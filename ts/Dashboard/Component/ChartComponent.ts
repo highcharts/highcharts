@@ -1,4 +1,3 @@
-/* eslint-disable */
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import DataSeriesConverter from '../../Data/DataSeriesConverter.js';
@@ -18,6 +17,7 @@ import U from '../../Core/Utilities.js';
 const {
     createElement,
     merge,
+    pick,
     uniqueKey,
     getStyle
 } = U;
@@ -115,7 +115,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
             'figure',
             void 0,
             void 0,
-            this.element,
+            void 0,
             true
         );
         if (this.options.chartClassName) {
@@ -130,21 +130,10 @@ class ChartComponent extends Component<ChartComponent.Event> {
         this.syncHandlerRegistry = {};
         this.chartOptions = this.options.chartOptions || { chart: {} };
         this.chart = this.constructChart();
-        // Extend via event.
-        this.on('resize', (e: Component.ResizeEvent): void => {
-            if (this.chart) {
-                this.chart.setSize(
-                    Number(getStyle(this.element, 'width')),
-                    Number(getStyle(this.element, 'height'))
-                );
-            }
-        });
 
-
-        const table = this.store?.table;
-        if (table) {
+        if (this.store) {
             this.on('tableChanged', (e: any): void => {
-                if (e.detail?.sender !== this.id) {
+                if (e.detail && e.detail.sender !== this.id) {
                     this.updateSeries();
                 }
             });
@@ -161,7 +150,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
         this.emit({ type: 'load' });
         super.load();
         this.parentElement.appendChild(this.element);
-        this.element.appendChild(this.chartContainer);
+        this.contentElement.appendChild(this.chartContainer);
         this.initChart();
         this.hasLoaded = true;
         this.emit({ type: 'afterLoad' });
@@ -182,21 +171,39 @@ class ChartComponent extends Component<ChartComponent.Event> {
         return this.render();
     }
 
+    public resize(
+        width?: number | string | null,
+        height?: number | string | null
+    ): this {
+        super.resize(width, height);
+
+        if (this.chart) {
+            const { width, height } = this.contentElement.getBoundingClientRect();
+            this.chart.setSize(
+                width,
+                height
+            );
+        }
+        return this;
+    }
+
     public update(options: Partial<ChartComponent.ComponentOptions>): this {
         super.update(options);
         if (this.chart) {
-            this.chart.update(this.options?.chartOptions || {});
+            this.chart.update(this.options.chartOptions || {});
         }
         this.emit({ type: 'afterUpdate' });
         return this;
     }
 
     private updateSeries(): void {
-        const series = new DataSeriesConverter(this.store?.table, {})
-            .getAllSeriesData();
+        if (this.store) {
+            const series = new DataSeriesConverter(this.store.table, {})
+                .getAllSeriesData();
 
-        if (this.chart) {
-            this.chart.update({ series }, true);
+            if (this.chart) {
+                this.chart.update({ series }, true);
+            }
         }
     }
 
@@ -212,8 +219,8 @@ class ChartComponent extends Component<ChartComponent.Event> {
     private initChart(): void {
         // @todo: This should be replaced when series understand dataTable
         const seriesFromStore: any = [];
-        if (this.store?.table) {
-            const data = DataParser.getColumnsFromTable(this.store?.table, false).slice(1);
+        if (this.store && this.store.table) {
+            const data = DataParser.getColumnsFromTable(this.store.table, false).slice(1);
             const keys = this.store.table.getColumnNames(true).slice(1);
             data.forEach((datum, i): void => {
                 let id, name;
@@ -226,13 +233,17 @@ class ChartComponent extends Component<ChartComponent.Event> {
 
         }
 
+
         if (
             !this.chartOptions.series ||
             this.chartOptions.series.length < seriesFromStore.length
         ) {
+            const seriesFromOptions = this.options.chartOptions && this.options.chartOptions.series ?
+                this.options.chartOptions.series :
+                [];
             this.chartOptions.series = [
                 ...seriesFromStore,
-                ...(this.options.chartOptions?.series || [])
+                ...seriesFromOptions
             ];
         }
 
@@ -245,7 +256,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
     }
 
     private setupSync(): void {
-        if (this.store?.table.getPresentationState()) {
+        if (this.store && this.store.table.getPresentationState()) {
             Object.keys(this.syncHandlers).forEach((id: string): void => {
                 if (this.syncEvents.indexOf(id as ChartComponent.syncEventsType) > -1) {
                     const { emitter, handler } = this.syncHandlers[id];

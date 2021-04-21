@@ -255,11 +255,6 @@ class Cell extends GUIElement {
             dimensions,
             this.container as HTMLDOMElement
         );
-
-        // redraw component inside the cell
-        if (this.mountedComponent) {
-            this.mountedComponent.resize(null);
-        }
     }
 }
 

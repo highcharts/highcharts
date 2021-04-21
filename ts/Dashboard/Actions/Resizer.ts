@@ -31,6 +31,7 @@ class Resizer {
     *  Static Properties
     *
     * */
+
     public static fromJSON(
         layout: Layout,
         json: Resizer.ClassJSON
@@ -113,6 +114,21 @@ class Resizer {
                 }
             }
         }
+
+        // Trigger component resize within rows where resize happened
+        addEvent(this.layout.dashboard, 'cellResize', e => {
+            const { cell } = e as { cell: Cell };
+
+            setTimeout(() => {
+                cell.row.cells.forEach(rowCell => {
+                    if (rowCell.mountedComponent) {
+                        if (rowCell.container) {
+                            rowCell.mountedComponent.resizeTo(rowCell.container);
+                        }
+                    }
+                });
+            });
+        });
     }
     /**
      * Add Snap - create snapXs and add events.
@@ -342,11 +358,6 @@ class Resizer {
                             (currentCell.styles || {}).minHeight || 0
                         )
                     ) + 'px';
-            }
-
-            // call component resize
-            if (currentCell.mountedComponent) {
-                currentCell.mountedComponent.resize(null);
             }
 
             // Call cellResize dashboard event.

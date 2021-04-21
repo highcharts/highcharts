@@ -1,4 +1,6 @@
+/* eslint-disable require-jsdoc */
 import type ComponentType from './ComponentType';
+import Cell from '../Layout/Cell.js';
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
 import type DataJSON from '../../Data/DataJSON';
@@ -17,6 +19,12 @@ const {
     getStyle,
     relativeLength
 } = U;
+
+
+function sumPixels(accumulator: number, value: string): number {
+    accumulator += parseFloat(value);
+    return accumulator;
+}
 
 abstract class Component<TEventObject extends Component.Event = Component.Event> {
 
@@ -152,6 +160,11 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
     public static defaultOptions: Component.ComponentOptions = {
         className: 'hcd-component',
         parentElement: document.body,
+        parentCell: void 0,
+        dimensions: {
+            width: '100%',
+            height: '100%'
+        },
         type: '',
         id: '',
         title: false,
@@ -169,11 +182,13 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
     }
 
     public parentElement: HTMLElement;
+    public parentCell?: Cell;
     public store?: DataStore<any>; // the attached store
     public dimensions: { width: number | null; height: number | null };
     public element: HTMLElement;
     public titleElement?: HTMLElement;
     public captionElement?: HTMLElement;
+    public contentElement: HTMLElement;
     public options: Component.ComponentOptions;
     public type: string;
     public id: string;
@@ -199,10 +214,18 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             this.parentElement = this.options.parentElement;
         }
 
+        if (this.options.parentCell) {
+            this.parentCell = this.options.parentCell;
+            if (this.parentCell.container) {
+                this.parentElement = this.parentCell.container;
+            }
+        }
+
         this.type = this.options.type;
         this.store = this.options.store;
         this.hasLoaded = false;
         this.editableOptions = new EditableOptions(this, options.editableOptionsBindings);
+
         // Initial dimensions
         this.dimensions = {
             width: null,
@@ -212,6 +235,12 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         this.element = createElement('div', {
             className: this.options.className
         });
+
+        this.contentElement = createElement('div', {
+            className: `${this.options.className}-content`
+        }, {
+            height: '100%'
+        }, void 0, true);
 
         // Add the component instance to the registry
         Component.addInstance(this);
@@ -263,6 +292,36 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         return this;
     }
 
+    protected getMargins(
+        element: HTMLElement,
+        includeBorders: boolean = true
+    ): { x: number; y: number } {
+        const styles = window.getComputedStyle(element);
+        const {
+            marginTop, marginBottom, marginLeft, marginRight,
+            borderTop, borderBottom, borderLeft, borderRight
+        } = styles;
+        const borders = includeBorders ?
+            { x: [borderLeft, borderRight], y: [borderTop, borderBottom] } :
+            { x: [], y: [] };
+
+        return {
+            y: [marginTop, marginBottom, ...borders.y].reduce(sumPixels, 0),
+            x: [marginLeft, marginRight, ...borders.x].reduce(sumPixels, 0)
+        };
+    }
+
+
+    protected getPaddings(element: HTMLElement): { x: number; y: number } {
+        const styles = window.getComputedStyle(element);
+        const { paddingTop, paddingBottom, paddingLeft, paddingRight } = styles;
+
+        return {
+            x: [paddingLeft, paddingRight].reduce(sumPixels, 0),
+            y: [paddingTop, paddingBottom].reduce(sumPixels, 0)
+        };
+    }
+
     /**
      * Resize the component
      * @param {number|string|null} [width]
@@ -273,33 +332,28 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
      * The height to set the component to.
      * Can be pixels, a percentage string or null.
      * Null will unset the style
-     *
-     * @return {this} this
      */
     public resize(
         width?: number | string | null,
         height?: number | string | null
-    ): this {
-
-        // If undefined, and parent has set style,
-        // set to parents height minus padding, margin, etc
-        if (height === void 0 && this.parentElement.style.height) {
-            height = '100%';
-        }
-
-        if (width === void 0 && this.parentElement.style.width) {
-            width = '100%';
-        }
+    ): void {
+        // if (!this.resizeTimeout) {
+        //     this.resizeTimeout = requestAnimationFrame(() => {
 
         if (height) {
-            // Get offset for border, padding, margin
-            const diff = this.element.offsetHeight - Number(getStyle(this.element, 'height'));
-            this.dimensions.height = relativeLength(height, Number(getStyle(this.parentElement, 'height')), -diff);
+            // Get offset for border, padding
+            const pad = this.getPaddings(this.element).y + this.getMargins(this.element).y;
+
+            this.dimensions.height = relativeLength(height, Number(getStyle(this.parentElement, 'height'))) - pad;
             this.element.style.height = this.dimensions.height + 'px';
+            /* [this.contentElement].forEach(element => { */
+            /*     element.style.height = '100%' */
+            /* }) */
+
         }
         if (width) {
-            const diff = this.element.offsetWidth - Number(getStyle(this.element, 'width'));
-            this.dimensions.width = relativeLength(width, Number(getStyle(this.parentElement, 'width')), -diff);
+            const pad = this.getPaddings(this.element).x + this.getMargins(this.element).x;
+            this.dimensions.width = relativeLength(width, Number(getStyle(this.parentElement, 'width'))) - pad;
             this.element.style.width = this.dimensions.width + 'px';
         }
 
@@ -317,7 +371,17 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             width,
             height
         });
-        return this;
+        //         cancelAnimationFrame(this.resizeTimeout)
+        //         this.resizeTimeout = 0;
+        //     });
+        // }
+    }
+
+    public resizeTo(element: HTMLElement): void {
+        const { width, height } = element.getBoundingClientRect();
+        const padding = this.getPaddings(element);
+        const margins = this.getMargins(element);
+        this.resize(width - padding.x - margins.x, height - padding.y - margins.y);
     }
 
     /**
@@ -337,6 +401,42 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         return this;
     }
 
+    public createTextElement(
+        tagName: string,
+        elementName: string,
+        textOptions: Component.textOptionsType
+    ): HTMLElement | undefined {
+        const classBase = 'hcd';
+
+        if (typeof textOptions === 'object') {
+            const { className, text, style } = textOptions;
+            return createElement(tagName, {
+                className: className || `${classBase}-component-${elementName}`,
+                textContent: text
+            }, style);
+        }
+
+        if (typeof textOptions === 'string') {
+            return createElement(tagName, {
+                className: `${classBase}-component-${elementName}`,
+                textContent: textOptions
+            });
+        }
+    }
+    public setTitle(titleOptions: Component.textOptionsType): void {
+        const titleElement = this.createTextElement('h1', 'title', titleOptions);
+        if (titleElement) {
+            this.titleElement = titleElement;
+        }
+    }
+
+    public setCaption(captionOptions: Component.textOptionsType): void {
+        const captionElement = this.createTextElement('div', 'caption', captionOptions);
+        if (captionElement) {
+            this.captionElement = captionElement;
+        }
+    }
+
     /**
      * Handles setting things up on initial render
      *
@@ -348,8 +448,13 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             this.setStore(this.store);
         }
 
-        /* this.parentElement.appendChild(this.element); */
-
+        this.setTitle(this.options.title);
+        this.setCaption(this.options.caption);
+        [this.titleElement, this.contentElement, this.captionElement].forEach((element): void => {
+            if (element) {
+                this.element.appendChild(element);
+            }
+        });
         // Setup event listeners
         // Grabbed from Chart.ts
         const events = this.options.events;
@@ -367,6 +472,8 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             }
         });
 
+        window.addEventListener('resize', (): void => this.resizeTo(this.parentElement));
+
         this.hasLoaded = true;
 
         return this;
@@ -379,12 +486,13 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
      */
     public render(): this {
         if (!this.hasLoaded) {
+
+            // this.setupResizeListeners()
             this.load();
-            // Call resize to set the sizes
-            this.resize(
-                this.options.dimensions ? this.options.dimensions.width : void 0,
-                this.options.dimensions ? this.options.dimensions.height : void 0
-            );
+            // Call resize to fit to the cell
+            setTimeout((): void => {
+                this.resizeTo(this.parentElement);
+            }, 0);
         }
 
         const e = {
@@ -510,6 +618,7 @@ namespace Component {
     }
 
     export interface ComponentOptions extends EditableOptions {
+        parentCell?: Cell;
         parentElement: HTMLElement | string;
         className?: string;
         type: string;
