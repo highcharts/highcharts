@@ -20,14 +20,10 @@ import type RectangleObject from './Renderer/RectangleObject';
 import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
+import F from './FormatUtilities.js';
+const { format } = F;
 import H from './Globals.js';
-const {
-    doc
-} = H;
-import O from './Options.js';
-const {
-    format
-} = O;
+const { doc } = H;
 import palette from './Color/Palette.js';
 import U from './Utilities.js';
 const {

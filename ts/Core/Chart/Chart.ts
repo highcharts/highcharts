@@ -43,6 +43,8 @@ const {
     setAnimation
 } = A;
 import Axis from '../Axis/Axis.js';
+import F from '../FormatUtilities.js';
+const { numberFormat } = F;
 import H from '../Globals.js';
 const {
     charts,
@@ -54,7 +56,6 @@ import MSPointer from '../MSPointer.js';
 import O from '../Options.js';
 const {
     defaultOptions,
-    numberFormat,
     defaultTime
 } = O;
 import palette from '../../Core/Color/Palette.js';

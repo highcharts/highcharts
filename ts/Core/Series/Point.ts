@@ -36,12 +36,11 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
+import F from '../FormatUtilities.js';
+const { format } = F;
 import H from '../Globals.js';
 import O from '../Options.js';
-const {
-    defaultOptions,
-    format
-} = O;
+const { defaultOptions } = O;
 import U from '../Utilities.js';
 const {
     addEvent,

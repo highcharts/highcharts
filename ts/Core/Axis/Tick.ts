@@ -17,11 +17,11 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type TimeTicksInfoObject from './TimeTicksInfoObject';
+import F from '../FormatUtilities.js';
 import H from '../Globals.js';
 const {
     deg2rad
 } = H;
-import O from '../Options.js';
 import U from '../Utilities.js';
 const {
     clamp,
@@ -398,7 +398,7 @@ class Tick {
         ): string => {
             if (labelOptions.format) {
                 ctx.text = axis.defaultLabelFormatter.call(ctx);
-                return O.format(labelOptions.format, ctx, chart);
+                return F.format(labelOptions.format, ctx, chart);
             }
             return (labelOptions.formatter || axis.defaultLabelFormatter)
                 .call(ctx, ctx);

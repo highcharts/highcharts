@@ -24,6 +24,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
+import F from '../../Core/FormatUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend.js';
@@ -36,7 +37,6 @@ const {
     addEvent,
     arrayMax,
     arrayMin,
-    extend,
     isNumber,
     merge,
     objectEach,
@@ -894,7 +894,7 @@ class BubbleLegend {
             format = (options.labels as any).format;
         const { numberFormatter } = this.chart;
 
-        return format ? O.format(format, range) :
+        return format ? F.format(format, range) :
             formatter ? formatter.call(range) :
                 numberFormatter(range.value, 1);
     }

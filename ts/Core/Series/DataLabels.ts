@@ -23,12 +23,10 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
+import F from '../FormatUtilities.js';
+const { format } = F;
 import H from '../Globals.js';
 const { noop } = H;
-import O from '../Options.js';
-const {
-    format
-} = O;
 import palette from '../Color/Palette.js';
 import Series from '../Series/Series.js';
 import SeriesRegistry from './SeriesRegistry.js';
