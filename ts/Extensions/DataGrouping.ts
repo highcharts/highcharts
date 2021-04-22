@@ -170,7 +170,7 @@ declare global {
         );
         type DataGroupingAnchor = ('start'|'middle'|'end');
         type DataGroupingAnchorExtremes = ('start'|'middle'|'end'|'firstPoint'|'lastPoint');
-        type anchorChoiceType = {
+        type AnchorChoiceType = {
             [key: string]: number;
         }
     }
@@ -187,7 +187,7 @@ declare global {
  */
 
 /**
- * The position of the first or last point on the chart inside the group.
+ * The position of the first or last point in the series inside the group.
  *
  * @typedef    {"start"|"middle"|"end"|"firstPoint"|"lastPoint"} Highcharts.DataGroupingAnchorExtremes
  */
@@ -549,7 +549,7 @@ const anchorPoints = function (
         // Anchor points that are not extremes.
         if (anchor && anchor !== 'start') {
             const shiftInterval: number = totalRange *
-                ({ middle: 0.5, end: 1 } as Highcharts.anchorChoiceType)[anchor];
+                ({ middle: 0.5, end: 1 } as Highcharts.AnchorChoiceType)[anchor];
 
             i = groupedXData.length - 1;
             while (i-- && i > 0) {
@@ -577,7 +577,7 @@ const anchorPoints = function (
                 end: groupedXData[0] + totalRange,
                 firstPoint: series.xData[0],
                 lastPoint: firstGroupstEnd && series.xData[firstGroupstEnd]
-            } as Highcharts.anchorChoiceType)[firstAnchor];
+            } as Highcharts.AnchorChoiceType)[firstAnchor];
         }
 
         // Change the last point position but only when it is
@@ -595,35 +595,36 @@ const anchorPoints = function (
                 end: groupedXData[groupedDataLength] + totalRange,
                 firstPoint: lastGroupStart && series.xData[lastGroupStart],
                 lastPoint: series.xData[series.xData.length - 1]
-            } as Highcharts.anchorChoiceType)[lastAnchor];
+            } as Highcharts.AnchorChoiceType)[lastAnchor];
         }
     }
 };
 
 const adjustExtremes = function (
     xAxis: Axis,
-    series: Series,
     groupedXData: Array<number>
 ): void {
     // Make sure the X axis extends to show the first group (#2533)
     // But only for visible series (#5493, #6393)
     if (
         defined(groupedXData[0]) &&
-        groupedXData[0] < (xAxis.min as any)
+        isNumber(xAxis.min) &&
+        isNumber(xAxis.dataMin) &&
+        groupedXData[0] < xAxis.min
     ) {
         if (
             (
                 !defined(xAxis.options.min) &&
-                (xAxis.min as any) <= (xAxis.dataMin as any)
+                xAxis.min <= xAxis.dataMin
             ) ||
             xAxis.min === xAxis.dataMin
         ) {
-            xAxis.min = Math.min(groupedXData[0], (xAxis.min as any));
+            xAxis.min = Math.min(groupedXData[0], xAxis.min);
         }
 
         xAxis.dataMin = Math.min(
             groupedXData[0],
-            (xAxis.dataMin as any)
+            xAxis.dataMin
         );
     }
 
@@ -631,20 +632,23 @@ const adjustExtremes = function (
     // the last point is visible (#12455).
     if (
         defined(groupedXData[groupedXData.length - 1]) &&
-        groupedXData[groupedXData.length - 1] > (xAxis.max as any)
+        isNumber(xAxis.max) &&
+        isNumber(xAxis.dataMax) &&
+        groupedXData[groupedXData.length - 1] > xAxis.max
     ) {
 
         if (
             (
                 !defined(xAxis.options.max) &&
-                (xAxis.max as any) >= (xAxis.dataMax as any)
+                isNumber(xAxis.dataMax) &&
+                xAxis.max >= xAxis.dataMax
             ) || xAxis.max === xAxis.dataMax
         ) {
-            xAxis.max = Math.max(groupedXData[groupedXData.length - 1], (xAxis.max as any));
+            xAxis.max = Math.max(groupedXData[groupedXData.length - 1], xAxis.max);
         }
         xAxis.dataMax = Math.max(
             groupedXData[groupedXData.length - 1],
-            (xAxis.dataMax as any)
+            xAxis.dataMax
         );
     }
 };
@@ -940,7 +944,7 @@ seriesProto.processData = function (): any {
             series.groupMap = groupedData.groupMap;
 
             if (visible) {
-                adjustExtremes(xAxis, series, groupedXData);
+                adjustExtremes(xAxis, groupedXData);
             }
 
             // We calculated all group positions but we should render
@@ -1290,16 +1294,16 @@ export default dataGrouping;
  */
 
 /**
- * Specifies how the points should be located on the x Axis inside the group.
+ * Specifies how the points should be located on the X axis inside the group.
  * Points that are extremes can be set separately. Available options:
  *
- * - `start` places the point always at the beginning of the group
+ * - `start` places the point at the beginning of the group
  * (e.g. range 00:00:00 - 23:59:59 -> 00:00:00)
  *
- * - `middle` places the point always in the middle of the group
+ * - `middle` places the point in the middle of the group
  * (e.g. range 00:00:00 - 23:59:59 -> 12:00:00)
  *
- * - `end` places the point always at the end of the group
+ * - `end` places the point at the end of the group
  * (e.g. range 00:00:00 - 23:59:59 -> 23:59:59)
  *
  * @sample {highstock} stock/plotoptions/series-datagrouping-anchor
@@ -1398,13 +1402,13 @@ export default dataGrouping;
  * precedence over anchor for the first and/or last grouped points.
  * Available options:
  *
- * -`start` places the point always at the beginning of the group
+ * -`start` places the point at the beginning of the group
  * (e.g. range 00:00:00 - 23:59:59 -> 00:00:00)
  *
- * -`middle` places the point always in the middle of the group
+ * -`middle` places the point in the middle of the group
  * (e.g. range 00:00:00 - 23:59:59 -> 12:00:00)
  *
- * -`end` places the point always at the end of the group
+ * -`end` places the point at the end of the group
  * (e.g. range 00:00:00 - 23:59:59 -> 23:59:59)
  *
  * -`firstPoint` the first point in the group
@@ -1474,13 +1478,13 @@ export default dataGrouping;
  * precedence over anchor for the first and/or last grouped points.
  * Available options:
  *
- * -`start` places the point always at the beginning of the group
+ * -`start` places the point at the beginning of the group
  * (e.g. range 00:00:00 - 23:59:59 -> 00:00:00)
  *
- * -`middle` places the point always in the middle of the group
+ * -`middle` places the point in the middle of the group
  * (e.g. range 00:00:00 - 23:59:59 -> 12:00:00)
  *
- * -`end` places the point always at the end of the group
+ * -`end` places the point at the end of the group
  * (e.g. range 00:00:00 - 23:59:59 -> 23:59:59)
  *
  * -`firstPoint` the first point in the group
