@@ -926,23 +926,30 @@ class Tick {
             horiz = axis.horiz,
             pos = tick.pos,
             tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
-            xy = tick.getPosition(horiz as any, pos, tickmarkOffset, old),
+            xy = tick.getPosition(!!horiz, pos, tickmarkOffset, old),
             x = xy.x,
             y = xy.y,
-            reverseCrisp = ((horiz && x === (axis.pos as any) + axis.len) ||
+            reverseCrisp = ((horiz && x === axis.pos + axis.len) ||
                 (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
 
+        old = !!old;
+
+        const labelOpacity = pick(
+            opacity,
+            tick.label && tick.label.newOpacity, // #15528
+            1
+        );
         opacity = pick(opacity, 1);
         this.isActive = true;
 
         // Create the grid line
-        this.renderGridLine(old as any, opacity as any, reverseCrisp);
+        this.renderGridLine(old, opacity, reverseCrisp);
 
         // create the tick mark
-        this.renderMark(xy, opacity as any, reverseCrisp);
+        this.renderMark(xy, opacity, reverseCrisp);
 
         // the label is created on init - now move it into place
-        this.renderLabel(xy, old as any, opacity as any, index as any);
+        this.renderLabel(xy, old, labelOpacity, index);
 
         tick.isNew = false;
 
