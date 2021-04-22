@@ -113,6 +113,15 @@ class DumbbellPoint extends AreaRangePoint {
 
         point.connector[verb](series.getConnectorAttribs(point));
     }
+
+    public destroy(): void {
+        // #15560
+        if (!this.graphic) {
+            this.graphic = this.connector;
+            this.connector = void 0 as any;
+        }
+        return super.destroy();
+    }
 }
 
 /* *
