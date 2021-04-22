@@ -2244,6 +2244,8 @@ class Navigator {
 
                 baseOptions = base.options || {};
                 baseNavigatorOptions = baseOptions.navigatorOptions || {};
+
+                userNavOptions.dataLabels = splat(userNavOptions.dataLabels);
                 mergedNavSeriesOptions = merge(
                     baseOptions,
                     navSeriesMixin,
