@@ -1144,3 +1144,74 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Navigator dafault dataLabels enabled, #13847.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        navigator: {
+            enabled: true
+        },
+        plotOptions: {
+            series: {
+                cursor: 'pointer',
+                dataLabels: [{
+                    enabled: true,
+                    format: 'T2'
+                }]
+            }
+        },
+        series: [{
+            data: [{
+                y: 1624060740000,
+                x: 1624060740000,
+                today: 1593414458227
+            }, {
+                y: 1655510340000,
+                x: 1655510340000,
+                today: 1593414458227
+            }, {
+                y: 1607731140000,
+                x: 1607731140000,
+                today: 1594125209741
+            }]
+        }]
+    });
+
+    assert.equal(
+        chart.navigator.series[0].options.dataLabels[0].enabled,
+        false,
+        'DataLabels in Navigator should be disabled in default.'
+    );
+    // The problem was connected with merge Utils function,
+    // that doesn't handle merging objects with different structures.
+    chart.update({
+        navigator: {
+            series: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        }
+    });
+
+    assert.equal(
+        chart.navigator.series[0].options.dataLabels[0].enabled,
+        true,
+        'DataLabels in Navigator should be enabled, if specified in options.'
+    );
+
+    chart.update({
+        navigator: {
+            series: {
+                dataLabels: [{
+                    enabled: true
+                }]
+            }
+        }
+    });
+
+    assert.equal(
+        chart.navigator.series[0].options.dataLabels[0].enabled,
+        true,
+        'DataLabels in Navigator should be enabled, if specified in options (wrapped with array).'
+    );
+});
