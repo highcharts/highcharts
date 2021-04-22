@@ -2712,7 +2712,10 @@ class Chart {
                     fireEvent(chart, 'afterAddSeries', { series: series });
 
                     if (redraw) {
+                        // For series animation after addSeries(), (#4406)
+                        series.useTemporaryClip = true;
                         chart.redraw(animation);
+                        delete series.useTemporaryClip;
                     }
                 }
             );

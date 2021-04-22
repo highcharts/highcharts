@@ -2735,6 +2735,8 @@ class Series {
 
     public symbol?: string;
 
+    public useTemporaryClip?: boolean;
+
     public tooltipOptions: Highcharts.TooltipOptions = void 0 as any;
 
     public touched?: boolean;
@@ -4864,6 +4866,7 @@ class Series {
         }
 
         const sharedClipKey = [
+            this.useTemporaryClip ? '_temporaryClip' : '', // #4406
             animation && animation.duration,
             animation && animation.easing,
             animation && animation.defer,
@@ -4894,6 +4897,10 @@ class Series {
             inverted = chart.inverted,
             seriesClipBox = this.clipBox,
             clipBox = this.getClipBox(animation),
+            tempClipKey = ( // #4406
+                this.sharedClipKey &&
+                this.sharedClipKey.split(',')[0] === '_temporaryClip'
+            ) ? this.sharedClipKey : void 0,
             sharedClipKey = this.getSharedClipKey(animation), // #4526
             clipRect = chart.sharedClips[sharedClipKey],
             markerClipRect = chart.sharedClips[sharedClipKey + 'm'];
@@ -4923,7 +4930,8 @@ class Series {
 
 
             }
-            chart.sharedClips[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
+            chart.sharedClips[sharedClipKey] = clipRect =
+                renderer.clipRect(clipBox);
 
             // Create hashmap for series indexes
             clipRect.count = { length: 0 };
@@ -4961,7 +4969,15 @@ class Series {
                     chart.sharedClips[sharedClipKey] = clipRect.destroy();
                 }
                 if (markerClipRect) {
-                    chart.sharedClips[sharedClipKey + 'm'] = markerClipRect.destroy();
+                    chart.sharedClips[sharedClipKey + 'm'] =
+                        markerClipRect.destroy();
+                }
+
+                // Remove the temporary clipping rectangle when the series
+                // animation has finished after chart.addSeries(), (#4406)
+                const tempClip = tempClipKey && chart.sharedClips[tempClipKey];
+                if (tempClipKey && tempClip) {
+                    chart.sharedClips[tempClipKey] = tempClip.destroy();
                 }
             }
         }

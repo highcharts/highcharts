@@ -84,6 +84,33 @@ QUnit.test('General series clip tests', assert => {
             '#15435: Shared clip should have been updated'
         );
 
+        chart.addSeries({
+            data: [3, 3, 3],
+            animation: true
+        });
+
+        assert.ok(
+            chart.series[4].sharedClipKey.includes('temporary'),
+            `Clippath should only exist until the animation is finished
+            (#4406).`
+        );
+
+        assert.strictEqual(
+            chart.sharedClips[chart.series[4].sharedClipKey].attr('width'),
+            0,
+            `Clippath's width immediately after addSeries should be 0
+            (series hasn't started animation yet) (#4406).`
+        );
+
+        setTimeout(() => {
+            assert.ok(
+                chart.sharedClips[chart.series[4].sharedClipKey]
+                    .attr('width') > 0,
+                `Clippath's width after addSeries should increase
+                (series is being animated) (#4406).`
+            );
+        }, 20);
+
         setTimeout(() => {
             chart.update(
                 {
