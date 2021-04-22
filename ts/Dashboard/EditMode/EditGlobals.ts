@@ -22,6 +22,7 @@ const EditGlobals: EditGlobals = {
         editSidebarTitle: PREFIX + 'sidebar-title',
         editSidebarTab: PREFIX + 'sidebar-tab',
         editSidebarTabsContainer: PREFIX + 'sidebar-tabs',
+        editSidebarTabContent: PREFIX + 'sidebar-tab-content',
         editSidebarTabActive: PREFIX + 'toolbar-tab-active',
         editSidebarMenuItem: PREFIX + 'sidebar-item',
         disabledNotEditedCells: PREFIX + 'hidden-cells',
@@ -39,7 +40,8 @@ const EditGlobals: EditGlobals = {
         toggleSlider: PREFIX + 'toggle-slider',
         button: PREFIX + 'button',
         sidebarNavButton: PREFIX + 'sidebar-button-nav',
-        labelText: PREFIX + 'label-text'
+        labelText: PREFIX + 'label-text',
+        editSidebarTabBtn: PREFIX + 'sidebar-tab-btn'
     },
     lang: {
         editMode: 'Edit mode',
@@ -74,6 +76,7 @@ namespace EditGlobals {
         editSidebarTitle: string;
         editSidebarTab: string;
         editSidebarTabsContainer: string;
+        editSidebarTabContent: string;
         editSidebarTabActive: string;
         editSidebarMenuItem: string;
         disabledNotEditedCells: string;
@@ -92,6 +95,7 @@ namespace EditGlobals {
         button: string;
         labelText: string;
         sidebarNavButton: string;
+        editSidebarTabBtn: string;
     }
 
     export interface LangOptions {

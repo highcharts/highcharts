@@ -9,6 +9,7 @@ import type MenuItem from './Menu/MenuItem.js';
 import DashboardGlobals from '../DashboardGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
+import ContainerComponent from '../../Accessibility/Components/ContainerComponent.js';
 
 const {
     merge,
@@ -29,7 +30,7 @@ class Sidebar {
         closeIcon: EditGlobals.iconsURL + '/close.svg',
         menu: {
             itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
-            items: ['cellWidth', 'rowHeight', 't1', 't2', 'componentSettings']
+            items: ['cellWidth', 'rowHeight', 'componentSettings']
         }
     }
 
@@ -37,45 +38,27 @@ class Sidebar {
         type: 'design',
         icon: '',
         items: {
-            cell: ['cellWidth'],
-            row: ['rowHeight']
+            cell: ['cellWidth']
         }
     }, {
         type: 'data',
         icon: '',
         items: {
-            cell: ['t2'],
-            row: ['t1']
+            cell: ['']
         }
     }, {
         type: 'component',
         icon: '',
         items: {
             cell: ['componentSettings'],
-            row: ['t2']
+            row: ['']
         }
     }]
 
     public static items: Record<string, MenuItem.Options> =
     merge(Menu.items, {
-        t1: {
-            type: 't1',
-            text: 'tool1',
-            events: {
-                load: function (): void {
-                    console.log('aaa');
-                },
-                click: function (): void {}
-            }
-        },
-        t2: {
-            type: 't2',
-            text: 'tool2',
-            events: {
-                click: function (): void {}
-            }
-        },
         componentSettings: {
+            id: 'componentSettings',
             type: 'componentSettings',
             text: 'Settings',
             events: {
@@ -101,7 +84,7 @@ class Sidebar {
                     const item = this,
                         cell = this.menu.parent.context;
 
-                    if (
+                    if (cell &&
                         cell.getType() === DashboardGlobals.guiElementType.cell &&
                         cell.container &&
                         item.innerElement &&
@@ -184,7 +167,6 @@ class Sidebar {
             this
         );
 
-        this.menu.initItems(Sidebar.items);
         this.initEvents();
     }
 
@@ -266,10 +248,15 @@ class Sidebar {
             }, {}, sidebar.container
         );
 
-
         let tabElement;
+        let contentContainer;
+        let content;
+        let saveBtn;
+        let contentItems = [];
 
         for (let i = 0, iEnd = tabs.length; i < iEnd; ++i) {
+            contentItems = tabs[i].items.cell;
+
             tabElement = createElement(
                 'div', {
                     className: EditGlobals.classNames.editSidebarTab,
@@ -280,10 +267,44 @@ class Sidebar {
                 }, {}, container
             );
 
+            contentContainer = createElement(
+                'div', {
+                    className: EditGlobals.classNames.editSidebarTabContent,
+                }, {}, sidebar.container
+            );
+            
+            content = new Menu(
+                contentContainer,
+                {
+                    itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
+                    items: contentItems
+                },
+                sidebar
+            );
+
+            content.initItems(
+                Sidebar.items,
+                true
+            );
+
+            saveBtn = EditRenderer.renderButton(
+                contentContainer,
+                {
+                    value: 'Save',
+                    className: EditGlobals.classNames.editSidebarTabBtn,
+                    callback: () => {
+                        console.log('save');
+                    }
+                }
+            );
+
             sidebar.tabs[tabs[i].type] = {
                 element: tabElement,
                 options: tabs[i],
-                isActive: false
+                isActive: false,
+                contentContainer: contentContainer,
+                content: content,
+                saveBtn: saveBtn as HTMLDOMElement
             };
         }
     }
@@ -338,16 +359,19 @@ class Sidebar {
                 sidebar.activeTab.element.classList.remove(
                     EditGlobals.classNames.editSidebarTabActive
                 );
+                sidebar.activeTab.contentContainer.style.display = "none";
             }
 
             tab.element.classList.add(
                 EditGlobals.classNames.editSidebarTabActive
             );
+            
+            tab.contentContainer.style.display = "block";
 
             sidebar.activeTab = tab;
             tab.isActive = true;
 
-            sidebar.menu.updateActiveItems(tab.options.items[contextType]);
+            tab.content.updateAllItems();
         }
     }
 
@@ -481,9 +505,17 @@ class Sidebar {
 
     public getComponentEditableOptions(): void {
         const sidebar = this;
-        const currentComponent = (sidebar.context as Cell).mountedComponent;
+        const cell = (sidebar.context as Cell);
+        const currentComponent = cell && cell.mountedComponent;
         const componentSettings = currentComponent &&
             currentComponent.editableOptions.getEditableOptions();
+
+        if (
+            sidebar.componentEditableOptions &&
+            cell.id === sidebar.componentEditableOptions.currentElementId
+        ) {
+            return;
+        }
 
         if (componentSettings) {
             let menuItems = {};
@@ -505,8 +537,13 @@ class Sidebar {
                 )
             }
 
+            // remove previous options
+            if (sidebar.componentEditableOptions) {
+                sidebar.componentEditableOptions.destroy();
+            }
+
             sidebar.componentEditableOptions = new Menu(
-                sidebar.container,
+                sidebar.activeTab?.content?.container as HTMLDOMElement,
                 {
                     itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
                     items: items
@@ -515,9 +552,12 @@ class Sidebar {
             );
 
             sidebar.componentEditableOptions.initItems(
-                menuItems
+                menuItems,
+                true
             );
-        }
+
+            sidebar.componentEditableOptions.currentElementId = cell.id;
+       }
     }
 }
 
@@ -545,6 +585,9 @@ namespace Sidebar {
         element: HTMLDOMElement;
         options: TabOptions;
         isActive: boolean;
+        content: Menu;
+        contentContainer: HTMLDOMElement;
+        saveBtn: HTMLDOMElement;
     }
 }
 

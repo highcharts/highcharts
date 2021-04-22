@@ -85,7 +85,8 @@ class Menu {
 
     // itemsSchemas - default items definitions.
     public initItems(
-        itemsSchemas: Record<string, MenuItem.Options>
+        itemsSchemas: Record<string, MenuItem.Options>,
+        activeItems?: boolean
     ): void {
         const menu = this,
             optionsItems = menu.options.items || [];
@@ -109,6 +110,11 @@ class Menu {
 
                 // Save initialized item.
                 menu.items[item.options.id] = item;
+
+                if (activeItems) {
+                    item.activate();
+                    menu.activeItems.push(item);
+                }
             } else {
                 // Error - defined item needs an id.
             }
@@ -152,6 +158,21 @@ class Menu {
         for (let i = 0, iEnd = menu.activeItems.length; i < iEnd; ++i) {
             menu.activeItems[i].deactivate();
         }
+    }
+
+    public updateAllItems(): void {
+        const activeItems = this.activeItems;
+
+        for (let i = 0, iEnd = activeItems.length; i < iEnd; ++i) {
+            activeItems[i].update();
+        }
+    }
+
+    public destroy(): void {
+        this.activeItems.length = 0;
+        this.container.remove();
+        this.items = {};
+        this.options = {};
     }
 }
 

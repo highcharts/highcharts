@@ -220,7 +220,7 @@ body {
     box-shadow: 0 0 1px #2196F3;
 }
 
-.hcd-edit-switch-wrapper input:checked + .hcd-edit-switch-slider:before {
+.hcd-edit-toggle-wrapper input:checked + .hcd-edit-toggle-slider:before {
     -webkit-transform: translateX(18px);
     -ms-transform: translateX(18px);
     transform: translateX(18px);
@@ -241,6 +241,10 @@ body {
 .block,
 .show-edit {
     display: block;
+}
+
+.hide {
+    display: none;
 }
 
 h1 {
@@ -339,7 +343,6 @@ h1 {
     display: none;
     border: 3px solid rgb(224, 29, 90);
     opacity: 0.3;
-    transition: 0.1s;
 }
 
 .hcd-edit-toolbar-item div {
@@ -384,8 +387,12 @@ h1 {
     display: none;
 }
 
+.hcd-edit-sidebar-tab-btn,
+.hcd-edit-sidebar .hcd-edit-button.hcd-edit-sidebar-tab-btn {
+    margin-top: 10px;
+}
+
 .hcd-edit-sidebar-item {
-    padding: 10px 10px 0px 10px;
     font-size: 0.876em;
 }
 
@@ -450,6 +457,11 @@ h1 {
     transition: 0.3s;
     opacity: 0.5;
     font-size: 0.876em;
+}
+
+.hcd-edit-sidebar-tab-content {
+    display: none;
+    padding: 10px;
 }
 
 .hcd-edit-sidebar-tab:hover,

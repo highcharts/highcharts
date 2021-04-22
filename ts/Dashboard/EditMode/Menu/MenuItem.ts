@@ -32,7 +32,7 @@ class MenuItem {
         options: MenuItem.Options
     ) {
         this.menu = menu;
-        this.isActive = options.isActive || false;
+        this.isActive = false;
         this.options = merge(MenuItem.defaultOptions, options || {});
 
         this.container = this.setContainer();
@@ -74,6 +74,7 @@ class MenuItem {
             { className: className },
             merge(
                 this.options.style || {},
+                // to remove
                 this.isActive ? { display: 'block' }: {}
             ),
             this.menu.container
