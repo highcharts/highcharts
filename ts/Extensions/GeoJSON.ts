@@ -13,14 +13,10 @@
 import type Series from '../Core/Series/Series';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
 import H from '../Core/Globals.js';
-const {
-    win
-} = H;
-import O from '../Core/Options.js';
-const {
-    format
-} = O;
+const { win } = H;
 import U from '../Core/Utilities.js';
 const {
     error,

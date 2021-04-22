@@ -24,16 +24,14 @@ const {
     animObject,
     setAnimation
 } = A;
+import F from './FormatUtilities.js';
+const { format } = F;
 import H from './Globals.js';
 const {
     isFirefox,
     marginNames,
     win
 } = H;
-import O from './Options.js';
-const {
-    format
-} = O;
 import Point from './Series/Point.js';
 import U from './Utilities.js';
 const {

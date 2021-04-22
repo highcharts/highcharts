@@ -22,15 +22,14 @@ import type {
 import type TimeTicksInfoObject from '../Core/Axis/TimeTicksInfoObject';
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
 import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
-const {
-    format
-} = O;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import Tooltip from '../Core/Tooltip.js';
+import O from '../Core/Options.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

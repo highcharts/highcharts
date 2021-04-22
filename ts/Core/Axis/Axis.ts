@@ -28,17 +28,12 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import A from '../Animation/AnimationUtilities.js';
-const {
-    animObject
-} = A;
+const { animObject } = A;
 import Color from '../Color/Color.js';
 import H from '../Globals.js';
 import palette from '../Color/Palette.js';
 import O from '../Options.js';
-const {
-    defaultOptions,
-    format
-} = O;
+const { defaultOptions } = O;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {

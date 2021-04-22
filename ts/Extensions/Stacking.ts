@@ -23,11 +23,9 @@ import type { DataLabelOverflowValue } from '../Core/Series/DataLabelOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
 import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
-const {
-    format
-} = O;
 import Series from '../Core/Series/Series.js';
 import StackingAxis from '../Core/Axis/StackingAxis.js';
 import U from '../Core/Utilities.js';
