@@ -1147,12 +1147,8 @@ QUnit.test(
 
 QUnit.test('Navigator dafault dataLabels enabled, #13847.', function (assert) {
     const chart = Highcharts.stockChart('container', {
-        navigator: {
-            enabled: true
-        },
         plotOptions: {
             series: {
-                cursor: 'pointer',
                 dataLabels: [{
                     enabled: true,
                     format: 'T2'
@@ -1160,19 +1156,7 @@ QUnit.test('Navigator dafault dataLabels enabled, #13847.', function (assert) {
             }
         },
         series: [{
-            data: [{
-                y: 1624060740000,
-                x: 1624060740000,
-                today: 1593414458227
-            }, {
-                y: 1655510340000,
-                x: 1655510340000,
-                today: 1593414458227
-            }, {
-                y: 1607731140000,
-                x: 1607731140000,
-                today: 1594125209741
-            }]
+            data: [1, 2, 3]
         }]
     });
 
