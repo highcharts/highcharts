@@ -60,11 +60,17 @@ const drawMap = projectionKey => {
         projectionName: undefined,
         projString: undefined,
         lat0: undefined,
+        latTS: undefined,
         lon0: parseInt(document.getElementById('lon0').value, 10),
         over: undefined,
         x0: undefined,
         y0: undefined
     }, {
+        'gall-peters': {
+            projectionName: 'cea',
+            lon0: 0,
+            latTS: 45
+        },
         eqc: {
             projectionName: 'eqc'
         },
@@ -118,6 +124,7 @@ const drawMap = projectionKey => {
 
 
         projection.proj4 = libs.proj4;
+        // projection.d3 = libs.d3;
 
         console.time('@mapChart');
 
@@ -168,7 +175,8 @@ const drawMap = projectionKey => {
                 pointFormat: '{point.name}: {point.value}'
             },
 
-            series: [{
+            series: [
+            {
                 name: 'Grid',
                 type: 'mapline',
                 data: getGraticule(),
@@ -176,19 +184,17 @@ const drawMap = projectionKey => {
             },
             /*
             {
-                type: 'map',
+                type: 'mapline',
                 data: [{
-                    type: 'Polygon',
-                    coordinates: [[
-                        [0, 30],
-                        [90, 0],
-                        [0, -30],
-                        [0, 30]
-                    ]]
+                    type: 'LineString',
+                    coordinates: [
+                        [120, 30],
+                        [-120, 30]
+                    ]
                 }],
-                color: 'rgba(0, 0, 0, 0.3)'
+                color: 'blue'
 
-            }
+            },
             // */
 
             //*
@@ -359,7 +365,7 @@ Highcharts.getJSON(
         static.geojson = JSON.stringify(geojson);
         static.data = data;
 
-        drawMap('robin');
+        drawMap('miller');
 
         enableInputs();
 

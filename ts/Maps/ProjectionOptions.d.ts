@@ -24,6 +24,7 @@ export interface ProjectionOptions {
     projectionName?: string;
     projString?: string;
     lat0?: number;
+    latTS?: number;
     lon0?: number;
     over?: boolean;
     x0?: number;
