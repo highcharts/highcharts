@@ -20,11 +20,7 @@ const {
     relativeLength
 } = U;
 
-
-function sumPixels(accumulator: number, value: string): number {
-    accumulator += parseFloat(value);
-    return accumulator;
-}
+import { getMargins, getPaddings } from './Utils.js';
 
 abstract class Component<TEventObject extends Component.Event = Component.Event> {
 
@@ -157,6 +153,28 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         return 'dashboard-component-' + uniqueKey();
     }
 
+    public static createTextElement(
+        tagName: string,
+        elementName: string,
+        textOptions: Component.textOptionsType
+    ): HTMLElement | undefined {
+        const classBase = 'hcd';
+
+        if (typeof textOptions === 'object') {
+            const { className, text, style } = textOptions;
+            return createElement(tagName, {
+                className: className || `${classBase}-component-${elementName}`,
+                textContent: text
+            }, style);
+        }
+
+        if (typeof textOptions === 'string') {
+            return createElement(tagName, {
+                className: `${classBase}-component-${elementName}`,
+                textContent: textOptions
+            });
+        }
+    }
     public static defaultOptions: Component.ComponentOptions = {
         className: 'hcd-component',
         parentElement: document.body,
@@ -169,7 +187,10 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         id: '',
         title: false,
         caption: false,
-        style: {},
+        style: {
+            display: 'flex',
+            'flex-direction': 'column'
+        },
         editableOptions: [
             'dimensions',
             'id',
@@ -234,7 +255,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
 
         this.element = createElement('div', {
             className: this.options.className
-        });
+        }, this.options.style);
 
         this.contentElement = createElement('div', {
             className: `${this.options.className}-content`
@@ -292,34 +313,17 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         return this;
     }
 
-    protected getMargins(
-        element: HTMLElement,
-        includeBorders: boolean = true
-    ): { x: number; y: number } {
-        const styles = window.getComputedStyle(element);
-        const {
-            marginTop, marginBottom, marginLeft, marginRight,
-            borderTop, borderBottom, borderLeft, borderRight
-        } = styles;
-        const borders = includeBorders ?
-            { x: [borderLeft, borderRight], y: [borderTop, borderBottom] } :
-            { x: [], y: [] };
 
-        return {
-            y: [marginTop, marginBottom, ...borders.y].reduce(sumPixels, 0),
-            x: [marginLeft, marginRight, ...borders.x].reduce(sumPixels, 0)
-        };
-    }
+    private getContentHeight(): number {
+        const parentHeight = this.dimensions.height || Number(getStyle(this.element, 'height'));
+        const titleHeight = this.titleElement ?
+            this.titleElement.clientHeight + getMargins(this.titleElement).y :
+            0;
+        const captionHeight = this.captionElement ?
+            this.captionElement.clientHeight + getMargins(this.captionElement).y :
+            0;
 
-
-    protected getPaddings(element: HTMLElement): { x: number; y: number } {
-        const styles = window.getComputedStyle(element);
-        const { paddingTop, paddingBottom, paddingLeft, paddingRight } = styles;
-
-        return {
-            x: [paddingLeft, paddingRight].reduce(sumPixels, 0),
-            y: [paddingTop, paddingBottom].reduce(sumPixels, 0)
-        };
+        return parentHeight - titleHeight - captionHeight;
     }
 
     /**
@@ -342,17 +346,14 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
 
         if (height) {
             // Get offset for border, padding
-            const pad = this.getPaddings(this.element).y + this.getMargins(this.element).y;
+            const pad = getPaddings(this.element).y + getMargins(this.element).y;
 
             this.dimensions.height = relativeLength(height, Number(getStyle(this.parentElement, 'height'))) - pad;
             this.element.style.height = this.dimensions.height + 'px';
-            /* [this.contentElement].forEach(element => { */
-            /*     element.style.height = '100%' */
-            /* }) */
-
+            this.contentElement.style.height = this.getContentHeight() + 'px';
         }
         if (width) {
-            const pad = this.getPaddings(this.element).x + this.getMargins(this.element).x;
+            const pad = getPaddings(this.element).x + getMargins(this.element).x;
             this.dimensions.width = relativeLength(width, Number(getStyle(this.parentElement, 'width'))) - pad;
             this.element.style.width = this.dimensions.width + 'px';
         }
@@ -379,8 +380,9 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
 
     public resizeTo(element: HTMLElement): void {
         const { width, height } = element.getBoundingClientRect();
-        const padding = this.getPaddings(element);
-        const margins = this.getMargins(element);
+        const padding = getPaddings(element);
+        const margins = getMargins(element);
+
         this.resize(width - padding.x - margins.x, height - padding.y - margins.y);
     }
 
@@ -401,37 +403,15 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         return this;
     }
 
-    public createTextElement(
-        tagName: string,
-        elementName: string,
-        textOptions: Component.textOptionsType
-    ): HTMLElement | undefined {
-        const classBase = 'hcd';
-
-        if (typeof textOptions === 'object') {
-            const { className, text, style } = textOptions;
-            return createElement(tagName, {
-                className: className || `${classBase}-component-${elementName}`,
-                textContent: text
-            }, style);
-        }
-
-        if (typeof textOptions === 'string') {
-            return createElement(tagName, {
-                className: `${classBase}-component-${elementName}`,
-                textContent: textOptions
-            });
-        }
-    }
     public setTitle(titleOptions: Component.textOptionsType): void {
-        const titleElement = this.createTextElement('h1', 'title', titleOptions);
+        const titleElement = Component.createTextElement('h1', 'title', titleOptions);
         if (titleElement) {
             this.titleElement = titleElement;
         }
     }
 
     public setCaption(captionOptions: Component.textOptionsType): void {
-        const captionElement = this.createTextElement('div', 'caption', captionOptions);
+        const captionElement = Component.createTextElement('div', 'caption', captionOptions);
         if (captionElement) {
             this.captionElement = captionElement;
         }

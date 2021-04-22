@@ -178,10 +178,9 @@ class ChartComponent extends Component<ChartComponent.Event> {
         super.resize(width, height);
 
         if (this.chart) {
-            const { width, height } = this.contentElement.getBoundingClientRect();
             this.chart.setSize(
-                width,
-                height
+                null,
+                this.contentElement.clientHeight
             );
         }
         return this;
