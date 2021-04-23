@@ -12,7 +12,8 @@ import EditContextMenu from './EditContextMenu.js';
 import DragDrop from './../Actions/DragDrop.js';
 
 const {
-    merge
+    merge,
+    pick
 } = U;
 
 class EditMode {
@@ -22,7 +23,12 @@ class EditMode {
     *
     * */
     protected static readonly defaultOptions: EditMode.Options = {
-        enabled: true
+        enabled: true,
+        tools: {
+            addComponentBtn: {
+                icon: EditGlobals.iconsURL + 'add.svg',
+            }
+        }
     }
 
     /* *
@@ -41,6 +47,7 @@ class EditMode {
         // Init renderer.
         this.renderer = new EditRenderer(this);
 
+        // create context menu button
         if (
             this.options.contextMenu &&
             this.options.contextMenu.enabled
@@ -49,6 +56,25 @@ class EditMode {
         }
 
         this.isInitialized = false;
+
+        // create add button
+        const addIconURL = options && options.tools &&
+            options.tools.addComponentBtn && options.tools.addComponentBtn.icon;
+
+        this.addComponentBtn = EditRenderer.renderButton(
+            this.dashboard.container,
+            {
+                className: EditGlobals.classNames.editToolsBtn,
+                icon:  addIconURL,
+                value: 'Add',
+                callback: () => {
+                    
+                },
+                style: {
+                    display: 'none'
+                }
+            }
+        );
     }
 
     /* *
@@ -69,6 +95,7 @@ class EditMode {
     public sidebar?: Sidebar;
     public dragDrop?: DragDrop;
     public isInitialized: boolean;
+    public addComponentBtn?: HTMLDOMElement;
 
     /* *
     *
@@ -162,6 +189,11 @@ class EditMode {
         editMode.dashboard.container.classList.add(
             EditGlobals.classNames.editModeEnabled
         );
+
+        if (this.addComponentBtn) {
+            this.addComponentBtn.style.display = 'block';
+        }
+
     }
 
     public deactivateEditMode(): void {
@@ -176,6 +208,10 @@ class EditMode {
 
         // Hide toolbars.
         editMode.hideToolbars();
+
+        if (this.addComponentBtn) {
+            this.addComponentBtn.style.display = 'none';
+        }
     }
 
     private initLayoutResizer(layout: Layout): void {
@@ -243,12 +279,21 @@ namespace EditMode {
         lang?: EditGlobals.LangOptions|string;
         toolbars?: EditMode.Toolbars;
         dragDrop?: DragDrop.Options;
+        tools?: Tools;
     }
 
     export interface Toolbars {
         cell?: CellEditToolbar.Options;
         row?: RowEditToolbar.Options;
         settings?: Sidebar.Options;
+    }
+
+    export interface Tools {
+        addComponentBtn: addComponentBtn
+    }
+
+    export interface addComponentBtn {
+        icon: string;
     }
 }
 

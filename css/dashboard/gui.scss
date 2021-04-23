@@ -32,6 +32,9 @@ body {
     flex: 1;
 }
 
+.hcd-layout {
+    float: left;
+}
 .hcd-layout .hcd-row,
 .hcd-layout .hcd-row .hcd-cell {
     box-sizing: border-box;
@@ -239,7 +242,8 @@ body {
 }
 
 .block,
-.show-edit {
+.show-edit
+.show {
     display: block;
 }
 
@@ -292,7 +296,7 @@ h1 {
     padding: 5px;
     cursor: pointer;
     border-radius: 3px;
-
+    float:right;
     div {
         height: 4px;
         background-color: #555;
@@ -390,6 +394,19 @@ h1 {
 .hcd-edit-sidebar-tab-btn,
 .hcd-edit-sidebar .hcd-edit-button.hcd-edit-sidebar-tab-btn {
     margin-top: 10px;
+}
+
+.hcd-edit-tools-btn {
+    float: right;
+    border: none;
+    display: inline-block;
+    padding: 4px 10px 4px 30px;
+    background-color: transparent;
+    border: 1px solid transparent;
+}
+
+.hcd-edit-tools-btn:hover {
+    border: 1px solid #4B4B4D;
 }
 
 .hcd-edit-sidebar-item {

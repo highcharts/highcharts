@@ -116,6 +116,11 @@ let dashboard = new Dashboard('container', {
         lang: {
             editMode: 'My edit mode',
             saveLocal: 'Save locally 1'
+        },
+        tools: {
+            addComponentBtn: {
+                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/add.svg'
+            }
         }
     },
     gui: {
