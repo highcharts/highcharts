@@ -21,6 +21,7 @@ const EditGlobals: EditGlobals = {
         editSidebarHide: PREFIX + 'sidebar-hide',
         editSidebarTitle: PREFIX + 'sidebar-title',
         editSidebarTab: PREFIX + 'sidebar-tab',
+        editSidebarTabContainer: PREFIX + 'sidebar-tab-wrapper',
         editSidebarTabsContainer: PREFIX + 'sidebar-tabs',
         editSidebarTabContent: PREFIX + 'sidebar-tab-content',
         editSidebarTabActive: PREFIX + 'toolbar-tab-active',
@@ -77,6 +78,7 @@ namespace EditGlobals {
         editSidebarHide: string;
         editSidebarTitle: string;
         editSidebarTab: string;
+        editSidebarTabContainer: string;
         editSidebarTabsContainer: string;
         editSidebarTabContent: string;
         editSidebarTabActive: string;

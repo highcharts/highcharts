@@ -252,6 +252,7 @@ class EditMode {
     }
 
     public createTools(): void {
+        const editMode = this;
         const options = this.options;
 
         // create tools container
@@ -284,6 +285,10 @@ class EditMode {
                 value: 'Add',
                 callback: (): void => {
                     // sidebar trigger
+                    console.log(editMode.sidebar);
+                    if (editMode.sidebar) {
+                        editMode.sidebar.show();
+                    }
                 },
                 style: {
                     display: 'none'

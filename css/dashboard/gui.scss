@@ -464,6 +464,14 @@ h1 {
     border-bottom: 1px solid #444;
 }
 
+.hcd-edit-sidebar-tab-wrapper {
+    display: none;
+}
+
+.hcd-edit-sidebar-tab-wrapper.current {
+    display: block;
+}
+
 .hcd-edit-sidebar-tabs {
     display: flex;
     justify-content: center;

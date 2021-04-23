@@ -51,6 +51,20 @@ class Sidebar {
         }
     }]
 
+    public static tabsGeneralOptions: Array<Sidebar.TabOptions> = [{
+        type: 'addLayout',
+        icon: '',
+        items: {
+            cell: ['addLayout']
+        }
+    }, {
+        type: 'addComponent',
+        icon: '',
+        items: {
+            cell: ['addComponent']
+        }
+    }]
+
     public static items: Record<string, MenuItem.Options> =
     merge(Menu.items, {
         componentSettings: {
@@ -133,6 +147,30 @@ class Sidebar {
         }
     })
 
+    public static itemsGeneralOptions: Record<string, MenuItem.Options> =
+    merge({}, {
+        addLayout: {
+            id: 'addLayout',
+            type: 'addLayout',
+            text: 'Add layout',
+            events: {
+                update: function (): void {
+                    //
+                }
+            }
+        },
+        addComponent: {
+            id: 'addComponent',
+            type: 'addComponent',
+            text: 'Add component',
+            events: {
+                update: function (): void {
+                    //
+                }
+            }
+        },
+    })
+
     /* *
     *
     *  Constructor
@@ -155,7 +193,13 @@ class Sidebar {
         this.renderCloseButton();
         this.renderDragDropButton();
         this.renderTitle();
-        this.initTabs();
+        this.initTabs(
+            Sidebar.tabs,
+            true
+        );
+        this.initTabs(
+            Sidebar.tabsGeneralOptions
+        );
         this.initEvents();
     }
 
@@ -174,6 +218,8 @@ class Sidebar {
     public activeTab?: Sidebar.Tab;
     public context?: Cell|Row;
     public isDragged: boolean;
+    public rowCellTab?: HTMLDOMElement;
+    public generalOptionsTab?: HTMLDOMElement;
 
     /* *
     *
@@ -226,14 +272,30 @@ class Sidebar {
         });
     }
 
-    private initTabs(): void {
-        const sidebar = this,
-            tabs = Sidebar.tabs;
+    private initTabs(
+        tabs: Array<Sidebar.TabOptions>,
+        isRowCell?: boolean
+    ): void {
+        const sidebar = this;
 
+        // create the whole tab (including menu) container
+        const tabContainer = createElement(
+            'div', {
+                className: EditGlobals.classNames.editSidebarTabContainer
+            }, {}, sidebar.container
+        );
+
+        if (isRowCell) {
+            sidebar.rowCellTab = tabContainer;
+        } else {
+            sidebar.generalOptionsTab = tabContainer;
+        }
+
+        // create tab menu container
         const container = createElement(
             'div', {
                 className: EditGlobals.classNames.editSidebarTabsContainer
-            }, {}, sidebar.container
+            }, {}, tabContainer
         );
 
         let tabElement;
@@ -258,7 +320,7 @@ class Sidebar {
             contentContainer = createElement(
                 'div', {
                     className: EditGlobals.classNames.editSidebarTabContent
-                }, {}, sidebar.container
+                }, {}, tabContainer
             );
 
             content = new Menu(
@@ -370,21 +432,37 @@ class Sidebar {
     ): void {
         const sidebar = this;
 
+        // hide tabs
+        if (sidebar.rowCellTab) {
+            sidebar.rowCellTab.classList.remove('current');
+        }
+
+        if (sidebar.generalOptionsTab) {
+            sidebar.generalOptionsTab.classList.remove('current');
+        }
+
+        // run current tab
         if (context) {
-
             this.update(context);
-
-            if (!this.isVisible) {
-                this.container.style.left = '0px';
-                this.container.style.top = '0px';
-                this.container.classList.add(
-                    EditGlobals.classNames.editSidebarShow
-                );
-                this.isVisible = true;
-
-                // Hide row and cell toolbars.
-                this.editMode.hideToolbars(['cell', 'row']);
+            if (sidebar.rowCellTab) {
+                sidebar.rowCellTab.classList.add('current');
             }
+        } else {
+            if (sidebar.generalOptionsTab) {
+                sidebar.generalOptionsTab.classList.add('current');
+            }
+        }
+
+        if (!this.isVisible) {
+            this.container.style.left = '0px';
+            this.container.style.top = '0px';
+            this.container.classList.add(
+                EditGlobals.classNames.editSidebarShow
+            );
+            this.isVisible = true;
+
+            // Hide row and cell toolbars.
+            this.editMode.hideToolbars(['cell', 'row']);
         }
     }
 
@@ -560,6 +638,8 @@ namespace Sidebar {
         className: string;
         dragIcon: string;
         closeIcon: string;
+        // rowCellTab?: HTMLDOMElement;
+        // generalOptionsTab?: HTMLDOMElement;
     }
 
     export interface TabOptions {
