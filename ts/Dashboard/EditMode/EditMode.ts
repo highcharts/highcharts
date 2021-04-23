@@ -9,6 +9,7 @@ import CellEditToolbar from './Toolbar/CellEditToolbar.js';
 import RowEditToolbar from './Toolbar/RowEditToolbar.js';
 import Sidebar from './Sidebar.js';
 import EditContextMenu from './EditContextMenu.js';
+import DragDrop from './../Actions/DragDrop.js';
 
 const {
     merge
@@ -46,6 +47,8 @@ class EditMode {
         ) {
             this.contextButtonElement = this.renderer.renderContextButton();
         }
+
+        this.isInitialized = false;
     }
 
     /* *
@@ -64,6 +67,8 @@ class EditMode {
     public cellToolbar?: CellEditToolbar;
     public rowToolbar?: RowEditToolbar;
     public sidebar?: Sidebar;
+    public dragDrop?: DragDrop;
+    public isInitialized: boolean;
 
     /* *
     *
@@ -103,11 +108,9 @@ class EditMode {
         }
     }
 
-    public activateEditMode(): void {
+    public initEditMode(): void {
         const editMode = this,
             dashboard = editMode.dashboard;
-
-        editMode.active = true;
 
         let layout;
 
@@ -118,6 +121,14 @@ class EditMode {
             if (!layout.resizer) {
                 editMode.initLayoutResizer(layout);
             }
+        }
+
+        // Init dragDrop.
+        if (
+            !(editMode.options.dragDrop &&
+                !editMode.options.dragDrop.enabled)
+        ) {
+            editMode.dragDrop = new DragDrop(editMode);
         }
 
         // Init cellToolbar.
@@ -134,6 +145,18 @@ class EditMode {
         if (!editMode.sidebar) {
             editMode.sidebar = new Sidebar(editMode);
         }
+
+        editMode.isInitialized = true;
+    }
+
+    public activateEditMode(): void {
+        const editMode = this;
+
+        if (!editMode.isInitialized) {
+            editMode.initEditMode();
+        }
+
+        editMode.active = true;
 
         // Set edit mode active class to dashboard.
         editMode.dashboard.container.classList.add(
@@ -219,6 +242,7 @@ namespace EditMode {
         contextMenu?: EditContextMenu.Options;
         lang?: EditGlobals.LangOptions|string;
         toolbars?: EditMode.Toolbars;
+        dragDrop?: DragDrop.Options;
     }
 
     export interface Toolbars {
