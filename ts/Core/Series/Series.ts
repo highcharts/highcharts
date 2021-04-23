@@ -6284,21 +6284,27 @@ class Series {
             // The tracker is added to the series group, which is clipped, but
             // is covered by the marker group. So the marker group also needs to
             // capture events.
-            [series.tracker, series.markerGroup].forEach(function (
-                tracker: (SVGElement|undefined)
+            [
+                series.tracker,
+                series.markerGroup,
+                series.dataLabelsGroup
+            ].forEach(function (
+                tracker?: SVGElement
             ): void {
-                (tracker as any).addClass('highcharts-tracker')
-                    .on('mouseover', onMouseOver)
-                    .on('mouseout', function (e: PointerEvent): void {
-                        pointer.onTrackerMouseOut(e);
-                    });
+                if (tracker) {
+                    tracker.addClass('highcharts-tracker')
+                        .on('mouseover', onMouseOver)
+                        .on('mouseout', function (e: PointerEvent): void {
+                            pointer.onTrackerMouseOut(e);
+                        });
 
-                if (options.cursor && !chart.styledMode) {
-                    (tracker as any).css({ cursor: options.cursor });
-                }
+                    if (options.cursor && !chart.styledMode) {
+                        tracker.css({ cursor: options.cursor });
+                    }
 
-                if (hasTouch) {
-                    (tracker as any).on('touchstart', onMouseOver);
+                    if (hasTouch) {
+                        tracker.on('touchstart', onMouseOver);
+                    }
                 }
             });
         }
