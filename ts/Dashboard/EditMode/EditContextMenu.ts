@@ -79,7 +79,7 @@ class EditContextMenu extends Menu {
                 }
             }
 
-            this.updateActiveItems(items);
+            this.setActiveItems(items);
         }
 
         this.initEvents();

@@ -121,7 +121,7 @@ class Menu {
         }
     }
 
-    public updateActiveItems(
+    public setActiveItems(
         items: Array<string>
     ): void {
         const menu = this;
@@ -160,7 +160,7 @@ class Menu {
         }
     }
 
-    public updateAllItems(): void {
+    public updateActiveItems(): void {
         const activeItems = this.activeItems;
 
         for (let i = 0, iEnd = activeItems.length; i < iEnd; ++i) {
