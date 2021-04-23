@@ -4772,7 +4772,7 @@ class Series {
                 if (insideOnly && !chart.isInsidePlot(
                     point.plotX as any,
                     point.plotY as any,
-                    chart.inverted
+                    { inverted: chart.inverted }
                 )) {
                     return false;
                 }
@@ -7251,7 +7251,16 @@ class Series {
         plotX: (number|true),
         plotY: (number|true)
     ): boolean {
-        return this.chart.isInside(plotX, plotY, this);
+        return this.chart.isInsidePlot(
+            plotX === true ? 0 : plotX,
+            plotY === true ? 0 : plotY,
+            {
+                ignoreX: plotX === true,
+                ignoreY: plotY === true,
+                series: this,
+                visiblePlotOnly: true
+            }
+        );
     }
 
     /** eslint-enable valid-jsdoc */

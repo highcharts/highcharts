@@ -453,7 +453,10 @@ class NavigationBindings {
                     !chart.cancelClick &&
                     chart.isInsidePlot(
                         e.chartX - chart.plotLeft,
-                        e.chartY - chart.plotTop
+                        e.chartY - chart.plotTop,
+                        {
+                            visiblePlotOnly: true
+                        }
                     )
                 ) {
                     navigation.bindingsChartClick(this as any, e);

@@ -135,6 +135,14 @@ declare global {
         interface CaptionObject extends SVGElement {
             update(titleOptions: CaptionOptions, redraw?: boolean): void;
         }
+        interface IsInsideOptions {
+            ignoreX?: boolean;
+            ignoreY?: boolean;
+            inverted?: boolean;
+            paneCoordinates?: boolean;
+            series?: Series;
+            visiblePlotOnly?: boolean;
+        }
         interface Options {
             series?: Array<SeriesTypeOptions>;
         }
@@ -627,8 +635,8 @@ class Chart {
      * @param {number} plotY
      * Pixel y relative to the plot area.
      *
-     * @param {boolean} [inverted]
-     * Whether the chart is inverted.
+     * @param {Highcharts.IsInsideOptions} [options]
+     * Options object.
      *
      * @return {boolean}
      * Returns true if the given point is inside the plot area.
@@ -636,37 +644,7 @@ class Chart {
     public isInsidePlot(
         plotX: number,
         plotY: number,
-        inverted?: boolean
-    ): boolean {
-        var x = inverted ? plotY : plotX,
-            y = inverted ? plotX : plotY,
-            e = {
-                x,
-                y,
-                isInsidePlot: x >= 0 &&
-                    x <= this.plotWidth &&
-                    y >= 0 &&
-                    y <= this.plotHeight
-            };
-
-        fireEvent(this, 'afterIsInsidePlot', e);
-
-        return e.isInsidePlot;
-    }
-
-    /**
-     * Checks if a point is within visible plot and axis bounds.
-     *
-     * @private
-     * @param {number|true} plotX
-     * @param {number|true} plotY
-     * @param {Highcharts.Series} series
-     * @return {boolean}
-     */
-    public isInside(
-        plotX: (number|true),
-        plotY: (number|true),
-        series?: Series
+        options: Highcharts.IsInsideOptions = {}
     ): boolean {
         const {
             inverted,
@@ -683,53 +661,64 @@ class Chart {
             }
         } = this;
 
-        const box = scrollablePlotBox || plotBox;
+        const series = options.series;
+        const box = (options.visiblePlotOnly && scrollablePlotBox) || plotBox;
+        const x = options.inverted ? plotY : plotX;
+        const y = options.inverted ? plotX : plotY;
 
-        if (plotX !== true) {
+        const e = {
+            x,
+            y,
+            isInsidePlot: true
+        };
+
+        if (!options.ignoreX) {
             const xAxis = (series && (inverted ? series.yAxis : series.xAxis)) || {
                 pos: plotLeft,
                 len: Infinity
             };
 
-            const x = plotLeft + plotX;
+            const chartX = options.paneCoordinates ? xAxis.pos + x : plotLeft + x;
 
             if (!(
-                x >= Math.max(
+                chartX >= Math.max(
                     scrollLeft + plotLeft,
                     xAxis.pos
                 ) &&
-                x <= Math.min(
+                chartX <= Math.min(
                     scrollLeft + plotLeft + box.width,
                     xAxis.pos + xAxis.len
                 )
             )) {
-                return false;
+                e.isInsidePlot = false;
             }
         }
 
-        if (plotY !== true) {
+        if (!options.ignoreY && e.isInsidePlot) {
             const yAxis = (series && (inverted ? series.xAxis : series.yAxis)) || {
                 pos: plotTop,
                 len: Infinity
             };
 
-            const y = plotTop + plotY;
+            const chartY = options.paneCoordinates ? yAxis.pos + y : plotTop + y;
 
             if (!(
-                y >= Math.max(
+                chartY >= Math.max(
                     scrollTop + plotTop,
                     yAxis.pos
                 ) &&
-                y <= Math.min(
+                chartY <= Math.min(
                     scrollTop + plotTop + box.height,
                     yAxis.pos + yAxis.len
                 )
             )) {
-                return false;
+                e.isInsidePlot = false;
             }
         }
 
-        return true;
+        fireEvent(this, 'afterIsInsidePlot', e);
+
+        return e.isInsidePlot;
     }
 
     /**

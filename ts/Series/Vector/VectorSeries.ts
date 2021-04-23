@@ -246,7 +246,7 @@ class VectorSeries extends ScatterSeries {
                 chart.isInsidePlot(
                     plotX as any,
                     plotY as any,
-                    chart.inverted
+                    { inverted: chart.inverted }
                 )
             ) {
 

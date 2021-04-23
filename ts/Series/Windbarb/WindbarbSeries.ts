@@ -366,7 +366,7 @@ class WindbarbSeries extends ColumnSeries {
             // dimension.
             if (
                 this.options.clip === false ||
-                chart.isInsidePlot(plotX as any, 0, false)
+                chart.isInsidePlot(plotX as any, 0)
             ) {
                 // Create the graphic the first time
                 if (!point.graphic) {
