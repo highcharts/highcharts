@@ -397,6 +397,7 @@ function GLRenderer(
             isXInside = false,
             isYInside = true,
             firstPoint = true,
+            zoneAxis = options.zoneAxis || 'y',
             zones = options.zones || false,
             zoneDefColor: (Color|undefined) = false as any,
             threshold: number = options.threshold as any,
@@ -821,13 +822,21 @@ function GLRenderer(
                     zone: SeriesZonesOptions,
                     i: number
                 ): boolean {
-                    var last: SeriesZonesOptions =
-                            (zones as any)[i - 1];
+                    var last: SeriesZonesOptions = (zones as any)[i - 1];
+
+                    if (zoneAxis === 'x') {
+                        if (typeof zone.value !== 'undefined' && x <= zone.value) {
+                            if (!last || x >= (last.value as any)) {
+                                pcolor = color(zone.color).rgba as any;
+                            }
+                            return true;
+                        }
+                        return false;
+                    }
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
                         if (!last || y >= (last.value as any)) {
                             pcolor = color(zone.color).rgba as any;
-
                         }
                         return true;
                     }
