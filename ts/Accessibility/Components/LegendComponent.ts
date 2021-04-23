@@ -16,6 +16,8 @@ import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import H from '../../Core/Globals.js';
 import Legend from '../../Core/Legend.js';
 import U from '../../Core/Utilities.js';

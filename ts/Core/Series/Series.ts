@@ -102,6 +102,12 @@ declare module '../Chart/ChartLike'{
     }
 }
 
+declare module '../Renderer/SVG/SVGElementLike' {
+    interface SVGElementLike {
+        survive?: boolean;
+    }
+}
+
 declare module './SeriesLike' {
     interface SeriesLike {
         _hasPointMarkers?: boolean;
@@ -153,9 +159,6 @@ declare global {
             cropped: (boolean|undefined);
             cropStart: number;
             closestPointRange: (number|undefined);
-        }
-        interface SVGElement {
-            survive?: boolean;
         }
         type SeriesPointIntervalUnitValue = ('day'|'month'|'year');
     }

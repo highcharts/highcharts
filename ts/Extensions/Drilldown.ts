@@ -85,6 +85,12 @@ declare module '../Core/Chart/ChartLike' {
     }
 }
 
+declare module '../Core/Renderer/SVG/SVGElementLike' {
+    interface SVGElementLike {
+        fadeIn(animation?: (boolean|Partial<AnimationOptions>)): void;
+    }
+}
+
 declare module '../Core/Series/PointLike' {
     interface PointLike {
         drilldown?: string;
@@ -219,9 +225,6 @@ declare global {
         }
         interface Options {
             drilldown?: DrilldownOptions;
-        }
-        interface SVGElement {
-            fadeIn(animation?: (boolean|Partial<AnimationOptions>)): void;
         }
         interface Tick {
             drillable(): void;

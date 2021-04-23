@@ -35,6 +35,8 @@ import type {
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -285,7 +287,7 @@ class TimelineSeries extends LineSeries {
 
     public alignDataLabel(
         point: TimelinePoint,
-        dataLabel: SVGElement,
+        dataLabel: SVGLabel,
         _options: TimelineDataLabelOptions,
         _alignTo: BBoxObject
     ): void {
@@ -490,16 +492,16 @@ class TimelineSeries extends LineSeries {
                     // target position (after animation) is needed to align
                     // connectors.
                     dataLabel.animate = function (
-                        this: SVGElement,
+                        this: SVGLabel,
                         params: SVGAttributes
-                    ): SVGElement {
+                    ): SVGLabel {
                         if (this.targetPosition) {
                             this.targetPosition = params;
                         }
                         return SVGElement.prototype.animate.apply(
                             this,
                             arguments
-                        );
+                        ) as SVGLabel;
                     };
 
                     // Initialize the targetPosition field within data label

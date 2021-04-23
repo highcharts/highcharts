@@ -23,8 +23,9 @@ import type ColorType from '../../Core/Color/ColorType';
 import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
 import type FunnelPoint from './FunnelPoint';
 import type FunnelSeriesOptions from './FunnelSeriesOptions';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -227,7 +228,7 @@ class FunnelSeries extends PieSeries {
      */
     public alignDataLabel(
         point: FunnelPoint,
-        dataLabel: SVGElement,
+        dataLabel: SVGLabel,
         options: FunnelDataLabelOptions,
         alignTo: BBoxObject,
         isNew?: boolean

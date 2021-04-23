@@ -22,6 +22,8 @@ import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type Point from '../Core/Series/Point';
 import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import O from '../Core/Options.js';
@@ -502,7 +504,7 @@ bindingsUtils.isNotNavigatorYAxis = function (axis: AxisType): boolean {
  */
 bindingsUtils.isPriceIndicatorEnabled = function (series: Series[]): boolean {
 
-    return series.some((s): Highcharts.SVGElement|undefined => s.lastVisiblePrice || s.lastPrice);
+    return series.some((s): (SVGElement|undefined) => s.lastVisiblePrice || s.lastPrice);
 };
 
 /**
