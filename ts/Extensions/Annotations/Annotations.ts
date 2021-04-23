@@ -22,6 +22,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions';
+import type MockPointOptions from './MockPointOptions';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
@@ -57,6 +58,15 @@ const {
     splat,
     wrap
 } = U;
+
+declare module './MockPointOptions' {
+    interface MockPointOptions {
+        x: number;
+        xAxis?: (number|AxisType|null);
+        y: number;
+        yAxis?: (number|AxisType|null);
+    }
+}
 
 /**
  * Internal types.
@@ -99,12 +109,6 @@ declare global {
             ControllableCircle|ControllableImage|ControllablePath|
             ControllableRect
         );
-        interface AnnotationMockPointOptionsObject {
-            x: number;
-            xAxis?: (number|AxisType|null);
-            y: number;
-            yAxis?: (number|AxisType|null);
-        }
         interface AnnotationPoint extends Point {
             series: AnnotationSeries;
         }
@@ -147,7 +151,7 @@ declare global {
             color?: ColorType;
             dashStyle?: DashStyleValue;
             // formatter: FormatterCallbackFunction<T>;
-            point?: (string|AnnotationMockPointOptionsObject);
+            point?: (string|MockPointOptions);
             itemType?: string;
             vertical?: VerticalAlignValue;
         }
@@ -183,14 +187,14 @@ declare global {
         interface AnnotationsShapesOptions extends AnnotationsShapeOptions {
             markerEnd?: string;
             markerStart?: string;
-            point?: (string|AnnotationMockPointOptionsObject);
-            points?: Array<(string|AnnotationMockPointOptionsObject)>;
+            point?: (string|MockPointOptions);
+            points?: Array<(string|MockPointOptions)>;
         }
         interface AnnotationsTypeOptions {
             background?: AnnotationsShapeOptions;
             height?: number;
             line?: AnnotationsShapeOptions;
-            point: AnnotationMockPointOptionsObject;
+            point: MockPointOptions;
             points?: Array<AnnotationsTypePointsOptions>;
             xAxis?: number;
             yAxis?: number;

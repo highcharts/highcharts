@@ -8,6 +8,7 @@
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
+import type MockPointOptions from '../MockPointOptions';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
@@ -432,7 +433,7 @@ class Measure extends Annotation {
      * @private
      * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
      */
-    public pointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+    public pointsOptions(): Array<MockPointOptions> {
         return this.options.points as any;
     }
 
@@ -441,7 +442,7 @@ class Measure extends Annotation {
      * @private
      * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
      */
-    public shapePointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+    public shapePointsOptions(): Array<MockPointOptions> {
 
         var options = this.options.typeOptions,
             xAxis = options.xAxis,

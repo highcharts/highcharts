@@ -37,10 +37,6 @@ declare global
             height?: number;
             width?: number;
         }
-        interface AnnotationMockPoint {
-            negative?: boolean;
-            ttBelow?: boolean;
-        }
     }
 }
 

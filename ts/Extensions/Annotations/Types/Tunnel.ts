@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type MockPointOptions from '../MockPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotations.js';
 import ControlPoint from '../ControlPoint.js';
@@ -20,10 +21,10 @@ const { merge } = U;
  */
 declare global {
     namespace Highcharts {
-        interface AnnotationTunnelOptionsObject extends AnnotationCrookedLineOptionsObject {
+        interface AnnotationTunnelOptionsObject extends CrookedLine.AnnotationCrookedLineOptionsObject {
             typeOptions: AnnotationTunnelTypeOptionsObject;
         }
-        interface AnnotationTunnelTypeOptionsObject extends AnnotationCrookedLineTypeOptionsObject {
+        interface AnnotationTunnelTypeOptionsObject extends CrookedLine.AnnotationCrookedLineTypeOptionsObject {
             height: number;
             heightControlPoint: AnnotationControlPointOptionsObject;
         }
@@ -64,7 +65,7 @@ class Tunnel extends CrookedLine {
      *
      * */
 
-    public getPointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+    public getPointsOptions(): Array<MockPointOptions> {
         var pointsOptions = CrookedLine.prototype.getPointsOptions.call(this);
 
         pointsOptions[2] = this.heightPointOptions(pointsOptions[1]);
@@ -73,13 +74,13 @@ class Tunnel extends CrookedLine {
         return pointsOptions;
     }
 
-    public getControlPointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+    public getControlPointsOptions(): Array<MockPointOptions> {
         return this.getPointsOptions().slice(0, 2);
     }
 
     public heightPointOptions(
-        pointOptions: Highcharts.AnnotationMockPointOptionsObject
-    ): Highcharts.AnnotationMockPointOptionsObject {
+        pointOptions: MockPointOptions
+    ): MockPointOptions {
         var heightPointOptions = merge(pointOptions),
             typeOptions = this.options.typeOptions as Highcharts.AnnotationTunnelTypeOptionsObject;
 
@@ -120,7 +121,7 @@ class Tunnel extends CrookedLine {
                 points: [
                     this.points[0],
                     this.points[1],
-                    function (target: any): Highcharts.AnnotationMockPointOptionsObject {
+                    function (target: any): MockPointOptions {
                         var pointOptions = MockPoint.pointToOptions(
                             target.annotation.points[2]
                         );

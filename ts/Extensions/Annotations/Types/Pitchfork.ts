@@ -9,6 +9,7 @@
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotations.js';
 import type { AxisType } from '../../../Core/Axis/Types';
+import type MockPointOptions from '../MockPointOptions';
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
@@ -119,7 +120,7 @@ class Pitchfork extends InfinityLine {
      *
      * */
 
-    public midPointOptions(): Highcharts.AnnotationMockPointOptionsObject {
+    public midPointOptions(): MockPointOptions {
         var points = this.points;
 
         return {
@@ -169,7 +170,7 @@ class Pitchfork extends InfinityLine {
             merge(typeOptions.innerBackground, {
                 type: 'path',
                 points: [
-                    function (target: any): Highcharts.AnnotationMockPointOptionsObject {
+                    function (target: any): MockPointOptions {
                         var annotation = target.annotation,
                             points = annotation.points,
                             midPointOptions = annotation.midPointOptions();
@@ -183,7 +184,7 @@ class Pitchfork extends InfinityLine {
                     },
                     shapes[1].points[1],
                     shapes[2].points[1],
-                    function (target: any): Highcharts.AnnotationMockPointOptionsObject {
+                    function (target: any): MockPointOptions {
                         var annotation = target.annotation,
                             points = annotation.points,
                             midPointOptions = annotation.midPointOptions();

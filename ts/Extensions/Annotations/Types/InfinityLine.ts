@@ -19,10 +19,10 @@ const { merge } = U;
  */
 declare global {
     namespace Highcharts {
-        interface AnnotationInfinityLineOptionsObject extends AnnotationCrookedLineOptionsObject {
+        interface AnnotationInfinityLineOptionsObject extends CrookedLine.AnnotationCrookedLineOptionsObject {
             typeOptions: AnnotationInfinityLineTypeOptionsObject;
         }
-        interface AnnotationInfinityLineTypeOptionsObject extends AnnotationCrookedLineTypeOptionsObject {
+        interface AnnotationInfinityLineTypeOptionsObject extends CrookedLine.AnnotationCrookedLineTypeOptionsObject {
             type: string;
         }
         interface AnnotationTypesRegistry {

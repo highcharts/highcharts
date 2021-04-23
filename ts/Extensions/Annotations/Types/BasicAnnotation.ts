@@ -8,6 +8,7 @@
 
 import type ControllableCircle from '../Controllables/ControllableCircle';
 import type ControllableRect from '../Controllables/ControllableRect';
+import type MockPointOptions from '../MockPointOptions';
 import type PointerEvent from '../../../Core/PointerEvent';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotations.js';
@@ -16,20 +17,6 @@ import U from '../../../Core/Utilities.js';
 const {
     merge
 } = U;
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationBasicControlPoints {
-            label: DeepPartial<AnnotationControlPointOptionsObject>[];
-            rectangle: DeepPartial<AnnotationControlPointOptionsObject>[];
-            circle: DeepPartial<AnnotationControlPointOptionsObject>[];
-        }
-    }
-}
 
 /* eslint-disable no-invalid-this */
 
@@ -41,7 +28,7 @@ class BasicAnnotation extends Annotation {
      *
      * */
 
-    public static basicControlPoints: Highcharts.AnnotationBasicControlPoints = {
+    public static basicControlPoints: BasicAnnotation.AnnotationBasicControlPoints = {
         label: [{
             symbol: 'triangle-down',
             positioner: function (
@@ -134,7 +121,7 @@ class BasicAnnotation extends Annotation {
                         coords = this.chart.pointer.getCoordinates(e),
                         x = coords.xAxis[0].value,
                         y = coords.yAxis[0].value,
-                        points: Array<Highcharts.AnnotationMockPointOptionsObject> = target.options.points as any;
+                        points: Array<MockPointOptions> = target.options.points as any;
 
                     // Top right point
                     points[1].x = x;
@@ -249,6 +236,13 @@ class BasicAnnotation extends Annotation {
 interface BasicAnnotation {
     defaultOptions: Annotation['defaultOptions'];
     basicType: string;
+}
+namespace BasicAnnotation {
+    export interface AnnotationBasicControlPoints {
+        label: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
+        rectangle: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
+        circle: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
+    }
 }
 
 BasicAnnotation.prototype.defaultOptions = merge(

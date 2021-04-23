@@ -7,12 +7,19 @@
 'use strict';
 
 import type ColorType from '../../../Core/Color/ColorType';
+import type MockPointOptions from '../MockPointOptions';
 import Annotation from '../Annotations.js';
 import CrookedLine from './CrookedLine.js';
 import U from '../../../Core/Utilities.js';
 const {
     merge
 } = U;
+
+declare module '../MockPointOptions' {
+    interface MockPointOptions {
+        label?: Highcharts.AnnotationsLabelOptions;
+    }
+}
 
 /**
  * Internal types.
@@ -25,15 +32,12 @@ declare global {
             borderWidth: number;
             y: number;
         }
-        interface AnnotationElliottWaveOptionsObject extends AnnotationCrookedLineOptionsObject {
+        interface AnnotationElliottWaveOptionsObject extends CrookedLine.AnnotationCrookedLineOptionsObject {
             labelOptions: AnnotationElliottWaveLabelOptionsObject;
             typeOptions: AnnotationElliottWaveTypeOptionsObject;
         }
-        interface AnnotationElliottWaveTypeOptionsObject extends AnnotationCrookedLineTypeOptionsObject {
+        interface AnnotationElliottWaveTypeOptionsObject extends CrookedLine.AnnotationCrookedLineTypeOptionsObject {
             labels: Array<string>;
-        }
-        interface AnnotationMockPointOptionsObject {
-            label?: AnnotationsLabelOptions;
         }
         interface AnnotationTypesRegistry {
             elliottWave: typeof ElliottWave;
@@ -56,7 +60,7 @@ class ElliottWave extends CrookedLine {
     public addLabels(): void {
         this.getPointsOptions().forEach(function (
             this: ElliottWave,
-            point: Highcharts.AnnotationMockPointOptionsObject,
+            point: MockPointOptions,
             i: number
         ): void {
             var typeOptions = this.options.typeOptions as Highcharts.AnnotationElliottWaveTypeOptionsObject,

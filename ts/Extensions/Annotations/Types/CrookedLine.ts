@@ -7,27 +7,16 @@
 'use strict';
 
 import type PositionObject from '../../../Core/Renderer/PositionObject';
+import type MockPointOptions from '../MockPointOptions';
 import Annotation from '../Annotations.js';
 import ControlPoint from '../ControlPoint.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationCrookedLineOptionsObject extends AnnotationsOptions {
-            typeOptions: AnnotationCrookedLineTypeOptionsObject;
-        }
-        interface AnnotationCrookedLineTypeOptionsObject extends AnnotationsTypeOptions {
-            points?: Array<AnnotationsTypePointsOptions>;
-        }
-        interface AnnotationMockPointOptionsObject {
-            controlPoint?: AnnotationControlPointOptionsObject;
-        }
+declare module '../MockPointOptions' {
+    interface MockPointOptions {
+        controlPoint?: Highcharts.AnnotationControlPointOptionsObject;
     }
 }
 
@@ -40,7 +29,7 @@ class CrookedLine extends Annotation {
      * Constructors
      *
      * */
-    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationCrookedLineOptionsObject) {
+    public constructor(chart: Highcharts.AnnotationChart, options: CrookedLine.AnnotationCrookedLineOptionsObject) {
         super(chart, options);
     }
 
@@ -59,12 +48,12 @@ class CrookedLine extends Annotation {
         this.clipYAxis = this.chart.yAxis[this.options.typeOptions.yAxis as any];
     }
 
-    public getPointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+    public getPointsOptions(): Array<MockPointOptions> {
         var typeOptions = this.options.typeOptions;
 
         return (typeOptions.points || []).map(function (
             pointOptions: Highcharts.AnnotationsTypePointsOptions
-        ): Highcharts.AnnotationMockPointOptionsObject {
+        ): MockPointOptions {
             pointOptions.xAxis = typeOptions.xAxis;
             pointOptions.yAxis = typeOptions.yAxis;
 
@@ -72,14 +61,14 @@ class CrookedLine extends Annotation {
         });
     }
 
-    public getControlPointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+    public getControlPointsOptions(): Array<MockPointOptions> {
         return this.getPointsOptions();
     }
 
     public addControlPoints(): void {
         this.getControlPointsOptions().forEach(
             function (
-                pointOptions: Highcharts.AnnotationMockPointOptionsObject,
+                pointOptions: MockPointOptions,
                 i: number
             ): void {
                 var controlPoint = new ControlPoint(
@@ -252,6 +241,15 @@ CrookedLine.prototype.defaultOptions = merge(
         }
     }
 );
+
+namespace CrookedLine {
+    export interface AnnotationCrookedLineOptionsObject extends Highcharts.AnnotationsOptions {
+        typeOptions: AnnotationCrookedLineTypeOptionsObject;
+    }
+    export interface AnnotationCrookedLineTypeOptionsObject extends Highcharts.AnnotationsTypeOptions {
+        points?: Array<Highcharts.AnnotationsTypePointsOptions>;
+    }
+}
 
 Annotation.types.crookedLine = CrookedLine;
 

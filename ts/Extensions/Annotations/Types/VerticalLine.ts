@@ -8,6 +8,7 @@
 
 import Annotation from '../Annotations.js';
 import type { AxisType } from '../../../Core/Axis/Types';
+import type MockPointOptions from '../MockPointOptions';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -24,7 +25,7 @@ declare global {
         class AnnotationVerticalLine extends Annotation {
             public static connectorFirstPoint: Function;
             public static connectorSecondPoint: Function;
-            public getPointsOptions: () => Array<AnnotationMockPointOptionsObject>;
+            public getPointsOptions: () => Array<MockPointOptions>;
             public options: AnnotationVerticalLineOptionsObject;
             public addLabels(): void;
             public addShapes(): void;
@@ -58,7 +59,7 @@ class VerticalLine extends Annotation {
 
     public static connectorFirstPoint(
         target: Highcharts.AnnotationControllable
-    ): Highcharts.AnnotationMockPointOptionsObject {
+    ): MockPointOptions {
         var annotation = target.annotation as Highcharts.AnnotationVerticalLine,
             chart = annotation.chart,
             inverted = chart.inverted,
@@ -78,7 +79,7 @@ class VerticalLine extends Annotation {
 
     public static connectorSecondPoint(
         target: Highcharts.AnnotationControllable
-    ): Highcharts.AnnotationMockPointOptionsObject {
+    ): MockPointOptions {
         var annotation = target.annotation as Highcharts.AnnotationVerticalLine,
             chart = annotation.chart,
             inverted = chart.inverted,
@@ -120,7 +121,7 @@ class VerticalLine extends Annotation {
      *
      * */
 
-    public getPointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+    public getPointsOptions(): Array<MockPointOptions> {
         return [this.options.typeOptions.point];
     }
 
