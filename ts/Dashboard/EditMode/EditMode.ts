@@ -280,10 +280,10 @@ class EditMode {
             this.tools.container,
             {
                 className: EditGlobals.classNames.editToolsBtn,
-                icon:  addIconURL,
+                icon: addIconURL,
                 value: 'Add',
-                callback: () => {
-                    
+                callback: (): void => {
+                    // sidebar trigger
                 },
                 style: {
                     display: 'none'
