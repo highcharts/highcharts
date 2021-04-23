@@ -174,6 +174,7 @@ const {
     erase,
     extend,
     fireEvent,
+    isNumber,
     merge,
     objectEach,
     pick
@@ -1174,8 +1175,10 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             plus = 1,
             isFlat: (boolean|undefined),
             outside =
-                (from < (this.min as any) && to < (this.min as any)) ||
-                (from > (this.max as any) && to > (this.max as any));
+                !isNumber(this.min) ||
+                !isNumber(this.max) ||
+                (from < this.min && to < this.min) ||
+                (from > this.max && to > this.max);
 
         if (path && toPath) {
 
@@ -1185,7 +1188,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 plus = 0;
             }
 
-            // Go over each subpath - for panes in Highstock
+            // Go over each subpath - for panes in Highcharts Stock
             for (i = 0; i < path.length; i += 2) {
                 const pathStart = path[i],
                     pathEnd = path[i + 1],

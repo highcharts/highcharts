@@ -22,6 +22,8 @@ import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
+import O from '../../Core/Options.js';
+const { getOptions } = O;
 import Point from '../../Core/Series/Point.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -30,7 +32,6 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     error,
-    getOptions,
     isArray,
     isNumber,
     pick,
@@ -130,7 +131,7 @@ Chart.prototype.isChartSeriesBoosting = function (): boolean {
 /**
  * Get the clip rectangle for a target, either a series or the chart. For the
  * chart, we need to consider the maximum extent of its Y axes, in case of
- * Highstock panes and navigator.
+ * Highcharts Stock panes and navigator.
  *
  * @private
  * @function Highcharts.Chart#getBoostClipRect
@@ -425,9 +426,11 @@ wrap(Series.prototype, 'processData', function (
         // Enter or exit boost mode
         if (this.isSeriesBoosting) {
             // Force turbo-mode:
-            firstPoint = this.getFirstValidPoint(this.options.data as any);
-            if (!isNumber(firstPoint) && !isArray(firstPoint)) {
-                error(12, false, this.chart);
+            if (this.options.data && this.options.data.length) {
+                firstPoint = this.getFirstValidPoint(this.options.data);
+                if (!isNumber(firstPoint) && !isArray(firstPoint)) {
+                    error(12, false, this.chart);
+                }
             }
             this.enterBoost();
         } else if (this.exitBoost) {

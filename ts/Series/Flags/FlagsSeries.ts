@@ -419,6 +419,10 @@ class FlagsSeries extends ColumnSeries {
                 (plotX as any) >= 0 &&
                 !outsideRight
             ) {
+                // #15384
+                if (graphic && point.hasNewShapeType()) {
+                    graphic = graphic.destroy();
+                }
 
                 // Create the flag
                 if (!graphic) {
@@ -642,9 +646,12 @@ class FlagsSeries extends ColumnSeries {
      */
     public setClip(): void {
         Series.prototype.setClip.apply(this, arguments as any);
-        if (this.options.clip !== false && this.sharedClipKey) {
-            (this.markerGroup as any)
-                .clip((this.chart as any)[this.sharedClipKey]);
+        if (
+            this.options.clip !== false &&
+            this.sharedClipKey &&
+            this.markerGroup
+        ) {
+            this.markerGroup.clip(this.chart.sharedClips[this.sharedClipKey]);
         }
     }
 

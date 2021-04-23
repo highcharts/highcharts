@@ -302,8 +302,7 @@ seriesProto.toXY = function (
     this: Highcharts.PolarSeries,
     point: Highcharts.PolarPoint
 ): void {
-    var xy,
-        chart = this.chart,
+    var chart = this.chart,
         xAxis = this.xAxis,
         yAxis = this.yAxis,
         plotX = point.plotX,
@@ -328,12 +327,15 @@ seriesProto.toXY = function (
         radius += yAxis.center[3] / 2;
     }
 
-    // Find the polar plotX and plotY
-    xy = inverted ? yAxis.postTranslate(plotY, radius) :
-        xAxis.postTranslate(plotX, radius);
+    // Find the polar plotX and plotY. Avoid setting plotX and plotY to NaN when
+    // plotY is undefined (#15438)
+    if (isNumber(plotY)) {
+        const xy = inverted ? yAxis.postTranslate(plotY, radius) :
+            xAxis.postTranslate(plotX, radius);
 
-    point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
-    point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+        point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
+        point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+    }
 
     // If shared tooltip, record the angle in degrees in order to align X
     // points. Otherwise, use a standard k-d tree to get the nearest point
@@ -380,12 +382,20 @@ if (seriesTypes.spline) {
                         true,
                         this.connectEnds
                     );
+
+                    const rightContX = connectors.prevPointCont && connectors.prevPointCont.rightContX;
+                    const rightContY = connectors.prevPointCont && connectors.prevPointCont.rightContY;
+
                     ret = [
                         'C',
-                        (connectors.prevPointCont as any).rightContX,
-                        (connectors.prevPointCont as any).rightContY,
-                        connectors.leftContX,
-                        connectors.leftContY,
+                        isNumber(rightContX) ? rightContX : connectors.plotX,
+                        isNumber(rightContY) ? rightContY : connectors.plotY,
+                        isNumber(connectors.leftContX) ?
+                            connectors.leftContX :
+                            connectors.plotX,
+                        isNumber(connectors.leftContY) ?
+                            connectors.leftContY :
+                            connectors.plotY,
                         connectors.plotX,
                         connectors.plotY
                     ];

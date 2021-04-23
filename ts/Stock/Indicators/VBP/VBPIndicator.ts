@@ -2,7 +2,7 @@
  *
  *  (c) 2010-2021 Paweł Dalek
  *
- *  Volume By Price (VBP) indicator for Highstock
+ *  Volume By Price (VBP) indicator for Highcharts Stock
  *
  *  License: www.highcharts.com/license
  *
@@ -115,6 +115,9 @@ class VBPIndicator extends SMAIndicator {
          * @excluding index, period
          */
         params: {
+            // Index and period are unchangeable, do not inherit (#15362)
+            index: void 0,
+            period: void 0,
             /**
              * The number of price zones.
              */
@@ -779,6 +782,7 @@ namespace VBPIndicator {
 
 interface VBPIndicator {
     nameBase: string;
+    nameComponents: Array<string>;
     calculateOn: string;
     pointClass: typeof VBPPoint;
 
@@ -788,6 +792,7 @@ interface VBPIndicator {
 
 extend(VBPIndicator.prototype, {
     nameBase: 'Volume by Price',
+    nameComponents: ['ranges'],
     bindTo: {
         series: false,
         eventName: 'afterSetExtremes'

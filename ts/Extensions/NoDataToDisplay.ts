@@ -19,12 +19,13 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Chart from '../Core/Chart/Chart.js';
+import O from '../Core/Options.js';
+const { getOptions } = O;
 import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    extend,
-    getOptions
+    extend
 } = U;
 
 declare module '../Core/Chart/ChartLike' {

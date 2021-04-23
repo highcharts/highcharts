@@ -22,6 +22,8 @@ const {
     isFirefox
 } = H;
 import NavigationBindings from './NavigationBindings.js';
+import O from '../../Core/Options.js';
+const { getOptions } = O;
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -29,7 +31,6 @@ const {
     createElement,
     defined,
     fireEvent,
-    getOptions,
     isArray,
     isObject,
     isString,
@@ -1110,26 +1111,28 @@ H.Popup.prototype = {
                 // create name like params.styles.fontSize
                 parentFullName = parentNode + '.' + fieldName;
 
-                if (isObject(value)) {
-                    addParamInputs.call(
-                        _self,
-                        chart,
-                        parentFullName,
-                        value as any,
-                        type,
-                        parentDiv
-                    );
-                } else if (
-                // skip volume field which is created by addFormFields
-                    parentFullName !== 'params.volumeSeriesID'
-                ) {
-                    addInput.call(
-                        _self,
-                        parentFullName,
-                        type,
-                        parentDiv,
-                        [value, 'text'] as any // all inputs are text type
-                    );
+                if (value !== void 0) { // skip if field is unnecessary, #15362
+                    if (isObject(value)) {
+                        addParamInputs.call(
+                            _self,
+                            chart,
+                            parentFullName,
+                            value as any,
+                            type,
+                            parentDiv
+                        );
+                    } else if (
+                    // skip volume field which is created by addFormFields
+                        parentFullName !== 'params.volumeSeriesID'
+                    ) {
+                        addInput.call(
+                            _self,
+                            parentFullName,
+                            type,
+                            parentDiv,
+                            [value, 'text'] as any // all inputs are text type
+                        );
+                    }
                 }
             });
         },

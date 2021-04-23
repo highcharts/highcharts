@@ -2540,18 +2540,40 @@ SVGRenderer.prototype.escapes = {
     '"': '&quot;'
 };
 
+const roundedRect: Highcharts.SymbolFunction = (
+    x,
+    y,
+    w,
+    h,
+    options
+): SVGPath => {
+    const r = (options && options.r) || 0;
+    return [
+        ['M', x + r, y],
+        ['L', x + w - r, y], // top side
+        ['C', x + w, y, x + w, y, x + w, y + r], // top-right corner
+        ['L', x + w, y + h - r], // right side
+        ['C', x + w, y + h, x + w, y + h, x + w - r, y + h], // bottom-rgt
+        ['L', x + r, y + h], // bottom side
+        ['C', x, y + h, x, y + h, x, y + h - r], // bottom-left corner
+        ['L', x, y + r], // left side
+        ['C', x, y, x, y, x + r, y] // top-left corner
+    ];
+};
+
 // #15291
-const rect = (
-    x: number,
-    y: number,
-    w: number,
-    h: number): SVGPath => [
-    ['M', x, y],
-    ['L', x + w, y],
-    ['L', x + w, y + h],
-    ['L', x, y + h],
-    ['Z']
-];
+const rect: Highcharts.SymbolFunction = function (x, y, w, h, options): SVGPath {
+    if (options && options.r) {
+        return roundedRect(x, y, w, h, options);
+    }
+    return [
+        ['M', x, y],
+        ['L', x + w, y],
+        ['L', x + w, y + h],
+        ['L', x, y + h],
+        ['Z']
+    ];
+};
 
 /**
  * An extendable collection of functions for defining symbol paths.
@@ -2631,8 +2653,8 @@ SVGRenderer.prototype.symbols = {
         if (options) {
             var start = options.start || 0,
                 end = options.end || 0,
-                rx = options.r || w,
-                ry = options.r || h || w,
+                rx = pick(options.r, w),
+                ry = pick(options.r, h || w),
                 proximity = 0.001,
                 fullCircle =
                     Math.abs(end - start - 2 * Math.PI) <
@@ -2714,25 +2736,14 @@ SVGRenderer.prototype.symbols = {
         h: number,
         options?: Highcharts.SymbolOptionsObject
     ): SVGPath {
-        var arrowLength = 6,
+        const arrowLength = 6,
             halfDistance = 6,
             r = Math.min((options && options.r) || 0, w, h),
             safeDistance = r + halfDistance,
             anchorX = options && options.anchorX,
-            anchorY = options && options.anchorY || 0,
-            path: SVGPath;
+            anchorY = options && options.anchorY || 0;
 
-        path = [
-            ['M', x + r, y],
-            ['L', x + w - r, y], // top side
-            ['C', x + w, y, x + w, y, x + w, y + r], // top-right corner
-            ['L', x + w, y + h - r], // right side
-            ['C', x + w, y + h, x + w, y + h, x + w - r, y + h], // bottom-rgt
-            ['L', x + r, y + h], // bottom side
-            ['C', x, y + h, x, y + h, x, y + h - r], // bottom-left corner
-            ['L', x, y + r], // left side
-            ['C', x, y, x, y, x + r, y] // top-left corner
-        ];
+        const path = roundedRect(x, y, w, h, { r });
 
         if (!isNumber(anchorX)) {
             return path;

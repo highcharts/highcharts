@@ -24,8 +24,16 @@ import type PointerEvent from '../PointerEvent';
 import type { SeriesTypePlotOptions } from '../Series/SeriesType';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import A from '../Animation/AnimationUtilities.js';
+const {
+    animObject
+} = A;
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
+import F from '../../Core/FormatUtilities.js';
+const { format } = F;
+import O from '../../Core/Options.js';
+const { getOptions } = O;
 import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 const {
@@ -50,8 +58,6 @@ const {
     defined,
     extend,
     find,
-    format,
-    getOptions,
     isNumber,
     isString,
     merge,
@@ -163,9 +169,9 @@ class StockChart extends Chart {
         userOptions: Partial<Highcharts.Options>,
         callback?: Chart.CallbackFunction
     ): void {
-        // to increase performance, don't merge the data
-        var seriesOptions = userOptions.series,
-            defaultOptions = getOptions(),
+        const defaultOptions = getOptions(),
+            xAxisOptions = userOptions.xAxis,
+            yAxisOptions = userOptions.yAxis,
             // Always disable startOnTick:true on the main axis when the
             // navigator is enabled (#1090)
             navigatorEnabled = pick(
@@ -174,36 +180,10 @@ class StockChart extends Chart {
                 true
             );
 
-        // apply X axis options to both single and multi y axes
-        userOptions.xAxis = splat(userOptions.xAxis || {}).map(function (
-            xAxisOptions: Highcharts.XAxisOptions,
-            i: number
-        ): Highcharts.XAxisOptions {
-            return merge(
-                getDefaultAxisOptions('xAxis', xAxisOptions),
-                defaultOptions.xAxis, // #3802
-                defaultOptions.xAxis && (defaultOptions.xAxis as any)[i], // #7690
-                xAxisOptions, // user options
-                getForcedAxisOptions('xAxis', userOptions)
-            );
-        });
+        // Avoid doing these twice
+        userOptions.xAxis = userOptions.yAxis = void 0;
 
-        // apply Y axis options to both single and multi y axes
-        userOptions.yAxis = splat(userOptions.yAxis || {}).map(function (
-            yAxisOptions: Highcharts.YAxisOptions,
-            i: number
-        ): Highcharts.YAxisOptions {
-            return merge(
-                getDefaultAxisOptions('yAxis', yAxisOptions),
-                defaultOptions.yAxis, // #3802
-                defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
-                yAxisOptions // user options
-            );
-        });
-
-        userOptions.series = void 0;
-
-        userOptions = merge(
+        const options = merge(
             {
                 chart: {
                     panning: {
@@ -246,9 +226,37 @@ class StockChart extends Chart {
             }
         );
 
-        userOptions.series = seriesOptions;
+        userOptions.xAxis = xAxisOptions;
+        userOptions.yAxis = yAxisOptions;
 
-        super.init(userOptions, callback);
+        // apply X axis options to both single and multi y axes
+        options.xAxis = splat(userOptions.xAxis || {}).map(function (
+            xAxisOptions: Highcharts.XAxisOptions,
+            i: number
+        ): Highcharts.XAxisOptions {
+            return merge(
+                getDefaultAxisOptions('xAxis', xAxisOptions),
+                defaultOptions.xAxis, // #3802
+                defaultOptions.xAxis && (defaultOptions.xAxis as any)[i], // #7690
+                xAxisOptions, // user options
+                getForcedAxisOptions('xAxis', userOptions)
+            );
+        });
+
+        // apply Y axis options to both single and multi y axes
+        options.yAxis = splat(userOptions.yAxis || {}).map(function (
+            yAxisOptions: Highcharts.YAxisOptions,
+            i: number
+        ): Highcharts.YAxisOptions {
+            return merge(
+                getDefaultAxisOptions('yAxis', yAxisOptions),
+                defaultOptions.yAxis, // #3802
+                defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
+                yAxisOptions // user options
+            );
+        });
+
+        super.init(options, callback);
     }
 
     /**
@@ -922,7 +930,7 @@ Series.prototype.init = function (): void {
 };
 
 /**
- * Highstock only. Set the
+ * Highcharts Stock only. Set the
  * [compare](https://api.highcharts.com/highstock/plotOptions.series.compare)
  * mode of the series after render time. In most cases it is more useful running
  * {@link Axis#setCompare} on the X axis to update all its series.
@@ -1062,8 +1070,8 @@ addEvent(
 );
 
 /**
- * Highstock only. Set the compare mode on all series belonging to an Y axis
- * after render time.
+ * Highcharts Stock only. Set the compare mode on all series
+ * belonging to an Y axis after render time.
  *
  * @see [series.plotOptions.compare](https://api.highcharts.com/highstock/series.plotOptions.compare)
  *
@@ -1159,25 +1167,43 @@ addEvent(Series, 'render', function (): void {
         // First render, initial clip box. clipBox also needs to be updated if
         // the series is rendered again before starting animating, in
         // compliance with a responsive rule (#13858).
-        if (!chart.hasLoaded || (!this.clipBox && this.isDirty && !this.isDirtyData)) {
+        if (!chart.hasRendered || (!this.clipBox && this.isDirty && !this.isDirtyData)) {
             this.clipBox = this.clipBox || merge(chart.clipBox);
             this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;
+        }
 
-        // On redrawing, resizing etc, update the clip rectangle
-        } else if ((chart as any)[this.sharedClipKey as any]) {
-            // animate in case resize is done during initial animation
-            (chart as any)[this.sharedClipKey as any].animate({
-                width: this.xAxis.len,
-                height: clipHeight
-            });
+        if (chart.hasRendered) {
+            const animation = animObject(this.options.animation);
 
-            // also change markers clip animation for consistency
-            // (marker clip rects should exist only on chart init)
-            if ((chart as any)[this.sharedClipKey + 'm']) {
-                (chart as any)[this.sharedClipKey + 'm'].animate({
-                    width: this.xAxis.len
+            // #15435: this.sharedClipKey might not have been set yet, for
+            // example when updating the series, so we need to use this
+            // function instead
+            const sharedClipKey = this.getSharedClipKey(animation);
+            const clipRect = chart.sharedClips[sharedClipKey];
+
+            // On redrawing, resizing etc, update the clip rectangle.
+            //
+            // #15435: Update it even when we are creating/updating clipBox,
+            // since there could be series updating and pane size changes
+            // happening at the same time and we dont destroy shared clips in
+            // stock.
+            if (clipRect) {
+                // animate in case resize is done during initial animation
+                clipRect.animate({
+                    width: this.xAxis.len,
+                    height: clipHeight
                 });
+
+                const markerClipRect = chart.sharedClips[sharedClipKey + 'm'];
+
+                // also change markers clip animation for consistency
+                // (marker clip rects should exist only on chart init)
+                if (markerClipRect) {
+                    markerClipRect.animate({
+                        width: this.xAxis.len
+                    });
+                }
             }
         }
     }

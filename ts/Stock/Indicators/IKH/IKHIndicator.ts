@@ -204,7 +204,11 @@ class IKHIndicator extends SMAIndicator {
     public static defaultOptions: IKHOptions = merge(
         SMAIndicator.defaultOptions,
         {
+            /**
+             * @excluding index
+             */
             params: {
+                index: void 0, // unused index, do not inherit (#15362)
                 period: 26,
                 /**
                  * The base period for Tenkan calculations.

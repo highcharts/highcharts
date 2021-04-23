@@ -72,6 +72,7 @@ class APOIndicator extends EMAIndicator {
          * @excluding period
          */
         params: {
+            period: void 0, // unchangeable period, do not inherit (#15362)
             /**
              * Periods for Absolute Price Oscillator calculations.
              *

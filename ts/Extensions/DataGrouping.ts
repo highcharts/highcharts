@@ -22,12 +22,14 @@ import type {
 import type TimeTicksInfoObject from '../Core/Axis/TimeTicksInfoObject';
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
 import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import Tooltip from '../Core/Tooltip.js';
+import O from '../Core/Options.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -37,7 +39,6 @@ const {
     defined,
     error,
     extend,
-    format,
     isNumber,
     merge,
     pick
@@ -470,7 +471,11 @@ const groupData = function (
         // for this specific group
         if (pointArrayMap) {
 
-            var index = series.options.dataGrouping?.groupAll ? i : (series.cropStart as any) + i,
+            var index = (
+                    series.options.dataGrouping &&
+                    series.options.dataGrouping.groupAll ?
+                        i : (series.cropStart as any) + i
+                ),
                 point = (data && data[index]) ||
                     series.pointClass.prototype.applyOptions.apply({
                         series: series
@@ -828,6 +833,7 @@ seriesProto.processData = function (): any {
                 );
                 groupedXData = croppedData.xData;
                 groupedYData = croppedData.yData;
+                series.cropStart = croppedData.start; // #15005
             }
             // Set series props
             series.processedXData = groupedXData;
@@ -1072,7 +1078,7 @@ Axis.prototype.getGroupPixelWidth = function (this: Highcharts.Axis): number {
 };
 
 /**
- * Highstock only. Force data grouping on all the axis' series.
+ * Highcharts Stock only. Force data grouping on all the axis' series.
  *
  * @product highstock
  *
@@ -1142,7 +1148,7 @@ export default dataGrouping;
 /**
  * Data grouping is the concept of sampling the data values into larger
  * blocks in order to ease readability and increase performance of the
- * JavaScript charts. Highstock by default applies data grouping when
+ * JavaScript charts. Highcharts Stock by default applies data grouping when
  * the points become closer than a certain pixel value, determined by
  * the `groupPixelWidth` option.
  *

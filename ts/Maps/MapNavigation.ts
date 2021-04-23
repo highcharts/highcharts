@@ -158,7 +158,6 @@ MapNavigation.prototype.update = function (
 ): void {
     var chart = this.chart,
         o: MapNavigationOptions = chart.options.mapNavigation as any,
-        buttonOptions,
         attr: ButtonThemeObject,
         states: ButtonThemeStatesObject|undefined,
         hoverStates: SVGAttributes|undefined,
@@ -187,10 +186,10 @@ MapNavigation.prototype.update = function (
     if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
 
         objectEach(o.buttons, function (
-            button: MapNavigationButtonOptions,
+            buttonOptions: MapNavigationButtonOptions,
             n: string
         ): void {
-            buttonOptions = merge(o.buttonOptions, button);
+            buttonOptions = merge(o.buttonOptions, buttonOptions);
 
             // Presentational
             if (!chart.styledMode && buttonOptions.theme) {
@@ -205,8 +204,7 @@ MapNavigation.prototype.update = function (
                 delete attr.states;
             }
 
-
-            button = chart.renderer
+            const button = chart.renderer
                 .button(
                     buttonOptions.text || '',
                     0,
@@ -229,27 +227,31 @@ MapNavigation.prototype.update = function (
                     padding: buttonOptions.padding,
                     zIndex: 5
                 })
-                .add() as any;
-            (button as any).handler = buttonOptions.onclick;
+                .add();
+            button.handler = buttonOptions.onclick;
 
             // Stop double click event (#4444)
-            addEvent((button as any).element, 'dblclick', stopEvent);
+            addEvent(button.element, 'dblclick', stopEvent);
 
-            mapNavButtons.push(button as any);
+            mapNavButtons.push(button);
 
-            // Align it after the plotBox is known (#12776)
-            const bo = buttonOptions;
-            const un = addEvent(chart, 'load', (): void => {
-                (button as any).align(
-                    extend(bo, {
-                        width: button.width,
-                        height: 2 * (button.height as any)
-                    }),
-                    null,
-                    bo.alignTo
-                );
-                un();
+            extend(buttonOptions, {
+                width: button.width,
+                height: 2 * button.height
             });
+
+            if (!chart.hasLoaded) {
+                // Align it after the plotBox is known (#12776)
+                const unbind = addEvent(chart, 'load', (): void => {
+                    // #15406: Make sure button hasnt been destroyed
+                    if (button.element) {
+                        button.align(buttonOptions, false, buttonOptions.alignTo);
+                    }
+                    unbind();
+                });
+            } else {
+                button.align(buttonOptions, false, buttonOptions.alignTo);
+            }
 
         });
     }

@@ -28,6 +28,11 @@ const {
     getSeriesA11yElement,
     unhideChartElementFromAT
 } = ChartUtilities;
+import F from '../../../Core/FormatUtilities.js';
+const {
+    format,
+    numberFormat
+} = F;
 import HTMLUtilities from '../../Utils/HTMLUtilities.js';
 const {
     reverseChildNodes,
@@ -37,9 +42,7 @@ import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 const {
     find,
-    format,
     isNumber,
-    numberFormat,
     pick,
     defined
 } = U;
@@ -560,7 +563,11 @@ function describePointsInSeries(series: Highcharts.AccessibilitySeries): void {
         ): void {
             const pointEl = point.graphic && point.graphic.element ||
                     shouldAddDummyPoint(point) && addDummyPointElement(point);
-            const pointA11yDisabled = point.options?.accessibility?.enabled === false;
+            const pointA11yDisabled = (
+                point.options &&
+                point.options.accessibility &&
+                point.options.accessibility.enabled === false
+            );
 
             if (pointEl) {
                 // We always set tabindex, as long as we are setting props.

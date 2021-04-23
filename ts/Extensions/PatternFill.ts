@@ -25,6 +25,8 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
+const { getOptions } = O;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
@@ -32,7 +34,6 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     erase,
-    getOptions,
     merge,
     pick,
     removeEvent,

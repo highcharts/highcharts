@@ -209,6 +209,78 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
     );
 });
 
+QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
+
+    // Create another container to float within
+    const subcontainer = document.createElement('div');
+    subcontainer.id = 'subcontainer';
+    subcontainer.style.float = 'right';
+    const mainContainer = document.querySelector('#container');
+
+    mainContainer.appendChild(subcontainer);
+
+    const initialWidth = mainContainer.style.width;
+    mainContainer.style.width = '100vw';
+
+    const chart = Highcharts.stockChart('subcontainer', {
+        chart: {
+            width: 120
+        },
+        series: [
+            {
+                data: [1, 2, 3, 5, 6, 7, 8]
+            }
+        ],
+        tooltip: {
+            split: true,
+            outside: true
+        }
+    });
+
+    // Hover over the final point
+    const { points } = chart.series[0];
+    points[points.length - 1].onMouseOver();
+
+    // Check both the series tooltip, and the header tooltip
+    [chart.tooltip.tt, chart.series[0].tt].forEach(tt => {
+        // Get the absolute position of right side of the tooltip element
+        // Test fails on firefox if we use getBoundingClientRect().right
+        const ttRight = tt.element.getBoundingClientRect().left +
+            tt.getBBox().width;
+
+        assert.strictEqual(
+            tt.x < tt.anchorX,
+            true,
+            'The tooltip should be aligned towards the left'
+        );
+        assert.strictEqual(
+            ttRight <= mainContainer.clientWidth,
+            true,
+            'The tooltip should not overflow the viewport'
+        );
+    });
+
+    // check the alignment when tooltip.outside is false
+    chart.update({
+        tooltip: {
+            split: true,
+            outside: false
+        }
+    });
+
+    points[points.length - 1].onMouseOver();
+    assert.strictEqual(
+        chart.series[0].tt.x < chart.series[0].tt.anchorX,
+        true,
+        'The tooltip should be aligned towards the left'
+    );
+
+    // Reset
+    subcontainer.remove();
+    mainContainer.style.width = initialWidth;
+
+});
+
 QUnit.test(
     'Split tooltip on flags, having noSharedTooltip flag',
     function (assert) {

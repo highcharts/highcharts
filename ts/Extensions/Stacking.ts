@@ -23,6 +23,8 @@ import type { DataLabelOverflowValue } from '../Core/Series/DataLabelOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
 import H from '../Core/Globals.js';
 import Series from '../Core/Series/Series.js';
 import StackingAxis from '../Core/Axis/StackingAxis.js';
@@ -31,7 +33,6 @@ const {
     correctFloat,
     defined,
     destroyObjectProperties,
-    format,
     isArray,
     isNumber,
     objectEach,

@@ -14,13 +14,14 @@ import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
+import F from '../../../Core/FormatUtilities.js';
+const { format } = F;
 import MockPoint from '../MockPoint.js';
 import SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer.js';
 import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,
-    format,
     isNumber,
     pick
 } = U;
@@ -184,7 +185,7 @@ class ControllableLabel implements ControllableMixin.Type {
             if (align === 'right') {
                 options.align = 'left';
             } else {
-                options.x = -off;
+                options.x = (options.x || 0) - off;
             }
         }
 
@@ -194,7 +195,7 @@ class ControllableLabel implements ControllableMixin.Type {
             if (align === 'left') {
                 options.align = 'right';
             } else {
-                options.x = chart.plotWidth - off;
+                options.x = (options.x || 0) + chart.plotWidth - off;
             }
         }
 
@@ -204,7 +205,7 @@ class ControllableLabel implements ControllableMixin.Type {
             if (verticalAlign === 'bottom') {
                 options.verticalAlign = 'top';
             } else {
-                options.y = -off;
+                options.y = (options.y || 0) - off;
             }
         }
 
@@ -214,7 +215,7 @@ class ControllableLabel implements ControllableMixin.Type {
             if (verticalAlign === 'top') {
                 options.verticalAlign = 'bottom';
             } else {
-                options.y = chart.plotHeight - off;
+                options.y = (options.y || 0) + chart.plotHeight - off;
             }
         }
 

@@ -153,6 +153,11 @@ QUnit.test('Adding color axis', function (assert) {
         'Colors should be the same for the second series.'
     );
 
+    assert.notOk(
+        chart.series[0].legendItem,
+        '#15436: Series legendItem should have been destroyed'
+    );
+
     chart.addColorAxis({});
 
     assert.notEqual(

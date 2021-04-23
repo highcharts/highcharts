@@ -891,7 +891,7 @@ class SankeySeries extends ColumnSeries {
             const y = Math.min(
                 node.nodeY + linkTop,
                 // Prevent links from spilling below the node (#12014)
-                node.nodeY + (node.shapeArgs?.height || 0) - linkHeight
+                node.nodeY + (node.shapeArgs && node.shapeArgs.height || 0) - linkHeight
             );
             return y;
         };

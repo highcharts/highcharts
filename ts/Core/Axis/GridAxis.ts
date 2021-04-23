@@ -432,7 +432,10 @@ addEvent(
             axis,
             value
         } = ctx;
-        if (axis.options.grid?.enabled) {
+        if (
+            axis.options.grid &&
+            axis.options.grid.enabled
+        ) {
             const tickPos = axis.tickPositions;
             const series = (
                 axis.linkedParent || axis
@@ -866,7 +869,14 @@ class GridAxis {
             });
             // Manipulate the tick mark visibility
             // based on the axis.max- allows smooth scrolling.
-            if (!axis.horiz && axis.chart.hasRendered && (axis.scrollbar || axis.linkedParent?.scrollbar)) {
+            if (
+                !axis.horiz &&
+                axis.chart.hasRendered &&
+                (
+                    axis.scrollbar ||
+                    (axis.linkedParent && axis.linkedParent.scrollbar)
+                )
+            ) {
                 const max = axis.max as any,
                     min = axis.min as any,
                     tickmarkOffset = axis.tickmarkOffset,
@@ -936,7 +946,11 @@ class GridAxis {
             } else {
                 // Don't trim ticks which not in min/max range but
                 // they are still in the min/max plus tickInterval.
-                if (this.options.type !== 'treegrid' && axis.grid?.columns) {
+                if (
+                    this.options.type !== 'treegrid' &&
+                    axis.grid &&
+                    axis.grid.columns
+                ) {
                     this.minPointOffset = this.tickInterval;
                 }
             }
@@ -953,11 +967,11 @@ class GridAxis {
      */
     public static onAfterSetOptions(
         this: Axis,
-        e: { userOptions: Highcharts.AxisOptions }
+        e: { userOptions: DeepPartial<Highcharts.AxisOptions> }
     ): void {
         var options = this.options,
             userOptions = e.userOptions,
-            gridAxisOptions: Highcharts.AxisOptions,
+            gridAxisOptions: DeepPartial<Highcharts.AxisOptions>,
             gridOptions: GridAxis.Options = (
                 (options && isObject(options.grid)) ? (options.grid as any) : {}
             );
@@ -966,7 +980,7 @@ class GridAxis {
 
             // Merge the user options into default grid axis options so
             // that when a user option is set, it takes presedence.
-            gridAxisOptions = merge(true, {
+            gridAxisOptions = merge<DeepPartial<Highcharts.AxisOptions>>(true, {
 
                 className: (
                     'highcharts-grid-axis ' + (userOptions.className || '')

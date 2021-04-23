@@ -194,8 +194,12 @@ function getAxisTimeLengthDesc(axis: Highcharts.Axis): string {
  */
 function getAxisFromToDescription(axis: Highcharts.Axis): string {
     const chart = axis.chart;
-    const dateRangeFormat = chart.options?.accessibility
-        ?.screenReaderSection.axisRangeDateFormat || '';
+    const dateRangeFormat = (
+        chart.options &&
+        chart.options.accessibility &&
+        chart.options.accessibility.screenReaderSection.axisRangeDateFormat ||
+        ''
+    );
     const format = function (axisKey: string): string {
         return axis.dateTime ? chart.time.dateFormat(
             dateRangeFormat, (axis as any)[axisKey]
@@ -225,9 +229,13 @@ function getAxisFromToDescription(axis: Highcharts.Axis): string {
 function getSeriesFirstPointElement(
     series: Series
 ): (DOMElementType|undefined) {
-    if (series.points?.length) {
+    if (series.points && series.points.length) {
         const firstPointWithGraphic = find(series.points, (p: Point): boolean => !!p.graphic);
-        return firstPointWithGraphic?.graphic?.element;
+        return (
+            firstPointWithGraphic &&
+            firstPointWithGraphic.graphic &&
+            firstPointWithGraphic.graphic.element
+        );
     }
 }
 
@@ -374,8 +382,8 @@ function getRelativePointAxisPosition(axis: Axis, point: Point): number {
 function scrollToPoint(point: Point): void {
     const xAxis = point.series.xAxis;
     const yAxis = point.series.yAxis;
-    const axis = xAxis?.scrollbar ? xAxis : yAxis;
-    const scrollbar = axis?.scrollbar;
+    const axis = (xAxis && xAxis.scrollbar ? xAxis : yAxis);
+    const scrollbar = (axis && axis.scrollbar);
 
     if (scrollbar && defined(scrollbar.to) && defined(scrollbar.from)) {
         const range = scrollbar.to - scrollbar.from;

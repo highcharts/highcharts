@@ -36,6 +36,8 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
+import F from '../FormatUtilities.js';
+const { format } = F;
 import H from '../Globals.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
@@ -46,7 +48,6 @@ const {
     erase,
     extend,
     fireEvent,
-    format,
     getNestedProperty,
     isArray,
     isFunction,
@@ -1582,7 +1583,7 @@ class Point {
 
                 // Some inactive points (e.g. slices in pie) should apply
                 // oppacity also for it's labels
-                if (series.options.inactiveOtherPoints && pointAttribs.opacity) {
+                if (series.options.inactiveOtherPoints && isNumber(pointAttribs.opacity)) {
                     (point.dataLabels || []).forEach(function (
                         label: SVGElement
                     ): void {
@@ -1732,7 +1733,7 @@ class Point {
             );
         }
 
-        fireEvent(point, 'afterSetState');
+        fireEvent(point, 'afterSetState', { state });
     }
 
     /**
