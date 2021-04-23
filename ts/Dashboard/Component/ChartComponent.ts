@@ -1,11 +1,10 @@
+import type Series from '../../Core/Series/Series.js';
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import DataSeriesConverter from '../../Data/DataSeriesConverter.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 import DataJSON from '../../Data/DataJSON.js';
-import DataParser from '../../Data/Parsers/DataParser.js';
-import Series from '../../Core/Series/Series.js';
-
+import DataTable from '../../Data/DataTable.js';
 import Highcharts from '../../masters/highcharts.src.js';
 import {
     ChartSyncHandler,
@@ -17,9 +16,7 @@ import U from '../../Core/Utilities.js';
 const {
     createElement,
     merge,
-    pick,
-    uniqueKey,
-    getStyle
+    uniqueKey
 } = U;
 
 /* *
@@ -216,40 +213,51 @@ class ChartComponent extends Component<ChartComponent.Event> {
     }
 
     private initChart(): void {
-        // @todo: This should be replaced when series understand dataTable
-        const seriesFromStore: any = [];
+        this.chart = this.constructChart();
+        // Heuristically create series from the store datatable
         if (this.store && this.store.table) {
-            const data = DataParser.getColumnsFromTable(this.store.table, false).slice(1);
-            const keys = this.store.table.getColumnNames(true).slice(1);
-            data.forEach((datum, i): void => {
-                let id, name;
-                if (keys && keys[i]) {
-                    id = keys[i];
-                    name = id;
+            const { table } = this.store;
+
+            const xKeys = ['datetime', 'x']; // Names/aliases that should be mapped to xAxis values
+            const seriesNames = table.getColumnNames(true);
+            const xKeyMap: Record<string, string> = {};
+
+            // Remove series names that match the xKeys
+            seriesNames.forEach((name, index): void => {
+                for (let i = 0; i < xKeys.length; i++) {
+                    const key = xKeys[i];
+                    if (key === name.toLowerCase()) {
+                        xKeyMap[name] = key;
+                        seriesNames.splice(index, 1);
+                        break; // We only need the first match
+                    }
                 }
-                seriesFromStore.push({ id, name, data: datum });
             });
 
+            // Create the series
+            const seriesList = seriesNames.map((seriesName, index): Series =>
+                this.chart.addSeries({
+                    name: seriesName,
+                    id: `${table.id}-series-${index}`
+                }, false)
+            );
+
+            // Insert the data
+            seriesList.forEach((series): void => {
+                const xKey = Object.keys(xKeyMap)[0];
+                const seriesTable = new DataTable(
+                    table.getColumns([xKey, series.name])
+                );
+
+                seriesTable.renameColumn(series.name, 'y');
+
+                if (xKey) {
+                    seriesTable.renameColumn(xKey, 'x');
+                }
+
+                series.setData(seriesTable);
+            });
         }
-
-
-        if (
-            !this.chartOptions.series ||
-            this.chartOptions.series.length < seriesFromStore.length
-        ) {
-            const seriesFromOptions = this.options.chartOptions && this.options.chartOptions.series ?
-                this.options.chartOptions.series :
-                [];
-            this.chartOptions.series = [
-                ...seriesFromStore,
-                ...seriesFromOptions
-            ];
-        }
-
-        this.chart = this.constructChart();
-
-        const { width, height } = this.dimensions;
-        this.chart.setSize(width, height);
 
         this.setupSync();
     }

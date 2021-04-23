@@ -29,8 +29,8 @@ describe('Chart synchronized series state', () => {
         // need to set scrollbehaviour to false to avoid change in dom
         // https://github.com/cypress-io/cypress/issues/9739
         cy.get('.highcharts-legend').first()
-            .get('.highcharts-legend-item').first()
-            .click({ scrollBehavior: false });
+            .get('.highcharts-legend-item').last()
+            .click();
 
         // Second chart should now have a hidden legend item
         cy.get('.chart-container').last().within(chart => {
@@ -40,8 +40,8 @@ describe('Chart synchronized series state', () => {
 
         // Reset by click
         cy.get('.highcharts-legend').first()
-            .get('.highcharts-legend-item').first()
-            .click({ scrollBehavior: false });
+            .get('.highcharts-legend-item').last()
+            .click();
 
         cy.get('.chart-container').last().within(() => {
             cy.get('.highcharts-legend-item-hidden')
@@ -55,7 +55,7 @@ describe('Chart synchronized series state', () => {
             .get('.highcharts-point').first()
             .as('firstPoint')
 
-        cy.get('@firstPoint').trigger('mouseover', { scrollBehavior: false });
+        cy.get('@firstPoint').trigger('mouseover');
 
         // Second chart should now have a tooltip
         cy.get('.chart-container').last().within((chart => {
@@ -64,7 +64,7 @@ describe('Chart synchronized series state', () => {
         }));
 
         // Move mouse away from the chart area
-        cy.get('.chart-container').first().trigger('mouseleave', { scrollBehavior: false });
+        cy.get('.chart-container').first().trigger('mouseleave');
 
         // Second chart should now not have a tooltip
         cy.get('.chart-container').last().within(() => {
