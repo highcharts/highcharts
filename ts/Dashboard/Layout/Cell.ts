@@ -147,7 +147,8 @@ class Cell extends GUIElement {
                         {
                             parentContainerId: options.id
                         }
-                    )
+                    ),
+                    this
                 );
             }
         } else {

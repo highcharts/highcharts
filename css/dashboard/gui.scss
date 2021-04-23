@@ -32,9 +32,6 @@ body {
     flex: 1;
 }
 
-.hcd-layout {
-    float: left;
-}
 .hcd-layout .hcd-row,
 .hcd-layout .hcd-row .hcd-cell {
     box-sizing: border-box;
@@ -296,7 +293,7 @@ h1 {
     padding: 5px;
     cursor: pointer;
     border-radius: 3px;
-    float:right;
+    float: right;
     div {
         height: 4px;
         background-color: #555;
@@ -310,6 +307,11 @@ h1 {
 
 .hcd-edit-menu-item {
     display: none;
+}
+
+.hcd-edit-tools {
+    overflow:hidden;
+    width: 100%;
 }
 
 .hcd-edit-context-menu-item {
@@ -397,12 +399,15 @@ h1 {
 }
 
 .hcd-edit-tools-btn {
-    float: right;
     border: none;
     display: inline-block;
     padding: 4px 10px 4px 30px;
     background-color: transparent;
     border: 1px solid transparent;
+    background-repeat: no-repeat;
+    background-size: 22px;
+    background-position-y: 4px;
+    float: right;
 }
 
 .hcd-edit-tools-btn:hover {
@@ -457,6 +462,14 @@ h1 {
     text-transform: uppercase;
     background: #141414;
     border-bottom: 1px solid #444;
+}
+
+.hcd-edit-sidebar-tab-wrapper {
+    display: none;
+}
+
+.hcd-edit-sidebar-tab-wrapper.current {
+    display: block;
 }
 
 .hcd-edit-sidebar-tabs {

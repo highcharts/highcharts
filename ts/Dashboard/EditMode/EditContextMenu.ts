@@ -79,7 +79,7 @@ class EditContextMenu extends Menu {
                 }
             }
 
-            this.updateActiveItems(items);
+            this.setActiveItems(items);
         }
 
         this.initEvents();
@@ -107,7 +107,7 @@ class EditContextMenu extends Menu {
         addEvent(document, 'click', (event): void => {
             if (
                 event.target !== this.container &&
-                event.target !== contextMenu.editMode.contextButtonElement &&
+                event.target !== contextMenu.editMode.tools.contextButtonElement &&
                 !event.target.classList.contains(EditGlobals.classNames.toggleSlider) &&
                 event.target.tagName !== 'INPUT' &&
                 this.isVisible

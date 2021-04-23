@@ -75,7 +75,7 @@ class MenuItem {
             merge(
                 this.options.style || {},
                 // to remove
-                this.isActive ? { display: 'block' }: {}
+                this.isActive ? { display: 'block' } : {}
             ),
             this.menu.container
         );

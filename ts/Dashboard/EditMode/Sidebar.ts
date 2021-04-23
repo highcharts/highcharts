@@ -9,12 +9,12 @@ import type MenuItem from './Menu/MenuItem.js';
 import DashboardGlobals from '../DashboardGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
-import ContainerComponent from '../../Accessibility/Components/ContainerComponent.js';
 
 const {
     merge,
     createElement,
-    addEvent
+    addEvent,
+    objectEach
 } = U;
 
 class Sidebar {
@@ -27,11 +27,7 @@ class Sidebar {
         enabled: true,
         className: 'test',
         dragIcon: EditGlobals.iconsURL + '/drag.svg',
-        closeIcon: EditGlobals.iconsURL + '/close.svg',
-        menu: {
-            itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
-            items: ['cellWidth', 'rowHeight', 'componentSettings']
-        }
+        closeIcon: EditGlobals.iconsURL + '/close.svg'
     }
 
     public static tabs: Array<Sidebar.TabOptions> = [{
@@ -52,6 +48,20 @@ class Sidebar {
         items: {
             cell: ['componentSettings'],
             row: ['']
+        }
+    }]
+
+    public static tabsGeneralOptions: Array<Sidebar.TabOptions> = [{
+        type: 'addLayout',
+        icon: '',
+        items: {
+            cell: ['addLayout']
+        }
+    }, {
+        type: 'addComponent',
+        icon: '',
+        items: {
+            cell: ['addComponent']
         }
     }]
 
@@ -137,6 +147,30 @@ class Sidebar {
         }
     })
 
+    public static itemsGeneralOptions: Record<string, MenuItem.Options> =
+    merge({}, {
+        addLayout: {
+            id: 'addLayout',
+            type: 'addLayout',
+            text: 'Add layout',
+            events: {
+                update: function (): void {
+                    //
+                }
+            }
+        },
+        addComponent: {
+            id: 'addComponent',
+            type: 'addComponent',
+            text: 'Add component',
+            events: {
+                update: function (): void {
+                    //
+                }
+            }
+        },
+    })
+
     /* *
     *
     *  Constructor
@@ -159,14 +193,13 @@ class Sidebar {
         this.renderCloseButton();
         this.renderDragDropButton();
         this.renderTitle();
-        this.initTabs();
-
-        this.menu = new Menu(
-            this.container,
-            this.options.menu,
-            this
+        this.initTabs(
+            Sidebar.tabs,
+            true
         );
-
+        this.initTabs(
+            Sidebar.tabsGeneralOptions
+        );
         this.initEvents();
     }
 
@@ -183,9 +216,10 @@ class Sidebar {
     public title?: HTMLDOMElement;
     public tabs: Record<string, Sidebar.Tab>;
     public activeTab?: Sidebar.Tab;
-    public menu: Menu;
     public context?: Cell|Row;
     public isDragged: boolean;
+    public rowCellTab?: HTMLDOMElement;
+    public generalOptionsTab?: HTMLDOMElement;
 
     /* *
     *
@@ -238,14 +272,30 @@ class Sidebar {
         });
     }
 
-    private initTabs(): void {
-        const sidebar = this,
-            tabs = Sidebar.tabs;
+    private initTabs(
+        tabs: Array<Sidebar.TabOptions>,
+        isRowCell?: boolean
+    ): void {
+        const sidebar = this;
 
+        // create the whole tab (including menu) container
+        const tabContainer = createElement(
+            'div', {
+                className: EditGlobals.classNames.editSidebarTabContainer
+            }, {}, sidebar.container
+        );
+
+        if (isRowCell) {
+            sidebar.rowCellTab = tabContainer;
+        } else {
+            sidebar.generalOptionsTab = tabContainer;
+        }
+
+        // create tab menu container
         const container = createElement(
             'div', {
                 className: EditGlobals.classNames.editSidebarTabsContainer
-            }, {}, sidebar.container
+            }, {}, tabContainer
         );
 
         let tabElement;
@@ -269,10 +319,10 @@ class Sidebar {
 
             contentContainer = createElement(
                 'div', {
-                    className: EditGlobals.classNames.editSidebarTabContent,
-                }, {}, sidebar.container
+                    className: EditGlobals.classNames.editSidebarTabContent
+                }, {}, tabContainer
             );
-            
+
             content = new Menu(
                 contentContainer,
                 {
@@ -292,8 +342,8 @@ class Sidebar {
                 {
                     value: 'Save',
                     className: EditGlobals.classNames.editSidebarTabBtn,
-                    callback: () => {
-                        console.log('save');
+                    callback: (): void => {
+                        // console.log('save');
                     }
                 }
             );
@@ -323,11 +373,13 @@ class Sidebar {
         addEvent(sidebar.editMode.dashboard, 'cellResize', function (): void {
             let item;
 
-            for (let i = 0, iEnd = sidebar.menu.activeItems.length; i < iEnd; ++i) {
-                item = sidebar.menu.activeItems[i];
+            if (sidebar.activeTab) {
+                for (let i = 0, iEnd = sidebar.activeTab.content.activeItems.length; i < iEnd; ++i) {
+                    item = sidebar.activeTab.content.activeItems[i];
 
-                if (item.options.events && item.options.events.onCellResize) {
-                    item.options.events.onCellResize.apply(item, arguments);
+                    if (item.options.events && item.options.events.onCellResize) {
+                        item.options.events.onCellResize.apply(item, arguments);
+                    }
                 }
             }
         });
@@ -359,19 +411,19 @@ class Sidebar {
                 sidebar.activeTab.element.classList.remove(
                     EditGlobals.classNames.editSidebarTabActive
                 );
-                sidebar.activeTab.contentContainer.style.display = "none";
+                sidebar.activeTab.contentContainer.style.display = 'none';
             }
 
             tab.element.classList.add(
                 EditGlobals.classNames.editSidebarTabActive
             );
-            
-            tab.contentContainer.style.display = "block";
+
+            tab.contentContainer.style.display = 'block';
 
             sidebar.activeTab = tab;
             tab.isActive = true;
 
-            tab.content.updateAllItems();
+            tab.content.updateActiveItems();
         }
     }
 
@@ -380,21 +432,37 @@ class Sidebar {
     ): void {
         const sidebar = this;
 
+        // hide tabs
+        if (sidebar.rowCellTab) {
+            sidebar.rowCellTab.classList.remove('current');
+        }
+
+        if (sidebar.generalOptionsTab) {
+            sidebar.generalOptionsTab.classList.remove('current');
+        }
+
+        // run current tab
         if (context) {
-
             this.update(context);
-
-            if (!this.isVisible) {
-                this.container.style.left = '0px';
-                this.container.style.top = '0px';
-                this.container.classList.add(
-                    EditGlobals.classNames.editSidebarShow
-                );
-                this.isVisible = true;
-
-                // Hide row and cell toolbars.
-                this.editMode.hideToolbars(['cell', 'row']);
+            if (sidebar.rowCellTab) {
+                sidebar.rowCellTab.classList.add('current');
             }
+        } else {
+            if (sidebar.generalOptionsTab) {
+                sidebar.generalOptionsTab.classList.add('current');
+            }
+        }
+
+        if (!this.isVisible) {
+            this.container.style.left = '0px';
+            this.container.style.top = '0px';
+            this.container.classList.add(
+                EditGlobals.classNames.editSidebarShow
+            );
+            this.isVisible = true;
+
+            // Hide row and cell toolbars.
+            this.editMode.hideToolbars(['cell', 'row']);
         }
     }
 
@@ -491,9 +559,7 @@ class Sidebar {
         }
     }
 
-    /**
-     * currently for the future, remove when not use, 
-     */
+    // Currently for the future, remove when not use.
     public afterCSSAnimate(
         element: HTMLDOMElement,
         callback: Function
@@ -518,24 +584,24 @@ class Sidebar {
         }
 
         if (componentSettings) {
-            let menuItems = {};
-            let items = [];
+            const menuItems = {};
+            const items: Array<string> = [];
             let type;
 
-            for (const key in componentSettings) {
-                type = componentSettings[key].type;
+            objectEach(componentSettings, (elem, key): void => {
+                type = elem.type;
 
                 (menuItems as any)[key] = {
                     id: key,
                     type: type === 'text' ? 'input' : type,
                     text: key,
                     isActive: true
-                }
+                };
 
                 items.push(
                     key
-                )
-            }
+                );
+            });
 
             // remove previous options
             if (sidebar.componentEditableOptions) {
@@ -557,7 +623,7 @@ class Sidebar {
             );
 
             sidebar.componentEditableOptions.currentElementId = cell.id;
-       }
+        }
     }
 }
 
@@ -570,9 +636,10 @@ namespace Sidebar {
     export interface Options {
         enabled: boolean;
         className: string;
-        menu: Menu.Options;
         dragIcon: string;
         closeIcon: string;
+        // rowCellTab?: HTMLDOMElement;
+        // generalOptionsTab?: HTMLDOMElement;
     }
 
     export interface TabOptions {

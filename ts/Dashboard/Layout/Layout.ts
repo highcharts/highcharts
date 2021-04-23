@@ -8,6 +8,7 @@ import DashboardGlobals from './../DashboardGlobals.js';
 
 import U from '../../Core/Utilities.js';
 import Resizer from '../Actions/Resizer.js';
+import Cell from './Cell.js';
 
 const {
     pick
@@ -88,7 +89,8 @@ class Layout extends GUIElement {
      */
     public constructor(
         dashboard: Dashboard,
-        options: Layout.Options
+        options: Layout.Options,
+        parentCell?: Cell
     ) {
         super();
 
@@ -101,6 +103,14 @@ class Layout extends GUIElement {
         const parentContainer = document.getElementById(
             options.parentContainerId || ''
         ) || dashboard.container;
+
+        // Set layout level.
+        if (parentCell) {
+            this.parentCell = parentCell;
+            this.level = parentCell.row.layout.level + 1;
+        } else {
+            this.level = 0;
+        }
 
         // GUI structure
         if (parentContainer) {
@@ -161,6 +171,10 @@ class Layout extends GUIElement {
     public resizer?: Resizer;
 
     public copyId?: string;
+
+    public level: number;
+
+    public parentCell?: Cell;
 
     /* *
     *
