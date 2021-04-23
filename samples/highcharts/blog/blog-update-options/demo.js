@@ -45,20 +45,13 @@ Math.easeOutElastic = x => {
 let demoChart, areaChart;
 let chartMargin = [0, 0, 0, 0];
 let chartSpacing = 0;
-const initialChartData = [
-    { y: 10 },
-    { y: 20 },
-    { y: 40 },
-    { y: 5 },
-    { y: 10 },
-    { y: 15 }
-];
+
 //for the sliders
 const initialValues = [
     [-100, 100, 30, 100],
     [0, 30, 100, 6],
     [50, 0, 0, 30],
-    [15, 30, 25, 200]
+    [5, 30, 25, 200]
 ];
 
 ///options for each series
@@ -79,10 +72,11 @@ const itemOptions = {
 const variablePieOptions = {
     startAngle: 0,
     innerSize: '30%',
-    center: ['50%', '60%'],
-    size: '110%',
+    center: ['50%', '50%'],
+    size: '125%',
     dataLabels: {
-        enabled: true
+        enabled: true,
+        distance: 10
     }
 };
 
@@ -97,9 +91,10 @@ const columnOptions = {
 //chart options
 const animationOptions = {
     enabled: true,
-    duration: 500,
+    duration: 700,
     easing: 'easeOutQuint'
 };
+
 let axisVisible = false;
 
 const data = [
@@ -114,17 +109,17 @@ const data = [
     { y: 10 },
     { y: 15 }
 ];
-
 let tempData = [];
 
-///for the ranges
-let rmin, rmax;
+const chartHeight = 300;
 
+///for the ranges
+let rmin, rmax, activeSlider;
+let rvalue = -100;
 const itemRanges = [[-100, 100], [-100, 100], [0, 100], [0, 200]];
 const variablePieRanges = [[0, 6], [0, 100], [0, 200], [0, 10]];
 const columnRanges = [[1, 100], [0, 6], [0, 4], [0, 100]];
-const areaRanges = [[0, 100], [-100, 100], [1, 25], [80, 500]];
-
+const areaRanges = [[0, 30], [-100, 100], [1, 10], [80, 500]];
 const ranges = [
     itemRanges,
     variablePieRanges,
@@ -144,7 +139,7 @@ const controls = [
 ];
 const controlLabels = [
     ['start angle', 'end angle', 'inner size', 'size'],
-    ['variable radius', 'inner size', 'size', 'slices'],
+    ['variable<br>radius', 'inner size', 'size', 'slices'],
     ['width', 'axis plot bands', 'axis zones', 'radial'],
     ['alpha', 'beta', 'view distance', 'depth']
 ];
@@ -178,6 +173,7 @@ let labelElementActive  = controlElementActive + ' ~ .form-check-label';
 const areaChartOptions = {
     chart: {
         type: 'area',
+        height: 270,
         animation: {
             duration: 500,
             easing: 'easeOutQuint'
@@ -210,6 +206,9 @@ const areaChartOptions = {
     },
     title: {
         text: ''
+    },
+    credits: {
+        enabled: false
     },
     yAxis: {
         title: {
@@ -356,11 +355,27 @@ const areaChartOptions = {
 };
 
 //chart for the other demos
+//window resize
+const resizer = function () {
+    const chartWidth = demoChart.chartWidth;
+    if (chartWidth > 410) {
+        $('.highcharts-item-series').css({
+            transform:
+        'translateX(-70px) scale(1.2)'
+        });
+    } else {
+        $('.highcharts-item-series').css({
+            transform:
+        'translateX(0px) scale(1)'
+        });
+    }
+};
 const demoChartOptions = {
     chart: {
         margin: chartMargin,
         spacing: chartSpacing,
-        animation: animationOptions
+        animation: animationOptions,
+        height: chartHeight
     },
     title: {
         text: ''
@@ -380,7 +395,8 @@ const demoChartOptions = {
     },
     xAxis: [
         {
-            visible: false
+            visible: axisVisible,
+            plotBands: []
         },
         {
             visible: false
@@ -394,14 +410,25 @@ const demoChartOptions = {
     ],
     yAxis: [{
         title: '',
-        visible: false
-    }
-    ],
+        visible: axisVisible,
+        gridLineDashStyle: 'dash',
+        plotLines: [],
+        min: 0,
+        max: 50
+    }],
     series: [
         {
-            type: 'item',
-            data: initialChartData,
-            zones: []
+            type: seriesType,
+            data: [
+                { y: 10 },
+                { y: 20 },
+                { y: 40 },
+                { y: 5 },
+                { y: 10 },
+                { y: 15 }
+            ],
+            zones: [],
+            zoneAxis: 'y'
         }
     ]
 };
@@ -638,7 +665,6 @@ function alphaChange(value) {
 }
 //for area
 function betaChange(value) {
-    console.log(areaChart.options.chart.options3d.beta);
     areaChart.options.chart.options3d.beta = parseFloat(value);
     areaChart.redraw(false);
     populateLabel(thingToChange, labelElementActive);
@@ -669,6 +695,48 @@ $('document').ready(function () {
     demoChart = Highcharts.chart('container', demoChartOptions);
     areaChart = Highcharts.chart('container-area', areaChartOptions);
 
+    ///PLUS MINUS CONTROLS FOR THE SLIDER
+    let pushed;
+    function setMinMaxStates(value, slider) {
+        ///remove disabled states
+        const min = $(slider).attr('min');
+        const max = $(slider).attr('max');
+
+        if (value <= min) {
+            $('#min i').addClass('disabled');
+        } else {
+            $('#min i').removeClass('disabled');
+        }
+        if (value >= max) {
+            $('#max i').addClass('disabled');
+        } else {
+            $('#max i').removeClass('disabled');
+        }
+    }
+
+    function move(dir) {
+        ///only do this if the plus/minus buttons are active
+        if ($(pushed).hasClass('disabled') === false) {
+            let increment = 5;
+            if (thingToChange === 'variwide' || thingToChange === 'slices') {
+                increment = 1;
+            }
+            //current value of the range slider
+            let value = parseFloat($('#' + thingToChange).val());
+            setMinMaxStates(value, pushed);
+            if (dir === 'min') {
+                value = value - increment;
+            } else {
+                value = value + increment;
+            }
+            $('#' + thingToChange).val(value);
+            setMinMaxStates(value, activeSlider);
+            const functionName = thingToChange + 'Change';
+            window[functionName](value);
+        }
+    }
+
+
     ///reset the series/chart options
     const resetCharts = function () {
         ///destroy the chart
@@ -684,68 +752,24 @@ $('document').ready(function () {
             chartSpacing = 40;
             axisVisible = true;
         }
+        demoChartOptions.series[0].data = [
+            { y: 10 },
+            { y: 20 },
+            { y: 40 },
+            { y: 5 },
+            { y: 10 },
+            { y: 15 }
+        ];
+        ///reset stuff
+        demoChartOptions.chart.spacing =  chartSpacing;
+        demoChartOptions.chart.margin =  chartMargin;
+        demoChartOptions.xAxis[0].plotBands = [];
+        demoChartOptions.xAxis[0].visible = axisVisible;
+        demoChartOptions.yAxis[0].visible = axisVisible;
+        demoChartOptions.series[0].type = seriesType;
 
         ///make the chart again
-        demoChart = Highcharts.chart('container', {
-            chart: {
-                margin: chartMargin,
-                spacing: chartSpacing,
-                animation: animationOptions
-            },
-            title: {
-                text: ''
-            },
-            legend: {
-                enabled: false
-            },
-            plotOptions: {
-                series: {
-                    colorByPoint: true,
-                    pointPadding: 0,
-                    zoneAxis: 'y'
-                },
-                item: itemOptions,
-                column: columnOptions,
-                variablepie: variablePieOptions
-            },
-            xAxis: [
-                {
-                    visible: axisVisible,
-                    plotBands: []
-                },
-                {
-                    visible: false
-                },
-                {
-                    visible: true
-                },
-                {
-                    visible: true
-                }
-            ],
-            yAxis: [{
-                title: '',
-                visible: axisVisible,
-                gridLineDashStyle: 'dash',
-                plotLines: [],
-                min: 0,
-                max: 50
-            }],
-            series: [
-                {
-                    type: seriesType,
-                    data: [
-                        { y: 10 },
-                        { y: 20 },
-                        { y: 40 },
-                        { y: 5 },
-                        { y: 10 },
-                        { y: 15 }
-                    ],
-                    zones: []
-                }
-            ]
-        });
+        demoChart = Highcharts.chart('container', demoChartOptions);
 
         if (seriesType !== 'area') {
             ///show the area chart, hide the demo chart
@@ -791,10 +815,12 @@ $('document').ready(function () {
             ///apply the min, max to the range, set the range value
             rmin = ranges[seriesIndex][controlIndex][0];
             rmax = ranges[seriesIndex][controlIndex][1];
-            const  initialValue = initialValues[seriesIndex][controlIndex];
-            $('#' + thingToChange).attr('min', rmin);
-            $('#' + thingToChange).attr('max', rmax);
-            $('#' + thingToChange).val(initialValue);
+            rvalue = initialValues[seriesIndex][controlIndex];
+            activeSlider = $('#' + thingToChange);
+            $(activeSlider).attr('min', rmin);
+            $(activeSlider).attr('max', rmax);
+            $(activeSlider).val(rvalue);
+            setMinMaxStates(rvalue, activeSlider);
 
             //populate labels with text
             $(labelElement).html(controlLabels[seriesIndex][ii]);
@@ -888,6 +914,7 @@ $('document').ready(function () {
         }
     };
 
+
     ///series buttons (item, pie, column, area)
     $('.series-types button').click(function () {
 
@@ -911,7 +938,6 @@ $('document').ready(function () {
 
         ///check first radio for the series
         $('#controlType1').trigger('click');
-
         initControls();
 
     });
@@ -929,129 +955,15 @@ $('document').ready(function () {
         //reset the charts each radio click
         //keeps things orderly
         resetCharts();
+
         //initilize controls for the series
         initControls();
     });
 
-    ///EVENT LISTENERS for the sliders
-    ///innerSize - item and pie
-    document.getElementById('innerSize').addEventListener('input',
-        function (e) {
-            e.preventDefault();
-            innerSizeChange(parseFloat(this.value));
-        }
-    );
-    ///size - item and pie
-    document.getElementById('size').addEventListener('input',
-        function () {
-            sizeChange(parseFloat(this.value));
-        }
-    );
-    ///endAngle - item
-    document.getElementById('endAngle').addEventListener('input',
-        function () {
-            endAngleChange(parseFloat(this.value));
-        }
-
-    );
-    //startAngle - item
-    document.getElementById('startAngle').addEventListener('input',
-        function () {
-            startAngleChange(parseFloat(this.value));
-        }
-    );
-    //slices - pie
-    document.getElementById('slices').addEventListener('input',
-        function () {
-            slicesChange(parseFloat(this.value));
-        }
-    );
-    ///variwide - pie
-    document.getElementById('variwide').addEventListener('input',
-        function () {
-            variwideChange(parseFloat(this.value));
-        }
-    );
-    //column width - column
-    document.getElementById('width').addEventListener('input',
-        function () {
-            widthChange(parseFloat(this.value));
-        }
-    );
-    ///radial - for column
-    document.getElementById('radial').addEventListener('input',
-        function () {
-            radialChange(parseFloat(this.value));
-        }
-    );
-    ///plotBands - column
-    document.getElementById('plotBands').addEventListener('input',
-        function () {
-            plotBandsChange(parseFloat(this.value));
-        }
-    );
-    ///zones - column
-    document.getElementById('zones').addEventListener('input',
-        function () {
-            zonesChange(parseFloat(this.value));
-        }
-    );
-    ///alpha - 3d area
-    document.getElementById('alpha').addEventListener('input',
-        function () {
-            alphaChange(parseFloat(this.value));
-        });
-
-    ///beta - 3d area
-    document.getElementById('beta').addEventListener('input',
-        function () {
-            betaChange(parseFloat(this.value));
-        });
-
-    //viewDistance - 3d area
-    document.getElementById('viewDistance').addEventListener('input',
-        function () {
-            viewDistanceChange(parseFloat(this.value));
-        });
-    //depth - 3d area
-    document.getElementById('depth').addEventListener('input',
-        function () {
-            depthChange(parseFloat(this.value));
-        });
-
 
     ///PLUS MINUS CONTROLS FOR THE SLIDER
-    let pushed;
-    function move(dir) {
-        let increment = 5;
-        const min = ranges[seriesIndex][controlIndex][0];
-        const max = ranges[seriesIndex][controlIndex][1];
 
-        if (thingToChange === 'variwide' || thingToChange === 'slices') {
-            increment = 1;
-        }
-        //current value of the range slider
-        let value = parseFloat($('#' + thingToChange).val());
-
-        $('.fas').each(function () {
-            $(this).removeClass('disabled');
-        });
-        console.log(dir, value, max);
-        if ((dir === 'min' && value <= min) || (dir === 'max' && value >= max)) {
-            $(pushed).addClass('disabled');
-            return;
-        }
-        if (dir === 'min') {
-            value = value - increment;
-        } else {
-            value = value + increment;
-        }
-        $('#' + thingToChange).val(value);
-        const functionName = thingToChange + 'Change';
-        window[functionName](value);
-    }
-
-    $('#min i').click(function () {
+    $('#min i:not(.disabled)').click(function () {
         pushed = this;
         move('min');
     });
@@ -1060,5 +972,136 @@ $('document').ready(function () {
         move('max');
     });
 
+    ///EVENT LISTENERS for the sliders
+    ///innerSize - item and pie
+    document.getElementById('innerSize').addEventListener('input',
+        function (e) {
+            e.preventDefault();
+            rvalue = parseFloat(this.value);
+            activeSlider = $(this)[0];
+            setMinMaxStates(rvalue,  activeSlider);
+            innerSizeChange(rvalue);
+        }
+    );
+    ///size - item and pie
+    document.getElementById('size').addEventListener('input',
+        function () {
+            rvalue = parseFloat(this.value);
+            activeSlider = $(this)[0];
+            setMinMaxStates(rvalue,  activeSlider);
+            sizeChange(rvalue);
+        }
+    );
+    ///endAngle - item
+    document.getElementById('endAngle').addEventListener('input',
+        function () {
+            rvalue = parseFloat(this.value);
+            activeSlider = $(this)[0];
+            setMinMaxStates(rvalue,  activeSlider);
+            endAngleChange(rvalue);
+        }
+
+    );
+    //startAngle - item
+    document.getElementById('startAngle').addEventListener('input',
+        function () {
+            rvalue = parseFloat(this.value);
+            activeSlider = $(this)[0];
+            setMinMaxStates(rvalue,  activeSlider);
+            startAngleChange(rvalue);
+        }
+    );
+    //slices - pie
+    document.getElementById('slices').addEventListener('input',
+        function () {
+            rvalue = parseFloat(this.value);
+            activeSlider = $(this)[0];
+            setMinMaxStates(rvalue,  activeSlider);
+            slicesChange(rvalue);
+        }
+    );
+    ///variwide - pie
+    document.getElementById('variwide').addEventListener('input',
+        function () {
+            rvalue = parseFloat(this.value);
+            activeSlider = $(this)[0];
+            setMinMaxStates(rvalue,  activeSlider);
+            variwideChange(rvalue);
+        }
+    );
+    //column width - column
+    document.getElementById('width').addEventListener('input',
+        function () {
+            rvalue = parseFloat(this.value);
+            activeSlider = $(this)[0];
+            setMinMaxStates(rvalue,  activeSlider);
+            widthChange(rvalue);
+        }
+    );
+    ///radial - for column
+    document.getElementById('radial').addEventListener('input',
+        function () {
+            rvalue = parseFloat(this.value);
+            activeSlider = $(this)[0];
+            setMinMaxStates(rvalue,  activeSlider);
+            radialChange(rvalue);
+        }
+    );
+    ///plotBands - column
+    document.getElementById('plotBands').addEventListener('input',
+        function () {
+            rvalue = parseFloat(this.value);
+            activeSlider = $(this)[0];
+            setMinMaxStates(rvalue,  activeSlider);
+            plotBandsChange(rvalue);
+        }
+    );
+    ///zones - column
+    document.getElementById('zones').addEventListener('input',
+        function () {
+            rvalue = parseFloat(this.value);
+            activeSlider = $(this)[0];
+            setMinMaxStates(rvalue,  activeSlider);
+            zonesChange(rvalue);
+        }
+    );
+    ///alpha - 3d area
+    document.getElementById('alpha').addEventListener('input',
+        function () {
+            rvalue = parseFloat(this.value);
+            activeSlider = $(this)[0];
+            setMinMaxStates(rvalue,  activeSlider);
+            alphaChange(rvalue);
+        });
+    ///beta - 3d area
+    document.getElementById('beta').addEventListener('input',
+        function () {
+            rvalue = parseFloat(this.value);
+            activeSlider = $(this)[0];
+            setMinMaxStates(rvalue,  activeSlider);
+            betaChange(rvalue);
+        });
+    //viewDistance - 3d area
+    document.getElementById('viewDistance').addEventListener('input',
+        function () {
+            rvalue = parseFloat(this.value);
+            activeSlider = $(this)[0];
+            setMinMaxStates(rvalue,  activeSlider);
+            viewDistanceChange(rvalue);
+        });
+    //depth - 3d area
+    document.getElementById('depth').addEventListener('input',
+        function () {
+            rvalue = parseFloat(this.value);
+            activeSlider = $(this)[0];
+            setMinMaxStates(rvalue,  activeSlider);
+            depthChange(rvalue);
+        });
+
+
+    ///initial setup
+    setMinMaxStates(rvalue, $('#' + thingToChange));
+
+    window.addEventListener('resize', resizer);
 
 });
