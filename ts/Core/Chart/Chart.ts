@@ -136,14 +136,6 @@ declare global {
         interface CaptionObject extends SVGElement {
             update(titleOptions: CaptionOptions, redraw?: boolean): void;
         }
-        interface IsInsideOptions {
-            ignoreX?: boolean;
-            ignoreY?: boolean;
-            inverted?: boolean;
-            paneCoordinates?: boolean;
-            series?: Series;
-            visiblePlotOnly?: boolean;
-        }
         interface Options {
             series?: Array<SeriesTypeOptions>;
         }
@@ -630,7 +622,7 @@ class Chart {
      * @param {number} plotY
      * Pixel y relative to the plot area.
      *
-     * @param {Highcharts.IsInsideOptions} [options]
+     * @param {Chart.IsInsideOptionsObject} [options]
      * Options object.
      *
      * @return {boolean}
@@ -639,7 +631,7 @@ class Chart {
     public isInsidePlot(
         plotX: number,
         plotY: number,
-        options: Highcharts.IsInsideOptions = {}
+        options: Chart.IsInsideOptionsObject = {}
     ): boolean {
         const {
             inverted,
@@ -3898,6 +3890,15 @@ namespace Chart {
         animation: undefined | boolean | Partial<AnimationOptions>;
         axis: DeepPartial<Highcharts.AxisOptions> | DeepPartial<ColorAxis.Options>;
         redraw: undefined | boolean;
+    }
+
+    export interface IsInsideOptionsObject {
+        ignoreX?: boolean;
+        ignoreY?: boolean;
+        inverted?: boolean;
+        paneCoordinates?: boolean;
+        series?: Series;
+        visiblePlotOnly?: boolean;
     }
 
     export interface LabelCollectorFunction {
