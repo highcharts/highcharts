@@ -18,6 +18,8 @@ import type {
 } from './Renderer/DOMElementType';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type SVGElement from './Renderer/SVG/SVGElement';
+
 import H from './Globals.js';
 const {
     charts,

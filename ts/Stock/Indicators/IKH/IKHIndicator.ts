@@ -472,7 +472,7 @@ class IKHIndicator extends SMAIndicator {
                 indicator.points,
             pointsLength: number = mainLinePoints.length,
             mainLineOptions: IKHOptions = indicator.options,
-            mainLinePath: Highcharts.SVGElement | undefined = indicator.graph,
+            mainLinePath = indicator.graph,
             mainColor = indicator.color,
             gappedExtend: IKHGapExtensionObject = {
                 options: {

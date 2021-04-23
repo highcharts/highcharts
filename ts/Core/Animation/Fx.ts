@@ -186,7 +186,7 @@ class Fx {
 
         // HTML styles, raw HTML content like container size
         } else {
-            elem.style[prop] = now + (this.unit as any);
+            elem.style[prop as any] = now + (this.unit as any);
         }
 
         if (step) {

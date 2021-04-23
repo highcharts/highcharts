@@ -131,7 +131,7 @@ extend<SVGRenderer|HTMLRenderer>(SVGRenderer.prototype, /** @lends SVGRenderer.p
         ): void {
             if (key === 'align') {
                 // Do not overwrite the SVGElement.align method. Same as VML.
-                wrapper.alignValue = wrapper.textAlign = value;
+                wrapper.alignValue = wrapper.textAlign = value as any;
             } else {
                 wrapper[key as any] = value;
             }

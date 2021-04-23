@@ -90,7 +90,7 @@ declare global {
             public setProxyButtonStyle(button: HTMLDOMElement): void;
             public updateProxyButtonPosition(
                 proxy: HTMLDOMElement,
-                posElement: Highcharts.SVGElement
+                posElement: SVGElement
             ): void;
         }
         interface AccessibilityChart {
@@ -329,10 +329,10 @@ AccessibilityComponent.prototype = {
      */
     createProxyButton: function (
         this: Highcharts.AccessibilityComponent,
-        svgElement: Highcharts.SVGElement,
+        svgElement: SVGElement,
         parentGroup: HTMLDOMElement,
         attributes?: SVGAttributes,
-        posElement?: Highcharts.SVGElement,
+        posElement?: SVGElement,
         preClickEvent?: Function
     ): HTMLDOMElement {
         var svgEl = svgElement.element,

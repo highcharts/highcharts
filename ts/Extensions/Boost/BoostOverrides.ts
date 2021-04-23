@@ -20,7 +20,9 @@ import type {
 } from '../../Core/Series/PointOptions';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import Chart from '../../Core/Chart/Chart.js';
 import O from '../../Core/Options.js';
 const { getOptions } = O;
@@ -574,7 +576,7 @@ Series.prototype.destroyGraphics = function (): void {
     if ((this as any).getZonesGraphs) {
         const props: string[][] = (this as any).getZonesGraphs([['graph', 'highcharts-graph']]);
         props.forEach((prop): void => {
-            const zoneGraph: Highcharts.SVGElement = (this as any)[prop[0]];
+            const zoneGraph: SVGElement = (this as any)[prop[0]];
             if (zoneGraph) {
                 (this as any)[prop[0]] = zoneGraph.destroy();
             }

@@ -28,6 +28,8 @@ import type {
     SVGElement3DLikeBase,
     SVGElement3DLikeCuboid
 } from './SVGElement3DLike';
+import type SVGPath from './SVGPath';
+
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import SVGElement from './SVGElement.js';
@@ -190,9 +192,9 @@ namespace SVGElement3D {
         attr: function (
             this: SVGElement,
             args: (string|SVGAttributes),
-            val?: (number|string),
-            complete?: any,
-            continueAnimation?: any
+            val?: (number|string|SVGPath),
+            complete?: Function,
+            continueAnimation?: boolean
         ): SVGElement {
             // Resolve setting attributes by string name
             if (typeof args === 'string' && typeof val !== 'undefined') {
@@ -213,7 +215,7 @@ namespace SVGElement3D {
             }
 
             return SVGElement.prototype.attr.call(
-                this, args, void 0, complete, continueAnimation
+                this, args as any, void 0, complete, continueAnimation
             );
         },
         animate: function (
