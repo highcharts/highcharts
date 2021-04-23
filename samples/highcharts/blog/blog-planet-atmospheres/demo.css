@@ -1,7 +1,7 @@
 .planets-title-container{
 	text-align:center;
 	color:#000;
-	background:url(sun.svg) center top no-repeat;
+	background:url(https://cdn.rawgit.com/highcharts/highcharts/21f272733db68faeaa77a23073ff2d1d73963f96samples/graphics/homepage/sun.svg) center top no-repeat;
 	background-size:40%;
 	background-color:transparent;
 	position: absolute;
@@ -11,6 +11,7 @@
 	height: 120px;
 	z-index: 1;
 }
+
 .planets-sub-title {
 	padding-top:50px;
 	text-align:center;

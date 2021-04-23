@@ -886,6 +886,10 @@ $('document').ready(function () {
             const plotLines = [];
             demoChart.xAxis[0].setExtremes(-1, 5);
             for (let ii = 0; ii <= 6; ++ii) {
+                let display = 'display: block';
+                if (ii === 6) {
+                    display = 'display: none;';
+                }
                 const zoneValue = ii * 10; //create a zone every 10
                 zonesArray.push({
                     value: zoneValue,
@@ -898,7 +902,7 @@ $('document').ready(function () {
                     label: {
                         useHTML: true,
                         formatter: function () {
-                            return '<div><img height=15 style="border:1px solid #ccc" src="https://cdn.rawgit.com/highcharts/highcharts/b87bb2d3714aadff87ec6e128c9a4ee814222d13/samples/graphics/homepage-hero/p' + (ii + 1) + '.png"> Zone' + (ii) + '</div>';
+                            return '<div style="' + display + '"><img height=15 style="border:1px solid #ccc" src="https://cdn.rawgit.com/highcharts/highcharts/21f272733db68faeaa77a23073ff2d1d73963f96/samples/graphics/homepage/p' + (ii + 1) + '.png"> Zone' + (ii) + '</div>';
                         }
                     },
                     align: 'left'

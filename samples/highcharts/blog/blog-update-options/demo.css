@@ -145,15 +145,3 @@
  .highcharts-item-series{
   transform: translateX(-30px) scale(1.2);
 }
-/*
-@media screen  and (max-width: 768px) {
-  .highcharts-item-series{
-    transform: translateX(-40px) scale(1);
-  }
-}
-
-@media screen  and (max-width: 1024px) {
-  .highcharts-item-series{
-    transform: translateX(-40px) scale(1.2);
-  }
-} */

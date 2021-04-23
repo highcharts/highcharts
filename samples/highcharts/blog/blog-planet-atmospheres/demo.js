@@ -17,6 +17,7 @@ const animate = true;
 const gasLabels = ['C0<sub>2</sub>', 'N', 'CH<sub>4</sub>', 'Ar', 'O', 'Na', 'H', 'He', 'Other'];
 const gases = ['Carbon<br>Dioxide', 'Nitrogen', 'Methane', 'Argon', 'Oxygen',  'Sodium', 'Hydrogen', 'Helium', 'Other'];
 const gasStyles = ['carbon-dioxide', 'nitrogen', 'methane', 'argon', 'oxygen', 'sodium', 'hydrogen', 'helium', 'other'];
+const srcURL = 'https://cdn.rawgit.com/highcharts/highcharts/21f272733db68faeaa77a23073ff2d1d73963f96/samples/graphics/homepage/';
 const planetImages = [
     'sun',
     'mercury',
@@ -125,7 +126,7 @@ const planetStyles = function (index, chart) {
         }
     });
     ///set the background image to the right planet and show it
-    $('.planets-title-container').css({ backgroundImage: 'url(' + planetImages[index] + '.png)' });
+    $('.planets-title-container').css({ backgroundImage: 'url(' + srcURL + planetImages[index] + '.png)' });
     $('.planets-title-container').fadeIn(1000);
 
 };
