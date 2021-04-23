@@ -138,7 +138,7 @@ class Cell extends GUIElement {
             if (this.options.layout) {
                 const dashboard = this.row.layout.dashboard;
 
-                this.layout = new Layout(
+                this.nestedLayout = new Layout(
                     dashboard,
                     merge(
                         {},
@@ -181,6 +181,11 @@ class Cell extends GUIElement {
      * Component mounted in the cell.
      */
     public mountedComponent?: Component;
+
+    /**
+     * Layout nested in the cell.
+     */
+    public nestedLayout?: Layout;
 
     /**
      * Mount component from JSON.
@@ -257,10 +262,6 @@ class Cell extends GUIElement {
             this.container as HTMLDOMElement
         );
     }
-}
-
-interface Cell {
-    layout: Layout;
 }
 
 namespace Cell {

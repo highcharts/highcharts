@@ -151,7 +151,7 @@ class Resizer {
         cell.styles = {} as Resizer.ElementStyles;
 
         // not created handlers when nested layouts, only in the child cells
-        if (cell.layout) {
+        if (cell.nestedLayout) {
             return;
         }
 
@@ -404,10 +404,9 @@ class Resizer {
 
                 // find all cells in nested layout to calculate
                 // min-width / width each of them
-                if (cells[i].layout) {
+                const cellRows = (cells[i].nestedLayout || {}).rows;
 
-                    const cellRows = cells[i].layout.rows;
-
+                if (cellRows) {
                     let maxRow = row;
                     let maxCells = 0;
 
@@ -484,9 +483,9 @@ class Resizer {
                 currentCell = rows[i].cells[j];
 
                 // run reccurent if nested layouts
-                if (currentCell.layout) {
+                if (currentCell.nestedLayout) {
                     resizer.destroy(
-                        currentCell.layout.rows
+                        currentCell.nestedLayout.rows
                     );
                 } else if (
                     currentCell.resizer &&

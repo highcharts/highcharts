@@ -6,6 +6,7 @@ import Menu from '../Menu/Menu.js';
 import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
 import type Resizer from './../../Actions/Resizer';
+import Layout from '../../Layout/Layout.js';
 
 const {
     addEvent,
@@ -108,36 +109,44 @@ class CellEditToolbar extends EditToolbar {
             dashboard = toolbar.editMode.dashboard;
 
         for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
-            const layout = dashboard.layouts[i];
-
-            for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
-                const row = layout.rows[j];
-
-                for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
-                    const cell = row.cells[k];
-
-                    if (cell.container) {
-                        addEvent(cell.container, 'mousemove', function (): void {
-                            toolbar.onMouseMove(cell);
-                        });
-
-                        // Hide cell toolbar when mouse on cell resizer.
-                        const resizedCell = (cell as Resizer.ResizedCell).resizer;
-                        if (resizedCell) {
-                            addEvent(resizedCell.snapX, 'mousemove', function (e): void {
-                                toolbar.hide();
-                                e.stopImmediatePropagation();
-                            });
-                        }
-                    }
-                }
-            }
+            toolbar.setLayoutEvents(dashboard.layouts[i]);
         }
 
         // Hide row toolbar when mouse on cell toolbar.
         addEvent(toolbar.container, 'mouseenter', function (): void {
             toolbar.editMode.hideToolbars(['row']);
         });
+    }
+
+    private setLayoutEvents(
+        layout: Layout
+    ): void {
+        const toolbar = this;
+
+        for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
+            const row = layout.rows[j];
+
+            for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
+                const cell = row.cells[k];
+
+                if (cell.nestedLayout) {
+                    toolbar.setLayoutEvents(cell.nestedLayout);
+                } else if (cell.container) {
+                    addEvent(cell.container, 'mousemove', function (): void {
+                        toolbar.onMouseMove(cell);
+                    });
+
+                    // Hide cell toolbar when mouse on cell resizer.
+                    const resizedCell = (cell as Resizer.ResizedCell).resizer;
+                    if (resizedCell && resizedCell.snapX) {
+                        addEvent(resizedCell.snapX, 'mousemove', function (e): void {
+                            toolbar.hide();
+                            e.stopImmediatePropagation();
+                        });
+                    }
+                }
+            }
+        }
     }
 
     private onMouseMove(
@@ -156,11 +165,8 @@ class CellEditToolbar extends EditToolbar {
             !isCellResizing &&
             !(toolbar.editMode.dragDrop || {}).isActive
         ) {
-            x = ((cellCnt.parentElement || {}).offsetLeft || 0) +
-              cellCnt.offsetLeft + cellCnt.offsetWidth - width;
-
-            y = ((cellCnt.parentElement || {}).offsetTop || 0) +
-              cellCnt.offsetTop;
+            x = this.getCellOffset(cell, 'offsetLeft') + cellCnt.clientWidth - width;
+            y = this.getCellOffset(cell, 'offsetTop');
 
             // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
@@ -171,6 +177,19 @@ class CellEditToolbar extends EditToolbar {
             toolbar.cell = cell;
             toolbar.refreshOutline();
         }
+    }
+
+    public getCellOffset(
+        cell: Cell,
+        offsetType: string
+    ): number {
+        let offset = (cell.container as any)[offsetType] + (cell.row.container as any)[offsetType];
+
+        if (cell.row.layout.parentCell) {
+            offset += this.getCellOffset(cell.row.layout.parentCell, offsetType);
+        }
+
+        return offset;
     }
 
     public refreshOutline(): void {
