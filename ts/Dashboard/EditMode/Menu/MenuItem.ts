@@ -104,7 +104,16 @@ class MenuItem {
                 options.icon,
                 callback
             );
-        } else if (options.type === 'textarea' ) {
+
+            // Temp.
+            if (element && options.events && options.events.onmousedown) {
+                element.onmousedown = function (): void {
+                    if (options.events && options.events.onmousedown) {
+                        options.events.onmousedown.apply(item, arguments);
+                    }
+                };
+            }
+        } else if (options.type === 'textarea') {
             element = EditRenderer.renderTextarea(
                 item.container,
                 options.text || ''

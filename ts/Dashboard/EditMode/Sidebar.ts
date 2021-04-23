@@ -474,9 +474,9 @@ class Sidebar {
         if (this.isDragged) {
             const cntStyle = this.container.style;
 
-            this.container.style.left = +cntStyle.left.substring(0, cntStyle.left.length - 2) +
+            this.container.style.left = +cntStyle.left.slice(0, -2) +
                 e.movementX + 'px';
-            this.container.style.top = +cntStyle.top.substring(0, cntStyle.top.length - 2) +
+            this.container.style.top = +cntStyle.top.slice(0, -2) +
                 e.movementY + 'px';
         }
     }

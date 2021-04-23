@@ -311,7 +311,11 @@ class Resizer {
         const cellContainer = currentCell && currentCell.container;
         const currentDimension = this.currentDimension;
 
-        if (currentCell && cellContainer) {
+        if (
+            currentCell &&
+            cellContainer &&
+            !((currentCell.row.layout.dashboard.editMode || {}).dragDrop || {}).isActive
+        ) {
             const parentRow = (cellContainer.parentNode as HTMLDOMElement);
             const parentRowWidth = parentRow.offsetWidth;
 

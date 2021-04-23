@@ -36,7 +36,14 @@ class CellEditToolbar extends EditToolbar {
             type: 'icon',
             icon: EditGlobals.iconsURL + 'drag.svg',
             events: {
-                click: function (this: MenuItem, e: any): void {}
+                onmousedown: function (this: MenuItem, e: any): void {
+                    const cellEditToolbar = (this.menu.parent as CellEditToolbar),
+                        dragDrop = cellEditToolbar.editMode.dragDrop;
+
+                    if (dragDrop && cellEditToolbar.cell) {
+                        dragDrop.onDragStart(cellEditToolbar.cell, e);
+                    }
+                }
             }
         },
         settings: {
@@ -143,7 +150,12 @@ class CellEditToolbar extends EditToolbar {
 
         let x, y;
 
-        if (cellCnt && toolbar.editMode.isActive() && !isCellResizing) {
+        if (
+            cellCnt &&
+            toolbar.editMode.isActive() &&
+            !isCellResizing &&
+            !(toolbar.editMode.dragDrop || {}).isActive
+        ) {
             x = ((cellCnt.parentElement || {}).offsetLeft || 0) +
               cellCnt.offsetLeft + cellCnt.offsetWidth - width;
 

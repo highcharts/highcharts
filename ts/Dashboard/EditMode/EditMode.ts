@@ -9,9 +9,11 @@ import CellEditToolbar from './Toolbar/CellEditToolbar.js';
 import RowEditToolbar from './Toolbar/RowEditToolbar.js';
 import Sidebar from './Sidebar.js';
 import EditContextMenu from './EditContextMenu.js';
+import DragDrop from './../Actions/DragDrop.js';
 
 const {
-    merge
+    merge,
+    pick
 } = U;
 
 class EditMode {
@@ -21,7 +23,12 @@ class EditMode {
     *
     * */
     protected static readonly defaultOptions: EditMode.Options = {
-        enabled: true
+        enabled: true,
+        tools: {
+            addComponentBtn: {
+                icon: EditGlobals.iconsURL + 'add.svg',
+            }
+        }
     }
 
     /* *
@@ -40,12 +47,34 @@ class EditMode {
         // Init renderer.
         this.renderer = new EditRenderer(this);
 
+        // create context menu button
         if (
             this.options.contextMenu &&
             this.options.contextMenu.enabled
         ) {
             this.contextButtonElement = this.renderer.renderContextButton();
         }
+
+        this.isInitialized = false;
+
+        // create add button
+        const addIconURL = options && options.tools &&
+            options.tools.addComponentBtn && options.tools.addComponentBtn.icon;
+
+        this.addComponentBtn = EditRenderer.renderButton(
+            this.dashboard.container,
+            {
+                className: EditGlobals.classNames.editToolsBtn,
+                icon:  addIconURL,
+                value: 'Add',
+                callback: () => {
+                    
+                },
+                style: {
+                    display: 'none'
+                }
+            }
+        );
     }
 
     /* *
@@ -64,6 +93,9 @@ class EditMode {
     public cellToolbar?: CellEditToolbar;
     public rowToolbar?: RowEditToolbar;
     public sidebar?: Sidebar;
+    public dragDrop?: DragDrop;
+    public isInitialized: boolean;
+    public addComponentBtn?: HTMLDOMElement;
 
     /* *
     *
@@ -103,11 +135,9 @@ class EditMode {
         }
     }
 
-    public activateEditMode(): void {
+    public initEditMode(): void {
         const editMode = this,
             dashboard = editMode.dashboard;
-
-        editMode.active = true;
 
         let layout;
 
@@ -118,6 +148,14 @@ class EditMode {
             if (!layout.resizer) {
                 editMode.initLayoutResizer(layout);
             }
+        }
+
+        // Init dragDrop.
+        if (
+            !(editMode.options.dragDrop &&
+                !editMode.options.dragDrop.enabled)
+        ) {
+            editMode.dragDrop = new DragDrop(editMode);
         }
 
         // Init cellToolbar.
@@ -135,10 +173,27 @@ class EditMode {
             editMode.sidebar = new Sidebar(editMode);
         }
 
+        editMode.isInitialized = true;
+    }
+
+    public activateEditMode(): void {
+        const editMode = this;
+
+        if (!editMode.isInitialized) {
+            editMode.initEditMode();
+        }
+
+        editMode.active = true;
+
         // Set edit mode active class to dashboard.
         editMode.dashboard.container.classList.add(
             EditGlobals.classNames.editModeEnabled
         );
+
+        if (this.addComponentBtn) {
+            this.addComponentBtn.style.display = 'block';
+        }
+
     }
 
     public deactivateEditMode(): void {
@@ -153,6 +208,10 @@ class EditMode {
 
         // Hide toolbars.
         editMode.hideToolbars();
+
+        if (this.addComponentBtn) {
+            this.addComponentBtn.style.display = 'none';
+        }
     }
 
     private initLayoutResizer(layout: Layout): void {
@@ -219,12 +278,22 @@ namespace EditMode {
         contextMenu?: EditContextMenu.Options;
         lang?: EditGlobals.LangOptions|string;
         toolbars?: EditMode.Toolbars;
+        dragDrop?: DragDrop.Options;
+        tools?: Tools;
     }
 
     export interface Toolbars {
         cell?: CellEditToolbar.Options;
         row?: RowEditToolbar.Options;
         settings?: Sidebar.Options;
+    }
+
+    export interface Tools {
+        addComponentBtn: addComponentBtn
+    }
+
+    export interface addComponentBtn {
+        icon: string;
     }
 }
 

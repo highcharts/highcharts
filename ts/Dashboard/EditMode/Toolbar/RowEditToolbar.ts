@@ -141,7 +141,11 @@ class RowEditToolbar extends EditToolbar {
 
         let x, y;
 
-        if (rowCnt && toolbar.editMode.isActive()) {
+        if (
+            rowCnt &&
+            toolbar.editMode.isActive() &&
+            !(toolbar.editMode.dragDrop || {}).isActive
+        ) {
             x = rowCnt.offsetLeft;
             y = rowCnt.offsetTop;
 
