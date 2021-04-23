@@ -2242,6 +2242,8 @@ class Navigator {
                 baseOptions = base.options || {};
                 baseNavigatorOptions = baseOptions.navigatorOptions || {};
 
+                // The dataLabels options are not merged correctly
+                // if the settings are and array, #13847.
                 userNavOptions.dataLabels = splat(userNavOptions.dataLabels);
                 mergedNavSeriesOptions = merge(
                     baseOptions,

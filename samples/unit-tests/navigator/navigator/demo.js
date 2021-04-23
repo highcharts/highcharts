@@ -1147,16 +1147,12 @@ QUnit.test(
 
 QUnit.test('Navigator dafault dataLabels enabled, #13847.', function (assert) {
     const chart = Highcharts.stockChart('container', {
-        plotOptions: {
-            series: {
-                dataLabels: [{
-                    enabled: true,
-                    format: 'T2'
-                }]
-            }
-        },
         series: [{
-            data: [1, 2, 3]
+            data: [1, 2, 3],
+            dataLabels: [{
+                enabled: true,
+                format: 'T2'
+            }]
         }]
     });
 
@@ -1187,7 +1183,7 @@ QUnit.test('Navigator dafault dataLabels enabled, #13847.', function (assert) {
         navigator: {
             series: {
                 dataLabels: [{
-                    enabled: true
+                    enabled: false
                 }]
             }
         }
@@ -1195,7 +1191,7 @@ QUnit.test('Navigator dafault dataLabels enabled, #13847.', function (assert) {
 
     assert.equal(
         chart.navigator.series[0].options.dataLabels[0].enabled,
-        true,
+        false,
         'DataLabels in Navigator should be enabled, if specified in options (wrapped with array).'
     );
 });
