@@ -10,10 +10,12 @@ import RowEditToolbar from './Toolbar/RowEditToolbar.js';
 import Sidebar from './Sidebar.js';
 import EditContextMenu from './EditContextMenu.js';
 import DragDrop from './../Actions/DragDrop.js';
+import StockToolsGui from '../../Stock/StockToolsGui.js';
 
 const {
     merge,
-    pick
+    pick,
+    createElement
 } = U;
 
 class EditMode {
@@ -47,34 +49,10 @@ class EditMode {
         // Init renderer.
         this.renderer = new EditRenderer(this);
 
-        // create context menu button
-        if (
-            this.options.contextMenu &&
-            this.options.contextMenu.enabled
-        ) {
-            this.contextButtonElement = this.renderer.renderContextButton();
-        }
-
         this.isInitialized = false;
+        this.tools = {};
 
-        // create add button
-        const addIconURL = options && options.tools &&
-            options.tools.addComponentBtn && options.tools.addComponentBtn.icon;
-
-        this.addComponentBtn = EditRenderer.renderButton(
-            this.dashboard.container,
-            {
-                className: EditGlobals.classNames.editToolsBtn,
-                icon:  addIconURL,
-                value: 'Add',
-                callback: () => {
-                    
-                },
-                style: {
-                    display: 'none'
-                }
-            }
-        );
+        this.createTools();
     }
 
     /* *
@@ -86,8 +64,8 @@ class EditMode {
     private active: boolean = false;
     public options: EditMode.Options;
     public dashboard: Dashboard;
-    public contextButtonElement?: HTMLDOMElement;
-    public contextMenu?: EditContextMenu;
+    // public contextButtonElement?: HTMLDOMElement;
+    // public contextMenu?: EditContextMenu;
     public lang: EditGlobals.LangOptions;
     public renderer: EditRenderer;
     public cellToolbar?: CellEditToolbar;
@@ -96,6 +74,7 @@ class EditMode {
     public dragDrop?: DragDrop;
     public isInitialized: boolean;
     public addComponentBtn?: HTMLDOMElement;
+    public tools: EditMode.Tools;
 
     /* *
     *
@@ -107,20 +86,20 @@ class EditMode {
         editMode: EditMode
     ): void {
         // Init contextMenu if doesn't exist.
-        if (!editMode.contextMenu) {
-            editMode.contextMenu = new EditContextMenu(
+        if (!editMode.tools.contextMenu) {
+            editMode.tools.contextMenu = new EditContextMenu(
                 editMode, editMode.options.contextMenu || {}
             );
         }
 
         // Show context menu.
-        if (editMode.contextMenu) {
-            if (!editMode.contextMenu.isVisible) {
-                editMode.contextMenu.updatePosition(editMode.contextButtonElement);
+        if (editMode.tools.contextMenu) {
+            if (!editMode.tools.contextMenu.isVisible) {
+                editMode.tools.contextMenu.updatePosition(editMode.tools.contextButtonElement);
             }
 
-            editMode.contextMenu.setVisible(
-                !editMode.contextMenu.isVisible
+            editMode.tools.contextMenu.setVisible(
+                !editMode.tools.contextMenu.isVisible
             );
         }
     }
@@ -271,15 +250,56 @@ class EditMode {
             }
         }
     }
+
+    public createTools(): void {
+        const options = this.options;
+
+        // create tools container
+        this.tools.container = createElement(
+            'div', {
+                className: EditGlobals.classNames.editTools
+            }, {},
+            this.dashboard.container
+        );
+
+        // create context menu button
+        if (
+            options.contextMenu &&
+            options.contextMenu.enabled
+        ) {
+            this.tools.contextButtonElement = this.renderer.renderContextButton(
+                this.tools.container
+            );
+        }
+
+        // create add button
+        const addIconURL = options && options.tools &&
+            options.tools.addComponentBtn && options.tools.addComponentBtn.icon;
+
+        this.addComponentBtn = EditRenderer.renderButton(
+            this.tools.container,
+            {
+                className: EditGlobals.classNames.editToolsBtn,
+                icon:  addIconURL,
+                value: 'Add',
+                callback: () => {
+                    
+                },
+                style: {
+                    display: 'none'
+                }
+            }
+        );
+    }
 }
 namespace EditMode {
     export interface Options {
         enabled: boolean;
-        contextMenu?: EditContextMenu.Options;
         lang?: EditGlobals.LangOptions|string;
         toolbars?: EditMode.Toolbars;
         dragDrop?: DragDrop.Options;
         tools?: Tools;
+        contextMenu?: EditContextMenu.Options;
     }
 
     export interface Toolbars {
@@ -289,7 +309,10 @@ namespace EditMode {
     }
 
     export interface Tools {
-        addComponentBtn: addComponentBtn
+        contextMenu?: EditContextMenu;
+        contextButtonElement?: HTMLDOMElement;
+        addComponentBtn?: addComponentBtn;
+        container?: HTMLDOMElement;
     }
 
     export interface addComponentBtn {

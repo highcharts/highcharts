@@ -42,7 +42,8 @@ const EditGlobals: EditGlobals = {
         sidebarNavButton: PREFIX + 'sidebar-button-nav',
         labelText: PREFIX + 'label-text',
         editSidebarTabBtn: PREFIX + 'sidebar-tab-btn',
-        editToolsBtn: PREFIX + 'tools-btn'
+        editToolsBtn: PREFIX + 'tools-btn',
+        editTools: PREFIX + 'tools'
     },
     lang: {
         editMode: 'Edit mode',
@@ -98,6 +99,7 @@ namespace EditGlobals {
         sidebarNavButton: string;
         editSidebarTabBtn: string;
         editToolsBtn: string;
+        editTools: string;
     }
 
     export interface LangOptions {

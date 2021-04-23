@@ -32,7 +32,9 @@ class EditRenderer {
     *  Functions
     *
     * */
-    public renderContextButton(): HTMLDOMElement|undefined {
+    public renderContextButton(
+        parentNode: HTMLDOMElement
+    ): HTMLDOMElement|undefined {
         const editMode = this.editMode;
 
         let ctxBtnElement;
@@ -44,7 +46,7 @@ class EditRenderer {
                     onclick: function (): void {
                         editMode.onContextBtnClick(editMode);
                     }
-                }, {}, editMode.dashboard.container
+                }, {}, parentNode
             );
             ctxBtnElement.style.background = 'url(' +
                 editMode.options.contextMenu.icon +
