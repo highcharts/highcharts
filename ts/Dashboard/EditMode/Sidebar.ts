@@ -327,7 +327,6 @@ class Sidebar {
                 }, {}, tabContainer
             );
 
-            console.log('contentItems', contentItems);
             content = new Menu(
                 contentContainer,
                 {
