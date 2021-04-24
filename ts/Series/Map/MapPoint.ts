@@ -83,6 +83,9 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
     ): SVGPath {
         if (!point.projectedPath) {
             if (projection && isArray((point as any).coordinates)) {
+
+                // (point as any).coordinates.name = point.name
+
                 point.projectedPath = projection.path({
                     type: (point as any).type,
                     coordinates: (point as any).coordinates

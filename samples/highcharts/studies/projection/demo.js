@@ -175,12 +175,12 @@ const drawMap = projectionKey => {
                 pointFormat: '{point.name}: {point.value}'
             },
 
-            series: [
-            {
-                name: 'Grid',
+            series: [{
+                name: 'Graticule',
                 type: 'mapline',
                 data: getGraticule(),
-                nullColor: '#e8e8e8'
+                nullColor: '#e8e8e8',
+                color: '#e8e8e8'
             },
             /*
             {
@@ -190,7 +190,9 @@ const drawMap = projectionKey => {
                     coordinates: [
                         [120, 30],
                         [-120, 30]
-                    ]
+                    ],
+                    name: 'MapLine'
+
                 }],
                 color: 'blue'
 

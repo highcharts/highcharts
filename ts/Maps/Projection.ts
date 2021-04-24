@@ -56,7 +56,11 @@ export default class Projection {
 
             const lineString: LonLatArray[] = [];
 
-            for (let fraction = step; fraction < 1; fraction += step) {
+            for (
+                let fraction = step;
+                fraction < 0.999; // Account for float errors
+                fraction += step
+            ) {
                 const A = sin((1 - fraction) * calcB) / sin(calcB);
                 const B = sin(fraction * calcB) / sin(calcB);
 
@@ -215,7 +219,14 @@ export default class Projection {
         const polygons: Highcharts.LonLatArray[][] = [poly];
 
         poly.forEach((lonLat, i): void => {
-            const previousLonLat = i ? poly[i - 1] : poly[poly.length - 1];
+            let previousLonLat = poly[i - 1];
+            if (!i) {
+                if (!isPolygon) {
+                    return;
+                }
+                // Else, wrap to beginning
+                previousLonLat = poly[poly.length - 1];
+            }
             const lon1 = previousLonLat[0];
             const lon2 = lonLat[0];
 
@@ -223,28 +234,16 @@ export default class Projection {
             const lon1Adjusted = (lon1 - antimeridian - 540) % 360 + 180;
             const lon2Adjusted = (lon2 - antimeridian - 540) % 360 + 180;
 
-
             if (
                 // Both points, after rotating for antimeridian, are
                 // in  the front facing hemisphere...
                 lon1Adjusted > -90 && lon1Adjusted < 90 &&
                 lon2Adjusted > -90 && lon2Adjusted < 90 &&
                 // ... and on either side of 0
-                (lon1Adjusted > 0) !== (lon2Adjusted > 0)
+                (lon1Adjusted >= 0) !== (lon2Adjusted >= 0)
             ) {
                 // Simplified measure of distance from the equator
                 const distance = Math.abs(previousLonLat[1] + lonLat[1]) / 2;
-
-                /*
-                const safetyMargin = 0.1;
-                if (lon1Adjusted < lon2Adjusted) {
-                    previousLonLat[0] -= safetyMargin;
-                    lonLat[0] += safetyMargin;
-                } else {
-                    previousLonLat[0] += safetyMargin;
-                    lonLat[0] -= safetyMargin;
-                }
-                */
 
                 intersections.push({
                     i,
@@ -372,6 +371,8 @@ export default class Projection {
                 return lonLat;
             });
 
+            let polygons = [poly];
+
 
             if (isGeographicCoordinates) {
 
@@ -395,15 +396,12 @@ export default class Projection {
                         }
                     }
                 }
-            }
 
-            // @todo: Cheap pre-check, only run if the polygon has latitudes
-            // below a certain value
-            const polygons =
                 // @todo better test for when to do this
-                this.options.projectionName !== 'ortho' ?
-                    this.clipOnAntimeridian(poly, isPolygon) :
-                    [poly];
+                if (this.options.projectionName !== 'ortho') {
+                    polygons = this.clipOnAntimeridian(poly, isPolygon);
+                }
+            }
 
             polygons.forEach((poly): void => {
                 if (poly.length < 2) {
@@ -431,9 +429,14 @@ export default class Projection {
                     const valid = (
                         !isNaN(point[0]) &&
                         !isNaN(point[1]) &&
-                        // Limited projections like Web Mercator
-                        lonLat[1] <= this.maxLatitude &&
-                        lonLat[1] >= -this.maxLatitude
+                        (
+                            !isGeographicCoordinates ||
+                            // Limited projections like Web Mercator
+                            (
+                                lonLat[1] <= this.maxLatitude &&
+                                lonLat[1] >= -this.maxLatitude
+                            )
+                        )
                     );
 
                     if (valid) {
@@ -446,8 +449,6 @@ export default class Projection {
                             firstValidLonLat = lonLat;
                             poly.push(lonLat);
                         }
-
-
 
                         // When entering the first valid point after a gap of
                         // invalid points, typically on the far side of the
