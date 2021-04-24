@@ -285,9 +285,9 @@ class EditMode {
                 value: 'Add',
                 callback: (): void => {
                     // sidebar trigger
-                    console.log(editMode.sidebar);
                     if (editMode.sidebar) {
                         editMode.sidebar.show();
+                        editMode.sidebar.updateTitle('General');
                     }
                 },
                 style: {

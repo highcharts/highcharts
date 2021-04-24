@@ -472,6 +472,25 @@ h1 {
     display: block;
 }
 
+.hcd-edit-grid-items {
+    
+}
+
+.hcd-edit-grid-items div {
+    width: calc(50% - 20px);
+    clear: both;
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+    display: inline-block;
+    background-color: #474747;
+    cursor: grab;
+}
+
+.hcd-edit-grid-items div:hover {
+    background-color :#aac6ff; 
+}
+
 .hcd-edit-sidebar-tabs {
     display: flex;
     justify-content: center;

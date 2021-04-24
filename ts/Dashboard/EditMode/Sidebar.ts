@@ -36,32 +36,38 @@ class Sidebar {
         items: {
             cell: ['cellWidth']
         }
-    }, {
+    },/* {
         type: 'data',
         icon: '',
         items: {
             cell: ['']
         }
-    }, {
+    },*/ {
         type: 'component',
         icon: '',
         items: {
-            cell: ['componentSettings'],
-            row: ['']
+            cell: ['componentSettings']
         }
     }]
 
+    public static components: Array<string> = [
+        'layout',
+        'chart',
+        'HTML',
+        'table'
+    ];
+
     public static tabsGeneralOptions: Array<Sidebar.TabOptions> = [{
-        type: 'addLayout',
-        icon: '',
-        items: {
-            cell: ['addLayout']
-        }
-    }, {
-        type: 'addComponent',
+        type: 'component',
         icon: '',
         items: {
             cell: ['addComponent']
+        }
+    }, {
+        type: 'layout',
+        icon: '',
+        items: {
+            cell: ['addLayout']
         }
     }]
 
@@ -152,23 +158,21 @@ class Sidebar {
         addLayout: {
             id: 'addLayout',
             type: 'addLayout',
-            text: 'Add layout',
             events: {
                 update: function (): void {
-                    //
+                    ((this as MenuItem).menu.parent as Sidebar).getLayoutOptions();
                 }
             }
         },
         addComponent: {
             id: 'addComponent',
             type: 'addComponent',
-            text: 'Add component',
             events: {
                 update: function (): void {
-                    //
+                    ((this as MenuItem).menu.parent as Sidebar).getComponents();
                 }
             }
-        },
+        }
     })
 
     /* *
@@ -323,6 +327,7 @@ class Sidebar {
                 }, {}, tabContainer
             );
 
+            console.log('contentItems', contentItems);
             content = new Menu(
                 contentContainer,
                 {
@@ -333,20 +338,22 @@ class Sidebar {
             );
 
             content.initItems(
-                Sidebar.items,
+                isRowCell ? Sidebar.items : Sidebar.itemsGeneralOptions,
                 true
             );
 
-            saveBtn = EditRenderer.renderButton(
-                contentContainer,
-                {
-                    value: 'Save',
-                    className: EditGlobals.classNames.editSidebarTabBtn,
-                    callback: (): void => {
-                        // console.log('save');
+            if (isRowCell) {
+                saveBtn = EditRenderer.renderButton(
+                    contentContainer,
+                    {
+                        value: 'Save',
+                        className: EditGlobals.classNames.editSidebarTabBtn,
+                        callback: (): void => {
+                            // console.log('save');
+                        }
                     }
-                }
-            );
+                );
+            }
 
             sidebar.tabs[tabs[i].type] = {
                 element: tabElement,
@@ -402,29 +409,26 @@ class Sidebar {
     public onTabClick(
         tab: Sidebar.Tab
     ): void {
-        const sidebar = this,
-            contextType = sidebar.context && sidebar.context.getType();
+        const sidebar = this;
 
-        if (contextType) {
-            if (sidebar.activeTab) {
-                sidebar.activeTab.isActive = false;
-                sidebar.activeTab.element.classList.remove(
-                    EditGlobals.classNames.editSidebarTabActive
-                );
-                sidebar.activeTab.contentContainer.style.display = 'none';
-            }
-
-            tab.element.classList.add(
+        if (sidebar.activeTab) {
+            sidebar.activeTab.isActive = false;
+            sidebar.activeTab.element.classList.remove(
                 EditGlobals.classNames.editSidebarTabActive
             );
-
-            tab.contentContainer.style.display = 'block';
-
-            sidebar.activeTab = tab;
-            tab.isActive = true;
-
-            tab.content.updateActiveItems();
+            sidebar.activeTab.contentContainer.style.display = 'none';
         }
+
+        tab.element.classList.add(
+            EditGlobals.classNames.editSidebarTabActive
+        );
+
+        tab.contentContainer.style.display = 'block';
+
+        sidebar.activeTab = tab;
+        tab.isActive = true;
+
+        tab.content.updateActiveItems();
     }
 
     public show(
@@ -442,8 +446,9 @@ class Sidebar {
         }
 
         // run current tab
+        this.update(context);
+
         if (context) {
-            this.update(context);
             if (sidebar.rowCellTab) {
                 sidebar.rowCellTab.classList.add('current');
             }
@@ -467,12 +472,14 @@ class Sidebar {
     }
 
     public update(
-        context: Cell|Row
+        context: Cell|Row|undefined
     ): void {
         this.context = context;
 
         // activate first tab.
-        this.onTabClick(this.tabs[Sidebar.tabs[0].type]);
+        this.onTabClick(this.tabs[
+            context ? Sidebar.tabs[0].type : Sidebar.tabsGeneralOptions[0].type
+        ]);
     }
 
     public hide(): void {
@@ -625,6 +632,50 @@ class Sidebar {
             sidebar.componentEditableOptions.currentElementId = cell.id;
         }
     }
+
+    public getComponents(): void {
+        const activeTab = this.activeTab;
+        const tabContainer = activeTab && activeTab.contentContainer;
+        const components = Sidebar.components;
+
+        let gridElement;
+
+        if (activeTab && activeTab.listComponent) {
+            return;
+        }
+
+        // TEMP reset tab content, Menu creates extra div, when addComponent,
+        // addLayout or componentSettings
+        if (activeTab) {
+            activeTab.contentContainer.innerHTML = '';
+        }
+
+        if (tabContainer) {
+            tabContainer.classList.add(EditGlobals.classNames.editGridItems);
+        }
+
+        for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
+            gridElement = createElement(
+                'div',
+                {},
+                {},
+                tabContainer
+            );
+
+            gridElement.innerHTML = components[i];
+        }
+
+        if (this.activeTab) {
+            this.activeTab.listComponent = true;
+        }
+
+    }
+
+    public getLayoutOptions(): void {
+        if (this.activeTab) {
+            this.activeTab.contentContainer.innerHTML = 'layouts options';
+        }
+    }
 }
 
 interface Sidebar {
@@ -638,8 +689,6 @@ namespace Sidebar {
         className: string;
         dragIcon: string;
         closeIcon: string;
-        // rowCellTab?: HTMLDOMElement;
-        // generalOptionsTab?: HTMLDOMElement;
     }
 
     export interface TabOptions {
@@ -655,6 +704,7 @@ namespace Sidebar {
         content: Menu;
         contentContainer: HTMLDOMElement;
         saveBtn: HTMLDOMElement;
+        listComponent?: boolean;
     }
 }
 

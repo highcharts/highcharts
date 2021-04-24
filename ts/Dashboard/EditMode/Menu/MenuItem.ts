@@ -124,14 +124,9 @@ class MenuItem {
                 {
                     callback: void 0,
                     title: options.text
-                    // applyButtonFn: function (input: HTMLDOMElement, e: any): void {
-                    //     if (options.events && options.events.click) {
-                    //         options.events.click.apply(item, [input, e]);
-                    //     }
-                    // }
                 }
             );
-        } else {
+        } else if (options.type === 'text') {
             element = EditRenderer.renderText(
                 item.container,
                 options.text || '',
