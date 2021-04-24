@@ -36,13 +36,13 @@ class Sidebar {
         items: {
             cell: ['cellWidth']
         }
-    },/* {
+    }, {
         type: 'data',
         icon: '',
         items: {
             cell: ['']
         }
-    },*/ {
+    }, {
         type: 'component',
         icon: '',
         items: {
