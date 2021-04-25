@@ -22,6 +22,21 @@ const {
 } = U;
 
 
+// Keep longitude within -180 and 180. This is faster than using the modulo
+// operator, and preserves the distinction between -180 and 180.
+const wrapLon = (lon: number): number => {
+    // Replacing the if's with while would increase the range, but make it prone
+    // to crashes on bad data
+    if (lon < -180) {
+        lon += 360;
+    }
+    if (lon > 180) {
+        lon -= 360;
+    }
+    return lon;
+};
+
+
 export default class Projection {
 
     public options: ProjectionOptions;
@@ -227,20 +242,20 @@ export default class Projection {
                 // Else, wrap to beginning
                 previousLonLat = poly[poly.length - 1];
             }
-            const lon1 = previousLonLat[0];
-            const lon2 = lonLat[0];
-
-            // Subtract the antimeridian and restrain to -180 - 180
-            const lon1Adjusted = (lon1 - antimeridian - 540) % 360 + 180;
-            const lon2Adjusted = (lon2 - antimeridian - 540) % 360 + 180;
+            let lon1 = previousLonLat[0];
+            let lon2 = lonLat[0];
+            if (antimeridian !== 180) {
+                lon1 = wrapLon(lon1 - antimeridian + 180);
+                lon2 = wrapLon(lon2 - antimeridian + 180);
+            }
 
             if (
-                // Both points, after rotating for antimeridian, are
-                // in  the front facing hemisphere...
-                lon1Adjusted > -90 && lon1Adjusted < 90 &&
-                lon2Adjusted > -90 && lon2Adjusted < 90 &&
-                // ... and on either side of 0
-                (lon1Adjusted >= 0) !== (lon2Adjusted >= 0)
+                // Both points, after rotating for antimeridian, are on the far
+                // side of the Earth
+                (lon1 < -90 || lon1 > 90) &&
+                (lon2 < -90 || lon2 > 90) &&
+                // ... and on either side of the plane
+                (lon1 > 0) !== (lon2 > 0)
             ) {
                 // Simplified measure of distance from the equator
                 const distance = Math.abs(previousLonLat[1] + lonLat[1]) / 2;
@@ -313,35 +328,6 @@ export default class Projection {
                 }
             }
         }
-
-        // Draw fake lines to the pole from the intersection closest to the pole
-        /*
-        if (intersections.length % 2 === 1) {
-            intersections.sort((a, b): number => b.distance - a.distance);
-
-            for (let i = 0; i < intersections.length; i++) {
-                const intersection = intersections[i];
-                // For the closest instersection, draw fake lines towards the
-                // pole
-                if (i === 0) {
-                    poly.splice(
-                        intersection.i,
-                        0,
-                        [intersection.previousLonLat[0], -this.maxLatitude],
-                        [intersection.lonLat[0], -this.maxLatitude]
-                    );
-
-                // Insert gaps
-                } else {
-                    (intersection.lonLat as any).moveTo = true;
-                }
-            }
-
-            return true;
-        }
-        return false;
-        */
-        // console.log(polygons)
         return polygons;
     }
 
@@ -359,15 +345,31 @@ export default class Projection {
         // pre-projected.
         const isGeographicCoordinates = this.isNorthPositive;
 
+        // @todo better test for when to do this
+        const projectingToPlane = this.options.projectionName !== 'ortho';
+
         const addToPath = (
             polygon: LonLatArray[]
         ): void => {
 
-            // @todo Roundoff error with the test dataset, or with proj4 that
-            // doesn't correctly wrap. Causing problems with translation and
-            // filling Antarctica
+            // Create a copy of the original coordinates. The copy applies a
+            // correction of points close to the antimeridian in order to
+            // prevent the points to be projected to the wrong side of the
+            // plane. Float errors in topojson or in the projection may cause
+            // that.
+            const floatCorrection = 0.000001;
             const poly = polygon.map((lonLat): Highcharts.LonLatArray => {
-                lonLat[0] = correctFloat(lonLat[0]);
+                let lon = lonLat[0];
+                if (projectingToPlane && this.antimeridian !== void 0) {
+                    if (Math.abs(lon - this.antimeridian) < floatCorrection) {
+                        if (lon < this.antimeridian) {
+                            lon = this.antimeridian - floatCorrection;
+                        } else {
+                            lon = this.antimeridian + floatCorrection;
+                        }
+                    }
+                    lonLat = [lon, lonLat[1]];
+                }
                 return lonLat;
             });
 
@@ -397,8 +399,7 @@ export default class Projection {
                     }
                 }
 
-                // @todo better test for when to do this
-                if (this.options.projectionName !== 'ortho') {
+                if (projectingToPlane) {
                     polygons = this.clipOnAntimeridian(poly, isPolygon);
                 }
             }
