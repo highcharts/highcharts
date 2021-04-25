@@ -240,6 +240,8 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
         if (!cells || cells.length === 0) {
             return false;
         }
+        parser.headers = [];
+        parser.columns = [];
 
         parser.emit<DataParser.Event>({
             type: 'parse',
@@ -251,9 +253,9 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
         parser.columns = parser.getSheetColumns(json);
 
         for (let i = 0, iEnd = parser.columns.length; i < iEnd; i++) {
-            headers.push(`${(parser.columns[i][0] || uniqueKey())}`);
-
             column = parser.columns[i];
+            parser.headers[i] = parserOptions.firstRowAsNames ? column.splice(0, 1).toString() : uniqueKey();
+
             for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
                 if (column[j] && typeof column[j] === 'string') {
                     let cellValue = converter.asGuessedType(column[j] as string);

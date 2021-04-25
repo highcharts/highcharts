@@ -42,7 +42,8 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements Da
         googleSpreadsheetKey: '',
         worksheet: 1,
         enablePolling: false,
-        dataRefreshRate: 2
+        dataRefreshRate: 2,
+        firstRowAsNames: true
     };
 
     /* *
@@ -89,7 +90,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements Da
     ) {
         super(table);
         this.options = merge(GoogleSheetsStore.defaultOptions, options);
-        this.parser = parser || new GoogleSheetsParser();
+        this.parser = parser || new GoogleSheetsParser({ firstRowAsNames: this.options.firstRowAsNames });
     }
 
     /* *
@@ -248,6 +249,7 @@ namespace GoogleSheetsStore {
         worksheet?: number;
         enablePolling: boolean;
         dataRefreshRate: number;
+        firstRowAsNames: boolean;
     }
 
 }
