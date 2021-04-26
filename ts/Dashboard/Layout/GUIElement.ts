@@ -6,6 +6,7 @@ import type {
 } from '../../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import U from '../../Core/Utilities.js';
+import Cell from './Cell';
 
 const {
     addEvent,
@@ -14,6 +15,25 @@ const {
 } = U;
 
 abstract class GUIElement {
+
+    /* *
+    *
+    *  Static Properties
+    *
+    * */
+    public static getCellOffset(
+        cell: Cell,
+        offsetType: string
+    ): number {
+        let offset = (cell.container as any)[offsetType] + (cell.row.container as any)[offsetType];
+
+        if (cell.row.layout.parentCell) {
+            offset += GUIElement.getCellOffset(cell.row.layout.parentCell, offsetType);
+        }
+
+        return offset;
+    }
+
     /* *
     *
     *  Properties

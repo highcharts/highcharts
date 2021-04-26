@@ -10,11 +10,10 @@ import RowEditToolbar from './Toolbar/RowEditToolbar.js';
 import Sidebar from './Sidebar.js';
 import EditContextMenu from './EditContextMenu.js';
 import DragDrop from './../Actions/DragDrop.js';
-import StockToolsGui from '../../Stock/StockToolsGui.js';
 
 const {
     merge,
-    pick,
+    addEvent,
     createElement
 } = U;
 
@@ -155,11 +154,84 @@ class EditMode {
         editMode.isInitialized = true;
     }
 
+    private initEvents(): void {
+        const editMode = this,
+            dashboard = editMode.dashboard;
+
+        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
+            editMode.setLayoutEvents(dashboard.layouts[i]);
+        }
+
+        if (editMode.cellToolbar) {
+            // Hide row toolbar when mouse on cell toolbar.
+            addEvent(editMode.cellToolbar.container, 'mouseenter', function (): void {
+                editMode.hideToolbars(['row']);
+            });
+        }
+
+        if (editMode.rowToolbar) {
+            const rowToolbar = editMode.rowToolbar;
+
+            // Hide cell toolbar when mouse on row toolbar.
+            addEvent(rowToolbar.container, 'mouseenter', function (): void {
+                editMode.hideToolbars(['cell']);
+                rowToolbar.refreshOutline();
+            });
+
+            addEvent(rowToolbar.container, 'mouseleave', function (): void {
+                rowToolbar.hideOutline();
+            });
+        }
+    }
+
+    private setLayoutEvents(
+        layout: Layout
+    ): void {
+        const editMode = this;
+
+        for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
+            const row = layout.rows[j];
+
+            if (editMode.rowToolbar) {
+                const rowToolbar = editMode.rowToolbar;
+
+                addEvent(row.container, 'mousemove', function (e): void {
+                    rowToolbar.onMouseMove(row);
+                    e.stopImmediatePropagation();
+                });
+            }
+
+            for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
+                const cell = row.cells[k];
+
+                if (cell.nestedLayout) {
+                    editMode.setLayoutEvents(cell.nestedLayout);
+                } else if (editMode.cellToolbar && cell.container) {
+                    const cellToolbar = editMode.cellToolbar;
+
+                    addEvent(cell.container, 'mousemove', function (): void {
+                        cellToolbar.onMouseMove(cell);
+                    });
+
+                    // Hide cell toolbar when mouse on cell resizer.
+                    const resizedCell = (cell as Resizer.ResizedCell).resizer;
+                    if (resizedCell && resizedCell.snapX) {
+                        addEvent(resizedCell.snapX, 'mousemove', function (e): void {
+                            cellToolbar.hide();
+                            e.stopImmediatePropagation();
+                        });
+                    }
+                }
+            }
+        }
+    }
+
     public activateEditMode(): void {
         const editMode = this;
 
         if (!editMode.isInitialized) {
             editMode.initEditMode();
+            editMode.initEvents();
         }
 
         editMode.active = true;

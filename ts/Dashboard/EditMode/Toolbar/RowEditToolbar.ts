@@ -5,9 +5,9 @@ import EditGlobals from '../EditGlobals.js';
 import Menu from '../Menu/Menu.js';
 import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
+import GUIElement from '../../Layout/GUIElement.js';
 
 const {
-    addEvent,
     merge,
     objectEach
 } = U;
@@ -78,7 +78,6 @@ class RowEditToolbar extends EditToolbar {
             )
         );
 
-        this.setEvents();
         this.menu.initItems(RowEditToolbar.items);
     }
 
@@ -96,35 +95,6 @@ class RowEditToolbar extends EditToolbar {
     *
     * */
 
-    private setEvents(): void {
-        const toolbar = this,
-            dashboard = toolbar.editMode.dashboard;
-
-        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
-            const layout = dashboard.layouts[i];
-
-            for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
-                const row = layout.rows[j];
-
-                if (row.container) {
-                    addEvent(row.container, 'mousemove', function (): void {
-                        toolbar.onMouseMove(row);
-                    });
-                }
-            }
-        }
-
-        // Hide cell toolbar when mouse on row toolbar.
-        addEvent(toolbar.container, 'mouseenter', function (): void {
-            toolbar.editMode.hideToolbars(['cell']);
-            toolbar.refreshOutline();
-        });
-
-        addEvent(toolbar.container, 'mouseleave', function (): void {
-            toolbar.hideOutline();
-        });
-    }
-
     public refreshOutline(): void {
         const toolbar = this;
 
@@ -133,7 +103,7 @@ class RowEditToolbar extends EditToolbar {
         }
     }
 
-    private onMouseMove(
+    public onMouseMove(
         row: Row
     ): void {
         const toolbar = this,
@@ -142,12 +112,13 @@ class RowEditToolbar extends EditToolbar {
         let x, y;
 
         if (
+            row.cells.length > 1 && // -> to discuss
             rowCnt &&
             toolbar.editMode.isActive() &&
             !(toolbar.editMode.dragDrop || {}).isActive
         ) {
-            x = rowCnt.offsetLeft;
-            y = rowCnt.offsetTop;
+            x = GUIElement.getCellOffset(row.cells[0], 'offsetLeft');
+            y = GUIElement.getCellOffset(row.cells[0], 'offsetTop');
 
             // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
@@ -155,6 +126,8 @@ class RowEditToolbar extends EditToolbar {
             });
             toolbar.setPosition(x, y);
             toolbar.row = row;
+        } else if (toolbar.isVisible) {
+            toolbar.hide();
         }
     }
 
