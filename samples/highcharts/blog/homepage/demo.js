@@ -2440,79 +2440,63 @@ function section1() {
     };
     currentTimeout = setTimeout(s12, 1500);
     //make an arch
+
     const s13 =  function () {
-        let radius = 5;
-        let size = '85%';
-        let centerY =  '85%';
-        let centerX = '50%%';
-        if (demoChart.chartWidth < 800) {
-            radius = 3;
-        }
-        if (demoChart.chartWidth > 800) {
-            size = '120%';
-            centerY = '80%';
-            centerX = '65.5%';
-        }
         demoChart.series[0].update({
-            startAngle: -100,
-            endAngle: 100,
-            center: [centerX, centerY],
-            size: size,
-            innerSize: '30%',
+            data: [
+                {
+                    y: 20,
+                    color: Highcharts.getOptions().colors[7]
+                },
+                {
+                    y: 20,
+                    color: Highcharts.getOptions().colors[0]
+                },
+                {
+                    y: 20,
+                    color: { patternIndex: 7 }
+                },
+                {
+                    y: 20,
+                    color: Highcharts.getOptions().colors[2]
+                },
+                {
+                    y: 20,
+                    color: Highcharts.getOptions().colors[4]
+                },
+                {
+                    y: 20,
+                    color: { patternIndex: 0 }
+                },
+                {
+                    y: 20,
+                    color: Highcharts.getOptions().colors[9]
+                }
+            ],
+            opacity: 1,
             marker: {
-                radius: radius
+                radius: 10
+            }
+        });
+        demoChart.update({
+            plotOptions: {
+                item: {
+                    startAngle: -100,
+                    size: '150%',
+                    center: ['65.5%', '80%']
+                }
             }
         });
     };
     currentTimeout = setTimeout(s13, 2500);
     ///expand the arch
     const s14 =  function () {
-        let size = '500%';
-        if (demoChart.chartWidth < 500) {
-            size = '200%';
-        }
-        demoChart.update({
-            chart: {
-                animation: {
-                    duration: 500
-                }
-            }
-        });
-        demoChart.series[0].update({
-            startAngle: 100,
-            size: size
-        });
-    };
-    currentTimeout = setTimeout(s14, 4000);
-
-    ///hide title, hide item chart, deactive carousel
-    ///1, show spline series
-    const s15 = function () {
         $('.highcharts-spline-series').show();
-        $('.highcharts-item-series').fadeOut(1000);
-
-        if (hasHTML) {
-            $('#developers').removeClass('active');
-            $('h2.fakeTitle').animate({ opacity: 0 }, 1000);
-        }
-    };
-    currentTimeout = setTimeout(s15, 4500);
-
-    //hide subtitle, turn off legen, add splines
-    const s16 = function () {
-        if (hasHTML) {
-            $('#c0').animate({ opacity: 0 }, 1000);
-        }
-        demoChart.update({
-            chart: {
-                animation: {
-                    duration: 100
-                }
-            }
-        });
         demoChart.series[0].update({
-            showInLegend: false
+            showInLegend: false,
+            innerSize: '200%'
         });
+        $('.highcharts-item-series').fadeOut(700);
         let count = 0;
         const addSeries = setInterval(function () {
             demoChart.addSeries(splineSeries[count]);
@@ -2522,13 +2506,9 @@ function section1() {
             }
         }, 0);
     };
-    currentTimeout = setTimeout(s16, 4700);
-
+    currentTimeout = setTimeout(s14, 4000);
     ///set current tab, go to section 2
     const s17 = function () {
-        if (hasHTML) {
-            $('#finance').addClass('active');
-        }
         section2();
     };
     currentTimeout = setTimeout(s17, 5000);
@@ -2573,8 +2553,6 @@ const heroChart = {
                     $('h2.fakeTitle').animate({ opacity: 1 }, 1000);
                     $('h1.title').animate({ opacity: 1 }, 1000);
                 }
-
-
             }
         }
     },
@@ -3181,7 +3159,6 @@ const heroChart = {
                         }
 
                     },
-
                     ///1
                     {
                         visible: false,
@@ -3292,7 +3269,7 @@ const heroChart = {
             name: 'Item Chart',
             pointPadding: 1,
             innerSize: null,
-            startAngle: -100,
+            startAngle: 100,
             endAngle: 100,
             borderColor: baseColor,
             color: null,
@@ -3493,60 +3470,35 @@ const heroChart = {
             label: {
                 enabled: true
             },
-            startAngle: 90,
-            endAngle: 90,
             name: 'Representatives',
             data: [
                 {
-                    name: 'The Left',
                     y: 39,
-                    color: Highcharts.getOptions().colors[7],
-                    opacity: 1,
-                    label: 'DIE LINKE',
-                    visible: true
+                    color: Highcharts.getOptions().colors[7]
                 },
                 {
-                    name: 'Social Democratic Party',
-                    color:
-         Highcharts.getOptions().colors[0],
-                    y: 123,
-                    label: 'SPD',
-                    visible: true
+                    color: Highcharts.getOptions().colors[0],
+                    y: 123
                 },
                 {
-                    name: 'Alliance 90/The Greens',
                     color: { patternIndex: 7 },
-                    y: 37,
-                    label: 'GRÜNE',
-                    visible: true
+                    y: 37
                 },
                 {
-                    name: 'Free Democratic Party',
                     color: Highcharts.getOptions().colors[2],
-                    y: 50,
-                    label: 'FDP',
-                    visible: true
+                    y: 50
                 },
                 {
-                    name: 'Christian Democratic Union',
                     color: Highcharts.getOptions().colors[4],
-                    y: 170,
-                    label: 'CDU',
-                    visible: true
+                    y: 170
                 },
                 {
-                    name: 'Christian Social Union in Bavaria',
                     color: { patternIndex: 0 },
-                    y: 16,
-                    label: 'CSU',
-                    visible: true
+                    y: 16
                 },
                 {
-                    name: 'Alternative for Germany',
                     color: Highcharts.getOptions().colors[9],
-                    y: 64,
-                    label: 'AfD',
-                    visible: true
+                    y: 64
                 }
             ],
             dataLabels: {
@@ -4257,46 +4209,32 @@ const heroChart = {
             showInLegend: false,
             data: [
                 {
-                    name: 'The Left',
                     y: 69,
-                    color: Highcharts.getOptions().colors[7],
-                    label: 'DIE LINKE'
+                    color: Highcharts.getOptions().colors[7]
                 },
                 {
-                    name: 'Social Democratic Party',
                     y: 153,
-                    color: Highcharts.getOptions().colors[0],
-                    label: 'SPD'
+                    color: Highcharts.getOptions().colors[0]
                 },
                 {
-                    name: 'Alliance 90/The Greens',
                     y: 67,
-                    color: { patternIndex: 7 },
-                    label: 'GRÜNE'
+                    color: { patternIndex: 7 }
                 },
                 {
-                    name: 'Free Democratic Party',
                     y: 80,
-                    color: Highcharts.getOptions().colors[2],
-                    label: 'FDP'
+                    color: Highcharts.getOptions().colors[2]
                 },
                 {
-                    name: 'Christian Democratic Union',
                     y: 200,
-                    color: Highcharts.getOptions().colors[4],
-                    label: 'CDU'
+                    color: Highcharts.getOptions().colors[4]
                 },
                 {
-                    name: 'Christian Social Union in Bavaria',
                     y: 46,
-                    color: { patternIndex: 0 },
-                    label: 'CSU'
+                    color: { patternIndex: 0 }
                 },
                 {
-                    name: 'Alternative for Germany',
                     y: 94,
-                    color: Highcharts.getOptions().colors[9],
-                    label: 'AfD'
+                    color: Highcharts.getOptions().colors[9]
                 }
 
             ],
