@@ -12,7 +12,8 @@ import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 
 const {
     merge,
-    isNumber
+    isNumber,
+    fireEvent
 } = U;
 class Cell extends GUIElement {
     /* *
@@ -224,13 +225,14 @@ class Cell extends GUIElement {
      */
     public destroy(): void {
         const cell = this;
-
+        const { row } = cell;
         // Destroy mounted component.
         if (cell.mountedComponent) {
             cell.mountedComponent.destroy();
         }
 
         super.destroy();
+        fireEvent(row, 'cellChange');
     }
 
     /**

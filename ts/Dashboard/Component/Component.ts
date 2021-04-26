@@ -7,6 +7,7 @@ import type DataJSON from '../../Data/DataJSON';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
 import EditableOptions from './EditableOptions.js';
+/* import CallbackRegistry from '../CallbackRegistry.js'; */
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -214,6 +215,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
     public type: string;
     public id: string;
     public editableOptions: EditableOptions;
+    /* public callbackRegistry = new CallbackRegistry(); */
     private tableEventTimeout?: number;
     private tableEvents: Function[] = [];
     protected hasLoaded: boolean;
@@ -240,6 +242,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             if (this.parentCell.container) {
                 this.parentElement = this.parentCell.container;
             }
+            this.attachCellListeneres();
         }
 
         this.type = this.options.type;
@@ -265,6 +268,25 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
 
         // Add the component instance to the registry
         Component.addInstance(this);
+    }
+
+    // Setup listeners on cell/other things up the chain
+    // TODO: teardown if we want to switch a component between cells
+    private attachCellListeneres(): void {
+        if (this.parentCell) {
+            addEvent(this.parentCell.row, 'cellChange', (e: any): void => {
+                this.resizeTo(this.parentElement);
+            });
+        }
+    }
+
+    // Set a parent cell
+    public setCell(cell: Cell) {
+        this.parentCell = cell;
+        if (cell.container) {
+            this.parentElement = cell.container;
+        }
+        this.attachCellListeneres();
     }
 
     public setStore(store: DataStore<any> | undefined): this {
@@ -439,6 +461,16 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         // Grabbed from Chart.ts
         const events = this.options.events;
         if (events) {
+
+            /* Object.keys(events).forEach(key => { */
+            /*     this.callbackRegistry.addCallback(key, { */
+            /*         type: 'component', */
+            /*         func: (events as any)[key].eventCallback, */
+            /*         args: (events as any)[key].eventCallback.arguments, */
+            /*         context: this */
+            /*     }) */
+            /* }) */
+
             objectEach(events, (eventCallback, eventType): void => {
                 if (isFunction(eventCallback)) {
                     this.on(eventType, eventCallback as any);
@@ -543,6 +575,13 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             }
             dimensions[key] = value;
         });
+        /* const callbacks: any[] = [] */
+        /* Object.keys(this.callbackRegistry).forEach(key =>{ */
+        /*     callbacks.push(this.callbackRegistry.getCallback(key)); */
+        /* }) */
+        /*  */
+        /* console.log(callbacks); */
+
         return {
             $class: Component.getName(this.constructor),
             store: this.store ? this.store.toJSON() : void 0,

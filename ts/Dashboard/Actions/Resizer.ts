@@ -115,20 +115,6 @@ class Resizer {
             }
         }
 
-        // Trigger component resize within rows where resize happened
-        addEvent(this.layout.dashboard, 'cellResize', e => {
-            const { cell } = e as { cell: Cell };
-
-            setTimeout(() => {
-                cell.row.cells.forEach(rowCell => {
-                    if (rowCell.mountedComponent) {
-                        if (rowCell.container) {
-                            rowCell.mountedComponent.resizeTo(rowCell.container);
-                        }
-                    }
-                });
-            });
-        });
     }
     /**
      * Add Snap - create snapXs and add events.
@@ -366,6 +352,7 @@ class Resizer {
 
             // Call cellResize dashboard event.
             fireEvent(this.layout.dashboard, 'cellResize', { cell: currentCell });
+            fireEvent(currentCell.row, 'cellChange');
         }
     }
     /**
