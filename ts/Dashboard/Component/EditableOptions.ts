@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable require-jsdoc */
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -6,10 +6,10 @@ const {
 } = U;
 
 namespace EditableOptions {
-   export type BindingsType = Record<'keyMap' | 'typeMap', Record<string, string>>;
-   export type recursive<T> = Record<string, T>;
+    export type BindingsType = Record<'keyMap' | 'typeMap', Record<string, string>>;
+    export type recursive<T> = Record<string, T>;
 
-    export type getTypesType = { type?: string; children?: recursive<getTypesType>; }
+    export type getTypesType = { type?: string; value?: string; children?: recursive<getTypesType> }
     export type getOptionsType = recursive<getTypesType>;
 }
 
@@ -54,26 +54,30 @@ class EditableOptions {
             const node = branch[nodeName];
 
             if (keyMap[nodeName]) {
-                return { type: keyMap[nodeName] };
+                return { type: keyMap[nodeName], value: node ? JSON.stringify(node) : void 0 };
             }
 
             const type = typeof node;
             if (typeMap[type]) {
-                return { type: typeMap[type] };
+                return { type: typeMap[type], value: node ? JSON.stringify(node) : void 0 };
             }
 
             if (type === 'object') {
                 if (Array.isArray(node)) {
-                    return { type: 'array' };
+                    return { type: 'array', value: node ? JSON.stringify(node) : void 0 };
                 }
                 // dive deeper
-                const childNodes = Object.keys(node).reduce((obj: Record<string, EditableOptions.getTypesType>, childNodeName: string): Record<string, any> => {
-                    const type = getType(childNodeName, node)
-                    if(type){
-                        obj[childNodeName] = type
-                    }
-                    return obj;
-                }, {});
+                const childNodes = Object.keys(node).reduce(
+                    (
+                        obj: Record<string, EditableOptions.getTypesType>,
+                        childNodeName: string
+                    ): Record<string, any> => {
+                        const type = getType(childNodeName, node);
+                        if (type) {
+                            obj[childNodeName] = type;
+                        }
+                        return obj;
+                    }, {});
 
                 return { children: childNodes };
             }
@@ -84,12 +88,12 @@ class EditableOptions {
         [
             ...Object.keys(Component.defaultOptions.editableOptions),
             ...options.editableOptions
-        ].forEach((optionName: string) => {
-            const type = getType(optionName, options)
-            if(type){
-                record[optionName] = type
+        ].forEach((optionName: string): void => {
+            const type = getType(optionName, options);
+            if (type) {
+                record[optionName] = type;
             }
-        })
+        });
 
         return record;
     }
