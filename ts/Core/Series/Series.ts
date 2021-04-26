@@ -2879,7 +2879,7 @@ class Series {
 
     public table?: DataTable;
 
-    private tableReset?: boolean;
+    private tableSyncOff?: boolean;
 
     private tableSyncTimeout?: number;
 
@@ -4029,7 +4029,7 @@ class Series {
         }
 
         fireEvent(series, 'setTable', { table: newTable });
-        series.tableReset = true;
+        series.tableSyncOff = true;
 
         if (!table) {
             /**
@@ -4060,7 +4060,7 @@ class Series {
             table.on('afterSetRows', syncTable);
         }
 
-        series.tableReset = false;
+        series.tableSyncOff = false;
         fireEvent(series, 'afterSetTable', { table: newTable });
 
         return table;
@@ -4085,6 +4085,13 @@ class Series {
             options = series.options,
             dataSorting: SeriesDataSortingOptions = options.dataSorting as any,
             sortModifier = (new SortModifier({
+                // @todo fails in unit-tests/series/datasorting-animation
+                // direction: (
+                //     series.xAxis &&
+                //     series.xAxis.reversed ?
+                //         'asc' :
+                //         'desc'
+                // ),
                 orderByColumn: (dataSorting.sortKey || 'y'),
                 orderInColumn: 'x'
             })),
@@ -4150,7 +4157,7 @@ class Series {
     private syncTable(e: DataTable.Event): void {
         const series = this;
 
-        if (series.tableReset) {
+        if (series.tableSyncOff) {
             return;
         }
 
@@ -4163,24 +4170,21 @@ class Series {
         let column: DataTable.Column,
             columnName: string,
             count: number,
-            index: number,
-            point: Point;
+            index: number;
 
         switch (e.type) {
             case 'afterClearRows':
             case 'afterClearTable':
-                data.length = 0;
-                return;
+                series.setData([]);
+                break;
 
             case 'afterClearColumn':
             case 'afterDeleteColumn':
             case 'afterSetColumn':
                 column = e.column;
                 columnName = e.columnName;
-                if (columnName === 'x' || keys.indexOf(columnName) !== -1) {
-                    for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
-                        series.syncTableRow(i);
-                    }
+                for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
+                    series.syncTableRow(i);
                 }
                 break;
 
@@ -4193,47 +4197,24 @@ class Series {
                     for (let i = 0, iEnd = deletedPoints.length; i < iEnd; ++i) {
                         deletedPoints[i].destroy();
                     }
-                    return;
                 }
                 break;
 
             case 'afterSetCell':
-                index = e.rowIndex;
-                point = points[index];
-                series.syncTableRow(index);
-                if (point) {
-                    point.update(data[index]);
-                    return;
-                }
+                series.syncTableRow(e.rowIndex);
                 break;
 
             case 'afterSetRows':
                 count = e.rowCount;
                 index = e.rowIndex;
                 for (let i = index, iEnd = (i + count); i < iEnd; ++i) {
-                    point = points[i];
                     series.syncTableRow(i);
-                    if (point) {
-                        point.update(data[i]);
-                    }
-                }
-                if (points[index + count]) {
-                    return;
                 }
                 break;
 
             default:
-                return;
+                break;
         }
-
-        clearTimeout(series.tableSyncTimeout);
-        series.tableSyncTimeout = syncTimeout(
-            (): void => {
-                series.setData(data);
-                delete series.tableSyncTimeout;
-            },
-            1
-        );
     }
 
     /** @private */
@@ -4247,7 +4228,7 @@ class Series {
 
         const options = series.options,
             dataOptions = options.data = (options.data || []),
-            rowOptions = dataOptions[index],
+            point = series.data[index],
             pointValKey = pick(
                 options.pointValKey,
                 options.keys && options.keys[0],
@@ -4260,22 +4241,47 @@ class Series {
             ),
             row = table.getRow(index, keys);
 
+        let pointOptions = dataOptions[index];
+
         if (!row || DataTable.isNull(row)) {
             dataOptions[index] = null;
-        } else if (rowOptions && typeof rowOptions === 'object') {
-            if (rowOptions instanceof Array) {
-                rowOptions.splice(
-                    (row.length < rowOptions.length ? 1 : 0),
+        } else if (
+            typeof pointOptions === 'object' ||
+            (
+                typeof pointOptions === 'undefined' &&
+                (!index || typeof dataOptions[0] === 'object')
+            )
+        ) {
+            if (pointOptions instanceof Array) {
+                pointOptions.splice(
+                    (row.length < pointOptions.length ? 1 : 0),
                     row.length,
                     ...row as Array<(number|string|null)>
                 );
             } else {
-                merge(true, rowOptions, table.getRowObject(index, keys));
+                pointOptions = merge(
+                    true,
+                    pointOptions,
+                    table.getRowObject(index)
+                );
             }
-        } else if (rowOptions === null) {
-            dataOptions[index] = row as Array<(number|string|null)>;
+        } else if (pointOptions === null) {
+            pointOptions = row as Array<(number|string|null)>;
         } else {
-            dataOptions[index] = table.getCellAsNumber(pointValKey, index);
+            pointOptions = table.getCellAsNumber(pointValKey, index);
+        }
+
+        if (point) {
+            point.update(pointOptions);
+        } else {
+            clearTimeout(series.tableSyncTimeout);
+            series.tableSyncTimeout = syncTimeout(
+                (): void => {
+                    series.addPoint(pointOptions);
+                    delete series.tableSyncTimeout;
+                },
+                1
+            );
         }
     }
 
@@ -5699,9 +5705,9 @@ class Series {
         }
         series.points = null as any;
         if (table) {
-            series.tableReset = true;
+            series.tableSyncOff = true;
             table.clear();
-            series.tableReset = false;
+            series.tableSyncOff = false;
         }
         if (series.clips) {
             series.clips.forEach((clip): void => clip.destroy());

@@ -1,65 +1,96 @@
-const chart = Highcharts.chart('container', {
-    series: [
-        {
-            name: 'Series with table sync'
-        }
-    ],
-    title: {
-        text: 'Series table demo'
-    },
-    tooltip: {
-        formatter: function () {
-            const point = this.point;
-            const row = point.series.table.getRowObject(point.index);
+var chart = Highcharts.chart('container', {
+        series: [
+            {
+                name: 'Series with table sync'
+            }
+        ],
+        title: {
+            text: 'Series table demo'
+        },
+        tooltip: {
+            formatter: function () {
+                var point = this.point,
+                    row = point.series.table.getRowObject(point.index);
 
-            return Object
-                .keys(row)
-                .sort()
-                .map(
-                    function (key) {
-                        return key + ': ' + row[key];
-                    }
-                )
-                .join('<br />');
+                return Object
+                    .keys(row)
+                    .sort()
+                    .map(
+                        function (key) {
+                            return key + ': ' + row[key];
+                        }
+                    )
+                    .join('<br />');
+            }
         }
-    }
-});
-const formTableBody = document.getElementById('table-body');
+    }),
+    formTableBody = document.getElementById('table-body'),
+    formButtonAdd = document.getElementById('button-add'),
+    formButtonReset = document.getElementById('button-reset'),
+    formSelectSort = document.getElementById('select-sort');
 
 // change a series row with data from the HTML form
 function change() {
-    const formInputs = this.getElementsByTagName('input');
-    const index = parseInt(this.getAttribute('data-index'), 10);
-    const name = formInputs[0].value;
-    const seriesTable = chart.series[0].table;
-    const x = parseFloat(formInputs[1].value);
-    const y = parseFloat(formInputs[2].value);
+    var formInputs = this.getElementsByTagName('input'),
+        index = parseInt(this.getAttribute('data-index'), 10),
+        name = formInputs[0].value,
+        seriesTable = chart.series[0].table,
+        x = index, // parseFloat(formInputs[1].value),
+        y = parseFloat(formInputs[1].value);
 
     seriesTable.setRow({ name, x, y }, index);
 }
 
 // add a series row with data from the HTML form
 function add() {
-    const formInputs = this.getElementsByTagName('input');
-    const formTableRow = document.createElement('tr');
-    const name = formInputs[0].value;
-    const seriesTable = chart.series[0].table;
-    const x = parseFloat(formInputs[1].value);
-    const y = parseFloat(formInputs[2].value);
+    var formInputs = this.getElementsByTagName('input'),
+        formTableRow = document.createElement('tr'),
+        name = formInputs[0].value,
+        seriesTable = chart.series[0].table,
+        x = seriesTable.getRowCount(), // parseFloat(formInputs[1].value),
+        y = parseFloat(formInputs[1].value);
 
     formTableRow.setAttribute('data-index', seriesTable.getRowCount());
     formTableRow.innerHTML = [
         `<td><input type="text" value="${name}"" /></td>`,
-        `<td><input type="number" value="${x}"" /></td>`,
+        // `<td><input type="number" value="${x}"" /></td>`,
         `<td><input type="number" value="${y}"" /></td>`,
         `<td><button type="button">Change</button></td>`
     ].join('');
-    formTableRow.childNodes[3].addEventListener('click', change.bind(formTableRow));
+    formTableRow.childNodes[2].addEventListener('click', change.bind(formTableRow));
     formTableBody.appendChild(formTableRow);
 
     seriesTable.setRow({ name, x, y });
 }
+formButtonAdd.addEventListener('click', add.bind(formButtonAdd.parentNode.parentNode));
 
-// connect HTML form
-const htmlButtonAdd = document.getElementById('button-add');
-htmlButtonAdd.addEventListener('click', add.bind(htmlButtonAdd.parentNode.parentNode));
+// reset table
+function reset() {
+    chart.series[0].table.clear();
+    formTableBody.innerHTML = '';
+}
+formButtonReset.addEventListener('click', reset);
+
+// change sorting options
+function sort() {
+    var sortKey = this.value,
+        series = chart.series[0],
+        seriesOptions = series.options;
+
+    if (sortKey) {
+        series.remove();
+        seriesOptions.dataSorting = {
+            enabled: true,
+            sortKey: sortKey
+        };
+    } else {
+        var seriesTable = chart.series[0].table.clone();
+        series.remove();
+        seriesTable.setColumn('x', seriesTable.deleteColumn('index'));
+        seriesOptions.data = seriesTable.getRowObjects();
+        seriesOptions.dataSorting = false;
+    }
+
+    chart.addSeries(seriesOptions);
+}
+formSelectSort.addEventListener('change', sort.bind(formSelectSort));

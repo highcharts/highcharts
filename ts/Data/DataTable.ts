@@ -456,22 +456,33 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
         table.emit({ type: 'cloneTable', detail: eventDetail });
 
-        const clone = new DataTable(
-            skipColumns ? {} : table.columns,
-            table.autoId ? void 0 : table.id,
-            table.presentationState,
-            table.converter
-        );
+        let clone: DataTable;
 
-        if (aliases.length) {
-            const cloneAliasMap = clone.aliasMap;
-            for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
-                alias = aliases[i];
-                cloneAliasMap[alias] = aliasMap[alias];
+        if (skipColumns) {
+            clone = new DataTable(
+                {},
+                table.autoId ? void 0 : table.id,
+                table.presentationState,
+                table.converter
+            );
+        } else {
+            clone = new DataTable(
+                table.columns,
+                table.autoId ? void 0 : table.id,
+                table.presentationState,
+                table.converter
+            );
+
+            if (aliases.length) {
+                const cloneAliasMap = clone.aliasMap;
+                for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
+                    alias = aliases[i];
+                    cloneAliasMap[alias] = aliasMap[alias];
+                }
             }
-        }
 
-        clone.versionTag = table.versionTag;
+            clone.versionTag = table.versionTag;
+        }
 
         table.emit({
             type: 'afterCloneTable',
@@ -1333,7 +1344,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Checks for given column names or aliases.
      *
-     * @function Highcharts.DataTable#hasColumn
+     * @function Highcharts.DataTable#hasColumns
      *
      * @param {Array<string>} columnNamesOrAliases
      * Column names of aliases to check.
