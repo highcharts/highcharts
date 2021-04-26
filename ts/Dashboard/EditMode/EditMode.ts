@@ -316,11 +316,11 @@ namespace EditMode {
     export interface Tools {
         contextMenu?: EditContextMenu;
         contextButtonElement?: HTMLDOMElement;
-        addComponentBtn?: addComponentBtn;
+        addComponentBtn?: AddComponentBtn;
         container?: HTMLDOMElement;
     }
 
-    export interface addComponentBtn {
+    export interface AddComponentBtn {
         icon: string;
     }
 }
