@@ -50,8 +50,9 @@ export default class Projection {
     // Calculate the great circle between two given coordinates
     public static greatCircle(
         point1: LonLatArray,
-        point2: LonLatArray
-    ): LonLatArray[]|undefined {
+        point2: LonLatArray,
+        inclusive?: boolean
+    ): LonLatArray[] {
         const deg2rad = Math.PI * 2 / 360;
         const { atan2, cos, sin, sqrt } = Math;
         const lat1 = point1[1] * deg2rad;
@@ -69,10 +70,14 @@ export default class Projection {
         const distance = calcB * 6371e3; // in meters
         const jumps = Math.round(distance / 500000); // 500 km each jump
 
+        const lineString: LonLatArray[] = [];
+
+        if (inclusive) {
+            lineString.push(point1);
+        }
+
         if (jumps > 1) {
             const step = 1 / jumps;
-
-            const lineString: LonLatArray[] = [];
 
             for (
                 let fraction = step;
@@ -91,7 +96,36 @@ export default class Projection {
                 lineString.push([lon3 / deg2rad, lat3 / deg2rad]);
             }
 
-            return lineString;
+        }
+
+        if (inclusive) {
+            lineString.push(point2);
+        }
+
+        return lineString;
+    }
+
+    public static insertGreatCircles(
+        poly: LonLatArray[]
+    ): void {
+        let i = poly.length - 1;
+        while (i--) {
+
+            // Distance in degrees, either in lon or lat. Avoid heavy
+            // calculation of true distance.
+            const roughDistance = Math.max(
+                Math.abs(poly[i][0] - poly[i + 1][0]),
+                Math.abs(poly[i][1] - poly[i + 1][1])
+            );
+            if (roughDistance > 10) {
+                const greatCircle = Projection.greatCircle(
+                    poly[i],
+                    poly[i + 1]
+                );
+                if (greatCircle.length) {
+                    poly.splice(i + 1, 0, ...greatCircle);
+                }
+            }
         }
     }
 
@@ -278,6 +312,7 @@ export default class Projection {
             }
         });
 
+        let polarIntersection;
         if (intersections.length) {
             if (isPolygon) {
 
@@ -285,7 +320,6 @@ export default class Projection {
                 // amount of intersections between the polygon and the
                 // antimeridian, the pole is inside the polygon. Applies
                 // primarily to Antarctica.
-                let polarIntersection;
                 if (intersections.length % 2 === 1) {
                     polarIntersection = intersections.slice().sort(
                         (a, b): number => Math.abs(b.lat) - Math.abs(a.lat))[0];
@@ -311,13 +345,21 @@ export default class Projection {
                         index,
                         intersections[i + 1].i - index,
                         // Add interpolated points close to the cut
-                        [lonPlus, intersections[i].lat],
-                        [lonPlus, intersections[i + 1].lat]
+                        ...Projection.greatCircle(
+                            [lonPlus, intersections[i].lat],
+                            [lonPlus, intersections[i + 1].lat],
+                            true
+                        )
                     );
 
                     // Add interpolated points close to the cut
-                    slice.unshift([lonMinus, intersections[i].lat]);
-                    slice.push([lonMinus, intersections[i + 1].lat]);
+                    slice.push(
+                        ...Projection.greatCircle(
+                            [lonMinus, intersections[i + 1].lat],
+                            [lonMinus, intersections[i].lat],
+                            true
+                        )
+                    );
 
                     polygons.push(slice);
 
@@ -342,13 +384,20 @@ export default class Projection {
                                 polarIntersection.direction * floatCorrection
                             );
 
+                            const polarSegment = Projection.greatCircle(
+                                [lon1, polarIntersection.lat],
+                                [lon1, polarLatitude],
+                                true
+                            ).concat(Projection.greatCircle(
+                                [lon2, polarLatitude],
+                                [lon2, polarIntersection.lat],
+                                true
+                            ));
+
                             poly.splice(
                                 indexOf,
                                 0,
-                                [lon1, polarIntersection.lat],
-                                [lon1, polarLatitude],
-                                [lon2, polarLatitude],
-                                [lon2, polarIntersection.lat]
+                                ...polarSegment
                             );
                             break;
                         }
@@ -385,6 +434,14 @@ export default class Projection {
                 }
             }
         }
+
+        // Insert great circles along the cuts
+        /*
+        if (isPolygon && polygons.length > 1 || polarIntersection) {
+            polygons.forEach(Projection.insertGreatCircles);
+        }
+        */
+
         return polygons;
     }
 
@@ -395,7 +452,6 @@ export default class Projection {
         const path: SVGPath = [];
         const isPolygon = geometry.type === 'Polygon' ||
             geometry.type === 'MultiPolygon';
-
 
         // @todo: It doesn't really have to do with whether north is
         // positive. It depends on whether the coordinates are
@@ -435,25 +491,7 @@ export default class Projection {
             if (isGeographicCoordinates) {
 
                 // Insert great circles into long straight lines
-                let i = poly.length - 1;
-                while (i--) {
-
-                    // Distance in degrees, either in lon or lat. Avoid heavy
-                    // calculation of true distance.
-                    const roughDistance = Math.max(
-                        Math.abs(poly[i][0] - poly[i + 1][0]),
-                        Math.abs(poly[i][1] - poly[i + 1][1])
-                    );
-                    if (roughDistance > 10) {
-                        const greatCircle = Projection.greatCircle(
-                            poly[i],
-                            poly[i + 1]
-                        );
-                        if (greatCircle) {
-                            poly.splice(i + 1, 0, ...greatCircle);
-                        }
-                    }
-                }
+                Projection.insertGreatCircles(poly);
 
                 if (projectingToPlane) {
                     polygons = this.clipOnAntimeridian(poly, isPolygon);
@@ -524,10 +562,8 @@ export default class Projection {
                                     lastValidLonLat,
                                     lonLat
                                 );
-                                if (greatCircle) {
-                                    greatCircle.forEach((lonLat): void =>
-                                        pushToPath(this.forward(lonLat)));
-                                }
+                                greatCircle.forEach((lonLat): void =>
+                                    pushToPath(this.forward(lonLat)));
 
                             // For lines, just jump over the gap
                             } else {
