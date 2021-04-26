@@ -544,7 +544,7 @@ class Tick {
      * @fires Highcharts.Tick#event:afterGetPosition
      */
     public getPosition(
-        horiz: boolean,
+        horiz: boolean|undefined,
         tickPos: number,
         tickmarkOffset: number,
         old?: boolean
@@ -926,13 +926,11 @@ class Tick {
             horiz = axis.horiz,
             pos = tick.pos,
             tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
-            xy = tick.getPosition(!!horiz, pos, tickmarkOffset, old),
+            xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
             x = xy.x,
             y = xy.y,
             reverseCrisp = ((horiz && x === axis.pos + axis.len) ||
                 (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
-
-        old = !!old;
 
         const labelOpacity = pick(
             opacity,
@@ -966,7 +964,7 @@ class Tick {
      * @return {void}
      */
     public renderGridLine(
-        old: boolean,
+        old: boolean|undefined,
         opacity: number,
         reverseCrisp: number
     ): void {
@@ -1123,7 +1121,7 @@ class Tick {
      */
     public renderLabel(
         xy: Highcharts.TickPositionObject,
-        old: boolean,
+        old: boolean|undefined,
         opacity: number,
         index: number
     ): void {
