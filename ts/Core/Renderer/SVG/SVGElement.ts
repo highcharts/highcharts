@@ -216,7 +216,7 @@ class SVGElement implements SVGElementLike {
      *         Property value.
      */
     private _defaultGetter(key: string): (number|string) {
-        var ret = pick(
+        let ret = pick(
             (this as AnyRecord)[key + 'Value'], // align getter
             (this as AnyRecord)[key],
             this.element ? this.element.getAttribute(key) : null,
@@ -265,9 +265,10 @@ class SVGElement implements SVGElementLike {
      *         Returns the SVGElement for chaining.
      */
     public add(parent?: SVGElement): this {
-        var renderer = this.renderer,
-            element = this.element,
-            inserted;
+        const renderer = this.renderer,
+            element = this.element;
+
+        let inserted;
 
         if (parent) {
             this.parentGroup = parent;
@@ -328,7 +329,7 @@ class SVGElement implements SVGElementLike {
         className: string,
         replace?: boolean
     ): this {
-        var currentClassName = replace ? '' : (this.attr('class') || '');
+        const currentClassName = replace ? '' : (this.attr('class') || '');
 
         // Trim the string and remove duplicates
         className = (className || '')
@@ -398,14 +399,13 @@ class SVGElement implements SVGElementLike {
         alignByTranslate?: boolean,
         box?: (string|BBoxObject)
     ): this {
-        var align: AlignValue,
-            vAlign: VerticalAlignValue,
-            x,
-            y,
-            attribs = {} as SVGAttributes,
-            alignTo: (string|undefined),
+        const attribs = {} as SVGAttributes,
             renderer = this.renderer,
-            alignedObjects: Array<SVGElement> = renderer.alignedObjects as any,
+            alignedObjects: Array<SVGElement> = renderer.alignedObjects as any;
+
+        let x,
+            y,
+            alignTo: (string|undefined),
             alignFactor,
             vAlignFactor;
 
@@ -436,8 +436,8 @@ class SVGElement implements SVGElementLike {
         );
 
         // Assign variables
-        align = (alignOptions as any).align;
-        vAlign = (alignOptions as any).verticalAlign;
+        const align = (alignOptions as any).align,
+            vAlign = (alignOptions as any).verticalAlign;
         // default: left align
         x = ((box as any).x || 0) + ((alignOptions as any).x || 0);
         // default: top align
@@ -482,7 +482,7 @@ class SVGElement implements SVGElementLike {
      * @param {"left"|"center"|"right"} value
      */
     public alignSetter(value: ('left'|'center'|'right')): void {
-        var convert: Record<string, string> = {
+        const convert: Record<string, string> = {
             left: 'start',
             center: 'middle',
             right: 'end'
@@ -518,7 +518,7 @@ class SVGElement implements SVGElementLike {
         options?: (boolean|DeepPartial<AnimationOptions>),
         complete?: Function
     ): this {
-        var animOptions = animObject(
+        const animOptions = animObject(
                 pick(options, this.renderer.globalAnimation, true)
             ),
             deferTime = animOptions.defer;
@@ -576,7 +576,7 @@ class SVGElement implements SVGElementLike {
      *        A custom CSS `text-outline` setting, defined by `width color`.
      */
     public applyTextOutline(textOutline: string): void {
-        var elem = this.element,
+        const elem = this.element,
             hasContrast = textOutline.indexOf('contrast') !== -1,
             styles: CSSObject = {};
 
@@ -737,13 +737,14 @@ class SVGElement implements SVGElementLike {
         complete?: Function,
         continueAnimation?: boolean
     ): (number|string|this) {
-        var key,
-            element = this.element,
+        const element = this.element,
+            symbolCustomAttribs = this.symbolCustomAttribs;
+
+        let key,
             hasSetSymbolSize: boolean,
             ret = this,
             skipAttr,
-            setter,
-            symbolCustomAttribs = this.symbolCustomAttribs;
+            setter;
 
         // single key-value pair
         if (typeof hash === 'string' && typeof val !== 'undefined') {
@@ -863,13 +864,11 @@ class SVGElement implements SVGElementLike {
         rect: RectangleObject,
         strokeWidth?: number
     ): RectangleObject {
-
-        var wrapper = this,
-            normalizer;
+        const wrapper = this;
 
         strokeWidth = strokeWidth || rect.strokeWidth || 0;
         // Math.round because strokeWidth can sometimes have roundoff errors
-        normalizer = Math.round(strokeWidth) % 2 / 2;
+        const normalizer = Math.round(strokeWidth) % 2 / 2;
 
         // normalize for crisp edges
         rect.x = Math.floor(rect.x || wrapper.x || 0) + normalizer;
@@ -908,8 +907,9 @@ class SVGElement implements SVGElementLike {
         prop: string,
         elem: SVGDOMElement
     ): void {
-        var renderer = this.renderer,
-            colorObject,
+        const renderer = this.renderer;
+
+        let colorObject,
             gradName: keyof GradientColor,
             gradAttr: SVGAttributes,
             radAttr: SVGAttributes,
@@ -998,8 +998,6 @@ class SVGElement implements SVGElementLike {
                     (stops as any).forEach(function (
                         stop: [number, ColorString]
                     ): void {
-                        var stopObject;
-
                         if (stop[1].indexOf('rgba') === 0) {
                             colorObject = Color.parse(stop[1]);
                             stopColor = colorObject.get('rgb') as any;
@@ -1008,7 +1006,7 @@ class SVGElement implements SVGElementLike {
                             stopColor = stop[1];
                             stopOpacity = 1;
                         }
-                        stopObject = renderer.createElement('stop').attr({
+                        const stopObject = renderer.createElement('stop').attr({
                             offset: stop[0],
                             'stop-color': stopColor,
                             'stop-opacity': stopOpacity
@@ -1051,18 +1049,19 @@ class SVGElement implements SVGElementLike {
      *         Return the SVG element for chaining.
      */
     public css(styles: CSSObject): this {
-        var oldStyles = this.styles,
+        const oldStyles = this.styles,
             newStyles: CSSObject = {},
             elem = this.element,
-            textWidth,
-            serializedCss = '',
-            hyphenate: Function,
-            hasNew = !oldStyles,
             // These CSS properties are interpreted internally by the SVG
             // renderer, but are not supported by SVG and should not be added to
             // the DOM. In styled mode, no CSS should find its way to the DOM
             // whatsoever (#6173, #6474).
             svgPseudoProps = ['textOutline', 'textOverflow', 'width'];
+
+        let textWidth,
+            serializedCss = '',
+            hyphenate: Function,
+            hasNew = !oldStyles;
 
         // convert legacy
         if (styles && styles.color) {
@@ -1154,7 +1153,7 @@ class SVGElement implements SVGElementLike {
      * @param {string} value
      */
     public dashstyleSetter(value: string): void {
-        var i,
+        let i,
             strokeWidth = this['stroke-width'];
 
         // If "inherit", like maps in IE, assume 1 (#4981). With HC5 and the new
@@ -1191,17 +1190,18 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#destroy
      */
     public destroy(): undefined {
-        var wrapper = this,
+        const wrapper = this,
             element = wrapper.element || {},
             renderer = wrapper.renderer,
-            parentToClean: (SVGElement|undefined) = (
+            ownerSVGElement = (element as SVGDOMElement).ownerSVGElement;
+
+        let parentToClean: (SVGElement|undefined) = (
                 renderer.isSVG &&
                 element.nodeName === 'SPAN' &&
                 wrapper.parentGroup ||
                 void 0
             ),
             grandParent: SVGElement,
-            ownerSVGElement = (element as SVGDOMElement).ownerSVGElement,
             i;
 
         // remove events
@@ -1217,9 +1217,7 @@ class SVGElement implements SVGElementLike {
             [].forEach.call(
                 ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
                 function (el: SVGDOMElement): void {
-                    var clipPathAttr = el.getAttribute('clip-path');
-
-                    if ((clipPathAttr as any).indexOf(clipPath.element.id) > -1
+                    if ((el.getAttribute('clip-path') as any).indexOf(clipPath.element.id) > -1
                     ) {
                         el.removeAttribute('clip-path');
                     }
@@ -1393,7 +1391,7 @@ class SVGElement implements SVGElementLike {
      * The fade duration in milliseconds.
      */
     public fadeOut(duration?: number): void {
-        var elemWrapper = this;
+        const elemWrapper = this;
 
         elemWrapper.animate({
             opacity: 0
@@ -1451,29 +1449,27 @@ class SVGElement implements SVGElementLike {
      *         The bounding box with `x`, `y`, `width` and `height` properties.
      */
     public getBBox(reload?: boolean, rot?: number): BBoxObject {
-        var wrapper = this,
-            bBox: any, // = wrapper.bBox,
+        const wrapper = this,
             renderer = wrapper.renderer,
-            width,
-            height,
             element = wrapper.element,
             styles = wrapper.styles,
-            fontSize,
             textStr = wrapper.textStr,
-            toggleTextShadowShim,
             cache = renderer.cache,
             cacheKeys = renderer.cacheKeys,
             isSVG = element.namespaceURI === wrapper.SVG_NS,
+            rotation = pick(rot, wrapper.rotation, 0),
+            fontSize = renderer.styledMode ? (
+                element &&
+                SVGElement.prototype.getStyle.call(element, 'font-size')
+            ) : (
+                styles && styles.fontSize
+            );
+
+        let bBox: any, // = wrapper.bBox,
+            width,
+            height,
+            toggleTextShadowShim,
             cacheKey;
-
-        const rotation = pick(rot, wrapper.rotation, 0);
-
-        fontSize = renderer.styledMode ? (
-            element &&
-            SVGElement.prototype.getStyle.call(element, 'font-size')
-        ) : (
-            styles && styles.fontSize
-        );
 
         // Avoid undefined and null (#7316)
         if (defined(textStr)) {
@@ -1901,7 +1897,7 @@ class SVGElement implements SVGElementLike {
     public safeRemoveChild(
         element: (SVGDOMElement|HTMLDOMElement)
     ): void {
-        var parentNode = element.parentNode;
+        const parentNode = element.parentNode;
 
         if (parentNode) {
             parentNode.removeChild(element);
@@ -1923,7 +1919,7 @@ class SVGElement implements SVGElementLike {
      * Returns the SVGElement for chaining.
      */
     public setRadialReference(coordinates: Array<number>): this {
-        var existingGradient = (
+        const existingGradient = (
             this.element.gradient &&
             this.renderer.gradients[this.element.gradient]
         );
@@ -1958,13 +1954,13 @@ class SVGElement implements SVGElementLike {
         path: SVGElement,
         textPathOptions: AnyRecord
     ): this {
-        var elem = this.element,
+        const elem = this.element,
             textNode = this.text ? this.text.element : elem,
             attribsMap = {
                 textAnchor: 'text-anchor'
-            },
-            attrs,
-            adder = false,
+            };
+
+        let adder = false,
             textPathElement: DOMElementType,
             textPathId,
             textPathWrapper: SVGElement = this.textPathWrapper as any,
@@ -1980,7 +1976,7 @@ class SVGElement implements SVGElementLike {
             }
         }, textPathOptions);
 
-        attrs = AST.filterUserAttributes(textPathOptions.attributes);
+        const attrs = AST.filterUserAttributes(textPathOptions.attributes);
 
         if (path && textPathOptions && textPathOptions.enabled) {
             // In case of fixed width for a text, string is rebuilt
@@ -2150,25 +2146,26 @@ class SVGElement implements SVGElementLike {
         group?: SVGElement,
         cutOff?: boolean
     ): this {
-        var shadows = [],
-            i,
-            shadow: SVGDOMElement,
+        const shadows = [],
             element = this.element,
+            oldShadowOptions = this.oldShadowOptions,
+            defaultShadowOptions: ShadowOptionsObject = {
+                color: palette.neutralColor100,
+                offsetX: 1,
+                offsetY: 1,
+                opacity: 0.15,
+                width: 3
+            };
+
+        let i,
+            shadow: SVGDOMElement,
             strokeWidth,
             shadowElementOpacity,
             update = false,
-            oldShadowOptions = this.oldShadowOptions,
             // compensate for inverted plot area
-            transform;
+            transform,
+            options: ShadowOptionsObject|undefined;
 
-        const defaultShadowOptions: ShadowOptionsObject = {
-            color: palette.neutralColor100,
-            offsetX: 1,
-            offsetY: 1,
-            opacity: 0.15,
-            width: 3
-        };
-        let options: ShadowOptionsObject|undefined;
         if (shadowOptions === true) {
             options = defaultShadowOptions;
         } else if (typeof shadowOptions === 'object') {
@@ -2332,8 +2329,9 @@ class SVGElement implements SVGElementLike {
         }
 
         // In styled mode, read computed stroke width
-        var val = this.getStyle('stroke-width'),
-            ret = 0,
+        const val = this.getStyle('stroke-width');
+
+        let ret = 0,
             dummy: SVGDOMElement;
 
         // Read pixel values directly
@@ -2366,7 +2364,7 @@ class SVGElement implements SVGElementLike {
      * The attributes to set.
      */
     public symbolAttr(hash: SVGAttributes): void {
-        var wrapper = this as AnyRecord;
+        const wrapper = this as AnyRecord;
 
         [
             'x',
@@ -2451,7 +2449,7 @@ class SVGElement implements SVGElementLike {
      * Returns the SVGElement for chaining.
      */
     public toFront(): this {
-        var element = this.element;
+        const element = this.element;
 
         element.parentNode.appendChild(element);
 
@@ -2530,16 +2528,16 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#updateTransform
      */
     public updateTransform(): void {
-        var wrapper = this,
-            translateX = wrapper.translateX || 0,
-            translateY = wrapper.translateY || 0,
+        const wrapper = this,
             scaleX = wrapper.scaleX,
             scaleY = wrapper.scaleY,
             inverted = wrapper.inverted,
             rotation = wrapper.rotation,
             matrix = wrapper.matrix,
-            element = wrapper.element,
-            transform;
+            element = wrapper.element;
+
+        let translateX = wrapper.translateX || 0,
+            translateY = wrapper.translateY || 0;
 
         // Flipping affects translate as adjustment for flipping around the
         // group's axis
@@ -2551,7 +2549,7 @@ class SVGElement implements SVGElementLike {
         // Apply translate. Nearly all transformed elements have translation,
         // so instead of checking for translate = 0, do it always (#1767,
         // #1846).
-        transform = ['translate(' + translateX + ',' + translateY + ')'];
+        const transform = ['translate(' + translateX + ',' + translateY + ')'];
 
         // apply matrix
         if (defined(matrix)) {
@@ -2641,17 +2639,18 @@ class SVGElement implements SVGElementLike {
         value?: number,
         key?: string
     ): boolean {
-        var renderer = this.renderer,
+        const renderer = this.renderer,
             parentGroup = this.parentGroup,
             parentWrapper = parentGroup || renderer,
             parentNode = (parentWrapper as any).element || renderer.box,
-            childNodes,
+            element = this.element,
+            svgParent = parentNode === renderer.box;
+
+        let childNodes,
             otherElement,
             otherZIndex,
-            element = this.element,
             inserted = false,
             undefinedOtherZIndex,
-            svgParent = parentNode === renderer.box,
             run = this.added,
             i;
 
