@@ -19,6 +19,7 @@
 import type { BubblePointMarkerOptions } from '../Bubble/BubblePointOptions';
 import type PackedBubbleChart from './PackedBubbleChart';
 import type { PackedBubbleDataLabelFormatterObject } from './PackedBubbleDataLabelOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type PackedBubbleLayout from './PackedBubbleLayout';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
@@ -676,8 +677,17 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             parentNodeLayout: PackedBubbleLayout = series.parentNodeLayout as any,
             nodeAdded,
             parentNode = series.parentNode,
-            PackedBubblePoint = series.pointClass;
+            PackedBubblePoint = series.pointClass,
+            layoutOptions = series.layout.options,
+            parentMarkerOptions: BubblePointMarkerOptions = {
+                radius: series.parentNodeRadius,
+                lineColor: series.color,
+                fillColor: color(series.color).brighten(0.4).get()
+            };
 
+        if (layoutOptions.parentNodeOptions) {
+            parentMarkerOptions = merge(layoutOptions.parentNodeOptions.marker || {}, parentMarkerOptions);
+        }
         series.parentNodeMass = 0;
 
         series.points.forEach(function (p): void {
@@ -700,11 +710,17 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                     this,
                     {
                         mass: (series.parentNodeRadius as any) / 2,
-                        marker: {
-                            radius: series.parentNodeRadius
-                        },
+                        marker: parentMarkerOptions,
                         dataLabels: {
                             inside: false
+                        },
+                        states: {
+                            normal: {
+                                marker: parentMarkerOptions
+                            },
+                            hover: {
+                                marker: parentMarkerOptions
+                            }
                         },
                         dataLabelOnNull: true,
                         degree: series.parentNodeRadius,
@@ -1153,6 +1169,26 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         return arr;
     }
 
+    public pointAttribs(
+        point?: PackedBubblePoint,
+        state?: StatesOptionsKey
+    ): SVGAttributes {
+        var options = this.options,
+            hasParentMarker = point && point.isParentNode,
+            markerOptions = hasParentMarker && options.layoutAlgorithm && options.layoutAlgorithm.parentNodeOptions ?
+                options.layoutAlgorithm.parentNodeOptions.marker :
+                options.marker,
+            fillOpacity = (markerOptions as any).fillOpacity,
+            attr = Series.prototype.pointAttribs.call(this, point, state);
+
+        if (fillOpacity !== 1) {
+            attr.fill = color(attr.fill as any)
+                .setOpacity(fillOpacity)
+                .get('rgba');
+        }
+        return attr;
+    }
+
     /**
      * Function that is adding one bubble based on positions and sizes of
      * two other bubbles, lastBubble is the last added bubble, newOrigin is
@@ -1347,6 +1383,80 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         return isNumber((bBox as any).width / (bBox as any).height) ?
             bBox :
             null;
+    }
+
+
+    /**
+     * Set the state of the series. Called internally on mouse interaction
+     * operations, but it can also be called directly to visually
+     * highlight a series.
+     *
+     * @function Highcharts.Series#setState
+     *
+     * @param {Highcharts.SeriesStateValue|""} [state]
+     *        The new state, can be either `'hover'`, `'inactive'`, `'select'`,
+     *        or `''` (an empty string), `'normal'` or `undefined` to set to
+     *        normal state.
+     * @param {boolean} [inherit]
+     *        Determines if state should be inherited by points too.
+     */
+    public setState(
+        state?: (StatesOptionsKey|''),
+        inherit?: boolean
+    ): void {
+
+
+        // Run default method
+        Series.prototype.setState.apply(this, arguments);
+
+        var series = this,
+            options = series.options,
+            stateOptions = options.states,
+            graph = series.graph,
+            layoutOptions = options.layoutAlgorithm,
+            lineWidth,
+            attribs,
+            stateAnimation = pick(
+                (
+                    (stateOptions as any)[state || 'normal'] &&
+                    (stateOptions as any)[state || 'normal'].animation
+                ),
+                series.chart.options.chart.animation
+            ),
+            i = 0;
+
+        if (layoutOptions && layoutOptions.parentNodeOptions && layoutOptions.parentNodeOptions.marker) {
+            lineWidth = layoutOptions.parentNodeOptions.marker.lineWidth;
+            if (!series.chart.styledMode) {
+                if (state) {
+                    lineWidth = (
+                        (stateOptions as any)[state].lineWidth ||
+                        lineWidth + (
+                            (stateOptions as any)[state].lineWidthPlus || 0
+                        )
+                    );
+                }
+
+                if (graph && !graph.dashstyle) {
+                    attribs = {
+                        'stroke-width': lineWidth
+                    };
+
+                    // Animate the graph stroke-width.
+                    graph.animate(
+                        attribs,
+                        stateAnimation
+                    );
+                    while ((series as any)['zone-graph-' + i]) {
+                        (series as any)['zone-graph-' + i].animate(
+                            attribs,
+                            stateAnimation
+                        );
+                        i = i + 1;
+                    }
+                }
+            }
+        }
     }
 
     /**
