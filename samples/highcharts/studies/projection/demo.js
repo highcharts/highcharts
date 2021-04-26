@@ -55,6 +55,8 @@ const drawMap = projectionKey => {
 
     const geojson = JSON.parse(static.geojson);
 
+    // geojson.features = geojson.features.filter(f => f.properties.name === 'Antarctica');
+
     // Apply projection using Proj4
     const projection = Highcharts.merge({
         projectionName: undefined,
@@ -367,7 +369,7 @@ Highcharts.getJSON(
         static.geojson = JSON.stringify(geojson);
         static.data = data;
 
-        drawMap('miller');
+        drawMap('robin');
 
         enableInputs();
 

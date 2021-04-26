@@ -16,11 +16,14 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const {
-    correctFloat,
+    erase,
     error,
     pick
 } = U;
 
+// Safe padding on either side of the antimeridian to avoid points being
+// projected to the wrong side of the plane
+const floatCorrection = 0.000001;
 
 // Keep longitude within -180 and 180. This is faster than using the modulo
 // operator, and preserves the distinction between -180 and 180.
@@ -227,7 +230,8 @@ export default class Projection {
         const antimeridian = pick(this.antimeridian, 180);
         const intersections: {
             i: number;
-            distance: number;
+            lat: number;
+            direction: (-1|1);
             previousLonLat: Highcharts.LonLatArray;
             lonLat: Highcharts.LonLatArray;
         }[] = [];
@@ -257,12 +261,17 @@ export default class Projection {
                 // ... and on either side of the plane
                 (lon1 > 0) !== (lon2 > 0)
             ) {
-                // Simplified measure of distance from the equator
-                const distance = Math.abs(previousLonLat[1] + lonLat[1]) / 2;
+
+                // Interpolate to the intersection latitude
+                const fraction = (antimeridian - previousLonLat[0]) /
+                    (lonLat[0] - previousLonLat[0]);
+                const lat = previousLonLat[1] +
+                    fraction * (lonLat[1] - previousLonLat[1]);
 
                 intersections.push({
                     i,
-                    distance,
+                    lat,
+                    direction: lon1 < 0 ? 1 : -1,
                     previousLonLat,
                     lonLat
                 });
@@ -276,24 +285,12 @@ export default class Projection {
                 // amount of intersections between the polygon and the
                 // antimeridian, the pole is inside the polygon. Applies
                 // primarily to Antarctica.
-                let closest;
+                let polarIntersection;
                 if (intersections.length % 2 === 1) {
-                    closest = (
-                        intersections[0].distance >
-                        intersections[intersections.length - 1].distance
-                    ) ?
-                        intersections.shift() :
-                        intersections.pop();
+                    polarIntersection = intersections.slice().sort(
+                        (a, b): number => Math.abs(b.lat) - Math.abs(a.lat))[0];
 
-                    /*
-                    poly.splice(
-                        intersection.i,
-                        0,
-                        [intersection.previousLonLat[0], -this.maxLatitude],
-                        [intersection.lonLat[0], -this.maxLatitude]
-                    );
-                    */
-
+                    erase(intersections, polarIntersection);
                 }
 
 
@@ -302,29 +299,89 @@ export default class Projection {
                 let i = intersections.length - 2;
                 while (i >= 0) {
                     const index = intersections[i].i;
-                    polygons.push(
-                        poly.splice(index, intersections[i + 1].i - index)
+                    const lonPlus = wrapLon(
+                        antimeridian +
+                        intersections[i].direction * floatCorrection
                     );
+                    const lonMinus = wrapLon(
+                        antimeridian -
+                        intersections[i].direction * floatCorrection
+                    );
+                    const slice = poly.splice(
+                        index,
+                        intersections[i + 1].i - index,
+                        // Add interpolated points close to the cut
+                        [lonPlus, intersections[i].lat],
+                        [lonPlus, intersections[i + 1].lat]
+                    );
+
+                    // Add interpolated points close to the cut
+                    slice.unshift([lonMinus, intersections[i].lat]);
+                    slice.push([lonMinus, intersections[i + 1].lat]);
+
+                    polygons.push(slice);
 
                     i -= 2;
                 }
 
                 // Insert dummy points close to the pole
-                if (closest) {
-                    i = poly.indexOf(closest.lonLat);
+                if (polarIntersection) {
+                    for (let i = 0; i < polygons.length; i++) {
+                        const poly = polygons[i];
+                        const indexOf = poly.indexOf(polarIntersection.lonLat);
+                        if (indexOf > -1) {
+                            const polarLatitude =
+                                (polarIntersection.lat < 0 ? -1 : 1) *
+                                this.maxLatitude;
+                            const lon1 = wrapLon(
+                                antimeridian +
+                                polarIntersection.direction * floatCorrection
+                            );
+                            const lon2 = wrapLon(
+                                antimeridian -
+                                polarIntersection.direction * floatCorrection
+                            );
 
-                    poly.splice(
-                        i,
-                        0,
-                        [closest.previousLonLat[0], -this.maxLatitude],
-                        [closest.lonLat[0], -this.maxLatitude]
-                    );
+                            poly.splice(
+                                indexOf,
+                                0,
+                                [lon1, polarIntersection.lat],
+                                [lon1, polarLatitude],
+                                [lon2, polarLatitude],
+                                [lon2, polarIntersection.lat]
+                            );
+                            break;
+                        }
+                    }
                 }
+
+            // Map lines, not closed
             } else {
                 let i = intersections.length;
                 while (i--) {
                     const index = intersections[i].i;
-                    polygons.push(poly.splice(index, poly.length));
+                    const slice = poly.splice(
+                        index,
+                        poly.length,
+                        // Add interpolated point close to the cut
+                        [
+                            wrapLon(
+                                antimeridian +
+                                intersections[i].direction * floatCorrection
+                            ),
+                            intersections[i].lat
+                        ]
+                    );
+
+                    // Add interpolated point close to the cut
+                    slice.unshift([
+                        wrapLon(
+                            antimeridian -
+                            intersections[i].direction * floatCorrection
+                        ),
+                        intersections[i].lat
+                    ]);
+                    polygons.push(slice);
                 }
             }
         }
@@ -357,7 +414,6 @@ export default class Projection {
             // prevent the points to be projected to the wrong side of the
             // plane. Float errors in topojson or in the projection may cause
             // that.
-            const floatCorrection = 0.000001;
             const poly = polygon.map((lonLat): Highcharts.LonLatArray => {
                 let lon = lonLat[0];
                 if (projectingToPlane && this.antimeridian !== void 0) {
