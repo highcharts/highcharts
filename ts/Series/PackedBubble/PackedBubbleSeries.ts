@@ -877,9 +877,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 (parentNode.graphic.element as any).point = parentNode;
             }
 
-            (dataLabels as any).forEach(function (
-                dataLabel: SVGElement
-            ): void {
+            dataLabels.forEach(function (dataLabel): void {
                 if (dataLabel.div) {
                     dataLabel.div.point = parentNode;
                 } else {

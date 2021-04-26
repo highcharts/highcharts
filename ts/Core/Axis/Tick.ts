@@ -17,6 +17,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type TimeTicksInfoObject from './TimeTicksInfoObject';
+import F from '../FormatUtilities.js';
 import H from '../Globals.js';
 const {
     deg2rad
@@ -397,7 +398,7 @@ class Tick {
         ): string => {
             if (labelOptions.format) {
                 ctx.text = axis.defaultLabelFormatter.call(ctx);
-                return U.format(labelOptions.format, ctx, chart);
+                return F.format(labelOptions.format, ctx, chart);
             }
             return (labelOptions.formatter || axis.defaultLabelFormatter)
                 .call(ctx, ctx);
@@ -544,7 +545,7 @@ class Tick {
      * @fires Highcharts.Tick#event:afterGetPosition
      */
     public getPosition(
-        horiz: boolean,
+        horiz: boolean|undefined,
         tickPos: number,
         tickmarkOffset: number,
         old?: boolean
@@ -926,23 +927,28 @@ class Tick {
             horiz = axis.horiz,
             pos = tick.pos,
             tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
-            xy = tick.getPosition(horiz as any, pos, tickmarkOffset, old),
+            xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
             x = xy.x,
             y = xy.y,
-            reverseCrisp = ((horiz && x === (axis.pos as any) + axis.len) ||
+            reverseCrisp = ((horiz && x === axis.pos + axis.len) ||
                 (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
 
+        const labelOpacity = pick(
+            opacity,
+            tick.label && tick.label.newOpacity, // #15528
+            1
+        );
         opacity = pick(opacity, 1);
         this.isActive = true;
 
         // Create the grid line
-        this.renderGridLine(old as any, opacity as any, reverseCrisp);
+        this.renderGridLine(old, opacity, reverseCrisp);
 
         // create the tick mark
-        this.renderMark(xy, opacity as any, reverseCrisp);
+        this.renderMark(xy, opacity, reverseCrisp);
 
         // the label is created on init - now move it into place
-        this.renderLabel(xy, old as any, opacity as any, index as any);
+        this.renderLabel(xy, old, labelOpacity, index);
 
         tick.isNew = false;
 
@@ -959,7 +965,7 @@ class Tick {
      * @return {void}
      */
     public renderGridLine(
-        old: boolean,
+        old: boolean|undefined,
         opacity: number,
         reverseCrisp: number
     ): void {
@@ -1116,7 +1122,7 @@ class Tick {
      */
     public renderLabel(
         xy: Highcharts.TickPositionObject,
-        old: boolean,
+        old: boolean|undefined,
         opacity: number,
         index: number
     ): void {

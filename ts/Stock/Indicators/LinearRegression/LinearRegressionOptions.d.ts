@@ -29,7 +29,7 @@ export interface LinearRegressionOptions extends SMAOptions {
 }
 
 export interface LinearRegressionParamsOptions extends SMAParamsOptions {
-    xAxisUnit?: number;
+    xAxisUnit?: null|number;
 }
 
 export interface RegressionLineParametersObject {

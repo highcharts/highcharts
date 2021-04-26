@@ -204,7 +204,11 @@ class IKHIndicator extends SMAIndicator {
     public static defaultOptions: IKHOptions = merge(
         SMAIndicator.defaultOptions,
         {
+            /**
+             * @excluding index
+             */
             params: {
+                index: void 0, // unused index, do not inherit (#15362)
                 period: 26,
                 /**
                  * The base period for Tenkan calculations.
@@ -468,7 +472,7 @@ class IKHIndicator extends SMAIndicator {
                 indicator.points,
             pointsLength: number = mainLinePoints.length,
             mainLineOptions: IKHOptions = indicator.options,
-            mainLinePath: Highcharts.SVGElement | undefined = indicator.graph,
+            mainLinePath = indicator.graph,
             mainColor = indicator.color,
             gappedExtend: IKHGapExtensionObject = {
                 options: {

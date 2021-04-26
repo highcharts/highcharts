@@ -20,10 +20,12 @@
  *
  * */
 
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 import type TimelinePointOptions from './TimelinePointOptions';
 import type TimelineSeries from './TimelineSeries';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -145,7 +147,7 @@ class TimelinePoint extends Series.prototype.pointClass {
             xAxisLen = point.series.xAxis.len,
             inverted = chart.inverted,
             direction = inverted ? 'x2' : 'y2',
-            dl: SVGElement = point.dataLabel as any,
+            dl: SVGLabel = point.dataLabel as any,
             targetDLPos = dl.targetPosition,
             coords: Record<string, (number|string)> = {
                 x1: point.plotX as any,

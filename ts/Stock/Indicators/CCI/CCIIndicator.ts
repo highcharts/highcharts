@@ -92,8 +92,11 @@ class CCIIndicator extends SMAIndicator {
      * @optionparent plotOptions.cci
      */
     public static defaultOptions: CCIOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * @excluding index
+         */
         params: {
-            period: 14
+            index: void 0 // unused index, do not inherit (#15362)
         }
     } as CCIOptions);
 

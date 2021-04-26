@@ -337,7 +337,7 @@ extend(defaultOptions, {
 
         /**
          * Whether the mask should be inside the range marking the zoomed
-         * range, or outside. In Highstock 1.x it was always `false`.
+         * range, or outside. In Highcharts Stock 1.x it was always `false`.
          *
          * @sample {highstock} stock/navigator/maskinside-false/
          *         False, mask outside
@@ -555,7 +555,10 @@ extend(defaultOptions, {
                 approximation: 'average',
                 enabled: true,
                 groupPixelWidth: 2,
-                smoothed: true,
+                // Replace smoothed property by anchors, #12455.
+                firstAnchor: 'firstPoint',
+                anchor: 'middle',
+                lastAnchor: 'lastPoint',
                 // Day and week differs from plotOptions.series.dataGrouping
                 units: [
                     ['millisecond', [1, 2, 5, 10, 20, 25, 50, 100, 200, 500]],
@@ -604,11 +607,11 @@ extend(defaultOptions, {
             },
 
             /**
-             * Since Highstock v8, default value is the same as default
+             * Since Highcharts Stock v8, default value is the same as default
              * `pointRange` defined for a specific type (e.g. `null` for
              * column type).
              *
-             * In Highstock version < 8, defaults to 0.
+             * In Highcharts Stock version < 8, defaults to 0.
              *
              * @extends plotOptions.series.pointRange
              * @type {number|null}
@@ -2241,6 +2244,10 @@ class Navigator {
 
                 baseOptions = base.options || {};
                 baseNavigatorOptions = baseOptions.navigatorOptions || {};
+
+                // The dataLabels options are not merged correctly
+                // if the settings are an array, #13847.
+                userNavOptions.dataLabels = splat(userNavOptions.dataLabels);
                 mergedNavSeriesOptions = merge(
                     baseOptions,
                     navSeriesMixin,

@@ -35,6 +35,8 @@ const {
     svg,
     win
 } = H;
+import O from '../../Core/Options.js';
+const { getOptions } = O;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../../Core/Pointer.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
@@ -49,7 +51,6 @@ const {
     erase,
     extend,
     extendClass,
-    getOptions,
     isArray,
     isNumber,
     isObject,

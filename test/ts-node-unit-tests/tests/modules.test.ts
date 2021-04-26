@@ -238,6 +238,7 @@ export function testStockIndicators() {
         'apo',
         'ikh',
         'keltnerchannels',
+        'klinger',
         'macd',
         'mfi',
         'momentum',
@@ -263,7 +264,8 @@ export function testStockIndicators() {
         'linearRegressionIntercept',
         'linearRegressionAngle',
         'abands',
-        'trendline'
+        'trendline',
+        'disparityindex'
     ];
 
     deepStrictEqual(

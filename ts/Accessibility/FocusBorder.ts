@@ -39,15 +39,13 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-declare global {
-    namespace Highcharts {
-        interface SVGElement {
-            focusBorder?: SVGElement;
-            /** @requires modules/accessibility */
-            addFocusBorder(margin: number, attribs: SVGAttributes): void;
-            /** @requires modules/accessibility */
-            removeFocusBorder(): void;
-        }
+declare module '../Core/Renderer/SVG/SVGElementLike' {
+    interface SVGElementLike {
+        focusBorder?: SVGElement;
+        /** @requires modules/accessibility */
+        addFocusBorder(margin: number, attribs: SVGAttributes): void;
+        /** @requires modules/accessibility */
+        removeFocusBorder(): void;
     }
 }
 

@@ -13,6 +13,8 @@
 'use strict';
 
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import Chart from '../../Core/Chart/Chart.js';
 import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';

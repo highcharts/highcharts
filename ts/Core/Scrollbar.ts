@@ -196,8 +196,8 @@ const swapXY = H.swapXY = function (
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
- * A reusable scrollbar, internally used in Highstock's navigator and optionally
- * on individual axes.
+ * A reusable scrollbar, internally used in Highcharts Stock's
+ * navigator and optionally on individual axes.
  *
  * @private
  * @class

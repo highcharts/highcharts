@@ -19,10 +19,11 @@
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Chart from './Chart.js';
+import O from '../../Core/Options.js';
+const { getOptions } = O;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
-    getOptions,
     merge,
     pick
 } = U;

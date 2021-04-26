@@ -28,6 +28,11 @@ const {
     getSeriesA11yElement,
     unhideChartElementFromAT
 } = ChartUtilities;
+import F from '../../../Core/FormatUtilities.js';
+const {
+    format,
+    numberFormat
+} = F;
 import HTMLUtilities from '../../Utils/HTMLUtilities.js';
 const {
     reverseChildNodes,
@@ -37,9 +42,7 @@ import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 const {
     find,
-    format,
     isNumber,
-    numberFormat,
     pick,
     defined
 } = U;

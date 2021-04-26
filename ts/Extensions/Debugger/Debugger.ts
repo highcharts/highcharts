@@ -21,15 +21,16 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Chart from '../../Core/Chart/Chart.js';
 import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
 const {
     charts
 } = H;
+import O from '../../Core/Options.js';
+const { setOptions } = O;
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     find,
-    isNumber,
-    setOptions
+    isNumber
 } = U;
 
 /* *

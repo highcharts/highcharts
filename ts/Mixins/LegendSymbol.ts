@@ -14,6 +14,8 @@ import type ColorAxis from '../Core/Axis/ColorAxis';
 import type Point from '../Core/Series/Point';
 import type Series from '../Core/Series/Series';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import H from '../Core/Globals.js';
 
 declare module '../Core/Axis/Types' {

@@ -34,6 +34,8 @@ import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
@@ -833,7 +835,7 @@ class TreemapSeries extends ScatterSeries {
      */
     public alignDataLabel(
         point: TreemapPoint,
-        dataLabel: SVGElement,
+        dataLabel: SVGLabel,
         labelOptions: DataLabelOptions
     ): void {
         var style = labelOptions.style;

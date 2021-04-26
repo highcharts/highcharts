@@ -151,6 +151,7 @@ class AST {
         'td',
         'th',
         'tr',
+        'u',
         'ul',
         '#text'
     ];

@@ -22,8 +22,15 @@ import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type Point from '../Core/Series/Point';
 import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
+import O from '../Core/Options.js';
+const {
+    getOptions,
+    setOptions
+} = O;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 import palette from '../Core/Color/Palette.js';
@@ -32,11 +39,9 @@ const {
     defined,
     extend,
     fireEvent,
-    getOptions,
     isNumber,
     merge,
     pick,
-    setOptions,
     uniqueKey
 } = U;
 
@@ -50,6 +55,7 @@ declare global {
         interface StockToolsNavigationBindings extends NavigationBindings {
             toggledAnnotations?: boolean;
             utils: StockToolsNavigationBindingsUtilsObject;
+            verticalCounter?: number;
             /** @requires modules/stock-tools */
             getYAxisPositions(
                 yAxes: Array<AxisType>,
@@ -250,6 +256,7 @@ bindingsUtils.manageIndicators = function (
         indicatorsWithVolume = [
             'ad',
             'cmf',
+            'klinger',
             'mfi',
             'obv',
             'vbp',
@@ -260,6 +267,7 @@ bindingsUtils.manageIndicators = function (
             'atr',
             'cci',
             'cmf',
+            'disparityindex',
             'cmo',
             'dmi',
             'macd',
@@ -281,7 +289,8 @@ bindingsUtils.manageIndicators = function (
             'linearRegression',
             'linearRegressionSlope',
             'linearRegressionIntercept',
-            'linearRegressionAngle'
+            'linearRegressionAngle',
+            'klinger'
         ],
         yAxis,
         parentSeries,
@@ -495,7 +504,7 @@ bindingsUtils.isNotNavigatorYAxis = function (axis: AxisType): boolean {
  */
 bindingsUtils.isPriceIndicatorEnabled = function (series: Series[]): boolean {
 
-    return series.some((s): Highcharts.SVGElement|undefined => s.lastVisiblePrice || s.lastPrice);
+    return series.some((s): (SVGElement|undefined) => s.lastVisiblePrice || s.lastPrice);
 };
 
 /**
@@ -1882,13 +1891,11 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
-            this: NavigationBindings,
+            this: Highcharts.StockToolsNavigationBindings,
             e: PointerEvent
         ): void {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
-                verticalCounter = !defined((this as any).verticalCounter) ? 0 :
-                    (this as any).verticalCounter,
                 options,
                 annotation;
 
@@ -1896,6 +1903,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             if (!closestPoint) {
                 return;
             }
+
+            this.verticalCounter = this.verticalCounter || 0;
 
             options = merge(
                 {
@@ -1910,7 +1919,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                         },
                         label: {
                             offset: closestPoint.below ? 40 : -40,
-                            text: verticalCounter.toString()
+                            text: this.verticalCounter.toString()
                         }
                     },
                     labelOptions: {
@@ -1930,7 +1939,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
 
             annotation = this.chart.addAnnotation(options);
 
-            verticalCounter++;
+            this.verticalCounter++;
 
             (annotation.options.events.click as any).call(annotation, {});
         }
@@ -2045,7 +2054,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                         },
                         connector: {
                             fill: 'none',
-                            stroke: closestPoint.below ? palette.negativeColor : palette.positiveColor
+                            stroke: closestPoint.below ?
+                                palette.negativeColor : palette.positiveColor
                         }
                     },
                     shapeOptions: {

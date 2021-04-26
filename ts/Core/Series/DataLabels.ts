@@ -21,8 +21,12 @@ import type PieSeries from '../../Series/Pie/PieSeries';
 import type Point from './Point';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+import type SVGLabel from '../Renderer/SVG/SVGLabel';
+
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
+import F from '../FormatUtilities.js';
+const { format } = F;
 import H from '../Globals.js';
 const { noop } = H;
 import palette from '../Color/Palette.js';
@@ -36,7 +40,6 @@ const {
     defined,
     extend,
     fireEvent,
-    format,
     isArray,
     merge,
     objectEach,
@@ -52,7 +55,7 @@ declare module './PointLike' {
         connector?: SVGElement;
         connectors?: Array<SVGElement>;
         contrastColor?: ColorString;
-        dataLabel?: SVGElement;
+        dataLabel?: SVGLabel;
         dataLabelOnNull?: boolean;
         dataLabelPath?: SVGElement;
         dataLabels?: Array<SVGElement>;
@@ -538,8 +541,8 @@ Series.prototype.drawDataLabels = function (): void {
                     style,
                     rotation,
                     attr: any,
-                    dataLabel = point.dataLabels ? point.dataLabels[i] :
-                        point.dataLabel,
+                    dataLabel: SVGLabel = point.dataLabels ? point.dataLabels[i] :
+                        point.dataLabel as any,
                     connector = point.connectors ? point.connectors[i] :
                         point.connector,
                     labelDistance = pick(
@@ -662,7 +665,7 @@ Series.prototype.drawDataLabels = function (): void {
                                 0,
                                 -9999,
                                 labelOptions.useHTML)
-                                .addClass('highcharts-data-label') :
+                                .addClass('highcharts-data-label') as any :
 
                             // We can use label
                             renderer.label(

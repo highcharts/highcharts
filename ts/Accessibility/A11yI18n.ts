@@ -15,9 +15,10 @@
 
 import type Chart from '../Core/Chart/Chart';
 import H from '../Core/Globals.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
 import U from '../Core/Utilities.js';
 const {
-    format,
     pick
 } = U;
 

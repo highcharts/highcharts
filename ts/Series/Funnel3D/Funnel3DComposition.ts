@@ -41,6 +41,17 @@ import '../../Core/Renderer/SVG/SVGRenderer.js';
  *
  * */
 
+declare module '../../Core/Renderer/SVG/SVGElementLike' {
+    interface SVGElementLike {
+        finishedOnAdd?: boolean;
+        lowerGroup?: SVGElement;
+        upperGroup?: SVGElement;
+        fontLower?: SVGElement;
+        backLower?: SVGElement;
+        rightLower?: SVGElement;
+    }
+}
+
 declare module '../../Core/Renderer/SVG/SVGElement3DLike' {
     interface SVGElement3DLike {
         funnel3d?: Highcharts.Funnel3dMethodsObject;
@@ -53,14 +64,6 @@ declare module '../../Core/Renderer/SVG/SVGElement3DLike' {
  */
 declare global {
     namespace Highcharts {
-        interface SVGElement {
-            finishedOnAdd?: boolean;
-            lowerGroup?: SVGElement;
-            upperGroup?: SVGElement;
-            fontLower?: SVGElement;
-            backLower?: SVGElement;
-            rightLower?: SVGElement;
-        }
         interface Funnel3dMethodsObject extends SVGElement3DLikeCuboid {
             parts: Array<string>;
             mainParts: Array<string>;

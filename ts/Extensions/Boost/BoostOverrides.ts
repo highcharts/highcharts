@@ -20,8 +20,12 @@ import type {
 } from '../../Core/Series/PointOptions';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import Chart from '../../Core/Chart/Chart.js';
+import O from '../../Core/Options.js';
+const { getOptions } = O;
 import Point from '../../Core/Series/Point.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -30,7 +34,6 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     error,
-    getOptions,
     isArray,
     isNumber,
     pick,
@@ -130,7 +133,7 @@ Chart.prototype.isChartSeriesBoosting = function (): boolean {
 /**
  * Get the clip rectangle for a target, either a series or the chart. For the
  * chart, we need to consider the maximum extent of its Y axes, in case of
- * Highstock panes and navigator.
+ * Highcharts Stock panes and navigator.
  *
  * @private
  * @function Highcharts.Chart#getBoostClipRect
@@ -573,7 +576,7 @@ Series.prototype.destroyGraphics = function (): void {
     if ((this as any).getZonesGraphs) {
         const props: string[][] = (this as any).getZonesGraphs([['graph', 'highcharts-graph']]);
         props.forEach((prop): void => {
-            const zoneGraph: Highcharts.SVGElement = (this as any)[prop[0]];
+            const zoneGraph: SVGElement = (this as any)[prop[0]];
             if (zoneGraph) {
                 (this as any)[prop[0]] = zoneGraph.destroy();
             }

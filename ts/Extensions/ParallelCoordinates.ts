@@ -18,7 +18,11 @@ import type RadialAxis from '../Core/Axis/RadialAxis';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
 import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
+const { setOptions } = O;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
@@ -28,10 +32,8 @@ const {
     defined,
     erase,
     extend,
-    format,
     merge,
     pick,
-    setOptions,
     splat,
     wrap
 } = U;

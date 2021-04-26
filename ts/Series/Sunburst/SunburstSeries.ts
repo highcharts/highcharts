@@ -27,7 +27,9 @@ import type SunburstDataLabelOptions from './SunburstDataLabelOptions';
 import type SunburstPointOptions from './SunburstPointOptions';
 import type SunburstSeriesOptions from './SunburstSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type TreemapSeriesType from '../Treemap/TreemapSeries';
+
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 const {
     getCenter,
@@ -719,7 +721,7 @@ class SunburstSeries extends TreemapSeries {
 
     public alignDataLabel(
         _point: SunburstPoint,
-        _dataLabel: SVGElement,
+        _dataLabel: SVGLabel,
         labelOptions: DataLabelOptions
     ): void {
 
