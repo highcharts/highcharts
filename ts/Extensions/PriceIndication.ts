@@ -196,6 +196,102 @@ declare global {
  */
 
 /**
+ * @declare   Highcharts.SeriesLastPriceLabelOptionsObject
+ * @extends   yAxis.crosshair.label
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastPrice.label
+ */
+
+/**
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastPrice.label.align
+ * */
+
+/**
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastPrice.label.backgroundColor
+ * */
+
+/**
+ * The border color of `lastPrice` label.
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastPrice.label.borderColor
+ * */
+
+/**
+ * The border radius of `lastPrice` label.
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastPrice.label.borderRadius
+ * */
+
+/**
+ * The border width of `lastPrice` label.
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastPrice.label.borderWidth
+ * */
+
+/**
+ * Flag to enable `lastPrice` label.
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastPrice.label.enabled
+ * */
+
+/**
+ * A format string for the `lastPrice` label. Defaults to `{value}` for
+ * numeric axes and `{value:%b %d, %Y}` for datetime axes.
+ *
+ * @type      {string}
+ * @since     7.0
+ * @product   highstock
+ * @apioption plotOptions.series.lastPrice.label.format
+*/
+
+/**
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastPrice.label.formatter
+ */
+
+/**
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastPrice.label.padding
+ */
+
+/**
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastPrice.label.shape
+ */
+
+/**
+ * Text styles for the `lastPrice` label.
+ *
+ * @type      {Highcharts.CSSObject}
+ * @default   {"color": "white", "fontWeight": "normal", "fontSize": "11px", "textAlign": "center"}
+ * @since     7.0
+ * @product   highstock
+ * @apioption plotOptions.series.lastPrice.label.style
+ */
+
+/**
+ * The border width for the `lastPrice` label.
+ *
+ * @type      {number}
+ * @default   0
+ * @since     7.0
+ * @product   highstock
+ * @apioption plotOptions.series.lastPrice.label.borderWidth
+*/
+
+/**
+ * Padding inside the `lastPrice` label.
+ *
+ * @type      {number}
+ * @default   8
+ * @since     7.0
+ * @product   highstock
+ * @apioption plotOptions.series.lastPrice.label.padding
+ */
+
+/**
  * The color of the line of last price.
  * By default, the line has the same color as the series.
  *
