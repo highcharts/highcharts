@@ -52,8 +52,6 @@ class Menu {
         }
 
         this.container = this.setContainer();
-
-        console.log('init menu', options);
     }
 
     /* *

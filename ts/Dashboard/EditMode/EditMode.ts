@@ -27,7 +27,7 @@ class EditMode {
         enabled: true,
         tools: {
             addComponentBtn: {
-                icon: EditGlobals.iconsURL + 'add.svg',
+                icon: EditGlobals.iconsURL + 'add.svg'
             }
         }
     }

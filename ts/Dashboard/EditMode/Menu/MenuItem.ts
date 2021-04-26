@@ -95,8 +95,12 @@ class MenuItem {
         if (options.type === 'toggle') {
             element = EditRenderer.renderToggle(
                 item.container,
-                callback,
-                options.text || ''
+                {
+                    id: options.id,
+                    name: options.id,
+                    title: options.text || '',
+                    callback: callback
+                }
             );
         } else if (options.type === 'icon' && options.icon) {
             element = EditRenderer.renderIcon(
@@ -116,12 +120,18 @@ class MenuItem {
         } else if (options.type === 'textarea') {
             element = EditRenderer.renderTextarea(
                 item.container,
-                options.text || ''
+                {
+                    id: options.id,
+                    name: options.id,
+                    title: options.text || ''
+                }
             );
         } else if (options.type === 'input') {
             element = EditRenderer.renderInput(
                 item.container,
                 {
+                    id: options.id,
+                    name: options.id,
                     callback: void 0,
                     title: options.text
                 }

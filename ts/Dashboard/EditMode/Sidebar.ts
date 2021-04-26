@@ -8,7 +8,7 @@ import Menu from './Menu/Menu.js';
 import type MenuItem from './Menu/MenuItem.js';
 import DashboardGlobals from '../DashboardGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
-import EditRenderer from './EditRenderer.js';
+import EditRenderer, { FormField } from './EditRenderer.js';
 
 const {
     merge,
@@ -58,7 +58,7 @@ class Sidebar {
     ];
 
     public static tabsGeneralOptions: Array<Sidebar.TabOptions> = [{
-        type: 'component',
+        type: 'components',
         icon: '',
         items: {
             cell: ['addComponent']
@@ -310,6 +310,7 @@ class Sidebar {
 
         for (let i = 0, iEnd = tabs.length; i < iEnd; ++i) {
             contentItems = tabs[i].items.cell;
+            const isComponentSettings = contentItems[0] === 'componentSettings';
 
             tabElement = createElement(
                 'div', {
@@ -348,7 +349,10 @@ class Sidebar {
                         value: 'Save',
                         className: EditGlobals.classNames.editSidebarTabBtn,
                         callback: (): void => {
-                            // console.log('save');
+                            // temp switch
+                            if (isComponentSettings) {
+                                sidebar.updateComponent();
+                            }
                         }
                     }
                 );
@@ -474,7 +478,6 @@ class Sidebar {
         context: Cell|Row|undefined
     ): void {
         this.context = context;
-
         // activate first tab.
         this.onTabClick(this.tabs[
             context ? Sidebar.tabs[0].type : Sidebar.tabsGeneralOptions[0].type
@@ -674,6 +677,21 @@ class Sidebar {
         if (this.activeTab) {
             this.activeTab.contentContainer.innerHTML = 'layouts options';
         }
+    }
+
+    public updateComponent(): void {
+        const formFields = this.activeTab?.contentContainer.querySelectorAll('input, textarea') || [];
+        const updatedSettings = {};
+        let fieldId;
+
+        for (let i = 0, iEnd = formFields.length; i < iEnd; ++i) {
+            fieldId = formFields[i].getAttribute('id');
+
+            if (fieldId) {
+                (updatedSettings as any)[fieldId] = (formFields[i] as HTMLInputElement).value;
+            }
+        }
+
     }
 }
 
