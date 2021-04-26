@@ -130,8 +130,15 @@ class ChartComponent extends Component<ChartComponent.Event> {
 
         if (this.store) {
             this.on('tableChanged', (e: any): void => {
-                if (e.detail && e.detail.sender !== this.id) {
+                if (!e.detail || (e.detail && e.detail.sender !== this.id)) {
                     this.updateSeries();
+                }
+            });
+
+            // reload the store when polling
+            this.store.on('afterLoad', (e): void => {
+                if (e.table && this.store) {
+                    this.store.table.setColumns(e.table.getColumns());
                 }
             });
         }
@@ -193,27 +200,6 @@ class ChartComponent extends Component<ChartComponent.Event> {
     }
 
     private updateSeries(): void {
-        if (this.store) {
-            const series = new DataSeriesConverter(this.store.table, {})
-                .getAllSeriesData();
-
-            if (this.chart) {
-                this.chart.update({ series }, true);
-            }
-        }
-    }
-
-    public registerSyncHandler(handler: ChartSyncHandler): void {
-        const { id } = handler;
-        this.syncHandlerRegistry[id] = handler;
-    }
-
-    public getSyncHandler(handlerID: string): ChartSyncHandler | undefined {
-        return this.syncHandlerRegistry[handlerID];
-    }
-
-    private initChart(): void {
-        this.chart = this.constructChart();
         // Heuristically create series from the store datatable
         if (this.store && this.store.table) {
             const { table } = this.store;
@@ -234,12 +220,22 @@ class ChartComponent extends Component<ChartComponent.Event> {
                 }
             });
 
-            // Create the series
-            const seriesList = seriesNames.map((seriesName, index): Series =>
-                this.chart.addSeries({
+            // Create the series or get the already added series
+            const seriesList = seriesNames.map((seriesName, index): Series => {
+                let i = 0;
+                while (i < this.chart.series.length) {
+                    const series = this.chart.series[i];
+                    if (series.name === seriesName) {
+                        return series;
+                    }
+                    i++;
+                }
+
+                return this.chart.addSeries({
                     name: seriesName,
                     id: `${table.id}-series-${index}`
-                }, false)
+                }, false);
+            }
             );
 
             // Insert the data
@@ -255,10 +251,25 @@ class ChartComponent extends Component<ChartComponent.Event> {
                     seriesTable.renameColumn(xKey, 'x');
                 }
 
-                series.setData(seriesTable);
+                series.setData(seriesTable, false);
             });
         }
 
+        this.chart.redraw();
+    }
+
+    public registerSyncHandler(handler: ChartSyncHandler): void {
+        const { id } = handler;
+        this.syncHandlerRegistry[id] = handler;
+    }
+
+    public getSyncHandler(handlerID: string): ChartSyncHandler | undefined {
+        return this.syncHandlerRegistry[handlerID];
+    }
+
+    private initChart(): void {
+        this.chart = this.constructChart();
+        this.updateSeries();
         this.setupSync();
     }
 
