@@ -87,17 +87,16 @@ class EditRenderer {
 
     public static renderToggle(
         parentElement: HTMLDOMElement,
-        callback?: Function,
-        title?: string
+        options: FormField
     ): HTMLDOMElement|undefined {
         let toggle;
 
         if (parentElement) {
 
-            if (title) {
+            if (options.title) {
                 EditRenderer.renderText(
                     parentElement,
-                    title
+                    options.title
                 );
             }
 
@@ -116,7 +115,7 @@ class EditRenderer {
                 'span',
                 {
                     className: EditGlobals.classNames.toggleSlider,
-                    onclick: callback
+                    onclick: options.callback
                 },
                 {},
                 toggle
@@ -170,7 +169,7 @@ class EditRenderer {
 
     public static renderInput(
         parentElement: HTMLDOMElement,
-        options: InputOptions
+        options: FormField
     ): HTMLDOMElement|undefined {
         let input: HTMLDOMElement|undefined;
 
@@ -185,24 +184,14 @@ class EditRenderer {
             input = createElement(
                 'input', {
                     type: 'text',
-                    onclick: options.callback
+                    onclick: options.callback,
+                    id: options.id || '',
+                    name: options.name || ''
                 }, {
 
                 },
                 parentElement
             );
-
-            // if (options.applyButtonFn) {
-            //     EditRenderer.renderButton(
-            //         parentElement,
-            //         {
-            //             callback: function (): void {
-            //                 options.applyButtonFn && options.applyButtonFn(input);
-            //             },
-            //             value: 'Save'
-            //         }
-            //     );
-            // }
         }
 
         return input;
@@ -210,22 +199,23 @@ class EditRenderer {
 
     public static renderTextarea(
         parentElement: HTMLDOMElement,
-        title: string
+        options: FormField
     ): HTMLDOMElement|undefined {
         let textarea;
 
         if (parentElement) {
 
-            if (title) {
+            if (options.title) {
                 EditRenderer.renderText(
                     parentElement,
-                    title
+                    options.title
                 );
             }
 
             textarea = createElement(
                 'textarea', {
-
+                    id: options.id,
+                    name: options.name
                 }, {
 
                 },
@@ -288,13 +278,14 @@ export interface ButtonOptions {
     className?: string;
     icon?: string;
     isDisabled?: boolean;
-    style?: CSSObject
+    style?: CSSObject;
 }
 
-export interface InputOptions {
+export interface FormField {
+    id: string;
+    name: string;
     callback?: Function;
     title?: string;
-    applyButtonFn?: Function;
 }
 
 export default EditRenderer;
