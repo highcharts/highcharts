@@ -1144,3 +1144,22 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Scrolling when the range is set, #14742.',
+    function (assert) {
+        const chart = Highcharts.stockChart('container', {
+            xAxis: {
+                range: 15
+            },
+            series: [{
+                // 16 points -> range 15
+                data: [2, 4, 6, 4, 1, 2, 5, 6, 2, 5, 6, 5, 4, 2, 4, 1]
+            }]
+        });
+
+        assert.ok(
+            chart,
+            'Add test...'
+        );
+    }
+);

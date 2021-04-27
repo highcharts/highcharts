@@ -218,6 +218,10 @@ declare global {
                 addEvent: boolean,
                 redraw?: boolean
             ): void;
+            public shouldStickToMin(
+                baseSeries: Series,
+                navigator: Navigator
+            ): boolean|undefined;
         }
     }
 }
@@ -2520,8 +2524,7 @@ class Navigator {
     public updatedDataHandler(this: Series): void {
         var navigator = this.chart.navigator as Highcharts.Navigator,
             baseSeries = this,
-            navigatorSeries = this.navigatorSeries,
-            xDataMin = navigator.getBaseSeriesMin((baseSeries.xData as any)[0]);
+            navigatorSeries = this.navigatorSeries;
 
         // If the scrollbar is scrolled all the way to the right, keep right as
         // new data  comes in.
@@ -2529,12 +2532,7 @@ class Navigator {
             Math.round(navigator.zoomedMin) === 0 :
             Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
 
-        // Detect whether the zoomed area should stick to the minimum or
-        // maximum. If the current axis minimum falls outside the new updated
-        // dataset, we must adjust.
-        navigator.stickToMin = isNumber(baseSeries.xAxis.min) &&
-            ((baseSeries.xAxis.min as any) <= xDataMin) &&
-            (!this.chart.fixedRange || !navigator.stickToMax);
+        navigator.stickToMin = navigator.shouldStickToMin(baseSeries, navigator);
 
         // Set the navigator series data to the new data of the base series
         if (navigatorSeries && !navigator.hasNavigatorData) {
@@ -2546,6 +2544,36 @@ class Navigator {
                 false
             ); // #5414
         }
+    }
+
+    /**
+     * Detect if the zoomed area should stick to the minimum or maximum.
+     *
+     * @private
+     * @function Highcharts.Navigator#shouldStickToMin
+     */
+    public shouldStickToMin(baseSeries: Series, navigator: Navigator): boolean|undefined {
+        const xDataMin = navigator.getBaseSeriesMin((baseSeries.xData as any)[0]),
+            xAxis = baseSeries.xAxis,
+            max = xAxis.max,
+            min = xAxis.min,
+            range = xAxis.options.range;
+
+        let stickToMin: boolean = true;
+
+        if (isNumber(max) && isNumber(min)) {
+            // If range declared, stick to the minimum only if the range
+            // is smaller than the data set range.
+            if (range) {
+                stickToMin = max - xDataMin < range && (!this.chart.fixedRange);
+            } else {
+                // If the current axis minimum falls outside the new
+                // updated dataset, we must adjust.
+                stickToMin = min <= xDataMin && (!this.chart.fixedRange);
+            }
+        }
+
+        return stickToMin;
     }
 
     /**
