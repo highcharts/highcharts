@@ -680,18 +680,33 @@ class Sidebar {
     }
 
     public updateComponent(): void {
-        const formFields = this.activeTab?.contentContainer.querySelectorAll('input, textarea') || [];
+        const activeTab = this.activeTab;
+        const formFields = activeTab &&
+            activeTab.contentContainer.querySelectorAll(
+                'input, textarea'
+            ) || [];
         const updatedSettings = {};
+        const mountedComponent = (this.context as Cell).mountedComponent;
         let fieldId;
 
         for (let i = 0, iEnd = formFields.length; i < iEnd; ++i) {
             fieldId = formFields[i].getAttribute('id');
 
             if (fieldId) {
-                (updatedSettings as any)[fieldId] = (formFields[i] as HTMLInputElement).value;
+                try {
+                    (updatedSettings as any)[fieldId] = JSON.parse(
+                        (formFields[i] as HTMLTextAreaElement).value
+                    );
+                } catch {
+                    (updatedSettings as any)[fieldId] =
+                        (formFields[i] as (HTMLInputElement)).value;
+                }
             }
         }
 
+        if (mountedComponent) {
+            mountedComponent.update(updatedSettings as any);
+        }
     }
 }
 
