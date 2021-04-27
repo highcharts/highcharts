@@ -35,10 +35,9 @@ function change() {
         index = parseInt(this.getAttribute('data-index'), 10),
         name = formInputs[0].value,
         seriesTable = chart.series[0].table,
-        x = index, // parseFloat(formInputs[1].value),
         y = parseFloat(formInputs[1].value);
 
-    seriesTable.setRow({ name, x, y }, index);
+    seriesTable.setRow({ name, y }, index);
 }
 
 // add a series row with data from the HTML form
@@ -47,13 +46,12 @@ function add() {
         formTableRow = document.createElement('tr'),
         name = formInputs[0].value,
         seriesTable = chart.series[0].table,
-        x = seriesTable.getRowCount(), // parseFloat(formInputs[1].value),
+        x = seriesTable.getRowCount(),
         y = parseFloat(formInputs[1].value);
 
     formTableRow.setAttribute('data-index', seriesTable.getRowCount());
     formTableRow.innerHTML = [
         `<td><input type="text" value="${name}"" /></td>`,
-        // `<td><input type="number" value="${x}"" /></td>`,
         `<td><input type="number" value="${y}"" /></td>`,
         `<td><button type="button">Change</button></td>`
     ].join('');
