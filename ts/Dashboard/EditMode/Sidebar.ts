@@ -604,7 +604,8 @@ class Sidebar {
                     id: key,
                     type: type === 'text' ? 'input' : type,
                     text: key,
-                    isActive: true
+                    isActive: true,
+                    value: elem.value
                 };
 
                 items.push(

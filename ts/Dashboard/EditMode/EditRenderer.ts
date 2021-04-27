@@ -186,7 +186,8 @@ class EditRenderer {
                     type: 'text',
                     onclick: options.callback,
                     id: options.id || '',
-                    name: options.name || ''
+                    name: options.name || '',
+                    value: options.value || ''
                 }, {
 
                 },
@@ -215,7 +216,8 @@ class EditRenderer {
             textarea = createElement(
                 'textarea', {
                     id: options.id,
-                    name: options.name
+                    name: options.name,
+                    value: options.value || ''
                 }, {
 
                 },
@@ -286,6 +288,7 @@ export interface FormField {
     name: string;
     callback?: Function;
     title?: string;
+    value?: string;
 }
 
 export default EditRenderer;

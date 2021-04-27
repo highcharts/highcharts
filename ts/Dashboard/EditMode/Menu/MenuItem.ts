@@ -123,7 +123,8 @@ class MenuItem {
                 {
                     id: options.id,
                     name: options.id,
-                    title: options.text || ''
+                    title: options.text || '',
+                    value: options.value || ''
                 }
             );
         } else if (options.type === 'input') {
@@ -133,7 +134,8 @@ class MenuItem {
                     id: options.id,
                     name: options.id,
                     callback: void 0,
-                    title: options.text
+                    title: options.text,
+                    value: options.value || ''
                 }
             );
         } else if (options.type === 'text') {
@@ -189,6 +191,7 @@ namespace MenuItem {
         style?: CSSJSONObject;
         icon?: string;
         isActive?: boolean;
+        value?: string;
     }
 }
 
