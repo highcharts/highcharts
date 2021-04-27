@@ -817,7 +817,7 @@ function GLRenderer(
 
             // Note: Boost requires that zones are sorted!
             if (zones) {
-                pcolor = (zoneDefColor as any).rgba;
+                pcolor = (zoneDefColor as any).rgba.slice();
                 zones.some(function ( // eslint-disable-line no-loop-func
                     zone: SeriesZonesOptions,
                     i: number
