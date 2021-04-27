@@ -7,6 +7,7 @@ import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 
 const {
     addEvent,
+    defined,
     merge,
     css,
     createElement
@@ -262,6 +263,9 @@ class DragDrop {
 
     public onCellDragEnd(): void {
         const dragDrop = this,
+            droppedCell = dragDrop.context as Cell,
+            dragContextCell = dragDrop.dragContext as Cell,
+            dragContextCellIndex = dragContextCell.row.getCellIndex(dragContextCell.id),
             insertBefore = function (newNode: HTMLDOMElement, referenceNode: HTMLDOMElement): void {
                 referenceNode.parentNode.insertBefore(newNode, referenceNode);
             },
@@ -270,19 +274,22 @@ class DragDrop {
             };
 
         if (
-            dragDrop.context &&
-            dragDrop.context.container &&
-            dragDrop.dragContext &&
-            dragDrop.dragContext.container
+            droppedCell.container &&
+            dragContextCell.container &&
+            defined(dragContextCellIndex)
         ) {
             if (dragDrop.dropPointer.align === 'right') {
-                insertAfter(dragDrop.context.container, dragDrop.dragContext.container);
+                droppedCell.row.unmountCell(droppedCell.id);
+                dragContextCell.row.mountCell(droppedCell, dragContextCellIndex + 1);
+                insertAfter(droppedCell.container, dragContextCell.container);
             } else if (dragDrop.dropPointer.align === 'left') {
-                insertBefore(dragDrop.context.container, dragDrop.dragContext.container);
+                droppedCell.row.unmountCell(droppedCell.id);
+                dragContextCell.row.mountCell(droppedCell, dragContextCellIndex);
+                insertBefore(droppedCell.container, dragContextCell.container);
             }
 
             dragDrop.hideDropPointer();
-            dragDrop.context.container.style.display = 'block';
+            droppedCell.container.style.display = 'block';
         }
     }
 

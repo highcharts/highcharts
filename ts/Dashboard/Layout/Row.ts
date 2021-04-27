@@ -298,6 +298,39 @@ class Row extends GUIElement {
             // nested layouts
         }
     }
+
+    // Find cell index in row.cells array.
+    public getCellIndex(
+        id: string
+    ): number | undefined {
+        const row = this;
+
+        for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
+            if (row.cells[i].id === id) {
+                return i;
+            }
+        }
+    }
+
+    // Find and remove cell from row.cells array.
+    public unmountCell(
+        id: string
+    ): void {
+        const cellIndex = this.getCellIndex(id);
+
+        if (cellIndex) {
+            this.cells.splice(cellIndex, 1);
+        }
+    }
+
+    // Add new cell to the row.cells array.
+    public mountCell(
+        cell: Cell,
+        index: number
+    ): void {
+        this.cells.splice(index, 0, cell);
+        cell.row = this;
+    }
 }
 
 namespace Row {

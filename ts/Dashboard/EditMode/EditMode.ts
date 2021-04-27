@@ -197,7 +197,10 @@ class EditMode {
 
                 addEvent(row.container, 'mousemove', function (e): void {
                     rowToolbar.onMouseMove(row);
-                    e.stopImmediatePropagation();
+
+                    if (!(editMode.dragDrop || {}).isActive) {
+                        e.stopImmediatePropagation();
+                    }
                 });
             }
 
@@ -218,7 +221,10 @@ class EditMode {
                     if (resizedCell && resizedCell.snapX) {
                         addEvent(resizedCell.snapX, 'mousemove', function (e): void {
                             cellToolbar.hide();
-                            e.stopImmediatePropagation();
+
+                            if (!(editMode.dragDrop || {}).isActive) {
+                                e.stopImmediatePropagation();
+                            }
                         });
                     }
                 }
