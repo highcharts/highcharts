@@ -7,7 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import type Time from '../Time';
+
 
 /* *
  *
@@ -15,9 +15,8 @@ import type Time from '../Time';
  *
  * */
 
-export interface TimeTicksInfoObject extends Time.TimeNormalizedObject {
-    higherRanks: Record<string, string>;
-    totalRange: number;
+export interface TickPositionsArray {
+
 }
 
-export default TimeTicksInfoObject;
+export default TickPositionsArray;

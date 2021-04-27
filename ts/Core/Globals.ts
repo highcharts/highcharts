@@ -75,6 +75,11 @@ declare global {
      * @todo: Rename UMD argument `win` to `window`
      */
     const win: Window|undefined;
+
+    interface Window {
+        moment: any;
+        Date: any;
+    }
 }
 
 /* *

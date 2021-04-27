@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type TickPositionsArray from './TickPositionsArray';
+import type Time from '../Time.js';
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
@@ -26,6 +28,11 @@ declare module '../Series/SeriesOptions' {
     }
 }
 
+declare module './TickPositionsArray' {
+    interface TickPositionsArray extends Array<number> {
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -33,7 +40,7 @@ declare module '../Series/SeriesOptions' {
 declare global {
     namespace Highcharts {
         type DateTimeLabelFormatsKey = keyof XAxisDateTimeLabelFormatsOptions;
-        interface DateTimeAxisNormalizedObject extends TimeNormalizedObject {
+        interface DateTimeAxisNormalizedObject extends Time.TimeNormalizedObject {
             unitName: DateTimeLabelFormatsKey;
         }
         interface DateTimeLabelFormatOptionsObject {
@@ -252,7 +259,7 @@ class DateTimeAxis {
          *
          * @return {Highcharts.AxisTickPositionsArray}
          */
-        axisProto.getTimeTicks = function (): Highcharts.AxisTickPositionsArray {
+        axisProto.getTimeTicks = function (): TickPositionsArray {
             return this.chart.time.getTimeTicks.apply(
                 this.chart.time, arguments as any
             );

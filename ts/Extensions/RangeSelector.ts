@@ -21,6 +21,7 @@ import type {
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type Time from '../Core/Time';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -1431,7 +1432,7 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#defaultInputDateParser
      */
-    public defaultInputDateParser(inputDate: string, useUTC: boolean, time?: Highcharts.Time): number {
+    public defaultInputDateParser(inputDate: string, useUTC: boolean, time?: Time): number {
         const hasTimezone = (str: string): boolean =>
             str.length > 6 &&
             (str.lastIndexOf('-') === str.length - 6 ||
@@ -2809,7 +2810,7 @@ Axis.prototype.minFromRange = function (
         time = this.chart.time,
         // Get the true range from a start date
         getTrueRange = function (base: number, count: number): number {
-            const timeName: Highcharts.TimeUnitValue = type === 'year' ? 'FullYear' : 'Month';
+            const timeName: Time.TimeUnitValue = type === 'year' ? 'FullYear' : 'Month';
             const date = new time.Date(base);
             const basePeriod = time.get(timeName, date);
 
