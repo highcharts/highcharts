@@ -186,7 +186,7 @@ class Fx {
 
         // HTML styles, raw HTML content like container size
         } else {
-            elem.style[prop] = now + (this.unit as any);
+            elem.style[prop as any] = now + (this.unit as any);
         }
 
         if (step) {
@@ -440,7 +440,7 @@ class Fx {
 
         // For sideways animation, find out how much we need to shift to get the
         // start path Xs to match the end path Xs.
-        if (startX && endX) {
+        if (startX && endX && endX.length) {
             for (i = 0; i < startX.length; i++) {
                 // Moving left, new points coming in on right
                 if (startX[i] === endX[0]) {

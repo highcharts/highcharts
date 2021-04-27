@@ -28,7 +28,6 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator,
-        ema: EMAIndicator,
         column: ColumnSeries
     }
 } = SeriesRegistry;

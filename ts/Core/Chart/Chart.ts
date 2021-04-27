@@ -43,6 +43,8 @@ const {
     setAnimation
 } = A;
 import Axis from '../Axis/Axis.js';
+import F from '../FormatUtilities.js';
+const { numberFormat } = F;
 import H from '../Globals.js';
 const {
     charts,
@@ -54,7 +56,7 @@ import MSPointer from '../MSPointer.js';
 import O from '../Options.js';
 const {
     defaultOptions,
-    time
+    defaultTime
 } = O;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
@@ -84,7 +86,6 @@ const {
     isObject,
     isString,
     merge,
-    numberFormat,
     objectEach,
     pick,
     pInt,
@@ -277,6 +278,7 @@ class Chart {
     public renderTo: globalThis.HTMLElement = void 0 as any;
     public series: Array<Series> = void 0 as any;
     public seriesGroup?: SVGElement;
+    public sharedClips: Record<string, (SVGElement|undefined)> = {};
     public spacing: Array<number> = void 0 as any;
     public spacingBox: BBoxObject = void 0 as any;
     public styledMode?: boolean;
@@ -1706,7 +1708,7 @@ class Chart {
      * @sample highcharts/members/chart-setsize-jquery-resizable/
      *         Add a jQuery UI resizable
      * @sample stock/members/chart-setsize/
-     *         Highstock with UI resizable
+     *         Highcharts Stock with UI resizable
      *
      * @function Highcharts.Chart#setSize
      *
@@ -2461,7 +2463,7 @@ class Chart {
      * @sample highcharts/members/chart-destroy/
      *         Destroy the chart from a button
      * @sample stock/members/chart-destroy/
-     *         Destroy with Highstock
+     *         Destroy with Highcharts Stock
      *
      * @function Highcharts.Chart#destroy
      *
@@ -2582,7 +2584,7 @@ class Chart {
         // Run an event after axes and series are initialized, but before
         // render. At this stage, the series data is indexed and cached in the
         // xData and yData arrays, so we can access those before rendering. Used
-        // in Highstock.
+        // in Highcharts Stock.
         fireEvent(chart, 'beforeRender');
 
         // depends on inverted and on margins being set
@@ -2662,7 +2664,7 @@ class Chart {
      * @sample highcharts/members/chart-addseries/
      *         Add a series from a button
      * @sample stock/members/chart-addseries/
-     *         Add a series in Highstock
+     *         Add a series in Highcharts Stock
      *
      * @function Highcharts.Chart#addSeries
      *
@@ -2862,7 +2864,7 @@ class Chart {
      * @sample highcharts/members/chart-showloading/
      *         Apply different text labels
      * @sample stock/members/chart-show-hide-loading/
-     *         Toggle loading in Highstock
+     *         Toggle loading in Highcharts Stock
      *
      * @function Highcharts.Chart#showLoading
      *
@@ -2946,7 +2948,7 @@ class Chart {
      * @sample highcharts/members/chart-hideloading/
      *         Show and hide loading from a button
      * @sample stock/members/chart-show-hide-loading/
-     *         Toggle loading in Highstock
+     *         Toggle loading in Highcharts Stock
      *
      * @function Highcharts.Chart#hideLoading
      */
@@ -3134,7 +3136,7 @@ class Chart {
             // first with global time, then updated with time options, we need
             // to create a new Time instance to avoid mutating the global time
             // (#10536).
-            if (this.time === time) {
+            if (this.time === defaultTime) {
                 this.time = new Time(options.time);
             }
 

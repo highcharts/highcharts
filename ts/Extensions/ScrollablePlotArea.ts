@@ -26,7 +26,9 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+
 import A from '../Core/Animation/AnimationUtilities.js';
 const { stop } = A;
 import Axis from '../Core/Axis/Axis.js';
@@ -49,7 +51,7 @@ declare module '../Core/Chart/ChartLike'{
         scrollingContainer?: HTMLDOMElement;
         scrollingParent?: HTMLDOMElement;
         scrollableDirty?: boolean;
-        scrollableMask?: Highcharts.SVGElement;
+        scrollableMask?: SVGElement;
         scrollablePixelsX?: number;
         scrollablePixelsY?: number;
         scrollablePlotBox?: BBoxObject;

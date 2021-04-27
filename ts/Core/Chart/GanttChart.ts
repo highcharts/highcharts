@@ -14,6 +14,16 @@ import type {
     HTMLDOMElement
 } from '../Renderer/DOMElementType';
 import Chart from './Chart.js';
+import O from '../../Core/Options.js';
+const { getOptions } = O;
+import U from '../Utilities.js';
+const {
+    isArray,
+    merge,
+    splat
+} = U;
+
+import '../../Series/Gantt/GanttSeries.js';
 
 /**
  * Internal types
@@ -26,16 +36,6 @@ declare global {
         }
     }
 }
-
-import U from '../Utilities.js';
-const {
-    getOptions,
-    isArray,
-    merge,
-    splat
-} = U;
-
-import '../../Series/Gantt/GanttSeries.js';
 
 /**
  * Gantt-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.

@@ -32,6 +32,11 @@ const {
     seriesTypes,
     win
 } = H;
+import O from '../Core/Options.js';
+const {
+    getOptions,
+    setOptions
+} = O;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -39,10 +44,8 @@ const {
     extend,
     find,
     fireEvent,
-    getOptions,
     isNumber,
-    pick,
-    setOptions
+    pick
 } = U;
 
 declare module '../Core/Chart/ChartLike'{
@@ -254,7 +257,7 @@ setOptions({
          * converter, as demonstrated in the sample below.
          *
          * @sample  highcharts/export-data/categorized/ Categorized data
-         * @sample  highcharts/export-data/stock-timeaxis/ Highstock time axis
+         * @sample  highcharts/export-data/stock-timeaxis/ Highcharts Stock time axis
          * @sample  highcharts/export-data/xlsx/
          *          Using a third party XLSX converter
          *

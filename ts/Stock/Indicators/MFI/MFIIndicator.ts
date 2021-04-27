@@ -1,6 +1,6 @@
 /* *
  *
- *  Money Flow Index indicator for Highstock
+ *  Money Flow Index indicator for Highcharts Stock
  *
  *  (c) 2010-2021 Grzegorz Blachliński
  *
@@ -93,7 +93,7 @@ class MFIIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            period: 14,
+            index: void 0, // unchangeable index, do not inherit (#15362)
             /**
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means

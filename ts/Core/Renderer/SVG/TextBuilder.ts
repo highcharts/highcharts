@@ -9,9 +9,11 @@
  * */
 
 import type {
-    DOMElementType
+    DOMElementType,
+    SVGDOMElement
 } from '../DOMElementType';
-import type SVGAttributes from '../SVG/SVGAttributes';
+import type SVGAttributes from './SVGAttributes';
+import type SVGElement from './SVGElement';
 
 import H from '../../Globals.js';
 import U from '../../Utilities.js';
@@ -37,7 +39,7 @@ const {
  */
 class TextBuilder {
 
-    public constructor(svgElement: Highcharts.SVGElement) {
+    public constructor(svgElement: SVGElement) {
         const textStyles = svgElement.styles;
 
         this.renderer = svgElement.renderer;
@@ -55,7 +57,7 @@ class TextBuilder {
     public fontSize: any;
     public noWrap: boolean;
     public renderer: Highcharts.Renderer;
-    public svgElement: Highcharts.SVGElement;
+    public svgElement: SVGElement;
     public textLineHeight: any;
     public textOutline: any;
     public width?: number;
@@ -179,7 +181,7 @@ class TextBuilder {
         // Modify hard line breaks by applying the rendered line height
         [].forEach.call(
             wrapper.element.querySelectorAll('tspan.highcharts-br'),
-            (br: SVGElement): void => {
+            (br: SVGDOMElement): void => {
                 if (br.nextSibling && br.previousSibling) { // #5261
                     attr(br, {
                         // Since the break is inserted in front of the next
@@ -295,7 +297,7 @@ class TextBuilder {
                     );
 
                     // Insert a break
-                    const br = doc.createElementNS(SVG_NS, 'tspan') as SVGElement;
+                    const br = doc.createElementNS(SVG_NS, 'tspan') as SVGDOMElement;
                     br.textContent = '\u200B'; // zero-width space
                     attr(br, { dy, x } as unknown as SVGAttributes);
                     parentElement.insertBefore(br, textNode);

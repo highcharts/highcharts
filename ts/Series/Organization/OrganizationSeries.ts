@@ -34,7 +34,7 @@ import type { SankeyDataLabelFormatterContext } from '../Sankey/SankeyDataLabelO
 import type SankeySeriesType from '../Sankey/SankeySeries';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import OrganizationPoint from './OrganizationPoint.js';
 import palette from '../../Core/Color/Palette.js';
@@ -388,7 +388,7 @@ class OrganizationSeries extends SankeySeries {
 
     public alignDataLabel(
         point: OrganizationPoint,
-        dataLabel: SVGElement,
+        dataLabel: SVGLabel,
         options: OrganizationDataLabelOptions
     ): void {
         // Align the data label to the point graphic

@@ -23,7 +23,9 @@ import type PointerEvent from '../Core/PointerEvent';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
@@ -975,7 +977,7 @@ if (seriesTypes.column) {
         this: (ColumnSeries|Highcharts.PolarSeries),
         proceed: Function,
         point: (ColumnPoint|Highcharts.PolarPoint),
-        dataLabel: SVGElement,
+        dataLabel: SVGLabel,
         options: DataLabelOptions,
         alignTo: BBoxObject,
         isNew?: boolean

@@ -548,7 +548,7 @@ class ColumnSeries extends Series {
                 attr.translateY = translatedThreshold;
             }
 
-            // apply finnal clipping (used in Highstock) (#7083)
+            // apply finnal clipping (used in Highcharts Stock) (#7083)
             // animation is done by scaleY, so cliping is for panes
             if (series.clipBox) {
                 series.setClip();

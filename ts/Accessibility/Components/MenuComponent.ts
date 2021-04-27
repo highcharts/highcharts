@@ -14,8 +14,11 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type {
-    HTMLDOMElement
+    HTMLDOMElement,
+    SVGDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -86,7 +89,7 @@ declare global {
  * @param {Highcharts.Chart} chart
  * @returns {Highcharts.SVGElement}
  */
-function getExportMenuButtonElement(chart: Chart): Highcharts.SVGElement|undefined {
+function getExportMenuButtonElement(chart: Chart): (SVGElement|undefined) {
     return chart.exportSVGElements && chart.exportSVGElements[0];
 }
 
@@ -324,7 +327,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                 } : {}
             );
 
-            const button: Highcharts.SVGElement = getExportMenuButtonElement(this.chart) as any;
+            const button: SVGElement = getExportMenuButtonElement(this.chart) as any;
             this.exportButtonProxy = this.createProxyButton(
                 button,
                 this.exportProxyGroup,
@@ -527,7 +530,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             curHighlightedItem = (chart.exportDivElements as any)[
                 chart.highlightedExportItemIx as any
             ],
-            exportButtonElement = (getExportMenuButtonElement(chart) as Highcharts.SVGElement).element;
+            exportButtonElement: SVGDOMElement = (getExportMenuButtonElement(chart) as any).element;
 
         if (this.isExportMenuShown) {
             this.fakeClickEvent(curHighlightedItem);

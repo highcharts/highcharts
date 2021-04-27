@@ -2641,7 +2641,7 @@ function mouseMove(
         numNewPoints = 0,
         newPoint: (Highcharts.DragDropPointObject|null|undefined);
 
-    if (dragDropData && dragDropData.isDragging) {
+    if (dragDropData && dragDropData.isDragging && dragDropData.point.series) {
         point = dragDropData.point;
         seriesDragDropOpts = point.series.options.dragDrop as any;
 
@@ -2710,7 +2710,8 @@ function mouseUp(
     if (
         dragDropData &&
         dragDropData.isDragging &&
-        dragDropData.draggedPastSensitivity
+        dragDropData.draggedPastSensitivity &&
+        dragDropData.point.series
     ) {
         var point = dragDropData.point,
             newPoints: Record<string, Highcharts.DragDropPointObject> =

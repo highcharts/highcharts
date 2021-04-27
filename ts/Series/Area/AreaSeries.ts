@@ -450,7 +450,9 @@ class AreaSeries extends LineSeries {
         }
 
         areaPath = topPath.concat(bottomPath);
-        areaPath.push(['Z']);
+        if (areaPath.length) {
+            areaPath.push(['Z']);
+        }
         // TODO: don't set leftCliff and rightCliff when connectNulls?
         graphPath = getGraphPath
             .call(this, graphPoints, false, connectNulls);

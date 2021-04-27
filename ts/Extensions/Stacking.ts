@@ -21,8 +21,12 @@ import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type { DataLabelOverflowValue } from '../Core/Series/DataLabelOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../Core/Renderer/SVG/SVGLabel';
+
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
 import H from '../Core/Globals.js';
 import Series from '../Core/Series/Series.js';
 import StackingAxis from '../Core/Axis/StackingAxis.js';
@@ -31,7 +35,6 @@ const {
     correctFloat,
     defined,
     destroyObjectProperties,
-    format,
     isArray,
     isNumber,
     objectEach,
@@ -301,7 +304,7 @@ class StackItem {
     public cumulative?: (null|number);
     public hasValidPoints: boolean;
     public isNegative: boolean;
-    public label?: SVGElement;
+    public label?: SVGLabel;
     public leftCliff: number;
     public options: Highcharts.YAxisStackLabelsOptions;
     public points: Record<string, Array<number>>;

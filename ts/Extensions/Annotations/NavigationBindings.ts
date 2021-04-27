@@ -15,12 +15,15 @@ import type PointerEvent from '../../Core/PointerEvent';
 import Annotation from './Annotations.js';
 import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
+import F from '../../Core/FormatUtilities.js';
+const { format } = F;
 import H from '../../Core/Globals.js';
+import O from '../../Core/Options.js';
+const { setOptions } = O;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     attr,
-    format,
     fireEvent,
     isArray,
     isFunction,
@@ -28,8 +31,7 @@ const {
     isObject,
     merge,
     objectEach,
-    pick,
-    setOptions
+    pick
 } = U;
 
 declare module '../../Core/Chart/ChartLike'{
@@ -1236,7 +1238,7 @@ setOptions({
          *
          * @type         {Highcharts.Dictionary<Highcharts.NavigationBindingsOptionsObject>|*}
          * @sample       stock/stocktools/stocktools-thresholds
-         *               Custom bindings in Highstock
+         *               Custom bindings in Highcharts Stock
          * @since        7.0.0
          * @product      highcharts highstock
          */

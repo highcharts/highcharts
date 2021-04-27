@@ -16,6 +16,8 @@ import type Chart from '../../Core/Chart/Chart';
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
@@ -115,7 +117,7 @@ function shouldRunInputNavigation(chart: Chart): boolean {
 H.Chart.prototype.highlightRangeSelectorButton = function (
     ix: number
 ): boolean {
-    const buttons: Array<Highcharts.SVGElement> = (
+    const buttons: Array<SVGElement> = (
         this.rangeSelector &&
         this.rangeSelector.buttons ||
         []
@@ -291,7 +293,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      */
     setRangeButtonAttrs: function (
         this: Highcharts.RangeSelectorComponent,
-        button: Highcharts.SVGElement
+        button: SVGElement
     ): void {
         setElAttrs(button.element, {
             tabindex: -1,

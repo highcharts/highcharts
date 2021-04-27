@@ -10,6 +10,30 @@ import type ShadowOptionsObject from '../Core/Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface DrawPoint extends Point {
+            shouldDraw(): boolean;
+        }
+        interface DrawPointParams {
+            animatableAttribs: SVGAttributes;
+            attribs: SVGAttributes;
+            css?: CSSObject;
+            group: SVGElement;
+            onComplete?: Function;
+            isNew?: boolean;
+            renderer: Renderer;
+            shadow?: (boolean|Partial<ShadowOptionsObject>);
+            shapeArgs?: SVGAttributes;
+            shapeType: string;
+        }
+    }
+}
+
 const isFn = function (x: unknown): x is Function {
     return typeof x === 'function';
 };

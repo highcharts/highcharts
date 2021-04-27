@@ -187,7 +187,6 @@ class BulletSeries extends ColumnSeries {
             point: BulletPoint
         ): void {
             var pointOptions = point.options,
-                shapeArgs,
                 targetGraphic = point.targetGraphic,
                 targetShapeArgs,
                 targetVal = point.target,
@@ -204,7 +203,13 @@ class BulletSeries extends ColumnSeries {
                 );
                 height = targetOptions.height;
 
-                shapeArgs = point.shapeArgs;
+                let shapeArgs = point.shapeArgs;
+
+                // #15547
+                if (point.dlBox && shapeArgs && !isNumber(shapeArgs.width)) {
+                    shapeArgs = point.dlBox;
+                }
+
                 width = relativeLength(
                     targetOptions.width as any,
                     (shapeArgs as any).width

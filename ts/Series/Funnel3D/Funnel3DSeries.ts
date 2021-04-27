@@ -23,7 +23,8 @@
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+
 import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -187,7 +188,7 @@ class Funnel3DSeries extends ColumnSeries {
      */
     public alignDataLabel(
         point: Funnel3DPoint,
-        _dataLabel: SVGElement,
+        _dataLabel: SVGLabel,
         options: DataLabelOptions
     ): void {
         var series = this,

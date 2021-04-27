@@ -218,7 +218,7 @@ declare global {
                 useHTML?: boolean,
                 baseline?: boolean,
                 className?: string
-            ): SVGElement;
+            ): SVGLabel;
             public path(attribs?: SVGAttributes): SVGElement;
             public path(path?: SVGPath): SVGElement;
             public pathToSegments(path: Array<string|number>): SVGPath;
@@ -2456,8 +2456,7 @@ class SVGRenderer {
         useHTML?: boolean,
         baseline?: boolean,
         className?: string
-    ): SVGElement {
-
+    ): SVGLabel {
         return new SVGLabel(
             this,
             str,
@@ -2470,7 +2469,6 @@ class SVGRenderer {
             baseline,
             className
         );
-
     }
 
     /**

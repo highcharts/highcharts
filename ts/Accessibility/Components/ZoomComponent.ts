@@ -17,6 +17,8 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
@@ -176,7 +178,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         // Make map zoom buttons accessible
         if (chart.mapNavButtons) {
             chart.mapNavButtons.forEach(function (
-                button: Highcharts.SVGElement,
+                button: SVGElement,
                 i: number
             ): void {
                 unhideChartElementFromAT(chart, button.element);
@@ -266,7 +268,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
      */
     recreateProxyButtonAndGroup: function (
         this: Highcharts.ZoomComponent,
-        buttonEl: Highcharts.SVGElement,
+        buttonEl: SVGElement,
         buttonProp: ('drillUpProxyButton'|'resetZoomProxyButton'),
         groupProp: ('drillUpProxyGroup'|'resetZoomProxyGroup'),
         label: string
@@ -370,7 +372,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler,
         event: KeyboardEvent
     ): number {
-        var button: (Highcharts.SVGElement|undefined),
+        var button: (SVGElement|undefined),
             chart: Highcharts.MapNavigationChart = this.chart as any,
             response = keyboardNavigationHandler.response,
             isBackwards = event.shiftKey,

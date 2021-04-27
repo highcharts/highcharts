@@ -67,11 +67,11 @@ class LinearRegressionIndicator extends SMAIndicator {
                 /**
                  * Unit (in milliseconds) for the x axis distances used to
                  * compute the regression line paramters (slope & intercept) for
-                 * every range. In Highstock the x axis values are always
+                 * every range. In Highcharts Stock the x axis values are always
                  * represented in milliseconds which may cause that distances
                  * between points are "big" integer numbers.
                  *
-                 * Highstock's linear regression algorithm (least squares
+                 * Highcharts Stock's linear regression algorithm (least squares
                  * method) will utilize these "big" integers for finding the
                  * slope and the intercept of the regression line for each
                  * period. In consequence, this value may be a very "small"
@@ -84,6 +84,9 @@ class LinearRegressionIndicator extends SMAIndicator {
                  *
                  * Default value is the closest distance between two data
                  * points.
+                 *
+                 * In `v9.0.2`, the default value has been changed
+                 * from `undefined` to `null`.
                  *
                  * @sample {highstock} stock/plotoptions/linear-regression-xaxisunit
                  *         xAxisUnit set to 1 minute
@@ -105,10 +108,10 @@ class LinearRegressionIndicator extends SMAIndicator {
                  * // indicator's point will be `2.3148148148148148e-8` which is
                  * // harder to interpert for a human.
                  *
-                 * @type    {number}
+                 * @type    {null|number}
                  * @product highstock
                  */
-                xAxisUnit: void 0
+                xAxisUnit: null
             },
             tooltip: {
                 valueDecimals: 4

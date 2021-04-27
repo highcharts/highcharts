@@ -1649,7 +1649,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @sample highcharts/members/chart-exportchart-custom-background/
      *         Different chart background in export
      * @sample stock/members/chart-exportchart/
-     *         Export with Highstock
+     *         Export with Highcharts Stock
      *
      * @function Highcharts.Chart#exportChart
      *
@@ -2395,7 +2395,7 @@ Chart.prototype.inlineStyles = function (): void {
         whitelist = renderer.inlineWhitelist, // For IE
         unstyledElements = renderer.unstyledElements,
         defaultStyles: Record<string, CSSObject> = {},
-        dummySVG: Element,
+        dummySVG: SVGElement,
         iframe: HTMLIFrameElement,
         iframeDoc: Document;
 
@@ -2531,7 +2531,7 @@ Chart.prototype.inlineStyles = function (): void {
                     doc.body.appendChild(dummySVG);
                 }
                 */
-                dummySVG = iframeDoc.getElementsByTagName('svg')[0];
+                dummySVG = iframeDoc.getElementsByTagName('svg')[0] as any;
                 dummy = iframeDoc.createElementNS(
                     node.namespaceURI,
                     node.nodeName

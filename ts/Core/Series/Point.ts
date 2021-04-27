@@ -32,10 +32,14 @@ import type { SeriesZonesOptions } from './SeriesOptions';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+import type SVGLabel from '../Renderer/SVG/SVGLabel';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
+import F from '../FormatUtilities.js';
+const { format } = F;
 import H from '../Globals.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
@@ -46,7 +50,6 @@ const {
     erase,
     extend,
     fireEvent,
-    format,
     getNestedProperty,
     isArray,
     isFunction,
@@ -440,7 +443,7 @@ class Point {
      */
     public colorIndex?: number = void 0;
 
-    public dataLabels?: Array<SVGElement>;
+    public dataLabels?: Array<SVGLabel>;
 
     public formatPrefix: string = 'point';
 

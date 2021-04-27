@@ -16,6 +16,7 @@
 
 import type AreaRangePointOptions from './AreaRangePointOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import AreaRangeSeries from './AreaRangeSeries.js';
@@ -57,7 +58,7 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
 
     public _plotY?: number;
     public below?: boolean;
-    public dataLabelUpper?: SVGElement;
+    public dataLabelUpper?: SVGLabel;
     public isInside?: boolean;
     public isTopInside?: boolean;
     public high: number = void 0 as any;

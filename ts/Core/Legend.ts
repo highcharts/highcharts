@@ -24,6 +24,8 @@ const {
     animObject,
     setAnimation
 } = A;
+import F from './FormatUtilities.js';
+const { format } = F;
 import H from './Globals.js';
 const {
     isFirefox,
@@ -40,7 +42,6 @@ const {
     discardElement,
     find,
     fireEvent,
-    format,
     isNumber,
     merge,
     pick,

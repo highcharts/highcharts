@@ -39,6 +39,8 @@ import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 import ColumnSeries from '../Series/Column/ColumnSeries.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
 import H from '../Core/Globals.js';
 const { noop } = H;
 import O from '../Core/Options.js';
@@ -56,7 +58,6 @@ const {
     removeEvent,
     extend,
     fireEvent,
-    format,
     merge,
     objectEach,
     pick,
@@ -81,6 +82,12 @@ declare module '../Core/Chart/ChartLike' {
         drillUp(): void;
         getDrilldownBackText(): (string|undefined);
         showDrillUpButton(): void;
+    }
+}
+
+declare module '../Core/Renderer/SVG/SVGElementLike' {
+    interface SVGElementLike {
+        fadeIn(animation?: (boolean|Partial<AnimationOptions>)): void;
     }
 }
 
@@ -218,9 +225,6 @@ declare global {
         }
         interface Options {
             drilldown?: DrilldownOptions;
-        }
-        interface SVGElement {
-            fadeIn(animation?: (boolean|Partial<AnimationOptions>)): void;
         }
         interface Tick {
             drillable(): void;

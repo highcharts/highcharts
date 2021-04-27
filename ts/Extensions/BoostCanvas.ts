@@ -24,6 +24,7 @@ import type {
     PointShortOptions
 } from '../Core/Series/PointOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -750,7 +751,7 @@ const initCanvasBoost = function (): void {
                 if (loadingShown) {
                     extend(loadingDiv.style, {
                         transition: 'opacity 250ms',
-                        opacity: 0
+                        opacity: 0 as any
                     });
                     chart.loadingShown = false;
                     destroyLoadingDiv = setTimeout(function (): void {
