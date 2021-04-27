@@ -662,7 +662,7 @@ class SVGElement implements SVGElementLike {
     public attr(key: string): (number|string);
     public attr(
         key: string,
-        val: (number|string|SVGPath),
+        val: (number|string|ColorType|SVGPath),
         complete?: Function,
         continueAnimation?: boolean
     ): this;
@@ -733,7 +733,7 @@ class SVGElement implements SVGElementLike {
      */
     public attr(
         hash?: (string|SVGAttributes),
-        val?: (number|string|SVGPath),
+        val?: (number|string|ColorType|SVGPath),
         complete?: Function,
         continueAnimation?: boolean
     ): (number|string|this) {
@@ -2268,12 +2268,12 @@ class SVGElement implements SVGElementLike {
      *
      * @private
      * @function Highcharts.SVGElement#strokeSetter
-     * @param {number|string} value
+     * @param {number|string|ColorType} value
      * @param {string} key
      * @param {Highcharts.SVGDOMElement} element
      */
     public strokeSetter(
-        value: (number|string),
+        value: (number|string|ColorType),
         key: string,
         element: SVGDOMElement
     ): void {

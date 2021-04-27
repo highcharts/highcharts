@@ -20,6 +20,7 @@ import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../CSSObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
+import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
 
 import SVGElement from './SVGElement.js';
@@ -182,7 +183,10 @@ class SVGLabel extends SVGElement {
     /*
      * Set a box attribute, or defer it if the box is not yet created
      */
-    private boxAttr(key: string, value: any): void {
+    private boxAttr(
+        key: string,
+        value: (number|string|ColorType|SVGPath)
+    ): void {
         if (this.box) {
             this.box.attr(key, value);
         } else {
@@ -196,14 +200,14 @@ class SVGLabel extends SVGElement {
      */
     public css(styles: CSSObject): this {
         if (styles) {
-            const textStyles: CSSObject = {};
+            const textStyles: AnyRecord = {};
 
             // Create a copy to avoid altering the original object
             // (#537)
             styles = merge(styles);
             SVGLabel.textProps.forEach((prop): void => {
                 if (typeof styles[prop] !== 'undefined') {
-                    (textStyles as any)[prop] = styles[prop];
+                    textStyles[prop] = styles[prop];
                     delete styles[prop];
                 }
             });
@@ -363,7 +367,7 @@ class SVGLabel extends SVGElement {
     }
 
     public rSetter(
-        value: any,
+        value: (number|string|ColorType|SVGPath),
         key: string
     ): void {
         this.boxAttr(key, value);
@@ -382,7 +386,7 @@ class SVGLabel extends SVGElement {
     }
 
     public strokeSetter(
-        value: any,
+        value: ColorType,
         key: string
     ): void {
         // for animation getter (#6776)
