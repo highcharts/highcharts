@@ -449,8 +449,12 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 [
                     [keys.enter, keys.space],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler
+                        this: Highcharts.KeyboardNavigationHandler,
+                        keyCode: number
                     ): number {
+                        if (H.isFirefox && keyCode === keys.space) { // #15520
+                            return this.response.success;
+                        }
                         return component.onKbdClick(this);
                     }
                 ]
