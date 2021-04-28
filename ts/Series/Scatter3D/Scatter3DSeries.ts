@@ -101,7 +101,7 @@ class Scatter3DSeries extends ScatterSeries {
      * */
 
     public pointAttribs(point: Scatter3DPoint): SVGAttributes {
-        var attribs = super.pointAttribs.apply(this, arguments);
+        const attribs = super.pointAttribs.apply(this, arguments);
 
         if (this.chart.is3d() && point) {
             attribs.zIndex =

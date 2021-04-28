@@ -14,8 +14,11 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type {
-    HTMLDOMElement
+    HTMLDOMElement,
+    SVGDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -26,10 +29,10 @@ import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 import ChartUtilities from '../Utils/ChartUtilities.js';
-var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+const unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var removeElement = HTMLUtilities.removeElement,
+const removeElement = HTMLUtilities.removeElement,
     getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
 
 declare module '../../Core/Chart/ChartLike' {
@@ -86,7 +89,7 @@ declare global {
  * @param {Highcharts.Chart} chart
  * @returns {Highcharts.SVGElement}
  */
-function getExportMenuButtonElement(chart: Chart): Highcharts.SVGElement|undefined {
+function getExportMenuButtonElement(chart: Chart): (SVGElement|undefined) {
     return chart.exportSVGElements && chart.exportSVGElements[0];
 }
 
@@ -114,7 +117,7 @@ H.Chart.prototype.showExportMenu = function (): void {
  * @function Highcharts.Chart#hideExportMenu
  */
 H.Chart.prototype.hideExportMenu = function (): void {
-    var chart = this,
+    const chart = this,
         exportList = chart.exportDivElements;
 
     if (exportList && chart.exportContextMenu) {
@@ -146,7 +149,7 @@ H.Chart.prototype.hideExportMenu = function (): void {
 H.Chart.prototype.highlightExportItem = function (
     ix: number
 ): boolean {
-    var listItem = this.exportDivElements && this.exportDivElements[ix],
+    let listItem = this.exportDivElements && this.exportDivElements[ix],
         curHighlighted =
             this.exportDivElements &&
             this.exportDivElements[this.highlightedExportItemIx as any],
@@ -189,7 +192,7 @@ H.Chart.prototype.highlightExportItem = function (
  * @return {boolean}
  */
 H.Chart.prototype.highlightLastExportItem = function (): boolean {
-    var chart = this,
+    let chart = this,
         i;
 
     if (chart.exportDivElements) {
@@ -230,7 +233,7 @@ function exportingShouldHaveA11y(chart: Chart): boolean {
  * @class
  * @name Highcharts.MenuComponent
  */
-var MenuComponent: typeof Highcharts.MenuComponent =
+const MenuComponent: typeof Highcharts.MenuComponent =
     function (): void {} as any;
 MenuComponent.prototype = new (AccessibilityComponent as any)();
 extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
@@ -239,7 +242,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * Init the component
      */
     init: function (this: Highcharts.MenuComponent): void {
-        var chart = this.chart,
+        const chart = this.chart,
             component = this;
 
         this.addEvent(chart, 'exportMenuShown', function (): void {
@@ -256,7 +259,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * @private
      */
     onMenuHidden: function (this: Highcharts.MenuComponent): void {
-        var menu: Highcharts.ExportingDivElement =
+        const menu: Highcharts.ExportingDivElement =
             (this.chart as any).exportContextMenu;
         if (menu) {
             menu.setAttribute('aria-hidden', 'true');
@@ -271,7 +274,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * @private
      */
     onMenuShown: function (this: Highcharts.MenuComponent): void {
-        var chart = this.chart,
+        const chart = this.chart,
             menu = chart.exportContextMenu;
 
         if (menu) {
@@ -292,7 +295,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         this: Highcharts.MenuComponent,
         stateStr: string
     ): void {
-        var button = this.exportButtonProxy;
+        const button = this.exportButtonProxy;
         if (button) {
             button.setAttribute('aria-expanded', stateStr);
         }
@@ -304,7 +307,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * proxy overlay.
      */
     onChartRender: function (this: Highcharts.MenuComponent): void {
-        var chart = this.chart,
+        const chart = this.chart,
             a11yOptions = chart.options.accessibility;
 
         // Always start with a clean slate
@@ -324,7 +327,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                 } : {}
             );
 
-            const button: Highcharts.SVGElement = getExportMenuButtonElement(this.chart) as any;
+            const button: SVGElement = getExportMenuButtonElement(this.chart) as any;
             this.exportButtonProxy = this.createProxyButton(
                 button,
                 this.exportProxyGroup,
@@ -346,7 +349,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
     addAccessibleContextMenuAttribs: function (
         this: Highcharts.MenuComponent
     ): void {
-        var chart = this.chart,
+        const chart = this.chart,
             exportList = chart.exportDivElements;
 
         if (exportList && exportList.length) {
@@ -364,7 +367,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             });
 
             // Set accessibility properties on parent div
-            var parentDiv: HTMLDOMElement = (
+            const parentDiv: HTMLDOMElement = (
                 exportList[0].parentNode as any
             );
             parentDiv.removeAttribute('aria-hidden');
@@ -385,7 +388,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
     getKeyboardNavigation: function (
         this: Highcharts.MenuComponent
     ): Highcharts.KeyboardNavigationHandler {
-        var keys = this.keyCodes,
+        const keys = this.keyCodes,
             chart = this.chart,
             component = this;
 
@@ -459,7 +462,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         this: Highcharts.MenuComponent,
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
     ): number {
-        var chart = this.chart,
+        let chart = this.chart,
             a11yOptions = chart.options.accessibility,
             response = keyboardNavigationHandler.response,
             i = chart.highlightedExportItemIx || 0;
@@ -491,7 +494,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         this: Highcharts.MenuComponent,
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
     ): number {
-        var chart = this.chart,
+        let chart = this.chart,
             a11yOptions = chart.options.accessibility,
             response = keyboardNavigationHandler.response,
             i = (chart.highlightedExportItemIx || 0) + 1;
@@ -527,7 +530,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             curHighlightedItem = (chart.exportDivElements as any)[
                 chart.highlightedExportItemIx as any
             ],
-            exportButtonElement = (getExportMenuButtonElement(chart) as Highcharts.SVGElement).element;
+            exportButtonElement: SVGDOMElement = (getExportMenuButtonElement(chart) as any).element;
 
         if (this.isExportMenuShown) {
             this.fakeClickEvent(curHighlightedItem);

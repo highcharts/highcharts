@@ -259,7 +259,7 @@ class Color implements ColorLike {
     private init(
         input: (ColorType|undefined)
     ): void {
-        var result: (RegExpExecArray|null),
+        let result: (RegExpExecArray|null),
             rgba: any,
             i: number,
             parser: Color.Parser,
@@ -348,7 +348,7 @@ class Color implements ColorLike {
      *         This color as a string or gradient stops.
      */
     public get(format?: ('a'|'rgb'|'rgba')): Color['input'] {
-        var input = this.input,
+        let input = this.input,
             rgba = this.rgba,
             ret: Color['input'];
 
@@ -389,7 +389,7 @@ class Color implements ColorLike {
      *         This color with modifications.
      */
     public brighten(alpha: number): this {
-        var i: number,
+        let i: number,
             rgba = this.rgba;
 
         if (this.stops) {
@@ -446,7 +446,7 @@ class Color implements ColorLike {
     public tweenTo(to: Color, pos: number): ColorString {
         // Check for has alpha, because rgba colors perform worse due to lack of
         // support in WebKit.
-        var fromRgba = this.rgba,
+        let fromRgba = this.rgba,
             toRgba = to.rgba,
             hasAlpha,
             ret: ColorString;

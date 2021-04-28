@@ -199,7 +199,7 @@ namespace TreeGridAxis {
         node: GridNode,
         max: number
     ): AxisBreakObject {
-        var from = node.collapseStart || 0,
+        let from = node.collapseStart || 0,
             to = node.collapseEnd || 0;
 
         // In broken-axis, the axis.max is minimized until it is not within a
@@ -248,7 +248,7 @@ namespace TreeGridAxis {
         uniqueNames: boolean,
         numberOfSeries: number
     ): TreeGridObject {
-        var categories: Array<string> = [],
+        let categories: Array<string> = [],
             collapsedNodes: Array<GridNode> = [],
             mapOfIdToNode: Record<string, TreeGridNode> = {},
             mapOfPosToGridNode: Record<string, GridNode> = {},
@@ -260,7 +260,7 @@ namespace TreeGridAxis {
         const treeParams: Highcharts.TreeGetOptionsObject = {
             // After the children has been created.
             after: function (node: Highcharts.TreeNode): void {
-                var gridNode = mapOfPosToGridNode[(node as TreeGridNode).pos],
+                let gridNode = mapOfPosToGridNode[(node as TreeGridNode).pos],
                     height = 0,
                     descendants = 0;
 
@@ -276,7 +276,7 @@ namespace TreeGridAxis {
             },
             // Before the children has been created.
             before: function (node: Highcharts.TreeNode): void {
-                var data = isObject(node.data, true) ? (node as TreeGridNode).data : {},
+                let data = isObject(node.data, true) ? (node as TreeGridNode).data : {},
                     name = isString(data.name) ? data.name : '',
                     parentNode = mapOfIdToNode[node.parent],
                     parentGridNode = (
@@ -355,7 +355,7 @@ namespace TreeGridAxis {
                 start: number,
                 result: Record<string, GridNode>
             ): Record<string, GridNode> {
-                var nodes = gridNode.nodes,
+                let nodes = gridNode.nodes,
                     end = start + (start === -1 ? 0 : numberOfSeries - 1),
                     diff = (end - start) / 2,
                     padding = 0.5,
@@ -432,7 +432,7 @@ namespace TreeGridAxis {
             return axis.options.type === 'treegrid';
         }) as Array<TreeGridAxis>).forEach(
             function (axis: TreeGridAxis): void {
-                var options = axis.options || {},
+                let options = axis.options || {},
                     labelOptions = options.labels,
                     uniqueNames = options.uniqueNames,
                     numberOfSeries = 0,
@@ -510,7 +510,7 @@ namespace TreeGridAxis {
 
                     // Update yData now that we have calculated the y values
                     axis.series.forEach(function (series): void {
-                        var axisData = (series.options.data || []).map(function (
+                        const axisData = (series.options.data || []).map(function (
                             d: (PointOptions|PointShortOptions)
                         ): (PointOptions|PointShortOptions) {
 
@@ -994,7 +994,7 @@ namespace TreeGridAxis {
 
             return Object.keys(axis.treeGrid.mapOfPosToGridNode || {}).reduce(
                 function (arr: Array<number>, key: string): Array<number> {
-                    var pos = +key;
+                    const pos = +key;
                     if (
                         pos >= roundedMin &&
                         pos <= roundedMax &&

@@ -53,7 +53,7 @@ class MapBubblePoint extends BubbleSeries.prototype.pointClass {
         options: MapBubblePointOptions,
         x?: number
     ): MapBubblePoint {
-        var point: MapBubblePoint;
+        let point: MapBubblePoint;
 
         if (
             options &&

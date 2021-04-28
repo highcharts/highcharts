@@ -14,6 +14,7 @@ import Fx from '../Core/Animation/Fx.js';
 import Animation from '../Core/Animation/AnimationUtilities.js';
 import AST from '../Core/Renderer/HTML/AST.js';
 import FormatUtilities from '../Core/FormatUtilities.js';
+import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import '../Core/Renderer/SVG/SVGRenderer.js';
 import '../Core/Renderer/HTML/HTMLElement.js';
 import '../Core/Renderer/HTML/HTMLRenderer.js';
@@ -52,6 +53,7 @@ G.timers = Fx.timers;
 G.AST = AST;
 G.Fx = Fx;
 G.Series = Series;
+G.SVGElement = SVGElement;
 // Format Utilities
 G.dateFormat = FormatUtilities.dateFormat;
 G.format = FormatUtilities.format;
