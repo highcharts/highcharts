@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type { AxisComposition, AxisLike } from './Types';
 import type { AlignValue } from '../Renderer/AlignObject';
@@ -27,6 +33,8 @@ import type SizeObject from '../Renderer/SizeObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../Color/Color.js';
@@ -62,6 +70,12 @@ const {
     splat,
     syncTimeout
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
@@ -179,7 +193,7 @@ declare global {
             format?: string;
             formatter?: XAxisCrosshairLabelFormatterCallbackFunction;
             padding?: number;
-            shape?: SymbolKeyValue;
+            shape?: SVGRenderer.SymbolKeyValue;
             style?: CSSObject;
         }
         interface XAxisCrosshairOptions {

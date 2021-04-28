@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AlignValue,
     VerticalAlignValue
@@ -27,6 +33,8 @@ import type Series from '../../Core/Series/Series';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import Chart from '../../Core/Chart/Chart.js';
@@ -134,7 +142,7 @@ declare global {
             overflow: DataLabelOverflowValue;
             padding: number;
             shadow: (boolean|Partial<ShadowOptionsObject>);
-            shape: SymbolKeyValue;
+            shape: SVGRenderer.SymbolKeyValue;
             style: CSSObject;
             text?: string;
             type?: string;

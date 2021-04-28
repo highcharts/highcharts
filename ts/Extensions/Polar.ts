@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AlignValue,
     VerticalAlignValue
@@ -47,6 +53,23 @@ const {
     uniqueKey,
     wrap
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        clipCircle(
+            x: number,
+            y: number,
+            r: number,
+            innerR: number
+        ): SVGElement;
+    }
+}
 
 declare module '../Core/Series/PointLike' {
     interface PointLike {
@@ -141,14 +164,6 @@ declare global {
             searchPointByAngle(e: PointerEvent): (Point|undefined);
             translate(): void;
             toXY(point: Point): void;
-        }
-        interface SVGRenderer {
-            clipCircle(
-                x: number,
-                y: number,
-                r: number,
-                innerR: number
-            ): SVGElement;
         }
     }
 }
@@ -1107,7 +1122,7 @@ wrap(pointerProto, 'getCoordinates', function (
 });
 
 SVGRenderer.prototype.clipCircle = function (
-    this: Highcharts.SVGRenderer,
+    this: SVGRenderer,
     x: number,
     y: number,
     r: number,

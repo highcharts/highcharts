@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
@@ -20,6 +26,8 @@ import type RectangleObject from './Renderer/RectangleObject';
 import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
+import type SVGRenderer from './Renderer/SVG/SVGRenderer';
+
 import F from './FormatUtilities.js';
 const { format } = F;
 import H from './Globals.js';
@@ -41,6 +49,12 @@ const {
     syncTimeout,
     timeUnits
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module './Series/PointLike' {
     interface PointLike {
@@ -82,7 +96,7 @@ declare global {
             public now: Record<string, number>;
             public options: TooltipOptions;
             public outside?: boolean;
-            public renderer?: Renderer;
+            public renderer?: SVGRenderer;
             public shared?: boolean;
             public split?: boolean;
             public tooltipTimeout?: number;
@@ -348,7 +362,7 @@ class Tooltip {
 
     public outside: boolean = false;
 
-    public renderer?: Highcharts.Renderer;
+    public renderer?: SVGRenderer;
 
     public shared?: boolean;
 
@@ -713,7 +727,7 @@ class Tooltip {
     public getLabel(): SVGElement {
 
         let tooltip = this,
-            renderer: (Highcharts.Renderer|Highcharts.SVGRenderer) = this.chart.renderer,
+            renderer: SVGRenderer = this.chart.renderer,
             styledMode = this.chart.styledMode,
             options = this.options,
             className = (

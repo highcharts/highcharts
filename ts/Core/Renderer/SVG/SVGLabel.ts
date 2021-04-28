@@ -78,7 +78,7 @@ class SVGLabel extends SVGElement {
         str: string,
         x: number,
         y?: number,
-        shape?: Highcharts.SymbolKeyValue | string,
+        shape?: SVGRenderer.SymbolKeyValue | string,
         anchorX?: number,
         anchorY?: number,
         useHTML?: boolean,

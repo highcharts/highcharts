@@ -29,6 +29,7 @@ import type PositionObject from '../PositionObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRendererLike from './SVGRendererLike';
+
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 import palette from '../../Color/Palette.js';
@@ -62,11 +63,6 @@ const {
 declare global {
     namespace Highcharts {
         type ClipRectElement = SVGElement;
-        type Renderer = SVGRenderer;
-        type SymbolKeyValue = (
-            'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|
-            'rect'|'square'|'topbutton'|'triangle'|'triangle-down'
-        );
         interface FontMetricsObject {
             b: number;
             f: number;
@@ -77,9 +73,6 @@ declare global {
             children?: Array<SVGDefinitionObject>;
             tagName?: string;
             textContent?: string;
-        }
-        interface SVGRenderer extends SVGRendererLike {
-            // nothing here yet
         }
         interface SymbolFunction {
             (
@@ -104,370 +97,161 @@ declare global {
             start?: number;
             width?: number;
         }
-        class SVGRenderer {
-            public constructor(
-                container: HTMLDOMElement,
-                width: number,
-                height: number,
-                style?: CSSObject,
-                forExport?: boolean,
-                allowHTML?: boolean,
-                styledMode?: boolean
-            );
-            public Element: typeof SVGElement;
-            public SVG_NS: string;
-            public alignedObjects: Array<SVGElement>;
-            public allowHTML?: boolean;
-            public box: SVGDOMElement;
-            public boxWrapper: SVGElement;
-            public cache: Record<string, BBoxObject>;
-            public cacheKeys: Array<string>;
-            public chartIndex: number;
-            public defs: SVGElement;
-            /** @deprecated */
-            public draw: Function;
-            public escapes: Record<string, string>;
-            public forExport?: boolean;
-            public globalAnimation: boolean|Partial<AnimationOptions>;
-            public gradients: Record<string, SVGElement>;
-            public height: number;
-            public imgCount: number;
-            public isSVG: boolean;
-            public style: CSSObject;
-            public styledMode?: boolean;
-            public symbols: Record<string, SymbolFunction>;
-            public unSubPixelFix?: Function;
-            public url: string;
-            public width: number;
-            public alignElements(): void;
-            public arc(attribs: SVGAttributes): SVGElement;
-            public arc(
-                x?: number,
-                y?: number,
-                r?: number,
-                innerR?: number,
-                start?: number,
-                end?: number
-            ): SVGElement;
-            public buildText(wrapper: SVGElement): void;
-            public button(
-                text: string,
-                x: number,
-                y: number,
-                callback: EventCallbackFunction<SVGElement>,
-                normalState?: SVGAttributes,
-                hoverState?: SVGAttributes,
-                pressedState?: SVGAttributes,
-                disabledState?: SVGAttributes,
-                shape?: SymbolKeyValue,
-                useHTML?: boolean
-            ): SVGElement;
-            public circle(attribs: SVGAttributes): SVGElement;
-            public circle(x?: number, y?: number, r?: number): SVGElement;
-            public clipRect(attribs: SVGAttributes): ClipRectElement;
-            public clipRect(
-                x?: number,
-                y?: number,
-                width?: number,
-                height?: number
-            ): ClipRectElement;
-            public createElement(nodeName: string): SVGElement;
-            public crispLine(
-                points: SVGPath,
-                width: number,
-                roundingFunction?: ('round'|'floor'|'ceil')
-            ): SVGPath;
-            public definition(def: ASTNode): SVGElement;
-            public destroy(): null;
-            public g(name?: string): SVGElement;
-            public getContrast(rgba: ColorString): ColorString;
-            public getRadialAttr(
-                radialReference: Array<number>,
-                gradAttr: SVGAttributes
-            ): SVGAttributes;
-            public getStyle(style: CSSObject): CSSObject;
-            public fontMetrics(
-                fontSize?: (number|string),
-                elem?: (DOMElementType|SVGElement)
-            ): FontMetricsObject;
-            public image(
-                src: string,
-                x?: number,
-                y?: number,
-                width?: number,
-                height?: number,
-                onload?: Function
-            ): SVGElement;
-            public init(
-                container: HTMLDOMElement,
-                width: number,
-                height: number,
-                style?: CSSObject,
-                forExport?: boolean,
-                allowHTML?: boolean,
-                styledMode?: boolean
-            ): void;
-            public isHidden(): boolean
-            public label(
-                str: string,
-                x: number,
-                y?: number,
-                shape?: SymbolKeyValue,
-                anchorX?: number,
-                anchorY?: number,
-                useHTML?: boolean,
-                baseline?: boolean,
-                className?: string
-            ): SVGLabel;
-            public path(attribs?: SVGAttributes): SVGElement;
-            public path(path?: SVGPath): SVGElement;
-            public pathToSegments(path: Array<string|number>): SVGPath;
-            public rect(attribs: SVGAttributes): SVGElement;
-            public rect(
-                x?: number,
-                y?: number,
-                width?: number,
-                height?: number,
-                r?: number,
-                strokeWidth?: number
-            ): SVGElement;
-            public rotCorr(
-                baseline: number,
-                rotation: number,
-                alterY?: boolean
-            ): PositionObject;
-            public setSize(
-                width: number,
-                height: number,
-                animate?: (boolean|Partial<AnimationOptions>)
-            ): void;
-            public setStyle(style: CSSObject): void;
-            public symbol(
-                symbol: string,
-                x?: number,
-                y?: number,
-                width?: number,
-                height?: number,
-                options?: SymbolOptionsObject
-            ): SVGElement;
-            public text(
-                str?: string,
-                x?: number,
-                y?: number,
-                useHTML?: boolean
-            ): SVGElement;
-        }
-        let Renderer: typeof SVGRenderer;
+        // class SVGRenderer {
+        //     public constructor(
+        //         container: HTMLDOMElement,
+        //         width: number,
+        //         height: number,
+        //         style?: CSSObject,
+        //         forExport?: boolean,
+        //         allowHTML?: boolean,
+        //         styledMode?: boolean
+        //     );
+        //     public Element: typeof SVGElement;
+        //     public SVG_NS: string;
+        //     public alignedObjects: Array<SVGElement>;
+        //     public allowHTML?: boolean;
+        //     public box: SVGDOMElement;
+        //     public boxWrapper: SVGElement;
+        //     public cache: Record<string, BBoxObject>;
+        //     public cacheKeys: Array<string>;
+        //     public chartIndex: number;
+        //     public defs: SVGElement;
+        //     /** @deprecated */
+        //     public draw: Function;
+        //     public escapes: Record<string, string>;
+        //     public forExport?: boolean;
+        //     public globalAnimation: boolean|Partial<AnimationOptions>;
+        //     public gradients: Record<string, SVGElement>;
+        //     public height: number;
+        //     public imgCount: number;
+        //     public isSVG: boolean;
+        //     public style: CSSObject;
+        //     public styledMode?: boolean;
+        //     public symbols: Record<string, SymbolFunction>;
+        //     public unSubPixelFix?: Function;
+        //     public url: string;
+        //     public width: number;
+        //     public alignElements(): void;
+        //     public arc(attribs: SVGAttributes): SVGElement;
+        //     public arc(
+        //         x?: number,
+        //         y?: number,
+        //         r?: number,
+        //         innerR?: number,
+        //         start?: number,
+        //         end?: number
+        //     ): SVGElement;
+        //     public buildText(wrapper: SVGElement): void;
+        //     public button(
+        //         text: string,
+        //         x: number,
+        //         y: number,
+        //         callback: EventCallbackFunction<SVGElement>,
+        //         normalState?: SVGAttributes,
+        //         hoverState?: SVGAttributes,
+        //         pressedState?: SVGAttributes,
+        //         disabledState?: SVGAttributes,
+        //         shape?: SVGRenderer.SymbolKeyValue,
+        //         useHTML?: boolean
+        //     ): SVGElement;
+        //     public circle(attribs: SVGAttributes): SVGElement;
+        //     public circle(x?: number, y?: number, r?: number): SVGElement;
+        //     public clipRect(attribs: SVGAttributes): ClipRectElement;
+        //     public clipRect(
+        //         x?: number,
+        //         y?: number,
+        //         width?: number,
+        //         height?: number
+        //     ): ClipRectElement;
+        //     public createElement(nodeName: string): SVGElement;
+        //     public crispLine(
+        //         points: SVGPath,
+        //         width: number,
+        //         roundingFunction?: ('round'|'floor'|'ceil')
+        //     ): SVGPath;
+        //     public definition(def: ASTNode): SVGElement;
+        //     public destroy(): null;
+        //     public g(name?: string): SVGElement;
+        //     public getContrast(rgba: ColorString): ColorString;
+        //     public getRadialAttr(
+        //         radialReference: Array<number>,
+        //         gradAttr: SVGAttributes
+        //     ): SVGAttributes;
+        //     public getStyle(style: CSSObject): CSSObject;
+        //     public fontMetrics(
+        //         fontSize?: (number|string),
+        //         elem?: (DOMElementType|SVGElement)
+        //     ): FontMetricsObject;
+        //     public image(
+        //         src: string,
+        //         x?: number,
+        //         y?: number,
+        //         width?: number,
+        //         height?: number,
+        //         onload?: Function
+        //     ): SVGElement;
+        //     public init(
+        //         container: HTMLDOMElement,
+        //         width: number,
+        //         height: number,
+        //         style?: CSSObject,
+        //         forExport?: boolean,
+        //         allowHTML?: boolean,
+        //         styledMode?: boolean
+        //     ): void;
+        //     public isHidden(): boolean
+        //     public label(
+        //         str: string,
+        //         x: number,
+        //         y?: number,
+        //         shape?: SVGRenderer.SymbolKeyValue,
+        //         anchorX?: number,
+        //         anchorY?: number,
+        //         useHTML?: boolean,
+        //         baseline?: boolean,
+        //         className?: string
+        //     ): SVGLabel;
+        //     public path(attribs?: SVGAttributes): SVGElement;
+        //     public path(path?: SVGPath): SVGElement;
+        //     public pathToSegments(path: Array<string|number>): SVGPath;
+        //     public rect(attribs: SVGAttributes): SVGElement;
+        //     public rect(
+        //         x?: number,
+        //         y?: number,
+        //         width?: number,
+        //         height?: number,
+        //         r?: number,
+        //         strokeWidth?: number
+        //     ): SVGElement;
+        //     public rotCorr(
+        //         baseline: number,
+        //         rotation: number,
+        //         alterY?: boolean
+        //     ): PositionObject;
+        //     public setSize(
+        //         width: number,
+        //         height: number,
+        //         animate?: (boolean|Partial<AnimationOptions>)
+        //     ): void;
+        //     public setStyle(style: CSSObject): void;
+        //     public symbol(
+        //         symbol: string,
+        //         x?: number,
+        //         y?: number,
+        //         width?: number,
+        //         height?: number,
+        //         options?: SymbolOptionsObject
+        //     ): SVGElement;
+        //     public text(
+        //         str?: string,
+        //         x?: number,
+        //         y?: number,
+        //         useHTML?: boolean
+        //     ): SVGElement;
+        // }
     }
 }
-
-/**
- * A clipping rectangle that can be applied to one or more {@link SVGElement}
- * instances. It is instanciated with the {@link SVGRenderer#clipRect} function
- * and applied with the {@link SVGElement#clip} function.
- *
- * @example
- * let circle = renderer.circle(100, 100, 100)
- *     .attr({ fill: 'red' })
- *     .add();
- * let clipRect = renderer.clipRect(100, 100, 100, 100);
- *
- * // Leave only the lower right quarter visible
- * circle.clip(clipRect);
- *
- * @typedef {Highcharts.SVGElement} Highcharts.ClipRectElement
- */
-
-/**
- * The font metrics.
- *
- * @interface Highcharts.FontMetricsObject
- *//**
- * The baseline relative to the top of the box.
- *
- * @name Highcharts.FontMetricsObject#b
- * @type {number}
- *//**
- * The font size.
- *
- * @name Highcharts.FontMetricsObject#f
- * @type {number}
- *//**
- * The line height.
- *
- * @name Highcharts.FontMetricsObject#h
- * @type {number}
- */
-
-/**
- * An object containing `x` and `y` properties for the position of an element.
- *
- * @interface Highcharts.PositionObject
- *//**
- * X position of the element.
- * @name Highcharts.PositionObject#x
- * @type {number}
- *//**
- * Y position of the element.
- * @name Highcharts.PositionObject#y
- * @type {number}
- */
-
-/**
- * A rectangle.
- *
- * @interface Highcharts.RectangleObject
- *//**
- * Height of the rectangle.
- * @name Highcharts.RectangleObject#height
- * @type {number}
- *//**
- * Width of the rectangle.
- * @name Highcharts.RectangleObject#width
- * @type {number}
- *//**
- * Horizontal position of the rectangle.
- * @name Highcharts.RectangleObject#x
- * @type {number}
- *//**
- * Vertical position of the rectangle.
- * @name Highcharts.RectangleObject#y
- * @type {number}
- */
-
-/**
- * The shadow options.
- *
- * @interface Highcharts.ShadowOptionsObject
- *//**
- * The shadow color.
- * @name    Highcharts.ShadowOptionsObject#color
- * @type    {Highcharts.ColorString|undefined}
- * @default ${palette.neutralColor100}
- *//**
- * The horizontal offset from the element.
- *
- * @name    Highcharts.ShadowOptionsObject#offsetX
- * @type    {number|undefined}
- * @default 1
- *//**
- * The vertical offset from the element.
- * @name    Highcharts.ShadowOptionsObject#offsetY
- * @type    {number|undefined}
- * @default 1
- *//**
- * The shadow opacity.
- *
- * @name    Highcharts.ShadowOptionsObject#opacity
- * @type    {number|undefined}
- * @default 0.15
- *//**
- * The shadow width or distance from the element.
- * @name    Highcharts.ShadowOptionsObject#width
- * @type    {number|undefined}
- * @default 3
- */
-
-/**
- * @interface Highcharts.SizeObject
- *//**
- * @name Highcharts.SizeObject#height
- * @type {number}
- *//**
- * @name Highcharts.SizeObject#width
- * @type {number}
- */
-
-/**
- * Array of path commands, that will go into the `d` attribute of an SVG
- * element.
- *
- * @typedef {Array<(Array<Highcharts.SVGPathCommand>|Array<Highcharts.SVGPathCommand,number>|Array<Highcharts.SVGPathCommand,number,number>|Array<Highcharts.SVGPathCommand,number,number,number,number>|Array<Highcharts.SVGPathCommand,number,number,number,number,number,number>|Array<Highcharts.SVGPathCommand,number,number,number,number,number,number,number>)>} Highcharts.SVGPathArray
- */
-
-/**
- * Possible path commands in an SVG path array. Valid values are `A`, `C`, `H`,
- * `L`, `M`, `Q`, `S`, `T`, `V`, `Z`.
- *
- * @typedef {string} Highcharts.SVGPathCommand
- * @validvalue ["a","c","h","l","m","q","s","t","v","z","A","C","H","L","M","Q","S","T","V","Z"]
- */
-
-/**
- * An extendable collection of functions for defining symbol paths. Symbols are
- * used internally for point markers, button and label borders and backgrounds,
- * or custom shapes. Extendable by adding to {@link SVGRenderer#symbols}.
- *
- * @interface Highcharts.SymbolDictionary
- *//**
- * @name Highcharts.SymbolDictionary#[key:string]
- * @type {Function|undefined}
- *//**
- * @name Highcharts.SymbolDictionary#arc
- * @type {Function|undefined}
- *//**
- * @name Highcharts.SymbolDictionary#callout
- * @type {Function|undefined}
- *//**
- * @name Highcharts.SymbolDictionary#circle
- * @type {Function|undefined}
- *//**
- * @name Highcharts.SymbolDictionary#diamond
- * @type {Function|undefined}
- *//**
- * @name Highcharts.SymbolDictionary#square
- * @type {Function|undefined}
- *//**
- * @name Highcharts.SymbolDictionary#triangle
- * @type {Function|undefined}
- */
-
-/**
- * Can be one of `arc`, `callout`, `circle`, `diamond`, `square`, `triangle`,
- * and `triangle-down`. Symbols are used internally for point markers, button
- * and label borders and backgrounds, or custom shapes. Extendable by adding to
- * {@link SVGRenderer#symbols}.
- *
- * @typedef {"arc"|"callout"|"circle"|"diamond"|"square"|"triangle"|"triangle-down"} Highcharts.SymbolKeyValue
- */
-
-/**
- * Additional options, depending on the actual symbol drawn.
- *
- * @interface Highcharts.SymbolOptionsObject
- *//**
- * The anchor X position for the `callout` symbol. This is where the chevron
- * points to.
- *
- * @name Highcharts.SymbolOptionsObject#anchorX
- * @type {number|undefined}
- *//**
- * The anchor Y position for the `callout` symbol. This is where the chevron
- * points to.
- *
- * @name Highcharts.SymbolOptionsObject#anchorY
- * @type {number|undefined}
- *//**
- * The end angle of an `arc` symbol.
- *
- * @name Highcharts.SymbolOptionsObject#end
- * @type {number|undefined}
- *//**
- * Whether to draw `arc` symbol open or closed.
- *
- * @name Highcharts.SymbolOptionsObject#open
- * @type {boolean|undefined}
- *//**
- * The radius of an `arc` symbol, or the border radius for the `callout` symbol.
- *
- * @name Highcharts.SymbolOptionsObject#r
- * @type {number|undefined}
- *//**
- * The start angle of an `arc` symbol.
- *
- * @name Highcharts.SymbolOptionsObject#start
- * @type {number|undefined}
- */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -530,7 +314,7 @@ let charts = H.charts,
  *        some cases, but not when set explicitly through `.attr` and `.css`
  *        etc.
  */
-class SVGRenderer {
+class SVGRenderer implements SVGRendererLike {
 
     /* *
      *
@@ -590,7 +374,7 @@ class SVGRenderer {
      */
     public defs: SVGElement = void 0 as any;
     public forExport?: boolean;
-    public globalAnimation: Partial<AnimationOptions> = void 0 as any;
+    public globalAnimation: (boolean|Partial<AnimationOptions>) = void 0 as any;
     public gradients: Record<string, SVGElement> = void 0 as any;
     public height: number = void 0 as any;
     public imgCount: number = void 0 as any;
@@ -1068,7 +852,7 @@ class SVGRenderer {
         hoverState?: SVGAttributes,
         pressedState?: SVGAttributes,
         disabledState?: SVGAttributes,
-        shape?: Highcharts.SymbolKeyValue,
+        shape?: SVGRenderer.SymbolKeyValue,
         useHTML?: boolean
     ): SVGElement {
         let label = this.label(
@@ -1225,7 +1009,7 @@ class SVGRenderer {
      * @param {number} width
      *        The width of the line.
      *
-     * @param {string} roundingFunction
+     * @param {string} [roundingFunction=round]
      *        The rounding function name on the `Math` object, can be one of
      *        `round`, `floor` or `ceil`.
      *
@@ -1233,7 +1017,7 @@ class SVGRenderer {
      *         The original points array, but modified to render crisply.
      */
     public crispLine(
-        points: Array<SVGPath.MoveTo|SVGPath.LineTo>,
+        points: SVGPath,
         width: number,
         roundingFunction: ('round'|'floor'|'ceil') = 'round'
     ): SVGPath {
@@ -1241,13 +1025,13 @@ class SVGRenderer {
         const end = points[1];
 
         // Normalize to a crisp line
-        if (start[1] === end[1]) {
+        if (defined(start[1]) && start[1] === end[1]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
             start[1] = end[1] =
                 Math[roundingFunction](start[1]) - (width % 2 / 2);
         }
-        if (start[2] === end[2]) {
+        if (defined(start[2]) && start[2] === end[2]) {
             start[2] = end[2] =
                 Math[roundingFunction](start[2]) + (width % 2 / 2);
         }
@@ -2080,7 +1864,7 @@ class SVGRenderer {
      */
     public fontMetrics(
         fontSize?: (number|string),
-        elem?: (globalThis.SVGElement|SVGElement)
+        elem?: (DOMElementType|SVGElement)
     ): Highcharts.FontMetricsObject {
         let lineHeight,
             baseline;
@@ -2451,7 +2235,7 @@ class SVGRenderer {
         str: string,
         x: number,
         y?: number,
-        shape?: Highcharts.SymbolKeyValue,
+        shape?: SVGRenderer.SymbolKeyValue,
         anchorX?: number,
         anchorY?: number,
         useHTML?: boolean,
@@ -2487,7 +2271,7 @@ class SVGRenderer {
 /**
  * @private
  */
-interface SVGRenderer extends Highcharts.SVGRenderer {
+interface SVGRenderer extends SVGRendererLike {
     Element: typeof SVGElement;
     SVG_NS: string;
     draw: Function;
@@ -2841,11 +2625,257 @@ SVGRenderer.prototype.symbols = {
     }
 };
 
-interface SVGRenderer extends SVGRendererLike {
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
+interface SVGRenderer extends SVGRendererLike {
+    // allow extension of SVGRenderer prototype via SVGRendererLike definitions
 }
 
-H.SVGRenderer = SVGRenderer;
-H.Renderer = H.SVGRenderer;
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
 
-export default H.Renderer;
+namespace SVGRenderer {
+    export type SymbolKeyValue = (
+        'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|'rect'|
+        'square'|'topbutton'|'triangle'|'triangle-down'
+    );
+}
+
+/* *
+ *
+ *  Renderer Registry
+ *
+ * */
+
+H.Renderer = SVGRenderer;
+
+/* *
+ *
+ *  Export Default
+ *
+ * */
+
+export default SVGRenderer;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * A clipping rectangle that can be applied to one or more {@link SVGElement}
+ * instances. It is instanciated with the {@link SVGRenderer#clipRect} function
+ * and applied with the {@link SVGElement#clip} function.
+ *
+ * @example
+ * let circle = renderer.circle(100, 100, 100)
+ *     .attr({ fill: 'red' })
+ *     .add();
+ * let clipRect = renderer.clipRect(100, 100, 100, 100);
+ *
+ * // Leave only the lower right quarter visible
+ * circle.clip(clipRect);
+ *
+ * @typedef {Highcharts.SVGElement} Highcharts.ClipRectElement
+ */
+
+/**
+ * The font metrics.
+ *
+ * @interface Highcharts.FontMetricsObject
+ *//**
+ * The baseline relative to the top of the box.
+ *
+ * @name Highcharts.FontMetricsObject#b
+ * @type {number}
+ *//**
+ * The font size.
+ *
+ * @name Highcharts.FontMetricsObject#f
+ * @type {number}
+ *//**
+ * The line height.
+ *
+ * @name Highcharts.FontMetricsObject#h
+ * @type {number}
+ */
+
+/**
+ * An object containing `x` and `y` properties for the position of an element.
+ *
+ * @interface Highcharts.PositionObject
+ *//**
+ * X position of the element.
+ * @name Highcharts.PositionObject#x
+ * @type {number}
+ *//**
+ * Y position of the element.
+ * @name Highcharts.PositionObject#y
+ * @type {number}
+ */
+
+/**
+ * A rectangle.
+ *
+ * @interface Highcharts.RectangleObject
+ *//**
+ * Height of the rectangle.
+ * @name Highcharts.RectangleObject#height
+ * @type {number}
+ *//**
+ * Width of the rectangle.
+ * @name Highcharts.RectangleObject#width
+ * @type {number}
+ *//**
+ * Horizontal position of the rectangle.
+ * @name Highcharts.RectangleObject#x
+ * @type {number}
+ *//**
+ * Vertical position of the rectangle.
+ * @name Highcharts.RectangleObject#y
+ * @type {number}
+ */
+
+/**
+ * The shadow options.
+ *
+ * @interface Highcharts.ShadowOptionsObject
+ *//**
+ * The shadow color.
+ * @name    Highcharts.ShadowOptionsObject#color
+ * @type    {Highcharts.ColorString|undefined}
+ * @default ${palette.neutralColor100}
+ *//**
+ * The horizontal offset from the element.
+ *
+ * @name    Highcharts.ShadowOptionsObject#offsetX
+ * @type    {number|undefined}
+ * @default 1
+ *//**
+ * The vertical offset from the element.
+ * @name    Highcharts.ShadowOptionsObject#offsetY
+ * @type    {number|undefined}
+ * @default 1
+ *//**
+ * The shadow opacity.
+ *
+ * @name    Highcharts.ShadowOptionsObject#opacity
+ * @type    {number|undefined}
+ * @default 0.15
+ *//**
+ * The shadow width or distance from the element.
+ * @name    Highcharts.ShadowOptionsObject#width
+ * @type    {number|undefined}
+ * @default 3
+ */
+
+/**
+ * @interface Highcharts.SizeObject
+ *//**
+ * @name Highcharts.SizeObject#height
+ * @type {number}
+ *//**
+ * @name Highcharts.SizeObject#width
+ * @type {number}
+ */
+
+/**
+ * Array of path commands, that will go into the `d` attribute of an SVG
+ * element.
+ *
+ * @typedef {Array<(Array<Highcharts.SVGPathCommand>|Array<Highcharts.SVGPathCommand,number>|Array<Highcharts.SVGPathCommand,number,number>|Array<Highcharts.SVGPathCommand,number,number,number,number>|Array<Highcharts.SVGPathCommand,number,number,number,number,number,number>|Array<Highcharts.SVGPathCommand,number,number,number,number,number,number,number>)>} Highcharts.SVGPathArray
+ */
+
+/**
+ * Possible path commands in an SVG path array. Valid values are `A`, `C`, `H`,
+ * `L`, `M`, `Q`, `S`, `T`, `V`, `Z`.
+ *
+ * @typedef {string} Highcharts.SVGPathCommand
+ * @validvalue ["a","c","h","l","m","q","s","t","v","z","A","C","H","L","M","Q","S","T","V","Z"]
+ */
+
+/**
+ * An extendable collection of functions for defining symbol paths. Symbols are
+ * used internally for point markers, button and label borders and backgrounds,
+ * or custom shapes. Extendable by adding to {@link SVGRenderer#symbols}.
+ *
+ * @interface Highcharts.SymbolDictionary
+ *//**
+ * @name Highcharts.SymbolDictionary#[key:string]
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#arc
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#callout
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#circle
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#diamond
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#square
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#triangle
+ * @type {Function|undefined}
+ */
+
+/**
+ * Can be one of `arc`, `callout`, `circle`, `diamond`, `square`, `triangle`,
+ * and `triangle-down`. Symbols are used internally for point markers, button
+ * and label borders and backgrounds, or custom shapes. Extendable by adding to
+ * {@link SVGRenderer#symbols}.
+ *
+ * @typedef {"arc"|"callout"|"circle"|"diamond"|"square"|"triangle"|"triangle-down"} Highcharts.SymbolKeyValue
+ */
+
+/**
+ * Additional options, depending on the actual symbol drawn.
+ *
+ * @interface Highcharts.SymbolOptionsObject
+ *//**
+ * The anchor X position for the `callout` symbol. This is where the chevron
+ * points to.
+ *
+ * @name Highcharts.SymbolOptionsObject#anchorX
+ * @type {number|undefined}
+ *//**
+ * The anchor Y position for the `callout` symbol. This is where the chevron
+ * points to.
+ *
+ * @name Highcharts.SymbolOptionsObject#anchorY
+ * @type {number|undefined}
+ *//**
+ * The end angle of an `arc` symbol.
+ *
+ * @name Highcharts.SymbolOptionsObject#end
+ * @type {number|undefined}
+ *//**
+ * Whether to draw `arc` symbol open or closed.
+ *
+ * @name Highcharts.SymbolOptionsObject#open
+ * @type {boolean|undefined}
+ *//**
+ * The radius of an `arc` symbol, or the border radius for the `callout` symbol.
+ *
+ * @name Highcharts.SymbolOptionsObject#r
+ * @type {number|undefined}
+ *//**
+ * The start angle of an `arc` symbol.
+ *
+ * @name Highcharts.SymbolOptionsObject#start
+ * @type {number|undefined}
+ */
+
+(''); // keeps doclets above in transpiled file

@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
@@ -24,6 +30,7 @@ import type PointerEvent from '../../Core/PointerEvent';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const color = Color.parse;
@@ -60,12 +67,34 @@ const {
 } = U;
 import VMLRenderer3D from './VMLRenderer3D.js';
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         /** @requires highcharts/modules/oldies */
         ieSanitizeSVG(svg: string): string;
         /** @requires highcharts/modules/oldies */
         isReadyToRender(): boolean;
+    }
+}
+
+declare module '../../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        /** @requires highcharts/modules/oldies */
+        isVML?: boolean;
+        /** @requires highcharts/modules/oldies */
+        getSpanWidth(wrapper: SVGElement, tspan: HTMLDOMElement): number;
+        /** @requires highcharts/modules/oldies */
+        invertChild(
+            element: HTMLDOMElement,
+            parentNode: HTMLDOMElement
+        ): void;
+        /** @requires highcharts/modules/oldies */
+        measureSpanWidth(text: string, style: CSSObject): number;
     }
 }
 
@@ -82,19 +111,6 @@ declare global {
         interface GlobalOptions {
             /** @requires highcharts/modules/oldies */
             VMLRadialGradientURL?: string;
-        }
-        interface SVGRenderer {
-            /** @requires highcharts/modules/oldies */
-            isVML?: boolean;
-            /** @requires highcharts/modules/oldies */
-            getSpanWidth(wrapper: SVGElement, tspan: HTMLDOMElement): number;
-            /** @requires highcharts/modules/oldies */
-            invertChild(
-                element: HTMLDOMElement,
-                parentNode: HTMLDOMElement
-            ): void;
-            /** @requires highcharts/modules/oldies */
-            measureSpanWidth(text: string, style: CSSObject): number;
         }
         /** @requires highcharts/modules/oldies */
         interface VMLAttributes extends AnyRecord {

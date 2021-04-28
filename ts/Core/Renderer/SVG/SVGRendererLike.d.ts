@@ -10,6 +10,14 @@
 
 /* *
  *
+ *  Imports
+ *
+ * */
+
+import type SVGRenderer from './SVGRenderer';
+
+/* *
+ *
  *  Declarations
  *
  * */

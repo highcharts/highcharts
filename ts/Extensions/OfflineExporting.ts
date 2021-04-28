@@ -52,6 +52,12 @@ declare module '../Core/Chart/ChartLike' {
     }
 }
 
+declare module '../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        inlineWhitelist?: Array<RegExp>;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -60,9 +66,6 @@ declare global {
     namespace Highcharts {
         interface ScriptOnLoadCallbackFunction {
             (this: GlobalEventHandlers, ev: Event): void;
-        }
-        interface SVGRenderer {
-            inlineWhitelist?: Array<RegExp>;
         }
         let CanVGRenderer: object;
         function downloadSVGLocal(
