@@ -437,13 +437,13 @@ class WindbarbSeries extends ColumnSeries {
     }
 
     public shouldShowTooltip(
-        plotX: (number|true),
-        plotY: (number|true)
+        plotX: number,
+        plotY: number,
+        options: Chart.IsInsideOptionsObject = {}
     ): boolean {
-        if (this.chart.inverted) {
-            return super.shouldShowTooltip(true, plotY);
-        }
-        return super.shouldShowTooltip(plotX, true);
+        options.ignoreX = this.chart.inverted;
+        options.ignoreY = !options.ignoreX;
+        return super.shouldShowTooltip(plotX, plotY, options);
     }
 }
 

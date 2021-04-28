@@ -1534,7 +1534,9 @@ class Tooltip {
                 anchorX = xAxis.pos + clamp(plotX, -distance, xAxis.len + distance);
 
                 // Set anchorY, limit to the scrollable plot area
-                if (series.shouldShowTooltip(true, yAxis.pos - plotTop + plotY)) {
+                if (series.shouldShowTooltip(0, yAxis.pos - plotTop + plotY, {
+                    ignoreX: true
+                })) {
                     anchorY = yAxis.pos + plotY;
                 }
             }

@@ -7282,24 +7282,19 @@ class Series {
      * Checks if a tooltip should be shown for a given point.
      *
      * @private
-     * @param {number|true} plotX
-     * @param {number|true} plotY
+     * @param {number} plotX
+     * @param {number} plotY
+     * @param {Highcharts.ChartIsInsideOptionsObject} [options]
      * @return {boolean}
      */
     public shouldShowTooltip(
-        plotX: (number|true),
-        plotY: (number|true)
+        plotX: number,
+        plotY: number,
+        options: Chart.IsInsideOptionsObject = {}
     ): boolean {
-        return this.chart.isInsidePlot(
-            plotX === true ? 0 : plotX,
-            plotY === true ? 0 : plotY,
-            {
-                ignoreX: plotX === true,
-                ignoreY: plotY === true,
-                series: this,
-                visiblePlotOnly: true
-            }
-        );
+        options.series = this;
+        options.visiblePlotOnly = true;
+        return this.chart.isInsidePlot(plotX, plotY, options);
     }
 
     /** eslint-enable valid-jsdoc */
