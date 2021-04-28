@@ -98,7 +98,6 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
 
 
     public load(): this {
-        this.emit({ type: 'load' });
         super.load();
         this.elements = this.options.elements || [];
 

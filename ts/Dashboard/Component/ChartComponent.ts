@@ -151,7 +151,6 @@ class ChartComponent extends Component<ChartComponent.Event> {
      * */
 
     public load(): this {
-        this.emit({ type: 'load' });
         super.load();
         this.parentElement.appendChild(this.element);
         this.contentElement.appendChild(this.chartContainer);

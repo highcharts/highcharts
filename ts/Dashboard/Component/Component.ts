@@ -6,8 +6,9 @@ import type DataStore from '../../Data/Stores/DataStore';
 import type DataJSON from '../../Data/DataJSON';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
+import type Row from '../Layout/Row';
 import EditableOptions from './EditableOptions.js';
-/* import CallbackRegistry from '../CallbackRegistry.js'; */
+import CallbackRegistry from '../CallbackRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -215,9 +216,10 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
     public type: string;
     public id: string;
     public editableOptions: EditableOptions;
-    /* public callbackRegistry = new CallbackRegistry(); */
+    public callbackRegistry = new CallbackRegistry();
     private tableEventTimeout?: number;
     private tableEvents: Function[] = [];
+    private cellListeners: Function[] = [];
     protected hasLoaded: boolean;
 
     constructor(options: Partial<Component.ComponentOptions>) {
@@ -273,20 +275,47 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
     // Setup listeners on cell/other things up the chain
     // TODO: teardown if we want to switch a component between cells
     private attachCellListeneres(): void {
+        // remove old listeners
+        while (this.cellListeners.length) {
+            const destroy = this.cellListeners.pop();
+            if (destroy) {
+                destroy();
+            }
+        }
+
         if (this.parentCell) {
-            addEvent(this.parentCell.row, 'cellChange', (e: any): void => {
-                this.resizeTo(this.parentElement);
-            });
+            this.cellListeners.push(addEvent(this.parentCell.row, 'cellChange', (e: { row: Row }): void => {
+                const { row } = e;
+                if (row && this.parentCell && this.parentCell.container) {
+                    const hasLeftTheRow = row.getCellIndex(this.parentCell) === void 0;
+                    if (hasLeftTheRow) {
+                        if (this.parentCell) {
+                            this.setCell(this.parentCell);
+                        }
+                    }
+                }
+                if (this.parentCell) {
+                    // Resize if number of cells in the row has changed
+                    // or if the width of the cell itself has changed
+                    setTimeout((): void => {
+                        this.resizeTo(this.parentElement);
+                    }, 0);
+                }
+            }));
+
         }
     }
 
     // Set a parent cell
-    public setCell(cell: Cell) {
+    public setCell(cell: Cell, resize = false): void {
         this.parentCell = cell;
         if (cell.container) {
             this.parentElement = cell.container;
         }
         this.attachCellListeneres();
+        if (resize) {
+            this.resizeTo(this.parentElement);
+        }
     }
 
     public setStore(store: DataStore<any> | undefined): this {
@@ -445,6 +474,11 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
      * @return {this}
      */
     public load(): this {
+        this.emit({
+            type: 'load',
+            component: this
+        } as any);
+
         // Set up the store on inital load if it has not been done
         if (!this.hasLoaded && this.store) {
             this.setStore(this.store);
@@ -461,15 +495,15 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         // Grabbed from Chart.ts
         const events = this.options.events;
         if (events) {
-
-            /* Object.keys(events).forEach(key => { */
-            /*     this.callbackRegistry.addCallback(key, { */
-            /*         type: 'component', */
-            /*         func: (events as any)[key].eventCallback, */
-            /*         args: (events as any)[key].eventCallback.arguments, */
-            /*         context: this */
-            /*     }) */
-            /* }) */
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
 
             objectEach(events, (eventCallback, eventType): void => {
                 if (isFunction(eventCallback)) {
@@ -575,14 +609,8 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             }
             dimensions[key] = value;
         });
-        /* const callbacks: any[] = [] */
-        /* Object.keys(this.callbackRegistry).forEach(key =>{ */
-        /*     callbacks.push(this.callbackRegistry.getCallback(key)); */
-        /* }) */
-        /*  */
-        /* console.log(callbacks); */
 
-        return {
+        const json = {
             $class: Component.getName(this.constructor),
             store: this.store ? this.store.toJSON() : void 0,
             options: {
@@ -592,6 +620,14 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
                 id: this.options.id || this.id
             }
         };
+
+        this.emit({
+            type: 'toJSON',
+            component: this,
+            json
+        } as any);
+
+        return json;
     }
 }
 
@@ -608,7 +644,7 @@ namespace Component {
         'load' | 'afterLoad' |
         'update' | 'afterUpdate' |
         'message' | 'tableChanged' |
-        'resize' | 'storeAttached';
+        'resize' | 'storeAttached' | 'toJSON';
     type ComponentEventTypes = ResizeEvent | MessageEvent | UpdateEvent | TableChangedEvent | Event;
     export interface ResizeEvent extends Event {
         width?: number;

@@ -352,7 +352,7 @@ class Resizer {
 
             // Call cellResize dashboard event.
             fireEvent(this.layout.dashboard, 'cellResize', { cell: currentCell });
-            fireEvent(currentCell.row, 'cellChange');
+            fireEvent(currentCell.row, 'cellChange', { cell: currentCell, row: currentCell.row });
         }
     }
     /**

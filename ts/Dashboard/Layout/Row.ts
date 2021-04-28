@@ -10,7 +10,8 @@ import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 const {
     pick,
     defined,
-    merge
+    merge,
+    fireEvent
 } = U;
 class Row extends GUIElement {
     /* *
@@ -290,11 +291,11 @@ class Row extends GUIElement {
 
         // redraw component inside the cell
         if (cells) {
-            for (let i = 0, iEnd = cells.length; i < iEnd; ++i) {
-                if (cells[i] && cells[i].mountedComponent) {
-                    (cells[i] as any).mountedComponent.resize(null);
-                }
-            }
+            /* for (let i = 0, iEnd = cells.length; i < iEnd; ++i) { */
+            /*     if (cells[i] && cells[i].mountedComponent) { */
+            /*         (cells[i] as any).mountedComponent.resize(null); */
+            /*     } */
+            /* } */
         } else {
             // nested layouts
         }
@@ -310,7 +311,7 @@ class Row extends GUIElement {
             }
         }
     }
-    
+
     // Add cell to the row.cells array and move cell container.
     public mountCell(
         cell: Cell,
@@ -328,9 +329,12 @@ class Row extends GUIElement {
 
             this.cells.splice(index, 0, cell);
             cell.row = this;
+            setTimeout(() => {
+                fireEvent(this, 'cellChange', { row: this, cell })
+            }, 0);
         }
     }
-    
+
     // Remove cell from the row.cells array.
     public unmountCell(
         cell: Cell
@@ -340,6 +344,10 @@ class Row extends GUIElement {
         if (defined(cellIndex)) {
             this.cells.splice(cellIndex, 1);
         }
+
+        setTimeout(() => {
+            fireEvent(this, 'cellChange', { row: this, cell })
+        }, 0);
     }
 }
 

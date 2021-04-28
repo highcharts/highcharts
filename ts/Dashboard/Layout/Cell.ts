@@ -235,7 +235,6 @@ class Cell extends GUIElement {
         row.unmountCell(cell);
 
         super.destroy();
-        fireEvent(row, 'cellChange');
     }
 
     /**
