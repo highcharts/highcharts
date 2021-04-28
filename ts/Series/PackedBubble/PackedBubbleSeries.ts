@@ -358,7 +358,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 marker: {
                     fillColor: null as any,
                     fillOpacity: 1,
-                    lineWidth: 1,
+                    lineWidth: null as any,
                     lineColor: null as any,
                     symbol: 'circle'
                 }
@@ -831,7 +831,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 fill: nodeMarker.fillColor || color(series.color).brighten(0.4).get(),
                 opacity: nodeMarker.fillOpacity,
                 stroke: nodeMarker.lineColor || series.color,
-                'stroke-width': nodeMarker.lineWidth
+                'stroke-width': nodeMarker.lineWidth || series.options.lineWidth
             };
 
         // create the group for parent Nodes if doesn't exist
@@ -1426,7 +1426,8 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             i = 0;
 
         if (layoutOptions && layoutOptions.parentNodeOptions && layoutOptions.parentNodeOptions.marker) {
-            lineWidth = layoutOptions.parentNodeOptions.marker.lineWidth;
+            lineWidth = (layoutOptions.parentNodeOptions.marker.lineWidth || options.lineWidth);
+
             if (!series.chart.styledMode) {
                 if (state) {
                     lineWidth = (
