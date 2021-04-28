@@ -92,7 +92,7 @@ class CMFIndicator extends SMAIndicator {
      * otherwise false.
      */
     public isValid(this: CMFIndicator): boolean {
-        var chart = this.chart,
+        let chart = this.chart,
             options: CMFOptions = this.options,
             series = this.linkedParent,
             volumeSeries: LineSeries = (
@@ -169,7 +169,7 @@ class CMFIndicator extends SMAIndicator {
         volumeSeriesYData: Array<number>,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {
-        var len: number = (seriesYData as any).length,
+        let len: number = (seriesYData as any).length,
             moneyFlowVolume: Array<(number|null)> = [],
             sumVolume = 0,
             sumMoneyFlowVolume = 0,
@@ -192,7 +192,7 @@ class CMFIndicator extends SMAIndicator {
             ohlc: Array<number>,
             volume: number
         ): (number|null) {
-            var high: number = ohlc[1],
+            let high: number = ohlc[1],
                 low: number = ohlc[2],
                 close: number = ohlc[3],
 

@@ -204,7 +204,7 @@ declare global {
  * });
  *
  * // Apply time settings by instance
- * var chart = Highcharts.chart('container', {
+ * let chart = Highcharts.chart('container', {
  *     time: {
  *         timezone: 'America/New_York'
  *     },
@@ -386,7 +386,7 @@ class Time {
      * @return {void}
      */
     public update(options: Highcharts.TimeOptions): void {
-        var useUTC = pick(options && options.useUTC, true) as boolean,
+        let useUTC = pick(options && options.useUTC, true) as boolean,
             time = this;
 
         this.options = options = merge(true, this.options || {}, options);
@@ -445,7 +445,7 @@ class Time {
         minutes?: number,
         seconds?: number
     ): number {
-        var d, offset, newOffset;
+        let d, offset, newOffset;
 
         if (this.useUTC) {
             d = this.Date.UTC.apply(0, arguments);
@@ -594,7 +594,7 @@ class Time {
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
 
-        var time = this,
+        let time = this,
             date = new this.Date(timestamp as any),
             // get the basic time values
             hours = this.get('Hours', date),
@@ -739,7 +739,7 @@ class Time {
         max?: number,
         startOfWeek?: number
     ): Highcharts.AxisTickPositionsArray {
-        var time = this,
+        let time = this,
             Date = time.Date,
             tickPositions = [] as Highcharts.AxisTickPositionsArray,
             i,
@@ -847,7 +847,7 @@ class Time {
 
             // Get basics for variable time spans
             minYear = time.get('FullYear', minDate);
-            var minMonth = time.get('Month', minDate),
+            let minMonth = time.get('Month', minDate),
                 minDateDate = time.get('Date', minDate),
                 minHours = time.get('Hours', minDate);
 
@@ -872,7 +872,7 @@ class Time {
             }
 
             // Iterate and add tick positions at appropriate values
-            var t = minDate.getTime();
+            let t = minDate.getTime();
 
             i = 1;
             while (t < (max as any)) {

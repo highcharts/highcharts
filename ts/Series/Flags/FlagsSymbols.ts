@@ -27,7 +27,7 @@ symbols.flag = function (
     h: number,
     options?: Highcharts.SymbolOptionsObject
 ): SVGPath {
-    var anchorX = (options && options.anchorX) || x,
+    let anchorX = (options && options.anchorX) || x,
         anchorY = (options && options.anchorY) || y;
 
     // To do: unwanted any cast because symbols.circle has wrong type, it
@@ -61,7 +61,7 @@ function createPinSymbol(shape: ('circle'|'square')): void {
         options?: Highcharts.SymbolOptionsObject
     ): SVGPath {
 
-        var anchorX = options && options.anchorX,
+        let anchorX = options && options.anchorX,
             anchorY = options && options.anchorY,
             path: SVGPath;
 

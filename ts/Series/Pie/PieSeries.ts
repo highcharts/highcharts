@@ -706,13 +706,13 @@ class PieSeries extends Series {
      * @private
      */
     public animate(init?: boolean): void {
-        var series = this,
+        let series = this,
             points = series.points,
             startAngleRad = series.startAngleRad;
 
         if (!init) {
             points.forEach(function (point): void {
-                var graphic = point.graphic,
+                let graphic = point.graphic,
                     args = point.shapeArgs;
 
                 if (graphic && args) {
@@ -744,7 +744,7 @@ class PieSeries extends Series {
      * @private
      */
     public drawEmpty(): void {
-        var centerX,
+        let centerX,
             centerY,
             start = this.startAngleRad,
             end = this.endAngleRad,
@@ -794,7 +794,7 @@ class PieSeries extends Series {
      * @private
      */
     public drawPoints(): void {
-        var renderer = this.chart.renderer;
+        let renderer = this.chart.renderer;
 
         this.points.forEach(function (point): void {
             // When updating a series between 2d and 3d or cartesian and
@@ -834,7 +834,7 @@ class PieSeries extends Series {
         left: boolean,
         point: PiePoint
     ): number {
-        var center = this.center,
+        let center = this.center,
             // Variable pie has individual radius
             radius = this.radii ?
                 this.radii[point.index as any] || 0 :
@@ -871,7 +871,7 @@ class PieSeries extends Series {
      * @private
      */
     public redrawPoints(): void {
-        var series = this,
+        let series = this,
             chart = series.chart,
             renderer = chart.renderer,
             groupTranslation,
@@ -891,9 +891,11 @@ class PieSeries extends Series {
 
         // draw the slices
         series.points.forEach(function (point): void {
-            var animateTo = {};
+            let animateTo = {};
             graphic = point.graphic;
             if (!point.isNull && graphic) {
+                let shadowGroup: (SVGElement|undefined);
+
                 shapeArgs = point.shapeArgs;
 
 
@@ -903,7 +905,7 @@ class PieSeries extends Series {
 
                 if (!chart.styledMode) {
                 // Put the shadow behind all points
-                    var shadowGroup = point.shadowGroup;
+                    shadowGroup = point.shadowGroup;
 
                     if (shadow && !shadowGroup) {
                         shadowGroup = point.shadowGroup = renderer
@@ -983,7 +985,7 @@ class PieSeries extends Series {
     public translate(positions?: Array<number>): void {
         this.generatePoints();
 
-        var series = this,
+        let series = this,
             cumulative = 0,
             precision = 1000, // issue #172
             options = series.options,
@@ -1149,7 +1151,7 @@ class PieSeries extends Series {
      * @private
      */
     public updateTotals(): void {
-        var i,
+        let i,
             total = 0,
             points = this.points,
             len = points.length,

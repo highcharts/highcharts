@@ -97,7 +97,7 @@ class LogarithmicAxisAdditions {
         // Second case: We need intermediary ticks. For example
         // 1, 2, 4, 6, 8, 10, 20, 40 etc.
         } else if (interval >= 0.08) {
-            var roundedMin = Math.floor(min),
+            let roundedMin = Math.floor(min),
                 intermediate,
                 i,
                 j,
@@ -140,7 +140,7 @@ class LogarithmicAxisAdditions {
         // we might as well handle the tick positions like a linear axis. For
         // example 1.01, 1.02, 1.03, 1.04.
         } else {
-            var realMin = log.lin2log(min),
+            let realMin = log.lin2log(min),
                 realMax = log.lin2log(max),
                 tickIntervalOption = minor ?
                     axis.getMinorTickInterval() :

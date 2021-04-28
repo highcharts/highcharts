@@ -121,7 +121,7 @@ Elements3D.funnel3d = merge(Elements3D.cuboid, {
         this: SVGElement,
         opacity: number
     ): SVGElement {
-        var funnel3d = this,
+        let funnel3d = this,
             parts = funnel3d.parts,
             chart: Chart =
                 H.charts[funnel3d.renderer.chartIndex] as any,
@@ -182,7 +182,7 @@ Elements3D.funnel3d = merge(Elements3D.cuboid, {
         fill: ColorType
     ): SVGElement {
         // extract alpha channel to use the opacitySetter
-        var funnel3d = this,
+        let funnel3d = this,
             fillColor: (Color|ColorType) = color(fill),
             alpha: number = (fillColor as any).rgba[3],
             partsWithColor: Record<string, ColorType> = {
@@ -224,7 +224,7 @@ Elements3D.funnel3d = merge(Elements3D.cuboid, {
         if ((fillColor as any).linearGradient) {
             // color in steps, as each gradient will generate a key
             funnel3d.sideGroups.forEach(function (sideGroupName: string): void {
-                var box = funnel3d[sideGroupName].gradientBox,
+                let box = funnel3d[sideGroupName].gradientBox,
                     gradient: NonNullable<GradientColor['linearGradient']> =
                         (fillColor as any).linearGradient,
                     alteredGradient = merge<GradientColor>(
@@ -260,7 +260,7 @@ Elements3D.funnel3d = merge(Elements3D.cuboid, {
                 funnel3d.sideGroups.forEach(function (
                     sideGroupName: string
                 ): void {
-                    var gradBox = funnel3d[sideGroupName].gradientBox,
+                    let gradBox = funnel3d[sideGroupName].gradientBox,
                         centerX = gradBox.x + gradBox.width / 2,
                         centerY = gradBox.y + gradBox.height / 2,
                         diameter = Math.min(gradBox.width, gradBox.height);
@@ -286,7 +286,7 @@ Elements3D.funnel3d = merge(Elements3D.cuboid, {
             [funnel3d.frontLower, funnel3d.frontUpper].forEach(function (
                 part: Record<string, SVGElement>
             ): void {
-                var elem: SVGElement = part.element,
+                let elem: SVGElement = part.element,
                     grad = elem && funnel3d.renderer.gradients[elem.gradient];
 
                 if (grad && grad.attr('gradientUnits') !== 'userSpaceOnUse') {
@@ -301,12 +301,12 @@ Elements3D.funnel3d = merge(Elements3D.cuboid, {
     },
 
     adjustForGradient: function (this: SVGElement): void {
-        var funnel3d = this,
+        let funnel3d = this,
             bbox: BBoxObject;
 
         funnel3d.sideGroups.forEach(function (sideGroupName: string): void {
             // use common extremes for groups for matching gradients
-            var topLeftEdge = {
+            let topLeftEdge = {
                     x: Number.MAX_VALUE,
                     y: Number.MAX_VALUE
                 },
@@ -319,7 +319,7 @@ Elements3D.funnel3d = merge(Elements3D.cuboid, {
             funnel3d.sideParts[sideGroupName].forEach(function (
                 partName: string
             ): void {
-                var part = funnel3d[partName];
+                let part = funnel3d[partName];
 
                 bbox = part.getBBox(true);
                 topLeftEdge = {
@@ -366,7 +366,7 @@ extend(H.Renderer.prototype, {
         this: SVGRenderer,
         shapeArgs: SVGAttributes
     ): SVGElement {
-        var renderer = this,
+        let renderer = this,
             funnel3d: SVGElement =
                 renderer.element3d('funnel3d', shapeArgs) as any,
             styledMode = renderer.styledMode,
@@ -430,7 +430,7 @@ extend(H.Renderer.prototype, {
             );
         }
 
-        var renderer = this,
+        let renderer = this,
             chart: Chart = charts[renderer.chartIndex] as any,
             // adjust angles for visible edges
             // based on alpha, selected through visual tests

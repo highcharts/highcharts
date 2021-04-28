@@ -105,7 +105,7 @@ function traverseSetOption<T>(
     optionAsArray: Array<string>,
     val: T
 ): void {
-    var opt = root,
+    let opt = root,
         prop,
         i = 0;
     for (;i < optionAsArray.length - 1; ++i) {
@@ -140,11 +140,11 @@ function deprecateFromOptionsMap(
         }, root as any);
     }
 
-    var rootOld = getChildProp(chart.options, rootOldAsArray),
+    let rootOld = getChildProp(chart.options, rootOldAsArray),
         rootNew = getChildProp(chart.options, rootNewAsArray);
 
     Object.keys(mapToNewOptions).forEach(function (oldOptionKey: string): void {
-        var val = rootOld[oldOptionKey];
+        let val = rootOld[oldOptionKey];
         if (typeof val !== 'undefined') {
             traverseSetOption(
                 rootNew,
@@ -168,7 +168,7 @@ function deprecateFromOptionsMap(
  * @private
  */
 function copyDeprecatedChartOptions(chart: Chart): void {
-    var chartOptions = chart.options.chart,
+    let chartOptions = chart.options.chart,
         a11yOptions = chart.options.accessibility || {};
     ['description', 'typeDescription'].forEach(function (
         prop: string
@@ -185,7 +185,7 @@ function copyDeprecatedChartOptions(chart: Chart): void {
  */
 function copyDeprecatedAxisOptions(chart: Chart): void {
     chart.axes.forEach(function (axis: Axis): void {
-        var opts = axis.options;
+        let opts = axis.options;
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
             opts.accessibility.description = opts.description;
@@ -200,7 +200,7 @@ function copyDeprecatedAxisOptions(chart: Chart): void {
 function copyDeprecatedSeriesOptions(chart: Chart): void {
     // Map of deprecated series options. New options are defined as
     // arrays of paths under series.options.
-    var oldToNewSeriesOptions = {
+    let oldToNewSeriesOptions = {
         description: ['accessibility', 'description'],
         exposeElementToA11y: ['accessibility', 'exposeAsGroupOnly'],
         pointDescriptionFormatter: [
@@ -215,7 +215,7 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
         Object.keys(oldToNewSeriesOptions).forEach(function (
             oldOption: string
         ): void {
-            var optionVal = (series.options as any)[oldOption];
+            let optionVal = (series.options as any)[oldOption];
             if (typeof optionVal !== 'undefined') {
                 // Set the new option
                 traverseSetOption(

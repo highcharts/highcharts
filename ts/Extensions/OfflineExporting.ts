@@ -107,7 +107,7 @@ declare global {
 import DownloadURL from '../Extensions/DownloadURL.js';
 const { downloadURL } = DownloadURL;
 
-var domurl = win.URL || win.webkitURL || win,
+let domurl = win.URL || win.webkitURL || win,
     // Milliseconds to defer image load event handlers to offset IE bug
     loadEventDeferDelay = H.isMS ? 150 : 0;
 
@@ -129,7 +129,7 @@ function getScript(
     scriptLocation: string,
     callback: Highcharts.ScriptOnLoadCallbackFunction
 ): void {
-    var head = doc.getElementsByTagName('head')[0],
+    let head = doc.getElementsByTagName('head')[0],
         script = doc.createElement('script');
 
     script.type = 'text/javascript';
@@ -218,11 +218,11 @@ function imageToDataUrl(
     failedLoadCallback: Function,
     finallyCallback?: Function
 ): void {
-    var img = new win.Image(),
+    let img = new win.Image(),
         taintedHandler: Function,
         loadHandler = function (): void {
             setTimeout(function (): void {
-                var canvas = doc.createElement('canvas'),
+                let canvas = doc.createElement('canvas'),
                     ctx = canvas.getContext && canvas.getContext('2d'),
                     dataURL;
 
@@ -335,7 +335,7 @@ function downloadSVGLocal(
     failCallback: Function,
     successCallback?: Function
 ): void {
-    var svgurl: string,
+    let svgurl: string,
         blob,
         objectURLRevoke = true,
         finallyHandler: Function,
@@ -360,7 +360,7 @@ function downloadSVGLocal(
      * @private
      */
     function svgToPdf(svgElement: SVGElement, margin: number): string {
-        var width = svgElement.width.baseVal.value + 2 * margin,
+        let width = svgElement.width.baseVal.value + 2 * margin,
             height = svgElement.height.baseVal.value + 2 * margin,
             pdf = new win.jsPDF( // eslint-disable-line new-cap
                 height > width ? 'p' : 'l', // setting orientation to portrait if height exceeds width
@@ -418,7 +418,7 @@ function downloadSVGLocal(
      */
     function downloadPDF(): void {
         dummySVGContainer.innerHTML = svg;
-        var textElements = dummySVGContainer.getElementsByTagName('text'),
+        let textElements = dummySVGContainer.getElementsByTagName('text'),
             titleElements,
             svgData,
             // Copy style property to element from parents if it's not there.
@@ -428,7 +428,7 @@ function downloadSVGLocal(
                 el: DOMElementType,
                 propName: string
             ): void {
-                var curParent = el;
+                let curParent = el;
 
                 while (curParent && curParent !== dummySVGContainer) {
                     if (curParent.style[propName as any]) {
@@ -540,7 +540,7 @@ function downloadSVGLocal(
             }, function (): void {
                 // Failed due to tainted canvas
                 // Create new and untainted canvas
-                var canvas = doc.createElement('canvas'),
+                let canvas = doc.createElement('canvas'),
                     ctx: CanvasRenderingContext2D =
                         canvas.getContext('2d') as any,
                     imageWidth = (svg.match(
@@ -622,7 +622,7 @@ Chart.prototype.getSVGForLocalExport = function (
     failCallback: Function,
     successCallback: Function
 ): void {
-    var chart = this,
+    let chart = this,
         images,
         imagesEmbedded = 0,
         chartCopyContainer: (HTMLDOMElement|undefined),
@@ -748,7 +748,7 @@ Chart.prototype.exportChartLocal = function (
     exportingOptions?: Highcharts.ExportingOptions,
     chartOptions?: Partial<Highcharts.Options>
 ): void {
-    var chart = this,
+    let chart = this,
         options = merge(chart.options.exporting, exportingOptions),
         fallbackToExportServer = function (err: Error): void {
             if (options.fallbackToExportServer === false) {
@@ -792,7 +792,7 @@ Chart.prototype.exportChartLocal = function (
             return [].some.call(
                 chart.container.getElementsByTagName('image'),
                 function (image: HTMLDOMElement): boolean {
-                    var href = image.getAttribute('href');
+                    let href = image.getAttribute('href');
                     return href !== '' && (href as any).indexOf('data:') !== 0;
                 }
             );

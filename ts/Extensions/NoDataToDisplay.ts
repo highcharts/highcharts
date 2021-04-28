@@ -61,7 +61,7 @@ declare global {
     }
 }
 
-var chartPrototype = Chart.prototype,
+let chartPrototype = Chart.prototype,
     defaultOptions = getOptions();
 
 // Add language option
@@ -190,7 +190,7 @@ defaultOptions.noData = {
  * @requires modules/no-data-to-display
  */
 chartPrototype.showNoData = function (str?: string): void {
-    var chart = this,
+    let chart = this,
         options = chart.options,
         text = str || (options && (options.lang as any).noData),
         noDataOptions: Highcharts.NoDataOptions =
@@ -238,7 +238,7 @@ chartPrototype.showNoData = function (str?: string): void {
  * @requires modules/no-data-to-display
  */
 chartPrototype.hideNoData = function (): void {
-    var chart = this;
+    let chart = this;
 
     if (chart.noDataLabel) {
         chart.noDataLabel = chart.noDataLabel.destroy();
@@ -255,7 +255,7 @@ chartPrototype.hideNoData = function (): void {
  * @requires modules/no-data-to-display
  */
 chartPrototype.hasData = function (): (boolean|undefined) {
-    var chart = this,
+    let chart = this,
         series = chart.series || [],
         i = series.length;
 

@@ -62,7 +62,7 @@ class DumbbellPoint extends AreaRangePoint {
      * @return {void}
      */
     setState(): void {
-        var point = this,
+        let point = this,
             series = point.series,
             chart = series.chart,
             seriesLowColor = series.options.lowColor,

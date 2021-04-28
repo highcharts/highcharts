@@ -140,7 +140,7 @@ class XRangeSeries extends ColumnSeries {
 
         dataLabels: {
             formatter: function (): (string|undefined) {
-                var point = this.point,
+                let point = this.point,
                     amount = (point as XRangePoint).partialFill;
 
                 if (isObject(amount)) {
@@ -203,7 +203,7 @@ class XRangeSeries extends ColumnSeries {
      * @return {Highcharts.ColumnMetricsObject}
      */
     public getColumnMetrics(): ColumnMetricsObject {
-        var metrics,
+        let metrics,
             chart = this.chart;
 
         /**
@@ -211,7 +211,7 @@ class XRangeSeries extends ColumnSeries {
          */
         function swapAxes(): void {
             chart.series.forEach(function (s): void {
-                var xAxis = s.xAxis;
+                let xAxis = s.xAxis;
 
                 s.xAxis = s.yAxis;
                 s.yAxis = xAxis;
@@ -254,7 +254,7 @@ class XRangeSeries extends ColumnSeries {
     ): Highcharts.SeriesCropDataObject {
 
         // Replace xData with x2Data to find the appropriate cropStart
-        var cropData = Series.prototype.cropData,
+        let cropData = Series.prototype.cropData,
             crop = cropData.call(this, this.x2Data as any, yData, min, max);
 
         // Re-insert the cropped xData
@@ -319,7 +319,7 @@ class XRangeSeries extends ColumnSeries {
      * @param {Highcharts.Point} point
      */
     public translatePoint(point: XRangePoint): void {
-        var series = this,
+        let series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             metrics: ColumnMetricsObject =
@@ -512,7 +512,7 @@ class XRangeSeries extends ColumnSeries {
         point: XRangePoint,
         verb: string
     ): void {
-        var series = this,
+        let series = this,
             seriesOpts = series.options,
             renderer = series.chart.renderer,
             graphic = point.graphic,
@@ -627,7 +627,7 @@ class XRangeSeries extends ColumnSeries {
      * @function Highcharts.Series#drawPoints
      */
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             verb = series.getAnimationVerb();
 
         // Draw the columns
@@ -682,7 +682,7 @@ class XRangeSeries extends ColumnSeries {
     /*
     // Override to remove stroke from points. For partial fill.
     pointAttribs: function () {
-        var series = this,
+        let series = this,
             retVal = columnType.prototype.pointAttribs
                 .apply(series, arguments);
 

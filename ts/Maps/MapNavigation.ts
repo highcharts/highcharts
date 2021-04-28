@@ -156,7 +156,7 @@ MapNavigation.prototype.update = function (
     this: Highcharts.MapNavigation,
     options?: MapNavigationOptions
 ): void {
-    var chart = this.chart,
+    let chart = this.chart,
         o: MapNavigationOptions = chart.options.mapNavigation as any,
         attr: ButtonThemeObject,
         states: ButtonThemeStatesObject|undefined,
@@ -274,7 +274,7 @@ MapNavigation.prototype.updateEvents = function (
     this: Highcharts.MapNavigation,
     options: MapNavigationOptions
 ): void {
-    var chart = this.chart;
+    let chart = this.chart;
 
     // Add the double click event
     if (
@@ -345,7 +345,7 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
         [['x', 'width'], ['y', 'height']].forEach(function (
             dim: Array<string>
         ): void {
-            var pos = dim[0],
+            let pos = dim[0],
                 size = dim[1];
 
             if ((inner as any)[pos] + (inner as any)[size] >
@@ -407,7 +407,7 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
         mouseX?: number,
         mouseY?: number
     ): void {
-        var chart = this,
+        let chart = this,
             xAxis = chart.xAxis[0],
             xRange = (xAxis.max as any) - (xAxis.min as any),
             centerX = pick(centerXArg, (xAxis.min as any) + xRange / 2),

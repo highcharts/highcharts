@@ -21,7 +21,7 @@ import H from '../../Core/Globals.js';
 import O from '../../Core/Options.js';
 const { setOptions } = O;
 
-var textBright = '#F0F0F3';
+let textBright = '#F0F0F3';
 
 H.theme = {
     colors: [

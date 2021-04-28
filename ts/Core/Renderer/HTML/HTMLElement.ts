@@ -130,7 +130,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
         this: HTMLElement,
         styles: CSSObject
     ): HTMLElement {
-        var wrapper = this,
+        let wrapper = this,
             element = wrapper.element,
             // When setting or unsetting the width style, we need to update
             // transform (#8809)
@@ -182,7 +182,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
     htmlGetBBox: function (
         this: HTMLElement
     ): BBoxObject {
-        var wrapper = this,
+        let wrapper = this,
             element = wrapper.element;
 
         return {
@@ -208,7 +208,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
             return;
         }
 
-        var wrapper = this,
+        let wrapper = this,
             renderer = wrapper.renderer,
             elem = wrapper.element,
             translateX = wrapper.translateX || 0,
@@ -262,7 +262,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
 
         if (elem.tagName === 'SPAN') {
 
-            var rotation = wrapper.rotation,
+            let rotation = wrapper.rotation,
                 baseline,
                 textWidth = wrapper.textWidth && pInt(wrapper.textWidth),
                 currentTextTransform = [
@@ -377,7 +377,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
                         '-o-transform' :
                         void 0);
 
-        var rotationStyle: CSSObject = {},
+        let rotationStyle: CSSObject = {},
             cssTransformKey = getTransformKey();
 
         if (cssTransformKey) {

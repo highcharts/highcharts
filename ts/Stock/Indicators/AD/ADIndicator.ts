@@ -95,7 +95,7 @@ class ADIndicator extends SMAIndicator {
         i: number,
         _period: number
     ): Array<number> {
-        var high = yVal[i][1],
+        let high = yVal[i][1],
             low = yVal[i][2],
             close = yVal[i][3],
             volume = yValVolume[i],
@@ -127,7 +127,7 @@ class ADIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: ADParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = (params.period as any),
+        let period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<(number|null|undefined)> = (series.yData as any),
             volumeSeriesID: string = (params.volumeSeriesID as any),

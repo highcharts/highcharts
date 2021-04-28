@@ -201,7 +201,7 @@ class CandlestickSeries extends OHLCSeries {
         point: CandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var attribs = ColumnSeries.prototype.pointAttribs.call(
+        let attribs = ColumnSeries.prototype.pointAttribs.call(
                 this,
                 point,
                 state
@@ -239,14 +239,14 @@ class CandlestickSeries extends OHLCSeries {
      * @return {void}
      */
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             points = series.points,
             chart = series.chart,
             reversedYAxis = series.yAxis.reversed;
 
         points.forEach(function (point: CandlestickPoint): void {
 
-            var graphic = point.graphic,
+            let graphic = point.graphic,
                 plotOpen,
                 plotClose,
                 topBox,

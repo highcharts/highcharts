@@ -174,7 +174,7 @@ addEvent(RangeSelector, 'afterBtnClick', function (): void {
  * @class
  * @name Highcharts.RangeSelectorComponent
  */
-var RangeSelectorComponent: typeof Highcharts.RangeSelectorComponent =
+let RangeSelectorComponent: typeof Highcharts.RangeSelectorComponent =
     function (): void {} as any;
 RangeSelectorComponent.prototype = new (AccessibilityComponent as any)();
 extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComponent */ { // eslint-disable-line
@@ -219,7 +219,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                 key: string,
                 i: number
             ): void {
-                var input = (rangeSelector as any)[key];
+                let input = (rangeSelector as any)[key];
                 if (input) {
                     unhideChartElementFromAT(chart, input);
                     component.setRangeInputAttrs(
@@ -310,7 +310,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         input: HTMLDOMElement,
         langKey: string
     ): void {
-        var chart = this.chart;
+        let chart = this.chart;
 
         setElAttrs(input, {
             tabindex: -1,
@@ -330,7 +330,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler,
         keyCode: number
     ): number {
-        var response = keyboardNavigationHandler.response,
+        let response = keyboardNavigationHandler.response,
             keys = this.keyCodes,
             chart = this.chart,
             wrapAround = chart.options.accessibility
@@ -361,7 +361,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         this: Highcharts.RangeSelectorComponent,
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
     ): number {
-        var response = keyboardNavigationHandler.response,
+        let response = keyboardNavigationHandler.response,
             chart = this.chart,
             wasDisabled = chart.oldRangeSelectorItemState === 3;
 
@@ -481,7 +481,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
     onInputNavTerminate: function (
         this: Highcharts.RangeSelectorComponent
     ): void {
-        var rangeSel: Highcharts.RangeSelector = (
+        let rangeSel: Highcharts.RangeSelector = (
             (this.chart as any).rangeSelector || {}
         );
 

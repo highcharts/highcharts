@@ -58,7 +58,7 @@ import '../../Core/Options.js';
 import './Layouts.js';
 import './DraggableNodes.js';
 
-var dragNodesMixin = H.dragNodesMixin;
+let dragNodesMixin = H.dragNodesMixin;
 
 /* *
  *
@@ -770,7 +770,7 @@ extend(NetworkgraphSeries.prototype, {
      * @private
      */
     generatePoints: function (this: NetworkgraphSeries): void {
-        var node,
+        let node,
             i;
 
         NodesMixin.generatePoints.apply(this, arguments as any);
@@ -851,7 +851,7 @@ extend(NetworkgraphSeries.prototype, {
         point: NetworkgraphPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var attribs =
+        let attribs =
             Series.prototype.markerAttribs.call(this, point, state);
 
         // series.render() is called before initial positions are set:
@@ -902,7 +902,7 @@ extend(NetworkgraphSeries.prototype, {
      * @private
      */
     deferLayout: function (this: NetworkgraphSeries): void {
-        var layoutOptions = this.options.layoutAlgorithm,
+        let layoutOptions = this.options.layoutAlgorithm,
             graphLayoutsStorage = this.chart.graphLayoutsStorage,
             graphLayoutsLookup = this.chart.graphLayoutsLookup,
             chartOptions = this.chart.options.chart,
@@ -950,7 +950,7 @@ extend(NetworkgraphSeries.prototype, {
      * @private
      */
     render: function (this: NetworkgraphSeries): void {
-        var series = this,
+        let series = this,
             points = series.points,
             hoverPoint = series.chart.hoverPoint,
             dataLabels = [] as Array<SVGElement>;
@@ -988,7 +988,7 @@ extend(NetworkgraphSeries.prototype, {
     // Networkgraph has two separate collecions of nodes and lines, render
     // dataLabels for both sets:
     drawDataLabels: function (this: NetworkgraphSeries): void {
-        var textPath = (this.options.dataLabels as any).textPath;
+        let textPath = (this.options.dataLabels as any).textPath;
 
         // Render node labels:
         Series.prototype.drawDataLabels.apply(this, arguments as any);
@@ -1011,7 +1011,7 @@ extend(NetworkgraphSeries.prototype, {
         state?: StatesOptionsKey
     ): SVGAttributes {
         // By default, only `selected` state is passed on
-        var pointState = state || point && point.state || 'normal',
+        let pointState = state || point && point.state || 'normal',
             attribs = Series.prototype.pointAttribs.call(
                 this,
                 point,
@@ -1195,7 +1195,7 @@ extend(NetworkgraphPoint.prototype, {
      * @return {number}
      */
     getDegree: function (this: Highcharts.NetworkgraphPoint): number {
-        var deg = this.isNode ?
+        let deg = this.isNode ?
             this.linksFrom.length + this.linksTo.length :
             0;
 
@@ -1210,7 +1210,7 @@ extend(NetworkgraphPoint.prototype, {
     getLinkAttributes: function (
         this: Highcharts.NetworkgraphPoint
     ): SVGAttributes {
-        var linkOptions = this.series.options.link,
+        let linkOptions = this.series.options.link,
             pointOptions = this.options;
 
         return {
@@ -1236,7 +1236,7 @@ extend(NetworkgraphPoint.prototype, {
      * @private
      */
     renderLink: function (this: Highcharts.NetworkgraphPoint): void {
-        var attribs: SVGAttributes;
+        let attribs: SVGAttributes;
 
         if (!this.graphic) {
             this.graphic = this.series.chart.renderer
@@ -1267,7 +1267,7 @@ extend(NetworkgraphPoint.prototype, {
      * @private
      */
     redrawLink: function (this: Highcharts.NetworkgraphPoint): void {
-        var path = this.getLinkPath(),
+        let path = this.getLinkPath(),
             attribs: SVGAttributes;
 
         if (this.graphic) {
@@ -1311,7 +1311,7 @@ extend(NetworkgraphPoint.prototype, {
     getMass: function (
         this: Highcharts.NetworkgraphPoint
     ): Record<string, number> {
-        var m1 = this.fromNode.mass,
+        let m1 = this.fromNode.mass,
             m2 = this.toNode.mass,
             sum = m1 + m2;
 
@@ -1330,7 +1330,7 @@ extend(NetworkgraphPoint.prototype, {
     getLinkPath: function (
         this: Highcharts.NetworkgraphPoint
     ): SVGPath {
-        var left = this.fromNode,
+        let left = this.fromNode,
             right = this.toNode;
 
         // Start always from left to the right node, to prevent rendering
@@ -1382,7 +1382,7 @@ extend(NetworkgraphPoint.prototype, {
         redraw?: boolean,
         animation?: boolean
     ): void {
-        var point = this,
+        let point = this,
             series = point.series,
             nodesOptions = series.options.nodes || [],
             index: number,

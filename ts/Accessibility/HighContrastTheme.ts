@@ -20,7 +20,7 @@ declare module '../Core/Series/DataLabelOptions' {
     }
 }
 
-var theme: Highcharts.Options = {
+let theme: Highcharts.Options = {
     chart: {
         backgroundColor: 'window'
     },

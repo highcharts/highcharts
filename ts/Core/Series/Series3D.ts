@@ -92,7 +92,7 @@ class Series3D extends Series {
      * @private
      */
     public translate3dPoints(): void {
-        var series = this,
+        let series = this,
             seriesOptions = series.options,
             chart = series.chart,
             zAxis: ZAxis = pick(series.zAxis, (chart.options.zAxis as any)[0]),

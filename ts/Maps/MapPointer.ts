@@ -55,7 +55,7 @@ extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
         this: Highcharts.MapPointer,
         e: PointerEvent
     ): void {
-        var chart = this.chart;
+        let chart = this.chart;
 
         e = this.normalize(e);
 
@@ -87,7 +87,7 @@ extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
         this: Highcharts.MapPointer,
         e: PointerEvent
     ): void {
-        var chart = this.chart,
+        let chart = this.chart,
             delta;
 
         e = this.normalize(e);
@@ -119,7 +119,7 @@ wrap(Pointer.prototype, 'zoomOption', function (
 ): void {
 
 
-    var mapNavigation = this.chart.options.mapNavigation;
+    let mapNavigation = this.chart.options.mapNavigation;
 
     // Pinch status
     if (pick(
@@ -147,7 +147,7 @@ wrap(
         clip: any,
         lastValidTouch: any
     ): void {
-        var xBigger;
+        let xBigger;
 
         proceed.call(
             this,

@@ -177,7 +177,7 @@ declare global {
     }
 }
 
-var langOptions: Highcharts.LangOptions = {
+let langOptions: Highcharts.LangOptions = {
 
     /**
      * Configure the accessibility strings in the chart. Requires the

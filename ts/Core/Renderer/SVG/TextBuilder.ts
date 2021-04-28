@@ -72,7 +72,7 @@ class TextBuilder {
      */
     public buildSVG(): void {
         const wrapper = this.svgElement;
-        var textNode = wrapper.element,
+        let textNode = wrapper.element,
             renderer = wrapper.renderer,
             textStr = pick(wrapper.textStr, '').toString() as string,
             hasMarkup = textStr.indexOf('<') !== -1,
@@ -474,7 +474,7 @@ class TextBuilder {
             // charEnd is used when finding the character-by-character
             // break for ellipsis, concatenatedEnd is used for word-by-word
             // break for word wrapping.
-            var end = concatenatedEnd || charEnd;
+            let end = concatenatedEnd || charEnd;
             const parentNode = textNode.parentNode;
 
             if (parentNode && typeof lengths[end] === 'undefined') {

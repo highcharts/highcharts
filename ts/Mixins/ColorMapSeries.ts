@@ -70,7 +70,7 @@ const {
     addEvent
 } = U;
 
-var noop = H.noop,
+let noop = H.noop,
     seriesTypes = H.seriesTypes;
 
 
@@ -139,7 +139,7 @@ const colorMapSeriesMixin = {
         this: Highcharts.ColorMapSeries,
         point: Highcharts.ColorMapPoint
     ): SVGAttributes {
-        var ret: SVGAttributes = {};
+        let ret: SVGAttributes = {};
 
         if (defined(point.color)) {
             (ret as any)[this.colorProp || 'fill'] = point.color;

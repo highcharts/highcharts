@@ -85,9 +85,9 @@ declare module '../Core/Axis/Types' {
 }
 
 // Extensions for parallel coordinates plot.
-var ChartProto = Chart.prototype;
+let ChartProto = Chart.prototype;
 
-var defaultXAxisOptions = {
+let defaultXAxisOptions = {
     lineWidth: 0,
     tickLength: 0,
     opposite: true,
@@ -99,7 +99,7 @@ var defaultXAxisOptions = {
 /**
  * @optionparent chart
  */
-var defaultParallelOptions: Highcharts.ChartOptions = {
+let defaultParallelOptions: Highcharts.ChartOptions = {
     /**
      * Flag to render charts as a parallel coordinates plot. In a parallel
      * coordinates plot (||-coords) by default all required yAxes are generated
@@ -301,7 +301,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
         this: Highcharts.ParallelChart,
         options: Partial<Highcharts.Options>
     ): void {
-        var chart = this,
+        let chart = this,
             seriesOptions: Array<SeriesOptions> =
                 options.series as any;
 
@@ -325,7 +325,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
 // calculate extremes.
 addEvent(Series, 'bindAxes', function (e: Event): void {
     if (this.chart.hasParallelCoordinates) {
-        var series = this;
+        let series = this;
 
         this.chart.axes.forEach(function (axis): void {
             series.insert(axis.series);
@@ -341,7 +341,7 @@ addEvent(Series, 'bindAxes', function (e: Event): void {
 
 // Translate each point using corresponding yAxis.
 addEvent(Series, 'afterTranslate', function (): void {
-    var series = this,
+    let series = this,
         chart = this.chart,
         points = series.points,
         dataLength = points && points.length,
@@ -409,7 +409,7 @@ function addFormattedValue(
     this: Point,
     proceed: Function
 ): void {
-    var chart = this.series && this.series.chart,
+    let chart = this.series && this.series.chart,
         config = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
         formattedValue,
         yAxisOptions,
@@ -646,7 +646,7 @@ namespace ParallelAxis {
         }
 
         if (chart && chart.hasParallelCoordinates && !axis.isXAxis) {
-            var index = parallelCoordinates.position,
+            let index = parallelCoordinates.position,
                 currentPoints: Array<Point> = [];
 
             axis.series.forEach(function (series): void {

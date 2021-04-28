@@ -179,7 +179,7 @@ class VectorSeries extends ScatterSeries {
      * @private
      */
     public arrow(point: VectorPoint): SVGPath {
-        var path: SVGPath,
+        let path: SVGPath,
             fraction: number = (point.length as any) / this.lengthMax,
             u: number = fraction * (this.options.vectorLength as any) / 20,
             o: number = ({
@@ -206,7 +206,7 @@ class VectorSeries extends ScatterSeries {
 
     /*
     drawLegendSymbol: function (legend, item) {
-        var options = legend.options,
+        let options = legend.options,
             symbolHeight = legend.symbolHeight,
             square = options.squareSymbol,
             symbolWidth = square ? symbolHeight : legend.symbolWidth,
@@ -235,10 +235,10 @@ class VectorSeries extends ScatterSeries {
      */
     public drawPoints(): void {
 
-        var chart = this.chart;
+        let chart = this.chart;
 
         this.points.forEach(function (point): void {
-            var plotX = point.plotX,
+            let plotX = point.plotX,
                 plotY = point.plotY;
 
             if (
@@ -288,7 +288,7 @@ class VectorSeries extends ScatterSeries {
         point: VectorPoint,
         state?: string
     ): SVGAttributes {
-        var options = this.options,
+        let options = this.options,
             stroke = point.color || this.color,
             strokeWidth = this.options.lineWidth;
 

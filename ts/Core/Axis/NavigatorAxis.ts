@@ -99,7 +99,7 @@ class NavigatorAxisAdditions {
         const axis = navigator.axis;
         const chart = axis.chart;
 
-        var fixedRange = chart && chart.fixedRange,
+        let fixedRange = chart && chart.fixedRange,
             halfPointRange = (axis.pointRange || 0) / 2,
             newMin = pick<number|undefined, number>(
                 fixedMin, axis.translate(pxMin as any, true, !axis.horiz) as any

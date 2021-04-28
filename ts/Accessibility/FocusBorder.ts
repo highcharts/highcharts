@@ -339,7 +339,7 @@ H.Chart.prototype.setFocusToElement = function (
     svgElement: SVGElement,
     focusElement?: DOMElementType
 ): void {
-    var focusBorderOptions: (
+    let focusBorderOptions: (
             Highcharts.AccessibilityKeyboardNavigationFocusBorderOptions
         ) = this.options.accessibility.keyboardNavigation.focusBorder,
         browserFocusElement = focusElement || svgElement.element;

@@ -262,7 +262,7 @@ function pointInPolygon(
     point: Highcharts.MapCoordinateObject,
     polygon: Array<Array<number>>
 ): boolean {
-    var i,
+    let i,
         j,
         rel1,
         rel2,
@@ -340,7 +340,7 @@ Chart.prototype.transformFromLatLon = function (
         };
     }
 
-    var projected = proj4(transform.crs, [latLon.lon, latLon.lat]),
+    let projected = proj4(transform.crs, [latLon.lon, latLon.lat]),
         cosAngle = transform.cosAngle ||
             (transform.rotation && Math.cos(transform.rotation)),
         sinAngle = transform.sinAngle ||
@@ -395,7 +395,7 @@ Chart.prototype.transformToLatLon = function (
         return;
     }
 
-    var normalized = {
+    let normalized = {
             x: (
                 (
                     point.x -
@@ -446,7 +446,7 @@ Chart.prototype.transformToLatLon = function (
 Chart.prototype.fromPointToLatLon = function (
     point: Highcharts.MapCoordinateObject
 ): (Highcharts.MapLatLonObject|undefined) {
-    var transforms = this.mapTransforms,
+    let transforms = this.mapTransforms,
         transform;
 
     if (!transforms) {
@@ -493,7 +493,7 @@ Chart.prototype.fromPointToLatLon = function (
 Chart.prototype.fromLatLonToPoint = function (
     latLon: Highcharts.MapLatLonObject
 ): Highcharts.MapCoordinateObject {
-    var transforms = this.mapTransforms,
+    let transforms = this.mapTransforms,
         transform,
         coords;
 
@@ -561,7 +561,7 @@ H.geojson = function (
     hType?: string,
     series?: Series
 ): Array<any> {
-    var mapData = [] as Array<any>,
+    let mapData = [] as Array<any>,
         path = [] as SVGPath,
         polygonToPath = function (polygon: Array<Array<number>>): void {
             polygon.forEach((point, i): void => {
@@ -577,7 +577,7 @@ H.geojson = function (
 
     geojson.features.forEach(function (feature: any): void {
 
-        var geometry = feature.geometry,
+        let geometry = feature.geometry,
             type = geometry.type,
             coordinates = geometry.coordinates,
             properties = feature.properties,

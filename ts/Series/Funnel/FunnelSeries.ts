@@ -233,7 +233,7 @@ class FunnelSeries extends PieSeries {
         alignTo: BBoxObject,
         isNew?: boolean
     ): void {
-        var series = point.series,
+        let series = point.series,
             reversed = series.options.reversed,
             dlBox = point.dlBox || point.shapeArgs,
             align = options.align,
@@ -317,7 +317,7 @@ class FunnelSeries extends PieSeries {
      * @private
      */
     public drawDataLabels(): void {
-        var series = this,
+        let series = this,
             data = series.data,
             labelDistance: number =
                 (series.options.dataLabels as any).distance,
@@ -392,7 +392,7 @@ class FunnelSeries extends PieSeries {
      */
     public translate(): void {
 
-        var sum = 0,
+        let sum = 0,
             series = this,
             chart = series.chart,
             options = series.options,
@@ -450,7 +450,7 @@ class FunnelSeries extends PieSeries {
             this: FunnelSeries,
             y: number
         ): number {
-            var top = (centerY - height / 2);
+            let top = (centerY - height / 2);
 
             return (y > neckY || height === neckHeight) ?
                 neckWidth :
