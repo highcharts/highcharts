@@ -396,12 +396,14 @@ class Tick {
         const labelFormatter = (
             ctx: Highcharts.AxisLabelsFormatterContextObject
         ): string => {
+            if (labelOptions.formatter) {
+                return labelOptions.formatter.call(ctx, ctx);
+            }
             if (labelOptions.format) {
                 ctx.text = axis.defaultLabelFormatter.call(ctx);
                 return F.format(labelOptions.format, ctx, chart);
             }
-            return (labelOptions.formatter || axis.defaultLabelFormatter)
-                .call(ctx, ctx);
+            return axis.defaultLabelFormatter.call(ctx, ctx);
         };
         str = labelFormatter.call(ctx, ctx);
 
