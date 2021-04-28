@@ -1105,6 +1105,7 @@ class SankeySeries extends ColumnSeries {
             });
 
             // Pass test in drawPoints
+            node.plotX = 1;
             node.plotY = 1;
 
             // Set the anchor position for tooltips

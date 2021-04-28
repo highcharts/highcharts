@@ -781,7 +781,15 @@ Series.prototype.alignDataLabel = function (
         negRotation,
         align = options.align,
         rotCorr, // rotation correction
-        isInsidePlot = chart.isInsidePlot(plotX, Math.round(plotY), inverted),
+        isInsidePlot = chart.isInsidePlot(
+            plotX,
+            Math.round(plotY),
+            {
+                inverted,
+                paneCoordinates: true,
+                series
+            }
+        ),
         // Math.round for rounding errors (#2683), alignTo to allow column
         // labels (#2700)
         alignAttr, // the final position;
@@ -808,7 +816,11 @@ Series.prototype.alignDataLabel = function (
                         inverted ?
                             alignTo.x + 1 :
                             alignTo.y + alignTo.height - 1,
-                        inverted
+                        {
+                            inverted,
+                            paneCoordinates: true,
+                            series
+                        }
                     )
                 )
             ),
@@ -910,11 +922,19 @@ Series.prototype.alignDataLabel = function (
             visible =
                 chart.isInsidePlot(
                     alignAttr.x,
-                    alignAttr.y
+                    alignAttr.y,
+                    {
+                        paneCoordinates: true,
+                        series
+                    }
                 ) &&
                 chart.isInsidePlot(
                     alignAttr.x + bBox.width,
-                    alignAttr.y + bBox.height
+                    alignAttr.y + bBox.height,
+                    {
+                        paneCoordinates: true,
+                        series
+                    }
                 );
         }
 

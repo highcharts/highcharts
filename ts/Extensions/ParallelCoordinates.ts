@@ -380,7 +380,7 @@ addEvent(Series, 'afterTranslate', function (): void {
                 point.isInside = chart.isInsidePlot(
                     point.plotX,
                     point.plotY as any,
-                    chart.inverted
+                    { inverted: chart.inverted }
                 );
             } else {
                 point.isNull = true;

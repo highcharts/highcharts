@@ -251,7 +251,10 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         if (
             this.chart.isInsidePlot(
                 e.chartX - this.chart.plotLeft,
-                e.chartY - this.chart.plotTop
+                e.chartY - this.chart.plotTop,
+                {
+                    visiblePlotOnly: true
+                }
             )
         ) {
             const translation = this.mouseMoveToTranslation(e);

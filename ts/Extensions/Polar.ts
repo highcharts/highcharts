@@ -1000,7 +1000,8 @@ if (seriesTypes.column) {
                 // don't need to be swapped (inverted argument is false)
                 this.forceDL = chart.isInsidePlot(
                     (point as Highcharts.PolarPoint).plotX,
-                    Math.round((point as Highcharts.PolarPoint).plotY), false);
+                    Math.round((point as Highcharts.PolarPoint).plotY)
+                );
 
                 // Checks if labels should be positioned inside
                 if (inside && point.shapeArgs) {
