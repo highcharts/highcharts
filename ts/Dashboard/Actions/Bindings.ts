@@ -1,4 +1,5 @@
 /* eslint-disable */
+import type ComponentTypes from '../Component/ComponentType';
 import ChartComponent from './../Component/ChartComponent.js';
 import HTMLComponent from './../Component/HTMLComponent.js';
 import GroupComponent from './../Component/GroupComponent.js';
@@ -58,11 +59,11 @@ class Bindings {
 
     public static addComponent(
         options: Bindings.ComponentOptions
-    ): HTMLComponent|ChartComponent|GroupComponent|undefined {
+    ): ComponentTypes | undefined {
         const compontentContainer = document.getElementById(options.cell);
         const events = options.events;
 
-        let component: HTMLComponent|ChartComponent|GroupComponent|undefined;
+        let component: ComponentTypes|undefined;
 
         // add elements to containers
         if (compontentContainer) {
@@ -117,7 +118,7 @@ class Bindings {
     public static componentFromJSON(
         json: HTMLComponent.ClassJSON|ChartComponent.ClassJSON,
         cellContainer: HTMLDOMElement|undefined
-    ): HTMLComponent|ChartComponent|GroupComponent|undefined {
+    ): ComponentTypes | undefined {
 
         const compontentContainer = cellContainer;
         let component: HTMLComponent|ChartComponent|GroupComponent|undefined;

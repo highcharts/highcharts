@@ -2,6 +2,7 @@
 import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type DataJSON from '../../Data/DataJSON';
 import type Component from './../Component/Component.js';
+import type ComponentType from '../Component/ComponentType'
 import DashboardGlobals from './../DashboardGlobals.js';
 import Row from './Row.js';
 import GUIElement from './GUIElement.js';
@@ -181,7 +182,7 @@ class Cell extends GUIElement {
     /**
      * Component mounted in the cell.
      */
-    public mountedComponent?: Component;
+    public mountedComponent?: ComponentType;
 
     /**
      * Layout nested in the cell.
