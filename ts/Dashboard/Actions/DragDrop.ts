@@ -4,6 +4,7 @@ import type Cell from './../Layout/Cell.js';
 import DashboardGlobals from './../DashboardGlobals.js';
 import EditMode from './../EditMode/EditMode.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import GUIElement from '../Layout/GUIElement.js';
 
 const {
     addEvent,
@@ -96,34 +97,11 @@ class DragDrop {
      * */
 
     public initEvents(): void {
-        const dragDrop = this,
-            dashboard = dragDrop.editMode.dashboard;
+        const dragDrop = this;
 
         // DragDrop events.
         addEvent(document, 'mousemove', dragDrop.onDrag.bind(dragDrop));
         addEvent(document, 'mouseup', dragDrop.onDragEnd.bind(dragDrop));
-
-        // Snap events.
-        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
-            const layout = dashboard.layouts[i];
-
-            for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
-                const row = layout.rows[j];
-
-                for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
-                    const cell = row.cells[k];
-
-                    if (cell.container) {
-                        addEvent(cell.container, 'mouseenter', function (e: any): void {
-                            if (dragDrop.isActive) {
-                                dragDrop.dropContext = cell;
-                                dragDrop.onDrag(e);
-                            }
-                        });
-                    }
-                }
-            }
-        }
     }
 
     public onDragStart(
@@ -208,20 +186,19 @@ class DragDrop {
 
     public onCellDrag(e: any): void {
         const dragDrop = this,
-            cellDrag = dragDrop.dropContext,
+            dropContext = dragDrop.dropContext as Cell,
             width = 20,
             offset = 50;
 
-        if (cellDrag && cellDrag.container) {
-            const cellTop = ((cellDrag.container.parentElement || {}).offsetTop || 0) +
-                    cellDrag.container.offsetTop,
-                cellStart = ((cellDrag.container.parentElement || {}).offsetLeft || 0) +
-                    cellDrag.container.offsetLeft,
-                cellEnd = cellStart + cellDrag.container.clientWidth;
+        if (dropContext && dropContext.container) {
+            const dropContextOffsets = GUIElement.getOffsets(
+                    dropContext, dragDrop.editMode.dashboard.container),
+                cellWidth = dropContextOffsets.right - dropContextOffsets.left,
+                cellHeight = dropContextOffsets.bottom - dropContextOffsets.top;
 
             if (
-                e.clientX >= cellStart - offset &&
-                e.clientX <= cellStart + offset
+                e.clientX >= dropContextOffsets.left - offset &&
+                e.clientX <= dropContextOffsets.left + offset
             ) {
                 dragDrop.dropPointer.align = 'left';
 
@@ -230,15 +207,15 @@ class DragDrop {
 
                     css(dragDrop.dropPointer.element, {
                         display: 'block',
-                        left: cellStart - width / 2 + 'px',
-                        top: cellTop + 'px',
-                        height: cellDrag.container.clientHeight + 'px',
+                        left: dropContextOffsets.left - width / 2 + 'px',
+                        top: dropContextOffsets.top + 'px',
+                        height: cellHeight + 'px',
                         width: width + 'px'
                     });
                 }
             } else if (
-                e.clientX >= cellEnd - offset &&
-                e.clientX <= cellEnd + offset
+                e.clientX >= dropContextOffsets.left + cellWidth - offset &&
+                e.clientX <= dropContextOffsets.left + cellWidth + offset
             ) {
                 dragDrop.dropPointer.align = 'right';
 
@@ -247,10 +224,10 @@ class DragDrop {
 
                     css(dragDrop.dropPointer.element, {
                         display: 'block',
-                        left: cellStart + cellDrag.container.clientWidth -
+                        left: dropContextOffsets.left + cellWidth -
                           width / 2 + 'px',
-                        top: cellTop + 'px',
-                        height: cellDrag.container.clientHeight + 'px',
+                        top: dropContextOffsets.top + 'px',
+                        height: cellHeight + 'px',
                         width: width + 'px'
                     });
                 }

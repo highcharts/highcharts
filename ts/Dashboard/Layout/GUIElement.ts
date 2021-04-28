@@ -6,7 +6,6 @@ import type {
 } from '../../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import U from '../../Core/Utilities.js';
-import Cell from './Cell';
 
 const {
     addEvent,
@@ -21,14 +20,24 @@ abstract class GUIElement {
     *  Static Properties
     *
     * */
-    public static getCellOffset(
-        cell: Cell,
-        offsetType: string
-    ): number {
-        let offset = (cell.container as any)[offsetType] + (cell.row.container as any)[offsetType];
 
-        if (cell.row.layout.parentCell) {
-            offset += GUIElement.getCellOffset(cell.row.layout.parentCell, offsetType);
+    // Get offsets of the guiElement relative to
+    // the referenceElement or the Viewport.
+    public static getOffsets(
+        guiElement: GUIElement,
+        referenceElement?: HTMLDOMElement
+    ): GUIElement.Offsets {
+        const offset = { left: 0, top: 0, right: 0, bottom: 0 };
+
+        if (guiElement.container) {
+            const guiElementClientRect = guiElement.container.getBoundingClientRect();
+            const dashboardClientRect = referenceElement ?
+                referenceElement.getBoundingClientRect() : { left: 0, top: 0 };
+
+            offset.left = guiElementClientRect.left - dashboardClientRect.left;
+            offset.top = guiElementClientRect.top - dashboardClientRect.top;
+            offset.right = guiElementClientRect.right - dashboardClientRect.left;
+            offset.bottom = guiElementClientRect.bottom - dashboardClientRect.top;
         }
 
         return offset;
@@ -156,6 +165,13 @@ namespace GUIElement {
         style?: CSSObject;
         element?: HTMLElement;
         elementId?: string;
+    }
+
+    export interface Offsets {
+        left: number;
+        top: number;
+        right: number;
+        bottom: number;
     }
 
     export interface BindedGUIElementEvent extends Event {

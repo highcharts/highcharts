@@ -117,8 +117,10 @@ class CellEditToolbar extends EditToolbar {
             !isCellResizing &&
             !(toolbar.editMode.dragDrop || {}).isActive
         ) {
-            x = GUIElement.getCellOffset(cell, 'offsetLeft') + cellCnt.clientWidth - width;
-            y = GUIElement.getCellOffset(cell, 'offsetTop');
+            const cellOffsets = GUIElement.getOffsets(cell, toolbar.editMode.dashboard.container);
+
+            x = cellOffsets.right - width;
+            y = cellOffsets.top;
 
             // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
@@ -136,7 +138,7 @@ class CellEditToolbar extends EditToolbar {
     public refreshOutline(): void {
         const toolbar = this;
 
-        if (toolbar.cell && toolbar.cell.container) {
+        if (toolbar.cell && toolbar.cell.container && toolbar.outline) {
             super.refreshOutline(
                 toolbar.container.offsetWidth - toolbar.cell.container.offsetWidth,
                 0,

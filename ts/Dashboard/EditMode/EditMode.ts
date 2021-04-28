@@ -227,6 +227,17 @@ class EditMode {
                             }
                         });
                     }
+
+                    // Init dragDrop cell events.
+                    if (editMode.dragDrop) {
+                        const dragDrop = editMode.dragDrop;
+                        addEvent(cell.container, 'mouseenter', function (e: any): void {
+                            if (dragDrop.isActive) {
+                                dragDrop.dropContext = cell;
+                                dragDrop.onDrag(e);
+                            }
+                        });
+                    }
                 }
             }
         }

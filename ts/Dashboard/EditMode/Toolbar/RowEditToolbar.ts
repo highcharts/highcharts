@@ -117,8 +117,10 @@ class RowEditToolbar extends EditToolbar {
             toolbar.editMode.isActive() &&
             !(toolbar.editMode.dragDrop || {}).isActive
         ) {
-            x = GUIElement.getCellOffset(row.cells[0], 'offsetLeft');
-            y = GUIElement.getCellOffset(row.cells[0], 'offsetTop');
+            const rowOffsets = GUIElement.getOffsets(row, toolbar.editMode.dashboard.container);
+
+            x = rowOffsets.left;
+            y = rowOffsets.top;
 
             // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
