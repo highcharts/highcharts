@@ -83,7 +83,7 @@ const draw = function draw(
                 onComplete
             );
     } else if (graphic) {
-        let destroy = function (): void {
+        const destroy = function (): void {
             component.graphic = graphic = (graphic as any).destroy();
             if (isFn(onComplete)) {
                 onComplete();
@@ -111,7 +111,7 @@ const drawPoint = function drawPoint(
     this: Highcharts.DrawPoint,
     params: Highcharts.DrawPointParams
 ): void {
-    let point = this,
+    const point = this,
         attribs = params.attribs = params.attribs || {};
 
     // Assigning class in dot notation does go well in IE8

@@ -355,7 +355,7 @@ class BoxPlotSeries extends ColumnSeries {
 
     // Translate data points from raw values x and y to plotX and plotY
     public translate(): void {
-        let series = this,
+        const series = this,
             yAxis = series.yAxis,
             pointArrayMap = series.pointArrayMap;
 

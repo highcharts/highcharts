@@ -71,13 +71,13 @@ const getListOfParents = function (
     data: Array<Highcharts.TreePointOptionsObject>,
     ids: Array<string>
 ): Record<string, Array<Highcharts.TreePointOptionsObject>> {
-    let listOfParents = data.reduce(function (
+    const listOfParents = data.reduce(function (
             prev: (
                 Record<string, Array<Highcharts.TreePointOptionsObject>>
             ),
             curr: Highcharts.TreePointOptionsObject
         ): Record<string, Array<Highcharts.TreePointOptionsObject>> {
-            let parent = pick(curr.parent, '');
+            const parent = pick(curr.parent, '');
 
             if (typeof prev[parent] === 'undefined') {
                 prev[parent] = [];
@@ -91,7 +91,7 @@ const getListOfParents = function (
 
     // If parent does not exist, hoist parent to root of tree.
     parents.forEach(function (parent: string, list: number): void {
-        let children = listOfParents[parent];
+        const children = listOfParents[parent];
 
         if ((parent !== '') && (ids.indexOf(parent) === -1)) {
             children.forEach(function (
@@ -139,7 +139,7 @@ const getNode = function (
     children = ((mapOfIdToChildren[id] || [])).map(function (
         child: Highcharts.TreePointOptionsObject
     ): Highcharts.TreeNode {
-        let node = getNode(
+        const node = getNode(
                 child.id as any,
                 id,
                 (level + 1),
@@ -197,7 +197,7 @@ const getTree = function (
     data: Array<Highcharts.TreePointOptionsObject>,
     options: Highcharts.TreeGetOptionsObject
 ): Highcharts.TreeNode {
-    let ids = data.map(function (d: Highcharts.TreePointOptionsObject): string {
+    const ids = data.map(function (d: Highcharts.TreePointOptionsObject): string {
             return d.id as any;
         }),
         mapOfIdToChildren = getListOfParents(data, ids);

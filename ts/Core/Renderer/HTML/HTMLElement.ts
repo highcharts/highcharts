@@ -182,7 +182,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
     htmlGetBBox: function (
         this: HTMLElement
     ): BBoxObject {
-        let wrapper = this,
+        const wrapper = this,
             element = wrapper.element;
 
         return {
@@ -208,7 +208,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
             return;
         }
 
-        let wrapper = this,
+        const wrapper = this,
             renderer = wrapper.renderer,
             elem = wrapper.element,
             translateX = wrapper.translateX || 0,
@@ -377,7 +377,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
                         '-o-transform' :
                         void 0);
 
-        let rotationStyle: CSSObject = {},
+        const rotationStyle: CSSObject = {},
             cssTransformKey = getTransformKey();
 
         if (cssTransformKey) {

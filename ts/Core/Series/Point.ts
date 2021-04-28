@@ -534,7 +534,7 @@ class Point {
         options: (PointOptions|PointShortOptions),
         x?: number
     ): Point {
-        let point = this,
+        const point = this,
             series = point.series,
             pointValKey = series.options.pointValKey || series.pointValKey;
 
@@ -672,7 +672,7 @@ class Point {
      * @param {Highcharts.Dictionary<number>} [kinds]
      */
     public destroyElements(kinds?: Record<string, number>): void {
-        let point = this,
+        const point = this,
             props = point.getGraphicalProps(kinds);
 
         props.singular.forEach(function (prop: string): void {
@@ -714,7 +714,7 @@ class Point {
             EventCallback<Point, T>|Function
         )
     ): void {
-        let point = this,
+        const point = this,
             series = this.series,
             seriesOptions = series.options;
 
@@ -802,7 +802,7 @@ class Point {
         }
 
         ['dataLabel', 'connector'].forEach(function (prop: string): void {
-            let plural = prop + 's';
+            const plural = prop + 's';
             if ((kinds as any)[prop] && (point as any)[plural]) {
                 graphicalProps.plural.push(plural);
             }
@@ -1088,7 +1088,7 @@ class Point {
         value: any,
         key: string
     ): T {
-        let nestedKeys = key.split('.');
+        const nestedKeys = key.split('.');
 
         nestedKeys.reduce(function (
             result: any,
@@ -1096,7 +1096,7 @@ class Point {
             i: number,
             arr: Array<string>
         ): T {
-            let isLastKey = arr.length - 1 === i;
+            const isLastKey = arr.length - 1 === i;
 
             result[key] = (
                 isLastKey ?
@@ -1124,7 +1124,7 @@ class Point {
     public tooltipFormatter(pointFormat: string): string {
 
         // Insert options for valueDecimals, valuePrefix, and valueSuffix
-        let series = this.series,
+        const series = this.series,
             seriesTooltipOptions = series.tooltipOptions,
             valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''),
             valuePrefix = seriesTooltipOptions.valuePrefix || '',
@@ -1343,7 +1343,7 @@ class Point {
         selected?: boolean,
         accumulate?: boolean
     ): void {
-        let point = this,
+        const point = this,
             series = point.series,
             chart = series.chart;
 
@@ -1377,7 +1377,7 @@ class Point {
                     chart.getSelectedPoints().forEach(function (
                         loopPoint: Point
                     ): void {
-                        let loopSeries = loopPoint.series;
+                        const loopSeries = loopPoint.series;
 
                         if (loopPoint.selected && loopPoint !== point) {
                             loopPoint.selected = loopPoint.options.selected =
@@ -1414,7 +1414,7 @@ class Point {
      *        The event arguments.
      */
     public onMouseOver(e?: PointerEvent): void {
-        let point = this,
+        const point = this,
             series = point.series,
             chart = series.chart,
             pointer = chart.pointer;
@@ -1434,7 +1434,7 @@ class Point {
      * @fires Highcharts.Point#event:mouseOut
      */
     public onMouseOut(): void {
-        let point = this,
+        const point = this,
             chart = point.series.chart;
 
         point.firePointEvent('mouseOut');
@@ -1459,7 +1459,7 @@ class Point {
      */
     public importEvents(): void {
         if (!this.hasImportedEvents) {
-            let point = this,
+            const point = this,
                 options = merge(
                     point.series.options.point as PointOptions,
                     point.options
@@ -1751,7 +1751,7 @@ class Point {
      *         The path definition.
      */
     public haloPath(size: number): SVGPath {
-        let series = this.series,
+        const series = this.series,
             chart = series.chart;
 
         return chart.renderer.symbols.circle(

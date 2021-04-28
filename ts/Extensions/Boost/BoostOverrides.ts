@@ -100,7 +100,7 @@ import butils from './BoostUtils.js';
 import boostable from './Boostables.js';
 import boostableMap from './BoostableMap.js';
 
-let boostEnabled = butils.boostEnabled,
+const boostEnabled = butils.boostEnabled,
     shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting,
     plotOptions = getOptions().plotOptions as SeriesTypePlotOptions;
 
@@ -143,7 +143,7 @@ Chart.prototype.isChartSeriesBoosting = function (): boolean {
  * @return {Highcharts.BBoxObject}
  */
 Chart.prototype.getBoostClipRect = function (target: Chart): BBoxObject {
-    let clipBox = {
+    const clipBox = {
         x: this.plotLeft,
         y: this.plotTop,
         width: this.plotWidth,
@@ -282,7 +282,7 @@ wrap(Series.prototype, 'markerAttribs', function (
  * but the fake search points are not registered like that.
  */
 addEvent(Series, 'destroy', function (): void {
-    let series = this,
+    const series = this,
         chart = series.chart;
 
     if (chart.markerGroup === series.markerGroup) {
@@ -338,7 +338,7 @@ wrap(Series.prototype, 'getExtremes', function (
         this: Series,
         proceed: Function
     ): void {
-        let letItPass = this.options.stacking &&
+        const letItPass = this.options.stacking &&
             (method === 'translate' || method === 'generatePoints');
 
         if (
@@ -526,7 +526,7 @@ Series.prototype.exitBoost = function (): void {
  * @return {boolean}
  */
 Series.prototype.hasExtremes = function (checkX?: boolean): boolean {
-    let options = this.options,
+    const options = this.options,
         data: Array<(PointOptions|PointShortOptions)> = options.data as any,
         xAxis = this.xAxis && this.xAxis.options,
         yAxis = this.yAxis && this.yAxis.options,

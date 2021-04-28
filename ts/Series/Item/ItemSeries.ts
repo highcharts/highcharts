@@ -283,7 +283,7 @@ class ItemSeries extends PieSeries {
                     if (series.center && series.slots) {
 
                         // Fill up the slots from left to right
-                        let slot: ItemSeries.GeometryObject =
+                        const slot: ItemSeries.GeometryObject =
                             series.slots.shift() as any;
                         x = slot.x - itemSize / 2;
                         y = slot.y - itemSize / 2;
@@ -517,7 +517,7 @@ class ItemSeries extends PieSeries {
         }
 
         rows.forEach(function (row): void {
-            let rowRadius = row.rowRadius,
+            const rowRadius = row.rowRadius,
                 colCount = row.colCount;
             increment = colCount ? fullAngle / colCount : 0;
             for (col = 0; col <= colCount; col += 1) {

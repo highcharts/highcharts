@@ -251,7 +251,7 @@ function getSeriesFirstPointElement(
 function getSeriesA11yElement(
     series: Series
 ): (DOMElementType|undefined) {
-    let firstPointEl = getSeriesFirstPointElement(series);
+    const firstPointEl = getSeriesFirstPointElement(series);
     return (
         firstPointEl &&
         (firstPointEl.parentNode as any) || series.graph &&
@@ -296,7 +296,7 @@ function unhideChartElementFromAT(chart: Chart, element: DOMElementType): void {
  * @return {void}
  */
 function hideSeriesFromAT(series: Series): void {
-    let seriesEl = getSeriesA11yElement(series);
+    const seriesEl = getSeriesA11yElement(series);
 
     if (seriesEl) {
         seriesEl.setAttribute('aria-hidden', true);

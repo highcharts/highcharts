@@ -197,7 +197,7 @@ declare global {
  */
 
 // Default options for Instrument constructor
-let defaultOptions: Highcharts.InstrumentOptionsObject = {
+const defaultOptions: Highcharts.InstrumentOptionsObject = {
     type: 'oscillator',
     playCallbackInterval: 20,
     masterVolume: 1,
@@ -305,7 +305,7 @@ Instrument.prototype.copy = function (
 Instrument.prototype.initAudioContext = function (
     this: Highcharts.Instrument
 ): boolean {
-    let Context = H.win.AudioContext || H.win.webkitAudioContext,
+    const Context = H.win.AudioContext || H.win.webkitAudioContext,
         hasOldContext = !!H.audioContext;
 
     if (Context) {
@@ -338,7 +338,7 @@ Instrument.prototype.initOscillator = function (
     this: Highcharts.Instrument,
     options: Highcharts.OscillatorOptionsObject
 ): void {
-    let ctx = H.audioContext;
+    const ctx = H.audioContext;
 
     this.oscillator = ctx.createOscillator();
     this.oscillator.type = options.waveformShape as any;
@@ -449,7 +449,7 @@ Instrument.prototype.getValidFrequency = function (
     min?: number,
     max?: number
 ): number {
-    let validFrequencies = this.options.allowedFrequencies,
+    const validFrequencies = this.options.allowedFrequencies,
         maximum = pick(max, Infinity),
         minimum = pick(min, -Infinity);
 
@@ -495,7 +495,7 @@ Instrument.prototype.setFrequency = function (
     frequency: number,
     frequencyLimits?: Record<string, number>
 ): void {
-    let limits = frequencyLimits || {},
+    const limits = frequencyLimits || {},
         validFrequency = this.getValidFrequency(
             frequency, limits.min, limits.max
         );
@@ -564,7 +564,7 @@ Instrument.prototype.play = function (
     this: Highcharts.Instrument,
     options: Highcharts.InstrumentPlayOptionsObject
 ): void {
-    let instrument = this,
+    const instrument = this,
         duration = options.duration || 0,
         // Set a value, or if it is a function, set it continously as a timer.
         // Pass in the value/function to set, the setter function, and any
@@ -579,9 +579,9 @@ Instrument.prototype.play = function (
                 callbackInterval = instrument.options.playCallbackInterval;
 
             if (typeof value === 'function') {
-                let timer = setInterval(function (): void {
+                const timer = setInterval(function (): void {
                     currentDurationIx++;
-                    let curTime = (
+                    const curTime = (
                         currentDurationIx * (callbackInterval as any) / target
                     );
 
@@ -650,11 +650,11 @@ Instrument.prototype.play = function (
 
     // Stop the note without fadeOut if the duration is too short to hear the
     // note otherwise.
-    let immediate = duration < H.sonification.fadeOutDuration + 20;
+    const immediate = duration < H.sonification.fadeOutDuration + 20;
 
     // Stop the instrument after the duration of the note
     instrument.stopCallback = options.onEnd;
-    let onStop = function (): void {
+    const onStop = function (): void {
         delete instrument.stopTimeout;
         instrument.stop(immediate);
     };
@@ -714,7 +714,7 @@ Instrument.prototype.stop = function (
     onStopped?: Function,
     callbackData?: unknown
 ): void {
-    let instr = this,
+    const instr = this,
         reset = function (): void {
             // Remove timeout reference
             if (instr.stopOscillatorTimeout) {

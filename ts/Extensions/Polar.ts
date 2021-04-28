@@ -171,7 +171,7 @@ let seriesProto = Series.prototype as Highcharts.PolarSeries,
 seriesProto.searchPointByAngle = function (
     e: PointerEvent
 ): (Point|undefined) {
-    let series = this,
+    const series = this,
         chart = series.chart,
         xAxis = series.xAxis,
         center = xAxis.pane.center,
@@ -557,7 +557,7 @@ wrap(seriesTypes.line.prototype, 'getGraphPath', function (
     }
 
     // Run uber method
-    let ret = proceed.apply(this, [].slice.call(arguments, 1));
+    const ret = proceed.apply(this, [].slice.call(arguments, 1));
 
     // #6212 points.splice method is adding points to an array. In case of
     // areaspline getGraphPath method is used two times and in both times
@@ -1151,7 +1151,7 @@ addEvent(Chart, 'afterDrawChartBox', function (): void {
 });
 
 addEvent(Series, 'afterInit', function (): void {
-    let chart = this.chart;
+    const chart = this.chart;
 
     // Add flags that identifies radial inverted series
     if (chart.inverted && chart.polar) {

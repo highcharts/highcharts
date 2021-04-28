@@ -17,14 +17,14 @@ import type Point from '../../../Core/Series/Point';
 import H from '../../../Core/Globals.js';
 import Series from '../../../Core/Series/Series.js';
 import U from '../../../Core/Utilities.js';
-let extend = U.extend,
+const extend = U.extend,
     defined = U.defined;
 
 import ChartUtilities from '../../Utils/ChartUtilities.js';
-let getChartTitle = ChartUtilities.getChartTitle;
+const getChartTitle = ChartUtilities.getChartTitle;
 
 import SeriesDescriber from './SeriesDescriber.js';
-let defaultPointDescriptionFormatter = SeriesDescriber
+const defaultPointDescriptionFormatter = SeriesDescriber
         .defaultPointDescriptionFormatter,
     defaultSeriesDescriptionFormatter = SeriesDescriber
         .defaultSeriesDescriptionFormatter;
@@ -99,7 +99,7 @@ function chartHasAnnounceEnabled(chart: Chart): boolean {
 function findPointInDataArray(
     point: Point
 ): Point {
-    let candidates = point.series.data.filter(function (
+    const candidates = point.series.data.filter(function (
         candidate: Point
     ): boolean {
         return point.x === candidate.x && point.y === candidate.y;
@@ -117,7 +117,7 @@ function getUniqueSeries(
     arrayA?: Array<Series>,
     arrayB?: Array<Series>
 ): Array<Series> {
-    let uniqueSeries = (arrayA || []).concat(arrayB || [])
+    const uniqueSeries = (arrayA || []).concat(arrayB || [])
         .reduce(function (
             acc: Record<string, Series>,
             cur: Series
@@ -138,7 +138,7 @@ function getUniqueSeries(
  * @private
  * @class
  */
-let NewDataAnnouncer: typeof Highcharts.NewDataAnnouncer = function (
+const NewDataAnnouncer: typeof Highcharts.NewDataAnnouncer = function (
     this: Highcharts.NewDataAnnouncer,
     chart: Highcharts.AccessibilityChart
 ): void {
@@ -181,7 +181,7 @@ extend(NewDataAnnouncer.prototype, {
      * @private
      */
     addEventListeners: function (this: Highcharts.NewDataAnnouncer): void {
-        let announcer = this,
+        const announcer = this,
             chart = this.chart,
             e = this.eventProvider;
 
@@ -220,7 +220,7 @@ extend(NewDataAnnouncer.prototype, {
         this: Highcharts.NewDataAnnouncer,
         series: Series
     ): void {
-        let chart = this.chart;
+        const chart = this.chart;
 
         if (series.chart === chart && chartHasAnnounceEnabled(chart)) {
             this.dirty.hasDirty = true;
@@ -257,7 +257,7 @@ extend(NewDataAnnouncer.prototype, {
         this: Highcharts.NewDataAnnouncer,
         point: Point
     ): void {
-        let chart = point.series.chart;
+        const chart = point.series.chart;
 
         if (this.chart === chart && chartHasAnnounceEnabled(chart)) {
             // Add it to newPoint storage unless we already have one
@@ -272,7 +272,7 @@ extend(NewDataAnnouncer.prototype, {
      * @private
      */
     announceDirtyData: function (this: Highcharts.NewDataAnnouncer): void {
-        let chart = this.chart,
+        const chart = this.chart,
             announcer = this;
 
         if (
@@ -392,12 +392,12 @@ extend(NewDataAnnouncer.prototype, {
         newSeries?: Highcharts.AccessibilitySeries,
         newPoint?: Highcharts.AccessibilityPoint
     ): (string|null) {
-        let chart = this.chart,
+        const chart = this.chart,
             annOptions = chart.options.accessibility.announceNewData;
 
         // User supplied formatter?
         if (annOptions.announcementFormatter) {
-            let formatterRes = annOptions.announcementFormatter(
+            const formatterRes = annOptions.announcementFormatter(
                 dirtySeries, newSeries, newPoint
             );
             if (formatterRes !== false) {
@@ -406,7 +406,7 @@ extend(NewDataAnnouncer.prototype, {
         }
 
         // Default formatter - use lang options
-        let multiple = H.charts && H.charts.length > 1 ? 'Multiple' : 'Single',
+        const multiple = H.charts && H.charts.length > 1 ? 'Multiple' : 'Single',
             langKey = newSeries ? 'newSeriesAnnounce' + multiple :
                 newPoint ? 'newPointAnnounce' + multiple : 'newDataAnnounce',
             chartTitle = getChartTitle(chart);

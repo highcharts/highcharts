@@ -220,7 +220,7 @@ columnProto.translate3dShapes = function (): void {
                     )
                 ) {
                     // Set args to 0 if column is outside the chart.
-                    for (let key in shapeArgs) { // eslint-disable-line guard-for-in
+                    for (const key in shapeArgs) { // eslint-disable-line guard-for-in
                         (shapeArgs as any)[key] = 0;
                     }
                     // #7103 outside3dPlot flag is set on Points which are
@@ -280,7 +280,7 @@ wrap(columnProto, 'animate', function (
     if (!this.chart.is3d()) {
         proceed.apply(this, [].slice.call(arguments, 1));
     } else {
-        let args = arguments,
+        const args = arguments,
             init = args[1],
             yAxis = this.yAxis,
             series = this,
@@ -382,7 +382,7 @@ wrap(
         proceed: Function,
         vis?: boolean
     ): void {
-        let series = this;
+        const series = this;
 
         if (series.chart.is3d()) {
             series.data.forEach(function (point): void {
@@ -445,7 +445,7 @@ function pointAttribs(
     this: ColumnSeries,
     proceed: Function
 ): SVGAttributes {
-    let attr = proceed.apply(this, [].slice.call(arguments, 1));
+    const attr = proceed.apply(this, [].slice.call(arguments, 1));
 
     if (this.chart.is3d && this.chart.is3d()) {
         // Set the fill color to the fill color to provide a smooth edge
@@ -468,7 +468,7 @@ function setState(
     state: unknown,
     inherit: unknown
 ): void {
-    let is3d = this.chart.is3d && this.chart.is3d();
+    const is3d = this.chart.is3d && this.chart.is3d();
 
     if (is3d) {
         this.options.inactiveOtherPoints = true;
@@ -585,7 +585,7 @@ wrap(StackItem.prototype, 'getStackBox', function (
     h: number,
     axis: Axis
 ): void { // #3946
-    let stackBox = proceed.apply(this, [].slice.call(arguments, 1));
+    const stackBox = proceed.apply(this, [].slice.call(arguments, 1));
     // Only do this for 3D graph
     if (chart.is3d() && stackItem.base) {
         // First element of stackItem.base is an index of base series.

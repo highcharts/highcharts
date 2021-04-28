@@ -106,7 +106,7 @@ function isBoolean(x: unknown): x is boolean {
  * @return {Highcharts.SVGAttributes}
  *         Returns the end coordinates, x and y.
  */
-let getEndPoint = function getEndPoint(
+const getEndPoint = function getEndPoint(
     x: number,
     y: number,
     angle: number,
@@ -372,7 +372,7 @@ function cbSetTreeValuesBefore(
     node: SunburstSeries.NodeObject,
     options: SunburstSeries.NodeValuesObject
 ): SunburstSeries.NodeObject {
-    let mapIdToNode: Record<string, SunburstSeries.NodeObject> =
+    const mapIdToNode: Record<string, SunburstSeries.NodeObject> =
             options.mapIdToNode as any,
         nodeParent = mapIdToNode[node.parent],
         series = options.series,
@@ -815,7 +815,7 @@ class SunburstSeries extends TreemapSeries {
         if (hackDataLabelAnimation) {
             (series.dataLabelsGroup as any).attr({ opacity: 0 });
             animateLabels = function (): void {
-                let s = series;
+                const s = series;
 
                 animateLabelsCalled = true;
                 if (s.dataLabelsGroup) {
@@ -940,7 +940,7 @@ class SunburstSeries extends TreemapSeries {
                 0;
 
         return (children || []).reduce(function (arr, child): Array<SunburstSeries.NodeValuesObject> {
-            let percentage = (1 / total) * child.val,
+            const percentage = (1 / total) * child.val,
                 radians = percentage * range,
                 radiansCenter = startAngle + (radians / 2),
                 offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset),
@@ -982,7 +982,7 @@ class SunburstSeries extends TreemapSeries {
 
         childrenValues = this.layoutAlgorithm(parentValues, children, options);
         children.forEach(function (child, index): void {
-            let values = childrenValues[index],
+            const values = childrenValues[index],
                 angle = values.start + ((values.end - values.start) / 2),
                 radius = values.innerR + ((values.r - values.innerR) / 2),
                 radians = (values.end - values.start),

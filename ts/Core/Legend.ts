@@ -420,7 +420,7 @@ class Legend {
      */
     public setOptions(options: Highcharts.LegendOptions): void {
 
-        let padding = pick(options.padding, 8) as number;
+        const padding = pick(options.padding, 8) as number;
 
         /**
          * Legend options.
@@ -469,7 +469,7 @@ class Legend {
      * @fires Highcharts.Legends#event:afterUpdate
      */
     public update(options: Highcharts.LegendOptions, redraw?: boolean): void {
-        let chart = this.chart;
+        const chart = this.chart;
 
         this.setOptions(merge(true, this.options, options));
         this.destroy();
@@ -570,7 +570,7 @@ class Legend {
      * The item to position
      */
     public positionItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
-        let legend = this,
+        const legend = this,
             options = legend.options,
             symbolPadding = options.symbolPadding,
             ltr = !options.rtl,
@@ -619,7 +619,7 @@ class Legend {
             Series|Point
         )
     ): void {
-        let checkbox = item.checkbox;
+        const checkbox = item.checkbox;
 
         // destroy SVG elements
         ['legendItem', 'legendLine', 'legendSymbol', 'legendGroup'].forEach(
@@ -775,7 +775,7 @@ class Legend {
      *        The item for which to update the text in the legend.
      */
     public setText(item: (Highcharts.BubbleLegend|Series|Point)): void {
-        let options = this.options;
+        const options = this.options;
 
         (item.legendItem as any).attr({
             text: options.labelFormat ?
@@ -952,7 +952,7 @@ class Legend {
      */
     public layoutItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
 
-        let options = this.options,
+        const options = this.options,
             padding = this.padding,
             horizontal = options.layout === 'horizontal',
             itemHeight = item.itemHeight,
@@ -1031,7 +1031,7 @@ class Legend {
         let allItems = [] as Array<(Highcharts.BubbleLegend|Series|Point)>;
 
         this.chart.series.forEach(function (series): void {
-            let seriesOptions = series && series.options;
+            const seriesOptions = series && series.options;
 
             // Handle showInLegend. If the series is linked to another series,
             // defaults to false.
@@ -1067,7 +1067,7 @@ class Legend {
      * The alignment, empty string if floating
      */
     public getAlignment(): string {
-        let options = this.options;
+        const options = this.options;
 
         // Use the first letter of each alignment option in order to detect
         // the side. (#4189 - use charAt(x) notation instead of [x] for IE7)
@@ -1092,7 +1092,7 @@ class Legend {
      * @param {Array<number>} spacing
      */
     public adjustMargins(margin: Array<number>, spacing: Array<number>): void {
-        let chart = this.chart,
+        const chart = this.chart,
             options = this.options,
             alignment = this.getAlignment();
 
@@ -1132,7 +1132,7 @@ class Legend {
      * @function Highcharts.Legend#proximatePositions
      */
     public proximatePositions(): void {
-        let chart = this.chart,
+        const chart = this.chart,
             boxes = [] as Array<AnyRecord>,
             alignLeft = this.options.align === 'left';
 
@@ -1365,7 +1365,7 @@ class Legend {
      * @return {void}
      */
     public align(alignTo: BBoxObject = this.chart.spacingBox): void {
-        let chart = this.chart,
+        const chart = this.chart,
             options = this.options;
         // If aligning to the top and the layout is horizontal, adjust for
         // the title (#7428)
@@ -1709,7 +1709,7 @@ class Legend {
         legendItem: SVGElement,
         useHTML?: boolean
     ): void {
-        let legend = this,
+        const legend = this,
             boxWrapper = legend.chart.renderer.boxWrapper,
             isPoint = item instanceof Point,
             activeClass = 'highcharts-legend-' +
@@ -1774,7 +1774,7 @@ class Legend {
                         item.setState();
                     })
                     .on('click', function (event: PointerEvent): void {
-                        let strLegendItemClick = 'legendItemClick',
+                        const strLegendItemClick = 'legendItemClick',
                             fnLegendItemClick = function (): void {
                                 if ((item as any).setVisible) {
                                     (item as any).setVisible();
@@ -1826,7 +1826,7 @@ class Legend {
     public createCheckboxForItem(
         item: (Highcharts.BubbleLegend|Series|Point)
     ): void {
-        let legend = this;
+        const legend = this;
 
         item.checkbox = createElement('input', {
             type: 'checkbox',
@@ -1836,7 +1836,7 @@ class Legend {
         }, legend.options.itemCheckboxStyle, legend.chart.container) as any;
 
         addEvent(item.checkbox, 'click', function (event: PointerEvent): void {
-            let target = event.target as Highcharts.LegendCheckBoxElement;
+            const target = event.target as Highcharts.LegendCheckBoxElement;
 
             fireEvent(
                 (item as any).series || item,
@@ -1868,7 +1868,7 @@ if (
         proceed: Function,
         item: (Series|Point)
     ): void {
-        let legend = this,
+        const legend = this,
             // If chart destroyed in sync, this is undefined (#2030)
             runPositionItem = function (): void {
                 if (item._legendItemPos) {

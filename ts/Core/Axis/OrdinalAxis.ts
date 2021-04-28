@@ -540,7 +540,7 @@ namespace OrdinalAxis {
          * @private
          */
         public getOverscrollPositions(): Array<number> {
-            let ordinal = this,
+            const ordinal = this,
                 axis = ordinal.axis,
                 extraRange = axis.options.overscroll,
                 distance = ordinal.overscrollPointsRange,
@@ -1012,7 +1012,7 @@ namespace OrdinalAxis {
         });
 
         addEvent(AxisClass, 'foundExtremes', function (): void {
-            let axis = this as OrdinalAxis;
+            const axis = this as OrdinalAxis;
 
             if (
                 axis.isXAxis &&
@@ -1042,7 +1042,7 @@ namespace OrdinalAxis {
         // loaded. If we don't do that, axis will have the same extremes as
         // previously, but ordinal positions won't be calculated. See #10290
         addEvent(AxisClass, 'afterSetScale', function (): void {
-            let axis = this;
+            const axis = this;
 
             if (axis.horiz && !axis.isDirty) {
                 axis.isDirty = axis.isOrdinal &&
@@ -1186,7 +1186,7 @@ namespace OrdinalAxis {
         });
 
         addEvent(SeriesClass, 'updatedData', function (): void {
-            let xAxis = this.xAxis as OrdinalAxis;
+            const xAxis = this.xAxis as OrdinalAxis;
 
             // Destroy the extended ordinal index on updated data
             if (xAxis && xAxis.options.ordinal) {

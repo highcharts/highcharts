@@ -1321,7 +1321,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             // Add it to the user options for exporting and Axis.update
             if (coll) {
                 // Workaround Microsoft/TypeScript issue #32693
-                let updatedOptions = (userOptions[coll] || []) as Array<T>;
+                const updatedOptions = (userOptions[coll] || []) as Array<T>;
                 updatedOptions.push(options);
                 userOptions[coll] = updatedOptions;
             }

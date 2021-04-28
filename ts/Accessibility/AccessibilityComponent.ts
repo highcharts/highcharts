@@ -103,7 +103,7 @@ declare global {
 /* eslint-disable valid-jsdoc */
 
 /** @lends Highcharts.AccessibilityComponent */
-let functionsToOverrideByDerivedClasses: (
+const functionsToOverrideByDerivedClasses: (
     Partial<Highcharts.AccessibilityComponent>
 ) = {
     /**
@@ -264,7 +264,7 @@ AccessibilityComponent.prototype = {
     ): HTMLDOMElement {
         this.createOrUpdateProxyContainer();
 
-        let groupDiv = this.createElement('div');
+        const groupDiv = this.createElement('div');
 
         Object.keys(attrs || {}).forEach(function (prop: string): void {
             if ((attrs as any)[prop] !== null) {
@@ -284,7 +284,7 @@ AccessibilityComponent.prototype = {
     createOrUpdateProxyContainer: function (
         this: Highcharts.AccessibilityComponent
     ): void {
-        let chart = this.chart,
+        const chart = this.chart,
             rendererSVGEl = chart.renderer.box;
 
         chart.a11yProxyContainer = chart.a11yProxyContainer ||
@@ -304,7 +304,7 @@ AccessibilityComponent.prototype = {
      * @return {Highcharts.HTMLDOMElement} element
      */
     createProxyContainerElement: function (): HTMLDOMElement {
-        let pc = doc.createElement('div');
+        const pc = doc.createElement('div');
         pc.className = 'highcharts-a11y-proxy-container';
         return pc;
     },
@@ -335,7 +335,7 @@ AccessibilityComponent.prototype = {
         posElement?: SVGElement,
         preClickEvent?: Function
     ): HTMLDOMElement {
-        let svgEl = svgElement.element,
+        const svgEl = svgElement.element,
             proxy = this.createElement('button'),
             attrs = merge({
                 'aria-label': svgEl.getAttribute('aria-label')
@@ -379,11 +379,11 @@ AccessibilityComponent.prototype = {
         this: Highcharts.AccessibilityComponent,
         element: SVGElement
     ): BBoxObject {
-        let el = element.element,
+        const el = element.element,
             div: HTMLDOMElement = (this.chart as any).renderTo;
 
         if (div && el && el.getBoundingClientRect) {
-            let rectEl = el.getBoundingClientRect(),
+            const rectEl = el.getBoundingClientRect(),
                 rectDiv = div.getBoundingClientRect();
 
             return {
@@ -454,7 +454,7 @@ AccessibilityComponent.prototype = {
         ),
         button: HTMLDOMElement
     ): void {
-        let component = this;
+        const component = this;
 
         [
             'click', 'touchstart', 'touchend', 'touchcancel', 'touchmove',
@@ -496,7 +496,7 @@ AccessibilityComponent.prototype = {
 
         // No MouseEvent support, try using initMouseEvent
         if (doc.createEvent) {
-            let evt = doc.createEvent('MouseEvent');
+            const evt = doc.createEvent('MouseEvent');
             if (evt.initMouseEvent) {
                 evt.initMouseEvent(
                     e.type,

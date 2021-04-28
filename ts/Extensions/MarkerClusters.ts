@@ -657,7 +657,7 @@ function getDataState(
     clusteredData: Highcharts.MarkerClusterInfoObject,
     stateDataLen: number
 ): Array<Highcharts.MarkerClusterSplitDataObject|undefined> {
-    let state: Array<Highcharts.MarkerClusterSplitDataObject|undefined> = [];
+    const state: Array<Highcharts.MarkerClusterSplitDataObject|undefined> = [];
     state.length = stateDataLen;
 
     clusteredData.clusters.forEach(function (
@@ -1179,7 +1179,7 @@ Scatter.prototype.onDrillToCluster = function (
     this: Point,
     event: PointClickEvent
 ): void {
-    let point = event.point || event.target;
+    const point = event.point || event.target;
 
     point.firePointEvent('drillToCluster', event, function (
         this: Point,
@@ -2027,7 +2027,7 @@ Scatter.prototype.getClusteredData = function (
 
 // Destroy clustered data points.
 Scatter.prototype.destroyClusteredData = function (): void {
-    let clusteredSeriesData = this.markerClusterSeriesData;
+    const clusteredSeriesData = this.markerClusterSeriesData;
 
     // Clear previous groups.
     (clusteredSeriesData || []).forEach(function (
@@ -2043,7 +2043,7 @@ Scatter.prototype.destroyClusteredData = function (): void {
 
 // Hide clustered data points.
 Scatter.prototype.hideClusteredData = function (): void {
-    let series = this,
+    const series = this,
         clusteredSeriesData = this.markerClusterSeriesData,
         oldState =
             ((series.markerClusterInfo || {}).pointsState || {}).oldState || {},
@@ -2306,11 +2306,11 @@ Scatter.prototype.generatePoints = function (): void {
 
 // Handle animation.
 addEvent(Chart, 'render', function (): void {
-    let chart = this;
+    const chart = this;
 
     (chart.series || []).forEach(function (series): void {
         if (series.markerClusterInfo) {
-            let options = series.options.cluster,
+            const options = series.options.cluster,
                 pointsState = (series.markerClusterInfo || {}).pointsState,
                 oldState = (pointsState || {}).oldState;
 
@@ -2356,7 +2356,7 @@ addEvent(Series, 'destroy', Scatter.prototype.destroyClusteredData);
 
 // Add classes, change mouse cursor.
 addEvent(Series, 'afterRender', function (): void {
-    let series = this,
+    const series = this,
         clusterZoomEnabled = (series.options.cluster || {}).drillToCluster;
 
     if (series.markerClusterInfo && series.markerClusterInfo.clusters) {
@@ -2394,7 +2394,7 @@ addEvent(Series, 'afterRender', function (): void {
 addEvent(Point, 'drillToCluster', function (
     event: PointClickEvent
 ): void {
-    let point = event.point || event.target,
+    const point = event.point || event.target,
         series = point.series,
         clusterOptions = series.options.cluster,
         onDrillToCluster =

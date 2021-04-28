@@ -911,7 +911,7 @@ class SVGRenderer {
      * @return {null}
      */
     public destroy(): null {
-        let renderer = this,
+        const renderer = this,
             rendererDefs = renderer.defs;
 
         renderer.box = null as any;
@@ -952,7 +952,7 @@ class SVGRenderer {
      * The generated SVGElement.
      */
     public createElement(nodeName: string): SVGElement {
-        let wrapper = new this.Element();
+        const wrapper = new this.Element();
 
         wrapper.init(this as any, nodeName);
         return wrapper;
@@ -1287,7 +1287,7 @@ class SVGRenderer {
      * The generated wrapper element.
      */
     public path(path?: (SVGAttributes|SVGPath)): SVGElement {
-        let attribs: SVGAttributes = (this.styledMode ? {} : {
+        const attribs: SVGAttributes = (this.styledMode ? {} : {
             fill: 'none'
         });
 
@@ -1334,7 +1334,7 @@ class SVGRenderer {
         y?: number,
         r?: number
     ): SVGElement {
-        let attribs: SVGAttributes = (
+        const attribs: SVGAttributes = (
                 isObject(x) ?
                     x :
                     typeof x === 'undefined' ? {} : { x: x, y: y, r: r }
@@ -1561,7 +1561,7 @@ class SVGRenderer {
         height: number,
         animate?: (boolean|Partial<AnimationOptions>)
     ): void {
-        let renderer = this;
+        const renderer = this;
 
         renderer.width = width;
         renderer.height = height;
@@ -1597,7 +1597,7 @@ class SVGRenderer {
      *         The generated wrapper element.
      */
     public g(name?: string): SVGElement {
-        let elem = this.createElement('g');
+        const elem = this.createElement('g');
 
         return name ?
             elem.attr({ 'class': 'highcharts-' + name }) as any :
@@ -1875,7 +1875,7 @@ class SVGRenderer {
                 createElement('img', {
                     onload: function (this: SVGDOMElement): void {
 
-                        let chart = charts[ren.chartIndex];
+                        const chart = charts[ren.chartIndex];
 
                         // Special case for SVGs on IE11, the width is not
                         // accessible until the image is part of the DOM
@@ -2650,7 +2650,7 @@ SVGRenderer.prototype.symbols = {
         const arc: SVGPath = [];
 
         if (options) {
-            let start = options.start || 0,
+            const start = options.start || 0,
                 rx = pick(options.r, w),
                 ry = pick(options.r, h || w),
                 proximity = 0.001,

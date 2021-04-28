@@ -924,7 +924,7 @@ class RangeSelector {
                     dataMax = Number.MIN_VALUE;
                     chart.series.forEach(function (series): void {
                         // reassign it to the last item
-                        let xData = series.xData;
+                        const xData = series.xData;
 
                         dataMin = Math.min((xData as any)[0], dataMin as any);
                         dataMax = Math.max(
@@ -1021,13 +1021,13 @@ class RangeSelector {
     public init(
         chart: Chart
     ): void {
-        let rangeSelector = this,
+        const rangeSelector = this,
             options =
                 chart.options.rangeSelector as Highcharts.RangeSelectorOptions,
             buttonOptions = options.buttons || rangeSelector.defaultButtons.slice(),
             selectedOption = options.selected,
             blurInputs = function (): void {
-                let minInput = rangeSelector.minInput,
+                const minInput = rangeSelector.minInput,
                     maxInput = rangeSelector.maxInput;
 
                 // #3274 in some case blur is not defined
@@ -1232,7 +1232,7 @@ class RangeSelector {
     public computeButtonRange(
         rangeOptions: Highcharts.RangeSelectorButtonsOptions
     ): void {
-        let type = rangeOptions.type as string,
+        const type = rangeOptions.type as string,
             count = rangeOptions.count || 1,
 
             // these time intervals have a fixed number of milliseconds, as
@@ -1297,7 +1297,7 @@ class RangeSelector {
         name: string,
         inputTime?: number
     ): void {
-        let options = this.options,
+        const options = this.options,
             time = this.chart.time,
             input = name === 'min' ? this.minInput : this.maxInput,
             dateBox = name === 'min' ? this.minDateBox : this.maxDateBox;
@@ -1484,7 +1484,7 @@ class RangeSelector {
             inputGroup
         } = this;
 
-        let rangeSelector = this,
+        const rangeSelector = this,
             chartStyle = chart.renderer.style || {},
             renderer = chart.renderer,
             options =
@@ -1678,7 +1678,7 @@ class RangeSelector {
      * @return {Highcharts.Dictionary<number>}
      */
     public getPosition(): Record<string, number> {
-        let chart = this.chart,
+        const chart = this.chart,
             options =
                 chart.options.rangeSelector as Highcharts.RangeSelectorOptions,
             top = options.verticalAlign === 'top' ?
@@ -1744,7 +1744,7 @@ class RangeSelector {
         max?: number
     ): void {
 
-        let chart = this.chart,
+        const chart = this.chart,
             renderer = chart.renderer,
             container = chart.container,
             chartOptions = chart.options,
@@ -2647,7 +2647,7 @@ class RangeSelector {
         this: Highcharts.RangeSelector,
         options: Highcharts.RangeSelectorOptions
     ): void {
-        let chart = this.chart;
+        const chart = this.chart;
         merge(true, chart.options.rangeSelector, options);
 
         this.destroy();
@@ -2663,7 +2663,7 @@ class RangeSelector {
      * @function Highcharts.RangeSelector#destroy
      */
     public destroy(): void {
-        let rSelector: RangeSelector = this,
+        const rSelector: RangeSelector = this,
             minInput = rSelector.minInput,
             maxInput = rSelector.maxInput;
 

@@ -220,7 +220,7 @@ const NodesMixin = H.NodesMixin = {
      * but pushed to the this.nodes array.
      */
     generatePoints: function (this: Highcharts.NodesSeries): void {
-        let chart = this.chart,
+        const chart = this.chart,
             nodeLookup = {} as Record<string, Highcharts.NodesPoint>;
 
         Series.prototype.generatePoints.call(this);
@@ -298,7 +298,7 @@ const NodesMixin = H.NodesMixin = {
      * highlight all connected nodes.
      */
     setNodeState: function (this: Highcharts.NodesPoint, state?: StatesOptionsKey): void {
-        let args = arguments,
+        const args = arguments,
             others = this.isNode ? this.linksTo.concat(this.linksFrom) :
                 [this.fromNode, this.toNode];
         if (state !== 'select') {

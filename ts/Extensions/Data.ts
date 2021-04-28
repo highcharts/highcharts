@@ -887,7 +887,7 @@ class Data {
         seriesMapping.forEach(function (
             mapping: Record<string, number>
         ): void {
-            let builder = new SeriesBuilder(),
+            const builder = new SeriesBuilder(),
                 numberOfValueColumnsNeeded = individualCounts[seriesIndex] ||
                     getValueCount(globalType),
                 seriesArr = (chartOptions && chartOptions.series) || [],
@@ -1757,7 +1757,7 @@ class Data {
          * @private
          */
         function fetchSheet(fn: Function): void {
-            let url = [
+            const url = [
                 'https://spreadsheets.google.com/feeds/cells',
                 googleSpreadsheetKey,
                 worksheet,
@@ -2527,7 +2527,7 @@ class Data {
         options: Highcharts.DataOptions,
         redraw?: boolean
     ): void {
-        let chart = this.chart;
+        const chart = this.chart;
 
         if (options) {
             // Set the complete handler
@@ -2744,7 +2744,7 @@ class SeriesBuilder {
         builder.readers.forEach(function (
             reader: Highcharts.SeriesBuilderReaderObject
         ): void {
-            let value = columns[reader.columnIndex as any][rowIndex];
+            const value = columns[reader.columnIndex as any][rowIndex];
 
             if (pointIsArray) {
                 (point as any).push(value);

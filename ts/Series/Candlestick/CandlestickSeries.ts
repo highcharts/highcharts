@@ -239,7 +239,7 @@ class CandlestickSeries extends OHLCSeries {
      * @return {void}
      */
     public drawPoints(): void {
-        let series = this,
+        const series = this,
             points = series.points,
             chart = series.chart,
             reversedYAxis = series.yAxis.reversed;

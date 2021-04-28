@@ -114,7 +114,7 @@ declare global {
  */
 
 import U from '../../Core/Utilities.js';
-let defined = U.defined,
+const defined = U.defined,
     extend = U.extend,
     fireEvent = U.fireEvent;
 
@@ -384,7 +384,7 @@ class MockPoint {
         options: Highcharts.AnnotationMockPointOptionsObject,
         xOrY: ('x'|'y')
     ): void {
-        let axisName: ('xAxis'|'yAxis') = (xOrY + 'Axis') as any,
+        const axisName: ('xAxis'|'yAxis') = (xOrY + 'Axis') as any,
             axisOptions = options[axisName],
             chart = this.series.chart;
 
@@ -406,7 +406,7 @@ class MockPoint {
      * A quadruple of numbers which denotes x, y, width and height of the box
      **/
     public toAnchor(): Array<number> {
-        let anchor = [this.plotX, this.plotY, 0, 0];
+        const anchor = [this.plotX, this.plotY, 0, 0];
 
         if (this.series.chart.inverted) {
             anchor[0] = this.plotY;
@@ -436,7 +436,7 @@ class MockPoint {
      * @return {boolean} A flag indicating whether the point is inside the pane.
      */
     public isInsidePlot(): boolean {
-        let plotX = this.plotX,
+        const plotX = this.plotX,
             plotY = this.plotY,
             xAxis = this.series.xAxis,
             yAxis = this.series.yAxis,
@@ -467,7 +467,7 @@ class MockPoint {
      * @private
      */
     public refresh(): void {
-        let series = this.series,
+        const series = this.series,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             options = this.getOptions();
@@ -546,7 +546,7 @@ class MockPoint {
         sy: number
     ): void {
         if (!this.hasDynamicOptions()) {
-            let x = this.plotX * sx,
+            const x = this.plotX * sx,
                 y = this.plotY * sy,
                 tx = (1 - sx) * cx,
                 ty = (1 - sy) * cy;
@@ -592,7 +592,7 @@ class MockPoint {
      * @private
      */
     public refreshOptions(): void {
-        let series = this.series,
+        const series = this.series,
             xAxis = series.xAxis,
             yAxis = series.yAxis;
 

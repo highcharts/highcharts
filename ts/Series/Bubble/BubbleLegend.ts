@@ -583,7 +583,7 @@ class BubbleLegend {
      * @return {void}
      */
     public setOptions(): void {
-        let ranges = this.ranges,
+        const ranges = this.ranges,
             options = this.options,
             series = this.chart.series[options.seriesIndex as any],
             baseline = this.legend.baseline,
@@ -662,7 +662,7 @@ class BubbleLegend {
      *         Radius for one range
      */
     public getRangeRadius(value: number): (number|null) {
-        let options = this.options,
+        const options = this.options,
             seriesIndex = this.options.seriesIndex,
             bubbleSeries: BubbleSeries = this.chart.series[seriesIndex as any] as any,
             zMax = (options.ranges as any)[0].value,
@@ -690,7 +690,7 @@ class BubbleLegend {
      * @return {void}
      */
     public render(): void {
-        let renderer = this.chart.renderer,
+        const renderer = this.chart.renderer,
             zThreshold = this.options.zThreshold;
 
 
@@ -889,7 +889,7 @@ class BubbleLegend {
      *         Range label text
      */
     public formatLabel(range: Highcharts.BubbleLegendRangesOptions): string {
-        let options = this.options,
+        const options = this.options,
             formatter = (options.labels as any).formatter,
             format = (options.labels as any).format;
         const { numberFormatter } = this.chart;
@@ -908,7 +908,7 @@ class BubbleLegend {
      * @return {void}
      */
     public hideOverlappingLabels(): void {
-        let chart = this.chart,
+        const chart = this.chart,
             allowOverlap = (this.options.labels as any).allowOverlap,
             symbols = this.symbols;
 
@@ -1056,7 +1056,7 @@ class BubbleLegend {
      * @return {void}
      */
     public updateRanges(min: number, max: number): void {
-        let bubbleLegendOptions = this.legend.options.bubbleLegend;
+        const bubbleLegendOptions = this.legend.options.bubbleLegend;
 
         (bubbleLegendOptions as any).minSize = min;
         (bubbleLegendOptions as any).maxSize = max;
@@ -1073,7 +1073,7 @@ class BubbleLegend {
      * @return {void}
      */
     public correctSizes(): void {
-        let legend = this.legend,
+        const legend = this.legend,
             chart = this.chart,
             bubbleSeries: BubbleSeries = chart.series[this.options.seriesIndex as any] as any,
             bubbleSeriesSize = bubbleSeries.maxPxSize,
@@ -1096,7 +1096,7 @@ addEvent(Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
     e: { allItems: Array<(Series|Point)> }
 ): void {
-    let legend = this,
+    const legend = this,
         bubbleLegend = legend.bubbleLegend,
         legendOptions = legend.options,
         options = legendOptions.bubbleLegend,

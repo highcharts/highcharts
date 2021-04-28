@@ -112,7 +112,7 @@ Chart.prototype.getSelectedParentNodes = function (): Array<PackedBubblePoint> {
         distanceXY: Record<string, number>,
         repNode: PackedBubblePoint
     ): void {
-        let factor = (
+        const factor = (
                 force * (this.diffTemperature as any) / (node.mass as any) /
                 (node.degree as any)
             ),
@@ -145,12 +145,12 @@ H.layouts.packedbubble = extendClass(
             }
         },
         isStable: function (this: PackedBubbleLayout): boolean { // #14439, new stable check.
-            let tempDiff = Math.abs(
+            const tempDiff = Math.abs(
                 (this.prevSystemTemperature as any) -
                 (this.systemTemperature as any)
             );
 
-            let upScaledTemperature = 10 * (this.systemTemperature as any) /
+            const upScaledTemperature = 10 * (this.systemTemperature as any) /
                 Math.sqrt(this.nodes.length);
 
             return Math.abs(upScaledTemperature) < 1 &&

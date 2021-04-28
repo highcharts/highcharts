@@ -102,7 +102,7 @@ class PPOIndicator extends EMAIndicator {
      * */
 
     public init(this: PPOIndicator): void {
-        let args = arguments,
+        const args = arguments,
             ctx = this;
 
         RequiredIndicatorMixin.isParentLoaded(

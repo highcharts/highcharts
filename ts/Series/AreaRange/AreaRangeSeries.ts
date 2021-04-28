@@ -239,7 +239,7 @@ class AreaRangeSeries extends AreaSeries {
      */
     public highToXY(point: AreaRangePoint): void {
         // Find the polar plotX and plotY
-        let chart = this.chart,
+        const chart = this.chart,
             xy = this.xAxis.postTranslate(
                 point.rectPlotX || 0,
                 this.yAxis.len - point.plotHigh
@@ -255,7 +255,7 @@ class AreaRangeSeries extends AreaSeries {
      * @private
      */
     public translate(): void {
-        let series = this,
+        const series = this,
             yAxis = series.yAxis,
             hasModifyValue = !!series.modifyValue;
 
@@ -266,7 +266,7 @@ class AreaRangeSeries extends AreaSeries {
             point: AreaRangePoint
         ): void {
 
-            let high = point.high,
+            const high = point.high,
                 plotY = point.plotY;
 
             if (point.isNull) {
@@ -335,7 +335,7 @@ class AreaRangeSeries extends AreaSeries {
             point = points[i];
 
             // Support for polar
-            let highAreaPoint = polar ? {
+            const highAreaPoint = polar ? {
                 plotX: point.rectPlotX,
                 plotY: point.yBottom,
                 doCurve: false // #5186, gaps in areasplinerange fill

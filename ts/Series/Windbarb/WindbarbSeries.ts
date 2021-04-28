@@ -329,7 +329,7 @@ class WindbarbSeries extends ColumnSeries {
     }
 
     public translate(): void {
-        let beaufortFloor = this.beaufortFloor,
+        const beaufortFloor = this.beaufortFloor,
             beaufortName = this.beaufortName;
 
         OnSeriesMixin.translate.call(this);
@@ -351,7 +351,7 @@ class WindbarbSeries extends ColumnSeries {
         });
     }
     public drawPoints(): void {
-        let chart = this.chart,
+        const chart = this.chart,
             yAxis = this.yAxis,
             inverted = chart.inverted,
             shapeOffset = (this.options.vectorLength as any) / 2;
@@ -359,7 +359,7 @@ class WindbarbSeries extends ColumnSeries {
         this.points.forEach(function (
             point: WindbarbPoint
         ): void {
-            let plotX = point.plotX,
+            const plotX = point.plotX,
                 plotY = point.plotY;
 
             // Check if it's inside the plot area, but only for the X

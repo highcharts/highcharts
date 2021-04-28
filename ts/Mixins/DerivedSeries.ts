@@ -122,7 +122,7 @@ const derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
      * @return {void}
      */
     setBaseSeries: function (this: Highcharts.DerivedSeries): void {
-        let chart = this.chart,
+        const chart = this.chart,
             baseSeriesOptions = this.options.baseSeries,
             baseSeries = (
                 defined(baseSeriesOptions) &&

@@ -59,7 +59,7 @@ class VerticalLine extends Annotation {
     public static connectorFirstPoint(
         target: Highcharts.AnnotationControllable
     ): Highcharts.AnnotationMockPointOptionsObject {
-        let annotation = target.annotation as Highcharts.AnnotationVerticalLine,
+        const annotation = target.annotation as Highcharts.AnnotationVerticalLine,
             chart = annotation.chart,
             inverted = chart.inverted,
             point = annotation.points[0],
@@ -125,7 +125,7 @@ class VerticalLine extends Annotation {
     }
 
     public addShapes(): void {
-        let typeOptions = this.options.typeOptions,
+        const typeOptions = this.options.typeOptions,
             connector = this.initShape(
                 merge(typeOptions.connector, {
                     type: 'path',
@@ -155,7 +155,7 @@ class VerticalLine extends Annotation {
             align = (labelOptions.offset as any) < 0 ? 'right' : 'left';
         }
 
-        let label = (this.initLabel as any)(
+        const label = (this.initLabel as any)(
             merge(labelOptions, {
                 verticalAlign: verticalAlign,
                 align: align,

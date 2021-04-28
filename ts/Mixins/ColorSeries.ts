@@ -76,7 +76,7 @@ const colorPointMixin = {
      * @return {void}
      */
     setVisible: function (this: Highcharts.ColorPoint, vis?: boolean): void {
-        let point = this,
+        const point = this,
             method = vis ? 'show' : 'hide';
 
         point.visible = point.options.visible = Boolean(vis);
@@ -111,7 +111,7 @@ const colorSeriesMixin = {
      * @return {void}
      */
     translateColors: function (this: Highcharts.ColorSeries): void {
-        let series = this,
+        const series = this,
             points = this.data.length ? this.data : this.points,
             nullColor = this.options.nullColor,
             colorAxis = this.colorAxis,

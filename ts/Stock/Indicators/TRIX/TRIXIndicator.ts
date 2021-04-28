@@ -63,7 +63,7 @@ class TRIXIndicator extends TEMAIndicator {
     public points: Array<TRIXPoint> = void 0 as any;
 
     public init(this: TRIXIndicator): void {
-        let args = arguments,
+        const args = arguments,
             ctx = this;
 
         RequiredIndicatorMixin.isParentLoaded(

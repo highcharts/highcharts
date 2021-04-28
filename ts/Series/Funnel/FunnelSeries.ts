@@ -450,7 +450,7 @@ class FunnelSeries extends PieSeries {
             this: FunnelSeries,
             y: number
         ): number {
-            let top = (centerY - height / 2);
+            const top = (centerY - height / 2);
 
             return (y > neckY || height === neckHeight) ?
                 neckWidth :

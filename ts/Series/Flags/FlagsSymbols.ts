@@ -27,7 +27,7 @@ symbols.flag = function (
     h: number,
     options?: Highcharts.SymbolOptionsObject
 ): SVGPath {
-    let anchorX = (options && options.anchorX) || x,
+    const anchorX = (options && options.anchorX) || x,
         anchorY = (options && options.anchorY) || y;
 
     // To do: unwanted any cast because symbols.circle has wrong type, it

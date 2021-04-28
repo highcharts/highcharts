@@ -54,7 +54,7 @@ class VennPoint extends ScatterSeries.prototype.pointClass implements Highcharts
     }
 
     public shouldDraw(): boolean {
-        let point = this;
+        const point = this;
 
         // Only draw points with single sets.
         return !!point.shapeArgs;

@@ -576,7 +576,7 @@ class Scrollbar {
 
     private buttonToMaxClick(e: PointerEvent): void {
         const scroller = this;
-        let range = (scroller.to - scroller.from) * pick(scroller.options.step, 0.2);
+        const range = (scroller.to - scroller.from) * pick(scroller.options.step, 0.2);
 
         scroller.updatePosition(scroller.from + range, scroller.to + range);
         fireEvent(scroller, 'changed', {
@@ -589,7 +589,7 @@ class Scrollbar {
 
     private buttonToMinClick(e: PointerEvent): void {
         const scroller = this;
-        let range = correctFloat(scroller.to - scroller.from) *
+        const range = correctFloat(scroller.to - scroller.from) *
             pick(scroller.options.step, 0.2);
 
         scroller.updatePosition(
@@ -617,7 +617,7 @@ class Scrollbar {
      *         Local position {chartX, chartY}
      */
     public cursorToScrollbarPosition(normalizedEvent: PointerEvent): Record<string, number> {
-        let scroller = this,
+        const scroller = this,
             options = scroller.options,
             minWidthDifference =
                 (options.minWidth as any) > (scroller.calculatedWidth as any) ?
@@ -645,7 +645,7 @@ class Scrollbar {
      */
     public destroy(): void {
 
-        let scroller = this.chart.scroller;
+        const scroller = this.chart.scroller;
 
         // Disconnect events added in addEvents
         this.removeEvents();
@@ -778,7 +778,7 @@ class Scrollbar {
 
     private mouseDownHandler(e: PointerEvent): void {
         const scroller = this;
-        let normalizedEvent = scroller.chart.pointer.normalize(e),
+        const normalizedEvent = scroller.chart.pointer.normalize(e),
             mousePosition = scroller.cursorToScrollbarPosition(
                 normalizedEvent
             );
@@ -1145,7 +1145,7 @@ class Scrollbar {
 
     public trackClick(e: PointerEvent): void {
         const scroller = this;
-        let normalizedEvent = scroller.chart.pointer.normalize(e),
+        const normalizedEvent = scroller.chart.pointer.normalize(e),
             range = scroller.to - scroller.from,
             top = scroller.y + scroller.scrollbarTop,
             left = scroller.x + scroller.scrollbarLeft;

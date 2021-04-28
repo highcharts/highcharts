@@ -122,7 +122,7 @@ class TimelinePoint extends Series.prototype.pointClass {
     }
 
     public drawConnector(): void {
-        let point = this,
+        const point = this,
             series = point.series;
 
         if (!point.connector) {
@@ -197,7 +197,7 @@ class TimelinePoint extends Series.prototype.pointClass {
     }
 
     public init(): TimelinePoint {
-        let point: TimelinePoint = super.init.apply(this, arguments) as any;
+        const point: TimelinePoint = super.init.apply(this, arguments) as any;
 
         point.name = pick(point.name, 'Event');
         point.y = 1;
@@ -210,7 +210,7 @@ class TimelinePoint extends Series.prototype.pointClass {
     }
 
     public setState(): void {
-        let proceed = super.setState;
+        const proceed = super.setState;
 
         // Prevent triggering the setState method on null points.
         if (!this.isNull) {
@@ -222,7 +222,7 @@ class TimelinePoint extends Series.prototype.pointClass {
         visible: boolean,
         redraw?: boolean
     ): void {
-        let point = this,
+        const point = this,
             series = point.series;
 
         redraw = pick(redraw, series.options.ignoreHiddenPoint);

@@ -47,7 +47,7 @@ const {
  * A dictionary with formulas for calculating number of bins based on the
  * base series
  **/
-let binsNumberFormulas: Record<string, Function> = {
+const binsNumberFormulas: Record<string, Function> = {
     'square-root': function (baseSeries: Series): number {
         return Math.ceil(Math.sqrt((baseSeries.options.data as any).length));
     },
@@ -181,8 +181,8 @@ class HistogramSeries extends ColumnSeries {
     /* eslint-disable valid-jsdoc */
 
     public binsNumber(): number {
-        let binsNumberOption = this.options.binsNumber;
-        let binsNumber = binsNumberFormulas[binsNumberOption as any] ||
+        const binsNumberOption = this.options.binsNumber;
+        const binsNumber = binsNumberFormulas[binsNumberOption as any] ||
             // #7457
             (typeof binsNumberOption === 'function' && binsNumberOption);
 
@@ -262,7 +262,7 @@ class HistogramSeries extends ColumnSeries {
         );
 
         baseData.forEach(function (y: number): void {
-            let x = correctFloat(fitToBin(y));
+            const x = correctFloat(fitToBin(y));
 
             bins[x]++;
         });
@@ -285,14 +285,14 @@ class HistogramSeries extends ColumnSeries {
     }
 
     public setDerivedData(): void {
-        let yData = (this.baseSeries as any).yData;
+        const yData = (this.baseSeries as any).yData;
 
         if (!yData.length) {
             this.setData([]);
             return;
         }
 
-        let data = this.derivedData(
+        const data = this.derivedData(
             yData,
             this.binsNumber(),
             this.options.binWidth as any

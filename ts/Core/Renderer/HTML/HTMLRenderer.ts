@@ -71,7 +71,7 @@ extend<SVGRenderer|HTMLRenderer>(SVGRenderer.prototype, /** @lends SVGRenderer.p
         x: number,
         y: number
     ): HTMLElement {
-        let wrapper = this.createElement('span') as HTMLElement,
+        const wrapper = this.createElement('span') as HTMLElement,
             element = wrapper.element,
             renderer = wrapper.renderer,
             isSVG = renderer.isSVG,
@@ -89,7 +89,7 @@ extend<SVGRenderer|HTMLRenderer>(SVGRenderer.prototype, /** @lends SVGRenderer.p
                         key: string,
                         elem: HTMLElement
                     ): void {
-                        let styleObject = gWrapper.div ?
+                        const styleObject = gWrapper.div ?
                             gWrapper.div.style :
                             style;
                         SVGElement.prototype[prop + 'Setter']

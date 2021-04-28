@@ -286,7 +286,7 @@ function GLRenderer(
      * @param {number} height - the height of the viewport in pixels
      */
     function orthoMatrix(width: number, height: number): Array<number> {
-        let near = 0,
+        const near = 0,
             far = 1;
 
         return [
@@ -821,7 +821,7 @@ function GLRenderer(
                     zone: SeriesZonesOptions,
                     i: number
                 ): boolean {
-                    let last: SeriesZonesOptions = (zones as any)[i - 1];
+                    const last: SeriesZonesOptions = (zones as any)[i - 1];
 
                     if (zoneAxis === 'x') {
                         if (typeof zone.value !== 'undefined' && x <= zone.value) {
@@ -1509,7 +1509,7 @@ function GLRenderer(
             name: string,
             fn: Highcharts.BoostGLTextureCallbackFunction
         ): void {
-            let props: Highcharts.BoostGLTextureObject = {
+            const props: Highcharts.BoostGLTextureObject = {
                     isReady: false,
                     texture: doc.createElement('canvas'),
                     handle: gl.createTexture()

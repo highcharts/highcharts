@@ -304,7 +304,7 @@ declare global {
 /* eslint-disable no-invalid-this */
 
 addEvent(Series, 'afterRender', function (): void {
-    let series = this,
+    const series = this,
         seriesOptions = series.options,
         pointRange = seriesOptions.pointRange,
         lastVisiblePrice = seriesOptions.lastVisiblePrice,

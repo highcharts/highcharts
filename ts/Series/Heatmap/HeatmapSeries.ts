@@ -413,7 +413,7 @@ class HeatmapSeries extends ScatterSeries {
 
         // In styled mode, use CSS, otherwise the fill used in the style
         // sheet will take precedence over the fill attribute.
-        let seriesMarkerOptions = this.options.marker || {};
+        const seriesMarkerOptions = this.options.marker || {};
 
         if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
             Series.prototype.drawPoints.call(this);
@@ -607,7 +607,7 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public setClip(animation?: (boolean|AnimationOptions)): void {
-        let series = this,
+        const series = this,
             chart = series.chart;
 
         Series.prototype.setClip.apply(series, arguments);
@@ -625,7 +625,7 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public translate(): void {
-        let series = this,
+        const series = this,
             options = series.options,
             symbol = options.marker && options.marker.symbol || '',
             shape = symbols[symbol] ? symbol : 'rect',

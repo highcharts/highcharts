@@ -171,7 +171,7 @@ addEvent(Highcharts, 'displayError', function (
 });
 
 addEvent(Chart, 'beforeRedraw', function (): void {
-    let errorElements = this.errorElements;
+    const errorElements = this.errorElements;
 
     if (errorElements && errorElements.length) {
         errorElements.forEach(function (el: SVGElement): void {

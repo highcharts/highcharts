@@ -153,7 +153,7 @@ declare global {
     }
 }
 
-let indexFilter = /\d/g,
+const indexFilter = /\d/g,
     PREFIX = 'highcharts-',
     DIV = 'div',
     INPUT = 'input',
@@ -173,7 +173,7 @@ let indexFilter = /\d/g,
 
 wrap(Pointer.prototype, 'onContainerMouseDown', function (this: Pointer, proceed: Function, e): void {
 
-    let popupClass = e.target && e.target.className;
+    const popupClass = e.target && e.target.className;
 
     // elements is not in popup
     if (!(isString(popupClass) &&
@@ -281,7 +281,7 @@ H.Popup.prototype = {
      * defaultOptions (ADD mode) or series options (EDIT mode)
      */
     addInput: function (option: string, type: string, parentDiv: HTMLDOMElement, value: string): void {
-        let optionParamList = option.split('.'),
+        const optionParamList = option.split('.'),
             optionName = optionParamList[optionParamList.length - 1],
             lang = this.lang,
             inputName = PREFIX + type + '-' + optionName;
@@ -409,7 +409,7 @@ H.Popup.prototype = {
      */
     showPopup: function (): void {
 
-        let popupDiv = this.container,
+        const popupDiv = this.container,
             toolbarClass = PREFIX + 'annotation-toolbar',
             popupCloseBtn = popupDiv
                 .querySelectorAll('.' + PREFIX + 'popup-close')[0];
@@ -835,14 +835,14 @@ H.Popup.prototype = {
                 serie: (Series|SeriesTypePlotOptions),
                 value: string
             ): void {
-                let seriesOptions = serie.options;
+                const seriesOptions = serie.options;
 
                 if (
                     (serie as any).params ||
                     seriesOptions && (seriesOptions as any).params
                 ) {
 
-                    let indicatorNameType = _self.indicators.getNameType(serie as any, value),
+                    const indicatorNameType = _self.indicators.getNameType(serie as any, value),
                         indicatorType = indicatorNameType.type;
 
                     item = createElement(LI, {
@@ -1017,7 +1017,7 @@ H.Popup.prototype = {
             seriesType: string,
             rhsColWrapper: HTMLDOMElement
         ): void {
-            let fields = (series as any).params || series.options.params,
+            const fields = (series as any).params || series.options.params,
                 getNameType = this.indicators.getNameType;
 
             // reset current content
@@ -1146,7 +1146,7 @@ H.Popup.prototype = {
                 counter = 0;
 
             series.forEach(function (serie): void {
-                let seriesOptions = serie.options;
+                const seriesOptions = serie.options;
 
                 if (
                     (serie as any).params ||
@@ -1231,7 +1231,7 @@ H.Popup.prototype = {
          * @return {HTMLDOMElement} - created HTML tab-content element
          */
         addContentItem: function (this: Highcharts.Popup): HTMLDOMElement {
-            let popupDiv = this.popup.container;
+            const popupDiv = this.popup.container;
 
             return createElement(
                 DIV,
@@ -1279,7 +1279,7 @@ H.Popup.prototype = {
          * @param {number} - Index of tab in menu
          */
         selectTab: function (this: Highcharts.Popup, tab: Element, index: number): void {
-            let allTabs = this.popup.container
+            const allTabs = this.popup.container
                 .querySelectorAll('.' + PREFIX + 'tab-item-content');
 
             tab.className += ' ' + PREFIX + 'tab-item-active';

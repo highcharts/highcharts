@@ -176,7 +176,7 @@ class BulletSeries extends ColumnSeries {
      * @function Highcharts.Series#drawPoints
      */
     public drawPoints(): void {
-        let series = this,
+        const series = this,
             chart = series.chart,
             options = series.options,
             animationLimit = options.animationLimit || 250;

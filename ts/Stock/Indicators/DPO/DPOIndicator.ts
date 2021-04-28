@@ -42,7 +42,7 @@ function accumulatePoints(
     index: number,
     subtract?: boolean
 ): number {
-    let price = pick<(number | undefined), number>(
+    const price = pick<(number | undefined), number>(
         (yVal[i] as any)[index], (yVal[i] as any)
     );
 

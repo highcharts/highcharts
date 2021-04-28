@@ -42,7 +42,7 @@ function accumulateAverage(
     i: number,
     index: number
 ): void {
-    let xValue: number = xVal[i],
+    const xValue: number = xVal[i],
         yValue: (number|Array<number>) = index < 0 ? yVal[i] : yVal[i][index];
 
     points.push([xValue, yValue]);
@@ -58,7 +58,7 @@ function weightedSumArray(
     // The denominator is the sum of the number of days as a triangular number.
     // If there are 5 days, the triangular numbers are 5, 4, 3, 2, and 1.
     // The sum is 5 + 4 + 3 + 2 + 1 = 15.
-    let denominator = (pLen + 1) / 2 * pLen;
+    const denominator = (pLen + 1) / 2 * pLen;
 
     // reduce VS loop => reduce
     return (array.reduce(
@@ -80,7 +80,7 @@ function populateAverage(
     yVal: Array<Array<number>>,
     i: number
 ): Array<number> {
-    let pLen = points.length,
+    const pLen = points.length,
         wmaY = weightedSumArray(points, pLen),
         wmaX = xVal[i - 1];
 

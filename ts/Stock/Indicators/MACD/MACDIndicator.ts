@@ -231,7 +231,7 @@ class MACDIndicator extends SMAIndicator {
     }
 
     public translate(): void {
-        let indicator = this,
+        const indicator = this,
             plotNames: Array<string> = ['plotSignal', 'plotMACD'];
 
         H.seriesTypes.column.prototype.translate.apply(indicator);
@@ -355,7 +355,7 @@ class MACDIndicator extends SMAIndicator {
     public applyZones(): void {
         // Histogram zones are handled by drawPoints method
         // Here we need to apply zones for all lines
-        let histogramZones = this.zones;
+        const histogramZones = this.zones;
 
         // signalZones.zones contains all zones:
         this.zones = (this.signalZones.zones as any);

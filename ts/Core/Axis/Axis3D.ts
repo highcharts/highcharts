@@ -77,7 +77,7 @@ declare module './Types' {
     }
 }
 
-let deg2rad = H.deg2rad;
+const deg2rad = H.deg2rad;
 
 /* eslint-disable valid-jsdoc */
 
@@ -240,7 +240,7 @@ class Axis3DAdditions {
                 vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
             } else { // X and Z Axis
                 let sin = Math.sin(alpha);
-                let cos = Math.cos(alpha);
+                const cos = Math.cos(alpha);
 
                 if (axis.opposite) {
                     sin = -sin;
@@ -255,11 +255,11 @@ class Axis3DAdditions {
             if (!axis.horiz) { // Y Axis
                 vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
             } else { // X and Z Axis
-                let sina = Math.sin(alpha);
-                let cosa = Math.cos(alpha);
-                let sinb = Math.sin(beta);
-                let cosb = Math.cos(beta);
-                let vecZ = { x: sinb * cosa, y: -sina, z: -cosa * cosb };
+                const sina = Math.sin(alpha);
+                const cosa = Math.cos(alpha);
+                const sinb = Math.sin(beta);
+                const cosb = Math.cos(beta);
+                const vecZ = { x: sinb * cosa, y: -sina, z: -cosa * cosb };
 
                 vecY = {
                     x: vecX.y * vecZ.z - vecX.z * vecZ.y,
@@ -292,11 +292,11 @@ class Axis3DAdditions {
         pos.y += offsetX * vecX.y + offsetY * vecY.y;
         pos.z += offsetX * vecX.z + offsetY * vecY.z;
 
-        let projected = perspective([pos], axis.chart)[0];
+        const projected = perspective([pos], axis.chart)[0];
 
         if (skew) {
             // Check if the label text would be mirrored
-            let isMirrored = shapeArea(perspective([
+            const isMirrored = shapeArea(perspective([
                 pos,
                 { x: pos.x + vecX.x, y: pos.y + vecX.y, z: pos.z + vecX.z },
                 { x: pos.x + vecY.x, y: pos.y + vecY.y, z: pos.z + vecY.z }
@@ -306,7 +306,7 @@ class Axis3DAdditions {
                 vecX = { x: -vecX.x, y: -vecX.y, z: -vecX.z };
             }
 
-            let pointsProjected = perspective([
+            const pointsProjected = perspective([
                 { x: pos.x, y: pos.y, z: pos.z },
                 { x: pos.x + vecX.x, y: pos.y + vecX.y, z: pos.z + vecX.z },
                 { x: pos.x + vecY.x, y: pos.y + vecY.y, z: pos.z + vecY.z }
@@ -339,7 +339,7 @@ class Axis3DAdditions {
         const axis = this.axis;
 
         if (axis.isZAxis) {
-            let plotLeft = insidePlotArea ? 0 : axis.chart.plotLeft;
+            const plotLeft = insidePlotArea ? 0 : axis.chart.plotLeft;
 
             return {
                 x: plotLeft + p.z,
@@ -599,7 +599,7 @@ class Axis3D {
             return proceed.apply(this, [].slice.call(arguments, 1));
         }
 
-        let args = arguments,
+        const args = arguments,
             from = args[1],
             to = args[2],
             path: SVGPath = [],
@@ -813,7 +813,7 @@ class Axis3D {
         this: Axis3D,
         proceed: Function
     ): Position3DObject {
-        let pos: Position3DObject =
+        const pos: Position3DObject =
             proceed.apply(this, [].slice.call(arguments, 1));
 
         return this.axis3D ?

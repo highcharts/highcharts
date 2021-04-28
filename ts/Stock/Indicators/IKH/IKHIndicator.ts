@@ -133,7 +133,7 @@ function checkLineIntersection(
 function drawSenkouSpan(
     opt: IKHDrawSenkouSpanObject
 ): void {
-    let indicator = opt.indicator;
+    const indicator = opt.indicator;
 
     indicator.points = opt.points;
     indicator.nextPoints = opt.nextPoints;
@@ -436,7 +436,7 @@ class IKHIndicator extends SMAIndicator {
     }
 
     public translate(): void {
-        let indicator = this;
+        const indicator = this;
 
         SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
 
@@ -551,7 +551,7 @@ class IKHIndicator extends SMAIndicator {
 
             if (negativeColor && pointsLength !== mainLinePoints.length - 1) {
                 // Check if lines intersect
-                let index = ikhMap.senkouSpanB.length - 1,
+                const index = ikhMap.senkouSpanB.length - 1,
                     intersect = checkLineIntersection(
                         ikhMap.senkouSpanA[index - 1],
                         ikhMap.senkouSpanA[index],
@@ -654,7 +654,7 @@ class IKHIndicator extends SMAIndicator {
                 // Add points to color or negativeColor arrays
                 // Check the middle point (if exist)
                 if (Math.floor(sectionPoints.length / 2) >= 1) {
-                    let x = Math.floor(sectionPoints.length / 2);
+                    const x = Math.floor(sectionPoints.length / 2);
 
                     // When middle points has equal values
                     // Compare all ponints plotY value sum

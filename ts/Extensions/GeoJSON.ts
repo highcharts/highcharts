@@ -340,7 +340,7 @@ Chart.prototype.transformFromLatLon = function (
         };
     }
 
-    let projected = proj4(transform.crs, [latLon.lon, latLon.lat]),
+    const projected = proj4(transform.crs, [latLon.lon, latLon.lat]),
         cosAngle = transform.cosAngle ||
             (transform.rotation && Math.cos(transform.rotation)),
         sinAngle = transform.sinAngle ||
@@ -395,7 +395,7 @@ Chart.prototype.transformToLatLon = function (
         return;
     }
 
-    let normalized = {
+    const normalized = {
             x: (
                 (
                     point.x -

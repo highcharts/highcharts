@@ -115,7 +115,7 @@ class PivotPointsIndicator extends SMAIndicator {
     }
 
     public translate(this: PivotPointsIndicator): void {
-        let indicator = this;
+        const indicator = this;
 
         SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
 
@@ -349,7 +349,7 @@ class PivotPointsIndicator extends SMAIndicator {
     public standardPlacement(
         values: Array<number>
     ): Array<(number|null)> {
-        let diff: number = values[1] - values[2],
+        const diff: number = values[1] - values[2],
             avg: Array<(number|null)> = [
                 null,
                 null,
@@ -368,7 +368,7 @@ class PivotPointsIndicator extends SMAIndicator {
     public camarillaPlacement(
         values: Array<number>
     ): Array<number> {
-        let diff: number = values[1] - values[2],
+        const diff: number = values[1] - values[2],
             avg = [
                 values[3] + diff * 1.5,
                 values[3] + diff * 1.25,
@@ -387,7 +387,7 @@ class PivotPointsIndicator extends SMAIndicator {
     public fibonacciPlacement(
         values: Array<number>
     ): Array<(number|null)> {
-        let diff: number = values[1] - values[2],
+        const diff: number = values[1] - values[2],
             avg = [
                 null,
                 values[0] + diff,

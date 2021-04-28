@@ -498,7 +498,7 @@ addEvent(Axis, 'autoLabelAlign', function (
 
 // Clear axis from label panes (#6071)
 addEvent(Axis, 'destroy', function (this: Highcharts.Axis): void {
-    let chart = this.chart,
+    const chart = this.chart,
         key = this.options && (this.options.top + ',' + this.options.height);
 
     if (key && chart._labelPanes && chart._labelPanes[key] === this) {
@@ -540,7 +540,7 @@ addEvent(Axis, 'getPlotLinePath', function (
      * @private
      */
     function getAxis(coll: string): Array<Highcharts.Axis> {
-        let otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
+        const otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
             opt = (axis.options as any)[otherColl];
 
         // Other axis indexed by number
@@ -579,7 +579,7 @@ addEvent(Axis, 'getPlotLinePath', function (
                     A.options.id.indexOf('navigator') === -1 :
                     true
             ) {
-                let a = (A.isXAxis ? 'yAxis' : 'xAxis'),
+                const a = (A.isXAxis ? 'yAxis' : 'xAxis'),
                     rax = (
                         defined((A.options as any)[a]) ?
                             (chart as any)[a][(A.options as any)[a]] :
@@ -962,7 +962,7 @@ Series.prototype.initCompare = function (compare?: string): void {
             value?: number,
             point?: Point
         ): (number|undefined) {
-            let compareValue = this.compareValue;
+            const compareValue = this.compareValue;
 
             if (
                 typeof value !== 'undefined' &&
@@ -1058,7 +1058,7 @@ addEvent(
     function (e): void {
         const dataExtremes: DataExtremesObject = (e as any).dataExtremes;
         if (this.modifyValue && dataExtremes) {
-            let extremes = [
+            const extremes = [
                 this.modifyValue(dataExtremes.dataMin),
                 this.modifyValue(dataExtremes.dataMax)
             ];
@@ -1112,7 +1112,7 @@ Axis.prototype.setCompare = function (
  * @param {string} pointFormat
  */
 Point.prototype.tooltipFormatter = function (pointFormat: string): string {
-    let point = this;
+    const point = this;
     const { numberFormatter } = point.series.chart;
 
     pointFormat = pointFormat.replace(
@@ -1153,7 +1153,7 @@ addEvent(Series, 'render', function (): void {
         // Include xAxis line width (#8031) but only if the Y axis ends on the
         // edge of the X axis (#11005).
         if (this.xAxis.axisLine) {
-            let dist = chart.plotTop + chart.plotHeight -
+            const dist = chart.plotTop + chart.plotHeight -
                     (this.yAxis.pos as any) - this.yAxis.len,
                 lineHeightCorrection = Math.floor(
                     this.xAxis.axisLine.strokeWidth() / 2
@@ -1213,7 +1213,7 @@ addEvent(Chart, 'update', function (
     this: StockChart,
     e: { options: Highcharts.Options }
 ): void {
-    let options = e.options;
+    const options = e.options;
 
     // Use case: enabling scrollbar from a disabled state.
     // Scrollbar needs to be initialized from a controller, Navigator in this

@@ -32,7 +32,7 @@ declare global {
 }
 
 // See TRACKER_FILL in highcharts.src.js
-let TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
+const TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -135,7 +135,7 @@ class ControllablePath implements ControllableMixin.Type {
      * A path's d attribute.
      */
     public toD(): (SVGPath|null) {
-        let dOption = this.options.d;
+        const dOption = this.options.d;
 
         if (dOption) {
             return typeof dOption === 'function' ?
@@ -182,7 +182,7 @@ class ControllablePath implements ControllableMixin.Type {
     }
 
     public render(parent: SVGElement): void {
-        let options = this.options,
+        const options = this.options,
             attrs = this.attrsFromOptions(options);
 
         this.graphic = this.annotation.chart.renderer
@@ -224,7 +224,7 @@ class ControllablePath implements ControllableMixin.Type {
 
     public redraw(animation?: boolean): void {
 
-        let d = this.toD(),
+        const d = this.toD(),
             action = animation ? 'animate' : 'attr';
 
         if (d) {

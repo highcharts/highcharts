@@ -85,9 +85,9 @@ declare module '../Core/Axis/Types' {
 }
 
 // Extensions for parallel coordinates plot.
-let ChartProto = Chart.prototype;
+const ChartProto = Chart.prototype;
 
-let defaultXAxisOptions = {
+const defaultXAxisOptions = {
     lineWidth: 0,
     tickLength: 0,
     opposite: true,
@@ -99,7 +99,7 @@ let defaultXAxisOptions = {
 /**
  * @optionparent chart
  */
-let defaultParallelOptions: Highcharts.ChartOptions = {
+const defaultParallelOptions: Highcharts.ChartOptions = {
     /**
      * Flag to render charts as a parallel coordinates plot. In a parallel
      * coordinates plot (||-coords) by default all required yAxes are generated
@@ -301,7 +301,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
         this: Highcharts.ParallelChart,
         options: Partial<Highcharts.Options>
     ): void {
-        let chart = this,
+        const chart = this,
             seriesOptions: Array<SeriesOptions> =
                 options.series as any;
 
@@ -325,7 +325,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
 // calculate extremes.
 addEvent(Series, 'bindAxes', function (e: Event): void {
     if (this.chart.hasParallelCoordinates) {
-        let series = this;
+        const series = this;
 
         this.chart.axes.forEach(function (axis): void {
             series.insert(axis.series);
@@ -646,7 +646,7 @@ namespace ParallelAxis {
         }
 
         if (chart && chart.hasParallelCoordinates && !axis.isXAxis) {
-            let index = parallelCoordinates.position,
+            const index = parallelCoordinates.position,
                 currentPoints: Array<Point> = [];
 
             axis.series.forEach(function (series): void {

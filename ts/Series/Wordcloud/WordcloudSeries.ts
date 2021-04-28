@@ -201,7 +201,7 @@ class WordcloudSeries extends ColumnSeries {
      *
      */
     public bindAxes(): void {
-        let wordcloudAxis = {
+        const wordcloudAxis = {
             endOnTick: false,
             gridLineWidth: 0,
             lineWidth: 0,
@@ -220,7 +220,7 @@ class WordcloudSeries extends ColumnSeries {
         point: WordcloudPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        let attribs = H.seriesTypes.column.prototype
+        const attribs = H.seriesTypes.column.prototype
             .pointAttribs.call(this, point, state);
 
         delete attribs.stroke;
@@ -253,7 +253,7 @@ class WordcloudSeries extends ColumnSeries {
         maxFontSize?: number,
         minFontSize?: number
     ): number {
-        let weight = isNumber(relativeWeight) ? relativeWeight : 0,
+        const weight = isNumber(relativeWeight) ? relativeWeight : 0,
             max = isNumber(maxFontSize) ? maxFontSize : 1,
             min = isNumber(minFontSize) ? minFontSize : 1;
 
@@ -459,7 +459,7 @@ class WordcloudSeries extends ColumnSeries {
     }
 
     public hasData(): boolean {
-        let series = this;
+        const series = this;
 
         return (
             isObject(series) as any &&
@@ -470,7 +470,7 @@ class WordcloudSeries extends ColumnSeries {
     }
 
     public getPlotBox(): Highcharts.SeriesPlotBoxObject {
-        let series = this,
+        const series = this,
             chart = series.chart,
             inverted = chart.inverted,
             // Swap axes for inverted (#2339)
@@ -518,7 +518,7 @@ extend(WordcloudSeries.prototype, {
             point: WordcloudPoint,
             options: WordcloudSeries.WordcloudPlacementOptionsObject
         ): WordcloudSeries.WordcloudPlacementObject {
-            let field = options.field,
+            const field = options.field,
                 r = options.rotation;
 
             return {
@@ -531,7 +531,7 @@ extend(WordcloudSeries.prototype, {
             point: WordcloudPoint,
             options: WordcloudSeries.WordcloudPlacementOptionsObject
         ): WordcloudSeries.WordcloudPlacementObject {
-            let r = options.rotation;
+            const r = options.rotation;
 
             return {
                 x: 0,

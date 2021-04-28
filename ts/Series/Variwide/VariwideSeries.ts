@@ -161,7 +161,7 @@ class VariwideSeries extends ColumnSeries {
         point?: VariwidePoint
     ): number {
 
-        let axis = this.xAxis,
+        const axis = this.xAxis,
             relZ = this.relZ,
             i = axis.reversed ? relZ.length - index : index,
             goRight = axis.reversed ? -1 : 1,
@@ -194,7 +194,7 @@ class VariwideSeries extends ColumnSeries {
     public translate(): void {
 
         // Temporarily disable crisping when computing original shapeArgs
-        let crispOption = this.options.crisp,
+        const crispOption = this.options.crisp,
             xAxis = this.xAxis;
 
         this.options.crisp = false;
@@ -204,7 +204,7 @@ class VariwideSeries extends ColumnSeries {
         // Reset option
         this.options.crisp = crispOption;
 
-        let inverted = this.chart.inverted,
+        const inverted = this.chart.inverted,
             crisp = this.borderWidth % 2 / 2;
 
         // Distort the points to reflect z dimension

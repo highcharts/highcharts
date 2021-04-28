@@ -35,7 +35,7 @@ const {
 } = HTMLUtilities;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
-let extend = U.extend,
+const extend = U.extend,
     pick = U.pick;
 
 /**
@@ -148,7 +148,7 @@ H.Axis.prototype.panStep = function (
  * @class
  * @name Highcharts.ZoomComponent
  */
-let ZoomComponent: typeof Highcharts.ZoomComponent = noop as any;
+const ZoomComponent: typeof Highcharts.ZoomComponent = noop as any;
 ZoomComponent.prototype = new (AccessibilityComponent as any)();
 extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
 
@@ -156,7 +156,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
      * Initialize the component
      */
     init: function (this: Highcharts.ZoomComponent): void {
-        let component = this,
+        const component = this,
             chart = this.chart;
         [
             'afterShowResetZoom', 'afterDrilldown', 'drillupall'
@@ -172,7 +172,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
      * Called when chart is updated
      */
     onChartUpdate: function (this: Highcharts.ZoomComponent): void {
-        let chart = this.chart,
+        const chart = this.chart,
             component = this;
 
         // Make map zoom buttons accessible
@@ -201,7 +201,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         button: DOMElementType,
         labelFormatKey: string
     ): void {
-        let chart = this.chart,
+        const chart = this.chart,
             label = chart.langFormat(
                 labelFormatKey,
                 { chart: chart }
@@ -228,7 +228,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
      * Update proxy overlays, recreating the buttons.
      */
     updateProxyOverlays: function (this: Highcharts.ZoomComponent): void {
-        let chart = this.chart;
+        const chart = this.chart;
 
         // Always start with a clean slate
         removeElement(this.drillUpProxyGroup);
@@ -291,7 +291,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
     getMapZoomNavigation: function (
         this: Highcharts.ZoomComponent
     ): Highcharts.KeyboardNavigationHandler {
-        let keys = this.keyCodes,
+        const keys = this.keyCodes,
             chart = this.chart,
             component = this;
 
@@ -348,7 +348,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler,
         keyCode: number
     ): number {
-        let keys = this.keyCodes,
+        const keys = this.keyCodes,
             panAxis: ('xAxis'|'yAxis') =
                 (keyCode === keys.up || keyCode === keys.down) ?
                     'yAxis' : 'xAxis',
@@ -422,7 +422,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         this: Highcharts.ZoomComponent,
         direction: number
     ): void {
-        let chart: Highcharts.MapNavigationChart = this.chart as any,
+        const chart: Highcharts.MapNavigationChart = this.chart as any,
             zoomIn = chart.mapNavButtons[0],
             zoomOut = chart.mapNavButtons[1],
             initialButton = direction > 0 ? zoomIn : zoomOut;
@@ -448,7 +448,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         proxyProp: string,
         onClick: Function
     ): Highcharts.KeyboardNavigationHandler {
-        let keys = this.keyCodes,
+        const keys = this.keyCodes,
             component = this,
             chart = this.chart;
 
@@ -461,7 +461,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
                         keyCode: number,
                         e: KeyboardEvent
                     ): number {
-                        let isBackwards = keyCode === keys.tab && e.shiftKey ||
+                        const isBackwards = keyCode === keys.tab && e.shiftKey ||
                             keyCode === keys.left || keyCode === keys.up;
 
                         // Arrow/tab => just move
@@ -473,14 +473,14 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
                     function (
                         this: Highcharts.KeyboardNavigationHandler
                     ): void {
-                        let res = onClick(this, chart);
+                        const res = onClick(this, chart);
                         return pick(res, this.response.success);
                     }
                 ]
             ],
 
             validate: function (): boolean {
-                let hasButton = (
+                const hasButton = (
                     (chart as any)[buttonProp] &&
                     (chart as any)[buttonProp].box &&
                     (component as any)[proxyProp]

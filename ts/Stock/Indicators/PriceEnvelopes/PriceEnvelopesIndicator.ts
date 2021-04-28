@@ -151,7 +151,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
     }
 
     public translate(): void {
-        let indicator = this,
+        const indicator = this,
             translatedEnvelopes = ['plotTop', 'plotMiddle', 'plotBottom'];
 
         SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);

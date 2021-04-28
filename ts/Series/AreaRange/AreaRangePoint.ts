@@ -84,7 +84,7 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
      * @private
      */
     public setState(): void {
-        let prevState = this.state,
+        const prevState = this.state,
             series = this.series,
             isPolar = series.chart.polar;
 

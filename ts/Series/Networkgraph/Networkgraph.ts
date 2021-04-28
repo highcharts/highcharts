@@ -58,7 +58,7 @@ import '../../Core/Options.js';
 import './Layouts.js';
 import './DraggableNodes.js';
 
-let dragNodesMixin = H.dragNodesMixin;
+const dragNodesMixin = H.dragNodesMixin;
 
 /* *
  *
@@ -851,7 +851,7 @@ extend(NetworkgraphSeries.prototype, {
         point: NetworkgraphPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        let attribs =
+        const attribs =
             Series.prototype.markerAttribs.call(this, point, state);
 
         // series.render() is called before initial positions are set:
@@ -950,7 +950,7 @@ extend(NetworkgraphSeries.prototype, {
      * @private
      */
     render: function (this: NetworkgraphSeries): void {
-        let series = this,
+        const series = this,
             points = series.points,
             hoverPoint = series.chart.hoverPoint,
             dataLabels = [] as Array<SVGElement>;
@@ -988,7 +988,7 @@ extend(NetworkgraphSeries.prototype, {
     // Networkgraph has two separate collecions of nodes and lines, render
     // dataLabels for both sets:
     drawDataLabels: function (this: NetworkgraphSeries): void {
-        let textPath = (this.options.dataLabels as any).textPath;
+        const textPath = (this.options.dataLabels as any).textPath;
 
         // Render node labels:
         Series.prototype.drawDataLabels.apply(this, arguments as any);
@@ -1195,7 +1195,7 @@ extend(NetworkgraphPoint.prototype, {
      * @return {number}
      */
     getDegree: function (this: Highcharts.NetworkgraphPoint): number {
-        let deg = this.isNode ?
+        const deg = this.isNode ?
             this.linksFrom.length + this.linksTo.length :
             0;
 
@@ -1210,7 +1210,7 @@ extend(NetworkgraphPoint.prototype, {
     getLinkAttributes: function (
         this: Highcharts.NetworkgraphPoint
     ): SVGAttributes {
-        let linkOptions = this.series.options.link,
+        const linkOptions = this.series.options.link,
             pointOptions = this.options;
 
         return {
@@ -1311,7 +1311,7 @@ extend(NetworkgraphPoint.prototype, {
     getMass: function (
         this: Highcharts.NetworkgraphPoint
     ): Record<string, number> {
-        let m1 = this.fromNode.mass,
+        const m1 = this.fromNode.mass,
             m2 = this.toNode.mass,
             sum = m1 + m2;
 

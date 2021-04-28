@@ -372,7 +372,7 @@ class Pointer {
      * @function Highcharts.Pointer#destroy
      */
     public destroy(): void {
-        let pointer = this;
+        const pointer = this;
 
         this.eventsToUnbind.forEach((unbind): void => unbind());
         this.eventsToUnbind = [];
@@ -526,7 +526,7 @@ class Pointer {
      * @function Highcharts.Pointer#dragStart
      */
     public dragStart(e: PointerEvent): void {
-        let chart = this.chart;
+        const chart = this.chart;
 
         // Record the start position
         chart.mouseIsDown = e.type;
@@ -544,7 +544,7 @@ class Pointer {
      * @param {global.Event} e
      */
     public drop(e: Event): void {
-        let pointer = this,
+        const pointer = this,
             chart = this.chart,
             hasPinched = this.hasPinched;
 
@@ -590,7 +590,7 @@ class Pointer {
                         isNumber(selectionLeft) &&
                         isNumber(selectionTop)
                     ) { // #859, #3569
-                        let horiz = axis.horiz,
+                        const horiz = axis.horiz,
                             minPixelPadding = e.type === 'touchend' ?
                                 axis.minPixelPadding :
                                 0, // #1207, #3075
@@ -727,7 +727,7 @@ class Pointer {
         }
 
         series.forEach(function (s): void {
-            let noSharedTooltip = s.noSharedTooltip && shared,
+            const noSharedTooltip = s.noSharedTooltip && shared,
                 compareX = (
                     !noSharedTooltip &&
                     (s.options.findNearestPointBy as any).indexOf('y') < 0
@@ -760,7 +760,7 @@ class Pointer {
         point: Point,
         inverted?: boolean
     ): (Highcharts.PointerCoordinatesObject|undefined) {
-        let series = point.series,
+        const series = point.series,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             plotX = pick<number|undefined, number>(
@@ -839,7 +839,7 @@ class Pointer {
      */
     public getCoordinates(e: PointerEvent): Highcharts.PointerAxisCoordinatesObject {
 
-        let coordinates = {
+        const coordinates = {
             xAxis: [],
             yAxis: []
         } as Highcharts.PointerAxisCoordinatesObject;
@@ -1489,7 +1489,7 @@ class Pointer {
             // Identify the data bounds in pixels
             chart.axes.forEach(function (axis: Axis): void {
                 if (axis.zoomEnabled) {
-                    let bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
+                    const bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
                         minPixelPadding = axis.minPixelPadding,
                         min = axis.toPixels(
                             Math.min(
@@ -1750,7 +1750,7 @@ class Pointer {
      * @return {void}
      */
     public reset(allowMove?: boolean, delay?: number): void {
-        let pointer = this,
+        const pointer = this,
             chart = pointer.chart,
             hoverSeries = chart.hoverSeries,
             hoverPoint = chart.hoverPoint,
@@ -1976,7 +1976,7 @@ class Pointer {
                 chart.container.ownerDocument,
                 'mousemove',
                 function (e: any): void {
-                    let chart = charts[H.hoverChartIndex as any];
+                    const chart = charts[H.hoverChartIndex as any];
 
                     if (chart) {
                         chart.pointer.onDocumentMouseMove(e);
@@ -2054,7 +2054,7 @@ class Pointer {
      */
     public setDOMEvents(): void {
 
-        let container = this.chart.container,
+        const container = this.chart.container,
             ownerDoc = container.ownerDocument;
 
         container.onmousedown = this.onContainerMouseDown.bind(this);

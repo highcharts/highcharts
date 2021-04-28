@@ -152,10 +152,10 @@ Earcon.prototype.sonify = function (
     this: Highcharts.Earcon,
     options: Partial<Highcharts.EarconOptionsObject>
 ): void {
-    let playOptions = merge(this.options, options);
+    const playOptions = merge(this.options, options);
 
     // Find master volume/pan settings
-    let masterVolume = pick(playOptions.volume, 1),
+    const masterVolume = pick(playOptions.volume, 1),
         masterPan = playOptions.pan,
         earcon = this,
         playOnEnd = options && options.onEnd,
@@ -223,7 +223,7 @@ Earcon.prototype.cancelSonify = function (
     this: Highcharts.Earcon,
     fadeOut?: boolean
 ): void {
-    let playing = this.instrumentsPlaying,
+    const playing = this.instrumentsPlaying,
         instrIds = playing && Object.keys(playing);
 
     if (instrIds && instrIds.length) {

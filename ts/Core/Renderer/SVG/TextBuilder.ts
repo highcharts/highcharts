@@ -474,7 +474,7 @@ class TextBuilder {
             // charEnd is used when finding the character-by-character
             // break for ellipsis, concatenatedEnd is used for word-by-word
             // break for word wrapping.
-            let end = concatenatedEnd || charEnd;
+            const end = concatenatedEnd || charEnd;
             const parentNode = textNode.parentNode;
 
             if (parentNode && typeof lengths[end] === 'undefined') {

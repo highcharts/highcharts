@@ -783,7 +783,7 @@ declare global {
 
 ''; // detach doclets above
 
-let deg2rad = H.deg2rad;
+const deg2rad = H.deg2rad;
 
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
@@ -4060,7 +4060,7 @@ class Axis {
      */
     public init(chart: Chart, userOptions: DeepPartial<Highcharts.AxisOptions>): void {
 
-        let isXAxis = userOptions.isX,
+        const isXAxis = userOptions.isX,
             axis: Highcharts.Axis = this as any;
 
         /**
@@ -4126,7 +4126,7 @@ class Axis {
         axis.setOptions(userOptions);
 
 
-        let options = this.options,
+        const options = this.options,
             labelsOptions = options.labels,
             type = options.type;
 
@@ -4252,7 +4252,7 @@ class Axis {
         );
         axis.crosshair = crosshair === true ? {} : crosshair;
 
-        let events = axis.options.events;
+        const events = axis.options.events;
 
         // Register. Don't add it again on Axis.update().
         if (chart.axes.indexOf(axis) === -1) { //
@@ -4868,7 +4868,7 @@ class Axis {
      * @return {number|"auto"|null}
      */
     public getMinorTickInterval(): ('auto'|null|number) {
-        let options = this.options;
+        const options = this.options;
 
         if (options.minorTicks === true) {
             return pick(options.minorTickInterval, 'auto');
@@ -5083,7 +5083,7 @@ class Axis {
             ret = 1;
         } else {
             this.series.forEach(function (series): void {
-                let seriesClosest = series.closestPointRange,
+                const seriesClosest = series.closestPointRange,
                     visible = series.visible ||
                         !series.chart.options.chart.ignoreHiddenSeries;
 
@@ -5157,7 +5157,7 @@ class Axis {
      * @function Highcharts.Axis#updateNames
      */
     public updateNames(): void {
-        let axis = this,
+        const axis = this,
             names = this.names,
             i = names.length;
 
@@ -5246,7 +5246,7 @@ class Axis {
                 pointRangePadding = linkedParent.pointRangePadding;
             } else {
                 axis.series.forEach(function (series): void {
-                    let seriesPointRange = hasCategories ?
+                    const seriesPointRange = hasCategories ?
                             1 :
                             (
                                 isXAxis ?
@@ -5264,7 +5264,7 @@ class Axis {
                     if (!axis.single || hasCategories) {
                         // TODO: series should internally set x- and y-
                         // pointPlacement to simplify this logic.
-                        let isPointPlacementAxis = series.is('xrange') ? !isXAxis : isXAxis;
+                        const isPointPlacementAxis = series.is('xrange') ? !isXAxis : isXAxis;
 
                         // minPointOffset is the value padding to the left of
                         // the axis in order to make room for points with a
@@ -5831,7 +5831,7 @@ class Axis {
         startOnTick?: boolean,
         endOnTick?: boolean
     ): void {
-        let roundedMin = tickPositions[0],
+        const roundedMin = tickPositions[0],
             roundedMax = tickPositions[tickPositions.length - 1],
             minPointOffset =
                 (!this.isOrdinal && this.minPointOffset) || 0; // (#12716)
@@ -5899,7 +5899,7 @@ class Axis {
             (this.chart as any)[this.coll].forEach(function (
                 axis: Highcharts.Axis
             ): void {
-                let otherOptions = axis.options,
+                const otherOptions = axis.options,
                     horiz = axis.horiz,
                     key = [
                         horiz ? otherOptions.left : otherOptions.top,
@@ -6162,7 +6162,7 @@ class Axis {
         animation?: (boolean|Partial<AnimationOptions>),
         eventArguments?: any
     ): void {
-        let axis = this,
+        const axis = this,
             chart = axis.chart;
 
         redraw = pick(redraw, true); // defaults to true
@@ -6205,7 +6205,7 @@ class Axis {
      * @return {boolean}
      */
     public zoom(newMin: number, newMax: number): void {
-        let axis: Highcharts.Axis = this as any,
+        const axis: Highcharts.Axis = this as any,
             dataMin = this.dataMin,
             dataMax = this.dataMax,
             options = this.options,
@@ -6276,7 +6276,7 @@ class Axis {
      * @function Highcharts.Axis#setAxisSize
      */
     public setAxisSize(): void {
-        let chart = this.chart,
+        const chart = this.chart,
             options = this.options,
             // [top, right, bottom, left]
             offsets = options.offsets || [0, 0, 0, 0],
@@ -6363,7 +6363,7 @@ class Axis {
      * stay within the axis bounds.
      */
     public getThreshold(threshold: number): (number|undefined) {
-        let axis: Highcharts.Axis = this as any,
+        const axis: Highcharts.Axis = this as any,
             log = axis.logarithmic,
             realMin = log ? log.lin2log(axis.min as any) : axis.min as any,
             realMax = log ? log.lin2log(axis.max as any) : axis.max as any;
@@ -6398,7 +6398,7 @@ class Axis {
      * Can be `"center"`, `"left"` or `"right"`.
      */
     public autoLabelAlign(rotation: number): AlignValue {
-        let angle = (pick(rotation, 0) - (this.side * 90) + 720) % 360,
+        const angle = (pick(rotation, 0) - (this.side * 90) + 720) % 360,
             evt = { align: 'center' as AlignValue };
 
         fireEvent(this, 'autoLabelAlign', evt, function (
@@ -6463,7 +6463,7 @@ class Axis {
      * @return {Highcharts.FontMetricsObject}
      */
     public labelMetrics(): Highcharts.FontMetricsObject {
-        let index = this.tickPositions && this.tickPositions[0] || 0;
+        const index = this.tickPositions && this.tickPositions[0] || 0;
 
         return this.chart.renderer.fontMetrics(
             this.options.labels.style.fontSize,
@@ -6589,7 +6589,7 @@ class Axis {
      */
     public getSlotWidth(tick?: Highcharts.Tick): number {
         // #5086, #1580, #1931
-        let chart = this.chart,
+        const chart = this.chart,
             horiz = this.horiz,
             labelOptions = this.options.labels,
             slotCount = Math.max(
@@ -6761,7 +6761,7 @@ class Axis {
 
         // Apply general and specific CSS
         tickPositions.forEach(function (pos: number): void {
-            let tick = ticks[pos],
+            const tick = ticks[pos],
                 label = tick && tick.label,
                 widthOption = labelStyleOptions.width,
                 css: CSSObject = {};
@@ -7151,7 +7151,7 @@ class Axis {
      * The SVG path definition in array form.
      */
     public getLinePath(lineWidth: number): SVGPath {
-        let chart = this.chart,
+        const chart = this.chart,
             opposite = this.opposite,
             offset = this.offset,
             horiz = this.horiz,
@@ -7219,7 +7219,7 @@ class Axis {
      */
     public getTitlePosition(): PositionObject {
         // compute anchor points for each of the title align options
-        let horiz = this.horiz,
+        const horiz = this.horiz,
             axisLeft = this.left,
             axisTop = this.top,
             axisLength = this.len,
@@ -7528,7 +7528,7 @@ class Axis {
         }
 
         if (axisTitle && showAxis) {
-            let titleXy = axis.getTitlePosition();
+            const titleXy = axis.getTitlePosition();
 
             if (isNumber(titleXy.y)) {
                 axisTitle[axisTitle.isNew ? 'attr' : 'animate'](titleXy);
@@ -7877,7 +7877,7 @@ class Axis {
         options: DeepPartial<Highcharts.AxisOptions>,
         redraw?: boolean
     ): void {
-        let chart = this.chart,
+        const chart = this.chart,
             newEvents = ((options && options.events) || {});
 
         options = merge(this.userOptions, options);

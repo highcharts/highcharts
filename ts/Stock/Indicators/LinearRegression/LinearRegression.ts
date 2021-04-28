@@ -222,7 +222,7 @@ class LinearRegressionIndicator extends SMAIndicator {
         xData: Array<number>,
         xAxisUnit: number
     ): Array<number> {
-        let xOffset: number = xData[0];
+        const xOffset: number = xData[0];
 
         return xData.map(function (xValue: number): number {
             return (xValue - xOffset) / xAxisUnit;

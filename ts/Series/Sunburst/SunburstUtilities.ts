@@ -106,7 +106,7 @@ namespace SunburstUtilities {
             // Calculate total weight to use in convertion from weight to
             // pixels.
             levels.forEach(function (level: number): void {
-                let options = (result as any)[level],
+                const options = (result as any)[level],
                     unit = options.levelSize.unit,
                     value = options.levelSize.value;
 

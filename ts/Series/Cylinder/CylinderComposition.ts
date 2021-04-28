@@ -148,7 +148,7 @@ RendererProto.cylinder = function (shapeArgs: SVGAttributes): SVGElement {
 RendererProto.cylinderPath = function (
     shapeArgs: SVGAttributes
 ): CylinderPathsObject {
-    let renderer = this,
+    const renderer = this,
         chart = charts[renderer.chartIndex],
 
         // decide zIndexes of parts based on cubiod logic, for consistency.

@@ -83,7 +83,7 @@ declare module './Types' {
     }
 }
 
-let argsToArray = function (args: IArguments): Array<any> {
+const argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
     },
     isObject = function (x: unknown): x is object {
@@ -92,8 +92,8 @@ let argsToArray = function (args: IArguments): Array<any> {
     },
     Chart = H.Chart;
 
-let applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
-    let options = axis.options;
+const applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
+    const options = axis.options;
 
     // Center-align by default
     /*
@@ -220,7 +220,7 @@ Axis.prototype.getMaxLabelDimensions = function (
     ticks: Record<string, Highcharts.Tick>,
     tickPositions: Array<(number|string)>
 ): SizeObject {
-    let dimensions: SizeObject = {
+    const dimensions: SizeObject = {
         width: 0,
         height: 0
     };
@@ -718,7 +718,7 @@ class GridAxis {
                 columnIndex = axis.grid.columnIndex = 0;
             // Handle columns, each column is a grid axis
             while (++columnIndex < gridOptions.columns.length) {
-                let columnOptions = merge(
+                const columnOptions = merge(
                     userOptions,
                     gridOptions.columns[
                         gridOptions.columns.length - columnIndex - 1
@@ -736,7 +736,7 @@ class GridAxis {
 
                 delete (columnOptions.grid as any).columns; // Prevent recursion
 
-                let column = new Axis(axis.chart, columnOptions) as GridAxis;
+                const column = new Axis(axis.chart, columnOptions) as GridAxis;
                 column.grid.isColumn = true;
                 column.grid.columnIndex = columnIndex;
 
@@ -1081,7 +1081,7 @@ class GridAxis {
                         max: number
                     ): (Highcharts.AxisTickPositionsArray|undefined) {
 
-                        let parentInfo = (
+                        const parentInfo = (
                             this.linkedParent &&
                             this.linkedParent.tickPositions &&
                             this.linkedParent.tickPositions.info

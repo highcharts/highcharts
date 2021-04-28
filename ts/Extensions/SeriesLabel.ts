@@ -292,7 +292,7 @@ function ccw(
     x3: number,
     y3: number
 ): boolean {
-    let cw = ((y3 - y1) * (x2 - x1)) - ((y2 - y1) * (x3 - x1));
+    const cw = ((y3 - y1) * (x2 - x1)) - ((y2 - y1) * (x3 - x1));
 
     return cw > 0 ? true : !(cw < 0);
 }
@@ -437,7 +437,7 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
      * @private
      */
     function pushDiscrete(point: Point): void {
-        let cellSize = 8,
+        const cellSize = 8,
             key = Math.round((point.plotX as any) / cellSize) + ',' +
             Math.round((point.plotY as any) / cellSize);
 
@@ -791,7 +791,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
     // console.time('drawSeriesLabels');
 
-    let chart = this,
+    const chart = this,
         labelSeries: Array<Series> = this.labelSeries as any;
 
     chart.boxesToAvoid = [];
@@ -862,7 +862,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             y: number,
             bBox: BBoxObject
         ): boolean {
-            let leftBound = Math.max(paneLeft as any, pick(areaMin, -Infinity)),
+            const leftBound = Math.max(paneLeft as any, pick(areaMin, -Infinity)),
                 rightBound = Math.min(
                     (paneLeft as any) + paneWidth,
                     pick(areaMax, Infinity)
@@ -1059,7 +1059,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                 });
 
                 // Move it if needed
-                let dist = Math.sqrt(
+                const dist = Math.sqrt(
                     Math.pow(Math.abs(best.x - (label.x || 0)), 2) +
                     Math.pow(Math.abs(best.y - (label.y || 0)), 2)
                 );
@@ -1107,7 +1107,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     // Record closest point to stick to for sync redraw
                     series.options.kdNow = true;
                     series.buildKDTree();
-                    let closest = series.searchPoint({
+                    const closest = series.searchPoint({
                         chartX: best.x,
                         chartY: best.y
                     } as any, true);
@@ -1155,7 +1155,7 @@ function drawLabels(this: Chart, e: Event): void {
 
         // Which series should have labels
         chart.series.forEach(function (series): void {
-            let options: Highcharts.SeriesLabelOptionsObject =
+            const options: Highcharts.SeriesLabelOptionsObject =
                     series.options.label as any,
                 label: SVGElement = series.labelBySeries as any,
                 closest = label && label.closest;

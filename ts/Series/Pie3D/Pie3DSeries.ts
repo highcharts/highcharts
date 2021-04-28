@@ -149,12 +149,12 @@ class Pie3DSeries extends PieSeries {
      */
     public drawDataLabels(): void {
         if (this.chart.is3d()) {
-            let series = this,
+            const series = this,
                 chart = series.chart,
                 options3d = chart.options.chart.options3d as any;
 
             series.data.forEach(function (point): void {
-                let shapeArgs = point.shapeArgs,
+                const shapeArgs = point.shapeArgs,
                     r = (shapeArgs as any).r,
                     // #3240 issue with datalabels for 0 and null values
                     a1 = ((shapeArgs as any).alpha || options3d.alpha) * deg2rad,
@@ -184,7 +184,7 @@ class Pie3DSeries extends PieSeries {
      * @private
      */
     public pointAttribs(point: Pie3DPoint): SVGAttributes {
-        let attr = super.pointAttribs.apply(this, arguments),
+        const attr = super.pointAttribs.apply(this, arguments),
             options = this.options;
 
         if (this.chart.is3d() && !this.chart.styledMode) {

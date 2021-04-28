@@ -97,7 +97,7 @@ SignalHandler.prototype.registerSignalCallbacks = function (
     this: Highcharts.SignalHandler,
     signals: Record<string, (Function|undefined)>
 ): void {
-    let signalHandler = this;
+    const signalHandler = this;
 
     signalHandler.supportedSignals.forEach(function (
         supportedSignal: keyof typeof signals
@@ -124,7 +124,7 @@ SignalHandler.prototype.clearSignalCallbacks = function (
     this: Highcharts.SignalHandler,
     signalNames?: Array<string>
 ): void {
-    let signalHandler = this;
+    const signalHandler = this;
 
     if (signalNames) {
         signalNames.forEach(function (signalName: string): void {
@@ -157,7 +157,7 @@ SignalHandler.prototype.emitSignal = function (
 
     if (this.signals[signalName]) {
         this.signals[signalName].forEach(function (handler: Function): void {
-            let result = handler(data);
+            const result = handler(data);
 
             retval = typeof result !== 'undefined' ? result : retval;
         });
@@ -166,7 +166,7 @@ SignalHandler.prototype.emitSignal = function (
 };
 
 
-let utilities: Highcharts.SonificationUtilitiesObject = {
+const utilities: Highcharts.SonificationUtilitiesObject = {
 
     // List of musical frequencies from C0 to C8
     musicalFrequencies: musicalFrequencies,
@@ -190,7 +190,7 @@ let utilities: Highcharts.SonificationUtilitiesObject = {
             freq: number,
             i: number
         ): boolean {
-            let interval = i % 12 + 1;
+            const interval = i % 12 + 1;
 
             return semitones.some(function (
                 allowedInterval: number
@@ -218,7 +218,7 @@ let utilities: Highcharts.SonificationUtilitiesObject = {
             // We use cropped points rather than series.data here, to allow
             // users to zoom in for better fidelity.
             series.points.forEach(function (point: Point): void {
-                let val = typeof (point as any)[prop] !== 'undefined' ?
+                const val = typeof (point as any)[prop] !== 'undefined' ?
                     (point as any)[prop] : (point.options as any)[prop];
 
                 extremes.min = Math.min(extremes.min, val);

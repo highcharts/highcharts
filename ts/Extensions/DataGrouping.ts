@@ -269,7 +269,7 @@ H.approximations = {
     // The same as average, but for series with multiple values, like area
     // ranges.
     averages: function (): (Array<(null|number|undefined)>|undefined) { // #5479
-        let ret = [] as Array<(null|number|undefined)>;
+        const ret = [] as Array<(null|number|undefined)>;
 
         [].forEach.call(arguments, function (
             arr: Highcharts.DataGroupingApproximationsArray
@@ -653,7 +653,7 @@ const adjustExtremes = function (
     }
 };
 
-let dataGrouping = {
+const dataGrouping = {
     approximations: approximations,
     groupData: groupData
 };

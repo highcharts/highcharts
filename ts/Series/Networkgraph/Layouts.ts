@@ -225,7 +225,7 @@ extend(
             this.enableSimulation = pick(enable, this.options.enableSimulation);
         },
         start: function (this: Highcharts.NetworkgraphLayout): void {
-            let layout = this,
+            const layout = this,
                 series = this.series,
                 options = this.options;
 
@@ -252,7 +252,7 @@ extend(
             }
         },
         step: function (this: Highcharts.NetworkgraphLayout): void {
-            let layout = this,
+            const layout = this,
                 series = this.series,
                 options = this.options;
 
@@ -347,7 +347,7 @@ extend(
             element: T,
             collection: Array<T>
         ): void {
-            let index = collection.indexOf(element);
+            const index = collection.indexOf(element);
 
             if (index !== -1) {
                 collection.splice(index, 1);
@@ -434,7 +434,7 @@ extend(
         initPositions: function (
             this: Highcharts.NetworkgraphLayout
         ): void {
-            let initialPositions = this.options.initialPositions;
+            const initialPositions = this.options.initialPositions;
 
             if (isFunction(initialPositions)) {
                 initialPositions.call(this);
@@ -526,7 +526,7 @@ extend(
         setRandomPositions: function (
             this: Highcharts.NetworkgraphLayout
         ): void {
-            let box = this.box,
+            const box = this.box,
                 nodes = this.nodes,
                 nodesLength = nodes.length + 1;
 
@@ -649,7 +649,7 @@ extend(
             return goDeeper;
         },
         repulsiveForces: function (this: Highcharts.NetworkgraphLayout): void {
-            let layout = this;
+            const layout = this;
 
             if (layout.approximation === 'barnes-hut') {
                 layout.nodes.forEach(function (node: Point): void {
@@ -730,7 +730,7 @@ extend(
             });
         },
         applyLimits: function (this: Highcharts.NetworkgraphLayout): void {
-            let layout = this,
+            const layout = this,
                 nodes = layout.nodes;
 
             nodes.forEach(function (node: Point): void {
@@ -757,7 +757,7 @@ extend(
             node: Highcharts.NetworkgraphPoint,
             box: Record<string, number>
         ): void {
-            let radius = node.radius;
+            const radius = node.radius;
             /*
             TO DO: Consider elastic collision instead of stopping.
             o' means end position when hitting plotting area edge:
@@ -855,7 +855,7 @@ extend(
             nodeA: Highcharts.NetworkgraphPoint,
             nodeB: (Highcharts.NetworkgraphPoint|Highcharts.QuadTreeNode)
         ): number {
-            let distance = this.getDistXY(nodeA, nodeB);
+            const distance = this.getDistXY(nodeA, nodeB);
 
             return this.vectorLength(distance);
         },
@@ -864,7 +864,7 @@ extend(
             nodeA: Point,
             nodeB: (Point|Highcharts.QuadTreeNode)
         ): Record<string, number> {
-            let xDist = (nodeA.plotX as any) - (nodeB.plotX as any),
+            const xDist = (nodeA.plotX as any) - (nodeB.plotX as any),
                 yDist = (nodeA.plotY as any) - (nodeB.plotY as any);
 
             return {

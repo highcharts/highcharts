@@ -34,7 +34,7 @@ function populateAverage(
     period: number,
     index: number
 ): [number, number] {
-    let mmY: number = yVal[i - 1][index] - yVal[i - period - 1][index],
+    const mmY: number = yVal[i - 1][index] - yVal[i - period - 1][index],
         mmX: number = xVal[i - 1];
 
     return [mmX, mmY];

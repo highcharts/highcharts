@@ -504,7 +504,7 @@ if (!svg) {
      * @function Highcharts.Chart#isReadyToRender
      */
     Chart.prototype.isReadyToRender = function (): boolean {
-        let chart = this;
+        const chart = this;
 
         // Note: win == win.top is required
         if (!svg &&
@@ -548,7 +548,7 @@ if (!svg) {
         type: string,
         fn: Highcharts.EventCallbackFunction<T>
     ): void {
-        let el = this;
+        const el = this;
 
         /**
          * @private
@@ -656,7 +656,7 @@ if (!svg) {
             this: Highcharts.VMLElement,
             parent: Highcharts.VMLElement
         ): Highcharts.VMLElement {
-            let wrapper = this,
+            const wrapper = this,
                 renderer = wrapper.renderer,
                 element = wrapper.element,
                 box = renderer.box,
@@ -720,7 +720,7 @@ if (!svg) {
             // compensate for the rotation, like it currently does for SVG.
             // Test case: https://jsfiddle.net/highcharts/Ybt44/
 
-            let rotation = this.rotation,
+            const rotation = this.rotation,
                 costheta = Math.cos((rotation as any) * deg2rad),
                 sintheta = Math.sin((rotation as any) * deg2rad);
 
@@ -934,7 +934,7 @@ if (!svg) {
         ): Highcharts.VMLElement {
             // simplest possible event model for internal use
             this.element['on' + eventType] = function (): void {
-                let e = win.event as Event;
+                const e = win.event as Event;
 
                 (e.target as any) = e.srcElement;
                 handler(e);
@@ -1109,7 +1109,7 @@ if (!svg) {
             key: string,
             element: HTMLDOMElement
         ): void {
-            let strokeElem =
+            const strokeElem =
                 element.getElementsByTagName('stroke')[0] as (
                     Highcharts.VMLDOMElement
                 ) ||
@@ -1159,7 +1159,7 @@ if (!svg) {
             key: string,
             element: Highcharts.VMLDOMElement
         ): void {
-            let nodeName = element.nodeName;
+            const nodeName = element.nodeName;
 
             if (nodeName === 'SPAN') { // text color
                 element.style.color = value;
@@ -1194,7 +1194,7 @@ if (!svg) {
             key: string,
             element: Highcharts.VMLDOMElement
         ): void {
-            let style = element.style;
+            const style = element.style;
 
             // style is for #1873:
             (this as any)[key] = style[key as any] = value;
@@ -1439,7 +1439,7 @@ if (!svg) {
         ): Highcharts.VMLClipRectObject {
 
             // create a dummy element
-            let clipRect = (this.createElement as any)(),
+            const clipRect = (this.createElement as any)(),
                 isObj = isObject(x);
 
             // mimic a rectangle with its style object for automatic updating in
@@ -1455,7 +1455,7 @@ if (!svg) {
                     this: Highcharts.VMLClipRectObject,
                     wrapper: Highcharts.VMLElement
                 ): CSSObject {
-                    let element = wrapper.element,
+                    const element = wrapper.element,
                         nodeName = element.nodeName,
                         isShape = nodeName === 'shape',
                         inverted = wrapper.inverted,
@@ -1714,7 +1714,7 @@ if (!svg) {
 
             } else {
                 // 'stroke' or 'fill' node
-                let propNodes = elem.getElementsByTagName(prop) as any;
+                const propNodes = elem.getElementsByTagName(prop) as any;
 
                 if (propNodes.length) {
                     propNodes[0].opacity = 1;
@@ -1740,7 +1740,7 @@ if (!svg) {
             this: Highcharts.VMLRenderer,
             markup: Array<(number|string)>
         ): string {
-            let vmlStyle = 'display:inline-block;behavior:url(#default#VML);',
+            const vmlStyle = 'display:inline-block;behavior:url(#default#VML);',
                 isIE8 = this.isIE8;
 
             markup = markup.join('') as any;
@@ -1793,7 +1793,7 @@ if (!svg) {
             this: Highcharts.VMLRenderer,
             path?: (Highcharts.VMLAttributes|Highcharts.VMLPathArray)
         ): Highcharts.VMLElement {
-            let attr = {
+            const attr = {
                 // subpixel precision down to 0.1 (width and height = 1px)
                 coordsize: '10 10'
             } as Highcharts.VMLAttributes;
@@ -1823,7 +1823,7 @@ if (!svg) {
             y?: number,
             r?: number
         ): Highcharts.VMLElement {
-            let circle = this.symbol('circle');
+            const circle = this.symbol('circle');
 
             if (isObject(x)) {
                 r = (x as any).r;
@@ -1892,7 +1892,7 @@ if (!svg) {
             width: number,
             height: number
         ): Highcharts.VMLElement {
-            let obj = this.createElement('img').attr({ src: src });
+            const obj = this.createElement('img').attr({ src: src });
 
             if (arguments.length > 1) {
                 obj.attr({
@@ -1937,7 +1937,7 @@ if (!svg) {
             element: HTMLDOMElement,
             parentNode: HTMLDOMElement
         ): void {
-            let ren = this,
+            const ren = this,
                 parentStyle = parentNode.style,
                 imgStyle = element.tagName === 'IMG' && element.style; // #1111
 

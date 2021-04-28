@@ -87,7 +87,7 @@ namespace VennUtils {
         relations: Array<Highcharts.VennRelationObject>
     ): Array<Highcharts.VennRelationObject> {
         // Calculate the amount of overlap per set.
-        let mapOfIdToProps = relations
+        const mapOfIdToProps = relations
             // Filter out relations consisting of 2 sets.
             .filter(function (relation: Highcharts.VennRelationObject): boolean {
                 return relation.sets.length === 2;
@@ -97,7 +97,7 @@ namespace VennUtils {
                 map: Record<string, Highcharts.VennPropsObject>,
                 relation: Highcharts.VennRelationObject
             ): Record<string, Highcharts.VennPropsObject> {
-                let sets = relation.sets;
+                const sets = relation.sets;
 
                 sets.forEach(function (
                     set: string,
@@ -121,7 +121,7 @@ namespace VennUtils {
             .filter(isSet)
             // Extend the set with the calculated properties.
             .forEach(function (set: Highcharts.VennRelationObject): void {
-                let properties = mapOfIdToProps[set.sets[0]];
+                const properties = mapOfIdToProps[set.sets[0]];
 
                 extend(set, properties);
             });
@@ -228,7 +228,7 @@ namespace VennUtils {
             distance = 0;
         } else {
             distance = bisect(function (x: number): number {
-                let actualOverlap = getOverlapBetweenCirclesByDistance(r1, r2, x);
+                const actualOverlap = getOverlapBetweenCirclesByDistance(r1, r2, x);
 
                 // Return the differance between wanted and actual overlap.
                 return overlap - actualOverlap;
@@ -257,7 +257,7 @@ namespace VennUtils {
         internal: Array<Highcharts.CircleObject>,
         external: Array<Highcharts.CircleObject>
     ): number {
-        let radius = internal.reduce(function (
+        const radius = internal.reduce(function (
                 min: number,
                 circle: Highcharts.CircleObject
             ): number {
@@ -270,12 +270,12 @@ namespace VennUtils {
                 }
             );
 
-        let findDistance = function (
+        const findDistance = function (
             maxDistance: number,
             direction: number
         ): number {
             return bisect(function (x: number): number {
-                let testPos = {
+                const testPos = {
                         x: pos.x + (direction * x),
                         y: pos.y
                     },
@@ -319,7 +319,7 @@ namespace VennUtils {
             margin: number,
             circle: Highcharts.CircleObject
         ): number {
-            let m = circle.r - getDistanceBetweenPoints(point, circle);
+            const m = circle.r - getDistanceBetweenPoints(point, circle);
 
             return (m <= margin) ? m : margin;
         }, Number.MAX_VALUE);
@@ -328,7 +328,7 @@ namespace VennUtils {
             margin: number,
             circle: Highcharts.CircleObject
         ): number {
-            let m = getDistanceBetweenPoints(point, circle) - circle.r;
+            const m = getDistanceBetweenPoints(point, circle) - circle.r;
 
             return (m <= margin) ? m : margin;
         }, margin);
@@ -353,8 +353,8 @@ namespace VennUtils {
         // When there is only two circles we can find the overlap by using their
         // radiuses and the distance between them.
         if (circles.length === 2) {
-            let circle1 = circles[0];
-            let circle2 = circles[1];
+            const circle1 = circles[0];
+            const circle2 = circles[1];
 
             overlap = getOverlapBetweenCirclesByDistance(
                 circle1.r,
@@ -377,7 +377,7 @@ namespace VennUtils {
     function isValidRelation(
         x: (VennPointOptions|Highcharts.VennRelationObject)
     ): boolean {
-        let map: Record<string, boolean> = {};
+        const map: Record<string, boolean> = {};
 
         return (
             isObject(x) &&
@@ -414,7 +414,7 @@ namespace VennUtils {
     export function layoutGreedyVenn(
         relations: Array<Highcharts.VennRelationObject>
     ): Record<string, Highcharts.CircleObject> {
-        let positionedSets: Array<Highcharts.VennRelationObject> = [],
+        const positionedSets: Array<Highcharts.VennRelationObject> = [],
             mapOfIdToCircles: Record<string, Highcharts.CircleObject> =
                 {};
 
@@ -440,11 +440,11 @@ namespace VennUtils {
          * The coordinates to position the set at.
          * @return {void}
          */
-        let positionSet = function positionSet(
+        const positionSet = function positionSet(
             set: Highcharts.VennRelationObject,
             coordinates: PositionObject
         ): void {
-            let circle = set.circle;
+            const circle = set.circle;
 
             circle.x = coordinates.x;
             circle.y = coordinates.y;
@@ -455,14 +455,14 @@ namespace VennUtils {
         addOverlapToSets(relations);
 
         // Sort sets by the sum of their size from large to small.
-        let sortedByOverlap = relations
+        const sortedByOverlap = relations
             .filter(isSet)
             .sort(sortByTotalOverlap);
 
         // Position the most overlapped set at 0,0.
         positionSet(sortedByOverlap.shift() as any, { x: 0, y: 0 });
 
-        let relationsWithTwoSets = relations.filter(
+        const relationsWithTwoSets = relations.filter(
             function (x: Highcharts.VennRelationObject): boolean {
                 return x.sets.length === 2;
             }
@@ -472,22 +472,22 @@ namespace VennUtils {
         sortedByOverlap.forEach(function (
             set: Highcharts.VennRelationObject
         ): void {
-            let circle = set.circle,
+            const circle = set.circle,
                 radius = circle.r,
                 overlapping = set.overlapping;
 
-            let bestPosition = positionedSets
+            const bestPosition = positionedSets
                 .reduce(function (
                     best: Highcharts.VennLabelOverlapObject,
                     positionedSet: Highcharts.VennRelationObject,
                     i: number
                 ): Highcharts.VennLabelOverlapObject {
-                    let positionedCircle = positionedSet.circle,
+                    const positionedCircle = positionedSet.circle,
                         overlap = overlapping[positionedSet.sets[0]];
 
                     // Calculate the distance between the sets to get the
                     // correct overlap
-                    let distance = getDistanceBetweenCirclesByOverlap(
+                    const distance = getDistanceBetweenCirclesByOverlap(
                         radius,
                         positionedCircle.r,
                         overlap
@@ -507,7 +507,7 @@ namespace VennUtils {
                     positionedSets.slice(i + 1).forEach(function (
                         positionedSet2: Highcharts.VennRelationObject
                     ): void {
-                        let positionedCircle2 = positionedSet2.circle,
+                        const positionedCircle2 = positionedSet2.circle,
                             overlap2 = overlapping[positionedSet2.sets[0]],
                             distance2 = getDistanceBetweenCirclesByOverlap(
                                 radius,
@@ -535,7 +535,7 @@ namespace VennUtils {
                         circle.y = coordinates.y;
 
                         // Calculate loss for the suggested coordinates.
-                        let currentLoss = loss(
+                        const currentLoss = loss(
                             mapOfIdToCircles, relationsWithTwoSets
                         );
 
@@ -577,7 +577,7 @@ namespace VennUtils {
         mapOfIdToCircle: Record<string, Highcharts.CircleObject>,
         relations: Array<Highcharts.VennRelationObject>
     ): number {
-        let precision = 10e10;
+        const precision = 10e10;
 
         // Iterate all the relations and calculate their individual loss.
         return relations.reduce(function (
@@ -587,9 +587,9 @@ namespace VennUtils {
             let loss = 0;
 
             if (relation.sets.length > 1) {
-                let wantedOverlap = relation.value;
+                const wantedOverlap = relation.value;
                 // Calculate the actual overlap between the sets.
-                let actualOverlap = getOverlapBetweenCircles(
+                const actualOverlap = getOverlapBetweenCircles(
                     // Get the circles for the given sets.
                     relation.sets.map(function (
                         set: string
@@ -598,7 +598,7 @@ namespace VennUtils {
                     })
                 );
 
-                let diff = wantedOverlap - actualOverlap;
+                const diff = wantedOverlap - actualOverlap;
 
                 loss = Math.round((diff * diff) * precision) / precision;
             }
@@ -620,9 +620,9 @@ namespace VennUtils {
     export function processVennData(
         data: Array<VennPointOptions>
     ): Array<Highcharts.VennRelationObject> {
-        let d = isArray(data) ? data : [];
+        const d = isArray(data) ? data : [];
 
-        let validSets = d
+        const validSets = d
             .reduce(function (
                 arr: Array<string>,
                 x: VennPointOptions
@@ -635,7 +635,7 @@ namespace VennUtils {
             }, [])
             .sort();
 
-        let mapOfIdToRelation = d.reduce(function (
+        const mapOfIdToRelation = d.reduce(function (
             mapOfIdToRelation: Record<string, Highcharts.VennRelationObject>,
             relation: VennPointOptions
         ): Record<string, Highcharts.VennRelationObject> {
@@ -657,7 +657,7 @@ namespace VennUtils {
             i: number,
             arr: Array<string>
         ): Array<string> {
-            let remaining = arr.slice(i + 1);
+            const remaining = arr.slice(i + 1);
 
             remaining.forEach(function (set2: string): void {
                 combinations.push(set + ',' + set2);
@@ -665,7 +665,7 @@ namespace VennUtils {
             return combinations;
         }, []).forEach(function (combination: string): void {
             if (!mapOfIdToRelation[combination]) {
-                let obj: Highcharts.VennRelationObject = {
+                const obj: Highcharts.VennRelationObject = {
                     sets: combination.split(','),
                     value: 0
                 } as any;

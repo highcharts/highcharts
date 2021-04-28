@@ -139,7 +139,7 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
         child: Highcharts.TreeNodeObject,
         i: number
     ): void {
-        let newOptions = extend<Highcharts.TreeValuesOptionsObject<T>>(
+        const newOptions = extend<Highcharts.TreeValuesOptionsObject<T>>(
             {} as any, options
         );
 
@@ -202,7 +202,7 @@ const getColor = function getColor(
      * @private
      */
     function variation(color: ColorString): ColorString {
-        let colorVariation = level && level.colorVariation;
+        const colorVariation = level && level.colorVariation;
 
         if (colorVariation) {
             if (colorVariation.key === 'brightness') {

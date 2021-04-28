@@ -127,7 +127,7 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
     }
 
     public init(this: AroonOscillatorIndicator): void {
-        let args = arguments,
+        const args = arguments,
             ctx = this;
 
         requiredIndicator.isParentLoaded(

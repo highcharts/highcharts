@@ -92,7 +92,7 @@ class CMFIndicator extends SMAIndicator {
      * otherwise false.
      */
     public isValid(this: CMFIndicator): boolean {
-        let chart = this.chart,
+        const chart = this.chart,
             options: CMFOptions = this.options,
             series = this.linkedParent,
             volumeSeries: LineSeries = (
@@ -192,7 +192,7 @@ class CMFIndicator extends SMAIndicator {
             ohlc: Array<number>,
             volume: number
         ): (number|null) {
-            let high: number = ohlc[1],
+            const high: number = ohlc[1],
                 low: number = ohlc[2],
                 close: number = ohlc[3],
 

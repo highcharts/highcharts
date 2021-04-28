@@ -83,11 +83,11 @@ wrap(
         h: number,
         options: Highcharts.SymbolOptionsObject
     ): SVGPath {
-        let arc = proceed,
+        const arc = proceed,
             path: SVGPath = arc(x, y, w, h, options);
 
         if (options.rounded) {
-            let r = options.r || w,
+            const r = options.r || w,
                 smallR = (r - (options.innerR || 0)) / 2,
                 outerArcStart = path[0],
                 innerArcStart = path[2];

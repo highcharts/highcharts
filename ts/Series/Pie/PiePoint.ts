@@ -133,7 +133,7 @@ class PiePoint extends Point {
      * @private
      */
     public haloPath(size: number): SVGPath {
-        let shapeArgs = this.shapeArgs;
+        const shapeArgs = this.shapeArgs;
 
         return this.sliced || !this.visible ?
             [] :
@@ -196,7 +196,7 @@ class PiePoint extends Point {
         vis: boolean,
         redraw?: boolean
     ): void {
-        let point = this,
+        const point = this,
             series = point.series,
             chart = series.chart,
             ignoreHiddenPoint = series.options.ignoreHiddenPoint;
@@ -261,7 +261,7 @@ class PiePoint extends Point {
         redraw?: boolean,
         animation?: (boolean|Partial<AnimationOptions>)
     ): void {
-        let point = this,
+        const point = this,
             series = point.series,
             chart = series.chart;
 
@@ -310,7 +310,7 @@ extend(PiePoint.prototype, {
             connectorPosition: PiePoint.LabelConnectorPositionObject,
             options: PieDataLabelOptions
         ): SVGPath {
-            let breakAt = connectorPosition.breakAt,
+            const breakAt = connectorPosition.breakAt,
                 touchingSliceAt = connectorPosition.touchingSliceAt,
                 lineSegment = options.softConnector ? [
                     'C', // soft break
@@ -341,7 +341,7 @@ extend(PiePoint.prototype, {
             labelPosition: PiePositionObject,
             connectorPosition: PiePoint.LabelConnectorPositionObject
         ): SVGPath {
-            let touchingSliceAt = connectorPosition.touchingSliceAt;
+            const touchingSliceAt = connectorPosition.touchingSliceAt;
 
             // direct line to the slice
             return [

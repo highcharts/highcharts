@@ -339,7 +339,7 @@ class LineSeries extends Series {
     public getZonesGraphs(props: Array<Array<string>>): Array<Array<string>> {
         // Add the zone properties if any
         this.zones.forEach(function (zone, i): void {
-            let propset = [
+            const propset = [
                 'zone-graph-' + i,
                 'highcharts-graph highcharts-zone-graph-' + i + ' ' +
                     (zone.className || '')

@@ -294,7 +294,7 @@ class SMAIndicator extends LineSeries {
         chart: Chart,
         options: SMAOptions
     ): void {
-        let indicator = this,
+        const indicator = this,
             requiredIndicators = indicator.requireIndicators();
 
         // Check whether all required indicators are loaded.
@@ -444,7 +444,7 @@ class SMAIndicator extends LineSeries {
         if (indicator.calculateOn === 'init') {
             recalculateValues();
         } else {
-            let unbinder = addEvent(
+            const unbinder = addEvent(
                 indicator.chart,
                 indicator.calculateOn,
                 function (): void {
@@ -462,7 +462,7 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public processData(): (boolean|undefined) {
-        let series = this,
+        const series = this,
             compareToMain = series.options.compareToMain,
             linkedParent = series.linkedParent;
 
@@ -479,7 +479,7 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public requireIndicators(): RequireIndicatorsResultObject {
-        let obj: RequireIndicatorsResultObject = {
+        const obj: RequireIndicatorsResultObject = {
             allLoaded: true
         };
 

@@ -203,7 +203,7 @@ TimelineEvent.prototype.play = function (
     this: Highcharts.TimelineEvent,
     options?: Highcharts.TimelineEventOptionsObject
 ): void {
-    let eventObject = this.options.eventObject,
+    const eventObject = this.options.eventObject,
         masterOnEnd = this.options.onEnd,
         playOnEnd = options && options.onEnd,
         playOptionsOnEnd = this.options.playOptions &&
@@ -214,7 +214,7 @@ TimelineEvent.prototype.play = function (
         // If we have multiple onEnds defined, use all
         playOptions.onEnd = masterOnEnd || playOnEnd || playOptionsOnEnd ?
             function (): void {
-                let args = arguments;
+                const args = arguments;
 
                 [masterOnEnd, playOnEnd, playOptionsOnEnd].forEach(
                     function (onEnd: (Function|undefined)): void {
@@ -422,7 +422,7 @@ TimelinePath.prototype.setCursor = function (
     this: Highcharts.TimelinePath,
     eventId: string
 ): boolean {
-    let ix = this.eventIdMap[eventId];
+    const ix = this.eventIdMap[eventId];
 
     if (typeof ix !== 'undefined') {
         this.cursor = ix;
@@ -496,7 +496,7 @@ TimelinePath.prototype.pause = function (
     this: Highcharts.TimelinePath,
     fadeOut?: boolean
 ): void {
-    let timelinePath = this;
+    const timelinePath = this;
 
     // Cancel next scheduled play
     clearTimeout(timelinePath.nextScheduledPlay);
@@ -558,7 +558,7 @@ TimelinePath.prototype.playEvents = function (
     timelinePath.eventsPlaying[curEvent.id] = curEvent;
     curEvent.play({
         onEnd: function (cancelled?: boolean): void {
-            let signalData: Highcharts.SignalDataObject = {
+            const signalData: Highcharts.SignalDataObject = {
                 event: curEvent,
                 cancelled: !!cancelled
             };
@@ -734,7 +734,7 @@ Timeline.prototype.playPaths = function (
             ): void {
                 // Play ended callback
                 // Data to pass to signal callbacks
-                let cancelled = callbackData && callbackData.cancelled,
+                const cancelled = callbackData && callbackData.cancelled,
                     signalData: Highcharts.SignalDataObject = {
                         path: path,
                         cancelled: cancelled
@@ -798,7 +798,7 @@ Timeline.prototype.pause = function (
     this: Highcharts.Timeline,
     fadeOut?: boolean
 ): void {
-    let timeline = this;
+    const timeline = this;
 
     // Cancel currently playing events
     Object.keys(timeline.pathsPlaying).forEach(function (id: string): void {
@@ -926,7 +926,7 @@ Timeline.prototype.getCurrentPlayingPaths = function (
 
 
 // Export the classes
-let timelineClasses: Highcharts.TimelineClassesObject = {
+const timelineClasses: Highcharts.TimelineClassesObject = {
     TimelineEvent: TimelineEvent as any,
     TimelinePath: TimelinePath as any,
     Timeline: Timeline as any

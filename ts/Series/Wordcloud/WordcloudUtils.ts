@@ -126,7 +126,7 @@ namespace WordcloudUtils {
             intersects = !!find(points, function (
                 p: WordcloudPoint
             ): boolean {
-                let result = isIntersecting(p);
+                const result = isIntersecting(p);
 
                 if (result) {
                     point.lastCollidedWith = p;
@@ -260,7 +260,7 @@ namespace WordcloudUtils {
         attempt: number,
         params?: WordcloudSeries.WordcloudSpiralParamsObject
     ): (boolean|PositionObject) {
-        let result: PositionObject = squareSpiral(attempt, params) as any,
+        const result: PositionObject = squareSpiral(attempt, params) as any,
             field: WordcloudSeries.WordcloudFieldObject = (params as any).field;
 
         if (result) {
@@ -311,7 +311,7 @@ namespace WordcloudUtils {
         targetHeight: number,
         field: Highcharts.PolygonBoxObject
     ): number {
-        let height = Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2,
+        const height = Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2,
             width = Math.max(Math.abs(field.left), Math.abs(field.right)) * 2,
             scaleX = width > 0 ? 1 / width * targetWidth : 1,
             scaleY = height > 0 ? 1 / height * targetHeight : 1;
@@ -347,11 +347,11 @@ namespace WordcloudUtils {
         targetHeight: number,
         data: Array<WordcloudPoint>
     ): WordcloudSeries.WordcloudFieldObject {
-        let info: Record<string, number> = data.reduce(function (
+        const info: Record<string, number> = data.reduce(function (
                 obj: Record<string, number>,
                 point: WordcloudPoint
             ): Record<string, number> {
-                let dimensions = point.dimensions,
+                const dimensions = point.dimensions,
                     x = Math.max(dimensions.width, dimensions.height);
 
                 // Find largest height.
@@ -494,7 +494,7 @@ namespace WordcloudUtils {
         rect: Highcharts.PolygonBoxObject,
         field: WordcloudSeries.WordcloudFieldObject
     ): boolean {
-        let playingField = {
+        const playingField = {
             left: -(field.width / 2),
             right: field.width / 2,
             top: -(field.height / 2),

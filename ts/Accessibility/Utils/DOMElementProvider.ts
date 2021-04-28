@@ -51,7 +51,7 @@ declare global {
  * @private
  * @class
  */
-let DOMElementProvider: typeof Highcharts.DOMElementProvider = function (
+const DOMElementProvider: typeof Highcharts.DOMElementProvider = function (
     this: Highcharts.DOMElementProvider
 ): void {
     this.elements = [];
@@ -64,7 +64,7 @@ extend(DOMElementProvider.prototype, {
      * @private
      */
     createElement: function (this: Highcharts.DOMElementProvider): HTMLDOMElement {
-        let el = doc.createElement.apply(doc, arguments);
+        const el = doc.createElement.apply(doc, arguments);
         this.elements.push(el);
         return el;
     },

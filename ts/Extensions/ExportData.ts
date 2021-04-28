@@ -553,7 +553,7 @@ Chart.prototype.getDataRows = function (
             keyLength?: number
         ): (string|Record<string, string>) {
             if (csvOptions.columnHeaderFormatter) {
-                let s = csvOptions.columnHeaderFormatter(item, key, keyLength);
+                const s = csvOptions.columnHeaderFormatter(item, key, keyLength);
 
                 if (s !== false) {
                     return s;
@@ -586,11 +586,11 @@ Chart.prototype.getDataRows = function (
             pointArrayMap: Array<string>,
             pIdx?: number
         ): Highcharts.ExportingCategoryDateTimeMap {
-            let categoryMap: Highcharts.ExportingCategoryMap = {},
+            const categoryMap: Highcharts.ExportingCategoryMap = {},
                 dateTimeValueAxisMap: Highcharts.ExportingDateTimeMap = {};
 
             pointArrayMap.forEach(function (prop: string): void {
-                let axisName = (
+                const axisName = (
                         (series.keyToAxis && series.keyToAxis[prop]) ||
                         prop
                     ) + 'Axis',
@@ -1246,7 +1246,7 @@ function getBlobFromContent(
     content: string,
     type: string
 ): (string|undefined) {
-    let nav = win.navigator,
+    const nav = win.navigator,
         webKit = (
             nav.userAgent.indexOf('WebKit') > -1 &&
             nav.userAgent.indexOf('Chrome') < 0
@@ -1256,7 +1256,7 @@ function getBlobFromContent(
     try {
         // MS specific
         if (nav.msSaveOrOpenBlob && win.MSBlobBuilder) {
-            let blob = new win.MSBlobBuilder();
+            const blob = new win.MSBlobBuilder();
             blob.append(content);
             return blob.getBlob('image/svg+xml') as any;
         }
@@ -1286,7 +1286,7 @@ function getBlobFromContent(
  * @requires modules/exporting
  */
 Chart.prototype.downloadCSV = function (): void {
-    let csv = this.getCSV(true);
+    const csv = this.getCSV(true);
 
     downloadURL(
         getBlobFromContent(csv, 'text/csv') ||
@@ -1306,7 +1306,7 @@ Chart.prototype.downloadCSV = function (): void {
  * @requires modules/exporting
  */
 Chart.prototype.downloadXLS = function (): void {
-    let uri = 'data:application/vnd.ms-excel;base64,',
+    const uri = 'data:application/vnd.ms-excel;base64,',
         template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
             'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
             'xmlns="http://www.w3.org/TR/REC-html40">' +

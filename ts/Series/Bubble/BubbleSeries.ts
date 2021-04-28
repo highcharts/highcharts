@@ -524,7 +524,7 @@ class BubbleSeries extends ScatterSeries {
         point?: BubblePoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        let markerOptions = this.options.marker,
+        const markerOptions = this.options.marker,
             fillOpacity = (markerOptions as any).fillOpacity,
             attr = Series.prototype.pointAttribs.call(this, point, state);
 

@@ -76,7 +76,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
     });
 
     (this.series || []).forEach(function (series): void {
-        let dlOptions: DataLabelOptions = (
+        const dlOptions: DataLabelOptions = (
             series.options.dataLabels as any
         );
 
@@ -87,7 +87,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
             const push = (points: Point[]): void =>
                 points.forEach((point: Point): void => {
                     if (point.visible) {
-                        let dataLabels = (
+                        const dataLabels = (
                             isArray(point.dataLabels) ?
                                 point.dataLabels :
                                 (point.dataLabel ? [point.dataLabel] : [])
@@ -96,7 +96,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
                         dataLabels.forEach(function (
                             label: SVGElement
                         ): void {
-                            let options = label.options;
+                            const options = label.options;
 
                             label.labelrank = pick(
                                 options.labelrank,

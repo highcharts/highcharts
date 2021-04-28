@@ -484,7 +484,7 @@ class Tick {
         str: string,
         labelOptions: Highcharts.XAxisLabelsOptions
     ): (SVGElement|undefined) {
-        let axis = this.axis,
+        const axis = this.axis,
             chart = axis.chart,
             label = defined(str) && labelOptions.enabled ?
                 chart.renderer
@@ -922,7 +922,7 @@ class Tick {
         old?: boolean,
         opacity?: number
     ): void {
-        let tick = this,
+        const tick = this,
             axis = tick.axis,
             horiz = axis.horiz,
             pos = tick.pos,

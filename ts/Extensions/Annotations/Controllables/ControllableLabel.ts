@@ -314,7 +314,7 @@ class ControllableLabel implements ControllableMixin.Type {
     }
 
     public render(parent: SVGElement): void {
-        let options = this.options,
+        const options = this.options,
             attrs = this.attrsFromOptions(options),
             style = options.style;
 
@@ -401,7 +401,7 @@ class ControllableLabel implements ControllableMixin.Type {
      * options.
      */
     public anchor(_point: Highcharts.AnnotationPointType): Highcharts.AnnotationAnchorObject {
-        let anchor = ControllableMixin.anchor.apply(this, arguments),
+        const anchor = ControllableMixin.anchor.apply(this, arguments),
             x = this.options.x || 0,
             y = this.options.y || 0;
 

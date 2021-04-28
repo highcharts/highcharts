@@ -152,7 +152,7 @@ class OrganizationSeries extends SankeySeries {
                 )
             ): string {
 
-                let outerStyle: CSSObject = {
+                const outerStyle: CSSObject = {
                         width: '100%',
                         height: '100%',
                         display: 'flex',
@@ -301,7 +301,7 @@ class OrganizationSeries extends SankeySeries {
         path: SVGPath,
         r: number
     ): SVGPath {
-        let d: SVGPath = [];
+        const d: SVGPath = [];
 
         for (let i = 0; i < path.length; i++) {
             const x = path[i][1];
@@ -444,7 +444,7 @@ class OrganizationSeries extends SankeySeries {
     }
 
     public createNode(id: string): OrganizationPoint {
-        let node: OrganizationPoint = super.createNode.call(this, id) as any;
+        const node: OrganizationPoint = super.createNode.call(this, id) as any;
 
         // All nodes in an org chart are equal width
         node.getSum = function (): number {
@@ -456,7 +456,7 @@ class OrganizationSeries extends SankeySeries {
     }
 
     public createNodeColumn(): OrganizationSeries.ColumnArray {
-        let column: OrganizationSeries.ColumnArray = super.createNodeColumn.call(this) as any;
+        const column: OrganizationSeries.ColumnArray = super.createNodeColumn.call(this) as any;
 
         // Wrap the offset function so that the hanging node's children are
         // aligned to their parent
@@ -466,7 +466,7 @@ class OrganizationSeries extends SankeySeries {
             node: OrganizationPoint,
             factor: number
         ): (Record<string, number>|undefined) {
-            let offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
+            const offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
 
             // Modify the default output if the parent's layout is 'hanging'
             if (node.hangsFrom) {
@@ -485,7 +485,7 @@ class OrganizationSeries extends SankeySeries {
         point: OrganizationPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        let series = this,
+        const series = this,
             attribs = SankeySeries.prototype.pointAttribs.call(series, point, state),
             level = point.isNode ? point.level : point.fromNode.level,
             levelOptions: OrganizationSeriesLevelOptions =

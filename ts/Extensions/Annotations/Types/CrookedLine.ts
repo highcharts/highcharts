@@ -60,7 +60,7 @@ class CrookedLine extends Annotation {
     }
 
     public getPointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
-        let typeOptions = this.options.typeOptions;
+        const typeOptions = this.options.typeOptions;
 
         return (typeOptions.points || []).map(function (
             pointOptions: Highcharts.AnnotationsTypePointsOptions
@@ -82,7 +82,7 @@ class CrookedLine extends Annotation {
                 pointOptions: Highcharts.AnnotationMockPointOptionsObject,
                 i: number
             ): void {
-                let controlPoint = new ControlPoint(
+                const controlPoint = new ControlPoint(
                     this.chart,
                     this,
                     merge(
@@ -101,7 +101,7 @@ class CrookedLine extends Annotation {
     }
 
     public addShapes(): void {
-        let typeOptions = this.options.typeOptions,
+        const typeOptions = this.options.typeOptions,
             shape = this.initShape(
                 merge(typeOptions.line, {
                     type: 'path',
@@ -212,7 +212,7 @@ CrookedLine.prototype.defaultOptions = merge(
                 this: Highcharts.AnnotationControlPoint,
                 target: Highcharts.AnnotationControllable
             ): PositionObject {
-                let graphic = this.graphic,
+                const graphic = this.graphic,
                     xy = MockPoint.pointToPixels(target.points[this.index]);
 
                 return {
@@ -233,7 +233,7 @@ CrookedLine.prototype.defaultOptions = merge(
                             e.chartY - target.chart.plotTop
                         )
                     ) {
-                        let translation = this.mouseMoveToTranslation(e);
+                        const translation = this.mouseMoveToTranslation(e);
 
                         target.translatePoint(
                             translation.x,

@@ -35,7 +35,7 @@ interface NelderMeadCentroidObject {
 const getCentroid = function (
     simplex: Array<Highcharts.NelderMeadPointArray>
 ): Array<number> {
-    let arr = simplex.slice(0, -1),
+    const arr = simplex.slice(0, -1),
         length = arr.length,
         result = [] as Array<number>,
         sum = function (
@@ -68,7 +68,7 @@ const nelderMead = function nelderMead(
     fn: Highcharts.NelderMeadTestFunction,
     initial: Highcharts.NelderMeadPointArray
 ): Highcharts.NelderMeadPointArray {
-    let maxIterations = 100,
+    const maxIterations = 100,
         sortByFx = function (
             a: Highcharts.NelderMeadPointArray,
             b: Highcharts.NelderMeadPointArray
@@ -84,7 +84,7 @@ const nelderMead = function nelderMead(
     /**
      * @private
      */
-    let weightedSum = function weightedSum(
+    const weightedSum = function weightedSum(
         weight1: number,
         v1: Array<number>,
         weight2: number,
@@ -98,10 +98,10 @@ const nelderMead = function nelderMead(
     /**
      * @private
      */
-    let getSimplex = function getSimplex(
+    const getSimplex = function getSimplex(
         initial: Highcharts.NelderMeadPointArray
     ): Array<Highcharts.NelderMeadPointArray> {
-        let n = initial.length,
+        const n = initial.length,
             simplex: Array<Highcharts.NelderMeadPointArray> =
                 new Array(n + 1);
 
@@ -111,7 +111,7 @@ const nelderMead = function nelderMead(
 
         // Create a set of extra points based on the initial.
         for (let i = 0; i < n; ++i) {
-            let point = initial.slice() as Highcharts.NelderMeadPointArray;
+            const point = initial.slice() as Highcharts.NelderMeadPointArray;
 
             point[i] = point[i] ? point[i] * 1.05 : 0.001;
             point.fx = fn(point);
@@ -120,7 +120,7 @@ const nelderMead = function nelderMead(
         return simplex;
     };
 
-    let updateSimplex = function (
+    const updateSimplex = function (
         simplex: Array<Highcharts.NelderMeadPointArray>,
         point: Highcharts.NelderMeadPointArray
     ): Array<Highcharts.NelderMeadPointArray> {
@@ -129,15 +129,15 @@ const nelderMead = function nelderMead(
         return simplex;
     };
 
-    let shrinkSimplex = function (
+    const shrinkSimplex = function (
         simplex: Array<Highcharts.NelderMeadPointArray>
     ): Array<Highcharts.NelderMeadPointArray> {
-        let best = simplex[0];
+        const best = simplex[0];
 
         return simplex.map(function (
             point: Highcharts.NelderMeadPointArray
         ): Highcharts.NelderMeadPointArray {
-            let p = weightedSum(1 - pShrink, best, pShrink, point) as (
+            const p = weightedSum(1 - pShrink, best, pShrink, point) as (
                 Highcharts.NelderMeadPointArray
             );
 
@@ -146,13 +146,13 @@ const nelderMead = function nelderMead(
         });
     };
 
-    let getPoint = function (
+    const getPoint = function (
         centroid: Array<number>,
         worst: Array<number>,
         a: number,
         b: number
     ): Highcharts.NelderMeadPointArray {
-        let point = weightedSum(a, centroid, b, worst) as (
+        const point = weightedSum(a, centroid, b, worst) as (
             Highcharts.NelderMeadPointArray
         );
 
@@ -169,15 +169,15 @@ const nelderMead = function nelderMead(
         simplex.sort(sortByFx);
 
         // Create a centroid from the simplex
-        let worst = simplex[simplex.length - 1];
-        let centroid = getCentroid(simplex);
+        const worst = simplex[simplex.length - 1];
+        const centroid = getCentroid(simplex);
 
         // Calculate the reflected point.
-        let reflected = getPoint(centroid, worst, 1 + pRef, -pRef);
+        const reflected = getPoint(centroid, worst, 1 + pRef, -pRef);
 
         if (reflected.fx < simplex[0].fx) {
             // If reflected point is the best, then possibly expand.
-            let expanded = getPoint(centroid, worst, 1 + pExp, -pExp);
+            const expanded = getPoint(centroid, worst, 1 + pExp, -pExp);
 
             simplex = updateSimplex(
                 simplex,
