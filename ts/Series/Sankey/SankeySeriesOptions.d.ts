@@ -18,6 +18,7 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type FormatUtilities from '../../Core/FormatUtilities';
 import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
 import type SankeyPoint from './SankeyPoint';
 import type SankeySeries from './SankeySeries';
@@ -70,7 +71,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, Highcharts.Nod
 
 export interface SankeySeriesTooltipOptions extends Highcharts.TooltipOptions {
     nodeFormat?: string;
-    nodeFormatter?: Highcharts.FormatterCallbackFunction<SankeyPoint>;
+    nodeFormatter?: FormatUtilities.FormatterCallbackFunction<SankeyPoint>;
 }
 
 export default SankeySeriesOptions;

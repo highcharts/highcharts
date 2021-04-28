@@ -18,6 +18,7 @@ import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type FormatUtilities from '../FormatUtilities';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -57,7 +58,7 @@ declare global {
         }
         interface AxisPlotBandsLabelOptions {
             align?: AlignValue;
-            formatter?: FormatterCallbackFunction<PlotLineOrBand>;
+            formatter?: FormatUtilities.FormatterCallbackFunction<PlotLineOrBand>;
             rotation?: number;
             style?: CSSObject;
             text?: string;
@@ -82,7 +83,7 @@ declare global {
         }
         interface AxisPlotLinesLabelOptions {
             align?: AlignValue;
-            formatter?: FormatterCallbackFunction<PlotLineOrBand>;
+            formatter?: FormatUtilities.FormatterCallbackFunction<PlotLineOrBand>;
             rotation?: number;
             style?: CSSObject;
             text?: string;
@@ -477,7 +478,7 @@ class PlotLineOrBand {
     )): string | undefined {
         return defined(optionsLabel.formatter) ?
             (optionsLabel.formatter as
-              Highcharts.FormatterCallbackFunction<Highcharts.PlotLineOrBand>)
+              FormatUtilities.FormatterCallbackFunction<Highcharts.PlotLineOrBand>)
                 .call(this as any) :
             optionsLabel.text;
     }

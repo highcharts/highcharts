@@ -302,10 +302,16 @@ function numberFormat(
  *
  * */
 
-const exports = {
+const FormatUtilities = {
     dateFormat,
     format,
     numberFormat
 };
 
-export default exports;
+namespace FormatUtilities {
+    export interface FormatterCallbackFunction<T> {
+        (this: T): string;
+    }
+}
+
+export default FormatUtilities;

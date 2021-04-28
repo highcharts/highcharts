@@ -7298,7 +7298,7 @@ interface Series extends SeriesLike {
         Highcharts.LegendSymbolMixin['drawLineMarker']|
         Highcharts.LegendSymbolMixin['drawRectangle']
     );
-    hcEvents?: Record<string, Array<Highcharts.EventWrapperObject<Series>>>;
+    hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
     isCartesian: boolean;
     kdAxisArray: Array<string>;
     parallelArrays: Array<string>;

@@ -79,6 +79,10 @@ declare global {
             rangeSelectorTo?: string;
             rangeSelectorZoom?: string;
         }
+        interface RangeObject {
+            max: number;
+            min: number;
+        }
         interface RangeSelectorClickCallbackFunction {
             (e: Event): (boolean|undefined);
         }

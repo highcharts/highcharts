@@ -50,7 +50,7 @@ namespace TreemapUtilities {
     export function eachObject(
         this: any,
         list: any,
-        func: Highcharts.ObjectEachCallbackFunction<any, unknown>,
+        func: U.ObjectEachCallbackFunction<any, unknown>,
         context?: unknown
     ): void {
         context = context || this;

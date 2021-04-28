@@ -86,7 +86,7 @@ setOptions({
 /* eslint-disable no-invalid-this */
 
 addEvent(Highcharts, 'displayError', function (
-    e: Highcharts.ErrorMessageEventObject
+    e: U.ErrorMessageEventObject
 ): void {
     // Display error on the chart causing the error or the last created chart.
     const chart = e.chart ||

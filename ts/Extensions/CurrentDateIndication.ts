@@ -19,6 +19,7 @@ import type {
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
+import type FormatUtilities from '../Core/FormatUtilities';
 import Axis from '../Core/Axis/Axis.js';
 import palette from '../Core/Color/Palette.js';
 
@@ -34,7 +35,7 @@ declare global {
         interface CurrentDateIndicatorLabelOptions {
             align?: AlignValue;
             format?: string;
-            formatter?: FormatterCallbackFunction<PlotLineOrBand>;
+            formatter?: FormatUtilities.FormatterCallbackFunction<PlotLineOrBand>;
             rotation?: number;
             style?: CSSObject;
             text?: string;

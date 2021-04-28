@@ -20,6 +20,7 @@ import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type EventCallback from '../Core/EventCallback';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
@@ -177,7 +178,7 @@ declare global {
             hideMenu(): void;
         }
         interface ExportingMenuObject {
-            onclick?: EventCallbackFunction<Chart>;
+            onclick?: EventCallback<Chart>;
             separator?: boolean;
             text?: string;
             textKey?: string;
@@ -2132,7 +2133,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             hover = states && states.hover,
             select = states && states.select,
             callback: (
-                Highcharts.EventCallbackFunction<SVGElement>|
+                EventCallback<SVGElement>|
                 undefined
             );
 
