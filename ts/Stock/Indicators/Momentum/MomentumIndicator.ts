@@ -34,7 +34,7 @@ function populateAverage(
     period: number,
     index: number
 ): [number, number] {
-    var mmY: number = yVal[i - 1][index] - yVal[i - period - 1][index],
+    const mmY: number = yVal[i - 1][index] - yVal[i - period - 1][index],
         mmX: number = xVal[i - 1];
 
     return [mmX, mmY];
@@ -80,7 +80,7 @@ class MomentumIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: MomentumOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = params.period,
+        let period: number = params.period,
             index: number = params.index as any,
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),

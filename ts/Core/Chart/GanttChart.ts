@@ -69,7 +69,7 @@ class GanttChart extends Chart {
         userOptions: Partial<Highcharts.Options>,
         callback?: Chart.CallbackFunction
     ): void {
-        var seriesOptions = userOptions.series,
+        let seriesOptions = userOptions.series,
             defaultOptions = getOptions(),
             defaultLinkedTo: number;
 
@@ -173,7 +173,7 @@ namespace GanttChart {
      *
      * @example
      * // Render a chart in to div#container
-     * var chart = Highcharts.ganttChart('container', {
+     * let chart = Highcharts.ganttChart('container', {
      *     title: {
      *         text: 'My chart'
      *     },

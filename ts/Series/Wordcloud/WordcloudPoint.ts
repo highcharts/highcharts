@@ -45,7 +45,7 @@ class WordcloudPoint extends ColumnSeries.prototype.pointClass implements Highch
      *
      * */
     public shouldDraw(): boolean {
-        var point = this;
+        const point = this;
         return !point.isNull;
     }
     public isValid(): boolean {

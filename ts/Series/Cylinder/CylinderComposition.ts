@@ -148,7 +148,7 @@ RendererProto.cylinder = function (shapeArgs: SVGAttributes): SVGElement {
 RendererProto.cylinderPath = function (
     shapeArgs: SVGAttributes
 ): CylinderPathsObject {
-    var renderer = this,
+    const renderer = this,
         chart = charts[renderer.chartIndex],
 
         // decide zIndexes of parts based on cubiod logic, for consistency.
@@ -269,7 +269,7 @@ RendererProto.getCylinderEnd = function (
         shapeArgs;
     // A half of the smaller one out of width or depth (optional, because
     // there's no depth for a funnel that reuses the code)
-    var depth = pick(shapeArgs.depth, width, 0),
+    let depth = pick(shapeArgs.depth, width, 0),
         radius = Math.min(width, depth) / 2,
 
         // Approximated longest diameter
@@ -387,7 +387,7 @@ RendererProto.getCylinderEnd = function (
 // [ M, x, y, ...[C, cp1x, cp2y, cp2x, cp2y, epx, epy]*n_times ]
 // (cp - control point, ep - end point)
 RendererProto.getCurvedPath = function (points: Array<PositionObject>): SVGPath {
-    var path: SVGPath = [['M', points[0].x, points[0].y]],
+    let path: SVGPath = [['M', points[0].x, points[0].y]],
         limit = points.length - 2,
         i;
 

@@ -128,7 +128,7 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
         series: TLinkedSeries,
         params: StochasticParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var periodK: number = (params.periods as any)[0],
+        let periodK: number = (params.periods as any)[0],
             periodD: number = (params.periods as any)[1],
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),

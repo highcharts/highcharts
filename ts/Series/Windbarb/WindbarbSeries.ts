@@ -181,7 +181,7 @@ class WindbarbSeries extends ColumnSeries {
                 values: Array<number>,
                 directions: Array<number>
             ): Array<number> {
-                var vectorX = 0,
+                let vectorX = 0,
                     vectorY = 0,
                     i,
                     len = values.length;
@@ -235,7 +235,7 @@ class WindbarbSeries extends ColumnSeries {
         point: WindbarbPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var options = this.options,
+        let options = this.options,
             stroke = point.color || this.color,
             strokeWidth = this.options.lineWidth;
 
@@ -254,7 +254,7 @@ class WindbarbSeries extends ColumnSeries {
     // Create a single wind arrow. It is later rotated around the zero
     // centerpoint.
     public windArrow(point: WindbarbPoint): (SVGElement|SVGPath) {
-        var knots = point.value * 1.943844,
+        let knots = point.value * 1.943844,
             level = point.beaufortLevel,
             path: SVGPath,
             barbs,
@@ -329,7 +329,7 @@ class WindbarbSeries extends ColumnSeries {
     }
 
     public translate(): void {
-        var beaufortFloor = this.beaufortFloor,
+        const beaufortFloor = this.beaufortFloor,
             beaufortName = this.beaufortName;
 
         OnSeriesMixin.translate.call(this);
@@ -337,7 +337,7 @@ class WindbarbSeries extends ColumnSeries {
         this.points.forEach(function (
             point: WindbarbPoint
         ): void {
-            var level = 0;
+            let level = 0;
 
             // Find the beaufort level (zero based)
             for (; level < beaufortFloor.length; level++) {
@@ -351,7 +351,7 @@ class WindbarbSeries extends ColumnSeries {
         });
     }
     public drawPoints(): void {
-        var chart = this.chart,
+        const chart = this.chart,
             yAxis = this.yAxis,
             inverted = chart.inverted,
             shapeOffset = (this.options.vectorLength as any) / 2;
@@ -359,7 +359,7 @@ class WindbarbSeries extends ColumnSeries {
         this.points.forEach(function (
             point: WindbarbPoint
         ): void {
-            var plotX = point.plotX,
+            const plotX = point.plotX,
                 plotY = point.plotY;
 
             // Check if it's inside the plot area, but only for the X

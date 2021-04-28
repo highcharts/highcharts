@@ -15,9 +15,7 @@ Most places where text is handled in Highcharts, it is also followed by an optio
 Using HTML also works around some older browser bugs with bi-directional text. Read more under [Internationalization.](https://highcharts.com/docs/advanced-chart-features/internationalization)
 
 ### Filtering
-Adding HTML from an untrusted source into the DOM is a potential security risk, as it may execute unauthorized code in the browser. This is known as [cross-site scripting or XSS](https://en.wikipedia.org/wiki/Cross-site_scripting). Since Highcharts v9 we aim to filter all HTML that is added through the chart options structure - except function callbacks, which are already by definition executing code in the browser. Our design goal is that as long as the chart options are valid JSON (which rules out functions), they should be XSS safe.
-
-In practice we do this by using the browser's built-in `DOMParser` to parse incoming strings, transform the result into an [abstract syntax tree](https://api.highcharts.com/class-reference/Highcharts.AST), then check the tags and attributes against allow lists. Unknown tags and attributes are removed.
+For security reasons, Highcharts since version 9 filters out unknown tags and attributes. See [the security page](https://highcharts.com/docs/chart-concepts/security) for details.
 
 If your config comes from a trusted source, you may add tags, attributes or reference patterns to the allow lists:
 ```js

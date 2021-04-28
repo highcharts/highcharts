@@ -65,7 +65,7 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
     public low: number = void 0 as any;
     public lowerGraphic?: SVGElement;
     public options: AreaRangePointOptions = void 0 as any;
-    public origProps?: object;
+    public origProps?: Partial<AreaRangePoint>;
     public plotHigh: number = void 0 as any;
     public plotLow: number = void 0 as any;
     public plotHighX: number = void 0 as any;
@@ -84,7 +84,7 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
      * @private
      */
     public setState(): void {
-        var prevState = this.state,
+        const prevState = this.state,
             series = this.series,
             isPolar = series.chart.polar;
 
@@ -137,7 +137,7 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
     }
 
     public haloPath(): SVGPath {
-        var isPolar = this.series.chart.polar,
+        let isPolar = this.series.chart.polar,
             path: SVGPath = [];
 
         // Bottom halo

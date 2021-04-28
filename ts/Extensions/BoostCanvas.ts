@@ -108,7 +108,7 @@ declare global {
     }
 }
 
-var CHUNK_SIZE = 50000,
+let CHUNK_SIZE = 50000,
     destroyLoadingDiv: number;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -123,7 +123,7 @@ const initCanvasBoost = function (): void {
         wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (
             this: HeatmapSeries
         ): void {
-            var chart = this.chart,
+            const chart = this.chart,
                 ctx = this.getContext(),
                 inverted = this.chart.inverted,
                 xAxis = this.xAxis,
@@ -133,7 +133,7 @@ const initCanvasBoost = function (): void {
 
                 // draw the columns
                 this.points.forEach(function (point): void {
-                    var plotY = point.plotY,
+                    let plotY = point.plotY,
                         pointAttr: SVGAttributes;
 
                     if (
@@ -200,7 +200,7 @@ const initCanvasBoost = function (): void {
         getContext: function (
             this: Series
         ): (CanvasRenderingContext2D|null|undefined) {
-            var chart = this.chart,
+            let chart = this.chart,
                 width = chart.chartWidth,
                 height = chart.chartHeight,
                 targetGroup = chart.seriesGroup || this.group,
@@ -321,7 +321,7 @@ const initCanvasBoost = function (): void {
         },
 
         renderCanvas: function (this: Series): void {
-            var series = this,
+            let series = this,
                 options = series.options,
                 chart = series.chart,
                 xAxis = this.xAxis,
@@ -584,7 +584,7 @@ const initCanvasBoost = function (): void {
 
             // Loop over the points
             (H as any).eachAsync(sdata, function (d: any, i: number): boolean {
-                var x: number,
+                let x: number,
                     y: number,
                     clientX: number,
                     plotY: number,
@@ -726,7 +726,7 @@ const initCanvasBoost = function (): void {
 
                 return !chartDestroyed;
             }, function (): void {
-                var loadingDiv: HTMLElement =
+                const loadingDiv: HTMLElement =
                         chart.loadingDiv as any,
                     loadingShown = chart.loadingShown;
 

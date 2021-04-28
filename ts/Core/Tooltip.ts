@@ -377,7 +377,7 @@ class Tooltip {
      */
     public applyFilter(): void {
 
-        var chart = this.chart;
+        const chart = this.chart;
 
         chart.renderer.definition({
             tagName: 'filter',
@@ -438,7 +438,7 @@ class Tooltip {
      */
     public bodyFormatter(items: Array<Point>): Array<string> {
         return items.map(function (item): string {
-            var tooltipOptions = (item as any).series.tooltipOptions;
+            const tooltipOptions = (item as any).series.tooltipOptions;
 
             return (
                 (tooltipOptions as any)[
@@ -466,7 +466,7 @@ class Tooltip {
      */
     public cleanSplit(force?: boolean): void {
         this.chart.series.forEach(function (series): void {
-            var tt = series && series.tt;
+            const tt = series && series.tt;
 
             if (tt) {
                 if (!tt.isActive || force) {
@@ -492,7 +492,7 @@ class Tooltip {
         this: Highcharts.TooltipFormatterContextObject,
         tooltip: Highcharts.Tooltip
     ): (string|Array<string>) {
-        var items = this.points || splat(this),
+        let items = this.points || splat(this),
             s: (string|Array<string>);
 
         // Build the header
@@ -546,7 +546,7 @@ class Tooltip {
         points: (Point|Array<Point>),
         mouseEvent?: PointerEvent
     ): Array<number> {
-        var ret: number[],
+        let ret: number[],
             chart = this.chart,
             pointer = chart.pointer,
             inverted = chart.inverted,
@@ -648,7 +648,7 @@ class Tooltip {
         startOfWeek: number,
         dateTimeLabelFormats: Record<string, string>
     ): string {
-        var time = this.chart.time,
+        let time = this.chart.time,
             dateStr = time.dateFormat('%m-%d %H:%M:%S.%L', date),
             format,
             n,
@@ -712,7 +712,7 @@ class Tooltip {
      */
     public getLabel(): SVGElement {
 
-        var tooltip = this,
+        let tooltip = this,
             renderer: (Highcharts.Renderer|Highcharts.SVGRenderer) = this.chart.renderer,
             styledMode = this.chart.styledMode,
             options = this.options,
@@ -878,7 +878,7 @@ class Tooltip {
      */
     public getPosition(boxWidth: number, boxHeight: number, point: Point): PositionObject {
 
-        var chart = this.chart,
+        let chart = this.chart,
             distance = this.distance,
             ret = {} as PositionObject,
             // Don't use h if chart isn't inverted (#7242) ???
@@ -1002,7 +1002,7 @@ class Tooltip {
                 scaledInnerSize: number, // #11329
                 point: number
             ): (boolean|undefined) {
-                var retVal;
+                let retVal;
                 // Too close to the edge, return false and swap dimensions
                 if (point < distance || point > outerSize - distance) {
                     retVal = false;
@@ -1023,7 +1023,7 @@ class Tooltip {
              * Swap the dimensions
              */
             swap = function (count?: boolean): void {
-                var temp = first;
+                const temp = first;
 
                 first = second;
                 second = temp;
@@ -1075,7 +1075,7 @@ class Tooltip {
         options: Highcharts.TooltipOptions,
         xAxis: Highcharts.Axis
     ): string {
-        var xDateFormat,
+        let xDateFormat,
             dateTimeLabelFormats = options.dateTimeLabelFormats,
             closestPointRange = xAxis && xAxis.closestPointRange;
 
@@ -1104,7 +1104,7 @@ class Tooltip {
      *        the fade out animation.
      */
     public hide(delay?: number): void {
-        var tooltip = this;
+        const tooltip = this;
 
         // disallow duplicate timers (#1728, #1766)
         U.clearTimeout(this.hideTimer as any);
@@ -1246,7 +1246,7 @@ class Tooltip {
      * @param {number} anchorY
      */
     public move(x: number, y: number, anchorX: number, anchorY: number): void {
-        var tooltip = this,
+        const tooltip = this,
             now = tooltip.now,
             animate = tooltip.options.animation !== false &&
                 !tooltip.isHidden &&
@@ -1305,7 +1305,7 @@ class Tooltip {
         pointOrPoints: (Point|Array<Point>),
         mouseEvent?: PointerEvent
     ): void {
-        var tooltip = this,
+        let tooltip = this,
             chart = this.chart,
             options = tooltip.options,
             x,
@@ -1947,7 +1947,7 @@ class Tooltip {
      * @return {string}
      */
     public tooltipFooterHeaderFormatter(labelConfig: Point.PointLabelObject, isFooter?: boolean): string {
-        var footOrHead = isFooter ? 'footer' : 'header',
+        let footOrHead = isFooter ? 'footer' : 'header',
             series = labelConfig.series,
             tooltipOptions = series.tooltipOptions,
             xDateFormat = tooltipOptions.xDateFormat,
@@ -2029,7 +2029,7 @@ class Tooltip {
      * @param {Highcharts.Point} point
      */
     public updatePosition(point: Point): void {
-        var chart = this.chart,
+        let chart = this.chart,
             pointer = chart.pointer,
             label = this.getLabel(),
             pos,
