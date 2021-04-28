@@ -7,7 +7,6 @@ import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 
 const {
     addEvent,
-    defined,
     merge,
     css,
     createElement
@@ -87,7 +86,7 @@ class DragDrop {
     public context?: Cell|Row; // Component icon from the sidebar
     public mockElement: HTMLDOMElement;
     public isActive?: boolean;
-    public dragContext?: Cell|Row;
+    public dropContext?: Cell|Row;
     public dropPointer: DragDrop.DropPointer;
 
     /* *
@@ -117,7 +116,7 @@ class DragDrop {
                     if (cell.container) {
                         addEvent(cell.container, 'mouseenter', function (e: any): void {
                             if (dragDrop.isActive) {
-                                dragDrop.dragContext = cell;
+                                dragDrop.dropContext = cell;
                                 dragDrop.onDrag(e);
                             }
                         });
@@ -209,7 +208,7 @@ class DragDrop {
 
     public onCellDrag(e: any): void {
         const dragDrop = this,
-            cellDrag = dragDrop.dragContext,
+            cellDrag = dragDrop.dropContext,
             width = 20,
             offset = 50;
 
@@ -263,33 +262,24 @@ class DragDrop {
 
     public onCellDragEnd(): void {
         const dragDrop = this,
-            droppedCell = dragDrop.context as Cell,
-            dragContextCell = dragDrop.dragContext as Cell,
-            dragContextCellIndex = dragContextCell.row.getCellIndex(dragContextCell.id),
-            insertBefore = function (newNode: HTMLDOMElement, referenceNode: HTMLDOMElement): void {
-                referenceNode.parentNode.insertBefore(newNode, referenceNode);
-            },
-            insertAfter = function (newNode: HTMLDOMElement, referenceNode: HTMLDOMElement): void {
-                referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-            };
+            draggedCell = dragDrop.context as Cell,
+            dropContext = dragDrop.dropContext as Cell;
 
         if (
-            droppedCell.container &&
-            dragContextCell.container &&
-            defined(dragContextCellIndex)
+            draggedCell.container &&
+            dropContext.container
         ) {
-            if (dragDrop.dropPointer.align === 'right') {
-                droppedCell.row.unmountCell(droppedCell.id);
-                dragContextCell.row.mountCell(droppedCell, dragContextCellIndex + 1);
-                insertAfter(droppedCell.container, dragContextCell.container);
-            } else if (dragDrop.dropPointer.align === 'left') {
-                droppedCell.row.unmountCell(droppedCell.id);
-                dragContextCell.row.mountCell(droppedCell, dragContextCellIndex);
-                insertBefore(droppedCell.container, dragContextCell.container);
+            if (dragDrop.dropPointer.align) {
+                draggedCell.row.unmountCell(draggedCell);
+                dropContext.row.mountCell(
+                    draggedCell,
+                    (dropContext.row.getCellIndex(dropContext) || 0) +
+                        (dragDrop.dropPointer.align === 'right' ? 1 : 0)
+                );
             }
 
             dragDrop.hideDropPointer();
-            droppedCell.container.style.display = 'block';
+            draggedCell.container.style.display = 'block';
         }
     }
 

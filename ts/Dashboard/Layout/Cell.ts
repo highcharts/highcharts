@@ -232,6 +232,8 @@ class Cell extends GUIElement {
             cell.mountedComponent.destroy();
         }
 
+        row.unmountCell(cell);
+
         super.destroy();
         fireEvent(row, 'cellChange');
     }

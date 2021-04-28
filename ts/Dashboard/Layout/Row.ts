@@ -9,6 +9,7 @@ import U from '../../Core/Utilities.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 const {
     pick,
+    defined,
     merge
 } = U;
 class Row extends GUIElement {
@@ -299,37 +300,46 @@ class Row extends GUIElement {
         }
     }
 
-    // Find cell index in row.cells array.
+    // Get cell index from the row.cells array.
     public getCellIndex(
-        id: string
+        cell: Cell
     ): number | undefined {
-        const row = this;
-
-        for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
-            if (row.cells[i].id === id) {
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            if (this.cells[i].id === cell.id) {
                 return i;
             }
         }
     }
-
-    // Find and remove cell from row.cells array.
-    public unmountCell(
-        id: string
-    ): void {
-        const cellIndex = this.getCellIndex(id);
-
-        if (cellIndex) {
-            this.cells.splice(cellIndex, 1);
-        }
-    }
-
-    // Add new cell to the row.cells array.
+    
+    // Add cell to the row.cells array and move cell container.
     public mountCell(
         cell: Cell,
         index: number
     ): void {
-        this.cells.splice(index, 0, cell);
-        cell.row = this;
+        const nextCell = this.cells[index],
+            prevCell = this.cells[index - 1];
+
+        if (cell.container) {
+            if (nextCell && nextCell.container) {
+                nextCell.container.parentNode.insertBefore(cell.container, nextCell.container);
+            } else if (prevCell && prevCell.container) {
+                prevCell.container.parentNode.insertBefore(cell.container, prevCell.container.nextSibling);
+            }
+
+            this.cells.splice(index, 0, cell);
+            cell.row = this;
+        }
+    }
+    
+    // Remove cell from the row.cells array.
+    public unmountCell(
+        cell: Cell
+    ): void {
+        const cellIndex = this.getCellIndex(cell);
+
+        if (defined(cellIndex)) {
+            this.cells.splice(cellIndex, 1);
+        }
     }
 }
 
