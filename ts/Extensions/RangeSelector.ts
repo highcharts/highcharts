@@ -1410,7 +1410,7 @@ class RangeSelector {
                         this.chart.chartWidth - input.offsetWidth
                     ) + 'px',
                     top: (
-                        translateY - 1 - (input.offsetHeight - dateBox.height) / 2
+                        translateY - (input.offsetHeight - dateBox.height) / 2
                     ) + 'px'
                 });
             }
@@ -1556,7 +1556,8 @@ class RangeSelector {
             .label(text, 0)
             .addClass('highcharts-range-label')
             .attr({
-                padding: text ? 2 : 0
+                padding: text ? 2 : 0,
+                height: text ? options.inputBoxHeight : 0
             })
             .add(inputGroup);
 
@@ -2424,8 +2425,8 @@ class RangeSelector {
         const getAttribs = (text?: string): SVGAttributes => ({
             text: text ? `${text} ▾` : '▾',
             width: 'auto',
-            paddingLeft: 8,
-            paddingRight: 8
+            paddingLeft: pick(options.buttonTheme.paddingLeft, 8),
+            paddingRight: pick(options.buttonTheme.paddingRight, 8)
         } as unknown as SVGAttributes);
 
         if (zoomText) {
@@ -2503,9 +2504,9 @@ class RangeSelector {
             button.attr({
                 text: rangeOptions.text,
                 width: options.buttonTheme.width || 28,
-                paddingLeft: 'unset',
-                paddingRight: 'unset'
-            });
+                paddingLeft: pick(options.buttonTheme.paddingLeft, 'unset'),
+                paddingRight: pick(options.buttonTheme.paddingRight, 'unset')
+            } as SVGAttributes);
 
             if (button.state < 2) {
                 button.setState(0);
