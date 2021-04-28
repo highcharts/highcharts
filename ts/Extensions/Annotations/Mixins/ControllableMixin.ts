@@ -168,7 +168,7 @@ declare global {
  * @mixin
  * @name Highcharts.AnnotationControllableMixin
  */
-let controllableMixin: Highcharts.AnnotationControllableMixin = {
+const controllableMixin: Highcharts.AnnotationControllableMixin = {
     /**
      * Init the controllable
      */
@@ -206,7 +206,7 @@ let controllableMixin: Highcharts.AnnotationControllableMixin = {
     getPointsOptions: function (
         this: Highcharts.AnnotationControllable
     ): Array<Highcharts.AnnotationMockPointOptionsObject> {
-        let options = this.options;
+        const options = this.options;
 
         return (options.points || (options.point && splat(options.point))) as any;
     },
@@ -260,7 +260,7 @@ let controllableMixin: Highcharts.AnnotationControllableMixin = {
         this: Highcharts.AnnotationControllable,
         point: Highcharts.AnnotationPointType
     ): Highcharts.AnnotationAnchorObject {
-        let plotBox = point.series.getPlotBox(),
+        const plotBox = point.series.getPlotBox(),
             chart = point.series.chart,
             box = point.mock ?
                 point.toAnchor() :
@@ -315,7 +315,7 @@ let controllableMixin: Highcharts.AnnotationControllableMixin = {
             } else if (isString(pointOptions)) {
                 point = (this.chart.get(pointOptions) as any) || null;
             } else if (typeof pointOptions === 'function') {
-                let pointConfig: (Highcharts.AnnotationMockPoint|Highcharts.AnnotationMockPointOptionsObject) =
+                const pointConfig: (Highcharts.AnnotationMockPoint|Highcharts.AnnotationMockPointOptionsObject) =
                     pointOptions.call(point, this);
 
                 point = pointConfig.series ?
@@ -367,14 +367,14 @@ let controllableMixin: Highcharts.AnnotationControllableMixin = {
      * Add control points to a controllable.
      */
     addControlPoints: function (this: Highcharts.AnnotationControllable): void {
-        let controlPointsOptions = this.options.controlPoints;
+        const controlPointsOptions = this.options.controlPoints;
 
         (controlPointsOptions || []).forEach(
             function (
                 controlPointOptions: Highcharts.AnnotationControlPointOptionsObject,
                 i: number
             ): void {
-                let options = merge(
+                const options = merge(
                     (this.options as any).controlPointOptions,
                     controlPointOptions
                 );
@@ -441,7 +441,7 @@ let controllableMixin: Highcharts.AnnotationControllableMixin = {
         p2?: number
     ): void {
         if (this.chart.inverted) {
-            let temp = cx;
+            const temp = cx;
 
             cx = cy;
             cy = temp;
@@ -511,7 +511,7 @@ let controllableMixin: Highcharts.AnnotationControllableMixin = {
      * @param {number} dy translation for y coordinate
      */
     translateShape: function (this: Highcharts.AnnotationControllable, dx: number, dy: number): void {
-        let chart: Highcharts.AnnotationChart = this.annotation.chart,
+        const chart: Highcharts.AnnotationChart = this.annotation.chart,
             // Annotation.options
             shapeOptions = this.annotation.userOptions,
             // Chart.options.annotations
@@ -596,7 +596,7 @@ let controllableMixin: Highcharts.AnnotationControllableMixin = {
         this: Highcharts.AnnotationControllable,
         newOptions: Highcharts.AnnotationControllableOptionsObject
     ): void {
-        let annotation = this.annotation,
+        const annotation = this.annotation,
             options = merge(true, this.options, newOptions),
             parentGroup = this.graphic.parentGroup;
 

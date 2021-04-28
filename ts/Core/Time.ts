@@ -386,7 +386,7 @@ class Time {
      * @return {void}
      */
     public update(options: Highcharts.TimeOptions): void {
-        let useUTC = pick(options && options.useUTC, true) as boolean,
+        const useUTC = pick(options && options.useUTC, true) as boolean,
             time = this;
 
         this.options = options = merge(true, this.options || {}, options);
@@ -594,7 +594,7 @@ class Time {
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
 
-        let time = this,
+        const time = this,
             date = new this.Date(timestamp as any),
             // get the basic time values
             hours = this.get('Hours', date),
@@ -847,7 +847,7 @@ class Time {
 
             // Get basics for variable time spans
             minYear = time.get('FullYear', minDate);
-            let minMonth = time.get('Month', minDate),
+            const minMonth = time.get('Month', minDate),
                 minDateDate = time.get('Date', minDate),
                 minHours = time.get('Hours', minDate);
 

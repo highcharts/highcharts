@@ -179,7 +179,7 @@ SVGRenderer.prototype.toLinePath = function (
     points: Array<PositionObject>,
     closed?: boolean
 ): SVGPath {
-    let result: SVGPath = [];
+    const result: SVGPath = [];
 
     // Put "L x y" for each point
     points.forEach(function (point: PositionObject): void {
@@ -217,7 +217,7 @@ SVGRenderer.prototype.toLineSegments = function (
 // vertexes are counter-clockwise (Back-face culling). It is used as a
 // polyhedron Element
 SVGRenderer.prototype.face3d = function (args?: SVGAttributes): SVGElement {
-    let renderer = this,
+    const renderer = this,
         ret: SVGElement = this.createElement('path');
 
     ret.vertexes = [];
@@ -249,7 +249,7 @@ SVGRenderer.prototype.face3d = function (args?: SVGAttributes): SVGElement {
             delete hash.vertexes;
             delete hash.insidePlotArea;
 
-            let chart = charts[renderer.chartIndex],
+            const chart = charts[renderer.chartIndex],
                 vertexes2d = perspective(
                     this.vertexes as any,
                     chart as any,
@@ -286,7 +286,7 @@ SVGRenderer.prototype.face3d = function (args?: SVGAttributes): SVGElement {
             delete params.vertexes;
             delete params.insidePlotArea;
 
-            let chart = charts[renderer.chartIndex],
+            const chart = charts[renderer.chartIndex],
                 vertexes2d = perspective(
                     this.vertexes as any,
                     chart as any,
@@ -312,7 +312,7 @@ SVGRenderer.prototype.face3d = function (args?: SVGAttributes): SVGElement {
 // attribute is `faces`, an array of attributes of each one of it's Face3D
 // instances.
 SVGRenderer.prototype.polyhedron = function (args?: SVGAttributes): SVGElement {
-    let renderer = this,
+    const renderer = this,
         result = this.g(),
         destroy = result.destroy;
 
@@ -401,7 +401,7 @@ SVGRenderer.prototype.element3d = function (
     shapeArgs: SVGAttributes
 ): SVGElement {
     // base
-    let ret = this.g();
+    const ret = this.g();
 
     // extend
     extend(ret, (this.elements3d as any)[type]);
@@ -670,7 +670,7 @@ SVGRenderer.prototype.cuboidPath = function (
 // SECTORS //
 SVGRenderer.prototype.arc3d = function (attribs: SVGAttributesExtended): SVGElement {
 
-    let wrapper = this.g(),
+    const wrapper = this.g(),
         renderer = wrapper.renderer,
         customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end', 'depth'];
 
@@ -712,7 +712,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributesExtended): SVGElem
 
     // Add all faces
     wrapper.onAdd = function (): void {
-        let parent = wrapper.parentGroup,
+        const parent = wrapper.parentGroup,
             className = wrapper.attr('class');
 
         wrapper.top.add(wrapper);
@@ -731,7 +731,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributesExtended): SVGElem
     // Cascade to faces
     ['addClass', 'removeClass'].forEach(function (fn: string): void {
         wrapper[fn] = function (): void {
-            let args = arguments;
+            const args = arguments;
 
             ['top', 'out', 'inn', 'side1', 'side2'].forEach(function (
                 face: string
@@ -747,7 +747,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributesExtended): SVGElem
      */
     wrapper.setPaths = function (attribs: SVGAttributesExtended): void {
 
-        let paths = wrapper.renderer.arc3dPath(attribs),
+        const paths = wrapper.renderer.arc3dPath(attribs),
             zIndex = paths.zTop * 100;
 
         wrapper.attribs = attribs;
@@ -779,7 +779,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributesExtended): SVGElem
         this: SVGElement,
         value: ColorType
     ): SVGElement {
-        let darker = color(value).brighten(-0.1).get();
+        const darker = color(value).brighten(-0.1).get();
 
         this.fill = value;
 
@@ -937,7 +937,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributesExtended): SVGElem
 SVGRenderer.prototype.arc3dPath = function (
     shapeArgs: SVGAttributesExtended
 ): SVGArc3D {
-    let cx = shapeArgs.x || 0, // x coordinate of the center
+    const cx = shapeArgs.x || 0, // x coordinate of the center
         cy = shapeArgs.y || 0, // y coordinate of the center
         start = shapeArgs.start || 0, // start angle
         end = (shapeArgs.end || 0) - 0.00001, // end angle
@@ -948,7 +948,7 @@ SVGRenderer.prototype.arc3dPath = function (
         beta = shapeArgs.beta || 0; // beta rotation of the chart
 
     // Derived Variables
-    let cs = Math.cos(start), // cosinus of the start angle
+    const cs = Math.cos(start), // cosinus of the start angle
         ss = Math.sin(start), // sinus of the start angle
         ce = Math.cos(end), // cosinus of the end angle
         se = Math.sin(end), // sinus of the end angle
@@ -972,10 +972,10 @@ SVGRenderer.prototype.arc3dPath = function (
     top.push(['Z']);
 
     // OUTSIDE
-    let b = (beta > 0 ? Math.PI / 2 : 0),
+    const b = (beta > 0 ? Math.PI / 2 : 0),
         a = (alpha > 0 ? 0 : Math.PI / 2);
 
-    let start2 = start > -b ? start : (end > -b ? -b : start),
+    const start2 = start > -b ? start : (end > -b ? -b : start),
         end2 = end < PI - a ? end : (start < PI - a ? PI - a : end),
         midEnd = 2 * PI - a;
 
@@ -1073,14 +1073,14 @@ SVGRenderer.prototype.arc3dPath = function (
     inn.push(['Z']);
 
     // SIDES
-    let side1: SVGPath = [
+    const side1: SVGPath = [
         ['M', cx + (rx * cs), cy + (ry * ss)],
         ['L', cx + (rx * cs) + dx, cy + (ry * ss) + dy],
         ['L', cx + (irx * cs) + dx, cy + (iry * ss) + dy],
         ['L', cx + (irx * cs), cy + (iry * ss)],
         ['Z']
     ];
-    let side2: SVGPath = [
+    const side2: SVGPath = [
         ['M', cx + (rx * ce), cy + (ry * se)],
         ['L', cx + (rx * ce) + dx, cy + (ry * se) + dy],
         ['L', cx + (irx * ce) + dx, cy + (iry * se) + dy],
@@ -1111,7 +1111,7 @@ SVGRenderer.prototype.arc3dPath = function (
     angleMid = toZeroPIRange(angleMid);
 
     // *1e5 is to compensate pInt in zIndexSetter
-    let incPrecision = 1e5,
+    const incPrecision = 1e5,
         a1 = angleMid * incPrecision,
         a2 = angleStart * incPrecision,
         a3 = angleEnd * incPrecision;

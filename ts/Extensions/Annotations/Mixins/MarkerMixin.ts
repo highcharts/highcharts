@@ -77,7 +77,7 @@ declare global {
  * @since        6.0.0
  * @optionparent defs
  */
-let defaultMarkers: Record<string, Highcharts.ASTNode> = {
+const defaultMarkers: Record<string, Highcharts.ASTNode> = {
     /**
      * @type {Highcharts.ASTNode}
      */
@@ -128,9 +128,9 @@ SVGRenderer.prototype.addMarker = function (
     id: string,
     markerOptions: Highcharts.ASTNode
 ): SVGElement {
-    let options: Highcharts.ASTNode = { attributes: { id } };
+    const options: Highcharts.ASTNode = { attributes: { id } };
 
-    let attrs: SVGAttributes = {
+    const attrs: SVGAttributes = {
         stroke: (markerOptions as any).color || 'none',
         fill: (markerOptions as any).color || 'rgba(0, 0, 0, 0.75)'
     };
@@ -154,7 +154,7 @@ SVGRenderer.prototype.addMarker = function (
         }
     }, markerOptions, options);
 
-    let marker = this.definition(ast);
+    const marker = this.definition(ast);
 
     marker.id = id;
 
@@ -177,7 +177,7 @@ function createMarkerSetter(markerType: string): Highcharts.AnnotationMarkerMixi
  * @mixin
  * @name Highcharts.AnnotaitonMarkerMixin
  */
-let markerMixin: Highcharts.AnnotationMarkerMixin = {
+const markerMixin: Highcharts.AnnotationMarkerMixin = {
     markerEndSetter: createMarkerSetter('marker-end'),
     markerStartSetter: createMarkerSetter('marker-start'),
 
@@ -187,7 +187,7 @@ let markerMixin: Highcharts.AnnotationMarkerMixin = {
      * @param {Highcharts.AnnotationControllablePath} item
      */
     setItemMarkers: function (item: ControllablePath): void {
-        let itemOptions = item.options,
+        const itemOptions = item.options,
             chart = item.chart,
             defs = chart.options.defs,
             fill = itemOptions.fill,

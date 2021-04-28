@@ -354,7 +354,7 @@ class TimelineSeries extends LineSeries {
     }
 
     public bindAxes(): void {
-        let series = this;
+        const series = this;
 
         super.bindAxes.call(series);
 
@@ -399,7 +399,7 @@ class TimelineSeries extends LineSeries {
     }
 
     public generatePoints(): void {
-        let series = this;
+        const series = this;
 
         super.generatePoints.apply(series);
         series.points.forEach(function (point, i): void {
@@ -410,7 +410,7 @@ class TimelineSeries extends LineSeries {
     }
 
     public getVisibilityMap(): Array<(boolean|TimelinePoint|TimelinePointOptions)> {
-        let series = this,
+        const series = this,
             map = (series.data.length ?
                 series.data : (series.userOptions.data as any)
             ).map(function (
@@ -426,7 +426,7 @@ class TimelineSeries extends LineSeries {
     }
 
     public getXExtremes(xData: Array<number>): Highcharts.RangeObject {
-        let series = this,
+        const series = this,
             filteredData = xData.filter(function (
                 x: number,
                 i: number
@@ -442,7 +442,7 @@ class TimelineSeries extends LineSeries {
     }
 
     public init(): void {
-        let series = this;
+        const series = this;
 
         super.init.apply(series, arguments);
 

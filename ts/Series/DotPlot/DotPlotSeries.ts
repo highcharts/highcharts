@@ -94,7 +94,7 @@ class DotPlotSeries extends ColumnSeries {
      * */
 
     public drawPoints(): void {
-        let series = this,
+        const series = this,
             renderer = series.chart.renderer,
             seriesMarkerOptions = this.options.marker,
             itemPaddingTranslated = this.yAxis.transA *

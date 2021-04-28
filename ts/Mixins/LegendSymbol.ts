@@ -99,7 +99,7 @@ const LegendSymbolMixin = H.LegendSymbolMixin = {
         legend: Highcharts.Legend,
         item: (Series|Point)
     ): void {
-        let options = legend.options,
+        const options = legend.options,
             symbolHeight = legend.symbolHeight,
             square = options.squareSymbol,
             symbolWidth = square ? symbolHeight : legend.symbolWidth;

@@ -123,7 +123,7 @@ namespace WaterfallAxis {
          * @function Highcharts.Axis#renderWaterfallStackTotals
          */
         public renderStackTotals(): void {
-            let yAxis = this.axis,
+            const yAxis = this.axis,
                 waterfallStacks = yAxis.waterfall.stacks,
                 stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup,
                 dummyStackItem = new StackItem(

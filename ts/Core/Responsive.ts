@@ -238,7 +238,7 @@ Chart.prototype.setResponsive = function (
     }
 
     // Merge matching rules
-    let mergedOptions = merge.apply(0, ruleIds.map(function (
+    const mergedOptions = merge.apply(0, ruleIds.map(function (
         ruleId: string
     ): (Highcharts.Options|undefined) {
         return (find(
@@ -295,7 +295,7 @@ Chart.prototype.matchResponsiveRule = function (
     matches: Array<string>
 ): void {
 
-    let condition =
+    const condition =
             rule.condition as Highcharts.ResponsiveRulesConditionOptions,
         fn = condition.callback || function (this: Chart): boolean {
             return (
@@ -329,7 +329,7 @@ Chart.prototype.currentOptions = function (
     options: Highcharts.Options
 ): Partial<Highcharts.Options> {
 
-    let chart = this,
+    const chart = this,
         ret = {};
 
     /**

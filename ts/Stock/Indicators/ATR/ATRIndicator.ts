@@ -39,7 +39,7 @@ function accumulateAverage(
     yVal: Array<Array<number>>,
     i: number
 ): void {
-    let xValue = xVal[i],
+    const xValue = xVal[i],
         yValue = yVal[i];
 
     points.push([xValue, yValue]);
@@ -52,7 +52,7 @@ function getTR(
     currentPoint: Array<number>,
     prevPoint: Array<number>
 ): number {
-    let pointY = currentPoint,
+    const pointY = currentPoint,
         prevY = prevPoint,
         HL = pointY[1] - pointY[2],
         HCp = typeof prevY === 'undefined' ? 0 : Math.abs(pointY[1] - prevY[3]),

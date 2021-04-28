@@ -107,7 +107,7 @@ declare global {
 import DownloadURL from '../Extensions/DownloadURL.js';
 const { downloadURL } = DownloadURL;
 
-let domurl = win.URL || win.webkitURL || win,
+const domurl = win.URL || win.webkitURL || win,
     // Milliseconds to defer image load event handlers to offset IE bug
     loadEventDeferDelay = H.isMS ? 150 : 0;
 
@@ -129,7 +129,7 @@ function getScript(
     scriptLocation: string,
     callback: Highcharts.ScriptOnLoadCallbackFunction
 ): void {
-    let head = doc.getElementsByTagName('head')[0],
+    const head = doc.getElementsByTagName('head')[0],
         script = doc.createElement('script');
 
     script.type = 'text/javascript';
@@ -360,7 +360,7 @@ function downloadSVGLocal(
      * @private
      */
     function svgToPdf(svgElement: SVGElement, margin: number): string {
-        let width = svgElement.width.baseVal.value + 2 * margin,
+        const width = svgElement.width.baseVal.value + 2 * margin,
             height = svgElement.height.baseVal.value + 2 * margin,
             pdf = new win.jsPDF( // eslint-disable-line new-cap
                 height > width ? 'p' : 'l', // setting orientation to portrait if height exceeds width
@@ -540,7 +540,7 @@ function downloadSVGLocal(
             }, function (): void {
                 // Failed due to tainted canvas
                 // Create new and untainted canvas
-                let canvas = doc.createElement('canvas'),
+                const canvas = doc.createElement('canvas'),
                     ctx: CanvasRenderingContext2D =
                         canvas.getContext('2d') as any,
                     imageWidth = (svg.match(
@@ -748,7 +748,7 @@ Chart.prototype.exportChartLocal = function (
     exportingOptions?: Highcharts.ExportingOptions,
     chartOptions?: Partial<Highcharts.Options>
 ): void {
-    let chart = this,
+    const chart = this,
         options = merge(chart.options.exporting, exportingOptions),
         fallbackToExportServer = function (err: Error): void {
             if (options.fallbackToExportServer === false) {
@@ -792,7 +792,7 @@ Chart.prototype.exportChartLocal = function (
             return [].some.call(
                 chart.container.getElementsByTagName('image'),
                 function (image: HTMLDOMElement): boolean {
-                    let href = image.getAttribute('href');
+                    const href = image.getAttribute('href');
                     return href !== '' && (href as any).indexOf('data:') !== 0;
                 }
             );

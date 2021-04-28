@@ -206,7 +206,7 @@ const {
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import '../Extensions/ArrowSymbols.js';
 
-let deg2rad = H.deg2rad,
+const deg2rad = H.deg2rad,
     max = Math.max,
     min = Math.min;
 
@@ -550,7 +550,7 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
             bbMargin?: number
         ): number {
             // Count the distance even if we are slightly off
-            let margin = pick(bbMargin, 10),
+            const margin = pick(bbMargin, 10),
                 yOverlap = a.yMax + margin > b.yMin - margin &&
                             a.yMin - margin < b.yMax + margin,
                 xOverlap = a.xMax + margin > b.xMin - margin &&
@@ -672,7 +672,7 @@ class Pathfinder {
      *        series.afterAnimate event has fired. Used on first render.
      */
     public update(deferRender?: boolean): void {
-        let chart = this.chart,
+        const chart = this.chart,
             pathfinder = this,
             oldConnections = pathfinder.connections;
 
@@ -782,10 +782,10 @@ class Pathfinder {
         if (deferRender) {
             // Render after series are done animating
             this.chart.series.forEach(function (series): void {
-                let render = function (): void {
+                const render = function (): void {
                     // Find pathfinder connections belonging to this series
                     // that haven't rendered, and render them now.
-                    let pathfinder = series.chart.pathfinder,
+                    const pathfinder = series.chart.pathfinder,
                         conns = pathfinder && pathfinder.connections || [];
 
                     conns.forEach(function (connection): void {
@@ -1169,7 +1169,7 @@ function warnLegacy(chart: Chart): void {
 Chart.prototype.callbacks.push(function (
     chart: Chart
 ): void {
-    let options = chart.options;
+    const options = chart.options;
 
     if ((options.connectors as any).enabled !== false) {
         warnLegacy(chart);

@@ -544,7 +544,7 @@ class StackItem {
         h: number,
         axis: Highcharts.Axis
     ): BBoxObject {
-        let reversed = stackItem.axis.reversed,
+        const reversed = stackItem.axis.reversed,
             inverted = chart.inverted,
             axisPos = axis.height + (axis.pos as any) -
                 (inverted ? chart.plotLeft : chart.plotTop),
@@ -573,7 +573,7 @@ class StackItem {
  * @function Highcharts.Chart#getStacks
  */
 Chart.prototype.getStacks = function (this: Chart): void {
-    let chart = this,
+    const chart = this,
         inverted = chart.inverted;
 
     // reset stacks for each yAxis
@@ -584,7 +584,7 @@ Chart.prototype.getStacks = function (this: Chart): void {
     });
 
     chart.series.forEach(function (series): void {
-        let xAxisOptions = series.xAxis && series.xAxis.options || {};
+        const xAxisOptions = series.xAxis && series.xAxis.options || {};
 
         if (
             series.options.stacking &&
@@ -875,7 +875,7 @@ Series.prototype.percentStacker = function (
     stack: Highcharts.StackItem,
     i: number
 ): void {
-    let totalFactor = stack.total ? 100 / stack.total : 0;
+    const totalFactor = stack.total ? 100 / stack.total : 0;
 
     // Y bottom value
     pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor);

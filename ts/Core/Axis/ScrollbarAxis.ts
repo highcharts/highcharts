@@ -82,7 +82,7 @@ class ScrollbarAxis {
 
         // Wrap axis initialization and create scrollbar if enabled:
         addEvent(AxisClass, 'afterInit', function (): void {
-            let axis = this as ScrollbarAxis;
+            const axis = this as ScrollbarAxis;
 
             if (
                 axis.options &&
@@ -244,7 +244,7 @@ class ScrollbarAxis {
 
         // Make space for a scrollbar:
         addEvent(AxisClass, 'afterGetOffset', function (): void {
-            let axis = this as ScrollbarAxis,
+            const axis = this as ScrollbarAxis,
                 index = axis.horiz ? 2 : 1,
                 scrollbar = axis.scrollbar;
 

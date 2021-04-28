@@ -116,7 +116,7 @@ class ChaikinIndicator extends EMAIndicator {
      *
      * */
     init(this: ChaikinIndicator): void {
-        let args = arguments,
+        const args = arguments,
             ctx = this;
 
         RequiredIndicatorMixin.isParentLoaded(

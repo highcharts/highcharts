@@ -140,7 +140,7 @@ class LogarithmicAxisAdditions {
         // we might as well handle the tick positions like a linear axis. For
         // example 1.01, 1.02, 1.03, 1.04.
         } else {
-            let realMin = log.lin2log(min),
+            const realMin = log.lin2log(min),
                 realMax = log.lin2log(max),
                 tickIntervalOption = minor ?
                     axis.getMinorTickInterval() :

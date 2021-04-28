@@ -386,7 +386,7 @@ class SankeySeries extends ColumnSeries {
             level: SankeySeriesLevelOptions;
         }
     ): SankeyDataLabelOptions {
-        let optionsPoint = (
+        const optionsPoint = (
                 isObject(params.optionsPoint) ?
                     params.optionsPoint.dataLabels :
                     {}
@@ -445,7 +445,7 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public createNodeColumn(): SankeySeries.ColumnArray {
-        let series = this,
+        const series = this,
             chart = this.chart,
             column: SankeySeries.ColumnArray = [] as any;
 
@@ -497,8 +497,8 @@ class SankeySeries extends ColumnSeries {
             this: SankeySeries.ColumnArray,
             factor: number
         ): number {
-            let nodePadding = series.nodePadding;
-            let height = this.reduce(function (
+            const nodePadding = series.nodePadding;
+            const height = this.reduce(function (
                 height: number,
                 node: SankeyPoint
             ): number {
@@ -524,7 +524,7 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public createNodeColumns(): Array<SankeySeries.ColumnArray> {
-        let columns: Array<SankeySeries.ColumnArray> = [];
+        const columns: Array<SankeySeries.ColumnArray> = [];
 
         this.nodes.forEach(function (node: SankeyPoint): void {
             let fromColumn = -1,
@@ -562,7 +562,7 @@ class SankeySeries extends ColumnSeries {
                                 link: SankeyPoint,
                                 index: number
                             ): boolean {
-                                let found = link.toNode === node;
+                                const found = link.toNode === node;
                                 if (found) {
                                     i = index;
                                 }
@@ -683,7 +683,7 @@ class SankeySeries extends ColumnSeries {
         if (!point) {
             return {};
         }
-        let series = this,
+        const series = this,
             level = point.isNode ? point.level : point.fromNode.level,
             levelOptions =
                 (series.mapOptionsToLevel as any)[level || 0] || {},
@@ -733,7 +733,7 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public render(): void {
-        let points = this.points;
+        const points = this.points;
 
         this.points = this.points.concat(this.nodes || []);
         ColumnSeries.prototype.render.call(this);
@@ -795,7 +795,7 @@ class SankeySeries extends ColumnSeries {
             this.chart.plotSizeX as any
         );
 
-        let series = this,
+        const series = this,
             chart = this.chart,
             options = this.options,
             nodeWidth = this.nodeWidth,
@@ -970,7 +970,7 @@ class SankeySeries extends ColumnSeries {
         // - Automatically determine if the link should go up or
         //   down.
         } else if (typeof toY === 'number') {
-            let bend = 20,
+            const bend = 20,
                 vDist = chart.plotHeight - fromY - linkHeight,
                 x1 = right - bend - linkHeight,
                 x2 = right - bend,
@@ -1051,7 +1051,7 @@ class SankeySeries extends ColumnSeries {
         node: SankeyPoint,
         column: SankeySeries.ColumnArray
     ): void {
-        let translationFactor = this.translationFactor,
+        const translationFactor = this.translationFactor,
             chart = this.chart,
             options = this.options,
             sum = node.getSum(),

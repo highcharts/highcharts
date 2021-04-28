@@ -58,7 +58,7 @@ import './SolidGaugeComposition.js';
  * @requires     modules/solid-gauge
  * @optionparent plotOptions.solidgauge
  */
-let solidGaugeOptions: SolidGaugeSeriesOptions = {
+const solidGaugeOptions: SolidGaugeSeriesOptions = {
     /**
      * The inner radius for points in a solid gauge. Can be given as a number
      * (pixels) or percentage string.
@@ -201,7 +201,7 @@ class SolidGaugeSeries extends GaugeSeries {
     // Extend the translate function to extend the Y axis with the necessary
     // decoration (#5895).
     public translate(): void {
-        let axis = this.yAxis;
+        const axis = this.yAxis;
 
         SolidGaugeAxis.init(axis);
 

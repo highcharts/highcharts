@@ -377,7 +377,7 @@ class Tooltip {
      */
     public applyFilter(): void {
 
-        let chart = this.chart;
+        const chart = this.chart;
 
         chart.renderer.definition({
             tagName: 'filter',
@@ -438,7 +438,7 @@ class Tooltip {
      */
     public bodyFormatter(items: Array<Point>): Array<string> {
         return items.map(function (item): string {
-            let tooltipOptions = (item as any).series.tooltipOptions;
+            const tooltipOptions = (item as any).series.tooltipOptions;
 
             return (
                 (tooltipOptions as any)[
@@ -466,7 +466,7 @@ class Tooltip {
      */
     public cleanSplit(force?: boolean): void {
         this.chart.series.forEach(function (series): void {
-            let tt = series && series.tt;
+            const tt = series && series.tt;
 
             if (tt) {
                 if (!tt.isActive || force) {
@@ -1023,7 +1023,7 @@ class Tooltip {
              * Swap the dimensions
              */
             swap = function (count?: boolean): void {
-                let temp = first;
+                const temp = first;
 
                 first = second;
                 second = temp;
@@ -1104,7 +1104,7 @@ class Tooltip {
      *        the fade out animation.
      */
     public hide(delay?: number): void {
-        let tooltip = this;
+        const tooltip = this;
 
         // disallow duplicate timers (#1728, #1766)
         U.clearTimeout(this.hideTimer as any);
@@ -1246,7 +1246,7 @@ class Tooltip {
      * @param {number} anchorY
      */
     public move(x: number, y: number, anchorX: number, anchorY: number): void {
-        let tooltip = this,
+        const tooltip = this,
             now = tooltip.now,
             animate = tooltip.options.animation !== false &&
                 !tooltip.isHidden &&

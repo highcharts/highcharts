@@ -83,7 +83,7 @@ class TEMAIndicator extends EMAIndicator {
     public points: Array<TEMAPoint> = void 0 as any;
 
     public init(this: TEMAIndicator): void {
-        let args = arguments,
+        const args = arguments,
             ctx = this;
 
         RequiredIndicatorMixin.isParentLoaded(
@@ -123,7 +123,7 @@ class TEMAIndicator extends EMAIndicator {
         EMAlevels: TEMAIndicator.EMALevelsObject,
         i: number
     ): ([number, (number|null)]|undefined) {
-        let TEMAPoint: [number, number] = [
+        const TEMAPoint: [number, number] = [
             xVal[i - 3],
             correctFloat(
                 3 * EMAlevels.level1 -

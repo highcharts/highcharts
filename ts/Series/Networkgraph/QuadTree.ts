@@ -75,7 +75,7 @@ declare global {
  *
  * @param {Highcharts.Dictionary<number>} box Available space for the node
  */
-let QuadTreeNode = H.QuadTreeNode = function (
+const QuadTreeNode = H.QuadTreeNode = function (
     this: Highcharts.QuadTreeNode,
     box: Record<string, number>
 ): void {
@@ -252,7 +252,7 @@ extend(
          * ```
          */
         divideBox: function (this: Highcharts.QuadTreeNode): void {
-            let halfWidth = this.box.width / 2,
+            const halfWidth = this.box.width / 2,
                 halfHeight = this.box.height / 2;
 
             // Top left
@@ -339,7 +339,7 @@ extend(
  * @param {number} width width of the plotting area
  * @param {number} height height of the plotting area
  */
-let QuadTree = H.QuadTree = function (
+const QuadTree = H.QuadTree = function (
     this: Highcharts.QuadTree,
     x: number,
     y: number,

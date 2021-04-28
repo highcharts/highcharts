@@ -63,7 +63,7 @@ const {
     merge
 } = U;
 
-let SMA = H.seriesTypes.sma;
+const SMA = H.seriesTypes.sma;
 
 /**
  * Mixin useful for all indicators that have more than one line.
@@ -127,7 +127,7 @@ const multipleLinesMixin: Highcharts.MultipleLinesMixin = {
         this: Highcharts.MultipleLinesIndicator,
         excludedValue?: string
     ): Array<string> {
-        let translatedLines: Array<string> = [];
+        const translatedLines: Array<string> = [];
 
         (this.pointArrayMap || []).forEach(
             function (propertyName: string): void {
@@ -155,7 +155,7 @@ const multipleLinesMixin: Highcharts.MultipleLinesMixin = {
         this: Highcharts.MultipleLinesIndicator,
         point: Point
     ): Array<number> {
-        let pointColl: Array<number> = [];
+        const pointColl: Array<number> = [];
 
         (this.pointArrayMap || []).forEach(
             function (propertyName: string): void {

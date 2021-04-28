@@ -294,7 +294,7 @@ class TilemapSeries extends HeatmapSeries {
      */
     public setOptions(): TilemapSeriesOptions {
         // Call original function
-        let ret: TilemapSeriesOptions = super.setOptions.apply(
+        const ret: TilemapSeriesOptions = super.setOptions.apply(
             this,
             Array.prototype.slice.call(arguments) as any
         );

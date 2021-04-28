@@ -168,7 +168,7 @@ class APOIndicator extends EMAIndicator {
     }
 
     public init(this: APOIndicator): void {
-        let args = arguments,
+        const args = arguments,
             ctx = this;
 
         RequiredIndicatorMixin.isParentLoaded(

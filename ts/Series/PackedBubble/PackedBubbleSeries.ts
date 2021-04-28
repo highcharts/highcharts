@@ -655,7 +655,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         bubble1: Array<number>,
         bubble2: Array<number>
     ): boolean {
-        let diffX = bubble1[0] - bubble2[0], // diff of X center values
+        const diffX = bubble1[0] - bubble2[0], // diff of X center values
             diffY = bubble1[1] - bubble2[1], // diff of Y center values
             sumRad = bubble1[2] + bubble2[2]; // sum of bubble radius
 
@@ -733,7 +733,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      */
     public deferLayout(): void {
         // TODO split layouts to independent methods
-        let series = this,
+        const series = this,
             layoutOptions = series.options.layoutAlgorithm;
         if (!series.visible) {
             return;
@@ -775,7 +775,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public drawDataLabels(): void {
-        let textPath = (this.options.dataLabels as any).textPath,
+        const textPath = (this.options.dataLabels as any).textPath,
             points = this.points;
 
         // Render node labels:
@@ -908,7 +908,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             radius: (number|null),
             zExtremes: Array<number>;
         ['minSize', 'maxSize'].forEach(function (prop: string): void {
-            let length = parseInt((seriesOptions as any)[prop], 10),
+            const length = parseInt((seriesOptions as any)[prop], 10),
                 isPercent = /%$/.test((seriesOptions as any)[prop]);
 
             extremes[prop] = isPercent ?
@@ -1167,7 +1167,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         newOrigin: Array<number>,
         nextBubble: Array<number>
     ): Array<number> {
-        let sqrt = Math.sqrt,
+        const sqrt = Math.sqrt,
             asin = Math.asin,
             acos = Math.acos,
             pow = Math.pow,
@@ -1216,7 +1216,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     }
 
     public render(): void {
-        let series = this,
+        const series = this,
             dataLabels = [] as Array<SVGElement>;
         Series.prototype.render.apply(this, arguments);
         // #10823 - dataLabels should stay visible
@@ -1352,7 +1352,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public setVisible(): void {
-        let series = this;
+        const series = this;
         Series.prototype.setVisible.apply(series, arguments as any);
         if (series.parentNodeLayout && series.graph) {
             if (series.visible) {

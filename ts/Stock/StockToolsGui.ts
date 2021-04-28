@@ -158,7 +158,7 @@ declare global {
     }
 }
 
-let DIV = 'div',
+const DIV = 'div',
     SPAN = 'span',
     UL = 'ul',
     LI = 'li',
@@ -939,7 +939,7 @@ addEvent(Chart, 'afterGetContainer', function (): void {
 });
 
 addEvent(Chart, 'getMargins', function (): void {
-    let listWrapper = this.stockTools && this.stockTools.listWrapper,
+    const listWrapper = this.stockTools && this.stockTools.listWrapper,
         offsetWidth = listWrapper && (
             (
                 (listWrapper as any).startWidth +
@@ -1333,7 +1333,7 @@ class Toolbar {
      *
      */
     public addNavigation(): void {
-        let stockToolbar = this,
+        const stockToolbar = this,
             wrapper = stockToolbar.wrapper;
 
         // arrow wrapper
@@ -1523,7 +1523,7 @@ class Toolbar {
         button: HTMLDOMElement,
         redraw?: boolean
     ): void {
-        let buttonWrapper = button.parentNode,
+        const buttonWrapper = button.parentNode,
             buttonWrapperClass = (buttonWrapper as any).classList.value,
             // main button in first level og GUI
             mainNavButton = (buttonWrapper as any).parentNode.parentNode;
@@ -1569,7 +1569,7 @@ class Toolbar {
      *
      */
     public unselectAllButtons(button: HTMLDOMElement): void {
-        let activeButtons = (button.parentNode as any)
+        const activeButtons = (button.parentNode as any)
             .querySelectorAll('.' + activeClass);
 
         [].forEach.call(activeButtons, function (
@@ -1600,7 +1600,7 @@ class Toolbar {
      * @private
      */
     public destroy(): void {
-        let stockToolsDiv = this.wrapper,
+        const stockToolsDiv = this.wrapper,
             parent = stockToolsDiv && stockToolsDiv.parentNode;
 
         this.eventsToUnbind.forEach(function (unbinder: Function): void {
@@ -1692,7 +1692,7 @@ extend(Chart.prototype, {
         this: Chart,
         options?: Highcharts.StockToolsOptions
     ): void {
-        let chartOptions: Highcharts.Options = this.options,
+        const chartOptions: Highcharts.Options = this.options,
             lang: Highcharts.LangOptions = chartOptions.lang as any,
             guiOptions = merge(
                 chartOptions.stockTools && chartOptions.stockTools.gui,

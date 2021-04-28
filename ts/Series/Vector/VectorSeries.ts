@@ -235,10 +235,10 @@ class VectorSeries extends ScatterSeries {
      */
     public drawPoints(): void {
 
-        let chart = this.chart;
+        const chart = this.chart;
 
         this.points.forEach(function (point): void {
-            let plotX = point.plotX,
+            const plotX = point.plotX,
                 plotY = point.plotY;
 
             if (

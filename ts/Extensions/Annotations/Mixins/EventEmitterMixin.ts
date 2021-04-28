@@ -84,7 +84,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
      * Add emitter events.
      */
     addEvents: function (this: Highcharts.AnnotationEventEmitter): void {
-        let emitter = this,
+        const emitter = this,
             addMouseDownEvent = function (element: DOMElementType): void {
                 addEvent(
                     element,
@@ -109,7 +109,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             event: Highcharts.EventCallbackFunction<Annotation>,
             type: string
         ): void {
-            let eventHandler = function (e: PointerEvent): void {
+            const eventHandler = function (e: PointerEvent): void {
                 if (type !== 'click' || !emitter.cancelClick) {
                     (event as any).call(
                         emitter,
@@ -230,7 +230,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
      * Mouse up handler.
      */
     onMouseUp: function (this: Highcharts.AnnotationEventEmitter, _e: Highcharts.AnnotationEventObject): void {
-        let chart = this.chart,
+        const chart = this.chart,
             annotation: Annotation = this.target as any || this,
             annotationsOptions = chart.options.annotations,
             index = chart.annotations.indexOf(annotation);
@@ -254,7 +254,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
                 e.chartY - this.chart.plotTop
             )
         ) {
-            let translation = this.mouseMoveToTranslation(e);
+            const translation = this.mouseMoveToTranslation(e);
 
             if (this.options.draggable === 'x') {
                 translation.y = 0;

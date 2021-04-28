@@ -94,7 +94,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
 // On a vertical axis, apply anti-collision logic to the labels.
 addEvent(Axis, 'afterRender', function (): void {
-    let axis = this;
+    const axis = this;
 
     if (!this.horiz && this.variwide) {
         this.chart.labelCollectors.push(
@@ -107,7 +107,7 @@ addEvent(Axis, 'afterRender', function (): void {
                         pos: number,
                         i: number
                     ): SVGElement {
-                        let label: SVGElement =
+                        const label: SVGElement =
                             axis.ticks[pos].label as any;
 
                         label.labelrank = (axis.zData as any)[i];
@@ -124,7 +124,7 @@ addEvent(Tick, 'afterGetPosition', function (
         xOrY: keyof PositionObject;
     }
 ): void {
-    let axis = this.axis,
+    const axis = this.axis,
         xOrY: keyof PositionObject = axis.horiz ? 'x' : 'y';
 
     if (axis.variwide) {

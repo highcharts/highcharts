@@ -162,7 +162,7 @@ class DateTimeAxisAdditions {
             if (units[i + 1]) {
                 // lessThan is in the middle between the highest multiple and
                 // the next unit.
-                let lessThan = (
+                const lessThan = (
                     interval *
                     (multiples as any)[(multiples as any).length - 1] +
                     timeUnits[units[i + 1][0]]

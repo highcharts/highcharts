@@ -155,7 +155,7 @@ function GLVertexBuffer(
      * @param drawMode {String} - the draw mode
      */
     function render(from: number, to: number, drawMode: string): boolean {
-        let length = preAllocated ? preAllocated.length : (data as any).length;
+        const length = preAllocated ? preAllocated.length : (data as any).length;
 
         if (!buffer) {
             return false;

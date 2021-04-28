@@ -585,7 +585,7 @@ class ColumnSeries extends Series {
     public init(chart: Chart, options: ColumnSeriesOptions): void {
         super.init.apply(this, arguments as any);
 
-        let series = this;
+        const series = this;
 
         chart = series.chart;
 
@@ -658,7 +658,7 @@ class ColumnSeries extends Series {
             });
         }
 
-        let categoryWidth = Math.min(
+        const categoryWidth = Math.min(
                 Math.abs(xAxis.transA) * (
                     (xAxis.ordinal && xAxis.ordinal.slope) ||
                 options.pointRange ||
@@ -1200,7 +1200,7 @@ class ColumnSeries extends Series {
             chart = series.chart,
             pointer = chart.pointer,
             onMouseOver = function (e: PointerEvent): void {
-                let point = pointer.getPointFromEvent(e);
+                const point = pointer.getPointFromEvent(e);
 
                 // undefined on graph in scatterchart
                 if (typeof point !== 'undefined') {
@@ -1267,7 +1267,7 @@ class ColumnSeries extends Series {
      * @function Highcharts.seriesTypes.column#remove
      */
     public remove(): void {
-        let series = this,
+        const series = this,
             chart = series.chart;
 
         // column and bar series affects other series of the same type

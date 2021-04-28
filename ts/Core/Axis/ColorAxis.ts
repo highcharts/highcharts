@@ -1396,7 +1396,7 @@ H.ColorAxis = ColorAxis as any;
 
 // Extend the chart getAxes method to also get the color axis
 addEvent(Chart, 'afterGetAxes', function (): void {
-    let chart = this,
+    const chart = this,
         options = chart.options;
 
     this.colorAxis = [];
@@ -1413,7 +1413,7 @@ addEvent(Chart, 'afterGetAxes', function (): void {
 
 // Add colorAxis to series axisTypes
 addEvent(Series, 'bindAxes', function (): void {
-    let axisTypes = this.axisTypes;
+    const axisTypes = this.axisTypes;
 
     if (!axisTypes) {
         this.axisTypes = ['colorAxis'];
@@ -1501,7 +1501,7 @@ addEvent(Legend, 'afterColorizeItem', function (
 
 // Updates in the legend need to be reflected in the color axis (6888)
 addEvent(Legend, 'afterUpdate', function (this: Highcharts.Legend): void {
-    let colorAxes = this.chart.colorAxis;
+    const colorAxes = this.chart.colorAxis;
 
     if (colorAxes) {
         colorAxes.forEach(function (colorAxis): void {

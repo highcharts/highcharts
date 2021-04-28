@@ -29,10 +29,10 @@ import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 import ChartUtilities from '../Utils/ChartUtilities.js';
-let unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+const unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-let removeElement = HTMLUtilities.removeElement,
+const removeElement = HTMLUtilities.removeElement,
     getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
 
 declare module '../../Core/Chart/ChartLike' {
@@ -117,7 +117,7 @@ H.Chart.prototype.showExportMenu = function (): void {
  * @function Highcharts.Chart#hideExportMenu
  */
 H.Chart.prototype.hideExportMenu = function (): void {
-    let chart = this,
+    const chart = this,
         exportList = chart.exportDivElements;
 
     if (exportList && chart.exportContextMenu) {
@@ -233,7 +233,7 @@ function exportingShouldHaveA11y(chart: Chart): boolean {
  * @class
  * @name Highcharts.MenuComponent
  */
-let MenuComponent: typeof Highcharts.MenuComponent =
+const MenuComponent: typeof Highcharts.MenuComponent =
     function (): void {} as any;
 MenuComponent.prototype = new (AccessibilityComponent as any)();
 extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
@@ -242,7 +242,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * Init the component
      */
     init: function (this: Highcharts.MenuComponent): void {
-        let chart = this.chart,
+        const chart = this.chart,
             component = this;
 
         this.addEvent(chart, 'exportMenuShown', function (): void {
@@ -259,7 +259,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * @private
      */
     onMenuHidden: function (this: Highcharts.MenuComponent): void {
-        let menu: Highcharts.ExportingDivElement =
+        const menu: Highcharts.ExportingDivElement =
             (this.chart as any).exportContextMenu;
         if (menu) {
             menu.setAttribute('aria-hidden', 'true');
@@ -274,7 +274,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * @private
      */
     onMenuShown: function (this: Highcharts.MenuComponent): void {
-        let chart = this.chart,
+        const chart = this.chart,
             menu = chart.exportContextMenu;
 
         if (menu) {
@@ -295,7 +295,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         this: Highcharts.MenuComponent,
         stateStr: string
     ): void {
-        let button = this.exportButtonProxy;
+        const button = this.exportButtonProxy;
         if (button) {
             button.setAttribute('aria-expanded', stateStr);
         }
@@ -307,7 +307,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * proxy overlay.
      */
     onChartRender: function (this: Highcharts.MenuComponent): void {
-        let chart = this.chart,
+        const chart = this.chart,
             a11yOptions = chart.options.accessibility;
 
         // Always start with a clean slate
@@ -349,7 +349,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
     addAccessibleContextMenuAttribs: function (
         this: Highcharts.MenuComponent
     ): void {
-        let chart = this.chart,
+        const chart = this.chart,
             exportList = chart.exportDivElements;
 
         if (exportList && exportList.length) {
@@ -367,7 +367,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             });
 
             // Set accessibility properties on parent div
-            let parentDiv: HTMLDOMElement = (
+            const parentDiv: HTMLDOMElement = (
                 exportList[0].parentNode as any
             );
             parentDiv.removeAttribute('aria-hidden');
@@ -388,7 +388,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
     getKeyboardNavigation: function (
         this: Highcharts.MenuComponent
     ): Highcharts.KeyboardNavigationHandler {
-        let keys = this.keyCodes,
+        const keys = this.keyCodes,
             chart = this.chart,
             component = this;
 

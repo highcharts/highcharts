@@ -38,7 +38,7 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
     proceed: Function
 ): SVGPath {
 
-    let series = this,
+    const series = this,
         svgPath = proceed.apply(series, [].slice.call(arguments, 1));
 
     // Do not do this if the chart is not 3D

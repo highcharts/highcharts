@@ -162,7 +162,7 @@ declare global {
 }
 type ChartClass = typeof Chart;
 
-let marginNames = H.marginNames;
+const marginNames = H.marginNames;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -390,7 +390,7 @@ class Chart {
              */
             this.userOptions = userOptions;
 
-            let chartEvents = optionsChart.events;
+            const chartEvents = optionsChart.events;
 
             this.margin = [];
             this.spacing = [];
@@ -468,7 +468,7 @@ class Chart {
             this.styledMode = optionsChart.styledMode;
             this.hasCartesianSeries = optionsChart.showAxes;
 
-            let chart = this;
+            const chart = this;
 
             /**
              * Index position of the chart in the {@link Highcharts#charts}
@@ -633,7 +633,7 @@ class Chart {
         plotY: number,
         inverted?: boolean
     ): boolean {
-        let x = inverted ? plotY : plotX,
+        const x = inverted ? plotY : plotX,
             y = inverted ? plotX : plotY,
             e = {
                 x,
@@ -787,7 +787,7 @@ class Chart {
         axes.forEach(function (axis): void {
 
             // Fire 'afterSetExtremes' only if extremes are set
-            let key = axis.min + ',' + axis.max;
+            const key = axis.min + ',' + axis.max;
 
             if (axis.extKey !== key) { // #821, #4452
                 axis.extKey = key;
@@ -1233,7 +1233,7 @@ class Chart {
      * @function Highcharts.Chart#getChartSize
      */
     public getChartSize(): void {
-        let chart = this,
+        const chart = this,
             optionsChart = chart.options.chart,
             widthOption = optionsChart.width,
             heightOption = optionsChart.height,
@@ -1563,7 +1563,7 @@ class Chart {
      */
     public getAxisMargins(): void {
 
-        let chart = this,
+        const chart = this,
             // [top, right, bottom, left]
             axisOffset = chart.axisOffset = [0, 0, 0, 0],
             colorAxis = chart.colorAxis,
@@ -1615,7 +1615,7 @@ class Chart {
      *        internally as a response to window resize.
      */
     public reflow(e?: Event): void {
-        let chart = this,
+        const chart = this,
             optionsChart = chart.options.chart,
             renderTo = chart.renderTo,
             hasUserSize = (
@@ -1665,7 +1665,7 @@ class Chart {
      * @function Highcharts.Chart#setReflow
      */
     public setReflow(reflow?: boolean): void {
-        let chart = this;
+        const chart = this;
 
         if (reflow !== false && !this.unbindReflow) {
             this.unbindReflow = addEvent(win, 'resize', function (
@@ -1934,14 +1934,14 @@ class Chart {
 
         fireEvent(this, 'resetMargins');
 
-        let chart = this,
+        const chart = this,
             chartOptions = chart.options.chart;
 
         // Create margin and spacing array
         ['margin', 'spacing'].forEach(function splashArrays(
             target: string
         ): void {
-            let value = (chartOptions as any)[target],
+            const value = (chartOptions as any)[target],
                 values = isObject(value) ? value : [value, value, value, value];
 
             [
@@ -2180,7 +2180,7 @@ class Chart {
      * @fires Highcharts.Chart#event:afterLinkSeries
      */
     public linkSeries(): void {
-        let chart = this,
+        const chart = this,
             chartSeries = chart.series;
 
         // Reset links
@@ -2239,14 +2239,14 @@ class Chart {
      * @function Highcharts.Chart#renderLabels
      */
     public renderLabels(): void {
-        let chart = this,
+        const chart = this,
             labels = chart.options.labels as Highcharts.LabelsOptions;
 
         if (labels.items) {
             labels.items.forEach(function (
                 label: Highcharts.LabelsItemsOptions
             ): void {
-                let style = extend(labels.style as any, label.style as any),
+                const style = extend(labels.style as any, label.style as any),
                     x = pInt(style.left) + chart.plotLeft,
                     y = pInt(style.top) + chart.plotTop + 12;
 
@@ -2517,7 +2517,7 @@ class Chart {
             'pointer', 'rangeSelector', 'legend', 'resetZoomButton', 'tooltip',
             'renderer'
         ].forEach(function (name: string): void {
-            let prop = (chart as any)[name];
+            const prop = (chart as any)[name];
 
             if (prop && prop.destroy) {
                 (chart as any)[name] = prop.destroy();
@@ -2550,7 +2550,7 @@ class Chart {
      * @fires Highcharts.Chart#event:beforeRender
      */
     public firstRender(): void {
-        let chart = this,
+        const chart = this,
             options = chart.options;
 
         // Hook for oldIE to check whether the chart is ready to render
@@ -2954,7 +2954,7 @@ class Chart {
      */
     public hideLoading(): void {
 
-        let options = this.options,
+        const options = this.options,
             loadingDiv = this.loadingDiv;
 
         if (loadingDiv) {
@@ -3369,7 +3369,7 @@ class Chart {
      * @fires Highcharts.Chart#event:beforeShowResetZoom
      */
     public showResetZoom(): void {
-        let chart = this,
+        const chart = this,
             lang = defaultOptions.lang,
             btnOptions = chart.options.chart.resetZoomButton as any,
             theme = btnOptions.theme,

@@ -112,7 +112,7 @@ declare global {
     }
 }
 
-let bindingsUtils: Highcharts.StockToolsNavigationBindingsUtilsObject = NavigationBindings.prototype.utils as any,
+const bindingsUtils: Highcharts.StockToolsNavigationBindingsUtilsObject = NavigationBindings.prototype.utils as any,
     PREFIX = 'highcharts-';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -166,7 +166,7 @@ bindingsUtils.addFlagFromForm = function (
             point: {
                 events: {
                     click: function (this: FlagsPoint): void {
-                        let point = this,
+                        const point = this,
                             options = point.options;
 
                         fireEvent(
@@ -532,7 +532,7 @@ bindingsUtils.updateNthPoint = function (
         e: PointerEvent,
         annotation: Annotation
     ): void {
-        let options = annotation.options.typeOptions,
+        const options = annotation.options.typeOptions,
             coords = this.chart.pointer.getCoordinates(e),
             coordsX = this.utils.getAssignedAxis(coords.xAxis),
             coordsY = this.utils.getAssignedAxis(coords.yAxis);
@@ -664,10 +664,10 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
     getYAxisResizers: function (
         yAxes: Array<AxisType>
     ): Array<Highcharts.NavigationBindingsResizerObject> {
-        let resizers: Array<Highcharts.NavigationBindingsResizerObject> = [];
+        const resizers: Array<Highcharts.NavigationBindingsResizerObject> = [];
 
         yAxes.forEach(function (_yAxis: AxisType, index: number): void {
-            let nextYAxis = yAxes[index + 1];
+            const nextYAxis = yAxes[index + 1];
 
             // We have next axis, bind them:
             if (nextYAxis) {
@@ -713,7 +713,7 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
     ): void {
         // The height of the new axis before rescalling. In %, but as a number.
         const defaultHeight = 20;
-        let chart = this.chart,
+        const chart = this.chart,
             // Only non-navigator axes
             yAxes = chart.yAxis.filter(bindingsUtils.isNotNavigatorYAxis),
             plotHeight = chart.plotHeight,
@@ -782,7 +782,7 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
             position: Record<string, number>,
             index: number
         ): void {
-            let prevPosition = positions[index - 1];
+            const prevPosition = positions[index - 1];
 
             position.top = !prevPosition ? 0 :
                 correctFloat(prevPosition.height + prevPosition.top);
@@ -804,7 +804,7 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
  * @since        7.0.0
  * @optionparent navigation.bindings
  */
-let stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObject> = {
+const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObject> = {
     // Line type annotations:
     /**
      * A segment annotation bindings. Includes `start` and one event in `steps`
@@ -2348,7 +2348,7 @@ let stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             this: NavigationBindings,
             button: HTMLDOMElement
         ): void {
-            let chart = this.chart,
+            const chart = this.chart,
                 series = chart.series,
                 gui = chart.stockTools,
                 priceIndicatorEnabled = bindingsUtils.isPriceIndicatorEnabled(chart.series);
@@ -2388,7 +2388,7 @@ let stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (this: Highcharts.StockToolsNavigationBindings): void {
-            let navigation = this;
+            const navigation = this;
 
             fireEvent(
                 navigation,
@@ -2423,7 +2423,7 @@ let stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             this: Highcharts.StockToolsNavigationBindings,
             button: HTMLDOMElement
         ): void {
-            let chart = this.chart,
+            const chart = this.chart,
                 gui: Highcharts.Toolbar = chart.stockTools as any,
                 iconsURL = gui.getIconsURL();
 
@@ -2476,7 +2476,7 @@ let stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             this: Highcharts.StockToolsNavigationBindings,
             button: HTMLDOMElement
         ): void {
-            let navigation = this,
+            const navigation = this,
                 chart = navigation.chart,
                 annotations: Array<Highcharts.AnnotationsOptions> = [],
                 indicators: Array<DeepPartial<SeriesTypeOptions>> = [],

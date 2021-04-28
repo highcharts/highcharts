@@ -155,7 +155,7 @@ function findObstacleFromPoint(obstacles: Array<any>, point: any): number {
  *         SVG path array as accepted by the SVG Renderer.
  */
 function pathFromSegments(segments: Array<any>): SVGPath {
-    let path: SVGPath = [];
+    const path: SVGPath = [];
 
     if (segments.length) {
         path.push(['M', segments[0].start.x, segments[0].start.y]);
@@ -278,7 +278,7 @@ const simpleConnect = function (
         toKey?: string,
         offset?: number
     ): Record<string, number> {
-        let point: Record<string, number> = {
+        const point: Record<string, number> = {
             x: from.x as any,
             y: from.y as any
         };
@@ -297,7 +297,7 @@ const simpleConnect = function (
         point: any,
         direction: string
     ): Record<string, number> {
-        let useMax = abs(point[direction] - obstacle[direction + 'Min']) >
+        const useMax = abs(point[direction] - obstacle[direction + 'Min']) >
                     abs(point[direction] - obstacle[direction + 'Max']);
 
         return copyFromPoint(
@@ -829,7 +829,7 @@ const fastAvoid = function (
         point: any,
         goalPoint: any
     ): any {
-        let dirIsX = min(obstacle.xMax - point.x, point.x - obstacle.xMin) <
+        const dirIsX = min(obstacle.xMax - point.x, point.x - obstacle.xMin) <
                     min(obstacle.yMax - point.y, point.y - obstacle.yMin),
             bounds = {
                 soft: options.hardBounds,

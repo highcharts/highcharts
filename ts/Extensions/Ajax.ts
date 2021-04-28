@@ -95,7 +95,7 @@ declare global {
 H.ajax = function (
     attr: Partial<Highcharts.AjaxSettingsObject>
 ): (false|undefined) {
-    let options = merge(true, {
+    const options = merge(true, {
             url: false as any,
             type: 'get',
             dataType: 'json',

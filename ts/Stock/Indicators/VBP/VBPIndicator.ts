@@ -82,7 +82,7 @@ function arrayExtremesOHLC(
 
 /* eslint-enable require-jsdoc */
 
-let abs = Math.abs,
+const abs = Math.abs,
     columnPrototype = SeriesRegistry.seriesTypes.column.prototype;
 
 /**
@@ -232,7 +232,7 @@ class VBPIndicator extends SMAIndicator {
         baseSeries: LineSeries,
         volumeSeries: LineSeries
     ): VBPIndicator {
-        let indicator = this;
+        const indicator = this;
 
         /* eslint-disable require-jsdoc */
         function toEmptyIndicator(): void {
@@ -302,7 +302,7 @@ class VBPIndicator extends SMAIndicator {
     }
 
     public drawPoints(): void {
-        let indicator = this;
+        const indicator = this;
 
         if ((indicator.options.volumeDivision as any).enabled) {
             indicator.posNegVolume(true, true);

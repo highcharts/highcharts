@@ -191,7 +191,7 @@ class Funnel3DSeries extends ColumnSeries {
         _dataLabel: SVGLabel,
         options: DataLabelOptions
     ): void {
-        let series = this,
+        const series = this,
             dlBoxRaw = point.dlBoxRaw,
             inverted = series.chart.inverted,
             below = (point.plotY as any) > pick(
@@ -310,7 +310,7 @@ class Funnel3DSeries extends ColumnSeries {
 
         // Return the width at a specific y coordinate
         series.getWidthAt = getWidthAt = function (y: number): number {
-            let top = (centerY - height / 2);
+            const top = (centerY - height / 2);
 
             return (y > neckY || height === neckHeight) ?
                 neckWidth :

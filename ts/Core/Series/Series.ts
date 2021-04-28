@@ -3086,12 +3086,12 @@ class Series {
         point: Point,
         i: (number|string)
     ): void {
-        let series = point.series,
+        const series = point.series,
             args = arguments,
             fn = isNumber(i) ?
                 // Insert the value in the given position
                 function (key: string): void {
-                    let val = key === 'y' && series.toYData ?
+                    const val = key === 'y' && series.toYData ?
                         series.toYData(point) :
                         (point as any)[key];
 
@@ -3195,7 +3195,7 @@ class Series {
      * @function Highcharts.Series#setDataSortingOptions
      */
     public setDataSortingOptions(): void {
-        let options = this.options;
+        const options = this.options;
 
         extend<Series>(this, {
             requireSorting: false,
@@ -3242,7 +3242,7 @@ class Series {
         fireEvent(this, 'setOptions', e);
 
         // These may be modified by the event
-        let typeOptions = (e.plotOptions as any)[this.type],
+        const typeOptions = (e.plotOptions as any)[this.type],
             userPlotOptions = (
                 userOptions.plotOptions || {} as SeriesTypePlotOptions
             );
@@ -3447,7 +3447,7 @@ class Series {
      * @return {void}
      */
     public getSymbol(): void {
-        let seriesMarkerOption = this.options.marker;
+        const seriesMarkerOption = this.options.marker;
 
         this.getCyclic(
             'symbol',
@@ -3948,7 +3948,7 @@ class Series {
         // own sorting
         if (series.linkedSeries) {
             series.linkedSeries.forEach(function (linkedSeries): void {
-                let options = linkedSeries.options,
+                const options = linkedSeries.options,
                     seriesData = options.data as Array<PointOptions>;
 
                 if (
@@ -4224,7 +4224,7 @@ class Series {
             );
 
         if (!data && !hasGroupedData) {
-            let arr = [] as Array<Point>;
+            const arr = [] as Array<Point>;
 
             arr.length = (dataOptions as any).length;
             data = series.data = arr;
@@ -4776,7 +4776,7 @@ class Series {
         insideOnly?: boolean,
         allowNull?: boolean
     ): Array<Point> {
-        let chart = this.chart;
+        const chart = this.chart;
 
         // #3916, #5029, #5085
         return (points || this.points || []).filter(
@@ -4983,7 +4983,7 @@ class Series {
      * Initialize the animation.
      */
     public animate(init?: boolean): void {
-        let series = this,
+        const series = this,
             chart = series.chart,
             animation = animObject(series.options.animation),
             sharedClipKey = this.sharedClipKey;
@@ -5616,7 +5616,7 @@ class Series {
      * @function Highcharts.Series#invertGroups
      */
     public invertGroups(inverted?: boolean): void {
-        let series = this,
+        const series = this,
             chart = series.chart;
 
         /**
@@ -5923,7 +5923,7 @@ class Series {
      * @function Highcharts.Series#redraw
      */
     public redraw(): void {
-        let series = this,
+        const series = this,
             chart = series.chart,
             // cache it here as it is set to false in render, but used after
             wasDirty = series.isDirty || series.isDirtyData,
@@ -5961,7 +5961,7 @@ class Series {
         e: PointerEvent,
         compareX?: boolean
     ): (Point|undefined) {
-        let series = this,
+        const series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             inverted = series.chart.inverted;
@@ -5991,7 +5991,7 @@ class Series {
         // (#6235)
         this.buildingKdTree = true;
 
-        let series = this,
+        const series = this,
             dimensions = (series.options.findNearestPointBy as any)
                 .indexOf('y') > -1 ? 2 : 1;
 
@@ -6072,7 +6072,7 @@ class Series {
         compareX?: boolean,
         e?: PointerEvent
     ): (Point|undefined) {
-        let series = this,
+        const series = this,
             kdX = this.kdAxisArray[0],
             kdY = this.kdAxisArray[1],
             kdComparer = compareX ? 'distX' : 'dist',
@@ -6087,7 +6087,7 @@ class Series {
             p1: KDPointSearchObject,
             p2: Point
         ): void {
-            let x = (defined((p1 as any)[kdX]) &&
+            const x = (defined((p1 as any)[kdX]) &&
                     defined((p2 as any)[kdX])) ?
                     Math.pow((p1 as any)[kdX] - (p2 as any)[kdX], 2) :
                     null,
@@ -6478,7 +6478,7 @@ class Series {
         animation?: (boolean|Partial<AnimationOptions>)
     ): void {
 
-        let series = this,
+        const series = this,
             data = series.data,
             point = data[i],
             points = series.points,
@@ -6547,7 +6547,7 @@ class Series {
         withEvent?: boolean,
         keepEvents?: boolean
     ): void {
-        let series = this,
+        const series = this,
             chart = series.chart;
 
         /**
@@ -6893,7 +6893,7 @@ class Series {
      * @fires Highcharts.Series#event:mouseOver
      */
     public onMouseOver(): void {
-        let series = this,
+        const series = this,
             chart = series.chart,
             hoverSeries = chart.hoverSeries,
             pointer = chart.pointer;
@@ -6932,7 +6932,7 @@ class Series {
      */
     public onMouseOut(): void {
         // trigger the event only if listeners exist
-        let series = this,
+        const series = this,
             options = series.options,
             chart = series.chart,
             tooltip = chart.tooltip,
@@ -7261,7 +7261,7 @@ class Series {
      * @fires Highcharts.Series#event:unselect
      */
     public select(selected?: boolean): void {
-        let series = this;
+        const series = this;
 
         series.selected =
         selected =

@@ -118,10 +118,10 @@ class DependencyWheelSeries extends SankeySeries {
 
     public animate(init?: boolean): void {
         if (!init) {
-            let duration = animObject(this.options.animation).duration,
+            const duration = animObject(this.options.animation).duration,
                 step = (duration / 2) / this.nodes.length;
             this.nodes.forEach(function (point, i): void {
-                let graphic = point.graphic;
+                const graphic = point.graphic;
                 if (graphic) {
                     graphic.attr({ opacity: 0 });
                     setTimeout(function (): void {
@@ -135,7 +135,7 @@ class DependencyWheelSeries extends SankeySeries {
                 }
             }, this);
             this.points.forEach(function (point): void {
-                let graphic = point.graphic;
+                const graphic = point.graphic;
                 if (!point.isNode && graphic) {
                     graphic.attr({ opacity: 0 })
                         .animate({
@@ -148,7 +148,7 @@ class DependencyWheelSeries extends SankeySeries {
     }
 
     public createNode(id: string): DependencyWheelPoint {
-        let node = SankeySeries.prototype.createNode.call(
+        const node = SankeySeries.prototype.createNode.call(
             this,
             id
         ) as DependencyWheelPoint;
@@ -230,7 +230,7 @@ class DependencyWheelSeries extends SankeySeries {
      * @private
      */
     public createNodeColumns(): Array<SankeySeriesType.ColumnArray> {
-        let columns = [this.createNodeColumn()];
+        const columns = [this.createNodeColumn()];
         this.nodes.forEach(function (
             node: DependencyWheelPoint
         ): void {
@@ -255,7 +255,7 @@ class DependencyWheelSeries extends SankeySeries {
      */
     public translate(): void {
 
-        let options = this.options,
+        const options = this.options,
             factor = 2 * Math.PI /
                 (this.chart.plotHeight + this.getNodePadding()),
             center = this.getCenter(),
@@ -266,7 +266,7 @@ class DependencyWheelSeries extends SankeySeries {
         this.nodeColumns[0].forEach(function (node): void {
             // Don't render the nodes if sum is 0 #12453
             if (node.sum) {
-                let shapeArgs = node.shapeArgs,
+                const shapeArgs = node.shapeArgs,
                     centerX = center[0],
                     centerY = center[1],
                     r = center[2] / 2,
@@ -299,7 +299,7 @@ class DependencyWheelSeries extends SankeySeries {
                 node.linksFrom.forEach(function (point): void {
                     if (point.linkBase) {
                         let distance;
-                        let corners = point.linkBase.map(function (
+                        const corners = point.linkBase.map(function (
                             top: number,
                             i: number
                         ): Record<string, number> {

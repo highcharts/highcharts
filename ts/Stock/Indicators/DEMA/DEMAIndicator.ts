@@ -67,7 +67,7 @@ class DEMAIndicator extends EMAIndicator {
     public points: Array<DEMAPoint> = void 0 as any;
 
     public init(this: DEMAIndicator): void {
-        let args = arguments,
+        const args = arguments,
             ctx = this;
 
         RequiredIndicatorMixin.isParentLoaded(

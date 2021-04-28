@@ -61,7 +61,7 @@ class MapChart extends Chart {
         userOptions: Partial<Highcharts.Options>,
         callback?: Chart.CallbackFunction
     ): void {
-        let hiddenAxis = {
+        const hiddenAxis = {
                 endOnTick: false,
                 visible: false,
                 minPadding: 0,

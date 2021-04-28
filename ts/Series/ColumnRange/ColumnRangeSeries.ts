@@ -55,7 +55,7 @@ const {
  * @requires     highcharts-more
  * @optionparent plotOptions.columnrange
  */
-let columnRangeOptions: ColumnRangeSeriesOptions = {
+const columnRangeOptions: ColumnRangeSeriesOptions = {
 
     /**
      * Extended data labels for range series types. Range series data labels

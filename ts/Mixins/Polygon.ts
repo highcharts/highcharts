@@ -83,7 +83,7 @@ const {
     isNumber
 } = U;
 
-let deg2rad = H.deg2rad;
+const deg2rad = H.deg2rad;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -98,7 +98,7 @@ let deg2rad = H.deg2rad;
  * @return {number}
  */
 const correctFloat = function (number: number, precision?: number): number {
-    let p = isNumber(precision) ? precision : 14,
+    const p = isNumber(precision) ? precision : 14,
         magnitude = Math.pow(10, p);
 
     return Math.round(number * magnitude) / magnitude;
@@ -120,7 +120,7 @@ const getNormals = function getNormal(
     p1: Highcharts.PolygonPointObject,
     p2: Highcharts.PolygonPointObject
 ): Highcharts.PolygonObject {
-    let dx = p2[0] - p1[0], // x2 - x1
+    const dx = p2[0] - p1[0], // x2 - x1
         dy = p2[1] - p1[1]; // y2 - y1
 
     return [
@@ -147,7 +147,7 @@ const dotProduct = function dotProduct(
     a: Highcharts.PolygonPointObject,
     b: Highcharts.PolygonPointObject
 ): number {
-    let ax = a[0],
+    const ax = a[0],
         ay = a[1],
         bx = b[0],
         by = b[1];
@@ -171,7 +171,7 @@ const project = function project(
     polygon: Highcharts.PolygonObject,
     target: Highcharts.PolygonPointObject
 ): Highcharts.RangeObject {
-    let products = polygon.map(function (
+    const products = polygon.map(function (
         point: Highcharts.PolygonPointObject
     ): number {
         return dotProduct(point, target);
@@ -199,7 +199,7 @@ const rotate2DToOrigin = function (
     point: Highcharts.PolygonPointObject,
     angle: number
 ): Highcharts.PolygonPointObject {
-    let x = point[0],
+    const x = point[0],
         y = point[1],
         rad = deg2rad * -angle,
         cosAngle = Math.cos(rad),
@@ -230,7 +230,7 @@ const rotate2DToPoint = function (
     origin: Highcharts.PolygonPointObject,
     angle: number
 ): Highcharts.PolygonPointObject {
-    let x = point[0] - origin[0],
+    const x = point[0] - origin[0],
         y = point[1] - origin[1],
         rotated = rotate2DToOrigin([x, y], angle);
 
@@ -270,7 +270,7 @@ const getAxesFromPolygon = function (
                 p1: Highcharts.PolygonPointObject,
                 p2: Highcharts.PolygonPointObject
             ): Highcharts.PolygonPointObject {
-                let normals = getNormals(p1, p2),
+                const normals = getNormals(p1, p2),
                     axis = normals[0]; // Use the left normal as axis.
 
                 // Check that the axis is unique.
@@ -299,7 +299,7 @@ const getAxes = function (
     polygon2: Highcharts.PolygonObject
 ): Highcharts.PolygonObject {
     // Get the axis from both polygons.
-    let axes1 = getAxesFromPolygon(polygon1),
+    const axes1 = getAxesFromPolygon(polygon1),
         axes2 = getAxesFromPolygon(polygon2);
 
     return axes1.concat(axes2);
@@ -315,7 +315,7 @@ const getPolygon = function (
     height: number,
     rotation: number
 ): Highcharts.PolygonObject {
-    let origin: Highcharts.PolygonPointObject = [x, y],
+    const origin: Highcharts.PolygonPointObject = [x, y],
         left = x - (width / 2),
         right = x + (width / 2),
         top = y - (height / 2),
@@ -344,7 +344,7 @@ const getBoundingBoxFromPolygon = function (
         obj: Highcharts.PolygonBoxObject,
         point: Highcharts.PolygonPointObject
     ): Highcharts.PolygonBoxObject {
-        let x = point[0],
+        const x = point[0],
             y = point[1];
 
         obj.left = Math.min(x, obj.left);
@@ -368,7 +368,7 @@ const isPolygonsOverlappingOnAxis = function (
     polygon1: Highcharts.PolygonObject,
     polygon2: Highcharts.PolygonObject
 ): boolean {
-    let projection1 = project(polygon1, axis),
+    const projection1 = project(polygon1, axis),
         projection2 = project(polygon2, axis),
         isOverlapping = !(
             projection2.min > projection1.max ||
@@ -397,7 +397,7 @@ const isPolygonsColliding = function isPolygonsColliding(
     polygon1: Highcharts.PolygonObject,
     polygon2: Highcharts.PolygonObject
 ): boolean {
-    let axes = getAxes(polygon1, polygon2),
+    const axes = getAxes(polygon1, polygon2),
         overlappingOnAllAxes = !find(axes, function (
             axis: Highcharts.PolygonPointObject
         ): boolean {
@@ -425,7 +425,7 @@ const movePolygon = function (
     });
 };
 
-let collision: Highcharts.PolygonCollisionMixins = {
+const collision: Highcharts.PolygonCollisionMixins = {
     getBoundingBoxFromPolygon: getBoundingBoxFromPolygon,
     getPolygon: getPolygon,
     isPolygonsColliding: isPolygonsColliding,

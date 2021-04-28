@@ -129,7 +129,7 @@ function formatExtendedStatement(
 
     // Dealing with a plural-function?
     if (pluralStart > -1) {
-        let pluralEnd = statement.slice(pluralStart).indexOf(')') + pluralStart,
+        const pluralEnd = statement.slice(pluralStart).indexOf(')') + pluralStart,
             pluralStatement = statement.substring(pluralStart + 8, pluralEnd),
             pluralArguments = pluralStatement.split(','),
             num = Number(ctx[pluralArguments[0]]);
@@ -262,7 +262,7 @@ H.i18nFormat = function (
             sourceStr: string,
             offset: number
         ): (Highcharts.A11yBracketStatementObject|undefined) {
-            let str = sourceStr.slice(offset || 0),
+            const str = sourceStr.slice(offset || 0),
                 startBracket = str.indexOf('{'),
                 endBracket = str.indexOf('}');
 

@@ -236,7 +236,7 @@ Accessibility.prototype = {
      * Update all components.
      */
     update: function (this: Highcharts.Accessibility): void {
-        let components = this.components,
+        const components = this.components,
             chart = this.chart,
             a11yOptions = chart.options.accessibility;
 
@@ -278,10 +278,10 @@ Accessibility.prototype = {
      * Destroy all elements.
      */
     destroy: function (): void {
-        let chart: Chart = this.chart || {};
+        const chart: Chart = this.chart || {};
 
         // Destroy components
-        let components = this.components;
+        const components = this.components;
         Object.keys(components).forEach(function (componentName: string): void {
             components[componentName].destroy();
             components[componentName].destroyBase();
@@ -309,7 +309,7 @@ Accessibility.prototype = {
      * @private
      */
     getChartTypes: function (this: Highcharts.Accessibility): Array<string> {
-        let types: Record<string, number> = {};
+        const types: Record<string, number> = {};
         this.chart.series.forEach(function (series): void {
             types[series.type] = 1;
         });
@@ -366,7 +366,7 @@ addEvent(H.Chart as any, 'update', function (
     e: { options: Highcharts.Options }
 ): void {
     // Merge new options
-    let newOptions = e.options.accessibility;
+    const newOptions = e.options.accessibility;
     if (newOptions) {
         // Handle custom component updating specifically
         if (newOptions.customComponents) {

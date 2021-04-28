@@ -178,7 +178,7 @@ function buildTypeDescriptionFromSeries(
     types: Array<string>,
     context: Highcharts.InfoRegionsComponentTypeDescFormatContextObject
 ): string {
-    let firstType = types[0],
+    const firstType = types[0],
         typeExplaination = chart.langFormat(
             'accessibility.seriesTypeDescriptions.' + firstType,
             context
@@ -217,7 +217,7 @@ function getTableSummary(chart: Chart): string {
  * @return {string} The text description of the chart type.
  */
 H.Chart.prototype.getTypeDescription = function (types: Array<string>): string {
-    let firstType = types[0],
+    const firstType = types[0],
         firstSeries = this.series && this.series[0] || {},
         formatContext: Highcharts.InfoRegionsComponentTypeDescFormatContextObject = {
             numSeries: this.series.length,
@@ -249,7 +249,7 @@ H.Chart.prototype.getTypeDescription = function (types: Array<string>): string {
  * @class
  * @name Highcharts.InfoRegionsComponent
  */
-let InfoRegionsComponent: typeof Highcharts.InfoRegionsComponent =
+const InfoRegionsComponent: typeof Highcharts.InfoRegionsComponent =
     function (): void {} as any;
 InfoRegionsComponent.prototype = new (AccessibilityComponent as any)();
 extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponent */ { // eslint-disable-line
@@ -291,7 +291,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     initRegionsDefinitions: function (
         this: Highcharts.InfoRegionsComponent
     ): void {
-        let component = this;
+        const component = this;
 
         this.screenReaderSections = {
             before: {
@@ -299,7 +299,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 buildContent: function (
                     chart: Highcharts.AccessibilityChart
                 ): string {
-                    let formatter: (
+                    const formatter: (
                         Highcharts.ScreenReaderFormatterCallbackFunction<Chart>|undefined
                     ) = chart.options.accessibility
                         .screenReaderSection.beforeChartFormatter;
@@ -329,7 +329,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 buildContent: function (
                     chart: Highcharts.AccessibilityChart
                 ): string {
-                    let formatter = chart.options.accessibility.screenReaderSection
+                    const formatter = chart.options.accessibility.screenReaderSection
                         .afterChartFormatter;
                     return formatter ? formatter(chart) :
                         component.defaultAfterChartFormatter();
@@ -352,7 +352,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * to get a11y info from series.
      */
     onChartRender: function (this: Highcharts.InfoRegionsComponent): void {
-        let component = this;
+        const component = this;
 
         this.linkedDescriptionElement = this.getLinkedDescriptionElement();
         this.setLinkedDescriptionAttrs();
@@ -371,7 +371,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     getLinkedDescriptionElement: function (
         this: Highcharts.InfoRegionsComponent
     ): (HTMLDOMElement|undefined) {
-        let chartOptions = this.chart.options,
+        const chartOptions = this.chart.options,
             linkedDescOption = chartOptions.accessibility.linkedDescription;
 
         if (!linkedDescOption) {
@@ -382,7 +382,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             return linkedDescOption;
         }
 
-        let query = format(linkedDescOption, this.chart),
+        const query = format(linkedDescOption, this.chart),
             queryMatch = doc.querySelectorAll(query);
 
         if (queryMatch.length === 1) {
@@ -397,7 +397,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     setLinkedDescriptionAttrs: function (
         this: Highcharts.InfoRegionsComponent
     ): void {
-        let el = this.linkedDescriptionElement;
+        const el = this.linkedDescriptionElement;
 
         if (el) {
             el.setAttribute('aria-hidden', 'true');
@@ -414,7 +414,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         this: Highcharts.InfoRegionsComponent,
         regionKey: string
     ): void {
-        let chart = this.chart,
+        const chart = this.chart,
             region = this.screenReaderSections[regionKey],
             content = region.buildContent(chart),
             sectionDiv = region.element = (
@@ -447,7 +447,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         sectionDiv: HTMLDOMElement,
         regionKey: string
     ): void {
-        let labelLangKey = (
+        const labelLangKey = (
                 'accessibility.screenReaderSection.' + regionKey + 'RegionLabel'
             ),
             chart = this.chart,
@@ -529,7 +529,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     defaultAfterChartFormatter: function (
         this: Highcharts.InfoRegionsComponent
     ): string {
-        let chart = this.chart,
+        const chart = this.chart,
             format = chart.options.accessibility
                 .screenReaderSection.afterChartFormat,
             context = {
@@ -548,7 +548,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     getLinkedDescription: function (
         this: Highcharts.InfoRegionsComponent
     ): string {
-        let el = this.linkedDescriptionElement,
+        const el = this.linkedDescriptionElement,
             content = el && el.innerHTML || '';
 
         return stripHTMLTagsFromString(content);
@@ -562,7 +562,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     getLongdescText: function (
         this: Highcharts.InfoRegionsComponent
     ): string {
-        let chartOptions = this.chart.options,
+        const chartOptions = this.chart.options,
             captionOptions = chartOptions.caption,
             captionText = captionOptions && captionOptions.text,
             linkedDescription = this.getLinkedDescription();
@@ -583,7 +583,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     getTypeDescriptionText: function (
         this: Highcharts.InfoRegionsComponent
     ): string {
-        let chart = this.chart;
+        const chart = this.chart;
         return chart.types ?
             chart.options.accessibility.typeDescription ||
             chart.getTypeDescription(chart.types) : '';
@@ -599,7 +599,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         this: Highcharts.InfoRegionsComponent,
         buttonId: string
     ): string {
-        let chart = this.chart,
+        const chart = this.chart,
             buttonText = chart.langFormat(
                 'accessibility.table.viewAsDataTableButtonText',
                 { chart: chart, chartTitle: getChartTitle(chart) }
@@ -643,7 +643,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     getSubtitleText: function (
         this: Highcharts.InfoRegionsComponent
     ): string {
-        let subtitle = (
+        const subtitle = (
             this.chart.options.subtitle
         );
         return stripHTMLTagsFromString(subtitle && subtitle.text || '');
@@ -657,7 +657,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     getEndOfChartMarkerText: function (
         this: Highcharts.InfoRegionsComponent
     ): string {
-        let chart = this.chart,
+        const chart = this.chart,
             markerText = chart.langFormat(
                 'accessibility.screenReaderSection.endOfChartMarker',
                 { chart: chart }
@@ -676,7 +676,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         this: Highcharts.InfoRegionsComponent,
         e: { tree: Highcharts.ASTNode }
     ): void {
-        let chart = this.chart;
+        const chart = this.chart;
 
         if (chart.options.accessibility.enabled) {
             if (this.viewDataTableButton) {
@@ -697,7 +697,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     focusDataTable: function (
         this: Highcharts.InfoRegionsComponent
     ): void {
-        let tableDiv = this.dataTableDiv,
+        const tableDiv = this.dataTableDiv,
             table = tableDiv && tableDiv.getElementsByTagName('table')[0];
 
         if (table && table.focus) {
@@ -770,7 +770,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         this: Highcharts.InfoRegionsComponent,
         tableButtonId: string
     ): void {
-        let el = this.viewDataTableButton = getElement(tableButtonId),
+        const el = this.viewDataTableButton = getElement(tableButtonId),
             chart = this.chart,
             tableId = tableButtonId.replace('hc-linkto-', '');
 
@@ -797,12 +797,12 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     getAxesDescription: function (
         this: Highcharts.InfoRegionsComponent
     ): Record<string, string> {
-        let chart = this.chart,
+        const chart = this.chart,
             shouldDescribeColl = function (
                 collectionKey: ('xAxis'|'yAxis'),
                 defaultCondition: boolean
             ): boolean {
-                let axes = chart[collectionKey];
+                const axes = chart[collectionKey];
                 return axes.length > 1 || axes[0] &&
                 pick(
                     axes[0].options.accessibility &&

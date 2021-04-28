@@ -105,7 +105,7 @@ import type Pathfinder from './Pathfinder.js';
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import '../Extensions/ArrowSymbols.js';
 
-let deg2rad = H.deg2rad,
+const deg2rad = H.deg2rad,
     max = Math.max,
     min = Math.min;
 
@@ -449,7 +449,7 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
             bbMargin?: number
         ): number {
             // Count the distance even if we are slightly off
-            let margin = pick(bbMargin, 10),
+            const margin = pick(bbMargin, 10),
                 yOverlap = a.yMax + margin > b.yMin - margin &&
                             a.yMin - margin < b.yMax + margin,
                 xOverlap = a.xMax + margin > b.xMin - margin &&

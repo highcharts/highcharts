@@ -495,7 +495,7 @@ Series.prototype.drawDataLabels = function (): void {
 
         dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
         if (!hasRendered) {
-            let group = series.dataLabelsGroup;
+            const group = series.dataLabelsGroup;
             if (group) {
                 if (series.visible) { // #2597, #3023, #3024
                     dataLabelsGroup.show(true);
@@ -1151,7 +1151,7 @@ if (seriesTypes.pie) {
             plotWidth: number,
             plotLeft: number
         ): number {
-            let dataLabelWidth = dataLabel.getBBox().width;
+            const dataLabelWidth = dataLabel.getBBox().width;
 
             return half ? dataLabelWidth + plotLeft :
                 plotWidth - dataLabelWidth - plotLeft;

@@ -127,7 +127,7 @@ const defaultOptions: Highcharts.CurrentDateIndicatorOptions = {
 /* eslint-disable no-invalid-this */
 
 addEvent(Axis, 'afterSetOptions', function (): void {
-    let options = this.options,
+    const options = this.options,
         cdiOptions = options.currentDateIndicator;
 
 
@@ -166,7 +166,7 @@ wrap(PlotLineOrBand.prototype, 'getLabelText', function (
         Highcharts.AxisPlotBandsLabelOptions
     )
 ): string {
-    let options = this.options;
+    const options = this.options;
 
     if (
         options &&

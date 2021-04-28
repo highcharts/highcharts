@@ -252,7 +252,7 @@ class AreaSeries extends LineSeries {
         super.drawGraph.apply(this);
 
         // Define local variables
-        let series = this,
+        const series = this,
             areaPath = this.areaPath,
             options = this.options,
             zones = this.zones,
@@ -471,7 +471,7 @@ class AreaSeries extends LineSeries {
     public getStackPoints(
         points: Array<AreaPoint>
     ): Array<AreaPoint> {
-        let series = this,
+        const series = this,
             segment: Array<AreaPoint> = [],
             keys: Array<string> = [],
             xAxis = this.xAxis,

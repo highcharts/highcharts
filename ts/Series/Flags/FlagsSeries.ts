@@ -518,7 +518,7 @@ class FlagsSeries extends ColumnSeries {
             H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
 
             points.forEach(function (point): void {
-                let box = point.graphic && boxesMap[point.plotX as any];
+                const box = point.graphic && boxesMap[point.plotX as any];
 
                 if (box) {
                     (point.graphic as any)[
@@ -566,7 +566,7 @@ class FlagsSeries extends ColumnSeries {
      * @private
      */
     public drawTracker(): void {
-        let series = this,
+        const series = this,
             points = series.points;
 
         super.drawTracker();
@@ -577,7 +577,7 @@ class FlagsSeries extends ColumnSeries {
         * axis. #1924.
         */
         points.forEach(function (point): void {
-            let graphic = point.graphic;
+            const graphic = point.graphic;
 
             if (graphic) {
                 if (point.unbindMouseOver) {

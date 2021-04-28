@@ -142,7 +142,7 @@ declare global {
  * @type {Array<Function>|undefined}
  */
 
-let doc = H.doc,
+const doc = H.doc,
     win = H.win,
     PREFIX = 'highcharts-';
 
@@ -401,7 +401,7 @@ class NavigationBindings {
      * @function Highcharts.NavigationBindings#initEvents
      */
     public initEvents(): void {
-        let navigation = this,
+        const navigation = this,
             chart = navigation.chart,
             bindingsContainer = navigation.container,
             options = navigation.options;
@@ -417,7 +417,7 @@ class NavigationBindings {
         ([] as Array<HTMLElement>).forEach.call(bindingsContainer, function (subContainer: HTMLElement): void {
             navigation.eventsToUnbind.push(
                 addEvent(subContainer, 'click', function (event: PointerEvent): void {
-                    let bindings = navigation.getButtonEvents(
+                    const bindings = navigation.getButtonEvents(
                         subContainer,
                         event
                     );
@@ -478,7 +478,7 @@ class NavigationBindings {
      * @function Highcharts.NavigationBindings#initUpdate
      */
     public initUpdate(): void {
-        let navigation = this;
+        const navigation = this;
         chartNavigationMixin.addUpdate(
             function (options: Highcharts.NavigationOptions): void {
                 navigation.update(options);
@@ -508,7 +508,7 @@ class NavigationBindings {
         events: Highcharts.NavigationBindingsOptionsObject,
         clickEvent: PointerEvent
     ): void {
-        let navigation = this,
+        const navigation = this,
             chart = navigation.chart;
 
         if (navigation.selectedButtonElement) {
@@ -563,7 +563,7 @@ class NavigationBindings {
     ): void {
         chart = this.chart;
 
-        let navigation = this,
+        const navigation = this,
             selectedButton = navigation.selectedButton,
             svgContainer = chart.renderer.boxWrapper;
 
@@ -715,7 +715,7 @@ class NavigationBindings {
             // Remove empty strings or values like 0
             if (value !== '' && value !== 'undefined') {
                 path.forEach(function (name: string, index: number): void {
-                    let nextName = pick(path[index + 1], '');
+                    const nextName = pick(path[index + 1], '');
 
                     if (pathLength === index) {
                         // Last index, put value:
@@ -759,7 +759,7 @@ class NavigationBindings {
     public annotationToFields(
         annotation: Annotation
     ): Record<string, string> {
-        let options = annotation.options,
+        const options = annotation.options,
             editables = NavigationBindings.annotationsEditable,
             nestedEditables = editables.nestedOptions,
             getFieldType = this.utils.getFieldType,
@@ -1027,7 +1027,7 @@ NavigationBindings.prototype.utils = bindingsUtils;
 
 
 Chart.prototype.initNavigationBindings = function (this: Highcharts.AnnotationChart): void {
-    let chart = this,
+    const chart = this,
         options = chart.options;
 
     if (options && options.navigation && options.navigation.bindings) {
@@ -1066,7 +1066,7 @@ addEvent(Annotation, 'remove', function (): void {
  * @private
  */
 function selectableAnnotation(annotationType: typeof Annotation): void {
-    let originalClick = annotationType.prototype.defaultOptions.events &&
+    const originalClick = annotationType.prototype.defaultOptions.events &&
             annotationType.prototype.defaultOptions.events.click;
 
     /**
@@ -1076,7 +1076,7 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
         this: Annotation,
         eventArguments: AnyRecord
     ): void {
-        let annotation = this,
+        const annotation = this,
             navigation = annotation.chart.navigationBindings,
             prevAnnotation = navigation.activeAnnotation;
 
@@ -1259,7 +1259,7 @@ setOptions({
                     this: NavigationBindings,
                     e: PointerEvent
                 ): Annotation|void {
-                    let coords = this.chart.pointer.getCoordinates(e),
+                    const coords = this.chart.pointer.getCoordinates(e),
                         coordsX = this.utils.getAssignedAxis(coords.xAxis),
                         coordsY = this.utils.getAssignedAxis(coords.yAxis),
                         navigation = this.chart.options.navigation;
@@ -1444,7 +1444,7 @@ setOptions({
                     this: NavigationBindings,
                     e: PointerEvent
                 ): Annotation|void {
-                    let coords = this.chart.pointer.getCoordinates(e),
+                    const coords = this.chart.pointer.getCoordinates(e),
                         coordsX = this.utils.getAssignedAxis(coords.xAxis),
                         coordsY = this.utils.getAssignedAxis(coords.yAxis),
                         navigation = this.chart.options.navigation;

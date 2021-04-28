@@ -202,7 +202,7 @@ KeyboardNavigation.prototype = {
         this: Highcharts.KeyboardNavigation,
         order?: Array<(keyof Highcharts.AccessibilityComponentsObject)>
     ): void {
-        let a11yOptions = this.chart.options.accessibility,
+        const a11yOptions = this.chart.options.accessibility,
             keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
             components = this.components;
 
@@ -219,7 +219,7 @@ KeyboardNavigation.prototype = {
                 modules: Array<Highcharts.KeyboardNavigationHandler>,
                 componentName: keyof Highcharts.AccessibilityComponentsObject
             ): Array<Highcharts.KeyboardNavigationHandler> {
-                let navModules = components[componentName].getKeyboardNavigation();
+                const navModules = components[componentName].getKeyboardNavigation();
                 return modules.concat(navModules);
             }, []);
 
@@ -263,7 +263,7 @@ KeyboardNavigation.prototype = {
         delete this.isClickingChart;
 
         if (!this.keyboardReset && !this.pointerIsOverChart) {
-            let chart = this.chart,
+            const chart = this.chart,
                 curMod = this.modules &&
                     this.modules[this.currentModuleIx || 0];
 
@@ -302,7 +302,7 @@ KeyboardNavigation.prototype = {
         // If there is a nav module for the current index, run it.
         // Otherwise, we are outside of the chart in some direction.
         if (curNavModule) {
-            let response = curNavModule.run(e);
+            const response = curNavModule.run(e);
             if (response === curNavModule.response.success) {
                 preventDefault = true;
             } else if (response === curNavModule.response.prev) {
@@ -348,7 +348,7 @@ KeyboardNavigation.prototype = {
         this: Highcharts.KeyboardNavigation,
         direction: number
     ): boolean {
-        let curModule = this.modules && this.modules[this.currentModuleIx];
+        const curModule = this.modules && this.modules[this.currentModuleIx];
         if (curModule && curModule.terminate) {
             curModule.terminate(direction);
         }
@@ -359,7 +359,7 @@ KeyboardNavigation.prototype = {
         }
 
         this.currentModuleIx += direction;
-        let newModule = this.modules && this.modules[this.currentModuleIx];
+        const newModule = this.modules && this.modules[this.currentModuleIx];
         if (newModule) {
             if (newModule.validate && !newModule.validate()) {
                 return this.move(direction); // Invalid module, recurse
@@ -393,7 +393,7 @@ KeyboardNavigation.prototype = {
      * @private
      */
     updateExitAnchor: function (this: Highcharts.KeyboardNavigation): void {
-        let endMarkerId = 'highcharts-end-of-chart-marker-' + this.chart.index,
+        const endMarkerId = 'highcharts-end-of-chart-marker-' + this.chart.index,
             endMarker = getElement(endMarkerId);
 
         this.removeExitAnchor();
@@ -460,7 +460,7 @@ KeyboardNavigation.prototype = {
      * @private
      */
     createExitAnchor: function (this: Highcharts.KeyboardNavigation): void {
-        let chart = this.chart,
+        const chart = this.chart,
             exitAnchor = this.exitAnchor = doc.createElement('div');
 
         chart.renderTo.appendChild(exitAnchor);
@@ -487,7 +487,7 @@ KeyboardNavigation.prototype = {
         this: Highcharts.KeyboardNavigation,
         element: HTMLDOMElement
     ): void {
-        let chart = this.chart,
+        const chart = this.chart,
             keyboardNavigation = this;
 
         this.eventProvider.addEvent(

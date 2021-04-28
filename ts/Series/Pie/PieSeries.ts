@@ -706,13 +706,13 @@ class PieSeries extends Series {
      * @private
      */
     public animate(init?: boolean): void {
-        let series = this,
+        const series = this,
             points = series.points,
             startAngleRad = series.startAngleRad;
 
         if (!init) {
             points.forEach(function (point): void {
-                let graphic = point.graphic,
+                const graphic = point.graphic,
                     args = point.shapeArgs;
 
                 if (graphic && args) {
@@ -794,7 +794,7 @@ class PieSeries extends Series {
      * @private
      */
     public drawPoints(): void {
-        let renderer = this.chart.renderer;
+        const renderer = this.chart.renderer;
 
         this.points.forEach(function (point): void {
             // When updating a series between 2d and 3d or cartesian and
@@ -891,7 +891,7 @@ class PieSeries extends Series {
 
         // draw the slices
         series.points.forEach(function (point): void {
-            let animateTo = {};
+            const animateTo = {};
             graphic = point.graphic;
             if (!point.isNull && graphic) {
                 let shadowGroup: (SVGElement|undefined);

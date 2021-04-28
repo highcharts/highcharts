@@ -660,7 +660,7 @@ class AxisResizer {
      * @function Highcharts.AxisResizer#destroy
      */
     public destroy(): void {
-        let resizer = this,
+        const resizer = this,
             axis = resizer.axis;
 
         // Clear resizer in axis

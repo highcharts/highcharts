@@ -95,7 +95,7 @@ class ADIndicator extends SMAIndicator {
         i: number,
         _period: number
     ): Array<number> {
-        let high = yVal[i][1],
+        const high = yVal[i][1],
             low = yVal[i][2],
             close = yVal[i][3],
             volume = yValVolume[i],

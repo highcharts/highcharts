@@ -969,7 +969,7 @@ class MapSeries extends ScatterSeries {
         point: MapPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        let attr = point.series.chart.styledMode ?
+        const attr = point.series.chart.styledMode ?
             this.colorAttribs(point) :
             ColumnSeries.prototype.pointAttribs.call(
                 this, point as any, state
@@ -997,7 +997,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public render(): void {
-        let series = this,
+        const series = this,
             render = Series.prototype.render;
 
         // Give IE8 some time to breathe.
@@ -1211,7 +1211,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public translate(): void {
-        let series = this,
+        const series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             doFullTranslate = series.doFullTranslate();
@@ -1247,7 +1247,7 @@ class MapSeries extends ScatterSeries {
      */
     public translatePath(path: SVGPath): SVGPath {
 
-        let series = this,
+        const series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             xMin = xAxis.min,

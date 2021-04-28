@@ -247,7 +247,7 @@ class TreemapSeries extends ScatterSeries {
             defer: false,
             enabled: true,
             formatter: function (): string {
-                let point: TreemapPoint = this && this.point ?
+                const point: TreemapPoint = this && this.point ?
                         this.point :
                         ({} as any),
                     name = isString(point.name) ? point.name : '';
@@ -838,7 +838,7 @@ class TreemapSeries extends ScatterSeries {
         dataLabel: SVGLabel,
         labelOptions: DataLabelOptions
     ): void {
-        let style = labelOptions.style;
+        const style = labelOptions.style;
 
         // #8160: Prevent the label from exceeding the point's
         // boundaries in treemaps by applying ellipsis overflow.
@@ -956,7 +956,7 @@ class TreemapSeries extends ScatterSeries {
             child: TreemapSeries.NodeObject,
             index: number
         ): void {
-            let values: TreemapSeries.NodeValuesObject =
+            const values: TreemapSeries.NodeValuesObject =
                 childrenValues[index];
 
             child.values = merge(values, {
@@ -1039,7 +1039,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public drawPoints(): void {
-        let series = this,
+        const series = this,
             chart = series.chart,
             renderer = chart.renderer,
             points = series.points,
@@ -1052,7 +1052,7 @@ class TreemapSeries extends ScatterSeries {
             allowTraversingTree = options.allowTraversingTree;
 
         points.forEach(function (point): void {
-            let levelDynamic = point.node.levelDynamic,
+            const levelDynamic = point.node.levelDynamic,
                 animatableAttribs: SVGAttributes = {},
                 attribs: SVGAttributes = {},
                 css: CSSObject = {},
@@ -1183,7 +1183,7 @@ class TreemapSeries extends ScatterSeries {
     }
 
     public drillUp(): void {
-        let series = this,
+        const series = this,
             node = series.nodeMap[series.rootNode];
 
         if (node && isString(node.parent)) {
@@ -1225,14 +1225,14 @@ class TreemapSeries extends ScatterSeries {
         data: Array<TreemapPoint>,
         existingIds: Array<string>
     ): TreemapSeries.ListOfParentsObject {
-        let arr = isArray(data) ? data : [],
+        const arr = isArray(data) ? data : [],
             ids = isArray(existingIds) ? existingIds : [],
             listOfParents = arr.reduce(function (
                 prev: TreemapSeries.ListOfParentsObject,
                 curr: TreemapPoint,
                 i: number
             ): TreemapSeries.ListOfParentsObject {
-                let parent = pick(curr.parent, '');
+                const parent = pick(curr.parent, '');
 
                 if (typeof prev[parent] === 'undefined') {
                     prev[parent] = [];
@@ -1264,7 +1264,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public getTree(): this['tree'] {
-        let series = this,
+        const series = this,
             allIds = this.data.map(function (
                 d: TreemapPoint
             ): string {
@@ -1300,7 +1300,7 @@ class TreemapSeries extends ScatterSeries {
         setOptionsEvent = addEvent(series, 'setOptions', function (
             event: { userOptions: TreemapSeriesOptions }
         ): void {
-            let options = event.userOptions;
+            const options = event.userOptions;
 
             if (
                 defined(options.allowDrillToNode) &&
@@ -1339,7 +1339,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public onClickDrillToNode(event: { point: TreemapPoint }): void {
-        let series = this,
+        const series = this,
             point = event.point,
             drillId = point && point.drillId;
 
@@ -1609,7 +1609,7 @@ class TreemapSeries extends ScatterSeries {
         redraw?: boolean,
         eventArguments?: TreemapSeries.SetRootNodeObject
     ): void {
-        let series = this,
+        const series = this,
             eventArgs: TreemapSeries.SetRootNodeObject =
                 extend<TreemapSeries.SetRootNodeObject>({
                     newRootId: id,
@@ -1632,7 +1632,7 @@ class TreemapSeries extends ScatterSeries {
          * directly.
          * @return {void}
          */
-        let defaultFn = function (
+        const defaultFn = function (
             args: {
                 newRootId: string;
                 previousRootId: string;
@@ -1641,7 +1641,7 @@ class TreemapSeries extends ScatterSeries {
                 trigger?: string;
             }
         ): void {
-            let series = args.series;
+            const series = args.series;
 
             // Store previous and new root ids on the series.
             series.idPreviousRoot = args.previousRootId;

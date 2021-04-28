@@ -140,11 +140,11 @@ function deprecateFromOptionsMap(
         }, root as any);
     }
 
-    let rootOld = getChildProp(chart.options, rootOldAsArray),
+    const rootOld = getChildProp(chart.options, rootOldAsArray),
         rootNew = getChildProp(chart.options, rootNewAsArray);
 
     Object.keys(mapToNewOptions).forEach(function (oldOptionKey: string): void {
-        let val = rootOld[oldOptionKey];
+        const val = rootOld[oldOptionKey];
         if (typeof val !== 'undefined') {
             traverseSetOption(
                 rootNew,
@@ -168,7 +168,7 @@ function deprecateFromOptionsMap(
  * @private
  */
 function copyDeprecatedChartOptions(chart: Chart): void {
-    let chartOptions = chart.options.chart,
+    const chartOptions = chart.options.chart,
         a11yOptions = chart.options.accessibility || {};
     ['description', 'typeDescription'].forEach(function (
         prop: string
@@ -185,7 +185,7 @@ function copyDeprecatedChartOptions(chart: Chart): void {
  */
 function copyDeprecatedAxisOptions(chart: Chart): void {
     chart.axes.forEach(function (axis: Axis): void {
-        let opts = axis.options;
+        const opts = axis.options;
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
             opts.accessibility.description = opts.description;
@@ -200,7 +200,7 @@ function copyDeprecatedAxisOptions(chart: Chart): void {
 function copyDeprecatedSeriesOptions(chart: Chart): void {
     // Map of deprecated series options. New options are defined as
     // arrays of paths under series.options.
-    let oldToNewSeriesOptions = {
+    const oldToNewSeriesOptions = {
         description: ['accessibility', 'description'],
         exposeElementToA11y: ['accessibility', 'exposeAsGroupOnly'],
         pointDescriptionFormatter: [
@@ -215,7 +215,7 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
         Object.keys(oldToNewSeriesOptions).forEach(function (
             oldOption: string
         ): void {
-            let optionVal = (series.options as any)[oldOption];
+            const optionVal = (series.options as any)[oldOption];
             if (typeof optionVal !== 'undefined') {
                 // Set the new option
                 traverseSetOption(

@@ -510,7 +510,7 @@ namespace TreeGridAxis {
 
                     // Update yData now that we have calculated the y values
                     axis.series.forEach(function (series): void {
-                        let axisData = (series.options.data || []).map(function (
+                        const axisData = (series.options.data || []).map(function (
                             d: (PointOptions|PointShortOptions)
                         ): (PointOptions|PointShortOptions) {
 
@@ -994,7 +994,7 @@ namespace TreeGridAxis {
 
             return Object.keys(axis.treeGrid.mapOfPosToGridNode || {}).reduce(
                 function (arr: Array<number>, key: string): Array<number> {
-                    let pos = +key;
+                    const pos = +key;
                     if (
                         pos >= roundedMin &&
                         pos <= roundedMax &&

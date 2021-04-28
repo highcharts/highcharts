@@ -41,7 +41,7 @@ addEvent(Series, 'init', function (
     eventOptions: { options: SMAOptions }
 ): void {
     // eslint-disable-next-line no-invalid-this
-    let series = this,
+    const series = this,
         options = eventOptions.options;
 
     if (
@@ -60,7 +60,7 @@ addEvent(Series, 'init', function (
 addEvent(Series, 'afterSetOptions', function (
     e: { options: LineSeriesOptions }
 ): void {
-    let options = e.options,
+    const options = e.options,
         dataGrouping = options.dataGrouping;
 
     if (

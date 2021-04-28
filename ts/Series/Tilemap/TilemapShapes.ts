@@ -58,7 +58,7 @@ function tilePaddingFromTileSize(
     xDiv: number,
     yDiv: number
 ): TilemapShapes.PaddingObject {
-    let options = series.options;
+    const options = series.options;
 
     return {
         xPad: (options.colsize || 1) / -xDiv,
@@ -125,7 +125,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             if (!size) {
                 return [];
             }
-            let hexagon = this.tileEdges;
+            const hexagon = this.tileEdges;
 
             return [
                 ['M', hexagon.x2 - size, hexagon.y1 + size],
@@ -304,7 +304,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             if (!size) {
                 return [];
             }
-            let diamond = this.tileEdges;
+            const diamond = this.tileEdges;
 
             return [
                 ['M', diamond.x2, diamond.y1 + size],

@@ -211,7 +211,7 @@ class XRangeSeries extends ColumnSeries {
          */
         function swapAxes(): void {
             chart.series.forEach(function (s): void {
-                let xAxis = s.xAxis;
+                const xAxis = s.xAxis;
 
                 s.xAxis = s.yAxis;
                 s.yAxis = xAxis;
@@ -254,7 +254,7 @@ class XRangeSeries extends ColumnSeries {
     ): Highcharts.SeriesCropDataObject {
 
         // Replace xData with x2Data to find the appropriate cropStart
-        let cropData = Series.prototype.cropData,
+        const cropData = Series.prototype.cropData,
             crop = cropData.call(this, this.x2Data as any, yData, min, max);
 
         // Re-insert the cropped xData
@@ -627,7 +627,7 @@ class XRangeSeries extends ColumnSeries {
      * @function Highcharts.Series#drawPoints
      */
     public drawPoints(): void {
-        let series = this,
+        const series = this,
             verb = series.getAnimationVerb();
 
         // Draw the columns

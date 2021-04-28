@@ -123,7 +123,7 @@ const initCanvasBoost = function (): void {
         wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (
             this: HeatmapSeries
         ): void {
-            let chart = this.chart,
+            const chart = this.chart,
                 ctx = this.getContext(),
                 inverted = this.chart.inverted,
                 xAxis = this.xAxis,
@@ -726,7 +726,7 @@ const initCanvasBoost = function (): void {
 
                 return !chartDestroyed;
             }, function (): void {
-                let loadingDiv: HTMLElement =
+                const loadingDiv: HTMLElement =
                         chart.loadingDiv as any,
                     loadingShown = chart.loadingShown;
 

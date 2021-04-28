@@ -49,7 +49,7 @@ const hasPointerEvent = !!win.PointerEvent;
 
 /** @private */
 function getWebkitTouches(): void {
-    let fake = [] as any;
+    const fake = [] as any;
 
     fake.item = function (i: string): any {
         return this[i];

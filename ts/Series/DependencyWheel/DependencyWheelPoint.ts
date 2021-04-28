@@ -79,7 +79,7 @@ class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
      * @private
      */
     public getDataLabelPath(label: SVGLabel): SVGElement {
-        let renderer = this.series.chart.renderer,
+        const renderer = this.series.chart.renderer,
             shapeArgs = this.shapeArgs,
             upperHalf = this.angle < 0 || this.angle > Math.PI,
             start = shapeArgs.start || 0,
