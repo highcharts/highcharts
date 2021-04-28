@@ -59,7 +59,7 @@ class ElliottWave extends CrookedLine {
             point: Highcharts.AnnotationMockPointOptionsObject,
             i: number
         ): void {
-            var typeOptions = this.options.typeOptions as Highcharts.AnnotationElliottWaveTypeOptionsObject,
+            let typeOptions = this.options.typeOptions as Highcharts.AnnotationElliottWaveTypeOptionsObject,
                 label = this.initLabel(merge(
                     point.label, {
                         text: typeOptions.labels[i],

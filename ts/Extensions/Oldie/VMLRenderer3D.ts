@@ -72,7 +72,7 @@ class VMLRenderer3D {
             this: Highcharts.VMLRenderer,
             shapeArgs: SVGAttributes
         ): Highcharts.VMLElement {
-            var result = svgProto.arc3d.call(this, shapeArgs);
+            let result = svgProto.arc3d.call(this, shapeArgs);
 
             result.css({ zIndex: result.zIndex });
             return result as any;

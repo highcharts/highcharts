@@ -51,7 +51,7 @@ class InfinityLine extends CrookedLine {
 
     private static edgePoint(startIndex: number, endIndex: number): Function {
         return function (target: any): PositionObject {
-            var annotation = target.annotation,
+            let annotation = target.annotation,
                 points = annotation.points,
                 type = annotation.options.typeOptions.type;
 
@@ -87,7 +87,7 @@ class InfinityLine extends CrookedLine {
         xOrY: ('x'|'y'),
         edgePointFirstCoordinate: number
     ): number {
-        var xOrYOpposite: ('x'|'y') = xOrY === 'x' ? 'y' : 'x';
+        let xOrYOpposite: ('x'|'y') = xOrY === 'x' ? 'y' : 'x';
 
         // solves equation for x or y
         // y - y1 = (y2 - y1) / (x2 - x1) * (x - x1)
@@ -103,7 +103,7 @@ class InfinityLine extends CrookedLine {
         firstPoint: Highcharts.AnnotationPointType,
         secondPoint: Highcharts.AnnotationPointType
     ): PositionObject {
-        var chart = firstPoint.series.chart,
+        let chart = firstPoint.series.chart,
             xAxis: Highcharts.Axis = firstPoint.series.xAxis as any,
             yAxis: Highcharts.Axis = secondPoint.series.yAxis as any,
             firstPointPixels = MockPoint.pointToPixels(firstPoint),
@@ -177,7 +177,7 @@ class InfinityLine extends CrookedLine {
      * */
 
     public addShapes(): void {
-        var typeOptions = this.options.typeOptions as Highcharts.AnnotationInfinityLineTypeOptionsObject,
+        let typeOptions = this.options.typeOptions as Highcharts.AnnotationInfinityLineTypeOptionsObject,
             points = [
                 this.points[0],
                 InfinityLine.endEdgePoint
@@ -191,7 +191,7 @@ class InfinityLine extends CrookedLine {
             points[0] = InfinityLine.startEdgePoint;
         }
 
-        var line = this.initShape(
+        let line = this.initShape(
             merge(typeOptions.line, {
                 type: 'path',
                 points: points

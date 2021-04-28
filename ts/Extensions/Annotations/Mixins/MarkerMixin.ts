@@ -77,7 +77,7 @@ declare global {
  * @since        6.0.0
  * @optionparent defs
  */
-var defaultMarkers: Record<string, Highcharts.ASTNode> = {
+let defaultMarkers: Record<string, Highcharts.ASTNode> = {
     /**
      * @type {Highcharts.ASTNode}
      */
@@ -128,9 +128,9 @@ SVGRenderer.prototype.addMarker = function (
     id: string,
     markerOptions: Highcharts.ASTNode
 ): SVGElement {
-    var options: Highcharts.ASTNode = { attributes: { id } };
+    let options: Highcharts.ASTNode = { attributes: { id } };
 
-    var attrs: SVGAttributes = {
+    let attrs: SVGAttributes = {
         stroke: (markerOptions as any).color || 'none',
         fill: (markerOptions as any).color || 'rgba(0, 0, 0, 0.75)'
     };
@@ -154,7 +154,7 @@ SVGRenderer.prototype.addMarker = function (
         }
     }, markerOptions, options);
 
-    var marker = this.definition(ast);
+    let marker = this.definition(ast);
 
     marker.id = id;
 
@@ -177,7 +177,7 @@ function createMarkerSetter(markerType: string): Highcharts.AnnotationMarkerMixi
  * @mixin
  * @name Highcharts.AnnotaitonMarkerMixin
  */
-var markerMixin: Highcharts.AnnotationMarkerMixin = {
+let markerMixin: Highcharts.AnnotationMarkerMixin = {
     markerEndSetter: createMarkerSetter('marker-end'),
     markerStartSetter: createMarkerSetter('marker-start'),
 
@@ -187,7 +187,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
      * @param {Highcharts.AnnotationControllablePath} item
      */
     setItemMarkers: function (item: ControllablePath): void {
-        var itemOptions = item.options,
+        let itemOptions = item.options,
             chart = item.chart,
             defs = chart.options.defs,
             fill = itemOptions.fill,
@@ -196,7 +196,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
                 itemOptions.stroke,
 
             setMarker = function (markerType: ('markerEnd'|'markerStart')): void {
-                var markerId = itemOptions[markerType],
+                let markerId = itemOptions[markerType],
                     def,
                     predefinedMarker,
                     key,

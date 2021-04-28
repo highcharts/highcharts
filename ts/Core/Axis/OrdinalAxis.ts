@@ -156,7 +156,7 @@ namespace OrdinalAxis {
          * @private
          */
         public beforeSetTickPositions(): void {
-            var axis = this.axis,
+            let axis = this.axis,
                 ordinal = axis.ordinal,
                 len,
                 ordinalPositions = [] as Array<number>,
@@ -364,7 +364,7 @@ namespace OrdinalAxis {
          * @private
          */
         public getExtendedPositions(): Array<number> {
-            var ordinal = this,
+            let ordinal = this,
                 axis = ordinal.axis,
                 axisProto = axis.constructor.prototype,
                 chart = axis.chart,
@@ -491,7 +491,7 @@ namespace OrdinalAxis {
             xMax: number,
             series: Series
         ): number {
-            var ordinal = this,
+            let ordinal = this,
                 axis = ordinal.axis,
                 i,
                 processedXData = series.processedXData,
@@ -540,7 +540,7 @@ namespace OrdinalAxis {
          * @private
          */
         public getOverscrollPositions(): Array<number> {
-            var ordinal = this,
+            let ordinal = this,
                 axis = ordinal.axis,
                 extraRange = axis.options.overscroll,
                 distance = ordinal.overscrollPointsRange,
@@ -576,7 +576,7 @@ namespace OrdinalAxis {
             // gaps reside within weeks. So we have a situation where the labels
             // are courser than the ordinal gaps, and thus the tick interval
             // should not be altered.
-            var ordinal = this,
+            let ordinal = this,
                 axis = ordinal.axis,
                 ordinalSlope = ordinal.slope,
                 ret;
@@ -647,7 +647,7 @@ namespace OrdinalAxis {
             findHigherRanks?: boolean
         ): Highcharts.AxisTickPositionsArray {
 
-            var start = 0,
+            let start = 0,
                 end,
                 segmentPositions,
                 higherRanks = {} as Record<string, string>,
@@ -772,7 +772,7 @@ namespace OrdinalAxis {
             // pixel interval
             if (findHigherRanks && defined(tickPixelIntervalOption)) {
 
-                var length = groupPositions.length,
+                let length = groupPositions.length,
                     i = length,
                     itemToRemove,
                     translated,
@@ -863,7 +863,7 @@ namespace OrdinalAxis {
             val: number,
             fromIndex?: boolean
         ): number {
-            var axis = this,
+            let axis = this,
                 ordinal = axis.ordinal,
                 ordinalPositions = ordinal.positions,
                 ret;
@@ -874,7 +874,7 @@ namespace OrdinalAxis {
 
             } else {
 
-                var ordinalSlope = ordinal.slope,
+                let ordinalSlope = ordinal.slope,
                     ordinalOffset = ordinal.offset,
                     i = ordinalPositions.length - 1,
                     linearEquivalentLeft,
@@ -954,7 +954,7 @@ namespace OrdinalAxis {
             val: number,
             toIndex?: boolean
         ): number {
-            var axis = this,
+            let axis = this,
                 ordinal = axis.ordinal,
                 ordinalPositions = ordinal.positions,
                 ret;
@@ -964,7 +964,7 @@ namespace OrdinalAxis {
 
             } else {
 
-                var ordinalLength = ordinalPositions.length,
+                let ordinalLength = ordinalPositions.length,
                     i,
                     distance,
                     ordinalIndex;
@@ -1012,7 +1012,7 @@ namespace OrdinalAxis {
         });
 
         addEvent(AxisClass, 'foundExtremes', function (): void {
-            var axis = this as OrdinalAxis;
+            let axis = this as OrdinalAxis;
 
             if (
                 axis.isXAxis &&
@@ -1042,7 +1042,7 @@ namespace OrdinalAxis {
         // loaded. If we don't do that, axis will have the same extremes as
         // previously, but ordinal positions won't be calculated. See #10290
         addEvent(AxisClass, 'afterSetScale', function (): void {
-            var axis = this;
+            let axis = this;
 
             if (axis.horiz && !axis.isDirty) {
                 axis.isDirty = axis.isOrdinal &&
@@ -1062,7 +1062,7 @@ namespace OrdinalAxis {
 
         // Extending the Chart.pan method for ordinal axes
         addEvent(ChartClass, 'pan', function (e: Event): void {
-            var chart = this,
+            let chart = this,
                 xAxis = chart.xAxis[0] as OrdinalAxis,
                 overscroll = xAxis.options.overscroll,
                 chartX = (e as any).originalEvent.chartX,
@@ -1076,7 +1076,7 @@ namespace OrdinalAxis {
                 xAxis.series.length
             ) {
 
-                var mouseDownX = chart.mouseDownX,
+                let mouseDownX = chart.mouseDownX,
                     extremes = xAxis.getExtremes(),
                     dataMax = extremes.dataMax,
                     min = extremes.min,
@@ -1186,7 +1186,7 @@ namespace OrdinalAxis {
         });
 
         addEvent(SeriesClass, 'updatedData', function (): void {
-            var xAxis = this.xAxis as OrdinalAxis;
+            let xAxis = this.xAxis as OrdinalAxis;
 
             // Destroy the extended ordinal index on updated data
             if (xAxis && xAxis.options.ordinal) {

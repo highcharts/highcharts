@@ -40,7 +40,7 @@ addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
         return;
     }
 
-    var axis = this,
+    let axis = this,
         // Find which series' padding to use
         seriesPadding = axis.series
             .map(function (series): Record<string, number>|undefined {

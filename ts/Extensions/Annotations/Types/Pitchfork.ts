@@ -56,7 +56,7 @@ class Pitchfork extends InfinityLine {
 
     private static outerLineEdgePoint(firstPointIndex: number): Function {
         return function (target: any): PositionObject {
-            var annotation: Pitchfork = target.annotation,
+            let annotation: Pitchfork = target.annotation,
                 points = annotation.points;
 
             return Pitchfork.findEdgePoint(
@@ -76,7 +76,7 @@ class Pitchfork extends InfinityLine {
         firstAnglePoint: Highcharts.AnnotationPointType,
         secondAnglePoint?: Highcharts.AnnotationPointType
     ): PositionObject {
-        var angle = Math.atan2(
+        let angle = Math.atan2(
                 (secondAnglePoint as any).plotY - (firstAnglePoint.plotY as any),
                 (secondAnglePoint as any).plotX - (firstAnglePoint.plotX as any)
             ),
@@ -89,7 +89,7 @@ class Pitchfork extends InfinityLine {
     }
 
     public static middleLineEdgePoint(target: Annotation): PositionObject {
-        var annotation: Pitchfork = target.annotation as any,
+        let annotation: Pitchfork = target.annotation as any,
             points = annotation.points;
 
         return InfinityLine.findEdgePoint(
@@ -120,7 +120,7 @@ class Pitchfork extends InfinityLine {
      * */
 
     public midPointOptions(): Highcharts.AnnotationMockPointOptionsObject {
-        var points = this.points;
+        let points = this.points;
 
         return {
             x: ((points[1].x as any) + (points[2].x as any)) / 2,
@@ -162,15 +162,15 @@ class Pitchfork extends InfinityLine {
     }
 
     public addBackgrounds(): void {
-        var shapes = this.shapes,
+        let shapes = this.shapes,
             typeOptions = this.options.typeOptions as Highcharts.AnnotationPitchforkTypeOptionsObject;
 
-        var innerBackground = (this.initShape as any)(
+        let innerBackground = (this.initShape as any)(
             merge(typeOptions.innerBackground, {
                 type: 'path',
                 points: [
                     function (target: any): Highcharts.AnnotationMockPointOptionsObject {
-                        var annotation = target.annotation,
+                        let annotation = target.annotation,
                             points = annotation.points,
                             midPointOptions = annotation.midPointOptions();
 
@@ -184,7 +184,7 @@ class Pitchfork extends InfinityLine {
                     shapes[1].points[1],
                     shapes[2].points[1],
                     function (target: any): Highcharts.AnnotationMockPointOptionsObject {
-                        var annotation = target.annotation,
+                        let annotation = target.annotation,
                             points = annotation.points,
                             midPointOptions = annotation.midPointOptions();
 
@@ -199,7 +199,7 @@ class Pitchfork extends InfinityLine {
             })
         );
 
-        var outerBackground = (this.initShape as any)(
+        let outerBackground = (this.initShape as any)(
             merge(typeOptions.outerBackground, {
                 type: 'path',
                 points: [

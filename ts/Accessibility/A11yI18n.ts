@@ -95,7 +95,7 @@ function formatExtendedStatement(
     statement: string,
     ctx: AnyRecord
 ): string {
-    var eachStart = statement.indexOf('#each('),
+    let eachStart = statement.indexOf('#each('),
         pluralStart = statement.indexOf('#plural('),
         indexStart = statement.indexOf('['),
         indexEnd = statement.indexOf(']'),
@@ -104,7 +104,7 @@ function formatExtendedStatement(
 
     // Dealing with an each-function?
     if (eachStart > -1) {
-        var eachEnd = statement.slice(eachStart).indexOf(')') + eachStart,
+        let eachEnd = statement.slice(eachStart).indexOf(')') + eachStart,
             preEach = statement.substring(0, eachStart),
             postEach = statement.substring(eachEnd + 1),
             eachStatement = statement.substring(eachStart + 6, eachEnd),
@@ -120,7 +120,7 @@ function formatExtendedStatement(
                 arr.length + lenArg :
                 Math.min(lenArg, arr.length); // Overshoot
             // Run through the array for the specified length
-            for (var i = 0; i < len; ++i) {
+            for (let i = 0; i < len; ++i) {
                 result += preEach + arr[i] + postEach;
             }
         }
@@ -129,7 +129,7 @@ function formatExtendedStatement(
 
     // Dealing with a plural-function?
     if (pluralStart > -1) {
-        var pluralEnd = statement.slice(pluralStart).indexOf(')') + pluralStart,
+        let pluralEnd = statement.slice(pluralStart).indexOf(')') + pluralStart,
             pluralStatement = statement.substring(pluralStart + 8, pluralEnd),
             pluralArguments = pluralStatement.split(','),
             num = Number(ctx[pluralArguments[0]]);
@@ -152,7 +152,7 @@ function formatExtendedStatement(
 
     // Array index
     if (indexStart > -1) {
-        var arrayName = statement.substring(0, indexStart),
+        let arrayName = statement.substring(0, indexStart),
             ix = Number(statement.substring(indexStart + 1, indexEnd)),
             val;
 
@@ -258,11 +258,11 @@ H.i18nFormat = function (
     context: AnyRecord,
     chart: Chart
 ): string {
-    var getFirstBracketStatement = function (
+    let getFirstBracketStatement = function (
             sourceStr: string,
             offset: number
         ): (Highcharts.A11yBracketStatementObject|undefined) {
-            var str = sourceStr.slice(offset || 0),
+            let str = sourceStr.slice(offset || 0),
                 startBracket = str.indexOf('{'),
                 endBracket = str.indexOf('}');
 
@@ -346,7 +346,7 @@ H.Chart.prototype.langFormat = function (
     langKey: string,
     context: AnyRecord
 ): string {
-    var keys = langKey.split('.'),
+    let keys = langKey.split('.'),
         formatString: string = this.options.lang as any,
         i = 0;
 

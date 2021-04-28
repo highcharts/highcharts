@@ -57,7 +57,7 @@ const {
 function arrayExtremesOHLC(
     data: Array<Array<number>>
 ): Record<string, number> {
-    var dataLength: number = data.length,
+    let dataLength: number = data.length,
         min: number = data[0][3],
         max: number = min,
         i = 1,
@@ -82,7 +82,7 @@ function arrayExtremesOHLC(
 
 /* eslint-enable require-jsdoc */
 
-var abs = Math.abs,
+let abs = Math.abs,
     columnPrototype = SeriesRegistry.seriesTypes.column.prototype;
 
 /**
@@ -211,7 +211,7 @@ class VBPIndicator extends SMAIndicator {
     public init(
         chart: Chart
     ): VBPIndicator {
-        var indicator = this,
+        let indicator = this,
             params: VBPParamsOptions,
             baseSeries: LineSeries,
             volumeSeries: LineSeries;
@@ -232,7 +232,7 @@ class VBPIndicator extends SMAIndicator {
         baseSeries: LineSeries,
         volumeSeries: LineSeries
     ): VBPIndicator {
-        var indicator = this;
+        let indicator = this;
 
         /* eslint-disable require-jsdoc */
         function toEmptyIndicator(): void {
@@ -272,7 +272,7 @@ class VBPIndicator extends SMAIndicator {
     public animate(
         init: boolean
     ): void {
-        var series = this,
+        let series = this,
             inverted = series.chart.inverted,
             group = series.group,
             attr: SVGAttributes = {},
@@ -302,7 +302,7 @@ class VBPIndicator extends SMAIndicator {
     }
 
     public drawPoints(): void {
-        var indicator = this;
+        let indicator = this;
 
         if ((indicator.options.volumeDivision as any).enabled) {
             indicator.posNegVolume(true, true);
@@ -318,7 +318,7 @@ class VBPIndicator extends SMAIndicator {
         initVol: boolean,
         pos: boolean
     ): void {
-        var indicator = this,
+        let indicator = this,
             signOrder: Array<string> = pos ?
                 ['positive', 'negative'] :
                 ['negative', 'positive'],
@@ -378,7 +378,7 @@ class VBPIndicator extends SMAIndicator {
     }
 
     public translate(): void {
-        var indicator = this,
+        let indicator = this,
             options: VBPOptions = indicator.options,
             chart: Chart = indicator.chart,
             yAxis: AxisType = indicator.yAxis,
@@ -474,7 +474,7 @@ class VBPIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: VBPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var indicator = this,
+        let indicator = this,
             xValues: Array<number> = series.processedXData,
             yValues: Array<Array<number>> = (series.processedYData as any),
             chart = indicator.chart,
@@ -561,7 +561,7 @@ class VBPIndicator extends SMAIndicator {
         ranges: number,
         volumeSeries: LineSeries
     ): Array<VBPIndicator.VBPIndicatorPriceZoneObject> {
-        var indicator = this,
+        let indicator = this,
             rangeExtremes: (boolean|Record<string, number>) = (
                 isOHLC ? arrayExtremesOHLC(yValues) : false
             ),
@@ -627,7 +627,7 @@ class VBPIndicator extends SMAIndicator {
         xValues: Array<number>,
         yValues: Array<Array<number>>
     ): Array<VBPIndicator.VBPIndicatorPriceZoneObject> {
-        var indicator = this,
+        let indicator = this,
             volumeXData: Array<number> = volumeSeries.processedXData,
             volumeYData: Array<number> = (
                 volumeSeries.processedYData as any
@@ -718,7 +718,7 @@ class VBPIndicator extends SMAIndicator {
         zonesValues: Array<number>,
         zonesStyles: CSSObject
     ): void {
-        var indicator = this,
+        let indicator = this,
             renderer: Highcharts.Renderer = chart.renderer,
             zoneLinesSVG = indicator.zoneLinesSVG,
             zoneLinesPath: SVGPath = [],

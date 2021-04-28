@@ -171,7 +171,7 @@ class ScatterSeries extends LineSeries {
      * @private
      */
     public applyJitter(): void {
-        var series = this,
+        let series = this,
             jitter = this.options.jitter,
             len = this.points.length;
 
@@ -181,14 +181,14 @@ class ScatterSeries extends LineSeries {
          * @private
          */
         function unrandom(seed: number): number {
-            var rand = Math.sin(seed) * 10000;
+            let rand = Math.sin(seed) * 10000;
             return rand - Math.floor(rand);
         }
 
         if (jitter) {
             this.points.forEach(function (point, i): void {
                 ['x', 'y'].forEach(function (dim, j): void {
-                    var axis,
+                    let axis,
                         plotProp = 'plot' + dim.toUpperCase(),
                         min,
                         max,

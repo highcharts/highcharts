@@ -36,7 +36,7 @@ import XRangeSeries from './XRangeSeries.js';
  * Max x2 should be considered in xAxis extremes
  */
 addEvent(Axis, 'afterGetSeriesExtremes', function (): void {
-    var axis = this, // eslint-disable-line no-invalid-this
+    let axis = this, // eslint-disable-line no-invalid-this
         axisSeries = axis.series,
         dataMax: (number|undefined),
         modMax: (boolean|undefined);

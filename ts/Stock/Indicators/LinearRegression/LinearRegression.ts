@@ -150,7 +150,7 @@ class LinearRegressionIndicator extends SMAIndicator {
         yData: Array<number>
     ): RegressionLineParametersObject {
         // least squares method
-        var yIndex: number = (this.options.params as any).index,
+        let yIndex: number = (this.options.params as any).index,
             getSingleYValue = function (
                 yValue: (number|Array<number>),
                 yIndex: number
@@ -222,7 +222,7 @@ class LinearRegressionIndicator extends SMAIndicator {
         xData: Array<number>,
         xAxisUnit: number
     ): Array<number> {
-        var xOffset: number = xData[0];
+        let xOffset: number = xData[0];
 
         return xData.map(function (xValue: number): number {
             return (xValue - xOffset) / xAxisUnit;
@@ -238,7 +238,7 @@ class LinearRegressionIndicator extends SMAIndicator {
     public findClosestDistance(
         xData: Array<number>
     ): (number|undefined) {
-        var distance: number,
+        let distance: number,
             closestDistance: (number|undefined),
             i: number;
 
@@ -265,7 +265,7 @@ class LinearRegressionIndicator extends SMAIndicator {
         regressionSeriesParams:
         LinearRegressionParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        var xData: Array<number> = (baseSeries.xData as any),
+        let xData: Array<number> = (baseSeries.xData as any),
             yData: Array<number> = (baseSeries.yData as any),
             period: number = (regressionSeriesParams.period as any),
             lineParameters: RegressionLineParametersObject,

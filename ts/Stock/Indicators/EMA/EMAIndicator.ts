@@ -105,7 +105,7 @@ class EMAIndicator extends SMAIndicator {
         index: number,
         yVal: Array<Array<number>>
     ): number {
-        var sum = 0,
+        let sum = 0,
             i = 0,
             y: (number|Array<number>) = 0;
 
@@ -127,7 +127,7 @@ class EMAIndicator extends SMAIndicator {
         index: number,
         SMA: number
     ): [number, number] {
-        var x: number = xVal[i - 1],
+        let x: number = xVal[i - 1],
             yValue: number = index < 0 ?
                 yVal[i - 1] :
                 (yVal as any)[i - 1][index],
@@ -144,7 +144,7 @@ class EMAIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: EMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = (params.period as any),
+        let period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen = yVal ? yVal.length : 0,

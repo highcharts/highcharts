@@ -29,7 +29,7 @@ function destroyExtraLabels(
     point: PivotPointsPoint,
     functionName: string
 ): void {
-    var props: Array<string> = point.series.pointArrayMap,
+    let props: Array<string> = point.series.pointArrayMap,
         prop: string,
         i: number = props.length;
 

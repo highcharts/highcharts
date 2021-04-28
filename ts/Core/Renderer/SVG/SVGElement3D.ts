@@ -76,7 +76,7 @@ namespace SVGElement3D {
             this: SVGElement,
             args: SVGAttributes
         ): void {
-            var elem3d = this,
+            let elem3d = this,
                 renderer = elem3d.renderer,
                 paths: (SVGArc3D|SVGCuboid) =
                     (renderer as any)[elem3d.pathType + 'Path'](args),
@@ -116,7 +116,7 @@ namespace SVGElement3D {
             duration?: any,
             complete?: any
         ): SVGElement {
-            var elem3d = this,
+            let elem3d = this,
                 newAttr = {} as AnyRecord,
                 optionsToApply = [null, null, (verb || 'attr'), duration, complete],
                 hasZIndexes = values && values.zIndexes;
@@ -159,7 +159,7 @@ namespace SVGElement3D {
             duration?: any,
             complete?: any
         ): SVGElement {
-            var elem3d = this;
+            let elem3d = this;
 
             (elem3d.parts as any).forEach(function (part: string): void {
                 // if different props for different parts
@@ -198,7 +198,7 @@ namespace SVGElement3D {
         ): SVGElement {
             // Resolve setting attributes by string name
             if (typeof args === 'string' && typeof val !== 'undefined') {
-                var key = args;
+                let key = args;
 
                 args = {} as SVGAttributes;
                 (args as any)[key] = val;
@@ -225,7 +225,7 @@ namespace SVGElement3D {
             complete?: Function
         ): SVGElement {
             if (defined(args.x) && defined(args.y)) {
-                var paths = (this.renderer as any)[this.pathType + 'Path'](args),
+                let paths = (this.renderer as any)[this.pathType + 'Path'](args),
                     forcedSides = paths.forcedSides;
                 this.singleSetterForParts(
                     'd', null, paths, 'animate', duration, complete
@@ -250,7 +250,7 @@ namespace SVGElement3D {
             this: SVGElement,
             fill: ColorType
         ): SVGElement {
-            var elem3d = this;
+            let elem3d = this;
             elem3d.forcedSides = elem3d.forcedSides || [];
             elem3d.singleSetterForParts('fill', null, {
                 front: fill,

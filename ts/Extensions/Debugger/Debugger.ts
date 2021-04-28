@@ -95,7 +95,7 @@ addEvent(Highcharts, 'displayError', function (
         return;
     }
 
-    var code = e.code,
+    let code = e.code,
         msg,
         options = chart.options.chart,
         renderer = chart.renderer,
@@ -171,7 +171,7 @@ addEvent(Highcharts, 'displayError', function (
 });
 
 addEvent(Chart, 'beforeRedraw', function (): void {
-    var errorElements = this.errorElements;
+    let errorElements = this.errorElements;
 
     if (errorElements && errorElements.length) {
         errorElements.forEach(function (el: SVGElement): void {

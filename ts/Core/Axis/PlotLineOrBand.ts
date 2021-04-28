@@ -226,7 +226,7 @@ class PlotLineOrBand {
     public render(): (Highcharts.PlotLineOrBand|undefined) {
         fireEvent(this, 'render');
 
-        var plotLine = this,
+        let plotLine = this,
             axis = plotLine.axis,
             horiz = axis.horiz,
             log = axis.logarithmic,
@@ -401,7 +401,7 @@ class PlotLineOrBand {
         isBand?: boolean,
         zIndex?: number
     ): void {
-        var plotLine = this,
+        let plotLine = this,
             label = plotLine.label,
             renderer = plotLine.axis.chart.renderer,
             attribs: SVGAttributes,
@@ -1158,7 +1158,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         to: number,
         options: (Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions) = this.options
     ): SVGPath {
-        var toPath = this.getPlotLinePath({
+        let toPath = this.getPlotLinePath({
                 value: to,
                 force: true,
                 acrossPanes: options.acrossPanes
@@ -1299,7 +1299,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 'plotLines'
         )
     ): (Highcharts.PlotLineOrBand|undefined) {
-        var obj: Highcharts.PlotLineOrBand|undefined = new H.PlotLineOrBand(this, options),
+        let obj: Highcharts.PlotLineOrBand|undefined = new H.PlotLineOrBand(this, options),
             userOptions = this.userOptions;
 
         if (this.visible) {
@@ -1321,7 +1321,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             // Add it to the user options for exporting and Axis.update
             if (coll) {
                 // Workaround Microsoft/TypeScript issue #32693
-                var updatedOptions = (userOptions[coll] || []) as Array<T>;
+                let updatedOptions = (userOptions[coll] || []) as Array<T>;
                 updatedOptions.push(options);
                 userOptions[coll] = updatedOptions;
             }
@@ -1341,7 +1341,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @return {void}
      */
     removePlotBandOrLine: function (this: Highcharts.Axis, id: string): void {
-        var plotLinesAndBands = this.plotLinesAndBands,
+        let plotLinesAndBands = this.plotLinesAndBands,
             options = this.options,
             userOptions = this.userOptions,
             i = plotLinesAndBands.length;

@@ -181,7 +181,7 @@ class ZAxis extends Axis implements AxisLike {
                 !chart.options.chart.ignoreHiddenSeries
             ) {
 
-                var seriesOptions = series.options,
+                let seriesOptions = series.options,
                     zData: Array<(number|null|undefined)>,
                     threshold = seriesOptions.threshold;
 

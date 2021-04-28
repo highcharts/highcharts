@@ -84,7 +84,7 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
      * @private
      */
     public setState(): void {
-        var prevState = this.state,
+        let prevState = this.state,
             series = this.series,
             isPolar = series.chart.polar;
 
@@ -137,7 +137,7 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
     }
 
     public haloPath(): SVGPath {
-        var isPolar = this.series.chart.polar,
+        let isPolar = this.series.chart.polar,
             path: SVGPath = [];
 
         // Bottom halo

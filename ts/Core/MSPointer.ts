@@ -49,7 +49,7 @@ const hasPointerEvent = !!win.PointerEvent;
 
 /** @private */
 function getWebkitTouches(): void {
-    var fake = [] as any;
+    let fake = [] as any;
 
     fake.item = function (i: string): any {
         return this[i];
@@ -71,7 +71,7 @@ function translateMSPointer(
     wktype: string,
     func: Function
 ): void {
-    var p;
+    let p;
 
     if (
         (

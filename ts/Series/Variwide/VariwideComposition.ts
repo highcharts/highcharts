@@ -62,7 +62,7 @@ Tick.prototype.postTranslate = function (
     xOrY: keyof PositionObject,
     index: number
 ): void {
-    var axis = this.axis,
+    let axis = this.axis,
         pos = xy[xOrY] - axis.pos;
 
     if (!axis.horiz) {
@@ -94,7 +94,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
 // On a vertical axis, apply anti-collision logic to the labels.
 addEvent(Axis, 'afterRender', function (): void {
-    var axis = this;
+    let axis = this;
 
     if (!this.horiz && this.variwide) {
         this.chart.labelCollectors.push(
@@ -107,7 +107,7 @@ addEvent(Axis, 'afterRender', function (): void {
                         pos: number,
                         i: number
                     ): SVGElement {
-                        var label: SVGElement =
+                        let label: SVGElement =
                             axis.ticks[pos].label as any;
 
                         label.labelrank = (axis.zData as any)[i];
@@ -124,7 +124,7 @@ addEvent(Tick, 'afterGetPosition', function (
         xOrY: keyof PositionObject;
     }
 ): void {
-    var axis = this.axis,
+    let axis = this.axis,
         xOrY: keyof PositionObject = axis.horiz ? 'x' : 'y';
 
     if (axis.variwide) {
@@ -144,7 +144,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (
     tickmarkOffset: number,
     index: number
 ): PositionObject {
-    var args = Array.prototype.slice.call(arguments, 1),
+    let args = Array.prototype.slice.call(arguments, 1),
         xy: PositionObject,
         xOrY: keyof PositionObject = horiz ? 'x' : 'y';
 

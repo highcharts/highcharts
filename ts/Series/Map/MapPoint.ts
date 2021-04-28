@@ -75,7 +75,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         x?: number
     ): MapPoint {
 
-        var series = this.series,
+        let series = this.series,
             point: MapPoint = (
                 super.applyOptions.call(this, options, x) as any
             ),

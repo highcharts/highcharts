@@ -413,7 +413,7 @@ class HeatmapSeries extends ScatterSeries {
 
         // In styled mode, use CSS, otherwise the fill used in the style
         // sheet will take precedence over the fill attribute.
-        var seriesMarkerOptions = this.options.marker || {};
+        let seriesMarkerOptions = this.options.marker || {};
 
         if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
             Series.prototype.drawPoints.call(this);
@@ -476,7 +476,7 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public init(): void {
-        var options;
+        let options;
 
         Series.prototype.init.apply(this, arguments as any);
 
@@ -499,7 +499,7 @@ class HeatmapSeries extends ScatterSeries {
         point: HeatmapPoint,
         state?: string
     ): SVGAttributes {
-        var pointMarkerOptions = point.marker || {},
+        let pointMarkerOptions = point.marker || {},
             seriesMarkerOptions = this.options.marker || {},
             seriesStateOptions: PointStateHoverOptions,
             pointStateOptions: PointStateHoverOptions,
@@ -552,7 +552,7 @@ class HeatmapSeries extends ScatterSeries {
         point?: HeatmapPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var series = this,
+        let series = this,
             attr = Series.prototype.pointAttribs.call(series, point, state),
             seriesOptions = series.options || {},
             plotOptions = series.chart.options.plotOptions || {},
@@ -607,7 +607,7 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public setClip(animation?: (boolean|AnimationOptions)): void {
-        var series = this,
+        let series = this,
             chart = series.chart;
 
         Series.prototype.setClip.apply(series, arguments);
@@ -625,16 +625,15 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public translate(): void {
-        var series = this,
+        let series = this,
             options = series.options,
             symbol = options.marker && options.marker.symbol || '',
             shape = symbols[symbol] ? symbol : 'rect',
-            options = series.options,
             hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
 
         series.generatePoints();
         series.points.forEach(function (point): void {
-            var pointAttr,
+            let pointAttr,
                 sizeDiff,
                 hasImage,
                 cellAttr = point.getCellAttributes(),

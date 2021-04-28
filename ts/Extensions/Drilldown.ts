@@ -353,7 +353,7 @@ declare global {
 
 import '../Series/Column/ColumnSeries.js';
 
-var PieSeries = seriesTypes.pie,
+let PieSeries = seriesTypes.pie,
     ddSeriesId = 1;
 
 // Add language
@@ -709,7 +709,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
     point: Point,
     ddOptions: SeriesTypeOptions
 ): void {
-    var oldSeries = point.series,
+    let oldSeries = point.series,
         xAxis = oldSeries.xAxis,
         yAxis = oldSeries.yAxis,
         newSeries: Series,
@@ -819,7 +819,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
 };
 
 Chart.prototype.applyDrilldown = function (): void {
-    var drilldownLevels = this.drilldownLevels,
+    let drilldownLevels = this.drilldownLevels,
         levelToRemove: (number|undefined);
 
     if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
@@ -856,7 +856,7 @@ Chart.prototype.applyDrilldown = function (): void {
 };
 
 Chart.prototype.getDrilldownBackText = function (): (string|undefined) {
-    var drilldownLevels = this.drilldownLevels,
+    let drilldownLevels = this.drilldownLevels,
         lastLevel: Highcharts.DrilldownLevelObject;
 
     if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
@@ -867,7 +867,7 @@ Chart.prototype.getDrilldownBackText = function (): (string|undefined) {
 };
 
 Chart.prototype.showDrillUpButton = function (): void {
-    var chart = this,
+    let chart = this,
         backText = this.getDrilldownBackText(),
         buttonOptions = (chart.options.drilldown as any).drillUpButton,
         attr,
@@ -923,7 +923,7 @@ Chart.prototype.drillUp = function (): void {
         return;
     }
 
-    var chart = this,
+    let chart = this,
         drilldownLevels = chart.drilldownLevels as any,
         levelNumber = drilldownLevels[drilldownLevels.length - 1].levelNumber,
         i = drilldownLevels.length,
@@ -934,7 +934,7 @@ Chart.prototype.drillUp = function (): void {
         newSeries: (Series|undefined),
         oldExtremes: Record<string, (number|undefined)>,
         addSeries = function (seriesOptions: SeriesOptions): void {
-            var addedSeries;
+            let addedSeries;
 
             chartSeries.forEach(function (series): void {
                 if (series.options._ddSeriesId === seriesOptions._ddSeriesId) {
@@ -1047,7 +1047,7 @@ Chart.prototype.drillUp = function (): void {
 // Add update function to be called internally from Chart.update
 // (#7600, #12855)
 addEvent(Chart, 'afterInit', function (): void {
-    var chart = this;
+    let chart = this;
 
     chart.drilldown = {
         update: function (
@@ -1084,7 +1084,7 @@ addEvent(Chart, 'render', function (): void {
     (this.xAxis || []).forEach(function (axis): void {
         axis.ddPoints = {};
         axis.series.forEach(function (series): void {
-            var i,
+            let i,
                 xData = series.xData || [],
                 points = series.points,
                 p;
@@ -1130,12 +1130,12 @@ addEvent(Chart, 'render', function (): void {
  */
 ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
     if (!init) {
-        var newSeries = this,
+        let newSeries = this,
             level = newSeries.drilldownLevel;
 
         // First hide all items before animating in again
         this.points.forEach(function (point: Point): void {
-            var dataLabel = point.dataLabel;
+            let dataLabel = point.dataLabel;
 
             if (point.graphic) { // #3407
                 point.graphic.hide();
@@ -1160,7 +1160,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
         syncTimeout(function (): void {
             if (newSeries.points) { // May be destroyed in the meantime, #3389
                 // Unable to drillup with nodes, #13711
-                var pointsWithNodes: Array<any> = [];
+                let pointsWithNodes: Array<any> = [];
                 newSeries.data.forEach(function (el): void {
                     pointsWithNodes.push(el);
                 });
@@ -1172,7 +1172,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
                     i: number
                 ): void {
                     // Fade in other points
-                    var verb =
+                    let verb =
                         i === (level && level.pointIndex) ? 'show' : 'fadeIn',
                         inherit = verb === 'show' ? true : void 0,
                         dataLabel = point.dataLabel;
@@ -1201,7 +1201,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
 };
 
 ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
-    var series = this,
+    let series = this,
         chart = this.chart,
         drilldownLevels = chart.drilldownLevels,
         animateFrom: (SVGAttributes|undefined),
@@ -1229,7 +1229,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
         (animateFrom as any).x += pick(xAxis.oldPos, xAxis.pos) - xAxis.pos;
 
         this.points.forEach(function (point: Point): void {
-            var animateTo = point.shapeArgs;
+            let animateTo = point.shapeArgs;
 
             if (!styledMode) {
                 // Add the point colors to animate to
@@ -1271,7 +1271,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
 ColumnSeries.prototype.animateDrillupFrom = function (
     level: Highcharts.DrilldownLevelObject
 ): void {
-    var animationOptions =
+    let animationOptions =
             animObject((this.chart.options.drilldown as any).animation),
         group: (SVGElement|undefined) = this.group,
         // For 3d column series all columns are added to one group
@@ -1291,7 +1291,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (
     }
 
     this.points.forEach(function (point: Point): void {
-        var graphic = point.graphic,
+        let graphic = point.graphic,
             animateTo = level.shapeArgs,
             complete = function (): void {
                 (graphic as any).destroy();
@@ -1330,7 +1330,7 @@ if (PieSeries) {
             this: typeof PieSeries.prototype,
             init?: boolean
         ): void {
-            var level: Highcharts.DrilldownLevelObject =
+            let level: Highcharts.DrilldownLevelObject =
                 (this.chart.drilldownLevels as any)[
                     (this.chart.drilldownLevels as any).length - 1
                 ],
@@ -1342,7 +1342,7 @@ if (PieSeries) {
             }
             // Unable to drill down in the horizontal item series #13372
             if (this.center) {
-                var animateFrom = level.shapeArgs,
+                let animateFrom = level.shapeArgs,
                     start = (animateFrom as any).start,
                     angle = (animateFrom as any).end - start,
                     startAngle = angle / this.points.length,
@@ -1350,7 +1350,7 @@ if (PieSeries) {
 
                 if (!init) {
                     this.points.forEach(function (point, i): void {
-                        var animateTo = point.shapeArgs;
+                        let animateTo = point.shapeArgs;
 
                         if (!styledMode) {
                             (animateFrom as any).fill = level.color;
@@ -1382,7 +1382,7 @@ Point.prototype.doDrilldown = function (
     category: (number|undefined),
     originalEvent: Event
 ): void {
-    var series = this.series,
+    let series = this.series,
         chart = series.chart,
         drilldown = chart.options.drilldown,
         i: number = ((drilldown as any).series || []).length,
@@ -1416,7 +1416,7 @@ Point.prototype.doDrilldown = function (
     } as Highcharts.DrilldownEventObject, function (
         e: Highcharts.DrilldownEventObject
     ): void {
-        var chart = e.point.series && e.point.series.chart,
+        let chart = e.point.series && e.point.series.chart,
             seriesOptions = e.seriesOptions;
 
         if (chart && seriesOptions) {
@@ -1481,7 +1481,7 @@ Axis.prototype.getDDPoints = function (
  * @function Highcharts.Axis#drillable
  */
 Tick.prototype.drillable = function (): void {
-    var pos = this.pos,
+    let pos = this.pos,
         label = this.label,
         axis = this.axis,
         isDrillable = axis.coll === 'xAxis' && axis.getDDPoints,
@@ -1582,12 +1582,12 @@ const handlePointClick = function (
 };
 
 addEvent(Series, 'afterDrawDataLabels', function (): void {
-    var css = (this.chart.options.drilldown as any).activeDataLabelStyle,
+    let css = (this.chart.options.drilldown as any).activeDataLabelStyle,
         renderer = this.chart.renderer,
         styledMode = this.chart.styledMode;
 
     this.points.forEach(function (point: Point): void {
-        var dataLabelsOptions = point.options.dataLabels,
+        let dataLabelsOptions = point.options.dataLabels,
             pointCSS = pick(
                 point.dlOptions as any,
                 dataLabelsOptions && (dataLabelsOptions as any).style,
@@ -1635,7 +1635,7 @@ const applyCursorCSS = function (
 
 // Mark the trackers with a pointer
 addEvent(Series, 'afterDrawTracker', function (): void {
-    var styledMode = this.chart.styledMode;
+    let styledMode = this.chart.styledMode;
 
     this.points.forEach(function (point): void {
         if (point.drilldown && point.graphic) {
@@ -1645,7 +1645,7 @@ addEvent(Series, 'afterDrawTracker', function (): void {
 });
 
 addEvent(Point, 'afterSetState', function (): void {
-    var styledMode = this.series.chart.styledMode;
+    let styledMode = this.series.chart.styledMode;
 
     if (this.drilldown && this.series.halo && this.state === 'hover') {
         applyCursorCSS(this.series.halo, 'pointer', true, styledMode);

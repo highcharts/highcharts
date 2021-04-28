@@ -521,7 +521,7 @@ class BubbleLegend {
      * @return {void}
      */
     public drawLegendSymbol(legend: Highcharts.Legend): void {
-        var chart = this.chart,
+        let chart = this.chart,
             options = this.options,
             size,
             itemDistance = pick(legend.options.itemDistance, 20),
@@ -583,7 +583,7 @@ class BubbleLegend {
      * @return {void}
      */
     public setOptions(): void {
-        var ranges = this.ranges,
+        let ranges = this.ranges,
             options = this.options,
             series = this.chart.series[options.seriesIndex as any],
             baseline = this.legend.baseline,
@@ -662,7 +662,7 @@ class BubbleLegend {
      *         Radius for one range
      */
     public getRangeRadius(value: number): (number|null) {
-        var options = this.options,
+        let options = this.options,
             seriesIndex = this.options.seriesIndex,
             bubbleSeries: BubbleSeries = this.chart.series[seriesIndex as any] as any,
             zMax = (options.ranges as any)[0].value,
@@ -690,7 +690,7 @@ class BubbleLegend {
      * @return {void}
      */
     public render(): void {
-        var renderer = this.chart.renderer,
+        let renderer = this.chart.renderer,
             zThreshold = this.options.zThreshold;
 
 
@@ -733,7 +733,7 @@ class BubbleLegend {
      * @return {void}
      */
     public renderRange(range: Highcharts.BubbleLegendRangesOptions): void {
-        var mainRange = this.ranges[0],
+        let mainRange = this.ranges[0],
             legend = this.legend,
             options = this.options,
             labelsOptions = options.labels as any,
@@ -860,7 +860,7 @@ class BubbleLegend {
      * @return {Highcharts.BBoxObject}
      */
     public getMaxLabelSize(): BBoxObject {
-        var labels = this.symbols.labels,
+        let labels = this.symbols.labels,
             maxLabel: (BBoxObject|undefined),
             labelSize: BBoxObject;
 
@@ -889,7 +889,7 @@ class BubbleLegend {
      *         Range label text
      */
     public formatLabel(range: Highcharts.BubbleLegendRangesOptions): string {
-        var options = this.options,
+        let options = this.options,
             formatter = (options.labels as any).formatter,
             format = (options.labels as any).format;
         const { numberFormatter } = this.chart;
@@ -908,7 +908,7 @@ class BubbleLegend {
      * @return {void}
      */
     public hideOverlappingLabels(): void {
-        var chart = this.chart,
+        let chart = this.chart,
             allowOverlap = (this.options.labels as any).allowOverlap,
             symbols = this.symbols;
 
@@ -938,7 +938,7 @@ class BubbleLegend {
      *         Array of range objects
      */
     public getRanges(): Array<Highcharts.BubbleLegendRangesOptions> {
-        var bubbleLegend = this.legend.bubbleLegend,
+        let bubbleLegend = this.legend.bubbleLegend,
             series = (bubbleLegend as any).chart.series,
             ranges: Array<Highcharts.BubbleLegendRangesOptions>,
             rangesOptions = (bubbleLegend as any).options.ranges,
@@ -1007,7 +1007,7 @@ class BubbleLegend {
      *         Calculated min and max bubble sizes
      */
     public predictBubbleSizes(): [number, number] {
-        var chart = this.chart,
+        let chart = this.chart,
             fontMetrics = this.fontMetrics,
             legendOptions = chart.legend.options,
             floating = legendOptions.floating,
@@ -1056,7 +1056,7 @@ class BubbleLegend {
      * @return {void}
      */
     public updateRanges(min: number, max: number): void {
-        var bubbleLegendOptions = this.legend.options.bubbleLegend;
+        let bubbleLegendOptions = this.legend.options.bubbleLegend;
 
         (bubbleLegendOptions as any).minSize = min;
         (bubbleLegendOptions as any).maxSize = max;
@@ -1073,7 +1073,7 @@ class BubbleLegend {
      * @return {void}
      */
     public correctSizes(): void {
-        var legend = this.legend,
+        let legend = this.legend,
             chart = this.chart,
             bubbleSeries: BubbleSeries = chart.series[this.options.seriesIndex as any] as any,
             bubbleSeriesSize = bubbleSeries.maxPxSize,
@@ -1096,7 +1096,7 @@ addEvent(Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
     e: { allItems: Array<(Series|Point)> }
 ): void {
-    var legend = this,
+    let legend = this,
         bubbleLegend = legend.bubbleLegend,
         legendOptions = legend.options,
         options = legendOptions.bubbleLegend,
@@ -1132,7 +1132,7 @@ addEvent(Legend, 'afterGetAllItems', function (
  *         First visible bubble series index
  */
 Chart.prototype.getVisibleBubbleSeriesIndex = function (): number {
-    var series = this.series,
+    let series = this.series,
         i = 0;
 
     while (i < series.length) {
@@ -1160,7 +1160,7 @@ Chart.prototype.getVisibleBubbleSeriesIndex = function (): number {
 Legend.prototype.getLinesHeights = function (
     this: Highcharts.Legend
 ): Array<Record<string, number>> {
-    var items = this.allItems,
+    let items = this.allItems,
         lines = [] as Array<Record<string, number>>,
         lastLine,
         length = items.length,
@@ -1205,7 +1205,7 @@ Legend.prototype.retranslateItems = function (
     this: Highcharts.Legend,
     lines: Array<Record<string, number>>
 ): void {
-    var items = this.allItems,
+    let items = this.allItems,
         orgTranslateX,
         orgTranslateY,
         movementX,
@@ -1244,7 +1244,7 @@ Legend.prototype.retranslateItems = function (
 
 // Toggle bubble legend depending on the visible status of bubble series.
 addEvent(Series, 'legendItemClick', function (): void {
-    var series = this,
+    let series = this,
         chart = series.chart,
         visible = series.visible,
         legend = series.chart.legend,
@@ -1279,7 +1279,7 @@ wrap(Chart.prototype, 'drawChartBox', function (
     options: Highcharts.Options,
     callback: Chart.CallbackFunction
 ): void {
-    var chart = this,
+    let chart = this,
         legend = chart.legend,
         bubbleSeries = chart.getVisibleBubbleSeriesIndex() >= 0,
         bubbleLegendOptions: Highcharts.BubbleLegendOptions,

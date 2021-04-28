@@ -206,7 +206,7 @@ class RadialAxis {
         // Merge and set options.
         axis.setOptions = function (userOptions: DeepPartial<RadialAxisOptions>): void {
 
-            var options = this.options = merge<RadialAxisOptions>(
+            let options = this.options = merge<RadialAxisOptions>(
                 (axis.constructor as typeof Axis).defaultOptions,
                 this.defaultPolarOptions,
                 userOptions
@@ -257,7 +257,7 @@ class RadialAxis {
             radius?: number,
             innerRadius?: number
         ): RadialAxisPath {
-            var center = this.pane.center,
+            let center = this.pane.center,
                 end,
                 chart = this.chart,
                 r = pick(radius, center[2] / 2 - this.offset),
@@ -380,7 +380,7 @@ class RadialAxis {
          * @private
          */
         axis.setAxisSize = function (): void {
-            var center: number[],
+            let center: number[],
                 start;
 
             axisProto.setAxisSize.call(this);
@@ -431,7 +431,7 @@ class RadialAxis {
             value: number,
             length?: number
         ): PositionObject {
-            var translatedVal = this.translate(value) as any;
+            let translatedVal = this.translate(value) as any;
 
             return this.postTranslate(
                 this.isCircular ? translatedVal : this.angleRad, // #2848
@@ -464,7 +464,7 @@ class RadialAxis {
             radius: number
         ): PositionObject {
 
-            var chart = this.chart,
+            let chart = this.chart,
                 center = this.center;
 
             angle = this.startAngleRad + angle;
@@ -509,7 +509,7 @@ class RadialAxis {
                 return radius;
             };
 
-            var center = this.center,
+            let center = this.center,
                 startAngleRad = this.startAngleRad,
                 fullRadius = center[2] / 2,
                 offset = Math.min(this.offset, 0),
@@ -619,7 +619,7 @@ class RadialAxis {
             x1: number,
             y1: number
         ): [(number | undefined), number, number] {
-            var axis = this,
+            let axis = this,
                 value = options.value,
                 center = axis.pane.center,
                 shapeArgs,
@@ -674,7 +674,7 @@ class RadialAxis {
         axis.getPlotLinePath = function (
             options: Highcharts.AxisPlotLinesOptions
         ): SVGPath {
-            var axis = this,
+            let axis = this,
                 center = axis.pane.center,
                 chart = axis.chart,
                 inverted = chart.inverted,
@@ -807,7 +807,7 @@ class RadialAxis {
 
         // Find the position for the axis title, by default inside the gauge.
         axis.getTitlePosition = function (): PositionObject {
-            var center = this.center,
+            let center = this.center,
                 chart = this.chart,
                 titleOptions = this.options.title;
 
@@ -840,7 +840,7 @@ class RadialAxis {
          * @return {Highcharts.ChartLabelCollectorFunction}
          */
         axis.createLabelCollector = function (): Chart.LabelCollectorFunction {
-            var axis = this;
+            let axis = this;
 
             return function (
                 this: null
@@ -887,7 +887,7 @@ class RadialAxis {
         addEvent(AxisClass, 'init', function (e: { userOptions: RadialAxisOptions }): void {
             const axis = this as RadialAxis;
             const chart = axis.chart;
-            var inverted = chart.inverted,
+            let inverted = chart.inverted,
                 angular = chart.angular,
                 polar = chart.polar,
                 isX = axis.isXAxis,
@@ -970,7 +970,7 @@ class RadialAxis {
         addEvent(AxisClass, 'afterInit', function (): void {
             const axis = this as RadialAxis;
 
-            var chart = axis.chart,
+            let chart = axis.chart,
                 options = axis.options,
                 isHidden = chart.angular && axis.isXAxis,
                 pane = axis.pane,
@@ -1013,7 +1013,7 @@ class RadialAxis {
                 axis.chart &&
                 axis.chart.labelCollectors
             ) {
-                var index = (
+                let index = (
                     axis.labelCollector ?
                         axis.chart.labelCollectors.indexOf(
                             axis.labelCollector
@@ -1054,7 +1054,7 @@ class RadialAxis {
                 return;
             }
 
-            var labelBBox = label.getBBox(),
+            let labelBBox = label.getBBox(),
                 labelOptions = axis.options.labels,
                 optionsY = labelOptions.y,
                 ret,

@@ -219,7 +219,7 @@ Chart.prototype.setResponsive = function (
     redraw?: boolean,
     reset?: boolean
 ): void {
-    var options = this.options.responsive,
+    let options = this.options.responsive,
         ruleIds = [] as Array<string>,
         currentResponsive = this.currentResponsive,
         currentRuleIds,
@@ -238,7 +238,7 @@ Chart.prototype.setResponsive = function (
     }
 
     // Merge matching rules
-    var mergedOptions = merge.apply(0, ruleIds.map(function (
+    let mergedOptions = merge.apply(0, ruleIds.map(function (
         ruleId: string
     ): (Highcharts.Options|undefined) {
         return (find(
@@ -295,7 +295,7 @@ Chart.prototype.matchResponsiveRule = function (
     matches: Array<string>
 ): void {
 
-    var condition =
+    let condition =
             rule.condition as Highcharts.ResponsiveRulesConditionOptions,
         fn = condition.callback || function (this: Chart): boolean {
             return (
@@ -329,7 +329,7 @@ Chart.prototype.currentOptions = function (
     options: Highcharts.Options
 ): Partial<Highcharts.Options> {
 
-    var chart = this,
+    let chart = this,
         ret = {};
 
     /**
@@ -342,7 +342,7 @@ Chart.prototype.currentOptions = function (
         ret: AnyRecord,
         depth: number
     ): void {
-        var i;
+        let i;
 
         objectEach(options, function (val, key): void {
             if (
