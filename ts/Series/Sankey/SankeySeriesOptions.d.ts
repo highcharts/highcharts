@@ -71,7 +71,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, Highcharts.Nod
 
 export interface SankeySeriesTooltipOptions extends Highcharts.TooltipOptions {
     nodeFormat?: string;
-    nodeFormatter?: FormatUtilities.FormatterCallbackFunction<SankeyPoint>;
+    nodeFormatter?: FormatUtilities.FormatterCallback<SankeyPoint>;
 }
 
 export default SankeySeriesOptions;

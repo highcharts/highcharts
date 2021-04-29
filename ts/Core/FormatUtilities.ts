@@ -309,7 +309,7 @@ const FormatUtilities = {
 };
 
 namespace FormatUtilities {
-    export interface FormatterCallbackFunction<T> {
+    export interface FormatterCallback<T> {
         (this: T): string;
     }
 }

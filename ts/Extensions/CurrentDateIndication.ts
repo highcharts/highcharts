@@ -35,7 +35,7 @@ declare global {
         interface CurrentDateIndicatorLabelOptions {
             align?: AlignValue;
             format?: string;
-            formatter?: FormatUtilities.FormatterCallbackFunction<PlotLineOrBand>;
+            formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
             rotation?: number;
             style?: CSSObject;
             text?: string;

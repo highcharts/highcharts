@@ -1606,7 +1606,7 @@ function addEvents<T>(
     el: T,
     types: Array<string>,
     fn: (Function|EventCallback<T>),
-    options?: U.EventOptionsObject
+    options?: U.EventOptions
 ): Function {
     var removeFuncs: Array<Function> = types.map(
         function (type: string): Function {

@@ -275,7 +275,7 @@ declare global {
             itemWidth?: number;
             layout?: ('horizontal'|'vertical'|'proximate');
             labelFormat?: string;
-            labelFormatter?: FormatUtilties.FormatterCallbackFunction<Series|Point>;
+            labelFormatter?: FormatUtilties.FormatterCallback<Series|Point>;
             /** @deprecated */
             lineHeight?: number;
             margin?: number;
@@ -386,7 +386,7 @@ declare global {
             outside?: boolean;
             padding?: number;
             pointFormat?: string;
-            pointFormatter?: FormatUtilties.FormatterCallbackFunction<Point>;
+            pointFormatter?: FormatUtilties.FormatterCallback<Point>;
             positioner?: TooltipPositionerCallbackFunction;
             shadow?: (boolean|Partial<ShadowOptionsObject>);
             shape?: TooltipShapeValue;

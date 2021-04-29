@@ -1779,7 +1779,7 @@ function offset(el: Element): Utilities.OffsetObject {
  */
 function objectEach<TObject, TContext>(
     obj: TObject,
-    fn: Utilities.ObjectEachCallbackFunction<TObject, TContext>,
+    fn: Utilities.ObjectEachCallback<TObject, TContext>,
     ctx?: TContext
 ): void {
     /* eslint-enable valid-jsdoc */
@@ -1926,7 +1926,7 @@ function addEvent<T>(
     el: (Utilities.Class<T>|T),
     type: string,
     fn: (EventCallback<T>|Function),
-    options: Utilities.EventOptionsObject = {}
+    options: Utilities.EventOptions = {}
 ): Function {
     /* eslint-enable valid-jsdoc */
 
@@ -2397,7 +2397,7 @@ namespace Utilities {
         message?: string;
         params?: Record<string, string>;
     }
-    export interface EventOptionsObject {
+    export interface EventOptions {
         order?: number;
         passive?: boolean;
     }
@@ -2405,7 +2405,7 @@ namespace Utilities {
         fn: EventCallback<T>;
         order: number;
     }
-    export interface ObjectEachCallbackFunction<TObject, TContext> {
+    export interface ObjectEachCallback<TObject, TContext> {
         (
             this: TContext,
             value: TObject[keyof TObject],

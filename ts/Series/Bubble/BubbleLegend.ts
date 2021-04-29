@@ -82,7 +82,7 @@ declare global {
             className?: string;
             format?: string;
             formatter?: (
-                FormatUtilities.FormatterCallbackFunction<BubbleLegendFormatterContextObject>
+                FormatUtilities.FormatterCallback<BubbleLegendFormatterContextObject>
             );
             style?: CSSObject;
             x?: number;

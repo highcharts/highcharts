@@ -102,7 +102,7 @@ declare global {
             connectorNeighbourDistance?: number;
             enabled?: boolean;
             format?: string;
-            formatter?: FormatUtilities.FormatterCallbackFunction<Series>;
+            formatter?: FormatUtilities.FormatterCallback<Series>;
             maxFontSize?: (number|null);
             minFontSize?: (number|null);
             onArea?: (boolean|null);

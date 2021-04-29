@@ -132,7 +132,7 @@ declare global {
             crop?: boolean;
             enabled?: boolean;
             format?: string;
-            formatter?: FormatUtilities.FormatterCallbackFunction<StackItemObject>;
+            formatter?: FormatUtilities.FormatterCallback<StackItemObject>;
             overflow?: DataLabelOverflowValue;
             rotation?: number;
             style?: CSSObject;

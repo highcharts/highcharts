@@ -38,7 +38,7 @@ declare global {
         }
         interface AnnotationsMeasureTypeLabelOptionsObject {
             enabled: boolean;
-            formatter?: FormatUtilities.FormatterCallbackFunction<Measure>;
+            formatter?: FormatUtilities.FormatterCallback<Measure>;
             style: CSSObject;
         }
         interface AnnotationMeasureTypeOptionsObject extends AnnotationsTypeOptions {

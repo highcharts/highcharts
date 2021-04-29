@@ -58,7 +58,7 @@ declare global {
         }
         interface AxisPlotBandsLabelOptions {
             align?: AlignValue;
-            formatter?: FormatUtilities.FormatterCallbackFunction<PlotLineOrBand>;
+            formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
             rotation?: number;
             style?: CSSObject;
             text?: string;
@@ -83,7 +83,7 @@ declare global {
         }
         interface AxisPlotLinesLabelOptions {
             align?: AlignValue;
-            formatter?: FormatUtilities.FormatterCallbackFunction<PlotLineOrBand>;
+            formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
             rotation?: number;
             style?: CSSObject;
             text?: string;
@@ -478,7 +478,7 @@ class PlotLineOrBand {
     )): string | undefined {
         return defined(optionsLabel.formatter) ?
             (optionsLabel.formatter as
-              FormatUtilities.FormatterCallbackFunction<Highcharts.PlotLineOrBand>)
+              FormatUtilities.FormatterCallback<Highcharts.PlotLineOrBand>)
                 .call(this as any) :
             optionsLabel.text;
     }

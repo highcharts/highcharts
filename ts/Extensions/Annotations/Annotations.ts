@@ -131,7 +131,7 @@ declare global {
             crop: boolean;
             distance?: number;
             format?: string;
-            formatter: FormatUtilities.FormatterCallbackFunction<Point>;
+            formatter: FormatUtilities.FormatterCallback<Point>;
             includeInDataExport: boolean;
             overflow: DataLabelOverflowValue;
             padding: number;
