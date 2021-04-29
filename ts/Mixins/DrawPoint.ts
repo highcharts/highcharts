@@ -15,7 +15,7 @@ import type Point from '../Core/Series/Point';
 import type ShadowOptionsObject from '../Core/Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGRenderer from '../Core/Renderer/SVG/SVGrenderer';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 /**
  * Internal types
