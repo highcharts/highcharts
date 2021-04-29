@@ -19,8 +19,8 @@ interface Proj4 {
 }
 
 export interface ProjectionOptions {
-    d3?: any;
-    proj4?: Proj4;
+    // d3?: any;
+    // proj4?: Proj4;
     projectionName?: string;
     projString?: string;
     lat0?: number;

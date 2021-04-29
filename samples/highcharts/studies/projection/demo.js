@@ -76,6 +76,9 @@ const drawMap = projectionKey => {
         eqc: {
             projectionName: 'eqc'
         },
+        equalearth: {
+            projectionName: 'EqualEarth'
+        },
         miller: {
             projectionName: 'mill',
             over: true
@@ -117,7 +120,7 @@ const drawMap = projectionKey => {
             projectionName: 'robin'
         },
         webmerc: {
-            projString: 'EPSG:3857'
+            projectionName: 'WebMercator'
         }
     }[projectionKey] || {});
 
@@ -125,7 +128,7 @@ const drawMap = projectionKey => {
     if (!chart) {
 
 
-        projection.proj4 = libs.proj4;
+        // projection.proj4 = libs.proj4;
         // projection.d3 = libs.d3;
 
         console.time('@mapChart');
@@ -157,14 +160,6 @@ const drawMap = projectionKey => {
 
             mapView: {
                 projection
-                /*
-                center: [4.90, 53.38],
-                zoom: 4,
-                projection: {
-                    projectionName: 'robin',
-                    proj4: libs.proj4
-                }
-                */
             },
 
             colorAxis: {
@@ -369,7 +364,7 @@ Highcharts.getJSON(
         static.geojson = JSON.stringify(geojson);
         static.data = data;
 
-        drawMap('robin');
+        drawMap('webmerc');
 
         enableInputs();
 

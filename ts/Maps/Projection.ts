@@ -11,15 +11,18 @@
 'use strict';
 
 import type { GeoJSONGeometry, LonLatArray } from 'GeoJSON';
+import type ProjectionDefinition from './ProjectionTypes';
 import type ProjectionOptions from 'ProjectionOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
+import registry from './Projections/ProjectionRegistry.js';
 import U from '../Core/Utilities.js';
 const {
     erase,
     error,
     pick
 } = U;
+
 
 // Safe padding on either side of the antimeridian to avoid points being
 // projected to the wrong side of the plane
@@ -39,13 +42,22 @@ const wrapLon = (lon: number): number => {
     return lon;
 };
 
-
 export default class Projection {
 
     public options: ProjectionOptions;
     public isNorthPositive: boolean = false;
 
     private antimeridian?: number;
+
+    public static registry = registry;
+
+    // Add a projection definition to the registry, accessible by its `name`.
+    public static add(
+        name: string,
+        definition: ProjectionDefinition
+    ): void {
+        Projection.registry[name] = definition;
+    }
 
     // Calculate the great circle between two given coordinates
     public static greatCircle(
@@ -162,15 +174,26 @@ export default class Projection {
 
     public constructor(options?: ProjectionOptions) {
         this.options = options || {};
-        const { d3, proj4 } = options || {};
+        // const { d3, proj4 } = options || {};
 
         // @todo: Better filter for when to handle antimeridian
         if (this.options.lon0 && this.options.projectionName !== 'ortho') {
             this.antimeridian = (this.options.lon0 + 360) % 360 - 180;
         }
 
+        const def = options && options.projectionName ?
+            Projection.registry[options.projectionName] : void 0;
+
+        if (def) {
+            this.forward = def.forward;
+            this.inverse = def.inverse;
+            this.maxLatitude = def.maxLatitude || 90;
+            this.isNorthPositive = true;
+
+        }
+        /*
         // Set up proj4 based projection
-        if (proj4) {
+        } else if (proj4) {
             const projString = Projection.toString(options);
 
             if (projString) {
@@ -210,7 +233,8 @@ export default class Projection {
             ) {
                 projection = d3.geoMercator();
             } else {
-                error('Projection unknown to d3 adapter, falling back to equirectangular', false);
+                error('Projection unknown to d3 adapter,
+                    falling back to equirectangular', false);
             }
             projection.rotate([-lon0, -lat0]);
 
@@ -235,6 +259,7 @@ export default class Projection {
             };
 
         }
+        */
     }
 
     // Project a lonlat coordinate position to xy. Dynamically overridden when

@@ -89,10 +89,6 @@ class MapView {
     ) {
         const options = merge(true, {
             center: [0, 0],
-            projection: {
-                d3: win.d3,
-                proj4: chart.options.chart.proj4 || win.proj4
-            },
             zoom: 0
         }, userOptions);
 
