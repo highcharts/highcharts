@@ -583,6 +583,9 @@ class Sidebar {
         if (componentSettings) {
             const menuItems = {};
             const items: Array<string> = [];
+            const activeTab = sidebar.activeTab && sidebar.activeTab;
+            const activeTabContainer = activeTab && activeTab.content &&
+                activeTab && activeTab.content.container;
             let type;
 
             objectEach(componentSettings, (elem, key): void => {
@@ -607,7 +610,7 @@ class Sidebar {
             }
 
             sidebar.componentEditableOptions = new Menu(
-                sidebar.activeTab?.content?.container as HTMLDOMElement,
+                activeTabContainer as HTMLDOMElement,
                 {
                     itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
                     items: items
@@ -694,7 +697,7 @@ class Sidebar {
         }
 
         if (mountedComponent) {
-            mountedComponent.update(updatedSettings as any);
+            mountedComponent.update(updatedSettings);
         }
     }
 }
