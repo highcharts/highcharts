@@ -704,7 +704,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public initDataClasses(userOptions: DeepPartial<ColorAxis.Options>): void {
         const axis = this;
-        var chart = axis.chart,
+        let chart = axis.chart,
             dataClasses,
             colorCounter = 0,
             colorCount = chart.options.chart.colorCount,
@@ -718,7 +718,7 @@ class ColorAxis extends Axis implements AxisLike {
             dataClass: ColorAxis.DataClassesOptions,
             i: number
         ): void {
-            var colors: any;
+            let colors: any;
 
             dataClass = merge(dataClass);
             dataClasses.push(dataClass);
@@ -1309,7 +1309,7 @@ class ColorAxis extends Axis implements AxisLike {
                 dataClass: ColorAxis.DataClassesOptions,
                 i: number
             ): void {
-                var vis = true,
+                let vis = true,
                     from = dataClass.from,
                     to = dataClass.to;
                 const { numberFormatter } = chart;
@@ -1396,7 +1396,7 @@ H.ColorAxis = ColorAxis as any;
 
 // Extend the chart getAxes method to also get the color axis
 addEvent(Chart, 'afterGetAxes', function (): void {
-    var chart = this,
+    const chart = this,
         options = chart.options;
 
     this.colorAxis = [];
@@ -1413,7 +1413,7 @@ addEvent(Chart, 'afterGetAxes', function (): void {
 
 // Add colorAxis to series axisTypes
 addEvent(Series, 'bindAxes', function (): void {
-    var axisTypes = this.axisTypes;
+    const axisTypes = this.axisTypes;
 
     if (!axisTypes) {
         this.axisTypes = ['colorAxis'];
@@ -1432,7 +1432,7 @@ addEvent(Legend, 'afterGetAllItems', function (
         allItems: Array<(Series|Point|ColorAxis|ColorAxis.LegendItemObject)>;
     }
 ): void {
-    var colorAxisItems = [] as Array<(ColorAxis|ColorAxis.LegendItemObject)>,
+    let colorAxisItems = [] as Array<(ColorAxis|ColorAxis.LegendItemObject)>,
         colorAxes = this.chart.colorAxis || [],
         options: ColorAxis.Options,
         i;
@@ -1501,7 +1501,7 @@ addEvent(Legend, 'afterColorizeItem', function (
 
 // Updates in the legend need to be reflected in the color axis (6888)
 addEvent(Legend, 'afterUpdate', function (this: Highcharts.Legend): void {
-    var colorAxes = this.chart.colorAxis;
+    const colorAxes = this.chart.colorAxis;
 
     if (colorAxes) {
         colorAxes.forEach(function (colorAxis): void {

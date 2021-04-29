@@ -450,7 +450,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      */
     public accumulateAllPoints(series: PackedBubbleSeries): Array<PackedBubbleSeries.Data> {
 
-        var chart = series.chart,
+        let chart = series.chart,
             allDataPoints = [] as Array<PackedBubbleSeries.Data>,
             i: number, j: number;
 
@@ -490,7 +490,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public addLayout(): void {
-        var series = this,
+        let series = this,
             layoutOptions = series.options.layoutAlgorithm,
             graphLayoutsStorage = series.chart.graphLayoutsStorage,
             graphLayoutsLookup = series.chart.graphLayoutsLookup,
@@ -538,7 +538,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public addSeriesLayout(): void {
-        var series = this,
+        let series = this,
             layoutOptions = series.options.layoutAlgorithm,
             graphLayoutsStorage = series.chart.graphLayoutsStorage,
             graphLayoutsLookup = series.chart.graphLayoutsLookup,
@@ -577,7 +577,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public calculateParentRadius(): void {
-        var series = this,
+        let series = this,
             bBox: (Array<number>|null),
             parentPadding = 20,
             minParentRadius = 20;
@@ -612,7 +612,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public calculateZExtremes(): Array<number> {
-        var chart = this.chart,
+        let chart = this.chart,
             zMin = this.options.zMin,
             zMax = this.options.zMax,
             valMin = Infinity,
@@ -655,7 +655,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         bubble1: Array<number>,
         bubble2: Array<number>
     ): boolean {
-        var diffX = bubble1[0] - bubble2[0], // diff of X center values
+        const diffX = bubble1[0] - bubble2[0], // diff of X center values
             diffY = bubble1[1] - bubble2[1], // diff of Y center values
             sumRad = bubble1[2] + bubble2[2]; // sum of bubble radius
 
@@ -671,7 +671,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public createParentNodes(): void {
-        var series = this,
+        let series = this,
             chart = series.chart,
             parentNodeLayout: PackedBubbleLayout = series.parentNodeLayout as any,
             nodeAdded,
@@ -733,7 +733,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      */
     public deferLayout(): void {
         // TODO split layouts to independent methods
-        var series = this,
+        const series = this,
             layoutOptions = series.options.layoutAlgorithm;
         if (!series.visible) {
             return;
@@ -775,7 +775,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public drawDataLabels(): void {
-        var textPath = (this.options.dataLabels as any).textPath,
+        const textPath = (this.options.dataLabels as any).textPath,
             points = this.points;
 
         // Render node labels:
@@ -806,7 +806,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             return;
         }
 
-        var series = this,
+        let series = this,
             chart = series.chart,
             parentAttribs: SVGAttributes = {},
             nodeMarker: BubblePointMarkerOptions =
@@ -877,9 +877,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 (parentNode.graphic.element as any).point = parentNode;
             }
 
-            (dataLabels as any).forEach(function (
-                dataLabel: SVGElement
-            ): void {
+            dataLabels.forEach(function (dataLabel): void {
                 if (dataLabel.div) {
                     dataLabel.div.point = parentNode;
                 } else {
@@ -894,7 +892,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public getPointRadius(): void {
-        var series = this,
+        let series = this,
             chart = series.chart,
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
@@ -910,7 +908,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             radius: (number|null),
             zExtremes: Array<number>;
         ['minSize', 'maxSize'].forEach(function (prop: string): void {
-            var length = parseInt((seriesOptions as any)[prop], 10),
+            const length = parseInt((seriesOptions as any)[prop], 10),
                 isPercent = /%$/.test((seriesOptions as any)[prop]);
 
             extremes[prop] = isPercent ?
@@ -982,7 +980,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      */
     public onMouseUp(point: PackedBubblePoint): void {
         if (point.fixedPosition && !point.removed) {
-            var distanceXY,
+            let distanceXY,
                 distanceR,
                 layout = this.layout,
                 parentNodeLayout = this.parentNodeLayout;
@@ -1028,7 +1026,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      */
     public placeBubbles(allDataPoints: Array<PackedBubbleSeries.Data>): Array<PackedBubbleSeries.Data> {
 
-        var series = this,
+        let series = this,
             checkOverlap = series.checkOverlap,
             positionBubble = series.positionBubble,
             bubblePos = [] as Array<Array<Array<number>>>,
@@ -1169,7 +1167,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         newOrigin: Array<number>,
         nextBubble: Array<number>
     ): Array<number> {
-        var sqrt = Math.sqrt,
+        const sqrt = Math.sqrt,
             asin = Math.asin,
             acos = Math.acos,
             pow = Math.pow,
@@ -1218,7 +1216,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     }
 
     public render(): void {
-        var series = this,
+        const series = this,
             dataLabels = [] as Array<SVGElement>;
         Series.prototype.render.apply(this, arguments);
         // #10823 - dataLabels should stay visible
@@ -1255,7 +1253,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      */
     public resizeRadius(): void {
 
-        var chart = this.chart,
+        let chart = this.chart,
             positions = chart.rawPositions,
             min = Math.min,
             max = Math.max,
@@ -1317,7 +1315,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public seriesBox(): (Array<number>|null) {
-        var series = this,
+        let series = this,
             chart = series.chart,
             data = series.data,
             max = Math.max,
@@ -1354,7 +1352,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public setVisible(): void {
-        var series = this;
+        const series = this;
         Series.prototype.setVisible.apply(series, arguments as any);
         if (series.parentNodeLayout && series.graph) {
             if (series.visible) {
@@ -1394,7 +1392,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      */
     public translate(): void {
 
-        var series = this,
+        let series = this,
             chart = series.chart,
             data = series.data,
             index = series.index,

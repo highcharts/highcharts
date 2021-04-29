@@ -123,7 +123,7 @@ namespace WaterfallAxis {
          * @function Highcharts.Axis#renderWaterfallStackTotals
          */
         public renderStackTotals(): void {
-            var yAxis = this.axis,
+            const yAxis = this.axis,
                 waterfallStacks = yAxis.waterfall.stacks,
                 stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup,
                 dummyStackItem = new StackItem(
@@ -209,7 +209,7 @@ namespace WaterfallAxis {
      * @private
      */
     function onBeforeRedraw(this: Chart): void {
-        var axes = this.axes as Array<WaterfallAxis>,
+        let axes = this.axes as Array<WaterfallAxis>,
             series = this.series,
             i = series.length;
 

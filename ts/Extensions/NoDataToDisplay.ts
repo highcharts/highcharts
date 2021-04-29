@@ -19,12 +19,13 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Chart from '../Core/Chart/Chart.js';
+import O from '../Core/Options.js';
+const { getOptions } = O;
 import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    extend,
-    getOptions
+    extend
 } = U;
 
 declare module '../Core/Chart/ChartLike' {
@@ -60,7 +61,7 @@ declare global {
     }
 }
 
-var chartPrototype = Chart.prototype,
+const chartPrototype = Chart.prototype,
     defaultOptions = getOptions();
 
 // Add language option
@@ -189,7 +190,7 @@ defaultOptions.noData = {
  * @requires modules/no-data-to-display
  */
 chartPrototype.showNoData = function (str?: string): void {
-    var chart = this,
+    const chart = this,
         options = chart.options,
         text = str || (options && (options.lang as any).noData),
         noDataOptions: Highcharts.NoDataOptions =
@@ -237,7 +238,7 @@ chartPrototype.showNoData = function (str?: string): void {
  * @requires modules/no-data-to-display
  */
 chartPrototype.hideNoData = function (): void {
-    var chart = this;
+    const chart = this;
 
     if (chart.noDataLabel) {
         chart.noDataLabel = chart.noDataLabel.destroy();
@@ -254,7 +255,7 @@ chartPrototype.hideNoData = function (): void {
  * @requires modules/no-data-to-display
  */
 chartPrototype.hasData = function (): (boolean|undefined) {
-    var chart = this,
+    let chart = this,
         series = chart.series || [],
         i = series.length;
 

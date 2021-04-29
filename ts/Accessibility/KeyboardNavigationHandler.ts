@@ -129,7 +129,7 @@ KeyboardNavigationHandler.prototype = {
         this: Highcharts.KeyboardNavigationHandler,
         e: KeyboardEvent
     ): number {
-        var keyCode = e.which || e.keyCode,
+        let keyCode = e.which || e.keyCode,
             response = this.response.noHandler,
             handlerCodeSet = find(this.keyCodeMap, function (
                 codeSet: [Array<number>, Function]

@@ -154,7 +154,7 @@ wrap(Series.prototype, 'justifyDataLabel', function (
 columnProto.translate3dPoints = function (): void {};
 columnProto.translate3dShapes = function (): void {
 
-    var series: ColumnSeries = this,
+    let series: ColumnSeries = this,
         chart = series.chart,
         seriesOptions = series.options,
         depth = (seriesOptions as any).depth,
@@ -178,7 +178,7 @@ columnProto.translate3dShapes = function (): void {
         // #7103 Reset outside3dPlot flag
         point.outside3dPlot = null;
         if (point.y !== null) {
-            var shapeArgs = point.shapeArgs,
+            let shapeArgs = point.shapeArgs,
                 tooltipPos = point.tooltipPos,
                 // Array for final shapeArgs calculation.
                 // We are checking two dimensions (x and y).
@@ -220,7 +220,7 @@ columnProto.translate3dShapes = function (): void {
                     )
                 ) {
                     // Set args to 0 if column is outside the chart.
-                    for (var key in shapeArgs) { // eslint-disable-line guard-for-in
+                    for (const key in shapeArgs) { // eslint-disable-line guard-for-in
                         (shapeArgs as any)[key] = 0;
                     }
                     // #7103 outside3dPlot flag is set on Points which are
@@ -280,7 +280,7 @@ wrap(columnProto, 'animate', function (
     if (!this.chart.is3d()) {
         proceed.apply(this, [].slice.call(arguments, 1));
     } else {
-        var args = arguments,
+        const args = arguments,
             init = args[1],
             yAxis = this.yAxis,
             series = this,
@@ -382,7 +382,7 @@ wrap(
         proceed: Function,
         vis?: boolean
     ): void {
-        var series = this;
+        const series = this;
 
         if (series.chart.is3d()) {
             series.data.forEach(function (point): void {
@@ -404,7 +404,7 @@ wrap(
 
 addEvent(ColumnSeries, 'afterInit', function (): void {
     if (this.chart.is3d()) {
-        var series = this as ColumnSeries,
+        let series = this as ColumnSeries,
             seriesOptions: ColumnSeriesOptions = this.options,
             grouping = seriesOptions.grouping,
             stacking = seriesOptions.stacking,
@@ -413,7 +413,7 @@ addEvent(ColumnSeries, 'afterInit', function (): void {
 
         // @todo grouping === true ?
         if (!(typeof grouping !== 'undefined' && !grouping)) {
-            var stacks = retrieveStacks(this.chart, stacking),
+            let stacks = retrieveStacks(this.chart, stacking),
                 stack: number = (seriesOptions.stack as any) || 0,
                 i; // position within the stack
 
@@ -445,7 +445,7 @@ function pointAttribs(
     this: ColumnSeries,
     proceed: Function
 ): SVGAttributes {
-    var attr = proceed.apply(this, [].slice.call(arguments, 1));
+    const attr = proceed.apply(this, [].slice.call(arguments, 1));
 
     if (this.chart.is3d && this.chart.is3d()) {
         // Set the fill color to the fill color to provide a smooth edge
@@ -468,7 +468,7 @@ function setState(
     state: unknown,
     inherit: unknown
 ): void {
-    var is3d = this.chart.is3d && this.chart.is3d();
+    const is3d = this.chart.is3d && this.chart.is3d();
 
     if (is3d) {
         this.options.inactiveOtherPoints = true;
@@ -585,7 +585,7 @@ wrap(StackItem.prototype, 'getStackBox', function (
     h: number,
     axis: Axis
 ): void { // #3946
-    var stackBox = proceed.apply(this, [].slice.call(arguments, 1));
+    const stackBox = proceed.apply(this, [].slice.call(arguments, 1));
     // Only do this for 3D graph
     if (chart.is3d() && stackItem.base) {
         // First element of stackItem.base is an index of base series.
@@ -635,10 +635,10 @@ wrap(StackItem.prototype, 'getStackBox', function (
     Not supported
 */
 /*
-var defaultOptions = H.getOptions();
+let defaultOptions = H.getOptions();
 defaultOptions.plotOptions.cylinder =
     merge(defaultOptions.plotOptions.column);
-var CylinderSeries = extendClass(seriesTypes.column, {
+let CylinderSeries = extendClass(seriesTypes.column, {
     type: 'cylinder'
 });
 seriesTypes.cylinder = CylinderSeries;
@@ -651,7 +651,7 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
         return;
     }
 
-    var series = this,
+    let series = this,
         chart = series.chart,
         options = chart.options,
         cylOptions = options.plotOptions.cylinder,
@@ -659,7 +659,7 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
         depth = cylOptions.depth || 0,
         alpha = chart.alpha3d;
 
-    var z = cylOptions.stacking ?
+    let z = cylOptions.stacking ?
         (this.options.stack || 0) * depth :
         series._i * depth;
     z += depth / 2;
@@ -667,7 +667,7 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
     if (cylOptions.grouping !== false) { z = 0; }
 
     each(series.data, function (point) {
-        var shapeArgs = point.shapeArgs,
+        let shapeArgs = point.shapeArgs,
             deg2rad = H.deg2rad;
         point.shapeType = 'arc3d';
         shapeArgs.x += depth / 2;

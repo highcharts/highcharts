@@ -88,7 +88,7 @@ class HeatmapPoint extends ScatterPoint {
     }
 
     public getCellAttributes(): HeatmapPoint.CellAttributes {
-        var point = this,
+        const point = this,
             series = point.series,
             seriesOptions = series.options,
             xPad = (seriesOptions.colsize || 1) / 2,
@@ -197,7 +197,7 @@ class HeatmapPoint extends ScatterPoint {
         if (!size) {
             return [];
         }
-        var rect = this.shapeArgs;
+        const rect = this.shapeArgs;
 
         return [
             'M',

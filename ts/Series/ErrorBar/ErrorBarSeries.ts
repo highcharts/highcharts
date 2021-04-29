@@ -136,7 +136,7 @@ class ErrorBarSeries extends BoxPlotSeries {
     }
 
     public drawDataLabels(): void {
-        var valKey = this.pointValKey;
+        const valKey = this.pointValKey;
 
         if (AreaRangeSeries) {
             AreaRangeSeries.prototype.drawDataLabels.call(this);

@@ -314,7 +314,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         chart: Highcharts.AnnotationChart,
         userOptions: Highcharts.AnnotationsOptions
     ) {
-        var labelsAndShapes;
+        let labelsAndShapes;
 
         /**
          * The chart that the annotation belongs to.
@@ -475,7 +475,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         baseOptions: Highcharts.AnnotationsOptions,
         newOptions: DeepPartial<Highcharts.AnnotationsOptions>
     ): Highcharts.AnnotationsOptions {
-        var mergedOptions = {} as Highcharts.AnnotationsOptions;
+        const mergedOptions = {} as Highcharts.AnnotationsOptions;
 
         (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach(function (name: ('labels'|'shapes')): void {
             if (baseOptions[name]) {
@@ -499,7 +499,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
             shapeOptions: Highcharts.AnnotationsShapesOptions,
             i: number
         ): void {
-            var shape = this.initShape(shapeOptions, i);
+            const shape = this.initShape(shapeOptions, i);
 
             merge(true, this.options.shapes[i], shape.options);
         }, this);
@@ -511,7 +511,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
             labelsOptions: Highcharts.AnnotationsLabelsOptions,
             i: number
         ): void {
-            var labels = this.initLabel(labelsOptions, i);
+            const labels = this.initLabel(labelsOptions, i);
 
             merge(true, this.options.labels[i], labels.options);
         }, this);
@@ -526,7 +526,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     }
 
     public setClipAxes(): void {
-        var xAxes = this.chart.xAxis,
+        const xAxes = this.chart.xAxis,
             yAxes = this.chart.yAxis,
             linkedAxes: Array<AxisType> = ((
                 this.options.labels || []
@@ -569,7 +569,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     }
 
     public setLabelCollector(): void {
-        var annotation = this;
+        const annotation = this;
 
         annotation.labelCollector = function (): Array<SVGElement> {
             return annotation.labels.reduce(
@@ -628,7 +628,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         items: Array<Highcharts.AnnotationControllable>,
         animation?: boolean
     ): void {
-        var i = items.length;
+        let i = items.length;
 
         // needs a backward loop
         // labels/shapes array might be modified
@@ -645,7 +645,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public renderItems(
         items: Array<Highcharts.AnnotationControllable>
     ): void {
-        var i = items.length;
+        let i = items.length;
 
         while (i--) {
             this.renderItem(items[i]);
@@ -653,7 +653,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     }
 
     public render(): void {
-        var renderer = this.chart.renderer;
+        const renderer = this.chart.renderer;
 
         this.graphic = renderer
             .g('annotation')
@@ -703,7 +703,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      * annotation's visibility is toggled.
      */
     public setVisibility(visible?: boolean): void {
-        var options = this.options,
+        const options = this.options,
             visibility = pick(visible, !options.visible);
 
         this.graphic.attr(
@@ -719,7 +719,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     }
 
     public setControlPointsVisibility(visible: boolean): void {
-        var setItemControlPointsVisibility = function (
+        const setItemControlPointsVisibility = function (
             item: (Highcharts.AnnotationLabelType|Highcharts.AnnotationShapeType)
         ): void {
             item.setControlPointsVisibility(visible);
@@ -742,7 +742,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      * @private
      */
     public destroy(): void {
-        var chart = this.chart,
+        const chart = this.chart,
             destroyItem = function (
                 item: (Highcharts.AnnotationLabelType|Highcharts.AnnotationShapeType)
             ): void {
@@ -786,7 +786,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         userOptions: DeepPartial<Highcharts.AnnotationsOptions>,
         redraw? : boolean
     ): void {
-        var chart = this.chart,
+        const chart = this.chart,
             labelsAndShapes = this.getLabelsAndShapesOptions(
                 this.userOptions,
                 userOptions
@@ -826,7 +826,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         shapeOptions: Partial<Highcharts.AnnotationsShapesOptions>,
         index: number
     ): Highcharts.AnnotationShapeType {
-        var options = merge(
+        const options = merge(
                 this.options.shapeOptions,
                 {
                     controlPointOptions: this.options.controlPointOptions
@@ -854,7 +854,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         labelOptions: Partial<Highcharts.AnnotationsLabelsOptions>,
         index: number
     ): Highcharts.AnnotationLabelType {
-        var options = merge(
+        const options = merge(
                 this.options.labelOptions,
                 {
                     controlPointOptions: this.options.controlPointOptions
@@ -912,7 +912,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public adjustVisibility(
         item: Highcharts.AnnotationControllable
     ): void { // #9481
-        var hasVisiblePoints = false,
+        let hasVisiblePoints = false,
             label = item.graphic;
 
         item.points.forEach(function (point: Highcharts.AnnotationPointType): void {
@@ -1658,7 +1658,7 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         this: Highcharts.AnnotationChart,
         userOptions: Highcharts.AnnotationsOptions
     ): Annotation {
-        var Constructor = (Annotation as any).types[(userOptions as any).type] || Annotation,
+        const Constructor = (Annotation as any).types[(userOptions as any).type] || Annotation,
             annotation = new Constructor(this, userOptions);
 
         this.annotations.push(annotation);
@@ -1680,7 +1680,7 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         userOptions: Highcharts.AnnotationsOptions,
         redraw?: boolean
     ): Annotation {
-        var annotation = this.initAnnotation(userOptions);
+        const annotation = this.initAnnotation(userOptions);
 
         this.options.annotations.push(annotation.options);
 
@@ -1704,7 +1704,7 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         this: Highcharts.AnnotationChart,
         idOrAnnotation: (number|string|Annotation)
     ): void {
-        var annotations = this.annotations,
+        const annotations = this.annotations,
             annotation: Annotation = (idOrAnnotation as any).coll === 'annotations' ?
                 idOrAnnotation :
                 find(

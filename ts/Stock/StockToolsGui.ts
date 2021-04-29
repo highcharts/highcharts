@@ -16,6 +16,8 @@ import type {
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
+import O from '../Core/Options.js';
+const { setOptions } = O;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -26,8 +28,7 @@ const {
     getStyle,
     isArray,
     merge,
-    pick,
-    setOptions
+    pick
 } = U;
 
 declare module '../Core/Chart/ChartLike'{
@@ -157,7 +158,7 @@ declare global {
     }
 }
 
-var DIV = 'div',
+const DIV = 'div',
     SPAN = 'span',
     UL = 'ul',
     LI = 'li',
@@ -938,7 +939,7 @@ addEvent(Chart, 'afterGetContainer', function (): void {
 });
 
 addEvent(Chart, 'getMargins', function (): void {
-    var listWrapper = this.stockTools && this.stockTools.listWrapper,
+    const listWrapper = this.stockTools && this.stockTools.listWrapper,
         offsetWidth = listWrapper && (
             (
                 (listWrapper as any).startWidth +
@@ -1068,7 +1069,7 @@ class Toolbar {
      * @private
      */
     public init(): void {
-        var _self = this,
+        let _self = this,
             lang = this.lang,
             guiOptions = this.options,
             toolbar = this.toolbar,
@@ -1116,7 +1117,7 @@ class Toolbar {
         parentBtn: Record<string, HTMLDOMElement>,
         button: Highcharts.StockToolsGuiDefinitionsButtonsOptions
     ): void {
-        var _self = this,
+        let _self = this,
             submenuArrow = parentBtn.submenuArrow,
             buttonWrapper = parentBtn.buttonWrapper,
             buttonWidth: number = getStyle(buttonWrapper, 'width') as any,
@@ -1197,7 +1198,7 @@ class Toolbar {
         buttonWrapper: HTMLDOMElement,
         button: Highcharts.StockToolsGuiDefinitionsButtonsOptions
     ): void {
-        var _self = this,
+        let _self = this,
             submenuWrapper = this.submenu,
             lang = this.lang,
             menuWrapper = this.listWrapper,
@@ -1285,7 +1286,7 @@ class Toolbar {
         btnName: string,
         lang: Record<string, string> = {}
     ): Record<string, HTMLDOMElement> {
-        var btnOptions: Highcharts.StockToolsGuiDefinitionsButtonsOptions =
+        let btnOptions: Highcharts.StockToolsGuiDefinitionsButtonsOptions =
                 options[btnName] as any,
             items = btnOptions.items,
             classMapping = Toolbar.prototype.classMapping,
@@ -1332,7 +1333,7 @@ class Toolbar {
      *
      */
     public addNavigation(): void {
-        var stockToolbar = this,
+        const stockToolbar = this,
             wrapper = stockToolbar.wrapper;
 
         // arrow wrapper
@@ -1368,7 +1369,7 @@ class Toolbar {
      *
      */
     public scrollButtons(): void {
-        var targetY = 0,
+        let targetY = 0,
             _self = this,
             wrapper = _self.wrapper,
             toolbar = _self.toolbar,
@@ -1400,7 +1401,7 @@ class Toolbar {
      *
      */
     public createHTML(): void {
-        var stockToolbar = this,
+        let stockToolbar = this,
             chart = stockToolbar.chart,
             guiOptions = stockToolbar.options,
             container = chart.container,
@@ -1461,7 +1462,7 @@ class Toolbar {
      * @private
      */
     public showHideToolbar(): void {
-        var stockToolbar = this,
+        let stockToolbar = this,
             chart = this.chart,
             wrapper = stockToolbar.wrapper,
             toolbar = this.listWrapper,
@@ -1522,7 +1523,7 @@ class Toolbar {
         button: HTMLDOMElement,
         redraw?: boolean
     ): void {
-        var buttonWrapper = button.parentNode,
+        const buttonWrapper = button.parentNode,
             buttonWrapperClass = (buttonWrapper as any).classList.value,
             // main button in first level og GUI
             mainNavButton = (buttonWrapper as any).parentNode.parentNode;
@@ -1568,7 +1569,7 @@ class Toolbar {
      *
      */
     public unselectAllButtons(button: HTMLDOMElement): void {
-        var activeButtons = (button.parentNode as any)
+        const activeButtons = (button.parentNode as any)
             .querySelectorAll('.' + activeClass);
 
         [].forEach.call(activeButtons, function (
@@ -1599,7 +1600,7 @@ class Toolbar {
      * @private
      */
     public destroy(): void {
-        var stockToolsDiv = this.wrapper,
+        const stockToolsDiv = this.wrapper,
             parent = stockToolsDiv && stockToolsDiv.parentNode;
 
         this.eventsToUnbind.forEach(function (unbinder: Function): void {
@@ -1691,7 +1692,7 @@ extend(Chart.prototype, {
         this: Chart,
         options?: Highcharts.StockToolsOptions
     ): void {
-        var chartOptions: Highcharts.Options = this.options,
+        const chartOptions: Highcharts.Options = this.options,
             lang: Highcharts.LangOptions = chartOptions.lang as any,
             guiOptions = merge(
                 chartOptions.stockTools && chartOptions.stockTools.gui,
@@ -1711,7 +1712,7 @@ extend(Chart.prototype, {
 addEvent(NavigationBindings, 'selectButton', function (
     event: Record<string, HTMLDOMElement>
 ): void {
-    var button = event.button,
+    let button = event.button,
         className = PREFIX + 'submenu-wrapper',
         gui = this.chart.stockTools;
 
@@ -1731,7 +1732,7 @@ addEvent(NavigationBindings, 'selectButton', function (
 addEvent(NavigationBindings, 'deselectButton', function (
     event: Record<string, HTMLDOMElement>
 ): void {
-    var button = event.button,
+    let button = event.button,
         className = PREFIX + 'submenu-wrapper',
         gui = this.chart.stockTools;
 

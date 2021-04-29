@@ -92,7 +92,7 @@ H.dragNodesMixin = {
         point: Highcharts.DragNodesPoint,
         event: PointerEvent
     ): void {
-        var normalizedEvent = this.chart.pointer.normalize(event);
+        const normalizedEvent = this.chart.pointer.normalize(event);
 
         point.fixedPosition = {
             chartX: normalizedEvent.chartX,
@@ -119,7 +119,7 @@ H.dragNodesMixin = {
         event: PointerEvent
     ): void {
         if (point.fixedPosition && point.inDragMode) {
-            var series = this,
+            let series = this,
                 chart = series.chart,
                 normalizedEvent = chart.pointer.normalize(event),
                 diffX = point.fixedPosition.chartX - normalizedEvent.chartX,
@@ -202,7 +202,7 @@ addEvent(
     Chart as any,
     'load',
     function (this: Highcharts.DragNodesChart): void {
-        var chart = this,
+        let chart = this,
             mousedownUnbinder: Function,
             mousemoveUnbinder: Function,
             mouseupUnbinder: Function;
@@ -212,7 +212,7 @@ addEvent(
                 chart.container,
                 'mousedown',
                 function (event: PointerEvent): void {
-                    var point = chart.hoverPoint;
+                    const point = chart.hoverPoint;
                     if (
                         point &&
                         point.series &&

@@ -18,6 +18,8 @@ import type {
 } from './Renderer/DOMElementType';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type SVGElement from './Renderer/SVG/SVGElement';
+
 import H from './Globals.js';
 const {
     charts,
@@ -27,7 +29,7 @@ const {
 
 /* *
  *
- * Declarations
+ *  Declarations
  *
  * */
 type NonArray<T> = T extends Array<unknown> ? never : T;
@@ -438,7 +440,7 @@ declare global {
  * chart constructor.
  *
  * @example
- * var chart = Highcharts.chart('container', { ... });
+ * let chart = Highcharts.chart('container', { ... });
  *
  * @namespace Highcharts
  */
@@ -486,22 +488,22 @@ function error(
         code = `${severity}: Deprecated member`;
     }
 
-    var isCode = isNumber(code),
-        message = isCode ?
-            `${severity} #${code}: www.highcharts.com/errors/${code}/` :
-            code.toString(),
-        defaultHandler = function (): void {
-            if (stop) {
-                throw new Error(message);
-            }
-            // else ...
-            if (
-                win.console &&
-                error.messages.indexOf(message) === -1 // prevent console flooting
-            ) {
-                console.warn(message); // eslint-disable-line no-console
-            }
-        };
+    const isCode = isNumber(code);
+    let message = isCode ?
+        `${severity} #${code}: www.highcharts.com/errors/${code}/` :
+        code.toString();
+    const defaultHandler = function (): void {
+        if (stop) {
+            throw new Error(message);
+        }
+        // else ...
+        if (
+            win.console &&
+            error.messages.indexOf(message) === -1 // prevent console flooting
+        ) {
+            console.warn(message); // eslint-disable-line no-console
+        }
+    };
 
     if (typeof params !== 'undefined') {
         let additionalMessages = '';
@@ -600,37 +602,36 @@ function merge<
  */
 function merge<T>(): T {
     /* eslint-enable valid-jsdoc */
-    var i,
+    let i,
         args = arguments,
-        len,
-        ret = {} as T,
-        doCopy = function (copy: any, original: any): any {
-            // An object is replacing a primitive
-            if (typeof copy !== 'object') {
-                copy = {};
+        ret = {} as T;
+    const doCopy = function (copy: any, original: any): any {
+        // An object is replacing a primitive
+        if (typeof copy !== 'object') {
+            copy = {};
+        }
+
+        objectEach(original, function (value, key): void {
+
+            // Prototype pollution (#14883)
+            if (key === '__proto__' || key === 'constructor') {
+                return;
             }
 
-            objectEach(original, function (value, key): void {
+            // Copy the contents of objects, but not arrays or DOM nodes
+            if (isObject(value, true) &&
+                !isClass(value) &&
+                !isDOMElement(value)
+            ) {
+                copy[key] = doCopy(copy[key] || {}, value);
 
-                // Prototype pollution (#14883)
-                if (key === '__proto__' || key === 'constructor') {
-                    return;
-                }
-
-                // Copy the contents of objects, but not arrays or DOM nodes
-                if (isObject(value, true) &&
-                    !isClass(value) &&
-                    !isDOMElement(value)
-                ) {
-                    copy[key] = doCopy(copy[key] || {}, value);
-
-                // Primitives and arrays are copied over directly
-                } else {
-                    copy[key] = original[key];
-                }
-            });
-            return copy;
-        };
+            // Primitives and arrays are copied over directly
+            } else {
+                copy[key] = original[key];
+            }
+        });
+        return copy;
+    };
 
     // If first argument is true, copy into the existing object. Used in
     // setOptions.
@@ -640,7 +641,7 @@ function merge<T>(): T {
     }
 
     // For each argument, extend the return
-    len = args.length;
+    const len = args.length;
     for (i = 0; i < len; i++) {
         ret = doCopy(ret, args[i]);
     }
@@ -671,10 +672,10 @@ function cleanRecursively<TNew extends AnyRecord, TOld extends AnyRecord>(
     newer: TNew,
     older: TOld
 ): TNew & TOld {
-    var result: AnyRecord = {};
+    const result: AnyRecord = {};
 
     objectEach(newer, function (_val: unknown, key: (number|string)): void {
-        var ob;
+        let ob;
 
         // Dive into objects (except DOM nodes)
         if (
@@ -748,7 +749,7 @@ function isString(s: unknown): s is string {
  *         True if the argument is an array.
  */
 function isArray(obj: unknown): obj is Array<unknown> {
-    var str = Object.prototype.toString.call(obj);
+    const str = Object.prototype.toString.call(obj);
 
     return str === '[object Array]' || str === '[object Array Iterator]';
 }
@@ -807,7 +808,7 @@ function isDOMElement(obj: unknown): obj is HTMLDOMElement {
  *         True if the argument is a class.
  */
 function isClass(obj: (object|undefined)): obj is Highcharts.Class<any> {
-    var c: (Function|undefined) = obj && obj.constructor;
+    const c: (Function|undefined) = obj && obj.constructor;
 
     return !!(
         isObject(obj, true) &&
@@ -846,7 +847,7 @@ function isNumber(n: unknown): n is number {
  * @return {void}
  */
 function erase(arr: Array<unknown>, item: unknown): void {
-    var i = arr.length;
+    let i = arr.length;
 
     while (i--) {
         if (arr[i] === item) {
@@ -1017,7 +1018,7 @@ function internalClearTimeout(id: number): void {
  */
 function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
     /* eslint-enable valid-jsdoc */
-    var n;
+    let n;
 
     if (!a) {
         a = {} as T;
@@ -1128,7 +1129,7 @@ function createElement(
     parent?: HTMLDOMElement,
     nopad?: boolean
 ): HTMLDOMElement {
-    var el = doc.createElement(tag);
+    const el = doc.createElement(tag);
 
     if (attribs) {
         extend(el, attribs);
@@ -1165,7 +1166,7 @@ function extendClass <T, TReturn = T>(
     parent: Highcharts.Class<T>,
     members: any
 ): Highcharts.Class<TReturn> {
-    var obj: Highcharts.Class<TReturn> = (function (): void {}) as any;
+    const obj: Highcharts.Class<TReturn> = (function (): void {}) as any;
 
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
@@ -1249,108 +1250,21 @@ function wrap(
     method: string,
     func: Highcharts.WrapProceedFunction
 ): void {
-    var proceed = obj[method];
+    const proceed = obj[method];
 
     obj[method] = function (): any {
-        var args = Array.prototype.slice.call(arguments),
+        const args = Array.prototype.slice.call(arguments),
             outerArgs = arguments,
-            ctx = this,
-            ret;
+            ctx = this;
 
         ctx.proceed = function (): void {
             proceed.apply(ctx, arguments.length ? arguments : outerArgs);
         };
         args.unshift(proceed);
-        ret = func.apply(this, args);
+        const ret = func.apply(this, args);
         ctx.proceed = null;
         return ret;
     };
-}
-
-/**
- * Format a string according to a subset of the rules of Python's String.format
- * method.
- *
- * @example
- * var s = Highcharts.format(
- *     'The {color} fox was {len:.2f} feet long',
- *     { color: 'red', len: Math.PI }
- * );
- * // => The red fox was 3.14 feet long
- *
- * @function Highcharts.format
- *
- * @param {string} str
- *        The string to format.
- *
- * @param {Record<string, *>} ctx
- *        The context, a collection of key-value pairs where each key is
- *        replaced by its value.
- *
- * @param {Highcharts.Chart} [chart]
- *        A `Chart` instance used to get numberFormatter and time.
- *
- * @return {string}
- *         The formatted string.
- */
-function format(str: string, ctx: any, chart?: Chart): string {
-    var splitter = '{',
-        isInside = false,
-        segment,
-        valueAndFormat: Array<string>,
-        ret = [],
-        val,
-        index;
-    const floatRegex = /f$/;
-    const decRegex = /\.([0-9])/;
-    const lang = H.defaultOptions.lang;
-    const time = chart && chart.time || H.time;
-    const numberFormatter = chart && chart.numberFormatter || numberFormat;
-
-    while (str) {
-        index = str.indexOf(splitter);
-        if (index === -1) {
-            break;
-        }
-
-        segment = str.slice(0, index);
-        if (isInside) { // we're on the closing bracket looking back
-
-            valueAndFormat = segment.split(':');
-            val = getNestedProperty(valueAndFormat.shift() || '', ctx);
-
-            // Format the replacement
-            if (valueAndFormat.length && typeof val === 'number') {
-
-                segment = valueAndFormat.join(':');
-
-                if (floatRegex.test(segment)) { // float
-                    const decimals = parseInt((segment.match(decRegex) || ['', '-1'])[1], 10);
-                    if (val !== null) {
-                        val = numberFormatter(
-                            val,
-                            decimals,
-                            (lang as any).decimalPoint,
-                            segment.indexOf(',') > -1 ? (lang as any).thousandsSep : ''
-                        );
-                    }
-                } else {
-                    val = time.dateFormat(segment, val);
-                }
-            }
-
-            // Push the result and advance the cursor
-            ret.push(val);
-        } else {
-            ret.push(segment);
-
-        }
-        str = str.slice(index + 1); // the rest
-        isInside = !isInside; // toggle
-        splitter = isInside ? '}' : '{'; // now look for next matching bracket
-    }
-    ret.push(str);
-    return ret.join('');
 }
 
 /**
@@ -1404,13 +1318,12 @@ function normalizeTickInterval(
     allowDecimals?: boolean,
     hasTickAmount?: boolean
 ): number {
-    var normalized,
-        i,
+    let i,
         retInterval = interval;
 
     // round to a tenfold of 1, 2, 2.5 or 5
     magnitude = pick(magnitude, 1);
-    normalized = interval / (magnitude as any);
+    const normalized = interval / (magnitude as any);
 
     // multiples for a linear scale
     if (!multiples) {
@@ -1489,8 +1402,8 @@ function stableSort(arr: Array<any>, sortFunction: Function): void {
     // @todo It seems like Chrome since v70 sorts in a stable way internally,
     // plus all other browsers do it, so over time we may be able to remove this
     // function
-    var length = arr.length,
-        sortValue,
+    const length = arr.length;
+    let sortValue,
         i;
 
     // Add index to each item
@@ -1523,7 +1436,7 @@ function stableSort(arr: Array<any>, sortFunction: Function): void {
  *         The lowest number.
  */
 function arrayMin(data: Array<any>): number {
-    var i = data.length,
+    let i = data.length,
         min = data[0];
 
     while (i--) {
@@ -1548,7 +1461,7 @@ function arrayMin(data: Array<any>): number {
  *         The highest number.
  */
 function arrayMax(data: Array<any>): number {
-    var i = data.length,
+    let i = data.length,
         max = data[0];
 
     while (i--) {
@@ -1647,126 +1560,6 @@ const timeUnits: Record<string, number> = {
     month: 28 * 24 * 3600000,
     year: 364 * 24 * 3600000
 };
-
-/**
- * Format a number and return a string based on input settings.
- *
- * @sample highcharts/members/highcharts-numberformat/
- *         Custom number format
- *
- * @function Highcharts.numberFormat
- *
- * @param {number} number
- *        The input number to format.
- *
- * @param {number} decimals
- *        The amount of decimals. A value of -1 preserves the amount in the
- *        input number.
- *
- * @param {string} [decimalPoint]
- *        The decimal point, defaults to the one given in the lang options, or
- *        a dot.
- *
- * @param {string} [thousandsSep]
- *        The thousands separator, defaults to the one given in the lang
- *        options, or a space character.
- *
- * @return {string}
- *         The formatted number.
- */
-function numberFormat(
-    number: number,
-    decimals: number,
-    decimalPoint?: string,
-    thousandsSep?: string
-): string {
-    number = +number || 0;
-    decimals = +decimals;
-
-    var lang = H.defaultOptions.lang,
-        origDec = (number.toString().split('.')[1] || '').split('e')[0].length,
-        strinteger,
-        thousands,
-        ret,
-        roundedNumber,
-        exponent = number.toString().split('e'),
-        fractionDigits,
-        firstDecimals = decimals;
-
-    if (decimals === -1) {
-        // Preserve decimals. Not huge numbers (#3793).
-        decimals = Math.min(origDec, 20);
-    } else if (!isNumber(decimals)) {
-        decimals = 2;
-    } else if (decimals && exponent[1] && exponent[1] as any < 0) {
-        // Expose decimals from exponential notation (#7042)
-        fractionDigits = decimals + +exponent[1];
-        if (fractionDigits >= 0) {
-            // remove too small part of the number while keeping the notation
-            exponent[0] = (+exponent[0]).toExponential(fractionDigits)
-                .split('e')[0];
-            decimals = fractionDigits;
-        } else {
-            // fractionDigits < 0
-            exponent[0] = exponent[0].split('.')[0] || 0 as any;
-
-            if (decimals < 20) {
-                // use number instead of exponential notation (#7405)
-                number = (exponent[0] as any * Math.pow(10, exponent[1] as any))
-                    .toFixed(decimals) as any;
-            } else {
-                // or zero
-                number = 0;
-            }
-            exponent[1] = 0 as any;
-        }
-    }
-
-    // Add another decimal to avoid rounding errors of float numbers. (#4573)
-    // Then use toFixed to handle rounding.
-    roundedNumber = (
-        Math.abs(exponent[1] ? exponent[0] as any : number) +
-        Math.pow(10, -Math.max(decimals, origDec) - 1)
-    ).toFixed(decimals);
-
-    // A string containing the positive integer component of the number
-    strinteger = String(pInt(roundedNumber));
-
-    // Leftover after grouping into thousands. Can be 0, 1 or 2.
-    thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
-
-    // Language
-    decimalPoint = pick(decimalPoint, (lang as any).decimalPoint);
-    thousandsSep = pick(thousandsSep, (lang as any).thousandsSep);
-
-    // Start building the return
-    ret = number < 0 ? '-' : '';
-
-    // Add the leftover after grouping into thousands. For example, in the
-    // number 42 000 000, this line adds 42.
-    ret += thousands ? strinteger.substr(0, thousands) + thousandsSep : '';
-
-    if (+exponent[1] < 0 && !firstDecimals) {
-        ret = '0';
-    } else {
-        // Add the remaining thousands groups, joined by the thousands separator
-        ret += strinteger
-            .substr(thousands)
-            .replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
-    }
-
-    // Add the decimal point and the decimal component
-    if (decimals) {
-        // Get the decimal component
-        ret += decimalPoint + roundedNumber.slice(-decimals);
-    }
-
-    if (exponent[1] && +ret !== 0) {
-        ret += 'e' + exponent[1];
-    }
-
-    return ret;
-}
 
 /**
  * Easing definition
@@ -1980,8 +1773,8 @@ const find = (Array.prototype as any).find ?
     } :
     // Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
     function<T> (arr: Array<T>, callback: Function): (T|undefined) {
-        var i,
-            length = arr.length;
+        let i;
+        const length = arr.length;
 
         for (i = 0; i < length; i++) {
             if (callback(arr[i], i)) { // eslint-disable-line callback-return
@@ -2020,7 +1813,7 @@ function keys(obj: any): Array<string> {
  *         the page.
  */
 function offset(el: Element): Highcharts.OffsetObject {
-    var docElem = doc.documentElement,
+    const docElem = doc.documentElement,
         box = (el.parentElement || el.parentNode) ?
             el.getBoundingClientRect() :
             { top: 0, left: 0, width: 0, height: 0 };
@@ -2061,7 +1854,7 @@ function objectEach<TObject, TContext>(
     ctx?: TContext
 ): void {
     /* eslint-enable valid-jsdoc */
-    for (var key in obj) {
+    for (const key in obj) {
         if (Object.hasOwnProperty.call(obj, key)) {
             fn.call(ctx || obj[key] as unknown as TContext, obj[key], key, obj);
         }
@@ -2306,7 +2099,7 @@ function removeEvent<T>(
         type: string,
         fn: (Highcharts.EventCallbackFunction<T>|Function)
     ): void {
-        var removeEventListener = (
+        const removeEventListener = (
             (el as any).removeEventListener || H.removeEventListenerPolyfill
         );
 
@@ -2321,7 +2114,7 @@ function removeEvent<T>(
      * @return {void}
      */
     function removeAllEvents(eventCollection: any): void {
-        var types: Record<string, boolean>,
+        let types: Record<string, boolean>,
             len;
 
         if (!(el as any).nodeName) {
@@ -2402,7 +2195,7 @@ function fireEvent<T>(
     defaultFunction?: (Highcharts.EventCallbackFunction<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */
-    var e,
+    let e,
         i;
 
     eventArguments = eventArguments || {};
@@ -2504,7 +2297,7 @@ let serialMode: (boolean|undefined);
  * counter.
  *
  * @example
- * var id = uniqueKey(); // => 'highcharts-x45f6hp-0'
+ * let id = uniqueKey(); // => 'highcharts-x45f6hp-0'
  *
  * @function Highcharts.uniqueKey
  *
@@ -2554,54 +2347,6 @@ function isFunction(obj: unknown): obj is Function { // eslint-disable-line
     return typeof obj === 'function';
 }
 
-/**
- * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
- * for outside modules wasn't enough because the setOptions method created a new
- * object.
- *
- * @function Highcharts.getOptions
- *
- * @return {Highcharts.Options}
- */
-const getOptions = H.getOptions = function (): Highcharts.Options {
-    return H.defaultOptions;
-};
-
-/**
- * Merge the default options with custom options and return the new options
- * structure. Commonly used for defining reusable templates.
- *
- * @sample highcharts/global/useutc-false Setting a global option
- * @sample highcharts/members/setoptions Applying a global theme
- *
- * @function Highcharts.setOptions
- *
- * @param {Highcharts.Options} options
- *        The new custom chart options.
- *
- * @return {Highcharts.Options}
- *         Updated options.
- */
-const setOptions = H.setOptions = function (
-    options: Partial<Highcharts.Options>
-): Highcharts.Options {
-
-    // Copy in the default options
-    H.defaultOptions = merge(true, H.defaultOptions, options);
-
-    // Update the time object
-    if (options.time || options.global) {
-        H.time.update(merge(
-            H.defaultOptions.global,
-            H.defaultOptions.time,
-            options.global,
-            options.time
-        ));
-    }
-
-    return H.defaultOptions;
-};
-
 // Register Highcharts as a plugin in jQuery
 if ((win as any).jQuery) {
 
@@ -2641,7 +2386,7 @@ if ((win as any).jQuery) {
      *         The current JQuery selector.
      */
     (win as any).jQuery.fn.highcharts = function (): any {
-        var args = [].slice.call(arguments) as any;
+        const args = [].slice.call(arguments) as any;
 
         if (this[0]) { // this[0] is the renderTo div
 
@@ -2682,10 +2427,8 @@ const utilitiesModule = {
     extendClass,
     find,
     fireEvent,
-    format,
     getMagnitude,
     getNestedProperty,
-    getOptions,
     getStyle,
     inArray,
     isArray,
@@ -2698,7 +2441,6 @@ const utilitiesModule = {
     keys,
     merge,
     normalizeTickInterval,
-    numberFormat,
     objectEach,
     offset,
     pad,
@@ -2706,7 +2448,6 @@ const utilitiesModule = {
     pInt,
     relativeLength,
     removeEvent,
-    setOptions,
     splat,
     stableSort,
     syncTimeout,

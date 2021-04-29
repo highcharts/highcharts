@@ -82,7 +82,7 @@ class NATRIndicator extends ATRIndicator {
         series: TLinkedSeries,
         params: NATRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var atrData: (
+        let atrData: (
                 IndicatorValuesObject<LineSeries>|
                 undefined
             ) = (

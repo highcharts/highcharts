@@ -116,7 +116,7 @@ class ChaikinIndicator extends EMAIndicator {
      *
      * */
     init(this: ChaikinIndicator): void {
-        var args = arguments,
+        const args = arguments,
             ctx = this;
 
         RequiredIndicatorMixin.isParentLoaded(
@@ -134,7 +134,7 @@ class ChaikinIndicator extends EMAIndicator {
         series: TLinkedSeries,
         params: ChaikinParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var periods: Array<number> = (params.periods as any),
+        let periods: Array<number> = (params.periods as any),
             period: number = (params.period as any),
             // Accumulation Distribution Line data
             ADL: (

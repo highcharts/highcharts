@@ -66,7 +66,7 @@ class Tunnel extends CrookedLine {
      * */
 
     public getPointsOptions(): Array<MockPointOptions> {
-        var pointsOptions = CrookedLine.prototype.getPointsOptions.call(this);
+        const pointsOptions = CrookedLine.prototype.getPointsOptions.call(this);
 
         pointsOptions[2] = this.heightPointOptions(pointsOptions[1]);
         pointsOptions[3] = this.heightPointOptions(pointsOptions[0]);
@@ -81,7 +81,7 @@ class Tunnel extends CrookedLine {
     public heightPointOptions(
         pointOptions: MockPointOptions
     ): MockPointOptions {
-        var heightPointOptions = merge(pointOptions),
+        const heightPointOptions = merge(pointOptions),
             typeOptions = this.options.typeOptions as Highcharts.AnnotationTunnelTypeOptionsObject;
 
         heightPointOptions.y += typeOptions.height;
@@ -92,7 +92,7 @@ class Tunnel extends CrookedLine {
     public addControlPoints(): void {
         CrookedLine.prototype.addControlPoints.call(this);
 
-        var options = this.options,
+        const options = this.options,
             typeOptions = options.typeOptions as Highcharts.AnnotationTunnelTypeOptionsObject,
             controlPoint = new ControlPoint(
                 this.chart,
@@ -115,14 +115,14 @@ class Tunnel extends CrookedLine {
     }
 
     public addLine(): void {
-        var line = this.initShape(
+        const line = this.initShape(
             merge(this.options.typeOptions.line, {
                 type: 'path',
                 points: [
                     this.points[0],
                     this.points[1],
                     function (target: any): MockPointOptions {
-                        var pointOptions = MockPoint.pointToOptions(
+                        const pointOptions = MockPoint.pointToOptions(
                             target.annotation.points[2]
                         );
 
@@ -140,7 +140,7 @@ class Tunnel extends CrookedLine {
     }
 
     public addBackground(): void {
-        var background = (this.initShape as any)(merge(
+        const background = (this.initShape as any)(merge(
             this.options.typeOptions.background,
             {
                 type: 'path',
@@ -159,7 +159,7 @@ class Tunnel extends CrookedLine {
      * @param {boolean} [end] - whether to translate start or end side
      */
     public translateSide(dx: number, dy: number, end?: boolean): void {
-        var topIndex = Number(end),
+        const topIndex = Number(end),
             bottomIndex = topIndex === 0 ? 3 : 2;
 
         this.translatePoint(dx, dy, topIndex);
@@ -234,7 +234,7 @@ Tunnel.prototype.defaultOptions = merge(
                     this: Highcharts.AnnotationControlPoint,
                     target: Highcharts.AnnotationControllable
                 ): PositionObject {
-                    var startXY = MockPoint.pointToPixels(target.points[2]),
+                    const startXY = MockPoint.pointToPixels(target.points[2]),
                         endXY = MockPoint.pointToPixels(target.points[3]),
                         x = (startXY.x + endXY.x) / 2;
 
@@ -253,7 +253,10 @@ Tunnel.prototype.defaultOptions = merge(
                         if (
                             target.chart.isInsidePlot(
                                 e.chartX - target.chart.plotLeft,
-                                e.chartY - target.chart.plotTop
+                                e.chartY - target.chart.plotTop,
+                                {
+                                    visiblePlotOnly: true
+                                }
                             )
                         ) {
                             target.translateHeight(
@@ -281,10 +284,13 @@ Tunnel.prototype.defaultOptions = merge(
                     if (
                         target.chart.isInsidePlot(
                             e.chartX - target.chart.plotLeft,
-                            e.chartY - target.chart.plotTop
+                            e.chartY - target.chart.plotTop,
+                            {
+                                visiblePlotOnly: true
+                            }
                         )
                     ) {
-                        var translation = this.mouseMoveToTranslation(e);
+                        const translation = this.mouseMoveToTranslation(e);
 
                         target.translateSide(
                             translation.x,

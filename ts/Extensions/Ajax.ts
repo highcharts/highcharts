@@ -95,7 +95,7 @@ declare global {
 H.ajax = function (
     attr: Partial<Highcharts.AjaxSettingsObject>
 ): (false|undefined) {
-    var options = merge(true, {
+    const options = merge(true, {
             url: false as any,
             type: 'get',
             dataType: 'json',
@@ -144,7 +144,7 @@ H.ajax = function (
 
     // @todo lacking timeout handling
     r.onreadystatechange = function (): void {
-        var res;
+        let res;
 
         if (r.readyState === 4) {
             if (r.status === 200) {

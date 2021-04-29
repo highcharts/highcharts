@@ -17,6 +17,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type TimeTicksInfoObject from './TimeTicksInfoObject';
+import F from '../FormatUtilities.js';
 import H from '../Globals.js';
 const {
     deg2rad
@@ -304,7 +305,7 @@ class Tick {
      * @return {void}
      */
     public addLabel(): void {
-        var tick = this,
+        let tick = this,
             axis = tick.axis,
             options = axis.options,
             chart = axis.chart,
@@ -395,12 +396,14 @@ class Tick {
         const labelFormatter = (
             ctx: Highcharts.AxisLabelsFormatterContextObject
         ): string => {
+            if (labelOptions.formatter) {
+                return labelOptions.formatter.call(ctx, ctx);
+            }
             if (labelOptions.format) {
                 ctx.text = axis.defaultLabelFormatter.call(ctx);
-                return U.format(labelOptions.format, ctx, chart);
+                return F.format(labelOptions.format, ctx, chart);
             }
-            return (labelOptions.formatter || axis.defaultLabelFormatter)
-                .call(ctx, ctx);
+            return axis.defaultLabelFormatter.call(ctx, ctx);
         };
         str = labelFormatter.call(ctx, ctx);
 
@@ -483,7 +486,7 @@ class Tick {
         str: string,
         labelOptions: Highcharts.XAxisLabelsOptions
     ): (SVGElement|undefined) {
-        var axis = this.axis,
+        const axis = this.axis,
             chart = axis.chart,
             label = defined(str) && labelOptions.enabled ?
                 chart.renderer
@@ -544,12 +547,12 @@ class Tick {
      * @fires Highcharts.Tick#event:afterGetPosition
      */
     public getPosition(
-        horiz: boolean,
+        horiz: boolean|undefined,
         tickPos: number,
         tickmarkOffset: number,
         old?: boolean
     ): PositionObject {
-        var axis = this.axis,
+        let axis = this.axis,
             chart = axis.chart,
             cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
             pos;
@@ -621,7 +624,7 @@ class Tick {
         step: number
     ): PositionObject {
 
-        var axis = this.axis,
+        let axis = this.axis,
             transA = axis.transA,
             reversed = ( // #7911
                 axis.isLinked && axis.linkedParent ?
@@ -736,7 +739,7 @@ class Tick {
      * @return {void}
      */
     public handleOverflow(xy: PositionObject): void {
-        var tick = this,
+        let tick = this,
             axis = this.axis,
             labelOptions = axis.options.labels,
             pxPos = xy.x,
@@ -855,7 +858,7 @@ class Tick {
      * @return {void}
      */
     public moveLabel(str: string, labelOptions: Highcharts.XAxisLabelsOptions): void {
-        var tick = this,
+        let tick = this,
             label = tick.label,
             moved = false,
             axis = tick.axis,
@@ -921,28 +924,33 @@ class Tick {
         old?: boolean,
         opacity?: number
     ): void {
-        var tick = this,
+        const tick = this,
             axis = tick.axis,
             horiz = axis.horiz,
             pos = tick.pos,
             tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
-            xy = tick.getPosition(horiz as any, pos, tickmarkOffset, old),
+            xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
             x = xy.x,
             y = xy.y,
-            reverseCrisp = ((horiz && x === (axis.pos as any) + axis.len) ||
+            reverseCrisp = ((horiz && x === axis.pos + axis.len) ||
                 (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
 
+        const labelOpacity = pick(
+            opacity,
+            tick.label && tick.label.newOpacity, // #15528
+            1
+        );
         opacity = pick(opacity, 1);
         this.isActive = true;
 
         // Create the grid line
-        this.renderGridLine(old as any, opacity as any, reverseCrisp);
+        this.renderGridLine(old, opacity, reverseCrisp);
 
         // create the tick mark
-        this.renderMark(xy, opacity as any, reverseCrisp);
+        this.renderMark(xy, opacity, reverseCrisp);
 
         // the label is created on init - now move it into place
-        this.renderLabel(xy, old as any, opacity as any, index as any);
+        this.renderLabel(xy, old, labelOpacity, index);
 
         tick.isNew = false;
 
@@ -959,11 +967,11 @@ class Tick {
      * @return {void}
      */
     public renderGridLine(
-        old: boolean,
+        old: boolean|undefined,
         opacity: number,
         reverseCrisp: number
     ): void {
-        var tick = this,
+        let tick = this,
             axis = tick.axis,
             options = axis.options,
             gridLine = tick.gridLine,
@@ -1044,7 +1052,7 @@ class Tick {
         opacity: number,
         reverseCrisp: number
     ): void {
-        var tick = this,
+        let tick = this,
             axis = tick.axis,
             options = axis.options,
             renderer = axis.chart.renderer,
@@ -1116,11 +1124,11 @@ class Tick {
      */
     public renderLabel(
         xy: Highcharts.TickPositionObject,
-        old: boolean,
+        old: boolean|undefined,
         opacity: number,
         index: number
     ): void {
-        var tick = this,
+        let tick = this,
             axis = tick.axis,
             horiz = axis.horiz,
             options = axis.options,
@@ -1198,7 +1206,7 @@ class Tick {
      * @return {void}
      */
     public replaceMovedLabel(): void {
-        var tick = this,
+        let tick = this,
             label = tick.label,
             axis = tick.axis,
             reversed = axis.reversed,

@@ -16,6 +16,8 @@ import type Chart from '../../Core/Chart/Chart';
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
@@ -115,7 +117,7 @@ function shouldRunInputNavigation(chart: Chart): boolean {
 H.Chart.prototype.highlightRangeSelectorButton = function (
     ix: number
 ): boolean {
-    const buttons: Array<Highcharts.SVGElement> = (
+    const buttons: Array<SVGElement> = (
         this.rangeSelector &&
         this.rangeSelector.buttons ||
         []
@@ -172,7 +174,7 @@ addEvent(RangeSelector, 'afterBtnClick', function (): void {
  * @class
  * @name Highcharts.RangeSelectorComponent
  */
-var RangeSelectorComponent: typeof Highcharts.RangeSelectorComponent =
+const RangeSelectorComponent: typeof Highcharts.RangeSelectorComponent =
     function (): void {} as any;
 RangeSelectorComponent.prototype = new (AccessibilityComponent as any)();
 extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComponent */ { // eslint-disable-line
@@ -217,7 +219,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                 key: string,
                 i: number
             ): void {
-                var input = (rangeSelector as any)[key];
+                const input = (rangeSelector as any)[key];
                 if (input) {
                     unhideChartElementFromAT(chart, input);
                     component.setRangeInputAttrs(
@@ -291,7 +293,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      */
     setRangeButtonAttrs: function (
         this: Highcharts.RangeSelectorComponent,
-        button: Highcharts.SVGElement
+        button: SVGElement
     ): void {
         setElAttrs(button.element, {
             tabindex: -1,
@@ -308,7 +310,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         input: HTMLDOMElement,
         langKey: string
     ): void {
-        var chart = this.chart;
+        const chart = this.chart;
 
         setElAttrs(input, {
             tabindex: -1,
@@ -328,7 +330,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler,
         keyCode: number
     ): number {
-        var response = keyboardNavigationHandler.response,
+        const response = keyboardNavigationHandler.response,
             keys = this.keyCodes,
             chart = this.chart,
             wrapAround = chart.options.accessibility
@@ -359,7 +361,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         this: Highcharts.RangeSelectorComponent,
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
     ): number {
-        var response = keyboardNavigationHandler.response,
+        const response = keyboardNavigationHandler.response,
             chart = this.chart,
             wasDisabled = chart.oldRangeSelectorItemState === 3;
 
@@ -479,7 +481,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
     onInputNavTerminate: function (
         this: Highcharts.RangeSelectorComponent
     ): void {
-        var rangeSel: Highcharts.RangeSelector = (
+        const rangeSel: Highcharts.RangeSelector = (
             (this.chart as any).rangeSelector || {}
         );
 

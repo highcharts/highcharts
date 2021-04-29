@@ -71,7 +71,7 @@ extend<SVGRenderer|HTMLRenderer>(SVGRenderer.prototype, /** @lends SVGRenderer.p
         x: number,
         y: number
     ): HTMLElement {
-        var wrapper = this.createElement('span') as HTMLElement,
+        const wrapper = this.createElement('span') as HTMLElement,
             element = wrapper.element,
             renderer = wrapper.renderer,
             isSVG = renderer.isSVG,
@@ -89,7 +89,7 @@ extend<SVGRenderer|HTMLRenderer>(SVGRenderer.prototype, /** @lends SVGRenderer.p
                         key: string,
                         elem: HTMLElement
                     ): void {
-                        var styleObject = gWrapper.div ?
+                        const styleObject = gWrapper.div ?
                             gWrapper.div.style :
                             style;
                         SVGElement.prototype[prop + 'Setter']
@@ -131,7 +131,7 @@ extend<SVGRenderer|HTMLRenderer>(SVGRenderer.prototype, /** @lends SVGRenderer.p
         ): void {
             if (key === 'align') {
                 // Do not overwrite the SVGElement.align method. Same as VML.
-                wrapper.alignValue = wrapper.textAlign = value;
+                wrapper.alignValue = wrapper.textAlign = value as any;
             } else {
                 wrapper[key as any] = value;
             }
@@ -176,7 +176,7 @@ extend<SVGRenderer|HTMLRenderer>(SVGRenderer.prototype, /** @lends SVGRenderer.p
         if (isSVG) {
             wrapper.add = function (svgGroupWrapper?: HTMLElement): HTMLElement {
 
-                var htmlGroup: (HTMLElement|HTMLDOMElement|null|undefined),
+                let htmlGroup: (HTMLElement|HTMLDOMElement|null|undefined),
                     container = renderer.box.parentNode,
                     parentGroup,
                     parents = [] as Array<HTMLElement>;
@@ -202,7 +202,7 @@ extend<SVGRenderer|HTMLRenderer>(SVGRenderer.prototype, /** @lends SVGRenderer.p
                         // Ensure dynamically updating position when any parent
                         // is translated
                         parents.reverse().forEach(function (parentGroup): void {
-                            var htmlGroupStyle: CSSObject,
+                            let htmlGroupStyle: CSSObject,
                                 cls = attr(parentGroup.element, 'class');
 
                             /**

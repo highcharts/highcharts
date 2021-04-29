@@ -34,10 +34,23 @@ declare global {
         ): TReturn;
     }
     interface Element {
+        /**
+         * @private
+         * @requires Core/Renderer/SVG/SVGElement
+         */
+        gradient?: string;
+        /**
+         * @private
+         * @requires Core/Renderer/SVG/SVGElement
+         */
+        radialReference?: Array<number>;
         setAttribute(
             qualifiedName: string,
             value: (boolean|number|string)
         ): void;
+    }
+    interface HTMLElement {
+        parentNode: HTMLElement;
     }
     interface ObjectConstructor {
         /**
@@ -47,6 +60,14 @@ declare global {
          * @param proto The value of the new prototype or null.
          */
         setPrototypeOf?<T>(o: T, proto: object | null): T;
+    }
+    interface SVGElement {
+        /**
+         * @private
+         * @requires Core/Renderer/SVG/SVGElement
+         */
+        cutHeight?: number;
+        parentNode: SVGElement;
     }
     /**
      * @private

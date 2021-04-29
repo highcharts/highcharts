@@ -171,7 +171,7 @@ namespace Chart3D {
          * */
 
         public get3dFrame(): Chart3D.FrameObject {
-            var chart = this.chart,
+            let chart = this.chart,
                 options3d = chart.options.chart.options3d as any,
                 frameOptions = options3d.frame,
                 xm = chart.plotLeft,
@@ -183,7 +183,7 @@ namespace Chart3D {
                 faceOrientation = function (
                     vertexes: Array<Position3DObject>
                 ): number {
-                    var area = shapeArea3D(vertexes, chart);
+                    let area = shapeArea3D(vertexes, chart);
 
                     // Give it 0.5 squared-pixel as a margin for rounding errors
                     if (area > 0.5) {
@@ -260,20 +260,20 @@ namespace Chart3D {
                     }
                 });
 
-            var getFaceOptions = function (
+            let getFaceOptions = function (
                 sources: Array<unknown>,
                 faceOrientation: number,
                 defaultVisible?: ('auto'|'default'|boolean)
             ): Chart3D.FrameSideObject {
-                var faceAttrs = ['size', 'color', 'visible'];
-                var options: Chart3D.FrameSideOptions = {};
+                let faceAttrs = ['size', 'color', 'visible'];
+                let options: Chart3D.FrameSideOptions = {};
 
-                for (var i = 0; i < faceAttrs.length; i++) {
-                    var attr = faceAttrs[i];
+                for (let i = 0; i < faceAttrs.length; i++) {
+                    let attr = faceAttrs[i];
 
-                    for (var j = 0; j < sources.length; j++) {
+                    for (let j = 0; j < sources.length; j++) {
                         if (typeof sources[j] === 'object') {
-                            var val = (sources[j] as any)[attr];
+                            let val = (sources[j] as any)[attr];
 
                             if (typeof val !== 'undefined' && val !== null) {
                                 (options as any)[attr] = val;
@@ -282,7 +282,7 @@ namespace Chart3D {
                         }
                     }
                 }
-                var isVisible = defaultVisible;
+                let isVisible = defaultVisible;
 
                 if (options.visible === true || options.visible === false) {
                     isVisible = options.visible;
@@ -300,7 +300,7 @@ namespace Chart3D {
 
             // docs @TODO: Add all frame options (left, right, top, bottom,
             // front, back) to apioptions JSDoc once the new system is up.
-            var ret: Chart3D.FrameObject = {
+            let ret: Chart3D.FrameObject = {
                 axes: {},
                 // FIXME: Previously, left/right, top/bottom and front/back
                 // pairs shared size and color.
@@ -356,7 +356,7 @@ namespace Chart3D {
             // between a visible face and an invisble one. Also, the Y label
             // should be one the left-most edge (right-most if opposite).
             if (options3d.axisLabelPosition === 'auto') {
-                var isValidEdge = function (
+                let isValidEdge = function (
                     face1: Chart3D.FrameSideObject,
                     face2: Chart3D.FrameSideObject
                 ): (boolean|undefined) {
@@ -370,7 +370,7 @@ namespace Chart3D {
                     );
                 };
 
-                var yEdges = [] as Array<Highcharts.Edge3DObject>;
+                let yEdges = [] as Array<Highcharts.Edge3DObject>;
 
                 if (isValidEdge(ret.left, ret.front)) {
                     yEdges.push({
@@ -405,7 +405,7 @@ namespace Chart3D {
                     });
                 }
 
-                var xBottomEdges = [] as Array<Highcharts.Edge3DObject>;
+                let xBottomEdges = [] as Array<Highcharts.Edge3DObject>;
 
                 if (isValidEdge(ret.bottom, ret.front)) {
                     xBottomEdges.push({
@@ -424,7 +424,7 @@ namespace Chart3D {
                     });
                 }
 
-                var xTopEdges = [] as Array<Highcharts.Edge3DObject>;
+                let xTopEdges = [] as Array<Highcharts.Edge3DObject>;
 
                 if (isValidEdge(ret.top, ret.front)) {
                     xTopEdges.push({
@@ -443,7 +443,7 @@ namespace Chart3D {
                     });
                 }
 
-                var zBottomEdges = [] as Array<Highcharts.Edge3DObject>;
+                let zBottomEdges = [] as Array<Highcharts.Edge3DObject>;
 
                 if (isValidEdge(ret.bottom, ret.left)) {
                     zBottomEdges.push({
@@ -462,7 +462,7 @@ namespace Chart3D {
                     });
                 }
 
-                var zTopEdges = [] as Array<Highcharts.Edge3DObject>;
+                let zTopEdges = [] as Array<Highcharts.Edge3DObject>;
 
                 if (isValidEdge(ret.top, ret.left)) {
                     zTopEdges.push({
@@ -481,7 +481,7 @@ namespace Chart3D {
                     });
                 }
 
-                var pickEdge = function (
+                let pickEdge = function (
                     edges: Array<Highcharts.Edge3DObject>,
                     axis: string,
                     mult: number
@@ -492,10 +492,10 @@ namespace Chart3D {
                     if (edges.length === 1) {
                         return edges[0];
                     }
-                    var best = 0,
+                    let best = 0,
                         projections = perspective(edges, chart, false);
 
-                    for (var i = 1; i < projections.length; i++) {
+                    for (let i = 1; i < projections.length; i++) {
                         if (
                             mult * (projections[i] as any)[axis] >
                             mult * (projections[best] as any)[axis]
@@ -582,7 +582,7 @@ namespace Chart3D {
          * @requires highcharts-3d
          */
         public getScale(depth: number): number {
-            var chart = this.chart,
+            let chart = this.chart,
                 plotLeft = chart.plotLeft,
                 plotRight = chart.plotWidth + plotLeft,
                 plotTop = chart.plotTop,
@@ -919,11 +919,11 @@ namespace Chart3D {
             if (
                 this.pos < 1 &&
                     (isArray(this.start) || isArray(this.end))) {
-                var start: Array<number> = (this.start as any) || [1, 0, 0, 1, 0, 0];
-                var end: Array<number> = (this.end as any) || [1, 0, 0, 1, 0, 0];
+                let start: Array<number> = (this.start as any) || [1, 0, 0, 1, 0, 0];
+                let end: Array<number> = (this.end as any) || [1, 0, 0, 1, 0, 0];
 
                 interpolated = [];
-                for (var i = 0; i < 6; i++) {
+                for (let i = 0; i < 6; i++) {
                     interpolated.push(this.pos * end[i] + (1 - this.pos) * start[i]);
                 }
             } else {
@@ -981,7 +981,7 @@ namespace Chart3D {
             this.chart3d &&
             this.is3d()
         ) {
-            var chart = this,
+            let chart = this,
                 renderer = chart.renderer,
                 options3d = this.options.chart.options3d as any,
                 frame = this.chart3d.get3dFrame(),
@@ -1858,11 +1858,11 @@ namespace Chart3D {
      * @private
      */
     function onAfterInit(this: Chart): void {
-        var options = this.options;
+        let options = this.options;
 
         if (this.is3d()) {
             (options.series || []).forEach(function (s): void {
-                var type = s.type ||
+                let type = s.type ||
                     options.chart.type ||
                     options.chart.defaultSeriesType;
 
@@ -1877,7 +1877,7 @@ namespace Chart3D {
      * @private
      */
     function onAfterSetChartSize(this: Chart): void {
-        var chart = this,
+        let chart = this,
             options3d = chart.options.chart.options3d as any;
 
         if (
@@ -1891,7 +1891,7 @@ namespace Chart3D {
                 options3d.beta = options3d.beta % 360 + (options3d.beta >= 0 ? 0 : 360);
             }
 
-            var inverted = chart.inverted,
+            let inverted = chart.inverted,
                 clipBox = chart.clipBox,
                 margin = chart.margin,
                 x = inverted ? 'y' : 'x',
@@ -1966,7 +1966,7 @@ namespace Chart3D {
         this: Chart,
         proceed: Function
     ): void {
-        var series,
+        let series,
             i = this.series.length;
 
         if (this.is3d()) {
