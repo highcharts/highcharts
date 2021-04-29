@@ -430,7 +430,7 @@ class BubbleSeries extends ScatterSeries {
         zMax: number,
         series: BubbleSeries
     ): void {
-        var len: number,
+        let len: number,
             i: number,
             zData = this.zData,
             yData = this.yData,
@@ -467,7 +467,7 @@ class BubbleSeries extends ScatterSeries {
         value: (number|null|undefined),
         yValue?: (number|null|undefined)
     ): (number|null) {
-        var options = this.options,
+        let options = this.options,
             sizeByArea = options.sizeBy !== 'width',
             zThreshold = options.zThreshold,
             zRange = zMax - zMin,
@@ -524,7 +524,7 @@ class BubbleSeries extends ScatterSeries {
         point?: BubblePoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var markerOptions = this.options.marker,
+        const markerOptions = this.options.marker,
             fillOpacity = (markerOptions as any).fillOpacity,
             attr = Series.prototype.pointAttribs.call(this, point, state);
 
@@ -543,7 +543,7 @@ class BubbleSeries extends ScatterSeries {
      */
     public translate(): void {
 
-        var i,
+        let i,
             data = this.data,
             point,
             radius,
@@ -624,7 +624,7 @@ extend(BubbleSeries.prototype, {
 // Add logic to pad each axis with the amount of pixels necessary to avoid the
 // bubbles to overflow.
 Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
-    var axis = this,
+    let axis = this,
         axisLength = this.len,
         chart = this.chart,
         pxMin = 0,
@@ -643,7 +643,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
     // Handle padding on the second pass, or on redraw
     this.series.forEach(function (series): void {
 
-        var seriesOptions = series.options as BubbleSeriesOptions,
+        let seriesOptions = series.options as BubbleSeriesOptions,
             zData;
 
         if (series.bubblePadding &&
@@ -659,7 +659,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
 
                 // For each series, translate the size extremes to pixel values
                 ['minSize', 'maxSize'].forEach(function (prop: string): void {
-                    var length = (seriesOptions as any)[prop],
+                    let length = (seriesOptions as any)[prop],
                         isPercent = /%$/.test(length);
 
                     length = pInt(length);
@@ -694,7 +694,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
 
     activeSeries.forEach(function (series): void {
 
-        var data = (series as any)[dataKey],
+        let data = (series as any)[dataKey],
             i = data.length,
             radius;
 

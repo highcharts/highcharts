@@ -1,7 +1,7 @@
 Highcharts.stockChart('container', {
 
     title: {
-        text: 'Adding series dynamically failed in Highstock <= 1.3.7'
+        text: 'Adding series dynamically failed in Highcharts Stock <= 1.3.7'
     },
     chart: {
         events: {

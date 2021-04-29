@@ -151,7 +151,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
     }
 
     public translate(): void {
-        var indicator = this,
+        const indicator = this,
             translatedEnvelopes = ['plotTop', 'plotMiddle', 'plotBottom'];
 
         SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
@@ -173,7 +173,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
     }
 
     public drawGraph(): void {
-        var indicator = this,
+        let indicator = this,
             middleLinePoints: Array<
             PriceEnvelopesPoint
             > = indicator.points,
@@ -237,7 +237,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: PriceEnvelopesParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = (params.period as any),
+        let period: number = (params.period as any),
             topPercent: number = (params.topBand as any),
             botPercent: number = (params.bottomBand as any),
             xVal: Array<number> = (series.xData as any),

@@ -14,8 +14,8 @@ import type ColorType from '../../Core/Color/ColorType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
 import Axis from '../../Core/Axis/Axis.js';
-import U from '../../Core/Utilities.js';
-const { setOptions } = U;
+import O from '../../Core/Options.js';
+const { setOptions } = O;
 import VMLAxis3D from './VMLAxis3D.js';
 
 /**
@@ -72,7 +72,7 @@ class VMLRenderer3D {
             this: Highcharts.VMLRenderer,
             shapeArgs: SVGAttributes
         ): Highcharts.VMLElement {
-            var result = svgProto.arc3d.call(this, shapeArgs);
+            const result = svgProto.arc3d.call(this, shapeArgs);
 
             result.css({ zIndex: result.zIndex });
             return result as any;

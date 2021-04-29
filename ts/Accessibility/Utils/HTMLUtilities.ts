@@ -88,7 +88,7 @@ function getFakeMouseEvent(type: string): MouseEvent {
 
     // No MouseEvent support, try using initMouseEvent
     if (doc.createEvent) {
-        var evt = doc.createEvent('MouseEvent');
+        const evt = doc.createEvent('MouseEvent');
         if (evt.initMouseEvent) {
             evt.initMouseEvent(
                 type,
@@ -193,7 +193,7 @@ function removeElement(element?: DOMElementType): void {
  * @return {void}
  */
 function reverseChildNodes(node: DOMElementType): void {
-    var i = node.childNodes.length;
+    let i = node.childNodes.length;
     while (i--) {
         node.appendChild(node.childNodes[i]);
     }
@@ -212,7 +212,7 @@ function setElAttrs(
     attrs: (HTMLAttributes|SVGAttributes)
 ): void {
     Object.keys(attrs).forEach(function (attr: string): void {
-        var val = (attrs as any)[attr];
+        const val = (attrs as any)[attr];
         if (val === null) {
             el.removeAttribute(attr);
         } else {
@@ -243,7 +243,7 @@ function stripHTMLTagsFromString(str: string): string {
  * @return {void}
  */
 function visuallyHideElement(element: HTMLDOMElement): void {
-    var hiddenStyle = {
+    const hiddenStyle = {
         position: 'absolute',
         width: '1px',
         height: '1px',
@@ -259,7 +259,7 @@ function visuallyHideElement(element: HTMLDOMElement): void {
 }
 
 
-var HTMLUtilities = {
+const HTMLUtilities = {
     addClass,
     escapeStringForHTML,
     getElement,

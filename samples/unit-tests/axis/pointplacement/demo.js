@@ -42,7 +42,11 @@ QUnit.test('Axis pointPlacement', assert => {
 
     chart.series[0].points.forEach(p => {
         if (isInsidePlot) {
-            isInsidePlot = chart.isInsidePlot(p.plotX, p.plotY, true);
+            isInsidePlot = chart.isInsidePlot(
+                p.plotX,
+                p.plotY,
+                { inverted: true }
+            );
         }
     });
 

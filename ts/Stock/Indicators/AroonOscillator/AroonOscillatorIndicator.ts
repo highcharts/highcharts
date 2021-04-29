@@ -69,20 +69,6 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
      * @optionparent plotOptions.aroonoscillator
      */
     public static defaultOptions: AroonOscillatorOptions = merge(AroonIndicator.defaultOptions, {
-        /**
-         * Paramters used in calculation of aroon oscillator series points.
-         *
-         * @excluding periods, index
-         */
-        params: {
-            /**
-             * Period for Aroon Oscillator
-             *
-             * @since   7.0.0
-             * @product highstock
-             */
-            period: 25
-        },
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b>: {point.y}'
         }
@@ -109,7 +95,7 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
         params: AroonOscillatorParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
         // 0- date, 1- Aroon Oscillator
-        var ARO: Array<Array<number>> = [],
+        let ARO: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
             aroon: IndicatorValuesObject<TLinkedSeries>,
@@ -141,7 +127,7 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
     }
 
     public init(this: AroonOscillatorIndicator): void {
-        var args = arguments,
+        const args = arguments,
             ctx = this;
 
         requiredIndicator.isParentLoaded(

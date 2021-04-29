@@ -15,6 +15,7 @@ import type CSSObject from '../CSSObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGRenderer from './SVGRenderer';
+
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
 const {
@@ -53,6 +54,19 @@ class SVGLabel extends SVGElement {
 
     public static readonly emptyBBox: BBoxObject = { width: 0, height: 0, x: 0, y: 0 };
 
+    /**
+     * For labels, these CSS properties are applied to the `text` node directly.
+     *
+     * @private
+     * @name Highcharts.SVGLabel#textProps
+     * @type {Array<string>}
+     */
+    public static textProps: Array<keyof CSSObject> = [
+        'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
+        'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
+        'textOutline', 'textOverflow', 'width'
+    ];
+
     /* *
      *
      *  Constructors
@@ -89,10 +103,7 @@ class SVGLabel extends SVGElement {
             this.addClass('highcharts-' + className);
         }
 
-        this.text = renderer.text('', 0, 0, useHTML)
-            .attr({
-                zIndex: 1
-            });
+        this.text = renderer.text('', 0, 0, useHTML).attr({ zIndex: 1 });
 
         // Validate the shape argument
         let hasBGImage;
@@ -118,18 +129,16 @@ class SVGLabel extends SVGElement {
      *
      * */
 
-    /**
-     * For labels, these CSS properties are applied to the `text` node directly.
-     *
-     * @private
-     * @name Highcharts.SVGLabel#textProps
-     * @type {Array<string>}
-     */
-    public static textProps: Array<keyof CSSObject> = [
-        'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
-        'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
-        'textOutline', 'textOverflow', 'width'
-    ]
+    public alignFactor: number;
+    public baselineOffset: number;
+    public bBox: BBoxObject;
+    public deferredAttr: (SVGAttributes&AnyRecord);
+    public heightSetting?: number;
+    public needsBox?: boolean;
+    public padding: number;
+    public text: SVGElement;
+    public textStr: string;
+    public x: number;
 
     /* *
      *
@@ -180,9 +189,9 @@ class SVGLabel extends SVGElement {
      * Pick up some properties and apply them to the text instead of the
      * wrapper.
      */
-    public css(styles: CSSObject): SVGElement {
+    public css(styles: CSSObject): this {
         if (styles) {
-            var textStyles: CSSObject = {},
+            let textStyles: CSSObject = {},
                 isWidth: boolean,
                 isFontStyle: boolean;
 
@@ -209,7 +218,7 @@ class SVGLabel extends SVGElement {
             }
 
         }
-        return SVGElement.prototype.css.call(this, styles);
+        return SVGElement.prototype.css.call(this, styles) as this;
     }
 
     /*
@@ -279,7 +288,7 @@ class SVGLabel extends SVGElement {
     public on(
         eventType: string,
         handler: Function
-    ): SVGLabel {
+    ): this {
         const label = this;
         const text = label.text;
         const span: SVGElement|undefined =
@@ -353,8 +362,8 @@ class SVGLabel extends SVGElement {
     }
 
     public shadow(
-        b: (boolean|ShadowOptionsObject)
-    ): SVGLabel {
+        b?: (boolean|Partial<ShadowOptionsObject>)
+    ): this {
         if (b && !this.renderer.styledMode) {
             this.updateBoxSize();
             if (this.box) {
@@ -402,7 +411,7 @@ class SVGLabel extends SVGElement {
      * the new bounding box and reflect it in the border box.
      */
     private updateBoxSize(): void {
-        var style = this.text.element.style,
+        let style = this.text.element.style,
             crispAdjust,
             attribs: SVGAttributes = {};
 

@@ -67,7 +67,7 @@ class DEMAIndicator extends EMAIndicator {
     public points: Array<DEMAPoint> = void 0 as any;
 
     public init(this: DEMAIndicator): void {
-        var args = arguments,
+        const args = arguments,
             ctx = this;
 
         RequiredIndicatorMixin.isParentLoaded(
@@ -109,7 +109,7 @@ class DEMAIndicator extends EMAIndicator {
         series: TLinkedSeries,
         params: DEMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = (params.period as any),
+        let period: number = (params.period as any),
             doubledPeriod: number = 2 * period,
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
@@ -224,10 +224,10 @@ SeriesRegistry.registerSeriesType('dema', DEMAIndicator);
 export default DEMAIndicator;
 
 /**
- * A `DEMA` series. If the [type](#series.ema.type) option is not
+ * A `DEMA` series. If the [type](#series.dema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends   series,plotOptions.ema
+ * @extends   series,plotOptions.dema
  * @since     7.0.0
  * @product   highstock
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,

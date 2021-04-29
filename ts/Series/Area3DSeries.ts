@@ -38,7 +38,7 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
     proceed: Function
 ): SVGPath {
 
-    var series = this,
+    const series = this,
         svgPath = proceed.apply(series, [].slice.call(arguments, 1));
 
     // Do not do this if the chart is not 3D
@@ -46,7 +46,7 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
         return svgPath;
     }
 
-    var getGraphPath = LineSeriesClass.prototype.getGraphPath,
+    let getGraphPath = LineSeriesClass.prototype.getGraphPath,
         graphPath: SVGPath = [],
         options = series.options,
         stacking = options.stacking,
@@ -65,7 +65,7 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
         options3d;
 
     if (series.rawPointsX) {
-        for (var i = 0; i < series.points.length; i++) {
+        for (let i = 0; i < series.points.length; i++) {
             bottomPoints.push({
                 x: series.rawPointsX[i],
                 y: options.stacking ? series.points[i].yBottom : translatedThreshold,

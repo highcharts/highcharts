@@ -124,7 +124,7 @@ const NodesMixin = H.NodesMixin = {
             });
         }
 
-        var node = findById(this.nodes, id),
+        let node = findById(this.nodes, id),
             PointClass = this.pointClass,
             options: (Highcharts.NodesPointOptions|undefined);
 
@@ -159,7 +159,7 @@ const NodesMixin = H.NodesMixin = {
              * @private
              */
             node.getSum = function (): number {
-                var sumTo = 0,
+                let sumTo = 0,
                     sumFrom = 0;
 
                 (node as any).linksTo.forEach(function (
@@ -182,9 +182,9 @@ const NodesMixin = H.NodesMixin = {
                 point: Highcharts.NodesPoint,
                 coll: string
             ): (number|undefined) {
-                var offset = 0;
+                let offset = 0;
 
-                for (var i = 0; i < (node as any)[coll].length; i++) {
+                for (let i = 0; i < (node as any)[coll].length; i++) {
                     if ((node as any)[coll][i] === point) {
                         return offset;
                     }
@@ -195,7 +195,7 @@ const NodesMixin = H.NodesMixin = {
             // Return true if the node has a shape, otherwise all links are
             // outgoing.
             node.hasShape = function (): boolean {
-                var outgoing = 0;
+                let outgoing = 0;
 
                 (node as any).linksTo.forEach(function (
                     link: Highcharts.NodesPointOptions
@@ -220,7 +220,7 @@ const NodesMixin = H.NodesMixin = {
      * but pushed to the this.nodes array.
      */
     generatePoints: function (this: Highcharts.NodesSeries): void {
-        var chart = this.chart,
+        const chart = this.chart,
             nodeLookup = {} as Record<string, Highcharts.NodesPoint>;
 
         Series.prototype.generatePoints.call(this);
@@ -298,7 +298,7 @@ const NodesMixin = H.NodesMixin = {
      * highlight all connected nodes.
      */
     setNodeState: function (this: Highcharts.NodesPoint, state?: StatesOptionsKey): void {
-        var args = arguments,
+        const args = arguments,
             others = this.isNode ? this.linksTo.concat(this.linksFrom) :
                 [this.fromNode, this.toNode];
         if (state !== 'select') {

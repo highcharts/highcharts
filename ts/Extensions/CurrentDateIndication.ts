@@ -98,7 +98,7 @@ const defaultOptions: Highcharts.CurrentDateIndicatorOptions = {
     label: {
         /**
          * Format of the label. This options is passed as the fist argument to
-         * [dateFormat](/class-reference/Highcharts#dateFormat) function.
+         * [dateFormat](/class-reference/Highcharts#.dateFormat) function.
          *
          * @type      {string}
          * @default   %a, %b %d %Y, %H:%M
@@ -127,7 +127,7 @@ const defaultOptions: Highcharts.CurrentDateIndicatorOptions = {
 /* eslint-disable no-invalid-this */
 
 addEvent(Axis, 'afterSetOptions', function (): void {
-    var options = this.options,
+    const options = this.options,
         cdiOptions = options.currentDateIndicator;
 
 
@@ -166,7 +166,7 @@ wrap(PlotLineOrBand.prototype, 'getLabelText', function (
         Highcharts.AxisPlotBandsLabelOptions
     )
 ): string {
-    var options = this.options;
+    const options = this.options;
 
     if (
         options &&
