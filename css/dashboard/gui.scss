@@ -520,10 +520,8 @@ h1 {
     border-color: #aac6ff;
 }
 
-
-.hcd-edit-hidden-cells .hcd-cell:not(.hcd-edit-current-cell),
-.hcd-edit-hidden-rows .hcd-row:not(.hcd-edit-current-row) {
-    opacity: 0.3;
+.hcd-edit-mask {
+    opacity: 0.3
 }
 
 @media (max-width: 728px) {

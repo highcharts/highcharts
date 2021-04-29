@@ -4,6 +4,8 @@ import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js
 // Bring in other forms of Highcharts
 import Highcharts from 'https://code.highcharts.com/stock/es-modules/masters/highcharts.src.js';
 
+let exportedLayoutId;
+
 let dashboard = new Dashboard('container', {
     editMode: {
         enabled: true,
@@ -11,64 +13,65 @@ let dashboard = new Dashboard('container', {
             icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/menu.svg',
             enabled: true,
             items: [{
-            id: 'saveLocal',
-            className: 'test-test-test',
-            events: {
-                click: function() {
-                console.log('save local');
+                id: 'saveLocal',
+                className: 'test-test-test',
+                events: {
+                    click: function() {
+                        console.log('save local');
+                    }
                 }
-            }
             }, 'verticalSeparator', 'editMode', {
-            id: 'export-dashboard',
-            text: 'Export dashboard',
-            events: {
-                click: function() {
-                dashboard.exportLocal();
-    
+                id: 'export-dashboard',
+                text: 'Export dashboard',
+                events: {
+                    click: function () {
+                        dashboard.exportLocal();
+                    }
                 }
-            }
             }, {
-            id: 'delete-dashboard',
-            text: 'Delete current dashboard',
-            events: {
-                click: function() {
-                dashboard.destroy();
+                id: 'delete-dashboard',
+                text: 'Delete current dashboard',
+                events: {
+                    click: function () {
+                        dashboard.destroy();
+                    }
                 }
-            }
             }, {
-            id: 'import-dashboard',
-            text: 'Import saved dashboard',
-            events: {
-                click: function() {
-                dashboard = Dashboard.importLocal();
+                id: 'import-dashboard',
+                text: 'Import saved dashboard',
+                events: {
+                    click: function () {
+                        dashboard = Dashboard.importLocal();
+                    }
                 }
-            }
             }, {
-            id: 'export-layout',
-            text: 'Export 1 layout',
-            events: {
-                click: function() {
-                exportedLayoutId = dashboard.layouts[0].options.id;
-                dashboard.layouts[0].exportLocal();
+                id: 'export-layout',
+                text: 'Export 1 layout',
+                events: {
+                    click: function () {
+                        exportedLayoutId = dashboard.layouts[0].options.id;
+                        dashboard.layouts[0].exportLocal();
+                    }
                 }
-            }
             }, {
-            id: 'delete-layout',
-            text: 'Delete 1 layout',
-            events: {
-                click: function() {
-                dashboard.layouts[0].destroy();
+                id: 'delete-layout',
+                text: 'Delete 1 layout',
+                events: {
+                    click: function () {
+                        dashboard.layouts[0].destroy();
+                    }
                 }
-            }
             }, {
-            id: 'import-layout',
-            text: 'Import saved layout',
-            events: {
-                click: function() {
-                const layout = dashboard.importLayoutLocal(exportedLayoutId);
-                console.log('Imported layout: ', layout);
+                id: 'import-layout',
+                text: 'Import saved layout',
+                events: {
+                    click: function () {
+                        const layout = dashboard.importLayoutLocal(
+                            exportedLayoutId
+                        );
+                        console.log('Imported layout: ', layout);
+                    }
                 }
-            }
             }]
         },
         toolbars: {
@@ -422,7 +425,6 @@ console.groupEnd();
 /*
   Bind export layout btn
 */
-let exportedLayoutId;
 /*
 Highcharts.addEvent(
     document.getElementById('export-layout'),
@@ -512,12 +514,11 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
 // console.log(dashboardBootstrap);
 
 console.log('========= Layout in layout =========');
-/*
+
 const dashboardLayout = new Dashboard('container-nested-layout', {
     editMode: {
         enabled: true,
         contextMenu: {
-            icon: '/code/gfx/dashboard-icons/menu.svg',
             enabled: true,
             menuItems: [{
                 type: 'saveLocal',
@@ -531,7 +532,7 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
                 type: 'editMode',
                 text: 'Edit on/off'
             }]
-        },
+        }
     },
     gui: {
         enabled: true,
@@ -559,7 +560,16 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
                             cells: [{
                                 id: 'dashboard-col-layout-1'
                             }, {
-                                id: 'dashboard-col-layout-2'
+                                id: 'dashboard-col-layout-2',
+                                layout: {
+                                    rows:[{
+                                        cells: [{
+                                            id: 'dashboard-col-layout-2a'
+                                        }, {
+                                            id: 'dashboard-col-layout-2b'
+                                        }]
+                                    }]
+                                }
                             }, {
                                 id: 'dashboard-col-layout-4'
                             }, {
@@ -600,7 +610,19 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
             textContent: 'Loreum ipsum'
         }]
     }, {
-        cell: 'dashboard-col-layout-2',
+        cell: 'dashboard-col-layout-2a',
+        type: 'html',
+        elements: [{
+            tagName: 'img',
+            attributes: {
+                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                title: 'I heard you like components'
+            }
+        }, {
+            textContent: 'Loreum ipsum'
+        }]
+    }, {
+        cell: 'dashboard-col-layout-2b',
         type: 'html',
         elements: [{
             tagName: 'img',
@@ -648,7 +670,7 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
             textContent: 'Loreum ipsum'
         }]
     }]
-});*/
+});
 
 // console.log(dashboardLayout);
 

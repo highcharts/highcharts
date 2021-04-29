@@ -166,7 +166,6 @@ class RowEditToolbar extends EditToolbar {
     }
 
     public resetEditedRow(): void {
-        super.resetCurrentElements();
         this.editedRow = void 0;
     }
 }

@@ -180,7 +180,6 @@ class CellEditToolbar extends EditToolbar {
     }
 
     public resetEditedCell(): void {
-        super.resetCurrentElements();
         this.editedCell = void 0;
     }
 }

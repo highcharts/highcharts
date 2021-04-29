@@ -26,10 +26,8 @@ const EditGlobals: EditGlobals = {
         editSidebarTabContent: PREFIX + 'sidebar-tab-content',
         editSidebarTabActive: PREFIX + 'toolbar-tab-active',
         editSidebarMenuItem: PREFIX + 'sidebar-item',
-        disabledNotEditedCells: PREFIX + 'hidden-cells',
-        disabledNotEditedRows: PREFIX + 'hidden-rows',
-        currentEditedCell: PREFIX + 'current-cell',
-        currentEditedRow: PREFIX + 'current-row',
+        currentEditedElement: PREFIX + 'unmask',
+        maskElement: PREFIX + 'mask',
         menuItem: PREFIX + 'menu-item',
         menu: PREFIX + 'menu',
         menuVerticalSeparator: PREFIX + 'menu-vertical-separator',
@@ -84,10 +82,8 @@ namespace EditGlobals {
         editSidebarTabContent: string;
         editSidebarTabActive: string;
         editSidebarMenuItem: string;
-        disabledNotEditedCells: string;
-        disabledNotEditedRows: string;
-        currentEditedCell: string;
-        currentEditedRow: string;
+        maskElement: string;
+        currentEditedElement: string;
         menuItem: string;
         menu: string;
         menuVerticalSeparator: string;

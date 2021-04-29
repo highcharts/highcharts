@@ -6,6 +6,8 @@ import EditGlobals from '../EditGlobals.js';
 import Row from '../../Layout/Row.js';
 import Cell from '../../Layout/Cell.js';
 import GUIElement from '../../Layout/GUIElement.js';
+import DashboardGlobals from '../../DashboardGlobals.js';
+import type Layout from '../../Layout/Layout.js';
 
 const {
     defined,
@@ -116,58 +118,51 @@ abstract class EditToolbar {
         currentElement: Cell|Row,
         isRow?: boolean
     ): void {
-        // reset current elements
-        this.resetCurrentElements();
+        const components = isRow ?
+            (currentElement as Row).layout.dashboard.mountedComponents :
+            (currentElement as Cell).row.layout.dashboard.mountedComponents;
 
-        // set current element
-        (currentElement.container as HTMLDOMElement).classList.add(
-            isRow ? EditGlobals.classNames.currentEditedRow :
-                EditGlobals.classNames.currentEditedCell
-        );
+        // set opacity
+        for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
+            (components[i].cell.container as HTMLDOMElement).classList.add(
+                EditGlobals.classNames.maskElement
+            );
+        }
 
-        if (!isRow) {
-            (currentElement as Cell).row.layout.dashboard.container.classList.add(
-                EditGlobals.classNames.disabledNotEditedCells
+        // highlight current element
+        if (isRow) {
+            this.unmaskRow(
+                currentElement as Row
             );
         } else {
-            (currentElement as Row).layout.dashboard.container.classList.add(
-                EditGlobals.classNames.disabledNotEditedRows
+            (currentElement.container as HTMLDOMElement).classList.remove(
+                EditGlobals.classNames.maskElement
             );
         }
     }
 
-    public resetCurrentElements(): void {
+    public unmaskRow(
+        row: Row
+    ): void {
+        const cells = row.cells;
+        let nestedLayout: Layout|undefined;
+        let rows;
 
-        const editMode = this.editMode;
-        const editedCell = editMode.cellToolbar && editMode.cellToolbar.editedCell;
-        const editedRow = editMode.rowToolbar && editMode.rowToolbar.editedRow;
+        for (let i = 0, iEnd = cells.length; i < iEnd; ++i) {
+            nestedLayout = cells[i].nestedLayout;
 
-        if (editedCell) {
-            const cellContainer = editedCell.container;
-
-            if (cellContainer) {
-                cellContainer.classList.remove(
-                    EditGlobals.classNames.currentEditedCell
+            if (nestedLayout) {
+                rows = nestedLayout.rows;
+                for (let j = 0, jEnd = rows.length; j < jEnd; ++j) {
+                    this.unmaskRow(
+                        rows[j]
+                    );
+                }
+            } else {
+                (cells[i].container as HTMLDOMElement).classList.remove(
+                    EditGlobals.classNames.maskElement
                 );
             }
-
-            editedCell.row.layout.dashboard.container.classList.remove(
-                EditGlobals.classNames.disabledNotEditedCells
-            );
-        }
-
-        if (editedRow) {
-            const rowContainer = editedRow.container;
-
-            if (rowContainer) {
-                rowContainer.classList.remove(
-                    EditGlobals.classNames.currentEditedRow
-                );
-            }
-
-            editedRow.layout.dashboard.container.classList.remove(
-                EditGlobals.classNames.disabledNotEditedRows
-            );
         }
     }
 }
