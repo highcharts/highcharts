@@ -222,6 +222,16 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
     private cellListeners: Function[] = [];
     protected hasLoaded: boolean;
 
+    /**
+     * Timeouts for calls to `Component.resizeTo()`
+     */
+    protected resizeTimeouts: number[] = [];
+
+    /**
+     * Timeouts for resizing the content. I.e. `chart.setSize()`
+     */
+    protected innerResizeTimeouts: number[] = [];
+
     constructor(options: Partial<Component.ComponentOptions>) {
         this.options = merge(Component.defaultOptions, options);
         this.id = this.options.id && this.options.id.length ?
@@ -273,7 +283,6 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
     }
 
     // Setup listeners on cell/other things up the chain
-    // TODO: teardown if we want to switch a component between cells
     private attachCellListeneres(): void {
         // remove old listeners
         while (this.cellListeners.length) {
@@ -430,11 +439,21 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
     }
 
     public resizeTo(element: HTMLElement): void {
-        const { width, height } = element.getBoundingClientRect();
-        const padding = getPaddings(element);
-        const margins = getMargins(element);
+        while (this.resizeTimeouts.length) {
+            const timeout = this.resizeTimeouts.pop();
+            if (timeout) {
+                cancelAnimationFrame(timeout);
+            }
+        }
+        const timeoutID = requestAnimationFrame((): void => {
+            const { width, height } = element.getBoundingClientRect();
+            const padding = getPaddings(element);
+            const margins = getMargins(element);
 
-        this.resize(width - padding.x - margins.x, height - padding.y - margins.y);
+            this.resize(width - padding.x - margins.x, height - padding.y - margins.y);
+        });
+
+        this.resizeTimeouts.push(timeoutID);
     }
 
     /**
@@ -532,13 +551,9 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
      */
     public render(): this {
         if (!this.hasLoaded) {
-
-            // this.setupResizeListeners()
             this.load();
             // Call resize to fit to the cell
-            setTimeout((): void => {
-                this.resizeTo(this.parentElement);
-            }, 0);
+            this.resizeTo(this.parentElement);
         }
 
         const e = {

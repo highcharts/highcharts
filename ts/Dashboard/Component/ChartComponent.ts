@@ -142,6 +142,8 @@ class ChartComponent extends Component<ChartComponent.Event> {
                 }
             });
         }
+
+        this.innerResizeTimeouts = [];
     }
 
     /* *
@@ -163,7 +165,6 @@ class ChartComponent extends Component<ChartComponent.Event> {
 
     public render(): this {
         super.render();
-
         this.emit({ type: 'afterRender' });
         return this;
     }
@@ -180,12 +181,23 @@ class ChartComponent extends Component<ChartComponent.Event> {
     ): this {
         super.resize(width, height);
 
-        if (this.chart) {
-            this.chart.setSize(
-                null,
-                this.contentElement.clientHeight
-            );
+        while (this.innerResizeTimeouts.length) {
+            const timeoutID = this.innerResizeTimeouts.pop();
+            if (timeoutID) {
+                clearTimeout(timeoutID);
+            }
         }
+
+        this.innerResizeTimeouts.push(setTimeout((): void => {
+            if (this.chart) {
+                this.chart.setSize(
+                    null,
+                    this.contentElement.clientHeight,
+                    this.chartOptions.chart.animation
+                );
+            }
+        }, 33));
+
         return this;
     }
 
@@ -322,7 +334,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
             throw new Error('Chart constructor not found');
         }
 
-        this.charter.chart(this.chartContainer, this.chartOptions);
+        this.chart = this.charter.chart(this.chartContainer, this.chartOptions);
 
         return this.chart;
     }
