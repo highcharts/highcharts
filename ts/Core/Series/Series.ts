@@ -731,7 +731,7 @@ class Series {
 
         /**
          * Same as
-         * [accessibility.pointDescriptionFormatter](#accessibility.pointDescriptionFormatter),
+         * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
          * but for an individual series. Overrides the chart wide configuration.
          *
          * @type      {Function}
