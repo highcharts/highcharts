@@ -3,4 +3,5 @@
  authors:
    - Nancy Dillon
  js_wrap: b
+ skipTest: true
 ...
