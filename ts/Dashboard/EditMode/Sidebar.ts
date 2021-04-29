@@ -255,25 +255,16 @@ class Sidebar {
             }, {}, sidebar.container
         );
 
-        // set default offset top, when cell or row is lower
-        const offsetTop = sidebarContainer.getBoundingClientRect().top;
-
-        if (window.pageYOffset > offsetTop) {
-            sidebarContainer.style.marginTop = window.pageYOffset - offsetTop + 'px';
-        } else {
-            sidebarContainer.style.marginTop = '0px';
-        }
-
         // add sticky position
-        addEvent(window, 'scroll', function (): void {
-            const containerOffsetTop = window.pageYOffset - offsetTop;
+        // addEvent(window, 'scroll', function (): void {
+        //     const containerOffsetTop = window.pageYOffset - offsetTop;
 
-            if (window.pageYOffset >= offsetTop) {
-                sidebarContainer.style.marginTop = containerOffsetTop + 'px';
-            } else {
-                sidebarContainer.style.marginTop = '0px';
-            }
-        });
+        //     if (window.pageYOffset >= offsetTop) {
+        //         sidebarContainer.style.marginTop = containerOffsetTop + 'px';
+        //     } else {
+        //         sidebarContainer.style.marginTop = '0px';
+        //     }
+        // });
     }
 
     private initTabs(
@@ -477,11 +468,19 @@ class Sidebar {
     public update(
         context: Cell|Row|undefined
     ): void {
+        const sidebarContainer = this.container;
+
         this.context = context;
         // activate first tab.
         this.onTabClick(this.tabs[
             context ? Sidebar.tabs[0].type : Sidebar.tabsGeneralOptions[0].type
         ]);
+
+        // set the position
+        sidebarContainer.style.marginTop = window.pageYOffset + 'px';
+        // reset drag X, Y dimension
+        sidebarContainer.style.top = '0px';
+        sidebarContainer.style.left = '0px';
     }
 
     public hide(): void {
