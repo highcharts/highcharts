@@ -143,15 +143,13 @@ QUnit.test('Add point with shift', function (assert) {
     maxBefore = chart.xAxis[0].max;
 
     add100();
-    assert.strictEqual(
-        chart.xAxis[0].min > minBefore,
-        true,
+    assert.ok(
+        chart.xAxis[0].min >= minBefore,
         'Stick left, data shifted'
     );
 
-    assert.strictEqual(
-        chart.xAxis[0].max > maxBefore,
-        true,
+    assert.ok(
+        chart.xAxis[0].max >= maxBefore,
         'Stick left, data shifted'
     );
 });
