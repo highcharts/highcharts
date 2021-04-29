@@ -1913,11 +1913,13 @@ class RangeSelector {
         });
 
         this.zoomText = renderer
-            .text(
-                (lang as any).rangeSelectorZoom,
-                0,
-                15
-            )
+            .label((lang && lang.rangeSelectorZoom) || '', 0)
+            .attr({
+                padding: options.buttonTheme.padding,
+                height: options.buttonTheme.height,
+                paddingLeft: 0,
+                paddingRight: 0
+            })
             .add(this.buttonGroup);
 
         if (!this.chart.styledMode) {
@@ -2410,16 +2412,30 @@ class RangeSelector {
         const {
             buttons,
             buttonOptions,
+            chart,
             dropdown,
             options,
             zoomText
         } = this;
 
+        const userButtonTheme = (
+            chart.userOptions.rangeSelector &&
+            chart.userOptions.rangeSelector.buttonTheme
+        ) || {};
+
         const getAttribs = (text?: string): SVGAttributes => ({
             text: text ? `${text} ▾` : '▾',
             width: 'auto',
-            paddingLeft: pick(options.buttonTheme.paddingLeft, 8),
-            paddingRight: pick(options.buttonTheme.paddingRight, 8)
+            paddingLeft: pick(
+                options.buttonTheme.paddingLeft,
+                userButtonTheme.padding,
+                8
+            ),
+            paddingRight: pick(
+                options.buttonTheme.paddingRight,
+                userButtonTheme.padding,
+                8
+            )
         } as unknown as SVGAttributes);
 
         if (zoomText) {
