@@ -60,7 +60,7 @@ declare global {
             public refreshOptions(): void;
             public rotate(cx: number, cy: number, radians: number): void;
             public scale(cx: number, cy: number, sx: number, sy: number): void;
-            public setAxis(options: AnnotationMockPoint, xOrY: ('x'|'y')): void;
+            public setAxis(options: MockPointOptions, xOrY: ('x'|'y')): void;
             public toAnchor(): Array<number>;
             public translate(cx: (number|undefined), cy: (number|undefined), dx: number, dy: number): void
         }

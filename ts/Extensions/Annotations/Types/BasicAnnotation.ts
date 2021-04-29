@@ -28,7 +28,7 @@ class BasicAnnotation extends Annotation {
      *
      * */
 
-    public static basicControlPoints: BasicAnnotation.AnnotationBasicControlPoints = {
+    public static basicControlPoints: BasicAnnotation.ControlPoints = {
         label: [{
             symbol: 'triangle-down',
             positioner: function (
@@ -238,7 +238,7 @@ interface BasicAnnotation {
     basicType: string;
 }
 namespace BasicAnnotation {
-    export interface AnnotationBasicControlPoints {
+    export interface ControlPoints {
         label: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
         rectangle: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
         circle: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
