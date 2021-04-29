@@ -268,10 +268,10 @@ declare global {
  * and applied with the {@link SVGElement#clip} function.
  *
  * @example
- * var circle = renderer.circle(100, 100, 100)
+ * let circle = renderer.circle(100, 100, 100)
  *     .attr({ fill: 'red' })
  *     .add();
- * var clipRect = renderer.clipRect(100, 100, 100, 100);
+ * let clipRect = renderer.clipRect(100, 100, 100, 100);
  *
  * // Leave only the lower right quarter visible
  * circle.clip(clipRect);
@@ -472,7 +472,7 @@ declare global {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-var charts = H.charts,
+let charts = H.charts,
     deg2rad = H.deg2rad,
     doc = H.doc,
     isFirefox = H.isFirefox,
@@ -501,7 +501,7 @@ var charts = H.charts,
  *
  * @example
  * // Use directly without a chart object.
- * var renderer = new Highcharts.Renderer(parentNode, 600, 400);
+ * let renderer = new Highcharts.Renderer(parentNode, 600, 400);
  *
  * @class
  * @name Highcharts.SVGRenderer
@@ -655,7 +655,7 @@ class SVGRenderer {
         allowHTML?: boolean,
         styledMode?: boolean
     ): void {
-        var renderer = this,
+        let renderer = this,
             boxWrapper: SVGElement,
             element,
             desc;
@@ -717,7 +717,7 @@ class SVGRenderer {
         // precision. In order to draw sharp lines, this must be compensated
         // for. This doesn't seem to work inside iframes though (like in
         // jsFiddle).
-        var subPixelFix, rect;
+        let subPixelFix, rect;
 
         if (isFirefox && container.getBoundingClientRect) {
             subPixelFix = function (): void {
@@ -912,7 +912,7 @@ class SVGRenderer {
      * @return {null}
      */
     public destroy(): null {
-        var renderer = this,
+        const renderer = this,
             rendererDefs = renderer.defs;
 
         renderer.box = null as any;
@@ -953,7 +953,7 @@ class SVGRenderer {
      * The generated SVGElement.
      */
     public createElement(nodeName: string): SVGElement {
-        var wrapper = new this.Element();
+        const wrapper = new this.Element();
 
         wrapper.init(this as any, nodeName);
         return wrapper;
@@ -1072,7 +1072,7 @@ class SVGRenderer {
         shape?: Highcharts.SymbolKeyValue,
         useHTML?: boolean
     ): SVGElement {
-        var label = this.label(
+        let label = this.label(
                 text,
                 x,
                 y,
@@ -1096,12 +1096,13 @@ class SVGRenderer {
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
 
+        // Presentational
+        let normalStyle: any,
+            hoverStyle: any,
+            pressedStyle: any,
+            disabledStyle: any;
+
         if (!styledMode) {
-            // Presentational
-            var normalStyle: any,
-                hoverStyle: any,
-                pressedStyle: any,
-                disabledStyle: any;
 
             // Normal state - prepare the attributes
             normalState = merge({
@@ -1263,7 +1264,7 @@ class SVGRenderer {
      *         Draw a path independent from a chart
      *
      * @example
-     * var path = renderer.path(['M', 10, 10, 'L', 30, 30, 'z'])
+     * let path = renderer.path(['M', 10, 10, 'L', 30, 30, 'z'])
      *     .attr({ stroke: '#ff00ff' })
      *     .add();
      *
@@ -1287,7 +1288,7 @@ class SVGRenderer {
      * The generated wrapper element.
      */
     public path(path?: (SVGAttributes|SVGPath)): SVGElement {
-        var attribs: SVGAttributes = (this.styledMode ? {} : {
+        const attribs: SVGAttributes = (this.styledMode ? {} : {
             fill: 'none'
         });
 
@@ -1334,7 +1335,7 @@ class SVGRenderer {
         y?: number,
         r?: number
     ): SVGElement {
-        var attribs: SVGAttributes = (
+        const attribs: SVGAttributes = (
                 isObject(x) ?
                     x :
                     typeof x === 'undefined' ? {} : { x: x, y: y, r: r }
@@ -1411,7 +1412,7 @@ class SVGRenderer {
         start?: number,
         end?: number
     ): SVGElement {
-        var arc: SVGElement,
+        let arc: SVGElement,
             options: SVGAttributes;
 
         if (isObject(x)) {
@@ -1496,7 +1497,7 @@ class SVGRenderer {
 
         r = isObject(x) ? (x as any).r : r;
 
-        var wrapper = this.createElement('rect'),
+        let wrapper = this.createElement('rect'),
             attribs = isObject(x) ?
                 x as SVGAttributes :
                 typeof x === 'undefined' ?
@@ -1561,7 +1562,7 @@ class SVGRenderer {
         height: number,
         animate?: (boolean|Partial<AnimationOptions>)
     ): void {
-        var renderer = this;
+        const renderer = this;
 
         renderer.width = width;
         renderer.height = height;
@@ -1597,7 +1598,7 @@ class SVGRenderer {
      *         The generated wrapper element.
      */
     public g(name?: string): SVGElement {
-        var elem = this.createElement('g');
+        const elem = this.createElement('g');
 
         return name ?
             elem.attr({ 'class': 'highcharts-' + name }) as any :
@@ -1644,7 +1645,7 @@ class SVGRenderer {
         height?: number,
         onload?: Function
     ): SVGElement {
-        var attribs: SVGAttributes =
+        let attribs: SVGAttributes =
             { preserveAspectRatio: 'none' },
             elemWrapper: SVGElement,
             dummy,
@@ -1740,7 +1741,7 @@ class SVGRenderer {
         options?: Highcharts.SymbolOptionsObject
     ): SVGElement {
 
-        var ren = this,
+        let ren = this,
             obj: any,
             imageRegex = /^url\((.*?)\)$/,
             isImage = imageRegex.test(symbol),
@@ -1819,7 +1820,7 @@ class SVGRenderer {
              */
             ['width', 'height'].forEach(function (key: string): void {
                 obj[key + 'Setter'] = function (value: any, key: string): void {
-                    var imgSize = this['img' + key];
+                    let imgSize = this['img' + key];
 
                     this[key] = value;
                     if (defined(imgSize)) {
@@ -1875,7 +1876,7 @@ class SVGRenderer {
                 createElement('img', {
                     onload: function (this: SVGDOMElement): void {
 
-                        var chart = charts[ren.chartIndex];
+                        const chart = charts[ren.chartIndex];
 
                         // Special case for SVGs on IE11, the width is not
                         // accessible until the image is part of the DOM
@@ -1934,10 +1935,10 @@ class SVGRenderer {
      * function.
      *
      * @example
-     * var circle = renderer.circle(100, 100, 100)
+     * let circle = renderer.circle(100, 100, 100)
      *     .attr({ fill: 'red' })
      *     .add();
-     * var clipRect = renderer.clipRect(100, 100, 100, 100);
+     * let clipRect = renderer.clipRect(100, 100, 100, 100);
      *
      * // Leave only the lower right quarter visible
      * circle.clip(clipRect);
@@ -1961,7 +1962,7 @@ class SVGRenderer {
         width?: number,
         height?: number
     ): Highcharts.ClipRectElement {
-        var wrapper,
+        let wrapper,
             // Add a hyphen at the end to avoid confusion in testing indexes
             // -1 and -10, -11 etc (#6550)
             id = uniqueKey() + '-',
@@ -2017,7 +2018,7 @@ class SVGRenderer {
     ): SVGElement {
 
         // declare variables
-        var renderer = this,
+        let renderer = this,
             wrapper: SVGElement,
             attribs: SVGAttributes = {};
 
@@ -2042,7 +2043,7 @@ class SVGRenderer {
                 key: string,
                 element: SVGDOMElement
             ): void {
-                var tspans = element.getElementsByTagName('tspan'),
+                let tspans = element.getElementsByTagName('tspan'),
                     tspan: SVGTSpanElement,
                     parentVal = element.getAttribute(key),
                     i;
@@ -2082,7 +2083,7 @@ class SVGRenderer {
         fontSize?: (number|string),
         elem?: (globalThis.SVGElement|SVGElement)
     ): Highcharts.FontMetricsObject {
-        var lineHeight,
+        let lineHeight,
             baseline;
 
         if (
@@ -2140,7 +2141,7 @@ class SVGRenderer {
         rotation: number,
         alterY?: boolean
     ): PositionObject {
-        var y = baseline;
+        let y = baseline;
 
         if (rotation && alterY) {
             y = Math.max(y * Math.cos(rotation * deg2rad), 4);
@@ -2650,17 +2651,17 @@ SVGRenderer.prototype.symbols = {
         const arc: SVGPath = [];
 
         if (options) {
-            var start = options.start || 0,
-                end = options.end || 0,
+            const start = options.start || 0,
                 rx = pick(options.r, w),
                 ry = pick(options.r, h || w),
                 proximity = 0.001,
-                fullCircle =
-                    Math.abs(end - start - 2 * Math.PI) <
-                    proximity,
+                fullCircle = (
+                    Math.abs((options.end || 0) - start - 2 * Math.PI) <
+                    proximity
+                ),
                 // Substract a small number to prevent cos and sin of start and
                 // end from becoming equal on 360 arcs (related: #1561)
-                end = end - proximity,
+                end = (options.end || 0) - proximity,
                 innerRadius = options.innerR,
                 open = pick(options.open, fullCircle),
                 cosStart = Math.cos(start),

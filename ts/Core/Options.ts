@@ -953,7 +953,7 @@ const defaultOptions: Highcharts.Options = {
      *     }
      * });
      * // Apply time settings by instance
-     * var chart = Highcharts.chart('container', {
+     * let chart = Highcharts.chart('container', {
      *     time: {
      *         timezone: 'America/New_York'
      *     },

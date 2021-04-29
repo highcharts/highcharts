@@ -98,7 +98,7 @@ SignalHandler.prototype.registerSignalCallbacks = function (
     this: Highcharts.SignalHandler,
     signals: Record<string, (Function|undefined)>
 ): void {
-    var signalHandler = this;
+    const signalHandler = this;
 
     signalHandler.supportedSignals.forEach(function (
         supportedSignal: keyof typeof signals
@@ -125,7 +125,7 @@ SignalHandler.prototype.clearSignalCallbacks = function (
     this: Highcharts.SignalHandler,
     signalNames?: Array<string>
 ): void {
-    var signalHandler = this;
+    const signalHandler = this;
 
     if (signalNames) {
         signalNames.forEach(function (signalName: string): void {
@@ -154,11 +154,11 @@ SignalHandler.prototype.emitSignal = function (
     signalName: string,
     data?: unknown
 ): (unknown|undefined) {
-    var retval: unknown;
+    let retval: unknown;
 
     if (this.signals[signalName]) {
         this.signals[signalName].forEach(function (handler: Function): void {
-            var result = handler(data);
+            const result = handler(data);
 
             retval = typeof result !== 'undefined' ? result : retval;
         });
@@ -167,7 +167,7 @@ SignalHandler.prototype.emitSignal = function (
 };
 
 
-var utilities: Highcharts.SonificationUtilitiesObject = {
+const utilities: Highcharts.SonificationUtilitiesObject = {
 
     // List of musical frequencies from C0 to C8
     musicalFrequencies: musicalFrequencies,
@@ -191,7 +191,7 @@ var utilities: Highcharts.SonificationUtilitiesObject = {
             freq: number,
             i: number
         ): boolean {
-            var interval = i % 12 + 1;
+            const interval = i % 12 + 1;
 
             return semitones.some(function (
                 allowedInterval: number
@@ -219,7 +219,7 @@ var utilities: Highcharts.SonificationUtilitiesObject = {
             // We use cropped points rather than series.data here, to allow
             // users to zoom in for better fidelity.
             series.points.forEach(function (point: Point): void {
-                var val = typeof (point as any)[prop] !== 'undefined' ?
+                const val = typeof (point as any)[prop] !== 'undefined' ?
                     (point as any)[prop] : (point.options as any)[prop];
 
                 extremes.min = Math.min(extremes.min, val);

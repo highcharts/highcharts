@@ -304,7 +304,7 @@ declare global {
 /* eslint-disable no-invalid-this */
 
 addEvent(Series, 'afterRender', function (): void {
-    var series = this,
+    const series = this,
         seriesOptions = series.options,
         pointRange = seriesOptions.pointRange,
         lastVisiblePrice = seriesOptions.lastVisiblePrice,
@@ -314,7 +314,7 @@ addEvent(Series, 'afterRender', function (): void {
         (lastVisiblePrice || lastPrice) &&
          seriesOptions.id !== 'highcharts-navigator-series'
     ) {
-        var xAxis = series.xAxis,
+        let xAxis = series.xAxis,
             yAxis = series.yAxis,
             origOptions = yAxis.crosshair,
             origGraphic = yAxis.cross,

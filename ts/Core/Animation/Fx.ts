@@ -35,7 +35,7 @@ const {
  * through {@link SVGElement#animate}.
  *
  * @example
- * var rect = renderer.rect(0, 0, 10, 10).add();
+ * let rect = renderer.rect(0, 0, 10, 10).add();
  * rect.animate({ width: 100 });
  *
  * @private

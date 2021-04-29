@@ -97,7 +97,7 @@ class TrendLineIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: TrendLineParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        var xVal: Array<number> = (series.xData as any),
+        let xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             LR: Array<Array<number>> = [],
             xData: Array<number> = [],

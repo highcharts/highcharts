@@ -239,7 +239,7 @@ class AreaRangeSeries extends AreaSeries {
      */
     public highToXY(point: AreaRangePoint): void {
         // Find the polar plotX and plotY
-        var chart = this.chart,
+        const chart = this.chart,
             xy = this.xAxis.postTranslate(
                 point.rectPlotX || 0,
                 this.yAxis.len - point.plotHigh
@@ -255,7 +255,7 @@ class AreaRangeSeries extends AreaSeries {
      * @private
      */
     public translate(): void {
-        var series = this,
+        const series = this,
             yAxis = series.yAxis,
             hasModifyValue = !!series.modifyValue;
 
@@ -266,7 +266,7 @@ class AreaRangeSeries extends AreaSeries {
             point: AreaRangePoint
         ): void {
 
-            var high = point.high,
+            const high = point.high,
                 plotY = point.plotY;
 
             if (point.isNull) {
@@ -309,7 +309,7 @@ class AreaRangeSeries extends AreaSeries {
      */
     public getGraphPath(points: Array<AreaPoint>): SVGPath {
 
-        var highPoints = [],
+        let highPoints = [],
             highAreaPoints: Array<AreaPoint> = [],
             i,
             getGraphPath = areaProto.getGraphPath,
@@ -335,7 +335,7 @@ class AreaRangeSeries extends AreaSeries {
             point = points[i];
 
             // Support for polar
-            var highAreaPoint = polar ? {
+            const highAreaPoint = polar ? {
                 plotX: point.rectPlotX,
                 plotY: point.yBottom,
                 doCurve: false // #5186, gaps in areasplinerange fill
@@ -423,7 +423,7 @@ class AreaRangeSeries extends AreaSeries {
      */
     public drawDataLabels(): void {
 
-        var data = this.points,
+        let data = this.points,
             length = data.length,
             i,
             originalDataLabels = [],
@@ -578,7 +578,7 @@ class AreaRangeSeries extends AreaSeries {
     }
 
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             pointLength = series.points.length,
             point,
             i;

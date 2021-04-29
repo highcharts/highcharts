@@ -201,7 +201,7 @@ class WordcloudSeries extends ColumnSeries {
      *
      */
     public bindAxes(): void {
-        var wordcloudAxis = {
+        const wordcloudAxis = {
             endOnTick: false,
             gridLineWidth: 0,
             lineWidth: 0,
@@ -220,7 +220,7 @@ class WordcloudSeries extends ColumnSeries {
         point: WordcloudPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var attribs = H.seriesTypes.column.prototype
+        const attribs = H.seriesTypes.column.prototype
             .pointAttribs.call(this, point, state);
 
         delete attribs.stroke;
@@ -253,7 +253,7 @@ class WordcloudSeries extends ColumnSeries {
         maxFontSize?: number,
         minFontSize?: number
     ): number {
-        var weight = isNumber(relativeWeight) ? relativeWeight : 0,
+        const weight = isNumber(relativeWeight) ? relativeWeight : 0,
             max = isNumber(maxFontSize) ? maxFontSize : 1,
             min = isNumber(minFontSize) ? minFontSize : 1;
 
@@ -261,7 +261,7 @@ class WordcloudSeries extends ColumnSeries {
     }
 
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             hasRendered = series.hasRendered,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
@@ -308,7 +308,7 @@ class WordcloudSeries extends ColumnSeries {
         // Get the dimensions for each word.
         // Used in calculating the playing field.
         data.forEach(function (point: WordcloudPoint): void {
-            var relativeWeight = 1 / maxWeight * point.weight,
+            let relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
                     options.maxFontSize,
@@ -338,7 +338,7 @@ class WordcloudSeries extends ColumnSeries {
         });
         // Draw all the points.
         data.forEach(function (point: WordcloudPoint): void {
-            var relativeWeight = 1 / maxWeight * point.weight,
+            let relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
                     options.maxFontSize,
@@ -459,7 +459,7 @@ class WordcloudSeries extends ColumnSeries {
     }
 
     public hasData(): boolean {
-        var series = this;
+        const series = this;
 
         return (
             isObject(series) as any &&
@@ -470,7 +470,7 @@ class WordcloudSeries extends ColumnSeries {
     }
 
     public getPlotBox(): Highcharts.SeriesPlotBoxObject {
-        var series = this,
+        const series = this,
             chart = series.chart,
             inverted = chart.inverted,
             // Swap axes for inverted (#2339)
@@ -518,7 +518,7 @@ extend(WordcloudSeries.prototype, {
             point: WordcloudPoint,
             options: WordcloudSeries.WordcloudPlacementOptionsObject
         ): WordcloudSeries.WordcloudPlacementObject {
-            var field = options.field,
+            const field = options.field,
                 r = options.rotation;
 
             return {
@@ -531,7 +531,7 @@ extend(WordcloudSeries.prototype, {
             point: WordcloudPoint,
             options: WordcloudSeries.WordcloudPlacementOptionsObject
         ): WordcloudSeries.WordcloudPlacementObject {
-            var r = options.rotation;
+            const r = options.rotation;
 
             return {
                 x: 0,

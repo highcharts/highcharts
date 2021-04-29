@@ -21,7 +21,7 @@ Good: This option set is valid JSON, and the evil code is stripped out internall
 Highcharts.chart('container', {
     "title": {
         // Filtered
-    	"text": "<a href='javascript:console.log(document.domain)'>Click me</a>"
+        "text": "<a href='javascript:console.log(document.domain)'>Click me</a>"
     }
 });
 ```
@@ -30,9 +30,9 @@ Bad: In this case the options set includes a function, and evil code may execute
 ```js
 Highcharts.chart('container', {
     "chart": {
-    	"events": {
+        "events": {
             // Unsafe
-        	"load": () => console.log(document.domain)
+            "load": () => console.log(document.domain)
         }
     }
 });
@@ -42,8 +42,8 @@ Good: If we run the options through `JSON.parse`, it will throw on the arrow fun
 ```js
 const options = JSON.parse(`{
     "chart": {
-    	"events": {
-        	"load": () => console.log(document.domain)
+        "events": {
+            "load": () => console.log(document.domain)
         }
     }
 }`); // => Throws SyntaxError
@@ -55,7 +55,7 @@ Good: The XSS filtering also applies to partial options given as parameters to f
 const chart = Highcharts.chart('container', {});
 chart.setTitle({
     // Filtered
-	text: "<a href='javascript:console.log(document.domain)'>Click me</a>"
+    text: "<a href='javascript:console.log(document.domain)'>Click me</a>"
 });
 ```
 

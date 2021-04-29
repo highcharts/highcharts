@@ -248,7 +248,7 @@ import utilities from './Utilities.js';
 // Defaults for the instrument options
 // NOTE: Also change defaults in Highcharts.PointInstrumentOptionsObject if
 //       making changes here.
-var defaultInstrumentOptions: Highcharts.PointInstrumentOptionsObject = {
+const defaultInstrumentOptions: Highcharts.PointInstrumentOptionsObject = {
     minDuration: 20,
     maxDuration: 2000,
     minVolume: 0.1,
@@ -282,7 +282,7 @@ function pointSonify(
     this: Highcharts.SonifyablePoint,
     options: Highcharts.PointSonifyOptionsObject
 ): void {
-    var point = this,
+    const point = this,
         chart = point.series.chart,
         masterVolume = pick(
             options.masterVolume,
@@ -339,7 +339,7 @@ function pointSonify(
         point.sonification.instrumentsPlaying || {};
 
     // Register signal handler for the point
-    var signalHandler = point.sonification.signalHandler =
+    const signalHandler = point.sonification.signalHandler =
         point.sonification.signalHandler ||
         new utilities.SignalHandler(['onEnd']);
 
@@ -356,7 +356,7 @@ function pointSonify(
     options.instruments.forEach(function (
         instrumentDefinition: Highcharts.PointInstrumentObject
     ): void {
-        var instrument = typeof instrumentDefinition.instrument === 'string' ?
+        const instrument = typeof instrumentDefinition.instrument === 'string' ?
                 H.sonification.instruments[instrumentDefinition.instrument] :
                 instrumentDefinition.instrument,
             mapping = instrumentDefinition.instrumentMapping || {},
@@ -453,7 +453,7 @@ function pointCancelSonify(
     this: Highcharts.SonifyablePoint,
     fadeOut?: boolean
 ): void {
-    var playing = this.sonification && this.sonification.instrumentsPlaying,
+    const playing = this.sonification && this.sonification.instrumentsPlaying,
         instrIds = playing && Object.keys(playing);
 
     if (instrIds && instrIds.length) {
@@ -468,7 +468,7 @@ function pointCancelSonify(
 }
 
 
-var pointSonifyFunctions: Highcharts.PointSonifyFunctions = {
+const pointSonifyFunctions: Highcharts.PointSonifyFunctions = {
     pointSonify,
     pointCancelSonify
 };

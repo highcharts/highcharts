@@ -191,7 +191,7 @@ class SVGLabel extends SVGElement {
      */
     public css(styles: CSSObject): this {
         if (styles) {
-            var textStyles: CSSObject = {},
+            let textStyles: CSSObject = {},
                 isWidth: boolean,
                 isFontStyle: boolean;
 
@@ -411,7 +411,7 @@ class SVGLabel extends SVGElement {
      * the new bounding box and reflect it in the border box.
      */
     private updateBoxSize(): void {
-        var style = this.text.element.style,
+        let style = this.text.element.style,
             crispAdjust,
             attribs: SVGAttributes = {};
 

@@ -245,7 +245,7 @@ class PSARIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: PSARParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var xVal: Array<number> = (series.xData as any),
+        let xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             // Extreme point is the lowest low for falling and highest high
             // for rising psar - and we are starting with falling
