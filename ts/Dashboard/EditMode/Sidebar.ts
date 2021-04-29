@@ -254,17 +254,6 @@ class Sidebar {
                 textContent: 'Cell Options' // shoudl be dynamic
             }, {}, sidebar.container
         );
-
-        // add sticky position
-        // addEvent(window, 'scroll', function (): void {
-        //     const containerOffsetTop = window.pageYOffset - offsetTop;
-
-        //     if (window.pageYOffset >= offsetTop) {
-        //         sidebarContainer.style.marginTop = containerOffsetTop + 'px';
-        //     } else {
-        //         sidebarContainer.style.marginTop = '0px';
-        //     }
-        // });
     }
 
     private initTabs(
