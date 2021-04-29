@@ -100,6 +100,7 @@ class Cell extends GUIElement {
         this.id = options.id;
         this.options = options;
         this.row = row;
+        this.isVisible = true;
 
         // Get parent container
         const parentContainer =
@@ -190,6 +191,11 @@ class Cell extends GUIElement {
     public nestedLayout?: Layout;
 
     /**
+     * The cell visibility flag.
+     */
+     public isVisible: boolean;
+
+    /**
      * Mount component from JSON.
      *
      * @param {Component.ClassJSON} [json]
@@ -265,6 +271,31 @@ class Cell extends GUIElement {
             dimensions,
             this.container as HTMLDOMElement
         );
+    }
+
+    private changeVisibility(
+        setVisible: boolean = true
+    ): void {
+        const cell = this,
+            row = cell.row,
+            visibilityChanged = cell.isVisible && !setVisible || !cell.isVisible && setVisible;
+
+        if (cell.container && visibilityChanged) {
+            cell.container.style.display = setVisible ? 'block' : 'none';
+            cell.isVisible = setVisible;
+
+            setTimeout(() => {
+                fireEvent(row, 'cellChange', { row, cell })
+            }, 0);
+        }
+    }
+
+    public hide(): void {
+        this.changeVisibility(false);
+    }
+
+    public show(): void {
+        this.changeVisibility();
     }
 }
 

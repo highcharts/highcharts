@@ -166,7 +166,7 @@ class DragDrop {
     public onCellDragStart(event: any): void {
         const dragDrop = this,
             editMode = dragDrop.editMode,
-            cell = dragDrop.context;
+            cell = dragDrop.context as Cell;
 
         if (cell && editMode.cellToolbar) {
             const cellToolbarStyle = editMode.cellToolbar.container.style;
@@ -177,10 +177,7 @@ class DragDrop {
             );
             dragDrop.mockElement.style.display = 'block';
             editMode.hideToolbars(['cell', 'row']);
-
-            if (cell.container) {
-                cell.container.style.display = 'none';
-            }
+            cell.hide();
         }
     }
 
@@ -242,22 +239,17 @@ class DragDrop {
             draggedCell = dragDrop.context as Cell,
             dropContext = dragDrop.dropContext as Cell;
 
-        if (
-            draggedCell.container &&
-            dropContext.container
-        ) {
-            if (dragDrop.dropPointer.align) {
-                draggedCell.row.unmountCell(draggedCell);
-                dropContext.row.mountCell(
-                    draggedCell,
-                    (dropContext.row.getCellIndex(dropContext) || 0) +
-                        (dragDrop.dropPointer.align === 'right' ? 1 : 0)
-                );
-            }
-
-            dragDrop.hideDropPointer();
-            draggedCell.container.style.display = 'block';
+        if (dragDrop.dropPointer.align) {
+            draggedCell.row.unmountCell(draggedCell);
+            dropContext.row.mountCell(
+                draggedCell,
+                (dropContext.row.getCellIndex(dropContext) || 0) +
+                    (dragDrop.dropPointer.align === 'right' ? 1 : 0)
+            );
         }
+
+        dragDrop.hideDropPointer();
+        draggedCell.show();
     }
 
     public setMockElementPosition(
