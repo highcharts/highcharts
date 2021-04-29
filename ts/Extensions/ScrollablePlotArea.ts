@@ -26,7 +26,9 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+
 import A from '../Core/Animation/AnimationUtilities.js';
 const { stop } = A;
 import Axis from '../Core/Axis/Axis.js';
@@ -49,7 +51,7 @@ declare module '../Core/Chart/ChartLike'{
         scrollingContainer?: HTMLDOMElement;
         scrollingParent?: HTMLDOMElement;
         scrollableDirty?: boolean;
-        scrollableMask?: Highcharts.SVGElement;
+        scrollableMask?: SVGElement;
         scrollablePixelsX?: number;
         scrollablePixelsY?: number;
         scrollablePlotBox?: BBoxObject;
@@ -140,7 +142,7 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
 
 addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
 
-    var scrollablePlotArea = (this.options.chart as any).scrollablePlotArea,
+    let scrollablePlotArea = (this.options.chart as any).scrollablePlotArea,
         scrollableMinWidth =
             scrollablePlotArea && scrollablePlotArea.minWidth,
         scrollableMinHeight =
@@ -205,7 +207,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                     axis.getPlotLinePath = function (
                         this: Highcharts.Axis
                     ): SVGPath {
-                        var marginName = (corrections as any)[axis.side].name,
+                        let marginName = (corrections as any)[axis.side].name,
                             correctionValue =
                                 (corrections as any)[axis.side].value,
                             // axis.right or axis.bottom
@@ -308,7 +310,7 @@ Chart.prototype.setUpScrolling = function (): void {
  * @private
  */
 Chart.prototype.moveFixedElements = function (): void {
-    var container = this.container,
+    let container = this.container,
         fixedRenderer = this.fixedRenderer,
         fixedSelectors = [
             '.highcharts-contextbutton',
@@ -365,7 +367,7 @@ Chart.prototype.moveFixedElements = function (): void {
  * @return {void}
  */
 Chart.prototype.applyFixed = function (): void {
-    var fixedRenderer,
+    let fixedRenderer,
         scrollableWidth,
         scrollableHeight,
         firstTime = !this.fixedDiv,
@@ -466,7 +468,7 @@ Chart.prototype.applyFixed = function (): void {
     }
 
     // Mask behind the left and right side
-    var axisOffset = this.axisOffset,
+    let axisOffset = this.axisOffset,
         maskTop = this.plotTop - axisOffset[0] - 1,
         maskLeft = this.plotLeft - axisOffset[3] - 1,
         maskBottom = this.plotTop + this.plotHeight + axisOffset[2] + 1,

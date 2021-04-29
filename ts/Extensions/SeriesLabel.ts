@@ -22,6 +22,10 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
+import O from '../Core/Options.js';
+const { setOptions } = O;
 import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -29,10 +33,8 @@ const {
     addEvent,
     extend,
     fireEvent,
-    format,
     isNumber,
     pick,
-    setOptions,
     syncTimeout
 } = U;
 
@@ -290,7 +292,7 @@ function ccw(
     x3: number,
     y3: number
 ): boolean {
-    var cw = ((y3 - y1) * (x2 - x1)) - ((y2 - y1) * (x3 - x1));
+    const cw = ((y3 - y1) * (x2 - x1)) - ((y2 - y1) * (x3 - x1));
 
     return cw > 0 ? true : !(cw < 0);
 }
@@ -352,7 +354,7 @@ SVGRenderer.prototype.symbols.connector = function (
     h: number,
     options?: Highcharts.SymbolOptionsObject
 ): SVGPath {
-    var anchorX = options && options.anchorX,
+    let anchorX = options && options.anchorX,
         anchorY = options && options.anchorY,
         path: (SVGPath|undefined),
         yOffset: number,
@@ -404,7 +406,7 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
         return;
     }
 
-    var distance = 16,
+    let distance = 16,
         points = this.points,
         point: Point,
         last: Point,
@@ -435,7 +437,7 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
      * @private
      */
     function pushDiscrete(point: Point): void {
-        var cellSize = 8,
+        const cellSize = 8,
             key = Math.round((point.plotX as any) / cellSize) + ',' +
             Math.round((point.plotY as any) / cellSize);
 
@@ -577,7 +579,7 @@ Series.prototype.checkClearPoint = function (
     bBox: BBoxObject,
     checkDistance?: boolean
 ): (boolean|Highcharts.LabelClearPointObject) {
-    var distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
+    let distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
         distToPointSquared = Number.MAX_VALUE,
         dist,
         connectorPoint,
@@ -789,7 +791,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
     // console.time('drawSeriesLabels');
 
-    var chart = this,
+    const chart = this,
         labelSeries: Array<Series> = this.labelSeries as any;
 
     chart.boxesToAvoid = [];
@@ -813,7 +815,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             return;
         }
 
-        var bBox: (BBoxObject|undefined),
+        let bBox: (BBoxObject|undefined),
             x: (number|undefined),
             y: (number|undefined),
             results: Array<Highcharts.LabelClearPointObject> = [],
@@ -860,7 +862,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             y: number,
             bBox: BBoxObject
         ): boolean {
-            var leftBound = Math.max(paneLeft as any, pick(areaMin, -Infinity)),
+            const leftBound = Math.max(paneLeft as any, pick(areaMin, -Infinity)),
                 rightBound = Math.min(
                     (paneLeft as any) + paneWidth,
                     pick(areaMax, Infinity)
@@ -1057,7 +1059,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                 });
 
                 // Move it if needed
-                var dist = Math.sqrt(
+                const dist = Math.sqrt(
                     Math.pow(Math.abs(best.x - (label.x || 0)), 2) +
                     Math.pow(Math.abs(best.y - (label.y || 0)), 2)
                 );
@@ -1066,7 +1068,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
                     // Move fast and fade in - pure animation movement is
                     // distractive...
-                    var attr: SVGAttributes = {
+                    let attr: SVGAttributes = {
                             opacity: chart.renderer.forExport ? 1 : 0,
                             x: best.x,
                             y: best.y
@@ -1105,7 +1107,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     // Record closest point to stick to for sync redraw
                     series.options.kdNow = true;
                     series.buildKDTree();
-                    var closest = series.searchPoint({
+                    const closest = series.searchPoint({
                         chartX: best.x,
                         chartY: best.y
                     } as any, true);
@@ -1143,7 +1145,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 function drawLabels(this: Chart, e: Event): void {
 
     if (this.renderer) {
-        var chart = this,
+        let chart = this,
             delay = animObject(chart.renderer.globalAnimation).duration;
 
         chart.labelSeries = [];
@@ -1153,7 +1155,7 @@ function drawLabels(this: Chart, e: Event): void {
 
         // Which series should have labels
         chart.series.forEach(function (series): void {
-            var options: Highcharts.SeriesLabelOptionsObject =
+            const options: Highcharts.SeriesLabelOptionsObject =
                     series.options.label as any,
                 label: SVGElement = series.labelBySeries as any,
                 closest = label && label.closest;

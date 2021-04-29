@@ -327,7 +327,7 @@ class Pointer {
      * Currently hovered points
      */
     public applyInactiveState(points: Array<Point>): void {
-        var activeSeries = [] as Array<Series>,
+        let activeSeries = [] as Array<Series>,
             series: Series;
 
         // Get all active series from the hovered points
@@ -372,7 +372,7 @@ class Pointer {
      * @function Highcharts.Pointer#destroy
      */
     public destroy(): void {
-        var pointer = this;
+        const pointer = this;
 
         this.eventsToUnbind.forEach((unbind): void => unbind());
         this.eventsToUnbind = [];
@@ -403,7 +403,7 @@ class Pointer {
      */
     public drag(e: PointerEvent): void {
 
-        var chart = this.chart,
+        let chart = this.chart,
             chartOptions = chart.options.chart,
             chartX = e.chartX,
             chartY = e.chartY,
@@ -455,7 +455,10 @@ class Pointer {
         if (this.hasDragged > 10) {
             clickedInside = chart.isInsidePlot(
                 mouseDownX - plotLeft,
-                mouseDownY - plotTop
+                mouseDownY - plotTop,
+                {
+                    visiblePlotOnly: true
+                }
             );
 
             // make a selection
@@ -526,7 +529,7 @@ class Pointer {
      * @function Highcharts.Pointer#dragStart
      */
     public dragStart(e: PointerEvent): void {
-        var chart = this.chart;
+        const chart = this.chart;
 
         // Record the start position
         chart.mouseIsDown = e.type;
@@ -544,12 +547,12 @@ class Pointer {
      * @param {global.Event} e
      */
     public drop(e: Event): void {
-        var pointer = this,
+        const pointer = this,
             chart = this.chart,
             hasPinched = this.hasPinched;
 
         if (this.selectionMarker) {
-            var selectionData = {
+            let selectionData = {
                     originalEvent: e, // #4890
                     xAxis: [],
                     yAxis: []
@@ -590,7 +593,7 @@ class Pointer {
                         isNumber(selectionLeft) &&
                         isNumber(selectionTop)
                     ) { // #859, #3569
-                        var horiz = axis.horiz,
+                        const horiz = axis.horiz,
                             minPixelPadding = e.type === 'touchend' ?
                                 axis.minPixelPadding :
                                 0, // #1207, #3075
@@ -699,7 +702,7 @@ class Pointer {
             p1: Point,
             p2: Point
         ): number {
-            var isCloserX = (p1.distX as any) - (p2.distX as any),
+            let isCloserX = (p1.distX as any) - (p2.distX as any),
                 isCloser = (p1.dist as any) - (p2.dist as any),
                 isAbove =
                     (p2.series.group && p2.series.group.zIndex) -
@@ -727,7 +730,7 @@ class Pointer {
         }
 
         series.forEach(function (s): void {
-            var noSharedTooltip = s.noSharedTooltip && shared,
+            const noSharedTooltip = s.noSharedTooltip && shared,
                 compareX = (
                     !noSharedTooltip &&
                     (s.options.findNearestPointBy as any).indexOf('y') < 0
@@ -760,21 +763,33 @@ class Pointer {
         point: Point,
         inverted?: boolean
     ): (Highcharts.PointerCoordinatesObject|undefined) {
-        var series = point.series,
+        const series = point.series,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
-            plotX = pick<number|undefined, number>(
-                point.clientX, point.plotX as any
-            ),
             shapeArgs = point.shapeArgs;
 
         if (xAxis && yAxis) {
+            let x = pick<number|undefined, number>(
+                point.clientX, point.plotX as any
+            );
+            let y = point.plotY || 0;
+
+            if (
+                (point as Highcharts.NodesPoint).isNode &&
+                shapeArgs &&
+                isNumber(shapeArgs.x) &&
+                isNumber(shapeArgs.y)
+            ) {
+                x = shapeArgs.x;
+                y = shapeArgs.y;
+            }
+
             return inverted ? {
-                chartX: xAxis.len + xAxis.pos - plotX,
-                chartY: yAxis.len + yAxis.pos - (point.plotY as any)
+                chartX: yAxis.len + yAxis.pos - y,
+                chartY: xAxis.len + xAxis.pos - x
             } : {
-                chartX: plotX + xAxis.pos,
-                chartY: (point.plotY as any) + yAxis.pos
+                chartX: x + xAxis.pos,
+                chartY: y + yAxis.pos
             };
         }
 
@@ -839,7 +854,7 @@ class Pointer {
      */
     public getCoordinates(e: PointerEvent): Highcharts.PointerAxisCoordinatesObject {
 
-        var coordinates = {
+        const coordinates = {
             xAxis: [],
             yAxis: []
         } as Highcharts.PointerAxisCoordinatesObject;
@@ -890,7 +905,7 @@ class Pointer {
         shared?: boolean,
         e?: PointerEvent
     ): Highcharts.PointerHoverDataObject {
-        var hoverPoint: Point,
+        let hoverPoint: Point,
             hoverPoints = [] as Array<Point>,
             hoverSeries = existingHoverSeries,
             useExisting = !!(isDirectTouch && existingHoverPoint),
@@ -942,7 +957,7 @@ class Pointer {
 
                 // Get all points with the same x value as the hoverPoint
                 searchSeries.forEach(function (s): any {
-                    var point = find(s.points, function (p: Point): boolean {
+                    let point = find(s.points, function (p: Point): boolean {
                         return p.x === hoverPoint.x && !p.isNull;
                     });
 
@@ -982,7 +997,7 @@ class Pointer {
      * @return {Highcharts.Point|undefined}
      */
     public getPointFromEvent(e: Event): (Point|undefined) {
-        var target = e.target,
+        let target = e.target,
             point;
 
         while (target && !point) {
@@ -1041,7 +1056,7 @@ class Pointer {
         element: DOMElementType,
         className: string
     ): (boolean|undefined) {
-        var elemClassName;
+        let elemClassName;
 
         while (element) {
             elemClassName = attr(element, 'class');
@@ -1188,7 +1203,15 @@ class Pointer {
                 extend(pEvt, this.getCoordinates(pEvt));
 
                 // fire a click event in the chart
-                if (chart.isInsidePlot((pEvt.chartX - plotLeft), (pEvt.chartY - plotTop))) {
+                if (
+                    chart.isInsidePlot(
+                        pEvt.chartX - plotLeft,
+                        pEvt.chartY - plotTop,
+                        {
+                            visiblePlotOnly: true
+                        }
+                    )
+                ) {
                     fireEvent(chart, 'click', pEvt);
                 }
             }
@@ -1319,8 +1342,11 @@ class Pointer {
             (
                 this.inClass(pEvt.target as any, 'highcharts-tracker') ||
                 chart.isInsidePlot(
-                    (pEvt.chartX - chart.plotLeft),
-                    (pEvt.chartY - chart.plotTop)
+                    pEvt.chartX - chart.plotLeft,
+                    pEvt.chartY - chart.plotTop,
+                    {
+                        visiblePlotOnly: true
+                    }
                 )
             )
         ) {
@@ -1402,7 +1428,10 @@ class Pointer {
             ) &&
             !chart.isInsidePlot(
                 pEvt.chartX - chart.plotLeft,
-                pEvt.chartY - chart.plotTop
+                pEvt.chartY - chart.plotTop,
+                {
+                    visiblePlotOnly: true
+                }
             ) &&
             !this.inClass(pEvt.target as any, 'highcharts-tracker')
         ) {
@@ -1437,7 +1466,7 @@ class Pointer {
      */
     public pinch(e: PointerEvent): void {
 
-        var self = this,
+        let self = this,
             chart = self.chart,
             pinchDown = self.pinchDown,
             touches: (Array<PointerEvent>|Array<Touch>) = (e.touches || []),
@@ -1489,7 +1518,7 @@ class Pointer {
             // Identify the data bounds in pixels
             chart.axes.forEach(function (axis: Axis): void {
                 if (axis.zoomEnabled) {
-                    var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
+                    const bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
                         minPixelPadding = axis.minPixelPadding,
                         min = axis.toPixels(
                             Math.min(
@@ -1647,7 +1676,7 @@ class Pointer {
         lastValidTouch: any,
         forcedScale?: number
     ): void {
-        var chart = this.chart,
+        let chart = this.chart,
             xy: ('x'|'y') = horiz ? 'x' : 'y',
             XY: ('X'|'Y') = horiz ? 'X' : 'Y',
             sChartXY: ('chartX'|'chartY') = ('chart' + XY) as any,
@@ -1750,7 +1779,7 @@ class Pointer {
      * @return {void}
      */
     public reset(allowMove?: boolean, delay?: number): void {
-        var pointer = this,
+        const pointer = this,
             chart = pointer.chart,
             hoverSeries = chart.hoverSeries,
             hoverPoint = chart.hoverPoint,
@@ -1849,7 +1878,7 @@ class Pointer {
      * @fires Highcharts.Point#event:mouseOver
      */
     public runPointActions(e: PointerEvent, p?: Point): void {
-        var pointer = this,
+        let pointer = this,
             chart = pointer.chart,
             series = chart.series,
             tooltip = (
@@ -1881,7 +1910,6 @@ class Pointer {
             ),
             useSharedTooltip: (boolean|undefined),
             followPointer: (boolean|undefined),
-            anchor: Array<number>,
             points: Array<Point>;
 
         // Update variables from hoverData.
@@ -1964,10 +1992,18 @@ class Pointer {
             }
         // Update positions (regardless of kdpoint or hoverPoint)
         } else if (followPointer && tooltip && !tooltip.isHidden) {
-            anchor = tooltip.getAnchor([{} as any], e);
-            tooltip.updatePosition(
-                { plotX: anchor[0], plotY: anchor[1] } as any
-            );
+            const anchor = tooltip.getAnchor([{} as any], e);
+            if (chart.isInsidePlot(
+                anchor[0],
+                anchor[1],
+                {
+                    visiblePlotOnly: true
+                }
+            )) {
+                tooltip.updatePosition(
+                    { plotX: anchor[0], plotY: anchor[1] } as any
+                );
+            }
         }
 
         // Start the event listener to pick up the tooltip and crosshairs
@@ -1976,7 +2012,7 @@ class Pointer {
                 chart.container.ownerDocument,
                 'mousemove',
                 function (e: any): void {
-                    var chart = charts[H.hoverChartIndex as any];
+                    const chart = charts[H.hoverChartIndex as any];
 
                     if (chart) {
                         chart.pointer.onDocumentMouseMove(e);
@@ -2019,7 +2055,7 @@ class Pointer {
      */
     public scaleGroups(attribs?: Highcharts.SeriesPlotBoxObject, clip?: boolean): void {
 
-        var chart = this.chart,
+        let chart = this.chart,
             seriesAttribs;
 
         // Scale each series
@@ -2054,7 +2090,7 @@ class Pointer {
      */
     public setDOMEvents(): void {
 
-        var container = this.chart.container,
+        const container = this.chart.container,
             ownerDoc = container.ownerDocument;
 
         container.onmousedown = this.onContainerMouseDown.bind(this);
@@ -2145,7 +2181,7 @@ class Pointer {
      * @function Highcharts.Pointer#touch
      */
     public touch(e: PointerEvent, start?: boolean): void {
-        var chart = this.chart,
+        let chart = this.chart,
             hasMoved,
             pinchDown,
             isInside;
@@ -2158,7 +2194,10 @@ class Pointer {
 
             isInside = chart.isInsidePlot(
                 e.chartX - chart.plotLeft,
-                e.chartY - chart.plotTop
+                e.chartY - chart.plotTop,
+                {
+                    visiblePlotOnly: true
+                }
             );
             if (isInside && !chart.openMenu) {
 
@@ -2222,7 +2261,7 @@ class Pointer {
      * @param {void}
      */
     public zoomOption(e: Event): void {
-        var chart = this.chart,
+        let chart = this.chart,
             options = chart.options.chart,
             zoomType = options.zoomType || '',
             inverted = chart.inverted,

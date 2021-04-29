@@ -62,7 +62,7 @@ declare global {
  * @class
  * @name Highcharts.ContainerComponent
  */
-var ContainerComponent: typeof Highcharts.ContainerComponent =
+const ContainerComponent: typeof Highcharts.ContainerComponent =
     function (): void {} as any;
 ContainerComponent.prototype = new (AccessibilityComponent as any)();
 extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */ {
@@ -85,7 +85,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
     handleSVGTitleElement: function (
         this: Highcharts.ContainerComponent
     ): void {
-        var chart = this.chart,
+        const chart = this.chart,
             titleId = 'highcharts-title-' + chart.index,
             titleContents = stripHTMLTags(chart.langFormat(
                 'accessibility.svgContainerTitle', {
@@ -94,7 +94,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
             ));
 
         if (titleContents.length) {
-            var titleElement = this.svgTitleElement =
+            const titleElement = this.svgTitleElement =
                 this.svgTitleElement || doc.createElementNS(
                     'http://www.w3.org/2000/svg',
                     'title'
@@ -113,7 +113,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
      * @private
      */
     setSVGContainerLabel: function (this: Highcharts.ContainerComponent): void {
-        var chart = this.chart,
+        const chart = this.chart,
             svgContainerLabel = chart.langFormat(
                 'accessibility.svgContainerLabel', {
                     chartTitle: getChartTitle(chart)
@@ -132,7 +132,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
     setGraphicContainerAttrs: function (
         this: Highcharts.ContainerComponent
     ): void {
-        var chart = this.chart,
+        const chart = this.chart,
             label = chart.langFormat('accessibility.graphicContainerLabel', {
                 chartTitle: getChartTitle(chart)
             });
@@ -147,7 +147,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
      * @private
      */
     setRenderToAttrs: function (this: Highcharts.ContainerComponent): void {
-        var chart = this.chart;
+        const chart = this.chart;
 
         if (chart.options.accessibility.landmarkVerbosity !== 'disabled') {
             chart.renderTo.setAttribute('role', 'region');
@@ -174,7 +174,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
     makeCreditsAccessible: function (
         this: Highcharts.ContainerComponent
     ): void {
-        var chart = this.chart,
+        const chart = this.chart,
             credits = chart.credits;
 
         if (credits) {

@@ -102,7 +102,7 @@ class VWAPIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: VWAPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var indicator = this,
+        let indicator = this,
             chart: Chart = series.chart,
             xValues: Array<number> = (series.xData as any),
             yValues: (
@@ -160,7 +160,7 @@ class VWAPIndicator extends SMAIndicator {
         volumeSeries: TLinkedSeries,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {
-        var volumeValues: Array<number> = (volumeSeries.yData as any),
+        let volumeValues: Array<number> = (volumeSeries.yData as any),
             volumeLength: number = (volumeSeries.xData as any).length,
             pointsLength: number = xValues.length,
             cumulativePrice: Array<number> = [],

@@ -365,7 +365,7 @@ class FlagsSeries extends ColumnSeries {
      * @private
      */
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             points = series.points,
             chart = series.chart,
             renderer = chart.renderer,
@@ -518,7 +518,7 @@ class FlagsSeries extends ColumnSeries {
             H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
 
             points.forEach(function (point): void {
-                var box = point.graphic && boxesMap[point.plotX as any];
+                const box = point.graphic && boxesMap[point.plotX as any];
 
                 if (box) {
                     (point.graphic as any)[
@@ -566,7 +566,7 @@ class FlagsSeries extends ColumnSeries {
      * @private
      */
     public drawTracker(): void {
-        var series = this,
+        const series = this,
             points = series.points;
 
         super.drawTracker();
@@ -577,7 +577,7 @@ class FlagsSeries extends ColumnSeries {
         * axis. #1924.
         */
         points.forEach(function (point): void {
-            var graphic = point.graphic;
+            const graphic = point.graphic;
 
             if (graphic) {
                 if (point.unbindMouseOver) {
@@ -622,7 +622,7 @@ class FlagsSeries extends ColumnSeries {
         point: FlagsPoint,
         state?: string
     ): SVGAttributes {
-        var options = this.options,
+        let options = this.options,
             color = (point && point.color) || this.color,
             lineColor = options.lineColor,
             lineWidth = (point && point.lineWidth),

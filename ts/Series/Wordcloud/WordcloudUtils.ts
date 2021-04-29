@@ -91,12 +91,12 @@ namespace WordcloudUtils {
         point: WordcloudPoint,
         points: Array<WordcloudPoint>
     ): boolean {
-        var intersects = false,
+        let intersects = false,
             rect: Highcharts.PolygonBoxObject = point.rect as any,
             polygon: Highcharts.PolygonObject = point.polygon as any,
             lastCollidedWith = point.lastCollidedWith,
             isIntersecting = function (p: WordcloudPoint): boolean {
-                var result = isRectanglesIntersecting(rect, p.rect as any);
+                let result = isRectanglesIntersecting(rect, p.rect as any);
 
                 if (result &&
                     ((point.rotation as any) % 90 || (p.rotation as any) % 90)
@@ -126,7 +126,7 @@ namespace WordcloudUtils {
             intersects = !!find(points, function (
                 p: WordcloudPoint
             ): boolean {
-                var result = isIntersecting(p);
+                const result = isIntersecting(p);
 
                 if (result) {
                     point.lastCollidedWith = p;
@@ -157,7 +157,7 @@ namespace WordcloudUtils {
         attempt: number,
         params?: WordcloudSeries.WordcloudSpiralParamsObject
     ): (boolean|PositionObject) {
-        var field: WordcloudSeries.WordcloudFieldObject = (params as any).field,
+        let field: WordcloudSeries.WordcloudFieldObject = (params as any).field,
             result: (boolean|PositionObject) = false,
             maxDelta = (field.width * field.width) + (field.height * field.height),
             t = attempt * 0.8; // 0.2 * 4 = 0.8. Enlarging the spiral.
@@ -195,7 +195,7 @@ namespace WordcloudUtils {
         attempt: number,
         params?: WordcloudSeries.WordcloudSpiralParamsObject
     ): (boolean|PositionObject) {
-        var a = attempt * 4,
+        let a = attempt * 4,
             k = Math.ceil((Math.sqrt(a) - 1) / 2),
             t = 2 * k + 1,
             m = Math.pow(t, 2),
@@ -260,7 +260,7 @@ namespace WordcloudUtils {
         attempt: number,
         params?: WordcloudSeries.WordcloudSpiralParamsObject
     ): (boolean|PositionObject) {
-        var result: PositionObject = squareSpiral(attempt, params) as any,
+        const result: PositionObject = squareSpiral(attempt, params) as any,
             field: WordcloudSeries.WordcloudFieldObject = (params as any).field;
 
         if (result) {
@@ -311,7 +311,7 @@ namespace WordcloudUtils {
         targetHeight: number,
         field: Highcharts.PolygonBoxObject
     ): number {
-        var height = Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2,
+        const height = Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2,
             width = Math.max(Math.abs(field.left), Math.abs(field.right)) * 2,
             scaleX = width > 0 ? 1 / width * targetWidth : 1,
             scaleY = height > 0 ? 1 / height * targetHeight : 1;
@@ -347,11 +347,11 @@ namespace WordcloudUtils {
         targetHeight: number,
         data: Array<WordcloudPoint>
     ): WordcloudSeries.WordcloudFieldObject {
-        var info: Record<string, number> = data.reduce(function (
+        const info: Record<string, number> = data.reduce(function (
                 obj: Record<string, number>,
                 point: WordcloudPoint
             ): Record<string, number> {
-                var dimensions = point.dimensions,
+                const dimensions = point.dimensions,
                     x = Math.max(dimensions.width, dimensions.height);
 
                 // Find largest height.
@@ -417,7 +417,7 @@ namespace WordcloudUtils {
         from?: number,
         to?: number
     ): (boolean|number) {
-        var result: (boolean|number) = false, // Default to false
+        let result: (boolean|number) = false, // Default to false
             range: number,
             intervals: number,
             orientation: number;
@@ -459,7 +459,7 @@ namespace WordcloudUtils {
         fn: WordcloudSeries.WordcloudSpiralFunction,
         params: WordcloudSeries.WordcloudSpiralParamsObject
     ): WordcloudSeries.WordcloudSpiralFunction {
-        var length = 10000,
+        let length = 10000,
             i: number,
             arr: Array<ReturnType<WordcloudSeries.WordcloudSpiralFunction>> = [];
 
@@ -494,7 +494,7 @@ namespace WordcloudUtils {
         rect: Highcharts.PolygonBoxObject,
         field: WordcloudSeries.WordcloudFieldObject
     ): boolean {
-        var playingField = {
+        const playingField = {
             left: -(field.width / 2),
             right: field.width / 2,
             top: -(field.height / 2),
@@ -531,7 +531,7 @@ namespace WordcloudUtils {
         point: WordcloudPoint,
         options: WordcloudSeries.WordcloudTestOptionsObject
     ): (boolean|PositionObject) {
-        var placed = options.placed,
+        let placed = options.placed,
             field = options.field,
             rectangle = options.rectangle,
             polygon = options.polygon,
@@ -595,7 +595,7 @@ namespace WordcloudUtils {
         field: WordcloudSeries.WordcloudFieldObject,
         rectangle: Highcharts.PolygonBoxObject
     ): WordcloudSeries.WordcloudFieldObject {
-        var height: number,
+        let height: number,
             width: number,
             ratioX: number,
             ratioY: number,

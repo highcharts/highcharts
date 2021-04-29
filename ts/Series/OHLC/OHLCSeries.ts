@@ -189,7 +189,7 @@ class OHLCSeries extends ColumnSeries {
      * @private
      */
     public drawPoints(): void {
-        var series = this,
+        const series = this,
             points = series.points,
             chart = series.chart,
             /**
@@ -221,7 +221,7 @@ class OHLCSeries extends ColumnSeries {
 
 
         points.forEach(function (point): void {
-            var plotOpen,
+            let plotOpen,
                 plotClose,
                 crispCorr,
                 halfWidth,
@@ -312,7 +312,7 @@ class OHLCSeries extends ColumnSeries {
         point: OHLCPoint,
         state: StatesOptionsKey
     ): SVGAttributes {
-        var attribs = super.pointAttribs.call(
+        const attribs = super.pointAttribs.call(
                 this,
                 point,
                 state
@@ -345,7 +345,7 @@ class OHLCSeries extends ColumnSeries {
      * @return {void}
      */
     public translate(): void {
-        var series = this,
+        const series = this,
             yAxis = series.yAxis,
             hasModifyValue = !!series.modifyValue,
             translated = [

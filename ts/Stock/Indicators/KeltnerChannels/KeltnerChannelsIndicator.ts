@@ -141,7 +141,7 @@ class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.Multip
         series: TLinkedSeries,
         params: KeltnerChannelsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period = (params.period as any),
+        let period = (params.period as any),
             periodATR: number = (params.periodATR as any),
             multiplierATR: number = (params.multiplierATR as any),
             index: number = (params.index as any),

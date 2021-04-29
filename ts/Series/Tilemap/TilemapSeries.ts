@@ -239,7 +239,7 @@ class TilemapSeries extends HeatmapSeries {
      * @private
      */
     public getSeriesPixelPadding(axis: Axis): Record<string, number> {
-        var isX = axis.isXAxis,
+        let isX = axis.isXAxis,
             padding = this.tileShape.getSeriesPadding(this),
             coord1,
             coord2;
@@ -294,7 +294,7 @@ class TilemapSeries extends HeatmapSeries {
      */
     public setOptions(): TilemapSeriesOptions {
         // Call original function
-        var ret: TilemapSeriesOptions = super.setOptions.apply(
+        const ret: TilemapSeriesOptions = super.setOptions.apply(
             this,
             Array.prototype.slice.call(arguments) as any
         );

@@ -60,7 +60,7 @@ class CrookedLine extends Annotation {
     }
 
     public getPointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
-        var typeOptions = this.options.typeOptions;
+        const typeOptions = this.options.typeOptions;
 
         return (typeOptions.points || []).map(function (
             pointOptions: Highcharts.AnnotationsTypePointsOptions
@@ -82,7 +82,7 @@ class CrookedLine extends Annotation {
                 pointOptions: Highcharts.AnnotationMockPointOptionsObject,
                 i: number
             ): void {
-                var controlPoint = new ControlPoint(
+                const controlPoint = new ControlPoint(
                     this.chart,
                     this,
                     merge(
@@ -101,7 +101,7 @@ class CrookedLine extends Annotation {
     }
 
     public addShapes(): void {
-        var typeOptions = this.options.typeOptions,
+        const typeOptions = this.options.typeOptions,
             shape = this.initShape(
                 merge(typeOptions.line, {
                     type: 'path',
@@ -212,7 +212,7 @@ CrookedLine.prototype.defaultOptions = merge(
                 this: Highcharts.AnnotationControlPoint,
                 target: Highcharts.AnnotationControllable
             ): PositionObject {
-                var graphic = this.graphic,
+                const graphic = this.graphic,
                     xy = MockPoint.pointToPixels(target.points[this.index]);
 
                 return {
@@ -230,10 +230,13 @@ CrookedLine.prototype.defaultOptions = merge(
                     if (
                         target.chart.isInsidePlot(
                             e.chartX - target.chart.plotLeft,
-                            e.chartY - target.chart.plotTop
+                            e.chartY - target.chart.plotTop,
+                            {
+                                visiblePlotOnly: true
+                            }
                         )
                     ) {
-                        var translation = this.mouseMoveToTranslation(e);
+                        const translation = this.mouseMoveToTranslation(e);
 
                         target.translatePoint(
                             translation.x,

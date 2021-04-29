@@ -34,7 +34,7 @@ const {
  * through {@link SVGElement#animate}.
  *
  * @example
- * var rect = renderer.rect(0, 0, 10, 10).add();
+ * let rect = renderer.rect(0, 0, 10, 10).add();
  * rect.animate({ width: 100 });
  *
  * @private
@@ -186,7 +186,7 @@ class Fx {
 
         // HTML styles, raw HTML content like container size
         } else {
-            elem.style[prop] = now + (this.unit as any);
+            elem.style[prop as any] = now + (this.unit as any);
         }
 
         if (step) {

@@ -47,7 +47,7 @@ const {
  * A dictionary with formulas for calculating number of bins based on the
  * base series
  **/
-var binsNumberFormulas: Record<string, Function> = {
+const binsNumberFormulas: Record<string, Function> = {
     'square-root': function (baseSeries: Series): number {
         return Math.ceil(Math.sqrt((baseSeries.options.data as any).length));
     },
@@ -73,7 +73,7 @@ var binsNumberFormulas: Record<string, Function> = {
  **/
 function fitToBinLeftClosed(bins: Array<number>): Function {
     return function (y: number): number {
-        var i = 1;
+        let i = 1;
 
         while (bins[i] <= y) {
             i++;
@@ -181,8 +181,8 @@ class HistogramSeries extends ColumnSeries {
     /* eslint-disable valid-jsdoc */
 
     public binsNumber(): number {
-        var binsNumberOption = this.options.binsNumber;
-        var binsNumber = binsNumberFormulas[binsNumberOption as any] ||
+        const binsNumberOption = this.options.binsNumber;
+        const binsNumber = binsNumberFormulas[binsNumberOption as any] ||
             // #7457
             (typeof binsNumberOption === 'function' && binsNumberOption);
 
@@ -201,7 +201,7 @@ class HistogramSeries extends ColumnSeries {
         binsNumber: number,
         binWidth: number
     ): Array<HistogramPointOptions> {
-        var series = this,
+        let series = this,
             max = correctFloat(arrayMax(baseData)),
             // Float correction needed, because first frequency value is not
             // corrected when generating frequencies (within for loop).
@@ -262,7 +262,7 @@ class HistogramSeries extends ColumnSeries {
         );
 
         baseData.forEach(function (y: number): void {
-            var x = correctFloat(fitToBin(y));
+            const x = correctFloat(fitToBin(y));
 
             bins[x]++;
         });
@@ -285,14 +285,14 @@ class HistogramSeries extends ColumnSeries {
     }
 
     public setDerivedData(): void {
-        var yData = (this.baseSeries as any).yData;
+        const yData = (this.baseSeries as any).yData;
 
         if (!yData.length) {
             this.setData([]);
             return;
         }
 
-        var data = this.derivedData(
+        const data = this.derivedData(
             yData,
             this.binsNumber(),
             this.options.binWidth as any
