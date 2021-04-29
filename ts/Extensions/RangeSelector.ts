@@ -950,6 +950,12 @@ class RangeSelector {
                 return;
             }
         } else if (type === 'all' && baseAxis) {
+            // If the navigator exist and the axis range is declared reset that
+            // range and from now on only use the range set by a user, #14742.
+            if (chart.navigator) {
+                chart.navigator.baseSeries[0].xAxis.options.range = void 0 as any;
+            }
+
             newMin = dataMin;
             newMax = dataMax as any;
         }
