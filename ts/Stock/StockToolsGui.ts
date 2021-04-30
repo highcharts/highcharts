@@ -1408,18 +1408,28 @@ class Toolbar {
             navigation = chart.options.navigation,
             bindingsClassName = navigation && navigation.bindingsClassName,
             listWrapper,
-            toolbar,
-            wrapper;
-
-        // #15593
-        css(container.parentNode, { position: 'relative' });
+            toolbar;
 
         // create main container
-        stockToolbar.wrapper = wrapper = createElement(DIV, {
+        const wrapper = stockToolbar.wrapper = createElement(DIV, {
             className: PREFIX + 'stocktools-wrapper ' +
                 guiOptions.className + ' ' + bindingsClassName
         });
-        container.parentNode.insertBefore(wrapper, container);
+        container.insertBefore(wrapper, container.childNodes[0]);
+
+        // Mimic event behaviour of being outside chart.container
+        [
+            'mousemove',
+            'click',
+            'touchstart'
+        ].forEach((eventType): void => {
+            addEvent(wrapper, eventType, (e): void =>
+                e.stopPropagation()
+            );
+        });
+        addEvent(wrapper, 'mouseover', (e: MouseEvent): void =>
+            chart.pointer.onContainerMouseLeave(e)
+        );
 
         // toolbar
         stockToolbar.toolbar = toolbar = createElement(UL, {
