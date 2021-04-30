@@ -98,6 +98,8 @@ class SVGLabel extends SVGElement {
 
         if (className !== 'button') {
             this.addClass('highcharts-label');
+        } else {
+            this.addClass('highcharts-no-tooltip');
         }
         if (className) {
             this.addClass('highcharts-' + className);
@@ -450,13 +452,9 @@ class SVGLabel extends SVGElement {
                     this.renderer.symbol(this.symbolKey) :
                     this.renderer.rect();
 
-                const className = this.className ?
-                    this.className.split(' ', 1)[0] :
-                    '';
-
                 box.addClass( // Don't use label className for buttons
-                    (className === 'button' ? '' : 'highcharts-label-box') +
-                    (className ? ' highcharts-' + className + '-box' : '')
+                    (this.className === 'button' ? '' : 'highcharts-label-box') +
+                    (this.className ? ' highcharts-' + this.className + '-box' : '')
                 );
 
                 box.add(this);
