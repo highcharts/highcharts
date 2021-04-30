@@ -7,6 +7,8 @@
 import type ProjectionDefinition from '../ProjectionTypes';
 
 import EqualEarth from './EqualEarth.js';
+import Miller from './Miller.js';
+import Orthographic from './Orthographic.js';
 import WebMercator from './WebMercator.js';
 
 
@@ -14,6 +16,8 @@ import WebMercator from './WebMercator.js';
 
 const registry: Record<string, ProjectionDefinition> = {
     EqualEarth,
+    Miller,
+    Orthographic,
     WebMercator
 };
 

@@ -80,39 +80,38 @@ const drawMap = projectionKey => {
             projectionName: 'EqualEarth'
         },
         miller: {
-            projectionName: 'mill',
-            over: true
+            projectionName: 'Miller'
         },
         'ortho-africa': {
-            projectionName: 'ortho',
+            projectionName: 'Orthographic',
             lon0: 15
         },
         'ortho-antarctica': {
-            projectionName: 'ortho',
+            projectionName: 'Orthographic',
             lat0: -90
         },
         'ortho-asia': {
-            projectionName: 'ortho',
+            projectionName: 'Orthographic',
             lat0: 40,
             lon0: 90
         },
         'ortho-australia': {
-            projectionName: 'ortho',
+            projectionName: 'Orthographic',
             lat0: -30,
             lon0: 140
         },
         'ortho-europe': {
-            projectionName: 'ortho',
+            projectionName: 'Orthographic',
             lat0: 40,
             lon0: 15
         },
         'ortho-north-america': {
-            projectionName: 'ortho',
+            projectionName: 'Orthographic',
             lat0: 45,
             lon0: -100
         },
         'ortho-south-america': {
-            projectionName: 'ortho',
+            projectionName: 'Orthographic',
             lat0: -10,
             lon0: -60
         },
@@ -364,7 +363,7 @@ Highcharts.getJSON(
         static.geojson = JSON.stringify(geojson);
         static.data = data;
 
-        drawMap('webmerc');
+        drawMap('equalearth');
 
         enableInputs();
 
