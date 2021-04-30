@@ -425,7 +425,7 @@ class Time {
     public timezoneOffsetFunction(): (timestamp: (number|Date)) => number {
         const time = this,
             options = this.options,
-            moment = options.moment || win.moment;
+            moment = options.moment || (win as any).moment;
 
         if (!this.useUTC) {
             return function (timestamp: (number|Date)): number {
@@ -668,7 +668,7 @@ class Time {
         max?: number,
         startOfWeek?: number
     ): TickPositionsArray {
-        let time = this,
+        const time = this,
             Date = time.Date,
             tickPositions = [] as TickPositionsArray,
             higherRanks = {} as Record<string, string>,

@@ -14,9 +14,13 @@
  *  Declarations
  *
  * */
-
-export interface TickPositionsArray {
+export interface TickPositionsArray extends Array<number> {
 
 }
 
+/* *
+ *
+ *  Default export
+ *
+ * */
 export default TickPositionsArray;
