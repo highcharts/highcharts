@@ -250,6 +250,23 @@ BasicAnnotation.prototype.defaultOptions = merge(
     {}
 );
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+
 Annotation.types.basicAnnotation = BasicAnnotation;
+declare module './AnnotationType' {
+    interface AnnotationTypeRegistry {
+        basicAnnotation: typeof BasicAnnotation;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default BasicAnnotation;

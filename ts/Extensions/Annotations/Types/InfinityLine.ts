@@ -13,24 +13,6 @@ import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationInfinityLineOptionsObject extends CrookedLine.AnnotationCrookedLineOptionsObject {
-            typeOptions: AnnotationInfinityLineTypeOptionsObject;
-        }
-        interface AnnotationInfinityLineTypeOptionsObject extends CrookedLine.AnnotationCrookedLineTypeOptionsObject {
-            type: string;
-        }
-        interface AnnotationTypesRegistry {
-            infinityLine: typeof InfinityLine;
-        }
-    }
-}
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 class InfinityLine extends CrookedLine {
 
@@ -166,7 +148,7 @@ class InfinityLine extends CrookedLine {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationInfinityLineOptionsObject) {
+    public constructor(chart: Highcharts.AnnotationChart, options: InfinityLine.Options) {
         super(chart, options);
     }
 
@@ -177,7 +159,7 @@ class InfinityLine extends CrookedLine {
      * */
 
     public addShapes(): void {
-        const typeOptions = this.options.typeOptions as Highcharts.AnnotationInfinityLineTypeOptionsObject,
+        const typeOptions = this.options.typeOptions as InfinityLine.TypeOptions,
             points = [
                 this.points[0],
                 InfinityLine.endEdgePoint
@@ -227,6 +209,30 @@ InfinityLine.prototype.defaultOptions = merge(
  * @apioption annotations.infinityLine
  */
 
-Annotation.types.infinityLine = InfinityLine;
+namespace InfinityLine {
+    export interface Options extends CrookedLine.Options{
+        typeOptions: TypeOptions;
+    }
+    export interface TypeOptions extends CrookedLine.TypeOptions {
+        type: string;
+    }
+}
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+Annotation.types.infinityLine = InfinityLine;
+declare module './AnnotationType'{
+    interface AnnotationTypeRegistry {
+        infinityLine: typeof InfinityLine;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default InfinityLine;

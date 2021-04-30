@@ -21,34 +21,10 @@ declare module '../MockPointOptions' {
     }
 }
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationElliottWaveLabelOptionsObject extends AnnotationsLabelOptions {
-            backgroundColor: ColorType;
-            borderWidth: number;
-            y: number;
-        }
-        interface AnnotationElliottWaveOptionsObject extends CrookedLine.AnnotationCrookedLineOptionsObject {
-            labelOptions: AnnotationElliottWaveLabelOptionsObject;
-            typeOptions: AnnotationElliottWaveTypeOptionsObject;
-        }
-        interface AnnotationElliottWaveTypeOptionsObject extends CrookedLine.AnnotationCrookedLineTypeOptionsObject {
-            labels: Array<string>;
-        }
-        interface AnnotationTypesRegistry {
-            elliottWave: typeof ElliottWave;
-        }
-    }
-}
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 class ElliottWave extends CrookedLine {
-    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationElliottWaveOptionsObject) {
+    public constructor(chart: Highcharts.AnnotationChart, options: ElliottWave.Options) {
         super(chart, options);
     }
 
@@ -63,7 +39,7 @@ class ElliottWave extends CrookedLine {
             point: MockPointOptions,
             i: number
         ): void {
-            const typeOptions = this.options.typeOptions as Highcharts.AnnotationElliottWaveTypeOptionsObject,
+            const typeOptions = this.options.typeOptions as ElliottWave.TypeOptions,
                 label = this.initLabel(merge(
                     point.label, {
                         text: typeOptions.labels[i],
@@ -124,6 +100,36 @@ ElliottWave.prototype.defaultOptions = merge(
     }
 );
 
-Annotation.types.elliottWave = ElliottWave;
+namespace ElliottWave {
+    export interface LabelOptions extends Highcharts.AnnotationsLabelOptions {
+        backgroundColor: ColorType;
+        borderWidth: number;
+        y: number;
+    }
+    export interface Options extends CrookedLine.Options {
+        labelOptions: LabelOptions;
+        typeOptions: TypeOptions;
+    }
+    export interface TypeOptions extends CrookedLine.TypeOptions {
+        labels: Array<string>;
+    }
+}
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+Annotation.types.elliottWave = ElliottWave;
+declare module './AnnotationType'{
+    interface AnnotationTypeRegistry {
+        elliottWave: typeof ElliottWave;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default ElliottWave;

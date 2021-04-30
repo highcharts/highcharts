@@ -15,25 +15,6 @@ import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationTunnelOptionsObject extends CrookedLine.AnnotationCrookedLineOptionsObject {
-            typeOptions: AnnotationTunnelTypeOptionsObject;
-        }
-        interface AnnotationTunnelTypeOptionsObject extends CrookedLine.AnnotationCrookedLineTypeOptionsObject {
-            height: number;
-            heightControlPoint: AnnotationControlPointOptionsObject;
-        }
-        interface AnnotationTypesRegistry {
-            tunnel: typeof Tunnel;
-        }
-    }
-}
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -55,7 +36,7 @@ class Tunnel extends CrookedLine {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationTunnelOptionsObject) {
+    public constructor(chart: Highcharts.AnnotationChart, options: Tunnel.Options) {
         super(chart, options);
     }
 
@@ -82,7 +63,7 @@ class Tunnel extends CrookedLine {
         pointOptions: MockPointOptions
     ): MockPointOptions {
         const heightPointOptions = merge(pointOptions),
-            typeOptions = this.options.typeOptions as Highcharts.AnnotationTunnelTypeOptionsObject;
+            typeOptions = this.options.typeOptions as Tunnel.TypeOptions;
 
         heightPointOptions.y += typeOptions.height;
 
@@ -93,7 +74,7 @@ class Tunnel extends CrookedLine {
         CrookedLine.prototype.addControlPoints.call(this);
 
         const options = this.options,
-            typeOptions = options.typeOptions as Highcharts.AnnotationTunnelTypeOptionsObject,
+            typeOptions = options.typeOptions as Tunnel.TypeOptions,
             controlPoint = new ControlPoint(
                 this.chart,
                 this,
@@ -306,6 +287,31 @@ Tunnel.prototype.defaultOptions = merge(
     }
 );
 
-Annotation.types.tunnel = Tunnel;
+namespace Tunnel {
+    export interface Options extends CrookedLine.Options {
+        typeOptions: TypeOptions;
+    }
+    export interface TypeOptions extends CrookedLine.TypeOptions {
+        height: number;
+        heightControlPoint: Highcharts.AnnotationControlPointOptionsObject;
+    }
+}
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+Annotation.types.tunnel = Tunnel;
+declare module './AnnotationType'{
+    interface AnnotationTypeRegistry {
+        tunnel: typeof Tunnel;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default Tunnel;

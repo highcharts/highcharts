@@ -15,6 +15,7 @@ import type {
     VerticalAlignValue
 } from '../../Core/Renderer/AlignObject';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type { AnnotationTypeRegistry } from './Types/AnnotationType';
 import type { AxisType } from '../../Core/Axis/Types';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorString from '../../Core/Color/ColorString';
@@ -155,7 +156,7 @@ declare global {
             itemType?: string;
             vertical?: VerticalAlignValue;
         }
-        interface AnnotationsOptions extends AnnotationControllableOptionsObject {
+        interface AnnotationsOptions extends AnnotationControllableOptionsObject { // @todo AnnotationOptions.d.ts
             animation: Partial<AnimationOptions>;
             controlPointOptions: AnnotationControlPointOptionsObject;
             draggable: AnnotationDraggableValue;
@@ -191,11 +192,11 @@ declare global {
             points?: Array<(string|MockPointOptions)>;
         }
         interface AnnotationsTypeOptions {
-            background?: AnnotationsShapeOptions;
+            background?: Highcharts.AnnotationsShapeOptions;
             height?: number;
-            line?: AnnotationsShapeOptions;
+            line?: Highcharts.AnnotationsShapeOptions;
             point: MockPointOptions;
-            points?: Array<AnnotationsTypePointsOptions>;
+            points?: Array<Highcharts.AnnotationsTypePointsOptions>;
             xAxis?: number;
             yAxis?: number;
         }
@@ -205,9 +206,6 @@ declare global {
             xAxis?: number;
             y?: number;
             yAxis?: number;
-        }
-        interface AnnotationTypesRegistry {
-            [key: string]: typeof Annotation;
         }
         function extendAnnotation<T extends typeof Annotation>(
             Constructor: T,
@@ -302,7 +300,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     /**
      * @private
      */
-    public static types = {} as Highcharts.AnnotationTypesRegistry;
+    public static types = {} as AnnotationTypeRegistry;
 
     /* *
      *

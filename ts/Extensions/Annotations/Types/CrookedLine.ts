@@ -29,7 +29,7 @@ class CrookedLine extends Annotation {
      * Constructors
      *
      * */
-    public constructor(chart: Highcharts.AnnotationChart, options: CrookedLine.AnnotationCrookedLineOptionsObject) {
+    public constructor(chart: Highcharts.AnnotationChart, options: CrookedLine.Options) {
         super(chart, options);
     }
 
@@ -246,14 +246,31 @@ CrookedLine.prototype.defaultOptions = merge(
 );
 
 namespace CrookedLine {
-    export interface AnnotationCrookedLineOptionsObject extends Highcharts.AnnotationsOptions {
-        typeOptions: AnnotationCrookedLineTypeOptionsObject;
+    export interface Options extends Highcharts.AnnotationsOptions {
+        typeOptions: TypeOptions;
     }
-    export interface AnnotationCrookedLineTypeOptionsObject extends Highcharts.AnnotationsTypeOptions {
+    export interface TypeOptions extends Highcharts.AnnotationsTypeOptions {
         points?: Array<Highcharts.AnnotationsTypePointsOptions>;
     }
 }
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+
 Annotation.types.crookedLine = CrookedLine;
+declare module './AnnotationType'{
+    interface AnnotationTypeRegistry {
+        crookedLine: typeof CrookedLine;
+    }
+}
+
+/* *
+ *
+ *  Export Default
+ *
+ * */
 
 export default CrookedLine;
