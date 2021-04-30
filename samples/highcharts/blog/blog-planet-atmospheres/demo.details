@@ -1,6 +1,0 @@
----
- name: Highcharts Demo - Planet Atmospheres
- authors:
-   - Nancy Dillon
- js_wrap: b
-...

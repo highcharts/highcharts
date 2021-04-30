@@ -156,7 +156,7 @@ declare global {
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
 
-var seriesProto = Series.prototype as Highcharts.PolarSeries,
+let seriesProto = Series.prototype as Highcharts.PolarSeries,
     pointerProto = Pointer.prototype,
     columnProto: Highcharts.PolarSeries,
     arearangeProto: Highcharts.AreaRangeSeries;
@@ -171,7 +171,7 @@ var seriesProto = Series.prototype as Highcharts.PolarSeries,
 seriesProto.searchPointByAngle = function (
     e: PointerEvent
 ): (Point|undefined) {
-    var series = this,
+    const series = this,
         chart = series.chart,
         xAxis = series.xAxis,
         center = xAxis.pane.center,
@@ -198,7 +198,7 @@ seriesProto.getConnectors = function (
     connectEnds?: boolean
 ): Highcharts.PolarConnector {
 
-    var i: number,
+    let i: number,
         prevPointInd: number,
         nextPointInd: number,
         previousPoint: Highcharts.PolarPoint,
@@ -304,7 +304,7 @@ seriesProto.toXY = function (
     this: Highcharts.PolarSeries,
     point: Highcharts.PolarPoint
 ): void {
-    var chart = this.chart,
+    let chart = this.chart,
         xAxis = this.xAxis,
         yAxis = this.yAxis,
         plotX = point.plotX,
@@ -370,7 +370,7 @@ if (seriesTypes.spline) {
             point: Highcharts.PolarPoint,
             i: number
         ): SVGPath {
-            var ret,
+            let ret,
                 connectors;
 
             if (this.chart.polar) {
@@ -466,7 +466,7 @@ addEvent(Series, 'afterTranslate', function (): void {
                 addEvent(series, 'afterRender', function (
                     this: Highcharts.PolarSeries
                 ): void {
-                    var circ: Array<number>;
+                    let circ: Array<number>;
 
                     if (chart.polar) {
                         // For clipping purposes there is a need for
@@ -508,7 +508,7 @@ wrap(seriesTypes.line.prototype, 'getGraphPath', function (
     proceed: Function,
     points: Array<Highcharts.PolarPoint>
 ): SVGPath {
-    var series = this,
+    let series = this,
         i,
         firstValid,
         popLastPoint;
@@ -557,7 +557,7 @@ wrap(seriesTypes.line.prototype, 'getGraphPath', function (
     }
 
     // Run uber method
-    var ret = proceed.apply(this, [].slice.call(arguments, 1));
+    const ret = proceed.apply(this, [].slice.call(arguments, 1));
 
     // #6212 points.splice method is adding points to an array. In case of
     // areaspline getGraphPath method is used two times and in both times
@@ -575,7 +575,7 @@ const polarAnimate = function (
     proceed: Function,
     init?: boolean
 ): void {
-    var series = this,
+    let series = this,
         chart = this.chart,
         animation = this.options.animation,
         group = this.group,
@@ -683,7 +683,7 @@ if (seriesTypes.column) {
         start: number,
         end: number
     ): SVGAttributes {
-        var center = this.xAxis.center,
+        let center = this.xAxis.center,
             len = this.yAxis.len,
             paneInnerR = center[3] / 2,
             r = len - high + paneInnerR,
@@ -727,7 +727,7 @@ if (seriesTypes.column) {
         proceed: Function
     ): void {
 
-        var series = this,
+        let series = this,
             options = series.options,
             threshold = options.threshold,
             stacking = options.stacking,
@@ -937,7 +937,7 @@ if (seriesTypes.column) {
         angle: number,
         options: DataLabelOptions
     ): DataLabelOptions {
-        var align: AlignValue,
+        let align: AlignValue,
             verticalAlign: VerticalAlignValue;
 
         if (options.align === null) {
@@ -982,7 +982,7 @@ if (seriesTypes.column) {
         alignTo: BBoxObject,
         isNew?: boolean
     ): void {
-        var chart = this.chart,
+        let chart = this.chart,
             inside = pick(options.inside, !!this.options.stacking),
             angle,
             shapeArgs,
@@ -1000,7 +1000,8 @@ if (seriesTypes.column) {
                 // don't need to be swapped (inverted argument is false)
                 this.forceDL = chart.isInsidePlot(
                     (point as Highcharts.PolarPoint).plotX,
-                    Math.round((point as Highcharts.PolarPoint).plotY), false);
+                    Math.round((point as Highcharts.PolarPoint).plotY)
+                );
 
                 // Checks if labels should be positioned inside
                 if (inside && point.shapeArgs) {
@@ -1065,7 +1066,7 @@ wrap(pointerProto, 'getCoordinates', function (
     proceed: Pointer['getCoordinates'],
     e: PointerEvent
 ): Highcharts.PointerAxisCoordinatesObject {
-    var chart = this.chart,
+    let chart = this.chart,
         ret: Highcharts.PointerAxisCoordinatesObject = {
             xAxis: [],
             yAxis: []
@@ -1074,7 +1075,7 @@ wrap(pointerProto, 'getCoordinates', function (
     if (chart.polar) {
 
         chart.axes.forEach(function (axis: Highcharts.Axis): void {
-            var isXAxis = axis.isXAxis,
+            let isXAxis = axis.isXAxis,
                 center = axis.center,
                 x,
                 y;
@@ -1113,7 +1114,7 @@ SVGRenderer.prototype.clipCircle = function (
     r: number,
     innerR: number
 ): SVGElement {
-    var wrapper: SVGElement,
+    let wrapper: SVGElement,
         id = uniqueKey(),
 
         clipPath = this.createElement('clipPath').attr({
@@ -1151,7 +1152,7 @@ addEvent(Chart, 'afterDrawChartBox', function (): void {
 });
 
 addEvent(Series, 'afterInit', function (): void {
-    var chart = this.chart;
+    const chart = this.chart;
 
     // Add flags that identifies radial inverted series
     if (chart.inverted && chart.polar) {

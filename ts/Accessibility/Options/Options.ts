@@ -243,7 +243,7 @@ declare global {
  *         Formatted string for the screen reader module.
  */
 
-var options: DeepPartial<Highcharts.Options> = {
+const options: DeepPartial<Highcharts.Options> = {
 
     /**
      * Options for configuring accessibility for the chart. Requires the

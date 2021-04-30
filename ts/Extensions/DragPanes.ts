@@ -320,7 +320,7 @@ class AxisResizer {
      * @function Highcharts.AxisResizer#render
      */
     public render(): void {
-        var resizer = this,
+        let resizer = this,
             axis = resizer.axis,
             chart = axis.chart,
             options = resizer.options,
@@ -377,7 +377,7 @@ class AxisResizer {
      * @function Highcharts.AxisResizer#addMouseEvents
      */
     public addMouseEvents(): void {
-        var resizer = this,
+        let resizer = this,
             ctrlLineElem = resizer.controlLine.element,
             container = resizer.axis.chart.container,
             eventsToUnbind: Array<Function> = [],
@@ -493,7 +493,7 @@ class AxisResizer {
      * @param {number} chartY
      */
     public updateAxes(chartY: number): void {
-        var resizer = this,
+        let resizer = this,
             chart = resizer.axis.chart,
             axes = resizer.options.controlledAxis,
             nextAxes: Array<(number|string)> = (axes as any).next.length === 0 ?
@@ -539,7 +539,7 @@ class AxisResizer {
                 i: number
             ): void {
                 // Axes given as array index, axis object or axis id
-                var axis: Highcharts.Axis = isNumber(axisInfo) ?
+                let axis: Highcharts.Axis = isNumber(axisInfo) ?
                         // If it's a number - it's an index
                         chart.yAxis[axisInfo] :
                         (
@@ -660,7 +660,7 @@ class AxisResizer {
      * @function Highcharts.AxisResizer#destroy
      */
     public destroy(): void {
-        var resizer = this,
+        const resizer = this,
             axis = resizer.axis;
 
         // Clear resizer in axis
@@ -689,7 +689,7 @@ Axis.keepProps.push('resizer');
 /* eslint-disable no-invalid-this */
 // Add new AxisResizer, update or remove it
 addEvent(Axis, 'afterRender', function (): void {
-    var axis = this,
+    let axis = this,
         resizer = axis.resizer,
         resizerOptions = axis.options.resize,
         enabled;

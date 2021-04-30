@@ -58,7 +58,7 @@ const dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL: string): (st
             buf = new win.ArrayBuffer(binStr.length),
             binary = new win.Uint8Array(buf);
 
-        for (var i = 0; i < binary.length; ++i) {
+        for (let i = 0; i < binary.length; ++i) {
             binary[i] = binStr.charCodeAt(i);
         }
 
@@ -84,7 +84,7 @@ const downloadURL = Highcharts.downloadURL = function (
     filename: string
 ): void {
     const nav = win.navigator;
-    var a = doc.createElement('a'),
+    let a = doc.createElement('a'),
         windowRef;
 
     // IE specific blob implementation

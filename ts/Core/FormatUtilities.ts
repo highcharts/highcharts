@@ -97,7 +97,7 @@ function dateFormat(
  * method.
  *
  * @example
- * var s = Highcharts.format(
+ * let s = Highcharts.format(
  *     'The {color} fox was {len:.2f} feet long',
  *     { color: 'red', len: Math.PI }
  * );

@@ -84,7 +84,7 @@ declare module './Types' {
     }
 }
 
-var argsToArray = function (args: IArguments): Array<any> {
+const argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
     },
     isObject = function (x: unknown): x is object {
@@ -93,8 +93,8 @@ var argsToArray = function (args: IArguments): Array<any> {
     },
     Chart = H.Chart;
 
-var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
-    var options = axis.options;
+const applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
+    const options = axis.options;
 
     // Center-align by default
     /*
@@ -221,13 +221,13 @@ Axis.prototype.getMaxLabelDimensions = function (
     ticks: Record<string, Highcharts.Tick>,
     tickPositions: Array<(number|string)>
 ): SizeObject {
-    var dimensions: SizeObject = {
+    const dimensions: SizeObject = {
         width: 0,
         height: 0
     };
 
     tickPositions.forEach(function (pos: (number|string)): void {
-        var tick = ticks[pos],
+        let tick = ticks[pos],
             labelHeight = 0,
             labelWidth = 0,
             label: SVGElement;
@@ -310,7 +310,7 @@ addEvent(
             index: number;
         }
     ): void {
-        var tick = this,
+        let tick = this,
             label = tick.label,
             axis = tick.axis,
             reversed = axis.reversed,
@@ -715,11 +715,11 @@ class GridAxis {
         }
 
         if (gridOptions.columns) {
-            var columns = axis.grid.columns = [] as Array<GridAxis>,
+            let columns = axis.grid.columns = [] as Array<GridAxis>,
                 columnIndex = axis.grid.columnIndex = 0;
             // Handle columns, each column is a grid axis
             while (++columnIndex < gridOptions.columns.length) {
-                var columnOptions = merge(
+                const columnOptions = merge(
                     userOptions,
                     gridOptions.columns[
                         gridOptions.columns.length - columnIndex - 1
@@ -737,7 +737,7 @@ class GridAxis {
 
                 delete (columnOptions.grid as any).columns; // Prevent recursion
 
-                var column = new Axis(axis.chart, columnOptions) as GridAxis;
+                const column = new Axis(axis.chart, columnOptions) as GridAxis;
                 column.grid.isColumn = true;
                 column.grid.columnIndex = columnIndex;
 
@@ -970,7 +970,7 @@ class GridAxis {
         this: Axis,
         e: { userOptions: DeepPartial<Highcharts.AxisOptions> }
     ): void {
-        var options = this.options,
+        let options = this.options,
             userOptions = e.userOptions,
             gridAxisOptions: DeepPartial<Highcharts.AxisOptions>,
             gridOptions: GridAxis.Options = (
@@ -1082,7 +1082,7 @@ class GridAxis {
                         max: number
                     ): (TickPositionsArray|undefined) {
 
-                        var parentInfo = (
+                        const parentInfo = (
                             this.linkedParent &&
                             this.linkedParent.tickPositions &&
                             this.linkedParent.tickPositions.info
@@ -1090,7 +1090,7 @@ class GridAxis {
 
                         if (parentInfo) {
 
-                            var unitIdx: (number|undefined),
+                            let unitIdx: (number|undefined),
                                 count,
                                 unitName,
                                 i,

@@ -133,7 +133,7 @@ declare module './Axis/TickPositionsArray'{
  * });
  *
  * // Apply time settings by instance
- * var chart = Highcharts.chart('container', {
+ * let chart = Highcharts.chart('container', {
  *     time: {
  *         timezone: 'America/New_York'
  *     },
@@ -668,7 +668,7 @@ class Time {
         max?: number,
         startOfWeek?: number
     ): TickPositionsArray {
-        const time = this,
+        let time = this,
             Date = time.Date,
             tickPositions = [] as TickPositionsArray,
             higherRanks = {} as Record<string, string>,

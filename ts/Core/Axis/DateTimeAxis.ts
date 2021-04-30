@@ -127,7 +127,7 @@ class DateTimeAxisAdditions {
         tickInterval: number,
         unitsOption?: Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>
     ): Highcharts.DateTimeAxisNormalizedObject {
-        var units = unitsOption || [[
+        let units = unitsOption || [[
                 'millisecond', // unit name
                 [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
             ], [
@@ -169,7 +169,7 @@ class DateTimeAxisAdditions {
             if (units[i + 1]) {
                 // lessThan is in the middle between the highest multiple and
                 // the next unit.
-                var lessThan = (
+                const lessThan = (
                     interval *
                     (multiples as any)[(multiples as any).length - 1] +
                     timeUnits[units[i + 1][0]]

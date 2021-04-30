@@ -1,6 +1,0 @@
----
- name: Homepage Animation with Highcharts
- authors:
-   - Nancy Dillon
- js_wrap: b
-...

@@ -305,7 +305,7 @@ class Tick {
      * @return {void}
      */
     public addLabel(): void {
-        var tick = this,
+        let tick = this,
             axis = tick.axis,
             options = axis.options,
             chart = axis.chart,
@@ -396,12 +396,14 @@ class Tick {
         const labelFormatter = (
             ctx: Highcharts.AxisLabelsFormatterContextObject
         ): string => {
+            if (labelOptions.formatter) {
+                return labelOptions.formatter.call(ctx, ctx);
+            }
             if (labelOptions.format) {
                 ctx.text = axis.defaultLabelFormatter.call(ctx);
                 return F.format(labelOptions.format, ctx, chart);
             }
-            return (labelOptions.formatter || axis.defaultLabelFormatter)
-                .call(ctx, ctx);
+            return axis.defaultLabelFormatter.call(ctx, ctx);
         };
         str = labelFormatter.call(ctx, ctx);
 
@@ -484,7 +486,7 @@ class Tick {
         str: string,
         labelOptions: Highcharts.XAxisLabelsOptions
     ): (SVGElement|undefined) {
-        var axis = this.axis,
+        const axis = this.axis,
             chart = axis.chart,
             label = defined(str) && labelOptions.enabled ?
                 chart.renderer
@@ -550,7 +552,7 @@ class Tick {
         tickmarkOffset: number,
         old?: boolean
     ): PositionObject {
-        var axis = this.axis,
+        let axis = this.axis,
             chart = axis.chart,
             cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
             pos;
@@ -622,7 +624,7 @@ class Tick {
         step: number
     ): PositionObject {
 
-        var axis = this.axis,
+        let axis = this.axis,
             transA = axis.transA,
             reversed = ( // #7911
                 axis.isLinked && axis.linkedParent ?
@@ -737,7 +739,7 @@ class Tick {
      * @return {void}
      */
     public handleOverflow(xy: PositionObject): void {
-        var tick = this,
+        let tick = this,
             axis = this.axis,
             labelOptions = axis.options.labels,
             pxPos = xy.x,
@@ -856,7 +858,7 @@ class Tick {
      * @return {void}
      */
     public moveLabel(str: string, labelOptions: Highcharts.XAxisLabelsOptions): void {
-        var tick = this,
+        let tick = this,
             label = tick.label,
             moved = false,
             axis = tick.axis,
@@ -922,7 +924,7 @@ class Tick {
         old?: boolean,
         opacity?: number
     ): void {
-        var tick = this,
+        const tick = this,
             axis = tick.axis,
             horiz = axis.horiz,
             pos = tick.pos,
@@ -969,7 +971,7 @@ class Tick {
         opacity: number,
         reverseCrisp: number
     ): void {
-        var tick = this,
+        let tick = this,
             axis = tick.axis,
             options = axis.options,
             gridLine = tick.gridLine,
@@ -1050,7 +1052,7 @@ class Tick {
         opacity: number,
         reverseCrisp: number
     ): void {
-        var tick = this,
+        let tick = this,
             axis = tick.axis,
             options = axis.options,
             renderer = axis.chart.renderer,
@@ -1126,7 +1128,7 @@ class Tick {
         opacity: number,
         index: number
     ): void {
-        var tick = this,
+        let tick = this,
             axis = tick.axis,
             horiz = axis.horiz,
             options = axis.options,
@@ -1204,7 +1206,7 @@ class Tick {
      * @return {void}
      */
     public replaceMovedLabel(): void {
-        var tick = this,
+        let tick = this,
             label = tick.label,
             axis = tick.axis,
             reversed = axis.reversed,

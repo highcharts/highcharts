@@ -46,7 +46,7 @@ declare module '../../Core/Series/SeriesLike' {
 import butils from './BoostUtils.js';
 import createAndAttachRenderer from './BoostAttach.js';
 
-var eachAsync = butils.eachAsync,
+let eachAsync = butils.eachAsync,
     pointDrawHandler = butils.pointDrawHandler,
     allocateIfNotSeriesBoosting = butils.allocateIfNotSeriesBoosting,
     renderIfNotSeriesBoosting = butils.renderIfNotSeriesBoosting,
@@ -68,7 +68,7 @@ function init(): void {
          * @function Highcharts.Series#renderCanvas
          */
         renderCanvas: function (this: Series): void {
-            var series = this,
+            let series = this,
                 options = series.options || {},
                 renderer: Highcharts.BoostGLRenderer = false as any,
                 chart = series.chart,
@@ -216,7 +216,7 @@ function init(): void {
                 d: (number|Array<number>|Record<string, number>),
                 i: number
             ): boolean {
-                var x: number,
+                let x: number,
                     y: number,
                     clientX,
                     plotY,

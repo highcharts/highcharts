@@ -1255,7 +1255,7 @@ H.post = function (
     formAttributes?: HTMLAttributes
 ): void {
     // create the form
-    var form: HTMLFormElement = createElement('form', merge({
+    const form: HTMLFormElement = createElement('form', merge({
         method: 'post',
         action: url,
         enctype: 'multipart/form-data'
@@ -1323,7 +1323,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         options: Highcharts.Options
     ): string {
 
-        var split = svg.indexOf('</svg>') + 6,
+        let split = svg.indexOf('</svg>') + 6,
             html = svg.substr(split);
 
         // Remove any HTML added to the container after the SVG (#894, #9087)
@@ -1421,7 +1421,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this: Chart,
         chartOptions?: DeepPartial<Highcharts.Options>
     ): string {
-        var chart = this,
+        let chart = this,
             chartCopy: Chart,
             sandbox,
             svg,
@@ -1518,7 +1518,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {
             ['xAxis', 'yAxis', 'series'].forEach(function (coll: string): void {
-                var collOptions: Partial<Highcharts.Options> = {};
+                const collOptions: Partial<Highcharts.Options> = {};
 
                 if ((chartOptions as any)[coll]) {
                     (collOptions as any)[coll] = (chartOptions as any)[coll];
@@ -1529,7 +1529,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Reflect axis extremes in the export (#5924)
         chart.axes.forEach(function (axis: Highcharts.Axis): void {
-            var axisCopy = find(chartCopy.axes, function (
+            const axisCopy = find(chartCopy.axes, function (
                     copy: Highcharts.Axis
                 ): boolean {
                     return copy.options.internalKey ===
@@ -1579,7 +1579,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         options: Highcharts.ExportingOptions,
         chartOptions: Partial<Highcharts.Options>
     ): string {
-        var chartExportingOptions: Highcharts.ExportingOptions =
+        const chartExportingOptions: Highcharts.ExportingOptions =
             this.options.exporting as any;
 
         return this.getSVG(merge(
@@ -1612,7 +1612,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     getFilename: function (this: Chart): string {
-        var s = this.userOptions.title && this.userOptions.title.text,
+        let s = this.userOptions.title && this.userOptions.title.text,
             filename: string = (this.options.exporting as any).filename;
 
         if (filename) {
@@ -1672,7 +1672,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chartOptions: Highcharts.Options
     ): void {
 
-        var svg = this.getSVGForExport(exportingOptions, chartOptions);
+        const svg = this.getSVGForExport(exportingOptions, chartOptions);
 
         // merge the options
         exportingOptions = merge(this.options.exporting, exportingOptions);
@@ -1733,7 +1733,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 resetParams: void 0
             };
 
-        var handleMaxWidth: (boolean|number);
+        let handleMaxWidth: (boolean|number);
 
         chart.isPrinting = true;
         chart.pointer.reset(null as any, 0);
@@ -1836,7 +1836,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     print: function (this: Chart): void {
-        var chart = this;
+        const chart = this;
 
         if (chart.isPrinting) { // block the button while in printing mode
             return;
@@ -1895,7 +1895,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         height: number,
         button: SVGElement
     ): void {
-        var chart = this,
+        let chart = this,
             navOptions: Highcharts.NavigationOptions =
                 chart.options.navigation as any,
             chartWidth = chart.chartWidth,
@@ -1993,7 +1993,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
 
                 if (isObject(item, true)) {
-                    var element;
+                    let element;
 
                     if ((item as any).separator) {
                         element = createElement(
@@ -2100,7 +2100,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this: Chart,
         options: Highcharts.ExportingButtonOptions
     ): void {
-        var chart = this,
+        let chart = this,
             renderer = chart.renderer,
             btnOptions = merge<Highcharts.ExportingButtonOptions>(
                 (chart.options.navigation as any).buttonOptions,
@@ -2127,7 +2127,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
 
-        var attr = btnOptions.theme,
+        let attr = btnOptions.theme,
             states = attr.states,
             hover = states && states.hover,
             select = states && states.select,
@@ -2274,7 +2274,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this: Chart,
         e?: Event
     ): void {
-        var chart: Chart = e ? (e.target as any) : this,
+        let chart: Chart = e ? (e.target as any) : this,
             exportSVGElements = chart.exportSVGElements,
             exportDivElements = chart.exportDivElements,
             exportEvents = chart.exportEvents,
@@ -2389,7 +2389,7 @@ SVGRenderer.prototype.unstyledElements = [
  * @requires modules/exporting
  */
 Chart.prototype.inlineStyles = function (): void {
-    var renderer = this.renderer,
+    let renderer = this.renderer,
         inlineToAttributes = renderer.inlineToAttributes,
         blacklist = renderer.inlineBlacklist,
         whitelist = renderer.inlineWhitelist, // For IE
@@ -2439,7 +2439,7 @@ Chart.prototype.inlineStyles = function (): void {
      * @return {void}
      */
     function recurse(node: HTMLDOMElement): void {
-        var styles: CSSObject,
+        let styles: CSSObject,
             parentStyles: (CSSObject|SVGAttributes),
             cssText = '',
             dummy: Element,
@@ -2551,7 +2551,7 @@ Chart.prototype.inlineStyles = function (): void {
             // Loop through all styles and add them inline if they are ok
             if (H.isFirefox || H.isMS) {
                 // Some browsers put lots of styles on the prototype
-                for (var p in styles) { // eslint-disable-line guard-for-in
+                for (const p in styles) { // eslint-disable-line guard-for-in
                     filterStyles((styles as any)[p], p);
                 }
             } else {
@@ -2604,7 +2604,7 @@ H.Renderer.prototype.symbols.menu = function (
     width: number,
     height: number
 ): SVGPath {
-    var arr: SVGPath = [
+    const arr: SVGPath = [
         ['M', x, y + 2.5],
         ['L', x + width, y + 2.5],
         ['M', x, y + height / 2 + 0.5],
@@ -2622,7 +2622,7 @@ H.Renderer.prototype.symbols.menuball = function (
     width: number,
     height: number
 ): SVGPath {
-    var path: SVGPath = [],
+    let path: SVGPath = [],
         h = (height / 3) - 2;
 
     path = path.concat(
@@ -2641,7 +2641,7 @@ H.Renderer.prototype.symbols.menuball = function (
  * @requires modules/exporting
  */
 Chart.prototype.renderExporting = function (): void {
-    var chart = this,
+    const chart = this,
         exportingOptions: Highcharts.ExportingOptions =
             chart.options.exporting as any,
         buttons = exportingOptions.buttons,
@@ -2677,7 +2677,7 @@ Chart.prototype.renderExporting = function (): void {
 // than the Chart prototype in order to use the chart instance inside the update
 // function.
 addEvent(Chart, 'init', function (): void {
-    var chart = this;
+    const chart = this;
 
     /**
      * @private
@@ -2738,16 +2738,16 @@ Chart.prototype.callbacks.push(function (chart: Chart): void {
     // Uncomment this to see a button directly below the chart, for quick
     // testing of export
     /*
-    var button, viewImage, viewSource;
+    let button, viewImage, viewSource;
     if (!chart.renderer.forExport) {
         viewImage = function () {
-            var div = doc.createElement('div');
+            let div = doc.createElement('div');
             div.innerHTML = chart.getSVGForExport();
             chart.renderTo.parentNode.appendChild(div);
         };
 
         viewSource = function () {
-            var pre = doc.createElement('pre');
+            let pre = doc.createElement('pre');
             pre.innerHTML = chart.getSVGForExport()
                 .replace(/</g, '\n&lt;')
                 .replace(/>/g, '&gt;');

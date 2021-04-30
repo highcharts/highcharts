@@ -234,7 +234,7 @@ H.approximations = {
     sum: function (
         arr: Highcharts.DataGroupingApproximationsArray
     ): (null|number|undefined) {
-        var len = arr.length,
+        let len = arr.length,
             ret;
 
         // 1. it consists of nulls exclusive
@@ -255,7 +255,7 @@ H.approximations = {
     average: function (
         arr: Highcharts.DataGroupingApproximationsArray
     ): (null|number|undefined) {
-        var len = arr.length,
+        let len = arr.length,
             ret = approximations.sum(arr);
 
         // If we have a number, return it divided by the length. If not,
@@ -269,7 +269,7 @@ H.approximations = {
     // The same as average, but for series with multiple values, like area
     // ranges.
     averages: function (): (Array<(null|number|undefined)>|undefined) { // #5479
-        var ret = [] as Array<(null|number|undefined)>;
+        const ret = [] as Array<(null|number|undefined)>;
 
         [].forEach.call(arguments, function (
             arr: Highcharts.DataGroupingApproximationsArray
@@ -356,7 +356,7 @@ const groupData = function (
     groupPositions: Array<number>,
     approximation: (string|Function)
 ): Highcharts.DataGroupingResultObject {
-    var series = this,
+    let series = this,
         data = series.data,
         dataOptions = series.options && series.options.data,
         groupedXData = [],
@@ -491,7 +491,7 @@ const groupData = function (
         // for this specific group
         if (pointArrayMap) {
 
-            var index = (
+            let index = (
                     series.options.dataGrouping &&
                     series.options.dataGrouping.groupAll ?
                         i : (series.cropStart as any) + i
@@ -653,7 +653,7 @@ const adjustExtremes = function (
     }
 };
 
-var dataGrouping = {
+const dataGrouping = {
     approximations: approximations,
     groupData: groupData
 };
@@ -804,7 +804,7 @@ seriesProto.groupData = groupData;
 // Extend the basic processData method, that crops the data to the current zoom
 // range, with data grouping logic.
 seriesProto.processData = function (): any {
-    var series = this,
+    let series = this,
         chart = series.chart,
         options = series.options,
         dataGroupingOptions = options.dataGrouping,
@@ -845,7 +845,7 @@ seriesProto.processData = function (): any {
     if (!skip) {
         series.destroyGroupedData();
 
-        var i,
+        let i,
             processedXData = (dataGroupingOptions as any).groupAll ?
                 series.xData :
                 series.processedXData,
@@ -871,7 +871,7 @@ seriesProto.processData = function (): any {
             series.isDirty = true;
             series.points = null as any; // #6709
 
-            var extremes = xAxis.getExtremes(),
+            let extremes = xAxis.getExtremes(),
                 xMin = extremes.min,
                 xMax = extremes.max,
                 groupIntervalFactor = (
@@ -1024,7 +1024,7 @@ addEvent(Tooltip, 'headerFormatter', function (
     this: Highcharts.Tooltip,
     e: AnyRecord
 ): void {
-    var tooltip = this,
+    let tooltip = this,
         chart = this.chart,
         time = chart.time,
         labelConfig = e.labelConfig,
@@ -1117,7 +1117,7 @@ addEvent(Series, 'afterSetOptions', function (
     e: { options: SeriesTypeOptions }
 ): void {
 
-    var options = e.options,
+    let options = e.options,
         type = this.type,
         plotOptions: SeriesTypePlotOptions = this.chart.options.plotOptions as any,
         defaultOptions: Highcharts.DataGroupingOptionsObject =
@@ -1131,13 +1131,19 @@ addEvent(Series, 'afterSetOptions', function (
             defaultOptions = merge(commonOptions, specificOptions[type]);
         }
 
+        const rangeSelector = this.chart.rangeSelector;
+
         options.dataGrouping = merge(
             baseOptions as any,
             defaultOptions,
             plotOptions.series && plotOptions.series.dataGrouping, // #1228
             // Set by the StockChart constructor:
             (plotOptions[type] as any).dataGrouping,
-            this.userOptions.dataGrouping
+            this.userOptions.dataGrouping,
+            !options.isInternal &&
+                rangeSelector &&
+                isNumber(rangeSelector.selected) &&
+                rangeSelector.buttonOptions[rangeSelector.selected].dataGrouping
         );
     }
 });
@@ -1155,7 +1161,7 @@ addEvent(Axis, 'afterSetScale', function (): void {
 // width of the axis' series, and if whether one of the axes need grouping.
 Axis.prototype.getGroupPixelWidth = function (this: Highcharts.Axis): number {
 
-    var series = this.series,
+    let series = this.series,
         len = series.length,
         i,
         groupPixelWidth = 0,
@@ -1227,7 +1233,7 @@ Axis.prototype.setDataGrouping = function (
 ): void {
     const axis = this as AxisType;
 
-    var i;
+    let i;
 
     redraw = pick(redraw, true);
 
