@@ -450,9 +450,13 @@ class SVGLabel extends SVGElement {
                     this.renderer.symbol(this.symbolKey) :
                     this.renderer.rect();
 
+                const className = this.className ?
+                    this.className.split(' ', 1)[0] :
+                    '';
+
                 box.addClass( // Don't use label className for buttons
-                    (this.className === 'button' ? '' : 'highcharts-label-box') +
-                    (this.className ? ' highcharts-' + this.className + '-box' : '')
+                    (className === 'button' ? '' : 'highcharts-label-box') +
+                    (className ? ' highcharts-' + className + '-box' : '')
                 );
 
                 box.add(this);

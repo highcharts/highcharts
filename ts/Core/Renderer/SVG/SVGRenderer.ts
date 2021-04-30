@@ -1080,7 +1080,7 @@ class SVGRenderer {
                 void 0,
                 useHTML,
                 void 0,
-                'button'
+                'button highcharts-no-tooltip'
             ),
             curState = 0,
             styledMode = this.styledMode,

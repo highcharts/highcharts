@@ -1350,7 +1350,11 @@ class Pointer {
                 )
             )
         ) {
-            this.runPointActions(pEvt);
+            if (this.inClass(pEvt.target as any, 'highcharts-no-tooltip')) {
+                this.reset(false, 0);
+            } else {
+                this.runPointActions(pEvt);
+            }
         }
     }
 
