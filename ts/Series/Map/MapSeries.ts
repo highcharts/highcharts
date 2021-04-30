@@ -455,7 +455,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public animate(init?: boolean): void {
-        var chart = this.chart,
+        let chart = this.chart,
             animation = this.options.animation,
             group = this.group;
 
@@ -496,7 +496,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public animateDrilldown(init?: boolean): void {
-        var toBox = this.chart.plotBox,
+        let toBox = this.chart.plotBox,
             level: Highcharts.DrilldownLevelObject =
                 (this.chart.drilldownLevels as any)[
                     (this.chart.drilldownLevels as any).length - 1
@@ -596,7 +596,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             // xAxis = series.xAxis,
             // yAxis = series.yAxis,
             group = series.group,
@@ -650,7 +650,7 @@ class MapSeries extends ScatterSeries {
             // Add class names
             series.points.forEach(function (point): void {
                 if (point.graphic) {
-                    var className = '';
+                    let className = '';
                     if (point.name) {
                         className +=
                             'highcharts-name-' +
@@ -927,7 +927,7 @@ class MapSeries extends ScatterSeries {
         point: MapPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var attr = point.series.chart.styledMode ?
+        const attr = point.series.chart.styledMode ?
             this.colorAttribs(point) :
             ColumnSeries.prototype.pointAttribs.call(
                 this, point as any, state
@@ -955,7 +955,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public render(): void {
-        var series = this,
+        const series = this,
             render = Series.prototype.render;
 
         // Give IE8 some time to breathe.
@@ -980,7 +980,7 @@ class MapSeries extends ScatterSeries {
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
-        var options = this.options,
+        let options = this.options,
             chartOptions = this.chart.options.chart,
             globalMapData = chartOptions && chartOptions.map,
             mapData = options.mapData,
@@ -1004,7 +1004,7 @@ class MapSeries extends ScatterSeries {
         // Convert Array point definitions to objects using pointArrayMap
         if (data) {
             data.forEach(function (val, i): void {
-                var ix = 0;
+                let ix = 0;
 
                 if (isNumber(val)) {
                     data[i] = {
@@ -1024,7 +1024,7 @@ class MapSeries extends ScatterSeries {
                     }
                     // Run through pointArrayMap and what's left of the
                     // point data array in parallel, copying over the values
-                    for (var j = 0; j < pointArrayMap.length; ++j, ++ix) {
+                    for (let j = 0; j < pointArrayMap.length; ++j, ++ix) {
                         if (
                             pointArrayMap[j] &&
                             typeof val[ix] !== 'undefined'
@@ -1152,7 +1152,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public setOptions(itemOptions: MapSeriesOptions): MapSeriesOptions {
-        var options = Series.prototype.setOptions.call(this, itemOptions),
+        let options = Series.prototype.setOptions.call(this, itemOptions),
             joinBy = options.joinBy,
             joinByNull = joinBy === null;
 
@@ -1173,7 +1173,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public translate(): void {
-        var series = this,
+        const series = this,
             doFullTranslate = series.doFullTranslate(),
             projection = this.chart.mapView && this.chart.mapView.projection;
 

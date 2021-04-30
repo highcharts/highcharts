@@ -91,7 +91,7 @@ class Pie3DSeries extends PieSeries {
         if (!this.chart.is3d()) {
             super.animate.apply(this, arguments);
         } else {
-            var animation = this.options.animation,
+            let animation = this.options.animation,
                 attribs: SVGAttributes,
                 center = this.center,
                 group = this.group,
@@ -149,12 +149,12 @@ class Pie3DSeries extends PieSeries {
      */
     public drawDataLabels(): void {
         if (this.chart.is3d()) {
-            var series = this,
+            const series = this,
                 chart = series.chart,
                 options3d = chart.options.chart.options3d as any;
 
             series.data.forEach(function (point): void {
-                var shapeArgs = point.shapeArgs,
+                const shapeArgs = point.shapeArgs,
                     r = (shapeArgs as any).r,
                     // #3240 issue with datalabels for 0 and null values
                     a1 = ((shapeArgs as any).alpha || options3d.alpha) * deg2rad,
@@ -184,7 +184,7 @@ class Pie3DSeries extends PieSeries {
      * @private
      */
     public pointAttribs(point: Pie3DPoint): SVGAttributes {
-        var attr = super.pointAttribs.apply(this, arguments),
+        const attr = super.pointAttribs.apply(this, arguments),
             options = this.options;
 
         if (this.chart.is3d() && !this.chart.styledMode) {
@@ -206,7 +206,7 @@ class Pie3DSeries extends PieSeries {
             return;
         }
 
-        var series = this,
+        let series = this,
             seriesOptions = series.options,
             depth = seriesOptions.depth || 0,
             options3d = series.chart.options.chart.options3d as any,
@@ -224,7 +224,7 @@ class Pie3DSeries extends PieSeries {
 
         series.data.forEach(function (point): void {
 
-            var shapeArgs = point.shapeArgs,
+            let shapeArgs = point.shapeArgs,
                 angle: number;
 
             point.shapeType = 'arc3d';

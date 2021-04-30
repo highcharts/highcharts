@@ -156,7 +156,7 @@ MapNavigation.prototype.update = function (
     this: Highcharts.MapNavigation,
     options?: MapNavigationOptions
 ): void {
-    var chart = this.chart,
+    let chart = this.chart,
         o: MapNavigationOptions = chart.options.mapNavigation as any,
         attr: ButtonThemeObject,
         states: ButtonThemeStatesObject|undefined,
@@ -274,7 +274,7 @@ MapNavigation.prototype.updateEvents = function (
     this: Highcharts.MapNavigation,
     options: MapNavigationOptions
 ): void {
-    var chart = this.chart;
+    const chart = this.chart;
 
     // Add the double click event
     if (
@@ -297,8 +297,9 @@ MapNavigation.prototype.updateEvents = function (
     if (pick(options.enableMouseWheelZoom, options.enabled)) {
         this.unbindMouseWheel = this.unbindMouseWheel || addEvent(
             chart.container,
-            typeof doc.onmousewheel === 'undefined' ?
-                'DOMMouseScroll' : 'mousewheel',
+            doc.onwheel !== void 0 ? 'wheel' : // Newer Firefox
+                doc.onmousewheel !== void 0 ? 'mousewheel' :
+                    'DOMMouseScroll',
             function (e: PointerEvent): boolean {
                 // Prevent scrolling when the pointer is over the element
                 // with that class, for example anotation popup #12100.
@@ -345,7 +346,7 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
         [['x', 'width'], ['y', 'height']].forEach(function (
             dim: Array<string>
         ): void {
-            var pos = dim[0],
+            const pos = dim[0],
                 size = dim[1];
 
             if ((inner as any)[pos] + (inner as any)[size] >

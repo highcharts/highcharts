@@ -2,13 +2,13 @@
 // call downloads the XML format data, basing on specific capital
 // city latitude and longitude values.
 
-function getXML(url, cb) {
+function getJSON(url, cb) {
     const request = new XMLHttpRequest();
     request.open('GET', url, true);
 
     request.onload = function () {
         if (this.status < 400) {
-            return cb(new DOMParser().parseFromString(this.response, 'application/xml'));
+            return cb(JSON.parse(this.response));
         }
     };
 
@@ -73,12 +73,13 @@ const newData = [
 // series array.
 function getTemp(point, countries, capitals) {
 
-    const url = 'https://api.met.no/weatherapi/locationforecast/1.9/?lat=' +
+    const url = 'https://api.met.no/weatherapi/locationforecast/2.0/?lat=' +
     point[1] + '&lon=' + point[2];
 
-    const callBack = xml => {
+    const callBack = json => {
 
-        const temp = xml.getElementsByTagName('temperature')[0].getAttribute('value');
+        const temp = json.properties.timeseries[0].data.instant.details
+            .air_temperature;
         const colorAxis = countries.chart.colorAxis[0];
 
         const country = {
@@ -98,7 +99,7 @@ function getTemp(point, countries, capitals) {
         return temp;
     };
 
-    getXML(url, callBack);
+    getJSON(url, callBack);
 }
 
 // Create the chart
@@ -148,7 +149,7 @@ Highcharts.mapChart('container', {
 
     legend: {
         title: {
-            text: 'Degrees of Celsius'
+            text: 'Degrees Celsius'
         }
     },
 

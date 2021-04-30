@@ -66,7 +66,7 @@ declare global {
  * @return {*}
  */
 function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
-    var vertShade = [
+    let vertShade = [
             /* eslint-disable max-len, @typescript-eslint/indent */
             '#version 100',
             '#define LN10 2.302585092994046',
@@ -312,7 +312,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
         str: string,
         type: string
     ): (false|WebGLShader|null) {
-        var t = type === 'vertex' ? gl.VERTEX_SHADER : gl.FRAGMENT_SHADER,
+        const t = type === 'vertex' ? gl.VERTEX_SHADER : gl.FRAGMENT_SHADER,
             shader = gl.createShader(t);
 
         gl.shaderSource(shader as any, str);
@@ -337,7 +337,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
      * @private
      */
     function createShader(): boolean {
-        var v = stringToProgram(vertShade, 'vertex'),
+        const v = stringToProgram(vertShade, 'vertex'),
             f = stringToProgram(fragShade, 'fragment');
 
         if (!v || !f) {
@@ -417,7 +417,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
      */
     function setUniform(name: string, val: number): void {
         if (gl && shaderProgram) {
-            var u = uLocations[name] = (
+            const u = uLocations[name] = (
                 uLocations[name] ||
                 gl.getUniformLocation(
                     shaderProgram,
@@ -482,7 +482,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
         zCalcMin: number,
         zCalcMax: number
     ): void {
-        var seriesOptions = series.options,
+        let seriesOptions = series.options,
             zMin = Number.MAX_VALUE,
             zMax = -Number.MAX_VALUE;
 

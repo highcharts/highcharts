@@ -12,7 +12,7 @@ import type ProjectionDefinition from '../ProjectionTypes';
 
 'use strict';
 
-var A1 = 1.340264,
+const A1 = 1.340264,
     A2 = -0.081106,
     A3 = 0.000893,
     A4 = 0.003796,

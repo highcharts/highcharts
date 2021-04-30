@@ -39,15 +39,13 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-declare global {
-    namespace Highcharts {
-        interface SVGElement {
-            focusBorder?: SVGElement;
-            /** @requires modules/accessibility */
-            addFocusBorder(margin: number, attribs: SVGAttributes): void;
-            /** @requires modules/accessibility */
-            removeFocusBorder(): void;
-        }
+declare module '../Core/Renderer/SVG/SVGElementLike' {
+    interface SVGElementLike {
+        focusBorder?: SVGElement;
+        /** @requires modules/accessibility */
+        addFocusBorder(margin: number, attribs: SVGAttributes): void;
+        /** @requires modules/accessibility */
+        removeFocusBorder(): void;
     }
 }
 
@@ -341,7 +339,7 @@ H.Chart.prototype.setFocusToElement = function (
     svgElement: SVGElement,
     focusElement?: DOMElementType
 ): void {
-    var focusBorderOptions: (
+    const focusBorderOptions: (
             Highcharts.AccessibilityKeyboardNavigationFocusBorderOptions
         ) = this.options.accessibility.keyboardNavigation.focusBorder,
         browserFocusElement = focusElement || svgElement.element;

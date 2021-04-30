@@ -3,7 +3,7 @@
  * @module highcharts/modules/map
  * @requires highcharts
  *
- * Highmaps as a plugin for Highcharts or Highstock.
+ * Highmaps as a plugin for Highcharts or Highcharts Stock.
  *
  * (c) 2011-2021 Torstein Honsi
  *

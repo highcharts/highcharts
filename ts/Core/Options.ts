@@ -40,13 +40,30 @@ import palette from './Color/Palette.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 const {
-    merge
+    getNestedProperty,
+    isNumber,
+    merge,
+    pick,
+    pInt
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module './Chart/ChartLike'{
     interface ChartLike {
         marginRight: Highcharts.ChartOptions['marginRight'];
         polar: Highcharts.ChartOptions['polar'];
+    }
+}
+
+declare module './GlobalsLike' {
+    interface GlobalsLike {
+        defaultOptions: Highcharts.Options;
+        time: Time;
     }
 }
 
@@ -384,13 +401,18 @@ declare global {
             xDateFormat?: string;
         }
         let defaultOptions: Options;
-        let time: Time;
         type DescriptionOptionsType =
             (TitleOptions|SubtitleOptions|CaptionOptions);
         type OptionsOverflowValue = ('allow'|'justify');
         type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
     }
 }
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
 
 /**
  * @typedef {"plotBox"|"spacingBox"} Highcharts.ButtonRelativeToValue
@@ -570,11 +592,13 @@ declare global {
  * @type {number}
  */
 
-''; // detach doclets above
+(''); // detach doclets above
 
-/* ************************************************************************** *
- * Handle the options                                                         *
- * ************************************************************************** */
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * Global default settings.
@@ -584,7 +608,7 @@ declare global {
  *//**
  * @optionparent
  */
-H.defaultOptions = {
+const defaultOptions: Highcharts.Options = {
 
     /**
      * An array containing the default colors for the chart's series. When
@@ -914,7 +938,7 @@ H.defaultOptions = {
      * settings affect how `datetime` axes are laid out, how tooltips are
      * formatted, how series
      * [pointIntervalUnit](#plotOptions.series.pointIntervalUnit) works and how
-     * the Highstock range selector handles time.
+     * the Highcharts Stock range selector handles time.
      *
      * The common use case is that all charts in the same Highcharts object
      * share the same time settings, in which case the global settings are set
@@ -928,7 +952,7 @@ H.defaultOptions = {
      *     }
      * });
      * // Apply time settings by instance
-     * var chart = Highcharts.chart('container', {
+     * let chart = Highcharts.chart('container', {
      *     time: {
      *         timezone: 'America/New_York'
      *     },
@@ -3049,7 +3073,7 @@ H.defaultOptions = {
 
         /**
          * Whether to show the symbol on the right side of the text rather than
-         * the left side. This is common in Arabic and Hebraic.
+         * the left side. This is common in Arabic and Hebrew.
          *
          * @sample {highcharts} highcharts/legend/rtl/
          *         Symbol to the right
@@ -3747,7 +3771,7 @@ H.defaultOptions = {
 
         /**
          * The name of a symbol to use for the border around the tooltip. Can
-         * be one of: `"callout"`, `"circle"`, or `"square"`. When
+         * be one of: `"callout"`, `"circle"` or `"rect"`. When
          * [tooltip.split](#tooltip.split)
          * option is enabled, shape is applied to all boxes except header, which
          * is controlled by
@@ -3817,9 +3841,10 @@ H.defaultOptions = {
          * tooltips for charts with multiple line series, generally making them
          * easier to read. This option takes precedence over `tooltip.shared`.
          *
-         * @productdesc {highstock} In Highstock, tooltips are split by default
-         * since v6.0.0. Stock charts typically contain multi-dimension points
-         * and multiple panes, making split tooltips the preferred layout over
+         * @productdesc {highstock} In Highcharts Stock, tooltips are split
+         * by default since v6.0.0. Stock charts typically contain
+         * multi-dimension points and multiple panes, making split tooltips
+         * the preferred layout over
          * the previous `shared` tooltip.
          *
          * @sample highcharts/tooltip/split/
@@ -3969,7 +3994,7 @@ H.defaultOptions = {
          * header will by default be guessed based on the closest data points.
          * This member gives the default string representations used for
          * each unit. For an overview of the replacement codes, see
-         * [dateFormat](/class-reference/Highcharts#dateFormat).
+         * [dateFormat](/class-reference/Highcharts#.dateFormat).
          *
          * @see [xAxis.dateTimeLabelFormats](#xAxis.dateTimeLabelFormats)
          *
@@ -4301,86 +4326,83 @@ H.defaultOptions = {
 /* eslint-disable spaced-comment */
 /*= if (!build.classic) { =*/
 // Legacy build for styled mode, set the styledMode option to true by default.
-(H.defaultOptions.chart as any).styledMode = true;
+(defaultOptions.chart as any).styledMode = true;
 /*= } else { =*/
-(H.defaultOptions.chart as any).styledMode = false;
+(defaultOptions.chart as any).styledMode = false;
 /*= } =*/
 '';
 
-/**
- * Global `Time` object with default options. Since v6.0.5, time settings can be
- * applied individually for each chart. If no individual settings apply, this
- * `Time` object is shared by all instances.
- *
- * @name Highcharts.time
- * @type {Highcharts.Time}
- */
-H.time = new Time(
-    merge<Highcharts.TimeOptions>(
-        H.defaultOptions.global as any,
-        H.defaultOptions.time as any
-    )
-);
+const defaultTime = new Time(merge(
+    defaultOptions.global,
+    defaultOptions.time
+));
 
 /**
- * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
- * human readable date string. The format is a subset of the formats for PHP's
- * [strftime](https://www.php.net/manual/en/function.strftime.php) function.
- * Additional formats can be given in the {@link Highcharts.dateFormats} hook.
+ * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
+ * for outside modules wasn't enough because the setOptions method created a new
+ * object.
  *
- * Since v6.0.5, all internal dates are formatted through the
- * {@link Highcharts.Chart#time} instance to respect chart-level time settings.
- * The `Highcharts.dateFormat` function only reflects global time settings set
- * with `setOptions`.
+ * @function Highcharts.getOptions
  *
- * Supported format keys:
- * - `%a`: Short weekday, like 'Mon'
- * - `%A`: Long weekday, like 'Monday'
- * - `%d`: Two digit day of the month, 01 to 31
- * - `%e`: Day of the month, 1 through 31
- * - `%w`: Day of the week, 0 through 6
- * - `%b`: Short month, like 'Jan'
- * - `%B`: Long month, like 'January'
- * - `%m`: Two digit month number, 01 through 12
- * - `%y`: Two digits year, like 09 for 2009
- * - `%Y`: Four digits year, like 2009
- * - `%H`: Two digits hours in 24h format, 00 through 23
- * - `%k`: Hours in 24h format, 0 through 23
- * - `%I`: Two digits hours in 12h format, 00 through 11
- * - `%l`: Hours in 12h format, 1 through 12
- * - `%M`: Two digits minutes, 00 through 59
- * - `%p`: Upper case AM or PM
- * - `%P`: Lower case AM or PM
- * - `%S`: Two digits seconds, 00 through 59
- * - `%L`: Milliseconds (naming from Ruby)
- *
- * @function Highcharts.dateFormat
- *
- * @param {string} format
- *        The desired format where various time representations are prefixed
- *        with `%`.
- *
- * @param {number} timestamp
- *        The JavaScript timestamp.
- *
- * @param {boolean} [capitalize=false]
- *        Upper case first letter in the return.
- *
- * @return {string}
- *         The formatted date.
+ * @return {Highcharts.Options}
  */
-H.dateFormat = function (
-    format: string,
-    timestamp: number,
-    capitalize?: boolean
-): string {
-    return H.time.dateFormat(format, timestamp, capitalize);
-};
+function getOptions(): Highcharts.Options {
+    return defaultOptions;
+}
+
+/**
+ * Merge the default options with custom options and return the new options
+ * structure. Commonly used for defining reusable templates.
+ *
+ * @sample highcharts/global/useutc-false Setting a global option
+ * @sample highcharts/members/setoptions Applying a global theme
+ *
+ * @function Highcharts.setOptions
+ *
+ * @param {Highcharts.Options} options
+ *        The new custom chart options.
+ *
+ * @return {Highcharts.Options}
+ *         Updated options.
+ */
+function setOptions(
+    options: Partial<Highcharts.Options>
+): Highcharts.Options {
+
+    // Copy in the default options
+    merge(true, defaultOptions, options);
+
+    // Update the time object
+    if (options.time || options.global) {
+        if (H.time) {
+            H.time.update(merge(
+                defaultOptions.global,
+                defaultOptions.time,
+                options.global,
+                options.time
+            ));
+        } else {
+            /**
+             * Global `Time` object with default options. Since v6.0.5, time
+             * settings can be applied individually for each chart. If no
+             * individual settings apply, this `Time` object is shared by all
+             * instances.
+             *
+             * @name Highcharts.time
+             * @type {Highcharts.Time}
+             */
+            H.time = defaultTime;
+        }
+    }
+
+    return defaultOptions;
+}
 
 const optionsModule = {
-    dateFormat: H.dateFormat,
-    defaultOptions: H.defaultOptions,
-    time: H.time
+    defaultOptions,
+    defaultTime,
+    getOptions,
+    setOptions
 };
 
 export default optionsModule;

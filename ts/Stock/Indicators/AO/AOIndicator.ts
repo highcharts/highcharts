@@ -67,6 +67,11 @@ class AOIndicator extends SMAIndicator {
      */
     public static defaultOptions: AOOptions =
     merge(SMAIndicator.defaultOptions, {
+        params: {
+            // Index and period are unchangeable, do not inherit (#15362)
+            index: void 0,
+            period: void 0
+        },
         /**
          * Color of the Awesome oscillator series bar that is greater than the
          * previous one. Note that if a `color` is defined, the `color`
@@ -121,7 +126,7 @@ class AOIndicator extends SMAIndicator {
      */
 
     public drawGraph(this: AOIndicator): void {
-        var indicator = this,
+        let indicator = this,
             options = indicator.options,
             points = indicator.points,
             userColor = indicator.userOptions.color,
@@ -150,7 +155,7 @@ class AOIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var shortPeriod = 5,
+        let shortPeriod = 5,
             longPeriod = 34,
             xVal: Array<number> = series.xData || [],
             yVal: Array<number|null|undefined> =

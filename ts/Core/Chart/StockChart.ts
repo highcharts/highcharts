@@ -24,8 +24,16 @@ import type PointerEvent from '../PointerEvent';
 import type { SeriesTypePlotOptions } from '../Series/SeriesType';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import A from '../Animation/AnimationUtilities.js';
+const {
+    animObject
+} = A;
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
+import F from '../../Core/FormatUtilities.js';
+const { format } = F;
+import O from '../../Core/Options.js';
+const { getOptions } = O;
 import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 const {
@@ -50,8 +58,6 @@ const {
     defined,
     extend,
     find,
-    format,
-    getOptions,
     isNumber,
     isString,
     merge,
@@ -290,7 +296,7 @@ namespace StockChart {
      * options than the basic Chart.
      *
      * @example
-     * var chart = Highcharts.stockChart('container', {
+     * let chart = Highcharts.stockChart('container', {
      *     series: [{
      *         data: [1, 2, 3, 4, 5, 6, 7, 8, 9],
      *         pointInterval: 24 * 60 * 60 * 1000
@@ -433,7 +439,7 @@ function getForcedAxisOptions(
 addEvent(Series, 'setOptions', function (
     e: { plotOptions: SeriesTypePlotOptions }
 ): void {
-    var overrides;
+    let overrides;
 
     if (this.chart.options.isStock) {
 
@@ -466,7 +472,7 @@ addEvent(Axis, 'autoLabelAlign', function (
     this: Highcharts.Axis,
     e: Event
 ): void {
-    var chart = this.chart,
+    let chart = this.chart,
         options = this.options,
         panes = chart._labelPanes = chart._labelPanes || {},
         key,
@@ -492,7 +498,7 @@ addEvent(Axis, 'autoLabelAlign', function (
 
 // Clear axis from label panes (#6071)
 addEvent(Axis, 'destroy', function (this: Highcharts.Axis): void {
-    var chart = this.chart,
+    const chart = this.chart,
         key = this.options && (this.options.top + ',' + this.options.height);
 
     if (key && chart._labelPanes && chart._labelPanes[key] === this) {
@@ -505,7 +511,7 @@ addEvent(Axis, 'getPlotLinePath', function (
     this: Highcharts.Axis,
     e: Event & Highcharts.AxisPlotLinePathOptionsObject
 ): void {
-    var axis = this,
+    let axis = this,
         series = (
             this.isLinked && !this.series ?
                 (this.linkedParent as any).series :
@@ -534,7 +540,7 @@ addEvent(Axis, 'getPlotLinePath', function (
      * @private
      */
     function getAxis(coll: string): Array<Highcharts.Axis> {
-        var otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
+        const otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
             opt = (axis.options as any)[otherColl];
 
         // Other axis indexed by number
@@ -573,7 +579,7 @@ addEvent(Axis, 'getPlotLinePath', function (
                     A.options.id.indexOf('navigator') === -1 :
                     true
             ) {
-                var a = (A.isXAxis ? 'yAxis' : 'xAxis'),
+                const a = (A.isXAxis ? 'yAxis' : 'xAxis'),
                     rax = (
                         defined((A.options as any)[a]) ?
                             (chart as any)[a][(A.options as any)[a]] :
@@ -614,7 +620,7 @@ addEvent(Axis, 'getPlotLinePath', function (
         if (isNumber(transVal)) {
             if (axis.horiz) {
                 uniqueAxes.forEach(function (axis2: Highcharts.Axis): void {
-                    var skip;
+                    let skip;
 
                     y1 = axis2.pos;
                     y2 = (y1 as any) + axis2.len;
@@ -641,7 +647,7 @@ addEvent(Axis, 'getPlotLinePath', function (
                 });
             } else {
                 uniqueAxes.forEach(function (axis2: Highcharts.Axis): void {
-                    var skip;
+                    let skip;
 
                     x1 = axis2.pos;
                     x2 = (x1 as any) + axis2.len;
@@ -734,7 +740,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         return;
     }
 
-    var chart = this.chart,
+    let chart = this.chart,
         log = this.logarithmic,
         options = this.crosshair.label, // the label's options
         horiz = this.horiz, // axis orientation
@@ -924,7 +930,7 @@ Series.prototype.init = function (): void {
 };
 
 /**
- * Highstock only. Set the
+ * Highcharts Stock only. Set the
  * [compare](https://api.highcharts.com/highstock/plotOptions.series.compare)
  * mode of the series after render time. In most cases it is more useful running
  * {@link Axis#setCompare} on the X axis to update all its series.
@@ -956,7 +962,7 @@ Series.prototype.initCompare = function (compare?: string): void {
             value?: number,
             point?: Point
         ): (number|undefined) {
-            var compareValue = this.compareValue;
+            const compareValue = this.compareValue;
 
             if (
                 typeof value !== 'undefined' &&
@@ -998,7 +1004,7 @@ Series.prototype.initCompare = function (compare?: string): void {
  * @function Highcharts.Series#processData
  */
 Series.prototype.processData = function (force?: boolean): (boolean|undefined) {
-    var series = this,
+    let series = this,
         i,
         keyIndex = -1,
         processedXData,
@@ -1052,7 +1058,7 @@ addEvent(
     function (e): void {
         const dataExtremes: DataExtremesObject = (e as any).dataExtremes;
         if (this.modifyValue && dataExtremes) {
-            var extremes = [
+            const extremes = [
                 this.modifyValue(dataExtremes.dataMin),
                 this.modifyValue(dataExtremes.dataMax)
             ];
@@ -1064,8 +1070,8 @@ addEvent(
 );
 
 /**
- * Highstock only. Set the compare mode on all series belonging to an Y axis
- * after render time.
+ * Highcharts Stock only. Set the compare mode on all series
+ * belonging to an Y axis after render time.
  *
  * @see [series.plotOptions.compare](https://api.highcharts.com/highstock/series.plotOptions.compare)
  *
@@ -1106,7 +1112,7 @@ Axis.prototype.setCompare = function (
  * @param {string} pointFormat
  */
 Point.prototype.tooltipFormatter = function (pointFormat: string): string {
-    var point = this;
+    const point = this;
     const { numberFormatter } = point.series.chart;
 
     pointFormat = pointFormat.replace(
@@ -1129,7 +1135,7 @@ Point.prototype.tooltipFormatter = function (pointFormat: string): string {
 // related to using multiple panes, and a future pane logic should incorporate
 // this feature (#2754).
 addEvent(Series, 'render', function (): void {
-    var chart = this.chart,
+    let chart = this.chart,
         clipHeight;
 
     // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
@@ -1147,7 +1153,7 @@ addEvent(Series, 'render', function (): void {
         // Include xAxis line width (#8031) but only if the Y axis ends on the
         // edge of the X axis (#11005).
         if (this.xAxis.axisLine) {
-            var dist = chart.plotTop + chart.plotHeight -
+            const dist = chart.plotTop + chart.plotHeight -
                     (this.yAxis.pos as any) - this.yAxis.len,
                 lineHeightCorrection = Math.floor(
                     this.xAxis.axisLine.strokeWidth() / 2
@@ -1161,25 +1167,43 @@ addEvent(Series, 'render', function (): void {
         // First render, initial clip box. clipBox also needs to be updated if
         // the series is rendered again before starting animating, in
         // compliance with a responsive rule (#13858).
-        if (!chart.hasLoaded || (!this.clipBox && this.isDirty && !this.isDirtyData)) {
+        if (!chart.hasRendered || (!this.clipBox && this.isDirty && !this.isDirtyData)) {
             this.clipBox = this.clipBox || merge(chart.clipBox);
             this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;
+        }
 
-        // On redrawing, resizing etc, update the clip rectangle
-        } else if ((chart as any)[this.sharedClipKey as any]) {
-            // animate in case resize is done during initial animation
-            (chart as any)[this.sharedClipKey as any].animate({
-                width: this.xAxis.len,
-                height: clipHeight
-            });
+        if (chart.hasRendered) {
+            const animation = animObject(this.options.animation);
 
-            // also change markers clip animation for consistency
-            // (marker clip rects should exist only on chart init)
-            if ((chart as any)[this.sharedClipKey + 'm']) {
-                (chart as any)[this.sharedClipKey + 'm'].animate({
-                    width: this.xAxis.len
+            // #15435: this.sharedClipKey might not have been set yet, for
+            // example when updating the series, so we need to use this
+            // function instead
+            const sharedClipKey = this.getSharedClipKey(animation);
+            const clipRect = chart.sharedClips[sharedClipKey];
+
+            // On redrawing, resizing etc, update the clip rectangle.
+            //
+            // #15435: Update it even when we are creating/updating clipBox,
+            // since there could be series updating and pane size changes
+            // happening at the same time and we dont destroy shared clips in
+            // stock.
+            if (clipRect) {
+                // animate in case resize is done during initial animation
+                clipRect.animate({
+                    width: this.xAxis.len,
+                    height: clipHeight
                 });
+
+                const markerClipRect = chart.sharedClips[sharedClipKey + 'm'];
+
+                // also change markers clip animation for consistency
+                // (marker clip rects should exist only on chart init)
+                if (markerClipRect) {
+                    markerClipRect.animate({
+                        width: this.xAxis.len
+                    });
+                }
             }
         }
     }
@@ -1189,7 +1213,7 @@ addEvent(Chart, 'update', function (
     this: StockChart,
     e: { options: Highcharts.Options }
 ): void {
-    var options = e.options;
+    const options = e.options;
 
     // Use case: enabling scrollbar from a disabled state.
     // Scrollbar needs to be initialized from a controller, Navigator in this

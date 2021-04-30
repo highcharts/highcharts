@@ -252,7 +252,7 @@ class AreaSeries extends LineSeries {
         super.drawGraph.apply(this);
 
         // Define local variables
-        var series = this,
+        const series = this,
             areaPath = this.areaPath,
             options = this.options,
             zones = this.zones,
@@ -277,7 +277,7 @@ class AreaSeries extends LineSeries {
         });
 
         props.forEach(function (prop: Array<string>): void {
-            var areaKey = prop[0],
+            let areaKey = prop[0],
                 area = (series as any)[areaKey],
                 verb = area ? 'animate' : 'attr',
                 attribs: SVGAttributes = {};
@@ -319,7 +319,7 @@ class AreaSeries extends LineSeries {
      * @private
      */
     public getGraphPath(points: Array<AreaPoint>): SVGPath {
-        var getGraphPath = LineSeries.prototype.getGraphPath,
+        let getGraphPath = LineSeries.prototype.getGraphPath,
             graphPath: SVGPath,
             options = this.options,
             stacking = options.stacking,
@@ -352,7 +352,7 @@ class AreaSeries extends LineSeries {
                 otherI: number,
                 side: string
             ): void {
-                var point = points[i],
+                let point = points[i],
                     stackedValues = stacking &&
                         stacks[point.x as any].points[seriesIndex as any],
                     nullVal = (point as any)[side + 'Null'] || 0,
@@ -450,7 +450,9 @@ class AreaSeries extends LineSeries {
         }
 
         areaPath = topPath.concat(bottomPath);
-        areaPath.push(['Z']);
+        if (areaPath.length) {
+            areaPath.push(['Z']);
+        }
         // TODO: don't set leftCliff and rightCliff when connectNulls?
         graphPath = getGraphPath
             .call(this, graphPoints, false, connectNulls);
@@ -469,7 +471,7 @@ class AreaSeries extends LineSeries {
     public getStackPoints(
         points: Array<AreaPoint>
     ): Array<AreaPoint> {
-        var series = this,
+        const series = this,
             segment: Array<AreaPoint> = [],
             keys: Array<string> = [],
             xAxis = this.xAxis,
@@ -513,7 +515,7 @@ class AreaSeries extends LineSeries {
             const visibleSeries = yAxisSeries.map((s): boolean => s.visible);
 
             keys.forEach(function (x: string, idx: number): void {
-                var y = 0,
+                let y = 0,
                     stackPoint,
                     stackedValues;
 
@@ -523,7 +525,7 @@ class AreaSeries extends LineSeries {
                     // Find left and right cliff. -1 goes left, 1 goes
                     // right.
                     [-1, 1].forEach(function (direction: number): void {
-                        var nullName = direction === 1 ?
+                        let nullName = direction === 1 ?
                                 'rightNull' :
                                 'leftNull',
                             cliffName = direction === 1 ?

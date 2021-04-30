@@ -37,7 +37,7 @@ let treemapAxisDefaultValues = false;
 
 addEvent(Series, 'afterBindAxes', function (): void {
     // eslint-disable-next-line no-invalid-this
-    var series = this,
+    let series = this,
         xAxis = series.xAxis,
         yAxis = series.yAxis,
         treeAxis;

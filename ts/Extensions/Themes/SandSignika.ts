@@ -15,11 +15,12 @@
 /* global document */
 
 import Highcharts from '../../Core/Globals.js';
+import O from '../../Core/Options.js';
+const { setOptions } = O;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    createElement,
-    setOptions
+    createElement
 } = U;
 
 // Load the fonts
@@ -99,7 +100,7 @@ Highcharts.theme = {
         }
     },
 
-    // Highstock specific
+    // Highcharts Stock specific
     navigator: {
         xAxis: {
             gridLineColor: '#D0D0D8'

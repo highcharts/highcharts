@@ -526,7 +526,7 @@ class ColumnSeries extends Series {
      *        Whether to initialize the animation or run it
      */
     public animate(init: boolean): void {
-        var series = this,
+        let series = this,
             yAxis = this.yAxis,
             options = series.options,
             inverted = this.chart.inverted,
@@ -548,7 +548,7 @@ class ColumnSeries extends Series {
                 attr.translateY = translatedThreshold;
             }
 
-            // apply finnal clipping (used in Highstock) (#7083)
+            // apply finnal clipping (used in Highcharts Stock) (#7083)
             // animation is done by scaleY, so cliping is for panes
             if (series.clipBox) {
                 series.setClip();
@@ -585,8 +585,9 @@ class ColumnSeries extends Series {
     public init(chart: Chart, options: ColumnSeriesOptions): void {
         super.init.apply(this, arguments as any);
 
-        var series = this,
-            chart = series.chart;
+        const series = this;
+
+        chart = series.chart;
 
         // if the series is added dynamically, force redraw of other
         // series affected by a new column
@@ -608,7 +609,7 @@ class ColumnSeries extends Series {
      * @return {Highcharts.ColumnMetricsObject}
      */
     public getColumnMetrics(): ColumnMetricsObject {
-        var series = this,
+        let series = this,
             options = series.options,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
@@ -628,7 +629,7 @@ class ColumnSeries extends Series {
             columnCount = 1;
         } else {
             series.chart.series.forEach(function (otherSeries): void {
-                var otherYAxis = otherSeries.yAxis,
+                let otherYAxis = otherSeries.yAxis,
                     otherOptions = otherSeries.options,
                     columnIndex;
 
@@ -657,7 +658,7 @@ class ColumnSeries extends Series {
             });
         }
 
-        var categoryWidth = Math.min(
+        const categoryWidth = Math.min(
                 Math.abs(xAxis.transA) * (
                     (xAxis.ordinal && xAxis.ordinal.slope) ||
                 options.pointRange ||
@@ -713,7 +714,7 @@ class ColumnSeries extends Series {
         w: number,
         h: number
     ): BBoxObject {
-        var chart = this.chart,
+        let chart = this.chart,
             borderWidth = this.borderWidth,
             xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0),
             yCrisp = (borderWidth as any) % 2 ? 0.5 : 1,
@@ -842,7 +843,7 @@ class ColumnSeries extends Series {
      * @function Highcharts.seriesTypes.column#translate
      */
     public translate(): void {
-        var series = this,
+        let series = this,
             chart = series.chart,
             options = series.options,
             dense = series.dense =
@@ -882,7 +883,7 @@ class ColumnSeries extends Series {
 
         // Record the new values
         series.points.forEach(function (point): void {
-            var yBottom = pick(point.yBottom, translatedThreshold as any),
+            let yBottom = pick(point.yBottom, translatedThreshold as any),
                 safeDistance = 999 + Math.abs(yBottom),
                 pointWidth = seriesPointWidth,
                 plotX = point.plotX || 0,
@@ -1012,7 +1013,7 @@ class ColumnSeries extends Series {
         point?: ColumnPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var options = this.options,
+        let options = this.options,
             stateOptions: SeriesStateHoverOptions,
             ret: SVGAttributes,
             p2o = (this as any).pointAttrToOptions || {},
@@ -1099,7 +1100,7 @@ class ColumnSeries extends Series {
      * @function Highcharts.seriesTypes.column#drawPoints
      */
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             chart = this.chart,
             options = series.options,
             renderer = chart.renderer,
@@ -1108,7 +1109,7 @@ class ColumnSeries extends Series {
 
         // draw the columns
         series.points.forEach(function (point): void {
-            var plotY = point.plotY,
+            let plotY = point.plotY,
                 graphic = point.graphic,
                 hasGraphic = !!graphic,
                 verb = graphic && chart.pointCount < animationLimit ?
@@ -1195,11 +1196,11 @@ class ColumnSeries extends Series {
      * @private
      */
     public drawTracker(): void {
-        var series = this,
+        let series = this,
             chart = series.chart,
             pointer = chart.pointer,
             onMouseOver = function (e: PointerEvent): void {
-                var point = pointer.getPointFromEvent(e);
+                const point = pointer.getPointFromEvent(e);
 
                 // undefined on graph in scatterchart
                 if (typeof point !== 'undefined') {
@@ -1266,7 +1267,7 @@ class ColumnSeries extends Series {
      * @function Highcharts.seriesTypes.column#remove
      */
     public remove(): void {
-        var series = this,
+        const series = this,
             chart = series.chart;
 
         // column and bar series affects other series of the same type

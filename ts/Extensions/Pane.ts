@@ -110,7 +110,7 @@ Chart.prototype.collectionsWithUpdate.push('pane');
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
  *
- * In the future, this can be extended to basic Highcharts and Highstock.
+ * In the future, this can be extended to basic Highcharts and Highcharts Stock.
  *
  * @private
  * @class
@@ -180,7 +180,7 @@ class Pane {
      * @function Highcharts.Pane#render
      */
     public render(): void {
-        var options = this.options,
+        let options = this.options,
             backgroundOption = this.options.background,
             renderer = this.chart.renderer,
             len,
@@ -238,7 +238,7 @@ class Pane {
         backgroundOptions: Highcharts.PaneBackgroundOptions,
         i: number
     ): void {
-        var method = 'animate',
+        let method = 'animate',
             attribs: SVGAttributes = {
                 'class':
                     'highcharts-pane ' + (backgroundOptions.className || '')

@@ -80,7 +80,7 @@ class SunburstPoint extends TreemapPoint implements Highcharts.DrawPoint {
     /* eslint-disable valid-jsdoc */
 
     public getDataLabelPath(label: SVGElement): SVGElement {
-        var renderer = this.series.chart.renderer,
+        let renderer = this.series.chart.renderer,
             shapeArgs = this.shapeExisting,
             start = shapeArgs.start,
             end = shapeArgs.end,

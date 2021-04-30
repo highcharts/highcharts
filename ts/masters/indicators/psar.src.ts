@@ -4,7 +4,7 @@
  * @requires highcharts
  * @requires highcharts/modules/stock
  *
- * Parabolic SAR Indicator for Highstock
+ * Parabolic SAR Indicator for Highcharts Stock
  *
  * (c) 2010-2021 Grzegorz Blachliński
  *

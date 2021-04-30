@@ -326,7 +326,8 @@ class MapView {
     public zoomBy(
         howMuch?: number,
         coords?: Highcharts.LonLatArray,
-        chartCoords?: [number, number]
+        chartCoords?: [number, number],
+        animation?: boolean|Partial<AnimationOptions>
     ): void {
         const chart = this.chart;
         const projectedCenter = this.projection.forward(this.center);
@@ -367,11 +368,11 @@ class MapView {
                 center = this.projection.inverse(projectedCenter);
             }
 
-            this.setView(center, zoom);
+            this.setView(center, zoom, void 0, animation);
 
         // Undefined howMuch => reset zoom
         } else {
-            this.fitToBounds();
+            this.fitToBounds(void 0, void 0, animation);
         }
 
     }

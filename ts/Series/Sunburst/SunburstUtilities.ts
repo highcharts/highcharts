@@ -76,7 +76,7 @@ namespace SunburstUtilities {
         levelOptions: SunburstSeriesLevelOptions,
         params: Record<string, number>
     ): (SunburstSeriesLevelOptions|undefined) {
-        var result: (SunburstSeriesLevelOptions|undefined),
+        let result: (SunburstSeriesLevelOptions|undefined),
             p = isObject(params) ? params : {},
             totalWeight = 0,
             diffRadius: number,
@@ -106,7 +106,7 @@ namespace SunburstUtilities {
             // Calculate total weight to use in convertion from weight to
             // pixels.
             levels.forEach(function (level: number): void {
-                var options = (result as any)[level],
+                const options = (result as any)[level],
                     unit = options.levelSize.unit,
                     value = options.levelSize.value;
 
@@ -125,7 +125,7 @@ namespace SunburstUtilities {
 
             // Convert weight to pixels.
             levels.forEach(function (level: number): void {
-                var options = (result as any)[level],
+                let options = (result as any)[level],
                     weight;
 
                 if (options.levelSize.unit === 'weight') {
@@ -166,7 +166,7 @@ namespace SunburstUtilities {
      * @private
      */
     export function range(from: unknown, to: unknown): Array<number> {
-        var result: Array<number> = [],
+        let result: Array<number> = [],
             i: number;
 
         if (isNumber(from) && isNumber(to) && from <= to) {

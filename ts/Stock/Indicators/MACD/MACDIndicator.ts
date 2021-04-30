@@ -28,7 +28,6 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator,
-        ema: EMAIndicator,
         column: ColumnSeries
     }
 } = SeriesRegistry;
@@ -232,7 +231,7 @@ class MACDIndicator extends SMAIndicator {
     }
 
     public translate(): void {
-        var indicator = this,
+        const indicator = this,
             plotNames: Array<string> = ['plotSignal', 'plotMACD'];
 
         H.seriesTypes.column.prototype.translate.apply(indicator);
@@ -264,7 +263,7 @@ class MACDIndicator extends SMAIndicator {
     }
 
     public drawGraph(): void {
-        var indicator = this,
+        let indicator = this,
             mainLinePoints: Array<(
                 MACDPoint
             )> = indicator.points,
@@ -332,7 +331,7 @@ class MACDIndicator extends SMAIndicator {
     public getZonesGraphs(
         props: Array<Array<string>>
     ): Array<Array<string>> {
-        var allZones: Array<Array<string>> =
+        let allZones: Array<Array<string>> =
         super.getZonesGraphs(props),
             currentZones: Array<Array<string>> = allZones;
 
@@ -356,7 +355,7 @@ class MACDIndicator extends SMAIndicator {
     public applyZones(): void {
         // Histogram zones are handled by drawPoints method
         // Here we need to apply zones for all lines
-        var histogramZones = this.zones;
+        const histogramZones = this.zones;
 
         // signalZones.zones contains all zones:
         this.zones = (this.signalZones.zones as any);
@@ -374,7 +373,7 @@ class MACDIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var indexToShift: number = (params.longPeriod as any) - (params.shortPeriod as any), // #14197
+        let indexToShift: number = (params.longPeriod as any) - (params.shortPeriod as any), // #14197
             j = 0,
             MACD: Array<Array<(number|null)>> = [],
             xMACD: Array<(number|null)> = [],

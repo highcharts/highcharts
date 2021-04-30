@@ -90,7 +90,7 @@ class BrokenAxisAdditions {
         brk: Highcharts.XAxisBreaksOptions,
         val: number
     ): (boolean|undefined) {
-        var ret: (boolean|undefined),
+        let ret: (boolean|undefined),
             repeat = brk.repeat || Infinity,
             from = brk.from,
             length = brk.to - brk.from,
@@ -123,7 +123,7 @@ class BrokenAxisAdditions {
             return val;
         }
 
-        var nval = val,
+        let nval = val,
             brk: AxisBreakObject,
             i: number;
 
@@ -156,7 +156,7 @@ class BrokenAxisAdditions {
             return val;
         }
 
-        var nval = val,
+        let nval = val,
             brk: AxisBreakObject,
             i: number;
 
@@ -235,7 +235,7 @@ class BrokenAxisAdditions {
         const brokenAxis = this;
         const axis = brokenAxis.axis;
 
-        var breaks = axis.options.breaks || [],
+        let breaks = axis.options.breaks || [],
             i = breaks.length,
             inbrk: (boolean|undefined),
             keep: (boolean|undefined),
@@ -318,7 +318,7 @@ class BrokenAxisAdditions {
                 // If trying to set extremes inside a break, extend min to
                 // after, and max to before the break ( #3857 )
                 if (brokenAxis.hasBreaks) {
-                    var axisBreak,
+                    let axisBreak,
                         breaks = this.options.breaks;
 
                     while ((axisBreak = brokenAxis.findBreakAt(newMin, breaks as any))) {
@@ -348,7 +348,7 @@ class BrokenAxisAdditions {
 
                 brokenAxis.unitLength = void 0;
                 if (brokenAxis.hasBreaks) {
-                    var breaks = axis.options.breaks || [],
+                    let breaks = axis.options.breaks || [],
                         // Temporary one:
                         breakArrayT: Array<AxisBreakBorderObject> = [],
                         breakArray: Array<AxisBreakObject> = [],
@@ -503,7 +503,7 @@ class BrokenAxis {
             axis: (Axis|undefined),
             keys: Array<string>
         ): void {
-            var series = this,
+            let series = this,
                 points = series.points,
                 breaks: Array<AxisBreakObject>,
                 threshold: (number|null|undefined),
@@ -566,7 +566,7 @@ class BrokenAxis {
          * Gapped path
          */
         seriesProto.gappedPath = function (this: LineSeries): SVGPath {
-            var currentDataGrouping = this.currentDataGrouping,
+            let currentDataGrouping = this.currentDataGrouping,
                 groupingSize = currentDataGrouping && currentDataGrouping.gapSize,
                 gapSize = this.options.gapSize,
                 points = this.points.slice(),
@@ -719,7 +719,7 @@ class BrokenAxis {
                 brokenAxis &&
                 brokenAxis.hasBreaks
             ) {
-                var tickPositions = this.tickPositions,
+                let tickPositions = this.tickPositions,
                     info = this.tickPositions.info,
                     newPositions = [],
                     i;

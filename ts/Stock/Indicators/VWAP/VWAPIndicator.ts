@@ -2,7 +2,7 @@
  *
  *  (c) 2010-2021 Paweł Dalek
  *
- *  Volume Weighted Average Price (VWAP) indicator for Highstock
+ *  Volume Weighted Average Price (VWAP) indicator for Highcharts Stock
  *
  *  License: www.highcharts.com/license
  *
@@ -71,6 +71,7 @@ class VWAPIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
+            index: void 0, // unchangeable index, do not inherit (#15362)
             period: 30,
             /**
              * The id of volume series which is mandatory. For example using
@@ -101,7 +102,7 @@ class VWAPIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: VWAPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var indicator = this,
+        let indicator = this,
             chart: Chart = series.chart,
             xValues: Array<number> = (series.xData as any),
             yValues: (
@@ -159,7 +160,7 @@ class VWAPIndicator extends SMAIndicator {
         volumeSeries: TLinkedSeries,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {
-        var volumeValues: Array<number> = (volumeSeries.yData as any),
+        let volumeValues: Array<number> = (volumeSeries.yData as any),
             volumeLength: number = (volumeSeries.xData as any).length,
             pointsLength: number = xValues.length,
             cumulativePrice: Array<number> = [],

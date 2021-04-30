@@ -41,6 +41,11 @@ QUnit.test('Positioning labels according to real points', function (assert) {
                                     y: 0
                                 };
                             }
+                        },
+                        {
+                            point: 'id5',
+                            text: 'Really long label',
+                            x: -10
                         }
                     ],
 
@@ -99,6 +104,13 @@ QUnit.test('Positioning labels according to real points', function (assert) {
 
     assert.strictEqual(label4.x, x4, 'x position - positioner');
     assert.strictEqual(label4.y, y4, 'y position - positioner');
+
+    const label5 = chart.annotations[0].labels[4].graphic;
+
+    assert.ok(
+        Math.round(label5.x + label5.width) <= chart.plotLeft + chart.plotWidth,
+        '#15524: Label should be within the plot'
+    );
 });
 
 QUnit.test(

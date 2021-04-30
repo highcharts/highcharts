@@ -432,7 +432,7 @@ class BubbleSeries extends ScatterSeries {
      * @private
      */
     public getRadii(): void {
-        var len: number,
+        let len: number,
             i: number,
             zData = this.zData,
             yData = this.yData,
@@ -500,7 +500,7 @@ class BubbleSeries extends ScatterSeries {
         value: (number|null|undefined),
         yValue?: (number|null|undefined)
     ): (number|null) {
-        var options = this.options,
+        let options = this.options,
             sizeByArea = options.sizeBy !== 'width',
             zThreshold = options.zThreshold,
             zRange = zMax - zMin,
@@ -557,7 +557,7 @@ class BubbleSeries extends ScatterSeries {
         point?: BubblePoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var markerOptions = this.options.marker,
+        const markerOptions = this.options.marker,
             fillOpacity = (markerOptions as any).fillOpacity,
             attr = Series.prototype.pointAttribs.call(this, point, state);
 
@@ -715,7 +715,7 @@ addEvent(BubbleSeries, 'updatedData', (e): void => {
 // Add logic to pad each axis with the amount of pixels necessary to avoid the
 // bubbles to overflow.
 Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
-    var axis = this,
+    let axis = this,
         axisLength = this.len,
         chart = this.chart,
         pxMin = 0,
@@ -739,28 +739,27 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
 
             hasActiveSeries = true;
 
-            var data = (series as any)[dataKey],
-                i = data.length,
-                radius;
+            const data = (series as any)[dataKey];
 
             if (isXAxis) {
                 (series as any).getRadii(0, 0, series);
             }
 
             if (range > 0) {
+                let i = data.length;
                 while (i--) {
                     if (
                         isNumber(data[i]) &&
                         (axis.dataMin as any) <= data[i] &&
                         data[i] <= (axis.max as any)
                     ) {
-                        radius = series.radii ? series.radii[i] : 0;
+                        const radius = series.radii && series.radii[i] || 0;
                         pxMin = Math.min(
-                            ((data[i] - (min as any)) * transA) - (radius as any),
+                            ((data[i] - (min as any)) * transA) - radius,
                             pxMin
                         );
                         pxMax = Math.max(
-                            ((data[i] - (min as any)) * transA) + (radius as any),
+                            ((data[i] - (min as any)) * transA) + radius,
                             pxMax
                         );
                     }

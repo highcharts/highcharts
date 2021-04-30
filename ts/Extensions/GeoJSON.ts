@@ -15,16 +15,14 @@ import type MapPointPointOptions from '../Series/MapPoint/MapPointPointOptions';
 import type Series from '../Core/Series/Series';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
 import H from '../Core/Globals.js';
-const {
-    win
-} = H;
-import '../Core/Options.js';
+const { win } = H;
 import U from '../Core/Utilities.js';
 const {
     error,
     extend,
-    format,
     merge,
     wrap
 } = U;
@@ -267,7 +265,7 @@ function pointInPolygon(
     point: Highcharts.MapCoordinateObject,
     polygon: Array<Array<number>>
 ): boolean {
-    var i,
+    let i,
         j,
         rel1,
         rel2,
@@ -351,7 +349,7 @@ Chart.prototype.transformFromLatLon = function (
         ypan = 0
     } = transform;
 
-    var projected = proj4(transform.crs, [latLon.lon, latLon.lat]),
+    const projected = proj4(transform.crs, [latLon.lon, latLon.lat]),
         cosAngle = transform.cosAngle ||
             (transform.rotation && Math.cos(transform.rotation)),
         sinAngle = transform.sinAngle ||
@@ -415,7 +413,7 @@ Chart.prototype.transformToLatLon = function (
         ypan = 0
     } = transform;
 
-    var normalized = {
+    const normalized = {
             x: ((point.x - jsonmarginX) / jsonres - xpan) / scale + xoffset,
             y: ((-point.y - jsonmarginY) / jsonres + ypan) / scale + yoffset
         },
@@ -453,7 +451,7 @@ Chart.prototype.transformToLatLon = function (
 Chart.prototype.fromPointToLatLon = function (
     point: Highcharts.MapCoordinateObject
 ): (Highcharts.MapLatLonObject|undefined) {
-    var transforms = this.mapTransforms,
+    let transforms = this.mapTransforms,
         transform;
 
     if (!transforms) {
@@ -500,7 +498,7 @@ Chart.prototype.fromPointToLatLon = function (
 Chart.prototype.fromLatLonToPoint = function (
     latLon: Highcharts.MapLatLonObject
 ): Highcharts.MapCoordinateObject {
-    var transforms = this.mapTransforms,
+    let transforms = this.mapTransforms,
         transform,
         coords;
 
@@ -568,12 +566,13 @@ H.geojson = function (
     hType: string = 'map',
     series?: Series
 ): Array<any> {
-    var mapData = [] as Array<any>,
-        path = [] as SVGPath;
+    const mapData = [] as Array<any>;
+
+    let path: SVGPath = [];
 
     geojson.features.forEach(function (feature): void {
 
-        var geometry = feature.geometry || {},
+        let geometry = feature.geometry || {},
             type = geometry.type,
             coordinates = geometry.coordinates,
             properties = feature.properties,

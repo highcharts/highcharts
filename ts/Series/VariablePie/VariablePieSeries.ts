@@ -180,7 +180,7 @@ class VariablePieSeries extends PieSeries {
      * @private
      */
     calculateExtremes(): void {
-        var series = this,
+        let series = this,
             chart = series.chart,
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
@@ -199,7 +199,7 @@ class VariablePieSeries extends PieSeries {
         ['minPointSize', 'maxPointSize'].forEach(function (
             prop: string
         ): void {
-            var length: (number|string) = (seriesOptions as any)[prop],
+            let length: (number|string) = (seriesOptions as any)[prop],
                 isPercent = /%$/.test(length as any);
 
             length = parseInt(length as any, 10);
@@ -255,7 +255,7 @@ class VariablePieSeries extends PieSeries {
         minSize: number,
         maxSize: number
     ): void {
-        var i = 0,
+        let i = 0,
             pos: (number|undefined),
             zData: Array<number> = this.zData as any,
             len = zData.length,
@@ -312,7 +312,7 @@ class VariablePieSeries extends PieSeries {
 
         this.generatePoints();
 
-        var series = this,
+        let series = this,
             cumulative = 0,
             precision = 1000, // issue #172
             options = series.options,
