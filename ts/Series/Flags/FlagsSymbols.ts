@@ -5,11 +5,7 @@
  * */
 
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import H from '../../Core/Globals.js';
-const {
-    Renderer,
-    VMLRenderer
-} = H;
+import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { symbols } = SVGRenderer.prototype;
 
@@ -116,9 +112,10 @@ createPinSymbol('square');
  * Even VML browsers need this in order to generate shapes in export. Now share
  * them with the VMLRenderer.
  */
-if ((Renderer as unknown) === VMLRenderer) {
+const Renderer = RendererRegistry.getRendererType();
+if (Renderer !== SVGRenderer) {
     ['circlepin', 'flag', 'squarepin'].forEach(function (shape: string): void {
-        VMLRenderer.prototype.symbols[shape] = symbols[shape];
+        Renderer.prototype.symbols[shape] = symbols[shape];
     });
 }
 

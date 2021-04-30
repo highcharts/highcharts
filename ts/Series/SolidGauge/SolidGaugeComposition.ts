@@ -19,8 +19,7 @@
  * */
 
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import H from '../../Core/Globals.js';
-const { Renderer } = H;
+import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     wrap
@@ -73,7 +72,7 @@ declare global {
  *         Path of the created arc.
  */
 wrap(
-    Renderer.prototype.symbols,
+    RendererRegistry.getRendererType().prototype.symbols,
     'arc',
     function (
         proceed: Function,

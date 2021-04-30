@@ -17,11 +17,8 @@
  * */
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import H from '../Core/Globals.js';
-const {
-    Renderer,
-    VMLRenderer
-} = H;
+
+import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 
 /* *
@@ -90,6 +87,7 @@ SVGRenderer.prototype.symbols.bottombutton = function (
 // The symbol callbacks are generated on the SVGRenderer object in all browsers.
 // Even VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
+const Renderer = RendererRegistry.getRendererType();
 if (Renderer !== SVGRenderer) {
     ['topbutton', 'bottombutton'].forEach(function (shape: string): void {
         Renderer.prototype.symbols[shape] = SVGRenderer.prototype.symbols[shape];

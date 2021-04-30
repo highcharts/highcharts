@@ -46,6 +46,7 @@ const {
     defaultOptions
 } = O;
 import palette from '../Core/Color/Palette.js';
+import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -2542,8 +2543,9 @@ Chart.prototype.inlineStyles = function (): void {
 
 };
 
+const Renderer = RendererRegistry.getRendererType();
 
-H.Renderer.prototype.symbols.menu = function (
+Renderer.prototype.symbols.menu = function (
     x: number,
     y: number,
     width: number,
@@ -2561,7 +2563,7 @@ H.Renderer.prototype.symbols.menu = function (
     return arr;
 };
 
-H.Renderer.prototype.symbols.menuball = function (
+Renderer.prototype.symbols.menuball = function (
     x: number,
     y: number,
     width: number,

@@ -40,8 +40,9 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { stop } = A;
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
-import Series from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+import Series from '../Core/Series/Series.js';
+import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -309,12 +310,14 @@ Chart.prototype.moveFixedElements = function (): void {
  * @return {void}
  */
 Chart.prototype.applyFixed = function (): void {
+    const firstTime = !this.fixedDiv,
+        chartOptions = this.options.chart as any,
+        scrollableOptions = chartOptions.scrollablePlotArea,
+        Renderer = RendererRegistry.getRendererType();
+
     let fixedRenderer,
         scrollableWidth,
-        scrollableHeight,
-        firstTime = !this.fixedDiv,
-        chartOptions = this.options.chart as any,
-        scrollableOptions = chartOptions.scrollablePlotArea;
+        scrollableHeight;
 
     // First render
     if (firstTime) {
@@ -341,7 +344,7 @@ Chart.prototype.applyFixed = function (): void {
         }
         this.renderTo.style.overflow = 'visible';
 
-        this.fixedRenderer = fixedRenderer = new H.Renderer(
+        this.fixedRenderer = fixedRenderer = new Renderer(
             this.fixedDiv,
             this.chartWidth,
             this.chartHeight,

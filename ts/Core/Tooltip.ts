@@ -33,6 +33,7 @@ const { format } = F;
 import H from './Globals.js';
 const { doc } = H;
 import palette from './Color/Palette.js';
+import RendererRegistry from './Renderer/RendererRegistry.js';
 import U from './Utilities.js';
 const {
     clamp,
@@ -761,7 +762,8 @@ class Tooltip {
         if (!this.label) {
 
             if (this.outside) {
-                const chartStyle = this.chart.options.chart.style;
+                const chartStyle = this.chart.options.chart.style,
+                    Renderer = RendererRegistry.getRendererType();
 
                 /**
                  * Reference to the tooltip's container, when
@@ -794,7 +796,7 @@ class Tooltip {
                  * @name Highcharts.Tooltip#renderer
                  * @type {Highcharts.SVGRenderer|undefined}
                  */
-                this.renderer = renderer = new H.Renderer(
+                this.renderer = renderer = new Renderer(
                     container,
                     0,
                     0,

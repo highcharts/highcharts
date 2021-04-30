@@ -46,6 +46,7 @@ import O from '../../Core/Options.js';
 const { getOptions } = O;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../../Core/Pointer.js';
+import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer3D.js';
 import U from '../../Core/Utilities.js';
@@ -372,7 +373,7 @@ declare global {
     }
 }
 
-let VMLRenderer: typeof Highcharts.VMLRenderer,
+let VMLRenderer: ((typeof SVGRenderer)&(typeof Highcharts.VMLRenderer)),
     VMLElement: typeof Highcharts.VMLElement;
 
 /**
@@ -2105,7 +2106,7 @@ if (!svg) {
     extend(VMLRenderer.prototype, VMLRendererExtension as any);
 
     // general renderer
-    H.Renderer = VMLRenderer as any;
+    RendererRegistry.registerRendererType('VMLRenderer', VMLRenderer, true);
 
     // 3D additions
     VMLRenderer3D.compose(VMLRenderer, SVGRenderer);
@@ -2147,3 +2148,15 @@ SVGRenderer.prototype.measureSpanWidth = function (
     discardElement(measuringSpan); // #2463
     return offsetWidth;
 };
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Core/Renderer/RendererType' {
+    interface RendererTypeRegistry {
+        VMLRenderer: typeof VMLRenderer;
+    }
+}

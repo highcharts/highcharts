@@ -835,7 +835,7 @@ class SVGElement implements SVGElementLike {
      * @return {Highcharts.SVGElement}
      *         Returns the SVG element to allow chaining.
      */
-    public clip(clipRect?: Highcharts.ClipRectElement): this {
+    public clip(clipRect?: SVGRenderer.ClipRectElement): this {
         return this.attr(
             'clip-path',
             clipRect ?

@@ -97,7 +97,6 @@ export type InternalNamespace = typeof Highcharts;
  */
 export interface GlobalsLike extends InternalNamespace {
     readonly Obj: ObjectConstructor;
-    Renderer: typeof SVGRenderer;
     readonly SVG_NS: string;
     readonly charts: Array<(Chart|undefined)>;
     readonly dateFormats: Record<string, Highcharts.TimeFormatCallbackFunction>;

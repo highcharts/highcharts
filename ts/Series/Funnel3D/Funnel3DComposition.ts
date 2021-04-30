@@ -34,13 +34,8 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
-const {
-    charts,
-    // Use H.Renderer instead of SVGRenderer for VML support.
-    Renderer: {
-        prototype: rendererProto
-    }
-} = H;
+const { charts } = H;
+import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     error,
@@ -113,6 +108,8 @@ declare global {
  *  Composition
  *
  * */
+
+const rendererProto = RendererRegistry.getRendererType().prototype;
 
 /* eslint-disable valid-jsdoc */
 

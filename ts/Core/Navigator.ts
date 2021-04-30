@@ -31,6 +31,7 @@ import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 const { defaultOptions } = O;
 import palette from './Color/Palette.js';
+import RendererRegistry from './Renderer/RendererRegistry.js';
 import Scrollbar from './Scrollbar.js';
 import Series from './Series/Series.js';
 import SeriesRegistry from './Series/SeriesRegistry.js';
@@ -769,7 +770,7 @@ extend(defaultOptions, {
  * @return {Highcharts.SVGPathArray}
  *         Path to be used in a handle
  */
-H.Renderer.prototype.symbols['navigator-handle'] = function (
+RendererRegistry.getRendererType().prototype.symbols['navigator-handle'] = function (
     x: number,
     y: number,
     w: number,

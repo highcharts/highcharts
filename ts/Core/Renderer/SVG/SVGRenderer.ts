@@ -30,12 +30,13 @@ import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRendererLike from './SVGRendererLike';
 
+import AST from '../HTML/AST.js';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
-import palette from '../../Color/Palette.js';
+import Palette from '../../Color/Palette.js';
+import RendererRegistry from '../RendererRegistry.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
-import AST from '../HTML/AST.js';
 import TextBuilder from './TextBuilder.js';
 import U from '../../Utilities.js';
 const {
@@ -62,7 +63,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        type ClipRectElement = SVGElement;
         interface FontMetricsObject {
             b: number;
             f: number;
@@ -889,11 +889,11 @@ class SVGRenderer implements SVGRendererLike {
 
             // Normal state - prepare the attributes
             normalState = merge({
-                fill: palette.neutralColor3,
-                stroke: palette.neutralColor20,
+                fill: Palette.neutralColor3,
+                stroke: Palette.neutralColor20,
                 'stroke-width': 1,
                 style: {
-                    color: palette.neutralColor80,
+                    color: Palette.neutralColor80,
                     cursor: 'pointer',
                     fontWeight: 'normal'
                 }
@@ -905,16 +905,16 @@ class SVGRenderer implements SVGRendererLike {
 
             // Hover state
             hoverState = merge(normalState, {
-                fill: palette.neutralColor10
+                fill: Palette.neutralColor10
             }, AST.filterUserAttributes(hoverState || {}));
             hoverStyle = hoverState.style;
             delete hoverState.style;
 
             // Pressed state
             pressedState = merge(normalState, {
-                fill: palette.highlightColor10,
+                fill: Palette.highlightColor10,
                 style: {
-                    color: palette.neutralColor100,
+                    color: Palette.neutralColor100,
                     fontWeight: 'bold'
                 }
             }, AST.filterUserAttributes(pressedState || {}));
@@ -924,7 +924,7 @@ class SVGRenderer implements SVGRendererLike {
             // Disabled state
             disabledState = merge(normalState, {
                 style: {
-                    color: palette.neutralColor20
+                    color: Palette.neutralColor20
                 }
             }, AST.filterUserAttributes(disabledState || {}));
             disabledStyle = disabledState.style;
@@ -1705,13 +1705,13 @@ class SVGRenderer implements SVGRendererLike {
         return obj;
     }
 
-    public clipRect(attribs: SVGAttributes): Highcharts.ClipRectElement;
+    public clipRect(attribs: SVGAttributes): SVGRenderer.ClipRectElement;
     public clipRect(
         x?: number,
         y?: number,
         width?: number,
         height?: number
-    ): Highcharts.ClipRectElement;
+    ): SVGRenderer.ClipRectElement;
     /**
      * Define a clipping rectangle. The clipping rectangle is later applied
      * to {@link SVGElement} objects through the {@link SVGElement#clip}
@@ -1744,7 +1744,7 @@ class SVGRenderer implements SVGRendererLike {
         y?: number,
         width?: number,
         height?: number
-    ): Highcharts.ClipRectElement {
+    ): SVGRenderer.ClipRectElement {
         let wrapper,
             // Add a hyphen at the end to avoid confusion in testing indexes
             // -1 and -10, -11 etc (#6550)
@@ -2642,6 +2642,7 @@ interface SVGRenderer extends SVGRendererLike {
  * */
 
 namespace SVGRenderer {
+    export type ClipRectElement = SVGElement;
     export type SymbolKeyValue = (
         'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|'rect'|
         'square'|'topbutton'|'triangle'|'triangle-down'
@@ -2650,11 +2651,11 @@ namespace SVGRenderer {
 
 /* *
  *
- *  Renderer Registry
+ *  Registry
  *
  * */
 
-H.Renderer = SVGRenderer;
+RendererRegistry.registerRendererType('svg', SVGRenderer, true);
 
 /* *
  *
