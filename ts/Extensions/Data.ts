@@ -1743,7 +1743,8 @@ class Data {
                         startRow: startRow,
                         endRow: endRow,
                         startColumn: startColumn,
-                        endColumn: endColumn
+                        endColumn: endColumn,
+                        firstRowAsNames: false // Handled elsewhere
                     },
                     new DataConverter({
                         decimalPoint: options.decimalPoint
