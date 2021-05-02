@@ -1,4 +1,5 @@
-import type Series from '../../Core/Series/Series.js';
+import type Series from '../../Core/Series/Series';
+import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import DataSeriesConverter from '../../Data/DataSeriesConverter.js';
@@ -51,7 +52,8 @@ class ChartComponent extends Component<ChartComponent.Event> {
                 'chartOptions',
                 'chartClassName',
                 'chartID'
-            ]
+            ],
+            tableAxisMap: {}
         });
 
     public static fromJSON(json: ChartComponent.ClassJSON): ChartComponent {
@@ -115,6 +117,8 @@ class ChartComponent extends Component<ChartComponent.Event> {
             void 0,
             true
         );
+
+        // Todo: this.setOptions?
         if (this.options.chartClassName) {
             this.chartContainer.classList.add(this.options.chartClassName);
         }
@@ -129,6 +133,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
         this.chart = this.constructChart();
 
         if (this.store) {
+            // TODO: this may be implemented on the table now
             this.on('tableChanged', (e: any): void => {
                 if (!e.detail || (e.detail && e.detail.sender !== this.id)) {
                     this.updateSeries();
@@ -193,7 +198,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
                 this.chart.setSize(
                     null,
                     this.contentElement.clientHeight,
-                    this.chartOptions.chart.animation
+                    this.chart.options.chart.animation
                 );
             }
         }, 33));
@@ -215,7 +220,8 @@ class ChartComponent extends Component<ChartComponent.Event> {
         if (this.store && this.store.table) {
             const { table } = this.store;
 
-            const xKeys = ['datetime', 'x']; // Names/aliases that should be mapped to xAxis values
+            // Names/aliases that should be mapped to xAxis values
+            const xKeys = Object.keys(this.options.tableAxisMap || {});
             const seriesNames = table.getColumnNames(true);
             const xKeyMap: Record<string, string> = {};
 
@@ -223,7 +229,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
             seriesNames.forEach((name, index): void => {
                 for (let i = 0; i < xKeys.length; i++) {
                     const key = xKeys[i];
-                    if (key === name.toLowerCase()) {
+                    if (key.toLowerCase() === name.toLowerCase()) {
                         xKeyMap[name] = key;
                         seriesNames.splice(index, 1);
                         break; // We only need the first match
@@ -339,10 +345,69 @@ class ChartComponent extends Component<ChartComponent.Event> {
         return this.chart;
     }
 
+    /**
+     * Registers events from the chart options to the callback register
+     */
+    private registerChartEvents(): void {
+        if (this.chart.options) {
+            const options = this.chart.options;
+            const allEvents = [
+                'chart',
+                'series',
+                'yAxis',
+                'xAxis',
+                'colorAxis',
+                'annotations',
+                'navigation'
+            ].map((optionKey: string): Record<string, any> => {
+                let seriesOrAxisOptions = (options as any)[optionKey] || {};
+
+                if (!Array.isArray(seriesOrAxisOptions) && seriesOrAxisOptions.events) {
+                    seriesOrAxisOptions = [seriesOrAxisOptions];
+                }
+
+                if (
+                    seriesOrAxisOptions &&
+                    typeof seriesOrAxisOptions === 'object' &&
+                    Array.isArray(seriesOrAxisOptions)
+                ) {
+                    return seriesOrAxisOptions.reduce(
+                        (
+                            acc: Record<string, any>,
+                            seriesOrAxis: SeriesOptions | Highcharts.AxisOptions,
+                            i: number
+                        ): Record<string, {}> => {
+                            if (seriesOrAxis && seriesOrAxis.events) {
+                                acc[seriesOrAxis.id || `${optionKey}-${i}`] = seriesOrAxis.events;
+                            }
+                            return acc;
+                        }, {}) || {};
+                }
+
+                return {};
+            });
+
+
+            allEvents.forEach((options): void => {
+                Object.keys(options).forEach((key): void => {
+                    const events = options[key];
+                    Object.keys(events).forEach((callbackKey): void => {
+                        this.callbackRegistry.addCallback(`${key}-${callbackKey}`, {
+                            type: 'seriesEvent',
+                            func: events[callbackKey]
+                        });
+                    });
+                });
+            });
+        }
+    }
+
     public toJSON(): ChartComponent.ClassJSON {
         const chartOptions = JSON.stringify(this.options.chartOptions),
             Highcharts = this.options.Highcharts,
             chartConstructor = this.options.chartConstructor;
+
+        this.registerChartEvents();
 
         const base = super.toJSON();
         return {
@@ -388,6 +453,7 @@ namespace ChartComponent {
         chartOptions?: Highcharts.Options;
         chartClassName?: string;
         chartID?: string;
+        tableAxisMap?: Record<string, string>;
     }
 
     export interface ComponentJSONOptions extends Component.ComponentJSONOptions {
