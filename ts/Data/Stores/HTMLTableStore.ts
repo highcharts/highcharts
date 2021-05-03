@@ -175,7 +175,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
         store.fetchTable();
 
         // If already loaded, clear the current rows
-        store.table.clear();
+        store.table.deleteColumns();
 
         store.emit({
             type: 'load',

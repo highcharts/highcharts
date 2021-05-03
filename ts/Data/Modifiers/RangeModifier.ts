@@ -194,7 +194,7 @@ class RangeModifier extends DataModifier {
                 }
             }
 
-            table.clearRows();
+            table.deleteRows();
             table.setRows(rows);
         }
 

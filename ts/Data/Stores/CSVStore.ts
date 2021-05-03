@@ -180,7 +180,7 @@ class CSVStore extends DataStore<CSVStore.Event> implements DataJSON.Class {
         let currentRetries: number;
 
         // Clear the table
-        store.table.clear();
+        store.table.deleteColumns();
         if (initialFetch) {
             clearTimeout(store.liveDataTimeout);
             store.liveDataURL = csvURL;
@@ -243,7 +243,7 @@ class CSVStore extends DataStore<CSVStore.Event> implements DataJSON.Class {
 
         if (csv) {
             // If already loaded, clear the current rows
-            table.clearRows();
+            table.deleteRows();
             store.emit({
                 type: 'load',
                 csv,

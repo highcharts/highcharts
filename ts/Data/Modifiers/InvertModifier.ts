@@ -126,7 +126,7 @@ class InvertModifier extends DataModifier {
 
         if (table.hasColumns(['columnNames'])) { // inverted table
             const columnNames: Array<string> = (
-                    table.deleteColumn('columnNames') || []
+                    (table.deleteColumns(['columnNames']) || {}).columnNames || []
                 ).map(
                     (column): string => `${column}`
                 ),
@@ -145,7 +145,7 @@ class InvertModifier extends DataModifier {
                 }
             }
 
-            table.clear();
+            table.deleteColumns();
             table.setColumns(columns);
 
         } else { // regular table
@@ -165,7 +165,7 @@ class InvertModifier extends DataModifier {
             }
             columns.columnNames = table.getColumnNames();
 
-            table.clear();
+            table.deleteColumns();
             table.setColumns(columns);
         }
 
