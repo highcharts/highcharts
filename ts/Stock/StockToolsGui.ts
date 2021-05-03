@@ -1415,7 +1415,7 @@ class Toolbar {
             className: PREFIX + 'stocktools-wrapper ' +
                 guiOptions.className + ' ' + bindingsClassName
         });
-        container.insertBefore(wrapper, container.childNodes[0]);
+        container.appendChild(wrapper);
 
         // Mimic event behaviour of being outside chart.container
         [
