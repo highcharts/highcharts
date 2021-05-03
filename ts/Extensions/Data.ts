@@ -12,16 +12,28 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+
 import Ajax from '../Extensions/Ajax.js';
 const {
     ajax
 } = Ajax;
 import Chart from '../Core/Chart/Chart.js';
+import CSVParser from '../Data/Parsers/CSVParser.js';
+import CSVStore from '../Data/Stores/CSVStore.js';
+import DataConverter from '../Data/DataConverter.js';
+import DataTable from '../Data/DataTable.js';
 import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
+import GoogleSheetsParser from '../Data/Parsers/GoogleSheetsParser.js';
+import GoogleSheetsStore from '../Data/Stores/GoogleSheetsStore.js';
+import HTMLTableParser from '../Data/Parsers/HTMLTableParser.js';
+import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
 import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
@@ -32,11 +44,18 @@ const {
     extend,
     fireEvent,
     isNumber,
+    isString,
     merge,
     objectEach,
     pick,
     splat
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -131,6 +150,7 @@ declare global {
             );
             public alternativeFormat?: string;
             public chart: Chart;
+            public dataStore?: (CSVStore|GoogleSheetsStore|HTMLTableStore);
             public chartOptions: Options;
             public columns?: Array<Array<DataValueType>>;
             public dateFormat?: string;
@@ -704,6 +724,7 @@ class Data {
 
     public alternativeFormat?: string;
     public chart: Chart = void 0 as any;
+    public dataStore?: (CSVStore|GoogleSheetsStore|HTMLTableStore);
     public chartOptions: Highcharts.Options = void 0 as any;
     public columns?: Array<Array<Highcharts.DataValueType>>;
     public dateFormat?: string;
@@ -974,7 +995,7 @@ class Data {
     }
 
     /**
-     * Parse a CSV input string
+     * Handle a CSV input string
      *
      * @function Highcharts.Data#parseCSV
      *
@@ -983,10 +1004,9 @@ class Data {
      * @return {Array<Array<Highcharts.DataValueType>>}
      */
     public parseCSV(inOptions?: Highcharts.DataOptions): Array<Array<Highcharts.DataValueType>> {
-        let self = this,
+        const self = this,
             options = inOptions || this.options,
             csv = options.csv,
-            columns: Array<Array<Highcharts.DataValueType>>,
             startRow = (
                 typeof options.startRow !== 'undefined' && options.startRow ?
                     options.startRow :
@@ -998,8 +1018,6 @@ class Data {
                 options.startColumn
             ) ? options.startColumn : 0,
             endColumn = options.endColumn || Number.MAX_VALUE,
-            itemDelimiter: string,
-            lines,
             rowIt = 0,
             // activeRowNo = 0,
             dataTypes: Array<Array<string>> = [],
@@ -1011,7 +1029,9 @@ class Data {
                 '\t': 0
             };
 
-        columns = this.columns = [];
+        let columns: Array<Array<Highcharts.DataValueType>> = this.columns = [],
+            itemDelimiter: string,
+            lines;
 
         /*
             This implementation is quite verbose. It will be shortened once
@@ -1137,7 +1157,16 @@ class Data {
             for (; i < columnStr.length; i++) {
                 read(i);
 
-                if (c === '"') {
+                if (c === '#') {
+                    // If there are hexvalues remaining (#13283)
+                    if (!/^#[0-F]{3,3}|[0-F]{6,6}/i.test(columnStr.substr(i))) {
+                        // The rest of the row is a comment
+                        push();
+                        return;
+                    }
+
+                // Quoted string
+                } else if (c === '"') {
                     read(++i);
 
                     while (i < columnStr.length) {
@@ -1421,95 +1450,34 @@ class Data {
             return format;
         }
 
-        /**
-         * @todo
-         * Figure out the best axis types for the data
-         * - If the first column is a number, we're good
-         * - If the first column is a date, set to date/time
-         * - If the first column is a string, set to categories
-         * @private
-         */
-        function deduceAxisTypes(): void {
-
-        }
-
-        if (csv && options.beforeParse) {
-            csv = options.beforeParse.call(this, csv);
-        }
+        let csvStore;
 
         if (csv) {
+            csvStore = this.dataStore = new CSVStore(
+                new DataTable(),
+                {
+                    csv: csv,
+                    csvURL: options.csvURL,
+                    enablePolling: options.enablePolling,
+                    dataRefreshRate: options.dataRefreshRate
+                },
+                new CSVParser({
+                    csv: csv,
+                    startRow: options.startRow,
+                    endRow: options.endRow,
+                    startColumn: options.startColumn,
+                    endColumn: options.endColumn,
+                    firstRowAsNames: options.firstRowAsNames,
+                    switchRowsAndColumns: options.switchRowsAndColumns,
+                    decimalPoint: options.decimalPoint,
+                    itemDelimiter: options.itemDelimiter,
+                    lineDelimiter: options.lineDelimiter
+                    // beforeParse: options.beforeParse
+                }, new DataConverter({}, options.parseDate))
+            );
 
-            lines = csv
-                .replace(/\r\n/g, '\n') // Unix
-                .replace(/\r/g, '\n') // Mac
-                .split(options.lineDelimiter || '\n');
-
-            if (!startRow || startRow < 0) {
-                startRow = 0;
-            }
-
-            if (!endRow || endRow >= lines.length) {
-                endRow = lines.length - 1;
-            }
-
-            if (options.itemDelimiter) {
-                itemDelimiter = options.itemDelimiter;
-            } else {
-                itemDelimiter = null as any;
-                itemDelimiter = guessDelimiter(lines);
-            }
-
-            let offset = 0;
-
-            for (rowIt = startRow; rowIt <= endRow; rowIt++) {
-                if (lines[rowIt][0] === '#') {
-                    offset++;
-                } else {
-                    parseRow(lines[rowIt], rowIt - startRow - offset);
-                }
-            }
-
-            // //Make sure that there's header columns for everything
-            // columns.forEach(function (col) {
-
-            // });
-
-            deduceAxisTypes();
-
-            if ((!options.columnTypes || options.columnTypes.length === 0) &&
-                dataTypes.length &&
-                dataTypes[0].length &&
-                dataTypes[0][1] === 'date' &&
-                !options.dateFormat) {
-                options.dateFormat = deduceDateFormat(columns[0] as any);
-            }
-
-
-            // lines.forEach(function (line, rowNo) {
-            //    let trimmed = self.trim(line),
-            //        isComment = trimmed.indexOf('#') === 0,
-            //        isBlank = trimmed === '',
-            //        items;
-
-            //    if (
-            //        rowNo >= startRow &&
-            //        rowNo <= endRow &&
-            //        !isComment && !isBlank
-            //    ) {
-            //        items = line.split(itemDelimiter);
-            //        items.forEach(function (item, colNo) {
-            //            if (colNo >= startColumn && colNo <= endColumn) {
-            //                if (!columns[colNo - startColumn]) {
-            //                    columns[colNo - startColumn] = [];
-            //                }
-
-            //                columns[colNo - startColumn][activeRowNo] = item;
-            //            }
-            //        });
-            //        activeRowNo += 1;
-            //    }
-            // });
-            //
+            csvStore.load();
+            columns = this.columns = this.getDataColumnsFromDataTable(csvStore.table);
 
             this.dataFound();
         }
@@ -1525,67 +1493,42 @@ class Data {
      * @return {Array<Array<Highcharts.DataValueType>>}
      */
     public parseTable(): Array<Array<Highcharts.DataValueType>> {
-        let options = this.options,
-            table: HTMLElement = options.table as any,
-            columns = this.columns || [],
+        const options = this.options,
+            table = options.table,
             startRow = options.startRow || 0,
             endRow = options.endRow || Number.MAX_VALUE,
             startColumn = options.startColumn || 0,
             endColumn = options.endColumn || Number.MAX_VALUE;
 
+        let columns: Array<Array<Highcharts.DataValueType>> = [],
+            htmlStore;
+
         if (table) {
+            htmlStore = this.dataStore = new HTMLTableStore(
+                new DataTable(),
+                {
+                    table: typeof table === 'string' ? table : table.id || ''
+                },
+                new HTMLTableParser({
+                    startRow: startRow,
+                    endRow: endRow,
+                    startColumn: startColumn,
+                    endColumn: endColumn,
+                    firstRowAsNames: options.firstRowAsNames,
+                    switchRowsAndColumns: options.switchRowsAndColumns
+                }, null, new DataConverter({
+                    decimalPoint: options.decimalPoint
+                }, options.parseDate))
+            );
 
-            if (typeof table === 'string') {
-                table = doc.getElementById(table) as any;
-            }
+            htmlStore.load();
+            columns = this.columns = this.getDataColumnsFromDataTable(htmlStore.table);
 
-            [].forEach.call(table.getElementsByTagName('tr'), function (
-                tr: HTMLTableRowElement,
-                rowNo: number
-            ): void {
-                if (rowNo >= startRow && rowNo <= endRow) {
-                    [].forEach.call(tr.children, function (
-                        item: Element,
-                        colNo: number
-                    ): void {
-                        const row = (columns as any)[colNo - startColumn];
-                        let i = 1;
-
-                        if (
-                            (
-                                item.tagName === 'TD' ||
-                                item.tagName === 'TH'
-                            ) &&
-                            colNo >= startColumn &&
-                            colNo <= endColumn
-                        ) {
-                            if (!(columns as any)[colNo - startColumn]) {
-                                (columns as any)[colNo - startColumn] = [];
-                            }
-
-                            (columns as any)[colNo - startColumn][
-                                rowNo - startRow
-                            ] = item.innerHTML;
-
-                            // Loop over all previous indices and make sure
-                            // they are nulls, not undefined.
-                            while (
-                                rowNo - startRow >= i &&
-                                row[rowNo - startRow - i] === void 0
-                            ) {
-                                row[rowNo - startRow - i] = null;
-                                i++;
-                            }
-                        }
-                    });
-                }
-            });
-
-            this.dataFound(); // continue
+            this.dataFound();
         }
+
         return columns;
     }
-
 
     /**
      * Fetch or refetch live data
@@ -1724,6 +1667,48 @@ class Data {
         return this.hasURLOption(options);
     }
 
+    /**
+     * Get data columns from the data table.
+     * @private
+     *
+     * @function Highcharts.Data#getDataColumnsFromDataTable
+     *
+     * @param {DataTable} [table]
+     *
+     * @return {Array<Array<Highcharts.DataValueType>>}
+     */
+    public getDataColumnsFromDataTable(
+        table: DataTable
+    ): Array<Array<Highcharts.DataValueType>> {
+        const columns: Array<Array<Highcharts.DataValueType>> = [];
+
+        let column: Array<Highcharts.DataValueType>,
+            element;
+
+        objectEach(table.getColumns(), function (elemArr, key): void {
+            if (key !== 'id') {
+                column = [];
+
+                for (let i = 0, iEnd = elemArr.length; i < iEnd; ++i) {
+                    element = elemArr[i];
+
+                    if (element instanceof Date) {
+                        column.push(element.toString());
+                    } else if (isNumber(element) || isString(element)) {
+                        column.push(element);
+                    } else {
+                        column.push(null);
+                    }
+                }
+
+                if (column.length) {
+                    columns.push(column);
+                }
+            }
+        });
+
+        return columns;
+    }
 
     /**
      * Parse a Google spreadsheet.
@@ -1734,158 +1719,56 @@ class Data {
      *         Always returns false, because it is an intermediate fetch.
      */
     public parseGoogleSpreadsheet(): boolean {
-        let data = this,
+        const chart = this.chart,
             options = this.options,
             googleSpreadsheetKey = options.googleSpreadsheetKey,
-            chart = this.chart,
-            // use sheet 1 as the default rather than od6
-            // as the latter sometimes cause issues (it looks like it can
-            // be renamed in some cases, ref. a fogbugz case).
-            worksheet = options.googleSpreadsheetWorksheet || 1,
             startRow = options.startRow || 0,
             endRow = options.endRow || Number.MAX_VALUE,
             startColumn = options.startColumn || 0,
-            endColumn = options.endColumn || Number.MAX_VALUE,
-            refreshRate = (options.dataRefreshRate || 2) * 1000;
+            endColumn = options.endColumn || Number.MAX_VALUE;
 
-        if (refreshRate < 4000) {
-            refreshRate = 4000;
-        }
-
-        /**
-         * Fetch the actual spreadsheet using XMLHttpRequest.
-         * @private
-         */
-        function fetchSheet(fn: Function): void {
-            const url = [
-                'https://spreadsheets.google.com/feeds/cells',
-                googleSpreadsheetKey,
-                worksheet,
-                'public/values?alt=json'
-            ].join('/');
-
-            ajax({
-                url: url,
-                dataType: 'json',
-                success: function (json: Highcharts.JSONType): void {
-                    fn(json);
-
-                    if (options.enablePolling) {
-                        setTimeout(
-                            function (): void {
-                                fetchSheet(fn);
-                            },
-                            (options.dataRefreshRate || 2) * 1000
-                        );
-                    }
-                },
-                error: function (
-                    xhr: XMLHttpRequest,
-                    text: (string|Error)
-                ): void {
-                    return options.error && options.error(text, xhr);
-                }
-            });
-        }
+        let columns: Array<Array<Highcharts.DataValueType>> = [],
+            store: GoogleSheetsStore;
 
         if (googleSpreadsheetKey) {
+            store = this.dataStore = new GoogleSheetsStore(
+                new DataTable(),
+                {
+                    googleSpreadsheetKey: googleSpreadsheetKey,
+                    enablePolling: options.enablePolling,
+                    dataRefreshRate: options.dataRefreshRate
+                },
+                new GoogleSheetsParser(
+                    {
+                        startRow: startRow,
+                        endRow: endRow,
+                        startColumn: startColumn,
+                        endColumn: endColumn
+                    },
+                    new DataConverter({
+                        decimalPoint: options.decimalPoint
+                    }, options.parseDate)
+                )
+            );
 
-            delete options.googleSpreadsheetKey;
+            store.on('afterLoad', (): void => {
+                columns = this.getDataColumnsFromDataTable(store.table);
 
-            fetchSheet(function (
-                json: Highcharts.JSONType
-            ): (boolean|undefined) {
-                // Prepare the data from the spreadsheat
-                let columns: Array<Array<Highcharts.DataValueType>> = [],
-                    cells = json.feed.entry,
-                    cell,
-                    cellCount = (cells || []).length,
-                    colCount = 0,
-                    rowCount = 0,
-                    val,
-                    gr,
-                    gc,
-                    cellInner,
-                    i: number;
-
-                if (!cells || cells.length === 0) {
-                    return false;
-                }
-
-                // First, find the total number of columns and rows that
-                // are actually filled with data
-                for (i = 0; i < cellCount; i++) {
-                    cell = cells[i];
-                    colCount = Math.max(colCount, cell.gs$cell.col);
-                    rowCount = Math.max(rowCount, cell.gs$cell.row);
-                }
-
-                // Set up arrays containing the column data
-                for (i = 0; i < colCount; i++) {
-                    if (i >= startColumn && i <= endColumn) {
-                        // Create new columns with the length of either
-                        // end-start or rowCount
-                        columns[i - startColumn] = [];
-                    }
-                }
-
-                // Loop over the cells and assign the value to the right
-                // place in the column arrays
-                for (i = 0; i < cellCount; i++) {
-                    cell = cells[i];
-                    gr = cell.gs$cell.row - 1; // rows start at 1
-                    gc = cell.gs$cell.col - 1; // columns start at 1
-
-                    // If both row and col falls inside start and end set the
-                    // transposed cell value in the newly created columns
-                    if (gc >= startColumn && gc <= endColumn &&
-                        gr >= startRow && gr <= endRow) {
-
-                        cellInner = cell.gs$cell || cell.content;
-
-                        val = null;
-
-                        if (cellInner.numericValue) {
-                            if (cellInner.$t.indexOf('/') >= 0 ||
-                                cellInner.$t.indexOf('-') >= 0) {
-                                // This is a date - for future reference.
-                                val = cellInner.$t;
-                            } else if (cellInner.$t.indexOf('%') > 0) {
-                                // Percentage
-                                val = parseFloat(cellInner.numericValue) * 100;
-                            } else {
-                                val = parseFloat(cellInner.numericValue);
+                if (columns.length > 0) {
+                    if (chart && chart.series) {
+                        chart.update({
+                            data: {
+                                columns: columns
                             }
-                        } else if (cellInner.$t && cellInner.$t.length) {
-                            val = cellInner.$t;
-                        }
-
-                        columns[gc - startColumn][gr - startRow] = val;
+                        });
+                    } else { // #8245
+                        this.columns = columns;
+                        this.dataFound();
                     }
-                }
-
-                // Insert null for empty spreadsheet cells (#5298)
-                columns.forEach(function (
-                    column: Array<Highcharts.DataValueType>
-                ): void {
-                    for (i = 0; i < column.length; i++) {
-                        if (typeof column[i] === 'undefined') {
-                            column[i] = null as any;
-                        }
-                    }
-                });
-
-                if (chart && chart.series) {
-                    chart.update({
-                        data: {
-                            columns: columns
-                        }
-                    });
-                } else { // #8245
-                    data.columns = columns;
-                    data.dataFound();
                 }
             });
+
+            store.load();
         }
 
         // This is an intermediate fetch, so always return false.
@@ -2225,14 +2108,12 @@ class Data {
                     (match as Date).getTime
                 ) {
                     ret = (
-                        (match as Date).getTime() -
-                        (match as Date).getTimezoneOffset() *
-                        60000
+                        (match as Date).getTime()
                     );
 
                 // Timestamp
                 } else if (isNumber(match)) {
-                    ret = match - (new Date(match)).getTimezoneOffset() * 60000;
+                    ret = match;
                 }
             }
         }

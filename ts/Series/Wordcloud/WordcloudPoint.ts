@@ -24,7 +24,7 @@ import WordcloudSeries from './WordcloudSeries';
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 
-class WordcloudPoint extends ColumnSeries.prototype.pointClass implements Highcharts.DrawPoint {
+class WordcloudPoint extends ColumnSeries.prototype.pointClass implements DrawPointMixin.DrawPoint {
 
     /* *
      *

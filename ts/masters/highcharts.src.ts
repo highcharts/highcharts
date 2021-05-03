@@ -29,6 +29,7 @@ import '../Core/Legend.js';
 import '../Core/Chart/Chart.js';
 import '../Extensions/ScrollablePlotArea.js';
 import '../Extensions/Stacking.js';
+import DataTable from '../Data/DataTable.js';
 import Series from '../Core/Series/Series.js';
 import '../Series/Line/LineSeries.js';
 import '../Series/Area/AreaSeries.js';
@@ -51,6 +52,7 @@ G.stop = Animation.stop;
 G.timers = Fx.timers;
 // Classes
 G.AST = AST;
+G.DataTable = DataTable;
 G.Fx = Fx;
 G.Series = Series;
 G.SVGElement = SVGElement;

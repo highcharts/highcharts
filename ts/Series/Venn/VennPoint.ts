@@ -25,7 +25,7 @@ const {
  *
  * */
 
-class VennPoint extends ScatterSeries.prototype.pointClass implements Highcharts.DrawPoint {
+class VennPoint extends ScatterSeries.prototype.pointClass implements DrawPointMixin.DrawPoint {
 
     /* *
      *

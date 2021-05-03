@@ -519,17 +519,47 @@ function error(
         message += additionalMessages;
     }
 
-    fireEvent(
-        Highcharts,
-        'displayError',
-        { chart, code, message, params },
-        defaultHandler
-    );
+    fireEvent(H, 'displayError', { chart, code, message, params }, defaultHandler);
 
     error.messages.push(message);
 }
 namespace error {
     export const messages: Array<string> = [];
+}
+
+// eslint-disable-next-line valid-jsdoc
+/**
+ * Reduces tree-like objects to a simple object with keys in dot syntax.
+ * @private
+ */
+function flat(
+    obj: AnyRecord
+): AnyRecord {
+    const flatObject: AnyRecord = {},
+        hasOwnProperty = {}.hasOwnProperty,
+        keys = Object.keys(obj);
+    for (let i = 0, iEnd = keys.length, name: string; i < iEnd; ++i) {
+        name = keys[i];
+        if (hasOwnProperty.call(obj, name)) {
+            if (obj[name] instanceof Array) {
+                flatObject[name] = obj[name].map(flat);
+            } else if (
+                typeof obj[name] === 'object' &&
+                obj[name] !== null &&
+                obj[name].constructor === Object
+            ) {
+                const subObj = flat(obj[name]);
+                Object
+                    .getOwnPropertyNames(subObj)
+                    .forEach(function (subName: string): void {
+                        flatObject[`${name}.${subName}`] = subObj[subName];
+                    });
+            } else {
+                flatObject[name] = obj[name];
+            }
+        }
+    }
+    return flatObject;
 }
 
 function merge<T = object>(
@@ -2406,6 +2436,40 @@ if ((win as any).jQuery) {
     };
 }
 
+// eslint-disable-next-line valid-jsdoc
+/**
+ * Reconstructs object keys in dot syntax to tree-like objects.
+ * @private
+ */
+function unflat(
+    flatObj: Record<string, any>
+): Record<string, any> {
+    const obj: Record<string, any> = {};
+    Object
+        .getOwnPropertyNames(flatObj)
+        .forEach(function (name: string): void {
+            if (name.indexOf('.') === -1) {
+                if (flatObj[name] instanceof Array) {
+                    obj[name] = flatObj[name].map(unflat);
+                } else {
+                    obj[name] = flatObj[name];
+                }
+            } else {
+                const subNames = name.split('.'),
+                    subObj = subNames
+                        .slice(0, -1)
+                        .reduce(function (
+                            subObj: Record<string, any>,
+                            subName: string
+                        ): Record<string, any> {
+                            return (subObj[subName] = (subObj[subName] || {}));
+                        }, obj);
+                subObj[(subNames.pop() || '')] = flatObj[name];
+            }
+        });
+    return obj;
+}
+
 // TODO use named exports when supported.
 const utilitiesModule = {
     addEvent,
@@ -2427,6 +2491,7 @@ const utilitiesModule = {
     extendClass,
     find,
     fireEvent,
+    flat,
     getMagnitude,
     getNestedProperty,
     getStyle,
@@ -2452,6 +2517,7 @@ const utilitiesModule = {
     stableSort,
     syncTimeout,
     timeUnits,
+    unflat,
     uniqueKey,
     useSerialIds,
     wrap

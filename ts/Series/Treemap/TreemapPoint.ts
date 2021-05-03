@@ -55,7 +55,7 @@ const {
  *
  * */
 
-class TreemapPoint extends ScatterPoint implements Highcharts.DrawPoint {
+class TreemapPoint extends ScatterPoint implements DrawPointMixin.DrawPoint {
 
     /* *
      *
@@ -144,7 +144,7 @@ class TreemapPoint extends ScatterPoint implements Highcharts.DrawPoint {
  *
  * */
 
-interface TreemapPoint extends Highcharts.DrawPoint {
+interface TreemapPoint extends DrawPointMixin.DrawPoint {
     draw: typeof DrawPointMixin.drawPoint;
     setVisible: typeof PiePoint.prototype.setVisible;
 }

@@ -26,6 +26,7 @@
             "never"
         ],
         "consistent-return": 0,
+        "default-case": 0,
         "function-paren-newline": 0,
         "func-style": 0,
         "indent": 0,
@@ -73,7 +74,14 @@
                 "allowTypedFunctionExpressions": false
             }
         ],
-        "@typescript-eslint/indent": ["error", 4, { "FunctionExpression": { "parameters": 1 }}],
+        "@typescript-eslint/indent": [
+            "error",
+            4,
+            {
+                "FunctionExpression": { "parameters": 1 },
+                "SwitchCase": 1
+            }
+        ],
         "@typescript-eslint/no-empty-function": 0, // @todo
         "@typescript-eslint/no-empty-interface": 0,
         "@typescript-eslint/no-explicit-any": 0,

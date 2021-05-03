@@ -13,7 +13,7 @@ const path = require('path');
 
 const LINT_FOLDER = path.join('test', 'typescript-lint');
 
-const TEST_FOLDER = path.join('test', 'typescript');
+const TEST_FOLDER = path.join('test', 'typescript-dts');
 
 /* *
  *
