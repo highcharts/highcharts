@@ -1511,7 +1511,8 @@ class Chart {
                 lineHeight: 'normal', // #427
                 zIndex: 0, // #1072
                 '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
-                userSelect: 'none' // #13503
+                userSelect: 'none', // #13503
+                'touch-action': 'manipulation'
             }, optionsChart.style || {});
         }
 

@@ -1743,9 +1743,9 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * Add an event listener. This is a simple setter that replaces all other
-     * events of the same type, opposed to the {@link Highcharts#addEvent}
-     * function.
+     * Add an event listener. This is a simple setter that replaces the
+     * previous event of the same type added by this function, as opposed to
+     * the {@link Highcharts#addEvent} function.
      *
      * @sample highcharts/members/element-on/
      *         A clickable rectangle
@@ -1753,9 +1753,7 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#on
      *
      * @param {string} eventType
-     * The event type. If the type is `click`, Highcharts will internally
-     * translate it to a `touchstart` event on touch devices, to prevent the
-     * browser from waiting for a click event from firing.
+     * The event type.
      *
      * @param {Function} handler
      * The handler callback.
@@ -1767,64 +1765,14 @@ class SVGElement implements SVGElementLike {
         eventType: string,
         handler: Function
     ): this {
-        const {
-            element,
-            onEvents
-        } = this;
+        const { onEvents } = this;
 
-        // touch
-        if (hasTouch && eventType === 'click') {
-            let touchStartX: number,
-                touchStartY: number,
-                touchEventFired = false;
-
-            const unbindStart = addEvent(element, 'touchstart', (e: TouchEvent): void => {
-                // save touch position for later calculation
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-            });
-
-            // Instead of ontouchstart, event handlers should be called
-            // on touchend - similar to how current mouseup events are called
-            const unbindEnd = addEvent(element, 'touchend', (e: TouchEvent): void => {
-                // hasMoved is a boolean variable containing logic if page
-                // was scrolled, so if touch position changed more than
-                // ~4px (value borrowed from general touch handler)
-                const hasMoved = touchStartX ? Math.sqrt(
-                    Math.pow(touchStartX - e.changedTouches[0].clientX, 2) +
-                    Math.pow(touchStartY - e.changedTouches[0].clientY, 2)
-                ) >= 4 : false;
-
-                if (!hasMoved) { // only call handlers if page was not scrolled
-                    handler.call(element, e);
-                }
-
-                touchEventFired = true;
-            });
-
-            const unbindClick = addEvent(element, 'click', (e: Event): void => {
-                // Do not call onclick handler if touch event was fired already.
-                if (!touchEventFired) {
-                    handler.call(element, e);
-                }
-            });
-
-            if (onEvents.click) {
-                onEvents.click();
-            }
-
-            onEvents.click = (): void => {
-                unbindStart();
-                unbindEnd();
-                onEvents.click = unbindClick();
-            };
-        } else {
-            if (onEvents[eventType]) {
-                // Unbind existing event
-                onEvents[eventType]();
-            }
-            onEvents[eventType] = addEvent(element, eventType, handler);
+        if (onEvents[eventType]) {
+            // Unbind existing event
+            onEvents[eventType]();
         }
+        onEvents[eventType] = addEvent(this.element, eventType, handler);
+
         return this;
     }
 
