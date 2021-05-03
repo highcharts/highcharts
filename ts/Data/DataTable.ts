@@ -402,7 +402,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {Highcharts.DataTableColumnColection|undefined}
+     * @return {Highcharts.DataTableColumnCollection|undefined}
      * Returns the deleted columns, if found.
      *
      * @emits #deleteColumns
