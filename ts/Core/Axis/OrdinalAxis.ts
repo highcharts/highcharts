@@ -33,11 +33,6 @@ const {
  *
  * */
 
-declare module './TickPositionsArray' {
-    interface TickPositionsArray extends Array<number> {
-    }
-}
-
 /**
  * Internal types
  * @private
