@@ -198,17 +198,6 @@ InfinityLine.prototype.defaultOptions = merge(
     {}
 );
 
-/**
- * An infinity line annotation.
- *
- * @sample highcharts/annotations-advanced/infinity-line/
- *         Infinity Line
- *
- * @extends   annotations.crookedLine
- * @product   highstock
- * @apioption annotations.infinityLine
- */
-
 namespace InfinityLine {
     export interface Options extends CrookedLine.Options{
         typeOptions: TypeOptions;
@@ -223,6 +212,18 @@ namespace InfinityLine {
  *  Registry
  *
  * */
+
+/**
+ * An infinity line annotation.
+ *
+ * @sample highcharts/annotations-advanced/infinity-line/
+ *         Infinity Line
+ *
+ * @extends   annotations.crookedLine
+ * @product   highstock
+ * @apioption annotations.infinityLine
+ */
+
 Annotation.types.infinityLine = InfinityLine;
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
