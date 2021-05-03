@@ -10,10 +10,20 @@
  *
  * */
 
+import type DataTable from '../Data/DataTable';
+
 export default {
-    makeDiv: (className: string): HTMLElement => {
+    dataTableCellToString(cell: DataTable.CellType): string {
+        return (typeof cell === 'string' || typeof cell === 'number' || typeof cell === 'boolean') ?
+            '' + cell :
+            '';
+    },
+    makeDiv: (className: string, id?: string): HTMLElement => {
         const div = document.createElement('div');
         div.className = className;
+        if (id) {
+            div.id = id;
+        }
         return div;
     }
 };

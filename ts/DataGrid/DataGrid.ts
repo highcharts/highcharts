@@ -20,6 +20,7 @@ import type DataGridOptions from './DataGridOptions';
 import DataTable from '../Data/DataTable.js';
 import DataGridUtils from './DataGridUtils.js';
 const {
+    dataTableCellToString,
     makeDiv
 } = DataGridUtils;
 import H from '../Core/Globals.js';
@@ -90,7 +91,12 @@ class DataGrid {
     constructor(container: (string|HTMLElement), options: DeepPartial<DataGridOptions>) {
         // Initialize containers
         if (typeof container === 'string') {
-            this.container = doc.getElementById(container) || makeDiv('hc-dg-container');
+            const existingContainer = doc.getElementById(container);
+            if (existingContainer) {
+                this.container = existingContainer;
+            } else {
+                this.container = makeDiv('hc-dg-container', container);
+            }
         } else {
             this.container = container;
         }
@@ -105,7 +111,7 @@ class DataGrid {
         this.options = merge(DataGrid.defaultOptions, options);
 
         // Init data table
-        this.dataTable = this.getDataTableFromOptions();
+        this.dataTable = this.initDataTable();
 
         this.rowElements = [];
         this.render();
@@ -117,15 +123,29 @@ class DataGrid {
     }
 
 
-    private getDataTableFromOptions(): DataTable {
+    // ---------------- Private methods
+
+
+    /**
+     * Get a reference to the underlying DataTable from options, or create one
+     * if needed.
+     * @return {DataTable}
+     */
+    private initDataTable(): DataTable {
         if (this.options.dataTable) {
             return this.options.dataTable;
         }
-
+        if (this.options.json) {
+            return DataTable.fromJSON(this.options.json);
+        }
         return new DataTable();
     }
 
 
+    /**
+     * Render the data grid. To be called on first render, as well as when
+     * options change, or the underlying data changes.
+     */
     private render(): void {
         this.emptyContainer();
         this.updateScrollingLength();
@@ -135,6 +155,9 @@ class DataGrid {
     }
 
 
+    /**
+     * Remove the rendered row elements.
+     */
     private emptyContainer(): void {
         const container = this.innerContainer;
         while (container.firstChild) {
@@ -143,7 +166,11 @@ class DataGrid {
     }
 
 
+    /**
+     * Apply CSS.
+     */
     private applyContainerStyles(): void {
+        // TODO: Use stylesheets.
         this.outerContainer.style.cssText =
             'width: 100%;' +
             'height: 100%;' +
@@ -163,25 +190,32 @@ class DataGrid {
     }
 
 
+    /**
+     * Add internal event listeners to the grid.
+     */
     private addEvents(): void {
         this.outerContainer.addEventListener('scroll', (e): void => this.onScroll(e));
         document.addEventListener('click', (e): void => this.onDocumentClick(e));
     }
 
 
+    /**
+     * Handle user scrolling the grid
+     * @param {Event} e Event object
+     */
     private onScroll(e: Event): void {
         e.preventDefault();
         window.requestAnimationFrame((): void => {
+            const columnsInPresentationOrder = this.dataTable.getColumnNames(true);
             let i = Math.floor(this.outerContainer.scrollTop / DataGrid.cellHeight) || 0;
 
             for (const tableRow of this.rowElements) {
-                const dataTableRow = this.dataTable.getRow(i);
+                const dataTableRow = this.dataTable.getRow(i, columnsInPresentationOrder);
                 if (dataTableRow) {
-                    const row: any = []; // (Object as any).values(dataTableRow.getAllCells());
                     const cellElements = tableRow.querySelectorAll('div');
-                    row.forEach((columnValue: string, j: number): void => {
+                    dataTableRow.forEach((columnValue: DataTable.CellType, j: number): void => {
                         const cell = cellElements[j];
-                        cell.textContent = columnValue;
+                        cell.textContent = dataTableCellToString(columnValue);
                     });
                 }
                 i++;
@@ -190,6 +224,10 @@ class DataGrid {
     }
 
 
+    /**
+     * Handle the user starting interaction with a cell.
+     * @param {HTMLElement} cellEl The clicked cell.
+     */
     private onCellClick(cellEl: HTMLElement): void {
         let input = cellEl.querySelector('input');
         const cellValue = cellEl.textContent;
@@ -208,6 +246,10 @@ class DataGrid {
     }
 
 
+    /**
+     * Handle the user clicking somewhere outside the grid.
+     * @param {MouseEvent} e Event object.
+     */
     private onDocumentClick(e: MouseEvent): void {
         if (this.cellInputEl && e.target) {
             const cellEl = this.cellInputEl.parentNode;
@@ -219,6 +261,9 @@ class DataGrid {
     }
 
 
+    /**
+     * Remove the <input> overlay and update the cell value
+     */
     private removeCellInputElement(): void {
         const cellInputEl = this.cellInputEl;
         if (cellInputEl) {
@@ -247,37 +292,53 @@ class DataGrid {
     }
 
 
+    /**
+     * Render a data cell.
+     * @param {HTMLElement} parentRow The parent row to add the cell to.
+     * @param {DataTable.CellType} cellValue The value to add in the data cell.
+     */
+    private renderCell(parentRow: HTMLElement, cellValue: DataTable.CellType): void {
+        const cellEl = makeDiv('hc-dg-cell');
+        cellEl.style.cssText = 'border: 1px solid black;' +
+            'overflow: hidden;' +
+            'padding: 0 10px;' +
+            'z-index: -1;';
+
+        cellEl.textContent = dataTableCellToString(cellValue);
+
+        cellEl.addEventListener('click', (): void => this.onCellClick(cellEl));
+        parentRow.appendChild(cellEl);
+    }
+
+
+    /**
+     * Render a row of data.
+     * @param {DataTable.Row} row The row data to render. The data should be in presentation order.
+     */
+    private renderRow(row: DataTable.Row): void {
+        const rowEl = makeDiv('hc-dg-row');
+        rowEl.style.cssText = 'display: flex;' +
+            'background-color: white;' +
+            'max-height: 20px;' +
+            'z-index: -1;';
+
+        row.forEach(this.renderCell.bind(this, rowEl));
+
+        this.innerContainer.appendChild(rowEl);
+        this.rowElements.push(rowEl);
+    }
+
+
+    /**
+     * Render initial rows before the user starts scrolling
+     */
     private renderInitialRows(): void {
         this.rowElements = [];
         const rowsToDraw = this.getNumRowsToDraw();
-        let i = 0;
-        while (i < rowsToDraw) {
-            const rowEl = makeDiv('hc-dg-row');
-            rowEl.style.cssText = 'display: flex;' +
-                'background-color: white;' +
-                'max-height: 20px;' +
-                'z-index: -1;';
+        const columnsInPresentationOrder = this.dataTable.getColumnNames(true);
+        const rowData = this.dataTable.getRows(0, rowsToDraw, columnsInPresentationOrder);
 
-            const dataTableRow = this.dataTable.getRow(i);
-            if (dataTableRow) {
-                const row: any = []; // (Object as any).values(dataTableRow.getAllCells());
-
-                row.forEach((columnValue: string): void => {
-                    const cellEl = makeDiv('hc-dg-cell');
-                    cellEl.style.cssText = 'border: 1px solid black;' +
-                        'overflow: hidden;' +
-                        'padding: 0 10px;' +
-                        'z-index: -1;';
-                    cellEl.textContent = columnValue;
-                    cellEl.addEventListener('click', (): void => this.onCellClick(cellEl));
-                    rowEl.appendChild(cellEl);
-                });
-            }
-
-            this.innerContainer.appendChild(rowEl);
-            this.rowElements.push(rowEl);
-            i++;
-        }
+        rowData.forEach(this.renderRow.bind(this));
     }
 }
 

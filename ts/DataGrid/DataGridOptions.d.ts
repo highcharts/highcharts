@@ -20,6 +20,7 @@ import type DataTable from '../Data/DataTable';
 
 export interface DataGridOptions {
     dataTable?: DataTable;
+    json?: DataTable.ClassJSON;
 }
 
 export default DataGridOptions;
