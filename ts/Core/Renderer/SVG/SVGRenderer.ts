@@ -1207,6 +1207,7 @@ class SVGRenderer {
         }
 
         return label
+            .on('touchstart', (e: Event): void => e.stopPropagation())
             .on('click', function (e: Event): void {
                 if (curState !== 3) {
                     callback.call(label, e);
