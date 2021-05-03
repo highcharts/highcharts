@@ -756,7 +756,7 @@ class Data {
         chart?: Chart
     ): void {
 
-        var decimalPoint = options.decimalPoint,
+        let decimalPoint = options.decimalPoint,
             hasData;
 
         if (chartOptions) {
@@ -846,7 +846,7 @@ class Data {
      * @function Highcharts.Data#getColumnDistribution
      */
     public getColumnDistribution(): void {
-        var chartOptions = this.chartOptions,
+        let chartOptions = this.chartOptions,
             options = this.options,
             xColumns: Array<number> = [],
             getValueCount = function (type: string): number {
@@ -908,7 +908,7 @@ class Data {
         seriesMapping.forEach(function (
             mapping: Record<string, number>
         ): void {
-            var builder = new SeriesBuilder(),
+            const builder = new SeriesBuilder(),
                 numberOfValueColumnsNeeded = individualCounts[seriesIndex] ||
                     getValueCount(globalType),
                 seriesArr = (chartOptions && chartOptions.series) || [],
@@ -952,7 +952,7 @@ class Data {
             seriesIndex++;
         });
 
-        var globalPointArrayMap = getPointArrayMap(globalType);
+        let globalPointArrayMap = getPointArrayMap(globalType);
 
         if (typeof globalPointArrayMap === 'undefined') {
             globalPointArrayMap = ['y'];
@@ -1081,7 +1081,7 @@ class Data {
             noAdd?: boolean,
             callbacks?: Record<string, Function>
         ): void {
-            var i = 0,
+            let i = 0,
                 c = '',
                 cl = '',
                 cn = '',
@@ -1208,7 +1208,7 @@ class Data {
          * @private
          */
         function guessDelimiter(lines: Array<string>): string {
-            var points = 0,
+            let points = 0,
                 commas = 0,
                 guessed: string = false as any;
 
@@ -1216,7 +1216,7 @@ class Data {
                 columnStr: string,
                 i: number
             ): (boolean|undefined) {
-                var inStr = false,
+                let inStr = false,
                     c,
                     cn,
                     cl,
@@ -1228,7 +1228,7 @@ class Data {
                     return true;
                 }
 
-                for (var j = 0; j < columnStr.length; j++) {
+                for (let j = 0; j < columnStr.length; j++) {
                     c = columnStr[j];
                     cn = columnStr[j + 1];
                     cl = columnStr[j - 1];
@@ -1330,7 +1330,7 @@ class Data {
          * @private
          */
         function deduceDateFormat(data: Array<string>, limit?: number): string {
-            var format = 'YYYY/mm/dd',
+            let format = 'YYYY/mm/dd',
                 thing: Array<Highcharts.DataValueType>,
                 guessedFormat: Array<string> = [],
                 calculatedFormat: string,
@@ -1539,7 +1539,7 @@ class Data {
      *         The URLs that were tried can be found in the options
      */
     public fetchLiveData(): boolean {
-        var data = this,
+        let data = this,
             chart = this.chart,
             options = this.options,
             maxRetries = 3,
@@ -1814,7 +1814,7 @@ class Data {
      * @function Highcharts.Data#parseTypes
      */
     public parseTypes(): void {
-        var columns = this.columns,
+        let columns = this.columns,
             col = (columns as any).length;
 
         while (col--) {
@@ -1838,7 +1838,7 @@ class Data {
         column: Array<Highcharts.DataValueType>,
         col: number
     ): void {
-        var rawColumns = this.rawColumns,
+        let rawColumns = this.rawColumns,
             columns = this.columns,
             row = column.length,
             val: Highcharts.DataValueType,
@@ -2015,7 +2015,7 @@ class Data {
                 if (!match) {
                     return NaN;
                 }
-                var year = +match[3],
+                let year = +match[3],
                     d = new Date();
 
                 if (year > (d.getFullYear() - 2000)) {
@@ -2131,7 +2131,7 @@ class Data {
      */
     public rowsToColumns(rows: (Array<Array<Highcharts.DataValueType>>|undefined)
     ): (Array<Array<Highcharts.DataValueType>>|undefined) {
-        var row,
+        let row,
             rowsLength,
             col,
             colsLength,
@@ -2194,7 +2194,7 @@ class Data {
         numberOfColumns: number,
         seriesBuilders: Array<Highcharts.SeriesBuilder>
     ): Array<number> {
-        var s,
+        let s,
             i,
             freeIndexes: Array<boolean> = [],
             freeIndexValues: Array<number> = [],
@@ -2232,7 +2232,7 @@ class Data {
      */
     public complete(): void {
 
-        var columns = this.columns,
+        let columns = this.columns,
             xColumns = [],
             type,
             options = this.options,
@@ -2408,7 +2408,7 @@ class Data {
         options: Highcharts.DataOptions,
         redraw?: boolean
     ): void {
-        var chart = this.chart;
+        const chart = this.chart;
 
         if (options) {
             // Set the complete handler
@@ -2476,7 +2476,7 @@ addEvent(
             ];
         }
     ): void {
-        var chart = this, // eslint-disable-line no-invalid-this
+        let chart = this, // eslint-disable-line no-invalid-this
             userOptions: Partial<Highcharts.Options> = (e.args[0] || {}),
             callback = e.args[1];
 
@@ -2493,7 +2493,7 @@ addEvent(
                 afterComplete: function (
                     dataOptions?: Partial<Highcharts.Options>
                 ): void {
-                    var i, series;
+                    let i, series;
 
                     // Merge series configs
                     if (
@@ -2570,7 +2570,7 @@ class SeriesBuilder {
      * @returns {boolean}
      */
     public populateColumns(freeIndexes: Array<number>): boolean {
-        var builder = this,
+        let builder = this,
             enoughColumns = true;
 
         // Loop each reader and give it an index if its missing.
@@ -2614,7 +2614,7 @@ class SeriesBuilder {
         columns: Array<Array<T>>,
         rowIndex: number
     ): (Array<T>|Record<string, T>) {
-        var builder = this,
+        let builder = this,
             pointIsArray = builder.pointIsArray,
             point =
                 pointIsArray ? [] as Array<T> : {} as Record<string, T>,
@@ -2625,7 +2625,7 @@ class SeriesBuilder {
         builder.readers.forEach(function (
             reader: Highcharts.SeriesBuilderReaderObject
         ): void {
-            var value = columns[reader.columnIndex as any][rowIndex];
+            const value = columns[reader.columnIndex as any][rowIndex];
 
             if (pointIsArray) {
                 (point as any).push(value);
@@ -2699,7 +2699,7 @@ class SeriesBuilder {
      * @returns {Array<number>}
      */
     public getReferencedColumnIndexes(): Array<number> {
-        var i,
+        let i,
             referencedColumnIndexes = [],
             columnReader;
 
@@ -2723,7 +2723,7 @@ class SeriesBuilder {
      * @returns {boolean|undefined}
      */
     public hasReader(configName: string): (boolean|undefined) {
-        var i, columnReader;
+        let i, columnReader;
 
         for (i = 0; i < this.readers.length; i = i + 1) {
             columnReader = this.readers[i];

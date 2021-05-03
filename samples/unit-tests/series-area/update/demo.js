@@ -3,7 +3,8 @@ QUnit.test('Updating series stacked property', assert => {
         chart: {
             type: 'area',
             width: 600,
-            height: 350
+            height: 350,
+            animation: true
         },
         xAxis: {
             categories: [
@@ -69,5 +70,24 @@ QUnit.test('Updating series stacked property', assert => {
     assert.ok(
         chart.series[0].areaPath.slice(-1)[0].includes("Z"),
         'The last index of the path array contains the closure'
+    );
+
+    chart.series[0].update({
+        data: []
+    });
+
+    assert.strictEqual(
+        chart.series[0].areaPath.length,
+        0,
+        'Path should be empty when there is no data'
+    );
+
+    chart.series[1].update({
+        data: []
+    });
+
+    assert.ok(
+        true,
+        '#15534: Updating from data containing nulls to no data should not throw'
     );
 });

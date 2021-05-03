@@ -21,8 +21,12 @@ import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type { DataLabelOverflowValue } from '../Core/Series/DataLabelOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../Core/Renderer/SVG/SVGLabel';
+
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
 import H from '../Core/Globals.js';
 import Series from '../Core/Series/Series.js';
 import StackingAxis from '../Core/Axis/StackingAxis.js';
@@ -31,7 +35,6 @@ const {
     correctFloat,
     defined,
     destroyObjectProperties,
-    format,
     isArray,
     isNumber,
     objectEach,
@@ -301,7 +304,7 @@ class StackItem {
     public cumulative?: (null|number);
     public hasValidPoints: boolean;
     public isNegative: boolean;
-    public label?: SVGElement;
+    public label?: SVGLabel;
     public leftCliff: number;
     public options: Highcharts.YAxisStackLabelsOptions;
     public points: Record<string, Array<number>>;
@@ -328,7 +331,7 @@ class StackItem {
      * @param {Highcharts.SVGElement} group
      */
     public render(group: SVGElement): void {
-        var chart = this.axis.chart,
+        let chart = this.axis.chart,
             options = this.options,
             formatOption = options.format,
             attr: Highcharts.AttrObject = {},
@@ -400,7 +403,7 @@ class StackItem {
         boxTop?: number,
         defaultX?: number
     ): void {
-        var stackItem = this,
+        let stackItem = this,
             axis = stackItem.axis,
             chart = axis.chart,
             // stack value translated mapped to chart coordinates
@@ -438,7 +441,7 @@ class StackItem {
             visible;
 
         if (label && stackBox) {
-            var bBox = label.getBBox(),
+            let bBox = label.getBBox(),
                 padding = label.padding,
                 boxOffsetX,
                 boxOffsetY;
@@ -541,7 +544,7 @@ class StackItem {
         h: number,
         axis: Highcharts.Axis
     ): BBoxObject {
-        var reversed = stackItem.axis.reversed,
+        const reversed = stackItem.axis.reversed,
             inverted = chart.inverted,
             axisPos = axis.height + (axis.pos as any) -
                 (inverted ? chart.plotLeft : chart.plotTop),
@@ -570,7 +573,7 @@ class StackItem {
  * @function Highcharts.Chart#getStacks
  */
 Chart.prototype.getStacks = function (this: Chart): void {
-    var chart = this,
+    const chart = this,
         inverted = chart.inverted;
 
     // reset stacks for each yAxis
@@ -581,7 +584,7 @@ Chart.prototype.getStacks = function (this: Chart): void {
     });
 
     chart.series.forEach(function (series): void {
-        var xAxisOptions = series.xAxis && series.xAxis.options || {};
+        const xAxisOptions = series.xAxis && series.xAxis.options || {};
 
         if (
             series.options.stacking &&
@@ -661,7 +664,7 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
         return;
     }
 
-    var series = this,
+    let series = this,
         xData = series.processedXData,
         yData = series.processedYData,
         stackedYData = [],
@@ -823,7 +826,7 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
  * @function Highcharts.Series#modifyStacks
  */
 Series.prototype.modifyStacks = function (): void {
-    var series = this,
+    let series = this,
         yAxis = series.yAxis as StackingAxis,
         stackKey = series.stackKey,
         stacks = yAxis.stacking.stacks,
@@ -835,7 +838,7 @@ Series.prototype.modifyStacks = function (): void {
         [stackKey, '-' + stackKey].forEach(function (
             key: (string|undefined)
         ): void {
-            var i = (processedXData as any).length,
+            let i = (processedXData as any).length,
                 x,
                 stack,
                 pointExtremes;
@@ -872,7 +875,7 @@ Series.prototype.percentStacker = function (
     stack: Highcharts.StackItem,
     i: number
 ): void {
-    var totalFactor = stack.total ? 100 / stack.total : 0;
+    const totalFactor = stack.total ? 100 / stack.total : 0;
 
     // Y bottom value
     pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor);

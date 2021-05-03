@@ -456,22 +456,33 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
         table.emit({ type: 'cloneTable', detail: eventDetail });
 
-        const clone = new DataTable(
-            skipColumns ? {} : table.columns,
-            table.autoId ? void 0 : table.id,
-            table.presentationState,
-            table.converter
-        );
+        let clone: DataTable;
 
-        if (aliases.length) {
-            const cloneAliasMap = clone.aliasMap;
-            for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
-                alias = aliases[i];
-                cloneAliasMap[alias] = aliasMap[alias];
+        if (skipColumns) {
+            clone = new DataTable(
+                {},
+                table.autoId ? void 0 : table.id,
+                table.presentationState,
+                table.converter
+            );
+        } else {
+            clone = new DataTable(
+                table.columns,
+                table.autoId ? void 0 : table.id,
+                table.presentationState,
+                table.converter
+            );
+
+            if (aliases.length) {
+                const cloneAliasMap = clone.aliasMap;
+                for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
+                    alias = aliases[i];
+                    cloneAliasMap[alias] = aliasMap[alias];
+                }
             }
-        }
 
-        clone.versionTag = table.versionTag;
+            clone.versionTag = table.versionTag;
+        }
 
         table.emit({
             type: 'afterCloneTable',
@@ -1333,7 +1344,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Checks for given column names or aliases.
      *
-     * @function Highcharts.DataTable#hasColumn
+     * @function Highcharts.DataTable#hasColumns
      *
      * @param {Array<string>} columnNamesOrAliases
      * Column names of aliases to check.
@@ -1703,13 +1714,45 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     }
 
     /**
-     * Sets cell values for multiple rows. Will insert new rows, if no
-     * index was provided, or if the index is higher than the total number of
+     * Sets cell values of a row. Will insert a new row, if no index was
+     * provided, or if the index is higher than the total number of table rows.
+     *
+     * Note: This function is just a simplified wrap of
+     * {@link Highcharts.DataTable#setRows}.
+     *
+     * @function Highcharts.DataTable#setRows
+     *
+     * @param {Highcharts.DataTableRow|Highcharts.DataTableRowObject} row
+     * Cell values to set.
+     *
+     * @param {number} [rowIndex]
+     * Index of the row to change. Leave `undefind` to add as a new row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {boolean}
+     * Returns `true` if successful, otherwise `false`.
+     *
+     * @emits #setRows
+     * @emits #afterSetRows
+     */
+    public setRow(
+        row: (DataTable.Row|DataTable.RowObject),
+        rowIndex?: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): boolean {
+        return this.setRows([row], rowIndex, eventDetail);
+    }
+
+    /**
+     * Sets cell values for multiple rows. Will insert new rows, if no index was
+     * was provided, or if the index is higher than the total number of table
      * rows.
      *
      * @function Highcharts.DataTable#setRows
      *
-     * @param {Array<Highcharts.DataTableRow>} rows
+     * @param {Array<(Highcharts.DataTableRow|Highcharts.DataTableRowObject)>} rows
      * Row values to insert.
      *
      * @param {number} [rowIndex]
@@ -1721,8 +1764,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @return {boolean}
      * Returns `true` if successful, otherwise `false`.
      *
-     * @emits #setRow
-     * @emits #afterSetRow
+     * @emits #setRows
+     * @emits #afterSetRows
      */
     public setRows(
         rows: Array<(DataTable.Row|DataTable.RowObject)>,

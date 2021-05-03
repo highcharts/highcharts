@@ -39,7 +39,7 @@ function accumulateAverage(
     yVal: Array<Array<number>>,
     i: number
 ): void {
-    var xValue = xVal[i],
+    const xValue = xVal[i],
         yValue = yVal[i];
 
     points.push([xValue, yValue]);
@@ -52,7 +52,7 @@ function getTR(
     currentPoint: Array<number>,
     prevPoint: Array<number>
 ): number {
-    var pointY = currentPoint,
+    const pointY = currentPoint,
         prevY = prevPoint,
         HL = pointY[1] - pointY[2],
         HCp = typeof prevY === 'undefined' ? 0 : Math.abs(pointY[1] - prevY[3]),
@@ -73,7 +73,7 @@ function populateAverage(
     period: number,
     prevATR: number
 ): Array<number> {
-    var x = xVal[i - 1],
+    let x = xVal[i - 1],
         TR = getTR(yVal[i - 1], yVal[i - 2]),
         y;
 
@@ -115,8 +115,11 @@ class ATRIndicator extends SMAIndicator {
      * @optionparent plotOptions.atr
      */
     public static defaultOptions: ATROptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * @excluding index
+         */
         params: {
-            period: 14
+            index: void 0 // unused index, do not inherit (#15362)
         }
     } as ATROptions);
 
@@ -140,7 +143,7 @@ class ATRIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: ATRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = (params.period as any),
+        let period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,

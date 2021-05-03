@@ -69,7 +69,7 @@ function highlowLevel(
 }
 
 function getClosestPointRange(axis: Highcharts.Axis): number | undefined {
-    var closestDataRange: number | undefined,
+    let closestDataRange: number | undefined,
         loopLength: number,
         distance: number,
         xData: Array<number>,
@@ -104,7 +104,7 @@ function checkLineIntersection(
     b2: IKHPoint | undefined
 ): boolean | Record<string, number> {
     if (a1 && a2 && b1 && b2) {
-        var saX: number = a2.plotX - a1.plotX, // Auxiliary section a2-a1 X
+        let saX: number = a2.plotX - a1.plotX, // Auxiliary section a2-a1 X
             saY: number = a2.plotY - a1.plotY, // Auxiliary section a2-a1 Y
             sbX: number = b2.plotX - b1.plotX, // Auxiliary section b2-b1 X
             sbY: number = b2.plotY - b1.plotY, // Auxiliary section b2-b1 Y
@@ -133,7 +133,7 @@ function checkLineIntersection(
 function drawSenkouSpan(
     opt: IKHDrawSenkouSpanObject
 ): void {
-    var indicator = opt.indicator;
+    const indicator = opt.indicator;
 
     indicator.points = opt.points;
     indicator.nextPoints = opt.nextPoints;
@@ -152,7 +152,7 @@ function drawSenkouSpan(
 // Point: [undefined, undefined, undefined, ...] is incorrect
 H.approximations['ichimoku-averages'] = function ():
 Array<number | null | undefined> | undefined {
-    var ret: Array<number | null | undefined> = [],
+    let ret: Array<number | null | undefined> = [],
         isEmptyRange: boolean | undefined;
 
     [].forEach.call(arguments, function (arr, i): void {
@@ -204,7 +204,11 @@ class IKHIndicator extends SMAIndicator {
     public static defaultOptions: IKHOptions = merge(
         SMAIndicator.defaultOptions,
         {
+            /**
+             * @excluding index
+             */
             params: {
+                index: void 0, // unused index, do not inherit (#15362)
                 period: 26,
                 /**
                  * The base period for Tenkan calculations.
@@ -432,7 +436,7 @@ class IKHIndicator extends SMAIndicator {
     }
 
     public translate(): void {
-        var indicator = this;
+        const indicator = this;
 
         SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
 
@@ -463,12 +467,12 @@ class IKHIndicator extends SMAIndicator {
     }
 
     public drawGraph(): void {
-        var indicator = this,
+        let indicator = this,
             mainLinePoints: Array<IKHPoint> =
                 indicator.points,
             pointsLength: number = mainLinePoints.length,
             mainLineOptions: IKHOptions = indicator.options,
-            mainLinePath: Highcharts.SVGElement | undefined = indicator.graph,
+            mainLinePath = indicator.graph,
             mainColor = indicator.color,
             gappedExtend: IKHGapExtensionObject = {
                 options: {
@@ -547,7 +551,7 @@ class IKHIndicator extends SMAIndicator {
 
             if (negativeColor && pointsLength !== mainLinePoints.length - 1) {
                 // Check if lines intersect
-                var index = ikhMap.senkouSpanB.length - 1,
+                const index = ikhMap.senkouSpanB.length - 1,
                     intersect = checkLineIntersection(
                         ikhMap.senkouSpanA[index - 1],
                         ikhMap.senkouSpanA[index],
@@ -650,7 +654,7 @@ class IKHIndicator extends SMAIndicator {
                 // Add points to color or negativeColor arrays
                 // Check the middle point (if exist)
                 if (Math.floor(sectionPoints.length / 2) >= 1) {
-                    var x = Math.floor(sectionPoints.length / 2);
+                    const x = Math.floor(sectionPoints.length / 2);
 
                     // When middle points has equal values
                     // Compare all ponints plotY value sum
@@ -751,7 +755,7 @@ class IKHIndicator extends SMAIndicator {
     }
 
     public getGraphPath(points: Array<LinePoint>): SVGPath {
-        var indicator = this,
+        let indicator = this,
             path: SVGPath = [],
             spanA: SVGPath,
             spanAarr: SVGPath = [];
@@ -788,7 +792,7 @@ class IKHIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: IKHParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> | undefined {
-        var period: number = params.period as any,
+        let period: number = params.period as any,
             periodTenkan: number = params.periodTenkan as any,
             periodSenkouSpanB: number = params.periodSenkouSpanB as any,
             xVal: Array<number> = series.xData as any,

@@ -33,7 +33,7 @@ const draw = function draw(
     this: Mixin.DrawPoint,
     params: Mixin.DrawPointParams
 ): void {
-    var component = this,
+    let component = this,
         graphic = component.graphic,
         animatableAttribs = params.animatableAttribs,
         onComplete = params.onComplete,
@@ -59,7 +59,7 @@ const draw = function draw(
                 onComplete
             );
     } else if (graphic) {
-        var destroy = function (): void {
+        const destroy = function (): void {
             component.graphic = graphic = (graphic as any).destroy();
             if (isFn(onComplete)) {
                 onComplete();
@@ -87,7 +87,7 @@ const drawPoint = function drawPoint(
     this: Mixin.DrawPoint,
     params: Mixin.DrawPointParams
 ): void {
-    var point = this,
+    const point = this,
         attribs = params.attribs = params.attribs || {};
 
     // Assigning class in dot notation does go well in IE8

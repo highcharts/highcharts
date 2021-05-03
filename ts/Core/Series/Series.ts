@@ -104,6 +104,12 @@ declare module '../Chart/ChartLike'{
     }
 }
 
+declare module '../Renderer/SVG/SVGElementLike' {
+    interface SVGElementLike {
+        survive?: boolean;
+    }
+}
+
 declare module './SeriesLike' {
     interface SeriesLike {
         _hasPointMarkers?: boolean;
@@ -155,9 +161,6 @@ declare global {
             cropped: (boolean|undefined);
             cropStart: number;
             closestPointRange: (number|undefined);
-        }
-        interface SVGElement {
-            survive?: boolean;
         }
         type SeriesPointIntervalUnitValue = ('day'|'month'|'year');
     }
@@ -2879,7 +2882,7 @@ class Series {
 
     public table?: DataTable;
 
-    private tableReset?: boolean;
+    private tableSyncOff?: boolean;
 
     private tableSyncTimeout?: number;
 
@@ -2925,7 +2928,7 @@ class Series {
 
         fireEvent(this, 'init', { options: userOptions });
 
-        var series = this,
+        let series = this,
             events,
             chartSeries = chart.series,
             lastSeries;
@@ -3102,7 +3105,7 @@ class Series {
      *         The index of the series in the collection.
      */
     public insert(collection: Array<Series>): number {
-        var indexOption = this.options.index,
+        let indexOption = this.options.index,
             i: any;
 
         // Insert by index option
@@ -3138,7 +3141,7 @@ class Series {
      * @function Highcharts.Series#bindAxes
      */
     public bindAxes(): void {
-        var series = this,
+        let series = this,
             seriesOptions = series.options,
             chart = series.chart,
             axisOptions;
@@ -3231,12 +3234,12 @@ class Series {
         point: Point,
         i: (number|string)
     ): void {
-        var series = point.series,
+        const series = point.series,
             args = arguments,
             fn = isNumber(i) ?
                 // Insert the value in the given position
                 function (key: string): void {
-                    var val = key === 'y' && series.toYData ?
+                    const val = key === 'y' && series.toYData ?
                         series.toYData(point) :
                         (point as any)[key];
 
@@ -3304,7 +3307,7 @@ class Series {
      * @function Highcharts.Series#setDataSortingOptions
      */
     public setDataSortingOptions(): void {
-        var options = this.options;
+        const options = this.options;
 
         extend<Series>(this, {
             requireSorting: false,
@@ -3334,7 +3337,7 @@ class Series {
      * @fires Highcharts.Series#event:afterSetOptions
      */
     public setOptions(itemOptions: DeepPartial<SeriesTypeOptions>): this['options'] {
-        var chart = this.chart,
+        let chart = this.chart,
             chartOptions = chart.options,
             plotOptions = chartOptions.plotOptions,
             userOptions = chart.userOptions || {},
@@ -3351,7 +3354,7 @@ class Series {
         fireEvent(this, 'setOptions', e);
 
         // These may be modified by the event
-        var typeOptions = (e.plotOptions as any)[this.type],
+        const typeOptions = (e.plotOptions as any)[this.type],
             userPlotOptions = (
                 userOptions.plotOptions || {} as SeriesTypePlotOptions
             );
@@ -3472,7 +3475,7 @@ class Series {
         value?: any,
         defaults?: AnyRecord
     ): void {
-        var i,
+        let i,
             chart = this.chart,
             userOptions = this.userOptions,
             indexName = prop + 'Index',
@@ -3556,7 +3559,7 @@ class Series {
      * @return {void}
      */
     public getSymbol(): void {
-        var seriesMarkerOption = this.options.marker;
+        const seriesMarkerOption = this.options.marker;
 
         this.getCyclic(
             'symbol',
@@ -3584,7 +3587,7 @@ class Series {
         optionsObject: PointOptions,
         fromIndex: number
     ): (number|undefined) {
-        var id = optionsObject.id,
+        let id = optionsObject.id,
             x = optionsObject.x,
             oldData = this.points,
             matchingPoint,
@@ -3674,7 +3677,7 @@ class Series {
 
         // Iterate the new data
         data.forEach(function (pointOptions, i): void {
-            var id,
+            let id,
                 x,
                 pointIndex,
                 optionsObject = (
@@ -3817,7 +3820,7 @@ class Series {
      * @sample highcharts/members/series-setdata-pie/
      *         Set data in a pie
      * @sample stock/members/series-setdata/
-     *         Set new data in Highstock
+     *         Set new data in Highcharts Stock
      * @sample maps/members/series-setdata/
      *         Set new data in Highmaps
      *
@@ -4029,13 +4032,14 @@ class Series {
         }
 
         fireEvent(series, 'setTable', { table: newTable });
-        series.tableReset = true;
+        series.tableSyncOff = true;
 
         if (!table) {
             /**
              * Table with data rows to synchronize with series points. The table
              * is filled automatically only during init. Afterwards series data
-             * must always be updated with {@link Highcharts.DataTable#setRows}.
+             * must always be updated with {@link Highcharts.DataTable#setRows}
+             * or it becomes out of sync.
              *
              * @name Highcharts.Series#table
              * @type {Highcharts.DataTable}
@@ -4059,7 +4063,7 @@ class Series {
             table.on('afterSetRows', syncTable);
         }
 
-        series.tableReset = false;
+        series.tableSyncOff = false;
         fireEvent(series, 'afterSetTable', { table: newTable });
 
         return table;
@@ -4084,6 +4088,13 @@ class Series {
             options = series.options,
             dataSorting: SeriesDataSortingOptions = options.dataSorting as any,
             sortModifier = (new SortModifier({
+                // @todo fails in unit-tests/series/datasorting-animation
+                // direction: (
+                //     series.xAxis &&
+                //     series.xAxis.reversed ?
+                //         'asc' :
+                //         'desc'
+                // ),
                 orderByColumn: (dataSorting.sortKey || 'y'),
                 orderInColumn: 'x'
             })),
@@ -4149,7 +4160,7 @@ class Series {
     private syncTable(e: DataTable.Event): void {
         const series = this;
 
-        if (series.tableReset) {
+        if (series.tableSyncOff) {
             return;
         }
 
@@ -4162,24 +4173,21 @@ class Series {
         let column: DataTable.Column,
             columnName: string,
             count: number,
-            index: number,
-            point: Point;
+            index: number;
 
         switch (e.type) {
             case 'afterClearRows':
             case 'afterClearTable':
-                data.length = 0;
-                return;
+                series.setData([]);
+                break;
 
             case 'afterClearColumn':
             case 'afterDeleteColumn':
             case 'afterSetColumn':
                 column = e.column;
                 columnName = e.columnName;
-                if (columnName === 'x' || keys.indexOf(columnName) !== -1) {
-                    for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
-                        series.syncTableRow(i);
-                    }
+                for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
+                    series.syncTableRow(i);
                 }
                 break;
 
@@ -4192,47 +4200,24 @@ class Series {
                     for (let i = 0, iEnd = deletedPoints.length; i < iEnd; ++i) {
                         deletedPoints[i].destroy();
                     }
-                    return;
                 }
                 break;
 
             case 'afterSetCell':
-                index = e.rowIndex;
-                point = points[index];
-                series.syncTableRow(index);
-                if (point) {
-                    point.update(data[index]);
-                    return;
-                }
+                series.syncTableRow(e.rowIndex);
                 break;
 
             case 'afterSetRows':
                 count = e.rowCount;
                 index = e.rowIndex;
                 for (let i = index, iEnd = (i + count); i < iEnd; ++i) {
-                    point = points[i];
                     series.syncTableRow(i);
-                    if (point) {
-                        point.update(data[i]);
-                    }
-                }
-                if (points[index + count]) {
-                    return;
                 }
                 break;
 
             default:
-                return;
+                break;
         }
-
-        clearTimeout(series.tableSyncTimeout);
-        series.tableSyncTimeout = syncTimeout(
-            (): void => {
-                series.setData(data);
-                delete series.tableSyncTimeout;
-            },
-            1
-        );
     }
 
     /** @private */
@@ -4246,7 +4231,7 @@ class Series {
 
         const options = series.options,
             dataOptions = options.data = (options.data || []),
-            rowOptions = dataOptions[index],
+            point = series.data[index],
             pointValKey = pick(
                 options.pointValKey,
                 options.keys && options.keys[0],
@@ -4259,22 +4244,47 @@ class Series {
             ),
             row = table.getRow(index, keys);
 
+        let pointOptions = dataOptions[index];
+
         if (!row || DataTable.isNull(row)) {
             dataOptions[index] = null;
-        } else if (rowOptions && typeof rowOptions === 'object') {
-            if (rowOptions instanceof Array) {
-                rowOptions.splice(
-                    (row.length < rowOptions.length ? 1 : 0),
+        } else if (
+            typeof pointOptions === 'object' ||
+            (
+                typeof pointOptions === 'undefined' &&
+                (!index || typeof dataOptions[0] === 'object')
+            )
+        ) {
+            if (pointOptions instanceof Array) {
+                pointOptions.splice(
+                    (row.length < pointOptions.length ? 1 : 0),
                     row.length,
                     ...row as Array<(number|string|null)>
                 );
             } else {
-                merge(true, rowOptions, table.getRowObject(index, keys));
+                pointOptions = merge(
+                    true,
+                    pointOptions,
+                    table.getRowObject(index)
+                );
             }
-        } else if (rowOptions === null) {
-            dataOptions[index] = row as Array<(number|string|null)>;
+        } else if (pointOptions === null) {
+            pointOptions = row as Array<(number|string|null)>;
         } else {
-            dataOptions[index] = table.getCellAsNumber(pointValKey, index);
+            pointOptions = table.getCellAsNumber(pointValKey, index);
+        }
+
+        if (point) {
+            point.update(pointOptions);
+        } else {
+            clearTimeout(series.tableSyncTimeout);
+            series.tableSyncTimeout = syncTimeout(
+                (): void => {
+                    series.addPoint(pointOptions);
+                    delete series.tableSyncTimeout;
+                },
+                1
+            );
         }
     }
 
@@ -4292,7 +4302,7 @@ class Series {
     public getProcessedData(
         forceExtremesFromAll?: boolean
     ): Highcharts.SeriesProcessedDataObject {
-        var series = this,
+        let series = this,
             // copied during slice operation:
             processedXData: Array<number> = series.xData as any,
             processedYData: (
@@ -4405,7 +4415,7 @@ class Series {
 
     /**
      * Internal function to apply processed data.
-     * In Highstock, this function is extended to provide data grouping.
+     * In Highcharts Stock, this function is extended to provide data grouping.
      *
      * @private
      * @function Highcharts.Series#processData
@@ -4414,7 +4424,7 @@ class Series {
      * @return {boolean|undefined}
      */
     public processData(force?: boolean): (boolean|undefined) {
-        var series = this,
+        let series = this,
             xAxis = series.xAxis,
             processedData;
 
@@ -4461,7 +4471,7 @@ class Series {
         max: number,
         cropShoulder?: number
     ): Highcharts.SeriesCropDataObject {
-        var dataLength = xData.length,
+        let dataLength = xData.length,
             cropStart = 0,
             cropEnd = dataLength,
             i,
@@ -4502,7 +4512,7 @@ class Series {
      * @function Highcharts.Series#generatePoints
      */
     public generatePoints(): void {
-        var series = this,
+        let series = this,
             options = series.options,
             dataOptions = options.data,
             data = series.data,
@@ -4526,7 +4536,7 @@ class Series {
             );
 
         if (!data && !hasGroupedData) {
-            var arr = [] as Array<Point>;
+            const arr = [] as Array<Point>;
 
             arr.length = (dataOptions as any).length;
             data = series.data = arr;
@@ -4562,7 +4572,7 @@ class Series {
                 );
 
                 /**
-                 * Highstock only. If a point object is created by data
+                 * Highcharts Stock only. If a point object is created by data
                  * grouping, it doesn't reflect actual points in the raw
                  * data. In this case, the `dataGroup` property holds
                  * information that points back to the raw data.
@@ -4698,7 +4708,7 @@ class Series {
         yData?: (Array<(number|null)>|Array<Array<(number|null)>>),
         forceExtremesFromAll?: boolean
     ): DataExtremesObject {
-        var xAxis = this.xAxis,
+        let xAxis = this.xAxis,
             yAxis = this.yAxis,
             xData = this.processedXData || this.xData,
             yDataLength,
@@ -4824,8 +4834,9 @@ class Series {
     public getFirstValidPoint<T extends PointOptions|PointShortOptions>(
         data: Array<T>
     ): (T|null) {
-        var firstPoint: (T|null) = null,
-            dataLength = data.length,
+        const dataLength = data.length;
+
+        let firstPoint: (T|null) = null,
             i = 0;
 
         while (firstPoint === null && i < dataLength) {
@@ -4851,7 +4862,7 @@ class Series {
             this.processData();
         }
         this.generatePoints();
-        var series = this,
+        let series = this,
             options = series.options,
             stacking = options.stacking,
             xAxis = series.xAxis,
@@ -4884,7 +4895,7 @@ class Series {
 
         // Translate each point
         for (i = 0; i < dataLength; i++) {
-            var point = points[i],
+            let point = points[i],
                 xValue = point.x,
                 yValue = point.y,
                 yBottom = point.low,
@@ -4985,7 +4996,7 @@ class Series {
                 ) as any) :
                 null as any;
 
-            // general hook, used for Highstock compare mode
+            // general hook, used for Highcharts Stock compare mode
             if (hasModifyValue) {
                 yValue = (series.modifyValue as any)(yValue, point);
             }
@@ -5078,7 +5089,7 @@ class Series {
         insideOnly?: boolean,
         allowNull?: boolean
     ): Array<Point> {
-        var chart = this.chart;
+        const chart = this.chart;
 
         // #3916, #5029, #5085
         return (points || this.points || []).filter(
@@ -5086,7 +5097,7 @@ class Series {
                 if (insideOnly && !chart.isInsidePlot(
                     point.plotX as any,
                     point.plotY as any,
-                    chart.inverted
+                    { inverted: chart.inverted }
                 )) {
                     return false;
                 }
@@ -5116,7 +5127,7 @@ class Series {
         animation?: (boolean|Partial<AnimationOptions>),
         finalBox?: boolean
     ): Record<string, number> {
-        var series = this,
+        let series = this,
             options = series.options,
             chart = series.chart,
             inverted = chart.inverted,
@@ -5158,6 +5169,33 @@ class Series {
     }
 
     /**
+     * Get the shared clip key, creating it if it doesn't exist.
+     *
+     * @private
+     * @function Highcharts.Series#getSharedClipKey
+     */
+    public getSharedClipKey(animation?: AnimationOptions): string {
+        if (this.sharedClipKey) {
+            return this.sharedClipKey;
+        }
+
+        const sharedClipKey = [
+            animation && animation.duration,
+            animation && animation.easing,
+            animation && animation.defer,
+            this.getClipBox(animation).height,
+            this.options.xAxis,
+            this.options.yAxis
+        ].join(',');
+
+        if (this.options.clip !== false || animation) {
+            this.sharedClipKey = sharedClipKey;
+        }
+
+        return sharedClipKey;
+    }
+
+    /**
      * Set the clipping for the series. For animated series it is called
      * twice, first to initiate animating the clip then the second time
      * without the animation to set the final clip.
@@ -5165,26 +5203,16 @@ class Series {
      * @private
      * @function Highcharts.Series#setClip
      */
-    public setClip(animation?: (boolean|AnimationOptions)): void {
-        var chart = this.chart,
+    public setClip(animation?: AnimationOptions): void {
+        let chart = this.chart,
             options = this.options,
             renderer = chart.renderer,
             inverted = chart.inverted,
             seriesClipBox = this.clipBox,
             clipBox = this.getClipBox(animation),
-            sharedClipKey =
-                this.sharedClipKey ||
-                [
-                    '_sharedClip',
-                    animation && (animation as any).duration,
-                    animation && (animation as any).easing,
-                    animation && (animation as any).defer,
-                    clipBox.height,
-                    options.xAxis,
-                    options.yAxis
-                ].join(','), // #4526
-            clipRect = (chart as any)[sharedClipKey],
-            markerClipRect = (chart as any)[sharedClipKey + 'm'];
+            sharedClipKey = this.getSharedClipKey(animation), // #4526
+            clipRect = chart.sharedClips[sharedClipKey],
+            markerClipRect = chart.sharedClips[sharedClipKey + 'm'];
 
         if (animation) {
             clipBox.width = 0;
@@ -5200,10 +5228,10 @@ class Series {
 
             // When animation is set, prepare the initial positions
             if (animation) {
-                (chart as any)[sharedClipKey + 'm'] = markerClipRect =
+                chart.sharedClips[sharedClipKey + 'm'] = markerClipRect =
                     renderer.clipRect(
                         // include the width of the first marker
-                        inverted ? (chart.plotSizeX as any) + 99 : -99,
+                        inverted ? (chart.plotSizeX || 0) + 99 : -99,
                         inverted ? -chart.plotLeft : -chart.plotTop,
                         99,
                         inverted ? chart.chartWidth : chart.chartHeight
@@ -5211,7 +5239,7 @@ class Series {
 
 
             }
-            (chart as any)[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
+            chart.sharedClips[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
 
             // Create hashmap for series indexes
             clipRect.count = { length: 0 };
@@ -5223,8 +5251,8 @@ class Series {
         }
 
         if (animation) {
-            if (!clipRect.count[this.index as any]) {
-                clipRect.count[this.index as any] = true;
+            if (!clipRect.count[this.index]) {
+                clipRect.count[this.index] = true;
                 clipRect.count.length += 1;
             }
         }
@@ -5235,28 +5263,21 @@ class Series {
                 animation || seriesClipBox ? clipRect : chart.clipRect
             );
             (this.markerGroup as any).clip(markerClipRect);
-            this.sharedClipKey = sharedClipKey;
         }
 
         // Remove the shared clipping rectangle when all series are shown
         if (!animation) {
-            if (clipRect.count[this.index as any]) {
-                delete clipRect.count[this.index as any];
+            if (clipRect.count[this.index]) {
+                delete clipRect.count[this.index];
                 clipRect.count.length -= 1;
             }
 
-            if (
-                clipRect.count.length === 0 &&
-                sharedClipKey &&
-                (chart as any)[sharedClipKey]
-            ) {
+            if (clipRect.count.length === 0) {
                 if (!seriesClipBox) {
-                    (chart as any)[sharedClipKey] =
-                        (chart as any)[sharedClipKey].destroy();
+                    chart.sharedClips[sharedClipKey] = clipRect.destroy();
                 }
-                if ((chart as any)[sharedClipKey + 'm']) {
-                    (chart as any)[sharedClipKey + 'm'] =
-                        (chart as any)[sharedClipKey + 'm'].destroy();
+                if (markerClipRect) {
+                    chart.sharedClips[sharedClipKey + 'm'] = markerClipRect.destroy();
                 }
             }
         }
@@ -5275,12 +5296,10 @@ class Series {
      * Initialize the animation.
      */
     public animate(init?: boolean): void {
-        var series = this,
+        const series = this,
             chart = series.chart,
             animation = animObject(series.options.animation),
-            clipRect,
-            sharedClipKey,
-            finalBox;
+            sharedClipKey = this.sharedClipKey;
 
         // Initialize the animation. Set up the clipping rectangle.
         if (init) {
@@ -5288,17 +5307,17 @@ class Series {
             series.setClip(animation);
 
         // Run the animation
-        } else {
-            sharedClipKey = this.sharedClipKey;
-            clipRect = (chart as any)[sharedClipKey as any];
+        } else if (sharedClipKey) {
+            const clipRect = chart.sharedClips[sharedClipKey];
+            const markerClipRect = chart.sharedClips[sharedClipKey + 'm'];
 
-            finalBox = series.getClipBox(animation, true);
+            const finalBox = series.getClipBox(animation, true);
 
             if (clipRect) {
                 clipRect.animate(finalBox, animation);
             }
-            if ((chart as any)[sharedClipKey + 'm']) {
-                (chart as any)[sharedClipKey + 'm'].animate({
+            if (markerClipRect) {
+                markerClipRect.animate({
                     width: finalBox.width + 99,
                     x: finalBox.x - (chart.inverted ? 0 : 99)
                 }, animation);
@@ -5330,7 +5349,7 @@ class Series {
      * @function Highcharts.Series#drawPoints
      */
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             points = series.points,
             chart = series.chart,
             i,
@@ -5494,7 +5513,7 @@ class Series {
         point: Point,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var seriesOptions = this.options,
+        let seriesOptions = this.options,
             seriesMarkerOptions = seriesOptions.marker,
             seriesStateOptions: SeriesStateHoverOptions,
             pointMarkerOptions = point.marker || {},
@@ -5568,7 +5587,7 @@ class Series {
         point?: Point,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var seriesMarkerOptions = this.options.marker,
+        let seriesMarkerOptions = this.options.marker,
             seriesStateOptions,
             pointOptions = point && point.options,
             pointMarkerOptions = (
@@ -5658,7 +5677,7 @@ class Series {
      */
     public destroy(keepEventsForUpdate?: boolean): void {
 
-        var series = this,
+        let series = this,
             chart = series.chart,
             data = series.data || [],
             table = series.table,
@@ -5698,9 +5717,9 @@ class Series {
         }
         series.points = null as any;
         if (table) {
-            series.tableReset = true;
+            series.tableSyncOff = true;
             table.clear();
-            series.tableReset = false;
+            series.tableSyncOff = false;
         }
         if (series.clips) {
             series.clips.forEach((clip): void => clip.destroy());
@@ -5746,7 +5765,7 @@ class Series {
      * @function Highcharts.Series#applyZones
      */
     public applyZones(): void {
-        var series = this,
+        let series = this,
             chart = this.chart,
             renderer = chart.renderer,
             zones = this.zones,
@@ -5916,7 +5935,7 @@ class Series {
      * @function Highcharts.Series#invertGroups
      */
     public invertGroups(inverted?: boolean): void {
-        var series = this,
+        const series = this,
             chart = series.chart;
 
         /**
@@ -5977,7 +5996,7 @@ class Series {
         zIndex?: number,
         parent?: SVGElement
     ): SVGElement {
-        var group = (this as any)[prop],
+        let group = (this as any)[prop],
             isNew = !group,
             attrs: SVGAttributes = {
                 visibility,
@@ -6038,7 +6057,7 @@ class Series {
      * @return {Highcharts.SeriesPlotBoxObject}
      */
     public getPlotBox(): Highcharts.SeriesPlotBoxObject {
-        var chart = this.chart,
+        let chart = this.chart,
             xAxis = this.xAxis,
             yAxis = this.yAxis;
 
@@ -6094,7 +6113,7 @@ class Series {
      * @fires Highcharts.Series#event:afterRender
      */
     public render(): void {
-        var series = this,
+        let series = this,
             chart = series.chart,
             group,
             options = series.options,
@@ -6227,7 +6246,7 @@ class Series {
      * @function Highcharts.Series#redraw
      */
     public redraw(): void {
-        var series = this,
+        const series = this,
             chart = series.chart,
             // cache it here as it is set to false in render, but used after
             wasDirty = series.isDirty || series.isDirtyData,
@@ -6265,7 +6284,7 @@ class Series {
         e: PointerEvent,
         compareX?: boolean
     ): (Point|undefined) {
-        var series = this,
+        const series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             inverted = series.chart.inverted;
@@ -6295,7 +6314,7 @@ class Series {
         // (#6235)
         this.buildingKdTree = true;
 
-        var series = this,
+        const series = this,
             dimensions = (series.options.findNearestPointBy as any)
                 .indexOf('y') > -1 ? 2 : 1;
 
@@ -6308,7 +6327,7 @@ class Series {
             depth: number,
             dimensions: number
         ): (KDNode|undefined) {
-            var axis: string,
+            let axis: string,
                 median,
                 length = points && points.length;
 
@@ -6376,7 +6395,7 @@ class Series {
         compareX?: boolean,
         e?: PointerEvent
     ): (Point|undefined) {
-        var series = this,
+        const series = this,
             kdX = this.kdAxisArray[0],
             kdY = this.kdAxisArray[1],
             kdComparer = compareX ? 'distX' : 'dist',
@@ -6391,7 +6410,7 @@ class Series {
             p1: KDPointSearchObject,
             p2: Point
         ): void {
-            var x = (defined((p1 as any)[kdX]) &&
+            const x = (defined((p1 as any)[kdX]) &&
                     defined((p2 as any)[kdX])) ?
                     Math.pow((p1 as any)[kdX] - (p2 as any)[kdX], 2) :
                     null,
@@ -6414,7 +6433,7 @@ class Series {
             depth: number,
             dimensions: number
         ): Point {
-            var point = tree.point,
+            let point = tree.point,
                 axis = series.kdAxisArray[depth % dimensions],
                 tdist,
                 sideA,
@@ -6522,7 +6541,7 @@ class Series {
      * @private
      */
     public drawTracker(): void {
-        var series = this,
+        let series = this,
             options = series.options,
             trackByArea = options.trackByArea,
             trackerPath = ([] as SVGPath).concat(
@@ -6588,21 +6607,27 @@ class Series {
             // The tracker is added to the series group, which is clipped, but
             // is covered by the marker group. So the marker group also needs to
             // capture events.
-            [series.tracker, series.markerGroup].forEach(function (
-                tracker: (SVGElement|undefined)
+            [
+                series.tracker,
+                series.markerGroup,
+                series.dataLabelsGroup
+            ].forEach(function (
+                tracker?: SVGElement
             ): void {
-                (tracker as any).addClass('highcharts-tracker')
-                    .on('mouseover', onMouseOver)
-                    .on('mouseout', function (e: PointerEvent): void {
-                        pointer.onTrackerMouseOut(e);
-                    });
+                if (tracker) {
+                    tracker.addClass('highcharts-tracker')
+                        .on('mouseover', onMouseOver)
+                        .on('mouseout', function (e: PointerEvent): void {
+                            pointer.onTrackerMouseOut(e);
+                        });
 
-                if (options.cursor && !chart.styledMode) {
-                    (tracker as any).css({ cursor: options.cursor });
-                }
+                    if (options.cursor && !chart.styledMode) {
+                        tracker.css({ cursor: options.cursor });
+                    }
 
-                if (hasTouch) {
-                    (tracker as any).on('touchstart', onMouseOver);
+                    if (hasTouch) {
+                        tracker.on('touchstart', onMouseOver);
+                    }
                 }
             });
         }
@@ -6623,9 +6648,9 @@ class Series {
      * @sample highcharts/members/series-addpoint-pie/
      *         Append pie slice
      * @sample stock/members/series-addpoint/
-     *         Append 100 points in Highstock
+     *         Append 100 points in Highcharts Stock
      * @sample stock/members/series-addpoint-shift/
-     *         Append and shift in Highstock
+     *         Append and shift in Highcharts Stock
      * @sample maps/members/series-addpoint/
      *         Add a point in Highmaps
      *
@@ -6665,7 +6690,7 @@ class Series {
         animation?: (boolean|Partial<AnimationOptions>),
         withEvent?: boolean
     ): void {
-        var series = this,
+        let series = this,
             seriesOptions = series.options,
             data = series.data,
             chart = series.chart,
@@ -6747,7 +6772,7 @@ class Series {
      * Remove a point from the series. Unlike the
      * {@link Highcharts.Point#remove} method, this can also be done on a point
      * that is not instanciated because it is outside the view or subject to
-     * Highstock data grouping.
+     * Highcharts Stock data grouping.
      *
      * @sample highcharts/members/series-removepoint/
      *         Remove cropped point
@@ -6776,7 +6801,7 @@ class Series {
         animation?: (boolean|Partial<AnimationOptions>)
     ): void {
 
-        var series = this,
+        const series = this,
             data = series.data,
             point = data[i],
             points = series.points,
@@ -6845,7 +6870,7 @@ class Series {
         withEvent?: boolean,
         keepEvents?: boolean
     ): void {
-        var series = this,
+        const series = this,
             chart = series.chart;
 
         /**
@@ -6909,7 +6934,7 @@ class Series {
 
         fireEvent(this, 'update', { options: options });
 
-        var series = this,
+        let series = this,
             chart = series.chart,
             // must use user options when changing type because series.options
             // is merged in with type specific plotOptions
@@ -7191,7 +7216,7 @@ class Series {
      * @fires Highcharts.Series#event:mouseOver
      */
     public onMouseOver(): void {
-        var series = this,
+        const series = this,
             chart = series.chart,
             hoverSeries = chart.hoverSeries,
             pointer = chart.pointer;
@@ -7230,7 +7255,7 @@ class Series {
      */
     public onMouseOut(): void {
         // trigger the event only if listeners exist
-        var series = this,
+        const series = this,
             options = series.options,
             chart = series.chart,
             tooltip = chart.tooltip,
@@ -7284,7 +7309,7 @@ class Series {
         state?: (StatesOptionsKey|''),
         inherit?: boolean
     ): void {
-        var series = this,
+        let series = this,
             options = series.options,
             graph = series.graph,
             inactiveOtherPoints = options.inactiveOtherPoints,
@@ -7440,7 +7465,7 @@ class Series {
         vis?: boolean,
         redraw?: boolean
     ): void {
-        var series = this,
+        let series = this,
             chart = series.chart,
             legendItem = series.legendItem,
             showOrHide: ('hide'|'show'),
@@ -7559,7 +7584,7 @@ class Series {
      * @fires Highcharts.Series#event:unselect
      */
     public select(selected?: boolean): void {
-        var series = this;
+        const series = this;
 
         series.selected =
         selected =
@@ -7574,6 +7599,25 @@ class Series {
         }
 
         fireEvent(series, selected ? 'select' : 'unselect');
+    }
+
+    /**
+     * Checks if a tooltip should be shown for a given point.
+     *
+     * @private
+     * @param {number} plotX
+     * @param {number} plotY
+     * @param {Highcharts.ChartIsInsideOptionsObject} [options]
+     * @return {boolean}
+     */
+    public shouldShowTooltip(
+        plotX: number,
+        plotY: number,
+        options: Chart.IsInsideOptionsObject = {}
+    ): boolean {
+        options.series = this;
+        options.visiblePlotOnly = true;
+        return this.chart.isInsidePlot(plotX, plotY, options);
     }
 
     /** eslint-enable valid-jsdoc */
@@ -7645,7 +7689,7 @@ export default Series;
 
 /**
  * This is a placeholder type of the possible series options for
- * [Highcharts](../highcharts/series), [Highstock](../highstock/series),
+ * [Highcharts](../highcharts/series), [Highcharts Stock](../highstock/series),
  * [Highmaps](../highmaps/series), and [Gantt](../gantt/series).
  *
  * In TypeScript is this dynamically generated to reference all possible types

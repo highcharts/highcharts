@@ -96,7 +96,7 @@ const onSeriesMixin = {
 
         columnProto.translate.apply(this);
 
-        var series = this,
+        let series = this,
             options = series.options,
             chart = series.chart,
             points = series.points,
@@ -192,7 +192,7 @@ const onSeriesMixin = {
             i: number
         ): void {
 
-            var stackIndex;
+            let stackIndex;
 
             (point.plotX as any) += xOffset; // #2049
 

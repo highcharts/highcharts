@@ -10,8 +10,7 @@
 
 import type TEMAIndicatorType from '../TEMA/TEMAIndicator';
 import type {
-    TRIXOptions,
-    TRIXParamsOptions
+    TRIXOptions
 } from './TRIXOptions';
 import type TRIXPoint from './TRIXPoint';
 
@@ -64,7 +63,7 @@ class TRIXIndicator extends TEMAIndicator {
     public points: Array<TRIXPoint> = void 0 as any;
 
     public init(this: TRIXIndicator): void {
-        var args = arguments,
+        const args = arguments,
             ctx = this;
 
         RequiredIndicatorMixin.isParentLoaded(
@@ -86,15 +85,13 @@ class TRIXIndicator extends TEMAIndicator {
         i: number
     ): ([number, (number|null)]|undefined) {
         if (i > tripledPeriod) {
-            var TRIXPoint: ([number, (number|null)]|undefined) = [
+            return [
                 xVal[i - 3],
                 EMAlevels.prevLevel3 !== 0 ?
                     correctFloat(EMAlevels.level3 - EMAlevels.prevLevel3) /
                     EMAlevels.prevLevel3 * 100 : null
             ];
         }
-
-        return TRIXPoint;
     }
 }
 
@@ -119,10 +116,10 @@ SeriesRegistry.registerSeriesType('trix', TRIXIndicator);
 export default TRIXIndicator;
 
 /**
- * A `TRIX` series. If the [type](#series.tema.type) option is not specified, it
+ * A `TRIX` series. If the [type](#series.trix.type) option is not specified, it
  * is inherited from [chart.type](#chart.type).
  *
- * @extends   series,plotOptions.tema
+ * @extends   series,plotOptions.trix
  * @since     7.0.0
  * @product   highstock
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,

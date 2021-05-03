@@ -142,11 +142,13 @@ class DataConverter {
         'dd/mm/YY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
+                const d = new Date();
+
                 if (!match) {
                     return NaN;
                 }
-                var year = +match[3],
-                    d = new Date();
+
+                let year = +match[3];
 
                 if (year > (d.getFullYear() - 2000)) {
                     year += 1900;

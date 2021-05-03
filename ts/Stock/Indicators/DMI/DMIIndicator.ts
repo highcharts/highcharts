@@ -1,7 +1,7 @@
 /* *
  *  (c) 2010-2021 Rafal Sebestjanski
  *
- *  Directional Movement Index (DMI) indicator for Highstock
+ *  Directional Movement Index (DMI) indicator for Highcharts Stock
  *
  *  License: www.highcharts.com/license
  *
@@ -79,8 +79,7 @@ class DMIIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // DMI has unchangeable index
-            period: 14
+            index: void 0 // unused index, do not inherit (#15362)
         },
         marker: {
             enabled: false

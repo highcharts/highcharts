@@ -109,7 +109,7 @@ class MapLineSeries extends MapSeries {
         point: MapLinePoint,
         state: StatesOptionsKey
     ): SVGAttributes {
-        var attr = MapSeries.prototype.pointAttribs.call(
+        const attr = MapSeries.prototype.pointAttribs.call(
             this,
             point,
             state

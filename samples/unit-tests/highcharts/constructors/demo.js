@@ -91,7 +91,7 @@ QUnit.test('Highcharts', function (assert) {
     );
 });
 
-QUnit.test('Highstock', function (assert) {
+QUnit.test('Highcharts Stock', function (assert) {
     var chart, calledBack;
 
     Highcharts.setOptions({

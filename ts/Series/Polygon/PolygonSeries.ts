@@ -98,7 +98,7 @@ class PolygonSeries extends ScatterSeries {
      *
      * */
     public getGraphPath(): SVGPath {
-        var graphPath: SVGPath = LineSeries.prototype.getGraphPath.call(this),
+        let graphPath: SVGPath = LineSeries.prototype.getGraphPath.call(this),
             i = graphPath.length + 1;
 
         // Close all segments
