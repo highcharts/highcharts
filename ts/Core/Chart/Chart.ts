@@ -623,8 +623,8 @@ class Chart {
      * @param {number} plotY
      * Pixel y relative to the plot area.
      *
-     * @param {boolean} [inverted]
-     * Whether the chart is inverted.
+     * @param {Highcharts.ChartIsInsideOptionsObject} [options]
+     * Options object.
      *
      * @return {boolean}
      * Returns true if the given point is inside the plot area.
@@ -632,18 +632,77 @@ class Chart {
     public isInsidePlot(
         plotX: number,
         plotY: number,
-        inverted?: boolean
+        options: Chart.IsInsideOptionsObject = {}
     ): boolean {
-        const x = inverted ? plotY : plotX,
-            y = inverted ? plotX : plotY,
-            e = {
-                x,
-                y,
-                isInsidePlot: x >= 0 &&
-                    x <= this.plotWidth &&
-                    y >= 0 &&
-                    y <= this.plotHeight
+        const {
+            inverted,
+            plotBox,
+            plotLeft,
+            plotTop,
+            scrollablePlotBox,
+            scrollingContainer: {
+                scrollLeft,
+                scrollTop
+            } = {
+                scrollLeft: 0,
+                scrollTop: 0
+            }
+        } = this;
+
+        const series = options.series;
+        const box = (options.visiblePlotOnly && scrollablePlotBox) || plotBox;
+        const x = options.inverted ? plotY : plotX;
+        const y = options.inverted ? plotX : plotY;
+
+        const e = {
+            x,
+            y,
+            isInsidePlot: true
+        };
+
+        if (!options.ignoreX) {
+            const xAxis = (series && (inverted ? series.yAxis : series.xAxis)) || {
+                pos: plotLeft,
+                len: Infinity
             };
+
+            const chartX = options.paneCoordinates ? xAxis.pos + x : plotLeft + x;
+
+            if (!(
+                chartX >= Math.max(
+                    scrollLeft + plotLeft,
+                    xAxis.pos
+                ) &&
+                chartX <= Math.min(
+                    scrollLeft + plotLeft + box.width,
+                    xAxis.pos + xAxis.len
+                )
+            )) {
+                e.isInsidePlot = false;
+            }
+        }
+
+        if (!options.ignoreY && e.isInsidePlot) {
+            const yAxis = (series && (inverted ? series.xAxis : series.yAxis)) || {
+                pos: plotTop,
+                len: Infinity
+            };
+
+            const chartY = options.paneCoordinates ? yAxis.pos + y : plotTop + y;
+
+            if (!(
+                chartY >= Math.max(
+                    scrollTop + plotTop,
+                    yAxis.pos
+                ) &&
+                chartY <= Math.min(
+                    scrollTop + plotTop + box.height,
+                    yAxis.pos + yAxis.len
+                )
+            )) {
+                e.isInsidePlot = false;
+            }
+        }
 
         fireEvent(this, 'afterIsInsidePlot', e);
 
@@ -1452,7 +1511,9 @@ class Chart {
                 lineHeight: 'normal', // #427
                 zIndex: 0, // #1072
                 '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
-                userSelect: 'none' // #13503
+                userSelect: 'none', // #13503
+                'touch-action': 'manipulation',
+                outline: 'none'
             }, optionsChart.style || {});
         }
 
@@ -3833,6 +3894,15 @@ namespace Chart {
         redraw: undefined | boolean;
     }
 
+    export interface IsInsideOptionsObject {
+        ignoreX?: boolean;
+        ignoreY?: boolean;
+        inverted?: boolean;
+        paneCoordinates?: boolean;
+        series?: Series;
+        visiblePlotOnly?: boolean;
+    }
+
     export interface LabelCollectorFunction {
         (): (Array<(SVGElement|undefined)>|undefined);
     }
@@ -4006,6 +4076,28 @@ export default Chart;
  *        Whether to redraw the chart after the caption is altered. If doing
  *        more operations on the chart, it is a good idea to set redraw to false
  *        and call {@link Chart#redraw} after.
+ */
+
+/**
+ * @interface Highcharts.ChartIsInsideOptionsObject
+ *//**
+ * @name Highcharts.ChartIsInsideOptionsObject#ignoreX
+ * @type {boolean|undefined}
+ *//**
+ * @name Highcharts.ChartIsInsideOptionsObject#ignoreY
+ * @type {boolean|undefined}
+ *//**
+ * @name Highcharts.ChartIsInsideOptionsObject#inverted
+ * @type {boolean|undefined}
+ *//**
+ * @name Highcharts.ChartIsInsideOptionsObject#paneCoordinates
+ * @type {boolean|undefined}
+ *//**
+ * @name Highcharts.ChartIsInsideOptionsObject#series
+ * @type {Highcharts.Series|undefined}
+ *//**
+ * @name Highcharts.ChartIsInsideOptionsObject#visiblePlotOnly
+ * @type {boolean|undefined}
  */
 
 ''; // include doclets above in transpilat

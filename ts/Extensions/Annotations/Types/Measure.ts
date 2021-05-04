@@ -8,6 +8,7 @@
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
+import type FormatUtilities from '../../../Core/FormatUtilities';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
@@ -37,7 +38,7 @@ declare global {
         }
         interface AnnotationsMeasureTypeLabelOptionsObject {
             enabled: boolean;
-            formatter?: FormatterCallbackFunction<Measure>;
+            formatter?: FormatUtilities.FormatterCallback<Measure>;
             style: CSSObject;
         }
         interface AnnotationMeasureTypeOptionsObject extends AnnotationsTypeOptions {

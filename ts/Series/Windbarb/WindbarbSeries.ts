@@ -366,7 +366,7 @@ class WindbarbSeries extends ColumnSeries {
             // dimension.
             if (
                 this.options.clip === false ||
-                chart.isInsidePlot(plotX as any, 0, false)
+                chart.isInsidePlot(plotX as any, 0)
             ) {
                 // Create the graphic the first time
                 if (!point.graphic) {
@@ -434,6 +434,16 @@ class WindbarbSeries extends ColumnSeries {
 
     public getExtremes(): DataExtremesObject {
         return {};
+    }
+
+    public shouldShowTooltip(
+        plotX: number,
+        plotY: number,
+        options: Chart.IsInsideOptionsObject = {}
+    ): boolean {
+        options.ignoreX = this.chart.inverted;
+        options.ignoreY = !options.ignoreX;
+        return super.shouldShowTooltip(plotX, plotY, options);
     }
 }
 

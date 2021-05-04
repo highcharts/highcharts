@@ -70,7 +70,8 @@ declare global {
                 centerXArg?: number,
                 centerYArg?: number,
                 mouseX?: number,
-                mouseY?: number
+                mouseY?: number,
+                animation?: false
             ): void;
         }
         class MapNavigation {
@@ -297,8 +298,9 @@ MapNavigation.prototype.updateEvents = function (
     if (pick(options.enableMouseWheelZoom, options.enabled)) {
         this.unbindMouseWheel = this.unbindMouseWheel || addEvent(
             chart.container,
-            typeof doc.onmousewheel === 'undefined' ?
-                'DOMMouseScroll' : 'mousewheel',
+            doc.onwheel !== void 0 ? 'wheel' : // Newer Firefox
+                doc.onmousewheel !== void 0 ? 'mousewheel' :
+                    'DOMMouseScroll',
             function (e: PointerEvent): boolean {
                 // Prevent scrolling when the pointer is over the element
                 // with that class, for example anotation popup #12100.
@@ -405,7 +407,8 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
         centerXArg?: number,
         centerYArg?: number,
         mouseX?: number,
-        mouseY?: number
+        mouseY?: number,
+        animation?: false
     ): void {
         const chart = this,
             xAxis = chart.xAxis[0],
@@ -479,7 +482,7 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
         }
         */
 
-        chart.redraw();
+        chart.redraw(animation);
     }
 });
 

@@ -176,7 +176,7 @@ declare global {
                 dataMax: number,
                 dataMin: number,
                 useUTC?: boolean
-            ): RangeObject;
+            ): RangeSelector.RangeObject;
             public hideInput(name: string): void;
             public init(chart: Chart): void;
             public render(min?: number, max?: number): void;
@@ -1709,7 +1709,7 @@ class RangeSelector {
         dataMax: number,
         dataMin: number,
         useUTC?: boolean
-    ): Highcharts.RangeObject {
+    ): RangeSelector.RangeObject {
         let time = this.chart.time,
             min,
             now = new time.Date(dataMax),
@@ -2907,7 +2907,7 @@ if (!H.RangeSelector) {
                     addEvent(
                         chart.xAxis[0],
                         'afterSetExtremes',
-                        function (e: Highcharts.RangeObject): void {
+                        function (e: RangeSelector.RangeObject): void {
                             if (rangeSelector) {
                                 rangeSelector.render(e.min, e.max);
                             }
@@ -3070,4 +3070,11 @@ if (!H.RangeSelector) {
     H.RangeSelector = RangeSelector;
 }
 
-export default H.RangeSelector;
+namespace RangeSelector {
+    export interface RangeObject {
+        max: number;
+        min: number;
+    }
+}
+
+export default RangeSelector;

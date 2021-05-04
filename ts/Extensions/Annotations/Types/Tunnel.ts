@@ -252,7 +252,10 @@ Tunnel.prototype.defaultOptions = merge(
                         if (
                             target.chart.isInsidePlot(
                                 e.chartX - target.chart.plotLeft,
-                                e.chartY - target.chart.plotTop
+                                e.chartY - target.chart.plotTop,
+                                {
+                                    visiblePlotOnly: true
+                                }
                             )
                         ) {
                             target.translateHeight(
@@ -280,7 +283,10 @@ Tunnel.prototype.defaultOptions = merge(
                     if (
                         target.chart.isInsidePlot(
                             e.chartX - target.chart.plotLeft,
-                            e.chartY - target.chart.plotTop
+                            e.chartY - target.chart.plotTop,
+                            {
+                                visiblePlotOnly: true
+                            }
                         )
                     ) {
                         const translation = this.mouseMoveToTranslation(e);

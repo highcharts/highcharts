@@ -13,6 +13,7 @@
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
 import type PointerEvent from './PointerEvent';
+import type RangeSelector from '../Extensions/RangeSelector';
 import type { SeriesTypeOptions } from './Series/SeriesType';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
@@ -30,7 +31,7 @@ const {
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 const { defaultOptions } = O;
-import palette from './Color/Palette.js';
+import Palette from './Color/Palette.js';
 import RendererRegistry from './Renderer/RendererRegistry.js';
 import Scrollbar from './Scrollbar.js';
 import Series from './Series/Series.js';
@@ -120,7 +121,7 @@ declare global {
                 pxMax: number,
                 fixedMin: number,
                 fixedMax: number
-            ) => RangeObject;
+            ) => RangeSelector.RangeObject;
         }
         class Navigator {
             public constructor(chart: Chart);
@@ -419,14 +420,14 @@ extend(defaultOptions, {
              *
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            backgroundColor: palette.neutralColor5,
+            backgroundColor: Palette.neutralColor5,
 
             /**
              * The stroke for the handle border and the stripes inside.
              *
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            borderColor: palette.neutralColor40
+            borderColor: Palette.neutralColor40
         },
 
         /**
@@ -444,7 +445,7 @@ extend(defaultOptions, {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default rgba(102,133,194,0.3)
          */
-        maskFill: color(palette.highlightColor60).setOpacity(0.3).get(),
+        maskFill: color(Palette.highlightColor60).setOpacity(0.3).get(),
 
         /**
          * The color of the line marking the currently zoomed area in the
@@ -456,7 +457,7 @@ extend(defaultOptions, {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #cccccc
          */
-        outlineColor: palette.neutralColor20,
+        outlineColor: Palette.neutralColor20,
 
         /**
          * The width of the line marking the currently zoomed area in the
@@ -668,7 +669,7 @@ extend(defaultOptions, {
 
             lineWidth: 0,
 
-            gridLineColor: palette.neutralColor10,
+            gridLineColor: Palette.neutralColor10,
 
             gridLineWidth: 1,
 
@@ -683,7 +684,7 @@ extend(defaultOptions, {
                  */
                 style: {
                     /** @ignore */
-                    color: palette.neutralColor40
+                    color: Palette.neutralColor40
                 },
 
                 x: 3,

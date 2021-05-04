@@ -466,6 +466,11 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
             init: function (direction: number): void {
                 return component.onKbdNavigationInit(direction);
+            },
+
+            terminate: function (): void {
+                chart.legend.allItems.forEach(
+                    (item): void => item.setState('', true));
             }
         });
     },

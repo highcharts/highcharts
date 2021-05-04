@@ -62,6 +62,7 @@ declare global {
             public modules: Array<KeyboardNavigationHandler>;
             public pointerIsOverChart?: boolean;
             public tabindexContainer: HTMLDOMElement;
+            public tabbingInBackwards?: boolean;
             public addExitAnchorEventsToEl(element: DOMElementType): void;
             public createExitAnchor(): void;
             public destroy(): void;
@@ -246,7 +247,13 @@ KeyboardNavigation.prototype = {
         );
 
         // Init keyboard nav if tabbing into chart
-        if (!this.exiting && !this.isClickingChart && !focusComesFromChart && this.modules[0]) {
+        if (
+            !this.exiting &&
+            !this.tabbingInBackwards &&
+            !this.isClickingChart &&
+            !focusComesFromChart &&
+            this.modules[0]
+        ) {
             this.modules[0].init(1);
         }
 
@@ -505,7 +512,10 @@ KeyboardNavigation.prototype = {
                     );
 
                 if (comingInBackwards) {
+                    // Focus the container instead
+                    keyboardNavigation.tabbingInBackwards = true;
                     keyboardNavigation.tabindexContainer.focus();
+                    delete keyboardNavigation.tabbingInBackwards;
                     e.preventDefault();
 
                     // Move to last valid keyboard nav module

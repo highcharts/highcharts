@@ -25,6 +25,7 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from '../DOMElementType';
+import type EventCallback from '../../../Core/EventCallback';
 import type FontMetricsObject from '../FontMetricsObject';
 import type PositionObject from '../PositionObject';
 import type SVGAttributes from './SVGAttributes';
@@ -666,7 +667,7 @@ class SVGRenderer implements SVGRendererLike {
         text: string,
         x: number,
         y: number,
-        callback: Highcharts.EventCallbackFunction<SVGElement>,
+        callback: EventCallback<SVGElement>,
         theme?: SVGAttributes,
         hoverState?: SVGAttributes,
         pressedState?: SVGAttributes,
@@ -812,6 +813,7 @@ class SVGRenderer implements SVGRendererLike {
         }
 
         return label
+            .on('touchstart', (e: Event): void => e.stopPropagation())
             .on('click', function (e: Event): void {
                 if (curState !== 3) {
                     callback.call(label, e);

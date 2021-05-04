@@ -14,6 +14,7 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type Point from '../../Core/Series/Point';
+import type RangeSelector from '../../Extensions/RangeSelector';
 import type Series from '../../Core/Series/Series';
 import musicalFrequencies from './MusicalFrequencies.js';
 import U from '../../Core/Utilities.js';
@@ -42,12 +43,12 @@ declare global {
         interface SonificationUtilitiesObject {
             SignalHandler: typeof SignalHandler;
             musicalFrequencies: Array<number>;
-            calculateDataExtremes(chart: Chart, prop: string): RangeObject;
+            calculateDataExtremes(chart: Chart, prop: string): RangeSelector.RangeObject;
             getMusicalScale(semitones: Array<number>): Array<number>;
             virtualAxisTranslate(
                 value: number,
-                dataExtremes: RangeObject,
-                limits: RangeObject,
+                dataExtremes: RangeSelector.RangeObject,
+                limits: RangeSelector.RangeObject,
                 invert?: boolean
             ): number;
         }
@@ -210,11 +211,11 @@ const utilities: Highcharts.SonificationUtilitiesObject = {
     calculateDataExtremes: function (
         chart: Chart,
         prop: string
-    ): Highcharts.RangeObject {
+    ): RangeSelector.RangeObject {
         return chart.series.reduce(function (
-            extremes: Highcharts.RangeObject,
+            extremes: RangeSelector.RangeObject,
             series: Series
-        ): Highcharts.RangeObject {
+        ): RangeSelector.RangeObject {
             // We use cropped points rather than series.data here, to allow
             // users to zoom in for better fidelity.
             series.points.forEach(function (point: Point): void {
@@ -248,8 +249,8 @@ const utilities: Highcharts.SonificationUtilitiesObject = {
      */
     virtualAxisTranslate: function (
         value: number,
-        dataExtremes: Highcharts.RangeObject,
-        limits: Highcharts.RangeObject,
+        dataExtremes: RangeSelector.RangeObject,
+        limits: RangeSelector.RangeObject,
         invert?: boolean
     ): number {
         const lenValueAxis = dataExtremes.max - dataExtremes.min,

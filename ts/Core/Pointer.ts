@@ -455,7 +455,10 @@ class Pointer {
         if (this.hasDragged > 10) {
             clickedInside = chart.isInsidePlot(
                 mouseDownX - plotLeft,
-                mouseDownY - plotTop
+                mouseDownY - plotTop,
+                {
+                    visiblePlotOnly: true
+                }
             );
 
             // make a selection
@@ -763,18 +766,30 @@ class Pointer {
         const series = point.series,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
-            plotX = pick<number|undefined, number>(
-                point.clientX, point.plotX as any
-            ),
             shapeArgs = point.shapeArgs;
 
         if (xAxis && yAxis) {
+            let x = pick<number|undefined, number>(
+                point.clientX, point.plotX as any
+            );
+            let y = point.plotY || 0;
+
+            if (
+                (point as Highcharts.NodesPoint).isNode &&
+                shapeArgs &&
+                isNumber(shapeArgs.x) &&
+                isNumber(shapeArgs.y)
+            ) {
+                x = shapeArgs.x;
+                y = shapeArgs.y;
+            }
+
             return inverted ? {
-                chartX: xAxis.len + xAxis.pos - plotX,
-                chartY: yAxis.len + yAxis.pos - (point.plotY as any)
+                chartX: yAxis.len + yAxis.pos - y,
+                chartY: xAxis.len + xAxis.pos - x
             } : {
-                chartX: plotX + xAxis.pos,
-                chartY: (point.plotY as any) + yAxis.pos
+                chartX: x + xAxis.pos,
+                chartY: y + yAxis.pos
             };
         }
 
@@ -1188,7 +1203,15 @@ class Pointer {
                 extend(pEvt, this.getCoordinates(pEvt));
 
                 // fire a click event in the chart
-                if (chart.isInsidePlot((pEvt.chartX - plotLeft), (pEvt.chartY - plotTop))) {
+                if (
+                    chart.isInsidePlot(
+                        pEvt.chartX - plotLeft,
+                        pEvt.chartY - plotTop,
+                        {
+                            visiblePlotOnly: true
+                        }
+                    )
+                ) {
                     fireEvent(chart, 'click', pEvt);
                 }
             }
@@ -1319,8 +1342,11 @@ class Pointer {
             (
                 this.inClass(pEvt.target as any, 'highcharts-tracker') ||
                 chart.isInsidePlot(
-                    (pEvt.chartX - chart.plotLeft),
-                    (pEvt.chartY - chart.plotTop)
+                    pEvt.chartX - chart.plotLeft,
+                    pEvt.chartY - chart.plotTop,
+                    {
+                        visiblePlotOnly: true
+                    }
                 )
             )
         ) {
@@ -1402,7 +1428,10 @@ class Pointer {
             ) &&
             !chart.isInsidePlot(
                 pEvt.chartX - chart.plotLeft,
-                pEvt.chartY - chart.plotTop
+                pEvt.chartY - chart.plotTop,
+                {
+                    visiblePlotOnly: true
+                }
             ) &&
             !this.inClass(pEvt.target as any, 'highcharts-tracker')
         ) {
@@ -1881,7 +1910,6 @@ class Pointer {
             ),
             useSharedTooltip: (boolean|undefined),
             followPointer: (boolean|undefined),
-            anchor: Array<number>,
             points: Array<Point>;
 
         // Update variables from hoverData.
@@ -1964,10 +1992,18 @@ class Pointer {
             }
         // Update positions (regardless of kdpoint or hoverPoint)
         } else if (followPointer && tooltip && !tooltip.isHidden) {
-            anchor = tooltip.getAnchor([{} as any], e);
-            tooltip.updatePosition(
-                { plotX: anchor[0], plotY: anchor[1] } as any
-            );
+            const anchor = tooltip.getAnchor([{} as any], e);
+            if (chart.isInsidePlot(
+                anchor[0],
+                anchor[1],
+                {
+                    visiblePlotOnly: true
+                }
+            )) {
+                tooltip.updatePosition(
+                    { plotX: anchor[0], plotY: anchor[1] } as any
+                );
+            }
         }
 
         // Start the event listener to pick up the tooltip and crosshairs
@@ -2158,7 +2194,10 @@ class Pointer {
 
             isInside = chart.isInsidePlot(
                 e.chartX - chart.plotLeft,
-                e.chartY - chart.plotTop
+                e.chartY - chart.plotTop,
+                {
+                    visiblePlotOnly: true
+                }
             );
             if (isInside && !chart.openMenu) {
 

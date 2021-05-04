@@ -22,6 +22,7 @@ import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type EventCallback from '../../Core/EventCallback';
 import type GradientColor from '../../Core/Color/GradientColor';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
@@ -84,6 +85,13 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../Core/EventCallback'{
+    interface EventCallback<T> {
+        /** @requires highcharts/modules/oldies */
+        hcKey?: string;
+    }
+}
+
 declare module '../../Core/Renderer/SVG/SVGRendererLike' {
     interface SVGRendererLike {
         /** @requires highcharts/modules/oldies */
@@ -106,10 +114,6 @@ declare module '../../Core/Renderer/SVG/SVGRendererLike' {
  */
 declare global {
     namespace Highcharts {
-        interface EventCallbackFunction<T> {
-            /** @requires highcharts/modules/oldies */
-            hcKey?: string;
-        }
         interface GlobalOptions {
             /** @requires highcharts/modules/oldies */
             VMLRadialGradientURL?: string;
@@ -325,13 +329,13 @@ declare global {
         function addEventListenerPolyfill<T extends EventTarget>(
             this: T,
             type: string,
-            fn: EventCallbackFunction<T>
+            fn: EventCallback<T>
         ): void;
         /** @requires highcharts/modules/oldies */
         function removeEventListenerPolyfill<T extends EventTarget> (
             this: T,
             type: string,
-            fn: EventCallbackFunction<T>
+            fn: EventCallback<T>
         ): void;
     }
     interface CSSStyleSheet {
@@ -564,7 +568,7 @@ if (!svg) {
     H.addEventListenerPolyfill = function<T extends EventTarget> (
         this: T,
         type: string,
-        fn: Highcharts.EventCallbackFunction<T>
+        fn: EventCallback<T>
     ): void {
         const el = this;
 
@@ -604,7 +608,7 @@ if (!svg) {
     H.removeEventListenerPolyfill = function<T extends EventTarget> (
         this: T,
         type: string,
-        fn: Highcharts.EventCallbackFunction<T>
+        fn: EventCallback<T>
     ): void {
         if (this.detachEvent) {
             fn = (this.hcEventsIE as any)[fn.hcKey as any];
@@ -948,7 +952,7 @@ if (!svg) {
         on: function (
             this: Highcharts.VMLElement,
             eventType: string,
-            handler: Highcharts.EventCallbackFunction<void>
+            handler: EventCallback<void>
         ): Highcharts.VMLElement {
             // simplest possible event model for internal use
             this.element['on' + eventType] = function (): void {

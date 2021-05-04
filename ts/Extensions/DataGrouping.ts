@@ -1319,7 +1319,7 @@ export default dataGrouping;
  * @see [dataGrouping.lastAnchor](#plotOptions.series.dataGrouping.lastAnchor)
  *
  * @type       {Highcharts.DataGroupingAnchor}
- * @since      next
+ * @since 9.1.0
  * @default    start
  * @apioption  plotOptions.series.dataGrouping.anchor
  */
@@ -1429,7 +1429,7 @@ export default dataGrouping;
  * @see [dataGrouping.anchor](#plotOptions.series.dataGrouping.anchor)
  *
  * @type       {Highcharts.DataGroupingAnchorExtremes}
- * @since      next
+ * @since 9.1.0
  * @default    start
  * @apioption  plotOptions.series.dataGrouping.firstAnchor
  */
@@ -1508,7 +1508,7 @@ export default dataGrouping;
  * @see [dataGrouping.anchor](#plotOptions.series.dataGrouping.anchor)
  *
  * @type       {Highcharts.DataGroupingAnchorExtremes}
- * @since      next
+ * @since 9.1.0
  * @default    start
  * @apioption  plotOptions.series.dataGrouping.lastAnchor
  */

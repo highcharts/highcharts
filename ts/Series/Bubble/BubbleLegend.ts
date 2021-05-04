@@ -25,6 +25,7 @@ import type { BubbleSizeByValue } from './BubbleSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FontMetricsObject from '../../Core/Renderer/FontMetricsObject';
+import type FormatUtilities from '../../Core/FormatUtilities';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -95,7 +96,7 @@ declare global {
             className?: string;
             format?: string;
             formatter?: (
-                FormatterCallbackFunction<BubbleLegendFormatterContextObject>
+                FormatUtilities.FormatterCallback<BubbleLegendFormatterContextObject>
             );
             style?: CSSObject;
             x?: number;
@@ -352,7 +353,7 @@ setOptions({ // Set default bubble legend options
                  */
                 style: {
                     /** @ignore-option */
-                    fontSize: 10,
+                    fontSize: '10px',
                     /** @ignore-option */
                     color: palette.neutralColor100
                 },
@@ -548,7 +549,7 @@ class BubbleLegend {
 
         // Predict label dimensions
         this.fontMetrics = chart.renderer.fontMetrics(
-            (options.labels as any).style.fontSize.toString() + 'px'
+            (options.labels as any).style.fontSize
         );
 
         // Do not create bubbleLegend now if ranges or ranges valeus are not
@@ -762,7 +763,6 @@ class BubbleLegend {
             connectorDistance = options.connectorDistance || 0,
             labelsAlign = (labelsOptions as any).align,
             rtl = legend.options.rtl,
-            fontSize = (labelsOptions as any).style.fontSize,
             connectorLength = rtl || labelsAlign === 'left' ?
                 -connectorDistance : connectorDistance,
             borderWidth = options.borderWidth,
@@ -773,7 +773,8 @@ class BubbleLegend {
             labelY,
             labelX,
             fontMetrics = this.fontMetrics,
-            labelMovement = fontSize / 2 - (fontMetrics.h - fontSize) / 2,
+            labelMovement = fontMetrics.f / 2 -
+                (fontMetrics.h - fontMetrics.f) / 2,
             crispMovement = (posY % 1 ? 1 : 0.5) -
                 ((connectorWidth as any) % 2 ? 0 : 0.5),
             styledMode = renderer.styledMode;

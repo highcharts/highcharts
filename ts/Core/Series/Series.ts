@@ -28,6 +28,7 @@ import type {
     PointShortOptions,
     PointStateHoverOptions
 } from './PointOptions';
+import type RangeSelector from '../../Extensions/RangeSelector';
 import type SeriesLike from './SeriesLike';
 import type {
     SeriesDataSortingOptions,
@@ -39,8 +40,6 @@ import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from './SeriesType';
-import type SplinePoint from '../../Series/Spline/SplinePoint';
-import type SplineSeries from '../../Series/Spline/SplineSeries';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -732,7 +731,7 @@ class Series {
 
         /**
          * Same as
-         * [accessibility.pointDescriptionFormatter](#accessibility.pointDescriptionFormatter),
+         * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
          * but for an individual series. Overrides the chart wide configuration.
          *
          * @type      {Function}
@@ -1786,11 +1785,13 @@ class Series {
              * series animation has finished. Setting to `false` renders the
              * data label immediately. If set to `true` inherits the defer
              * time set in [plotOptions.series.animation](#plotOptions.series.animation).
+             * If set to a number, a defer time is specified in milliseconds.
              *
              * @sample highcharts/plotoptions/animation-defer
              *         Set defer time
              *
              * @since     4.0.0
+             * @type      {boolean|number}
              * @product   highcharts highstock gantt
              */
             defer: true,
@@ -4370,7 +4371,7 @@ class Series {
      *
      * @return {Highcharts.RangeObject}
      */
-    public getXExtremes(xData: Array<number>): Highcharts.RangeObject {
+    public getXExtremes(xData: Array<number>): RangeSelector.RangeObject {
         return {
             min: arrayMin(xData),
             max: arrayMax(xData)
@@ -4784,7 +4785,7 @@ class Series {
                 if (insideOnly && !chart.isInsidePlot(
                     point.plotX as any,
                     point.plotY as any,
-                    chart.inverted
+                    { inverted: chart.inverted }
                 )) {
                     return false;
                 }
@@ -5460,7 +5461,7 @@ class Series {
             axis = (this as any)[
                 (this.zoneAxis || 'y') + 'Axis'
             ] as Highcharts.Axis,
-            extremes: Highcharts.RangeObject,
+            extremes: RangeSelector.RangeObject,
             reversed: (boolean|undefined),
             inverted = chart.inverted,
             horiz: (boolean|undefined),
@@ -7278,6 +7279,25 @@ class Series {
         fireEvent(series, selected ? 'select' : 'unselect');
     }
 
+    /**
+     * Checks if a tooltip should be shown for a given point.
+     *
+     * @private
+     * @param {number} plotX
+     * @param {number} plotY
+     * @param {Highcharts.ChartIsInsideOptionsObject} [options]
+     * @return {boolean}
+     */
+    public shouldShowTooltip(
+        plotX: number,
+        plotY: number,
+        options: Chart.IsInsideOptionsObject = {}
+    ): boolean {
+        options.series = this;
+        options.visiblePlotOnly = true;
+        return this.chart.isInsidePlot(plotX, plotY, options);
+    }
+
     /** eslint-enable valid-jsdoc */
 
 }
@@ -7298,7 +7318,7 @@ interface Series extends SeriesLike {
         Highcharts.LegendSymbolMixin['drawLineMarker']|
         Highcharts.LegendSymbolMixin['drawRectangle']
     );
-    hcEvents?: Record<string, Array<Highcharts.EventWrapperObject<Series>>>;
+    hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
     isCartesian: boolean;
     kdAxisArray: Array<string>;
     parallelArrays: Array<string>;

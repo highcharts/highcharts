@@ -42,6 +42,7 @@ const {
     discardElement,
     extend,
     fireEvent,
+    isArray,
     isNumber,
     isString,
     merge,
@@ -1326,14 +1327,14 @@ class Tooltip {
             options = tooltip.options,
             x,
             y,
-            point = pointOrPoints,
+            points: Array<Point> = splat(pointOrPoints),
+            point = points[0],
             anchor,
             textConfig = {} as Highcharts.TooltipFormatterContextObject,
             text: (boolean|string),
             pointConfig = [] as Array<Point.PointLabelObject>,
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
-            currentSeries,
             styledMode = chart.styledMode;
 
         if (!options.enabled) {
@@ -1343,40 +1344,43 @@ class Tooltip {
         U.clearTimeout(this.hideTimer as any);
 
         // get the reference point coordinates (pie charts use tooltipPos)
-        tooltip.followPointer = !tooltip.split && splat(point)[0].series.tooltipOptions.followPointer;
-        anchor = tooltip.getAnchor(point as any, mouseEvent);
+        tooltip.followPointer = !tooltip.split && point.series.tooltipOptions.followPointer;
+        anchor = tooltip.getAnchor(pointOrPoints, mouseEvent);
         x = anchor[0];
         y = anchor[1];
 
         // shared tooltip, array is sent over
-        if (shared &&
-            !((point as any).series &&
-            (point as any).series.noSharedTooltip)
+        if (
+            shared &&
+            !(
+                !isArray(pointOrPoints) &&
+                pointOrPoints.series &&
+                pointOrPoints.series.noSharedTooltip
+            )
         ) {
-            chart.pointer.applyInactiveState(point as any);
+            chart.pointer.applyInactiveState(points);
 
             // Now set hover state for the choosen ones:
-            (point as any).forEach(function (item: Point): void {
+            points.forEach(function (item: Point): void {
                 item.setState('hover');
                 pointConfig.push(item.getLabelConfig());
             });
 
             textConfig = {
-                x: (point as any)[0].category,
-                y: (point as any)[0].y
+                x: point.category,
+                y: point.y
             } as any;
             textConfig.points = pointConfig as any;
-            point = (point as any)[0];
 
         // single point tooltip
         } else {
-            textConfig = (point as any).getLabelConfig();
+            textConfig = point.getLabelConfig() as any;
         }
         this.len = pointConfig.length; // #6128
         text = (formatter as any).call(textConfig, tooltip);
 
         // register the current series
-        currentSeries = (point as any).series;
+        const currentSeries = point.series;
         this.distance = pick(currentSeries.tooltipOptions.distance, 16);
 
         // update the inner HTML
@@ -1385,51 +1389,70 @@ class Tooltip {
         } else {
             // update text
             if (tooltip.split) {
-                this.renderSplit(text as any, splat(pointOrPoints));
+                this.renderSplit(text as any, points);
             } else {
-                const label = tooltip.getLabel();
+                let checkX = x;
+                let checkY = y;
 
-                // Prevent the tooltip from flowing over the chart box (#6659)
-                if (!(options.style as any).width || styledMode) {
-                    label.css({
-                        width: this.chart.spacingBox.width + 'px'
-                    });
+                if (mouseEvent && chart.pointer.isDirectTouch) {
+                    checkX = mouseEvent.chartX - chart.plotLeft;
+                    checkY = mouseEvent.chartY - chart.plotTop;
                 }
 
-                label.attr({
-                    text: text && (text as any).join ?
-                        (text as any).join('') :
-                        text
-                });
+                // #11493, #13095
+                if (
+                    chart.polar ||
+                    currentSeries.options.clip === false ||
+                    currentSeries.shouldShowTooltip(checkX, checkY)
+                ) {
+                    const label = tooltip.getLabel();
 
-                // Set the stroke color of the box to reflect the point
-                label.removeClass(/highcharts-color-[\d]+/g)
-                    .addClass(
-                        'highcharts-color-' +
-                        pick(
-                            (point as any).colorIndex,
-                            currentSeries.colorIndex
-                        )
-                    );
+                    // Prevent the tooltip from flowing over the chart box
+                    // (#6659)
+                    if (!(options.style as any).width || styledMode) {
+                        label.css({
+                            width: this.chart.spacingBox.width + 'px'
+                        });
+                    }
 
-                if (!styledMode) {
                     label.attr({
-                        stroke: (
-                            options.borderColor ||
-                            (point as any).color ||
-                            currentSeries.color ||
-                            palette.neutralColor60
-                        )
+                        text: text && (text as any).join ?
+                            (text as any).join('') :
+                            text
                     });
-                }
 
-                tooltip.updatePosition({
-                    plotX: x,
-                    plotY: y,
-                    negative: (point as any).negative,
-                    ttBelow: (point as any).ttBelow,
-                    h: anchor[2] || 0
-                } as any);
+                    // Set the stroke color of the box to reflect the point
+                    label.removeClass(/highcharts-color-[\d]+/g)
+                        .addClass(
+                            'highcharts-color-' +
+                            pick(
+                                point.colorIndex,
+                                currentSeries.colorIndex
+                            )
+                        );
+
+                    if (!styledMode) {
+                        label.attr({
+                            stroke: (
+                                options.borderColor ||
+                                point.color ||
+                                currentSeries.color ||
+                                palette.neutralColor60
+                            )
+                        });
+                    }
+
+                    tooltip.updatePosition({
+                        plotX: x,
+                        plotY: y,
+                        negative: point.negative,
+                        ttBelow: point.ttBelow,
+                        h: anchor[2] || 0
+                    } as any);
+                } else {
+                    tooltip.hide();
+                    return;
+                }
             }
 
             // show it
@@ -1527,10 +1550,9 @@ class Tooltip {
                 anchorX = xAxis.pos + clamp(plotX, -distance, xAxis.len + distance);
 
                 // Set anchorY, limit to the scrollable plot area
-                if (
-                    yAxis.pos + plotY >= scrollTop + plotTop &&
-                    yAxis.pos + plotY <= scrollTop + plotTop + plotHeight - scrollablePixelsY
-                ) {
+                if (series.shouldShowTooltip(0, yAxis.pos - plotTop + plotY, {
+                    ignoreX: true
+                })) {
                     anchorY = yAxis.pos + plotY;
                 }
             }

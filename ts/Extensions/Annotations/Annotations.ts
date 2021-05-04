@@ -28,6 +28,8 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions';
+import type EventCallback from '../../Core/EventCallback';
+import type FormatUtilities from '../../Core/FormatUtilities';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
@@ -121,10 +123,10 @@ declare global {
             points: Array<AnnotationPoint>;
         }
         interface AnnotationsEventsOptions {
-            afterUpdate?: EventCallbackFunction<Annotation>;
-            add?: EventCallbackFunction<Annotation>;
-            click?: EventCallbackFunction<Annotation>;
-            remove?: EventCallbackFunction<Annotation>;
+            afterUpdate?: EventCallback<Annotation>;
+            add?: EventCallback<Annotation>;
+            click?: EventCallback<Annotation>;
+            remove?: EventCallback<Annotation>;
         }
         interface AnnotationsLabelOptions extends AnnotationControllableOptionsObject {
             align: AlignValue;
@@ -137,7 +139,7 @@ declare global {
             crop: boolean;
             distance?: number;
             format?: string;
-            formatter: FormatterCallbackFunction<Point>;
+            formatter: FormatUtilities.FormatterCallback<Point>;
             includeInDataExport: boolean;
             overflow: DataLabelOverflowValue;
             padding: number;
