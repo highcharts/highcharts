@@ -204,6 +204,21 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
         'blue',
         '#15424: Fourth line should be blue (lineColor)'
     );
+
+    const controller = new TestController(chart);
+    const label = thirdAnnotation.labels[0].graphic;
+
+    controller.moveTo(label.x + 5, label.y + 5);
+    assert.ok(
+        chart.tooltip.isHidden,
+        '#14403: Tooltip should be hidden when hovering annotation'
+    );
+
+    controller.moveTo(label.x - 5, label.y + 5);
+    assert.notOk(
+        chart.tooltip.isHidden,
+        '#14403: Tooltip should not be hidden when not hovering annotation'
+    );
 });
 
 QUnit.test(
