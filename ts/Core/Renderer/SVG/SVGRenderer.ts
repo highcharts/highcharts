@@ -74,172 +74,21 @@ const {
     uniqueKey
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        // class SVGRenderer {
-        //     public constructor(
-        //         container: HTMLDOMElement,
-        //         width: number,
-        //         height: number,
-        //         style?: CSSObject,
-        //         forExport?: boolean,
-        //         allowHTML?: boolean,
-        //         styledMode?: boolean
-        //     );
-        //     public Element: typeof SVGElement;
-        //     public SVG_NS: string;
-        //     public alignedObjects: Array<SVGElement>;
-        //     public allowHTML?: boolean;
-        //     public box: SVGDOMElement;
-        //     public boxWrapper: SVGElement;
-        //     public cache: Record<string, BBoxObject>;
-        //     public cacheKeys: Array<string>;
-        //     public chartIndex: number;
-        //     public defs: SVGElement;
-        //     /** @deprecated */
-        //     public draw: Function;
-        //     public escapes: Record<string, string>;
-        //     public forExport?: boolean;
-        //     public globalAnimation: boolean|Partial<AnimationOptions>;
-        //     public gradients: Record<string, SVGElement>;
-        //     public height: number;
-        //     public imgCount: number;
-        //     public isSVG: boolean;
-        //     public style: CSSObject;
-        //     public styledMode?: boolean;
-        //     public symbols: Record<string, SymbolFunction>;
-        //     public unSubPixelFix?: Function;
-        //     public url: string;
-        //     public width: number;
-        //     public alignElements(): void;
-        //     public arc(attribs: SVGAttributes): SVGElement;
-        //     public arc(
-        //         x?: number,
-        //         y?: number,
-        //         r?: number,
-        //         innerR?: number,
-        //         start?: number,
-        //         end?: number
-        //     ): SVGElement;
-        //     public buildText(wrapper: SVGElement): void;
-        //     public button(
-        //         text: string,
-        //         x: number,
-        //         y: number,
-        //         callback: EventCallbackFunction<SVGElement>,
-        //         normalState?: SVGAttributes,
-        //         hoverState?: SVGAttributes,
-        //         pressedState?: SVGAttributes,
-        //         disabledState?: SVGAttributes,
-        //         shape?: SVGRenderer.SymbolKeyValue,
-        //         useHTML?: boolean
-        //     ): SVGElement;
-        //     public circle(attribs: SVGAttributes): SVGElement;
-        //     public circle(x?: number, y?: number, r?: number): SVGElement;
-        //     public clipRect(attribs: SVGAttributes): ClipRectElement;
-        //     public clipRect(
-        //         x?: number,
-        //         y?: number,
-        //         width?: number,
-        //         height?: number
-        //     ): ClipRectElement;
-        //     public createElement(nodeName: string): SVGElement;
-        //     public crispLine(
-        //         points: SVGPath,
-        //         width: number,
-        //         roundingFunction?: ('round'|'floor'|'ceil')
-        //     ): SVGPath;
-        //     public definition(def: ASTNode): SVGElement;
-        //     public destroy(): null;
-        //     public g(name?: string): SVGElement;
-        //     public getContrast(rgba: ColorString): ColorString;
-        //     public getRadialAttr(
-        //         radialReference: Array<number>,
-        //         gradAttr: SVGAttributes
-        //     ): SVGAttributes;
-        //     public getStyle(style: CSSObject): CSSObject;
-        //     public fontMetrics(
-        //         fontSize?: (number|string),
-        //         elem?: (DOMElementType|SVGElement)
-        //     ): FontMetricsObject;
-        //     public image(
-        //         src: string,
-        //         x?: number,
-        //         y?: number,
-        //         width?: number,
-        //         height?: number,
-        //         onload?: Function
-        //     ): SVGElement;
-        //     public init(
-        //         container: HTMLDOMElement,
-        //         width: number,
-        //         height: number,
-        //         style?: CSSObject,
-        //         forExport?: boolean,
-        //         allowHTML?: boolean,
-        //         styledMode?: boolean
-        //     ): void;
-        //     public isHidden(): boolean
-        //     public label(
-        //         str: string,
-        //         x: number,
-        //         y?: number,
-        //         shape?: SVGRenderer.SymbolKeyValue,
-        //         anchorX?: number,
-        //         anchorY?: number,
-        //         useHTML?: boolean,
-        //         baseline?: boolean,
-        //         className?: string
-        //     ): SVGLabel;
-        //     public path(attribs?: SVGAttributes): SVGElement;
-        //     public path(path?: SVGPath): SVGElement;
-        //     public pathToSegments(path: Array<string|number>): SVGPath;
-        //     public rect(attribs: SVGAttributes): SVGElement;
-        //     public rect(
-        //         x?: number,
-        //         y?: number,
-        //         width?: number,
-        //         height?: number,
-        //         r?: number,
-        //         strokeWidth?: number
-        //     ): SVGElement;
-        //     public rotCorr(
-        //         baseline: number,
-        //         rotation: number,
-        //         alterY?: boolean
-        //     ): PositionObject;
-        //     public setSize(
-        //         width: number,
-        //         height: number,
-        //         animate?: (boolean|Partial<AnimationOptions>)
-        //     ): void;
-        //     public setStyle(style: CSSObject): void;
-        //     public symbol(
-        //         symbol: string,
-        //         x?: number,
-        //         y?: number,
-        //         width?: number,
-        //         height?: number,
-        //         options?: SymbolOptionsObject
-        //     ): SVGElement;
-        //     public text(
-        //         str?: string,
-        //         x?: number,
-        //         y?: number,
-        //         useHTML?: boolean
-        //     ): SVGElement;
-        // }
-    }
-}
+/* *
+ *
+ *  Variables
+ *
+ * */
+
+let hasInternalReferenceBug: (boolean|undefined);
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
-
-
-let hasInternalReferenceBug: boolean|undefined;
 
 /**
  * Allows direct access to the Highcharts rendering layer in order to draw
@@ -412,22 +261,19 @@ class SVGRenderer implements SVGRendererLike {
         allowHTML?: boolean,
         styledMode?: boolean
     ): void {
-        let renderer = this,
-            boxWrapper: SVGElement,
-            element,
-            desc;
-
-        boxWrapper = renderer.createElement('svg')
-            .attr({
-                version: '1.1',
-                'class': 'highcharts-root'
-            }) as any;
+        const renderer = this,
+            boxWrapper = renderer
+                .createElement('svg')
+                .attr({
+                    version: '1.1',
+                    'class': 'highcharts-root'
+                }) as any,
+            element = boxWrapper.element;
 
         if (!styledMode) {
             boxWrapper.css(this.getStyle(style as any));
         }
 
-        element = boxWrapper.element;
         container.appendChild(element);
 
         // Always use ltr on the container, otherwise text-anchor will be
@@ -450,7 +296,7 @@ class SVGRenderer implements SVGRendererLike {
 
 
         // Add description
-        desc = this.createElement('desc').add();
+        const desc = this.createElement('desc').add();
         desc.element.appendChild(
             doc.createTextNode('Created with @product.name@ @product.version@')
         );
@@ -828,7 +674,7 @@ class SVGRenderer implements SVGRendererLike {
         shape?: SVGRenderer.SymbolKeyValue,
         useHTML?: boolean
     ): SVGElement {
-        let label = this.label(
+        const label = this.label(
                 text,
                 x,
                 y,
@@ -839,12 +685,14 @@ class SVGRenderer implements SVGRendererLike {
                 void 0,
                 'button'
             ),
-            curState = 0,
-            styledMode = this.styledMode,
+            styledMode = this.styledMode;
+
+        let curState = 0,
             // Make a copy of normalState (#13798)
             // (reference to options.rangeSelector.buttonTheme)
-            normalState = theme ? merge(theme) : {},
-            userNormalStyle = normalState && normalState.style || {};
+            normalState = theme ? merge(theme) : {};
+
+        const userNormalStyle = normalState && normalState.style || {};
 
         // Remove stylable attributes
         normalState = AST.filterUserAttributes(normalState);
@@ -1248,8 +1096,10 @@ class SVGRenderer implements SVGRendererLike {
 
         r = isObject(x) ? (x as any).r : r;
 
-        let wrapper = this.createElement('rect'),
-            attribs = isObject(x) ?
+        const wrapper = this.createElement('rect');
+
+        let attribs = (
+            isObject(x) ?
                 x as SVGAttributes :
                 typeof x === 'undefined' ?
                     {} :
@@ -1258,7 +1108,8 @@ class SVGRenderer implements SVGRendererLike {
                         y: y,
                         width: Math.max(width as any, 0),
                         height: Math.max(height as any, 0)
-                    };
+                    }
+        );
 
         if (!this.styledMode) {
             if (typeof strokeWidth !== 'undefined') {
@@ -1274,7 +1125,7 @@ class SVGRenderer implements SVGRendererLike {
 
         wrapper.rSetter = function (
             value: number,
-            key: string,
+            _key: string,
             element: SVGDOMElement
         ): void {
             wrapper.r = value;
@@ -1396,10 +1247,8 @@ class SVGRenderer implements SVGRendererLike {
         height?: number,
         onload?: Function
     ): SVGElement {
-        let attribs: SVGAttributes =
+        const attribs: SVGAttributes =
             { preserveAspectRatio: 'none' },
-            elemWrapper: SVGElement,
-            dummy,
             setSVGImageSource = function (
                 el: SVGElement,
                 src: string
@@ -1415,10 +1264,6 @@ class SVGRenderer implements SVGRendererLike {
                     // requries regex shim to fix later
                     el.setAttribute('hc-svg-href', src);
                 }
-            },
-            onDummyLoad = function (e: Event): void {
-                setSVGImageSource(elemWrapper.element as any, src);
-                (onload as any).call(elemWrapper, e);
             };
 
         // optional properties
@@ -1431,7 +1276,11 @@ class SVGRenderer implements SVGRendererLike {
             });
         }
 
-        elemWrapper = this.createElement('image').attr(attribs) as any;
+        const elemWrapper = this.createElement('image').attr(attribs) as any,
+            onDummyLoad = function (e: Event): void {
+                setSVGImageSource(elemWrapper.element as any, src);
+                (onload as any).call(elemWrapper, e);
+            };
 
         // Add load event if supplied
         if (onload) {
@@ -1442,7 +1291,7 @@ class SVGRenderer implements SVGRendererLike {
                 elemWrapper.element as any,
                 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' /* eslint-disable-line */
             );
-            dummy = new win.Image();
+            const dummy = new win.Image();
             addEvent(dummy, 'load', onDummyLoad as any);
             dummy.src = src;
             if (dummy.complete) {
@@ -1491,14 +1340,14 @@ class SVGRenderer implements SVGRendererLike {
         height?: number,
         options?: SymbolOptions
     ): SVGElement {
-
-        let ren = this,
-            obj: any,
+        const ren = this,
             imageRegex = /^url\((.*?)\)$/,
             isImage = imageRegex.test(symbol),
             sym = (!isImage && (this.symbols[symbol] ? symbol : 'circle')),
             // get the symbol definition function
-            symbolFn = (sym && this.symbols[sym]),
+            symbolFn = (sym && this.symbols[sym]);
+
+        let obj: (SVGElement|undefined),
             path,
             imageSrc: string,
             centerImage: Function;
@@ -1523,7 +1372,7 @@ class SVGRenderer implements SVGRendererLike {
 
             // expando properties for use in animate and attr
             extend(obj, {
-                symbolName: sym,
+                symbolName: (sym || void 0),
                 x: x,
                 y: y,
                 width: width,
@@ -1541,28 +1390,26 @@ class SVGRenderer implements SVGRendererLike {
             imageSrc = (symbol.match(imageRegex) as any)[1];
 
             // Create the image synchronously, add attribs async
-            obj = this.image(imageSrc);
+            const img = obj = this.image(imageSrc);
 
             // The image width is not always the same as the symbol width. The
             // image may be centered within the symbol, as is the case when
             // image shapes are used as label backgrounds, for example in flags.
-            obj.imgwidth = pick(
+            img.imgwidth = pick(
                 symbolSizes[imageSrc] && symbolSizes[imageSrc].width,
                 options && options.width
             );
-            obj.imgheight = pick(
+            img.imgheight = pick(
                 symbolSizes[imageSrc] && symbolSizes[imageSrc].height,
                 options && options.height
             );
             /**
              * Set the size and position
              */
-            centerImage = function (): void {
-                obj.attr({
-                    width: obj.width,
-                    height: obj.height
-                });
-            };
+            centerImage = (obj: SVGElement): SVGElement => obj.attr({
+                width: obj.width,
+                height: obj.height
+            });
 
             /**
              * Width and height setters that take both the image's physical size
@@ -1570,7 +1417,7 @@ class SVGRenderer implements SVGRendererLike {
              * to center within the label.
              */
             ['width', 'height'].forEach(function (key: string): void {
-                obj[key + 'Setter'] = function (value: any, key: string): void {
+                img[key + 'Setter'] = function (value: any, key: string): void {
                     let imgSize = this['img' + key];
 
                     this[key] = value;
@@ -1609,19 +1456,19 @@ class SVGRenderer implements SVGRendererLike {
 
 
             if (defined(x)) {
-                obj.attr({
+                img.attr({
                     x: x,
                     y: y
                 });
             }
-            obj.isImg = true;
+            img.isImg = true;
 
-            if (defined(obj.imgwidth) && defined(obj.imgheight)) {
-                centerImage();
+            if (defined(img.imgwidth) && defined(img.imgheight)) {
+                centerImage(img);
             } else {
                 // Initialize image to be 0 size so export will still function
                 // if there's no cached sizes.
-                obj.attr({ width: 0, height: 0 });
+                img.attr({ width: 0, height: 0 });
 
                 // Create a dummy JavaScript image to get the width and height.
                 createElement('img', {
@@ -1645,11 +1492,11 @@ class SVGRenderer implements SVGRendererLike {
                             width: (this as any).width,
                             height: (this as any).height
                         };
-                        obj.imgwidth = (this as any).width;
-                        obj.imgheight = (this as any).height;
+                        img.imgwidth = (this as any).width;
+                        img.imgheight = (this as any).height;
 
-                        if (obj.element) {
-                            centerImage();
+                        if (img.element) {
+                            centerImage(img);
                         }
 
                         // Clean up after #2854 workaround.
@@ -1670,7 +1517,7 @@ class SVGRenderer implements SVGRendererLike {
             }
         }
 
-        return obj;
+        return obj as any;
     }
 
     public clipRect(attribs: SVGAttributes): SVGRenderer.ClipRectElement;
@@ -1713,16 +1560,15 @@ class SVGRenderer implements SVGRendererLike {
         width?: number,
         height?: number
     ): SVGRenderer.ClipRectElement {
-        let wrapper,
+        const
             // Add a hyphen at the end to avoid confusion in testing indexes
             // -1 and -10, -11 etc (#6550)
             id = uniqueKey() + '-',
-
             clipPath = (this.createElement('clipPath').attr({
                 id: id
-            }) as any).add(this.defs);
+            }) as any).add(this.defs),
+            wrapper = this.rect(x, y, width, height, 0).add(clipPath);
 
-        wrapper = this.rect(x, y, width, height, 0).add(clipPath);
         wrapper.id = id;
         wrapper.clipPath = clipPath;
         wrapper.count = 0;
@@ -1767,10 +1613,7 @@ class SVGRenderer implements SVGRendererLike {
         y?: number,
         useHTML?: boolean
     ): SVGElement {
-
-        // declare variables
-        let renderer = this,
-            wrapper: SVGElement,
+        const renderer = this,
             attribs: SVGAttributes = {};
 
         if (useHTML && (renderer.allowHTML || !renderer.forExport)) {
@@ -1785,8 +1628,7 @@ class SVGRenderer implements SVGRendererLike {
             attribs.text = str;
         }
 
-        wrapper = renderer.createElement('text')
-            .attr(attribs);
+        const wrapper = renderer.createElement('text').attr(attribs);
 
         if (!useHTML) {
             wrapper.xSetter = function (
@@ -1794,12 +1636,10 @@ class SVGRenderer implements SVGRendererLike {
                 key: string,
                 element: SVGDOMElement
             ): void {
-                let tspans = element.getElementsByTagName('tspan'),
-                    tspan: SVGTSpanElement,
-                    parentVal = element.getAttribute(key),
-                    i;
+                const tspans = element.getElementsByTagName('tspan'),
+                    parentVal = element.getAttribute(key);
 
-                for (i = 0; i < tspans.length; i++) {
+                for (let i = 0, tspan: SVGTSpanElement; i < tspans.length; i++) {
                     tspan = tspans[i];
                     // If the x values are equal, the tspan represents a
                     // linebreak
@@ -1834,9 +1674,6 @@ class SVGRenderer implements SVGRendererLike {
         fontSize?: (number|string),
         elem?: (DOMElementType|SVGElement)
     ): FontMetricsObject {
-        let lineHeight,
-            baseline;
-
         if (
             (this.styledMode || !/px/.test(fontSize as any)) &&
             win.getComputedStyle // old IE doesn't support it
@@ -1863,8 +1700,12 @@ class SVGRenderer implements SVGRendererLike {
         // Empirical values found by comparing font size and bounding box
         // height. Applies to the default font family.
         // https://jsfiddle.net/highcharts/7xvn7/
-        lineHeight = fontSize < 24 ? fontSize + 3 : Math.round(fontSize * 1.2);
-        baseline = Math.round(lineHeight * 0.8);
+        const lineHeight = (
+                fontSize < 24 ?
+                    fontSize + 3 :
+                    Math.round(fontSize * 1.2)
+            ),
+            baseline = Math.round(lineHeight * 0.8);
 
         return {
             h: lineHeight,
