@@ -23,6 +23,10 @@ const {
 } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
+interface ExtendedPositionObject extends PositionObject{
+    yAxis: number;
+    xAxis: number;
+}
 
 class Measure extends Annotation {
 
@@ -498,22 +502,18 @@ class Measure extends Annotation {
                 dashStyle: 'Dash',
                 overflow: 'allow',
                 align: 'left',
-                vertical: 'top',
+                y: 0,
+                verticalAlign: 'top',
                 crop: true,
-                point: function (target: any): PositionObject {
-                    const annotation: Measure = target.annotation,
-                        chart = annotation.chart,
-                        inverted = chart.inverted,
-                        xAxis = chart.xAxis[typeOptions.xAxis],
-                        yAxis = chart.yAxis[typeOptions.yAxis],
-                        top = chart.plotTop,
-                        left = chart.plotLeft;
+                point: function (target: any): ExtendedPositionObject {
+                    const annotation: Measure = target.annotation;
+                    const options = target.options;
 
                     return {
-                        x: (inverted ? top : 10) +
-                            xAxis.toPixels(annotation.xAxisMin, !inverted),
-                        y: (inverted ? -left + 10 : top) +
-                            yAxis.toPixels(annotation.yAxisMin)
+                        x: annotation.xAxisMin,
+                        y: annotation.yAxisMin,
+                        xAxis: options.xAxis,
+                        yAxis: options.yAxis
                     };
                 } as any,
                 text: (formatter && formatter.call(this)) ||
