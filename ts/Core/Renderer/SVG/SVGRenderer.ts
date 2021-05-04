@@ -25,6 +25,7 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from '../DOMElementType';
+import type FontMetricsObject from '../FontMetricsObject';
 import type PositionObject from '../PositionObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
@@ -63,11 +64,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface FontMetricsObject {
-            b: number;
-            f: number;
-            h: number;
-        }
         interface SVGDefinitionObject {
             [key: string]: (boolean|number|string|Array<SVGDefinitionObject>|undefined);
             children?: Array<SVGDefinitionObject>;
@@ -1865,7 +1861,7 @@ class SVGRenderer implements SVGRendererLike {
     public fontMetrics(
         fontSize?: (number|string),
         elem?: (DOMElementType|SVGElement)
-    ): Highcharts.FontMetricsObject {
+    ): FontMetricsObject {
         let lineHeight,
             baseline;
 

@@ -23,6 +23,7 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type GradientColor from '../Color/GradientColor';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../Series/Point';
@@ -6476,7 +6477,7 @@ class Axis {
      *
      * @return {Highcharts.FontMetricsObject}
      */
-    public labelMetrics(): Highcharts.FontMetricsObject {
+    public labelMetrics(): FontMetricsObject {
         const index = this.tickPositions && this.tickPositions[0] || 0;
 
         return this.chart.renderer.fontMetrics(
