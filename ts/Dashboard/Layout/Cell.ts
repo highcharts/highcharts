@@ -297,6 +297,26 @@ class Cell extends GUIElement {
     public show(): void {
         this.changeVisibility();
     }
+
+    public getParentCell(
+        level: number
+    ): Cell | undefined {
+        const cell = this;
+
+        let parentCell;
+
+        if (level <= cell.row.layout.level) {
+            if (cell.row.layout.level === level) {
+                return cell;
+            } else if (cell.row.layout.level - 1 >= 0) {
+                parentCell = cell.row.layout.parentCell;
+
+                if (parentCell) {
+                    return parentCell.getParentCell(level);
+                }
+            }
+        }
+    }
 }
 
 namespace Cell {

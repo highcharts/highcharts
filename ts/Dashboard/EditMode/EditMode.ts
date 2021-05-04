@@ -233,7 +233,7 @@ class EditMode {
                         const dragDrop = editMode.dragDrop;
                         addEvent(cell.container, 'mouseenter', function (e: any): void {
                             if (dragDrop.isActive) {
-                                dragDrop.dropContext = cell;
+                                dragDrop.mouseContext = cell;
                                 dragDrop.onDrag(e);
                             }
                         });

@@ -469,7 +469,6 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
         layoutOptions: {
             rowClassName: 'row', // optional
             cellClassName: 'col' // optional
-
         },
         layouts: [{
             id: 'layout-bt-1' // mandatory
@@ -685,7 +684,6 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
             layout.resizer.destroy();
             console.log(layout.resizer);
         });
-
         dashboardLayout.layouts.forEach(layout => {
             layout.resizer.destroy();
             console.log(layout.resizer);

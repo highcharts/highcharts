@@ -349,6 +349,18 @@ class Row extends GUIElement {
             fireEvent(this, 'cellChange', { row: this, cell })
         }, 0);
     }
+
+    public getVisibleCells(): Array<Cell> {
+        const cells = [];
+
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            if (this.cells[i].isVisible) {
+                cells.push(this.cells[i]);
+            }
+        }
+
+        return cells;
+    }
 }
 
 namespace Row {
