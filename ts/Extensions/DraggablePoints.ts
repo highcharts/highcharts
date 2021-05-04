@@ -21,6 +21,7 @@ import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnPoint from '../Series/Column/ColumnPoint';
 import type ColumnRangePoint from '../Series/ColumnRange/ColumnRangePoint';
+import type EventCallback from '../Core/EventCallback';
 import type GanttPoint from '../Series/Gantt//GanttPoint';
 import type OHLCPoint from '../Series/OHLC/OHLCPoint';
 import type PointerEvent from '../Core/PointerEvent';
@@ -1604,8 +1605,8 @@ function getNormalizedEvent<T extends PointerEvent>(
 function addEvents<T>(
     el: T,
     types: Array<string>,
-    fn: (Function|Highcharts.EventCallbackFunction<T>),
-    options?: Highcharts.EventOptionsObject
+    fn: (Function|EventCallback<T>),
+    options?: U.EventOptions
 ): Function {
     const removeFuncs: Array<Function> = types.map(
         function (type: string): Function {

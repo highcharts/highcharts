@@ -16,6 +16,7 @@ import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type EventCallback from '../../Core/EventCallback';
 import type GradientColor from '../../Core/Color/GradientColor';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
@@ -24,6 +25,7 @@ import type PointerEvent from '../../Core/PointerEvent';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const color = Color.parse;
@@ -69,16 +71,19 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../Core/EventCallback'{
+    interface EventCallback<T> {
+        /** @requires highcharts/modules/oldies */
+        hcKey?: string;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface EventCallbackFunction<T> {
-            /** @requires highcharts/modules/oldies */
-            hcKey?: string;
-        }
         interface GlobalOptions {
             /** @requires highcharts/modules/oldies */
             VMLRadialGradientURL?: string;
@@ -307,13 +312,13 @@ declare global {
         function addEventListenerPolyfill<T extends EventTarget>(
             this: T,
             type: string,
-            fn: EventCallbackFunction<T>
+            fn: EventCallback<T>
         ): void;
         /** @requires highcharts/modules/oldies */
         function removeEventListenerPolyfill<T extends EventTarget> (
             this: T,
             type: string,
-            fn: EventCallbackFunction<T>
+            fn: EventCallback<T>
         ): void;
     }
     interface CSSStyleSheet {
@@ -546,7 +551,7 @@ if (!svg) {
     H.addEventListenerPolyfill = function<T extends EventTarget> (
         this: T,
         type: string,
-        fn: Highcharts.EventCallbackFunction<T>
+        fn: EventCallback<T>
     ): void {
         const el = this;
 
@@ -586,7 +591,7 @@ if (!svg) {
     H.removeEventListenerPolyfill = function<T extends EventTarget> (
         this: T,
         type: string,
-        fn: Highcharts.EventCallbackFunction<T>
+        fn: EventCallback<T>
     ): void {
         if (this.detachEvent) {
             fn = (this.hcEventsIE as any)[fn.hcKey as any];
@@ -930,7 +935,7 @@ if (!svg) {
         on: function (
             this: Highcharts.VMLElement,
             eventType: string,
-            handler: Highcharts.EventCallbackFunction<void>
+            handler: EventCallback<void>
         ): Highcharts.VMLElement {
             // simplest possible event model for internal use
             this.element['on' + eventType] = function (): void {

@@ -18,6 +18,7 @@ import type BubbleSeries from './BubbleSeries';
 import type { BubbleSizeByValue } from './BubbleSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type FormatUtilities from '../../Core/FormatUtilities';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -81,7 +82,7 @@ declare global {
             className?: string;
             format?: string;
             formatter?: (
-                FormatterCallbackFunction<BubbleLegendFormatterContextObject>
+                FormatUtilities.FormatterCallback<BubbleLegendFormatterContextObject>
             );
             style?: CSSObject;
             x?: number;

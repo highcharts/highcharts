@@ -28,6 +28,7 @@ import type {
     PointShortOptions,
     PointStateHoverOptions
 } from './PointOptions';
+import type RangeSelector from '../../Extensions/RangeSelector';
 import type SeriesLike from './SeriesLike';
 import type {
     SeriesDataSortingOptions,
@@ -39,8 +40,6 @@ import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from './SeriesType';
-import type SplinePoint from '../../Series/Spline/SplinePoint';
-import type SplineSeries from '../../Series/Spline/SplineSeries';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -4372,7 +4371,7 @@ class Series {
      *
      * @return {Highcharts.RangeObject}
      */
-    public getXExtremes(xData: Array<number>): Highcharts.RangeObject {
+    public getXExtremes(xData: Array<number>): RangeSelector.RangeObject {
         return {
             min: arrayMin(xData),
             max: arrayMax(xData)
@@ -5462,7 +5461,7 @@ class Series {
             axis = (this as any)[
                 (this.zoneAxis || 'y') + 'Axis'
             ] as Highcharts.Axis,
-            extremes: Highcharts.RangeObject,
+            extremes: RangeSelector.RangeObject,
             reversed: (boolean|undefined),
             inverted = chart.inverted,
             horiz: (boolean|undefined),
@@ -7319,7 +7318,7 @@ interface Series extends SeriesLike {
         Highcharts.LegendSymbolMixin['drawLineMarker']|
         Highcharts.LegendSymbolMixin['drawRectangle']
     );
-    hcEvents?: Record<string, Array<Highcharts.EventWrapperObject<Series>>>;
+    hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
     isCartesian: boolean;
     kdAxisArray: Array<string>;
     parallelArrays: Array<string>;

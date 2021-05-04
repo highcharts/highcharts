@@ -21,6 +21,7 @@ import type ColorString from './Color/ColorString';
 import type ColorType from './Color/ColorType';
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
+import type FormatUtilties from './FormatUtilities';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type Point from './Series/Point';
 import type Series from './Series/Series';
@@ -274,7 +275,7 @@ declare global {
             itemWidth?: number;
             layout?: ('horizontal'|'vertical'|'proximate');
             labelFormat?: string;
-            labelFormatter?: FormatterCallbackFunction<Series|Point>;
+            labelFormatter?: FormatUtilties.FormatterCallback<Series|Point>;
             /** @deprecated */
             lineHeight?: number;
             margin?: number;
@@ -385,7 +386,7 @@ declare global {
             outside?: boolean;
             padding?: number;
             pointFormat?: string;
-            pointFormatter?: FormatterCallbackFunction<Point>;
+            pointFormatter?: FormatUtilties.FormatterCallback<Point>;
             positioner?: TooltipPositionerCallbackFunction;
             shadow?: (boolean|Partial<ShadowOptionsObject>);
             shape?: TooltipShapeValue;
