@@ -124,6 +124,11 @@ let dashboard = new Dashboard('container', {
             addComponentBtn: {
                 icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/add.svg'
             }
+        },
+        confirmationPopup: {
+            close: {
+                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/close.svg'
+            }
         }
     },
     gui: {

@@ -47,7 +47,7 @@ const {
 declare global {
     namespace Highcharts {
         class Popup {
-            public constructor(parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart);
+            public constructor(parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart|undefined);
             public annotations: PopupAnnotationsObject;
             public container: HTMLDOMElement;
             public iconsURL: string;
@@ -69,7 +69,7 @@ declare global {
             public deselectAll(): void;
             public getFields(parentDiv: HTMLDOMElement, type: string): PopupFieldsObject;
             public getLangpack(): Record<string, string>;
-            public init(parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart): void;
+            public init(parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart|undefined): void;
             public showForm(
                 type: string,
                 chart: AnnotationChart,
@@ -183,7 +183,7 @@ wrap(Pointer.prototype, 'onContainerMouseDown', function (this: Pointer, proceed
     }
 });
 
-H.Popup = function (this: Highcharts.Popup, parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart): void {
+H.Popup = function (this: Highcharts.Popup, parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart|undefined): void {
     this.init(parentDiv, iconsURL, chart);
 } as any;
 
@@ -196,7 +196,7 @@ H.Popup.prototype = {
      * @param {string} iconsURL
      * Icon URL
      */
-    init: function (parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart): void {
+    init: function (parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart|undefined): void {
         this.chart = chart;
 
         // create popup div
@@ -218,18 +218,22 @@ H.Popup.prototype = {
         var _self = this,
             closeBtn: HTMLDOMElement;
 
+        const iconsURL = this.iconsURL;
+
         // create close popup btn
         closeBtn = createElement(DIV, {
             className: PREFIX + 'popup-close'
         }, null as any, this.container);
 
         closeBtn.style['background-image' as any] = 'url(' +
-                this.iconsURL + 'close.svg)';
+                (
+                    iconsURL.match(/png|svg|jpeg|jpg|gif/ig) ?
+                        iconsURL : iconsURL + 'close.svg'
+                ) + ')';
 
         ['click', 'touchstart'].forEach(function (eventName: string): void {
             addEvent(closeBtn, eventName, function (): void {
-
-                fireEvent(_self.chart.navigationBindings, 'closePopup');
+                _self.closePopup();
             });
         });
     },
@@ -427,6 +431,7 @@ H.Popup.prototype = {
 
         // add close button
         popupDiv.appendChild(popupCloseBtn);
+
         popupDiv.style.display = 'block';
     },
     /**
@@ -434,7 +439,11 @@ H.Popup.prototype = {
      * @private
      */
     closePopup: function (): void {
-        this.popup.container.style.display = 'none';
+        const container = pick(
+            this.popup && this.popup.container,
+            this.container
+        );
+        container.style.display = 'none';
     },
     /**
      * Create content and show popup.
@@ -1336,3 +1345,5 @@ addEvent(NavigationBindings, 'closePopup', function (this: NavigationBindings): 
         this.popup.closePopup();
     }
 });
+
+export default H.Popup;

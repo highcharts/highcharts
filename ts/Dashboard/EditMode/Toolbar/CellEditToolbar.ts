@@ -62,7 +62,14 @@ class CellEditToolbar extends EditToolbar {
             icon: EditGlobals.iconsURL + 'destroy.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {
-                    (this.menu.parent as CellEditToolbar).onCellDestroy(e);
+
+                    const parentNode = (this.menu.parent as CellEditToolbar);
+                    const popup = this.menu.parent.editMode.confirmationPopup;
+
+                    popup.show(
+                        parentNode.onCellDestroy,
+                        parentNode
+                    );
                 }
             }
         }

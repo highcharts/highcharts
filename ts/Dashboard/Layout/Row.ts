@@ -246,7 +246,9 @@ class Row extends GUIElement {
 
         // Destroy cells.
         for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
-            row.cells[i].destroy();
+            if (row.cells[i]) {
+                row.cells[i].destroy();
+            }
         }
 
         super.destroy();
