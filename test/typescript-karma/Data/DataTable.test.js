@@ -5,7 +5,7 @@ QUnit.test('DataTable Clone', function (assert) {
     const table = new DataTable({}, 'table');
 
     table.setRows([[ 'row1', 1 ]]);
-    table.setCell(0, '1', 100);
+    table.setCell('1', 0, 100);
     table.setColumnAlias('x', 'x-alias');
 
     const tableClone = table.clone();
@@ -97,17 +97,21 @@ QUnit.test('DataTable Column Aliases', function (assert) {
         'Table should return canonical name, after alias is removed.'
     );
 
-    assert.ok(
-        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'population', 4),
+    table.setCell('population', table.getRowIndexBy('id', 'Our Land'), 4),
+    assert.strictEqual(
+        table.getCell('population', table.getRowIndexBy('id', 'Our Land')),
+        4,
         'Table should set cell value for column name.'
     );
-    assert.ok(
-        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'x', 10),
+    table.setCell('x', table.getRowIndexBy('id', 'Our Land'), 10),
+    assert.strictEqual(
+        table.getCell('x', table.getRowIndexBy('id', 'Our Land')),
+        10,
         'Table should set cell value for column alias.'
     );
     assert.strictEqual(
-        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'population'),
-        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'x'),
+        table.getCell('population', table.getRowIndexBy('id', 'Our Land')),
+        table.getCell('x', table.getRowIndexBy('id', 'Our Land')),
         'Table should return cell value for column name and alias.'
     );
 
@@ -307,7 +311,7 @@ QUnit.test('DataTable Events', function (assert) {
     );
 
     registeredEvents.length = 0;
-    table.setCell(table.getRowIndexBy('id', 'a'), 'text', 'test');
+    table.setCell('text', table.getRowIndexBy('id', 'a'), 'test');
     assert.deepEqual(
         registeredEvents,
         [
@@ -350,7 +354,7 @@ QUnit.test('DataTable Events', function (assert) {
     );
 
     registeredEvents.length = 0;
-    table.setCell(0, 'text', 'test');
+    table.setCell('text', 0, 'test');
     assert.deepEqual(
         registeredEvents,
         [

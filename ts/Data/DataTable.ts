@@ -1205,11 +1205,11 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      *
      * @function Highcharts.DataTable#setCell
      *
-     * @param {number|undefined} rowIndex
-     * Row index to set.
-     *
      * @param {string} columnNameOrAlias
      * Column name or alias to set.
+     *
+     * @param {number|undefined} rowIndex
+     * Row index to set.
      *
      * @param {Highcharts.DataTableCellType} cellValue
      * Cell value to set.
@@ -1224,8 +1224,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @emits #afterSetCell
      */
     public setCell(
-        rowIndex: number,
         columnNameOrAlias: string,
+        rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {

@@ -273,7 +273,7 @@ class DataSeriesConverter {
                         columns.id = id;
                         table.setRows([columns], void 0, eventDetail);
                     } else if (columns[y]) {
-                        table.setCell(rowIndex, y, columns[y], eventDetail);
+                        table.setCell(y, rowIndex, columns[y], eventDetail);
                     }
                 }
             }

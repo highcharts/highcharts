@@ -162,7 +162,7 @@ class SortModifier extends DataModifier {
 
         if (orderInColumn) {
             for (let i = 0, iEnd = rowsLength; i < iEnd; ++i) {
-                table.setCell(rowReferences[i].index, orderInColumn, i);
+                table.setCell(orderInColumn, rowReferences[i].index, i);
             }
         } else {
             for (let i = 0, iEnd = rowsLength; i < iEnd; ++i) {
