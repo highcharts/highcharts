@@ -34,6 +34,18 @@ import type SVGRendererLike from './SVGRendererLike';
 import AST from '../HTML/AST.js';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
+const {
+    charts,
+    deg2rad,
+    doc,
+    isFirefox,
+    isMS,
+    isWebKit,
+    noop,
+    SVG_NS,
+    symbolSizes,
+    win
+} = H;
 import Palette from '../../Color/Palette.js';
 import RendererRegistry from '../RendererRegistry.js';
 import SVGElement from './SVGElement.js';
@@ -64,12 +76,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface SVGDefinitionObject {
-            [key: string]: (boolean|number|string|Array<SVGDefinitionObject>|undefined);
-            children?: Array<SVGDefinitionObject>;
-            tagName?: string;
-            textContent?: string;
-        }
         interface SymbolFunction {
             (
                 x: number,
@@ -251,17 +257,8 @@ declare global {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-let charts = H.charts,
-    deg2rad = H.deg2rad,
-    doc = H.doc,
-    isFirefox = H.isFirefox,
-    isMS = H.isMS,
-    isWebKit = H.isWebKit,
-    noop = H.noop,
-    SVG_NS = H.SVG_NS,
-    symbolSizes = H.symbolSizes,
-    win = H.win,
-    hasInternalReferenceBug: boolean|undefined;
+
+let hasInternalReferenceBug: boolean|undefined;
 
 /**
  * Allows direct access to the Highcharts rendering layer in order to draw
@@ -615,8 +612,7 @@ class SVGRenderer implements SVGRendererLike {
                 });
 
                 const hitElement = doc.elementFromPoint(6, 6);
-                hasInternalReferenceBug =
-                    (hitElement && hitElement.id) === 'hitme';
+                hasInternalReferenceBug = (hitElement && hitElement.id) === 'hitme';
                 doc.body.removeChild(svg);
             }
 
