@@ -18,7 +18,9 @@
  *
  * */
 
+import type { SymbolOptions } from '../../Core/Renderer/SVG/SymbolFunction';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -29,11 +31,9 @@ const {
  * Internal types
  * @private
  */
-declare global {
-    namespace Highcharts {
-        interface SymbolOptionsObject {
-            rounded?: boolean;
-        }
+declare module '../../Core/Renderer/SVG/SymbolFunction' {
+    interface SymbolOptions {
+        rounded?: boolean;
     }
 }
 
@@ -80,7 +80,7 @@ wrap(
         y: number,
         w: number,
         h: number,
-        options: Highcharts.SymbolOptionsObject
+        options: SymbolOptions
     ): SVGPath {
         const arc = proceed,
             path: SVGPath = arc(x, y, w, h, options);

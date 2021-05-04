@@ -16,13 +16,7 @@ const { symbols } = SVGRenderer.prototype;
  * */
 
 // create the flag icon with anchor
-symbols.flag = function (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    options?: Highcharts.SymbolOptionsObject
-): SVGPath {
+symbols.flag = function (x, y, w, h, options): SVGPath {
     const anchorX = (options && options.anchorX) || x,
         anchorY = (options && options.anchorY) || y;
 
@@ -49,17 +43,12 @@ symbols.flag = function (
  * @return {void}
  */
 function createPinSymbol(shape: ('circle'|'square')): void {
-    symbols[shape + 'pin'] = function (
-        x: number,
-        y: number,
-        w: number,
-        h: number,
-        options?: Highcharts.SymbolOptionsObject
-    ): SVGPath {
+    symbols[shape + 'pin'] = function (x, y, w, h, options): SVGPath {
 
-        let anchorX = options && options.anchorX,
-            anchorY = options && options.anchorY,
-            path: SVGPath;
+        const anchorX = options && options.anchorX,
+            anchorY = options && options.anchorY;
+
+        let path: SVGPath;
 
         // For single-letter flags, make sure circular flags are not taller
         // than their width

@@ -64,23 +64,11 @@ function selectiveRoundedRect(
     ];
 }
 
-SVGRenderer.prototype.symbols.topbutton = function (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    options?: Highcharts.SymbolOptionsObject
-): SVGPath {
+SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, options): SVGPath {
     const r = (options && options.r) || 0;
     return selectiveRoundedRect(x - 1, y - 1, w, h, r, r, 0, 0);
 };
-SVGRenderer.prototype.symbols.bottombutton = function (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    options?: Highcharts.SymbolOptionsObject
-): SVGPath {
+SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, options): SVGPath {
     const r = (options && options.r) || 0;
     return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, r, r);
 };

@@ -30,6 +30,10 @@ import type PositionObject from '../PositionObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRendererLike from './SVGRendererLike';
+import type {
+    SymbolFunction,
+    SymbolOptions
+} from './SymbolFunction';
 
 import AST from '../HTML/AST.js';
 import Color from '../../Color/Color.js';
@@ -76,29 +80,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface SymbolFunction {
-            (
-                x: number,
-                y: number,
-                width: number,
-                height: number,
-                options?: SymbolOptionsObject
-            ): SVGPath;
-        }
-        interface SymbolOptionsObject {
-            anchorX?: number;
-            anchorY?: number;
-            backgroundSize?: ('contain'|'cover'|'within');
-            clockwise?: (0|1);
-            end?: number;
-            height?: number;
-            innerR?: number;
-            longArc?: (0|1);
-            open?: boolean;
-            r?: number;
-            start?: number;
-            width?: number;
-        }
         // class SVGRenderer {
         //     public constructor(
         //         container: HTMLDOMElement,
@@ -1187,11 +1168,10 @@ class SVGRenderer implements SVGRendererLike {
         start?: number,
         end?: number
     ): SVGElement {
-        let arc: SVGElement,
-            options: SVGAttributes;
+        let options: SymbolOptions;
 
         if (isObject(x)) {
-            options = x as SVGAttributes;
+            options = x as SymbolOptions;
             y = options.y;
             r = options.r;
             innerR = options.innerR;
@@ -1199,22 +1179,18 @@ class SVGRenderer implements SVGRendererLike {
             end = options.end;
             x = options.x;
         } else {
-            options = {
-                innerR: innerR,
-                start: start,
-                end: end
-            };
+            options = { innerR, start, end };
         }
 
         // Arcs are defined as symbols for the ability to set
         // attributes in attr and animate
-        arc = this.symbol(
+        const arc = this.symbol(
             'arc',
             x as number,
             y,
             r,
             r,
-            options as Highcharts.SymbolOptionsObject
+            options
         );
         arc.r = r; // #959
         return arc;
@@ -1513,7 +1489,7 @@ class SVGRenderer implements SVGRendererLike {
         y?: number,
         width?: number,
         height?: number,
-        options?: Highcharts.SymbolOptionsObject
+        options?: SymbolOptions
     ): SVGElement {
 
         let ren = this,
@@ -2268,7 +2244,7 @@ interface SVGRenderer extends SVGRendererLike {
     SVG_NS: string;
     draw: Function;
     escapes: Record<string, string>;
-    symbols: Record<string, Highcharts.SymbolFunction>;
+    symbols: Record<string, SymbolFunction>;
 }
 
 /**
@@ -2315,13 +2291,7 @@ SVGRenderer.prototype.escapes = {
     '"': '&quot;'
 };
 
-const roundedRect: Highcharts.SymbolFunction = (
-    x,
-    y,
-    w,
-    h,
-    options
-): SVGPath => {
+const roundedRect: SymbolFunction = function (x, y, w, h, options): SVGPath {
     const r = (options && options.r) || 0;
     return [
         ['M', x + r, y],
@@ -2337,7 +2307,7 @@ const roundedRect: Highcharts.SymbolFunction = (
 };
 
 // #15291
-const rect: Highcharts.SymbolFunction = function (x, y, w, h, options): SVGPath {
+const rect: SymbolFunction = function (x, y, w, h, options): SVGPath {
     if (options && options.r) {
         return roundedRect(x, y, w, h, options);
     }
@@ -2357,12 +2327,7 @@ const rect: Highcharts.SymbolFunction = function (x, y, w, h, options): SVGPath 
  * @type {Highcharts.SymbolDictionary}
  */
 SVGRenderer.prototype.symbols = {
-    circle: function (
-        x: number,
-        y: number,
-        w: number,
-        h: number
-    ): SVGPath {
+    circle: function (x, y, w, h): SVGPath {
         // Return a full arc
         return this.arc(x + w / 2, y + h / 2, w / 2, h / 2, {
             start: Math.PI * 0.5,
@@ -2375,12 +2340,7 @@ SVGRenderer.prototype.symbols = {
 
     square: rect, // #15291
 
-    triangle: function (
-        x: number,
-        y: number,
-        w: number,
-        h: number
-    ): SVGPath {
+    triangle: function (x, y, w, h): SVGPath {
         return [
             ['M', x + w / 2, y],
             ['L', x + w, y + h],
@@ -2389,12 +2349,7 @@ SVGRenderer.prototype.symbols = {
         ];
     },
 
-    'triangle-down': function (
-        x: number,
-        y: number,
-        w: number,
-        h: number
-    ): SVGPath {
+    'triangle-down': function (x, y, w, h): SVGPath {
         return [
             ['M', x, y],
             ['L', x + w, y],
@@ -2402,12 +2357,7 @@ SVGRenderer.prototype.symbols = {
             ['Z']
         ];
     },
-    diamond: function (
-        x: number,
-        y: number,
-        w: number,
-        h: number
-    ): SVGPath {
+    diamond: function (x, y, w, h): SVGPath {
         return [
             ['M', x + w / 2, y],
             ['L', x + w, y + h / 2],
@@ -2416,13 +2366,7 @@ SVGRenderer.prototype.symbols = {
             ['Z']
         ];
     },
-    arc: function (
-        x: number,
-        y: number,
-        w: number,
-        h: number,
-        options?: Highcharts.SymbolOptionsObject
-    ): SVGPath {
+    arc: function (x, y, w, h, options): SVGPath {
         const arc: SVGPath = [];
 
         if (options) {
@@ -2504,13 +2448,7 @@ SVGRenderer.prototype.symbols = {
      * Callout shape used for default tooltips, also used for rounded
      * rectangles in VML
      */
-    callout: function (
-        x: number,
-        y: number,
-        w: number,
-        h: number,
-        options?: Highcharts.SymbolOptionsObject
-    ): SVGPath {
+    callout: function (x, y, w, h, options): SVGPath {
         const arrowLength = 6,
             halfDistance = 6,
             r = Math.min((options && options.r) || 0, w, h),

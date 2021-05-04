@@ -347,16 +347,11 @@ function boxIntersectLine(
  * @private
  * @function Highcharts.SVGRenderer#symbols.connector
  */
-SVGRenderer.prototype.symbols.connector = function (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    options?: Highcharts.SymbolOptionsObject
-): SVGPath {
-    let anchorX = options && options.anchorX,
-        anchorY = options && options.anchorY,
-        path: (SVGPath|undefined),
+SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options): SVGPath {
+    const anchorX = options && options.anchorX,
+        anchorY = options && options.anchorY;
+
+    let path: (SVGPath|undefined),
         yOffset: number,
         lateral = w / 2;
 
@@ -406,19 +401,9 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
         return;
     }
 
-    let distance = 16,
+    const distance = 16,
         points = this.points,
-        point: Point,
-        last: Point,
         interpolated: Array<Point> = [],
-        i: (number|undefined),
-        deltaX: (number|undefined),
-        deltaY: (number|undefined),
-        delta: (number|undefined),
-        len: (number|undefined),
-        n: (number|undefined),
-        j: (number|undefined),
-        d: (SVGPath|undefined),
         graph: SVGElement = this.graph || (this.area as any),
         node: SVGPathElement = graph.element as any,
         inverted = this.chart.inverted,
@@ -429,6 +414,17 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
         onArea = pick((this.options.label as any).onArea, !!this.area),
         translatedThreshold = yAxis.getThreshold(this.options.threshold as any),
         grid: Record<string, number> = {};
+
+    let point: Point,
+        last: Point,
+        i: (number|undefined),
+        deltaX: (number|undefined),
+        deltaY: (number|undefined),
+        delta: (number|undefined),
+        len: (number|undefined),
+        n: (number|undefined),
+        j: (number|undefined),
+        d: (SVGPath|undefined);
 
     /**
      * Push the point to the interpolated points, but only if that position in
@@ -579,18 +575,19 @@ Series.prototype.checkClearPoint = function (
     bBox: BBoxObject,
     checkDistance?: boolean
 ): (boolean|Highcharts.LabelClearPointObject) {
-    let distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
-        distToPointSquared = Number.MAX_VALUE,
-        dist,
-        connectorPoint,
+    const chart = this.chart,
         onArea = pick((this.options.label as any).onArea, !!this.area),
         findDistanceToOthers = (
             onArea || (this.options.label as any).connectorAllowed
         ),
-        chart = this.chart,
+        leastDistance = 16;
+
+    let distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
+        distToPointSquared = Number.MAX_VALUE,
+        dist,
+        connectorPoint,
         series: (Series|undefined),
         points: (Array<Point>|undefined),
-        leastDistance = 16,
         withinRange: (boolean|undefined),
         xDist: (number|undefined),
         yDist: (number|undefined),
@@ -815,13 +812,10 @@ Chart.prototype.drawSeriesLabels = function (): void {
             return;
         }
 
-        let bBox: (BBoxObject|undefined),
-            x: (number|undefined),
-            y: (number|undefined),
-            results: Array<Highcharts.LabelClearPointObject> = [],
-            clearPoint,
-            i: (number|undefined),
-            best,
+        const colorClass = 'highcharts-color-' + pick(series.colorIndex, 'none'),
+            isNew = !series.labelBySeries,
+            minFontSize = labelOptions.minFontSize,
+            maxFontSize = labelOptions.maxFontSize,
             inverted = chart.inverted,
             paneLeft: number = (
                 inverted ? series.yAxis.pos : (series.xAxis.pos as any)
@@ -833,14 +827,18 @@ Chart.prototype.drawSeriesLabels = function (): void {
             paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
             points: Array<Point> = series.interpolatedPoints as any,
             onArea = pick(labelOptions.onArea, !!series.area),
+            results: Array<Highcharts.LabelClearPointObject> = [];
+
+        let bBox: (BBoxObject|undefined),
+            x: (number|undefined),
+            y: (number|undefined),
+            clearPoint,
+            i: (number|undefined),
+            best,
             label: SVGElement = series.labelBySeries as any,
-            isNew = !label,
-            minFontSize = labelOptions.minFontSize,
-            maxFontSize = labelOptions.maxFontSize,
             dataExtremes,
             areaMin: (number|undefined),
-            areaMax: (number|undefined),
-            colorClass = 'highcharts-color-' + pick(series.colorIndex, 'none');
+            areaMax: (number|undefined);
 
         // Stay within the area data bounds (#10038)
         if (onArea && !inverted) {
@@ -1145,8 +1143,9 @@ Chart.prototype.drawSeriesLabels = function (): void {
 function drawLabels(this: Chart, e: Event): void {
 
     if (this.renderer) {
-        let chart = this,
-            delay = animObject(chart.renderer.globalAnimation).duration;
+        const chart = this;
+
+        let delay = animObject(chart.renderer.globalAnimation).duration;
 
         chart.labelSeries = [];
         chart.labelSeriesMaxSum = 0;

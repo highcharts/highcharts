@@ -30,6 +30,7 @@ import type PointerEvent from '../../Core/PointerEvent';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type { SymbolOptions } from '../../Core/Renderer/SVG/SymbolFunction';
 
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
@@ -2089,7 +2090,7 @@ if (!svg) {
                 y: number,
                 w: number,
                 h: number,
-                options: Highcharts.SymbolOptionsObject
+                options: SymbolOptions
             ): SVGPath {
                 return SVGRenderer.prototype.symbols[
                     !defined(options) || !options.r ? 'square' : 'callout'

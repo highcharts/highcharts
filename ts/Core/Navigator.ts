@@ -771,11 +771,7 @@ extend(defaultOptions, {
  *         Path to be used in a handle
  */
 RendererRegistry.getRendererType().prototype.symbols['navigator-handle'] = function (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    options?: Highcharts.SymbolOptionsObject
+    _x, _y, _w, _h, options
 ): SVGPath {
     const halfWidth = (options && options.width || 0) / 2,
         markerPosition = Math.round(halfWidth / 3) + 0.5,

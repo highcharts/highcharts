@@ -6,6 +6,14 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import '../../../Core/Renderer/SVG/SVGRenderer.js';
+
 import type { AlignObject } from '../../../Core/Renderer/AlignObject';
 import type Annotation from '../Annotations';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
@@ -13,6 +21,7 @@ import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import F from '../../../Core/FormatUtilities.js';
 const { format } = F;
@@ -30,10 +39,8 @@ const {
  * Internal types.
  * @private
  */
-declare global
-{
-    namespace Highcharts
-    {
+declare global {
+    namespace Highcharts {
         interface AnnotationAlignObject extends AlignObject {
             height?: number;
             width?: number;
@@ -44,8 +51,6 @@ declare global
         }
     }
 }
-
-import '../../../Core/Renderer/SVG/SVGRenderer.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -117,11 +122,11 @@ class ControllableLabel implements ControllableMixin.Type {
         alignOptions: Highcharts.AnnotationAlignObject,
         box: BBoxObject
     ): PositionObject {
-        let align = alignOptions.align,
-            vAlign = alignOptions.verticalAlign,
-            x = (box.x || 0) + (alignOptions.x || 0),
-            y = (box.y || 0) + (alignOptions.y || 0),
+        const align = alignOptions.align,
+            vAlign = alignOptions.verticalAlign;
 
+        let x = (box.x || 0) + (alignOptions.x || 0),
+            y = (box.y || 0) + (alignOptions.y || 0),
             alignFactor,
             vAlignFactor;
 
@@ -161,11 +166,10 @@ class ControllableLabel implements ControllableMixin.Type {
         alignOptions: Highcharts.AnnotationAlignObject,
         alignAttr: SVGAttributes
     ): Highcharts.AnnotationAlignObject {
-        let align = alignOptions.align,
+        const align = alignOptions.align,
             verticalAlign = alignOptions.verticalAlign,
             padding = label.box ? 0 : (label.padding || 0),
             bBox = label.getBBox(),
-            off,
             //
             options: Highcharts.AnnotationAlignObject = {
                 align: align,
@@ -178,6 +182,8 @@ class ControllableLabel implements ControllableMixin.Type {
             //
             x = (alignAttr.x || 0) - chart.plotLeft,
             y = (alignAttr.y || 0) - chart.plotTop;
+
+        let off: number;
 
         // Off left
         off = x + padding;
@@ -286,17 +292,16 @@ class ControllableLabel implements ControllableMixin.Type {
      * @param {number} dy translation for y coordinate
      */
     public translate(dx: number, dy: number): void {
-        let chart = this.annotation.chart,
+        const chart = this.annotation.chart,
             // Annotation.options
             labelOptions: AnyRecord = this.annotation.userOptions,
             // Chart.options.annotations
             annotationIndex = chart.annotations.indexOf(this.annotation),
             chartAnnotations = chart.options.annotations,
-            chartOptions: AnyRecord = chartAnnotations[annotationIndex],
-            temp;
+            chartOptions: AnyRecord = chartAnnotations[annotationIndex];
 
         if (chart.inverted) {
-            temp = dx;
+            const temp = dx;
             dx = dy;
             dy = temp;
         }
@@ -356,12 +361,10 @@ class ControllableLabel implements ControllableMixin.Type {
     }
 
     public redraw(animation?: boolean): void {
-        let options = this.options,
+        const options = this.options,
             text = this.text || options.format || options.text,
             label = this.graphic,
-            point = this.points[0],
-            anchor,
-            attrs: (SVGAttributes|null|undefined);
+            point = this.points[0];
 
         label.attr({
             text: text ?
@@ -373,8 +376,8 @@ class ControllableLabel implements ControllableMixin.Type {
                 (options.formatter as any).call(point, this)
         });
 
-        anchor = this.anchor(point);
-        attrs = this.position(anchor);
+        const anchor = this.anchor(point);
+        const attrs: (SVGAttributes|null|undefined) = this.position(anchor);
 
         if (attrs) {
             label.alignAttr = attrs;
@@ -424,13 +427,14 @@ class ControllableLabel implements ControllableMixin.Type {
     public position(
         anchor: Highcharts.AnnotationAnchorObject
     ): (PositionObject|null|undefined) {
-        let item = this.graphic,
+        const item = this.graphic,
             chart = this.annotation.chart,
             point = this.points[0],
             itemOptions = this.options,
             anchorAbsolutePosition = anchor.absolutePosition,
-            anchorRelativePosition = anchor.relativePosition,
-            itemPosition: (PositionObject|undefined),
+            anchorRelativePosition = anchor.relativePosition;
+
+        let itemPosition: (PositionObject|undefined),
             alignTo,
             itemPosRelativeX,
             itemPosRelativeY,
@@ -527,16 +531,11 @@ export default ControllableLabel;
  * General symbol definition for labels with connector
  * @private
  */
-SVGRenderer.prototype.symbols.connector = function (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    options?: Highcharts.SymbolOptionsObject
-): SVGPath {
-    let anchorX = options && options.anchorX,
-        anchorY = options && options.anchorY,
-        path: (SVGPath|undefined),
+SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options): SVGPath {
+    const anchorX = options && options.anchorX,
+        anchorY = options && options.anchorY;
+
+    let path: (SVGPath|undefined),
         yOffset: number,
         lateral = w / 2;
 
