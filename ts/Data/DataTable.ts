@@ -127,8 +127,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             (
                 json.presentationState &&
                 DataPresentationState.fromJSON(json.presentationState)
-            ),
-            converter
+            )
         );
 
         if (json.aliasMap) {
@@ -219,8 +218,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     public constructor(
         columns: DataTable.ColumnCollection = {},
         id?: string,
-        presentationState: DataPresentationState = new DataPresentationState(),
-        converter: DataConverter = new DataConverter()
+        presentationState: DataPresentationState = new DataPresentationState()
     ) {
         /**
          * Whether the ID was automatic generated or given.
@@ -230,7 +228,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
          */
         this.autoId = !id;
         this.columns = {};
-        this.converter = converter;
+
         /**
          * ID of the table.
          *
@@ -282,12 +280,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
     public readonly autoId: boolean;
 
-    /**
-     * Converter for type conversions of cell values.
-     * @private
-     */
-    public readonly converter: DataConverter;
-
     private columns: Record<string, DataTable.Column>;
 
     public readonly id: string;
@@ -331,22 +323,14 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
         table.emit({ type: 'cloneTable', detail: eventDetail });
 
-        let clone: DataTable;
+        const clone: DataTable = new DataTable(
+            (skipColumns ? {} : table.columns),
+            table.autoId ? void 0 : table.id,
+            table.presentationState
+        );
 
-        if (skipColumns) {
-            clone = new DataTable(
-                {},
-                table.autoId ? void 0 : table.id,
-                table.presentationState,
-                table.converter
-            );
-        } else {
-            clone = new DataTable(
-                table.columns,
-                table.autoId ? void 0 : table.id,
-                table.presentationState,
-                table.converter
-            );
+        if (!skipColumns) {
+            clone.versionTag = table.versionTag;
 
             if (aliases.length) {
                 const cloneAliasMap = clone.aliasMap;
@@ -355,8 +339,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
                     cloneAliasMap[alias] = aliasMap[alias];
                 }
             }
-
-            clone.versionTag = table.versionTag;
         }
 
         table.emit({
@@ -618,37 +600,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
         const column = table.columns[columnNameOrAlias];
 
-        return table.converter.asBoolean(column && column[rowIndex]);
-    }
-
-    /**
-     * Fetches a cell value for the given row as a date.
-     *
-     * @function Highcharts.DataTable#getCellAsDate
-     *
-     * @param {string} columnNameOrAlias
-     * Column name or alias to fetch.
-     *
-     * @param {number} rowIndex
-     * Row index to fetch.
-     *
-     * @return {Date}
-     * Returns the cell value of the row as a date.
-     */
-    public getCellAsDate(
-        columnNameOrAlias: string,
-        rowIndex: number
-    ): Date {
-        const table = this;
-
-        columnNameOrAlias = (
-            table.aliasMap[columnNameOrAlias] ||
-            columnNameOrAlias
-        );
-
-        const column = table.columns[columnNameOrAlias];
-
-        return table.converter.asDate(column && column[rowIndex]);
+        return !!(column && column[rowIndex]);
     }
 
     public getCellAsNumber(
@@ -690,14 +642,20 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             columnNameOrAlias
         );
 
-        const column = table.columns[columnNameOrAlias],
-            cellValue = table.converter.asNumber(column && column[rowIndex]);
+        const column = table.columns[columnNameOrAlias];
 
-        if (!useNaN && isNaN(cellValue)) {
-            return null;
+        let cellValue = (column && column[rowIndex]);
+
+        switch (typeof cellValue) {
+            case 'boolean':
+                return (cellValue ? 1 : 0);
+            case 'number':
+                return (isNaN(cellValue) && !useNaN ? null : cellValue);
         }
 
-        return cellValue;
+        cellValue = parseFloat(`${cellValue}`);
+
+        return (isNaN(cellValue) && !useNaN ? null : cellValue);
     }
 
     /**
@@ -727,7 +685,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
         const column = table.columns[columnNameOrAlias];
 
-        return table.converter.asString(column && column[rowIndex]);
+        return `${(column && column[rowIndex])}`;
     }
 
     public getColumn(
@@ -815,8 +773,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         useNaN?: boolean
     ): Array<(number|null)> {
         const table = this,
-            columns = table.columns,
-            converter = table.converter;
+            columns = table.columns;
 
         columnNameOrAlias = (
             table.aliasMap[columnNameOrAlias] ||
@@ -831,7 +788,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
             if (useNaN) {
                 for (let i = 0; i < columnLength; ++i) {
-                    columnAsNumber.push(converter.asNumber(column[i]));
+                    columnAsNumber.push(table.getCellAsNumber(columnNameOrAlias, i, true));
                 }
             } else {
                 for (
@@ -842,7 +799,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
                 ) {
                     cellValue = column[i];
                     if (typeof cellValue === 'number') {
-                        // assume unmixed data
+                        // assume unmixed data for performance reasons
                         return column.slice() as Array<(number|null)>;
                     }
                     if (
@@ -852,14 +809,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
                         break;
                     }
                 }
-                for (
-                    let i = 0,
-                        cellValue: number;
-                    i < columnLength;
-                    ++i
-                ) {
-                    cellValue = converter.asNumber(column[i]);
-                    columnAsNumber.push(isNaN(cellValue) ? null : cellValue);
+                for (let i = 0; i < columnLength; ++i) {
+                    columnAsNumber.push(table.getCellAsNumber(columnNameOrAlias, i));
                 }
             }
         }

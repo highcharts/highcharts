@@ -105,8 +105,7 @@ class DataSeriesConverter {
             table = converter.table,
             seriesData = [];
 
-        let pointOptions: Record<string, number>,
-            row,
+        let pointOptions: Record<string, (number|null)>,
             cellName,
             cell,
             isCellFound,
@@ -127,7 +126,7 @@ class DataSeriesConverter {
 
                     if (typeof cell !== 'undefined') {
                         isCellFound = true;
-                        pointOptions[pointArrayMap[j]] = table.converter.asNumber(cell);
+                        pointOptions[pointArrayMap[j]] = table.getCellAsNumber(cellName, i);
                     }
                 }
 
