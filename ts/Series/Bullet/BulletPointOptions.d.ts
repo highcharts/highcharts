@@ -14,7 +14,7 @@
  *
  * */
 
-import type BulletSeriesTargetOptions from './BulletSeriesTargetOptions';
+import type BulletTargetOptions from './BulletTargetOptions';
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 import type ColorType from '../../Core/Color/ColorType';
 
@@ -28,7 +28,7 @@ import type ColorType from '../../Core/Color/ColorType';
 export interface BulletPointOptions extends ColumnPointOptions {
     borderColor?: ColorType;
     target?: number;
-    targetOptions?: BulletSeriesTargetOptions;
+    targetOptions?: BulletTargetOptions;
 }
 
 /* *
