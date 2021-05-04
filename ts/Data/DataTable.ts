@@ -18,9 +18,7 @@
 
 import type DataEventEmitter from './DataEventEmitter';
 
-import DataConverter from './DataConverter.js';
 import DataJSON from './DataJSON.js';
-import DataPresentationState from './DataPresentationState.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -79,16 +77,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {DataTable.ClassJSON} json
      * Class JSON (usually with a $class property) to convert.
      *
-     * @param {DataConverter} [converter]
-     * Converter for conversions of cell values.
-     *
      * @return {DataTable}
      * DataTable instance from the class JSON.
      */
-    public static fromJSON(
-        json: DataTable.ClassJSON,
-        converter?: DataConverter
-    ): DataTable {
+    public static fromJSON(json: DataTable.ClassJSON): DataTable {
         const columns: DataTable.ColumnCollection = {},
             jsonColumns = json.columns,
             columnNames = Object.keys(jsonColumns);
@@ -114,21 +106,14 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             ) {
                 jsonCell = jsonColumn[j];
                 if (typeof jsonCell === 'object' && jsonCell) {
-                    column[j] = DataTable.fromJSON(jsonCell, converter);
+                    column[j] = DataTable.fromJSON(jsonCell);
                 } else {
                     column[j] = jsonCell;
                 }
             }
         }
 
-        const table = new DataTable(
-            columns,
-            json.id,
-            (
-                json.presentationState &&
-                DataPresentationState.fromJSON(json.presentationState)
-            )
-        );
+        const table = new DataTable(columns, json.id);
 
         if (json.aliasMap) {
             const aliasMap = (json.aliasMap || {}),
@@ -208,17 +193,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      *
      * @param {string} [id]
      * DataTable identifier.
-     *
-     * @param {DataPresentationState} [presentationState]
-     * Presentation state for the DataTable.
-     *
-     * @param {DataConverter} [converter]
-     * Converter for conversions of cell values.
      */
     public constructor(
         columns: DataTable.ColumnCollection = {},
-        id?: string,
-        presentationState: DataPresentationState = new DataPresentationState()
+        id?: string
     ) {
         /**
          * Whether the ID was automatic generated or given.
@@ -236,7 +214,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
          * @type {string}
          */
         this.id = (id || uniqueKey());
-        this.presentationState = presentationState;
         this.rowCount = 0;
         this.versionTag = uniqueKey();
 
@@ -284,8 +261,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
     public readonly id: string;
 
-    private presentationState: DataPresentationState;
-
     private rowCount: number;
 
     private versionTag: string;
@@ -323,17 +298,16 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
         table.emit({ type: 'cloneTable', detail: eventDetail });
 
-        const clone: DataTable = new DataTable(
+        const tableClone: DataTable = new DataTable(
             (skipColumns ? {} : table.columns),
-            table.autoId ? void 0 : table.id,
-            table.presentationState
+            (table.autoId ? void 0 : table.id)
         );
 
         if (!skipColumns) {
-            clone.versionTag = table.versionTag;
+            tableClone.versionTag = table.versionTag;
 
             if (aliases.length) {
-                const cloneAliasMap = clone.aliasMap;
+                const cloneAliasMap = tableClone.aliasMap;
                 for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
                     alias = aliases[i];
                     cloneAliasMap[alias] = aliasMap[alias];
@@ -344,10 +318,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         table.emit({
             type: 'afterCloneTable',
             detail: eventDetail,
-            tableClone: clone
+            tableClone
         });
 
-        return clone;
+        return tableClone;
     }
 
     /**
@@ -723,21 +697,12 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      *
      * @function Highcharts.DataTable#getColumnAliases
      *
-     * @param {boolean} [usePresentationOrder]
-     * Whether to use the column order of the presentation state.
-     *
      * @return {Array<string>}
      * Returns all column aliases.
      */
-    public getColumnAliases(
-        usePresentationOrder?: boolean
-    ): Array<string> {
+    public getColumnAliases(): Array<string> {
         const table = this,
             columnAliases = Object.keys(table.aliasMap);
-
-        if (usePresentationOrder && columnAliases.length) {
-            columnAliases.sort(table.presentationState.getColumnSorter());
-        }
 
         return columnAliases;
     }
@@ -823,21 +788,12 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      *
      * @function Highcharts.DataTable#getColumnNames
      *
-     * @param {boolean} [usePresentationOrder]
-     * Whether to use the column order of the presentation state.
-     *
      * @return {Array<string>}
      * Returns all column names.
      */
-    public getColumnNames(
-        usePresentationOrder?: boolean
-    ): Array<string> {
+    public getColumnNames(): Array<string> {
         const table = this,
             columnNames = Object.keys(table.columns);
-
-        if (usePresentationOrder && columnNames.length) {
-            columnNames.sort(table.presentationState.getColumnSorter());
-        }
 
         return columnNames;
     }
@@ -893,16 +849,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         }
 
         return columns;
-    }
-
-    /**
-     * Returns the presentation state of the table.
-     *
-     * @return {DataPresentationState}
-     * Returns the presentation state.
-     */
-    public getPresentationState(): DataPresentationState {
-        return this.presentationState;
     }
 
     /**
@@ -1476,19 +1422,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     }
 
     /**
-     * Sets a new presentation state for the table.
-     * @private
-     *
-     * @param {DataPresentationState} presentationState
-     * The new presentation state to use.
-     */
-    public setPresentationState(
-        presentationState: DataPresentationState
-    ): void {
-        this.presentationState = presentationState;
-    }
-
-    /**
      * Sets cell values of a row. Will insert a new row, if no index was
      * provided, or if the index is higher than the total number of table rows.
      *
@@ -1639,10 +1572,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             json.id = table.id;
         }
 
-        if (table.presentationState.isSet()) {
-            json.presentationState = table.presentationState.toJSON();
-        }
-
         if (aliases.length) {
             const jsonAliasMap: Record<string, string> = json.aliasMap = {};
 
@@ -1736,7 +1665,6 @@ namespace DataTable {
         aliasMap?: Record<string, string>;
         columns: ColumnCollectionJSON;
         id?: string;
-        presentationState?: DataPresentationState.ClassJSON;
     }
 
     /**
