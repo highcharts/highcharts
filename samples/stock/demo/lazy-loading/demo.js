@@ -19,10 +19,7 @@ fetch(dataURL)
     .then(data => {
 
         // Add a null value for the end date
-        data = [].concat(
-            data,
-            [[Date.UTC(2011, 9, 14, 19, 59), null, null, null, null]]
-        );
+        data.push([Date.UTC(2011, 9, 14, 18), null, null, null, null]);
 
         // create the chart
         Highcharts.stockChart('container', {
