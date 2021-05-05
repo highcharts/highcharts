@@ -155,6 +155,9 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
 
         this.innerResizeTimeouts = [];
+
+        // Add the component instance to the registry
+        Component.addInstance(this);
     }
 
     /* *
@@ -303,31 +306,30 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
     }
 
     private setupSync(): void {
-        if (this.store && this.store.table.getPresentationState()) {
-            Object.keys(this.syncHandlers).forEach((id: string): void => {
-                if (this.syncEvents.indexOf(id as ChartComponent.syncEventsType) > -1) {
-                    const { emitter, handler } = this.syncHandlers[id];
-                    if (handler instanceof ChartSyncHandler) {
-                        // Avoid registering the same handler multiple times
-                        // i.e. panning and selection uses the same handler
-                        const existingHandler = this.getSyncHandler(handler.id);
-                        if (!existingHandler) {
-                            this.registerSyncHandler(handler);
-                            handler.createHandler(this)();
-                        }
-                    } else if (typeof handler === 'function') {
-                        handler(this);
+        Object.keys(this.syncHandlers).forEach((id: string): void => {
+            if (this.syncEvents.indexOf(id as ChartComponent.syncEventsType) > -1) {
+                const { emitter, handler } = this.syncHandlers[id];
+                if (handler instanceof ChartSyncHandler) {
+                    // Avoid registering the same handler multiple times
+                    // i.e. panning and selection uses the same handler
+                    const existingHandler = this.getSyncHandler(handler.id);
+                    if (!existingHandler) {
+                        this.registerSyncHandler(handler);
+                        handler.createHandler(this)();
                     }
-
-                    // Probably should register this also
-                    if (emitter instanceof ChartSyncEmitter) {
-                        emitter.createEmitter(this)();
-                    } else if (emitter instanceof Function) {
-                        emitter(this);
-                    }
+                } else if (typeof handler === 'function') {
+                    handler(this);
                 }
-            });
-        }
+
+                // Probably should register this also
+                if (emitter instanceof ChartSyncEmitter) {
+                    emitter.createEmitter(this)();
+                } else if (emitter instanceof Function) {
+                    emitter(this);
+                }
+            }
+        });
+
     }
 
     private constructChart(): Chart {

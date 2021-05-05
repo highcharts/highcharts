@@ -20,7 +20,7 @@ import type DataEventEmitter from './DataEventEmitter';
 
 import DataConverter from './DataConverter.js';
 import DataJSON from './DataJSON.js';
-import DataPresentationState from './DataPresentationState.js';
+import DataPresentationState from '../Dashboard/Component/SharedComponentState.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

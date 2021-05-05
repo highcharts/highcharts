@@ -1,21 +1,22 @@
-/* eslint-disable */
+/* eslint-disable no-invalid-this, require-jsdoc */
 import type ChartComponent from './ChartComponent';
 import type Chart from '../../Core/Chart/Chart';
 import type Point from '../../Core/Series/Point';
-import type DataPresentationState from '../../Data/DataPresentationState';
+import type SharedState from './SharedComponentState';
+
+import ComponentGroup from './ComponentGroup.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent
 } = U;
 
-/* eslint-disable no-invalid-this, require-jsdoc */
 export class ChartSyncHandler {
 
     public id: string;
-    public presentationStateTrigger: DataPresentationState.eventTypes;
+    public presentationStateTrigger: SharedState.eventTypes;
     public func: Function;
 
-    constructor(id: string, trigger: DataPresentationState.eventTypes, func: Function) {
+    constructor(id: string, trigger: SharedState.eventTypes, func: Function) {
         this.id = id;
         this.presentationStateTrigger = trigger;
         this.func = func;
@@ -23,14 +24,16 @@ export class ChartSyncHandler {
 
     public createHandler(component: ChartComponent): Function {
         return (): void => {
-            const { store, chart, id } = component;
-            if (store && chart) {
-                store.table.getPresentationState().on(this.presentationStateTrigger, (e): void => {
-                    if (id !== e.detail?.sender) {
+            const { id } = component;
+
+            const groups = ComponentGroup.getGroupsFromComponent(component.id);
+            groups.forEach((group): void => {
+                group.getSharedState().on(this.presentationStateTrigger, (e): void => {
+                    if (id !== (e.detail ? e.detail.sender : void 0)) {
                         this.func.bind(component)(e);
                     }
                 });
-            }
+            });
         };
     }
 }
@@ -63,14 +66,18 @@ export const tooltipEmitter = new ChartSyncEmitter(
     'tooltipEmitter',
     'presentation',
     function (this: ChartComponent): void {
-        const { chart, store, id } = this;
-        if (chart && store) {
+        const { chart, id } = this;
+        const groups = ComponentGroup.getGroupsFromComponent(this.id);
+
+        if (chart) {
             const setHoverPointWithDetail = (
-                hoverPoint: DataPresentationState.PresentationHoverPointType | undefined
+                hoverPoint: SharedState.PresentationHoverPointType | undefined
             ): void => {
-                requestAnimationFrame((): void => {
-                    store.table.getPresentationState().setHoverPoint(hoverPoint, {
-                        sender: id
+                groups.forEach((group): void => {
+                    requestAnimationFrame((): void => {
+                        group.getSharedState().setHoverPoint(hoverPoint, {
+                            sender: id
+                        });
                     });
                 });
             };
@@ -78,8 +85,8 @@ export const tooltipEmitter = new ChartSyncEmitter(
             // Listen for the tooltip changes
             addEvent(chart.tooltip, 'refresh', (): void => {
                 const isSamePoint = (
-                    pointA?: DataPresentationState.PresentationHoverPointType,
-                    pointB?: DataPresentationState.PresentationHoverPointType
+                    pointA?: SharedState.PresentationHoverPointType,
+                    pointB?: SharedState.PresentationHoverPointType
                 ): boolean => {
                     if (!pointA || !pointB) {
                         return false;
@@ -87,10 +94,11 @@ export const tooltipEmitter = new ChartSyncEmitter(
 
                     return pointA.x === pointB.x && pointA.y === pointB.y;
                 };
-
-                if (!isSamePoint(store.table.getPresentationState().getHoverPoint(), chart.hoverPoint)) {
-                    setHoverPointWithDetail(chart.hoverPoint);
-                }
+                groups.forEach((group): void => {
+                    if (!isSamePoint(group.getSharedState().getHoverPoint(), chart.hoverPoint)) {
+                        setHoverPointWithDetail(chart.hoverPoint);
+                    }
+                });
             });
 
             // Listen to the pointer to get when the hoverpoint is undefined
@@ -120,9 +128,10 @@ export const seriesVisibilityEmitter = new ChartSyncEmitter(
         const { chart, store, id } = this;
 
         addEvent(chart, 'redraw', (): void => {
+            const groups = ComponentGroup.getGroupsFromComponent(this.id);
             if (
                 store && // has a store
-                chart?.hasRendered
+                chart.hasRendered
             ) {
                 const { series } = chart;
                 const visibilityMap: Record<string, boolean> = {};
@@ -132,9 +141,11 @@ export const seriesVisibilityEmitter = new ChartSyncEmitter(
                         visibilityMap[seriesID] = series[i].visible;
                     }
                 }
-                if (Object.keys(visibilityMap)?.length) {
-                    store.table.getPresentationState().setColumnVisibility(visibilityMap, {
-                        sender: id
+                if (Object.keys(visibilityMap).length) {
+                    groups.forEach((group): void => {
+                        group.getSharedState().setColumnVisibility(visibilityMap, {
+                            sender: id
+                        });
                     });
                 }
             }
@@ -149,18 +160,15 @@ export const seriesVisibilityHandler =
     new ChartSyncHandler(
         'seriesVisibilityHandler',
         'afterColumnVisibilityChange',
-        function (this: ChartComponent, _e: DataPresentationState.ColumnVisibilityEvent): void {
+        function (this: ChartComponent, e: SharedState.ColumnVisibilityEvent): void {
             const { chart, store } = this;
             if (store) {
-                const presentationState = store.table.getPresentationState();
-
                 chart.series.forEach((series): void => {
                     const seriesID = series.options.id;
                     if (seriesID) {
-                        series.setVisible(presentationState.getColumnVisibility(seriesID), false);
+                        series.setVisible(e.visibilityMap[seriesID], false);
                     }
                 });
-
             }
         }
     );
@@ -177,7 +185,7 @@ export const seriesVisibilityHandler =
  */
 function findMatchingPoint(
     chart: Chart,
-    hoverPoint: DataPresentationState.PresentationHoverPointType
+    hoverPoint: SharedState.PresentationHoverPointType
 ): Point | undefined {
     const { x, y, series } = hoverPoint;
 
@@ -204,16 +212,19 @@ export const tooltipHandler =
     new ChartSyncHandler(
         'tooltipHandler',
         'afterHoverPointChange',
-        function (this: ChartComponent, _e: DataPresentationState.PointHoverEvent): void {
+        function (this: ChartComponent, e: SharedState.PointHoverEvent): void {
             const { chart } = this;
-            const hoverPoint = this.store?.table.getPresentationState().getHoverPoint();
-            if (hoverPoint === void 0 && !chart.hoverPoint) {
-                chart.tooltip?.hide();
-            }
-            if (hoverPoint && chart.tooltip) {
-                const match = findMatchingPoint(chart, hoverPoint);
-                if (match) {
-                    chart.tooltip?.refresh(match);
+            const { hoverPoint } = e;
+
+            if (chart.tooltip) {
+                if (hoverPoint === void 0 && !chart.hoverPoint) {
+                    chart.tooltip.hide();
+                }
+                if (hoverPoint) {
+                    const match = findMatchingPoint(chart, hoverPoint);
+                    if (match) {
+                        chart.tooltip.refresh(match);
+                    }
                 }
             }
         }
@@ -232,14 +243,17 @@ export const selectionEmitter = new ChartSyncEmitter(
 
         if (store && chart) {
             addEvent(chart, 'selection', (e): void => {
+                const groups = ComponentGroup.getGroupsFromComponent(id);
                 if ((e as any).resetSelection) {
-                    const selection: DataPresentationState.selectionObjectType = {};
+                    const selection: SharedState.selectionObjectType = {};
                     chart.axes.forEach((axis): void => {
                         selection[axis.coll] = {};
                     });
 
-                    store.table.getPresentationState().setSelection(selection, true, {
-                        sender: id
+                    groups.forEach((group): void => {
+                        group.getSharedState().setSelection(selection, true, {
+                            sender: id
+                        });
                     });
 
                     if (chart.resetZoomButton) {
@@ -253,13 +267,15 @@ export const selectionEmitter = new ChartSyncEmitter(
                     const minMaxes = getAxisMinMaxMap(chart);
                     minMaxes.forEach((minMax): void => {
                         const { coll, extremes } = minMax;
-                        store.table.getPresentationState().setSelection(
-                            { [coll]: extremes },
-                            false,
-                            {
-                                sender: id
-                            }
-                        );
+                        groups.forEach((group): void => {
+                            group.getSharedState().setSelection(
+                                { [coll]: extremes },
+                                false,
+                                {
+                                    sender: id
+                                }
+                            );
+                        });
                     });
                 });
             });
@@ -274,16 +290,16 @@ export const selectionHandler =
     new ChartSyncHandler(
         'selectionHandler',
         'afterSelectionChange',
-        function (this: ChartComponent, e?: DataPresentationState.SelectionEvent): void {
+        function (this: ChartComponent, e: SharedState.SelectionEvent): void {
 
             const { chart } = this;
             // Reset the zoom if the source is the reset button
-            if (e?.reset) {
+            if (e.reset) {
                 chart.zoom({ resetSelection: true } as any); // Not allowed by TS, but works
                 return;
             }
 
-            const selectionAxes = this.store?.table.getPresentationState().getSelection();
+            const { selection: selectionAxes } = e;
             if (selectionAxes) {
                 Object.keys(selectionAxes).forEach((axisName: string): void => {
                     const selectionAxis = selectionAxes[axisName];
@@ -313,7 +329,7 @@ function getAxisMinMaxMap(chart: Chart): Array<{
     extremes: { min: number | undefined; max: number | undefined };
 }> {
     return chart.axes
-        .filter((axis): boolean => (chart.options.chart?.zoomType || '')
+        .filter((axis): boolean => (chart.options.chart.zoomType || '')
             .indexOf(axis.coll.slice(0, 1)) > -1 // A bit silly
         )
         .map((axis): { coll: string; extremes: { min: number | undefined; max: number | undefined } } => {
@@ -337,7 +353,7 @@ export const panEmitter = new ChartSyncEmitter(
         if (store && chart) {
             const ticks: number[] = [];
             addEvent(chart, 'pan', (): void => {
-
+                const groups = ComponentGroup.getGroupsFromComponent(id);
                 // Cancel previous ticks
                 while (ticks.length) {
                     const tick = ticks.pop();
@@ -350,13 +366,15 @@ export const panEmitter = new ChartSyncEmitter(
                     const minMaxes = getAxisMinMaxMap(chart);
                     minMaxes.forEach((minMax): void => {
                         const { coll, extremes } = minMax;
-                        store.table.getPresentationState().setSelection(
-                            { [coll]: extremes },
-                            false,
-                            {
-                                sender: id
-                            }
-                        );
+                        groups.forEach((group): void => {
+                            group.getSharedState().setSelection(
+                                { [coll]: extremes },
+                                false,
+                                {
+                                    sender: id
+                                }
+                            );
+                        });
                     });
                 }, 100));
             });

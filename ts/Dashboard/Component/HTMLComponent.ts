@@ -94,6 +94,8 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
                 this.redraw();
             }
         });
+
+        Component.addInstance(this);
     }
 
 

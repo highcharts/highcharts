@@ -16,10 +16,10 @@
  *
  * */
 
-import type DataEventEmitter from './DataEventEmitter';
-import type DataJSON from './DataJSON.js';
-import type PointType from '../Core/Series/PointType';
-import U from '../Core/Utilities.js';
+import type DataEventEmitter from '../../Data/DataEventEmitter';
+import type DataJSON from '../../Data/DataJSON.js';
+import type PointType from '../../Core/Series/PointType';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,

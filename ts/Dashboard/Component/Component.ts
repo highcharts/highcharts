@@ -23,6 +23,7 @@ const {
 } = U;
 
 import { getMargins, getPaddings } from './Utils.js';
+import ComponentGroup from './ComponentGroup.js';
 
 abstract class Component<TEventObject extends Component.EventTypes = Component.EventTypes> {
 
@@ -93,8 +94,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * @param {Component} component
      * The component to add
      */
-    public static addInstance(component: Component<any>): void {
+    public static addInstance(component: ComponentType): void {
         Component.instanceRegistry[component.id] = component;
+
     }
 
     /**
@@ -279,8 +281,6 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             height: '100%'
         }, void 0, true);
 
-        // Add the component instance to the registry
-        Component.addInstance(this);
     }
 
     // Setup listeners on cell/other things up the chain
@@ -367,6 +367,20 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                 if (typeof eventCallback === 'function') {
                     eventCallback();
                 }
+            }
+        }
+
+        // Add the component to a group based on the store table id by default
+        // TODO: make this configurable
+        if (this.store) {
+            const tableID = this.store.table.id;
+
+            if (!ComponentGroup.getComponentGroup(tableID)) {
+                ComponentGroup.addComponentGroup(new ComponentGroup(tableID));
+            }
+            const group = ComponentGroup.getComponentGroup(tableID);
+            if (group) {
+                group.addComponents([this.id]);
             }
         }
 
