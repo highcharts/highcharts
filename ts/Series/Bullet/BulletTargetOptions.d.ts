@@ -24,6 +24,7 @@ import type ColorType from '../../Core/Color/ColorType';
 
 export interface BulletTargetOptions {
     borderColor?: ColorString;
+    borderRadius?: number;
     borderWidth?: number;
     color?: ColorType;
     height?: number;

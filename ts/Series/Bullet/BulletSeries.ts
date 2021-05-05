@@ -134,7 +134,14 @@ class BulletSeries extends ColumnSeries {
              *
              * @since   6.0.0
              */
-            borderWidth: 0
+            borderWidth: 0,
+
+            /**
+             * The border radius of the rectangle representing the target.
+             *
+             * In styled mode, use class `highcharts-bullet-target` instead.
+             */
+            borderRadius: 0
         },
 
         tooltip: {
@@ -280,7 +287,8 @@ class BulletSeries extends ColumnSeries {
                             point.borderColor,
                             series.options.borderColor
                         ),
-                        'stroke-width': targetOptions.borderWidth
+                        'stroke-width': targetOptions.borderWidth,
+                        r: targetOptions.borderRadius
                     });
                 }
 
