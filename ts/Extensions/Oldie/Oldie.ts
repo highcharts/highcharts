@@ -31,7 +31,7 @@ import type PointerEvent from '../../Core/PointerEvent';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type { SymbolOptions } from '../../Core/Renderer/SVG/SymbolFunction';
+import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';

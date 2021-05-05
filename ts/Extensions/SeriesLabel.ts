@@ -20,6 +20,7 @@ import type SplineSeries from '../Series/Spline/SplineSeries';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
@@ -28,7 +29,7 @@ const { format } = F;
 import O from '../Core/Options.js';
 const { setOptions } = O;
 import Series from '../Core/Series/Series.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import SymbolRegistry from '../Core/Renderer/SVG/SymbolRegistry.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -342,13 +343,16 @@ function boxIntersectLine(
     );
 }
 
+declare module '../Core/Renderer/SVG/SymbolTypeRegistry' {
+    interface SymbolTypeRegistry {
+        /** @requires Extensions/SeriesLabel */
+        connector: SymbolFunction;
+    }
+}
 /**
  * General symbol definition for labels with connector.
- *
- * @private
- * @function Highcharts.SVGRenderer#symbols.connector
  */
-SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options): SVGPath {
+SymbolRegistry.register('connector', function (x, y, w, h, options): SVGPath {
     const anchorX = options && options.anchorX,
         anchorY = options && options.anchorY;
 
@@ -387,7 +391,7 @@ SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options): SVGPat
         }
     }
     return path || [];
-};
+});
 
 /**
  * Points to avoid. In addition to actual data points, the label should avoid

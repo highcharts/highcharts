@@ -24,10 +24,9 @@ import type Point from '../../Core/Series/Point.js';
 import type { PointStateHoverOptions } from '../../Core/Series/PointOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import Color from '../../Core/Color/Color.js';
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const { colorMapSeriesMixin } = ColorMapMixin;
-import H from '../../Core/Globals.js';
-const { noop } = H;
 import HeatmapPoint from './HeatmapPoint.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
@@ -39,12 +38,8 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-const {
-    prototype: {
-        symbols
-    }
-} = SVGRenderer;
+import SymbolRegistry from '../../Core/Renderer/SVG/SymbolRegistry.js';
+const { symbols } = SymbolRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -59,6 +54,13 @@ const {
  *  Declarations
  *
  * */
+
+declare module '../../Core/Renderer/SVG/SymbolTypeRegistry' {
+    interface SymbolTypeRegistry {
+        /** @requires Series/Heatmap/HeatmapSeries */
+        ellipse: SymbolTypeRegistry['circle'];
+    }
+}
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
@@ -487,9 +489,7 @@ class HeatmapSeries extends ScatterSeries {
         this.yAxis.axisPointRange = options.rowsize || 1;
 
         // Bind new symbol names
-        extend(symbols, {
-            ellipse: symbols.circle
-        });
+        SymbolRegistry.register('ellipse', symbols.circle);
     }
 
     /**
@@ -595,7 +595,7 @@ class HeatmapSeries extends ScatterSeries {
 
             attr.fill =
                 stateOptions.color ||
-                H.color(attr.fill).brighten(brightness || 0).get();
+                Color.parse(attr.fill).brighten(brightness || 0).get();
 
             attr.stroke = stateOptions.lineColor;
         }

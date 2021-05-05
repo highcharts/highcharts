@@ -18,20 +18,19 @@
  *
  * */
 
-import type { SymbolOptions } from '../../Core/Renderer/SVG/SymbolFunction';
+import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import SymbolRegistry from '../../Core/Renderer/SVG/SymbolRegistry.js';
+const { symbols: { arc } } = SymbolRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    wrap
-} = U;
+const { wrap } = U;
 
 /**
  * Internal types
  * @private
  */
-declare module '../../Core/Renderer/SVG/SymbolFunction' {
+declare module '../../Core/Renderer/SVG/SymbolOptions' {
     interface SymbolOptions {
         rounded?: boolean;
     }
@@ -71,40 +70,34 @@ declare module '../../Core/Renderer/SVG/SymbolFunction' {
  * @return {Highcharts.SVGPathArray}
  *         Path of the created arc.
  */
-wrap(
-    RendererRegistry.getRendererType().prototype.symbols,
-    'arc',
-    function (
-        proceed: Function,
-        x: number,
-        y: number,
-        w: number,
-        h: number,
-        options: SymbolOptions
-    ): SVGPath {
-        const arc = proceed,
-            path: SVGPath = arc(x, y, w, h, options);
+SymbolRegistry.register('arc', function (
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    options?: SymbolOptions
+): SVGPath {
+    const path: SVGPath = arc(x, y, w, h, options);
 
-        if (options.rounded) {
-            const r = options.r || w,
-                smallR = (r - (options.innerR || 0)) / 2,
-                outerArcStart = path[0],
-                innerArcStart = path[2];
+    if (options && options.rounded) {
+        const r = options.r || w,
+            smallR = (r - (options.innerR || 0)) / 2,
+            outerArcStart = path[0],
+            innerArcStart = path[2];
 
-            if (outerArcStart[0] === 'M' && innerArcStart[0] === 'L') {
-                const x1 = outerArcStart[1],
-                    y1 = outerArcStart[2],
-                    x2 = innerArcStart[1],
-                    y2 = innerArcStart[2],
-                    roundStart: SVGPath.Arc = ['A', smallR, smallR, 0, 1, 1, x1, y1],
-                    roundEnd: SVGPath.Arc = ['A', smallR, smallR, 0, 1, 1, x2, y2];
+        if (outerArcStart[0] === 'M' && innerArcStart[0] === 'L') {
+            const x1 = outerArcStart[1],
+                y1 = outerArcStart[2],
+                x2 = innerArcStart[1],
+                y2 = innerArcStart[2],
+                roundStart: SVGPath.Arc = ['A', smallR, smallR, 0, 1, 1, x1, y1],
+                roundEnd: SVGPath.Arc = ['A', smallR, smallR, 0, 1, 1, x2, y2];
 
-                // Replace the line segment and the last close segment
-                path[2] = roundEnd;
-                path[4] = roundStart;
-            }
+            // Replace the line segment and the last close segment
+            path[2] = roundEnd;
+            path[4] = roundStart;
         }
-
-        return path;
     }
-);
+
+    return path;
+});

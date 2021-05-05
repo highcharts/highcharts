@@ -17,9 +17,9 @@
  * */
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions';
 
-import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import SymbolRegistry from '../Core/Renderer/SVG/SymbolRegistry.js';
 
 /* *
  *
@@ -27,7 +27,19 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
  *
  * */
 
-// eslint-disable-next-line valid-jsdoc
+/* eslint-disable require-jsdoc, valid-jsdoc */
+
+function bottomButton(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    options?: SymbolOptions
+): SVGPath {
+    const r = (options && options.r) || 0;
+    return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, r, r);
+}
+
 /**
  * Create symbols for the zoom buttons
  * @private
@@ -64,22 +76,39 @@ function selectiveRoundedRect(
     ];
 }
 
-SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, options): SVGPath {
+function topButton(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    options?: SymbolOptions
+): SVGPath {
     const r = (options && options.r) || 0;
     return selectiveRoundedRect(x - 1, y - 1, w, h, r, r, 0, 0);
-};
-SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, options): SVGPath {
-    const r = (options && options.r) || 0;
-    return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, r, r);
-};
-// The symbol callbacks are generated on the SVGRenderer object in all browsers.
-// Even VML browsers need this in order to generate shapes in export. Now share
-// them with the VMLRenderer.
-const Renderer = RendererRegistry.getRendererType();
-if (Renderer !== SVGRenderer) {
-    ['topbutton', 'bottombutton'].forEach(function (shape: string): void {
-        Renderer.prototype.symbols[shape] = SVGRenderer.prototype.symbols[shape];
-    });
 }
 
-export default SVGRenderer.prototype.symbols;
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Renderer/SVG/SymbolTypeRegistry' {
+    interface SymbolTypeRegistry {
+        /** @requires Map/MapSymbols */
+        bottombutton: typeof bottomButton;
+        /** @requires Map/MapSymbols */
+        topbutton: typeof topButton;
+    }
+}
+
+SymbolRegistry.register('bottombutton', bottomButton);
+SymbolRegistry.register('topbutton', topButton);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default SymbolRegistry;

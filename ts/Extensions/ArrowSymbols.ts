@@ -11,8 +11,21 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+
+import SymbolRegistry from '../Core/Renderer/SVG/SymbolRegistry.js';
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Creates an arrow symbol. Like a triangle, except not filled.
@@ -44,7 +57,7 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
  * @return {Highcharts.SVGPathArray}
  *         Path array
  */
-SVGRenderer.prototype.symbols.arrow = function (
+function arrow(
     x: number,
     y: number,
     w: number,
@@ -56,7 +69,7 @@ SVGRenderer.prototype.symbols.arrow = function (
         ['L', x, y + h / 2],
         ['L', x + w, y + h]
     ];
-};
+}
 
 /**
  * Creates a half-width arrow symbol. Like a triangle, except not filled.
@@ -86,14 +99,14 @@ SVGRenderer.prototype.symbols.arrow = function (
  * @return {Highcharts.SVGPathArray}
  *         Path array
  */
-SVGRenderer.prototype.symbols['arrow-half'] = function (
+function arrowHalf(
     x: number,
     y: number,
     w: number,
     h: number
 ): SVGPath {
-    return SVGRenderer.prototype.symbols.arrow(x, y, w / 2, h);
-};
+    return arrow(x, y, w / 2, h);
+}
 
 /**
  * Creates a left-oriented triangle.
@@ -123,7 +136,7 @@ SVGRenderer.prototype.symbols['arrow-half'] = function (
  * @return {Highcharts.SVGPathArray}
  *         Path array
  */
-SVGRenderer.prototype.symbols['triangle-left'] = function (
+function triangleLeft(
     x: number,
     y: number,
     w: number,
@@ -135,30 +148,7 @@ SVGRenderer.prototype.symbols['triangle-left'] = function (
         ['L', x + w, y + h],
         ['Z']
     ];
-};
-
-/**
- * Alias function for triangle-left.
- *
- * @private
- * @function
- *
- * @param {number} x
- *        x position of the arrow
- *
- * @param {number} y
- *        y position of the arrow
- *
- * @param {number} w
- *        width of the arrow
- *
- * @param {number} h
- *        height of the arrow
- *
- * @return {Highcharts.SVGPathArray}
- *         Path array
- */
-SVGRenderer.prototype.symbols['arrow-filled'] = SVGRenderer.prototype.symbols['triangle-left'];
+}
 
 /**
  * Creates a half-width, left-oriented triangle.
@@ -188,34 +178,49 @@ SVGRenderer.prototype.symbols['arrow-filled'] = SVGRenderer.prototype.symbols['t
  * @return {Highcharts.SVGPathArray}
  *         Path array
  */
-SVGRenderer.prototype.symbols['triangle-left-half'] = function (
+function triangleLeftHalf(
     x: number,
     y: number,
     w: number,
     h: number
 ): SVGPath {
-    return SVGRenderer.prototype.symbols['triangle-left'](x, y, w / 2, h);
-};
+    return triangleLeft(x, y, w / 2, h);
+}
 
-/**
- * Alias function for triangle-left-half.
+/* *
  *
- * @private
- * @function
+ *  Registry
  *
- * @param {number} x
- *        x position of the arrow
+ * */
+
+declare module '../Core/Renderer/SVG/SymbolTypeRegistry' {
+    interface SymbolTypeRegistry {
+        /** @requires Extensions/ArrowSymbols */
+        arrow: typeof arrow;
+        /** @requires Extensions/ArrowSymbols */
+        'arrow-filled': typeof triangleLeft;
+        /** @requires Extensions/ArrowSymbols */
+        'arrow-filled-half': typeof triangleLeftHalf;
+        /** @requires Extensions/ArrowSymbols */
+        'arrow-half': typeof arrowHalf;
+        /** @requires Extensions/ArrowSymbols */
+        'triangle-left': typeof triangleLeft;
+        /** @requires Extensions/ArrowSymbols */
+        'triangle-left-half': typeof triangleLeftHalf;
+    }
+}
+
+SymbolRegistry.register('arrow', arrow);
+SymbolRegistry.register('arrow-filled', triangleLeft);
+SymbolRegistry.register('arrow-filled-half', triangleLeftHalf);
+SymbolRegistry.register('arrow-half', arrowHalf);
+SymbolRegistry.register('triangle-left', triangleLeft);
+SymbolRegistry.register('triangle-left-half', triangleLeftHalf);
+
+/* *
  *
- * @param {number} y
- *        y position of the arrow
+ *  Default Export
  *
- * @param {number} w
- *        width of the arrow
- *
- * @param {number} h
- *        height of the arrow
- *
- * @return {Highcharts.SVGPathArray}
- *         Path array
- */
-SVGRenderer.prototype.symbols['arrow-filled-half'] = SVGRenderer.prototype.symbols['triangle-left-half'];
+ * */
+
+export default SymbolRegistry;

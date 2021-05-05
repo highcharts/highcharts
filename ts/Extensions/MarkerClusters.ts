@@ -44,7 +44,8 @@ import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import SymbolRegistry from '../Core/Renderer/SVG/SymbolRegistry.js';
+const { symbols } = SymbolRegistry;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -878,9 +879,14 @@ function getStateId(): string {
 // }
 /* eslint-enable require-jsdoc */
 
-
+declare module '../Core/Renderer/SVG/SymbolTypeRegistry' {
+    interface SymbolTypeRegistry {
+        /** @requires Extensions/MarkerClusters */
+        cluster: SymbolFunction;
+    }
+}
 // Cluster symbol.
-SVGRenderer.prototype.symbols.cluster = function (
+SymbolRegistry.register('cluster', function (
     x: number,
     y: number,
     width: number,
@@ -894,20 +900,20 @@ SVGRenderer.prototype.symbols.cluster = function (
         outer1: SVGPath,
         outer2: SVGPath;
 
-    inner = this.arc(x + w, y + h, w - space * 4, h - space * 4, {
+    inner = symbols.arc(x + w, y + h, w - space * 4, h - space * 4, {
         start: Math.PI * 0.5,
         end: Math.PI * 2.5,
         open: false
     });
 
-    outer1 = this.arc(x + w, y + h, w - space * 3, h - space * 3, {
+    outer1 = symbols.arc(x + w, y + h, w - space * 3, h - space * 3, {
         start: Math.PI * 0.5,
         end: Math.PI * 2.5,
         innerR: w - outerWidth * 2,
         open: false
     });
 
-    outer2 = this.arc(x + w, y + h, w - space, h - space, {
+    outer2 = symbols.arc(x + w, y + h, w - space, h - space, {
         start: Math.PI * 0.5,
         end: Math.PI * 2.5,
         innerR: w,
@@ -915,7 +921,7 @@ SVGRenderer.prototype.symbols.cluster = function (
     });
 
     return outer2.concat(outer1, inner);
-};
+});
 
 Scatter.prototype.animateClusterPoint = function (
     clusterObj: Highcharts.ClusterAndNoiseObject

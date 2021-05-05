@@ -47,8 +47,9 @@ const {
     defaultOptions
 } = O;
 import palette from '../Core/Color/Palette.js';
-import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import SymbolRegistry from '../Core/Renderer/SVG/SymbolRegistry.js';
+const { symbols } = SymbolRegistry;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -2544,9 +2545,15 @@ Chart.prototype.inlineStyles = function (): void {
 
 };
 
-const Renderer = RendererRegistry.getRendererType();
-
-Renderer.prototype.symbols.menu = function (
+declare module '../Core/Renderer/SVG/SymbolTypeRegistry' {
+    interface SymbolTypeRegistry {
+        /** @requires Extensions/Exporting */
+        menu: SymbolFunction;
+        /** @requires Extensions/Exporting */
+        menuball: SymbolFunction;
+    }
+}
+SymbolRegistry.register('menu', function (
     x: number,
     y: number,
     width: number,
@@ -2562,9 +2569,8 @@ Renderer.prototype.symbols.menu = function (
     ];
 
     return arr;
-};
-
-Renderer.prototype.symbols.menuball = function (
+});
+SymbolRegistry.register('menuball', function (
     x: number,
     y: number,
     width: number,
@@ -2574,12 +2580,12 @@ Renderer.prototype.symbols.menuball = function (
         h = (height / 3) - 2;
 
     path = path.concat(
-        this.circle(width - h, y, h, h),
-        this.circle(width - h, y + h + 4, h, h),
-        this.circle(width - h, y + 2 * (h + 4), h, h)
+        symbols.circle(width - h, y, h, h),
+        symbols.circle(width - h, y + h + 4, h, h),
+        symbols.circle(width - h, y + 2 * (h + 4), h, h)
     );
     return path;
-};
+});
 
 /**
  * Add the buttons on chart load

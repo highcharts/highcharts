@@ -15,6 +15,7 @@
  * */
 
 import type SVGPath from './SVGPath';
+import type SymbolOptions from './SymbolOptions';
 
 /* *
  *
@@ -32,21 +33,8 @@ export interface SymbolFunction {
     ): SVGPath;
 }
 
-export interface SymbolOptions {
-    anchorX?: number;
-    anchorY?: number;
-    backgroundSize?: ('contain'|'cover'|'within');
-    clockwise?: (0|1);
-    end?: number;
-    height?: number;
-    innerR?: number;
-    longArc?: (0|1);
-    open?: boolean;
-    r?: number;
-    start?: number;
-    width?: number;
-    x?: number;
-    y?: number;
+export interface SymbolTypeRegistry {
+    [key: string]: SymbolFunction;
 }
 
 /* *
@@ -55,4 +43,4 @@ export interface SymbolOptions {
  *
  * */
 
-export default SymbolFunction;
+export default SymbolTypeRegistry;
