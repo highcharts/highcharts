@@ -2552,7 +2552,7 @@ class Navigator {
     }
 
     /**
-     * Detect if the zoomed area should stick to the minimum or maximum, #14742.
+     * Detect if the zoomed area should stick to the minimum, #14742.
      *
      * @private
      * @function Highcharts.Navigator#shouldStickToMin
@@ -2569,12 +2569,12 @@ class Navigator {
         if (isNumber(max) && isNumber(min)) {
             // If range declared, stick to the minimum only if the range
             // is smaller than the data set range.
-            if (range) {
+            if (range && max - xDataMin > 0) {
                 stickToMin = max - xDataMin < range && (!this.chart.fixedRange);
             } else {
                 // If the current axis minimum falls outside the new
                 // updated dataset, we must adjust.
-                stickToMin = min <= xDataMin && (!this.chart.fixedRange);
+                stickToMin = min <= xDataMin;
             }
         }
 
