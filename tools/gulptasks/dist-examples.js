@@ -39,8 +39,13 @@ function indexTemplate(options) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>${title} Examples</title>
         <style>
+            * {
+                font-family: sans-serif;
+            }
             ul.nav > li > div {
-                font-size: 1.25em;
+                font-size: 1.5em;
+                font-weight: bold;
+                margin: 1em 0 0.3em 0;
             }
             ul.nav > li {
                 list-style: none;
@@ -53,6 +58,13 @@ function indexTemplate(options) {
                 list-style-type: initial;
                 padding-left: 1.25em;
                 font-size: 1.15em;
+            }
+            li a {
+                text-decoration: none;
+                color: #6065c8;
+            }
+            li a:hover {
+                text-decoration: underline;
             }
         </style>
     </head>
