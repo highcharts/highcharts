@@ -398,7 +398,7 @@ function GLRenderer(
             firstPoint = true,
             zoneAxis = options.zoneAxis || 'y',
             zones = options.zones || false,
-            zoneDefColor: (Color|undefined) = false as any,
+            zoneDefColor: (Color.RGBA|undefined) = false as any,
             threshold: number = options.threshold as any,
             gapSize: number = false as any;
 
@@ -415,19 +415,23 @@ function GLRenderer(
         if (zones) {
             zones.some(function (zone): (boolean) {
                 if (typeof zone.value === 'undefined') {
-                    zoneDefColor = new Color(zone.color);
+                    zoneDefColor = new Color(zone.color).rgba as Color.RGBA;
                     return true;
                 }
                 return false;
             });
 
             if (!zoneDefColor) {
-                zoneDefColor = (
+                const color = (
                     (series.pointAttribs && series.pointAttribs().fill) ||
                     series.color
-                ) as any;
-                zoneDefColor = new Color(zoneDefColor as any);
+                );
+                zoneDefColor = new Color(color).rgba as Color.RGBA;
             }
+
+            zoneDefColor[0] /= 255.0;
+            zoneDefColor[1] /= 255.0;
+            zoneDefColor[2] /= 255.0;
         }
 
         if (chart.inverted) {
@@ -816,7 +820,7 @@ function GLRenderer(
 
             // Note: Boost requires that zones are sorted!
             if (zones) {
-                pcolor = (zoneDefColor as any).rgba.slice();
+                let zoneColor: Color.RGBA|undefined;
                 zones.some(function ( // eslint-disable-line no-loop-func
                     zone: SeriesZonesOptions,
                     i: number
@@ -826,7 +830,7 @@ function GLRenderer(
                     if (zoneAxis === 'x') {
                         if (typeof zone.value !== 'undefined' && x <= zone.value) {
                             if (zone.color && (!last || x >= (last.value as any))) {
-                                pcolor = color(zone.color).rgba as any;
+                                zoneColor = color(zone.color).rgba as any;
                             }
                             return true;
                         }
@@ -835,17 +839,20 @@ function GLRenderer(
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
                         if (zone.color && (!last || y >= (last.value as any))) {
-                            pcolor = color(zone.color).rgba as any;
+                            zoneColor = color(zone.color).rgba as any;
                         }
                         return true;
                     }
                     return false;
                 });
 
-                pcolor[0] /= 255.0;
-                pcolor[1] /= 255.0;
-                pcolor[2] /= 255.0;
+                pcolor = zoneColor || zoneDefColor || pcolor;
 
+                if (zoneColor) {
+                    pcolor[0] /= 255.0;
+                    pcolor[1] /= 255.0;
+                    pcolor[2] /= 255.0;
+                }
             }
 
             // Skip translations - temporary floating point fix
