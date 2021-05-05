@@ -779,12 +779,12 @@ function GLRenderer(
 
             if (x > xMax && closestRight.x < xMax) {
                 closestRight.x = x;
-                closestRight.y = y as any;
+                closestRight.y = y;
             }
 
             if (x < xMin && closestLeft.x > xMin) {
                 closestLeft.x = x;
-                closestLeft.y = y as any;
+                closestLeft.y = y;
             }
 
             if (y === null && connectNulls) {
@@ -825,7 +825,7 @@ function GLRenderer(
 
                     if (zoneAxis === 'x') {
                         if (typeof zone.value !== 'undefined' && x <= zone.value) {
-                            if (!last || x >= (last.value as any)) {
+                            if (zone.color && (!last || x >= (last.value as any))) {
                                 pcolor = color(zone.color).rgba as any;
                             }
                             return true;
@@ -834,7 +834,7 @@ function GLRenderer(
                     }
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
-                        if (!last || y >= (last.value as any)) {
+                        if (zone.color && (!last || y >= (last.value as any))) {
                             pcolor = color(zone.color).rgba as any;
                         }
                         return true;
@@ -842,9 +842,9 @@ function GLRenderer(
                     return false;
                 });
 
-                (pcolor as any)[0] /= 255.0;
-                (pcolor as any)[1] /= 255.0;
-                (pcolor as any)[2] /= 255.0;
+                pcolor[0] /= 255.0;
+                pcolor[1] /= 255.0;
+                pcolor[2] /= 255.0;
 
             }
 
