@@ -2284,9 +2284,9 @@ Series.prototype.getGuideBox = function (
 
         if (bBox && (bBox.width || bBox.height || bBox.x || bBox.y)) {
             changed = true;
-            minX = Math.min(bBox.x || 0, minX);
+            minX = Math.min(point.plotX || 0, bBox.x || 0, minX);
             maxX = Math.max((bBox.x || 0) + (bBox.width || 0), maxX);
-            minY = Math.min(bBox.y || 0, minY);
+            minY = Math.min(point.plotY || 0, bBox.y || 0, minY);
             maxY = Math.max((bBox.y || 0) + (bBox.height || 0), maxY);
         }
     });
