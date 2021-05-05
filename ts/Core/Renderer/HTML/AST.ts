@@ -217,6 +217,7 @@ class AST {
         'stroke-linecap',
         'stroke-width',
         'style',
+        'tableValues',
         'result',
         'rowspan',
         'summary',
