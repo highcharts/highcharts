@@ -211,7 +211,8 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements Da
             $class: 'GoogleSheetsStore',
             metadata: merge(this.metadata),
             options: merge(this.options),
-            table: this.table.toJSON()
+            table: this.table.toJSON(),
+            parser: this.parser.toJSON()
         };
     }
 

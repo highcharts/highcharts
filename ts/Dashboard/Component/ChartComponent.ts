@@ -2,7 +2,6 @@ import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
-import DataSeriesConverter from '../../Data/DataSeriesConverter.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 import DataJSON from '../../Data/DataJSON.js';
 import DataTable from '../../Data/DataTable.js';
@@ -25,7 +24,7 @@ const {
  *  Class
  *
  * */
-class ChartComponent extends Component<ChartComponent.Event> {
+class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
     /* *
      *
@@ -72,6 +71,12 @@ class ChartComponent extends Component<ChartComponent.Event> {
                 }
             )
         );
+
+        component.emit({
+            type: 'fromJSOM',
+            json,
+            component
+        });
 
         return component;
     }
@@ -134,7 +139,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
 
         if (this.store) {
             // TODO: this may be implemented on the table now
-            this.on('tableChanged', (e: any): void => {
+            this.on('tableChanged', (e): void => {
                 if (!e.detail || (e.detail && e.detail.sender !== this.id)) {
                     this.updateSeries();
                 }
@@ -148,6 +153,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
             });
         }
 
+
         this.innerResizeTimeouts = [];
     }
 
@@ -158,11 +164,17 @@ class ChartComponent extends Component<ChartComponent.Event> {
      * */
 
     public load(): this {
+        const component = this;
+        this.emit({
+            type: 'load',
+            component
+        });
         super.load();
         this.parentElement.appendChild(this.element);
         this.contentElement.appendChild(this.chartContainer);
         this.initChart();
         this.hasLoaded = true;
+
         this.emit({ type: 'afterLoad' });
 
         return this;
@@ -410,7 +422,8 @@ class ChartComponent extends Component<ChartComponent.Event> {
         this.registerChartEvents();
 
         const base = super.toJSON();
-        return {
+
+        const json = {
             ...base,
             options: {
                 ...base.options,
@@ -420,6 +433,13 @@ class ChartComponent extends Component<ChartComponent.Event> {
                 syncEvents: this.syncEvents
             }
         };
+
+        this.emit({
+            type: 'toJSON',
+            component: this,
+            json
+        });
+        return json;
     }
 }
 
@@ -431,16 +451,18 @@ class ChartComponent extends Component<ChartComponent.Event> {
 namespace ChartComponent {
 
     export type ComponentType = ChartComponent;
-
     export type constructorType = 'chart' | 'stock' | 'map' | 'gantt';
 
     export type syncEventsType = 'visibility'| 'selection' | 'tooltip' | 'panning';
     export type syncHandlersType = { emitter: Function | ChartSyncEmitter; handler: Function | ChartSyncHandler };
 
-    export interface Event extends Component.Event {
-    }
-    export interface UpdateEvent extends Component.UpdateEvent {
-        options?: ComponentOptions;
+    export type ChartComponentEvents =
+        JSONEvent |
+        Component.EventTypes;
+
+    export interface JSONEvent extends Component.Event {
+        readonly type: 'toJSON' | 'fromJSOM';
+        json?: ChartComponent.ClassJSON;
     }
     export interface ComponentOptions extends Component.ComponentOptions, EditableOptions {
         Highcharts: typeof Highcharts;

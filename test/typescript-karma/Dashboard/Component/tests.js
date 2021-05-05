@@ -457,7 +457,9 @@ test('ChartComponent resizing', function(assert) {
 
     const component = new ChartComponent({
         parentElement: parent,
-        chartOptions: {},
+        chartOptions: {
+            chart: {}
+        },
         dimensions: {
             height: '100%',
             width: '100%'
@@ -467,3 +469,28 @@ test('ChartComponent resizing', function(assert) {
     const { width, height } = component.element.style
     assert.ok(true)
 })
+
+test('toJSON', function(assert) {
+    const container = document.createElement('div');
+    container.id = 'container';
+
+    const store = new CSVStore();
+    const component = new ChartComponent({
+        Highcharts, // TODO, when not passing this it fails, is this a bug? Or a feature?
+        store,
+        parentElement: container,
+        chartOptions: {
+            chart: {},
+            series: [{
+                data: [1, 2, 3, 5, 15, 1, 5, 15, 1]
+            }]
+        }
+    });
+
+    component.render()
+    const json = component.toJSON()
+    const clone = ChartComponent.fromJSON(json);
+    clone.render();
+
+    assert.deepEqual(json, clone.toJSON())
+});

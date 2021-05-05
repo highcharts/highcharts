@@ -1,4 +1,3 @@
-/* eslint-disable */
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -9,7 +8,7 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 import DataJSON from '../../Data/DataJSON.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 
-class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
+class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
     /* *
      *
@@ -37,15 +36,24 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
 
     public static fromJSON(json: HTMLComponent.ClassJSON): HTMLComponent {
         const options = json.options;
-        const elements = json.elements?.map((el): Highcharts.ASTNode => JSON.parse(el));
-        const store = json.store?.$class ? DataStore.getStore(json.store?.$class) : void 0;
+        const elements = json.elements ? json.elements.map((el): Highcharts.ASTNode => JSON.parse(el)) : [];
+        const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
 
         const component = new HTMLComponent(
             merge(
                 options,
-                { elements, store: store as any }
+                {
+                    elements,
+                    store: store instanceof DataStore ? store : void 0
+                }
             )
         );
+
+        component.emit({
+            type: 'fromJSOM',
+            json,
+            component
+        });
 
         return component;
     }
@@ -81,8 +89,8 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
         this.elements = [];
         this.scaleElements = this.options.scaleElements;
 
-        this.on('tableChanged', (e: Component.TableChangedEvent): void => {
-            if (e.detail?.sender !== this.id) {
+        this.on('tableChanged', (e): void => {
+            if (e.detail && e.detail.sender !== this.id) {
                 this.redraw();
             }
         });
@@ -94,10 +102,11 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
      *  Class methods
      *
      * */
-
-
-
     public load(): this {
+        this.emit({
+            type: 'load',
+            component: this
+        });
         super.load();
         this.elements = this.options.elements || [];
 
@@ -191,8 +200,8 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
             const createdElement = createElement(
                 el.tagName || 'div',
                 attributes,
-                typeof attributes?.style !== 'string' ?
-                    attributes?.style :
+                attributes && typeof attributes.style !== 'string' ?
+                    attributes.style :
                     void 0
             );
             if (el.textContent) {
@@ -206,10 +215,18 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
         const elements = (this.options.elements || [])
             .map((el): string => JSON.stringify(el));
 
-        return merge(
+        const json = merge(
             super.toJSON(),
             { elements }
         );
+
+        this.emit({
+            type: 'toJSON',
+            component: this,
+            json
+        });
+
+        return json;
     }
 }
 
@@ -235,13 +252,14 @@ namespace HTMLComponent {
         scaleElements: boolean;
     }
 
-    export interface HTMLComponentEventObject extends Component.Event {
-    }
+    export type HTMLComponentEvents =
+        JSONEvent |
+        Component.EventTypes;
 
-    export interface HTMLComponentUpdateEvent extends Component.UpdateEvent {
-        options?: HTMLComponentOptions;
+    export interface JSONEvent extends Component.Event {
+        readonly type: 'toJSON' | 'fromJSOM';
+        json?: HTMLComponent.ClassJSON;
     }
-
     export interface ClassJSON extends Component.ClassJSON {
         elements?: string[];
         events?: string[];

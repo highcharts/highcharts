@@ -24,7 +24,7 @@ const {
 
 import { getMargins, getPaddings } from './Utils.js';
 
-abstract class Component<TEventObject extends Component.Event = Component.Event> {
+abstract class Component<TEventObject extends Component.EventTypes = Component.EventTypes> {
 
     /**
      *
@@ -238,6 +238,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             this.options.id :
             Component.getUUID();
 
+        // Todo: we might want to handle this later
         if (typeof this.options.parentElement === 'string') {
             const el = document.getElementById(this.options.parentElement);
             if (!el) {
@@ -493,10 +494,6 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
      * @return {this}
      */
     public load(): this {
-        this.emit({
-            type: 'load',
-            component: this
-        } as any);
 
         // Set up the store on inital load if it has not been done
         if (!this.hasLoaded && this.store) {
@@ -636,12 +633,6 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             }
         };
 
-        this.emit({
-            type: 'toJSON',
-            component: this,
-            json
-        } as any);
-
         return json;
     }
 }
@@ -653,38 +644,49 @@ namespace Component {
         options: ComponentJSONOptions;
     }
 
-    export type eventTypes =
-        'render' | 'afterRender' |
-        'redraw' | 'afterRedraw' |
-        'load' | 'afterLoad' |
-        'update' | 'afterUpdate' |
-        'message' | 'tableChanged' |
-        'resize' | 'storeAttached' | 'toJSON';
-    type ComponentEventTypes = ResizeEvent | MessageEvent | UpdateEvent | TableChangedEvent | Event;
+    /**
+     * The basic events
+     */
+    export type EventTypes =
+        ResizeEvent |
+        UpdateEvent |
+        TableChangedEvent |
+        LoadEvent |
+        RenderEvent |
+        Event;
     export interface ResizeEvent extends Event {
+        readonly type: 'resize';
         width?: number;
         height?: number;
     }
 
-    export interface MessageEvent extends Event {
-        message?: Partial<{
-            callback: Function;
-        }>;
-    }
-
     export interface UpdateEvent extends Event {
+        readonly type: 'update' | 'afterUpdate';
         options?: ComponentOptions;
     }
 
+    export interface LoadEvent extends Event {
+        readonly type: 'load' | 'afterLoad';
+    }
+    export interface RenderEvent extends Event {
+        readonly type: 'render' | 'afterRender';
+    }
+    export interface MessageEvent extends Event {
+        // readonly type: 'message';
+        message?: {
+            callback: Function;
+        };
+    }
     export interface TableChangedEvent extends Event {
+        readonly type: 'tableChanged';
         options?: ComponentOptions;
     }
     /**
      * The default event object for a component
      */
     export interface Event extends DataEventEmitter.Event {
-        readonly type: eventTypes;
-        component?: Component<any>;
+        readonly type: string;
+        component?: this;
     }
 
     export interface ComponentOptions extends EditableOptions {

@@ -359,7 +359,9 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         return {
             $class: DataStore.getName(this.constructor),
             metadata: merge(this.metadata),
-            table: this.table.toJSON()
+            table: this.table.toJSON(),
+            parser: this.parser.toJSON(),
+            options: merge({})
         };
     }
 
@@ -392,6 +394,8 @@ namespace DataStore {
     export interface ClassJSON extends DataJSON.ClassJSON {
         table: DataTable.ClassJSON;
         metadata: DataStore.Metadata;
+        options: DataJSON.JSONObject;
+        parser: DataJSON.ClassJSON;
     }
 
     /**
@@ -439,7 +443,7 @@ namespace DataStore {
 
 declare module './StoreType' {
     interface StoreTypeRegistry {
-        '': typeof DataStore;
+        // '': typeof DataStore;
     }
 }
 
