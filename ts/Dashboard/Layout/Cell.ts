@@ -191,11 +191,6 @@ class Cell extends GUIElement {
     public nestedLayout?: Layout;
 
     /**
-     * The cell visibility flag.
-     */
-     public isVisible: boolean;
-
-    /**
      * Mount component from JSON.
      *
      * @param {Component.ClassJSON} [json]
@@ -273,29 +268,17 @@ class Cell extends GUIElement {
         );
     }
 
-    private changeVisibility(
+    protected changeVisibility(
         setVisible: boolean = true
     ): void {
         const cell = this,
-            row = cell.row,
-            visibilityChanged = cell.isVisible && !setVisible || !cell.isVisible && setVisible;
+            row = cell.row
 
-        if (cell.container && visibilityChanged) {
-            cell.container.style.display = setVisible ? 'block' : 'none';
-            cell.isVisible = setVisible;
+        super.changeVisibility(setVisible);
 
-            setTimeout(() => {
-                fireEvent(row, 'cellChange', { row, cell })
-            }, 0);
-        }
-    }
-
-    public hide(): void {
-        this.changeVisibility(false);
-    }
-
-    public show(): void {
-        this.changeVisibility();
+        setTimeout(() => {
+            fireEvent(row, 'cellChange', { row, cell })
+        }, 0);
     }
 
     public getParentCell(

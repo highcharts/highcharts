@@ -11,7 +11,8 @@ import Resizer from '../Actions/Resizer.js';
 import Cell from './Cell.js';
 
 const {
-    pick
+    pick,
+    defined
 } = U;
 
 class Layout extends GUIElement {
@@ -98,6 +99,7 @@ class Layout extends GUIElement {
         this.dashboard = dashboard;
         this.rows = [];
         this.options = options;
+        this.isVisible = true;
 
         // Get parent container
         const parentContainer = document.getElementById(
@@ -267,6 +269,48 @@ class Layout extends GUIElement {
             DashboardGlobals.prefix + this.options.id,
             JSON.stringify(this.toJSON())
         );
+    }
+
+    // Get row index from the layout.rows array.
+    public getRowIndex(
+        row: Row
+    ): number | undefined {
+        for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
+            if (this.rows[i] === row) {
+                return i;
+            }
+        }
+    }
+
+    // Add cell to the layout.rows array and move row container.
+    public mountRow(
+        row: Row,
+        index: number
+    ): void {
+        const nextRow = this.rows[index],
+            prevRow = this.rows[index - 1];
+
+        if (row.container) {
+            if (nextRow && nextRow.container) {
+                nextRow.container.parentNode.insertBefore(row.container, nextRow.container);
+            } else if (prevRow && prevRow.container) {
+                prevRow.container.parentNode.insertBefore(row.container, prevRow.container.nextSibling);
+            }
+
+            this.rows.splice(index, 0, row);
+            row.layout = this;
+        }
+    }
+
+    // Remove row from the layout.rows array.
+    public unmountRow(
+        row: Row
+    ): void {
+        const rowIndex = this.getRowIndex(row);
+
+        if (defined(rowIndex)) {
+            this.rows.splice(rowIndex, 1);
+        }
     }
 
     /**

@@ -85,6 +85,7 @@ class Row extends GUIElement {
         this.layout = layout;
         this.cells = [];
         this.options = options;
+        this.isVisible = true;
 
         // Get parent container
         const parentContainer =
@@ -362,6 +363,10 @@ class Row extends GUIElement {
         }
 
         return cells;
+    }
+
+    public show(): void {
+        this.changeVisibility(true, 'flex');
     }
 }
 

@@ -36,7 +36,14 @@ class RowEditToolbar extends EditToolbar {
             type: 'icon',
             icon: EditGlobals.iconsURL + 'drag.svg',
             events: {
-                click: function (): void {}
+                onmousedown: function (this: MenuItem, e: any): void {
+                    const rowEditToolbar = (this.menu.parent as RowEditToolbar),
+                        dragDrop = rowEditToolbar.editMode.dragDrop;
+
+                    if (dragDrop && rowEditToolbar.row) {
+                        dragDrop.onDragStart(rowEditToolbar.row, e);
+                    }
+                }
             }
         },
         settings: {
