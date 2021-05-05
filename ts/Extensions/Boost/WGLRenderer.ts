@@ -398,6 +398,7 @@ function GLRenderer(
             firstPoint = true,
             zoneAxis = options.zoneAxis || 'y',
             zones = options.zones || false,
+            zoneColors: Array<Color.RGBA>,
             zoneDefColor: (Color.RGBA|undefined) = false as any,
             threshold: number = options.threshold as any,
             gapSize: number = false as any;
@@ -413,12 +414,19 @@ function GLRenderer(
         }
 
         if (zones) {
-            zones.some(function (zone): (boolean) {
-                if (typeof zone.value === 'undefined') {
+            zoneColors = [];
+
+            zones.forEach(function (zone, i): void {
+                if (!zoneDefColor && typeof zone.value === 'undefined') {
                     zoneDefColor = new Color(zone.color).rgba as Color.RGBA;
-                    return true;
                 }
-                return false;
+                if (zone.color) {
+                    const zoneColor = color(zone.color).rgba as Color.RGBA;
+                    zoneColor[0] /= 255.0;
+                    zoneColor[1] /= 255.0;
+                    zoneColor[2] /= 255.0;
+                    zoneColors[i] = zoneColor;
+                }
             });
 
             if (!zoneDefColor) {
@@ -829,8 +837,8 @@ function GLRenderer(
 
                     if (zoneAxis === 'x') {
                         if (typeof zone.value !== 'undefined' && x <= zone.value) {
-                            if (zone.color && (!last || x >= (last.value as any))) {
-                                zoneColor = color(zone.color).rgba as any;
+                            if (zoneColors[i] && (!last || x >= (last.value as any))) {
+                                zoneColor = zoneColors[i];
                             }
                             return true;
                         }
@@ -838,8 +846,8 @@ function GLRenderer(
                     }
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
-                        if (zone.color && (!last || y >= (last.value as any))) {
-                            zoneColor = color(zone.color).rgba as any;
+                        if (zoneColors[i] && (!last || y >= (last.value as any))) {
+                            zoneColor = zoneColors[i];
                         }
                         return true;
                     }
@@ -847,12 +855,6 @@ function GLRenderer(
                 });
 
                 pcolor = zoneColor || zoneDefColor || pcolor;
-
-                if (zoneColor) {
-                    pcolor[0] /= 255.0;
-                    pcolor[1] /= 255.0;
-                    pcolor[2] /= 255.0;
-                }
             }
 
             // Skip translations - temporary floating point fix
