@@ -10,6 +10,7 @@ import RowEditToolbar from './Toolbar/RowEditToolbar.js';
 import Sidebar from './Sidebar.js';
 import EditContextMenu from './EditContextMenu.js';
 import DragDrop from './../Actions/DragDrop.js';
+import ConfirmationPopup from './ConfirmationPopup.js';
 
 const {
     merge,
@@ -28,6 +29,11 @@ class EditMode {
         tools: {
             addComponentBtn: {
                 icon: EditGlobals.iconsURL + 'add.svg'
+            }
+        },
+        confirmationPopup: {
+            close: {
+                icon: EditGlobals.iconsURL + 'close.svg'
             }
         }
     }
@@ -52,6 +58,11 @@ class EditMode {
         this.tools = {};
 
         this.createTools();
+
+        this.confirmationPopup = new ConfirmationPopup(
+            dashboard.container,
+            this.options.confirmationPopup
+        );
     }
 
     /* *
@@ -74,6 +85,7 @@ class EditMode {
     public isInitialized: boolean;
     public addComponentBtn?: HTMLDOMElement;
     public tools: EditMode.Tools;
+    public confirmationPopup?: ConfirmationPopup;
 
     /* *
     *
@@ -233,7 +245,7 @@ class EditMode {
                         const dragDrop = editMode.dragDrop;
                         addEvent(cell.container, 'mouseenter', function (e: any): void {
                             if (dragDrop.isActive) {
-                                dragDrop.dropContext = cell;
+                                dragDrop.mouseContext = cell;
                                 dragDrop.onDrag(e);
                             }
                         });
@@ -392,8 +404,9 @@ namespace EditMode {
         lang?: EditGlobals.LangOptions|string;
         toolbars?: EditMode.Toolbars;
         dragDrop?: DragDrop.Options;
-        tools?: Tools;
+        tools: Tools;
         contextMenu?: EditContextMenu.Options;
+        confirmationPopup: ConfirmationPopup.Options;
     }
 
     export interface Toolbars {

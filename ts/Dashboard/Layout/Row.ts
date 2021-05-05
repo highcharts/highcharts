@@ -246,7 +246,9 @@ class Row extends GUIElement {
 
         // Destroy cells.
         for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
-            row.cells[i].destroy();
+            if (row.cells[i]) {
+                row.cells[i].destroy();
+            }
         }
 
         super.destroy();
@@ -348,6 +350,18 @@ class Row extends GUIElement {
         setTimeout(() => {
             fireEvent(this, 'cellChange', { row: this, cell })
         }, 0);
+    }
+
+    public getVisibleCells(): Array<Cell> {
+        const cells = [];
+
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            if (this.cells[i].isVisible) {
+                cells.push(this.cells[i]);
+            }
+        }
+
+        return cells;
     }
 }
 

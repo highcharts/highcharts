@@ -56,7 +56,13 @@ class RowEditToolbar extends EditToolbar {
             icon: EditGlobals.iconsURL + 'destroy.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {
-                    (this.menu.parent as RowEditToolbar).onRowDestroy(e);
+                    const parentNode = (this.menu.parent as RowEditToolbar);
+                    const popup = this.menu.parent.editMode.confirmationPopup;
+
+                    popup.show(
+                        parentNode.onRowDestroy,
+                        parentNode
+                    );
                 }
             }
         }

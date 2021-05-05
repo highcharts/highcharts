@@ -524,6 +524,35 @@ h1 {
     opacity: 0.3
 }
 
+// popup
+@import '../annotations/popup.scss';
+
+.highcharts-popup {
+    min-height: 160px;
+    width: 200px;
+    left: calc(50% - 100px);
+}
+
+.highcharts-popup .hcd-edit-popup-content {
+    padding-top: 60px;
+    clear: both;
+    text-align: center;
+}
+
+.highcharts-popup .hcd-edit-popup-content button {
+    float: none;
+}
+
+.highcharts-popup .hcd-edit-popup-content.hcd-edit-label-text {
+    width: 100%;
+    padding: 10px 0px;
+}
+
+.highcharts-popup .hcd-edit-popup-content button.hcd-edit-popup-confirm-btn {
+    background-color: #e01d5a;
+    color: #000;
+}
+
 @media (max-width: 728px) {
 
     .w-1-2,

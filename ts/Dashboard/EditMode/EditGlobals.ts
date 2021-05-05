@@ -43,7 +43,9 @@ const EditGlobals: EditGlobals = {
         editSidebarTabBtn: PREFIX + 'sidebar-tab-btn',
         editToolsBtn: PREFIX + 'tools-btn',
         editTools: PREFIX + 'tools',
-        editGridItems: PREFIX + 'grid-items'
+        editGridItems: PREFIX + 'grid-items',
+        popupContentContainer: PREFIX + 'popup-content',
+        popupConfirmBtn: PREFIX + 'popup-confirm-btn'
     },
     lang: {
         editMode: 'Edit mode',
@@ -100,6 +102,8 @@ namespace EditGlobals {
         editToolsBtn: string;
         editTools: string;
         editGridItems: string;
+        popupContentContainer: string;
+        popupConfirmBtn: string;
     }
 
     export interface LangOptions {

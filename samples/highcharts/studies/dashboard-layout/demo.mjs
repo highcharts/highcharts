@@ -124,6 +124,11 @@ let dashboard = new Dashboard('container', {
             addComponentBtn: {
                 icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/add.svg'
             }
+        },
+        confirmationPopup: {
+            close: {
+                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/close.svg'
+            }
         }
     },
     gui: {
@@ -469,7 +474,6 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
         layoutOptions: {
             rowClassName: 'row', // optional
             cellClassName: 'col' // optional
-
         },
         layouts: [{
             id: 'layout-bt-1' // mandatory
@@ -685,7 +689,6 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
             layout.resizer.destroy();
             console.log(layout.resizer);
         });
-
         dashboardLayout.layouts.forEach(layout => {
             layout.resizer.destroy();
             console.log(layout.resizer);
