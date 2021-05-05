@@ -40,13 +40,7 @@ const {
 import palette from './Color/Palette.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-const {
-    getNestedProperty,
-    isNumber,
-    merge,
-    pick,
-    pInt
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -331,7 +325,7 @@ declare global {
             plotOptions?: SeriesTypePlotOptions;
             subtitle?: SubtitleOptions;
             symbols?: Array<SymbolKeyValue>;
-            time?: TimeOptions;
+            time?: Time.TimeOptions;
             title?: TitleOptions;
             tooltip?: TooltipOptions;
         }

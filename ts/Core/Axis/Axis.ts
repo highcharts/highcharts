@@ -12,6 +12,7 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type { AxisComposition, AxisLike } from './Types';
+import type TickPositionsArray from './TickPositionsArray';
 import type { AlignValue } from '../Renderer/AlignObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
@@ -140,14 +141,12 @@ declare global {
             trigger: (AxisExtremesTriggerValue|string);
             type: 'setExtremes';
         }
-        interface AxisTickPositionsArray extends Array<number> {
-        }
         interface AxisTickPositionerCallbackFunction {
             (
                 this: Axis,
                 min: number,
                 max: number
-            ): (AxisTickPositionsArray|undefined);
+            ): (TickPositionsArray|undefined);
         }
         interface ExtremesObject {
             dataMax: number;
@@ -294,7 +293,7 @@ declare global {
             tickPixelInterval: number;
             tickPosition: AxisTickPositionValue;
             tickPositioner?: AxisTickPositionerCallbackFunction;
-            tickPositions?: AxisTickPositionsArray;
+            tickPositions?: TickPositionsArray;
             tickWidth?: number;
             title: XAxisTitleOptions;
             top?: (number|string);
@@ -435,7 +434,7 @@ declare global {
             public tickAmount: number;
             public tickInterval: number;
             public tickmarkOffset: number;
-            public tickPositions: AxisTickPositionsArray;
+            public tickPositions: TickPositionsArray;
             public tickRotCorr: PositionObject;
             public ticks: Record<string, Tick>;
             public titleOffset?: number;
@@ -524,7 +523,7 @@ declare global {
                 pointPlacement?: number
             ): (number|undefined);
             public trimTicks(
-                tickPositions: AxisTickPositionsArray,
+                tickPositions: TickPositionsArray,
                 startOnTick?: boolean,
                 endOnTick?: boolean
             ): void;
@@ -4020,7 +4019,7 @@ class Axis {
     public tickAmount: number = void 0 as any;
     public tickInterval: number = void 0 as any;
     public tickmarkOffset: number = void 0 as any;
-    public tickPositions: Highcharts.AxisTickPositionsArray = void 0 as any;
+    public tickPositions: TickPositionsArray = void 0 as any;
     public tickRotCorr: PositionObject = void 0 as any;
     public ticks: Record<string, Tick> = void 0 as any;
     public titleOffset?: number;
