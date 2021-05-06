@@ -262,6 +262,7 @@ declare global {
             borderColor?: ColorType;
             borderRadius?: number;
             borderWidth?: number;
+            className?: string;
             enabled?: boolean;
             floating?: boolean;
             itemCheckboxStyle?: CSSObject;
@@ -2724,6 +2725,11 @@ const defaultOptions: Highcharts.Options = {
          * @since 6.1.0
          */
         alignColumns: true,
+
+        /**
+         * A CSS class name to apply to the legend group.
+         */
+        className: 'highcharts-no-tooltip',
 
         /**
          * When the legend is floating, the plot area ignores it and is allowed

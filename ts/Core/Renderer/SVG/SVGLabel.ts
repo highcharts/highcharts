@@ -96,11 +96,12 @@ class SVGLabel extends SVGElement {
         this.baseline = baseline;
         this.className = className;
 
-        if (className !== 'button') {
-            this.addClass('highcharts-label');
-        } else {
-            this.addClass('highcharts-no-tooltip');
-        }
+        this.addClass(
+            className === 'button' ?
+                'highcharts-no-tooltip' :
+                'highcharts-label'
+        );
+
         if (className) {
             this.addClass('highcharts-' + className);
         }

@@ -1237,7 +1237,7 @@ class Legend {
              * @type {Highcharts.SVGElement}
              */
             legend.group = legendGroup = renderer.g('legend')
-                .addClass('highcharts-no-tooltip')
+                .addClass(options.className || '')
                 .attr({ zIndex: 7 })
                 .add();
             legend.contentGroup = renderer.g()
