@@ -62,6 +62,14 @@ class ConfirmationPopup extends Popup {
             this.container
         );
 
+        const popupContainer = this.contentContainer.parentNode;
+        popupContainer.style.marginTop = '0px';
+        const offsetTop = popupContainer.getBoundingClientRect().top;
+
+        popupContainer.style.marginTop = (
+            offsetTop < 0 ? Math.abs(offsetTop - 200) : 200
+        ) + 'px';
+
         // render text
         EditRenderer.renderText(
             this.contentContainer,
