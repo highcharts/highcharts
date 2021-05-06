@@ -417,29 +417,29 @@ function GLRenderer(
             zoneColors = [];
 
             zones.forEach(function (zone, i): void {
-                if (!zoneDefColor && typeof zone.value === 'undefined') {
-                    zoneDefColor = new Color(zone.color).rgba as Color.RGBA;
-                }
                 if (zone.color) {
                     const zoneColor = color(zone.color).rgba as Color.RGBA;
                     zoneColor[0] /= 255.0;
                     zoneColor[1] /= 255.0;
                     zoneColor[2] /= 255.0;
                     zoneColors[i] = zoneColor;
+
+                    if (!zoneDefColor && typeof zone.value === 'undefined') {
+                        zoneDefColor = zoneColor;
+                    }
                 }
             });
 
             if (!zoneDefColor) {
-                const color = (
+                const seriesColor = (
                     (series.pointAttribs && series.pointAttribs().fill) ||
                     series.color
                 );
-                zoneDefColor = new Color(color).rgba as Color.RGBA;
+                zoneDefColor = color(seriesColor).rgba as Color.RGBA;
+                zoneDefColor[0] /= 255.0;
+                zoneDefColor[1] /= 255.0;
+                zoneDefColor[2] /= 255.0;
             }
-
-            zoneDefColor[0] /= 255.0;
-            zoneDefColor[1] /= 255.0;
-            zoneDefColor[2] /= 255.0;
         }
 
         if (chart.inverted) {
