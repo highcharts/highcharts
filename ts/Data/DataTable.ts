@@ -17,6 +17,7 @@
  * */
 
 import type DataEventEmitter from './DataEventEmitter';
+import type SortModifier from './Modifiers/SortModifier';
 
 import DataJSON from './DataJSON.js';
 import U from '../Core/Utilities.js';
@@ -214,6 +215,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
          * @type {string}
          */
         this.id = (id || uniqueKey());
+        this.modified = this;
         this.rowCount = 0;
         this.versionTag = uniqueKey();
 
@@ -260,6 +262,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     private columns: Record<string, DataTable.Column>;
 
     public readonly id: string;
+
+    public modified: DataTable;
+
+    private modifier?: SortModifier;
 
     private rowCount: number;
 
@@ -852,6 +858,17 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     }
 
     /**
+     * Retrieves the modifier for the table.
+     * @private
+     *
+     * @return {DataModifier|undefined}
+     * Returns the modifier or `undefined`.
+     */
+    public getModifier(): (SortModifier|undefined) {
+        return this.modifier;
+    }
+
+    /**
      * Retrieves the row at a given index. This function is a simplified wrap of
      * {@link getRows}.
      *
@@ -1217,9 +1234,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {boolean}
-     * Returns `true` if successful, `false` if not.
-     *
      * @emits #setCell
      * @emits #afterSetCell
      */
@@ -1228,9 +1242,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEventEmitter.EventDetail
-    ): boolean {
+    ): void {
         const table = this,
-            columns = table.columns;
+            columns = table.columns,
+            modifier = table.modifier;
 
         columnNameOrAlias = (
             table.aliasMap[columnNameOrAlias] ||
@@ -1241,6 +1256,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
         if (!column) {
             column = columns[columnNameOrAlias] = new Array(table.rowCount);
+        } else if (column[rowIndex] === cellValue) {
+            return;
         }
 
         table.emit({
@@ -1257,6 +1274,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
         column[rowIndex] = cellValue;
 
+        if (modifier) {
+            modifier.modifyCell(table, columnNameOrAlias, rowIndex, cellValue);
+        }
+
         table.emit({
             type: 'afterSetCell',
             cellValue,
@@ -1264,8 +1285,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             detail: eventDetail,
             rowIndex
         });
-
-        return true;
     }
 
     /**
@@ -1285,9 +1304,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {boolean}
-     * Returns `true` if successful, `false` if not.
-     *
      * @emits #setColumn
      * @emits #afterSetColumn
      */
@@ -1296,8 +1312,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         column: DataTable.Column = [],
         rowIndex?: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): boolean {
-        return this.setColumns({ [columnNameOrAlias]: column }, rowIndex, eventDetail);
+    ): void {
+        this.setColumns({ [columnNameOrAlias]: column }, rowIndex, eventDetail);
     }
 
     /**
@@ -1337,25 +1353,23 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableColumnCollection} columns
      * Columns as a collection, where the keys are the column names or aliases.
      *
-     * @param {number} [rowIndex]
-     * Index of the first row to change. Leave `undefind` to set as new columns.
+     * @param {number} [rowIndex=0]
+     * Index of the first row to change.
      *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
-     *
-     * @return {boolean}
-     * Returns `true` if successful, `false` if not.
      *
      * @emits #setColumn
      * @emits #afterSetColumn
      */
     public setColumns(
         columns: DataTable.ColumnCollection,
-        rowIndex?: number,
+        rowIndex: number = 0,
         eventDetail?: DataEventEmitter.EventDetail
-    ): boolean {
+    ): void {
         const table = this,
             tableColumns = table.columns,
+            tableModifier = table.modifier,
             columnNames = Object.keys(columns);
 
         table.emit({
@@ -1411,14 +1425,39 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             }
         }
 
+        if (tableModifier) {
+            tableModifier.modifyColumns(table, columns, rowIndex);
+        }
+
         table.emit({
             type: 'afterSetColumns',
             columns,
             columnNames,
             detail: eventDetail
         });
+    }
 
-        return true;
+    /**
+     * Sets or unsets the modifier for the table.
+     * @private
+     *
+     * @param {DataModifier|undefined} modifier
+     * Modifier to set, or `undefined` to unset.
+     */
+    public setModifier(modifier: (SortModifier|undefined)): void {
+        const table = this;
+
+        table.modifier = modifier;
+
+        if (modifier) {
+            if (table.modified === table) {
+                table.modified = modifier.modify(table.clone());
+            }
+        } else {
+            if (table.modified !== table) {
+                table.modified = this;
+            }
+        }
     }
 
     /**
@@ -1428,7 +1467,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * Note: This function is just a simplified wrap of
      * {@link Highcharts.DataTable#setRows}.
      *
-     * @function Highcharts.DataTable#setRows
+     * @function Highcharts.DataTable#setRow
      *
      * @param {Highcharts.DataTableRow|Highcharts.DataTableRowObject} row
      * Cell values to set.
@@ -1484,6 +1523,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             aliasMap = table.aliasMap,
             columns = table.columns,
             columnNames = Object.keys(columns),
+            modifier = table.modifier,
             rowCount = rows.length;
 
         table.emit({
@@ -1535,6 +1575,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
                 columns[columnNames[i]].length = indexRowCount;
             }
+        }
+
+        if (modifier) {
+            modifier.modifyRows(table, rows, rowIndex);
         }
 
         table.emit({
