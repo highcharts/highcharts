@@ -69,4 +69,4 @@ tmp/
 /temp.*
 /env.file
 
-*.bak
+/cypress
