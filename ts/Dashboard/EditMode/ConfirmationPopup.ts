@@ -34,6 +34,14 @@ class ConfirmationPopup extends Popup {
         );
 
         this.options = options;
+
+        // create overlay
+        this.overlay = createElement(
+            'div', {
+                className: EditGlobals.classNames.overlay
+            }, {},
+            parentNode
+        );
     }
 
     /* *
@@ -43,6 +51,7 @@ class ConfirmationPopup extends Popup {
     * */
     public options: ConfirmationPopup.Options;
     public contentContainer: HTMLDOMElement|undefined;
+    public overlay: HTMLDOMElement;
 
     /* *
     *
@@ -113,6 +122,12 @@ class ConfirmationPopup extends Popup {
             confirmCallback,
             context
         );
+        this.overlay.style.display = 'block';
+    }
+
+    public closePopup(): void {
+        super.closePopup();
+        this.overlay.style.display = 'none';
     }
 }
 

@@ -530,7 +530,7 @@ h1 {
 .highcharts-popup {
     min-height: 160px;
     width: 200px;
-    left: calc(50% - 100px);
+    left: calc(50% - 150px);
 }
 
 .highcharts-popup .hcd-edit-popup-content {
@@ -551,6 +551,17 @@ h1 {
 .highcharts-popup .hcd-edit-popup-content button.hcd-edit-popup-confirm-btn {
     background-color: #e01d5a;
     color: #000;
+}
+
+.hcd-edit-overlay {
+    background:rgba(0, 0, 0, 0.3);
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    left: 0px;
+    top: 0px;
 }
 
 @media (max-width: 728px) {
