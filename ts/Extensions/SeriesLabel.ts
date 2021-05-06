@@ -13,6 +13,7 @@
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type FormatUtilities from '../Core/FormatUtilities';
 import type Point from '../Core/Series/Point';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SplineSeries from '../Series/Spline/SplineSeries';
@@ -101,7 +102,7 @@ declare global {
             connectorNeighbourDistance?: number;
             enabled?: boolean;
             format?: string;
-            formatter?: FormatterCallbackFunction<Series>;
+            formatter?: FormatUtilities.FormatterCallback<Series>;
             maxFontSize?: (number|null);
             minFontSize?: (number|null);
             onArea?: (boolean|null);

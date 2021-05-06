@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type TickPositionsArray from './TickPositionsArray';
 import type NavigatorAxis from './NavigatorAxis';
 import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
 import Axis from './Axis.js';
@@ -62,7 +63,7 @@ declare module './Types' {
             positions?: Array<number>,
             closestDistance?: number,
             findHigherRanks?: boolean
-        ): Highcharts.AxisTickPositionsArray;
+        ): TickPositionsArray;
         /** @deprecated */
         lin2val(val: number, fromIndex?: boolean): number;
         /** @deprecated */
@@ -95,7 +96,7 @@ interface OrdinalAxis extends Axis {
         positions?: Array<number>,
         closestDistance?: number,
         findHigherRanks?: boolean
-    ): Highcharts.AxisTickPositionsArray;
+    ): TickPositionsArray;
     lin2val(val: number, fromIndex?: boolean): number;
     val2lin(val: number, toIndex?: boolean): number;
 }
@@ -645,7 +646,7 @@ namespace OrdinalAxis {
             positions: Array<number> = [],
             closestDistance: number = 0,
             findHigherRanks?: boolean
-        ): Highcharts.AxisTickPositionsArray {
+        ): TickPositionsArray {
 
             let start = 0,
                 end,
@@ -655,7 +656,7 @@ namespace OrdinalAxis {
                 info,
                 posLength,
                 outsideMax,
-                groupPositions = [] as Highcharts.AxisTickPositionsArray,
+                groupPositions = [] as TickPositionsArray,
                 lastGroupPosition = -Number.MAX_VALUE,
                 tickPixelIntervalOption = this.options.tickPixelInterval,
                 time = this.chart.time,

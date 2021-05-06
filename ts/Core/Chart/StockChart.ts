@@ -1167,7 +1167,7 @@ addEvent(Series, 'render', function (): void {
         // First render, initial clip box. clipBox also needs to be updated if
         // the series is rendered again before starting animating, in
         // compliance with a responsive rule (#13858).
-        if (!chart.hasRendered || (!this.clipBox && this.isDirty && !this.isDirtyData)) {
+        if (!chart.hasLoaded || (!this.clipBox && this.isDirty && !this.isDirtyData)) {
             this.clipBox = this.clipBox || merge(chart.clipBox);
             this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;

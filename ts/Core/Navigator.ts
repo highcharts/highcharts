@@ -13,6 +13,7 @@
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
 import type PointerEvent from './PointerEvent';
+import type RangeSelector from '../Extensions/RangeSelector';
 import type { SeriesTypeOptions } from './Series/SeriesType';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
@@ -31,6 +32,7 @@ import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 const { defaultOptions } = O;
 import palette from './Color/Palette.js';
+
 import Scrollbar from './Scrollbar.js';
 import Series from './Series/Series.js';
 import SeriesRegistry from './Series/SeriesRegistry.js';
@@ -119,7 +121,7 @@ declare global {
                 pxMax: number,
                 fixedMin: number,
                 fixedMax: number
-            ) => RangeObject;
+            ) => RangeSelector.RangeObject;
         }
         class Navigator {
             public constructor(chart: Chart);

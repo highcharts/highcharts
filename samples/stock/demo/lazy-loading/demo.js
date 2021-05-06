@@ -19,7 +19,7 @@ fetch(dataURL)
     .then(data => {
 
         // Add a null value for the end date
-        data = [].concat(data, [[Date.UTC(2011, 9, 14, 19, 59), null, null, null, null]]);
+        data.push([Date.UTC(2011, 9, 14, 18), null, null, null, null]);
 
         // create the chart
         Highcharts.stockChart('container', {
@@ -40,11 +40,13 @@ fetch(dataURL)
             },
 
             title: {
-                text: 'AAPL history by the minute from 1998 to 2011'
+                text: 'AAPL history by the minute from 1998 to 2011',
+                align: 'left'
             },
 
             subtitle: {
-                text: 'Displaying 1.7 million data points in Highcharts Stock by async server loading'
+                text: 'Displaying 1.7 million data points in Highcharts Stock by async server loading',
+                align: 'left'
             },
 
             rangeSelector: {

@@ -7,17 +7,20 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import type Time from '../Time';
+
 
 /* *
  *
  *  Declarations
  *
  * */
+export interface TickPositionsArray extends Array<number> {
 
-export interface TimeTicksInfoObject extends Time.TimeNormalizedObject {
-    higherRanks: Record<string, string>;
-    totalRange: number;
 }
 
-export default TimeTicksInfoObject;
+/* *
+ *
+ *  Default export
+ *
+ * */
+export default TickPositionsArray;

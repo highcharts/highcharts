@@ -28,6 +28,7 @@ import type {
     PointShortOptions,
     PointStateHoverOptions
 } from './PointOptions';
+import type RangeSelector from '../../Extensions/RangeSelector';
 import type SeriesLike from './SeriesLike';
 import type {
     SeriesDataSortingOptions,
@@ -39,8 +40,6 @@ import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from './SeriesType';
-import type SplinePoint from '../../Series/Spline/SplinePoint';
-import type SplineSeries from '../../Series/Spline/SplineSeries';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -49,6 +48,10 @@ const {
     animObject,
     setAnimation
 } = A;
+import F from '../Foundation.js';
+const {
+    registerEventOptions
+} = F;
 import H from '../Globals.js';
 const {
     hasTouch,
@@ -79,7 +82,6 @@ const {
     fireEvent,
     getNestedProperty,
     isArray,
-    isFunction,
     isNumber,
     isString,
     merge,
@@ -732,7 +734,7 @@ class Series {
 
         /**
          * Same as
-         * [accessibility.pointDescriptionFormatter](#accessibility.pointDescriptionFormatter),
+         * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
          * but for an individual series. Overrides the chart wide configuration.
          *
          * @type      {Function}
@@ -1786,11 +1788,13 @@ class Series {
              * series animation has finished. Setting to `false` renders the
              * data label immediately. If set to `true` inherits the defer
              * time set in [plotOptions.series.animation](#plotOptions.series.animation).
+             * If set to a number, a defer time is specified in milliseconds.
              *
              * @sample highcharts/plotoptions/animation-defer
              *         Set defer time
              *
              * @since     4.0.0
+             * @type      {boolean|number}
              * @product   highcharts highstock gantt
              */
             defer: true,
@@ -2780,15 +2784,8 @@ class Series {
 
         fireEvent(this, 'init', { options: userOptions });
 
-        let series = this,
-            events,
-            chartSeries = chart.series,
-            lastSeries;
-
-        // A lookup over those events that are added by _options_ (not
-        // programmatically). These are updated through Series.update()
-        // (#10861).
-        this.eventOptions = this.eventOptions || {};
+        const series = this,
+            chartSeries = chart.series;
 
         // The 'eventsToUnbind' property moved from prototype into the
         // Series init to avoid reference to the same array between
@@ -2855,29 +2852,9 @@ class Series {
             selected: options.selected === true // false by default
         });
 
-        // Register event listeners
-        events = options.events;
+        registerEventOptions(this);
 
-        objectEach(events, function (event: any, eventType: string): void {
-            if (isFunction(event)) {
-
-                // If event does not exist, or is changed by Series.update
-                if (series.eventOptions[eventType] !== event) {
-
-                    // Remove existing if set by option
-                    if (isFunction(series.eventOptions[eventType])) {
-                        removeEvent(
-                            series,
-                            eventType,
-                            series.eventOptions[eventType]
-                        );
-                    }
-
-                    series.eventOptions[eventType] = event;
-                    addEvent(series, eventType, event);
-                }
-            }
-        });
+        const events = options.events;
         if (
             (events && events.click) ||
             (
@@ -2907,6 +2884,7 @@ class Series {
 
         // Get the index and register the series in the chart. The index is
         // one more than the current latest series index (#5960).
+        let lastSeries: Series|undefined;
         if (chartSeries.length) {
             lastSeries = chartSeries[chartSeries.length - 1];
         }
@@ -4370,7 +4348,7 @@ class Series {
      *
      * @return {Highcharts.RangeObject}
      */
-    public getXExtremes(xData: Array<number>): Highcharts.RangeObject {
+    public getXExtremes(xData: Array<number>): RangeSelector.RangeObject {
         return {
             min: arrayMin(xData),
             max: arrayMax(xData)
@@ -5460,7 +5438,7 @@ class Series {
             axis = (this as any)[
                 (this.zoneAxis || 'y') + 'Axis'
             ] as Highcharts.Axis,
-            extremes: Highcharts.RangeObject,
+            extremes: RangeSelector.RangeObject,
             reversed: (boolean|undefined),
             inverted = chart.inverted,
             horiz: (boolean|undefined),
@@ -7317,7 +7295,7 @@ interface Series extends SeriesLike {
         Highcharts.LegendSymbolMixin['drawLineMarker']|
         Highcharts.LegendSymbolMixin['drawRectangle']
     );
-    hcEvents?: Record<string, Array<Highcharts.EventWrapperObject<Series>>>;
+    hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
     isCartesian: boolean;
     kdAxisArray: Array<string>;
     parallelArrays: Array<string>;

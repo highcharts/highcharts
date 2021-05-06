@@ -8,6 +8,7 @@
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
+import type FormatUtilities from '../../../Core/FormatUtilities';
 import type MockPointOptions from '../MockPointOptions';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
@@ -1048,7 +1049,7 @@ namespace Measure {
     }
     export interface MeasureTypeLabelOptions {
         enabled: boolean;
-        formatter?: Highcharts.FormatterCallbackFunction<Measure>;
+        formatter?: FormatUtilities.FormatterCallback<Measure>;
         style: CSSObject;
     }
     export interface MeasureTypeOptions extends Highcharts.AnnotationsTypeOptions {
