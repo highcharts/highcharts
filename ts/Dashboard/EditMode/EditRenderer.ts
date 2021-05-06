@@ -187,7 +187,7 @@ class EditRenderer {
                     onclick: options.callback,
                     id: options.id || '',
                     name: options.name || '',
-                    value: options.value || ''
+                    value: (options.value && options.value.replace(/\"/g, '')) || ''
                 }, {
 
                 },

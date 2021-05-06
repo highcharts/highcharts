@@ -574,6 +574,7 @@ class Sidebar {
 
     public getComponentEditableOptions(): void {
         const sidebar = this;
+        const lang = this.editMode.lang;
         const cell = (sidebar.context as Cell);
         const currentComponent = cell && cell.mountedComponent;
         const componentSettings = currentComponent &&
@@ -593,22 +594,24 @@ class Sidebar {
             const activeTabContainer = activeTab && activeTab.content &&
                 activeTab && activeTab.content.container;
             let type;
+console.log(lang);
+            for (const key in componentSettings) {
+                if (componentSettings[key]) {
+                    type = componentSettings[key].type;
 
-            objectEach(componentSettings, (elem, key): void => {
-                type = elem.type;
+                    (menuItems as any)[key] = {
+                        id: key,
+                        type: type === 'text' ? 'input' : type,
+                        text: (lang as any)[key] || key,
+                        isActive: true,
+                        value: componentSettings[key].value
+                    };
 
-                (menuItems as any)[key] = {
-                    id: key,
-                    type: type === 'text' ? 'input' : type,
-                    text: key,
-                    isActive: true,
-                    value: elem.value
-                };
-
-                items.push(
-                    key
-                );
-            });
+                    items.push(
+                        key
+                    );
+                }
+            }
 
             // remove previous options
             if (sidebar.componentEditableOptions) {

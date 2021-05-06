@@ -50,7 +50,15 @@ const EditGlobals: EditGlobals = {
     },
     lang: {
         editMode: 'Edit mode',
-        saveLocal: 'Save locally'
+        saveLocal: 'Save locally',
+        style: 'Styles',
+        chartOptions: 'Chart options',
+        id: 'Id',
+        title: 'Title',
+        caption: 'Caption',
+        chartClassName: 'Chart class name',
+        chartID: 'Chart id',
+        scaleElements: 'Scale elements'
     }
 };
 
@@ -111,6 +119,14 @@ namespace EditGlobals {
     export interface LangOptions {
         editMode?: string;
         saveLocal?: string;
+        style?: string;
+        chartOptions?: string;
+        id?: string;
+        title?: string;
+        caption?: string;
+        chartClassName?: string;
+        chartID?: string;
+        scaleElements?: string;
     }
 
     export type TLangKeys = 'editMode'|'saveLocal'|'verticalSeparator';

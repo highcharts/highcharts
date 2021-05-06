@@ -118,7 +118,8 @@ let dashboard = new Dashboard('container', {
         },
         lang: {
             editMode: 'My edit mode',
-            saveLocal: 'Save locally 1'
+            saveLocal: 'Save locally 1',
+            chartOptions: 'Chart options EN'
         },
         tools: {
             addComponentBtn: {
@@ -631,7 +632,8 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
         },
         lang: {
             editMode: 'My edit mode',
-            saveLocal: 'Save locally 1'
+            saveLocal: 'Save locally 1',
+            chartOptions: 'Chart options EN'
         },
         tools: {
             addComponentBtn: {
