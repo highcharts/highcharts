@@ -31,13 +31,13 @@ abstract class GUIElement {
 
         if (guiElement.container) {
             const guiElementClientRect = guiElement.container.getBoundingClientRect();
-            const dashboardClientRect = referenceElement ?
+            const referenceClientRect = referenceElement ?
                 referenceElement.getBoundingClientRect() : { left: 0, top: 0 };
 
-            offset.left = guiElementClientRect.left - dashboardClientRect.left;
-            offset.top = guiElementClientRect.top - dashboardClientRect.top;
-            offset.right = guiElementClientRect.right - dashboardClientRect.left;
-            offset.bottom = guiElementClientRect.bottom - dashboardClientRect.top;
+            offset.left = guiElementClientRect.left - referenceClientRect.left;
+            offset.top = guiElementClientRect.top - referenceClientRect.top;
+            offset.right = guiElementClientRect.right - referenceClientRect.left;
+            offset.bottom = guiElementClientRect.bottom - referenceClientRect.top;
         }
 
         return offset;
@@ -64,6 +64,11 @@ abstract class GUIElement {
      * event on GUIElement container.
      */
     public removeBindedEventFn?: Function;
+
+    /**
+     * The visibility flag.
+     */
+    public isVisible?: boolean;
 
     /* *
     *
@@ -154,6 +159,26 @@ abstract class GUIElement {
      */
     public getType(): GUIElement.GUIElementType|undefined {
         return this.type;
+    }
+
+    protected changeVisibility(
+        setVisible: boolean = true,
+        displayStyle?: string
+    ): void {
+        const visibilityChanged = this.isVisible && !setVisible || !this.isVisible && setVisible;
+
+        if (this.container && visibilityChanged) {
+            this.container.style.display = setVisible ? (displayStyle || 'block') : 'none';
+            this.isVisible = setVisible;
+        }
+    }
+
+    public hide(): void {
+        this.changeVisibility(false);
+    }
+
+    public show(): void {
+        this.changeVisibility();
     }
 }
 

@@ -36,7 +36,14 @@ class RowEditToolbar extends EditToolbar {
             type: 'icon',
             icon: EditGlobals.iconsURL + 'drag.svg',
             events: {
-                click: function (): void {}
+                onmousedown: function (this: MenuItem, e: any): void {
+                    const rowEditToolbar = (this.menu.parent as RowEditToolbar),
+                        dragDrop = rowEditToolbar.editMode.dragDrop;
+
+                    if (dragDrop && rowEditToolbar.row) {
+                        dragDrop.onDragStart(rowEditToolbar.row, e);
+                    }
+                }
             }
         },
         settings: {
@@ -162,16 +169,19 @@ class RowEditToolbar extends EditToolbar {
         const toolbar = this;
 
         if (toolbar.row) {
+
+            this.resetEditedRow();
+
             toolbar.row.destroy();
             toolbar.row = void 0;
 
             // Hide row and cell toolbars.
             toolbar.editMode.hideToolbars(['cell', 'row']);
-            this.resetEditedRow();
         }
     }
 
     public resetEditedRow(): void {
+        super.resetCurrentElements(this.row as Row, true);
         this.editedRow = void 0;
     }
 }

@@ -523,19 +523,125 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
     editMode: {
         enabled: true,
         contextMenu: {
+            icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/menu.svg',
             enabled: true,
-            menuItems: [{
-                type: 'saveLocal',
+            items: [{
+                id: 'saveLocal',
                 className: 'test-test-test',
                 events: {
-                    click: function () {
-                        console.log(this);
+                    click: function() {
+                        console.log('save local');
                     }
                 }
-            }, 'separator', {
-                type: 'editMode',
-                text: 'Edit on/off'
+            }, 'verticalSeparator', 'editMode', {
+                id: 'export-dashboard',
+                text: 'Export dashboard',
+                events: {
+                    click: function () {
+                        dashboard.exportLocal();
+                    }
+                }
+            }, {
+                id: 'delete-dashboard',
+                text: 'Delete current dashboard',
+                events: {
+                    click: function () {
+                        dashboard.destroy();
+                    }
+                }
+            }, {
+                id: 'import-dashboard',
+                text: 'Import saved dashboard',
+                events: {
+                    click: function () {
+                        dashboard = Dashboard.importLocal();
+                    }
+                }
+            }, {
+                id: 'export-layout',
+                text: 'Export 1 layout',
+                events: {
+                    click: function () {
+                        exportedLayoutId = dashboard.layouts[0].options.id;
+                        dashboard.layouts[0].exportLocal();
+                    }
+                }
+            }, {
+                id: 'delete-layout',
+                text: 'Delete 1 layout',
+                events: {
+                    click: function () {
+                        dashboard.layouts[0].destroy();
+                    }
+                }
+            }, {
+                id: 'import-layout',
+                text: 'Import saved layout',
+                events: {
+                    click: function () {
+                        const layout = dashboard.importLayoutLocal(
+                            exportedLayoutId
+                        );
+                        console.log('Imported layout: ', layout);
+                    }
+                }
             }]
+        },
+        toolbars: {
+            cell: {
+                menu: {
+                    items: [{
+                        id: 'drag',
+                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                    }, {
+                        id: 'settings',
+                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
+                    }, {
+                        id: 'my-option-1',
+                        text: 't1',
+                        events: {
+                            click: function() {
+                                console.log('hello world!');
+                            }
+                        }
+                    }, {
+                        id: 'destroy',
+                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
+                    }]
+                }
+            },
+            row: {
+                menu: {
+                    items: [{
+                        id: 'drag',
+                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                    }, {
+                        id: 'settings',
+                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
+                    }, {
+                        id: 'destroy',
+                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
+                    }]
+                }
+            },
+            settings: {
+                closeIcon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/close.svg',
+                dragIcon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+            }
+        },
+        lang: {
+            editMode: 'My edit mode',
+            saveLocal: 'Save locally 1'
+        },
+        tools: {
+            addComponentBtn: {
+                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/add.svg'
+            }
+        },
+        confirmationPopup: {
+            close: {
+                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/close.svg'
+            }
         }
     },
     gui: {

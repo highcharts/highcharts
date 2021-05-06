@@ -177,16 +177,19 @@ class CellEditToolbar extends EditToolbar {
         const toolbar = this;
 
         if (toolbar.cell) {
+
+            this.resetEditedCell();
+
             toolbar.cell.destroy();
             toolbar.cell = void 0;
 
             // Hide row and cell toolbars.
             toolbar.editMode.hideToolbars(['cell', 'row']);
-            this.resetEditedCell();
         }
     }
 
     public resetEditedCell(): void {
+        super.resetCurrentElements(this.cell as Cell);
         this.editedCell = void 0;
     }
 }

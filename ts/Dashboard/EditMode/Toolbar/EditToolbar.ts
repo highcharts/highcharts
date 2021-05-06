@@ -165,6 +165,22 @@ abstract class EditToolbar {
             }
         }
     }
+
+    public resetCurrentElements(
+        currentElement: Cell|Row,
+        isRow?: boolean
+    ): void {
+        const components = isRow ?
+            (currentElement as Row).layout.dashboard.mountedComponents :
+            (currentElement as Cell).row.layout.dashboard.mountedComponents;
+
+        // set opacity
+        for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
+            (components[i].cell.container as HTMLDOMElement).classList.remove(
+                EditGlobals.classNames.maskElement
+            );
+        }
+    }
 }
 
 namespace EditToolbar {

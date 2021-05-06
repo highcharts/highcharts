@@ -44,7 +44,7 @@ class DragDrop {
                 left: '100px',
                 height: '50px',
                 width: '50px',
-                zIndex: 9999,
+                zIndex: 99999,
                 display: 'none',
                 cursor: 'grab',
                 pointerEvents: 'none',
@@ -118,6 +118,8 @@ class DragDrop {
 
         if (context.getType() === DashboardGlobals.guiElementType.cell) {
             dragDrop.onCellDragStart(event);
+        } else if (context.getType() === DashboardGlobals.guiElementType.row) {
+            dragDrop.onRowDragStart(event);
         }
     }
 
@@ -125,14 +127,13 @@ class DragDrop {
         const dragDrop = this;
 
         if (dragDrop.isActive) {
-            const mockStyle = dragDrop.mockElement.style;
-
-            mockStyle.left = +mockStyle.left.slice(0, -2) + e.movementX + 'px';
-            mockStyle.top = +mockStyle.top.slice(0, -2) + e.movementY + 'px';
+            dragDrop.setMockElementPosition(e);
 
             if (dragDrop.context) {
                 if (dragDrop.context.getType() === DashboardGlobals.guiElementType.cell) {
                     dragDrop.onCellDrag(e);
+                } else if (dragDrop.context.getType() === DashboardGlobals.guiElementType.row) {
+                    dragDrop.onRowDrag(e);
                 }
             }
         }
@@ -151,6 +152,8 @@ class DragDrop {
             if (dragDrop.context) {
                 if (dragDrop.context.getType() === DashboardGlobals.guiElementType.cell) {
                     dragDrop.onCellDragEnd();
+                } else if (dragDrop.context.getType() === DashboardGlobals.guiElementType.row) {
+                    dragDrop.onRowDragEnd();
                 }
             }
         }
@@ -165,18 +168,96 @@ class DragDrop {
         }
     }
 
-    public onCellDragStart(event: any): void {
+    public onRowDragStart(e: any): void {
+        const dragDrop = this,
+            editMode = dragDrop.editMode,
+            row = dragDrop.context as Row;
+
+        if (row && editMode.rowToolbar) {
+            dragDrop.setMockElementPosition(e);
+            dragDrop.mockElement.style.display = 'block';
+            editMode.hideToolbars(['cell', 'row']);
+            row.hide();
+        }
+    }
+
+    public onRowDrag(e: any): void {
+        const dragDrop = this,
+            mouseContext = dragDrop.mouseContext as Cell,
+            mouseContextRow = mouseContext && mouseContext.row,
+            height = 14;
+
+        let offset = 30;
+
+        if (mouseContextRow && mouseContextRow.container) {
+            const dropContextRowOffsets = GUIElement.getOffsets(mouseContextRow),
+                rowWidth = dropContextRowOffsets.right - dropContextRowOffsets.left,
+                rowHeight = dropContextRowOffsets.bottom - dropContextRowOffsets.top;
+
+            if (rowHeight < 2 * offset) {
+                offset = rowHeight / 2;
+            }
+
+            // Get mouse position relative to the mouseContext top edge.
+            const topEdgeY = e.clientY - dropContextRowOffsets.top;
+            dragDrop.dropPointer.align = topEdgeY >= -offset && topEdgeY <= offset ? 'top' :
+                (topEdgeY - rowHeight >= -offset && topEdgeY - rowHeight <= offset ? 'bottom' : '');
+
+            if (dragDrop.dropPointer.align) {
+                dragDrop.dropContext = mouseContextRow;
+
+                // Update or show drop pointer.
+                if (!dragDrop.dropPointer.isVisible) {
+                    dragDrop.dropPointer.isVisible = true;
+
+                    const dashBoundingRect = dragDrop.editMode.dashboard.container.getBoundingClientRect();
+                    css(dragDrop.dropPointer.element, {
+                        display: 'block',
+                        left: dropContextRowOffsets.left - dashBoundingRect.left + 'px',
+                        top: dropContextRowOffsets.top - dashBoundingRect.top +
+                            (dragDrop.dropPointer.align === 'bottom' ? rowHeight : 0) - height / 2 + 'px',
+                        height: height + 'px',
+                        width: rowWidth + 'px'
+                    });
+                }
+            } else {
+                dragDrop.dropContext = void 0;
+                dragDrop.hideDropPointer();
+            }
+        }
+    }
+
+    public onRowDragEnd(): void {
+        const dragDrop = this,
+            draggedRow = dragDrop.context as Row,
+            dropContext = dragDrop.dropContext as Row;
+
+        if (dragDrop.dropPointer.align) {
+            draggedRow.layout.unmountRow(draggedRow);
+
+            // Destroy layout when empty.
+            if (draggedRow.layout.rows.length === 0) {
+                draggedRow.layout.destroy();
+            }
+
+            dropContext.layout.mountRow(
+                draggedRow,
+                (dropContext.layout.getRowIndex(dropContext) || 0) +
+                    (dragDrop.dropPointer.align === 'bottom' ? 1 : 0)
+            );
+        }
+
+        dragDrop.hideDropPointer();
+        draggedRow.show();
+    }
+
+    public onCellDragStart(e: any): void {
         const dragDrop = this,
             editMode = dragDrop.editMode,
             cell = dragDrop.context as Cell;
 
         if (cell && editMode.cellToolbar) {
-            const cellToolbarStyle = editMode.cellToolbar.container.style;
-
-            dragDrop.setMockElementPosition(
-                +cellToolbarStyle.left.slice(0, -2),
-                +cellToolbarStyle.top.slice(0, -2)
-            );
+            dragDrop.setMockElementPosition(e);
             dragDrop.mockElement.style.display = 'block';
             editMode.hideToolbars(['cell', 'row']);
             cell.hide();
@@ -273,6 +354,12 @@ class DragDrop {
 
         if (dragDrop.dropPointer.align) {
             draggedCell.row.unmountCell(draggedCell);
+
+            // Destroy row when empty.
+            if (draggedCell.row.cells.length === 0) {
+                draggedCell.row.destroy();
+            }
+
             dropContext.row.mountCell(
                 draggedCell,
                 (dropContext.row.getCellIndex(dropContext) || 0) +
@@ -285,9 +372,15 @@ class DragDrop {
     }
 
     public setMockElementPosition(
-        x: number,
-        y: number
+        mouseEvent: any
     ): void {
+        const dragDrop = this,
+            dashBoundingRect =
+                dragDrop.editMode.dashboard.container.getBoundingClientRect(),
+            offset = dragDrop.mockElement.clientWidth / 2,
+            x = mouseEvent.clientX - dashBoundingRect.left - offset,
+            y = mouseEvent.clientY - dashBoundingRect.top - offset;
+
         css(this.mockElement, {
             left: x + 'px',
             top: y + 'px'

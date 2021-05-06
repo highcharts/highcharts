@@ -85,6 +85,7 @@ class Row extends GUIElement {
         this.layout = layout;
         this.cells = [];
         this.options = options;
+        this.isVisible = true;
 
         // Get parent container
         const parentContainer =
@@ -243,6 +244,7 @@ class Row extends GUIElement {
      */
     public destroy(): void {
         const row = this;
+        const { layout } = row;
 
         // Destroy cells.
         for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
@@ -251,7 +253,14 @@ class Row extends GUIElement {
             }
         }
 
+        row.layout.unmountRow(row);
+        const destroyLayout = layout.rows.length === 0;
+
         super.destroy();
+
+        if (destroyLayout) {
+            layout.destroy();
+        }
     }
 
     /**
@@ -362,6 +371,10 @@ class Row extends GUIElement {
         }
 
         return cells;
+    }
+
+    public show(): void {
+        this.changeVisibility(true, 'flex');
     }
 }
 

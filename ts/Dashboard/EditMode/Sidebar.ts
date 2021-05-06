@@ -466,7 +466,13 @@ class Sidebar {
         ]);
 
         // set the position
-        sidebarContainer.style.marginTop = window.pageYOffset + 'px';
+        sidebarContainer.style.marginTop = '0px';
+        const offsetTop = sidebarContainer.getBoundingClientRect().top;
+
+        sidebarContainer.style.marginTop = (
+            offsetTop < 0 ? Math.abs(offsetTop) : 0
+        ) + 'px';
+
         // reset drag X, Y dimension
         sidebarContainer.style.top = '0px';
         sidebarContainer.style.left = '0px';
