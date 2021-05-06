@@ -44,7 +44,7 @@ class DragDrop {
                 left: '100px',
                 height: '50px',
                 width: '50px',
-                zIndex: 9999,
+                zIndex: 99999,
                 display: 'none',
                 cursor: 'grab',
                 pointerEvents: 'none',
@@ -127,10 +127,7 @@ class DragDrop {
         const dragDrop = this;
 
         if (dragDrop.isActive) {
-            const mockStyle = dragDrop.mockElement.style;
-
-            mockStyle.left = +mockStyle.left.slice(0, -2) + e.movementX + 'px';
-            mockStyle.top = +mockStyle.top.slice(0, -2) + e.movementY + 'px';
+            dragDrop.setMockElementPosition(e);
 
             if (dragDrop.context) {
                 if (dragDrop.context.getType() === DashboardGlobals.guiElementType.cell) {
@@ -171,18 +168,13 @@ class DragDrop {
         }
     }
 
-    public onRowDragStart(event: any): void {
+    public onRowDragStart(e: any): void {
         const dragDrop = this,
             editMode = dragDrop.editMode,
             row = dragDrop.context as Row;
 
         if (row && editMode.rowToolbar) {
-            const rowToolbarStyle = editMode.rowToolbar.container.style;
-
-            dragDrop.setMockElementPosition(
-                +rowToolbarStyle.left.slice(0, -2),
-                +rowToolbarStyle.top.slice(0, -2)
-            );
+            dragDrop.setMockElementPosition(e);
             dragDrop.mockElement.style.display = 'block';
             editMode.hideToolbars(['cell', 'row']);
             row.hide();
@@ -242,6 +234,12 @@ class DragDrop {
 
         if (dragDrop.dropPointer.align) {
             draggedRow.layout.unmountRow(draggedRow);
+
+            // Destroy layout when empty.
+            if (draggedRow.layout.rows.length === 0) {
+                draggedRow.layout.destroy();
+            }
+
             dropContext.layout.mountRow(
                 draggedRow,
                 (dropContext.layout.getRowIndex(dropContext) || 0) +
@@ -253,18 +251,13 @@ class DragDrop {
         draggedRow.show();
     }
 
-    public onCellDragStart(event: any): void {
+    public onCellDragStart(e: any): void {
         const dragDrop = this,
             editMode = dragDrop.editMode,
             cell = dragDrop.context as Cell;
 
         if (cell && editMode.cellToolbar) {
-            const cellToolbarStyle = editMode.cellToolbar.container.style;
-
-            dragDrop.setMockElementPosition(
-                +cellToolbarStyle.left.slice(0, -2),
-                +cellToolbarStyle.top.slice(0, -2)
-            );
+            dragDrop.setMockElementPosition(e);
             dragDrop.mockElement.style.display = 'block';
             editMode.hideToolbars(['cell', 'row']);
             cell.hide();
@@ -361,6 +354,12 @@ class DragDrop {
 
         if (dragDrop.dropPointer.align) {
             draggedCell.row.unmountCell(draggedCell);
+
+            // Destroy row when empty.
+            if (draggedCell.row.cells.length === 0) {
+                draggedCell.row.destroy();
+            }
+
             dropContext.row.mountCell(
                 draggedCell,
                 (dropContext.row.getCellIndex(dropContext) || 0) +
@@ -373,9 +372,15 @@ class DragDrop {
     }
 
     public setMockElementPosition(
-        x: number,
-        y: number
+        mouseEvent: any
     ): void {
+        const dragDrop = this,
+            dashBoundingRect =
+                dragDrop.editMode.dashboard.container.getBoundingClientRect(),
+            offset = dragDrop.mockElement.clientWidth / 2,
+            x = mouseEvent.clientX - dashBoundingRect.left - offset,
+            y = mouseEvent.clientY - dashBoundingRect.top - offset;
+
         css(this.mockElement, {
             left: x + 'px',
             top: y + 'px'

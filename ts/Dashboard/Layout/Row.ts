@@ -244,6 +244,7 @@ class Row extends GUIElement {
      */
     public destroy(): void {
         const row = this;
+        const { layout } = row;
 
         // Destroy cells.
         for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
@@ -252,7 +253,14 @@ class Row extends GUIElement {
             }
         }
 
+        row.layout.unmountRow(row);
+        const destroyLayout = layout.rows.length === 0;
+
         super.destroy();
+
+        if (destroyLayout) {
+            layout.destroy();
+        }
     }
 
     /**

@@ -228,14 +228,20 @@ class Cell extends GUIElement {
     public destroy(): void {
         const cell = this;
         const { row } = cell;
+
         // Destroy mounted component.
         if (cell.mountedComponent) {
             cell.mountedComponent.destroy();
         }
 
         row.unmountCell(cell);
+        const destroyRow = row.cells.length === 0;
 
         super.destroy();
+
+        if (destroyRow) {
+            row.destroy();
+        }
     }
 
     /**

@@ -258,6 +258,10 @@ class Layout extends GUIElement {
             layout.rows[i].destroy();
         }
 
+        if (layout.parentCell) {
+            layout.parentCell.destroy();
+        }
+
         super.destroy();
     }
 
