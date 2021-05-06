@@ -6,12 +6,25 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type PositionObject from '../../../Core/Renderer/PositionObject';
+
 import Annotation from '../Annotations.js';
 import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 class InfinityLine extends CrookedLine {
@@ -186,17 +199,25 @@ class InfinityLine extends CrookedLine {
 
 }
 
-/**
- * @private
- */
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface InfinityLine {
     defaultOptions: CrookedLine['defaultOptions'];
 }
-
 InfinityLine.prototype.defaultOptions = merge(
     CrookedLine.prototype.defaultOptions,
     {}
 );
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
 
 namespace InfinityLine {
     export interface Options extends CrookedLine.Options{
@@ -213,17 +234,6 @@ namespace InfinityLine {
  *
  * */
 
-/**
- * An infinity line annotation.
- *
- * @sample highcharts/annotations-advanced/infinity-line/
- *         Infinity Line
- *
- * @extends   annotations.crookedLine
- * @product   highstock
- * @apioption annotations.infinityLine
- */
-
 Annotation.types.infinityLine = InfinityLine;
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
@@ -236,4 +246,24 @@ declare module './AnnotationType'{
  *  Default Export
  *
  * */
+
 export default InfinityLine;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * An infinity line annotation.
+ *
+ * @sample highcharts/annotations-advanced/infinity-line/
+ *         Infinity Line
+ *
+ * @extends   annotations.crookedLine
+ * @product   highstock
+ * @apioption annotations.infinityLine
+ */
+
+(''); // keeps doclets above in transpiled file
