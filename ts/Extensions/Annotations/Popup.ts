@@ -47,7 +47,7 @@ const {
 declare global {
     namespace Highcharts {
         class Popup {
-            public constructor(parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart|undefined);
+            public constructor(parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart);
             public annotations: PopupAnnotationsObject;
             public container: HTMLDOMElement;
             public iconsURL: string;
@@ -69,7 +69,7 @@ declare global {
             public deselectAll(): void;
             public getFields(parentDiv: HTMLDOMElement, type: string): PopupFieldsObject;
             public getLangpack(): Record<string, string>;
-            public init(parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart|undefined): void;
+            public init(parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart): void;
             public showForm(
                 type: string,
                 chart: AnnotationChart,
@@ -183,7 +183,7 @@ wrap(Pointer.prototype, 'onContainerMouseDown', function (this: Pointer, proceed
     }
 });
 
-H.Popup = function (this: Highcharts.Popup, parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart|undefined): void {
+H.Popup = function (this: Highcharts.Popup, parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart): void {
     this.init(parentDiv, iconsURL, chart);
 } as any;
 
@@ -196,7 +196,7 @@ H.Popup.prototype = {
      * @param {string} iconsURL
      * Icon URL
      */
-    init: function (parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart|undefined): void {
+    init: function (parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart): void {
         this.chart = chart;
 
         // create popup div
@@ -233,6 +233,7 @@ H.Popup.prototype = {
 
         ['click', 'touchstart'].forEach(function (eventName: string): void {
             addEvent(closeBtn, eventName, function (): void {
+                fireEvent(_self.chart.navigationBindings, 'closePopup');
                 _self.closePopup();
             });
         });
