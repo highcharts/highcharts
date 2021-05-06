@@ -233,8 +233,11 @@ H.Popup.prototype = {
 
         ['click', 'touchstart'].forEach(function (eventName: string): void {
             addEvent(closeBtn, eventName, function (): void {
-                fireEvent(_self.chart.navigationBindings, 'closePopup');
-                _self.closePopup();
+                if (_self.chart) {
+                    fireEvent(_self.chart.navigationBindings, 'closePopup');
+                } else {
+                    _self.closePopup();
+                }
             });
         });
     },
