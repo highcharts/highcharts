@@ -26,7 +26,7 @@ abstract class GUIElement {
     public static getOffsets(
         guiElement: GUIElement,
         referenceElement?: HTMLDOMElement
-    ): GUIElement.Offsets {
+    ): Record<string, number> {
         const offset = { left: 0, top: 0, right: 0, bottom: 0 };
 
         if (guiElement.container) {
@@ -190,13 +190,6 @@ namespace GUIElement {
         style?: CSSObject;
         element?: HTMLElement;
         elementId?: string;
-    }
-
-    export interface Offsets {
-        left: number;
-        top: number;
-        right: number;
-        bottom: number;
     }
 
     export interface BindedGUIElementEvent extends Event {

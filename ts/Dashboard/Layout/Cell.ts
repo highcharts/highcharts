@@ -306,6 +306,32 @@ class Cell extends GUIElement {
             }
         }
     }
+
+    // Method to get array of overlapping levels.
+    public getOverlappingLevels(
+        align: string, // left, right, top, bottom
+        levelMaxGap: number, // max distance between levels
+        offset?: number // analized cell offset
+    ): Array<number> {
+        const cell = this,
+            parentCell = cell.row.layout.parentCell;
+
+        let levels = [cell.row.layout.level];
+
+        if (parentCell) {
+            const cellOffset = offset || GUIElement.getOffsets(cell)[align];
+            const parentCellOffset = GUIElement.getOffsets(parentCell)[align];
+
+            if (Math.abs(cellOffset - parentCellOffset) < levelMaxGap) {
+                levels = [
+                    ...levels,
+                    ...parentCell.getOverlappingLevels(align, levelMaxGap, parentCellOffset)
+                ];
+            }
+        }
+
+        return levels;
+    }
 }
 
 namespace Cell {

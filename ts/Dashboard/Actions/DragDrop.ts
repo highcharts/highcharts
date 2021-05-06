@@ -108,19 +108,18 @@ class DragDrop {
 
     public onDragStart(
         context: Cell|Row,
-        event?: any
+        e?: any
     ): void {
-        const dragDrop = this;
+        this.context = context;
+        this.isActive = true;
+        this.editMode.hideToolbars();
+        this.setMockElementPosition(e);
+        context.hide();
 
-        dragDrop.context = context;
-        dragDrop.isActive = true;
-        dragDrop.mockElement.style.cursor = 'grabbing';
-
-        if (context.getType() === DashboardGlobals.guiElementType.cell) {
-            dragDrop.onCellDragStart(event);
-        } else if (context.getType() === DashboardGlobals.guiElementType.row) {
-            dragDrop.onRowDragStart(event);
-        }
+        css(this.mockElement, {
+            cursor: 'grabbing',
+            display: 'block'
+        });
     }
 
     public onDrag(e: any): void {
@@ -165,19 +164,6 @@ class DragDrop {
             this.dropPointer.align = '';
 
             this.dropPointer.element.style.display = 'none';
-        }
-    }
-
-    public onRowDragStart(e: any): void {
-        const dragDrop = this,
-            editMode = dragDrop.editMode,
-            row = dragDrop.context as Row;
-
-        if (row && editMode.rowToolbar) {
-            dragDrop.setMockElementPosition(e);
-            dragDrop.mockElement.style.display = 'block';
-            editMode.hideToolbars(['cell', 'row']);
-            row.hide();
         }
     }
 
@@ -251,19 +237,6 @@ class DragDrop {
         draggedRow.show();
     }
 
-    public onCellDragStart(e: any): void {
-        const dragDrop = this,
-            editMode = dragDrop.editMode,
-            cell = dragDrop.context as Cell;
-
-        if (cell && editMode.cellToolbar) {
-            dragDrop.setMockElementPosition(e);
-            dragDrop.mockElement.style.display = 'block';
-            editMode.hideToolbars(['cell', 'row']);
-            cell.hide();
-        }
-    }
-
     public onCellDrag(e: any): void {
         const dragDrop = this,
             mouseContext = dragDrop.mouseContext as Cell,
@@ -287,11 +260,7 @@ class DragDrop {
             if (dragDrop.dropPointer.align) {
                 dragDrop.dropContext = mouseContext;
 
-                const rowVisibleCells = mouseContext.row.getVisibleCells(),
-                    // Divide offset to level sections (eg 3 nested layouts -
-                    // cell edge will have 3 sections each 1/3 offset width).
-                    divOffset = offset / (mouseContext.row.layout.level + 1);
-
+                const rowVisibleCells = mouseContext.row.getVisibleCells();
                 // Get appropriate dropContext on nested layouts edge.
                 if (
                     mouseContext.row.layout.level &&
@@ -306,20 +275,29 @@ class DragDrop {
                     const dropEdgeOffset = dragDrop.dropPointer.align === 'right' ?
                         leftEdgeX - cellWidth + offset : offset - leftEdgeX;
 
-                    // Nested layout level.
+                    // Array of overlapped levels.
+                    const overlappedLevels = mouseContext.getOverlappingLevels(
+                        dragDrop.dropPointer.align, offset / 2);
+
+                    // Divide offset to level sections (eg 3 nested layouts -
+                    // cell edge will have 3 sections each 1/3 offset width).
+                    const divOffset = offset / overlappedLevels.length;
+
+                    // Overlapped nested layout level.
+                    const lastOverlappedLevel = overlappedLevels[overlappedLevels.length - 1];
                     level = mouseContext.row.layout.level - Math.floor(dropEdgeOffset / divOffset);
-                    level = level < 0 ? 0 : (
+                    level = level < lastOverlappedLevel ? lastOverlappedLevel : (
                         level > mouseContext.row.layout.level ?
                             mouseContext.row.layout.level : level
                     );
 
-                    updateDropPointer = true;
-
                     // Set nested drop context.
                     dragDrop.dropContext = mouseContext.getParentCell(level);
 
-                    // Set nested drop context offsets.
+                    // Get nested drop context offsets.
                     if (dragDrop.dropContext) {
+                        updateDropPointer = true;
+
                         dropContextOffsets = GUIElement.getOffsets(
                             dragDrop.dropContext, dragDrop.editMode.dashboard.container);
                         cellWidth = dropContextOffsets.right - dropContextOffsets.left;
