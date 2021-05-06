@@ -6,16 +6,7 @@
 /.history
 /api-docs
 /out
-/js/highcharts-3d.src.js
-/js/highcharts-more.src.js
-/js/highcharts.js
-/js/highcharts.src.js
-/js/highmaps.src.js
-/js/highstock.js
-/js/highstock.src.js
-/js/adapters/mootools-adapter.js
-/js/adapters/prototype-adapter.js
-/js/modules/exporting.js
+/js
 /build
 /code
 /errors/errors.json
@@ -75,7 +66,6 @@ nbproject/
 
 tmp/
 /yarn.lock
-/package-lock.json
 /temp.*
 /env.file
 

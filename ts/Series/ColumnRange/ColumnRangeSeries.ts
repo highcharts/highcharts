@@ -55,7 +55,7 @@ const {
  * @requires     highcharts-more
  * @optionparent plotOptions.columnrange
  */
-var columnRangeOptions: ColumnRangeSeriesOptions = {
+const columnRangeOptions: ColumnRangeSeriesOptions = {
 
     /**
      * Extended data labels for range series types. Range series data labels
@@ -140,7 +140,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
      * @private
      */
     public translate(): void {
-        var series = this,
+        let series = this,
             yAxis = series.yAxis,
             xAxis = series.xAxis,
             startAngleRad = xAxis.startAngleRad,
@@ -166,7 +166,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
         series.points.forEach(function (
             point: ColumnRangePoint
         ): void {
-            var shapeArgs = point.shapeArgs,
+            let shapeArgs = point.shapeArgs || {},
                 minPointLength = series.options.minPointLength,
                 heightDifference,
                 height,
@@ -209,17 +209,18 @@ class ColumnRangeSeries extends AreaRangeSeries {
 
                 shapeArgs.height = height;
                 shapeArgs.y = y;
+                const { x = 0, width = 0 } = shapeArgs;
 
                 point.tooltipPos = chart.inverted ?
                     [
                         yAxis.len + (yAxis.pos as any) - chart.plotLeft - y -
                         height / 2,
                         xAxis.len + (xAxis.pos as any) - chart.plotTop -
-                        shapeArgs.x - shapeArgs.width / 2,
+                        x - width / 2,
                         height
                     ] : [
-                        xAxis.left - chart.plotLeft + shapeArgs.x +
-                        shapeArgs.width / 2,
+                        xAxis.left - chart.plotLeft + x +
+                        width / 2,
                         (yAxis.pos as any) - chart.plotTop + y + height / 2,
                         height
                     ]; // don't inherit from column tooltip position - #3372
@@ -270,10 +271,10 @@ interface ColumnRangeSeries {
 extend(ColumnRangeSeries.prototype, {
     directTouch: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
-    drawGraph: noop as any,
-    getSymbol: noop as any,
-    polarArc: function (this: ColumnRangeSeries): void {
-        return (columnProto as any).polarArc.apply(this, arguments);
+    drawGraph: noop,
+    getSymbol: noop,
+    polarArc: function (this: ColumnRangeSeries): SVGAttributes {
+        return columnProto.polarArc.apply(this, arguments);
     },
     pointClass: ColumnRangePoint
 });

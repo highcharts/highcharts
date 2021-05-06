@@ -21,11 +21,16 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Chart from '../../Core/Chart/Chart.js';
 import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
+const {
+    charts
+} = H;
+import O from '../../Core/Options.js';
+const { setOptions } = O;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    isNumber,
-    setOptions
+    find,
+    isNumber
 } = U;
 
 /* *
@@ -80,11 +85,17 @@ setOptions({
 
 /* eslint-disable no-invalid-this */
 
-addEvent(Chart, 'displayError', function (
-    e: Highcharts.ErrorMessageEventObject
+addEvent(Highcharts, 'displayError', function (
+    e: U.ErrorMessageEventObject
 ): void {
-    var chart = this,
-        code = e.code,
+    // Display error on the chart causing the error or the last created chart.
+    const chart = e.chart ||
+            find(charts.slice().reverse(), (c?: Chart): boolean => !!c);
+    if (!chart) {
+        return;
+    }
+
+    let code = e.code,
         msg,
         options = chart.options.chart,
         renderer = chart.renderer,
@@ -92,7 +103,7 @@ addEvent(Chart, 'displayError', function (
         chartHeight;
 
     if (chart.errorElements) {
-        (chart.errorElements).forEach(function (el: SVGElement): void {
+        chart.errorElements.forEach(function (el: SVGElement): void {
             if (el) {
                 el.destroy();
             }
@@ -104,7 +115,7 @@ addEvent(Chart, 'displayError', function (
         msg = isNumber(code) ?
             (
                 'Highcharts error #' + code + ': ' +
-                (H.errorMessages as any)[code].text
+                ErrorMessages[code].text
             ) :
             code;
         chartWidth = chart.chartWidth;
@@ -154,20 +165,20 @@ addEvent(Chart, 'displayError', function (
         }).add();
 
         chart.errorElements[1].attr({
-            y: chartHeight - (this.errorElements as any)[1].getBBox().height
+            y: chartHeight - chart.errorElements[1].getBBox().height
         });
     }
 });
 
 addEvent(Chart, 'beforeRedraw', function (): void {
-    var errorElements = this.errorElements;
+    const errorElements = this.errorElements;
 
     if (errorElements && errorElements.length) {
         errorElements.forEach(function (el: SVGElement): void {
             el.destroy();
         });
     }
-    this.errorElements = null as any;
+    delete this.errorElements;
 });
 
 /* eslint-enable no-invalid-this */

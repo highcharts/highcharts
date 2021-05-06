@@ -22,6 +22,8 @@ import type DependencyWheelPointOptions from './DependencyWheelPointOptions';
 import type DependencyWheelSeries from './DependencyWheelSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+
 import NodesMixin from '../../Mixins/Nodes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -76,12 +78,12 @@ class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
      * Return a text path that the data label uses.
      * @private
      */
-    public getDataLabelPath(label: SVGElement): SVGElement {
-        var renderer = this.series.chart.renderer,
+    public getDataLabelPath(label: SVGLabel): SVGElement {
+        const renderer = this.series.chart.renderer,
             shapeArgs = this.shapeArgs,
             upperHalf = this.angle < 0 || this.angle > Math.PI,
-            start = shapeArgs.start,
-            end = shapeArgs.end;
+            start = shapeArgs.start || 0,
+            end = shapeArgs.end || 0;
 
         if (!this.dataLabelPath) {
             this.dataLabelPath = renderer

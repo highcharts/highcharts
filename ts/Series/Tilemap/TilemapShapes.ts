@@ -58,7 +58,7 @@ function tilePaddingFromTileSize(
     xDiv: number,
     yDiv: number
 ): TilemapShapes.PaddingObject {
-    var options = series.options;
+    const options = series.options;
 
     return {
         xPad: (options.colsize || 1) / -xDiv,
@@ -125,7 +125,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             if (!size) {
                 return [];
             }
-            var hexagon = this.tileEdges;
+            const hexagon = this.tileEdges;
 
             return [
                 ['M', hexagon.x2 - size, hexagon.y1 + size],
@@ -138,7 +138,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             ];
         },
         translate: function (this: TilemapSeries): void {
-            var series = this,
+            let series = this,
                 options = series.options,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
@@ -150,7 +150,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             series.generatePoints();
 
             series.points.forEach(function (point): void {
-                var x1 = clamp(
+                let x1 = clamp(
                         Math.floor(
                             xAxis.len -
                             (xAxis.translate(
@@ -304,7 +304,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             if (!size) {
                 return [];
             }
-            var diamond = this.tileEdges;
+            const diamond = this.tileEdges;
 
             return [
                 ['M', diamond.x2, diamond.y1 + size],
@@ -315,7 +315,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             ];
         },
         translate: function (this: TilemapSeries): void {
-            var series = this,
+            let series = this,
                 options = series.options,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
@@ -327,7 +327,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             series.generatePoints();
 
             series.points.forEach(function (point): void {
-                var x1 = clamp(
+                let x1 = clamp(
                         Math.round(
                             xAxis.len -
                             (xAxis.translate(
@@ -466,7 +466,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                 );
         },
         translate: function (this: TilemapSeries): void {
-            var series = this,
+            let series = this,
                 options = series.options,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
@@ -482,7 +482,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             series.generatePoints();
 
             series.points.forEach(function (point): void {
-                var x = clamp(
+                let x = clamp(
                         Math.round(
                             xAxis.len -
                             (xAxis.translate(

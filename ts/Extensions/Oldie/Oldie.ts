@@ -16,6 +16,7 @@ import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type EventCallback from '../../Core/EventCallback';
 import type GradientColor from '../../Core/Color/GradientColor';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
@@ -24,6 +25,7 @@ import type PointerEvent from '../../Core/PointerEvent';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const color = Color.parse;
@@ -35,6 +37,8 @@ const {
     svg,
     win
 } = H;
+import O from '../../Core/Options.js';
+const { getOptions } = O;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../../Core/Pointer.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
@@ -49,15 +53,11 @@ const {
     erase,
     extend,
     extendClass,
-    getOptions,
     isArray,
     isNumber,
     isObject,
-    merge,
-    offset,
     pick,
     pInt,
-    setOptions,
     uniqueKey
 } = U;
 import VMLRenderer3D from './VMLRenderer3D.js';
@@ -71,16 +71,19 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../Core/EventCallback'{
+    interface EventCallback<T> {
+        /** @requires highcharts/modules/oldies */
+        hcKey?: string;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface EventCallbackFunction<T> {
-            /** @requires highcharts/modules/oldies */
-            hcKey?: string;
-        }
         interface GlobalOptions {
             /** @requires highcharts/modules/oldies */
             VMLRadialGradientURL?: string;
@@ -99,7 +102,7 @@ declare global {
             measureSpanWidth(text: string, style: CSSObject): number;
         }
         /** @requires highcharts/modules/oldies */
-        interface VMLAttributes extends Record<string, any> {
+        interface VMLAttributes extends AnyRecord {
             d?: VMLPathArray;
             end?: number;
             innerR?: number;
@@ -309,13 +312,13 @@ declare global {
         function addEventListenerPolyfill<T extends EventTarget>(
             this: T,
             type: string,
-            fn: EventCallbackFunction<T>
+            fn: EventCallback<T>
         ): void;
         /** @requires highcharts/modules/oldies */
         function removeEventListenerPolyfill<T extends EventTarget> (
             this: T,
             type: string,
-            fn: EventCallbackFunction<T>
+            fn: EventCallback<T>
         ): void;
     }
     interface CSSStyleSheet {
@@ -377,11 +380,11 @@ let VMLRenderer: typeof Highcharts.VMLRenderer,
 
 // Utilites
 if (doc && !doc.defaultView) {
-    (H as any).getStyle = U.getStyle = function (
+    (H as any).getStyle = U.getStyle = function getStyle(
         el: HTMLDOMElement,
         prop: string
     ): number {
-        var val: string,
+        let val: string,
             alias = ({
                 width: 'clientWidth',
                 height: 'clientHeight'
@@ -398,7 +401,7 @@ if (doc && !doc.defaultView) {
         if (alias) {
             el.style.zoom = 1 as any;
             return Math.max(
-                (el as any)[alias] - 2 * (U.getStyle(el, 'padding') as number),
+                (el as any)[alias] - 2 * getStyle(el, 'padding'),
                 0
             );
         }
@@ -506,7 +509,7 @@ if (!svg) {
      * @function Highcharts.Chart#isReadyToRender
      */
     Chart.prototype.isReadyToRender = function (): boolean {
-        var chart = this;
+        const chart = this;
 
         // Note: win == win.top is required
         if (!svg &&
@@ -548,9 +551,9 @@ if (!svg) {
     H.addEventListenerPolyfill = function<T extends EventTarget> (
         this: T,
         type: string,
-        fn: Highcharts.EventCallbackFunction<T>
+        fn: EventCallback<T>
     ): void {
-        var el = this;
+        const el = this;
 
         /**
          * @private
@@ -588,7 +591,7 @@ if (!svg) {
     H.removeEventListenerPolyfill = function<T extends EventTarget> (
         this: T,
         type: string,
-        fn: Highcharts.EventCallbackFunction<T>
+        fn: EventCallback<T>
     ): void {
         if (this.detachEvent) {
             fn = (this.hcEventsIE as any)[fn.hcKey as any];
@@ -623,7 +626,7 @@ if (!svg) {
             renderer: Highcharts.VMLRenderer,
             nodeName: string
         ): void {
-            var wrapper = this,
+            let wrapper = this,
                 markup = ['<', nodeName, ' filled="f" stroked="f"'],
                 style = ['position: ', 'absolute', ';'],
                 isDiv = nodeName === 'div';
@@ -658,7 +661,7 @@ if (!svg) {
             this: Highcharts.VMLElement,
             parent: Highcharts.VMLElement
         ): Highcharts.VMLElement {
-            var wrapper = this,
+            const wrapper = this,
                 renderer = wrapper.renderer,
                 element = wrapper.element,
                 box = renderer.box,
@@ -722,7 +725,7 @@ if (!svg) {
             // compensate for the rotation, like it currently does for SVG.
             // Test case: https://jsfiddle.net/highcharts/Ybt44/
 
-            var rotation = this.rotation,
+            const rotation = this.rotation,
                 costheta = Math.cos((rotation as any) * deg2rad),
                 sintheta = Math.sin((rotation as any) * deg2rad);
 
@@ -749,7 +752,7 @@ if (!svg) {
             align: AlignValue
         ): void {
 
-            var costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
+            let costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
                 sintheta = rotation ? Math.sin(rotation * deg2rad) : 0,
                 height = pick(this.elemHeight, this.element.offsetHeight),
                 quad,
@@ -799,7 +802,7 @@ if (!svg) {
             value: Highcharts.VMLPathArray
         ): string {
             // convert paths
-            var i = value.length,
+            let i = value.length,
                 path = [];
 
             while (i--) {
@@ -850,7 +853,7 @@ if (!svg) {
             this: Highcharts.VMLElement,
             clipRect: Highcharts.VMLClipRectObject
         ): Highcharts.VMLElement {
-            var wrapper = this,
+            let wrapper = this,
                 clipMembers: Array<Highcharts.VMLElement>,
                 cssRet;
 
@@ -932,11 +935,11 @@ if (!svg) {
         on: function (
             this: Highcharts.VMLElement,
             eventType: string,
-            handler: Highcharts.EventCallbackFunction<void>
+            handler: EventCallback<void>
         ): Highcharts.VMLElement {
             // simplest possible event model for internal use
             this.element['on' + eventType] = function (): void {
-                var e = win.event as Event;
+                const e = win.event as Event;
 
                 (e.target as any) = e.srcElement;
                 handler(e);
@@ -958,7 +961,7 @@ if (!svg) {
             length: number
         ): string {
 
-            var len;
+            let len;
 
             // The extra comma tricks the trailing comma remover in
             // "gulp scripts" task
@@ -988,7 +991,7 @@ if (!svg) {
             group: Highcharts.VMLElement,
             cutOff: boolean
         ): Highcharts.VMLElement {
-            var shadows = [],
+            let shadows = [],
                 i,
                 element = this.element,
                 renderer = this.renderer,
@@ -1034,10 +1037,10 @@ if (!svg) {
                         renderer.prepVML(markup as any),
                         null as any,
                         {
-                            left: pInt(elemStyle.left) +
-                                pick(shadowOptions.offsetX, 1),
-                            top: pInt(elemStyle.top) +
-                                pick(shadowOptions.offsetY, 1)
+                            left: (pInt(elemStyle.left) +
+                                pick(shadowOptions.offsetX, 1)) + 'px',
+                            top: (pInt(elemStyle.top) +
+                                pick(shadowOptions.offsetY, 1)) + 'px'
                         }
                     );
                     if (cutOff) {
@@ -1111,7 +1114,7 @@ if (!svg) {
             key: string,
             element: HTMLDOMElement
         ): void {
-            var strokeElem =
+            const strokeElem =
                 element.getElementsByTagName('stroke')[0] as (
                     Highcharts.VMLDOMElement
                 ) ||
@@ -1133,7 +1136,7 @@ if (!svg) {
             key: string,
             element: Highcharts.VMLDOMElement
         ): void {
-            var i,
+            let i,
                 shadows = this.shadows;
 
             value = value || [];
@@ -1161,7 +1164,7 @@ if (!svg) {
             key: string,
             element: Highcharts.VMLDOMElement
         ): void {
-            var nodeName = element.nodeName;
+            const nodeName = element.nodeName;
 
             if (nodeName === 'SPAN') { // text color
                 element.style.color = value;
@@ -1196,7 +1199,7 @@ if (!svg) {
             key: string,
             element: Highcharts.VMLDOMElement
         ): void {
-            var style = element.style;
+            const style = element.style;
 
             // style is for #1873:
             (this as any)[key] = style[key as any] = value;
@@ -1360,7 +1363,7 @@ if (!svg) {
             width: number,
             height: number
         ): void {
-            var renderer = this,
+            let renderer = this,
                 boxWrapper,
                 box,
                 css;
@@ -1441,7 +1444,7 @@ if (!svg) {
         ): Highcharts.VMLClipRectObject {
 
             // create a dummy element
-            var clipRect = (this.createElement as any)(),
+            const clipRect = (this.createElement as any)(),
                 isObj = isObject(x);
 
             // mimic a rectangle with its style object for automatic updating in
@@ -1457,7 +1460,7 @@ if (!svg) {
                     this: Highcharts.VMLClipRectObject,
                     wrapper: Highcharts.VMLElement
                 ): CSSObject {
-                    var element = wrapper.element,
+                    const element = wrapper.element,
                         nodeName = element.nodeName,
                         isShape = nodeName === 'shape',
                         inverted = wrapper.inverted,
@@ -1466,7 +1469,7 @@ if (!svg) {
                         left = rect.left,
                         right = left + rect.width,
                         bottom = top + rect.height,
-                        ret = {
+                        ret: CSSObject = {
                             clip: 'rect(' +
                                 Math.round(inverted ? left : top) + 'px,' +
                                 Math.round(inverted ? bottom : right) + 'px,' +
@@ -1521,7 +1524,7 @@ if (!svg) {
             prop: string,
             wrapper: Highcharts.VMLElement
         ): T {
-            var renderer = this,
+            let renderer = this,
                 colorObject,
                 regexRgba = /^rgba/,
                 markup: Array<number|string>,
@@ -1544,7 +1547,7 @@ if (!svg) {
 
             if (fillType) {
 
-                var stopColor: (ColorString|undefined),
+                let stopColor: (ColorString|undefined),
                     stopOpacity: number,
                     gradient: (
                         GradientColor['linearGradient']|
@@ -1648,7 +1651,7 @@ if (!svg) {
                     // Radial (circular) gradient
                     } else {
 
-                        var r = (gradient as any).r,
+                        let r = (gradient as any).r,
                             sizex = r * 2,
                             sizey = r * 2,
                             cx = (gradient as any).cx,
@@ -1716,7 +1719,7 @@ if (!svg) {
 
             } else {
                 // 'stroke' or 'fill' node
-                var propNodes = elem.getElementsByTagName(prop) as any;
+                const propNodes = elem.getElementsByTagName(prop) as any;
 
                 if (propNodes.length) {
                     propNodes[0].opacity = 1;
@@ -1742,7 +1745,7 @@ if (!svg) {
             this: Highcharts.VMLRenderer,
             markup: Array<(number|string)>
         ): string {
-            var vmlStyle = 'display:inline-block;behavior:url(#default#VML);',
+            const vmlStyle = 'display:inline-block;behavior:url(#default#VML);',
                 isIE8 = this.isIE8;
 
             markup = markup.join('') as any;
@@ -1795,7 +1798,7 @@ if (!svg) {
             this: Highcharts.VMLRenderer,
             path?: (Highcharts.VMLAttributes|Highcharts.VMLPathArray)
         ): Highcharts.VMLElement {
-            var attr = {
+            const attr = {
                 // subpixel precision down to 0.1 (width and height = 1px)
                 coordsize: '10 10'
             } as Highcharts.VMLAttributes;
@@ -1825,7 +1828,7 @@ if (!svg) {
             y?: number,
             r?: number
         ): Highcharts.VMLElement {
-            var circle = this.symbol('circle');
+            const circle = this.symbol('circle');
 
             if (isObject(x)) {
                 r = (x as any).r;
@@ -1853,7 +1856,7 @@ if (!svg) {
             this: Highcharts.VMLRenderer,
             name: string
         ): Highcharts.VMLElement {
-            var wrapper,
+            let wrapper,
                 attribs: (Highcharts.VMLAttributes|undefined);
 
             // set the class name
@@ -1894,7 +1897,7 @@ if (!svg) {
             width: number,
             height: number
         ): Highcharts.VMLElement {
-            var obj = this.createElement('img').attr({ src: src });
+            const obj = this.createElement('img').attr({ src: src });
 
             if (arguments.length > 1) {
                 obj.attr({
@@ -1939,16 +1942,16 @@ if (!svg) {
             element: HTMLDOMElement,
             parentNode: HTMLDOMElement
         ): void {
-            var ren = this,
+            const ren = this,
                 parentStyle = parentNode.style,
                 imgStyle = element.tagName === 'IMG' && element.style; // #1111
 
             css(element, {
                 flip: 'x',
-                left: pInt(parentStyle.width) -
-                    (imgStyle ? pInt(imgStyle.top) : 1),
-                top: pInt(parentStyle.height) -
-                    (imgStyle ? pInt(imgStyle.left) : 1),
+                left: (pInt(parentStyle.width) -
+                    (imgStyle ? pInt(imgStyle.top) : 1)) + 'px',
+                top: (pInt(parentStyle.height) -
+                    (imgStyle ? pInt(imgStyle.left) : 1)) + 'px',
                 rotation: -90
             });
 
@@ -1976,7 +1979,7 @@ if (!svg) {
                 h: number,
                 options: Highcharts.VMLAttributes
             ): Highcharts.VMLPathArray {
-                var start = options.start as any,
+                let start = options.start as any,
                     end = options.end as any,
                     radius = options.r || w || h,
                     innerRadius = options.innerR as any,
@@ -2087,8 +2090,8 @@ if (!svg) {
     ): void {
         this.init.apply(this, arguments as any);
     } as any;
-    extend(VMLRenderer.prototype, SVGRenderer.prototype);
-    extend(VMLRenderer.prototype, VMLRendererExtension);
+    extend(VMLRenderer.prototype, SVGRenderer.prototype as any);
+    extend(VMLRenderer.prototype, VMLRendererExtension as any);
 
     // general renderer
     H.Renderer = VMLRenderer as any;
@@ -2102,7 +2105,7 @@ SVGRenderer.prototype.getSpanWidth = function (
     wrapper: SVGElement,
     tspan: HTMLDOMElement
 ): number {
-    var renderer = this,
+    let renderer = this,
         bBox = wrapper.getBBox(true),
         actualWidth = bBox.width;
 
@@ -2122,7 +2125,7 @@ SVGRenderer.prototype.measureSpanWidth = function (
     text: string,
     styles: CSSObject
 ): number {
-    var measuringSpan = doc.createElement('span'),
+    let measuringSpan = doc.createElement('span'),
         offsetWidth,
         textNode = doc.createTextNode(text);
 

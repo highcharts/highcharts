@@ -94,13 +94,13 @@ class RadialAxis {
      * Circular axis around the perimeter of a polar chart.
      * @private
      */
-    public static defaultCircularOptions: RadialAxisOptions = {
+    public static defaultCircularOptions: DeepPartial<RadialAxisOptions> = {
         gridLineWidth: 1, // spokes
         labels: {
-            align: null as any, // auto
+            align: void 0, // auto
             distance: 15,
             x: 0,
-            y: null as any, // auto
+            y: void 0, // auto
             style: {
                 textOverflow: 'none' // wrap lines by default (#7248)
             }
@@ -115,11 +115,11 @@ class RadialAxis {
      * The default options extend defaultYAxisOptions.
      * @private
      */
-    public static defaultRadialGaugeOptions: RadialAxisOptions = {
+    public static defaultRadialGaugeOptions: DeepPartial<RadialAxisOptions> = {
         labels: {
             align: 'center',
             x: 0,
-            y: null as any // auto
+            y: void 0 // auto
         },
         minorGridLineWidth: 0,
         minorTickInterval: 'auto',
@@ -139,7 +139,7 @@ class RadialAxis {
      * Radial axis, like a spoke in a polar chart.
      * @private
      */
-    public static defaultRadialOptions: RadialAxisOptions = {
+    public static defaultRadialOptions: DeepPartial<RadialAxisOptions> = {
 
         /**
          * In a polar chart, this is the angle of the Y axis in degrees, where
@@ -206,7 +206,7 @@ class RadialAxis {
         // Merge and set options.
         axis.setOptions = function (userOptions: DeepPartial<RadialAxisOptions>): void {
 
-            var options = this.options = merge(
+            const options = this.options = merge<RadialAxisOptions>(
                 (axis.constructor as typeof Axis).defaultOptions,
                 this.defaultPolarOptions,
                 userOptions
@@ -257,7 +257,7 @@ class RadialAxis {
             radius?: number,
             innerRadius?: number
         ): RadialAxisPath {
-            var center = this.pane.center,
+            let center = this.pane.center,
                 end,
                 chart = this.chart,
                 r = pick(radius, center[2] / 2 - this.offset),
@@ -380,7 +380,7 @@ class RadialAxis {
          * @private
          */
         axis.setAxisSize = function (): void {
-            var center: number[],
+            let center: number[],
                 start;
 
             axisProto.setAxisSize.call(this);
@@ -392,7 +392,7 @@ class RadialAxis {
 
                 // In case when the innerSize is set in a polar chart, the axis'
                 // center cannot be a reference to pane's center
-                center = this.center = extend([], this.pane.center);
+                center = this.center = this.pane.center.slice();
 
                 // The sector is used in Axis.translate to compute the
                 // translation of reversed axis points (#2570)
@@ -431,7 +431,7 @@ class RadialAxis {
             value: number,
             length?: number
         ): PositionObject {
-            var translatedVal = this.translate(value) as any;
+            const translatedVal = this.translate(value) as any;
 
             return this.postTranslate(
                 this.isCircular ? translatedVal : this.angleRad, // #2848
@@ -464,7 +464,7 @@ class RadialAxis {
             radius: number
         ): PositionObject {
 
-            var chart = this.chart,
+            const chart = this.chart,
                 center = this.center;
 
             angle = this.startAngleRad + angle;
@@ -509,7 +509,7 @@ class RadialAxis {
                 return radius;
             };
 
-            var center = this.center,
+            let center = this.center,
                 startAngleRad = this.startAngleRad,
                 fullRadius = center[2] / 2,
                 offset = Math.min(this.offset, 0),
@@ -619,7 +619,7 @@ class RadialAxis {
             x1: number,
             y1: number
         ): [(number | undefined), number, number] {
-            var axis = this,
+            let axis = this,
                 value = options.value,
                 center = axis.pane.center,
                 shapeArgs,
@@ -674,7 +674,7 @@ class RadialAxis {
         axis.getPlotLinePath = function (
             options: Highcharts.AxisPlotLinesOptions
         ): SVGPath {
-            var axis = this,
+            let axis = this,
                 center = axis.pane.center,
                 chart = axis.chart,
                 inverted = chart.inverted,
@@ -807,7 +807,7 @@ class RadialAxis {
 
         // Find the position for the axis title, by default inside the gauge.
         axis.getTitlePosition = function (): PositionObject {
-            var center = this.center,
+            const center = this.center,
                 chart = this.chart,
                 titleOptions = this.options.title;
 
@@ -840,7 +840,7 @@ class RadialAxis {
          * @return {Highcharts.ChartLabelCollectorFunction}
          */
         axis.createLabelCollector = function (): Chart.LabelCollectorFunction {
-            var axis = this;
+            const axis = this;
 
             return function (
                 this: null
@@ -850,7 +850,7 @@ class RadialAxis {
                     axis.isRadial &&
                     axis.tickPositions &&
                     // undocumented option for now, but working
-                    (axis.options.labels as any).allowOverlap !== true
+                    axis.options.labels.allowOverlap !== true
                 ) {
                     return axis.tickPositions
                         .map(function (
@@ -887,7 +887,7 @@ class RadialAxis {
         addEvent(AxisClass, 'init', function (e: { userOptions: RadialAxisOptions }): void {
             const axis = this as RadialAxis;
             const chart = axis.chart;
-            var inverted = chart.inverted,
+            let inverted = chart.inverted,
                 angular = chart.angular,
                 polar = chart.polar,
                 isX = axis.isXAxis,
@@ -936,6 +936,7 @@ class RadialAxis {
                 // Apply the stack labels for yAxis in case of inverted chart
                 if (inverted && coll === 'yAxis') {
                     axis.defaultPolarOptions.stackLabels = AxisClass.defaultYAxisOptions.stackLabels;
+                    axis.defaultPolarOptions.reversedStacks = true;
                 }
             }
 
@@ -969,7 +970,7 @@ class RadialAxis {
         addEvent(AxisClass, 'afterInit', function (): void {
             const axis = this as RadialAxis;
 
-            var chart = axis.chart,
+            const chart = axis.chart,
                 options = axis.options,
                 isHidden = chart.angular && axis.isXAxis,
                 pane = axis.pane,
@@ -1012,7 +1013,7 @@ class RadialAxis {
                 axis.chart &&
                 axis.chart.labelCollectors
             ) {
-                var index = (
+                const index = (
                     axis.labelCollector ?
                         axis.chart.labelCollectors.indexOf(
                             axis.labelCollector
@@ -1053,12 +1054,12 @@ class RadialAxis {
                 return;
             }
 
-            var labelBBox = label.getBBox(),
+            let labelBBox = label.getBBox(),
                 labelOptions = axis.options.labels,
-                optionsY = (labelOptions as any).y,
+                optionsY = labelOptions.y,
                 ret,
                 centerSlot = 20, // 20 degrees to each side at the top and bottom
-                align = (labelOptions as any).align,
+                align = labelOptions.align,
                 angle = (
                     (
                         (axis.translate(this.pos) as any) + axis.startAngleRad +
@@ -1073,27 +1074,27 @@ class RadialAxis {
                 translateY = 0,
                 translateX = 0,
                 labelYPosCorrection =
-                    (labelOptions as any).y === null ? -labelBBox.height * 0.3 : 0;
+                    !defined(optionsY) ? -labelBBox.height * 0.3 : 0;
 
             if (axis.isRadial) { // Both X and Y axes in a polar chart
                 ret = axis.getPosition(
                     this.pos,
                     (axis.center[2] / 2) +
                         relativeLength(
-                            pick((labelOptions as any).distance, -25),
+                            pick(labelOptions.distance, -25),
                             axis.center[2] / 2,
                             -axis.center[2] / 2
                         )
                 );
 
                 // Automatically rotated
-                if ((labelOptions as any).rotation === 'auto') {
+                if (labelOptions.rotation === 'auto') {
                     label.attr({
                         rotation: angle
                     });
 
                 // Vertically centered
-                } else if (optionsY === null) {
+                } else if (!defined(optionsY)) {
                     optionsY = (
                         axis.chart.renderer
                             .fontMetrics(label.styles && label.styles.fontSize).b -
@@ -1102,7 +1103,7 @@ class RadialAxis {
                 }
 
                 // Automatic alignment
-                if (align === null) {
+                if (!defined(align)) {
                     if (axis.isCircular) { // Y axis
                         if (
                             labelBBox.width >
@@ -1130,7 +1131,7 @@ class RadialAxis {
 
                 // Auto alignment for solid-gauges with two labels (#10635)
                 if (
-                    align === 'auto' &&
+                    align as any === 'auto' &&
                     axis.tickPositions.length === 2 &&
                     axis.isCircular
                 ) {
@@ -1202,8 +1203,8 @@ class RadialAxis {
                     label.translate(translateX, translateY + labelYPosCorrection);
                 }
 
-                e.pos.x = ret.x + (labelOptions as any).x;
-                e.pos.y = ret.y + optionsY;
+                e.pos.x = ret.x + (labelOptions.x || 0);
+                e.pos.y = ret.y + (optionsY || 0);
 
             }
         });
@@ -1266,7 +1267,7 @@ interface RadialAxis extends Axis {
     angleRad: number;
     autoConnect?: boolean;
     center: Array<number>;
-    defaultPolarOptions: RadialAxisOptions;
+    defaultPolarOptions: DeepPartial<RadialAxisOptions>;
     endAngleRad: number;
     isCircular?: boolean;
     labelCollector?: Chart.LabelCollectorFunction;

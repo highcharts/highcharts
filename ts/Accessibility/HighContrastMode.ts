@@ -33,7 +33,7 @@ declare module '../Core/Series/PointLike' {
     }
 }
 
-var whcm = {
+const whcm = {
 
     /**
      * Detect WHCM in the browser.
@@ -89,14 +89,14 @@ var whcm = {
         chart.highContrastModeActive = true;
 
         // Apply theme to chart
-        var theme: Record<string, any> = (
+        const theme: AnyRecord = (
             chart.options.accessibility.highContrastTheme
         );
         chart.update(theme, false);
 
         // Force series colors (plotOptions is not enough)
         chart.series.forEach(function (s): void {
-            var plotOpts = theme.plotOptions[s.type] || {};
+            const plotOpts = theme.plotOptions[s.type] || {};
             s.update({
                 color: plotOpts.color || 'windowText',
                 colors: [plotOpts.color || 'windowText'],

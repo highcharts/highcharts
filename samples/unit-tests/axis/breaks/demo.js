@@ -239,7 +239,7 @@ QUnit.test(
             ]
         });
 
-        assert.strictEqual(iteratorAB, 9, 'All after breaks called');
+        assert.strictEqual(iteratorAB, 7, 'All after breaks called');
         assert.strictEqual(iteratorPB, 8, 'All point breaks called');
     }
 );
@@ -530,7 +530,7 @@ QUnit.test('PointBreak with different thresholds(#4356)', function (assert) {
 });
 
 QUnit.test(
-    'Axis breaks and column width in Highstock (#5979)',
+    'Axis breaks and column width in Highcharts Stock (#5979)',
     function (assert) {
         var data = [];
         for (
@@ -792,5 +792,32 @@ QUnit.test('#14833: Column series axis break regression', assert => {
     assert.ok(
         chart.series[0].points.slice(6, 10).every(point => point.graphic.visibility === 'hidden'),
         'Points in break should not render'
+    );
+});
+
+QUnit.test('connectNulls and stacking', assert => {
+    const chart = Highcharts.chart('container', {
+        yAxis: [{}, {}],
+        plotOptions: {
+            series: {
+                connectNulls: false
+            }
+        },
+        series: [{
+            type: 'line',
+            stacking: false,
+            data: [4, 4, null, null, 4, 4, 4]
+        }, {
+            type: 'area',
+            stacking: 'normal',
+            yAxis: 1,
+            data: [1, 1, null, null, 1, 1, 1]
+        }]
+    });
+
+    assert.notStrictEqual(
+        chart.series[1].graph.element.getAttribute('d').indexOf('M', 1),
+        -1,
+        '#14882: Area graph should have a gap'
     );
 });

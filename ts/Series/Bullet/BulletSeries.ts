@@ -176,7 +176,7 @@ class BulletSeries extends ColumnSeries {
      * @function Highcharts.Series#drawPoints
      */
     public drawPoints(): void {
-        var series = this,
+        const series = this,
             chart = series.chart,
             options = series.options,
             animationLimit = options.animationLimit || 250;
@@ -186,8 +186,7 @@ class BulletSeries extends ColumnSeries {
         series.points.forEach(function (
             point: BulletPoint
         ): void {
-            var pointOptions = point.options,
-                shapeArgs,
+            let pointOptions = point.options,
                 targetGraphic = point.targetGraphic,
                 targetShapeArgs,
                 targetVal = point.target,
@@ -204,7 +203,13 @@ class BulletSeries extends ColumnSeries {
                 );
                 height = targetOptions.height;
 
-                shapeArgs = point.shapeArgs;
+                let shapeArgs = point.shapeArgs;
+
+                // #15547
+                if (point.dlBox && shapeArgs && !isNumber(shapeArgs.width)) {
+                    shapeArgs = point.dlBox;
+                }
+
                 width = relativeLength(
                     targetOptions.width as any,
                     (shapeArgs as any).width
@@ -300,7 +305,7 @@ class BulletSeries extends ColumnSeries {
      * @function Highcharts.Series#getExtremes
      */
     public getExtremes(yData?: Array<number>): DataExtremesObject {
-        var series = this,
+        let series = this,
             targetData = series.targetData,
             yMax,
             yMin;

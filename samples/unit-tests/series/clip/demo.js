@@ -3,18 +3,44 @@ QUnit.test('General series clip tests', assert => {
 
     try {
         const chart = Highcharts.chart('container', {
-                yAxis: {
+                series: [{
+                    data: [10, 20]
+                }, {
+                    data: [1, 2, 3],
+                    yAxis: 1
+                }],
+                yAxis: [{
                     labels: {
                         format: '{value}'
                     }
-                },
+                }, {
+                    opposite: true
+                }],
                 plotOptions: {
                     series: {
                         animation: false
                     }
+                },
+                responsive: {
+                    rules: [{
+                        chartOptions: {
+                            title: {
+                                text: null
+                            }
+                        },
+                        condition: {
+                            callback: () => true
+                        }
+                    }]
                 }
             }),
             done = assert.async();
+
+        assert.strictEqual(
+            chart.series[0].clipBox.height,
+            chart.yAxis[0].len,
+            '#13858: clipBox should have been updated in compliance with responsive rule'
+        );
 
         chart.update(
             {
@@ -28,7 +54,8 @@ QUnit.test('General series clip tests', assert => {
                     {
                         clip: false,
                         data: [1, 2, 3]
-                    }
+                    },
+                    {}
                 ]
             },
             true,
@@ -41,6 +68,20 @@ QUnit.test('General series clip tests', assert => {
         assert.notOk(
             chart.series[2].clipBox,
             '#15128: Series with clip=false should not have stock clipping applied'
+        );
+
+        const widthBefore = chart.sharedClips[chart.series[3].sharedClipKey].attr('width');
+
+        chart.update({
+            yAxis: [{}, {
+                visible: false
+            }],
+            series: [{}, {}, {}, {}]
+        }, true, true);
+
+        assert.ok(
+            chart.sharedClips[chart.series[3].sharedClipKey].attr('width') > widthBefore,
+            '#15435: Shared clip should have been updated'
         );
 
         setTimeout(() => {

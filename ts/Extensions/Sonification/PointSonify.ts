@@ -11,6 +11,7 @@
  * */
 
 'use strict';
+import type RangeSelector from '../../Extensions/RangeSelector';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -56,7 +57,7 @@ declare global {
             ): void;
         }
         interface PointSonifyOptionsObject {
-            dataExtremes?: Record<string, RangeObject>;
+            dataExtremes?: Record<string, RangeSelector.RangeObject>;
             instruments: Array<PointInstrumentObject>;
             onEnd?: Function;
             masterVolume?: number;
@@ -247,7 +248,7 @@ import utilities from './Utilities.js';
 // Defaults for the instrument options
 // NOTE: Also change defaults in Highcharts.PointInstrumentOptionsObject if
 //       making changes here.
-var defaultInstrumentOptions: Highcharts.PointInstrumentOptionsObject = {
+const defaultInstrumentOptions: Highcharts.PointInstrumentOptionsObject = {
     minDuration: 20,
     maxDuration: 2000,
     minVolume: 0.1,
@@ -281,16 +282,20 @@ function pointSonify(
     this: Highcharts.SonifyablePoint,
     options: Highcharts.PointSonifyOptionsObject
 ): void {
-    var point = this,
+    const point = this,
         chart = point.series.chart,
-        masterVolume = pick(options.masterVolume, chart.options.sonification?.masterVolume),
+        masterVolume = pick(
+            options.masterVolume,
+            chart.options.sonification &&
+            chart.options.sonification.masterVolume
+        ),
         dataExtremes = options.dataExtremes || {},
         // Get the value to pass to instrument.play from the mapping value
         // passed in.
         getMappingValue = function (
             value: (number|string|Function),
             makeFunction: boolean,
-            allowedExtremes: Highcharts.RangeObject
+            allowedExtremes: RangeSelector.RangeObject
         ): (number|Function) {
             // Function. Return new function if we try to use callback,
             // otherwise call it now and return result.
@@ -334,7 +339,7 @@ function pointSonify(
         point.sonification.instrumentsPlaying || {};
 
     // Register signal handler for the point
-    var signalHandler = point.sonification.signalHandler =
+    const signalHandler = point.sonification.signalHandler =
         point.sonification.signalHandler ||
         new utilities.SignalHandler(['onEnd']);
 
@@ -351,7 +356,7 @@ function pointSonify(
     options.instruments.forEach(function (
         instrumentDefinition: Highcharts.PointInstrumentObject
     ): void {
-        var instrument = typeof instrumentDefinition.instrument === 'string' ?
+        const instrument = typeof instrumentDefinition.instrument === 'string' ?
                 H.sonification.instruments[instrumentDefinition.instrument] :
                 instrumentDefinition.instrument,
             mapping = instrumentDefinition.instrumentMapping || {},
@@ -448,7 +453,7 @@ function pointCancelSonify(
     this: Highcharts.SonifyablePoint,
     fadeOut?: boolean
 ): void {
-    var playing = this.sonification && this.sonification.instrumentsPlaying,
+    const playing = this.sonification && this.sonification.instrumentsPlaying,
         instrIds = playing && Object.keys(playing);
 
     if (instrIds && instrIds.length) {
@@ -463,7 +468,7 @@ function pointCancelSonify(
 }
 
 
-var pointSonifyFunctions: Highcharts.PointSonifyFunctions = {
+const pointSonifyFunctions: Highcharts.PointSonifyFunctions = {
     pointSonify,
     pointCancelSonify
 };

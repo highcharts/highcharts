@@ -13,6 +13,8 @@
 'use strict';
 
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import Chart from '../../Core/Chart/Chart.js';
 import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';
@@ -75,7 +77,7 @@ function createAndAttachRenderer(
     chart: Chart,
     series: Series
 ): Highcharts.BoostGLRenderer {
-    var width = chart.chartWidth,
+    let width = chart.chartWidth,
         height = chart.chartHeight,
         target: Highcharts.BoostTargetObject = chart,
         targetGroup = chart.seriesGroup || series.group,

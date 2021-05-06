@@ -63,7 +63,6 @@ class RSIIndicator extends SMAIndicator {
      */
     public static defaultOptions: RSIOptions = merge(SMAIndicator.defaultOptions, {
         params: {
-            period: 14,
             decimals: 4,
             index: 3
         }
@@ -89,7 +88,7 @@ class RSIIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: RSIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period = (params.period as any),
+        let period = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<number> | Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,

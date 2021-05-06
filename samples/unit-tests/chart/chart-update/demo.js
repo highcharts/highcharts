@@ -367,45 +367,49 @@
         );
     });
 
-    QUnit.test(
-        'Options for chart.update should not be mutated',
-        function (assert) {
-            var options = {
-                legend: {
-                    enabled: false
-                },
-                title: {
-                    text: 'Hello Bello'
-                },
-                series: [
-                    {
-                        data: [1, 4, 3, 5]
-                    }
-                ]
-            };
-            var chart = Highcharts.chart('container', options);
-
-            var cfg = JSON.stringify(options, null, '  ');
-
-            chart.update(options);
-
-            assert.strictEqual(
-                cfg,
-                JSON.stringify(options, null, '  '),
-                'Options should not be mutated after chart.update'
-            );
-
-            chart.update({
-                title: {
-                    text: 'Ohai'
+    QUnit.test('Chart options mutation', function (assert) {
+        var options = {
+            legend: {
+                enabled: false
+            },
+            title: {
+                text: 'Hello Bello'
+            },
+            series: [
+                {
+                    data: [1, 4, 3, 5]
                 }
-            });
+            ]
+        };
 
-            assert.strictEqual(
-                cfg,
-                JSON.stringify(options, null, '  '),
-                '#14305: Options should not be mutated after actually changing something with chart.update'
-            );
-        }
-    );
+        var cfg = JSON.stringify(options, null, '  ');
+
+        var chart = Highcharts.stockChart('container', options);
+
+        assert.strictEqual(
+            JSON.stringify(options, null, '  '),
+            cfg,
+            '#15445: Options should not be mutated after chart creation'
+        );
+
+        chart.update(options);
+
+        assert.strictEqual(
+            JSON.stringify(options, null, '  '),
+            cfg,
+            'Options should not be mutated after chart.update'
+        );
+
+        chart.update({
+            title: {
+                text: 'Ohai'
+            }
+        });
+
+        assert.strictEqual(
+            JSON.stringify(options, null, '  '),
+            cfg,
+            '#14305: Options should not be mutated after actually changing something with chart.update'
+        );
+    });
 }());

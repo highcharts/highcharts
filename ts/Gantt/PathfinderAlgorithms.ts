@@ -67,7 +67,7 @@ function findLastObstacleBefore(
     xMin: number,
     startIx?: number
 ): number {
-    var left = startIx || 0, // left limit
+    let left = startIx || 0, // left limit
         right = obstacles.length - 1, // right limit
         min = xMin - 0.0000001, // Make sure we include all obstacles at xMin
         cursor,
@@ -128,7 +128,7 @@ function pointWithinObstacle(obstacle: any, point: Point): boolean {
  *         Ix of the obstacle in the array, or -1 if not found.
  */
 function findObstacleFromPoint(obstacles: Array<any>, point: any): number {
-    var i = findLastObstacleBefore(obstacles, point.x + 1) + 1;
+    let i = findLastObstacleBefore(obstacles, point.x + 1) + 1;
 
     while (i--) {
         if (
@@ -155,11 +155,11 @@ function findObstacleFromPoint(obstacles: Array<any>, point: any): number {
  *         SVG path array as accepted by the SVG Renderer.
  */
 function pathFromSegments(segments: Array<any>): SVGPath {
-    var path: SVGPath = [];
+    const path: SVGPath = [];
 
     if (segments.length) {
         path.push(['M', segments[0].start.x, segments[0].start.y]);
-        for (var i = 0; i < segments.length; ++i) {
+        for (let i = 0; i < segments.length; ++i) {
             path.push(['L', segments[i].end.x, segments[i].end.y]);
         }
     }
@@ -243,12 +243,12 @@ function straight(
  *         renderer, as well as an array of new obstacles making up this
  *         path.
  */
-const simpleConnect = extend(function (
+const simpleConnect = function (
     start: PositionObject,
     end: PositionObject,
     options: any
 ): Highcharts.PathfinderAlgorithmResultObject {
-    var segments = [],
+    let segments = [],
         endSegment,
         dir = pick(
             options.startDirectionX,
@@ -278,7 +278,7 @@ const simpleConnect = extend(function (
         toKey?: string,
         offset?: number
     ): Record<string, number> {
-        var point: Record<string, number> = {
+        const point: Record<string, number> = {
             x: from.x as any,
             y: from.y as any
         };
@@ -297,7 +297,7 @@ const simpleConnect = extend(function (
         point: any,
         direction: string
     ): Record<string, number> {
-        var useMax = abs(point[direction] - obstacle[direction + 'Min']) >
+        const useMax = abs(point[direction] - obstacle[direction + 'Min']) >
                     abs(point[direction] - obstacle[direction + 'Max']);
 
         return copyFromPoint(
@@ -384,9 +384,8 @@ const simpleConnect = extend(function (
         path: pathFromSegments(segments),
         obstacles: segments
     };
-}, {
-    requiresObstacles: true
-});
+};
+simpleConnect.requiresObstacles = true;
 
 /**
  * Find a path from a starting coordinate to an ending coordinate, taking
@@ -418,7 +417,7 @@ const simpleConnect = extend(function (
  *         renderer, as well as an array of new obstacles making up this
  *         path.
  */
-const fastAvoid = extend(function (
+const fastAvoid = function (
     start: PositionObject,
     end: PositionObject,
     options: any
@@ -443,7 +442,7 @@ const fastAvoid = extend(function (
             - When going around the end obstacle we should not always go the
                 shortest route, rather pick the one closer to the end point
     */
-    var dirIsX = pick(
+    let dirIsX = pick(
             options.startDirectionX,
             abs(end.x - start.x) > abs(end.y - start.y)
         ),
@@ -479,7 +478,7 @@ const fastAvoid = extend(function (
         toPoint: any,
         directionIsX?: boolean
     ): any {
-        var firstPoint,
+        let firstPoint,
             lastPoint,
             highestPoint,
             lowestPoint,
@@ -585,7 +584,7 @@ const fastAvoid = extend(function (
         dirIsX: boolean,
         bounds: any
     ): boolean {
-        var softBounds = bounds.soft,
+        let softBounds = bounds.soft,
             hardBounds = bounds.hard,
             dir = dirIsX ? 'x' : 'y',
             toPointMax: Record<string, number> =
@@ -656,7 +655,7 @@ const fastAvoid = extend(function (
             return [];
         }
 
-        var dir = dirIsX ? 'x' : 'y',
+        let dir = dirIsX ? 'x' : 'y',
             pivot,
             segments: Array<any>,
             waypoint,
@@ -830,7 +829,7 @@ const fastAvoid = extend(function (
         point: any,
         goalPoint: any
     ): any {
-        var dirIsX = min(obstacle.xMax - point.x, point.x - obstacle.xMin) <
+        const dirIsX = min(obstacle.xMax - point.x, point.x - obstacle.xMin) <
                     min(obstacle.yMax - point.y, point.y - obstacle.yMin),
             bounds = {
                 soft: options.hardBounds,
@@ -898,9 +897,8 @@ const fastAvoid = extend(function (
         path: pathFromSegments(segments),
         obstacles: segments
     };
-}, {
-    requiresObstacles: true
-});
+};
+fastAvoid.requiresObstacles = true;
 
 // Define the available pathfinding algorithms.
 // Algorithms take up to 3 arguments: starting point, ending point, and an

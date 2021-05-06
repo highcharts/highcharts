@@ -79,7 +79,7 @@ class GanttSeries extends XRangeSeries {
                 '<span style="font-size: 10px">{series.name}</span><br/>',
             pointFormat: null as any,
             pointFormatter: function (this: GanttPoint): string {
-                var point = this,
+                let point = this,
                     series = point.series,
                     tooltip = series.chart.tooltip,
                     xAxis = series.xAxis,
@@ -185,7 +185,7 @@ class GanttSeries extends XRangeSeries {
         point: GanttPoint,
         verb: string
     ): void {
-        var series = this,
+        let series = this,
             seriesOpts = series.options,
             renderer = series.chart.renderer,
             shapeArgs: SVGAttributes = point.shapeArgs as any,
@@ -198,10 +198,10 @@ class GanttSeries extends XRangeSeries {
         if (point.options.milestone) {
             if (isNumber(plotY) && point.y !== null && point.visible !== false) {
                 diamondShape = renderer.symbols.diamond(
-                    shapeArgs.x,
-                    shapeArgs.y,
-                    shapeArgs.width,
-                    shapeArgs.height
+                    shapeArgs.x || 0,
+                    shapeArgs.y || 0,
+                    shapeArgs.width || 0,
+                    shapeArgs.height || 0
                 );
 
                 if (graphic) {
@@ -233,7 +233,7 @@ class GanttSeries extends XRangeSeries {
      * @private
      */
     public translatePoint(point: GanttPoint): void {
-        var series = this,
+        let series = this,
             shapeArgs: SVGAttributes,
             size: number;
 
@@ -241,9 +241,9 @@ class GanttSeries extends XRangeSeries {
 
         if (point.options.milestone) {
             shapeArgs = point.shapeArgs as any;
-            size = shapeArgs.height;
+            size = shapeArgs.height || 0;
             point.shapeArgs = {
-                x: shapeArgs.x - (size / 2),
+                x: (shapeArgs.x || 0) - (size / 2),
                 y: shapeArgs.y,
                 width: size,
                 height: size

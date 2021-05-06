@@ -38,7 +38,7 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
     proceed: Function
 ): SVGPath {
 
-    var series = this,
+    const series = this,
         svgPath = proceed.apply(series, [].slice.call(arguments, 1));
 
     // Do not do this if the chart is not 3D
@@ -46,7 +46,7 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
         return svgPath;
     }
 
-    var getGraphPath = LineSeriesClass.prototype.getGraphPath,
+    let getGraphPath = LineSeriesClass.prototype.getGraphPath,
         graphPath: SVGPath = [],
         options = series.options,
         stacking = options.stacking,
@@ -65,7 +65,7 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
         options3d;
 
     if (series.rawPointsX) {
-        for (var i = 0; i < series.points.length; i++) {
+        for (let i = 0; i < series.points.length; i++) {
             bottomPoints.push({
                 x: series.rawPointsX[i],
                 y: options.stacking ? series.points[i].yBottom : translatedThreshold,
@@ -74,31 +74,29 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
         }
     }
 
-    if (series.chart.options && series.chart.options.chart) {
-        options3d = series.chart.options.chart.options3d;
-        bottomPoints = perspective(
-            bottomPoints as any, series.chart, true
-        ).map(function (point): AreaPoint {
-            return { plotX: point.x, plotY: point.y, plotZ: point.z } as any;
-        });
-        if (series.group && options3d && options3d.depth && options3d.beta) {
-            // Markers should take the global zIndex of series group.
-            if (series.markerGroup) {
-                series.markerGroup.add(series.group);
-                series.markerGroup.attr({
-                    translateX: 0,
-                    translateY: 0
-                });
-            }
-            series.group.attr({
-                zIndex: Math.max(
-                    1,
-                    (options3d.beta > 270 || options3d.beta < 90) ?
-                        options3d.depth - Math.round(series.zPadding || 0) :
-                        Math.round(series.zPadding || 0)
-                )
+    options3d = series.chart.options.chart.options3d;
+    bottomPoints = perspective(
+        bottomPoints as any, series.chart, true
+    ).map(function (point): AreaPoint {
+        return { plotX: point.x, plotY: point.y, plotZ: point.z } as any;
+    });
+    if (series.group && options3d && options3d.depth && options3d.beta) {
+        // Markers should take the global zIndex of series group.
+        if (series.markerGroup) {
+            series.markerGroup.add(series.group);
+            series.markerGroup.attr({
+                translateX: 0,
+                translateY: 0
             });
         }
+        series.group.attr({
+            zIndex: Math.max(
+                1,
+                (options3d.beta > 270 || options3d.beta < 90) ?
+                    options3d.depth - Math.round(series.zPadding || 0) :
+                    Math.round(series.zPadding || 0)
+            )
+        });
     }
 
     (bottomPoints as any).reversed = true;

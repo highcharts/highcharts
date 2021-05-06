@@ -18,8 +18,9 @@ import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type FormatUtilities from '../FormatUtilities';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
@@ -57,7 +58,7 @@ declare global {
         }
         interface AxisPlotBandsLabelOptions {
             align?: AlignValue;
-            formatter?: FormatterCallbackFunction<PlotLineOrBand>;
+            formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
             rotation?: number;
             style?: CSSObject;
             text?: string;
@@ -82,7 +83,7 @@ declare global {
         }
         interface AxisPlotLinesLabelOptions {
             align?: AlignValue;
-            formatter?: FormatterCallbackFunction<PlotLineOrBand>;
+            formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
             rotation?: number;
             style?: CSSObject;
             text?: string;
@@ -92,9 +93,6 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface PlotLineOrBandLabelFormatterCallbackFunction {
-            (this: PlotLineOrBand, value?: number, format?: string): string;
-        }
         interface AxisPlotLinesOptions {
             acrossPanes?: boolean;
             className?: string;
@@ -103,6 +101,7 @@ declare global {
             events?: any;
             id?: string;
             label?: AxisPlotLinesLabelOptions;
+            translatedValue?: number;
             value?: number;
             width?: number;
             zIndex?: number;
@@ -176,6 +175,7 @@ const {
     erase,
     extend,
     fireEvent,
+    isNumber,
     merge,
     objectEach,
     pick
@@ -210,7 +210,10 @@ class PlotLineOrBand {
     public isActive?: boolean;
     public eventsAdded?: boolean;
     public label?: SVGElement;
-    public options?: (Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions);
+    public options?: (
+        Highcharts.AxisPlotLinesOptions|
+        Highcharts.AxisPlotBandsOptions
+    );
     public svgElem?: SVGElement;
 
     /**
@@ -224,7 +227,7 @@ class PlotLineOrBand {
     public render(): (Highcharts.PlotLineOrBand|undefined) {
         fireEvent(this, 'render');
 
-        var plotLine = this,
+        let plotLine = this,
             axis = plotLine.axis,
             horiz = axis.horiz,
             log = axis.logarithmic,
@@ -399,7 +402,7 @@ class PlotLineOrBand {
         isBand?: boolean,
         zIndex?: number
     ): void {
-        var plotLine = this,
+        let plotLine = this,
             label = plotLine.label,
             renderer = plotLine.axis.chart.renderer,
             attribs: SVGAttributes,
@@ -475,7 +478,7 @@ class PlotLineOrBand {
     )): string | undefined {
         return defined(optionsLabel.formatter) ?
             (optionsLabel.formatter as
-              Highcharts.FormatterCallbackFunction<Highcharts.PlotLineOrBand>)
+              FormatUtilities.FormatterCallback<Highcharts.PlotLineOrBand>)
                 .call(this as any) :
             optionsLabel.text;
     }
@@ -1156,7 +1159,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         to: number,
         options: (Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions) = this.options
     ): SVGPath {
-        var toPath = this.getPlotLinePath({
+        let toPath = this.getPlotLinePath({
                 value: to,
                 force: true,
                 acrossPanes: options.acrossPanes
@@ -1173,8 +1176,10 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             plus = 1,
             isFlat: (boolean|undefined),
             outside =
-                (from < (this.min as any) && to < (this.min as any)) ||
-                (from > (this.max as any) && to > (this.max as any));
+                !isNumber(this.min) ||
+                !isNumber(this.max) ||
+                (from < this.min && to < this.min) ||
+                (from > this.max && to > this.max);
 
         if (path && toPath) {
 
@@ -1184,7 +1189,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 plus = 0;
             }
 
-            // Go over each subpath - for panes in Highstock
+            // Go over each subpath - for panes in Highcharts Stock
             for (i = 0; i < path.length; i += 2) {
                 const pathStart = path[i],
                     pathEnd = path[i + 1],
@@ -1295,7 +1300,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 'plotLines'
         )
     ): (Highcharts.PlotLineOrBand|undefined) {
-        var obj: Highcharts.PlotLineOrBand|undefined = new H.PlotLineOrBand(this, options),
+        let obj: Highcharts.PlotLineOrBand|undefined = new H.PlotLineOrBand(this, options),
             userOptions = this.userOptions;
 
         if (this.visible) {
@@ -1317,7 +1322,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             // Add it to the user options for exporting and Axis.update
             if (coll) {
                 // Workaround Microsoft/TypeScript issue #32693
-                var updatedOptions = (userOptions[coll] || []) as Array<T>;
+                const updatedOptions = (userOptions[coll] || []) as Array<T>;
                 updatedOptions.push(options);
                 userOptions[coll] = updatedOptions;
             }
@@ -1337,7 +1342,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @return {void}
      */
     removePlotBandOrLine: function (this: Highcharts.Axis, id: string): void {
-        var plotLinesAndBands = this.plotLinesAndBands,
+        let plotLinesAndBands = this.plotLinesAndBands,
             options = this.options,
             userOptions = this.userOptions,
             i = plotLinesAndBands.length;

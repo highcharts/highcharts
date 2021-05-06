@@ -16,6 +16,8 @@ import type {
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
+import O from '../Core/Options.js';
+const { setOptions } = O;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -26,8 +28,7 @@ const {
     getStyle,
     isArray,
     merge,
-    pick,
-    setOptions
+    pick
 } = U;
 
 declare module '../Core/Chart/ChartLike'{
@@ -157,7 +158,7 @@ declare global {
     }
 }
 
-var DIV = 'div',
+const DIV = 'div',
     SPAN = 'span',
     UL = 'ul',
     LI = 'li',
@@ -294,7 +295,36 @@ setOptions({
                 crosshairX: 'Crosshair X',
                 crosshairY: 'Crosshair Y',
                 tunnel: 'Tunnel',
-                background: 'Background'
+                background: 'Background',
+
+                // Indicators' params (#15170):
+                index: 'Index',
+                period: 'Period',
+                standardDeviation: 'Standard deviation',
+                periodTenkan: 'Tenkan period',
+                periodSenkouSpanB: 'Senkou Span B period',
+                periodATR: 'ATR period',
+                multiplierATR: 'ATR multiplier',
+                shortPeriod: 'Short period',
+                longPeriod: 'Long period',
+                signalPeriod: 'Signal period',
+                decimals: 'Decimals',
+                algorithm: 'Algorithm',
+                topBand: 'Top band',
+                bottomBand: 'Bottom band',
+                initialAccelerationFactor: 'Initial acceleration factor',
+                maxAccelerationFactor: 'Max acceleration factor',
+                increment: 'Increment',
+                multiplier: 'Multiplier',
+                ranges: 'Ranges',
+                highIndex: 'High index',
+                lowIndex: 'Low index',
+                deviation: 'Deviation',
+                xAxisUnit: 'x-axis unit',
+                factor: 'Factor',
+                fastAvgPeriod: 'Fast average period',
+                slowAvgPeriod: 'Slow average period',
+                average: 'Average'
             }
         }
     },
@@ -909,7 +939,7 @@ addEvent(Chart, 'afterGetContainer', function (): void {
 });
 
 addEvent(Chart, 'getMargins', function (): void {
-    var listWrapper = this.stockTools && this.stockTools.listWrapper,
+    const listWrapper = this.stockTools && this.stockTools.listWrapper,
         offsetWidth = listWrapper && (
             (
                 (listWrapper as any).startWidth +
@@ -922,11 +952,14 @@ addEvent(Chart, 'getMargins', function (): void {
         this.plotLeft += offsetWidth;
         this.spacing[3] += offsetWidth;
     }
+}, {
+    order: 0
 });
 
 ['beforeRender', 'beforeRedraw'].forEach((event: string): void => {
     addEvent(Chart, event, function (): void {
         if (this.stockTools) {
+            const optionsChart = this.options.chart as Highcharts.ChartOptions;
             const listWrapper = this.stockTools.listWrapper,
                 offsetWidth = listWrapper && (
                     (
@@ -939,7 +972,14 @@ addEvent(Chart, 'getMargins', function (): void {
             let dirty = false;
 
             if (offsetWidth && offsetWidth < this.plotWidth) {
-                this.spacingBox.x += offsetWidth;
+                const nextX = pick(
+                    optionsChart.spacingLeft,
+                    optionsChart.spacing && optionsChart.spacing[3],
+                    0
+                ) + offsetWidth;
+                const diff = nextX - this.spacingBox.x;
+                this.spacingBox.x = nextX;
+                this.spacingBox.width -= diff;
                 dirty = true;
             } else if (offsetWidth === 0) {
                 dirty = true;
@@ -1029,7 +1069,7 @@ class Toolbar {
      * @private
      */
     public init(): void {
-        var _self = this,
+        let _self = this,
             lang = this.lang,
             guiOptions = this.options,
             toolbar = this.toolbar,
@@ -1077,7 +1117,7 @@ class Toolbar {
         parentBtn: Record<string, HTMLDOMElement>,
         button: Highcharts.StockToolsGuiDefinitionsButtonsOptions
     ): void {
-        var _self = this,
+        let _self = this,
             submenuArrow = parentBtn.submenuArrow,
             buttonWrapper = parentBtn.buttonWrapper,
             buttonWidth: number = getStyle(buttonWrapper, 'width') as any,
@@ -1158,7 +1198,7 @@ class Toolbar {
         buttonWrapper: HTMLDOMElement,
         button: Highcharts.StockToolsGuiDefinitionsButtonsOptions
     ): void {
-        var _self = this,
+        let _self = this,
             submenuWrapper = this.submenu,
             lang = this.lang,
             menuWrapper = this.listWrapper,
@@ -1246,7 +1286,7 @@ class Toolbar {
         btnName: string,
         lang: Record<string, string> = {}
     ): Record<string, HTMLDOMElement> {
-        var btnOptions: Highcharts.StockToolsGuiDefinitionsButtonsOptions =
+        let btnOptions: Highcharts.StockToolsGuiDefinitionsButtonsOptions =
                 options[btnName] as any,
             items = btnOptions.items,
             classMapping = Toolbar.prototype.classMapping,
@@ -1265,7 +1305,6 @@ class Toolbar {
         mainButton = createElement(SPAN, {
             className: PREFIX + 'menu-item-btn'
         }, null as any, buttonWrapper);
-
 
         // submenu
         if (items && items.length) {
@@ -1294,7 +1333,7 @@ class Toolbar {
      *
      */
     public addNavigation(): void {
-        var stockToolbar = this,
+        const stockToolbar = this,
             wrapper = stockToolbar.wrapper;
 
         // arrow wrapper
@@ -1330,7 +1369,7 @@ class Toolbar {
      *
      */
     public scrollButtons(): void {
-        var targetY = 0,
+        let targetY = 0,
             _self = this,
             wrapper = _self.wrapper,
             toolbar = _self.toolbar,
@@ -1362,7 +1401,7 @@ class Toolbar {
      *
      */
     public createHTML(): void {
-        var stockToolbar = this,
+        let stockToolbar = this,
             chart = stockToolbar.chart,
             guiOptions = stockToolbar.options,
             container = chart.container,
@@ -1423,7 +1462,7 @@ class Toolbar {
      * @private
      */
     public showHideToolbar(): void {
-        var stockToolbar = this,
+        let stockToolbar = this,
             chart = this.chart,
             wrapper = stockToolbar.wrapper,
             toolbar = this.listWrapper,
@@ -1484,11 +1523,15 @@ class Toolbar {
         button: HTMLDOMElement,
         redraw?: boolean
     ): void {
-        var buttonWrapper = button.parentNode,
+        const buttonWrapper = button.parentNode,
             buttonWrapperClass = (buttonWrapper as any).classList.value,
             // main button in first level og GUI
             mainNavButton = (buttonWrapper as any).parentNode.parentNode;
 
+        // if the button is disabled, don't do anything
+        if (buttonWrapperClass.indexOf('highcharts-disabled-btn') > -1) {
+            return;
+        }
         // set class
         mainNavButton.className = '';
         if (buttonWrapperClass) {
@@ -1526,7 +1569,7 @@ class Toolbar {
      *
      */
     public unselectAllButtons(button: HTMLDOMElement): void {
-        var activeButtons = (button.parentNode as any)
+        const activeButtons = (button.parentNode as any)
             .querySelectorAll('.' + activeClass);
 
         [].forEach.call(activeButtons, function (
@@ -1557,7 +1600,7 @@ class Toolbar {
      * @private
      */
     public destroy(): void {
-        var stockToolsDiv = this.wrapper,
+        const stockToolsDiv = this.wrapper,
             parent = stockToolsDiv && stockToolsDiv.parentNode;
 
         this.eventsToUnbind.forEach(function (unbinder: Function): void {
@@ -1649,7 +1692,7 @@ extend(Chart.prototype, {
         this: Chart,
         options?: Highcharts.StockToolsOptions
     ): void {
-        var chartOptions: Highcharts.Options = this.options,
+        const chartOptions: Highcharts.Options = this.options,
             lang: Highcharts.LangOptions = chartOptions.lang as any,
             guiOptions = merge(
                 chartOptions.stockTools && chartOptions.stockTools.gui,
@@ -1669,7 +1712,7 @@ extend(Chart.prototype, {
 addEvent(NavigationBindings, 'selectButton', function (
     event: Record<string, HTMLDOMElement>
 ): void {
-    var button = event.button,
+    let button = event.button,
         className = PREFIX + 'submenu-wrapper',
         gui = this.chart.stockTools;
 
@@ -1689,7 +1732,7 @@ addEvent(NavigationBindings, 'selectButton', function (
 addEvent(NavigationBindings, 'deselectButton', function (
     event: Record<string, HTMLDOMElement>
 ): void {
-    var button = event.button,
+    let button = event.button,
         className = PREFIX + 'submenu-wrapper',
         gui = this.chart.stockTools;
 
@@ -1699,6 +1742,26 @@ addEvent(NavigationBindings, 'deselectButton', function (
             button = (button.parentNode as any).parentNode;
         }
         gui.selectButton(button);
+    }
+});
+
+// Check if the correct price indicator button is displayed, #15029.
+addEvent(H.Chart, 'render', function (): void {
+    const chart = this,
+        stockTools = chart.stockTools,
+        button = stockTools &&
+            stockTools.toolbar &&
+            stockTools.toolbar.querySelector('.highcharts-current-price-indicator') as any;
+
+    // Change the initial button background.
+    if (stockTools && chart.navigationBindings && chart.options.series && button) {
+        if (chart.navigationBindings.constructor.prototype.utils.isPriceIndicatorEnabled(chart.series)) {
+            button.firstChild.style['background-image'] =
+            'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
+        } else {
+            button.firstChild.style['background-image'] =
+            'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
+        }
     }
 });
 

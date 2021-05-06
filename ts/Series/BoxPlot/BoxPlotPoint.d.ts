@@ -20,7 +20,7 @@ import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type GradientColor from '../../Core/Color/GradientColor';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 /* *
@@ -48,7 +48,7 @@ declare class BoxPlotPoint extends ColumnPoint {
     public q3: number;
     public q3Plot: number;
     public series: BoxPlotSeries;
-    public shapeArgs: SVGAttributes;
+    public shapeArgs: BBoxObject;
     public stem: SVGElement;
     public stemColor: ColorType;
     public stemDashStyle: DashStyleValue;

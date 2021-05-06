@@ -67,6 +67,9 @@ class ZigzagIndicator extends SMAIndicator {
          * @excluding index, period
          */
         params: {
+            // Index and period are unchangeable, do not inherit (#15362)
+            index: void 0,
+            period: void 0,
             /**
              * The point index which indicator calculations will base - low
              * value.
@@ -111,7 +114,7 @@ class ZigzagIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: ZigzagParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var lowIndex: number = params.lowIndex as any,
+        let lowIndex: number = params.lowIndex as any,
             highIndex: number = params.highIndex as any,
             deviation = (params.deviation as any) / 100,
             deviations = {

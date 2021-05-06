@@ -21,6 +21,7 @@ const {
 
 declare module '../Core/PointerEvent' {
     interface PointerEvent {
+        deltaY?: number;
         /** @deprecated */
         wheelDelta: number;
     }
@@ -47,15 +48,18 @@ declare global {
 
 /* eslint-disable no-invalid-this */
 
+let totalWheelDelta = 0;
+let totalWheelDeltaTimer: number;
+
 // Extend the Pointer
-extend(Pointer.prototype, {
+extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
 
     // The event handler for the doubleclick event
     onContainerDblClick: function (
         this: Highcharts.MapPointer,
         e: PointerEvent
     ): void {
-        var chart = this.chart;
+        const chart = this.chart;
 
         e = this.normalize(e);
 
@@ -87,14 +91,30 @@ extend(Pointer.prototype, {
         this: Highcharts.MapPointer,
         e: PointerEvent
     ): void {
-        var chart = this.chart,
-            delta;
+        const chart = this.chart;
 
         e = this.normalize(e);
 
-        // Firefox uses e.detail, WebKit and IE uses wheelDelta
-        delta = e.detail || -((e.wheelDelta as any) / 120);
-        if (chart.isInsidePlot(
+        // Firefox uses e.deltaY or e.detail, WebKit and IE uses wheelDelta
+        const delta = e.deltaY || e.detail || -((e.wheelDelta as any) / 120);
+
+        // Wheel zooming on trackpads have different behaviours in Firefox vs
+        // WebKit. In Firefox the delta increments in steps by 1, so it is not
+        // distinguishable from true mouse wheel. Therefore we use this timer
+        // to avoid trackpad zooming going too fast and out of control. In
+        // WebKit however, the delta is < 1, so we simply disable animation in
+        // the `chart.mapZoom` call below.
+        if (Math.abs(delta) >= 1) {
+            totalWheelDelta += Math.abs(delta);
+            if (totalWheelDeltaTimer) {
+                clearTimeout(totalWheelDeltaTimer);
+            }
+            totalWheelDeltaTimer = setTimeout((): void => {
+                totalWheelDelta = 0;
+            }, 50);
+        }
+
+        if (totalWheelDelta < 10 && chart.isInsidePlot(
             e.chartX - chart.plotLeft,
             e.chartY - chart.plotTop
         )) {
@@ -106,7 +126,10 @@ extend(Pointer.prototype, {
                 chart.xAxis[0].toValue(e.chartX),
                 chart.yAxis[0].toValue(e.chartY),
                 e.chartX,
-                e.chartY
+                e.chartY,
+                // Delta less than 1 indicates stepless/trackpad zooming, avoid
+                // animation delaying the zoom
+                Math.abs(delta) < 1 ? false : void 0
             );
         }
     }
@@ -119,14 +142,14 @@ wrap(Pointer.prototype, 'zoomOption', function (
 ): void {
 
 
-    var mapNavigation = this.chart.options.mapNavigation;
+    const mapNavigation = this.chart.options.mapNavigation;
 
     // Pinch status
     if (pick(
         (mapNavigation as any).enableTouchZoom,
         (mapNavigation as any).enabled)
     ) {
-        (this.chart.options.chart as any).pinchType = 'xy';
+        this.chart.options.chart.pinchType = 'xy';
     }
 
     proceed.apply(this, [].slice.call(arguments, 1));
@@ -147,7 +170,7 @@ wrap(
         clip: any,
         lastValidTouch: any
     ): void {
-        var xBigger;
+        let xBigger;
 
         proceed.call(
             this,
@@ -160,7 +183,7 @@ wrap(
         );
 
         // Keep ratio
-        if ((this.chart.options.chart as any).type === 'map' && this.hasZoom) {
+        if (this.chart.options.chart.type === 'map' && this.hasZoom) {
             xBigger = transform.scaleX > transform.scaleY;
             this.pinchTranslateDirection(
                 !xBigger,

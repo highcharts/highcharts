@@ -180,7 +180,7 @@ QUnit.test(
 );
 
 QUnit.test('Input focus of previously hidden chart (#5231)', function (assert) {
-    Highcharts.StockChart({
+    Highcharts.stockChart({
         chart: {
             renderTo: 'container'
         },
@@ -211,7 +211,7 @@ QUnit.test('Input focus of previously hidden chart (#5231)', function (assert) {
 QUnit.test(
     "Focusable inputs after setting chart's zIndex (#8899)",
     assert => {
-        var chart = Highcharts.StockChart({
+        var chart = Highcharts.stockChart({
                 chart: {
                     renderTo: 'container'
                 },

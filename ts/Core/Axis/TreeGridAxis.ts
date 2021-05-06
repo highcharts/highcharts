@@ -13,6 +13,7 @@
 
 import type AxisTypes from './Types';
 import type Chart from '../Chart/Chart';
+import type ColorType from '../Color/ColorType';
 import type GanttPoint from '../../Series/Gantt/GanttPoint';
 import type GanttPointOptions from '../../Series/Gantt/GanttPointOptions';
 import type GanttSeries from '../../Series/Gantt/GanttSeries';
@@ -105,7 +106,7 @@ namespace TreeGridAxis {
      *
      * */
 
-    export interface AxisBreakObject extends AxisTypes.AxisBreakObject {
+    export interface AxisBreakObject extends Highcharts.XAxisBreaksOptions {
         showPoints: boolean;
     }
 
@@ -124,13 +125,25 @@ namespace TreeGridAxis {
         tickmarkOffset?: number;
     }
 
+
+    export interface LabelIconOptionsObject {
+        height?: number;
+        lineColor?: ColorType;
+        lineWidth?: number;
+        padding?: number;
+        type?: number;
+        width?: number;
+        x?: number;
+        y?: number;
+    }
+
     export interface LabelsOptions extends Highcharts.XAxisLabelsOptions {
         levels?: number;
-        symbol?: SVGAttributes;
+        symbol?: LabelIconOptionsObject;
     }
 
     export interface Options extends Highcharts.XAxisOptions {
-        labels?: LabelsOptions;
+        labels: LabelsOptions;
     }
 
     export interface TreeGridNode extends Highcharts.TreeNode {
@@ -185,8 +198,8 @@ namespace TreeGridAxis {
     function getBreakFromNode(
         node: GridNode,
         max: number
-    ): Partial<AxisBreakObject> {
-        var from = node.collapseStart || 0,
+    ): AxisBreakObject {
+        let from = node.collapseStart || 0,
             to = node.collapseEnd || 0;
 
         // In broken-axis, the axis.max is minimized until it is not within a
@@ -235,7 +248,7 @@ namespace TreeGridAxis {
         uniqueNames: boolean,
         numberOfSeries: number
     ): TreeGridObject {
-        var categories: Array<string> = [],
+        let categories: Array<string> = [],
             collapsedNodes: Array<GridNode> = [],
             mapOfIdToNode: Record<string, TreeGridNode> = {},
             mapOfPosToGridNode: Record<string, GridNode> = {},
@@ -247,7 +260,7 @@ namespace TreeGridAxis {
         const treeParams: Highcharts.TreeGetOptionsObject = {
             // After the children has been created.
             after: function (node: Highcharts.TreeNode): void {
-                var gridNode = mapOfPosToGridNode[(node as TreeGridNode).pos],
+                let gridNode = mapOfPosToGridNode[(node as TreeGridNode).pos],
                     height = 0,
                     descendants = 0;
 
@@ -263,7 +276,7 @@ namespace TreeGridAxis {
             },
             // Before the children has been created.
             before: function (node: Highcharts.TreeNode): void {
-                var data = isObject(node.data, true) ? (node as TreeGridNode).data : {},
+                let data = isObject(node.data, true) ? (node as TreeGridNode).data : {},
                     name = isString(data.name) ? data.name : '',
                     parentNode = mapOfIdToNode[node.parent],
                     parentGridNode = (
@@ -342,7 +355,7 @@ namespace TreeGridAxis {
                 start: number,
                 result: Record<string, GridNode>
             ): Record<string, GridNode> {
-                var nodes = gridNode.nodes,
+                let nodes = gridNode.nodes,
                     end = start + (start === -1 ? 0 : numberOfSeries - 1),
                     diff = (end - start) / 2,
                     padding = 0.5,
@@ -419,7 +432,7 @@ namespace TreeGridAxis {
             return axis.options.type === 'treegrid';
         }) as Array<TreeGridAxis>).forEach(
             function (axis: TreeGridAxis): void {
-                var options = axis.options || {},
+                let options = axis.options || {},
                     labelOptions = options.labels,
                     uniqueNames = options.uniqueNames,
                     numberOfSeries = 0,
@@ -497,7 +510,7 @@ namespace TreeGridAxis {
 
                     // Update yData now that we have calculated the y values
                     axis.series.forEach(function (series): void {
-                        var axisData = (series.options.data || []).map(function (
+                        const axisData = (series.options.data || []).map(function (
                             d: (PointOptions|PointShortOptions)
                         ): (PointOptions|PointShortOptions) {
 
@@ -561,7 +574,7 @@ namespace TreeGridAxis {
             ticks = axis.ticks;
         let tick = ticks[pos],
             levelOptions,
-            options: (TreeGridAxis.Options | undefined),
+            options: (DeepPartial<TreeGridAxis.Options> | undefined),
             gridNode;
 
         if (
@@ -610,19 +623,13 @@ namespace TreeGridAxis {
     ): SizeObject {
         const axis = this,
             options = axis.options,
-            labelOptions = options && options.labels,
-            indentation = (
-                labelOptions && isNumber(labelOptions.indentation) ?
-                    labelOptions.indentation :
-                    0
-            ),
             retVal = proceed.apply(axis, Array.prototype.slice.call(arguments, 1)),
-            isTreeGrid = axis.options.type === 'treegrid';
+            isTreeGrid = options.type === 'treegrid';
         let treeDepth: number;
 
         if (isTreeGrid && axis.treeGrid.mapOfPosToGridNode) {
             treeDepth = axis.treeGrid.mapOfPosToGridNode[-1].height || 0;
-            retVal.width += indentation * (treeDepth - 1);
+            retVal.width += options.labels.indentation * (treeDepth - 1);
         }
 
         return retVal;
@@ -688,7 +695,11 @@ namespace TreeGridAxis {
             // and chart height is set, set axis.isDirty
             // to ensure collapsing works (#12012)
             addEvent(axis, 'afterBreaks', function (): void {
-                if (axis.coll === 'yAxis' && !axis.staticScale && axis.chart.options.chart?.height) {
+                if (
+                    axis.coll === 'yAxis' &&
+                    !axis.staticScale &&
+                    axis.chart.options.chart.height
+                ) {
                     axis.isDirty = true;
                 }
             });
@@ -983,7 +994,7 @@ namespace TreeGridAxis {
 
             return Object.keys(axis.treeGrid.mapOfPosToGridNode || {}).reduce(
                 function (arr: Array<number>, key: string): Array<number> {
-                    var pos = +key;
+                    const pos = +key;
                     if (
                         pos >= roundedMin &&
                         pos <= roundedMax &&

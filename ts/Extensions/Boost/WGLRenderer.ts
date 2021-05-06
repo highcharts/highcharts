@@ -147,7 +147,7 @@ function GLRenderer(
     postRenderCallback: Function
 ): (false|Highcharts.BoostGLRenderer) {
     //  // Shader
-    var shader: Highcharts.BoostGLShader = false as any,
+    let shader: Highcharts.BoostGLShader = false as any,
         // Vertex buffers - keyed on shader attribute name
         vbuffer: Highcharts.BoostGLVertexBuffer = false as any,
         vlen = 0,
@@ -214,7 +214,7 @@ function GLRenderer(
      * @private
      */
     function seriesPointCount(series: Series): number {
-        var isStacked: boolean,
+        let isStacked: boolean,
             xData: Array<number>,
             s: number;
 
@@ -247,7 +247,7 @@ function GLRenderer(
      * @private
      */
     function allocateBuffer(chart: Chart): void {
-        var s = 0;
+        let s = 0;
 
         if (!settings.usePreallocated) {
             return;
@@ -266,7 +266,7 @@ function GLRenderer(
      * @private
      */
     function allocateBufferForSingleSeries(series: Series): void {
-        var s = 0;
+        let s = 0;
 
         if (!settings.usePreallocated) {
             return;
@@ -286,7 +286,7 @@ function GLRenderer(
      * @param {number} height - the height of the viewport in pixels
      */
     function orthoMatrix(width: number, height: number): Array<number> {
-        var near = 0,
+        const near = 0,
             far = 1;
 
         return [
@@ -324,7 +324,7 @@ function GLRenderer(
         series: Series,
         inst: Highcharts.BoostGLSeriesObject
     ): void {
-        var isRange = (
+        let isRange = (
                 series.pointArrayMap &&
                 series.pointArrayMap.join(',') === 'low,high'
             ),
@@ -369,7 +369,6 @@ function GLRenderer(
             lastX: number = false as any,
             lastY: number = false as any,
             minVal: (number|undefined),
-            pcolor: Color.RGBA,
             scolor: Color.RGBA,
             sdata = isStacked ? series.data : (xData || rawData),
             closestLeft = { x: Number.MAX_VALUE, y: 0 },
@@ -397,6 +396,7 @@ function GLRenderer(
             isXInside = false,
             isYInside = true,
             firstPoint = true,
+            zoneAxis = options.zoneAxis || 'y',
             zones = options.zones || false,
             zoneDefColor: (Color|undefined) = false as any,
             threshold: number = options.threshold as any,
@@ -569,17 +569,18 @@ function GLRenderer(
             }
 
             points.forEach(function (point: Point): void {
-                var plotY = point.plotY,
-                    shapeArgs: SVGAttributes,
+                let plotY = point.plotY,
                     swidth,
                     pointAttr;
 
                 if (
                     typeof plotY !== 'undefined' &&
                     !isNaN(plotY) &&
-                    point.y !== null
+                    point.y !== null &&
+                    point.shapeArgs
                 ) {
-                    shapeArgs = point.shapeArgs as any;
+                    let { x = 0, y = 0, width = 0, height = 0 } =
+                        point.shapeArgs;
 
                     pointAttr = chart.styledMode ?
                         (point.series as Highcharts.ColorMapSeries)
@@ -610,13 +611,7 @@ function GLRenderer(
                         scolor[1] /= 255.0;
                         scolor[2] /= 255.0;
 
-                        pushRect(
-                            shapeArgs.x,
-                            shapeArgs.y,
-                            shapeArgs.width,
-                            shapeArgs.height,
-                            scolor
-                        );
+                        pushRect(x, y, width, height, scolor);
 
                         swidth /= 2;
                     }
@@ -630,17 +625,17 @@ function GLRenderer(
                     // bottom-right. This causes a vertical and horizontal flip
                     // in the resulting image, making it rotated 180 degrees.
                     if (series.type === 'heatmap' && chart.inverted) {
-                        shapeArgs.x = xAxis.len - shapeArgs.x;
-                        shapeArgs.y = yAxis.len - shapeArgs.y;
-                        shapeArgs.width = -shapeArgs.width;
-                        shapeArgs.height = -shapeArgs.height;
+                        x = xAxis.len - x;
+                        y = yAxis.len - y;
+                        width = -width;
+                        height = -height;
                     }
 
                     pushRect(
-                        shapeArgs.x + swidth,
-                        shapeArgs.y + swidth,
-                        shapeArgs.width - (swidth * 2),
-                        shapeArgs.height - (swidth * 2),
+                        x + swidth,
+                        y + swidth,
+                        width - (swidth * 2),
+                        height - (swidth * 2),
                         pcolor
                     );
                 }
@@ -660,6 +655,10 @@ function GLRenderer(
 
         while (i < sdata.length - 1) {
             d = sdata[++i];
+
+            if (typeof d === 'undefined') {
+                continue;
+            }
 
             // px = x = y = z = nx = low = false;
             // chartDestroyed = typeof chart.index === 'undefined';
@@ -817,18 +816,26 @@ function GLRenderer(
 
             // Note: Boost requires that zones are sorted!
             if (zones) {
-                pcolor = (zoneDefColor as any).rgba;
+                pcolor = (zoneDefColor as any).rgba.slice();
                 zones.some(function ( // eslint-disable-line no-loop-func
                     zone: SeriesZonesOptions,
                     i: number
                 ): boolean {
-                    var last: SeriesZonesOptions =
-                            (zones as any)[i - 1];
+                    const last: SeriesZonesOptions = (zones as any)[i - 1];
+
+                    if (zoneAxis === 'x') {
+                        if (typeof zone.value !== 'undefined' && x <= zone.value) {
+                            if (!last || x >= (last.value as any)) {
+                                pcolor = color(zone.color).rgba as any;
+                            }
+                            return true;
+                        }
+                        return false;
+                    }
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
                         if (!last || y >= (last.value as any)) {
                             pcolor = color(zone.color).rgba as any;
-
                         }
                         return true;
                     }
@@ -1207,7 +1214,7 @@ function GLRenderer(
             s: Highcharts.BoostGLSeriesObject,
             si: number
         ): void {
-            var options = s.series.options,
+            let options = s.series.options,
                 shapeOptions = options.marker,
                 sindex,
                 lineWidth = (
@@ -1444,7 +1451,7 @@ function GLRenderer(
      * @param canvas {HTMLCanvas} - the canvas to render to
      */
     function init(canvas?: HTMLCanvasElement, noFlush?: boolean): boolean {
-        var i = 0,
+        let i = 0,
             contexts = [
                 'webgl',
                 'experimental-webgl',
@@ -1502,7 +1509,7 @@ function GLRenderer(
             name: string,
             fn: Highcharts.BoostGLTextureCallbackFunction
         ): void {
-            var props: Highcharts.BoostGLTextureObject = {
+            const props: Highcharts.BoostGLTextureObject = {
                     isReady: false,
                     texture: doc.createElement('canvas'),
                     handle: gl.createTexture()

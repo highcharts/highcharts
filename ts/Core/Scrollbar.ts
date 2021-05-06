@@ -138,6 +138,7 @@ declare global {
             public removeEvents(): void;
             public render(): void;
             public setRange(from: number, to: number): void;
+            public shouldUpdateExtremes(eventType: string): boolean;
             public update(options: Highcharts.ScrollbarOptions): void;
             public updatePosition(from: number, to: number): void;
         }
@@ -195,8 +196,8 @@ const swapXY = H.swapXY = function (
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
- * A reusable scrollbar, internally used in Highstock's navigator and optionally
- * on individual axes.
+ * A reusable scrollbar, internally used in Highcharts Stock's
+ * navigator and optionally on individual axes.
  *
  * @private
  * @class
@@ -534,7 +535,7 @@ class Scrollbar {
      * @return {void}
      */
     public addEvents(): void {
-        var buttonsOrder = this.options.inverted ? [1, 0] : [0, 1],
+        let buttonsOrder = this.options.inverted ? [1, 0] : [0, 1],
             buttons = this.scrollbarButtons,
             bar = this.scrollbarGroup.element,
             track = this.track.element,
@@ -575,7 +576,7 @@ class Scrollbar {
 
     private buttonToMaxClick(e: PointerEvent): void {
         const scroller = this;
-        var range = (scroller.to - scroller.from) * pick(scroller.options.step, 0.2);
+        const range = (scroller.to - scroller.from) * pick(scroller.options.step, 0.2);
 
         scroller.updatePosition(scroller.from + range, scroller.to + range);
         fireEvent(scroller, 'changed', {
@@ -588,7 +589,7 @@ class Scrollbar {
 
     private buttonToMinClick(e: PointerEvent): void {
         const scroller = this;
-        var range = correctFloat(scroller.to - scroller.from) *
+        const range = correctFloat(scroller.to - scroller.from) *
             pick(scroller.options.step, 0.2);
 
         scroller.updatePosition(
@@ -616,7 +617,7 @@ class Scrollbar {
      *         Local position {chartX, chartY}
      */
     public cursorToScrollbarPosition(normalizedEvent: PointerEvent): Record<string, number> {
-        var scroller = this,
+        const scroller = this,
             options = scroller.options,
             minWidthDifference =
                 (options.minWidth as any) > (scroller.calculatedWidth as any) ?
@@ -644,7 +645,7 @@ class Scrollbar {
      */
     public destroy(): void {
 
-        var scroller = this.chart.scroller;
+        const scroller = this.chart.scroller;
 
         // Disconnect events added in addEvents
         this.removeEvents();
@@ -684,7 +685,7 @@ class Scrollbar {
      * @return {void}
      */
     public drawScrollbarButton(index: number): void {
-        var scroller = this,
+        let scroller = this,
             renderer = scroller.renderer,
             scrollbarButtons = scroller.scrollbarButtons,
             options = scroller.options,
@@ -777,7 +778,7 @@ class Scrollbar {
 
     private mouseDownHandler(e: PointerEvent): void {
         const scroller = this;
-        var normalizedEvent = scroller.chart.pointer.normalize(e),
+        const normalizedEvent = scroller.chart.pointer.normalize(e),
             mousePosition = scroller.cursorToScrollbarPosition(
                 normalizedEvent
             );
@@ -795,7 +796,7 @@ class Scrollbar {
      */
     private mouseMoveHandler(e: PointerEvent): void {
         const scroller = this;
-        var normalizedEvent = scroller.chart.pointer.normalize(e),
+        let normalizedEvent = scroller.chart.pointer.normalize(e),
             options = scroller.options,
             direction: ('chartY'|'chartX') = options.vertical ? 'chartY' : 'chartX',
             initPositions = scroller.initPositions || [],
@@ -874,7 +875,7 @@ class Scrollbar {
      * @return {void}
      */
     public position(x: number, y: number, width: number, height: number): void {
-        var scroller = this,
+        let scroller = this,
             options = scroller.options,
             vertical = options.vertical,
             xOffset = height,
@@ -941,7 +942,7 @@ class Scrollbar {
      * @function Highcharts.Scrollbar#render
      */
     public render(): void {
-        var scroller = this,
+        let scroller = this,
             renderer = scroller.renderer,
             options = scroller.options,
             size = scroller.size,
@@ -1036,7 +1037,7 @@ class Scrollbar {
      * @return {void}
      */
     public setRange(from: number, to: number): void {
-        var scroller = this,
+        let scroller = this,
             options = scroller.options,
             vertical = options.vertical,
             minWidth = options.minWidth,
@@ -1119,9 +1120,32 @@ class Scrollbar {
         scroller.rendered = true;
     }
 
+    /**
+     * Checks if the extremes should be updated in response to a scrollbar
+     * change event.
+     *
+     * @private
+     * @function Highcharts.Scrollbar#shouldUpdateExtremes
+     * @param  {string} eventType
+     * @return {boolean}
+     */
+    public shouldUpdateExtremes(eventType: string): boolean {
+        return (
+            pick(
+                this.options.liveRedraw,
+                H.svg && !H.isTouchDevice && !this.chart.isBoosting
+            ) ||
+            // Mouseup always should change extremes
+            eventType === 'mouseup' ||
+            eventType === 'touchend' ||
+            // Internal events
+            !defined(eventType)
+        );
+    }
+
     public trackClick(e: PointerEvent): void {
         const scroller = this;
-        var normalizedEvent = scroller.chart.pointer.normalize(e),
+        const normalizedEvent = scroller.chart.pointer.normalize(e),
             range = scroller.to - scroller.from,
             top = scroller.y + scroller.scrollbarTop,
             left = scroller.x + scroller.scrollbarLeft;

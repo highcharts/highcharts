@@ -38,7 +38,7 @@ declare global {
             defs?: Record<string, ASTNode>;
         }
         interface SVGRenderer {
-            addMarker(id: string, markerOptions: SVGAttributes): SVGElement;
+            addMarker(id: string, markerOptions: ASTNode): SVGElement;
         }
     }
 }
@@ -77,14 +77,13 @@ declare global {
  * @since        6.0.0
  * @optionparent defs
  */
-var defaultMarkers: Record<string, Highcharts.ASTNode> = {
+const defaultMarkers: Record<string, Highcharts.ASTNode> = {
     /**
      * @type {Highcharts.ASTNode}
      */
     arrow: {
         tagName: 'marker',
         attributes: {
-            display: 'none',
             id: 'arrow',
             refY: 5,
             refX: 9,
@@ -108,7 +107,6 @@ var defaultMarkers: Record<string, Highcharts.ASTNode> = {
     'reverse-arrow': {
         tagName: 'marker',
         attributes: {
-            display: 'none',
             id: 'reverse-arrow',
             refY: 5,
             refX: 1,
@@ -128,20 +126,23 @@ var defaultMarkers: Record<string, Highcharts.ASTNode> = {
 
 SVGRenderer.prototype.addMarker = function (
     id: string,
-    markerOptions: SVGAttributes
+    markerOptions: Highcharts.ASTNode
 ): SVGElement {
-    var options: Highcharts.ASTNode = { attributes: { id } };
+    const options: Highcharts.ASTNode = { attributes: { id } };
 
-    var attrs: SVGAttributes = {
-        stroke: markerOptions.color || 'none',
-        fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
+    const attrs: SVGAttributes = {
+        stroke: (markerOptions as any).color || 'none',
+        fill: (markerOptions as any).color || 'rgba(0, 0, 0, 0.75)'
     };
 
-    options.children = markerOptions.children.map(function (
-        child: Highcharts.ASTNode
-    ): Highcharts.ASTNode {
-        return merge(attrs, child);
-    });
+    options.children = (
+        markerOptions.children &&
+        markerOptions.children.map(function (
+            child: Highcharts.ASTNode
+        ): Highcharts.ASTNode {
+            return merge(attrs, child);
+        })
+    );
 
     const ast = merge(true, {
         attributes: {
@@ -153,7 +154,7 @@ SVGRenderer.prototype.addMarker = function (
         }
     }, markerOptions, options);
 
-    var marker = this.definition(ast);
+    const marker = this.definition(ast);
 
     marker.id = id;
 
@@ -176,7 +177,7 @@ function createMarkerSetter(markerType: string): Highcharts.AnnotationMarkerMixi
  * @mixin
  * @name Highcharts.AnnotaitonMarkerMixin
  */
-var markerMixin: Highcharts.AnnotationMarkerMixin = {
+const markerMixin: Highcharts.AnnotationMarkerMixin = {
     markerEndSetter: createMarkerSetter('marker-end'),
     markerStartSetter: createMarkerSetter('marker-start'),
 
@@ -186,7 +187,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
      * @param {Highcharts.AnnotationControllablePath} item
      */
     setItemMarkers: function (item: ControllablePath): void {
-        var itemOptions = item.options,
+        const itemOptions = item.options,
             chart = item.chart,
             defs = chart.options.defs,
             fill = itemOptions.fill,
@@ -195,7 +196,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
                 itemOptions.stroke,
 
             setMarker = function (markerType: ('markerEnd'|'markerStart')): void {
-                var markerId = itemOptions[markerType],
+                let markerId = itemOptions[markerType],
                     def,
                     predefinedMarker,
                     key,
@@ -207,7 +208,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
 
                         if (
                             (
-                                markerId === def.attributes?.id ||
+                                markerId === (def.attributes && def.attributes.id) ||
                                 // Legacy, for
                                 // unit-tests/annotations/annotations-shapes
                                 markerId === (def as any).id
@@ -239,16 +240,17 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
 addEvent(Chart, 'afterGetContainer', function (): void {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
-    objectEach(this.options.defs, function (def): void {
-        const attributes = def.attributes;
-        if (
-            def.tagName === 'marker' &&
-            attributes &&
-            attributes.display !== 'none'
-        ) {
-            this.renderer.addMarker(attributes.id, def);
-        }
-    }, this);
+    // objectEach(this.options.defs, function (def): void {
+    //     const attributes = def.attributes;
+    //     if (
+    //         def.tagName === 'marker' &&
+    //         attributes &&
+    //         attributes.id &&
+    //         attributes.display !== 'none'
+    //     ) {
+    //         this.renderer.addMarker(attributes.id, def);
+    //     }
+    // }, this);
 });
 
 export default markerMixin;

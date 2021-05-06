@@ -400,7 +400,7 @@ class GaugeSeries extends Series {
      */
     public translate(): void {
 
-        var series = this,
+        const series = this,
             yAxis = series.yAxis,
             options = series.options,
             center = yAxis.center;
@@ -409,7 +409,7 @@ class GaugeSeries extends Series {
 
         series.points.forEach(function (point: GaugePoint): void {
 
-            var dialOptions: GaugeSeriesDialOptions =
+            let dialOptions: GaugeSeriesDialOptions =
                     merge(options.dial, point.dial) as any,
                 radius = (
                     (pInt(pick(dialOptions.radius, '80%')) * center[2]) /
@@ -472,7 +472,7 @@ class GaugeSeries extends Series {
      */
     public drawPoints(): void {
 
-        var series = this,
+        const series = this,
             chart = series.chart,
             center = series.yAxis.center,
             pivot = series.pivot,
@@ -482,7 +482,7 @@ class GaugeSeries extends Series {
 
         series.points.forEach(function (point: GaugePoint): void {
 
-            var graphic = point.graphic,
+            const graphic = point.graphic,
                 shapeArgs = point.shapeArgs,
                 d = shapeArgs.d,
                 dialOptions = merge(options.dial, point.dial); // #1233
@@ -547,13 +547,13 @@ class GaugeSeries extends Series {
      * @private
      */
     public animate(init?: boolean): void {
-        var series = this;
+        const series = this;
 
         if (!init) {
             series.points.forEach(function (
                 point: GaugePoint
             ): void {
-                var graphic = point.graphic;
+                const graphic = point.graphic;
 
                 if (graphic) {
                     // start value
@@ -622,6 +622,7 @@ class GaugeSeries extends Series {
 interface GaugeSeries {
     angular: boolean;
     directTouch: boolean;
+    drawGraph(): void;
     fixedBox: boolean;
     forceDL: boolean;
     noSharedTooltip: boolean;
@@ -633,7 +634,7 @@ extend(GaugeSeries.prototype, {
     // and this will be used on the axes
     angular: true,
     directTouch: true, // #5063
-    drawGraph: noop as any,
+    drawGraph: noop,
     drawTracker: ColumnSeries.prototype.drawTracker,
     fixedBox: true,
     forceDL: true,

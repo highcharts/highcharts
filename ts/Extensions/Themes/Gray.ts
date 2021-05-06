@@ -14,8 +14,8 @@
 
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
-const { setOptions } = U;
+import O from '../../Core/Options.js';
+const { setOptions } = O;
 
 H.theme = {
     colors: ['#DDDF0D', '#7798BF', '#55BF3B', '#DF5353', '#aaeeee',
@@ -122,8 +122,6 @@ H.theme = {
             color: '#FFF'
         }
     },
-
-
     plotOptions: {
         series: {
             dataLabels: {
@@ -153,13 +151,6 @@ H.theme = {
             lineColor: 'white'
         }
     } as SeriesTypePlotOptions,
-
-    toolbar: {
-        itemStyle: {
-            color: '#CCC'
-        }
-    },
-
     navigation: {
         buttonOptions: {
             symbolStroke: '#DDDDDD',
@@ -175,7 +166,6 @@ H.theme = {
             }
         }
     },
-
     // scroll charts
     rangeSelector: {
         buttonTheme: {
@@ -228,7 +218,6 @@ H.theme = {
             color: 'silver'
         }
     },
-
     navigator: {
         handles: {
             backgroundColor: '#666',
@@ -241,7 +230,6 @@ H.theme = {
             lineColor: '#A6C7ED'
         }
     },
-
     scrollbar: {
         barBackgroundColor: {
             linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },

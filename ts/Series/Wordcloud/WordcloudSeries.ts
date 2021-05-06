@@ -201,13 +201,13 @@ class WordcloudSeries extends ColumnSeries {
      *
      */
     public bindAxes(): void {
-        var wordcloudAxis = {
+        const wordcloudAxis = {
             endOnTick: false,
             gridLineWidth: 0,
             lineWidth: 0,
             maxPadding: 0,
             startOnTick: false,
-            title: null,
+            title: void 0,
             tickPositions: []
         };
 
@@ -220,7 +220,7 @@ class WordcloudSeries extends ColumnSeries {
         point: WordcloudPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var attribs = H.seriesTypes.column.prototype
+        const attribs = H.seriesTypes.column.prototype
             .pointAttribs.call(this, point, state);
 
         delete attribs.stroke;
@@ -253,7 +253,7 @@ class WordcloudSeries extends ColumnSeries {
         maxFontSize?: number,
         minFontSize?: number
     ): number {
-        var weight = isNumber(relativeWeight) ? relativeWeight : 0,
+        const weight = isNumber(relativeWeight) ? relativeWeight : 0,
             max = isNumber(maxFontSize) ? maxFontSize : 1,
             min = isNumber(minFontSize) ? minFontSize : 1;
 
@@ -261,7 +261,7 @@ class WordcloudSeries extends ColumnSeries {
     }
 
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             hasRendered = series.hasRendered,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
@@ -308,7 +308,7 @@ class WordcloudSeries extends ColumnSeries {
         // Get the dimensions for each word.
         // Used in calculating the playing field.
         data.forEach(function (point: WordcloudPoint): void {
-            var relativeWeight = 1 / maxWeight * point.weight,
+            let relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
                     options.maxFontSize,
@@ -338,7 +338,7 @@ class WordcloudSeries extends ColumnSeries {
         });
         // Draw all the points.
         data.forEach(function (point: WordcloudPoint): void {
-            var relativeWeight = 1 / maxWeight * point.weight,
+            let relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
                     options.maxFontSize,
@@ -364,7 +364,9 @@ class WordcloudSeries extends ColumnSeries {
                         x: placement.x,
                         y: placement.y,
                         text: point.name,
-                        rotation: placement.rotation
+                        rotation: isNumber(placement.rotation) ?
+                            placement.rotation :
+                            void 0
                     }
                 ),
                 polygon = getPolygon(
@@ -403,8 +405,8 @@ class WordcloudSeries extends ColumnSeries {
             // Check if point was placed, if so delete it, otherwise place it
             // on the correct positions.
             if (isObject(delta)) {
-                attr.x += delta.x;
-                attr.y += delta.y;
+                attr.x = (attr.x || 0) + delta.x;
+                attr.y = (attr.y || 0) + delta.y;
                 rectangle.left += delta.x;
                 rectangle.right += delta.x;
                 rectangle.top += delta.y;
@@ -412,6 +414,7 @@ class WordcloudSeries extends ColumnSeries {
                 field = WordcloudUtils.updateFieldBoundaries(field, rectangle);
                 placed.push(point);
                 point.isNull = false;
+                point.isInside = true; // #15447
             } else {
                 point.isNull = true;
             }
@@ -456,7 +459,7 @@ class WordcloudSeries extends ColumnSeries {
     }
 
     public hasData(): boolean {
-        var series = this;
+        const series = this;
 
         return (
             isObject(series) as any &&
@@ -467,7 +470,7 @@ class WordcloudSeries extends ColumnSeries {
     }
 
     public getPlotBox(): Highcharts.SeriesPlotBoxObject {
-        var series = this,
+        const series = this,
             chart = series.chart,
             inverted = chart.inverted,
             // Swap axes for inverted (#2339)
@@ -502,10 +505,10 @@ interface WordcloudSeries {
 
 extend(WordcloudSeries.prototype, {
     animate: Series.prototype.animate,
-    animateDrilldown: noop as any,
-    animateDrillupFrom: noop as any,
+    animateDrilldown: noop,
+    animateDrillupFrom: noop,
     pointClass: WordcloudPoint,
-    setClip: noop as any,
+    setClip: noop,
 
     // Strategies used for deciding rotation and initial position of a word. To
     // implement a custom strategy, have a look at the function random for
@@ -515,7 +518,7 @@ extend(WordcloudSeries.prototype, {
             point: WordcloudPoint,
             options: WordcloudSeries.WordcloudPlacementOptionsObject
         ): WordcloudSeries.WordcloudPlacementObject {
-            var field = options.field,
+            const field = options.field,
                 r = options.rotation;
 
             return {
@@ -528,7 +531,7 @@ extend(WordcloudSeries.prototype, {
             point: WordcloudPoint,
             options: WordcloudSeries.WordcloudPlacementOptionsObject
         ): WordcloudSeries.WordcloudPlacementObject {
-            var r = options.rotation;
+            const r = options.rotation;
 
             return {
                 x: 0,
@@ -552,7 +555,7 @@ extend(WordcloudSeries.prototype, {
         isPolygonsColliding: isPolygonsColliding,
         rotate2DToOrigin: rotate2DToOrigin,
         rotate2DToPoint: rotate2DToPoint
-    }
+    } as any
 });
 
 /* *

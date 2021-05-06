@@ -26,7 +26,9 @@ const {
 declare module './Chart/ChartLike' {
     interface ChartLike {
         currentResponsive?: Highcharts.ResponsiveCurrentObject;
-        currentOptions(options: Highcharts.Options): Highcharts.Options;
+        currentOptions(
+            options: Partial<Highcharts.Options>
+        ): Partial<Highcharts.Options>;
         matchResponsiveRule(
             rule: Highcharts.ResponsiveRulesOptions,
             matches: Array<string>
@@ -64,9 +66,9 @@ declare global {
             condition?: ResponsiveRulesConditionOptions;
         }
         interface ResponsiveCurrentObject {
-            mergedOptions: Options;
+            mergedOptions: Partial<Options>;
             ruleIds: string;
-            undoOptions: Options;
+            undoOptions: Partial<Options>;
         }
     }
 }
@@ -217,7 +219,7 @@ Chart.prototype.setResponsive = function (
     redraw?: boolean,
     reset?: boolean
 ): void {
-    var options = this.options.responsive,
+    let options = this.options.responsive,
         ruleIds = [] as Array<string>,
         currentResponsive = this.currentResponsive,
         currentRuleIds,
@@ -236,7 +238,7 @@ Chart.prototype.setResponsive = function (
     }
 
     // Merge matching rules
-    var mergedOptions = merge.apply(0, ruleIds.map(function (
+    const mergedOptions = merge.apply(0, ruleIds.map(function (
         ruleId: string
     ): (Highcharts.Options|undefined) {
         return (find(
@@ -245,7 +247,7 @@ Chart.prototype.setResponsive = function (
                 return rule._id === ruleId;
             }
         ) as any).chartOptions;
-    }) as any) as Highcharts.Options;
+    }) as any) as Partial<Highcharts.Options>;
 
     mergedOptions.isResponsiveOptions = true;
 
@@ -293,7 +295,7 @@ Chart.prototype.matchResponsiveRule = function (
     matches: Array<string>
 ): void {
 
-    var condition =
+    const condition =
             rule.condition as Highcharts.ResponsiveRulesConditionOptions,
         fn = condition.callback || function (this: Chart): boolean {
             return (
@@ -325,27 +327,24 @@ Chart.prototype.matchResponsiveRule = function (
  */
 Chart.prototype.currentOptions = function (
     options: Highcharts.Options
-): Highcharts.Options {
+): Partial<Highcharts.Options> {
 
-    var chart = this,
-        ret = {} as Record<string, any>;
+    const chart = this,
+        ret = {};
 
     /**
      * Recurse over a set of options and its current values,
      * and store the current values in the ret object.
      */
     function getCurrent(
-        options: Highcharts.Options,
-        curr: Record<string, any>,
-        ret: Record<string, any>,
+        options: AnyRecord,
+        curr: AnyRecord,
+        ret: AnyRecord,
         depth: number
     ): void {
-        var i;
+        let i;
 
-        objectEach(options, function (
-            val: Record<string, any>,
-            key: string
-        ): void {
+        objectEach(options, function (val, key): void {
             if (
                 !depth &&
                 chart.collectionsWithUpdate.indexOf(key) > -1 &&

@@ -33,11 +33,11 @@ const { colorMapSeriesMixin } = ColorMapMixin;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import mapModule from '../../Maps/Map.js';
+import MapChart from '../../Core/Chart/MapChart.js';
 const {
     maps,
     splitPath
-} = mapModule;
+} = MapChart;
 import MapPoint from './MapPoint.js';
 import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
@@ -420,7 +420,7 @@ class MapSeries extends ScatterSeries {
 
     public mapData?: unknown;
 
-    public mapMap?: Record<string, any>;
+    public mapMap?: AnyRecord;
 
     public mapTitle?: string;
 
@@ -461,7 +461,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public animate(init?: boolean): void {
-        var chart = this.chart,
+        let chart = this.chart,
             animation = this.options.animation,
             group = this.group,
             xAxis = this.xAxis,
@@ -506,7 +506,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public animateDrilldown(init?: boolean): void {
-        var toBox = this.chart.plotBox,
+        let toBox = this.chart.plotBox,
             level: Highcharts.DrilldownLevelObject =
                 (this.chart.drilldownLevels as any)[
                     (this.chart.drilldownLevels as any).length - 1
@@ -598,7 +598,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             group = series.group,
@@ -656,7 +656,7 @@ class MapSeries extends ScatterSeries {
                 point: MapPoint
             ): void {
                 if (point.graphic) {
-                    var className = '';
+                    let className = '';
                     if (point.name) {
                         className +=
                             'highcharts-name-' +
@@ -817,7 +817,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public getBox(paths: Array<MapPointOptions>): void {
-        var MAX_VALUE = Number.MAX_VALUE,
+        let MAX_VALUE = Number.MAX_VALUE,
             maxX = -MAX_VALUE,
             minX = MAX_VALUE,
             maxY = -MAX_VALUE,
@@ -843,7 +843,7 @@ class MapSeries extends ScatterSeries {
                     );
                 }
 
-                var path: SVGPath = point.path || [],
+                let path: SVGPath = point.path || [],
                     pointMaxX = -MAX_VALUE,
                     pointMinX = MAX_VALUE,
                     pointMaxY = -MAX_VALUE,
@@ -969,7 +969,7 @@ class MapSeries extends ScatterSeries {
         point: MapPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var attr = point.series.chart.styledMode ?
+        const attr = point.series.chart.styledMode ?
             this.colorAttribs(point) :
             ColumnSeries.prototype.pointAttribs.call(
                 this, point as any, state
@@ -997,7 +997,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public render(): void {
-        var series = this,
+        const series = this,
             render = Series.prototype.render;
 
         // Give IE8 some time to breathe.
@@ -1022,14 +1022,14 @@ class MapSeries extends ScatterSeries {
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
-        var options = this.options,
+        let options = this.options,
             chartOptions = this.chart.options.chart,
             globalMapData = chartOptions && chartOptions.map,
             mapData = options.mapData,
             joinBy = this.joinBy,
             pointArrayMap = options.keys || this.pointArrayMap,
             dataUsed: Array<MapPointOptions> = [],
-            mapMap: Record<string, any> = {},
+            mapMap: AnyRecord = {},
             mapPoint,
             mapTransforms = this.chart.mapTransforms,
             props,
@@ -1046,7 +1046,7 @@ class MapSeries extends ScatterSeries {
         // Convert Array point definitions to objects using pointArrayMap
         if (data) {
             data.forEach(function (val, i): void {
-                var ix = 0;
+                let ix = 0;
 
                 if (isNumber(val)) {
                     data[i] = {
@@ -1066,7 +1066,7 @@ class MapSeries extends ScatterSeries {
                     }
                     // Run through pointArrayMap and what's left of the
                     // point data array in parallel, copying over the values
-                    for (var j = 0; j < pointArrayMap.length; ++j, ++ix) {
+                    for (let j = 0; j < pointArrayMap.length; ++j, ++ix) {
                         if (
                             pointArrayMap[j] &&
                             typeof val[ix] !== 'undefined'
@@ -1092,7 +1092,7 @@ class MapSeries extends ScatterSeries {
 
         // Pick up transform definitions for chart
         this.chart.mapTransforms = mapTransforms =
-            chartOptions && chartOptions.mapTransforms ||
+            chartOptions.mapTransforms ||
             mapData && mapData['hc-transform'] ||
             mapTransforms;
 
@@ -1190,7 +1190,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public setOptions(itemOptions: MapSeriesOptions): MapSeriesOptions {
-        var options = Series.prototype.setOptions.call(this, itemOptions),
+        let options = Series.prototype.setOptions.call(this, itemOptions),
             joinBy = options.joinBy,
             joinByNull = joinBy === null;
 
@@ -1211,7 +1211,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public translate(): void {
-        var series = this,
+        const series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             doFullTranslate = series.doFullTranslate();
@@ -1247,7 +1247,7 @@ class MapSeries extends ScatterSeries {
      */
     public translatePath(path: SVGPath): SVGPath {
 
-        var series = this,
+        const series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             xMin = xAxis.min,
@@ -1346,10 +1346,10 @@ extend(MapSeries.prototype, {
 
     // We need the points' bounding boxes in order to draw the data labels,
     // so we skip it now and call it from drawPoints instead.
-    drawDataLabels: noop as any,
+    drawDataLabels: noop,
 
     // No graph for the map series
-    drawGraph: noop as any,
+    drawGraph: noop,
 
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 

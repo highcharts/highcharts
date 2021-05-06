@@ -32,7 +32,7 @@ declare global {
             (response: (string|JSONType)): void;
         }
         interface AjaxSettingsObject {
-            data: (string|Record<string, any>);
+            data: (string|AnyRecord);
             dataType: string;
             error: AjaxErrorCallbackFunction;
             headers: Record<string, string>;
@@ -95,7 +95,7 @@ declare global {
 H.ajax = function (
     attr: Partial<Highcharts.AjaxSettingsObject>
 ): (false|undefined) {
-    var options = merge(true, {
+    const options = merge(true, {
             url: false as any,
             type: 'get',
             dataType: 'json',
@@ -144,7 +144,7 @@ H.ajax = function (
 
     // @todo lacking timeout handling
     r.onreadystatechange = function (): void {
-        var res;
+        let res;
 
         if (r.readyState === 4) {
             if (r.status === 200) {

@@ -25,6 +25,7 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from '../DOMElementType';
+import type EventCallback from '../../../Core/EventCallback';
 import type PositionObject from '../PositionObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
@@ -128,7 +129,7 @@ declare global {
             public draw: Function;
             public escapes: Record<string, string>;
             public forExport?: boolean;
-            public globalAnimation: Partial<AnimationOptions>;
+            public globalAnimation: boolean|Partial<AnimationOptions>;
             public gradients: Record<string, SVGElement>;
             public height: number;
             public imgCount: number;
@@ -139,6 +140,7 @@ declare global {
             public unSubPixelFix?: Function;
             public url: string;
             public width: number;
+            public alignElements(): void;
             public arc(attribs: SVGAttributes): SVGElement;
             public arc(
                 x?: number,
@@ -153,7 +155,7 @@ declare global {
                 text: string,
                 x: number,
                 y: number,
-                callback: EventCallbackFunction<SVGElement>,
+                callback: EventCallback<SVGElement>,
                 normalState?: SVGAttributes,
                 hoverState?: SVGAttributes,
                 pressedState?: SVGAttributes,
@@ -217,7 +219,7 @@ declare global {
                 useHTML?: boolean,
                 baseline?: boolean,
                 className?: string
-            ): SVGElement;
+            ): SVGLabel;
             public path(attribs?: SVGAttributes): SVGElement;
             public path(path?: SVGPath): SVGElement;
             public pathToSegments(path: Array<string|number>): SVGPath;
@@ -266,10 +268,10 @@ declare global {
  * and applied with the {@link SVGElement#clip} function.
  *
  * @example
- * var circle = renderer.circle(100, 100, 100)
+ * let circle = renderer.circle(100, 100, 100)
  *     .attr({ fill: 'red' })
  *     .add();
- * var clipRect = renderer.clipRect(100, 100, 100, 100);
+ * let clipRect = renderer.clipRect(100, 100, 100, 100);
  *
  * // Leave only the lower right quarter visible
  * circle.clip(clipRect);
@@ -470,7 +472,7 @@ declare global {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-var charts = H.charts,
+let charts = H.charts,
     deg2rad = H.deg2rad,
     doc = H.doc,
     isFirefox = H.isFirefox,
@@ -499,7 +501,7 @@ var charts = H.charts,
  *
  * @example
  * // Use directly without a chart object.
- * var renderer = new Highcharts.Renderer(parentNode, 600, 400);
+ * let renderer = new Highcharts.Renderer(parentNode, 600, 400);
  *
  * @class
  * @name Highcharts.SVGRenderer
@@ -653,7 +655,7 @@ class SVGRenderer {
         allowHTML?: boolean,
         styledMode?: boolean
     ): void {
-        var renderer = this,
+        let renderer = this,
             boxWrapper: SVGElement,
             element,
             desc;
@@ -715,7 +717,7 @@ class SVGRenderer {
         // precision. In order to draw sharp lines, this must be compensated
         // for. This doesn't seem to work inside iframes though (like in
         // jsFiddle).
-        var subPixelFix, rect;
+        let subPixelFix, rect;
 
         if (isFirefox && container.getBoundingClientRect) {
             subPixelFix = function (): void {
@@ -865,7 +867,7 @@ class SVGRenderer {
      * The style settings mixed with defaults.
      */
     public getStyle(style: CSSObject): CSSObject {
-        this.style = extend({
+        this.style = extend<CSSObject>({
 
             fontFamily: '"Lucida Grande", "Lucida Sans Unicode", ' +
                 'Arial, Helvetica, sans-serif',
@@ -910,7 +912,7 @@ class SVGRenderer {
      * @return {null}
      */
     public destroy(): null {
-        var renderer = this,
+        const renderer = this,
             rendererDefs = renderer.defs;
 
         renderer.box = null as any;
@@ -951,7 +953,7 @@ class SVGRenderer {
      * The generated SVGElement.
      */
     public createElement(nodeName: string): SVGElement {
-        var wrapper = new this.Element();
+        const wrapper = new this.Element();
 
         wrapper.init(this as any, nodeName);
         return wrapper;
@@ -971,10 +973,10 @@ class SVGRenderer {
     ): SVGAttributes {
         return {
             cx: (radialReference[0] - radialReference[2] / 2) +
-                gradAttr.cx * radialReference[2],
+                (gradAttr.cx || 0) * radialReference[2],
             cy: (radialReference[1] - radialReference[2] / 2) +
-                gradAttr.cy * radialReference[2],
-            r: gradAttr.r * radialReference[2]
+                (gradAttr.cy || 0) * radialReference[2],
+            r: (gradAttr.r || 0) * radialReference[2]
         };
     }
 
@@ -1062,7 +1064,7 @@ class SVGRenderer {
         text: string,
         x: number,
         y: number,
-        callback: Highcharts.EventCallbackFunction<SVGElement>,
+        callback: EventCallback<SVGElement>,
         theme?: SVGAttributes,
         hoverState?: SVGAttributes,
         pressedState?: SVGAttributes,
@@ -1070,7 +1072,7 @@ class SVGRenderer {
         shape?: Highcharts.SymbolKeyValue,
         useHTML?: boolean
     ): SVGElement {
-        var label = this.label(
+        let label = this.label(
                 text,
                 x,
                 y,
@@ -1094,12 +1096,13 @@ class SVGRenderer {
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
 
+        // Presentational
+        let normalStyle: any,
+            hoverStyle: any,
+            pressedStyle: any,
+            disabledStyle: any;
+
         if (!styledMode) {
-            // Presentational
-            var normalStyle: any,
-                hoverStyle: any,
-                pressedStyle: any,
-                disabledStyle: any;
 
             // Normal state - prepare the attributes
             normalState = merge({
@@ -1205,6 +1208,7 @@ class SVGRenderer {
         }
 
         return label
+            .on('touchstart', (e: Event): void => e.stopPropagation())
             .on('click', function (e: Event): void {
                 if (curState !== 3) {
                     callback.call(label, e);
@@ -1261,7 +1265,7 @@ class SVGRenderer {
      *         Draw a path independent from a chart
      *
      * @example
-     * var path = renderer.path(['M', 10, 10, 'L', 30, 30, 'z'])
+     * let path = renderer.path(['M', 10, 10, 'L', 30, 30, 'z'])
      *     .attr({ stroke: '#ff00ff' })
      *     .add();
      *
@@ -1285,7 +1289,7 @@ class SVGRenderer {
      * The generated wrapper element.
      */
     public path(path?: (SVGAttributes|SVGPath)): SVGElement {
-        var attribs: SVGAttributes = (this.styledMode ? {} : {
+        const attribs: SVGAttributes = (this.styledMode ? {} : {
             fill: 'none'
         });
 
@@ -1332,7 +1336,7 @@ class SVGRenderer {
         y?: number,
         r?: number
     ): SVGElement {
-        var attribs: SVGAttributes = (
+        const attribs: SVGAttributes = (
                 isObject(x) ?
                     x :
                     typeof x === 'undefined' ? {} : { x: x, y: y, r: r }
@@ -1409,7 +1413,7 @@ class SVGRenderer {
         start?: number,
         end?: number
     ): SVGElement {
-        var arc: SVGElement,
+        let arc: SVGElement,
             options: SVGAttributes;
 
         if (isObject(x)) {
@@ -1494,7 +1498,7 @@ class SVGRenderer {
 
         r = isObject(x) ? (x as any).r : r;
 
-        var wrapper = this.createElement('rect'),
+        let wrapper = this.createElement('rect'),
             attribs = isObject(x) ?
                 x as SVGAttributes :
                 typeof x === 'undefined' ?
@@ -1508,7 +1512,7 @@ class SVGRenderer {
 
         if (!this.styledMode) {
             if (typeof strokeWidth !== 'undefined') {
-                attribs.strokeWidth = strokeWidth;
+                attribs['stroke-width'] = strokeWidth;
                 attribs = wrapper.crisp(attribs as any);
             }
             attribs.fill = 'none';
@@ -1530,10 +1534,10 @@ class SVGRenderer {
             });
         };
         wrapper.rGetter = function (): number {
-            return wrapper.r as any;
+            return wrapper.r || 0;
         };
 
-        return wrapper.attr(attribs as any) as any;
+        return wrapper.attr(attribs);
     }
 
     /**
@@ -1559,9 +1563,7 @@ class SVGRenderer {
         height: number,
         animate?: (boolean|Partial<AnimationOptions>)
     ): void {
-        var renderer = this,
-            alignedObjects = renderer.alignedObjects,
-            i = alignedObjects.length;
+        const renderer = this;
 
         renderer.width = width;
         renderer.height = height;
@@ -1579,9 +1581,7 @@ class SVGRenderer {
             duration: pick(animate, true) ? void 0 : 0
         });
 
-        while (i--) {
-            alignedObjects[i].align();
-        }
+        renderer.alignElements();
     }
 
     /**
@@ -1599,7 +1599,7 @@ class SVGRenderer {
      *         The generated wrapper element.
      */
     public g(name?: string): SVGElement {
-        var elem = this.createElement('g');
+        const elem = this.createElement('g');
 
         return name ?
             elem.attr({ 'class': 'highcharts-' + name }) as any :
@@ -1646,7 +1646,7 @@ class SVGRenderer {
         height?: number,
         onload?: Function
     ): SVGElement {
-        var attribs: SVGAttributes =
+        let attribs: SVGAttributes =
             { preserveAspectRatio: 'none' },
             elemWrapper: SVGElement,
             dummy,
@@ -1742,7 +1742,7 @@ class SVGRenderer {
         options?: Highcharts.SymbolOptionsObject
     ): SVGElement {
 
-        var ren = this,
+        let ren = this,
             obj: any,
             imageRegex = /^url\((.*?)\)$/,
             isImage = imageRegex.test(symbol),
@@ -1821,9 +1821,7 @@ class SVGRenderer {
              */
             ['width', 'height'].forEach(function (key: string): void {
                 obj[key + 'Setter'] = function (value: any, key: string): void {
-                    var attribs: SVGAttributes = {},
-                        imgSize = this['img' + key],
-                        trans = key === 'width' ? 'translateX' : 'translateY';
+                    let imgSize = this['img' + key];
 
                     this[key] = value;
                     if (defined(imgSize)) {
@@ -1849,7 +1847,10 @@ class SVGRenderer {
                             this.element.setAttribute(key, imgSize);
                         }
                         if (!this.alignByTranslate) {
-                            attribs[trans] = ((this[key] || 0) - imgSize) / 2;
+                            const translate = ((this[key] || 0) - imgSize) / 2;
+                            const attribs = key === 'width' ?
+                                { translateX: translate } :
+                                { translateY: translate };
                             this.attr(attribs);
                         }
                     }
@@ -1876,7 +1877,7 @@ class SVGRenderer {
                 createElement('img', {
                     onload: function (this: SVGDOMElement): void {
 
-                        var chart = charts[ren.chartIndex];
+                        const chart = charts[ren.chartIndex];
 
                         // Special case for SVGs on IE11, the width is not
                         // accessible until the image is part of the DOM
@@ -1935,10 +1936,10 @@ class SVGRenderer {
      * function.
      *
      * @example
-     * var circle = renderer.circle(100, 100, 100)
+     * let circle = renderer.circle(100, 100, 100)
      *     .attr({ fill: 'red' })
      *     .add();
-     * var clipRect = renderer.clipRect(100, 100, 100, 100);
+     * let clipRect = renderer.clipRect(100, 100, 100, 100);
      *
      * // Leave only the lower right quarter visible
      * circle.clip(clipRect);
@@ -1962,7 +1963,7 @@ class SVGRenderer {
         width?: number,
         height?: number
     ): Highcharts.ClipRectElement {
-        var wrapper,
+        let wrapper,
             // Add a hyphen at the end to avoid confusion in testing indexes
             // -1 and -10, -11 etc (#6550)
             id = uniqueKey() + '-',
@@ -2018,7 +2019,7 @@ class SVGRenderer {
     ): SVGElement {
 
         // declare variables
-        var renderer = this,
+        let renderer = this,
             wrapper: SVGElement,
             attribs: SVGAttributes = {};
 
@@ -2043,7 +2044,7 @@ class SVGRenderer {
                 key: string,
                 element: SVGDOMElement
             ): void {
-                var tspans = element.getElementsByTagName('tspan'),
+                let tspans = element.getElementsByTagName('tspan'),
                     tspan: SVGTSpanElement,
                     parentVal = element.getAttribute(key),
                     i;
@@ -2083,7 +2084,7 @@ class SVGRenderer {
         fontSize?: (number|string),
         elem?: (globalThis.SVGElement|SVGElement)
     ): Highcharts.FontMetricsObject {
-        var lineHeight,
+        let lineHeight,
             baseline;
 
         if (
@@ -2141,7 +2142,7 @@ class SVGRenderer {
         rotation: number,
         alterY?: boolean
     ): PositionObject {
-        var y = baseline;
+        let y = baseline;
 
         if (rotation && alterY) {
             y = Math.max(y * Math.cos(rotation * deg2rad), 4);
@@ -2458,8 +2459,7 @@ class SVGRenderer {
         useHTML?: boolean,
         baseline?: boolean,
         className?: string
-    ): SVGElement {
-
+    ): SVGLabel {
         return new SVGLabel(
             this,
             str,
@@ -2472,7 +2472,17 @@ class SVGRenderer {
             baseline,
             className
         );
+    }
 
+    /**
+     * Re-align all aligned elements.
+     *
+     * @private
+     * @function Highcharts.SVGRenderer#alignElements
+     * @return {void}
+     */
+    public alignElements(): void {
+        this.alignedObjects.forEach((el): SVGElement => el.align());
     }
 }
 
@@ -2531,6 +2541,41 @@ SVGRenderer.prototype.escapes = {
     '"': '&quot;'
 };
 
+const roundedRect: Highcharts.SymbolFunction = (
+    x,
+    y,
+    w,
+    h,
+    options
+): SVGPath => {
+    const r = (options && options.r) || 0;
+    return [
+        ['M', x + r, y],
+        ['L', x + w - r, y], // top side
+        ['C', x + w, y, x + w, y, x + w, y + r], // top-right corner
+        ['L', x + w, y + h - r], // right side
+        ['C', x + w, y + h, x + w, y + h, x + w - r, y + h], // bottom-rgt
+        ['L', x + r, y + h], // bottom side
+        ['C', x, y + h, x, y + h, x, y + h - r], // bottom-left corner
+        ['L', x, y + r], // left side
+        ['C', x, y, x, y, x + r, y] // top-left corner
+    ];
+};
+
+// #15291
+const rect: Highcharts.SymbolFunction = function (x, y, w, h, options): SVGPath {
+    if (options && options.r) {
+        return roundedRect(x, y, w, h, options);
+    }
+    return [
+        ['M', x, y],
+        ['L', x + w, y],
+        ['L', x + w, y + h],
+        ['L', x, y + h],
+        ['Z']
+    ];
+};
+
 /**
  * An extendable collection of functions for defining symbol paths.
  *
@@ -2552,20 +2597,9 @@ SVGRenderer.prototype.symbols = {
         });
     },
 
-    square: function (
-        x: number,
-        y: number,
-        w: number,
-        h: number
-    ): SVGPath {
-        return [
-            ['M', x, y],
-            ['L', x + w, y],
-            ['L', x + w, y + h],
-            ['L', x, y + h],
-            ['Z']
-        ];
-    },
+    rect,
+
+    square: rect, // #15291
 
     triangle: function (
         x: number,
@@ -2618,17 +2652,17 @@ SVGRenderer.prototype.symbols = {
         const arc: SVGPath = [];
 
         if (options) {
-            var start = options.start || 0,
-                end = options.end || 0,
-                rx = options.r || w,
-                ry = options.r || h || w,
+            const start = options.start || 0,
+                rx = pick(options.r, w),
+                ry = pick(options.r, h || w),
                 proximity = 0.001,
-                fullCircle =
-                    Math.abs(end - start - 2 * Math.PI) <
-                    proximity,
+                fullCircle = (
+                    Math.abs((options.end || 0) - start - 2 * Math.PI) <
+                    proximity
+                ),
                 // Substract a small number to prevent cos and sin of start and
                 // end from becoming equal on 360 arcs (related: #1561)
-                end = end - proximity,
+                end = (options.end || 0) - proximity,
                 innerRadius = options.innerR,
                 open = pick(options.open, fullCircle),
                 cosStart = Math.cos(start),
@@ -2703,25 +2737,14 @@ SVGRenderer.prototype.symbols = {
         h: number,
         options?: Highcharts.SymbolOptionsObject
     ): SVGPath {
-        var arrowLength = 6,
+        const arrowLength = 6,
             halfDistance = 6,
             r = Math.min((options && options.r) || 0, w, h),
             safeDistance = r + halfDistance,
             anchorX = options && options.anchorX,
-            anchorY = options && options.anchorY || 0,
-            path: SVGPath;
+            anchorY = options && options.anchorY || 0;
 
-        path = [
-            ['M', x + r, y],
-            ['L', x + w - r, y], // top side
-            ['C', x + w, y, x + w, y, x + w, y + r], // top-right corner
-            ['L', x + w, y + h - r], // right side
-            ['C', x + w, y + h, x + w, y + h, x + w - r, y + h], // bottom-rgt
-            ['L', x + r, y + h], // bottom side
-            ['C', x, y + h, x, y + h, x, y + h - r], // bottom-left corner
-            ['L', x, y + r], // left side
-            ['C', x, y, x, y, x + r, y] // top-left corner
-        ];
+        const path = roundedRect(x, y, w, h, { r });
 
         if (!isNumber(anchorX)) {
             return path;

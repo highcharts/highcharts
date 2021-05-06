@@ -16,6 +16,12 @@ import type {
 } from '../DOMElementType';
 import type HTMLRenderer from './HTMLRenderer';
 import H from '../../Globals.js';
+const {
+    isFirefox,
+    isMS,
+    isWebKit,
+    win
+} = H;
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../Utilities.js';
@@ -32,11 +38,11 @@ declare module '../SVG/SVGElementLike' {
         /** @requires Core/Renderer/HTML/HTMLElement */
         appendChild: HTMLDOMElement['appendChild'];
         /** @requires Core/Renderer/HTML/HTMLElement */
-        div?: HTMLDOMElement;
+        // @todo div?: HTMLDOMElement;
         element: DOMElementType;
         parentGroup?: (HTMLElement|SVGElement);
         renderer: (HTMLRenderer|SVGRenderer);
-        style: CSSObject & CSSStyleDeclaration;
+        style: (CSSObject&CSSStyleDeclaration);
         xCorr: number;
         yCorr: number;
         afterSetters(): void;
@@ -75,7 +81,7 @@ interface HTMLElement extends SVGElement {
     element: HTMLDOMElement;
     parentGroup?: HTMLElement;
     renderer: HTMLRenderer;
-    style: CSSObject & CSSStyleDeclaration;
+    style: (CSSObject&CSSStyleDeclaration);
     xCorr: number;
     yCorr: number;
     afterSetters(): void;
@@ -97,7 +103,12 @@ interface HTMLElement extends SVGElement {
     translateYSetter(value: any, key: string): void;
 }
 
-var isFirefox = H.isFirefox;
+type TransformKeyType = (
+    '-ms-transform'|
+    '-webkit-transform'|
+    'MozTransform'|
+    '-o-transform'
+)
 
 /* eslint-disable valid-jsdoc */
 
@@ -119,7 +130,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
         this: HTMLElement,
         styles: CSSObject
     ): HTMLElement {
-        var wrapper = this,
+        let wrapper = this,
             element = wrapper.element,
             // When setting or unsetting the width style, we need to update
             // transform (#8809)
@@ -136,7 +147,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
 
         if (isSettingWidth) {
             delete styles.width;
-            wrapper.textWidth = textWidth;
+            wrapper.textWidth = textWidth as any;
             doTransform = true;
         }
 
@@ -171,7 +182,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
     htmlGetBBox: function (
         this: HTMLElement
     ): BBoxObject {
-        var wrapper = this,
+        const wrapper = this,
             element = wrapper.element;
 
         return {
@@ -197,7 +208,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
             return;
         }
 
-        var wrapper = this,
+        const wrapper = this,
             renderer = wrapper.renderer,
             elem = wrapper.element,
             translateX = wrapper.translateX || 0,
@@ -227,8 +238,8 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
 
         // apply translate
         css(elem, {
-            marginLeft: translateX,
-            marginTop: translateY
+            marginLeft: translateX as any,
+            marginTop: translateY as any
         });
 
         if (!renderer.styledMode && wrapper.shadows) { // used in labels/tooltip
@@ -236,8 +247,8 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
                 shadow: DOMElementType
             ): void {
                 css(shadow, {
-                    marginLeft: translateX + 1,
-                    marginTop: translateY + 1
+                    marginLeft: translateX + 1 as any,
+                    marginTop: translateY + 1 as any
                 });
             });
         }
@@ -251,7 +262,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
 
         if (elem.tagName === 'SPAN') {
 
-            var rotation = wrapper.rotation,
+            let rotation = wrapper.rotation,
                 baseline,
                 textWidth = wrapper.textWidth && pInt(wrapper.textWidth),
                 currentTextTransform = [
@@ -269,8 +280,8 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
             if (
                 textWidth !== wrapper.oldTextWidth &&
                 (
-                    (textWidth > wrapper.oldTextWidth) ||
-                    (wrapper.textPxLength || getTextPxLength()) > textWidth
+                    ((textWidth as any) > wrapper.oldTextWidth) ||
+                    (wrapper.textPxLength || getTextPxLength()) > (textWidth as any)
                 ) && (
                     // Only set the width if the text is able to word-wrap, or
                     // text-overflow is ellipsis (#9537)
@@ -355,15 +366,29 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
         alignCorrection: number,
         baseline: number
     ): void {
-        var rotationStyle: CSSObject = {},
-            cssTransformKey = this.renderer.getTransformKey();
+        const getTransformKey = (): TransformKeyType|undefined => (isMS &&
+            !/Edge/.test(win.navigator.userAgent) ?
+            '-ms-transform' :
+            isWebKit ?
+                '-webkit-transform' :
+                isFirefox ?
+                    'MozTransform' :
+                    win.opera ?
+                        '-o-transform' :
+                        void 0);
 
-        rotationStyle[cssTransformKey] = rotationStyle.transform =
-            'rotate(' + rotation + 'deg)';
-        rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] =
-        rotationStyle.transformOrigin =
-            (alignCorrection * 100) + '% ' + baseline + 'px';
-        css(this.element, rotationStyle);
+        const rotationStyle: CSSObject = {},
+            cssTransformKey = getTransformKey();
+
+        if (cssTransformKey) {
+            rotationStyle[cssTransformKey] = rotationStyle.transform =
+                'rotate(' + rotation + 'deg)';
+            (rotationStyle as any)[
+                cssTransformKey + (isFirefox ? 'Origin' : '-origin')
+            ] = rotationStyle.transformOrigin =
+                (alignCorrection * 100) + '% ' + baseline + 'px';
+            css(this.element, rotationStyle);
+        }
     },
 
     /**

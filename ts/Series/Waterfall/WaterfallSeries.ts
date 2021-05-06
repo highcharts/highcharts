@@ -210,7 +210,7 @@ class WaterfallSeries extends ColumnSeries {
      * */
     // After generating points, set y-values for all sums.
     public generatePoints(): void {
-        var point,
+        let point,
             len,
             i,
             y: number;
@@ -231,7 +231,7 @@ class WaterfallSeries extends ColumnSeries {
 
     // Translate data points from raw values
     public translate(): void {
-        var series = this,
+        let series = this,
             options = series.options,
             yAxis = series.yAxis,
             len,
@@ -515,7 +515,7 @@ class WaterfallSeries extends ColumnSeries {
     public processData(
         force?: boolean
     ): undefined {
-        var series = this,
+        let series = this,
             options = series.options,
             yData = series.yData,
             // #3710 Update point does not propagate to sum
@@ -596,7 +596,7 @@ class WaterfallSeries extends ColumnSeries {
         state: StatesOptionsKey
     ): SVGAttributes {
 
-        var upColor = this.options.upColor,
+        let upColor = this.options.upColor,
             attr: SVGAttributes;
 
         // Set or reset up color (#3710, update to negative)
@@ -630,7 +630,7 @@ class WaterfallSeries extends ColumnSeries {
         this: WaterfallSeries
     ): SVGPath {
 
-        var data = this.data,
+        let data = this.data,
             yAxis = this.yAxis,
             length = data.length,
             graphNormalizer =
@@ -707,8 +707,14 @@ class WaterfallSeries extends ColumnSeries {
                     (prevPoint.y > 0 && reversedYAxis)
                 )
             ) {
-                path[path.length - 2][2] += prevArgs.height;
-                path[path.length - 1][2] += prevArgs.height;
+                const nextLast = path[path.length - 2];
+                if (nextLast && typeof nextLast[2] === 'number') {
+                    nextLast[2] += prevArgs.height || 0;
+                }
+                const last = path[path.length - 1];
+                if (last && typeof last[2] === 'number') {
+                    last[2] += prevArgs.height || 0;
+                }
             }
 
         }
@@ -726,7 +732,7 @@ class WaterfallSeries extends ColumnSeries {
 
     // Waterfall has stacking along the x-values too.
     public setStackedPoints(): void {
-        var series = this,
+        let series = this,
             options = series.options,
             waterfallStacks = series.yAxis.waterfall.stacks,
             seriesThreshold = options.threshold,
@@ -780,8 +786,9 @@ class WaterfallSeries extends ColumnSeries {
         totalYVal = actualSum = prevSum = stackThreshold;
 
         // code responsible for creating stacks for waterfall series
-        if (series.visible ||
-            !(series.chart.options.chart as any).ignoreHiddenSeries
+        if (
+            series.visible ||
+            !series.chart.options.chart.ignoreHiddenSeries
         ) {
             changed = waterfallStacks.changed;
             alreadyChanged = waterfallStacks.alreadyChanged;
@@ -799,7 +806,7 @@ class WaterfallSeries extends ColumnSeries {
             }
 
             actualStack = waterfallStacks[stackKey];
-            for (var i = 0; i < xLength; i++) {
+            for (let i = 0; i < xLength; i++) {
                 x = xData[i];
                 if (!(actualStack as any)[x] || changed) {
                     (actualStack as any)[x] = {
@@ -884,7 +891,7 @@ class WaterfallSeries extends ColumnSeries {
     // Extremes for a non-stacked series are recorded in processData.
     // In case of stacking, use Series.stackedYData to calculate extremes.
     public getExtremes(): DataExtremesObject {
-        var stacking = this.options.stacking,
+        let stacking = this.options.stacking,
             yAxis,
             waterfallStacks,
             stackedYNeg,
@@ -932,7 +939,7 @@ class WaterfallSeries extends ColumnSeries {
 }
 
 interface WaterfallSeries {
-    getZonesGraph: typeof LineSeries.prototype.getZonesGraphs;
+    getZonesGraphs: typeof LineSeries.prototype.getZonesGraphs;
     pointClass: typeof WaterfallPoint;
     pointValKey: string;
     showLine: boolean;

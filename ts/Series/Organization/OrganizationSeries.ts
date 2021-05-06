@@ -34,7 +34,7 @@ import type { SankeyDataLabelFormatterContext } from '../Sankey/SankeyDataLabelO
 import type SankeySeriesType from '../Sankey/SankeySeries';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import OrganizationPoint from './OrganizationPoint.js';
 import palette from '../../Core/Color/Palette.js';
@@ -152,7 +152,7 @@ class OrganizationSeries extends SankeySeries {
                 )
             ): string {
 
-                var outerStyle: CSSObject = {
+                const outerStyle: CSSObject = {
                         width: '100%',
                         height: '100%',
                         display: 'flex',
@@ -190,7 +190,7 @@ class OrganizationSeries extends SankeySeries {
                         str: string,
                         key: string
                     ): string {
-                        return str + key + ':' + style[key] + ';';
+                        return str + key + ':' + (style as any)[key] + ';';
                     }, 'style="') + '"';
                 }
 
@@ -208,7 +208,7 @@ class OrganizationSeries extends SankeySeries {
                     innerStyle.top = 0;
                 }
 
-                var html = '<div ' + styleAttr(outerStyle) + '>';
+                let html = '<div ' + styleAttr(outerStyle) + '>';
 
                 if ((this.point as any).image) {
                     html += '<img src="' + (this.point as any).image + '" ' +
@@ -301,7 +301,7 @@ class OrganizationSeries extends SankeySeries {
         path: SVGPath,
         r: number
     ): SVGPath {
-        var d: SVGPath = [];
+        const d: SVGPath = [];
 
         for (let i = 0; i < path.length; i++) {
             const x = path[i][1];
@@ -388,12 +388,12 @@ class OrganizationSeries extends SankeySeries {
 
     public alignDataLabel(
         point: OrganizationPoint,
-        dataLabel: SVGElement,
+        dataLabel: SVGLabel,
         options: OrganizationDataLabelOptions
     ): void {
         // Align the data label to the point graphic
         if (options.useHTML) {
-            var width = (point.shapeArgs as any).width,
+            let width = (point.shapeArgs as any).width,
                 height = (point.shapeArgs as any).height,
                 padjust = (
                     (this.options.borderWidth as any) +
@@ -444,7 +444,7 @@ class OrganizationSeries extends SankeySeries {
     }
 
     public createNode(id: string): OrganizationPoint {
-        var node: OrganizationPoint = super.createNode.call(this, id) as any;
+        const node: OrganizationPoint = super.createNode.call(this, id) as any;
 
         // All nodes in an org chart are equal width
         node.getSum = function (): number {
@@ -456,7 +456,7 @@ class OrganizationSeries extends SankeySeries {
     }
 
     public createNodeColumn(): OrganizationSeries.ColumnArray {
-        var column: OrganizationSeries.ColumnArray = super.createNodeColumn.call(this) as any;
+        const column: OrganizationSeries.ColumnArray = super.createNodeColumn.call(this) as any;
 
         // Wrap the offset function so that the hanging node's children are
         // aligned to their parent
@@ -466,7 +466,7 @@ class OrganizationSeries extends SankeySeries {
             node: OrganizationPoint,
             factor: number
         ): (Record<string, number>|undefined) {
-            var offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
+            const offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
 
             // Modify the default output if the parent's layout is 'hanging'
             if (node.hangsFrom) {
@@ -485,7 +485,7 @@ class OrganizationSeries extends SankeySeries {
         point: OrganizationPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var series = this,
+        const series = this,
             attribs = SankeySeries.prototype.pointAttribs.call(series, point, state),
             level = point.isNode ? point.level : point.fromNode.level,
             levelOptions: OrganizationSeriesLevelOptions =
@@ -524,7 +524,7 @@ class OrganizationSeries extends SankeySeries {
     }
 
     public translateLink(point: OrganizationPoint): void {
-        var fromNode = point.fromNode,
+        let fromNode = point.fromNode,
             toNode = point.toNode,
             crisp = Math.round(this.options.linkLineWidth as any) % 2 / 2,
             x1 = Math.floor(

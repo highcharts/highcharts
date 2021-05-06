@@ -9,8 +9,11 @@
  * */
 
 import type {
-    DOMElementType
+    DOMElementType,
+    SVGDOMElement
 } from '../DOMElementType';
+import type SVGAttributes from './SVGAttributes';
+import type SVGElement from './SVGElement';
 
 import H from '../../Globals.js';
 import U from '../../Utilities.js';
@@ -36,7 +39,7 @@ const {
  */
 class TextBuilder {
 
-    public constructor(svgElement: Highcharts.SVGElement) {
+    public constructor(svgElement: SVGElement) {
         const textStyles = svgElement.styles;
 
         this.renderer = svgElement.renderer;
@@ -54,7 +57,7 @@ class TextBuilder {
     public fontSize: any;
     public noWrap: boolean;
     public renderer: Highcharts.Renderer;
-    public svgElement: Highcharts.SVGElement;
+    public svgElement: SVGElement;
     public textLineHeight: any;
     public textOutline: any;
     public width?: number;
@@ -69,7 +72,7 @@ class TextBuilder {
      */
     public buildSVG(): void {
         const wrapper = this.svgElement;
-        var textNode = wrapper.element,
+        let textNode = wrapper.element,
             renderer = wrapper.renderer,
             textStr = pick(wrapper.textStr, '').toString() as string,
             hasMarkup = textStr.indexOf('<') !== -1,
@@ -178,15 +181,15 @@ class TextBuilder {
         // Modify hard line breaks by applying the rendered line height
         [].forEach.call(
             wrapper.element.querySelectorAll('tspan.highcharts-br'),
-            (br: SVGElement): void => {
+            (br: SVGDOMElement): void => {
                 if (br.nextSibling && br.previousSibling) { // #5261
                     attr(br, {
                         // Since the break is inserted in front of the next
                         // line, we need to use the next sibling for the line
                         // height
-                        dy: this.getLineHeight(br.nextSibling as any),
+                        dy: this.getLineHeight(br.nextSibling as any) as any,
                         x
-                    });
+                    } as unknown as SVGAttributes);
                 }
             }
         );
@@ -294,9 +297,9 @@ class TextBuilder {
                     );
 
                     // Insert a break
-                    const br = doc.createElementNS(SVG_NS, 'tspan') as SVGElement;
+                    const br = doc.createElementNS(SVG_NS, 'tspan') as SVGDOMElement;
                     br.textContent = '\u200B'; // zero-width space
-                    attr(br, { dy, x });
+                    attr(br, { dy, x } as unknown as SVGAttributes);
                     parentElement.insertBefore(br, textNode);
                 });
 
@@ -471,7 +474,7 @@ class TextBuilder {
             // charEnd is used when finding the character-by-character
             // break for ellipsis, concatenatedEnd is used for word-by-word
             // break for word wrapping.
-            var end = concatenatedEnd || charEnd;
+            const end = concatenatedEnd || charEnd;
             const parentNode = textNode.parentNode;
 
             if (parentNode && typeof lengths[end] === 'undefined') {

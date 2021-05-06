@@ -63,7 +63,7 @@ const {
  */
 
 addEvent(Axis, 'afterSetOptions', function (): void {
-    var chartOptions = this.chart.options && this.chart.options.chart;
+    const chartOptions = this.chart.options.chart;
     if (
         !this.horiz &&
         isNumber(this.options.staticScale) &&
@@ -82,7 +82,7 @@ addEvent(Axis, 'afterSetOptions', function (): void {
 Chart.prototype.adjustHeight = function (): void {
     if (this.redrawTrigger !== 'adjustHeight') {
         (this.axes || []).forEach(function (axis: Highcharts.Axis): void {
-            var chart = axis.chart,
+            let chart = axis.chart,
                 animate =
                     !!chart.initiatedScale &&
                     (chart.options as any).animation,
@@ -102,7 +102,7 @@ Chart.prototype.adjustHeight = function (): void {
 
                 diff = height - chart.plotHeight;
 
-                if (Math.abs(diff) >= 1) {
+                if (!chart.scrollablePixelsY && Math.abs(diff) >= 1) {
                     chart.plotHeight = height;
                     chart.redrawTrigger = 'adjustHeight';
                     chart.setSize(void 0, chart.chartHeight + diff, animate);
@@ -111,11 +111,13 @@ Chart.prototype.adjustHeight = function (): void {
                 // Make sure clip rects have the right height before initial
                 // animation.
                 axis.series.forEach(function (series: Series): void {
-                    var clipRect = series.sharedClipKey &&
-                        (chart as any)[series.sharedClipKey];
+                    const clipRect = series.sharedClipKey &&
+                        chart.sharedClips[series.sharedClipKey];
 
                     if (clipRect) {
-                        clipRect.attr({
+                        clipRect.attr(chart.inverted ? {
+                            width: chart.plotHeight
+                        } : {
                             height: chart.plotHeight
                         });
                     }

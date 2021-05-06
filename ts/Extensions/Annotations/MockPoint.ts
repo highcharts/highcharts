@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type { AxisType } from '../../Core/Axis/Types';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import Series from '../../Core/Series/Series.js';
 
@@ -113,7 +114,7 @@ declare global {
  */
 
 import U from '../../Core/Utilities.js';
-var defined = U.defined,
+const defined = U.defined,
     extend = U.extend,
     fireEvent = U.fireEvent;
 
@@ -182,7 +183,7 @@ class MockPoint {
         point: Highcharts.AnnotationPointType,
         paneCoordinates?: boolean
     ): PositionObject {
-        var series = point.series,
+        let series = point.series,
             chart = series.chart,
             x: number = point.plotX as any,
             y: number = point.plotY as any,
@@ -224,6 +225,7 @@ class MockPoint {
     public static pointToOptions(
         point: Highcharts.AnnotationPointType
     ): Highcharts.AnnotationMockPointOptionsObject {
+
         return {
             x: point.x as any,
             y: point.y as any,
@@ -382,7 +384,7 @@ class MockPoint {
         options: Highcharts.AnnotationMockPointOptionsObject,
         xOrY: ('x'|'y')
     ): void {
-        var axisName: ('xAxis'|'yAxis') = (xOrY + 'Axis') as any,
+        const axisName: ('xAxis'|'yAxis') = (xOrY + 'Axis') as any,
             axisOptions = options[axisName],
             chart = this.series.chart;
 
@@ -404,7 +406,7 @@ class MockPoint {
      * A quadruple of numbers which denotes x, y, width and height of the box
      **/
     public toAnchor(): Array<number> {
-        var anchor = [this.plotX, this.plotY, 0, 0];
+        const anchor = [this.plotX, this.plotY, 0, 0];
 
         if (this.series.chart.inverted) {
             anchor[0] = this.plotY;
@@ -434,7 +436,7 @@ class MockPoint {
      * @return {boolean} A flag indicating whether the point is inside the pane.
      */
     public isInsidePlot(): boolean {
-        var plotX = this.plotX,
+        const plotX = this.plotX,
             plotY = this.plotY,
             xAxis = this.series.xAxis,
             yAxis = this.series.yAxis,
@@ -465,7 +467,7 @@ class MockPoint {
      * @private
      */
     public refresh(): void {
-        var series = this.series,
+        const series = this.series,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             options = this.getOptions();
@@ -544,7 +546,7 @@ class MockPoint {
         sy: number
     ): void {
         if (!this.hasDynamicOptions()) {
-            var x = this.plotX * sx,
+            const x = this.plotX * sx,
                 y = this.plotY * sy,
                 tx = (1 - sx) * cx,
                 ty = (1 - sy) * cy;
@@ -565,7 +567,7 @@ class MockPoint {
      */
     public rotate(cx: number, cy: number, radians: number): void {
         if (!this.hasDynamicOptions()) {
-            var cos = Math.cos(radians),
+            let cos = Math.cos(radians),
                 sin = Math.sin(radians),
                 x = this.plotX,
                 y = this.plotY,
@@ -590,7 +592,7 @@ class MockPoint {
      * @private
      */
     public refreshOptions(): void {
-        var series = this.series,
+        const series = this.series,
             xAxis = series.xAxis,
             yAxis = series.yAxis;
 

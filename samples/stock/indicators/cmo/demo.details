@@ -1,0 +1,6 @@
+---
+ name: Highcharts Stock Demo
+ authors:
+   - Pawel Lysy
+ js_wrap: b
+...

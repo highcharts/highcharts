@@ -7,10 +7,12 @@
 'use strict';
 
 import Annotation from '../Annotations.js';
+import type { AxisType } from '../../../Core/Axis/Types';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
-    merge
+    merge,
+    pick
 } = U;
 
 /**
@@ -57,32 +59,35 @@ class VerticalLine extends Annotation {
     public static connectorFirstPoint(
         target: Highcharts.AnnotationControllable
     ): Highcharts.AnnotationMockPointOptionsObject {
-        var annotation = target.annotation as Highcharts.AnnotationVerticalLine,
+        const annotation = target.annotation as Highcharts.AnnotationVerticalLine,
+            chart = annotation.chart,
+            inverted = chart.inverted,
             point = annotation.points[0],
-            xy = MockPoint.pointToPixels(point, true),
-            y = xy.y,
-            offset = annotation.options.typeOptions.label.offset;
-
-        if (annotation.chart.inverted) {
-            y = xy.x;
-        }
+            left = pick(point.series.yAxis && point.series.yAxis.left, 0),
+            top = pick(point.series.yAxis && point.series.yAxis.top, 0),
+            offset = annotation.options.typeOptions.label.offset,
+            y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
 
         return {
             x: point.x as any,
             xAxis: point.series.xAxis,
-            y: y + offset
+            y: y + offset +
+                (inverted ? (left - chart.plotLeft) : (top - chart.plotTop))
         };
     }
 
     public static connectorSecondPoint(
         target: Highcharts.AnnotationControllable
     ): Highcharts.AnnotationMockPointOptionsObject {
-        var annotation = target.annotation as Highcharts.AnnotationVerticalLine,
+        let annotation = target.annotation as Highcharts.AnnotationVerticalLine,
+            chart = annotation.chart,
+            inverted = chart.inverted,
             typeOptions = annotation.options.typeOptions,
             point = annotation.points[0],
+            left = pick(point.series.yAxis && point.series.yAxis.left, 0),
+            top = pick(point.series.yAxis && point.series.yAxis.top, 0),
             yOffset = typeOptions.yOffset,
-            xy = MockPoint.pointToPixels(point, true),
-            y = xy[annotation.chart.inverted ? 'x' : 'y'];
+            y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
 
         if (typeOptions.label.offset < 0) {
             yOffset *= -1;
@@ -91,7 +96,8 @@ class VerticalLine extends Annotation {
         return {
             x: point.x as any,
             xAxis: point.series.xAxis,
-            y: y + yOffset
+            y: y + yOffset +
+                (inverted ? (left - chart.plotLeft) : (top - chart.plotTop))
         };
     }
 
@@ -119,7 +125,7 @@ class VerticalLine extends Annotation {
     }
 
     public addShapes(): void {
-        var typeOptions = this.options.typeOptions,
+        const typeOptions = this.options.typeOptions,
             connector = this.initShape(
                 merge(typeOptions.connector, {
                     type: 'path',
@@ -135,7 +141,7 @@ class VerticalLine extends Annotation {
     }
 
     public addLabels(): void {
-        var typeOptions = this.options.typeOptions,
+        let typeOptions = this.options.typeOptions,
             labelOptions = typeOptions.label,
             x = 0,
             y = labelOptions.offset,
@@ -149,7 +155,7 @@ class VerticalLine extends Annotation {
             align = (labelOptions.offset as any) < 0 ? 'right' : 'left';
         }
 
-        var label = (this.initLabel as any)(
+        const label = (this.initLabel as any)(
             merge(labelOptions, {
                 verticalAlign: verticalAlign,
                 align: align,

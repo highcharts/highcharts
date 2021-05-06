@@ -84,7 +84,7 @@ class StackingAxisAdditions {
         const stacking = this;
         const axis = stacking.axis;
         const axisSeries = axis.series;
-        const reversedStacks = pick(axis.options.reversedStacks, true);
+        const reversedStacks = axis.options.reversedStacks;
         const len = axisSeries.length;
 
         let actualSeries: Series,
@@ -170,8 +170,8 @@ class StackingAxisAdditions {
         const chart = axis.chart;
         const renderer = chart.renderer;
         const stacks = stacking.stacks;
-        const stackLabelsAnim = axis.options.stackLabels.animation;
-        const animationConfig = getDeferredAnimation(chart, stackLabelsAnim);
+        const stackLabelsAnim = axis.options.stackLabels && axis.options.stackLabels.animation;
+        const animationConfig = getDeferredAnimation(chart, stackLabelsAnim || false);
         const stackTotalGroup = stacking.stackTotalGroup = (
             stacking.stackTotalGroup ||
             renderer

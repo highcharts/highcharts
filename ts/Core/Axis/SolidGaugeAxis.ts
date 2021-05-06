@@ -85,7 +85,7 @@ namespace SolidGaugeAxis {
             this: SolidGaugeAxis,
             userOptions: ColorAxis.Options
         ): void {
-            var chart = this.chart,
+            let chart = this.chart,
                 dataClasses: Array<ColorAxis.DataClassesOptions>,
                 colorCounter = 0,
                 options = this.options;
@@ -96,7 +96,7 @@ namespace SolidGaugeAxis {
                 dataClass: ColorAxis.DataClassesOptions,
                 i: number
             ): void {
-                var colors: (Array<string>|undefined);
+                let colors: (Array<string>|undefined);
 
                 dataClass = merge(dataClass);
                 dataClasses.push(dataClass);
@@ -138,7 +138,7 @@ namespace SolidGaugeAxis {
             value: number,
             point: SolidGaugePoint
         ): (ColorType|undefined) {
-            var pos: number,
+            let pos: number,
                 stops = this.stops,
                 from: (number|GradientColor['stops'][0]|undefined),
                 to: (number|GradientColor['stops'][0]|undefined),
@@ -203,7 +203,7 @@ namespace SolidGaugeAxis {
      * @private
      */
     export function init(axis: RadialAxis): void {
-        extend(axis, methods);
+        extend<SolidGaugeAxis|RadialAxis>(axis, methods);
     }
 
 }

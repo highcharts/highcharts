@@ -28,6 +28,8 @@ import type {
     SVGElement3DLikeBase,
     SVGElement3DLikeCuboid
 } from './SVGElement3DLike';
+import type SVGPath from './SVGPath';
+
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import SVGElement from './SVGElement.js';
@@ -74,7 +76,7 @@ namespace SVGElement3D {
             this: SVGElement,
             args: SVGAttributes
         ): void {
-            var elem3d = this,
+            const elem3d = this,
                 renderer = elem3d.renderer,
                 paths: (SVGArc3D|SVGCuboid) =
                     (renderer as any)[elem3d.pathType + 'Path'](args),
@@ -109,13 +111,13 @@ namespace SVGElement3D {
             this: SVGElement,
             prop: string,
             val: any,
-            values?: Record<string, any>,
+            values?: AnyRecord,
             verb?: string,
             duration?: any,
             complete?: any
         ): SVGElement {
-            var elem3d = this,
-                newAttr = {} as Record<string, any>,
+            const elem3d = this,
+                newAttr = {} as AnyRecord,
                 optionsToApply = [null, null, (verb || 'attr'), duration, complete],
                 hasZIndexes = values && values.zIndexes;
 
@@ -152,12 +154,12 @@ namespace SVGElement3D {
         processParts: function (
             this: SVGElement,
             props: any,
-            partsProps: Record<string, any>,
+            partsProps: AnyRecord,
             verb: string,
             duration?: any,
             complete?: any
         ): SVGElement {
-            var elem3d = this;
+            const elem3d = this;
 
             (elem3d.parts as any).forEach(function (part: string): void {
                 // if different props for different parts
@@ -190,16 +192,16 @@ namespace SVGElement3D {
         attr: function (
             this: SVGElement,
             args: (string|SVGAttributes),
-            val?: (number|string),
-            complete?: any,
-            continueAnimation?: any
+            val?: (number|string|SVGPath),
+            complete?: Function,
+            continueAnimation?: boolean
         ): SVGElement {
             // Resolve setting attributes by string name
             if (typeof args === 'string' && typeof val !== 'undefined') {
-                var key = args;
+                const key = args;
 
                 args = {} as SVGAttributes;
-                args[key] = val;
+                (args as any)[key] = val;
             }
 
             if ((args as any).shapeArgs || defined((args as any).x)) {
@@ -213,7 +215,7 @@ namespace SVGElement3D {
             }
 
             return SVGElement.prototype.attr.call(
-                this, args, void 0, complete, continueAnimation
+                this, args as any, void 0, complete, continueAnimation
             );
         },
         animate: function (
@@ -223,7 +225,7 @@ namespace SVGElement3D {
             complete?: Function
         ): SVGElement {
             if (defined(args.x) && defined(args.y)) {
-                var paths = (this.renderer as any)[this.pathType + 'Path'](args),
+                const paths = (this.renderer as any)[this.pathType + 'Path'](args),
                     forcedSides = paths.forcedSides;
                 this.singleSetterForParts(
                     'd', null, paths, 'animate', duration, complete
@@ -248,7 +250,7 @@ namespace SVGElement3D {
             this: SVGElement,
             fill: ColorType
         ): SVGElement {
-            var elem3d = this;
+            const elem3d = this;
             elem3d.forcedSides = elem3d.forcedSides || [];
             elem3d.singleSetterForParts('fill', null, {
                 front: fill,

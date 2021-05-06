@@ -77,7 +77,7 @@ declare module './Types' {
     }
 }
 
-var deg2rad = H.deg2rad;
+const deg2rad = H.deg2rad;
 
 /* eslint-disable valid-jsdoc */
 
@@ -143,15 +143,15 @@ class Axis3DAdditions {
             return pos;
         }
 
-        var alpha = deg2rad * (chart.options.chart as any).options3d.alpha,
-            beta = deg2rad * (chart.options.chart as any).options3d.beta,
+        let alpha = deg2rad * (chart.options.chart.options3d as any).alpha,
+            beta = deg2rad * (chart.options.chart.options3d as any).beta,
             positionMode = pick(
                 isTitle && (axis.options.title as any).position3d,
-                (axis.options.labels as any).position3d
+                axis.options.labels.position3d
             ),
             skew = pick(
                 isTitle && (axis.options.title as any).skew3d,
-                (axis.options.labels as any).skew3d
+                axis.options.labels.skew3d
             ),
             frame = chart.chart3d.frame3d,
             plotLeft = chart.plotLeft,
@@ -239,8 +239,8 @@ class Axis3DAdditions {
             if (!axis.horiz) { // Y Axis
                 vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
             } else { // X and Z Axis
-                var sin = Math.sin(alpha);
-                var cos = Math.cos(alpha);
+                let sin = Math.sin(alpha);
+                const cos = Math.cos(alpha);
 
                 if (axis.opposite) {
                     sin = -sin;
@@ -255,18 +255,18 @@ class Axis3DAdditions {
             if (!axis.horiz) { // Y Axis
                 vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
             } else { // X and Z Axis
-                var sina = Math.sin(alpha);
-                var cosa = Math.cos(alpha);
-                var sinb = Math.sin(beta);
-                var cosb = Math.cos(beta);
-                var vecZ = { x: sinb * cosa, y: -sina, z: -cosa * cosb };
+                const sina = Math.sin(alpha);
+                const cosa = Math.cos(alpha);
+                const sinb = Math.sin(beta);
+                const cosb = Math.cos(beta);
+                const vecZ = { x: sinb * cosa, y: -sina, z: -cosa * cosb };
 
                 vecY = {
                     x: vecX.y * vecZ.z - vecX.z * vecZ.y,
                     y: vecX.z * vecZ.x - vecX.x * vecZ.z,
                     z: vecX.x * vecZ.y - vecX.y * vecZ.x
                 };
-                var scale = 1 / Math.sqrt(
+                let scale = 1 / Math.sqrt(
                     vecY.x * vecY.x + vecY.y * vecY.y + vecY.z * vecY.z
                 );
 
@@ -292,11 +292,11 @@ class Axis3DAdditions {
         pos.y += offsetX * vecX.y + offsetY * vecY.y;
         pos.z += offsetX * vecX.z + offsetY * vecY.z;
 
-        var projected = perspective([pos], axis.chart)[0];
+        const projected = perspective([pos], axis.chart)[0];
 
         if (skew) {
             // Check if the label text would be mirrored
-            var isMirrored = shapeArea(perspective([
+            const isMirrored = shapeArea(perspective([
                 pos,
                 { x: pos.x + vecX.x, y: pos.y + vecX.y, z: pos.z + vecX.z },
                 { x: pos.x + vecY.x, y: pos.y + vecY.y, z: pos.z + vecY.z }
@@ -306,7 +306,7 @@ class Axis3DAdditions {
                 vecX = { x: -vecX.x, y: -vecX.y, z: -vecX.z };
             }
 
-            var pointsProjected = perspective([
+            const pointsProjected = perspective([
                 { x: pos.x, y: pos.y, z: pos.z },
                 { x: pos.x + vecX.x, y: pos.y + vecX.y, z: pos.z + vecX.z },
                 { x: pos.x + vecY.x, y: pos.y + vecY.y, z: pos.z + vecY.z }
@@ -339,7 +339,7 @@ class Axis3DAdditions {
         const axis = this.axis;
 
         if (axis.isZAxis) {
-            var plotLeft = insidePlotArea ? 0 : axis.chart.plotLeft;
+            const plotLeft = insidePlotArea ? 0 : axis.chart.plotLeft;
 
             return {
                 x: plotLeft + p.z,
@@ -368,7 +368,7 @@ class Axis3D {
     /**
      * @optionparent xAxis
      */
-    public static defaultOptions: Highcharts.AxisOptions = {
+    public static defaultOptions: DeepPartial<Highcharts.AxisOptions> = {
         labels: {
             /**
              * Defines how the labels are be repositioned according to the 3D
@@ -599,7 +599,7 @@ class Axis3D {
             return proceed.apply(this, [].slice.call(arguments, 1));
         }
 
-        var args = arguments,
+        const args = arguments,
             from = args[1],
             to = args[2],
             path: SVGPath = [],
@@ -607,7 +607,7 @@ class Axis3D {
             toPath = this.getPlotLinePath({ value: to });
 
         if (fromPath && toPath) {
-            for (var i = 0; i < fromPath.length; i += 2) {
+            for (let i = 0; i < fromPath.length; i += 2) {
                 const fromStartSeg = fromPath[i],
                     fromEndSeg = fromPath[i + 1],
                     toStartSeg = toPath[i],
@@ -661,7 +661,7 @@ class Axis3D {
             return path;
         }
 
-        var options3d = (chart.options.chart as any).options3d,
+        let options3d = chart.options.chart.options3d as any,
             d = axis.isZAxis ? chart.plotWidth : options3d.depth,
             frame = chart.chart3d.frame3d,
             startSegment = path[0],
@@ -747,9 +747,9 @@ class Axis3D {
             tick &&
             tick.label
         ) {
-            var firstGridLine = (gridGroup.element.childNodes[0] as any).getBBox(),
+            let firstGridLine = (gridGroup.element.childNodes[0] as any).getBBox(),
                 frame3DLeft = chart.frameShapes.left.getBBox(),
-                options3d = (chart.options.chart as any).options3d,
+                options3d = chart.options.chart.options3d as any,
                 origin = {
                     x: chart.plotWidth / 2,
                     y: chart.plotHeight / 2,
@@ -813,7 +813,7 @@ class Axis3D {
         this: Axis3D,
         proceed: Function
     ): Position3DObject {
-        var pos: Position3DObject =
+        const pos: Position3DObject =
             proceed.apply(this, [].slice.call(arguments, 1));
 
         return this.axis3D ?
