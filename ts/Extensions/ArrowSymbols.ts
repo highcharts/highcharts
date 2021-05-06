@@ -19,7 +19,8 @@
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
-import SymbolRegistry from '../Core/Renderer/SVG/SymbolRegistry.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+const { prototype: { symbols } } = SVGRenderer;
 
 /* *
  *
@@ -193,7 +194,7 @@ function triangleLeftHalf(
  *
  * */
 
-declare module '../Core/Renderer/SVG/SymbolTypeRegistry' {
+declare module '../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Extensions/ArrowSymbols */
         arrow: typeof arrow;
@@ -210,12 +211,12 @@ declare module '../Core/Renderer/SVG/SymbolTypeRegistry' {
     }
 }
 
-SymbolRegistry.register('arrow', arrow);
-SymbolRegistry.register('arrow-filled', triangleLeft);
-SymbolRegistry.register('arrow-filled-half', triangleLeftHalf);
-SymbolRegistry.register('arrow-half', arrowHalf);
-SymbolRegistry.register('triangle-left', triangleLeft);
-SymbolRegistry.register('triangle-left-half', triangleLeftHalf);
+symbols.arrow = arrow;
+symbols['arrow-filled'] = triangleLeft;
+symbols['arrow-filled-half'] = triangleLeftHalf;
+symbols['arrow-half'] = arrowHalf;
+symbols['triangle-left'] = triangleLeft;
+symbols['triangle-left-half'] = triangleLeftHalf;
 
 /* *
  *
@@ -223,4 +224,4 @@ SymbolRegistry.register('triangle-left-half', triangleLeftHalf);
  *
  * */
 
-export default SymbolRegistry;
+export default symbols;

@@ -26,7 +26,8 @@ import ControllableMixin from '../Mixins/ControllableMixin.js';
 import F from '../../../Core/FormatUtilities.js';
 const { format } = F;
 import MockPoint from '../MockPoint.js';
-import SymbolRegistry from '../../../Core/Renderer/SVG/SymbolRegistry.js';
+import SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer.js';
+const { prototype: { symbols } } = SVGRenderer;
 import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -527,7 +528,7 @@ export default ControllableLabel;
 
 /* ********************************************************************** */
 
-declare module '../../../Core/Renderer/SVG/SymbolTypeRegistry' {
+declare module '../../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Extensions/ControllableLabel */
         connector: SymbolFunction;
@@ -537,7 +538,7 @@ declare module '../../../Core/Renderer/SVG/SymbolTypeRegistry' {
  * General symbol definition for labels with connector
  * @private
  */
-SymbolRegistry.register('connector', function (x, y, w, h, options): SVGPath {
+symbols.connector = function (x, y, w, h, options): SVGPath {
     const anchorX = options && options.anchorX,
         anchorY = options && options.anchorY;
 
@@ -577,4 +578,4 @@ SymbolRegistry.register('connector', function (x, y, w, h, options): SVGPath {
     }
 
     return path || [];
-});
+};

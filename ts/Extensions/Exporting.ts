@@ -48,8 +48,7 @@ const {
 } = O;
 import palette from '../Core/Color/Palette.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import SymbolRegistry from '../Core/Renderer/SVG/SymbolRegistry.js';
-const { symbols } = SymbolRegistry;
+const { prototype: { symbols } } = SVGRenderer;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -2545,7 +2544,7 @@ Chart.prototype.inlineStyles = function (): void {
 
 };
 
-declare module '../Core/Renderer/SVG/SymbolTypeRegistry' {
+declare module '../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Extensions/Exporting */
         menu: SymbolFunction;
@@ -2553,7 +2552,7 @@ declare module '../Core/Renderer/SVG/SymbolTypeRegistry' {
         menuball: SymbolFunction;
     }
 }
-SymbolRegistry.register('menu', function (
+symbols.menu = function (
     x: number,
     y: number,
     width: number,
@@ -2569,8 +2568,8 @@ SymbolRegistry.register('menu', function (
     ];
 
     return arr;
-});
-SymbolRegistry.register('menuball', function (
+};
+symbols.menuball = function (
     x: number,
     y: number,
     width: number,
@@ -2585,7 +2584,7 @@ SymbolRegistry.register('menuball', function (
         symbols.circle(width - h, y + 2 * (h + 4), h, h)
     );
     return path;
-});
+};
 
 /**
  * Add the buttons on chart load

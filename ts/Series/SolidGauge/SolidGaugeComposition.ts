@@ -21,10 +21,8 @@
 import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import SymbolRegistry from '../../Core/Renderer/SVG/SymbolRegistry.js';
-const { symbols: { arc } } = SymbolRegistry;
-import U from '../../Core/Utilities.js';
-const { wrap } = U;
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+const { prototype: { symbols, symbols: { arc } } } = SVGRenderer;
 
 /**
  * Internal types
@@ -70,7 +68,7 @@ declare module '../../Core/Renderer/SVG/SymbolOptions' {
  * @return {Highcharts.SVGPathArray}
  *         Path of the created arc.
  */
-SymbolRegistry.register('arc', function (
+symbols.arc = function (
     x: number,
     y: number,
     w: number,
@@ -100,4 +98,4 @@ SymbolRegistry.register('arc', function (
     }
 
     return path;
-});
+};

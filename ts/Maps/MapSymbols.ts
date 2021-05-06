@@ -19,7 +19,8 @@
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions';
 
-import SymbolRegistry from '../Core/Renderer/SVG/SymbolRegistry.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+const { prototype: { symbols } } = SVGRenderer;
 
 /* *
  *
@@ -93,7 +94,7 @@ function topButton(
  *
  * */
 
-declare module '../Core/Renderer/SVG/SymbolTypeRegistry' {
+declare module '../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Map/MapSymbols */
         bottombutton: typeof bottomButton;
@@ -102,8 +103,8 @@ declare module '../Core/Renderer/SVG/SymbolTypeRegistry' {
     }
 }
 
-SymbolRegistry.register('bottombutton', bottomButton);
-SymbolRegistry.register('topbutton', topButton);
+symbols.bottombutton = bottomButton;
+symbols.topbutton = topButton;
 
 /* *
  *
@@ -111,4 +112,4 @@ SymbolRegistry.register('topbutton', topButton);
  *
  * */
 
-export default SymbolRegistry;
+export default symbols;

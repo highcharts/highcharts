@@ -18,8 +18,8 @@
 
 import type SVGPath from './SVGPath';
 import type SymbolOptions from './SymbolOptions';
+import type { SymbolTypeRegistry } from './SymbolType';
 
-import SymbolRegistry from './SymbolRegistry.js';
 import U from '../../Utilities.js';
 const {
     defined,
@@ -339,7 +339,7 @@ function triangleDown(
  *
  * */
 
-declare module './SymbolTypeRegistry' {
+declare module './SymbolType' {
     interface SymbolTypeRegistry {
         arc: typeof arc;
         callout: typeof callout;
@@ -353,16 +353,17 @@ declare module './SymbolTypeRegistry' {
     }
 }
 
-
-SymbolRegistry.register('arc', arc);
-SymbolRegistry.register('callout', callout);
-SymbolRegistry.register('circle', circle);
-SymbolRegistry.register('diamond', diamond);
-SymbolRegistry.register('rect', rect);
-SymbolRegistry.register('roundedRect', roundedRect);
-SymbolRegistry.register('square', rect);
-SymbolRegistry.register('triangle', triangle);
-SymbolRegistry.register('triangle-down', triangleDown);
+const Symbols: SymbolTypeRegistry = {
+    arc,
+    callout,
+    circle,
+    diamond,
+    rect,
+    roundedRect,
+    square: rect,
+    triangle,
+    'triangle-down': triangleDown
+} as SymbolTypeRegistry;
 
 /* *
  *
@@ -370,4 +371,4 @@ SymbolRegistry.register('triangle-down', triangleDown);
  *
  * */
 
-export default SymbolRegistry.symbols;
+export default Symbols;

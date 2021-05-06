@@ -33,6 +33,8 @@ export interface SymbolFunction {
     ): SVGPath;
 }
 
+export type SymbolType = keyof SymbolTypeRegistry;
+
 export interface SymbolTypeRegistry {
     [key: string]: SymbolFunction;
 }
@@ -43,4 +45,4 @@ export interface SymbolTypeRegistry {
  *
  * */
 
-export default SymbolTypeRegistry;
+export default SymbolType;

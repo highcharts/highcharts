@@ -38,8 +38,8 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import SymbolRegistry from '../../Core/Renderer/SVG/SymbolRegistry.js';
-const { symbols } = SymbolRegistry;
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -55,7 +55,7 @@ const {
  *
  * */
 
-declare module '../../Core/Renderer/SVG/SymbolTypeRegistry' {
+declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Series/Heatmap/HeatmapSeries */
         ellipse: SymbolTypeRegistry['circle'];
@@ -489,7 +489,7 @@ class HeatmapSeries extends ScatterSeries {
         this.yAxis.axisPointRange = options.rowsize || 1;
 
         // Bind new symbol names
-        SymbolRegistry.register('ellipse', symbols.circle);
+        symbols.ellipse = symbols.circle;
     }
 
     /**

@@ -29,7 +29,8 @@ const { format } = F;
 import O from '../Core/Options.js';
 const { setOptions } = O;
 import Series from '../Core/Series/Series.js';
-import SymbolRegistry from '../Core/Renderer/SVG/SymbolRegistry.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+const { prototype: { symbols } } = SVGRenderer;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -343,7 +344,7 @@ function boxIntersectLine(
     );
 }
 
-declare module '../Core/Renderer/SVG/SymbolTypeRegistry' {
+declare module '../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Extensions/SeriesLabel */
         connector: SymbolFunction;
@@ -352,7 +353,7 @@ declare module '../Core/Renderer/SVG/SymbolTypeRegistry' {
 /**
  * General symbol definition for labels with connector.
  */
-SymbolRegistry.register('connector', function (x, y, w, h, options): SVGPath {
+symbols.connector = function (x, y, w, h, options): SVGPath {
     const anchorX = options && options.anchorX,
         anchorY = options && options.anchorY;
 
@@ -391,7 +392,7 @@ SymbolRegistry.register('connector', function (x, y, w, h, options): SVGPath {
         }
     }
     return path || [];
-});
+};
 
 /**
  * Points to avoid. In addition to actual data points, the label should avoid
