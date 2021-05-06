@@ -40,7 +40,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * Record of component instances
      *
      */
-    public static instanceRegistry: Record<string, Component<any>> = {};
+    public static instanceRegistry: Record<string, ComponentType> = {};
 
     /**
      * Regular expression to extract the  name (group 1) from the
@@ -127,30 +127,58 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         return ids.map((id): Component<any> => this.instanceRegistry[id]);
     }
 
-    public static getInstanceById(id: string): Component | undefined {
+    public static getInstanceById(id: string): ComponentType | undefined {
         return this.instanceRegistry[id];
     }
 
     public static relayMessage(
-        sender: Component<any>, // Possibly layout?
-        message: (string | MessageEvent), // should probably be a typical event with optional payloads
-        target: string = 'all' // currently all or type. Could also add groups
+        sender: ComponentType | ComponentGroup, // Are there cases where a group should be the sender?
+        message: Component.MessageEvent['message'],
+        targetObj: Component.MessageTarget
     ): void {
-        this.getAllInstanceIDs()
-            .filter((id): boolean => id !== sender.id)
-            .forEach((componentID): void => {
-                const component = this.instanceRegistry[componentID];
-                if (component.type === target || target === 'all') {
-                    component.emit({
-                        type: 'message',
-                        detail: {
-                            sender,
-                            target
-                        },
-                        message
+        const emit = (component: ComponentType): void =>
+            component.emit({
+                type: 'message',
+                detail: {
+                    sender: sender.id,
+                    target: targetObj.target
+                },
+                message
+            });
+
+        const handlers: Record<Component.MessageTarget['type'], Function> = {
+            'componentID': (recipient: Component.MessageTarget['target']): void => {
+                const component = this.getInstanceById(recipient);
+                if (component) {
+                    emit(component);
+                }
+            },
+            'componentType': (recipient: Component.MessageTarget['target']): void => {
+                this.getAllInstanceIDs()
+                    .forEach((instanceID): void => {
+                        const component = this.getInstanceById(instanceID);
+                        if (component && component.id !== sender.id) {
+                            if (component.type === recipient || recipient === 'all') {
+                                emit(component);
+                            }
+                        }
+                    });
+            },
+            'group': (recipient: Component.MessageTarget['target']): void => {
+                // Send a message to a whole group
+                const group = ComponentGroup.getComponentGroup(recipient);
+                if (group) {
+                    group.components.forEach((id): void => {
+                        const component = this.getInstanceById(id);
+                        if (component && component.id !== sender.id) {
+                            emit(component);
+                        }
                     });
                 }
-            });
+            }
+        };
+
+        handlers[targetObj.type](targetObj.target);
     }
 
     protected static getUUID(): string {
@@ -543,8 +571,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
 
         this.on('message', (e: Component.MessageEvent): void => {
-            if (e.message && typeof e.message.callback === 'function') {
-                e.message.callback.apply(this);
+            if (e.message) {
+                this.onMessage(e.message);
             }
         });
 
@@ -614,8 +642,26 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         fireEvent(this, e.type, e);
     }
 
-    public postMessage(message: any, target?: string): void {
-        Component.relayMessage(this, message, target);
+    public postMessage(
+        message: Component.MessageType,
+        target: Component.MessageTarget = { type: 'componentType', target: 'all' }
+    ): void {
+        const component = Component.getInstanceById(this.id);
+
+        if (component) {
+            Component.relayMessage(component, message, target);
+        }
+    }
+
+    public onMessage(message: Component.MessageType): void {
+        if (message && typeof message === 'string') {
+            // do something
+            return;
+        }
+
+        if (typeof message === 'object' && typeof message.callback === 'function') {
+            message.callback.apply(this);
+        }
     }
 
     /**
@@ -667,6 +713,7 @@ namespace Component {
         TableChangedEvent |
         LoadEvent |
         RenderEvent |
+        MessageEvent |
         Event;
     export interface ResizeEvent extends Event {
         readonly type: 'resize';
@@ -686,10 +733,8 @@ namespace Component {
         readonly type: 'render' | 'afterRender';
     }
     export interface MessageEvent extends Event {
-        // readonly type: 'message';
-        message?: {
-            callback: Function;
-        };
+        /* readonly type: 'message'; */
+        message?: MessageType;
     }
     export interface TableChangedEvent extends Event {
         readonly type: 'tableChanged';
@@ -736,5 +781,14 @@ namespace Component {
         type: string;
         id: string;
     }
+    export interface MessageTarget {
+        type: 'group' | 'componentType' | 'componentID';
+        target: ComponentType['id'] | ComponentType['type'] | ComponentGroup['id'];
+    }
+
+    export type MessageType = string | {
+        callback: Function;
+    }
+
 }
 export default Component;
