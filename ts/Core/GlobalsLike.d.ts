@@ -17,8 +17,7 @@
 import type Chart from './Chart/Chart';
 import type { SeriesTypeRegistry } from './Series/SeriesType';
 import type SizeObject from './Renderer/SizeObject';
-import type SVGRenderer from './Renderer/SVG/SVGRenderer';
-import type SVGRendererLike from './Renderer/SVG/SVGRendererLike';
+import type Time from './Time';
 
 /* *
  *
@@ -99,7 +98,7 @@ export interface GlobalsLike extends InternalNamespace {
     readonly Obj: ObjectConstructor;
     readonly SVG_NS: string;
     readonly charts: Array<(Chart|undefined)>;
-    readonly dateFormats: Record<string, Highcharts.TimeFormatCallbackFunction>;
+    readonly dateFormats: Record<string, Time.TimeFormatCallbackFunction>;
     readonly deg2rad: number;
     readonly doc: Document;
     readonly hasBidiBug: boolean;

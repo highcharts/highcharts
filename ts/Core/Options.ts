@@ -327,7 +327,7 @@ declare global {
             plotOptions?: SeriesTypePlotOptions;
             subtitle?: SubtitleOptions;
             symbols?: Array<SVGRenderer.SymbolKeyValue>;
-            time?: TimeOptions;
+            time?: Time.TimeOptions;
             title?: TitleOptions;
             tooltip?: TooltipOptions;
         }

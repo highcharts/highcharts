@@ -28,6 +28,8 @@ import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type SizeObject from '../Renderer/SizeObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type TickPositionsArray from './TickPositionsArray';
+import type Time from '../Time';
 
 import Axis from './Axis.js';
 import H from '../Globals.js';
@@ -266,7 +268,7 @@ Axis.prototype.getMaxLabelDimensions = function (
 };
 
 // Adds week date format
-H.dateFormats.W = function (this: Highcharts.Time, timestamp: number): string {
+H.dateFormats.W = function (this: Time, timestamp: number): string {
     const d = new this.Date(timestamp);
     const firstDay = (this.get('Day', d) + 6) % 7;
     const thursday = new this.Date(d.valueOf());
@@ -285,7 +287,7 @@ H.dateFormats.W = function (this: Highcharts.Time, timestamp: number): string {
 };
 
 // First letter of the day of the week, e.g. 'M' for 'Monday'.
-H.dateFormats.E = function (this: Highcharts.Time, timestamp: number): string {
+H.dateFormats.E = function (this: Time, timestamp: number): string {
     return this.dateFormat('%a', timestamp, true).charAt(0);
 };
 
@@ -1086,7 +1088,7 @@ class GridAxis {
                         this: Highcharts.Axis,
                         min: number,
                         max: number
-                    ): (Highcharts.AxisTickPositionsArray|undefined) {
+                    ): (TickPositionsArray|undefined) {
 
                         const parentInfo = (
                             this.linkedParent &&

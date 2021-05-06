@@ -48,6 +48,10 @@ const {
     animObject,
     setAnimation
 } = A;
+import F from '../Foundation.js';
+const {
+    registerEventOptions
+} = F;
 import H from '../Globals.js';
 const {
     hasTouch,
@@ -78,7 +82,6 @@ const {
     fireEvent,
     getNestedProperty,
     isArray,
-    isFunction,
     isNumber,
     isString,
     merge,
@@ -2781,15 +2784,8 @@ class Series {
 
         fireEvent(this, 'init', { options: userOptions });
 
-        let series = this,
-            events,
-            chartSeries = chart.series,
-            lastSeries;
-
-        // A lookup over those events that are added by _options_ (not
-        // programmatically). These are updated through Series.update()
-        // (#10861).
-        this.eventOptions = this.eventOptions || {};
+        const series = this,
+            chartSeries = chart.series;
 
         // The 'eventsToUnbind' property moved from prototype into the
         // Series init to avoid reference to the same array between
@@ -2856,29 +2852,9 @@ class Series {
             selected: options.selected === true // false by default
         });
 
-        // Register event listeners
-        events = options.events;
+        registerEventOptions(this);
 
-        objectEach(events, function (event: any, eventType: string): void {
-            if (isFunction(event)) {
-
-                // If event does not exist, or is changed by Series.update
-                if (series.eventOptions[eventType] !== event) {
-
-                    // Remove existing if set by option
-                    if (isFunction(series.eventOptions[eventType])) {
-                        removeEvent(
-                            series,
-                            eventType,
-                            series.eventOptions[eventType]
-                        );
-                    }
-
-                    series.eventOptions[eventType] = event;
-                    addEvent(series, eventType, event);
-                }
-            }
-        });
+        const events = options.events;
         if (
             (events && events.click) ||
             (
@@ -2908,6 +2884,7 @@ class Series {
 
         // Get the index and register the series in the chart. The index is
         // one more than the current latest series index (#5960).
+        let lastSeries: Series|undefined;
         if (chartSeries.length) {
             lastSeries = chartSeries[chartSeries.length - 1];
         }

@@ -18,11 +18,13 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type { AxisComposition, AxisLike } from './Types';
+import type TickPositionsArray from './TickPositionsArray';
 import type { AlignValue } from '../Renderer/AlignObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type GradientColor from '../Color/GradientColor';
 import type PlotLineOrBand from './PlotLineOrBand';
@@ -39,6 +41,10 @@ import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../Color/Color.js';
+import F from '../Foundation.js';
+const {
+    registerEventOptions
+} = F;
 import H from '../Globals.js';
 import palette from '../Color/Palette.js';
 import O from '../Options.js';
@@ -155,14 +161,12 @@ declare global {
             trigger: (AxisExtremesTriggerValue|string);
             type: 'setExtremes';
         }
-        interface AxisTickPositionsArray extends Array<number> {
-        }
         interface AxisTickPositionerCallbackFunction {
             (
                 this: Axis,
                 min: number,
                 max: number
-            ): (AxisTickPositionsArray|undefined);
+            ): (TickPositionsArray|undefined);
         }
         interface ExtremesObject {
             dataMax: number;
@@ -309,7 +313,7 @@ declare global {
             tickPixelInterval: number;
             tickPosition: AxisTickPositionValue;
             tickPositioner?: AxisTickPositionerCallbackFunction;
-            tickPositions?: AxisTickPositionsArray;
+            tickPositions?: TickPositionsArray;
             tickWidth?: number;
             title: XAxisTitleOptions;
             top?: (number|string);
@@ -381,6 +385,7 @@ declare global {
             public dataMin?: (null|number);
             public displayBtn?: boolean;
             public eventArgs?: any;
+            public eventOptions: Record<string, EventCallback<Series, Event>>;
             public finalTickAmt?: number;
             public forceRedraw?: boolean;
             public gridGroup?: SVGElement;
@@ -450,7 +455,7 @@ declare global {
             public tickAmount: number;
             public tickInterval: number;
             public tickmarkOffset: number;
-            public tickPositions: AxisTickPositionsArray;
+            public tickPositions: TickPositionsArray;
             public tickRotCorr: PositionObject;
             public ticks: Record<string, Tick>;
             public titleOffset?: number;
@@ -539,7 +544,7 @@ declare global {
                 pointPlacement?: number
             ): (number|undefined);
             public trimTicks(
-                tickPositions: AxisTickPositionsArray,
+                tickPositions: TickPositionsArray,
                 startOnTick?: boolean,
                 endOnTick?: boolean
             ): void;
@@ -3968,6 +3973,7 @@ class Axis {
     public dataMin?: (null|number);
     public displayBtn?: boolean;
     public eventArgs?: any;
+    public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
     public finalTickAmt?: number;
     public forceRedraw?: boolean;
     public gridGroup?: SVGElement;
@@ -4035,7 +4041,7 @@ class Axis {
     public tickAmount: number = void 0 as any;
     public tickInterval: number = void 0 as any;
     public tickmarkOffset: number = void 0 as any;
-    public tickPositions: Highcharts.AxisTickPositionsArray = void 0 as any;
+    public tickPositions: TickPositionsArray = void 0 as any;
     public tickRotCorr: PositionObject = void 0 as any;
     public ticks: Record<string, Tick> = void 0 as any;
     public titleOffset?: number;
@@ -4267,8 +4273,6 @@ class Axis {
         );
         axis.crosshair = crosshair === true ? {} : crosshair;
 
-        const events = axis.options.events;
-
         // Register. Don't add it again on Axis.update().
         if (chart.axes.indexOf(axis) === -1) { //
             if (isXAxis) { // #2713
@@ -4302,12 +4306,8 @@ class Axis {
             labelsOptions.rotation :
             void 0;
 
-        // register event listeners
-        objectEach(events, function (event: any, eventType: string): void {
-            if (isFunction(event)) {
-                addEvent(axis, eventType, event);
-            }
-        });
+        // Register event listeners
+        registerEventOptions(axis);
 
         fireEvent(this, 'afterInit');
     }
@@ -7624,10 +7624,9 @@ class Axis {
      * Whether to preserve events, used internally in Axis.update.
      */
     public destroy(keepEvents?: boolean): void {
-        let axis: Highcharts.Axis = this as any,
+        const axis = this,
             plotLinesAndBands = axis.plotLinesAndBands,
-            plotGroup,
-            i;
+            eventOptions = this.eventOptions;
 
         fireEvent(this, 'destroy', { keepEvents: keepEvents });
 
@@ -7648,7 +7647,7 @@ class Axis {
             }
         );
         if (plotLinesAndBands) {
-            i = plotLinesAndBands.length;
+            let i = plotLinesAndBands.length;
             while (i--) { // #1975
                 plotLinesAndBands[i].destroy();
             }
@@ -7665,7 +7664,7 @@ class Axis {
         );
 
         // Destroy each generated group for plotlines and plotbands
-        for (plotGroup in axis.plotLinesAndBandsGroups) { // eslint-disable-line guard-for-in
+        for (const plotGroup in axis.plotLinesAndBandsGroups) { // eslint-disable-line guard-for-in
             axis.plotLinesAndBandsGroups[plotGroup] =
                 axis.plotLinesAndBandsGroups[plotGroup].destroy() as any;
         }
@@ -7676,6 +7675,7 @@ class Axis {
                 delete (axis as any)[key];
             }
         });
+        this.eventOptions = eventOptions;
     }
 
     /**
@@ -7892,23 +7892,12 @@ class Axis {
         options: DeepPartial<Highcharts.AxisOptions>,
         redraw?: boolean
     ): void {
-        const chart = this.chart,
-            newEvents = ((options && options.events) || {});
+        const chart = this.chart;
 
         options = merge(this.userOptions, options);
 
-        // Remove old events, if no new exist (#8161)
-        objectEach(
-            (chart.options as any)[this.coll].events,
-            function (fn: Function, ev: string): void {
-                if (typeof (newEvents as any)[ev] === 'undefined') {
-                    (newEvents as any)[ev] = void 0;
-                }
-            }
-        );
-
         this.destroy(true);
-        this.init(chart, extend(options, { events: newEvents }));
+        this.init(chart, options);
 
         chart.isDirtyBox = true;
         if (pick(redraw, true)) {
