@@ -178,7 +178,7 @@ declare global {
                 width: number,
                 roundingFunction?: ('round'|'floor'|'ceil')
             ): SVGPath;
-            public definition(def: ASTNode): SVGElement;
+            public definition(def: AST.Node): SVGElement;
             public destroy(): null;
             public g(name?: string): SVGElement;
             public getContrast(rgba: ColorString): ColorString;
@@ -754,7 +754,7 @@ class SVGRenderer {
      * @return {Highcharts.SVGElement}
      * The inserted node.
      */
-    public definition(def: Highcharts.ASTNode): SVGElement {
+    public definition(def: AST.Node): SVGElement {
         const ast = new AST([def]);
         return ast.addToDOM(this.defs.element) as unknown as SVGElement;
     }

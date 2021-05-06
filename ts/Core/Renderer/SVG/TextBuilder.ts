@@ -370,10 +370,10 @@ class TextBuilder {
      * @return {void}
      */
     private modifyTree(
-        nodes: Highcharts.ASTNode[]
+        nodes: AST.Node[]
     ): void {
 
-        const modifyChild = (node: Highcharts.ASTNode, i: number): void => {
+        const modifyChild = (node: AST.Node, i: number): void => {
             const tagName = node.tagName;
             const styledMode = this.renderer.styledMode;
             const attributes = node.attributes || {};
