@@ -139,8 +139,6 @@ class BulletSeries extends ColumnSeries {
 
             /**
              * The border radius of the rectangle representing the target.
-             *
-             * In styled mode, use class `highcharts-bullet-target` instead.
              */
             borderRadius: 0
         },
