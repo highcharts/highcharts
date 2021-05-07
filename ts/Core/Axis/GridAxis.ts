@@ -11,7 +11,12 @@
 
 'use strict';
 
-import type TickPositionsArray from './TickPositionsArray';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Color/ColorType';
 import type Point from '../Series/Point';
 import type {
@@ -19,10 +24,13 @@ import type {
     PointShortOptions
 } from '../Series/PointOptions';
 import type PositionObject from '../Renderer/PositionObject';
+import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type SizeObject from '../Renderer/SizeObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
+
 import Axis from './Axis.js';
 import H from '../Globals.js';
 import Tick from './Tick.js';
@@ -334,7 +342,7 @@ addEvent(
             tickWidth = tickSize ? tickSize[0] : 0,
             crispCorr = tickSize ? tickSize[1] / 2 : 0,
             labelHeight: number,
-            lblMetrics: Highcharts.FontMetricsObject,
+            lblMetrics: FontMetricsObject,
             lines: number,
             bottom: number,
             top: number,

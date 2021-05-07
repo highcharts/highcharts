@@ -10,11 +10,19 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
 import type PointerEvent from './PointerEvent';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
+import type SVGRenderer from './Renderer/SVG/SVGRenderer';
+
 import Axis from './Axis/Axis.js';
 import H from './Globals.js';
 import palette from './Color/Palette.js';
@@ -30,6 +38,12 @@ const {
     pick,
     removeEvent
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module './Chart/ChartLike'{
     interface ChartLike {
@@ -437,7 +451,7 @@ class Scrollbar {
      * */
 
     public constructor(
-        renderer: Highcharts.SVGRenderer,
+        renderer: SVGRenderer,
         options: Highcharts.ScrollbarOptions,
         chart: Chart
     ) {
@@ -485,7 +499,7 @@ class Scrollbar {
 
     public rendered?: boolean;
 
-    public renderer: Highcharts.SVGRenderer;
+    public renderer: SVGRenderer;
 
     public scrollbar: SVGElement = void 0 as any;
 
@@ -752,7 +766,7 @@ class Scrollbar {
      * @param {Highcharts.Chart} chart
      */
     public init(
-        renderer: Highcharts.SVGRenderer,
+        renderer: SVGRenderer,
         options: Highcharts.ScrollbarOptions,
         chart: Chart
     ): void {

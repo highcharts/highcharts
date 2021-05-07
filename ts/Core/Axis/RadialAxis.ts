@@ -10,12 +10,20 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from '../Chart/Chart';
 import type Pane from '../../Extensions/Pane';
 import type Point from '../Series/Point';
 import type PositionObject from '../Renderer/PositionObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+
 import Axis from './Axis.js';
 import Tick from './Tick.js';
 import HiddenAxis from './HiddenAxis.js';
@@ -33,6 +41,12 @@ const {
     relativeLength,
     wrap
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 type YAxisOptions = (typeof Axis)['defaultYAxisOptions'];
 
@@ -1218,7 +1232,7 @@ class RadialAxis {
             tickLength: number,
             tickWidth: number,
             horiz: boolean,
-            renderer: Highcharts.Renderer
+            renderer: SVGRenderer
         ): SVGPath {
             const tick = this;
             const axis = tick.axis as RadialAxis;

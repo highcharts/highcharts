@@ -1,5 +1,21 @@
 /* *
  *
+ *  Highcharts funnel3d series module
+ *
+ *  (c) 2010-2021 Highsoft AS
+ *
+ *  Author: Kacper Madej
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+'use strict';
+
+/* *
+ *
  *  Imports
  *
  * */
@@ -14,19 +30,12 @@ import type { SVGElement3DLikeCuboid } from '../../Core/Renderer/SVG/SVGElement3
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type SVGPath3D from '../../Core/Renderer/SVG/SVGPath3D';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
-const {
-    charts,
-    // Use H.Renderer instead of SVGRenderer for VML support.
-    Renderer: {
-        prototype: {
-            cuboidPath,
-            elements3d: Elements3D
-        }
-    }
-} = H;
+const { charts } = H;
+import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     error,
@@ -58,6 +67,13 @@ declare module '../../Core/Renderer/SVG/SVGElement3DLike' {
     }
 }
 
+declare module '../../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        funnel3d(shapeArgs: SVGAttributes): SVGElement;
+        funnel3dPath(shapeArgs: SVGAttributes): Highcharts.Funnel3dPathsObject;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -76,10 +92,6 @@ declare global {
             zIndexSetter(this: SVGElement): boolean;
             onAdd(this: SVGElement): void;
         }
-        interface SVGRenderer {
-            funnel3d(shapeArgs: SVGAttributes): SVGElement;
-            funnel3dPath(shapeArgs: SVGAttributes): Funnel3dPathsObject;
-        }
         interface Funnel3dPathsObject extends SVGPath3D {
             backLower: SVGPath;
             backUpper: SVGPath;
@@ -97,9 +109,11 @@ declare global {
  *
  * */
 
+const rendererProto = RendererRegistry.getRendererType().prototype;
+
 /* eslint-disable valid-jsdoc */
 
-Elements3D.funnel3d = merge(Elements3D.cuboid, {
+rendererProto.elements3d.funnel3d = merge(rendererProto.elements3d.cuboid, {
     parts: [
         'top', 'bottom',
         'frontUpper', 'backUpper',
@@ -361,7 +375,7 @@ Elements3D.funnel3d = merge(Elements3D.cuboid, {
     }
 });
 
-extend(H.Renderer.prototype, {
+extend<SVGRenderer>(rendererProto, {
     funnel3d: function (
         this: SVGRenderer,
         shapeArgs: SVGAttributes
@@ -438,7 +452,7 @@ extend(H.Renderer.prototype, {
                 Math.abs(((chart.options.chart.options3d as any).alpha % 180) - 90),
 
             // set zIndexes of parts based on cubiod logic, for consistency
-            cuboidData = cuboidPath.call(renderer, merge(shapeArgs, {
+            cuboidData = rendererProto.cuboidPath.call(renderer, merge(shapeArgs, {
                 depth: shapeArgs.width,
                 width: (shapeArgs.width + shapeArgs.bottom.width) / 2
             })),

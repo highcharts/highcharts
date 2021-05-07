@@ -36,30 +36,6 @@ const {
 
 /* *
  *
- *  Declarations
- *
- * */
-
-/**
- * Internal namespace
- * @private
- * @todo remove
- */
-declare global {
-    namespace Highcharts {
-        let seriesTypes: SeriesTypeRegistry;
-        function seriesType<T extends typeof Series>(
-            type: keyof SeriesTypeRegistry,
-            parent: (keyof SeriesTypeRegistry|undefined),
-            options: T['prototype']['options'],
-            props?: DeepPartial<T['prototype']>,
-            pointProps?: DeepPartial<T['prototype']['pointClass']['prototype']>
-        ): T;
-    }
-}
-
-/* *
- *
  *  Namespace
  *
  * */
@@ -215,7 +191,7 @@ namespace SeriesRegistry {
  *
  * */
 
-H.seriesType = SeriesRegistry.seriesType;
+(H as AnyRecord).seriesType = SeriesRegistry.seriesType;
 
 /* *
  *

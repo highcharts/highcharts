@@ -6,9 +6,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ControllablePath from '../Controllables/ControllablePath';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+
 import Chart from '../../../Core/Chart/Chart.js';
 import SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../../Core/Utilities.js';
@@ -16,9 +23,20 @@ const {
     addEvent,
     defined,
     merge,
-    objectEach,
     uniqueKey
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        addMarker(id: string, markerOptions: Highcharts.ASTNode): SVGElement;
+    }
+}
 
 /**
  * Internal types.
@@ -36,9 +54,6 @@ declare global {
         }
         interface Options {
             defs?: Record<string, ASTNode>;
-        }
-        interface SVGRenderer {
-            addMarker(id: string, markerOptions: ASTNode): SVGElement;
         }
     }
 }
