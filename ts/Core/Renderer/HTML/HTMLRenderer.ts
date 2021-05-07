@@ -8,9 +8,18 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type CSSObject from '../CSSObject';
 import type HTMLElement from './HTMLElement';
 import type { HTMLDOMElement } from '../DOMElementType';
+
 import AST from './AST.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
@@ -22,30 +31,49 @@ const {
     pick
 } = U;
 
-/**
- * @private
- */
-declare module '../SVG/SVGRendererLike' {
-    interface SVGElementLike {
-        /** @requires Core/Renderer/HTML/HTMLRenderer */
-        html(str: string, x: number, y: number): HTMLElement;
-    }
-}
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
-/**
- * Renderer placebo
- * @private
- */
-const HTMLRenderer = SVGRenderer;
 interface HTMLRenderer extends SVGRenderer {
     /** @requires Core/Renderer/HTML/HTMLRenderer */
     html(str: string, x: number, y: number): HTMLElement;
 }
 
+declare module '../SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        /** @requires Core/Renderer/HTML/HTMLRenderer */
+        html(str: string, x: number, y: number): HTMLElement;
+    }
+}
+
+/* *
+ *
+ *  Composition
+ *
+ * */
+
 /* eslint-disable valid-jsdoc */
 
 // Extend SvgRenderer for useHTML option.
-extend<SVGRenderer|HTMLRenderer>(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
+namespace HTMLRenderer {
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(SVGRendererClass: typeof SVGRenderer): void {
+        const svgRendererProto = SVGRendererClass.prototype;
+
+        svgRendererProto.html = html;
+    }
 
     /**
      * Create HTML text node. This is used by the VML renderer as well as the
@@ -65,7 +93,7 @@ extend<SVGRenderer|HTMLRenderer>(SVGRenderer.prototype, /** @lends SVGRenderer.p
      *
      * @return {Highcharts.HTMLDOMElement}
      */
-    html: function (
+    function html(
         this: HTMLRenderer,
         str: string,
         x: number,
@@ -310,6 +338,12 @@ extend<SVGRenderer|HTMLRenderer>(SVGRenderer.prototype, /** @lends SVGRenderer.p
         }
         return wrapper;
     }
-});
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default HTMLRenderer;
