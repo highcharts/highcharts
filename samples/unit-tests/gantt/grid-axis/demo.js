@@ -256,6 +256,16 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
         axes[2].x + axes[2].width,
         'Right outer linear axis horizontal placement'
     );
+
+    chart.yAxis[1].update({
+        lineColor: 'red'
+    });
+
+    assert.strictEqual(
+        chart.yAxis[1].grid.axisLineExtra.attr('stroke'),
+        'red',
+        '#15664: axisLineExtra stroke should be updated'
+    );
 });
 
 /**
