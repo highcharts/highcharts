@@ -166,6 +166,8 @@ declare global {
             point?: (string|MockPointOptions);
             itemType?: string;
             vertical?: VerticalAlignValue;
+            xAxis?: number;
+            yAxis?: number;
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject { // @todo AnnotationOptions.d.ts
             animation: Partial<AnimationOptions>;

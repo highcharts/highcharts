@@ -19,7 +19,8 @@ import U from '../../../Core/Utilities.js';
 const {
     extend,
     isNumber,
-    merge
+    merge,
+    pick
 } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -505,6 +506,8 @@ class Measure extends Annotation {
                 y: 0,
                 verticalAlign: 'top',
                 crop: true,
+                xAxis: 0,
+                yAxis: 0,
                 point: function (target: any): ExtendedPositionObject {
                     const annotation: Measure = target.annotation;
                     const options = target.options;
@@ -512,9 +515,9 @@ class Measure extends Annotation {
                     return {
                         x: annotation.xAxisMin,
                         y: annotation.yAxisMin,
-                        xAxis: options.xAxis,
-                        yAxis: options.yAxis
-                    };
+                        xAxis: pick(typeOptions.xAxis, options.xAxis),
+                        yAxis: pick(typeOptions.yAxis, options.yAxis)
+                      };
                 } as any,
                 text: (formatter && formatter.call(this)) ||
                     Measure.calculations.defaultFormatter.call(this)
