@@ -835,7 +835,7 @@ class SVGElement implements SVGElementLike {
      * @return {Highcharts.SVGElement}
      *         Returns the SVG element to allow chaining.
      */
-    public clip(clipRect?: Highcharts.ClipRectElement): this {
+    public clip(clipRect?: SVGRenderer.ClipRectElement): this {
         return this.attr(
             'clip-path',
             clipRect ?
@@ -2099,8 +2099,8 @@ class SVGElement implements SVGElementLike {
             oldShadowOptions = this.oldShadowOptions,
             defaultShadowOptions: ShadowOptionsObject = {
                 color: palette.neutralColor100,
-                offsetX: 1,
-                offsetY: 1,
+                offsetX: this.parentInverted ? -1 : 1,
+                offsetY: this.parentInverted ? -1 : 1,
                 opacity: 0.15,
                 width: 3
             };
@@ -2144,7 +2144,7 @@ class SVGElement implements SVGElementLike {
         } else if (!this.shadows) {
             shadowElementOpacity = options.opacity / options.width;
             transform = this.parentInverted ?
-                'translate(-1,-1)' :
+                `translate(${options.offsetY}, ${options.offsetX})` :
                 `translate(${options.offsetX}, ${options.offsetY})`;
             for (i = 1; i <= options.width; i++) {
                 shadow = element.cloneNode(false) as any;

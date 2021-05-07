@@ -719,7 +719,7 @@ class VBPIndicator extends SMAIndicator {
         zonesStyles: CSSObject
     ): void {
         let indicator = this,
-            renderer: Highcharts.Renderer = chart.renderer,
+            renderer = chart.renderer,
             zoneLinesSVG = indicator.zoneLinesSVG,
             zoneLinesPath: SVGPath = [],
             leftLinePos = 0,

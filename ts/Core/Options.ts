@@ -28,6 +28,8 @@ import type Series from './Series/Series';
 import type { SeriesTypeOptions, SeriesTypePlotOptions } from './Series/SeriesType';
 import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type SVGRenderer from './Renderer/SVG/SVGRenderer';
+
 import H from './Globals.js';
 const {
     isTouchDevice,
@@ -324,7 +326,7 @@ declare global {
             loading?: LoadingOptions;
             plotOptions?: SeriesTypePlotOptions;
             subtitle?: SubtitleOptions;
-            symbols?: Array<SymbolKeyValue>;
+            symbols?: Array<SVGRenderer.SymbolKeyValue>;
             time?: Time.TimeOptions;
             title?: TitleOptions;
             tooltip?: TooltipOptions;

@@ -10,13 +10,21 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type CSSObject from '../Renderer/CSSObject';
 import type PositionObject from '../Renderer/PositionObject';
 import type { TickLike } from '../Axis/Types';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
 import type TimeTicksInfoObject from './TimeTicksInfoObject';
+
 import F from '../FormatUtilities.js';
 import H from '../Globals.js';
 const {
@@ -106,7 +114,7 @@ declare global {
                 tickLength: number,
                 tickWidth: number,
                 horiz: boolean,
-                renderer: Renderer
+                renderer: SVGRenderer
             ): SVGPath;
             public getPosition(
                 horiz: boolean,
@@ -716,7 +724,7 @@ class Tick {
         tickLength: number,
         tickWidth: number,
         horiz: boolean,
-        renderer: Highcharts.Renderer
+        renderer: SVGRenderer
     ): SVGPath {
         return renderer.crispLine([[
             'M',

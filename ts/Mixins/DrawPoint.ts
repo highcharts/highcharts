@@ -4,11 +4,18 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
 import type ShadowOptionsObject from '../Core/Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 /**
  * Internal types
@@ -26,7 +33,7 @@ declare global {
             group: SVGElement;
             onComplete?: Function;
             isNew?: boolean;
-            renderer: Renderer;
+            renderer: SVGRenderer;
             shadow?: (boolean|Partial<ShadowOptionsObject>);
             shapeArgs?: SVGAttributes;
             shapeType: string;

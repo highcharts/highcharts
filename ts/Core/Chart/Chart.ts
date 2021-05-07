@@ -60,6 +60,7 @@ const {
 } = O;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
+import RendererRegistry from '../Renderer/RendererRegistry.js';
 import SeriesRegistry from '../Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
@@ -1440,7 +1441,6 @@ class Chart {
             renderTo = chart.renderTo,
             indexAttrName = 'data-highcharts-chart',
             oldChartIndex,
-            Ren,
             containerId = uniqueKey(),
             containerStyle: CSSObject|undefined,
             key;
@@ -1539,7 +1539,7 @@ class Chart {
         chart._cursor = container.style.cursor as CursorValue;
 
         // Initialize the renderer
-        Ren = (H as any)[optionsChart.renderer as any] || H.Renderer;
+        const Renderer = RendererRegistry.getRendererType(optionsChart.renderer);
 
         /**
          * The renderer instance of the chart. Each chart instance has only one
@@ -1548,15 +1548,15 @@ class Chart {
          * @name Highcharts.Chart#renderer
          * @type {Highcharts.SVGRenderer}
          */
-        chart.renderer = new Ren(
+        chart.renderer = new Renderer(
             container,
             chartWidth,
             chartHeight,
-            null,
+            void 0,
             optionsChart.forExport,
             options.exporting && options.exporting.allowHTML,
             chart.styledMode
-        );
+        ) as Chart.Renderer;
         // Set the initial animation from the options
         setAnimation(void 0, chart);
 
