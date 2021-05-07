@@ -10,11 +10,18 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AlignValue,
     VerticalAlignValue
 } from '../../Core/Renderer/AlignObject';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type { AnnotationTypeRegistry } from './Types/AnnotationType';
 import type AST from '../../Core/Renderer/HTML/AST';
 import type { AxisType } from '../../Core/Axis/Types';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
@@ -25,11 +32,13 @@ import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions';
 import type EventCallback from '../../Core/EventCallback';
 import type FormatUtilities from '../../Core/FormatUtilities';
+import type MockPointOptions from './MockPointOptions';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
@@ -61,6 +70,15 @@ const {
     splat,
     wrap
 } = U;
+
+declare module './MockPointOptions' {
+    interface MockPointOptions {
+        x: number;
+        xAxis?: (number|AxisType|null);
+        y: number;
+        yAxis?: (number|AxisType|null);
+    }
+}
 
 /**
  * Internal types.
@@ -103,12 +121,6 @@ declare global {
             ControllableCircle|ControllableImage|ControllablePath|
             ControllableRect
         );
-        interface AnnotationMockPointOptionsObject {
-            x: number;
-            xAxis?: (number|AxisType|null);
-            y: number;
-            yAxis?: (number|AxisType|null);
-        }
         interface AnnotationPoint extends Point {
             series: AnnotationSeries;
         }
@@ -138,7 +150,7 @@ declare global {
             overflow: DataLabelOverflowValue;
             padding: number;
             shadow: (boolean|Partial<ShadowOptionsObject>);
-            shape: SymbolKeyValue;
+            shape: SVGRenderer.SymbolKeyValue;
             style: CSSObject;
             text?: string;
             type?: string;
@@ -151,11 +163,11 @@ declare global {
             color?: ColorType;
             dashStyle?: DashStyleValue;
             // formatter: FormatterCallbackFunction<T>;
-            point?: (string|AnnotationMockPointOptionsObject);
+            point?: (string|MockPointOptions);
             itemType?: string;
             vertical?: VerticalAlignValue;
         }
-        interface AnnotationsOptions extends AnnotationControllableOptionsObject {
+        interface AnnotationsOptions extends AnnotationControllableOptionsObject { // @todo AnnotationOptions.d.ts
             animation: Partial<AnimationOptions>;
             controlPointOptions: AnnotationControlPointOptionsObject;
             draggable: AnnotationDraggableValue;
@@ -187,15 +199,15 @@ declare global {
         interface AnnotationsShapesOptions extends AnnotationsShapeOptions {
             markerEnd?: string;
             markerStart?: string;
-            point?: (string|AnnotationMockPointOptionsObject);
-            points?: Array<(string|AnnotationMockPointOptionsObject)>;
+            point?: (string|MockPointOptions);
+            points?: Array<(string|MockPointOptions)>;
         }
         interface AnnotationsTypeOptions {
-            background?: AnnotationsShapeOptions;
+            background?: Highcharts.AnnotationsShapeOptions;
             height?: number;
-            line?: AnnotationsShapeOptions;
-            point: AnnotationMockPointOptionsObject;
-            points?: Array<AnnotationsTypePointsOptions>;
+            line?: Highcharts.AnnotationsShapeOptions;
+            point: MockPointOptions;
+            points?: Array<Highcharts.AnnotationsTypePointsOptions>;
             xAxis?: number;
             yAxis?: number;
         }
@@ -205,9 +217,6 @@ declare global {
             xAxis?: number;
             y?: number;
             yAxis?: number;
-        }
-        interface AnnotationTypesRegistry {
-            [key: string]: typeof Annotation;
         }
         function extendAnnotation<T extends typeof Annotation>(
             Constructor: T,
@@ -302,7 +311,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     /**
      * @private
      */
-    public static types = {} as Highcharts.AnnotationTypesRegistry;
+    public static types = {} as AnnotationTypeRegistry;
 
     /* *
      *

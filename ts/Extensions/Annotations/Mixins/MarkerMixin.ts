@@ -6,6 +6,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AST from '../../../Core/Renderer/HTML/AST';
 import type ControllablePath from '../Controllables/ControllablePath';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
@@ -18,9 +24,20 @@ const {
     addEvent,
     defined,
     merge,
-    objectEach,
     uniqueKey
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        addMarker(id: string, markerOptions: AST.Node): SVGElement;
+    }
+}
 
 /**
  * Internal types.
@@ -38,9 +55,6 @@ declare global {
         }
         interface Options {
             defs?: Record<string, AST.Node>;
-        }
-        interface SVGRenderer {
-            addMarker(id: string, markerOptions: AST.Node): SVGElement;
         }
     }
 }

@@ -31,8 +31,8 @@ const {
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 const { defaultOptions } = O;
-import palette from './Color/Palette.js';
-
+import Palette from './Color/Palette.js';
+import RendererRegistry from './Renderer/RendererRegistry.js';
 import Scrollbar from './Scrollbar.js';
 import Series from './Series/Series.js';
 import SeriesRegistry from './Series/SeriesRegistry.js';
@@ -420,14 +420,14 @@ extend(defaultOptions, {
              *
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            backgroundColor: palette.neutralColor5,
+            backgroundColor: Palette.neutralColor5,
 
             /**
              * The stroke for the handle border and the stripes inside.
              *
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            borderColor: palette.neutralColor40
+            borderColor: Palette.neutralColor40
         },
 
         /**
@@ -445,7 +445,7 @@ extend(defaultOptions, {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default rgba(102,133,194,0.3)
          */
-        maskFill: color(palette.highlightColor60).setOpacity(0.3).get(),
+        maskFill: color(Palette.highlightColor60).setOpacity(0.3).get(),
 
         /**
          * The color of the line marking the currently zoomed area in the
@@ -457,7 +457,7 @@ extend(defaultOptions, {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #cccccc
          */
-        outlineColor: palette.neutralColor20,
+        outlineColor: Palette.neutralColor20,
 
         /**
          * The width of the line marking the currently zoomed area in the
@@ -669,7 +669,7 @@ extend(defaultOptions, {
 
             lineWidth: 0,
 
-            gridLineColor: palette.neutralColor10,
+            gridLineColor: Palette.neutralColor10,
 
             gridLineWidth: 1,
 
@@ -684,7 +684,7 @@ extend(defaultOptions, {
                  */
                 style: {
                     /** @ignore */
-                    color: palette.neutralColor40
+                    color: Palette.neutralColor40
                 },
 
                 x: 3,
@@ -771,12 +771,8 @@ extend(defaultOptions, {
  * @return {Highcharts.SVGPathArray}
  *         Path to be used in a handle
  */
-H.Renderer.prototype.symbols['navigator-handle'] = function (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    options?: Highcharts.SymbolOptionsObject
+RendererRegistry.getRendererType().prototype.symbols['navigator-handle'] = function (
+    _x, _y, _w, _h, options
 ): SVGPath {
     const halfWidth = (options && options.width || 0) / 2,
         markerPosition = Math.round(halfWidth / 3) + 0.5,

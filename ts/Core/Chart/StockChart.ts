@@ -691,7 +691,7 @@ addEvent(Axis, 'getPlotLinePath', function (
  * @return {Highcharts.SVGPathArray}
  */
 SVGRenderer.prototype.crispPolyLine = function (
-    this: Highcharts.SVGRenderer,
+    this: SVGRenderer,
     points: Array<SVGPath.MoveTo|SVGPath.LineTo>,
     width: number
 ): SVGPath {

@@ -12,16 +12,24 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type BubbleSeries from './BubbleSeries';
 import type { BubbleSizeByValue } from './BubbleSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type FontMetricsObject from '../../Core/Renderer/FontMetricsObject';
 import type FormatUtilities from '../../Core/FormatUtilities';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -45,6 +53,12 @@ const {
     stableSort,
     wrap
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
@@ -459,7 +473,7 @@ class BubbleLegend {
     }
 
     public chart: Chart = void 0 as any;
-    public fontMetrics: Highcharts.FontMetricsObject = void 0 as any;
+    public fontMetrics: FontMetricsObject = void 0 as any;
     public legend: Highcharts.Legend = void 0 as any;
     public legendGroup: SVGElement = void 0 as any;
     public legendItem: SVGElement = void 0 as any;
