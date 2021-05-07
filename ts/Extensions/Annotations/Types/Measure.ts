@@ -517,7 +517,7 @@ class Measure extends Annotation {
                         y: annotation.yAxisMin,
                         xAxis: pick(typeOptions.xAxis, options.xAxis),
                         yAxis: pick(typeOptions.yAxis, options.yAxis)
-                      };
+                    };
                 } as any,
                 text: (formatter && formatter.call(this)) ||
                     Measure.calculations.defaultFormatter.call(this)
