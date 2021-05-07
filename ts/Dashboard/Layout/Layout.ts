@@ -317,6 +317,35 @@ class Layout extends GUIElement {
         }
     }
 
+    public getVisibleRows(): Array<Row> {
+        const rows = [];
+
+        for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
+            if (this.rows[i].isVisible) {
+                rows.push(this.rows[i]);
+            }
+        }
+
+        return rows;
+    }
+
+    protected changeVisibility(
+        setVisible: boolean = true
+    ): void {
+        const layout = this;
+
+        super.changeVisibility(setVisible);
+
+        // Change parentCell visibility.
+        if (layout.parentCell) {
+            if (layout.isVisible && !layout.parentCell.isVisible) {
+                layout.parentCell.show();
+            } else if (!layout.isVisible && layout.parentCell.isVisible) {
+                layout.parentCell.hide();
+            }
+        }
+    }
+
     /**
      * Converts the class instance to a class JSON.
      *

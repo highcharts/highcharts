@@ -282,6 +282,13 @@ class Cell extends GUIElement {
 
         super.changeVisibility(setVisible);
 
+        // Change row visibility if needed.
+        if (!cell.row.getVisibleCells().length) {
+            cell.row.hide();
+        } else if (cell.isVisible && !row.isVisible) {
+            cell.row.show();
+        }
+
         setTimeout(() => {
             fireEvent(row, 'cellChange', { row, cell })
         }, 0);

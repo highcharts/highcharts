@@ -373,6 +373,22 @@ class Row extends GUIElement {
         return cells;
     }
 
+    protected changeVisibility(
+        setVisible: boolean = true,
+        displayStyle?: string
+    ): void {
+        const row = this;
+
+        super.changeVisibility(setVisible, displayStyle);
+
+        // Change layout visibility if needed.
+        if (!row.layout.getVisibleRows().length) {
+            row.layout.hide();
+        } else if (row.isVisible && !row.layout.isVisible) {
+            row.layout.show();
+        }
+    }
+
     public show(): void {
         this.changeVisibility(true, 'flex');
     }
