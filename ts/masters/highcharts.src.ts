@@ -41,6 +41,7 @@ import '../Series/Pie/PieSeries.js';
 import '../Core/Series/DataLabels.js';
 import '../Extensions/OverlappingDataLabels.js';
 import '../Core/Responsive.js';
+import Color from '../Core/Color/Color.js';
 import Time from '../Core/Time.js';
 const G: AnyRecord = Highcharts;
 // Animation
@@ -57,6 +58,9 @@ G.Series = Series;
 G.SVGElement = SVGElement;
 G.SVGRenderer = SVGRenderer;
 G.Time = Time;
+// Color
+G.Color = Color;
+G.color = Color.parse;
 // Format Utilities
 G.dateFormat = FormatUtilities.dateFormat;
 G.format = FormatUtilities.format;
