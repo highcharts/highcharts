@@ -50,7 +50,7 @@ import palette from '../../Core/Color/Palette.js';
 import Pointer from '../../Core/Pointer.js';
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer3D.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
