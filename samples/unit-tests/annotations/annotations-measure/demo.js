@@ -52,7 +52,30 @@ QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
     assert.close(
         chart.annotations[0].shapesGroup.getBBox().x,
         chart.annotations[0].labels[0].graphic.anchorX,
-        5,
+        0.5,
         "Annotation's label's X position should be close to the X position of the annotation."
+    );
+
+    chart.update({
+        chart: {
+            spacingTop: 100
+        },
+        title: {
+            text: ''
+        }
+    });
+
+    assert.close(
+        chart.annotations[0].shapesGroup.getBBox().y,
+        chart.annotations[0].labels[0].graphic.anchorY,
+        0.5,
+        "Annotation's label's Y position should be close to the Y position of the annotation after updates."
+    );
+
+    assert.close(
+        chart.annotations[0].shapesGroup.getBBox().x,
+        chart.annotations[0].labels[0].graphic.anchorX,
+        0.5,
+        "Annotation's label's X position should be close to the X position of the annotation after updates."
     );
 });
