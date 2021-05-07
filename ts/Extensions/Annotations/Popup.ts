@@ -54,6 +54,7 @@ declare global {
             public indicators: PopupIndicatorsObject;
             public lang: Record<string, string>;
             public popup: Popup;
+            public chart?: Chart;
             public tabs: PopupTabsObject;
             public addButton (
                 parentDiv: HTMLDOMElement,
@@ -463,6 +464,10 @@ H.Popup.prototype = {
         callback: Function
     ): void {
 
+        if (!chart) {
+            return;
+        }
+
         this.popup = chart.navigationBindings.popup;
 
         // show blank popup
@@ -524,7 +529,9 @@ H.Popup.prototype = {
             }
 
             // set position
-            popupDiv.style.top = chart.plotTop + 10 + 'px';
+            if (chart) {
+                popupDiv.style.top = chart.plotTop + 10 + 'px';
+            }
 
             // create label
             createElement(SPAN, void 0, void 0, popupDiv).appendChild(
@@ -594,6 +601,10 @@ H.Popup.prototype = {
                 lang = this.lang,
                 bottomRow,
                 lhsCol;
+
+            if (!chart) {
+                return;
+            }
 
             // create title of annotations
             lhsCol = createElement('h2', {
@@ -665,6 +676,10 @@ H.Popup.prototype = {
                 lang = this.lang,
                 parentFullName,
                 titleName;
+
+            if (!chart) {
+                return;
+            }
 
             objectEach(options, function (value, option: string): void {
 
@@ -756,6 +771,10 @@ H.Popup.prototype = {
                 lang = this.lang,
                 buttonParentDiv;
 
+            if (!chart) {
+                return;
+            }
+
             // add tabs
             this.tabs.init.call(this, chart);
 
@@ -834,6 +853,10 @@ H.Popup.prototype = {
                 rhsColWrapper: Element,
                 indicatorList: HTMLDOMElement,
                 item: HTMLDOMElement;
+
+            if (!chart) {
+                return;
+            }
 
             // create wrapper for list
             indicatorList = createElement(UL, {
@@ -955,6 +978,10 @@ H.Popup.prototype = {
                 lang = this.lang,
                 selectBox: HTMLSelectElement,
                 seriesOptions;
+
+            if (!chart) {
+                return;
+            }
 
             createElement(
                 LABEL, {
@@ -1119,6 +1146,10 @@ H.Popup.prototype = {
                 addInput = this.addInput,
                 parentFullName;
 
+            if (!chart) {
+                return;
+            }
+
             objectEach(fields, function (value, fieldName): void {
                 // create name like params.styles.fontSize
                 parentFullName = parentNode + '.' + fieldName;
@@ -1182,6 +1213,10 @@ H.Popup.prototype = {
             let tabs = this.tabs,
                 indicatorsCount = this.indicators.getAmount.call(chart),
                 firstTab; // run by default
+
+            if (!chart) {
+                return;
+            }
 
             // create menu items
             firstTab = tabs.addMenuItem.call(this, 'add');
