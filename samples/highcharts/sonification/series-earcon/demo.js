@@ -1,7 +1,7 @@
 Highcharts.setOptions({
     lang: {
         accessibility: {
-            chartContainerLabel: 'Click series to sonify chart.'
+            chartContainerLabel: 'Earcons on series. Highcharts interactive chart.'
         }
     }
 });

@@ -1,11 +1,3 @@
-Highcharts.setOptions({
-    lang: {
-        accessibility: {
-            chartContainerLabel: 'Click play button to sonify chart.'
-        }
-    }
-});
-
 // Set up a simple chart
 var chart = Highcharts.chart('container', {
     title: {
