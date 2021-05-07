@@ -1145,7 +1145,9 @@ addEvent(Series, 'render', function (): void {
         !chart.polar &&
         this.xAxis &&
         !this.xAxis.isRadial && // Gauge, #6192
-        this.options.clip !== false // #15128
+        this.options.clip !== false && // #15128
+        !chart.scrollablePixelsX && // #15676
+        !chart.scrollablePixelsY
     ) {
 
         clipHeight = this.yAxis.len;
