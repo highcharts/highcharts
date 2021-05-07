@@ -1,11 +1,3 @@
-Highcharts.setOptions({
-    lang: {
-        accessibility: {
-            chartContainerLabel: 'Click play button to sonify chart.'
-        }
-    }
-});
-
 var chart = Highcharts.chart('container', {
     chart: {
         type: 'spline'

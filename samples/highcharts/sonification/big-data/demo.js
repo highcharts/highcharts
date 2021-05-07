@@ -7,7 +7,7 @@ for (var i = 0; i < 1000; ++i) {
 Highcharts.setOptions({
     lang: {
         accessibility: {
-            chartContainerLabel: 'Click series to sonify chart.'
+            chartContainerLabel: 'Big data sonification. Highcharts interactive chart.'
         }
     }
 });

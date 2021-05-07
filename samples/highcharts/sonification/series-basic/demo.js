@@ -1,11 +1,3 @@
-Highcharts.setOptions({
-    lang: {
-        accessibility: {
-            chartContainerLabel: 'Click series to sonify chart.'
-        }
-    }
-});
-
 var chart = Highcharts.chart('container', {
     title: {
         text: 'Click on series to sonify'
