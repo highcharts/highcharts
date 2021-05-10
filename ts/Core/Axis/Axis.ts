@@ -1945,6 +1945,9 @@ class Axis {
          * of the plot area. When the axis' `max` option is set or a max extreme
          * is set using `axis.setExtremes()`, the maxPadding will be ignored.
          *
+         * @productdesc {highstock}
+         * When the axis `ordinal: true`, the `maxPadding` is ignored.
+         *
          * @sample {highcharts} highcharts/yaxis/maxpadding/
          *         Max padding of 0.25 on y axis
          * @sample {highstock} stock/xaxis/minpadding-maxpadding/
@@ -2108,6 +2111,9 @@ class Axis {
          * of the plot area. When the axis' `min` option is set or a min extreme
          * is set using `axis.setExtremes()`, the minPadding will be ignored.
          *
+         * @productdesc {highstock}
+         * When the axis `ordinal: true`, the `minPadding` is ignored.
+         *
          * @sample {highcharts} highcharts/yaxis/minpadding/
          *         Min padding of 0.2
          * @sample {highstock} stock/xaxis/minpadding-maxpadding/
@@ -2207,10 +2213,15 @@ class Axis {
          * the boost module is used and at least one of the series' data length
          * exceeds the [boostThreshold](#series.line.boostThreshold).
          *
+         * For the ordinal axis, the `minPadding` and `maxPadding` are ignored,
+         * instead, use the `overscroll`.
+         *
          * @sample {highstock} stock/xaxis/ordinal-true/
          *         True by default
          * @sample {highstock} stock/xaxis/ordinal-false/
          *         False
+         *
+         * @see [overscroll](#xAxis.overscroll)
          *
          * @type      {boolean}
          * @default   true
