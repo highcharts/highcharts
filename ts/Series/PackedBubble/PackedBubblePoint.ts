@@ -20,12 +20,8 @@ import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeries from './PackedBubbleSeries';
 import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
-import Series from '../../Core/Series/Series.js';
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 
 const {
     seriesTypes: {

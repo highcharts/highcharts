@@ -1506,18 +1506,10 @@ class Point {
                 (series.options.states as any)[state || 'normal'] ||
                 {}
             ),
-            layoutAlgorithm = ((series as any).options.layoutAlgorithm || {}),
-            marker = (
-                layoutAlgorithm &&
-                layoutAlgorithm.parentNodeOptions &&
-                layoutAlgorithm.parentNodeOptions.marker
-            ) ?
-                layoutAlgorithm.parentNodeOptions.marker :
-                series.options.marker,
             markerOptions = (
                 (defaultOptions.plotOptions as any)[series.type as any].marker &&
-                marker
-            ) as PointMarkerOptions | undefined,
+                series.options.marker
+            ),
             normalDisabled = (markerOptions && markerOptions.enabled === false),
             markerStateOptions = ((
                 markerOptions &&

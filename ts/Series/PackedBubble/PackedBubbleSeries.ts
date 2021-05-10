@@ -831,7 +831,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 fill: nodeMarker.fillColor || color(series.color).brighten(0.4).get(),
                 opacity: nodeMarker.fillOpacity,
                 stroke: nodeMarker.lineColor || series.color,
-                'stroke-width': nodeMarker.lineWidth || series.options.lineWidth
+                'stroke-width': pick(nodeMarker.lineWidth, series.options.lineWidth)
             };
 
         // create the group for parent Nodes if doesn't exist
@@ -1167,23 +1167,44 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         return arr;
     }
 
+    /**
+     * Function that checks for a parentMarker and sets the correct opacity.
+     * @private
+     * @param {Highcharts.Pack} point
+     * Candidate point for opacity correction.
+     * @param {string} [state]
+     * The point state, can be either `hover`, `select` or 'normal'. If
+     * undefined, normal state is assumed.
+     *
+     * @return {Highcharts.SVGAttributes}
+     * The presentational attributes to be set on the point.
+     */
     public pointAttribs(
         point?: PackedBubblePoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         let options = this.options,
             hasParentMarker = point && point.isParentNode,
-            markerOptions = hasParentMarker && options.layoutAlgorithm && options.layoutAlgorithm.parentNodeOptions ?
-                options.layoutAlgorithm.parentNodeOptions.marker :
-                options.marker,
-            fillOpacity = (markerOptions as any).fillOpacity,
-            attr = Series.prototype.pointAttribs.call(this, point, state);
+            markerOptions = options.marker,
+            fillOpacity,
+            attr;
+
+        if (
+            hasParentMarker &&
+            options.layoutAlgorithm &&
+            options.layoutAlgorithm.parentNodeOptions
+        ) {
+            markerOptions = options.layoutAlgorithm.parentNodeOptions.marker;
+        }
+
+        fillOpacity = (markerOptions as BubblePointMarkerOptions).fillOpacity;
+        attr = Series.prototype.pointAttribs.call(this, point, state);
 
         if (fillOpacity !== 1) {
-            attr.fill = color(attr.fill as any)
-                .setOpacity(fillOpacity)
-                .get('rgba');
+            attr.fill = color(attr.fill as any).get();
+            attr['fill-opacity'] = fillOpacity;
         }
+
         return attr;
     }
 
@@ -1381,81 +1402,6 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         return isNumber((bBox as any).width / (bBox as any).height) ?
             bBox :
             null;
-    }
-
-
-    /**
-     * Set the state of the series. Called internally on mouse interaction
-     * operations, but it can also be called directly to visually
-     * highlight a series.
-     *
-     * @function Highcharts.Series#setState
-     *
-     * @param {Highcharts.SeriesStateValue|""} [state]
-     *        The new state, can be either `'hover'`, `'inactive'`, `'select'`,
-     *        or `''` (an empty string), `'normal'` or `undefined` to set to
-     *        normal state.
-     * @param {boolean} [inherit]
-     *        Determines if state should be inherited by points too.
-     */
-    public setState(
-        state?: (StatesOptionsKey|''),
-        inherit?: boolean
-    ): void {
-
-
-        // Run default method
-        Series.prototype.setState.apply(this, arguments);
-
-        let series = this,
-            options = series.options,
-            stateOptions = options.states,
-            graph = series.graph,
-            layoutOptions = options.layoutAlgorithm,
-            lineWidth,
-            attribs,
-            stateAnimation = pick(
-                (
-                    (stateOptions as any)[state || 'normal'] &&
-                    (stateOptions as any)[state || 'normal'].animation
-                ),
-                series.chart.options.chart.animation
-            ),
-            i = 0;
-
-        if (layoutOptions && layoutOptions.parentNodeOptions && layoutOptions.parentNodeOptions.marker) {
-            lineWidth = (layoutOptions.parentNodeOptions.marker.lineWidth || options.lineWidth);
-
-            if (!series.chart.styledMode) {
-                if (state) {
-                    lineWidth = (
-                        (stateOptions as any)[state].lineWidth ||
-                        lineWidth + (
-                            (stateOptions as any)[state].lineWidthPlus || 0
-                        )
-                    );
-                }
-
-                if (graph && !graph.dashstyle) {
-                    attribs = {
-                        'stroke-width': lineWidth
-                    };
-
-                    // Animate the graph stroke-width.
-                    graph.animate(
-                        attribs,
-                        stateAnimation
-                    );
-                    while ((series as any)['zone-graph-' + i]) {
-                        (series as any)['zone-graph-' + i].animate(
-                            attribs,
-                            stateAnimation
-                        );
-                        i = i + 1;
-                    }
-                }
-            }
-        }
     }
 
     /**
