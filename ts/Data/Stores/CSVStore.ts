@@ -193,13 +193,13 @@ class CSVStore extends DataStore<CSVStore.Event> implements DataJSON.Class {
             dataType: 'text',
             success: function (csv: string): void {
                 store.parser.parse({ csv });
+
+                // On inital fetch we need to set the columns
+                store.table.setColumns(store.parser.getTable().getColumns());
+
                 if (store.liveDataURL) {
                     store.poll();
                 }
-
-                // On inital fetch we need to set the columns
-                initialFetch ? store.table.setColumns(store.parser.getTable().getColumns()) :
-                    store.table.setRows(store.parser.getTable().getRows());
 
                 store.emit({
                     type: 'afterLoad',
@@ -207,6 +207,7 @@ class CSVStore extends DataStore<CSVStore.Event> implements DataJSON.Class {
                     detail: eventDetail,
                     table: store.table
                 });
+
             },
             error: function (xhr, error): void {
                 if (++currentRetries < maxRetries) {
