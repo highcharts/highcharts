@@ -12,6 +12,7 @@
  *
  * */
 
+import type AST from '../../../Core/Renderer/HTML/AST';
 import type ControllablePath from '../Controllables/ControllablePath';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
@@ -34,7 +35,7 @@ const {
 
 declare module '../../../Core/Renderer/SVG/SVGRendererLike' {
     interface SVGRendererLike {
-        addMarker(id: string, markerOptions: Highcharts.ASTNode): SVGElement;
+        addMarker(id: string, markerOptions: AST.Node): SVGElement;
     }
 }
 
@@ -53,7 +54,7 @@ declare global {
             setItemMarkers(this: ControllablePath, item: ControllablePath): void;
         }
         interface Options {
-            defs?: Record<string, ASTNode>;
+            defs?: Record<string, AST.Node>;
         }
     }
 }
@@ -92,7 +93,7 @@ declare global {
  * @since        6.0.0
  * @optionparent defs
  */
-const defaultMarkers: Record<string, Highcharts.ASTNode> = {
+const defaultMarkers: Record<string, AST.Node> = {
     /**
      * @type {Highcharts.ASTNode}
      */
@@ -141,9 +142,9 @@ const defaultMarkers: Record<string, Highcharts.ASTNode> = {
 
 SVGRenderer.prototype.addMarker = function (
     id: string,
-    markerOptions: Highcharts.ASTNode
+    markerOptions: AST.Node
 ): SVGElement {
-    const options: Highcharts.ASTNode = { attributes: { id } };
+    const options: AST.Node = { attributes: { id } };
 
     const attrs: SVGAttributes = {
         stroke: (markerOptions as any).color || 'none',
@@ -152,11 +153,11 @@ SVGRenderer.prototype.addMarker = function (
 
     options.children = (
         markerOptions.children &&
-        markerOptions.children.map(function (
-            child: Highcharts.ASTNode
-        ): Highcharts.ASTNode {
-            return merge(attrs, child);
-        })
+        markerOptions.children.map(
+            function (child: AST.Node): AST.Node {
+                return merge(attrs, child);
+            }
+        )
     );
 
     const ast = merge(true, {

@@ -64,7 +64,7 @@ declare module '../Core/Chart/ChartLike'{
         /** @requires modules/export-data */
         getTable(useLocalDecimalPoint?: boolean): string;
         /** @requires modules/export-data */
-        getTableAST(useLocalDecimalPoint?: boolean): Highcharts.ASTNode;
+        getTableAST(useLocalDecimalPoint?: boolean): AST.Node;
         /** @requires modules/export-data */
         setUpKeyToAxis(): void;
         /** @requires modules/export-data */
@@ -946,7 +946,7 @@ Chart.prototype.getCSV = function (
 Chart.prototype.getTable = function (
     useLocalDecimalPoint?: boolean
 ): string {
-    const serialize = (node: Highcharts.ASTNode): string => {
+    const serialize = (node: AST.Node): string => {
         if (!node.tagName || node.tagName === '#text') {
             // Text node
             return node.textContent || '';
@@ -994,8 +994,8 @@ Chart.prototype.getTable = function (
  */
 Chart.prototype.getTableAST = function (
     useLocalDecimalPoint?: boolean
-): Highcharts.ASTNode {
-    const treeChildren: Highcharts.ASTNode[] = [];
+): AST.Node {
+    const treeChildren: AST.Node[] = [];
     let options = this.options,
         decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
         useMultiLevelHeaders = pick(
@@ -1029,7 +1029,7 @@ Chart.prototype.getTableAST = function (
             classes: (string|null),
             attributes: HTMLAttributes,
             value: (number|string)
-        ): Highcharts.ASTNode {
+        ): AST.Node {
             let textContent = pick(value, ''),
                 className = 'text' + (classes ? ' ' + classes : '');
 
@@ -1061,8 +1061,8 @@ Chart.prototype.getTableAST = function (
             topheaders: (Array<(number|string)>|null|undefined),
             subheaders: Array<(number|string)>,
             rowLength?: number
-        ): Highcharts.ASTNode {
-            const theadChildren: Highcharts.ASTNode[] = [];
+        ): AST.Node {
+            const theadChildren: AST.Node[] = [];
 
             let i = 0,
                 len = rowLength || subheaders && subheaders.length,
@@ -1194,7 +1194,7 @@ Chart.prototype.getTableAST = function (
     ));
 
     // Transform the rows to HTML
-    const trs: Highcharts.ASTNode[] = [];
+    const trs: AST.Node[] = [];
     rows.forEach(function (row: Array<(number|string)>): void {
         const trChildren = [];
         for (let j = 0; j < rowLength; j++) {
@@ -1223,7 +1223,7 @@ Chart.prototype.getTableAST = function (
             tagName: 'table',
             id: `highcharts-data-table-${this.index}`,
             children: treeChildren
-        } as Highcharts.ASTNode
+        } as AST.Node
     };
     fireEvent(this, 'aftergetTableAST', e);
 
