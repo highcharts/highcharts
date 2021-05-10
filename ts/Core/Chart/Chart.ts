@@ -639,15 +639,15 @@ class Chart {
             plotBox,
             plotLeft,
             plotTop,
-            scrollablePlotBox,
-            scrollingContainer: {
-                scrollLeft,
-                scrollTop
-            } = {
-                scrollLeft: 0,
-                scrollTop: 0
-            }
+            scrollablePlotBox
         } = this;
+
+        let scrollLeft = 0,
+            scrollTop = 0;
+
+        if (options.visiblePlotOnly && this.scrollingContainer) {
+            ({ scrollLeft, scrollTop } = this.scrollingContainer);
+        }
 
         const series = options.series;
         const box = (options.visiblePlotOnly && scrollablePlotBox) || plotBox;

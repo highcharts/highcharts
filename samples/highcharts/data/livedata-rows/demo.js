@@ -2,6 +2,7 @@ Highcharts.chart('container', {
     chart: {
         type: 'spline'
     },
+
     title: {
         text: 'Live Data (Rows JSON)'
     },
@@ -10,9 +11,18 @@ Highcharts.chart('container', {
         text: 'Data input from a remote JSON file'
     },
 
+    legend: {
+        enabled: false
+    },
+
+    yAxis: {
+        title: null
+    },
+
     data: {
         rowsURL: 'https://demo-live-data.highcharts.com/time-rows.json',
         firstRowAsNames: false,
-        enablePolling: true
+        enablePolling: true,
+        name: 'Random Sample Data'
     }
 });
