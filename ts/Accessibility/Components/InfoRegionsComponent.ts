@@ -101,7 +101,7 @@ declare global {
             public initRegionsDefinitions(): void;
             public initSonifyButton(sonifyButtonId: string): void;
             public onChartUpdate(): void;
-            public onDataTableCreated(e: { tree: ASTNode }): void;
+            public onDataTableCreated(e: { tree: AST.Node }): void;
             public setLinkedDescriptionAttrs(): void;
             public setScreenReaderSectionAttribs(
                 sectionDiv: HTMLDOMElement,
@@ -265,7 +265,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         this.initRegionsDefinitions();
 
         this.addEvent(chart, 'aftergetTableAST', function (
-            e: { tree: Highcharts.ASTNode }
+            e: { tree: AST.Node }
         ): void {
             component.onDataTableCreated(e);
         });
@@ -674,7 +674,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     onDataTableCreated: function (
         this: Highcharts.InfoRegionsComponent,
-        e: { tree: Highcharts.ASTNode }
+        e: { tree: AST.Node }
     ): void {
         const chart = this.chart;
 

@@ -356,7 +356,7 @@ class SVGRenderer implements SVGRendererLike {
      * @return {Highcharts.SVGElement}
      * The inserted node.
      */
-    public definition(def: Highcharts.ASTNode): SVGElement {
+    public definition(def: AST.Node): SVGElement {
         const ast = new AST([def]);
         return ast.addToDOM(this.defs.element) as unknown as SVGElement;
     }

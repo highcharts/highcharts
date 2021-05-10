@@ -22,6 +22,7 @@ import type {
 } from '../../Core/Renderer/AlignObject';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type { AnnotationTypeRegistry } from './Types/AnnotationType';
+import type AST from '../../Core/Renderer/HTML/AST';
 import type { AxisType } from '../../Core/Axis/Types';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorString from '../../Core/Color/ColorString';
@@ -97,7 +98,7 @@ declare global {
         }
         interface AnnotationChartOptionsObject extends Options {
             annotations: Array<AnnotationsOptions>;
-            defs: Record<string, ASTNode>;
+            defs: Record<string, AST.Node>;
             navigation: NavigationOptions;
         }
         interface AnnotationControlPointEventsOptionsObject {

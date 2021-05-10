@@ -16,7 +16,7 @@ import AST from '../Core/Renderer/HTML/AST.js';
 import FormatUtilities from '../Core/FormatUtilities.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import '../Core/Renderer/HTML/HTMLElement.js';
+import HTMLElement from '../Core/Renderer/HTML/HTMLElement.js';
 import '../Core/Renderer/HTML/HTMLRenderer.js';
 import '../Core/Axis/Axis.js';
 import '../Core/Axis/DateTimeAxis.js';
@@ -61,6 +61,8 @@ G.Time = Time;
 // Color
 G.Color = Color;
 G.color = Color.parse;
+// Compositions
+HTMLElement.compose(SVGElement);
 // Format Utilities
 G.dateFormat = FormatUtilities.dateFormat;
 G.format = FormatUtilities.format;
