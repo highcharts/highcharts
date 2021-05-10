@@ -23,7 +23,6 @@ import type {
     HTMLDOMElement
 } from '../DOMElementType';
 import type HTMLRenderer from './HTMLRenderer';
-import type SVGElement from '../SVG/SVGElement.js';
 import type SVGRenderer from '../SVG/SVGRenderer.js';
 
 import H from '../../Globals.js';
@@ -33,6 +32,7 @@ const {
     isWebKit,
     win
 } = H;
+import SVGElement from '../SVG/SVGElement.js';
 import U from '../../Utilities.js';
 const {
     css,
@@ -48,34 +48,6 @@ const {
  *
  * */
 
-interface HTMLElement extends SVGElement {
-    appendChild: HTMLDOMElement['appendChild'];
-    div?: HTMLDOMElement;
-    element: HTMLDOMElement;
-    parentGroup?: HTMLElement;
-    renderer: HTMLRenderer;
-    style: (CSSObject&CSSStyleDeclaration);
-    xCorr: number;
-    yCorr: number;
-    afterSetters(): void;
-    getSpanCorrection(
-        width: number,
-        baseline: number,
-        alignCorrection: number
-    ): void;
-    htmlCss(styles: CSSObject): HTMLElement;
-    htmlGetBBox(): BBoxObject;
-    htmlUpdateTransform(): void;
-    setSpanRotation(
-        rotation: number,
-        alignCorrection: number,
-        baseline: number
-    ): void;
-    textSetter(value: string): void;
-    translateXSetter(value: any, key: string): void;
-    translateYSetter(value: any, key: string): void;
-}
-
 type TransformKeyType = (
     '-ms-transform'|
     '-webkit-transform'|
@@ -87,8 +59,6 @@ declare module '../SVG/SVGElementLike' {
     interface SVGElementLike {
         /** @requires Core/Renderer/HTML/HTMLElement */
         appendChild: HTMLDOMElement['appendChild'];
-        /** @requires Core/Renderer/HTML/HTMLElement */
-        // @todo div?: HTMLDOMElement;
         element: DOMElementType;
         parentGroup?: (HTMLElement|SVGElement);
         renderer: (HTMLRenderer|SVGRenderer);
@@ -128,7 +98,37 @@ declare module '../SVG/SVGElementLike' {
 
 /* eslint-disable valid-jsdoc */
 
-namespace HTMLElement {
+class HTMLElement extends SVGElement {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Modifies SVGElement to support HTML elements.
+     * @private
+     */
+    public static compose(SVGElementClass: typeof SVGElement): void {
+        const svgElementProto = SVGElementClass.prototype,
+            htmlElementProto = HTMLElement.prototype;
+
+        svgElementProto.getSpanCorrection = htmlElementProto.getSpanCorrection;
+        svgElementProto.htmlCss = htmlElementProto.htmlCss;
+        svgElementProto.htmlGetBBox = htmlElementProto.htmlGetBBox;
+        svgElementProto.htmlUpdateTransform = htmlElementProto.htmlUpdateTransform;
+        svgElementProto.setSpanRotation = htmlElementProto.setSpanRotation;
+    }
+
+    /* *
+     *
+     *  Prototype
+     *
+     * */
+
+    public div?: HTMLDOMElement;
+    public parentGroup?: HTMLElement;
 
     /* *
      *
@@ -137,25 +137,10 @@ namespace HTMLElement {
      * */
 
     /**
-     * Modifies SVGElement to support HTML elements.
-     * @private
-     */
-    export function compose(SVGElementClass: typeof SVGElement): void {
-        const svgElementProto = SVGElementClass.prototype;
-
-        svgElementProto.getSpanCorrection = getSpanCorrection;
-        svgElementProto.htmlCss = htmlCss;
-        svgElementProto.htmlGetBBox = htmlGetBBox;
-        svgElementProto.htmlUpdateTransform = htmlUpdateTransform;
-        svgElementProto.setSpanRotation = setSpanRotation;
-    }
-
-    /**
      * Get the correction in X and Y positioning as the element is rotated.
      * @private
      */
-    function getSpanCorrection(
-        this: HTMLElement,
+    public getSpanCorrection(
         width: number,
         baseline: number,
         alignCorrection: number
@@ -169,10 +154,7 @@ namespace HTMLElement {
      * by the VML renderer
      * @private
      */
-    function htmlCss(
-        this: HTMLElement,
-        styles: CSSObject
-    ): HTMLElement {
+    public htmlCss(styles: CSSObject): HTMLElement {
         const wrapper = this,
             element = wrapper.element,
             // When setting or unsetting the width style, we need to update
@@ -213,9 +195,7 @@ namespace HTMLElement {
     /**
      * VML and useHTML method for calculating the bounding box based on offsets.
      */
-    function htmlGetBBox(
-        this: HTMLElement
-    ): BBoxObject {
+    public htmlGetBBox(): BBoxObject {
         const wrapper = this,
             element = wrapper.element;
 
@@ -232,7 +212,7 @@ namespace HTMLElement {
      * properties based on SVG transform.
      * @private
      */
-    function htmlUpdateTransform(this: HTMLElement): void {
+    public htmlUpdateTransform(): void {
         // aligning non added elements is expensive
         if (!this.added) {
             this.alignOnAdd = true;
@@ -382,8 +362,7 @@ namespace HTMLElement {
      * Set the rotation of an individual HTML span.
      * @private
      */
-    function setSpanRotation(
-        this: HTMLElement,
+    public setSpanRotation(
         rotation: number,
         alignCorrection: number,
         baseline: number
@@ -412,6 +391,11 @@ namespace HTMLElement {
             css(this.element, rotationStyle);
         }
     }
+}
+
+interface HTMLElement {
+    element: HTMLDOMElement;
+    renderer: HTMLRenderer;
 }
 
 /* *
