@@ -237,12 +237,18 @@ class Layout extends GUIElement {
      */
     public addRow(
         options: Row.Options,
-        rowElement?: HTMLElement
+        rowElement?: HTMLElement,
+        index?: number
     ): Row {
         const layout = this,
             row = new Row(layout, options, rowElement);
 
-        layout.rows.push(row);
+        if (!defined(index)) {
+            layout.rows.push(row);
+        } else {
+            layout.mountRow(row, index);
+        }
+
         return row;
     }
 

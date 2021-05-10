@@ -326,22 +326,25 @@ class Row extends GUIElement {
     // Add cell to the row.cells array and move cell container.
     public mountCell(
         cell: Cell,
-        index: number
+        index: number = 0
     ): void {
-        const nextCell = this.cells[index],
-            prevCell = this.cells[index - 1];
+        const row = this,
+            nextCell = row.cells[index],
+            prevCell = row.cells[index - 1];
 
         if (cell.container) {
             if (nextCell && nextCell.container) {
                 nextCell.container.parentNode.insertBefore(cell.container, nextCell.container);
             } else if (prevCell && prevCell.container) {
                 prevCell.container.parentNode.insertBefore(cell.container, prevCell.container.nextSibling);
+            } else if (!prevCell && !nextCell && row.container) {
+                row.container.appendChild(cell.container);
             }
 
-            this.cells.splice(index, 0, cell);
-            cell.row = this;
+            row.cells.splice(index, 0, cell);
+            cell.row = row;
             setTimeout(() => {
-                fireEvent(this, 'cellChange', { row: this, cell })
+                fireEvent(row, 'cellChange', { row, cell })
             }, 0);
         }
     }

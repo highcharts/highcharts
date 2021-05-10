@@ -66,9 +66,16 @@ class DragDrop {
                     zIndex: 9999,
                     display: 'none',
                     pointerEvents: 'none',
-                    backgroundColor: '#e01d5a',
+                    background: `repeating-linear-gradient(
+                        45deg,
+                        rgba(3, 104, 8, 0.58),
+                        rgba(3, 104, 8, 0.58) 10px,
+                        rgba(4, 134, 11, 0.2) 10px,
+                        rgba(4, 134, 11, 0.2) 20px
+                      )`,
                     opacity: 0.5,
-                    transition: '0.1s'
+                    transition: '0.1s',
+                    borderRadius: '2px'
                 },
                 editMode.dashboard.container
             )
@@ -171,7 +178,7 @@ class DragDrop {
         const dragDrop = this,
             mouseContext = dragDrop.mouseContext as Cell,
             mouseContextRow = mouseContext && mouseContext.row,
-            height = 14;
+            height = 16;
 
         let offset = 30;
 
@@ -240,7 +247,7 @@ class DragDrop {
     public onCellDrag(e: any): void {
         const dragDrop = this,
             mouseContext = dragDrop.mouseContext as Cell,
-            width = 14,
+            width = 16,
             offset = 50;
 
         let updateDropPointer = false;
@@ -257,7 +264,10 @@ class DragDrop {
             dragDrop.dropPointer.align = leftEdgeX >= -offset && leftEdgeX <= offset ? 'left' :
                 (leftEdgeX - cellWidth >= -offset && leftEdgeX - cellWidth <= offset ? 'right' : '');
 
-            if (dragDrop.dropPointer.align) {
+            if (!dragDrop.dropPointer.align) {
+                // Check if cell is dragged as row.
+                dragDrop.onRowDrag(e);
+            } else {
                 dragDrop.dropContext = mouseContext;
 
                 const rowVisibleCells = mouseContext.row.getVisibleCells();
@@ -318,19 +328,17 @@ class DragDrop {
                         width: width + 'px'
                     });
                 }
-            } else {
-                dragDrop.dropContext = void 0;
-                dragDrop.hideDropPointer();
             }
         }
     }
 
     public onCellDragEnd(): void {
         const dragDrop = this,
-            draggedCell = dragDrop.context as Cell,
-            dropContext = dragDrop.dropContext as Cell;
+            draggedCell = dragDrop.context as Cell;
 
-        if (dragDrop.dropPointer.align) {
+        let dropContext = dragDrop.dropContext;
+
+        if (dragDrop.dropPointer.align && dropContext) {
             draggedCell.row.unmountCell(draggedCell);
 
             // Destroy row when empty.
@@ -338,11 +346,30 @@ class DragDrop {
                 draggedCell.row.destroy();
             }
 
-            dropContext.row.mountCell(
-                draggedCell,
-                (dropContext.row.getCellIndex(dropContext) || 0) +
-                    (dragDrop.dropPointer.align === 'right' ? 1 : 0)
-            );
+            if (
+                (dragDrop.dropPointer.align === 'top' ||
+                dragDrop.dropPointer.align === 'bottom') &&
+                dropContext.type === DashboardGlobals.guiElementType.row
+            ) {
+                dropContext = dropContext as Row;
+                const newRow = dropContext.layout.addRow(
+                    {},
+                    void 0,
+                    (dropContext.layout.getRowIndex(dropContext) || 0) +
+                        (dragDrop.dropPointer.align === 'bottom' ? 1 : 0)
+                );
+
+                newRow.mountCell(draggedCell, 0);
+            } else if (
+                dropContext.type === DashboardGlobals.guiElementType.cell
+            ) {
+                dropContext = dropContext as Cell;
+                dropContext.row.mountCell(
+                    draggedCell,
+                    (dropContext.row.getCellIndex(dropContext) || 0) +
+                        (dragDrop.dropPointer.align === 'right' ? 1 : 0)
+                );
+            }
         }
 
         dragDrop.hideDropPointer();
