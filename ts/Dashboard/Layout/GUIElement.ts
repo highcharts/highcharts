@@ -43,6 +43,16 @@ abstract class GUIElement {
         return offset;
     }
 
+    // Get dimensions of the guiElement container from offsets.
+    public static getDimFromOffsets(
+        offsets: Record<string, number>
+    ): Record<string, number> {
+        return {
+            width: offsets.right - offsets.left,
+            height: offsets.bottom - offsets.top
+        };
+    }
+
     /* *
     *
     *  Properties
