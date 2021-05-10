@@ -131,8 +131,8 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements Da
                 'public/values?alt=json'
             ].join('/');
 
-        // If already loaded, clear the current rows
-        store.table.clear();
+        // If already loaded, clear the current table
+        store.table.deleteColumns();
 
         store.emit({
             type: 'load',

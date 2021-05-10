@@ -187,7 +187,7 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
             { startRow } = parseOptions;
 
         // Insert headers from the first row
-        if (firstRowAsNames) {
+        if (firstRowAsNames && rowsCount) {
             const items = rows[0].children,
                 itemsLength = items.length;
 

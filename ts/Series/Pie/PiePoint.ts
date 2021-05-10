@@ -101,7 +101,7 @@ class PiePoint extends Point {
      * @private
      */
     public getConnectorPath(): void {
-        var labelPosition = this.labelPosition,
+        let labelPosition = this.labelPosition,
             options = this.series.options.dataLabels,
             connectorShape = (options as any).connectorShape,
             predefinedShapes = this.connectorShapes;
@@ -133,7 +133,7 @@ class PiePoint extends Point {
      * @private
      */
     public haloPath(size: number): SVGPath {
-        var shapeArgs = this.shapeArgs;
+        const shapeArgs = this.shapeArgs;
 
         return this.sliced || !this.visible ?
             [] :
@@ -159,7 +159,7 @@ class PiePoint extends Point {
 
         Point.prototype.init.apply(this, arguments as any);
 
-        var point = this,
+        let point = this,
             toggleSlice;
 
         point.name = pick(point.name, 'Slice');
@@ -196,7 +196,7 @@ class PiePoint extends Point {
         vis: boolean,
         redraw?: boolean
     ): void {
-        var point = this,
+        const point = this,
             series = point.series,
             chart = series.chart,
             ignoreHiddenPoint = series.options.ignoreHiddenPoint;
@@ -261,7 +261,7 @@ class PiePoint extends Point {
         redraw?: boolean,
         animation?: (boolean|Partial<AnimationOptions>)
     ): void {
-        var point = this,
+        const point = this,
             series = point.series,
             chart = series.chart;
 
@@ -310,7 +310,7 @@ extend(PiePoint.prototype, {
             connectorPosition: PiePoint.LabelConnectorPositionObject,
             options: PieDataLabelOptions
         ): SVGPath {
-            var breakAt = connectorPosition.breakAt,
+            const breakAt = connectorPosition.breakAt,
                 touchingSliceAt = connectorPosition.touchingSliceAt,
                 lineSegment = options.softConnector ? [
                     'C', // soft break
@@ -341,7 +341,7 @@ extend(PiePoint.prototype, {
             labelPosition: PiePositionObject,
             connectorPosition: PiePoint.LabelConnectorPositionObject
         ): SVGPath {
-            var touchingSliceAt = connectorPosition.touchingSliceAt;
+            const touchingSliceAt = connectorPosition.touchingSliceAt;
 
             // direct line to the slice
             return [
@@ -357,7 +357,7 @@ extend(PiePoint.prototype, {
             options: PieDataLabelOptions
         ): SVGPath {
 
-            var touchingSliceAt = connectorPosition.touchingSliceAt,
+            let touchingSliceAt = connectorPosition.touchingSliceAt,
                 series = this.series,
                 pieCenterX = series.center[0],
                 plotWidth = series.chart.plotWidth,

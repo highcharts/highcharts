@@ -5,7 +5,7 @@ QUnit.test('DataTable Clone', function (assert) {
     const table = new DataTable({}, 'table');
 
     table.setRows([[ 'row1', 1 ]]);
-    table.setCell(0, '1', 100);
+    table.setCell('1', 0, 100);
     table.setColumnAlias('x', 'x-alias');
 
     const tableClone = table.clone();
@@ -97,17 +97,21 @@ QUnit.test('DataTable Column Aliases', function (assert) {
         'Table should return canonical name, after alias is removed.'
     );
 
-    assert.ok(
-        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'population', 4),
+    table.setCell('population', table.getRowIndexBy('id', 'Our Land'), 4),
+    assert.strictEqual(
+        table.getCell('population', table.getRowIndexBy('id', 'Our Land')),
+        4,
         'Table should set cell value for column name.'
     );
-    assert.ok(
-        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'x', 10),
+    table.setCell('x', table.getRowIndexBy('id', 'Our Land'), 10),
+    assert.strictEqual(
+        table.getCell('x', table.getRowIndexBy('id', 'Our Land')),
+        10,
         'Table should set cell value for column alias.'
     );
     assert.strictEqual(
-        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'population'),
-        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'x'),
+        table.getCell('population', table.getRowIndexBy('id', 'Our Land')),
+        table.getCell('x', table.getRowIndexBy('id', 'Our Land')),
         'Table should return cell value for column name and alias.'
     );
 
@@ -141,25 +145,27 @@ QUnit.test('DataTable Column Aliases', function (assert) {
     );
 
     assert.ok(
-        table.deleteColumn('Cols'),
+        table.deleteColumns(['Cols']),
         'Table should have deleted column. (1)'
     );
 
-    assert.notOk(
-        table.getColumn('Cols'),
+    assert.strictEqual(
+        typeof table.getColumns(['Cols']).Cols,
+        'undefined',
         'Table should have deleted column. (2)'
     );
 
-    const expectedValues = table.getColumn('population');
+    const expectedValues = table.getColumns(['population']);
     assert.deepEqual(
-        table.deleteColumn('population'),
+        table.deleteColumns(['population']),
         expectedValues,
         'Table should return cell values of deleted column.'
     );
 
-    assert.notOk(
-        table.getColumn('population'),
-        'Table should remove column "population".'
+    assert.ok(
+        typeof table.getColumn('population'),
+        'undefined',
+        'Table should have removed column "population".'
     )
 
 });
@@ -266,22 +272,16 @@ QUnit.test('DataTable Events', function (assert) {
 
     /** @param {DataTable} table */
     function registerTable(table) {
-        table.on('clearTable', registerEvent);
-        table.on('afterClearTable', registerEvent);
-        table.on('clearRows', registerEvent);
-        table.on('afterClearRows', registerEvent);
         table.on('cloneTable', registerEvent);
         table.on('afterCloneTable', registerEvent);
-        table.on('clearColumn', registerEvent);
-        table.on('afterClearColumn', registerEvent);
-        table.on('deleteColumn', registerEvent);
-        table.on('afterDeleteColumn', registerEvent);
+        table.on('deleteColumns', registerEvent);
+        table.on('afterDeleteColumns', registerEvent);
         table.on('deleteRows', registerEvent);
         table.on('afterDeleteRows', registerEvent);
         table.on('setCell', registerEvent);
         table.on('afterSetCell', registerEvent);
-        table.on('setColumn', registerEvent);
-        table.on('afterSetColumn', registerEvent);
+        table.on('setColumns', registerEvent);
+        table.on('afterSetColumns', registerEvent);
         table.on('setRows', registerEvent);
         table.on('afterSetRows', registerEvent);
     }
@@ -311,7 +311,7 @@ QUnit.test('DataTable Events', function (assert) {
     );
 
     registeredEvents.length = 0;
-    table.setCell(table.getRowIndexBy('id', 'a'), 'text', 'test');
+    table.setCell('text', table.getRowIndexBy('id', 'a'), 'test');
     assert.deepEqual(
         registeredEvents,
         [
@@ -347,14 +347,14 @@ QUnit.test('DataTable Events', function (assert) {
     assert.deepEqual(
         registeredEvents,
         [
-            'setColumn',
-            'afterSetColumn'
+            'setColumns',
+            'afterSetColumns'
         ],
         'Events for DataTable.setColumn should be in expected order.'
     );
 
     registeredEvents.length = 0;
-    table.setCell(0, 'text', 'test');
+    table.setCell('text', 0, 'test');
     assert.deepEqual(
         registeredEvents,
         [
@@ -365,25 +365,14 @@ QUnit.test('DataTable Events', function (assert) {
     );
 
     registeredEvents.length = 0;
-    table.deleteColumn('new');
+    table.deleteColumns(['new']);
     assert.deepEqual(
         registeredEvents,
         [
-            'deleteColumn',
-            'afterDeleteColumn'
+            'deleteColumns',
+            'afterDeleteColumns'
         ],
-        'Events for DataTable.deleteColumn should be in expected order.'
-    );
-
-    registeredEvents.length = 0;
-    table.clear();
-    assert.deepEqual(
-        registeredEvents,
-        [
-            'clearTable',
-            'afterClearTable'
-        ],
-        'Events for DataTable.clear should be in expected order.'
+        'Events for DataTable.deleteColumns should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -608,7 +597,7 @@ QUnit.test('DataTable.setRows', function (assert) {
         'Cloned table should have same rows length.'
     );
 
-    tableClone.clearRows();
+    tableClone.deleteRows();
 
     assert.deepEqual(
         tableClone.getRowCount(),

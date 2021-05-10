@@ -55,7 +55,7 @@ const {
  * @requires     highcharts-more
  * @optionparent plotOptions.columnrange
  */
-var columnRangeOptions: ColumnRangeSeriesOptions = {
+const columnRangeOptions: ColumnRangeSeriesOptions = {
 
     /**
      * Extended data labels for range series types. Range series data labels
@@ -140,7 +140,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
      * @private
      */
     public translate(): void {
-        var series = this,
+        let series = this,
             yAxis = series.yAxis,
             xAxis = series.xAxis,
             startAngleRad = xAxis.startAngleRad,
@@ -166,7 +166,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
         series.points.forEach(function (
             point: ColumnRangePoint
         ): void {
-            var shapeArgs = point.shapeArgs || {},
+            let shapeArgs = point.shapeArgs || {},
                 minPointLength = series.options.minPointLength,
                 heightDifference,
                 height,

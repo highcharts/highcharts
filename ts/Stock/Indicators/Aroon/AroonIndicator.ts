@@ -38,7 +38,7 @@ const {
  * @private
  */
 function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
-    var extremeValue = arr[0],
+    let extremeValue = arr[0],
         valueIndex = 0,
         i: (number|undefined);
 
@@ -154,7 +154,7 @@ class AroonIndicator extends SMAIndicator implements Highcharts.MultipleLinesInd
         series: TLinkedSeries,
         params: AroonParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        var period = (params.period as any),
+        let period = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen = yVal ? yVal.length : 0,

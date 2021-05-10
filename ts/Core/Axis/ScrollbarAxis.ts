@@ -82,7 +82,7 @@ class ScrollbarAxis {
 
         // Wrap axis initialization and create scrollbar if enabled:
         addEvent(AxisClass, 'afterInit', function (): void {
-            var axis = this as ScrollbarAxis;
+            const axis = this as ScrollbarAxis;
 
             if (
                 axis.options &&
@@ -103,7 +103,7 @@ class ScrollbarAxis {
                     this: Highcharts.Scrollbar,
                     e: Highcharts.ScrollbarChangedEventObject
                 ): void {
-                    var {
+                    let {
                             axisMin,
                             axisMax,
                             scrollMin: unitedMin,
@@ -150,7 +150,7 @@ class ScrollbarAxis {
 
         // Wrap rendering axis, and update scrollbar if one is created:
         addEvent(AxisClass, 'afterRender', function (): void {
-            var axis = this as ScrollbarAxis,
+            let axis = this as ScrollbarAxis,
                 {
                     scrollMin,
                     scrollMax
@@ -244,7 +244,7 @@ class ScrollbarAxis {
 
         // Make space for a scrollbar:
         addEvent(AxisClass, 'afterGetOffset', function (): void {
-            var axis = this as ScrollbarAxis,
+            const axis = this as ScrollbarAxis,
                 index = axis.horiz ? 2 : 1,
                 scrollbar = axis.scrollbar;
 

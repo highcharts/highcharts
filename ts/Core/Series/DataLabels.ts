@@ -215,7 +215,7 @@ H.distribute = function (
     maxDistance?: number
 ): void {
 
-    var i: number,
+    let i: number,
         overlapping = true,
         origBoxes = boxes, // Original array will be altered with added .pos
         restBoxes: Highcharts.DataLabelsBoxArray = [], // The outranked overshoot
@@ -325,7 +325,7 @@ H.distribute = function (
     boxes.some(function (
         box: Highcharts.DataLabelsBoxObject
     ): (boolean|undefined) {
-        var posInCompositeBox = 0;
+        let posInCompositeBox = 0;
 
         if ((box.targets as any).some(function (): (boolean|undefined) {
             origBoxes[i].pos = (box.pos as any) + posInCompositeBox;
@@ -381,7 +381,7 @@ H.distribute = function (
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
 Series.prototype.drawDataLabels = function (): void {
-    var series = this,
+    let series = this,
         chart = series.chart,
         seriesOptions = series.options,
         seriesDlOptions = seriesOptions.dataLabels,
@@ -403,7 +403,7 @@ Series.prototype.drawDataLabels = function (): void {
         point: Point,
         options: DataLabelOptions
     ): boolean {
-        var filter = options.filter,
+        let filter = options.filter,
             op,
             prop,
             val;
@@ -437,7 +437,7 @@ Series.prototype.drawDataLabels = function (): void {
         one: (DataLabelOptions|Array<DataLabelOptions>),
         two: (DataLabelOptions|Array<DataLabelOptions>)
     ): (DataLabelOptions|Array<DataLabelOptions>) {
-        var res: (DataLabelOptions|Array<DataLabelOptions>) = [],
+        let res: (DataLabelOptions|Array<DataLabelOptions>) = [],
             i: number;
 
         if (isArray(one) && !isArray(two)) {
@@ -495,7 +495,7 @@ Series.prototype.drawDataLabels = function (): void {
 
         dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
         if (!hasRendered) {
-            var group = series.dataLabelsGroup;
+            const group = series.dataLabelsGroup;
             if (group) {
                 if (series.visible) { // #2597, #3023, #3024
                     dataLabelsGroup.show(true);
@@ -529,7 +529,7 @@ Series.prototype.drawDataLabels = function (): void {
                 i: number
             ): void {
                 // Options for one datalabel
-                var labelEnabled = (
+                let labelEnabled = (
                         labelOptions.enabled &&
                         // #2282, #4641, #7112, #10049
                         (!point.isNull || point.dataLabelOnNull) &&
@@ -764,7 +764,7 @@ Series.prototype.alignDataLabel = function (
     alignTo: BBoxObject,
     isNew?: boolean
 ): void {
-    var series = this,
+    let series = this,
         chart = this.chart,
         inverted = this.isCartesian && chart.inverted,
         enabledDataSorting = this.enabledDataSorting,
@@ -781,7 +781,15 @@ Series.prototype.alignDataLabel = function (
         negRotation,
         align = options.align,
         rotCorr, // rotation correction
-        isInsidePlot = chart.isInsidePlot(plotX, Math.round(plotY), inverted),
+        isInsidePlot = chart.isInsidePlot(
+            plotX,
+            Math.round(plotY),
+            {
+                inverted,
+                paneCoordinates: true,
+                series
+            }
+        ),
         // Math.round for rounding errors (#2683), alignTo to allow column
         // labels (#2700)
         alignAttr, // the final position;
@@ -808,7 +816,11 @@ Series.prototype.alignDataLabel = function (
                         inverted ?
                             alignTo.x + 1 :
                             alignTo.y + alignTo.height - 1,
-                        inverted
+                        {
+                            inverted,
+                            paneCoordinates: true,
+                            series
+                        }
                     )
                 )
             ),
@@ -910,11 +922,19 @@ Series.prototype.alignDataLabel = function (
             visible =
                 chart.isInsidePlot(
                     alignAttr.x,
-                    alignAttr.y
+                    alignAttr.y,
+                    {
+                        paneCoordinates: true,
+                        series
+                    }
                 ) &&
                 chart.isInsidePlot(
                     alignAttr.x + bBox.width,
-                    alignAttr.y + bBox.height
+                    alignAttr.y + bBox.height,
+                    {
+                        paneCoordinates: true,
+                        series
+                    }
                 );
         }
 
@@ -962,7 +982,7 @@ Series.prototype.setDataLabelStartPos = function (
     isInside: boolean,
     alignOptions: AlignObject
 ): void {
-    var chart = this.chart,
+    let chart = this.chart,
         inverted = chart.inverted,
         xAxis = this.xAxis,
         reversed = xAxis.reversed,
@@ -1038,7 +1058,7 @@ Series.prototype.justifyDataLabel = function (
     alignTo?: BBoxObject,
     isNew?: boolean
 ): (boolean|undefined) {
-    var chart = this.chart,
+    let chart = this.chart,
         align = options.align,
         verticalAlign = options.verticalAlign,
         off,
@@ -1151,7 +1171,7 @@ if (seriesTypes.pie) {
             plotWidth: number,
             plotLeft: number
         ): number {
-            var dataLabelWidth = dataLabel.getBBox().width;
+            const dataLabelWidth = dataLabel.getBBox().width;
 
             return half ? dataLabelWidth + plotLeft :
                 plotWidth - dataLabelWidth - plotLeft;
@@ -1167,7 +1187,7 @@ if (seriesTypes.pie) {
             plotWidth: number,
             plotLeft: number
         ): number {
-            var maxDataLabelWidth = 0,
+            let maxDataLabelWidth = 0,
                 dataLabelWidth;
 
             // find widest data label
@@ -1190,7 +1210,7 @@ if (seriesTypes.pie) {
      * @return {void}
      */
     seriesTypes.pie.prototype.drawDataLabels = function (): void {
-        var series = this,
+        let series = this,
             data = series.data,
             point,
             chart = series.chart,
@@ -1294,7 +1314,7 @@ if (seriesTypes.pie) {
          */
         halves.forEach(function (points, i): void {
 
-            var top,
+            let top,
                 bottom,
                 length = points.length,
                 positions =
@@ -1515,7 +1535,7 @@ if (seriesTypes.pie) {
 
                 // Draw the connector
                 if (connectorWidth) {
-                    var isNew;
+                    let isNew;
 
                     connector = point.connector;
                     dataLabel = point.dataLabel;
@@ -1584,7 +1604,7 @@ if (seriesTypes.pie) {
     // TODO: depracated - remove it
     /*
     seriesTypes.pie.prototype.connectorPath = function (labelPos) {
-        var x = labelPos.x,
+        let x = labelPos.x,
             y = labelPos.y;
         return pick(this.options.dataLabels.softConnector, true) ? [
             'M',
@@ -1619,7 +1639,7 @@ if (seriesTypes.pie) {
      */
     seriesTypes.pie.prototype.placeDataLabels = function (): void {
         this.points.forEach(function (point: Point): void {
-            var dataLabel = point.dataLabel,
+            let dataLabel = point.dataLabel,
                 _pos;
 
             if (dataLabel && point.visible) {
@@ -1672,7 +1692,7 @@ if (seriesTypes.pie) {
         overflow: Array<number>
     ): boolean {
 
-        var center = this.center,
+        let center = this.center,
             options = this.options,
             centerOption = options.center,
             minSize = options.minSize || 80,
@@ -1760,7 +1780,7 @@ if (seriesTypes.column) {
         alignTo: BBoxObject,
         isNew?: boolean
     ): void {
-        var inverted = this.chart.inverted,
+        let inverted = this.chart.inverted,
             series = point.series,
             // data label box for alignment
             dlBox = point.dlBox || point.shapeArgs,

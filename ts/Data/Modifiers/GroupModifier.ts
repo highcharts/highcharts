@@ -182,7 +182,7 @@ class GroupModifier extends DataModifier {
             }
         }
 
-        table.clear();
+        table.deleteColumns();
         table.setColumns({
             groupBy: byGroups,
             table: tableGroups,

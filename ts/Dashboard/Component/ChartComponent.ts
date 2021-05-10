@@ -12,6 +12,7 @@ import {
     defaults as defaultHandlers
 } from './ChartSyncHandlers.js';
 
+import DataSeriesConverter from '../../Data/DataSeriesConverter.js';
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -237,7 +238,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
             // Names/aliases that should be mapped to xAxis values
             const xKeys = Object.keys(this.options.tableAxisMap || {});
-            const seriesNames = table.getColumnNames(true);
+            const seriesNames = table.getColumnNames();
             const xKeyMap: Record<string, string> = {};
 
             // Remove series names that match the xKeys
@@ -282,8 +283,15 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
                 if (xKey) {
                     seriesTable.renameColumn(xKey, 'x');
                 }
+                const seriesData = seriesTable.getRowObjects().reduce((
+                    arr: (number | {})[],
+                    row
+                ): (number | {})[] => {
+                    arr.push(row);
+                    return arr;
+                }, []);
 
-                series.setData(seriesTable, false);
+                series.setData(seriesData, false);
             });
         }
 

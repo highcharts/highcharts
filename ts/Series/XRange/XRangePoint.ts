@@ -78,7 +78,7 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
         series: Series,
         point: Point
     ): AnyRecord {
-        var colors = series.options.colors || series.chart.options.colors,
+        const colors = series.options.colors || series.chart.options.colors,
             colorCount = colors ?
                 colors.length :
                 series.chart.options.chart.colorCount as any,
@@ -127,7 +127,7 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
      * @private
      */
     public resolveColor(): void {
-        var series = this.series,
+        let series = this.series,
             colorByPoint;
 
         if (series.options.colorByPoint && !this.options.color) {
@@ -181,7 +181,7 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
      */
     // Add x2 and yCategory to the available properties for tooltip formats
     public getLabelConfig(): XRangePoint.XRangePointLabelObject {
-        var point = this,
+        const point = this,
             cfg: XRangePoint.XRangePointLabelObject =
                 Point.prototype.getLabelConfig.call(point) as any,
             yCats: Array<string> = point.series.yAxis.categories as any;

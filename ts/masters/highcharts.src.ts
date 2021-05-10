@@ -52,6 +52,7 @@ G.stop = Animation.stop;
 G.timers = Fx.timers;
 // Classes
 G.AST = AST;
+G.DataTable = DataTable;
 G.Fx = Fx;
 G.Series = Series;
 G.SVGElement = SVGElement;

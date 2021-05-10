@@ -126,7 +126,7 @@ class AOIndicator extends SMAIndicator {
      */
 
     public drawGraph(this: AOIndicator): void {
-        var indicator = this,
+        let indicator = this,
             options = indicator.options,
             points = indicator.points,
             userColor = indicator.userOptions.color,
@@ -155,7 +155,7 @@ class AOIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var shortPeriod = 5,
+        let shortPeriod = 5,
             longPeriod = 34,
             xVal: Array<number> = series.xData || [],
             yVal: Array<number|null|undefined> =

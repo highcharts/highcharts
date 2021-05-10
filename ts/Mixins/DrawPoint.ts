@@ -10,30 +10,6 @@ import type ShadowOptionsObject from '../Core/Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface DrawPoint extends Point {
-            shouldDraw(): boolean;
-        }
-        interface DrawPointParams {
-            animatableAttribs: SVGAttributes;
-            attribs: SVGAttributes;
-            css?: CSSObject;
-            group: SVGElement;
-            onComplete?: Function;
-            isNew?: boolean;
-            renderer: Renderer;
-            shadow?: (boolean|Partial<ShadowOptionsObject>);
-            shapeArgs?: SVGAttributes;
-            shapeType: string;
-        }
-    }
-}
-
 const isFn = function (x: unknown): x is Function {
     return typeof x === 'function';
 };
@@ -57,7 +33,7 @@ const draw = function draw(
     this: Mixin.DrawPoint,
     params: Mixin.DrawPointParams
 ): void {
-    var component = this,
+    let component = this,
         graphic = component.graphic,
         animatableAttribs = params.animatableAttribs,
         onComplete = params.onComplete,
@@ -83,7 +59,7 @@ const draw = function draw(
                 onComplete
             );
     } else if (graphic) {
-        var destroy = function (): void {
+        const destroy = function (): void {
             component.graphic = graphic = (graphic as any).destroy();
             if (isFn(onComplete)) {
                 onComplete();
@@ -111,7 +87,7 @@ const drawPoint = function drawPoint(
     this: Mixin.DrawPoint,
     params: Mixin.DrawPointParams
 ): void {
-    var point = this,
+    const point = this,
         attribs = params.attribs = params.attribs || {};
 
     // Assigning class in dot notation does go well in IE8

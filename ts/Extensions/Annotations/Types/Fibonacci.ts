@@ -53,9 +53,9 @@ declare global {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-var createPathDGenerator = function (retracementIndex: number, isBackground?: boolean): Function {
+const createPathDGenerator = function (retracementIndex: number, isBackground?: boolean): Function {
     return function (this: Highcharts.AnnotationControllable): SVGPath {
-        var annotation = this.annotation as Highcharts.AnnotationFibonacci,
+        let annotation = this.annotation as Highcharts.AnnotationFibonacci,
             leftTop = this.anchor(
                 annotation.startRetracements[retracementIndex]
             ).absolutePosition,
@@ -132,14 +132,14 @@ class Fibonacci extends Tunnel {
     }
 
     public linkRetracementsPoints(): void {
-        var points = this.points,
+        const points = this.points,
             startDiff = (points[0].y as any) - (points[3].y as any),
             endDiff = (points[1].y as any) - (points[2].y as any),
             startX: number = points[0].x as any,
             endX: number = points[1].x as any;
 
         Fibonacci.levels.forEach(function (level: number, i: number): void {
-            var startRetracement = (points[0].y as any) - startDiff * level,
+            const startRetracement = (points[0].y as any) - startDiff * level,
                 endRetracement = (points[1].y as any) - endDiff * level;
 
             this.startRetracements = this.startRetracements || [];
@@ -167,7 +167,7 @@ class Fibonacci extends Tunnel {
         y: number,
         retracements: Array<Highcharts.AnnotationMockPoint>
     ): void {
-        var point = retracements[pointIndex],
+        const point = retracements[pointIndex],
             typeOptions = this.options.typeOptions;
 
         if (!point) {
@@ -216,11 +216,11 @@ class Fibonacci extends Tunnel {
 
     public addLabels(): void {
         Fibonacci.levels.forEach(function (this: Highcharts.AnnotationFibonacci, level: number, i: number): void {
-            var options = this.options.typeOptions,
+            const options = this.options.typeOptions,
                 label = (this.initLabel as any)(
                     merge(options.labels[i], {
                         point: function (target: any): Highcharts.AnnotationMockPointOptionsObject {
-                            var point = MockPoint.pointToOptions(
+                            const point = MockPoint.pointToOptions(
                                 target.annotation.startRetracements[i]
                             );
 

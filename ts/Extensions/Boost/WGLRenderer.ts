@@ -147,7 +147,7 @@ function GLRenderer(
     postRenderCallback: Function
 ): (false|Highcharts.BoostGLRenderer) {
     //  // Shader
-    var shader: Highcharts.BoostGLShader = false as any,
+    let shader: Highcharts.BoostGLShader = false as any,
         // Vertex buffers - keyed on shader attribute name
         vbuffer: Highcharts.BoostGLVertexBuffer = false as any,
         vlen = 0,
@@ -214,7 +214,7 @@ function GLRenderer(
      * @private
      */
     function seriesPointCount(series: Series): number {
-        var isStacked: boolean,
+        let isStacked: boolean,
             xData: Array<number>,
             s: number;
 
@@ -247,7 +247,7 @@ function GLRenderer(
      * @private
      */
     function allocateBuffer(chart: Chart): void {
-        var s = 0;
+        let s = 0;
 
         if (!settings.usePreallocated) {
             return;
@@ -266,7 +266,7 @@ function GLRenderer(
      * @private
      */
     function allocateBufferForSingleSeries(series: Series): void {
-        var s = 0;
+        let s = 0;
 
         if (!settings.usePreallocated) {
             return;
@@ -286,7 +286,7 @@ function GLRenderer(
      * @param {number} height - the height of the viewport in pixels
      */
     function orthoMatrix(width: number, height: number): Array<number> {
-        var near = 0,
+        const near = 0,
             far = 1;
 
         return [
@@ -324,7 +324,7 @@ function GLRenderer(
         series: Series,
         inst: Highcharts.BoostGLSeriesObject
     ): void {
-        var isRange = (
+        let isRange = (
                 series.pointArrayMap &&
                 series.pointArrayMap.join(',') === 'low,high'
             ),
@@ -369,7 +369,6 @@ function GLRenderer(
             lastX: number = false as any,
             lastY: number = false as any,
             minVal: (number|undefined),
-            pcolor: Color.RGBA,
             scolor: Color.RGBA,
             sdata = isStacked ? series.data : (xData || rawData),
             closestLeft = { x: Number.MAX_VALUE, y: 0 },
@@ -570,7 +569,7 @@ function GLRenderer(
             }
 
             points.forEach(function (point: Point): void {
-                var plotY = point.plotY,
+                let plotY = point.plotY,
                     swidth,
                     pointAttr;
 
@@ -817,12 +816,12 @@ function GLRenderer(
 
             // Note: Boost requires that zones are sorted!
             if (zones) {
-                pcolor = (zoneDefColor as any).rgba;
+                pcolor = (zoneDefColor as any).rgba.slice();
                 zones.some(function ( // eslint-disable-line no-loop-func
                     zone: SeriesZonesOptions,
                     i: number
                 ): boolean {
-                    var last: SeriesZonesOptions = (zones as any)[i - 1];
+                    const last: SeriesZonesOptions = (zones as any)[i - 1];
 
                     if (zoneAxis === 'x') {
                         if (typeof zone.value !== 'undefined' && x <= zone.value) {
@@ -1215,7 +1214,7 @@ function GLRenderer(
             s: Highcharts.BoostGLSeriesObject,
             si: number
         ): void {
-            var options = s.series.options,
+            let options = s.series.options,
                 shapeOptions = options.marker,
                 sindex,
                 lineWidth = (
@@ -1452,7 +1451,7 @@ function GLRenderer(
      * @param canvas {HTMLCanvas} - the canvas to render to
      */
     function init(canvas?: HTMLCanvasElement, noFlush?: boolean): boolean {
-        var i = 0,
+        let i = 0,
             contexts = [
                 'webgl',
                 'experimental-webgl',
@@ -1510,7 +1509,7 @@ function GLRenderer(
             name: string,
             fn: Highcharts.BoostGLTextureCallbackFunction
         ): void {
-            var props: Highcharts.BoostGLTextureObject = {
+            const props: Highcharts.BoostGLTextureObject = {
                     isReady: false,
                     texture: doc.createElement('canvas'),
                     handle: gl.createTexture()

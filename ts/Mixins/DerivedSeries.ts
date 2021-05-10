@@ -122,7 +122,7 @@ const derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
      * @return {void}
      */
     setBaseSeries: function (this: Highcharts.DerivedSeries): void {
-        var chart = this.chart,
+        const chart = this.chart,
             baseSeriesOptions = this.options.baseSeries,
             baseSeries = (
                 defined(baseSeriesOptions) &&
@@ -143,7 +143,7 @@ const derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
      * @return {void}
      */
     addEvents: function (this: Highcharts.DerivedSeries): void {
-        var derivedSeries = this,
+        let derivedSeries = this,
             chartSeriesLinked;
 
         chartSeriesLinked = addEvent(
@@ -174,7 +174,7 @@ const derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
      * @return {void}
      */
     addBaseSeriesEvents: function (this: Highcharts.DerivedSeries): void {
-        var derivedSeries = this,
+        let derivedSeries = this,
             updatedDataRemover,
             destroyRemover;
 

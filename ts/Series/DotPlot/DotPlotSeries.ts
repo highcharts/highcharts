@@ -94,7 +94,7 @@ class DotPlotSeries extends ColumnSeries {
      * */
 
     public drawPoints(): void {
-        var series = this,
+        const series = this,
             renderer = series.chart.renderer,
             seriesMarkerOptions = this.options.marker,
             itemPaddingTranslated = this.yAxis.transA *
@@ -103,7 +103,7 @@ class DotPlotSeries extends ColumnSeries {
             crisp = borderWidth % 2 ? 0.5 : 1;
 
         this.points.forEach(function (point: DotPlotPoint): void {
-            var yPos: number,
+            let yPos: number,
                 attr: SVGAttributes,
                 graphics: Record<string, SVGElement>,
                 itemY: (number|undefined),

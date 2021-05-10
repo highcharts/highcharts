@@ -440,7 +440,7 @@ declare global {
  * chart constructor.
  *
  * @example
- * var chart = Highcharts.chart('container', { ... });
+ * let chart = Highcharts.chart('container', { ... });
  *
  * @namespace Highcharts
  */
@@ -2327,7 +2327,7 @@ let serialMode: (boolean|undefined);
  * counter.
  *
  * @example
- * var id = uniqueKey(); // => 'highcharts-x45f6hp-0'
+ * let id = uniqueKey(); // => 'highcharts-x45f6hp-0'
  *
  * @function Highcharts.uniqueKey
  *

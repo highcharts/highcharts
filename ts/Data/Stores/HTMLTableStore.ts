@@ -175,7 +175,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
         store.fetchTable();
 
         // If already loaded, clear the current rows
-        store.table.clear();
+        store.table.deleteColumns();
 
         store.emit({
             type: 'load',
@@ -231,7 +231,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
             row1: Array<(number | string | undefined)>,
             row2: Array<(number | string | undefined)>
         ): boolean {
-            var i = row1.length;
+            let i = row1.length;
 
             if (row2.length === i) {
                 while (i--) {
@@ -251,7 +251,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
             subheaders: Array<(number | string | undefined)>,
             rowLength?: number
         ): string {
-            var html = '<thead>',
+            let html = '<thead>',
                 i = 0,
                 len = rowLength || subheaders && subheaders.length,
                 next,
