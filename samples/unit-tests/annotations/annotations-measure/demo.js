@@ -37,20 +37,21 @@ QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
         }]
     });
 
+    let bbox = chart.annotations[0].shapesGroup.getBBox();
     assert.ok(
-        chart.annotations[0].shapesGroup.getBBox().y === chart.yAxis[1].top,
+        bbox.y === chart.yAxis[1].top,
         'Annotation measure should be visible on vary yaxis (#13664).'
     );
 
     assert.close(
-        chart.annotations[0].shapesGroup.getBBox().y,
+        bbox.y,
         chart.annotations[0].labels[0].graphic.anchorY,
         0.5,
         "Annotation's label's Y position should be close to the Y position of the annotation."
     );
 
     assert.close(
-        chart.annotations[0].shapesGroup.getBBox().x,
+        bbox.x,
         chart.annotations[0].labels[0].graphic.anchorX,
         0.5,
         "Annotation's label's X position should be close to the X position of the annotation."
@@ -65,15 +66,17 @@ QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
         }
     });
 
+    bbox = chart.annotations[0].shapesGroup.getBBox();
+
     assert.close(
-        chart.annotations[0].shapesGroup.getBBox().y,
+        bbox.y,
         chart.annotations[0].labels[0].graphic.anchorY,
         0.5,
         "Annotation's label's Y position should be close to the Y position of the annotation after updates."
     );
 
     assert.close(
-        chart.annotations[0].shapesGroup.getBBox().x,
+        bbox.x,
         chart.annotations[0].labels[0].graphic.anchorX,
         0.5,
         "Annotation's label's X position should be close to the X position of the annotation after updates."

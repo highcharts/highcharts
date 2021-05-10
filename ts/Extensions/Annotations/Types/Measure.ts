@@ -504,13 +504,14 @@ class Measure extends Annotation {
                 overflow: 'allow',
                 align: 'left',
                 y: 0,
+                x: 0,
                 verticalAlign: 'top',
                 crop: true,
                 xAxis: 0,
                 yAxis: 0,
                 point: function (target: any): ExtendedPositionObject {
-                    const annotation: Measure = target.annotation;
-                    const options = target.options;
+                    const annotation: Measure = target.annotation,
+                        options = target.options;
 
                     return {
                         x: annotation.xAxisMin,
