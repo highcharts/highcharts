@@ -294,6 +294,7 @@ declare global {
             ordinal?: boolean;
             overscroll?: number;
             pane?: number;
+            panningEnabled: boolean;
             range?: number;
             reversed?: boolean;
             reversedStacks: boolean;
@@ -432,6 +433,7 @@ declare global {
             public options: AxisOptions;
             public overlap: boolean;
             public paddedTicks: Array<number>;
+            public panningEnabled: boolean;
             public panningState?: AxisPanningState;
             public plotLinesAndBands: Array<PlotLineOrBand>;
             public plotLinesAndBandsGroups: Record<string, SVGElement>;
@@ -1259,6 +1261,12 @@ class Axis {
          * @since     4.1
          * @apioption xAxis.crosshair.zIndex
          */
+
+        /**
+         * Whether to pan axis. If `chart.panning` is enabled, the option
+         * allows to disable panning on an individual axis.
+         */
+        panningEnabled: true,
 
         /**
          * The Z index for the axis group.
@@ -4171,6 +4179,7 @@ class Axis {
          */
         axis.reversed = pick(options.reversed, axis.reversed);
         axis.visible = options.visible;
+        axis.panningEnabled = options.panningEnabled;
         axis.zoomEnabled = options.zoomEnabled;
 
         // Initial categories
