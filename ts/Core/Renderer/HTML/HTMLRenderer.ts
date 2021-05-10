@@ -37,11 +37,6 @@ const {
  *
  * */
 
-interface HTMLRenderer extends SVGRenderer {
-    /** @requires Core/Renderer/HTML/HTMLRenderer */
-    html(str: string, x: number, y: number): HTMLElement;
-}
-
 declare module '../SVG/SVGRendererLike' {
     interface SVGRendererLike {
         /** @requires Core/Renderer/HTML/HTMLRenderer */
@@ -58,7 +53,7 @@ declare module '../SVG/SVGRendererLike' {
 /* eslint-disable valid-jsdoc */
 
 // Extend SvgRenderer for useHTML option.
-namespace HTMLRenderer {
+class HTMLRenderer extends SVGRenderer {
 
     /* *
      *
@@ -66,13 +61,12 @@ namespace HTMLRenderer {
      *
      * */
 
-    /**
-     * @private
-     */
-    export function compose(SVGRendererClass: typeof SVGRenderer): void {
-        const svgRendererProto = SVGRendererClass.prototype;
+    /** @private */
+    public static compose(SVGRendererClass: typeof SVGRenderer): void {
+        const svgRendererProto = SVGRendererClass.prototype,
+            htmlRendererProto = HTMLRenderer.prototype;
 
-        svgRendererProto.html = html;
+        svgRendererProto.html = htmlRendererProto.html;
     }
 
     /**
@@ -93,7 +87,7 @@ namespace HTMLRenderer {
      *
      * @return {Highcharts.HTMLDOMElement}
      */
-    function html(
+    public html(
         this: HTMLRenderer,
         str: string,
         x: number,
