@@ -98,22 +98,6 @@ interface SVGAttributesExtended extends SVGAttributes {
     vertexes?: Position3DObject[];
 }
 
-interface SVGRenderer3D extends SVGRenderer {
-    elements3d: SVGElement3D;
-    arc3d(attribs: SVGAttributes): SVGElement;
-    arc3dPath(shapeArgs: SVGAttributes): SVGArc3D;
-    cuboid(shapeArgs: SVGAttributes): SVGElement;
-    cuboidPath(shapeArgs: SVGAttributes): SVGCuboid;
-    element3d(type: string, shapeArgs: SVGAttributes): SVGElement;
-    face3d(args?: SVGAttributes): SVGElement;
-    polyhedron(args?: SVGAttributes): SVGElement;
-    toLinePath(
-        points: Array<PositionObject>,
-        closed?: boolean
-    ): SVGPath;
-    toLineSegments(points: Array<PositionObject>): SVGPath;
-}
-
 /* *
  *
  *  Constants
@@ -139,28 +123,29 @@ const cos = Math.cos,
  *
  * */
 
-namespace SVGRenderer3D {
+class SVGRenderer3D extends SVGRenderer {
 
     /* *
      *
-     *  Functions
+     *  Static Functions
      *
      * */
 
     /** @private */
-    export function compose(SVGRendererClass: typeof SVGRenderer): void {
-        const svgRendererProto = SVGRendererClass.prototype;
+    public static compose(SVGRendererClass: typeof SVGRenderer): void {
+        const svgRendererProto = SVGRendererClass.prototype,
+            svgRenderer3dProto = SVGRenderer3D.prototype;
 
         svgRendererProto.elements3d = SVGElement3D;
-        svgRendererProto.arc3d = arc3d;
-        svgRendererProto.arc3dPath = arc3dPath;
-        svgRendererProto.cuboid = cuboid;
-        svgRendererProto.cuboidPath = cuboidPath;
-        svgRendererProto.element3d = element3d;
-        svgRendererProto.face3d = face3d;
-        svgRendererProto.polyhedron = polyhedron;
-        svgRendererProto.toLinePath = toLinePath;
-        svgRendererProto.toLineSegments = toLineSegments;
+        svgRendererProto.arc3d = svgRenderer3dProto.arc3d;
+        svgRendererProto.arc3dPath = svgRenderer3dProto.arc3dPath;
+        svgRendererProto.cuboid = svgRenderer3dProto.cuboid;
+        svgRendererProto.cuboidPath = svgRenderer3dProto.cuboidPath;
+        svgRendererProto.element3d = svgRenderer3dProto.element3d;
+        svgRendererProto.face3d = svgRenderer3dProto.face3d;
+        svgRendererProto.polyhedron = svgRenderer3dProto.polyhedron;
+        svgRendererProto.toLinePath = svgRenderer3dProto.toLinePath;
+        svgRendererProto.toLineSegments = svgRenderer3dProto.toLineSegments;
     }
 
     /**
@@ -168,7 +153,7 @@ namespace SVGRenderer3D {
      * degrees.
      * @private
      */
-    function curveTo(
+    private static curveTo(
         cx: number,
         cy: number,
         rx: number,
@@ -183,19 +168,19 @@ namespace SVGRenderer3D {
 
         if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
             result = result.concat(
-                curveTo(cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy)
+                this.curveTo(cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy)
             );
             result = result.concat(
-                curveTo(cx, cy, rx, ry, start + (Math.PI / 2), end, dx, dy)
+                this.curveTo(cx, cy, rx, ry, start + (Math.PI / 2), end, dx, dy)
             );
             return result;
         }
         if ((end < start) && (start - end > Math.PI / 2 + 0.0001)) {
             result = result.concat(
-                curveTo(cx, cy, rx, ry, start, start - (Math.PI / 2), dx, dy)
+                this.curveTo(cx, cy, rx, ry, start, start - (Math.PI / 2), dx, dy)
             );
             result = result.concat(
-                curveTo(cx, cy, rx, ry, start - (Math.PI / 2), end, dx, dy)
+                this.curveTo(cx, cy, rx, ry, start - (Math.PI / 2), end, dx, dy)
             );
             return result;
         }
@@ -215,9 +200,14 @@ namespace SVGRenderer3D {
         ]];
     }
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /** @private */
-    function toLinePath(
-        this: SVGRenderer3D,
+    public toLinePath(
         points: Array<PositionObject>,
         closed?: boolean
     ): SVGPath {
@@ -242,10 +232,7 @@ namespace SVGRenderer3D {
     }
 
     /** @private */
-    function toLineSegments(
-        this: SVGRenderer3D,
-        points: Array<PositionObject>
-    ): SVGPath {
+    public toLineSegments(points: Array<PositionObject>): SVGPath {
         let result = [] as SVGPath,
             m = true;
 
@@ -263,10 +250,7 @@ namespace SVGRenderer3D {
      * polyhedron Element.
      * @private
      */
-    function face3d(
-        this: SVGRenderer3D,
-        args?: SVGAttributes
-    ): SVGElement {
+    public face3d(args?: SVGAttributes): SVGElement {
         const renderer = this,
             ret: SVGElement = this.createElement('path');
 
@@ -364,10 +348,7 @@ namespace SVGRenderer3D {
      * instances.
      * @private
      */
-    function polyhedron(
-        this: SVGRenderer3D,
-        args?: SVGAttributes
-    ): SVGElement {
+    public polyhedron(args?: SVGAttributes): SVGElement {
         const renderer = this,
             result = this.g(),
             destroy = result.destroy;
@@ -451,11 +432,7 @@ namespace SVGRenderer3D {
      * @private
      * @requires highcharts-3d
      */
-    function element3d(
-        this: SVGRenderer3D,
-        type: string,
-        shapeArgs: SVGAttributes
-    ): SVGElement {
+    public element3d(type: string, shapeArgs: SVGAttributes): SVGElement {
         // base
         const ret = this.g();
 
@@ -473,10 +450,7 @@ namespace SVGRenderer3D {
      * generelized, so now use simply
      * @private
      */
-    function cuboid(
-        this: SVGRenderer3D,
-        shapeArgs: SVGAttributes
-    ): SVGElement {
+    public cuboid(shapeArgs: SVGAttributes): SVGElement {
         return this.element3d('cuboid', shapeArgs);
     }
 
@@ -484,10 +458,7 @@ namespace SVGRenderer3D {
      * Generates a cuboid path and zIndexes
      * @private
      */
-    function cuboidPath(
-        this: SVGRenderer,
-        shapeArgs: SVGAttributesExtended
-    ): SVGCuboid {
+    public cuboidPath(shapeArgs: SVGAttributesExtended): SVGCuboid {
         let x = shapeArgs.x || 0,
             y = shapeArgs.y || 0,
             z = shapeArgs.z || 0,
@@ -731,10 +702,7 @@ namespace SVGRenderer3D {
     }
 
     /** @private */
-    function arc3d(
-        this: SVGRenderer3D,
-        attribs: SVGAttributesExtended
-    ): SVGElement {
+    public arc3d(attribs: SVGAttributesExtended): SVGElement {
 
         const wrapper = this.g(),
             renderer = wrapper.renderer,
@@ -1005,9 +973,7 @@ namespace SVGRenderer3D {
      * Generate the paths required to draw a 3D arc.
      * @private
      */
-    function arc3dPath(
-        shapeArgs: SVGAttributesExtended
-    ): SVGArc3D {
+    public arc3dPath(shapeArgs: SVGAttributesExtended): SVGArc3D {
         const cx = shapeArgs.x || 0, // x coordinate of the center
             cy = shapeArgs.y || 0, // y coordinate of the center
             start = shapeArgs.start || 0, // start angle
@@ -1035,11 +1001,11 @@ namespace SVGRenderer3D {
             ['M', cx + (rx * cs), cy + (ry * ss)]
         ];
 
-        top = top.concat(curveTo(cx, cy, rx, ry, start, end, 0, 0));
+        top = top.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, start, end, 0, 0));
         top.push([
             'L', cx + (irx * ce), cy + (iry * se)
         ]);
-        top = top.concat(curveTo(cx, cy, irx, iry, end, start, 0, 0));
+        top = top.concat(SVGRenderer3D.curveTo(cx, cy, irx, iry, end, start, 0, 0));
         top.push(['Z']);
 
         // OUTSIDE
@@ -1078,7 +1044,7 @@ namespace SVGRenderer3D {
             ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))]
         ];
 
-        out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
+        out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
 
         // When shape is wide, it can cross both, (c) and (d) edges, when using
         // startAngle
@@ -1088,24 +1054,24 @@ namespace SVGRenderer3D {
                 'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
             ]);
             // Curve to the right edge of the slice (d)
-            out = out.concat(curveTo(cx, cy, rx, ry, end2, midEnd, dx, dy));
+            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, midEnd, dx, dy));
             // Go to the inner side
             out.push([
                 'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
             ]);
             // Curve to the true end of the slice
-            out = out.concat(curveTo(cx, cy, rx, ry, midEnd, end, 0, 0));
+            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, midEnd, end, 0, 0));
             // Go to the outer side
             out.push([
                 'L', cx + (rx * cos(end)) + dx, cy + (ry * sin(end)) + dy
             ]);
             // Go back to middle (d)
-            out = out.concat(curveTo(cx, cy, rx, ry, end, midEnd, dx, dy));
+            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end, midEnd, dx, dy));
             out.push([
                 'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
             ]);
             // Go back to the left edge
-            out = out.concat(curveTo(cx, cy, rx, ry, midEnd, end2, 0, 0));
+            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, midEnd, end2, 0, 0));
 
         // But shape can cross also only (c) edge:
         } else if (end > PI - a && start < PI - a) {
@@ -1116,19 +1082,19 @@ namespace SVGRenderer3D {
                 cy + (ry * Math.sin(end2)) + dy
             ]);
             // Curve to the true end of the slice
-            out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
+            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, end, dx, dy));
             // Go to the inner side
             out.push([
                 'L', cx + (rx * Math.cos(end)), cy + (ry * Math.sin(end))
             ]);
             // Go back to the artifical end2
-            out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
+            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end, end2, 0, 0));
         }
 
         out.push([
             'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
         ]);
-        out = out.concat(curveTo(cx, cy, rx, ry, end2, start2, dx, dy));
+        out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, start2, dx, dy));
         out.push(['Z']);
 
         // INSIDE
@@ -1136,11 +1102,11 @@ namespace SVGRenderer3D {
             ['M', cx + (irx * cs), cy + (iry * ss)]
         ];
 
-        inn = inn.concat(curveTo(cx, cy, irx, iry, start, end, 0, 0));
+        inn = inn.concat(SVGRenderer3D.curveTo(cx, cy, irx, iry, start, end, 0, 0));
         inn.push([
             'L', cx + (irx * Math.cos(end)) + dx, cy + (iry * Math.sin(end)) + dy
         ]);
-        inn = inn.concat(curveTo(cx, cy, irx, iry, end, start, dx, dy));
+        inn = inn.concat(SVGRenderer3D.curveTo(cx, cy, irx, iry, end, start, dx, dy));
         inn.push(['Z']);
 
         // SIDES
