@@ -143,7 +143,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                     sender: sender.id,
                     target: targetObj.target
                 },
-                message
+                message,
+                component
             });
 
         const handlers: Record<Component.MessageTarget['type'], Function> = {
@@ -562,16 +563,15 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                     });
                 }
             });
-
             objectEach(events, (eventCallback, eventType): void => {
                 if (isFunction(eventCallback)) {
-                    this.on(eventType, eventCallback as any);
+                    this.on(eventType as any, eventCallback as any);
                 }
             });
         }
 
-        this.on('message', (e: Component.MessageEvent): void => {
-            if (e.message) {
+        this.on('message', (e): void => {
+            if ('message' in e) {
                 this.onMessage(e.message);
             }
         });
@@ -631,7 +631,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public on(
         type: TEventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, TEventObject>
+        callback: DataEventEmitter.EventCallback<this, TEventObject | Component.EventTypes>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -713,40 +713,42 @@ namespace Component {
         TableChangedEvent |
         LoadEvent |
         RenderEvent |
-        MessageEvent |
-        Event;
-    export interface ResizeEvent extends Event {
+        RedrawEvent |
+        JSONEvent |
+        MessageEvent;
+
+    export type ResizeEvent = Event<'resize', {
         readonly type: 'resize';
         width?: number;
         height?: number;
-    }
+    }>;
 
-    export interface UpdateEvent extends Event {
-        readonly type: 'update' | 'afterUpdate';
+    export type UpdateEvent = Event<'update' | 'afterUpdate', {
         options?: ComponentOptions;
-    }
+    }>;
 
-    export interface LoadEvent extends Event {
-        readonly type: 'load' | 'afterLoad';
-    }
-    export interface RenderEvent extends Event {
-        readonly type: 'render' | 'afterRender';
-    }
-    export interface MessageEvent extends Event {
-        /* readonly type: 'message'; */
-        message?: MessageType;
-    }
-    export interface TableChangedEvent extends Event {
-        readonly type: 'tableChanged';
-        options?: ComponentOptions;
-    }
-    /**
-     * The default event object for a component
-     */
-    export interface Event extends DataEventEmitter.Event {
-        readonly type: string;
-        component?: this;
-    }
+    export type LoadEvent = Event<'load' | 'afterLoad', {}>;
+    export type RedrawEvent = Event<'redraw' | 'afterRedraw', {}>;
+    export type RenderEvent = Event<'render' | 'afterRender', {}>;
+    export type MessageEvent = Event<'message', {
+        message: MessageType;
+        detail?: {
+            sender: string;
+            target: string;
+        };
+    }>;
+    export type JSONEvent = Event<'toJSON' | 'fromJSOM', {
+        json: DataJSON.ClassJSON;
+    }>;
+    export type TableChangedEvent = Event<'tableChanged', {}>
+
+    export type Event<
+        EventType extends DataEventEmitter.Event['type'],
+        EventRecord extends Record<string, any>> = {
+            readonly type: EventType;
+            component: ComponentType;
+            detail?: DataEventEmitter.EventDetail;
+        } & EventRecord;
 
     export interface ComponentOptions extends EditableOptions {
         parentCell?: Cell;
@@ -755,7 +757,7 @@ namespace Component {
         type: string;
         // allow overwriting gui elements
         navigationBindings?: Highcharts.NavigationBindingsOptionsObject[];
-        events?: Record<Event['type'], Function>;
+        events?: Record<string, Function>;
         editableOptions: Array<keyof EditableOptions>;
         editableOptionsBindings?: EditableOptions.BindingsType;
     }

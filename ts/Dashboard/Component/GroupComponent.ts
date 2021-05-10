@@ -28,11 +28,9 @@ export default class GroupComponent extends Component {
     }
 
     public load(): this {
-        this.emit({ type: 'load' });
         super.load();
         this.parentElement.appendChild(this.element);
         this.hasLoaded = true;
-        this.emit({ type: 'afterLoad' });
         return this;
     }
     render(): this {

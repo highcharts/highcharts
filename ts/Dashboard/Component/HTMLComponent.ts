@@ -90,7 +90,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         this.scaleElements = this.options.scaleElements;
 
         this.on('tableChanged', (e): void => {
-            if (e.detail && e.detail.sender !== this.id) {
+            if ('detail' in e && e.detail && e.detail.sender !== this.id) {
                 this.redraw();
             }
         });
@@ -123,7 +123,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         if (this.scaleElements) {
             this.autoScale();
         }
-        this.emit({ type: 'afterLoad' });
+        this.emit({ type: 'afterLoad', component: this });
         return this;
     }
 
@@ -255,13 +255,11 @@ namespace HTMLComponent {
     }
 
     export type HTMLComponentEvents =
-        JSONEvent |
-        Component.EventTypes;
+        Component.EventTypes | JSONEvent;
 
-    export interface JSONEvent extends Component.Event {
-        readonly type: 'toJSON' | 'fromJSOM';
-        json?: HTMLComponent.ClassJSON;
-    }
+    export type JSONEvent = Component.Event<'toJSON' | 'fromJSOM', {
+        json: HTMLComponent.ClassJSON;
+    }>;
     export interface ClassJSON extends Component.ClassJSON {
         elements?: string[];
         events?: string[];

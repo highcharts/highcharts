@@ -178,14 +178,14 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
         this.initChart();
         this.hasLoaded = true;
 
-        this.emit({ type: 'afterLoad' });
+        this.emit({ type: 'afterLoad', component });
 
         return this;
     }
 
     public render(): this {
         super.render();
-        this.emit({ type: 'afterRender' });
+        this.emit({ type: 'afterRender', component: this });
         return this;
     }
 
@@ -226,7 +226,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
         if (this.chart) {
             this.chart.update(this.options.chartOptions || {});
         }
-        this.emit({ type: 'afterUpdate' });
+        this.emit({ type: 'afterUpdate', component: this });
         return this;
     }
 
@@ -462,10 +462,9 @@ namespace ChartComponent {
         JSONEvent |
         Component.EventTypes;
 
-    export interface JSONEvent extends Component.Event {
-        readonly type: 'toJSON' | 'fromJSOM';
-        json?: ChartComponent.ClassJSON;
-    }
+    export type JSONEvent = Component.Event<'toJSON' | 'fromJSOM', {
+        json: ChartComponent.ClassJSON;
+    }>;
     export interface ComponentOptions extends Component.ComponentOptions, EditableOptions {
         Highcharts: typeof Highcharts;
         chartConstructor: ChartComponent.constructorType;
