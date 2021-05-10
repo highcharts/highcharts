@@ -1183,11 +1183,11 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         point?: PackedBubblePoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        let options = this.options,
-            hasParentMarker = point && point.isParentNode,
-            markerOptions = options.marker,
+        const options = this.options,
+            hasParentMarker = point && point.isParentNode;
+        let attr,
             fillOpacity,
-            attr;
+            markerOptions = options.marker;
 
         if (
             hasParentMarker &&
@@ -1201,7 +1201,6 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         attr = Series.prototype.pointAttribs.call(this, point, state);
 
         if (fillOpacity !== 1) {
-            attr.fill = color(attr.fill as any).get();
             attr['fill-opacity'] = fillOpacity;
         }
 

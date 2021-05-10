@@ -159,10 +159,10 @@ QUnit.test('PackedBubble hover and dehover (#12537)', function (assert) {
             }
         },
         series: [{
-            value: '1'
+            value: 1
 
         }, {
-            value: '2'
+            value: 2
         }]
     });
 
