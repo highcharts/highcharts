@@ -1255,10 +1255,7 @@ function GLRenderer(
 
             if (
                 s.segments.length === 0 ||
-                (
-                    (s as any).segmentslength &&
-                    s.segments[0].from === s.segments[0].to
-                )
+                s.segments[0].from === s.segments[0].to
             ) {
                 return;
             }
