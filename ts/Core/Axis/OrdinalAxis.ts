@@ -65,7 +65,7 @@ declare module './Types' {
             findHigherRanks?: boolean
         ): TickPositionsArray;
         /** @deprecated */
-        lin2val(val: number, fromIndex?: boolean): number;
+        lin2val(val: number): number;
         /** @deprecated */
         val2lin(val: number, toIndex?: boolean): number;
     }
@@ -84,10 +84,15 @@ import '../Navigator.js';
  * @private
  */
 interface OrdinalAxis extends Axis {
+    extendedOrdinalPositions?: Array<number>;
     forceOrdinal?: boolean;
     isInternal?: boolean;
     ordinal: OrdinalAxis.Composition;
-    ordinal2lin: OrdinalAxis['val2lin'];
+    getIndexOfPoint(
+        val: number,
+        ordinalPositions: Array<number>,
+        extendedOrdinalPositions: Array<number>
+    ): number;
     getTimeTicks(
         normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
         min: number,
@@ -97,7 +102,9 @@ interface OrdinalAxis extends Axis {
         closestDistance?: number,
         findHigherRanks?: boolean
     ): TickPositionsArray;
-    lin2val(val: number, fromIndex?: boolean): number;
+    index2val(val: number): number;
+    lin2val(val: number): number;
+    ordinal2lin: OrdinalAxis['val2lin'];
     val2lin(val: number, toIndex?: boolean): number;
 }
 
@@ -846,6 +853,91 @@ namespace OrdinalAxis {
         };
 
         /**
+         * Get index of point inside the extended ordinal positions array.
+         *
+         * @private
+         * @function Highcharts.Axis#getIndexOfPoint
+         *
+         * @param {number} val
+         *        The pixel value of a point.
+         *
+         * @param {Array<number>} [ordinalPositions]
+         *        An array of points visible in the current plot area.
+         *
+         * @param {Array<number>} [extendedOrdinalPositions]
+         *        An array of all points available on the axis
+         *        for the given data set.
+         *
+         * @return {number}
+         */
+        axisProto.getIndexOfPoint = function (
+            val: number,
+            ordinalPositions: Array<number>,
+            extendedOrdinalPositions: Array<number>
+        ): number {
+            const axis = this,
+                // Distance in pixels between two points
+                // on the ordinal axis in the current zoom.
+                ordinalPointPixelInterval = axis.len / ordinalPositions.length - 1,
+                shiftIndex = val / ordinalPointPixelInterval;
+
+            // Make sure that the returned index does not exceed array
+            // boundaries. If so, return the first or the last index of array.
+            return Math.min(
+                Math.max(
+                    extendedOrdinalPositions.indexOf(axis.min as any) + shiftIndex,
+                    0
+                ), // first index
+                extendedOrdinalPositions.length - 1 // last index
+            );
+        };
+
+        /**
+         * Get axis position of given index of the extended ordinal positions.
+         * Used only when panning an ordinal axis.
+         *
+         * @private
+         * @function Highcharts.Axis#lin2val
+         *
+         * @param {number} index
+         *        The index value of searched point
+         *
+         * @return {number}
+         */
+        axisProto.index2val = function (index: number): number {
+            let axis = this,
+                ordinal = axis.ordinal,
+                // Context could be changed to extendedOrdinalPositions.
+                ordinalPositions = ordinal.positions;
+
+            // The visible range contains only equally spaced values.
+            if (!ordinalPositions) {
+                return index; // TODO Find better return value if ordinal doesn't exist.
+            }
+
+            let i = ordinalPositions.length - 1,
+                distance;
+
+            if (index < 0) { // out of range, in effect panning to the left
+                index = ordinalPositions[0];
+            } else if (index > i) { // out of range, panning to the right
+                index = ordinalPositions[i];
+            } else { // split it up
+                i = Math.floor(index);
+                distance = index - i; // the decimal
+            }
+
+            if (typeof distance !== 'undefined' &&
+                typeof ordinalPositions[i] !== 'undefined') {
+                return ordinalPositions[i] + (distance ?
+                    distance *
+                        (ordinalPositions[i + 1] - ordinalPositions[i]) :
+                    0);
+            }
+            return index;
+        };
+
+        /**
          * Translate from linear (internal) to axis value.
          *
          * @private
@@ -860,76 +952,37 @@ namespace OrdinalAxis {
          *
          * @return {number}
          */
-        axisProto.lin2val = function (
-            val: number,
-            fromIndex?: boolean
-        ): number {
+        axisProto.lin2val = function (val: number): number {
             let axis = this,
                 ordinal = axis.ordinal,
-                ordinalPositions = ordinal.positions,
-                ret;
+                ordinalPositions = ordinal.positions, // for the current visible range
+                ret = 0,
+                extendedOrdinalPositions = this.extendedOrdinalPositions;
 
-            // the visible range contains only equally spaced values
+            // The visible range contains only equally spaced values.
             if (!ordinalPositions) {
-                ret = val;
+                return val;
+            }
 
-            } else {
+            // If the value is not inside the plot area,
+            // use the extended positions.
+            // (array contains also points that are currently out of range).
 
-                let ordinalSlope = ordinal.slope,
-                    ordinalOffset = ordinal.offset,
-                    i = ordinalPositions.length - 1,
-                    linearEquivalentLeft,
-                    linearEquivalentRight,
-                    distance;
+            // When iterating for the first time,
+            // get the extended ordinal positional and assign them.
+            if (axis.ordinal && !extendedOrdinalPositions) {
+                extendedOrdinalPositions = axis.ordinal.getExtendedPositions();
+                this.extendedOrdinalPositions = extendedOrdinalPositions;
+            }
 
+            if (ordinalPositions && extendedOrdinalPositions && extendedOrdinalPositions.length) {
+                const indexToShift = this.getIndexOfPoint(val, ordinalPositions, extendedOrdinalPositions),
+                    leftNeighbor = Math.floor(indexToShift);
 
-                // Handle the case where we translate from the index directly,
-                // used only when panning an ordinal axis
-                if (fromIndex) {
-
-                    if (val < 0) { // out of range, in effect panning to the left
-                        val = ordinalPositions[0];
-                    } else if (val > i) { // out of range, panning to the right
-                        val = ordinalPositions[i];
-                    } else { // split it up
-                        i = Math.floor(val);
-                        distance = val - i; // the decimal
-                    }
-
-                // Loop down along the ordinal positions. When the linear
-                // equivalent of i matches an ordinal position, interpolate
-                // between the left and right values.
-                } else {
-                    while (i--) {
-                        linearEquivalentLeft =
-                            ((ordinalSlope as any) * i) + (ordinalOffset as any);
-                        if (val >= linearEquivalentLeft) {
-                            linearEquivalentRight =
-                                ((ordinalSlope as any) *
-                                (i + 1)) +
-                                (ordinalOffset as any);
-                            // something between 0 and 1
-                            distance = (val - linearEquivalentLeft) /
-                                (linearEquivalentRight - linearEquivalentLeft);
-                            break;
-                        }
-                    }
-                }
-
-                // If the index is within the range of the ordinal positions,
-                // return the associated or interpolated value. If not, just
-                // return the value.
-                return (
-                    typeof distance !== 'undefined' &&
-                    typeof ordinalPositions[i] !== 'undefined' ?
-                        ordinalPositions[i] + (
-                            distance ?
-                                distance *
-                                (ordinalPositions[i + 1] - ordinalPositions[i]) :
-                                0
-                        ) :
-                        val
-                );
+                // In order to ensure that axis.min equals to some calculated
+                // value from the ordinal axis. Do not interpolate the points,
+                // always return the point to the left.
+                ret = extendedOrdinalPositions[leftNeighbor];
             }
             return ret;
         };
@@ -1098,7 +1151,7 @@ namespace OrdinalAxis {
                     extendedAxis = { ordinal: { positions: xAxis.ordinal.getExtendedPositions() } },
                     ordinalPositions,
                     searchAxisLeft,
-                    lin2val = xAxis.lin2val,
+                    index2val = xAxis.index2val,
                     val2lin = xAxis.val2lin,
                     searchAxisRight;
 
@@ -1145,13 +1198,11 @@ namespace OrdinalAxis {
                     trimmedRange = (xAxis as NavigatorAxis).navigatorAxis.toFixedRange(
                         null as any,
                         null as any,
-                        lin2val.apply(searchAxisLeft, [
-                            val2lin.apply(searchAxisLeft, [min, true]) + movedUnits,
-                            true // translate from index
+                        index2val.apply(searchAxisLeft, [
+                            val2lin.apply(searchAxisLeft, [min, true]) + movedUnits
                         ]),
-                        lin2val.apply(searchAxisRight, [
-                            val2lin.apply(searchAxisRight, [max, true]) + movedUnits,
-                            true // translate from index
+                        index2val.apply(searchAxisRight, [
+                            val2lin.apply(searchAxisRight, [max, true]) + movedUnits
                         ])
                     );
 

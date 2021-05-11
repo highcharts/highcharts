@@ -4615,7 +4615,12 @@ class Axis {
             // from chart pixel to value:
             returnValue = val / localA + (localMin as any);
             if (doPostTranslate) { // log and ordinal axes
-                returnValue = axis.lin2val(returnValue);
+                if (axis.logarithmic) {
+                    returnValue = axis.lin2val(returnValue);
+                }
+                // For the ordinal axis use an unmodified value,
+                // that value will be modified in lin2val method.
+                returnValue = axis.lin2val(val);
             }
 
         // From value to pixels
