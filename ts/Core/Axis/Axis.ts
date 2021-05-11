@@ -433,7 +433,6 @@ declare global {
             public options: AxisOptions;
             public overlap: boolean;
             public paddedTicks: Array<number>;
-            public panningEnabled: boolean;
             public panningState?: AxisPanningState;
             public plotLinesAndBands: Array<PlotLineOrBand>;
             public plotLinesAndBandsGroups: Record<string, SVGElement>;
@@ -4179,7 +4178,6 @@ class Axis {
          */
         axis.reversed = pick(options.reversed, axis.reversed);
         axis.visible = options.visible;
-        axis.panningEnabled = options.panningEnabled;
         axis.zoomEnabled = options.zoomEnabled;
 
         // Initial categories
