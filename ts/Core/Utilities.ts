@@ -449,7 +449,7 @@ function error(
     }
 
     fireEvent(
-        Highcharts,
+        H,
         'displayError',
         { chart, code, message, params },
         defaultHandler
