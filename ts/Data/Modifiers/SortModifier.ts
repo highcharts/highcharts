@@ -183,12 +183,35 @@ class SortModifier extends DataModifier {
         return table;
     }
 
+    /**
+     * Applies partial modifications of a cell change to the property `modified`
+     * of the given modified table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {string} columnName
+     * Column name of changed cell.
+     *
+     * @param {number|undefined} rowIndex
+     * Row index of changed cell.
+     *
+     * @param {Highcharts.DataTableCellType} cellValue
+     * Changed cell value.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * `table.modified` as a reference.
+     */
     public modifyCell(
         table: DataTable,
         columnName: string,
-        _rowIndex: number,
-        _cellValue: DataTable.CellType
-    ): void {
+        rowIndex: number,
+        cellValue: DataTable.CellType,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
         const modifier = this,
             {
                 orderByColumn,
@@ -204,16 +227,22 @@ class SortModifier extends DataModifier {
                     table.getColumnNames()
             ));
 
-            table.modified.setColumns(this.modify(sortedTable).getColumns());
+            table.modified.setColumns(
+                this.modify(sortedTable).getColumns(),
+                void 0,
+                eventDetail
+            );
         }
+
+        return table.modified;
     }
 
     public modifyColumns(
         table: DataTable,
         columns: DataTable.ColumnCollection,
-        _rowIndex: number = 0,
-        _eventDetail?: DataEventEmitter.EventDetail
-    ): void {
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
 
         const modifier = this,
             {
@@ -231,8 +260,14 @@ class SortModifier extends DataModifier {
                     table.getColumnNames()
             ));
 
-            table.modified.setColumns(this.modify(sortedTable).getColumns());
+            table.modified.setColumns(
+                this.modify(sortedTable).getColumns(),
+                void 0,
+                eventDetail
+            );
         }
+
+        return table.modified;
     }
 
     public modifyRows(
@@ -240,7 +275,7 @@ class SortModifier extends DataModifier {
         _rows: Array<(DataTable.Row|DataTable.RowObject)>,
         _rowIndex: number,
         _eventDetail?: DataEventEmitter.EventDetail
-    ): void {
+    ): DataTable {
 
         const modifier = this,
             {
@@ -257,6 +292,8 @@ class SortModifier extends DataModifier {
         ));
 
         table.modified.setColumns(this.modify(sortedTable).getColumns());
+
+        return table.modified;
     }
 
     /**

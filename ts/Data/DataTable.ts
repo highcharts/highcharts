@@ -17,7 +17,7 @@
  * */
 
 import type DataEventEmitter from './DataEventEmitter';
-import type SortModifier from './Modifiers/SortModifier';
+import type DataModifier from './Modifiers/DataModifier';
 
 import DataJSON from './DataJSON.js';
 import U from '../Core/Utilities.js';
@@ -265,7 +265,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
     public modified: DataTable;
 
-    private modifier?: SortModifier;
+    private modifier?: DataModifier;
 
     private rowCount: number;
 
@@ -861,10 +861,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * Retrieves the modifier for the table.
      * @private
      *
-     * @return {DataModifier|undefined}
+     * @return {Highcharts.DataModifier|undefined}
      * Returns the modifier or `undefined`.
      */
-    public getModifier(): (SortModifier|undefined) {
+    public getModifier(): (DataModifier|undefined) {
         return this.modifier;
     }
 
@@ -1441,10 +1441,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * Sets or unsets the modifier for the table.
      * @private
      *
-     * @param {DataModifier|undefined} modifier
+     * @param {Highcharts.DataModifier|undefined} modifier
      * Modifier to set, or `undefined` to unset.
      */
-    public setModifier(modifier: (SortModifier|undefined)): void {
+    public setModifier(modifier: (DataModifier|undefined)): void {
         const table = this;
 
         table.modifier = modifier;
@@ -1473,7 +1473,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * Cell values to set.
      *
      * @param {number} [rowIndex]
-     * Index of the row to change. Leave `undefind` to add as a new row.
+     * Index of the row to set. Leave `undefind` to add as a new row.
      *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
@@ -1500,10 +1500,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @function Highcharts.DataTable#setRows
      *
      * @param {Array<(Highcharts.DataTableRow|Highcharts.DataTableRowObject)>} rows
-     * Row values to insert.
+     * Row values to set.
      *
      * @param {number} [rowIndex]
-     * Index of the first row to change. Leave `undefind` to add as new rows.
+     * Index of the first row to set. Leave `undefind` to add as new rows.
      *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
