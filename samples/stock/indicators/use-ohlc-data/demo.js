@@ -7,12 +7,18 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
         },
 
         title: {
-            text: 'AAPL Stock Price'
+            text: 'Plot line on Y axis'
         },
 
         legend: {
             enabled: true
         },
+        yAxis: [{
+            height: '70%'
+        }, {
+            height: '30%',
+            top: '70%'
+        }],
 
         plotOptions: {
             series: {
@@ -25,9 +31,11 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
             useOhlcData: true,
             id: 'aapl',
             name: 'AAPL Stock Price',
+            yAxis: 0,
             data: data
         }, {
             type: 'atr',
+            yAxis: 1,
             linkedTo: 'aapl'
         }]
     });
