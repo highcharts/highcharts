@@ -25,6 +25,7 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
+import Funnel3DComposition from './Funnel3DComposition.js';
 import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -44,7 +45,6 @@ const {
     pick,
     relativeLength
 } = U;
-import './Funnel3DComposition.js';
 
 /* *
  *
@@ -62,6 +62,14 @@ import './Funnel3DComposition.js';
  * @requires modules/funnel3d
  */
 class Funnel3DSeries extends ColumnSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    public static compose = Funnel3DComposition.compose;
 
     /**
      * A funnel3d is a 3d version of funnel series type. Funnel charts are
