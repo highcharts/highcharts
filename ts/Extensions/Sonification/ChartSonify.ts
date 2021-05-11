@@ -13,6 +13,7 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
+import type RangeSelector from '../../Extensions/RangeSelector';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import H from '../../Core/Globals.js';
 
@@ -66,7 +67,7 @@ declare global {
         }
         interface ChartSonificationOptions {
             afterSeriesWait?: number;
-            dataExtremes?: Record<string, RangeObject>;
+            dataExtremes?: Record<string, RangeSelector.RangeObject>;
             defaultInstrumentOptions?: DefaultSonificationInstrumentOptions;
             duration: number;
             earcons?: Array<EarconConfiguration>;
@@ -98,7 +99,7 @@ declare global {
         }
         interface SonifyChartOptionsObject {
             afterSeriesWait?: number;
-            dataExtremes?: Record<string, RangeObject>;
+            dataExtremes?: Record<string, RangeSelector.RangeObject>;
             duration: number;
             earcons?: Array<EarconConfiguration>;
             instruments?: Array<PointInstrumentObject>;
@@ -113,7 +114,7 @@ declare global {
             );
         }
         interface SonifySeriesOptionsObject extends SeriesOptions {
-            dataExtremes?: Record<string, RangeObject>;
+            dataExtremes?: Record<string, RangeSelector.RangeObject>;
             duration: number;
             earcons?: Array<EarconConfiguration>;
             instruments: Array<PointInstrumentObject>;
@@ -123,7 +124,7 @@ declare global {
             onPointStart?: Function;
             onStart?: Function;
             pointPlayTime: (string|Function);
-            timeExtremes?: RangeObject;
+            timeExtremes?: RangeSelector.RangeObject;
         }
         interface SonifySeriesOrderObject {
             series: SonifyableSeries;
@@ -267,12 +268,12 @@ function getPointTimeValue(
 function getTimeExtremes(
     series: Highcharts.SonifyableSeries,
     timeProp: (string|Function)
-): Highcharts.RangeObject {
+): RangeSelector.RangeObject {
     // Compute the extremes from the visible points.
     return series.points.reduce(function (
-        acc: Highcharts.RangeObject,
+        acc: RangeSelector.RangeObject,
         point: Highcharts.SonifyablePoint
-    ): Highcharts.RangeObject {
+    ): RangeSelector.RangeObject {
         const value = getPointTimeValue(point, timeProp);
 
         acc.min = Math.min(acc.min, value);
@@ -301,8 +302,8 @@ function getTimeExtremes(
 function getExtremesForInstrumentProps(
     chart: Chart,
     instruments?: Array<Highcharts.PointInstrumentObject>,
-    dataExtremes?: Record<string, Highcharts.RangeObject>
-): Record<string, Highcharts.RangeObject> {
+    dataExtremes?: Record<string, RangeSelector.RangeObject>
+): Record<string, RangeSelector.RangeObject> {
     let allInstrumentDefinitions = (instruments || []).slice(0);
     const defaultInstrumentDef = (
         chart.options.sonification &&
@@ -329,9 +330,9 @@ function getExtremesForInstrumentProps(
     });
 
     return (allInstrumentDefinitions).reduce(function (
-        newExtremes: Record<string, Highcharts.RangeObject>,
+        newExtremes: Record<string, RangeSelector.RangeObject>,
         instrumentDefinition: Highcharts.PointInstrumentObject
-    ): Record<string, Highcharts.RangeObject> {
+    ): Record<string, RangeSelector.RangeObject> {
         Object.keys(instrumentDefinition.instrumentMapping || {}).forEach(
             function (instrumentParameter: string): void {
                 const value = instrumentDefinition.instrumentMapping[
@@ -459,7 +460,7 @@ function applyMasterVolumeToInstruments(
 function getFinalNoteDuration(
     series: Highcharts.SonifyableSeries,
     instruments: Array<Highcharts.PointInstrumentObject>,
-    dataExtremes: Record<string, Highcharts.RangeObject>
+    dataExtremes: Record<string, RangeSelector.RangeObject>
 ): number {
     const finalPoint = series.points[series.points.length - 1];
     return instruments.reduce((duration, instrument): number => {
@@ -667,7 +668,7 @@ function seriesSonify(
  */
 function buildChartSonifySeriesOptions(
     series: Highcharts.SonifyableSeries,
-    dataExtremes: Record<string, Highcharts.RangeObject>,
+    dataExtremes: Record<string, RangeSelector.RangeObject>,
     chartSonifyOptions: Highcharts.SonifyChartOptionsObject
 ): Partial<Highcharts.SonifySeriesOptionsObject> {
     const additionalSeriesOptions: (
@@ -951,9 +952,9 @@ function getWaitTime(
 function syncSimultaneousPaths(paths: Array<Highcharts.TimelinePath>): void {
     // Find the extremes for these paths
     const extremes = paths.reduce(function (
-        extremes: Highcharts.RangeObject,
+        extremes: RangeSelector.RangeObject,
         path: Highcharts.TimelinePath
-    ): Highcharts.RangeObject {
+    ): RangeSelector.RangeObject {
         const events = path.events;
 
         if (events && events.length) {
@@ -1017,7 +1018,7 @@ function getSimulPathDurationTotal(
                     Highcharts.SonifySeriesOrderObject|Highcharts.TimelinePath
                 )
             ): number {
-                const timeExtremes: Highcharts.RangeObject = (
+                const timeExtremes: RangeSelector.RangeObject = (
                     (item as any).series &&
                     (item as any).seriesOptions &&
                     (item as any).seriesOptions.timeExtremes

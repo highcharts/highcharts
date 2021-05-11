@@ -66,7 +66,7 @@ class DisparityIndexIndicator extends SMAIndicator {
      *         Disparity Index indicator
      *
      * @extends      plotOptions.sma
-     * @since        next
+     * @since 9.1.0
      * @product      highstock
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
@@ -233,7 +233,7 @@ export default DisparityIndexIndicator;
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.disparityindex
- * @since     next
+ * @since 9.1.0
  * @product   highstock
  * @excluding allAreas, colorAxis,  dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,

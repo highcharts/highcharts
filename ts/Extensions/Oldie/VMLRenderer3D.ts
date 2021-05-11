@@ -10,9 +10,19 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../../Core/Color/ColorType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
+
 import Axis from '../../Core/Axis/Axis.js';
 import O from '../../Core/Options.js';
 const { setOptions } = O;

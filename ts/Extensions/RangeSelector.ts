@@ -21,6 +21,7 @@ import type {
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type Time from '../Core/Time';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -176,7 +177,7 @@ declare global {
                 dataMax: number,
                 dataMin: number,
                 useUTC?: boolean
-            ): RangeObject;
+            ): RangeSelector.RangeObject;
             public hideInput(name: string): void;
             public init(chart: Chart): void;
             public render(min?: number, max?: number): void;
@@ -950,6 +951,12 @@ class RangeSelector {
                 return;
             }
         } else if (type === 'all' && baseAxis) {
+            // If the navigator exist and the axis range is declared reset that
+            // range and from now on only use the range set by a user, #14742.
+            if (chart.navigator && chart.navigator.baseSeries[0]) {
+                chart.navigator.baseSeries[0].xAxis.options.range = void 0 as any;
+            }
+
             newMin = dataMin;
             newMax = dataMax as any;
         }
@@ -1432,7 +1439,7 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#defaultInputDateParser
      */
-    public defaultInputDateParser(inputDate: string, useUTC: boolean, time?: Highcharts.Time): number {
+    public defaultInputDateParser(inputDate: string, useUTC: boolean, time?: Time): number {
         const hasTimezone = (str: string): boolean =>
             str.length > 6 &&
             (str.lastIndexOf('-') === str.length - 6 ||
@@ -1709,7 +1716,7 @@ class RangeSelector {
         dataMax: number,
         dataMin: number,
         useUTC?: boolean
-    ): Highcharts.RangeObject {
+    ): RangeSelector.RangeObject {
         let time = this.chart.time,
             min,
             now = new time.Date(dataMax),
@@ -2810,7 +2817,7 @@ Axis.prototype.minFromRange = function (
         time = this.chart.time,
         // Get the true range from a start date
         getTrueRange = function (base: number, count: number): number {
-            const timeName: Highcharts.TimeUnitValue = type === 'year' ? 'FullYear' : 'Month';
+            const timeName: Time.TimeUnitValue = type === 'year' ? 'FullYear' : 'Month';
             const date = new time.Date(base);
             const basePeriod = time.get(timeName, date);
 
@@ -2907,7 +2914,7 @@ if (!H.RangeSelector) {
                     addEvent(
                         chart.xAxis[0],
                         'afterSetExtremes',
-                        function (e: Highcharts.RangeObject): void {
+                        function (e: RangeSelector.RangeObject): void {
                             if (rangeSelector) {
                                 rangeSelector.render(e.min, e.max);
                             }
@@ -3070,4 +3077,11 @@ if (!H.RangeSelector) {
     H.RangeSelector = RangeSelector;
 }
 
-export default H.RangeSelector;
+namespace RangeSelector {
+    export interface RangeObject {
+        max: number;
+        min: number;
+    }
+}
+
+export default RangeSelector;

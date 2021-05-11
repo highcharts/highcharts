@@ -8,6 +8,7 @@
 
 import type Annotation from '../Annotations';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
+import type MockPointOptions from '../MockPointOptions';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import ControlPoint from '../ControlPoint.js';
@@ -51,7 +52,7 @@ declare global {
             attr: SVGElement['attr'];
             attrsFromOptions(this: AnnotationControllable, options: AnnotationControllableOptionsObject): SVGAttributes;
             destroy(this: AnnotationControllable): void;
-            getPointsOptions(this: AnnotationControllable): Array<AnnotationMockPointOptionsObject>;
+            getPointsOptions(this: AnnotationControllable): Array<MockPointOptions>;
             init(
                 this: AnnotationControllable,
                 annotation: Annotation,
@@ -61,7 +62,7 @@ declare global {
             linkPoints(this: AnnotationControllable): (Array<AnnotationPointType>|undefined);
             point(
                 this: AnnotationControllable,
-                pointOptions: (string|Function|AnnotationMockPointOptionsObject),
+                pointOptions: (string|Function|MockPointOptions),
                 point: AnnotationPointType
             ): (AnnotationPointType|null);
             redraw(this: AnnotationControllable, animation?: boolean): void;
@@ -113,8 +114,8 @@ declare global {
             id?: (number|string);
             markerEnd?: string;
             markerStart?: string;
-            point?: (string|AnnotationMockPointOptionsObject);
-            points?: Array<(string|AnnotationMockPointOptionsObject)>;
+            point?: (string|MockPointOptions);
+            points?: Array<(string|MockPointOptions)>;
             r?: number;
             x?: number;
             y?: number;
@@ -205,7 +206,7 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      */
     getPointsOptions: function (
         this: Highcharts.AnnotationControllable
-    ): Array<Highcharts.AnnotationMockPointOptionsObject> {
+    ): Array<MockPointOptions> {
         const options = this.options;
 
         return (options.points || (options.point && splat(options.point))) as any;
@@ -298,10 +299,10 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      */
     point: function (
         this: Highcharts.AnnotationControllable,
-        pointOptions: (string|Function|Highcharts.AnnotationMockPointOptionsObject|Highcharts.AnnotationMockPoint),
+        pointOptions: (string|Function|MockPointOptions|MockPoint),
         point: (Highcharts.AnnotationPointType|null)
     ): (Highcharts.AnnotationPointType|null) {
-        if (pointOptions && (pointOptions as Highcharts.AnnotationMockPointOptionsObject).series) {
+        if (pointOptions && (pointOptions as MockPointOptions).series) {
             return pointOptions as any;
         }
 
@@ -315,7 +316,7 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
             } else if (isString(pointOptions)) {
                 point = (this.chart.get(pointOptions) as any) || null;
             } else if (typeof pointOptions === 'function') {
-                const pointConfig: (Highcharts.AnnotationMockPoint|Highcharts.AnnotationMockPointOptionsObject) =
+                const pointConfig: (MockPoint|MockPointOptions) =
                     pointOptions.call(point, this);
 
                 point = pointConfig.series ?

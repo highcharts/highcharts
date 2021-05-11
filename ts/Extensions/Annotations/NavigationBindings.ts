@@ -11,6 +11,7 @@
 'use strict';
 
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type MockPointOptions from './MockPointOptions';
 import type PointerEvent from '../../Core/PointerEvent';
 import Annotation from './Annotations.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -1305,7 +1306,7 @@ setOptions({
                         annotation: Annotation
                     ): void {
                         let mockPointOpts = annotation.options.shapes[0]
-                                .point as Highcharts.AnnotationMockPointOptionsObject,
+                                .point as MockPointOptions,
                             inverted = this.chart.inverted,
                             x,
                             y,
@@ -1405,7 +1406,7 @@ setOptions({
                         e: PointerEvent,
                         annotation: Annotation
                     ): void {
-                        let points: Array<Highcharts.AnnotationMockPointOptionsObject> =
+                        let points: Array<MockPointOptions> =
                                 annotation.options.shapes[0].points as any,
                             coords = this.chart.pointer.getCoordinates(e),
                             coordsX = this.utils.getAssignedAxis(coords.xAxis),

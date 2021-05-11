@@ -2,13 +2,13 @@
 The changelog is generated from PR descriptions. The following rules apply:
 1. All PRs that should go into the changelog must be labeled with either
 `Changelog: Feature` or `Changelog: Bugfix`. Everything else is ignored.
-2. Label the PR with `Product: Highstock`, `Product: Highmaps` etc. for specific
+2. Label the PR with `Product: Highcharts Stock`, `Product: Highcharts Maps` etc. for specific
 products. PRs with no product tags go into the Highcharts changelog.
 3. Only the first paragraph of the description is used. Anything below the first
 line break `\n` is removed (except upgrade notes).
 4. Upgrade notes are marked with `#### Upgrade note`, then the _next paragraph_ after
 this will be parsed as an upgrade note into the changelog.
-5. For consistency, bug fixes should start with "Fixed #xxxx".
+5. For consistency, bug fixes should start with "Fixed #xxxx, [some description...]". Lower case after the comma.
 6. Since the changelog refers to changes that were done by a past release, write
 in past tense.
 7. Describe bug fixes in a way that users recognize and can relate to their

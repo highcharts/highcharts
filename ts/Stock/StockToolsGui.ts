@@ -1130,7 +1130,7 @@ class Toolbar {
         // create submenu container
         this.submenu = submenuWrapper = createElement(UL, {
             className: PREFIX + 'submenu-wrapper'
-        }, null as any, buttonWrapper);
+        }, void 0, buttonWrapper);
 
         // create submenu buttons and select the first one
         this.addSubmenuItems(buttonWrapper, button);
@@ -1218,7 +1218,7 @@ class Toolbar {
 
             _self.eventsToUnbind.push(
                 addEvent(
-                    (submenuBtn as any).mainButton,
+                    submenuBtn.mainButton,
                     'click',
                     function (): void {
                         (_self.switchSymbol as any)(this, buttonWrapper, true);
@@ -1299,12 +1299,12 @@ class Toolbar {
         buttonWrapper = createElement(LI, {
             className: pick(classMapping[btnName], '') + ' ' + userClassName,
             title: lang[btnName] || btnName
-        }, null as any, target);
+        }, void 0, target);
 
         // single button
         mainButton = createElement(SPAN, {
             className: PREFIX + 'menu-item-btn'
-        }, null as any, buttonWrapper);
+        }, void 0, buttonWrapper);
 
         // submenu
         if (items && items.length) {
@@ -1313,12 +1313,12 @@ class Toolbar {
             submenuArrow = createElement(SPAN, {
                 className: PREFIX + 'submenu-item-arrow ' +
                     PREFIX + 'arrow-right'
-            }, null as any, buttonWrapper);
+            }, void 0, buttonWrapper);
 
-            (submenuArrow.style as any)['background-image'] = 'url(' +
+            submenuArrow.style.backgroundImage = 'url(' +
                 this.iconsURL + 'arrow-bottom.svg)';
         } else {
-            (mainButton.style as any)['background-image'] = 'url(' +
+            mainButton.style.backgroundImage = 'url(' +
                 this.iconsURL + btnOptions.symbol + ')';
         }
 
@@ -1343,16 +1343,16 @@ class Toolbar {
 
         stockToolbar.arrowUp = createElement(DIV, {
             className: PREFIX + 'arrow-up'
-        }, null as any, stockToolbar.arrowWrapper);
+        }, void 0, stockToolbar.arrowWrapper);
 
-        (stockToolbar.arrowUp.style as any)['background-image'] =
+        stockToolbar.arrowUp.style.backgroundImage =
             'url(' + this.iconsURL + 'arrow-right.svg)';
 
         stockToolbar.arrowDown = createElement(DIV, {
             className: PREFIX + 'arrow-down'
-        }, null as any, stockToolbar.arrowWrapper);
+        }, void 0, stockToolbar.arrowWrapper);
 
-        (stockToolbar.arrowDown.style as any)['background-image'] =
+        stockToolbar.arrowDown.style.backgroundImage =
             'url(' + this.iconsURL + 'arrow-right.svg)';
 
         wrapper.insertBefore(
@@ -1379,7 +1379,7 @@ class Toolbar {
             addEvent(_self.arrowUp, 'click', function (): void {
                 if (targetY > 0) {
                     targetY -= step;
-                    (toolbar.style as any)['margin-top'] = -targetY + 'px';
+                    toolbar.style.marginTop = -targetY + 'px';
                 }
             })
         );
@@ -1391,7 +1391,7 @@ class Toolbar {
                     toolbar.offsetHeight + step
                 ) {
                     targetY += step;
-                    (toolbar.style as any)['margin-top'] = -targetY + 'px';
+                    toolbar.style.marginTop = -targetY + 'px';
                 }
             })
         );
@@ -1408,15 +1408,28 @@ class Toolbar {
             navigation = chart.options.navigation,
             bindingsClassName = navigation && navigation.bindingsClassName,
             listWrapper,
-            toolbar,
-            wrapper;
+            toolbar;
 
         // create main container
-        stockToolbar.wrapper = wrapper = createElement(DIV, {
+        const wrapper = stockToolbar.wrapper = createElement(DIV, {
             className: PREFIX + 'stocktools-wrapper ' +
                 guiOptions.className + ' ' + bindingsClassName
         });
-        (container.parentNode as any).insertBefore(wrapper, container);
+        container.appendChild(wrapper);
+
+        // Mimic event behaviour of being outside chart.container
+        [
+            'mousemove',
+            'click',
+            'touchstart'
+        ].forEach((eventType): void => {
+            addEvent(wrapper, eventType, (e): void =>
+                e.stopPropagation()
+            );
+        });
+        addEvent(wrapper, 'mouseover', (e: MouseEvent): void =>
+            chart.pointer.onContainerMouseLeave(e)
+        );
 
         // toolbar
         stockToolbar.toolbar = toolbar = createElement(UL, {
@@ -1473,9 +1486,9 @@ class Toolbar {
         // Show hide toolbar
         this.showhideBtn = showhideBtn = createElement(DIV, {
             className: PREFIX + 'toggle-toolbar ' + PREFIX + 'arrow-left'
-        }, null as any, wrapper);
+        }, void 0, wrapper);
 
-        (showhideBtn.style as any)['background-image'] =
+        showhideBtn.style.backgroundImage =
             'url(' + this.iconsURL + 'arrow-right.svg)';
 
         if (!visible) {
@@ -1524,9 +1537,9 @@ class Toolbar {
         redraw?: boolean
     ): void {
         const buttonWrapper = button.parentNode,
-            buttonWrapperClass = (buttonWrapper as any).classList.value,
+            buttonWrapperClass = buttonWrapper.classList.value,
             // main button in first level og GUI
-            mainNavButton = (buttonWrapper as any).parentNode.parentNode;
+            mainNavButton = buttonWrapper.parentNode.parentNode;
 
         // if the button is disabled, don't do anything
         if (buttonWrapperClass.indexOf('highcharts-disabled-btn') > -1) {
@@ -1540,9 +1553,9 @@ class Toolbar {
 
         // set icon
         mainNavButton
-            .querySelectorAll('.' + PREFIX + 'menu-item-btn')[0]
-            .style['background-image'] =
-            (button.style as any)['background-image'];
+            .querySelectorAll<HTMLElement>('.' + PREFIX + 'menu-item-btn')[0]
+            .style.backgroundImage =
+            button.style.backgroundImage;
 
         // set active class
         if (redraw) {
@@ -1569,7 +1582,7 @@ class Toolbar {
      *
      */
     public unselectAllButtons(button: HTMLDOMElement): void {
-        const activeButtons = (button.parentNode as any)
+        const activeButtons = button.parentNode
             .querySelectorAll('.' + activeClass);
 
         [].forEach.call(activeButtons, function (
@@ -1693,16 +1706,16 @@ extend(Chart.prototype, {
         options?: Highcharts.StockToolsOptions
     ): void {
         const chartOptions: Highcharts.Options = this.options,
-            lang: Highcharts.LangOptions = chartOptions.lang as any,
+            lang = chartOptions.lang,
             guiOptions = merge(
                 chartOptions.stockTools && chartOptions.stockTools.gui,
                 options && options.gui
             ),
-            langOptions = lang.stockTools && lang.stockTools.gui;
+            langOptions = lang && lang.stockTools && lang.stockTools.gui;
 
         this.stockTools = new Toolbar(guiOptions, langOptions, this);
 
-        if ((this.stockTools as any).guiEnabled) {
+        if (this.stockTools.guiEnabled) {
             this.isDirtyBox = true;
         }
     }
@@ -1721,8 +1734,8 @@ addEvent(NavigationBindings, 'selectButton', function (
         gui.unselectAllButtons(event.button);
 
         // If clicked on a submenu, select state for it's parent
-        if ((button.parentNode as any).className.indexOf(className) >= 0) {
-            button = (button.parentNode as any).parentNode;
+        if (button.parentNode.className.indexOf(className) >= 0) {
+            button = button.parentNode.parentNode;
         }
         // Set active class on the current button
         gui.selectButton(button);
@@ -1738,8 +1751,8 @@ addEvent(NavigationBindings, 'deselectButton', function (
 
     if (gui && gui.guiEnabled) {
         // If deselecting a button from a submenu, select state for it's parent
-        if ((button.parentNode as any).className.indexOf(className) >= 0) {
-            button = (button.parentNode as any).parentNode;
+        if (button.parentNode.className.indexOf(className) >= 0) {
+            button = button.parentNode.parentNode;
         }
         gui.selectButton(button);
     }
@@ -1765,5 +1778,5 @@ addEvent(H.Chart, 'render', function (): void {
     }
 });
 
-H.Toolbar = Toolbar as any;
+H.Toolbar = Toolbar;
 export default H.Toolbar;

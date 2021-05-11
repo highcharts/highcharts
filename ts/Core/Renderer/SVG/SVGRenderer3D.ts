@@ -396,7 +396,7 @@ SVGRenderer.prototype.polyhedron = function (args?: SVGAttributes): SVGElement {
  * @requires highcharts-3d
  */
 SVGRenderer.prototype.element3d = function (
-    this: Highcharts.SVGRenderer,
+    this: SVGRenderer,
     type: string,
     shapeArgs: SVGAttributes
 ): SVGElement {
@@ -423,7 +423,7 @@ SVGRenderer.prototype.cuboid = function (
 
 // Generates a cuboid path and zIndexes
 SVGRenderer.prototype.cuboidPath = function (
-    this: Highcharts.SVGRenderer,
+    this: SVGRenderer,
     shapeArgs: SVGAttributesExtended
 ): SVGCuboid {
     let x = shapeArgs.x || 0,

@@ -21,6 +21,7 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type RangeSelector from '../../Extensions/RangeSelector';
 import type {
     TimelineDataLabelContextObject,
     TimelineDataLabelOptions
@@ -425,7 +426,7 @@ class TimelineSeries extends LineSeries {
         return map;
     }
 
-    public getXExtremes(xData: Array<number>): Highcharts.RangeObject {
+    public getXExtremes(xData: Array<number>): RangeSelector.RangeObject {
         const series = this,
             filteredData = xData.filter(function (
                 x: number,
