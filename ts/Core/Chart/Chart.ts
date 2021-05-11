@@ -3622,7 +3622,7 @@ class Chart {
             axes.forEach(function (
                 axis: Axis
             ): void {
-                if (!axis.panningEnabled || axis.options.isInternal) {
+                if (!axis.options.panningEnabled || axis.options.isInternal) {
                     return;
                 }
 
