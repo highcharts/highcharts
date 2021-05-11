@@ -2,6 +2,7 @@ import U from './../../Core/Utilities.js';
 import type Row from './../Layout/Row.js';
 import type Cell from './../Layout/Cell.js';
 import DashboardGlobals from './../DashboardGlobals.js';
+import EditGlobals from './../EditMode/EditGlobals.js';
 import EditMode from './../EditMode/EditMode.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import GUIElement from '../Layout/GUIElement.js';
@@ -13,6 +14,9 @@ const {
     createElement
 } = U;
 
+/**
+ * Class providing a drag and drop functionality.
+ */
 class DragDrop {
     /* *
     *
@@ -20,7 +24,10 @@ class DragDrop {
     *
     * */
     protected static readonly defaultOptions: DragDrop.Options = {
-        enabled: true
+        enabled: true,
+        rowDropOffset: 30,
+        cellDropOffset: 30,
+        dropPointerSize: 16
     }
 
     /* *
@@ -28,6 +35,16 @@ class DragDrop {
     *  Constructors
     *
     * */
+
+    /**
+     * Constructor for the DragDrop class.
+     *
+     * @param {EditMode} editMode
+     * The parent editMode reference.
+     *
+     * @param {DragDrop.Options} options
+     * Options for the DragDrop.
+     */
     constructor(
         editMode: EditMode,
         options?: DragDrop.Options
@@ -36,22 +53,9 @@ class DragDrop {
         this.options = merge(DragDrop.defaultOptions, options);
 
         this.mockElement = createElement(
-            'div', {
-                className: 'drag-mock-element'
-            }, {
-                position: 'absolute',
-                top: '100px',
-                left: '100px',
-                height: '50px',
-                width: '50px',
-                zIndex: 99999,
-                display: 'none',
-                cursor: 'grab',
-                pointerEvents: 'none',
-                backgroundColor: 'rgb(255, 255, 255)',
-                boxShadow: 'rgb(4 9 20 / 3%) 0px 0.46875rem 2.1875rem, rgb(4 9 20 / 3%) 0px 0.9375rem 1.40625rem, ' +
-                  'rgb(4 9 20 / 5%) 0px 0.25rem 0.53125rem, rgb(4 9 20 / 3%) 0px 0.125rem 0.1875rem'
-            },
+            'div',
+            { className: EditGlobals.classNames.dragMock },
+            {},
             editMode.dashboard.container
         );
 
@@ -59,24 +63,9 @@ class DragDrop {
             isVisible: false,
             align: '',
             element: createElement(
-                'div', {
-                    className: 'drop-pointer'
-                }, {
-                    position: 'absolute',
-                    zIndex: 9999,
-                    display: 'none',
-                    pointerEvents: 'none',
-                    background: `repeating-linear-gradient(
-                        45deg,
-                        rgba(3, 104, 8, 0.58),
-                        rgba(3, 104, 8, 0.58) 10px,
-                        rgba(4, 134, 11, 0.2) 10px,
-                        rgba(4, 134, 11, 0.2) 20px
-                      )`,
-                    opacity: 0.5,
-                    transition: '0.1s',
-                    borderRadius: '2px'
-                },
+                'div',
+                { className: EditGlobals.classNames.dropPointer },
+                {},
                 editMode.dashboard.container
             )
         };
@@ -90,13 +79,47 @@ class DragDrop {
     *  Properties
     *
     * */
+
+    /**
+     * The editMode reference.
+     */
     public editMode: EditMode;
+
+    /**
+     * DragDrop options.
+     */
     public options: DragDrop.Options;
-    public context?: Cell|Row; // Component icon from the sidebar
-    public mockElement: HTMLDOMElement;
+
+    /**
+     * Dragged element reference.
+     */
+    public context?: Cell|Row;
+
+    /**
+     * Pending drag flag.
+     */
     public isActive?: boolean;
+
+    /**
+     * Reference to the element that is under the dragging mock element.
+     */
     public mouseContext?: Cell|Row;
+
+    /**
+     * Reference to the element that is used on drop to mount dragged element.
+     * In most cases the context is the same as mouseContext. Could be different
+     * in nested layout when elements overlapps.
+     */
     public dropContext?: Cell|Row;
+
+    /**
+     * Dragged element mock.
+     */
+    public mockElement: HTMLDOMElement;
+
+    /**
+     * Element to visualize a drop spot.
+     */
     public dropPointer: DragDrop.DropPointer;
 
     /* *
@@ -105,11 +128,25 @@ class DragDrop {
      *
      * */
 
-    // Get overlapped layout level.
+    /**
+     * Method for getting overlapped layout level.
+     *
+     * @param {Cell} mouseContext
+     * Reference to the mouse context.
+     *
+     * @param {number} offset
+     * Drop offset from the element edge.
+     *
+     * @param {number} mouseDropEdgeOffset
+     * Mouse offset from the drop edge.
+     *
+     * @return {number}
+     * Overlapped layout level.
+     */
     private getDropContextLevel(
         mouseContext: Cell,
         offset: number,
-        dropEdgeOffset: number
+        mouseDropEdgeOffset: number
     ): number {
         // Array of overlapped levels.
         const overlappedLevels = mouseContext.getOverlappingLevels(this.dropPointer.align, offset / 2);
@@ -121,7 +158,7 @@ class DragDrop {
         // Overlapped nested layout level.
         const lastOverlappedLevel = overlappedLevels[overlappedLevels.length - 1];
 
-        let level = mouseContext.row.layout.level - Math.floor(dropEdgeOffset / divOffset);
+        let level = mouseContext.row.layout.level - Math.floor(mouseDropEdgeOffset / divOffset);
         level = level < lastOverlappedLevel ? lastOverlappedLevel : (
             level > mouseContext.row.layout.level ?
                 mouseContext.row.layout.level : level
@@ -130,6 +167,21 @@ class DragDrop {
         return level;
     }
 
+    /**
+     * Method for showing and positioning drop pointer.
+     *
+     * @param {number} left
+     * Drop pointer left position.
+     *
+     * @param {number} top
+     * Drop pointer top position.
+     *
+     * @param {number} width
+     * Drop pointer width.
+     *
+     * @param {number} height
+     * Drop pointer height.
+     */
     private showDropPointer(
         left: number,
         top: number,
@@ -146,6 +198,9 @@ class DragDrop {
         });
     }
 
+    /**
+     * Method for hiding drop pointer.
+     */
     private hideDropPointer(): void {
         if (this.dropPointer.isVisible) {
             this.dropPointer.isVisible = false;
@@ -154,6 +209,14 @@ class DragDrop {
         }
     }
 
+    /**
+     * Method for checking if gui element is on parent edge.
+     *
+     * @param {Cell} mouseContext
+     * Reference to the mouseContext.
+     *
+     * @return {boolean}
+     */
     private isGUIElementOnEdge(
         mouseContext: Cell
     ): boolean {
@@ -171,6 +234,28 @@ class DragDrop {
         );
     }
 
+    /**
+     * Method for positioning drag mock element.
+     *
+     * @param {PointerEvent} mouseEvent
+     * Mouse event.
+     */
+    public setMockElementPosition(
+        mouseEvent: PointerEvent
+    ): void {
+        const dragDrop = this,
+            dashBoundingRect =
+                dragDrop.editMode.dashboard.container.getBoundingClientRect(),
+            offset = dragDrop.mockElement.clientWidth / 2,
+            x = mouseEvent.clientX - dashBoundingRect.left - offset,
+            y = mouseEvent.clientY - dashBoundingRect.top - offset;
+
+        css(this.mockElement, { left: x + 'px', top: y + 'px' });
+    }
+
+    /**
+     * Method for initializing drag drop events.
+     */
     public initEvents(): void {
         const dragDrop = this;
 
@@ -179,9 +264,18 @@ class DragDrop {
         addEvent(document, 'mouseup', dragDrop.onDragEnd.bind(dragDrop));
     }
 
+    /**
+     * General method used on drag start.
+     *
+     * @param {Cell|Row} context
+     * Reference to the dragged context.
+     *
+     * @param {PointerEvent} e
+     * Mouse event.
+     */
     public onDragStart(
         context: Cell|Row,
-        e?: any
+        e: PointerEvent
     ): void {
         this.context = context;
         this.isActive = true;
@@ -195,7 +289,13 @@ class DragDrop {
         });
     }
 
-    public onDrag(e: any): void {
+    /**
+     * General method used while dragging.
+     *
+     * @param {PointerEvent} e
+     * Mouse event.
+     */
+    public onDrag(e: PointerEvent): void {
         const dragDrop = this;
 
         if (dragDrop.isActive) {
@@ -211,6 +311,9 @@ class DragDrop {
         }
     }
 
+    /**
+     * General method used when drag finish.
+     */
     public onDragEnd(): void {
         const dragDrop = this;
 
@@ -231,13 +334,20 @@ class DragDrop {
         }
     }
 
-    public onRowDrag(e: any): void {
+    /**
+     * Sets appropriate drop context and refresh drop pointer position when
+     * row is dragged or cell is dragged as a row.
+     *
+     * @param {PointerEvent} e
+     * Mouse event.
+     */
+    public onRowDrag(e: PointerEvent): void {
         const dragDrop = this,
             mouseContext = dragDrop.mouseContext as Cell,
             mouseContextRow = mouseContext && mouseContext.row,
-            height = 16;
+            dropPointerSize = dragDrop.options.dropPointerSize;
 
-        let offset = 30,
+        let offset = dragDrop.options.rowDropOffset,
             updateDropPointer = false;
 
         if (mouseContextRow && mouseContextRow.container) {
@@ -260,9 +370,9 @@ class DragDrop {
                 // Get appropriate dropContext on nested layouts edge.
                 if (mouseContext.row.layout.level && dragDrop.isGUIElementOnEdge(mouseContext)) {
                     // Mouse position relative to the drop context offset.
-                    const dropEdgeOffset = dragDrop.dropPointer.align === 'bottom' ?
+                    const mouseDropEdgeOffset = dragDrop.dropPointer.align === 'bottom' ?
                             topEdgeY - rowHeight + offset : offset - topEdgeY,
-                        level = dragDrop.getDropContextLevel(mouseContext, offset, dropEdgeOffset),
+                        level = dragDrop.getDropContextLevel(mouseContext, offset, mouseDropEdgeOffset),
                         dropContextCell = mouseContext.getParentCell(level);
 
                     // Get nested drop context offsets.
@@ -282,9 +392,9 @@ class DragDrop {
                     dragDrop.showDropPointer(
                         dropContextRowOffsets.left - dashBoundingRect.left,
                         dropContextRowOffsets.top - dashBoundingRect.top +
-                            (dragDrop.dropPointer.align === 'bottom' ? rowHeight : 0) - height / 2,
+                            (dragDrop.dropPointer.align === 'bottom' ? rowHeight : 0) - dropPointerSize / 2,
                         rowWidth,
-                        height
+                        dropPointerSize
                     );
                 }
             } else {
@@ -294,6 +404,9 @@ class DragDrop {
         }
     }
 
+    /**
+     * Unmounts dropped row and mounts it in a new position.
+     */
     public onRowDragEnd(): void {
         const dragDrop = this,
             draggedRow = dragDrop.context as Row,
@@ -318,13 +431,20 @@ class DragDrop {
         draggedRow.show();
     }
 
-    public onCellDrag(e: any): void {
+    /**
+     * Sets appropriate drop context and refresh drop pointer
+     * position when cell is dragged.
+     *
+     * @param {PointerEvent} e
+     * Mouse event.
+     */
+    public onCellDrag(e: PointerEvent): void {
         const dragDrop = this,
             mouseContext = dragDrop.mouseContext as Cell,
-            width = 16;
+            dropPointerSize = dragDrop.options.dropPointerSize;
 
         let updateDropPointer = false,
-            offset = 50;
+            offset = dragDrop.options.cellDropOffset;
 
         if (mouseContext && mouseContext.container) {
             let dropContextOffsets = GUIElement.getOffsets(
@@ -350,9 +470,9 @@ class DragDrop {
                 // Get appropriate dropContext on nested layouts edge.
                 if (mouseContext.row.layout.level && dragDrop.isGUIElementOnEdge(mouseContext)) {
                     // Mouse position relative to the drop context offset.
-                    const dropEdgeOffset = dragDrop.dropPointer.align === 'right' ?
+                    const mouseDropEdgeOffset = dragDrop.dropPointer.align === 'right' ?
                             leftEdgeX - cellWidth + offset : offset - leftEdgeX,
-                        level = dragDrop.getDropContextLevel(mouseContext, offset, dropEdgeOffset);
+                        level = dragDrop.getDropContextLevel(mouseContext, offset, mouseDropEdgeOffset);
 
                     // Set nested drop context.
                     dragDrop.dropContext = mouseContext.getParentCell(level);
@@ -371,9 +491,9 @@ class DragDrop {
                 if (!dragDrop.dropPointer.isVisible || updateDropPointer) {
                     dragDrop.showDropPointer(
                         dropContextOffsets.left + (dragDrop.dropPointer.align === 'right' ? cellWidth : 0) -
-                            width / 2,
+                            dropPointerSize / 2,
                         dropContextOffsets.top,
-                        width,
+                        dropPointerSize,
                         cellHeight
                     );
                 }
@@ -381,6 +501,11 @@ class DragDrop {
         }
     }
 
+    /**
+     * Unmounts dropped cell and mounts it in a new position.
+     * When cell is dragged as a row also creates a new row
+     * and mounts cell there.
+     */
     public onCellDragEnd(): void {
         const dragDrop = this,
             draggedCell = dragDrop.context as Cell;
@@ -398,7 +523,7 @@ class DragDrop {
             if (
                 (dragDrop.dropPointer.align === 'top' ||
                 dragDrop.dropPointer.align === 'bottom') &&
-                dropContext.type === DashboardGlobals.guiElementType.row
+                dropContext.getType() === DashboardGlobals.guiElementType.row
             ) {
                 dropContext = dropContext as Row;
                 const newRow = dropContext.layout.addRow(
@@ -410,7 +535,7 @@ class DragDrop {
 
                 newRow.mountCell(draggedCell, 0);
             } else if (
-                dropContext.type === DashboardGlobals.guiElementType.cell
+                dropContext.getType() === DashboardGlobals.guiElementType.cell
             ) {
                 dropContext = dropContext as Cell;
                 dropContext.row.mountCell(
@@ -424,24 +549,14 @@ class DragDrop {
         dragDrop.hideDropPointer();
         draggedCell.show();
     }
-
-    public setMockElementPosition(
-        mouseEvent: any
-    ): void {
-        const dragDrop = this,
-            dashBoundingRect =
-                dragDrop.editMode.dashboard.container.getBoundingClientRect(),
-            offset = dragDrop.mockElement.clientWidth / 2,
-            x = mouseEvent.clientX - dashBoundingRect.left - offset,
-            y = mouseEvent.clientY - dashBoundingRect.top - offset;
-
-        css(this.mockElement, { left: x + 'px', top: y + 'px' });
-    }
 }
 
 namespace DragDrop {
     export interface Options {
         enabled: boolean;
+        rowDropOffset: number;
+        cellDropOffset: number;
+        dropPointerSize: number;
     }
 
     export interface DropPointer {

@@ -49,6 +49,37 @@ body {
     float: left;
 }
 
+.hcd-edit-drop-pointer {
+    position: absolute;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(3, 104, 8, 0.58),
+        rgba(3, 104, 8, 0.58) 10px,
+        rgba(4, 134, 11, 0.2) 10px,
+        rgba(4, 134, 11, 0.2) 20px
+    );
+    opacity: 0.5;
+    transition: 0.1s;
+    border-radius: 2px;
+}
+
+.hcd-edit-drag-mock {
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    height: 50px;
+    width: 50px;
+    z-index: 99999;
+    display: none;
+    cursor: grab;
+    pointer-events: none;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+}
+
 // .hcd-layout.edit-mode .hcd-row :hover .hcd-cell  {
 //     border: 1px dashed #bdbdbd;
 //     cursor: pointer;

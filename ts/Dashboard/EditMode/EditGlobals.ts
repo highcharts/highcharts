@@ -26,6 +26,8 @@ const EditGlobals: EditGlobals = {
         editSidebarTabContent: PREFIX + 'sidebar-tab-content',
         editSidebarTabActive: PREFIX + 'toolbar-tab-active',
         editSidebarMenuItem: PREFIX + 'sidebar-item',
+        dragMock: PREFIX + 'drag-mock',
+        dropPointer: PREFIX + 'drop-pointer',
         currentEditedElement: PREFIX + 'unmask',
         maskElement: PREFIX + 'mask',
         menuItem: PREFIX + 'menu-item',
@@ -93,6 +95,8 @@ namespace EditGlobals {
         editSidebarTabContent: string;
         editSidebarTabActive: string;
         editSidebarMenuItem: string;
+        dragMock: string;
+        dropPointer: string;
         maskElement: string;
         currentEditedElement: string;
         menuItem: string;
