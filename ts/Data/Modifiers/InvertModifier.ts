@@ -122,7 +122,7 @@ class InvertModifier extends DataModifier {
     ): DataTable {
         const modifier = this;
 
-        modifier.emit({ type: 'execute', detail: eventDetail, table });
+        modifier.emit({ type: 'modify', detail: eventDetail, table });
 
         if (table.hasColumns(['columnNames'])) { // inverted table
             const columnNames: Array<string> = (
@@ -169,7 +169,7 @@ class InvertModifier extends DataModifier {
             table.setColumns(columns);
         }
 
-        modifier.emit({ type: 'afterExecute', detail: eventDetail, table });
+        modifier.emit({ type: 'afterModify', detail: eventDetail, table });
 
         return table;
     }

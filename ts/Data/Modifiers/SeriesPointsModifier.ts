@@ -122,14 +122,14 @@ class SeriesPointsModifier extends DataModifier {
             aliasMap = modifier.options.aliasMap || {},
             aliases = Object.keys(aliasMap);
 
-        this.emit({ type: 'execute', detail: eventDetail, table });
+        this.emit({ type: 'modify', detail: eventDetail, table });
 
         for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
             alias = aliases[i];
             table.renameColumn(aliasMap[alias], alias);
         }
 
-        this.emit({ type: 'afterExecute', detail: eventDetail, table });
+        this.emit({ type: 'afterModify', detail: eventDetail, table });
 
         return table;
     }

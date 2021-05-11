@@ -138,7 +138,7 @@ class SortModifier extends DataModifier {
             );
 
         modifier.emit({
-            type: 'execute',
+            type: 'modify',
             detail: eventDetail,
             table
         });
@@ -175,7 +175,7 @@ class SortModifier extends DataModifier {
         }
 
         modifier.emit({
-            type: 'afterExecute',
+            type: 'afterModify',
             detail: eventDetail,
             table
         });

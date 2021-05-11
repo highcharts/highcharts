@@ -227,11 +227,11 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
         };
 
         // Add timers
-        modifier.on('execute', (): void => {
+        modifier.on('modify', (): void => {
             times.startTime = window.performance.now();
         });
 
-        modifier.on('afterExecute', (): void => {
+        modifier.on('afterModify', (): void => {
             times.endTime = window.performance.now();
             results.push(times.endTime - times.startTime);
         });
@@ -318,7 +318,8 @@ namespace DataModifier {
      */
     export interface BenchmarkEvent extends DataEventEmitter.Event {
         readonly type: (
-            'afterBenchmark'|'afterBenchmarkIteration'
+            'afterBenchmark'|
+            'afterBenchmarkIteration'
         );
         readonly results?: Array<number>;
     }
@@ -333,14 +334,14 @@ namespace DataModifier {
     /**
      * Event information.
      */
-    export type Event = (BenchmarkEvent|ExecuteEvent);
+    export type Event = (BenchmarkEvent|ModifyEvent);
 
     /**
-     * Execute event with additional event information.
+     * Modify event with additional event information.
      */
-    export interface ExecuteEvent extends DataEventEmitter.Event {
+    export interface ModifyEvent extends DataEventEmitter.Event {
         readonly type: (
-            'execute'|'afterExecute'
+            'modify'|'afterModify'
         );
         readonly table: DataTable;
     }

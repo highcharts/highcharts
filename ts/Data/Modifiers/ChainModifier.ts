@@ -208,7 +208,7 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         let modifier: DataModifier;
 
         this.emit({
-            type: 'execute',
+            type: 'modify',
             detail: eventDetail,
             table
         });
@@ -232,7 +232,7 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         }
 
         this.emit({
-            type: 'afterExecute',
+            type: 'afterModify',
             detail: eventDetail,
             table
         });

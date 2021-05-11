@@ -130,7 +130,7 @@ class RangeModifier extends DataModifier {
                 strict
             } = modifier.options;
 
-        this.emit({ type: 'execute', detail: eventDetail, table });
+        this.emit({ type: 'modify', detail: eventDetail, table });
 
         if (ranges.length) {
             const columns = table.getColumns(),
@@ -199,7 +199,7 @@ class RangeModifier extends DataModifier {
         }
 
         this.emit({
-            type: 'afterExecute',
+            type: 'afterModify',
             detail: eventDetail,
             table
         });

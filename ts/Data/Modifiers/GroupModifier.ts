@@ -128,7 +128,7 @@ class GroupModifier extends DataModifier {
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
 
-        this.emit({ type: 'execute', detail: eventDetail, table });
+        this.emit({ type: 'modify', detail: eventDetail, table });
 
         const modifier = this,
             {
@@ -189,7 +189,7 @@ class GroupModifier extends DataModifier {
             value: valueGroups
         });
 
-        this.emit({ type: 'afterExecute', detail: eventDetail, table });
+        this.emit({ type: 'afterModify', detail: eventDetail, table });
 
         return table;
     }
