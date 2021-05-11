@@ -1848,6 +1848,24 @@ QUnit.test(
             chart.xAxis[1].tickPositions,
             'The secondary axis should have longer range ticks'
         );
+
+        chart.update({
+            series: [{
+                data: [{
+                    start: Date.UTC(2019, 7, 2),
+                    end: Date.UTC(2019, 11, 1)
+                }]
+            }]
+        }, true, true);
+        chart.setSize(400);
+
+        const axis = chart.xAxis[1];
+
+        assert.strictEqual(
+            axis.ticks[axis.tickPositions[0]].label.textStr,
+            '2019',
+            '#15692: Primary axis should show years'
+        );
     }
 );
 
