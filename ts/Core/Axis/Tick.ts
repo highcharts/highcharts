@@ -439,6 +439,9 @@ class Tick {
                     text: ''
                 });
             };
+        } else {
+            // #15692
+            tick.shortenLabel = void 0;
         }
 
         // Call only after first render
