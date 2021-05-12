@@ -138,6 +138,7 @@ class SVGElement implements SVGElementLike {
     public doTransform?: boolean;
     public element: DOMElementType = void 0 as any;
     public fakeTS?: boolean;
+    public firstLineHeight?: number;
     public handleZ?: boolean;
     public hasBoxWidthChanged?: boolean;
     public hasStroke?: boolean;

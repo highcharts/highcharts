@@ -445,35 +445,12 @@ class SVGLabel extends SVGElement {
         this.width = this.getPaddedWidth();
         this.height = (this.heightSetting || bBox.height || 0) + 2 * padding;
 
-        let fontSize = style && style.fontSize;
-
-        const children = this.text.element.children ||
-            this.text.element.childNodes; // IE8
-
-        if (children.length > 1) {
-            let firstLineFontSize = 0;
-
-            for (let i = 0; i < children.length; i++) {
-                if (children[i].nodeType === 1 && // Element
-                    children[i].getAttribute('class') === 'highcharts-br') {
-                    for (let j = 0; j < i; j++) {
-                        const size = getStyle(
-                            children[j] as HTMLElement,
-                            'font-size',
-                            true
-                        );
-                        if (size && size > firstLineFontSize) {
-                            firstLineFontSize = size;
-                        }
-                    }
-                    break;
-                }
-            }
-
-            if (firstLineFontSize) {
-                fontSize = firstLineFontSize + 'px';
-            }
-        }
+        const fontSize = this.text.firstLineHeight ?
+            // When applicable, use the font size of the first line. The 0.9
+            // factor makes it consistent with pre-fix positioning with default
+            // tooltip options (#15701)
+            Math.round(this.text.firstLineHeight * 0.9) + 'px' :
+            style && style.fontSize;
 
         // Update the label-scoped y offset. Math.min because of inline
         // style (#9400)
