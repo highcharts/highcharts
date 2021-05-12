@@ -177,7 +177,7 @@ export default class Projection {
         // const { d3, proj4 } = options || {};
 
         // @todo: Better filter for when to handle antimeridian
-        if (options.lon0 && projectionName !== 'ortho') {
+        if (options.lon0 && projectionName !== 'Orthographic') {
             this.antimeridian = (options.lon0 + 360) % 360 - 180;
         }
 
@@ -565,7 +565,7 @@ export default class Projection {
         const isGeographicCoordinates = this.isNorthPositive;
 
         // @todo better test for when to do this
-        const projectingToPlane = this.options.projectionName !== 'ortho';
+        const projectingToPlane = this.options.projectionName !== 'Orthographic';
 
         const addToPath = (
             polygon: LonLatArray[]

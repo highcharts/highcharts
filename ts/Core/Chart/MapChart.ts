@@ -17,6 +17,7 @@
  * */
 
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
+import type { ProjectionRotationOption } from '../../Maps/ProjectionOptions';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Chart from './Chart.js';
 import O from '../../Core/Options.js';
@@ -245,8 +246,7 @@ addEvent(Chart, 'afterSetChartSize', function (): void {
 
 let mouseDownCenterProjected: [number, number];
 let mouseDownKey: string;
-let mouseDownLon0: number;
-let mouseDownLat0: number;
+let mouseDownRotation: number[]|undefined;
 addEvent(Chart, 'pan', function (e: PointerEvent): void {
     const {
         mapView,
@@ -264,33 +264,42 @@ addEvent(Chart, 'pan', function (e: PointerEvent): void {
 
         // Reset starting position
         if (key !== mouseDownKey) {
+            mouseDownKey = key;
+
             mouseDownCenterProjected = mapView.projection
                 .forward(mapView.center);
-            mouseDownKey = key;
-            mouseDownLon0 = mapView.projection.options.lon0 || 0;
-            mouseDownLat0 = mapView.projection.options.lat0 || 0;
+
+            mouseDownRotation = (
+                mapView.projection.options.rotation || [0, 0]
+            ).slice();
         }
 
         /*
         @todo
         - Fix zooming (don't jump back to fit bounds)
         */
-        if (mapView.projection.options.projectionName === 'ortho') {
+        if (mapView.projection.options.projectionName === 'Orthographic') {
 
             // Empirical ratio where the globe rotates roughly the same speed
             // as moving the pointer across the center of the projection
             const ratio = 120 / Math.min(this.plotWidth, this.plotHeight);
 
-            mapView.update({
-                projection: {
-                    lon0: mouseDownLon0 + (mouseDownX - chartX) * ratio,
-                    lat0: clamp(
-                        mouseDownLat0 - (mouseDownY - chartY) * ratio,
-                        -80,
-                        80
-                    )
-                }
-            }, true, false);
+            if (mouseDownRotation) {
+                mapView.update({
+                    projection: {
+                        rotation: [
+                            mouseDownRotation[0] -
+                                (mouseDownX - chartX) * ratio,
+                            clamp(
+                                mouseDownRotation[1] +
+                                    (mouseDownY - chartY) * ratio,
+                                -80,
+                                80
+                            )
+                        ]
+                    }
+                }, true, false);
+            }
 
 
         } else {
