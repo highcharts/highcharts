@@ -65,9 +65,11 @@ const drawMap = projectionKey => {
         latTS: undefined,
         lon0: parseInt(document.getElementById('lon0').value, 10),
         over: undefined,
+        rotation: undefined,
         x0: undefined,
         y0: undefined
     }, {
+        /*
         'gall-peters': {
             projectionName: 'cea',
             lon0: 0,
@@ -76,6 +78,7 @@ const drawMap = projectionKey => {
         eqc: {
             projectionName: 'eqc'
         },
+        */
         equalearth: {
             projectionName: 'EqualEarth'
         },
@@ -84,40 +87,37 @@ const drawMap = projectionKey => {
         },
         'ortho-africa': {
             projectionName: 'Orthographic',
-            lon0: 15
+            rotation: [-15, 0]
         },
         'ortho-antarctica': {
             projectionName: 'Orthographic',
-            lat0: -90
+            rotation: [0, 90]
         },
         'ortho-asia': {
             projectionName: 'Orthographic',
-            lat0: 40,
-            lon0: 90
+            rotation: [-90, -40]
         },
         'ortho-australia': {
             projectionName: 'Orthographic',
-            lat0: -30,
-            lon0: 140
+            rotation: [-140, 30]
         },
         'ortho-europe': {
             projectionName: 'Orthographic',
-            lat0: 40,
-            lon0: 15
+            rotation: [-15, -40]
         },
         'ortho-north-america': {
             projectionName: 'Orthographic',
-            lat0: 45,
-            lon0: -100
+            rotation: [100, -45]
         },
         'ortho-south-america': {
             projectionName: 'Orthographic',
-            lat0: -10,
-            lon0: -60
+            rotation: [60, 10]
         },
+        /*
         robin: {
             projectionName: 'robin'
         },
+        */
         webmerc: {
             projectionName: 'WebMercator'
         }

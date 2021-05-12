@@ -11,19 +11,19 @@
 'use strict';
 
 import type { GeoJSONGeometry, LonLatArray } from 'GeoJSON';
-import type ProjectionDefinition from './ProjectionTypes';
-import type ProjectionOptions from 'ProjectionOptions';
+import type { ProjectionDefinition, ProjectionFunction } from './ProjectionTypes';
+import type { ProjectionOptions, ProjectionRotationOption } from 'ProjectionOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
 import registry from './Projections/ProjectionRegistry.js';
 import U from '../Core/Utilities.js';
 const {
     erase,
-    error,
     pick
 } = U;
 
 
+const deg2rad = Math.PI * 2 / 360;
 // Safe padding on either side of the antimeridian to avoid points being
 // projected to the wrong side of the plane
 const floatCorrection = 0.000001;
@@ -65,7 +65,6 @@ export default class Projection {
         point2: LonLatArray,
         inclusive?: boolean
     ): LonLatArray[] {
-        const deg2rad = Math.PI * 2 / 360;
         const { atan2, cos, sin, sqrt } = Math;
         const lat1 = point1[1] * deg2rad;
         const lon1 = point1[0] * deg2rad;
@@ -172,25 +171,43 @@ export default class Projection {
         }
     }
 
-    public constructor(options?: ProjectionOptions) {
-        this.options = options || {};
+    public constructor(options: ProjectionOptions = {}) {
+        this.options = options;
+        const { projectionName, rotation } = options;
         // const { d3, proj4 } = options || {};
 
         // @todo: Better filter for when to handle antimeridian
-        if (this.options.lon0 && this.options.projectionName !== 'ortho') {
-            this.antimeridian = (this.options.lon0 + 360) % 360 - 180;
+        if (options.lon0 && projectionName !== 'ortho') {
+            this.antimeridian = (options.lon0 + 360) % 360 - 180;
         }
 
-        const def = options && options.projectionName ?
-            Projection.registry[options.projectionName] : void 0;
+        const rotator = rotation ? this.getRotator(rotation) : void 0;
+
+        const def = projectionName ?
+            Projection.registry[projectionName] : void 0;
 
         if (def) {
-            this.forward = def.forward;
-            this.inverse = def.inverse;
             this.maxLatitude = def.maxLatitude || 90;
             this.isNorthPositive = true;
-
         }
+
+        if (rotator && def) {
+            this.forward = (lonLat): [number, number] => {
+                lonLat = rotator.forward(lonLat);
+                return def.forward(lonLat);
+            };
+            this.inverse = (xy): [number, number] => {
+                const lonLat = def.inverse(xy);
+                return rotator.inverse(lonLat);
+            };
+        } else if (def) {
+            this.forward = def.forward;
+            this.inverse = def.inverse;
+        } else if (rotator) {
+            this.forward = rotator.forward;
+            this.inverse = rotator.inverse;
+        }
+
         /*
         // Set up proj4 based projection
         } else if (proj4) {
@@ -260,6 +277,70 @@ export default class Projection {
 
         }
         */
+    }
+
+    /*
+     * Take the rotation options and return the appropriate projection functions
+     */
+    public getRotator(rotation: ProjectionRotationOption): {
+        forward: ProjectionFunction;
+        inverse: ProjectionFunction;
+    } {
+        const deltaLambda = rotation[0] * deg2rad,
+            deltaPhi = (rotation[1] || 0) * deg2rad,
+            deltaGamma = (rotation[2] || 0) * deg2rad;
+
+        const cosDeltaPhi = Math.cos(deltaPhi),
+            sinDeltaPhi = Math.sin(deltaPhi),
+            cosDeltaGamma = Math.cos(deltaGamma),
+            sinDeltaGamma = Math.sin(deltaGamma);
+
+        return {
+            forward: (lonLat): [number, number] => {
+                // Lambda (lon) rotation
+                const lon = lonLat[0] * deg2rad + deltaLambda;
+
+                // Phi (lat) and gamma rotation
+                const lat = lonLat[1] * deg2rad,
+                    cosLat = Math.cos(lat),
+                    x = Math.cos(lon) * cosLat,
+                    y = Math.sin(lon) * cosLat,
+                    sinLat = Math.sin(lat),
+                    k = sinLat * cosDeltaPhi + x * sinDeltaPhi;
+                return [
+                    Math.atan2(
+                        y * cosDeltaGamma - k * sinDeltaGamma,
+                        x * cosDeltaPhi - sinLat * sinDeltaPhi
+                    ) / deg2rad,
+                    Math.asin(k * cosDeltaGamma + y * sinDeltaGamma) / deg2rad
+                ];
+            },
+
+            inverse: (rLonLat): [number, number] => {
+                // Lambda (lon) unrotation
+                const lon = rLonLat[0] * deg2rad;
+
+                // Phi (lat) and gamma unrotation
+                const lat = rLonLat[1] * deg2rad,
+                    cosLat = Math.cos(lat),
+                    x = Math.cos(lon) * cosLat,
+                    y = Math.sin(lon) * cosLat,
+                    sinLat = Math.sin(lat),
+                    k = sinLat * cosDeltaGamma - y * sinDeltaGamma;
+
+                return [
+                    (
+                        Math.atan2(
+                            y * cosDeltaGamma + sinLat * sinDeltaGamma,
+                            x * cosDeltaPhi + k * sinDeltaPhi
+                        ) - deltaLambda
+                    ) / deg2rad,
+                    Math.asin(k * cosDeltaPhi - x * sinDeltaPhi) / deg2rad
+                ];
+
+            }
+        };
+
     }
 
     // Project a lonlat coordinate position to xy. Dynamically overridden when

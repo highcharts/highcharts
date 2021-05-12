@@ -8,9 +8,13 @@
  *
  * */
 
-type ProjectionDefinition = {
-    forward(lonLat: [number, number]): [number, number];
-    inverse(xy: [number, number]): [number, number];
+export type ProjectionFunction = {
+    (coords: [number, number]): [number, number];
+}
+
+export type ProjectionDefinition = {
+    forward: ProjectionFunction;
+    inverse: ProjectionFunction;
     maxLatitude?: number;
 }
 

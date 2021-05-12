@@ -17,6 +17,7 @@ interface Proj4 {
         projString: string
     ): Proj4Instance;
 }
+export type ProjectionRotationOption = [number, number]|[number, number, number];
 
 export interface ProjectionOptions {
     // d3?: any;
@@ -27,6 +28,7 @@ export interface ProjectionOptions {
     latTS?: number;
     lon0?: number;
     over?: boolean;
+    rotation?: ProjectionRotationOption;
     x0?: number;
     y0?: number;
 }
