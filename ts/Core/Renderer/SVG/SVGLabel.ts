@@ -454,7 +454,7 @@ class SVGLabel extends SVGElement {
             let firstLineFontSize = 0;
 
             for (let i = 0; i < children.length; i++) {
-                if (children[i].nodeType === Node.ELEMENT_NODE &&
+                if (children[i].nodeType === 1 && // Element
                     children[i].getAttribute('class') === 'highcharts-br') {
                     for (let j = 0; j < i; j++) {
                         const size = getStyle(
