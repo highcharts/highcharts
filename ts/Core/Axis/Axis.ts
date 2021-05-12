@@ -1939,7 +1939,8 @@ class Axis {
          * is set using `axis.setExtremes()`, the maxPadding will be ignored.
          *
          * @productdesc {highstock}
-         * When the axis `ordinal: true`, the `maxPadding` is ignored.
+         * For the ordinal axis, the `minPadding` and `maxPadding` are ignored
+         * use the `overscroll` instead.
          *
          * @sample {highcharts} highcharts/yaxis/maxpadding/
          *         Max padding of 0.25 on y axis
@@ -2105,7 +2106,8 @@ class Axis {
          * is set using `axis.setExtremes()`, the minPadding will be ignored.
          *
          * @productdesc {highstock}
-         * When the axis `ordinal: true`, the `minPadding` is ignored.
+         * For the ordinal axis, the `minPadding` and `maxPadding` are ignored
+         * use the `overscroll` instead.
          *
          * @sample {highcharts} highcharts/yaxis/minpadding/
          *         Min padding of 0.2
