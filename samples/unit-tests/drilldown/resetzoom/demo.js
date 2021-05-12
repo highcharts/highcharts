@@ -189,7 +189,7 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
     );
     assert.notOk(
         chart.tooltip.isHidden,
-        '#14403: Tooltip should be hidden when not hovering button'
+        '#14403: Tooltip should not be hidden when not hovering button'
     );
 
     // Drill up
