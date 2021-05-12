@@ -93,8 +93,10 @@ class Resizer {
      *  Functions
      *
      * */
-    public init(): void {
-        const rows = this.layout.rows;
+    public init(
+        nestedLayout?: Layout
+    ): void {
+        const rows = (nestedLayout && nestedLayout.rows) || this.layout.rows;
 
         for (let i = 0, iEnd = (rows || []).length; i < iEnd; ++i) {
 
@@ -102,20 +104,38 @@ class Resizer {
 
             if (cells) {
                 for (let j = 0, jEnd = cells.length; j < jEnd; ++j) {
-                    // set min-size
-                    (cells[j].container as HTMLElement).style.minWidth =
-                        this.resizeOptions.minWidth + 'px';
 
-                    this.addSnaps(
-                        cells[j],
-                        this.resizeOptions.minWidth,
-                        this.resizeOptions.minHeight
-                    );
+                    if (cells[j].nestedLayout) {
+                        this.init(cells[j].nestedLayout);
+                    } else {
+                        const cellContainer = (cells[j].container as HTMLElement);
+                        // set min-size
+                        cellContainer.style.minWidth =
+                            this.resizeOptions.minWidth + 'px';
+                        
+                        // convert current width to percent
+                        // fix bug when we resize the last cell in a row
+                        // cellContainer.style.width = (
+                        //     (
+                        //         (cellContainer.offsetWidth) /
+                        //         ((cells[j].row.container as HTMLElement).offsetWidth || 1)
+                        //     ) * 100
+                        // ) + '%';               
+                        // cellContainer.style.flex = '0 0 auto';
+
+                        // add snaps
+                        this.addSnaps(
+                            cells[j],
+                            this.resizeOptions.minWidth,
+                            this.resizeOptions.minHeight
+                        );
+                    }
                 }
             }
         }
 
     }
+
     /**
      * Add Snap - create snapXs and add events.
      *
@@ -137,9 +157,9 @@ class Resizer {
         cell.styles = {} as Resizer.ElementStyles;
 
         // not created handlers when nested layouts, only in the child cells
-        if (cell.nestedLayout) {
-            return;
-        }
+        // if (cell.nestedLayout) {
+        //     return;
+        // }
 
         if (cell.container) {
 
