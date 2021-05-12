@@ -294,6 +294,7 @@ declare global {
             ordinal?: boolean;
             overscroll?: number;
             pane?: number;
+            panningEnabled: boolean;
             range?: number;
             reversed?: boolean;
             reversedStacks: boolean;
@@ -1259,6 +1260,12 @@ class Axis {
          * @since     4.1
          * @apioption xAxis.crosshair.zIndex
          */
+
+        /**
+         * Whether to pan axis. If `chart.panning` is enabled, the option
+         * allows to disable panning on an individual axis.
+         */
+        panningEnabled: true,
 
         /**
          * The Z index for the axis group.
