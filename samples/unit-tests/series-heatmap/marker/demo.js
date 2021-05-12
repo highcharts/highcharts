@@ -20,7 +20,7 @@ QUnit.test('General marker tests', function (assert) {
         series: [
             {
                 data: [
-                    [0, 0, 1],
+                    [0, 0, null],
                     [0, 1, 1.1],
                     [0, 2, 1.2],
                     [1, 0, 2],
@@ -205,5 +205,10 @@ QUnit.test('General marker tests', function (assert) {
         point.graphic.element.tagName === 'image' && point.hasImage,
         true,
         "The image should set as a point's marker."
+    );
+
+    assert.ok(
+        heatmap.points[0].graphic.hasClass('highcharts-null-point'),
+        '#15708: Null points should have null-point class'
     );
 });
