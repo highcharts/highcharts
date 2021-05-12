@@ -1345,25 +1345,29 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         let plotLinesAndBands = this.plotLinesAndBands,
             options = this.options,
             userOptions = this.userOptions,
+            i;
+
+        if (plotLinesAndBands) { // #15639
             i = plotLinesAndBands.length;
-        while (i--) {
-            if (plotLinesAndBands[i].id === id) {
-                plotLinesAndBands[i].destroy();
-            }
-        }
-        ([
-            options.plotLines || [],
-            userOptions.plotLines || [],
-            options.plotBands || [],
-            userOptions.plotBands || []
-        ]).forEach(function (arr): void {
-            i = arr.length;
             while (i--) {
-                if ((arr[i] || {}).id === id) {
-                    erase(arr, arr[i]);
+                if (plotLinesAndBands[i].id === id) {
+                    plotLinesAndBands[i].destroy();
                 }
             }
-        });
+            ([
+                options.plotLines || [],
+                userOptions.plotLines || [],
+                options.plotBands || [],
+                userOptions.plotBands || []
+            ]).forEach(function (arr): void {
+                i = arr.length;
+                while (i--) {
+                    if ((arr[i] || {}).id === id) {
+                        erase(arr, arr[i]);
+                    }
+                }
+            });
+        }
     },
 
     /**
