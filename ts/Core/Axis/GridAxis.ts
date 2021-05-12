@@ -17,6 +17,7 @@
  *
  * */
 
+import type ChartOptions from '../Chart/ChartOptions';
 import type ColorType from '../Color/ColorType';
 import type Point from '../Series/Point';
 import type {
@@ -47,6 +48,13 @@ const {
     timeUnits,
     wrap
 } = U;
+
+declare module '../Chart/ChartLike'{
+    interface ChartLike {
+        marginRight: ChartOptions['marginRight'];
+        polar: ChartOptions['polar'];
+    }
+}
 
 /**
  * Internal types
@@ -91,6 +99,7 @@ declare module './Types' {
         GridAxis: GridAxis;
     }
 }
+
 
 const argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);

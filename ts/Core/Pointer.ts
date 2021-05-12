@@ -24,6 +24,7 @@ const {
     charts,
     noop
 } = H;
+import O from './Options.js';
 import palette from '../Core/Color/Palette.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
@@ -249,7 +250,7 @@ class Pointer {
      *
      * */
 
-    public constructor(chart: Chart, options: Highcharts.Options) {
+    public constructor(chart: Chart, options: O) {
         this.chart = chart;
         this.hasDragged = false;
         this.options = options;
@@ -286,7 +287,7 @@ class Pointer {
 
     public mouseDownY?: number;
 
-    public options: Highcharts.Options;
+    public options: O;
 
     public pinchDown: Array<any> = [];
 
@@ -1087,7 +1088,7 @@ class Pointer {
      *
      * @return {void}
      */
-    public init(chart: Chart, options: Highcharts.Options): void {
+    public init(chart: Chart, options: O): void {
 
         // Store references
         this.options = options;

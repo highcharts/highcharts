@@ -41,11 +41,11 @@ declare module '../Core/Chart/ChartLike' {
         unbindGetSVG?: Function;
         exportChartLocal(
             exportingOptions?: Highcharts.ExportingOptions,
-            chartOptions?: Partial<Highcharts.Options>
+            chartOptions?: Partial<O>
         ): void;
         getSVGForLocalExport(
             options: Highcharts.ExportingOptions,
-            chartOptions: Partial<Highcharts.Options>,
+            chartOptions: Partial<O>,
             failCallback: Function,
             successCallback: Function
         ): void;
@@ -621,7 +621,7 @@ function downloadSVGLocal(
  */
 Chart.prototype.getSVGForLocalExport = function (
     options: Highcharts.ExportingOptions,
-    chartOptions: Partial<Highcharts.Options>,
+    chartOptions: Partial<O>,
     failCallback: Function,
     successCallback: Function
 ): void {
@@ -629,7 +629,7 @@ Chart.prototype.getSVGForLocalExport = function (
         images,
         imagesEmbedded = 0,
         chartCopyContainer: (HTMLDOMElement|undefined),
-        chartCopyOptions: (Highcharts.Options|undefined),
+        chartCopyOptions: (O|undefined),
         el,
         i,
         l,
@@ -749,7 +749,7 @@ Chart.prototype.getSVGForLocalExport = function (
  */
 Chart.prototype.exportChartLocal = function (
     exportingOptions?: Highcharts.ExportingOptions,
-    chartOptions?: Partial<Highcharts.Options>
+    chartOptions?: Partial<O>
 ): void {
     const chart = this,
         options = merge(chart.options.exporting, exportingOptions),

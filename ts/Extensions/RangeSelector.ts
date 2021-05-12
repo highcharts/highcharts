@@ -49,6 +49,12 @@ const {
     splat
 } = U;
 
+/* *
+ *
+ * Declarations
+ *
+ * */
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         extraBottomMargin?: boolean;
@@ -57,6 +63,21 @@ declare module '../Core/Chart/ChartLike'{
         rangeSelector?: Highcharts.RangeSelector;
     }
 }
+
+declare module '../Core/LangOptions'{
+    interface LangOptions {
+        rangeSelectorFrom?: string;
+        rangeSelectorTo?: string;
+        rangeSelectorZoom?: string;
+    }
+}
+
+declare module '../Core/OptionsLike'{
+    interface OptionsLike {
+        rangeSelector?: DeepPartial<Highcharts.RangeSelectorOptions>;
+    }
+}
+
 
 /**
  * Internal types
@@ -71,14 +92,6 @@ declare global {
         interface Axis {
             newMax?: number;
             range?: (null|number|RangeSelectorButtonsOptions);
-        }
-        interface Options {
-            rangeSelector?: DeepPartial<RangeSelectorOptions>;
-        }
-        interface LangOptions {
-            rangeSelectorFrom?: string;
-            rangeSelectorTo?: string;
-            rangeSelectorZoom?: string;
         }
         interface RangeSelectorClickCallbackFunction {
             (e: Event): (boolean|undefined);

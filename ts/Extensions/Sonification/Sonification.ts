@@ -213,7 +213,7 @@ addEvent(Chart, 'init', function (): void {
 // Update with chart/series/point updates
 addEvent(Chart as any, 'update', function (
     this: Highcharts.SonifyableChart,
-    e: { options: Highcharts.Options }
+    e: { options: O}
 ): void {
     const newOptions = e.options.sonification;
     if (newOptions) {

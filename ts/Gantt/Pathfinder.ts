@@ -28,9 +28,20 @@ import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 
+/* *
+ *
+ * Declarations
+ *
+ * */
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         pathfinder?: Pathfinder;
+    }
+}
+
+declare module '../Core/OptionsLike'{
+    interface OptionsLike {
+        connectors?: Highcharts.ConnectorsOptions;
     }
 }
 
@@ -131,9 +142,6 @@ declare global {
             symbol?: string;
             verticalAlign?: VerticalAlignValue;
             width?: number;
-        }
-        interface Options {
-            connectors?: ConnectorsOptions;
         }
         interface PointConnectOptionsObject {
             to?: string;

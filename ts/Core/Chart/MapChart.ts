@@ -58,7 +58,7 @@ class MapChart extends Chart {
      * @fires Highcharts.MapChart#event:afterInit
      */
     public init(
-        userOptions: Partial<Highcharts.Options>,
+        userOptions: Partial<O>,
         callback?: Chart.CallbackFunction
     ): void {
         const hiddenAxis = {
@@ -159,8 +159,8 @@ namespace MapChart {
      * The chart object.
      */
     export function mapChart(
-        a: (string|HTMLDOMElement|Highcharts.Options),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        a: (string|HTMLDOMElement|O),
+        b?: (Chart.CallbackFunction|O),
         c?: Chart.CallbackFunction
     ): MapChart {
         return new MapChart(a as any, b as any, c);

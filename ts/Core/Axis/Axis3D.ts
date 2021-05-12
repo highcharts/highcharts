@@ -13,6 +13,7 @@
 'use strict';
 
 import type Axis from './Axis';
+import type O from '../../Core/Options';
 import type Point from '../Series/Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -55,7 +56,7 @@ declare module '../Series/PointLike' {
 declare global {
     namespace Highcharts {
         interface XAxisLabelsOptions {
-            position3d?: OptionsPosition3dValue;
+            position3d?: O.OptionsPosition3dValue;
             skew3d?: boolean;
         }
         interface XAxisTitleOptions {

@@ -43,6 +43,12 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../Core/LangOptions'{
+    interface LangOptions {
+        navigation?: Highcharts.LangNavigationOptions;
+    }
+}
+
 declare module '../../Core/PointerEvent' {
     interface PointerEvent {
         activeAnnotation?: boolean;
@@ -80,10 +86,6 @@ declare global {
         interface LangNavigationOptions {
             popup?: Record<string, string>;
         }
-        interface LangOptions {
-            navigation?: LangNavigationOptions;
-        }
-
         interface NavigationBindingsButtonEventsObject {
             button: HTMLDOMElement;
             events: NavigationBindingsOptionsObject;

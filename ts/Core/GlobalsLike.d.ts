@@ -18,6 +18,7 @@ import type Chart from './Chart/Chart';
 import type { SeriesTypeRegistry } from './Series/SeriesType';
 import type SizeObject from './Renderer/SizeObject';
 import type Time from './Time';
+import O from './Options.js';
 
 /* *
  *
@@ -117,7 +118,7 @@ export interface GlobalsLike extends InternalNamespace {
     readonly supportsPassiveEvents: boolean;
     readonly svg: boolean;
     readonly symbolSizes: Record<string, SizeObject>;
-    theme?: Partial<Highcharts.Options>;
+    theme?: Partial<O>;
     readonly userAgent: string;
     readonly version: string;
     // eslint-disable-next-line node/no-unsupported-features/es-builtins

@@ -81,6 +81,12 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../Core/Chart/ChartOptions'{
+    interface ChartOptions {
+        zoomKey?: string;
+    }
+}
+
 declare module '../Core/Series/PointLike' {
     interface PointLike {
         /** @requires modules/draggable-points */
@@ -121,9 +127,6 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface ChartOptions {
-            zoomKey?: string;
-        }
         interface DragDropDataObject {
             draggedPastSensitivity?: boolean;
             groupedPoints: Array<Point>;

@@ -73,7 +73,7 @@ declare global {
             zoom: ZoomComponent;
         }
         interface AccessibilityChart extends Chart {
-            options: Required<Options>;
+            options: Required<O>;
             series: Array<AccessibilitySeries>;
         }
         interface AccessibilityPoint extends Point {
@@ -363,7 +363,7 @@ addEvent(H.Chart, 'render', function (e: Event): void {
 // Update with chart/series/point updates
 addEvent(H.Chart as any, 'update', function (
     this: Highcharts.AccessibilityChart,
-    e: { options: Highcharts.Options }
+    e: { options: O }
 ): void {
     // Merge new options
     const newOptions = e.options.accessibility;

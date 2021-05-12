@@ -51,15 +51,18 @@ declare module './Chart/ChartLike'{
     }
 }
 
+declare module './OptionsLike'{
+    interface OptionsLike {
+        scrollbar?: Highcharts.ScrollbarOptions;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface Options {
-            scrollbar?: ScrollbarOptions;
-        }
         interface ScrollbarChangedEventObject {
             from: number;
             to: number;

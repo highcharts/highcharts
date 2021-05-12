@@ -19,6 +19,7 @@ const {
     noop,
     win
 } = H;
+import O from './Options.js';
 import Pointer from './Pointer.js';
 import U from './Utilities.js';
 const {
@@ -136,7 +137,7 @@ class MSPointer extends Pointer {
     }
 
     // Disable default IE actions for pinch and such on chart element
-    public init(chart: Chart, options: Highcharts.Options): void {
+    public init(chart: Chart, options: O): void {
 
         super.init(chart, options);
 

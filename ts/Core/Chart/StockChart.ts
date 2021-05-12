@@ -95,6 +95,12 @@ declare module './ChartLike' {
     }
 }
 
+declare module '../OptionsLike'{
+    interface OptionsLike {
+        isStock?: boolean;
+    }
+}
+
 declare module '../Series/PointLike' {
     interface PointLike {
         change?: number;
@@ -122,18 +128,6 @@ declare module '../Series/SeriesOptions' {
 declare module '../Renderer/SVG/SVGRendererLike' {
     interface SVGRendererLike {
         crispPolyLine(points: SVGPath, width: number): SVGPath;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            isStock?: boolean;
-        }
     }
 }
 
@@ -166,7 +160,7 @@ class StockChart extends Chart {
      * @fires Highcharts.StockChart#event:afterInit
      */
     public init(
-        userOptions: Partial<Highcharts.Options>,
+        userOptions: Partial<O>,
         callback?: Chart.CallbackFunction
     ): void {
         const defaultOptions = getOptions(),
@@ -327,8 +321,8 @@ namespace StockChart {
      *         The chart object.
      */
     export function stockChart(
-        a: (string|HTMLDOMElement|Highcharts.Options),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        a: (string|HTMLDOMElement|O),
+        b?: (Chart.CallbackFunction|O),
         c?: Chart.CallbackFunction
     ): StockChart {
         return new StockChart(a as any, b as any, c);
@@ -402,7 +396,7 @@ function getDefaultAxisOptions(
  */
 function getForcedAxisOptions(
     type: string,
-    chartOptions: Partial<Highcharts.Options>
+    chartOptions: Partial<O>
 ): DeepPartial<Highcharts.AxisOptions> {
     if (type === 'xAxis') {
         const defaultOptions = getOptions(),
@@ -1211,7 +1205,7 @@ addEvent(Series, 'render', function (): void {
 
 addEvent(Chart, 'update', function (
     this: StockChart,
-    e: { options: Highcharts.Options }
+    e: { options: O }
 ): void {
     const options = e.options;
 

@@ -79,6 +79,12 @@ declare module '../../Core/Series/SeriesLike' {
     }
 }
 
+declare module '../../Core/LegendOptions'{
+    interface LegendOptions {
+        bubbleLegend?: Highcharts.BubbleLegendOptions;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -143,9 +149,6 @@ declare global {
         }
         interface LegendItemObject {
             ignoreSeries?: boolean;
-        }
-        interface LegendOptions {
-            bubbleLegend?: BubbleLegendOptions;
         }
         class BubbleLegend implements LegendItemObject {
             public constructor(options: BubbleLegendOptions, legend: Legend);
@@ -1291,7 +1294,7 @@ addEvent(Series, 'legendItemClick', function (): void {
 wrap(Chart.prototype, 'drawChartBox', function (
     this: Chart,
     proceed: Function,
-    options: Highcharts.Options,
+    options: O,
     callback: Chart.CallbackFunction
 ): void {
     let chart = this,

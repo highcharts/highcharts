@@ -63,6 +63,12 @@ declare module './Chart/ChartLike'{
     }
 }
 
+declare module './OptionsLike'{
+    interface OptionsLike {
+        navigator?: Highcharts.NavigatorOptions;
+    }
+}
+
 declare module './Series/SeriesLike' {
     interface SeriesLike {
         baseSeries?: Series;
@@ -110,9 +116,6 @@ declare global {
             top?: number;
             xAxis?: DeepPartial<XAxisOptions>;
             yAxis?: DeepPartial<YAxisOptions>;
-        }
-        interface Options {
-            navigator?: NavigatorOptions;
         }
         interface XAxisOptions {
             maxRange?: number;
