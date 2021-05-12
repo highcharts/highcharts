@@ -28,7 +28,6 @@ import U from '../../Utilities.js';
 const {
     defined,
     extend,
-    getStyle,
     isNumber,
     merge,
     pick,
