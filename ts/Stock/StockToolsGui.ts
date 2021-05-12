@@ -10,6 +10,7 @@
  *
  * */
 
+import type ChartOptions from '../Core/Chart/ChartOptions';
 import type {
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
@@ -31,11 +32,28 @@ const {
     pick
 } = U;
 
+/* *
+ *
+ * Declarations
+ *
+ * */
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         stockTools?: Toolbar;
         /** @requires modules/stock-tools */
         setStockTools(options?: Highcharts.StockToolsOptions): void;
+    }
+}
+
+declare module '../Core/LangOptions'{
+    interface LangOptions {
+        stockTools?: Highcharts.LangStockToolsOptions;
+    }
+}
+
+declare module '../Core/OptionsLike'{
+    interface OptionsLike {
+        stockTools?: Highcharts.StockToolsOptions;
     }
 }
 
@@ -45,14 +63,8 @@ declare module '../Core/Chart/ChartLike'{
  */
 declare global {
     namespace Highcharts {
-        interface LangOptions {
-            stockTools?: LangStockToolsOptions;
-        }
         interface LangStockToolsOptions {
             gui?: Record<string, string>;
-        }
-        interface Options {
-            stockTools?: StockToolsOptions;
         }
         interface StockToolsGuiDefinitionsButtonOptions {
             symbol?: string;
@@ -959,7 +971,7 @@ addEvent(Chart, 'getMargins', function (): void {
 ['beforeRender', 'beforeRedraw'].forEach((event: string): void => {
     addEvent(Chart, event, function (): void {
         if (this.stockTools) {
-            const optionsChart = this.options.chart as Highcharts.ChartOptions;
+            const optionsChart = this.options.chart as ChartOptions;
             const listWrapper = this.stockTools.listWrapper,
                 offsetWidth = listWrapper && (
                     (
@@ -1705,7 +1717,7 @@ extend(Chart.prototype, {
         this: Chart,
         options?: Highcharts.StockToolsOptions
     ): void {
-        const chartOptions: Highcharts.Options = this.options,
+        const chartOptions: O = this.options,
             lang = chartOptions.lang,
             guiOptions = merge(
                 chartOptions.stockTools && chartOptions.stockTools.gui,

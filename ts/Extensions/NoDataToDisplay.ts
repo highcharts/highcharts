@@ -40,18 +40,24 @@ declare module '../Core/Chart/ChartLike' {
     }
 }
 
+declare module '../Core/LangOptions'{
+    interface LangOptions {
+        noData?: string;
+    }
+}
+
+declare module '../Core/OptionsLike'{
+    interface OptionsLike {
+        noData?: Highcharts.NoDataOptions;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface LangOptions {
-            noData?: string;
-        }
-        interface Options {
-            noData?: NoDataOptions;
-        }
         interface NoDataOptions {
             attr?: SVGAttributes;
             useHTML?: boolean;

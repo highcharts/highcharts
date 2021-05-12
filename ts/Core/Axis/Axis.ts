@@ -52,7 +52,6 @@ const { defaultOptions } = O;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
-    addEvent,
     arrayMax,
     arrayMin,
     clamp,
@@ -65,7 +64,6 @@ const {
     fireEvent,
     getMagnitude,
     isArray,
-    isFunction,
     isNumber,
     isString,
     merge,
@@ -83,6 +81,12 @@ const {
  *  Declarations
  *
  * */
+declare module '../../Core/OptionsLike'{
+    interface OptionsLike {
+        xAxis?: (DeepPartial<Highcharts.XAxisOptions>|Array<DeepPartial<Highcharts.XAxisOptions>>);
+        yAxis?: (DeepPartial<Highcharts.YAxisOptions>|Array<DeepPartial<Highcharts.YAxisOptions>>);
+    }
+}
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
@@ -176,10 +180,6 @@ declare global {
             userMax: number;
             userMin: number;
         }
-        interface Options {
-            xAxis?: (DeepPartial<XAxisOptions>|Array<DeepPartial<XAxisOptions>>);
-            yAxis?: (DeepPartial<YAxisOptions>|Array<DeepPartial<YAxisOptions>>);
-        }
         interface XAxisAccessibilityOptions {
             description?: string;
             enabled?: boolean;
@@ -233,7 +233,7 @@ declare global {
             format?: string;
             formatter?: AxisLabelsFormatterCallbackFunction;
             indentation: number;
-            overflow: OptionsOverflowValue;
+            overflow: O.OptionsOverflowValue;
             padding: number;
             reserveSpace?: boolean;
             rotation?: number|'auto';

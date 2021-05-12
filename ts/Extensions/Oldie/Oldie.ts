@@ -85,10 +85,26 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../Core/Chart/ChartOptions'{
+    interface ChartOptions {
+        /** @deprecated */
+        defaultSeriesType?: string;
+    }
+}
+
 declare module '../../Core/EventCallback'{
     interface EventCallback<T> {
         /** @requires highcharts/modules/oldies */
         hcKey?: string;
+    }
+}
+
+declare module '../../Core/OptionsLike' {
+    interface OptionsLike {
+        /** @deprecated */
+        global?: GlobalOptions;
+        /** @deprecated */
+        labels?: LabelsOptions;
     }
 }
 
@@ -108,6 +124,26 @@ declare module '../../Core/Renderer/SVG/SVGRendererLike' {
     }
 }
 
+interface GlobalOptions {
+    /** @deprecated */
+    canvasToolsURL?: string;
+    /** @deprecated */
+    Date?: Function;
+    /** @deprecated */
+    getTimezoneOffset?: Function;
+    /** @deprecated */
+    timezone?: string;
+    /** @deprecated */
+    timezoneOffset?: number;
+    /** @deprecated */
+    useUTC?: boolean;
+}
+
+export interface LabelsOptions {
+    items?: Array<O.LabelsItemsOptions>;
+    style?: CSSObject;
+}
+
 /**
  * Internal types
  * @private
@@ -115,6 +151,18 @@ declare module '../../Core/Renderer/SVG/SVGRendererLike' {
 declare global {
     namespace Highcharts {
         interface GlobalOptions {
+            /** @deprecated */
+            canvasToolsURL?: string;
+            /** @deprecated */
+            Date?: Function;
+            /** @deprecated */
+            getTimezoneOffset?: Function;
+            /** @deprecated */
+            timezone?: string;
+            /** @deprecated */
+            timezoneOffset?: number;
+            /** @deprecated */
+            useUTC?: boolean;
             /** @requires highcharts/modules/oldies */
             VMLRadialGradientURL?: string;
         }

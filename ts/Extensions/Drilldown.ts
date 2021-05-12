@@ -85,6 +85,18 @@ declare module '../Core/Chart/ChartLike' {
     }
 }
 
+declare module '../Core/OptionsLike'{
+    interface OptionsLike {
+        drilldown?: Highcharts.DrilldownOptions;
+    }
+}
+
+declare module '../Core/LangOptions' {
+    interface LangOptions {
+        drillUpText?: string;
+    }
+}
+
 declare module '../Core/Renderer/SVG/SVGElementLike' {
     interface SVGElementLike {
         fadeIn(animation?: (boolean|Partial<AnimationOptions>)): void;
@@ -219,12 +231,6 @@ declare global {
             seriesOptions?: SeriesTypeOptions;
             target: Chart;
             type: 'drillup';
-        }
-        interface LangOptions {
-            drillUpText?: string;
-        }
-        interface Options {
-            drilldown?: DrilldownOptions;
         }
         interface Tick {
             drillable(): void;
@@ -1546,7 +1552,7 @@ addEvent(Point, 'afterInit', function (): Point {
     return point;
 });
 
-addEvent(Point, 'update', function (e: { options: Highcharts.Options }): void {
+addEvent(Point, 'update', function (e: { options: O }): void {
     const point = this,
         options = e.options || {};
 

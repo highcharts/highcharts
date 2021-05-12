@@ -25,15 +25,14 @@ const {
 
 import '../../Series/Gantt/GanttSeries.js';
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            isGantt?: boolean;
-        }
+/* *
+ *
+ * Declarations
+ *
+ * */
+declare module '../OptionsLike.js' {
+    interface OptionsLike {
+        isGantt?: boolean;
     }
 }
 
@@ -66,7 +65,7 @@ class GanttChart extends Chart {
      * @fires Highcharts.GanttChart#event:afterInit
      */
     public init(
-        userOptions: Partial<Highcharts.Options>,
+        userOptions: Partial<O>,
         callback?: Chart.CallbackFunction
     ): void {
         const defaultOptions = getOptions(),
@@ -97,14 +96,14 @@ class GanttChart extends Chart {
                         type: 'category'
                     }
                 }
-            } as Highcharts.Options,
+            } as O,
 
             userOptions, // user's options
 
             // forced options
             {
                 isGantt: true
-            } as Highcharts.Options
+            } as O
         );
 
         userOptions.xAxis = xAxisOptions;
@@ -162,7 +161,6 @@ class GanttChart extends Chart {
                 yAxisOptions // user options
             );
         });
-
         super.init(options, callback);
     }
 }
@@ -204,8 +202,8 @@ namespace GanttChart {
      *         Returns the Chart object.
      */
     export function ganttChart(
-        a: (string|HTMLDOMElement|Highcharts.Options),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        a: (string|HTMLDOMElement|O),
+        b?: (Chart.CallbackFunction|O),
         c?: Chart.CallbackFunction
     ): GanttChart {
         return new GanttChart(a as any, b as any, c);

@@ -45,15 +45,18 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../Core/Chart/ChartOptions'{
+    interface ChartOptions {
+        displayErrors?: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartOptions {
-            displayErrors?: boolean;
-        }
         let errorMessages: typeof ErrorMessages;
     }
 }

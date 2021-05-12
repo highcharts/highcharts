@@ -54,6 +54,7 @@ import ControlPoint from './ControlPoint.js';
 import EventEmitterMixin from './Mixins/EventEmitterMixin.js';
 import H from '../../Core/Globals.js';
 import MockPoint from './MockPoint.js';
+import O from '../../Core/Options.js';
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
 import palette from '../../Core/Color/Palette.js';
@@ -71,12 +72,23 @@ const {
     wrap
 } = U;
 
+/* *
+ *
+ * Declarations
+ *
+ * */
 declare module './MockPointOptions' {
     interface MockPointOptions {
         x: number;
         xAxis?: (number|AxisType|null);
         y: number;
         yAxis?: (number|AxisType|null);
+    }
+}
+
+declare module '../../Core/OptionsLike'{
+    interface OptionsLike {
+        annotations?: (Highcharts.AnnotationsOptions|Array<Highcharts.AnnotationsOptions>);
     }
 }
 
@@ -96,7 +108,7 @@ declare global {
             initAnnotation(userOptions: AnnotationsOptions): Annotation;
             removeAnnotation(idOrAnnotation: (number|string|Annotation)): void;
         }
-        interface AnnotationChartOptionsObject extends Options {
+        interface AnnotationChartOptionsObject extends O {
             annotations: Array<AnnotationsOptions>;
             defs: Record<string, AST.Node>;
             navigation: NavigationOptions;
@@ -226,9 +238,6 @@ declare global {
             prototype: Partial<T['prototype']>,
             defaultOptions?: DeepPartial<T['prototype']['options']>
         ): void;
-        interface Options {
-            annotations?: (AnnotationsOptions|Array<AnnotationsOptions>);
-        }
     }
 }
 

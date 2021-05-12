@@ -43,6 +43,7 @@ import type {
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type TooltipOptions from '../TooltipOptions';
 import A from '../Animation/AnimationUtilities.js';
 const {
     animObject,
@@ -2742,7 +2743,7 @@ class Series {
 
     public symbol?: string;
 
-    public tooltipOptions: Highcharts.TooltipOptions = void 0 as any;
+    public tooltipOptions: TooltipOptions = void 0 as any;
 
     public touched?: boolean;
 

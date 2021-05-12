@@ -13,6 +13,7 @@
 'use strict';
 
 import type { AxisType } from '../Core/Axis/Types';
+import type { ChartOptions } from '../Core/Chart/ChartOptions';
 import type Point from '../Core/Series/Point';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
@@ -38,12 +39,23 @@ const {
     wrap
 } = U;
 
+/* *
+ *
+ * Declarations
+ *
+ * */
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         hasParallelCoordinates?: Highcharts.ParallelChart['hasParallelCoordinates'];
         parallelInfo?: Highcharts.ParallelChart['parallelInfo'];
         /** @requires modules/parallel-coordinates */
-        setParallelInfo(options: Partial<Highcharts.Options>): void;
+        setParallelInfo(options: Partial<O>): void;
+    }
+}
+declare module '../Core/Chart/ChartOptions'{
+    interface ChartOptions {
+        parallelAxes?: DeepPartial<Highcharts.XAxisOptions>;
+        parallelCoordinates?: boolean;
     }
 }
 
@@ -53,11 +65,6 @@ declare module '../Core/Chart/ChartLike'{
  */
 declare global {
     namespace Highcharts {
-
-        interface ChartOptions {
-            parallelAxes?: DeepPartial<XAxisOptions>;
-            parallelCoordinates?: boolean;
-        }
         interface ParallelChart extends Chart {
             hasParallelCoordinates?: boolean;
             parallelInfo: ParallelInfoObject;
@@ -99,7 +106,7 @@ const defaultXAxisOptions = {
 /**
  * @optionparent chart
  */
-const defaultParallelOptions: Highcharts.ChartOptions = {
+const defaultParallelOptions: ChartOptions = {
     /**
      * Flag to render charts as a parallel coordinates plot. In a parallel
      * coordinates plot (||-coords) by default all required yAxes are generated
@@ -186,7 +193,7 @@ setOptions({
 // Initialize parallelCoordinates
 addEvent(Chart, 'init', function (
     e: {
-        args: { 0: Partial<Highcharts.Options> };
+        args: { 0: Partial<O> };
     }
 ): void {
     const options = e.args[0],
@@ -250,7 +257,7 @@ addEvent(Chart, 'init', function (
 });
 
 // Initialize parallelCoordinates
-addEvent(Chart, 'update', function (e: { options: Partial<Highcharts.Options> }): void {
+addEvent(Chart, 'update', function (e: { options: Partial<O> }): void {
     const options = e.options;
 
     if (options.chart) {
@@ -299,7 +306,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
      */
     setParallelInfo: function (
         this: Highcharts.ParallelChart,
-        options: Partial<Highcharts.Options>
+        options: Partial<O>
     ): void {
         const chart = this,
             seriesOptions: Array<SeriesOptions> =

@@ -42,6 +42,13 @@ const {
     wrap
 } = U;
 import ZAxis from '../Axis/ZAxis.js';
+
+/* *
+ *
+ * Declarations
+ *
+ * */
+
 declare module '../Animation/FxLike' {
     interface FxLike {
         matrixSetter?(): void;
@@ -56,15 +63,31 @@ declare module '../Chart/ChartLike'{
     }
 }
 
+declare module '../Chart/ChartOptions'{
+    interface ChartOptions {
+        options3d?: O;
+    }
+}
+
+declare module '../OptionsLike'{
+    export interface OptionsLike {
+        alpha?: number;
+        axisLabelPosition?: ('auto'|null);
+        beta?: number;
+        depth?: number;
+        enabled?: boolean;
+        fitToPlot?: boolean;
+        frame?: Chart3D.FrameOptions;
+        viewDistance?: number;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartOptions {
-            options3d?: Chart3D.Options;
-        }
         interface Edge3DObject extends Position3DObject {
             xDir: Position3DObject;
         }
@@ -125,16 +148,6 @@ namespace Chart3D {
         visible?: ('auto'|'default'|boolean);
     }
 
-    export interface Options {
-        alpha?: number;
-        axisLabelPosition?: ('auto'|null);
-        beta?: number;
-        depth?: number;
-        enabled?: boolean;
-        fitToPlot?: boolean;
-        frame?: FrameOptions;
-        viewDistance?: number;
-    }
 
     /* *
      *

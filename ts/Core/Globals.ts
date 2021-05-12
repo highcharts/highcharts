@@ -17,6 +17,7 @@
  * */
 
 import type GlobalsLike from './GlobalsLike';
+import O from './Options.js';
 
 /* *
  *
@@ -229,7 +230,7 @@ namespace Globals {
      * @name Highcharts.theme
      * @type {Highcharts.Options}
      */
-    export let theme: (Highcharts.Options|undefined);
+    export let theme: (O|undefined);
 
 }
 
