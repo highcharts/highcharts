@@ -37,11 +37,14 @@ const {
  *
  * */
 
-declare module '../../Core/Axis/Types' {
+declare module '../../Core/Axis/AxisLike' {
     interface AxisLike {
         variwide?: boolean;
         zData?: Array<number>;
     }
+}
+
+declare module '../../Core/Axis/TickLike' {
     interface TickLike {
         postTranslate(
             xy: PositionObject,
@@ -62,8 +65,9 @@ Tick.prototype.postTranslate = function (
     xOrY: keyof PositionObject,
     index: number
 ): void {
-    let axis = this.axis,
-        pos = xy[xOrY] - axis.pos;
+    const axis = this.axis;
+
+    let pos = xy[xOrY] - axis.pos;
 
     if (!axis.horiz) {
         pos = axis.len - pos;
@@ -134,7 +138,7 @@ addEvent(Tick, 'afterGetPosition', function (
 });
 
 wrap(Tick.prototype, 'getLabelPosition', function (
-    this: Highcharts.Tick,
+    this: Tick,
     proceed: Function,
     x: number,
     y: number,

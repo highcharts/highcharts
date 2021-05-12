@@ -21,6 +21,12 @@ const {
     timeUnits
 } = U;
 
+declare module './AxisComposition' {
+    interface AxisComposition {
+        dateTime?: DateTimeAxis['dateTime'];
+    }
+}
+
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
         pointInterval?: number;
@@ -64,9 +70,6 @@ declare global {
  * @private
  */
 declare module './Types' {
-    interface AxisComposition {
-        dateTime?: DateTimeAxis['dateTime'];
-    }
     interface AxisTypeRegistry {
         DateTimeAxis: DateTimeAxis;
     }

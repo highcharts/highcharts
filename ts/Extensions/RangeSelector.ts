@@ -49,6 +49,13 @@ const {
     splat
 } = U;
 
+declare module '../Core/Axis/AxisLike' {
+    interface AxisLike {
+        newMax?: number;
+        range?: (null|number|Highcharts.RangeSelectorButtonsOptions);
+    }
+}
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         extraBottomMargin?: boolean;
@@ -68,10 +75,6 @@ declare global {
             'all'|'day'|'hour'|'millisecond'|'minute'|'month'|'second'|'week'|
             'year'|'ytd'
         );
-        interface Axis {
-            newMax?: number;
-            range?: (null|number|RangeSelectorButtonsOptions);
-        }
         interface Options {
             rangeSelector?: DeepPartial<RangeSelectorOptions>;
         }
@@ -859,7 +862,7 @@ class RangeSelector {
             rangeMin,
             minSetting: (number|null|undefined),
             rangeSetting: (number|undefined),
-            ctx,
+            ctx: Axis,
             ytdExtremes,
             dataGrouping = rangeOptions.dataGrouping;
 
@@ -898,7 +901,7 @@ class RangeSelector {
                     chart: chart,
                     dataMin: dataMin,
                     dataMax: dataMax
-                } as Highcharts.Axis;
+                } as any;
                 newMin = baseAxis.minFromRange.call(ctx);
                 if (isNumber(ctx.newMax)) {
                     newMax = ctx.newMax as any;
@@ -1071,10 +1074,7 @@ class RangeSelector {
             // If a data grouping is applied to the current button, release it
             // when extremes change
             if (chart.xAxis && chart.xAxis[0]) {
-                addEvent(chart.xAxis[0], 'setExtremes', function (
-                    this: Highcharts.Axis,
-                    e: any
-                ): void {
+                addEvent(chart.xAxis[0], 'setExtremes', function (e: any): void {
                     if (
                         (this.max as any) - (this.min as any) !==
                             chart.fixedRange &&
@@ -2805,9 +2805,7 @@ function preferredInputType(format: string): string {
  * @return {number|undefined}
  *         The new minimum value.
  */
-Axis.prototype.minFromRange = function (
-    this: Highcharts.Axis
-): (number|undefined) {
+Axis.prototype.minFromRange = function (): (number|undefined) {
     let rangeOptions = this.range,
         type = (rangeOptions as any).type,
         min,
@@ -2954,7 +2952,7 @@ if (!H.RangeSelector) {
                 delete rangeSelector.deferredYTDClick;
             }
 
-            axes.forEach(function (axis: Highcharts.Axis): void {
+            axes.forEach(function (axis): void {
                 axis.updateNames();
                 axis.setScale();
             });

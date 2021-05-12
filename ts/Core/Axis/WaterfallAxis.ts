@@ -24,13 +24,16 @@ const {
     objectEach
 } = U;
 
+declare module './AxisComposition' {
+    interface AxisComposition {
+        waterfall?: WaterfallAxis['waterfall'];
+    }
+}
+
 /**
  * @private
  */
 declare module '../../Core/Axis/Types' {
-    interface AxisComposition {
-        waterfall?: WaterfallAxis['waterfall'];
-    }
     interface AxisTypeRegistry {
         WaterfallAxis: WaterfallAxis;
     }

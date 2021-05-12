@@ -17,6 +17,7 @@
  * */
 
 import type AnimationOptions from '../Animation/AnimationOptions';
+import type Axis from '../Axis/Axis';
 import type { AxisType } from '../Axis/Types';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
@@ -2744,8 +2745,6 @@ class Series {
 
     public tooltipOptions: Highcharts.TooltipOptions = void 0 as any;
 
-    public touched?: boolean;
-
     public tracker?: SVGElement;
 
     public trackerGroups?: Array<string>;
@@ -2983,9 +2982,7 @@ class Series {
                 let index = 0;
 
                 // loop through the chart's axis objects
-                (chart as any)[AXIS].forEach(function (
-                    axis: Highcharts.Axis
-                ): void {
+                (chart as any)[AXIS].forEach(function (axis: Axis): void {
                     axisOptions = axis.options;
 
                     // apply if the series xAxis or yAxis option mathches
@@ -5435,9 +5432,9 @@ class Series {
             graph = this.graph,
             area = this.area,
             chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight),
-            axis = (this as any)[
+            axis: Axis = (this as any)[
                 (this.zoneAxis || 'y') + 'Axis'
-            ] as Highcharts.Axis,
+            ],
             extremes: RangeSelector.RangeObject,
             reversed: (boolean|undefined),
             inverted = chart.inverted,
@@ -5655,12 +5652,14 @@ class Series {
         zIndex?: number,
         parent?: SVGElement
     ): SVGElement {
-        let group = (this as any)[prop],
-            isNew = !group,
+        let group = (this as any)[prop];
+
+        const isNew = !group,
             attrs: SVGAttributes = {
                 visibility,
                 zIndex: zIndex || 0.1 // IE8 and pointer logic use this
             };
+
         // Avoid setting undefined opacity, or in styled mode
         if (
             typeof this.opacity !== 'undefined' &&

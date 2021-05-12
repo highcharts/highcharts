@@ -19,13 +19,16 @@ const {
     pick
 } = U;
 
+declare module './AxisComposition' {
+    interface AxisComposition {
+        logarithmic?: LogarithmicAxis['logarithmic'];
+    }
+}
+
 /**
  * @private
  */
 declare module './Types' {
-    interface AxisComposition {
-        logarithmic?: LogarithmicAxis['logarithmic'];
-    }
     interface AxisTypeRegistry {
         LogarithmicAxis: LogarithmicAxis;
     }

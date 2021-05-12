@@ -543,7 +543,7 @@ class StackItem {
         y: number,
         xWidth: number,
         h: number,
-        axis: Highcharts.Axis
+        axis: Axis
     ): BBoxObject {
         const reversed = stackItem.axis.reversed,
             inverted = chart.inverted,

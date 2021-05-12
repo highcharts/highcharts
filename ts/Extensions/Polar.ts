@@ -60,6 +60,12 @@ const {
  *
  * */
 
+declare module '../Core/Axis/AxisLike' {
+    interface AxisLike {
+        center?: Array<number>;
+    }
+}
+
 declare module '../Core/Renderer/SVG/SVGRendererLike' {
     interface SVGRendererLike {
         clipCircle(
@@ -103,9 +109,6 @@ declare global {
     namespace Highcharts {
         interface AreaRangeSeries {
             findAlignments: PolarSeries['findAlignments'];
-        }
-        interface Axis {
-            center?: Array<number>;
         }
         interface PolarConnector {
             leftContX: number;
@@ -1089,7 +1092,7 @@ wrap(pointerProto, 'getCoordinates', function (
 
     if (chart.polar) {
 
-        chart.axes.forEach(function (axis: Highcharts.Axis): void {
+        chart.axes.forEach(function (axis): void {
             let isXAxis = axis.isXAxis,
                 center = axis.center,
                 x,

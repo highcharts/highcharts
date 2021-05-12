@@ -82,7 +82,7 @@ import '../../Extensions/RangeSelector.js';
  *
  * */
 
-declare module '../Axis/Types' {
+declare module '../Axis/AxisLike' {
     interface AxisLike {
         crossLabel?: SVGElement;
         setCompare(compare?: string, redraw?: boolean): void;
@@ -277,7 +277,7 @@ class StockChart extends Chart {
     public createAxis(
         type: string,
         options: Chart.CreateAxisOptionsObject
-    ): Highcharts.Axis {
+    ): Axis {
         options.axis = merge(
             getDefaultAxisOptions(type, options.axis),
             options.axis,
@@ -468,10 +468,7 @@ addEvent(Series, 'setOptions', function (
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
-addEvent(Axis, 'autoLabelAlign', function (
-    this: Highcharts.Axis,
-    e: Event
-): void {
+addEvent(Axis, 'autoLabelAlign', function (e: Event): void {
     let chart = this.chart,
         options = this.options,
         panes = chart._labelPanes = chart._labelPanes || {},
@@ -497,7 +494,7 @@ addEvent(Axis, 'autoLabelAlign', function (
 });
 
 // Clear axis from label panes (#6071)
-addEvent(Axis, 'destroy', function (this: Highcharts.Axis): void {
+addEvent(Axis, 'destroy', function (): void {
     const chart = this.chart,
         key = this.options && (this.options.top + ',' + this.options.height);
 
@@ -508,7 +505,6 @@ addEvent(Axis, 'destroy', function (this: Highcharts.Axis): void {
 
 // Override getPlotLinePath to allow for multipane charts
 addEvent(Axis, 'getPlotLinePath', function (
-    this: Highcharts.Axis,
     e: Event & Highcharts.AxisPlotLinePathOptionsObject
 ): void {
     let axis = this,
@@ -527,8 +523,8 @@ addEvent(Axis, 'getPlotLinePath', function (
         y2,
         result = [] as SVGPath,
         axes = [], // #3416 need a default array
-        axes2: Array<Highcharts.Axis>,
-        uniqueAxes: Array<Highcharts.Axis>,
+        axes2: Array<Axis>,
+        uniqueAxes: Array<Axis>,
         translatedValue = e.translatedValue,
         value = e.value,
         force = e.force,
@@ -539,7 +535,7 @@ addEvent(Axis, 'getPlotLinePath', function (
      * series.
      * @private
      */
-    function getAxis(coll: string): Array<Highcharts.Axis> {
+    function getAxis(coll: string): Array<Axis> {
         const otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
             opt = (axis.options as any)[otherColl];
 
@@ -550,11 +546,11 @@ addEvent(Axis, 'getPlotLinePath', function (
 
         // Other axis indexed by id (like navigator)
         if (isString(opt)) {
-            return [chart.get(opt) as Highcharts.Axis];
+            return [chart.get(opt) as Axis];
         }
 
         // Auto detect based on existing series
-        return series.map(function (s: Series): Highcharts.Axis {
+        return series.map(function (s: Series): Axis {
             return (s as any)[otherColl];
         });
     }
@@ -573,7 +569,7 @@ addEvent(Axis, 'getPlotLinePath', function (
 
         // Get the related axes based options.*Axis setting #2810
         axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
-        axes2.forEach(function (A: Highcharts.Axis): void {
+        axes2.forEach(function (A): void {
             if (
                 defined(A.options.id) ?
                     A.options.id.indexOf('navigator') === -1 :
@@ -599,13 +595,11 @@ addEvent(Axis, 'getPlotLinePath', function (
         uniqueAxes = axes.length ?
             [] :
             [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; // #3742
-        axes.forEach(function (axis2: Highcharts.Axis): void {
+        axes.forEach(function (axis2): void {
             if (
                 uniqueAxes.indexOf(axis2) === -1 &&
                 // Do not draw on axis which overlap completely. #5424
-                !find(uniqueAxes, function (
-                    unique: Highcharts.Axis
-                ): boolean {
+                !find(uniqueAxes, function (unique: Axis): boolean {
                     return unique.pos === axis2.pos && unique.len === axis2.len;
                 })
             ) {
@@ -619,7 +613,7 @@ addEvent(Axis, 'getPlotLinePath', function (
         );
         if (isNumber(transVal)) {
             if (axis.horiz) {
-                uniqueAxes.forEach(function (axis2: Highcharts.Axis): void {
+                uniqueAxes.forEach(function (axis2): void {
                     let skip;
 
                     y1 = axis2.pos;
@@ -646,7 +640,7 @@ addEvent(Axis, 'getPlotLinePath', function (
                     }
                 });
             } else {
-                uniqueAxes.forEach(function (axis2: Highcharts.Axis): void {
+                uniqueAxes.forEach(function (axis2): void {
                     let skip;
 
                     x1 = axis2.pos;
@@ -716,7 +710,7 @@ SVGRenderer.prototype.crispPolyLine = function (
 };
 
 // Wrapper to hide the label
-addEvent(Axis, 'afterHideCrosshair', function (this: Highcharts.Axis): void {
+addEvent(Axis, 'afterHideCrosshair', function (): void {
     if (this.crossLabel) {
         this.crossLabel = this.crossLabel.hide();
     }
@@ -724,7 +718,6 @@ addEvent(Axis, 'afterHideCrosshair', function (this: Highcharts.Axis): void {
 
 // Extend crosshairs to also draw the label
 addEvent(Axis, 'afterDrawCrosshair', function (
-    this: Highcharts.Axis,
     event: { e: PointerEvent; point: Point }
 ): void {
 

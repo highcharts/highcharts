@@ -19,13 +19,16 @@ const {
     pick
 } = U;
 
+declare module './AxisComposition' {
+    interface AxisComposition {
+        mapAxis?: MapAxis['mapAxis'];
+    }
+}
+
 /**
  * @private
  */
 declare module './Types' {
-    interface AxisComposition {
-        mapAxis?: MapAxis['mapAxis'];
-    }
     interface AxisTypeRegistry {
         MapAxis: MapAxis;
     }

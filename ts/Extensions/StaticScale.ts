@@ -81,7 +81,7 @@ addEvent(Axis, 'afterSetOptions', function (): void {
 
 Chart.prototype.adjustHeight = function (): void {
     if (this.redrawTrigger !== 'adjustHeight') {
-        (this.axes || []).forEach(function (axis: Highcharts.Axis): void {
+        (this.axes || []).forEach(function (axis): void {
             let chart = axis.chart,
                 animate =
                     !!chart.initiatedScale &&

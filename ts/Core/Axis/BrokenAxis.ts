@@ -28,6 +28,12 @@ const {
     pick
 } = U;
 
+declare module './AxisComposition' {
+    interface AxisComposition {
+        brokenAxis?: BrokenAxis['brokenAxis'];
+    }
+}
+
 declare module '../Series/SeriesLike' {
     interface SeriesLike {
         /** @requires modules/broken-axis */
@@ -48,9 +54,6 @@ declare module '../Series/SeriesOptions' {
  * @private
  */
 declare module './Types' {
-    interface AxisComposition {
-        brokenAxis?: BrokenAxis['brokenAxis'];
-    }
     interface AxisTypeRegistry {
         BrokenAxis: BrokenAxis;
     }

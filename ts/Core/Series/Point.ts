@@ -453,8 +453,6 @@ class Point {
      */
     public total?: number = void 0;
 
-    public touched?: boolean;
-
     /**
      * For certain series types, like pie charts, where individual points can
      * be shown or hidden.

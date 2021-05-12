@@ -160,7 +160,7 @@ addEvent(PlotLineOrBand, 'render', function (): void {
 });
 
 wrap(PlotLineOrBand.prototype, 'getLabelText', function (
-    this: Highcharts.PlotLineOrBand,
+    this: PlotLineOrBand,
     defaultMethod: Function,
     defaultLabelOptions: (
         Highcharts.AxisPlotLinesLabelOptions|

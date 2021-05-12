@@ -46,6 +46,18 @@ const {
 import './GridAxis.js';
 import './BrokenAxis.js';
 
+declare module './AxisComposition' {
+    interface AxisComposition {
+        treeGrid?: TreeGridAxis['treeGrid'];
+    }
+}
+
+declare module './AxisLike' {
+    interface AxisLike {
+        utils: TreeGridAxisUtilsObject;
+    }
+}
+
 declare module '../Series/PointOptions' {
     interface PointOptions extends Highcharts.TreePointOptionsObject {
         collapsed?: boolean;
@@ -54,27 +66,9 @@ declare module '../Series/PointOptions' {
 }
 
 /**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Axis {
-            utils: TreeGridAxisUtilsObject;
-        }
-        interface TreeGridAxisUtilsObject {
-            getNode: typeof Tree['getNode'];
-        }
-    }
-}
-
-/**
  * @private
  */
 declare module './Types' {
-    interface AxisComposition {
-        treeGrid?: TreeGridAxis['treeGrid'];
-    }
     interface AxisTypeRegistry {
         TreeGridAxis: TreeGridAxis;
     }
@@ -93,6 +87,10 @@ interface TreeGridAxis extends Axis {
     options: TreeGridAxis.Options;
     series: Array<GanttSeries>;
     treeGrid: TreeGridAxis.Additions;
+}
+
+interface TreeGridAxisUtilsObject {
+    getNode: typeof Tree['getNode'];
 }
 
 /**
@@ -428,7 +426,7 @@ namespace TreeGridAxis {
         const chart = e.target,
             axes = chart.axes;
 
-        (axes.filter(function (axis: Highcharts.Axis): boolean {
+        (axes.filter(function (axis): boolean {
             return axis.options.type === 'treegrid';
         }) as Array<TreeGridAxis>).forEach(
             function (axis: TreeGridAxis): void {

@@ -48,7 +48,7 @@ const {
  *
  * */
 
-type YAxisOptions = (typeof Axis)['defaultYAxisOptions'];
+type YAxisOptions = Highcharts.YAxisOptions;
 
 declare module '../Chart/ChartLike'{
     interface ChartLike {
@@ -864,6 +864,7 @@ class RadialAxis {
                     axis.isRadial &&
                     axis.tickPositions &&
                     // undocumented option for now, but working
+                    axis.options.labels &&
                     axis.options.labels.allowOverlap !== true
                 ) {
                     return axis.tickPositions
@@ -899,8 +900,9 @@ class RadialAxis {
 
         // Actions before axis init.
         addEvent(AxisClass, 'init', function (e: { userOptions: RadialAxisOptions }): void {
-            const axis = this as RadialAxis;
-            const chart = axis.chart;
+            const axis = this as RadialAxis,
+                chart = axis.chart;
+
             let inverted = chart.inverted,
                 angular = chart.angular,
                 polar = chart.polar,
@@ -910,8 +912,7 @@ class RadialAxis {
                 isCircular: (boolean|undefined),
                 chartOptions = chart.options,
                 paneIndex = e.userOptions.pane || 0,
-                pane = (this as Highcharts.Axis).pane =
-                    chart.pane && chart.pane[paneIndex];
+                pane = axis.pane = chart.pane && chart.pane[paneIndex] as any;
 
             // Prevent changes for colorAxis
             if (coll === 'colorAxis') {
@@ -923,7 +924,7 @@ class RadialAxis {
             if (angular) {
 
                 if (isHidden) {
-                    HiddenAxis.init(axis);
+                    HiddenAxis.init(axis as HiddenAxis);
                 } else {
                     RadialAxis.init(axis);
                 }
@@ -1060,16 +1061,16 @@ class RadialAxis {
 
         // Find the center position of the label based on the distance option.
         addEvent(TickClass, 'afterGetLabelPosition', function (e: RadialAfterGetPositionEvent): void {
-            const tick = this;
-            const axis = tick.axis as RadialAxis;
-            const label = tick.label;
+            const tick = this,
+                axis = tick.axis as RadialAxis,
+                label = tick.label;
 
             if (!label) {
                 return;
             }
 
             let labelBBox = label.getBBox(),
-                labelOptions = axis.options.labels,
+                labelOptions = axis.options.labels as any,
                 optionsY = labelOptions.y,
                 ret,
                 centerSlot = 20, // 20 degrees to each side at the top and bottom

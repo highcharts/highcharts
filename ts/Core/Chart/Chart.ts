@@ -103,6 +103,14 @@ const {
  *
  * */
 
+declare module '../Axis/AxisLike' {
+    interface AxisLike {
+        extKey?: string;
+        index?: number;
+        touched?: boolean;
+    }
+}
+
 declare module './ChartLike' {
     interface ChartLike {
         resetZoomButton?: SVGElement;
@@ -113,9 +121,16 @@ declare module './ChartLike' {
     }
 }
 
+declare module '../Series/PointLike' {
+    interface PointLike {
+        touched?: boolean;
+    }
+}
+
 declare module '../Series/SeriesLike' {
     interface SeriesLike {
         index?: number;
+        touched?: boolean;
     }
 }
 
@@ -125,10 +140,6 @@ declare module '../Series/SeriesLike' {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            extKey?: string;
-            index?: number;
-        }
         interface ChartOptions {
             forExport?: boolean;
             renderer?: string;
@@ -1629,8 +1640,8 @@ class Chart {
             axisOffset = chart.axisOffset = [0, 0, 0, 0],
             colorAxis = chart.colorAxis,
             margin = chart.margin,
-            getOffset = function (axes: Array<Highcharts.Axis>): void {
-                axes.forEach(function (axis: Highcharts.Axis): void {
+            getOffset = function (axes: Array<Axis>): void {
+                axes.forEach(function (axis): void {
                     if (axis.visible) {
                         axis.getOffset();
                     }
@@ -1835,7 +1846,7 @@ class Chart {
         );
 
         // handle axes
-        chart.axes.forEach(function (axis: Highcharts.Axis): void {
+        chart.axes.forEach(function (axis): void {
             axis.isDirty = true;
             axis.setScale();
         });
@@ -1975,7 +1986,7 @@ class Chart {
         };
 
         if (!skipAxes) {
-            chart.axes.forEach(function (axis: Highcharts.Axis): void {
+            chart.axes.forEach(function (axis): void {
                 axis.setAxisSize();
                 axis.setAxisTranslation();
             });
@@ -2345,8 +2356,8 @@ class Chart {
             tempHeight,
             redoHorizontal: boolean,
             redoVertical: boolean,
-            renderAxes = function (axes: Array<Highcharts.Axis>): void {
-                axes.forEach(function (axis: Highcharts.Axis): void {
+            renderAxes = function (axes: Array<Axis>): void {
+                axes.forEach(function (axis): void {
                     if (axis.visible) {
                         axis.render();
                     }
@@ -2376,7 +2387,7 @@ class Chart {
         // Record preliminary dimensions for later comparison
         tempWidth = chart.plotWidth;
 
-        axes.some(function (axis: Highcharts.Axis): (boolean|undefined) {
+        axes.some(function (axis: Axis): (boolean|undefined) {
             if (
                 axis.horiz &&
                 axis.visible &&
@@ -2394,7 +2405,7 @@ class Chart {
         tempHeight = chart.plotHeight;
 
         // Get margins by pre-rendering axes
-        axes.forEach(function (axis: Highcharts.Axis): void {
+        axes.forEach(function (axis): void {
             axis.setScale();
         });
         chart.getAxisMargins();
@@ -2407,7 +2418,7 @@ class Chart {
 
         if (redoHorizontal || redoVertical) {
 
-            axes.forEach(function (axis: Highcharts.Axis): void {
+            axes.forEach(function (axis): void {
                 if (
                     (axis.horiz && redoHorizontal) ||
                     (!axis.horiz && redoVertical)
@@ -2815,7 +2826,7 @@ class Chart {
         isX?: boolean,
         redraw?: boolean,
         animation?: boolean
-    ): Highcharts.Axis {
+    ): Axis {
         return this.createAxis(
             isX ? 'xAxis' : 'yAxis',
             { axis: options, redraw: redraw, animation: animation }
@@ -2850,7 +2861,7 @@ class Chart {
         options: ColorAxis.Options,
         redraw?: boolean,
         animation?: boolean
-    ): Highcharts.Axis {
+    ): Axis {
         return this.createAxis(
             'colorAxis',
             { axis: options, redraw: redraw, animation: animation }
@@ -2875,7 +2886,7 @@ class Chart {
     public createAxis(
         type: string,
         options: Chart.CreateAxisOptionsObject
-    ): Highcharts.Axis {
+    ): Axis {
         let chartOptions = this.options,
             isColorAxis = type === 'colorAxis',
             axisOptions = options.axis,
@@ -3335,7 +3346,7 @@ class Chart {
         });
 
         if (updateAllAxes) {
-            chart.axes.forEach(function (axis: Highcharts.Axis): void {
+            chart.axes.forEach(function (axis): void {
                 axis.update({}, false);
             });
         }
@@ -3501,7 +3512,7 @@ class Chart {
 
         // If zoom is called with no arguments, reset the axes
         if (!event || (event as any).resetSelection) {
-            chart.axes.forEach(function (axis: Highcharts.Axis): void {
+            chart.axes.forEach(function (axis): void {
                 hasZoomed = (axis.zoom as any)();
             });
             pointer.initiated = false; // #6804

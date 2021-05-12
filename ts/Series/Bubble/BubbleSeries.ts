@@ -56,7 +56,7 @@ import './BubbleLegend.js';
  *
  * */
 
-declare module '../../Core/Axis/Types' {
+declare module '../../Core/Axis/AxisLike' {
     interface AxisLike {
         beforePadding?(): void;
     }
@@ -623,7 +623,7 @@ extend(BubbleSeries.prototype, {
 
 // Add logic to pad each axis with the amount of pixels necessary to avoid the
 // bubbles to overflow.
-Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
+Axis.prototype.beforePadding = function (): void {
     let axis = this,
         axisLength = this.len,
         chart = this.chart,

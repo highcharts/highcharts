@@ -11,7 +11,7 @@
 'use strict';
 
 import type AnimationOptions from '../Animation/AnimationOptions';
-import type { AxisLike } from './Types';
+import type AxisLike from './AxisLike';
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type GradientColor from '../Color/GradientColor';
@@ -51,6 +51,13 @@ const {
     splat
 } = U;
 
+declare module '../Axis/AxisLike' {
+    interface AxisLike {
+        labelLeft?: number;
+        labelRight?: number;
+    }
+}
+
 declare module '../Chart/ChartLike' {
     interface ChartLike {
         colorAxis?: Array<ColorAxis>;
@@ -85,10 +92,6 @@ declare module '../Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            labelLeft?: number;
-            labelRight?: number;
-        }
         interface Options {
             colorAxis?: (
                 DeepPartial<ColorAxis.Options>|

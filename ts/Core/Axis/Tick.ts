@@ -16,9 +16,10 @@
  *
  * */
 
+import type Axis from './Axis.js';
 import type CSSObject from '../Renderer/CSSObject';
 import type PositionObject from '../Renderer/PositionObject';
-import type { TickLike } from '../Axis/Types';
+import type TickLike from './TickLike';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -61,6 +62,7 @@ declare global {
         interface TickPositionObject extends PositionObject {
             opacity?: number;
         }
+        /*
         interface Tick extends TickLike {}
         class Tick {
             public constructor(
@@ -146,6 +148,7 @@ declare global {
                 reverseCrisp: number
             ): void;
         }
+         */
     }
 }
 
@@ -213,7 +216,7 @@ class Tick {
      * */
 
     public constructor(
-        axis: Highcharts.Axis,
+        axis: Axis,
         pos: number,
         type?: string,
         noLabel?: boolean,
@@ -261,7 +264,7 @@ class Tick {
      *
      * */
 
-    public axis: Highcharts.Axis;
+    public axis: Axis;
 
     public gridLine?: SVGElement;
 
@@ -1248,6 +1251,8 @@ class Tick {
     }
 }
 
-H.Tick = Tick as typeof Highcharts.Tick;
+interface Tick extends TickLike {
+    // nothing here yet
+}
 
-export default H.Tick;
+export default Tick;

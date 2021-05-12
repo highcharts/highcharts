@@ -33,6 +33,26 @@ const {
  *
  * */
 
+declare module './AxisComposition' {
+    interface AxisComposition {
+        ordinal?: OrdinalAxis['ordinal'];
+        /** @deprecated */
+        getTimeTicks(
+            normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
+            min: number,
+            max: number,
+            startOfWeek?: number,
+            positions?: Array<number>,
+            closestDistance?: number,
+            findHigherRanks?: boolean
+        ): TickPositionsArray;
+        /** @deprecated */
+        lin2val(val: number, fromIndex?: boolean): number;
+        /** @deprecated */
+        val2lin(val: number, toIndex?: boolean): number;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -52,23 +72,6 @@ declare module './TimeTicksInfoObject' {
 }
 
 declare module './Types' {
-    interface AxisComposition {
-        ordinal?: OrdinalAxis['ordinal'];
-        /** @deprecated */
-        getTimeTicks(
-            normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
-            min: number,
-            max: number,
-            startOfWeek?: number,
-            positions?: Array<number>,
-            closestDistance?: number,
-            findHigherRanks?: boolean
-        ): TickPositionsArray;
-        /** @deprecated */
-        lin2val(val: number, fromIndex?: boolean): number;
-        /** @deprecated */
-        val2lin(val: number, toIndex?: boolean): number;
-    }
     interface AxisTypeRegistry {
         OrdinalAxis: OrdinalAxis;
     }

@@ -8,7 +8,7 @@
  *
  * */
 
-import type { AxisLike } from './Types';
+import type AxisLike from './AxisLike';
 import type Chart from '../Chart/Chart.js';
 import Axis from './Axis.js';
 import U from '../Utilities.js';
@@ -108,7 +108,7 @@ class ZChart {
     public static wrapAddZAxis(
         this: Chart,
         options: Highcharts.AxisOptions
-    ): Highcharts.Axis {
+    ): Axis {
         return new ZAxis(this, options);
     }
 

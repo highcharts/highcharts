@@ -33,6 +33,18 @@ const {
     wrap
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisComposition' {
+    interface AxisComposition {
+        axis3D?: Axis3D['axis3D'];
+    }
+}
+
 declare module '../Renderer/Position3DObject' {
     interface Position3DObject {
         matrix?: Array<number>;
@@ -69,9 +81,6 @@ declare global {
  * @private
  */
 declare module './Types' {
-    interface AxisComposition {
-        axis3D?: Axis3D['axis3D'];
-    }
     interface AxisTypeRegistry {
         Axis3D: Axis3D;
     }

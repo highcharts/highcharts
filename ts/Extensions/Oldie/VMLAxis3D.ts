@@ -16,13 +16,16 @@ const {
     addEvent
 } = U;
 
+declare module '../../Core/Axis/AxisComposition' {
+    interface AxisComposition {
+        vml?: VMLAxis3D['vml'];
+    }
+}
+
 /**
  * @private
  */
 declare module '../../Core/Axis/Types' {
-    interface AxisComposition {
-        vml?: VMLAxis3D['vml'];
-    }
     interface AxisTypeRegistry {
         VMLAxis3D: VMLAxis3D;
     }

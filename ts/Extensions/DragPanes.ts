@@ -39,6 +39,12 @@ const {
     wrap
 } = U;
 
+declare module '../Core/Axis/AxisLike' {
+    interface AxisLike {
+        resizer?: AxisResizer;
+    }
+}
+
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         activeResizer?: boolean;
@@ -51,9 +57,6 @@ declare module '../Core/Chart/ChartLike' {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            resizer?: AxisResizer;
-        }
         interface XAxisOptions {
             maxLength?: (number|string);
             minLength?: (number|string);
@@ -274,14 +277,12 @@ class AxisResizer {
         }
     }
 
-    public constructor(
-        axis: Highcharts.Axis
-    ) {
+    public constructor(axis: Axis) {
         this.init(axis);
     }
     /* eslint-enable no-invalid-this */
 
-    public axis: Highcharts.Axis = void 0 as any;
+    public axis: Axis = void 0 as any;
     public controlLine: SVGElement = void 0 as any;
     public eventsToUnbind?: Array<Function>;
     public grabbed?: boolean;
@@ -301,7 +302,7 @@ class AxisResizer {
      *        Main axis for the AxisResizer.
      */
     public init(
-        axis: Highcharts.Axis,
+        axis: Axis,
         update?: boolean
     ): void {
         this.axis = axis;
@@ -539,7 +540,7 @@ class AxisResizer {
                 i: number
             ): void {
                 // Axes given as array index, axis object or axis id
-                let axis: Highcharts.Axis = isNumber(axisInfo) ?
+                let axis: Axis = isNumber(axisInfo) ?
                         // If it's a number - it's an index
                         chart.yAxis[axisInfo] :
                         (

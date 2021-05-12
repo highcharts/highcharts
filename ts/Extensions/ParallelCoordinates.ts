@@ -38,6 +38,12 @@ const {
     wrap
 } = U;
 
+declare module '../Core/Axis/AxisComposition' {
+    interface AxisComposition {
+        parallelCoordinates?: ParallelAxis['parallelCoordinates'];
+    }
+}
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         hasParallelCoordinates?: Highcharts.ParallelChart['hasParallelCoordinates'];
@@ -76,9 +82,6 @@ declare global {
  * @private
  */
 declare module '../Core/Axis/Types' {
-    interface AxisComposition {
-        parallelCoordinates?: ParallelAxis['parallelCoordinates'];
-    }
     interface AxisTypeRegistry {
         ParallelAxis: ParallelAxis;
     }

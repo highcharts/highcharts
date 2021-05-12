@@ -2452,7 +2452,7 @@ class Navigator {
      * @private
      * @function Highcharts.Navigator#modifyBaseAxisExtremes
      */
-    public modifyBaseAxisExtremes(this: Highcharts.Axis): void {
+    public modifyBaseAxisExtremes(this: Axis): void {
         let baseXAxis = this,
             navigator = baseXAxis.chart.navigator,
             baseExtremes = baseXAxis.getExtremes(),

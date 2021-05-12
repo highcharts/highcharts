@@ -48,27 +48,40 @@ const {
     wrap
 } = U;
 
+declare module './AxisComposition' {
+    interface AxisComposition {
+        grid?: GridAxis['grid'];
+    }
+}
+
+declare module './AxisLike' {
+    interface AxisLike {
+        axisBorder?: SVGElement;
+        rightWall?: SVGElement;
+        getMaxLabelDimensions(
+            ticks: Record<string, Tick>,
+            tickPositions: Array<(number|string)>
+        ): SizeObject;
+        addExtraBorder(
+            path: SVGPath,
+        ): SizeObject;
+    }
+}
+
+declare module './TickLike' {
+    interface TickLike {
+        slotWidth?: number;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            axisBorder?: SVGElement;
-            getMaxLabelDimensions(
-                ticks: Record<string, Tick>,
-                tickPositions: Array<(number|string)>
-            ): SizeObject;
-            addExtraBorder(
-                path: SVGPath,
-            ): SizeObject;
-        }
         interface AxisLabelsFormatterContextObject {
             point?: Point;
-        }
-        interface Tick {
-            slotWidth?: number;
         }
         interface XAxisOptions {
             grid?: GridAxis.Options;
@@ -81,12 +94,6 @@ declare global {
  * @private
  */
 declare module './Types' {
-    interface AxisLike {
-        rightWall?: SVGElement;
-    }
-    interface AxisComposition {
-        grid?: GridAxis['grid'];
-    }
     interface AxisTypeRegistry {
         GridAxis: GridAxis;
     }
@@ -101,7 +108,7 @@ const argsToArray = function (args: IArguments): Array<any> {
     },
     Chart = H.Chart;
 
-const applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
+const applyGridOptions = function applyGridOptions(axis: Axis): void {
     const options = axis.options;
 
     // Center-align by default
@@ -226,7 +233,7 @@ const applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void 
  * @todo Move this to the generic axis implementation, as it is used there.
  */
 Axis.prototype.getMaxLabelDimensions = function (
-    ticks: Record<string, Highcharts.Tick>,
+    ticks: Record<string, Tick>,
     tickPositions: Array<(number|string)>
 ): SizeObject {
     const dimensions: SizeObject = {
@@ -543,7 +550,7 @@ class GridAxisAdditions {
             lastIndex = 0;
 
         (chart as any)[axis.coll].forEach(function (
-            otherAxis: Highcharts.Axis,
+            otherAxis: Axis,
             index: number
         ): void {
             if (otherAxis.side === axis.side && !otherAxis.options.isInternal) {
@@ -895,9 +902,7 @@ class GridAxis {
                 }
             }
 
-            (grid && grid.columns || []).forEach(function (
-                column: Highcharts.Axis
-            ): void {
+            (grid && grid.columns || []).forEach(function (column): void {
                 column.render();
             });
             // Manipulate the tick mark visibility
@@ -1116,7 +1121,6 @@ class GridAxis {
                     !defined(userOptions.tickInterval)
                 ) {
                     gridAxisOptions.tickPositioner = function (
-                        this: Highcharts.Axis,
                         min: number,
                         max: number
                     ): (TickPositionsArray|undefined) {
