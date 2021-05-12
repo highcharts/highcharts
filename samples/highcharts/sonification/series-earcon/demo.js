@@ -19,9 +19,6 @@ var chart = Highcharts.chart('container', {
     legend: {
         enabled: false
     },
-    accessibility: {
-        landmarkVerbosity: 'one'
-    },
     plotOptions: {
         series: {
             sonification: {
