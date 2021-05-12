@@ -23,6 +23,7 @@ const {
     css,
     defined,
     error,
+    isNumber,
     pick,
     timeUnits
 } = U;
@@ -90,7 +91,6 @@ interface OrdinalAxis extends Axis {
     ordinal: OrdinalAxis.Composition;
     getIndexOfPoint(
         val: number,
-        ordinalPositions: Array<number>,
         extendedOrdinalPositions: Array<number>
     ): number;
     getTimeTicks(
@@ -872,24 +872,37 @@ namespace OrdinalAxis {
          */
         axisProto.getIndexOfPoint = function (
             val: number,
-            ordinalPositions: Array<number>,
             extendedOrdinalPositions: Array<number>
         ): number {
-            const axis = this,
+            const axis = this;
+            let firstPointVal,
+                firstPointX,
+                secondPointX;
+
+            if (axis.series[0].points) {
+                firstPointVal = axis.series[0].points[0].x;
+                firstPointX = axis.series[0].points[0].plotX;
+                secondPointX = axis.series[0].points[1].plotX;
+            }
+
+            if (isNumber(firstPointVal) && isNumber(firstPointX) && isNumber(secondPointX)) {
                 // Distance in pixels between two points
                 // on the ordinal axis in the current zoom.
-                ordinalPointPixelInterval = axis.len / ordinalPositions.length - 1,
-                shiftIndex = val / ordinalPointPixelInterval;
+                const ordinalPointPixelInterval = secondPointX - firstPointX,
+                    shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
 
-            // Make sure that the returned index does not exceed array
-            // boundaries. If so, return the first or the last index of array.
-            return Math.min(
-                Math.max(
-                    extendedOrdinalPositions.indexOf(axis.min as any) + shiftIndex,
-                    0
-                ), // first index
-                extendedOrdinalPositions.length - 1 // last index
-            );
+                // Make sure that the returned index does not exceed array
+                // boundaries. If so, return the first or last index of array.
+                return Math.min(
+                    Math.max(
+                        extendedOrdinalPositions.indexOf(firstPointVal) + shiftIndex,
+                        0
+                    ), // first index
+                    extendedOrdinalPositions.length - 1 // last index
+                );
+            }
+
+            return 0;
         };
 
         /**
@@ -976,7 +989,7 @@ namespace OrdinalAxis {
             }
 
             if (ordinalPositions && extendedOrdinalPositions && extendedOrdinalPositions.length) {
-                const indexToShift = this.getIndexOfPoint(val, ordinalPositions, extendedOrdinalPositions),
+                const indexToShift = this.getIndexOfPoint(val, extendedOrdinalPositions),
                     leftNeighbor = Math.floor(indexToShift);
 
                 // In order to ensure that axis.min equals to some calculated
