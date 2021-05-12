@@ -24,11 +24,6 @@ const {
 } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
-interface ExtendedPositionObject extends PositionObject{
-    yAxis: number;
-    xAxis: number;
-}
-
 class Measure extends Annotation {
 
     /* *
@@ -509,7 +504,7 @@ class Measure extends Annotation {
                 crop: true,
                 xAxis: 0,
                 yAxis: 0,
-                point: function (target: any): ExtendedPositionObject {
+                point: function (target: any): MockPointOptions {
                     const annotation: Measure = target.annotation,
                         options = target.options;
 
