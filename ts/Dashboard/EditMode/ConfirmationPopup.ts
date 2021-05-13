@@ -60,8 +60,7 @@ class ConfirmationPopup extends Popup {
     * */
 
     public renderContent(
-        confirmCallback: Function,
-        context: RowEditToolbar|CellEditToolbar
+        options: ConfirmationPopup.ContentOptions
     ): void {
         // render content wrapper
         this.contentContainer = createElement(
@@ -82,7 +81,7 @@ class ConfirmationPopup extends Popup {
         // render text
         EditRenderer.renderText(
             this.contentContainer,
-            'Do you want to destroy the element?'
+            options.text || ''
         );
 
         // render buttons
@@ -90,10 +89,8 @@ class ConfirmationPopup extends Popup {
         EditRenderer.renderButton(
             this.contentContainer,
             {
-                value: 'Cancel',
-                callback: (): void => {
-                    this.closePopup();
-                }
+                value: options.cancelButton.value,
+                callback: options.cancelButton.callback
             }
         );
 
@@ -101,11 +98,14 @@ class ConfirmationPopup extends Popup {
         EditRenderer.renderButton(
             this.contentContainer,
             {
-                value: 'Confirm',
+                value: options.confirmButton.value,
                 className: EditGlobals.classNames.popupConfirmBtn,
                 callback: (): void => {
                     // run callback
-                    confirmCallback.call(context);
+                    // confirmCallback.call(context);
+                    options.confirmButton.callback.call(
+                        options.confirmButton.context
+                    );
                     // hide popup
                     this.closePopup();
                 }
@@ -114,14 +114,10 @@ class ConfirmationPopup extends Popup {
     }
 
     public show(
-        confirmCallback: Function,
-        context: RowEditToolbar|CellEditToolbar
+        options: ConfirmationPopup.ContentOptions
     ): void {
         this.showPopup();
-        this.renderContent(
-            confirmCallback,
-            context
-        );
+        this.renderContent(options);
         this.overlay.style.display = 'block';
     }
 
@@ -138,6 +134,23 @@ namespace ConfirmationPopup {
 
     export interface CloseIcon {
         icon: string;
+    }
+
+    export interface ContentOptions {
+        confirmButton: ConfirmButton;
+        cancelButton: ConfirmButton;
+        text: string;
+    }
+
+    export interface ConfirmButton {
+        value: string;
+        callback: Function;
+        context: RowEditToolbar|CellEditToolbar;
+    }
+
+    export interface CancelButton{
+        value: string;
+        callback: Function;
     }
 }
 

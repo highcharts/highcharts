@@ -60,7 +60,11 @@ const EditGlobals: EditGlobals = {
         caption: 'Caption',
         chartClassName: 'Chart class name',
         chartID: 'Chart id',
-        scaleElements: 'Scale elements'
+        scaleElements: 'Scale elements',
+        confirmDestroyRow: 'Do you want to destroy the row?',
+        confirmDestroyCell: 'Do you want to destroy the cell?',
+        confirmButton: 'Confirm',
+        cancelButton: 'Cancel'
     }
 };
 
@@ -131,6 +135,10 @@ namespace EditGlobals {
         chartClassName?: string;
         chartID?: string;
         scaleElements?: string;
+        confirmDestroyRow?: string;
+        confirmDestroyCell?: string;
+        confirmButton?: string;
+        cancelButton?: string;
     }
 
     export type TLangKeys = 'editMode'|'saveLocal'|'verticalSeparator';

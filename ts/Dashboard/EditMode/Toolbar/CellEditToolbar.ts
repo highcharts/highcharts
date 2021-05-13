@@ -66,10 +66,20 @@ class CellEditToolbar extends EditToolbar {
                     const parentNode = (this.menu.parent as CellEditToolbar);
                     const popup = this.menu.parent.editMode.confirmationPopup;
 
-                    popup.show(
-                        parentNode.onCellDestroy,
-                        parentNode
-                    );
+                    popup.show({
+                        confirmButton: {
+                            value: EditGlobals.lang.confirmButton,
+                            callback: parentNode.onCellDestroy,
+                            context: parentNode
+                        },
+                        cancelButton: {
+                            value: EditGlobals.lang.cancelButton,
+                            callback: (): void => {
+                                popup.closePopup();
+                            }
+                        },
+                        text: EditGlobals.lang.confirmDestroyCell
+                    });
                 }
             }
         }

@@ -66,10 +66,20 @@ class RowEditToolbar extends EditToolbar {
                     const parentNode = (this.menu.parent as RowEditToolbar);
                     const popup = this.menu.parent.editMode.confirmationPopup;
 
-                    popup.show(
-                        parentNode.onRowDestroy,
-                        parentNode
-                    );
+                    popup.show({
+                        confirmButton: {
+                            value: EditGlobals.lang.confirmButton,
+                            callback: parentNode.onRowDestroy,
+                            context: parentNode
+                        },
+                        cancelButton: {
+                            value: EditGlobals.lang.cancelButton,
+                            callback: (): void => {
+                                popup.closePopup();
+                            }
+                        },
+                        text: EditGlobals.lang.confirmDestroyRow
+                    });
                 }
             }
         }
