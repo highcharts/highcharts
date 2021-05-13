@@ -258,3 +258,83 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
         but changed respectively.`
     );
 });
+
+
+QUnit.test('lin2val- unit test', function (assert) {
+    const axis = {
+        min: 3,
+        len: 500,
+        extendedOrdinalPositions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        ordinal: {
+            positions: [3, 4, 5, 6, 7]
+        },
+        series: [{
+            points: [{
+                x: 3,
+                plotX: -20
+            }, {
+                x: 4,
+                plotX: 80 // distance between points 100px
+            }]
+        }]
+    };
+
+    // On the chart there are 5 points equaly spaced.
+    // The distance between them equals 100px.
+    // Thare are some points that are out of the current range.
+    // The last visible point is located at 380px.
+
+    axis.getIndexOfPoint = Highcharts.Axis.prototype.getIndexOfPoint;
+    function lin2val(val) {
+        return Highcharts.Axis.prototype.lin2val.call(axis, val);
+    }
+
+    assert.strictEqual(
+        lin2val(-20),
+        3,
+        `For the pixel value equal to the first point x position,
+        the function should return the value for that point.`
+    );
+    assert.strictEqual(
+        lin2val(80),
+        4,
+        `For the pixel value equal to the second point x position,
+        the function should return the value for that point.`
+    );
+    assert.strictEqual(
+        lin2val(25),
+        3,
+        `For the pixel value located between two points,
+        the function should return the value of the point on the left.`
+    );
+    assert.strictEqual(
+        lin2val(-50),
+        2,
+        `For the pixel value lower than the first point, the function should
+        return the next value from the extendedOrdinalPositions array.`
+    );
+    assert.strictEqual(
+        lin2val(-500),
+        0,
+        `For the pixel value lower than any point in extendedOrdinalPositions,
+        array, the function should return the first element of that array.`
+    );
+    assert.strictEqual(
+        lin2val(380),
+        7,
+        `For the pixel value equal to last point, 
+        the function should return the value for that point.`
+    );
+    assert.strictEqual(
+        lin2val(420),
+        7,
+        `For the pixel value higher than the last visible point, 
+        the function should return the value for that point.`
+    );
+    assert.strictEqual(
+        lin2val(1000),
+        9,
+        `For the pixel value higher than any point in extendedOrdinalPositions,
+        array, the function should return the last element of that array.`
+    );
+});
