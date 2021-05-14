@@ -4584,9 +4584,10 @@ class Axis {
             localMin = old && axis.old ? axis.old.min : axis.min,
             returnValue = 0,
             minPixelPadding = axis.minPixelPadding,
+            isBrokenAxis = axis.brokenAxis && axis.brokenAxis.hasBreaks,
             doPostTranslate = (
                 axis.isOrdinal ||
-                axis.brokenAxis && axis.brokenAxis.hasBreaks ||
+                isBrokenAxis ||
                 (axis.logarithmic && handleLog)
             ) && axis.lin2val;
 
@@ -4614,15 +4615,15 @@ class Axis {
             val -= minPixelPadding;
             // from chart pixel to value:
             returnValue = val / localA + (localMin as any);
-            if (doPostTranslate) { // log and ordinal axes
+            if (doPostTranslate) { // log, ordinal and broken axis
                 // For the ordinal axis use an unmodified value,
                 // that value will be modified in lin2val method.
-                returnValue = axis.lin2val(axis.logarithmic ? returnValue : val);
+                returnValue = axis.lin2val(axis.logarithmic || isBrokenAxis ? returnValue : val);
             }
 
         // From value to pixels
         } else {
-            if (doPostTranslate) { // log and ordinal axes
+            if (doPostTranslate) { // log, ordinal and broken axis
                 val = (axis.val2lin as any)(val);
             }
             returnValue = isNumber(localMin) ?

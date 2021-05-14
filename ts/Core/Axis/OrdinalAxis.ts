@@ -917,7 +917,7 @@ namespace OrdinalAxis {
 
             // The visible range contains only equally spaced values.
             if (!ordinalPositions) {
-                return index; // TODO Find better return value if ordinal doesn't exist.
+                return index;
             }
 
             let i = ordinalPositions.length - 1,
