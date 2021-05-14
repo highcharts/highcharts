@@ -4914,7 +4914,10 @@ class Series {
         }
 
         (this.group as any).clip(clipRect);
-        (this.markerGroup as any).clip(markerClipRect);
+
+        if (!this.finishedAnimating) {
+            (this.markerGroup as any).clip(markerClipRect);
+        }
     }
 
     /**

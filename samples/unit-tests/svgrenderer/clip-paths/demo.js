@@ -4,16 +4,15 @@ QUnit.test(
         // Get list of unique clip path references
         function getClipPathSet(chart) {
             var clipPathList = [];
-
-            chart.container.querySelectorAll('[clip-path],[CLIP-PATH]')
-                .forEach(function (clipPath) {
+            Highcharts.each(
+                chart.container.querySelectorAll('[clip-path],[CLIP-PATH]'),
+                function (clipPath) {
                     var p = clipPath.getAttribute('clip-path');
-
                     if (p !== 'none' && clipPathList.indexOf(p) < 0) {
                         clipPathList.push(p);
                     }
-                });
-
+                }
+            );
             return clipPathList;
         }
 
@@ -30,9 +29,7 @@ QUnit.test(
                             assert.strictEqual(
                                 getClipPathSet(this).length,
                                 3,
-                                `There should be references to three different
-                                clipPaths (one additional from annotations
-                                module)`
+                                'There are references to three (one additional from annotations module) different clipPaths'
                             );
                             done();
                         }
@@ -58,9 +55,8 @@ QUnit.test(
             setTimeout(function () {
                 assert.strictEqual(
                     getClipPathSet(chart).length,
-                    3,
-                    `There should be still references to three clipPaths
-                    after animation (one additional from annotations module)`
+                    2,
+                    'There are only references to two (one additional from annotations module) clipPath after animation'
                 );
                 done();
             }, 20);
