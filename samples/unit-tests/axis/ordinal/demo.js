@@ -243,14 +243,14 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
         }),
         axis = chart.xAxis[0];
 
-    function emulatePannign() {
+    function emulatePanning() {
         const newMin = axis.toValue(-20),
             newMax = axis.toValue(400);
 
         chart.xAxis[0].setExtremes(newMin, newMax);
     }
 
-    emulatePannign();
+    emulatePanning();
 
     assert.ok(
         axis.min > chart.series[0].points[0].x,
@@ -264,8 +264,8 @@ QUnit.test('lin2val- unit test', function (assert) {
     const axis = {
         min: 3,
         len: 500,
-        extendedOrdinalPositions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         ordinal: {
+            extendedOrdinalPositions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
             positions: [3, 4, 5, 6, 7]
         },
         series: [{
@@ -278,13 +278,16 @@ QUnit.test('lin2val- unit test', function (assert) {
             }]
         }]
     };
+    axis.ordinal.axis = axis;
 
     // On the chart there are 5 points equaly spaced.
     // The distance between them equals 100px.
     // Thare are some points that are out of the current range.
     // The last visible point is located at 380px.
 
-    axis.getIndexOfPoint = Highcharts.Axis.prototype.getIndexOfPoint;
+    axis.ordinal.getIndexOfPoint =
+        // eslint-disable-next-line no-underscore-dangle
+        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.getIndexOfPoint;
     function lin2val(val) {
         return Highcharts.Axis.prototype.lin2val.call(axis, val);
     }

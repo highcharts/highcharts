@@ -85,14 +85,9 @@ import '../Navigator.js';
  * @private
  */
 interface OrdinalAxis extends Axis {
-    extendedOrdinalPositions?: Array<number>;
     forceOrdinal?: boolean;
     isInternal?: boolean;
     ordinal: OrdinalAxis.Composition;
-    getIndexOfPoint(
-        val: number,
-        extendedOrdinalPositions: Array<number>
-    ): number;
     getTimeTicks(
         normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
         min: number,
@@ -145,6 +140,7 @@ namespace OrdinalAxis {
          * */
 
         public axis: OrdinalAxis;
+        public extendedOrdinalPositions?: Array<number>;
         public groupIntervalFactor?: number;
         public index: Record<string, Array<number>> = {};
         public offset?: number;
@@ -538,6 +534,55 @@ namespace OrdinalAxis {
         }
 
         /**
+         * Get index of point inside the extended ordinal positions array.
+         *
+         * @private
+         * @param {number} val
+         *        The pixel value of a point.
+         *
+         * @param {Array<number>} [extendedOrdinalPositions]
+         *        An array of all points available on the axis
+         *        for the given data set.
+         *
+         * @return {number}
+         */
+        public getIndexOfPoint(
+            val: number,
+            extendedOrdinalPositions: Array<number>
+        ): number {
+            const ordinal = this,
+                axis = ordinal.axis;
+            let firstPointVal,
+                firstPointX,
+                secondPointX;
+
+            if (axis.series[0].points) {
+                firstPointVal = axis.series[0].points[0].x;
+                firstPointX = axis.series[0].points[0].plotX;
+                secondPointX = axis.series[0].points[1].plotX;
+            }
+
+            if (isNumber(firstPointVal) && isNumber(firstPointX) && isNumber(secondPointX)) {
+                // Distance in pixels between two points
+                // on the ordinal axis in the current zoom.
+                const ordinalPointPixelInterval = secondPointX - firstPointX,
+                    shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
+
+                // Make sure that the returned index does not exceed array
+                // boundaries. If so, return the first or last index of array.
+                return Math.min(
+                    Math.max(
+                        extendedOrdinalPositions.indexOf(firstPointVal) + shiftIndex,
+                        0
+                    ), // first index
+                    extendedOrdinalPositions.length - 1 // last index
+                );
+            }
+
+            return 0;
+        }
+
+        /**
          * Get ticks for an ordinal axis within a range where points don't
          * exist. It is required when overscroll is enabled. We can't base on
          * points, because we may not have any, so we use approximated
@@ -853,59 +898,6 @@ namespace OrdinalAxis {
         };
 
         /**
-         * Get index of point inside the extended ordinal positions array.
-         *
-         * @private
-         * @function Highcharts.Axis#getIndexOfPoint
-         *
-         * @param {number} val
-         *        The pixel value of a point.
-         *
-         * @param {Array<number>} [ordinalPositions]
-         *        An array of points visible in the current plot area.
-         *
-         * @param {Array<number>} [extendedOrdinalPositions]
-         *        An array of all points available on the axis
-         *        for the given data set.
-         *
-         * @return {number}
-         */
-        axisProto.getIndexOfPoint = function (
-            val: number,
-            extendedOrdinalPositions: Array<number>
-        ): number {
-            const axis = this;
-            let firstPointVal,
-                firstPointX,
-                secondPointX;
-
-            if (axis.series[0].points) {
-                firstPointVal = axis.series[0].points[0].x;
-                firstPointX = axis.series[0].points[0].plotX;
-                secondPointX = axis.series[0].points[1].plotX;
-            }
-
-            if (isNumber(firstPointVal) && isNumber(firstPointX) && isNumber(secondPointX)) {
-                // Distance in pixels between two points
-                // on the ordinal axis in the current zoom.
-                const ordinalPointPixelInterval = secondPointX - firstPointX,
-                    shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
-
-                // Make sure that the returned index does not exceed array
-                // boundaries. If so, return the first or last index of array.
-                return Math.min(
-                    Math.max(
-                        extendedOrdinalPositions.indexOf(firstPointVal) + shiftIndex,
-                        0
-                    ), // first index
-                    extendedOrdinalPositions.length - 1 // last index
-                );
-            }
-
-            return 0;
-        };
-
-        /**
          * Get axis position of given index of the extended ordinal positions.
          * Used only when panning an ordinal axis.
          *
@@ -970,7 +962,7 @@ namespace OrdinalAxis {
                 ordinal = axis.ordinal,
                 ordinalPositions = ordinal.positions, // for the current visible range
                 ret = 0,
-                extendedOrdinalPositions = this.extendedOrdinalPositions;
+                extendedOrdinalPositions = this.ordinal.extendedOrdinalPositions;
 
             // The visible range contains only equally spaced values.
             if (!ordinalPositions) {
@@ -985,11 +977,11 @@ namespace OrdinalAxis {
             // get the extended ordinal positional and assign them.
             if (axis.ordinal && !extendedOrdinalPositions) {
                 extendedOrdinalPositions = axis.ordinal.getExtendedPositions();
-                this.extendedOrdinalPositions = extendedOrdinalPositions;
+                this.ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
             }
 
             if (ordinalPositions && extendedOrdinalPositions && extendedOrdinalPositions.length) {
-                const indexToShift = this.getIndexOfPoint(val, extendedOrdinalPositions),
+                const indexToShift = this.ordinal.getIndexOfPoint(val, extendedOrdinalPositions),
                     leftNeighbor = Math.floor(indexToShift);
 
                 // In order to ensure that axis.min equals to some calculated
