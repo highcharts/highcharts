@@ -551,7 +551,7 @@ class ColumnSeries extends Series {
             // apply finnal clipping (used in Highcharts Stock) (#7083)
             // animation is done by scaleY, so cliping is for panes
             if (series.clipBox) {
-                series.setClip();
+                series.removeClip();
             }
 
             series.group.attr(attr);

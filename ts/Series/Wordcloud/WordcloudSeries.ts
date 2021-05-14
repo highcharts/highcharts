@@ -508,7 +508,8 @@ extend(WordcloudSeries.prototype, {
     animateDrilldown: noop,
     animateDrillupFrom: noop,
     pointClass: WordcloudPoint,
-    setClip: noop,
+    addAnimationClip: noop,
+    removeClip: noop,
 
     // Strategies used for deciding rotation and initial position of a word. To
     // implement a custom strategy, have a look at the function random for

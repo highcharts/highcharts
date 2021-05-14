@@ -611,11 +611,11 @@ class HeatmapSeries extends ScatterSeries {
     /**
      * @private
      */
-    public setClip(animation?: (boolean|AnimationOptions)): void {
+    public addAnimationClip(animation?: (boolean|AnimationOptions)): void {
         const series = this,
             chart = series.chart;
 
-        Series.prototype.setClip.apply(series, arguments);
+        Series.prototype.addAnimationClip.apply(series, arguments);
         if (series.options.clip !== false || animation) {
             (series.markerGroup as any)
                 .clip(

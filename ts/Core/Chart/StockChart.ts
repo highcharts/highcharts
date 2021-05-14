@@ -1169,6 +1169,9 @@ addEvent(Series, 'render', function (): void {
         // compliance with a responsive rule (#13858).
         if (!chart.hasLoaded || (!this.clipBox && this.isDirty && !this.isDirtyData)) {
             this.clipBox = this.clipBox || merge(chart.clipBox);
+        }
+
+        if (this.clipBox) {
             this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;
         }
@@ -1201,11 +1204,47 @@ addEvent(Series, 'render', function (): void {
                 // (marker clip rects should exist only on chart init)
                 if (markerClipRect) {
                     markerClipRect.animate({
-                        width: this.xAxis.len
+                        width: this.xAxis.len + 99
                     });
                 }
             }
         }
+    }
+});
+
+// After animating, create final shared clips (#4406)
+addEvent(Series, 'afterRemoveClip', function (): void {
+    // Prepare for animating
+    delete this.sharedClipKey;
+    this.finishedAnimating = true;
+
+    const animation = animObject(this.options.animation),
+        clipKey = this.getSharedClipKey(animation),
+        clipBox = this.getClipBox(animation, true),
+        width = clipBox.width,
+        x = clipBox.x;
+
+    // Set common clip
+    if (animation) {
+        this.addAnimationClip(animation);
+    }
+
+    const sharedClip = this.chart.sharedClips[clipKey],
+        markerSharedClip = this.chart.sharedClips[clipKey + 'm'];
+
+    // Because addAnimationClip prepares for animation,
+    // it's width is 0px, so change it
+    if (sharedClip) {
+        sharedClip.attr({
+            width: width,
+            x: x
+        });
+    }
+
+    if (markerSharedClip) {
+        markerSharedClip.attr({
+            width: this.chart.chartWidth + 99
+        });
     }
 });
 

@@ -505,7 +505,8 @@ addEvent(Series, 'afterTranslate', function (): void {
                         }
 
                         this.group.clip(this.clipCircle);
-                        this.setClip = H.noop;
+                        this.addAnimationClip = H.noop;
+                        this.removeClip = H.noop;
                     }
                 })
             );

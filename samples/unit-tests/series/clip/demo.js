@@ -103,18 +103,16 @@ QUnit.test('General series clip tests', assert => {
 
         setTimeout(() => {
             assert.strictEqual(
-                parseFloat(
-                    chart.container
-                        .querySelectorAll(
-                            chart.series[0].group
-                                .attr('clip-path')
-                                .slice(4)
-                                .slice(0, -1) + ' rect'
-                        )[0]
-                        .getAttribute('width')
-                ),
-                chart.clipBox.width,
-                "Correct clippath's width after updating chart (#13751)."
+                chart.container
+                    .querySelectorAll(
+                        chart.series[0].group
+                            .attr('clip-path')
+                            .slice(4)
+                            .slice(0, -1) + ' rect'
+                    )[0]
+                    .getAttribute('width'),
+                chart.clipRect.element.getAttribute('width'),
+                `Correct clippath's width after updating chart (#13751).`
             );
 
             done();

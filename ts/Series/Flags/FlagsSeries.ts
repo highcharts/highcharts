@@ -356,7 +356,7 @@ class FlagsSeries extends ColumnSeries {
      */
     public animate(init?: boolean): void {
         if (init) {
-            this.setClip();
+            this.addAnimationClip();
         }
     }
 
@@ -644,8 +644,8 @@ class FlagsSeries extends ColumnSeries {
     /**
      * @private
      */
-    public setClip(): void {
-        Series.prototype.setClip.apply(this, arguments as any);
+    public addAnimationClip(): void {
+        Series.prototype.addAnimationClip.apply(this, arguments as any);
         if (
             this.options.clip !== false &&
             this.sharedClipKey &&
