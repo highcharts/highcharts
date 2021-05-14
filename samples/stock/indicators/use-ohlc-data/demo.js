@@ -7,7 +7,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
         },
 
         title: {
-            text: 'Plot line on Y axis'
+            text: 'AAPL Stock Price'
         },
 
         legend: {
