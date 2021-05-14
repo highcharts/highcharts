@@ -260,7 +260,7 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
 });
 
 
-QUnit.test('lin2val- unit test', function (assert) {
+QUnit.test('lin2val- unit test for values outside the plotArea.', function (assert) {
     const axis = {
         min: 3,
         len: 500,
@@ -288,28 +288,10 @@ QUnit.test('lin2val- unit test', function (assert) {
     axis.ordinal.getIndexOfPoint =
         // eslint-disable-next-line no-underscore-dangle
         Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.getIndexOfPoint;
-    function lin2val(val) {
-        return Highcharts.Axis.prototype.lin2val.call(axis, val);
+    function lin2val(val, isInside) {
+        return Highcharts.Axis.prototype.lin2val.call(axis, val, isInside);
     }
 
-    assert.strictEqual(
-        lin2val(-20),
-        3,
-        `For the pixel value equal to the first point x position,
-        the function should return the value for that point.`
-    );
-    assert.strictEqual(
-        lin2val(80),
-        4,
-        `For the pixel value equal to the second point x position,
-        the function should return the value for that point.`
-    );
-    assert.strictEqual(
-        lin2val(25),
-        3,
-        `For the pixel value located between two points,
-        the function should return the value of the point on the left.`
-    );
     assert.strictEqual(
         lin2val(-50),
         2,
@@ -321,12 +303,6 @@ QUnit.test('lin2val- unit test', function (assert) {
         0,
         `For the pixel value lower than any point in extendedOrdinalPositions,
         array, the function should return the first element of that array.`
-    );
-    assert.strictEqual(
-        lin2val(380),
-        7,
-        `For the pixel value equal to last point, 
-        the function should return the value for that point.`
     );
     assert.strictEqual(
         lin2val(420),

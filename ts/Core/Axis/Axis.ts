@@ -4610,6 +4610,7 @@ class Axis {
 
         // From pixels to value
         if (backwards) { // reverse translation
+            const isInside = val > axis.left || val > axis.len;
 
             val = val * sign + cvsOffset;
             val -= minPixelPadding;
@@ -4618,7 +4619,13 @@ class Axis {
             if (doPostTranslate) { // log, ordinal and broken axis
                 // For the ordinal axis use an unmodified value,
                 // that value will be modified in lin2val method.
-                returnValue = axis.lin2val(axis.logarithmic || isBrokenAxis ? returnValue : val);
+                // Also, pass the second argument which indicates
+                // if the value is inside the plotArea.
+                if (axis.logarithmic || isBrokenAxis) {
+                    returnValue = axis.lin2val(returnValue);
+                } else {
+                    returnValue = axis.lin2val(isInside ? returnValue : val, isInside);
+                }
             }
 
         // From value to pixels

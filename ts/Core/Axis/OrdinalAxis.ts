@@ -66,7 +66,7 @@ declare module './Types' {
             findHigherRanks?: boolean
         ): TickPositionsArray;
         /** @deprecated */
-        lin2val(val: number): number;
+        lin2val(val: number, isInside?: boolean|undefined): number;
         /** @deprecated */
         val2lin(val: number, toIndex?: boolean): number;
     }
@@ -98,7 +98,7 @@ interface OrdinalAxis extends Axis {
         findHigherRanks?: boolean
     ): TickPositionsArray;
     index2val(val: number): number;
-    lin2val(val: number): number;
+    lin2val(val: number, isInside?: boolean|undefined): number;
     ordinal2lin: OrdinalAxis['val2lin'];
     val2lin(val: number, toIndex?: boolean): number;
 }
@@ -957,7 +957,7 @@ namespace OrdinalAxis {
          *
          * @return {number}
          */
-        axisProto.lin2val = function (val: number): number {
+        axisProto.lin2val = function (val: number, isInside: boolean|undefined): number {
             let axis = this,
                 ordinal = axis.ordinal,
                 ordinalPositions = ordinal.positions, // for the current visible range
@@ -972,23 +972,59 @@ namespace OrdinalAxis {
             // If the value is not inside the plot area,
             // use the extended positions.
             // (array contains also points that are currently out of range).
+            if (!isInside) {
+                // When iterating for the first time,
+                // get the extended ordinal positional and assign them.
+                if (axis.ordinal && !extendedOrdinalPositions) {
+                    extendedOrdinalPositions = axis.ordinal.getExtendedPositions();
+                    this.ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
+                }
 
-            // When iterating for the first time,
-            // get the extended ordinal positional and assign them.
-            if (axis.ordinal && !extendedOrdinalPositions) {
-                extendedOrdinalPositions = axis.ordinal.getExtendedPositions();
-                this.ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
+                if (ordinalPositions && extendedOrdinalPositions && extendedOrdinalPositions.length) {
+                    const indexToShift = this.ordinal.getIndexOfPoint(val, extendedOrdinalPositions),
+                        leftNeighbor = Math.floor(indexToShift);
+
+                    // In order to ensure that axis.min equals to some
+                    // calculated value from the ordinal axis. Do not
+                    // interpolate the points, always return point to the left.
+                    ret = extendedOrdinalPositions[leftNeighbor];
+                }
+            } else {
+                const ordinalSlope = ordinal.slope,
+                    ordinalOffset = ordinal.offset;
+                let i = ordinalPositions.length - 1,
+                    linearEquivalentLeft = 0,
+                    linearEquivalentRight = 0,
+                    distance = 0;
+
+                if (isNumber(ordinalSlope) && isNumber(ordinalOffset)) {
+                    while (i--) {
+                        linearEquivalentLeft =
+                            (ordinalSlope * i) + ordinalOffset;
+                        if (val >= linearEquivalentLeft) {
+                            linearEquivalentRight =
+                                (ordinalSlope *
+                                    (i + 1)) +
+                                    ordinalOffset;
+                            // something between 0 and 1
+                            distance = (val - linearEquivalentLeft) /
+                                (linearEquivalentRight - linearEquivalentLeft);
+                            break;
+                        }
+                    }
+                    // If the index is within the range of ordinal positions,
+                    // return the associated or interpolated value. If not,
+                    // return the value.
+                    ret = (typeof distance !== 'undefined' &&
+                        typeof ordinalPositions[i] !== 'undefined' ?
+                        ordinalPositions[i] + (distance ?
+                            distance *
+                                (ordinalPositions[i + 1] - ordinalPositions[i]) :
+                            0) :
+                        val);
+                }
             }
 
-            if (ordinalPositions && extendedOrdinalPositions && extendedOrdinalPositions.length) {
-                const indexToShift = this.ordinal.getIndexOfPoint(val, extendedOrdinalPositions),
-                    leftNeighbor = Math.floor(indexToShift);
-
-                // In order to ensure that axis.min equals to some calculated
-                // value from the ordinal axis. Do not interpolate the points,
-                // always return the point to the left.
-                ret = extendedOrdinalPositions[leftNeighbor];
-            }
             return ret;
         };
 
