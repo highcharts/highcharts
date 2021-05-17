@@ -665,6 +665,67 @@ function GLRenderer(
         //     }
         // });
 
+        if (series.is('networkgraph')) {
+            while (i < sdata.length - 1) {
+
+                d = (series.data[++i] as any).getLinkPath();
+
+                if (typeof d === 'undefined') {
+                    continue;
+                }
+
+                if (chartDestroyed) {
+                    break;
+                }
+
+                if (d) {
+                    nextInside = true;
+                }
+
+                beginSegment();
+
+                x = Math.round((d as any)[0][1]) - chart.plotLeft;
+                y = Math.round((d as any)[0][2]) - chart.plotTop;
+
+                if (y === null && connectNulls || !nextInside) {
+                    continue;
+                }
+
+                // useGPUTranslations is always false in Networkgraph
+                inst.skipTranslation = true;
+
+                vertice(
+                    x,
+                    y,
+                    0 as any,
+                    2,
+                    pcolor
+                );
+
+                hadPoints = true;
+                firstPoint = false;
+
+
+                x = Math.round((d as any)[1][1]) - chart.plotLeft;
+                y = Math.round((d as any)[1][2]) - chart.plotTop;
+
+                if (y === null && connectNulls || !nextInside) {
+                    continue;
+                }
+
+                vertice(
+                    x,
+                    y,
+                    0 as any,
+                    2,
+                    pcolor
+                );
+
+                lastX = x;
+                lastY = y;
+            }
+        }
+
         while (i < sdata.length - 1) {
             d = sdata[++i];
 
@@ -1085,6 +1146,7 @@ function GLRenderer(
                     'bar': 'lines',
                     'line': 'line_strip',
                     'scatter': 'points',
+                    'networkgraph': 'line_strip',
                     'heatmap': 'triangles',
                     'treemap': 'triangles',
                     'bubble': 'points'

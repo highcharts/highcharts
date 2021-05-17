@@ -22,7 +22,8 @@ const boostables = [
     'scatter',
     'heatmap',
     'bubble',
-    'treemap'
+    'treemap',
+    'networkgraph'
 ];
 
 export default boostables;
