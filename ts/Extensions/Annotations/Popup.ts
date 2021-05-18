@@ -22,7 +22,7 @@ const {
     isFirefox
 } = H;
 import NavigationBindings from './NavigationBindings.js';
-import O from '../../Core/Options.js';
+import O from '../../Core/DefaultOptions.js';
 const { getOptions } = O;
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';

@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type Options from '../Core/Options';
+import type Options from '../Core/DefaultOptions';
 import type Series from '../Core/Series/Series';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';

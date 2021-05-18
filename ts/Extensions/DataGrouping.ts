@@ -29,7 +29,7 @@ import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import Tooltip from '../Core/Tooltip.js';
-import O from '../Core/Options.js';
+import O from '../Core/DefaultOptions.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

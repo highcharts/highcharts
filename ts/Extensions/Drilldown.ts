@@ -43,7 +43,7 @@ import F from '../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../Core/Globals.js';
 const { noop } = H;
-import O from '../Core/Options.js';
+import O from '../Core/DefaultOptions.js';
 const { defaultOptions } = O;
 import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';

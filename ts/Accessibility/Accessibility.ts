@@ -20,7 +20,7 @@ const {
     doc
 } = H;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import O from '../Core/Options.js';
+import O from '../Core/DefaultOptions.js';
 const {
     defaultOptions
 } = O;

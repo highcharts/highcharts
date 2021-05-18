@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type O from './Options';
+import type O from './DefaultOptions';
 import Chart from './Chart/Chart.js';
 import U from './Utilities.js';
 const {

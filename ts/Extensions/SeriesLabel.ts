@@ -26,7 +26,7 @@ const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import F from '../Core/FormatUtilities.js';
 const { format } = F;
-import O from '../Core/Options.js';
+import O from '../Core/DefaultOptions.js';
 const { setOptions } = O;
 import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';

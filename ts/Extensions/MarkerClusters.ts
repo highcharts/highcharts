@@ -37,7 +37,7 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
-import O from '../Core/Options.js';
+import O from '../Core/DefaultOptions.js';
 const { defaultOptions } = O;
 import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';

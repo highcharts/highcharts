@@ -13,7 +13,7 @@
 'use strict';
 
 import Highcharts from '../../Core/Globals.js';
-import O from '../../Core/Options.js';
+import O from '../../Core/DefaultOptions.js';
 const { setOptions } = O;
 
 Highcharts.theme = {

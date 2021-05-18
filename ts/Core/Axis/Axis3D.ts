@@ -13,7 +13,7 @@
 'use strict';
 
 import type Axis from './Axis';
-import type O from '../../Core/Options';
+import type O from '../DefaultOptions';
 import type Point from '../Series/Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';

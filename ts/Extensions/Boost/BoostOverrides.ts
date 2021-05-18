@@ -24,7 +24,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import Chart from '../../Core/Chart/Chart.js';
-import O from '../../Core/Options.js';
+import O from '../../Core/DefaultOptions.js';
 const { getOptions } = O;
 import Point from '../../Core/Series/Point.js';
 import Series from '../../Core/Series/Series.js';
@@ -94,7 +94,7 @@ declare global {
     }
 }
 
-import '../../Core/Options.js';
+import '../../Core/DefaultOptions.js';
 
 import butils from './BoostUtils.js';
 import boostable from './Boostables.js';

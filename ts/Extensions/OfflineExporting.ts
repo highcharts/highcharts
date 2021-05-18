@@ -24,7 +24,7 @@ const {
     win,
     doc
 } = H;
-import O from '../Core/Options.js';
+import O from '../Core/DefaultOptions.js';
 const { getOptions } = O;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';

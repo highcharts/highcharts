@@ -17,7 +17,7 @@ import type {
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
-import O from '../Core/Options.js';
+import O from '../Core/DefaultOptions.js';
 const { setOptions } = O;
 import U from '../Core/Utilities.js';
 const {

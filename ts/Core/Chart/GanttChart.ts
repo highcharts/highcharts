@@ -14,7 +14,7 @@ import type {
     HTMLDOMElement
 } from '../Renderer/DOMElementType';
 import Chart from './Chart.js';
-import O from '../../Core/Options.js';
+import O from '../DefaultOptions.js';
 const { getOptions } = O;
 import U from '../Utilities.js';
 const {

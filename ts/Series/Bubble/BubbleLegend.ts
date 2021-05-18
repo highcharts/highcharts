@@ -37,7 +37,7 @@ import F from '../../Core/FormatUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend.js';
-import O from '../../Core/Options.js';
+import O from '../../Core/DefaultOptions.js';
 const { setOptions } = O;
 import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';

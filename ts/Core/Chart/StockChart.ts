@@ -32,7 +32,7 @@ import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
-import O from '../../Core/Options.js';
+import O from '../DefaultOptions.js';
 const { getOptions } = O;
 import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';

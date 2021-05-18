@@ -55,7 +55,7 @@ const {
 } = H;
 import Legend from '../Legend.js';
 import MSPointer from '../MSPointer.js';
-import O from '../Options.js';
+import O from '../DefaultOptions.js';
 const {
     defaultOptions,
     defaultTime

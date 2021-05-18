@@ -47,7 +47,7 @@ const {
 } = F;
 import H from '../Globals.js';
 import palette from '../Color/Palette.js';
-import O from '../Options.js';
+import O from '../DefaultOptions.js';
 const { defaultOptions } = O;
 import Tick from './Tick.js';
 import U from '../Utilities.js';

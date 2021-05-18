@@ -167,7 +167,7 @@ interface ScrollbarEventCallbackFunction {
     (e: PointerEvent): void;
 }
 
-import O from './Options.js';
+import O from './DefaultOptions.js';
 const { defaultOptions } = O;
 
 const isTouchDevice = H.isTouchDevice;
