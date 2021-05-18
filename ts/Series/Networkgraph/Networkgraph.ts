@@ -953,6 +953,7 @@ extend(NetworkgraphSeries.prototype, {
     render: function (this: NetworkgraphSeries): void {
         const series = this,
             points = series.points,
+            seriesOptions = series.options,
             hoverPoint = series.chart.hoverPoint,
             dataLabels = [] as Array<SVGElement>;
 
@@ -963,7 +964,12 @@ extend(NetworkgraphSeries.prototype, {
         series.points = points || [];
 
         // Draw the data labels if not handled by standard render method.
-        if (series.chart.isBoosting && series.drawDataLabels) {
+        if (
+            series.chart.isBoosting &&
+            series.drawDataLabels &&
+            seriesOptions.dataLabels &&
+            seriesOptions.dataLabels.enabled
+        ) {
             series.drawDataLabels();
         } else {
             (points || []).forEach(function (
