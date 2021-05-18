@@ -783,9 +783,10 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                 options.shape || 'callout'
             )
             .addClass(
-                'highcharts-crosshair-label' + (
-                    this.series[0] &&
-                    ' highcharts-color-' + this.series[0].colorIndex
+                'highcharts-crosshair-label highcharts-color-' + (
+                    point ?
+                        point.series.colorIndex :
+                        this.series[0] && this.series[0].colorIndex
                 )
             )
             .attr({

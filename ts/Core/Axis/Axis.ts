@@ -294,6 +294,7 @@ declare global {
             ordinal?: boolean;
             overscroll?: number;
             pane?: number;
+            panningEnabled: boolean;
             range?: number;
             reversed?: boolean;
             reversedStacks: boolean;
@@ -1261,6 +1262,12 @@ class Axis {
          */
 
         /**
+         * Whether to pan axis. If `chart.panning` is enabled, the option
+         * allows to disable panning on an individual axis.
+         */
+        panningEnabled: true,
+
+        /**
          * The Z index for the axis group.
          */
         zIndex: 2,
@@ -1938,6 +1945,10 @@ class Axis {
          * of the plot area. When the axis' `max` option is set or a max extreme
          * is set using `axis.setExtremes()`, the maxPadding will be ignored.
          *
+         * @productdesc {highstock}
+         * For an [ordinal](#xAxis.ordinal) axis, `minPadding` and `maxPadding`
+         * are ignored. Use [overscroll](#xAxis.overscroll) instead.
+         *
          * @sample {highcharts} highcharts/yaxis/maxpadding/
          *         Max padding of 0.25 on y axis
          * @sample {highstock} stock/xaxis/minpadding-maxpadding/
@@ -2101,6 +2112,10 @@ class Axis {
          * of the plot area. When the axis' `min` option is set or a min extreme
          * is set using `axis.setExtremes()`, the minPadding will be ignored.
          *
+         * @productdesc {highstock}
+         * For an [ordinal](#xAxis.ordinal) axis, `minPadding` and `maxPadding`
+         * are ignored. Use [overscroll](#xAxis.overscroll) instead.
+         *
          * @sample {highcharts} highcharts/yaxis/minpadding/
          *         Min padding of 0.2
          * @sample {highstock} stock/xaxis/minpadding-maxpadding/
@@ -2200,10 +2215,15 @@ class Axis {
          * the boost module is used and at least one of the series' data length
          * exceeds the [boostThreshold](#series.line.boostThreshold).
          *
+         * For an ordinal axis, `minPadding` and `maxPadding` are ignored. Use
+         * [overscroll](#xAxis.overscroll) instead.
+         *
          * @sample {highstock} stock/xaxis/ordinal-true/
          *         True by default
          * @sample {highstock} stock/xaxis/ordinal-false/
          *         False
+         *
+         * @see [overscroll](#xAxis.overscroll)
          *
          * @type      {boolean}
          * @default   true
