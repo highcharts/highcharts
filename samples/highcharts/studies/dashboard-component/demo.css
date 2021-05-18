@@ -1,15 +1,17 @@
 #container{
     display: flex;
     flex-wrap: wrap;
-    flex-basis: 100vw;
+    flex-direction: row;
+    width: 100vw;
 }
-figure {
-    margin: 0;
-}
-.highcharts-dashboard-component{
+.hcd-component{
     box-shadow: 0 0 0 3px rgba(37,56,111,.3);
     max-width: 100%;
     overflow: hidden;
     box-sizing: border-box;
     margin: 0.5em;
+}
+
+#csvedit {
+    width: 600px;
 }

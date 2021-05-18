@@ -1,4 +1,4 @@
-import type Series from '../../Core/Series/Series';
+import type Series from '../../Core/Series/Series.js';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
@@ -237,18 +237,21 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
             const { table } = this.store;
 
             // Names/aliases that should be mapped to xAxis values
-            const xKeys = Object.keys(this.options.tableAxisMap || {});
+            const tableAxisMap = this.options.tableAxisMap || {};
             const seriesNames = table.getColumnNames();
             const xKeyMap: Record<string, string> = {};
 
             // Remove series names that match the xKeys
             seriesNames.forEach((name, index): void => {
-                for (let i = 0; i < xKeys.length; i++) {
-                    const key = xKeys[i];
-                    if (key.toLowerCase() === name.toLowerCase()) {
-                        xKeyMap[name] = key;
+                if (name in tableAxisMap) {
+                    if (tableAxisMap[name] === null) {
                         seriesNames.splice(index, 1);
-                        break; // We only need the first match
+                        return;
+                    }
+
+                    if (tableAxisMap[name] === 'x') {
+                        xKeyMap[name] = name;
+                        seriesNames.splice(index, 1);
                     }
                 }
             });
@@ -258,7 +261,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
                 let i = 0;
                 while (i < this.chart.series.length) {
                     const series = this.chart.series[i];
-                    if (series.name === seriesName) {
+                    if (series.options.id === `${table.id}-series-${index}`) {
                         return series;
                     }
                     i++;
@@ -287,7 +290,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
                     arr: (number | {})[],
                     row
                 ): (number | {})[] => {
-                    arr.push(row);
+                    arr.push([row.x, row.y]);
                     return arr;
                 }, []);
 

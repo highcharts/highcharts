@@ -253,6 +253,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     private cellListeners: Function[] = [];
     protected hasLoaded: boolean;
 
+    public activeGroup: ComponentGroup | undefined = void 0;
+
     /**
      * Timeouts for calls to `Component.resizeTo()`
      */
@@ -362,11 +364,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         if (store) {
             // Set up event listeners
             [
-                'afterInsertRow',
-                'afterDeleteRow',
-                'afterChangeRow',
-                'afterUpdateRow',
-                'afterClearTable'
+                'afterSetRows',
+                'afterDeleteRows',
+                'afterSetColums',
+                'afterDeleteColumns'
             ].forEach((event: any): void => {
                 this.tableEvents.push(store.table.on(event, (e): void => {
 
@@ -410,11 +411,27 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             const group = ComponentGroup.getComponentGroup(tableID);
             if (group) {
                 group.addComponents([this.id]);
+                this.activeGroup = group;
             }
         }
 
         fireEvent(this, 'storeAttached', { store });
         return this;
+    }
+
+    setActiveGroup(group: ComponentGroup | string | null): void {
+        if (typeof group === 'string') {
+            group = ComponentGroup.getComponentGroup(group) || null;
+        }
+        if (group instanceof ComponentGroup) {
+            this.activeGroup = group;
+        }
+        if (group === null) {
+            this.activeGroup = void 0;
+        }
+        if (this.activeGroup) {
+            this.activeGroup.addComponents([this.id]);
+        }
     }
 
 

@@ -82,6 +82,8 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
 
     private columnVisibilityMap: Record<string, boolean> = {};
 
+    private hiddenRowIndexes: number[] = [];
+
     private hoverPoint?: DataPresentationState.PresentationHoverPointType;
 
     private selection: Record<string, { min?: number; max?: number }> = {};
@@ -230,6 +232,26 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         });
     }
 
+    public setHiddenRows(rowIndexes: number[], hidden = true): void {
+        rowIndexes.forEach((rowIndex): void => {
+            if (this.hiddenRowIndexes.indexOf(rowIndex) === -1 && hidden) {
+                this.hiddenRowIndexes.push(rowIndex);
+            }
+            if (this.hiddenRowIndexes.indexOf(rowIndex) > -1 && !hidden) {
+                this.hiddenRowIndexes.splice(this.hiddenRowIndexes.indexOf(rowIndex), 1);
+            }
+        });
+
+        this.emit({
+            type: 'afterSetHiddenRows',
+            hiddenRows: this.hiddenRowIndexes
+        });
+    }
+
+    public getHiddenRows(): number[] {
+        return this.hiddenRowIndexes;
+    }
+
     public setHoverPoint(point: DataPresentationState.PresentationHoverPointType | undefined, eventDetail?: {}): void {
         this.hoverPoint = point;
         this.emit({
@@ -355,7 +377,7 @@ namespace DataPresentationState {
      */
     export type Event = (
         ColumnOrderEvent | ColumnVisibilityEvent |
-        PointHoverEvent | SelectionEvent
+        PointHoverEvent | SelectionEvent | HiddenRowEvent
     );
 
     /**
@@ -369,6 +391,10 @@ namespace DataPresentationState {
     export interface ColumnVisibilityEvent extends DataEventEmitter.Event {
         type: ColumnVisibilityEventType;
         visibilityMap: Record<string, boolean>;
+    }
+    export interface HiddenRowEvent extends DataEventEmitter.Event {
+        type: ('afterSetHiddenRows');
+        hiddenRows: number[];
     }
 
     export interface PointHoverEvent extends DataEventEmitter.Event {
