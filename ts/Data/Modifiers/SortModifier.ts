@@ -159,11 +159,10 @@ class SortModifier extends DataModifier {
                 b.row[orderByColumnIndex]
             ));
         }
-
         if (orderInColumn) {
             const column: DataTable.Column = [];
             for (let i = 0; i < rowCount; ++i) {
-                column.push(rowReferences[i].index);
+                column[rowReferences[i].index] = i;
             }
             table.setColumns({ [orderInColumn]: column });
         } else {
@@ -203,7 +202,7 @@ class SortModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Reference of `table.modified` with the additional modifications.
      */
     public modifyCell(
         table: DataTable,
