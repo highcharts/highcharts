@@ -961,7 +961,6 @@ extend(NetworkgraphSeries.prototype, {
         seriesTypes.line.prototype.render.call(this);
 
         series.points = points || [];
-        seriesTypes.line.prototype.render.call(this);
 
         // Draw the data labels if not handled by standard render method.
         if (series.chart.isBoosting && series.drawDataLabels) {
@@ -976,6 +975,8 @@ extend(NetworkgraphSeries.prototype, {
                 }
             });
         }
+
+        seriesTypes.line.prototype.render.call(this);
 
         if (hoverPoint && hoverPoint.series === series) {
             series.redrawHalo(hoverPoint);
