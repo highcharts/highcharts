@@ -15,7 +15,7 @@
  * */
 
 import type Chart from './Chart/Chart';
-import type O from './Options';
+import type O from './DefaultOptions';
 import type { SeriesTypeRegistry } from './Series/SeriesType';
 import type SizeObject from './Renderer/SizeObject';
 import type Time from './Time';

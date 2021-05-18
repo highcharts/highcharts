@@ -25,7 +25,7 @@ import type Time from '../Core/Time';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
+import O from '../Core/DefaultOptions.js';
 const { defaultOptions } = O;
 import palette from '../Core/Color/Palette.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';

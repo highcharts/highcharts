@@ -21,7 +21,7 @@ import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import O from '../../Core/Options.js';
+import O from '../../Core/DefaultOptions.js';
 const { defaultOptions } = O;
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';

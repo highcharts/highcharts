@@ -196,7 +196,7 @@ declare global {
 
 ''; // detach doclets above
 
-import O from '../Core/Options.js';
+import O from '../Core/DefaultOptions.js';
 const { defaultOptions } = O;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';

@@ -26,7 +26,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
-import O from '../Core/Options.js';
+import O from '../Core/DefaultOptions.js';
 const {
     getOptions,
     setOptions

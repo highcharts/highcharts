@@ -29,7 +29,7 @@ const {
     isTouchDevice
 } = H;
 import NavigatorAxis from './Axis/NavigatorAxis.js';
-import O from './Options.js';
+import O from './DefaultOptions.js';
 const { defaultOptions } = O;
 import Palette from './Color/Palette.js';
 import RendererRegistry from './Renderer/RendererRegistry.js';

@@ -28,7 +28,7 @@ const {
     perspective,
     shapeArea3D
 } = Math3D;
-import O from '../Options.js';
+import O from '../DefaultOptions.js';
 const {
     defaultOptions: genericDefaultOptions
 } = O;

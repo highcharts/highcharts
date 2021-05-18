@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type O from '../Core/Options';
+import type O from '../Core/DefaultOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Ajax from '../Extensions/Ajax.js';
 const {

@@ -17,7 +17,7 @@
 
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import H from '../../Core/Globals.js';
-import O from '../../Core/Options.js';
+import O from '../../Core/DefaultOptions.js';
 const { setOptions } = O;
 
 H.theme = {

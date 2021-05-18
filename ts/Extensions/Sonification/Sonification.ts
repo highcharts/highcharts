@@ -14,7 +14,7 @@
 
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
-import O from '../../Core/Options.js';
+import O from '../../Core/DefaultOptions.js';
 const { defaultOptions } = O;
 import Point from '../../Core/Series/Point.js';
 import Series from '../../Core/Series/Series.js';

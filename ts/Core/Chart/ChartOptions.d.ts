@@ -22,7 +22,7 @@ import type Chart from './Chart';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type O from '../Options';
+import type O from '../DefaultOptions';
 import type { SeriesTypeOptions } from '../Series/SeriesType';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';

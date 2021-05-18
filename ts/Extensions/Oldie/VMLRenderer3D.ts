@@ -23,7 +23,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
 import Axis from '../../Core/Axis/Axis.js';
-import O from '../../Core/Options.js';
+import O from '../../Core/DefaultOptions.js';
 const { setOptions } = O;
 import VMLAxis3D from './VMLAxis3D.js';
 

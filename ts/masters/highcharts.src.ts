@@ -9,7 +9,7 @@
 'use strict';
 import Highcharts from '../Core/Globals.js';
 import Utilities from '../Core/Utilities.js';
-import Options from '../Core/Options.js';
+import Options from '../Core/DefaultOptions.js';
 import Fx from '../Core/Animation/Fx.js';
 import Animation from '../Core/Animation/AnimationUtilities.js';
 import AST from '../Core/Renderer/HTML/AST.js';

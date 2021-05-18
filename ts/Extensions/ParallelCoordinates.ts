@@ -22,7 +22,7 @@ import Chart from '../Core/Chart/Chart.js';
 import F from '../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
+import O from '../Core/DefaultOptions.js';
 const { setOptions } = O;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';

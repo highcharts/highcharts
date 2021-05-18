@@ -44,7 +44,7 @@ const {
     svg,
     win
 } = H;
-import O from '../../Core/Options.js';
+import O from '../../Core/DefaultOptions.js';
 const { getOptions } = O;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../../Core/Pointer.js';

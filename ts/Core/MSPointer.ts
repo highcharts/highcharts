@@ -11,7 +11,7 @@
 'use strict';
 
 import type Chart from './Chart/Chart';
-import type O from './Options';
+import type O from './DefaultOptions';
 import type PointerEvent from './PointerEvent';
 import H from './Globals.js';
 const {
