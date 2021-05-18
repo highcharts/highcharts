@@ -8,7 +8,6 @@ import type ProjectionDefinition from '../ProjectionTypes';
 
 const quarterPI = Math.PI / 4;
 const deg2rad = Math.PI / 180;
-const rad2deg = 180 / Math.PI;
 
 const Miller: ProjectionDefinition = {
 
@@ -18,8 +17,8 @@ const Miller: ProjectionDefinition = {
     ],
 
     inverse: (xy): [number, number] => [
-        xy[0],
-        rad2deg * 2.5 * (Math.atan(Math.exp(0.8 * xy[1])) - quarterPI)
+        xy[0] / deg2rad,
+        2.5 * (Math.atan(Math.exp(0.8 * xy[1])) - quarterPI) / deg2rad
     ]
 };
 
