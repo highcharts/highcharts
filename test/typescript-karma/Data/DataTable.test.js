@@ -1,7 +1,7 @@
 import DataTable from '/base/js/Data/DataTable.js';
+import SortModifier from '/base/js/Data/Modifiers/SortModifier.js';
 
 QUnit.test('DataTable Clone', function (assert) {
-
     const table = new DataTable({}, 'table');
 
     table.setRows([[ 'row1', 1 ]]);
@@ -171,7 +171,6 @@ QUnit.test('DataTable Column Aliases', function (assert) {
 });
 
 QUnit.test('DataTable Column Rename', function (assert) {
-
     const table = new DataTable({
         column1: [ true ],
         existingColumn: [ true ]
@@ -229,21 +228,19 @@ QUnit.test('DataTable Column Rename', function (assert) {
 });
 
 QUnit.test('DataTable Column Retrieve', function (assert) {
-
     const table = new DataTable({
-        id: [ 0, 1 ],
-        a: [ 'a0', 'a1' ],
-        b: [ 0.0002, 'b1' ],
-        c: [
-            'c0',
-            new DataTable({
-                id: [ 0, 1, 2 ],
-                ca: [ 'ca0', 'ca1', 'ca2' ]
-            })
-        ]
-    });
-
-    const columns = table.getColumns();
+            id: [ 0, 1 ],
+            a: [ 'a0', 'a1' ],
+            b: [ 0.0002, 'b1' ],
+            c: [
+                'c0',
+                new DataTable({
+                    id: [ 0, 1, 2 ],
+                    ca: [ 'ca0', 'ca1', 'ca2' ]
+                })
+            ]
+        }),
+        columns = table.getColumns();
 
     assert.deepEqual(
         Object.keys(columns),
@@ -262,7 +259,6 @@ QUnit.test('DataTable Column Retrieve', function (assert) {
 });
 
 QUnit.test('DataTable Events', function (assert) {
-
     const registeredEvents = [];
 
     /** @param {DataTable.EventObject} e */
@@ -389,28 +385,26 @@ QUnit.test('DataTable Events', function (assert) {
 });
 
 QUnit.test('DataTable JSON', function (assert) {
-
     const json = {
-        $class: 'DataTable',
-        columns: {
-            A: [ 'a0', 'a1', 'a2'],
-            B: [ 0.0002, 'b1', 'b2'],
-            C: [
-                false,
-                {
-                    $class: 'DataTable',
-                    columns: {
-                        CA: [ 'ca0', 'ca1', 'ca2' ]
+            $class: 'DataTable',
+            columns: {
+                A: [ 'a0', 'a1', 'a2'],
+                B: [ 0.0002, 'b1', 'b2'],
+                C: [
+                    false,
+                    {
+                        $class: 'DataTable',
+                        columns: {
+                            CA: [ 'ca0', 'ca1', 'ca2' ]
+                        },
+                        id: 'table2'
                     },
-                    id: 'table2'
-                },
-                'c2'
-            ]
+                    'c2'
+                ]
+            },
+            id: 'table1'
         },
-        id: 'table1'
-    };
-
-    const table = DataTable.fromJSON(json);
+        table = DataTable.fromJSON(json);
 
     assert.strictEqual(
         table.getRowCount(),
@@ -445,7 +439,6 @@ QUnit.test('DataTable JSON', function (assert) {
 });
 
 QUnit.test('DataTable.getCellAsNumber', function (assert) {
-
     const table = new DataTable({
         A: [false, true, -1, 0, 1, NaN, '', '0', 'a', null, ,void 0 ]
     });
@@ -522,7 +515,6 @@ QUnit.test('DataTable.getCellAsNumber', function (assert) {
 });
 
 QUnit.test('DataTable.getColumnAsNumbers', function (assert) {
-
     const table = new DataTable({
         test1: [null, 1, 2],
         test2: [void 0, 1, 2],
@@ -583,13 +575,11 @@ QUnit.test('DataTable.getColumnAsNumbers', function (assert) {
 });
 
 QUnit.test('DataTable.setRows', function (assert) {
-
     const table = new DataTable({
-        column1: [ true ],
-        existingColumn: [ true ]
-    });
-
-    const tableClone = table.clone();
+            column1: [ true ],
+            existingColumn: [ true ]
+        }),
+        tableClone = table.clone();
 
     assert.strictEqual(
         tableClone.getRowCount(),
@@ -613,4 +603,49 @@ QUnit.test('DataTable.setRows', function (assert) {
         'Row values are the same after clone.'
     );
 
+});
+
+QUnit.test('DataTable.setModifier', function (assert) {
+    const modifier = new SortModifier({
+            direction: 'asc',
+            orderByColumn: 'y',
+            orderInColumn: 'x'
+        }),
+        table = new DataTable({
+            x: [0, 1, 2],
+            y: [3, 1, 2]
+        });
+
+    assert.deepEqual(
+        table.modified.getColumns(),
+        {
+            x: [0, 1, 2],
+            y: [3, 1, 2]
+        },
+        'Modified table should contain unsorted columns.'
+    );
+
+    table.setModifier(modifier);
+
+    assert.deepEqual(
+        table.modified.getColumns(),
+        {
+            x: [2, 0, 1],
+            y: [3, 1, 2] 
+        },
+        'Modified table should contain sorted columns.'
+    );
+
+    delete modifier.options.orderInColumn;
+    modifier.options.direction = 'desc';
+    table.setModifier(modifier);
+
+    assert.deepEqual(
+        table.modified.getColumns(),
+        {
+            x: [0, 2, 1],
+            y: [3, 2, 1] 
+        },
+        'Modified table should contain sorted columns.'
+    );
 });

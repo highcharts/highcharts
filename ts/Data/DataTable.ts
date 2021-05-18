@@ -1298,19 +1298,19 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableColumn} [column]
      * Values to set in the column.
      *
-     * @param {number} [rowIndex]
-     * Index of the first row to change. Leave `undefind` to set as new column.
+     * @param {number} [rowIndex=0]
+     * Index of the first row to change.
      *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @emits #setColumn
-     * @emits #afterSetColumn
+     * @emits #setColumns
+     * @emits #afterSetColumns
      */
     public setColumn(
         columnNameOrAlias: string,
         column: DataTable.Column = [],
-        rowIndex?: number,
+        rowIndex: number = 0,
         eventDetail?: DataEventEmitter.EventDetail
     ): void {
         this.setColumns({ [columnNameOrAlias]: column }, rowIndex, eventDetail);
@@ -1359,8 +1359,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @emits #setColumn
-     * @emits #afterSetColumn
+     * @emits #setColumns
+     * @emits #afterSetColumns
      */
     public setColumns(
         columns: DataTable.ColumnCollection,
