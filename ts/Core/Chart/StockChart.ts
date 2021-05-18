@@ -1225,7 +1225,7 @@ addEvent(Series, 'afterRemoveClip', function (): void {
         x = clipBox.x;
 
     // Set common clip
-    if (animation) {
+    if (animation && this.options.clip !== false) {
         this.addAnimationClip(animation);
     }
 
