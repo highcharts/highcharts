@@ -40,6 +40,12 @@ declare module './Chart/ChartLike'{
     }
 }
 
+declare module '../OptionsLike' {
+    interface OptionsLike {
+        chart: ChartOptions;
+    }
+}
+
 export interface ChartOptions {
     alignTicks?: boolean;
     animation?: (boolean|Partial<AnimationOptions>);

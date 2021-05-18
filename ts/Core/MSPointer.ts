@@ -11,6 +11,7 @@
 'use strict';
 
 import type Chart from './Chart/Chart';
+import type O from './Options';
 import type PointerEvent from './PointerEvent';
 import H from './Globals.js';
 const {
@@ -19,7 +20,6 @@ const {
     noop,
     win
 } = H;
-import O from './Options.js';
 import Pointer from './Pointer.js';
 import U from './Utilities.js';
 const {

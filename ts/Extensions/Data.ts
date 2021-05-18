@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type O from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Ajax from '../Extensions/Ajax.js';
 const {
@@ -22,7 +23,6 @@ import H from '../Core/Globals.js';
 const {
     doc
 } = H;
-import O from '../Core/Options.js';
 import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;

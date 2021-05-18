@@ -17,7 +17,7 @@
  * */
 
 import type GlobalsLike from './GlobalsLike';
-import O from './Options.js';
+import type O from './Options';
 
 /* *
  *

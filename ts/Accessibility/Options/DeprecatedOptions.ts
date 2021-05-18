@@ -61,10 +61,10 @@
 
 'use strict';
 
+import type O from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
-import O from '../../Core/Options.js';
 import U from '../../Core/Utilities.js';
 const {
     error,
