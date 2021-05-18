@@ -13,7 +13,7 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
-import O from '../Core/Options.js';
+import type O from '../Core/Options';
 
 declare module '../Core/Series/DataLabelOptions' {
     interface DataLabelOptions {

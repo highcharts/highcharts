@@ -21,13 +21,13 @@ import type {
     PointShortOptions
 } from '../Series/PointOptions';
 import type SizeObject from '../Renderer/SizeObject';
+import type { ChartAddSeriesEventObject } from '../Chart/ChartOptions';
 import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import mixinTreeSeries from '../../Mixins/TreeSeries.js';
 const { getLevelOptions } = mixinTreeSeries;
-import type { ChartAddSeriesEventObject } from '../Chart/ChartOptions';
 import U from '../Utilities.js';
 const {
     addEvent,

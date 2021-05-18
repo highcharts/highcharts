@@ -33,6 +33,7 @@ import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions'
 import type EventCallback from '../../Core/EventCallback';
 import type FormatUtilities from '../../Core/FormatUtilities';
 import type MockPointOptions from './MockPointOptions';
+import type O from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
@@ -54,7 +55,6 @@ import ControlPoint from './ControlPoint.js';
 import EventEmitterMixin from './Mixins/EventEmitterMixin.js';
 import H from '../../Core/Globals.js';
 import MockPoint from './MockPoint.js';
-import O from '../../Core/Options.js';
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
 import palette from '../../Core/Color/Palette.js';

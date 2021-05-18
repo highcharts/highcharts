@@ -13,6 +13,7 @@
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type { DOMElementType } from './Renderer/DOMElementType';
+import type O from './Options.js';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type Series from './Series/Series';
@@ -24,7 +25,7 @@ const {
     charts,
     noop
 } = H;
-import O from './Options.js';
+
 import palette from '../Core/Color/Palette.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
