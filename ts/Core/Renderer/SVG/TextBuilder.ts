@@ -190,7 +190,7 @@ class TextBuilder {
 
         const wrapper = this.svgElement;
         const x = attr(wrapper.element, 'x');
-        wrapper.firstLineHeight = void 0;
+        wrapper.firstLineMetrics = void 0;
 
         // Modify hard line breaks by applying the rendered line height
         [].forEach.call(
@@ -198,9 +198,9 @@ class TextBuilder {
             (br: SVGDOMElement, i): void => {
                 if (br.nextSibling && br.previousSibling) { // #5261
 
-                    if (i === 0) {
-                        wrapper.firstLineHeight =
-                            this.getLineHeight(br.previousSibling as any);
+                    if (i === 0 && br.previousSibling.nodeType === 1) {
+                        wrapper.firstLineMetrics = wrapper.renderer
+                            .fontMetrics(void 0, br.previousSibling as any);
                     }
 
                     attr(br, {

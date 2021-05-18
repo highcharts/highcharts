@@ -444,20 +444,17 @@ class SVGLabel extends SVGElement {
         this.width = this.getPaddedWidth();
         this.height = (this.heightSetting || bBox.height || 0) + 2 * padding;
 
-        const fontSize = this.text.firstLineHeight ?
-            // When applicable, use the font size of the first line. The 0.9
-            // factor makes it consistent with pre-fix positioning with default
-            // tooltip options (#15701)
-            Math.round(this.text.firstLineHeight * 0.9) + 'px' :
-            style && style.fontSize;
-
-        // Update the label-scoped y offset. Math.min because of inline
-        // style (#9400)
-        this.baselineOffset = padding + Math.min(
+        const fontMetrics =
+            // When applicable, use the font size of the first line (#15707)
+            this.text.firstLineMetrics ||
             this.renderer.fontMetrics(
-                fontSize,
+                style && style.fontSize,
                 this.text
-            ).b,
+            );
+
+        // Math.min because of inline style (#9400)
+        this.baselineOffset = padding + Math.min(
+            fontMetrics.b,
             // When the height is 0, there is no bBox, so go with the font
             // metrics. Highmaps CSS demos.
             bBox.height || Infinity
