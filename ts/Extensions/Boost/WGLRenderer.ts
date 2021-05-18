@@ -685,8 +685,8 @@ function GLRenderer(
 
                 beginSegment();
 
-                x = Math.round((d as any)[0][1]) - chart.plotLeft;
-                y = Math.round((d as any)[0][2]) - chart.plotTop;
+                x = (d as any)[0][1] - chart.plotLeft;
+                y = (d as any)[0][2] - chart.plotTop;
 
                 if (y === null && connectNulls || !nextInside) {
                     continue;
@@ -720,8 +720,8 @@ function GLRenderer(
                 firstPoint = false;
 
 
-                x = Math.round((d as any)[1][1]) - chart.plotLeft;
-                y = Math.round((d as any)[1][2]) - chart.plotTop;
+                x = (d as any)[1][1] - chart.plotLeft;
+                y = (d as any)[1][2] - chart.plotTop;
 
                 if (y === null && connectNulls || !nextInside) {
                     continue;
