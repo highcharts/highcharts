@@ -50,6 +50,7 @@ declare global {
             public constructor(parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart);
             public annotations: PopupAnnotationsObject;
             public container: HTMLDOMElement;
+            public formType?: string;
             public iconsURL: string;
             public indicators: PopupIndicatorsObject;
             public lang: Record<string, string>;
@@ -423,6 +424,8 @@ H.Popup.prototype = {
             popupCloseBtn = popupDiv
                 .querySelectorAll('.' + PREFIX + 'popup-close')[0];
 
+        this.formType = void 0;
+
         // reset content
         popupDiv.innerHTML = '';
 
@@ -492,6 +495,8 @@ H.Popup.prototype = {
         if (type === 'flag') {
             this.annotations.addForm.call(this, chart, options, callback, true);
         }
+
+        this.formType = type;
     },
     /**
      * Return lang definitions for popup.

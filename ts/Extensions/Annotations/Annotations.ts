@@ -713,6 +713,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      */
     public setVisibility(visible?: boolean): void {
         const options = this.options,
+            navigation = this.chart.navigationBindings,
             visibility = pick(visible, !options.visible);
 
         this.graphic.attr(
@@ -722,6 +723,14 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         if (!visibility) {
             this.setControlPointsVisibility(false);
+
+            if (
+                navigation.activeAnnotation === this &&
+                navigation.popup &&
+                navigation.popup.formType === 'annotation-toolbar'
+            ) {
+                fireEvent(navigation, 'closePopup');
+            }
         }
 
         options.visible = visibility;
