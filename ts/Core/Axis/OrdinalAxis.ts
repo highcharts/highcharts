@@ -20,10 +20,10 @@ import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 const {
     addEvent,
+    correctFloat,
     css,
     defined,
     error,
-    isNumber,
     pick,
     timeUnits
 } = U;
@@ -540,46 +540,44 @@ namespace OrdinalAxis {
          * @param {number} val
          *        The pixel value of a point.
          *
-         * @param {Array<number>} [extendedOrdinalPositions]
+         * @param {Array<number>} [ordinallArray]
          *        An array of all points available on the axis
          *        for the given data set.
+         *        Either ordinalPositions if the value is inside the plotArea
+         *        or extendedOrdinalPositions if not.
          *
          * @return {number}
          */
         public getIndexOfPoint(
             val: number,
-            extendedOrdinalPositions: Array<number>
+            ordinallArray: Array<number>
         ): number {
             const ordinal = this,
                 axis = ordinal.axis;
-            let firstPointVal,
-                firstPointX,
-                secondPointX;
+            let firstPointVal = (axis.series[0].points && axis.series[0].points[0].x) || 0,
+                firstPointX = (axis.series[0].points && axis.series[0].points[0].plotX) || 0;
 
-            if (axis.series[0].points) {
-                firstPointVal = axis.series[0].points[0].x;
-                firstPointX = axis.series[0].points[0].plotX;
-                secondPointX = axis.series[0].points[1].plotX;
-            }
+            // Find the point with the smallest x and pixel value from
+            // all series assigned to the axis.
+            axis.series.forEach(function (series): void {
+                if (series.points &&
+                    series.points[0] &&
+                    series.points[0].x &&
+                    series.points[0].plotX &&
+                    series.points[0].plotX < firstPointX
+                ) {
+                    firstPointX = series.points[0].plotX;
+                    firstPointVal = series.points[0].x;
+                }
+            });
 
-            if (isNumber(firstPointVal) && isNumber(firstPointX) && isNumber(secondPointX)) {
-                // Distance in pixels between two points
-                // on the ordinal axis in the current zoom.
-                const ordinalPointPixelInterval = secondPointX - firstPointX,
-                    shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
+            // Distance in pixels between two points
+            // on the ordinal axis in the current zoom.
+            const ordinalPointPixelInterval = axis.translationSlope *
+                (ordinal.slope || axis.closestPointRange || ordinal.overscrollPointsRange as number),
+                shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
 
-                // Make sure that the returned index does not exceed array
-                // boundaries. If so, return the first or last index of array.
-                return Math.min(
-                    Math.max(
-                        extendedOrdinalPositions.indexOf(firstPointVal) + shiftIndex,
-                        0
-                    ), // first index
-                    extendedOrdinalPositions.length - 1 // last index
-                );
-            }
-
-            return 0;
+            return ordinallArray.indexOf(firstPointVal) + shiftIndex;
         }
 
         /**
@@ -951,18 +949,17 @@ namespace OrdinalAxis {
          * @param {number} val
          *        The linear abstracted value.
          *
-         * @param {boolean} [fromIndex]
+         * @param {boolean} [isInside]
          *        Translate from an index in the ordinal positions rather than a
          *        value.
          *
          * @return {number}
          */
         axisProto.lin2val = function (val: number, isInside: boolean|undefined): number {
-            let axis = this,
+            const axis = this,
                 ordinal = axis.ordinal,
-                ordinalPositions = ordinal.positions, // for the current visible range
-                ret = 0,
-                extendedOrdinalPositions = this.ordinal.extendedOrdinalPositions;
+                ordinalPositions = ordinal.positions; // for the current visible range
+            let extendedOrdinalPositions = this.ordinal.extendedOrdinalPositions;
 
             // The visible range contains only equally spaced values.
             if (!ordinalPositions) {
@@ -981,51 +978,44 @@ namespace OrdinalAxis {
                 }
 
                 if (ordinalPositions && extendedOrdinalPositions && extendedOrdinalPositions.length) {
-                    const indexToShift = this.ordinal.getIndexOfPoint(val, extendedOrdinalPositions),
-                        leftNeighbor = Math.floor(indexToShift);
+                    const indexInEOP = this.ordinal.getIndexOfPoint(val, extendedOrdinalPositions),
+                        mantissa = correctFloat(indexInEOP % 1);
 
-                    // In order to ensure that axis.min equals to some
-                    // calculated value from the ordinal axis. Do not
-                    // interpolate the points, always return point to the left.
-                    ret = extendedOrdinalPositions[leftNeighbor];
+                    // Check if the index is inside extendedOrdinalPositions.
+                    // If true, read/approximate value for that exact index.
+                    if (indexInEOP >= 0 && indexInEOP < extendedOrdinalPositions.length) {
+                        const leftNeighbour = extendedOrdinalPositions[Math.floor(indexInEOP)],
+                            rightNeighbour = extendedOrdinalPositions[Math.ceil(indexInEOP)],
+                            distance = rightNeighbour - leftNeighbour;
+
+                        return extendedOrdinalPositions[Math.floor(indexInEOP)] + mantissa * distance;
+                    }
+
+                    const EOPlength = extendedOrdinalPositions.length,
+                        leftVisiblePoint = extendedOrdinalPositions[0],
+                        rightVisiblePoint = extendedOrdinalPositions[EOPlength - 1],
+                        slope = (rightVisiblePoint - leftVisiblePoint) / (EOPlength - 1);
+
+                    if (indexInEOP < 0) {
+                        return leftVisiblePoint + slope * indexInEOP;
+                    }
+
+                    return rightVisiblePoint + slope * (indexInEOP - EOPlength);
                 }
             } else {
-                const ordinalSlope = ordinal.slope,
-                    ordinalOffset = ordinal.offset;
-                let i = ordinalPositions.length - 1,
-                    linearEquivalentLeft = 0,
-                    linearEquivalentRight = 0,
-                    distance = 0;
+                // Even if the isInside property passed as true, due to some
+                // inaccuracy the getIndexOfPoint might return a negative value.
+                // To prevent that, compare it with zero.
+                const indexInEOP = Math.max(this.ordinal.getIndexOfPoint(val, ordinalPositions), 0),
+                    mantissa = correctFloat(indexInEOP % 1),
+                    leftNeighbour = ordinalPositions[Math.floor(indexInEOP)],
+                    rightNeighbour = ordinalPositions[Math.ceil(indexInEOP)],
+                    distance = rightNeighbour - leftNeighbour;
 
-                if (isNumber(ordinalSlope) && isNumber(ordinalOffset)) {
-                    while (i--) {
-                        linearEquivalentLeft =
-                            (ordinalSlope * i) + ordinalOffset;
-                        if (val >= linearEquivalentLeft) {
-                            linearEquivalentRight =
-                                (ordinalSlope *
-                                    (i + 1)) +
-                                    ordinalOffset;
-                            // something between 0 and 1
-                            distance = (val - linearEquivalentLeft) /
-                                (linearEquivalentRight - linearEquivalentLeft);
-                            break;
-                        }
-                    }
-                    // If the index is within the range of ordinal positions,
-                    // return the associated or interpolated value. If not,
-                    // return the value.
-                    ret = (typeof distance !== 'undefined' &&
-                        typeof ordinalPositions[i] !== 'undefined' ?
-                        ordinalPositions[i] + (distance ?
-                            distance *
-                                (ordinalPositions[i + 1] - ordinalPositions[i]) :
-                            0) :
-                        val);
-                }
+                return ordinalPositions[Math.floor(indexInEOP)] + mantissa * distance;
+
             }
-
-            return ret;
+            return val;
         };
 
         /**

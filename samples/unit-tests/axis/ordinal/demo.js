@@ -264,16 +264,18 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     const axis = {
         min: 3,
         len: 500,
+        translationSlope: 0.2,
         ordinal: {
-            extendedOrdinalPositions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-            positions: [3, 4, 5, 6, 7]
+            extendedOrdinalPositions: [0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9],
+            positions: [3, 4.2, 4.8, 5, 7],
+            slope: 500
         },
         series: [{
             points: [{
                 x: 3,
                 plotX: -20
             }, {
-                x: 4,
+                x: 4.2,
                 plotX: 80 // distance between points 100px
             }]
         }]
@@ -284,6 +286,7 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     // The distance between them equals 100px.
     // Thare are some points that are out of the current range.
     // The last visible point is located at 380px.
+    // EOP = extendedOrdinalPositions
 
     axis.ordinal.getIndexOfPoint =
         // eslint-disable-next-line no-underscore-dangle
@@ -293,26 +296,50 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     }
 
     assert.strictEqual(
-        lin2val(-50),
-        2,
-        `For the pixel value lower than the first point, the function should
-        return the next value from the extendedOrdinalPositions array.`
-    );
-    assert.strictEqual(
-        lin2val(-500),
-        0,
-        `For the pixel value lower than any point in extendedOrdinalPositions,
-        array, the function should return the first element of that array.`
-    );
-    assert.strictEqual(
-        lin2val(420),
-        7,
-        `For the pixel value higher than the last visible point, 
+        lin2val(-20, true),
+        3,
+        `For the pixel value equal to the first point x position,
         the function should return the value for that point.`
     );
     assert.strictEqual(
+        lin2val(80, true),
+        4.2,
+        `For the pixel value equal to the second point x position,
+        the function should return the value for that point.`
+    );
+    assert.strictEqual(
+        lin2val(30, true),
+        3.6,
+        `For the pixel value located between two visible points,
+        the function should calculate the value between them.`
+    );
+    assert.strictEqual(
+        lin2val(-50),
+        2.55,
+        `For the pixel value smaller than the first visible point, the function
+        should calculate value between that point and next using EOP array.`
+    );
+    assert.strictEqual(
+        lin2val(-520),
+        -2,
+        `For the pixel value lower than any point in EOP array, the function
+        should calculate an approximate value based on previous distance.`
+    );
+    assert.strictEqual(
+        lin2val(380),
+        7,
+        `For the pixel value equal to last point, 
+        the function should return the value for that point.`
+    );
+    assert.strictEqual(
+        lin2val(420),
+        7.4,
+        `For the pixel value higher than the first visible point, the function
+        should calculate value between that point and next using EOP array.`
+    );
+    assert.strictEqual(
         lin2val(1000),
-        9,
+        12.2,
         `For the pixel value higher than any point in extendedOrdinalPositions,
         array, the function should return the last element of that array.`
     );

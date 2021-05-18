@@ -4610,7 +4610,7 @@ class Axis {
 
         // From pixels to value
         if (backwards) { // reverse translation
-            const isInside = val > axis.left || val > axis.len;
+            const isInside = val > axis.left && val < axis.left + axis.len;
 
             val = val * sign + cvsOffset;
             val -= minPixelPadding;
@@ -4624,7 +4624,7 @@ class Axis {
                 if (axis.logarithmic || isBrokenAxis) {
                     returnValue = axis.lin2val(returnValue);
                 } else {
-                    returnValue = axis.lin2val(isInside ? returnValue : val, isInside);
+                    returnValue = axis.lin2val(val, isInside);
                 }
             }
 
