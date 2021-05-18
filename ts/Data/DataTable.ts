@@ -1452,6 +1452,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         if (modifier) {
             if (table.modified === table) {
                 table.modified = modifier.modify(table.clone());
+            } else {
+                table.modified.setColumns(modifier.modify(table.clone()).getColumns());
             }
         } else {
             if (table.modified !== table) {
