@@ -1342,13 +1342,12 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @return {void}
      */
     removePlotBandOrLine: function (this: Highcharts.Axis, id: string): void {
-        let plotLinesAndBands = this.plotLinesAndBands,
+        const plotLinesAndBands = this.plotLinesAndBands,
             options = this.options,
-            userOptions = this.userOptions,
-            i;
+            userOptions = this.userOptions;
 
         if (plotLinesAndBands) { // #15639
-            i = plotLinesAndBands.length;
+            let i = plotLinesAndBands.length;
             while (i--) {
                 if (plotLinesAndBands[i].id === id) {
                     plotLinesAndBands[i].destroy();
