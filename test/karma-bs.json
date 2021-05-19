@@ -23,7 +23,7 @@
     "Mac.Safari": {
         "base": "BrowserStack",
         "browser": "safari",
-        "browser_version": "14.1",
+        "browser_version": "14.0",
         "os": "OS X",
         "os_version": "Big Sur"
     },
