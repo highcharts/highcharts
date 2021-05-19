@@ -302,7 +302,7 @@ addEvent(
                 column.setAxisSize();
                 column.setAxisTranslation();
             });
-        } as any);
+        });
     }
 );
 
@@ -326,7 +326,7 @@ addEvent(
             options = axis.options,
             gridOptions = options.grid || {},
             labelOpts = axis.options.labels,
-            align = (labelOpts as any).align,
+            align = labelOpts.align,
             // verticalAlign is currently not supported for axis.labels.
             verticalAlign = 'middle', // labelOpts.verticalAlign,
             side = GridAxis.Side[axis.side],
@@ -336,7 +336,7 @@ addEvent(
             nextTickPos = (
                 isNumber(tickPositions[e.index + 1]) ?
                     tickPositions[e.index + 1] - tickmarkOffset :
-                    (axis.max as any) + tickmarkOffset
+                    (axis.max || 0) + tickmarkOffset
             ),
             tickSize = axis.tickSize('tick'),
             tickWidth = tickSize ? tickSize[0] : 0,
@@ -361,10 +361,10 @@ addEvent(
             } else {
                 bottom = axis.top + axis.len - (axis.translate(
                     reversed ? nextTickPos : tickPos
-                ) as any);
+                ) || 0);
                 top = axis.top + axis.len - (axis.translate(
                     reversed ? tickPos : nextTickPos
-                ) as any);
+                ) || 0);
             }
 
             // Calculate left and right positions of the cell.
@@ -377,10 +377,13 @@ addEvent(
             } else {
                 left = Math.round(axis.left + (axis.translate(
                     reversed ? nextTickPos : tickPos
-                ) as any)) - crispCorr;
-                right = Math.round(axis.left + (axis.translate(
-                    reversed ? tickPos : nextTickPos
-                ) as any)) - crispCorr;
+                ) || 0)) - crispCorr;
+                right = Math.min( // #15742
+                    Math.round(axis.left + (axis.translate(
+                        reversed ? tickPos : nextTickPos
+                    ) || 0)) - crispCorr,
+                    axis.left + axis.len
+                );
             }
 
             tick.slotWidth = right - left;
@@ -403,14 +406,14 @@ addEvent(
             );
 
             lblMetrics = chart.renderer.fontMetrics(
-                (labelOpts as any).style.fontSize,
-                (label as any).element
+                labelOpts.style.fontSize,
+                label && label.element
             );
-            labelHeight = (label as any).getBBox().height;
+            labelHeight = label ? label.getBBox().height : 0;
 
             // Adjustment to y position to align the label correctly.
             // Would be better to have a setter or similar for this.
-            if (!(labelOpts as any).useHTML) {
+            if (!labelOpts.useHTML) {
                 lines = Math.round(labelHeight / lblMetrics.h);
                 e.pos.y += (
                     // Center the label
@@ -428,7 +431,7 @@ addEvent(
                 );
             }
 
-            e.pos.x += (axis.horiz && (labelOpts as any).x || 0);
+            e.pos.x += (axis.horiz && labelOpts.x) || 0;
         }
     }
 );
