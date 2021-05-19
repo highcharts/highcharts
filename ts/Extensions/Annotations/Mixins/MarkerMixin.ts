@@ -32,8 +32,8 @@ const {
  *  Declarations
  *
  * */
-declare module '../../../Core/OptionsLike'{
-    interface OptionsLike {
+declare module '../../../Core/Options'{
+    interface Options {
         defs?: Record<string, AST.Node>;
     }
 }

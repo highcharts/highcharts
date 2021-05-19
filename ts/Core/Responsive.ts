@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type O from './DefaultOptions';
+import type Options from './Options';
 import Chart from './Chart/Chart.js';
 import U from './Utilities.js';
 const {
@@ -28,8 +28,8 @@ declare module './Chart/ChartLike' {
     interface ChartLike {
         currentResponsive?: Highcharts.ResponsiveCurrentObject;
         currentOptions(
-            options: Partial<O>
-        ): Partial<O>;
+            options: Partial<Options>
+        ): Partial<Options>;
         matchResponsiveRule(
             rule: Highcharts.ResponsiveRulesOptions,
             matches: Array<string>
@@ -38,8 +38,8 @@ declare module './Chart/ChartLike' {
     }
 }
 
-declare module './OptionsLike' {
-    interface OptionsLike {
+declare module './Options' {
+    interface Options {
         isResponsiveOptions?: boolean;
         responsive?: Highcharts.ResponsiveOptions;
     }
@@ -66,13 +66,13 @@ declare global {
         }
         interface ResponsiveRulesOptions {
             _id?: string;
-            chartOptions?: O;
+            chartOptions?: Options;
             condition?: ResponsiveRulesConditionOptions;
         }
         interface ResponsiveCurrentObject {
-            mergedOptions: Partial<O>;
+            mergedOptions: Partial<Options>;
             ruleIds: string;
-            undoOptions: Partial<O>;
+            undoOptions: Partial<Options>;
         }
     }
 }
@@ -244,14 +244,14 @@ Chart.prototype.setResponsive = function (
     // Merge matching rules
     const mergedOptions = merge.apply(0, ruleIds.map(function (
         ruleId: string
-    ): (O|undefined) {
+    ): (Options|undefined) {
         return (find(
             (options as any).rules as Array<Highcharts.ResponsiveRulesOptions>,
             function (rule: Highcharts.ResponsiveRulesOptions): boolean {
                 return rule._id === ruleId;
             }
         ) as any).chartOptions;
-    }) as any) as Partial<O>;
+    }) as any) as Partial<Options>;
 
     mergedOptions.isResponsiveOptions = true;
 
@@ -330,8 +330,8 @@ Chart.prototype.matchResponsiveRule = function (
  * @return {Highcharts.Options}
  */
 Chart.prototype.currentOptions = function (
-    options: O
-): Partial<O> {
+    options: Options
+): Partial<Options> {
 
     const chart = this,
         ret = {};

@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type O from '../Core/DefaultOptions';
+import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Ajax from '../Extensions/Ajax.js';
 const {
@@ -51,8 +51,8 @@ declare module '../Core/Chart/ChartLike'{
         liveDataURL?: string;
     }
 }
-declare module '../Core/OptionsLike' {
-    interface OptionsLike {
+declare module '../Core/Options' {
+    interface Options {
         data?: Highcharts.DataOptions;
     }
 }
@@ -65,13 +65,13 @@ declare global {
     namespace Highcharts {
         type DataValueType = (number|string|null);
         interface DataAfterCompleteCallbackFunction {
-            (dataOptions?: Partial<O>): void;
+            (dataOptions?: Partial<Options>): void;
         }
         interface DataBeforeParseCallbackFunction {
             (csv: string): string;
         }
         interface DataCompleteCallbackFunction {
-            (chartOptions: Partial<O>): void;
+            (chartOptions: Partial<Options>): void;
         }
         interface DataDateFormatCallbackFunction {
             (match: ReturnType<string['match']>): number;
@@ -134,12 +134,12 @@ declare global {
         class Data {
             public constructor(
                 dataOptions: DataOptions,
-                chartOptions?: Partial<O>,
+                chartOptions?: Partial<Options>,
                 chart?: Chart
             );
             public alternativeFormat?: string;
             public chart: Chart;
-            public chartOptions: O;
+            public chartOptions: Options;
             public columns?: Array<Array<DataValueType>>;
             public dateFormat?: string;
             public dateFormats: Record<string, Highcharts.DataDateFormatObject>;
@@ -161,7 +161,7 @@ declare global {
             public hasURLOption(options: DataOptions): boolean;
             public init(
                 options: DataOptions,
-                chartOptions?: O,
+                chartOptions?: Options,
                 chart?: Chart
             ): void;
             public parseColumn(column: Array<DataValueType>, col: number): void;
@@ -196,7 +196,7 @@ declare global {
         }
         function data(
             dataOptions: DataOptions,
-            chartOptions?: O,
+            chartOptions?: Options,
             chart?: Chart
         ): Data;
     }
@@ -698,7 +698,7 @@ class Data {
 
     public constructor(
         dataOptions: Highcharts.DataOptions,
-        chartOptions?: O,
+        chartOptions?: Options,
         chart?: Chart
     ) {
         this.init(dataOptions, chartOptions, chart);
@@ -712,7 +712,7 @@ class Data {
 
     public alternativeFormat?: string;
     public chart: Chart = void 0 as any;
-    public chartOptions: O = void 0 as any;
+    public chartOptions: Options = void 0 as any;
     public columns?: Array<Array<Highcharts.DataValueType>>;
     public dateFormat?: string;
     public decimalRegex?: RegExp;
@@ -739,7 +739,7 @@ class Data {
      */
     public init(
         options: Highcharts.DataOptions,
-        chartOptions?: O,
+        chartOptions?: Options,
         chart?: Chart
     ): void {
 
@@ -2372,7 +2372,7 @@ class Data {
             j: number,
             r: number,
             seriesIndex,
-            chartOptions: Partial<O>,
+            chartOptions: Partial<Options>,
             allSeriesBuilders = [],
             builder,
             freeIndexes,
@@ -2543,7 +2543,7 @@ class Data {
         if (options) {
             // Set the complete handler
             options.afterComplete = function (
-                dataOptions?: Partial<O>
+                dataOptions?: Partial<Options>
             ): void {
                 // Avoid setting axis options unless the type changes. Running
                 // Axis.update will cause the whole structure to be destroyed
@@ -2587,7 +2587,7 @@ class Data {
  */
 H.data = function (
     dataOptions: Highcharts.DataOptions,
-    chartOptions?: O,
+    chartOptions?: Options,
     chart?: Chart
 ): Highcharts.Data {
     return new H.Data(dataOptions, chartOptions, chart);
@@ -2601,13 +2601,13 @@ addEvent(
     function (
         e: Event & {
             args: [
-                (Partial<O>|undefined),
+                (Partial<Options>|undefined),
                 (Chart.CallbackFunction|undefined)
             ];
         }
     ): void {
         let chart = this, // eslint-disable-line no-invalid-this
-            userOptions: Partial<O> = (e.args[0] || {}),
+            userOptions: Partial<Options> = (e.args[0] || {}),
             callback = e.args[1];
 
         if (userOptions && userOptions.data && !chart.hasDataDef) {
@@ -2621,7 +2621,7 @@ addEvent(
             chart.data = new H.Data(extend(userOptions.data, {
 
                 afterComplete: function (
-                    dataOptions?: Partial<O>
+                    dataOptions?: Partial<Options>
                 ): void {
                     let i, series;
 

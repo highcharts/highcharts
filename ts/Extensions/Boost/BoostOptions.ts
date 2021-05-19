@@ -19,8 +19,8 @@ import '../../Core/Globals.js';
  * Declarations
  *
  * */
-declare module '../../Core/OptionsLike'{
-    interface OptionsLike {
+declare module '../../Core/Options'{
+    interface Options {
         boost?: Highcharts.BoostOptions;
     }
 }

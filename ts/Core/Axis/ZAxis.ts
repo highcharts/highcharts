@@ -26,8 +26,8 @@ declare module '../Chart/ChartLike'{
     }
 }
 
-declare module '../OptionsLike' {
-    interface OptionsLike {
+declare module '../Options' {
+    interface Options {
         zAxis?: (
             DeepPartial<Highcharts.AxisOptions>|
             Array<DeepPartial<Highcharts.AxisOptions>>

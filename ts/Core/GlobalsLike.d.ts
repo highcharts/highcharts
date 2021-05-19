@@ -15,7 +15,7 @@
  * */
 
 import type Chart from './Chart/Chart';
-import type O from './DefaultOptions';
+import type Options from './Options';
 import type { SeriesTypeRegistry } from './Series/SeriesType';
 import type SizeObject from './Renderer/SizeObject';
 import type Time from './Time';
@@ -119,7 +119,7 @@ export interface GlobalsLike extends InternalNamespace {
     readonly supportsPassiveEvents: boolean;
     readonly svg: boolean;
     readonly symbolSizes: Record<string, SizeObject>;
-    theme?: Partial<O>;
+    theme?: Partial<Options>;
     readonly userAgent: string;
     readonly version: string;
     // eslint-disable-next-line node/no-unsupported-features/es-builtins

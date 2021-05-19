@@ -33,7 +33,7 @@ import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions'
 import type EventCallback from '../../Core/EventCallback';
 import type FormatUtilities from '../../Core/FormatUtilities';
 import type MockPointOptions from './MockPointOptions';
-import type O from '../../Core/DefaultOptions';
+import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
@@ -86,8 +86,8 @@ declare module './MockPointOptions' {
     }
 }
 
-declare module '../../Core/OptionsLike'{
-    interface OptionsLike {
+declare module '../../Core/Options'{
+    interface Options {
         annotations?: (Highcharts.AnnotationsOptions|Array<Highcharts.AnnotationsOptions>);
     }
 }
@@ -108,7 +108,7 @@ declare global {
             initAnnotation(userOptions: AnnotationsOptions): Annotation;
             removeAnnotation(idOrAnnotation: (number|string|Annotation)): void;
         }
-        interface AnnotationChartOptionsObject extends O {
+        interface AnnotationChartOptionsObject extends Options {
             annotations: Array<AnnotationsOptions>;
             defs: Record<string, AST.Node>;
             navigation: NavigationOptions;

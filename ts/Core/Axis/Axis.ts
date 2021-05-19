@@ -26,6 +26,7 @@ import type CSSObject from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
+import type { OptionsOverflowValue } from '../Options';
 import type GradientColor from '../Color/GradientColor';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../Series/Point';
@@ -47,8 +48,8 @@ const {
 } = F;
 import H from '../Globals.js';
 import palette from '../Color/Palette.js';
-import O from '../DefaultOptions.js';
-const { defaultOptions } = O;
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
@@ -81,8 +82,8 @@ const {
  *  Declarations
  *
  * */
-declare module '../../Core/OptionsLike'{
-    interface OptionsLike {
+declare module '../../Core/Options'{
+    interface Options {
         xAxis?: (DeepPartial<Highcharts.XAxisOptions>|Array<DeepPartial<Highcharts.XAxisOptions>>);
         yAxis?: (DeepPartial<Highcharts.YAxisOptions>|Array<DeepPartial<Highcharts.YAxisOptions>>);
     }
@@ -233,7 +234,7 @@ declare global {
             format?: string;
             formatter?: AxisLabelsFormatterCallbackFunction;
             indentation: number;
-            overflow: O.OptionsOverflowValue;
+            overflow: OptionsOverflowValue;
             padding: number;
             reserveSpace?: boolean;
             rotation?: number|'auto';

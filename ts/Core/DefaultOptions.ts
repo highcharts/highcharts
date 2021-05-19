@@ -10,20 +10,9 @@
 
 'use strict';
 
-import type {
-    AlignObject,
-    AlignValue,
-    VerticalAlignValue
-} from './Renderer/AlignObject';
-import type ColorString from './Color/ColorString';
-import type CSSObject from './Renderer/CSSObject';
-import type LangOptions from './LangOptions';
-import type OptionsLike from './OptionsLike';
+import type { Options } from './Options';
 import type Point from './Series/Point';
 import type Series from './Series/Series';
-import type { SeriesTypePlotOptions } from './Series/SeriesType';
-import type SVGRenderer from './Renderer/SVG/SVGRenderer';
-import type ChartOptions from '../Core/Chart/ChartOptions';
 
 import H from './Globals.js';
 const {
@@ -72,87 +61,6 @@ declare module './LangOptions'{
         zoomIn?: string;
         zoomOut?: string;
     }
-}
-
-interface Options extends OptionsLike {
-    chart: ChartOptions;
-    credits?: Options.CreditsOptions;
-    colors?: Array<ColorString>;
-    caption?: Options.CaptionOptions;
-    lang?: LangOptions;
-    loading?: Options.LoadingOptions;
-    plotOptions?: SeriesTypePlotOptions;
-    subtitle?: Options.SubtitleOptions;
-    symbols?: Array<SVGRenderer.SymbolKeyValue>;
-    title?: Options.TitleOptions;
-}
-
-namespace Options {
-    export interface CreditsOptions {
-        enabled?: boolean;
-        href?: string;
-        mapText?: string;
-        mapTextFull?: string;
-        position?: AlignObject;
-        style?: CSSObject;
-        text?: string;
-    }
-    export interface CaptionOptions {
-        align?: AlignValue;
-        floating?: boolean;
-        margin?: number;
-        style?: CSSObject;
-        text?: string;
-        useHTML?: boolean;
-        verticalAlign?: VerticalAlignValue;
-        widthAdjust?: number;
-        x?: number;
-        y?: number;
-    }
-    export interface LabelsItemsOptions {
-        html?: string;
-        style?: CSSObject;
-    }
-    export interface LoadingOptions {
-        hideDuration?: number;
-        labelStyle?: CSSObject;
-        showDuration?: number;
-        style?: CSSObject;
-    }
-    export interface NumberFormatterCallbackFunction {
-        (
-            number: number,
-            decimals: number,
-            decimalPoint?: string,
-            thousandsSep?: string
-        ): string;
-    }
-    export interface SubtitleOptions {
-        align?: AlignValue;
-        floating?: boolean;
-        style?: CSSObject;
-        text?: string;
-        useHTML?: boolean;
-        verticalAlign?: VerticalAlignValue;
-        widthAdjust?: number;
-        x?: number;
-        y?: number;
-    }
-    export interface TitleOptions {
-        align?: AlignValue;
-        floating?: boolean;
-        margin?: number;
-        style?: CSSObject;
-        text?: string;
-        useHTML?: boolean;
-        verticalAlign?: VerticalAlignValue;
-        widthAdjust?: number;
-        x?: number;
-        y?: number;
-    }
-    export type DescriptionOptionsType = (TitleOptions|SubtitleOptions|Options.CaptionOptions);
-    export type OptionsOverflowValue = ('allow'|'justify');
-    export type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
 }
 
 /* *
@@ -4149,11 +4057,11 @@ function setOptions(
  *
  * */
 
-const Options = {
+const DefaultOptions = {
     defaultOptions,
     defaultTime,
     getOptions,
     setOptions
 };
 
-export default Options;
+export default DefaultOptions;

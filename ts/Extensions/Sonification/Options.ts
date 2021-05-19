@@ -17,8 +17,8 @@
  * Declarations
  *
  * */
-declare module '../../Core/OptionsLike'{
-    interface OptionsLike {
+declare module '../../Core/Options'{
+    interface Options {
         sonification?: Highcharts.ChartSonificationOptions;
     }
 }

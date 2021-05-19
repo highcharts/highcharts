@@ -51,8 +51,8 @@ declare module './Chart/ChartLike'{
     }
 }
 
-declare module './OptionsLike'{
-    interface OptionsLike {
+declare module './Options'{
+    interface Options {
         scrollbar?: Highcharts.ScrollbarOptions;
     }
 }
@@ -167,8 +167,8 @@ interface ScrollbarEventCallbackFunction {
     (e: PointerEvent): void;
 }
 
-import O from './DefaultOptions.js';
-const { defaultOptions } = O;
+import D from './DefaultOptions.js';
+const { defaultOptions } = D;
 
 const isTouchDevice = H.isTouchDevice;
 

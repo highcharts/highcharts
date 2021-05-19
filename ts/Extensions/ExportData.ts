@@ -33,11 +33,11 @@ const {
     seriesTypes,
     win
 } = H;
-import O from '../Core/DefaultOptions.js';
+import D from '../Core/DefaultOptions.js';
 const {
     getOptions,
     setOptions
-} = O;
+} = D;
 import U from '../Core/Utilities.js';
 const {
     addEvent,

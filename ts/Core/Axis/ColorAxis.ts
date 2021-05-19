@@ -58,8 +58,8 @@ declare module '../Chart/ChartLike' {
     }
 }
 
-declare module '../../Core/OptionsLike'{
-    interface OptionsLike {
+declare module '../../Core/Options'{
+    interface Options {
         colorAxis?: (
             DeepPartial<ColorAxis.Options>|
             Array<DeepPartial<ColorAxis.Options>>

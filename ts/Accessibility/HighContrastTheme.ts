@@ -13,7 +13,7 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
-import type O from '../Core/DefaultOptions';
+import type Options from '../Core/Options';
 
 declare module '../Core/Series/DataLabelOptions' {
     interface DataLabelOptions {
@@ -21,7 +21,7 @@ declare module '../Core/Series/DataLabelOptions' {
     }
 }
 
-const theme: O = {
+const theme: Options = {
     chart: {
         backgroundColor: 'window'
     },

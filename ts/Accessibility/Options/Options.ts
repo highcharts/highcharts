@@ -14,7 +14,7 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type O from '../../Core/DefaultOptions';
+import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 
@@ -39,8 +39,8 @@ declare module '../../Core/LegendOptions' {
     }
 }
 
-declare module '../../Core/OptionsLike'{
-    interface OptionsLike {
+declare module '../../Core/Options'{
+    interface Options {
         accessibility?: Highcharts.AccessibilityOptions;
     }
 }
@@ -251,7 +251,7 @@ declare global {
  *         Formatted string for the screen reader module.
  */
 
-const options: DeepPartial<O> = {
+const options: DeepPartial<Options> = {
 
     /**
      * Options for configuring accessibility for the chart. Requires the

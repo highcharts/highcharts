@@ -40,8 +40,8 @@ const {
  *  Declarations
  *
  * */
-declare module './OptionsLike' {
-    interface OptionsLike {
+declare module './Options' {
+    interface Options {
         time?: Time.TimeOptions;
     }
 }

@@ -25,6 +25,7 @@ import type {
     CSSObject,
     CursorValue
 } from '../Core/Renderer/CSSObject';
+import type Options from '../Core/Options';
 import type {
     PointOptions,
     PointShortOptions
@@ -43,8 +44,8 @@ import F from '../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../Core/Globals.js';
 const { noop } = H;
-import O from '../Core/DefaultOptions.js';
-const { defaultOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
@@ -85,8 +86,8 @@ declare module '../Core/Chart/ChartLike' {
     }
 }
 
-declare module '../Core/OptionsLike'{
-    interface OptionsLike {
+declare module '../Core/Options'{
+    interface Options {
         drilldown?: Highcharts.DrilldownOptions;
     }
 }
@@ -1552,7 +1553,7 @@ addEvent(Point, 'afterInit', function (): Point {
     return point;
 });
 
-addEvent(Point, 'update', function (e: { options: O }): void {
+addEvent(Point, 'update', function (e: { options: Options }): void {
     const point = this,
         options = e.options || {};
 
