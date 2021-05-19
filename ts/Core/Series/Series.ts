@@ -4821,14 +4821,10 @@ class Series {
             clipBox = series.clipBox || chart.clipBox;
 
             if (finalBox) {
-                clipBox.width = pick(
-                    chart.inverted ? yAxis && yAxis.len : xAxis && xAxis.len,
-                    chart.plotSizeX as any
-                );
+                clipBox.width = chart.plotSizeX as any;
 
                 clipBox.x = (chart.scrollablePixelsX || 0) *
-                    (scrollablePlotAreaOptions.scrollPositionX || 0) +
-                    (chart.plotBorderWidth || 0) / 2;
+                    (scrollablePlotAreaOptions.scrollPositionX || 0);
             }
         }
 

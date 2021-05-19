@@ -1220,7 +1220,7 @@ addEvent(Series, 'afterRemoveClip', function (): void {
 
     const animation = animObject(this.options.animation),
         clipKey = this.getSharedClipKey(animation),
-        clipBox = this.getClipBox(animation, true),
+        clipBox = this.getClipBox(animation),
         width = clipBox.width,
         x = clipBox.x;
 
