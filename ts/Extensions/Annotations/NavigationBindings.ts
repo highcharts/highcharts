@@ -574,6 +574,7 @@ class NavigationBindings {
         // Click outside popups, should close them and deselect the annotation
         if (
             navigation.activeAnnotation &&
+            !navigation.activeAnnotation.cancelClick && // #15729
             !clickEvent.activeAnnotation &&
             // Element could be removed in the child action, e.g. button
             (clickEvent.target as any).parentNode &&
