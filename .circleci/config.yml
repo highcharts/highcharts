@@ -227,13 +227,13 @@ jobs:
       - run: > # checkout master at diverge point of current branch and install
           git checkout master && git fetch origin master && git reset --hard origin/master &&
           git checkout $(git merge-base master ${CIRCLE_BRANCH}) && git log --oneline -5 &&
-          npm i && npx gulp scripts
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
       - run:
           name: Write file sizes at master
           command: npx gulp write-file-sizes --filename master.json
       - generate_references_command:
           browsercount: 2
-      - run: git checkout ${CIRCLE_BRANCH}  && git log --oneline -5 && npm i && npx gulp scripts
+      - run: git checkout ${CIRCLE_BRANCH}  && git log --oneline -5 && npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
       - run:
           name: File size comparison
           command: |
@@ -547,6 +547,7 @@ workflows:
           notify_on_failure: true
       - build_dist:
           requires: [checkout_and_install, "test-Win.IE8"]
+          context: highcharts-staging
       - deploy_code:
           requires: [build_dist]
           context: highcharts-staging
@@ -563,6 +564,7 @@ workflows:
       # Trigger samples/demo updates
       - check_for_samples_changes_and_deploy:
           requires: [build_dist]
+          context: highcharts-staging
           filters:
             branches:
               only: [master]

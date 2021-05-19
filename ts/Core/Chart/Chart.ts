@@ -60,6 +60,7 @@ const {
 } = O;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
+import RendererRegistry from '../Renderer/RendererRegistry.js';
 import SeriesRegistry from '../Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
@@ -638,15 +639,15 @@ class Chart {
             plotBox,
             plotLeft,
             plotTop,
-            scrollablePlotBox,
-            scrollingContainer: {
-                scrollLeft,
-                scrollTop
-            } = {
-                scrollLeft: 0,
-                scrollTop: 0
-            }
+            scrollablePlotBox
         } = this;
+
+        let scrollLeft = 0,
+            scrollTop = 0;
+
+        if (options.visiblePlotOnly && this.scrollingContainer) {
+            ({ scrollLeft, scrollTop } = this.scrollingContainer);
+        }
 
         const series = options.series;
         const box = (options.visiblePlotOnly && scrollablePlotBox) || plotBox;
@@ -1440,7 +1441,6 @@ class Chart {
             renderTo = chart.renderTo,
             indexAttrName = 'data-highcharts-chart',
             oldChartIndex,
-            Ren,
             containerId = uniqueKey(),
             containerStyle: CSSObject|undefined,
             key;
@@ -1511,7 +1511,9 @@ class Chart {
                 lineHeight: 'normal', // #427
                 zIndex: 0, // #1072
                 '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
-                userSelect: 'none' // #13503
+                userSelect: 'none', // #13503
+                'touch-action': 'manipulation',
+                outline: 'none'
             }, optionsChart.style || {});
         }
 
@@ -1537,7 +1539,7 @@ class Chart {
         chart._cursor = container.style.cursor as CursorValue;
 
         // Initialize the renderer
-        Ren = (H as any)[optionsChart.renderer as any] || H.Renderer;
+        const Renderer = RendererRegistry.getRendererType(optionsChart.renderer);
 
         /**
          * The renderer instance of the chart. Each chart instance has only one
@@ -1546,15 +1548,15 @@ class Chart {
          * @name Highcharts.Chart#renderer
          * @type {Highcharts.SVGRenderer}
          */
-        chart.renderer = new Ren(
+        chart.renderer = new Renderer(
             container,
             chartWidth,
             chartHeight,
-            null,
+            void 0,
             optionsChart.forExport,
             options.exporting && options.exporting.allowHTML,
             chart.styledMode
-        );
+        ) as Chart.Renderer;
         // Set the initial animation from the options
         setAnimation(void 0, chart);
 
@@ -3607,22 +3609,24 @@ class Chart {
                 });
             }
 
-            // panning axis mapping
-
-            let xy = [1]; // x
+            let axes = chart.xAxis;
 
             if (type === 'xy') {
-                xy = [1, 0];
+                axes = axes.concat(chart.yAxis);
             } else if (type === 'y') {
-                xy = [0];
+                axes = chart.yAxis;
             }
 
-            xy.forEach(function (
-                isX: number
-            ): void {
+            const nextMousePos: Record<string, number> = {};
 
-                let axis = chart[isX ? 'xAxis' : 'yAxis'][0],
-                    horiz = axis.horiz,
+            axes.forEach(function (
+                axis: Axis
+            ): void {
+                if (!axis.options.panningEnabled || axis.options.isInternal) {
+                    return;
+                }
+
+                let horiz = axis.horiz,
                     mousePos = e[horiz ? 'chartX' : 'chartY'],
                     mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
                     startPos = (chart as any)[mouseDown],
@@ -3653,7 +3657,7 @@ class Chart {
                 // This is related to using vertical panning. (#11315).
                 if (
                     hasVerticalPanning &&
-                    !isX && (
+                    !axis.isXAxis && (
                         !panningState || panningState.isDirty
                     )
                 ) {
@@ -3760,8 +3764,12 @@ class Chart {
                     }
 
                     // set new reference for next run:
-                    (chart as any)[mouseDown] = mousePos;
+                    nextMousePos[mouseDown] = mousePos;
                 }
+            });
+
+            objectEach(nextMousePos, (pos, down): void => {
+                (chart as any)[down] = pos;
             });
 
             if (doRedraw) {

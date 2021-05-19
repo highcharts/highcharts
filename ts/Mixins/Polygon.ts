@@ -4,6 +4,7 @@
  *
  * */
 
+import type RangeSelector from '../Extensions/RangeSelector';
 import H from '../Core/Globals.js';
 
 /**
@@ -170,7 +171,7 @@ const project = function project(
     this: unknown,
     polygon: Highcharts.PolygonObject,
     target: Highcharts.PolygonPointObject
-): Highcharts.RangeObject {
+): RangeSelector.RangeObject {
     const products = polygon.map(function (
         point: Highcharts.PolygonPointObject
     ): number {

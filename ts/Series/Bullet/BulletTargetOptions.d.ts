@@ -22,8 +22,9 @@ import type ColorType from '../../Core/Color/ColorType';
  *
  * */
 
-export interface BulletSeriesTargetOptions {
+export interface BulletTargetOptions {
     borderColor?: ColorString;
+    borderRadius?: number;
     borderWidth?: number;
     color?: ColorType;
     height?: number;
@@ -36,4 +37,4 @@ export interface BulletSeriesTargetOptions {
  *
  * */
 
-export default BulletSeriesTargetOptions;
+export default BulletTargetOptions;

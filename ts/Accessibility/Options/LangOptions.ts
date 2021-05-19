@@ -187,10 +187,10 @@ const langOptions: Highcharts.LangOptions = {
      * [Highcharts Accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility).
      *
      * For more dynamic control over the accessibility functionality, see
-     * [accessibility.pointDescriptionFormatter](#accessibility.pointDescriptionFormatter),
-     * [accessibility.seriesDescriptionFormatter](#accessibility.seriesDescriptionFormatter),
+     * [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter),
+     * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
      * and
-     * [accessibility.screenReaderSectionFormatter](#accessibility.screenReaderSectionFormatter).
+     * [accessibility.screenReaderSection.beforeChartFormatter](#accessibility.screenReaderSection.beforeChartFormatter).
      *
      * @since        6.0.6
      * @optionparent lang.accessibility

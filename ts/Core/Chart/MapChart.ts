@@ -68,7 +68,6 @@ class MapChart extends Chart {
                 maxPadding: 0,
                 startOnTick: false
             },
-            seriesOptions = userOptions.series,
             defaultCreditsOptions = getOptions().credits;
 
         /* For visual testing
@@ -77,10 +76,7 @@ class MapChart extends Chart {
         hiddenAxis.tickPositions = undefined;
         // */
 
-        // Don't merge the data
-        userOptions.series = void 0;
-
-        userOptions = merge(
+        const options = merge(
             {
                 chart: {
                     panning: {
@@ -116,9 +112,7 @@ class MapChart extends Chart {
             }
         );
 
-        userOptions.series = seriesOptions;
-
-        super.init(userOptions, callback);
+        super.init(options, callback);
     }
 }
 

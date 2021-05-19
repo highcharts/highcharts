@@ -12,6 +12,7 @@
 
 import type AnimationOptions from './AnimationOptions';
 import type FxLike from './FxLike';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type HTMLElement from '../Renderer/HTML/HTMLElement';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -49,7 +50,7 @@ class Fx {
      *
      * */
 
-    public static timers: Array<Highcharts.Timer> = [];
+    public static timers: Array<Fx.Timer> = [];
 
     /* *
      *
@@ -214,7 +215,7 @@ class Fx {
     public run(from: number, to: number, unit: string): void {
         const self = this,
             options = self.options,
-            timer: Highcharts.Timer = function (gotoEnd?: boolean): boolean {
+            timer: Fx.Timer = function (gotoEnd?: boolean): boolean {
                 return timer.stopped ? false : self.step(gotoEnd);
             },
             requestAnimationFrame =
@@ -513,6 +514,15 @@ class Fx {
 
 interface Fx extends FxLike {
     // Nothing here yet
+}
+
+namespace Fx {
+    export interface Timer {
+        (gotoEnd?: boolean): boolean;
+        elem?: (HTMLDOMElement|SVGElement);
+        prop?: string;
+        stopped?: boolean;
+    }
 }
 
 /* *
