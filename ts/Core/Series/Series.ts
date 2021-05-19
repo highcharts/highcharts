@@ -4816,14 +4816,15 @@ class Series {
                 x: -(xAxis.pos as any)
             };
             // x and width will be changed later when setting for animation
-            // initial state in Series.setClip
+            // initial state in Series.addAnimationClip
         } else {
             clipBox = series.clipBox || chart.clipBox;
 
             if (finalBox) {
                 clipBox.width = chart.plotSizeX as any;
                 clipBox.x = (chart.scrollablePixelsX || 0) *
-                    (scrollablePlotAreaOptions.scrollPositionX || 0);
+                    (scrollablePlotAreaOptions.scrollPositionX || 0) +
+                    (chart.plotBorderWidth || 0) / 2;
             }
         }
 
@@ -4867,7 +4868,10 @@ class Series {
      * @private
      * @function Highcharts.Series#addAnimationClip
      */
-    public addAnimationClip(animation?: AnimationOptions): void {
+    public addAnimationClip(
+        animation?: AnimationOptions,
+        skipMarkerClip?: true
+    ): void {
         let chart = this.chart,
             options = this.options,
             renderer = chart.renderer,
@@ -4888,16 +4892,19 @@ class Series {
         if (!clipRect) {
 
             // When animation is set, prepare the initial positions
-            chart.sharedClips[sharedClipKey + 'm'] = markerClipRect =
-                renderer.clipRect(
-                    // include the width of the first marker
-                    inverted ? (chart.plotSizeX || 0) + 99 : -99,
-                    inverted ? -chart.plotLeft : -chart.plotTop,
-                    99,
-                    inverted ? chart.chartWidth : chart.chartHeight
-                );
+            if (!skipMarkerClip) {
+                chart.sharedClips[sharedClipKey + 'm'] = markerClipRect =
+                    renderer.clipRect(
+                        // include the width of the first marker
+                        inverted ? (chart.plotSizeX || 0) + 99 : -99,
+                        inverted ? -chart.plotLeft : -chart.plotTop,
+                        99,
+                        inverted ? chart.chartWidth : chart.chartHeight
+                    );
+            }
 
-            chart.sharedClips[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
+            chart.sharedClips[sharedClipKey] =
+                clipRect = renderer.clipRect(clipBox);
 
             // Create hashmap for series indexes
             clipRect.count = { length: 0 };

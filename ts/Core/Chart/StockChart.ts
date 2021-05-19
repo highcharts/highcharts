@@ -1226,7 +1226,7 @@ addEvent(Series, 'afterRemoveClip', function (): void {
 
     // Set common clip
     if (animation && this.options.clip !== false) {
-        this.addAnimationClip(animation);
+        this.addAnimationClip(animation, true);
     }
 
     const sharedClip = this.chart.sharedClips[clipKey],
