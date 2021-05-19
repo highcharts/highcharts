@@ -17,17 +17,29 @@
  * */
 
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
+import type { ProjectionRotationOption } from '../../Maps/ProjectionOptions';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Chart from './Chart.js';
 import O from '../../Core/Options.js';
 const { getOptions } = O;
+import MapView from '../../Maps/MapView.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
+    addEvent,
+    clamp,
+    isNumber,
     merge,
     pick
 } = U;
 import '../../Maps/MapSymbols.js';
+
+
+declare module './ChartLike'{
+    interface ChartLike {
+        mapView?: MapView;
+    }
+}
 
 /**
  * Map-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.
@@ -96,6 +108,7 @@ class MapChart extends Chart {
                         '{geojson.copyright}'
                     )
                 },
+                mapView: {}, // Required to enable Chart.mapView
                 tooltip: {
                     followTouchMove: false
                 },
@@ -207,6 +220,141 @@ namespace MapChart {
         return SVGRenderer.prototype.pathToSegments(arr);
     }
 }
+
+/* eslint-disable no-invalid-this */
+addEvent(Chart, 'afterInit', function (): void {
+    if (this.options.mapView) {
+        this.mapView = new MapView(this, this.options.mapView);
+    }
+});
+
+addEvent(Chart, 'afterSetChartSize', function (): void {
+    const mapView = this.mapView;
+
+    if (mapView && mapView.minZoom === void 0) {
+
+        mapView.fitToBounds(void 0, false);
+
+        if (isNumber(mapView.userOptions.zoom)) {
+            mapView.zoom = mapView.userOptions.zoom;
+        }
+        if (mapView.userOptions.center) {
+            merge(true, mapView.center, mapView.userOptions.center);
+        }
+    }
+});
+
+let mouseDownCenterProjected: [number, number];
+let mouseDownKey: string;
+let mouseDownRotation: number[]|undefined;
+addEvent(Chart, 'pan', function (e: PointerEvent): void {
+    const {
+        mapView,
+        mouseDownX,
+        mouseDownY
+    } = this;
+
+    if (
+        mapView &&
+        typeof mouseDownX === 'number' &&
+        typeof mouseDownY === 'number'
+    ) {
+        const key = `${mouseDownX},${mouseDownY}`;
+        const { chartX, chartY } = (e as any).originalEvent;
+
+        // Reset starting position
+        if (key !== mouseDownKey) {
+            mouseDownKey = key;
+
+            mouseDownCenterProjected = mapView.projection
+                .forward(mapView.center);
+
+            mouseDownRotation = (
+                mapView.projection.options.rotation || [0, 0]
+            ).slice();
+        }
+
+        /*
+        @todo
+        - Fix zooming (don't jump back to fit bounds)
+        */
+        if (mapView.projection.options.projectionName === 'Orthographic') {
+
+            // Empirical ratio where the globe rotates roughly the same speed
+            // as moving the pointer across the center of the projection
+            const ratio = 120 / Math.min(this.plotWidth, this.plotHeight);
+
+            if (mouseDownRotation) {
+                mapView.update({
+                    projection: {
+                        rotation: [
+                            mouseDownRotation[0] -
+                                (mouseDownX - chartX) * ratio,
+                            clamp(
+                                mouseDownRotation[1] +
+                                    (mouseDownY - chartY) * ratio,
+                                -80,
+                                80
+                            )
+                        ]
+                    }
+                }, true, false);
+            }
+
+
+        } else {
+
+            const scale = (MapView.tileSize / MapView.worldSize) *
+                Math.pow(2, mapView.zoom);
+
+            const newCenter = mapView.projection.inverse([
+                mouseDownCenterProjected[0] + (mouseDownX - chartX) / scale,
+                mouseDownCenterProjected[1] - (mouseDownY - chartY) / scale
+            ]);
+
+            mapView.setView(newCenter, void 0, true, false);
+
+        }
+
+        e.preventDefault();
+    }
+});
+
+// Perform the map zoom by selection
+addEvent(Chart, 'selection', function (evt: PointerEvent): void {
+    const mapView = this.mapView;
+    if (mapView) {
+
+        // Zoom in
+        if (!(evt as any).resetSelection) {
+            const x = evt.x - this.plotLeft;
+            const y = evt.y - this.plotTop;
+            const { y: y1, x: x1 } = mapView.pixelsToProjectedUnits({ x, y });
+            const { y: y2, x: x2 } = mapView.pixelsToProjectedUnits(
+                { x: x + evt.width, y: y + evt.height }
+            );
+            mapView.fitToBounds(
+                { x1, y1, x2, y2 },
+                true,
+                (evt as any).originalEvent.touches ?
+                    // On touch zoom, don't animate, since we're already in
+                    // transformed zoom preview
+                    false :
+                    // On mouse zoom, obey the chart-level animation
+                    void 0
+            );
+
+            this.showResetZoom();
+
+            evt.preventDefault();
+
+        // Reset zoom
+        } else {
+            mapView.zoomBy();
+        }
+
+    }
+});
 
 /* *
  *

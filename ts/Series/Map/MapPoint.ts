@@ -19,6 +19,8 @@
 import type MapPointOptions from './MapPointOptions';
 import type MapSeries from './MapSeries';
 import type PointerEvent from '../../Core/PointerEvent';
+
+import Projection from '../../Maps/Projection.js';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type ScatterPoint from '../Scatter/ScatterPoint';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -32,7 +34,10 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const { extend } = U;
+const {
+    extend,
+    isArray
+} = U;
 
 /* *
  *
@@ -50,9 +55,13 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
     public colorInterval?: unknown;
 
+    public labelrank?: number;
+
     public options: MapPointOptions = void 0 as any;
 
     public path: SVGPath = void 0 as any;
+
+    public projectedPath: SVGPath|undefined;
 
     public properties?: object;
 
@@ -65,6 +74,58 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      * */
 
     /* eslint-disable valid-jsdoc */
+
+    /* @todo: Doesn't need to be static, it is always used with instance. And
+    consider not returning the path, and not calling it get* */
+    public static getProjectedPath(
+        point: MapPoint,
+        projection?: Projection
+    ): SVGPath {
+        if (!point.projectedPath) {
+            if (projection && isArray((point as any).coordinates)) {
+
+                // (point as any).coordinates.name = point.name
+
+                point.projectedPath = projection.path({
+                    type: (point as any).type,
+                    coordinates: (point as any).coordinates
+                });
+
+                /*
+            // Experimental! d3 projections
+            if (
+                isArray((point as any).coordinates) &&
+                (win as any).geoPath
+            ) {
+                const path = (win as any).geoPath({
+                    type: 'Feature',
+                    geometry: {
+                        type: (point as any).type,
+                        coordinates: (point as any).coordinates
+                    }
+                });
+
+                if (path) {
+                    point.projectedPath = splitPath(path);
+                }
+
+            } else if (isArray(point.path) && projection) {
+                point.projectedPath = point.path.map((seg): SVGPath.Segment => {
+                    if (seg[0] === 'M' || seg[0] === 'L') {
+                        const p = projection.forward({ x: seg[1], y: seg[2] });
+                        return [seg[0], p.x, p.y];
+                    }
+                    return seg;
+                });
+            */
+
+            // SVG path given directly in point options
+            } else {
+                point.projectedPath = point.path;
+            }
+        }
+        return point.projectedPath || [];
+    }
 
     /**
      * Extend the Point object to split paths.
@@ -127,20 +188,15 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      * @function Highcharts.Point#zoomTo
      */
     public zoomTo(): void {
-        const point: (MapPoint&MapPoint.CacheObject) = this,
-            series = point.series;
+        const point = this as (MapPoint&MapPoint.CacheObject);
+        const chart = point.series.chart;
 
-        series.xAxis.setExtremes(
-            point._minX,
-            point._maxX,
-            false
-        );
-        series.yAxis.setExtremes(
-            point._minY,
-            point._maxY,
-            false
-        );
-        series.chart.redraw();
+        if (chart.mapView && point.bounds) {
+            chart.mapView.fitToBounds(point.bounds, false);
+
+            point.series.isDirty = true;
+            chart.redraw();
+        }
     }
 
     /* eslint-enable valid-jsdoc */
@@ -154,6 +210,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
  * */
 
 interface MapPoint extends ScatterPoint, Highcharts.ColorMapPoint {
+    bounds?: Highcharts.MapBounds;
     dataLabelOnNull: typeof colorMapPointMixin.dataLabelOnNull;
     isValid: typeof colorMapPointMixin.isValid;
     moveToTopOnHover: typeof colorMapPointMixin.moveToTopOnHover;
@@ -172,14 +229,7 @@ extend(MapPoint.prototype, {
 
 namespace MapPoint {
     export interface CacheObject {
-        _foundBox?: boolean;
-        _i?: number;
-        _maxX?: number;
-        _maxY?: number;
-        _midX?: number;
-        _midY?: number;
-        _minX?: number;
-        _minY?: number;
+        bounds?: Highcharts.MapBounds;
     }
 }
 

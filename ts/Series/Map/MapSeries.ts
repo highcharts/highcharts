@@ -18,7 +18,6 @@
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
-import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
 import type PointerEvent from '../../Core/PointerEvent';
@@ -28,6 +27,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const { colorMapSeriesMixin } = ColorMapMixin;
 import H from '../../Core/Globals.js';
@@ -39,6 +39,7 @@ const {
     splitPath
 } = MapChart;
 import MapPoint from './MapPoint.js';
+import MapView from '../../Maps/MapView.js';
 import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -71,9 +72,12 @@ const {
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
+        clearBounds?(): void;
+        getProjectedBounds?(): Highcharts.MapBounds|undefined;
         mapTitle?: string;
         valueMax?: number;
         valueMin?: number;
+        useMapGeometry?: boolean;
     }
 }
 
@@ -105,12 +109,6 @@ declare global {
             public applyOptions(options: (MapPointOptions|PointShortOptions), x?: number): MapPoint;
             public onMouseOver(e?: PointerEvent): void;
             public zoomTo(): void;
-        }
-        interface MapBaseTransObject {
-            originX: number;
-            originY: number;
-            transAX: number;
-            transAY: number;
         }
     }
 }
@@ -151,6 +149,8 @@ class MapSeries extends ScatterSeries {
     public static defaultOptions: MapSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
         animation: false, // makes the complex shapes slow
+
+        center: [null, null],
 
         dataLabels: {
             crop: false,
@@ -408,9 +408,11 @@ class MapSeries extends ScatterSeries {
      *
      * */
 
-    public baseTrans: Highcharts.MapBaseTransObject = void 0 as any;
+    public baseView?: { center: Highcharts.LonLatArray; zoom: number };
 
-    public chart: Highcharts.MapChart = void 0 as any;
+    public bounds?: Highcharts.MapBounds;
+
+    public chart: MapChart = void 0 as any;
 
     public data: Array<MapPoint> = void 0 as any;
 
@@ -423,14 +425,6 @@ class MapSeries extends ScatterSeries {
     public mapMap?: AnyRecord;
 
     public mapTitle?: string;
-
-    public maxX?: number;
-
-    public maxY?: number;
-
-    public minX?: number;
-
-    public minY?: number;
 
     public options: MapSeriesOptions = void 0 as any;
 
@@ -463,11 +457,7 @@ class MapSeries extends ScatterSeries {
     public animate(init?: boolean): void {
         let chart = this.chart,
             animation = this.options.animation,
-            group = this.group,
-            xAxis = this.xAxis,
-            yAxis = this.yAxis,
-            left = xAxis.pos,
-            top = yAxis.pos;
+            group = this.group;
 
         if (chart.renderer.isSVG) {
 
@@ -482,8 +472,8 @@ class MapSeries extends ScatterSeries {
 
                 // Scale down the group and place it in the center
                 group.attr({
-                    translateX: (left as any) + xAxis.len / 2,
-                    translateY: (top as any) + yAxis.len / 2,
+                    translateX: chart.plotLeft + chart.plotWidth / 2,
+                    translateY: chart.plotTop + chart.plotHeight / 2,
                     scaleX: 0.001, // #1499
                     scaleY: 0.001
                 });
@@ -491,8 +481,8 @@ class MapSeries extends ScatterSeries {
             // Run the animation
             } else {
                 group.animate({
-                    translateX: left,
-                    translateY: top,
+                    translateX: chart.plotLeft,
+                    translateY: chart.plotTop,
                     scaleX: 1,
                     scaleY: 1
                 }, animation);
@@ -565,17 +555,25 @@ class MapSeries extends ScatterSeries {
         ColumnSeries.prototype.animateDrillupTo.call(this, init);
     }
 
+    public clearBounds(): void {
+        this.points.forEach((point): void => {
+            delete point.bounds;
+            delete point.projectedPath;
+        });
+        delete this.bounds;
+    }
+
     /**
      * Allow a quick redraw by just translating the area group. Used for zooming
      * and panning in capable browsers.
      * @private
      */
     public doFullTranslate(): boolean {
-        return (
+        return Boolean(
             this.isDirtyData ||
-            (this.chart.isResizing as any) ||
+            this.chart.isResizing ||
             this.chart.renderer.isVML ||
-            !this.baseTrans
+            !this.baseView
         );
     }
 
@@ -599,21 +597,21 @@ class MapSeries extends ScatterSeries {
      */
     public drawPoints(): void {
         let series = this,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
+            // xAxis = series.xAxis,
+            // yAxis = series.yAxis,
             group = series.group,
             chart = series.chart,
             renderer = chart.renderer,
-            scaleX: (number|undefined),
-            scaleY: number,
+            scale = 1,
             translateX: number,
             translateY: number,
-            baseTrans = this.baseTrans,
+            // baseTrans = this.baseTrans,
+            mapView = chart.mapView,
+            baseView = this.baseView,
             transformGroup: SVGElement,
             startTranslateX: number,
             startTranslateY: number,
-            startScaleX: number,
-            startScaleY: number;
+            startScale: number;
 
         // Set a group that handles transform during zooming and panning in
         // order to preserve clipping on series.group
@@ -632,9 +630,7 @@ class MapSeries extends ScatterSeries {
 
             // Individual point actions.
             if (chart.hasRendered && !chart.styledMode) {
-                series.points.forEach(function (
-                    point: MapPoint
-                ): void {
+                series.points.forEach(function (point): void {
 
                     // Restore state color on update/redraw (#3529)
                     if (point.shapeArgs) {
@@ -652,9 +648,7 @@ class MapSeries extends ScatterSeries {
             series.group = group; // Reset
 
             // Add class names
-            series.points.forEach(function (
-                point: MapPoint
-            ): void {
+            series.points.forEach(function (point): void {
                 if (point.graphic) {
                     let className = '';
                     if (point.name) {
@@ -690,19 +684,12 @@ class MapSeries extends ScatterSeries {
             // Set the base for later scale-zooming. The originX and originY
             // properties are the axis values in the plot area's upper left
             // corner.
-            this.baseTrans = {
-                originX: (
-                    (xAxis.min as any) -
-                    xAxis.minPixelPadding / xAxis.transA
-                ),
-                originY: (
-                    (yAxis.min as any) -
-                    yAxis.minPixelPadding / yAxis.transA +
-                    (yAxis.reversed ? 0 : yAxis.len / yAxis.transA)
-                ),
-                transAX: xAxis.transA,
-                transAY: yAxis.transA
-            };
+            if (mapView) {
+                this.baseView = {
+                    center: [mapView.center[0], mapView.center[1]],
+                    zoom: mapView.zoom
+                };
+            }
 
             // Reset transformation in case we're doing a full translate
             // (#3789)
@@ -714,21 +701,35 @@ class MapSeries extends ScatterSeries {
             });
 
         // Just update the scale and transform for better performance
-        } else {
-            scaleX = xAxis.transA / baseTrans.transAX;
-            scaleY = yAxis.transA / baseTrans.transAY;
-            translateX = xAxis.toPixels(baseTrans.originX, true);
-            translateY = yAxis.toPixels(baseTrans.originY, true);
+        } else if (mapView && baseView) {
+
+            const baseViewCenterProjected = mapView.projection
+                .forward(baseView.center);
+            const mapViewCenterProjected = mapView.projection
+                .forward(mapView.center);
+
+            scale = Math.pow(2, mapView.zoom) / Math.pow(2, baseView.zoom);
+
+            const oldTransA = (MapView.tileSize / MapView.worldSize) *
+                Math.pow(2, baseView.zoom);
+            const newTransA = (MapView.tileSize / MapView.worldSize) *
+                Math.pow(2, mapView.zoom);
+
+            const oldLeft = baseViewCenterProjected[0] - (chart.plotWidth / 2) /
+                oldTransA;
+            const newLeft = mapViewCenterProjected[0] - (chart.plotWidth / 2) /
+                newTransA;
+            translateX = (oldLeft - newLeft) * newTransA;
+
+            const oldTop = -baseViewCenterProjected[1] - (chart.plotHeight / 2) /
+                oldTransA;
+            const newTop = -mapViewCenterProjected[1] - (chart.plotHeight / 2) /
+                newTransA;
+            translateY = (oldTop - newTop) * newTransA;
 
             // Handle rounding errors in normal view (#3789)
-            if (
-                scaleX > 0.99 &&
-                scaleX < 1.01 &&
-                scaleY > 0.99 &&
-                scaleY < 1.01
-            ) {
-                scaleX = 1;
-                scaleY = 1;
+            if (scale > 0.99 && scale < 1.01) {
+                scale = 1;
                 translateX = Math.round(translateX);
                 translateY = Math.round(translateY);
             }
@@ -748,14 +749,16 @@ class MapSeries extends ScatterSeries {
             if (chart.renderer.globalAnimation) {
                 startTranslateX = transformGroup.attr('translateX') as any;
                 startTranslateY = transformGroup.attr('translateY') as any;
-                startScaleX = transformGroup.attr('scaleX') as any;
-                startScaleY = transformGroup.attr('scaleY') as any;
+                startScale = transformGroup.attr('scaleX') as any;
+
                 transformGroup
                     .attr({ animator: 0 })
                     .animate({
                         animator: 1
                     }, {
                         step: function (now: any, fx: any): void {
+                            const scaleStep = startScale +
+                                (scale - startScale) * fx.pos;
                             transformGroup.attr({
                                 translateX: (
                                     startTranslateX +
@@ -765,15 +768,8 @@ class MapSeries extends ScatterSeries {
                                     startTranslateY +
                                     (translateY - startTranslateY) * fx.pos
                                 ),
-                                scaleX: (
-                                    startScaleX +
-                                    ((scaleX as any) - startScaleX) *
-                                    fx.pos
-                                ),
-                                scaleY: (
-                                    startScaleY +
-                                    (scaleY - startScaleY) * fx.pos
-                                )
+                                scaleX: scaleStep,
+                                scaleY: scaleStep
                             });
 
                         }
@@ -784,8 +780,8 @@ class MapSeries extends ScatterSeries {
                 transformGroup.attr({
                     translateX: translateX,
                     translateY: translateY,
-                    scaleX: scaleX,
-                    scaleY: scaleY
+                    scaleX: scale,
+                    scaleY: scale
                 });
             }
 
@@ -804,7 +800,7 @@ class MapSeries extends ScatterSeries {
                         (series.pointAttrToOptions as any)['stroke-width']
                     ) || 'borderWidth'],
                     1 // Styled mode
-                ) / (scaleX || 1)) as any
+                ) / scale)
             );
         }
 
@@ -814,140 +810,102 @@ class MapSeries extends ScatterSeries {
 
     /**
      * Get the bounding box of all paths in the map combined.
-     * @private
+     *
      */
-    public getBox(paths: Array<MapPointOptions>): void {
-        let MAX_VALUE = Number.MAX_VALUE,
-            maxX = -MAX_VALUE,
-            minX = MAX_VALUE,
-            maxY = -MAX_VALUE,
-            minY = MAX_VALUE,
-            minRange = MAX_VALUE,
-            xAxis = this.xAxis,
-            yAxis = this.yAxis,
-            hasBox;
+    public getProjectedBounds(): Highcharts.MapBounds|undefined {
+        if (!this.bounds) {
 
-        // Find the bounding box
-        (paths || []).forEach(function (
-            point: (MapPointOptions&MapPoint.CacheObject)
-        ): void {
+            const MAX_VALUE = Number.MAX_VALUE;
+            const projection = this.chart.mapView &&
+                this.chart.mapView.projection;
+            const allBounds: Highcharts.MapBounds[] = [];
 
-            if (point.path) {
-                if (typeof point.path === 'string') {
-                    point.path = splitPath(point.path);
+            // Find the bounding box of each point
+            (this.points || []).forEach(function (point): void {
 
-                // Legacy one-dimensional array
-                } else if (point.path[0] as any === 'M') {
-                    point.path = SVGRenderer.prototype.pathToSegments(
-                        point.path as any
-                    );
-                }
+                if (point.path || (point as any).coordinates) {
 
-                let path: SVGPath = point.path || [],
-                    pointMaxX = -MAX_VALUE,
-                    pointMinX = MAX_VALUE,
-                    pointMaxY = -MAX_VALUE,
-                    pointMinY = MAX_VALUE,
-                    properties = (point as any).properties;
+                    // @todo Try to puth these two conversions in
+                    // MapPoint.applyOptions
+                    if (typeof point.path === 'string') {
+                        point.path = splitPath(point.path);
 
-                // The first time a map point is used, analyze its box
-                if (!point._foundBox) {
-                    path.forEach((seg): void => {
-                        const x = seg[seg.length - 2];
-                        const y = seg[seg.length - 1];
-                        if (typeof x === 'number' && typeof y === 'number') {
-                            pointMinX = Math.min(pointMinX, x);
-                            pointMaxX = Math.max(pointMaxX, x);
-                            pointMinY = Math.min(pointMinY, y);
-                            pointMaxY = Math.max(pointMaxY, y);
+                    // Legacy one-dimensional array
+                    } else if (
+                        isArray(point.path) &&
+                        point.path[0] as any === 'M'
+                    ) {
+                        point.path = SVGRenderer.prototype.pathToSegments(
+                            point.path as any
+                        );
+                    }
+
+                    // The first time a map point is used, analyze its box
+                    if (!point.bounds) {
+                        // const path = point.path || [],
+                        const path = MapPoint.getProjectedPath(
+                                point, projection
+                            ),
+                            properties = (point as any).properties;
+
+                        let x2 = -MAX_VALUE,
+                            x1 = MAX_VALUE,
+                            y2 = -MAX_VALUE,
+                            y1 = MAX_VALUE,
+                            validBounds;
+
+                        path.forEach((seg): void => {
+                            const x = seg[seg.length - 2];
+                            const y = seg[seg.length - 1];
+                            if (
+                                typeof x === 'number' &&
+                                typeof y === 'number'
+                            ) {
+                                x1 = Math.min(x1, x);
+                                x2 = Math.max(x2, x);
+                                y1 = Math.min(y1, y);
+                                y2 = Math.max(y2, y);
+                                validBounds = true;
+                            }
+                        });
+                        // Cache point bounding box for use to position data
+                        // labels, bubbles etc
+                        const midX = (
+                            x1 + (x2 - x1) * pick(
+                                point.options.middleX,
+                                properties && (properties as any)['hc-middle-x'],
+                                0.5
+                            )
+                        );
+                        const midY = (
+                            y1 + (y2 - y1) * pick(
+                                point.options.middleY,
+                                properties && (properties as any)['hc-middle-y'],
+                                0.5
+                            )
+                        );
+
+                        if (validBounds) {
+                            point.bounds = { midX, midY, x1, y1, x2, y2 };
+
+                            point.labelrank = pick(
+                                point.labelrank,
+                                (x2 - x1) * (y2 - y1)
+                            );
                         }
-                    });
-                    // Cache point bounding box for use to position data
-                    // labels, bubbles etc
-                    point._midX = (
-                        pointMinX + (pointMaxX - pointMinX) * pick(
-                            point.middleX,
-                            properties &&
-                            (properties as any)['hc-middle-x'],
-                            0.5
-                        )
-                    );
-                    point._midY = (
-                        pointMinY + (pointMaxY - pointMinY) * pick(
-                            point.middleY,
-                            properties &&
-                            (properties as any)['hc-middle-y'],
-                            0.5
-                        )
-                    );
-                    point._maxX = pointMaxX;
-                    point._minX = pointMinX;
-                    point._maxY = pointMaxY;
-                    point._minY = pointMinY;
-                    point.labelrank = pick(
-                        point.labelrank,
-                        (pointMaxX - pointMinX) * (pointMaxY - pointMinY)
-                    );
-                    point._foundBox = true;
+                    }
+
+                    if (point.bounds) {
+                        allBounds.push(point.bounds);
+                    }
+
                 }
+            });
 
-                maxX = Math.max(maxX, point._maxX as any);
-                minX = Math.min(minX, point._minX as any);
-                maxY = Math.max(maxY, point._maxY as any);
-                minY = Math.min(minY, point._minY as any);
-                minRange = Math.min(
-                    (point._maxX as any) - (point._minX as any),
-                    (point._maxY as any) - (point._minY as any), minRange
-                );
-                hasBox = true;
-            }
-        });
-
-        // Set the box for the whole series
-        if (hasBox) {
-            this.minY = Math.min(minY, pick(this.minY, MAX_VALUE));
-            this.maxY = Math.max(maxY, pick(this.maxY, -MAX_VALUE));
-            this.minX = Math.min(minX, pick(this.minX, MAX_VALUE));
-            this.maxX = Math.max(maxX, pick(this.maxX, -MAX_VALUE));
-
-            // If no minRange option is set, set the default minimum zooming
-            // range to 5 times the size of the smallest element
-            if (xAxis && typeof xAxis.options.minRange === 'undefined') {
-                xAxis.minRange = Math.min(
-                    5 * minRange,
-                    (this.maxX - this.minX) / 5,
-                    xAxis.minRange || MAX_VALUE
-                );
-            }
-            if (yAxis && typeof yAxis.options.minRange === 'undefined') {
-                yAxis.minRange = Math.min(
-                    5 * minRange,
-                    (this.maxY - this.minY) / 5,
-                    yAxis.minRange || MAX_VALUE
-                );
-            }
-        }
-    }
-
-    public getExtremes(): DataExtremesObject {
-        // Get the actual value extremes for colors
-        const { dataMin, dataMax } = Series.prototype.getExtremes
-            .call(this, this.valueData);
-
-        // Recalculate box on updated data
-        if (this.chart.hasRendered && this.isDirtyData) {
-            this.getBox(this.options.data as any);
+            this.bounds = MapView.compositeBounds(allBounds);
         }
 
-        if (isNumber(dataMin)) {
-            this.valueMin = dataMin;
-        }
-        if (isNumber(dataMax)) {
-            this.valueMax = dataMax;
-        }
-
-        // Extremes for the mock Y axis
-        return { dataMin: this.minY, dataMax: this.maxY };
+        return this.bounds;
     }
 
     /**
@@ -1088,7 +1046,7 @@ class MapSeries extends ScatterSeries {
             });
         }
 
-        this.getBox(data as any);
+        // this.getBox(data as any);
 
         // Pick up transform definitions for chart
         this.chart.mapTransforms = mapTransforms =
@@ -1140,7 +1098,7 @@ class MapSeries extends ScatterSeries {
             }
 
             if (options.allAreas) {
-                this.getBox(mapData);
+                // this.getBox(mapData);
                 data = data || [];
 
                 // Registered the point codes that actually hold data
@@ -1171,10 +1129,11 @@ class MapSeries extends ScatterSeries {
                         updatePoints = false;
                     }
                 });
-            } else {
+            } /* else {
                 this.getBox(dataUsed); // Issue #4784
-            }
+            } */
         }
+
         Series.prototype.setData.call(
             this,
             data,
@@ -1182,6 +1141,9 @@ class MapSeries extends ScatterSeries {
             animation,
             updatePoints
         );
+
+        this.processData();
+        this.generatePoints();
     }
 
     /**
@@ -1212,28 +1174,42 @@ class MapSeries extends ScatterSeries {
      */
     public translate(): void {
         const series = this,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
-            doFullTranslate = series.doFullTranslate();
+            doFullTranslate = series.doFullTranslate(),
+            projection = this.chart.mapView && this.chart.mapView.projection;
 
-        series.generatePoints();
+        // Recalculate box on updated data
+        if (this.chart.hasRendered && this.isDirtyData) {
+            this.processData();
+            this.generatePoints();
+            delete this.bounds;
+            this.getProjectedBounds();
+        }
 
-        series.data.forEach(function (
+        series.points.forEach(function (
             point: (MapPoint&MapPoint.CacheObject)
         ): void {
 
             // Record the middle point (loosely based on centroid),
             // determined by the middleX and middleY options.
-            if (isNumber(point._midX) && isNumber(point._midY)) {
-                point.plotX = xAxis.toPixels(point._midX, true);
-                point.plotY = yAxis.toPixels(point._midY, true);
+            if (
+                point.bounds &&
+                isNumber(point.bounds.midX) &&
+                isNumber(point.bounds.midY)
+            ) {
+                const midPoint = series.translatePath([
+                    ['M', point.bounds.midX, point.bounds.midY]
+                ]);
+                point.plotX = midPoint[0][1];
+                point.plotY = midPoint[0][2];
             }
 
             if (doFullTranslate) {
 
                 point.shapeType = 'path';
                 point.shapeArgs = {
-                    d: series.translatePath(point.path)
+                    d: series.translatePath(
+                        MapPoint.getProjectedPath(point as any, projection)
+                    )
                 };
             }
         });
@@ -1246,50 +1222,57 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public translatePath(path: SVGPath): SVGPath {
-
-        const series = this,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
-            xMin = xAxis.min,
-            xTransA = xAxis.transA,
-            xMinPixelPadding = xAxis.minPixelPadding,
-            yMin = yAxis.min,
-            yTransA = yAxis.transA,
-            yMinPixelPadding = yAxis.minPixelPadding,
-            ret: SVGPath = []; // Preserve the original
+        const ret: SVGPath = []; // Preserve the original
+        const mapView = this.chart.mapView;
 
         // Do the translation
-        if (path) {
+        if (path && mapView) {
+            // A zoom of 0 means the world (360x360 degrees) fits in a
+            // 256x256 px tile
+            const transA = (MapView.tileSize / MapView.worldSize) *
+                Math.pow(2, mapView.zoom);
+            const projectedCenter = mapView.projection.forward(mapView.center);
+            const x = projectedCenter[0];
+            let y = projectedCenter[1];
+
+            // When dealing with unprojected coordinates, y axis is flipped.
+            if (mapView.projection.isNorthPositive) {
+                y = -y;
+            }
+
+
+            const xOffset = this.chart.plotWidth / 2;
+            const yOffset = this.chart.plotHeight / 2;
             path.forEach((seg): void => {
                 if (seg[0] === 'M') {
                     ret.push([
                         'M',
-                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        (seg[1] - x) * transA + xOffset,
+                        (seg[2] - y) * transA + yOffset
                     ]);
                 } else if (seg[0] === 'L') {
                     ret.push([
                         'L',
-                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        (seg[1] - x) * transA + xOffset,
+                        (seg[2] - y) * transA + yOffset
                     ]);
                 } else if (seg[0] === 'C') {
                     ret.push([
                         'C',
-                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                        (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                        (seg[5] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[6] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        (seg[1] - x) * transA + xOffset,
+                        (seg[2] - y) * transA + yOffset,
+                        (seg[3] - x) * transA + xOffset,
+                        (seg[4] - y) * transA + yOffset,
+                        (seg[5] - x) * transA + xOffset,
+                        (seg[6] - y) * transA + yOffset
                     ]);
                 } else if (seg[0] === 'Q') {
                     ret.push([
                         'Q',
-                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                        (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        (seg[1] - x) * transA + xOffset,
+                        (seg[2] - y) * transA + yOffset,
+                        (seg[3] - x) * transA + xOffset,
+                        (seg[4] - y) * transA + yOffset
                     ]);
                 } else if (seg[0] === 'Z') {
                     ret.push(['Z']);
@@ -1312,6 +1295,7 @@ class MapSeries extends ScatterSeries {
 interface MapSeries extends Highcharts.ColorMapSeries {
     colorAttribs: typeof colorMapSeriesMixin['colorAttribs'];
     drawLegendSymbol: Highcharts.LegendSymbolMixin['drawRectangle'];
+    getCenter: typeof CenteredSeriesMixin['getCenter'];
     pointArrayMap: typeof colorMapSeriesMixin['pointArrayMap'];
     pointClass: typeof MapPoint;
     preserveAspectRatio: boolean;
@@ -1334,7 +1318,7 @@ interface MapSeries extends Highcharts.ColorMapSeries {
 extend(MapSeries.prototype, {
     type: 'map',
 
-    axisTypes: colorMapSeriesMixin.axisTypes,
+    axisTypes: ['colorAxis'],
 
     colorAttribs: colorMapSeriesMixin.colorAttribs,
 
@@ -1355,9 +1339,13 @@ extend(MapSeries.prototype, {
 
     forceDL: true,
 
+    getCenter: CenteredSeriesMixin.getCenter,
+
     getExtremesFromAll: true,
 
     getSymbol: colorMapSeriesMixin.getSymbol,
+
+    isCartesian: false,
 
     parallelArrays: colorMapSeriesMixin.parallelArrays,
 

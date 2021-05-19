@@ -37,6 +37,12 @@ const {
     pick
 } = U;
 
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        maxPxSize?: number;
+        minPxSize?: number;
+    }
+}
 /* *
  *
  *  Class

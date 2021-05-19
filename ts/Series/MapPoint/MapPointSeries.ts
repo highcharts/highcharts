@@ -17,6 +17,8 @@
  * */
 
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
+import H from '../../Core/Globals.js';
+const { noop } = H;
 import MapPointPoint from './MapPointPoint.js';
 import palette from '../../Core/Color/Palette.js';
 import Point from '../../Core/Series/Point.js';
@@ -29,6 +31,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     extend,
+    isNumber,
     merge
 } = U;
 
@@ -112,6 +115,48 @@ class MapPointSeries extends ScatterSeries {
         }
     }
 
+    public translate(): void {
+        const mapView = this.chart.mapView;
+
+        if (!this.processedXData) {
+            this.processData();
+        }
+        this.generatePoints();
+
+        // Create map based translation
+        if (mapView) {
+            const { forward, isNorthPositive } = mapView.projection;
+            this.points.forEach((p): void => {
+
+                let { x, y } = p;
+
+                let coordinates = p.options.coordinates;
+                if (coordinates) {
+
+                    if (!isNorthPositive) {
+                        coordinates = [
+                            coordinates[0],
+                            -coordinates[1]
+                        ];
+                    }
+
+                    const xy = forward(coordinates);
+                    x = xy[0];
+                    y = xy[1];
+                }
+
+                if (isNumber(x) && isNumber(y)) {
+                    const plotCoords = mapView.projectedUnitsToPixels({ x, y });
+                    p.plotX = plotCoords.x;
+                    p.plotY = plotCoords.y;
+                } else {
+                    p.plotX = void 0;
+                    p.plotY = void 0;
+                }
+            });
+        }
+    }
+
     /* eslint-enable valid-jsdoc */
 
 }
@@ -127,8 +172,10 @@ interface MapPointSeries {
 }
 extend(MapPointSeries.prototype, {
     type: 'mappoint',
+    axisTypes: ['colorAxis'],
     forceDL: true,
-    pointClass: MapPointPoint
+    pointClass: MapPointPoint,
+    searchPoint: noop as any
 });
 
 /* *

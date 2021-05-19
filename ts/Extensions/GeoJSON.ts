@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type MapPointOptions from '../Series/Map/MapPointOptions';
+import type MapPointPointOptions from '../Series/MapPoint/MapPointPointOptions';
 import type Series from '../Core/Series/Series';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
@@ -66,7 +68,7 @@ declare global {
         }
         interface MapPathObject {
             name?: string;
-            path: SVGPath;
+            path?: SVGPath;
             properties?: object;
         }
         interface MapLatLonObject {
@@ -111,6 +113,7 @@ declare global {
         ): Array<any>;
     }
     interface Window {
+        d3: any;
         proj4: any;
     }
 }
@@ -326,12 +329,7 @@ Chart.prototype.transformFromLatLon = function (
      * @apioption  chart.proj4
      */
 
-    const proj4 = (
-        this.userOptions.chart &&
-        this.userOptions.chart.proj4 ||
-        win.proj4
-    );
-
+    const proj4 = this.options.chart.proj4 || win.proj4;
     if (!proj4) {
         error(21, false, this);
         return {
@@ -339,6 +337,17 @@ Chart.prototype.transformFromLatLon = function (
             y: null
         };
     }
+
+    const {
+        jsonmarginX = 0,
+        jsonmarginY = 0,
+        jsonres = 1,
+        scale = 1,
+        xoffset = 0,
+        xpan = 0,
+        yoffset = 0,
+        ypan = 0
+    } = transform;
 
     const projected = proj4(transform.crs, [latLon.lon, latLon.lat]),
         cosAngle = transform.cosAngle ||
@@ -351,16 +360,8 @@ Chart.prototype.transformFromLatLon = function (
         ] : projected;
 
     return {
-        x: (
-            (rotated[0] - (transform.xoffset || 0)) * (transform.scale || 1) +
-            (transform.xpan || 0)
-        ) * (transform.jsonres || 1) +
-        (transform.jsonmarginX || 0),
-        y: (
-            ((transform.yoffset || 0) - rotated[1]) * (transform.scale || 1) +
-            (transform.ypan || 0)
-        ) * (transform.jsonres || 1) -
-        (transform.jsonmarginY || 0)
+        x: ((rotated[0] - xoffset) * scale + xpan) * jsonres + jsonmarginX,
+        y: ((yoffset - rotated[1]) * scale + ypan) * jsonres - jsonmarginY
     };
 };
 
@@ -390,27 +391,31 @@ Chart.prototype.transformToLatLon = function (
     point: Highcharts.MapCoordinateObject,
     transform: any
 ): (Highcharts.MapLatLonObject|undefined) {
-    if (typeof win.proj4 === 'undefined') {
+
+    const proj4 = this.options.chart.proj4 || win.proj4;
+    if (!proj4) {
         error(21, false, this);
         return;
     }
 
+    if (point.y === null) {
+        return;
+    }
+
+    const {
+        jsonmarginX = 0,
+        jsonmarginY = 0,
+        jsonres = 1,
+        scale = 1,
+        xoffset = 0,
+        xpan = 0,
+        yoffset = 0,
+        ypan = 0
+    } = transform;
+
     const normalized = {
-            x: (
-                (
-                    point.x -
-                    (transform.jsonmarginX || 0)
-                ) / (transform.jsonres || 1) -
-                (transform.xpan || 0)
-            ) / (transform.scale || 1) +
-            (transform.xoffset || 0),
-            y: (
-                (
-                    -(point.y as any) - (transform.jsonmarginY || 0)
-                ) / (transform.jsonres || 1) +
-                (transform.ypan || 0)
-            ) / (transform.scale || 1) +
-            (transform.yoffset || 0)
+            x: ((point.x - jsonmarginX) / jsonres - xpan) / scale + xoffset,
+            y: ((-point.y - jsonmarginY) / jsonres + ypan) / scale + yoffset
         },
         cosAngle = transform.cosAngle ||
             (transform.rotation && Math.cos(transform.rotation)),
@@ -558,76 +563,49 @@ Chart.prototype.fromLatLonToPoint = function (
  */
 H.geojson = function (
     geojson: Highcharts.GeoJSON,
-    hType?: string,
+    hType: string = 'map',
     series?: Series
 ): Array<any> {
-    let mapData = [] as Array<any>,
-        path = [] as SVGPath,
-        polygonToPath = function (polygon: Array<Array<number>>): void {
-            polygon.forEach((point, i): void => {
-                if (i === 0) {
-                    path.push(['M', point[0], -point[1]]);
-                } else {
-                    path.push(['L', point[0], -point[1]]);
-                }
-            });
-        };
+    const mapData = [] as Array<any>;
 
-    hType = hType || 'map';
+    let path: SVGPath = [];
 
-    geojson.features.forEach(function (feature: any): void {
+    geojson.features.forEach(function (feature): void {
 
-        let geometry = feature.geometry,
+        let geometry = feature.geometry || {},
             type = geometry.type,
             coordinates = geometry.coordinates,
             properties = feature.properties,
-            point: (
-                Highcharts.MapCoordinateObject|
-                Highcharts.MapPathObject|
-                undefined
-            );
+            pointOptions: (MapPointOptions|MapPointPointOptions|undefined);
 
         path = [];
 
-        if (hType === 'map' || hType === 'mapbubble') {
-            if (type === 'Polygon') {
-                coordinates.forEach(polygonToPath);
-                path.push(['Z']);
-
-            } else if (type === 'MultiPolygon') {
-                coordinates.forEach(function (
-                    items: Array<Array<Array<number>>>
-                ): void {
-                    items.forEach(polygonToPath);
-                });
-                path.push(['Z']);
+        if (
+            (hType === 'map' || hType === 'mapbubble') &&
+            (type === 'Polygon' || type === 'MultiPolygon')
+        ) {
+            if (coordinates.length) {
+                pointOptions = { coordinates, type };
             }
 
-            if (path.length) {
-                point = { path: path };
+        } else if (
+            hType === 'mapline' &&
+            (
+                type === 'LineString' ||
+                type === 'MultiLineString'
+            )
+        ) {
+            if (coordinates.length) {
+                pointOptions = { coordinates, type };
             }
 
-        } else if (hType === 'mapline') {
-            if (type === 'LineString') {
-                polygonToPath(coordinates);
-            } else if (type === 'MultiLineString') {
-                coordinates.forEach(polygonToPath);
-            }
-
-            if (path.length) {
-                point = { path: path };
-            }
-
-        } else if (hType === 'mappoint') {
-            if (type === 'Point') {
-                point = {
-                    x: coordinates[0],
-                    y: -coordinates[1]
-                };
+        } else if (hType === 'mappoint' && type === 'Point') {
+            if (coordinates.length) {
+                pointOptions = { coordinates, type };
             }
         }
-        if (point) {
-            mapData.push(extend(point, {
+        if (pointOptions) {
+            mapData.push(extend(pointOptions, {
                 name: properties.name || properties.NAME,
 
                 /**

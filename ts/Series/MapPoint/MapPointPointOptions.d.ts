@@ -21,10 +21,13 @@ import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
  *  Declarations
  *
  * */
+type LonLatArray = [number, number];
 
 export interface MapPointPointOptions extends ScatterPointOptions {
+    coordinates?: LonLatArray;
     lat?: number;
     lon?: number;
+    type?: 'Point';
     x?: number;
     y?: (number|null);
 }
