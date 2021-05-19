@@ -1353,8 +1353,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableColumnCollection} columns
      * Columns as a collection, where the keys are the column names or aliases.
      *
-     * @param {number} [rowIndex=0]
-     * Index of the first row to change.
+     * @param {number} [rowIndex]
+     * Index of the first row to change. Keep undefined to reset.
      *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
@@ -1364,19 +1364,22 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      */
     public setColumns(
         columns: DataTable.ColumnCollection,
-        rowIndex: number = 0,
+        rowIndex?: number,
         eventDetail?: DataEventEmitter.EventDetail
     ): void {
         const table = this,
             tableColumns = table.columns,
             tableModifier = table.modifier,
+            tableRowCount = table.rowCount,
+            reset = (typeof rowIndex === 'undefined'),
             columnNames = Object.keys(columns);
 
         table.emit({
             type: 'setColumns',
             columns,
             columnNames,
-            detail: eventDetail
+            detail: eventDetail,
+            rowIndex
         });
 
         for (
@@ -1394,46 +1397,45 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
                 columnName
             );
 
-            if (rowIndex) {
-                if (!tableColumns[columnName]) {
-                    tableColumns[columnName] = [];
-                }
+            if (reset) {
+                tableColumns[columnName] = column.slice();
+                table.rowCount = column.length;
+            } else {
+                const tableColumn = (
+                    tableColumns[columnName] ?
+                        tableColumns[columnName] :
+                        tableColumns[columnName] = new Array(table.rowCount)
+                );
 
-                const tableColumn = tableColumns[columnName];
+                rowIndex = (rowIndex || 0);
 
-                let rowCount = tableColumn.length;
-
-                if (rowIndex > rowCount) {
+                if (rowIndex > tableRowCount) {
                     tableColumn.length = rowIndex;
                     tableColumn.push(...column);
-
-                    rowCount = Math.max(table.rowCount, tableColumn.length);
-
-                    const columnNames = Object.keys(tableColumns);
-
-                    for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                        tableColumns[columnNames[i]].length = rowCount;
-                    }
-
-                    table.rowCount = rowCount;
                 } else {
-                    tableColumn.splice(rowIndex, (rowCount - rowIndex), ...column);
+                    tableColumn.splice(rowIndex, (column.length - rowIndex), ...column);
                 }
-            } else {
-                tableColumns[columnName] = column.slice();
-                table.rowCount = Math.max(table.rowCount, column.length);
+
+                table.rowCount = Math.max(table.rowCount, tableColumn.length);
             }
         }
 
+        const tableColumnNames = Object.keys(tableColumns);
+
+        for (let i = 0, iEnd = tableColumnNames.length; i < iEnd; ++i) {
+            tableColumns[tableColumnNames[i]].length = table.rowCount;
+        }
+
         if (tableModifier) {
-            tableModifier.modifyColumns(table, columns, rowIndex);
+            tableModifier.modifyColumns(table, columns, (rowIndex || 0));
         }
 
         table.emit({
             type: 'afterSetColumns',
             columns,
             columnNames,
-            detail: eventDetail
+            detail: eventDetail,
+            rowIndex
         });
     }
 
@@ -1753,6 +1755,7 @@ namespace DataTable {
         );
         readonly columns?: Readonly<ColumnCollection>;
         readonly columnNames: Array<string>;
+        readonly rowIndex?: number;
     }
 
     /**

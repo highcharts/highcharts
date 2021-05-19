@@ -605,6 +605,40 @@ QUnit.test('DataTable.setRows', function (assert) {
 
 });
 
+QUnit.test('DataTable.setColumns', function (assert) {
+    const table = new DataTable({
+        x: [0, 1, 2],
+        y: [3, 1, 2]
+    });
+
+    table.setColumns({
+        x: [8, 9],
+        y: [0, 1]
+    }, 0);
+
+    assert.deepEqual(
+        table.getColumns(),
+        {
+            x: [8, 9, 2],
+            y: [0, 1, 2]
+        },
+        'Table should contain three rows of valid values.'
+    );
+
+    table.setColumns({
+        x: [8, 7]
+    });
+
+    assert.deepEqual(
+        table.getColumns(),
+        {
+            x: [8, 7],
+            y: [0, 1]
+        },
+        'Table should contain two rows of valid values.'
+    );
+});
+
 QUnit.test('DataTable.setModifier', function (assert) {
     const modifier = new SortModifier({
             direction: 'asc',
