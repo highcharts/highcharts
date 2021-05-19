@@ -21,7 +21,12 @@ QUnit.test('General marker tests', function (assert) {
             {
                 data: [
                     [0, 0, null],
-                    [0, 1, 1.1],
+                    {
+                        x: 0,
+                        y: 1,
+                        value: 1.1,
+                        selected: true
+                    },
                     [0, 2, 1.2],
                     [1, 0, 2],
                     [1, 1, 2.1],
@@ -29,12 +34,23 @@ QUnit.test('General marker tests', function (assert) {
                     [2, 0, 3],
                     [2, 1, 3.1],
                     [2, 2, 3.2]
-                ]
+                ],
+                states: {
+                    select: {
+                        color: 'yellow'
+                    }
+                }
             }
         ]
     });
 
     var heatmap = chart.series[0];
+
+    assert.strictEqual(
+        heatmap.points[1].graphic.attr('fill'),
+        'yellow',
+        '#15746: Point should have selected state color'
+    );
 
     // Check setting a series marker's lineWidth and lineColor
     heatmap.update({
