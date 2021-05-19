@@ -2145,3 +2145,26 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('slotWidth', assert => {
+    const chart = Highcharts.ganttChart("container", {
+        chart: {
+            width: 600
+        },
+        series: [{
+            data: [
+                {
+                    start: Date.UTC(2017, 8, 1),
+                    end: Date.UTC(2017, 11, 4)
+                }
+            ]
+        }]
+    });
+
+    const axis = chart.xAxis[1];
+
+    assert.ok(
+        axis.ticks[axis.tickPositions[3]].slotWidth < 30,
+        '#15742: Rightmost tick slotWidth should be much smaller than the other ticks'
+    );
+});
