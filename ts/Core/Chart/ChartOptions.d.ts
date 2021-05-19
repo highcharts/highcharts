@@ -22,7 +22,7 @@ import type Chart from './Chart';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type O from '../DefaultOptions';
+import type { NumberFormatterCallbackFunction } from '../Options';
 import type { SeriesTypeOptions } from '../Series/SeriesType';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -40,8 +40,8 @@ declare module './Chart/ChartLike'{
     }
 }
 
-declare module '../OptionsLike' {
-    interface OptionsLike {
+declare module '../Options' {
+    interface Options {
         chart: ChartOptions;
     }
 }
@@ -66,7 +66,7 @@ export interface ChartOptions {
     marginLeft?: number;
     marginRight?: number;
     marginTop?: number;
-    numberFormatter?: O.NumberFormatterCallbackFunction;
+    numberFormatter?: NumberFormatterCallbackFunction;
     panKey?: string;
     panning?: ChartPanningOptions;
     pinchType?: string;

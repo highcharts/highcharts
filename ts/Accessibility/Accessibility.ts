@@ -13,6 +13,7 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type { Options } from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import ChartUtilities from './Utils/ChartUtilities.js';
 import H from '../Core/Globals.js';
@@ -20,10 +21,10 @@ const {
     doc
 } = H;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import O from '../Core/DefaultOptions.js';
+import D from '../Core/DefaultOptions.js';
 const {
     defaultOptions
-} = O;
+} = D;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
@@ -73,7 +74,7 @@ declare global {
             zoom: ZoomComponent;
         }
         interface AccessibilityChart extends Chart {
-            options: Required<O>;
+            options: Required<Options>;
             series: Array<AccessibilitySeries>;
         }
         interface AccessibilityPoint extends Point {
@@ -363,7 +364,7 @@ addEvent(H.Chart, 'render', function (e: Event): void {
 // Update with chart/series/point updates
 addEvent(H.Chart as any, 'update', function (
     this: Highcharts.AccessibilityChart,
-    e: { options: O }
+    e: { options: Options }
 ): void {
     // Merge new options
     const newOptions = e.options.accessibility;

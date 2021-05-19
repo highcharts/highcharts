@@ -36,8 +36,8 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../Core/OptionsLike'{
-    interface OptionsLike {
+declare module '../Core/Options'{
+    interface Options {
         pane?: Highcharts.PaneOptions;
     }
 }

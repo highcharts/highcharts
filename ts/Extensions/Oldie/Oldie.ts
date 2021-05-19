@@ -19,6 +19,7 @@
  * */
 
 import type { AlignValue } from '../../Core/Renderer/AlignObject';
+import type { LabelsItemsOptions } from '../../Core/Options';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
@@ -44,8 +45,8 @@ const {
     svg,
     win
 } = H;
-import O from '../../Core/DefaultOptions.js';
-const { getOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { getOptions } = D;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../../Core/Pointer.js';
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
@@ -99,8 +100,8 @@ declare module '../../Core/EventCallback'{
     }
 }
 
-declare module '../../Core/OptionsLike' {
-    interface OptionsLike {
+declare module '../../Core/Options' {
+    interface Options {
         /** @deprecated */
         global?: GlobalOptions;
         /** @deprecated */
@@ -140,7 +141,7 @@ interface GlobalOptions {
 }
 
 export interface LabelsOptions {
-    items?: Array<O.LabelsItemsOptions>;
+    items?: Array<LabelsItemsOptions>;
     style?: CSSObject;
 }
 

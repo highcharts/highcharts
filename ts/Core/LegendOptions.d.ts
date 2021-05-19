@@ -32,8 +32,8 @@ import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
  *
  * */
 
-declare module './OptionsLike' {
-    interface OptionsLike {
+declare module './Options' {
+    interface Options {
         legend?: LegendOptions;
     }
 }

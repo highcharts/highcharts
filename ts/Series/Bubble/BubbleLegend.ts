@@ -26,6 +26,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FontMetricsObject from '../../Core/Renderer/FontMetricsObject';
 import type FormatUtilities from '../../Core/FormatUtilities';
+import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -37,8 +38,8 @@ import F from '../../Core/FormatUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend.js';
-import O from '../../Core/DefaultOptions.js';
-const { setOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
@@ -1294,7 +1295,7 @@ addEvent(Series, 'legendItemClick', function (): void {
 wrap(Chart.prototype, 'drawChartBox', function (
     this: Chart,
     proceed: Function,
-    options: O,
+    options: Options,
     callback: Chart.CallbackFunction
 ): void {
     let chart = this,

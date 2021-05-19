@@ -61,7 +61,7 @@
 
 'use strict';
 
-import type O from '../../Core/DefaultOptions';
+import type Options from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -76,8 +76,8 @@ const {
  * Declarations
  *
  * */
-declare module '../../Core/OptionsLike'{
-    interface OptionsLike {
+declare module '../../Core/Options'{
+    interface Options {
         /** @deprecated */
         exposeElementToA11y?: (
             Highcharts.SeriesAccessibilityOptions['exposeAsGroupOnly']
@@ -138,7 +138,7 @@ function deprecateFromOptionsMap(
      * @private
      */
     function getChildProp(
-        root: O,
+        root: Options,
         propAsArray: Array<string>
     ): Record<string, unknown> {
         return propAsArray.reduce(function (

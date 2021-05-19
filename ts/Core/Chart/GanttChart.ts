@@ -13,9 +13,10 @@
 import type {
     HTMLDOMElement
 } from '../Renderer/DOMElementType';
+import type Options from '../Options';
 import Chart from './Chart.js';
-import O from '../DefaultOptions.js';
-const { getOptions } = O;
+import D from '../DefaultOptions.js';
+const { getOptions } = D;
 import U from '../Utilities.js';
 const {
     isArray,
@@ -30,8 +31,8 @@ import '../../Series/Gantt/GanttSeries.js';
  * Declarations
  *
  * */
-declare module '../OptionsLike.js' {
-    interface OptionsLike {
+declare module '../Options' {
+    interface Options {
         isGantt?: boolean;
     }
 }
@@ -65,7 +66,7 @@ class GanttChart extends Chart {
      * @fires Highcharts.GanttChart#event:afterInit
      */
     public init(
-        userOptions: Partial<O>,
+        userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
         const defaultOptions = getOptions(),
@@ -96,14 +97,14 @@ class GanttChart extends Chart {
                         type: 'category'
                     }
                 }
-            } as O,
+            } as Options,
 
             userOptions, // user's options
 
             // forced options
             {
                 isGantt: true
-            } as O
+            } as Options
         );
 
         userOptions.xAxis = xAxisOptions;
@@ -202,8 +203,8 @@ namespace GanttChart {
      *         Returns the Chart object.
      */
     export function ganttChart(
-        a: (string|HTMLDOMElement|O),
-        b?: (Chart.CallbackFunction|O),
+        a: (string|HTMLDOMElement|Options),
+        b?: (Chart.CallbackFunction|Options),
         c?: Chart.CallbackFunction
     ): GanttChart {
         return new GanttChart(a as any, b as any, c);

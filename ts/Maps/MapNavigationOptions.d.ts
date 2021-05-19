@@ -26,8 +26,8 @@ import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
  *  Declarations
  *
  * */
-declare module '../Core/OptionsLike' {
-    interface OptionsLike {
+declare module '../Core/Options' {
+    interface Options {
         mapNavigation?: MapNavigationOptions;
     }
 }

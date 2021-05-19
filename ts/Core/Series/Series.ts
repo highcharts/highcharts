@@ -60,8 +60,8 @@ const {
     win
 } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import O from '../DefaultOptions.js';
-const { defaultOptions } = O;
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import palette from '../Color/Palette.js';
 import Point from './Point.js';
 import SeriesRegistry from './SeriesRegistry.js';

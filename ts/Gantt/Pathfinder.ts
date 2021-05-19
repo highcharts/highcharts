@@ -39,8 +39,8 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../Core/OptionsLike'{
-    interface OptionsLike {
+declare module '../Core/Options'{
+    interface Options {
         connectors?: Highcharts.ConnectorsOptions;
     }
 }
@@ -196,8 +196,8 @@ declare global {
 
 ''; // detach doclets above
 
-import O from '../Core/DefaultOptions.js';
-const { defaultOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {

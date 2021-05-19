@@ -13,6 +13,7 @@
 'use strict';
 
 import type ColorType from '../Color/ColorType';
+import type Options from '../Options';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -28,10 +29,10 @@ const {
     perspective,
     shapeArea3D
 } = Math3D;
-import O from '../DefaultOptions.js';
+import D from '../DefaultOptions.js';
 const {
     defaultOptions: genericDefaultOptions
-} = O;
+} = D;
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 const {
@@ -65,12 +66,12 @@ declare module '../Chart/ChartLike'{
 
 declare module '../Chart/ChartOptions'{
     interface ChartOptions {
-        options3d?: O;
+        options3d?: Options;
     }
 }
 
-declare module '../OptionsLike'{
-    export interface OptionsLike {
+declare module '../Options'{
+    export interface Options {
         alpha?: number;
         axisLabelPosition?: ('auto'|null);
         beta?: number;

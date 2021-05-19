@@ -25,8 +25,8 @@ import type Time from '../Core/Time';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import O from '../Core/DefaultOptions.js';
-const { defaultOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import palette from '../Core/Color/Palette.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
@@ -72,8 +72,8 @@ declare module '../Core/LangOptions'{
     }
 }
 
-declare module '../Core/OptionsLike'{
-    interface OptionsLike {
+declare module '../Core/Options'{
+    interface Options {
         rangeSelector?: DeepPartial<Highcharts.RangeSelectorOptions>;
     }
 }

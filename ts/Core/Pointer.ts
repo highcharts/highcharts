@@ -13,7 +13,7 @@
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type { DOMElementType } from './Renderer/DOMElementType';
-import type O from './DefaultOptions.js';
+import type Options from './Options';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type Series from './Series/Series';
@@ -251,7 +251,7 @@ class Pointer {
      *
      * */
 
-    public constructor(chart: Chart, options: O) {
+    public constructor(chart: Chart, options: Options) {
         this.chart = chart;
         this.hasDragged = false;
         this.options = options;
@@ -288,7 +288,7 @@ class Pointer {
 
     public mouseDownY?: number;
 
-    public options: O;
+    public options: Options;
 
     public pinchDown: Array<any> = [];
 
@@ -1089,7 +1089,7 @@ class Pointer {
      *
      * @return {void}
      */
-    public init(chart: Chart, options: O): void {
+    public init(chart: Chart, options: Options): void {
 
         // Store references
         this.options = options;

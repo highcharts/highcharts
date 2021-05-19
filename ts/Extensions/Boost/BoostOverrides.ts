@@ -24,8 +24,8 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import Chart from '../../Core/Chart/Chart.js';
-import O from '../../Core/DefaultOptions.js';
-const { getOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { getOptions } = D;
 import Point from '../../Core/Series/Point.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';

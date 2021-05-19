@@ -11,14 +11,15 @@
  * */
 
 import type ChartOptions from '../Core/Chart/ChartOptions';
+import type Options from '../Core/Options';
 import type {
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
-import O from '../Core/DefaultOptions.js';
-const { setOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { setOptions } = D;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -51,8 +52,8 @@ declare module '../Core/LangOptions'{
     }
 }
 
-declare module '../Core/OptionsLike'{
-    interface OptionsLike {
+declare module '../Core/Options'{
+    interface Options {
         stockTools?: Highcharts.StockToolsOptions;
     }
 }
@@ -1717,7 +1718,7 @@ extend(Chart.prototype, {
         this: Chart,
         options?: Highcharts.StockToolsOptions
     ): void {
-        const chartOptions: O = this.options,
+        const chartOptions: Options = this.options,
             lang = chartOptions.lang,
             guiOptions = merge(
                 chartOptions.stockTools && chartOptions.stockTools.gui,

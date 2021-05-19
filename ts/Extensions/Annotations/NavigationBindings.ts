@@ -19,8 +19,8 @@ import chartNavigationMixin from '../../Mixins/Navigation.js';
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
-import O from '../../Core/DefaultOptions.js';
-const { setOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

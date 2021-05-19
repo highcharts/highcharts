@@ -26,8 +26,8 @@ import Point from '../Core/Series/Point.js';
  *
  * */
 
-declare module './OptionsLike' {
-    interface OptionsLike {
+declare module './Options' {
+    interface Options {
         tooltip?: TooltipOptions;
     }
 }
