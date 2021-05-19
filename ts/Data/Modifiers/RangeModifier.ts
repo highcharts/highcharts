@@ -228,7 +228,7 @@ class RangeModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Modified table as a reference.
      */
     public modifyCell(
         table: DataTable,
@@ -262,7 +262,7 @@ class RangeModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Modified table as a reference.
      */
     public modifyColumns(
         table: DataTable,
@@ -275,7 +275,7 @@ class RangeModifier extends DataModifier {
             void 0,
             eventDetail
         );
-        return table.modified;
+        return table;
     }
 
     /**
@@ -295,7 +295,7 @@ class RangeModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Modified table as a reference.
      */
     public modifyRows(
         table: DataTable,
@@ -308,7 +308,7 @@ class RangeModifier extends DataModifier {
             void 0,
             eventDetail
         );
-        return table.modified;
+        return table;
     }
 
     /**
