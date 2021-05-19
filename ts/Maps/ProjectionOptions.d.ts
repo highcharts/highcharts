@@ -8,29 +8,20 @@
  *
  * */
 
-interface Proj4Instance {
-    forward([x, y]: [number, number]): [number, number];
-    inverse([x, y]: [number, number]): [number, number];
-}
-interface Proj4 {
-    (
-        projString: string
-    ): Proj4Instance;
-}
 export type ProjectionRotationOption = [number, number]|[number, number, number];
 
 export interface ProjectionOptions {
     // d3?: any;
     // proj4?: Proj4;
     projectionName?: string;
-    projString?: string;
-    lat0?: number;
-    latTS?: number;
-    lon0?: number;
-    over?: boolean;
+    // projString?: string;
+    // lat0?: number;
+    // latTS?: number;
+    // lon0?: number;
+    // over?: boolean;
     rotation?: ProjectionRotationOption;
-    x0?: number;
-    y0?: number;
+    // x0?: number;
+    // y0?: number;
 }
 
 export default ProjectionOptions;

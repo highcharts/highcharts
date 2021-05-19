@@ -18,4 +18,9 @@ export type ProjectionDefinition = {
     maxLatitude?: number;
 }
 
+export type Projector = {
+    forward: ProjectionFunction;
+    inverse: ProjectionFunction;
+}
+
 export default ProjectionDefinition;

@@ -61,13 +61,11 @@ const drawMap = projectionKey => {
     const projection = Highcharts.merge({
         projectionName: undefined,
         projString: undefined,
-        lat0: undefined,
-        latTS: undefined,
-        lon0: parseInt(document.getElementById('lon0').value, 10),
-        over: undefined,
-        rotation: undefined,
-        x0: undefined,
-        y0: undefined
+        rotation: [
+            parseInt(document.getElementById('rotation-lambda').value, 10),
+            parseInt(document.getElementById('rotation-phi').value, 10),
+            parseInt(document.getElementById('rotation-gamma').value, 10)
+        ]
     }, {
         /*
         'gall-peters': {
@@ -159,6 +157,13 @@ const drawMap = projectionKey => {
 
             mapView: {
                 projection
+                /*
+                projection: {
+                    projectionName: 'WebMercator'
+                },
+                zoom: 4,
+                center: [6.5, 61]
+                */
             },
 
             colorAxis: {
@@ -335,13 +340,27 @@ const enableInputs = () => {
     document.querySelectorAll('#library-buttons button').forEach(btn =>
         btn.addEventListener('click', e => setLibrary(e.target.id))
     );
-    document.querySelector('#lon0').addEventListener('input', e => {
-        document.getElementById('lon0-output').innerText = e.target.value;
-        chart.mapView.update({
-            projection: {
-                lon0: parseInt(e.target.value, 10)
-            }
-        }, true, false);
+    document.querySelectorAll('.rotation').forEach(input => {
+        input.addEventListener('input', () => {
+            const lambda = document.getElementById('rotation-lambda').value;
+            const phi = document.getElementById('rotation-phi').value;
+            const gamma = document.getElementById('rotation-gamma').value;
+            document.getElementById('rotation-lambda-output')
+                .innerText = lambda;
+            document.getElementById('rotation-phi-output').innerText = phi;
+            document.getElementById('rotation-gamma-output').innerText = gamma;
+
+            const rotation = chart.mapView.projection.options.rotation ||
+                [0, 0];
+            rotation[0] = parseInt(lambda, 10);
+            rotation[1] = parseInt(phi, 10);
+            rotation[2] = parseInt(gamma, 10);
+            chart.mapView.update({
+                projection: {
+                    rotation
+                }
+            }, true, false);
+        });
     });
 };
 

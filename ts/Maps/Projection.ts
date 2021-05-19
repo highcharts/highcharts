@@ -11,10 +11,9 @@
 'use strict';
 
 import type { GeoJSONGeometry, LonLatArray } from 'GeoJSON';
-import type { ProjectionDefinition, ProjectionFunction } from './ProjectionTypes';
+import type { ProjectionDefinition, Projector } from './ProjectionTypes';
 import type { ProjectionOptions, ProjectionRotationOption } from 'ProjectionOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import H from '../Core/Globals.js';
 import registry from './Projections/ProjectionRegistry.js';
 import U from '../Core/Utilities.js';
 const {
@@ -46,8 +45,8 @@ export default class Projection {
 
     public options: ProjectionOptions;
     public isNorthPositive: boolean = false;
-
-    private antimeridian?: number;
+    public rotator: Projector|undefined;
+    public def: ProjectionDefinition|undefined;
 
     public static registry = registry;
 
@@ -144,47 +143,21 @@ export default class Projection {
         options?: DeepPartial<ProjectionOptions>
     ): string|undefined {
         const {
-            lat0 = 0,
-            latTS,
-            lon0 = 0,
-            over,
-            projString,
             projectionName,
-            x0 = 0,
-            y0 = 0
+            rotation
         } = options || {};
 
-        if (projString) {
-            return projString;
-        }
-
-        if (projectionName) {
-            let projString = `+proj=${projectionName} +lon_0=${lon0} ` +
-                `+lat_0=${lat0} +x_0=${x0} +y_0=${y0}`;
-            if (over) {
-                projString += ' +over';
-            }
-            if (latTS !== void 0) {
-                projString += ` +lat_ts=${latTS}`;
-            }
-            return projString;
-        }
+        return [projectionName, rotation && rotation.join(',')].join(';');
     }
 
     public constructor(options: ProjectionOptions = {}) {
         this.options = options;
         const { projectionName, rotation } = options;
-        // const { d3, proj4 } = options || {};
 
-        // @todo: Better filter for when to handle antimeridian
-        if (options.lon0 && projectionName !== 'Orthographic') {
-            this.antimeridian = (options.lon0 + 360) % 360 - 180;
-        }
-
-        const rotator = rotation ? this.getRotator(rotation) : void 0;
-
-        const def = projectionName ?
+        this.rotator = rotation ? this.getRotator(rotation) : void 0;
+        this.def = projectionName ?
             Projection.registry[projectionName] : void 0;
+        const { def, rotator } = this;
 
         if (def) {
             this.maxLatitude = def.maxLatitude || 90;
@@ -282,10 +255,7 @@ export default class Projection {
     /*
      * Take the rotation options and return the appropriate projection functions
      */
-    public getRotator(rotation: ProjectionRotationOption): {
-        forward: ProjectionFunction;
-        inverse: ProjectionFunction;
-    } {
+    public getRotator(rotation: ProjectionRotationOption): Projector|undefined {
         const deltaLambda = rotation[0] * deg2rad,
             deltaPhi = (rotation[1] || 0) * deg2rad,
             deltaGamma = (rotation[2] || 0) * deg2rad;
@@ -294,6 +264,11 @@ export default class Projection {
             sinDeltaPhi = Math.sin(deltaPhi),
             cosDeltaGamma = Math.cos(deltaGamma),
             sinDeltaGamma = Math.sin(deltaGamma);
+
+        if (deltaLambda === 0 && deltaPhi === 0 && deltaGamma === 0) {
+            // Don't waste processing time
+            return;
+        }
 
         return {
             forward: (lonLat): [number, number] => {
@@ -367,7 +342,7 @@ export default class Projection {
         poly: Highcharts.LonLatArray[],
         isPolygon: boolean
     ): Highcharts.LonLatArray[][] {
-        const antimeridian = pick(this.antimeridian, 180);
+        const antimeridian = 180;
         const intersections: {
             i: number;
             lat: number;
@@ -386,12 +361,8 @@ export default class Projection {
                 // Else, wrap to beginning
                 previousLonLat = poly[poly.length - 1];
             }
-            let lon1 = previousLonLat[0];
-            let lon2 = lonLat[0];
-            if (antimeridian !== 180) {
-                lon1 = wrapLon(lon1 - antimeridian + 180);
-                lon2 = wrapLon(lon2 - antimeridian + 180);
-            }
+            const lon1 = previousLonLat[0],
+                lon2 = lonLat[0];
 
             if (
                 // Both points, after rotating for antimeridian, are on the far
@@ -555,6 +526,9 @@ export default class Projection {
     // Take a GeoJSON geometry and return a translated SVGPath
     public path(geometry: GeoJSONGeometry): SVGPath {
 
+        const { def, rotator } = this;
+        const antimeridian = 180;
+
         const path: SVGPath = [];
         const isPolygon = geometry.type === 'Polygon' ||
             geometry.type === 'MultiPolygon';
@@ -577,13 +551,18 @@ export default class Projection {
             // plane. Float errors in topojson or in the projection may cause
             // that.
             const poly = polygon.map((lonLat): Highcharts.LonLatArray => {
+                // We need to rotate in a separate step before applying anti-
+                // meridian clipping
+                if (rotator) {
+                    lonLat = rotator.forward(lonLat);
+                }
                 let lon = lonLat[0];
-                if (projectingToPlane && this.antimeridian !== void 0) {
-                    if (Math.abs(lon - this.antimeridian) < floatCorrection) {
-                        if (lon < this.antimeridian) {
-                            lon = this.antimeridian - floatCorrection;
+                if (projectingToPlane) {
+                    if (Math.abs(lon - antimeridian) < floatCorrection) {
+                        if (lon < antimeridian) {
+                            lon = antimeridian - floatCorrection;
                         } else {
-                            lon = this.antimeridian + floatCorrection;
+                            lon = antimeridian + floatCorrection;
                         }
                     }
                     lonLat = [lon, lonLat[1]];
@@ -625,7 +604,9 @@ export default class Projection {
                 for (let i = 0; i < poly.length; i++) {
                     const lonLat = poly[i];
 
-                    const point = this.forward(lonLat);
+                    const point = rotator && def ?
+                        def.forward(lonLat) :
+                        this.forward(lonLat);
 
                     const valid = (
                         !isNaN(point[0]) &&

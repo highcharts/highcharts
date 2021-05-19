@@ -34,10 +34,24 @@
         <button id="webmerc" class="btn btn-outline-secondary">Web Mercator</button>
         <button id="eqc" class="btn btn-outline-secondary">None (Equirectangular)</button>
     </div>
-    <label>
-        <input id="lon0" type="range" min="-180" max="180" value="0" />
-        Center longitude <span id="lon0-output">0</span>
-    </label>
+
+    <h4 class="mt-4">Rotation</h4>
+    <div>
+        <label>
+            <input class="rotation" id="rotation-lambda" type="range" min="-180" max="180" value="0" />
+            Lambda → <span class="text-muted" id="rotation-lambda-output"></span>
+        </label>
+        <br>
+        <label>
+            <input class="rotation" id="rotation-phi" type="range" min="-180" max="180" value="0" />
+            Phi ↑ <span class="text-muted" id="rotation-phi-output"></span>
+        </label>
+        <br>
+        <label>
+            <input class="rotation" id="rotation-gamma" type="range" min="-180" max="180" value="0" />
+            Gamma ⟲ <span class="text-muted" id="rotation-gamma-output"></span>
+        </label>
+    </div>
 
     <h4 class="mt-4">Ortographic projections</h4>
     <div class="btn-group">
