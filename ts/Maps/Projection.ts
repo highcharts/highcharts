@@ -540,6 +540,10 @@ export default class Projection {
 
         // @todo better test for when to do this
         const projectingToPlane = this.options.projectionName !== 'Orthographic';
+        // We need to rotate in a separate step before applying antimeridian
+        // clipping
+        const preclip = projectingToPlane ? rotator : void 0;
+        const postclip = projectingToPlane ? (def || this) : this;
 
         const addToPath = (
             polygon: LonLatArray[]
@@ -551,13 +555,12 @@ export default class Projection {
             // plane. Float errors in topojson or in the projection may cause
             // that.
             const poly = polygon.map((lonLat): Highcharts.LonLatArray => {
-                // We need to rotate in a separate step before applying anti-
-                // meridian clipping
-                if (rotator) {
-                    lonLat = rotator.forward(lonLat);
-                }
-                let lon = lonLat[0];
                 if (projectingToPlane) {
+
+                    if (preclip) {
+                        lonLat = preclip.forward(lonLat);
+                    }
+                    let lon = lonLat[0];
                     if (Math.abs(lon - antimeridian) < floatCorrection) {
                         if (lon < antimeridian) {
                             lon = antimeridian - floatCorrection;
@@ -604,9 +607,7 @@ export default class Projection {
                 for (let i = 0; i < poly.length; i++) {
                     const lonLat = poly[i];
 
-                    const point = rotator && def ?
-                        def.forward(lonLat) :
-                        this.forward(lonLat);
+                    const point = postclip.forward(lonLat);
 
                     const valid = (
                         !isNaN(point[0]) &&
@@ -650,7 +651,7 @@ export default class Projection {
                                     lonLat
                                 );
                                 greatCircle.forEach((lonLat): void =>
-                                    pushToPath(this.forward(lonLat)));
+                                    pushToPath(postclip.forward(lonLat)));
 
                             // For lines, just jump over the gap
                             } else {
