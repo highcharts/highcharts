@@ -216,6 +216,22 @@ class EditMode {
                 });
             }
 
+            // Init dragDrop row events.
+            if (editMode.dragDrop) {
+                const dragDrop = editMode.dragDrop;
+                addEvent(row.container, 'mouseenter', function (): void {
+                    if (dragDrop.isActive) {
+                        dragDrop.mouseRowContext = row;
+                    }
+                });
+
+                addEvent(row.container, 'mouseleave', function (): void {
+                    if (dragDrop.isActive) {
+                        dragDrop.mouseRowContext = void 0;
+                    }
+                });
+            }
+
             for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
                 const cell = row.cells[k];
 
@@ -243,10 +259,16 @@ class EditMode {
                     // Init dragDrop cell events.
                     if (editMode.dragDrop) {
                         const dragDrop = editMode.dragDrop;
-                        addEvent(cell.container, 'mouseenter', function (e: any): void {
+                        addEvent(cell.container, 'mouseenter', function (e: PointerEvent): void {
                             if (dragDrop.isActive) {
-                                dragDrop.mouseContext = cell;
+                                dragDrop.mouseCellContext = cell;
                                 dragDrop.onDrag(e);
+                            }
+                        });
+
+                        addEvent(cell.container, 'mouseleave', function (): void {
+                            if (dragDrop.isActive) {
+                                dragDrop.mouseCellContext = void 0;
                             }
                         });
                     }

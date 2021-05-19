@@ -101,9 +101,14 @@ class DragDrop {
     public isActive?: boolean;
 
     /**
-     * Reference to the element that is under the dragging mock element.
+     * Reference to the Cell that is under the dragging mock element.
      */
-    public mouseContext?: Cell|Row;
+    public mouseCellContext?: Cell;
+
+    /**
+     * Reference to the Row that is under the dragging mock element.
+     */
+    public mouseRowContext?: Row;
 
     /**
      * Reference to the element that is used on drop to mount dragged element.
@@ -343,15 +348,15 @@ class DragDrop {
      */
     public onRowDrag(e: PointerEvent): void {
         const dragDrop = this,
-            mouseContext = dragDrop.mouseContext as Cell,
-            mouseContextRow = mouseContext && mouseContext.row,
+            mouseCellContext = dragDrop.mouseCellContext,
+            mouseCellContextRow = mouseCellContext && mouseCellContext.row,
             dropPointerSize = dragDrop.options.dropPointerSize;
 
         let offset = dragDrop.options.rowDropOffset,
             updateDropPointer = false;
 
-        if (mouseContextRow && mouseContextRow.container) {
-            let dropContextRowOffsets = GUIElement.getOffsets(mouseContextRow);
+        if (mouseCellContext && mouseCellContextRow) {
+            let dropContextRowOffsets = GUIElement.getOffsets(mouseCellContextRow);
             let { width: rowWidth, height: rowHeight } = GUIElement.getDimFromOffsets(dropContextRowOffsets);
 
             // Correct offset when row to small.
@@ -365,15 +370,15 @@ class DragDrop {
                 (topEdgeY - rowHeight >= -offset && topEdgeY - rowHeight <= offset ? 'bottom' : '');
 
             if (dragDrop.dropPointer.align) {
-                dragDrop.dropContext = mouseContextRow;
+                dragDrop.dropContext = mouseCellContextRow;
 
                 // Get appropriate dropContext on nested layouts edge.
-                if (mouseContext.row.layout.level && dragDrop.isGUIElementOnEdge(mouseContext)) {
+                if (mouseCellContext.row.layout.level && dragDrop.isGUIElementOnEdge(mouseCellContext)) {
                     // Mouse position relative to the drop context offset.
                     const mouseDropEdgeOffset = dragDrop.dropPointer.align === 'bottom' ?
                             topEdgeY - rowHeight + offset : offset - topEdgeY,
-                        level = dragDrop.getDropContextLevel(mouseContext, offset, mouseDropEdgeOffset),
-                        dropContextCell = mouseContext.getParentCell(level);
+                        level = dragDrop.getDropContextLevel(mouseCellContext, offset, mouseDropEdgeOffset),
+                        dropContextCell = mouseCellContext.getParentCell(level);
 
                     // Get nested drop context offsets.
                     if (dropContextCell) {
@@ -437,18 +442,28 @@ class DragDrop {
      *
      * @param {PointerEvent} e
      * Mouse event.
+     *
+     * @param {string} dropPointerAlign
+     * How to align drop pointer.
+     *
+     * @param {Cell} cellContext
+     * Cell used as a context.
      */
-    public onCellDrag(e: PointerEvent): void {
+    public onCellDrag(
+        e: PointerEvent,
+        dropPointerAlign?: string,
+        cellContext?: Cell
+    ): void {
         const dragDrop = this,
-            mouseContext = dragDrop.mouseContext as Cell,
+            mouseCellContext = cellContext || dragDrop.mouseCellContext,
             dropPointerSize = dragDrop.options.dropPointerSize;
 
         let updateDropPointer = false,
             offset = dragDrop.options.cellDropOffset;
 
-        if (mouseContext && mouseContext.container) {
+        if (mouseCellContext) {
             let dropContextOffsets = GUIElement.getOffsets(
-                mouseContext, dragDrop.editMode.dashboard.container);
+                mouseCellContext, dragDrop.editMode.dashboard.container);
             let { width: cellWidth, height: cellHeight } = GUIElement.getDimFromOffsets(dropContextOffsets);
 
             // Correct offset when cell to small.
@@ -458,24 +473,31 @@ class DragDrop {
 
             // Get mouse position relative to the mouseContext left edge.
             const leftEdgeX = e.clientX - dropContextOffsets.left;
-            dragDrop.dropPointer.align = leftEdgeX >= -offset && leftEdgeX <= offset ? 'left' :
-                (leftEdgeX - cellWidth >= -offset && leftEdgeX - cellWidth <= offset ? 'right' : '');
+
+            // Get drop pointer align.
+            if (dropPointerAlign) {
+                dragDrop.dropPointer.align = dropPointerAlign;
+                updateDropPointer = true;
+            } else {
+                dragDrop.dropPointer.align = leftEdgeX >= -offset && leftEdgeX <= offset ? 'left' :
+                    (leftEdgeX - cellWidth >= -offset && leftEdgeX - cellWidth <= offset ? 'right' : '');
+            }
 
             if (!dragDrop.dropPointer.align) {
                 // Check if cell is dragged as row.
                 dragDrop.onRowDrag(e);
             } else {
-                dragDrop.dropContext = mouseContext;
+                dragDrop.dropContext = mouseCellContext;
 
                 // Get appropriate dropContext on nested layouts edge.
-                if (mouseContext.row.layout.level && dragDrop.isGUIElementOnEdge(mouseContext)) {
+                if (mouseCellContext.row.layout.level && dragDrop.isGUIElementOnEdge(mouseCellContext)) {
                     // Mouse position relative to the drop context offset.
                     const mouseDropEdgeOffset = dragDrop.dropPointer.align === 'right' ?
                             leftEdgeX - cellWidth + offset : offset - leftEdgeX,
-                        level = dragDrop.getDropContextLevel(mouseContext, offset, mouseDropEdgeOffset);
+                        level = dragDrop.getDropContextLevel(mouseCellContext, offset, mouseDropEdgeOffset);
 
                     // Set nested drop context.
-                    dragDrop.dropContext = mouseContext.getParentCell(level);
+                    dragDrop.dropContext = mouseCellContext.getParentCell(level);
 
                     // Get nested drop context offsets.
                     if (dragDrop.dropContext) {
@@ -496,6 +518,22 @@ class DragDrop {
                         dropPointerSize,
                         cellHeight
                     );
+                }
+            }
+        } else if (dragDrop.mouseRowContext) {
+            let cell, cellOffsets;
+
+            for (let i = 0, iEnd = dragDrop.mouseRowContext.cells.length; i < iEnd; ++i) {
+                cell = dragDrop.mouseRowContext.cells[i];
+                cellOffsets = GUIElement.getOffsets(cell);
+
+                if (cellOffsets.left <= e.clientX && cellOffsets.right >= e.clientX) {
+                    // @ToDo - Mouse below or above the cell.
+                } else if (
+                    (i === 0 && cellOffsets.left > e.clientX) ||
+                    (i === dragDrop.mouseRowContext.cells.length - 1 && cellOffsets.right < e.clientX)
+                ) {
+                    dragDrop.onCellDrag(e, (i === 0 && cellOffsets.left > e.clientX) ? 'left' : 'right', cell);
                 }
             }
         }
