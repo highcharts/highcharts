@@ -242,7 +242,7 @@ class RangeModifier extends DataModifier {
             void 0,
             eventDetail
         );
-        return table.modified;
+        return table;
     }
 
     /**
