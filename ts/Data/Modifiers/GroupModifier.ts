@@ -23,9 +23,7 @@ import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -121,7 +119,7 @@ class GroupModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Modified table as a reference.
      */
     public modify(
         table: DataTable,
@@ -214,7 +212,7 @@ class GroupModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Modified table as a reference.
      */
     public modifyCell(
         table: DataTable,
@@ -228,7 +226,7 @@ class GroupModifier extends DataModifier {
             void 0,
             eventDetail
         );
-        return table.modified;
+        return table;
     }
 
     /**
@@ -248,7 +246,7 @@ class GroupModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Modified table as a reference.
      */
     public modifyColumns(
         table: DataTable,
@@ -261,7 +259,7 @@ class GroupModifier extends DataModifier {
             void 0,
             eventDetail
         );
-        return table.modified;
+        return table;
     }
 
     /**
@@ -281,7 +279,7 @@ class GroupModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Modified table as a reference.
      */
     public modifyRows(
         table: DataTable,
@@ -294,7 +292,7 @@ class GroupModifier extends DataModifier {
             void 0,
             eventDetail
         );
-        return table.modified;
+        return table;
     }
 
     /**
