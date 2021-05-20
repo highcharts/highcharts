@@ -28,6 +28,8 @@ import Palette from '../Color/Palette.js';
 
 /**
  * General options for the chart.
+ *
+ * @optionparent chart
  */
 const ChartDefaults: ChartOptions = {
 
