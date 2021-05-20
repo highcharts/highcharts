@@ -16,6 +16,11 @@
  *
  * */
 
+import type {
+    AlignObject,
+    AlignValue,
+    VerticalAlignValue
+} from '../Renderer/AlignObject';
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type AxisOptions from '../Axis/AxisOptions';
 import type { AxisType } from '../Axis/Types';
@@ -25,16 +30,12 @@ import type {
     CursorValue
 } from '../Renderer/CSSObject';
 import type {
-    CaptionOptions,
-    CreditsOptions,
-    DescriptionOptionsType,
     LabelsItemsOptions,
     NumberFormatterCallbackFunction,
-    Options,
-    TitleOptions,
-    SubtitleOptions
+    Options
 } from '../Options';
 import type ChartLike from './ChartLike';
+import type ChartOptions from './ChartOptions';
 import type { ChartPanningOptions } from './ChartOptions';
 import type ColorAxis from '../Axis/ColorAxis';
 import type { LabelsOptions } from '../../Extensions/Oldie/Oldie';
@@ -157,7 +158,12 @@ declare module './ChartOptions' {
 
 declare module '../Options' {
     interface Options {
+        chart: ChartOptions;
+        caption?: Chart.CaptionOptions;
+        credits?: Chart.CreditsOptions;
+        subtitle?: Chart.SubtitleOptions;
         series?: Array<SeriesTypeOptions>;
+        title?: Chart.TitleOptions;
     }
 }
 
@@ -585,14 +591,13 @@ class Chart {
      * @function Highcharts.Chart#initSeries
      */
     public initSeries(options: SeriesOptions): Series {
-        let chart = this,
+        const chart = this,
             optionsChart = chart.options.chart,
             type = (
                 options.type ||
                 optionsChart.type ||
                 optionsChart.defaultSeriesType
             ) as string,
-            series: Series,
             SeriesClass = seriesTypes[type];
 
         // No such series type
@@ -600,7 +605,8 @@ class Chart {
             error(17, true, chart as any, { missingModuleFor: type });
         }
 
-        series = new SeriesClass();
+        const series = new SeriesClass();
+
         if (typeof series.init === 'function') {
             series.init(chart, options);
         }
@@ -650,10 +656,9 @@ class Chart {
      * If this is given, only the series above this index are handled.
      */
     public orderSeries(fromIndex?: number): void {
-        let series = this.series,
-            i = fromIndex || 0;
+        const series = this.series;
 
-        for (; i < series.length; i++) {
+        for (let i = (fromIndex || 0), iEnd = series.length; i < iEnd; ++i) {
             if (series[i]) {
                 /**
                  * Contains the series' index in the `Chart.series` array.
@@ -790,21 +795,22 @@ class Chart {
 
         fireEvent(this, 'beforeRedraw');
 
-        let chart = this,
+        const chart = this,
             axes: Array<Axis> = chart.hasCartesianSeries ? chart.axes : chart.colorAxis || [],
             series = chart.series,
             pointer = chart.pointer,
             legend = chart.legend,
             legendUserOptions = chart.userOptions.legend,
-            redrawLegend = chart.isDirtyLegend,
-            hasStackedSeries: (boolean|undefined),
-            hasDirtyStacks,
-            isDirtyBox = chart.isDirtyBox,
-            i,
-            serie,
             renderer = chart.renderer,
             isHiddenChart = renderer.isHidden(),
             afterRedraw = [] as Array<Function>;
+
+        let hasDirtyStacks: (boolean|undefined),
+            hasStackedSeries: (boolean|undefined),
+            i: number,
+            isDirtyBox = chart.isDirtyBox,
+            redrawLegend = chart.isDirtyLegend,
+            serie: Series;
 
         // Handle responsive rules, not only on resize (#6130)
         if (chart.setResponsive) {
@@ -980,10 +986,7 @@ class Chart {
      * The retrieved item.
      */
     public get(id: string): (Axis|Series|Point|undefined) {
-
-        let ret: (Axis|Series|Point|undefined),
-            series = this.series,
-            i;
+        const series = this.series;
 
         /**
          * @private
@@ -997,7 +1000,7 @@ class Chart {
             );
         }
 
-        ret =
+        let ret: (Axis|Series|Point|undefined) =
             // Search axes
             find(this.axes, itemById) ||
 
@@ -1005,7 +1008,7 @@ class Chart {
             find(this.series, itemById);
 
         // Search points
-        for (i = 0; !ret && i < series.length; i++) {
+        for (let i = 0; !ret && i < series.length; i++) {
             ret = find((series[i].points as any) || [], itemById);
         }
 
@@ -1128,8 +1131,8 @@ class Chart {
      *        `chart.redraw()`.
      */
     public setTitle(
-        titleOptions?: TitleOptions,
-        subtitleOptions?: SubtitleOptions,
+        titleOptions?: Chart.TitleOptions,
+        subtitleOptions?: Chart.SubtitleOptions,
         redraw?: boolean
     ): void {
 
@@ -1155,7 +1158,7 @@ class Chart {
      */
     public applyDescription(
         name: ('title'|'subtitle'|'caption'),
-        explicitOptions?: DescriptionOptionsType
+        explicitOptions?: Chart.DescriptionOptionsType
     ): void {
         const chart = this;
 
@@ -1170,8 +1173,7 @@ class Chart {
         // Merge default options with explicit options
         const options = this.options[name] = merge(
             // Default styles
-            (!this.styledMode && { style }) as
-                DescriptionOptionsType,
+            (!this.styledMode && { style }) as Chart.DescriptionOptionsType,
             this.options[name],
             explicitOptions
         );
@@ -1199,7 +1201,7 @@ class Chart {
             // Update methods, shortcut to Chart.setTitle, Chart.setSubtitle and
             // Chart.setCaption
             elem.update = function (
-                updateOptions: (DescriptionOptionsType)
+                updateOptions: (Chart.DescriptionOptionsType)
             ): void {
                 const fn = {
                     title: 'setTitle',
@@ -2522,10 +2524,10 @@ class Chart {
      * @param {Highcharts.CreditsOptions} [credits]
      * A configuration object for the new credits.
      */
-    public addCredits(credits?: CreditsOptions): void {
+    public addCredits(credits?: Chart.CreditsOptions): void {
         const chart = this,
             creds = merge(
-                true, this.options.credits as CreditsOptions, credits
+                true, this.options.credits as Chart.CreditsOptions, credits
             );
         if (creds.enabled && !this.credits) {
 
@@ -2564,7 +2566,7 @@ class Chart {
 
             // Dynamically update
             this.credits.update = function (
-                options: CreditsOptions
+                options: Chart.CreditsOptions
             ): void {
                 chart.credits = (chart.credits as any).destroy();
                 chart.addCredits(options);
@@ -3451,7 +3453,7 @@ class Chart {
      *        `options.text` property.
      */
     public setSubtitle(
-        options: SubtitleOptions,
+        options: Chart.SubtitleOptions,
         redraw?: boolean
     ): void {
         this.applyDescription('subtitle', options);
@@ -3469,7 +3471,7 @@ class Chart {
      *        `options.text` property.
      */
     public setCaption(
-        options: CaptionOptions,
+        options: Chart.CaptionOptions,
         redraw?: boolean
     ): void {
         this.applyDescription('caption', options);
@@ -3633,28 +3635,27 @@ class Chart {
         panning: ChartPanningOptions|boolean
     ): void {
 
-        let chart = this,
+        const chart = this,
             hoverPoints = chart.hoverPoints,
-            panningOptions: ChartPanningOptions,
+            panningOptions: ChartPanningOptions = (
+                typeof panning === 'object' ?
+                    panning :
+                    {
+                        enabled: panning,
+                        type: 'x'
+                    }
+            ),
             chartOptions = chart.options.chart,
             hasMapNavigation = chart.options.mapNavigation &&
-                chart.options.mapNavigation.enabled,
-            doRedraw: boolean,
-            type: string;
-
-        if (typeof panning === 'object') {
-            panningOptions = panning;
-        } else {
-            panningOptions = {
-                enabled: panning,
-                type: 'x'
-            };
-        }
+                chart.options.mapNavigation.enabled;
 
         if (chartOptions && chartOptions.panning) {
             chartOptions.panning = panningOptions;
         }
-        type = panningOptions.type;
+
+        const type = panningOptions.type;
+
+        let doRedraw: boolean;
 
         fireEvent(this, 'pan', { originalEvent: e }, function (): void {
 
@@ -3682,7 +3683,7 @@ class Chart {
                     return;
                 }
 
-                let horiz = axis.horiz,
+                const horiz = axis.horiz,
                     mousePos = e[horiz ? 'chartX' : 'chartY'],
                     mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
                     startPos = (chart as any)[mouseDown],
@@ -3701,13 +3702,12 @@ class Chart {
                         ) -
                         halfPointRange * pointRangeDirection,
                     flipped = panMax < panMin,
-                    newMin = flipped ? panMax : panMin,
+                    hasVerticalPanning = axis.hasVerticalPanning();
+
+                let newMin = flipped ? panMax : panMin,
                     newMax = flipped ? panMin : panMax,
-                    hasVerticalPanning = axis.hasVerticalPanning(),
-                    paddedMin,
-                    paddedMax,
-                    spill,
-                    panningState = axis.panningState;
+                    panningState = axis.panningState,
+                    spill;
 
                 // General calculations of panning state.
                 // This is related to using vertical panning. (#11315).
@@ -3748,7 +3748,7 @@ class Chart {
                     });
                 }
 
-                paddedMin = Math.min(
+                const paddedMin = Math.min(
                     pick(panningState && panningState.startMin, extremes.dataMin),
                     halfPointRange ?
                         extremes.min :
@@ -3757,7 +3757,7 @@ class Chart {
                             axis.minPixelPadding
                         )
                 );
-                paddedMax = Math.max(
+                const paddedMax = Math.max(
                     pick(panningState && panningState.startMax, extremes.dataMax),
                     halfPointRange ?
                         extremes.max :
@@ -3950,11 +3950,36 @@ namespace Chart {
         (this: Chart, chart: Chart): void;
     }
 
+    export interface CaptionOptions {
+        align?: AlignValue;
+        floating?: boolean;
+        margin?: number;
+        style?: CSSObject;
+        text?: string;
+        useHTML?: boolean;
+        verticalAlign?: VerticalAlignValue;
+        widthAdjust?: number;
+        x?: number;
+        y?: number;
+    }
+
     export interface CreateAxisOptionsObject {
         animation: (undefined|boolean|Partial<AnimationOptions>);
         axis: (DeepPartial<AxisOptions>|DeepPartial<ColorAxis.Options>);
         redraw: (undefined|boolean);
     }
+
+    export interface CreditsOptions {
+        enabled?: boolean;
+        href?: string;
+        mapText?: string;
+        mapTextFull?: string;
+        position?: AlignObject;
+        style?: CSSObject;
+        text?: string;
+    }
+
+    export type DescriptionOptionsType = (TitleOptions|SubtitleOptions|CaptionOptions);
 
     export interface IsInsideOptionsObject {
         ignoreX?: boolean;
@@ -3974,6 +3999,30 @@ namespace Chart {
         spacingBox: BBoxObject;
     }
 
+    export interface SubtitleOptions {
+        align?: AlignValue;
+        floating?: boolean;
+        style?: CSSObject;
+        text?: string;
+        useHTML?: boolean;
+        verticalAlign?: VerticalAlignValue;
+        widthAdjust?: number;
+        x?: number;
+        y?: number;
+    }
+
+    export interface TitleOptions {
+        align?: AlignValue;
+        floating?: boolean;
+        margin?: number;
+        style?: CSSObject;
+        text?: string;
+        useHTML?: boolean;
+        verticalAlign?: VerticalAlignValue;
+        widthAdjust?: number;
+        x?: number;
+        y?: number;
+    }
 }
 
 /* *
