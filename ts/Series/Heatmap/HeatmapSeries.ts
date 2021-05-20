@@ -420,10 +420,15 @@ class HeatmapSeries extends ScatterSeries {
         if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
             Series.prototype.drawPoints.call(this);
             this.points.forEach((point): void => {
-                point.graphic &&
-                (point.graphic as any)[
-                    this.chart.styledMode ? 'css' : 'animate'
-                ](this.colorAttribs(point));
+                if (point.graphic) {
+                    (point.graphic as any)[
+                        this.chart.styledMode ? 'css' : 'animate'
+                    ](this.colorAttribs(point));
+
+                    if (point.value === null) { // #15708
+                        point.graphic.addClass('highcharts-null-point');
+                    }
+                }
             });
         }
     }
