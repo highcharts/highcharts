@@ -17,6 +17,7 @@
  * */
 
 import type AnimationOptions from '../Animation/AnimationOptions';
+import type AxisOptions from '../Axis/AxisOptions';
 import type { AxisType } from '../Axis/Types';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type {
@@ -48,6 +49,7 @@ import type {
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+
 import A from '../Animation/AnimationUtilities.js';
 const {
     animate,
@@ -115,6 +117,19 @@ const {
  *
  * */
 
+declare module '../Axis/AxisOptions' {
+    interface AxisOptions {
+        index?: number;
+    }
+}
+
+declare module '../Axis/Types' {
+    interface AxisLike {
+        extKey?: string;
+        index?: number;
+    }
+}
+
 declare module './ChartLike' {
     interface ChartLike {
         resetZoomButton?: SVGElement;
@@ -151,22 +166,6 @@ declare module '../Options' {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            extKey?: string;
-            index?: number;
-        }
-        interface CaptionObject extends SVGElement {
-            update(titleOptions: CaptionOptions, redraw?: boolean): void;
-        }
-        interface SubtitleObject extends SVGElement {
-            update(titleOptions: SubtitleOptions, redraw?: boolean): void;
-        }
-        interface TitleObject extends SVGElement {
-            update(titleOptions: TitleOptions, redraw?: boolean): void;
-        }
-        interface XAxisOptions {
-            index?: number;
-        }
         function chart(
             options: Options,
             callback?: Chart.CallbackFunction
@@ -1005,7 +1004,7 @@ class Chart {
         optionsArray = xAxisOptions.concat(yAxisOptions);
 
         optionsArray.forEach(function (
-            axisOptions: Highcharts.AxisOptions
+            axisOptions: AxisOptions
         ): void {
             new Axis(chart, axisOptions); // eslint-disable-line no-new
         });
@@ -2829,7 +2828,7 @@ class Chart {
      *         The newly generated Axis object.
      */
     public addAxis(
-        options: DeepPartial<Highcharts.AxisOptions>,
+        options: DeepPartial<AxisOptions>,
         isX?: boolean,
         redraw?: boolean,
         animation?: boolean
@@ -3913,9 +3912,9 @@ namespace Chart {
     }
 
     export interface CreateAxisOptionsObject {
-        animation: undefined | boolean | Partial<AnimationOptions>;
-        axis: DeepPartial<Highcharts.AxisOptions> | DeepPartial<ColorAxis.Options>;
-        redraw: undefined | boolean;
+        animation: (undefined|boolean|Partial<AnimationOptions>);
+        axis: (DeepPartial<AxisOptions>|DeepPartial<ColorAxis.Options>);
+        redraw: (undefined|boolean);
     }
 
     export interface IsInsideOptionsObject {

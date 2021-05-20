@@ -10,10 +10,17 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
+import type AxisOptions from '../Core/Axis/AxisOptions';
 import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
@@ -22,6 +29,7 @@ import type {
 } from '../Core/Renderer/DOMElementType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type Time from '../Core/Time';
+
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -867,7 +875,7 @@ class RangeSelector {
                 )
             ), // #1568
             type = rangeOptions.type,
-            baseXAxisOptions: Highcharts.AxisOptions,
+            baseXAxisOptions: AxisOptions,
             range = rangeOptions._range,
             rangeMin,
             minSetting: (number|null|undefined),

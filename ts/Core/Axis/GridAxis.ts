@@ -17,6 +17,7 @@
  *
  * */
 
+import type AxisOptions from './AxisOptions';
 import type ChartOptions from '../Chart/ChartOptions';
 import type ColorType from '../Color/ColorType';
 import type Point from '../Series/Point';
@@ -49,6 +50,19 @@ const {
     wrap
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisOptions' {
+    interface AxisOptions {
+        grid?: GridAxis.Options;
+        isInternal?: boolean;
+    }
+}
+
 declare module '../Chart/ChartLike'{
     interface ChartLike {
         marginRight: ChartOptions['marginRight'];
@@ -77,10 +91,6 @@ declare global {
         }
         interface Tick {
             slotWidth?: number;
-        }
-        interface XAxisOptions {
-            grid?: GridAxis.Options;
-            isInternal?: boolean;
         }
     }
 }
@@ -1019,11 +1029,11 @@ class GridAxis {
      */
     public static onAfterSetOptions(
         this: Axis,
-        e: { userOptions: DeepPartial<Highcharts.AxisOptions> }
+        e: { userOptions: DeepPartial<AxisOptions> }
     ): void {
         let options = this.options,
             userOptions = e.userOptions,
-            gridAxisOptions: DeepPartial<Highcharts.AxisOptions>,
+            gridAxisOptions: DeepPartial<Highcharts.AxisTypeOptions>,
             gridOptions: GridAxis.Options = (
                 (options && isObject(options.grid)) ? (options.grid as any) : {}
             );
@@ -1032,7 +1042,7 @@ class GridAxis {
 
             // Merge the user options into default grid axis options so
             // that when a user option is set, it takes presedence.
-            gridAxisOptions = merge<DeepPartial<Highcharts.AxisOptions>>(true, {
+            gridAxisOptions = merge<DeepPartial<Highcharts.AxisTypeOptions>>(true, {
 
                 className: (
                     'highcharts-grid-axis ' + (userOptions.className || '')
@@ -1224,7 +1234,7 @@ class GridAxis {
      */
     public static onAfterSetOptions2(
         this: Axis,
-        e: { userOptions?: Highcharts.AxisOptions }
+        e: { userOptions?: AxisOptions }
     ): void {
         const axis = this;
         const userOptions = e.userOptions;
@@ -1304,7 +1314,7 @@ class GridAxis {
      */
     public static onInit(
         this: Axis,
-        e: { userOptions?: DeepPartial<Highcharts.AxisOptions> }
+        e: { userOptions?: DeepPartial<AxisOptions> }
     ): void {
         const axis = this;
         const userOptions = e.userOptions || {};
@@ -1410,7 +1420,7 @@ namespace GridAxis {
         borderColor?: ColorType;
         borderWidth?: number;
         cellHeight?: number;
-        columns?: Array<Highcharts.AxisOptions>;
+        columns?: Array<AxisOptions>;
         enabled?: boolean;
     }
 
