@@ -53,6 +53,13 @@ declare global {
     }
 }
 
+/**
+ * The world size equals meters in the Web Mercator projection, to match a
+ * 256 square tile to zoom level 0
+ */
+const worldSize = 40097932.2;
+const tileSize = 256;
+
 class MapView {
 
     /* *
@@ -74,14 +81,6 @@ class MapView {
         }
         return;
     };
-
-    /**
-     * The world size equals meters in the Web Mercator projection, to match a
-     * 256 square tile to zoom level 0
-     */
-    public static worldSize = 40097932.2;
-
-    public static tileSize = 256;
 
     public constructor(
         chart: Chart,
@@ -124,7 +123,6 @@ class MapView {
         const b = bounds || this.getProjectedBounds();
 
         if (b) {
-            const { tileSize, worldSize } = MapView;
             const { plotWidth, plotHeight } = this.chart;
 
             const scaleToPlotArea = Math.max(
@@ -159,6 +157,12 @@ class MapView {
             [] as Highcharts.MapBounds[]
         );
         return MapView.compositeBounds(allBounds);
+    }
+
+    public getScale(): number {
+        // A zoom of 0 means the world (360x360 degrees) fits in a 256x256 px
+        // tile
+        return (tileSize / worldSize) * Math.pow(2, this.zoom);
     }
 
     public redraw(animation?: boolean|Partial<AnimationOptions>): void {
@@ -199,8 +203,7 @@ class MapView {
         ) {
             const projectedCenter = this.projection.forward(this.center);
             const { plotWidth, plotHeight } = this.chart;
-            const scale = (MapView.tileSize / MapView.worldSize) *
-                Math.pow(2, this.zoom);
+            const scale = this.getScale();
             const bottomLeft = this.projectedUnitsToPixels({
                 x: bounds.x1,
                 y: bounds.y1
@@ -259,8 +262,7 @@ class MapView {
     }
 
     public projectedUnitsToPixels(pos: Highcharts.ProjectedXY): PositionObject {
-        const scale = (MapView.tileSize / MapView.worldSize) *
-            Math.pow(2, this.zoom);
+        const scale = this.getScale();
         const projectedCenter = this.projection.forward(this.center);
         const centerPxX = this.chart.plotWidth / 2;
         const centerPxY = this.chart.plotHeight / 2;
@@ -271,8 +273,7 @@ class MapView {
 
     public pixelsToProjectedUnits(pos: PositionObject): Highcharts.ProjectedXY {
         const { x, y } = pos;
-        const scale = (MapView.tileSize / MapView.worldSize) *
-            Math.pow(2, this.zoom);
+        const scale = this.getScale();
         const centerPxX = this.chart.plotWidth / 2;
         const centerPxY = this.chart.plotHeight / 2;
 
@@ -344,13 +345,12 @@ class MapView {
             // Keep chartX and chartY stationary - convert to lat and lng
             if (chartCoords) {
                 const [chartX, chartY] = chartCoords;
-                const transA = (MapView.tileSize / MapView.worldSize) *
-                    Math.pow(2, this.zoom);
+                const scale = this.getScale();
 
                 const offsetX = chartX - chart.plotLeft - chart.plotWidth / 2;
                 const offsetY = chartY - chart.plotTop - chart.plotHeight / 2;
-                x = projectedCenter[0] + offsetX / transA;
-                y = projectedCenter[1] + offsetY / transA;
+                x = projectedCenter[0] + offsetX / scale;
+                y = projectedCenter[1] + offsetY / scale;
             }
 
             // Keep lon and lat stationary by adjusting the center

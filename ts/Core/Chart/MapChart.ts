@@ -304,8 +304,7 @@ addEvent(Chart, 'pan', function (e: PointerEvent): void {
 
         } else {
 
-            const scale = (MapView.tileSize / MapView.worldSize) *
-                Math.pow(2, mapView.zoom);
+            const scale = mapView.getScale();
 
             const newCenter = mapView.projection.inverse([
                 mouseDownCenterProjected[0] + (mouseDownX - chartX) / scale,

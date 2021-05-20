@@ -1,7 +1,13 @@
 QUnit.test(
     'Map with allAreas disabled centers on visible areas (#4784)',
     assert => {
+
         let chart;
+
+        const getRenderedHeight = () =>
+            chart.series[0].points[0].graphic.getBBox().height *
+            chart.series[0].svgTransform.scaleY;
+
 
         chart = Highcharts.mapChart('container', {
             series: [
@@ -14,7 +20,7 @@ QUnit.test(
         });
 
         assert.close(
-            chart.series[0].points[0].graphic.getBBox().height,
+            getRenderedHeight(),
             chart.plotHeight,
             2,
             'Height of point bBox equals plotHeight'
@@ -31,10 +37,7 @@ QUnit.test(
         });
 
         assert.ok(
-            Math.abs(
-                chart.series[0].points[0].graphic.getBBox().height -
-                    chart.plotHeight
-            ) > 2,
+            Math.abs(getRenderedHeight() - chart.plotHeight) > 2,
             'Height of point bBox no longer equals plotHeight'
         );
     }
