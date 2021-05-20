@@ -12,11 +12,12 @@
 
 'use strict';
 
-import type Chart from '../Core/Chart/Chart';
 import type {
     DOMElementType,
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
+
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
     doc,
@@ -105,7 +106,7 @@ addEvent(doc, 'keydown', (e: KeyboardEvent): void => {
 /**
  * Dismiss popup content in chart, including export menu and tooltip.
  */
-H.Chart.prototype.dismissPopupContent = function (): void {
+Chart.prototype.dismissPopupContent = function (): void {
     const chart = this;
 
     fireEvent(this, 'dismissPopupContent', {}, function (): void {

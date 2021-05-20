@@ -1772,7 +1772,7 @@ addEvent(NavigationBindings, 'deselectButton', function (
 });
 
 // Check if the correct price indicator button is displayed, #15029.
-addEvent(H.Chart, 'render', function (): void {
+addEvent(Chart, 'render', function (): void {
     const chart = this,
         stockTools = chart.stockTools,
         button = stockTools &&

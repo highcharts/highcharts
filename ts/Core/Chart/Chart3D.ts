@@ -965,7 +965,7 @@ namespace Chart3D {
         addEvent(ChartClass, 'beforeRedraw', onBeforeRedraw);
         addEvent(ChartClass, 'beforeRender', onBeforeRender);
 
-        wrap(H.Chart.prototype, 'isInsidePlot', wrapIsInsidePlot);
+        wrap(chartProto, 'isInsidePlot', wrapIsInsidePlot);
         wrap(ChartClass, 'renderSeries', wrapRenderSeries);
         wrap(ChartClass, 'setClassName', wrapSetClassName);
 
