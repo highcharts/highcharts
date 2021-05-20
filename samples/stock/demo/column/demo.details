@@ -6,5 +6,6 @@ js_wrap: b
 tags:
   - Highcharts Stock demo
 categories:
-  - Chart types
+  - Chart types:
+      priority: 2
 ...

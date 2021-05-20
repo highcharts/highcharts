@@ -7,5 +7,6 @@ requiresManualTesting: true
 tags:
   - Highcharts Stock demo
 categories:
-  - General
+  - General:
+      priority: 6
 ...
