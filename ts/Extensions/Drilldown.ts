@@ -811,6 +811,8 @@ Chart.prototype.applyDrilldown = function (): void {
     var drilldownLevels = this.drilldownLevels,
         levelToRemove: (number|undefined);
 
+    fireEvent(this, 'applyDrilldown');
+
     if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
         levelToRemove = drilldownLevels[drilldownLevels.length - 1].levelNumber;
         (this.drilldownLevels as any).forEach(function (
@@ -842,7 +844,6 @@ Chart.prototype.applyDrilldown = function (): void {
 
     this.pointer.reset();
     this.redraw();
-    this.showDrillUpButton();
     fireEvent(this, 'afterDrilldown');
 };
 
@@ -890,7 +891,7 @@ Chart.prototype.showDrillUpButton = function (): void {
                 false,
                 buttonOptions.relativeTo || 'plotBox'
             );
-    } else {
+    } else if (this.drillUpButton) {
         this.drillUpButton.attr({
             text: backText
         })
@@ -910,6 +911,8 @@ Chart.prototype.drillUp = function (): void {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
         return;
     }
+
+    fireEvent(this, 'beforeDrillUp');
 
     var chart = this,
         drilldownLevels = chart.drilldownLevels as any,
@@ -1012,15 +1015,6 @@ Chart.prototype.drillUp = function (): void {
     }
 
     this.redraw();
-
-    if (this.drilldownLevels.length === 0) {
-        this.drillUpButton = (this.drillUpButton as any).destroy();
-    } else {
-        (this.drillUpButton as any).attr({
-            text: this.getDrilldownBackText()
-        })
-            .align();
-    }
 
     (this.ddDupes as any).length = []; // #3315
 

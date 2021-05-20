@@ -10,3 +10,4 @@
  */
 'use strict';
 import '../../Series/TreemapSeries.js';
+import '../../Extensions/Breadcrumbs.js';

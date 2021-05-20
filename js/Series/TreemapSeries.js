@@ -967,7 +967,6 @@ BaseSeries.seriesType('treemap', 'scatter'
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
         rootNode = series.nodeMap[rootId];
-        series.renderTraverseUpButton(rootId);
         series.mapOptionsToLevel = getLevelOptions({
             from: rootNode.level + 1,
             levels: options.levels,
@@ -1343,39 +1342,6 @@ BaseSeries.seriesType('treemap', 'scatter'
         // difference (#13388).
         return !(tree.children.length === 1 && ((this.rootNode === '' && targetNode === firstChild.id) ||
             (this.rootNode === firstChild.id && targetNode === '')));
-    },
-    renderTraverseUpButton: function (rootId) {
-        var series = this, nodeMap = series.nodeMap, node = nodeMap[rootId], name = node.name, buttonOptions = series.options.traverseUpButton, backText = pick(buttonOptions.text, name, '< Back'), attr, states;
-        if (rootId === '' ||
-            (series.isDrillAllowed ?
-                !(isString(node.parent) && series.isDrillAllowed(node.parent)) : false)) {
-            if (series.drillUpButton) {
-                series.drillUpButton =
-                    series.drillUpButton.destroy();
-            }
-        }
-        else if (!this.drillUpButton) {
-            attr = buttonOptions.theme;
-            states = attr && attr.states;
-            this.drillUpButton = this.chart.renderer
-                .button(backText, null, null, function () {
-                series.drillUp();
-            }, attr, states && states.hover, states && states.select)
-                .addClass('highcharts-drillup-button')
-                .attr({
-                align: buttonOptions.position.align,
-                zIndex: 7
-            })
-                .add()
-                .align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');
-        }
-        else {
-            this.drillUpButton.placed = false;
-            this.drillUpButton.attr({
-                text: backText
-            })
-                .align();
-        }
     },
     buildKDTree: noop,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,

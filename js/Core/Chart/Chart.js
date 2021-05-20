@@ -494,7 +494,7 @@ var Chart = /** @class */ (function () {
      */
     Chart.prototype.redraw = function (animation) {
         fireEvent(this, 'beforeRedraw');
-        var chart = this, axes = chart.axes, series = chart.series, pointer = chart.pointer, legend = chart.legend, legendUserOptions = chart.userOptions.legend, redrawLegend = chart.isDirtyLegend, hasStackedSeries, hasDirtyStacks, hasCartesianSeries = chart.hasCartesianSeries, isDirtyBox = chart.isDirtyBox, i, serie, renderer = chart.renderer, isHiddenChart = renderer.isHidden(), afterRedraw = [];
+        var chart = this, axes = chart.axes, series = chart.series, pointer = chart.pointer, hasCartesianSeries = chart.hasCartesianSeries, isDirtyBox = chart.isDirtyBox, renderer = chart.renderer, isHiddenChart = renderer.isHidden(), afterRedraw = [];
         // Handle responsive rules, not only on resize (#6130)
         if (chart.setResponsive) {
             chart.setResponsive(false);
@@ -506,56 +506,9 @@ var Chart = /** @class */ (function () {
         if (isHiddenChart) {
             chart.temporaryDisplay();
         }
-        // Adjust title layout (reflow multiline text)
-        chart.layOutTitles();
-        // link stacked series
-        i = series.length;
-        while (i--) {
-            serie = series[i];
-            if (serie.options.stacking) {
-                hasStackedSeries = true;
-                if (serie.isDirty) {
-                    hasDirtyStacks = true;
-                    break;
-                }
-            }
-        }
-        if (hasDirtyStacks) { // mark others as dirty
-            i = series.length;
-            while (i--) {
-                serie = series[i];
-                if (serie.options.stacking) {
-                    serie.isDirty = true;
-                }
-            }
-        }
-        // Handle updated data in the series
-        series.forEach(function (serie) {
-            if (serie.isDirty) {
-                if (serie.options.legendType === 'point') {
-                    if (typeof serie.updateTotals === 'function') {
-                        serie.updateTotals();
-                    }
-                    redrawLegend = true;
-                }
-                else if (legendUserOptions &&
-                    (legendUserOptions.labelFormatter ||
-                        legendUserOptions.labelFormat)) {
-                    redrawLegend = true; // #2165
-                }
-            }
-            if (serie.isDirtyData) {
-                fireEvent(serie, 'updatedData');
-            }
-        });
-        // handle added or removed series
-        if (redrawLegend && legend && legend.options.enabled) {
-            // draw legend graphics
-            legend.render();
-            chart.isDirtyLegend = false;
-        }
+        chart.setOffsets();
         // reset stacks
-        if (hasStackedSeries) {
+        if (chart.hasStackedSeries) {
             chart.getStacks();
         }
         if (hasCartesianSeries) {
@@ -590,7 +543,7 @@ var Chart = /** @class */ (function () {
                         delete axis.eventArgs;
                     });
                 }
-                if (isDirtyBox || hasStackedSeries) {
+                if (isDirtyBox || chart.hasStackedSeries) {
                     axis.redraw();
                 }
             });
@@ -1187,6 +1140,56 @@ var Chart = /** @class */ (function () {
         chart.setChartSize();
     };
     /**
+     * The method used for getting info about dirty series
+     * before the final plot area is set.
+     *
+     * @private
+     * @function Highcharts.Chart#markDirtySeries
+     */
+    Chart.prototype.markDirtySeries = function () {
+        var chart = this, series = chart.series, legendUserOptions = chart.userOptions.legend;
+        var i = series.length, serie, hasStackedSeries, hasDirtyStacks;
+        while (i--) {
+            serie = series[i];
+            if (serie.options.stacking) {
+                hasStackedSeries = true;
+                if (serie.isDirty) {
+                    hasDirtyStacks = true;
+                    break;
+                }
+            }
+        }
+        if (hasDirtyStacks) { // mark others as dirty
+            i = series.length;
+            while (i--) {
+                serie = series[i];
+                if (serie.options.stacking) {
+                    serie.isDirty = true;
+                }
+            }
+        }
+        // Handle updated data in the series
+        series.forEach(function (serie) {
+            if (serie.isDirty) {
+                if (serie.options.legendType === 'point') {
+                    if (typeof serie.updateTotals === 'function') {
+                        serie.updateTotals();
+                    }
+                    chart.isDirtyLegend = true;
+                }
+                else if (legendUserOptions &&
+                    (legendUserOptions.labelFormatter ||
+                        legendUserOptions.labelFormat)) {
+                    chart.isDirtyLegend = true; // #2165
+                }
+            }
+            if (serie.isDirtyData) {
+                fireEvent(serie, 'updatedData');
+            }
+        });
+        chart.hasStackedSeries = hasStackedSeries;
+    };
+    /**
      * Reflows the chart to its container. By default, the chart reflows
      * automatically to its container following a `window.resize` event, as per
      * the [chart.reflow](https://api.highcharts.com/highcharts/chart.reflow)
@@ -1230,6 +1233,26 @@ var Chart = /** @class */ (function () {
             }
             chart.containerWidth = width;
             chart.containerHeight = height;
+        }
+    };
+    /**
+     * The method used for adding the offsets to the axis before
+     * the final plot area is set.
+     *
+     * @private
+     * @function Highcharts.Chart#setOffsets
+     */
+    Chart.prototype.setOffsets = function () {
+        var chart = this, legend = chart.legend;
+        fireEvent(this, 'setOffsets');
+        // Adjust title layout (reflow multiline text)
+        this.layOutTitles();
+        this.markDirtySeries();
+        // handle added or removed series
+        if (chart.isDirtyLegend && legend && legend.options.enabled) {
+            // draw legend graphics
+            legend.render();
+            chart.isDirtyLegend = false;
         }
     };
     /**

@@ -120,6 +120,9 @@ QUnit.test('Drill up failed on top level (#3544)', function (assert) {
         xAxis: {
             type: 'category'
         },
+        title: {
+            text: null
+        },
 
         drilldown: {
             animation: false,
@@ -169,8 +172,8 @@ QUnit.test('Drill up failed on top level (#3544)', function (assert) {
     controller.moveTo(columnCenterX, columnCenterY);
 
     var drillUpButton = chart.drillUpButton,
-        drillUpButtonX = drillUpButton.x - (drillUpButton.getBBox().width / 2),
-        drillUpButtonY = drillUpButton.y + (drillUpButton.getBBox().height / 2);
+        drillUpButtonX = drillUpButton.bBox.x + (drillUpButton.getBBox().width / 2),
+        drillUpButtonY = drillUpButton.bBox.y + (drillUpButton.getBBox().height / 2);
 
     assert.notEqual(
         drillUpButton,

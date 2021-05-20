@@ -547,6 +547,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
 };
 Chart.prototype.applyDrilldown = function () {
     var drilldownLevels = this.drilldownLevels, levelToRemove;
+    fireEvent(this, 'applyDrilldown');
     if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
         levelToRemove = drilldownLevels[drilldownLevels.length - 1].levelNumber;
         this.drilldownLevels.forEach(function (level) {
@@ -570,7 +571,6 @@ Chart.prototype.applyDrilldown = function () {
     }
     this.pointer.reset();
     this.redraw();
-    this.showDrillUpButton();
     fireEvent(this, 'afterDrilldown');
 };
 Chart.prototype.getDrilldownBackText = function () {
@@ -597,7 +597,7 @@ Chart.prototype.showDrillUpButton = function () {
             .add()
             .align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');
     }
-    else {
+    else if (this.drillUpButton) {
         this.drillUpButton.attr({
             text: backText
         })
@@ -616,6 +616,7 @@ Chart.prototype.drillUp = function () {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
         return;
     }
+    fireEvent(this, 'beforeDrillUp');
     var chart = this, drilldownLevels = chart.drilldownLevels, levelNumber = drilldownLevels[drilldownLevels.length - 1].levelNumber, i = drilldownLevels.length, chartSeries = chart.series, seriesI, level, oldSeries, newSeries, oldExtremes, addSeries = function (seriesOptions) {
         var addedSeries;
         chartSeries.forEach(function (series) {
@@ -681,15 +682,6 @@ Chart.prototype.drillUp = function () {
         }
     }
     this.redraw();
-    if (this.drilldownLevels.length === 0) {
-        this.drillUpButton = this.drillUpButton.destroy();
-    }
-    else {
-        this.drillUpButton.attr({
-            text: this.getDrilldownBackText()
-        })
-            .align();
-    }
     this.ddDupes.length = []; // #3315
     // Fire a once-off event after all series have been drilled up (#5158)
     fireEvent(chart, 'drillupall');
