@@ -17,10 +17,11 @@
  * */
 
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
+import type Options from '../Options';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Chart from './Chart.js';
-import O from '../../Core/Options.js';
-const { getOptions } = O;
+import D from '../DefaultOptions.js';
+const { getOptions } = D;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
@@ -58,7 +59,7 @@ class MapChart extends Chart {
      * @fires Highcharts.MapChart#event:afterInit
      */
     public init(
-        userOptions: Partial<Highcharts.Options>,
+        userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
         const hiddenAxis = {
@@ -68,7 +69,6 @@ class MapChart extends Chart {
                 maxPadding: 0,
                 startOnTick: false
             },
-            seriesOptions = userOptions.series,
             defaultCreditsOptions = getOptions().credits;
 
         /* For visual testing
@@ -77,10 +77,7 @@ class MapChart extends Chart {
         hiddenAxis.tickPositions = undefined;
         // */
 
-        // Don't merge the data
-        userOptions.series = void 0;
-
-        userOptions = merge(
+        const options = merge(
             {
                 chart: {
                     panning: {
@@ -116,9 +113,7 @@ class MapChart extends Chart {
             }
         );
 
-        userOptions.series = seriesOptions;
-
-        super.init(userOptions, callback);
+        super.init(options, callback);
     }
 }
 
@@ -165,8 +160,8 @@ namespace MapChart {
      * The chart object.
      */
     export function mapChart(
-        a: (string|HTMLDOMElement|Highcharts.Options),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        a: (string|HTMLDOMElement|Options),
+        b?: (Chart.CallbackFunction|Options),
         c?: Chart.CallbackFunction
     ): MapChart {
         return new MapChart(a as any, b as any, c);

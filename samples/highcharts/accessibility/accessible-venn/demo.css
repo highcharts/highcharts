@@ -11,6 +11,7 @@
 }
 
 .btn {
+  white-space: normal;
   background-color: #25386f;
   border: 1px solid #25386f;
   cursor: pointer;
@@ -548,7 +549,7 @@
 
 @media (max-width: 575px){
 
-  .btn span{
-    display: block;
+  .btn {
+    min-width: 140px;
   }
 }

@@ -11,6 +11,13 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type ChartOptions from '../Chart/ChartOptions';
 import type ColorType from '../Color/ColorType';
 import type Point from '../Series/Point';
 import type {
@@ -18,10 +25,13 @@ import type {
     PointShortOptions
 } from '../Series/PointOptions';
 import type PositionObject from '../Renderer/PositionObject';
-import type Series from '../Series/Series';
+import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type SizeObject from '../Renderer/SizeObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type TickPositionsArray from './TickPositionsArray';
+import type Time from '../Time';
+
 import Axis from './Axis.js';
 import H from '../Globals.js';
 import Tick from './Tick.js';
@@ -38,6 +48,13 @@ const {
     timeUnits,
     wrap
 } = U;
+
+declare module '../Chart/ChartLike'{
+    interface ChartLike {
+        marginRight: ChartOptions['marginRight'];
+        polar: ChartOptions['polar'];
+    }
+}
 
 /**
  * Internal types
@@ -82,6 +99,7 @@ declare module './Types' {
         GridAxis: GridAxis;
     }
 }
+
 
 const argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
@@ -259,7 +277,7 @@ Axis.prototype.getMaxLabelDimensions = function (
 };
 
 // Adds week date format
-H.dateFormats.W = function (this: Highcharts.Time, timestamp: number): string {
+H.dateFormats.W = function (this: Time, timestamp: number): string {
     const d = new this.Date(timestamp);
     const firstDay = (this.get('Day', d) + 6) % 7;
     const thursday = new this.Date(d.valueOf());
@@ -278,7 +296,7 @@ H.dateFormats.W = function (this: Highcharts.Time, timestamp: number): string {
 };
 
 // First letter of the day of the week, e.g. 'M' for 'Monday'.
-H.dateFormats.E = function (this: Highcharts.Time, timestamp: number): string {
+H.dateFormats.E = function (this: Time, timestamp: number): string {
     return this.dateFormat('%a', timestamp, true).charAt(0);
 };
 
@@ -293,7 +311,7 @@ addEvent(
                 column.setAxisSize();
                 column.setAxisTranslation();
             });
-        } as any);
+        });
     }
 );
 
@@ -317,7 +335,7 @@ addEvent(
             options = axis.options,
             gridOptions = options.grid || {},
             labelOpts = axis.options.labels,
-            align = (labelOpts as any).align,
+            align = labelOpts.align,
             // verticalAlign is currently not supported for axis.labels.
             verticalAlign = 'middle', // labelOpts.verticalAlign,
             side = GridAxis.Side[axis.side],
@@ -327,13 +345,13 @@ addEvent(
             nextTickPos = (
                 isNumber(tickPositions[e.index + 1]) ?
                     tickPositions[e.index + 1] - tickmarkOffset :
-                    (axis.max as any) + tickmarkOffset
+                    (axis.max || 0) + tickmarkOffset
             ),
             tickSize = axis.tickSize('tick'),
             tickWidth = tickSize ? tickSize[0] : 0,
             crispCorr = tickSize ? tickSize[1] / 2 : 0,
             labelHeight: number,
-            lblMetrics: Highcharts.FontMetricsObject,
+            lblMetrics: FontMetricsObject,
             lines: number,
             bottom: number,
             top: number,
@@ -352,10 +370,10 @@ addEvent(
             } else {
                 bottom = axis.top + axis.len - (axis.translate(
                     reversed ? nextTickPos : tickPos
-                ) as any);
+                ) || 0);
                 top = axis.top + axis.len - (axis.translate(
                     reversed ? tickPos : nextTickPos
-                ) as any);
+                ) || 0);
             }
 
             // Calculate left and right positions of the cell.
@@ -368,10 +386,13 @@ addEvent(
             } else {
                 left = Math.round(axis.left + (axis.translate(
                     reversed ? nextTickPos : tickPos
-                ) as any)) - crispCorr;
-                right = Math.round(axis.left + (axis.translate(
-                    reversed ? tickPos : nextTickPos
-                ) as any)) - crispCorr;
+                ) || 0)) - crispCorr;
+                right = Math.min( // #15742
+                    Math.round(axis.left + (axis.translate(
+                        reversed ? tickPos : nextTickPos
+                    ) || 0)) - crispCorr,
+                    axis.left + axis.len
+                );
             }
 
             tick.slotWidth = right - left;
@@ -394,14 +415,14 @@ addEvent(
             );
 
             lblMetrics = chart.renderer.fontMetrics(
-                (labelOpts as any).style.fontSize,
-                (label as any).element
+                labelOpts.style.fontSize,
+                label && label.element
             );
-            labelHeight = (label as any).getBBox().height;
+            labelHeight = label ? label.getBBox().height : 0;
 
             // Adjustment to y position to align the label correctly.
             // Would be better to have a setter or similar for this.
-            if (!(labelOpts as any).useHTML) {
+            if (!labelOpts.useHTML) {
                 lines = Math.round(labelHeight / lblMetrics.h);
                 e.pos.y += (
                     // Center the label
@@ -419,7 +440,7 @@ addEvent(
                 );
             }
 
-            e.pos.x += (axis.horiz && (labelOpts as any).x || 0);
+            e.pos.x += (axis.horiz && labelOpts.x) || 0;
         }
     }
 );
@@ -769,6 +790,8 @@ class GridAxis {
             gridOptions = options.grid || {};
 
         if (gridOptions.enabled === true) {
+            const min = axis.min || 0,
+                max = axis.max || 0;
 
             // @todo acutual label padding (top, bottom, left, right)
             axis.maxLabelDimensions = axis.getMaxLabelDimensions(
@@ -819,29 +842,47 @@ class GridAxis {
                     // for the vertical grid axis.
                     if (!axis.horiz && axis.chart.marginRight) {
                         const upperBorderStartPoint = startPoint,
-                            upperBorderEndPoint = ['L', axis.left, startPoint[2]],
+                            upperBorderEndPoint: SVGPath.Segment = [
+                                'L',
+                                axis.left,
+                                startPoint[2] || 0
+                            ],
                             upperBorderPath = [upperBorderStartPoint, upperBorderEndPoint],
-                            lowerBorderEndPoint = ['L', axis.chart.chartWidth - axis.chart.marginRight,
-                                axis.toPixels(axis.max as any + axis.tickmarkOffset)],
-                            lowerBorderStartPoint = ['M', endPoint[1],
-                                axis.toPixels(axis.max as any + axis.tickmarkOffset)],
+                            lowerBorderEndPoint: SVGPath.Segment = [
+                                'L',
+                                axis.chart.chartWidth - axis.chart.marginRight,
+                                axis.toPixels(max + axis.tickmarkOffset)
+                            ],
+                            lowerBorderStartPoint: SVGPath.Segment = [
+                                'M',
+                                endPoint[1] || 0,
+                                axis.toPixels(max + axis.tickmarkOffset)
+                            ],
                             lowerBorderPath = [lowerBorderStartPoint, lowerBorderEndPoint];
 
-                        if (!axis.grid.upperBorder && axis.min as any % 1 !== 0) {
-                            axis.grid.upperBorder = axis.grid.renderBorder(upperBorderPath as any);
+                        if (!axis.grid.upperBorder && min % 1 !== 0) {
+                            axis.grid.upperBorder = axis.grid.renderBorder(upperBorderPath);
                         }
                         if (axis.grid.upperBorder) {
+                            axis.grid.upperBorder.attr({
+                                stroke: options.lineColor,
+                                'stroke-width': options.lineWidth
+                            });
                             axis.grid.upperBorder.animate({
-                                d: upperBorderPath as any
+                                d: upperBorderPath
                             });
                         }
 
-                        if (!axis.grid.lowerBorder && axis.max as any % 1 !== 0) {
-                            axis.grid.lowerBorder = axis.grid.renderBorder(lowerBorderPath as any);
+                        if (!axis.grid.lowerBorder && max % 1 !== 0) {
+                            axis.grid.lowerBorder = axis.grid.renderBorder(lowerBorderPath);
                         }
                         if (axis.grid.lowerBorder) {
+                            axis.grid.lowerBorder.attr({
+                                stroke: options.lineColor,
+                                'stroke-width': options.lineWidth
+                            });
                             axis.grid.lowerBorder.animate({
-                                d: lowerBorderPath as any
+                                d: lowerBorderPath
                             });
                         }
                     }
@@ -851,6 +892,10 @@ class GridAxis {
                     if (!axis.grid.axisLineExtra) {
                         axis.grid.axisLineExtra = axis.grid.renderBorder(linePath);
                     } else {
+                        axis.grid.axisLineExtra.attr({
+                            stroke: options.lineColor,
+                            'stroke-width': options.lineWidth
+                        });
                         axis.grid.axisLineExtra.animate({
                             d: linePath
                         });
@@ -877,30 +922,37 @@ class GridAxis {
                     (axis.linkedParent && axis.linkedParent.scrollbar)
                 )
             ) {
-                const max = axis.max as any,
-                    min = axis.min as any,
-                    tickmarkOffset = axis.tickmarkOffset,
+                const tickmarkOffset = axis.tickmarkOffset,
                     lastTick = axis.tickPositions[axis.tickPositions.length - 1],
                     firstTick = axis.tickPositions[0];
 
                 // Hide/show firts tick label.
-                if (min - firstTick > tickmarkOffset) {
-                    (axis.ticks[firstTick].label as any).hide();
-                } else {
-                    (axis.ticks[firstTick].label as any).show();
+                let label = axis.ticks[firstTick].label;
+                if (label) {
+                    if (min - firstTick > tickmarkOffset) {
+                        label.hide();
+                    } else {
+                        label.show();
+                    }
                 }
 
                 // Hide/show last tick mark/label.
-                if (lastTick - max > tickmarkOffset) {
-                    (axis.ticks[lastTick].label as any).hide();
-                } else {
-                    (axis.ticks[lastTick].label as any).show();
+                label = axis.ticks[lastTick].label;
+                if (label) {
+                    if (lastTick - max > tickmarkOffset) {
+                        label.hide();
+                    } else {
+                        label.show();
+                    }
                 }
 
-                if (lastTick - max < tickmarkOffset && lastTick - max > 0 && axis.ticks[lastTick].isLast) {
-                    (axis.ticks[lastTick].mark as any).hide();
-                } else if (axis.ticks[lastTick - 1]) {
-                    (axis.ticks[lastTick - 1].mark as any).show();
+                const mark = axis.ticks[lastTick].mark;
+                if (mark) {
+                    if (lastTick - max < tickmarkOffset && lastTick - max > 0 && axis.ticks[lastTick].isLast) {
+                        mark.hide();
+                    } else if (axis.ticks[lastTick - 1]) {
+                        mark.show();
+                    }
                 }
             }
         }
@@ -1079,7 +1131,7 @@ class GridAxis {
                         this: Highcharts.Axis,
                         min: number,
                         max: number
-                    ): (Highcharts.AxisTickPositionsArray|undefined) {
+                    ): (TickPositionsArray|undefined) {
 
                         const parentInfo = (
                             this.linkedParent &&

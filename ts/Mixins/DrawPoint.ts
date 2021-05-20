@@ -4,11 +4,18 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
 import type ShadowOptionsObject from '../Core/Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 /**
  * Internal types
@@ -26,7 +33,7 @@ declare global {
             group: SVGElement;
             onComplete?: Function;
             isNew?: boolean;
-            renderer: Renderer;
+            renderer: SVGRenderer;
             shadow?: (boolean|Partial<ShadowOptionsObject>);
             shapeArgs?: SVGAttributes;
             shapeType: string;
@@ -57,20 +64,27 @@ const draw = function draw(
     this: Highcharts.DrawPoint,
     params: Highcharts.DrawPointParams
 ): void {
-    let component = this,
-        graphic = component.graphic,
-        animatableAttribs = params.animatableAttribs,
-        onComplete = params.onComplete,
-        css = params.css,
-        renderer = params.renderer,
-        animation = (
-            component.series &&
-            component.series.options.animation
+    const {
+        animatableAttribs,
+        onComplete,
+        css,
+        renderer
+    } = params;
+
+    const animation = (this.series && this.series.chart.hasRendered) ?
+        // Chart-level animation on updates
+        void 0 :
+        // Series-level animation on new points
+        (
+            this.series &&
+            this.series.options.animation
         );
 
-    if (component.shouldDraw()) {
+    let graphic = this.graphic;
+
+    if (this.shouldDraw()) {
         if (!graphic) {
-            component.graphic = graphic =
+            this.graphic = graphic =
                 (renderer as any)[params.shapeType](params.shapeArgs)
                     .add(params.group);
         }
@@ -83,8 +97,8 @@ const draw = function draw(
                 onComplete
             );
     } else if (graphic) {
-        const destroy = function (): void {
-            component.graphic = graphic = (graphic as any).destroy();
+        const destroy = (): void => {
+            this.graphic = graphic = (graphic && graphic.destroy());
             if (isFn(onComplete)) {
                 onComplete();
             }

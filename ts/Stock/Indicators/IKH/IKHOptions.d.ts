@@ -18,6 +18,7 @@ import type IKHPoint from './IKHPoint';
 import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
 import type { SMAParamsOptions, SMAOptions } from '../SMA/SMAOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import type TooltipOptions from '../../../Core/TooltipOptions';
 
 /* *
 *
@@ -67,6 +68,6 @@ export interface IKHOptions extends SMAOptions {
     senkouSpanA?: Record<string, CSSObject>;
     senkouSpanB?: Record<string, CSSObject>;
     tenkanLine?: Record<string, CSSObject>;
-    tooltip?: Highcharts.TooltipOptions;
+    tooltip?: TooltipOptions;
 }
 /* eslint-enable @typescript-eslint/interface-name-prefix */

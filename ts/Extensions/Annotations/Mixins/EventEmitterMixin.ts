@@ -7,6 +7,7 @@
 import type Annotation from '../Annotations';
 import type { CursorValue } from '../../../Core/Renderer/CSSObject';
 import type DOMElementType from '../../../Core/Renderer/DOMElementType';
+import type EventCallback from '../../../Core/EventCallback';
 import type PointerEvent from '../../../Core/PointerEvent';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
@@ -106,7 +107,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         });
 
         objectEach(emitter.options.events, function (
-            event: Highcharts.EventCallbackFunction<Annotation>,
+            event: EventCallback<Annotation>,
             type: string
         ): void {
             const eventHandler = function (e: PointerEvent): void {

@@ -51,7 +51,7 @@ declare module '../../Core/Series/SeriesLike' {
     }
 }
 
-import '../../Core/Options.js';
+import '../../Core/DefaultOptions.js';
 
 /**
  * Returns true if the key is a direct property of the object.

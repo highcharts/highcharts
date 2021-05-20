@@ -15,8 +15,11 @@
  * */
 
 import type Chart from './Chart/Chart';
+import type Options from './Options';
 import type { SeriesTypeRegistry } from './Series/SeriesType';
 import type SizeObject from './Renderer/SizeObject';
+import type Time from './Time';
+
 
 /* *
  *
@@ -97,7 +100,7 @@ export interface GlobalsLike extends InternalNamespace {
     readonly Obj: ObjectConstructor;
     readonly SVG_NS: string;
     readonly charts: Array<(Chart|undefined)>;
-    readonly dateFormats: Record<string, Highcharts.TimeFormatCallbackFunction>;
+    readonly dateFormats: Record<string, Time.TimeFormatCallbackFunction>;
     readonly deg2rad: number;
     readonly doc: Document;
     readonly hasBidiBug: boolean;
@@ -116,7 +119,7 @@ export interface GlobalsLike extends InternalNamespace {
     readonly supportsPassiveEvents: boolean;
     readonly svg: boolean;
     readonly symbolSizes: Record<string, SizeObject>;
-    theme?: Partial<Highcharts.Options>;
+    theme?: Partial<Options>;
     readonly userAgent: string;
     readonly version: string;
     // eslint-disable-next-line node/no-unsupported-features/es-builtins

@@ -30,7 +30,7 @@ import palette from '../../Core/Color/Palette.js';
 import PiePoint from './PiePoint.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import Symbols from '../../Core/Renderer/SVG/Symbols.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -41,7 +41,7 @@ const {
     relativeLength
 } = U;
 
-import '../../Core/Options.js';
+import '../../Core/DefaultOptions.js';
 
 /* *
  *
@@ -763,7 +763,7 @@ class PieSeries extends Series {
             }
 
             this.graph.attr({
-                d: SVGRenderer.prototype.symbols.arc(
+                d: Symbols.arc(
                     centerX,
                     centerY,
                     this.center[2] / 2,

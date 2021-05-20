@@ -29,7 +29,7 @@ import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import Tooltip from '../Core/Tooltip.js';
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -1121,7 +1121,7 @@ addEvent(Series, 'afterSetOptions', function (
         type = this.type,
         plotOptions: SeriesTypePlotOptions = this.chart.options.plotOptions as any,
         defaultOptions: Highcharts.DataGroupingOptionsObject =
-            (O.defaultOptions.plotOptions as any)[type].dataGrouping,
+            (D.defaultOptions.plotOptions as any)[type].dataGrouping,
         // External series, for example technical indicators should also
         // inherit commonOptions which are not available outside this module
         baseOptions = this.useCommonDataGrouping && commonOptions;
@@ -1319,7 +1319,7 @@ export default dataGrouping;
  * @see [dataGrouping.lastAnchor](#plotOptions.series.dataGrouping.lastAnchor)
  *
  * @type       {Highcharts.DataGroupingAnchor}
- * @since      next
+ * @since 9.1.0
  * @default    start
  * @apioption  plotOptions.series.dataGrouping.anchor
  */
@@ -1429,7 +1429,7 @@ export default dataGrouping;
  * @see [dataGrouping.anchor](#plotOptions.series.dataGrouping.anchor)
  *
  * @type       {Highcharts.DataGroupingAnchorExtremes}
- * @since      next
+ * @since 9.1.0
  * @default    start
  * @apioption  plotOptions.series.dataGrouping.firstAnchor
  */
@@ -1508,7 +1508,7 @@ export default dataGrouping;
  * @see [dataGrouping.anchor](#plotOptions.series.dataGrouping.anchor)
  *
  * @type       {Highcharts.DataGroupingAnchorExtremes}
- * @since      next
+ * @since 9.1.0
  * @default    start
  * @apioption  plotOptions.series.dataGrouping.lastAnchor
  */

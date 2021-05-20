@@ -15,7 +15,7 @@
  *  Imports
  *
  * */
-
+import type TickPositionsArray from './Axis/TickPositionsArray';
 import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
 import H from './Globals.js';
 const {
@@ -40,80 +40,15 @@ const {
  *  Declarations
  *
  * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    interface Window {
-        moment: any;
-        Date: any;
+declare module './Options' {
+    interface Options {
+        time?: Time.TimeOptions;
     }
-    namespace Highcharts {
-        type TimeUnitValue = (
-            'Date'|
-            'Day'|
-            'FullYear'|
-            'Hours'|
-            'Milliseconds'|
-            'Minutes'|
-            'Month'|
-            'Seconds'
-        );
-        interface AxisTickPositionsArray {
-            info?: TimeTicksInfoObject;
-        }
-        interface TimeNormalizedObject {
-            count: number;
-            unitRange: number;
-        }
-        interface TimeOptions {
-            Date?: any;
-            getTimezoneOffset?: Function;
-            timezone?: string;
-            timezoneOffset?: number;
-            useUTC?: boolean;
-            moment?: any;
-        }
-        interface TimeFormatCallbackFunction {
-            (timestamp: number): string;
-        }
-        class Time {
-            public constructor(options: TimeOptions);
-            public Date: DateConstructor;
-            public options: TimeOptions;
-            public timezoneOffset?: number;
-            public useUTC: boolean;
-            public variableTimezone: boolean;
-            public dateFormat(
-                format: string,
-                timestamp?: number,
-                capitalize?: boolean
-            ): string;
-            public get(unit: TimeUnitValue, date: Date): number;
-            public getTimeTicks(
-                normalizedInterval: TimeNormalizedObject,
-                min?: number,
-                max?: number,
-                startOfWeek?: number
-            ): AxisTickPositionsArray;
-            public getTimezoneOffset(timestamp: (number|Date)): number;
-            public makeTime(
-                year: number,
-                month: number,
-                date?: number,
-                hours?: number,
-                minutes?: number,
-                seconds?: number
-            ): number;
-            public resolveDTLFormat<T>(
-                f: (string|Array<T>|Record<string, T>)
-            ): Record<string, T>;
-            public set(unit: TimeUnitValue, date: Date, value: number): (number|undefined);
-            public timezoneOffsetFunction(): Time['getTimezoneOffset']
-            public update(options: TimeOptions): void;
-        }
+}
+
+declare module './Axis/TickPositionsArray'{
+    interface TickPositionsArray {
+        info?: TimeTicksInfoObject;
     }
 }
 
@@ -236,7 +171,7 @@ class Time {
      * */
 
     public constructor(
-        options: Highcharts.TimeOptions
+        options: Time.TimeOptions
     ) {
         /**
          * Get the time zone offset based on the current timezone information as
@@ -261,7 +196,7 @@ class Time {
      *
      * */
 
-    public options: Highcharts.TimeOptions = {};
+    public options: Time.TimeOptions = {};
 
     public timezoneOffset?: number;
 
@@ -300,7 +235,7 @@ class Time {
      * @return {number}
      *        The given time unit
      */
-    public get(unit: Highcharts.TimeUnitValue, date: Date): number {
+    public get(unit: Time.TimeUnitValue, date: Date): number {
         if (this.variableTimezone || this.timezoneOffset) {
             const realMs = date.getTime();
             const ms = realMs - this.getTimezoneOffset(date);
@@ -336,7 +271,7 @@ class Time {
      * @return {number}
      *        The epoch milliseconds of the updated date
      */
-    public set(unit: Highcharts.TimeUnitValue, date: Date, value: number): number {
+    public set(unit: Time.TimeUnitValue, date: Date, value: number): number {
         // UTC time with timezone handling
         if (this.variableTimezone || this.timezoneOffset) {
             // For lower order time units, just set it directly using UTC
@@ -385,7 +320,7 @@ class Time {
      *
      * @return {void}
      */
-    public update(options: Highcharts.TimeOptions): void {
+    public update(options: Time.TimeOptions): void {
         const useUTC = pick(options && options.useUTC, true) as boolean,
             time = this;
 
@@ -496,7 +431,7 @@ class Time {
     public timezoneOffsetFunction(): (timestamp: (number|Date)) => number {
         const time = this,
             options = this.options,
-            moment = options.moment || win.moment;
+            moment = options.moment || (win as any).moment;
 
         if (!this.useUTC) {
             return function (timestamp: (number|Date)): number {
@@ -734,21 +669,22 @@ class Time {
      * @return {Highcharts.AxisTickPositionsArray}
      */
     public getTimeTicks(
-        normalizedInterval: Highcharts.TimeNormalizedObject,
+        normalizedInterval: Time.TimeNormalizedObject,
         min?: number,
         max?: number,
         startOfWeek?: number
-    ): Highcharts.AxisTickPositionsArray {
-        let time = this,
+    ): TickPositionsArray {
+        const time = this,
             Date = time.Date,
-            tickPositions = [] as Highcharts.AxisTickPositionsArray,
-            i,
+            tickPositions = [] as TickPositionsArray,
             higherRanks = {} as Record<string, string>,
-            minYear: any, // used in months and years as a basis for Date.UTC()
             // When crossing DST, use the max. Resolves #6278.
             minDate = new Date(min as any),
             interval = normalizedInterval.unitRange,
-            count = normalizedInterval.count || 1,
+            count = normalizedInterval.count || 1;
+
+        let i,
+            minYear: any, // used in months and years as a basis for Date.UTC()
             variableDayLength,
             minDay;
 
@@ -945,7 +881,7 @@ class Time {
 
 
         // record information on the chosen unit - for dynamic label formatter
-        tickPositions.info = extend<Highcharts.TimeNormalizedObject|TimeTicksInfoObject>(
+        tickPositions.info = extend<Time.TimeNormalizedObject|TimeTicksInfoObject>(
             normalizedInterval,
             {
                 higherRanks,
@@ -958,6 +894,32 @@ class Time {
 
 }
 
-H.Time = Time;
+namespace Time {
+    export interface TimeOptions {
+        Date?: any;
+        getTimezoneOffset?: Function;
+        timezone?: string;
+        timezoneOffset?: number;
+        useUTC?: boolean;
+        moment?: any;
+    }
+    export interface TimeFormatCallbackFunction {
+        (timestamp: number): string;
+    }
+    export interface TimeNormalizedObject {
+        count: number;
+        unitRange: number;
+    }
+    export type TimeUnitValue = (
+        'Date'|
+        'Day'|
+        'FullYear'|
+        'Hours'|
+        'Milliseconds'|
+        'Minutes'|
+        'Month'|
+        'Seconds'
+    );
+}
 
-export default H.Time;
+export default Time;

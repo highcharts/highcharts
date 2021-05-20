@@ -25,7 +25,8 @@ const {
     addEvent,
     extend,
     find,
-    fireEvent
+    fireEvent,
+    isNumber
 } = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
@@ -149,10 +150,11 @@ function shouldDoLegendA11y(chart: Chart): boolean {
  */
 H.Chart.prototype.highlightLegendItem = function (ix: number): boolean {
     const items = this.legend.allItems,
-        oldIx: number = this.highlightedLegendItemIx as any;
+        oldIx = this.accessibility &&
+            this.accessibility.components.legend.highlightedLegendItemIx;
 
     if (items[ix]) {
-        if (items[oldIx]) {
+        if (isNumber(oldIx) && items[oldIx]) {
             fireEvent((items[oldIx].legendGroup as any).element, 'mouseout');
         }
 
@@ -466,6 +468,11 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
             init: function (direction: number): void {
                 return component.onKbdNavigationInit(direction);
+            },
+
+            terminate: function (): void {
+                chart.legend.allItems.forEach(
+                    (item): void => item.setState('', true));
             }
         });
     },

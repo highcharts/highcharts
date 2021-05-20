@@ -12,10 +12,12 @@
 
 'use strict';
 
+import type Options from '../../Core/Options';
+
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
-import O from '../../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import Point from '../../Core/Series/Point.js';
 import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
@@ -213,7 +215,7 @@ addEvent(Chart, 'init', function (): void {
 // Update with chart/series/point updates
 addEvent(Chart as any, 'update', function (
     this: Highcharts.SonifyableChart,
-    e: { options: Highcharts.Options }
+    e: { options: Options}
 ): void {
     const newOptions = e.options.sonification;
     if (newOptions) {

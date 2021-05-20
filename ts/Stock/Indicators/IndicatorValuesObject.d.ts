@@ -22,8 +22,8 @@ import type LineSeries from '../../Series/Line/LineSeries';
 
 export interface IndicatorValuesObject<TLinkedSeries extends typeof LineSeries.prototype> {
     values: Array<Array<(
-        Highcharts.ExtractArrayType<TLinkedSeries['xData']>|
-        Highcharts.ExtractArrayType<TLinkedSeries['yData']>
+        ExtractArrayType<TLinkedSeries['xData']>|
+        ExtractArrayType<TLinkedSeries['yData']>
     )>>;
     xData: NonNullable<TLinkedSeries['xData']>;
     yData: NonNullable<TLinkedSeries['yData']>;

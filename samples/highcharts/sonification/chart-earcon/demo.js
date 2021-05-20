@@ -54,6 +54,9 @@ var chart = Highcharts.chart('container', {
             }
         }
     },
+    accessibility: {
+        landmarkVerbosity: 'one'
+    },
     series: [{
         data: [1, 2, 4, 5, 7, 9, 11, 13]
     }, {

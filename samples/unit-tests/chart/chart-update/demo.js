@@ -384,32 +384,44 @@
 
         var cfg = JSON.stringify(options, null, '  ');
 
-        var chart = Highcharts.stockChart('container', options);
-
-        assert.strictEqual(
-            JSON.stringify(options, null, '  '),
-            cfg,
-            '#15445: Options should not be mutated after chart creation'
-        );
-
-        chart.update(options);
-
-        assert.strictEqual(
-            JSON.stringify(options, null, '  '),
-            cfg,
-            'Options should not be mutated after chart.update'
-        );
-
-        chart.update({
-            title: {
-                text: 'Ohai'
+        [
+            'chart',
+            'stockChart',
+            'ganttChart',
+            'mapChart'
+        ].forEach(constructor => {
+            if (constructor === 'mapChart') {
+                options.series[0].data = [];
+                cfg = JSON.stringify(options, null, '  ');
             }
-        });
 
-        assert.strictEqual(
-            JSON.stringify(options, null, '  '),
-            cfg,
-            '#14305: Options should not be mutated after actually changing something with chart.update'
-        );
+            const chart = Highcharts[constructor]('container', options);
+
+            assert.strictEqual(
+                JSON.stringify(options, null, '  '),
+                cfg,
+                constructor + ': #15445: Options should not be mutated after chart creation'
+            );
+
+            chart.update(options);
+
+            assert.strictEqual(
+                JSON.stringify(options, null, '  '),
+                cfg,
+                constructor + ': Options should not be mutated after chart.update'
+            );
+
+            chart.update({
+                title: {
+                    text: 'Ohai'
+                }
+            });
+
+            assert.strictEqual(
+                JSON.stringify(options, null, '  '),
+                cfg,
+                constructor + ': #14305: Options should not be mutated after actually changing something with chart.update'
+            );
+        });
     });
 }());

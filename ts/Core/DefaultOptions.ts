@@ -10,42 +10,21 @@
 
 'use strict';
 
-import type {
-    AlignObject,
-    AlignValue,
-    VerticalAlignValue
-} from './Renderer/AlignObject';
-import type AnimationOptions from './Animation/AnimationOptions';
-import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
-import type ColorString from './Color/ColorString';
-import type ColorType from './Color/ColorType';
-import type Chart from './Chart/Chart';
-import type CSSObject from './Renderer/CSSObject';
-import type { HTMLDOMElement } from './Renderer/DOMElementType';
+import type { Options } from './Options';
 import type Point from './Series/Point';
 import type Series from './Series/Series';
-import type { SeriesTypeOptions, SeriesTypePlotOptions } from './Series/SeriesType';
-import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
-import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+
 import H from './Globals.js';
 const {
     isTouchDevice,
     svg
 } = H;
 import Color from './Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import palette from './Color/Palette.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-const {
-    getNestedProperty,
-    isNumber,
-    merge,
-    pick,
-    pInt
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -53,359 +32,34 @@ const {
  *
  * */
 
-declare module './Chart/ChartLike'{
-    interface ChartLike {
-        marginRight: Highcharts.ChartOptions['marginRight'];
-        polar: Highcharts.ChartOptions['polar'];
-    }
-}
-
 declare module './GlobalsLike' {
     interface GlobalsLike {
-        defaultOptions: Highcharts.Options;
+        defaultOptions: Options;
         time: Time;
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        function dateFormat(
-            format: string,
-            timestamp: number,
-            capitalize?: boolean
-        ): string;
-        function getOptions(): Options;
-        function setOptions(options: Options): Options;
-        interface ChartAddSeriesCallbackFunction {
-            (this: Chart, event: ChartAddSeriesEventObject): void;
-        }
-        interface ChartAddSeriesEventObject {
-            options: SeriesTypeOptions;
-            preventDefault: Function;
-            target: Chart;
-            type: 'addSeries';
-        }
-        interface ChartClickCallbackFunction {
-            (this: Chart, event: PointerEvent): void;
-        }
-        interface ChartClickEventAxisObject {
-            axis: Axis;
-            value: number;
-        }
-        interface ChartClickEventObject {
-            xAxis: Array<ChartClickEventAxisObject>;
-            yAxis: Array<ChartClickEventAxisObject>;
-            zAxis?: Array<ChartClickEventAxisObject>;
-        }
-        interface ChartEventsOptions {
-            addSeries?: ChartAddSeriesCallbackFunction;
-            click?: ChartClickCallbackFunction;
-            load?: ChartLoadCallbackFunction;
-            redraw?: ChartRedrawCallbackFunction;
-            render?: ChartRenderCallbackFunction;
-            selection?: ChartSelectionCallbackFunction;
-        }
-        interface ChartLoadCallbackFunction {
-            (this: Chart, event: Event): void;
-        }
-        interface ChartOptions {
-            alignTicks?: boolean;
-            animation?: (boolean|Partial<AnimationOptions>);
-            backgroundColor?: ColorType;
-            borderColor?: ColorType;
-            borderRadius?: number;
-            borderWidth?: number;
-            className?: string;
-            colorCount?: number;
-            /** @deprecated */
-            defaultSeriesType?: string;
-            events?: ChartEventsOptions;
-            height?: (null|number|string);
-            ignoreHiddenSeries?: boolean;
-            inverted?: boolean;
-            map?: string|Array<any>|Highcharts.GeoJSON;
-            mapTransforms?: any;
-            margin?: (number|Array<number>);
-            marginBottom?: number;
-            marginLeft?: number;
-            marginRight?: number;
-            marginTop?: number;
-            numberFormatter?: NumberFormatterCallbackFunction;
-            panKey?: string;
-            panning?: PanningOptions;
-            pinchType?: string;
-            plotBackgroundColor?: ColorType;
-            plotBackgroundImage?: string;
-            plotBorderColor?: ColorType;
-            plotBorderWidth?: number;
-            plotShadow?: (boolean|Partial<ShadowOptionsObject>);
-            polar?: boolean;
-            reflow?: boolean;
-            renderTo?: (string|HTMLDOMElement);
-            resetZoomButton?: ChartResetZoomButtonOptions;
-            shadow?: (boolean|Partial<ShadowOptionsObject>);
-            selectionMarkerFill?: ColorType;
-            showAxes?: boolean;
-            spacing?: Array<number>;
-            spacingBottom?: number;
-            spacingLeft?: number;
-            spacingRight?: number;
-            spacingTop?: number;
-            style?: CSSObject;
-            styledMode?: boolean;
-            type?: string;
-            width?: (null|number);
-            zoomBySingleTouch?: boolean;
-            zoomType?: ('x'|'xy'|'y');
-        }
-        interface ChartRedrawCallbackFunction {
-            (this: Chart, event: Event): void;
-        }
-        interface ChartRenderCallbackFunction {
-            (this: Chart, event: Event): void;
-        }
-        interface ChartResetZoomButtonOptions {
-            position?: AlignObject;
-            relativeTo?: ButtonRelativeToValue;
-            theme?: SVGAttributes;
-        }
-        interface ChartSelectionCallbackFunction {
-            (
-                this: Chart,
-                event: ChartSelectionContextObject
-            ): (boolean|undefined);
-        }
-        interface ChartSelectionContextObject {
-            xAxis: Array<ChartSelectionAxisContextObject>;
-            yAxis: Array<ChartSelectionAxisContextObject>;
-        }
-        interface ChartSelectionAxisContextObject {
-            axis: Axis;
-            max: number;
-            min: number;
-        }
-        interface CreditsOptions {
-            enabled?: boolean;
-            href?: string;
-            mapText?: string;
-            mapTextFull?: string;
-            position?: AlignObject;
-            style?: CSSObject;
-            text?: string;
-        }
-        interface CaptionOptions {
-            align?: AlignValue;
-            floating?: boolean;
-            margin?: number;
-            style?: CSSObject;
-            text?: string;
-            useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
-            widthAdjust?: number;
-            x?: number;
-            y?: number;
-        }
-        interface GlobalOptions {
-            /** @deprecated */
-            canvasToolsURL?: string;
-            /** @deprecated */
-            Date?: Function;
-            /** @deprecated */
-            getTimezoneOffset?: Function;
-            /** @deprecated */
-            timezone?: string;
-            /** @deprecated */
-            timezoneOffset?: number;
-            /** @deprecated */
-            useUTC?: boolean;
-        }
-        interface LabelsItemsOptions {
-            html?: string;
-            style?: CSSObject;
-        }
-        interface LabelsOptions {
-            items?: Array<LabelsItemsOptions>;
-            style?: CSSObject;
-        }
-        interface LangOptions {
-            decimalPoint?: string;
-            invalidDate?: string;
-            loading?: string;
-            months?: Array<string>;
-            numericSymbolMagnitude?: number;
-            numericSymbols?: Array<string>;
-            resetZoom?: string;
-            resetZoomTitle?: string;
-            shortMonths?: Array<string>;
-            shortWeekdays?: Array<string>;
-            thousandsSep?: string;
-            weekdays?: Array<string>;
-            zoomIn?: string;
-            zoomOut?: string;
-        }
-        interface LegendNavigationOptions {
-            activeColor?: ColorType;
-            animation?: (boolean|Partial<AnimationOptions>);
-            arrowSize?: number;
-            enabled?: boolean;
-            inactiveColor?: ColorType;
-            style?: CSSObject;
-        }
-        interface LegendOptions {
-            align?: AlignValue;
-            alignColumns?: boolean;
-            backgroundColor?: ColorType;
-            borderColor?: ColorType;
-            borderRadius?: number;
-            borderWidth?: number;
-            className?: string;
-            enabled?: boolean;
-            floating?: boolean;
-            itemCheckboxStyle?: CSSObject;
-            itemDistance?: number;
-            itemHiddenStyle?: CSSObject;
-            itemHoverStyle?: CSSObject;
-            itemMarginBottom?: number;
-            itemMarginTop?: number;
-            itemStyle?: CSSObject;
-            itemWidth?: number;
-            layout?: ('horizontal'|'vertical'|'proximate');
-            labelFormat?: string;
-            labelFormatter?: FormatterCallbackFunction<Series|Point>;
-            /** @deprecated */
-            lineHeight?: number;
-            margin?: number;
-            maxHeight?: number;
-            navigation?: LegendNavigationOptions;
-            padding?: number;
-            reversed?: boolean;
-            rtl?: boolean;
-            shadow?: (boolean|Partial<ShadowOptionsObject>);
-            squareSymbol?: boolean;
-            /** @deprecated */
-            style?: CSSObject;
-            symbolHeight?: number;
-            symbolPadding?: number;
-            symbolRadius?: number;
-            symbolWidth?: number;
-            title?: LegendTitleOptions;
-            useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
-            width?: (number|string);
-            x?: number;
-            y?: number;
-        }
-        interface LegendTitleOptions {
-            style?: CSSObject;
-            text?: string;
-        }
-        interface LoadingOptions {
-            hideDuration?: number;
-            labelStyle?: CSSObject;
-            showDuration?: number;
-            style?: CSSObject;
-        }
-        interface NumberFormatterCallbackFunction {
-            (
-                number: number,
-                decimals: number,
-                decimalPoint?: string,
-                thousandsSep?: string
-            ): string;
-        }
-        interface Options {
-            chart: ChartOptions;
-            credits?: CreditsOptions;
-            colors?: Array<ColorString>;
-            caption?: CaptionOptions;
-            global?: GlobalOptions;
-            /** @deprecated */
-            labels?: LabelsOptions;
-            lang?: LangOptions;
-            legend?: LegendOptions;
-            loading?: LoadingOptions;
-            plotOptions?: SeriesTypePlotOptions;
-            subtitle?: SubtitleOptions;
-            symbols?: Array<SymbolKeyValue>;
-            time?: TimeOptions;
-            title?: TitleOptions;
-            tooltip?: TooltipOptions;
-        }
-        interface PanningOptions {
-            type: ('x'|'y'|'xy');
-            enabled: boolean;
-        }
-        interface SubtitleOptions {
-            align?: AlignValue;
-            floating?: boolean;
-            style?: CSSObject;
-            text?: string;
-            useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
-            widthAdjust?: number;
-            x?: number;
-            y?: number;
-        }
-        interface TitleOptions {
-            align?: AlignValue;
-            floating?: boolean;
-            margin?: number;
-            style?: CSSObject;
-            text?: string;
-            useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
-            widthAdjust?: number;
-            x?: number;
-            y?: number;
-        }
-        interface TooltipOptions {
-            animation?: boolean;
-            backgroundColor?: ColorType;
-            borderColor?: ColorType;
-            borderRadius?: number;
-            borderWidth?: number;
-            className?: string;
-            changeDecimals?: number;
-            /** @deprecated */
-            crosshairs?: any;
-            dateTimeLabelFormats?: Record<string, string>;
-            enabled?: boolean;
-            followPointer?: boolean;
-            followTouchMove?: boolean;
-            footerFormat?: string;
-            formatter?: TooltipFormatterCallbackFunction;
-            headerFormat?: string;
-            headerShape?: TooltipShapeValue;
-            hideDelay?: number;
-            nullFormat?: string;
-            nullFormatter?: TooltipFormatterCallbackFunction;
-            outside?: boolean;
-            padding?: number;
-            pointFormat?: string;
-            pointFormatter?: FormatterCallbackFunction<Point>;
-            positioner?: TooltipPositionerCallbackFunction;
-            shadow?: (boolean|Partial<ShadowOptionsObject>);
-            shape?: TooltipShapeValue;
-            shared?: boolean;
-            snap?: number;
-            split?: boolean;
-            stickOnContact?: boolean;
-            style?: CSSObject;
-            useHTML?: boolean;
-            valueDecimals?: number;
-            valuePrefix?: string;
-            valueSuffix?: string;
-            xDateFormat?: string;
-        }
-        let defaultOptions: Options;
-        type DescriptionOptionsType =
-            (TitleOptions|SubtitleOptions|CaptionOptions);
-        type OptionsOverflowValue = ('allow'|'justify');
-        type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
+declare module './Chart/ChartOptions'{
+    interface ChartOptions {
+    }
+}
+
+declare module './LangOptions'{
+    export interface LangOptions {
+        decimalPoint?: string;
+        invalidDate?: string;
+        loading?: string;
+        months?: Array<string>;
+        numericSymbolMagnitude?: number;
+        numericSymbols?: Array<string>;
+        resetZoom?: string;
+        resetZoomTitle?: string;
+        shortMonths?: Array<string>;
+        shortWeekdays?: Array<string>;
+        thousandsSep?: string;
+        weekdays?: Array<string>;
+        zoomIn?: string;
+        zoomOut?: string;
     }
 }
 
@@ -609,7 +263,7 @@ declare global {
  *//**
  * @optionparent
  */
-const defaultOptions: Highcharts.Options = {
+const defaultOptions: Options = {
 
     /**
      * An array containing the default colors for the chart's series. When
@@ -3531,8 +3185,6 @@ const defaultOptions: Highcharts.Options = {
      * @declare Highcharts.TooltipOptions
      */
     tooltip: {
-
-
         /**
          * The color of the tooltip border. When `undefined`, the border takes
          * the color of the corresponding series or point.
@@ -4352,7 +4004,7 @@ const defaultTime = new Time(merge(
  *
  * @return {Highcharts.Options}
  */
-function getOptions(): Highcharts.Options {
+function getOptions(): Options {
     return defaultOptions;
 }
 
@@ -4372,8 +4024,8 @@ function getOptions(): Highcharts.Options {
  *         Updated options.
  */
 function setOptions(
-    options: Partial<Highcharts.Options>
-): Highcharts.Options {
+    options: Partial<Options>
+): Options {
 
     // Copy in the default options
     merge(true, defaultOptions, options);
@@ -4404,11 +4056,17 @@ function setOptions(
     return defaultOptions;
 }
 
-const optionsModule = {
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const DefaultOptions = {
     defaultOptions,
     defaultTime,
     getOptions,
     setOptions
 };
 
-export default optionsModule;
+export default DefaultOptions;

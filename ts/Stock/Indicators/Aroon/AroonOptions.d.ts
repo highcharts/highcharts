@@ -17,6 +17,7 @@ import type {
     SMAOptions,
     SMAParamsOptions
 } from '../SMA/SMAOptions';
+import type TooltipOptions from '../../../Core/TooltipOptions';
 
 /* *
 *
@@ -28,7 +29,7 @@ export interface AroonOptions extends SMAOptions, Highcharts.MultipleLinesIndica
     aroonDown?: Record<string, CSSObject>;
     marker?: PointMarkerOptions;
     params?: AroonParamsOptions;
-    tooltip?: Highcharts.TooltipOptions;
+    tooltip?: TooltipOptions;
 }
 
 export interface AroonParamsOptions extends SMAParamsOptions {

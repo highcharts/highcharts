@@ -13,9 +13,10 @@
 import type {
     HTMLDOMElement
 } from '../Renderer/DOMElementType';
+import type Options from '../Options';
 import Chart from './Chart.js';
-import O from '../../Core/Options.js';
-const { getOptions } = O;
+import D from '../DefaultOptions.js';
+const { getOptions } = D;
 import U from '../Utilities.js';
 const {
     isArray,
@@ -25,15 +26,14 @@ const {
 
 import '../../Series/Gantt/GanttSeries.js';
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            isGantt?: boolean;
-        }
+/* *
+ *
+ * Declarations
+ *
+ * */
+declare module '../Options' {
+    interface Options {
+        isGantt?: boolean;
     }
 }
 
@@ -66,21 +66,58 @@ class GanttChart extends Chart {
      * @fires Highcharts.GanttChart#event:afterInit
      */
     public init(
-        userOptions: Partial<Highcharts.Options>,
+        userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
-        let seriesOptions = userOptions.series,
-            defaultOptions = getOptions(),
-            defaultLinkedTo: number;
+        const defaultOptions = getOptions(),
+            xAxisOptions = userOptions.xAxis,
+            yAxisOptions = userOptions.yAxis;
 
-        // If user hasn't defined axes as array, make it into an array and add a
-        // second axis by default.
-        if (!isArray(userOptions.xAxis)) {
-            userOptions.xAxis = [userOptions.xAxis || {}, {}];
-        }
+        let defaultLinkedTo: number;
+
+        // Avoid doing these twice
+        userOptions.xAxis = userOptions.yAxis = void 0;
+
+        const options = merge(
+            true,
+            {
+                chart: {
+                    type: 'gantt'
+                },
+                title: {
+                    text: null as any
+                },
+                legend: {
+                    enabled: false
+                },
+                navigator: {
+                    series: { type: 'gantt' },
+                    // Bars were clipped, #14060.
+                    yAxis: {
+                        type: 'category'
+                    }
+                }
+            } as Options,
+
+            userOptions, // user's options
+
+            // forced options
+            {
+                isGantt: true
+            } as Options
+        );
+
+        userOptions.xAxis = xAxisOptions;
+        userOptions.yAxis = yAxisOptions;
 
         // apply X axis options to both single and multi x axes
-        userOptions.xAxis = userOptions.xAxis.map(function (
+        // If user hasn't defined axes as array, make it into an array and add a
+        // second axis by default.
+        options.xAxis = (
+            !isArray(userOptions.xAxis) ?
+                [userOptions.xAxis || {}, {}] :
+                userOptions.xAxis
+        ).map(function (
             xAxisOptions,
             i
         ): Highcharts.XAxisOptions {
@@ -104,7 +141,7 @@ class GanttChart extends Chart {
         });
 
         // apply Y axis options to both single and multi y axes
-        userOptions.yAxis = (splat(userOptions.yAxis || {})).map(function (
+        options.yAxis = (splat(userOptions.yAxis || {})).map(function (
             yAxisOptions: Highcharts.YAxisOptions
         ): Highcharts.YAxisOptions {
             return merge<Highcharts.YAxisOptions>(
@@ -125,41 +162,7 @@ class GanttChart extends Chart {
                 yAxisOptions // user options
             );
         });
-
-        delete userOptions.series;
-
-        userOptions = merge(
-            true,
-            {
-                chart: {
-                    type: 'gantt'
-                },
-                title: {
-                    text: null as any
-                },
-                legend: {
-                    enabled: false
-                },
-                navigator: {
-                    series: { type: 'gantt' },
-                    // Bars were clipped, #14060.
-                    yAxis: {
-                        type: 'category'
-                    }
-                }
-            } as Highcharts.Options,
-
-            userOptions, // user's options
-
-            // forced options
-            {
-                isGantt: true
-            } as Highcharts.Options
-        );
-
-        userOptions.series = seriesOptions;
-
-        super.init(userOptions, callback);
+        super.init(options, callback);
     }
 }
 
@@ -200,8 +203,8 @@ namespace GanttChart {
      *         Returns the Chart object.
      */
     export function ganttChart(
-        a: (string|HTMLDOMElement|Highcharts.Options),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        a: (string|HTMLDOMElement|Options),
+        b?: (Chart.CallbackFunction|Options),
         c?: Chart.CallbackFunction
     ): GanttChart {
         return new GanttChart(a as any, b as any, c);

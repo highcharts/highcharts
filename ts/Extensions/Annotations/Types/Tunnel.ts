@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type MockPointOptions from '../MockPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotations.js';
 import ControlPoint from '../ControlPoint.js';
@@ -13,25 +14,6 @@ import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationTunnelOptionsObject extends AnnotationCrookedLineOptionsObject {
-            typeOptions: AnnotationTunnelTypeOptionsObject;
-        }
-        interface AnnotationTunnelTypeOptionsObject extends AnnotationCrookedLineTypeOptionsObject {
-            height: number;
-            heightControlPoint: AnnotationControlPointOptionsObject;
-        }
-        interface AnnotationTypesRegistry {
-            tunnel: typeof Tunnel;
-        }
-    }
-}
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -54,7 +36,7 @@ class Tunnel extends CrookedLine {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationTunnelOptionsObject) {
+    public constructor(chart: Highcharts.AnnotationChart, options: Tunnel.Options) {
         super(chart, options);
     }
 
@@ -64,7 +46,7 @@ class Tunnel extends CrookedLine {
      *
      * */
 
-    public getPointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+    public getPointsOptions(): Array<MockPointOptions> {
         const pointsOptions = CrookedLine.prototype.getPointsOptions.call(this);
 
         pointsOptions[2] = this.heightPointOptions(pointsOptions[1]);
@@ -73,15 +55,15 @@ class Tunnel extends CrookedLine {
         return pointsOptions;
     }
 
-    public getControlPointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+    public getControlPointsOptions(): Array<MockPointOptions> {
         return this.getPointsOptions().slice(0, 2);
     }
 
     public heightPointOptions(
-        pointOptions: Highcharts.AnnotationMockPointOptionsObject
-    ): Highcharts.AnnotationMockPointOptionsObject {
+        pointOptions: MockPointOptions
+    ): MockPointOptions {
         const heightPointOptions = merge(pointOptions),
-            typeOptions = this.options.typeOptions as Highcharts.AnnotationTunnelTypeOptionsObject;
+            typeOptions = this.options.typeOptions as Tunnel.TypeOptions;
 
         heightPointOptions.y += typeOptions.height;
 
@@ -92,7 +74,7 @@ class Tunnel extends CrookedLine {
         CrookedLine.prototype.addControlPoints.call(this);
 
         const options = this.options,
-            typeOptions = options.typeOptions as Highcharts.AnnotationTunnelTypeOptionsObject,
+            typeOptions = options.typeOptions as Tunnel.TypeOptions,
             controlPoint = new ControlPoint(
                 this.chart,
                 this,
@@ -120,7 +102,7 @@ class Tunnel extends CrookedLine {
                 points: [
                     this.points[0],
                     this.points[1],
-                    function (target: any): Highcharts.AnnotationMockPointOptionsObject {
+                    function (target: any): MockPointOptions {
                         const pointOptions = MockPoint.pointToOptions(
                             target.annotation.points[2]
                         );
@@ -305,6 +287,31 @@ Tunnel.prototype.defaultOptions = merge(
     }
 );
 
-Annotation.types.tunnel = Tunnel;
+namespace Tunnel {
+    export interface Options extends CrookedLine.Options {
+        typeOptions: TypeOptions;
+    }
+    export interface TypeOptions extends CrookedLine.TypeOptions {
+        height: number;
+        heightControlPoint: Highcharts.AnnotationControlPointOptionsObject;
+    }
+}
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+Annotation.types.tunnel = Tunnel;
+declare module './AnnotationType'{
+    interface AnnotationTypeRegistry {
+        tunnel: typeof Tunnel;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default Tunnel;

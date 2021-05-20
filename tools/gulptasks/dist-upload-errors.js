@@ -32,7 +32,7 @@ async function uploadErrors() {
     await Promise.all(
         Object.keys(errors)
             .filter(key => key !== 'meta')
-            .map(err => putS3Object(`${errorLocation}/${err}`, null, {
+            .map(err => putS3Object(`${errorLocation}/${err}/index.html`, null, {
                 Bucket: bucket,
                 Body: makeHTML(err, errors[err]),
                 ContentType: 'text/html; charset=utf-8'

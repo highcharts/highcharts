@@ -26,18 +26,12 @@ declare module '../Chart/ChartLike'{
     }
 }
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            zAxis?: (
-                DeepPartial<Highcharts.AxisOptions>|
-                Array<DeepPartial<Highcharts.AxisOptions>>
-            );
-        }
+declare module '../Options' {
+    interface Options {
+        zAxis?: (
+            DeepPartial<Highcharts.AxisOptions>|
+            Array<DeepPartial<Highcharts.AxisOptions>>
+        );
     }
 }
 
