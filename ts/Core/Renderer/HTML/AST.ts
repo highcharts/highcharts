@@ -187,6 +187,7 @@ class AST {
         'orient',
         'padding',
         'paddingLeft',
+        'paddingRight',
         'patternUnits',
         'r',
         'refX',

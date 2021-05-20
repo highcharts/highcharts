@@ -444,17 +444,24 @@ class SVGLabel extends SVGElement {
         this.width = this.getPaddedWidth();
         this.height = (this.heightSetting || bBox.height || 0) + 2 * padding;
 
+        const metrics = this.renderer.fontMetrics(
+            style && style.fontSize,
+            this.text
+        );
+
         // Update the label-scoped y offset. Math.min because of inline
         // style (#9400)
         this.baselineOffset = padding + Math.min(
-            this.renderer.fontMetrics(
-                style && style.fontSize,
-                this.text
-            ).b,
+            metrics.b,
             // When the height is 0, there is no bBox, so go with the font
             // metrics. Highmaps CSS demos.
             bBox.height || Infinity
         );
+
+        // #15491: Vertical centering
+        if (this.heightSetting) {
+            this.baselineOffset += (this.heightSetting - metrics.h) / 2;
+        }
 
         if (this.needsBox) {
 
