@@ -1662,7 +1662,7 @@ addEvent(Point, 'afterSetState', function (): void {
 });
 
 // After zooming out, shift the drillUpButton to the previous position, #8095.
-addEvent(H.Chart, 'selection', function (event: any): void {
+addEvent(Chart, 'selection', function (event: any): void {
     if (event.resetSelection === true && this.drillUpButton) {
         const buttonOptions = this.options.drilldown && this.options.drilldown.drillUpButton;
 
@@ -1679,7 +1679,7 @@ addEvent(H.Chart, 'selection', function (event: any): void {
     }
 });
 
-addEvent(H.Chart, 'drillup', function (): void {
+addEvent(Chart, 'drillup', function (): void {
     if (this.resetZoomButton) {
         this.resetZoomButton = this.resetZoomButton.destroy();
     }

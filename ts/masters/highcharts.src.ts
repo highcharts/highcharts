@@ -26,7 +26,7 @@ import '../Core/Tooltip.js';
 import '../Core/Pointer.js';
 import '../Core/MSPointer.js';
 import '../Core/Legend.js';
-import '../Core/Chart/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import '../Extensions/ScrollablePlotArea.js';
 import '../Extensions/Stacking.js';
 import Series from '../Core/Series/Series.js';
@@ -53,6 +53,8 @@ G.stop = Animation.stop;
 G.timers = Fx.timers;
 // Classes
 G.AST = AST;
+G.Chart = Chart;
+G.chart = Chart.chart;
 G.Fx = Fx;
 G.Series = Series;
 G.SVGElement = SVGElement;

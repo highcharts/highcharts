@@ -34,6 +34,7 @@ import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 
 import Axis from './Axis.js';
+import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 import Tick from './Tick.js';
 import U from '../Utilities.js';
@@ -117,8 +118,7 @@ const argsToArray = function (args: IArguments): Array<any> {
     isObject = function (x: unknown): x is object {
         // Always use strict mode
         return U.isObject(x, true);
-    },
-    Chart = H.Chart;
+    };
 
 const applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
     const options = axis.options;

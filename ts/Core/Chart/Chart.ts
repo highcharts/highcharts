@@ -63,6 +63,7 @@ import H from '../Globals.js';
 const {
     charts,
     doc,
+    marginNames,
     win
 } = H;
 import Legend from '../Legend.js';
@@ -160,27 +161,11 @@ declare module '../Options' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        function chart(
-            options: Options,
-            callback?: Chart.CallbackFunction
-        ): Chart;
-        function chart(
-            renderTo: (string|HTMLDOMElement),
-            options: Options,
-            callback?: Chart.CallbackFunction
-        ): Chart;
-        let Chart: ChartClass;
-    }
-}
-type ChartClass = typeof Chart;
-
-const marginNames = H.marginNames;
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -213,6 +198,60 @@ const marginNames = H.marginNames;
  *        handler is equivalent.
  */
 class Chart {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    public static chart(
+        options: Partial<Options>,
+        callback?: Chart.CallbackFunction
+    ): Chart;
+    public static chart(
+        renderTo: (string|globalThis.HTMLElement),
+        options: Partial<Options>,
+        callback?: Chart.CallbackFunction
+    ): Chart;
+    /**
+     * Factory function for basic charts.
+     *
+     * @example
+     * // Render a chart in to div#container
+     * let chart = Highcharts.chart('container', {
+     *     title: {
+     *         text: 'My chart'
+     *     },
+     *     series: [{
+     *         data: [1, 3, 2, 4]
+     *     }]
+     * });
+     *
+     * @function Highcharts.chart
+     *
+     * @param {string|Highcharts.HTMLDOMElement} [renderTo]
+     * The DOM element to render to, or its id.
+     *
+     * @param {Highcharts.Options} options
+     * The chart options structure.
+     *
+     * @param {Highcharts.ChartCallbackFunction} [callback]
+     * Function to run when the chart has loaded and and all external images are
+     * loaded. Defining a
+     * [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
+     * handler is equivalent.
+     *
+     * @return {Highcharts.Chart}
+     * Returns the Chart object.
+     */
+    public static chart(
+        a: (string|globalThis.HTMLElement|Partial<Options>),
+        b?: (Chart.CallbackFunction|Partial<Options>),
+        c?: Chart.CallbackFunction
+    ): Chart {
+        return new Chart(a as any, b as any, c);
+    }
 
     /* *
      *
@@ -3936,62 +3975,6 @@ namespace Chart {
     }
 
 }
-
-/* *
- *
- *  Compatibility
- *
- * */
-
-function chart(
-    options: Partial<Options>,
-    callback?: Chart.CallbackFunction
-): Chart;
-function chart(
-    renderTo: (string|globalThis.HTMLElement),
-    options: Partial<Options>,
-    callback?: Chart.CallbackFunction
-): Chart;
-/**
- * Factory function for basic charts.
- *
- * @example
- * // Render a chart in to div#container
- * let chart = Highcharts.chart('container', {
- *     title: {
- *         text: 'My chart'
- *     },
- *     series: [{
- *         data: [1, 3, 2, 4]
- *     }]
- * });
- *
- * @function Highcharts.chart
- *
- * @param {string|Highcharts.HTMLDOMElement} [renderTo]
- *        The DOM element to render to, or its id.
- *
- * @param {Highcharts.Options} options
- *        The chart options structure.
- *
- * @param {Highcharts.ChartCallbackFunction} [callback]
- *        Function to run when the chart has loaded and and all external images
- *        are loaded. Defining a
- *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
- *        handler is equivalent.
- *
- * @return {Highcharts.Chart}
- *         Returns the Chart object.
- */
-function chart(
-    a: (string|globalThis.HTMLElement|Partial<Options>),
-    b?: (Chart.CallbackFunction|Partial<Options>),
-    c?: Chart.CallbackFunction
-): Chart {
-    return new Chart(a as any, b as any, c);
-}
-H.chart = chart;
-H.Chart = Chart;
 
 /* *
  *

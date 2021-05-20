@@ -267,7 +267,7 @@ const initCanvasBoost = function (): void {
 
                 target.renderTarget.clip(target.boostClipRect);
 
-            } else if (!(target instanceof H.Chart)) {
+            } else if (!(target instanceof Chart)) {
                 // ctx.clearRect(0, 0, width, height);
             }
 
