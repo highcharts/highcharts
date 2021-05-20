@@ -113,6 +113,7 @@ QUnit.test('General marker tests', function (assert) {
 
     // Test marker states
     heatmap.update({
+        borderRadius: 5,
         marker: {
             states: {
                 hover: {
@@ -124,6 +125,11 @@ QUnit.test('General marker tests', function (assert) {
             }
         }
     });
+
+    assert.ok(
+        heatmap.points[0].graphic.pathArray.length > 5,
+        '#15757: Corners should be rounded'
+    );
 
     resetState(point);
 
