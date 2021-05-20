@@ -16,6 +16,7 @@
  *
  * */
 
+import type AxisOptions from '../Axis/AxisOptions';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type CSSObject from '../Renderer/CSSObject';
 import type DataExtremesObject from '../Series/DataExtremesObject';
@@ -341,8 +342,8 @@ namespace StockChart {
  */
 function getDefaultAxisOptions(
     type: string,
-    options: DeepPartial<Highcharts.AxisOptions>
-): DeepPartial<Highcharts.AxisOptions> {
+    options: DeepPartial<AxisOptions>
+): DeepPartial<AxisOptions> {
     if (type === 'xAxis') {
         return {
             minPadding: 0,
@@ -398,7 +399,7 @@ function getDefaultAxisOptions(
 function getForcedAxisOptions(
     type: string,
     chartOptions: Partial<Options>
-): DeepPartial<Highcharts.AxisOptions> {
+): DeepPartial<AxisOptions> {
     if (type === 'xAxis') {
         const defaultOptions = getOptions(),
             // Always disable startOnTick:true on the main axis when the
@@ -409,7 +410,7 @@ function getForcedAxisOptions(
                 true
             );
 
-        const axisOptions: DeepPartial<Highcharts.AxisOptions> = {
+        const axisOptions: DeepPartial<AxisOptions> = {
             type: 'datetime',
             categories: void 0
         };
