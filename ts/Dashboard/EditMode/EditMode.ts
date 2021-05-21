@@ -3,13 +3,13 @@ import Dashboard from './../Dashboard.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
-import Resizer from './../Actions/Resizer.js';
 import type Layout from './../Layout/Layout.js';
 import CellEditToolbar from './Toolbar/CellEditToolbar.js';
 import RowEditToolbar from './Toolbar/RowEditToolbar.js';
 import Sidebar from './Sidebar.js';
 import EditContextMenu from './EditContextMenu.js';
 import DragDrop from './../Actions/DragDrop.js';
+import Resizer from './../Actions/Resizer.js';
 import ConfirmationPopup from './ConfirmationPopup.js';
 
 const {
@@ -82,6 +82,7 @@ class EditMode {
     public rowToolbar?: RowEditToolbar;
     public sidebar?: Sidebar;
     public dragDrop?: DragDrop;
+    public resizer?: Resizer;
     public isInitialized: boolean;
     public addComponentBtn?: HTMLDOMElement;
     public tools: EditMode.Tools;
@@ -132,13 +133,25 @@ class EditMode {
         let layout;
 
         // Init resizers.
-        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
-            layout = dashboard.layouts[i];
+        // for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
+        //     layout = dashboard.layouts[i];
 
-            if (!layout.resizer) {
-                editMode.initLayoutResizer(layout);
-            }
+        //     if (!layout.resizer) {
+        //         editMode.initLayoutResizer(layout);
+        //     }
+        // }
+        const guiOptions = dashboard.options.gui;
+
+        if (
+            !(editMode.options.resize &&
+                !editMode.options.resize.enabled)
+        ) {
+            editMode.resizer = new Resizer(editMode);
         }
+
+        //     editMode.resizer = Resizer.fromJSON(
+        //         editMode, guiOptions.layoutOptions.resizerJSON
+        //     );
 
         // Init dragDrop.
         if (
@@ -316,20 +329,20 @@ class EditMode {
         }
     }
 
-    private initLayoutResizer(layout: Layout): void {
-        const dashboard = this.dashboard,
-            guiOptions = dashboard.options.gui;
+    // private initLayoutResizer(layout: Layout): void {
+    //     const dashboard = this.dashboard,
+    //         guiOptions = dashboard.options.gui;
 
-        if (guiOptions) {
-            if (guiOptions.layoutOptions.resize) {
-                layout.resizer = new Resizer(layout);
-            } else if (guiOptions.layoutOptions.resizerJSON) {
-                layout.resizer = Resizer.fromJSON(
-                    layout, guiOptions.layoutOptions.resizerJSON
-                );
-            }
-        }
-    }
+    //     if (guiOptions) {
+    //         if (guiOptions.layoutOptions.resize) {
+    //             layout.resizer = new Resizer(layout);
+    //         } else if (guiOptions.layoutOptions.resizerJSON) {
+    //             layout.resizer = Resizer.fromJSON(
+    //                 layout, guiOptions.layoutOptions.resizerJSON
+    //             );
+    //         }
+    //     }
+    // }
 
     public isActive(): boolean {
         return this.active;
@@ -426,6 +439,7 @@ namespace EditMode {
         lang?: EditGlobals.LangOptions|string;
         toolbars?: EditMode.Toolbars;
         dragDrop?: DragDrop.Options;
+        resize?: Resizer.Options;
         tools: Tools;
         contextMenu?: EditContextMenu.Options;
         confirmationPopup: ConfirmationPopup.Options;

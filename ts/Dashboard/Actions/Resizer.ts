@@ -15,12 +15,12 @@ const {
     merge,
     addEvent,
     createElement,
-    getStyle,
     fireEvent,
     removeEvent
 } = U;
 
 import H from '../../Core/Globals.js';
+import EditMode from '../EditMode/EditMode';
 
 const {
     hasTouch
@@ -34,10 +34,10 @@ class Resizer {
     * */
 
     public static fromJSON(
-        layout: Layout,
+        editMode: EditMode,
         json: Resizer.ClassJSON
     ): Resizer|undefined {
-        return new Resizer(layout, json.options);
+        return new Resizer(editMode, json.options);
     }
 
     protected static readonly defaultOptions: Resizer.Options = {
@@ -47,10 +47,8 @@ class Resizer {
             minHeight: 50
         },
         type: 'xy',
-        snapX: {
-            width: 20
-        },
-        snapY: {
+        snap: {
+            width: 20,
             height: 20
         }
     };
@@ -61,33 +59,34 @@ class Resizer {
     *
     * */
     public constructor(
-        layout: Layout,
+        editMode: EditMode,
         options?: Resizer.Options
     ) {
-        this.resizeOptions = merge(
+        this.editMode = editMode;
+        this.options = merge(
             {},
             Resizer.defaultOptions,
-            layout.options.resize,
+            editMode.options.resize,
             options
         );
 
-        this.layout = layout;
         this.currentCell = void 0; // consider naming for example currentCell
-        this.isX = this.resizeOptions.type.indexOf('x') > -1;
-        this.isY = this.resizeOptions.type.indexOf('y') > -1;
+        this.isX = this.options.type.indexOf('x') > -1;
+        this.isY = this.options.type.indexOf('y') > -1;
         this.isActive = false;
 
         this.init();
 
         this.addSnaps(
-            this.resizeOptions
+            this.options
         );
 
         // temp for testing
-        if (this.layout.rows && this.layout.rows[1]) {
-            this.resizeElement(this.layout.rows[1].cells[0]);
+        const layout = this.editMode.dashboard.layouts[0];
+        if (layout.rows && layout.rows[1]) {
+            this.resizeElement(layout.rows[1].cells[0]);
         } else {
-            this.resizeElement(this.layout.rows[0].cells[0]);
+            this.resizeElement(layout.rows[0].cells[0]);
         }
     }
 
@@ -96,8 +95,7 @@ class Resizer {
     *  Properties
     *
     * */
-    public resizeOptions: Resizer.Options;
-    public layout: Layout;
+    public options: Resizer.Options;
     public currentCell: Cell|undefined;
     public currentDimension: string|undefined;
     public isX: boolean;
@@ -107,16 +105,25 @@ class Resizer {
     public snapYT: HTMLDOMElement|undefined;
     public snapYB: HTMLDOMElement|undefined;
     public isActive: boolean;
+    public editMode: EditMode;
 
     /* *
      *
      *  Functions
      *
      * */
-    public init(
-        nestedLayout?: Layout
+    public init(): void {
+        const layouts = this.editMode.dashboard.layouts;
+
+        for (let i = 0, iEnd = layouts.length; i < iEnd; ++i) {
+            this.setInitWidth(layouts[i]);
+        }
+    }
+
+    public setInitWidth(
+        layout?: Layout
     ): void {
-        const rows = (nestedLayout && nestedLayout.rows) || this.layout.rows;
+        const rows = layout && layout.rows;
 
         for (let i = 0, iEnd = (rows || []).length; i < iEnd; ++i) {
 
@@ -126,12 +133,12 @@ class Resizer {
                 for (let j = 0, jEnd = cells.length; j < jEnd; ++j) {
 
                     if (cells[j].nestedLayout) {
-                         this.init(cells[j].nestedLayout);
+                         this.setInitWidth(cells[j].nestedLayout);
                     } else {
                         const cellContainer = (cells[j].container as HTMLElement);
                         // set min-size
                         cellContainer.style.minWidth =
-                            this.resizeOptions.styles.minWidth + 'px';
+                            this.options.styles.minWidth + 'px';
                         
                         // convert current width to percent
                         // fix bug when we resize the last cell in a row
@@ -159,12 +166,13 @@ class Resizer {
         // cell: Resizer.ResizedCell,
         // minWidth: number,
         // minHeight: number
-        resizeOptions: Resizer.Options
+        options: Resizer.Options
     ): void {
-        const minWidth = resizeOptions.styles.minWidth;
-        const minHeight = resizeOptions.styles.minHeight;
-        const snapWidth = this.resizeOptions.snapX.width || 0;
-        const snapHeight = this.resizeOptions.snapY.height || 0;
+        const minWidth = options.styles.minWidth;
+        const minHeight = options.styles.minHeight;
+        const snapWidth = this.options.snap.width || 0;
+        const snapHeight = this.options.snap.height || 0;
+        const dashboardContainer = this.editMode.dashboard.container;
 
         // left snap
         this.snapXL = createElement(
@@ -177,7 +185,7 @@ class Resizer {
                 width: snapWidth + 'px',
                 left: -9999 + 'px' 
             },
-            this.layout.container
+            dashboardContainer
         );
 
         // right snap
@@ -191,7 +199,7 @@ class Resizer {
                 width: snapWidth + 'px',
                 left: -9999 + 'px'
             },
-            this.layout.container
+            dashboardContainer
         );
 
         // top snap
@@ -206,7 +214,7 @@ class Resizer {
                 top: -9999 + 'px',
                 left: '0px' 
             },
-            this.layout.container
+            dashboardContainer
         );
 
         // bottom snap
@@ -221,7 +229,7 @@ class Resizer {
                 top: -9999 + 'px',
                 left: '0px'
             },
-            this.layout.container
+            dashboardContainer
         );
 
         this.addResizeEvents();
@@ -235,14 +243,17 @@ class Resizer {
         this.currentCell = cell;
 
         // set position of snaps
-        const cellOffsets = GUIElement.getOffsets(cell, this.layout.container)
+        const cellOffsets = GUIElement.getOffsets(
+            cell,
+            this.editMode.dashboard.container
+        );
         const cellContainer = cell.container;
         const left = cellOffsets.left || 0;
         const top = cellOffsets.top || 0;
         const width = (cellContainer && cellContainer.offsetWidth) || 0;
         const height = (cellContainer && cellContainer.offsetHeight) || 0;
-        const snapXwidth = (this.resizeOptions.snapX.width || 0);
-        const snapYheight = (this.resizeOptions.snapY.height || 0);
+        const snapXwidth = (this.options.snap.width || 0);
+        const snapYheight = (this.options.snap.height || 0);
 
         if (this.snapXL) {
             this.snapXL.style.left = left + 'px';
@@ -397,18 +408,18 @@ class Resizer {
                 // resize snaps
                 if (this.snapXR) {
                     const minWidth = (cellContainer.offsetLeft || 0) +
-                        (this.resizeOptions.styles.minWidth || 0) -
-                        (this.resizeOptions.snapX.width || 0);
+                        (this.options.styles.minWidth || 0) -
+                        (this.options.snap.width || 0);
 
                     const currentWidth = (
                         e.clientX -
-                        (this.resizeOptions.snapX.width || 0) -
+                        (this.options.snap.width || 0) -
                         (cellContainer?.getBoundingClientRect().left || 0)
                     );
                     
                     this.snapXR.style.left = Math.min(
                         currentWidth > minWidth ? currentWidth : minWidth,
-                        maxWidth - (this.resizeOptions.snapX.width || 0)
+                        maxWidth - (this.options.snap.width || 0)
                     ) + 'px';
                 }
             }
@@ -427,7 +438,7 @@ class Resizer {
                     ) + 'px';
             }
             // Call cellResize dashboard event.
-            fireEvent(this.layout.dashboard, 'cellResize', { cell: currentCell });
+            fireEvent(this.editMode.dashboard, 'cellResize', { cell: currentCell });
             fireEvent(currentCell.row, 'cellChange', { cell: currentCell, row: currentCell.row });
         }
     }
@@ -509,7 +520,7 @@ class Resizer {
 
                     // add min-size if "resized" width does not exist or is
                     // bigger then width
-                    const minWidth = (this.resizeOptions.styles || {}).minWidth || 0;
+                    const minWidth = (this.options.styles || {}).minWidth || 0;
 
                     // sum += (
                     //     cellStylesWidth && cellStylesWidth > minWidth ?
@@ -555,22 +566,20 @@ class Resizer {
      * Class JSON of this Resizer instance.
      */
     public toJSON(): Resizer.ClassJSON {
-        const resizeOptions = this.resizeOptions;
+        const options = this.options;
 
         return {
             $class: 'Resizer',
             options: {
-                enabled: resizeOptions.enabled,
+                enabled: options.enabled,
                 styles: {
-                    minWidth: resizeOptions.styles.minWidth,
-                    minHeight: resizeOptions.styles.minHeight,
+                    minWidth: options.styles.minWidth,
+                    minHeight: options.styles.minHeight,
                 },
-                type: resizeOptions.type,
-                snapX: {
-                    width: resizeOptions.snapX.width
-                },
-                snapY: {
-                    height: resizeOptions.snapY.height
+                type: options.type,
+                snap: {
+                    width: options.snap.width,
+                    height: options.snap.height
                 }
             }
         };
@@ -585,11 +594,8 @@ interface Resizer {
 namespace Resizer {
     export interface Options {
         enabled: boolean;
-        // minWidth: number;
-        // minHeight: number;
         type: string;
-        snapX: SnapOptions;
-        snapY: SnapOptions;
+        snap: SnapOptions;
         styles: ElementStyles
     }
     export interface ResizedCell extends Cell {
@@ -627,8 +633,7 @@ namespace Resizer {
         enabled: boolean;
         styles: ElementStylesJSON;
         type: string;
-        snapX: SnapJSON;
-        snapY: SnapJSON;
+        snap: SnapJSON;
     }
     export interface SnapJSON extends DataJSON.JSONObject {
         width?: number;
