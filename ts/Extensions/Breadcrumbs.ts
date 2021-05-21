@@ -137,6 +137,17 @@ declare global {
         }
     }
 }
+/**
+ * Callback function to react on button clicks.
+ *
+ * @callback Highcharts.BreadcrumbsClickCallbackFunction
+ *
+ * @param {global.Event} e
+ *        Event arguments.
+ *
+ * @param {Breadcrumbs} breadcrumbs
+ *        The breadcrumbs objecs.
+ */
 
 // Add language support.
 extend(
