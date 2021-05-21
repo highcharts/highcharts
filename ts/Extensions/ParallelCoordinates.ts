@@ -12,6 +12,13 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AxisOptions from '../Core/Axis/AxisOptions';
 import type { AxisType } from '../Core/Axis/Types';
 import type { ChartOptions } from '../Core/Chart/ChartOptions';
 import type Options from '../Core/Options';
@@ -45,6 +52,14 @@ const {
  * Declarations
  *
  * */
+
+declare module '../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        angle?: number;
+        tooltipValueFormat?: string;
+    }
+}
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         hasParallelCoordinates?: Highcharts.ParallelChart['hasParallelCoordinates'];
@@ -72,10 +87,6 @@ declare global {
         }
         interface ParallelInfoObject {
             counter: number;
-        }
-        interface XAxisOptions {
-            angle?: number;
-            tooltipValueFormat?: string;
         }
     }
 }
@@ -550,7 +561,7 @@ class ParallelAxisAdditions {
      */
     public setPosition(
         axisPosition: Array<('left'|'width'|'height'|'top')>,
-        options: Highcharts.AxisOptions
+        options: AxisOptions
     ): void {
         const parallel = this,
             axis = parallel.axis,

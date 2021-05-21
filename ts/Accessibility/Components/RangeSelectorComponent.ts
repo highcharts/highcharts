@@ -12,7 +12,6 @@
 
 'use strict';
 
-import type Chart from '../../Core/Chart/Chart';
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
@@ -25,7 +24,7 @@ const {
     getAxisRangeDescription
 } = ChartUtilities;
 import Announcer from '../Utils/Announcer.js';
-import H from '../../Core/Globals.js';
+import Chart from '../../Core/Chart/Chart.js';
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
     setElAttrs
@@ -114,7 +113,7 @@ function shouldRunInputNavigation(chart: Chart): boolean {
  *
  * @return {boolean}
  */
-H.Chart.prototype.highlightRangeSelectorButton = function (
+Chart.prototype.highlightRangeSelectorButton = function (
     ix: number
 ): boolean {
     const buttons: Array<SVGElement> = (

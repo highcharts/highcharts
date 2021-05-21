@@ -1636,7 +1636,7 @@ addEvent(Point, 'afterSetState', function (): void {
     }
 });
 
-addEvent(H.Chart, 'drillup', function (): void {
+addEvent(Chart, 'drillup', function (): void {
     if (this.resetZoomButton) {
         this.resetZoomButton = this.resetZoomButton.destroy();
     }

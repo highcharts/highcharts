@@ -202,7 +202,7 @@ H.Popup.prototype = {
 
         // create popup div
         this.container = createElement(DIV, {
-            className: PREFIX + 'popup'
+            className: PREFIX + 'popup highcharts-no-tooltip'
         }, null as any, parentDiv);
 
         this.lang = this.getLangpack();

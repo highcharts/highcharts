@@ -1565,7 +1565,7 @@ setOptions({
         }
     }
 });
-addEvent(H.Chart, 'render', function (): void {
+addEvent(Chart, 'render', function (): void {
     const chart = this,
         navigationBindings = chart.navigationBindings,
         disabledClassName = 'highcharts-disabled-btn';

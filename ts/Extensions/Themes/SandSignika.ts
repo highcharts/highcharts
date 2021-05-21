@@ -31,7 +31,7 @@ createElement('link', {
 }, null as any, document.getElementsByTagName('head')[0]);
 
 // Add the background image to the container
-addEvent(Highcharts.Chart, 'afterGetContainer', function (): void {
+addEvent((Highcharts as any).Chart, 'afterGetContainer', function (): void {
     // eslint-disable-next-line no-invalid-this
     this.container.style.background =
         'url(https://www.highcharts.com/samples/graphics/sand.png)';

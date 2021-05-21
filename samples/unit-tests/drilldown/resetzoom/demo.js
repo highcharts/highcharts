@@ -1,7 +1,6 @@
 QUnit.test('Drilldown and reset zoom', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            type: 'column',
             zoomType: 'x'
         },
         xAxis: {
@@ -168,7 +167,7 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
     );
 
     // Click reset zoom.
-    controller.click(520, 60);
+    Highcharts.fireEvent(chart.resetZoomButton.element, 'click');
     assert.strictEqual(
         drillUpButtonxSetting,
         chart.drillUpButton.xSetting,
@@ -178,6 +177,34 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
 
     // Zoom again on second level
     controller.pan([300, 200], [200, 200]);
+    controller.moveTo(
+        chart.resetZoomButton.translateX + 5,
+        chart.resetZoomButton.translateY + 5
+    );
+    assert.ok(
+        chart.tooltip.isHidden,
+        '#14403: Tooltip should be hidden when hovering resetZoomButton'
+    );
+
+    controller.moveTo(
+        chart.drillUpButton.translateX + 5,
+        chart.drillUpButton.translateY + 5
+    );
+    // @todo
+    // assert.ok(
+    //     chart.tooltip.isHidden,
+    //     '#14403: Tooltip should be hidden when hovering drillUpButton'
+    // );
+
+    controller.moveTo(
+        chart.drillUpButton.translateX - 5,
+        chart.drillUpButton.translateY + 5
+    );
+    assert.notOk(
+        chart.tooltip.isHidden,
+        '#14403: Tooltip should not be hidden when not hovering button'
+    );
+
     // Drill up
     chart.drillUp();
     assert.strictEqual(

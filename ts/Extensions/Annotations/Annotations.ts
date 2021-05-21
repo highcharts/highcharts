@@ -1157,7 +1157,7 @@ merge<Annotation>(
                      *
                      * @since 6.0.5
                      */
-                    className: '',
+                    className: 'highcharts-no-tooltip',
 
                     /**
                      * Whether to hide the annotation's label
