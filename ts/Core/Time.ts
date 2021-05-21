@@ -40,6 +40,12 @@ const {
  *  Declarations
  *
  * */
+declare module './Options' {
+    interface Options {
+        time?: Time.TimeOptions;
+    }
+}
+
 declare module './Axis/TickPositionsArray'{
     interface TickPositionsArray {
         info?: TimeTicksInfoObject;

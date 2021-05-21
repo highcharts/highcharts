@@ -19,6 +19,7 @@
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type AxisComposition from './AxisComposition';
 import type AxisLike from './AxisLike';
+import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type { AlignValue } from '../Renderer/AlignObject';
 import type Chart from '../Chart/Chart';
@@ -27,6 +28,7 @@ import type CSSObject from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
+import type { OptionsOverflowValue } from '../Options';
 import type GradientColor from '../Color/GradientColor';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../Series/Point';
@@ -48,12 +50,11 @@ const {
 } = F;
 import H from '../Globals.js';
 import palette from '../Color/Palette.js';
-import O from '../Options.js';
-const { defaultOptions } = O;
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
-    addEvent,
     arrayMax,
     arrayMin,
     clamp,
@@ -66,7 +67,6 @@ const {
     fireEvent,
     getMagnitude,
     isArray,
-    isFunction,
     isNumber,
     isString,
     merge,
@@ -84,6 +84,13 @@ const {
  *  Declarations
  *
  * */
+
+declare module '../../Core/Options'{
+    interface Options {
+        xAxis?: (DeepPartial<Highcharts.XAxisOptions>|Array<DeepPartial<Highcharts.XAxisOptions>>);
+        yAxis?: (DeepPartial<Highcharts.YAxisOptions>|Array<DeepPartial<Highcharts.YAxisOptions>>);
+    }
+}
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
@@ -105,8 +112,7 @@ declare global {
             'navigator'|'pan'|'rangeSelectorButton'|'rangeSelectorInput'|
             'scrollbar'|'traverseUpButton'|'zoom'
         );
-        type AxisMinorTickPositionValue = ('inside'|'outside');
-        type AxisOptions = (XAxisOptions|YAxisOptions);
+        type AxisTypeOptions = (XAxisOptions|YAxisOptions);
         type AxisTickmarkPlacementValue = ('between'|'on');
         type AxisTickPositionValue = ('inside'|'outside');
         type AxisTitleAlignValue = ('high'|'low'|'middle');
@@ -177,10 +183,6 @@ declare global {
             userMax: number;
             userMin: number;
         }
-        interface Options {
-            xAxis?: (DeepPartial<XAxisOptions>|Array<DeepPartial<XAxisOptions>>);
-            yAxis?: (DeepPartial<YAxisOptions>|Array<DeepPartial<YAxisOptions>>);
-        }
         interface XAxisAccessibilityOptions {
             description?: string;
             enabled?: boolean;
@@ -246,85 +248,8 @@ declare global {
             y?: number;
             zIndex: number;
         }
-        interface XAxisOptions {
-            accessibility?: XAxisAccessibilityOptions;
-            alignTicks: boolean;
-            allowDecimals?: boolean;
-            alternateGridColor?: ColorType;
-            breaks?: Array<XAxisBreaksOptions>;
-            categories?: Array<string>;
-            ceiling?: number;
-            className?: string;
-            crosshair?: (boolean|XAxisCrosshairOptions);
-            endOnTick: boolean;
-            events?: XAxisEventsOptions;
-            floor?: number;
-            gridLineColor: ColorType;
-            gridLineDashStyle: DashStyleValue;
-            gridLineWidth?: number;
-            gridZIndex: number;
-            height?: (number|string);
-            id?: string;
-            isX?: boolean;
-            labels: XAxisLabelsOptions;
-            left?: (number|string);
-            lineColor: ColorType;
-            lineWidth: number;
-            linkedTo?: number;
-            margin?: number;
-            max?: (null|number);
-            maxPadding: number;
-            maxRange?: number;
-            maxZoom?: number;
-            min?: (null|number);
-            minorGridLineColor: ColorType;
-            minorGridLineDashStyle: DashStyleValue;
-            minorGridLineWidth: number;
-            minorTickColor: ColorType;
-            minorTickInterval?: ('auto'|null|number);
-            minorTickLength: number;
-            minorTickPosition: AxisMinorTickPositionValue;
-            minorTicks?: boolean;
-            minorTickWidth?: number;
-            minPadding: number;
-            minRange?: number;
-            minTickInterval?: number;
-            offset?: number;
-            offsets?: [number, number, number, number];
-            opposite: boolean;
-            ordinal?: boolean;
-            overscroll?: number;
-            pane?: number;
-            panningEnabled: boolean;
-            range?: number;
-            reversed?: boolean;
-            reversedStacks: boolean;
-            showEmpty: boolean;
-            showFirstLabel: boolean;
-            showLastLabel: boolean;
-            side?: number;
-            softMax?: number;
-            softMin?: number;
-            startOfWeek: number;
-            startOnTick: boolean;
-            tickAmount?: number;
-            tickColor: ColorType;
-            tickInterval?: number;
-            tickLength: number;
-            tickmarkPlacement: AxisTickmarkPlacementValue;
-            tickPixelInterval: number;
-            tickPosition: AxisTickPositionValue;
-            tickPositioner?: AxisTickPositionerCallbackFunction;
-            tickPositions?: TickPositionsArray;
-            tickWidth?: number;
-            title: XAxisTitleOptions;
-            top?: (number|string);
-            type: AxisTypeValue;
-            uniqueNames: boolean;
-            visible: boolean;
-            width?: (number|string);
-            zIndex: number;
-            zoomEnabled: boolean;
+        interface XAxisOptions extends AxisOptions {
+
         }
         interface XAxisTitleOptions {
             align: AxisTitleAlignValue;
@@ -430,7 +355,7 @@ declare global {
                 userMin?: number;
             }
             public opposite?: boolean;
-            public options: AxisOptions;
+            public options: AxisTypeOptions;
             public overlap: boolean;
             public paddedTicks: Array<number>;
             public panningState?: AxisPanningState;
@@ -467,7 +392,7 @@ declare global {
             public userMax?: number;
             public userMin?: number;
             public userMinRange?: number;
-            public userOptions: DeepPartial<AxisOptions>;
+            public userOptions: DeepPartial<AxisTypeOptions>;
             public visible: boolean;
             public width: number;
             public zoomEnabled: boolean;
@@ -1954,6 +1879,10 @@ class Axis {
          * of the plot area. When the axis' `max` option is set or a max extreme
          * is set using `axis.setExtremes()`, the maxPadding will be ignored.
          *
+         * @productdesc {highstock}
+         * For an [ordinal](#xAxis.ordinal) axis, `minPadding` and `maxPadding`
+         * are ignored. Use [overscroll](#xAxis.overscroll) instead.
+         *
          * @sample {highcharts} highcharts/yaxis/maxpadding/
          *         Max padding of 0.25 on y axis
          * @sample {highstock} stock/xaxis/minpadding-maxpadding/
@@ -2117,6 +2046,10 @@ class Axis {
          * of the plot area. When the axis' `min` option is set or a min extreme
          * is set using `axis.setExtremes()`, the minPadding will be ignored.
          *
+         * @productdesc {highstock}
+         * For an [ordinal](#xAxis.ordinal) axis, `minPadding` and `maxPadding`
+         * are ignored. Use [overscroll](#xAxis.overscroll) instead.
+         *
          * @sample {highcharts} highcharts/yaxis/minpadding/
          *         Min padding of 0.2
          * @sample {highstock} stock/xaxis/minpadding-maxpadding/
@@ -2216,10 +2149,15 @@ class Axis {
          * the boost module is used and at least one of the series' data length
          * exceeds the [boostThreshold](#series.line.boostThreshold).
          *
+         * For an ordinal axis, `minPadding` and `maxPadding` are ignored. Use
+         * [overscroll](#xAxis.overscroll) instead.
+         *
          * @sample {highstock} stock/xaxis/ordinal-true/
          *         True by default
          * @sample {highstock} stock/xaxis/ordinal-false/
          *         False
+         *
+         * @see [overscroll](#xAxis.overscroll)
          *
          * @type      {boolean}
          * @default   true
@@ -3898,7 +3836,7 @@ class Axis {
      */
 
     // This variable extends the defaultOptions for left axes.
-    public static defaultLeftAxisOptions: DeepPartial<Highcharts.AxisOptions> = {
+    public static defaultLeftAxisOptions: DeepPartial<AxisOptions> = {
         labels: {
             x: -15
         },
@@ -3908,7 +3846,7 @@ class Axis {
     };
 
     // This variable extends the defaultOptions for right axes.
-    public static defaultRightAxisOptions: DeepPartial<Highcharts.AxisOptions> = {
+    public static defaultRightAxisOptions: DeepPartial<AxisOptions> = {
         labels: {
             x: 15
         },
@@ -3918,7 +3856,7 @@ class Axis {
     };
 
     // This variable extends the defaultOptions for bottom axes.
-    public static defaultBottomAxisOptions: DeepPartial<Highcharts.AxisOptions> = {
+    public static defaultBottomAxisOptions: DeepPartial<AxisOptions> = {
         labels: {
             autoRotation: [-45],
             x: 0
@@ -3932,7 +3870,7 @@ class Axis {
     };
 
     // This variable extends the defaultOptions for top axes.
-    public static defaultTopAxisOptions: DeepPartial<Highcharts.AxisOptions> = {
+    public static defaultTopAxisOptions: DeepPartial<AxisOptions> = {
         labels: {
             autoRotation: [-45],
             x: 0
@@ -3957,7 +3895,7 @@ class Axis {
 
     public constructor(
         chart: Chart,
-        userOptions: DeepPartial<Highcharts.AxisOptions>
+        userOptions: DeepPartial<AxisOptions>
     ) {
         this.init(chart, userOptions);
     }
@@ -4033,7 +3971,7 @@ class Axis {
         userMin?: number;
     };
     public opposite?: boolean;
-    public options: Highcharts.AxisOptions = void 0 as any;
+    public options: Highcharts.AxisTypeOptions = void 0 as any;
     public ordinal?: AxisComposition['ordinal'];
     public overlap: boolean = void 0 as any;
     public paddedTicks: Array<number> = void 0 as any;
@@ -4070,7 +4008,7 @@ class Axis {
     public userMax?: number;
     public userMin?: number;
     public userMinRange?: number;
-    public userOptions: DeepPartial<Highcharts.AxisOptions> = void 0 as any;
+    public userOptions: DeepPartial<AxisOptions> = void 0 as any;
     public visible: boolean = void 0 as any;
     public width: number = void 0 as any;
     public zoomEnabled: boolean = void 0 as any;
@@ -4091,13 +4029,13 @@ class Axis {
      * @param {Highcharts.Chart} chart
      * The Chart instance to apply the axis on.
      *
-     * @param {Highcharts.AxisOptions} userOptions
+     * @param {AxisOptions} userOptions
      * Axis options.
      *
      * @fires Highcharts.Axis#event:afterInit
      * @fires Highcharts.Axis#event:init
      */
-    public init(chart: Chart, userOptions: DeepPartial<Highcharts.AxisOptions>): void {
+    public init(chart: Chart, userOptions: DeepPartial<AxisOptions>): void {
 
         const isXAxis = userOptions.isX,
             axis = this;
@@ -4341,7 +4279,7 @@ class Axis {
      *
      * @fires Highcharts.Axis#event:afterSetOptions
      */
-    public setOptions(userOptions: DeepPartial<Highcharts.AxisOptions>): void {
+    public setOptions(userOptions: DeepPartial<AxisOptions>): void {
         this.options = merge(
             Axis.defaultOptions,
             (this.coll === 'yAxis') && Axis.defaultYAxisOptions,
@@ -5916,7 +5854,7 @@ class Axis {
     public alignToOthers(): (boolean|undefined) {
         let axis = this,
             others = // Whether there is another axis to pair with this one
-                {} as Highcharts.AxisOptions,
+                {} as AxisOptions,
             hasOther,
             options = axis.options;
 
@@ -7901,7 +7839,7 @@ class Axis {
      *        false and call {@link Chart#redraw} after.
      */
     public update(
-        options: DeepPartial<Highcharts.AxisOptions>,
+        options: DeepPartial<Highcharts.AxisTypeOptions>,
         redraw?: boolean
     ): void {
         const chart = this.chart;

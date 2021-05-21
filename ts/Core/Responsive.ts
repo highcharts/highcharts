@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Options from './Options';
 import Chart from './Chart/Chart.js';
 import U from './Utilities.js';
 const {
@@ -27,13 +28,20 @@ declare module './Chart/ChartLike' {
     interface ChartLike {
         currentResponsive?: Highcharts.ResponsiveCurrentObject;
         currentOptions(
-            options: Partial<Highcharts.Options>
-        ): Partial<Highcharts.Options>;
+            options: Partial<Options>
+        ): Partial<Options>;
         matchResponsiveRule(
             rule: Highcharts.ResponsiveRulesOptions,
             matches: Array<string>
         ): void;
         setResponsive(redraw?: boolean, reset?: boolean): void;
+    }
+}
+
+declare module './Options' {
+    interface Options {
+        isResponsiveOptions?: boolean;
+        responsive?: Highcharts.ResponsiveOptions;
     }
 }
 
@@ -43,10 +51,6 @@ declare module './Chart/ChartLike' {
  */
 declare global {
     namespace Highcharts {
-        interface Options {
-            isResponsiveOptions?: boolean;
-            responsive?: ResponsiveOptions;
-        }
         interface ResponsiveCallbackFunction {
             (this: Chart): boolean;
         }
@@ -240,14 +244,14 @@ Chart.prototype.setResponsive = function (
     // Merge matching rules
     const mergedOptions = merge.apply(0, ruleIds.map(function (
         ruleId: string
-    ): (Highcharts.Options|undefined) {
+    ): (Options|undefined) {
         return (find(
             (options as any).rules as Array<Highcharts.ResponsiveRulesOptions>,
             function (rule: Highcharts.ResponsiveRulesOptions): boolean {
                 return rule._id === ruleId;
             }
         ) as any).chartOptions;
-    }) as any) as Partial<Highcharts.Options>;
+    }) as any) as Partial<Options>;
 
     mergedOptions.isResponsiveOptions = true;
 
@@ -326,8 +330,8 @@ Chart.prototype.matchResponsiveRule = function (
  * @return {Highcharts.Options}
  */
 Chart.prototype.currentOptions = function (
-    options: Highcharts.Options
-): Partial<Highcharts.Options> {
+    options: Options
+): Partial<Options> {
 
     const chart = this,
         ret = {};

@@ -24,8 +24,8 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import H from '../../Core/Globals.js';
 import ItemPoint from './ItemPoint.js';
-import O from '../../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {

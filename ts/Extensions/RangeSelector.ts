@@ -10,10 +10,17 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
+import type AxisOptions from '../Core/Axis/AxisOptions';
 import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
@@ -22,11 +29,12 @@ import type {
 } from '../Core/Renderer/DOMElementType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type Time from '../Core/Time';
+
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import palette from '../Core/Color/Palette.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
@@ -49,6 +57,12 @@ const {
     splat
 } = U;
 
+/* *
+ *
+ * Declarations
+ *
+ * */
+
 declare module '../Core/Axis/AxisLike' {
     interface AxisLike {
         newMax?: number;
@@ -65,6 +79,21 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../Core/LangOptions'{
+    interface LangOptions {
+        rangeSelectorFrom?: string;
+        rangeSelectorTo?: string;
+        rangeSelectorZoom?: string;
+    }
+}
+
+declare module '../Core/Options'{
+    interface Options {
+        rangeSelector?: DeepPartial<Highcharts.RangeSelectorOptions>;
+    }
+}
+
+
 /**
  * Internal types
  * @private
@@ -75,14 +104,6 @@ declare global {
             'all'|'day'|'hour'|'millisecond'|'minute'|'month'|'second'|'week'|
             'year'|'ytd'
         );
-        interface Options {
-            rangeSelector?: DeepPartial<RangeSelectorOptions>;
-        }
-        interface LangOptions {
-            rangeSelectorFrom?: string;
-            rangeSelectorTo?: string;
-            rangeSelectorZoom?: string;
-        }
         interface RangeSelectorClickCallbackFunction {
             (e: Event): (boolean|undefined);
         }
@@ -857,7 +878,7 @@ class RangeSelector {
                 )
             ), // #1568
             type = rangeOptions.type,
-            baseXAxisOptions: Highcharts.AxisOptions,
+            baseXAxisOptions: AxisOptions,
             range = rangeOptions._range,
             rangeMin,
             minSetting: (number|null|undefined),
@@ -1410,7 +1431,7 @@ class RangeSelector {
                         this.chart.chartWidth - input.offsetWidth
                     ) + 'px',
                     top: (
-                        translateY - 1 - (input.offsetHeight - dateBox.height) / 2
+                        translateY - (input.offsetHeight - dateBox.height) / 2
                     ) + 'px'
                 });
             }
@@ -1556,7 +1577,8 @@ class RangeSelector {
             .label(text, 0)
             .addClass('highcharts-range-label')
             .attr({
-                padding: text ? 2 : 0
+                padding: text ? 2 : 0,
+                height: text ? options.inputBoxHeight : 0
             })
             .add(inputGroup);
 
@@ -1919,11 +1941,13 @@ class RangeSelector {
         });
 
         this.zoomText = renderer
-            .text(
-                (lang as any).rangeSelectorZoom,
-                0,
-                15
-            )
+            .label((lang && lang.rangeSelectorZoom) || '', 0)
+            .attr({
+                padding: options.buttonTheme.padding,
+                height: options.buttonTheme.height,
+                paddingLeft: 0,
+                paddingRight: 0
+            })
             .add(this.buttonGroup);
 
         if (!this.chart.styledMode) {
@@ -2416,16 +2440,30 @@ class RangeSelector {
         const {
             buttons,
             buttonOptions,
+            chart,
             dropdown,
             options,
             zoomText
         } = this;
 
+        const userButtonTheme = (
+            chart.userOptions.rangeSelector &&
+            chart.userOptions.rangeSelector.buttonTheme
+        ) || {};
+
         const getAttribs = (text?: string): SVGAttributes => ({
             text: text ? `${text} ▾` : '▾',
             width: 'auto',
-            paddingLeft: 8,
-            paddingRight: 8
+            paddingLeft: pick(
+                options.buttonTheme.paddingLeft,
+                userButtonTheme.padding,
+                8
+            ),
+            paddingRight: pick(
+                options.buttonTheme.paddingRight,
+                userButtonTheme.padding,
+                8
+            )
         } as unknown as SVGAttributes);
 
         if (zoomText) {
@@ -2503,9 +2541,9 @@ class RangeSelector {
             button.attr({
                 text: rangeOptions.text,
                 width: options.buttonTheme.width || 28,
-                paddingLeft: 'unset',
-                paddingRight: 'unset'
-            });
+                paddingLeft: pick(options.buttonTheme.paddingLeft, 'unset'),
+                paddingRight: pick(options.buttonTheme.paddingRight, 'unset')
+            } as SVGAttributes);
 
             if (button.state < 2) {
                 button.setState(0);

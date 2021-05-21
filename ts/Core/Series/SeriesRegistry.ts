@@ -24,8 +24,8 @@ import type {
     SeriesTypeRegistry
 } from './SeriesType';
 import H from '../Globals.js';
-import O from '../Options.js';
-const { defaultOptions } = O;
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import Point from './Point.js';
 import U from '../Utilities.js';
 const {

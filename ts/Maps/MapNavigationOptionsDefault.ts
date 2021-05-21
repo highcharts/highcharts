@@ -17,7 +17,7 @@
  * */
 
 import type MapNavigationOptions from './MapNavigationOptions';
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 import U from '../Core/Utilities.js';
 const { extend } = U;
 
@@ -288,12 +288,12 @@ const defaultOptions: MapNavigationOptions = {
  * */
 
 // Add language
-extend(O.defaultOptions.lang, {
+extend(D.defaultOptions.lang, {
     zoomIn: 'Zoom in',
     zoomOut: 'Zoom out'
 });
 // Set the default map navigation options
-O.defaultOptions.mapNavigation = defaultOptions;
+D.defaultOptions.mapNavigation = defaultOptions;
 
 /* *
  *

@@ -18,11 +18,11 @@
 
 import type Chart from './Chart/Chart';
 
-import O from './Options.js';
+import D from './DefaultOptions.js';
 const {
     defaultOptions,
     defaultTime
-} = O;
+} = D;
 import U from './Utilities.js';
 const {
     getNestedProperty,

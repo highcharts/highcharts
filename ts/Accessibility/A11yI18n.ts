@@ -13,8 +13,9 @@
 
 'use strict';
 
-import type Chart from '../Core/Chart/Chart';
 import type Time from '../Core/Time';
+
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import F from '../Core/FormatUtilities.js';
 const { format } = F;
@@ -344,7 +345,7 @@ H.i18nFormat = function (
  * @return {string}
  *         The formatted string.
  */
-H.Chart.prototype.langFormat = function (
+Chart.prototype.langFormat = function (
     langKey: string,
     context: AnyRecord
 ): string {

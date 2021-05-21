@@ -15,6 +15,7 @@ import type AxisLike from './AxisLike';
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type GradientColor from '../Color/GradientColor';
+import type LegendOptions from '../LegendOptions';
 import type PointerEvent from '../PointerEvent';
 import type { StatesOptionsKey } from '../Series/StatesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -64,6 +65,15 @@ declare module '../Chart/ChartLike' {
     }
 }
 
+declare module '../../Core/Options'{
+    interface Options {
+        colorAxis?: (
+            DeepPartial<ColorAxis.Options>|
+            Array<DeepPartial<ColorAxis.Options>>
+        );
+    }
+}
+
 declare module '../Series/PointLike' {
     interface PointLike {
         dataClass?: number;
@@ -92,12 +102,6 @@ declare module '../Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface Options {
-            colorAxis?: (
-                DeepPartial<ColorAxis.Options>|
-                Array<DeepPartial<ColorAxis.Options>>
-            );
-        }
         let ColorAxis: ColorAxisClass;
     }
 }
@@ -1557,7 +1561,7 @@ namespace ColorAxis {
         dataClassColor?: string;
         dataClasses?: Array<DataClassesOptions>;
         layout?: string;
-        legend?: Highcharts.LegendOptions;
+        legend?: LegendOptions;
         marker?: MarkerOptions;
         maxColor?: ColorType;
         minColor?: ColorType;

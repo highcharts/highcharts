@@ -33,6 +33,7 @@ import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions'
 import type EventCallback from '../../Core/EventCallback';
 import type FormatUtilities from '../../Core/FormatUtilities';
 import type MockPointOptions from './MockPointOptions';
+import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
@@ -71,12 +72,23 @@ const {
     wrap
 } = U;
 
+/* *
+ *
+ * Declarations
+ *
+ * */
 declare module './MockPointOptions' {
     interface MockPointOptions {
         x: number;
         xAxis?: (number|AxisType|null);
         y: number;
         yAxis?: (number|AxisType|null);
+    }
+}
+
+declare module '../../Core/Options'{
+    interface Options {
+        annotations?: (Highcharts.AnnotationsOptions|Array<Highcharts.AnnotationsOptions>);
     }
 }
 
@@ -166,6 +178,8 @@ declare global {
             point?: (string|MockPointOptions);
             itemType?: string;
             vertical?: VerticalAlignValue;
+            xAxis?: number|string;
+            yAxis?: number|string;
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject { // @todo AnnotationOptions.d.ts
             animation: Partial<AnimationOptions>;
@@ -224,9 +238,6 @@ declare global {
             prototype: Partial<T['prototype']>,
             defaultOptions?: DeepPartial<T['prototype']['options']>
         ): void;
-        interface Options {
-            annotations?: (AnnotationsOptions|Array<AnnotationsOptions>);
-        }
     }
 }
 

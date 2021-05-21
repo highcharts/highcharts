@@ -53,6 +53,13 @@ declare module './AxisLike' {
     }
 }
 
+declare module './AxisOptions' {
+    interface AxisOptions {
+        plotBands?: Array<Highcharts.AxisPlotBandsOptions>;
+        plotLines?: Array<Highcharts.AxisPlotLinesOptions>;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -108,10 +115,6 @@ declare global {
             value?: number;
             width?: number;
             zIndex?: number;
-        }
-        interface XAxisOptions {
-            plotBands?: Array<AxisPlotBandsOptions>;
-            plotLines?: Array<AxisPlotLinesOptions>;
         }
         /*
         class PlotLineOrBand {

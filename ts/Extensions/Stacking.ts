@@ -21,6 +21,7 @@ import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type { DataLabelOverflowValue } from '../Core/Series/DataLabelOptions';
 import type FormatUtilities from '../Core/FormatUtilities';
+import type { OptionsOverflowValue } from '../Core/Options';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../Core/Renderer/SVG/SVGLabel';
 

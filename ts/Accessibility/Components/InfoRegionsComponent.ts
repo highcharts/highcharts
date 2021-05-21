@@ -10,13 +10,15 @@
  *
  * */
 
+'use strict';
+
 import type Axis from '../../Core/Axis/Axis';
-import type Chart from '../../Core/Chart/Chart';
 import type {
     DOMElementType,
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import AST from '../../Core/Renderer/HTML/AST.js';
+import Chart from '../../Core/Chart/Chart.js';
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
@@ -217,7 +219,7 @@ function getTableSummary(chart: Chart): string {
  * @param {Array<string>} types The series types in this chart.
  * @return {string} The text description of the chart type.
  */
-H.Chart.prototype.getTypeDescription = function (types: Array<string>): string {
+Chart.prototype.getTypeDescription = function (types: Array<string>): string {
     const firstType = types[0],
         firstSeries = this.series && this.series[0] || {},
         formatContext: Highcharts.InfoRegionsComponentTypeDescFormatContextObject = {
