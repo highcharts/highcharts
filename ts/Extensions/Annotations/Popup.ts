@@ -289,7 +289,13 @@ H.Popup.prototype = {
      * Default value of input i.e period value is 14, extracted from
      * defaultOptions (ADD mode) or series options (EDIT mode)
      */
-    addInput: function (option: string, type: string, parentDiv: HTMLDOMElement, value: string): void {
+    addInput: function (
+        this: Highcharts.Popup,
+        option: string,
+        type: string,
+        parentDiv: HTMLDOMElement,
+        value: string
+    ): void {
         const optionParamList = option.split('.'),
             optionName = optionParamList[optionParamList.length - 1],
             lang = this.lang,
@@ -309,7 +315,7 @@ H.Popup.prototype = {
         }
 
         // add input
-        createElement(
+        const input = createElement(
             INPUT,
             {
                 name: inputName,
@@ -319,7 +325,25 @@ H.Popup.prototype = {
             },
             void 0,
             parentDiv
-        ).setAttribute(PREFIX + 'data-name', option);
+        );
+        input.setAttribute(PREFIX + 'data-name', option);
+
+        addEvent(input, 'mousedown', (): void => {
+            const activeAnnotation = this.chart &&
+                this.chart.navigationBindings &&
+                this.chart.navigationBindings.activeAnnotation;
+
+            if (activeAnnotation) {
+                activeAnnotation.cancelClick = true;
+
+                const unbind = addEvent(H.doc, 'mouseup', (): void => {
+                    setTimeout((): void => {
+                        activeAnnotation.cancelClick = false;
+                    }, 0);
+                    unbind();
+                });
+            }
+        });
     },
     /**
      * Create button.
