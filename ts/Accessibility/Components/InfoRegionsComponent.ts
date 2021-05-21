@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Axis from '../../Core/Axis/Axis';
 import type {
     DOMElementType,
