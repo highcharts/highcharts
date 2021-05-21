@@ -17,7 +17,10 @@
  *
  * */
 
-import type AxisOptions from './AxisOptions';
+import type {
+    AxisLabelFormatterContextObject,
+    AxisOptions
+} from './AxisOptions';
 import type ChartOptions from '../Chart/ChartOptions';
 import type ColorType from '../Color/ColorType';
 import type Point from '../Series/Point';
@@ -78,6 +81,9 @@ declare module './AxisLike' {
 }
 
 declare module './AxisOptions' {
+    interface AxisLabelFormatterContextObject {
+        point?: Point;
+    }
     interface AxisOptions {
         grid?: GridAxis.Options;
         isInternal?: boolean;
@@ -97,27 +103,17 @@ declare module './TickLike' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AxisLabelsFormatterContextObject {
-            point?: Point;
-        }
-    }
-}
-
-/**
- * @private
- */
 declare module './Types' {
     interface AxisTypeRegistry {
         GridAxis: GridAxis;
     }
 }
 
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 const argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
@@ -462,7 +458,7 @@ addEvent(
 addEvent(
     Tick,
     'labelFormat',
-    (ctx: Highcharts.AxisLabelsFormatterContextObject): void => {
+    (ctx: AxisLabelFormatterContextObject): void => {
         const {
             axis,
             value

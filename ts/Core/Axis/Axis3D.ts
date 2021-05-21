@@ -47,6 +47,13 @@ declare module './AxisComposition' {
     }
 }
 
+declare module './AxisOptions' {
+    interface AxisLabelOptions {
+        position3d?: OptionsPosition3dValue;
+        skew3d?: boolean;
+    }
+}
+
 declare module '../Renderer/Position3DObject' {
     interface Position3DObject {
         matrix?: Array<number>;
@@ -68,10 +75,6 @@ declare module '../Series/PointLike' {
  */
 declare global {
     namespace Highcharts {
-        interface XAxisLabelsOptions {
-            position3d?: OptionsPosition3dValue;
-            skew3d?: boolean;
-        }
         interface XAxisTitleOptions {
             position3d?: ('chart'|'flap'|'offset'|'ortho'|null);
             skew3d?: (boolean|null);

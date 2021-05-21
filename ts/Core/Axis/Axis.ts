@@ -19,16 +19,19 @@
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type AxisComposition from './AxisComposition';
 import type AxisLike from './AxisLike';
-import type AxisOptions from './AxisOptions';
+import type {
+    AxisCrosshairOptions,
+    AxisLabelFormatterCallback,
+    AxisLabelFormatterContextObject,
+    AxisOptions
+} from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type { AlignValue } from '../Renderer/AlignObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
-import type DashStyleValue from '../Renderer/DashStyleValue';
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
-import type { OptionsOverflowValue } from '../Options';
 import type GradientColor from '../Color/GradientColor';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../Series/Point';
@@ -39,7 +42,6 @@ import type SizeObject from '../Renderer/SizeObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
-import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
 
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -106,8 +108,6 @@ declare module '../Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        type AxisCollValue = ('xAxis'|'yAxis');
-        type AxisCrosshairOptions = XAxisCrosshairOptions;
         type AxisExtremesTriggerValue = (
             'navigator'|'pan'|'rangeSelectorButton'|'rangeSelectorInput'|
             'scrollbar'|'traverseUpButton'|'zoom'
@@ -122,23 +122,6 @@ declare global {
         );
         interface AxisEventCallbackFunction {
             (this: Axis): void;
-        }
-        interface AxisLabelsFormatterCallbackFunction {
-            (
-                this: AxisLabelsFormatterContextObject,
-                ctx?: AxisLabelsFormatterContextObject
-            ): string;
-        }
-        interface AxisLabelsFormatterContextObject {
-            axis: Axis;
-            chart: Chart;
-            dateTimeLabelFormat: string;
-            isFirst: boolean;
-            isLast: boolean;
-            pos: number;
-            text?: string;
-            tick: Tick;
-            value: number|string;
         }
         interface AxisPlotLinePathOptionsObject {
             acrossPanes?: boolean;
@@ -188,65 +171,11 @@ declare global {
             enabled?: boolean;
             rangeDescription?: string;
         }
-        interface XAxisCrosshairLabelFormatterCallbackFunction {
-            (this: Axis, value: number): string;
-        }
-        interface XAxisCrosshairLabelOptions {
-            align?: AlignValue;
-            backgroundColor?: ColorType;
-            borderColor?: ColorType;
-            borderRadius?: number;
-            borderWidth?: number;
-            enabled?: boolean;
-            format?: string;
-            formatter?: XAxisCrosshairLabelFormatterCallbackFunction;
-            padding?: number;
-            shape?: SVGRenderer.SymbolKeyValue;
-            style?: CSSObject;
-        }
-        interface XAxisCrosshairOptions {
-            className?: string;
-            color?: ColorType;
-            dashStyle?: DashStyleValue;
-            label?: XAxisCrosshairLabelOptions;
-            snap?: boolean;
-            width?: number;
-            zIndex?: number;
-        }
         interface XAxisBreaksOptions {
             breakSize?: number;
             from: number;
             repeat?: number;
             to: number;
-        }
-        interface XAxisEventsOptions {
-            afterBreaks?: AxisEventCallbackFunction;
-            afterSetExtremes?: AxisSetExtremesEventCallbackFunction;
-            pointBreak?: AxisPointBreakEventCallbackFunction;
-            pointInBreak?: AxisPointBreakEventCallbackFunction;
-            setExtremes?: AxisSetExtremesEventCallbackFunction;
-        }
-        interface XAxisLabelsOptions {
-            align?: AlignValue;
-            allowOverlap?: boolean;
-            autoRotation?: Array<number>;
-            autoRotationLimit: number;
-            distance?: number;
-            enabled: boolean;
-            format?: string;
-            formatter?: AxisLabelsFormatterCallbackFunction;
-            indentation: number;
-            overflow: OptionsOverflowValue;
-            padding: number;
-            reserveSpace?: boolean;
-            rotation?: number|'auto';
-            staggerLines: number;
-            step: number;
-            style: CSSObject;
-            useHTML: boolean;
-            x: number;
-            y?: number;
-            zIndex: number;
         }
         interface XAxisOptions extends AxisOptions {
 
@@ -3922,7 +3851,7 @@ class Axis {
     public closestPointRange: number = void 0 as any;
     public coll: string = void 0 as any;
     public cross?: SVGElement;
-    public crosshair?: Highcharts.AxisCrosshairOptions;
+    public crosshair?: AxisCrosshairOptions;
     public dataMax?: (null|number);
     public dataMin?: (null|number);
     public displayBtn?: boolean;
@@ -3944,7 +3873,7 @@ class Axis {
     public keepProps?: Array<string>;
     public labelAlign?: AlignValue;
     public labelEdge: Array<null> = void 0 as any; // @todo
-    public labelFormatter: Highcharts.AxisLabelsFormatterCallbackFunction = void 0 as any;
+    public labelFormatter: AxisLabelFormatterCallback = void 0 as any;
     public labelGroup?: SVGElement;
     public labelOffset?: number;
     public labelRotation?: number;
@@ -4317,8 +4246,8 @@ class Axis {
      * The formatted label content.
      */
     public defaultLabelFormatter(
-        this: Highcharts.AxisLabelsFormatterContextObject,
-        ctx?: Highcharts.AxisLabelsFormatterContextObject
+        this: AxisLabelFormatterContextObject,
+        ctx?: AxisLabelFormatterContextObject
     ): string {
         let axis = this.axis,
             value = isNumber(this.value) ? this.value : NaN,

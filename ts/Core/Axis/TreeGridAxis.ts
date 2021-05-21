@@ -11,6 +11,13 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type { AxisLabelOptions } from './AxisOptions';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type GanttPoint from '../../Series/Gantt/GanttPoint';
@@ -22,6 +29,7 @@ import type {
 } from '../Series/PointOptions';
 import type SizeObject from '../Renderer/SizeObject';
 import type { ChartAddSeriesEventObject } from '../Chart/ChartOptions';
+
 import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
@@ -134,7 +142,7 @@ namespace TreeGridAxis {
         y?: number;
     }
 
-    export interface LabelsOptions extends Highcharts.XAxisLabelsOptions {
+    export interface LabelsOptions extends AxisLabelOptions {
         levels?: number;
         symbol?: LabelIconOptionsObject;
     }

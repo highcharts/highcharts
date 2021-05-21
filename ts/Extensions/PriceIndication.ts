@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type { AxisCrosshairOptions } from '../Core/Axis/AxisOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
@@ -37,7 +38,7 @@ declare module '../Core/Series/SeriesOptions' {
 
 declare global {
     namespace Highcharts {
-        interface LastPriceOptions extends XAxisCrosshairOptions {
+        interface LastPriceOptions extends AxisCrosshairOptions {
             enabled?: boolean;
         }
         interface LastVisiblePriceOptions {
