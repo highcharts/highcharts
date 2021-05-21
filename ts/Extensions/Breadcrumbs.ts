@@ -195,7 +195,7 @@ class Breadcrumbs {
          *
          * Return false to stop default buttons click action.
          *
-         * @type      {Highcharts.DrilldownBreadcrumbsClickCallbackFunction}
+         * @type      {Highcharts.BreadcrumbsClickCallbackFunction}
          * @since     next
          * @apioption breadcrumbs.events.click
          */
