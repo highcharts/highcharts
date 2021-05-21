@@ -210,9 +210,9 @@ class EditMode {
                 addEvent(row.container, 'mousemove', function (e): void {
                     rowToolbar.onMouseMove(row);
 
-                    if (!(editMode.dragDrop || {}).isActive) {
-                        e.stopImmediatePropagation();
-                    }
+                    // if ((!(editMode.dragDrop || {}).isActive)) {
+                    //     e.stopImmediatePropagation();
+                    // }
                 });
             }
 
@@ -250,9 +250,9 @@ class EditMode {
                         addEvent(resizedCell.snapX, 'mousemove', function (e): void {
                             cellToolbar.hide();
 
-                            if (!(editMode.dragDrop || {}).isActive) {
-                                e.stopImmediatePropagation();
-                            }
+                            // if (!(editMode.dragDrop || {}).isActive) {
+                            //     e.stopImmediatePropagation();
+                            // }
                         });
                     }
 
