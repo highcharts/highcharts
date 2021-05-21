@@ -1,7 +1,6 @@
 QUnit.test('Drilldown and reset zoom', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            type: 'column',
             zoomType: 'x'
         },
         xAxis: {
@@ -164,6 +163,33 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
         chart.resetZoomButton.xSetting >
             chart.drillUpButton.xSetting + chart.drillUpButton.width,
         'Buttons should not overlap.'
+    );
+
+    controller.moveTo(
+        chart.resetZoomButton.translateX + 5,
+        chart.resetZoomButton.translateY + 5
+    );
+    assert.ok(
+        chart.tooltip.isHidden,
+        '#14403: Tooltip should be hidden when hovering resetZoomButton'
+    );
+
+    controller.moveTo(
+        chart.drillUpButton.translateX + 5,
+        chart.drillUpButton.translateY + 5
+    );
+    assert.ok(
+        chart.tooltip.isHidden,
+        '#14403: Tooltip should be hidden when hovering drillUpButton'
+    );
+
+    controller.moveTo(
+        chart.drillUpButton.translateX - 5,
+        chart.drillUpButton.translateY + 5
+    );
+    assert.notOk(
+        chart.tooltip.isHidden,
+        '#14403: Tooltip should not be hidden when not hovering button'
     );
 
     // Drill up

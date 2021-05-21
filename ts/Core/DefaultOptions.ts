@@ -1288,6 +1288,11 @@ const defaultOptions: Options = {
         alignColumns: true,
 
         /**
+         * A CSS class name to apply to the legend group.
+         */
+        className: 'highcharts-no-tooltip',
+
+        /**
          * When the legend is floating, the plot area ignores it and is allowed
          * to be placed below it.
          *
