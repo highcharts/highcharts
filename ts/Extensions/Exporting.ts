@@ -35,6 +35,7 @@ import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type { SymbolKey } from '../Core/Renderer/SVG/SymbolType';
 
 import Chart from '../Core/Chart/Chart.js';
 import chartNavigationMixin from '../Mixins/Navigation.js';
@@ -201,7 +202,7 @@ declare global {
             menuClassName?: string;
             menuItems?: Array<string>;
             onclick?: Function;
-            symbol?: ('menu'|'menuball'|'exportIcon'|string|SVGRenderer.SymbolKeyValue);
+            symbol?: ('menu'|'menuball'|SymbolKey);
             symbolFill?: ColorString;
             symbolSize?: number;
             symbolStroke?: ColorString;
@@ -994,7 +995,7 @@ defaultOptions.exporting = {
             /**
              * The symbol for the button. Points to a definition function in
              * the `Highcharts.Renderer.symbols` collection. The default
-             * `exportIcon` function is part of the exporting module. Possible
+             * `menu` function is part of the exporting module. Possible
              * values are "circle", "square", "diamond", "triangle",
              * "triangle-down", "menu", "menuball" or custom shape.
              *
@@ -1003,7 +1004,7 @@ defaultOptions.exporting = {
              * @sample highcharts/exporting/buttons-contextbutton-symbol-custom/
              *         Custom shape as symbol
              *
-             * @type  {Highcharts.SymbolKeyValue|"exportIcon"|"menu"|"menuball"|string}
+             * @type  {Highcharts.SymbolKeyValue|"menu"|"menuball"|string}
              * @since 2.0
              */
             symbol: 'menu',

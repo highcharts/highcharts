@@ -23,6 +23,7 @@ import type PositionObject from '../Renderer/PositionObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type Tick from './Tick';
 import type TreeGridAxis from './TreeGridAxis';
 
@@ -30,7 +31,6 @@ import palette from '../../Core/Color/Palette.js';
 import U from '../Utilities.js';
 const {
     addEvent,
-    defined,
     isObject,
     isNumber,
     pick,
@@ -180,7 +180,7 @@ namespace TreeGridTick {
 
         if (!icon) {
             treeGrid.labelIcon = icon = renderer
-                .path(renderer.symbols[(options as any).type](
+                .path(renderer.symbols[(options as any).type as SymbolKey](
                     options.x || 0,
                     options.y || 0,
                     width,

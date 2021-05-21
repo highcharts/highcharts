@@ -44,7 +44,9 @@ import type {
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
+
 import A from '../Animation/AnimationUtilities.js';
 const {
     animObject,
@@ -2742,7 +2744,7 @@ class Series {
 
     public stickyTracking?: boolean;
 
-    public symbol?: string;
+    public symbol?: SymbolKey;
 
     public tooltipOptions: TooltipOptions = void 0 as any;
 
@@ -3628,7 +3630,7 @@ class Series {
             data.forEach(function (point, i): void {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
-                if (oldData[i].update && point !== oldData[i].y) {
+                if (point !== oldData[i].y && oldData[i].update) {
                     oldData[i].update(point, false, null as any, false);
                 }
             });
@@ -5060,8 +5062,8 @@ class Series {
                 // only draw the point if y is defined
                 if (shouldDrawMarker) {
                     // Shortcuts
-                    const symbol = pick<string|undefined, string>(
-                        pointMarkerOptions.symbol, series.symbol as any
+                    const symbol = pick(
+                        pointMarkerOptions.symbol, series.symbol, 'rect' as SymbolKey
                     );
 
                     markerAttribs = series.markerAttribs(

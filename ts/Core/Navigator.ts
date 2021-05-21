@@ -2856,4 +2856,10 @@ if (!H.Navigator) {
 
 H.Navigator = Navigator;
 
+declare module './Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        'navigator-handle': SymbolFunction;
+    }
+}
+
 export default H.Navigator;

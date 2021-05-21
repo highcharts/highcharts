@@ -39,7 +39,7 @@ import type Series from '../../Core/Series/Series';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
@@ -123,7 +123,7 @@ declare global {
             index?: number;
             positioner: AnnotationControlPointPositionerFunction;
             style: CSSObject;
-            symbol: string;
+            symbol: SymbolKey;
             visible: boolean;
             width: number;
         }
@@ -162,7 +162,7 @@ declare global {
             overflow: DataLabelOverflowValue;
             padding: number;
             shadow: (boolean|Partial<ShadowOptionsObject>);
-            shape: SVGRenderer.SymbolKeyValue;
+            shape: SymbolKey;
             style: CSSObject;
             text?: string;
             type?: string;
