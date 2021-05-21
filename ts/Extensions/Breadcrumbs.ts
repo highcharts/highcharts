@@ -145,7 +145,7 @@ declare global {
  * @param {global.Event} e
  *        Event arguments.
  *
- * @param {Breadcrumbs} breadcrumbs
+ * @param {Highcharts.Breadcrumbs} breadcrumbs
  *        The breadcrumbs objecs.
  */
 
