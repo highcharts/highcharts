@@ -216,6 +216,11 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             H.doc,
             H.isTouchDevice ? 'touchend' : 'mouseup',
             function (e: Highcharts.AnnotationEventObject): void {
+                if (emitter.target) {
+                    // Keep annotation selected after dragging control point
+                    (emitter.target as Annotation).cancelClick = emitter.hasDragged;
+                }
+
                 emitter.cancelClick = emitter.hasDragged;
                 emitter.hasDragged = false;
                 emitter.chart.hasDraggedAnnotation = false;
