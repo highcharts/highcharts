@@ -698,6 +698,7 @@ class MapSeries extends ScatterSeries {
                 for symbols and for transform properties, it should induce a
                 single updateTransform and symbolAttr call. */
             const scale = svgTransform.scaleX;
+            const flipFactor = svgTransform.scaleY > 0 ? 1 : -1;
             const transformGroup = this.transformGroup;
             if (renderer.globalAnimation && chart.hasRendered) {
                 const startTranslateX = Number(transformGroup.attr('translateX'));
@@ -717,7 +718,7 @@ class MapSeries extends ScatterSeries {
                             (svgTransform.translateY - startTranslateY) * fx.pos
                         ),
                         scaleX: scaleStep,
-                        scaleY: scaleStep
+                        scaleY: scaleStep * flipFactor
                     });
 
                     if (!chart.styledMode) {
@@ -815,28 +816,30 @@ class MapSeries extends ScatterSeries {
                                 validBounds = true;
                             }
                         });
-                        // Cache point bounding box for use to position data
-                        // labels, bubbles etc
-                        const midX = (
-                            x1 + (x2 - x1) * pick(
-                                point.options.middleX,
-                                properties && (properties as any)['hc-middle-x'],
-                                0.5
-                            )
-                        );
-                        const midY = (
-                            y1 + (y2 - y1) * pick(
-                                point.options.middleY,
-                                properties && (properties as any)['hc-middle-y'],
-                                0.5
-                            )
-                        );
 
                         if (validBounds) {
+
+                            // Cache point bounding box for use to position data
+                            // labels, bubbles etc
+                            const midX = (
+                                x1 + (x2 - x1) * pick(
+                                    point.options.middleX,
+                                    properties && (properties as any)['hc-middle-x'],
+                                    0.5
+                                )
+                            );
+                            const midY = (
+                                y1 + (y2 - y1) * pick(
+                                    point.options.middleY,
+                                    properties && (properties as any)['hc-middle-y'],
+                                    0.5
+                                )
+                            );
                             point.bounds = { midX, midY, x1, y1, x2, y2 };
 
                             point.labelrank = pick(
                                 point.labelrank,
+                                // Bigger shape, higher rank
                                 (x2 - x1) * (y2 - y1)
                             );
                         }
@@ -1141,22 +1144,19 @@ class MapSeries extends ScatterSeries {
         }
 
         // Calculate the SVG transform
-        let svgTransform: SVGTransformType;
+        let svgTransform: SVGTransformType|undefined;
         if (mapView) {
             const scale = mapView.getScale();
-            const projectedCenter = mapView.projection.forward(mapView.center);
-            const x = projectedCenter[0];
-            let y = projectedCenter[1];
+            const [x, y] = mapView.projection.forward(mapView.center);
+
             // When dealing with unprojected coordinates, y axis is flipped.
-            if (mapView.projection.isNorthPositive) {
-                y = -y;
-            }
+            const flipFactor = mapView.projection.hasCoordinates ? -1 : 1;
 
             const translateX = this.chart.plotWidth / 2 - x * scale;
-            const translateY = this.chart.plotHeight / 2 - y * scale;
+            const translateY = this.chart.plotHeight / 2 - y * scale * flipFactor;
             svgTransform = {
                 scaleX: scale,
-                scaleY: scale,
+                scaleY: scale * flipFactor,
                 translateX,
                 translateY
             };

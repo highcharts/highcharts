@@ -34,6 +34,10 @@ QUnit.module('Projection', function () {
                 assert,
                 new Projection({ projectionName })
             );
+            testPoints(
+                assert,
+                new Projection({ projectionName, rotation: [30, 30] })
+            );
         });
     });
 

@@ -44,7 +44,13 @@ const wrapLon = (lon: number): number => {
 export default class Projection {
 
     public options: ProjectionOptions;
-    public isNorthPositive: boolean = false;
+    // Whether the chart has points, lines or polygons given as coordinates
+    // with positive up, as opposed to paths in the SVG plane with positive
+    // down.
+    public hasCoordinates: boolean = false;
+    // Whether the chart has true projection as opposed to pre-projected geojson
+    // as in the legacy map collection.
+    public hasGeoProjection: boolean = false;
     public rotator: Projector|undefined;
     public def: ProjectionDefinition|undefined;
 
@@ -161,7 +167,7 @@ export default class Projection {
 
         if (def) {
             this.maxLatitude = def.maxLatitude || 90;
-            this.isNorthPositive = true;
+            this.hasGeoProjection = true;
         }
 
         if (rotator && def) {
@@ -536,7 +542,7 @@ export default class Projection {
         // @todo: It doesn't really have to do with whether north is
         // positive. It depends on whether the coordinates are
         // pre-projected.
-        const isGeographicCoordinates = this.isNorthPositive;
+        const hasGeoProjection = this.hasGeoProjection;
 
         // @todo better test for when to do this
         const projectingToPlane = this.options.projectionName !== 'Orthographic';
@@ -576,7 +582,7 @@ export default class Projection {
             let polygons = [poly];
 
 
-            if (isGeographicCoordinates) {
+            if (hasGeoProjection) {
 
                 // Insert great circles into long straight lines
                 Projection.insertGreatCircles(poly);
@@ -597,10 +603,10 @@ export default class Projection {
                 let gap = false;
                 const pushToPath = (point: [number, number]): void => {
                     if (!movedTo) {
-                        path.push(['M', point[0], -point[1]]);
+                        path.push(['M', point[0], point[1]]);
                         movedTo = true;
                     } else {
-                        path.push(['L', point[0], -point[1]]);
+                        path.push(['L', point[0], point[1]]);
                     }
                 };
 
@@ -613,7 +619,7 @@ export default class Projection {
                         !isNaN(point[0]) &&
                         !isNaN(point[1]) &&
                         (
-                            !isGeographicCoordinates ||
+                            !hasGeoProjection ||
                             // Limited projections like Web Mercator
                             (
                                 lonLat[1] <= this.maxLatitude &&
@@ -645,7 +651,7 @@ export default class Projection {
                             // globe. It that poses a problem, we may have to
                             // rewrite this to use the small circle related to
                             // the current lon0 and lat0.
-                            if (isPolygon && isGeographicCoordinates) {
+                            if (isPolygon && hasGeoProjection) {
                                 const greatCircle = Projection.greatCircle(
                                     lastValidLonLat,
                                     lonLat

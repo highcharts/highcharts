@@ -4,10 +4,10 @@ QUnit.test(
 
         let chart;
 
-        const getRenderedHeight = () =>
+        const getRenderedHeight = () => Math.abs(
             chart.series[0].points[0].graphic.getBBox().height *
-            chart.series[0].svgTransform.scaleY;
-
+            chart.series[0].svgTransform.scaleY
+        );
 
         chart = Highcharts.mapChart('container', {
             series: [
@@ -23,7 +23,7 @@ QUnit.test(
             getRenderedHeight(),
             chart.plotHeight,
             2,
-            'Height of point bBox equals plotHeight'
+            'Height of point bBox should equal plotHeight'
         );
 
         chart = Highcharts.mapChart('container', {
@@ -38,7 +38,7 @@ QUnit.test(
 
         assert.ok(
             Math.abs(getRenderedHeight() - chart.plotHeight) > 2,
-            'Height of point bBox no longer equals plotHeight'
+            'Height of point bBox should no longer equal plotHeight'
         );
     }
 );

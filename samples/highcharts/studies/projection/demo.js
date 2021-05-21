@@ -150,6 +150,7 @@ const drawMap = projectionKey => {
 
             mapNavigation: {
                 enabled: true,
+                enableDoubleClickZoomTo: true,
                 buttonOptions: {
                     verticalAlign: 'bottom'
                 }

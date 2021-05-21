@@ -84,40 +84,13 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         if (!point.projectedPath) {
             if (projection && isArray((point as any).coordinates)) {
 
-                // (point as any).coordinates.name = point.name
+                // Always true when given GeoJSON coordinates
+                projection.hasCoordinates = true;
 
                 point.projectedPath = projection.path({
                     type: (point as any).type,
                     coordinates: (point as any).coordinates
                 });
-
-                /*
-            // Experimental! d3 projections
-            if (
-                isArray((point as any).coordinates) &&
-                (win as any).geoPath
-            ) {
-                const path = (win as any).geoPath({
-                    type: 'Feature',
-                    geometry: {
-                        type: (point as any).type,
-                        coordinates: (point as any).coordinates
-                    }
-                });
-
-                if (path) {
-                    point.projectedPath = splitPath(path);
-                }
-
-            } else if (isArray(point.path) && projection) {
-                point.projectedPath = point.path.map((seg): SVGPath.Segment => {
-                    if (seg[0] === 'M' || seg[0] === 'L') {
-                        const p = projection.forward({ x: seg[1], y: seg[2] });
-                        return [seg[0], p.x, p.y];
-                    }
-                    return seg;
-                });
-            */
 
             // SVG path given directly in point options
             } else {
