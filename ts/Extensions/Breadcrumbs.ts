@@ -52,7 +52,7 @@ declare module '../Core/LangOptions' {
 }
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
-        breadcrumbs?: Breadcrumbs;
+        breadcrumbs?: Highcharts.Breadcrumbs;
     }
 }
 declare module '../Series/Treemap/TreemapSeriesOptions' {
