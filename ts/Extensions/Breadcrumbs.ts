@@ -45,6 +45,7 @@ const {
  * Declarations
  *
  * */
+
 declare module '../Core/LangOptions' {
     interface LangOptions {
         mainBreadcrumb?: string;
@@ -143,17 +144,6 @@ declare global {
         }
     }
 }
-/**
- * Callback function to react on button clicks.
- *
- * @callback Highcharts.BreadcrumbsClickCallbackFunction
- *
- * @param {global.Event} e
- *        Event arguments.
- *
- * @param {Highcharts.Breadcrumbs} breadcrumbs
- *        The breadcrumbs objecs.
- */
 
 // Add language support.
 extend(
@@ -173,7 +163,6 @@ extend(
 /**
  * The Breadcrumbs class
  *
- * @private
  * @class
  * @name Highcharts.Breadcrumbs
  *
@@ -247,12 +236,8 @@ class Breadcrumbs {
         /**
          * Callback function to format the breadcrumb text from scratch.
          *
-         * @param {Highcharts.Breadcrumbs} breadcrumbs
-         *        The breadcrumbs instance
-         *
-         * @return {string}
-         *         Formatted text or false
-         * @since    next
+         * @type      {Highcharts.BreadcrumbsFormatterCallbackFunction}
+         * @since     next
          * @apioption breadcrumbs.formatter
          */
 
@@ -876,7 +861,7 @@ class Breadcrumbs {
     *        Initial horizontal position
     * @param {Highcharts.Breadcrumbs} posY
     *        Initial vertical position
-    * @return {SVGElement}
+    * @return {Highcharts.SVGElement}
     *        Returns the SVG button
     */
     public renderSeparator(this: Breadcrumbs, posX: number, posY: number): SVGElement|undefined {
@@ -1084,3 +1069,35 @@ if (!H.Breadcrumbs) {
 }
 
 export default Breadcrumbs;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Callback function to react on button clicks.
+ *
+ * @callback Highcharts.BreadcrumbsClickCallbackFunction
+ *
+ * @param {Highcharts.Breadcrumbs} this
+ * Breadcumps instance.
+ *
+ * @param {global.Event} e
+ * Event arguments.
+ */
+
+/**
+ * Callback function to format the breadcrumb text from scratch.
+ *
+ * @callback Highcharts.BreadcrumbsFormatterCallbackFunction
+ *
+ * @param {Highcharts.Breadcrumbs} breadcrumbs
+ * The breadcrumbs instance
+ *
+ * @return {string}
+ * Formatted text or false
+ */
+
+(''); // keeps doclets above in JS file
