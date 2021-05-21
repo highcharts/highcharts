@@ -34,15 +34,11 @@ const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const {
     charts,
-    deg2rad,
-    // Work on H.Renderer instead of SVGRenderer for VML support.
-    Renderer: {
-        prototype: RendererProto
-    }
+    deg2rad
 } = H;
 import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
-import _SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -108,7 +104,8 @@ declare module '../../Core/Renderer/SVG/SVGRendererLike' {
  *
  * */
 
-const cuboidPath = RendererProto.cuboidPath;
+const rendererProto = RendererRegistry.getRendererType().prototype,
+    cuboidPath = rendererProto.cuboidPath;
 
 // Check if a path is simplified. The simplified path contains only lineTo
 // segments, whereas non-simplified contain curves.
@@ -116,7 +113,7 @@ const isSimplified = (path: SVGPath): boolean =>
     !path.some((seg): boolean => seg[0] === 'C');
 
 // cylinder extends cuboid
-const cylinderMethods = merge(RendererProto.elements3d.cuboid, {
+const cylinderMethods = merge(rendererProto.elements3d.cuboid, {
     parts: ['top', 'bottom', 'front', 'back'],
     pathType: 'cylinder',
 
@@ -138,14 +135,14 @@ const cylinderMethods = merge(RendererProto.elements3d.cuboid, {
     }
 });
 
-RendererProto.elements3d.cylinder = cylinderMethods;
+rendererProto.elements3d.cylinder = cylinderMethods;
 
-RendererProto.cylinder = function (shapeArgs: SVGAttributes): SVGElement {
+rendererProto.cylinder = function (shapeArgs: SVGAttributes): SVGElement {
     return this.element3d('cylinder', shapeArgs);
 };
 
 // Generates paths and zIndexes.
-RendererProto.cylinderPath = function (
+rendererProto.cylinderPath = function (
     shapeArgs: SVGAttributes
 ): CylinderPathsObject {
     const renderer = this,
@@ -177,7 +174,7 @@ RendererProto.cylinderPath = function (
 };
 
 // Returns cylinder Front path
-RendererProto.getCylinderFront = function (
+rendererProto.getCylinderFront = function (
     topPath: SVGPath,
     bottomPath: SVGPath
 ): SVGPath {
@@ -210,7 +207,7 @@ RendererProto.getCylinderFront = function (
 };
 
 // Returns cylinder Back path
-RendererProto.getCylinderBack = function (
+rendererProto.getCylinderBack = function (
     topPath: SVGPath,
     bottomPath: SVGPath
 ): SVGPath {
@@ -259,7 +256,7 @@ RendererProto.getCylinderBack = function (
 };
 
 // Retruns cylinder path for top or bottom
-RendererProto.getCylinderEnd = function (
+rendererProto.getCylinderEnd = function (
     chart: Chart,
     shapeArgs: SVGAttributes,
     isBottom?: boolean
@@ -386,7 +383,7 @@ RendererProto.getCylinderEnd = function (
 // Returns curved path in format of:
 // [ M, x, y, ...[C, cp1x, cp2y, cp2x, cp2y, epx, epy]*n_times ]
 // (cp - control point, ep - end point)
-RendererProto.getCurvedPath = function (points: Array<PositionObject>): SVGPath {
+rendererProto.getCurvedPath = function (points: Array<PositionObject>): SVGPath {
     let path: SVGPath = [['M', points[0].x, points[0].y]],
         limit = points.length - 2,
         i;

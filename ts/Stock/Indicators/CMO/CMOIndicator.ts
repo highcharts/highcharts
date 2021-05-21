@@ -41,7 +41,7 @@ class CMOIndicator extends SMAIndicator {
      *         CMO indicator
      *
      * @extends      plotOptions.sma
-     * @since        next
+     * @since 9.1.0
      * @product      highstock
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/cmo
@@ -203,7 +203,7 @@ export default CMOIndicator;
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.cmo
- * @since     next
+ * @since 9.1.0
  * @product   highstock
  * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators

@@ -15,6 +15,7 @@ import type BBoxObject from './Renderer/BBoxObject';
 import type Chart from './Chart/Chart';
 import type ColorAxis from './Axis/ColorAxis';
 import type CSSObject from './Renderer/CSSObject';
+import type FontMetricsObject from './Renderer/FontMetricsObject';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
@@ -287,7 +288,7 @@ class Legend {
 
     public downTracker?: SVGElement;
 
-    public fontMetrics?: Highcharts.FontMetricsObject;
+    public fontMetrics?: FontMetricsObject;
 
     public fullHeight?: number;
 

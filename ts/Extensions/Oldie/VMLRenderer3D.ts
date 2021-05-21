@@ -10,9 +10,18 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../../Core/Color/ColorType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+
 import Axis from '../../Core/Axis/Axis.js';
 import O from '../../Core/Options.js';
 const { setOptions } = O;
@@ -51,7 +60,7 @@ class VMLRenderer3D {
      *
      * */
 
-    public static compose(vmlClass: typeof Highcharts.VMLRenderer, svgClass: typeof SVGRenderer3D): void {
+    public static compose(vmlClass: typeof Highcharts.VMLRenderer, svgClass: typeof SVGRenderer): void {
         const svgProto = svgClass.prototype;
         const vmlProto = vmlClass.prototype;
 

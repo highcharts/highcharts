@@ -36,7 +36,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
     public static fromJSON(json: HTMLComponent.ClassJSON): HTMLComponent {
         const options = json.options;
-        const elements = json.elements ? json.elements.map((el): Highcharts.ASTNode => JSON.parse(el)) : [];
+        const elements = json.elements ? json.elements.map((el): AST.Node => JSON.parse(el)) : [];
         const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
 
         const component = new HTMLComponent(
@@ -65,7 +65,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      * */
 
     private innerElements: HTMLElement[];
-    private elements: Highcharts.ASTNode[];
+    private elements: AST.Node[];
     private scaleElements: boolean;
     public options: HTMLComponent.HTMLComponentOptions;
 
@@ -242,7 +242,7 @@ namespace HTMLComponent {
 
     export type ComponentType = HTMLComponent;
     export interface HTMLComponentOptions extends Component.ComponentOptions, EditableOptions {
-        elements?: Highcharts.ASTNode[];
+        elements?: AST.Node[];
     }
 
     export interface EditableOptions extends Component.EditableOptions {

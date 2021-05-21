@@ -155,7 +155,7 @@ class SeriesPointsModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Modified table as a reference.
      */
     public modifyCell(
         table: DataTable,
@@ -169,7 +169,7 @@ class SeriesPointsModifier extends DataModifier {
             void 0,
             eventDetail
         );
-        return table.modified;
+        return table;
     }
 
     /**
@@ -189,7 +189,7 @@ class SeriesPointsModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Modifier table as a reference.
      */
     public modifyColumns(
         table: DataTable,
@@ -202,7 +202,7 @@ class SeriesPointsModifier extends DataModifier {
             void 0,
             eventDetail
         );
-        return table.modified;
+        return table;
     }
 
     /**
@@ -222,7 +222,7 @@ class SeriesPointsModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Modified table as a reference.
      */
     public modifyRows(
         table: DataTable,
@@ -235,7 +235,7 @@ class SeriesPointsModifier extends DataModifier {
             void 0,
             eventDetail
         );
-        return table.modified;
+        return table;
     }
 
     /**

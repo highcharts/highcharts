@@ -8,6 +8,8 @@
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
+import type FormatUtilities from '../../../Core/FormatUtilities';
+import type MockPointOptions from '../MockPointOptions';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
@@ -17,46 +19,11 @@ import U from '../../../Core/Utilities.js';
 const {
     extend,
     isNumber,
-    merge
+    merge,
+    pick
 } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationMeasureOptionsObject extends AnnotationsOptions {
-            typeOptions: AnnotationMeasureTypeOptionsObject;
-        }
-        interface AnnotationMeasureTypeCrosshairOptionsObject {
-            dashStyle: DashStyleValue;
-            enabled: boolean;
-            markerEnd: string;
-            zIndex: number;
-        }
-        interface AnnotationsMeasureTypeLabelOptionsObject {
-            enabled: boolean;
-            formatter?: FormatterCallbackFunction<Measure>;
-            style: CSSObject;
-        }
-        interface AnnotationMeasureTypeOptionsObject extends AnnotationsTypeOptions {
-            background: AnnotationsShapeOptions;
-            crosshairX: AnnotationMeasureTypeCrosshairOptionsObject;
-            crosshairY: AnnotationMeasureTypeCrosshairOptionsObject;
-            label: AnnotationsMeasureTypeLabelOptionsObject;
-            selectType: AnnotationDraggableValue;
-            xAxis: number;
-            yAxis: number;
-        }
-        interface AnnotationTypesRegistry {
-            measure: typeof Measure;
-        }
-    }
-}
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
-
 class Measure extends Annotation {
 
     /* *
@@ -386,7 +353,7 @@ class Measure extends Annotation {
 
     public constructor(
         chart: Highcharts.AnnotationChart,
-        userOptions: Highcharts.AnnotationMeasureOptionsObject
+        userOptions: Measure.MeasureOptions
     ) {
         super(chart, userOptions);
     }
@@ -403,7 +370,7 @@ class Measure extends Annotation {
      */
     public init(
         annotationOrChart: (Annotation|Highcharts.AnnotationChart),
-        userOptions: Highcharts.AnnotationMeasureOptionsObject,
+        userOptions: Measure.MeasureOptions,
         index?: number
     ): void {
         Annotation.prototype.init.call(this, annotationOrChart, userOptions, index);
@@ -432,7 +399,7 @@ class Measure extends Annotation {
      * @private
      * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
      */
-    public pointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+    public pointsOptions(): Array<MockPointOptions> {
         return this.options.points as any;
     }
 
@@ -441,7 +408,7 @@ class Measure extends Annotation {
      * @private
      * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
      */
-    public shapePointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+    public shapePointsOptions(): Array<MockPointOptions> {
 
         const options = this.options.typeOptions,
             xAxis = options.xAxis,
@@ -531,22 +498,21 @@ class Measure extends Annotation {
                 dashStyle: 'Dash',
                 overflow: 'allow',
                 align: 'left',
-                vertical: 'top',
+                y: 0,
+                x: 0,
+                verticalAlign: 'top',
                 crop: true,
-                point: function (target: any): PositionObject {
+                xAxis: 0,
+                yAxis: 0,
+                point: function (target: any): MockPointOptions {
                     const annotation: Measure = target.annotation,
-                        chart = annotation.chart,
-                        inverted = chart.inverted,
-                        xAxis = chart.xAxis[typeOptions.xAxis],
-                        yAxis = chart.yAxis[typeOptions.yAxis],
-                        top = chart.plotTop,
-                        left = chart.plotLeft;
+                        options = target.options;
 
                     return {
-                        x: (inverted ? top : 10) +
-                            xAxis.toPixels(annotation.xAxisMin, !inverted),
-                        y: (inverted ? -left + 10 : top) +
-                            yAxis.toPixels(annotation.yAxisMin)
+                        x: annotation.xAxisMin,
+                        y: annotation.yAxisMin,
+                        xAxis: pick(typeOptions.xAxis, options.xAxis),
+                        yAxis: pick(typeOptions.yAxis, options.yAxis)
                     };
                 } as any,
                 text: (formatter && formatter.call(this)) ||
@@ -790,7 +756,7 @@ interface Measure {
     max: (''|number);
     offsetX: number;
     offsetY: number;
-    options: Highcharts.AnnotationMeasureOptionsObject;
+    options: Measure.MeasureOptions;
     resizeX: number;
     resizeY: number;
     startXMax: number;
@@ -1070,6 +1036,47 @@ Measure.prototype.defaultOptions = merge(
     }
 );
 
-Annotation.types.measure = Measure as any;
+namespace Measure {
+    export interface MeasureOptions extends Highcharts.AnnotationsOptions {
+        typeOptions: MeasureTypeOptions;
+    }
+    export interface MeasureTypeCrosshairOptions {
+        dashStyle: DashStyleValue;
+        enabled: boolean;
+        markerEnd: string;
+        zIndex: number;
+    }
+    export interface MeasureTypeLabelOptions {
+        enabled: boolean;
+        formatter?: FormatUtilities.FormatterCallback<Measure>;
+        style: CSSObject;
+    }
+    export interface MeasureTypeOptions extends Highcharts.AnnotationsTypeOptions {
+        background: Highcharts.AnnotationsShapeOptions;
+        crosshairX: MeasureTypeCrosshairOptions;
+        crosshairY: MeasureTypeCrosshairOptions;
+        label: MeasureTypeLabelOptions;
+        selectType: Highcharts.AnnotationDraggableValue;
+        xAxis: number;
+        yAxis: number;
+    }
+}
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+Annotation.types.measure = Measure as any;
+declare module './AnnotationType'{
+    interface AnnotationTypeRegistry {
+        measure: typeof Measure;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default Measure;

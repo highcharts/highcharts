@@ -10,11 +10,13 @@
 
 'use strict';
 
+import type RangeSelector from '../../Extensions/RangeSelector';
 import Axis from './Axis.js';
 import H from '../Globals.js';
 const {
     isTouchDevice
 } = H;
+
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -94,7 +96,7 @@ class NavigatorAxisAdditions {
         pxMax?: number,
         fixedMin?: number,
         fixedMax?: number
-    ): Highcharts.RangeObject {
+    ): RangeSelector.RangeObject {
         const navigator = this;
         const axis = navigator.axis;
         const chart = axis.chart;

@@ -691,7 +691,7 @@ addEvent(Axis, 'getPlotLinePath', function (
  * @return {Highcharts.SVGPathArray}
  */
 SVGRenderer.prototype.crispPolyLine = function (
-    this: Highcharts.SVGRenderer,
+    this: SVGRenderer,
     points: Array<SVGPath.MoveTo|SVGPath.LineTo>,
     width: number
 ): SVGPath {
@@ -783,9 +783,10 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                 options.shape || 'callout'
             )
             .addClass(
-                'highcharts-crosshair-label' + (
-                    this.series[0] &&
-                    ' highcharts-color-' + this.series[0].colorIndex
+                'highcharts-crosshair-label highcharts-color-' + (
+                    point ?
+                        point.series.colorIndex :
+                        this.series[0] && this.series[0].colorIndex
                 )
             )
             .attr({
@@ -1167,7 +1168,7 @@ addEvent(Series, 'render', function (): void {
         // First render, initial clip box. clipBox also needs to be updated if
         // the series is rendered again before starting animating, in
         // compliance with a responsive rule (#13858).
-        if (!chart.hasRendered || (!this.clipBox && this.isDirty && !this.isDirtyData)) {
+        if (!chart.hasLoaded || (!this.clipBox && this.isDirty && !this.isDirtyData)) {
             this.clipBox = this.clipBox || merge(chart.clipBox);
             this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;

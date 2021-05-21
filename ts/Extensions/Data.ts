@@ -1575,7 +1575,10 @@ class Data {
                 done: Function,
                 tp?: string
             ): boolean {
-                if (!url || url.indexOf('http') !== 0) {
+                if (
+                    !url ||
+                    !/^(http|\/|\.\/|\.\.\/)/.test(url)
+                ) {
                     if (url && options.error) {
                         options.error('Invalid URL');
                     }

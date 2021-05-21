@@ -185,6 +185,8 @@ function (assert) {
         controller = new TestController(chart),
         button = chart.stockTools.listWrapper.childNodes[0].childNodes[0];
 
+    chart.stockTools.wrapper.style.display = 'none';
+
     // Show croshair with the label.
     controller.moveTo(200, 200);
     assert.strictEqual(

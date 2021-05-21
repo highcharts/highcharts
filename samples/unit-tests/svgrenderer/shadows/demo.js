@@ -68,6 +68,9 @@ QUnit.test('Series shadows', function (assert) {
     );
 
     chart = Highcharts.chart('container', {
+        chart: {
+            inverted: true
+        },
         series: [
             {
                 shadow: true,
@@ -79,7 +82,7 @@ QUnit.test('Series shadows', function (assert) {
     attributes = [
         'stroke="red"',
         'stroke-opacity="0.3"',
-        'transform="translate(5, 10)'
+        'transform="translate(10, 5)'
     ];
 
     chart.series[0].update({

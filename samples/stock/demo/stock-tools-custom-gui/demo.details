@@ -1,5 +1,6 @@
 ---
 name: Stock chart with custom GUI
+requiresManualTesting: true
 authors:
   - Sebastian Bochan
 js_wrap: b

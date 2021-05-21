@@ -24,10 +24,9 @@ import type Point from '../../Core/Series/Point.js';
 import type { PointStateHoverOptions } from '../../Core/Series/PointOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import Color from '../../Core/Color/Color.js';
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const { colorMapSeriesMixin } = ColorMapMixin;
-import H from '../../Core/Globals.js';
-const { noop } = H;
 import HeatmapPoint from './HeatmapPoint.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
@@ -40,11 +39,7 @@ const {
     }
 } = SeriesRegistry;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-const {
-    prototype: {
-        symbols
-    }
-} = SVGRenderer;
+const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -59,6 +54,13 @@ const {
  *  Declarations
  *
  * */
+
+declare module '../../Core/Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        /** @requires Series/Heatmap/HeatmapSeries */
+        ellipse: SymbolTypeRegistry['circle'];
+    }
+}
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
@@ -418,10 +420,15 @@ class HeatmapSeries extends ScatterSeries {
         if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
             Series.prototype.drawPoints.call(this);
             this.points.forEach((point): void => {
-                point.graphic &&
-                (point.graphic as any)[
-                    this.chart.styledMode ? 'css' : 'animate'
-                ](this.colorAttribs(point));
+                if (point.graphic) {
+                    (point.graphic as any)[
+                        this.chart.styledMode ? 'css' : 'animate'
+                    ](this.colorAttribs(point));
+
+                    if (point.value === null) { // #15708
+                        point.graphic.addClass('highcharts-null-point');
+                    }
+                }
             });
         }
     }
@@ -487,9 +494,7 @@ class HeatmapSeries extends ScatterSeries {
         this.yAxis.axisPointRange = options.rowsize || 1;
 
         // Bind new symbol names
-        extend(symbols, {
-            ellipse: symbols.circle
-        });
+        symbols.ellipse = symbols.circle;
     }
 
     /**
@@ -595,7 +600,7 @@ class HeatmapSeries extends ScatterSeries {
 
             attr.fill =
                 stateOptions.color ||
-                H.color(attr.fill).brighten(brightness || 0).get();
+                Color.parse(attr.fill).brighten(brightness || 0).get();
 
             attr.stroke = stateOptions.lineColor;
         }

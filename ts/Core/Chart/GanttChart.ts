@@ -69,66 +69,16 @@ class GanttChart extends Chart {
         userOptions: Partial<Highcharts.Options>,
         callback?: Chart.CallbackFunction
     ): void {
-        let seriesOptions = userOptions.series,
-            defaultOptions = getOptions(),
-            defaultLinkedTo: number;
+        const defaultOptions = getOptions(),
+            xAxisOptions = userOptions.xAxis,
+            yAxisOptions = userOptions.yAxis;
 
-        // If user hasn't defined axes as array, make it into an array and add a
-        // second axis by default.
-        if (!isArray(userOptions.xAxis)) {
-            userOptions.xAxis = [userOptions.xAxis || {}, {}];
-        }
+        let defaultLinkedTo: number;
 
-        // apply X axis options to both single and multi x axes
-        userOptions.xAxis = userOptions.xAxis.map(function (
-            xAxisOptions,
-            i
-        ): Highcharts.XAxisOptions {
-            if (i === 1) { // Second xAxis
-                defaultLinkedTo = 0;
-            }
-            return merge<Highcharts.XAxisOptions>(
-                defaultOptions.xAxis as any,
-                { // defaults
-                    grid: {
-                        enabled: true
-                    },
-                    opposite: true,
-                    linkedTo: defaultLinkedTo
-                } as Highcharts.XAxisOptions,
-                xAxisOptions, // user options
-                { // forced options
-                    type: 'datetime'
-                } as Highcharts.XAxisOptions
-            );
-        });
+        // Avoid doing these twice
+        userOptions.xAxis = userOptions.yAxis = void 0;
 
-        // apply Y axis options to both single and multi y axes
-        userOptions.yAxis = (splat(userOptions.yAxis || {})).map(function (
-            yAxisOptions: Highcharts.YAxisOptions
-        ): Highcharts.YAxisOptions {
-            return merge<Highcharts.YAxisOptions>(
-                defaultOptions.yAxis as any, // #3802
-                { // defaults
-                    grid: {
-                        enabled: true
-                    },
-
-                    staticScale: 50,
-
-                    reversed: true,
-
-                    // Set default type treegrid, but only if 'categories' is
-                    // undefined
-                    type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
-                } as Highcharts.YAxisOptions,
-                yAxisOptions // user options
-            );
-        });
-
-        delete userOptions.series;
-
-        userOptions = merge(
+        const options = merge(
             true,
             {
                 chart: {
@@ -157,9 +107,63 @@ class GanttChart extends Chart {
             } as Highcharts.Options
         );
 
-        userOptions.series = seriesOptions;
+        userOptions.xAxis = xAxisOptions;
+        userOptions.yAxis = yAxisOptions;
 
-        super.init(userOptions, callback);
+        // apply X axis options to both single and multi x axes
+        // If user hasn't defined axes as array, make it into an array and add a
+        // second axis by default.
+        options.xAxis = (
+            !isArray(userOptions.xAxis) ?
+                [userOptions.xAxis || {}, {}] :
+                userOptions.xAxis
+        ).map(function (
+            xAxisOptions,
+            i
+        ): Highcharts.XAxisOptions {
+            if (i === 1) { // Second xAxis
+                defaultLinkedTo = 0;
+            }
+            return merge<Highcharts.XAxisOptions>(
+                defaultOptions.xAxis as any,
+                { // defaults
+                    grid: {
+                        enabled: true
+                    },
+                    opposite: true,
+                    linkedTo: defaultLinkedTo
+                } as Highcharts.XAxisOptions,
+                xAxisOptions, // user options
+                { // forced options
+                    type: 'datetime'
+                } as Highcharts.XAxisOptions
+            );
+        });
+
+        // apply Y axis options to both single and multi y axes
+        options.yAxis = (splat(userOptions.yAxis || {})).map(function (
+            yAxisOptions: Highcharts.YAxisOptions
+        ): Highcharts.YAxisOptions {
+            return merge<Highcharts.YAxisOptions>(
+                defaultOptions.yAxis as any, // #3802
+                { // defaults
+                    grid: {
+                        enabled: true
+                    },
+
+                    staticScale: 50,
+
+                    reversed: true,
+
+                    // Set default type treegrid, but only if 'categories' is
+                    // undefined
+                    type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
+                } as Highcharts.YAxisOptions,
+                yAxisOptions // user options
+            );
+        });
+
+        super.init(options, callback);
     }
 }
 

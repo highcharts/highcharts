@@ -21,12 +21,15 @@ import type ColorString from './Color/ColorString';
 import type ColorType from './Color/ColorType';
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
+import type FormatUtilties from './FormatUtilities';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type Point from './Series/Point';
 import type Series from './Series/Series';
 import type { SeriesTypeOptions, SeriesTypePlotOptions } from './Series/SeriesType';
 import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type SVGRenderer from './Renderer/SVG/SVGRenderer';
+
 import H from './Globals.js';
 const {
     isTouchDevice,
@@ -39,13 +42,7 @@ const {
 import palette from './Color/Palette.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-const {
-    getNestedProperty,
-    isNumber,
-    merge,
-    pick,
-    pInt
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -274,7 +271,7 @@ declare global {
             itemWidth?: number;
             layout?: ('horizontal'|'vertical'|'proximate');
             labelFormat?: string;
-            labelFormatter?: FormatterCallbackFunction<Series|Point>;
+            labelFormatter?: FormatUtilties.FormatterCallback<Series|Point>;
             /** @deprecated */
             lineHeight?: number;
             margin?: number;
@@ -329,8 +326,8 @@ declare global {
             loading?: LoadingOptions;
             plotOptions?: SeriesTypePlotOptions;
             subtitle?: SubtitleOptions;
-            symbols?: Array<SymbolKeyValue>;
-            time?: TimeOptions;
+            symbols?: Array<SVGRenderer.SymbolKeyValue>;
+            time?: Time.TimeOptions;
             title?: TitleOptions;
             tooltip?: TooltipOptions;
         }
@@ -385,7 +382,7 @@ declare global {
             outside?: boolean;
             padding?: number;
             pointFormat?: string;
-            pointFormatter?: FormatterCallbackFunction<Point>;
+            pointFormatter?: FormatUtilties.FormatterCallback<Point>;
             positioner?: TooltipPositionerCallbackFunction;
             shadow?: (boolean|Partial<ShadowOptionsObject>);
             shape?: TooltipShapeValue;

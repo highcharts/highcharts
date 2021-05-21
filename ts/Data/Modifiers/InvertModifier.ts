@@ -194,7 +194,7 @@ class InvertModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Modified table as a reference.
      */
     public modifyCell(
         table: DataTable,
@@ -203,12 +203,25 @@ class InvertModifier extends DataModifier {
         cellValue: DataTable.CellType,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
-        table.modified.setColumns(
-            this.modify(table.clone()).getColumns(),
-            void 0,
-            eventDetail
-        );
-        return table.modified;
+        const modified = table.modified,
+            modifiedRowIndex = modified.getRowIndexBy('columnNames', columnName);
+
+        if (typeof modifiedRowIndex === 'undefined') {
+            modified.setColumns(
+                this.modify(table.clone()).getColumns(),
+                void 0,
+                eventDetail
+            );
+        } else {
+            modified.setCell(
+                `${rowIndex}`,
+                modifiedRowIndex,
+                cellValue,
+                eventDetail
+            );
+        }
+
+        return table;
     }
 
     /**
@@ -228,7 +241,7 @@ class InvertModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Modified table as a reference.
      */
     public modifyColumns(
         table: DataTable,
@@ -236,12 +249,65 @@ class InvertModifier extends DataModifier {
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
-        table.modified.setColumns(
-            this.modify(table.clone()).getColumns(),
-            void 0,
-            eventDetail
-        );
-        return table.modified;
+        const modified = table.modified,
+            modifiedColumnNames = modified.getColumnNames();
+
+        let columnNames = table.getColumnNames(),
+            reset = (columnNames.length !== modifiedColumnNames.length);
+
+        if (!reset) {
+            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+                if (columnNames[i] !== modifiedColumnNames[i]) {
+                    reset = true;
+                    break;
+                }
+            }
+        }
+
+        if (reset) {
+            modified.setColumns(
+                this.modify(table.clone()).getColumns(),
+                void 0,
+                eventDetail
+            );
+            return table;
+        }
+
+        columnNames = Object.keys(columns);
+
+        for (
+            let i = 0,
+                iEnd = columnNames.length,
+                column: DataTable.Column,
+                columnName: string,
+                modifiedRowIndex: (number|undefined);
+            i < iEnd;
+            ++i
+        ) {
+            columnName = columnNames[i];
+            column = columns[columnName];
+            modifiedRowIndex = (
+                modified.getRowIndexBy('columnNames', columnName) ||
+                modified.getRowCount()
+            );
+
+            for (
+                let j = 0,
+                    j2 = rowIndex,
+                    jEnd = column.length;
+                j < jEnd;
+                ++j, ++j2
+            ) {
+                modified.setCell(
+                    `${j2}`,
+                    modifiedRowIndex,
+                    column[j],
+                    eventDetail
+                );
+            }
+        }
+
+        return table;
     }
 
     /**
@@ -261,7 +327,7 @@ class InvertModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Modified table as a reference.
      */
     public modifyRows(
         table: DataTable,
@@ -269,12 +335,55 @@ class InvertModifier extends DataModifier {
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
-        table.modified.setColumns(
-            this.modify(table.clone()).getColumns(),
-            void 0,
-            eventDetail
-        );
-        return table.modified;
+        const columnNames = table.getColumnNames(),
+            modified = table.modified,
+            modifiedColumnNames = modified.getColumnNames();
+
+        let reset = (columnNames.length !== modifiedColumnNames.length);
+
+        if (!reset) {
+            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+                if (columnNames[i] !== modifiedColumnNames[i]) {
+                    reset = true;
+                    break;
+                }
+            }
+        }
+
+        if (reset) {
+            modified.setColumns(
+                this.modify(table.clone()).getColumns(),
+                void 0,
+                eventDetail
+            );
+            return table;
+        }
+
+        for (
+            let i = 0,
+                i2 = rowIndex,
+                iEnd = rows.length,
+                row: (DataTable.Row|DataTable.RowObject);
+            i < iEnd;
+            ++i, ++i2
+        ) {
+            row = rows[i];
+
+            if (row instanceof Array) {
+                modified.setColumn(`${i2}`, row);
+            } else {
+                for (let j = 0, jEnd = columnNames.length; j < jEnd; ++j) {
+                    modified.setCell(
+                        `${i2}`,
+                        j,
+                        row[columnNames[j]],
+                        eventDetail
+                    );
+                }
+            }
+        }
+
+        return table;
     }
 
     /**

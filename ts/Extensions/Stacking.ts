@@ -20,6 +20,7 @@ import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type { DataLabelOverflowValue } from '../Core/Series/DataLabelOptions';
+import type FormatUtilities from '../Core/FormatUtilities';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../Core/Renderer/SVG/SVGLabel';
 
@@ -131,7 +132,7 @@ declare global {
             crop?: boolean;
             enabled?: boolean;
             format?: string;
-            formatter?: FormatterCallbackFunction<StackItemObject>;
+            formatter?: FormatUtilities.FormatterCallback<StackItemObject>;
             overflow?: DataLabelOverflowValue;
             rotation?: number;
             style?: CSSObject;
