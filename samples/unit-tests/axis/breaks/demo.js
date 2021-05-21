@@ -847,8 +847,8 @@ QUnit.test('Axis with breaks and toValue method calculation, #13238.', function 
 
     assert.close(
         chart.xAxis[0].toValue(100),
-        0.2,
-        0.1,
+        0.26227848101265816,
+        0.05,
         'The toValue method should return correct value when breakes enabled.'
     );
 });

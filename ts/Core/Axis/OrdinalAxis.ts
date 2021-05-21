@@ -66,7 +66,7 @@ declare module './Types' {
             findHigherRanks?: boolean
         ): TickPositionsArray;
         /** @deprecated */
-        lin2val(val: number, isInside?: boolean|undefined): number;
+        lin2val(val: number): number;
         /** @deprecated */
         val2lin(val: number, toIndex?: boolean): number;
     }
@@ -98,7 +98,7 @@ interface OrdinalAxis extends Axis {
         findHigherRanks?: boolean
     ): TickPositionsArray;
     index2val(val: number): number;
-    lin2val(val: number, isInside?: boolean|undefined): number;
+    lin2val(val: number): number;
     ordinal2lin: OrdinalAxis['val2lin'];
     val2lin(val: number, toIndex?: boolean): number;
 }
@@ -534,7 +534,7 @@ namespace OrdinalAxis {
         }
 
         /**
-         * Get index of point inside the extended ordinal positions array.
+         * Get index of point inside the ordinal positions array.
          *
          * @private
          * @param {number} val
@@ -550,12 +550,12 @@ namespace OrdinalAxis {
          */
         public getIndexOfPoint(
             val: number,
-            ordinallArray: Array<number>
+            ordinalArray: Array<number>
         ): number {
             const ordinal = this,
                 axis = ordinal.axis;
-            let firstPointVal = (axis.series[0].points && axis.series[0].points[0].x) || 0,
-                firstPointX = (axis.series[0].points && axis.series[0].points[0].plotX) || 0;
+            let firstPointVal = 0,
+                firstPointX = 0;
 
             // Find the point with the smallest x and pixel value from
             // all series assigned to the axis.
@@ -577,7 +577,7 @@ namespace OrdinalAxis {
                 (ordinal.slope || axis.closestPointRange || ordinal.overscrollPointsRange as number),
                 shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
 
-            return ordinallArray.indexOf(firstPointVal) + shiftIndex;
+            return ordinalArray.indexOf(firstPointVal) + shiftIndex;
         }
 
         /**
@@ -900,7 +900,7 @@ namespace OrdinalAxis {
          * Used only when panning an ordinal axis.
          *
          * @private
-         * @function Highcharts.Axis#lin2val
+         * @function Highcharts.Axis#index2val
          *
          * @param {number} index
          *        The index value of searched point
@@ -949,16 +949,14 @@ namespace OrdinalAxis {
          * @param {number} val
          *        The linear abstracted value.
          *
-         * @param {boolean} [isInside]
-         *        Translate from an index in the ordinal positions rather than a
-         *        value.
-         *
          * @return {number}
          */
-        axisProto.lin2val = function (val: number, isInside: boolean|undefined): number {
+        axisProto.lin2val = function (val: number): number {
             const axis = this,
                 ordinal = axis.ordinal,
-                ordinalPositions = ordinal.positions; // for the current visible range
+                ordinalPositions = ordinal.positions, // for the current visible range
+                isInside = val > axis.left && val < axis.left + axis.len;
+
             let extendedOrdinalPositions = this.ordinal.extendedOrdinalPositions;
 
             // The visible range contains only equally spaced values.
@@ -972,12 +970,12 @@ namespace OrdinalAxis {
             if (!isInside) {
                 // When iterating for the first time,
                 // get the extended ordinal positional and assign them.
-                if (axis.ordinal && !extendedOrdinalPositions) {
+                if (!extendedOrdinalPositions) {
                     extendedOrdinalPositions = axis.ordinal.getExtendedPositions();
                     this.ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
                 }
 
-                if (ordinalPositions && extendedOrdinalPositions && extendedOrdinalPositions.length) {
+                if (extendedOrdinalPositions && extendedOrdinalPositions.length) {
                     const indexInEOP = this.ordinal.getIndexOfPoint(val, extendedOrdinalPositions),
                         mantissa = correctFloat(indexInEOP % 1);
 

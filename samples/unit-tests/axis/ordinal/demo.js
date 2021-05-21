@@ -341,6 +341,6 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
         lin2val(1000),
         12.2,
         `For the pixel value higher than any point in extendedOrdinalPositions,
-        array, the function should return the last element of that array.`
+        array, the function should calculate value for that point.`
     );
 });
