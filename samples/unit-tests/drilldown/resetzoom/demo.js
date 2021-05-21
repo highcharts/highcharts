@@ -160,12 +160,24 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
         'object',
         'Reset zoom button should also be visible.'
     );
+    const drillUpButtonxSetting = chart.drillUpButton.xSetting;
     assert.ok(
         chart.resetZoomButton.xSetting >
             chart.drillUpButton.xSetting + chart.drillUpButton.width,
         'Buttons should not overlap.'
     );
 
+    // Click reset zoom.
+    controller.click(520, 60);
+    assert.strictEqual(
+        drillUpButtonxSetting,
+        chart.drillUpButton.xSetting,
+        `After resetting the zoom, the drillup button should
+        stay at the same position.`
+    );
+
+    // Zoom again on second level
+    controller.pan([300, 200], [200, 200]);
     // Drill up
     chart.drillUp();
     assert.strictEqual(
@@ -186,9 +198,6 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
         'undefined',
         'resetZoomButton removed'
     );
-
-    chart.series[0].points[0].doDrilldown();
-    controller.pan([300, 200], [200, 200]);
 });
 
 QUnit.test('Drilldown and reset zoom should not crash the chart, #8095.', function (assert) {

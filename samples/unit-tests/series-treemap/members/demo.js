@@ -326,50 +326,6 @@ QUnit.test('seriesTypes.treemap.onClickDrillToNode', function (assert) {
     );
 });
 
-QUnit.test('traverseUpButton', assert => {
-    const chart = Highcharts.chart('container', {
-        chart: {
-            type: 'treemap'
-        },
-        series: [
-            {
-                data: [
-                    {
-                        id: 'A',
-                        name: 'A'
-                    }
-                ]
-            }
-        ]
-    });
-    const series = chart.series[0];
-
-    // Render button when root id is ''
-    series.renderTraverseUpButton('');
-    assert.strictEqual(
-        series.drillUpButton,
-        undefined,
-        "should destroy traverseUpButton when root id is ''."
-    );
-
-    // Render button when root id is 'A'
-    series.renderTraverseUpButton('A');
-    assert.strictEqual(
-        series.drillUpButton.text.textStr,
-        'A',
-        'should set name to "A" when root is "A" and traverseUpButton.text is undefined.'
-    );
-
-    // Render button with custom text
-    series.options.traverseUpButton.text = 'My Custom Text';
-    series.renderTraverseUpButton('A');
-    assert.strictEqual(
-        series.drillUpButton.text.textStr,
-        'My Custom Text',
-        'should set name to "My Custom Text" when traverseUpButton.text is set to "My Custom Text".'
-    );
-});
-
 QUnit.test('Traversing single top node', assert => {
     const data = [
         {
