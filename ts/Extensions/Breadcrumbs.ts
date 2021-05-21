@@ -40,6 +40,11 @@ const {
     merge
 } = U;
 
+/* *
+ *
+ * Declarations
+ *
+ * */
 declare module '../Core/LangOptions' {
     interface LangOptions {
         mainBreadcrumb?: string;
@@ -55,6 +60,7 @@ declare module '../Series/Treemap/TreemapSeriesOptions' {
         breadcrumbs?: Highcharts.BreadcrumbsOptions;
     }
 }
+
 /**
  * Internal types
  * @private
@@ -356,6 +362,11 @@ class Breadcrumbs {
         zIndex: 7
     };
 
+    /* *
+     *
+     * Properties
+     *
+     * */
     public chart: Chart = void 0 as any;
     public breadcrumbsGroup: SVGElement = void 0 as any;
     public breadcrumbsList: Array<Array<any>> = [];
@@ -1072,4 +1083,4 @@ if (!H.Breadcrumbs) {
     });
 }
 
-export default H.Breadcrumbs;
+export default Breadcrumbs;
