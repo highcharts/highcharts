@@ -10,10 +10,18 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type TickPositionsArray from './TickPositionsArray';
 import type NavigatorAxis from './NavigatorAxis';
 import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
+
 import Axis from './Axis.js';
+import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 import Point from '../Series/Point.js';
 import Series from '../Series/Series.js';
@@ -26,6 +34,9 @@ const {
     pick,
     timeUnits
 } = U;
+
+// Has a dependency on Navigator due to the use of Axis.toFixedRange
+import '../Navigator.js';
 
 /* *
  *
@@ -53,15 +64,9 @@ declare module './AxisComposition' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface XAxisOptions {
-            keepOrdinalPadding?: boolean;
-        }
+declare module './AxisOptions' {
+    interface AxisOptions {
+        keepOrdinalPadding?: boolean;
     }
 }
 
@@ -76,10 +81,6 @@ declare module './Types' {
         OrdinalAxis: OrdinalAxis;
     }
 }
-
-import Chart from '../Chart/Chart.js';
-// Has a dependency on Navigator due to the use of Axis.toFixedRange
-import '../Navigator.js';
 
 /* eslint-disable valid-jsdoc */
 

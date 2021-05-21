@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Options from '../../Core/Options';
@@ -20,6 +26,18 @@ import type Series from '../../Core/Series/Series';
 
 import palette from '../../Core/Color/Palette.js';
 import ColorType from '../../Core/Color/ColorType';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        accessibility?: Highcharts.XAxisAccessibilityOptions;
+    }
+}
 
 declare module '../../Core/Series/PointOptions' {
     interface PointOptions {
@@ -173,9 +191,6 @@ declare global {
             description?: string;
             enabled?: boolean;
             rangeDescription?: string;
-        }
-        interface XAxisOptions {
-            accessibility?: XAxisAccessibilityOptions;
         }
     }
 }

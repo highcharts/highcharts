@@ -16,13 +16,20 @@
 
 import type Axis from './Axis.js';
 import type Chart from '../Chart/Chart.js';
-import type SVGElement from '../Renderer/SVG/SVGElement';
+import type SVGLabel from '../Renderer/SVG/SVGLabel';
+
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
 const {
     addEvent,
     objectEach
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module './AxisComposition' {
     interface AxisComposition {
@@ -64,7 +71,7 @@ namespace WaterfallAxis {
     }
 
     export interface StacksItemObject {
-        label?: SVGElement;
+        label?: SVGLabel;
         negTotal: number;
         posTotal: number;
         stackState: Array<string>;

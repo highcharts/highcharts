@@ -10,6 +10,13 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AxisOptions from './Axis/AxisOptions';
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
 import type PointerEvent from './PointerEvent';
@@ -17,6 +24,7 @@ import type RangeSelector from '../Extensions/RangeSelector';
 import type { SeriesTypeOptions } from './Series/SeriesType';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
+
 import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
 import Color from './Color/Color.js';
@@ -54,6 +62,24 @@ const {
     removeEvent,
     splat
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './Axis/AxisOptions' {
+    interface AxisOptions {
+        maxRange?: number;
+        toFixedRange?: (
+            pxMin: number,
+            pxMax: number,
+            fixedMin: number,
+            fixedMax: number
+        ) => RangeSelector.RangeObject;
+    }
+}
 
 declare module './Chart/ChartLike'{
     interface ChartLike {
@@ -114,17 +140,8 @@ declare global {
             outlineWidth?: number;
             series?: SeriesTypeOptions;
             top?: number;
-            xAxis?: DeepPartial<XAxisOptions>;
+            xAxis?: DeepPartial<AxisOptions>;
             yAxis?: DeepPartial<YAxisOptions>;
-        }
-        interface XAxisOptions {
-            maxRange?: number;
-            toFixedRange?: (
-                pxMin: number,
-                pxMax: number,
-                fixedMin: number,
-                fixedMax: number
-            ) => RangeSelector.RangeObject;
         }
         class Navigator {
             public constructor(chart: Chart);
@@ -1893,7 +1910,7 @@ class Navigator {
 
         if (navigator.navigatorEnabled) {
             // an x axis is required for scrollbar also
-            navigator.xAxis = new Axis(chart, merge<DeepPartial<Highcharts.XAxisOptions>>({
+            navigator.xAxis = new Axis(chart, merge<DeepPartial<AxisOptions>>({
                 // inherit base xAxis' break and ordinal options
                 breaks: baseXaxis.options.breaks,
                 ordinal: baseXaxis.options.ordinal

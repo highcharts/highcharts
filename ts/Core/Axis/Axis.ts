@@ -89,7 +89,7 @@ const {
 
 declare module '../../Core/Options'{
     interface Options {
-        xAxis?: (DeepPartial<Highcharts.XAxisOptions>|Array<DeepPartial<Highcharts.XAxisOptions>>);
+        xAxis?: (DeepPartial<AxisOptions>|Array<DeepPartial<AxisOptions>>);
         yAxis?: (DeepPartial<Highcharts.YAxisOptions>|Array<DeepPartial<Highcharts.YAxisOptions>>);
     }
 }
@@ -112,7 +112,7 @@ declare global {
             'navigator'|'pan'|'rangeSelectorButton'|'rangeSelectorInput'|
             'scrollbar'|'traverseUpButton'|'zoom'
         );
-        type AxisTypeOptions = (XAxisOptions|YAxisOptions);
+        type AxisTypeOptions = (AxisOptions|YAxisOptions);
         type AxisTickmarkPlacementValue = ('between'|'on');
         type AxisTickPositionValue = ('inside'|'outside');
         type AxisTitleAlignValue = ('high'|'low'|'middle');
@@ -177,9 +177,6 @@ declare global {
             repeat?: number;
             to: number;
         }
-        interface XAxisOptions extends AxisOptions {
-
-        }
         interface XAxisTitleOptions {
             align: AxisTitleAlignValue;
             enabled?: boolean;
@@ -194,7 +191,7 @@ declare global {
             x: number;
             y: number;
         }
-        interface YAxisOptions extends XAxisOptions {
+        interface YAxisOptions extends AxisOptions {
             maxColor?: ColorType;
             minColor?: ColorType;
             staticScale?: number;
@@ -210,7 +207,7 @@ declare global {
         class Axis implements AxisLike {
             public static defaultBottomAxisOptions: AxisOptions;
             public static defaultLeftAxisOptions: AxisOptions;
-            public static defaultOptions: XAxisOptions;
+            public static defaultOptions: AxisOptions;
             public static defaultRightAxisOptions: AxisOptions;
             public static defaultTopAxisOptions: AxisOptions;
             public static defaultYAxisOptions: YAxisOptions;
@@ -423,251 +420,13 @@ declare global {
     }
 }
 
-/**
- * Options for the path on the Axis to be calculated.
- * @interface Highcharts.AxisPlotLinePathOptionsObject
- *//**
- * Axis value.
- * @name Highcharts.AxisPlotLinePathOptionsObject#value
- * @type {number|undefined}
- *//**
- * Line width used for calculation crisp line coordinates. Defaults to 1.
- * @name Highcharts.AxisPlotLinePathOptionsObject#lineWidth
- * @type {number|undefined}
- *//**
- * If `false`, the function will return null when it falls outside the axis
- * bounds. If `true`, the function will return a path aligned to the plot area
- * sides if it falls outside. If `pass`, it will return a path outside.
- * @name Highcharts.AxisPlotLinePathOptionsObject#force
- * @type {string|boolean|undefined}
- *//**
- * Used in Highcharts Stock. When `true`, plot paths
- * (crosshair, plotLines, gridLines)
- * will be rendered on all axes when defined on the first axis.
- * @name Highcharts.AxisPlotLinePathOptionsObject#acrossPanes
- * @type {boolean|undefined}
- *//**
- * Use old coordinates (for resizing and rescaling).
- * If not set, defaults to `false`.
- * @name Highcharts.AxisPlotLinePathOptionsObject#old
- * @type {boolean|undefined}
- *//**
- * If given, return the plot line path of a pixel position on the axis.
- * @name Highcharts.AxisPlotLinePathOptionsObject#translatedValue
- * @type {number|undefined}
- *//**
- * Used in Polar axes. Reverse the positions for concatenation of polygonal
- * plot bands
- * @name Highcharts.AxisPlotLinePathOptionsObject#reverse
- * @type {boolean|undefined}
- */
-
-/**
- * Options for crosshairs on axes.
- *
- * @product highstock
- *
- * @typedef {Highcharts.XAxisCrosshairOptions|Highcharts.YAxisCrosshairOptions} Highcharts.AxisCrosshairOptions
- */
-
-/**
- * @typedef {"navigator"|"pan"|"rangeSelectorButton"|"rangeSelectorInput"|"scrollbar"|"traverseUpButton"|"zoom"} Highcharts.AxisExtremesTriggerValue
- */
-
-/**
- * @callback Highcharts.AxisEventCallbackFunction
- *
- * @param {Highcharts.Axis} this
- */
-
-/**
- * @callback Highcharts.AxisLabelsFormatterCallbackFunction
- *
- * @param {Highcharts.AxisLabelsFormatterContextObject} this
- *
- * @param {Highcharts.AxisLabelsFormatterContextObject} ctx
- *
- * @return {string}
- */
-
-/**
- * @interface Highcharts.AxisLabelsFormatterContextObject
- *//**
- * The axis item of the label
- * @name Highcharts.AxisLabelsFormatterContextObject#axis
- * @type {Highcharts.Axis}
- *//**
- * The chart instance.
- * @name Highcharts.AxisLabelsFormatterContextObject#chart
- * @type {Highcharts.Chart}
- *//**
- * Whether the label belongs to the first tick on the axis.
- * @name Highcharts.AxisLabelsFormatterContextObject#isFirst
- * @type {boolean}
- *//**
- * Whether the label belongs to the last tick on the axis.
- * @name Highcharts.AxisLabelsFormatterContextObject#isLast
- * @type {boolean}
- *//**
- * The position on the axis in terms of axis values. For category axes, a
- * zero-based index. For datetime axes, the JavaScript time in milliseconds
- * since 1970.
- * @name Highcharts.AxisLabelsFormatterContextObject#pos
- * @type {number}
- *//**
- * The preformatted text as the result of the default formatting. For example
- * dates will be formatted as strings, and numbers with language-specific comma
- * separators, thousands separators and numeric symbols like `k` or `M`.
- * @name Highcharts.AxisLabelsFormatterContextObject#text
- * @type {string}
- *//**
- * The Tick instance.
- * @name Highcharts.AxisLabelsFormatterContextObject#tick
- * @type {Highcharts.Tick}
- *//**
- * This can be either a numeric value or a category string.
- * @name Highcharts.AxisLabelsFormatterContextObject#value
- * @type {number|string}
- */
-
-/**
- * Options for axes.
- *
- * @typedef {Highcharts.XAxisOptions|Highcharts.YAxisOptions|Highcharts.ZAxisOptions} Highcharts.AxisOptions
- */
-
-/**
- * @callback Highcharts.AxisPointBreakEventCallbackFunction
- *
- * @param {Highcharts.Axis} this
- *
- * @param {Highcharts.AxisPointBreakEventObject} evt
- */
-
-/**
- * @interface Highcharts.AxisPointBreakEventObject
- *//**
- * @name Highcharts.AxisPointBreakEventObject#brk
- * @type {Highcharts.Dictionary<number>}
- *//**
- * @name Highcharts.AxisPointBreakEventObject#point
- * @type {Highcharts.Point}
- *//**
- * @name Highcharts.AxisPointBreakEventObject#preventDefault
- * @type {Function}
- *//**
- * @name Highcharts.AxisPointBreakEventObject#target
- * @type {Highcharts.SVGElement}
- *//**
- * @name Highcharts.AxisPointBreakEventObject#type
- * @type {"pointBreak"|"pointInBreak"}
- */
-
-/**
- * @callback Highcharts.AxisSetExtremesEventCallbackFunction
- *
- * @param {Highcharts.Axis} this
- *
- * @param {Highcharts.AxisSetExtremesEventObject} evt
- */
-
-/**
- * @interface Highcharts.AxisSetExtremesEventObject
- * @extends Highcharts.ExtremesObject
- *//**
- * @name Highcharts.AxisSetExtremesEventObject#preventDefault
- * @type {Function}
- *//**
- * @name Highcharts.AxisSetExtremesEventObject#target
- * @type {Highcharts.SVGElement}
- *//**
- * @name Highcharts.AxisSetExtremesEventObject#trigger
- * @type {Highcharts.AxisExtremesTriggerValue|string}
- *//**
- * @name Highcharts.AxisSetExtremesEventObject#type
- * @type {"setExtremes"}
- */
-
-/**
- * @callback Highcharts.AxisTickPositionerCallbackFunction
- *
- * @param {Highcharts.Axis} this
- *
- * @return {Highcharts.AxisTickPositionsArray}
- */
-
-/**
- * @interface Highcharts.AxisTickPositionsArray
- * @augments Array<number>
- */
-
-/**
- * @typedef {"high"|"low"|"middle"} Highcharts.AxisTitleAlignValue
- */
-
-/**
- * @typedef {Highcharts.XAxisTitleOptions|Highcharts.YAxisTitleOptions|Highcharts.ZAxisTitleOptions} Highcharts.AxisTitleOptions
- */
-
-/**
- * @typedef {"linear"|"logarithmic"|"datetime"|"category"|"treegrid"} Highcharts.AxisTypeValue
- */
-
-/**
- * The returned object literal from the {@link Highcharts.Axis#getExtremes}
- * function.
- *
- * @interface Highcharts.ExtremesObject
- *//**
- * The maximum value of the axis' associated series.
- * @name Highcharts.ExtremesObject#dataMax
- * @type {number}
- *//**
- * The minimum value of the axis' associated series.
- * @name Highcharts.ExtremesObject#dataMin
- * @type {number}
- *//**
- * The maximum axis value, either automatic or set manually. If the `max` option
- * is not set, `maxPadding` is 0 and `endOnTick` is false, this value will be
- * the same as `dataMax`.
- * @name Highcharts.ExtremesObject#max
- * @type {number}
- *//**
- * The minimum axis value, either automatic or set manually. If the `min` option
- * is not set, `minPadding` is 0 and `startOnTick` is false, this value will be
- * the same as `dataMin`.
- * @name Highcharts.ExtremesObject#min
- * @type {number}
- *//**
- * The user defined maximum, either from the `max` option or from a zoom or
- * `setExtremes` action.
- * @name Highcharts.ExtremesObject#userMax
- * @type {number}
- *//**
- * The user defined minimum, either from the `min` option or from a zoom or
- * `setExtremes` action.
- * @name Highcharts.ExtremesObject#userMin
- * @type {number}
- */
-
-/**
- * Formatter function for the text of a crosshair label.
- *
- * @callback Highcharts.XAxisCrosshairLabelFormatterCallbackFunction
- *
- * @param {Highcharts.Axis} this
- *        Axis context
- *
- * @param {number} value
- *        Y value of the data point
- *
- * @return {string}
- */
-
-
-''; // detach doclets above
-
 const deg2rad = H.deg2rad;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
@@ -7878,3 +7637,253 @@ interface Axis extends AxisComposition, AxisLike {
 }
 
 export default Axis;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Options for the path on the Axis to be calculated.
+ * @interface Highcharts.AxisPlotLinePathOptionsObject
+ *//**
+ * Axis value.
+ * @name Highcharts.AxisPlotLinePathOptionsObject#value
+ * @type {number|undefined}
+ *//**
+ * Line width used for calculation crisp line coordinates. Defaults to 1.
+ * @name Highcharts.AxisPlotLinePathOptionsObject#lineWidth
+ * @type {number|undefined}
+ *//**
+ * If `false`, the function will return null when it falls outside the axis
+ * bounds. If `true`, the function will return a path aligned to the plot area
+ * sides if it falls outside. If `pass`, it will return a path outside.
+ * @name Highcharts.AxisPlotLinePathOptionsObject#force
+ * @type {string|boolean|undefined}
+ *//**
+ * Used in Highcharts Stock. When `true`, plot paths
+ * (crosshair, plotLines, gridLines)
+ * will be rendered on all axes when defined on the first axis.
+ * @name Highcharts.AxisPlotLinePathOptionsObject#acrossPanes
+ * @type {boolean|undefined}
+ *//**
+ * Use old coordinates (for resizing and rescaling).
+ * If not set, defaults to `false`.
+ * @name Highcharts.AxisPlotLinePathOptionsObject#old
+ * @type {boolean|undefined}
+ *//**
+ * If given, return the plot line path of a pixel position on the axis.
+ * @name Highcharts.AxisPlotLinePathOptionsObject#translatedValue
+ * @type {number|undefined}
+ *//**
+ * Used in Polar axes. Reverse the positions for concatenation of polygonal
+ * plot bands
+ * @name Highcharts.AxisPlotLinePathOptionsObject#reverse
+ * @type {boolean|undefined}
+ */
+
+/**
+ * Options for crosshairs on axes.
+ *
+ * @product highstock
+ *
+ * @typedef {Highcharts.XAxisCrosshairOptions|Highcharts.YAxisCrosshairOptions} Highcharts.AxisCrosshairOptions
+ */
+
+/**
+ * @typedef {"navigator"|"pan"|"rangeSelectorButton"|"rangeSelectorInput"|"scrollbar"|"traverseUpButton"|"zoom"} Highcharts.AxisExtremesTriggerValue
+ */
+
+/**
+ * @callback Highcharts.AxisEventCallbackFunction
+ *
+ * @param {Highcharts.Axis} this
+ */
+
+/**
+ * @callback Highcharts.AxisLabelsFormatterCallbackFunction
+ *
+ * @param {Highcharts.AxisLabelsFormatterContextObject} this
+ *
+ * @param {Highcharts.AxisLabelsFormatterContextObject} ctx
+ *
+ * @return {string}
+ */
+
+/**
+ * @interface Highcharts.AxisLabelsFormatterContextObject
+ *//**
+ * The axis item of the label
+ * @name Highcharts.AxisLabelsFormatterContextObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * The chart instance.
+ * @name Highcharts.AxisLabelsFormatterContextObject#chart
+ * @type {Highcharts.Chart}
+ *//**
+ * Whether the label belongs to the first tick on the axis.
+ * @name Highcharts.AxisLabelsFormatterContextObject#isFirst
+ * @type {boolean}
+ *//**
+ * Whether the label belongs to the last tick on the axis.
+ * @name Highcharts.AxisLabelsFormatterContextObject#isLast
+ * @type {boolean}
+ *//**
+ * The position on the axis in terms of axis values. For category axes, a
+ * zero-based index. For datetime axes, the JavaScript time in milliseconds
+ * since 1970.
+ * @name Highcharts.AxisLabelsFormatterContextObject#pos
+ * @type {number}
+ *//**
+ * The preformatted text as the result of the default formatting. For example
+ * dates will be formatted as strings, and numbers with language-specific comma
+ * separators, thousands separators and numeric symbols like `k` or `M`.
+ * @name Highcharts.AxisLabelsFormatterContextObject#text
+ * @type {string}
+ *//**
+ * The Tick instance.
+ * @name Highcharts.AxisLabelsFormatterContextObject#tick
+ * @type {Highcharts.Tick}
+ *//**
+ * This can be either a numeric value or a category string.
+ * @name Highcharts.AxisLabelsFormatterContextObject#value
+ * @type {number|string}
+ */
+
+/**
+ * Options for axes.
+ *
+ * @typedef {Highcharts.XAxisOptions|Highcharts.YAxisOptions|Highcharts.ZAxisOptions} Highcharts.AxisOptions
+ */
+
+/**
+ * @callback Highcharts.AxisPointBreakEventCallbackFunction
+ *
+ * @param {Highcharts.Axis} this
+ *
+ * @param {Highcharts.AxisPointBreakEventObject} evt
+ */
+
+/**
+ * @interface Highcharts.AxisPointBreakEventObject
+ *//**
+ * @name Highcharts.AxisPointBreakEventObject#brk
+ * @type {Highcharts.Dictionary<number>}
+ *//**
+ * @name Highcharts.AxisPointBreakEventObject#point
+ * @type {Highcharts.Point}
+ *//**
+ * @name Highcharts.AxisPointBreakEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * @name Highcharts.AxisPointBreakEventObject#target
+ * @type {Highcharts.SVGElement}
+ *//**
+ * @name Highcharts.AxisPointBreakEventObject#type
+ * @type {"pointBreak"|"pointInBreak"}
+ */
+
+/**
+ * @callback Highcharts.AxisSetExtremesEventCallbackFunction
+ *
+ * @param {Highcharts.Axis} this
+ *
+ * @param {Highcharts.AxisSetExtremesEventObject} evt
+ */
+
+/**
+ * @interface Highcharts.AxisSetExtremesEventObject
+ * @extends Highcharts.ExtremesObject
+ *//**
+ * @name Highcharts.AxisSetExtremesEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * @name Highcharts.AxisSetExtremesEventObject#target
+ * @type {Highcharts.SVGElement}
+ *//**
+ * @name Highcharts.AxisSetExtremesEventObject#trigger
+ * @type {Highcharts.AxisExtremesTriggerValue|string}
+ *//**
+ * @name Highcharts.AxisSetExtremesEventObject#type
+ * @type {"setExtremes"}
+ */
+
+/**
+ * @callback Highcharts.AxisTickPositionerCallbackFunction
+ *
+ * @param {Highcharts.Axis} this
+ *
+ * @return {Highcharts.AxisTickPositionsArray}
+ */
+
+/**
+ * @interface Highcharts.AxisTickPositionsArray
+ * @augments Array<number>
+ */
+
+/**
+ * @typedef {"high"|"low"|"middle"} Highcharts.AxisTitleAlignValue
+ */
+
+/**
+ * @typedef {Highcharts.XAxisTitleOptions|Highcharts.YAxisTitleOptions|Highcharts.ZAxisTitleOptions} Highcharts.AxisTitleOptions
+ */
+
+/**
+ * @typedef {"linear"|"logarithmic"|"datetime"|"category"|"treegrid"} Highcharts.AxisTypeValue
+ */
+
+/**
+ * The returned object literal from the {@link Highcharts.Axis#getExtremes}
+ * function.
+ *
+ * @interface Highcharts.ExtremesObject
+ *//**
+ * The maximum value of the axis' associated series.
+ * @name Highcharts.ExtremesObject#dataMax
+ * @type {number}
+ *//**
+ * The minimum value of the axis' associated series.
+ * @name Highcharts.ExtremesObject#dataMin
+ * @type {number}
+ *//**
+ * The maximum axis value, either automatic or set manually. If the `max` option
+ * is not set, `maxPadding` is 0 and `endOnTick` is false, this value will be
+ * the same as `dataMax`.
+ * @name Highcharts.ExtremesObject#max
+ * @type {number}
+ *//**
+ * The minimum axis value, either automatic or set manually. If the `min` option
+ * is not set, `minPadding` is 0 and `startOnTick` is false, this value will be
+ * the same as `dataMin`.
+ * @name Highcharts.ExtremesObject#min
+ * @type {number}
+ *//**
+ * The user defined maximum, either from the `max` option or from a zoom or
+ * `setExtremes` action.
+ * @name Highcharts.ExtremesObject#userMax
+ * @type {number}
+ *//**
+ * The user defined minimum, either from the `min` option or from a zoom or
+ * `setExtremes` action.
+ * @name Highcharts.ExtremesObject#userMin
+ * @type {number}
+ */
+
+/**
+ * Formatter function for the text of a crosshair label.
+ *
+ * @callback Highcharts.XAxisCrosshairLabelFormatterCallbackFunction
+ *
+ * @param {Highcharts.Axis} this
+ *        Axis context
+ *
+ * @param {number} value
+ *        Y value of the data point
+ *
+ * @return {string}
+ */
+
+
+''; // keeps doclets above in JS file

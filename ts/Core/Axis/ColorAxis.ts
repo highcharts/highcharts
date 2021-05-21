@@ -10,8 +10,15 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type AxisLike from './AxisLike';
+import type AxisOptions from './AxisOptions';
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type GradientColor from '../Color/GradientColor';
@@ -20,6 +27,7 @@ import type PointerEvent from '../PointerEvent';
 import type { StatesOptionsKey } from '../Series/StatesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import Color from '../Color/Color.js';
@@ -51,6 +59,12 @@ const {
     pick,
     splat
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Axis/AxisLike' {
     interface AxisLike {
@@ -1557,7 +1571,7 @@ namespace ColorAxis {
         width?: number;
     }
 
-    export interface Options extends Highcharts.XAxisOptions {
+    export interface Options extends AxisOptions {
         dataClassColor?: string;
         dataClasses?: Array<DataClassesOptions>;
         layout?: string;

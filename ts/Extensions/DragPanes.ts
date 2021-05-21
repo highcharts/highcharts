@@ -14,6 +14,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorType';
 import type {
     CursorValue
@@ -21,6 +27,7 @@ import type {
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import H from '../Core/Globals.js';
 const {
     hasTouch
@@ -39,9 +46,23 @@ const {
     wrap
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../Core/Axis/AxisLike' {
     interface AxisLike {
         resizer?: AxisResizer;
+    }
+}
+
+declare module '../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        maxLength?: (number|string);
+        minLength?: (number|string);
+        resize?: Highcharts.YAxisResizeOptions;
     }
 }
 
@@ -57,11 +78,6 @@ declare module '../Core/Chart/ChartLike' {
  */
 declare global {
     namespace Highcharts {
-        interface XAxisOptions {
-            maxLength?: (number|string);
-            minLength?: (number|string);
-            resize?: YAxisResizeOptions;
-        }
         interface YAxisResizeControlledAxisOptions {
             next?: Array<number|string>;
             prev?: Array<number|string>;
@@ -99,6 +115,12 @@ declare global {
         }
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

@@ -34,10 +34,8 @@ const {
     defined,
     extend,
     fireEvent,
-    isNumber,
     merge,
     pick,
-    pInt,
     relativeLength,
     wrap
 } = U;
@@ -48,13 +46,20 @@ const {
  *
  * */
 
-type YAxisOptions = Highcharts.YAxisOptions;
+declare module './AxisOptions' {
+    interface AxisOptions {
+        angle?: number;
+        gridLineInterpolation?: Highcharts.AxisGridLineInterpolationValue;
+    }
+}
 
 declare module '../Chart/ChartLike'{
     interface ChartLike {
         inverted?: boolean;
     }
 }
+
+type YAxisOptions = Highcharts.YAxisOptions;
 
 /**
  * Internal types
@@ -63,10 +68,6 @@ declare module '../Chart/ChartLike'{
 declare global {
     namespace Highcharts {
         type AxisGridLineInterpolationValue = ('circle'|'polygon');
-        interface XAxisOptions {
-            angle?: number;
-            gridLineInterpolation?: AxisGridLineInterpolationValue;
-        }
         interface AxisPlotBandsOptions {
             innerRadius?: (number|string);
             outerRadius?: (number|string);

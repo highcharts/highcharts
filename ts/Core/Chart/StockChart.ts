@@ -26,6 +26,7 @@ import type PointerEvent from '../PointerEvent';
 import type { SeriesTypePlotOptions } from '../Series/SeriesType';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+
 import A from '../Animation/AnimationUtilities.js';
 const {
     animObject
@@ -36,7 +37,7 @@ import F from '../../Core/FormatUtilities.js';
 const { format } = F;
 import D from '../DefaultOptions.js';
 const { getOptions } = D;
-import palette from '../../Core/Color/Palette.js';
+import Palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 const {
     prototype: {
@@ -133,6 +134,12 @@ declare module '../Renderer/SVG/SVGRendererLike' {
     }
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * Stock-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.
  *
@@ -227,9 +234,9 @@ class StockChart extends Chart {
 
         // apply X axis options to both single and multi y axes
         options.xAxis = splat(userOptions.xAxis || {}).map(function (
-            xAxisOptions: Highcharts.XAxisOptions,
+            xAxisOptions: AxisOptions,
             i: number
-        ): Highcharts.XAxisOptions {
+        ): AxisOptions {
             return merge(
                 getDefaultAxisOptions('xAxis', xAxisOptions),
                 defaultOptions.xAxis, // #3802
@@ -792,12 +799,12 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                 .attr({
                     fill: options.backgroundColor ||
                         point && point.series && point.series.color || // #14888
-                        palette.neutralColor60,
+                        Palette.neutralColor60,
                     stroke: options.borderColor || '',
                     'stroke-width': options.borderWidth || 0
                 })
                 .css(extend<CSSObject>({
-                    color: palette.backgroundColor,
+                    color: Palette.backgroundColor,
                     fontWeight: 'normal',
                     fontSize: '11px',
                     textAlign: 'center'

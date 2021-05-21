@@ -17,7 +17,7 @@
  *
  * */
 
-import type { AxisLabelOptions } from './AxisOptions';
+import type { AxisLabelOptions, AxisOptions } from './AxisOptions';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type GanttPoint from '../../Series/Gantt/GanttPoint';
@@ -52,6 +52,12 @@ const {
 
 import './GridAxis.js';
 import './BrokenAxis.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module './AxisComposition' {
     interface AxisComposition {
@@ -147,7 +153,7 @@ namespace TreeGridAxis {
         symbol?: LabelIconOptionsObject;
     }
 
-    export interface Options extends Highcharts.XAxisOptions {
+    export interface Options extends AxisOptions {
         labels: LabelsOptions;
     }
 

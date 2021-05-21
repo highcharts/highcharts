@@ -10,10 +10,18 @@
  *
  * */
 
-import type {
-    HTMLDOMElement
-} from '../Renderer/DOMElementType';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AxisOptions from '../Axis/AxisOptions';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Options from '../Options';
+
 import Chart from './Chart.js';
 import D from '../DefaultOptions.js';
 const { getOptions } = D;
@@ -31,11 +39,18 @@ import '../../Series/Gantt/GanttSeries.js';
  * Declarations
  *
  * */
+
 declare module '../Options' {
     interface Options {
         isGantt?: boolean;
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Gantt-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.
@@ -120,23 +135,23 @@ class GanttChart extends Chart {
         ).map(function (
             xAxisOptions,
             i
-        ): Highcharts.XAxisOptions {
+        ): DeepPartial<AxisOptions> {
             if (i === 1) { // Second xAxis
                 defaultLinkedTo = 0;
             }
-            return merge<Highcharts.XAxisOptions>(
-                defaultOptions.xAxis as any,
+            return merge(
+                defaultOptions.xAxis,
                 { // defaults
                     grid: {
                         enabled: true
                     },
                     opposite: true,
                     linkedTo: defaultLinkedTo
-                } as Highcharts.XAxisOptions,
+                },
                 xAxisOptions, // user options
                 { // forced options
                     type: 'datetime'
-                } as Highcharts.XAxisOptions
+                }
             );
         });
 

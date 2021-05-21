@@ -11,9 +11,24 @@
  * */
 
 'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AxisOptions from '../../Core/Axis/AxisOptions';
+
 import Highcharts from '../../Core/Globals.js';
 import D from '../../Core/DefaultOptions.js';
 const { setOptions } = D;
+
+/* *
+ *
+ *  Theme
+ *
+ * */
 
 Highcharts.theme = {
     colors: ['#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee',
@@ -64,7 +79,7 @@ Highcharts.theme = {
 
             }
         }
-    } as Highcharts.XAxisOptions,
+    } as AxisOptions,
     yAxis: {
         gridLineColor: '#333333',
         labels: {

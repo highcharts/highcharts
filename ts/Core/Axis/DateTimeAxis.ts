@@ -10,8 +10,15 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time.js';
+
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
@@ -21,9 +28,22 @@ const {
     timeUnits
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module './AxisComposition' {
     interface AxisComposition {
         dateTime?: DateTimeAxis['dateTime'];
+    }
+}
+
+declare module './AxisOptions' {
+    interface AxisOptions {
+        dateTimeLabelFormats?: Highcharts.XAxisDateTimeLabelFormatsOptions;
+        units?: Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>;
     }
 }
 
@@ -58,10 +78,6 @@ declare global {
             second?: (string|DateTimeLabelFormatOptionsObject);
             week?: (string|DateTimeLabelFormatOptionsObject);
             year?: (string|DateTimeLabelFormatOptionsObject);
-        }
-        interface XAxisOptions {
-            dateTimeLabelFormats?: XAxisDateTimeLabelFormatsOptions;
-            units?: Array<[DateTimeLabelFormatsKey, (Array<number>|null)]>;
         }
     }
 }
