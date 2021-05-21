@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Floating breadcrumbs buttons'
+        text: 'Non-floating breadcrumbs buttons'
     },
     subtitle: {
         text: 'Drilldown to see how the buttons are positioned'

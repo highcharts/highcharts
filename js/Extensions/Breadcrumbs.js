@@ -580,13 +580,13 @@ var Breadcrumbs = /** @class */ (function () {
          * @apioption breadcrumbs.events.click
          */
         /**
-         * When the breadcrumbs is floating, the plot area will not move
+         * When the breadcrumbs are floating, the plot area will not move
          * to make space for it. By default, the chart will not make space
-         * for the buttons.
-         * This property won't work when positioned in the middle.
+         * for the buttons. This property won't work when positioned in the
+         * middle.
          *
-         * @sample {highcharts} highcharts/breadcrumbs/floating
-         *          Organization chart drilldown
+         * @sample {highcharts} highcharts/breadcrumbs/floating-false
+         *          Non-floating breadcrumbs
          *
          * @type      {boolean}
          * @since     next
