@@ -6,6 +6,20 @@ import Highcharts from 'https://code.highcharts.com/stock/es-modules/masters/hig
 
 let exportedLayoutId;
 
+const chartDemo = {
+    type: 'chart',
+    chartOptions: {
+        type: 'line',
+        series: [{
+            name: 'Series from options',
+            data: [1, 2, 3, 4]
+        }],
+        chart: {
+            animation: false
+        }
+    }
+}
+
 let dashboard = new Dashboard('container', {
     editMode: {
         enabled: true,
@@ -130,19 +144,31 @@ let dashboard = new Dashboard('container', {
             close: {
                 icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/close.svg'
             }
+        },
+        resize: {
+            enabled: true,
+            styles: {
+                minWidth: 50,
+                minHeight: 50
+            },
+            type: 'xy',
+            snap: {
+                width: 20,
+                height: 20
+            }
         }
     },
     gui: {
         enabled: true,
-        layoutOptions: {
-            resize: {
-                cells: true,
-                rows: true,
-                snap: {
-                    width: 20
-                }
-            }
-        },
+        // layoutOptions: {
+        //     resize: {
+        //         cells: true,
+        //         rows: true,
+        //         snap: {
+        //             width: 20
+        //         }
+        //     }
+        // },
         layouts: [{
             id: 'layout-1', // mandatory
             rowClassName: 'custom-row', // optional
@@ -644,22 +670,34 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
             close: {
                 icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/close.svg'
             }
+        },
+        resize: {
+            enabled: true,
+            styles: {
+                minWidth: 50,
+                minHeight: 50
+            },
+            type: 'xy',
+            snap: {
+                width: 20,
+                height: 20
+            }
         }
     },
     gui: {
         enabled: true,
-        layoutOptions: {
-            resize: {
-                cells: {
-                    enabled: true,
-                    minSize: 70
-                },
-                rows: {
-                    enabled: true,
-                    minSize: 70
-                }
-            }
-        },
+        // layoutOptions: {
+        //     resize: {
+        //         cells: {
+        //             enabled: true,
+        //             minSize: 70
+        //         },
+        //         rows: {
+        //             enabled: true,
+        //             minSize: 70
+        //         }
+        //     }
+        // },
         layouts: [{
             id: 'layout-in-1', // mandatory
             rows: [{
@@ -711,76 +749,82 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
         }
     }, {
         cell: 'dashboard-col-layout-1',
-        type: 'html',
-        elements: [{
-            tagName: 'img',
-            attributes: {
-                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-                title: 'I heard you like components'
-            }
-        }, {
-            textContent: 'Loreum ipsum'
-        }]
+        ...chartDemo
+        // type: 'html',
+        // elements: [{
+        //     tagName: 'img',
+        //     attributes: {
+        //         src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+        //         title: 'I heard you like components'
+        //     }
+        // }, {
+        //     textContent: 'Loreum ipsum'
+        // }]
     }, {
         cell: 'dashboard-col-layout-2a',
-        type: 'html',
-        elements: [{
-            tagName: 'img',
-            attributes: {
-                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-                title: 'I heard you like components'
-            }
-        }, {
-            textContent: 'Loreum ipsum'
-        }]
+        ...chartDemo
+        // type: 'html',
+        // elements: [{
+        //     tagName: 'img',
+        //     attributes: {
+        //         src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+        //         title: 'I heard you like components'
+        //     }
+        // }, {
+        //     textContent: 'Loreum ipsum'
+        // }]
     }, {
         cell: 'dashboard-col-layout-2b',
-        type: 'html',
-        elements: [{
-            tagName: 'img',
-            attributes: {
-                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-                title: 'I heard you like components'
-            }
-        }, {
-            textContent: 'Loreum ipsum'
-        }]
+        ...chartDemo
+        // type: 'html',
+        // elements: [{
+        //     tagName: 'img',
+        //     attributes: {
+        //         src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+        //         title: 'I heard you like components'
+        //     }
+        // }, {
+        //     textContent: 'Loreum ipsum'
+        // }]
     }, {
         cell: 'dashboard-col-layout-3',
-        type: 'html',
-        elements: [{
-            tagName: 'img',
-            attributes: {
-                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-                title: 'I heard you like components'
-            }
-        }, {
-            textContent: 'Loreum ipsum'
-        }]
+        ...chartDemo
+        // type: 'html',
+        // elements: [{
+        //     tagName: 'img',
+        //     attributes: {
+        //         src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+        //         title: 'I heard you like components'
+        //     }
+        // }, {
+        //     textContent: 'Loreum ipsum'
+        // }]
     }, {
         cell: 'dashboard-col-layout-4',
-        type: 'html',
-        elements: [{
-            tagName: 'img',
-            attributes: {
-                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-                title: 'I heard you like components'
-            }
-        }, {
-            textContent: 'Loreum ipsum'
-        }]
+        ...chartDemo
+        // type: 'html',
+        // elements: [{
+        //     tagName: 'img',
+        //     attributes: {
+        //         src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+        //         title: 'I heard you like components'
+        //     }
+        // }, {
+        //     textContent: 'Loreum ipsum'
+        // }]
     }, {
         cell: 'dashboard-col-layout-5',
-        type: 'html',
-        elements: [{
-            tagName: 'img',
-            attributes: {
-                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-                title: 'I heard you like components'
-            }
-        }, {
-            textContent: 'Loreum ipsum'
-        }]
+        ...chartDemo
+        // type: 'html',
+        // elements: [{
+        //     tagName: 'img',
+        //     attributes: {
+        //         src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+        //         title: 'I heard you like components'
+        //     }
+        // }, {
+        //     textContent: 'Loreum ipsum'
+        // }]
     }]
 });
 
