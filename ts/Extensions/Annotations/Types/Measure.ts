@@ -6,6 +6,8 @@
 
 'use strict';
 
+import type AnnotationChart from '../AnnotationChart';
+import type AnnotationsOptions from '../AnnotationsOptions';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type FormatUtilities from '../../../Core/FormatUtilities';
@@ -352,7 +354,7 @@ class Measure extends Annotation {
      * */
 
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         userOptions: Measure.MeasureOptions
     ) {
         super(chart, userOptions);
@@ -369,7 +371,7 @@ class Measure extends Annotation {
      * @private
      */
     public init(
-        annotationOrChart: (Annotation|Highcharts.AnnotationChart),
+        annotationOrChart: (Annotation|AnnotationChart),
         userOptions: Measure.MeasureOptions,
         index?: number
     ): void {
@@ -490,7 +492,7 @@ class Measure extends Annotation {
                         Measure.calculations.defaultFormatter.call(this);
 
         } else {
-            this.initLabel(extend<Partial<Highcharts.AnnotationsLabelsOptions>>({
+            this.initLabel(extend<Partial<Annotation.LabelsOptions>>({
                 shape: 'rect',
                 backgroundColor: 'none',
                 color: 'black',
@@ -541,7 +543,7 @@ class Measure extends Annotation {
             return;
         }
 
-        this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
+        this.initShape(extend<Partial<Annotation.ShapeOptions>>({
             type: 'path',
             points: this.shapePointsOptions()
         }, this.options.typeOptions.background), false as any);
@@ -619,11 +621,11 @@ class Measure extends Annotation {
             crosshairOptionsX = merge(defaultOptions, options.crosshairX);
             crosshairOptionsY = merge(defaultOptions, options.crosshairY);
 
-            this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
+            this.initShape(extend<Partial<Annotation.ShapeOptions>>({
                 d: pathH
             }, crosshairOptionsX), false as any);
 
-            this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
+            this.initShape(extend<Partial<Annotation.ShapeOptions>>({
                 d: pathV
             }, crosshairOptionsY), false as any);
 
@@ -658,7 +660,7 @@ class Measure extends Annotation {
         dx: number,
         dy: number,
         cpIndex?: number,
-        selectType?: Highcharts.AnnotationDraggableValue
+        selectType?: Annotation.DraggableValue
     ): void {
 
         // background shape
@@ -738,7 +740,7 @@ class Measure extends Annotation {
     }
 
     public translate(dx: number, dy: number): void {
-        this.shapes.forEach(function (item: Highcharts.AnnotationShapeType): void {
+        this.shapes.forEach(function (item: Annotation.ShapeType): void {
             item.translate(dx, dy);
         });
 
@@ -1037,7 +1039,7 @@ Measure.prototype.defaultOptions = merge(
 );
 
 namespace Measure {
-    export interface MeasureOptions extends Highcharts.AnnotationsOptions {
+    export interface MeasureOptions extends AnnotationsOptions {
         typeOptions: MeasureTypeOptions;
     }
     export interface MeasureTypeCrosshairOptions {
@@ -1051,12 +1053,12 @@ namespace Measure {
         formatter?: FormatUtilities.FormatterCallback<Measure>;
         style: CSSObject;
     }
-    export interface MeasureTypeOptions extends Highcharts.AnnotationsTypeOptions {
-        background: Highcharts.AnnotationsShapeOptions;
+    export interface MeasureTypeOptions extends Annotation.TypeOptions {
+        background: Annotation.ShapeOptions;
         crosshairX: MeasureTypeCrosshairOptions;
         crosshairY: MeasureTypeCrosshairOptions;
         label: MeasureTypeLabelOptions;
-        selectType: Highcharts.AnnotationDraggableValue;
+        selectType: Annotation.DraggableValue;
         xAxis: number;
         yAxis: number;
     }

@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type AnnotationChart from '../AnnotationChart';
 import type ColorString from '../../../Core/Color/ColorString';
 import type MockPointOptions from '../MockPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
@@ -74,7 +75,7 @@ class Fibonacci extends Tunnel {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Fibonacci.Options) {
+    public constructor(chart: AnnotationChart, options: Fibonacci.Options) {
         super(chart, options);
     }
 

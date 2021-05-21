@@ -7,6 +7,7 @@
 'use strict';
 
 import type Annotation from '../Annotations';
+import type AnnotationChart from '../AnnotationChart';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
 import type MockPointOptions from '../MockPointOptions';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
@@ -110,7 +111,7 @@ declare global {
         }
         interface AnnotationControllableOptionsObject {
             className?: string;
-            controlPoints?: Array<AnnotationControlPointOptionsObject>;
+            controlPoints?: Array<Annotation.ControlPointOptions>;
             id?: (number|string);
             markerEnd?: string;
             markerStart?: string;
@@ -372,7 +373,7 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
 
         (controlPointsOptions || []).forEach(
             function (
-                controlPointOptions: Highcharts.AnnotationControlPointOptionsObject,
+                controlPointOptions: Annotation.ControlPointOptions,
                 i: number
             ): void {
                 const options = merge(
@@ -512,7 +513,7 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      * @param {number} dy translation for y coordinate
      */
     translateShape: function (this: Highcharts.AnnotationControllable, dx: number, dy: number): void {
-        const chart: Highcharts.AnnotationChart = this.annotation.chart,
+        const chart: AnnotationChart = this.annotation.chart,
             // Annotation.options
             shapeOptions = this.annotation.userOptions,
             // Chart.options.annotations

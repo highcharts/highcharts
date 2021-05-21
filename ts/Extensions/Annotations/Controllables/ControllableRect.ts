@@ -66,7 +66,7 @@ class ControllableRect implements ControllableMixin.Type {
 
     public constructor(
         annotation: Annotation,
-        options: Highcharts.AnnotationsShapeOptions,
+        options: Annotation.ShapeOptions,
         index: number
     ) {
         this.init(annotation, options, index);
@@ -147,7 +147,7 @@ class ControllableRect implements ControllableMixin.Type {
 
 interface ControllableRect extends ControllableMixin.Type {
     // adds mixin property types, created during init
-    options: Highcharts.AnnotationsShapeOptions;
+    options: Annotation.ShapeOptions;
 }
 
 export default ControllableRect;

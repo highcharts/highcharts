@@ -84,7 +84,7 @@ class ControllablePath implements ControllableMixin.Type {
 
     public constructor(
         annotation: Annotation,
-        options: Highcharts.AnnotationsShapeOptions,
+        options: Annotation.ShapeOptions,
         index: number
     ) {
         this.init(annotation, options, index);
@@ -243,7 +243,7 @@ class ControllablePath implements ControllableMixin.Type {
 
 interface ControllablePath extends ControllableMixin.Type {
     // adds mixin property types, created during init
-    options: Highcharts.AnnotationsShapeOptions;
+    options: Annotation.ShapeOptions;
     tracker: Highcharts.SVGAnnotationElement;
 }
 

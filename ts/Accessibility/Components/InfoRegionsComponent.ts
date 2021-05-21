@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -495,7 +496,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 chart.index,
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
                 chart.index,
-            annotationsList = getAnnotationsInfoHTML(chart as Highcharts.AnnotationChart),
+            annotationsList = getAnnotationsInfoHTML(chart as AnnotationChart),
             annotationsTitleStr = chart.langFormat(
                 'accessibility.screenReaderSection.annotations.heading',
                 { chart: chart }

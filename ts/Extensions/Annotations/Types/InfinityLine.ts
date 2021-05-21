@@ -12,6 +12,7 @@
  *
  * */
 
+import type AnnotationChart from '../AnnotationChart';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 
 import Annotation from '../Annotations.js';
@@ -161,7 +162,7 @@ class InfinityLine extends CrookedLine {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: InfinityLine.Options) {
+    public constructor(chart: AnnotationChart, options: InfinityLine.Options) {
         super(chart, options);
     }
 

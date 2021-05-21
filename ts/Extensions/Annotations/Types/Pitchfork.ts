@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type AnnotationChart from '../AnnotationChart';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotations.js';
 import type { AxisType } from '../../../Core/Axis/Types';
@@ -89,7 +90,7 @@ class Pitchfork extends InfinityLine {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Pitchfork.Options) {
+    public constructor(chart: AnnotationChart, options: Pitchfork.Options) {
         super(chart, options);
     }
 
@@ -243,8 +244,8 @@ namespace Pitchfork {
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends InfinityLine.TypeOptions {
-        innerBackground: Highcharts.AnnotationsShapeOptions;
-        outerBackground: Highcharts.AnnotationsShapeOptions;
+        innerBackground: Annotation.ShapeOptions;
+        outerBackground: Annotation.ShapeOptions;
     }
 }
 

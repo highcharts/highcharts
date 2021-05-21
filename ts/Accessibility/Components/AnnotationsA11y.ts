@@ -13,7 +13,8 @@
 'use strict';
 
 import type Annotation from '../../Extensions/Annotations/Annotations';
-import type Point from '../../Core/Series/Point';
+import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
+import type PointClass from '../../Core/Series/Point';
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
@@ -30,14 +31,14 @@ const {
  * @return {Array<object>} The labels, or empty array if none.
  */
 function getChartAnnotationLabels(
-    chart: Highcharts.AnnotationChart
-): Array<Highcharts.AnnotationLabelType> {
+    chart: AnnotationChart
+): Array<Annotation.LabelType> {
     const annotations = chart.annotations || [];
 
     return annotations.reduce((
-        acc: Array<Highcharts.AnnotationLabelType>,
+        acc: Array<Annotation.LabelType>,
         cur: Annotation
-    ): Array<Highcharts.AnnotationLabelType> => {
+    ): Array<Annotation.LabelType> => {
         if (
             cur.options &&
             cur.options.visible !== false
@@ -56,7 +57,7 @@ function getChartAnnotationLabels(
  * @param {object} label The annotation label object
  * @return {string} The text in the label.
  */
-function getLabelText(label: Highcharts.AnnotationLabelType): string {
+function getLabelText(label: Annotation.LabelType): string {
     return (
         (
             label.options &&
@@ -80,7 +81,7 @@ function getLabelText(label: Highcharts.AnnotationLabelType): string {
  * @param {object} label The annotation label object to describe
  * @return {string} The description for the label.
  */
-function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): string {
+function getAnnotationLabelDescription(label: Annotation.LabelType): string {
     const a11yDesc = (
         label.options &&
         label.options.accessibility &&
@@ -94,7 +95,7 @@ function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): s
     const chart = label.chart;
     const labelText = getLabelText(label);
     const points = label.points as Array<Highcharts.AccessibilityPoint>;
-    const getAriaLabel = (point: Point): string => (
+    const getAriaLabel = (point: PointClass): string => (
         point.graphic &&
         point.graphic.element &&
         point.graphic.element.getAttribute('aria-label') ||
@@ -139,7 +140,7 @@ function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): s
  * @param {Highcharts.Chart} chart The chart to get annotation info on.
  * @return {Array<string>} Array of strings with HTML content for each annotation label.
  */
-function getAnnotationListItems(chart: Highcharts.AnnotationChart): string[] {
+function getAnnotationListItems(chart: AnnotationChart): string[] {
     const labels = getChartAnnotationLabels(chart);
 
     return labels.map((label): string => {
@@ -160,7 +161,7 @@ function getAnnotationListItems(chart: Highcharts.AnnotationChart): string[] {
  * @param {Highcharts.Chart} chart The chart to get annotation info on.
  * @return {string} String with HTML content or empty string if no annotations.
  */
-function getAnnotationsInfoHTML(chart: Highcharts.AnnotationChart): string {
+function getAnnotationsInfoHTML(chart: AnnotationChart): string {
     const annotations = chart.annotations;
 
     if (!(annotations && annotations.length)) {
@@ -180,7 +181,7 @@ function getAnnotationsInfoHTML(chart: Highcharts.AnnotationChart): string {
  * @param {Highcharts.Point} point The data point to get the annotation info from.
  * @return {Array<string>} Annotation texts
  */
-function getPointAnnotationTexts(point: Highcharts.AnnotationPoint): Array<string> {
+function getPointAnnotationTexts(point: Annotation.Point): Array<string> {
     const labels = getChartAnnotationLabels(point.series.chart);
     const pointLabels = labels
         .filter((label): boolean => label.points.indexOf(point) > -1);

@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type AnnotationChart from './AnnotationChart';
+import type AnnotationsOptions from './AnnotationsOptions';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type MockPointOptions from './MockPointOptions';
 import type PointerEvent from '../../Core/PointerEvent';
@@ -34,6 +36,18 @@ const {
     objectEach,
     pick
 } = U;
+
+declare module './AnnotationChart'{
+    interface AnnotationChart {
+        navigationBindings: NavigationBindings;
+    }
+}
+
+declare module './AnnotationsOptions'{
+    interface AnnotationsOptions {
+        langKey?: string;
+    }
+}
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -61,9 +75,6 @@ declare module '../../Core/PointerEvent' {
  */
 declare global {
     namespace Highcharts {
-        interface AnnotationChart {
-            navigationBindings: NavigationBindings;
-        }
         interface AnnotationEditableObject {
             basicAnnotation: Array<string>;
             circle: Array<string>;
@@ -79,9 +90,6 @@ declare global {
         }
         interface AnnotationNonEditableObject {
             rectangle: Array<string>;
-        }
-        interface AnnotationsOptions {
-            langKey?: string;
         }
         interface LangNavigationOptions {
             popup?: Record<string, string>;
@@ -335,7 +343,7 @@ class NavigationBindings {
      * */
 
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         options: Highcharts.NavigationOptions
     ) {
         this.chart = chart;
@@ -354,7 +362,7 @@ class NavigationBindings {
 
     public activeAnnotation?: (false|Annotation);
     public boundClassNames: Record<string, Highcharts.NavigationBindingsOptionsObject> = void 0 as any;
-    public chart: Highcharts.AnnotationChart;
+    public chart: AnnotationChart;
     public container: HTMLCollectionOf<HTMLDOMElement>;
     public currentUserDetails?: Annotation;
     public eventsToUnbind: Array<Function>;
@@ -564,7 +572,7 @@ class NavigationBindings {
      *        Browser's click event.
      */
     public bindingsChartClick(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         clickEvent: PointerEvent
     ): void {
         chart = this.chart;
@@ -1032,7 +1040,7 @@ interface NavigationBindings {
 NavigationBindings.prototype.utils = bindingsUtils;
 
 
-Chart.prototype.initNavigationBindings = function (this: Highcharts.AnnotationChart): void {
+Chart.prototype.initNavigationBindings = function (this: AnnotationChart): void {
     const chart = this,
         options = chart.options;
 

@@ -5,6 +5,7 @@
  * */
 
 import type Annotation from './Annotations';
+import type AnnotationChart from './AnnotationChart';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
@@ -18,7 +19,7 @@ declare global {
             public constructor(
                 chart: AnnotationChart,
                 target: AnnotationControllable,
-                options: Partial<AnnotationControlPointOptionsObject>,
+                options: Partial<Annotation.ControlPointOptions>,
                 index?: number
             );
             public addEvents: AnnotationEventEmitterMixin['addEvents'];
@@ -32,14 +33,14 @@ declare global {
             public onDrag: AnnotationEventEmitterMixin['onDrag'];
             public onMouseDown: AnnotationEventEmitterMixin['onMouseDown'];
             public onMouseUp: AnnotationEventEmitterMixin['onMouseUp'];
-            public options: AnnotationControlPointOptionsObject;
+            public options: Annotation.ControlPointOptions;
             public removeDocEvents: AnnotationEventEmitterMixin['removeDocEvents'];
             public target: AnnotationControllable;
             public destroy(): void;
             public redraw(animation?: boolean): void;
             public render(): void;
             public setVisibility(visible: boolean): void;
-            public update(userOptions: Partial<AnnotationControlPointOptionsObject>): void;
+            public update(userOptions: Partial<Annotation.ControlPointOptions>): void;
         }
         interface AnnotationControlPointDragEventFunction {
             (this: Annotation, e: AnnotationEventObject, target: AnnotationControllable): void;
@@ -95,9 +96,9 @@ import eventEmitterMixin from './Mixins/EventEmitterMixin.js';
  */
 class ControlPoint implements eventEmitterMixin.Type {
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         target: Highcharts.AnnotationControllable,
-        options: Highcharts.AnnotationControlPointOptionsObject,
+        options: Annotation.ControlPointOptions,
         index?: number
     ) {
         this.chart = chart;
@@ -113,7 +114,7 @@ class ControlPoint implements eventEmitterMixin.Type {
      */
 
     public addEvents = eventEmitterMixin.addEvents;
-    public chart: Highcharts.AnnotationChart;
+    public chart: AnnotationChart;
     public graphic: SVGElement = void 0 as any;
     public index: number;
     public mouseMoveToRadians = eventEmitterMixin.mouseMoveToRadians;
@@ -122,7 +123,7 @@ class ControlPoint implements eventEmitterMixin.Type {
     public onDrag = eventEmitterMixin.onDrag;
     public onMouseDown = eventEmitterMixin.onMouseDown;
     public onMouseUp = eventEmitterMixin.onMouseUp;
-    public options: Highcharts.AnnotationControlPointOptionsObject;
+    public options: Annotation.ControlPointOptions;
     public removeDocEvents = eventEmitterMixin.removeDocEvents;
     public target: Highcharts.AnnotationControllable;
 
@@ -220,7 +221,7 @@ class ControlPoint implements eventEmitterMixin.Type {
      * @return {void}
      */
     public update(
-        userOptions: Partial<Highcharts.AnnotationControlPointOptionsObject>
+        userOptions: Partial<Annotation.ControlPointOptions>
     ): void {
         const chart = this.chart,
             target = this.target,

@@ -6,13 +6,14 @@
 
 'use strict';
 
-import type { AxisType } from '../../Core/Axis/Types';
+import type Annotation from '../Annotations/Annotations';
+import type AnnotationChart from '../Annotations/AnnotationChart';
 import type MockPointOptions from './MockPointOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import Series from '../../Core/Series/Series.js';
 
 declare module './MockPointOptions' {
-    interface MockPointOptions {
+    interface MockPointOptions { // @todo -> MockPointOptions
         command?: string;
         series?: undefined;
     }
@@ -30,7 +31,7 @@ declare global {
             point: MockPoint;
         }
         class AnnotationMockPoint {
-            public static fromPoint(point: AnnotationPoint): AnnotationMockPoint;
+            public static fromPoint(point: MockPoint.Point): AnnotationMockPoint;
             public static pointToOptions(point: AnnotationPointType): MockPointOptions;
             public static pointToPixels(point: AnnotationPointType, paneCoordinates?: boolean): PositionObject;
             public constructor(
@@ -71,11 +72,7 @@ declare global {
             yAxis?: (Axis|null);
             visible: boolean;
         }
-        interface AnnotationPoint {
-            command?: undefined;
-            mock?: undefined;
-        }
-        type AnnotationPointType = (MockPoint|AnnotationPoint);
+        type AnnotationPointType = (MockPoint|MockPoint.Point);
     }
 }
 
@@ -163,7 +160,7 @@ class MockPoint {
      * @return {Highcharts.AnnotationMockPoint}
      * A mock point instance.
      */
-    public static fromPoint(point: Highcharts.AnnotationPoint): MockPoint {
+    public static fromPoint(point: MockPoint.Point): MockPoint {
         return new MockPoint(point.series.chart, null, {
             x: point.x as any,
             y: point.y as any,
@@ -241,7 +238,7 @@ class MockPoint {
     }
 
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         target: (Highcharts.AnnotationControllable|null),
         options: (MockPointOptions|Function)
     ) {
@@ -611,6 +608,13 @@ class MockPoint {
         this.y = (this.options as any).y = yAxis ?
             yAxis.toValue(this.plotY, true) :
             this.plotY;
+    }
+}
+
+namespace MockPoint {
+    export interface Point extends Annotation.Point {
+        command?: undefined;
+        mock?: undefined;
     }
 }
 

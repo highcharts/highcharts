@@ -55,7 +55,7 @@ class ControllableCircle implements ControllableMixin.Type {
 
     public constructor(
         annotation: Annotation,
-        options: Highcharts.AnnotationsShapeOptions,
+        options: Annotation.ShapeOptions,
         index: number
     ) {
         this.init(annotation, options, index);
@@ -145,7 +145,7 @@ class ControllableCircle implements ControllableMixin.Type {
 
 interface ControllableCircle extends ControllableMixin.Type {
     // adds mixin property types, created during init
-    options: Highcharts.AnnotationsShapeOptions;
+    options: Annotation.ShapeOptions;
 }
 
 export default ControllableCircle;

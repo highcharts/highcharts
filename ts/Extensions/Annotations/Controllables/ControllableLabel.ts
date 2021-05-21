@@ -16,7 +16,9 @@ import '../../../Core/Renderer/SVG/SVGRenderer.js';
 
 import type { AlignObject } from '../../../Core/Renderer/AlignObject';
 import type Annotation from '../Annotations';
+import type AnnotationChart from '../AnnotationChart';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
+import type { AnnotationsLabelOptions } from '../../../Extensions/Annotations/AnnotationsOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
@@ -158,7 +160,7 @@ class ControllableLabel implements ControllableMixin.Type {
      * it works with absolute instead of relative position.
      */
     public static justifiedOptions(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         label: SVGElement,
         alignOptions: Highcharts.AnnotationAlignObject,
         alignAttr: SVGAttributes
@@ -233,7 +235,7 @@ class ControllableLabel implements ControllableMixin.Type {
 
     public constructor(
         annotation: Annotation,
-        options: Highcharts.AnnotationsLabelOptions,
+        options: AnnotationsLabelOptions,
         index: number
     ) {
         this.init(annotation, options, index);
@@ -471,7 +473,7 @@ class ControllableLabel implements ControllableMixin.Type {
                 };
 
                 itemPosition = ControllableLabel.alignedPosition(
-                    extend<Highcharts.AnnotationsLabelOptions|BBoxObject>(
+                    extend<AnnotationsLabelOptions|BBoxObject>(
                         itemOptions, {
                             width,
                             height
@@ -517,7 +519,7 @@ class ControllableLabel implements ControllableMixin.Type {
 interface ControllableLabel extends ControllableMixin.Type {
     // adds mixin property types, created during init
     itemType: 'label';
-    options: Highcharts.AnnotationsLabelOptions;
+    options: AnnotationsLabelOptions;
 }
 
 export default ControllableLabel;
