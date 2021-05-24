@@ -112,7 +112,6 @@ export interface AxisOptions {
     alignTicks: boolean;
     allowDecimals?: boolean;
     alternateGridColor?: ColorType;
-    breaks?: Array<Highcharts.XAxisBreaksOptions>;
     categories?: Array<string>;
     ceiling?: number;
     className?: string;

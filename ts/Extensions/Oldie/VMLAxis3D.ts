@@ -16,20 +16,29 @@ const {
     addEvent
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../../Core/Axis/AxisComposition' {
     interface AxisComposition {
         vml?: VMLAxis3D['vml'];
     }
 }
 
-/**
- * @private
- */
-declare module '../../Core/Axis/Types' {
+declare module '../../Core/Axis/AxisType' {
     interface AxisTypeRegistry {
         VMLAxis3D: VMLAxis3D;
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 

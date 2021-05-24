@@ -8,6 +8,8 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
@@ -37,10 +39,7 @@ declare module './AxisComposition' {
     }
 }
 
-/**
- * @private
- */
-declare module '../../Core/Axis/Types' {
+declare module '../../Core/Axis/AxisType' {
     interface AxisTypeRegistry {
         WaterfallAxis: WaterfallAxis;
     }

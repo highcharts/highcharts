@@ -23,7 +23,7 @@ import type {
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type { AnnotationTypeRegistry } from './Types/AnnotationType';
 import type AST from '../../Core/Renderer/HTML/AST';
-import type { AxisType } from '../../Core/Axis/Types';
+import type AxisType from '../../Core/Axis/AxisType';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';

@@ -7,9 +7,8 @@
 'use strict';
 
 import type PositionObject from '../../../Core/Renderer/PositionObject';
-import Annotation from '../Annotations.js';
-import type { AxisType } from '../../../Core/Axis/Types';
 import type MockPointOptions from '../MockPointOptions';
+import Annotation from '../Annotations.js';
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';

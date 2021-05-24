@@ -28,7 +28,7 @@ declare module './AxisComposition' {
 /**
  * @private
  */
-declare module './Types' {
+declare module './AxisType' {
     interface AxisTypeRegistry {
         LogarithmicAxis: LogarithmicAxis;
     }

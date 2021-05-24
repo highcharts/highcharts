@@ -19,8 +19,8 @@
  * */
 
 import type AxisOptions from '../Core/Axis/AxisOptions';
-import type { AxisType } from '../Core/Axis/Types';
-import type { ChartOptions } from '../Core/Chart/ChartOptions';
+import type AxisType from '../Core/Axis/AxisType';
+import type ChartOptions from '../Core/Chart/ChartOptions';
 import type Options from '../Core/Options';
 import type Point from '../Core/Series/Point';
 import type RadialAxis from '../Core/Axis/RadialAxis';
@@ -67,6 +67,12 @@ declare module '../Core/Axis/AxisOptions' {
     }
 }
 
+declare module '../Core/Axis/AxisType' {
+    interface AxisTypeRegistry {
+        ParallelAxis: ParallelAxis;
+    }
+}
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         hasParallelCoordinates?: Highcharts.ParallelChart['hasParallelCoordinates'];
@@ -79,12 +85,6 @@ declare module '../Core/Chart/ChartOptions'{
     interface ChartOptions {
         parallelAxes?: DeepPartial<AxisOptions>;
         parallelCoordinates?: boolean;
-    }
-}
-
-declare module '../Core/Axis/Types' {
-    interface AxisTypeRegistry {
-        ParallelAxis: ParallelAxis;
     }
 }
 

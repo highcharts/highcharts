@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type { AxisType } from '../Core/Axis/Types';
+import type AxisType from '../Core/Axis/AxisType';
 import type {
     PointOptions,
     PointShortOptions

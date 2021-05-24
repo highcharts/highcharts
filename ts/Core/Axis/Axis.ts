@@ -171,12 +171,6 @@ declare global {
             enabled?: boolean;
             rangeDescription?: string;
         }
-        interface XAxisBreaksOptions {
-            breakSize?: number;
-            from: number;
-            repeat?: number;
-            to: number;
-        }
         interface XAxisTitleOptions {
             align: AxisTitleAlignValue;
             enabled?: boolean;

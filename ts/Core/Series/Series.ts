@@ -18,7 +18,7 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type Axis from '../Axis/Axis';
-import type { AxisType } from '../Axis/Types';
+import type AxisType from '../Axis/AxisType';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';

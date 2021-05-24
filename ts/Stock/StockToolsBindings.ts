@@ -13,7 +13,7 @@
 'use strict';
 
 import type Annotation from '../Extensions/Annotations/Annotations';
-import type { AxisType } from '../Core/Axis/Types';
+import type AxisType from '../Core/Axis/AxisType';
 import type Chart from '../Core/Chart/Chart';
 import type FlagsPoint from '../Series/Flags/FlagsPoint';
 import type { FlagsShapeValue } from '../Series/Flags/FlagsPointOptions';

@@ -103,7 +103,7 @@ declare module './TickLike' {
     }
 }
 
-declare module './Types' {
+declare module './AxisType' {
     interface AxisTypeRegistry {
         GridAxis: GridAxis;
     }
@@ -478,9 +478,9 @@ addEvent(
             const isLast = value === tickPos[tickPos.length - 1];
             const point: (Point|undefined) =
                 series && find(series.options.data as any, function (
-                    p: (PointOptions|PointShortOptions)
+                    p: Point
                 ): boolean {
-                    return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
+                    return p[axis.isXAxis ? 'x' : 'y'] === value;
                 });
             let pointCopy;
 

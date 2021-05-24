@@ -76,7 +76,7 @@ declare module './TimeTicksInfoObject' {
     }
 }
 
-declare module './Types' {
+declare module './AxisType' {
     interface AxisTypeRegistry {
         OrdinalAxis: OrdinalAxis;
     }

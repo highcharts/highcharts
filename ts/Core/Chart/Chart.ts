@@ -23,7 +23,7 @@ import type {
 } from '../Renderer/AlignObject';
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type AxisOptions from '../Axis/AxisOptions';
-import type { AxisType } from '../Axis/Types';
+import type AxisType from '../Axis/AxisType';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type {
     CSSObject,

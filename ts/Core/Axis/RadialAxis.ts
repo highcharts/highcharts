@@ -87,7 +87,7 @@ declare global {
 /**
  * @private
  */
-declare module './Types' {
+declare module './AxisType' {
     interface AxisTypeRegistry {
         RadialAxis: RadialAxis;
     }

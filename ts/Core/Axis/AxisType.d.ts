@@ -8,25 +8,29 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Axis from './Axis';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * All possible axis types.
- * @private
  */
 export type AxisType = AxisTypeRegistry[keyof AxisTypeRegistry];
 
-export interface AxisBreakBorderObject {
-    move: string;
-    size?: number;
-    value: number;
-}
-
-export interface AxisBreakObject {
-    from: number;
-    len: number;
-    to: number;
-}
+/**
+ * All possible axis options.
+ */
+export type AxisTypeOptions = AxisType['options'];
 
 /**
  * Helper interface to add axis types to `AxisType`.
@@ -37,3 +41,11 @@ export interface AxisBreakObject {
 export interface AxisTypeRegistry extends Record<string, Axis> {
     Axis: Axis;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default AxisType;

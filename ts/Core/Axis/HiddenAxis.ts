@@ -14,7 +14,7 @@ import type RadialAxis from './RadialAxis';
 /**
  * @private
  */
-declare module './Types' {
+declare module './AxisType' {
     interface AxisTypeRegistry {
         HiddenAxis: HiddenAxis;
     }
