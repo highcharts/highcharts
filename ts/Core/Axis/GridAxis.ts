@@ -38,6 +38,7 @@ import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 
 import Axis from './Axis.js';
+import AxisDefaults from './AxisDefaults.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 import Tick from './Tick.js';
@@ -1270,7 +1271,7 @@ class GridAxis {
         this: Axis,
         e: { tickSize?: [number, number] }
     ): void {
-        const defaultLeftAxisOptions = Axis.defaultLeftAxisOptions;
+        const defaultLeftAxisOptions = AxisDefaults.defaultLeftAxisOptions;
         const {
             horiz,
             maxLabelDimensions,

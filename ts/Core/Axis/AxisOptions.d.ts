@@ -35,6 +35,13 @@ import type TickPositionsArray from './TickPositionsArray';
  *
  * */
 
+declare module '../../Core/Options'{
+    interface Options {
+        xAxis?: (DeepPartial<XAxisOptions>|Array<DeepPartial<XAxisOptions>>);
+        yAxis?: (DeepPartial<YAxisOptions>|Array<DeepPartial<YAxisOptions>>);
+    }
+}
+
 export interface AxisCrosshairLabelOptions {
     align?: AlignValue;
     backgroundColor?: ColorType;

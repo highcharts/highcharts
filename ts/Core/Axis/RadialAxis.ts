@@ -26,6 +26,7 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
 
 import Axis from './Axis.js';
+import AxisDefaults from './AxisDefaults.js';
 import Tick from './Tick.js';
 import HiddenAxis from './HiddenAxis.js';
 import U from '../Utilities.js';
@@ -943,14 +944,14 @@ class RadialAxis {
                     RadialAxis.defaultCircularOptions :
                     merge(
                         coll === 'xAxis' ?
-                            AxisClass.defaultOptions :
-                            AxisClass.defaultYAxisOptions,
+                            AxisDefaults.defaultXAxisOptions :
+                            AxisDefaults.defaultYAxisOptions,
                         RadialAxis.defaultRadialOptions
                     );
 
                 // Apply the stack labels for yAxis in case of inverted chart
                 if (inverted && coll === 'yAxis') {
-                    axis.defaultPolarOptions.stackLabels = AxisClass.defaultYAxisOptions.stackLabels;
+                    axis.defaultPolarOptions.stackLabels = AxisDefaults.defaultYAxisOptions.stackLabels;
                     axis.defaultPolarOptions.reversedStacks = true;
                 }
             }
