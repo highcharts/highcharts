@@ -28,6 +28,7 @@ const EditGlobals: EditGlobals = {
         editSidebarMenuItem: PREFIX + 'sidebar-item',
         dragMock: PREFIX + 'drag-mock',
         dropPointer: PREFIX + 'drop-pointer',
+        resizePointer: PREFIX + 'resize-pointer',
         currentEditedElement: PREFIX + 'unmask',
         maskElement: PREFIX + 'mask',
         menuItem: PREFIX + 'menu-item',
@@ -101,6 +102,7 @@ namespace EditGlobals {
         editSidebarMenuItem: string;
         dragMock: string;
         dropPointer: string;
+        resizePointer: string;
         maskElement: string;
         currentEditedElement: string;
         menuItem: string;

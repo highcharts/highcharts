@@ -85,6 +85,7 @@ class EditMode {
     public resizer?: Resizer;
     public isInitialized: boolean;
     public addComponentBtn?: HTMLDOMElement;
+    public resizeBtn?: HTMLDOMElement;
     public tools: EditMode.Tools;
     public confirmationPopup?: ConfirmationPopup;
 
@@ -269,19 +270,29 @@ class EditMode {
                         });
                     }
 
-                    // Init dragDrop cell events.
-                    if (editMode.dragDrop) {
-                        const dragDrop = editMode.dragDrop;
+                    // Init dragDrop and resizer cell events.
+                    if (editMode.dragDrop || editMode.resizer) {
+                        const dragDrop = editMode.dragDrop,
+                            resizer = editMode.resizer;
+
                         addEvent(cell.container, 'mouseenter', function (e: PointerEvent): void {
-                            if (dragDrop.isActive) {
+                            if (dragDrop && dragDrop.isActive) {
                                 dragDrop.mouseCellContext = cell;
                                 dragDrop.onDrag(e);
+                            }
+
+                            if (resizer && resizer.isResizerDetectionActive) {
+                                resizer.mouseCellContext = cell;
                             }
                         });
 
                         addEvent(cell.container, 'mouseleave', function (): void {
-                            if (dragDrop.isActive) {
+                            if (dragDrop && dragDrop.isActive) {
                                 dragDrop.mouseCellContext = void 0;
+                            }
+
+                            if (resizer && resizer.isResizerDetectionActive) {
+                                resizer.mouseCellContext = void 0;
                             }
                         });
                     }
@@ -305,10 +316,13 @@ class EditMode {
             EditGlobals.classNames.editModeEnabled
         );
 
+        // TODO all buttons should be activated, add some wrapper?
         if (this.addComponentBtn) {
             this.addComponentBtn.style.display = 'block';
         }
-
+        if (this.resizeBtn) {
+            this.resizeBtn.style.display = 'block';
+        }
     }
 
     public deactivateEditMode(): void {
@@ -324,8 +338,12 @@ class EditMode {
         // Hide toolbars.
         editMode.hideToolbars();
 
+        // TODO all buttons should be deactivated.
         if (this.addComponentBtn) {
             this.addComponentBtn.style.display = 'none';
+        }
+        if (this.resizeBtn) {
+            this.resizeBtn.style.display = 'none';
         }
     }
 
@@ -424,6 +442,33 @@ class EditMode {
                     if (editMode.sidebar) {
                         editMode.sidebar.show();
                         editMode.sidebar.updateTitle('General');
+                    }
+                },
+                style: {
+                    display: 'none'
+                }
+            }
+        );
+
+        // Create resizer button.
+        this.resizeBtn = EditRenderer.renderButton(
+            this.tools.container,
+            {
+                className: EditGlobals.classNames.editToolsBtn,
+                value: 'Resize',
+                callback: (): void => {
+                    const resizer = editMode.resizer;
+
+                    if (resizer && !resizer.isResizerDetectionActive) {
+                        resizer.activateResizerDetection();
+                        if (editMode.resizeBtn) {
+                            editMode.resizeBtn.style.color = '#90ED7D';
+                        }
+                    } else if (resizer) {
+                        resizer.deactivateResizerDetection();
+                        if (editMode.resizeBtn) {
+                            editMode.resizeBtn.style.color = '#555';
+                        }
                     }
                 },
                 style: {
