@@ -1678,7 +1678,6 @@ function inArray(item: any, arr: Array<any>, fromIndex?: number): number {
     return arr.indexOf(item, fromIndex);
 }
 
-/* eslint-disable valid-jsdoc */
 /**
  * Return the value of the first element in the array that satisfies the
  * provided testing function.
@@ -1696,12 +1695,17 @@ function inArray(item: any, arr: Array<any>, fromIndex?: number): number {
  *         The value of the element.
  */
 const find = (Array.prototype as any).find ?
-    /* eslint-enable valid-jsdoc */
-    function<T> (arr: Array<T>, callback: Function): (T|undefined) {
+    function<T> (
+        arr: Array<T>,
+        callback: Utilities.FindCallback<T>
+    ): (T|undefined) {
         return (arr as any).find(callback as any);
     } :
     // Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
-    function<T> (arr: Array<T>, callback: Function): (T|undefined) {
+    function<T> (
+        arr: Array<T>,
+        callback: Utilities.FindCallback<T>
+    ): (T|undefined) {
         let i;
         const length = arr.length;
 
@@ -2404,6 +2408,12 @@ namespace Utilities {
     export interface EventWrapperObject<T> {
         fn: EventCallback<T>;
         order: number;
+    }
+    export interface FindCallback<T> {
+        (
+            value: T,
+            index: number
+        ): unknown;
     }
     export interface ObjectEachCallback<TObject, TContext> {
         (
