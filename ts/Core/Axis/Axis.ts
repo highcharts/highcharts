@@ -3691,7 +3691,9 @@ class Axis {
         this: AxisLabelFormatterContextObject,
         ctx?: AxisLabelFormatterContextObject
     ): string {
-        let axis = this.axis,
+        const axis = this.axis,
+            chart = this.chart,
+            { numberFormatter } = chart,
             value = isNumber(this.value) ? this.value : NaN,
             time = axis.chart.time,
             categories = axis.categories,
@@ -3699,17 +3701,15 @@ class Axis {
             lang = defaultOptions.lang,
             numericSymbols = (lang as any).numericSymbols,
             numSymMagnitude = (lang as any).numericSymbolMagnitude || 1000,
-            i = numericSymbols && numericSymbols.length,
-            multi,
-            ret: (string|undefined),
-
             // make sure the same symbol is added for all labels on a linear
             // axis
             numericSymbolDetector = axis.logarithmic ?
                 Math.abs(value) :
                 axis.tickInterval;
-        const chart = this.chart;
-        const { numberFormatter } = chart;
+
+        let i = numericSymbols && numericSymbols.length,
+            multi,
+            ret: (string|undefined);
 
         if (categories) {
             ret = `${this.value}`;
@@ -3762,9 +3762,10 @@ class Axis {
      * @fires Highcharts.Axis#event:getSeriesExtremes
      */
     public getSeriesExtremes(): void {
-        let axis = this,
-            chart = axis.chart,
-            xExtremes;
+        const axis = this,
+            chart = axis.chart;
+
+        let xExtremes;
 
         fireEvent(this, 'getSeriesExtremes', null as any, function (): void {
 
@@ -3786,8 +3787,9 @@ class Axis {
                     !chart.options.chart.ignoreHiddenSeries
                 ) {
 
-                    let seriesOptions = series.options,
-                        xData,
+                    const seriesOptions = series.options;
+
+                    let xData,
                         threshold = seriesOptions.threshold,
                         seriesDataMin: number,
                         seriesDataMax: number;
@@ -3923,18 +3925,19 @@ class Axis {
         handleLog?: boolean,
         pointPlacement?: number
     ): (number|undefined) {
-        let axis = (this.linkedParent || this), // #1417
-            sign = 1,
-            cvsOffset = 0,
-            localA = old && axis.old ? axis.old.transA : axis.transA,
+        const axis = (this.linkedParent || this), // #1417
             localMin = old && axis.old ? axis.old.min : axis.min,
-            returnValue = 0,
             minPixelPadding = axis.minPixelPadding,
             doPostTranslate = (
                 axis.isOrdinal ||
                 axis.brokenAxis && axis.brokenAxis.hasBreaks ||
                 (axis.logarithmic && handleLog)
             ) && axis.lin2val;
+
+        let sign = 1,
+            cvsOffset = 0,
+            localA = old && axis.old ? axis.old.transA : axis.transA,
+            returnValue = 0;
 
         if (!localA) {
             localA = axis.transA;
@@ -4051,24 +4054,24 @@ class Axis {
      * The SVG path definition for the plot line.
      */
     public getPlotLinePath(options: Axis.PlotLinePathOptions): (SVGPath|null) {
-        let axis = this,
+        const axis = this,
             chart = axis.chart,
             axisLeft = axis.left,
             axisTop = axis.top,
             old = options.old,
             value = options.value,
-            translatedValue = options.translatedValue,
             lineWidth = options.lineWidth,
+            cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
+            cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
+            transB = axis.transB;
+
+        let translatedValue = options.translatedValue,
             force = options.force,
             x1: number,
             y1: number,
             x2: number,
             y2: number,
-            cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
-            cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
-            skip: boolean,
-            transB = axis.transB,
-            evt: Event;
+            skip: boolean;
 
         // eslint-disable-next-line valid-jsdoc
         /**
@@ -4087,7 +4090,7 @@ class Axis {
             return x;
         }
 
-        evt = {
+        const evt: Event = {
             value: value,
             lineWidth: lineWidth,
             old: old,
@@ -4158,13 +4161,12 @@ class Axis {
         min: number,
         max: number
     ): Array<number> {
+        const roundedMin = correctFloat(Math.floor(min / tickInterval) * tickInterval),
+            roundedMax = correctFloat(Math.ceil(max / tickInterval) * tickInterval),
+            tickPositions = [];
+
         let pos,
             lastPos,
-            roundedMin =
-                correctFloat(Math.floor(min / tickInterval) * tickInterval),
-            roundedMax =
-                correctFloat(Math.ceil(max / tickInterval) * tickInterval),
-            tickPositions = [],
             precision;
 
         // When the precision is higher than what we filter out in
@@ -4235,16 +4237,17 @@ class Axis {
      * An array of axis values where ticks should be placed.
      */
     public getMinorTickPositions(): Array<number> {
-        let axis = this,
+        const axis = this,
             options = axis.options,
             tickPositions = axis.tickPositions,
             minorTickInterval = axis.minorTickInterval,
-            minorTickPositions = [] as Array<number>,
-            pos,
             pointRangePadding = axis.pointRangePadding || 0,
             min = (axis.min as any) - pointRangePadding, // #1498
             max = (axis.max as any) + pointRangePadding, // #1498
             range = max - min;
+
+        let minorTickPositions = [] as Array<number>,
+            pos: number;
 
         // If minor ticks get too dense, they are hard to read, and may cause
         // long running script. So we don't draw them.
@@ -4316,11 +4319,12 @@ class Axis {
      * @function Highcharts.Axis#adjustForMinRange
      */
     public adjustForMinRange(): void {
-        let axis = this,
+        const axis = this,
             options = axis.options,
-            min = axis.min,
+            log = axis.logarithmic;
+
+        let min = axis.min,
             max = axis.max,
-            log = axis.logarithmic,
             zoomOffset,
             spaceAvailable: boolean,
             closestDataRange = 0,
@@ -4461,9 +4465,10 @@ class Axis {
      * The X value that the point is given.
      */
     public nameToX(point: Point): number {
-        let explicitCategories = isArray(this.categories),
-            names = explicitCategories ? this.categories : this.names,
-            nameX = point.options.x,
+        const explicitCategories = isArray(this.categories),
+            names = explicitCategories ? this.categories : this.names;
+
+        let nameX = point.options.x,
             x: (number|undefined);
 
         point.series.requireSorting = false;
@@ -4568,17 +4573,18 @@ class Axis {
      * @fires Highcharts.Axis#event:afterSetAxisTranslation
      */
     public setAxisTranslation(): void {
-        let axis = this,
+        const axis = this,
             range = (axis.max as any) - (axis.min as any),
-            pointRange = axis.axisPointRange || 0,
+            linkedParent = axis.linkedParent,
+            hasCategories = !!axis.categories,
+            isXAxis = axis.isXAxis;
+
+        let pointRange = axis.axisPointRange || 0,
             closestPointRange: number,
             minPointOffset = 0,
             pointRangePadding = 0,
-            linkedParent = axis.linkedParent,
             ordinalCorrection,
-            hasCategories = !!axis.categories,
-            transA = axis.transA,
-            isXAxis = axis.isXAxis;
+            transA = axis.transA;
 
         // Adjust translation for padding. Y axis with categories need to go
         // through the same (#1784).
@@ -4697,22 +4703,22 @@ class Axis {
      * @fires Highcharts.Axis#event:foundExtremes
      */
     public setTickInterval(secondPass?: boolean): void {
-        let axis = this,
+        const axis = this,
             chart = axis.chart,
             log = axis.logarithmic,
             options = axis.options,
             isXAxis = axis.isXAxis,
             isLinked = axis.isLinked,
-            maxPadding = options.maxPadding,
+            tickPixelIntervalOption = options.tickPixelInterval,
+            categories = axis.categories,
+            softThreshold = axis.softThreshold;
+
+        let maxPadding = options.maxPadding,
             minPadding = options.minPadding,
             length,
             linkedParentExtremes,
             tickIntervalOption = options.tickInterval,
-            minTickInterval,
-            tickPixelIntervalOption = options.tickPixelInterval,
-            categories = axis.categories,
             threshold = isNumber(axis.threshold) ? axis.threshold : null,
-            softThreshold = axis.softThreshold,
             thresholdMin,
             thresholdMax,
             hardMin,
@@ -4954,7 +4960,7 @@ class Axis {
 
         // Before normalizing the tick interval, handle minimum tick interval.
         // This applies only if tickInterval is not defined.
-        minTickInterval = pick(
+        const minTickInterval = pick(
             options.minTickInterval,
             // In datetime axes, don't go below the data interval, except when
             // there are scatter-like series involved (#13369).
@@ -5002,17 +5008,17 @@ class Axis {
      * @fires Highcharts.Axis#event:afterSetTickPositions
      */
     public setTickPositions(): void {
-
-        let axis = this,
+        const axis = this,
             options = this.options,
-            tickPositions,
             tickPositionsOption = options.tickPositions,
             minorTickIntervalOption = this.getMinorTickInterval(),
-            tickPositioner = options.tickPositioner,
             hasVerticalPanning = this.hasVerticalPanning(),
             isColorAxis = this.coll === 'colorAxis',
             startOnTick = (isColorAxis || !hasVerticalPanning) && options.startOnTick,
             endOnTick = (isColorAxis || !hasVerticalPanning) && options.endOnTick;
+
+        let tickPositions,
+            tickPositioner = options.tickPositioner;
 
         // Set the tickmarkOffset
         this.tickmarkOffset = (
@@ -5223,11 +5229,12 @@ class Axis {
      * True if there are other axes.
      */
     public alignToOthers(): (boolean|undefined) {
-        let axis = this,
+        const axis = this,
             others = // Whether there is another axis to pair with this one
                 {} as AxisOptions,
-            hasOther,
             options = axis.options;
+
+        let hasOther: (boolean|undefined);
 
         if (
             // Only if alignTicks is true
@@ -5273,10 +5280,11 @@ class Axis {
      * @function Highcharts.Axis#getTickAmount
      */
     public getTickAmount(): void {
-        let axis = this,
+        const axis = this,
             options = this.options,
-            tickAmount = options.tickAmount,
             tickPixelInterval = options.tickPixelInterval as any;
+
+        let tickAmount = options.tickAmount;
 
         if (
             !defined(options.tickInterval) &&
@@ -5315,15 +5323,16 @@ class Axis {
      * @function Highcharts.Axis#adjustTickAmount
      */
     public adjustTickAmount(): void {
-        let axis = this,
+        const axis = this,
             axisOptions = axis.options,
             tickInterval = axis.tickInterval,
             tickPositions = axis.tickPositions,
             tickAmount = axis.tickAmount,
             finalTickAmt = axis.finalTickAmt,
             currentTickAmount = tickPositions && tickPositions.length,
-            threshold = pick(axis.threshold, axis.softThreshold ? 0 : null),
-            len,
+            threshold = pick(axis.threshold, axis.softThreshold ? 0 : null);
+
+        let len,
             i;
 
         if (axis.hasData() && isNumber(axis.min) && isNumber(axis.max)) { // #14769
@@ -5394,9 +5403,9 @@ class Axis {
      * @fires Highcharts.Axis#event:afterSetScale
      */
     public setScale(): void {
-        let axis = this,
-            isDirtyAxisLength,
-            isDirtyData: (boolean|undefined) = false,
+        const axis = this;
+
+        let isDirtyData: (boolean|undefined) = false,
             isXAxisDirty = false;
 
         axis.series.forEach(function (series): void {
@@ -5413,7 +5422,7 @@ class Axis {
 
         // set the new axisLength
         axis.setAxisSize();
-        isDirtyAxisLength = axis.len !== (axis.old && axis.old.len);
+        const isDirtyAxisLength = axis.len !== (axis.old && axis.old.len);
 
         // do we really need to go through all this?
         if (
@@ -5771,16 +5780,16 @@ class Axis {
      * An array of tickLength and tickWidth
      */
     public tickSize(prefix?: string): [number, number]|undefined {
-        let options = this.options,
-            tickLength = options[
-                prefix === 'tick' ? 'tickLength' : 'minorTickLength'
-            ],
+        const options = this.options,
             tickWidth = pick(
                 options[prefix === 'tick' ? 'tickWidth' : 'minorTickWidth'],
                 // Default to 1 on linear and datetime X axes
                 prefix === 'tick' && this.isXAxis && !this.categories ? 1 : 0
-            ),
-            e,
+            );
+
+        let tickLength = options[
+                prefix === 'tick' ? 'tickLength' : 'minorTickLength'
+            ],
             tickSize: ([number, number]|undefined);
 
         if (tickWidth && tickLength) {
@@ -5791,7 +5800,7 @@ class Axis {
             tickSize = [tickLength, tickWidth];
         }
 
-        e = { tickSize };
+        const e = { tickSize };
         fireEvent(this, 'afterTickSize', e);
 
         return e.tickSize;
@@ -5826,10 +5835,9 @@ class Axis {
      * @return {number}
      */
     public unsquish(): number {
-        let labelOptions = this.options.labels,
+        const labelOptions = this.options.labels,
             horiz = this.horiz,
             tickInterval = this.tickInterval,
-            newTickInterval = tickInterval,
             slotSize = this.len / (
                 (
                     (this.categories ? 1 : 0) +
@@ -5838,12 +5846,8 @@ class Axis {
                 ) /
                 tickInterval
             ),
-            rotation: number|undefined,
             rotationOption = labelOptions.rotation,
             labelMetrics = this.labelMetrics(),
-            step,
-            bestScore = Number.MAX_VALUE,
-            autoRotation: Array<number>|undefined,
             range = Math.max((this.max as any) - (this.min as any), 0),
             // Return the multiple of tickInterval that is needed to avoid
             // collision
@@ -5864,6 +5868,12 @@ class Axis {
 
                 return correctFloat(step * tickInterval);
             };
+
+        let newTickInterval = tickInterval,
+            rotation: (number|undefined),
+            step: number,
+            bestScore = Number.MAX_VALUE,
+            autoRotation: (Array<number>|undefined);
 
         if (horiz) {
             if (!labelOptions.staggerLines && !labelOptions.step) {
@@ -5979,7 +5989,7 @@ class Axis {
      * @function Highcharts.Axis#renderUnsquish
      */
     public renderUnsquish(): void {
-        let chart = this.chart,
+        const chart = this.chart,
             renderer = chart.renderer,
             tickPositions = this.tickPositions,
             ticks = this.ticks,
@@ -5993,8 +6003,9 @@ class Axis {
             ),
             attr: SVGAttributes = {},
             labelMetrics = this.labelMetrics(),
-            textOverflowOption = labelStyleOptions.textOverflow,
-            commonWidth: number,
+            textOverflowOption = labelStyleOptions.textOverflow;
+
+        let commonWidth: number,
             commonTextOverflow: string,
             maxLabelLength = 0,
             label,
@@ -6190,14 +6201,15 @@ class Axis {
      * Whether or not to display the title.
      */
     public addTitle(display?: boolean): void {
-        let axis = this,
+        const axis = this,
             renderer = axis.chart.renderer,
             horiz = axis.horiz,
             opposite = axis.opposite,
             options = axis.options,
             axisTitleOptions = options.title,
-            textAlign: AlignValue|undefined,
             styledMode = axis.chart.styledMode;
+
+        let textAlign: (AlignValue|undefined);
 
         if (!axis.axisTitle) {
             textAlign = axisTitleOptions.textAlign;
@@ -6283,7 +6295,7 @@ class Axis {
      * @fires Highcharts.Axis#event:afterGetOffset
      */
     public getOffset(): void {
-        let axis = this,
+        const axis = this,
             chart = axis.chart,
             renderer = chart.renderer,
             options = axis.options,
@@ -6291,27 +6303,29 @@ class Axis {
             ticks = axis.ticks,
             horiz = axis.horiz,
             side = axis.side,
-            invertedSide = chart.inverted &&
-                !axis.isZAxis ? [1, 0, 3, 2][side] : side,
-            hasData,
-            showAxis,
+            invertedSide = (
+                chart.inverted && !axis.isZAxis ?
+                    [1, 0, 3, 2][side] :
+                    side
+            ),
+            hasData = axis.hasData(),
+            axisTitleOptions = options.title,
+            labelOptions = options.labels,
+            axisOffset = chart.axisOffset,
+            clipOffset = chart.clipOffset,
+            directionFactor = [-1, 1, 1, -1][side],
+            className = options.className,
+            axisParent = axis.axisParent; // Used in color axis
+
+        let showAxis,
             titleOffset = 0,
             titleOffsetOption,
             titleMargin = 0,
-            axisTitleOptions = options.title,
-            labelOptions = options.labels,
             labelOffset = 0, // reset
             labelOffsetPadded,
-            axisOffset = chart.axisOffset,
-            clipOffset = chart.clipOffset,
-            clip,
-            directionFactor = [-1, 1, 1, -1][side],
-            className = options.className,
-            axisParent = axis.axisParent, // Used in color axis
             lineHeightCorrection;
 
         // For reuse in Axis.render
-        hasData = axis.hasData();
         axis.showAxis = showAxis = hasData || options.showEmpty;
 
         // Set/reset staggerLines
@@ -6469,7 +6483,7 @@ class Axis {
 
         // Decide the clipping needed to keep the graph inside
         // the plot area and axis lines
-        clip = options.offset ?
+        const clip = options.offset ?
             0 :
             // #4308, #4371:
             Math.floor((axis.axisLine as any).strokeWidth() / 2) * 2;
@@ -6695,7 +6709,7 @@ class Axis {
      * @fires Highcharts.Axis#event:afterRender
      */
     public render(): void {
-        let axis = this,
+        const axis = this,
             chart = axis.chart,
             log = axis.logarithmic,
             renderer = chart.renderer,
@@ -6711,9 +6725,10 @@ class Axis {
             tickmarkOffset = axis.tickmarkOffset,
             axisLine = axis.axisLine,
             showAxis = axis.showAxis,
-            animation = animObject(renderer.globalAnimation),
-            from,
-            to;
+            animation = animObject(renderer.globalAnimation);
+
+        let from: number,
+            to: number;
 
         // Reset
         axis.labelEdge.length = 0;
@@ -6810,11 +6825,10 @@ class Axis {
         [ticks, minorTicks, alternateBands].forEach(function (
             coll: (Record<string, PlotLineOrBand>|Record<string, Tick>)
         ): void {
-            let i,
-                forDestruction: Array<number> = [],
+            const forDestruction: Array<number> = [],
                 delay = animation.duration,
                 destroyInactiveItems = function (): void {
-                    i = forDestruction.length;
+                    let i = forDestruction.length;
                     while (i--) {
                         // When resizing rapidly, the same items
                         // may be destroyed in different timeouts,
@@ -7237,10 +7251,11 @@ class Axis {
      *        Whether to redraw the chart following the remove.
      */
     public remove(redraw?: boolean): void {
-        let chart = this.chart,
+        const chart = this.chart,
             key = this.coll, // xAxis or yAxis
-            axisSeries = this.series,
-            i = axisSeries.length;
+            axisSeries = this.series;
+
+        let i = axisSeries.length;
 
         // Remove associated series (#2687)
         while (i--) {
