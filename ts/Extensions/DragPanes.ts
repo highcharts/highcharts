@@ -20,6 +20,7 @@
  *
  * */
 
+import type { YAxisOptions } from '../Core/Axis/AxisOptions';
 import type ColorType from '../Core/Color/ColorType';
 import type {
     CursorValue
@@ -137,7 +138,7 @@ declare global {
 class AxisResizer {
 
     // Default options for AxisResizer.
-    public static resizerOptions: DeepPartial<Highcharts.YAxisOptions> = {
+    public static resizerOptions: DeepPartial<YAxisOptions> = {
         /**
          * Minimal size of a resizable axis. Could be set as a percent
          * of plot area or pixel size.
@@ -574,7 +575,7 @@ class AxisResizer {
                                 chart.get(axisInfo)
                         ),
                     axisOptions = axis && axis.options,
-                    optionsToUpdate: DeepPartial<Highcharts.YAxisOptions> = {},
+                    optionsToUpdate: DeepPartial<YAxisOptions> = {},
                     hDelta = 0,
                     height, top,
                     minLength, maxLength;

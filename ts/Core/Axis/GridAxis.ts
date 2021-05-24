@@ -21,6 +21,7 @@ import type {
     AxisLabelFormatterContextObject,
     AxisOptions
 } from './AxisOptions';
+import type { AxisTypeOptions } from './AxisType';
 import type ChartOptions from '../Chart/ChartOptions';
 import type ColorType from '../Color/ColorType';
 import type Point from '../Series/Point';
@@ -319,7 +320,7 @@ addEvent(
     Chart,
     'afterSetChartSize',
     function (): void {
-        this.axes.forEach(function (axis: Axis): void {
+        this.axes.forEach(function (axis): void {
             (axis.grid && axis.grid.columns || []).forEach(function (column): void {
                 column.setAxisSize();
                 column.setAxisTranslation();
@@ -1034,7 +1035,7 @@ class GridAxis {
     ): void {
         let options = this.options,
             userOptions = e.userOptions,
-            gridAxisOptions: DeepPartial<Highcharts.AxisTypeOptions>,
+            gridAxisOptions: DeepPartial<AxisTypeOptions>,
             gridOptions: GridAxis.Options = (
                 (options && isObject(options.grid)) ? (options.grid as any) : {}
             );
@@ -1043,7 +1044,7 @@ class GridAxis {
 
             // Merge the user options into default grid axis options so
             // that when a user option is set, it takes presedence.
-            gridAxisOptions = merge<DeepPartial<Highcharts.AxisTypeOptions>>(true, {
+            gridAxisOptions = merge<DeepPartial<AxisTypeOptions>>(true, {
 
                 className: (
                     'highcharts-grid-axis ' + (userOptions.className || '')

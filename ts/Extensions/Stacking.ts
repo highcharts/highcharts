@@ -22,6 +22,7 @@ import type {
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type { YAxisOptions } from '../Core/Axis/AxisOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
@@ -702,7 +703,7 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
                 stacks[key as any][x] = new StackItem(
                     yAxis,
                     (
-                        yAxis.options as Highcharts.YAxisOptions
+                        yAxis.options as YAxisOptions
                     ).stackLabels as any,
                     isNegative,
                     x,

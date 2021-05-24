@@ -11,7 +11,10 @@
 'use strict';
 
 import type AnimationOptions from '../Animation/AnimationOptions';
-import type { AxisBreakOptions } from './AxisOptions';
+import type {
+    AxisBreakOptions,
+    YAxisOptions
+} from './AxisOptions';
 import type { AxisBreakBorderObject, AxisBreakObject } from './BreakObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
@@ -690,7 +693,7 @@ class BrokenAxis {
                                 new StackItem(
                                     yAxis as any,
                                     (
-                                        (yAxis.options as Highcharts.YAxisOptions)
+                                        (yAxis.options as YAxisOptions)
                                             .stackLabels as any
                                     ),
                                     false,

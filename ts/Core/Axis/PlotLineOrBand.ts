@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AlignValue,
     VerticalAlignValue
@@ -22,9 +28,15 @@ import type FormatUtilities from '../FormatUtilities';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+
 import Axis from './Axis.js';
-import H from '../Globals.js';
 import palette from '../../Core/Color/Palette.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module './AxisLike' {
     interface AxisLike {
@@ -1171,12 +1183,12 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 value: to,
                 force: true,
                 acrossPanes: options.acrossPanes
-            } as Highcharts.AxisPlotLinePathOptionsObject),
+            }),
             path = this.getPlotLinePath({
                 value: from,
                 force: true,
                 acrossPanes: options.acrossPanes
-            } as Highcharts.AxisPlotLinePathOptionsObject),
+            }),
             result = [] as SVGPath,
             i,
             // #4964 check if chart is inverted or plotband is on yAxis

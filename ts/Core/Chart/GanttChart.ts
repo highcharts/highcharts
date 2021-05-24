@@ -18,7 +18,10 @@
  *
  * */
 
-import type AxisOptions from '../Axis/AxisOptions';
+import type {
+    AxisOptions,
+    YAxisOptions
+} from '../Axis/AxisOptions';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Options from '../Options';
 
@@ -157,10 +160,10 @@ class GanttChart extends Chart {
 
         // apply Y axis options to both single and multi y axes
         options.yAxis = (splat(userOptions.yAxis || {})).map(function (
-            yAxisOptions: Highcharts.YAxisOptions
-        ): Highcharts.YAxisOptions {
-            return merge<Highcharts.YAxisOptions>(
-                defaultOptions.yAxis as any, // #3802
+            yAxisOptions: YAxisOptions
+        ): YAxisOptions {
+            return merge(
+                defaultOptions.yAxis, // #3802
                 { // defaults
                     grid: {
                         enabled: true
@@ -173,7 +176,7 @@ class GanttChart extends Chart {
                     // Set default type treegrid, but only if 'categories' is
                     // undefined
                     type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
-                } as Highcharts.YAxisOptions,
+                } as YAxisOptions,
                 yAxisOptions // user options
             );
         });

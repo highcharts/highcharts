@@ -16,7 +16,10 @@
  *
  * */
 
-import type AxisOptions from './Axis/AxisOptions';
+import type {
+    AxisOptions,
+    YAxisOptions
+} from './Axis/AxisOptions';
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
 import type PointerEvent from './PointerEvent';
@@ -1937,7 +1940,7 @@ class Navigator {
             })) as NavigatorAxis;
 
             navigator.yAxis = new Axis(chart, merge(
-                navigatorOptions.yAxis as Highcharts.YAxisOptions,
+                navigatorOptions.yAxis,
                 {
                     id: 'navigator-y-axis',
                     alignTicks: false,

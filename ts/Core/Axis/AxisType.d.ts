@@ -38,7 +38,7 @@ export type AxisTypeOptions = AxisType['options'];
  * Use the `declare module 'Types'` pattern to overload the interface in this
  * definition file.
  */
-export interface AxisTypeRegistry extends Record<string, Axis> {
+export interface AxisTypeRegistry {
     Axis: Axis;
 }
 

@@ -23,16 +23,18 @@ import type {
     AxisCrosshairOptions,
     AxisLabelFormatterCallback,
     AxisLabelFormatterContextObject,
-    AxisOptions
+    AxisOptions,
+    AxisTitleOptions,
+    XAxisOptions,
+    YAxisOptions
 } from './AxisOptions';
+import type { AxisTypeOptions } from './AxisType';
 import type TickPositionsArray from './TickPositionsArray';
 import type { AlignValue } from '../Renderer/AlignObject';
 import type Chart from '../Chart/Chart';
-import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
-import type GradientColor from '../Color/GradientColor';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
@@ -51,6 +53,7 @@ const {
     registerEventOptions
 } = F;
 import H from '../Globals.js';
+const { deg2rad } = H;
 import palette from '../Color/Palette.js';
 import D from '../DefaultOptions.js';
 const { defaultOptions } = D;
@@ -89,8 +92,8 @@ const {
 
 declare module '../../Core/Options'{
     interface Options {
-        xAxis?: (DeepPartial<AxisOptions>|Array<DeepPartial<AxisOptions>>);
-        yAxis?: (DeepPartial<Highcharts.YAxisOptions>|Array<DeepPartial<Highcharts.YAxisOptions>>);
+        xAxis?: (DeepPartial<XAxisOptions>|Array<DeepPartial<XAxisOptions>>);
+        yAxis?: (DeepPartial<YAxisOptions>|Array<DeepPartial<YAxisOptions>>);
     }
 }
 
@@ -101,320 +104,6 @@ declare module '../Series/SeriesOptions' {
         threshold?: number|null;
     }
 }
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        type AxisExtremesTriggerValue = (
-            'navigator'|'pan'|'rangeSelectorButton'|'rangeSelectorInput'|
-            'scrollbar'|'traverseUpButton'|'zoom'
-        );
-        type AxisTypeOptions = (AxisOptions|YAxisOptions);
-        type AxisTickmarkPlacementValue = ('between'|'on');
-        type AxisTickPositionValue = ('inside'|'outside');
-        type AxisTitleAlignValue = ('high'|'low'|'middle');
-        type AxisTitleOptions = XAxisTitleOptions;
-        type AxisTypeValue = (
-            'linear'|'logarithmic'|'datetime'|'category'|'treegrid'
-        );
-        interface AxisEventCallbackFunction {
-            (this: Axis): void;
-        }
-        interface AxisPlotLinePathOptionsObject {
-            acrossPanes?: boolean;
-            force?: (boolean|string);
-            lineWidth?: number;
-            old?: boolean;
-            reverse?: boolean;
-            translatedValue?: number;
-            value?: number;
-        }
-        interface AxisPointBreakEventCallbackFunction {
-            (this: Axis, evt: AxisPointBreakEventObject): void;
-        }
-        interface AxisPointBreakEventObject {
-            brk: Record<string, number>;
-            point: Point;
-            preventDefault: Function;
-            target: SVGElement;
-            type: ('pointBreak'|'pointInBreak');
-        }
-        interface AxisSetExtremesEventCallbackFunction {
-            (this: Axis, evt: AxisSetExtremesEventObject): void;
-        }
-        interface AxisSetExtremesEventObject extends ExtremesObject {
-            preventDefault: Function;
-            target: SVGElement;
-            trigger: (AxisExtremesTriggerValue|string);
-            type: 'setExtremes';
-        }
-        interface AxisTickPositionerCallbackFunction {
-            (
-                this: Axis,
-                min: number,
-                max: number
-            ): (TickPositionsArray|undefined);
-        }
-        interface ExtremesObject {
-            dataMax: number;
-            dataMin: number;
-            max: number;
-            min: number;
-            userMax: number;
-            userMin: number;
-        }
-        interface XAxisAccessibilityOptions {
-            description?: string;
-            enabled?: boolean;
-            rangeDescription?: string;
-        }
-        interface XAxisTitleOptions {
-            align: AxisTitleAlignValue;
-            enabled?: boolean;
-            margin?: number;
-            offset?: number;
-            reserveSpace?: boolean;
-            rotation: number;
-            style: CSSObject;
-            text?: (string|null);
-            textAlign?: AlignValue;
-            useHTML: boolean;
-            x: number;
-            y: number;
-        }
-        interface YAxisOptions extends AxisOptions {
-            maxColor?: ColorType;
-            minColor?: ColorType;
-            staticScale?: number;
-            stops?: GradientColor['stops'];
-            tooltipValueFormat?: string;
-        }
-        interface AxisPanningState {
-            startMin: (number);
-            startMax: (number);
-            isDirty?: boolean;
-        }
-        /*
-        class Axis implements AxisLike {
-            public static defaultBottomAxisOptions: AxisOptions;
-            public static defaultLeftAxisOptions: AxisOptions;
-            public static defaultOptions: AxisOptions;
-            public static defaultRightAxisOptions: AxisOptions;
-            public static defaultTopAxisOptions: AxisOptions;
-            public static defaultYAxisOptions: YAxisOptions;
-            public static keepProps: Array<string>;
-            public constructor(
-                chart: Chart,
-                userOptions: DeepPartial<AxisOptions>
-            );
-            public _addedPlotLB?: boolean;
-            public allowZoomOutside?: boolean;
-            public alternateBands: Record<string, PlotLineOrBand>;
-            public autoRotation?: Array<number>;
-            public axisGroup?: SVGElement;
-            public axisLine?: SVGElement;
-            public axisParent?: SVGElement;
-            public axisPointRange?: number;
-            public axisTitle?: SVGElement;
-            public axisTitleMargin?: number;
-            public bottom: number;
-            public categories: Array<string>;
-            public chart: Chart;
-            public closestPointRange: number;
-            public coll: string;
-            public cross?: SVGElement;
-            public crosshair?: AxisCrosshairOptions;
-            public dataMax?: (null|number);
-            public dataMin?: (null|number);
-            public displayBtn?: boolean;
-            public eventArgs?: any;
-            public eventOptions: Record<string, EventCallback<Series, Event>>;
-            public finalTickAmt?: number;
-            public forceRedraw?: boolean;
-            public gridGroup?: SVGElement;
-            public hasNames: boolean;
-            public hasVisibleSeries: boolean;
-            public height: number;
-            public horiz?: boolean;
-            public isDirty?: boolean;
-            public isHidden?: boolean;
-            public isLinked: boolean;
-            public isOrdinal?: boolean;
-            public isRadial?: boolean;
-            public isXAxis?: boolean;
-            public isZAxis?: boolean;
-            public keepProps?: Array<string>;
-            public labelAlign?: AlignValue;
-            public labelEdge: Array<null>;
-            public labelGroup?: SVGElement;
-            public labelOffset?: number;
-            public labelRotation?: number;
-            public left: number;
-            public len: number;
-            public linkedParent?: Axis;
-            public max: (null|number);
-            public maxLabelDimensions?: SizeObject;
-            public maxLabelLength: number;
-            public min: (null|number);
-            public minorTickInterval: number;
-            public minorTicks: Record<string, Tick>;
-            public minPixelPadding: number;
-            public minPointOffset?: number;
-            public minRange?: (null|number);
-            public names: Array<string>;
-            public offset: number;
-            public old?: {
-                len: number;
-                max: number|null;
-                min: number|null;
-                transA: number;
-                userMax?: number;
-                userMin?: number;
-            }
-            public opposite?: boolean;
-            public options: AxisTypeOptions;
-            public overlap: boolean;
-            public paddedTicks: Array<number>;
-            public panningState?: AxisPanningState;
-            public plotLinesAndBands: Array<PlotLineOrBand>;
-            public plotLinesAndBandsGroups: Record<string, SVGElement>;
-            public pointRange: number;
-            public pointRangePadding: number;
-            public pos: number;
-            public positiveValuesOnly: boolean;
-            public postProcessTickInterval?: Function;
-            public reserveSpaceDefault?: boolean;
-            public reversed?: boolean;
-            public right: number;
-            public sector?: number;
-            public series: Array<Series>;
-            public showAxis?: boolean;
-            public side: number;
-            public single?: boolean;
-            public softThreshold?: boolean;
-            public staggerLines?: number;
-            public staticScale?: number;
-            public threshold?: number;
-            public tickAmount: number;
-            public tickInterval: number;
-            public tickmarkOffset: number;
-            public tickPositions: TickPositionsArray;
-            public tickRotCorr: PositionObject;
-            public ticks: Record<string, Tick>;
-            public titleOffset?: number;
-            public top: number;
-            public transA: number;
-            public transB: number;
-            public translationSlope: number;
-            public userMax?: number;
-            public userMin?: number;
-            public userMinRange?: number;
-            public userOptions: DeepPartial<AxisTypeOptions>;
-            public visible: boolean;
-            public width: number;
-            public zoomEnabled: boolean;
-            public addTitle(display?: boolean): void;
-            public adjustForMinRange(): void;
-            public adjustTickAmount(): void;
-            public alignToOthers(): (boolean|undefined);
-            public autoLabelAlign(rotation: number): AlignValue;
-            public defaultLabelFormatter: AxisLabelsFormatterCallbackFunction;
-            public destroy(keepEvents?: boolean): void;
-            public drawCrosshair(e?: PointerEvent, point?: Point): void;
-            public generateTick(pos: number, i?: number): void;
-            public getClosest(): number;
-            public getExtremes(): ExtremesObject;
-            public getKeepProps(): Array<string>;
-            public getLinePath(lineWidth: number): SVGPath;
-            public getLinearTickPositions(
-                tickInterval: number,
-                min: number,
-                max: number
-            ): Array<number>;
-            public getMinorTickInterval(): ('auto'|null|number);
-            public getMinorTickPositions(): Array<number>;
-            public getOffset(): void;
-            public getPlotLinePath(
-                options: AxisPlotLinePathOptionsObject
-            ): (SVGPath|null);
-            public getSeriesExtremes(): void;
-            public getSlotWidth(tick?: Tick): number;
-            public getThreshold(threshold: number): (number|undefined);
-            public getTickAmount(): void;
-            public getTitlePosition(): PositionObject;
-            public hasData(): boolean;
-            public hasVerticalPanning(): boolean;
-            public hideCrosshair(): void;
-            public init(
-                chart: Chart,
-                userOptions: DeepPartial<AxisOptions>
-            ): void;
-            public labelMetrics(): FontMetricsObject;
-            public minFromRange(): (number|undefined);
-            public nameToX(point: Point): number;
-            public redraw(): void;
-            public remove(redraw?: boolean): void;
-            public render(): void;
-            public renderLine(): void;
-            public renderMinorTick(pos: number): void;
-            public renderTick(pos: number, i: number): void;
-            public renderUnsquish(): void;
-            public setAxisSize(): void;
-            public setAxisTranslation(): void;
-            public setCategories(
-                categories: Array<string>,
-                redraw?: boolean
-            ): void;
-            public setExtremes(
-                newMin?: number,
-                newMax?: number,
-                redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptions>),
-                eventArguments?: any
-            ): void;
-            public setOptions(userOptions: DeepPartial<AxisOptions>): void;
-            public setScale(): void;
-            public setTickInterval(secondPass?: boolean): void;
-            public setTickPositions(): void;
-            public setTitle(
-                titleOptions: AxisTitleOptions,
-                redraw?: boolean
-            ): void;
-            public tickSize(prefix?: string): [number, number]|undefined;
-            public toPixels(value: number, paneCoordinates?: boolean): number;
-            public toValue(pixel: number, paneCoordinates?: boolean): number;
-            public translate(
-                val: number,
-                backwards?: (boolean|null),
-                cvsCoord?: (boolean|null),
-                old?: (boolean|null),
-                handleLog?: boolean,
-                pointPlacement?: number
-            ): (number|undefined);
-            public trimTicks(
-                tickPositions: TickPositionsArray,
-                startOnTick?: boolean,
-                endOnTick?: boolean
-            ): void;
-            public unsquish(): number;
-            public update(
-                options: DeepPartial<AxisOptions>,
-                redraw?: boolean
-            ): void;
-            public updateNames(): void;
-            public validatePositiveValue(value: unknown): boolean;
-            public zoom(newMin: number, newMax: number): boolean;
-        }
-        interface Axis extends AxisComposition {
-        }
-        */
-    }
-}
-
-const deg2rad = H.deg2rad;
 
 /* *
  *
@@ -480,7 +169,7 @@ class Axis {
      *
      * @private
      */
-    public static defaultOptions: Highcharts.YAxisOptions = {
+    public static defaultOptions: YAxisOptions = {
 
         /**
          * When using multiple axis, the ticks of two or more opposite axes
@@ -2669,7 +2358,7 @@ class Axis {
      *
      * @private
      */
-    public static defaultYAxisOptions: DeepPartial<Highcharts.YAxisOptions> = {
+    public static defaultYAxisOptions: DeepPartial<YAxisOptions> = {
 
         /**
          * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
@@ -3653,11 +3342,11 @@ class Axis {
         userMin?: number;
     };
     public opposite?: boolean;
-    public options: Highcharts.AxisTypeOptions = void 0 as any;
+    public options: (AxisOptions|XAxisOptions|YAxisOptions) = void 0 as any;
     public ordinal?: AxisComposition['ordinal'];
     public overlap: boolean = void 0 as any;
     public paddedTicks: Array<number> = void 0 as any;
-    public panningState?: Highcharts.AxisPanningState;
+    public panningState?: Axis.PanningState;
     public plotLinesAndBands: Array<PlotLineOrBand> = void 0 as any;
     public plotLinesAndBandsGroups: Record<string, SVGElement> = void 0 as any;
     public pointRange: number = void 0 as any;
@@ -4361,7 +4050,7 @@ class Axis {
      * @return {Highcharts.SVGPathArray|null}
      * The SVG path definition for the plot line.
      */
-    public getPlotLinePath(options: Highcharts.AxisPlotLinePathOptionsObject): (SVGPath|null) {
+    public getPlotLinePath(options: Axis.PlotLinePathOptions): (SVGPath|null) {
         let axis = this,
             chart = axis.chart,
             axisLeft = axis.left,
@@ -5986,7 +5675,7 @@ class Axis {
      * @return {Highcharts.ExtremesObject}
      * An object containing extremes information.
      */
-    public getExtremes(): Highcharts.ExtremesObject {
+    public getExtremes(): Axis.ExtremesObject {
         const axis = this,
             log = axis.logarithmic;
 
@@ -7017,8 +6706,7 @@ class Axis {
             ticks = axis.ticks,
             minorTicks = axis.minorTicks,
             alternateBands = axis.alternateBands,
-            stackLabelOptions =
-                (options as Highcharts.YAxisOptions).stackLabels,
+            stackLabelOptions = (options as YAxisOptions).stackLabels,
             alternateGridColor = options.alternateGridColor,
             tickmarkOffset = axis.tickmarkOffset,
             axisLine = axis.axisLine,
@@ -7521,7 +7209,7 @@ class Axis {
      *        false and call {@link Chart#redraw} after.
      */
     public update(
-        options: DeepPartial<Highcharts.AxisTypeOptions>,
+        options: DeepPartial<AxisTypeOptions>,
         redraw?: boolean
     ): void {
         const chart = this.chart;
@@ -7597,7 +7285,7 @@ class Axis {
      * @return {void}
      */
     public setTitle(
-        titleOptions: Highcharts.AxisTitleOptions,
+        titleOptions: AxisTitleOptions,
         redraw?: boolean
     ): void {
         this.update({ title: titleOptions }, redraw);
@@ -7628,6 +7316,31 @@ class Axis {
 
 interface Axis extends AxisComposition, AxisLike {
     // nothing here yet
+}
+
+namespace Axis {
+    export interface ExtremesObject {
+        dataMax: number;
+        dataMin: number;
+        max: number;
+        min: number;
+        userMax: number;
+        userMin: number;
+    }
+    export interface PanningState {
+        startMin: (number);
+        startMax: (number);
+        isDirty?: boolean;
+    }
+    export interface PlotLinePathOptions {
+        acrossPanes?: boolean;
+        force?: (boolean|string);
+        lineWidth?: number;
+        old?: boolean;
+        reverse?: boolean;
+        translatedValue?: number;
+        value?: number;
+    }
 }
 
 export default Axis;

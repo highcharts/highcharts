@@ -79,7 +79,7 @@ Highcharts.theme = {
 
             }
         }
-    } as AxisOptions,
+    },
     yAxis: {
         gridLineColor: '#333333',
         labels: {
@@ -99,7 +99,7 @@ Highcharts.theme = {
                 fontFamily: 'Trebuchet MS, Verdana, sans-serif'
             }
         }
-    } as Highcharts.YAxisOptions,
+    },
     tooltip: {
         backgroundColor: 'rgba(0, 0, 0, 0.75)',
         style: {

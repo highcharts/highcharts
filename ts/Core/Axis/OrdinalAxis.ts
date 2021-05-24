@@ -399,7 +399,7 @@ namespace OrdinalAxis {
                     series: [],
                     chart: chart,
                     forceOrdinal: false,
-                    getExtremes: function (): Highcharts.ExtremesObject {
+                    getExtremes: function (): Axis.ExtremesObject {
                         return {
                             min: extremes.dataMin,
                             max: extremes.dataMax + (overscroll as any)

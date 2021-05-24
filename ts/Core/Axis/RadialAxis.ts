@@ -16,6 +16,7 @@
  *
  * */
 
+import type { YAxisOptions } from './AxisOptions';
 import type Chart from '../Chart/Chart';
 import type Pane from '../../Extensions/Pane';
 import type Point from '../Series/Point';
@@ -58,8 +59,6 @@ declare module '../Chart/ChartLike'{
         inverted?: boolean;
     }
 }
-
-type YAxisOptions = Highcharts.YAxisOptions;
 
 /**
  * Internal types

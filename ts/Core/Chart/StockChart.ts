@@ -16,7 +16,10 @@
  *
  * */
 
-import type AxisOptions from '../Axis/AxisOptions';
+import type {
+    AxisOptions,
+    YAxisOptions
+} from '../Axis/AxisOptions';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type CSSObject from '../Renderer/CSSObject';
 import type DataExtremesObject from '../Series/DataExtremesObject';
@@ -248,9 +251,9 @@ class StockChart extends Chart {
 
         // apply Y axis options to both single and multi y axes
         options.yAxis = splat(userOptions.yAxis || {}).map(function (
-            yAxisOptions: Highcharts.YAxisOptions,
+            yAxisOptions: YAxisOptions,
             i: number
-        ): Highcharts.YAxisOptions {
+        ): YAxisOptions {
             return merge(
                 getDefaultAxisOptions('yAxis', yAxisOptions),
                 defaultOptions.yAxis, // #3802
@@ -508,7 +511,7 @@ addEvent(Axis, 'destroy', function (): void {
 
 // Override getPlotLinePath to allow for multipane charts
 addEvent(Axis, 'getPlotLinePath', function (
-    e: Event & Highcharts.AxisPlotLinePathOptionsObject
+    e: (Event&Axis.PlotLinePathOptions)
 ): void {
     let axis = this,
         series = (

@@ -1203,7 +1203,7 @@ class ColorAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public getPlotLinePath(options: Highcharts.AxisPlotLinePathOptionsObject): (SVGPath|null) {
+    public getPlotLinePath(options: Axis.PlotLinePathOptions): (SVGPath|null) {
         const axis = this,
             left = axis.left,
             pos = options.translatedValue,

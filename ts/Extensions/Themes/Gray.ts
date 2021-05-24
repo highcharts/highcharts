@@ -79,7 +79,7 @@ H.theme = {
                 ' Verdana, Arial, Helvetica, sans-serif'
             }
         }
-    } as AxisOptions,
+    },
     yAxis: {
         alternateGridColor: null as any,
         minorTickInterval: null as any,
@@ -100,7 +100,7 @@ H.theme = {
                 ' Verdana, Arial, Helvetica, sans-serif'
             }
         }
-    } as Highcharts.YAxisOptions,
+    },
     legend: {
         backgroundColor: 'rgba(48, 48, 48, 0.8)',
         itemStyle: {

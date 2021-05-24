@@ -67,6 +67,7 @@
  *
  * */
 
+import type A11yOptions from '../Options/Options';
 import type Options from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
 
@@ -87,7 +88,7 @@ const {
 declare module '../../Core/Axis/AxisOptions' {
     interface AxisOptions {
         /** @deprecated */
-        description?: Highcharts.XAxisAccessibilityOptions['description'];
+        description?: A11yOptions.AxisAccessibilityOptions['description'];
     }
 }
 
