@@ -16,6 +16,8 @@ import type {
     DOMElementType
 } from '../Core/Renderer/DOMElementType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
@@ -300,7 +302,7 @@ extend(SVGElement.prototype, {
  * @private
  * @function Highcharts.Chart#renderFocusBorder
  */
-H.Chart.prototype.renderFocusBorder = function (this: Highcharts.AccessibilityChart): void {
+Chart.prototype.renderFocusBorder = function (this: Highcharts.AccessibilityChart): void {
     const focusElement = this.focusElement,
         focusBorderOptions: (
             Highcharts.AccessibilityKeyboardNavigationFocusBorderOptions
@@ -334,7 +336,7 @@ H.Chart.prototype.renderFocusBorder = function (this: Highcharts.AccessibilityCh
  *        If supplied, it draws the border around svgElement and sets the focus
  *        to focusElement.
  */
-H.Chart.prototype.setFocusToElement = function (
+Chart.prototype.setFocusToElement = function (
     this: Highcharts.AccessibilityChart,
     svgElement: SVGElement,
     focusElement?: DOMElementType

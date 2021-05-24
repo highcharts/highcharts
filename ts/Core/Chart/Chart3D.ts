@@ -13,6 +13,7 @@
 'use strict';
 
 import type ColorType from '../Color/ColorType';
+import type Options from '../Options';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -28,10 +29,10 @@ const {
     perspective,
     shapeArea3D
 } = Math3D;
-import O from '../Options.js';
+import D from '../DefaultOptions.js';
 const {
     defaultOptions: genericDefaultOptions
-} = O;
+} = D;
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 const {
@@ -42,6 +43,13 @@ const {
     wrap
 } = U;
 import ZAxis from '../Axis/ZAxis.js';
+
+/* *
+ *
+ * Declarations
+ *
+ * */
+
 declare module '../Animation/FxLike' {
     interface FxLike {
         matrixSetter?(): void;
@@ -56,15 +64,31 @@ declare module '../Chart/ChartLike'{
     }
 }
 
+declare module '../Chart/ChartOptions'{
+    interface ChartOptions {
+        options3d?: Options;
+    }
+}
+
+declare module '../Options'{
+    export interface Options {
+        alpha?: number;
+        axisLabelPosition?: ('auto'|null);
+        beta?: number;
+        depth?: number;
+        enabled?: boolean;
+        fitToPlot?: boolean;
+        frame?: Chart3D.FrameOptions;
+        viewDistance?: number;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartOptions {
-            options3d?: Chart3D.Options;
-        }
         interface Edge3DObject extends Position3DObject {
             xDir: Position3DObject;
         }
@@ -125,16 +149,6 @@ namespace Chart3D {
         visible?: ('auto'|'default'|boolean);
     }
 
-    export interface Options {
-        alpha?: number;
-        axisLabelPosition?: ('auto'|null);
-        beta?: number;
-        depth?: number;
-        enabled?: boolean;
-        fitToPlot?: boolean;
-        frame?: FrameOptions;
-        viewDistance?: number;
-    }
 
     /* *
      *
@@ -951,7 +965,7 @@ namespace Chart3D {
         addEvent(ChartClass, 'beforeRedraw', onBeforeRedraw);
         addEvent(ChartClass, 'beforeRender', onBeforeRender);
 
-        wrap(H.Chart.prototype, 'isInsidePlot', wrapIsInsidePlot);
+        wrap(chartProto, 'isInsidePlot', wrapIsInsidePlot);
         wrap(ChartClass, 'renderSeries', wrapRenderSeries);
         wrap(ChartClass, 'setClassName', wrapSetClassName);
 

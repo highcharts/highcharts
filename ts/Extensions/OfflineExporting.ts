@@ -17,6 +17,7 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from '../Core/Renderer/DOMElementType';
+import type Options from '../Core/Options';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -24,8 +25,8 @@ const {
     win,
     doc
 } = H;
-import O from '../Core/Options.js';
-const { getOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { getOptions } = D;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -41,11 +42,11 @@ declare module '../Core/Chart/ChartLike' {
         unbindGetSVG?: Function;
         exportChartLocal(
             exportingOptions?: Highcharts.ExportingOptions,
-            chartOptions?: Partial<Highcharts.Options>
+            chartOptions?: Partial<Options>
         ): void;
         getSVGForLocalExport(
             options: Highcharts.ExportingOptions,
-            chartOptions: Partial<Highcharts.Options>,
+            chartOptions: Partial<Options>,
             failCallback: Function,
             successCallback: Function
         ): void;
@@ -621,7 +622,7 @@ function downloadSVGLocal(
  */
 Chart.prototype.getSVGForLocalExport = function (
     options: Highcharts.ExportingOptions,
-    chartOptions: Partial<Highcharts.Options>,
+    chartOptions: Partial<Options>,
     failCallback: Function,
     successCallback: Function
 ): void {
@@ -629,7 +630,7 @@ Chart.prototype.getSVGForLocalExport = function (
         images,
         imagesEmbedded = 0,
         chartCopyContainer: (HTMLDOMElement|undefined),
-        chartCopyOptions: (Highcharts.Options|undefined),
+        chartCopyOptions: (Options|undefined),
         el,
         i,
         l,
@@ -749,7 +750,7 @@ Chart.prototype.getSVGForLocalExport = function (
  */
 Chart.prototype.exportChartLocal = function (
     exportingOptions?: Highcharts.ExportingOptions,
-    chartOptions?: Partial<Highcharts.Options>
+    chartOptions?: Partial<Options>
 ): void {
     const chart = this,
         options = merge(chart.options.exporting, exportingOptions),

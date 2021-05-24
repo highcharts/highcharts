@@ -11,6 +11,7 @@
 'use strict';
 
 import type Chart from './Chart/Chart';
+import type Options from './Options';
 import type PointerEvent from './PointerEvent';
 import H from './Globals.js';
 const {
@@ -136,7 +137,7 @@ class MSPointer extends Pointer {
     }
 
     // Disable default IE actions for pinch and such on chart element
-    public init(chart: Chart, options: Highcharts.Options): void {
+    public init(chart: Chart, options: Options): void {
 
         super.init(chart, options);
 

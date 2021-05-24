@@ -32,6 +32,11 @@ const {
  *  Declarations
  *
  * */
+declare module '../../../Core/Options'{
+    interface Options {
+        defs?: Record<string, AST.Node>;
+    }
+}
 
 declare module '../../../Core/Renderer/SVG/SVGRendererLike' {
     interface SVGRendererLike {
@@ -52,9 +57,6 @@ declare global {
             markerEndSetter(this: SVGElement, value: string): void;
             markerStartSetter(this: SVGElement, value: string): void;
             setItemMarkers(this: ControllablePath, item: ControllablePath): void;
-        }
-        interface Options {
-            defs?: Record<string, AST.Node>;
         }
     }
 }

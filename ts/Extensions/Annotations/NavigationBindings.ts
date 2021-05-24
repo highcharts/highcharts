@@ -19,8 +19,8 @@ import chartNavigationMixin from '../../Mixins/Navigation.js';
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
-import O from '../../Core/Options.js';
-const { setOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -40,6 +40,12 @@ declare module '../../Core/Chart/ChartLike'{
         navigationBindings?: NavigationBindings;
         /** @requires modules/annotations */
         initNavigationBindings(): void;
+    }
+}
+
+declare module '../../Core/LangOptions'{
+    interface LangOptions {
+        navigation?: Highcharts.LangNavigationOptions;
     }
 }
 
@@ -80,10 +86,6 @@ declare global {
         interface LangNavigationOptions {
             popup?: Record<string, string>;
         }
-        interface LangOptions {
-            navigation?: LangNavigationOptions;
-        }
-
         interface NavigationBindingsButtonEventsObject {
             button: HTMLDOMElement;
             events: NavigationBindingsOptionsObject;
@@ -1563,7 +1565,7 @@ setOptions({
         }
     }
 });
-addEvent(H.Chart, 'render', function (): void {
+addEvent(Chart, 'render', function (): void {
     const chart = this,
         navigationBindings = chart.navigationBindings,
         disabledClassName = 'highcharts-disabled-btn';

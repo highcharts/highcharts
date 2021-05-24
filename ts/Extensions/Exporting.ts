@@ -29,6 +29,7 @@ import type CSSObject from '../Core/Renderer/CSSObject';
 import type EventCallback from '../Core/EventCallback';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
+import type Options from '../Core/Options';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -42,10 +43,10 @@ const {
     isTouchDevice,
     win
 } = H;
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 const {
     defaultOptions
-} = O;
+} = D;
 import palette from '../Core/Color/Palette.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
@@ -110,18 +111,18 @@ declare module '../Core/Chart/ChartLike' {
         /** @requires modules/exporting */
         exportChart(
             exportingOptions?: Highcharts.ExportingOptions,
-            chartOptions?: Highcharts.Options
+            chartOptions?: Options
         ): void;
         /** @requires modules/exporting */
         getChartHTML(): string;
         /** @requires modules/exporting */
         getFilename(): string;
         /** @requires modules/exporting */
-        getSVG(chartOptions?: Highcharts.Options): string;
+        getSVG(chartOptions?: Options): string;
         /** @requires modules/exporting */
         getSVGForExport(
             options: Highcharts.ExportingOptions,
-            chartOptions: Partial<Highcharts.Options>
+            chartOptions: Partial<Options>
         ): string;
         /** @requires modules/exporting */
         inlineStyles(): void;
@@ -132,7 +133,27 @@ declare module '../Core/Chart/ChartLike' {
         /** @requires modules/exporting */
         renderExporting(): void;
         /** @requires modules/exporting */
-        sanitizeSVG(svg: string, options: Highcharts.Options): string;
+        sanitizeSVG(svg: string, options: Options): string;
+    }
+}
+
+declare module '../Core/LangOptions'{
+    interface LangOptions {
+        contextButtonTitle?: string;
+        exitFullscreen?: string;
+        downloadJPEG?: string;
+        downloadPDF?: string;
+        downloadPNG?: string;
+        downloadSVG?: string;
+        printChart?: string;
+        viewFullscreen?: string;
+    }
+}
+
+declare module '../Core/Options'{
+    interface Options {
+        exporting?: Highcharts.ExportingOptions;
+        navigation?: Highcharts.NavigationOptions;
     }
 }
 
@@ -232,20 +253,6 @@ declare global {
             menuItemHoverStyle?: CSSObject;
             menuItemStyle?: CSSObject;
             menuStyle?: CSSObject;
-        }
-        interface LangOptions {
-            contextButtonTitle?: string;
-            exitFullscreen?: string;
-            downloadJPEG?: string;
-            downloadPDF?: string;
-            downloadPNG?: string;
-            downloadSVG?: string;
-            printChart?: string;
-            viewFullscreen?: string;
-        }
-        interface Options {
-            exporting?: ExportingOptions;
-            navigation?: NavigationOptions;
         }
         interface PrintReverseInfoObject {
             childNodes: NodeListOf<ChildNode>;
@@ -1267,7 +1274,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     sanitizeSVG: function (
         this: Chart,
         svg: string,
-        options: Highcharts.Options
+        options: Options
     ): string {
 
         let split = svg.indexOf('</svg>') + 6,
@@ -1366,7 +1373,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     getSVG: function (
         this: Chart,
-        chartOptions?: DeepPartial<Highcharts.Options>
+        chartOptions?: DeepPartial<Options>
     ): string {
         let chart = this,
             chartCopy: Chart,
@@ -1465,7 +1472,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {
             ['xAxis', 'yAxis', 'series'].forEach(function (coll: string): void {
-                const collOptions: Partial<Highcharts.Options> = {};
+                const collOptions: Partial<Options> = {};
 
                 if ((chartOptions as any)[coll]) {
                     (collOptions as any)[coll] = (chartOptions as any)[coll];
@@ -1524,7 +1531,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     getSVGForExport: function (
         this: Chart,
         options: Highcharts.ExportingOptions,
-        chartOptions: Partial<Highcharts.Options>
+        chartOptions: Partial<Options>
     ): string {
         const chartExportingOptions: Highcharts.ExportingOptions =
             this.options.exporting as any;
@@ -1616,7 +1623,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     exportChart: function (
         this: Chart,
         exportingOptions: Highcharts.ExportingOptions,
-        chartOptions: Highcharts.Options
+        chartOptions: Options
     ): void {
 
         const svg = this.getSVGForExport(exportingOptions, chartOptions);

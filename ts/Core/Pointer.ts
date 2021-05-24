@@ -13,6 +13,7 @@
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type { DOMElementType } from './Renderer/DOMElementType';
+import type Options from './Options';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type Series from './Series/Series';
@@ -24,6 +25,7 @@ const {
     charts,
     noop
 } = H;
+
 import palette from '../Core/Color/Palette.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
@@ -249,7 +251,7 @@ class Pointer {
      *
      * */
 
-    public constructor(chart: Chart, options: Highcharts.Options) {
+    public constructor(chart: Chart, options: Options) {
         this.chart = chart;
         this.hasDragged = false;
         this.options = options;
@@ -286,7 +288,7 @@ class Pointer {
 
     public mouseDownY?: number;
 
-    public options: Highcharts.Options;
+    public options: Options;
 
     public pinchDown: Array<any> = [];
 
@@ -1087,7 +1089,7 @@ class Pointer {
      *
      * @return {void}
      */
-    public init(chart: Chart, options: Highcharts.Options): void {
+    public init(chart: Chart, options: Options): void {
 
         // Store references
         this.options = options;
@@ -1350,7 +1352,11 @@ class Pointer {
                 )
             )
         ) {
-            this.runPointActions(pEvt);
+            if (this.inClass(pEvt.target as any, 'highcharts-no-tooltip')) {
+                this.reset(false, 0);
+            } else {
+                this.runPointActions(pEvt);
+            }
         }
     }
 

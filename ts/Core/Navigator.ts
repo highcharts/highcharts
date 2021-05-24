@@ -29,8 +29,8 @@ const {
     isTouchDevice
 } = H;
 import NavigatorAxis from './Axis/NavigatorAxis.js';
-import O from './Options.js';
-const { defaultOptions } = O;
+import D from './DefaultOptions.js';
+const { defaultOptions } = D;
 import Palette from './Color/Palette.js';
 import RendererRegistry from './Renderer/RendererRegistry.js';
 import Scrollbar from './Scrollbar.js';
@@ -60,6 +60,12 @@ declare module './Chart/ChartLike'{
         navigator?: Navigator;
         scrollbar?: Scrollbar;
         scroller?: Navigator;
+    }
+}
+
+declare module './Options'{
+    interface Options {
+        navigator?: Highcharts.NavigatorOptions;
     }
 }
 
@@ -110,9 +116,6 @@ declare global {
             top?: number;
             xAxis?: DeepPartial<XAxisOptions>;
             yAxis?: DeepPartial<YAxisOptions>;
-        }
-        interface Options {
-            navigator?: NavigatorOptions;
         }
         interface XAxisOptions {
             maxRange?: number;

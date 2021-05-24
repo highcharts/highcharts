@@ -89,7 +89,7 @@ class SMAIndicator extends LineSeries {
      * Data in OHLC format is required.
      *
      * @sample {highstock} stock/indicators/use-ohlc-data
-     *         Plot line on Y axis
+     *         Use OHLC data format to plot line chart
      *
      * @type      {boolean}
      * @product   highstock

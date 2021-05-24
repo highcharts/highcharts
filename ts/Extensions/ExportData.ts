@@ -16,6 +16,7 @@
 
 'use strict';
 
+import type LangOptions from '../Core/LangOptions';
 import type Point from '../Core/Series/Point';
 import type {
     PointOptions,
@@ -32,11 +33,11 @@ const {
     seriesTypes,
     win
 } = H;
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 const {
     getOptions,
     setOptions
-} = O;
+} = D;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -75,6 +76,16 @@ declare module '../Core/Chart/ChartLike'{
         hideData(): void;
         /** @requires modules/export-data */
         isDataTableVisible: boolean;
+    }
+}
+
+declare module '../Core/LangOptions'{
+    interface LangOptions {
+        downloadCSV?: string;
+        downloadXLS?: string;
+        exportData?: Highcharts.ExportDataOptions;
+        viewData?: string;
+        hideData?: string;
     }
 }
 
@@ -135,13 +146,6 @@ declare global {
             annotationHeader?: string;
             categoryHeader?: string;
             categoryDatetimeHeader?: string;
-        }
-        interface LangOptions {
-            downloadCSV?: string;
-            downloadXLS?: string;
-            exportData?: ExportDataOptions;
-            viewData?: string;
-            hideData?: string;
         }
     }
     interface MSBlobBuilder extends Blob {
@@ -542,7 +546,7 @@ Chart.prototype.getDataRows = function (
         i: number,
         x,
         xTitle: string,
-        langOptions: Highcharts.LangOptions = this.options.lang as any,
+        langOptions: LangOptions = this.options.lang as any,
         exportDataOptions: Highcharts.ExportDataOptions = langOptions.exportData as any,
         categoryHeader = exportDataOptions.categoryHeader as any,
         categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,

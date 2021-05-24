@@ -18,6 +18,7 @@
  *
  * */
 
+import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import Ajax from '../Extensions/Ajax.js';
@@ -62,6 +63,11 @@ declare module '../Core/Chart/ChartLike'{
         data?: Highcharts.Data;
         hasDataDef?: boolean;
         liveDataURL?: string;
+    }
+}
+declare module '../Core/Options' {
+    interface Options {
+        data?: Highcharts.DataOptions;
     }
 }
 
@@ -134,9 +140,6 @@ declare global {
             individual: Array<number>;
             seriesBuilders: Array<SeriesBuilder>;
             xColumns: Array<number>;
-        }
-        interface Options {
-            data?: DataOptions;
         }
         interface SeriesBuilderReaderObject {
             columnIndex: (number|undefined);
@@ -710,7 +713,7 @@ class Data {
 
     public constructor(
         dataOptions: Highcharts.DataOptions,
-        chartOptions?: Highcharts.Options,
+        chartOptions?: Options,
         chart?: Chart
     ) {
         this.init(dataOptions, chartOptions, chart);
@@ -724,9 +727,9 @@ class Data {
 
     public alternativeFormat?: string;
     public chart: Chart = void 0 as any;
-    public dataStore?: (CSVStore|GoogleSheetsStore|HTMLTableStore);
-    public chartOptions: Highcharts.Options = void 0 as any;
+    public chartOptions: Options = void 0 as any;
     public columns?: Array<Array<Highcharts.DataValueType>>;
+    public dataStore?: (CSVStore|GoogleSheetsStore|HTMLTableStore);
     public dateFormat?: string;
     public decimalRegex?: RegExp;
     public firstRowAsNames: boolean = void 0 as any;
@@ -752,7 +755,7 @@ class Data {
      */
     public init(
         options: Highcharts.DataOptions,
-        chartOptions?: Highcharts.Options,
+        chartOptions?: Options,
         chart?: Chart
     ): void {
 
@@ -2246,7 +2249,7 @@ class Data {
             j: number,
             r: number,
             seriesIndex,
-            chartOptions: Partial<Highcharts.Options>,
+            chartOptions: Partial<Options>,
             allSeriesBuilders = [],
             builder,
             freeIndexes,
@@ -2417,7 +2420,7 @@ class Data {
         if (options) {
             // Set the complete handler
             options.afterComplete = function (
-                dataOptions?: Partial<Highcharts.Options>
+                dataOptions?: Partial<Options>
             ): void {
                 // Avoid setting axis options unless the type changes. Running
                 // Axis.update will cause the whole structure to be destroyed
@@ -2461,7 +2464,7 @@ class Data {
  */
 H.data = function (
     dataOptions: Highcharts.DataOptions,
-    chartOptions?: Highcharts.Options,
+    chartOptions?: Options,
     chart?: Chart
 ): Highcharts.Data {
     return new H.Data(dataOptions, chartOptions, chart);
@@ -2475,13 +2478,13 @@ addEvent(
     function (
         e: Event & {
             args: [
-                (Partial<Highcharts.Options>|undefined),
+                (Partial<Options>|undefined),
                 (Chart.CallbackFunction|undefined)
             ];
         }
     ): void {
         let chart = this, // eslint-disable-line no-invalid-this
-            userOptions: Partial<Highcharts.Options> = (e.args[0] || {}),
+            userOptions: Partial<Options> = (e.args[0] || {}),
             callback = e.args[1];
 
         if (userOptions && userOptions.data && !chart.hasDataDef) {
@@ -2495,7 +2498,7 @@ addEvent(
             chart.data = new H.Data(extend(userOptions.data, {
 
                 afterComplete: function (
-                    dataOptions?: Partial<Highcharts.Options>
+                    dataOptions?: Partial<Options>
                 ): void {
                     let i, series;
 

@@ -11,7 +11,6 @@
 
 'use strict';
 
-import type AxisTypes from './Types';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type GanttPoint from '../../Series/Gantt/GanttPoint';
@@ -22,7 +21,7 @@ import type {
     PointShortOptions
 } from '../Series/PointOptions';
 import type SizeObject from '../Renderer/SizeObject';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type { ChartAddSeriesEventObject } from '../Chart/ChartOptions';
 import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
@@ -660,7 +659,7 @@ namespace TreeGridAxis {
             addEvent(chart, 'beforeRedraw', onBeforeRender);
 
             // Add new collapsed nodes on addseries
-            addEvent(chart, 'addSeries', function (e: Highcharts.ChartAddSeriesEventObject): void {
+            addEvent(chart, 'addSeries', function (e: ChartAddSeriesEventObject): void {
                 if (e.options.data) {
                     const treeGrid = getTreeGridFromData((e.options.data as any), userOptions.uniqueNames || false, 1);
 

@@ -16,10 +16,12 @@
  *
  * */
 
+import type AxisOptions from '../Axis/AxisOptions';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type CSSObject from '../Renderer/CSSObject';
 import type DataExtremesObject from '../Series/DataExtremesObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
+import type Options from '../Options';
 import type PointerEvent from '../PointerEvent';
 import type { SeriesTypePlotOptions } from '../Series/SeriesType';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -32,8 +34,8 @@ import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
-import O from '../../Core/Options.js';
-const { getOptions } = O;
+import D from '../DefaultOptions.js';
+const { getOptions } = D;
 import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 const {
@@ -95,6 +97,12 @@ declare module './ChartLike' {
     }
 }
 
+declare module '../Options'{
+    interface Options {
+        isStock?: boolean;
+    }
+}
+
 declare module '../Series/PointLike' {
     interface PointLike {
         change?: number;
@@ -122,18 +130,6 @@ declare module '../Series/SeriesOptions' {
 declare module '../Renderer/SVG/SVGRendererLike' {
     interface SVGRendererLike {
         crispPolyLine(points: SVGPath, width: number): SVGPath;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            isStock?: boolean;
-        }
     }
 }
 
@@ -166,7 +162,7 @@ class StockChart extends Chart {
      * @fires Highcharts.StockChart#event:afterInit
      */
     public init(
-        userOptions: Partial<Highcharts.Options>,
+        userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
         const defaultOptions = getOptions(),
@@ -327,8 +323,8 @@ namespace StockChart {
      *         The chart object.
      */
     export function stockChart(
-        a: (string|HTMLDOMElement|Highcharts.Options),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        a: (string|HTMLDOMElement|Options),
+        b?: (Chart.CallbackFunction|Options),
         c?: Chart.CallbackFunction
     ): StockChart {
         return new StockChart(a as any, b as any, c);
@@ -346,8 +342,8 @@ namespace StockChart {
  */
 function getDefaultAxisOptions(
     type: string,
-    options: DeepPartial<Highcharts.AxisOptions>
-): DeepPartial<Highcharts.AxisOptions> {
+    options: DeepPartial<AxisOptions>
+): DeepPartial<AxisOptions> {
     if (type === 'xAxis') {
         return {
             minPadding: 0,
@@ -402,8 +398,8 @@ function getDefaultAxisOptions(
  */
 function getForcedAxisOptions(
     type: string,
-    chartOptions: Partial<Highcharts.Options>
-): DeepPartial<Highcharts.AxisOptions> {
+    chartOptions: Partial<Options>
+): DeepPartial<AxisOptions> {
     if (type === 'xAxis') {
         const defaultOptions = getOptions(),
             // Always disable startOnTick:true on the main axis when the
@@ -414,7 +410,7 @@ function getForcedAxisOptions(
                 true
             );
 
-        const axisOptions: DeepPartial<Highcharts.AxisOptions> = {
+        const axisOptions: DeepPartial<AxisOptions> = {
             type: 'datetime',
             categories: void 0
         };
@@ -1212,7 +1208,7 @@ addEvent(Series, 'render', function (): void {
 
 addEvent(Chart, 'update', function (
     this: StockChart,
-    e: { options: Highcharts.Options }
+    e: { options: Options }
 ): void {
     const options = e.options;
 
