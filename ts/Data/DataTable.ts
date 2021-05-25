@@ -1446,16 +1446,20 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataModifier|undefined} modifier
      * Modifier to set, or `undefined` to unset.
      */
-    public setModifier(modifier: (DataModifier|undefined)): void {
+    public setModifier(modifier: (DataModifier | undefined)): void {
         const table = this;
+
+        this.emit({
+            type: 'setModifier',
+            modifier,
+            modified: this.modified
+        });
 
         table.modifier = modifier;
 
         if (modifier) {
             if (table.modified === table) {
-                table.modified = modifier.modify(table.clone());
-            } else {
-                table.modified.setColumns(modifier.modify(table.clone()).getColumns());
+                table.modified = table.clone(true);
             }
         } else {
             if (table.modified !== table) {
@@ -1465,8 +1469,13 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
         this.emit({
             type: 'afterSetModifier',
-            modifier: table.modifier
+            modifier: this.modifier,
+            modified: this.modified
         });
+
+        if (this.modifier) {
+            this.modified.setColumns(this.modifier.modify(this.clone()).getColumns());
+        }
     }
 
     /**
@@ -1817,9 +1826,10 @@ namespace DataTable {
     */
     export interface SetModifierEvent extends DataEventEmitter.Event {
         readonly type: (
-            'afterSetModifier'
+            'setModifier' | 'afterSetModifier'
         );
         readonly modifier?: DataModifier;
+        readonly modified?: DataTable;
     }
 
 }
