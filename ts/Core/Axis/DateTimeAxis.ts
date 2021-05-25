@@ -10,8 +10,15 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time.js';
+
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
@@ -20,6 +27,25 @@ const {
     normalizeTickInterval,
     timeUnits
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisComposition' {
+    interface AxisComposition {
+        dateTime?: DateTimeAxis['dateTime'];
+    }
+}
+
+declare module './AxisOptions' {
+    interface AxisOptions {
+        dateTimeLabelFormats?: Highcharts.XAxisDateTimeLabelFormatsOptions;
+        units?: Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>;
+    }
+}
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
@@ -53,20 +79,13 @@ declare global {
             week?: (string|DateTimeLabelFormatOptionsObject);
             year?: (string|DateTimeLabelFormatOptionsObject);
         }
-        interface XAxisOptions {
-            dateTimeLabelFormats?: XAxisDateTimeLabelFormatsOptions;
-            units?: Array<[DateTimeLabelFormatsKey, (Array<number>|null)]>;
-        }
     }
 }
 
 /**
  * @private
  */
-declare module './Types' {
-    interface AxisComposition {
-        dateTime?: DateTimeAxis['dateTime'];
-    }
+declare module './AxisType' {
     interface AxisTypeRegistry {
         DateTimeAxis: DateTimeAxis;
     }

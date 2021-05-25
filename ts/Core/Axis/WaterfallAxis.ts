@@ -8,6 +8,8 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
@@ -16,7 +18,8 @@
 
 import type Axis from './Axis.js';
 import type Chart from '../Chart/Chart.js';
-import type SVGElement from '../Renderer/SVG/SVGElement';
+import type SVGLabel from '../Renderer/SVG/SVGLabel';
+
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
 const {
@@ -24,13 +27,19 @@ const {
     objectEach
 } = U;
 
-/**
- * @private
- */
-declare module '../../Core/Axis/Types' {
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisComposition' {
     interface AxisComposition {
         waterfall?: WaterfallAxis['waterfall'];
     }
+}
+
+declare module '../../Core/Axis/AxisType' {
     interface AxisTypeRegistry {
         WaterfallAxis: WaterfallAxis;
     }
@@ -61,7 +70,7 @@ namespace WaterfallAxis {
     }
 
     export interface StacksItemObject {
-        label?: SVGElement;
+        label?: SVGLabel;
         negTotal: number;
         posTotal: number;
         stackState: Array<string>;

@@ -534,7 +534,7 @@ Chart.prototype.getDataRows = function (
         csvOptions = (
             (this.options.exporting && this.options.exporting.csv) || {}
         ),
-        xAxis: Highcharts.Axis,
+        xAxis: Axis,
         xAxes = this.xAxis,
         rows: Record<string, (Array<any>&AnyRecord)> =
             {},
@@ -621,7 +621,7 @@ Chart.prototype.getDataRows = function (
         // or point.name is defined #13293
         getPointArray = function (
             series: Series,
-            xAxis: Highcharts.Axis
+            xAxis: Axis
         ): string[] {
             const namedPoints = series.data.filter((d): string | false =>
                 (typeof d.y !== 'undefined') && d.name

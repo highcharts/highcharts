@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type { AxisType } from '../Core/Axis/Types';
+import type AxisType from '../Core/Axis/AxisType';
 import type {
     PointOptions,
     PointShortOptions
@@ -43,6 +43,16 @@ const {
     merge,
     pick
 } = U;
+
+declare module '../Core/Axis/AxisLike' {
+    interface AxisLike {
+        getGroupPixelWidth(): number;
+        setDataGrouping(
+            dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
+            redraw?: boolean
+        ): void;
+    }
+}
 
 declare module '../Core/Axis/TimeTicksInfoObject' {
     interface TimeTicksInfoObject {
@@ -86,13 +96,6 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            getGroupPixelWidth(): number;
-            setDataGrouping(
-                dataGrouping?: (boolean|DataGroupingOptionsObject),
-                redraw?: boolean
-            ): void;
-        }
         interface DataGroupingApproximationsArray extends Array<number> {
             hasNulls?: boolean;
         }
@@ -1159,7 +1162,7 @@ addEvent(Axis, 'afterSetScale', function (): void {
 
 // Get the data grouping pixel width based on the greatest defined individual
 // width of the axis' series, and if whether one of the axes need grouping.
-Axis.prototype.getGroupPixelWidth = function (this: Highcharts.Axis): number {
+Axis.prototype.getGroupPixelWidth = function (): number {
 
     let series = this.series,
         len = series.length,
@@ -1223,11 +1226,9 @@ Axis.prototype.getGroupPixelWidth = function (this: Highcharts.Axis): number {
  * @param {boolean} [redraw=true]
  *        Whether to redraw the chart or wait for a later call to
  *        {@link Chart#redraw}.
- *
- * @return {void}
  */
 Axis.prototype.setDataGrouping = function (
-    this: Highcharts.Axis,
+    this: Axis,
     dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
     redraw?: boolean
 ): void {

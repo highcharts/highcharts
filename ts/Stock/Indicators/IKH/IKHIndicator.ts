@@ -28,6 +28,8 @@ import type LinePoint from '../../../Series/Line/LinePoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+
+import Axis from '../../../Core/Axis/Axis.js';
 import Color from '../../../Core/Color/Color.js';
 const color = Color.parse;
 import H from '../../../Core/Globals.js';
@@ -68,7 +70,7 @@ function highlowLevel(
     };
 }
 
-function getClosestPointRange(axis: Highcharts.Axis): number | undefined {
+function getClosestPointRange(axis: Axis): (number|undefined) {
     let closestDataRange: number | undefined,
         loopLength: number,
         distance: number,
@@ -797,7 +799,7 @@ class IKHIndicator extends SMAIndicator {
             periodSenkouSpanB: number = params.periodSenkouSpanB as any,
             xVal: Array<number> = series.xData as any,
             yVal: Array<Array<number>> = series.yData as any,
-            xAxis: Highcharts.Axis = series.xAxis,
+            xAxis: Axis = series.xAxis,
             yValLen: number = (yVal && yVal.length) || 0,
             closestPointRange: number = getClosestPointRange(xAxis) as any,
             IKH: Array<Array<number | undefined>> = [],

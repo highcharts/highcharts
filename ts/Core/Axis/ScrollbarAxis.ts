@@ -18,13 +18,16 @@ const {
     pick
 } = U;
 
-/**
- * @private
- */
-declare module './Types' {
+declare module './AxisComposition' {
     interface AxisComposition {
         scrollbar?: ScrollbarAxis['scrollbar'];
     }
+}
+
+/**
+ * @private
+ */
+declare module './AxisType' {
     interface AxisTypeRegistry {
         ScrollbarAxis: ScrollbarAxis;
     }

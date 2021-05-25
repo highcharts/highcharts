@@ -10,28 +10,13 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Series from '../Core/Series/Series';
-
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
-        redrawTrigger?: string;
-        initiatedScale?: boolean;
-        /** @requires modules/static-scale */
-        adjustHeight(): void;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface XAxisOptions {
-            staticScale?: number;
-        }
-    }
-}
 
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
@@ -42,6 +27,27 @@ const {
     isNumber,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        staticScale?: number;
+    }
+}
+
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        redrawTrigger?: string;
+        initiatedScale?: boolean;
+        /** @requires modules/static-scale */
+        adjustHeight(): void;
+    }
+}
 
 /* eslint-disable no-invalid-this */
 
@@ -81,7 +87,7 @@ addEvent(Axis, 'afterSetOptions', function (): void {
 
 Chart.prototype.adjustHeight = function (): void {
     if (this.redrawTrigger !== 'adjustHeight') {
-        (this.axes || []).forEach(function (axis: Highcharts.Axis): void {
+        (this.axes || []).forEach(function (axis): void {
             let chart = axis.chart,
                 animate =
                     !!chart.initiatedScale &&

@@ -43,7 +43,13 @@ symbols.flag = function (x, y, w, h, options): SVGPath {
  * @return {void}
  */
 function createPinSymbol(shape: ('circle'|'square')): void {
-    symbols[shape + 'pin'] = function (x, y, w, h, options): SVGPath {
+    symbols[(shape + 'pin') as ('circlepin'|'squarepin')] = function (
+        x,
+        y,
+        w,
+        h,
+        options
+    ): SVGPath {
 
         const anchorX = options && options.anchorX,
             anchorY = options && options.anchorY;
@@ -103,9 +109,17 @@ createPinSymbol('square');
  */
 const Renderer = RendererRegistry.getRendererType();
 if (Renderer !== SVGRenderer) {
-    ['circlepin', 'flag', 'squarepin'].forEach(function (shape: string): void {
-        Renderer.prototype.symbols[shape] = symbols[shape];
-    });
+    Renderer.prototype.symbols.circlepin = symbols.circlepin;
+    Renderer.prototype.symbols.flag = symbols.flag;
+    Renderer.prototype.symbols.squarepin = symbols.squarepin;
+}
+
+declare module '../../Core/Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        'circlepin': SymbolFunction;
+        'flag': SymbolFunction;
+        'squarepin': SymbolFunction;
+    }
 }
 
 /* *

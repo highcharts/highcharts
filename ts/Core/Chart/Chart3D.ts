@@ -256,9 +256,9 @@ namespace Chart3D {
             // The 'default' criteria to visible faces of the frame is looking
             // up every axis to decide whenever the left/right//top/bottom sides
             // of the frame will be shown
-            ([] as Array<Highcharts.Axis>)
+            ([] as Array<Axis>)
                 .concat(chart.xAxis, chart.yAxis, chart.zAxis as any)
-                .forEach(function (axis: Highcharts.Axis): void {
+                .forEach(function (axis: Axis): void {
                     if (axis) {
                         if (axis.horiz) {
                             if (axis.opposite) {

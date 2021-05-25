@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AlignValue,
     VerticalAlignValue
@@ -20,8 +26,28 @@ import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type FormatUtilities from '../Core/FormatUtilities';
+
 import Axis from '../Core/Axis/Axis.js';
-import palette from '../Core/Color/Palette.js';
+import Palette from '../Core/Color/Palette.js';
+import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    merge,
+    wrap
+} = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        currentDateIndicator?: (boolean|Highcharts.CurrentDateIndicatorOptions);
+    }
+}
 
 /**
  * Internal types
@@ -56,20 +82,8 @@ declare global {
             width?: number;
             zIndex?: number;
         }
-        interface XAxisOptions {
-            currentDateIndicator?: (boolean|CurrentDateIndicatorOptions);
-        }
     }
 }
-
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    merge,
-    wrap
-} = U;
-
-import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
 
 /**
  * Show an indicator on the axis for the current date and time. Can be a
@@ -91,7 +105,7 @@ import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
  */
 
 const defaultOptions: Highcharts.CurrentDateIndicatorOptions = {
-    color: palette.highlightColor20,
+    color: Palette.highlightColor20,
     width: 2,
     /**
      * @declare Highcharts.AxisCurrentDateIndicatorLabelOptions
@@ -160,7 +174,7 @@ addEvent(PlotLineOrBand, 'render', function (): void {
 });
 
 wrap(PlotLineOrBand.prototype, 'getLabelText', function (
-    this: Highcharts.PlotLineOrBand,
+    this: PlotLineOrBand,
     defaultMethod: Function,
     defaultLabelOptions: (
         Highcharts.AxisPlotLinesLabelOptions|

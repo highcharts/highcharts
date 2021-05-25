@@ -20,6 +20,7 @@ import type {
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
+import Axis from '../../Core/Axis/Axis.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
     unhideChartElementFromAT
@@ -37,6 +38,13 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
 const extend = U.extend,
     pick = U.pick;
+
+declare module '../../Core/Axis/AxisLike' {
+    interface AxisLike {
+        /** @requires modules/accessibility */
+        panStep(direction: number, granularity?: number): void;
+    }
+}
 
 /**
  * Internal types.
@@ -85,10 +93,6 @@ declare global {
             ): KeyboardNavigationHandler;
             updateProxyOverlays(): void;
         }
-        interface Axis {
-            /** @requires modules/accessibility */
-            panStep(direction: number, granularity?: number): void;
-        }
     }
 }
 
@@ -119,7 +123,7 @@ function chartHasMapZoom(
  * @param {number} direction
  * @param {number} [granularity]
  */
-H.Axis.prototype.panStep = function (
+(H as any).Axis.prototype.panStep = function (
     direction: number,
     granularity?: number
 ): void {

@@ -643,7 +643,7 @@ class HeatmapSeries extends ScatterSeries {
     public translate(): void {
         const series = this,
             options = series.options,
-            symbol = options.marker && options.marker.symbol || '',
+            symbol = options.marker && options.marker.symbol || 'rect',
             shape = symbols[symbol] ? symbol : 'rect',
             hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
 

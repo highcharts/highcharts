@@ -16,6 +16,7 @@
  *
  * */
 
+import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
@@ -574,8 +575,8 @@ class Tooltip {
             plotLeft = chart.plotLeft,
             plotX = 0,
             plotY = 0,
-            yAxis: Highcharts.Axis|undefined,
-            xAxis: Highcharts.Axis|undefined;
+            yAxis: (Axis|undefined),
+            xAxis: (Axis|undefined);
 
         points = splat(points);
 
@@ -1094,7 +1095,7 @@ class Tooltip {
     public getXDateFormat(
         point: Point,
         options: TooltipOptions,
-        xAxis: Highcharts.Axis
+        xAxis: Axis
     ): string {
         let xDateFormat,
             dateTimeLabelFormats = options.dateTimeLabelFormats,

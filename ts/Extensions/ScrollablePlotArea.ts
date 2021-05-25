@@ -40,7 +40,6 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { stop } = A;
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
 import Series from '../Core/Series/Series.js';
 import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import U from '../Core/Utilities.js';
@@ -142,14 +141,12 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
         }
 
         if (corrections && !e.skipAxes) {
-            this.axes.forEach(function (axis: Highcharts.Axis): void {
+            this.axes.forEach(function (axis): void {
                 // For right and bottom axes, only fix the plot line length
                 if ((corrections as any)[axis.side]) {
                     // Get the plot lines right in getPlotLinePath,
                     // temporarily set it to the adjusted plot width.
-                    axis.getPlotLinePath = function (
-                        this: Highcharts.Axis
-                    ): SVGPath {
+                    axis.getPlotLinePath = function (this): SVGPath {
                         let marginName = (corrections as any)[axis.side].name,
                             correctionValue =
                                 (corrections as any)[axis.side].value,
@@ -159,7 +156,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
 
                         // Temporarily adjust
                         (this as any)[marginName] = margin - correctionValue;
-                        path = H.Axis.prototype.getPlotLinePath.apply(
+                        path = Axis.prototype.getPlotLinePath.apply(
                             this,
                             arguments as any
                         ) as any;

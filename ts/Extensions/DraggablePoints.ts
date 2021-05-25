@@ -14,6 +14,7 @@
 
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type AreaRangePoint from '../Series/AreaRange/AreaRangePoint';
+import type Axis from '../Core/Axis/Axis';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type BoxPlotPoint from '../Series/BoxPlot/BoxPlotPoint';
 import type BulletPoint from '../Series/Bullet/BulletPoint';
@@ -32,6 +33,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type WaterfallPoint from '../Series/Waterfall/WaterfallPoint';
 import type XRangePoint from '../Series/XRange/XRangePoint';
+
 import A from '../Core/Animation/AnimationUtilities.js';
 const {
     animObject
@@ -2232,7 +2234,7 @@ Point.prototype.getDropValues = function (
         key: string
     ): void {
         const oldVal = pointOrigin[key],
-            axis: Highcharts.Axis = (series as any)[val.axis + 'Axis'],
+            axis: Axis = (series as any)[val.axis + 'Axis'],
             newVal = limitToRange(
                 axis.toValue(
                     (axis.horiz ? newPos.chartX : newPos.chartY) +

@@ -46,7 +46,7 @@ import './TilemapComposition.js';
  *
  * */
 
-declare module '../../Core/Axis/Types' {
+declare module '../../Core/Axis/AxisLike' {
     interface AxisLike {
         recomputingForTilemap?: boolean;
     }

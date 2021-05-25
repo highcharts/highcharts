@@ -65,6 +65,21 @@ const {
     syncTimeout
 } = U;
 
+declare module '../Core/Axis/AxisLike' {
+    interface AxisLike {
+        ddPoints?: Record<string, Array<(false|Point)>>;
+        oldPos?: number;
+        drilldownCategory(x: number, e: MouseEvent): void;
+        getDDPoints(x: number): Array<(false|Point)>;
+    }
+}
+
+declare module '../Core/Axis/TickLike' {
+    interface TickLike {
+        drillable(): void;
+    }
+}
+
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         ddDupes?: Array<string>;
@@ -145,12 +160,6 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            ddPoints?: Record<string, Array<(false|Point)>>;
-            oldPos?: number;
-            drilldownCategory(x: number, e: MouseEvent): void;
-            getDDPoints(x: number): Array<(false|Point)>;
-        }
         interface ChartDrilldownObject {
             update(options: DrilldownOptions, redraw?: boolean): void;
         }

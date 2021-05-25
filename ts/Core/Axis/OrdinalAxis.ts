@@ -10,10 +10,18 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type TickPositionsArray from './TickPositionsArray';
 import type NavigatorAxis from './NavigatorAxis';
 import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
+
 import Axis from './Axis.js';
+import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 import Point from '../Series/Point.js';
 import Series from '../Series/Series.js';
@@ -27,31 +35,16 @@ const {
     timeUnits
 } = U;
 
+// Has a dependency on Navigator due to the use of Axis.toFixedRange
+import '../Navigator.js';
+
 /* *
  *
  *  Declarations
  *
  * */
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface XAxisOptions {
-            keepOrdinalPadding?: boolean;
-        }
-    }
-}
-
-declare module './TimeTicksInfoObject' {
-    interface TimeTicksInfoObject extends Highcharts.DateTimeAxisNormalizedObject {
-        segmentStarts?: Array<number>;
-    }
-}
-
-declare module './Types' {
+declare module './AxisComposition' {
     interface AxisComposition {
         ordinal?: OrdinalAxis['ordinal'];
         /** @deprecated */
@@ -69,14 +62,25 @@ declare module './Types' {
         /** @deprecated */
         val2lin(val: number, toIndex?: boolean): number;
     }
+}
+
+declare module './AxisOptions' {
+    interface AxisOptions {
+        keepOrdinalPadding?: boolean;
+    }
+}
+
+declare module './TimeTicksInfoObject' {
+    interface TimeTicksInfoObject extends Highcharts.DateTimeAxisNormalizedObject {
+        segmentStarts?: Array<number>;
+    }
+}
+
+declare module './AxisType' {
     interface AxisTypeRegistry {
         OrdinalAxis: OrdinalAxis;
     }
 }
-
-import Chart from '../Chart/Chart.js';
-// Has a dependency on Navigator due to the use of Axis.toFixedRange
-import '../Navigator.js';
 
 /* eslint-disable valid-jsdoc */
 
@@ -395,7 +399,7 @@ namespace OrdinalAxis {
                     series: [],
                     chart: chart,
                     forceOrdinal: false,
-                    getExtremes: function (): Highcharts.ExtremesObject {
+                    getExtremes: function (): Axis.ExtremesObject {
                         return {
                             min: extremes.dataMin,
                             max: extremes.dataMax + (overscroll as any)
