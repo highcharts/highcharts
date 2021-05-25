@@ -119,7 +119,12 @@ class HeatmapSeries extends ScatterSeries {
         animation: false,
 
         /**
-         * The border width for each heat map item.
+         * The border radius for each heatmap item.
+         */
+        borderRadius: 0,
+
+        /**
+         * The border width for each heatmap item.
          */
         borderWidth: 0,
 
@@ -424,6 +429,12 @@ class HeatmapSeries extends ScatterSeries {
                     (point.graphic as any)[
                         this.chart.styledMode ? 'css' : 'animate'
                     ](this.colorAttribs(point));
+
+                    if (this.options.borderRadius) {
+                        point.graphic.attr({
+                            r: this.options.borderRadius
+                        });
+                    }
 
                     if (point.value === null) { // #15708
                         point.graphic.addClass('highcharts-null-point');

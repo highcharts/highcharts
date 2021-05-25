@@ -10,10 +10,17 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
+import type AxisOptions from '../Core/Axis/AxisOptions';
 import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
@@ -22,11 +29,12 @@ import type {
 } from '../Core/Renderer/DOMElementType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type Time from '../Core/Time';
+
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import palette from '../Core/Color/Palette.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
@@ -49,6 +57,12 @@ const {
     splat
 } = U;
 
+/* *
+ *
+ * Declarations
+ *
+ * */
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         extraBottomMargin?: boolean;
@@ -57,6 +71,21 @@ declare module '../Core/Chart/ChartLike'{
         rangeSelector?: Highcharts.RangeSelector;
     }
 }
+
+declare module '../Core/LangOptions'{
+    interface LangOptions {
+        rangeSelectorFrom?: string;
+        rangeSelectorTo?: string;
+        rangeSelectorZoom?: string;
+    }
+}
+
+declare module '../Core/Options'{
+    interface Options {
+        rangeSelector?: DeepPartial<Highcharts.RangeSelectorOptions>;
+    }
+}
+
 
 /**
  * Internal types
@@ -71,14 +100,6 @@ declare global {
         interface Axis {
             newMax?: number;
             range?: (null|number|RangeSelectorButtonsOptions);
-        }
-        interface Options {
-            rangeSelector?: DeepPartial<RangeSelectorOptions>;
-        }
-        interface LangOptions {
-            rangeSelectorFrom?: string;
-            rangeSelectorTo?: string;
-            rangeSelectorZoom?: string;
         }
         interface RangeSelectorClickCallbackFunction {
             (e: Event): (boolean|undefined);
@@ -854,7 +875,7 @@ class RangeSelector {
                 )
             ), // #1568
             type = rangeOptions.type,
-            baseXAxisOptions: Highcharts.AxisOptions,
+            baseXAxisOptions: AxisOptions,
             range = rangeOptions._range,
             rangeMin,
             minSetting: (number|null|undefined),

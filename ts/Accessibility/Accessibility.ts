@@ -12,18 +12,20 @@
 
 'use strict';
 
-import type Chart from '../Core/Chart/Chart';
+import type { Options } from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+
+import Chart from '../Core/Chart/Chart.js';
 import ChartUtilities from './Utils/ChartUtilities.js';
 import H from '../Core/Globals.js';
 const {
     doc
 } = H;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 const {
     defaultOptions
-} = O;
+} = D;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
@@ -321,7 +323,7 @@ Accessibility.prototype = {
 /**
  * @private
  */
-H.Chart.prototype.updateA11yEnabled = function (): void {
+Chart.prototype.updateA11yEnabled = function (): void {
     let a11y = this.accessibility,
         accessibilityOptions = this.options.accessibility;
     if (accessibilityOptions && accessibilityOptions.enabled) {
@@ -343,7 +345,7 @@ H.Chart.prototype.updateA11yEnabled = function (): void {
 };
 
 // Handle updates to the module and send render updates to components
-addEvent(H.Chart, 'render', function (e: Event): void {
+addEvent(Chart, 'render', function (e: Event): void {
     // Update/destroy
     if (this.a11yDirty && this.renderTo) {
         delete this.a11yDirty;
@@ -361,9 +363,9 @@ addEvent(H.Chart, 'render', function (e: Event): void {
 });
 
 // Update with chart/series/point updates
-addEvent(H.Chart as any, 'update', function (
+addEvent(Chart as any, 'update', function (
     this: Highcharts.AccessibilityChart,
-    e: { options: Highcharts.Options }
+    e: { options: Options }
 ): void {
     // Merge new options
     const newOptions = e.options.accessibility;
@@ -393,7 +395,7 @@ addEvent(Point, 'update', function (): void {
     }
 });
 ['addSeries', 'init'].forEach(function (event: string): void {
-    addEvent(H.Chart, event, function (): void {
+    addEvent(Chart, event, function (): void {
         this.a11yDirty = true;
     });
 });
@@ -409,7 +411,7 @@ addEvent(Point, 'update', function (): void {
 [
     'afterDrilldown', 'drillupall'
 ].forEach(function (event: string): void {
-    addEvent(H.Chart, event, function (): void {
+    addEvent(Chart, event, function (): void {
         if (this.accessibility) {
             this.accessibility.update();
         }
@@ -417,7 +419,7 @@ addEvent(Point, 'update', function (): void {
 });
 
 // Destroy with chart
-addEvent(H.Chart, 'destroy', function (): void {
+addEvent(Chart, 'destroy', function (): void {
     if (this.accessibility) {
         this.accessibility.destroy();
     }

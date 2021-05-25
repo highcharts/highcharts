@@ -43,6 +43,7 @@ import type {
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type TooltipOptions from '../TooltipOptions';
 import A from '../Animation/AnimationUtilities.js';
 const {
     animObject,
@@ -59,8 +60,8 @@ const {
     win
 } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import O from '../Options.js';
-const { defaultOptions } = O;
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import palette from '../Color/Palette.js';
 import Point from './Point.js';
 import SeriesRegistry from './SeriesRegistry.js';
@@ -2742,7 +2743,7 @@ class Series {
 
     public symbol?: string;
 
-    public tooltipOptions: Highcharts.TooltipOptions = void 0 as any;
+    public tooltipOptions: TooltipOptions = void 0 as any;
 
     public touched?: boolean;
 

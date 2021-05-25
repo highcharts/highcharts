@@ -13,9 +13,10 @@
 import type {
     HTMLDOMElement
 } from '../Renderer/DOMElementType';
+import type Options from '../Options';
 import Chart from './Chart.js';
-import O from '../../Core/Options.js';
-const { getOptions } = O;
+import D from '../DefaultOptions.js';
+const { getOptions } = D;
 import U from '../Utilities.js';
 const {
     isArray,
@@ -25,15 +26,14 @@ const {
 
 import '../../Series/Gantt/GanttSeries.js';
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            isGantt?: boolean;
-        }
+/* *
+ *
+ * Declarations
+ *
+ * */
+declare module '../Options' {
+    interface Options {
+        isGantt?: boolean;
     }
 }
 
@@ -66,7 +66,7 @@ class GanttChart extends Chart {
      * @fires Highcharts.GanttChart#event:afterInit
      */
     public init(
-        userOptions: Partial<Highcharts.Options>,
+        userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
         const defaultOptions = getOptions(),
@@ -97,14 +97,14 @@ class GanttChart extends Chart {
                         type: 'category'
                     }
                 }
-            } as Highcharts.Options,
+            } as Options,
 
             userOptions, // user's options
 
             // forced options
             {
                 isGantt: true
-            } as Highcharts.Options
+            } as Options
         );
 
         userOptions.xAxis = xAxisOptions;
@@ -162,7 +162,6 @@ class GanttChart extends Chart {
                 yAxisOptions // user options
             );
         });
-
         super.init(options, callback);
     }
 }
@@ -204,8 +203,8 @@ namespace GanttChart {
      *         Returns the Chart object.
      */
     export function ganttChart(
-        a: (string|HTMLDOMElement|Highcharts.Options),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        a: (string|HTMLDOMElement|Options),
+        b?: (Chart.CallbackFunction|Options),
         c?: Chart.CallbackFunction
     ): GanttChart {
         return new GanttChart(a as any, b as any, c);

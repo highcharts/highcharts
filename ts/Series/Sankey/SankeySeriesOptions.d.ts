@@ -23,6 +23,7 @@ import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
 import type SankeyPoint from './SankeyPoint';
 import type SankeySeries from './SankeySeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -69,7 +70,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, Highcharts.Nod
     width?: number;
 }
 
-export interface SankeySeriesTooltipOptions extends Highcharts.TooltipOptions {
+export interface SankeySeriesTooltipOptions extends TooltipOptions {
     nodeFormat?: string;
     nodeFormatter?: FormatUtilities.FormatterCallback<SankeyPoint>;
 }

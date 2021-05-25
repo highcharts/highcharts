@@ -349,6 +349,10 @@ AccessibilityComponent.prototype = {
 
         proxy.className = 'highcharts-a11y-proxy-button';
 
+        if (svgElement.hasClass('highcharts-no-tooltip')) {
+            proxy.className += ' highcharts-no-tooltip';
+        }
+
         if (preClickEvent) {
             this.addEvent(proxy, 'click', preClickEvent);
         }
@@ -435,8 +439,8 @@ AccessibilityComponent.prototype = {
         merge(true, proxy.style, {
             width: (bBox.width || 1) + 'px',
             height: (bBox.height || 1) + 'px',
-            left: (bBox.x || 0) + 'px',
-            top: (bBox.y || 0) + 'px'
+            left: (Math.round(bBox.x) || 0) + 'px',
+            top: (Math.round(bBox.y) || 0) + 'px'
         });
     },
 

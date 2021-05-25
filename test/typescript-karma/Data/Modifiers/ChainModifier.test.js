@@ -230,7 +230,7 @@ QUnit.test('ChainModifier.modifyRows', function (assert) {
         6,
         'DataTable should contain six rows.'
     );
-    console.log(table.modified.getColumn('x'));
+
     assert.strictEqual(
         table.modified.getRowCount(),
         4,

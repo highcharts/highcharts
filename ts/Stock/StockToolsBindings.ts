@@ -26,11 +26,11 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 const {
     getOptions,
     setOptions
-} = O;
+} = D;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 import palette from '../Core/Color/Palette.js';

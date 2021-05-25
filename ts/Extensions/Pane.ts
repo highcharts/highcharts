@@ -36,6 +36,12 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../Core/Options'{
+    interface Options {
+        pane?: Highcharts.PaneOptions;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -45,9 +51,6 @@ declare global {
         type PaneBackgroundShapeValue = ('arc'|'circle'|'solid');
         interface Axis {
             pane?: Pane;
-        }
-        interface Options {
-            pane?: PaneOptions;
         }
         interface PaneBackgroundOptions {
             backgroundColor?: ColorType;

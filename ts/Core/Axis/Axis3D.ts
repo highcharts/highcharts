@@ -13,6 +13,8 @@
 'use strict';
 
 import type Axis from './Axis';
+import type AxisOptions from './AxisOptions';
+import type { OptionsPosition3dValue } from '../Options';
 import type Point from '../Series/Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -368,7 +370,7 @@ class Axis3D {
     /**
      * @optionparent xAxis
      */
-    public static defaultOptions: DeepPartial<Highcharts.AxisOptions> = {
+    public static defaultOptions: DeepPartial<AxisOptions> = {
         labels: {
             /**
              * Defines how the labels are be repositioned according to the 3D

@@ -16,6 +16,7 @@
  *
  * */
 
+import type AxisOptions from './AxisOptions';
 import type CSSObject from '../Renderer/CSSObject';
 import type PositionObject from '../Renderer/PositionObject';
 import type { TickLike } from '../Axis/Types';
@@ -283,7 +284,7 @@ class Tick {
 
     public movedLabel?: SVGElement;
 
-    public options?: DeepPartial<Highcharts.AxisOptions>;
+    public options?: DeepPartial<AxisOptions>;
 
     public parameters: Highcharts.TickParametersObject;
 

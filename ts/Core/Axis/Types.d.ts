@@ -9,6 +9,7 @@
  * */
 
 import type Axis from './Axis';
+import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart';
 import type Series from '../Series/Series';
 import type Tick from './Tick';
@@ -55,12 +56,12 @@ export interface AxisLike {
     isXAxis?: boolean;
     max: (null|number);
     min: (null|number);
-    options: Highcharts.AxisOptions;
+    options: AxisOptions;
     reversed?: boolean;
     series: Array<Series>;
     side: number;
     ticks: Record<string, Tick>;
-    userOptions: DeepPartial<Highcharts.AxisOptions>;
+    userOptions: DeepPartial<AxisOptions>;
     visible: boolean;
 }
 

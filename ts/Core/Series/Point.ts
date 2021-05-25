@@ -41,8 +41,8 @@ const { animObject } = A;
 import F from '../FormatUtilities.js';
 const { format } = F;
 import H from '../Globals.js';
-import O from '../Options.js';
-const { defaultOptions } = O;
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import U from '../Utilities.js';
 const {
     addEvent,
