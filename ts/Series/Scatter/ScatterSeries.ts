@@ -18,6 +18,9 @@
 
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
+import type {
+    SeriesTypeOptions
+} from '../../Core/Series/SeriesType';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import LineSeries from '../Line/LineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -25,7 +28,8 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    merge
+    merge,
+    pick
 } = U;
 
 /* *
@@ -222,6 +226,28 @@ class ScatterSeries extends LineSeries {
                 });
             });
         }
+    }
+
+    /**
+     * @private
+     * @function Highcharts.seriesTypes.scatter#setOptions
+     */
+    public setOptions(itemOptions: DeepPartial<SeriesTypeOptions>): this['options'] {
+        const options = super.setOptions(itemOptions),
+            userStates = this.userOptions.states;
+
+        if (options.lineWidth === 0) { // #15667
+            options.states = options.states || {};
+            options.states.hover = options.states.hover || {};
+            options.states.hover.lineWidthPlus = pick(
+                userStates &&
+                userStates.hover &&
+                userStates.hover.lineWidthPlus,
+                0
+            );
+        }
+
+        return options;
     }
 
     /**
