@@ -992,13 +992,13 @@ namespace OrdinalAxis {
                 // Even if the isInside property passed as true, due to some
                 // inaccuracy the getIndexOfPoint might return a negative value.
                 // To prevent that, compare it with zero.
-                const indexInEOP = Math.max(this.ordinal.getIndexOfPoint(val, ordinalPositions), 0),
-                    mantissa = correctFloat(indexInEOP % 1),
-                    leftNeighbour = ordinalPositions[Math.floor(indexInEOP)],
-                    rightNeighbour = ordinalPositions[Math.ceil(indexInEOP)],
+                const indexInOP = this.ordinal.getIndexOfPoint(val, ordinalPositions),
+                    mantissa = correctFloat(indexInOP % 1),
+                    leftNeighbour = ordinalPositions[Math.floor(indexInOP)],
+                    rightNeighbour = ordinalPositions[Math.ceil(indexInOP)],
                     distance = rightNeighbour - leftNeighbour;
 
-                return ordinalPositions[Math.floor(indexInEOP)] + mantissa * distance;
+                return ordinalPositions[Math.floor(indexInOP)] + mantissa * distance;
 
             }
             return val;
