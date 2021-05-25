@@ -934,7 +934,7 @@ setOptions({
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 // Run HTML generator
-addEvent(Chart, 'afterGetContainer', function (): void {
+addEvent(Chart, 'beforeRender', function (): void {
     this.setStockTools();
 });
 
@@ -1599,14 +1599,17 @@ class Toolbar {
      * @param {Object} - general options for Stock Tools
      */
     public update(options: Highcharts.StockToolsOptions): void {
-        merge(true, this.chart.options.stockTools, options);
+        const chart = this.chart;
+        merge(true, chart.options.stockTools, options);
         this.destroy();
-        this.chart.setStockTools(options);
+        chart.setStockTools(options);
 
         // If Stock Tools are updated, then bindings should be updated too:
-        if (this.chart.navigationBindings) {
-            this.chart.navigationBindings.update();
+        if (chart.navigationBindings) {
+            chart.navigationBindings.update();
         }
+
+        chart.redraw();
     }
     /**
      * Destroy all HTML GUI elements.
@@ -1627,7 +1630,6 @@ class Toolbar {
 
         // redraw
         this.chart.isDirtyBox = true;
-        this.chart.redraw();
     }
     /**
      * Redraw, GUI requires to verify if the navigation should be visible.

@@ -5920,7 +5920,7 @@ class Axis {
 
         if (
             // Only if alignTicks is true
-            this.chart.options.chart.alignTicks !== false &&
+            axis.chart.options.chart.alignTicks !== false &&
             options.alignTicks &&
 
             // Disabled when startOnTick or endOnTick are false (#7604)
