@@ -75,20 +75,6 @@ const {
  * Declarations
  *
  * */
-
-declare module './AnnotationChart'{
-    interface AnnotationChart extends Chart {
-        annotations: Array<Annotation>;
-        controlPointsGroup: SVGElement;
-        options: Annotation.ChartOptions;
-        plotBoxClip: SVGElement;
-        addAnnotation(userOptions: AnnotationsOptions, redraw?: boolean): Annotation;
-        drawAnnotations(): void;
-        initAnnotation(userOptions: AnnotationsOptions): Annotation;
-        removeAnnotation(idOrAnnotation: (number|string|Annotation)): void;
-    }
-}
-
 declare module './AnnotationsOptions'{
     // @todo AnnotationOptions.d.ts
     interface AnnotationsOptions extends Highcharts.AnnotationControllableOptionsObject {
