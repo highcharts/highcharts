@@ -33,9 +33,7 @@ import type TimeTicksInfoObject from './TimeTicksInfoObject';
 
 import F from '../FormatUtilities.js';
 import H from '../Globals.js';
-const {
-    deg2rad
-} = H;
+const { deg2rad } = H;
 import U from '../Utilities.js';
 const {
     clamp,
@@ -62,141 +60,11 @@ declare module './AxisOptions' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface TickParametersObject {
-            category?: string;
-            options?: AnyRecord;
-            tickmarkOffset?: number;
-        }
-        interface TickPositionObject extends PositionObject {
-            opacity?: number;
-        }
-        /*
-        interface Tick extends TickLike {}
-        class Tick {
-            public constructor(
-                axis: Axis,
-                pos: number,
-                type?: string,
-                noLabel?: boolean,
-                parameters?: TickParametersObject
-            );
-            public axis: Axis;
-            public gridLine?: SVGElement;
-            public isActive?: boolean;
-            public isFirst?: boolean;
-            public isLast?: boolean;
-            public isNew: boolean;
-            public isNewLabel: boolean;
-            public label?: SVGElement;
-            public labelPos?: PositionObject;
-            public mark?: SVGElement;
-            public movedLabel?: SVGElement;
-            public options?: DeepPartial<AxisOptions>;
-            public parameters: TickParametersObject;
-            public prevLabel?: SVGElement;
-            public pos: number;
-            public rotation?: number;
-            public shortenLabel?: Function;
-            public tickmarkOffset?: number;
-            public type: string;
-            public addLabel(): void;
-            public createLabel(
-                this: Highcharts.Tick,
-                xy: PositionObject,
-                str: string,
-                labelOptions: XAxisLabelsOptions
-            ): SVGElement|undefined;
-            public destroy(): void;
-            public getLabelPosition(
-                x: number,
-                y: number,
-                label: SVGElement,
-                horiz: boolean,
-                labelOptions: PositionObject,
-                tickmarkOffset: number,
-                index: number,
-                step: number
-            ): PositionObject;
-            public getLabelSize(): number;
-            public getMarkPath(
-                x: number,
-                y: number,
-                tickLength: number,
-                tickWidth: number,
-                horiz: boolean,
-                renderer: SVGRenderer
-            ): SVGPath;
-            public getPosition(
-                horiz: boolean,
-                tickPos: number,
-                tickmarkOffset: number,
-                old?: boolean
-            ): PositionObject;
-            public handleOverflow(xy: PositionObject): void;
-            public moveLabel(
-                str: string,
-                labelOptions: XAxisLabelsOptions
-            ): void;
-            public replaceMovedLabel(): void;
-            public render(index: number, old?: boolean, opacity?: number): void;
-            public renderGridLine(
-                old: boolean,
-                opacity: number,
-                reverseCrisp: number
-            ): void;
-            public renderLabel(
-                xy: PositionObject,
-                old: boolean,
-                opacity: number,
-                index: number
-            ): void;
-            public renderMark(
-                xy: PositionObject,
-                opacity: number,
-                reverseCrisp: number
-            ): void;
-        }
-         */
-    }
-}
-
-/**
- * Optional parameters for the tick.
- * @private
- * @interface Highcharts.TickParametersObject
- *//**
- * Set category for the tick.
- * @name Highcharts.TickParametersObject#category
- * @type {string|undefined}
- *//**
- * @name Highcharts.TickParametersObject#options
- * @type {Highcharts.Dictionary<any>|undefined}
- *//**
- * Set tickmarkOffset for the tick.
- * @name Highcharts.TickParametersObject#tickmarkOffset
- * @type {number|undefined}
- */
-
-/**
- * Additonal time tick information.
+/* *
  *
- * @interface Highcharts.TimeTicksInfoObject
- * @extends Highcharts.TimeNormalizedObject
- *//**
- * @name Highcharts.TimeTicksInfoObject#higherRanks
- * @type {Array<string>}
- *//**
- * @name Highcharts.TimeTicksInfoObject#totalRange
- * @type {number}
- */
-
-''; // detach doclets above
+ *  Class
+ *
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -234,7 +102,7 @@ class Tick {
         pos: number,
         type?: string,
         noLabel?: boolean,
-        parameters?: Highcharts.TickParametersObject
+        parameters?: Tick.ParametersObject
     ) {
         /**
          * The related axis of the tick.
@@ -302,7 +170,7 @@ class Tick {
 
     public options?: DeepPartial<AxisOptions>;
 
-    public parameters: Highcharts.TickParametersObject;
+    public parameters: Tick.ParametersObject;
 
     public pos: number;
 
@@ -1149,7 +1017,7 @@ class Tick {
      * @return {void}
      */
     public renderLabel(
-        xy: Highcharts.TickPositionObject,
+        xy: Tick.LabelObject,
         old: boolean|undefined,
         opacity: number,
         index: number
@@ -1263,8 +1131,75 @@ class Tick {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface Tick extends TickLike {
     // nothing here yet
 }
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace Tick {
+    export interface ParametersObject {
+        category?: string;
+        options?: AnyRecord;
+        tickmarkOffset?: number;
+    }
+    export interface LabelObject extends PositionObject {
+        opacity?: number;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default Tick;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Optional parameters for the tick.
+ * @private
+ * @interface Highcharts.TickParametersObject
+ *//**
+ * Set category for the tick.
+ * @name Highcharts.TickParametersObject#category
+ * @type {string|undefined}
+ *//**
+ * @name Highcharts.TickParametersObject#options
+ * @type {Highcharts.Dictionary<any>|undefined}
+ *//**
+ * Set tickmarkOffset for the tick.
+ * @name Highcharts.TickParametersObject#tickmarkOffset
+ * @type {number|undefined}
+ */
+
+/**
+ * Additonal time tick information.
+ *
+ * @interface Highcharts.TimeTicksInfoObject
+ * @extends Highcharts.TimeNormalizedObject
+ *//**
+ * @name Highcharts.TimeTicksInfoObject#higherRanks
+ * @type {Array<string>}
+ *//**
+ * @name Highcharts.TimeTicksInfoObject#totalRange
+ * @type {number}
+ */
+
+''; // detach doclets above
