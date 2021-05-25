@@ -12,12 +12,14 @@
 
 'use strict';
 
+import type Axis from '../../../Core/Axis/Axis';
 import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
 import type Annotation from '../../../Extensions/Annotations/Annotations';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type Series from '../../../Core/Series/Series';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+
 import AnnotationsA11y from '../AnnotationsA11y.js';
 const {
     getPointAnnotationTexts
@@ -314,7 +316,7 @@ function getSeriesAxisDescriptionText(
     series: Series,
     axisCollection: string
 ): string {
-    const axis: Highcharts.Axis = (series as any)[axisCollection];
+    const axis: Axis = (series as any)[axisCollection];
 
     return series.chart.langFormat(
         'accessibility.series.' + axisCollection + 'Description',
@@ -601,7 +603,7 @@ function defaultSeriesDescriptionFormatter(
         description = getSeriesDescriptionText(series),
         shouldDescribeAxis = function (
             coll: ('xAxis'|'yAxis')
-        ): (boolean|Highcharts.Axis) {
+        ): (boolean|Axis) {
             return chart[coll] && chart[coll].length > 1 && series[coll];
         },
         xAxisInfo = getSeriesAxisDescriptionText(series, 'xAxis'),

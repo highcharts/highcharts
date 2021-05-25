@@ -23,6 +23,7 @@ import type {
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type Axis from '../Core/Axis/Axis';
 import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
@@ -34,6 +35,7 @@ import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type { SymbolKey } from '../Core/Renderer/SVG/SymbolType';
 
 import Chart from '../Core/Chart/Chart.js';
 import chartNavigationMixin from '../Mixins/Navigation.js';
@@ -72,6 +74,12 @@ const {
  *  Declarations
  *
  * */
+
+declare module '../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        internalKey?: string;
+    }
+}
 
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
@@ -194,7 +202,7 @@ declare global {
             menuClassName?: string;
             menuItems?: Array<string>;
             onclick?: Function;
-            symbol?: ('menu'|'menuball'|'exportIcon'|string|SVGRenderer.SymbolKeyValue);
+            symbol?: ('menu'|'menuball'|SymbolKey);
             symbolFill?: ColorString;
             symbolSize?: number;
             symbolStroke?: ColorString;
@@ -262,9 +270,6 @@ declare global {
                 (number|null)?,
                 (boolean|Partial<AnimationOptions>)?
             ];
-        }
-        interface XAxisOptions {
-            internalKey?: string;
         }
         /** @requires modules/exporting */
         function post(
@@ -990,7 +995,7 @@ defaultOptions.exporting = {
             /**
              * The symbol for the button. Points to a definition function in
              * the `Highcharts.Renderer.symbols` collection. The default
-             * `exportIcon` function is part of the exporting module. Possible
+             * `menu` function is part of the exporting module. Possible
              * values are "circle", "square", "diamond", "triangle",
              * "triangle-down", "menu", "menuball" or custom shape.
              *
@@ -999,7 +1004,7 @@ defaultOptions.exporting = {
              * @sample highcharts/exporting/buttons-contextbutton-symbol-custom/
              *         Custom shape as symbol
              *
-             * @type  {Highcharts.SymbolKeyValue|"exportIcon"|"menu"|"menuball"|string}
+             * @type  {Highcharts.SymbolKeyValue|"menu"|"menuball"|string}
              * @since 2.0
              */
             symbol: 'menu',
@@ -1448,7 +1453,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         });
 
         const colls: Record<string, boolean> = {};
-        chart.axes.forEach(function (axis: Highcharts.Axis): void {
+        chart.axes.forEach(function (axis): void {
             // Assign an internal key to ensure a one-to-one mapping (#5924)
             if (!axis.userOptions.internalKey) { // #6444
                 axis.userOptions.internalKey = uniqueKey();
@@ -1482,9 +1487,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // Reflect axis extremes in the export (#5924)
-        chart.axes.forEach(function (axis: Highcharts.Axis): void {
+        chart.axes.forEach(function (axis): void {
             const axisCopy = find(chartCopy.axes, function (
-                    copy: Highcharts.Axis
+                    copy: Axis
                 ): boolean {
                     return copy.options.internalKey ===
                         axis.userOptions.internalKey;

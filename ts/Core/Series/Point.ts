@@ -34,6 +34,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGLabel from '../Renderer/SVG/SVGLabel';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
@@ -452,8 +453,6 @@ class Point {
      * @type {number|undefined}
      */
     public total?: number = void 0;
-
-    public touched?: boolean;
 
     /**
      * For certain series types, like pie charts, where individual points can
@@ -1526,7 +1525,7 @@ class Point {
             pointAttribs: SVGAttributes,
             pointAttribsAnimation: AnimationOptions,
             hasMarkers = (markerOptions && series.markerAttribs),
-            newSymbol;
+            newSymbol: (SymbolKey|undefined);
 
         state = state || ''; // empty string
 

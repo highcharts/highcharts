@@ -8,6 +8,7 @@
 
 import type AnnotationChart from '../AnnotationChart';
 import type AnnotationsOptions from '../AnnotationsOptions';
+import type Axis from '../../../Core/Axis/Axis';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type FormatUtilities from '../../../Core/FormatUtilities';
@@ -128,7 +129,11 @@ class Measure extends Annotation {
          * @param {number} offset
          * Amount of pixels
          */
-        getPointPos: function (axis: Highcharts.Axis, value: number, offset: number): number {
+        getPointPos: function (
+            axis: Axis,
+            value: number,
+            offset: number
+        ): number {
             return axis.toValue(axis.toPixels(value) + offset);
         },
         /**

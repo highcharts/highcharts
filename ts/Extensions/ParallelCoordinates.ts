@@ -19,12 +19,13 @@
  * */
 
 import type AxisOptions from '../Core/Axis/AxisOptions';
-import type { AxisType } from '../Core/Axis/Types';
-import type { ChartOptions } from '../Core/Chart/ChartOptions';
+import type AxisType from '../Core/Axis/AxisType';
+import type ChartOptions from '../Core/Chart/ChartOptions';
 import type Options from '../Core/Options';
 import type Point from '../Core/Series/Point';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import F from '../Core/FormatUtilities.js';
@@ -53,10 +54,22 @@ const {
  *
  * */
 
+declare module '../Core/Axis/AxisComposition' {
+    interface AxisComposition {
+        parallelCoordinates?: ParallelAxis['parallelCoordinates'];
+    }
+}
+
 declare module '../Core/Axis/AxisOptions' {
     interface AxisOptions {
         angle?: number;
         tooltipValueFormat?: string;
+    }
+}
+
+declare module '../Core/Axis/AxisType' {
+    interface AxisTypeRegistry {
+        ParallelAxis: ParallelAxis;
     }
 }
 
@@ -70,7 +83,7 @@ declare module '../Core/Chart/ChartLike'{
 }
 declare module '../Core/Chart/ChartOptions'{
     interface ChartOptions {
-        parallelAxes?: DeepPartial<Highcharts.XAxisOptions>;
+        parallelAxes?: DeepPartial<AxisOptions>;
         parallelCoordinates?: boolean;
     }
 }
@@ -91,17 +104,11 @@ declare global {
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Axis/Types' {
-    interface AxisComposition {
-        parallelCoordinates?: ParallelAxis['parallelCoordinates'];
-    }
-    interface AxisTypeRegistry {
-        ParallelAxis: ParallelAxis;
-    }
-}
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 // Extensions for parallel coordinates plot.
 const ChartProto = Chart.prototype;
@@ -610,7 +617,7 @@ namespace ParallelAxis {
      */
     function onAfterSetOptions(
         this: Axis,
-        e: { userOptions: Highcharts.XAxisOptions }
+        e: { userOptions: AxisOptions }
     ): void {
         const axis = this as ParallelAxis,
             chart = axis.chart,

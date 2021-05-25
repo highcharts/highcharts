@@ -61,8 +61,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type A11yOptions from '../Options/Options';
 import type Options from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
+
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
@@ -76,25 +84,20 @@ const {
  * Declarations
  *
  * */
+
+declare module '../../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        /** @deprecated */
+        description?: A11yOptions.AxisAccessibilityOptions['description'];
+    }
+}
+
 declare module '../../Core/Options'{
     interface Options {
         /** @deprecated */
         exposeElementToA11y?: (
             Highcharts.SeriesAccessibilityOptions['exposeAsGroupOnly']
         );
-    }
-}
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface XAxisOptions {
-            /** @deprecated */
-            description?: XAxisAccessibilityOptions['description'];
-        }
     }
 }
 

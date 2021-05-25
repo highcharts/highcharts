@@ -57,7 +57,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
         labels = labels.concat(collector());
     });
 
-    (this.yAxis || []).forEach(function (yAxis: Highcharts.Axis): void {
+    (this.yAxis || []).forEach(function (yAxis): void {
         if (
             yAxis.stacking &&
             yAxis.options.stackLabels &&

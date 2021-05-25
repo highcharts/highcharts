@@ -25,7 +25,7 @@ import type {
 } from './AnnotationsOptions';
 import type { AnnotationTypeRegistry } from './Types/AnnotationType';
 import type AST from '../../Core/Renderer/HTML/AST';
-import type { AxisType } from '../../Core/Axis/Types';
+import type AxisType from '../../Core/Axis/AxisType';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
@@ -38,6 +38,7 @@ import type PointClass from '../../Core/Series/Point';
 import type SeriesClass from '../../Core/Series/Series';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;

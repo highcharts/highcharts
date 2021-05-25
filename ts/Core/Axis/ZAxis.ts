@@ -8,13 +8,15 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
  *
  * */
 
-import type { AxisLike } from './Types';
+import type AxisLike from './AxisLike';
 import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
 
@@ -33,6 +35,12 @@ const {
  *
  * */
 
+declare module './AxisType' {
+    interface AxisTypeRegistry {
+        ZAxis: ZAxis;
+    }
+}
+
 declare module '../Chart/ChartLike'{
     interface ChartLike {
         zAxis?: Array<ZAxis>;
@@ -46,15 +54,6 @@ declare module '../Options' {
             DeepPartial<AxisOptions>|
             Array<DeepPartial<AxisOptions>>
         );
-    }
-}
-
-/**
- * @private
- */
-declare module './Types' {
-    interface AxisTypeRegistry {
-        ZAxis: ZAxis;
     }
 }
 
@@ -116,7 +115,7 @@ class ZChart {
     public static wrapAddZAxis(
         this: Chart,
         options: AxisOptions
-    ): Highcharts.Axis {
+    ): Axis {
         return new ZAxis(this, options);
     }
 
