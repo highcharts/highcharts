@@ -1462,6 +1462,11 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
                 table.modified = this;
             }
         }
+
+        this.emit({
+            type: 'afterSetModifier',
+            modifier: table.modifier
+        });
     }
 
     /**
@@ -1764,6 +1769,7 @@ namespace DataTable {
     export type Event = (
         CellEvent|
         ColumnEvent|
+        SetModifierEvent|
         TableEvent|
         RowEvent
     );
@@ -1804,6 +1810,16 @@ namespace DataTable {
             'cloneTable'|'afterCloneTable'
         );
         readonly tableClone?: DataTable;
+    }
+
+    /**
+    * Event object for the setModifier events.
+    */
+    export interface SetModifierEvent extends DataEventEmitter.Event {
+        readonly type: (
+            'afterSetModifier'
+        );
+        readonly modifier?: DataModifier;
     }
 
 }
