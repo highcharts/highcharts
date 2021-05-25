@@ -14,6 +14,7 @@ import U from '../../Core/Utilities.js';
 const {
     merge,
     addEvent,
+    css,
     createElement,
     fireEvent,
     removeEvent
@@ -21,6 +22,7 @@ const {
 
 import H from '../../Core/Globals.js';
 import EditMode from '../EditMode/EditMode';
+import ContextDetection from './ContextDetection.js';
 
 const {
     hasTouch
@@ -81,13 +83,18 @@ class Resizer {
             this.options
         );
 
-        // temp for testing
-        const layout = this.editMode.dashboard.layouts[0];
-        if (layout.rows && layout.rows[1]) {
-            this.resizeElement(layout.rows[1].cells[0]);
-        } else {
-            this.resizeElement(layout.rows[0].cells[0]);
-        }
+        this.resizePointer = {
+            isVisible: false,
+            element: createElement(
+                'div',
+                { className: EditGlobals.classNames.resizePointer },
+                {},
+                editMode.dashboard.container
+            )
+        };
+
+        this.isResizerDetectionActive = false;
+        this.initEvents();
     }
 
     /* *
@@ -106,6 +113,10 @@ class Resizer {
     public snapYB: HTMLDOMElement|undefined;
     public isActive: boolean;
     public editMode: EditMode;
+    public mouseCellContext?: Cell;
+    public resizeCellContext?: Cell;
+    public isResizerDetectionActive: boolean;
+    public resizePointer: Resizer.ResizePointer;
 
     /* *
      *
@@ -118,6 +129,14 @@ class Resizer {
         for (let i = 0, iEnd = layouts.length; i < iEnd; ++i) {
             this.setInitWidth(layouts[i]);
         }
+    }
+
+    public initEvents(): void {
+        const resizer = this;
+
+        // Resizer events.
+        addEvent(document, 'mousemove', resizer.onDetectContext.bind(resizer));
+        addEvent(document, 'click', resizer.onResizeElementConfirm.bind(resizer));
     }
 
     public setInitWidth(
@@ -307,6 +326,7 @@ class Resizer {
         ): void {
             resizer.isActive = true;
             resizer.currentDimension = 'x';
+            resizer.deactivateResizerDetection();
             // set snap position
         };
 
@@ -315,6 +335,7 @@ class Resizer {
         ): void {
             resizer.isActive = true;
             resizer.currentDimension = 'y';
+            resizer.deactivateResizerDetection();
         };
 
         resizer.mouseMoveSnap = mouseMoveSnap = function (
@@ -330,8 +351,11 @@ class Resizer {
         resizer.mouseUpSnap = mouseUpSnap = function (
             e: PointerEvent
         ): void {
-            resizer.isActive = false;
-            resizer.currentDimension = void 0;
+            if (resizer.isActive) {
+                resizer.isActive = false;
+                resizer.currentDimension = void 0;
+                resizer.activateResizerDetection();
+            }
         };
 
         // Add mouse events
@@ -584,6 +608,85 @@ class Resizer {
             }
         };
     }
+
+    public activateResizerDetection(): void {
+        this.isResizerDetectionActive = true;
+        this.editMode.hideToolbars();
+    }
+
+    public deactivateResizerDetection(): void {
+        this.isResizerDetectionActive = false;
+        this.mouseCellContext = void 0;
+        this.hideResizePointer();
+    }
+
+    public onDetectContext(e: PointerEvent): void {
+        const resizer = this,
+            offset = 50; // TODO - add it from options.
+
+        if (resizer.isResizerDetectionActive && resizer.mouseCellContext) {
+            const resizeCellContext = this.resizeCellContext =
+                ContextDetection.getContext(resizer.mouseCellContext, e, offset);
+
+            if (resizeCellContext) {
+                const resizeCellContextOffsets = GUIElement.getOffsets(
+                    resizeCellContext, resizer.editMode.dashboard.container);
+                const { width, height } = GUIElement.getDimFromOffsets(resizeCellContextOffsets);
+
+                resizer.showResizePointer(
+                    resizeCellContextOffsets.left, resizeCellContextOffsets.top, width, height
+                );
+            }
+        }
+    }
+
+    // Used when gui element is selected and resizing is confirmed by click.
+    public onResizeElementConfirm(): void {
+        if (this.isResizerDetectionActive && this.resizeCellContext) {
+            this.resizeElement(this.resizeCellContext);
+        }
+    }
+
+    /**
+     * Method for showing and positioning resize pointer.
+     *
+     * @param {number} left
+     * Resize pointer left position.
+     *
+     * @param {number} top
+     * Resize pointer top position.
+     *
+     * @param {number} width
+     * Resize pointer width.
+     *
+     * @param {number} height
+     * Resize pointer height.
+     */
+    private showResizePointer(
+        left: number,
+        top: number,
+        width: number,
+        height: number
+    ): void {
+        this.resizePointer.isVisible = true;
+        css(this.resizePointer.element, {
+            display: 'block',
+            left: left + 'px',
+            top: top + 'px',
+            height: height + 'px',
+            width: width + 'px'
+        });
+    }
+
+    /**
+     * Method for hiding resize pointer.
+     */
+    private hideResizePointer(): void {
+        if (this.resizePointer.isVisible) {
+            this.resizePointer.isVisible = false;
+            this.resizePointer.element.style.display = 'none';
+        }
+    }
 }
 interface Resizer {
     mouseDownSnapX?: Function;
@@ -646,6 +749,11 @@ namespace Resizer {
         borderBottom?: number;
         minWidth?: number;
         minHeight?: number;
+    }
+
+    export interface ResizePointer {
+        isVisible: boolean;
+        element: HTMLDOMElement;
     }
 }
 

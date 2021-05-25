@@ -130,7 +130,8 @@ class RowEditToolbar extends EditToolbar {
         row: Row
     ): void {
         const toolbar = this,
-            rowCnt = row.container;
+            rowCnt = row.container,
+            resizer = toolbar.editMode.resizer;
 
         let x, y;
 
@@ -138,7 +139,8 @@ class RowEditToolbar extends EditToolbar {
             row.cells.length > 1 && // -> to discuss
             rowCnt &&
             toolbar.editMode.isActive() &&
-            !(toolbar.editMode.dragDrop || {}).isActive
+            !(toolbar.editMode.dragDrop || {}).isActive &&
+            resizer && !resizer.isActive && !resizer.isResizerDetectionActive
         ) {
             const rowOffsets = GUIElement.getOffsets(row, toolbar.editMode.dashboard.container);
 

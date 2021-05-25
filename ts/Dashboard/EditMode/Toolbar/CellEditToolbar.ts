@@ -124,15 +124,15 @@ class CellEditToolbar extends EditToolbar {
         const toolbar = this,
             cellCnt = cell.container,
             width = toolbar.container.clientWidth,
-            isCellResizing = (cell.row.layout.resizer || {}).currentCell;
+            resizer = toolbar.editMode.resizer;
 
         let x, y;
 
         if (
             cellCnt &&
             toolbar.editMode.isActive() &&
-            !isCellResizing &&
-            !(toolbar.editMode.dragDrop || {}).isActive
+            !(toolbar.editMode.dragDrop || {}).isActive &&
+            resizer && !resizer.isActive && !resizer.isResizerDetectionActive
         ) {
             const cellOffsets = GUIElement.getOffsets(cell, toolbar.editMode.dashboard.container);
 
