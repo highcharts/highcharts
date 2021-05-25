@@ -16,14 +16,20 @@
  *
  * */
 
+import type {
+    AxisOptions,
+    YAxisOptions
+} from '../Axis/AxisOptions';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type CSSObject from '../Renderer/CSSObject';
 import type DataExtremesObject from '../Series/DataExtremesObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
+import type Options from '../Options';
 import type PointerEvent from '../PointerEvent';
 import type { SeriesTypePlotOptions } from '../Series/SeriesType';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+
 import A from '../Animation/AnimationUtilities.js';
 const {
     animObject
@@ -32,9 +38,9 @@ import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
-import O from '../../Core/Options.js';
-const { getOptions } = O;
-import palette from '../../Core/Color/Palette.js';
+import D from '../DefaultOptions.js';
+const { getOptions } = D;
+import Palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 const {
     prototype: {
@@ -82,7 +88,7 @@ import '../../Extensions/RangeSelector.js';
  *
  * */
 
-declare module '../Axis/Types' {
+declare module '../Axis/AxisLike' {
     interface AxisLike {
         crossLabel?: SVGElement;
         setCompare(compare?: string, redraw?: boolean): void;
@@ -92,6 +98,12 @@ declare module '../Axis/Types' {
 declare module './ChartLike' {
     interface ChartLike {
         _labelPanes?: Record<string, Axis>;
+    }
+}
+
+declare module '../Options'{
+    interface Options {
+        isStock?: boolean;
     }
 }
 
@@ -125,17 +137,11 @@ declare module '../Renderer/SVG/SVGRendererLike' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            isStock?: boolean;
-        }
-    }
-}
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Stock-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.
@@ -166,7 +172,7 @@ class StockChart extends Chart {
      * @fires Highcharts.StockChart#event:afterInit
      */
     public init(
-        userOptions: Partial<Highcharts.Options>,
+        userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
         const defaultOptions = getOptions(),
@@ -231,9 +237,9 @@ class StockChart extends Chart {
 
         // apply X axis options to both single and multi y axes
         options.xAxis = splat(userOptions.xAxis || {}).map(function (
-            xAxisOptions: Highcharts.XAxisOptions,
+            xAxisOptions: AxisOptions,
             i: number
-        ): Highcharts.XAxisOptions {
+        ): AxisOptions {
             return merge(
                 getDefaultAxisOptions('xAxis', xAxisOptions),
                 defaultOptions.xAxis, // #3802
@@ -245,9 +251,9 @@ class StockChart extends Chart {
 
         // apply Y axis options to both single and multi y axes
         options.yAxis = splat(userOptions.yAxis || {}).map(function (
-            yAxisOptions: Highcharts.YAxisOptions,
+            yAxisOptions: YAxisOptions,
             i: number
-        ): Highcharts.YAxisOptions {
+        ): YAxisOptions {
             return merge(
                 getDefaultAxisOptions('yAxis', yAxisOptions),
                 defaultOptions.yAxis, // #3802
@@ -277,7 +283,7 @@ class StockChart extends Chart {
     public createAxis(
         type: string,
         options: Chart.CreateAxisOptionsObject
-    ): Highcharts.Axis {
+    ): Axis {
         options.axis = merge(
             getDefaultAxisOptions(type, options.axis),
             options.axis,
@@ -327,8 +333,8 @@ namespace StockChart {
      *         The chart object.
      */
     export function stockChart(
-        a: (string|HTMLDOMElement|Highcharts.Options),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        a: (string|HTMLDOMElement|Options),
+        b?: (Chart.CallbackFunction|Options),
         c?: Chart.CallbackFunction
     ): StockChart {
         return new StockChart(a as any, b as any, c);
@@ -346,8 +352,8 @@ namespace StockChart {
  */
 function getDefaultAxisOptions(
     type: string,
-    options: DeepPartial<Highcharts.AxisOptions>
-): DeepPartial<Highcharts.AxisOptions> {
+    options: DeepPartial<AxisOptions>
+): DeepPartial<AxisOptions> {
     if (type === 'xAxis') {
         return {
             minPadding: 0,
@@ -402,8 +408,8 @@ function getDefaultAxisOptions(
  */
 function getForcedAxisOptions(
     type: string,
-    chartOptions: Partial<Highcharts.Options>
-): DeepPartial<Highcharts.AxisOptions> {
+    chartOptions: Partial<Options>
+): DeepPartial<AxisOptions> {
     if (type === 'xAxis') {
         const defaultOptions = getOptions(),
             // Always disable startOnTick:true on the main axis when the
@@ -414,7 +420,7 @@ function getForcedAxisOptions(
                 true
             );
 
-        const axisOptions: DeepPartial<Highcharts.AxisOptions> = {
+        const axisOptions: DeepPartial<AxisOptions> = {
             type: 'datetime',
             categories: void 0
         };
@@ -468,10 +474,7 @@ addEvent(Series, 'setOptions', function (
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
-addEvent(Axis, 'autoLabelAlign', function (
-    this: Highcharts.Axis,
-    e: Event
-): void {
+addEvent(Axis, 'autoLabelAlign', function (e: Event): void {
     let chart = this.chart,
         options = this.options,
         panes = chart._labelPanes = chart._labelPanes || {},
@@ -497,7 +500,7 @@ addEvent(Axis, 'autoLabelAlign', function (
 });
 
 // Clear axis from label panes (#6071)
-addEvent(Axis, 'destroy', function (this: Highcharts.Axis): void {
+addEvent(Axis, 'destroy', function (): void {
     const chart = this.chart,
         key = this.options && (this.options.top + ',' + this.options.height);
 
@@ -508,8 +511,7 @@ addEvent(Axis, 'destroy', function (this: Highcharts.Axis): void {
 
 // Override getPlotLinePath to allow for multipane charts
 addEvent(Axis, 'getPlotLinePath', function (
-    this: Highcharts.Axis,
-    e: Event & Highcharts.AxisPlotLinePathOptionsObject
+    e: (Event&Axis.PlotLinePathOptions)
 ): void {
     let axis = this,
         series = (
@@ -527,8 +529,8 @@ addEvent(Axis, 'getPlotLinePath', function (
         y2,
         result = [] as SVGPath,
         axes = [], // #3416 need a default array
-        axes2: Array<Highcharts.Axis>,
-        uniqueAxes: Array<Highcharts.Axis>,
+        axes2: Array<Axis>,
+        uniqueAxes: Array<Axis>,
         translatedValue = e.translatedValue,
         value = e.value,
         force = e.force,
@@ -539,7 +541,7 @@ addEvent(Axis, 'getPlotLinePath', function (
      * series.
      * @private
      */
-    function getAxis(coll: string): Array<Highcharts.Axis> {
+    function getAxis(coll: string): Array<Axis> {
         const otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
             opt = (axis.options as any)[otherColl];
 
@@ -550,11 +552,11 @@ addEvent(Axis, 'getPlotLinePath', function (
 
         // Other axis indexed by id (like navigator)
         if (isString(opt)) {
-            return [chart.get(opt) as Highcharts.Axis];
+            return [chart.get(opt) as Axis];
         }
 
         // Auto detect based on existing series
-        return series.map(function (s: Series): Highcharts.Axis {
+        return series.map(function (s: Series): Axis {
             return (s as any)[otherColl];
         });
     }
@@ -573,7 +575,7 @@ addEvent(Axis, 'getPlotLinePath', function (
 
         // Get the related axes based options.*Axis setting #2810
         axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
-        axes2.forEach(function (A: Highcharts.Axis): void {
+        axes2.forEach(function (A): void {
             if (
                 defined(A.options.id) ?
                     A.options.id.indexOf('navigator') === -1 :
@@ -599,13 +601,11 @@ addEvent(Axis, 'getPlotLinePath', function (
         uniqueAxes = axes.length ?
             [] :
             [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; // #3742
-        axes.forEach(function (axis2: Highcharts.Axis): void {
+        axes.forEach(function (axis2): void {
             if (
                 uniqueAxes.indexOf(axis2) === -1 &&
                 // Do not draw on axis which overlap completely. #5424
-                !find(uniqueAxes, function (
-                    unique: Highcharts.Axis
-                ): boolean {
+                !find(uniqueAxes, function (unique: Axis): boolean {
                     return unique.pos === axis2.pos && unique.len === axis2.len;
                 })
             ) {
@@ -619,7 +619,7 @@ addEvent(Axis, 'getPlotLinePath', function (
         );
         if (isNumber(transVal)) {
             if (axis.horiz) {
-                uniqueAxes.forEach(function (axis2: Highcharts.Axis): void {
+                uniqueAxes.forEach(function (axis2): void {
                     let skip;
 
                     y1 = axis2.pos;
@@ -646,7 +646,7 @@ addEvent(Axis, 'getPlotLinePath', function (
                     }
                 });
             } else {
-                uniqueAxes.forEach(function (axis2: Highcharts.Axis): void {
+                uniqueAxes.forEach(function (axis2): void {
                     let skip;
 
                     x1 = axis2.pos;
@@ -716,7 +716,7 @@ SVGRenderer.prototype.crispPolyLine = function (
 };
 
 // Wrapper to hide the label
-addEvent(Axis, 'afterHideCrosshair', function (this: Highcharts.Axis): void {
+addEvent(Axis, 'afterHideCrosshair', function (): void {
     if (this.crossLabel) {
         this.crossLabel = this.crossLabel.hide();
     }
@@ -724,7 +724,6 @@ addEvent(Axis, 'afterHideCrosshair', function (this: Highcharts.Axis): void {
 
 // Extend crosshairs to also draw the label
 addEvent(Axis, 'afterDrawCrosshair', function (
-    this: Highcharts.Axis,
     event: { e: PointerEvent; point: Point }
 ): void {
 
@@ -803,12 +802,12 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                 .attr({
                     fill: options.backgroundColor ||
                         point && point.series && point.series.color || // #14888
-                        palette.neutralColor60,
+                        Palette.neutralColor60,
                     stroke: options.borderColor || '',
                     'stroke-width': options.borderWidth || 0
                 })
                 .css(extend<CSSObject>({
-                    color: palette.backgroundColor,
+                    color: Palette.backgroundColor,
                     fontWeight: 'normal',
                     fontSize: '11px',
                     textAlign: 'center'
@@ -1212,7 +1211,7 @@ addEvent(Series, 'render', function (): void {
 
 addEvent(Chart, 'update', function (
     this: StockChart,
-    e: { options: Highcharts.Options }
+    e: { options: Options }
 ): void {
     const options = e.options;
 

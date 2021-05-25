@@ -17,6 +17,7 @@ import type {
     SMAParamsOptions
 } from '../SMA/SMAOptions';
 import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
+import type TooltipOptions from '../../../Core/TooltipOptions';
 
 /* *
  *
@@ -27,7 +28,7 @@ import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
 export interface OBVOptions extends SMAOptions {
     marker?: PointMarkerOptions;
     params?: OBVParamsOptions;
-    tooltip?: Highcharts.TooltipOptions;
+    tooltip?: TooltipOptions;
 }
 
 export interface OBVParamsOptions extends SMAParamsOptions {

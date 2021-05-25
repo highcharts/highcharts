@@ -18,8 +18,8 @@
 
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import H from '../../Core/Globals.js';
-import O from '../../Core/Options.js';
-const { setOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 
 const textBright = '#F0F0F3';
 

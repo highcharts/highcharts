@@ -41,7 +41,7 @@ const {
     relativeLength
 } = U;
 
-import '../../Core/Options.js';
+import '../../Core/DefaultOptions.js';
 
 /* *
  *

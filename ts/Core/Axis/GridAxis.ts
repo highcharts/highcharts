@@ -17,6 +17,12 @@
  *
  * */
 
+import type {
+    AxisLabelFormatterContextObject,
+    AxisOptions
+} from './AxisOptions';
+import type { AxisTypeOptions } from './AxisType';
+import type ChartOptions from '../Chart/ChartOptions';
 import type ColorType from '../Color/ColorType';
 import type Point from '../Series/Point';
 import type {
@@ -32,6 +38,8 @@ import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 
 import Axis from './Axis.js';
+import AxisDefaults from './AxisDefaults.js';
+import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 import Tick from './Tick.js';
 import U from '../Utilities.js';
@@ -48,49 +56,66 @@ const {
     wrap
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Axis {
-            axisBorder?: SVGElement;
-            getMaxLabelDimensions(
-                ticks: Record<string, Tick>,
-                tickPositions: Array<(number|string)>
-            ): SizeObject;
-            addExtraBorder(
-                path: SVGPath,
-            ): SizeObject;
-        }
-        interface AxisLabelsFormatterContextObject {
-            point?: Point;
-        }
-        interface Tick {
-            slotWidth?: number;
-        }
-        interface XAxisOptions {
-            grid?: GridAxis.Options;
-            isInternal?: boolean;
-        }
-    }
-}
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
-/**
- * @private
- */
-declare module './Types' {
-    interface AxisLike {
-        rightWall?: SVGElement;
-    }
+declare module './AxisComposition' {
     interface AxisComposition {
         grid?: GridAxis['grid'];
     }
+}
+
+declare module './AxisLike' {
+    interface AxisLike {
+        axisBorder?: SVGElement;
+        rightWall?: SVGElement;
+        getMaxLabelDimensions(
+            ticks: Record<string, Tick>,
+            tickPositions: Array<(number|string)>
+        ): SizeObject;
+        addExtraBorder(
+            path: SVGPath,
+        ): SizeObject;
+    }
+}
+
+declare module './AxisOptions' {
+    interface AxisLabelFormatterContextObject {
+        point?: Point;
+    }
+    interface AxisOptions {
+        grid?: GridAxis.Options;
+        isInternal?: boolean;
+    }
+}
+
+declare module '../Chart/ChartLike'{
+    interface ChartLike {
+        marginRight: ChartOptions['marginRight'];
+        polar: ChartOptions['polar'];
+    }
+}
+
+declare module './TickLike' {
+    interface TickLike {
+        slotWidth?: number;
+    }
+}
+
+declare module './AxisType' {
     interface AxisTypeRegistry {
         GridAxis: GridAxis;
     }
 }
+
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 const argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
@@ -98,10 +123,9 @@ const argsToArray = function (args: IArguments): Array<any> {
     isObject = function (x: unknown): x is object {
         // Always use strict mode
         return U.isObject(x, true);
-    },
-    Chart = H.Chart;
+    };
 
-const applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
+const applyGridOptions = function applyGridOptions(axis: Axis): void {
     const options = axis.options;
 
     // Center-align by default
@@ -226,7 +250,7 @@ const applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void 
  * @todo Move this to the generic axis implementation, as it is used there.
  */
 Axis.prototype.getMaxLabelDimensions = function (
-    ticks: Record<string, Highcharts.Tick>,
+    ticks: Record<string, Tick>,
     tickPositions: Array<(number|string)>
 ): SizeObject {
     const dimensions: SizeObject = {
@@ -297,12 +321,12 @@ addEvent(
     Chart,
     'afterSetChartSize',
     function (): void {
-        this.axes.forEach(function (axis: Axis): void {
+        this.axes.forEach(function (axis): void {
             (axis.grid && axis.grid.columns || []).forEach(function (column): void {
                 column.setAxisSize();
                 column.setAxisTranslation();
             });
-        } as any);
+        });
     }
 );
 
@@ -326,7 +350,7 @@ addEvent(
             options = axis.options,
             gridOptions = options.grid || {},
             labelOpts = axis.options.labels,
-            align = (labelOpts as any).align,
+            align = labelOpts.align,
             // verticalAlign is currently not supported for axis.labels.
             verticalAlign = 'middle', // labelOpts.verticalAlign,
             side = GridAxis.Side[axis.side],
@@ -336,7 +360,7 @@ addEvent(
             nextTickPos = (
                 isNumber(tickPositions[e.index + 1]) ?
                     tickPositions[e.index + 1] - tickmarkOffset :
-                    (axis.max as any) + tickmarkOffset
+                    (axis.max || 0) + tickmarkOffset
             ),
             tickSize = axis.tickSize('tick'),
             tickWidth = tickSize ? tickSize[0] : 0,
@@ -361,10 +385,10 @@ addEvent(
             } else {
                 bottom = axis.top + axis.len - (axis.translate(
                     reversed ? nextTickPos : tickPos
-                ) as any);
+                ) || 0);
                 top = axis.top + axis.len - (axis.translate(
                     reversed ? tickPos : nextTickPos
-                ) as any);
+                ) || 0);
             }
 
             // Calculate left and right positions of the cell.
@@ -377,10 +401,13 @@ addEvent(
             } else {
                 left = Math.round(axis.left + (axis.translate(
                     reversed ? nextTickPos : tickPos
-                ) as any)) - crispCorr;
-                right = Math.round(axis.left + (axis.translate(
-                    reversed ? tickPos : nextTickPos
-                ) as any)) - crispCorr;
+                ) || 0)) - crispCorr;
+                right = Math.min( // #15742
+                    Math.round(axis.left + (axis.translate(
+                        reversed ? tickPos : nextTickPos
+                    ) || 0)) - crispCorr,
+                    axis.left + axis.len
+                );
             }
 
             tick.slotWidth = right - left;
@@ -403,14 +430,14 @@ addEvent(
             );
 
             lblMetrics = chart.renderer.fontMetrics(
-                (labelOpts as any).style.fontSize,
-                (label as any).element
+                labelOpts.style.fontSize,
+                label && label.element
             );
-            labelHeight = (label as any).getBBox().height;
+            labelHeight = label ? label.getBBox().height : 0;
 
             // Adjustment to y position to align the label correctly.
             // Would be better to have a setter or similar for this.
-            if (!(labelOpts as any).useHTML) {
+            if (!labelOpts.useHTML) {
                 lines = Math.round(labelHeight / lblMetrics.h);
                 e.pos.y += (
                     // Center the label
@@ -428,7 +455,7 @@ addEvent(
                 );
             }
 
-            e.pos.x += (axis.horiz && (labelOpts as any).x || 0);
+            e.pos.x += (axis.horiz && labelOpts.x) || 0;
         }
     }
 );
@@ -436,7 +463,7 @@ addEvent(
 addEvent(
     Tick,
     'labelFormat',
-    (ctx: Highcharts.AxisLabelsFormatterContextObject): void => {
+    (ctx: AxisLabelFormatterContextObject): void => {
         const {
             axis,
             value
@@ -453,9 +480,9 @@ addEvent(
             const isLast = value === tickPos[tickPos.length - 1];
             const point: (Point|undefined) =
                 series && find(series.options.data as any, function (
-                    p: (PointOptions|PointShortOptions)
+                    p: Point
                 ): boolean {
-                    return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
+                    return p[axis.isXAxis ? 'x' : 'y'] === value;
                 });
             let pointCopy;
 
@@ -543,7 +570,7 @@ class GridAxisAdditions {
             lastIndex = 0;
 
         (chart as any)[axis.coll].forEach(function (
-            otherAxis: Highcharts.Axis,
+            otherAxis: Axis,
             index: number
         ): void {
             if (otherAxis.side === axis.side && !otherAxis.options.isInternal) {
@@ -895,9 +922,7 @@ class GridAxis {
                 }
             }
 
-            (grid && grid.columns || []).forEach(function (
-                column: Highcharts.Axis
-            ): void {
+            (grid && grid.columns || []).forEach(function (column): void {
                 column.render();
             });
             // Manipulate the tick mark visibility
@@ -1007,11 +1032,11 @@ class GridAxis {
      */
     public static onAfterSetOptions(
         this: Axis,
-        e: { userOptions: DeepPartial<Highcharts.AxisOptions> }
+        e: { userOptions: DeepPartial<AxisOptions> }
     ): void {
         let options = this.options,
             userOptions = e.userOptions,
-            gridAxisOptions: DeepPartial<Highcharts.AxisOptions>,
+            gridAxisOptions: DeepPartial<AxisTypeOptions>,
             gridOptions: GridAxis.Options = (
                 (options && isObject(options.grid)) ? (options.grid as any) : {}
             );
@@ -1020,7 +1045,7 @@ class GridAxis {
 
             // Merge the user options into default grid axis options so
             // that when a user option is set, it takes presedence.
-            gridAxisOptions = merge<DeepPartial<Highcharts.AxisOptions>>(true, {
+            gridAxisOptions = merge<DeepPartial<AxisTypeOptions>>(true, {
 
                 className: (
                     'highcharts-grid-axis ' + (userOptions.className || '')
@@ -1116,7 +1141,6 @@ class GridAxis {
                     !defined(userOptions.tickInterval)
                 ) {
                     gridAxisOptions.tickPositioner = function (
-                        this: Highcharts.Axis,
                         min: number,
                         max: number
                     ): (TickPositionsArray|undefined) {
@@ -1212,7 +1236,7 @@ class GridAxis {
      */
     public static onAfterSetOptions2(
         this: Axis,
-        e: { userOptions?: Highcharts.AxisOptions }
+        e: { userOptions?: AxisOptions }
     ): void {
         const axis = this;
         const userOptions = e.userOptions;
@@ -1247,7 +1271,7 @@ class GridAxis {
         this: Axis,
         e: { tickSize?: [number, number] }
     ): void {
-        const defaultLeftAxisOptions = Axis.defaultLeftAxisOptions;
+        const defaultLeftAxisOptions = AxisDefaults.defaultLeftAxisOptions;
         const {
             horiz,
             maxLabelDimensions,
@@ -1292,7 +1316,7 @@ class GridAxis {
      */
     public static onInit(
         this: Axis,
-        e: { userOptions?: DeepPartial<Highcharts.AxisOptions> }
+        e: { userOptions?: DeepPartial<AxisOptions> }
     ): void {
         const axis = this;
         const userOptions = e.userOptions || {};
@@ -1398,7 +1422,7 @@ namespace GridAxis {
         borderColor?: ColorType;
         borderWidth?: number;
         cellHeight?: number;
-        columns?: Array<Highcharts.AxisOptions>;
+        columns?: Array<AxisOptions>;
         enabled?: boolean;
     }
 

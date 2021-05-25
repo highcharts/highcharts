@@ -22,10 +22,12 @@ import type { ItemPointMarkerOptions } from './ItemPointOptions';
 import type ItemSeriesOptions from './ItemSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
+
 import H from '../../Core/Globals.js';
 import ItemPoint from './ItemPoint.js';
-import O from '../../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -246,7 +248,7 @@ class ItemSeries extends PieSeries {
                 graphics: Record<string, SVGElement>,
                 pointAttr: (SVGAttributes|undefined),
                 pointMarkerOptions = point.marker || {},
-                symbol: string = (
+                symbol: SymbolKey = (
                     pointMarkerOptions.symbol ||
                     (seriesMarkerOptions.symbol as any)
                 ),

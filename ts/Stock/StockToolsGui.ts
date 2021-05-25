@@ -10,14 +10,16 @@
  *
  * */
 
+import type ChartOptions from '../Core/Chart/ChartOptions';
+import type Options from '../Core/Options';
 import type {
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
-import O from '../Core/Options.js';
-const { setOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { setOptions } = D;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -31,11 +33,28 @@ const {
     pick
 } = U;
 
+/* *
+ *
+ * Declarations
+ *
+ * */
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         stockTools?: Toolbar;
         /** @requires modules/stock-tools */
         setStockTools(options?: Highcharts.StockToolsOptions): void;
+    }
+}
+
+declare module '../Core/LangOptions'{
+    interface LangOptions {
+        stockTools?: Highcharts.LangStockToolsOptions;
+    }
+}
+
+declare module '../Core/Options'{
+    interface Options {
+        stockTools?: Highcharts.StockToolsOptions;
     }
 }
 
@@ -45,14 +64,8 @@ declare module '../Core/Chart/ChartLike'{
  */
 declare global {
     namespace Highcharts {
-        interface LangOptions {
-            stockTools?: LangStockToolsOptions;
-        }
         interface LangStockToolsOptions {
             gui?: Record<string, string>;
-        }
-        interface Options {
-            stockTools?: StockToolsOptions;
         }
         interface StockToolsGuiDefinitionsButtonOptions {
             symbol?: string;
@@ -959,7 +972,7 @@ addEvent(Chart, 'getMargins', function (): void {
 ['beforeRender', 'beforeRedraw'].forEach((event: string): void => {
     addEvent(Chart, event, function (): void {
         if (this.stockTools) {
-            const optionsChart = this.options.chart as Highcharts.ChartOptions;
+            const optionsChart = this.options.chart as ChartOptions;
             const listWrapper = this.stockTools.listWrapper,
                 offsetWidth = listWrapper && (
                     (
@@ -1707,7 +1720,7 @@ extend(Chart.prototype, {
         this: Chart,
         options?: Highcharts.StockToolsOptions
     ): void {
-        const chartOptions: Highcharts.Options = this.options,
+        const chartOptions: Options = this.options,
             lang = chartOptions.lang,
             guiOptions = merge(
                 chartOptions.stockTools && chartOptions.stockTools.gui,
@@ -1761,7 +1774,7 @@ addEvent(NavigationBindings, 'deselectButton', function (
 });
 
 // Check if the correct price indicator button is displayed, #15029.
-addEvent(H.Chart, 'render', function (): void {
+addEvent(Chart, 'render', function (): void {
     const chart = this,
         stockTools = chart.stockTools,
         button = stockTools &&

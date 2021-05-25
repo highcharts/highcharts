@@ -12,11 +12,20 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Axis from './Axis';
+import type AxisOptions from './AxisOptions';
+import type { OptionsPosition3dValue } from '../Options';
 import type Point from '../Series/Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import H from '../Globals.js';
+const { deg2rad } = H;
 import Math3D from '../../Extensions/Math3D.js';
 const {
     perspective,
@@ -33,6 +42,35 @@ const {
     wrap
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisComposition' {
+    interface AxisComposition {
+        axis3D?: Axis3D['axis3D'];
+    }
+}
+
+declare module './AxisOptions' {
+    interface AxisLabelOptions {
+        position3d?: OptionsPosition3dValue;
+        skew3d?: boolean;
+    }
+    interface AxisTitleOptions {
+        position3d?: ('chart'|'flap'|'offset'|'ortho'|null);
+        skew3d?: (boolean|null);
+    }
+}
+
+declare module './AxisType' {
+    interface AxisTypeRegistry {
+        Axis3D: Axis3D;
+    }
+}
+
 declare module '../Renderer/Position3DObject' {
     interface Position3DObject {
         matrix?: Array<number>;
@@ -48,36 +86,11 @@ declare module '../Series/PointLike' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface XAxisLabelsOptions {
-            position3d?: OptionsPosition3dValue;
-            skew3d?: boolean;
-        }
-        interface XAxisTitleOptions {
-            position3d?: ('chart'|'flap'|'offset'|'ortho'|null);
-            skew3d?: (boolean|null);
-        }
-    }
-}
-
-/**
- * @private
- */
-declare module './Types' {
-    interface AxisComposition {
-        axis3D?: Axis3D['axis3D'];
-    }
-    interface AxisTypeRegistry {
-        Axis3D: Axis3D;
-    }
-}
-
-const deg2rad = H.deg2rad;
+/* *
+ *
+ *  Classes
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 
@@ -368,7 +381,7 @@ class Axis3D {
     /**
      * @optionparent xAxis
      */
-    public static defaultOptions: DeepPartial<Highcharts.AxisOptions> = {
+    public static defaultOptions: DeepPartial<AxisOptions> = {
         labels: {
             /**
              * Defines how the labels are be repositioned according to the 3D

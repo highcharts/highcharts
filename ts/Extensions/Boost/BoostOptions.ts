@@ -14,6 +14,16 @@
 
 import '../../Core/Globals.js';
 
+/* *
+ *
+ * Declarations
+ *
+ * */
+declare module '../../Core/Options'{
+    interface Options {
+        boost?: Highcharts.BoostOptions;
+    }
+}
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         boostBlending?: Highcharts.BoostBlendingValue;
@@ -42,9 +52,6 @@ declare global {
             seriesThreshold?: (number|null);
             useGPUTranslations?: boolean;
             usePreallocated?: boolean;
-        }
-        interface Options {
-            boost?: BoostOptions;
         }
         type BoostBlendingValue = ('add'|'darken'|'multiply');
     }

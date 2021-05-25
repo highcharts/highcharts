@@ -37,8 +37,8 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
@@ -2406,9 +2406,7 @@ addEvent(Point, 'drillToCluster', function (
 });
 
 // Destroy the old tooltip after zoom.
-addEvent(Axis, 'setExtremes', function (
-    this: Highcharts.Axis
-): void {
+addEvent(Axis, 'setExtremes', function (): void {
     let chart = this.chart,
         animationDuration = 0,
         animation;
