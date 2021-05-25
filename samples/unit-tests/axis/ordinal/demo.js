@@ -262,6 +262,7 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
 
 QUnit.test('lin2val- unit test for values outside the plotArea.', function (assert) {
     const axis = {
+        transA: -0.04,
         min: 3,
         len: 500,
         translationSlope: 0.2,

@@ -1450,6 +1450,41 @@ function discardElement(element?: HTMLDOMElement): void {
     garbageBin.innerHTML = '';
 }
 
+/**
+ * Faster way of using the Array.indexOf method.
+ * Works for sorted arrays only.
+ *
+ * @function Highcharts.findIndexOf
+ *
+ * @param {Array} sortedArray
+ *        The sorted array inside which we are looking for.
+ * @param {number} key
+ *        The key to being found.
+ */
+function findIndexOf(sortedArray: Array<number>, key: number): number {
+    let start = 0,
+        end = sortedArray.length - 1,
+        middle;
+
+    while (start <= end) {
+        middle = Math.floor((start + end) / 2);
+
+        // Key found as the middle element.
+        if (sortedArray[middle] === key) {
+            return middle;
+        }
+        if (sortedArray[middle] < key) {
+            // Continue searching to the right.
+            start = middle + 1;
+        } else {
+            // Continue searching to the left.
+            end = middle - 1;
+        }
+    }
+    // Key could not be found.
+    return -1;
+}
+
 let garbageBin: (globalThis.HTMLElement|undefined);
 
 /**
@@ -2355,6 +2390,7 @@ const Utilities = {
     extend,
     extendClass,
     find,
+    findIndexOf,
     fireEvent,
     getMagnitude,
     getNestedProperty,

@@ -24,6 +24,7 @@ const {
     css,
     defined,
     error,
+    findIndexOf,
     pick,
     timeUnits
 } = U;
@@ -553,23 +554,10 @@ namespace OrdinalAxis {
             ordinalArray: Array<number>
         ): number {
             const ordinal = this,
-                axis = ordinal.axis;
-            let firstPointVal = 0,
-                firstPointX = 0;
-
-            // Find the point with the smallest x and pixel value from
-            // all series assigned to the axis.
-            axis.series.forEach(function (series): void {
-                if (series.points &&
-                    series.points[0] &&
-                    series.points[0].x &&
-                    series.points[0].plotX &&
-                    series.points[0].plotX < firstPointX
-                ) {
-                    firstPointX = series.points[0].plotX;
-                    firstPointVal = series.points[0].x;
-                }
-            });
+                axis = ordinal.axis,
+                firstPointVal = ordinal.positions ? ordinal.positions[0] : 0,
+                // toValue for the first point.
+                firstPointX = ordinal.slope ? ordinal.slope * axis.transA : 0;
 
             // Distance in pixels between two points
             // on the ordinal axis in the current zoom.
@@ -577,7 +565,7 @@ namespace OrdinalAxis {
                 (ordinal.slope || axis.closestPointRange || ordinal.overscrollPointsRange as number),
                 shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
 
-            return ordinalArray.indexOf(firstPointVal) + shiftIndex;
+            return findIndexOf(ordinalArray, firstPointVal) + shiftIndex;
         }
 
         /**
