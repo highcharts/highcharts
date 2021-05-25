@@ -293,9 +293,7 @@ class MapView {
             (
                 Projection.toString(newProjection) !==
                 Projection.toString(this.options.projection)
-            ) ||
-            'd3' in newProjection ||
-            'proj4' in newProjection
+            )
         );
 
         merge(true, this.userOptions, userOptions);
@@ -316,6 +314,10 @@ class MapView {
             if (!userOptions.center && !isNumber(userOptions.zoom)) {
                 this.fitToBounds(void 0, false);
             }
+        }
+
+        if (userOptions.center || isNumber(userOptions.zoom)) {
+            this.setView(this.options.center, userOptions.zoom, false);
         }
 
         if (redraw) {

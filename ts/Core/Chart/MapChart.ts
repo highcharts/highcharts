@@ -274,31 +274,28 @@ addEvent(Chart, 'pan', function (e: PointerEvent): void {
             ).slice();
         }
 
-        /*
-        @todo
-        - Fix zooming (don't jump back to fit bounds)
-        */
         if (mapView.projection.options.projectionName === 'Orthographic') {
 
             // Empirical ratio where the globe rotates roughly the same speed
             // as moving the pointer across the center of the projection
-            const ratio = 120 / Math.min(this.plotWidth, this.plotHeight);
+            const ratio = 28000 /
+                (mapView.getScale() * Math.min(this.plotWidth, this.plotHeight));
 
             if (mouseDownRotation) {
+                const lon = (mouseDownX - chartX) * ratio - mouseDownRotation[0];
+                const lat = clamp(
+                    -mouseDownRotation[1] - (mouseDownY - chartY) * ratio,
+                    -80,
+                    80
+                );
                 mapView.update({
                     projection: {
-                        rotation: [
-                            mouseDownRotation[0] -
-                                (mouseDownX - chartX) * ratio,
-                            clamp(
-                                mouseDownRotation[1] +
-                                    (mouseDownY - chartY) * ratio,
-                                -80,
-                                80
-                            )
-                        ]
-                    }
+                        rotation: [-lon, -lat]
+                    },
+                    center: [lon, lat],
+                    zoom: mapView.zoom
                 }, true, false);
+
             }
 
 
