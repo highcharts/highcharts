@@ -18,9 +18,10 @@
 
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
-import type {
-    SeriesTypeOptions
-} from '../../Core/Series/SeriesType';
+import A from '../../Core/Animation/AnimationUtilities.js';
+const {
+    animObject
+} = A;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import LineSeries from '../Line/LineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -29,7 +30,8 @@ const {
     addEvent,
     extend,
     merge,
-    pick
+    pick,
+    syncTimeout
 } = U;
 
 /* *
@@ -230,42 +232,28 @@ class ScatterSeries extends LineSeries {
 
     /**
      * @private
-     * @function Highcharts.seriesTypes.scatter#setOptions
-     */
-    public setOptions(itemOptions: DeepPartial<SeriesTypeOptions>): this['options'] {
-        const options = super.setOptions(itemOptions),
-            userStates = this.userOptions.states;
-
-        if (options.lineWidth === 0) { // #15667
-            options.states = options.states || {};
-            options.states.hover = options.states.hover || {};
-            options.states.hover.lineWidthPlus = pick(
-                userStates &&
-                userStates.hover &&
-                userStates.hover.lineWidthPlus,
-                0
-            );
-        }
-
-        return options;
-    }
-
-    /**
-     * @private
      * @function Highcharts.seriesTypes.scatter#drawGraph
      */
     public drawGraph(): void {
-        if (
-            this.options.lineWidth ||
-            // In case we have a graph from before and we update the line
-            // width to 0 (#13816)
-            (
-                this.options.lineWidth === 0 &&
-                this.graph &&
-                this.graph.strokeWidth()
-            )
-        ) {
+        const graph = this.graph;
+
+        if (this.options.lineWidth) {
             super.drawGraph();
+        } else if (graph) {
+            graph.animate({
+                'stroke-width': 0
+            });
+
+            // Use a timeout instead of an animation callback since the
+            // animation gets cancelled on hover
+            syncTimeout(
+                (): void => {
+                    this.graph = graph.destroy(); // #15667
+                },
+                animObject(
+                    pick(this.chart.renderer.globalAnimation, true)
+                ).duration
+            );
         }
     }
 
