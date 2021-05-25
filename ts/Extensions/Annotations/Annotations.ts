@@ -1861,7 +1861,7 @@ namespace Annotation {
         index?: number;
         positioner: Highcharts.AnnotationControlPointPositionerFunction;
         style: CSSObject;
-        symbol: string;
+        symbol: SymbolKey;
         visible: boolean;
         width: number;
     }

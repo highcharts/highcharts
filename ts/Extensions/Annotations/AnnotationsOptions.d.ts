@@ -25,6 +25,7 @@ import type FormatUtilities from '../../Core/FormatUtilities';
 import type PointClass from '../../Core/Series/Point';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 /* *
  *
@@ -52,7 +53,7 @@ export interface AnnotationsLabelOptions extends Highcharts.AnnotationControllab
     overflow: DataLabelOverflowValue;
     padding: number;
     shadow: (boolean|Partial<ShadowOptionsObject>);
-    shape: SVGRenderer.SymbolKeyValue;
+    shape: SymbolKey;
     style: CSSObject;
     text?: string;
     type?: string;
