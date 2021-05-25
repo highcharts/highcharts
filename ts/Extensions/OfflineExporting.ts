@@ -90,15 +90,23 @@ declare global {
         ): void;
         function svgToDataUrl(svg: string): string;
     }
-    interface CanvasRenderingContext2D {
-        drawSvg: Function;
+
+    interface Canvg {
+        fromString(
+            ctx: CanvasRenderingContext2D,
+            svg: string
+        ): Canvg;
+        start(): void;
+    }
+    interface CanvgNamespace {
+        Canvg: Canvg;
     }
     interface HTMLCanvasElement {
         /** @deprecated */
         msToBlob: Function;
     }
     interface Window {
-        canvg: unknown;
+        canvg: CanvgNamespace;
         jsPDF: typeof jsPDF;
         svg2pdf: Function;
     }
@@ -554,7 +562,8 @@ function downloadSVGLocal(
                         /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
                     ) as any)[1] * scale,
                     downloadWithCanVG = function (): void {
-                        ctx.drawSvg(svg, 0, 0, imageWidth, imageHeight);
+                        const v = win.canvg.Canvg.fromString(ctx, svg);
+                        v.start();
                         try {
                             downloadURL(
                                 win.navigator.msSaveOrOpenBlob as any ?
@@ -582,11 +591,8 @@ function downloadSVGLocal(
                     // yet since we are doing things asynchronously. A cleaner
                     // solution would be nice, but this will do for now.
                     objectURLRevoke = true;
-                    // Get RGBColor.js first, then canvg
-                    getScript(libURL + 'rgbcolor.js', function (): void {
-                        getScript(libURL + 'canvg.js', function (): void {
-                            downloadWithCanVG();
-                        });
+                    getScript(libURL + 'canvg.js', function (): void {
+                        downloadWithCanVG();
                     });
                 }
             },
