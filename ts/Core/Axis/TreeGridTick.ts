@@ -11,25 +11,37 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type PositionObject from '../Renderer/PositionObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type Tick from './Tick';
 import type TreeGridAxis from './TreeGridAxis';
+
 import palette from '../../Core/Color/Palette.js';
 import U from '../Utilities.js';
 const {
     addEvent,
-    defined,
     isObject,
     isNumber,
     pick,
     wrap
 } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * @private
@@ -39,6 +51,8 @@ interface TreeGridTick extends Tick {
     options: TreeGridAxis.Options;
     treeGrid: TreeGridTick.Additions;
 }
+
+/* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
  * @private
@@ -56,7 +70,7 @@ namespace TreeGridTick {
         color: ColorType;
         group?: SVGElement;
         options: TreeGridAxis.LabelIconOptionsObject;
-        renderer: Highcharts.Renderer;
+        renderer: SVGRenderer;
         show: boolean;
         xy: PositionObject;
     }
@@ -166,7 +180,7 @@ namespace TreeGridTick {
 
         if (!icon) {
             treeGrid.labelIcon = icon = renderer
-                .path(renderer.symbols[(options as any).type](
+                .path(renderer.symbols[(options as any).type as SymbolKey](
                     options.x || 0,
                     options.y || 0,
                     width,

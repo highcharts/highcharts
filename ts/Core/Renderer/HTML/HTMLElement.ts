@@ -8,6 +8,14 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type BBoxObject from '../BBoxObject';
 import type CSSObject from '../CSSObject';
 import type {
@@ -15,6 +23,8 @@ import type {
     HTMLDOMElement
 } from '../DOMElementType';
 import type HTMLRenderer from './HTMLRenderer';
+import type SVGRenderer from '../SVG/SVGRenderer.js';
+
 import H from '../../Globals.js';
 const {
     isFirefox,
@@ -23,7 +33,6 @@ const {
     win
 } = H;
 import SVGElement from '../SVG/SVGElement.js';
-import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../Utilities.js';
 const {
     css,
@@ -33,12 +42,23 @@ const {
     pInt
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+type TransformKeyType = (
+    '-ms-transform'|
+    '-webkit-transform'|
+    'MozTransform'|
+    '-o-transform'
+);
+
 declare module '../SVG/SVGElementLike' {
     interface SVGElementLike {
         /** @requires Core/Renderer/HTML/HTMLElement */
         appendChild: HTMLDOMElement['appendChild'];
-        /** @requires Core/Renderer/HTML/HTMLElement */
-        // @todo div?: HTMLDOMElement;
         element: DOMElementType;
         parentGroup?: (HTMLElement|SVGElement);
         renderer: (HTMLRenderer|SVGRenderer);
@@ -70,67 +90,72 @@ declare module '../SVG/SVGElementLike' {
     }
 }
 
-/**
- * Element placebo
- * @private
- */
-const HTMLElement = SVGElement;
-interface HTMLElement extends SVGElement {
-    appendChild: HTMLDOMElement['appendChild'];
-    div?: HTMLDOMElement;
-    element: HTMLDOMElement;
-    parentGroup?: HTMLElement;
-    renderer: HTMLRenderer;
-    style: (CSSObject&CSSStyleDeclaration);
-    xCorr: number;
-    yCorr: number;
-    afterSetters(): void;
-    getSpanCorrection(
-        width: number,
-        baseline: number,
-        alignCorrection: number
-    ): void;
-    htmlCss(styles: CSSObject): HTMLElement;
-    htmlGetBBox(): BBoxObject;
-    htmlUpdateTransform(): void;
-    setSpanRotation(
-        rotation: number,
-        alignCorrection: number,
-        baseline: number
-    ): void;
-    textSetter(value: string): void;
-    translateXSetter(value: any, key: string): void;
-    translateYSetter(value: any, key: string): void;
-}
-
-type TransformKeyType = (
-    '-ms-transform'|
-    '-webkit-transform'|
-    'MozTransform'|
-    '-o-transform'
-)
+/* *
+ *
+ *  Composition
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 
-// Extend SvgElement for useHTML option.
-extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
+class HTMLElement extends SVGElement {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Modifies SVGElement to support HTML elements.
+     * @private
+     */
+    public static compose(SVGElementClass: typeof SVGElement): void {
+        const svgElementProto = SVGElementClass.prototype,
+            htmlElementProto = HTMLElement.prototype;
+
+        svgElementProto.getSpanCorrection = htmlElementProto.getSpanCorrection;
+        svgElementProto.htmlCss = htmlElementProto.htmlCss;
+        svgElementProto.htmlGetBBox = htmlElementProto.htmlGetBBox;
+        svgElementProto.htmlUpdateTransform = htmlElementProto.htmlUpdateTransform;
+        svgElementProto.setSpanRotation = htmlElementProto.setSpanRotation;
+    }
+
+    /* *
+     *
+     *  Prototype
+     *
+     * */
+
+    public div?: HTMLDOMElement;
+    public parentGroup?: HTMLElement;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Get the correction in X and Y positioning as the element is rotated.
+     * @private
+     */
+    public getSpanCorrection(
+        width: number,
+        baseline: number,
+        alignCorrection: number
+    ): void {
+        this.xCorr = -width * alignCorrection;
+        this.yCorr = -baseline;
+    }
 
     /**
      * Apply CSS to HTML elements. This is used in text within SVG rendering and
      * by the VML renderer
-     *
      * @private
-     * @function Highcharts.SVGElement#htmlCss
-     *
-     * @param {Highcharts.CSSObject} styles
-     *
-     * @return {Highcharts.SVGElement}
      */
-    htmlCss: function (
-        this: HTMLElement,
-        styles: CSSObject
-    ): HTMLElement {
-        let wrapper = this,
+    public htmlCss(styles: CSSObject): HTMLElement {
+        const wrapper = this,
             element = wrapper.element,
             // When setting or unsetting the width style, we need to update
             // transform (#8809)
@@ -142,8 +167,9 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
             textWidth = pick(
                 isSettingWidth && styles.width,
                 void 0
-            ),
-            doTransform;
+            );
+
+        let doTransform;
 
         if (isSettingWidth) {
             delete styles.width;
@@ -164,24 +190,12 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
         }
 
         return wrapper;
-    },
+    }
 
     /**
      * VML and useHTML method for calculating the bounding box based on offsets.
-     *
-     * @private
-     * @function Highcharts.SVGElement#htmlGetBBox
-     *
-     * @param {boolean} refresh
-     *        Whether to force a fresh value from the DOM or to use the cached
-     *        value.
-     *
-     * @return {Highcharts.BBoxObject}
-     *         A hash containing values for x, y, width and height.
      */
-    htmlGetBBox: function (
-        this: HTMLElement
-    ): BBoxObject {
+    public htmlGetBBox(): BBoxObject {
         const wrapper = this,
             element = wrapper.element;
 
@@ -191,17 +205,14 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
             width: element.offsetWidth,
             height: element.offsetHeight
         };
-    },
+    }
 
     /**
      * VML override private method to update elements based on internal
      * properties based on SVG transform.
-     *
      * @private
-     * @function Highcharts.SVGElement#htmlUpdateTransform
-     * @return {void}
      */
-    htmlUpdateTransform: function (this: HTMLElement): void {
+    public htmlUpdateTransform(): void {
         // aligning non added elements is expensive
         if (!this.added) {
             this.alignOnAdd = true;
@@ -222,10 +233,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
             styles = wrapper.styles,
             whiteSpace = styles && styles.whiteSpace;
 
-        /**
-         * @private
-         * @return {number}
-         */
+        /** @private */
         function getTextPxLength(): number {
             // Reset multiline/ellipsis in order to read width (#4928,
             // #5417)
@@ -261,9 +269,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
         }
 
         if (elem.tagName === 'SPAN') {
-
-            let rotation = wrapper.rotation,
-                baseline,
+            const rotation = wrapper.rotation,
                 textWidth = wrapper.textWidth && pInt(wrapper.textWidth),
                 currentTextTransform = [
                     rotation,
@@ -272,6 +278,8 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
                     wrapper.textWidth,
                     wrapper.textAlign
                 ].join(',');
+
+            let baseline;
 
             // Update textWidth. Use the memoized textPxLength if possible, to
             // avoid the getTextPxLength function using elem.offsetWidth.
@@ -348,25 +356,18 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
             wrapper.oldRotation = rotation;
             wrapper.oldAlign = align;
         }
-    },
+    }
 
     /**
      * Set the rotation of an individual HTML span.
-     *
      * @private
-     * @function Highcharts.SVGElement#setSpanRotation
-     * @param {number} rotation
-     * @param {number} alignCorrection
-     * @param {number} baseline
-     * @return {void}
      */
-    setSpanRotation: function (
-        this: HTMLElement,
+    public setSpanRotation(
         rotation: number,
         alignCorrection: number,
         baseline: number
     ): void {
-        const getTransformKey = (): TransformKeyType|undefined => (isMS &&
+        const getTransformKey = (): (TransformKeyType|undefined) => (isMS &&
             !/Edge/.test(win.navigator.userAgent) ?
             '-ms-transform' :
             isWebKit ?
@@ -389,27 +390,18 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
                 (alignCorrection * 100) + '% ' + baseline + 'px';
             css(this.element, rotationStyle);
         }
-    },
-
-    /**
-     * Get the correction in X and Y positioning as the element is rotated.
-     *
-     * @private
-     * @function Highcharts.SVGElement#getSpanCorrection
-     * @param {number} width
-     * @param {number} baseline
-     * @param {number} alignCorrection
-     * @return {void}
-     */
-    getSpanCorrection: function (
-        this: HTMLElement,
-        width: number,
-        baseline: number,
-        alignCorrection: number
-    ): void {
-        this.xCorr = -width * alignCorrection;
-        this.yCorr = -baseline;
     }
-});
+}
+
+interface HTMLElement {
+    element: HTMLDOMElement;
+    renderer: HTMLRenderer;
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default HTMLElement;

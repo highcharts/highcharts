@@ -10,13 +10,23 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type { YAxisOptions } from './AxisOptions';
 import type Chart from '../Chart/Chart';
 import type Pane from '../../Extensions/Pane';
 import type Point from '../Series/Point';
 import type PositionObject from '../Renderer/PositionObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+
 import Axis from './Axis.js';
+import AxisDefaults from './AxisDefaults.js';
 import Tick from './Tick.js';
 import HiddenAxis from './HiddenAxis.js';
 import U from '../Utilities.js';
@@ -26,15 +36,24 @@ const {
     defined,
     extend,
     fireEvent,
-    isNumber,
     merge,
     pick,
-    pInt,
     relativeLength,
     wrap
 } = U;
 
-type YAxisOptions = (typeof Axis)['defaultYAxisOptions'];
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisOptions' {
+    interface AxisOptions {
+        angle?: number;
+        gridLineInterpolation?: Highcharts.AxisGridLineInterpolationValue;
+    }
+}
 
 declare module '../Chart/ChartLike'{
     interface ChartLike {
@@ -49,10 +68,6 @@ declare module '../Chart/ChartLike'{
 declare global {
     namespace Highcharts {
         type AxisGridLineInterpolationValue = ('circle'|'polygon');
-        interface XAxisOptions {
-            angle?: number;
-            gridLineInterpolation?: AxisGridLineInterpolationValue;
-        }
         interface AxisPlotBandsOptions {
             innerRadius?: (number|string);
             outerRadius?: (number|string);
@@ -72,7 +87,7 @@ declare global {
 /**
  * @private
  */
-declare module './Types' {
+declare module './AxisType' {
     interface AxisTypeRegistry {
         RadialAxis: RadialAxis;
     }
@@ -850,6 +865,7 @@ class RadialAxis {
                     axis.isRadial &&
                     axis.tickPositions &&
                     // undocumented option for now, but working
+                    axis.options.labels &&
                     axis.options.labels.allowOverlap !== true
                 ) {
                     return axis.tickPositions
@@ -885,8 +901,9 @@ class RadialAxis {
 
         // Actions before axis init.
         addEvent(AxisClass, 'init', function (e: { userOptions: RadialAxisOptions }): void {
-            const axis = this as RadialAxis;
-            const chart = axis.chart;
+            const axis = this as RadialAxis,
+                chart = axis.chart;
+
             let inverted = chart.inverted,
                 angular = chart.angular,
                 polar = chart.polar,
@@ -896,8 +913,7 @@ class RadialAxis {
                 isCircular: (boolean|undefined),
                 chartOptions = chart.options,
                 paneIndex = e.userOptions.pane || 0,
-                pane = (this as Highcharts.Axis).pane =
-                    chart.pane && chart.pane[paneIndex];
+                pane = axis.pane = chart.pane && chart.pane[paneIndex] as any;
 
             // Prevent changes for colorAxis
             if (coll === 'colorAxis') {
@@ -909,7 +925,7 @@ class RadialAxis {
             if (angular) {
 
                 if (isHidden) {
-                    HiddenAxis.init(axis);
+                    HiddenAxis.init(axis as HiddenAxis);
                 } else {
                     RadialAxis.init(axis);
                 }
@@ -928,14 +944,14 @@ class RadialAxis {
                     RadialAxis.defaultCircularOptions :
                     merge(
                         coll === 'xAxis' ?
-                            AxisClass.defaultOptions :
-                            AxisClass.defaultYAxisOptions,
+                            AxisDefaults.defaultXAxisOptions :
+                            AxisDefaults.defaultYAxisOptions,
                         RadialAxis.defaultRadialOptions
                     );
 
                 // Apply the stack labels for yAxis in case of inverted chart
                 if (inverted && coll === 'yAxis') {
-                    axis.defaultPolarOptions.stackLabels = AxisClass.defaultYAxisOptions.stackLabels;
+                    axis.defaultPolarOptions.stackLabels = AxisDefaults.defaultYAxisOptions.stackLabels;
                     axis.defaultPolarOptions.reversedStacks = true;
                 }
             }
@@ -1046,16 +1062,16 @@ class RadialAxis {
 
         // Find the center position of the label based on the distance option.
         addEvent(TickClass, 'afterGetLabelPosition', function (e: RadialAfterGetPositionEvent): void {
-            const tick = this;
-            const axis = tick.axis as RadialAxis;
-            const label = tick.label;
+            const tick = this,
+                axis = tick.axis as RadialAxis,
+                label = tick.label;
 
             if (!label) {
                 return;
             }
 
             let labelBBox = label.getBBox(),
-                labelOptions = axis.options.labels,
+                labelOptions = axis.options.labels as any,
                 optionsY = labelOptions.y,
                 ret,
                 centerSlot = 20, // 20 degrees to each side at the top and bottom
@@ -1218,7 +1234,7 @@ class RadialAxis {
             tickLength: number,
             tickWidth: number,
             horiz: boolean,
-            renderer: Highcharts.Renderer
+            renderer: SVGRenderer
         ): SVGPath {
             const tick = this;
             const axis = tick.axis as RadialAxis;

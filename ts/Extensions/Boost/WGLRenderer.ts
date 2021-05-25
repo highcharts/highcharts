@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorString from '../../Core/Color/ColorString';
 import type Point from '../../Core/Series/Point';
@@ -398,7 +399,8 @@ function GLRenderer(
             firstPoint = true,
             zoneAxis = options.zoneAxis || 'y',
             zones = options.zones || false,
-            zoneDefColor: (Color|undefined) = false as any,
+            zoneColors: Array<Color.RGBA>,
+            zoneDefColor: (Color.RGBA|undefined) = false as any,
             threshold: number = options.threshold as any,
             gapSize: number = false as any;
 
@@ -413,20 +415,31 @@ function GLRenderer(
         }
 
         if (zones) {
-            zones.some(function (zone): (boolean) {
-                if (typeof zone.value === 'undefined') {
-                    zoneDefColor = new Color(zone.color);
-                    return true;
+            zoneColors = [];
+
+            zones.forEach(function (zone, i): void {
+                if (zone.color) {
+                    const zoneColor = color(zone.color).rgba as Color.RGBA;
+                    zoneColor[0] /= 255.0;
+                    zoneColor[1] /= 255.0;
+                    zoneColor[2] /= 255.0;
+                    zoneColors[i] = zoneColor;
+
+                    if (!zoneDefColor && typeof zone.value === 'undefined') {
+                        zoneDefColor = zoneColor;
+                    }
                 }
-                return false;
             });
 
             if (!zoneDefColor) {
-                zoneDefColor = (
+                const seriesColor = (
                     (series.pointAttribs && series.pointAttribs().fill) ||
                     series.color
-                ) as any;
-                zoneDefColor = new Color(zoneDefColor as any);
+                );
+                zoneDefColor = color(seriesColor).rgba as Color.RGBA;
+                zoneDefColor[0] /= 255.0;
+                zoneDefColor[1] /= 255.0;
+                zoneDefColor[2] /= 255.0;
             }
         }
 
@@ -779,12 +792,12 @@ function GLRenderer(
 
             if (x > xMax && closestRight.x < xMax) {
                 closestRight.x = x;
-                closestRight.y = y as any;
+                closestRight.y = y;
             }
 
             if (x < xMin && closestLeft.x > xMin) {
                 closestLeft.x = x;
-                closestLeft.y = y as any;
+                closestLeft.y = y;
             }
 
             if (y === null && connectNulls) {
@@ -816,7 +829,7 @@ function GLRenderer(
 
             // Note: Boost requires that zones are sorted!
             if (zones) {
-                pcolor = (zoneDefColor as any).rgba.slice();
+                let zoneColor: Color.RGBA|undefined;
                 zones.some(function ( // eslint-disable-line no-loop-func
                     zone: SeriesZonesOptions,
                     i: number
@@ -825,8 +838,8 @@ function GLRenderer(
 
                     if (zoneAxis === 'x') {
                         if (typeof zone.value !== 'undefined' && x <= zone.value) {
-                            if (!last || x >= (last.value as any)) {
-                                pcolor = color(zone.color).rgba as any;
+                            if (zoneColors[i] && (!last || x >= (last.value as any))) {
+                                zoneColor = zoneColors[i];
                             }
                             return true;
                         }
@@ -834,18 +847,15 @@ function GLRenderer(
                     }
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
-                        if (!last || y >= (last.value as any)) {
-                            pcolor = color(zone.color).rgba as any;
+                        if (zoneColors[i] && (!last || y >= (last.value as any))) {
+                            zoneColor = zoneColors[i];
                         }
                         return true;
                     }
                     return false;
                 });
 
-                (pcolor as any)[0] /= 255.0;
-                (pcolor as any)[1] /= 255.0;
-                (pcolor as any)[2] /= 255.0;
-
+                pcolor = zoneColor || zoneDefColor || pcolor;
             }
 
             // Skip translations - temporary floating point fix
@@ -1118,7 +1128,7 @@ function GLRenderer(
      * @private
      * @param axis {Highcharts.Axis} - the x-axis
      */
-    function setXAxis(axis: Highcharts.Axis): void {
+    function setXAxis(axis: Axis): void {
         if (!shader) {
             return;
         }
@@ -1139,7 +1149,7 @@ function GLRenderer(
      * @private
      * @param axis {Highcharts.Axis} - the y-axis
      */
-    function setYAxis(axis: Highcharts.Axis): void {
+    function setYAxis(axis: Axis): void {
         if (!shader) {
             return;
         }
@@ -1246,10 +1256,7 @@ function GLRenderer(
 
             if (
                 s.segments.length === 0 ||
-                (
-                    (s as any).segmentslength &&
-                    s.segments[0].from === s.segments[0].to
-                )
+                s.segments[0].from === s.segments[0].to
             ) {
                 return;
             }

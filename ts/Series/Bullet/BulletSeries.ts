@@ -15,6 +15,7 @@
  *  Imports
  *
  * */
+import '../Column/ColumnSeries.js';
 
 import type BulletSeriesOptions from './BulletSeriesOptions';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
@@ -33,8 +34,6 @@ const {
     pick,
     relativeLength
 } = U;
-
-import '../Column/ColumnSeries.js';
 
 /* *
  *
@@ -135,7 +134,12 @@ class BulletSeries extends ColumnSeries {
              *
              * @since   6.0.0
              */
-            borderWidth: 0
+            borderWidth: 0,
+
+            /**
+             * The border radius of the rectangle representing the target.
+             */
+            borderRadius: 0
         },
 
         tooltip: {
@@ -186,11 +190,12 @@ class BulletSeries extends ColumnSeries {
         series.points.forEach(function (
             point: BulletPoint
         ): void {
-            let pointOptions = point.options,
-                targetGraphic = point.targetGraphic,
-                targetShapeArgs,
+            const pointOptions = point.options,
                 targetVal = point.target,
-                pointVal = point.y,
+                pointVal = point.y;
+
+            let targetShapeArgs,
+                targetGraphic = point.targetGraphic,
                 width,
                 height,
                 targetOptions,
@@ -280,7 +285,8 @@ class BulletSeries extends ColumnSeries {
                             point.borderColor,
                             series.options.borderColor
                         ),
-                        'stroke-width': targetOptions.borderWidth
+                        'stroke-width': targetOptions.borderWidth,
+                        r: targetOptions.borderRadius
                     });
                 }
 
@@ -305,12 +311,10 @@ class BulletSeries extends ColumnSeries {
      * @function Highcharts.Series#getExtremes
      */
     public getExtremes(yData?: Array<number>): DataExtremesObject {
-        let series = this,
-            targetData = series.targetData,
-            yMax,
-            yMin;
-
-        const dataExtremes = super.getExtremes.call(this, yData);
+        const dataExtremes = super.getExtremes.call(this, yData),
+            series = this,
+            targetData = series.targetData;
+        let yMax, yMin;
 
         if (targetData && targetData.length) {
             const targetExtremes = super.getExtremes.call(

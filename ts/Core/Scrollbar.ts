@@ -10,11 +10,19 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
 import type PointerEvent from './PointerEvent';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
+import type SVGRenderer from './Renderer/SVG/SVGRenderer';
+
 import Axis from './Axis/Axis.js';
 import H from './Globals.js';
 import palette from './Color/Palette.js';
@@ -31,9 +39,21 @@ const {
     removeEvent
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module './Chart/ChartLike'{
     interface ChartLike {
         scrollbarsOffsets?: [number, number];
+    }
+}
+
+declare module './Options'{
+    interface Options {
+        scrollbar?: Highcharts.ScrollbarOptions;
     }
 }
 
@@ -43,9 +63,6 @@ declare module './Chart/ChartLike'{
  */
 declare global {
     namespace Highcharts {
-        interface Options {
-            scrollbar?: ScrollbarOptions;
-        }
         interface ScrollbarChangedEventObject {
             from: number;
             to: number;
@@ -150,8 +167,8 @@ interface ScrollbarEventCallbackFunction {
     (e: PointerEvent): void;
 }
 
-import O from './Options.js';
-const { defaultOptions } = O;
+import D from './DefaultOptions.js';
+const { defaultOptions } = D;
 
 const isTouchDevice = H.isTouchDevice;
 
@@ -437,7 +454,7 @@ class Scrollbar {
      * */
 
     public constructor(
-        renderer: Highcharts.SVGRenderer,
+        renderer: SVGRenderer,
         options: Highcharts.ScrollbarOptions,
         chart: Chart
     ) {
@@ -485,7 +502,7 @@ class Scrollbar {
 
     public rendered?: boolean;
 
-    public renderer: Highcharts.SVGRenderer;
+    public renderer: SVGRenderer;
 
     public scrollbar: SVGElement = void 0 as any;
 
@@ -752,7 +769,7 @@ class Scrollbar {
      * @param {Highcharts.Chart} chart
      */
     public init(
-        renderer: Highcharts.SVGRenderer,
+        renderer: SVGRenderer,
         options: Highcharts.ScrollbarOptions,
         chart: Chart
     ): void {

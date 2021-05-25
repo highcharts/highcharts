@@ -42,9 +42,7 @@ QUnit.test('Bindings general tests', function (assert) {
     // CSS Styles are not loaded, so hide left bar. If we don't hide the bar,
     // chart will be rendered outside the visible page and events will not be
     // fired (TestController issue)
-    document.getElementsByClassName(
-        'highcharts-stocktools-wrapper'
-    )[0].style.display = 'none';
+    chart.stockTools.wrapper.style.display = 'none';
 
     // Number of tests is so high that events are not triggered on a chart,
     // temporary hide it:

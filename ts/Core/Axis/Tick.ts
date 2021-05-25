@@ -10,13 +10,27 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Axis from './Axis.js';
+import type {
+    AxisLabelFormatterContextObject,
+    AxisLabelOptions,
+    AxisOptions
+} from './AxisOptions';
 import type CSSObject from '../Renderer/CSSObject';
 import type PositionObject from '../Renderer/PositionObject';
-import type { TickLike } from '../Axis/Types';
+import type TickLike from './TickLike';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
 import type TimeTicksInfoObject from './TimeTicksInfoObject';
+
 import F from '../FormatUtilities.js';
 import H from '../Globals.js';
 const {
@@ -36,15 +50,24 @@ const {
     pick
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisOptions' {
+    interface AxisLabelFormatterContextObject {
+        tickPositionInfo?: TimeTicksInfoObject;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface AxisLabelsFormatterContextObject {
-            tickPositionInfo?: TimeTicksInfoObject;
-        }
         interface TickParametersObject {
             category?: string;
             options?: AnyRecord;
@@ -53,6 +76,7 @@ declare global {
         interface TickPositionObject extends PositionObject {
             opacity?: number;
         }
+        /*
         interface Tick extends TickLike {}
         class Tick {
             public constructor(
@@ -106,7 +130,7 @@ declare global {
                 tickLength: number,
                 tickWidth: number,
                 horiz: boolean,
-                renderer: Renderer
+                renderer: SVGRenderer
             ): SVGPath;
             public getPosition(
                 horiz: boolean,
@@ -138,6 +162,7 @@ declare global {
                 reverseCrisp: number
             ): void;
         }
+         */
     }
 }
 
@@ -205,7 +230,7 @@ class Tick {
      * */
 
     public constructor(
-        axis: Highcharts.Axis,
+        axis: Axis,
         pos: number,
         type?: string,
         noLabel?: boolean,
@@ -253,7 +278,7 @@ class Tick {
      *
      * */
 
-    public axis: Highcharts.Axis;
+    public axis: Axis;
 
     public gridLine?: SVGElement;
 
@@ -275,7 +300,7 @@ class Tick {
 
     public movedLabel?: SVGElement;
 
-    public options?: DeepPartial<Highcharts.AxisOptions>;
+    public options?: DeepPartial<AxisOptions>;
 
     public parameters: Highcharts.TickParametersObject;
 
@@ -313,7 +338,7 @@ class Tick {
             log = axis.logarithmic,
             names = axis.names,
             pos = tick.pos,
-            labelOptions: Highcharts.XAxisLabelsOptions = pick(
+            labelOptions: AxisLabelOptions = pick(
                 tick.options && tick.options.labels,
                 options.labels
             ) as any,
@@ -373,7 +398,7 @@ class Tick {
         tick.isLast = isLast;
 
         // Get the string
-        const ctx: Highcharts.AxisLabelsFormatterContextObject = {
+        const ctx: AxisLabelFormatterContextObject = {
             axis,
             chart,
             dateTimeLabelFormat: dateTimeLabelFormat as any,
@@ -393,9 +418,7 @@ class Tick {
         // defaultFormatter and append the result to the context as `text`.
         // Handy for adding prefix or suffix while keeping default number
         // formatting.
-        const labelFormatter = (
-            ctx: Highcharts.AxisLabelsFormatterContextObject
-        ): string => {
+        const labelFormatter = (ctx: AxisLabelFormatterContextObject): string => {
             if (labelOptions.formatter) {
                 return labelOptions.formatter.call(ctx, ctx);
             }
@@ -431,6 +454,9 @@ class Tick {
                     text: ''
                 });
             };
+        } else {
+            // #15692
+            tick.shortenLabel = void 0;
         }
 
         // Call only after first render
@@ -484,7 +510,7 @@ class Tick {
     public createLabel(
         xy: PositionObject,
         str: string,
-        labelOptions: Highcharts.XAxisLabelsOptions
+        labelOptions: AxisLabelOptions
     ): (SVGElement|undefined) {
         const axis = this.axis,
             chart = axis.chart,
@@ -716,7 +742,7 @@ class Tick {
         tickLength: number,
         tickWidth: number,
         horiz: boolean,
-        renderer: Highcharts.Renderer
+        renderer: SVGRenderer
     ): SVGPath {
         return renderer.crispLine([[
             'M',
@@ -857,7 +883,7 @@ class Tick {
      *
      * @return {void}
      */
-    public moveLabel(str: string, labelOptions: Highcharts.XAxisLabelsOptions): void {
+    public moveLabel(str: string, labelOptions: AxisLabelOptions): void {
         let tick = this,
             label = tick.label,
             moved = false,
@@ -1237,6 +1263,8 @@ class Tick {
     }
 }
 
-H.Tick = Tick as typeof Highcharts.Tick;
+interface Tick extends TickLike {
+    // nothing here yet
+}
 
-export default H.Tick;
+export default Tick;

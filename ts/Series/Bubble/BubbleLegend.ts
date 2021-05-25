@@ -12,16 +12,25 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type BubbleSeries from './BubbleSeries';
 import type { BubbleSizeByValue } from './BubbleSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type FontMetricsObject from '../../Core/Renderer/FontMetricsObject';
 import type FormatUtilities from '../../Core/FormatUtilities';
+import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -29,8 +38,8 @@ import F from '../../Core/FormatUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend.js';
-import O from '../../Core/Options.js';
-const { setOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
@@ -45,6 +54,12 @@ const {
     stableSort,
     wrap
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
@@ -62,6 +77,12 @@ declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         ignoreSeries?: boolean;
         isBubble?: boolean;
+    }
+}
+
+declare module '../../Core/LegendOptions'{
+    interface LegendOptions {
+        bubbleLegend?: Highcharts.BubbleLegendOptions;
     }
 }
 
@@ -129,9 +150,6 @@ declare global {
         }
         interface LegendItemObject {
             ignoreSeries?: boolean;
-        }
-        interface LegendOptions {
-            bubbleLegend?: BubbleLegendOptions;
         }
         class BubbleLegend implements LegendItemObject {
             public constructor(options: BubbleLegendOptions, legend: Legend);
@@ -459,7 +477,7 @@ class BubbleLegend {
     }
 
     public chart: Chart = void 0 as any;
-    public fontMetrics: Highcharts.FontMetricsObject = void 0 as any;
+    public fontMetrics: FontMetricsObject = void 0 as any;
     public legend: Highcharts.Legend = void 0 as any;
     public legendGroup: SVGElement = void 0 as any;
     public legendItem: SVGElement = void 0 as any;
@@ -1277,7 +1295,7 @@ addEvent(Series, 'legendItemClick', function (): void {
 wrap(Chart.prototype, 'drawChartBox', function (
     this: Chart,
     proceed: Function,
-    options: Highcharts.Options,
+    options: Options,
     callback: Chart.CallbackFunction
 ): void {
     let chart = this,

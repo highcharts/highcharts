@@ -18,7 +18,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import H from '../Core/Globals.js';
 
-declare module '../Core/Axis/Types' {
+declare module '../Core/Axis/AxisLike' {
     interface AxisLike extends Highcharts.LegendItemObject {
         // nothing more
     }

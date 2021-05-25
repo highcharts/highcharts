@@ -256,6 +256,16 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
         axes[2].x + axes[2].width,
         'Right outer linear axis horizontal placement'
     );
+
+    chart.yAxis[1].update({
+        lineColor: 'red'
+    });
+
+    assert.strictEqual(
+        chart.yAxis[1].grid.axisLineExtra.attr('stroke'),
+        'red',
+        '#15664: axisLineExtra stroke should be updated'
+    );
 });
 
 /**
@@ -1838,6 +1848,24 @@ QUnit.test(
             chart.xAxis[1].tickPositions,
             'The secondary axis should have longer range ticks'
         );
+
+        chart.update({
+            series: [{
+                data: [{
+                    start: Date.UTC(2019, 7, 2),
+                    end: Date.UTC(2019, 11, 1)
+                }]
+            }]
+        }, true, true);
+        chart.setSize(400);
+
+        const axis = chart.xAxis[1];
+
+        assert.strictEqual(
+            axis.ticks[axis.tickPositions[0]].label.textStr,
+            '2019',
+            '#15692: Primary axis should show years'
+        );
     }
 );
 
@@ -2117,3 +2145,26 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('slotWidth', assert => {
+    const chart = Highcharts.ganttChart("container", {
+        chart: {
+            width: 600
+        },
+        series: [{
+            data: [
+                {
+                    start: Date.UTC(2017, 8, 1),
+                    end: Date.UTC(2017, 11, 4)
+                }
+            ]
+        }]
+    });
+
+    const axis = chart.xAxis[1];
+
+    assert.ok(
+        axis.ticks[axis.tickPositions[3]].slotWidth < 30,
+        '#15742: Rightmost tick slotWidth should be much smaller than the other ticks'
+    );
+});

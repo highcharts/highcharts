@@ -19,8 +19,8 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Chart from '../Core/Chart/Chart.js';
-import O from '../Core/Options.js';
-const { getOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { getOptions } = D;
 import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 const {
@@ -40,18 +40,24 @@ declare module '../Core/Chart/ChartLike' {
     }
 }
 
+declare module '../Core/LangOptions'{
+    interface LangOptions {
+        noData?: string;
+    }
+}
+
+declare module '../Core/Options'{
+    interface Options {
+        noData?: Highcharts.NoDataOptions;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface LangOptions {
-            noData?: string;
-        }
-        interface Options {
-            noData?: NoDataOptions;
-        }
         interface NoDataOptions {
             attr?: SVGAttributes;
             useHTML?: boolean;

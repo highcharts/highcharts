@@ -12,10 +12,24 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
+
 import H from '../../Core/Globals.js';
-import O from '../../Core/Options.js';
-const { setOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
+
+/* *
+ *
+ *  Theme
+ *
+ * */
 
 H.theme = {
     colors: ['#DDDF0D', '#7798BF', '#55BF3B', '#DF5353', '#aaeeee',
@@ -65,7 +79,7 @@ H.theme = {
                 ' Verdana, Arial, Helvetica, sans-serif'
             }
         }
-    } as Highcharts.XAxisOptions,
+    },
     yAxis: {
         alternateGridColor: null as any,
         minorTickInterval: null as any,
@@ -86,7 +100,7 @@ H.theme = {
                 ' Verdana, Arial, Helvetica, sans-serif'
             }
         }
-    } as Highcharts.YAxisOptions,
+    },
     legend: {
         backgroundColor: 'rgba(48, 48, 48, 0.8)',
         itemStyle: {

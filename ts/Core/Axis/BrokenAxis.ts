@@ -11,7 +11,11 @@
 'use strict';
 
 import type AnimationOptions from '../Animation/AnimationOptions';
-import type { AxisBreakBorderObject, AxisBreakObject } from './Types';
+import type {
+    AxisBreakOptions,
+    YAxisOptions
+} from './AxisOptions';
+import type { AxisBreakBorderObject, AxisBreakObject } from './BreakObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -27,6 +31,37 @@ const {
     isNumber,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisComposition' {
+    interface AxisComposition {
+        brokenAxis?: BrokenAxis['brokenAxis'];
+    }
+}
+
+declare module './AxisOptions' {
+    interface AxisBreakOptions {
+        breakSize?: number;
+        from: number;
+        inclusive?: boolean;
+        repeat?: number;
+        to: number;
+    }
+    interface AxisOptions {
+        breaks?: Array<AxisBreakOptions>;
+    }
+}
+
+declare module './AxisType' {
+    interface AxisTypeRegistry {
+        BrokenAxis: BrokenAxis;
+    }
+}
 
 declare module '../Series/SeriesLike' {
     interface SeriesLike {
@@ -44,29 +79,11 @@ declare module '../Series/SeriesOptions' {
     }
 }
 
-/**
- * @private
- */
-declare module './Types' {
-    interface AxisComposition {
-        brokenAxis?: BrokenAxis['brokenAxis'];
-    }
-    interface AxisTypeRegistry {
-        BrokenAxis: BrokenAxis;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface XAxisBreaksOptions {
-            inclusive?: boolean;
-        }
-    }
-}
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 
@@ -87,7 +104,7 @@ class BrokenAxisAdditions {
      * @private
      */
     public static isInBreak(
-        brk: Highcharts.XAxisBreaksOptions,
+        brk: AxisBreakOptions,
         val: number
     ): (boolean|undefined) {
         let ret: (boolean|undefined),
@@ -218,9 +235,9 @@ class BrokenAxisAdditions {
      */
     public findBreakAt(
         x: number,
-        breaks: Array<Highcharts.XAxisBreaksOptions>
-    ): (Highcharts.XAxisBreaksOptions|undefined) {
-        return find(breaks, function (b: Highcharts.XAxisBreaksOptions): boolean {
+        breaks: Array<AxisBreakOptions>
+    ): (AxisBreakOptions|undefined) {
+        return find(breaks, function (b): boolean {
             return b.from < x && x < b.to;
         });
     }
@@ -280,7 +297,7 @@ class BrokenAxisAdditions {
      * @return {void}
      */
     public setBreaks(
-        breaks?: Array<Highcharts.XAxisBreaksOptions>,
+        breaks?: Array<AxisBreakOptions>,
         redraw?: boolean
     ): void {
         const brokenAxis = this;
@@ -363,7 +380,7 @@ class BrokenAxisAdditions {
 
                     // Min & max check (#4247)
                     breaks.forEach(
-                        function (brk: Highcharts.XAxisBreaksOptions): void {
+                        function (brk): void {
                             repeat = brk.repeat || Infinity;
                             if (isNumber(min) && isNumber(max)) {
                                 if (BrokenAxisAdditions.isInBreak(brk, min)) {
@@ -378,7 +395,7 @@ class BrokenAxisAdditions {
 
                     // Construct an array holding all breaks in the axis
                     breaks.forEach(
-                        function (brk: Highcharts.XAxisBreaksOptions): void {
+                        function (brk): void {
                             start = brk.from;
                             repeat = brk.repeat || Infinity;
 
@@ -676,7 +693,7 @@ class BrokenAxis {
                                 new StackItem(
                                     yAxis as any,
                                     (
-                                        (yAxis.options as Highcharts.YAxisOptions)
+                                        (yAxis.options as YAxisOptions)
                                             .stackLabels as any
                                     ),
                                     false,

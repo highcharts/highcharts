@@ -37,14 +37,15 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+const { prototype: { symbols } } = SVGRenderer;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -878,41 +879,40 @@ function getStateId(): string {
 // }
 /* eslint-enable require-jsdoc */
 
-
+declare module '../Core/Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        /** @requires Extensions/MarkerClusters */
+        cluster: SymbolFunction;
+    }
+}
 // Cluster symbol.
-SVGRenderer.prototype.symbols.cluster = function (
+symbols.cluster = function (
     x: number,
     y: number,
     width: number,
     height: number
 ): SVGPath {
-    let w = width / 2,
+    const w = width / 2,
         h = height / 2,
         outerWidth = 1,
         space = 1,
-        inner: SVGPath,
-        outer1: SVGPath,
-        outer2: SVGPath;
-
-    inner = this.arc(x + w, y + h, w - space * 4, h - space * 4, {
-        start: Math.PI * 0.5,
-        end: Math.PI * 2.5,
-        open: false
-    });
-
-    outer1 = this.arc(x + w, y + h, w - space * 3, h - space * 3, {
-        start: Math.PI * 0.5,
-        end: Math.PI * 2.5,
-        innerR: w - outerWidth * 2,
-        open: false
-    });
-
-    outer2 = this.arc(x + w, y + h, w - space, h - space, {
-        start: Math.PI * 0.5,
-        end: Math.PI * 2.5,
-        innerR: w,
-        open: false
-    });
+        inner = symbols.arc(x + w, y + h, w - space * 4, h - space * 4, {
+            start: Math.PI * 0.5,
+            end: Math.PI * 2.5,
+            open: false
+        }),
+        outer1 = symbols.arc(x + w, y + h, w - space * 3, h - space * 3, {
+            start: Math.PI * 0.5,
+            end: Math.PI * 2.5,
+            innerR: w - outerWidth * 2,
+            open: false
+        }),
+        outer2 = symbols.arc(x + w, y + h, w - space, h - space, {
+            start: Math.PI * 0.5,
+            end: Math.PI * 2.5,
+            innerR: w,
+            open: false
+        });
 
     return outer2.concat(outer1, inner);
 };
@@ -2406,9 +2406,7 @@ addEvent(Point, 'drillToCluster', function (
 });
 
 // Destroy the old tooltip after zoom.
-addEvent(Axis, 'setExtremes', function (
-    this: Highcharts.Axis
-): void {
+addEvent(Axis, 'setExtremes', function (): void {
     let chart = this.chart,
         animationDuration = 0,
         animation;
