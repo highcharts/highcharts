@@ -201,6 +201,21 @@ QUnit.test('Drilldown methods', function (assert) {
         ['Cats2', 'Dogs2', 'Cows2', 'Sheep2', 'Pigs2'],
         'First drilldown after update (#7600)'
     );
+
+    chart.drillUp();
+    chart.update({
+        series: [{
+            cropThreshold: 1
+        }],
+        xAxis: {
+            min: 2
+        }
+    });
+    assert.strictEqual(
+        chart.xAxis[0].ddPoints[2][0].index,
+        2,
+        '#15771: Point should be at correct index in ddPoints'
+    );
 });
 
 QUnit.test('Chart type update after drilldown', function (assert) {
