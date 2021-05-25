@@ -945,7 +945,7 @@ namespace OrdinalAxis {
                 ordinalPositions = ordinal.positions, // for the current visible range
                 isInside = val > axis.left && val < axis.left + axis.len;
 
-            let extendedOrdinalPositions = this.ordinal.extendedOrdinalPositions;
+            let extendedOrdinalPositions = ordinal.extendedOrdinalPositions;
 
             // The visible range contains only equally spaced values.
             if (!ordinalPositions) {
@@ -960,11 +960,11 @@ namespace OrdinalAxis {
                 // get the extended ordinal positional and assign them.
                 if (!extendedOrdinalPositions) {
                     extendedOrdinalPositions = axis.ordinal.getExtendedPositions();
-                    this.ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
+                    ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
                 }
 
                 if (extendedOrdinalPositions && extendedOrdinalPositions.length) {
-                    const indexInEOP = this.ordinal.getIndexOfPoint(val, extendedOrdinalPositions),
+                    const indexInEOP = ordinal.getIndexOfPoint(val, extendedOrdinalPositions),
                         mantissa = correctFloat(indexInEOP % 1);
 
                     // Check if the index is inside extendedOrdinalPositions.
@@ -992,7 +992,7 @@ namespace OrdinalAxis {
                 // Even if the isInside property passed as true, due to some
                 // inaccuracy the getIndexOfPoint might return a negative value.
                 // To prevent that, compare it with zero.
-                const indexInOP = this.ordinal.getIndexOfPoint(val, ordinalPositions),
+                const indexInOP = Math.max(ordinal.getIndexOfPoint(val, ordinalPositions), 0),
                     mantissa = correctFloat(indexInOP % 1),
                     leftNeighbour = ordinalPositions[Math.floor(indexInOP)],
                     rightNeighbour = ordinalPositions[Math.ceil(indexInOP)],
