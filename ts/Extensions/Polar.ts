@@ -1083,9 +1083,9 @@ wrap(pointerProto, 'getCoordinates', function (
     this: Highcharts.PolarSeries,
     proceed: Pointer['getCoordinates'],
     e: PointerEvent
-): Highcharts.PointerAxisCoordinatesObject {
+): Pointer.AxesCoordinatesObject {
     let chart = this.chart,
-        ret: Highcharts.PointerAxisCoordinatesObject = {
+        ret: Pointer.AxesCoordinatesObject = {
             xAxis: [],
             yAxis: []
         };

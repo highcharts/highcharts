@@ -138,7 +138,7 @@ declare module './ChartLike' {
         resetZoomButton?: SVGElement;
         pan(e: PointerEvent, panning: boolean|ChartPanningOptions): void;
         showResetZoom(): void;
-        zoom(event: Highcharts.SelectEventObject): void;
+        zoom(event: Pointer.SelectEventObject): void;
         zoomOut(): void;
     }
 }
@@ -3540,7 +3540,7 @@ class Chart {
      * @function Highcharts.Chart#zoom
      * @param {Highcharts.SelectEventObject} event
      */
-    public zoom(event: Highcharts.SelectEventObject): void {
+    public zoom(event: Pointer.SelectEventObject): void {
         const chart = this,
             pointer = chart.pointer,
             mouseDownPos = (chart.inverted ? pointer.mouseDownX : pointer.mouseDownY);
@@ -3557,7 +3557,7 @@ class Chart {
 
         } else { // else, zoom in on all axes
             event.xAxis.concat(event.yAxis).forEach(function (
-                axisData: Highcharts.SelectDataObject
+                axisData: Pointer.SelectDataObject
             ): void {
                 const axis = axisData.axis,
                     axisStartPos = chart.inverted ? axis.left : axis.top,
