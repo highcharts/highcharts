@@ -1458,13 +1458,9 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         table.modifier = modifier;
 
         if (modifier) {
-            if (table.modified === table) {
-                table.modified = table.clone(true);
-            }
-        } else {
-            if (table.modified !== table) {
-                table.modified = this;
-            }
+            table.modified = modifier.modify(table.clone());
+        } else if (table.modified !== table) {
+            table.modified = this;
         }
 
         this.emit({
@@ -1472,10 +1468,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             modifier: this.modifier,
             modified: this.modified
         });
-
-        if (this.modifier) {
-            this.modified.setColumns(this.modifier.modify(this.clone()).getColumns());
-        }
     }
 
     /**
