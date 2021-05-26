@@ -27,13 +27,13 @@ To use the module, simply include it after the exporting module. The exporting m
 
 ||Chrome (latest)|Firefox (latest)|Microsoft Edge|Internet Explorer 11|Internet Explorer 10|Safari (latest)|Safari 5.1|Android (latest)|Android (4.0)|Chrome for Android|iOS|Chrome for iOS|
 |--- |--- |--- |--- |--- |--- |--- |--- |--- |--- |--- |--- |--- |
-|SVG|OK|OK|OK|OK|OK|Opens data URI in new tab|Opens data URI|OK|Opens data URI|OK|Opens data URI in new tab|Opens blob URI in new tab|
-|PNG/JPEG|OK|OK|OK|OK|OK|Opens data URI in same tab|Opens data URI|OK|Opens data URI|OK|Opens data URI in same tab|Opens blob URI in new tab|
-|PDF|OK|OK|Fallback to export server|Fallback to export server|Fallback to export server|Opens data URI in same tab|Fallback to export server|OK|Fallback to export server|OK|Fallback to export server|Fallback to export server|
-|SVG w/images (same server)|OK|OK|OK|OK|OK|Opens data URI in same tab|Opens data URI|OK|Opens data URI|OK|Opens data URI in same tab|Opens blob URI in new tab|
-|PNG/JPEG w/images (same server)|OK|OK|Fallback to export server|Fallback to export server|Fallback to export server|Opens data URI in same tab|Suboptimal image|OK|Opens data URI|OK|Opens data URI in same tab|Opens blob URI in new tab|
-|SVG w/images (CORS enabled server)|OK|OK|OK|Fallback to export server|Fallback to export server|Opens data URI in same tab|Fallback to export server|OK|Fallback to export server|OK|Fallback to export server|Fallback to export server|
-|PNG/JPEG w/images (CORS enabled server)|OK|OK|Fallback to export server|Fallback to export server|Fallback to export server|Opens data URI in same tab|Fallback to export server|OK|Fallback to export server|OK|Fallback to export server|Fallback to export server|
+|SVG|OK|OK|OK|OK|OK|OK|Opens data URI|OK|Opens data URI|OK|OK|OK|
+|PNG/JPEG|OK|OK|OK|OK|OK|OK|Opens data URI|OK|Opens data URI|OK|OK|OK|
+|PDF|OK|OK|Fallback to export server|Fallback to export server|Fallback to export server|OK|Fallback to export server|OK|Fallback to export server|OK|Fallback to export server|Fallback to export server|
+|SVG w/images (same server)|OK|OK|OK|OK|OK|OK|Opens data URI|OK|Opens data URI|OK|OK|OK|
+|PNG/JPEG w/images (same server)|OK|OK|Fallback to export server|Fallback to export server|Fallback to export server|OK|Suboptimal image|OK|Opens data URI|OK|OK|OK|
+|SVG w/images (CORS enabled server)|OK|OK|OK|Fallback to export server|Fallback to export server|OK|Fallback to export server|OK|Fallback to export server|OK|Fallback to export server|Fallback to export server|
+|PNG/JPEG w/images (CORS enabled server)|OK|OK|Fallback to export server|Fallback to export server|Fallback to export server|OK|Fallback to export server|OK|Fallback to export server|OK|Fallback to export server|Fallback to export server|
 
 Internet Explorer 9 and older will attempt to fall back to export server in all cases.
 
