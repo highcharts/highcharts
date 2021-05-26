@@ -32,9 +32,7 @@ import type { AxisTypeOptions } from './AxisType';
 import type TickPositionsArray from './TickPositionsArray';
 import type { AlignValue } from '../Renderer/AlignObject';
 import type Chart from '../Chart/Chart';
-
 import type CSSObject from '../Renderer/CSSObject';
-
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type PlotLineOrBand from './PlotLineOrBand';
@@ -46,7 +44,6 @@ import type SizeObject from '../Renderer/SizeObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
-
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import AxisDefaults from './AxisDefaults.js';
@@ -63,7 +60,6 @@ const { defaultOptions } = D;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
-
     arrayMax,
     arrayMin,
     clamp,
@@ -76,7 +72,6 @@ const {
     fireEvent,
     getMagnitude,
     isArray,
-
     isNumber,
     isString,
     merge,
@@ -104,13 +99,10 @@ declare module '../Series/SeriesOptions' {
 }
 
 /* *
-
  *
  *  Class
-
  *
  * */
-
 
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
@@ -153,7 +145,6 @@ class Axis {
      * */
 
     public static readonly defaultOptions = AxisDefaults.defaultXAxisOptions;
-
 
     // Properties to survive after destroy, needed for Axis.update (#4317,
     // #5773, #5881).
@@ -602,7 +593,6 @@ class Axis {
             lang = defaultOptions.lang,
             numericSymbols = (lang as any).numericSymbols,
             numSymMagnitude = (lang as any).numericSymbolMagnitude || 1000,
-
             // make sure the same symbol is added for all labels on a linear
             // axis
             numericSymbolDetector = axis.logarithmic ?
@@ -828,9 +818,7 @@ class Axis {
         pointPlacement?: number
     ): (number|undefined) {
         const axis = (this.linkedParent || this), // #1417
-
             localMin = old && axis.old ? axis.old.min : axis.min,
-
             minPixelPadding = axis.minPixelPadding,
             isBrokenAxis = axis.brokenAxis && axis.brokenAxis.hasBreaks,
             doPostTranslate = (
@@ -869,15 +857,7 @@ class Axis {
             // from chart pixel to value:
             returnValue = val / localA + (localMin as any);
             if (doPostTranslate) { // log, ordinal and broken axis
-                // For the ordinal axis use an unmodified value,
-                // that value will be modified in lin2val method.
-                // Also, pass the second argument which indicates
-                // if the value is inside the plotArea.
-                if (axis.logarithmic || isBrokenAxis) {
-                    returnValue = axis.lin2val(returnValue);
-                } else {
-                    returnValue = axis.lin2val(val);
-                }
+                returnValue = axis.lin2val(returnValue);
             }
 
         // From value to pixels
@@ -973,7 +953,6 @@ class Axis {
             axisTop = axis.top,
             old = options.old,
             value = options.value,
-
             lineWidth = options.lineWidth,
             cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
             cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
@@ -986,7 +965,6 @@ class Axis {
             x2: number,
             y2: number,
             skip: boolean;
-
 
         // eslint-disable-next-line valid-jsdoc
         /**
@@ -1082,7 +1060,6 @@ class Axis {
 
         let pos,
             lastPos,
-
             precision;
 
         // When the precision is higher than what we filter out in
@@ -1157,7 +1134,6 @@ class Axis {
             options = axis.options,
             tickPositions = axis.tickPositions,
             minorTickInterval = axis.minorTickInterval,
-
             pointRangePadding = axis.pointRangePadding || 0,
             min = (axis.min as any) - pointRangePadding, // #1498
             max = (axis.max as any) + pointRangePadding, // #1498
@@ -1242,7 +1218,6 @@ class Axis {
 
         let min = axis.min,
             max = axis.max,
-
             zoomOffset,
             spaceAvailable: boolean,
             closestDataRange = 0,
@@ -1336,7 +1311,6 @@ class Axis {
         axis.min = min;
         axis.max = max;
     }
-
 
     /**
      * Find the closestPointRange across all series.
@@ -1504,10 +1478,8 @@ class Axis {
             closestPointRange: number,
             minPointOffset = 0,
             pointRangePadding = 0,
-
             ordinalCorrection,
             transA = axis.transA;
-
 
         // Adjust translation for padding. Y axis with categories need to go
         // through the same (#1784).
@@ -1641,9 +1613,7 @@ class Axis {
             length,
             linkedParentExtremes,
             tickIntervalOption = options.tickInterval,
-
             threshold = isNumber(axis.threshold) ? axis.threshold : null,
-
             thresholdMin,
             thresholdMax,
             hardMin,
@@ -1934,12 +1904,9 @@ class Axis {
      */
     public setTickPositions(): void {
         const axis = this,
-
             options = this.options,
-
             tickPositionsOption = options.tickPositions,
             minorTickIntervalOption = this.getMinorTickInterval(),
-
             hasVerticalPanning = this.hasVerticalPanning(),
             isColorAxis = this.coll === 'colorAxis',
             startOnTick = (isColorAxis || !hasVerticalPanning) && options.startOnTick,
@@ -2160,7 +2127,6 @@ class Axis {
         const axis = this,
             others = // Whether there is another axis to pair with this one
                 {} as AxisOptions,
-
             options = axis.options;
 
         let hasOther: (boolean|undefined);
@@ -2179,7 +2145,6 @@ class Axis {
             !axis.logarithmic
         ) {
             (this.chart as any)[this.coll].forEach(function (axis: Axis): void {
-
                 const otherOptions = axis.options,
                     horiz = axis.horiz,
                     key = [
@@ -2212,7 +2177,6 @@ class Axis {
     public getTickAmount(): void {
         const axis = this,
             options = this.options,
-
             tickPixelInterval = options.tickPixelInterval as any;
 
         let tickAmount = options.tickAmount;
@@ -2714,7 +2678,6 @@ class Axis {
      */
     public tickSize(prefix?: string): [number, number]|undefined {
         const options = this.options,
-
             tickWidth = pick(
                 options[prefix === 'tick' ? 'tickWidth' : 'minorTickWidth'],
                 // Default to 1 on linear and datetime X axes
@@ -2772,7 +2735,6 @@ class Axis {
         const labelOptions = this.options.labels,
             horiz = this.horiz,
             tickInterval = this.tickInterval,
-
             slotSize = this.len / (
                 (
                     (this.categories ? 1 : 0) +
@@ -2781,10 +2743,8 @@ class Axis {
                 ) /
                 tickInterval
             ),
-
             rotationOption = labelOptions.rotation,
             labelMetrics = this.labelMetrics(),
-
             range = Math.max((this.max as any) - (this.min as any), 0),
             // Return the multiple of tickInterval that is needed to avoid
             // collision
@@ -3144,7 +3104,6 @@ class Axis {
             opposite = axis.opposite,
             options = axis.options,
             axisTitleOptions = options.title,
-
             styledMode = axis.chart.styledMode;
 
         let textAlign: (AlignValue|undefined);
@@ -3247,13 +3206,10 @@ class Axis {
                     side
             ),
             hasData = axis.hasData(),
-
             axisTitleOptions = options.title,
             labelOptions = options.labels,
-
             axisOffset = chart.axisOffset,
             clipOffset = chart.clipOffset,
-
             directionFactor = [-1, 1, 1, -1][side],
             className = options.className,
             axisParent = axis.axisParent; // Used in color axis
@@ -3267,7 +3223,6 @@ class Axis {
             lineHeightCorrection;
 
         // For reuse in Axis.render
-
         axis.showAxis = showAxis = hasData || options.showEmpty;
 
         // Set/reset staggerLines
@@ -3664,7 +3619,6 @@ class Axis {
             minorTicks = axis.minorTicks,
             alternateBands = axis.alternateBands,
             stackLabelOptions = (options as YAxisOptions).stackLabels,
-
             alternateGridColor = options.alternateGridColor,
             tickmarkOffset = axis.tickmarkOffset,
             axisLine = axis.axisLine,
@@ -3681,7 +3635,6 @@ class Axis {
         // Mark all elements inActive before we go over and mark the active ones
         [ticks, minorTicks, alternateBands].forEach(function (
             coll: (Record<string, PlotLineOrBand>|Record<string, Tick>)
-
         ): void {
             objectEach(coll, function (tick): void {
                 tick.isActive = false;
@@ -3772,7 +3725,6 @@ class Axis {
 
         ): void {
             const forDestruction: Array<number> = [],
-
                 delay = animation.duration,
                 destroyInactiveItems = function (): void {
                     let i = forDestruction.length;
@@ -3976,7 +3928,6 @@ class Axis {
     public drawCrosshair(e?: PointerEvent, point?: Point): void {
 
         const options = this.crosshair,
-
             snap = pick(options && options.snap, true),
             chart = this.chart;
 
@@ -3985,7 +3936,6 @@ class Axis {
             categorized,
             graphic = this.cross,
             crossOptions: Highcharts.AxisPlotLinesOptions;
-
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
 
@@ -4125,7 +4075,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#hasVerticalPanning
-
      *
      * @return {boolean}
      */
@@ -4165,7 +4114,6 @@ class Axis {
      *
      * @param {Highcharts.AxisOptions} options
      * The new options that will be merged in with existing options on the axis.
-
      *
      * @param {boolean} [redraw=true]
      * Whether to redraw the chart after the axis is altered. If doing more
@@ -4246,7 +4194,6 @@ class Axis {
      *
      * @param {boolean} [redraw=true]
      * Whether to redraw the chart after setting the title.
-
      */
     public setTitle(
         titleOptions: AxisTitleOptions,

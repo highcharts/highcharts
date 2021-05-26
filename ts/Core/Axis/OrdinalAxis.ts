@@ -947,7 +947,9 @@ namespace OrdinalAxis {
             const axis = this,
                 ordinal = axis.ordinal,
                 ordinalPositions = ordinal.positions, // for the current visible range
-                isInside = val > axis.left && val < axis.left + axis.len;
+                isInside = val > axis.left && val < axis.left + axis.len,
+                localMin = axis.old ? axis.old.min : axis.min,
+                localA = axis.old ? axis.old.transA : axis.transA;
 
             let extendedOrdinalPositions = ordinal.extendedOrdinalPositions;
 
@@ -955,6 +957,9 @@ namespace OrdinalAxis {
             if (!ordinalPositions) {
                 return val;
             }
+
+            // Convert back from modivied value to pixels.
+            val = (val - (localMin as any)) * localA;
 
             // If the value is not inside the plot area,
             // use the extended positions.

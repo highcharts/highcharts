@@ -292,54 +292,54 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     axis.ordinal.getIndexOfPoint =
         // eslint-disable-next-line no-underscore-dangle
         Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.getIndexOfPoint;
-    function lin2val(val, isInside) {
-        return Highcharts.Axis.prototype.lin2val.call(axis, val, isInside);
+    function lin2val(val) {
+        return Highcharts.Axis.prototype.lin2val.call(axis, val);
     }
 
     assert.strictEqual(
-        lin2val(-20, true),
+        lin2val(-20 / axis.transA + axis.min),
         3,
         `For the pixel value equal to the first point x position,
         the function should return the value for that point.`
     );
     assert.strictEqual(
-        lin2val(80, true),
+        lin2val(80 / axis.transA + axis.min),
         4.2,
         `For the pixel value equal to the second point x position,
         the function should return the value for that point.`
     );
     assert.strictEqual(
-        lin2val(30, true),
+        lin2val(30 / axis.transA + axis.min),
         3.6,
         `For the pixel value located between two visible points,
         the function should calculate the value between them.`
     );
     assert.strictEqual(
-        lin2val(-50),
+        lin2val(-50 / axis.transA + axis.min),
         2.55,
         `For the pixel value smaller than the first visible point, the function
         should calculate value between that point and next using EOP array.`
     );
     assert.strictEqual(
-        lin2val(-520),
+        lin2val(-520 / axis.transA + axis.min),
         -2,
         `For the pixel value lower than any point in EOP array, the function
         should calculate an approximate value based on previous distance.`
     );
     assert.strictEqual(
-        lin2val(380),
+        lin2val(380 / axis.transA + axis.min),
         7,
         `For the pixel value equal to last point, 
         the function should return the value for that point.`
     );
     assert.strictEqual(
-        lin2val(420),
+        lin2val(420 / axis.transA + axis.min),
         7.4,
         `For the pixel value higher than the first visible point, the function
         should calculate value between that point and next using EOP array.`
     );
     assert.strictEqual(
-        lin2val(1000),
+        lin2val(1000 / axis.transA + axis.min),
         12.2,
         `For the pixel value higher than any point in extendedOrdinalPositions,
         array, the function should calculate value for that point.`
