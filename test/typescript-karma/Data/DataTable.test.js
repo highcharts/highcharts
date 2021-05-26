@@ -268,18 +268,18 @@ QUnit.test('DataTable Events', function (assert) {
 
     /** @param {DataTable} table */
     function registerTable(table) {
-        table.on('cloneTable', registerEvent);
-        table.on('afterCloneTable', registerEvent);
-        table.on('deleteColumns', registerEvent);
-        table.on('afterDeleteColumns', registerEvent);
-        table.on('deleteRows', registerEvent);
-        table.on('afterDeleteRows', registerEvent);
-        table.on('setCell', registerEvent);
-        table.on('afterSetCell', registerEvent);
-        table.on('setColumns', registerEvent);
-        table.on('afterSetColumns', registerEvent);
-        table.on('setRows', registerEvent);
-        table.on('afterSetRows', registerEvent);
+        const eventsToRegister = [
+            'cloneTable', 'afterCloneTable',
+            'deleteColumns', 'afterDeleteColumns',
+            'deleteRows', 'afterDeleteRows',
+            'setCell', 'afterSetCell',
+            'setColumns', 'afterSetColumns',
+            'setModifier', 'afterSetModifier',
+            'setRows', 'afterSetRows'
+        ];
+        while (eventsToRegister.length) {
+            table.on(eventsToRegister.shift(), registerEvent);
+        }
     }
 
     const table = new DataTable({
@@ -336,6 +336,30 @@ QUnit.test('DataTable Events', function (assert) {
             'afterDeleteRows'
         ],
         'Events for DataTable.deleteRows should be in expected order.'
+    );
+
+    registeredEvents.length = 0;
+    table.setModifier(new SortModifier());
+    assert.deepEqual(
+        registeredEvents,
+        [
+            'setModifier',
+            'cloneTable',
+            'afterCloneTable',
+            'afterSetModifier'
+        ],
+        'Events for DataTable.setModifier should be in expected order.'
+    );
+
+    registeredEvents.length = 0;
+    table.setModifier();
+    assert.deepEqual(
+        registeredEvents,
+        [
+            'setModifier',
+            'afterSetModifier'
+        ],
+        'Events for DataTable.setModifier should be in expected order.'
     );
 
     registeredEvents.length = 0;

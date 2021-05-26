@@ -1445,14 +1445,21 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      *
      * @param {Highcharts.DataModifier|undefined} modifier
      * Modifier to set, or `undefined` to unset.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
      */
-    public setModifier(modifier: (DataModifier | undefined)): void {
+    public setModifier(
+        modifier: (DataModifier | undefined),
+        eventDetail?: DataEventEmitter.EventDetail
+    ): void {
         const table = this;
 
-        this.emit({
+        table.emit({
             type: 'setModifier',
+            detail: eventDetail,
             modifier,
-            modified: this.modified
+            modified: table.modified
         });
 
         table.modifier = modifier;
@@ -1460,13 +1467,14 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         if (modifier) {
             table.modified = modifier.modify(table.clone());
         } else if (table.modified !== table) {
-            table.modified = this;
+            table.modified = table;
         }
 
         this.emit({
             type: 'afterSetModifier',
-            modifier: this.modifier,
-            modified: this.modified
+            detail: eventDetail,
+            modifier,
+            modified: table.modified
         });
     }
 
@@ -1722,6 +1730,16 @@ namespace DataTable {
     }
 
     /**
+     * Event object for clone-related events.
+     */
+    export interface CloneEvent extends DataEventEmitter.Event {
+        readonly type: (
+            'cloneTable'|'afterCloneTable'
+        );
+        readonly tableClone?: DataTable;
+    }
+
+    /**
      * Array of table cells in vertical expansion.
      */
     export interface Column extends Array<DataTable.CellType> {
@@ -1769,11 +1787,19 @@ namespace DataTable {
      */
     export type Event = (
         CellEvent|
+        CloneEvent|
         ColumnEvent|
         SetModifierEvent|
-        TableEvent|
         RowEvent
     );
+
+    /**
+     * Event object for modifier-related events.
+     */
+    export interface ModifierEvent extends DataEventEmitter.Event {
+        readonly type: ('setModifier'|'afterSetModifier');
+        readonly modifier: (DataModifier|undefined);
+    }
 
     /**
      * Array of table cells in horizontal expansion. Index of the array is the
@@ -1801,16 +1827,6 @@ namespace DataTable {
      */
     export interface RowObject extends Record<string, CellType> {
         [column: string]: CellType;
-    }
-
-    /**
-     * Event object for table-related events.
-     */
-    export interface TableEvent extends DataEventEmitter.Event {
-        readonly type: (
-            'cloneTable'|'afterCloneTable'
-        );
-        readonly tableClone?: DataTable;
     }
 
     /**
