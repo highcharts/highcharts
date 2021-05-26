@@ -36,6 +36,7 @@ const {
 /**
  * Class to manage columns and rows in a table structure.
  *
+ * @private
  * @class
  * @name Highcharts.DataTable
  *
