@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Data Layer Working Group
+ js_wrap: b
+...
