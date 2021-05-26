@@ -173,8 +173,9 @@ function svgToDataUrl(svg: string): string {
     try {
         // Safari requires data URI since it doesn't allow navigation to blob
         // URLs. Firefox has an issue with Blobs and internal references,
-        // leading to gradients not working using Blobs (#4550)
-        if (!webKit && !H.isFirefox) {
+        // leading to gradients not working using Blobs (#4550).
+        // foreignObjects also dont work well in Blobs in Chrome (#14780).
+        if (!webKit && !H.isFirefox && svg.indexOf('<foreignObject') === -1) {
             return domurl.createObjectURL(new win.Blob([svg], {
                 type: 'image/svg+xml;charset-utf-16'
             }));
@@ -772,11 +773,15 @@ Chart.prototype.exportChartLocal = function (
             }
         },
         svgSuccess = function (svg: string): void {
-            // If SVG contains foreignObjects all exports except SVG will fail,
-            // as both CanVG and svg2pdf choke on this. Gracefully fall back.
+            // If SVG contains foreignObjects PDF fails in all browsers and all
+            // exports except SVG will fail in IE, as both CanVG and svg2pdf
+            // choke on this. Gracefully fall back.
             if (
                 svg.indexOf('<foreignObject') > -1 &&
-                options.type !== 'image/svg+xml'
+                options.type !== 'image/svg+xml' &&
+                (
+                    H.isMS || options.type === 'application/pdf'
+                )
             ) {
                 fallbackToExportServer(
                     'Image type not supported' +
