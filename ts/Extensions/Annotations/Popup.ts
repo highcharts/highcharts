@@ -173,13 +173,8 @@ const indexFilter = /\d/g,
 // Related issue #4606
 
 wrap(Pointer.prototype, 'onContainerMouseDown', function (this: Pointer, proceed: Function, e): void {
-
-    const popupClass = e.target && e.target.className;
-
     // elements is not in popup
-    if (!(isString(popupClass) &&
-        popupClass.indexOf(PREFIX + 'popup-field') >= 0)
-    ) {
+    if (!this.inClass(e.target, PREFIX + 'popup')) {
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
 });
