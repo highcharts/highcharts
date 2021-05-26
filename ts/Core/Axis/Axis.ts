@@ -820,10 +820,9 @@ class Axis {
         const axis = (this.linkedParent || this), // #1417
             localMin = old && axis.old ? axis.old.min : axis.min,
             minPixelPadding = axis.minPixelPadding,
-            isBrokenAxis = axis.brokenAxis && axis.brokenAxis.hasBreaks,
             doPostTranslate = (
                 axis.isOrdinal ||
-                isBrokenAxis ||
+                axis.brokenAxis && axis.brokenAxis.hasBreaks ||
                 (axis.logarithmic && handleLog)
             ) && axis.lin2val;
 
@@ -3299,7 +3298,6 @@ class Axis {
 
         } else { // doesn't have data
             objectEach(ticks, function (tick, n): void {
-
                 tick.destroy();
                 delete ticks[n];
             });
@@ -3722,7 +3720,6 @@ class Axis {
         // Remove inactive ticks
         [ticks, minorTicks, alternateBands].forEach(function (
             coll: (Record<string, PlotLineOrBand>|Record<string, Tick>)
-
         ): void {
             const forDestruction: Array<number> = [],
                 delay = animation.duration,
