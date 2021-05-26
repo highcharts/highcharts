@@ -3681,7 +3681,7 @@ class Chart {
                     mousePos = e[horiz ? 'chartX' : 'chartY'],
                     mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
                     startPos = (chart as any)[mouseDown],
-                    halfPointRange = (axis.pointRange || 0) / 2,
+                    halfPointRange = axis.minPointOffset || 0,
                     pointRangeDirection =
                         (axis.reversed && !chart.inverted) ||
                         (!axis.reversed && chart.inverted) ?
@@ -3694,7 +3694,11 @@ class Chart {
                         axis.toValue(
                             startPos + axis.len - mousePos, true
                         ) -
-                        halfPointRange * pointRangeDirection,
+                        (
+                            (halfPointRange * pointRangeDirection) ||
+                            (axis.isXAxis && axis.pointRangePadding) ||
+                            0
+                        ),
                     flipped = panMax < panMin,
                     hasVerticalPanning = axis.hasVerticalPanning();
 
