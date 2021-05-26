@@ -131,6 +131,7 @@ export const seriesVisibilityEmitter = new ChartSyncEmitter(
             const groups = ComponentGroup.getGroupsFromComponent(this.id);
             if (
                 store && // has a store
+                chart &&
                 chart.hasRendered
             ) {
                 const { series } = chart;
@@ -162,7 +163,7 @@ export const seriesVisibilityHandler =
         'afterColumnVisibilityChange',
         function (this: ChartComponent, e: SharedState.ColumnVisibilityEvent): void {
             const { chart, store } = this;
-            if (store) {
+            if (store && chart) {
                 chart.series.forEach((series): void => {
                     const seriesID = series.options.id;
                     if (seriesID) {
@@ -216,7 +217,7 @@ export const tooltipHandler =
             const { chart } = this;
             const { hoverPoint } = e;
 
-            if (chart.tooltip) {
+            if (chart && chart.tooltip) {
                 if (hoverPoint === void 0 && !chart.hoverPoint) {
                     chart.tooltip.hide();
                 }
@@ -293,33 +294,35 @@ export const selectionHandler =
         function (this: ChartComponent, e: SharedState.SelectionEvent): void {
 
             const { chart } = this;
-            // Reset the zoom if the source is the reset button
-            if (e.reset) {
-                chart.zoom({ resetSelection: true } as any); // Not allowed by TS, but works
-                return;
-            }
+            if (chart) {
+                // Reset the zoom if the source is the reset button
+                if (e.reset) {
+                    chart.zoom({ resetSelection: true } as any); // Not allowed by TS, but works
+                    return;
+                }
 
-            const { selection: selectionAxes } = e;
-            if (selectionAxes) {
-                Object.keys(selectionAxes).forEach((axisName: string): void => {
-                    const selectionAxis = selectionAxes[axisName];
-                    if (selectionAxis) {
-                        const { min, max } = selectionAxis;
-                        chart.axes.forEach((axis): void => {
-                            if (axis.coll === axisName && axis.zoomEnabled) {
-                                if (typeof min === 'number' && typeof max === 'number') {
-                                    axis.zoom(min, max);
+                const { selection: selectionAxes } = e;
+                if (selectionAxes) {
+                    Object.keys(selectionAxes).forEach((axisName: string): void => {
+                        const selectionAxis = selectionAxes[axisName];
+                        if (selectionAxis) {
+                            const { min, max } = selectionAxis;
+                            chart.axes.forEach((axis): void => {
+                                if (axis.coll === axisName && axis.zoomEnabled) {
+                                    if (typeof min === 'number' && typeof max === 'number') {
+                                        axis.zoom(min, max);
 
-                                    if (!chart.resetZoomButton) {
-                                        chart.showResetZoom();
+                                        if (!chart.resetZoomButton) {
+                                            chart.showResetZoom();
+                                        }
                                     }
                                 }
-                            }
-                        });
-                    }
+                            });
+                        }
 
-                    chart.redraw();
-                });
+                        chart.redraw();
+                    });
+                }
             }
         }
     );

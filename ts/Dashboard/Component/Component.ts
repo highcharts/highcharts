@@ -3,6 +3,7 @@ import type ComponentType from './ComponentType';
 import Cell from '../Layout/Cell.js';
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
+import DataTable from '../../Data/DataTable.js';
 import type DataJSON from '../../Data/DataJSON';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
@@ -359,35 +360,70 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
     }
 
-    public setStore(store: DataStore<any> | undefined): this {
-        this.store = store;
-        if (store) {
-            // Set up event listeners
-            [
-                'afterSetRows',
-                'afterDeleteRows',
-                'afterSetColums',
-                'afterDeleteColumns'
-            ].forEach((event: any): void => {
-                this.tableEvents.push(store.table.on(event, (e): void => {
+    private setupTableListeners(table: DataTable): void {
+        [
+            'afterSetRows',
+            'afterDeleteRows',
+            'afterSetColumns',
+            'afterDeleteColumns'
+        ].forEach((event: any): void => {
+            if (this.store && table) {
+                this.tableEvents.push((table)
+                    .on(event, (e: any): void => {
+                        clearInterval(this.tableEventTimeout);
+                        this.tableEventTimeout = setTimeout((): void => {
+                            this.emit({
+                                ...e,
+                                type: 'tableChanged'
+                            });
+                            this.tableEventTimeout = void 0;
+                        }, 0);
+                    }));
+            }
+        });
 
-                    clearInterval(this.tableEventTimeout);
-                    this.tableEventTimeout = setTimeout((): void => {
-                        this.emit({
-                            ...e as any,
-                            type: 'tableChanged'
-                        });
-                        this.tableEventTimeout = void 0;
-                    }, 0);
-                }));
-            });
 
-            this.tableEvents.push(store.on('afterLoad', (e): void => {
+        if (this.store) {
+            this.tableEvents.push(this.store.on('afterLoad', (e): void => {
                 this.emit({
                     ...e,
                     type: 'tableChanged'
                 });
             }));
+        }
+    }
+
+    private clearTableListeners(): void {
+        if (this.tableEvents.length) {
+            this.tableEvents.forEach((removeEventCallback): void => removeEventCallback());
+        }
+
+        if (this.store) {
+            this.tableEvents.push(this.store.table.on('afterSetModifier', (e): void => {
+                if (e.type === 'afterSetModifier') {
+                    this.emit({
+                        ...e,
+                        type: 'tableChanged'
+                    } as any);
+                }
+            }));
+        }
+    }
+
+    public setStore(store: DataStore<any> | undefined): this {
+        this.store = store;
+        if (this.store) {
+            // Set up event listeners
+            this.clearTableListeners();
+            this.setupTableListeners(this.store.table);
+
+            // re-setup if modifier changes
+            this.store.table.on('setModifier', (): void => this.clearTableListeners());
+            this.store.table.on('afterSetModifier', (e): void => {
+                if (e.type === 'afterSetModifier' && e.modified) {
+                    this.setupTableListeners(e.modified);
+                }
+            });
         }
 
         // Clean up old event listeners

@@ -1,5 +1,7 @@
 import type Series from '../../Core/Series/Series.js';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
+import type Options from '../../Core/Options.js';
+import type AxisOptions from '../../Core/Axis/AxisOptions.js';
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import DataStore from '../../Data/Stores/DataStore.js';
@@ -12,7 +14,6 @@ import {
     defaults as defaultHandlers
 } from './ChartSyncHandlers.js';
 
-import DataSeriesConverter from '../../Data/DataSeriesConverter.js';
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -88,8 +89,8 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
      *
      * */
 
-    public chartOptions: Highcharts.Options;
-    public chart: Chart;
+    public chartOptions: Options;
+    public chart: Chart | undefined;
     public chartContainer: HTMLElement;
     public options: ChartComponent.ComponentOptions;
     public charter: typeof Highcharts;
@@ -136,15 +137,9 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
         this.syncHandlers = this.options.syncHandlers;
         this.syncHandlerRegistry = {};
         this.chartOptions = this.options.chartOptions || { chart: {} };
-        this.chart = this.constructChart();
 
         if (this.store) {
-            // TODO: this may be implemented on the table now
-            this.on('tableChanged', (e): void => {
-                if (!e.detail || (e.detail && e.detail.sender !== this.id)) {
-                    this.updateSeries();
-                }
-            });
+            this.on('tableChanged', (e): void => this.updateSeries());
 
             // reload the store when polling
             this.store.on('afterLoad', (e): void => {
@@ -214,7 +209,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
                 this.chart.setSize(
                     null,
                     this.contentElement.clientHeight,
-                    this.chart.options.chart.animation
+                    false
                 );
             }
         }, 33));
@@ -225,7 +220,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
     public update(options: Partial<ChartComponent.ComponentOptions>): this {
         super.update(options);
         if (this.chart) {
-            this.chart.update(this.options.chartOptions || {});
+            this.chart.update(this.options.chartOptions as any || {});
         }
         this.emit({ type: 'afterUpdate', component: this });
         return this;
@@ -233,41 +228,49 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
     private updateSeries(): void {
         // Heuristically create series from the store datatable
-        if (this.store && this.store.table) {
+        if (this.chart && this.store) {
             const { table } = this.store;
+            const { chart } = this;
 
             // Names/aliases that should be mapped to xAxis values
             const tableAxisMap = this.options.tableAxisMap || {};
-            const seriesNames = table.getColumnNames();
             const xKeyMap: Record<string, string> = {};
 
             // Remove series names that match the xKeys
-            seriesNames.forEach((name, index): void => {
-                if (name in tableAxisMap) {
+            const seriesNames = table.getColumnNames()
+                .filter((name): boolean => {
+                    const isVisible = this.activeGroup ?
+                        this.activeGroup.getSharedState().getColumnVisibility(name) !== false :
+                        true;
+
+                    if (!isVisible && !tableAxisMap[name]) {
+                        return false;
+                    }
+
                     if (tableAxisMap[name] === null) {
-                        seriesNames.splice(index, 1);
-                        return;
+                        return false;
                     }
 
                     if (tableAxisMap[name] === 'x') {
                         xKeyMap[name] = name;
-                        seriesNames.splice(index, 1);
+                        return false;
                     }
-                }
-            });
+
+                    return true;
+                });
 
             // Create the series or get the already added series
             const seriesList = seriesNames.map((seriesName, index): Series => {
                 let i = 0;
-                while (i < this.chart.series.length) {
-                    const series = this.chart.series[i];
+                while (i < chart.series.length) {
+                    const series = chart.series[i];
                     if (series.options.id === `${table.id}-series-${index}`) {
                         return series;
                     }
                     i++;
                 }
 
-                return this.chart.addSeries({
+                return chart.addSeries({
                     name: seriesName,
                     id: `${table.id}-series-${index}`
                 }, false);
@@ -278,7 +281,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
             seriesList.forEach((series): void => {
                 const xKey = Object.keys(xKeyMap)[0];
                 const seriesTable = new DataTable(
-                    table.getColumns([xKey, series.name])
+                    table.modified.getColumns([xKey, series.name])
                 );
 
                 seriesTable.renameColumn(series.name, 'y');
@@ -296,9 +299,9 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
                 series.setData(seriesData, false);
             });
-        }
 
-        this.chart.redraw();
+            chart.redraw();
+        }
     }
 
     public registerSyncHandler(handler: ChartSyncHandler): void {
@@ -310,10 +313,19 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
         return this.syncHandlerRegistry[handlerID];
     }
 
-    private initChart(): void {
+    private initChart(): Chart {
+        this.emit({
+            type: 'initChart'
+        } as any);
+
+        if (this.chart) {
+            this.chart.destroy();
+        }
         this.chart = this.constructChart();
         this.updateSeries();
         this.setupSync();
+
+        return this.chart;
     }
 
     private setupSync(): void {
@@ -365,7 +377,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
             throw new Error('Chart constructor not found');
         }
 
-        this.chart = this.charter.chart(this.chartContainer, this.chartOptions);
+        this.chart = this.charter.chart(this.chartContainer, this.chartOptions) as Chart;
 
         return this.chart;
     }
@@ -374,7 +386,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
      * Registers events from the chart options to the callback register
      */
     private registerChartEvents(): void {
-        if (this.chart.options) {
+        if (this.chart && this.chart.options) {
             const options = this.chart.options;
             const allEvents = [
                 'chart',
@@ -399,7 +411,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
                     return seriesOrAxisOptions.reduce(
                         (
                             acc: Record<string, any>,
-                            seriesOrAxis: SeriesOptions | Highcharts.AxisOptions,
+                            seriesOrAxis: SeriesOptions | AxisOptions,
                             i: number
                         ): Record<string, {}> => {
                             if (seriesOrAxis && seriesOrAxis.events) {
@@ -484,10 +496,10 @@ namespace ChartComponent {
     }
 
     export interface EditableOptions extends Component.EditableOptions {
-        chartOptions?: Highcharts.Options;
+        chartOptions?: Options;
         chartClassName?: string;
         chartID?: string;
-        tableAxisMap?: Record<string, string>;
+        tableAxisMap?: Record<string, string | null>;
     }
 
     export interface ComponentJSONOptions extends Component.ComponentJSONOptions {
