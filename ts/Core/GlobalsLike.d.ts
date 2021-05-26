@@ -68,7 +68,13 @@ declare global {
         /** @deprecated */
         webkitRequestFullScreen: Function;
     }
+    interface MSPointerEvent {
+        /** @deprecated */
+        readonly MSPOINTER_TYPE_TOUCH: string;
+    }
     interface PointerEvent {
+        /** @deprecated */
+        readonly MSPOINTER_TYPE_TOUCH: string;
         /** @deprecated */
         readonly toElement: Element;
     }
@@ -99,6 +105,7 @@ export type InternalNamespace = typeof Highcharts;
 export interface GlobalsLike extends InternalNamespace {
     readonly Obj: ObjectConstructor;
     readonly SVG_NS: string;
+    chartCount: number;
     readonly charts: Array<(Chart|undefined)>;
     readonly dateFormats: Record<string, Time.TimeFormatCallbackFunction>;
     readonly deg2rad: number;

@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type { DOMElementType } from './Renderer/DOMElementType';
@@ -25,8 +31,7 @@ const {
     charts,
     noop
 } = H;
-
-import palette from '../Core/Color/Palette.js';
+import Palette from '../Core/Color/Palette.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 const {
@@ -45,6 +50,12 @@ const {
     splat
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module './Chart/ChartLike'{
     interface ChartLike {
         cancelClick?: boolean;
@@ -58,173 +69,11 @@ declare module './Chart/ChartLike'{
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface PointerAxisCoordinateObject {
-            axis: Axis;
-            value: number;
-        }
-        interface PointerAxisCoordinatesObject {
-            xAxis: Array<PointerAxisCoordinateObject>;
-            yAxis: Array<PointerAxisCoordinateObject>;
-        }
-        interface PointerCoordinatesObject {
-            chartX: number;
-            chartY: number;
-        }
-        interface PointerEventArgsObject {
-            chartX?: number;
-            chartY?: number;
-            filter?: Function;
-            hoverPoint?: Point;
-            shared?: boolean;
-        }
-        interface PointerHoverDataObject {
-            hoverPoint?: Point;
-            hoverPoints: Array<Point>;
-            hoverSeries: Series;
-        }
-        interface SelectDataObject {
-            axis: Axis;
-            max: number;
-            min: number;
-        }
-        interface SelectEventObject {
-            originalEvent: Event;
-            xAxis: Array<SelectDataObject>;
-            yAxis: Array<SelectDataObject>;
-        }
-        interface ChartPositionObject {
-            left: number;
-            scaleX: number;
-            scaleY: number;
-            top: number;
-        }
-        let Pointer: PointerClass;
-        let chartCount: number;
-        let hoverChartIndex: (number|undefined);
-        let unbindDocumentMouseUp: (Function|undefined);
-        let unbindDocumentTouchEnd: (Function|undefined);
-    }
-    interface TouchList {
-        changedTouches: Array<Touch>;
-    }
-}
-type PointerClass = typeof Pointer;
-
-/**
- * One position in relation to an axis.
+/* *
  *
- * @interface Highcharts.PointerAxisCoordinateObject
- *//**
- * Related axis.
+ *  Class
  *
- * @name Highcharts.PointerAxisCoordinateObject#axis
- * @type {Highcharts.Axis}
- *//**
- * Axis value.
- *
- * @name Highcharts.PointerAxisCoordinateObject#value
- * @type {number}
- */
-
-/**
- * Positions in terms of axis values.
- *
- * @interface Highcharts.PointerAxisCoordinatesObject
- *//**
- * Positions on the x-axis.
- * @name Highcharts.PointerAxisCoordinatesObject#xAxis
- * @type {Array<Highcharts.PointerAxisCoordinateObject>}
- *//**
- * Positions on the y-axis.
- * @name Highcharts.PointerAxisCoordinatesObject#yAxis
- * @type {Array<Highcharts.PointerAxisCoordinateObject>}
- */
-
-/**
- * Pointer coordinates.
- *
- * @interface Highcharts.PointerCoordinatesObject
- *//**
- * @name Highcharts.PointerCoordinatesObject#chartX
- * @type {number}
- *//**
- * @name Highcharts.PointerCoordinatesObject#chartY
- * @type {number}
- */
-
-/**
- * A native browser mouse or touch event, extended with position information
- * relative to the {@link Chart.container}.
- *
- * @interface Highcharts.PointerEventObject
- * @extends global.PointerEvent
- *//**
- * The X coordinate of the pointer interaction relative to the chart.
- *
- * @name Highcharts.PointerEventObject#chartX
- * @type {number}
- *//**
- * The Y coordinate of the pointer interaction relative to the chart.
- *
- * @name Highcharts.PointerEventObject#chartY
- * @type {number}
- */
-
-/**
- * Axis-specific data of a selection.
- *
- * @interface Highcharts.SelectDataObject
- *//**
- * @name Highcharts.SelectDataObject#axis
- * @type {Highcharts.Axis}
- *//**
- * @name Highcharts.SelectDataObject#max
- * @type {number}
- *//**
- * @name Highcharts.SelectDataObject#min
- * @type {number}
- */
-
-/**
- * Object for select events.
- *
- * @interface Highcharts.SelectEventObject
- *//**
- * @name Highcharts.SelectEventObject#originalEvent
- * @type {global.Event}
- *//**
- * @name Highcharts.SelectEventObject#xAxis
- * @type {Array<Highcharts.SelectDataObject>}
- *//**
- * @name Highcharts.SelectEventObject#yAxis
- * @type {Array<Highcharts.SelectDataObject>}
- */
-
-/**
- * Chart position and scale.
- *
- * @interface Highcharts.ChartPositionObject
- *//**
- * @name Highcharts.ChartPositionObject#left
- * @type {number}
- *//**
- * @name Highcharts.ChartPositionObject#scaleX
- * @type {number}
- *//**
- * @name Highcharts.ChartPositionObject#scaleY
- * @type {number}
- *//**
- * @name Highcharts.ChartPositionObject#top
- * @type {number}
- */
-
-''; // detach doclets above
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -247,6 +96,18 @@ class Pointer {
 
     /* *
      *
+     *  Static Properties
+     *
+     * */
+
+    public static hoverChartIndex: (number|undefined);
+
+    public static unbindDocumentMouseUp: (Function|undefined);
+
+    public static unbindDocumentTouchEnd: (Function|undefined);
+
+    /* *
+     *
      *  Constructors
      *
      * */
@@ -266,7 +127,7 @@ class Pointer {
 
     public chart: Chart;
 
-    public chartPosition?: Highcharts.ChartPositionObject;
+    public chartPosition?: Pointer.ChartPositionObject;
 
     public followTouchMove?: boolean;
 
@@ -380,11 +241,11 @@ class Pointer {
         this.eventsToUnbind = [];
 
         if (!H.chartCount) {
-            if (H.unbindDocumentMouseUp) {
-                H.unbindDocumentMouseUp = H.unbindDocumentMouseUp();
+            if (Pointer.unbindDocumentMouseUp) {
+                Pointer.unbindDocumentMouseUp = Pointer.unbindDocumentMouseUp();
             }
-            if (H.unbindDocumentTouchEnd) {
-                H.unbindDocumentTouchEnd = H.unbindDocumentTouchEnd();
+            if (Pointer.unbindDocumentTouchEnd) {
+                Pointer.unbindDocumentTouchEnd = Pointer.unbindDocumentTouchEnd();
             }
         }
 
@@ -489,7 +350,7 @@ class Pointer {
                         selectionMarker.attr({
                             fill: (
                                 chartOptions.selectionMarkerFill ||
-                                color(palette.highlightColor80)
+                                color(Palette.highlightColor80)
                                     .setOpacity(0.25).get()
                             )
                         });
@@ -764,7 +625,7 @@ class Pointer {
     public getChartCoordinatesFromPoint(
         point: Point,
         inverted?: boolean
-    ): (Highcharts.PointerCoordinatesObject|undefined) {
+    ): (Pointer.CoordinatesObject|undefined) {
         const series = point.series,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
@@ -814,7 +675,7 @@ class Pointer {
      * @return {Highcharts.ChartPositionObject}
      *         The offset of the chart container within the page
      */
-    public getChartPosition(): Highcharts.ChartPositionObject {
+    public getChartPosition(): Pointer.ChartPositionObject {
         if (this.chartPosition) {
             return this.chartPosition;
         }
@@ -854,12 +715,12 @@ class Pointer {
      *
      * @return {Highcharts.PointerAxisCoordinatesObject}
      */
-    public getCoordinates(e: PointerEvent): Highcharts.PointerAxisCoordinatesObject {
+    public getCoordinates(e: PointerEvent): Pointer.AxesCoordinatesObject {
 
-        const coordinates = {
+        const coordinates: Pointer.AxesCoordinatesObject = {
             xAxis: [],
             yAxis: []
-        } as Highcharts.PointerAxisCoordinatesObject;
+        };
 
         this.chart.axes.forEach(function (axis: Axis): void {
             (coordinates as any)[axis.isXAxis ? 'xAxis' : 'yAxis'].push({
@@ -906,7 +767,7 @@ class Pointer {
         isDirectTouch?: boolean,
         shared?: boolean,
         e?: PointerEvent
-    ): Highcharts.PointerHoverDataObject {
+    ): Pointer.HoverDataObject {
         let hoverPoint: Point,
             hoverPoints = [] as Array<Point>,
             hoverSeries = existingHoverSeries,
@@ -915,7 +776,7 @@ class Pointer {
             // Which series to look in for the hover point
             searchSeries,
             // Parameters needed for beforeGetHoverData event.
-            eventArgs: Highcharts.PointerEventArgsObject = {
+            eventArgs: Pointer.EventArgsObject = {
                 chartX: e ? e.chartX : void 0,
                 chartY: e ? e.chartY : void 0,
                 shared: shared
@@ -1086,8 +947,6 @@ class Pointer {
      * @param {Highcharts.Options} options
      *        The root options object. The pointer uses options from the chart
      *        and tooltip structures.
-     *
-     * @return {void}
      */
     public init(chart: Chart, options: Options): void {
 
@@ -1137,7 +996,7 @@ class Pointer {
      */
     public normalize<T extends PointerEvent>(
         e: (T|MouseEvent|PointerEvent|TouchEvent),
-        chartPosition?: Highcharts.ChartPositionObject
+        chartPosition?: Pointer.ChartPositionObject
     ): T {
         const touches = (e as TouchEvent).touches;
 
@@ -1263,16 +1122,12 @@ class Pointer {
 
     /**
      * When mouse leaves the container, hide the tooltip.
-     *
      * @private
      * @function Highcharts.Pointer#onContainerMouseLeave
-     *
      * @param {global.MouseEvent} e
-     *
-     * @return {void}
      */
     public onContainerMouseLeave(e: MouseEvent): void {
-        const chart = charts[pick(H.hoverChartIndex, -1)];
+        const chart = charts[pick(Pointer.hoverChartIndex, -1)];
         const tooltip = this.chart.tooltip;
 
         e = this.normalize(e);
@@ -1297,13 +1152,9 @@ class Pointer {
 
     /**
      * When mouse enters the container, delete pointer's chartPosition.
-     *
      * @private
      * @function Highcharts.Pointer#onContainerMouseEnter
-     *
      * @param {global.MouseEvent} e
-     *
-     * @return {void}
      */
     public onContainerMouseEnter(e: MouseEvent): void {
         delete this.chartPosition;
@@ -1311,13 +1162,9 @@ class Pointer {
 
     /**
      * The mousemove, touchmove and touchstart event handler
-     *
      * @private
      * @function Highcharts.Pointer#onContainerMouseMove
-     *
      * @param {global.MouseEvent} e
-     *
-     * @return {void}
      */
     public onContainerMouseMove(e: MouseEvent): void {
         const chart = this.chart;
@@ -1363,24 +1210,19 @@ class Pointer {
     /**
      * @private
      * @function Highcharts.Pointer#onDocumentTouchEnd
-     *
      * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
     public onDocumentTouchEnd(e: PointerEvent): void {
-        if (charts[H.hoverChartIndex as any]) {
-            (charts[H.hoverChartIndex as any] as any).pointer.drop(e);
+        const hoverChart = charts[Pointer.hoverChartIndex || NaN];
+        if (hoverChart) {
+            hoverChart.pointer.drop(e);
         }
     }
 
     /**
      * @private
      * @function Highcharts.Pointer#onContainerTouchMove
-     *
      * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
     public onContainerTouchMove(e: PointerEvent): void {
         if (this.touchSelect(e)) {
@@ -1393,10 +1235,7 @@ class Pointer {
     /**
      * @private
      * @function Highcharts.Pointer#onContainerTouchStart
-     *
      * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
     public onContainerTouchStart(e: PointerEvent): void {
         if (this.touchSelect(e)) {
@@ -1414,10 +1253,7 @@ class Pointer {
      *
      * @private
      * @function Highcharts.Pointer#onDocumentMouseMove
-     *
      * @param {global.MouseEvent} e
-     *
-     * @return {void}
      */
     public onDocumentMouseMove(e: MouseEvent): void {
         const chart = this.chart;
@@ -1448,13 +1284,10 @@ class Pointer {
     /**
      * @private
      * @function Highcharts.Pointer#onDocumentMouseUp
-     *
      * @param {global.MouseEvent} e
-     *
-     * @return {void}
      */
     public onDocumentMouseUp(e: MouseEvent): void {
-        const chart = charts[pick(H.hoverChartIndex, -1)];
+        const chart = charts[pick(Pointer.hoverChartIndex, -1)];
         if (chart) {
             chart.pointer.drop(e);
         }
@@ -1462,13 +1295,9 @@ class Pointer {
 
     /**
      * Handle touch events with two touches
-     *
      * @private
      * @function Highcharts.Pointer#pinch
-     *
      * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
     public pinch(e: PointerEvent): void {
 
@@ -1597,23 +1426,14 @@ class Pointer {
 
     /**
      * Run translation operations
-     *
      * @private
      * @function Highcharts.Pointer#pinchTranslate
-     *
      * @param {Array<*>} pinchDown
-     *
      * @param {Array<Highcharts.PointerEventObject>} touches
-     *
      * @param {*} transform
-     *
      * @param {*} selectionMarker
-     *
      * @param {*} clip
-     *
      * @param {*} lastValidTouch
-     *
-     * @return {void}
      */
     public pinchTranslate(
         pinchDown: Array<any>,
@@ -1650,27 +1470,16 @@ class Pointer {
     /**
      * Run translation operations for each direction (horizontal and vertical)
      * independently.
-     *
      * @private
      * @function Highcharts.Pointer#pinchTranslateDirection
-     *
      * @param {boolean} horiz
-     *
      * @param {Array<*>} pinchDown
-     *
      * @param {Array<Highcharts.PointerEventObject>} touches
-     *
      * @param {*} transform
-     *
      * @param {*} selectionMarker
-     *
      * @param {*} clip
-     *
      * @param {*} lastValidTouch
-     *
      * @param {number|undefined} [forcedScale=1]
-     *
-     * @return {void}
      */
     public pinchTranslateDirection(
         horiz: boolean,
@@ -1777,12 +1586,10 @@ class Pointer {
      * @function Highcharts.Pointer#reset
      *
      * @param {boolean} [allowMove]
-     *        Instead of destroying the tooltip altogether, allow moving it if
-     *        possible.
+     * Instead of destroying the tooltip altogether, allow moving it if
+     * possible.
      *
      * @param {number} [delay]
-     *
-     * @return {void}
      */
     public reset(allowMove?: boolean, delay?: number): void {
         const pointer = this,
@@ -2018,7 +1825,7 @@ class Pointer {
                 chart.container.ownerDocument,
                 'mousemove',
                 function (e: any): void {
-                    const chart = charts[H.hoverChartIndex as any];
+                    const chart = charts[Pointer.hoverChartIndex as any];
 
                     if (chart) {
                         chart.pointer.onDocumentMouseMove(e);
@@ -2112,8 +1919,8 @@ class Pointer {
             'mouseleave',
             this.onContainerMouseLeave.bind(this)
         ));
-        if (!H.unbindDocumentMouseUp) {
-            H.unbindDocumentMouseUp = addEvent(
+        if (!Pointer.unbindDocumentMouseUp) {
+            Pointer.unbindDocumentMouseUp = addEvent(
                 ownerDoc,
                 'mouseup',
                 this.onDocumentMouseUp.bind(this)
@@ -2143,8 +1950,8 @@ class Pointer {
                 this.onContainerTouchMove.bind(this),
                 { passive: false }
             ));
-            if (!H.unbindDocumentTouchEnd) {
-                H.unbindDocumentTouchEnd = addEvent(
+            if (!Pointer.unbindDocumentTouchEnd) {
+                Pointer.unbindDocumentTouchEnd = addEvent(
                     ownerDoc,
                     'touchend',
                     this.onDocumentTouchEnd.bind(this),
@@ -2163,7 +1970,7 @@ class Pointer {
      */
     public setHoverChartIndex(): void {
         const chart = this.chart;
-        const hoverChart = H.charts[pick(H.hoverChartIndex, -1)];
+        const hoverChart = H.charts[pick(Pointer.hoverChartIndex, -1)];
 
         if (
             hoverChart &&
@@ -2176,7 +1983,7 @@ class Pointer {
             !hoverChart ||
             !hoverChart.mouseIsDown
         ) {
-            H.hoverChartIndex = chart.index;
+            Pointer.hoverChartIndex = chart.index;
         }
     }
 
@@ -2263,8 +2070,6 @@ class Pointer {
      *
      * @param {global.Event} e
      *        Event object.
-     *
-     * @param {void}
      */
     public zoomOption(e: Event): void {
         let chart = this.chart,
@@ -2287,6 +2092,175 @@ class Pointer {
     }
 }
 
-H.Pointer = Pointer;
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace Pointer {
+    export interface ChartPositionObject {
+        left: number;
+        scaleX: number;
+        scaleY: number;
+        top: number;
+    }
+    export interface AxesCoordinatesObject {
+        xAxis: Array<AxisCoordinateObject>;
+        yAxis: Array<AxisCoordinateObject>;
+    }
+    export interface AxisCoordinateObject {
+        axis: Axis;
+        value: number;
+    }
+    export interface CoordinatesObject {
+        chartX: number;
+        chartY: number;
+    }
+    export interface EventArgsObject {
+        chartX?: number;
+        chartY?: number;
+        filter?: Function;
+        hoverPoint?: Point;
+        shared?: boolean;
+    }
+    export interface HoverDataObject {
+        hoverPoint?: Point;
+        hoverPoints: Array<Point>;
+        hoverSeries: Series;
+    }
+    export interface SelectDataObject {
+        axis: Axis;
+        max: number;
+        min: number;
+    }
+    export interface SelectEventObject {
+        originalEvent: Event;
+        xAxis: Array<SelectDataObject>;
+        yAxis: Array<SelectDataObject>;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Pointer;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * One position in relation to an axis.
+ *
+ * @interface Highcharts.PointerAxisCoordinateObject
+ *//**
+ * Related axis.
+ *
+ * @name Highcharts.PointerAxisCoordinateObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * Axis value.
+ *
+ * @name Highcharts.PointerAxisCoordinateObject#value
+ * @type {number}
+ */
+
+/**
+ * Positions in terms of axis values.
+ *
+ * @interface Highcharts.PointerAxisCoordinatesObject
+ *//**
+ * Positions on the x-axis.
+ * @name Highcharts.PointerAxisCoordinatesObject#xAxis
+ * @type {Array<Highcharts.PointerAxisCoordinateObject>}
+ *//**
+ * Positions on the y-axis.
+ * @name Highcharts.PointerAxisCoordinatesObject#yAxis
+ * @type {Array<Highcharts.PointerAxisCoordinateObject>}
+ */
+
+/**
+ * Pointer coordinates.
+ *
+ * @interface Highcharts.PointerCoordinatesObject
+ *//**
+ * @name Highcharts.PointerCoordinatesObject#chartX
+ * @type {number}
+ *//**
+ * @name Highcharts.PointerCoordinatesObject#chartY
+ * @type {number}
+ */
+
+/**
+ * A native browser mouse or touch event, extended with position information
+ * relative to the {@link Chart.container}.
+ *
+ * @interface Highcharts.PointerEventObject
+ * @extends global.PointerEvent
+ *//**
+ * The X coordinate of the pointer interaction relative to the chart.
+ *
+ * @name Highcharts.PointerEventObject#chartX
+ * @type {number}
+ *//**
+ * The Y coordinate of the pointer interaction relative to the chart.
+ *
+ * @name Highcharts.PointerEventObject#chartY
+ * @type {number}
+ */
+
+/**
+ * Axis-specific data of a selection.
+ *
+ * @interface Highcharts.SelectDataObject
+ *//**
+ * @name Highcharts.SelectDataObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * @name Highcharts.SelectDataObject#max
+ * @type {number}
+ *//**
+ * @name Highcharts.SelectDataObject#min
+ * @type {number}
+ */
+
+/**
+ * Object for select events.
+ *
+ * @interface Highcharts.SelectEventObject
+ *//**
+ * @name Highcharts.SelectEventObject#originalEvent
+ * @type {global.Event}
+ *//**
+ * @name Highcharts.SelectEventObject#xAxis
+ * @type {Array<Highcharts.SelectDataObject>}
+ *//**
+ * @name Highcharts.SelectEventObject#yAxis
+ * @type {Array<Highcharts.SelectDataObject>}
+ */
+
+/**
+ * Chart position and scale.
+ *
+ * @interface Highcharts.ChartPositionObject
+ *//**
+ * @name Highcharts.ChartPositionObject#left
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#scaleX
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#scaleY
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#top
+ * @type {number}
+ */
+
+''; // keeps doclets above in JS file

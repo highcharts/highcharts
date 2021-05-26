@@ -604,7 +604,7 @@ addEvent(Pointer, 'beforeGetHoverData', function (
 });
 
 addEvent(Pointer, 'afterGetHoverData', function (
-    eventArgs: Highcharts.PointerEventArgsObject
+    eventArgs: Pointer.EventArgsObject
 ): void {
     const chart = this.chart;
     if (

@@ -72,16 +72,17 @@ function translateMSPointer(
     wktype: string,
     func: Function
 ): void {
-    let p;
+    const chart = charts[Pointer.hoverChartIndex || NaN];
 
     if (
         (
             e.pointerType === 'touch' ||
-            e.pointerType === (e as any).MSPOINTER_TYPE_TOUCH
-        ) && charts[H.hoverChartIndex as any]
+            e.pointerType === e.MSPOINTER_TYPE_TOUCH
+        ) && chart
     ) {
+        const p: AnyRecord = chart.pointer;
+
         func(e);
-        p = (charts[H.hoverChartIndex as any] as any).pointer;
         p[method]({
             type: wktype,
             target: e.currentTarget,
