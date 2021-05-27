@@ -300,7 +300,10 @@ class Time {
         }
 
         // UTC time with no timezone handling
-        if (this.useUTC) {
+        if (
+            this.useUTC ||
+            (H.isSafari && unit === 'FullYear') // leap calculation in UTC only
+        ) {
             return (date as any)['setUTC' + unit](value);
         }
 
@@ -397,7 +400,10 @@ class Time {
             // 2 am. We need to make the same time as local Date does.
             } else if (
                 offset - 36e5 === this.getTimezoneOffset(d - 36e5) &&
-                !H.isSafari
+                (
+                    !H.isSafari ||
+                    Intl.DateTimeFormat.prototype.formatRange // >= Safari 14.1
+                )
             ) {
                 d -= 36e5;
             }
