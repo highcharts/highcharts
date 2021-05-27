@@ -130,7 +130,8 @@ declare global {
             public alignGroup(): void;
             public createList(e?: any): void;
             public destroyGroup(this: Breadcrumbs): void;
-            public multipleDrillUp(numb: number): void;
+            public jumpBy(numb: number): void;
+            public jumpTo(): void;
             public redraw(): void;
             public render(): void;
             public renderButton(breadcrumb: Array<number|Point|SVGAElement>, posX: number, posY: number):
@@ -589,19 +590,38 @@ class Breadcrumbs {
     }
 
     /**
+     * Perform the drillUp action.
+     *
+     * @requires  modules/breadcrumbs
+     *
+     * @function Highcharts.Breadcrumbs#jumpTo
+     * @param {Highcharts.Breadcrumbs} this
+     *        Breadcrumbs class.
+     */
+    public jumpTo(this: Breadcrumbs): void {
+        const breadcrumbs = this,
+            chart = breadcrumbs.chart;
+
+        if (this.isTreemap) {
+            (chart.series[0] as TreemapSeries).drillUp();
+        } else {
+            chart.drillUp();
+        }
+    }
+
+    /**
      * Performs multiple drillups based on the provided number.
      *
      * @requires  modules/breadcrumbs
      *
-     * @function Highcharts.Breadcrumbs#multipleDrillUp
+     * @function Highcharts.Breadcrumbs#jumpBy
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      * @param {Highcharts.Breadcrumbs} drillAmount
      *        A number of drillups that needs to be performed.
      */
-    public multipleDrillUp(this: Breadcrumbs, drillAmount: number): void {
-        const chart = this.chart,
-            breadcrumbsList = this.breadcrumbsList,
+    public jumpBy(this: Breadcrumbs, drillAmount: number): void {
+        const breadcrumbsList = this.breadcrumbsList,
             drillNumber = defined(drillAmount) ?
                 breadcrumbsList[breadcrumbsList.length - 1][0] - drillAmount :
                 breadcrumbsList[breadcrumbsList.length - 1][0] + 1;
@@ -609,21 +629,12 @@ class Breadcrumbs {
         if (this.options.showFullPath) {
             if (breadcrumbsList && breadcrumbsList.length) {
                 for (let i = 0; i < drillNumber; i++) {
-
-                    if (this.isTreemap) {
-                        (chart.series[0] as TreemapSeries).drillUp();
-                    } else {
-                        chart.drillUp();
-                    }
+                    this.jumpTo();
                 }
             }
         } else {
             this.destroyGroup();
-            if (this.isTreemap) {
-                (chart.series[0] as TreemapSeries).drillUp();
-            } else {
-                chart.drillUp();
-            }
+            this.jumpTo();
         }
     }
 
@@ -818,11 +829,11 @@ class Breadcrumbs {
                         breadcrumbsList[breadcrumbsList.length - 1][1].name !== button.textStr &&
                         breadcrumbsOptions.showFullPath
                     ) {
-                        breadcrumbs.multipleDrillUp(breadcrumb[0] as number);
+                        breadcrumbs.jumpBy(breadcrumb[0] as number);
                     }
 
                     if (callDefaultEvent !== false && !breadcrumbsOptions.showFullPath) {
-                        breadcrumbs.multipleDrillUp(null as any);
+                        breadcrumbs.jumpBy(null as any);
                     }
                 })
                 .attr({

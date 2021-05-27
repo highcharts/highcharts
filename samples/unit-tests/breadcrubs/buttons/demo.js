@@ -113,13 +113,13 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
         'Lemon',
         'The last button should have text Lemon.'
     );
-    chart.breadcrumbs.multipleDrillUp(0);
+    chart.breadcrumbs.jumpBy(0);
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Fruits',
         'The last button should have text Fruits.'
     );
-    chart.breadcrumbs.multipleDrillUp(null);
+    chart.breadcrumbs.jumpBy(null);
     assert.notOk(
         buttons.length,
         'The breadcrumbsButtonGroup should be empty.'
