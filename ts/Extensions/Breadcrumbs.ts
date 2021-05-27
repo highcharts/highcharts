@@ -117,28 +117,27 @@ declare global {
             mainBreadcrumb?: string;
         }
         class Breadcrumbs {
-            public constructor(chart: Chart, userOptions: Highcharts.BreadcrumbsOptions, isTreemap: boolean);
+            public constructor(chart: Chart, userOptions: Highcharts.BreadcrumbsOptions, isTreemap?: boolean);
 
             public breadcrumbsGroup: SVGElement;
             public breadcrumbsList: Array<Array<number|null|Point|SeriesType|SVGAElement>>
             public chart: Chart;
             public isDirty: boolean;
-            public isTreemap: boolean;
+            public isTreemap?: boolean;
             public level: number;
             public options: BreadcrumbsOptions;
 
             public alignGroup(): void;
             public createList(e?: any): void;
             public destroyGroup(this: Breadcrumbs): void;
-            public draw(): void;
             public multipleDrillUp(numb: number): void;
-            public init(chart: Chart, userOptions: Highcharts.BreadcrumbsOptions, isTreemap: boolean): void;
             public redraw(): void;
-            public resetList(this: Breadcrumbs): void
+            public render(): void;
             public renderButton(breadcrumb: Array<number|Point|SVGAElement>, posX: number, posY: number):
             SVGElement|void;
             public renderSeparator(posX: number, posY: number): SVGElement|undefined;
-            public update(userOptions: Highcharts.BreadcrumbsOptions, redrawFlag: boolean): void;
+            public resetList(this: Breadcrumbs): void
+            public update(options: Highcharts.BreadcrumbsOptions, redraw: boolean): void;
             public updateSingleButton(this: Breadcrumbs): void;
             public setMargins(this: Breadcrumbs): void;
         }
@@ -298,7 +297,7 @@ class Breadcrumbs {
              */
             symbol: 'triangle-right',
             /**
-             * A size of the separator
+             * The size of the separator
              *
              * @type      {number}
              * @since     next
@@ -317,7 +316,7 @@ class Breadcrumbs {
         showFullPath: false,
 
         /**
-         * A CSS styles for all breadcrumbs.
+         * CSS styles for all breadcrumbs.
          *
          * In styled mode, the breadcrumbs buttons are styled by the
          * `.highcharts-range-selector-buttons .highcharts-button` rule with its
@@ -331,7 +330,7 @@ class Breadcrumbs {
         },
 
         /**
-         * A useHTML property.
+         * Whether to use HTML to render the breadcrumbs items texts.
          *
          * @type      {boolean}
          * @since     next
@@ -356,15 +355,11 @@ class Breadcrumbs {
     public breadcrumbsGroup: SVGElement = void 0 as any;
     public breadcrumbsList: Array<Array<any>> = [];
     public isDirty: boolean = true;
-    public isTreemap: boolean = void 0 as any;
+    public isTreemap?: boolean = void 0 as any;
     public level: number = -1;
     public options: Highcharts.BreadcrumbsOptions = void 0 as any;
 
     public constructor(chart: Chart, userOptions?: Highcharts.BreadcrumbsOptions, isTreemap?: boolean) {
-        this.init(chart, userOptions as Highcharts.BreadcrumbsOptions, isTreemap as boolean);
-    }
-
-    public init(chart: Chart, userOptions: Highcharts.BreadcrumbsOptions, isTreemap: boolean): void {
         const chartOptions = merge(Breadcrumbs.defaultBreadcrumbsOptions, userOptions);
 
         this.chart = chart;
@@ -390,13 +385,7 @@ class Breadcrumbs {
 
         if (positionOptions) {
             // Create a deep copy.
-            const calcPosition: Highcharts.BreadcrumbsAlignOptions = {
-                align: positionOptions.align,
-                alignByTranslate: positionOptions.alignByTranslate,
-                verticalAlign: positionOptions.verticalAlign,
-                x: positionOptions.x,
-                y: positionOptions.y
-            };
+            const calcPosition = merge(positionOptions);
 
             // Change the initial position based on other elements on the chart.
             if (positionOptions.verticalAlign === 'top') {
@@ -600,6 +589,107 @@ class Breadcrumbs {
     }
 
     /**
+     * Performs multiple drillups based on the provided number.
+     *
+     * @requires  modules/breadcrumbs
+     *
+     * @function Highcharts.Breadcrumbs#multipleDrillUp
+     * @param {Highcharts.Breadcrumbs} this
+     *        Breadcrumbs class.
+     * @param {Highcharts.Breadcrumbs} drillAmount
+     *        A number of drillups that needs to be performed.
+     */
+    public multipleDrillUp(this: Breadcrumbs, drillAmount: number): void {
+        const chart = this.chart,
+            breadcrumbsList = this.breadcrumbsList,
+            drillNumber = defined(drillAmount) ?
+                breadcrumbsList[breadcrumbsList.length - 1][0] - drillAmount :
+                breadcrumbsList[breadcrumbsList.length - 1][0] + 1;
+
+        if (this.options.showFullPath) {
+            if (breadcrumbsList && breadcrumbsList.length) {
+                for (let i = 0; i < drillNumber; i++) {
+
+                    if (this.isTreemap) {
+                        (chart.series[0] as TreemapSeries).drillUp();
+                    } else {
+                        chart.drillUp();
+                    }
+                }
+            }
+        } else {
+            this.destroyGroup();
+            if (this.isTreemap) {
+                (chart.series[0] as TreemapSeries).drillUp();
+            } else {
+                chart.drillUp();
+            }
+        }
+    }
+
+    /**
+    * Redraw.
+    *
+    * @requires  modules/breadcrums
+    *
+    * @function Highcharts.Breadcrumbs#redraw
+    * @param {Highcharts.Breadcrumbs} this
+    *        Breadcrumbs class.
+    */
+    public redraw(this: Breadcrumbs): void {
+        const breadcrumbsGroup = this.breadcrumbsGroup;
+
+        this.calculateLevel();
+
+        if (this.isDirty) {
+            this.createList();
+            this.render();
+        }
+
+        if (breadcrumbsGroup && this.breadcrumbsList.length) {
+            this.alignGroup();
+        }
+
+        this.isDirty = false;
+    }
+
+    /**
+    * Reset list after the drillUp.
+    *
+    * @requires  modules/breadcrums
+    *
+    * @function Highcharts.Breadcrumbs#redraw
+    * @param {Highcharts.Breadcrumbs} this
+    *        Breadcrumbs class.
+    */
+    public resetList(this: Breadcrumbs): void {
+        const breadcrumbsList = this.breadcrumbsList;
+
+        if (this.level === 0) {
+            this.destroyGroup();
+        } else {
+            if (this.options.showFullPath) {
+                const el = breadcrumbsList[breadcrumbsList.length - 1],
+                    button = el && el[2],
+                    conector = el && el[3],
+                    prevConector = breadcrumbsList[breadcrumbsList.length - 2] &&
+                        breadcrumbsList[breadcrumbsList.length - 2][3];
+
+                // Remove connector from the previous button.
+                prevConector && prevConector.destroy();
+                breadcrumbsList[breadcrumbsList.length - 2].length = 3;
+
+                // Remove SVG elements fromt the DOM.
+                button && button.destroy();
+                conector && conector.destroy();
+            } else {
+                this.updateSingleButton();
+            }
+            breadcrumbsList.pop();
+        }
+    }
+
+    /**
      * Create a group, then draw breadcrumbs together with the separators.
      *
      * @requires  modules/breadcrumbs
@@ -608,7 +698,7 @@ class Breadcrumbs {
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public draw(this: Breadcrumbs): void {
+    public render(this: Breadcrumbs): void {
         const breadcrumbs = this,
             chart = breadcrumbs.chart,
             breadcrumbsList = breadcrumbs.breadcrumbsList,
@@ -684,108 +774,7 @@ class Breadcrumbs {
     }
 
     /**
-     * Performs multiple drillups based on the provided number.
-     *
-     * @requires  modules/breadcrumbs
-     *
-     * @function Highcharts.Breadcrumbs#multipleDrillUp
-     * @param {Highcharts.Breadcrumbs} this
-     *        Breadcrumbs class.
-     * @param {Highcharts.Breadcrumbs} drillAmount
-     *        A number of drillups that needs to be performed.
-     */
-    public multipleDrillUp(this: Breadcrumbs, drillAmount: number): void {
-        const chart = this.chart,
-            breadcrumbsList = this.breadcrumbsList,
-            drillNumber = defined(drillAmount) ?
-                breadcrumbsList[breadcrumbsList.length - 1][0] - drillAmount :
-                breadcrumbsList[breadcrumbsList.length - 1][0] + 1;
-
-        if (this.options.showFullPath) {
-            if (breadcrumbsList && breadcrumbsList.length) {
-                for (let i = 0; i < drillNumber; i++) {
-
-                    if (this.isTreemap) {
-                        (chart.series[0] as TreemapSeries).drillUp();
-                    } else {
-                        chart.drillUp();
-                    }
-                }
-            }
-        } else {
-            this.destroyGroup();
-            if (this.isTreemap) {
-                (chart.series[0] as TreemapSeries).drillUp();
-            } else {
-                chart.drillUp();
-            }
-        }
-    }
-
-    /**
-    * Redraw.
-    *
-    * @requires  modules/breadcrums
-    *
-    * @function Highcharts.Breadcrumbs#redraw
-    * @param {Highcharts.Breadcrumbs} this
-    *        Breadcrumbs class.
-    */
-    public redraw(this: Breadcrumbs): void {
-        const breadcrumbsGroup = this.breadcrumbsGroup;
-
-        this.calculateLevel();
-
-        if (this.isDirty) {
-            this.createList();
-            this.draw();
-        }
-
-        if (breadcrumbsGroup && this.breadcrumbsList.length) {
-            this.alignGroup();
-        }
-
-        this.isDirty = false;
-    }
-
-    /**
-    * Reset list after the drillUp.
-    *
-    * @requires  modules/breadcrums
-    *
-    * @function Highcharts.Breadcrumbs#redraw
-    * @param {Highcharts.Breadcrumbs} this
-    *        Breadcrumbs class.
-    */
-    public resetList(this: Breadcrumbs): void {
-        const breadcrumbsList = this.breadcrumbsList;
-
-        if (this.level === 0) {
-            this.destroyGroup();
-        } else {
-            if (this.options.showFullPath) {
-                const el = breadcrumbsList[breadcrumbsList.length - 1],
-                    button = el && el[2],
-                    conector = el && el[3],
-                    prevConector = breadcrumbsList[breadcrumbsList.length - 2] &&
-                        breadcrumbsList[breadcrumbsList.length - 2][3];
-
-                // Remove connector from the previous button.
-                prevConector && prevConector.destroy();
-                breadcrumbsList[breadcrumbsList.length - 2].length = 3;
-
-                // Remove SVG elements fromt the DOM.
-                button && button.destroy();
-                conector && conector.destroy();
-            } else {
-                this.updateSingleButton();
-            }
-            breadcrumbsList.pop();
-        }
-    }
-
-    /**
-    * Render the button.
+    * Render a button.
     *
     * @requires  modules/breadcrums
     *
@@ -850,7 +839,7 @@ class Breadcrumbs {
     }
 
     /**
-    * Render the separator.
+    * Render a separator.
     *
     * @requires  modules/breadcrums
     *
@@ -906,15 +895,15 @@ class Breadcrumbs {
     *
     * @param {Highcharts.Breadcrumbs} this
     *        Breadcrumbs class.
-    * @param {Highcharts.BreadcrumbsOptions} userOptions
+    * @param {Highcharts.BreadcrumbsOptions} options
     *        Breadcrumbs class.
-    * @param {boolean} redrawFlag
+    * @param {boolean} redraw
     *        Redraw flag
     */
-    public update(this: Breadcrumbs, userOptions: Highcharts.BreadcrumbsOptions, redrawFlag: boolean = true): void {
-        merge(true, this.options, userOptions);
+    public update(this: Breadcrumbs, options: Highcharts.BreadcrumbsOptions, redraw: boolean = true): void {
+        merge(true, this.options, options);
 
-        if (redrawFlag) {
+        if (redraw) {
             this.destroyGroup();
             this.redraw();
         }
@@ -1038,7 +1027,7 @@ if (!H.Breadcrumbs) {
                         // Create a list using the event after drilldown.
                         if ((e as any).trigger === 'click' || !(e as any).trigger) {
                             chart.breadcrumbs.createList(e);
-                            chart.breadcrumbs.draw();
+                            chart.breadcrumbs.render();
                         }
 
                         if ((e as any).trigger === 'traverseUpButton') {
