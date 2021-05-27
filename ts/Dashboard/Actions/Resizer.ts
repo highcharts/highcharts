@@ -17,7 +17,8 @@ const {
     css,
     createElement,
     fireEvent,
-    removeEvent
+    removeEvent,
+    pick
 } = U;
 
 import H from '../../Core/Globals.js';
@@ -161,13 +162,15 @@ class Resizer {
                         
                         // convert current width to percent
                         // fix bug when we resize the last cell in a row
+                        // debugger;
+                        
                         cellContainer.style.width = (
                             (
                                 (cellContainer.offsetWidth) /
                                 ((cells[j].row.container as HTMLElement).offsetWidth || 1)
                             ) * 100
                         ) + '%';               
-                        cellContainer.style.flex = 'auto';
+                        cellContainer.style.flex = 'none';
                     }
                 }
             }
@@ -182,9 +185,6 @@ class Resizer {
      *
      */
     public addSnaps(
-        // cell: Resizer.ResizedCell,
-        // minWidth: number,
-        // minHeight: number
         options: Resizer.Options
     ): void {
         const minWidth = options.styles.minWidth;
@@ -271,21 +271,21 @@ class Resizer {
         const top = cellOffsets.top || 0;
         const width = (cellContainer && cellContainer.offsetWidth) || 0;
         const height = (cellContainer && cellContainer.offsetHeight) || 0;
-        const snapXwidth = (this.options.snap.width || 0);
-        const snapYheight = (this.options.snap.height || 0);
+        const snapWidth = (this.options.snap.width || 0);
+        const snapHeight = (this.options.snap.height || 0);
 
         if (this.snapXL) {
             this.snapXL.style.left = left + 'px';
             this.snapXL.style.top = top + (
                 height / 2
-            ) - (snapYheight / 2) + 'px';
+            ) - (snapHeight / 2) + 'px';
         }
 
         if (this.snapXR) {
-            this.snapXR.style.left = (left + width - snapXwidth) + 'px';
+            this.snapXR.style.left = (left + width - snapWidth) + 'px';
             this.snapXR.style.top = top + (
                 height / 2
-            ) - (snapYheight / 2) + 'px';
+            ) - (snapHeight / 2) + 'px';
         }
 
         if (this.snapYT) {
@@ -293,16 +293,16 @@ class Resizer {
             this.snapYT.style.left = (
                 left + (
                     width / 2
-                ) - (snapXwidth / 2)
+                ) - (snapWidth / 2)
             ) + 'px';
         }
 
         if (this.snapYB) {
-            this.snapYB.style.top = (top + height - snapYheight) + 'px';
+            this.snapYB.style.top = (top + height - snapHeight) + 'px';
             this.snapYB.style.left = (
                 left + (
                     width / 2
-                ) - (snapXwidth / 2)
+                ) - (snapWidth / 2)
             ) + 'px';
         }
     }
@@ -421,7 +421,9 @@ class Resizer {
                     (
                         Math.min(
                             // diff
-                            e.clientX - cellContainer.getBoundingClientRect().left,
+                            e.clientX +
+                            this.editMode.dashboard.container.getBoundingClientRect().left -
+                            cellContainer.getBoundingClientRect().left,
                             // maxSize
                             maxWidth
                         ) / parentRowWidth
@@ -431,14 +433,13 @@ class Resizer {
 
                 // resize snaps
                 if (this.snapXR) {
+
+                    // TODO -> margins / paddings
                     const minWidth = (cellContainer.offsetLeft || 0) +
-                        (this.options.styles.minWidth || 0) -
-                        (this.options.snap.width || 0);
+                        (this.options.styles.minWidth || 0);
 
                     const currentWidth = (
-                        e.clientX -
-                        (this.options.snap.width || 0) -
-                        (cellContainer?.getBoundingClientRect().left || 0)
+                        e.clientX - (this.options.snap.width || 0)
                     );
                     
                     this.snapXR.style.left = Math.min(
@@ -446,6 +447,10 @@ class Resizer {
                         maxWidth - (this.options.snap.width || 0)
                     ) + 'px';
                 }
+                
+                this.resizeCellSiblings(
+                    0.05
+                );
             }
 
             // resize height
@@ -524,39 +529,40 @@ class Resizer {
                         );
                     }
                 } else {
-                    // const cellWidth = rowCellContainer.style.getPropertyValue('width');
-
-                    // const cellStylesWidth = (/px$/).test(cellWidth) ?
-                    //     // value in px
-                    //     parseFloat(cellWidth) :
-                    //     // convert % to px
-                    //     (
-                    //         parseFloat(
-                    //             cellWidth
-                    //         ) / 100
-                    //     ) * (parentRowWidth || 1);
-
-                    // add borders width
-                    // sum += (
-                    //     ((rowCell.styles || {}).borderLeft || 0) +
-                    //     ((rowCell.styles || {}).borderRight || 0)
-                    // );
-
                     // add min-size if "resized" width does not exist or is
                     // bigger then width
-                    const minWidth = (this.options.styles || {}).minWidth || 0;
-
-                    // sum += (
-                    //     cellStylesWidth && cellStylesWidth > minWidth ?
-                    //         cellStylesWidth : minWidth
-                    // );
-
-                    sum += minWidth;
+                    sum += (this.options.styles || {}).minWidth || 0;
                 }
             }
         }
 
         return sum;
+    }
+
+    public resizeCellSiblings(
+        diffWidth: number
+    ): void {
+        const currentCell = this.currentCell;
+        
+        var cellSiblings = [];
+        let node = currentCell?.container;
+        
+        // detect siblings
+        while ( node ) {
+            if (node !== currentCell?.container && node.nodeType === Node.ELEMENT_NODE ) {
+                cellSiblings.push(node);
+            }
+            node = (node.nextElementSibling || node.nextSibling) as HTMLDOMElement;
+        }
+
+        const cellDiff = diffWidth / cellSiblings.length;
+
+        for(let i = 0, iEnd = cellSiblings.length; i < iEnd; ++i) {
+            cellSiblings[i].style.width =
+                parseFloat(cellSiblings[i].style.getPropertyValue('width'))
+                + (cellDiff < 0 ? cellDiff : -cellDiff) // size+, size-
+                + '%'; 
+        }
     }
     /**
      * Destroy resizer
