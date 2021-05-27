@@ -527,7 +527,7 @@ class Axis {
             void 0;
 
         // Register event listeners
-        registerEventOptions(axis);
+        registerEventOptions(axis, axis.options);
 
         fireEvent(this, 'afterInit');
     }

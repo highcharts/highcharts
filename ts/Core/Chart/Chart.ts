@@ -29,6 +29,7 @@ import type {
     CSSObject,
     CursorValue
 } from '../Renderer/CSSObject';
+import type { EventCallback } from '../Callback';
 import type {
     LabelsItemsOptions,
     NumberFormatterCallbackFunction,
@@ -58,8 +59,12 @@ const {
     setAnimation
 } = A;
 import Axis from '../Axis/Axis.js';
-import F from '../FormatUtilities.js';
-const { numberFormat } = F;
+import FormatUtilities from '../FormatUtilities.js';
+const { numberFormat } = FormatUtilities;
+import Foundation from '../Foundation.js';
+const {
+    registerEventOptions
+} = Foundation;
 import H from '../Globals.js';
 const {
     charts,
@@ -313,6 +318,7 @@ class Chart {
     public containerWidth?: string;
     public credits?: SVGElement;
     public caption?: SVGElement;
+    public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
     public hasRendered?: boolean;
@@ -461,8 +467,6 @@ class Chart {
              */
             this.userOptions = userOptions;
 
-            const chartEvents = optionsChart.events;
-
             this.margin = [];
             this.spacing = [];
 
@@ -555,13 +559,7 @@ class Chart {
             H.chartCount++;
 
             // Chart event handlers
-            if (chartEvents) {
-                objectEach(chartEvents, function (event, eventType): void {
-                    if (isFunction(event)) {
-                        addEvent(chart, eventType, event);
-                    }
-                });
-            }
+            registerEventOptions(this, optionsChart);
 
             /**
              * A collection of the X axes in the chart.
@@ -3209,6 +3207,11 @@ class Chart {
 
             if ('alignTicks' in optionsChart) { // #6452
                 updateAllAxes = true;
+            }
+
+            if ('events' in optionsChart) {
+                // Chart event handlers
+                registerEventOptions(this, optionsChart);
             }
 
             objectEach(optionsChart, function (val: any, key: string): void {
