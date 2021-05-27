@@ -421,29 +421,25 @@ class Resizer {
                     (
                         Math.min(
                             // diff
-                            e.clientX - this.editMode.dashboard.container.getBoundingClientRect().left,
+                            e.clientX +
+                            this.editMode.dashboard.container.getBoundingClientRect().left -
+                            cellContainer.getBoundingClientRect().left,
                             // maxSize
                             maxWidth
                         ) / parentRowWidth
                     ) * 100 + '%';
 
-                // console.log(
-                //     'zmiana',
-                //     (Math.max(e.offsetX, 0) / parentRowWidth) * 100 + '%'
-                // );
-
                 cellContainer.style.flex = 'none';
 
                 // resize snaps
                 if (this.snapXR) {
+
+                    // TODO -> margins / paddings
                     const minWidth = (cellContainer.offsetLeft || 0) +
-                        (this.options.styles.minWidth || 0) -
-                        (this.options.snap.width || 0);
+                        (this.options.styles.minWidth || 0);
 
                     const currentWidth = (
-                        e.clientX -
-                        // (this.options.snap.width || 0) -
-                        (cellContainer?.getBoundingClientRect().left || 0)
+                        e.clientX - (this.options.snap.width || 0)
                     );
                     
                     this.snapXR.style.left = Math.min(
@@ -453,15 +449,15 @@ class Resizer {
                 }
 
                 // resize other columns
-                console.log(
-                    ((e.offsetX - (cellContainer.getBoundingClientRect().left || 0)) / parentRowWidth) * 100,
-                    'offset',
-                    e.offsetX,
-                    e.clientX - (cellContainer.getBoundingClientRect().left || 0) - cellContainer.offsetWidth,
-                    e.clientX - (currentCell.row.layout.container?.getBoundingClientRect().left || 0),
-                    e.clientX - (currentCell.row.layout.dashboard.container?.getBoundingClientRect().left || 0),
-                    parentRowWidth
-                )
+                // console.log(
+                //     ((e.offsetX - (cellContainer.getBoundingClientRect().left || 0)) / parentRowWidth) * 100,
+                //     'offset',
+                //     e.offsetX,
+                //     e.clientX - (cellContainer.getBoundingClientRect().left || 0) - cellContainer.offsetWidth,
+                //     e.clientX - (currentCell.row.layout.container?.getBoundingClientRect().left || 0),
+                //     e.clientX - (currentCell.row.layout.dashboard.container?.getBoundingClientRect().left || 0),
+                //     parentRowWidth
+                // )
 
                 this.resizeCellSiblings(
                     // (e.offsetX / parentRowWidth) * 100 // percent
@@ -570,7 +566,7 @@ class Resizer {
             }
             node = (node.nextElementSibling || node.nextSibling) as HTMLDOMElement;
         }
-        
+
         const cellDiff = diffWidth / cellSiblings.length;
 
         for(let i = 0, iEnd = cellSiblings.length; i < iEnd; ++i) {
