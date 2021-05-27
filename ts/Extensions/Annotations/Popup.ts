@@ -198,7 +198,24 @@ H.Popup.prototype = {
         // create popup div
         this.container = createElement(DIV, {
             className: PREFIX + 'popup highcharts-no-tooltip'
-        }, null as any, parentDiv);
+        }, void 0, parentDiv);
+
+        addEvent(this.container, 'mousedown', (): void => {
+            const activeAnnotation = chart &&
+                chart.navigationBindings &&
+                chart.navigationBindings.activeAnnotation;
+
+            if (activeAnnotation) {
+                activeAnnotation.cancelClick = true;
+
+                const unbind = addEvent(H.doc, 'mouseup', (): void => {
+                    setTimeout((): void => {
+                        activeAnnotation.cancelClick = false;
+                    }, 0);
+                    unbind();
+                });
+            }
+        });
 
         this.lang = this.getLangpack();
         this.iconsURL = iconsURL;
@@ -310,7 +327,7 @@ H.Popup.prototype = {
         }
 
         // add input
-        const input = createElement(
+        createElement(
             INPUT,
             {
                 name: inputName,
@@ -320,25 +337,7 @@ H.Popup.prototype = {
             },
             void 0,
             parentDiv
-        );
-        input.setAttribute(PREFIX + 'data-name', option);
-
-        addEvent(input, 'mousedown', (): void => {
-            const activeAnnotation = this.chart &&
-                this.chart.navigationBindings &&
-                this.chart.navigationBindings.activeAnnotation;
-
-            if (activeAnnotation) {
-                activeAnnotation.cancelClick = true;
-
-                const unbind = addEvent(H.doc, 'mouseup', (): void => {
-                    setTimeout((): void => {
-                        activeAnnotation.cancelClick = false;
-                    }, 0);
-                    unbind();
-                });
-            }
-        });
+        ).setAttribute(PREFIX + 'data-name', option);
     },
     /**
      * Create button.
