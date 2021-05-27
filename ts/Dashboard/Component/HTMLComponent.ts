@@ -1,13 +1,17 @@
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
 const {
-    createElement,
     merge
 } = U;
 import AST from '../../Core/Renderer/HTML/AST.js';
 import DataJSON from '../../Data/DataJSON.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 
+// TODO: This may affect the AST parsing in Highcharts
+// should look into adding these as options if possible
+AST.allowedTags = [...AST.allowedTags, 'option', 'select', 'label', 'input'];
+AST.allowedAttributes = [...AST.allowedAttributes, 'for', 'value', 'checked', 'src'];
+AST.allowedReferences = [...AST.allowedReferences, 'data:image/'];
 class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
     /* *
@@ -115,10 +119,6 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         this.constructTree();
 
 
-        this.innerElements.forEach((element): void => {
-            this.contentElement.appendChild(element);
-        });
-
         this.parentElement.appendChild(this.element);
         if (this.scaleElements) {
             this.autoScale();
@@ -132,22 +132,28 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     public autoScale(): void {
         this.element.style.display = 'flex';
         this.element.style.flexDirection = 'column';
-
-        this.innerElements.forEach((element): void => {
-            element.style.width = 'auto';
-            element.style.maxWidth = '100%';
-            element.style.maxHeight = '100%';
-            element.style.flexBasis = 'auto'; // (100 / this.innerElements.length) + '%';
-            element.style.overflow = 'auto';
+        this.contentElement.childNodes.forEach((element): void => {
+            if (element && element instanceof HTMLElement) {
+                element.style.width = 'auto';
+                element.style.maxWidth = '100%';
+                element.style.maxHeight = '100%';
+                element.style.flexBasis = 'auto'; // (100 / this.innerElements.length) + '%';
+                element.style.overflow = 'auto';
+            }
         });
-        this.scaleText();
+
+        if (this.options.scaleElements) {
+            this.scaleText();
+        }
     }
 
     // WIP basic font size scaling
     // Should also take height into account
     public scaleText(): void {
-        this.innerElements.forEach((element): void => {
-            element.style.fontSize = Math.max(Math.min(element.clientWidth / (1 * 10), 200), 20) + 'px';
+        this.contentElement.childNodes.forEach((element): void => {
+            if (element instanceof HTMLElement) {
+                element.style.fontSize = Math.max(Math.min(element.clientWidth / (1 * 10), 200), 20) + 'px';
+            }
         });
     }
 
@@ -159,17 +165,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
     public redraw(): this {
         super.redraw();
-        this.innerElements = [];
         this.constructTree();
-
-        for (let i = 0; i < this.element.childNodes.length; i++) {
-            const childnode = this.element.childNodes[i];
-            if (this.innerElements[i]) {
-                this.element.replaceChild(this.innerElements[i], childnode);
-            } else {
-                this.element.removeChild(childnode);
-            }
-        }
 
         this.render();
         this.emit({ type: 'afterRedraw', component: this });
@@ -196,21 +192,8 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     // Could probably use the serialize function moved on
     // the exportdata branch
     private constructTree(): void {
-        this.elements.forEach((el): void => {
-            const { attributes } = el;
-
-            const createdElement = createElement(
-                el.tagName || 'div',
-                attributes,
-                attributes && typeof attributes.style !== 'string' ?
-                    attributes.style :
-                    void 0
-            );
-            if (el.textContent) {
-                AST.setElementHTML(createdElement, el.textContent);
-            }
-            this.innerElements.push(createdElement);
-        });
+        const parser = new AST(this.elements);
+        parser.addToDOM(this.contentElement);
     }
 
     public toJSON(): HTMLComponent.ClassJSON {
