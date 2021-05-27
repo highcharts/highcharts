@@ -447,20 +447,8 @@ class Resizer {
                         maxWidth - (this.options.snap.width || 0)
                     ) + 'px';
                 }
-
-                // resize other columns
-                // console.log(
-                //     ((e.offsetX - (cellContainer.getBoundingClientRect().left || 0)) / parentRowWidth) * 100,
-                //     'offset',
-                //     e.offsetX,
-                //     e.clientX - (cellContainer.getBoundingClientRect().left || 0) - cellContainer.offsetWidth,
-                //     e.clientX - (currentCell.row.layout.container?.getBoundingClientRect().left || 0),
-                //     e.clientX - (currentCell.row.layout.dashboard.container?.getBoundingClientRect().left || 0),
-                //     parentRowWidth
-                // )
-
+                
                 this.resizeCellSiblings(
-                    // (e.offsetX / parentRowWidth) * 100 // percent
                     0.05
                 );
             }
