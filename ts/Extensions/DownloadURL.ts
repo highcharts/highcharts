@@ -103,8 +103,14 @@ const downloadURL = Highcharts.downloadURL = function (
 
     // Some browsers have limitations for data URL lengths. Try to convert to
     // Blob or fall back. Edge always needs that blob.
-    const isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent);
-    if (isSafari || isEdgeBrowser || dataURL.length > 2000000) {
+    const isOldEdgeBrowser = /Edge\/\d+/.test(nav.userAgent);
+    // Safari on iOS needs Blob in order to download PDF
+    const safariBlob = (
+        isSafari &&
+        typeof dataURL === 'string' &&
+        dataURL.indexOf('data:application/pdf') === 0
+    );
+    if (safariBlob || isOldEdgeBrowser || dataURL.length > 2000000) {
         dataURL = dataURLtoBlob(dataURL) || '';
         if (!dataURL) {
             throw new Error('Failed to convert to blob');

@@ -1,6 +1,6 @@
 var nav = Highcharts.win.navigator,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
-    isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent),
+    isOldEdgeBrowser = /Edge\/\d+/.test(nav.userAgent),
     containerEl = document.getElementById('container'),
     parentEl = containerEl.parentNode;
 
@@ -12,7 +12,7 @@ function addText(text) {
 
 function fallbackHandler(options) {
     if (isMSBrowser &&
-        !(options.type === 'image/svg+xml' && isEdgeBrowser) ||
+        !(options.type === 'image/svg+xml' && isOldEdgeBrowser) ||
         options.type === 'application/pdf') {
         addText(options.type + ' fell back on purpose');
     } else {
