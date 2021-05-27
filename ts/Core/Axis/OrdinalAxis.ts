@@ -32,7 +32,6 @@ const {
     css,
     defined,
     error,
-    findIndexOf,
     pick,
     timeUnits
 } = U;
@@ -363,6 +362,47 @@ namespace OrdinalAxis {
         }
 
         /**
+         * Faster way of using the Array.indexOf method.
+         * Works for sorted arrays only with unique values.
+         *
+         * @param {Array} sortedArray
+         *        The sorted array inside which we are looking for.
+         * @param {number} key
+         *        The key to being found.
+         * @param {boolean} indirectSearch
+         *        In case of lack of the point in the array, should return
+         *        value be equal to -1 or the closest bigger index.
+         *  @private
+         */
+        public findIndexOf(
+            sortedArray: Array<number>,
+            key: number,
+            indirectSearch?: boolean
+        ): number {
+            let start = 0,
+                end = sortedArray.length - 1,
+                middle;
+
+            while (start <= end) {
+                middle = Math.floor((start + end) / 2);
+
+                // Key found as the middle element.
+                if (sortedArray[middle] === key) {
+                    return middle;
+                }
+                if (sortedArray[middle] < key) {
+                    // Continue searching to the right.
+                    start = middle + 1;
+                } else {
+                    // Continue searching to the left.
+                    end = middle - 1;
+                }
+            }
+            // Key could not be found.
+            return !indirectSearch ? -1 : (middle as number);
+        }
+
+        /**
          * Get the ordinal positions for the entire data set. This is necessary
          * in chart panning because we need to find out what points or data
          * groups are available outside the visible range. When a panning
@@ -569,7 +609,7 @@ namespace OrdinalAxis {
                 (ordinal.slope || axis.closestPointRange || ordinal.overscrollPointsRange as number),
                 shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
 
-            return findIndexOf(ordinalArray, firstPointVal) + shiftIndex;
+            return this.findIndexOf(ordinalArray, firstPointVal) + shiftIndex;
         }
 
         /**

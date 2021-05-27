@@ -259,6 +259,23 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
     );
 });
 
+QUnit.test('findIndexOf', assert => {
+    const findIndexOf =
+        // eslint-disable-next-line no-underscore-dangle
+        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.findIndexOf;
+    const array = [0, 1, 3, 5, 10, 12, 13, 15];
+    assert.equal(findIndexOf(array, 3), 2);
+    assert.equal(findIndexOf(array, 0), 0);
+    assert.equal(findIndexOf(array, 14), -1);
+    assert.equal(findIndexOf(array, 18), -1);
+    assert.equal(findIndexOf(array, 3, true), 2);
+    assert.equal(findIndexOf(array, 0, true), 0);
+    assert.equal(findIndexOf(array, -10, true), 0);
+    assert.equal(findIndexOf(array, 2, true), 2);
+    assert.equal(findIndexOf(array, 11, true), 4);
+    assert.equal(findIndexOf(array, 18, true), 7);
+});
+
 
 QUnit.test('lin2val- unit test for values outside the plotArea.', function (assert) {
     const axis = {
@@ -292,6 +309,9 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     axis.ordinal.getIndexOfPoint =
         // eslint-disable-next-line no-underscore-dangle
         Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.getIndexOfPoint;
+    axis.ordinal.findIndexOf =
+        // eslint-disable-next-line no-underscore-dangle
+        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.findIndexOf;
     function lin2val(val) {
         return Highcharts.Axis.prototype.lin2val.call(axis, val);
     }

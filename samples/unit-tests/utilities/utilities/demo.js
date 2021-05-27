@@ -1070,18 +1070,4 @@
             Object.keys({ foo: 'bar' })
         );
     });
-
-    QUnit.test('findIndexOf', assert => {
-        const array = [0, 1, 3, 5, 10, 12, 13, 15];
-        assert.equal(Highcharts.findIndexOf(array, 3), 2);
-        assert.equal(Highcharts.findIndexOf(array, 0), 0);
-        assert.equal(Highcharts.findIndexOf(array, 14), -1);
-        assert.equal(Highcharts.findIndexOf(array, 18), -1);
-        assert.equal(Highcharts.findIndexOf(array, 3, true), 2);
-        assert.equal(Highcharts.findIndexOf(array, 0, true), 0);
-        assert.equal(Highcharts.findIndexOf(array, -10, true), 0);
-        assert.equal(Highcharts.findIndexOf(array, 2, true), 2);
-        assert.equal(Highcharts.findIndexOf(array, 11, true), 4);
-        assert.equal(Highcharts.findIndexOf(array, 18, true), 7);
-    });
 }());

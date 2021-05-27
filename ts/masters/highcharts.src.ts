@@ -96,7 +96,6 @@ G.error = Utilities.error;
 G.extend = Utilities.extend;
 G.extendClass = Utilities.extendClass;
 G.find = Utilities.find;
-G.findIndexOf = Utilities.findIndexOf;
 G.fireEvent = Utilities.fireEvent;
 G.getMagnitude = Utilities.getMagnitude;
 G.getStyle = Utilities.getStyle;
