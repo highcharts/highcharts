@@ -1621,8 +1621,9 @@ class Toolbar {
             this.chart.navigationBindings.update();
         }
 
+        this.chart.isDirtyBox = true;
+
         if (pick(redraw, true)) {
-            this.chart.isDirtyBox = true;
             this.chart.redraw();
         }
     }
