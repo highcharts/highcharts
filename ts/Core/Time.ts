@@ -52,72 +52,22 @@ declare module './Axis/TickPositionsArray'{
     }
 }
 
-/**
- * Normalized interval.
+/* *
  *
- * @interface Highcharts.TimeNormalizedObject
- *//**
- * The count.
+ *  Constants
  *
- * @name Highcharts.TimeNormalizedObject#count
- * @type {number}
- *//**
- * The interval in axis values (ms).
- *
- * @name Highcharts.TimeNormalizedObject#unitRange
- * @type {number}
- */
+ * */
 
-/**
- * Function of an additional date format specifier.
- *
- * @callback Highcharts.TimeFormatCallbackFunction
- *
- * @param {number} timestamp
- *        The time to format.
- *
- * @return {string}
- *         The formatted portion of the date.
- */
+const hasNewSafariBug = (H.isSafari && Intl.DateTimeFormat.prototype.formatRange);
 
-/**
- * Time ticks.
- *
- * @interface Highcharts.AxisTickPositionsArray
- * @extends global.Array<number>
- *//**
- * @name Highcharts.AxisTickPositionsArray#info
- * @type {Highcharts.TimeTicksInfoObject|undefined}
- */
+// To do: Remove this when we no longer need support for Safari < v14.1
+const hasOldSafariBug = (H.isSafari && !Intl.DateTimeFormat.prototype.formatRange);
 
-/**
- * A callback to return the time zone offset for a given datetime. It
- * takes the timestamp in terms of milliseconds since January 1 1970,
- * and returns the timezone offset in minutes. This provides a hook
- * for drawing time based charts in specific time zones using their
- * local DST crossover dates, with the help of external libraries.
+/* *
  *
- * @callback Highcharts.TimezoneOffsetCallbackFunction
+ *  Class
  *
- * @param {number} timestamp
- * Timestamp in terms of milliseconds since January 1 1970.
- *
- * @return {number}
- * Timezone offset in minutes.
- */
-
-/**
- * Allows to manually load the `moment.js` library from Highcharts options
- * instead of the `window`.
- * In case of loading the library from a `script` tag,
- * this option is not needed, it will be loaded from there by default.
- *
- * @type {function}
- * @since 8.2.0
- * @apioption time.moment
- */
-
-''; // detach doclets above
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -302,7 +252,7 @@ class Time {
         // UTC time with no timezone handling
         if (
             this.useUTC ||
-            (H.isSafari && unit === 'FullYear') // leap calculation in UTC only
+            (hasNewSafariBug && unit === 'FullYear') // leap calculation in UTC only
         ) {
             return (date as any)['setUTC' + unit](value);
         }
@@ -400,10 +350,7 @@ class Time {
             // 2 am. We need to make the same time as local Date does.
             } else if (
                 offset - 36e5 === this.getTimezoneOffset(d - 36e5) &&
-                (
-                    !H.isSafari ||
-                    Intl.DateTimeFormat.prototype.formatRange // >= Safari 14.1
-                )
+                !hasOldSafariBug
             ) {
                 d -= 36e5;
             }
@@ -929,3 +876,70 @@ namespace Time {
 }
 
 export default Time;
+
+/**
+ * Normalized interval.
+ *
+ * @interface Highcharts.TimeNormalizedObject
+ *//**
+ * The count.
+ *
+ * @name Highcharts.TimeNormalizedObject#count
+ * @type {number}
+ *//**
+ * The interval in axis values (ms).
+ *
+ * @name Highcharts.TimeNormalizedObject#unitRange
+ * @type {number}
+ */
+
+/**
+ * Function of an additional date format specifier.
+ *
+ * @callback Highcharts.TimeFormatCallbackFunction
+ *
+ * @param {number} timestamp
+ *        The time to format.
+ *
+ * @return {string}
+ *         The formatted portion of the date.
+ */
+
+/**
+ * Time ticks.
+ *
+ * @interface Highcharts.AxisTickPositionsArray
+ * @extends global.Array<number>
+ *//**
+ * @name Highcharts.AxisTickPositionsArray#info
+ * @type {Highcharts.TimeTicksInfoObject|undefined}
+ */
+
+/**
+ * A callback to return the time zone offset for a given datetime. It
+ * takes the timestamp in terms of milliseconds since January 1 1970,
+ * and returns the timezone offset in minutes. This provides a hook
+ * for drawing time based charts in specific time zones using their
+ * local DST crossover dates, with the help of external libraries.
+ *
+ * @callback Highcharts.TimezoneOffsetCallbackFunction
+ *
+ * @param {number} timestamp
+ * Timestamp in terms of milliseconds since January 1 1970.
+ *
+ * @return {number}
+ * Timezone offset in minutes.
+ */
+
+/**
+ * Allows to manually load the `moment.js` library from Highcharts options
+ * instead of the `window`.
+ * In case of loading the library from a `script` tag,
+ * this option is not needed, it will be loaded from there by default.
+ *
+ * @type {function}
+ * @since 8.2.0
+ * @apioption time.moment
+ */
+
+''; // keeps doclets above in JS file
