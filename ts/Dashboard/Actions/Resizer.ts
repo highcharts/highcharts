@@ -77,6 +77,7 @@ class Resizer {
         this.isX = this.options.type.indexOf('x') > -1;
         this.isY = this.options.type.indexOf('y') > -1;
         this.isActive = false;
+        this.startX = 0;
 
         this.init();
 
@@ -118,6 +119,7 @@ class Resizer {
     public resizeCellContext?: Cell;
     public isResizerDetectionActive: boolean;
     public resizePointer: Resizer.ResizePointer;
+    public startX: number;
 
     /* *
      *
@@ -162,7 +164,6 @@ class Resizer {
                         
                         // convert current width to percent
                         // fix bug when we resize the last cell in a row
-                        // debugger;
                         
                         cellContainer.style.width = (
                             (
@@ -327,7 +328,8 @@ class Resizer {
             resizer.isActive = true;
             resizer.currentDimension = 'x';
             resizer.deactivateResizerDetection();
-            // set snap position
+
+            resizer.startX = e.clientX;
         };
 
         resizer.mouseDownSnapY = mouseDownSnapY = function (
@@ -392,7 +394,6 @@ class Resizer {
      *
      */
     public onMouseMove(
-        // currentCell: Resizer.ResizedCell|undefined,
         e: PointerEvent
     ): void {
         const currentCell = this.currentCell as Resizer.ResizedCell;
@@ -447,10 +448,12 @@ class Resizer {
                         maxWidth - (this.options.snap.width || 0)
                     ) + 'px';
                 }
-                
+
                 this.resizeCellSiblings(
-                    0.05
+                    ((e.clientX - this.startX) / parentRowWidth) * 100
                 );
+
+                this.startX = e.clientX;
             }
 
             // resize height
@@ -489,7 +492,6 @@ class Resizer {
         cell?: Cell
     ): number {
 
-        // const convertToPercent = this.convertToPercent;
         const cellContainer = cell && cell.container as HTMLElement;
         const parentRowWidth = row.container && row.container.offsetWidth;
         const cells = row.cells;
@@ -543,12 +545,12 @@ class Resizer {
         diffWidth: number
     ): void {
         const currentCell = this.currentCell;
-        
+
         var cellSiblings = [];
         let node = currentCell?.container;
         
         // detect siblings
-        while ( node ) {
+        while (node) {
             if (node !== currentCell?.container && node.nodeType === Node.ELEMENT_NODE ) {
                 cellSiblings.push(node);
             }
@@ -559,9 +561,8 @@ class Resizer {
 
         for(let i = 0, iEnd = cellSiblings.length; i < iEnd; ++i) {
             cellSiblings[i].style.width =
-                parseFloat(cellSiblings[i].style.getPropertyValue('width'))
-                + (cellDiff < 0 ? cellDiff : -cellDiff) // size+, size-
-                + '%'; 
+                parseFloat(cellSiblings[i].style.getPropertyValue('width')) +
+                -cellDiff + '%'; 
         }
     }
     /**
