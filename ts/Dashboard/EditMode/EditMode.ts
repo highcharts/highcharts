@@ -342,25 +342,11 @@ class EditMode {
         if (this.addComponentBtn) {
             this.addComponentBtn.style.display = 'none';
         }
+
         if (this.resizeBtn) {
             this.resizeBtn.style.display = 'none';
         }
     }
-
-    // private initLayoutResizer(layout: Layout): void {
-    //     const dashboard = this.dashboard,
-    //         guiOptions = dashboard.options.gui;
-
-    //     if (guiOptions) {
-    //         if (guiOptions.layoutOptions.resize) {
-    //             layout.resizer = new Resizer(layout);
-    //         } else if (guiOptions.layoutOptions.resizerJSON) {
-    //             layout.resizer = Resizer.fromJSON(
-    //                 layout, guiOptions.layoutOptions.resizerJSON
-    //             );
-    //         }
-    //     }
-    // }
 
     public isActive(): boolean {
         return this.active;
