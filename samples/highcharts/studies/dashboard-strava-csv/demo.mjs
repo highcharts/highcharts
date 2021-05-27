@@ -2,13 +2,18 @@ import CSVStore from '../../../../code/es-modules/Data/Stores/CSVStore.js';
 import HTMLTableStore from '../../../../code/es-modules/Data/Stores/HTMLTableStore.js';
 import Dashboard from '../../../../code/es-modules/Dashboard/Dashboard.js';
 import RangeModifier from '../../../../code/es-modules/Data/Modifiers/RangeModifier.js';
+import ChainModifier from '../../../../code/es-modules/Data/Modifiers/ChainModifier.js';
 import GroupModifier from '../../../../code/es-modules/Data/Modifiers/GroupModifier.js';
+import SortModifier from '../../../../code/es-modules/Data/Modifiers/SortModifier.js';
 import DataStore from '../../../../code/es-modules/Data/Stores/DataStore.js';
+import DataTable from '../../../../code/es-modules/Data/DataTable.js';
+
+const dataURL = 'https://gist.githubusercontent.com/goransle/f294f045f0bd294780fb1643ae977602/raw/777089958f80250072c8d1110d78ca54a5c69709/activities.csv';
 const store = new CSVStore(undefined, {
-    csvURL: 'https://gist.githubusercontent.com/goransle/f294f045f0bd294780fb1643ae977602/raw/777089958f80250072c8d1110d78ca54a5c69709/activities.csv'
+    csvURL: dataURL
 });
 
-const activityTypes = ['Run', 'Ride', 'Walk', 'Nordic Ski'];
+let activityTypes = ['Run', 'Ride', 'Walk', 'Nordic Ski'];
 function generateChecks() {
     return [...activityTypes].flatMap(activityType => [
         {
@@ -29,63 +34,183 @@ function generateChecks() {
     ]);
 }
 
+let loads = 0;
 
+// Workaround for some dashboard/store async weirdness
 store.on("afterLoad", function () {
-    const groupStore = new DataStore(store.table.modified.clone());
+    loads++;
+    if (loads > 1) {
+        return;
+    }
 
+    // use group modifier to get unique values
+    const groupStore = new DataStore(store.table.modified.clone());
     groupStore.table.setModifier(new GroupModifier({
         groupColumn: 'Activity Type'
     }));
+    activityTypes = groupStore.table.modified.columns.value;
+
     console.log(groupStore);
+
+    function sumTable(table) {
+        const values = table.getColumn('value');
+        const subtables = table.getColumn('table');
+
+        return new DataTable({
+            Activity: values,
+            Count: subtables.map(table => table.getRowCount())
+        });
+    }
+
+    const summedtable = sumTable(groupStore.table.modified);
+    console.log(summedtable);
+
+    let sortColumn = 'Activity Date';
+    let sortDirection = 'asc';
+
     const dash = new Dashboard("container", {
         editMode,
         gui,
         components: [
             {
+                cell: "datasource",
+                type: "html",
+                store,
+                title: "Datasource",
+                scaleElements: false,
+                elements: [
+                    {
+                        tagName: "label",
+                        textContent: 'Data URL:',
+                        attributes: {
+                            for: `dataurl`
+                        }
+                    },
+                    {
+                        tagName: "input",
+                        attributes: {
+                            id: 'dataurl',
+                            type: "text",
+                            value: store.options.csvURL,
+                            style: 'width: 100%;'
+                        }
+                    }
+                ],
+                events: {
+                    afterRender: () => {
+                        document.querySelector('#dataurl').addEventListener('change', e => {
+                            if (e.target.value !== store.options.csvURL) {
+                                store.options.csvURL = e.target.value;
+                                store.load();
+                            }
+                        });
+                    }
+                }
+            },
+            {
                 cell: "selectors",
                 type: "html",
                 store,
                 title: "Filters",
-                elements: generateChecks(),
+                scaleElements: false,
+                elements: [
+                    ...generateChecks(),
+                    { tagName: 'br' },
+                    {
+                        tagName: 'label',
+                        textContent: 'Sort by:',
+                        attributes: {
+                            for: 'sortselect'
+                        }
+                    },
+                    {
+                        tagName: "select",
+                        attributes: {
+                            id: 'sortselect'
+                        },
+                        children: [
+                            ...store.table.getColumnNames()
+                                .map(column => ({ tagName: 'option', textContent: column, value: column }))
+                        ]
+                    },
+                    ...['asc', 'desc'].map(val => ({
+                        tagName: 'div',
+                        children: [
+                            {
+                                tagName: 'input',
+                                attributes: {
+                                    id: `sort${val}ending`,
+                                    value: val,
+                                    name: 'sort',
+                                    type: 'radio'
+                                }
+                            },
+                            {
+                                tagName: 'label',
+                                textContent: `${val.charAt(0).toUpperCase() + val.slice(1)}ending`,
+                                attributes: {
+                                    for: `sort${val}ending`
+                                }
+                            }
+                        ]
+                    })),
+                    { tagName: 'br' },
+                    {
+                        tagName: "button",
+                        textContent: 'Apply',
+                        attributes: {
+                            id: 'filterButton'
+                        }
+                    }
+                ],
                 events: {
                     afterRender: function () {
-                        const checked = [];
-                        const checkboxes = document
-                            .querySelectorAll('input[type="checkbox"]');
+                        function doModify(checked) {
+                            // Use the RangeModifier as a filter
+                            // Might be more user-friendly (and perhaps better performance?)
+                            // with a separate modifier for this
+                            const ranges = checked.map(value => ({
+                                column: "Activity Type",
+                                minValue: value,
+                                maxValue: value
+                            }));
 
-                        function doModify() {
-                            checked.sort();
-                            const modifier = new RangeModifier({
-                                ranges: [
-                                    {
-                                        column: "Activity Type",
-                                        minValue: checked[0],
-                                        maxValue: checked[checked.length - 1]
-                                    }
-                                ]
-                            });
-                            store.table.setModifier(modifier);
+                            store.table.setModifier(
+                                new ChainModifier({},
+                                    new RangeModifier({ ranges }),
+                                    new SortModifier({
+                                        direction: sortDirection,
+                                        orderByColumn: sortColumn
+                                    })
+                                )
+                            );
                         }
-                        function setChecks(checkbox) {
-                            if (checkbox.checked) {
-                                checked.push(checkbox.id.replace(/check/, ""));
-                            } else {
-                                checked.splice(checked.indexOf(checkbox.id.replace(/check/, "")), 1);
-                            }
-                        }
-
-                        for (const checkbox of checkboxes) {
-                            // Set initial state
-                            setChecks(checkbox);
-
-                            // Update on click
-                            checkbox.addEventListener("click", e => {
-                                setChecks(e.target);
-                                if (checked) {
-                                    doModify();
+                        function getChecked() {
+                            const checked = [];
+                            const checkboxes = document
+                                .querySelectorAll('input[type="checkbox"]');
+                            for (const checkbox of checkboxes) {
+                                if (checkbox.checked) {
+                                    checked.push(checkbox.id.replace(/check/, ""));
                                 }
-                            });
+                            }
+                            return checked;
                         }
+
+                        document.querySelector('#filterButton').addEventListener("click", e => {
+                            doModify(getChecked());
+                        });
+                        document.querySelector('#sortselect').addEventListener("change", function (e) {
+                            if (!e.target.defaultSelected) {
+
+                                sortColumn = e.target.value;
+                            }
+                        });
+                        document.querySelectorAll('input[type="radio"]').forEach(radioButton => {
+                            radioButton.addEventListener("change", function (e) {
+                                sortDirection = e.target.value;
+                            });
+                        });
 
                     }
                 }
@@ -105,7 +230,8 @@ store.on("afterLoad", function () {
                 chartOptions: {
                     chart: {
                         animation: false,
-                        type: "column"
+                        type: "column",
+                        zoomType: 'x'
                     },
                     xAxis: {
                         type: 'datetime'
@@ -123,26 +249,29 @@ store.on("afterLoad", function () {
                     }
                 }
             },
-            // {
-            //     cell: "piechart",
-            //     isResizable: true,
-            //     type: "chart",
-            //     store: new DataStore(store.table.modified),
-            //     tableAxisMap: {
-            //         // "Activity Type": "y"
-            //         Distance: 'y'
-            //     },
-            //     chartOptions: {
-            //         chart: {
-            //             animation: false,
-            //             type: "pie"
-            //         }
-            //     }
-            // },
+            {
+                cell: "piechart",
+                isResizable: true,
+                type: "chart",
+                store: new DataStore(summedtable),
+                tableAxisMap: {
+                    Activity: 'x'
+                },
+                chartOptions: {
+                    title: {
+                        text: 'Activity count by type'
+                    },
+                    chart: {
+                        animation: false,
+                        type: "pie"
+                    }
+                }
+            },
             {
                 cell: "table",
                 type: "html",
                 store,
+                scaleElements: false,
                 elements: [
                     {
                         tagName: "div"
@@ -322,6 +451,12 @@ const gui = {
             rows: [
                 {
                     cells: [
+                        {
+                            id: "datasource",
+                            style: {
+                                ...defaultstyle
+                            }
+                        },
                         {
                             id: "selectors",
                             style: {
