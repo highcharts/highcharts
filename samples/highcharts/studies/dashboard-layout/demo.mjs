@@ -18,7 +18,7 @@ const chartDemo = {
             animation: false
         }
     }
-}
+};
 
 let dashboard = new Dashboard('container', {
     editMode: {
@@ -712,11 +712,17 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
                             }, {
                                 id: 'dashboard-col-layout-2',
                                 layout: {
-                                    rows:[{
+                                    rows: [{
                                         cells: [{
                                             id: 'dashboard-col-layout-2a'
                                         }, {
                                             id: 'dashboard-col-layout-2b'
+                                        }]
+                                    }, {
+                                        cells: [{
+                                            id: 'dashboard-col-layout-2c'
+                                        }, {
+                                            id: 'dashboard-col-layout-2d'
                                         }]
                                     }]
                                 }
@@ -786,6 +792,10 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
         // }, {
         //     textContent: 'Loreum ipsum'
         // }]
+    }, {
+        cell: 'dashboard-col-layout-2c', ...chartDemo
+    }, {
+        cell: 'dashboard-col-layout-2d', ...chartDemo
     }, {
         cell: 'dashboard-col-layout-3',
         ...chartDemo

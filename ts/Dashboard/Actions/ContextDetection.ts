@@ -51,62 +51,74 @@ class ContextDetection {
         mouseCellContext: Cell,
         e: PointerEvent,
         offset: number
-    ): Cell | undefined {
-        let context, sideOffset;
+    ): ContextDetection.ContextDetails {
+        let sideOffset;
 
-        if (mouseCellContext.row.layout.level === 0) {
-            context = mouseCellContext;
-        } else {
-            // get cell offsets, width, height
-            const mouseCellContextOffsets = GUIElement.getOffsets(mouseCellContext);
-            const { width, height } = GUIElement.getDimFromOffsets(mouseCellContextOffsets);
+        // get cell offsets, width, height
+        const mouseCellContextOffsets = GUIElement.getOffsets(mouseCellContext);
+        const { width, height } = GUIElement.getDimFromOffsets(mouseCellContextOffsets);
 
-            // Correct offset when element to small.
-            if (width < 2 * offset) {
-                offset = width / 2;
-            }
+        // Correct offset when element to small.
+        if (width < 2 * offset) {
+            offset = width / 2;
+        }
 
-            // Get mouse position relative to the mouseContext sides.
-            const leftSideX = e.clientX - mouseCellContextOffsets.left;
-            const topSideY = e.clientY - mouseCellContextOffsets.top;
+        // Get mouse position relative to the mouseContext sides.
+        const leftSideX = e.clientX - mouseCellContextOffsets.left;
+        const topSideY = e.clientY - mouseCellContextOffsets.top;
 
-            // get cell side - right, left, top, bottom
-            const sideY = topSideY >= -offset && topSideY <= offset ? 'top' :
-                (topSideY - height >= -offset && topSideY - height <= offset ? 'bottom' : '');
+        // get cell side - right, left, top, bottom
+        const sideY = topSideY >= -offset && topSideY <= offset ? 'top' :
+            (topSideY - height >= -offset && topSideY - height <= offset ? 'bottom' : '');
 
-            const sideX = leftSideX >= -offset && leftSideX <= offset ? 'left' :
-                (leftSideX - width >= -offset && leftSideX - width <= offset ? 'right' : '');
+        const sideX = leftSideX >= -offset && leftSideX <= offset ? 'left' :
+            (leftSideX - width >= -offset && leftSideX - width <= offset ? 'right' : '');
 
-            const side = sideX ? sideX : sideY; // X is prioritized.
+        const side = sideX ? sideX : sideY; // X is prioritized.
 
-            switch (side) {
-                case 'right':
-                    sideOffset = leftSideX - width + offset;
-                    break;
-                case 'left':
-                    sideOffset = offset - leftSideX;
-                    break;
-                case 'top':
-                    sideOffset = offset - topSideY;
-                    break;
-                case 'bottom':
-                    sideOffset = topSideY - height + offset;
-                    break;
-            }
+        switch (side) {
+            case 'right':
+                sideOffset = leftSideX - width + offset;
+                break;
+            case 'left':
+                sideOffset = offset - leftSideX;
+                break;
+            case 'top':
+                sideOffset = offset - topSideY;
+                break;
+            case 'bottom':
+                sideOffset = topSideY - height + offset;
+                break;
+        }
 
-            if (
-                side &&
-                ContextDetection.isGUIElementOnParentEdge(mouseCellContext, side) &&
-                defined(sideOffset)
-            ) {
-                const level = ContextDetection.getContextLevel(mouseCellContext, offset, sideOffset, side);
-                context = mouseCellContext.getParentCell(level);
-            } else {
-                context = mouseCellContext;
+        const context = {
+            cell: mouseCellContext,
+            side: side
+        };
+
+        // Nested layouts.
+        if (
+            mouseCellContext.row.layout.level !== 0 &&
+            side &&
+            ContextDetection.isGUIElementOnParentEdge(mouseCellContext, side) &&
+            defined(sideOffset)
+        ) {
+            const level = ContextDetection.getContextLevel(mouseCellContext, offset, sideOffset, side);
+            const cell = mouseCellContext.getParentCell(level);
+
+            if (cell) {
+                context.cell = cell;
             }
         }
 
         return context;
+    }
+}
+
+namespace ContextDetection {
+    export interface ContextDetails {
+        cell: Cell;
+        side: string; // right, left, top, bottom
     }
 }
 

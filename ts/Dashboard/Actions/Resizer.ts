@@ -626,7 +626,7 @@ class Resizer {
 
         if (resizer.isResizerDetectionActive && resizer.mouseCellContext) {
             const resizeCellContext = this.resizeCellContext =
-                ContextDetection.getContext(resizer.mouseCellContext, e, offset);
+                ContextDetection.getContext(resizer.mouseCellContext, e, offset).cell;
 
             if (resizeCellContext) {
                 const resizeCellContextOffsets = GUIElement.getOffsets(
