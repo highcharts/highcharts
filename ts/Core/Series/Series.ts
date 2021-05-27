@@ -2854,7 +2854,7 @@ class Series {
             selected: options.selected === true // false by default
         });
 
-        registerEventOptions(this, this.options);
+        registerEventOptions(this, options);
 
         const events = options.events;
         if (
