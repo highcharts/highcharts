@@ -18,10 +18,6 @@
 
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
-import A from '../../Core/Animation/AnimationUtilities.js';
-const {
-    animObject
-} = A;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import LineSeries from '../Line/LineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -29,9 +25,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    merge,
-    pick,
-    syncTimeout
+    merge
 } = U;
 
 /* *
@@ -235,25 +229,10 @@ class ScatterSeries extends LineSeries {
      * @function Highcharts.seriesTypes.scatter#drawGraph
      */
     public drawGraph(): void {
-        const graph = this.graph;
-
         if (this.options.lineWidth) {
             super.drawGraph();
-        } else if (graph) {
-            graph.animate({
-                'stroke-width': 0
-            });
-
-            // Use a timeout instead of an animation callback since the
-            // animation gets cancelled on hover
-            syncTimeout(
-                (): void => {
-                    this.graph = graph.destroy(); // #15667
-                },
-                animObject(
-                    pick(this.chart.renderer.globalAnimation, true)
-                ).duration
-            );
+        } else if (this.graph) {
+            this.graph = this.graph.destroy();
         }
     }
 
