@@ -3,7 +3,7 @@ let demoChart;
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const baseColor = 'rgba(72,72,72,.2)';
-const networklinkColor = 'rgba(72,72,72,.4)';
+const networklinkColor = '#000';
 const baseTextColor = '#222';
 const axisColor = '#333';
 const streamLine = '#ebebeb';
@@ -2127,7 +2127,7 @@ function section4() {
             });
         }
     };
-    currentTimeout = window.setTimeout(p2, 1200);
+    currentTimeout = window.setTimeout(p2, 500);
 
     //shows the splines
     const p25 = function () {
@@ -2139,7 +2139,7 @@ function section4() {
         }
         demoChart.series[19].update({ color: '#1E90FF' });
     };
-    currentTimeout = window.setTimeout(p25, 2500);
+    currentTimeout = window.setTimeout(p25, 1000);
 
     //moves the node again
     const p3 = function () {
@@ -2161,44 +2161,44 @@ function section4() {
             demoChart.xAxis[5].setExtremes(78, 107);
         }
     };
-    currentTimeout = window.setTimeout(p3, 3000);
+    currentTimeout = window.setTimeout(p3, 2000);
 
     const p31 = function () {
         if (reduced) {
             top.window.endAnimation();
         }
     };
-    currentTimeout = window.setTimeout(p31, 3500);
+    currentTimeout = window.setTimeout(p31, 4500);
 
     ///consolidates all the nodes, hides most everything else,
     //shows the title and content
     const p4 = function () {
-        $('.highcharts-label').fadeOut();
-        $('.highcharts-streamgraph-series').fadeOut();
-        $('.highcharts-spline-series').fadeOut();
-        $('.highcharts-scatter-series').fadeOut();
-        $('.highcharts-legend').fadeOut();
+        // $('.highcharts-label').fadeOut();
+        // $('.highcharts-streamgraph-series').fadeOut();
+        // $('.highcharts-spline-series').fadeOut();
+        // $('.highcharts-scatter-series').fadeOut();
+        // $('.highcharts-legend').fadeOut();
         ///only manipulate the nodes for the full animation
         if (!reduced) {
-            demoChart.series[3].nodes[0].update({
-                plotX: demoChart.chartWidth / 2,
-                plotY: demoChart.chartHeight / 2
+            // demoChart.series[3].nodes[0].update({
+            //     plotX: demoChart.chartWidth / 2,
+            //     plotY: demoChart.chartHeight / 2
 
-            });
-            let pointCount = 0;
-            const updatePoints = setInterval(function () {
-                demoChart.series[3].nodes[pointCount].plotY =
-                        demoChart.series[3].nodes[0].plotY;
-                demoChart.series[3].nodes[pointCount].plotX =
-                        demoChart.series[3].nodes[0].plotX;
-                demoChart.series[3].nodes[pointCount].mass = 1;
-                pointCount = pointCount + 1;
-                const nodeLength = demoChart.series[3].nodes.length;
-                if (pointCount === nodeLength) {
-                    clearInterval(updatePoints);
-                    demoChart.series[3].hide();
-                }
-            }, 10);
+            // });
+            // let pointCount = 0;
+            // const updatePoints = setInterval(function () {
+            //     demoChart.series[3].nodes[pointCount].plotY =
+            //             demoChart.series[3].nodes[0].plotY;
+            //     demoChart.series[3].nodes[pointCount].plotX =
+            //             demoChart.series[3].nodes[0].plotX;
+            //     demoChart.series[3].nodes[pointCount].mass = 1;
+            //     pointCount = pointCount + 1;
+            //     const nodeLength = demoChart.series[3].nodes.length;
+            //     if (pointCount === nodeLength) {
+            //         clearInterval(updatePoints);
+            //         demoChart.series[3].hide();
+            //     }
+            // }, 10);
         }
     };
     currentTimeout = window.setTimeout(p4, 5000);
@@ -2400,7 +2400,7 @@ function section3() {
             section4();
         }
     };
-    currentTimeout = window.setTimeout(s7, 8000);
+    currentTimeout = window.setTimeout(s7, 7000);
 }
 /****************************************/
 ////Section 2 Splines and candlestick
