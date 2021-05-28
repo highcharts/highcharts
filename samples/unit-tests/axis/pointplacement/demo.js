@@ -40,10 +40,10 @@ QUnit.test('Axis pointPlacement', assert => {
         'No padded ticks'
     );
 
-    controller.pan([200, 60], [400, 60], void 0, true);
+    controller.pan([200, 60], [400, 60]);
 
     const rangeBefore = axis.max - axis.min;
-    controller.pan([200, 60], [400, 60], { shiftKey: true }, true);
+    controller.pan([200, 60], [400, 60], { shiftKey: true });
     assert.close(
         rangeBefore,
         axis.max - axis.min,
