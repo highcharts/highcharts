@@ -100,15 +100,7 @@ class Bindings {
         }
 
         // add events
-        if (component && events) {
-            objectEach(events, (fn, key): void => {
-                addEvent(
-                    component,
-                    key,
-                    fn
-                );
-            });
-
+        if (component) {
             fireEvent(component, 'mount');
         }
 
