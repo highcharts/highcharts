@@ -2770,7 +2770,10 @@ if (!H.Navigator) {
                     this.spacing[3] + (scrollbarHeight as any);
                 navigator.top = this.plotTop + (scrollbarHeight as any);
             } else {
-                navigator.left = this.plotLeft + (scrollbarHeight as any);
+                navigator.left = pick(
+                    xAxis.left,
+                    this.plotLeft + (scrollbarHeight as any)
+                );
                 navigator.top = (navigator.navigatorOptions.top as any) ||
                     this.chartHeight -
                     navigator.height -
