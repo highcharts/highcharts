@@ -46,6 +46,11 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
             }
         ],
         drilldown: {
+            breadcrumbs: {
+                position: {
+                    x: 100
+                }
+            },
             series: [
                 {
                     name: 'Microsoft Internet Explorer',
@@ -187,18 +192,17 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
     );
 
     controller.moveTo(
-        chart.drillUpButton.translateX + 5,
-        chart.drillUpButton.translateY + 5
+        chart.drillUpButton.parentGroup.translateX + 5,
+        chart.drillUpButton.parentGroup.translateY + 5
     );
-    // @todo
-    // assert.ok(
-    //     chart.tooltip.isHidden,
-    //     '#14403: Tooltip should be hidden when hovering drillUpButton'
-    // );
+    assert.ok(
+        chart.tooltip.isHidden,
+        '#14403: Tooltip should be hidden when hovering drillUpButton'
+    );
 
     controller.moveTo(
-        chart.drillUpButton.translateX - 5,
-        chart.drillUpButton.translateY + 5
+        chart.drillUpButton.parentGroup.translateX - 5,
+        chart.drillUpButton.parentGroup.translateY + 5
     );
     assert.notOk(
         chart.tooltip.isHidden,
