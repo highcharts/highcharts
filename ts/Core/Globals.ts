@@ -17,6 +17,7 @@
  * */
 
 import type GlobalsLike from './GlobalsLike';
+import type Options from './Options';
 
 /* *
  *
@@ -78,6 +79,9 @@ declare global {
          */
         cutHeight?: number;
         parentNode: SVGElement;
+    }
+    interface TouchList {
+        changedTouches: Array<Touch>;
     }
     /**
      * @private
@@ -229,7 +233,7 @@ namespace Globals {
      * @name Highcharts.theme
      * @type {Highcharts.Options}
      */
-    export let theme: (Highcharts.Options|undefined);
+    export let theme: (Options|undefined);
 
 }
 

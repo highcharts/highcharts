@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type Axis from '../../../Core/Axis/Axis';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type FormatUtilities from '../../../Core/FormatUtilities';
@@ -19,11 +20,11 @@ import U from '../../../Core/Utilities.js';
 const {
     extend,
     isNumber,
-    merge
+    merge,
+    pick
 } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
-
 class Measure extends Annotation {
 
     /* *
@@ -126,7 +127,11 @@ class Measure extends Annotation {
          * @param {number} offset
          * Amount of pixels
          */
-        getPointPos: function (axis: Highcharts.Axis, value: number, offset: number): number {
+        getPointPos: function (
+            axis: Axis,
+            value: number,
+            offset: number
+        ): number {
             return axis.toValue(axis.toPixels(value) + offset);
         },
         /**
@@ -498,22 +503,21 @@ class Measure extends Annotation {
                 dashStyle: 'Dash',
                 overflow: 'allow',
                 align: 'left',
-                vertical: 'top',
+                y: 0,
+                x: 0,
+                verticalAlign: 'top',
                 crop: true,
-                point: function (target: any): PositionObject {
+                xAxis: 0,
+                yAxis: 0,
+                point: function (target: any): MockPointOptions {
                     const annotation: Measure = target.annotation,
-                        chart = annotation.chart,
-                        inverted = chart.inverted,
-                        xAxis = chart.xAxis[typeOptions.xAxis],
-                        yAxis = chart.yAxis[typeOptions.yAxis],
-                        top = chart.plotTop,
-                        left = chart.plotLeft;
+                        options = target.options;
 
                     return {
-                        x: (inverted ? top : 10) +
-                            xAxis.toPixels(annotation.xAxisMin, !inverted),
-                        y: (inverted ? -left + 10 : top) +
-                            yAxis.toPixels(annotation.yAxisMin)
+                        x: annotation.xAxisMin,
+                        y: annotation.yAxisMin,
+                        xAxis: pick(typeOptions.xAxis, options.xAxis),
+                        yAxis: pick(typeOptions.yAxis, options.yAxis)
                     };
                 } as any,
                 text: (formatter && formatter.call(this)) ||

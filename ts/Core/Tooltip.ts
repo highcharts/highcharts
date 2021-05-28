@@ -16,6 +16,7 @@
  *
  * */
 
+import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
@@ -27,6 +28,7 @@ import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGRenderer from './Renderer/SVG/SVGRenderer';
+import type TooltipOptions from './TooltipOptions';
 
 import F from './FormatUtilities.js';
 const { format } = F;
@@ -73,7 +75,13 @@ declare module './Series/SeriesLike' {
 
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
-        tooltip?: Highcharts.TooltipOptions;
+        tooltip?: TooltipOptions;
+    }
+}
+
+declare module '../Core/TooltipOptions'{
+    interface TooltipOptions {
+        distance?: number;
     }
 }
 
@@ -175,9 +183,6 @@ declare global {
             total?: number;
             x: number;
             y: number;
-        }
-        interface TooltipOptions {
-            distance?: number;
         }
         interface TooltipPositionerCallbackFunction {
             (
@@ -324,7 +329,7 @@ class Tooltip {
 
     public constructor(
         chart: Chart,
-        options: Highcharts.TooltipOptions
+        options: TooltipOptions
     ) {
         this.chart = chart;
         this.init(chart, options);
@@ -360,7 +365,7 @@ class Tooltip {
 
     public now: Record<string, number> = {};
 
-    public options: Highcharts.TooltipOptions = {};
+    public options: TooltipOptions = {};
 
     public outside: boolean = false;
 
@@ -570,8 +575,8 @@ class Tooltip {
             plotLeft = chart.plotLeft,
             plotX = 0,
             plotY = 0,
-            yAxis: Highcharts.Axis|undefined,
-            xAxis: Highcharts.Axis|undefined;
+            yAxis: (Axis|undefined),
+            xAxis: (Axis|undefined);
 
         points = splat(points);
 
@@ -1089,8 +1094,8 @@ class Tooltip {
      */
     public getXDateFormat(
         point: Point,
-        options: Highcharts.TooltipOptions,
-        xAxis: Highcharts.Axis
+        options: TooltipOptions,
+        xAxis: Axis
     ): string {
         let xDateFormat,
             dateTimeLabelFormats = options.dateTimeLabelFormats,
@@ -1147,7 +1152,7 @@ class Tooltip {
      * @param {Highcharts.TooltipOptions} options
      *        Tooltip options.
      */
-    public init(chart: Chart, options: Highcharts.TooltipOptions): void {
+    public init(chart: Chart, options: TooltipOptions): void {
 
         /**
          * Chart of the tooltip.
@@ -2051,7 +2056,7 @@ class Tooltip {
      * @param {Highcharts.TooltipOptions} options
      *        The tooltip options to update.
      */
-    public update(options: Highcharts.TooltipOptions): void {
+    public update(options: TooltipOptions): void {
         this.destroy();
         // Update user options (#6218)
         merge(true, (this.chart.options.tooltip as any).userOptions, options);

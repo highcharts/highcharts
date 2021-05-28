@@ -547,6 +547,7 @@ workflows:
           notify_on_failure: true
       - build_dist:
           requires: [checkout_and_install, "test-Win.IE8"]
+          context: highcharts-staging
       - deploy_code:
           requires: [build_dist]
           context: highcharts-staging
@@ -563,6 +564,7 @@ workflows:
       # Trigger samples/demo updates
       - check_for_samples_changes_and_deploy:
           requires: [build_dist]
+          context: highcharts-staging
           filters:
             branches:
               only: [master]

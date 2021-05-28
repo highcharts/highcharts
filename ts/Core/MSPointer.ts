@@ -11,6 +11,7 @@
 'use strict';
 
 import type Chart from './Chart/Chart';
+import type Options from './Options';
 import type PointerEvent from './PointerEvent';
 import H from './Globals.js';
 const {
@@ -71,16 +72,17 @@ function translateMSPointer(
     wktype: string,
     func: Function
 ): void {
-    let p;
+    const chart = charts[Pointer.hoverChartIndex || NaN];
 
     if (
         (
             e.pointerType === 'touch' ||
-            e.pointerType === (e as any).MSPOINTER_TYPE_TOUCH
-        ) && charts[H.hoverChartIndex as any]
+            e.pointerType === e.MSPOINTER_TYPE_TOUCH
+        ) && chart
     ) {
+        const p: AnyRecord = chart.pointer;
+
         func(e);
-        p = (charts[H.hoverChartIndex as any] as any).pointer;
         p[method]({
             type: wktype,
             target: e.currentTarget,
@@ -136,7 +138,7 @@ class MSPointer extends Pointer {
     }
 
     // Disable default IE actions for pinch and such on chart element
-    public init(chart: Chart, options: Highcharts.Options): void {
+    public init(chart: Chart, options: Options): void {
 
         super.init(chart, options);
 

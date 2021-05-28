@@ -6,7 +6,6 @@
 
 'use strict';
 
-import type { AxisType } from '../../Core/Axis/Types';
 import type MockPointOptions from './MockPointOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import Series from '../../Core/Series/Series.js';

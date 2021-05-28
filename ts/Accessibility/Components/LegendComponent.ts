@@ -12,12 +12,12 @@
 
 'use strict';
 
-import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import Legend from '../../Core/Legend.js';
 import U from '../../Core/Utilities.js';
@@ -148,7 +148,7 @@ function shouldDoLegendA11y(chart: Chart): boolean {
  *
  * @return {boolean}
  */
-H.Chart.prototype.highlightLegendItem = function (ix: number): boolean {
+Chart.prototype.highlightLegendItem = function (ix: number): boolean {
     const items = this.legend.allItems,
         oldIx = this.accessibility &&
             this.accessibility.components.legend.highlightedLegendItemIx;

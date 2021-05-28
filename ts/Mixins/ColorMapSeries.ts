@@ -141,7 +141,10 @@ const colorMapSeriesMixin = {
     ): SVGAttributes {
         const ret: SVGAttributes = {};
 
-        if (defined(point.color)) {
+        if (
+            defined(point.color) &&
+            (!point.state || point.state === 'normal') // #15746
+        ) {
             (ret as any)[this.colorProp || 'fill'] = point.color;
         }
         return ret;
