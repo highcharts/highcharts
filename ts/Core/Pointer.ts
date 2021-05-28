@@ -1199,7 +1199,7 @@ class Pointer {
      * @function Highcharts.Pointer#onDocumentTouchEnd
      */
     public onDocumentTouchEnd(e: PointerEvent): void {
-        const hoverChart = charts[Pointer.hoverChartIndex || NaN];
+        const hoverChart = charts[pick(Pointer.hoverChartIndex, -1)];
         if (hoverChart) {
             hoverChart.pointer.drop(e);
         }
