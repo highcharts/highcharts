@@ -204,10 +204,10 @@ class ResponsiveChart {
         redraw?: boolean,
         reset?: boolean
     ): void {
-        let options = this.options.responsive,
-            ruleIds = [] as Array<string>,
-            currentResponsive = this.currentResponsive,
-            currentRuleIds,
+        const options = this.options.responsive,
+            currentResponsive = this.currentResponsive;
+
+        let ruleIds = [] as Array<string>,
             undoOptions;
 
         if (!reset && options && options.rules) {
@@ -238,7 +238,7 @@ class ResponsiveChart {
 
         // Stringified key for the rules that currently apply.
         ruleIds = ((ruleIds.toString() as any) || void 0);
-        currentRuleIds = currentResponsive && currentResponsive.ruleIds;
+        const currentRuleIds = currentResponsive && currentResponsive.ruleIds;
 
         // Changes in what rules apply
         if ((ruleIds as any) !== currentRuleIds) {
