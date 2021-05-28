@@ -34,6 +34,8 @@ const { merge } = U;
 
 /**
  * Inverts columns and rows in a table.
+ *
+ * @private
  */
 class InvertModifier extends DataModifier {
 

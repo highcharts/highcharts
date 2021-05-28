@@ -32,6 +32,9 @@ const { merge } = U;
  *
  * */
 
+/**
+ * @private
+ */
 class SeriesPointsModifier extends DataModifier {
 
     /* *

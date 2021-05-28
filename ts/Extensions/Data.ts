@@ -1675,8 +1675,8 @@ class Data {
 
     /**
      * Get data columns from the data table.
-     * @private
      *
+     * @private
      * @function Highcharts.Data#getDataColumnsFromDataTable
      *
      * @param {DataTable} [table]

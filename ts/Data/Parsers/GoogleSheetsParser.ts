@@ -39,6 +39,8 @@ const {
 
 /**
  * Handles parsing and transformation of an Google Sheets to a table.
+ *
+ * @private
  */
 class GoogleSheetsParser extends DataParser<DataParser.Event> {
 

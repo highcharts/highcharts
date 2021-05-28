@@ -39,6 +39,8 @@ const {
 
 /**
  * Abstract class to provide an interface for modifying a table.
+ *
+ * @private
  */
 abstract class DataModifier<TEvent extends DataEventEmitter.Event = DataModifier.Event>
 implements DataEventEmitter<TEvent>, DataJSON.Class {

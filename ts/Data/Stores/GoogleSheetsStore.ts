@@ -29,7 +29,6 @@ const {
 /**
  * @private
  */
-
 class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements DataJSON.Class {
 
     /* *

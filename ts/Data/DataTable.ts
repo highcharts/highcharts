@@ -1867,17 +1867,20 @@ export default DataTable;
 
 /**
  * Possible value types for a table cell.
+ * @private
  * @typedef {boolean|null|number|string|Highcharts.DataTable|undefined} Highcharts.DataTableCellType
  */
 
 /**
  * Array of table cells in vertical expansion.
+ * @private
  * @typedef {Array<Highcharts.DataTableCellType>} Highcharts.DataTableColumn
  */
 
 /**
  * Collection of columns, where the key is the column name (or alias) and
  * the value is an array of column values.
+ * @private
  * @interface Highcharts.DataTableColumnCollection
  * @readonly
  *//**
@@ -1887,6 +1890,7 @@ export default DataTable;
 
 /**
  * Custom information for an event.
+ * @private
  * @typedef Highcharts.DataTableEventDetail
  * @type {Record<string,(boolean|number|string|null|undefined)>}
  */
@@ -1894,12 +1898,14 @@ export default DataTable;
 /**
  * Array of table cells in horizontal expansion. Index of the array is the index
  * of the column names.
+ * @private
  * @typedef {Array<Highcharts.DataTableCellType>} Highcharts.DataTableRow
  */
 
 /**
  * Record of table cells in horizontal expansion. Keys of the record are the
  * column names (or aliases).
+ * @private
  * @typedef {Record<string,Highcharts.DataTableCellType>} Highcharts.DataTableRowObject
  */
 

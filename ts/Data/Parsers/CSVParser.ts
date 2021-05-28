@@ -29,6 +29,8 @@ const { merge } = U;
 
 /**
  * Handles parsing and transforming CSV to a table.
+ *
+ * @private
  */
 class CSVParser extends DataParser<DataParser.Event> {
 
