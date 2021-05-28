@@ -1611,7 +1611,7 @@ class Toolbar {
      *
      * @param {Object} - general options for Stock Tools
      */
-    public update(options: Highcharts.StockToolsOptions): void {
+    public update(options: Highcharts.StockToolsOptions, redraw?: boolean): void {
         merge(true, this.chart.options.stockTools, options);
         this.destroy();
         this.chart.setStockTools(options);
@@ -1619,6 +1619,12 @@ class Toolbar {
         // If Stock Tools are updated, then bindings should be updated too:
         if (this.chart.navigationBindings) {
             this.chart.navigationBindings.update();
+        }
+
+        this.chart.isDirtyBox = true;
+
+        if (pick(redraw, true)) {
+            this.chart.redraw();
         }
     }
     /**
@@ -1637,10 +1643,6 @@ class Toolbar {
         if (parent) {
             parent.removeChild(stockToolsDiv);
         }
-
-        // redraw
-        this.chart.isDirtyBox = true;
-        this.chart.redraw();
     }
     /**
      * Redraw, GUI requires to verify if the navigation should be visible.

@@ -14,7 +14,7 @@
  *
  * */
 
-import type { AxisType } from '../../../Core/Axis/Types';
+import type AxisType from '../../../Core/Axis/AxisType';
 import type Chart from '../../../Core/Chart/Chart';
 import type IndicatorLike from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';

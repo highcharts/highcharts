@@ -11,6 +11,17 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    AxisBreakOptions,
+    AxisLabelOptions,
+    AxisOptions
+} from './AxisOptions';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type GanttPoint from '../../Series/Gantt/GanttPoint';
@@ -22,6 +33,7 @@ import type {
 } from '../Series/PointOptions';
 import type SizeObject from '../Renderer/SizeObject';
 import type { ChartAddSeriesEventObject } from '../Chart/ChartOptions';
+
 import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
@@ -45,37 +57,34 @@ const {
 import './GridAxis.js';
 import './BrokenAxis.js';
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisComposition' {
+    interface AxisComposition {
+        treeGrid?: TreeGridAxis['treeGrid'];
+    }
+}
+
+declare module './AxisLike' {
+    interface AxisLike {
+        utils: TreeGridAxisUtilsObject;
+    }
+}
+
+declare module './AxisType' {
+    interface AxisTypeRegistry {
+        TreeGridAxis: TreeGridAxis;
+    }
+}
+
 declare module '../Series/PointOptions' {
     interface PointOptions extends Highcharts.TreePointOptionsObject {
         collapsed?: boolean;
         seriesIndex?: number;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Axis {
-            utils: TreeGridAxisUtilsObject;
-        }
-        interface TreeGridAxisUtilsObject {
-            getNode: typeof Tree['getNode'];
-        }
-    }
-}
-
-/**
- * @private
- */
-declare module './Types' {
-    interface AxisComposition {
-        treeGrid?: TreeGridAxis['treeGrid'];
-    }
-    interface AxisTypeRegistry {
-        TreeGridAxis: TreeGridAxis;
     }
 }
 
@@ -94,6 +103,10 @@ interface TreeGridAxis extends Axis {
     treeGrid: TreeGridAxis.Additions;
 }
 
+interface TreeGridAxisUtilsObject {
+    getNode: typeof Tree['getNode'];
+}
+
 /**
  * @private
  */
@@ -105,7 +118,7 @@ namespace TreeGridAxis {
      *
      * */
 
-    export interface AxisBreakObject extends Highcharts.XAxisBreaksOptions {
+    export interface AxisBreakObject extends AxisBreakOptions {
         showPoints: boolean;
     }
 
@@ -136,12 +149,12 @@ namespace TreeGridAxis {
         y?: number;
     }
 
-    export interface LabelsOptions extends Highcharts.XAxisLabelsOptions {
+    export interface LabelsOptions extends AxisLabelOptions {
         levels?: number;
         symbol?: LabelIconOptionsObject;
     }
 
-    export interface Options extends Highcharts.XAxisOptions {
+    export interface Options extends AxisOptions {
         labels: LabelsOptions;
     }
 
@@ -427,7 +440,7 @@ namespace TreeGridAxis {
         const chart = e.target,
             axes = chart.axes;
 
-        (axes.filter(function (axis: Highcharts.Axis): boolean {
+        (axes.filter(function (axis): boolean {
             return axis.options.type === 'treegrid';
         }) as Array<TreeGridAxis>).forEach(
             function (axis: TreeGridAxis): void {
@@ -926,7 +939,7 @@ namespace TreeGridAxis {
          * @return {Array<object>}
          * Returns an array of the new breaks for the axis.
          */
-        public collapse(node: GridNode): Array<Highcharts.XAxisBreaksOptions> {
+        public collapse(node: GridNode): Array<AxisBreakOptions> {
             const axis = this.axis,
                 breaks = (axis.options.breaks || []),
                 obj = getBreakFromNode(node, axis.max);
@@ -956,7 +969,7 @@ namespace TreeGridAxis {
          * @return {Array<object>}
          * Returns an array of the new breaks for the axis.
          */
-        public expand(node: GridNode): Array<Highcharts.XAxisBreaksOptions> {
+        public expand(node: GridNode): Array<AxisBreakOptions> {
             const axis = this.axis,
                 breaks = (axis.options.breaks || []),
                 obj = getBreakFromNode(node, axis.max);
@@ -966,15 +979,15 @@ namespace TreeGridAxis {
             axis.treeGrid.setCollapsedStatus(node);
 
             // Remove the break from the axis breaks array.
-            return breaks.reduce(function (
-                arr: Array<Highcharts.XAxisBreaksOptions>,
-                b: Highcharts.XAxisBreaksOptions
-            ): Array<Highcharts.XAxisBreaksOptions> {
-                if (b.to !== obj.to || b.from !== obj.from) {
-                    arr.push(b);
-                }
-                return arr;
-            }, [] as Array<Highcharts.XAxisBreaksOptions>);
+            return breaks.reduce(
+                function (arr, b): Array<AxisBreakOptions> {
+                    if (b.to !== obj.to || b.from !== obj.from) {
+                        arr.push(b);
+                    }
+                    return arr;
+                },
+                [] as Array<AxisBreakOptions>
+            );
         }
 
         /**
@@ -1029,7 +1042,7 @@ namespace TreeGridAxis {
                 breaks = (axis.options.breaks || []),
                 obj = getBreakFromNode(node, axis.max);
 
-            return breaks.some(function (b: Highcharts.XAxisBreaksOptions): boolean {
+            return breaks.some(function (b): boolean {
                 return b.from === obj.from && b.to === obj.to;
             });
         }
@@ -1050,7 +1063,7 @@ namespace TreeGridAxis {
          * @return {Array<object>}
          * Returns an array of the new breaks for the axis.
          */
-        public toggleCollapse(node: GridNode): Array<Highcharts.XAxisBreaksOptions> {
+        public toggleCollapse(node: GridNode): Array<AxisBreakOptions> {
             return (
                 this.isCollapsed(node) ?
                     this.expand(node) :

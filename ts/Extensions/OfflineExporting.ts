@@ -90,15 +90,23 @@ declare global {
         ): void;
         function svgToDataUrl(svg: string): string;
     }
-    interface CanvasRenderingContext2D {
-        drawSvg: Function;
+
+    interface Canvg {
+        fromString(
+            ctx: CanvasRenderingContext2D,
+            svg: string
+        ): Canvg;
+        start(): void;
+    }
+    interface CanvgNamespace {
+        Canvg: Canvg;
     }
     interface HTMLCanvasElement {
         /** @deprecated */
         msToBlob: Function;
     }
     interface Window {
-        canvg: unknown;
+        canvg: CanvgNamespace;
         jsPDF: typeof jsPDF;
         svg2pdf: Function;
     }
@@ -165,8 +173,9 @@ function svgToDataUrl(svg: string): string {
     try {
         // Safari requires data URI since it doesn't allow navigation to blob
         // URLs. Firefox has an issue with Blobs and internal references,
-        // leading to gradients not working using Blobs (#4550)
-        if (!webKit && !H.isFirefox) {
+        // leading to gradients not working using Blobs (#4550).
+        // foreignObjects also dont work well in Blobs in Chrome (#14780).
+        if (!webKit && !H.isFirefox && svg.indexOf('<foreignObject') === -1) {
             return domurl.createObjectURL(new win.Blob([svg], {
                 type: 'image/svg+xml;charset-utf-16'
             }));
@@ -554,7 +563,8 @@ function downloadSVGLocal(
                         /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
                     ) as any)[1] * scale,
                     downloadWithCanVG = function (): void {
-                        ctx.drawSvg(svg, 0, 0, imageWidth, imageHeight);
+                        const v = win.canvg.Canvg.fromString(ctx, svg);
+                        v.start();
                         try {
                             downloadURL(
                                 win.navigator.msSaveOrOpenBlob as any ?
@@ -582,11 +592,8 @@ function downloadSVGLocal(
                     // yet since we are doing things asynchronously. A cleaner
                     // solution would be nice, but this will do for now.
                     objectURLRevoke = true;
-                    // Get RGBColor.js first, then canvg
-                    getScript(libURL + 'rgbcolor.js', function (): void {
-                        getScript(libURL + 'canvg.js', function (): void {
-                            downloadWithCanVG();
-                        });
+                    getScript(libURL + 'canvg.js', function (): void {
+                        downloadWithCanVG();
                     });
                 }
             },
@@ -766,11 +773,15 @@ Chart.prototype.exportChartLocal = function (
             }
         },
         svgSuccess = function (svg: string): void {
-            // If SVG contains foreignObjects all exports except SVG will fail,
-            // as both CanVG and svg2pdf choke on this. Gracefully fall back.
+            // If SVG contains foreignObjects PDF fails in all browsers and all
+            // exports except SVG will fail in IE, as both CanVG and svg2pdf
+            // choke on this. Gracefully fall back.
             if (
                 svg.indexOf('<foreignObject') > -1 &&
-                options.type !== 'image/svg+xml'
+                options.type !== 'image/svg+xml' &&
+                (
+                    H.isMS || options.type === 'application/pdf'
+                )
             ) {
                 fallbackToExportServer(
                     'Image type not supported' +
