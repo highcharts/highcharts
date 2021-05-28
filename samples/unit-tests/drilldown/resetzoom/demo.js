@@ -49,7 +49,8 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
             breadcrumbs: {
                 position: {
                     x: 100
-                }
+                },
+                showFullPath: false
             },
             series: [
                 {
@@ -250,6 +251,9 @@ QUnit.test('Drilldown and reset zoom should not crash the chart, #8095.', functi
             }]
         }],
         drilldown: {
+            breadcrumbs: {
+                showFullPath: false
+            },
             series: [{
                 id: 'drill',
                 data: [8, 9, 8]

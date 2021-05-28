@@ -1,6 +1,9 @@
 QUnit.test('Breadcrumbs button', function (assert) {
     const chart =  Highcharts.chart('container', {
         series: [{
+            breadcrumbs: {
+                showFullPath: false
+            },
             type: 'treemap',
             name: 'Store',
             layoutAlgorithm: 'squarified',

@@ -28,6 +28,9 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
             ]
         }],
         drilldown: {
+            breadcrumbs: {
+                showFullPath: false
+            },
             animation: false,
             series: [{
                 name: "Fruits",
@@ -158,8 +161,7 @@ QUnit.test('Breadcrumbs button format.', function (assert) {
         drilldown: {
             breadcrumbs: {
                 enabled: true,
-                showFullPath: true,
-                format: 'Go to {point.name}'
+                format: 'Go to {level.name}'
             },
             animation: false,
             series: [{
@@ -239,7 +241,7 @@ QUnit.test('Breadcrumbs button formatter.', function (assert) {
     const buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
 
     assert.strictEqual(
-        buttons[0].textContent,
+        buttons[1].textContent,
         '1',
         'The first button should have text 1.'
     );
@@ -278,7 +280,8 @@ QUnit.test('Breadcrumbs with no series name, lang', function (assert) {
         }],
         drilldown: {
             breadcrumbs: {
-                enabled: true
+                enabled: true,
+                showFullPath: false
             },
             animation: false,
             series: [{
@@ -297,9 +300,9 @@ QUnit.test('Breadcrumbs with no series name, lang', function (assert) {
     const buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
 
     assert.strictEqual(
-        buttons[buttons.length - 1].textContent,
-        '◁ Major',
-        'The button should show ◁ Major.'
+        buttons[0].textContent,
+        '← Major',
+        'The button should show Major.'
     );
 });
 

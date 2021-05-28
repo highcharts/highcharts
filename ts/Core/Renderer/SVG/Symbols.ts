@@ -333,20 +333,6 @@ function triangleDown(
     ];
 }
 
-function triangleRight(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
-    return [
-        ['M', x, y],
-        ['L', x + w, y + h / 2],
-        ['L', x, y + h],
-        ['Z']
-    ];
-}
-
 /* *
  *
  *  Registry
@@ -364,7 +350,6 @@ declare module './SymbolType' {
         square: typeof rect;
         triangle: typeof triangle;
         'triangle-down': typeof triangleDown;
-        'triangle-right': typeof triangleRight;
     }
 }
 
@@ -377,8 +362,7 @@ const Symbols: SymbolTypeRegistry = {
     roundedRect,
     square: rect,
     triangle,
-    'triangle-down': triangleDown,
-    'triangle-right': triangleRight
+    'triangle-down': triangleDown
 } as SymbolTypeRegistry;
 
 /* *

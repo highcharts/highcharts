@@ -144,6 +144,9 @@ QUnit.test('Drill up failed on top level (#3544)', function (assert) {
             text: null
         },
         drilldown: {
+            breadcrumbs: {
+                showFullPath: false
+            },
             animation: false,
             series: [
                 {
@@ -272,6 +275,9 @@ QUnit.test('Multi-level drilldown gets mixed  (#3579)', function (assert) {
             }
         ],
         drilldown: {
+            breadcrumbs: {
+                showFullPath: false
+            },
             animation: false,
             series: [
                 {

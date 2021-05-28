@@ -37,7 +37,8 @@ const {
     addEvent,
     defined,
     extend,
-    merge
+    merge,
+    pick
 } = U;
 
 /* *
@@ -48,6 +49,7 @@ const {
 
 declare module '../Core/LangOptions' {
     interface LangOptions {
+        breadcrumbsToLabel?: string;
         mainBreadcrumb?: string;
     }
 }
@@ -69,7 +71,8 @@ declare module '../Series/Treemap/TreemapSeriesOptions' {
 declare global {
     namespace Highcharts {
         interface BreadcrumbsOptions {
-            buttonPadding?: number;
+            buttonTheme: SVGAttributes;
+            buttonSpacing?: number;
             events?: BreadcrumbsButtonsEventsOptions;
             floating?: boolean;
             format?: string;
@@ -156,6 +159,12 @@ extend(
          * @since    next
          * @product  highcharts
          */
+        breadcrumbsToLabel: '&#8592',
+
+        /**
+         * @since    next
+         * @product  highcharts
+         */
         mainBreadcrumb: 'Main'
     }
 );
@@ -180,12 +189,26 @@ class Breadcrumbs {
      */
     public static defaultBreadcrumbsOptions = {
         /**
+         * Them for button.
+         *
+         * @type {Highcharts.SVGAttributes}
+         */
+        buttonTheme: {
+            /** @ignore */
+            height: 18,
+            /** @ignore */
+            padding: 2,
+            /** @ignore */
+            zIndex: 7
+        },
+
+        /**
          * The default padding for each button and separator in each direction.
          *
          * @type      {number}
          * @since     next
          */
-        buttonPadding: 5,
+        buttonSpacing: 5,
 
         /**
          * Fires when clicking on the breadcrumbs button.
@@ -218,20 +241,20 @@ class Breadcrumbs {
          * @type      {boolean}
          * @since     next
          */
-        floating: true,
+        floating: false,
 
         /**
          * A format string for the breadcrumbs button.
          * Variables are enclosed by curly brackets.
          * Available values are passed in the declared point options.
          *
-         * @type      {string}
+         * @type      {string|undefined}
          * @since     next
-         * @default   '{point.name}'
+         * @default   undefined
          * @sample {highcharts} highcharts/breadcrumbs/format
          *          Display custom values in breadcrumb button.
          */
-        format: '{point.name}',
+        format: void 0 as any,
 
         /**
          * Callback function to format the breadcrumb text from scratch.
@@ -314,7 +337,7 @@ class Breadcrumbs {
          * @sample {highcharts} highcharts/breadcrumbs/show-full-path
          *          Show full path.
          */
-        showFullPath: false,
+        showFullPath: true,
 
         /**
          * CSS styles for all breadcrumbs.
@@ -520,33 +543,6 @@ class Breadcrumbs {
     }
 
     /**
-     * Default button text formatter.
-     *
-     * @requires  modules/breadcrumbs
-     *
-     * @function Highcharts.Breadcrumbs#defaultFormatter
-     * @param {Highcharts.Breadcrumbs} this
-     *        Breadcrumbs class.
-     * @param {Highcharts.Breadcrumbs} breadcrumb
-     *        Breadcrumb.
-     * @return {string}
-     *         Formatted text.
-     */
-    public defaultFormatter(this: Breadcrumbs, breadcrumb: Array<number|null|Point|SeriesType|SVGAElement>): string {
-        const breadcrumbs = this,
-            chart = breadcrumbs.chart,
-            breadcrumbsOptions = breadcrumbs.options,
-            arrow = breadcrumbsOptions.showFullPath ? '' : '◁ ',
-            lang = chart.options.lang;
-
-        return breadcrumbsOptions.formatter && breadcrumbsOptions.formatter(breadcrumb, breadcrumbs) ||
-            arrow + (
-                format(breadcrumbsOptions.format as string, { point: (breadcrumb[1] as Point) }, chart) ||
-                (lang as Highcharts.LangOptions).mainBreadcrumb
-            );
-    }
-
-    /**
      * Destroy the chosen buttons and separators.
      *
      * @requires  modules/breadcrumbs
@@ -587,6 +583,37 @@ class Breadcrumbs {
                 chart.drillUpButton = void 0;
             }
         }
+    }
+
+    /**
+     * Default button text formatter.
+     *
+     * @requires  modules/breadcrumbs
+     *
+     * @function Highcharts.Breadcrumbs#getButtonText
+     * @param {Highcharts.Breadcrumbs} this
+     *        Breadcrumbs class.
+     * @param {Highcharts.Breadcrumbs} breadcrumb
+     *        Breadcrumb.
+     * @return {string}
+     *         Formatted text.
+     */
+    public getButtonText(this: Breadcrumbs, breadcrumb: Array<number|null|Point|SeriesType|SVGAElement>): string {
+        const breadcrumbs = this,
+            chart = breadcrumbs.chart,
+            breadcrumbsOptions = breadcrumbs.options,
+            lang = chart.options.lang,
+            textFormat = pick(breadcrumbsOptions.format,
+                breadcrumbsOptions.showFullPath ? '{level.name}' : '← {level.name}'
+            );
+
+        let returnText = breadcrumbsOptions.formatter && breadcrumbsOptions.formatter(breadcrumb, breadcrumbs) ||
+                format(textFormat, { level: (breadcrumb[1] as Point) }, chart) || '';
+
+        if (returnText === '← ' && lang && lang.mainBreadcrumb) {
+            returnText = !breadcrumbsOptions.showFullPath ? '← ' + lang.mainBreadcrumb : lang.mainBreadcrumb;
+        }
+        return returnText;
     }
 
     /**
@@ -716,7 +743,7 @@ class Breadcrumbs {
             breadcrumbsOptions = breadcrumbs.options,
             lastBreadcrumbs = breadcrumbsList[breadcrumbsList.length - 2] &&
                 breadcrumbsList[breadcrumbsList.length - 2][2],
-            buttonPadding = breadcrumbsOptions && breadcrumbsOptions.buttonPadding;
+            buttonSpacing = breadcrumbsOptions && breadcrumbsOptions.buttonSpacing;
 
         // A main group for the breadcrumbs.
         if (!this.breadcrumbsGroup && breadcrumbsOptions) {
@@ -730,11 +757,11 @@ class Breadcrumbs {
         }
 
         // Draw breadcrumbs.
-        if (breadcrumbsList && breadcrumbsOptions && buttonPadding) {
+        if (breadcrumbsList && breadcrumbsOptions && buttonSpacing) {
             // Inital position for calculating the breadcrumbsGroup.
             let posX: number = lastBreadcrumbs ? lastBreadcrumbs.x +
-                    lastBreadcrumbs.element.getBBox().width + buttonPadding : 0;
-            const posY: number = buttonPadding;
+                    lastBreadcrumbs.element.getBBox().width + buttonSpacing : 0;
+            const posY: number = buttonSpacing;
 
             if (breadcrumbsOptions.showFullPath) {
                 // Make sure that only one type of button is visible.
@@ -751,7 +778,7 @@ class Breadcrumbs {
                     if (!breadcrumbButton) {
                         const button = breadcrumbs.renderButton(breadcrumb, posX, posY);
                         breadcrumb.push(button);
-                        posX += button ? button.getBBox().width + buttonPadding : 0;
+                        posX += button ? button.getBBox().width + buttonSpacing : 0;
                         breadcrumbs.breadcrumbsGroup.lastXPos = posX;
                     }
 
@@ -760,7 +787,7 @@ class Breadcrumbs {
                         const separator = breadcrumbs.renderSeparator(posX, posY);
 
                         breadcrumb.push(separator);
-                        posX += separator ? separator.getBBox().width + buttonPadding : 0;
+                        posX += separator ? separator.getBBox().width + buttonSpacing : 0;
                     }
                 });
             } else {
@@ -812,7 +839,7 @@ class Breadcrumbs {
 
         if (breadcrumbsOptions && breadcrumb && breadcrumb[1]) {
             const button = chart.renderer.button(
-                breadcrumbs.defaultFormatter(breadcrumb),
+                breadcrumbs.getButtonText(breadcrumb),
                 posX,
                 posY,
                 function (e: (Event|any)): void {
@@ -836,9 +863,9 @@ class Breadcrumbs {
                         breadcrumbs.jumpBy(null as any);
                     }
                 })
-                .attr({
-                    padding: 3
-                })
+                .attr(
+                    breadcrumbsOptions.buttonTheme
+                )
                 .addClass('highcharts-breadcrumbs-button')
                 .add(breadcrumbs.breadcrumbsGroup);
 
@@ -868,31 +895,33 @@ class Breadcrumbs {
         const breadcrumbs = this,
             chart = this.chart,
             breadcrumbsOptions = breadcrumbs.options,
+            lang = chart.options.lang,
             size = 10,
             separatorOptions = breadcrumbsOptions.separator;
 
         let separator, separatorBBox;
 
-        if (separatorOptions) {
-            separator = chart.renderer.symbol(
-                separatorOptions.symbol as string,
+        if (separatorOptions && lang && lang.breadcrumbsToLabel) {
+            separator = chart.renderer.label(
+                lang.breadcrumbsToLabel,
                 posX,
                 posY,
-                separatorOptions.size,
-                separatorOptions.size
+                void 0 as any,
+                void 0 as any,
+                void 0 as any,
+                true
             ).add(breadcrumbs.breadcrumbsGroup)
                 .addClass('highcharts-breadcrumbs-separator');
             separatorBBox = separator.getBBox();
 
             if (!chart.styledMode) {
                 separator.css({
+                    align: 'middle',
                     fill: 'white',
-                    stroke: 'black',
-                    lineWidth: 1
+                    lineWidth: 1,
+                    stroke: 'black'
                 });
             }
-
-            separator.translate(0, separatorBBox.height / 2);
         }
 
         return separator;
@@ -938,7 +967,7 @@ class Breadcrumbs {
 
         if (chart.drillUpButton && breadcrumbsOptions && lang) {
             chart.drillUpButton.attr({
-                text: this.defaultFormatter(currentBreadcrumb)
+                text: this.getButtonText(currentBreadcrumb)
             });
         }
     }
@@ -1063,7 +1092,7 @@ if (!H.Breadcrumbs) {
     addEvent(Chart, 'destroy', function destroyEvents(): void {
         if (this.breadcrumbs) {
             this.breadcrumbs.destroyGroup();
-            this.breadcrumbs = void 0 as any;
+            this.breadcrumbs = void 0 as Breadcrumbs|undefined;
         }
     });
 }
