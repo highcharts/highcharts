@@ -15,7 +15,7 @@ const { test, only,skip } = QUnit;
 const eventTypes = [
     'load',
     'afterLoad',
-    'render',
+    'beforeRender',
     'afterRender',
     'redraw',
     'afterRedraw',
@@ -64,8 +64,9 @@ test('ChartComponent events', function (assert) {
 
     registerEvents(component);
 
+    component.load()
     component.render();
-    const expectedEvents = ['load', 'afterLoad', 'render', 'afterRender']
+    const expectedEvents = ['load', 'afterLoad', 'beforeRender', 'afterRender']
     assert.deepEqual(registeredEvents, expectedEvents);
 
     component.setStore(store)
@@ -86,9 +87,10 @@ test('ChartComponent events', function (assert) {
     });
     registerEvents(componentWithStore);
 
+    componentWithStore.load();
     componentWithStore.render();
 
-    expectedEvents.push('load', 'storeAttached', 'afterLoad', 'render', 'afterRender');
+    expectedEvents.push('load', 'storeAttached', 'afterLoad', 'beforeRender', 'afterRender');
     assert.deepEqual(
         registeredEvents,
         expectedEvents,
@@ -116,7 +118,7 @@ test('ChartComponent events', function (assert) {
 
     // Redraws -> should also fire render
     component.redraw();
-    expectedEvents.push('redraw', 'render', 'afterRender');
+    expectedEvents.push('redraw', 'beforeRender', 'afterRender');
 
 
     assert.deepEqual(
@@ -196,8 +198,9 @@ test('HTMLComponent events', function (assert) {
 
     registerEvents(component);
 
+    component.load();
     component.render();
-    const expectedEvents = ['load', 'afterLoad', 'render', 'afterRender']
+    const expectedEvents = ['load', 'afterLoad', 'beforeRender', 'afterRender']
     assert.deepEqual(registeredEvents, expectedEvents);
 
     component.setStore(store);
@@ -218,9 +221,10 @@ test('HTMLComponent events', function (assert) {
     });
     registerEvents(componentWithStore);
 
+    componentWithStore.load();
     componentWithStore.render();
 
-    expectedEvents.push('load', 'storeAttached', 'afterLoad', 'render', 'afterRender');
+    expectedEvents.push('load', 'storeAttached', 'afterLoad', 'beforeRender', 'afterRender');
     assert.deepEqual(
         registeredEvents,
         expectedEvents,
@@ -248,7 +252,7 @@ test('HTMLComponent events', function (assert) {
 
     // Redraws -> should also fire render
     component.redraw();
-    expectedEvents.push('redraw', 'render', 'afterRender', 'afterRedraw');
+    expectedEvents.push('redraw', 'beforeRender', 'afterRender', 'afterRedraw');
 
 
     assert.deepEqual(
@@ -322,7 +326,7 @@ test('ChartComponent constructors', function (assert) {
             Highcharts: constructorMap[HCType],
             chartConstructor: HCType,
             chartOptions: {}
-        }).load();
+        }).render();
         // Test that the constructor creates a chart
         assert.ok(component.chart, `Able to create a ${HCType} chart`);
 

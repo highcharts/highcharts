@@ -158,6 +158,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     }
 
     public render(): this {
+        this.emit({ type: 'beforeRender', component: this });
         super.render(); // Fires the render event and calls load
         this.emit({ type: 'afterRender', component: this });
         return this;

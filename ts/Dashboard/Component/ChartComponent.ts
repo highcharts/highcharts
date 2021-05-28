@@ -171,7 +171,6 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
         super.load();
         this.parentElement.appendChild(this.element);
         this.contentElement.appendChild(this.chartContainer);
-        this.initChart();
         this.hasLoaded = true;
 
         this.emit({ type: 'afterLoad', component });
@@ -180,14 +179,15 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
     }
 
     public render(): this {
+        this.emit({ type: 'beforeRender', component: this });
         super.render();
+        this.initChart();
         this.emit({ type: 'afterRender', component: this });
         return this;
     }
 
     public redraw(): this {
         super.redraw();
-        this.initChart();
         return this.render();
     }
 
@@ -220,7 +220,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
     public update(options: Partial<ChartComponent.ComponentOptions>): this {
         super.update(options);
         if (this.chart) {
-            this.chart.update(this.options.chartOptions as any || {});
+            this.chart.update(this.options.chartOptions || {});
         }
         this.emit({ type: 'afterUpdate', component: this });
         return this;
@@ -229,15 +229,28 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
     private updateSeries(): void {
         // Heuristically create series from the store datatable
         if (this.chart && this.store) {
-            const { table } = this.store;
+            this.presentationTable = this.presentationModifier ?
+                this.store.table.modified.clone() :
+                this.store.table;
+
+            const { id: storeTableID } = this.store.table;
             const { chart } = this;
 
             // Names/aliases that should be mapped to xAxis values
             const tableAxisMap = this.options.tableAxisMap || {};
             const xKeyMap: Record<string, string> = {};
 
+            if (this.presentationModifier) {
+                this.presentationModifier.modify(this.presentationTable);
+                this.emit({
+                    type: 'afterPresentationModifier',
+                    component: this
+                });
+            }
+
+            const table = this.presentationTable;
             // Remove series names that match the xKeys
-            const seriesNames = table.getColumnNames()
+            const seriesNames = table.modified.getColumnNames()
                 .filter((name): boolean => {
                     const isVisible = this.activeGroup ?
                         this.activeGroup.getSharedState().getColumnVisibility(name) !== false :
@@ -264,7 +277,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
                 let i = 0;
                 while (i < chart.series.length) {
                     const series = chart.series[i];
-                    if (series.options.id === `${table.id}-series-${index}`) {
+                    if (series.options.id === `${storeTableID}-series-${index}`) {
                         return series;
                     }
                     i++;
@@ -272,10 +285,9 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
                 return chart.addSeries({
                     name: seriesName,
-                    id: `${table.id}-series-${index}`
+                    id: `${storeTableID}-series-${index}`
                 }, false);
-            }
-            );
+            });
 
             // Insert the data
             seriesList.forEach((series): void => {
@@ -314,10 +326,6 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
     }
 
     private initChart(): Chart {
-        this.emit({
-            type: 'initChart'
-        } as any);
-
         if (this.chart) {
             this.chart.destroy();
         }
@@ -488,6 +496,7 @@ namespace ChartComponent {
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSOM', {
         json: ChartComponent.ClassJSON;
     }>;
+
     export interface ComponentOptions extends Component.ComponentOptions, EditableOptions {
         Highcharts: typeof Highcharts;
         chartConstructor: ChartComponent.constructorType;

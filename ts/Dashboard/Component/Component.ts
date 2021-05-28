@@ -3,6 +3,7 @@ import type ComponentType from './ComponentType';
 import Cell from '../Layout/Cell.js';
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
+import type DataModifier from '../../Data/Modifiers/DataModifier';
 import DataTable from '../../Data/DataTable.js';
 import type DataJSON from '../../Data/DataJSON';
 import type CSSObject from '../../Core/Renderer/CSSObject';
@@ -254,6 +255,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     private cellListeners: Function[] = [];
     protected hasLoaded: boolean;
 
+    public presentationModifier?: DataModifier;
+    public presentationTable?: DataTable;
+
     public activeGroup: ComponentGroup | undefined = void 0;
 
     /**
@@ -296,6 +300,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         this.store = this.options.store;
         this.hasLoaded = false;
         this.editableOptions = new EditableOptions(this, options.editableOptionsBindings);
+
+        this.presentationModifier = this.options.presentationModifier;
 
         // Initial dimensions
         this.dimensions = {
@@ -647,13 +653,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             // Call resize to fit to the cell
             this.resizeTo(this.parentElement);
         }
-
-        const e = {
-            component: this
-        };
-        fireEvent(this, 'render', e);
-
-        return e.component;
+        return this;
     }
 
     /**
@@ -768,7 +768,8 @@ namespace Component {
         RenderEvent |
         RedrawEvent |
         JSONEvent |
-        MessageEvent;
+        MessageEvent |
+        PresentationModifierEvent;
 
     export type ResizeEvent = Event<'resize', {
         readonly type: 'resize';
@@ -782,7 +783,7 @@ namespace Component {
 
     export type LoadEvent = Event<'load' | 'afterLoad', {}>;
     export type RedrawEvent = Event<'redraw' | 'afterRedraw', {}>;
-    export type RenderEvent = Event<'render' | 'afterRender', {}>;
+    export type RenderEvent = Event<'beforeRender' | 'afterRender', {}>;
     export type MessageEvent = Event<'message', {
         message: MessageType;
         detail?: {
@@ -794,6 +795,7 @@ namespace Component {
         json: DataJSON.ClassJSON;
     }>;
     export type TableChangedEvent = Event<'tableChanged', {}>
+    export type PresentationModifierEvent = Component.Event<'afterPresentationModifier', {}>
 
     export type Event<
         EventType extends DataEventEmitter.Event['type'],
@@ -813,6 +815,7 @@ namespace Component {
         events?: Record<string, Function>;
         editableOptions: Array<keyof EditableOptions>;
         editableOptionsBindings?: EditableOptions.BindingsType;
+        presentationModifier?: DataModifier;
     }
 
     export interface EditableOptions {
