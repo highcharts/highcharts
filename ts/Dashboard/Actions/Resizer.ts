@@ -410,6 +410,9 @@ class Resizer {
 
             // resize width
             if (currentDimension === 'x') {
+                const cellSiblings = this.getSiblings(currentCell);
+
+console.log('cellSiblings', cellSiblings);
 
                 const maxWidth = parentRowWidth - (
                     this.sumCellOuterWidth(
@@ -450,7 +453,8 @@ class Resizer {
                 }
 
                 this.resizeCellSiblings(
-                    ((e.clientX - this.startX) / parentRowWidth) * 100
+                    ((e.clientX - this.startX) / parentRowWidth) * 100,
+                    cellSiblings.next
                 );
 
                 this.startX = e.clientX;
@@ -541,28 +545,60 @@ class Resizer {
         return sum;
     }
 
-    public resizeCellSiblings(
-        diffWidth: number
-    ): void {
-        const currentCell = this.currentCell;
+    public getSiblings(
+        currentCell: Cell|undefined
+    ): Resizer.CellSiblings {
+        const siblings = {
+            prev: [] as Array<Cell>,
+            next: [] as Array<Cell>
+        };
 
-        var cellSiblings = [];
-        let node = currentCell?.container;
-        
-        // detect siblings
-        while (node) {
-            if (node !== currentCell?.container && node.nodeType === Node.ELEMENT_NODE ) {
-                cellSiblings.push(node);
-            }
-            node = (node.nextElementSibling || node.nextSibling) as HTMLDOMElement;
+        if (!currentCell) {
+            return siblings;
         }
 
-        const cellDiff = diffWidth / cellSiblings.length;
+        const row = currentCell.row;
+        const cells = row.cells;
+        let currentCellIndex = Infinity;
 
-        for(let i = 0, iEnd = cellSiblings.length; i < iEnd; ++i) {
-            cellSiblings[i].style.width =
-                parseFloat(cellSiblings[i].style.getPropertyValue('width')) +
-                -cellDiff + '%'; 
+        
+        for (let i = 0, iEnd = cells.length; i < iEnd; i++) {
+            if (cells[i].id !== currentCell.id) {
+                // detect prev or next sibbling
+                if (i < currentCellIndex) {
+                    siblings.prev.push(
+                        cells[i]
+                    );
+                } else {
+                    siblings.next.push(
+                        cells[i]
+                    );
+                }
+            } else {
+                // make breaking point for detection of prev / next
+                currentCellIndex = i;
+            }
+        }
+
+        return siblings;
+    }
+
+    public resizeCellSiblings(
+        diffWidth: number,
+        cellSiblings: Array<Cell>
+    ): void {
+        const cellDiff = diffWidth / cellSiblings.length;
+        let cellContainer;
+
+        for (let i = 0, iEnd = cellSiblings.length; i < iEnd; ++i) {
+            cellContainer = cellSiblings[i].container;
+
+            if (cellContainer) {
+                (cellContainer).style.width =
+                    // bug, missing padding/margin
+                    parseFloat(cellContainer.style.getPropertyValue('width')) +
+                    -cellDiff + '%'; 
+            }
         }
     }
     /**
@@ -761,6 +797,11 @@ namespace Resizer {
     export interface ResizePointer {
         isVisible: boolean;
         element: HTMLDOMElement;
+    }
+
+    export interface CellSiblings {
+        prev: Array<Cell>;
+        next: Array<Cell>;
     }
 }
 
