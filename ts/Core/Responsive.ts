@@ -16,7 +16,7 @@
  *
  * */
 
-import type Options from './Options';
+import type GlobalOptions from './Options';
 
 import Chart from './Chart/Chart.js';
 import U from './Utilities.js';
@@ -40,14 +40,18 @@ const {
 
 declare module './Chart/ChartLike' {
     interface ChartLike {
-        currentResponsive?: Highcharts.ResponsiveCurrentObject;
+        /** @requires Core/Responsive */
+        currentResponsive?: ResponsiveComposition.CurrentObject;
+        /** @requires Core/Responsive */
         currentOptions(
-            options: Partial<Options>
-        ): Partial<Options>;
+            options: Partial<GlobalOptions>
+        ): Partial<GlobalOptions>;
+        /** @requires Core/Responsive */
         matchResponsiveRule(
-            rule: Highcharts.ResponsiveRulesOptions,
+            rule: ResponsiveComposition.RuleOptions,
             matches: Array<string>
         ): void;
+        /** @requires Core/Responsive */
         setResponsive(redraw?: boolean, reset?: boolean): void;
     }
 }
@@ -55,49 +59,17 @@ declare module './Chart/ChartLike' {
 declare module './Options' {
     interface Options {
         isResponsiveOptions?: boolean;
-        responsive?: Highcharts.ResponsiveOptions;
+        responsive?: ResponsiveComposition.Options;
     }
 }
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface ResponsiveCallbackFunction {
-            (this: Chart): boolean;
-        }
-        interface ResponsiveOptions {
-            rules?: Array<ResponsiveRulesOptions>;
-        }
-        interface ResponsiveRulesConditionOptions {
-            callback?: ResponsiveCallbackFunction;
-            maxHeight?: number;
-            maxWidth?: number;
-            minHeight?: number;
-            minWidth?: number;
-        }
-        interface ResponsiveRulesOptions {
-            _id?: string;
-            chartOptions?: Options;
-            condition?: ResponsiveRulesConditionOptions;
-        }
-        interface ResponsiveCurrentObject {
-            mergedOptions: Partial<Options>;
-            ruleIds: string;
-            undoOptions: Partial<Options>;
-        }
-    }
-}
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
 
 /* *
  *
  *  Class
  *
  * */
+
+/* eslint-disable no-invalid-this, valid-jsdoc */
 
 class ResponsiveChart {
 
@@ -119,8 +91,8 @@ class ResponsiveChart {
      * @function Highcharts.Chart#currentOptions
      */
     public currentOptions(
-        options: Options
-    ): Partial<Options> {
+        options: GlobalOptions
+    ): Partial<GlobalOptions> {
 
         const chart = this,
             ret = {};
@@ -197,12 +169,11 @@ class ResponsiveChart {
      * @param {Array<string>} matches
      */
     public matchResponsiveRule(
-        rule: Highcharts.ResponsiveRulesOptions,
+        rule: ResponsiveComposition.RuleOptions,
         matches: Array<string>
     ): void {
 
-        const condition =
-                rule.condition as Highcharts.ResponsiveRulesConditionOptions,
+        const condition = rule.condition,
             fn = condition.callback || function (this: Chart): boolean {
                 return (
                     this.chartWidth <= pick(condition.maxWidth, Number.MAX_VALUE) &&
@@ -241,7 +212,7 @@ class ResponsiveChart {
 
         if (!reset && options && options.rules) {
             options.rules.forEach(function (
-                rule: Highcharts.ResponsiveRulesOptions
+                rule: ResponsiveComposition.RuleOptions
             ): void {
                 if (typeof rule._id === 'undefined') {
                     rule._id = uniqueKey();
@@ -254,11 +225,11 @@ class ResponsiveChart {
         // Merge matching rules
         const mergedOptions = merge(
             ...ruleIds
-                .map((ruleId): (Highcharts.ResponsiveRulesOptions|undefined) => find(
+                .map((ruleId): (ResponsiveComposition.RuleOptions|undefined) => find(
                     (options || {}).rules || [],
                     (rule): boolean => (rule._id === ruleId)
                 ))
-                .map((rule): (Options|undefined) => (
+                .map((rule): (GlobalOptions|undefined) => (
                     rule && rule.chartOptions
                 ))
         );
@@ -324,8 +295,34 @@ class ResponsiveComposition {
 
     public static compose<T extends typeof Chart>(ChartClass: T): (T&ResponsiveChart) {
         extend(ChartClass.prototype, ResponsiveChart.prototype);
-
         return ChartClass as (T&ResponsiveChart);
+    }
+
+}
+
+namespace ResponsiveComposition {
+    export interface CallbackFunction {
+        (this: Chart): boolean;
+    }
+    export interface CurrentObject {
+        mergedOptions: Partial<GlobalOptions>;
+        ruleIds: string;
+        undoOptions: Partial<GlobalOptions>;
+    }
+    export interface Options {
+        rules?: Array<RuleOptions>;
+    }
+    export interface RuleConditionOptions {
+        callback?: CallbackFunction;
+        maxHeight?: number;
+        maxWidth?: number;
+        minHeight?: number;
+        minWidth?: number;
+    }
+    export interface RuleOptions {
+        _id?: string;
+        chartOptions?: GlobalOptions;
+        condition: RuleConditionOptions;
     }
 
 }
