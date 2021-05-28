@@ -251,6 +251,14 @@ QUnit.test('1Y button should be selected. (#7467)', function (assert) {
         true,
         '1Y initiallly selected'
     );
+
+    const minBefore = chart.xAxis[0].min;
+    chart.rangeSelector.clickButton(0);
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        minBefore,
+        'offsetMin should have been applied by pre-selected button'
+    );
 });
 
 QUnit.test('Highcharts Stock with empty data', assert => {
