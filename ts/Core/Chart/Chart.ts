@@ -2701,7 +2701,7 @@ class Chart {
 
         // depends on inverted and on margins being set
         if (Pointer) {
-            if (!H.hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
+            if (MSPointer.isRequired()) {
                 chart.pointer = new MSPointer(chart, options);
             } else {
                 /**
