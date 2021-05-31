@@ -1832,12 +1832,24 @@ class Axis {
         // This is in turn needed in order to find tick positions in ordinal
         // axes.
         if (isXAxis && !secondPass) {
+            // First process all series assigned to that axis.
             axis.series.forEach(function (series): void {
+                const chart = series.chart,
+                    options = series.options,
+                    dataGroupingOptions = options.dataGrouping,
+                    groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
+                        pick(dataGroupingOptions.enabled, chart.options.isStock);
+
+                // Allows filtering out points outside the plot area.
+                series.forceCrop = groupingEnabled; // #334
+
                 series.processData(
                     axis.min !== (axis.old && axis.old.min) ||
                     axis.max !== (axis.old && axis.old.max)
                 );
             });
+            // Then apply grouping if needed.
+            fireEvent(this, 'afterProcessData');
         }
 
         // set the translation factor used in translate function
