@@ -25,7 +25,6 @@ import type SeriesOptions from '../Series/SeriesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 
 import Axis from '../Axis/Axis.js';
-import Axis3D from '../Axis/Axis3D.js';
 import Chart from './Chart.js';
 import Color from '../Color/Color.js';
 const { parse: color } = Color;
@@ -48,7 +47,6 @@ const {
     pick,
     wrap
 } = U;
-import ZAxis from '../Axis/ZAxis.js';
 
 /* *
  *
@@ -89,28 +87,6 @@ declare module '../Options'{
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Edge3DObject extends Position3DObject {
-            xDir: Position3DObject;
-        }
-        interface Stack3DDictionary {
-            [index: number]: Stack3DDictionaryObject;
-            totalStacks: number;
-        }
-        interface Stack3DDictionaryObject {
-            position: number;
-            series: Array<Series>;
-        }
-    }
-}
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
 interface Chart3D extends Chart {
     chart3d: Chart3D.Composition;
 }
@@ -123,8 +99,12 @@ namespace Chart3D {
      *
      * */
 
+    export interface Edge3DObject extends Position3DObject {
+        xDir: Position3DObject;
+    }
+
     export interface FrameObject extends FrameOptions {
-        axes: Record<string, Record<string, (Highcharts.Edge3DObject|null)>>;
+        axes: Record<string, Record<string, (Edge3DObject|null)>>;
         back: FrameSideObject;
         bottom: FrameSideObject;
         front: FrameSideObject;
@@ -155,6 +135,14 @@ namespace Chart3D {
         visible?: ('auto'|'default'|boolean);
     }
 
+    export interface Stack3DDictionary {
+        [index: number]: Stack3DDictionaryObject;
+        totalStacks: number;
+    }
+    export interface Stack3DDictionaryObject {
+        position: number;
+        series: Array<Series>;
+    }
 
     /* *
      *
@@ -170,9 +158,6 @@ namespace Chart3D {
          *
          * */
 
-        /**
-         * @private
-         */
         public constructor(chart: Chart3D) {
             this.chart = chart;
         }
@@ -392,7 +377,7 @@ namespace Chart3D {
                     );
                 };
 
-                let yEdges = [] as Array<Highcharts.Edge3DObject>;
+                let yEdges = [] as Array<Edge3DObject>;
 
                 if (isValidEdge(ret.left, ret.front)) {
                     yEdges.push({
@@ -427,7 +412,7 @@ namespace Chart3D {
                     });
                 }
 
-                let xBottomEdges = [] as Array<Highcharts.Edge3DObject>;
+                let xBottomEdges = [] as Array<Edge3DObject>;
 
                 if (isValidEdge(ret.bottom, ret.front)) {
                     xBottomEdges.push({
@@ -446,7 +431,7 @@ namespace Chart3D {
                     });
                 }
 
-                let xTopEdges = [] as Array<Highcharts.Edge3DObject>;
+                let xTopEdges = [] as Array<Edge3DObject>;
 
                 if (isValidEdge(ret.top, ret.front)) {
                     xTopEdges.push({
@@ -465,7 +450,7 @@ namespace Chart3D {
                     });
                 }
 
-                let zBottomEdges = [] as Array<Highcharts.Edge3DObject>;
+                let zBottomEdges = [] as Array<Edge3DObject>;
 
                 if (isValidEdge(ret.bottom, ret.left)) {
                     zBottomEdges.push({
@@ -484,7 +469,7 @@ namespace Chart3D {
                     });
                 }
 
-                let zTopEdges = [] as Array<Highcharts.Edge3DObject>;
+                let zTopEdges = [] as Array<Edge3DObject>;
 
                 if (isValidEdge(ret.top, ret.left)) {
                     zTopEdges.push({
@@ -504,10 +489,10 @@ namespace Chart3D {
                 }
 
                 let pickEdge = function (
-                    edges: Array<Highcharts.Edge3DObject>,
+                    edges: Array<Edge3DObject>,
                     axis: string,
                     mult: number
-                ): (Highcharts.Edge3DObject|null) {
+                ): (Edge3DObject|null) {
                     if (edges.length === 0) {
                         return null;
                     }
@@ -905,6 +890,8 @@ namespace Chart3D {
      *  Functions
      *
      * */
+
+    /* eslint-disable no-invalid-this, valid-jsdoc */
 
     /**
      * @private
