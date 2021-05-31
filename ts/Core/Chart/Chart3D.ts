@@ -22,7 +22,7 @@ import type ColorType from '../Color/ColorType';
 import type Options from '../Options';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SeriesOptions from '../Series/SeriesOptions';
-import type SVGElement from '../Renderer/SVG/SVGElement';
+import type SVGElement3DLike from '../Renderer/SVG/SVGElement3DLike';
 
 import Axis from '../Axis/Axis.js';
 import Chart from './Chart.js';
@@ -63,7 +63,7 @@ declare module '../Animation/FxLike' {
 declare module '../Chart/ChartLike'{
     interface ChartLike {
         chart3d?: Chart3D['chart3d'];
-        frameShapes?: Record<string, SVGElement>;
+        frameShapes?: Record<string, SVGElement3DLike>;
         is3d(): boolean;
     }
 }
@@ -178,7 +178,7 @@ namespace Chart3D {
          * */
 
         public get3dFrame(): Chart3D.FrameObject {
-            let chart = this.chart,
+            const chart = this.chart,
                 options3d = chart.options.chart.options3d as any,
                 frameOptions = options3d.frame,
                 xm = chart.plotLeft,
@@ -190,7 +190,7 @@ namespace Chart3D {
                 faceOrientation = function (
                     vertexes: Array<Position3DObject>
                 ): number {
-                    let area = shapeArea3D(vertexes, chart);
+                    const area = shapeArea3D(vertexes, chart);
 
                     // Give it 0.5 squared-pixel as a margin for rounding errors
                     if (area > 0.5) {
@@ -237,12 +237,13 @@ namespace Chart3D {
                     { x: xp, y: yp, z: zp },
                     { x: xm, y: yp, z: zp }
                 ]),
-                defaultShowBottom = false,
-                defaultShowTop = false,
-                defaultShowLeft = false,
-                defaultShowRight = false,
                 defaultShowFront = false,
                 defaultShowBack = true;
+
+            let defaultShowBottom = false,
+                defaultShowTop = false,
+                defaultShowLeft = false,
+                defaultShowRight = false;
 
             // The 'default' criteria to visible faces of the frame is looking
             // up every axis to decide whenever the left/right//top/bottom sides
@@ -267,20 +268,20 @@ namespace Chart3D {
                     }
                 });
 
-            let getFaceOptions = function (
+            const getFaceOptions = function (
                 sources: Array<unknown>,
                 faceOrientation: number,
                 defaultVisible?: ('auto'|'default'|boolean)
             ): Chart3D.FrameSideObject {
-                let faceAttrs = ['size', 'color', 'visible'];
-                let options: Chart3D.FrameSideOptions = {};
+                const faceAttrs = ['size', 'color', 'visible'],
+                    options: Chart3D.FrameSideOptions = {};
 
                 for (let i = 0; i < faceAttrs.length; i++) {
-                    let attr = faceAttrs[i];
+                    const attr = faceAttrs[i];
 
                     for (let j = 0; j < sources.length; j++) {
                         if (typeof sources[j] === 'object') {
-                            let val = (sources[j] as any)[attr];
+                            const val = (sources[j] as any)[attr];
 
                             if (typeof val !== 'undefined' && val !== null) {
                                 (options as any)[attr] = val;
@@ -307,7 +308,7 @@ namespace Chart3D {
 
             // docs @TODO: Add all frame options (left, right, top, bottom,
             // front, back) to apioptions JSDoc once the new system is up.
-            let ret: Chart3D.FrameObject = {
+            const ret: Chart3D.FrameObject = {
                 axes: {},
                 // FIXME: Previously, left/right, top/bottom and front/back
                 // pairs shared size and color.
@@ -363,7 +364,7 @@ namespace Chart3D {
             // between a visible face and an invisble one. Also, the Y label
             // should be one the left-most edge (right-most if opposite).
             if (options3d.axisLabelPosition === 'auto') {
-                let isValidEdge = function (
+                const isValidEdge = function (
                     face1: Chart3D.FrameSideObject,
                     face2: Chart3D.FrameSideObject
                 ): (boolean|undefined) {
@@ -377,7 +378,7 @@ namespace Chart3D {
                     );
                 };
 
-                let yEdges = [] as Array<Edge3DObject>;
+                const yEdges = [] as Array<Edge3DObject>;
 
                 if (isValidEdge(ret.left, ret.front)) {
                     yEdges.push({
@@ -412,7 +413,7 @@ namespace Chart3D {
                     });
                 }
 
-                let xBottomEdges = [] as Array<Edge3DObject>;
+                const xBottomEdges = [] as Array<Edge3DObject>;
 
                 if (isValidEdge(ret.bottom, ret.front)) {
                     xBottomEdges.push({
@@ -431,7 +432,7 @@ namespace Chart3D {
                     });
                 }
 
-                let xTopEdges = [] as Array<Edge3DObject>;
+                const xTopEdges = [] as Array<Edge3DObject>;
 
                 if (isValidEdge(ret.top, ret.front)) {
                     xTopEdges.push({
@@ -450,7 +451,7 @@ namespace Chart3D {
                     });
                 }
 
-                let zBottomEdges = [] as Array<Edge3DObject>;
+                const zBottomEdges = [] as Array<Edge3DObject>;
 
                 if (isValidEdge(ret.bottom, ret.left)) {
                     zBottomEdges.push({
@@ -469,7 +470,7 @@ namespace Chart3D {
                     });
                 }
 
-                let zTopEdges = [] as Array<Edge3DObject>;
+                const zTopEdges = [] as Array<Edge3DObject>;
 
                 if (isValidEdge(ret.top, ret.left)) {
                     zTopEdges.push({
@@ -488,7 +489,7 @@ namespace Chart3D {
                     });
                 }
 
-                let pickEdge = function (
+                const pickEdge = function (
                     edges: Array<Edge3DObject>,
                     axis: string,
                     mult: number
@@ -499,8 +500,9 @@ namespace Chart3D {
                     if (edges.length === 1) {
                         return edges[0];
                     }
-                    let best = 0,
-                        projections = perspective(edges, chart, false);
+                    const projections = perspective(edges, chart, false);
+
+                    let best = 0;
 
                     for (let i = 1; i < projections.length; i++) {
                         if (
@@ -589,7 +591,7 @@ namespace Chart3D {
          * @requires highcharts-3d
          */
         public getScale(depth: number): number {
-            let chart = this.chart,
+            const chart = this.chart,
                 plotLeft = chart.plotLeft,
                 plotRight = chart.plotWidth + plotLeft,
                 plotTop = chart.plotTop,
@@ -601,8 +603,9 @@ namespace Chart3D {
                     maxX: -Number.MAX_VALUE,
                     minY: Number.MAX_VALUE,
                     maxY: -Number.MAX_VALUE
-                },
-                corners: Array<Position3DObject>,
+                };
+
+            let corners: Array<Position3DObject>,
                 scale = 1;
 
             // Top left corners:
@@ -927,9 +930,10 @@ namespace Chart3D {
 
             if (
                 this.pos < 1 &&
-                    (isArray(this.start) || isArray(this.end))) {
-                let start: Array<number> = (this.start as any) || [1, 0, 0, 1, 0, 0];
-                let end: Array<number> = (this.end as any) || [1, 0, 0, 1, 0, 0];
+                (isArray(this.start) || isArray(this.end))
+            ) {
+                const start: Array<number> = (this.start as any) || [1, 0, 0, 1, 0, 0],
+                    end: Array<number> = (this.end as any) || [1, 0, 0, 1, 0, 0];
 
                 interpolated = [];
                 for (let i = 0; i < 6; i++) {
@@ -985,18 +989,19 @@ namespace Chart3D {
      * @private
      */
     function onAfterDrawChartBox(this: Chart): void {
+
         if (
             this.chart3d &&
             this.is3d()
         ) {
-            let chart = this,
+            const chart = this as Chart3D,
                 renderer = chart.renderer,
-                options3d = this.options.chart.options3d as any,
-                frame = this.chart3d.get3dFrame(),
-                xm = this.plotLeft,
-                xp = this.plotLeft + this.plotWidth,
-                ym = this.plotTop,
-                yp = this.plotTop + this.plotHeight,
+                options3d = chart.options.chart.options3d as any,
+                frame = chart.chart3d.get3dFrame(),
+                xm = chart.plotLeft,
+                xp = chart.plotLeft + chart.plotWidth,
+                ym = chart.plotTop,
+                yp = chart.plotTop + chart.plotHeight,
                 zm = 0,
                 zp = options3d.depth,
                 xmm = xm - (frame.left.visible ? frame.left.size : 0),
@@ -1007,10 +1012,10 @@ namespace Chart3D {
                 zpp = zp + (frame.back.visible ? frame.back.size : 0),
                 verb = chart.hasRendered ? 'animate' : 'attr';
 
-            this.chart3d.frame3d = frame;
+            chart.chart3d.frame3d = frame;
 
-            if (!this.frameShapes) {
-                this.frameShapes = {
+            if (!chart.frameShapes) {
+                chart.frameShapes = {
                     bottom: renderer.polyhedron().add(),
                     top: renderer.polyhedron().add(),
                     left: renderer.polyhedron().add(),
@@ -1019,7 +1024,7 @@ namespace Chart3D {
                     front: renderer.polyhedron().add()
                 };
             }
-            this.frameShapes.bottom[verb]({
+            chart.frameShapes.bottom[verb]({
                 'class': 'highcharts-3d-frame highcharts-3d-frame-bottom',
                 zIndex: frame.bottom.frontFacing ? -1000 : 1000,
                 faces: [{ // bottom
@@ -1149,7 +1154,7 @@ namespace Chart3D {
                     enabled: frame.bottom.visible && !frame.back.visible
                 }]
             });
-            this.frameShapes.top[verb]({
+            chart.frameShapes.top[verb]({
                 'class': 'highcharts-3d-frame highcharts-3d-frame-top',
                 zIndex: frame.top.frontFacing ? -1000 : 1000,
                 faces: [{ // bottom
@@ -1279,7 +1284,7 @@ namespace Chart3D {
                     enabled: frame.top.visible && !frame.back.visible
                 }]
             });
-            this.frameShapes.left[verb]({
+            chart.frameShapes.left[verb]({
                 'class': 'highcharts-3d-frame highcharts-3d-frame-left',
                 zIndex: frame.left.frontFacing ? -1000 : 1000,
                 faces: [{ // bottom
@@ -1409,7 +1414,7 @@ namespace Chart3D {
                     enabled: frame.left.visible && !frame.back.visible
                 }]
             });
-            this.frameShapes.right[verb]({
+            chart.frameShapes.right[verb]({
                 'class': 'highcharts-3d-frame highcharts-3d-frame-right',
                 zIndex: frame.right.frontFacing ? -1000 : 1000,
                 faces: [{ // bottom
@@ -1539,7 +1544,7 @@ namespace Chart3D {
                     enabled: frame.right.visible && !frame.back.visible
                 }]
             });
-            this.frameShapes.back[verb]({
+            chart.frameShapes.back[verb]({
                 'class': 'highcharts-3d-frame highcharts-3d-frame-back',
                 zIndex: frame.back.frontFacing ? -1000 : 1000,
                 faces: [{ // bottom
@@ -1669,7 +1674,7 @@ namespace Chart3D {
                     enabled: frame.back.visible
                 }]
             });
-            this.frameShapes.front[verb]({
+            chart.frameShapes.front[verb]({
                 'class': 'highcharts-3d-frame highcharts-3d-frame-front',
                 zIndex: frame.front.frontFacing ? -1000 : 1000,
                 faces: [{ // bottom
@@ -1866,13 +1871,15 @@ namespace Chart3D {
      * @private
      */
     function onAfterInit(this: Chart): void {
-        let options = this.options;
+        const options = this.options;
 
         if (this.is3d()) {
             (options.series || []).forEach(function (s): void {
-                let type = s.type ||
+                const type = (
+                    s.type ||
                     options.chart.type ||
-                    options.chart.defaultSeriesType;
+                    options.chart.defaultSeriesType
+                );
 
                 if (type === 'scatter') {
                     s.type = 'scatter3d';
@@ -1885,7 +1892,7 @@ namespace Chart3D {
      * @private
      */
     function onAfterSetChartSize(this: Chart): void {
-        let chart = this,
+        const chart = this,
             options3d = chart.options.chart.options3d as any;
 
         if (
@@ -1899,7 +1906,7 @@ namespace Chart3D {
                 options3d.beta = options3d.beta % 360 + (options3d.beta >= 0 ? 0 : 360);
             }
 
-            let inverted = chart.inverted,
+            const inverted = chart.inverted,
                 clipBox = chart.clipBox,
                 margin = chart.margin,
                 x = inverted ? 'y' : 'x',
@@ -1907,12 +1914,10 @@ namespace Chart3D {
                 w = inverted ? 'height' : 'width',
                 h = inverted ? 'width' : 'height';
 
-            (clipBox as any)[x] = -(margin[3] || 0);
-            (clipBox as any)[y] = -(margin[0] || 0);
-            (clipBox as any)[w] =
-                chart.chartWidth + (margin[3] || 0) + (margin[1] || 0);
-            (clipBox as any)[h] =
-                chart.chartHeight + (margin[0] || 0) + (margin[2] || 0);
+            clipBox[x] = -(margin[3] || 0);
+            clipBox[y] = -(margin[0] || 0);
+            clipBox[w] = chart.chartWidth + (margin[3] || 0) + (margin[1] || 0);
+            clipBox[h] = chart.chartHeight + (margin[0] || 0) + (margin[2] || 0);
 
             // Set scale, used later in perspective method():
             // getScale uses perspective, so scale3d has to be reset.
