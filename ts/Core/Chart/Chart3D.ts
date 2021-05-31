@@ -12,18 +12,24 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Color/ColorType';
 import type Options from '../Options';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+
 import Axis from '../Axis/Axis.js';
 import Axis3D from '../Axis/Axis3D.js';
 import Chart from './Chart.js';
 import Color from '../Color/Color.js';
 const { parse: color } = Color;
 import Fx from '../Animation/Fx.js';
-import H from '../Globals.js';
 import Math3D from '../../Extensions/Math3D.js';
 const {
     perspective,
@@ -968,7 +974,6 @@ namespace Chart3D {
         wrap(chartProto, 'isInsidePlot', wrapIsInsidePlot);
         wrap(ChartClass, 'renderSeries', wrapRenderSeries);
         wrap(ChartClass, 'setClassName', wrapSetClassName);
-
     }
 
     /**
@@ -2012,9 +2017,19 @@ namespace Chart3D {
 
 }
 
-Chart3D.compose(Chart, Fx);
-ZAxis.ZChartComposition.compose(Chart);
-Axis3D.compose(Axis);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default Chart3D;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
 
 /**
  * Note: As of v5.0.12, `frame.left` or `frame.right` should be used instead.
@@ -2050,6 +2065,4 @@ Axis3D.compose(Axis);
  * @apioption chart.options3d.frame.side.size
  */
 
-''; // adds doclets above to transpiled file
-
-export default Chart3D;
+''; // keeps doclets above in JS file
