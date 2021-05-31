@@ -231,21 +231,20 @@ class Scrollbar {
      * @function Highcharts.Scrollbar#addEvents
      */
     public addEvents(): void {
-        let buttonsOrder = this.options.inverted ? [1, 0] : [0, 1],
+        const buttonsOrder = this.options.inverted ? [1, 0] : [0, 1],
             buttons = this.scrollbarButtons,
             bar = this.scrollbarGroup.element,
             track = this.track.element,
             mouseDownHandler = this.mouseDownHandler.bind(this),
             mouseMoveHandler = this.mouseMoveHandler.bind(this),
-            mouseUpHandler = this.mouseUpHandler.bind(this),
-            _events: Array<[
-                any,
-                string,
-                (e: PointerEvent) => void
-            ]>;
+            mouseUpHandler = this.mouseUpHandler.bind(this);
 
         // Mouse events
-        _events = [
+        const _events: Array<[
+            any,
+            string,
+            (e: PointerEvent) => void
+        ]> = [
             [buttons[buttonsOrder[0]].element, 'click', this.buttonToMinClick.bind(this)],
             [buttons[buttonsOrder[1]].element, 'click', this.buttonToMaxClick.bind(this)],
             [track, 'click', this.trackClick.bind(this)],
@@ -341,11 +340,11 @@ class Scrollbar {
      */
     public destroy(): void {
 
-        const scrollbar: AnyRecord = this,
-            scroller = scrollbar.chart.scroller;
+        const scroller: AnyRecord = this,
+            navigator = scroller.chart.scroller;
 
         // Disconnect events added in addEvents
-        scrollbar.removeEvents();
+        scroller.removeEvents();
 
         // Destroy properties
         [
@@ -356,18 +355,18 @@ class Scrollbar {
             'group'
         ].forEach(
             function (prop): void {
-                if (scrollbar[prop] && scrollbar[prop].destroy) {
-                    scrollbar[prop] = scrollbar[prop].destroy();
+                if (scroller[prop] && scroller[prop].destroy) {
+                    scroller[prop] = scroller[prop].destroy();
                 }
             }
         );
 
         // #6421, chart may have more scrollbars
-        if (scroller && this === scroller.scrollbar) {
-            scroller.scrollbar = null;
+        if (navigator && scroller === navigator.scrollbar) {
+            navigator.scrollbar = null;
 
             // Destroy elements in collection
-            destroyObjectProperties(scroller.scrollbarButtons);
+            destroyObjectProperties(navigator.scrollbarButtons);
         }
     }
 
@@ -381,15 +380,15 @@ class Scrollbar {
      * @return {void}
      */
     public drawScrollbarButton(index: number): void {
-        let scroller = this,
+        const scroller = this,
             renderer = scroller.renderer,
             scrollbarButtons = scroller.scrollbarButtons,
             options = scroller.options,
             size = scroller.size,
-            group,
-            tempElem;
+            group = renderer.g().add(scroller.group);
 
-        group = renderer.g().add(scroller.group);
+        let tempElem;
+
         scrollbarButtons.push(group);
 
         // Create a rectangle for the scrollbar button
@@ -398,7 +397,7 @@ class Scrollbar {
             .add(group);
 
         // Presentational attributes
-        if (!this.chart.styledMode) {
+        if (!scroller.chart.styledMode) {
             tempElem.attr({
                 stroke: options.buttonBorderColor,
                 'stroke-width': options.buttonBorderWidth,
@@ -433,7 +432,7 @@ class Scrollbar {
             .addClass('highcharts-scrollbar-arrow')
             .add(scrollbarButtons[index]);
 
-        if (!this.chart.styledMode) {
+        if (!scroller.chart.styledMode) {
             tempElem.attr({
                 fill: options.buttonArrowColor
             });
@@ -452,30 +451,30 @@ class Scrollbar {
         options: DeepPartial<ScrollbarOptions>,
         chart: Chart
     ): void {
-        const scrollbar = this;
+        const scroller = this;
 
-        scrollbar.scrollbarButtons = [];
+        scroller.scrollbarButtons = [];
 
-        scrollbar.renderer = renderer;
+        scroller.renderer = renderer;
 
-        scrollbar.userOptions = options;
-        scrollbar.options = merge(ScrollbarDefaults, defaultOptions.scrollbar, options);
+        scroller.userOptions = options;
+        scroller.options = merge(ScrollbarDefaults, defaultOptions.scrollbar, options);
 
-        scrollbar.chart = chart;
+        scroller.chart = chart;
 
         // backward compatibility
-        scrollbar.size = pick(scrollbar.options.size, scrollbar.options.height as any);
+        scroller.size = pick(scroller.options.size, scroller.options.height as any);
 
         // Init
         if (options.enabled) {
-            scrollbar.render();
-            scrollbar.addEvents();
+            scroller.render();
+            scroller.addEvents();
         }
     }
 
     private mouseDownHandler(e: PointerEvent): void {
-        const scroller = this;
-        const normalizedEvent = scroller.chart.pointer.normalize(e),
+        const scroller = this,
+            normalizedEvent = scroller.chart.pointer.normalize(e),
             mousePosition = scroller.cursorToScrollbarPosition(
                 normalizedEvent
             );
@@ -492,12 +491,13 @@ class Scrollbar {
      * @private
      */
     private mouseMoveHandler(e: PointerEvent): void {
-        const scroller = this;
-        let normalizedEvent = scroller.chart.pointer.normalize(e),
+        const scroller = this,
+            normalizedEvent = scroller.chart.pointer.normalize(e),
             options = scroller.options,
             direction: ('chartY'|'chartX') = options.vertical ? 'chartY' : 'chartX',
-            initPositions = scroller.initPositions || [],
-            scrollPosition,
+            initPositions = scroller.initPositions || [];
+
+        let scrollPosition,
             chartPosition,
             change;
 
@@ -572,12 +572,13 @@ class Scrollbar {
      * @return {void}
      */
     public position(x: number, y: number, width: number, height: number): void {
-        let scroller = this,
+        const scroller = this,
             options = scroller.options,
             vertical = options.vertical,
-            xOffset = height,
-            yOffset = 0,
             method = scroller.rendered ? 'animate' : 'attr';
+
+        let xOffset = height,
+            yOffset = 0;
 
         scroller.x = x;
         scroller.y = y + this.trackBorderWidth;
@@ -639,18 +640,18 @@ class Scrollbar {
      * @function Highcharts.Scrollbar#render
      */
     public render(): void {
-        let scroller = this,
+        const scroller = this,
             renderer = scroller.renderer,
             options = scroller.options,
             size = scroller.size,
-            styledMode = this.chart.styledMode,
-            group;
+            styledMode = scroller.chart.styledMode,
+            group = renderer.g('scrollbar').attr({
+                zIndex: options.zIndex,
+                translateY: -99999
+            }).add();
 
         // Draw the scrollbar group
-        scroller.group = group = renderer.g('scrollbar').attr({
-            zIndex: options.zIndex,
-            translateY: -99999
-        }).add();
+        scroller.group = group;
 
         // Draw the scrollbar track:
         scroller.track = renderer.rect()
@@ -670,7 +671,7 @@ class Scrollbar {
             });
         }
 
-        this.trackBorderWidth = scroller.track.strokeWidth();
+        scroller.trackBorderWidth = scroller.track.strokeWidth();
         scroller.track.attr({
             y: -this.trackBorderWidth % 2 / 2
         });
@@ -734,16 +735,11 @@ class Scrollbar {
      * @return {void}
      */
     public setRange(from: number, to: number): void {
-        let scroller = this,
+        const scroller = this,
             options = scroller.options,
             vertical = options.vertical,
             minWidth = options.minWidth,
             fullWidth = scroller.barWidth,
-            fromPX,
-            toPX,
-            newPos,
-            newSize: number,
-            newRiflesPos,
             method = (
                 this.rendered &&
                 !this.hasDragged &&
@@ -754,9 +750,13 @@ class Scrollbar {
             return;
         }
 
+        const toPX = (fullWidth as any) * Math.min(to, 1);
+
+        let fromPX,
+            newSize: number;
+
         from = Math.max(from, 0);
         fromPX = Math.ceil((fullWidth as any) * from);
-        toPX = (fullWidth as any) * Math.min(to, 1);
         scroller.calculatedWidth = newSize = correctFloat(toPX - fromPX);
 
         // We need to recalculate position, if minWidth is used
@@ -764,10 +764,10 @@ class Scrollbar {
             fromPX = ((fullWidth as any) - (minWidth as any) + newSize) * from;
             newSize = minWidth as any;
         }
-        newPos = Math.floor(
+        const newPos = Math.floor(
             fromPX + (scroller.xOffset as any) + (scroller.yOffset as any)
         );
-        newRiflesPos = newSize / 2 - 0.5; // -0.5 -> rifle line width / 2
+        const newRiflesPos = newSize / 2 - 0.5; // -0.5 -> rifle line width / 2
 
         // Store current position:
         scroller.from = from;
