@@ -24,6 +24,7 @@ import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
 import type PointerEvent from './PointerEvent';
 import type RangeSelector from '../Extensions/RangeSelector';
+import type ScrollbarOptions from './ScrollbarOptions';
 import type { SeriesTypeOptions } from './Series/SeriesType';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
@@ -861,10 +862,10 @@ class Navigator {
     public range: number = void 0 as any;
     public rendered: boolean = void 0 as any;
     public reversedExtremes?: boolean;
-    public scrollbar?: Highcharts.Scrollbar;
+    public scrollbar?: Scrollbar;
     public scrollbarEnabled?: boolean;
     public scrollbarHeight?: number;
-    public scrollbarOptions?: Highcharts.ScrollbarOptions;
+    public scrollbarOptions?: ScrollbarOptions;
     public series?: Array<Series>;
     public shades: Array<SVGElement> = void 0 as any;
     public size: number = void 0 as any;
@@ -2042,14 +2043,13 @@ class Navigator {
         if ((chart.options.scrollbar as any).enabled) {
             chart.scrollbar = navigator.scrollbar = new Scrollbar(
                 chart.renderer,
-                merge(chart.options.scrollbar as Highcharts.ScrollbarOptions, {
+                merge(chart.options.scrollbar, {
                     margin: navigator.navigatorEnabled ? 0 : 10,
                     vertical: chart.inverted
-                } as Highcharts.ScrollbarOptions),
+                } as DeepPartial<ScrollbarOptions>),
                 chart
             );
             addEvent(navigator.scrollbar, 'changed', function (
-                this: Highcharts.Scrollbar,
                 e: PointerEvent
             ): void {
                 const range = navigator.size,
