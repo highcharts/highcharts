@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type {
     AxisBreakOptions,
@@ -19,6 +25,7 @@ import type { AxisBreakBorderObject, AxisBreakObject } from './BreakObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+
 import Axis from './Axis.js';
 import Series from '../Series/Series.js';
 import StackItem from '../../Extensions/Stacking.js';
@@ -107,8 +114,7 @@ class BrokenAxisAdditions {
         brk: AxisBreakOptions,
         val: number
     ): (boolean|undefined) {
-        let ret: (boolean|undefined),
-            repeat = brk.repeat || Infinity,
+        const repeat = brk.repeat || Infinity,
             from = brk.from,
             length = brk.to - brk.from,
             test = (
@@ -116,6 +122,8 @@ class BrokenAxisAdditions {
                     (val - from) % repeat :
                     repeat - ((from - val) % repeat)
             );
+
+        let ret: (boolean|undefined);
 
         if (!brk.inclusive) {
             ret = test < length && test !== 0;
@@ -249,11 +257,11 @@ class BrokenAxisAdditions {
         val: (number|null|undefined),
         testKeep?: boolean
     ): (boolean|undefined) {
-        const brokenAxis = this;
-        const axis = brokenAxis.axis;
+        const brokenAxis = this,
+            axis = brokenAxis.axis,
+            breaks = axis.options.breaks || [];
 
-        let breaks = axis.options.breaks || [],
-            i = breaks.length,
+        let i = breaks.length,
             inbrk: (boolean|undefined),
             keep: (boolean|undefined),
             ret: (boolean|undefined);
@@ -335,10 +343,11 @@ class BrokenAxisAdditions {
                 // If trying to set extremes inside a break, extend min to
                 // after, and max to before the break ( #3857 )
                 if (brokenAxis.hasBreaks) {
-                    let axisBreak,
-                        breaks = this.options.breaks;
+                    const breaks = (this.options.breaks || []);
 
-                    while ((axisBreak = brokenAxis.findBreakAt(newMin, breaks as any))) {
+                    let axisBreak;
+
+                    while ((axisBreak = brokenAxis.findBreakAt(newMin, breaks))) {
                         newMin = axisBreak.to as any;
                     }
                     while ((axisBreak = brokenAxis.findBreakAt(newMax, breaks as any))) {
@@ -365,16 +374,17 @@ class BrokenAxisAdditions {
 
                 brokenAxis.unitLength = void 0;
                 if (brokenAxis.hasBreaks) {
-                    let breaks = axis.options.breaks || [],
+                    const breaks = axis.options.breaks || [],
                         // Temporary one:
                         breakArrayT: Array<AxisBreakBorderObject> = [],
                         breakArray: Array<AxisBreakObject> = [],
-                        length = 0,
+                        pointRangePadding = pick(axis.pointRangePadding, 0);
+
+                    let length = 0,
                         inBrk: number,
                         repeat: number,
                         min = axis.userMin || axis.min,
                         max = axis.userMax || axis.max,
-                        pointRangePadding = pick(axis.pointRangePadding, 0),
                         start: (number|null|undefined),
                         i: number;
 
@@ -507,7 +517,10 @@ class BrokenAxis {
      * Adds support for broken axes.
      * @private
      */
-    public static compose(AxisClass: typeof Axis, SeriesClass: typeof Series): void {
+    public static compose<T extends typeof Axis>(
+        AxisClass: T,
+        SeriesClass: typeof Series
+    ): (T&typeof BrokenAxis) {
 
         AxisClass.keepProps.push('brokenAxis');
 
@@ -520,9 +533,10 @@ class BrokenAxis {
             axis: (Axis|undefined),
             keys: Array<string>
         ): void {
-            let series = this,
-                points = series.points,
-                breaks: Array<AxisBreakObject>,
+            const series = this,
+                points = series.points;
+
+            let breaks: Array<AxisBreakObject>,
                 threshold: (number|null|undefined),
                 eventName: string,
                 y: (number|null|undefined);
@@ -583,13 +597,14 @@ class BrokenAxis {
          * Gapped path
          */
         seriesProto.gappedPath = function (this: LineSeries): SVGPath {
-            let currentDataGrouping = this.currentDataGrouping,
+            const currentDataGrouping = this.currentDataGrouping,
                 groupingSize = currentDataGrouping && currentDataGrouping.gapSize,
-                gapSize = this.options.gapSize,
                 points = this.points.slice(),
+                yAxis = this.yAxis;
+
+            let gapSize = this.options.gapSize,
                 i = points.length - 1,
-                yAxis = this.yAxis,
-                stack: Highcharts.StackItem;
+                stack: StackItem;
 
             /**
              * Defines when to display a gap in the graph, together with the
@@ -729,33 +744,33 @@ class BrokenAxis {
         });
 
         addEvent(AxisClass, 'afterSetTickPositions', function (): void {
-            const axis = this;
-            const brokenAxis = axis.brokenAxis;
+            const axis = this,
+                brokenAxis = axis.brokenAxis;
 
             if (
                 brokenAxis &&
                 brokenAxis.hasBreaks
             ) {
-                let tickPositions = this.tickPositions,
-                    info = this.tickPositions.info,
-                    newPositions = [],
-                    i;
+                const tickPositions = axis.tickPositions,
+                    info = axis.tickPositions.info,
+                    newPositions = [];
 
-                for (i = 0; i < tickPositions.length; i++) {
+                for (let i = 0; i < tickPositions.length; i++) {
                     if (!brokenAxis.isInAnyBreak(tickPositions[i])) {
                         newPositions.push(tickPositions[i]);
                     }
                 }
 
-                this.tickPositions = newPositions;
-                this.tickPositions.info = info;
+                axis.tickPositions = newPositions;
+                axis.tickPositions.info = info;
             }
         });
 
         // Force Axis to be not-ordinal when breaks are defined
         addEvent(AxisClass, 'afterSetOptions', function (): void {
-            if (this.brokenAxis && this.brokenAxis.hasBreaks) {
-                this.options.ordinal = false;
+            const axis = this;
+            if (axis.brokenAxis && axis.brokenAxis.hasBreaks) {
+                axis.options.ordinal = false;
             }
         });
 
@@ -804,6 +819,7 @@ class BrokenAxis {
             this.drawBreaks(this.yAxis, pick(this.pointArrayMap, ['y']));
         });
 
+        return AxisClass as (T&typeof BrokenAxis);
     }
 
 }
@@ -820,6 +836,10 @@ interface BrokenAxis extends Axis {
     brokenAxis: BrokenAxisAdditions;
 }
 
-BrokenAxis.compose(Axis, Series); // @todo remove automatism
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default BrokenAxis;
