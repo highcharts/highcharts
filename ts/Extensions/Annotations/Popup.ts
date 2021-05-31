@@ -295,6 +295,23 @@ H.Popup.prototype = {
             lang = this.lang,
             inputName = PREFIX + type + '-' + optionName;
 
+        if (optionParamList.length === 3 && optionName === '0') { // If a label refers to multiple fields (15733)
+            const optionNameForArray = optionParamList[1],
+                inputNameForArray = PREFIX + type + '-' + optionNameForArray;
+            if (!inputNameForArray.match(indexFilter)) {
+                // add label
+                createElement(
+                    LABEL, {
+                        htmlFor: inputNameForArray
+                    },
+                    void 0,
+                    parentDiv
+                ).appendChild(
+                    doc.createTextNode(lang[optionNameForArray] || optionNameForArray)
+                );
+            }
+        }
+
         if (!inputName.match(indexFilter)) {
             // add label
             createElement(
