@@ -55,8 +55,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
         component.emit({
             type: 'fromJSOM',
-            json,
-            component
+            json
         });
 
         return component;
@@ -110,8 +109,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      * */
     public load(): this {
         this.emit({
-            type: 'load',
-            component: this
+            type: 'load'
         });
         super.load();
         this.elements = this.options.elements || [];
@@ -123,7 +121,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         if (this.scaleElements) {
             this.autoScale();
         }
-        this.emit({ type: 'afterLoad', component: this });
+        this.emit({ type: 'afterLoad' });
         return this;
     }
 
@@ -158,9 +156,9 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     }
 
     public render(): this {
-        this.emit({ type: 'beforeRender', component: this });
+        this.emit({ type: 'beforeRender' });
         super.render(); // Fires the render event and calls load
-        this.emit({ type: 'afterRender', component: this });
+        this.emit({ type: 'afterRender' });
         return this;
     }
 
@@ -169,7 +167,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         this.constructTree();
 
         this.render();
-        this.emit({ type: 'afterRedraw', component: this });
+        this.emit({ type: 'afterRedraw' });
         return this;
     }
 
@@ -186,7 +184,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
     public update(options: Partial<HTMLComponent.HTMLComponentOptions>): this {
         super.update(options);
-        this.emit({ type: 'afterUpdate', component: this });
+        this.emit({ type: 'afterUpdate' });
         return this;
     }
 
@@ -208,7 +206,6 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
         this.emit({
             type: 'toJSON',
-            component: this,
             json
         });
 

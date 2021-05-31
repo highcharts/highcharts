@@ -1,5 +1,9 @@
 /* eslint-disable require-jsdoc */
 import type ComponentType from './ComponentType';
+import type StoreType from '../../Data/Stores/StoreType';
+import type CSVStore from '../../Data/Stores/CSVStore';
+import type HTMLTableStore from '../../Data/Stores/HTMLTableStore';
+import type GoogleSheetsStore from '../../Data/Stores/GoogleSheetsStore';
 import Cell from '../Layout/Cell.js';
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
@@ -146,7 +150,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                     target: targetObj.target
                 },
                 message,
-                component
+                target: component
             });
 
         const handlers: Record<Component.MessageTarget['type'], Function> = {
@@ -239,7 +243,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public parentElement: HTMLElement;
     public parentCell?: Cell;
-    public store?: DataStore<any>; // the attached store
+    public store?: Component.StoreTypes; // the attached store
     public dimensions: { width: number | null; height: number | null };
     public element: HTMLElement;
     public titleElement?: HTMLElement;
@@ -390,9 +394,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
 
         if (this.store) {
-            this.tableEvents.push(this.store.on('afterLoad', (e): void => {
+            const component = this;
+            this.tableEvents.push(this.store.on('afterLoad', (): void => {
                 this.emit({
-                    ...e,
+                    target: component,
                     type: 'tableChanged'
                 });
             }));
@@ -410,13 +415,13 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                     this.emit({
                         ...e,
                         type: 'tableChanged'
-                    } as any);
+                    });
                 }
             }));
         }
     }
 
-    public setStore(store: DataStore<any> | undefined): this {
+    public setStore(store: Component.StoreTypes | undefined): this {
         this.store = store;
         if (this.store) {
             // Set up event listeners
@@ -690,8 +695,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     public emit(
-        e: TEventObject
+        e: Component.EventTypes
     ): void {
+        if (!e.target) {
+            e.target = this;
+        }
         fireEvent(this, e.type, e);
     }
 
@@ -801,7 +809,7 @@ namespace Component {
         EventType extends DataEventEmitter.Event['type'],
         EventRecord extends Record<string, any>> = {
             readonly type: EventType;
-            component: ComponentType;
+            target?: Component;
             detail?: DataEventEmitter.EventDetail;
         } & EventRecord;
 
@@ -818,9 +826,11 @@ namespace Component {
         presentationModifier?: DataModifier;
     }
 
+    export type StoreTypes = DataStore<DataStore.Event>
+
     export interface EditableOptions {
         dimensions?: { width?: number | string; height?: number | string };
-        store?: DataStore<any>;
+        store?: StoreTypes;
         id?: string;
         style?: CSSObject;
         title: textOptionsType;

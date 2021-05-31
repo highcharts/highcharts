@@ -76,8 +76,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
         component.emit({
             type: 'fromJSOM',
-            json,
-            component
+            json
         });
 
         return component;
@@ -139,10 +138,10 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
         this.chartOptions = this.options.chartOptions || { chart: {} };
 
         if (this.store) {
-            this.on('tableChanged', (e): void => this.updateSeries());
+            this.on('tableChanged', (): void => this.updateSeries());
 
             // reload the store when polling
-            this.store.on('afterLoad', (e): void => {
+            this.store.on('afterLoad', (e: DataStore.Event): void => {
                 if (e.table && this.store) {
                     this.store.table.setColumns(e.table.getColumns());
                 }
@@ -163,26 +162,22 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
      * */
 
     public load(): this {
-        const component = this;
-        this.emit({
-            type: 'load',
-            component
-        });
+        this.emit({ type: 'load' });
         super.load();
         this.parentElement.appendChild(this.element);
         this.contentElement.appendChild(this.chartContainer);
         this.hasLoaded = true;
 
-        this.emit({ type: 'afterLoad', component });
+        this.emit({ type: 'afterLoad' });
 
         return this;
     }
 
     public render(): this {
-        this.emit({ type: 'beforeRender', component: this });
+        this.emit({ type: 'beforeRender' });
         super.render();
         this.initChart();
-        this.emit({ type: 'afterRender', component: this });
+        this.emit({ type: 'afterRender' });
         return this;
     }
 
@@ -222,7 +217,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
         if (this.chart) {
             this.chart.update(this.options.chartOptions || {});
         }
-        this.emit({ type: 'afterUpdate', component: this });
+        this.emit({ type: 'afterUpdate' });
         return this;
     }
 
@@ -242,10 +237,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
             if (this.presentationModifier) {
                 this.presentationModifier.modify(this.presentationTable);
-                this.emit({
-                    type: 'afterPresentationModifier',
-                    component: this
-                });
+                this.emit({ type: 'afterPresentationModifier' });
             }
 
             const table = this.presentationTable;
@@ -467,11 +459,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
             }
         };
 
-        this.emit({
-            type: 'toJSON',
-            component: this,
-            json
-        });
+        this.emit({ type: 'toJSON', json });
         return json;
     }
 }
