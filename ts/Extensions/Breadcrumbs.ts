@@ -47,20 +47,21 @@ const {
  *
  * */
 
+
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        breadcrumbs?: Breadcrumbs;
+    }
+}
 declare module '../Core/LangOptions' {
     interface LangOptions {
         breadcrumbsToLabel?: string;
         mainBreadcrumb?: string;
     }
 }
-declare module '../Core/Chart/ChartLike' {
-    interface ChartLike {
-        breadcrumbs?: Breadcrumbs;
-    }
-}
 declare module '../Series/Treemap/TreemapSeriesOptions' {
     interface TreemapSeriesOptions {
-        breadcrumbs?: Highcharts.BreadcrumbsOptions;
+        breadcrumbs?: BreadcrumbsOptions;
     }
 }
 
@@ -70,80 +71,11 @@ declare module '../Series/Treemap/TreemapSeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface BreadcrumbsOptions {
-            buttonTheme: SVGAttributes;
-            buttonSpacing?: number;
-            events?: BreadcrumbsButtonsEventsOptions;
-            floating?: boolean;
-            format?: string;
-            formatter?: BreadcrumbsButtonsFormatter;
-            position?: BreadcrumbsAlignOptions;
-            separator?: SeparatorOptions;
-            showFullPath?: boolean;
-            style?: CSSObject;
-            useHTML?: boolean;
-            zIndex?: number;
-        }
-        interface BreadcrumbsAlignOptions {
-            align?: AlignValue;
-            verticalAlign?: VerticalAlignValue;
-            alignByTranslate?: boolean;
-            x: number;
-            y: number;
-        }
-        interface BreadcrumbsClickCallbackFunction {
-            (e: Event, breadcrumbs: Breadcrumbs): (boolean|undefined);
-        }
-        interface BreadcrumbsButtonsEventsOptions {
-            click?: BreadcrumbsClickCallbackFunction;
-        }
-        interface BreadcrumbsButtonsFormatter {
-            (
-                breadcrumb: Array<number|null|Point|SeriesType|SVGAElement>,
-                breadcrumbs: Breadcrumbs
-            ): (string);
-        }
         interface DrilldownOptions {
             breadcrumbs?: BreadcrumbsOptions;
         }
-        interface SeparatorOptions {
-            symbol?: string;
-            size?: number;
-        }
-        interface TreemapSeriesOptions {
-            breadcrumbs?: BreadcrumbsOptions;
-        }
-        interface ChartLike {
-            breadcrumbs?: Breadcrumbs;
-        }
-        interface LangOptions {
-            mainBreadcrumb?: string;
-        }
         class Breadcrumbs {
-            public constructor(chart: Chart, userOptions: Highcharts.BreadcrumbsOptions, isTreemap?: boolean);
-
-            public breadcrumbsGroup: SVGElement;
-            public breadcrumbsList: Array<Array<number|null|Point|SeriesType|SVGAElement>>
-            public chart: Chart;
-            public isDirty: boolean;
-            public isTreemap?: boolean;
-            public level: number;
-            public options: BreadcrumbsOptions;
-
-            public alignGroup(): void;
-            public createList(e?: any): void;
-            public destroyGroup(this: Breadcrumbs): void;
-            public jumpBy(numb: number): void;
-            public jumpTo(): void;
-            public redraw(): void;
-            public render(): void;
-            public renderButton(breadcrumb: Array<number|Point|SVGAElement>, posX: number, posY: number):
-            SVGElement|void;
-            public renderSeparator(posX: number, posY: number): SVGElement|undefined;
-            public resetList(this: Breadcrumbs): void
-            public update(options: Highcharts.BreadcrumbsOptions, redraw: boolean): void;
-            public updateSingleButton(this: Breadcrumbs): void;
-            public setMargins(this: Breadcrumbs): void;
+            public constructor(chart: Chart, userOptions?: BreadcrumbsOptions, isTreemap?: boolean);
         }
     }
 }
@@ -375,15 +307,14 @@ class Breadcrumbs {
      * Properties
      *
      * */
-    public chart: Chart = void 0 as any;
     public breadcrumbsGroup: SVGElement = void 0 as any;
     public breadcrumbsList: Array<Array<any>> = [];
     public isDirty: boolean = true;
     public isTreemap?: boolean = void 0 as any;
     public level: number = -1;
-    public options: Highcharts.BreadcrumbsOptions = void 0 as any;
+    public options: BreadcrumbsOptions = void 0 as any;
 
-    public constructor(chart: Chart, userOptions?: Highcharts.BreadcrumbsOptions, isTreemap?: boolean) {
+    public constructor(chart: Chart, userOptions?: BreadcrumbsOptions, isTreemap?: boolean) {
         const chartOptions = merge(Breadcrumbs.defaultBreadcrumbsOptions, userOptions);
 
         this.chart = chart;
@@ -838,7 +769,7 @@ class Breadcrumbs {
             lang = chart.options.lang;
 
         if (breadcrumbsOptions && breadcrumb && breadcrumb[1]) {
-            const button = chart.renderer.button(
+            const button: SVGElement = chart.renderer.button(
                 breadcrumbs.getButtonText(breadcrumb),
                 posX,
                 posY,
@@ -940,7 +871,7 @@ class Breadcrumbs {
     * @param {boolean} redraw
     *        Redraw flag
     */
-    public update(this: Breadcrumbs, options: Highcharts.BreadcrumbsOptions, redraw: boolean = true): void {
+    public update(this: Breadcrumbs, options: BreadcrumbsOptions, redraw: boolean = true): void {
         merge(true, this.options, options);
 
         if (redraw) {
@@ -1015,7 +946,7 @@ if (!H.Breadcrumbs) {
 
         if (breadcrumbs && e.options.drilldown && e.options.drilldown.breadcrumbs) {
             breadcrumbs.isDirty = true;
-            breadcrumbs.update(e.options.drilldown.breadcrumbs as Highcharts.BreadcrumbsOptions, false);
+            breadcrumbs.update(e.options.drilldown.breadcrumbs as BreadcrumbsOptions, false);
             breadcrumbs.redraw();
         }
     });
@@ -1033,11 +964,11 @@ if (!H.Breadcrumbs) {
 
     addEvent(Chart, 'applyDrilldown', function (): void {
         const chart = this,
-            breadcrumbs = chart.breadcrumbs as Highcharts.Breadcrumbs,
+            breadcrumbs = chart.breadcrumbs,
             breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs;
 
         if (!breadcrumbs) {
-            chart.breadcrumbs = new Breadcrumbs(chart as Chart, breadcrumbsOptions, false);
+            chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions as any, false);
             chart.breadcrumbs.createList();
 
         } else {
@@ -1080,7 +1011,7 @@ if (!H.Breadcrumbs) {
 
                 if (breadcrumbs && e.options.breadcrumbs) {
                     breadcrumbs.isDirty = true;
-                    breadcrumbs.update(e.options.breadcrumbs as Highcharts.BreadcrumbsOptions, false);
+                    breadcrumbs.update(e.options.breadcrumbs as BreadcrumbsOptions, false);
                     breadcrumbs.redraw();
                 }
             });
@@ -1096,6 +1027,65 @@ if (!H.Breadcrumbs) {
         }
     });
 }
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface Breadcrumbs {
+    breadcrumbsGroup: SVGElement;
+    breadcrumbsList: Array<Array<any>>;
+    chart: Chart;
+    isDirty: boolean;
+    isTreemap?: boolean;
+    level: number;
+    options: BreadcrumbsOptions;
+}
+interface BreadcrumbsOptions {
+    buttonTheme: SVGAttributes;
+    buttonSpacing?: number;
+    events?: BreadcrumbsButtonsEventsOptions;
+    floating?: boolean;
+    format?: string;
+    formatter?: BreadcrumbsButtonsFormatter;
+    position?: BreadcrumbsAlignOptions;
+    separator?: SeparatorOptions;
+    showFullPath?: boolean;
+    style?: CSSObject;
+    useHTML?: boolean;
+    zIndex?: number;
+}
+interface BreadcrumbsAlignOptions {
+    align?: AlignValue;
+    verticalAlign?: VerticalAlignValue;
+    alignByTranslate?: boolean;
+    x: number;
+    y: number;
+}
+interface BreadcrumbsClickCallbackFunction {
+    (e: Event, breadcrumbs: Breadcrumbs): (boolean|undefined);
+}
+interface BreadcrumbsButtonsEventsOptions {
+    click?: BreadcrumbsClickCallbackFunction;
+}
+interface BreadcrumbsButtonsFormatter {
+    (
+        breadcrumb: Array<number|null|Point|SeriesType|SVGAElement>,
+        breadcrumbs: Breadcrumbs
+    ): (string);
+}
+interface SeparatorOptions {
+    symbol?: string;
+    size?: number;
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Breadcrumbs;
 

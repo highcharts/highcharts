@@ -21,50 +21,50 @@ QUnit.test('Breadcrumbs button', function (assert) {
             }],
             data: [{
                 id: '1',
-                name: "Fruits",
+                name: 'Fruits',
                 value: 5
             }, {
                 id: '2',
-                name: "Vegetables",
+                name: 'Vegetables',
                 value: 6
             }, {
                 id: '3',
-                name: "Meat",
+                name: 'Meat',
                 value: 3
             }, {
                 id: '1_1',
                 parent: '1',
-                name: "Citrus",
+                name: 'Citrus',
                 value: 2
             }, {
                 id: '1_2',
                 parent: '1',
-                name: "Tropical",
+                name: 'Tropical',
                 value: 5
             }, {
                 id: '1_3',
                 parent: '1',
-                name: "Other",
+                name: 'Other',
                 value: 3
             }, {
                 id: '1_1_1',
                 parent: '1_1',
-                name: "Lemon",
+                name: 'Lemon',
                 value: 3
             }, {
                 id: '1_1_2',
                 parent: '1_1',
-                name: "Orange",
+                name: 'Orange',
                 value: 3
             }, {
                 id: '1_1_1_1',
                 parent: '1_1_1',
-                name: "Type A",
+                name: 'Type A',
                 value: 3
             }, {
                 id: '1_1_1_1',
                 parent: '1_1_1',
-                name: "Type B",
+                name: 'Type B',
                 value: 4
             }]
         }]

@@ -7,16 +7,16 @@ QUnit.test('Breadcrumbs format', function (assert) {
                 type: 'category'
             },
             series: [{
-                name: "Supply",
+                name: 'Supply',
                 data: [{
-                    name: "Fruits",
+                    name: 'Fruits',
                     y: 5,
-                    drilldown: "Fruits"
+                    drilldown: 'Fruits'
                 }, {
-                    name: "Vegetables",
+                    name: 'Vegetables',
                     y: 6
                 }, {
-                    name: "Meat",
+                    name: 'Meat',
                     y: 3
                 }]
             }],
@@ -32,11 +32,11 @@ QUnit.test('Breadcrumbs format', function (assert) {
                 },
                 animation: false,
                 series: [{
-                    name: "Fruits",
-                    id: "Fruits",
+                    name: 'Fruits',
+                    id: 'Fruits',
                     data: [
-                        ["Citrus", 2],
-                        ["Tropical", 5],
+                        ['Citrus', 2],
+                        ['Tropical', 5],
                         ['Other', 1]
                     ]
                 }]

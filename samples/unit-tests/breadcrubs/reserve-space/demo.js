@@ -10,16 +10,16 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
             text: null
         },
         series: [{
-            name: "Supply",
+            name: 'Supply',
             data: [{
-                name: "Fruits",
+                name: 'Fruits',
                 y: 5,
-                drilldown: "Fruits"
+                drilldown: 'Fruits'
             }, {
-                name: "Vegetables",
+                name: 'Vegetables',
                 y: 6
             }, {
-                name: "Meat",
+                name: 'Meat',
                 y: 3
             }]
         }],
@@ -29,11 +29,11 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
             },
             animation: false,
             series: [{
-                name: "Fruits",
-                id: "Fruits",
+                name: 'Fruits',
+                id: 'Fruits',
                 data: [
-                    ["Citrus", 2],
-                    ["Tropical", 5],
+                    ['Citrus', 2],
+                    ['Tropical', 5],
                     ['Other', 1]
                 ]
             }]

@@ -9,19 +9,19 @@ Highcharts.chart('container', {
         text: null
     },
     series: [{
-        name: "Supply",
+        name: 'Supply',
         data: [{
-            name: "Fruits",
+            name: 'Fruits',
             y: 5,
-            drilldown: "Fruits"
+            drilldown: 'Fruits'
         },
         {
-            name: "Vegetables",
+            name: 'Vegetables',
             y: 6,
-            drilldown: "Vegetables"
+            drilldown: 'Vegetables'
         },
         {
-            name: "Meat",
+            name: 'Meat',
             y: 3
         }
         ]
@@ -32,49 +32,49 @@ Highcharts.chart('container', {
             showFullPath: true
         },
         series: [{
-            name: "Fruits",
-            id: "Fruits",
+            name: 'Fruits',
+            id: 'Fruits',
             data: [{
-                name: "Citrus",
+                name: 'Citrus',
                 y: 2,
-                drilldown: "Citrus"
+                drilldown: 'Citrus'
             }, {
-                name: "Tropical",
+                name: 'Tropical',
                 y: 5,
-                drilldown: "Tropical"
+                drilldown: 'Tropical'
             },
             ['Other', 1]
             ]
         }, {
-            name: "Vegetables",
-            id: "Vegetables",
+            name: 'Vegetables',
+            id: 'Vegetables',
             data: [
-                ["Potatoes", 2],
-                ["Cucumber", 4]
+                ['Potatoes', 2],
+                ['Cucumber', 4]
             ]
         }, {
-            name: "Citrus",
-            id: "Citrus",
+            name: 'Citrus',
+            id: 'Citrus',
             data: [{
-                name: "Lemon",
+                name: 'Lemon',
                 y: 5,
-                drilldown: "Lemon"
+                drilldown: 'Lemon'
             },
-            ["Orange", 4]
+            ['Orange', 4]
             ]
         }, {
-            name: "Tropical",
-            id: "Tropical",
+            name: 'Tropical',
+            id: 'Tropical',
             data: [
-                ["Banana", 1],
-                ["Mango", 3]
+                ['Banana', 1],
+                ['Mango', 3]
             ]
         }, {
-            name: "Lemon",
-            id: "Lemon",
+            name: 'Lemon',
+            id: 'Lemon',
             data: [
-                ["Typ A", 2],
-                ["Typ B", 7]
+                ['Typ A', 2],
+                ['Typ B', 7]
             ]
         }
         ]
