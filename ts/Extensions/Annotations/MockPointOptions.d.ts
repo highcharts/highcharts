@@ -16,6 +16,8 @@
  * */
 
 export interface MockPointOptions {
+    command?: string;
+    series?: undefined;
 }
 
 /* *

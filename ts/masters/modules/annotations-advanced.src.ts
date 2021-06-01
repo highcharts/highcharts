@@ -11,7 +11,8 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import Annotation from '../../Extensions/Annotations/Annotations.js';
+import Annotation from '../../Extensions/Annotations/Annotation.js';
+import AnnotationChart from '../../Extensions/Annotations/AnnotationChart.js';
 import '../../Extensions/Annotations/Types/BasicAnnotation.js';
 import '../../Extensions/Annotations/Types/CrookedLine.js';
 import '../../Extensions/Annotations/Types/ElliottWave.js';
@@ -25,4 +26,7 @@ import '../../Extensions/Annotations/NavigationBindings.js';
 import '../../Extensions/Annotations/Popup.js';
 const G: AnyRecord = Highcharts;
 // Annotations
+G.Annotation = Annotation;
 G.extendAnnotation = Annotation.extendAnnotation;
+// Compositions
+AnnotationChart.compose(G.Chart);

@@ -4,7 +4,7 @@
  *
  * */
 
-import type Annotation from './Annotations';
+import type Annotation from './Annotation';
 import type AnnotationChart from './AnnotationChart';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -107,11 +107,11 @@ class ControlPoint implements eventEmitterMixin.Type {
         this.index = pick((options as any).index, index);
     }
 
-    /**
+    /* *
      *
-     * Properties
+     *  Properties
      *
-     */
+     * */
 
     public addEvents = eventEmitterMixin.addEvents;
     public chart: AnnotationChart;

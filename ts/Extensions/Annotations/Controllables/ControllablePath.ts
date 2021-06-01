@@ -6,7 +6,7 @@
 
 'use strict';
 
-import type Annotation from '../Annotations';
+import type Annotation from '../Annotation';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import ControllableMixin from '../Mixins/ControllableMixin.js';

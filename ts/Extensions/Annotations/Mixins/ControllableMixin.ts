@@ -6,7 +6,7 @@
 
 'use strict';
 
-import type Annotation from '../Annotations';
+import type Annotation from '../Annotation';
 import type AnnotationChart from '../AnnotationChart';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
 import type MockPointOptions from '../MockPointOptions';

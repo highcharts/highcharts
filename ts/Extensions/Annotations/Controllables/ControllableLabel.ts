@@ -15,10 +15,10 @@
 import '../../../Core/Renderer/SVG/SVGRenderer.js';
 
 import type { AlignObject } from '../../../Core/Renderer/AlignObject';
-import type Annotation from '../Annotations';
+import type Annotation from '../Annotation';
 import type AnnotationChart from '../AnnotationChart';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
-import type { AnnotationsLabelOptions } from '../../../Extensions/Annotations/AnnotationsOptions';
+import type { AnnotationLabelOptions } from '../../../Extensions/Annotations/AnnotationOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
@@ -235,7 +235,7 @@ class ControllableLabel implements ControllableMixin.Type {
 
     public constructor(
         annotation: Annotation,
-        options: AnnotationsLabelOptions,
+        options: AnnotationLabelOptions,
         index: number
     ) {
         this.init(annotation, options, index);
@@ -473,7 +473,7 @@ class ControllableLabel implements ControllableMixin.Type {
                 };
 
                 itemPosition = ControllableLabel.alignedPosition(
-                    extend<AnnotationsLabelOptions|BBoxObject>(
+                    extend<AnnotationLabelOptions|BBoxObject>(
                         itemOptions, {
                             width,
                             height
@@ -519,7 +519,7 @@ class ControllableLabel implements ControllableMixin.Type {
 interface ControllableLabel extends ControllableMixin.Type {
     // adds mixin property types, created during init
     itemType: 'label';
-    options: AnnotationsLabelOptions;
+    options: AnnotationLabelOptions;
 }
 
 export default ControllableLabel;

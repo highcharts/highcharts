@@ -14,7 +14,7 @@
 
 import type Axis from '../../../Core/Axis/Axis';
 import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
-import type Annotation from '../../../Extensions/Annotations/Annotations';
+import type Annotation from '../../../Extensions/Annotations/Annotation';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type Series from '../../../Core/Series/Series';

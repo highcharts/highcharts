@@ -7,7 +7,7 @@
 'use strict';
 
 import type AnnotationChart from '../AnnotationChart';
-import type AnnotationsOptions from '../AnnotationsOptions';
+import type AnnotationOptions from '../AnnotationOptions';
 import type Axis from '../../../Core/Axis/Axis';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
@@ -16,7 +16,7 @@ import type MockPointOptions from '../MockPointOptions';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -1044,7 +1044,7 @@ Measure.prototype.defaultOptions = merge(
 );
 
 namespace Measure {
-    export interface MeasureOptions extends AnnotationsOptions {
+    export interface MeasureOptions extends AnnotationOptions {
         typeOptions: MeasureTypeOptions;
     }
     export interface MeasureTypeCrosshairOptions {

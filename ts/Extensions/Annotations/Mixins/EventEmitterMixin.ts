@@ -4,9 +4,9 @@
  *
  * */
 
-import type Annotation from '../Annotations';
+import type Annotation from '../Annotation';
 import type AnnotationChart from '../AnnotationChart';
-import type AnnotationsOptions from '../AnnotationsOptions';
+import type AnnotationOptions from '../AnnotationOptions';
 import type { CursorValue } from '../../../Core/Renderer/CSSObject';
 import type DOMElementType from '../../../Core/Renderer/DOMElementType';
 import type EventCallback from '../../../Core/EventCallback';
@@ -29,7 +29,7 @@ declare global {
             isUpdating?: boolean;
             labels?: Array<Annotation.LabelType>;
             nonDOMEvents?: Array<string>;
-            options: Partial<(Annotation.ControlPointOptions|AnnotationsOptions)>;
+            options: Partial<(Annotation.ControlPointOptions|AnnotationOptions)>;
             points?: Array<AnnotationPointType>;
             removeDrag?: Function;
             removeMouseUp?: Function;

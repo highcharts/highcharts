@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type Annotation from '../../Extensions/Annotations/Annotations';
+import type Annotation from '../../Extensions/Annotations/Annotation';
 import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
 import type PointClass from '../../Core/Series/Point';
 

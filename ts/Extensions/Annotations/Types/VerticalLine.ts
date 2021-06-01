@@ -7,11 +7,13 @@
 'use strict';
 
 import type AnnotationChart from '../AnnotationChart';
-import type { AnnotationsLabelOptions } from '../AnnotationsOptions';
-import type AnnotationsOptions from '../AnnotationsOptions';
+import type {
+    AnnotationOptions,
+    AnnotationLabelOptions
+} from '../AnnotationOptions';
 import type MockPointOptions from '../MockPointOptions';
 
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -201,10 +203,10 @@ VerticalLine.prototype.defaultOptions = merge(
 );
 
 namespace VerticalLine {
-    export interface Options extends AnnotationsOptions {
+    export interface Options extends AnnotationOptions {
         typeOptions: TypeOptions;
     }
-    export interface TypeLabelOptions extends AnnotationsLabelOptions {
+    export interface TypeLabelOptions extends AnnotationLabelOptions {
         offset: number;
     }
     export interface TypeOptions extends Annotation.TypeOptions {

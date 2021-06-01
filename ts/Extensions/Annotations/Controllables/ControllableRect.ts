@@ -4,7 +4,7 @@
  *
  * */
 
-import type Annotation from '../Annotations';
+import type Annotation from '../Annotation';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import ControllablePath from './ControllablePath.js';

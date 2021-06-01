@@ -10,9 +10,9 @@
  *
  * */
 
-import type Annotation from './Annotations';
+import type Annotation from './Annotation';
 import type AnnotationChart from './AnnotationChart';
-import type AnnotationsOptions from './AnnotationsOptions';
+import type AnnotationOptions from './AnnotationOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Series from '../../Core/Series/Series';
@@ -76,7 +76,7 @@ declare global {
             public showForm(
                 type: string,
                 chart: AnnotationChart,
-                options: AnnotationsOptions,
+                options: AnnotationOptions,
                 callback: Function
             ): void;
             public showPopup(): void;
@@ -85,7 +85,7 @@ declare global {
             addForm(
                 this: Popup,
                 chart: AnnotationChart,
-                options: AnnotationsOptions,
+                options: AnnotationOptions,
                 callback: Function,
                 isInit?: boolean
             ): void;
@@ -94,17 +94,17 @@ declare global {
                 parentDiv: HTMLDOMElement,
                 chart: AnnotationChart,
                 parentNode: string,
-                options: AnnotationsOptions,
+                options: AnnotationOptions,
                 storage: Array<unknown>,
                 isRoot?: boolean
             ): void;
-            addToolbar(this: Popup, chart: AnnotationChart, options: AnnotationsOptions, callback: Function): void;
+            addToolbar(this: Popup, chart: AnnotationChart, options: AnnotationOptions, callback: Function): void;
         }
         interface PopupConfigObject {
             annotation: Annotation;
             formType: string;
             onSubmit: Function;
-            options: AnnotationsOptions;
+            options: AnnotationOptions;
         }
         interface PopupFieldsDictionary<T> {
             [key: string]: (T | PopupFieldsDictionary<T>);
@@ -117,7 +117,7 @@ declare global {
             type?: string;
         }
         interface PopupIndicatorsObject {
-            addForm(this: Popup, chart: AnnotationChart, options: AnnotationsOptions, callback: Function): void;
+            addForm(this: Popup, chart: AnnotationChart, options: AnnotationOptions, callback: Function): void;
             addFormFields(
                 this: Popup,
                 chart: AnnotationChart,
@@ -462,7 +462,7 @@ H.Popup.prototype = {
     showForm: function (
         type: string,
         chart: AnnotationChart,
-        options: AnnotationsOptions,
+        options: AnnotationOptions,
         callback: Function
     ): void {
 
@@ -515,7 +515,7 @@ H.Popup.prototype = {
         addToolbar: function (
             this: Highcharts.Popup,
             chart: AnnotationChart,
-            options: AnnotationsOptions,
+            options: AnnotationOptions,
             callback: Function
         ): void {
             let _self = this,
@@ -595,7 +595,7 @@ H.Popup.prototype = {
         addForm: function (
             this: Highcharts.Popup,
             chart: AnnotationChart,
-            options: AnnotationsOptions,
+            options: AnnotationOptions,
             callback: Function,
             isInit?: boolean
         ): void {
@@ -668,7 +668,7 @@ H.Popup.prototype = {
             parentDiv: HTMLDOMElement,
             chart: AnnotationChart,
             parentNode: string,
-            options: AnnotationsOptions,
+            options: AnnotationOptions,
             storage: Array<unknown>,
             isRoot?: boolean
         ): void {
@@ -764,7 +764,7 @@ H.Popup.prototype = {
         addForm: function (
             this: Highcharts.Popup,
             chart: AnnotationChart,
-            _options: AnnotationsOptions,
+            _options: AnnotationOptions,
             callback: Function
         ): void {
 

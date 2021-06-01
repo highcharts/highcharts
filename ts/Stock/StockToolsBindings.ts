@@ -12,8 +12,8 @@
 
 'use strict';
 
-import type Annotation from '../Extensions/Annotations/Annotations';
-import type AnnotationsOptions from '../Extensions/Annotations/AnnotationsOptions';
+import type Annotation from '../Extensions/Annotations/Annotation';
+import type AnnotationOptions from '../Extensions/Annotations/AnnotationOptions';
 import type { YAxisOptions } from '../Core/Axis/AxisOptions';
 import type AxisType from '../Core/Axis/AxisType';
 import type Chart from '../Core/Chart/Chart';
@@ -2480,7 +2480,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             const navigation = this,
                 chart = navigation.chart,
-                annotations: Array<AnnotationsOptions> = [],
+                annotations: Array<AnnotationOptions> = [],
                 indicators: Array<DeepPartial<SeriesTypeOptions>> = [],
                 flags: Array<DeepPartial<SeriesTypeOptions>> = [],
                 yAxes: Array<YAxisOptions> = [];

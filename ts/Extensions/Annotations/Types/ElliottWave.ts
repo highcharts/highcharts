@@ -8,9 +8,9 @@
 
 import type AnnotationChart from '../AnnotationChart';
 import type ColorType from '../../../Core/Color/ColorType';
-import type { AnnotationsLabelOptions } from '../../../Extensions/Annotations/AnnotationsOptions';
+import type { AnnotationLabelOptions } from '../../../Extensions/Annotations/AnnotationOptions';
 import type MockPointOptions from '../MockPointOptions';
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -19,7 +19,7 @@ const {
 
 declare module '../MockPointOptions' {
     interface MockPointOptions {
-        label?: AnnotationsLabelOptions;
+        label?: AnnotationLabelOptions;
     }
 }
 
@@ -103,7 +103,7 @@ ElliottWave.prototype.defaultOptions = merge(
 );
 
 namespace ElliottWave {
-    export interface LabelOptions extends AnnotationsLabelOptions {
+    export interface LabelOptions extends AnnotationLabelOptions {
         backgroundColor: ColorType;
         borderWidth: number;
         y: number;

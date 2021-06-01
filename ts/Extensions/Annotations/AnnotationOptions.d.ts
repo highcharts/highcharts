@@ -18,13 +18,15 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../Core/Renderer/AlignObject';
+import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type Annotation from './Annotation';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions';
 import type FormatUtilities from '../../Core/FormatUtilities';
 import type PointClass from '../../Core/Series/Point';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 /* *
@@ -33,11 +35,24 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
  *
  * */
 
-export interface AnnotationsOptions {
-    // Nothing here
+export interface AnnotationOptions extends Highcharts.AnnotationControllableOptionsObject {
+    animation: Partial<AnimationOptions>;
+    controlPointOptions: Annotation.ControlPointOptions;
+    draggable: Annotation.DraggableValue;
+    events: Annotation.EventsOptions;
+    id?: (number|string);
+    itemType?: string;
+    labelOptions: AnnotationLabelOptions;
+    labels: Array<Annotation.LabelsOptions>;
+    shapeOptions: Annotation.ShapeOptions;
+    shapes: Array<Annotation.ShapesOptions>;
+    type?: string;
+    typeOptions: Annotation.TypeOptions;
+    visible: boolean;
+    zIndex: number;
 }
 
-export interface AnnotationsLabelOptions extends Highcharts.AnnotationControllableOptionsObject {
+export interface AnnotationLabelOptions extends Highcharts.AnnotationControllableOptionsObject {
     align: AlignValue;
     allowOverlap: boolean;
     backgroundColor: ColorType;
@@ -63,4 +78,4 @@ export interface AnnotationsLabelOptions extends Highcharts.AnnotationControllab
     y: number;
 }
 
-export default AnnotationsOptions;
+export default AnnotationOptions;

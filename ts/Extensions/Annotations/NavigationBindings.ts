@@ -11,11 +11,11 @@
 'use strict';
 
 import type AnnotationChart from './AnnotationChart';
-import type AnnotationsOptions from './AnnotationsOptions';
+import type AnnotationOptions from './AnnotationOptions';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type MockPointOptions from './MockPointOptions';
 import type PointerEvent from '../../Core/PointerEvent';
-import Annotation from './Annotations.js';
+import Annotation from './Annotation.js';
 import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
 import F from '../../Core/FormatUtilities.js';
@@ -43,8 +43,8 @@ declare module './AnnotationChart'{
     }
 }
 
-declare module './AnnotationsOptions'{
-    interface AnnotationsOptions {
+declare module './AnnotationOptions'{
+    interface AnnotationOptions {
         langKey?: string;
     }
 }
@@ -117,7 +117,7 @@ declare global {
             showPopup?: Function;
         }
         interface NavigationOptions {
-            annotationsOptions?: DeepPartial<AnnotationsOptions>;
+            annotationsOptions?: DeepPartial<AnnotationOptions>;
             bindings?: Record<string, NavigationBindingsOptionsObject>;
             bindingsClassName?: string;
             events?: NavigationEventsOptions;

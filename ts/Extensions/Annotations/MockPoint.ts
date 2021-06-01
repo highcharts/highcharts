@@ -6,18 +6,11 @@
 
 'use strict';
 
-import type Annotation from '../Annotations/Annotations';
+import type Annotation from './Annotation';
 import type AnnotationChart from '../Annotations/AnnotationChart';
 import type MockPointOptions from './MockPointOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import Series from '../../Core/Series/Series.js';
-
-declare module './MockPointOptions' {
-    interface MockPointOptions { // @todo -> MockPointOptions
-        command?: string;
-        series?: undefined;
-    }
-}
 
 /**
  * Internal types.

@@ -26,7 +26,7 @@ import type Series from '../../Core/Series/Series';
 
 import palette from '../../Core/Color/Palette.js';
 import ColorType from '../../Core/Color/ColorType';
-import Annotation from '../../Extensions/Annotations/Annotations';
+import Annotation from '../../Extensions/Annotations/Annotation';
 
 /* *
  *
@@ -58,8 +58,8 @@ declare module '../../Core/LegendOptions' {
     }
 }
 
-declare module '../../Extensions/Annotations/AnnotationsOptions' {
-    interface AnnotationsLabelOptions {
+declare module '../../Extensions/Annotations/AnnotationOptions' {
+    interface AnnotationLabelOptions {
         accessibility?: Highcharts.AnnotationsAccessibilityOptionsObject;
     }
 }

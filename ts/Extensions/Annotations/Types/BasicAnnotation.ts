@@ -7,13 +7,13 @@
 'use strict';
 
 import type AnnotationChart from '../AnnotationChart';
-import type AnnotationsOptions from '../AnnotationsOptions';
+import type AnnotationOptions from '../AnnotationOptions';
 import type ControllableCircle from '../Controllables/ControllableCircle';
 import type ControllableRect from '../Controllables/ControllableRect';
 import type MockPointOptions from '../MockPointOptions';
 import type PointerEvent from '../../../Core/PointerEvent';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -190,7 +190,7 @@ class BasicAnnotation extends Annotation {
      *
      * */
 
-    public constructor(chart: AnnotationChart, options: AnnotationsOptions) {
+    public constructor(chart: AnnotationChart, options: AnnotationOptions) {
         super(chart, options);
     }
 
