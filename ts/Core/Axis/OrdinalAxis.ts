@@ -986,69 +986,59 @@ namespace OrdinalAxis {
         axisProto.lin2val = function (val: number): number {
             const axis = this,
                 ordinal = axis.ordinal,
-                ordinalPositions = ordinal.positions, // for the current visible range
                 isInside = val > axis.left && val < axis.left + axis.len,
                 localMin = axis.old ? axis.old.min : axis.min,
                 localA = axis.old ? axis.old.transA : axis.transA;
-
-            let extendedOrdinalPositions = ordinal.extendedOrdinalPositions;
+            let positions = ordinal.positions; // for the current visible range
 
             // The visible range contains only equally spaced values.
-            if (!ordinalPositions) {
+            if (!positions) {
                 return val;
             }
 
             // Convert back from modivied value to pixels.
-            val = (val - (localMin as any)) * localA;
+            const pixelVal = (val - (localMin as any)) * localA;
 
             // If the value is not inside the plot area,
             // use the extended positions.
-            // (array contains also points that are currently out of range).
+            // (array contains also points that are outside of the plotArea).
             if (!isInside) {
                 // When iterating for the first time,
                 // get the extended ordinal positional and assign them.
-                if (!extendedOrdinalPositions) {
-                    extendedOrdinalPositions = axis.ordinal.getExtendedPositions();
-                    ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
+                if (!ordinal.extendedOrdinalPositions) {
+                    ordinal.extendedOrdinalPositions = ordinal.getExtendedPositions();
+                }
+                positions = ordinal.extendedOrdinalPositions;
+            }
+
+            // In some cases (especially in early stages of the chart creation)
+            // the getExtendedPositions might return undefined.
+            if (positions && positions.length) {
+                const indexInPostions = ordinal.getIndexOfPoint(pixelVal, positions),
+                    mantissa = correctFloat(indexInPostions % 1);
+
+                // Check if the index is inside position array.
+                // If true, read/approximate value for that exact index.
+                if (indexInPostions >= 0 && indexInPostions < positions.length) {
+                    const leftNeighbour = positions[Math.floor(indexInPostions)],
+                        rightNeighbour = positions[Math.ceil(indexInPostions)],
+                        distance = rightNeighbour - leftNeighbour;
+
+                    return positions[Math.floor(indexInPostions)] + mantissa * distance;
                 }
 
-                if (extendedOrdinalPositions && extendedOrdinalPositions.length) {
-                    const indexInEOP = ordinal.getIndexOfPoint(val, extendedOrdinalPositions),
-                        mantissa = correctFloat(indexInEOP % 1);
+                // For cases when the index is not in the EOP array,
+                // approximate that value based on the calculated slope.
+                const EOPlength = positions.length,
+                    firstEOPPoint = positions[0],
+                    lastEOPPoint = positions[EOPlength - 1],
+                    slope = (lastEOPPoint - firstEOPPoint) / (EOPlength - 1);
 
-                    // Check if the index is inside extendedOrdinalPositions.
-                    // If true, read/approximate value for that exact index.
-                    if (indexInEOP >= 0 && indexInEOP < extendedOrdinalPositions.length) {
-                        const leftNeighbour = extendedOrdinalPositions[Math.floor(indexInEOP)],
-                            rightNeighbour = extendedOrdinalPositions[Math.ceil(indexInEOP)],
-                            distance = rightNeighbour - leftNeighbour;
-
-                        return extendedOrdinalPositions[Math.floor(indexInEOP)] + mantissa * distance;
-                    }
-
-                    const EOPlength = extendedOrdinalPositions.length,
-                        leftVisiblePoint = extendedOrdinalPositions[0],
-                        rightVisiblePoint = extendedOrdinalPositions[EOPlength - 1],
-                        slope = (rightVisiblePoint - leftVisiblePoint) / (EOPlength - 1);
-
-                    if (indexInEOP < 0) {
-                        return leftVisiblePoint + slope * indexInEOP;
-                    }
-
-                    return rightVisiblePoint + slope * (indexInEOP - EOPlength);
+                if (indexInPostions < 0) {
+                    return firstEOPPoint + slope * indexInPostions;
                 }
-            } else {
-                // Even if the isInside property passed as true, due to some
-                // inaccuracy the getIndexOfPoint might return a negative value.
-                // To prevent that, compare it with zero.
-                const indexInOP = Math.max(ordinal.getIndexOfPoint(val, ordinalPositions), 0),
-                    mantissa = correctFloat(indexInOP % 1),
-                    leftNeighbour = ordinalPositions[Math.floor(indexInOP)],
-                    rightNeighbour = ordinalPositions[Math.ceil(indexInOP)],
-                    distance = rightNeighbour - leftNeighbour;
 
-                return ordinalPositions[Math.floor(indexInOP)] + mantissa * distance;
-
+                return lastEOPPoint + slope * (indexInPostions - EOPlength);
             }
             return val;
         };
