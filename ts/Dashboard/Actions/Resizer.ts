@@ -685,19 +685,37 @@ class Resizer {
         diffWidth: number,
         cellSiblings: Array<Cell>
     ): void {
-        const cellDiff = diffWidth / cellSiblings.length;
+        let cellsToChange = cellSiblings.length;
         let cellContainer;
 
         for (let i = 0, iEnd = cellSiblings.length; i < iEnd; ++i) {
             cellContainer = cellSiblings[i].container;
+            const cellStyle = cellSiblings[i].options.style;
+            const cellWidth = cellContainer && parseFloat(cellContainer.style.getPropertyValue('width')) || 0;
+            const minWidthPercent =
+                (
+                    (((cellStyle || {}).minWidth as number) || 0) /
+                    (((cellSiblings[i].row.container as HTMLDOMElement).offsetWidth) || 0)
+                ) * 100
+
+            // detect achieve the minWidth
+            if (minWidthPercent >= cellWidth) {
+                cellsToChange--;
+            }
 
             if (cellContainer) {
                 (cellContainer).style.width =
                     // bug, missing padding/margin
-                    parseFloat(cellContainer.style.getPropertyValue('width')) +
-                        -cellDiff + '%'; 
+                    cellWidth +
+                        -(diffWidth / cellsToChange) + '%'; 
             }
+
         }
+
+    }
+
+    private updateCellWidth(): void {
+
     }
     /**
      * Destroy resizer
