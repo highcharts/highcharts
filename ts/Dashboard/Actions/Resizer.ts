@@ -46,7 +46,7 @@ class Resizer {
     protected static readonly defaultOptions: Resizer.Options = {
         enabled: true,
         styles: {
-            minWidth: 50,
+            minWidth: 20,
             minHeight: 50
         },
         type: 'xy',
@@ -146,35 +146,105 @@ class Resizer {
         layout?: Layout
     ): void {
         const rows = layout && layout.rows;
+        let cellStyle;
+        let sumMinWidth;
+        let prevIndexRow = 0;
 
         for (let i = 0, iEnd = (rows || []).length; i < iEnd; ++i) {
 
             const cells = rows && rows[i].cells;
-
+            
             if (cells) {
                 for (let j = 0, jEnd = cells.length; j < jEnd; ++j) {
 
+                    const cellContainer = (cells[j].container as HTMLElement);
+                    sumMinWidth = 0;
+
+                    for (let k = 0, kEnd = cells[j].row.cells.length; k < kEnd; ++k) {
+                        const prevCell = cells[j].row.cells[k];
+
+                        if (k <= j) {
+                            sumMinWidth += (
+                                ((cells[j].row.cells[k].options.style?.minWidth as number) || 0) || ((this.options.styles || {}).minWidth || 0)
+                            );
+                        }
+                    }
+
                     if (cells[j].nestedLayout) {
-                         this.setInitWidth(cells[j].nestedLayout);
+                        this.setInitWidth(cells[j].nestedLayout);
                     } else {
-                        const cellContainer = (cells[j].container as HTMLElement);
                         // set min-size
                         cellContainer.style.minWidth =
                             this.options.styles.minWidth + 'px';
-                        
-                        // convert current width to percent
-                        // fix bug when we resize the last cell in a row
-                        
-                        cellContainer.style.width = (
-                            (
-                                (cellContainer.offsetWidth) /
-                                ((cells[j].row.container as HTMLElement).offsetWidth || 1)
-                            ) * 100
-                        ) + '%';               
-                        cellContainer.style.flex = 'none';
+
+                        cellStyle = cells[j].options.style;
+
+                        if (cellStyle) {
+                            cellStyle.minWidth = this.options.styles.minWidth;
+                        } else {
+                            cells[j].options.style = {
+                                minWidth: this.options.styles.minWidth
+                            }
+                        }
+
+                        this.updateParentMinWidth(
+                            cells[j],
+                            sumMinWidth
+                        );
                     }
+
+                    cellContainer.style.width = (
+                        (
+                            (cellContainer.offsetWidth) /
+                            ((cells[j].row.container as HTMLElement).offsetWidth || 1)
+                        ) * 100
+                    ) + '%';               
+                    cellContainer.style.flex = 'none';
                 }
             }
+
+            prevIndexRow = i;
+        }
+    }
+
+    public updateParentMinWidth(
+        cell: Cell,
+        sumMinWidth: number,
+        sumParentMinWidth?: boolean
+    ): void {
+        const parentCell = cell.row.layout.parentCell;
+
+        if (!parentCell) {
+            return;
+        }
+
+        const parentCellStyle = parentCell.options.style;
+
+        if (parentCellStyle) {
+            if (sumParentMinWidth) {
+                if ((parentCellStyle.minWidth || 0) <= sumMinWidth) {
+                    parentCellStyle.minWidth = (
+                        ((parentCellStyle.minWidth as number) || 0) + (this.options.styles.minWidth || 0)
+                    );
+                }
+            } else {
+                if ((parentCellStyle.minWidth || 0) <= sumMinWidth) {
+                    parentCellStyle.minWidth = (
+                        sumMinWidth
+                    );
+                }
+            }
+        } else {
+
+            parentCell.options.style = {
+                minWidth: (sumMinWidth || 0)
+            }
+        }
+
+        if (parentCell.container) {
+
+            parentCell.container.style.minWidth =
+                (parentCell.options.style || {}).minWidth + 'px';
         }
     }
 
@@ -407,16 +477,17 @@ class Resizer {
         ) {
             const parentRow = (cellContainer.parentNode as HTMLDOMElement);
             const parentRowWidth = parentRow.offsetWidth;
+            const cellSiblings = this.getSiblings(currentCell);
 
             // resize width
             if (currentDimension === 'x') {
 
-                const maxWidth = parentRowWidth - (
+                const maxWidth = parentRowWidth -
                     this.sumCellOuterWidth(
+                        cellSiblings,
                         currentCell.row,
                         currentCell
-                    ) || 0
-                );
+                    ) || 0;
 
                 cellContainer.style.width =
                     (
@@ -450,7 +521,8 @@ class Resizer {
                 }
 
                 this.resizeCellSiblings(
-                    ((e.clientX - this.startX) / parentRowWidth) * 100
+                    ((e.clientX - this.startX) / parentRowWidth) * 100,
+                    cellSiblings.next
                 );
 
                 this.startX = e.clientX;
@@ -488,17 +560,41 @@ class Resizer {
      * Sum
      */
     public sumCellOuterWidth(
+        cellSiblings: Resizer.CellSiblings,
         row: Row,
         cell?: Cell
     ): number {
 
         const cellContainer = cell && cell.container as HTMLElement;
         const parentRowWidth = row.container && row.container.offsetWidth;
-        const cells = row.cells;
 
         let sum = 0;
         let rowCell;
         let rowCellContainer;
+
+        // TEMP
+        let prevCellsWidth = 0;
+        let prevCellContainer;
+
+        // sum prev
+        for (let i = 0, iEnd = cellSiblings.prev.length; i < iEnd; ++i) {
+
+            prevCellContainer = cellSiblings.prev[i].container;
+
+            if (prevCellContainer) {
+                prevCellsWidth += prevCellContainer.offsetWidth;
+            }
+        }
+
+        // sum next
+        // let nextCellsWidth = 0;
+
+        // for (let i = 0, iEnd = cellSiblings.next.length; i < iEnd; ++i) {
+        //     nextCellsWidth += (this.options.styles || {}).minWidth || 0;
+        // }
+        // END TEMP
+
+        const cells = cellSiblings.next;
 
         for (let i = 0, iEnd = cells.length; i < iEnd; ++i) {
 
@@ -526,6 +622,10 @@ class Resizer {
                     // call reccurent calculation of cells (nested layouts)
                     if (maxRow) {
                         sum = this.sumCellOuterWidth(
+                            {
+                                next: maxRow.cells,
+                                prev: []
+                            },
                             maxRow,
                             void 0
                         );
@@ -538,32 +638,84 @@ class Resizer {
             }
         }
 
+        sum += prevCellsWidth;
+
         return sum;
     }
 
-    public resizeCellSiblings(
-        diffWidth: number
-    ): void {
-        const currentCell = this.currentCell;
+    public getSiblings(
+        currentCell: Cell|undefined
+    ): Resizer.CellSiblings {
+        const siblings = {
+            prev: [] as Array<Cell>,
+            next: [] as Array<Cell>
+        };
 
-        var cellSiblings = [];
-        let node = currentCell?.container;
+        if (!currentCell) {
+            return siblings;
+        }
+
+        const row = currentCell.row;
+        const cells = row.cells;
+        let currentCellIndex = Infinity;
+
         
-        // detect siblings
-        while (node) {
-            if (node !== currentCell?.container && node.nodeType === Node.ELEMENT_NODE ) {
-                cellSiblings.push(node);
+        for (let i = 0, iEnd = cells.length; i < iEnd; i++) {
+            if (cells[i].id !== currentCell.id) {
+                // detect prev or next sibbling
+                if (i < currentCellIndex) {
+                    siblings.prev.push(
+                        cells[i]
+                    );
+                } else {
+                    siblings.next.push(
+                        cells[i]
+                    );
+                }
+            } else {
+                // make breaking point for detection of prev / next
+                currentCellIndex = i;
             }
-            node = (node.nextElementSibling || node.nextSibling) as HTMLDOMElement;
         }
 
-        const cellDiff = diffWidth / cellSiblings.length;
+        return siblings;
+    }
 
-        for(let i = 0, iEnd = cellSiblings.length; i < iEnd; ++i) {
-            cellSiblings[i].style.width =
-                parseFloat(cellSiblings[i].style.getPropertyValue('width')) +
-                -cellDiff + '%'; 
+    public resizeCellSiblings(
+        diffWidth: number,
+        cellSiblings: Array<Cell>
+    ): void {
+        let cellsToChange = cellSiblings.length;
+        let cellContainer;
+
+        for (let i = 0, iEnd = cellSiblings.length; i < iEnd; ++i) {
+            cellContainer = cellSiblings[i].container;
+            const cellStyle = cellSiblings[i].options.style;
+            const cellWidth = cellContainer && parseFloat(cellContainer.style.getPropertyValue('width')) || 0;
+            const minWidthPercent =
+                (
+                    (((cellStyle || {}).minWidth as number) || 0) /
+                    (((cellSiblings[i].row.container as HTMLDOMElement).offsetWidth) || 0)
+                ) * 100
+
+            // detect achieve the minWidth
+            if (minWidthPercent >= cellWidth) {
+                cellsToChange--;
+            }
+
+            if (cellContainer) {
+                (cellContainer).style.width =
+                    // bug, missing padding/margin
+                    cellWidth +
+                        -(diffWidth / cellsToChange) + '%'; 
+            }
+
         }
+
+    }
+
+    private updateCellWidth(): void {
+
     }
     /**
      * Destroy resizer
@@ -761,6 +913,11 @@ namespace Resizer {
     export interface ResizePointer {
         isVisible: boolean;
         element: HTMLDOMElement;
+    }
+
+    export interface CellSiblings {
+        prev: Array<Cell>;
+        next: Array<Cell>;
     }
 }
 

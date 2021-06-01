@@ -674,7 +674,7 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
         resize: {
             enabled: true,
             styles: {
-                minWidth: 50,
+                minWidth: 20,
                 minHeight: 50
             },
             type: 'xy',
@@ -717,6 +717,8 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
                                             id: 'dashboard-col-layout-2a'
                                         }, {
                                             id: 'dashboard-col-layout-2b'
+                                        }, {
+                                            id: 'dashboard-col-layout-2f'
                                         }]
                                     }, {
                                         cells: [{
@@ -835,6 +837,9 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
         // }, {
         //     textContent: 'Loreum ipsum'
         // }]
+    }, {
+        cell: 'dashboard-col-layout-2f',
+        ...chartDemo
     }]
 });
 
