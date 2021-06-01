@@ -14,6 +14,7 @@ import type AnnotationChart from './AnnotationChart';
 import type AnnotationOptions from './AnnotationOptions';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type MockPointOptions from './MockPointOptions';
+import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
 import Annotation from './Annotation.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -264,8 +265,8 @@ const bindingsUtils = {
      *         is currently pointing.
      */
     getAssignedAxis(
-        coords: Array<Highcharts.PointerAxisCoordinateObject>
-    ): Highcharts.PointerAxisCoordinateObject {
+        coords: Array<Pointer.AxisCoordinateObject>
+    ): Pointer.AxisCoordinateObject {
         return coords.filter(function (coord): boolean {
             const axisMin = coord.axis.min,
                 axisMax = coord.axis.max,

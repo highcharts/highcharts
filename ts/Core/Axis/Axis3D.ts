@@ -24,6 +24,8 @@ import type { OptionsPosition3dValue } from '../Options';
 import type Point from '../Series/Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type VMLAxis3D from '../../Extensions/Oldie/VMLAxis3D';
+
 import H from '../Globals.js';
 const { deg2rad } = H;
 import Math3D from '../../Extensions/Math3D.js';
@@ -156,7 +158,7 @@ class Axis3DAdditions {
             return pos;
         }
 
-        let alpha = deg2rad * (chart.options.chart.options3d as any).alpha,
+        const alpha = deg2rad * (chart.options.chart.options3d as any).alpha,
             beta = deg2rad * (chart.options.chart.options3d as any).beta,
             positionMode = pick(
                 isTitle && (axis.options.title as any).position3d,
@@ -170,14 +172,15 @@ class Axis3DAdditions {
             plotLeft = chart.plotLeft,
             plotRight = chart.plotWidth + plotLeft,
             plotTop = chart.plotTop,
-            plotBottom = chart.plotHeight + plotTop,
-            // Indicates that we are labelling an X or Z axis on the "back" of
-            // the chart
-            reverseFlap = false,
-            offsetX = 0,
+            plotBottom = chart.plotHeight + plotTop;
+
+        let offsetX = 0,
             offsetY = 0,
             vecX: Position3DObject,
-            vecY = { x: 0, y: 1, z: 0 };
+            vecY = { x: 0, y: 1, z: 0 },
+            // Indicates that we are labelling an X or Z axis on the "back" of
+            // the chart
+            reverseFlap = false;
 
         pos = axis.axis3D.swapZ({ x: pos.x, y: pos.y, z: 0 });
 
@@ -506,7 +509,6 @@ class Axis3D {
         addEvent(AxisClass, 'init', Axis3D.onInit);
         addEvent(AxisClass, 'afterSetOptions', Axis3D.onAfterSetOptions);
         addEvent(AxisClass, 'drawCrosshair', Axis3D.onDrawCrosshair);
-        addEvent(AxisClass, 'destroy', Axis3D.onDestroy);
 
         const axisProto = AxisClass.prototype as Axis3D;
 
@@ -532,19 +534,6 @@ class Axis3D {
             options.tickWidth = pick(options.tickWidth, 0);
             options.gridLineWidth = pick(options.gridLineWidth, 1);
         }
-    }
-
-    /**
-     * @private
-     */
-    public static onDestroy(this: Axis): void {
-        ['backFrame', 'bottomFrame', 'sideFrame'].forEach(function (
-            prop: string
-        ): void {
-            if ((this as any)[prop]) {
-                (this as any)[prop] = (this as any)[prop].destroy();
-            }
-        }, this);
     }
 
     /**
@@ -653,13 +642,13 @@ class Axis3D {
         this: Axis3D,
         proceed: Function
     ): SVGPath {
-        const axis = this;
-        const axis3D = axis.axis3D;
-        const chart = axis.chart;
-        const path: SVGPath = proceed.apply(
-            axis,
-            [].slice.call(arguments, 1)
-        );
+        const axis = this,
+            axis3D = axis.axis3D,
+            chart = axis.chart,
+            path: SVGPath = proceed.apply(
+                axis,
+                [].slice.call(arguments, 1)
+            );
 
         // Do not do this if the chart is not 3D
         if (
@@ -674,12 +663,13 @@ class Axis3D {
             return path;
         }
 
-        let options3d = chart.options.chart.options3d as any,
+        const options3d = chart.options.chart.options3d as any,
             d = axis.isZAxis ? chart.plotWidth : options3d.depth,
             frame = chart.chart3d.frame3d,
             startSegment = path[0],
-            endSegment = path[1],
-            pArr,
+            endSegment = path[1];
+
+        let pArr,
             pathSegments: Array<Position3DObject> = [];
 
         if (startSegment[0] === 'M' && endSegment[0] === 'L') {
@@ -747,10 +737,10 @@ class Axis3D {
         proceed: Function,
         tick: Tick
     ): number {
-        const axis = this;
-        const chart = axis.chart;
-        const ticks = axis.ticks;
-        const gridGroup = axis.gridGroup;
+        const axis = this,
+            chart = axis.chart,
+            ticks = axis.ticks,
+            gridGroup = axis.gridGroup;
 
         if (
             axis.categories &&
@@ -760,7 +750,7 @@ class Axis3D {
             tick &&
             tick.label
         ) {
-            let firstGridLine = (gridGroup.element.childNodes[0] as any).getBBox(),
+            const firstGridLine = (gridGroup.element.childNodes[0] as any).getBBox(),
                 frame3DLeft = chart.frameShapes.left.getBBox(),
                 options3d = chart.options.chart.options3d as any,
                 origin = {
@@ -769,13 +759,13 @@ class Axis3D {
                     z: options3d.depth / 2,
                     vd: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0)
                 },
-                labelPos,
-                prevLabelPos,
-                nextLabelPos,
-                slotWidth,
                 tickId = tick.pos,
                 prevTick = ticks[tickId - 1],
                 nextTick = ticks[tickId + 1];
+
+            let labelPos,
+                prevLabelPos,
+                nextLabelPos;
 
             // Check whether the tick is not the first one and previous tick
             // exists, then calculate position of previous label.
@@ -808,13 +798,12 @@ class Axis3D {
             // the second label. If there is no next label position calculated,
             // return the difference between the first grid line and left 3d
             // frame.
-            slotWidth = Math.abs(
+            return Math.abs(
                 prevLabelPos ?
                     labelPos.x - prevLabelPos.x : nextLabelPos ?
                         nextLabelPos.x - labelPos.x :
                         firstGridLine.x - frame3DLeft.x
             );
-            return slotWidth;
         }
         return proceed.apply(axis, [].slice.call(arguments, 1));
     }
@@ -843,5 +832,11 @@ class Axis3D {
 interface Axis3D extends Axis {
     axis3D: Axis3DAdditions;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Axis3D;

@@ -1362,28 +1362,31 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @return {void}
      */
     removePlotBandOrLine: function (this: Axis, id: string): void {
-        let plotLinesAndBands = this.plotLinesAndBands,
+        const plotLinesAndBands = this.plotLinesAndBands,
             options = this.options,
-            userOptions = this.userOptions,
-            i = plotLinesAndBands.length;
-        while (i--) {
-            if (plotLinesAndBands[i].id === id) {
-                plotLinesAndBands[i].destroy();
-            }
-        }
-        ([
-            options.plotLines || [],
-            userOptions.plotLines || [],
-            options.plotBands || [],
-            userOptions.plotBands || []
-        ]).forEach(function (arr): void {
-            i = arr.length;
+            userOptions = this.userOptions;
+
+        if (plotLinesAndBands) { // #15639
+            let i = plotLinesAndBands.length;
             while (i--) {
-                if ((arr[i] || {}).id === id) {
-                    erase(arr, arr[i]);
+                if (plotLinesAndBands[i].id === id) {
+                    plotLinesAndBands[i].destroy();
                 }
             }
-        });
+            ([
+                options.plotLines || [],
+                userOptions.plotLines || [],
+                options.plotBands || [],
+                userOptions.plotBands || []
+            ]).forEach(function (arr): void {
+                i = arr.length;
+                while (i--) {
+                    if ((arr[i] || {}).id === id) {
+                        erase(arr, arr[i]);
+                    }
+                }
+            });
+        }
     },
 
     /**

@@ -1120,8 +1120,13 @@ addEvent(Chart, 'render', function (): void {
                         if (!(axis.ddPoints as any)[xData[i]]) {
                             (axis.ddPoints as any)[xData[i]] = [];
                         }
+
+                        const index = i - (series.cropStart || 0);
+
                         (axis.ddPoints as any)[xData[i]].push(
-                            points ? points[i] : true
+                            (points && index >= 0 && index < points.length) ?
+                                points[index] :
+                                true
                         );
                     }
                 }

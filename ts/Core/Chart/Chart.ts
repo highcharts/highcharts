@@ -29,6 +29,7 @@ import type {
     CSSObject,
     CursorValue
 } from '../Renderer/CSSObject';
+import type { EventCallback } from '../Callback';
 import type {
     LabelsItemsOptions,
     NumberFormatterCallbackFunction,
@@ -58,8 +59,12 @@ const {
     setAnimation
 } = A;
 import Axis from '../Axis/Axis.js';
-import F from '../FormatUtilities.js';
-const { numberFormat } = F;
+import FormatUtilities from '../FormatUtilities.js';
+const { numberFormat } = FormatUtilities;
+import Foundation from '../Foundation.js';
+const {
+    registerEventOptions
+} = Foundation;
 import H from '../Globals.js';
 const {
     charts,
@@ -138,7 +143,7 @@ declare module './ChartLike' {
         resetZoomButton?: SVGElement;
         pan(e: PointerEvent, panning: boolean|ChartPanningOptions): void;
         showResetZoom(): void;
-        zoom(event: Highcharts.SelectEventObject): void;
+        zoom(event: Pointer.SelectEventObject): void;
         zoomOut(): void;
     }
 }
@@ -313,6 +318,7 @@ class Chart {
     public containerWidth?: string;
     public credits?: SVGElement;
     public caption?: SVGElement;
+    public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
     public hasRendered?: boolean;
@@ -461,8 +467,6 @@ class Chart {
              */
             this.userOptions = userOptions;
 
-            const chartEvents = optionsChart.events;
-
             this.margin = [];
             this.spacing = [];
 
@@ -555,13 +559,7 @@ class Chart {
             H.chartCount++;
 
             // Chart event handlers
-            if (chartEvents) {
-                objectEach(chartEvents, function (event, eventType): void {
-                    if (isFunction(event)) {
-                        addEvent(chart, eventType, event);
-                    }
-                });
-            }
+            registerEventOptions(this, optionsChart);
 
             /**
              * A collection of the X axes in the chart.
@@ -1268,7 +1266,8 @@ class Chart {
             const title = (this as any)[key],
                 titleOptions: Chart.DescriptionOptionsType = (this as any).options[key],
                 verticalAlign = titleOptions.verticalAlign || 'top',
-                offset = key === 'title' ? -3 :
+                offset = key === 'title' ?
+                    verticalAlign === 'top' ? -3 : 0 :
                     // Floating subtitle (#6574)
                     verticalAlign === 'top' ? titleOffset[0] + 2 : 0;
 
@@ -2703,7 +2702,7 @@ class Chart {
 
         // depends on inverted and on margins being set
         if (Pointer) {
-            if (!H.hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
+            if (MSPointer.isRequired()) {
                 chart.pointer = new MSPointer(chart, options);
             } else {
                 /**
@@ -3211,6 +3210,11 @@ class Chart {
                 updateAllAxes = true;
             }
 
+            if ('events' in optionsChart) {
+                // Chart event handlers
+                registerEventOptions(this, optionsChart);
+            }
+
             objectEach(optionsChart, function (val: any, key: string): void {
                 if (
                     chart.propsRequireUpdateSeries.indexOf('chart.' + key) !==
@@ -3540,7 +3544,7 @@ class Chart {
      * @function Highcharts.Chart#zoom
      * @param {Highcharts.SelectEventObject} event
      */
-    public zoom(event: Highcharts.SelectEventObject): void {
+    public zoom(event: Pointer.SelectEventObject): void {
         const chart = this,
             pointer = chart.pointer,
             mouseDownPos = (chart.inverted ? pointer.mouseDownX : pointer.mouseDownY);
@@ -3557,7 +3561,7 @@ class Chart {
 
         } else { // else, zoom in on all axes
             event.xAxis.concat(event.yAxis).forEach(function (
-                axisData: Highcharts.SelectDataObject
+                axisData: Pointer.SelectDataObject
             ): void {
                 const axis = axisData.axis,
                     axisStartPos = chart.inverted ? axis.left : axis.top,
@@ -3678,7 +3682,7 @@ class Chart {
                     mousePos = e[horiz ? 'chartX' : 'chartY'],
                     mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
                     startPos = (chart as any)[mouseDown],
-                    halfPointRange = (axis.pointRange || 0) / 2,
+                    halfPointRange = axis.minPointOffset || 0,
                     pointRangeDirection =
                         (axis.reversed && !chart.inverted) ||
                         (!axis.reversed && chart.inverted) ?
@@ -3691,7 +3695,11 @@ class Chart {
                         axis.toValue(
                             startPos + axis.len - mousePos, true
                         ) -
-                        halfPointRange * pointRangeDirection,
+                        (
+                            (halfPointRange * pointRangeDirection) ||
+                            (axis.isXAxis && axis.pointRangePadding) ||
+                            0
+                        ),
                     flipped = panMax < panMin,
                     hasVerticalPanning = axis.hasVerticalPanning();
 
