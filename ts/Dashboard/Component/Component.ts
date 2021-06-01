@@ -336,24 +336,24 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
 
         if (this.parentCell) {
-            this.cellListeners.push(addEvent(this.parentCell.row, 'cellChange', (e: { row: Row }): void => {
-                const { row } = e;
-                if (row && this.parentCell && this.parentCell.container) {
-                    const hasLeftTheRow = row.getCellIndex(this.parentCell) === void 0;
-                    if (hasLeftTheRow) {
-                        if (this.parentCell) {
-                            this.setCell(this.parentCell);
+            const dashboard = this.parentCell.row.layout.dashboard;
+            this.cellListeners.push(
+                // Listen for resize on dashboard
+                addEvent(dashboard, 'cellResize', (): void => {
+                    this.resizeTo(this.parentElement);
+                }),
+                // Listen for changed parent
+                addEvent(this.parentCell.row, 'cellChange', (e: { row: Row }): void => {
+                    const { row } = e;
+                    if (row && this.parentCell) {
+                        const hasLeftTheRow = row.getCellIndex(this.parentCell) === void 0;
+                        if (hasLeftTheRow) {
+                            if (this.parentCell) {
+                                this.setCell(this.parentCell);
+                            }
                         }
                     }
-                }
-                if (this.parentCell) {
-                    // Resize if number of cells in the row has changed
-                    // or if the width of the cell itself has changed
-                    setTimeout((): void => {
-                        this.resizeTo(this.parentElement);
-                    }, 0);
-                }
-            }));
+                }));
 
         }
     }
