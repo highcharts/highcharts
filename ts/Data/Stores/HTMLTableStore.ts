@@ -10,6 +10,8 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
@@ -25,7 +27,10 @@ import H from '../../Core/Globals.js';
 const { win } = H;
 import HTMLTableParser from '../Parsers/HTMLTableParser.js';
 import U from '../../Core/Utilities.js';
-const { merge, objectEach } = U;
+const {
+    merge,
+    objectEach
+} = U;
 
 /** eslint-disable valid-jsdoc */
 
