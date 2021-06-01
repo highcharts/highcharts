@@ -46,7 +46,7 @@ class Resizer {
     protected static readonly defaultOptions: Resizer.Options = {
         enabled: true,
         styles: {
-            minWidth: 50,
+            minWidth: 20,
             minHeight: 50
         },
         type: 'xy',
@@ -146,35 +146,105 @@ class Resizer {
         layout?: Layout
     ): void {
         const rows = layout && layout.rows;
+        let cellStyle;
+        let sumMinWidth;
+        let prevIndexRow = 0;
 
         for (let i = 0, iEnd = (rows || []).length; i < iEnd; ++i) {
 
             const cells = rows && rows[i].cells;
-
+            
             if (cells) {
                 for (let j = 0, jEnd = cells.length; j < jEnd; ++j) {
 
+                    const cellContainer = (cells[j].container as HTMLElement);
+                    sumMinWidth = 0;
+
+                    for (let k = 0, kEnd = cells[j].row.cells.length; k < kEnd; ++k) {
+                        const prevCell = cells[j].row.cells[k];
+
+                        if (k <= j) {
+                            sumMinWidth += (
+                                ((cells[j].row.cells[k].options.style?.minWidth as number) || 0) || ((this.options.styles || {}).minWidth || 0)
+                            );
+                        }
+                    }
+
                     if (cells[j].nestedLayout) {
-                         this.setInitWidth(cells[j].nestedLayout);
+                        this.setInitWidth(cells[j].nestedLayout);
                     } else {
-                        const cellContainer = (cells[j].container as HTMLElement);
                         // set min-size
                         cellContainer.style.minWidth =
                             this.options.styles.minWidth + 'px';
-                        
-                        // convert current width to percent
-                        // fix bug when we resize the last cell in a row
-                        
-                        cellContainer.style.width = (
-                            (
-                                (cellContainer.offsetWidth) /
-                                ((cells[j].row.container as HTMLElement).offsetWidth || 1)
-                            ) * 100
-                        ) + '%';               
-                        cellContainer.style.flex = 'none';
+
+                        cellStyle = cells[j].options.style;
+
+                        if (cellStyle) {
+                            cellStyle.minWidth = this.options.styles.minWidth;
+                        } else {
+                            cells[j].options.style = {
+                                minWidth: this.options.styles.minWidth
+                            }
+                        }
+
+                        this.updateParentMinWidth(
+                            cells[j],
+                            sumMinWidth
+                        );
                     }
+
+                    cellContainer.style.width = (
+                        (
+                            (cellContainer.offsetWidth) /
+                            ((cells[j].row.container as HTMLElement).offsetWidth || 1)
+                        ) * 100
+                    ) + '%';               
+                    cellContainer.style.flex = 'none';
                 }
             }
+
+            prevIndexRow = i;
+        }
+    }
+
+    public updateParentMinWidth(
+        cell: Cell,
+        sumMinWidth: number,
+        sumParentMinWidth?: boolean
+    ): void {
+        const parentCell = cell.row.layout.parentCell;
+
+        if (!parentCell) {
+            return;
+        }
+
+        const parentCellStyle = parentCell.options.style;
+
+        if (parentCellStyle) {
+            if (sumParentMinWidth) {
+                if ((parentCellStyle.minWidth || 0) <= sumMinWidth) {
+                    parentCellStyle.minWidth = (
+                        ((parentCellStyle.minWidth as number) || 0) + (this.options.styles.minWidth || 0)
+                    );
+                }
+            } else {
+                if ((parentCellStyle.minWidth || 0) <= sumMinWidth) {
+                    parentCellStyle.minWidth = (
+                        sumMinWidth
+                    );
+                }
+            }
+        } else {
+
+            parentCell.options.style = {
+                minWidth: (sumMinWidth || 0)
+            }
+        }
+
+        if (parentCell.container) {
+
+            parentCell.container.style.minWidth =
+                (parentCell.options.style || {}).minWidth + 'px';
         }
     }
 
@@ -407,19 +477,17 @@ class Resizer {
         ) {
             const parentRow = (cellContainer.parentNode as HTMLDOMElement);
             const parentRowWidth = parentRow.offsetWidth;
+            const cellSiblings = this.getSiblings(currentCell);
 
             // resize width
             if (currentDimension === 'x') {
-                const cellSiblings = this.getSiblings(currentCell);
 
-console.log('cellSiblings', cellSiblings);
-
-                const maxWidth = parentRowWidth - (
+                const maxWidth = parentRowWidth -
                     this.sumCellOuterWidth(
+                        cellSiblings,
                         currentCell.row,
                         currentCell
-                    ) || 0
-                );
+                    ) || 0;
 
                 cellContainer.style.width =
                     (
@@ -492,17 +560,41 @@ console.log('cellSiblings', cellSiblings);
      * Sum
      */
     public sumCellOuterWidth(
+        cellSiblings: Resizer.CellSiblings,
         row: Row,
         cell?: Cell
     ): number {
 
         const cellContainer = cell && cell.container as HTMLElement;
         const parentRowWidth = row.container && row.container.offsetWidth;
-        const cells = row.cells;
 
         let sum = 0;
         let rowCell;
         let rowCellContainer;
+
+        // TEMP
+        let prevCellsWidth = 0;
+        let prevCellContainer;
+
+        // sum prev
+        for (let i = 0, iEnd = cellSiblings.prev.length; i < iEnd; ++i) {
+
+            prevCellContainer = cellSiblings.prev[i].container;
+
+            if (prevCellContainer) {
+                prevCellsWidth += prevCellContainer.offsetWidth;
+            }
+        }
+
+        // sum next
+        // let nextCellsWidth = 0;
+
+        // for (let i = 0, iEnd = cellSiblings.next.length; i < iEnd; ++i) {
+        //     nextCellsWidth += (this.options.styles || {}).minWidth || 0;
+        // }
+        // END TEMP
+
+        const cells = cellSiblings.next;
 
         for (let i = 0, iEnd = cells.length; i < iEnd; ++i) {
 
@@ -530,6 +622,10 @@ console.log('cellSiblings', cellSiblings);
                     // call reccurent calculation of cells (nested layouts)
                     if (maxRow) {
                         sum = this.sumCellOuterWidth(
+                            {
+                                next: maxRow.cells,
+                                prev: []
+                            },
                             maxRow,
                             void 0
                         );
@@ -541,6 +637,8 @@ console.log('cellSiblings', cellSiblings);
                 }
             }
         }
+
+        sum += prevCellsWidth;
 
         return sum;
     }
@@ -597,7 +695,7 @@ console.log('cellSiblings', cellSiblings);
                 (cellContainer).style.width =
                     // bug, missing padding/margin
                     parseFloat(cellContainer.style.getPropertyValue('width')) +
-                    -cellDiff + '%'; 
+                        -cellDiff + '%'; 
             }
         }
     }
