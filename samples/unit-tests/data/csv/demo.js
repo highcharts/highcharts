@@ -85,11 +85,13 @@ if (!isNaN(Date.parse('Jan 16'))) {
             'X axis is date/time'
         );
 
-        assert.ok(
-            // Chrome Date.parse assumes year 2001
-            options.series[0].data[0][0] === 979603200000 ||
+        assert.strictEqual(
+            options.series[0].data[0][0],
+            Highcharts.isSafari ?
                 // Safari Date.parse assumes year 2000
-                options.series[0].data[0][0] === 947980800000,
+                947980800000 :
+                // Chrome Date.parse assumes year 2001
+                979599600000,
             'Date for point one is correct'
         );
 
