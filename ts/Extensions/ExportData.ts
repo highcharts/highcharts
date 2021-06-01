@@ -186,24 +186,6 @@ import DownloadURL from '../Extensions/DownloadURL.js';
 import HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 const { downloadURL } = DownloadURL;
 
-
-// Can we add this to utils? Also used in screen-reader.js
-/**
- * HTML encode some characters vulnerable for XSS.
- * @private
- * @param  {string} html The input string
- * @return {string} The excaped string
- */
-function htmlencode(html: string): string {
-    return html
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#x27;')
-        .replace(/\//g, '&#x2F;');
-}
-
 setOptions({
     /**
      * Callback that fires while exporting data. This allows the modification of
@@ -652,14 +634,14 @@ Chart.prototype.getDataRows = function (
     this.setUpKeyToAxis();
 
     this.series.forEach(function (series: Series): void {
-        let keys = series.options.keys,
+        const keys = series.options.keys,
             xAxis = series.xAxis,
             pointArrayMap = keys || getPointArray(series, xAxis),
             valueCount = pointArrayMap.length,
             xTaken: (false|Record<string, unknown>) =
                 !series.requireSorting && {},
-            xAxisIndex = xAxes.indexOf(xAxis),
-            categoryAndDatetimeMap = getCategoryAndDateTimeMap(
+            xAxisIndex = xAxes.indexOf(xAxis);
+        let categoryAndDatetimeMap = getCategoryAndDateTimeMap(
                 series,
                 pointArrayMap
             ),
@@ -882,8 +864,8 @@ Chart.prototype.getDataRows = function (
 Chart.prototype.getCSV = function (
     useLocalDecimalPoint?: boolean
 ): string {
-    let csv = '',
-        rows = this.getDataRows(),
+    let csv = '';
+    const rows = this.getDataRows(),
         csvOptions: Highcharts.ExportingCsvOptions =
             (this.options.exporting as any).csv,
         decimalPoint = pick(
@@ -999,14 +981,14 @@ Chart.prototype.getTable = function (
 Chart.prototype.getTableAST = function (
     useLocalDecimalPoint?: boolean
 ): AST.Node {
+    let rowLength = 0;
     const treeChildren: AST.Node[] = [];
-    let options = this.options,
+    const options = this.options,
         decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
         useMultiLevelHeaders = pick(
             (options.exporting as any).useMultiLevelHeaders, true
         ),
         rows = this.getDataRows(useMultiLevelHeaders),
-        rowLength = 0,
         topHeaders = useMultiLevelHeaders ? rows.shift() : null,
         subHeaders = rows.shift(),
         // Compare two rows for equality
@@ -1176,7 +1158,7 @@ Chart.prototype.getTableAST = function (
                 (options.exporting as any).tableCaption,
                 (
                     (options.title as any).text ?
-                        htmlencode((options.title as any).text) :
+                        (options.title as any).text :
                         'Chart'
                 )
             )
