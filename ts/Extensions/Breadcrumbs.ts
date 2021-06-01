@@ -75,7 +75,11 @@ declare global {
             breadcrumbs?: Breadcrumbs.BreadcrumbsOptions;
         }
         class Breadcrumbs {
-            public constructor(chart: Chart, userOptions?: Breadcrumbs.BreadcrumbsOptions, isTreemap?: boolean);
+            public constructor(
+                chart: Chart,
+                userOptions?: DeepPartial<Breadcrumbs.BreadcrumbsOptions>,
+                isTreemap?: boolean
+            );
         }
     }
 }
@@ -873,7 +877,11 @@ class Breadcrumbs {
     * @param {boolean} redraw
     *        Redraw flag
     */
-    public update(this: Breadcrumbs, options: Breadcrumbs.BreadcrumbsOptions, redraw: boolean = true): void {
+    public update(
+        this: Breadcrumbs,
+        options: DeepPartial<Breadcrumbs.BreadcrumbsOptions>,
+        redraw: boolean = true
+    ): void {
         merge(true, this.options, options);
 
         if (redraw) {
@@ -948,7 +956,7 @@ if (!H.Breadcrumbs) {
 
         if (breadcrumbs && e.options.drilldown && e.options.drilldown.breadcrumbs) {
             breadcrumbs.isDirty = true;
-            breadcrumbs.update(e.options.drilldown.breadcrumbs as Breadcrumbs.BreadcrumbsOptions, false);
+            breadcrumbs.update(e.options.drilldown.breadcrumbs, false);
             breadcrumbs.redraw();
         }
     });
@@ -970,7 +978,7 @@ if (!H.Breadcrumbs) {
             breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs;
 
         if (!breadcrumbs) {
-            chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions as any, false);
+            chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions, false);
             chart.breadcrumbs.createList();
 
         } else {
@@ -1013,7 +1021,7 @@ if (!H.Breadcrumbs) {
 
                 if (breadcrumbs && e.options.breadcrumbs) {
                     breadcrumbs.isDirty = true;
-                    breadcrumbs.update(e.options.breadcrumbs as Breadcrumbs.BreadcrumbsOptions, false);
+                    breadcrumbs.update(e.options.breadcrumbs, false);
                     breadcrumbs.redraw();
                 }
             });
