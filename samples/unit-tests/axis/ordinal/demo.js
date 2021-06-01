@@ -262,7 +262,7 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
 QUnit.test('findIndexOf', assert => {
     const findIndexOf =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.findIndexOf;
+        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.findIndexOf;
     const array = [0, 1, 3, 5, 10, 12, 13, 15];
     assert.equal(findIndexOf(array, 3), 2);
     assert.equal(findIndexOf(array, 0), 0);

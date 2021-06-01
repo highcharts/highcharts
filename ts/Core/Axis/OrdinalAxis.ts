@@ -374,7 +374,7 @@ namespace OrdinalAxis {
          *        value be equal to -1 or the closest bigger index.
          *  @private
          */
-        public findIndexOf(
+        public static findIndexOf(
             sortedArray: Array<number>,
             key: number,
             indirectSearch?: boolean
@@ -609,7 +609,7 @@ namespace OrdinalAxis {
                 (ordinal.slope || axis.closestPointRange || ordinal.overscrollPointsRange as number),
                 shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
 
-            return this.findIndexOf(ordinalArray, firstPointVal) + shiftIndex;
+            return Composition.findIndexOf(ordinalArray, firstPointVal) + shiftIndex;
         }
 
         /**
@@ -1014,31 +1014,33 @@ namespace OrdinalAxis {
             // In some cases (especially in early stages of the chart creation)
             // the getExtendedPositions might return undefined.
             if (positions && positions.length) {
-                const indexInPostions = ordinal.getIndexOfPoint(pixelVal, positions),
-                    mantissa = correctFloat(indexInPostions % 1);
+                const index = ordinal.getIndexOfPoint(pixelVal, positions),
+                    mantissa = correctFloat(index % 1);
 
                 // Check if the index is inside position array.
                 // If true, read/approximate value for that exact index.
-                if (indexInPostions >= 0 && indexInPostions < positions.length) {
-                    const leftNeighbour = positions[Math.floor(indexInPostions)],
-                        rightNeighbour = positions[Math.ceil(indexInPostions)],
+                if (index >= 0 && index < positions.length) {
+                    const leftNeighbour = positions[Math.floor(index)],
+                        rightNeighbour = positions[Math.ceil(index)],
                         distance = rightNeighbour - leftNeighbour;
 
-                    return positions[Math.floor(indexInPostions)] + mantissa * distance;
+                    return positions[Math.floor(index)] + mantissa * distance;
                 }
 
-                // For cases when the index is not in the EOP array,
+                // For cases when the index is not in the extended ordinal
+                // position array (EOP), like when the value we are looking
+                // for exceed the available data,
                 // approximate that value based on the calculated slope.
-                const EOPlength = positions.length,
-                    firstEOPPoint = positions[0],
-                    lastEOPPoint = positions[EOPlength - 1],
-                    slope = (lastEOPPoint - firstEOPPoint) / (EOPlength - 1);
+                const positionsLength = positions.length,
+                    firstPositionsValue = positions[0],
+                    lastPositionsValue = positions[positionsLength - 1],
+                    slope = (lastPositionsValue - firstPositionsValue) / (positionsLength - 1);
 
-                if (indexInPostions < 0) {
-                    return firstEOPPoint + slope * indexInPostions;
+                if (index < 0) {
+                    return firstPositionsValue + slope * index;
                 }
 
-                return lastEOPPoint + slope * (indexInPostions - EOPlength);
+                return lastPositionsValue + slope * (index - positionsLength);
             }
             return val;
         };
