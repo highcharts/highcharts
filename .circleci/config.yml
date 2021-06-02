@@ -152,6 +152,19 @@ jobs:
       - <<: *load_workspace
       - run: ./.circleci/scripts/test_timezones.sh -b=<<parameters.browsers>>
 
+  test_cypress:
+    <<: *defaults
+    description: Run Cypress tests
+    steps:
+      - << : *load_workspace
+      - run:
+          name: Run utils in background
+          command: sudo npx highcharts-utils
+          background: true
+      - run:
+          name: Run cypress tests
+          command: npx cypress run --headless
+
   check_for_docs_changes_and_deploy:
     <<: *defaults
     description: Checks for changes in docs/ and triggers deploy via doc-builder
@@ -437,6 +450,8 @@ workflows:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-staging
+      - test_cypress:
+          requires: [lint]
       - test_timezones:
           requires: [lint]
           filters:
