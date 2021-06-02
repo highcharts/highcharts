@@ -240,7 +240,31 @@ export const selectionEmitter = new ChartSyncEmitter(
     'selectionEmitter',
     'presentation',
     function (this: ChartComponent): void {
-        const { chart, store, id } = this;
+        const {
+            chart,
+            store,
+            id,
+            options: {
+                tableAxisMap
+            }
+        } = this;
+
+        function getX(): string | undefined {
+            if (tableAxisMap) {
+                const keys = Object.keys(tableAxisMap);
+
+                let i = 0;
+                while (i < keys.length) {
+                    const key = keys[i];
+                    if (tableAxisMap[key] === 'x') {
+                        return key;
+                    }
+
+                    i++;
+                }
+            }
+        }
+
 
         if (store && chart) {
             addEvent(chart, 'selection', (e): void => {
@@ -248,7 +272,9 @@ export const selectionEmitter = new ChartSyncEmitter(
                 if ((e as any).resetSelection) {
                     const selection: SharedState.selectionObjectType = {};
                     chart.axes.forEach((axis): void => {
-                        selection[axis.coll] = {};
+                        selection[axis.coll] = {
+                            columnName: axis.coll === 'xAxis' ? getX() : void 0
+                        };
                     });
 
                     groups.forEach((group): void => {
@@ -270,7 +296,7 @@ export const selectionEmitter = new ChartSyncEmitter(
                         const { coll, extremes } = minMax;
                         groups.forEach((group): void => {
                             group.getSharedState().setSelection(
-                                { [coll]: extremes },
+                                { [coll]: { ...extremes, columnName: coll === 'xAxis' ? getX() : void 0 } },
                                 false,
                                 {
                                     sender: id

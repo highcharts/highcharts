@@ -270,7 +270,7 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
     }
 
     public setSelection(
-        selection: Record<string, { min?: number; max?: number }>,
+        selection: DataPresentationState.selectionObjectType,
         reset = false,
         eventDetail?: {}
     ): void {
@@ -404,7 +404,7 @@ namespace DataPresentationState {
 
     export type columnVisibilityType = Record<string, boolean>;
 
-    export type selectionObjectType = Record<string, { min?: number; max?: number }>;
+    export type selectionObjectType = Record<string, { columnName?: string; min?: number; max?: number }>;
 
     export type PresentationHoverPointType = Partial<PointType>;
 
