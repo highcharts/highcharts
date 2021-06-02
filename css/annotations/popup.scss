@@ -33,7 +33,7 @@ $button-hover-color: #e6ebf5;
   top: 5%;
   left: 15%;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
   width: 75%;
   min-width: 300px;
   max-width: 600px;
@@ -45,7 +45,7 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-popup div, .highcharts-popup span {
-  box-sizing: content-box;
+  box-sizing: border-box;
 }
 
 .highcharts-popup input, .highcharts-popup label, .highcharts-popup select {
@@ -53,55 +53,56 @@ $button-hover-color: #e6ebf5;
   float: left;
   width: 100%;
   margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
 .highcharts-popup input {
   border: 1px solid #e6e6e6;
   padding: 5px;
-  width: calc(100% - 12px);
+  width: 100%;
 }
 
 .highcharts-popup-lhs-col, .highcharts-popup-rhs-col {
-  padding: 20px;
-  height: calc(100% - 84px); /* 44px - padding, 40px - tabs*/
+  height: 100%;
   float: left;
+  overflow-y: auto;
 }
 
 .highcharts-popup-lhs-col.highcharts-popup-lhs-full { 
-  width: calc(100% - 52px);
-  overflow-y: auto;
+  width: 100%;
   overflow-x: hidden;
-  height: calc(100% - 140px);
+  height: calc(100% - 104px);
   border: none;
-  padding: 0px 20px 20px 20px;
+  padding: 20px;
+  padding-bottom: 10px;
 }
 
 .highcharts-popup-lhs-col.highcharts-popup-lhs-full + .highcharts-popup-bottom-row {
-  width: calc(100% - 32px);
+  width: 100%;
 }
 
 .highcharts-popup-lhs-col {
   clear: both;
-  width: calc(30% - 44px);
+  width: 30%;
   border-right: 1px solid #e6e6e6;
 }
 
 .highcharts-popup-bottom-row {
   float: left;
   padding: 0px 20px;
-  width: calc(100% - 40px);
+  padding-bottom: 12px;
+  width: 100%;
+  border-top: 1px solid #e6e6e6;
 }
 
 .highcharts-popup-rhs-col {
-  width: calc(70% - 40px);
+  width: 70%;
+  height: calc(100% - 40px);
+  padding: 20px;
 }
 
 .highcharts-popup-rhs-col-wrapper {
-  float: left;
-  width: calc(100% - 20px);
-  padding-right: 20px;
-  height: calc(100% - 40px);
-  overflow-y: auto;
+  width: 100%;
   overflow-x: hidden;
 }
 
@@ -114,22 +115,22 @@ $button-hover-color: #e6ebf5;
 .highcharts-indicator-list {
   float: left;
   color: #666;
-  height: 100%;
+  height: calc(100% - 70px);
   width: 100%;
-  overflow-y: auto;
   overflow-x: hidden;
   margin: 0px;
-  padding: 0px;
+  padding: 15px 0px;
 }
 
 .highcharts-indicator-list li {
   cursor: pointer;
-  padding: 0px 0px 5px 0px;
+  padding: 5px 20px;
   margin: 0px;
   width: 100%;
   height: auto;
   overflow: hidden;
   word-break: break-all;
+  box-sizing: border-box;
 }
 
 .highcharts-indicator-list li:hover {
@@ -141,8 +142,9 @@ $button-hover-color: #e6ebf5;
   cursor: pointer;
   display: block;
   float:left;
-  padding: 10px;
-  height: 20px;
+  padding: 0px 10px;
+  height: 40px;
+  line-height: 40px;
 }
 
 .highcharts-tab-item.highcharts-tab-item-active {
@@ -165,8 +167,8 @@ $button-hover-color: #e6ebf5;
 .highcharts-popup-close {
   background-repeat: no-repeat;
   background-position: 50% 50%;
-  width: 20px;
-  height: 20px;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
   position: absolute;
   padding: 10px;
@@ -229,7 +231,7 @@ $button-hover-color: #e6ebf5;
 
 .highcharts-popup .highcharts-popup-main-title {
   border-bottom: 1px solid #e6e6e6;
-  margin: 0px 0px 20px 0px;
+  margin: 0px;
   padding: 8px 0px 6px 20px;
 }
 
