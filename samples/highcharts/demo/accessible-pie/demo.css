@@ -1,10 +1,27 @@
+#patternsEnabled {
+    width: 17px;
+    height: 17px;
+    vertical-align: middle;
+    margin-top: 0;
+    cursor: pointer;
+}
+
+#peLbl {
+    cursor: pointer;
+}
+
 #container {
     height: 420px; 
 }
 
-.highcharts-figure, .highcharts-data-table table {
-    min-width: 350px; 
+#chart-wrap {
+    min-width: 350px;
     max-width: 700px;
+    margin: 1em auto;
+    font-family: sans-serif;
+}
+
+.highcharts-figure, .highcharts-data-table table {
     margin: 1em auto;
 }
 
