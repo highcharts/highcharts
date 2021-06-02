@@ -1,4 +1,4 @@
-#patternsEnabled {
+#patterns-enabled {
     width: 17px;
     height: 17px;
     vertical-align: middle;
@@ -6,7 +6,7 @@
     cursor: pointer;
 }
 
-#peLbl {
+#patterns-enabled-label {
     cursor: pointer;
 }
 

@@ -100,7 +100,7 @@ var chart = Highcharts.chart('container', {
 });
 
 // Toggle patterns enabled
-document.getElementById('patternsEnabled').onclick = function () {
+document.getElementById('patterns-enabled').onclick = function () {
     chart.update({
         colors: this.checked ? patterns : pieColors
     });
