@@ -93,6 +93,7 @@ jobs:
      - save_cache:
          paths:
            - /home/circleci/repo/highcharts/.npm
+           - /home/circleci/.cache # Cypress and node-gyp is cached here
          key: npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
      - run: npm run gulp scripts
      - run: git diff --name-only --exit-code || (echo "Untracked files found. Did you forget to commit any transpiled files? Failing build now as this likely will trigger errors later in the build.." && exit 1)
