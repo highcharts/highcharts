@@ -39,7 +39,8 @@ describe('layout resize on window changes', () => {
         checkRowsAndCells();
     });
 
-    it('should resize cells and components when dragging the handles', () => {
+    // TODO: update when resizer is cemented
+    it.skip('should resize cells and components when dragging the handles', () => {
         cy.get('.hcd-row').first().next().as('secondRow').within(() => {
             cy.get('.hcd-edit-resize-snap-x').first().as('dragger')
                 .trigger('mousedown')
