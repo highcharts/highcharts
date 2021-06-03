@@ -241,6 +241,7 @@ class Axis {
     public paddedTicks: Array<number> = void 0 as any;
     public panningState?: Axis.PanningState;
     public plotLinesAndBands: Array<PlotLineOrBand> = void 0 as any;
+    public plotLinesAndBandsClip?: SVGElement;
     public plotLinesAndBandsGroups: Record<string, SVGElement> = void 0 as any;
     public pointRange: number = void 0 as any;
     public pointRangePadding: number = void 0 as any;

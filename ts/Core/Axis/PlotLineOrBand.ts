@@ -229,6 +229,7 @@ class PlotLineOrBand {
     public id?: string;
     public isActive?: boolean;
     public eventsAdded?: boolean;
+    public group?: SVGElement;
     public label?: SVGElement;
     public options?: (
         Highcharts.AxisPlotLinesOptions|
@@ -309,14 +310,30 @@ class PlotLineOrBand {
             }
         }
 
+        let clip = axis.plotLinesAndBandsClip;
+        if (!clip) {
+            axis.plotLinesAndBandsClip = clip = renderer.clipRect(
+                axis.left, axis.top, axis.width, axis.height
+            );
+        } else {
+            clip.animate({
+                x: axis.left,
+                y: axis.top,
+                width: axis.width,
+                height: axis.height
+            });
+        }
+
         // Grouping and zIndex
         groupAttribs.zIndex = zIndex;
         groupName += '-' + zIndex;
 
         group = axis.plotLinesAndBandsGroups[groupName];
+
         if (!group) {
-            axis.plotLinesAndBandsGroups[groupName] = group =
+            axis.plotLinesAndBandsGroups[groupName] = plotLine.group = group =
                 renderer.g('plot-' + groupName)
+                    .clip(clip)
                     .attr(groupAttribs).add();
         }
 
@@ -458,7 +475,7 @@ class PlotLineOrBand {
                     optionsLabel.useHTML
                 )
                 .attr(attribs)
-                .add();
+                .add(this.group);
 
             if (!this.axis.chart.styledMode) {
                 label.css(optionsLabel.style as any);
