@@ -14,6 +14,8 @@ parameters:
 defaults: &defaults
   executor: node_image
   working_directory: /home/circleci/repo/highcharts
+  environment:
+    CYPRESS_CACHE_FOLDER: /home/circleci/repo/highcharts/.cache
 
 persist_workspace: &persist_workspace
   - persist_to_workspace:
@@ -93,7 +95,6 @@ jobs:
      - save_cache:
          paths:
            - /home/circleci/repo/highcharts/.npm
-           - /home/circleci/.cache # Cypress and node-gyp is cached here
          key: npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
      - run: npm run gulp scripts
      - run: git diff --name-only --exit-code || (echo "Untracked files found. Did you forget to commit any transpiled files? Failing build now as this likely will trigger errors later in the build.." && exit 1)
