@@ -206,7 +206,6 @@ namespace TreeGridAxis {
             TickConstructor = TickClass;
 
             wrap(AxisClass.prototype, 'generateTick', wrapGenerateTick);
-            wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
             wrap(AxisClass.prototype, 'init', wrapInit);
             wrap(AxisClass.prototype, 'setTickInterval', wrapSetTickInterval);
 
@@ -645,33 +644,6 @@ namespace TreeGridAxis {
         } else {
             proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
         }
-    }
-
-    /**
-     * Override to add indentation to axis.maxLabelDimensions.
-     *
-     * @private
-     * @function Highcharts.GridAxis#getMaxLabelDimensions
-     *
-     * @param {Function} proceed
-     * The original function
-     */
-    function wrapGetMaxLabelDimensions(
-        this: TreeGridAxis,
-        proceed: Function
-    ): SizeObject {
-        const axis = this,
-            options = axis.options,
-            retVal = proceed.apply(axis, Array.prototype.slice.call(arguments, 1)),
-            isTreeGrid = options.type === 'treegrid';
-        let treeDepth: number;
-
-        if (isTreeGrid && axis.treeGrid.mapOfPosToGridNode) {
-            treeDepth = axis.treeGrid.mapOfPosToGridNode[-1].height || 0;
-            retVal.width += options.labels.indentation * (treeDepth - 1);
-        }
-
-        return retVal;
     }
 
     /**

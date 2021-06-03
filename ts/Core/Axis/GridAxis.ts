@@ -303,6 +303,16 @@ namespace GridAxis {
             }
         });
 
+        // For tree grid, add indentation
+        if (
+            this.options.type === 'treegrid' &&
+            this.treeGrid &&
+            this.treeGrid.mapOfPosToGridNode
+        ) {
+            const treeDepth = this.treeGrid.mapOfPosToGridNode[-1].height || 0;
+            dimensions.width += this.options.labels.indentation * (treeDepth - 1);
+        }
+
         return dimensions;
     }
 
