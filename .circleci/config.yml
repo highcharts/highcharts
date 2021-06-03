@@ -172,7 +172,7 @@ jobs:
           name: Caching Cypress binary
           key: cypress-cache-{{ checksum "package-lock.json" }}
           paths:
-            - ${CYPRESS_CACHE_FOLDER}
+            - /home/circleci/repo/highcharts/.cache
       - run:
           name: Run utils in background
           command: sudo npx highcharts-utils
