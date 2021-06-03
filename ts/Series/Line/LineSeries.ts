@@ -92,6 +92,10 @@ class LineSeries extends Series {
                 'graph',
                 'highcharts-graph'
             ]];
+        ///
+        let chart = series.chart,
+            polarExtremes = (series as any).polarExtremes;
+        ///
 
         // Presentational properties
         if (!styledMode) {
@@ -106,6 +110,31 @@ class LineSeries extends Series {
         }
 
         props = series.getZonesGraphs(props);
+
+        /// TO DO: Support for inverted chart, reversed axes and other series
+        // If this is polar line chart, need to add extreme zones
+        if (chart.polar && !chart.inverted) {
+            // Check the start point
+            if (polarExtremes.start.length) {
+                props.push([
+                    'polarGraphStart',
+                    'highcharts-graph highcharts-polar-graph-start',
+                    'transparent',
+                    undefined as any
+                ]);
+            }
+
+            // Check the end point
+            if (polarExtremes.end.length) {
+                props.push([
+                    'polarGraphEnd',
+                    'highcharts-graph highcharts-polar-graph-end',
+                    'transparent',
+                    undefined as any
+                ]);
+            }
+        }
+        /// 
 
         // Draw the graph
         props.forEach(function (prop, i): void {
@@ -142,11 +171,36 @@ class LineSeries extends Series {
                  * @name Highcharts.Series#graph
                  * @type {Highcharts.SVGElement|undefined}
                  */
-                (series as any)[graphKey] = graph = series.chart.renderer
+
+                /// 
+                if (chart.polar && !chart.inverted) {
+                    if (graphKey === 'graph') {
+                        graphPath = polarExtremes[graphKey];
+                    } else if (graphKey === 'polarGraphStart') {
+                        graphPath = polarExtremes.start;
+                    } else if (graphKey === 'polarGraphEnd') {
+                        graphPath = polarExtremes.end;
+                    }
+                }
+                (series as any)[graphKey] = series.chart.renderer
                     .path(graphPath)
                     .addClass(prop[1])
-                    .attr({ zIndex: 1 }) // #1069
+                    .attr({
+                        zIndex: 1
+                    }) // #1069
                     .add(series.group);
+
+                if (graphKey === 'graph') {
+                    graph = series[graphKey];
+                }
+                /// 
+                //// 
+                // (series as any)[graphKey] = graph = series.chart.renderer
+                //     .path(graphPath)
+                //     .addClass(prop[1])
+                //     .attr({ zIndex: 1 }) // #1069
+                //     .add(series.group);
+                //// 
             }
 
             if (graph && !styledMode) {
@@ -178,6 +232,28 @@ class LineSeries extends Series {
         });
     }
 
+    /// TO DO: Correct any and refactor
+    public linesIntersection(
+        firstLine: any,
+        secondLine: any
+    ): Array<any> {
+        var [x1, y1, x2, y2] = firstLine,
+            [x3, y3, x4, y4] = secondLine,
+            x,
+            y;
+
+        x = -((x1 - x2) * (x3 * y4 - x4 * y3) - (x4 - x3) * (x2 * y1 - x1 * y2))
+            / ((y3 - y4) * (x1 - x2) - (x4 - x3) * (y2 - y1));
+
+        y = -(x3 * y4 * y1 - x3 * y4 * y2 - x4 * y3 * y1 + x4 * y3 * y2 - y3 *
+            x1 * y2 + y3 * x2 * y1 + y4 * x1 * y2 - y4 * x2 * y1) /
+            (-x3 * y1 + x3 * y2 + x4 * y1 - x4 * y2 + y3 * x1 - y3 *
+            x2 - y4 * x1 + y4 * x2);
+
+        return [U.correctFloat(x), U.correctFloat(y)];
+    }
+    /// 
+
     // eslint-disable-next-line valid-jsdoc
     /**
      * Get the graph path.
@@ -196,6 +272,33 @@ class LineSeries extends Series {
             graphPath = [] as SVGPath,
             xMap = [] as Array<(number|null)>,
             gap: boolean;
+
+        /// TO DO: Correct any and refactor
+        let chart = series.chart,
+            axis = series.yAxis,
+            alreadyAdded = false,
+            pane = (series as any).xAxis.pane,
+            paneOptions = pane.options,
+            paneStart = paneOptions.startAngle * Math.PI / 180,
+            paneEnd = U.pick(paneOptions.endAngle, 360) * Math.PI / 180,
+            polarExtremes = (series as any).polarExtremes,
+            xStartMap: any = [],
+            startPointIds: any = [],
+            xEndMap: any = [],
+            endPointIds: any = [],
+            startThersholdPoint,
+            endThersholdPoint,
+            nextPoint;
+
+        (this as any).polarExtremes = {
+            start: [],
+            // The only visible part of a polar line
+            graph: [],
+            end: []
+        };
+
+        (series as any).polarExtremes.graph.xMap = [];
+        /// 
 
         points = points || series.points;
 
@@ -308,6 +411,105 @@ class LineSeries extends Series {
                     ]];
                 }
 
+                /// TO DO: Correct any and refactor
+                // Only if this persists false, add points to polarExtremes.graph
+                alreadyAdded = false;
+                nextPoint = (points as any)[i + 1];
+
+                // Check if exceeds the end threshold
+                if (((point as any).rectPlotX < paneStart)) {
+                    polarExtremes.start.xMap = xStartMap;
+                    polarExtremes.start.pointIds = startPointIds;
+
+                    polarExtremes.start.push(pathToPoint[0]);
+                    xStartMap.push(point.x);
+                    startPointIds.push(point.id);
+
+                    if (nextPoint && (nextPoint.rectPlotX >= paneStart &&
+                        nextPoint.rectPlotX < paneEnd)) {
+
+                        let strPost = (axis as any).postTranslate(
+                            paneStart,
+                            (series as any).xAxis.pane.center[2] / 2
+                        );
+
+                        let firstLine = [
+                            point.plotX,
+                            point.plotY,
+                            nextPoint.plotX,
+                            nextPoint.plotY
+                        ],
+                        secondLine = [
+                            (series as any).xAxis.pane.center[0],
+                            (series as any).xAxis.pane.center[1],
+                            strPost.x - series.chart.plotLeft,
+                            strPost.y - series.chart.plotTop
+                        ];
+                        startThersholdPoint = series.linesIntersection(
+                            firstLine,
+                            secondLine
+                        );
+                        (series as any).polarExtremes.start.push([
+                            'L',
+                            (startThersholdPoint as any)[0],
+                            (startThersholdPoint as any)[1]
+                        ]);
+                    }
+                    alreadyAdded = true;
+                }
+
+                /// TO DO: Correct any and refactor
+                // Check if exceeds the end threshold
+                if (((point as any).rectPlotX > paneEnd)) {
+                    polarExtremes.end.xMap = xEndMap;
+                    polarExtremes.end.pointIds = endPointIds;
+
+                    if (lastPoint && (lastPoint.rectPlotX <= paneEnd &&
+                        lastPoint.rectPlotX > paneStart)) {
+                        let endPost = (axis as any).postTranslate(
+                            paneEnd,
+                            (series as any).xAxis.pane.center[2] / 2
+                        );
+
+                        let firstLine = [
+                                lastPoint.plotX,
+                                lastPoint.plotY,
+                                point.plotX,
+                                point.plotY
+                            ],
+                            secondLine = [
+                                (series as any).xAxis.pane.center[0],
+                                (series as any).xAxis.pane.center[1],
+                                endPost.x - series.chart.plotLeft,
+                                endPost.y - series.chart.plotTop
+                            ];
+
+                    endThersholdPoint = series.linesIntersection(
+                        firstLine,
+                        secondLine
+                    );
+                    (series as any).polarExtremes.end.push([
+                            'M',
+                            (endThersholdPoint as any)[0],
+                            (endThersholdPoint as any)[1]
+                        ]);
+                    }
+                    (series as any).polarExtremes.end.push(pathToPoint[0]);
+                    xEndMap.push(point.x);
+                    endPointIds.push(point.id);
+                    alreadyAdded = true;
+                }
+
+                if (!alreadyAdded) {
+                    (series as any).polarExtremes.graph.push([
+                        'L',
+                        point.plotX,
+                        point.plotY
+                    ]);
+                    (series as any).polarExtremes.graph.xMap.push(point.x);
+                }
+                /// 
+
                 // Prepare for animation. When step is enabled, there are
                 // two path nodes for each x value.
                 xMap.push(point.x);
@@ -324,6 +526,33 @@ class LineSeries extends Series {
         });
 
         (graphPath as any).xMap = xMap;
+        /// 
+        if (chart.polar && !chart.inverted) {
+            if (startThersholdPoint) {
+                (series as any).polarExtremes.graph.unshift(
+                    [
+                        'M',
+                        (startThersholdPoint as any)[0],
+                        (startThersholdPoint as any)[1]
+                    ]
+                );
+            }
+
+            if (endThersholdPoint) {
+                (series as any).polarExtremes.graph.push(
+                    [
+                        'L',
+                        (endThersholdPoint as any)[0],
+                        (endThersholdPoint as any)[1]
+                    ]
+                );
+            }
+
+            (series as any).polarExtremes.graph[0][0] = 'M';
+            graphPath = (series as any).polarExtremes.graph;
+            graphPath.xMap = (series as any).polarExtremes.graph.xMap;
+        }
+        /// 
         series.graphPath = graphPath;
 
         return graphPath;

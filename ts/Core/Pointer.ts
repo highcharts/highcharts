@@ -427,6 +427,21 @@ class Pointer {
                 chartOptions.panKey && (e as any)[chartOptions.panKey + 'Key']
             );
 
+        /// TO DO: Determine which pane should be picked
+        let pane = (chart as any).pane[0],
+            center = pane.center,
+            startAngleRad = pane.axis?.startAngleRad,
+            centerX = center[0] + plotLeft,
+            centerY = center[1] + plotTop,
+            fullCircle = Math.PI * 2,
+            markerOptions,
+            markerShape,
+            startAngle,
+            endAngle,
+            radius,
+            innerRadius;
+        /// 
+
         // If the device supports both touch and mouse (like IE11), and we are
         // touch-dragging inside the plot area, don't handle the mouse event.
         // #4339.
@@ -455,9 +470,9 @@ class Pointer {
         );
 
         //// if (this.hasDragged > 10) {
-        ///
+        /// 
         if (this.hasDragged > 10 || chart.polar) {
-        ///
+        /// 
             clickedInside = chart.isInsidePlot(
                 mouseDownX - plotLeft,
                 mouseDownY - plotTop,
@@ -466,12 +481,7 @@ class Pointer {
                 }
             );
 
-            /// TO DO: refactor
-            let center = (chart as any).pane[0] &&
-                (chart as any).pane[0].center,
-                centerX = center[0] + chart.plotLeft,
-                centerY = center[1] + chart.plotTop;
-
+            ///
             // make a selection
             if (chart.hasCartesianSeries &&
                 (this.zoomX || this.zoomY) &&
@@ -479,29 +489,28 @@ class Pointer {
                 !panKey) {
                 if (!selectionMarker) {
                     if (chart.polar) {
-                        /// TO DO: Determine which pane should be picked
-                        selectionMarker = chart.renderer.arc(
-                            centerX,
-                            centerY
-                        );
+                        markerShape = 'arc';
+                        markerOptions = [centerX, centerY];
                     } else {
-                        selectionMarker = chart.renderer.rect(
+                        markerShape = 'rect';
+                        markerOptions = [
                             plotLeft,
                             plotTop,
                             zoomHor ? 1 : plotWidth,
                             zoomVert ? 1 : plotHeight,
                             0
-                        );
+                        ];
                     }
 
-                    this.selectionMarker = selectionMarker
+                    this.selectionMarker = selectionMarker =
+                        (chart as any).renderer[markerShape](...markerOptions)
                         .attr({
                             'class': 'highcharts-selection-marker',
                             zIndex: 7
                         }).add();
 
                     if (!chart.styledMode) {
-                        selectionMarker.attr({
+                        (selectionMarker as any).attr({
                             fill: (chartOptions.selectionMarkerFill ||
                                 color('#335cad')
                                     .setOpacity(0.25).get())
@@ -509,9 +518,9 @@ class Pointer {
                     }
                 }
             }
-            ///
+            /// 
 
-            ////
+            //// 
             /*
             // make a selection
             if (
@@ -547,108 +556,80 @@ class Pointer {
                 }
             }
             */
-            ////
+            //// 
 
-            ///
+            /// 
             if (chart.polar) {
-                let fullCircle = Math.PI * 2,
-                    startAngle = 0,
-                    endAngle = fullCircle,
-                    r = center[2] / 2,
-                    innerR = center[3] / 2;
+                markerOptions = {
+                    start: 0,
+                    end: fullCircle,
+                    r: center[2] / 2,
+                    innerR: center[3] / 2
+                };
 
                 // adjust the width of the selection marker
                 if (selectionMarker && zoomHor) {
-                    let center;
-                    if (chart.polar) {
-                        center = (chart as any).pane[0].center;
-                    }
-                    let startAngleRad = (chart as any).xAxis[0].startAngleRad,
-                        sAngle = Math.atan2(
-                            mouseDownY - chart.plotTop - center[1],
-                            mouseDownX - chart.plotLeft - center[0]
-                        ) - startAngleRad,
-                        eAngle = Math.atan2(
-                            chartY - chart.plotTop - center[1],
-                            chartX - chart.plotLeft - center[0]
-                        ) - startAngleRad;
+                    startAngle = Math.atan2(
+                        mouseDownY - centerY,
+                        mouseDownX - centerX
+                    ) - startAngleRad;
 
-                    if (sAngle <= 0) {
-                        sAngle += fullCircle;
+                    endAngle = Math.atan2(
+                        chartY - centerY,
+                        chartX - centerX
+                    ) - startAngleRad;
+
+                    if (startAngle <= 0) {
+                        startAngle += fullCircle;
                     }
 
-                    if (eAngle <= 0) {
-                        eAngle += fullCircle;
+                    if (endAngle <= 0) {
+                        endAngle += fullCircle;
                     }
 
-                    if (eAngle < sAngle) {
+                    if (endAngle < startAngle) {
                         // Swapping angles
-                        eAngle = [sAngle, sAngle = eAngle][0];
+                        endAngle = [startAngle, startAngle = endAngle][0];
                     }
 
-                    startAngle = sAngle + startAngleRad;
-                    endAngle = eAngle + startAngleRad;
-
-                    /// TO DO: Create a constrain for the angle range
-                    // selectionMarker.attr({
-                    //     r: center[2] / 2,
-                    //     innerR: center[3] / 2,
-                    //     start: sAngle + startAngleRad,
-                    //     end: eAngle + startAngleRad
-                    // });
+                    markerOptions.start = startAngle + startAngleRad;
+                    markerOptions.end = endAngle + startAngleRad;
                 }
                 // adjust the height of the selection marker
                 if (selectionMarker && zoomVert) {
-                    let center;
-                    if (chart.polar) {
-                        center = (chart as any).pane[0].center;
-                    }
-                    let fullCircle = Math.PI * 2,
-                        innR = Math.sqrt(
-                            Math.pow(mouseDownX - chart.plotLeft - center[0], 2) +
-                            Math.pow(mouseDownY - chart.plotTop - center[1], 2)
-                        ),
-                        rd = Math.sqrt(
-                            Math.pow(chartX - chart.plotLeft - center[0], 2) +
-                            Math.pow(chartY - chart.plotTop - center[1], 2)
-                        );
+                    innerRadius = Math.sqrt(
+                        Math.pow(mouseDownX - centerX, 2) +
+                        Math.pow(mouseDownY - centerY, 2)
+                    );
+                    radius = Math.sqrt(
+                        Math.pow(chartX - centerX, 2) +
+                        Math.pow(chartY - centerY, 2)
+                    );
 
-                    if (rd < innR) {
+                    if (radius < innerRadius) {
                         // Swapping angles
-                        innR = [rd, rd = innR][0];
+                        innerRadius = [radius, radius = innerRadius][0];
                     }
 
-                    if (rd > center[2] / 2) {
-                        rd = center[2] / 2;
+                    if (radius > markerOptions.r) {
+                        radius = markerOptions.r;
                     }
 
-                    if (innR < center[3] / 2) {
-                        innR = center[3] / 2;
+                    if (innerRadius < markerOptions.innerR) {
+                        innerRadius = markerOptions.innerR;
                     }
 
-                    r = rd;
-                    innerR = innR;
-
-                    /// TO DO: Create the constrain for angle range
-                    // selectionMarker.attr({
-                    //     r: rd,
-                    //     innerR: innR,
-                    //     start: 0,
-                    //     end: fullCircle
-                    // });
+                    markerOptions.r = radius;
+                    markerOptions.innerR = innerRadius;
                 }
 
-                /// TO DO: Create the constrain for angle range
-                (selectionMarker as any).attr({
-                    r: r,
-                    innerR: innerR,
-                    start: startAngle,
-                    end: endAngle
-                });
+                if ((selectionMarker as any)) {
+                    (selectionMarker as any).attr(markerOptions);
+                }
             }
-            ///
+            /// 
 
-            ////
+            //// 
             /*
             // adjust the width of the selection marker
             if (selectionMarker && zoomHor) {
@@ -667,7 +648,7 @@ class Pointer {
                 });
             }
             */
-            ////
+            //// 
 
             // panning
             if (clickedInside &&
@@ -729,7 +710,7 @@ class Pointer {
                     selectionBox.height,
                 runZoom;
 
-            /// TO DO: refactor
+            /// 
             if (chart.polar) {
                 selectionLeft = selectionBox.attr ?
                     selectionBox.attr('start') :
@@ -747,7 +728,7 @@ class Pointer {
                     selectionBox.attr('innerR') :
                     selectionBox.innerR;
             }
-            ///
+            /// 
 
             // a selection has been made
             if (this.hasDragged || hasPinched) {
@@ -771,7 +752,6 @@ class Pointer {
                         isNumber(selectionTop)
                     ) { // #859, #3569
                         //// const horiz = axis.horiz,
-                        ///
                         let horiz = axis.horiz,
                             minPixelPadding = e.type === 'touchend' ?
                                 axis.minPixelPadding :
@@ -788,8 +768,7 @@ class Pointer {
                                 ) - minPixelPadding
                             );
 
-                        ///
-                        /// TO DO: REFACTOR
+                        /// TO DO: Support for vertical axis in polar
                         if (chart.polar) {
                             selectionMin = axis.toValue(
                                 selectionLeft - (axis as any).startAngleRad,
@@ -801,7 +780,7 @@ class Pointer {
                                 true
                             );
                         }
-                        ///
+                        /// 
 
                         (selectionData as any)[axis.coll].push({
                             axis: axis,
@@ -2109,6 +2088,33 @@ class Pointer {
             useSharedTooltip: (boolean|undefined),
             followPointer: (boolean|undefined),
             points: Array<Point>;
+
+        /// TO DO: Correct any and refactor
+        let hovPn: any,
+            polarExtremes: any,
+            outsidePolarScope;
+
+        if (chart.polar && !chart.inverted && hoverData.hoverSeries) {
+            polarExtremes = (hoverData.hoverSeries as any).polarExtremes;
+            if (polarExtremes.start.length && polarExtremes.end.length) {
+                outsidePolarScope = polarExtremes.start.pointIds.concat(
+                    polarExtremes.end.pointIds
+                );
+
+                if (hoverData.hoverPoint) {
+                    if (outsidePolarScope.includes(hoverData.hoverPoint.id)) {
+                        hovPn = hoverData.hoverPoint;
+                        hoverData.hoverPoint = undefined;
+                    }
+                    hoverData.hoverPoints.forEach(function(p) {
+                        if (p === hovPn) {
+                            hoverData.hoverPoints = [];
+                        }
+                    });
+                }
+            }
+        }
+        /// 
 
         // Update variables from hoverData.
         hoverPoint = hoverData.hoverPoint;
