@@ -3116,14 +3116,16 @@ class Series {
      * @function Highcharts.Series#autoIncrement
      * @return {number}
      */
-    public autoIncrement(): number {
+    public autoIncrement(x?: number): number {
 
-        let options: SeriesTypeOptions = this.options,
-            xIncrement = this.xIncrement as number,
-            date,
-            pointInterval,
+        const options = this.options,
             pointIntervalUnit = options.pointIntervalUnit,
+            pointStartAsBase = options.pointStartAsBase,
             time = this.chart.time;
+
+        let xIncrement = this.xIncrement,
+            date,
+            pointInterval: number;
 
         xIncrement = pick(xIncrement, options.pointStart, 0);
 
@@ -3132,6 +3134,10 @@ class Series {
             options.pointInterval,
             1
         );
+
+        if (pointStartAsBase && isNumber(x)) {
+            pointInterval *= x;
+        }
 
         // Added code for pointInterval strings
         if (pointIntervalUnit) {
@@ -3161,6 +3167,9 @@ class Series {
 
         }
 
+        if (pointStartAsBase) {
+            return xIncrement + pointInterval;
+        }
         this.xIncrement = xIncrement + pointInterval;
         return xIncrement;
     }

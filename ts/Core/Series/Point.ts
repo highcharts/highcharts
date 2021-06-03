@@ -593,10 +593,12 @@ class Point {
         }
         if (typeof point.x === 'undefined' && series) {
             if (typeof x === 'undefined') {
-                point.x = (series.autoIncrement as any)(point);
+                point.x = series.autoIncrement();
             } else {
                 point.x = x;
             }
+        } else if (isNumber(options.x) && series.options.pointStartAsBase) {
+            point.x = series.autoIncrement(options.x);
         }
 
         return point;
