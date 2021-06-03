@@ -243,6 +243,7 @@ class Axis {
     public plotLinesAndBands: Array<PlotLineOrBand> = void 0 as any;
     public plotLinesAndBandsClip?: SVGElement;
     public plotLinesAndBandsGroups: Record<string, SVGElement> = void 0 as any;
+    public plotLinesAndBandsLabelGroup?: SVGElement;
     public pointRange: number = void 0 as any;
     public pointRangePadding: number = void 0 as any;
     public pos: number = void 0 as any;

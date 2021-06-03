@@ -229,7 +229,6 @@ class PlotLineOrBand {
     public id?: string;
     public isActive?: boolean;
     public eventsAdded?: boolean;
-    public group?: SVGElement;
     public label?: SVGElement;
     public options?: (
         Highcharts.AxisPlotLinesOptions|
@@ -310,30 +309,14 @@ class PlotLineOrBand {
             }
         }
 
-        let clip = axis.plotLinesAndBandsClip;
-        if (!clip) {
-            axis.plotLinesAndBandsClip = clip = renderer.clipRect(
-                axis.left, axis.top, axis.width, axis.height
-            );
-        } else {
-            clip.animate({
-                x: axis.left,
-                y: axis.top,
-                width: axis.width,
-                height: axis.height
-            });
-        }
-
         // Grouping and zIndex
         groupAttribs.zIndex = zIndex;
         groupName += '-' + zIndex;
 
         group = axis.plotLinesAndBandsGroups[groupName];
-
         if (!group) {
-            axis.plotLinesAndBandsGroups[groupName] = plotLine.group = group =
+            axis.plotLinesAndBandsGroups[groupName] = group =
                 renderer.g('plot-' + groupName)
-                    .clip(clip)
                     .attr(groupAttribs).add();
         }
 
@@ -440,6 +423,7 @@ class PlotLineOrBand {
         zIndex?: number
     ): void {
         let plotLine = this,
+            axis = plotLine.axis,
             label = plotLine.label,
             renderer = plotLine.axis.chart.renderer,
             attribs: SVGAttributes,
@@ -449,8 +433,32 @@ class PlotLineOrBand {
             y,
             labelText;
 
+        let clip = axis.plotLinesAndBandsClip;
+        if (!clip) {
+            axis.plotLinesAndBandsClip = clip = renderer.clipRect(
+                axis.left, axis.top, axis.width, axis.height
+            );
+        } else {
+            clip.animate({
+                x: axis.left,
+                y: axis.top,
+                width: axis.width,
+                height: axis.height
+            });
+        }
+
         // add the SVG element
         if (!label) {
+            let group = axis.plotLinesAndBandsLabelGroup;
+            if (!group) {
+                axis.plotLinesAndBandsLabelGroup = group = renderer.g()
+                    .attr({
+                        zIndex
+                    })
+                    .clip(clip)
+                    .add(group);
+            }
+
             attribs = {
                 align: optionsLabel.textAlign || optionsLabel.align,
                 rotation: optionsLabel.rotation,
@@ -475,7 +483,7 @@ class PlotLineOrBand {
                     optionsLabel.useHTML
                 )
                 .attr(attribs)
-                .add(this.group);
+                .add(group);
 
             if (!this.axis.chart.styledMode) {
                 label.css(optionsLabel.style as any);

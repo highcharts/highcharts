@@ -1196,7 +1196,6 @@ class SVGElement implements SVGElementLike {
             ownerSVGElement = (element as SVGDOMElement).ownerSVGElement;
 
         let parentToClean: (SVGElement|undefined) = (
-                renderer &&
                 renderer.isSVG &&
                 element.nodeName === 'SPAN' &&
                 wrapper.parentGroup ||
@@ -1239,7 +1238,7 @@ class SVGElement implements SVGElementLike {
         // remove element
         wrapper.safeRemoveChild(element);
 
-        if (renderer && !renderer.styledMode) {
+        if (!renderer.styledMode) {
             wrapper.destroyShadows();
         }
 
@@ -1257,7 +1256,7 @@ class SVGElement implements SVGElementLike {
         }
 
         // remove from alignObjects
-        if (renderer && wrapper.alignTo) {
+        if (wrapper.alignTo) {
             erase(renderer.alignedObjects, wrapper);
         }
 
