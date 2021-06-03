@@ -97,7 +97,6 @@ jobs:
      - save_cache:
          paths:
            - /home/circleci/repo/highcharts/.npm
-           - /home/circleci/repo/highcharts/.cache
          key: npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
      - run: npm run gulp scripts
      - run: git diff --name-only --exit-code || (echo "Untracked files found. Did you forget to commit any transpiled files? Failing build now as this likely will trigger errors later in the build.." && exit 1)
@@ -162,17 +161,28 @@ jobs:
     description: Run Cypress tests
     steps:
       - << : *load_workspace
+      - restore_cache:
+          name: Restore cached cypress binary
+          key: cypress-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Install cypress
           description: Will install Cypress if cached version is not found
           command: npx cypress install
+      - save_cache:
+          name: Caching cypress binary
+          key: cypress-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - $CYPRESS_CACHE_FOLDER
       - run:
           name: Run utils in background
           command: sudo npx highcharts-utils
           background: true
       - run:
-          name: Run cypress tests
-          command: npx cypress run --headless
+          name: Run cypress tests (Chrome)
+          command: npx cypress run --browser /usr/local/bin/chrome --headless
+      - run:
+          name: Run cypress tests (Firefox)
+          command: npx cypress run --browser /usr/local/bin/firefox --headless
       - store_artifacts:
           path: cypress/videos
       - store_artifacts:
