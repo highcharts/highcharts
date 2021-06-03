@@ -162,27 +162,28 @@ jobs:
     steps:
       - << : *load_workspace
       - restore_cache:
-          name: Restore cached cypress binary
+          name: Restore cached Cypress binary
           key: cypress-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: Install cypress
+          name: Install Cypress
           description: Will install Cypress if cached version is not found
           command: npx cypress install
       - save_cache:
-          name: Caching cypress binary
+          name: Caching Cypress binary
           key: cypress-cache-{{ checksum "package-lock.json" }}
           paths:
-            - $CYPRESS_CACHE_FOLDER
+            - ${CYPRESS_CACHE_FOLDER}
       - run:
           name: Run utils in background
           command: sudo npx highcharts-utils
           background: true
+      - run: npx cypress info
       - run:
           name: Run cypress tests (Chrome)
-          command: npx cypress run --browser /usr/local/bin/chrome --headless
+          command: npx cypress run --browser chrome --headless
       - run:
           name: Run cypress tests (Firefox)
-          command: npx cypress run --browser /usr/local/bin/firefox --headless
+          command: npx cypress run --browser firefox --headless
       - store_artifacts:
           path: cypress/videos
       - store_artifacts:
