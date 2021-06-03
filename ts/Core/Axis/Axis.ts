@@ -3819,6 +3819,15 @@ class Axis {
             // render the axis
             this.render();
 
+            if (this.plotLinesAndBandsClip) {
+                this.plotLinesAndBandsClip.animate({
+                    x: this.left,
+                    y: this.top,
+                    width: this.width,
+                    height: this.height
+                });
+            }
+
             // move plot lines and bands
             this.plotLinesAndBands.forEach(function (plotLine): void {
                 plotLine.render();

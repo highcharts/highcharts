@@ -433,22 +433,15 @@ class PlotLineOrBand {
             y,
             labelText;
 
-        let clip = axis.plotLinesAndBandsClip;
-        if (!clip) {
-            axis.plotLinesAndBandsClip = clip = renderer.clipRect(
-                axis.left, axis.top, axis.width, axis.height
-            );
-        } else {
-            clip.animate({
-                x: axis.left,
-                y: axis.top,
-                width: axis.width,
-                height: axis.height
-            });
-        }
-
         // add the SVG element
         if (!label) {
+            let clip = axis.plotLinesAndBandsClip;
+            if (!clip) {
+                axis.plotLinesAndBandsClip = clip = renderer.clipRect(
+                    axis.left, axis.top, axis.width, axis.height
+                );
+            }
+
             let group = axis.plotLinesAndBandsLabelGroup;
             if (!group) {
                 axis.plotLinesAndBandsLabelGroup = group = renderer.g()
@@ -456,7 +449,7 @@ class PlotLineOrBand {
                         zIndex
                     })
                     .clip(clip)
-                    .add(group);
+                    .add();
             }
 
             attribs = {
