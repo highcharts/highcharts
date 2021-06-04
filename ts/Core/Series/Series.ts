@@ -756,13 +756,21 @@ class Series {
          * It can be also be combined with `pointIntervalUnit` to draw irregular
          * time intervals.
          *
+         * If combined with `relativeXValue`, an x value can be set on each
+         * point, and the `pointInterval` is added x times to the `pointStart`
+         * setting.
+         *
          * Please note that this options applies to the _series data_, not the
          * interval of the axis ticks, which is independent.
          *
          * @sample {highcharts} highcharts/plotoptions/series-pointstart-datetime/
          *         Datetime X axis
+         * @sample {highcharts} highcharts/plotoptions/series-relativexvalue/
+         *         Relative x value
          * @sample {highstock} stock/plotoptions/pointinterval-pointstart/
          *         Using pointStart and pointInterval
+         * @sample {highstock} stock/plotoptions/relativexvalue/
+         *         Relative x value
          *
          * @type      {number}
          * @default   1
@@ -840,17 +848,46 @@ class Series {
          * defines on what value to start. For example, if a series contains one
          * yearly value starting from 1945, set pointStart to 1945.
          *
+         * If combined with `relativeXValue`, an x value can be set on each
+         * point. The x value from the point options is multiplied by
+         * `pointInterval` and added to `pointStart` to produce a modified x
+         * value.
+         *
          * @sample {highcharts} highcharts/plotoptions/series-pointstart-linear/
          *         Linear
          * @sample {highcharts} highcharts/plotoptions/series-pointstart-datetime/
          *         Datetime
+         * @sample {highcharts} highcharts/plotoptions/series-relativexvalue/
+         *         Relative x value
          * @sample {highstock} stock/plotoptions/pointinterval-pointstart/
          *         Using pointStart and pointInterval
+         * @sample {highstock} stock/plotoptions/relativexvalue/
+         *         Relative x value
          *
          * @type      {number}
          * @default   0
          * @product   highcharts highstock gantt
          * @apioption plotOptions.series.pointStart
+         */
+
+        /**
+         * When true, X values in the data set are relative to the current
+         * `pointStart`, `pointInterval` and `pointIntervalUnit` settings. This
+         * allows compression of the data for datasets with irregular X values.
+         *
+         * The real X values are computed on the formula `f(x) = ax + b`, where
+         * `a` is the `pointInterval` (optionally with a time unit given by
+         * `pointIntervalUnit`), and `b` is the `pointStart`.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-relativexvalue/
+         *         Relative X value
+         * @sample {highstock} stock/plotoptions/relativexvalue/
+         *         Relative X value
+         *
+         * @type      {boolean}
+         * @default   false
+         * @product   highcharts highstock
+         * @apioption plotOptions.series.relativeXValue
          */
 
         /**
@@ -3120,7 +3157,7 @@ class Series {
 
         const options = this.options,
             pointIntervalUnit = options.pointIntervalUnit,
-            pointStartAsBase = options.pointStartAsBase,
+            relativeXValue = options.relativeXValue,
             time = this.chart.time;
 
         let xIncrement = this.xIncrement,
@@ -3135,7 +3172,7 @@ class Series {
             1
         );
 
-        if (pointStartAsBase && isNumber(x)) {
+        if (relativeXValue && isNumber(x)) {
             pointInterval *= x;
         }
 
@@ -3167,7 +3204,7 @@ class Series {
 
         }
 
-        if (pointStartAsBase) {
+        if (relativeXValue) {
             return xIncrement + pointInterval;
         }
         this.xIncrement = xIncrement + pointInterval;

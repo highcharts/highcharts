@@ -1,21 +1,15 @@
-Highcharts.chart('container', {
+Highcharts.stockChart('container', {
 
     title: {
-        text: 'Point start as base'
-    },
-    subtitle: {
-        text: 'X values are relative to pointStart'
-    },
-    xAxis: {
-        type: 'datetime'
+        text: 'Relative X value'
     },
 
-    plotOptions: {
-        series: {
-            pointStart: Date.UTC(2020, 0, 1),
-            pointStartAsBase: true,
-            pointIntervalUnit: 'day'
-        }
+    subtitle: {
+        text: 'X values are relative to pointStart and pointInterval'
+    },
+
+    rangeSelector: {
+        selected: 1
     },
 
     series: [{
@@ -33,6 +27,9 @@ Highcharts.chart('container', {
             [15, 95.6],
             [16, 54.4]
         ],
-        type: 'column'
+        gapSize: 1,
+        pointStart: Date.UTC(2020, 0, 1),
+        pointInterval: 36e5, // one hour
+        relativeXValue: true
     }]
 });

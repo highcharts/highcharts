@@ -597,7 +597,7 @@ class Point {
             } else {
                 point.x = x;
             }
-        } else if (isNumber(options.x) && series.options.pointStartAsBase) {
+        } else if (isNumber(options.x) && series.options.relativeXValue) {
             point.x = series.autoIncrement(options.x);
         }
 

@@ -123,7 +123,7 @@ export interface SeriesOptions {
     point?: SeriesPointOptions;
     pointPlacement?: (number|string);
     pointStart?: number;
-    pointStartAsBase?: boolean;
+    relativeXValue?: boolean;
     pointValKey?: string;
     selected?: boolean;
     shadow?: (boolean|Partial<ShadowOptionsObject>);
