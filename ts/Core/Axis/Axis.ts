@@ -1834,14 +1834,8 @@ class Axis {
         if (isXAxis && !secondPass) {
             // First process all series assigned to that axis.
             axis.series.forEach(function (series): void {
-                const chart = series.chart,
-                    options = series.options,
-                    dataGroupingOptions = options.dataGrouping,
-                    groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
-                        pick(dataGroupingOptions.enabled, chart.options.isStock);
-
                 // Allows filtering out points outside the plot area.
-                series.forceCrop = groupingEnabled; // #334
+                series.forceCrop = series.forceCropping();
 
                 series.processData(
                     axis.min !== (axis.old && axis.old.min) ||
