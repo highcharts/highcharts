@@ -188,8 +188,8 @@ declare global {
             public stickToMin?: boolean;
             public top: number;
             public unbindRedraw?: Function;
-            public xAxis: NavigatorAxis;
-            public yAxis: NavigatorAxis;
+            public xAxis: NavigatorAxis.Composition;
+            public yAxis: NavigatorAxis.Composition;
             public zoomedMax: number;
             public zoomedMin: number;
             public addBaseSeriesEvents(): void;
@@ -871,8 +871,8 @@ class Navigator {
     public size: number = void 0 as any;
     public top: number = void 0 as any;
     public unbindRedraw?: Function;
-    public xAxis: NavigatorAxis = void 0 as any;
-    public yAxis: NavigatorAxis = void 0 as any;
+    public xAxis: NavigatorAxis.Composition = void 0 as any;
+    public yAxis: NavigatorAxis.Composition = void 0 as any;
     public zoomedMax: number = void 0 as any;
     public zoomedMin: number = void 0 as any;
 
@@ -1938,7 +1938,7 @@ class Navigator {
             } : {
                 offsets: [0, -scrollbarHeight, 0, scrollbarHeight],
                 height: height
-            })) as NavigatorAxis;
+            })) as NavigatorAxis.Composition;
 
             navigator.yAxis = new Axis(chart, merge(
                 navigatorOptions.yAxis,
@@ -1957,7 +1957,7 @@ class Navigator {
                 } : {
                     height: height
                 }
-            )) as NavigatorAxis;
+            )) as NavigatorAxis.Composition;
 
             // If we have a base series, initialize the navigator series
             if (baseSeries || (navigatorOptions.series as any).data) {
@@ -2019,22 +2019,22 @@ class Navigator {
                         scrollTrackWidth * (value - (min as any)) / valueRange;
                 },
                 toPixels: function (
-                    this: NavigatorAxis,
+                    this: NavigatorAxis.Composition,
                     value: number
                 ): number {
                     return this.translate(value) as any;
                 },
                 toValue: function (
-                    this: NavigatorAxis,
+                    this: NavigatorAxis.Composition,
                     value: number
                 ): number {
                     return this.translate(value, true) as any;
                 }
-            } as unknown as NavigatorAxis;
+            } as unknown as NavigatorAxis.Composition;
 
             navigator.xAxis.navigatorAxis.axis = navigator.xAxis;
             navigator.xAxis.navigatorAxis.toFixedRange = (
-                NavigatorAxis.AdditionsClass.prototype.toFixedRange.bind(navigator.xAxis.navigatorAxis)
+                NavigatorAxis.Additions.prototype.toFixedRange.bind(navigator.xAxis.navigatorAxis)
             );
         }
 

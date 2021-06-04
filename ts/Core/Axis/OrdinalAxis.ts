@@ -17,12 +17,12 @@
  * */
 
 import type TickPositionsArray from './TickPositionsArray';
-import type NavigatorAxis from './NavigatorAxis';
 import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
 
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
+import NavigatorAxis from './NavigatorAxis.js';
 import Point from '../Series/Point.js';
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
@@ -34,9 +34,6 @@ const {
     pick,
     timeUnits
 } = U;
-
-// Has a dependency on Navigator due to the use of Axis.toFixedRange
-import '../Navigator.js';
 
 /* *
  *
@@ -1146,18 +1143,20 @@ namespace OrdinalAxis {
                     // range, else it happens on the current x axis which is
                     // smaller and faster.
                     chart.fixedRange = max - min;
-                    trimmedRange = (xAxis as NavigatorAxis).navigatorAxis.toFixedRange(
-                        null as any,
-                        null as any,
-                        lin2val.apply(searchAxisLeft, [
-                            val2lin.apply(searchAxisLeft, [min, true]) + movedUnits,
-                            true // translate from index
-                        ]),
-                        lin2val.apply(searchAxisRight, [
-                            val2lin.apply(searchAxisRight, [max, true]) + movedUnits,
-                            true // translate from index
-                        ])
-                    );
+                    trimmedRange = NavigatorAxis.Additions.prototype
+                        .toFixedRange.call(
+                            { axis: xAxis },
+                            null as any,
+                            null as any,
+                            lin2val.apply(searchAxisLeft, [
+                                val2lin.apply(searchAxisLeft, [min, true]) + movedUnits,
+                                true // translate from index
+                            ]),
+                            lin2val.apply(searchAxisRight, [
+                                val2lin.apply(searchAxisRight, [max, true]) + movedUnits,
+                                true // translate from index
+                            ])
+                        );
 
                     // Apply it if it is within the available data range
                     if (trimmedRange.min >= Math.min(extremes.dataMin, min) &&
