@@ -18,7 +18,6 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../Core/Renderer/AlignObject';
-import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type Annotation from './Annotation';
 import type ColorType from '../../Core/Color/ColorType';

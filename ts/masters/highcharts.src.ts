@@ -12,6 +12,7 @@ import Utilities from '../Core/Utilities.js';
 import DefaultOptions from '../Core/DefaultOptions.js';
 import Fx from '../Core/Animation/Fx.js';
 import Animation from '../Core/Animation/AnimationUtilities.js';
+import Annotation from '../Extensions/Annotations/Annotation.js';
 import AST from '../Core/Renderer/HTML/AST.js';
 import FormatUtilities from '../Core/FormatUtilities.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
@@ -52,6 +53,8 @@ G.getDeferredAnimation = Animation.getDeferredAnimation;
 G.setAnimation = Animation.setAnimation;
 G.stop = Animation.stop;
 G.timers = Fx.timers;
+// Annotation
+G.Annotation = Annotation;
 // Classes
 G.AST = AST;
 G.Axis = Axis;

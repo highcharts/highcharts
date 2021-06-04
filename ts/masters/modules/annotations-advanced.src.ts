@@ -29,4 +29,5 @@ const G: AnyRecord = Highcharts;
 G.Annotation = Annotation;
 G.extendAnnotation = Annotation.extendAnnotation;
 // Compositions
+Annotation.compose(G.Pointer);
 AnnotationChart.compose(G.Chart);

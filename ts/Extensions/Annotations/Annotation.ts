@@ -148,6 +148,18 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      *
      * */
 
+    public static compose(PointerClass: typeof Pointer): void {
+        wrap(
+            PointerClass.prototype,
+            'onContainerMouseDown',
+            function (this: Annotation, proceed: Function): void {
+                if (!this.chart.hasDraggedAnnotation) {
+                    proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+                }
+            }
+        );
+    }
+
     public static extendAnnotation = function <T extends typeof Annotation> (
         Constructor: T,
         BaseConstructor: (Function|null),
@@ -643,7 +655,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      *
      * @function Highcharts.Annotation#update
      *
-     * @param {Partial<Highcharts.AnnotationOptions>} userOptions
+     * @param {Partial<Highcharts.AnnotationsOptions>} userOptions
      * New user options for the annotation.
      */
     public update(
@@ -1487,24 +1499,6 @@ merge<Annotation>(
         }
     )
 );
-
-/* *********************************************************************
- *
- * EXTENDING CHART PROTOTYPE
- *
- ******************************************************************** */
-
-wrap(
-    Pointer.prototype,
-    'onContainerMouseDown',
-    function (this: Annotation, proceed: Function): void {
-        if (!this.chart.hasDraggedAnnotation) {
-            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-        }
-    }
-);
-
-(H as any).Annotation = Annotation as any;
 
 namespace Annotation {
     export interface Point extends PointClass {
