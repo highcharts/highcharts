@@ -425,8 +425,8 @@ class PlotLineOrBand {
         zIndex?: number
     ): void {
         const plotLine = this,
-            chart = plotLine.axis.chart,
-            renderer = plotLine.axis.chart.renderer;
+            axis = plotLine.axis,
+            renderer = axis.chart.renderer;
 
         let label = plotLine.label;
 
@@ -482,13 +482,13 @@ class PlotLineOrBand {
         let width = 0;
 
         if (!rotation) {
-            width = chart.plotWidth - (label.alignAttr.x - chart.plotLeft);
+            width = axis.width - (label.alignAttr.x - axis.left);
         } else if (rotation === 90) {
-            width = chart.plotHeight - (label.alignAttr.y - chart.plotTop);
+            width = axis.height - (label.alignAttr.y - axis.top);
         } else if (rotation === 180) {
-            width = label.alignAttr.x - chart.plotLeft;
+            width = label.alignAttr.x - axis.left;
         } else if (rotation === 270) {
-            width = label.alignAttr.y - chart.plotTop;
+            width = label.alignAttr.y - axis.top;
         }
 
         if (width) {
