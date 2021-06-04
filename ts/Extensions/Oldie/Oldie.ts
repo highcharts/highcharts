@@ -244,7 +244,7 @@ declare global {
                 key: string,
                 element: HTMLDOMElement
             ): void;
-            public destroy(): void;
+            public destroy(): undefined;
             public dSetter(
                 value: VMLPathArray,
                 key: string,

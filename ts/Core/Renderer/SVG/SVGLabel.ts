@@ -456,7 +456,8 @@ class SVGLabel extends SVGElement {
         // Update the label-scoped y offset. Math.min because of inline
         // style (#9400)
         this.baselineOffset = padding + Math.min(
-            metrics.b,
+            // When applicable, use the font size of the first line (#15707)
+            (this.text.firstLineMetrics || metrics).b,
             // When the height is 0, there is no bBox, so go with the font
             // metrics. Highmaps CSS demos.
             bBox.height || Infinity

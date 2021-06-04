@@ -11,7 +11,8 @@ const gulp = require('gulp');
  * */
 
 const WATCH_GLOBS = [
-    'js/**/*.js'
+    'js/**/*.js',
+    'css/**/*.scss'
 ];
 
 /* *
@@ -42,6 +43,7 @@ function task() {
     }
 
     let jsHash;
+    let cssHash;
 
     gulp
         .watch(WATCH_GLOBS, done => {
@@ -52,6 +54,13 @@ function task() {
             if (newJsHash !== jsHash) {
                 jsHash = newJsHash;
                 buildTasks.push('scripts-js');
+            }
+
+            const newCssHash = fsLib.getDirectoryHash('css', true);
+
+            if (newCssHash !== cssHash) {
+                cssHash = newCssHash;
+                buildTasks.push('scripts-css');
             }
 
             if (buildTasks.length === 0) {

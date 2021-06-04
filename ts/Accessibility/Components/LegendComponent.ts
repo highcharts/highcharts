@@ -71,8 +71,10 @@ declare global {
             public highlightedLegendItemIx: number;
             public legendProxyButtonClicked?: boolean;
             public legendProxyGroup: HTMLDOMElement;
+            public legendListContainer?: HTMLDOMElement;
             public proxyElementsList: Array<A11yLegendProxyButtonReference>;
             public addLegendProxyGroup(): void;
+            public addLegendListContainer(): void;
             public getKeyboardNavigation(): KeyboardNavigationHandler;
             public init(): void;
             public onChartRender(): void;
@@ -308,6 +310,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
         if (shouldDoLegendA11y(this.chart)) {
             this.addLegendProxyGroup();
+            this.addLegendListContainer();
             this.proxyLegendItems();
             this.updateLegendItemProxyVisibility();
         }
@@ -367,6 +370,18 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     /**
      * @private
      */
+    addLegendListContainer: function (this: Highcharts.LegendComponent): void {
+        if (this.legendProxyGroup) {
+            const container = this.legendListContainer = this.createElement('ul');
+            container.style.listStyle = 'none';
+            this.legendProxyGroup.appendChild(container);
+        }
+    },
+
+
+    /**
+     * @private
+     */
     proxyLegendItems: function (this: Highcharts.LegendComponent): void {
         const component = this,
             items = (
@@ -390,7 +405,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         this: Highcharts.LegendComponent,
         item: LegendItem
     ): void {
-        if (!item.legendItem || !item.legendGroup) {
+        if (!item.legendItem || !item.legendGroup || !this.legendListContainer) {
             return;
         }
 
@@ -411,9 +426,12 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             proxyPositioningElement = item.legendGroup.div ?
                 item.legendItem : item.legendGroup;
 
+        const listItem = this.createElement('li');
+        this.legendListContainer.appendChild(listItem);
+
         item.a11yProxyElement = this.createProxyButton(
             item.legendItem as any,
-            this.legendProxyGroup as any,
+            listItem,
             attribs,
             proxyPositioningElement as any
         );
