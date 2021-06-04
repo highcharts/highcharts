@@ -132,7 +132,7 @@ QUnit.test('NaN in label position (#7175)', function (assert) {
     assert.strictEqual(chart.container.innerHTML.indexOf('NaN'), -1, 'No NaN');
 });
 
-QUnit.skip(
+QUnit.test(
     'Events should be bound to all plotBands (#6166) and plotLines (#10302).',
     function (assert) {
         var clicked,
