@@ -371,7 +371,7 @@ namespace OrdinalAxis {
          *        The key to being found.
          * @param {boolean} indirectSearch
          *        In case of lack of the point in the array, should return
-         *        value be equal to -1 or the closest bigger index.
+         *        value be equal to -1 or the closest smaller index.
          *  @private
          */
         public static findIndexOf(
@@ -383,23 +383,23 @@ namespace OrdinalAxis {
                 end = sortedArray.length - 1,
                 middle;
 
-            while (start <= end) {
-                middle = Math.floor((start + end) / 2);
+            while (start < end) {
+                middle = Math.ceil((start + end) / 2);
 
                 // Key found as the middle element.
-                if (sortedArray[middle] === key) {
-                    return middle;
-                }
-                if (sortedArray[middle] < key) {
+                if (sortedArray[middle] <= key) {
                     // Continue searching to the right.
-                    start = middle + 1;
+                    start = middle;
                 } else {
                     // Continue searching to the left.
                     end = middle - 1;
                 }
             }
+            if (sortedArray[start] === key) {
+                return start;
+            }
             // Key could not be found.
-            return !indirectSearch ? -1 : (middle as number);
+            return !indirectSearch ? -1 : start;
         }
 
         /**
@@ -1093,8 +1093,8 @@ namespace OrdinalAxis {
                     ordinalIndex = index;
                 } else {
                     const percent =
-                        (val - ordinalPositions[index - 1]) /
-                        (ordinalPositions[index] - ordinalPositions[index - 1]); // znak?
+                        (val - ordinalPositions[index]) /
+                        (ordinalPositions[index + 1] - ordinalPositions[index]); // znak?
                     ordinalIndex = index + percent;
                 }
                 // final return value is based on ordinalIndex
@@ -1147,10 +1147,10 @@ namespace OrdinalAxis {
                         extendedOrdinalIndex = index;
                     } else {
                         const percent =
-                            (val - extendedOrdinalPositions[index - 1]) /
-                            (extendedOrdinalPositions[index] -
-                                extendedOrdinalPositions[index - 1]);
-                        extendedOrdinalIndex = index + percent - 1; // ???????
+                            (val - extendedOrdinalPositions[index]) /
+                            (extendedOrdinalPositions[index + 1] -
+                                extendedOrdinalPositions[index]);
+                        extendedOrdinalIndex = index + percent; // ???????
                     }
 
                     // Return Value
