@@ -241,9 +241,7 @@ class Axis {
     public paddedTicks: Array<number> = void 0 as any;
     public panningState?: Axis.PanningState;
     public plotLinesAndBands: Array<PlotLineOrBand> = void 0 as any;
-    public plotLinesAndBandsClip?: SVGElement;
     public plotLinesAndBandsGroups: Record<string, SVGElement> = void 0 as any;
-    public plotLinesAndBandsLabelGroup?: SVGElement;
     public pointRange: number = void 0 as any;
     public pointRangePadding: number = void 0 as any;
     public pos: number = void 0 as any;
@@ -3818,15 +3816,6 @@ class Axis {
         if (this.visible) {
             // render the axis
             this.render();
-
-            if (this.plotLinesAndBandsClip) {
-                this.plotLinesAndBandsClip.animate({
-                    x: this.left,
-                    y: this.top,
-                    width: this.width,
-                    height: this.height
-                });
-            }
 
             // move plot lines and bands
             this.plotLinesAndBands.forEach(function (plotLine): void {
