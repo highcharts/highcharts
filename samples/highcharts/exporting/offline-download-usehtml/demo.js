@@ -19,11 +19,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Offline export'
-    },
-
-    subtitle: {
-        text: 'Should fail for all except SVG'
+        text: 'Offline export with HTML data labels'
     },
 
     chart: {
