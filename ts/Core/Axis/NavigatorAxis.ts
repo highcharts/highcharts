@@ -20,9 +20,7 @@ import type RangeSelector from '../../Extensions/RangeSelector';
 
 import Axis from './Axis.js';
 import H from '../Globals.js';
-const {
-    isTouchDevice
-} = H;
+const { isTouchDevice } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -223,19 +221,20 @@ namespace NavigatorAxis {
             fixedMin?: number,
             fixedMax?: number
         ): RangeSelector.RangeObject {
-            const navigator = this;
-            const axis = navigator.axis;
-            const chart = axis.chart;
+            const navigator = this,
+                axis = navigator.axis,
+                chart = axis.chart,
+                fixedRange = chart && chart.fixedRange,
+                halfPointRange = (axis.pointRange || 0) / 2;
 
-            let fixedRange = chart && chart.fixedRange,
-                halfPointRange = (axis.pointRange || 0) / 2,
-                newMin = pick<number|undefined, number>(
+            let newMin = pick<number|undefined, number>(
                     fixedMin, axis.translate(pxMin as any, true, !axis.horiz) as any
                 ),
                 newMax = pick<number|undefined, number>(
                     fixedMax, axis.translate(pxMax as any, true, !axis.horiz) as any
-                ),
-                changeRatio = fixedRange && (newMax - newMin) / fixedRange;
+                );
+
+            const changeRatio = fixedRange && (newMax - newMin) / fixedRange;
 
             // Add/remove half point range to/from the extremes (#1172)
             if (!defined(fixedMin)) {
@@ -248,7 +247,11 @@ namespace NavigatorAxis {
             // If the difference between the fixed range and the actual
             // requested range is too great, the user is dragging across an
             // ordinal gap, and we need to release the range selector button.
-            if ((changeRatio as any) > 0.7 && (changeRatio as any) < 1.3) {
+            if (
+                changeRatio &&
+                changeRatio > 0.7 &&
+                changeRatio < 1.3
+            ) {
                 if (fixedMax) {
                     newMin = newMax - (fixedRange as any);
                 } else {
