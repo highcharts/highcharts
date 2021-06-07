@@ -19,35 +19,36 @@
 import type {
     AxisOptions,
     YAxisOptions
-} from './Axis/AxisOptions';
-import type ColorType from './Color/ColorType';
-import type CSSObject from './Renderer/CSSObject';
-import type PointerEvent from './PointerEvent';
-import type RangeSelector from '../Extensions/RangeSelector';
-import type ScrollbarOptions from './ScrollbarOptions';
-import type { SeriesTypeOptions } from './Series/SeriesType';
-import type SVGElement from './Renderer/SVG/SVGElement';
-import type SVGPath from './Renderer/SVG/SVGPath';
+} from '../Axis/AxisOptions';
+import type ColorType from '../Color/ColorType';
+import type CSSObject from '../Renderer/CSSObject';
+import type PointerEvent from '../PointerEvent';
+import type RangeSelector from '../../Extensions/RangeSelector';
+import type ScrollbarOptions from '../ScrollbarOptions';
+import type { SeriesTypeOptions } from '../Series/SeriesType';
+import type SVGElement from '../Renderer/SVG/SVGElement';
+import type SVGPath from '../Renderer/SVG/SVGPath';
 
-import Axis from './Axis/Axis.js';
-import Chart from './Chart/Chart.js';
-import Color from './Color/Color.js';
+import Axis from '../Axis/Axis.js';
+import Chart from '../Chart/Chart.js';
+import Color from '../Color/Color.js';
 const { parse: color } = Color;
-import H from './Globals.js';
+import H from '../Globals.js';
 const {
     hasTouch,
     isTouchDevice
 } = H;
-import NavigatorAxis from './Axis/NavigatorAxis.js';
-import D from './DefaultOptions.js';
+import NavigatorAxis from '../Axis/NavigatorAxis.js';
+import NavigatorComposition from './NavigatorComposition.js';
+import D from '../DefaultOptions.js';
 const { defaultOptions } = D;
-import Palette from './Color/Palette.js';
-import RendererRegistry from './Renderer/RendererRegistry.js';
-import Scrollbar from './Scrollbar.js';
-import Series from './Series/Series.js';
-import SeriesRegistry from './Series/SeriesRegistry.js';
+import Palette from '../Color/Palette.js';
+import RendererRegistry from '../Renderer/RendererRegistry.js';
+import Scrollbar from '../Scrollbar.js';
+import Series from '../Series/Series.js';
+import SeriesRegistry from '../Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import U from './Utilities.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     clamp,
@@ -71,7 +72,7 @@ const {
  *
  * */
 
-declare module './Axis/AxisOptions' {
+declare module '../Axis/AxisOptions' {
     interface AxisOptions {
         maxRange?: number;
         toFixedRange?: (
@@ -83,7 +84,7 @@ declare module './Axis/AxisOptions' {
     }
 }
 
-declare module './Chart/ChartLike'{
+declare module '../Chart/ChartLike'{
     interface ChartLike {
         navigator?: Navigator;
         scrollbar?: Scrollbar;
@@ -91,20 +92,20 @@ declare module './Chart/ChartLike'{
     }
 }
 
-declare module './Options'{
+declare module '../Options'{
     interface Options {
         navigator?: Highcharts.NavigatorOptions;
     }
 }
 
-declare module './Series/SeriesLike' {
+declare module '../Series/SeriesLike' {
     interface SeriesLike {
         baseSeries?: Series;
         navigatorSeries?: Series;
     }
 }
 
-declare module './Series/SeriesOptions' {
+declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
         fillOpacity?: number;
         navigatorOptions?: SeriesOptions;
@@ -789,44 +790,6 @@ extend(defaultOptions, {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-declare module './Renderer/SVG/SymbolType' {
-    interface SymbolTypeRegistry {
-        'navigator-handle': SymbolFunction;
-    }
-}
-
-/**
- * Draw one of the handles on the side of the zoomed range in the navigator
- *
- * @private
- * @function Highcharts.Renderer#symbols.navigator-handle
- * @param {number} x
- * @param {number} y
- * @param {number} w
- * @param {number} h
- * @param {Highcharts.NavigatorHandlesOptions} options
- * @return {Highcharts.SVGPathArray}
- *         Path to be used in a handle
- */
-RendererRegistry.getRendererType().prototype.symbols['navigator-handle'] = function (
-    _x, _y, _w, _h, options
-): SVGPath {
-    const halfWidth = (options && options.width || 0) / 2,
-        markerPosition = Math.round(halfWidth / 3) + 0.5,
-        height = options && options.height || 0;
-
-    return [
-        ['M', -halfWidth - 1, 0.5],
-        ['L', halfWidth, 0.5],
-        ['L', halfWidth, height + 0.5],
-        ['L', -halfWidth - 1, height + 0.5],
-        ['L', -halfWidth - 1, 0.5],
-        ['M', -markerPosition, 4],
-        ['L', -markerPosition, height - 3],
-        ['M', markerPosition - 1, 4],
-        ['L', markerPosition - 1, height - 3]
-    ];
-};
 
 /* *
  *
@@ -845,6 +808,14 @@ RendererRegistry.getRendererType().prototype.symbols['navigator-handle'] = funct
  *        Chart object
  */
 class Navigator {
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    public static compose = NavigatorComposition.compose;
 
     /* *
      *

@@ -16,7 +16,7 @@ import '../../Series/Gantt/GanttSeries.js';
 import GanttChart from '../../Core/Chart/GanttChart.js';
 import '../../Core/Scrollbar.js';
 import '../../Extensions/RangeSelector.js';
-import '../../Core/Navigator.js';
+import '../../Core/Navigator/Navigator.js';
 
 (Highcharts as any).GanttChart = GanttChart;
 (Highcharts as any).ganttChart = GanttChart.ganttChart;
