@@ -370,86 +370,74 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     );
 });
 
-QUnit.skip('val2lin- unit tests', function (assert) {
+QUnit.test('val2lin- unit tests', function (assert) {
     const axis = {
-        transA: -0.04,
-        min: 3,
-        len: 500,
-        translationSlope: 0.2,
         ordinal: {
-            extendedOrdinalPositions: [0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9],
-            positions: [3, 4.2, 4.8, 5, 7],
-            slope: 500
-        },
-        series: [{
-            points: [{
-                x: 3,
-                plotX: -20
-            }, {
-                x: 4.2,
-                plotX: 80 // distance between points 100px
-            }]
-        }]
+            extendedOrdinalPositions: [
+                0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9, 10
+            ],
+            positions: [3, 4.2, 4.8, 5, 7]
+        }
     };
     axis.ordinal.axis = axis;
 
-    axis.ordinal.getIndexOfPoint =
-        // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.getIndexOfPoint;
-    axis.ordinal.getIndexOfPoint =
-        // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.getIndexOfPoint;
-
-    function lin2val(val, isInside) {
-        return Highcharts.Axis.prototype.val2lin.call(axis, val, isInside);
+    function val2lin(val, toIndex) {
+        return Highcharts.Axis.prototype.val2lin.call(axis, val, toIndex);
     }
 
-    assert.strictEqual(
-        lin2val(-20, true),
+    assert.equal(
+        val2lin(5, true),
         3,
-        `For the pixel value equal to the first point x position,
-        the function should return the value for that point.`
+        'Calculate value inside ordinalPositionsArray.'
     );
-    assert.strictEqual(
-        lin2val(80, true),
-        4.2,
-        `For the pixel value equal to the second point x position,
-        the function should return the value for that point.`
+    assert.equal(
+        val2lin(7, true),
+        4,
+        'Calculate value inside ordinalPositionsArray.'
     );
-    assert.strictEqual(
-        lin2val(30, true),
-        3.6,
-        `For the pixel value located between two visible points,
-        the function should calculate the value between them.`
+    assert.equal(
+        val2lin(3, true),
+        0,
+        'Calculate value inside ordinalPositionsArray.'
     );
-    assert.strictEqual(
-        lin2val(-50),
-        2.55,
-        `For the pixel value smaller than the first visible point, the function
-        should calculate value between that point and next using EOP array.`
+    assert.equal(
+        val2lin(6, true),
+        3.5,
+        'Calculate value inside ordinalPositionsArray.'
     );
-    assert.strictEqual(
-        lin2val(-520),
-        -2,
-        `For the pixel value lower than any point in EOP array, the function
-        should calculate an approximate value based on previous distance.`
+    assert.equal(
+        val2lin(3.6, true),
+        0.5,
+        'Calculate value inside ordinalPositionsArray.'
     );
-    assert.strictEqual(
-        lin2val(380),
-        7,
-        `For the pixel value equal to last point, 
-        the function should return the value for that point.`
+    assert.equal(
+        val2lin(0, true),
+        -3,
+        'Calculate value inside ExtendedOrdinalPositionsArray.'
     );
-    assert.strictEqual(
-        lin2val(420),
-        7.4,
-        `For the pixel value higher than the first visible point, the function
-        should calculate value between that point and next using EOP array.`
+    assert.equal(
+        val2lin(2.25, true),
+        -0.5,
+        'Calculate value inside ExtendedOrdinalPositionsArray.'
     );
-    assert.strictEqual(
-        lin2val(1000),
-        12.2,
-        `For the pixel value higher than any point in extendedOrdinalPositions,
-        array, the function should calculate value for that point.`
+    assert.equal(
+        val2lin(8.5, true),
+        5.5,
+        'Calculate value inside ExtendedOrdinalPositionsArray.'
+    );
+    assert.equal(
+        val2lin(9, true),
+        6,
+        'Calculate value inside ExtendedOrdinalPositionsArray.'
+    );
+    assert.equal(
+        val2lin(-10, true),
+        -14,
+        'Calculate value outside ExtendedOrdinalPositionsArray.'
+    );
+    assert.equal(
+        val2lin(20, true),
+        19,
+        'Calculate value outside ExtendedOrdinalPositionsArray.'
     );
 });

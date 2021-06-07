@@ -1094,7 +1094,7 @@ namespace OrdinalAxis {
                 } else {
                     const percent =
                         (val - ordinalPositions[index]) /
-                        (ordinalPositions[index + 1] - ordinalPositions[index]); // znak?
+                        (ordinalPositions[index + 1] - ordinalPositions[index]);
                     ordinalIndex = index + percent;
                 }
                 // final return value is based on ordinalIndex
@@ -1150,7 +1150,7 @@ namespace OrdinalAxis {
                             (val - extendedOrdinalPositions[index]) /
                             (extendedOrdinalPositions[index + 1] -
                                 extendedOrdinalPositions[index]);
-                        extendedOrdinalIndex = index + percent; // ???????
+                        extendedOrdinalIndex = index + percent;
                     }
 
                     // Return Value
