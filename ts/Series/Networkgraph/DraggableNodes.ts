@@ -13,7 +13,7 @@
 'use strict';
 
 import type Point from '../../Core/Series/Point';
-import type PointerEvent from '../../Core/PointerEvent';
+import type PointerEvent from '../../Core/Pointer/PointerEvent';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import Chart from '../../Core/Chart/Chart.js';

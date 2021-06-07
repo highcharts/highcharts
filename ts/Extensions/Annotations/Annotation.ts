@@ -51,7 +51,7 @@ import ControlPoint from './ControlPoint.js';
 import EventEmitterMixin from './Mixins/EventEmitterMixin.js';
 import H from '../../Core/Globals.js';
 import MockPoint from './MockPoint.js';
-import Pointer from '../../Core/Pointer.js';
+import Pointer from '../../Core/Pointer/Pointer.js';
 import U from '../../Core/Utilities.js';
 import palette from '../../Core/Color/Palette.js';
 const {
@@ -73,6 +73,7 @@ const {
  * Declarations
  *
  * */
+
 declare module './MockPointOptions' {
     interface MockPointOptions {
         x: number;
@@ -85,6 +86,12 @@ declare module './MockPointOptions' {
 declare module '../../Core/Options'{
     interface Options {
         annotations?: (AnnotationOptions|Array<AnnotationOptions>);
+    }
+}
+
+declare module '../../Core/Pointer/PointerLike' {
+    interface PointerLike {
+        hasAnnotationComposition?: boolean;
     }
 }
 
@@ -149,15 +156,20 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      * */
 
     public static compose(PointerClass: typeof Pointer): void {
-        wrap(
-            PointerClass.prototype,
-            'onContainerMouseDown',
-            function (this: Annotation, proceed: Function): void {
-                if (!this.chart.hasDraggedAnnotation) {
-                    proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        const pointerProto = PointerClass.prototype;
+
+        if (!pointerProto.hasAnnotationComposition) {
+            pointerProto.hasAnnotationComposition = true;
+
+            const superOnContainerMouseDown = pointerProto.onContainerMouseDown;
+
+            pointerProto.onContainerMouseDown = function (): void {
+                const pointer = this;
+                if (!pointer.chart.hasDraggedAnnotation) {
+                    superOnContainerMouseDown.apply(pointer, arguments);
                 }
-            }
-        );
+            };
+        }
     }
 
     public static extendAnnotation = function <T extends typeof Annotation> (

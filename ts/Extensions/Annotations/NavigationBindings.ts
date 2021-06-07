@@ -14,8 +14,8 @@ import type AnnotationChart from './AnnotationChart';
 import type AnnotationOptions from './AnnotationOptions';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type MockPointOptions from './MockPointOptions';
-import type Pointer from '../../Core/Pointer';
-import type PointerEvent from '../../Core/PointerEvent';
+import type Pointer from '../../Core/Pointer/Pointer';
+import type PointerEvent from '../../Core/Pointer/PointerEvent';
 import Annotation from './Annotation.js';
 import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
@@ -64,7 +64,7 @@ declare module '../../Core/LangOptions'{
     }
 }
 
-declare module '../../Core/PointerEvent' {
+declare module '../../Core/Pointer/PointerEvent' {
     interface PointerEvent {
         activeAnnotation?: boolean;
     }

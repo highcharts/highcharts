@@ -16,24 +16,26 @@
  *
  * */
 
-import type Axis from './Axis/Axis';
-import type Chart from './Chart/Chart';
-import type { DOMElementType } from './Renderer/DOMElementType';
-import type Options from './Options';
-import type Point from './Series/Point';
+import type Axis from '../Axis/Axis';
+import type Chart from '../Chart/Chart';
+import type { DOMElementType } from '../Renderer/DOMElementType';
+import type Options from '../Options';
+import type Point from '../Series/Point';
 import type PointerEvent from './PointerEvent';
-import type Series from './Series/Series';
-import type SVGElement from './Renderer/SVG/SVGElement';
-import Color from './Color/Color.js';
+import type PointerLike from './PointerLike';
+import type Series from '../Series/Series';
+import type SVGElement from '../Renderer/SVG/SVGElement';
+
+import Color from '../Color/Color.js';
 const { parse: color } = Color;
-import H from './Globals.js';
+import H from '../Globals.js';
 const {
     charts,
     noop
 } = H;
-import Palette from '../Core/Color/Palette.js';
-import Tooltip from './Tooltip.js';
-import U from './Utilities.js';
+import Palette from '../Color/Palette.js';
+import Tooltip from '../Tooltip.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     attr,
@@ -56,7 +58,7 @@ const {
  *
  * */
 
-declare module './Chart/ChartLike'{
+declare module '../Chart/ChartLike'{
     interface ChartLike {
         cancelClick?: boolean;
         hoverPoint?: Point;
@@ -2048,6 +2050,16 @@ class Pointer {
         this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
         this.hasZoom = zoomX || zoomY;
     }
+}
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface Pointer extends PointerLike {
+    // adds PointerLike type modifications
 }
 
 /* *

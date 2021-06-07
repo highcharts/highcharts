@@ -10,8 +10,8 @@
 
 'use strict';
 
-import type PointerEvent from '../Core/PointerEvent';
-import Pointer from '../Core/Pointer.js';
+import type PointerEvent from '../Core/Pointer/PointerEvent';
+import Pointer from '../Core/Pointer/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
     extend,
@@ -19,7 +19,7 @@ const {
     wrap
 } = U;
 
-declare module '../Core/PointerEvent' {
+declare module '../Core/Pointer/PointerEvent' {
     interface PointerEvent {
         deltaY?: number;
         /** @deprecated */

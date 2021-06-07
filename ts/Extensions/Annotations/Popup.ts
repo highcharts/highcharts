@@ -26,7 +26,7 @@ const {
 import NavigationBindings from './NavigationBindings.js';
 import D from '../../Core/DefaultOptions.js';
 const { getOptions } = D;
-import Pointer from '../../Core/Pointer.js';
+import Pointer from '../../Core/Pointer/Pointer.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

@@ -21,7 +21,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
-import type PointerEvent from '../../Core/PointerEvent';
+import type PointerEvent from '../../Core/Pointer/PointerEvent';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type ScatterPoint from '../Scatter/ScatterPoint';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';

@@ -36,7 +36,7 @@ const {
 import Axis from '../Core/Axis/Axis.js';
 import AxisDefaults from '../Core/Axis/AxisDefaults.js';
 import palette from '../Core/Color/Palette.js';
-import Pointer from '../Core/Pointer.js';
+import Pointer from '../Core/Pointer/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

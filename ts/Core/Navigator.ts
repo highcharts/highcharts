@@ -22,7 +22,7 @@ import type {
 } from './Axis/AxisOptions';
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
-import type PointerEvent from './PointerEvent';
+import type PointerEvent from './Pointer/PointerEvent';
 import type RangeSelector from '../Extensions/RangeSelector';
 import type ScrollbarOptions from './ScrollbarOptions';
 import type { SeriesTypeOptions } from './Series/SeriesType';

@@ -37,7 +37,7 @@ import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../Series/Point';
-import type PointerEvent from '../PointerEvent';
+import type PointerEvent from '../Pointer/PointerEvent';
 import type PositionObject from '../Renderer/PositionObject';
 import type Series from '../Series/Series';
 import type SizeObject from '../Renderer/SizeObject';

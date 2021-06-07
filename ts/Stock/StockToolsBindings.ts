@@ -22,7 +22,7 @@ import type { FlagsShapeValue } from '../Series/Flags/FlagsPointOptions';
 import type FlagsSeriesOptions from '../Series/Flags/FlagsSeriesOptions';
 import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type Point from '../Core/Series/Point';
-import type PointerEvent from '../Core/PointerEvent';
+import type PointerEvent from '../Core/Pointer/PointerEvent';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 

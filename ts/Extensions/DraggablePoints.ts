@@ -25,7 +25,7 @@ import type ColumnRangePoint from '../Series/ColumnRange/ColumnRangePoint';
 import type EventCallback from '../Core/EventCallback';
 import type GanttPoint from '../Series/Gantt//GanttPoint';
 import type OHLCPoint from '../Series/OHLC/OHLCPoint';
-import type PointerEvent from '../Core/PointerEvent';
+import type PointerEvent from '../Core/Pointer/PointerEvent';
 import type { PointOptions, PointShortOptions } from '../Core/Series/PointOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';

@@ -18,7 +18,7 @@
 
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
-import type PointerEvent from './PointerEvent';
+import type PointerEvent from './Pointer/PointerEvent';
 import type ScrollbarOptions from './ScrollbarOptions';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';

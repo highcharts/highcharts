@@ -11,7 +11,7 @@ import type AnnotationOptions from '../AnnotationOptions';
 import type ControllableCircle from '../Controllables/ControllableCircle';
 import type ControllableRect from '../Controllables/ControllableRect';
 import type MockPointOptions from '../MockPointOptions';
-import type PointerEvent from '../../../Core/PointerEvent';
+import type PointerEvent from '../../../Core/Pointer/PointerEvent';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';

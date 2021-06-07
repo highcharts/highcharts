@@ -14,7 +14,7 @@
  *
  * */
 
-import type Point from './Series/Point';
+import type Point from '../Series/Point';
 import type Pointer from './Pointer';
 
 /* *

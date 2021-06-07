@@ -25,7 +25,7 @@ import '../Core/Axis/LogarithmicAxis.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
 import Tick from '../Core/Axis/Tick.js';
 import '../Core/Tooltip.js';
-import Pointer from '../Core/Pointer.js';
+import Pointer from '../Core/Pointer/Pointer.js';
 import MSPointer from '../Core/MSPointer.js';
 import '../Core/Legend.js';
 import Chart from '../Core/Chart/Chart.js';
