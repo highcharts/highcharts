@@ -134,6 +134,7 @@ module.exports = {
         ],
         'Working with data': [
             'working-with-data/data-intro',
+            'working-with-data/data-compression',
             'working-with-data/data-module',
             'working-with-data/custom-preprocessing',
             'working-with-data/live-data',

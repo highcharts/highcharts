@@ -3204,7 +3204,7 @@ class Series {
 
         }
 
-        if (relativeXValue) {
+        if (relativeXValue && isNumber(x)) {
             return xIncrement + pointInterval;
         }
         this.xIncrement = xIncrement + pointInterval;
@@ -3499,32 +3499,44 @@ class Series {
         optionsObject: PointOptions,
         fromIndex: number
     ): (number|undefined) {
-        let id = optionsObject.id,
+        const id = optionsObject.id,
             x = optionsObject.x,
             oldData = this.points,
-            matchingPoint,
-            matchedById,
-            pointIndex,
-            matchKey: string,
             dataSorting = this.options.dataSorting;
 
+        let matchingPoint: Point|undefined,
+            matchedById: boolean|undefined,
+            pointIndex: number|undefined;
+
         if (id) {
-            matchingPoint = this.chart.get(id);
+            const item = this.chart.get(id);
+            if (item instanceof Point) {
+                matchingPoint = item;
+            }
 
-        } else if (this.linkedParent || this.enabledDataSorting) {
-            matchKey = (dataSorting && dataSorting.matchByName) ?
-                'name' : 'index';
+        } else if (
+            this.linkedParent ||
+            this.enabledDataSorting ||
+            this.options.relativeXValue
+        ) {
 
-            matchingPoint = find(oldData, function (
-                oldPoint: Point
-            ): boolean {
-                return !oldPoint.touched && (oldPoint as any)[matchKey] ===
-                    (optionsObject as any)[matchKey];
-            });
+            let matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
+                oldPoint.index === optionsObject.index;
+
+            if (dataSorting && dataSorting.matchByName) {
+                matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
+                    oldPoint.name === optionsObject.name;
+
+            } else if (this.options.relativeXValue) {
+                matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
+                    oldPoint.options.x === optionsObject.x;
+            }
+
+            matchingPoint = find(oldData, matcher);
+
             // Add unmatched point as a new point
             if (!matchingPoint) {
                 return void 0;
-
             }
         }
 
@@ -3549,7 +3561,9 @@ class Series {
                 pointIndex - (this.cropStart as any) : pointIndex;
         }
 
-        if (!matchedById &&
+        if (
+            !matchedById &&
+            isNumber(pointIndex) &&
             oldData[pointIndex] && oldData[pointIndex].touched
         ) {
             pointIndex = void 0;
@@ -6659,6 +6673,7 @@ class Series {
                 // New options affecting how the data points are built
                 typeof options.pointStart !== 'undefined' ||
                 typeof options.pointInterval !== 'undefined' ||
+                typeof options.relativeXValue !== 'undefined' ||
                 // Changes to data grouping requires new points in new group
                 series.hasOptionChanged('dataGrouping') ||
                 series.hasOptionChanged('pointStart') ||

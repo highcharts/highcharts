@@ -21,7 +21,7 @@ The data in a series
 
 The actual data is represented as an array, by the data attribute, and can be presented in three ways:
 
-1.  A list of numerical values. In this case, the numerical values will be interpreted as y values and the x values will be automatically calculated, either starting at 0 and incrementing by 1, or from the pointStart and pointInterval options. If the axis is has categories, these will be used. Example:
+1.  A list of numerical values. In this case, the numerical values will be interpreted as `y` values and the `x` values will be automatically calculated, either starting at 0 and incrementing by 1, or from the [pointStart](https://api.highcharts.com/highcharts/series.line.pointStart) and [pointInterval](https://api.highcharts.com/highcharts/series.line.pointInterval) options. If the axis has categories, these will be used. Example:
 
 ```js
 data: [0, 5, 3, 5]
@@ -31,7 +31,7 @@ data: [0, 5, 3, 5]
 
 2.  A list of arrays with two or more values. In this case, the first value is the x value and the second is the y value. If the first value is a string, it is applied as the name of the point, and the x value is incremented following the above rules. Some series, [like arearange](https://api.highcharts.com/highcharts/series.arearange.data), accept more than two values. See API documentation for each series type. Example:
 
-```js  
+```js
 data: [[5, 2], [6, 3], [8, 2]]
 ```
 
@@ -39,7 +39,7 @@ data: [[5, 2], [6, 3], [8, 2]]
 
 3.  A list of object with named values. In this case the objects are point configuration objects as seen under options.point. The full list of available properties can be seen from the API, for [example for line series](https://api.highcharts.com/highcharts/series.line.data). Note that for this option to work in Highcharts Stock, the total number of points must not exceed the [turboThreshold](https://api.highcharts.com/highstock/series.line.turboThreshold), or the _turboThreshold_ setting must be increased. Example:
 
-```js   
+```js
 data: [{
     name: 'Point 1',
     color: '#00FF00',
@@ -50,7 +50,7 @@ data: [{
     y: 5
 }]
 ```
-    
+
 
 [Online example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/data-array-of-objects/)
 
@@ -67,7 +67,7 @@ series: [{
             { y: 216.4, color: '#BF0B23'}, 194.1, 95.6, 54.4]
 }]
 ```
-    
+
 
 Line, spline, area and areaspline charts have the option to display point markers, these are slightly different from the point option because they enable altering the style and shape of the point marker.
 
@@ -79,7 +79,7 @@ series: [{
     {y: 216.4, marker: { fillColor: '#BF0B23', radius: 10 } }, 194.1, 95.6, 54.4]
 }]
 ```
-    
+
 
 ## Series options
 
@@ -115,14 +115,14 @@ plotOptions: {
     }
 }
 ```
-    
+
 
 Code to get the selected points:
 
 ```js
 var selectedPoints = chart.getSelectedPoints();
 ```
-    
+
 
 ### Line width
 
@@ -167,7 +167,7 @@ plotOptions: {
     }
 },
 ```
-    
+
 
 Note: You may wish to disable mouse tracking, which highlights the series and points the mouse hovers over (tooltips will not show if mouse tracking is disabled).
 
@@ -199,14 +199,14 @@ In some cases, you would want to display certain sections of the graph different
 Code used for the zoning:
 
 ```js
-zones: [{  
-    value: 0,  
-    color: '#f7a35c'  
-}, {  
-    value: 10,  
-    color: '#7cb5ec'  
-}, {  
-    color: '#90ed7d'  
+zones: [{
+    value: 0,
+    color: '#f7a35c'
+}, {
+    value: 10,
+    color: '#7cb5ec'
+}, {
+    color: '#90ed7d'
 }]
 ```
 
