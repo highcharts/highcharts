@@ -1176,7 +1176,6 @@ namespace OrdinalAxis {
                         ordinalIndex =
                             approximateIndexOffset +
                             EOPlength -
-                            ordinalLength -
                             originalPositionsReference;
                     }
                 }
