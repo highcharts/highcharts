@@ -1064,13 +1064,26 @@ namespace OrdinalAxis {
          * @return {number}
          */
         axisProto.val2lin = function (val: number, toIndex?: boolean): number {
+            /**
+             * Internal function to calculate the precise index
+             * in ordinalPositions array.
+             */
+            function getIndexInArray(ordinalPositions: Array<number>, val: number): number {
+                const index =
+                Composition.findIndexOf &&
+                Composition.findIndexOf(ordinalPositions, val, true);
+                if (ordinalPositions[index] === val) {
+                    return index;
+                }
+                const percent =
+                    (val - ordinalPositions[index]) /
+                    (ordinalPositions[index + 1] - ordinalPositions[index]);
+                return index + percent;
+            }
             let axis = this,
                 ordinal = axis.ordinal,
                 slope = ordinal.slope,
-                // In some places shorted to OP.
-
                 ordinalPositions = ordinal.positions,
-                // In some places shorted to EOP.
                 extendedOrdinalPositions = ordinal.extendedOrdinalPositions;
 
             if (!ordinalPositions) {
@@ -1085,18 +1098,7 @@ namespace OrdinalAxis {
                 ordinalPositions[0] <= val &&
                 ordinalPositions[ordinalLength - 1] >= val
             ) {
-                let index =
-                    Composition.findIndexOf &&
-                    Composition.findIndexOf(ordinalPositions, val, true);
-                // first look for an exact match in the ordinalpositions array
-                if (ordinalPositions[index] === val) {
-                    ordinalIndex = index;
-                } else {
-                    const percent =
-                        (val - ordinalPositions[index]) /
-                        (ordinalPositions[index + 1] - ordinalPositions[index]);
-                    ordinalIndex = index + percent;
-                }
+                ordinalIndex = getIndexInArray(ordinalPositions, val);
                 // final return value is based on ordinalIndex
             } else {
 
@@ -1111,8 +1113,7 @@ namespace OrdinalAxis {
                     return val;
                 }
 
-                let EOPlength = extendedOrdinalPositions.length,
-                    extendedOrdinalIndex;
+                const EOPlength = extendedOrdinalPositions.length;
 
                 if (!slope) {
                     slope =
@@ -1120,9 +1121,8 @@ namespace OrdinalAxis {
                             extendedOrdinalPositions[0]) /
                         EOPlength;
                 }
-                // this value represents the value, where the first index of
-                // ordinalPositions lays in extendedOrdinalPositions.
-                // in other words, how much the OP is moved inside the EOP
+                // OriginalPointReference is equal to the index of
+                // first point of ordinalPositions in extendedOrdinalPositions.
 
                 const originalPositionsReference = Composition.findIndexOf(
                     extendedOrdinalPositions,
@@ -1137,24 +1137,8 @@ namespace OrdinalAxis {
                             extendedOrdinalPositions.length - 1
                         ]
                 ) {
-                    let index = Composition.findIndexOf(
-                        extendedOrdinalPositions,
-                        val,
-                        true
-                    );
-
-                    if (extendedOrdinalPositions[index] === val) {
-                        extendedOrdinalIndex = index;
-                    } else {
-                        const percent =
-                            (val - extendedOrdinalPositions[index]) /
-                            (extendedOrdinalPositions[index + 1] -
-                                extendedOrdinalPositions[index]);
-                        extendedOrdinalIndex = index + percent;
-                    }
-
                     // Return Value
-                    ordinalIndex = extendedOrdinalIndex - originalPositionsReference;
+                    ordinalIndex = getIndexInArray(extendedOrdinalPositions, val) - originalPositionsReference;
                 } else {
                     // since ordinal.slope is the average distance between 2
                     // points on visible plotArea, this can be used to calculete
