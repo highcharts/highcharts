@@ -1328,21 +1328,15 @@ namespace OrdinalAxis {
                     // smaller and faster.
                     chart.fixedRange = max - min;
 
-                    // @todo debug session, to change later
-                    let arg1 = val2lin.apply(searchAxisLeft, [min, true]),
-                        arg2 = index2val.apply(searchAxisLeft, [
-                            arg1 + movedUnits
-                        ]),
-                        arg3 = val2lin.apply(searchAxisRight, [max, true]),
-                        arg4 = index2val.apply(searchAxisRight, [
-                            arg3 + movedUnits
-                        ]);
-
                     trimmedRange = (xAxis as NavigatorAxis).navigatorAxis.toFixedRange(
                         null as any,
                         null as any,
-                        arg2,
-                        arg4
+                        index2val.apply(searchAxisLeft, [
+                            val2lin.apply(searchAxisLeft, [min, true]) + movedUnits
+                        ]),
+                        index2val.apply(searchAxisRight, [
+                            val2lin.apply(searchAxisRight, [max, true]) + movedUnits
+                        ])
                     );
 
                     // Apply it if it is within the available data range
