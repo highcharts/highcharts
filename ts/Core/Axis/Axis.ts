@@ -44,7 +44,6 @@ import type SizeObject from '../Renderer/SizeObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
-
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import AxisDefaults from './AxisDefaults.js';
@@ -856,13 +855,13 @@ class Axis {
             val -= minPixelPadding;
             // from chart pixel to value:
             returnValue = val / localA + (localMin as any);
-            if (doPostTranslate) { // log and ordinal axes
+            if (doPostTranslate) { // log, ordinal and broken axis
                 returnValue = axis.lin2val(returnValue);
             }
 
         // From value to pixels
         } else {
-            if (doPostTranslate) { // log and ordinal axes
+            if (doPostTranslate) { // log, ordinal and broken axis
                 val = (axis.val2lin as any)(val);
             }
             returnValue = isNumber(localMin) ?
