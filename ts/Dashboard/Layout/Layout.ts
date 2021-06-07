@@ -249,6 +249,11 @@ class Layout extends GUIElement {
             layout.mountRow(row, index);
         }
 
+        // Set editMode events.
+        if (layout.dashboard.editMode) {
+            layout.dashboard.editMode.setRowEvents(row);
+        }
+
         return row;
     }
 

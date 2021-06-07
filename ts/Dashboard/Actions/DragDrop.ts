@@ -128,6 +128,11 @@ class DragDrop {
      */
     public dropPointer: DragDrop.DropPointer;
 
+    /**
+     * Function to call when drag ends (when no context).
+     */
+    public dragEndCallback?: Function;
+
     /* *
      *
      *  Functions
@@ -273,21 +278,30 @@ class DragDrop {
     /**
      * General method used on drag start.
      *
+     * @param {PointerEvent} e
+     * Mouse event.
+     *
      * @param {Cell|Row} context
      * Reference to the dragged context.
      *
-     * @param {PointerEvent} e
-     * Mouse event.
+     * @param {Function} dragEndCallback
+     * Callback invoked on drag end.
      */
     public onDragStart(
-        context: Cell|Row,
-        e: PointerEvent
+        e: PointerEvent,
+        context?: Cell|Row,
+        dragEndCallback?: Function
     ): void {
-        this.context = context;
         this.isActive = true;
         this.editMode.hideToolbars();
         this.setMockElementPosition(e);
-        context.hide();
+
+        if (context) {
+            this.context = context;
+            context.hide();
+        } else if (dragEndCallback) {
+            this.dragEndCallback = dragEndCallback;
+        }
 
         css(this.mockElement, {
             cursor: 'grabbing',
@@ -313,6 +327,8 @@ class DragDrop {
                 } else if (dragDrop.context.getType() === DashboardGlobals.guiElementType.row) {
                     dragDrop.onRowDrag(e);
                 }
+            } else if (dragDrop.dragEndCallback) {
+                dragDrop.onCellDrag(e);
             }
         }
     }
@@ -336,6 +352,12 @@ class DragDrop {
                 } else if (dragDrop.context.getType() === DashboardGlobals.guiElementType.row) {
                     dragDrop.onRowDragEnd();
                 }
+
+                dragDrop.context = void 0;
+            } else if (dragDrop.dragEndCallback) {
+                dragDrop.dragEndCallback(dragDrop.dropContext);
+                dragDrop.dragEndCallback = void 0;
+                dragDrop.hideDropPointer();
             }
         }
     }
@@ -505,14 +527,19 @@ class DragDrop {
      * Unmounts dropped cell and mounts it in a new position.
      * When cell is dragged as a row also creates a new row
      * and mounts cell there.
+     *
+     * @param {Cell} contextCell
+     * Cell used as a dragDrop context.
      */
-    public onCellDragEnd(): void {
+    public onCellDragEnd(
+        contextCell?: Cell
+    ): void {
         const dragDrop = this,
-            draggedCell = dragDrop.context as Cell;
+            draggedCell = contextCell || dragDrop.context as Cell;
 
         let dropContext = dragDrop.dropContext;
 
-        if (dragDrop.dropPointer.align && dropContext) {
+        if (dragDrop.dropPointer.align && dropContext && draggedCell) {
             draggedCell.row.unmountCell(draggedCell);
 
             // Destroy row when empty.

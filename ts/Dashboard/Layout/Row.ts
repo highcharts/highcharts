@@ -235,6 +235,12 @@ class Row extends GUIElement {
             cell = new Cell(row, options, cellElement);
 
         row.cells.push(cell);
+
+        // Set editMode events.
+        if (row.layout.dashboard.editMode) {
+            row.layout.dashboard.editMode.setCellEvents(cell);
+        }
+
         return cell;
     }
 

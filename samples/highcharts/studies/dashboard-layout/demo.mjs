@@ -15,7 +15,8 @@ const chartDemo = {
             data: [1, 2, 3, 4]
         }],
         chart: {
-            animation: false
+            animation: false,
+            height: 150
         }
     }
 };

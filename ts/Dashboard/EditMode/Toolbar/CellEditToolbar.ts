@@ -40,7 +40,7 @@ class CellEditToolbar extends EditToolbar {
                         dragDrop = cellEditToolbar.editMode.dragDrop;
 
                     if (dragDrop && cellEditToolbar.cell) {
-                        dragDrop.onDragStart(cellEditToolbar.cell, e);
+                        dragDrop.onDragStart(e, cellEditToolbar.cell);
                     }
                 }
             }

@@ -4,6 +4,8 @@ import EditGlobals from '../EditMode/EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
 import type Layout from './../Layout/Layout.js';
+import type Cell from '../Layout/Cell.js';
+import type Row from '../Layout/Row.js';
 import CellEditToolbar from './Toolbar/CellEditToolbar.js';
 import RowEditToolbar from './Toolbar/RowEditToolbar.js';
 import Sidebar from './Sidebar.js';
@@ -217,86 +219,99 @@ class EditMode {
 
         for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
             const row = layout.rows[j];
+            editMode.setRowEvents(row);
 
-            if (editMode.rowToolbar) {
-                const rowToolbar = editMode.rowToolbar;
+            for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
+                editMode.setCellEvents(row.cells[k]);
+            }
+        }
+    }
 
-                addEvent(row.container, 'mousemove', function (e): void {
-                    rowToolbar.onMouseMove(row);
+    public setRowEvents(
+        row: Row
+    ): void {
+        const editMode = this;
 
-                    // if ((!(editMode.dragDrop || {}).isActive)) {
+        if (editMode.rowToolbar) {
+            const rowToolbar = editMode.rowToolbar;
+
+            addEvent(row.container, 'mousemove', function (e): void {
+                rowToolbar.onMouseMove(row);
+
+                // if ((!(editMode.dragDrop || {}).isActive)) {
+                //     e.stopImmediatePropagation();
+                // }
+            });
+        }
+
+        // Init dragDrop row events.
+        if (editMode.dragDrop) {
+            const dragDrop = editMode.dragDrop;
+            addEvent(row.container, 'mouseenter', function (): void {
+                if (dragDrop.isActive) {
+                    dragDrop.mouseRowContext = row;
+                }
+            });
+
+            addEvent(row.container, 'mouseleave', function (): void {
+                if (dragDrop.isActive) {
+                    dragDrop.mouseRowContext = void 0;
+                }
+            });
+        }
+    }
+
+    public setCellEvents(
+        cell: Cell
+    ): void {
+        const editMode = this;
+
+        if (cell.nestedLayout) {
+            editMode.setLayoutEvents(cell.nestedLayout);
+        } else if (editMode.cellToolbar && cell.container) {
+            const cellToolbar = editMode.cellToolbar;
+
+            addEvent(cell.container, 'mousemove', function (): void {
+                cellToolbar.onMouseMove(cell);
+            });
+
+            // Hide cell toolbar when mouse on cell resizer.
+            const resizedCell = (cell as Resizer.ResizedCell).resizer;
+            if (resizedCell && resizedCell.snapX) {
+                addEvent(resizedCell.snapX, 'mousemove', function (e): void {
+                    cellToolbar.hide();
+
+                    // if (!(editMode.dragDrop || {}).isActive) {
                     //     e.stopImmediatePropagation();
                     // }
                 });
             }
 
-            // Init dragDrop row events.
-            if (editMode.dragDrop) {
-                const dragDrop = editMode.dragDrop;
-                addEvent(row.container, 'mouseenter', function (): void {
-                    if (dragDrop.isActive) {
-                        dragDrop.mouseRowContext = row;
+            // Init dragDrop and resizer cell events.
+            if (editMode.dragDrop || editMode.resizer) {
+                const dragDrop = editMode.dragDrop,
+                    resizer = editMode.resizer;
+
+                addEvent(cell.container, 'mouseenter', function (e: PointerEvent): void {
+                    if (dragDrop && dragDrop.isActive) {
+                        dragDrop.mouseCellContext = cell;
+                        dragDrop.onDrag(e);
+                    }
+
+                    if (resizer && resizer.isResizerDetectionActive) {
+                        resizer.mouseCellContext = cell;
                     }
                 });
 
-                addEvent(row.container, 'mouseleave', function (): void {
-                    if (dragDrop.isActive) {
-                        dragDrop.mouseRowContext = void 0;
+                addEvent(cell.container, 'mouseleave', function (): void {
+                    if (dragDrop && dragDrop.isActive) {
+                        dragDrop.mouseCellContext = void 0;
+                    }
+
+                    if (resizer && resizer.isResizerDetectionActive) {
+                        resizer.mouseCellContext = void 0;
                     }
                 });
-            }
-
-            for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
-                const cell = row.cells[k];
-
-                if (cell.nestedLayout) {
-                    editMode.setLayoutEvents(cell.nestedLayout);
-                } else if (editMode.cellToolbar && cell.container) {
-                    const cellToolbar = editMode.cellToolbar;
-
-                    addEvent(cell.container, 'mousemove', function (): void {
-                        cellToolbar.onMouseMove(cell);
-                    });
-
-                    // Hide cell toolbar when mouse on cell resizer.
-                    const resizedCell = (cell as Resizer.ResizedCell).resizer;
-                    if (resizedCell && resizedCell.snapX) {
-                        addEvent(resizedCell.snapX, 'mousemove', function (e): void {
-                            cellToolbar.hide();
-
-                            // if (!(editMode.dragDrop || {}).isActive) {
-                            //     e.stopImmediatePropagation();
-                            // }
-                        });
-                    }
-
-                    // Init dragDrop and resizer cell events.
-                    if (editMode.dragDrop || editMode.resizer) {
-                        const dragDrop = editMode.dragDrop,
-                            resizer = editMode.resizer;
-
-                        addEvent(cell.container, 'mouseenter', function (e: PointerEvent): void {
-                            if (dragDrop && dragDrop.isActive) {
-                                dragDrop.mouseCellContext = cell;
-                                dragDrop.onDrag(e);
-                            }
-
-                            if (resizer && resizer.isResizerDetectionActive) {
-                                resizer.mouseCellContext = cell;
-                            }
-                        });
-
-                        addEvent(cell.container, 'mouseleave', function (): void {
-                            if (dragDrop && dragDrop.isActive) {
-                                dragDrop.mouseCellContext = void 0;
-                            }
-
-                            if (resizer && resizer.isResizerDetectionActive) {
-                                resizer.mouseCellContext = void 0;
-                            }
-                        });
-                    }
-                }
             }
         }
     }
