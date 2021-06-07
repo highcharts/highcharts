@@ -388,56 +388,78 @@ QUnit.test('val2lin- unit tests', function (assert) {
     assert.equal(
         val2lin(5, true),
         3,
-        'Calculate value inside ordinalPositionsArray.'
+        `If the value we are looking for is inside the ordinal positions array
+        and fits the exact value, the method should return the index of that
+        value in this array as a total number.`
     );
     assert.equal(
         val2lin(7, true),
         4,
-        'Calculate value inside ordinalPositionsArray.'
+        `If the value we are looking for is inside the ordinal positions array
+        and fits the exact value, the method should return the index of that
+        value in this array as a total number.`
     );
     assert.equal(
         val2lin(3, true),
         0,
-        'Calculate value inside ordinalPositionsArray.'
+        `If the value we are looking for is inside the ordinal positions array
+        and fits the exact value, the method should return the index of that
+        value in this array as a total number.`
     );
     assert.equal(
         val2lin(6, true),
         3.5,
-        'Calculate value inside ordinalPositionsArray.'
+        `If the value we are looking for is inside the ordinal positions array
+        and doesn't fit the exact value, the method should return the index
+        between higher and lower value.`
     );
     assert.equal(
         val2lin(3.6, true),
         0.5,
-        'Calculate value inside ordinalPositionsArray.'
+        `If the value we are looking for is inside the ordinal positions array
+        and doesn't fit the exact value, the method should return the index
+        between higher and lower value.`
     );
     assert.equal(
         val2lin(0, true),
         -3,
-        'Calculate value inside ExtendedOrdinalPositionsArray.'
-    );
-    assert.equal(
-        val2lin(2.25, true),
-        -0.5,
-        'Calculate value inside ExtendedOrdinalPositionsArray.'
-    );
-    assert.equal(
-        val2lin(8.5, true),
-        5.5,
-        'Calculate value inside ExtendedOrdinalPositionsArray.'
+        `If the value we are looking for is inside the extended ordinal
+        positions array and fits the exact value, the method should return
+        the index of that value in this array as a total number.`
     );
     assert.equal(
         val2lin(9, true),
         6,
-        'Calculate value inside ExtendedOrdinalPositionsArray.'
+        `If the value we are looking for is inside the extended ordinal
+        positions array and fits the exact value, the method should return
+        the index of that value in this array as a total number.`
+    );
+    assert.equal(
+        val2lin(2.25, true),
+        -0.5,
+        `If the value we are looking for is inside the extended ordinal
+        positions array and doesn't fit the exact value, the method should
+        return the index between higher and lower value.`
+    );
+    assert.equal(
+        val2lin(8.5, true),
+        5.5,
+        `If the value we are looking for is inside the extended ordinal
+        positions array and doesn't fit the exact value, the method should
+        return the index between higher and lower value.`
     );
     assert.equal(
         val2lin(-10, true),
         -14,
-        'Calculate value outside ExtendedOrdinalPositionsArray.'
+        `If the value we are looking for is outside the extended ordinal
+        positions array, the method should return the approximate index
+        extrapolated from the slope of the array`
     );
     assert.equal(
         val2lin(20, true),
         19,
-        'Calculate value outside ExtendedOrdinalPositionsArray.'
+        `If the value we are looking for is outside the extended ordinal
+        positions array, the method should return the approximate index
+        extrapolated from the slope of the array`
     );
 });

@@ -625,7 +625,6 @@ QUnit.test('Data grouping and extremes change', function (assert) {
         expectedMax,
         'DataGrouping should not prevent panning to the RIGHT (#12099)'
     );
-
     chart.xAxis[0].setExtremes(null, null); // reset old extremes
 });
 

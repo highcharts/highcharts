@@ -1029,7 +1029,7 @@ namespace OrdinalAxis {
                 }
 
                 // For cases when the index is not in the extended ordinal
-                // position array (EOP), like when the value we are looking
+                // position array, like when the value we are looking
                 // for exceed the available data,
                 // approximate that value based on the calculated slope.
                 const positionsLength = positions.length,
@@ -1093,7 +1093,7 @@ namespace OrdinalAxis {
             let ordinalLength = ordinalPositions.length,
                 ordinalIndex;
             // If the searched value is inside visible plotArea, ivastigate the
-            // value basing on ordinalPositions
+            // value basing on ordinalPositions.
             if (
                 ordinalPositions[0] <= val &&
                 ordinalPositions[ordinalLength - 1] >= val
@@ -1129,7 +1129,7 @@ namespace OrdinalAxis {
                     ordinalPositions[0]
                 );
                 // If the searched value is outside the visiblePlotArea,
-                // check if it is inside ExtendedOrdinalPositions.
+                // check if it is inside extendedOrdinalPositions.
                 if (
                     val >= extendedOrdinalPositions[0] &&
                     val <=
