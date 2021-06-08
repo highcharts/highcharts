@@ -1913,9 +1913,9 @@ class Tooltip {
 
         const chart = tooltip.chart;
         const label = tooltip.label;
-        const point = chart.hoverPoint;
+        const points = tooltip.shared ? chart.hoverPoints : chart.hoverPoint;
 
-        if (!label || !point) {
+        if (!label || !points) {
             return;
         }
 
@@ -1927,7 +1927,7 @@ class Tooltip {
         };
 
         // Combine anchor and tooltip
-        const anchorPos = this.getAnchor(point);
+        const anchorPos = this.getAnchor(points);
         const labelBBox = label.getBBox();
 
         anchorPos[0] += chart.plotLeft - label.translateX;
