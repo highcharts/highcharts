@@ -122,10 +122,11 @@ declare module '../Core/Renderer/SVG/SVGElementLike' {
 declare module '../Core/Series/PointLike' {
     interface PointLike {
         drilldown?: string;
-        doDrilldown(
-            _holdRedraw: (boolean|undefined),
-            category: (number|undefined),
-            originalEvent: Event
+        doDrilldown(): void;
+        runDrilldown(
+            holdRedraw?: boolean,
+            category?: number,
+            originalEvent?: Event
         ): void;
         unbindDrilldownClick?: Function;
     }
@@ -1398,15 +1399,29 @@ if (PieSeries) {
     });
 }
 
-Point.prototype.doDrilldown = function (
-    _holdRedraw: (boolean|undefined),
+/**
+ * Perform drilldown on a point instance. The [drilldown](https://api.highcharts.com/highcharts/series.line.data.drilldown)
+ * property must be set on the point options.
+ *
+ * @requires  modules/drilldown
+ *
+ * @function Highcharts.Point#doDrilldown
+ */
+Point.prototype.doDrilldown = function (): void {
+    this.runDrilldown();
+};
+
+Point.prototype.runDrilldown = function (
+    holdRedraw: (boolean|undefined),
     category: (number|undefined),
-    originalEvent: Event
+    originalEvent: Event|undefined
 ): void {
-    let series = this.series,
+
+    const series = this.series,
         chart = series.chart,
-        drilldown = chart.options.drilldown,
-        i: number = ((drilldown as any).series || []).length,
+        drilldown = chart.options.drilldown;
+
+    let i: number = ((drilldown as any).series || []).length,
         seriesOptions: (SeriesOptions|undefined);
 
     if (!chart.ddDupes) {
@@ -1441,7 +1456,7 @@ Point.prototype.doDrilldown = function (
             seriesOptions = e.seriesOptions;
 
         if (chart && seriesOptions) {
-            if (_holdRedraw) {
+            if (holdRedraw) {
                 chart.addSingleSeriesAsDrilldown(e.point, seriesOptions);
             } else {
                 chart.addSeriesAsDrilldown(e.point, seriesOptions);
@@ -1470,9 +1485,9 @@ Axis.prototype.drilldownCategory = function (
             point &&
             point.series &&
             point.series.visible &&
-            point.doDrilldown
+            point.runDrilldown
         ) { // #3197
-            point.doDrilldown(true, x, e);
+            point.runDrilldown(true, x, e);
         }
     });
     this.chart.applyDrilldown();
@@ -1598,7 +1613,7 @@ const handlePointClick = function (
         // #5822, x changed
         series.xAxis.drilldownCategory(point.x as any, e);
     } else {
-        point.doDrilldown(void 0, void 0, e);
+        point.runDrilldown(void 0, void 0, e);
     }
 };
 
