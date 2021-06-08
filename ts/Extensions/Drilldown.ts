@@ -934,6 +934,9 @@ Chart.prototype.showDrillUpButton = function (): void {
  * @requires  modules/drilldown
  *
  * @function Highcharts.Chart#drillUp
+ *
+ * @sample {highcharts} highcharts/drilldown/programmatic
+ *         Programmatic drilldown
  */
 Chart.prototype.drillUp = function (): void {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
@@ -1403,9 +1406,15 @@ if (PieSeries) {
  * Perform drilldown on a point instance. The [drilldown](https://api.highcharts.com/highcharts/series.line.data.drilldown)
  * property must be set on the point options.
  *
+ * To drill down multiple points in the same category, use
+ * `Axis.drilldownCategory` instead.
+ *
  * @requires  modules/drilldown
  *
  * @function Highcharts.Point#doDrilldown
+ *
+ * @sample {highcharts} highcharts/drilldown/programmatic
+ *         Programmatic drilldown
  */
 Point.prototype.doDrilldown = function (): void {
     this.runDrilldown();
@@ -1467,18 +1476,24 @@ Point.prototype.runDrilldown = function (
 
 /**
  * Drill down to a given category. This is the same as clicking on an axis
- * label.
+ * label. If multiple series with drilldown are present, all will drill down to
+ * the given category.
  *
- * @private
+ * See also `Point.doDrilldown` for drilling down on a single point instance.
+ *
  * @function Highcharts.Axis#drilldownCategory
+ *
+ * @sample {highcharts} highcharts/drilldown/programmatic
+ *         Programmatic drilldown
+ *
  * @param {number} x
- *        Tick position
- * @param {global.MouseEvent} e
- *        Click event
+ *        The index of the category
+ * @param {global.MouseEvent} [originalEvent]
+ *        The original event, used internally.
  */
 Axis.prototype.drilldownCategory = function (
     x: number,
-    e: MouseEvent
+    originalEvent?: MouseEvent
 ): void {
     this.getDDPoints(x).forEach(function (point): void {
         if (
@@ -1487,7 +1502,7 @@ Axis.prototype.drilldownCategory = function (
             point.series.visible &&
             point.runDrilldown
         ) { // #3197
-            point.runDrilldown(true, x, e);
+            point.runDrilldown(true, x, originalEvent);
         }
     });
     this.chart.applyDrilldown();
