@@ -87,7 +87,9 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
         chart.drillUpButton.element,
         'Initially, the breadcrumbs should be disabled and the drillUp button should exist.'
     );
-    chart.drillUp();
+    // @todo
+    //chart.drillUp();
+    chart.breadcrumbs.jumpBy(null);
 
     chart.update({
         drilldown: {

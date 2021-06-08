@@ -71,6 +71,7 @@ const {
     extend,
     fireEvent,
     isArray,
+    isNumber,
     isObject,
     isString,
     merge,
@@ -981,6 +982,75 @@ class TreemapSeries extends ScatterSeries {
                 series.calculateChildrenAreas(child, child.values);
             }
         });
+    }
+    /**
+     * Calcule level on which chart currently is.
+     *
+     * @requires  modules/breadcrumbs
+     *
+     * @function Highcharts.Breadcrumbs#calculateLevel
+     * @param {Highcharts.Breadcrumbs} this
+     *        Breadcrumbs class.
+     */
+    public calculateLevel(this: TreemapSeries): number|undefined {
+        const breadcrumbs = this.chart.breadcrumbs,
+            chart = this.chart;
+
+        // Calculate on which level we are now.
+        if (breadcrumbs && isNumber(this.tree.levelDynamic)) {
+            return Math.abs(this.tree.levelDynamic);
+        }
+    }
+
+    /**
+     * createLeveList
+     *
+     * @private
+     */
+    public createLeveList(e: any): any {
+        const breadcrumbs = this.chart.breadcrumbs,
+            breadcrumbsList: Array<any> = breadcrumbs && breadcrumbs.breadcrumbsList || [],
+            chart = this.chart;
+
+        // If the list doesn't exist treat the initial series
+        // as the current level- first iteration.
+        let currentLevelNumber: number|null = breadcrumbsList.length ?
+            (breadcrumbsList[breadcrumbsList.length - 1][0] as number) : null;
+
+        if (!breadcrumbsList[0]) {
+            // As a first element add the series.
+            breadcrumbsList.push([null, chart.series[0]]);
+        }
+        if (e.trigger === 'click' && e.newRootId) {
+            // When a user clicks add element one by one.
+            if (currentLevelNumber === null) {
+                breadcrumbsList.push([0, (chart.get(e.newRootId))]);
+                currentLevelNumber = 0;
+            } else {
+                breadcrumbsList.push([currentLevelNumber + 1, (chart.get(e.newRootId))]);
+            }
+        } else {
+            let node = e.target.nodeMap[e.newRootId];
+            const extraNodes = [];
+
+            // When the root node is set and has parent,
+            // recreate the path from the node tree.
+            while (node.parent || node.parent === '') {
+                extraNodes.push(node);
+                node = e.target.nodeMap[node.parent];
+            }
+            extraNodes.reverse().forEach(function (node): void {
+                if (currentLevelNumber === null) {
+                    breadcrumbsList.push([0, node]);
+                    currentLevelNumber = 0;
+                } else {
+                    breadcrumbsList.push([++currentLevelNumber, node]);
+                }
+            });
+        }
+
+
+        return breadcrumbsList;
     }
 
     /**

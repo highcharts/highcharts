@@ -211,7 +211,8 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
     );
 
     // Drill up
-    chart.drillUp();
+    // chart.drillUp();
+    chart.breadcrumbs.jumpBy(null);
     assert.strictEqual(
         typeof chart.drillUpButton,
         'undefined',
@@ -282,7 +283,8 @@ QUnit.test('Drilldown and reset zoom should not crash the chart, #8095.', functi
         'Buttons should not overlap.'
     );
 
-    chart.drillUp();
+    //chart.drillUp();
+    chart.breadcrumbs.jumpBy(null);
     chart.series[0].points[0].doDrilldown();
 
     assert.ok(
