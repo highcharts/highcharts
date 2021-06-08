@@ -1843,7 +1843,7 @@ class Axis {
                 );
             });
             // Then apply grouping if needed.
-            fireEvent(this, 'afterProcessData');
+            fireEvent(this, 'postProcessData');
         }
 
         // set the translation factor used in translate function
