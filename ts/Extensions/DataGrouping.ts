@@ -1024,13 +1024,13 @@ seriesProto.generatePoints = function (): void {
 
 // When all series are processed, calculate the group pixel width and then
 // if this value is different than zero apply groupings.
-addEvent(Axis, 'afterProcessData', function (): void {
+addEvent(Axis, 'postProcessData', function (): void {
     const axis = this,
         series = axis.series;
 
     series.forEach(function (series): void {
         // Reset the groupPixelWidth, then calculate if needed.
-        series.groupPixelWidth = null as any; // #2110
+        series.groupPixelWidth = void 0; // #2110
 
         series.groupPixelWidth = axis.getGroupPixelWidth && axis.getGroupPixelWidth();
 
