@@ -320,3 +320,19 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Pie chart initialized through the stockChart constructor, (#14773).', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            type: 'pie',
+            data: [3]
+        }]
+    });
+    chart.series[0].points[0].setState('hover');
+    chart.tooltip.refresh(chart.series[0].points[0]);
+    assert.ok(
+        true,
+        `Hovering over the pie chart initialized through the stockChart
+        constructor should not produce errors in the console.`
+    );
+});
