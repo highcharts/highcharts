@@ -19,6 +19,7 @@
  * */
 
 import H from '../Core/Globals.js';
+const win: AnyRecord = H.win;
 
 /* *
  *
@@ -61,6 +62,9 @@ class DataPromise<TValue = never, TError = any> {
     public static reject<TValue = never, TError = any>(
         reason: (TError|DataPromise<TValue, TError>)
     ): DataPromise<TValue, TError> {
+        if (win.Promise && DataPromise.builtinPromise) {
+            return win.Promise.reject(reason);
+        }
         if (reason instanceof DataPromise) {
             return reason;
         }
@@ -75,6 +79,9 @@ class DataPromise<TValue = never, TError = any> {
     public static resolve<TValue = never, TError = any>(
         value: (TValue|DataPromise<TValue, TError>)
     ): DataPromise<TValue, TError> {
+        if (win.Promise && DataPromise.builtinPromise) {
+            return win.Promise.resolve(value);
+        }
         if (value instanceof DataPromise) {
             return value;
         }
@@ -98,8 +105,6 @@ class DataPromise<TValue = never, TError = any> {
             reject: (reason?: TError) => void
         ) => void
     ) {
-        const win: AnyRecord = H.win;
-
         if (win.Promise && DataPromise.builtinPromise) {
             return new win.Promise(executor);
         }
@@ -184,8 +189,8 @@ class DataPromise<TValue = never, TError = any> {
     }
 
     public then<UValue = never, UError = any>(
-        onfulfilled?: (DataPromise.ResolveCallback<TValue, UValue, UError>|null),
-        onrejected?: DataPromise.RejectCallback<TError, UValue, UError>
+        onfulfilled?: (DataPromise.OnResolved<TValue, UValue, UError>|null),
+        onrejected?: DataPromise.OnRejected<TError, UValue, UError>
     ): DataPromise<UValue, UError> {
         const promise = this,
             reason = promise.reason,
@@ -214,32 +219,12 @@ class DataPromise<TValue = never, TError = any> {
 
         return new DataPromise<UValue, UError>((resolve, reject): void => {
             promise.registry.push({
-                rejectPromise: (reason?: TError): void => {
-                    try {
-                        if (onrejected) {
-                            const result = onrejected(reason);
-                            if (result instanceof DataPromise) {
-                                result
-                                    .then((value): void => resolve(value))
-                                    .catch(reject);
-                            } else {
-                                resolve(result);
-                            }
-                        } else {
-                            reject(reason as unknown as UError);
-                        }
-                    } catch (e) {
-                        reject(e);
-                    }
-                },
                 resolvePromise: (value: TValue): void => {
                     try {
                         if (onfulfilled) {
                             const result = onfulfilled(value);
                             if (result instanceof DataPromise) {
-                                result
-                                    .then((value): void => resolve(value))
-                                    .catch(reject);
+                                result.then(resolve, reject);
                             } else {
                                 resolve(result);
                             }
@@ -249,35 +234,13 @@ class DataPromise<TValue = never, TError = any> {
                     } catch (e) {
                         reject(e);
                     }
-                }
-            });
-        });
-    }
-
-    public catch<UValue = never, UError = any>(
-        rejectCallback: DataPromise.RejectCallback<TError, UValue, UError>
-    ): DataPromise<UValue, UError> {
-        const promise = this,
-            reason = promise.reason;
-
-        if (promise.state === DataPromiseState.REJECTED) {
-            try {
-                return DataPromise.resolve(rejectCallback(reason));
-            } catch (e) {
-                return DataPromise.reject(e);
-            }
-        }
-
-        return new DataPromise<UValue, UError>((resolve, reject): void => {
-            promise.registry.push({
+                },
                 rejectPromise: (reason?: TError): void => {
                     try {
-                        if (rejectCallback) {
-                            const result = rejectCallback(reason);
+                        if (onrejected) {
+                            const result = onrejected(reason);
                             if (result instanceof DataPromise) {
-                                result
-                                    .then((value): void => resolve(value))
-                                    .catch(reject);
+                                result.then(resolve, reject);
                             } else {
                                 resolve(result);
                             }
@@ -287,11 +250,15 @@ class DataPromise<TValue = never, TError = any> {
                     } catch (e) {
                         reject(e);
                     }
-                },
-                resolvePromise: (value: TValue): void =>
-                    resolve(value as unknown as UValue)
+                }
             });
         });
+    }
+
+    public 'catch'<UValue = never, UError = any>(
+        onrejected: DataPromise.OnRejected<TError, UValue, UError>
+    ): DataPromise<UValue, UError> {
+        return this.then(void 0, onrejected);
     }
 
 }
@@ -314,13 +281,13 @@ class DataPromise<TValue = never, TError = any> {
 
 namespace DataPromise {
     export interface RegistryItem<TValue, TError> {
-        rejectPromise?: RejectCallback<TError, void>;
-        resolvePromise: ResolveCallback<TValue, void>;
+        rejectPromise?: OnRejected<TError, void>;
+        resolvePromise: OnResolved<TValue, void>;
     }
-    export type RejectCallback<TError, UValue = never, UError = any> = (
+    export type OnRejected<TError, UValue = never, UError = any> = (
         reason?: TError
     ) => (UValue|DataPromise<UValue, UError>);
-    export type ResolveCallback<TValue, UValue = never, UError = any> = (
+    export type OnResolved<TValue, UValue = never, UError = any> = (
         value: TValue
     ) => (UValue|DataPromise<UValue, UError>);
 }
