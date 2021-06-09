@@ -3385,7 +3385,7 @@ class Chart {
         });
 
         itemsForRemoval.forEach(function (item: any): void {
-            if (item.chart) { // #9097, avoid removing twice
+            if (item.chart && item.remove) { // #9097, avoid removing twice
                 item.remove(false);
             }
         });

@@ -198,6 +198,15 @@ QUnit.test('Pane update through chart.update', function (assert) {
         'silver',
         'Pane updated by id'
     );
+
+    chart.update({
+        pane: []
+    }, true, true);
+
+    assert.ok(
+        true,
+        '#15862: oneToOne update attempting to remove pane should not throw'
+    );
 });
 
 QUnit.test('Pane update, backgrounds', function (assert) {
