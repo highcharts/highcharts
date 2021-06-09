@@ -1448,7 +1448,7 @@ addEvent(Series, 'bindAxes', function (): void {
 // Add the color axis. This also removes the axis' own series to prevent
 // them from showing up individually.
 addEvent(Legend, 'afterGetAllItems', function (
-    this: Highcharts.Legend,
+    this: Legend,
     e: {
         allItems: Array<(Series|Point|ColorAxis|ColorAxis.LegendItemObject)>;
     }
@@ -1507,7 +1507,7 @@ addEvent(Legend, 'afterGetAllItems', function (
 });
 
 addEvent(Legend, 'afterColorizeItem', function (
-    this: Highcharts.Legend,
+    this: Legend,
     e: {
         item: ColorAxis;
         visible: boolean;
@@ -1521,7 +1521,7 @@ addEvent(Legend, 'afterColorizeItem', function (
 });
 
 // Updates in the legend need to be reflected in the color axis (6888)
-addEvent(Legend, 'afterUpdate', function (this: Highcharts.Legend): void {
+addEvent(Legend, 'afterUpdate', function (this: Legend): void {
     const colorAxes = this.chart.colorAxis;
 
     if (colorAxes) {

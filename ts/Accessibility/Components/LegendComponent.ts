@@ -113,7 +113,7 @@ declare global {
 /**
  * @private
  */
-function scrollLegendToItem(legend: Highcharts.Legend, itemIx: number): void {
+function scrollLegendToItem(legend: Legend, itemIx: number): void {
     const itemPage = legend.allItems[itemIx].pageIx,
         curPage: number = legend.currentPage as any;
 

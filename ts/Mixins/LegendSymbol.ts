@@ -11,6 +11,7 @@
 'use strict';
 
 import type ColorAxis from '../Core/Axis/ColorAxis';
+import type Legend from '../Core/Legend';
 import type Point from '../Core/Series/Point';
 import type Series from '../Core/Series/Series';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -45,7 +46,7 @@ declare global {
         }
         interface LegendItemObject extends LegendSymbolMixin {
             _legendItemPos?: Array<number>;
-            checkbox?: LegendCheckBoxElement;
+            checkbox?: Legend.LegendCheckBoxElement;
             checkboxOffset?: number;
             itemHeight?: number;
             itemWidth?: number;
@@ -96,7 +97,7 @@ const LegendSymbolMixin = H.LegendSymbolMixin = {
      */
     drawRectangle: function (
         this: Series,
-        legend: Highcharts.Legend,
+        legend: Legend,
         item: (Series|Point)
     ): void {
         const options = legend.options,
@@ -131,7 +132,7 @@ const LegendSymbolMixin = H.LegendSymbolMixin = {
      */
     drawLineMarker: function (
         this: Series,
-        legend: Highcharts.Legend
+        legend: Legend
     ): void {
 
         let options = this.options,
