@@ -87,6 +87,23 @@ declare module './AxisType' {
 
 /**
  * @private
+ * Internal function to calculate the precise index
+ * in ordinalPositions array.
+ */
+function getIndexInArray(ordinalPositions: Array<number>, val: number): number {
+    const index =
+    OrdinalAxis.Composition.findIndexOf(ordinalPositions, val, true);
+    if (ordinalPositions[index] === val) {
+        return index;
+    }
+    const percent =
+        (val - ordinalPositions[index]) /
+        (ordinalPositions[index + 1] - ordinalPositions[index]);
+    return index + percent;
+}
+
+/**
+ * @private
  */
 interface OrdinalAxis extends Axis {
     forceOrdinal?: boolean;
@@ -480,6 +497,9 @@ namespace OrdinalAxis {
 
                     fakeSeries.options = {
                         dataGrouping: grouping ? {
+                            firstAnchor: 'firstPoint',
+                            anchor: 'middle',
+                            lastAnchor: 'lastPoint',
                             enabled: true,
                             forced: true,
                             // doesn't matter which, use the fastest
@@ -1064,22 +1084,6 @@ namespace OrdinalAxis {
          * @return {number}
          */
         axisProto.val2lin = function (val: number, toIndex?: boolean): number {
-            /**
-             * Internal function to calculate the precise index
-             * in ordinalPositions array.
-             */
-            function getIndexInArray(ordinalPositions: Array<number>, val: number): number {
-                const index =
-                Composition.findIndexOf &&
-                Composition.findIndexOf(ordinalPositions, val, true);
-                if (ordinalPositions[index] === val) {
-                    return index;
-                }
-                const percent =
-                    (val - ordinalPositions[index]) /
-                    (ordinalPositions[index + 1] - ordinalPositions[index]);
-                return index + percent;
-            }
             let axis = this,
                 ordinal = axis.ordinal,
                 slope = ordinal.slope,
@@ -1113,21 +1117,22 @@ namespace OrdinalAxis {
                     return val;
                 }
 
-                const EOPlength = extendedOrdinalPositions.length;
+                const length = extendedOrdinalPositions.length;
 
                 if (!slope) {
                     slope =
-                        (extendedOrdinalPositions[EOPlength - 1] -
+                        (extendedOrdinalPositions[length - 1] -
                             extendedOrdinalPositions[0]) /
-                        EOPlength;
+                        length;
                 }
                 // OriginalPointReference is equal to the index of
                 // first point of ordinalPositions in extendedOrdinalPositions.
 
-                const originalPositionsReference = Composition.findIndexOf(
+                let originalPositionsReference = getIndexInArray(
                     extendedOrdinalPositions,
                     ordinalPositions[0]
                 );
+
                 // If the searched value is outside the visiblePlotArea,
                 // check if it is inside extendedOrdinalPositions.
                 if (
@@ -1159,7 +1164,7 @@ namespace OrdinalAxis {
                             approximateIndexOffset = diff / slope;
                         ordinalIndex =
                             approximateIndexOffset +
-                            EOPlength -
+                            length -
                             originalPositionsReference;
                     }
                 }
