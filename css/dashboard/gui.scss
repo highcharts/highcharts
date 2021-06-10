@@ -88,11 +88,11 @@ body {
 
 .hcd-edit-resize-pointer {
     position: absolute;
-    z-index: 9999;
+    z-index: 100;
     display: none;
     pointer-events: none;
-    transition: 0.1s;
-    border: 5px solid rgba(0, 0, 0, 0.2);
+    border: 4px solid #2196F3;
+    opacity: 0.5;
 }
 
 // .hcd-layout.edit-mode .hcd-row :hover .hcd-cell  {
@@ -141,9 +141,10 @@ body {
 
 .hcd-edit-resize-snap {
     position: absolute;
-    background: red;
-    opacity: 0.5;
-    z-index: 10;
+    background: #fff;
+    border-radius: 9999px;
+    border: 1px solid gray;
+    z-index: 1000;
 }
 
 .hcd-edit-resize-snap-x {
