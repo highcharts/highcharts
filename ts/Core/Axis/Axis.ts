@@ -1835,7 +1835,7 @@ class Axis {
             // First process all series assigned to that axis.
             axis.series.forEach(function (series): void {
                 // Allows filtering out points outside the plot area.
-                series.forceCrop = series.forceCropping();
+                series.forceCrop = series.forceCropping && series.forceCropping();
 
                 series.processData(
                     axis.min !== (axis.old && axis.old.min) ||
