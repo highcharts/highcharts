@@ -19,7 +19,8 @@ const {
     createElement,
     fireEvent,
     removeEvent,
-    pick
+    pick,
+    getStyle
 } = U;
 
 import H from '../../Core/Globals.js';
@@ -130,9 +131,7 @@ class Resizer {
     public currentDimension: string|undefined;
     public isX: boolean;
     public isY: boolean;
-    public snapXL: HTMLDOMElement|undefined;
     public snapXR: HTMLDOMElement|undefined;
-    public snapYT: HTMLDOMElement|undefined;
     public snapYB: HTMLDOMElement|undefined;
     public isActive: boolean;
     public editMode: EditMode;
@@ -285,20 +284,6 @@ class Resizer {
         const snapHeight = this.options.snap.height || 0;
         const dashboardContainer = this.editMode.dashboard.container;
 
-        // left snap
-        this.snapXL = createElement(
-            'div',
-            {
-                className: EditGlobals.classNames.resizeSnap + ' ' +
-                    EditGlobals.classNames.resizeSnapX
-            },
-            {
-                width: snapWidth + 'px',
-                left: -9999 + 'px' 
-            },
-            dashboardContainer
-        );
-
         // right snap
         this.snapXR = createElement(
             'div',
@@ -309,21 +294,6 @@ class Resizer {
             {
                 width: snapWidth + 'px',
                 left: -9999 + 'px'
-            },
-            dashboardContainer
-        );
-
-        // top snap
-        this.snapYT = createElement(
-            'div',
-            {
-                className: EditGlobals.classNames.resizeSnap + ' ' +
-                    EditGlobals.classNames.resizeSnapY
-            },
-            {
-                height: snapHeight + 'px',
-                top: -9999 + 'px',
-                left: '0px' 
             },
             dashboardContainer
         );
@@ -355,20 +325,12 @@ class Resizer {
         this.resizeCellContext = void 0;
         this.disableMenuBtn();
 
-        if (this.snapXL) {
-            this.snapXL.style.left = '-9999px';
-        }
-
         if (this.snapXR) {
             this.snapXR.style.left = '-9999px';
         }
 
         if (this.snapYB) {
             this.snapYB.style.left = '-9999px';
-        }
-
-        if (this.snapYT) {
-            this.snapYT.style.left = '-9999px';
         }
     }
 
@@ -391,27 +353,11 @@ class Resizer {
         const snapWidth = (this.options.snap.width || 0);
         const snapHeight = (this.options.snap.height || 0);
 
-        if (this.snapXL) {
-            this.snapXL.style.left = left + 'px';
-            this.snapXL.style.top = top + (
-                height / 2
-            ) - (snapHeight / 2) + 'px';
-        }
-
         if (this.snapXR) {
             this.snapXR.style.left = (left + width - snapWidth) + 'px';
             this.snapXR.style.top = top + (
                 height / 2
             ) - (snapHeight / 2) + 'px';
-        }
-
-        if (this.snapYT) {
-            this.snapYT.style.top = top + 'px';
-            this.snapYT.style.left = (
-                left + (
-                    width / 2
-                ) - (snapWidth / 2)
-            ) + 'px';
         }
 
         if (this.snapYB) {
@@ -478,8 +424,6 @@ class Resizer {
 
         // Add mouse events
         addEvent(this.snapXR, 'mousedown', mouseDownSnapX);
-        addEvent(this.snapXL, 'mousedown', mouseDownSnapX);
-        addEvent(this.snapYT, 'mousedown', mouseDownSnapY);
         addEvent(this.snapYB, 'mousedown', mouseDownSnapY);
 
         addEvent(document, 'mousemove', mouseMoveSnap);
@@ -528,6 +472,7 @@ class Resizer {
             // resize width
             if (currentDimension === 'x') {
 
+                // debugger;
                 const maxWidth = parentRowWidth -
                     this.sumCellOuterWidth(
                         cellSiblings,
@@ -539,32 +484,15 @@ class Resizer {
                     (
                         Math.min(
                             // diff
-                            e.clientX +
-                            this.editMode.dashboard.container.getBoundingClientRect().left -
-                            cellContainer.getBoundingClientRect().left,
+                            e.clientX -
+                            this.editMode.dashboard.container.offsetLeft -
+                            cellContainer.offsetLeft,
+                            // this.editMode.dashboard.container.getBoundingClientRect().left -
+                            // cellContainer.getBoundingClientRect().left,
                             // maxSize
                             maxWidth
                         ) / parentRowWidth
                     ) * 100 + '%';
-
-                cellContainer.style.flex = 'none';
-
-                // resize snaps
-                if (this.snapXR) {
-
-                    // TODO -> margins / paddings
-                    const minWidth = (cellContainer.offsetLeft || 0) +
-                        (this.options.styles.minWidth || 0);
-
-                    const currentWidth = (
-                        e.clientX - (this.options.snap.width || 0)
-                    );
-                    
-                    this.snapXR.style.left = Math.min(
-                        currentWidth > minWidth ? currentWidth : minWidth,
-                        maxWidth - (this.options.snap.width || 0)
-                    ) + 'px';
-                }
 
                 this.resizeCellSiblings(
                     ((e.clientX - this.startX) / parentRowWidth) * 100,
@@ -590,6 +518,9 @@ class Resizer {
             // Call cellResize dashboard event.
             fireEvent(this.editMode.dashboard, 'cellResize', { cell: currentCell });
             fireEvent(currentCell.row, 'cellChange', { cell: currentCell, row: currentCell.row });
+
+            console.log('resize cell');
+            this.resizeElement(currentCell);
         }
     }
     /**
@@ -632,14 +563,6 @@ class Resizer {
             }
         }
 
-        // sum next
-        // let nextCellsWidth = 0;
-
-        // for (let i = 0, iEnd = cellSiblings.next.length; i < iEnd; ++i) {
-        //     nextCellsWidth += (this.options.styles || {}).minWidth || 0;
-        // }
-        // END TEMP
-
         const cells = cellSiblings.next;
 
         for (let i = 0, iEnd = cells.length; i < iEnd; ++i) {
@@ -667,7 +590,7 @@ class Resizer {
 
                     // call reccurent calculation of cells (nested layouts)
                     if (maxRow) {
-                        sum = this.sumCellOuterWidth(
+                        sum += this.sumCellOuterWidth(
                             {
                                 next: maxRow.cells,
                                 prev: []
@@ -767,7 +690,7 @@ class Resizer {
      *
      */
     public destroy(): void {
-        const snaps = ['snapXL', 'snapXR', 'snapYT', 'snapYB'];
+        const snaps = ['snapXR', 'snapYB'];
         let snap;
 
         // unbind events
