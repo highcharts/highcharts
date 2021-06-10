@@ -47,7 +47,7 @@ For full control over string handling and additional scripting capabilities arou
 
 ### Advanced format strings
 
-Since 6.0.6, the [accessibility module](https://www.highcharts.com/docs/chart-concepts/accessibility) supports more advanced format strings, by also by also handling arrays and plural conditionals. The options this applies to can be found under [lang.accessibility](https://api.highcharts.com/highcharts/lang.accessibility). Arrays can be indexed as follows:
+Since 6.0.6, the [accessibility module](https://www.highcharts.com/docs/chart-concepts/accessibility) supports more advanced format strings, by also handling arrays and plural conditionals. The options this applies to can be found under [lang.accessibility](https://api.highcharts.com/highcharts/lang.accessibility). Arrays can be indexed as follows:
 
 
     Format: 'This is the first index: {myArray[0]}. The last: {myArray[-1]}.'
