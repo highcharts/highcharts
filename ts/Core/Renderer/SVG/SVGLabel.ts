@@ -8,13 +8,21 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type { AlignValue } from '../AlignObject';
 import type BBoxObject from '../BBoxObject';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../CSSObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
+import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
+import type { SymbolKey } from './SymbolType';
 
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
@@ -27,15 +35,11 @@ const {
     removeEvent
 } = U;
 
-/* eslint require-jsdoc: 0, no-invalid-this: 0 */
-function paddingSetter(this: SVGLabel, value: (number|string), key: string): void {
-    if (!isNumber(value)) {
-        this[key] = void 0;
-    } else if (value !== this[key]) {
-        this[key] = value;
-        this.updateTextPadding();
-    }
-}
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * SVG label to render text.
@@ -78,7 +82,7 @@ class SVGLabel extends SVGElement {
         str: string,
         x: number,
         y?: number,
-        shape?: Highcharts.SymbolKeyValue | string,
+        shape?: (SymbolKey|string),
         anchorX?: number,
         anchorY?: number,
         useHTML?: boolean,
@@ -96,9 +100,12 @@ class SVGLabel extends SVGElement {
         this.baseline = baseline;
         this.className = className;
 
-        if (className !== 'button') {
-            this.addClass('highcharts-label');
-        }
+        this.addClass(
+            className === 'button' ?
+                'highcharts-no-tooltip' :
+                'highcharts-label'
+        );
+
         if (className) {
             this.addClass('highcharts-' + className);
         }
@@ -109,7 +116,7 @@ class SVGLabel extends SVGElement {
         let hasBGImage;
         if (typeof shape === 'string') {
             hasBGImage = /^url\((.*?)\)$/.test(shape);
-            if (this.renderer.symbols[shape] || hasBGImage) {
+            if (hasBGImage || this.renderer.symbols[shape as SymbolKey]) {
                 this.symbolKey = shape;
             }
         }
@@ -132,10 +139,13 @@ class SVGLabel extends SVGElement {
     public alignFactor: number;
     public baselineOffset: number;
     public bBox: BBoxObject;
+    public box?: SVGElement;
     public deferredAttr: (SVGAttributes&AnyRecord);
     public heightSetting?: number;
     public needsBox?: boolean;
     public padding: number;
+    public paddingLeftSetter = this.paddingSetter;
+    public paddingRightSetter = this.paddingSetter;
     public text: SVGElement;
     public textStr: string;
     public x: number;
@@ -177,7 +187,10 @@ class SVGLabel extends SVGElement {
     /*
      * Set a box attribute, or defer it if the box is not yet created
      */
-    private boxAttr(key: string, value: any): void {
+    private boxAttr(
+        key: string,
+        value: (number|string|ColorType|SVGPath)
+    ): void {
         if (this.box) {
             this.box.attr(key, value);
         } else {
@@ -191,24 +204,21 @@ class SVGLabel extends SVGElement {
      */
     public css(styles: CSSObject): this {
         if (styles) {
-            let textStyles: CSSObject = {},
-                isWidth: boolean,
-                isFontStyle: boolean;
+            const textStyles: AnyRecord = {};
 
             // Create a copy to avoid altering the original object
             // (#537)
             styles = merge(styles);
             SVGLabel.textProps.forEach((prop): void => {
                 if (typeof styles[prop] !== 'undefined') {
-                    (textStyles as any)[prop] = styles[prop];
+                    textStyles[prop] = styles[prop];
                     delete styles[prop];
                 }
             });
             this.text.css(textStyles);
 
-            isWidth = 'width' in textStyles;
-            isFontStyle = 'fontSize' in textStyles ||
-                'fontWeight' in textStyles;
+            const isWidth = 'width' in textStyles,
+                isFontStyle = ('fontSize' in textStyles || 'fontWeight' in textStyles);
 
             // Update existing text, box (#9400, #12163)
             if (isFontStyle) {
@@ -348,14 +358,20 @@ class SVGLabel extends SVGElement {
         }
     }
 
-    public paddingSetter = paddingSetter;
-
-    public paddingLeftSetter = paddingSetter;
-
-    public paddingRightSetter = paddingSetter;
+    public paddingSetter(
+        value: (number|string),
+        key: string
+    ): void {
+        if (!isNumber(value)) {
+            this[key] = void 0;
+        } else if (value !== this[key]) {
+            this[key] = value;
+            this.updateTextPadding();
+        }
+    }
 
     public rSetter(
-        value: any,
+        value: (number|string|ColorType|SVGPath),
         key: string
     ): void {
         this.boxAttr(key, value);
@@ -374,7 +390,7 @@ class SVGLabel extends SVGElement {
     }
 
     public strokeSetter(
-        value: any,
+        value: ColorType,
         key: string
     ): void {
         // for animation getter (#6776)
@@ -411,35 +427,46 @@ class SVGLabel extends SVGElement {
      * the new bounding box and reflect it in the border box.
      */
     private updateBoxSize(): void {
-        let style = this.text.element.style,
-            crispAdjust,
-            attribs: SVGAttributes = {};
+        const style = this.text.element.style,
+            attribs: SVGAttributes = {},
+            padding = this.padding,
+            // #12165 error when width is null (auto)
+            // #12163 when fontweight: bold, recalculate bBox withot cache
+            // #3295 && 3514 box failure when string equals 0
+            bBox = this.bBox = (
+                ((
+                    !isNumber(this.widthSetting) ||
+                    !isNumber(this.heightSetting) ||
+                    this.textAlign
+                ) && defined(this.text.textStr)) ?
+                    this.text.getBBox() :
+                    SVGLabel.emptyBBox
+            );
 
-        const padding = this.padding;
-
-        // #12165 error when width is null (auto)
-        // #12163 when fontweight: bold, recalculate bBox withot cache
-        // #3295 && 3514 box failure when string equals 0
-        const bBox = this.bBox = (
-            (!isNumber(this.widthSetting) || !isNumber(this.heightSetting) || this.textAlign) &&
-            defined(this.text.textStr)
-        ) ?
-            this.text.getBBox() : SVGLabel.emptyBBox;
+        let crispAdjust;
 
         this.width = this.getPaddedWidth();
         this.height = (this.heightSetting || bBox.height || 0) + 2 * padding;
 
+        const metrics = this.renderer.fontMetrics(
+            style && style.fontSize,
+            this.text
+        );
+
         // Update the label-scoped y offset. Math.min because of inline
         // style (#9400)
         this.baselineOffset = padding + Math.min(
-            this.renderer.fontMetrics(
-                style && style.fontSize,
-                this.text
-            ).b,
+            // When applicable, use the font size of the first line (#15707)
+            (this.text.firstLineMetrics || metrics).b,
             // When the height is 0, there is no bBox, so go with the font
             // metrics. Highmaps CSS demos.
             bBox.height || Infinity
         );
+
+        // #15491: Vertical centering
+        if (this.heightSetting) {
+            this.baselineOffset += (this.heightSetting - metrics.h) / 2;
+        }
 
         if (this.needsBox) {
 

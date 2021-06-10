@@ -10,9 +10,18 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type TickPositionsArray from './TickPositionsArray';
 import type NavigatorAxis from './NavigatorAxis';
 import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
+
 import Axis from './Axis.js';
+import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 import Point from '../Series/Point.js';
 import Series from '../Series/Series.js';
@@ -26,31 +35,16 @@ const {
     timeUnits
 } = U;
 
+// Has a dependency on Navigator due to the use of Axis.toFixedRange
+import '../Navigator.js';
+
 /* *
  *
  *  Declarations
  *
  * */
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface XAxisOptions {
-            keepOrdinalPadding?: boolean;
-        }
-    }
-}
-
-declare module './TimeTicksInfoObject' {
-    interface TimeTicksInfoObject extends Highcharts.DateTimeAxisNormalizedObject {
-        segmentStarts?: Array<number>;
-    }
-}
-
-declare module './Types' {
+declare module './AxisComposition' {
     interface AxisComposition {
         ordinal?: OrdinalAxis['ordinal'];
         /** @deprecated */
@@ -62,20 +56,31 @@ declare module './Types' {
             positions?: Array<number>,
             closestDistance?: number,
             findHigherRanks?: boolean
-        ): Highcharts.AxisTickPositionsArray;
+        ): TickPositionsArray;
         /** @deprecated */
         lin2val(val: number, fromIndex?: boolean): number;
         /** @deprecated */
         val2lin(val: number, toIndex?: boolean): number;
     }
+}
+
+declare module './AxisOptions' {
+    interface AxisOptions {
+        keepOrdinalPadding?: boolean;
+    }
+}
+
+declare module './TimeTicksInfoObject' {
+    interface TimeTicksInfoObject extends Highcharts.DateTimeAxisNormalizedObject {
+        segmentStarts?: Array<number>;
+    }
+}
+
+declare module './AxisType' {
     interface AxisTypeRegistry {
         OrdinalAxis: OrdinalAxis;
     }
 }
-
-import Chart from '../Chart/Chart.js';
-// Has a dependency on Navigator due to the use of Axis.toFixedRange
-import '../Navigator.js';
 
 /* eslint-disable valid-jsdoc */
 
@@ -95,7 +100,7 @@ interface OrdinalAxis extends Axis {
         positions?: Array<number>,
         closestDistance?: number,
         findHigherRanks?: boolean
-    ): Highcharts.AxisTickPositionsArray;
+    ): TickPositionsArray;
     lin2val(val: number, fromIndex?: boolean): number;
     val2lin(val: number, toIndex?: boolean): number;
 }
@@ -394,7 +399,7 @@ namespace OrdinalAxis {
                     series: [],
                     chart: chart,
                     forceOrdinal: false,
-                    getExtremes: function (): Highcharts.ExtremesObject {
+                    getExtremes: function (): Axis.ExtremesObject {
                         return {
                             min: extremes.dataMin,
                             max: extremes.dataMax + (overscroll as any)
@@ -645,7 +650,7 @@ namespace OrdinalAxis {
             positions: Array<number> = [],
             closestDistance: number = 0,
             findHigherRanks?: boolean
-        ): Highcharts.AxisTickPositionsArray {
+        ): TickPositionsArray {
 
             let start = 0,
                 end,
@@ -655,7 +660,7 @@ namespace OrdinalAxis {
                 info,
                 posLength,
                 outsideMax,
-                groupPositions = [] as Highcharts.AxisTickPositionsArray,
+                groupPositions = [] as TickPositionsArray,
                 lastGroupPosition = -Number.MAX_VALUE,
                 tickPixelIntervalOption = this.options.tickPixelInterval,
                 time = this.chart.time,

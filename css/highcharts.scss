@@ -91,6 +91,8 @@ $negative-color: #f21313; // Negative indicator color
     font-family: $font-family;
     font-size: 12px;
     user-select: none;
+    touch-action: manipulation;
+    outline: none;
 }
 .highcharts-root {
     display: block;

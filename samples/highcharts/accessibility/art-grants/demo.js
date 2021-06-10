@@ -25,8 +25,7 @@ Highcharts.chart('container', {
             seriesNavigation: {
                 mode: 'serialize'
             }
-        },
-        landmarkVerbosity: 'one'
+        }
     },
 
     title: {

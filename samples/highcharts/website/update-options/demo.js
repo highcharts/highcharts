@@ -902,7 +902,7 @@ $('document').ready(function () {
                     label: {
                         useHTML: true,
                         formatter: function () {
-                            return '<div style="' + display + '"><img height=15 style="border:1px solid #ccc" src="https://cdn.rawgit.com/highcharts/highcharts/21f272733db68faeaa77a23073ff2d1d73963f96/samples/graphics/homepage/p' + (ii + 1) + '.png"> Zone' + (ii) + '</div>';
+                            return '<div style="' + display + '"><img height=15 style="border:1px solid #ccc" src="https://www.highcharts.com/samples/graphics/homepage/p' + (ii + 1) + '.png"> Zone' + (ii) + '</div>';
                         }
                     },
                     align: 'left'

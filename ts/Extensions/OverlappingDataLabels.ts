@@ -57,7 +57,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
         labels = labels.concat(collector());
     });
 
-    (this.yAxis || []).forEach(function (yAxis: Highcharts.Axis): void {
+    (this.yAxis || []).forEach(function (yAxis): void {
         if (
             yAxis.stacking &&
             yAxis.options.stackLabels &&
@@ -69,7 +69,12 @@ addEvent(Chart, 'render', function collectAndHide(): void {
                 objectEach(stack, function (
                     stackItem: Highcharts.StackItem
                 ): void {
-                    labels.push(stackItem.label);
+                    if (
+                        stackItem.label &&
+                        stackItem.label.visibility !== 'hidden' // #15607
+                    ) {
+                        labels.push(stackItem.label);
+                    }
                 });
             });
         }
@@ -311,7 +316,6 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
                     if (!chart.styledMode) {
                         label.css({ pointerEvents: newOpacity ? 'auto' : 'none' });
                     }
-                    label.visibility = newOpacity ? 'inherit' : 'hidden';
                 };
 
                 isLabelAffected = true;

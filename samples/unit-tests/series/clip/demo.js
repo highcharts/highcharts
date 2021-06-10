@@ -128,8 +128,26 @@ QUnit.test('General series clip tests', assert => {
 
 QUnit.test('Each series should have their own clip-path, (#14549).', assert => {
     const chart = Highcharts.stockChart('container', {
-
+        chart: {
+            height: 300,
+            events: {
+                load() {
+                    this.setSize(null, 400, false);
+                }
+            }
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
     });
+
+    assert.strictEqual(
+        chart.series[0].clipBox.height,
+        chart.clipBox.height,
+        '#15400: clipBox should have been updated by setSize in load event'
+    );
+
+    chart.series[0].remove();
 
     chart.addAxis({
         id: 'line',

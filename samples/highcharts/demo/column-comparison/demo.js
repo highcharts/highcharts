@@ -154,10 +154,12 @@ var chart = Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Summer Olympics 2016 - Top 5 countries by Gold medals'
+        text: 'Summer Olympics 2016 - Top 5 countries by Gold medals',
+        align: 'left'
     },
     subtitle: {
-        text: 'Comparing to results from Summer Olympics 2012 - Source: <a href="https://en.wikipedia.org/wiki/2016_Summer_Olympics_medal_table">Wikipedia</a>'
+        text: 'Comparing to results from Summer Olympics 2012 - Source: <a href="https://en.wikipedia.org/wiki/2016_Summer_Olympics_medal_table">Wikipedia</a>',
+        align: 'left'
     },
     plotOptions: {
         series: {

@@ -12,11 +12,12 @@
 
 'use strict';
 
-import type Chart from '../Core/Chart/Chart';
 import type {
     DOMElementType,
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
+
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
     doc,
@@ -62,6 +63,7 @@ declare global {
             public modules: Array<KeyboardNavigationHandler>;
             public pointerIsOverChart?: boolean;
             public tabindexContainer: HTMLDOMElement;
+            public tabbingInBackwards?: boolean;
             public addExitAnchorEventsToEl(element: DOMElementType): void;
             public createExitAnchor(): void;
             public destroy(): void;
@@ -104,7 +106,7 @@ addEvent(doc, 'keydown', (e: KeyboardEvent): void => {
 /**
  * Dismiss popup content in chart, including export menu and tooltip.
  */
-H.Chart.prototype.dismissPopupContent = function (): void {
+Chart.prototype.dismissPopupContent = function (): void {
     const chart = this;
 
     fireEvent(this, 'dismissPopupContent', {}, function (): void {
@@ -246,7 +248,13 @@ KeyboardNavigation.prototype = {
         );
 
         // Init keyboard nav if tabbing into chart
-        if (!this.exiting && !this.isClickingChart && !focusComesFromChart && this.modules[0]) {
+        if (
+            !this.exiting &&
+            !this.tabbingInBackwards &&
+            !this.isClickingChart &&
+            !focusComesFromChart &&
+            this.modules[0]
+        ) {
             this.modules[0].init(1);
         }
 
@@ -505,7 +513,10 @@ KeyboardNavigation.prototype = {
                     );
 
                 if (comingInBackwards) {
+                    // Focus the container instead
+                    keyboardNavigation.tabbingInBackwards = true;
                     keyboardNavigation.tabindexContainer.focus();
+                    delete keyboardNavigation.tabbingInBackwards;
                     e.preventDefault();
 
                     // Move to last valid keyboard nav module

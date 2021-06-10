@@ -80,6 +80,7 @@ export interface CSSObject {
     overflow?: string;
     overflowX?: string;
     overflowY?: string;
+    outline?: string;
     padding?: number|string;
     pointerEvents?: string;
     'pointer-events'?: string;

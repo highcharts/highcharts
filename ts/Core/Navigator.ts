@@ -10,12 +10,25 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    AxisOptions,
+    YAxisOptions
+} from './Axis/AxisOptions';
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
 import type PointerEvent from './PointerEvent';
+import type RangeSelector from '../Extensions/RangeSelector';
+import type ScrollbarOptions from './ScrollbarOptions';
 import type { SeriesTypeOptions } from './Series/SeriesType';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
+
 import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
 import Color from './Color/Color.js';
@@ -28,9 +41,10 @@ const {
     isTouchDevice
 } = H;
 import NavigatorAxis from './Axis/NavigatorAxis.js';
-import O from './Options.js';
-const { defaultOptions } = O;
-import palette from './Color/Palette.js';
+import D from './DefaultOptions.js';
+const { defaultOptions } = D;
+import Palette from './Color/Palette.js';
+import RendererRegistry from './Renderer/RendererRegistry.js';
 import Scrollbar from './Scrollbar.js';
 import Series from './Series/Series.js';
 import SeriesRegistry from './Series/SeriesRegistry.js';
@@ -53,11 +67,35 @@ const {
     splat
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './Axis/AxisOptions' {
+    interface AxisOptions {
+        maxRange?: number;
+        toFixedRange?: (
+            pxMin: number,
+            pxMax: number,
+            fixedMin: number,
+            fixedMax: number
+        ) => RangeSelector.RangeObject;
+    }
+}
+
 declare module './Chart/ChartLike'{
     interface ChartLike {
         navigator?: Navigator;
         scrollbar?: Scrollbar;
         scroller?: Navigator;
+    }
+}
+
+declare module './Options'{
+    interface Options {
+        navigator?: Highcharts.NavigatorOptions;
     }
 }
 
@@ -106,20 +144,8 @@ declare global {
             outlineWidth?: number;
             series?: SeriesTypeOptions;
             top?: number;
-            xAxis?: DeepPartial<XAxisOptions>;
+            xAxis?: DeepPartial<AxisOptions>;
             yAxis?: DeepPartial<YAxisOptions>;
-        }
-        interface Options {
-            navigator?: NavigatorOptions;
-        }
-        interface XAxisOptions {
-            maxRange?: number;
-            toFixedRange?: (
-                pxMin: number,
-                pxMax: number,
-                fixedMin: number,
-                fixedMax: number
-            ) => RangeObject;
         }
         class Navigator {
             public constructor(chart: Chart);
@@ -218,6 +244,10 @@ declare global {
                 addEvent: boolean,
                 redraw?: boolean
             ): void;
+            public shouldStickToMin(
+                baseSeries: Series,
+                navigator: Navigator
+            ): boolean|undefined;
         }
     }
 }
@@ -418,14 +448,14 @@ extend(defaultOptions, {
              *
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            backgroundColor: palette.neutralColor5,
+            backgroundColor: Palette.neutralColor5,
 
             /**
              * The stroke for the handle border and the stripes inside.
              *
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            borderColor: palette.neutralColor40
+            borderColor: Palette.neutralColor40
         },
 
         /**
@@ -443,7 +473,7 @@ extend(defaultOptions, {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default rgba(102,133,194,0.3)
          */
-        maskFill: color(palette.highlightColor60).setOpacity(0.3).get(),
+        maskFill: color(Palette.highlightColor60).setOpacity(0.3).get(),
 
         /**
          * The color of the line marking the currently zoomed area in the
@@ -455,7 +485,7 @@ extend(defaultOptions, {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #cccccc
          */
-        outlineColor: palette.neutralColor20,
+        outlineColor: Palette.neutralColor20,
 
         /**
          * The width of the line marking the currently zoomed area in the
@@ -667,7 +697,7 @@ extend(defaultOptions, {
 
             lineWidth: 0,
 
-            gridLineColor: palette.neutralColor10,
+            gridLineColor: Palette.neutralColor10,
 
             gridLineWidth: 1,
 
@@ -682,7 +712,7 @@ extend(defaultOptions, {
                  */
                 style: {
                     /** @ignore */
-                    color: palette.neutralColor40
+                    color: Palette.neutralColor40
                 },
 
                 x: 3,
@@ -769,12 +799,8 @@ extend(defaultOptions, {
  * @return {Highcharts.SVGPathArray}
  *         Path to be used in a handle
  */
-H.Renderer.prototype.symbols['navigator-handle'] = function (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    options?: Highcharts.SymbolOptionsObject
+RendererRegistry.getRendererType().prototype.symbols['navigator-handle'] = function (
+    _x, _y, _w, _h, options
 ): SVGPath {
     const halfWidth = (options && options.width || 0) / 2,
         markerPosition = Math.round(halfWidth / 3) + 0.5,
@@ -836,10 +862,10 @@ class Navigator {
     public range: number = void 0 as any;
     public rendered: boolean = void 0 as any;
     public reversedExtremes?: boolean;
-    public scrollbar?: Highcharts.Scrollbar;
+    public scrollbar?: Scrollbar;
     public scrollbarEnabled?: boolean;
     public scrollbarHeight?: number;
-    public scrollbarOptions?: Highcharts.ScrollbarOptions;
+    public scrollbarOptions?: ScrollbarOptions;
     public series?: Array<Series>;
     public shades: Array<SVGElement> = void 0 as any;
     public size: number = void 0 as any;
@@ -1888,7 +1914,7 @@ class Navigator {
 
         if (navigator.navigatorEnabled) {
             // an x axis is required for scrollbar also
-            navigator.xAxis = new Axis(chart, merge<DeepPartial<Highcharts.XAxisOptions>>({
+            navigator.xAxis = new Axis(chart, merge<DeepPartial<AxisOptions>>({
                 // inherit base xAxis' break and ordinal options
                 breaks: baseXaxis.options.breaks,
                 ordinal: baseXaxis.options.ordinal
@@ -1915,7 +1941,7 @@ class Navigator {
             })) as NavigatorAxis;
 
             navigator.yAxis = new Axis(chart, merge(
-                navigatorOptions.yAxis as Highcharts.YAxisOptions,
+                navigatorOptions.yAxis,
                 {
                     id: 'navigator-y-axis',
                     alignTicks: false,
@@ -2017,14 +2043,13 @@ class Navigator {
         if ((chart.options.scrollbar as any).enabled) {
             chart.scrollbar = navigator.scrollbar = new Scrollbar(
                 chart.renderer,
-                merge(chart.options.scrollbar as Highcharts.ScrollbarOptions, {
+                merge(chart.options.scrollbar, {
                     margin: navigator.navigatorEnabled ? 0 : 10,
                     vertical: chart.inverted
-                } as Highcharts.ScrollbarOptions),
+                } as DeepPartial<ScrollbarOptions>),
                 chart
             );
             addEvent(navigator.scrollbar, 'changed', function (
-                this: Highcharts.Scrollbar,
                 e: PointerEvent
             ): void {
                 const range = navigator.size,
@@ -2450,7 +2475,7 @@ class Navigator {
      * @private
      * @function Highcharts.Navigator#modifyBaseAxisExtremes
      */
-    public modifyBaseAxisExtremes(this: Highcharts.Axis): void {
+    public modifyBaseAxisExtremes(this: Axis): void {
         let baseXAxis = this,
             navigator = baseXAxis.chart.navigator,
             baseExtremes = baseXAxis.getExtremes(),
@@ -2527,8 +2552,7 @@ class Navigator {
     public updatedDataHandler(this: Series): void {
         const navigator = this.chart.navigator as Highcharts.Navigator,
             baseSeries = this,
-            navigatorSeries = this.navigatorSeries,
-            xDataMin = navigator.getBaseSeriesMin((baseSeries.xData as any)[0]);
+            navigatorSeries = this.navigatorSeries;
 
         // If the scrollbar is scrolled all the way to the right, keep right as
         // new data  comes in.
@@ -2536,12 +2560,7 @@ class Navigator {
             Math.round(navigator.zoomedMin) === 0 :
             Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
 
-        // Detect whether the zoomed area should stick to the minimum or
-        // maximum. If the current axis minimum falls outside the new updated
-        // dataset, we must adjust.
-        navigator.stickToMin = isNumber(baseSeries.xAxis.min) &&
-            ((baseSeries.xAxis.min as any) <= xDataMin) &&
-            (!this.chart.fixedRange || !navigator.stickToMax);
+        navigator.stickToMin = navigator.shouldStickToMin(baseSeries, navigator);
 
         // Set the navigator series data to the new data of the base series
         if (navigatorSeries && !navigator.hasNavigatorData) {
@@ -2553,6 +2572,36 @@ class Navigator {
                 false
             ); // #5414
         }
+    }
+
+    /**
+     * Detect if the zoomed area should stick to the minimum, #14742.
+     *
+     * @private
+     * @function Highcharts.Navigator#shouldStickToMin
+     */
+    public shouldStickToMin(baseSeries: Series, navigator: Navigator): boolean|undefined {
+        const xDataMin = navigator.getBaseSeriesMin((baseSeries.xData as any)[0]),
+            xAxis = baseSeries.xAxis,
+            max = xAxis.max,
+            min = xAxis.min,
+            range = xAxis.options.range;
+
+        let stickToMin: boolean = true;
+
+        if (isNumber(max) && isNumber(min)) {
+            // If range declared, stick to the minimum only if the range
+            // is smaller than the data set range.
+            if (range && max - xDataMin > 0) {
+                stickToMin = max - xDataMin < range && (!this.chart.fixedRange);
+            } else {
+                // If the current axis minimum falls outside the new
+                // updated dataset, we must adjust.
+                stickToMin = min <= xDataMin;
+            }
+        }
+
+        return stickToMin;
     }
 
     /**
@@ -2721,7 +2770,10 @@ if (!H.Navigator) {
                     this.spacing[3] + (scrollbarHeight as any);
                 navigator.top = this.plotTop + (scrollbarHeight as any);
             } else {
-                navigator.left = this.plotLeft + (scrollbarHeight as any);
+                navigator.left = pick(
+                    xAxis.left,
+                    this.plotLeft + (scrollbarHeight as any)
+                );
                 navigator.top = (navigator.navigatorOptions.top as any) ||
                     this.chartHeight -
                     navigator.height -
@@ -2826,5 +2878,11 @@ if (!H.Navigator) {
 }
 
 H.Navigator = Navigator;
+
+declare module './Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        'navigator-handle': SymbolFunction;
+    }
+}
 
 export default H.Navigator;

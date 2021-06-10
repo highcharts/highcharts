@@ -16,9 +16,9 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from './Renderer/DOMElementType';
+import type EventCallback from './EventCallback';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
-import type SVGElement from './Renderer/SVG/SVGElement';
 
 import H from './Globals.js';
 const {
@@ -35,77 +35,6 @@ const {
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
 type NullType = (null|undefined);
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    type DeepPartial<T> = {
-        [P in keyof T]?: (T[P]|DeepPartial<T[P]>);
-    }
-    type DeepRecord<K extends keyof any, T> = {
-        [P in K]: (T|DeepRecord<K, T>);
-    }
-    interface Math {
-        easeInOutSine(pos: number): number;
-    }
-    namespace Highcharts {
-        type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
-        type RelativeSize = (number|string);
-        interface Class<T = any> extends Function {
-            new(...args: Array<any>): T;
-        }
-        interface ErrorMessageEventObject {
-            chart?: Chart;
-            code: number;
-            message?: string;
-            params?: Record<string, string>;
-        }
-        interface EventCallbackFunction<T> {
-            (this: T, eventArguments: (AnyRecord|Event)): (boolean|void);
-        }
-        interface EventOptionsObject {
-            order?: number;
-            passive?: boolean;
-        }
-        interface EventWrapperObject<T> {
-            fn: Highcharts.EventCallbackFunction<T>;
-            order: number;
-        }
-        interface FormatterCallbackFunction<T> {
-            (this: T): string;
-        }
-        interface ObjectEachCallbackFunction<TObject, TContext> {
-            (
-                this: TContext,
-                value: TObject[keyof TObject],
-                key: keyof TObject,
-                obj: TObject
-            ): void;
-        }
-        interface OffsetObject {
-            height: number;
-            left: number;
-            top: number;
-            width: number;
-        }
-        interface Timer {
-            (gotoEnd?: boolean): boolean;
-            elem?: (HTMLDOMElement|SVGElement);
-            prop?: string;
-            stopped?: boolean;
-        }
-        interface RangeObject {
-            max: number;
-            min: number;
-        }
-        interface WrapProceedFunction {
-            (...args: Array<any>): any;
-        }
-        let timeUnits: Record<string, number>;
-    }
-}
 
 /**
  * An animation configuration. Animation configurations can also be defined as
@@ -519,47 +448,17 @@ function error(
         message += additionalMessages;
     }
 
-    fireEvent(H, 'displayError', { chart, code, message, params }, defaultHandler);
+    fireEvent(
+        H,
+        'displayError',
+        { chart, code, message, params },
+        defaultHandler
+    );
 
     error.messages.push(message);
 }
 namespace error {
     export const messages: Array<string> = [];
-}
-
-// eslint-disable-next-line valid-jsdoc
-/**
- * Reduces tree-like objects to a simple object with keys in dot syntax.
- * @private
- */
-function flat(
-    obj: AnyRecord
-): AnyRecord {
-    const flatObject: AnyRecord = {},
-        hasOwnProperty = {}.hasOwnProperty,
-        keys = Object.keys(obj);
-    for (let i = 0, iEnd = keys.length, name: string; i < iEnd; ++i) {
-        name = keys[i];
-        if (hasOwnProperty.call(obj, name)) {
-            if (obj[name] instanceof Array) {
-                flatObject[name] = obj[name].map(flat);
-            } else if (
-                typeof obj[name] === 'object' &&
-                obj[name] !== null &&
-                obj[name].constructor === Object
-            ) {
-                const subObj = flat(obj[name]);
-                Object
-                    .getOwnPropertyNames(subObj)
-                    .forEach(function (subName: string): void {
-                        flatObject[`${name}.${subName}`] = subObj[subName];
-                    });
-            } else {
-                flatObject[name] = obj[name];
-            }
-        }
-    }
-    return flatObject;
 }
 
 function merge<T = object>(
@@ -837,7 +736,7 @@ function isDOMElement(obj: unknown): obj is HTMLDOMElement {
  * @return {boolean}
  *         True if the argument is a class.
  */
-function isClass(obj: (object|undefined)): obj is Highcharts.Class<any> {
+function isClass(obj: (object|undefined)): obj is Utilities.Class<any> {
     const c: (Function|undefined) = obj && obj.constructor;
 
     return !!(
@@ -1193,10 +1092,10 @@ function createElement(
  *         A new prototype.
  */
 function extendClass <T, TReturn = T>(
-    parent: Highcharts.Class<T>,
+    parent: Utilities.Class<T>,
     members: any
-): Highcharts.Class<TReturn> {
-    const obj: Highcharts.Class<TReturn> = (function (): void {}) as any;
+): Utilities.Class<TReturn> {
+    const obj: Utilities.Class<TReturn> = (function (): void {}) as any;
 
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
@@ -1249,7 +1148,7 @@ function pad(number: number, length?: number, padder?: string): string {
  *         The computed length.
  */
 function relativeLength(
-    value: Highcharts.RelativeSize,
+    value: Utilities.RelativeSize,
     base: number,
     offset?: number
 ): number {
@@ -1278,7 +1177,7 @@ function relativeLength(
 function wrap(
     obj: any,
     method: string,
-    func: Highcharts.WrapProceedFunction
+    func: Utilities.WrapProceedFunction
 ): void {
     const proceed = obj[method];
 
@@ -1779,7 +1678,6 @@ function inArray(item: any, arr: Array<any>, fromIndex?: number): number {
     return arr.indexOf(item, fromIndex);
 }
 
-/* eslint-disable valid-jsdoc */
 /**
  * Return the value of the first element in the array that satisfies the
  * provided testing function.
@@ -1797,12 +1695,17 @@ function inArray(item: any, arr: Array<any>, fromIndex?: number): number {
  *         The value of the element.
  */
 const find = (Array.prototype as any).find ?
-    /* eslint-enable valid-jsdoc */
-    function<T> (arr: Array<T>, callback: Function): (T|undefined) {
+    function<T> (
+        arr: Array<T>,
+        callback: Utilities.FindCallback<T>
+    ): (T|undefined) {
         return (arr as any).find(callback as any);
     } :
     // Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
-    function<T> (arr: Array<T>, callback: Function): (T|undefined) {
+    function<T> (
+        arr: Array<T>,
+        callback: Utilities.FindCallback<T>
+    ): (T|undefined) {
         let i;
         const length = arr.length;
 
@@ -1842,7 +1745,7 @@ function keys(obj: any): Array<string> {
  *         An object containing `left` and `top` properties for the position in
  *         the page.
  */
-function offset(el: Element): Highcharts.OffsetObject {
+function offset(el: Element): Utilities.OffsetObject {
     const docElem = doc.documentElement,
         box = (el.parentElement || el.parentNode) ?
             el.getBoundingClientRect() :
@@ -1880,7 +1783,7 @@ function offset(el: Element): Highcharts.OffsetObject {
  */
 function objectEach<TObject, TContext>(
     obj: TObject,
-    fn: Highcharts.ObjectEachCallbackFunction<TObject, TContext>,
+    fn: Utilities.ObjectEachCallback<TObject, TContext>,
     ctx?: TContext
 ): void {
     /* eslint-enable valid-jsdoc */
@@ -2024,10 +1927,10 @@ objectEach({
  *         A callback function to remove the added event.
  */
 function addEvent<T>(
-    el: (Highcharts.Class<T>|T),
+    el: (Utilities.Class<T>|T),
     type: string,
-    fn: (Highcharts.EventCallbackFunction<T>|Function),
-    options: Highcharts.EventOptionsObject = {}
+    fn: (EventCallback<T>|Function),
+    options: Utilities.EventOptions = {}
 ): Function {
     /* eslint-enable valid-jsdoc */
 
@@ -2083,8 +1986,8 @@ function addEvent<T>(
 
     // Order the calls
     events[type].sort((
-        a: Highcharts.EventWrapperObject<T>,
-        b: Highcharts.EventWrapperObject<T>
+        a: Utilities.EventWrapperObject<T>,
+        b: Utilities.EventWrapperObject<T>
     ): number => a.order - b.order);
 
     // Return a function that can be called to remove this event.
@@ -2113,9 +2016,9 @@ function addEvent<T>(
  * @return {void}
  */
 function removeEvent<T>(
-    el: (Highcharts.Class<T>|T),
+    el: (Utilities.Class<T>|T),
     type?: string,
-    fn?: (Highcharts.EventCallbackFunction<T>|Function)
+    fn?: (EventCallback<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */
 
@@ -2127,7 +2030,7 @@ function removeEvent<T>(
      */
     function removeOneEvent(
         type: string,
-        fn: (Highcharts.EventCallbackFunction<T>|Function)
+        fn: (EventCallback<T>|Function)
     ): void {
         const removeEventListener = (
             (el as any).removeEventListener || H.removeEventListenerPolyfill
@@ -2174,7 +2077,7 @@ function removeEvent<T>(
         if (type) {
             const typeEvents = (
                 events[type] || []
-            ) as Highcharts.EventWrapperObject<T>[];
+            ) as Utilities.EventWrapperObject<T>[];
 
             if (fn) {
                 events[type] = typeEvents.filter(
@@ -2222,7 +2125,7 @@ function fireEvent<T>(
     el: T,
     type: string,
     eventArguments?: (AnyRecord|Event),
-    defaultFunction?: (Highcharts.EventCallbackFunction<T>|Function)
+    defaultFunction?: (EventCallback<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */
     let e,
@@ -2273,7 +2176,7 @@ function fireEvent<T>(
             });
         }
 
-        const events: Array<Highcharts.EventWrapperObject<any>> = [];
+        const events: Array<Utilities.EventWrapperObject<any>> = [];
         let object: any = el;
         let multilevel = false;
 
@@ -2298,8 +2201,8 @@ function fireEvent<T>(
         if (multilevel) {
             // Order the calls
             events.sort((
-                a: Highcharts.EventWrapperObject<T>,
-                b: Highcharts.EventWrapperObject<T>
+                a: Utilities.EventWrapperObject<T>,
+                b: Utilities.EventWrapperObject<T>
             ): number => a.order - b.order);
         }
 
@@ -2436,42 +2339,8 @@ if ((win as any).jQuery) {
     };
 }
 
-// eslint-disable-next-line valid-jsdoc
-/**
- * Reconstructs object keys in dot syntax to tree-like objects.
- * @private
- */
-function unflat(
-    flatObj: Record<string, any>
-): Record<string, any> {
-    const obj: Record<string, any> = {};
-    Object
-        .getOwnPropertyNames(flatObj)
-        .forEach(function (name: string): void {
-            if (name.indexOf('.') === -1) {
-                if (flatObj[name] instanceof Array) {
-                    obj[name] = flatObj[name].map(unflat);
-                } else {
-                    obj[name] = flatObj[name];
-                }
-            } else {
-                const subNames = name.split('.'),
-                    subObj = subNames
-                        .slice(0, -1)
-                        .reduce(function (
-                            subObj: Record<string, any>,
-                            subName: string
-                        ): Record<string, any> {
-                            return (subObj[subName] = (subObj[subName] || {}));
-                        }, obj);
-                subObj[(subNames.pop() || '')] = flatObj[name];
-            }
-        });
-    return obj;
-}
-
 // TODO use named exports when supported.
-const utilitiesModule = {
+const Utilities = {
     addEvent,
     arrayMax,
     arrayMin,
@@ -2491,7 +2360,6 @@ const utilitiesModule = {
     extendClass,
     find,
     fireEvent,
-    flat,
     getMagnitude,
     getNestedProperty,
     getStyle,
@@ -2517,10 +2385,53 @@ const utilitiesModule = {
     stableSort,
     syncTimeout,
     timeUnits,
-    unflat,
     uniqueKey,
     useSerialIds,
     wrap
 };
 
-export default utilitiesModule;
+namespace Utilities {
+    export type RelativeSize = (number|string);
+    export interface Class<T = any> extends Function {
+        new(...args: Array<any>): T;
+    }
+    export interface ErrorMessageEventObject {
+        chart?: Chart;
+        code: number;
+        message?: string;
+        params?: Record<string, string>;
+    }
+    export interface EventOptions {
+        order?: number;
+        passive?: boolean;
+    }
+    export interface EventWrapperObject<T> {
+        fn: EventCallback<T>;
+        order: number;
+    }
+    export interface FindCallback<T> {
+        (
+            value: T,
+            index: number
+        ): unknown;
+    }
+    export interface ObjectEachCallback<TObject, TContext> {
+        (
+            this: TContext,
+            value: TObject[keyof TObject],
+            key: keyof TObject,
+            obj: TObject
+        ): void;
+    }
+    export interface OffsetObject {
+        height: number;
+        left: number;
+        top: number;
+        width: number;
+    }
+    export interface WrapProceedFunction {
+        (...args: Array<any>): any;
+    }
+}
+
+export default Utilities;

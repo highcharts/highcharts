@@ -22,8 +22,8 @@ const {
     isFirefox
 } = H;
 import NavigationBindings from './NavigationBindings.js';
-import O from '../../Core/Options.js';
-const { getOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { getOptions } = D;
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -47,13 +47,14 @@ const {
 declare global {
     namespace Highcharts {
         class Popup {
-            public constructor(parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart);
+            public constructor(parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart);
             public annotations: PopupAnnotationsObject;
             public container: HTMLDOMElement;
             public iconsURL: string;
             public indicators: PopupIndicatorsObject;
             public lang: Record<string, string>;
             public popup: Popup;
+            public chart?: Chart;
             public tabs: PopupTabsObject;
             public addButton (
                 parentDiv: HTMLDOMElement,
@@ -69,7 +70,7 @@ declare global {
             public deselectAll(): void;
             public getFields(parentDiv: HTMLDOMElement, type: string): PopupFieldsObject;
             public getLangpack(): Record<string, string>;
-            public init(parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart): void;
+            public init(parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart): void;
             public showForm(
                 type: string,
                 chart: AnnotationChart,
@@ -183,7 +184,7 @@ wrap(Pointer.prototype, 'onContainerMouseDown', function (this: Pointer, proceed
     }
 });
 
-H.Popup = function (this: Highcharts.Popup, parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart): void {
+H.Popup = function (this: Highcharts.Popup, parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart): void {
     this.init(parentDiv, iconsURL, chart);
 } as any;
 
@@ -196,12 +197,12 @@ H.Popup.prototype = {
      * @param {string} iconsURL
      * Icon URL
      */
-    init: function (parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart): void {
+    init: function (parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart): void {
         this.chart = chart;
 
         // create popup div
         this.container = createElement(DIV, {
-            className: PREFIX + 'popup'
+            className: PREFIX + 'popup highcharts-no-tooltip'
         }, null as any, parentDiv);
 
         this.lang = this.getLangpack();
@@ -218,18 +219,26 @@ H.Popup.prototype = {
         let _self = this,
             closeBtn: HTMLDOMElement;
 
+        const iconsURL = this.iconsURL;
+
         // create close popup btn
         closeBtn = createElement(DIV, {
             className: PREFIX + 'popup-close'
         }, null as any, this.container);
 
         closeBtn.style['background-image' as any] = 'url(' +
-                this.iconsURL + 'close.svg)';
+                (
+                    iconsURL.match(/png|svg|jpeg|jpg|gif/ig) ?
+                        iconsURL : iconsURL + 'close.svg'
+                ) + ')';
 
         ['click', 'touchstart'].forEach(function (eventName: string): void {
             addEvent(closeBtn, eventName, function (): void {
-
-                fireEvent(_self.chart.navigationBindings, 'closePopup');
+                if (_self.chart) {
+                    fireEvent(_self.chart.navigationBindings, 'closePopup');
+                } else {
+                    _self.closePopup();
+                }
             });
         });
     },
@@ -434,7 +443,11 @@ H.Popup.prototype = {
      * @private
      */
     closePopup: function (): void {
-        this.popup.container.style.display = 'none';
+        const container = pick(
+            this.popup && this.popup.container,
+            this.container
+        );
+        container.style.display = 'none';
     },
     /**
      * Create content and show popup.
@@ -450,6 +463,10 @@ H.Popup.prototype = {
         options: Highcharts.AnnotationsOptions,
         callback: Function
     ): void {
+
+        if (!chart) {
+            return;
+        }
 
         this.popup = chart.navigationBindings.popup;
 
@@ -512,7 +529,9 @@ H.Popup.prototype = {
             }
 
             // set position
-            popupDiv.style.top = chart.plotTop + 10 + 'px';
+            if (chart) {
+                popupDiv.style.top = chart.plotTop + 10 + 'px';
+            }
 
             // create label
             createElement(SPAN, void 0, void 0, popupDiv).appendChild(
@@ -582,6 +601,10 @@ H.Popup.prototype = {
                 lang = this.lang,
                 bottomRow,
                 lhsCol;
+
+            if (!chart) {
+                return;
+            }
 
             // create title of annotations
             lhsCol = createElement('h2', {
@@ -653,6 +676,10 @@ H.Popup.prototype = {
                 lang = this.lang,
                 parentFullName,
                 titleName;
+
+            if (!chart) {
+                return;
+            }
 
             objectEach(options, function (value, option: string): void {
 
@@ -744,6 +771,10 @@ H.Popup.prototype = {
                 lang = this.lang,
                 buttonParentDiv;
 
+            if (!chart) {
+                return;
+            }
+
             // add tabs
             this.tabs.init.call(this, chart);
 
@@ -822,6 +853,10 @@ H.Popup.prototype = {
                 rhsColWrapper: Element,
                 indicatorList: HTMLDOMElement,
                 item: HTMLDOMElement;
+
+            if (!chart) {
+                return;
+            }
 
             // create wrapper for list
             indicatorList = createElement(UL, {
@@ -943,6 +978,10 @@ H.Popup.prototype = {
                 lang = this.lang,
                 selectBox: HTMLSelectElement,
                 seriesOptions;
+
+            if (!chart) {
+                return;
+            }
 
             createElement(
                 LABEL, {
@@ -1107,6 +1146,10 @@ H.Popup.prototype = {
                 addInput = this.addInput,
                 parentFullName;
 
+            if (!chart) {
+                return;
+            }
+
             objectEach(fields, function (value, fieldName): void {
                 // create name like params.styles.fontSize
                 parentFullName = parentNode + '.' + fieldName;
@@ -1170,6 +1213,10 @@ H.Popup.prototype = {
             let tabs = this.tabs,
                 indicatorsCount = this.indicators.getAmount.call(chart),
                 firstTab; // run by default
+
+            if (!chart) {
+                return;
+            }
 
             // create menu items
             firstTab = tabs.addMenuItem.call(this, 'add');
@@ -1336,3 +1383,5 @@ addEvent(NavigationBindings, 'closePopup', function (this: NavigationBindings): 
         this.popup.closePopup();
     }
 });
+
+export default H.Popup;

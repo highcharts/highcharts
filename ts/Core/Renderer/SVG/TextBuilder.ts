@@ -8,28 +8,41 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     DOMElementType,
     SVGDOMElement
 } from '../DOMElementType';
 import type SVGAttributes from './SVGAttributes';
 import type SVGElement from './SVGElement';
+import type SVGRenderer from './SVGRenderer';
 
-import H from '../../Globals.js';
-import U from '../../Utilities.js';
 import AST from '../HTML/AST.js';
+import H from '../../Globals.js';
 const {
     doc,
     SVG_NS
 } = H;
-
+import U from '../../Utilities.js';
 const {
     attr,
-    erase,
     isString,
     objectEach,
     pick
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * SVG Text Builder
@@ -56,7 +69,7 @@ class TextBuilder {
     public ellipsis: boolean;
     public fontSize: any;
     public noWrap: boolean;
-    public renderer: Highcharts.Renderer;
+    public renderer: SVGRenderer;
     public svgElement: SVGElement;
     public textLineHeight: any;
     public textOutline: any;
@@ -177,12 +190,19 @@ class TextBuilder {
 
         const wrapper = this.svgElement;
         const x = attr(wrapper.element, 'x');
+        wrapper.firstLineMetrics = void 0;
 
         // Modify hard line breaks by applying the rendered line height
         [].forEach.call(
             wrapper.element.querySelectorAll('tspan.highcharts-br'),
-            (br: SVGDOMElement): void => {
+            (br: SVGDOMElement, i): void => {
                 if (br.nextSibling && br.previousSibling) { // #5261
+
+                    if (i === 0 && br.previousSibling.nodeType === 1) {
+                        wrapper.firstLineMetrics = wrapper.renderer
+                            .fontMetrics(void 0, br.previousSibling as any);
+                    }
+
                     attr(br, {
                         // Since the break is inserted in front of the next
                         // line, we need to use the next sibling for the line
@@ -370,10 +390,10 @@ class TextBuilder {
      * @return {void}
      */
     private modifyTree(
-        nodes: Highcharts.ASTNode[]
+        nodes: AST.Node[]
     ): void {
 
-        const modifyChild = (node: Highcharts.ASTNode, i: number): void => {
+        const modifyChild = (node: AST.Node, i: number): void => {
             const tagName = node.tagName;
             const styledMode = this.renderer.styledMode;
             const attributes = node.attributes || {};

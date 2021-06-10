@@ -16,6 +16,7 @@ import type {
     SMAOptions,
     SMAParamsOptions
 } from '../SMA/SMAOptions';
+import type TooltipOptions from '../../../Core/TooltipOptions';
 
 /* *
  *
@@ -25,7 +26,7 @@ import type {
 
 export interface LinearRegressionOptions extends SMAOptions {
     params?: LinearRegressionParamsOptions;
-    tooltip?: Highcharts.TooltipOptions;
+    tooltip?: TooltipOptions;
 }
 
 export interface LinearRegressionParamsOptions extends SMAParamsOptions {

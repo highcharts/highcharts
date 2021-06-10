@@ -17,6 +17,7 @@
  * */
 
 import type GlobalsLike from './GlobalsLike';
+import type Options from './Options';
 
 /* *
  *
@@ -26,6 +27,13 @@ import type GlobalsLike from './GlobalsLike';
 
 declare global {
     type AnyRecord = Record<string, any>;
+    type DeepPartial<T> = {
+        [P in keyof T]?: (T[P]|DeepPartial<T[P]>);
+    }
+    type DeepRecord<K extends keyof any, T> = {
+        [P in K]: (T|DeepRecord<K, T>);
+    }
+    type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
     interface CallableFunction {
         apply<TScope, TArguments extends Array<unknown>, TReturn>(
             this: (this: TScope, ...args: TArguments) => TReturn,
@@ -52,6 +60,9 @@ declare global {
     interface HTMLElement {
         parentNode: HTMLElement;
     }
+    interface Math {
+        easeInOutSine(pos: number): number;
+    }
     interface ObjectConstructor {
         /**
          * Sets the prototype of a specified object o to object proto or null.
@@ -68,6 +79,9 @@ declare global {
          */
         cutHeight?: number;
         parentNode: SVGElement;
+    }
+    interface TouchList {
+        changedTouches: Array<Touch>;
     }
     /**
      * @private
@@ -219,7 +233,7 @@ namespace Globals {
      * @name Highcharts.theme
      * @type {Highcharts.Options}
      */
-    export let theme: (Highcharts.Options|undefined);
+    export let theme: (Options|undefined);
 
 }
 

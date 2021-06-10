@@ -206,7 +206,7 @@ class DataGrid {
     private onScroll(e: Event): void {
         e.preventDefault();
         window.requestAnimationFrame((): void => {
-            const columnsInPresentationOrder = this.dataTable.getColumnNames(true);
+            const columnsInPresentationOrder = this.dataTable.getColumnNames();
             let i = Math.floor(this.outerContainer.scrollTop / DataGrid.cellHeight) || 0;
 
             for (const tableRow of this.rowElements) {
@@ -335,7 +335,7 @@ class DataGrid {
     private renderInitialRows(): void {
         this.rowElements = [];
         const rowsToDraw = this.getNumRowsToDraw();
-        const columnsInPresentationOrder = this.dataTable.getColumnNames(true);
+        const columnsInPresentationOrder = this.dataTable.getColumnNames();
         const rowData = this.dataTable.getRows(0, rowsToDraw, columnsInPresentationOrder);
 
         rowData.forEach(this.renderRow.bind(this));

@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type { AxisType } from '../Core/Axis/Types';
+import type AxisType from '../Core/Axis/AxisType';
 import type {
     PointOptions,
     PointShortOptions
@@ -29,7 +29,7 @@ import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import Tooltip from '../Core/Tooltip.js';
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -43,6 +43,16 @@ const {
     merge,
     pick
 } = U;
+
+declare module '../Core/Axis/AxisLike' {
+    interface AxisLike {
+        getGroupPixelWidth(): number;
+        setDataGrouping(
+            dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
+            redraw?: boolean
+        ): void;
+    }
+}
 
 declare module '../Core/Axis/TimeTicksInfoObject' {
     interface TimeTicksInfoObject {
@@ -86,13 +96,6 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            getGroupPixelWidth(): number;
-            setDataGrouping(
-                dataGrouping?: (boolean|DataGroupingOptionsObject),
-                redraw?: boolean
-            ): void;
-        }
         interface DataGroupingApproximationsArray extends Array<number> {
             hasNulls?: boolean;
         }
@@ -1121,7 +1124,7 @@ addEvent(Series, 'afterSetOptions', function (
         type = this.type,
         plotOptions: SeriesTypePlotOptions = this.chart.options.plotOptions as any,
         defaultOptions: Highcharts.DataGroupingOptionsObject =
-            (O.defaultOptions.plotOptions as any)[type].dataGrouping,
+            (D.defaultOptions.plotOptions as any)[type].dataGrouping,
         // External series, for example technical indicators should also
         // inherit commonOptions which are not available outside this module
         baseOptions = this.useCommonDataGrouping && commonOptions;
@@ -1159,7 +1162,7 @@ addEvent(Axis, 'afterSetScale', function (): void {
 
 // Get the data grouping pixel width based on the greatest defined individual
 // width of the axis' series, and if whether one of the axes need grouping.
-Axis.prototype.getGroupPixelWidth = function (this: Highcharts.Axis): number {
+Axis.prototype.getGroupPixelWidth = function (): number {
 
     let series = this.series,
         len = series.length,
@@ -1223,11 +1226,9 @@ Axis.prototype.getGroupPixelWidth = function (this: Highcharts.Axis): number {
  * @param {boolean} [redraw=true]
  *        Whether to redraw the chart or wait for a later call to
  *        {@link Chart#redraw}.
- *
- * @return {void}
  */
 Axis.prototype.setDataGrouping = function (
-    this: Highcharts.Axis,
+    this: Axis,
     dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
     redraw?: boolean
 ): void {
@@ -1319,7 +1320,7 @@ export default dataGrouping;
  * @see [dataGrouping.lastAnchor](#plotOptions.series.dataGrouping.lastAnchor)
  *
  * @type       {Highcharts.DataGroupingAnchor}
- * @since      next
+ * @since 9.1.0
  * @default    start
  * @apioption  plotOptions.series.dataGrouping.anchor
  */
@@ -1429,7 +1430,7 @@ export default dataGrouping;
  * @see [dataGrouping.anchor](#plotOptions.series.dataGrouping.anchor)
  *
  * @type       {Highcharts.DataGroupingAnchorExtremes}
- * @since      next
+ * @since 9.1.0
  * @default    start
  * @apioption  plotOptions.series.dataGrouping.firstAnchor
  */
@@ -1508,7 +1509,7 @@ export default dataGrouping;
  * @see [dataGrouping.anchor](#plotOptions.series.dataGrouping.anchor)
  *
  * @type       {Highcharts.DataGroupingAnchorExtremes}
- * @since      next
+ * @since 9.1.0
  * @default    start
  * @apioption  plotOptions.series.dataGrouping.lastAnchor
  */

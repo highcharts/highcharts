@@ -65,7 +65,7 @@ class DMIIndicator extends SMAIndicator {
      *         DMI indicator
      *
      * @extends      plotOptions.sma
-     * @since        next
+     * @since 9.1.0
      * @product      highstock
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
@@ -382,7 +382,7 @@ export default DMIIndicator;
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.dmi
- * @since     next
+ * @since 9.1.0
  * @product   highstock
  * @excluding allAreas, colorAxis,  dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,

@@ -94,7 +94,16 @@ QUnit.test('Navigator (#4053)', function (assert) {
 });
 
 QUnit.test('General Navigator tests', function (assert) {
+    let left = 0;
+
     var chart = Highcharts.stockChart('container', {
+            chart: {
+                events: {
+                    afterSetChartSize() {
+                        left = this.navigator && this.navigator.left;
+                    }
+                }
+            },
             legend: {
                 enabled: true
             },
@@ -104,7 +113,10 @@ QUnit.test('General Navigator tests', function (assert) {
                 }
             },
             navigator: {
-                height: 100
+                height: 100,
+                xAxis: {
+                    left: 200
+                }
             },
             series: [
                 {
@@ -120,6 +132,12 @@ QUnit.test('General Navigator tests', function (assert) {
         secondShadeXBeforeTranslate,
         x,
         y;
+
+    assert.strictEqual(
+        left,
+        200,
+        '#15803: navigator.left should be correct after afterSetChartSize'
+    );
 
     const eventCount = el => {
         let count = 0;
@@ -1193,5 +1211,81 @@ QUnit.test('Navigator dafault dataLabels enabled, #13847.', function (assert) {
         chart.navigator.series[0].options.dataLabels[0].enabled,
         false,
         'DataLabels in Navigator should be enabled, if specified in options (wrapped with array).'
+    );
+});
+
+QUnit.test('Scrolling when the range is set, #14742.', function (assert) {
+    let cursor = 8;
+    const chunk = 3,
+        originalData = [7, 6, 9, 14, 8, 8, 5, 6, 4, 1, 3, 9, 4, 6, 7, 4],
+        chart = Highcharts.stockChart('container', {
+            xAxis: {
+                range: 15
+            },
+            series: [{
+                // 16 points -> range is 15
+                data: originalData
+            }]
+        });
+
+    function addPoints() {
+        const data = originalData.slice(cursor, cursor + chunk);
+        cursor += chunk;
+        for (let i = 0; i < data.length; i++) {
+            chart.series[0].addPoint(data[i], false, true);
+        }
+
+        chart.redraw();
+    }
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        `Initially, for that number of points,
+        the navigator should be placed on the left.`
+    );
+
+    chart.series[0].addPoint(3);
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        1,
+        `After adding the point, the number of sections between ticks
+        is greater than the range so the extremes should have changed.`
+    );
+
+    chart.series[0].addPoint(5);
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        2,
+        `Adding another point should result in changing the extremes.`
+    );
+
+    chart.rangeSelector.clickButton(5); // all
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        `After selecting all, extremes should return to the initial one.`
+    );
+
+    chart.series[0].addPoint(5);
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        `When all button enabled, adding point should not change the extremes.`
+    );
+
+    chart.xAxis[0].setExtremes(2, 5);
+    addPoints();
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        chart.series[0].data[0].x,
+        `After changing the extremes and adding shifted points,
+        min should stay at the begging of the data.`
+    );
+    assert.ok(
+        chart.xAxis[0].max > chart.xAxis[0].min,
+        `After changing the extremes and adding shifted points,
+        the range should not equal zero.`
     );
 });

@@ -15,7 +15,9 @@ import type BBoxObject from './Renderer/BBoxObject';
 import type Chart from './Chart/Chart';
 import type ColorAxis from './Axis/ColorAxis';
 import type CSSObject from './Renderer/CSSObject';
+import type FontMetricsObject from './Renderer/FontMetricsObject';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
+import type LegendOptions from './LegendOptions';
 import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
@@ -254,7 +256,7 @@ class Legend {
      *
      * */
 
-    public constructor(chart: Chart, options: Highcharts.LegendOptions) {
+    public constructor(chart: Chart, options: LegendOptions) {
         this.chart = chart;
         this.init(chart, options);
     }
@@ -287,7 +289,7 @@ class Legend {
 
     public downTracker?: SVGElement;
 
-    public fontMetrics?: Highcharts.FontMetricsObject;
+    public fontMetrics?: FontMetricsObject;
 
     public fullHeight?: number;
 
@@ -325,7 +327,7 @@ class Legend {
 
     public offsetWidth: number = 0;
 
-    public options: Highcharts.LegendOptions = {};
+    public options: LegendOptions = {};
 
     public padding: number = 0;
 
@@ -375,7 +377,7 @@ class Legend {
      * @param {Highcharts.LegendOptions} options
      * Legend options.
      */
-    public init(chart: Chart, options: Highcharts.LegendOptions): void {
+    public init(chart: Chart, options: LegendOptions): void {
 
         /**
          * Chart of this legend.
@@ -418,7 +420,7 @@ class Legend {
      * @function Highcharts.Legend#setOptions
      * @param {Highcharts.LegendOptions} options
      */
-    public setOptions(options: Highcharts.LegendOptions): void {
+    public setOptions(options: LegendOptions): void {
 
         const padding = pick(options.padding, 8) as number;
 
@@ -468,7 +470,7 @@ class Legend {
      *
      * @fires Highcharts.Legends#event:afterUpdate
      */
-    public update(options: Highcharts.LegendOptions, redraw?: boolean): void {
+    public update(options: LegendOptions, redraw?: boolean): void {
         const chart = this.chart;
 
         this.setOptions(merge(true, this.options, options));
@@ -1237,6 +1239,7 @@ class Legend {
              * @type {Highcharts.SVGElement}
              */
             legend.group = legendGroup = renderer.g('legend')
+                .addClass(options.className || '')
                 .attr({ zIndex: 7 })
                 .add();
             legend.contentGroup = renderer.g()

@@ -12,6 +12,24 @@
 
 'use strict';
 
+/* *
+ *
+ * Import
+ *
+ * */
+import type LangOptions from '../../Core/LangOptions';
+
+/* *
+ *
+ * Declarations
+ *
+ * */
+declare module '../../Core/LangOptions'{
+    interface LangOptions {
+        accessibility?: Highcharts.LangAccessibilityOptions;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -171,13 +189,10 @@ declare global {
             mapZoomOut: string;
             resetZoomButton: string;
         }
-        interface LangOptions {
-            accessibility?: LangAccessibilityOptions;
-        }
     }
 }
 
-const langOptions: Highcharts.LangOptions = {
+const langOptions: LangOptions = {
 
     /**
      * Configure the accessibility strings in the chart. Requires the
@@ -187,10 +202,10 @@ const langOptions: Highcharts.LangOptions = {
      * [Highcharts Accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility).
      *
      * For more dynamic control over the accessibility functionality, see
-     * [accessibility.pointDescriptionFormatter](#accessibility.pointDescriptionFormatter),
-     * [accessibility.seriesDescriptionFormatter](#accessibility.seriesDescriptionFormatter),
+     * [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter),
+     * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
      * and
-     * [accessibility.screenReaderSectionFormatter](#accessibility.screenReaderSectionFormatter).
+     * [accessibility.screenReaderSection.beforeChartFormatter](#accessibility.screenReaderSection.beforeChartFormatter).
      *
      * @since        6.0.6
      * @optionparent lang.accessibility

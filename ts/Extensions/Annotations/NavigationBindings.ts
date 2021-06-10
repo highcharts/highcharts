@@ -11,15 +11,18 @@
 'use strict';
 
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type MockPointOptions from './MockPointOptions';
+import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
+
 import Annotation from './Annotations.js';
 import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
-import O from '../../Core/Options.js';
-const { setOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -39,6 +42,12 @@ declare module '../../Core/Chart/ChartLike'{
         navigationBindings?: NavigationBindings;
         /** @requires modules/annotations */
         initNavigationBindings(): void;
+    }
+}
+
+declare module '../../Core/LangOptions'{
+    interface LangOptions {
+        navigation?: Highcharts.LangNavigationOptions;
     }
 }
 
@@ -79,10 +88,6 @@ declare global {
         interface LangNavigationOptions {
             popup?: Record<string, string>;
         }
-        interface LangOptions {
-            navigation?: LangNavigationOptions;
-        }
-
         interface NavigationBindingsButtonEventsObject {
             button: HTMLDOMElement;
             events: NavigationBindingsOptionsObject;
@@ -253,8 +258,8 @@ const bindingsUtils = {
      *         is currently pointing.
      */
     getAssignedAxis(
-        coords: Array<Highcharts.PointerAxisCoordinateObject>
-    ): Highcharts.PointerAxisCoordinateObject {
+        coords: Array<Pointer.AxisCoordinateObject>
+    ): Pointer.AxisCoordinateObject {
         return coords.filter(function (coord): boolean {
             const axisMin = coord.axis.min,
                 axisMax = coord.axis.max,
@@ -1305,7 +1310,7 @@ setOptions({
                         annotation: Annotation
                     ): void {
                         let mockPointOpts = annotation.options.shapes[0]
-                                .point as Highcharts.AnnotationMockPointOptionsObject,
+                                .point as MockPointOptions,
                             inverted = this.chart.inverted,
                             x,
                             y,
@@ -1405,7 +1410,7 @@ setOptions({
                         e: PointerEvent,
                         annotation: Annotation
                     ): void {
-                        let points: Array<Highcharts.AnnotationMockPointOptionsObject> =
+                        let points: Array<MockPointOptions> =
                                 annotation.options.shapes[0].points as any,
                             coords = this.chart.pointer.getCoordinates(e),
                             coordsX = this.utils.getAssignedAxis(coords.xAxis),
@@ -1562,7 +1567,7 @@ setOptions({
         }
     }
 });
-addEvent(H.Chart, 'render', function (): void {
+addEvent(Chart, 'render', function (): void {
     const chart = this,
         navigationBindings = chart.navigationBindings,
         disabledClassName = 'highcharts-disabled-btn';

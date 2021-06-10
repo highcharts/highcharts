@@ -51,7 +51,7 @@ class KlingerIndicator extends SMAIndicator {
      *         Klinger oscillator
      *
      * @extends      plotOptions.sma
-     * @since        next
+     * @since 9.1.0
      * @product      highstock
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/klinger
@@ -428,7 +428,7 @@ export default KlingerIndicator;
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.klinger
- * @since     next
+ * @since 9.1.0
  * @product   highstock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/ema

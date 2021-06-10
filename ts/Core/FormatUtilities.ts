@@ -18,11 +18,11 @@
 
 import type Chart from './Chart/Chart';
 
-import O from './Options.js';
+import D from './DefaultOptions.js';
 const {
     defaultOptions,
     defaultTime
-} = O;
+} = D;
 import U from './Utilities.js';
 const {
     getNestedProperty,
@@ -302,10 +302,16 @@ function numberFormat(
  *
  * */
 
-const exports = {
+const FormatUtilities = {
     dateFormat,
     format,
     numberFormat
 };
 
-export default exports;
+namespace FormatUtilities {
+    export interface FormatterCallback<T> {
+        (this: T): string;
+    }
+}
+
+export default FormatUtilities;

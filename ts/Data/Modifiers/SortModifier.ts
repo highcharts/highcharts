@@ -10,6 +10,8 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
@@ -31,6 +33,8 @@ const { merge } = U;
 
 /**
  * Sort table rows according to values of a column.
+ *
+ * @private
  */
 class SortModifier extends DataModifier {
 
@@ -138,7 +142,7 @@ class SortModifier extends DataModifier {
             );
 
         modifier.emit({
-            type: 'execute',
+            type: 'modify',
             detail: eventDetail,
             table
         });
@@ -151,7 +155,7 @@ class SortModifier extends DataModifier {
                     index,
                     row
                 })),
-            rowsLength = rowReferences.length;
+            rowCount = table.getRowCount();
 
         if (orderByColumnIndex !== -1) {
             rowReferences.sort((a, b): number => compare(
@@ -159,24 +163,140 @@ class SortModifier extends DataModifier {
                 b.row[orderByColumnIndex]
             ));
         }
-
         if (orderInColumn) {
-            for (let i = 0, iEnd = rowsLength; i < iEnd; ++i) {
-                table.setCell(rowReferences[i].index, orderInColumn, i);
+            const column: DataTable.Column = [];
+            for (let i = 0; i < rowCount; ++i) {
+                column[rowReferences[i].index] = i;
             }
+            table.setColumns({ [orderInColumn]: column });
         } else {
-            for (let i = 0, iEnd = rowsLength; i < iEnd; ++i) {
-                table.setRows([rowReferences[i].row], i);
+            const rows: Array<DataTable.Row> = [];
+            for (let i = 0; i < rowCount; ++i) {
+                rows.push(rowReferences[i].row);
             }
+            table.setRows(rows, 0);
         }
 
         modifier.emit({
-            type: 'afterExecute',
+            type: 'afterModify',
             detail: eventDetail,
             table
         });
 
         return table;
+    }
+
+    /**
+     * Applies partial modifications of a cell change to the property `modified`
+     * of the given modified table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {string} columnName
+     * Column name of changed cell.
+     *
+     * @param {number|undefined} rowIndex
+     * Row index of changed cell.
+     *
+     * @param {Highcharts.DataTableCellType} cellValue
+     * Changed cell value.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Reference of `table.modified` with the additional modifications.
+     */
+    public modifyCell(
+        table: DataTable,
+        columnName: string,
+        rowIndex: number,
+        cellValue: DataTable.CellType,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+        const modifier = this,
+            {
+                orderByColumn,
+                orderInColumn
+            } = modifier.options;
+
+        if (columnName === orderByColumn) {
+            const sortedTable = new DataTable();
+
+            sortedTable.setColumns(table.getColumns(
+                orderInColumn ?
+                    [orderByColumn, orderInColumn] :
+                    table.getColumnNames()
+            ));
+
+            table.modified.setColumns(
+                this.modify(sortedTable).getColumns(),
+                void 0,
+                eventDetail
+            );
+        }
+
+        return table.modified;
+    }
+
+    public modifyColumns(
+        table: DataTable,
+        columns: DataTable.ColumnCollection,
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+
+        const modifier = this,
+            {
+                orderByColumn,
+                orderInColumn
+            } = modifier.options,
+            columnNames = Object.keys(columns);
+
+        if (columnNames.indexOf(orderByColumn) > -1) {
+            const sortedTable = new DataTable();
+
+            sortedTable.setColumns(table.getColumns(
+                orderInColumn ?
+                    [orderByColumn, orderInColumn] :
+                    table.getColumnNames()
+            ));
+
+            table.modified.setColumns(
+                this.modify(sortedTable).getColumns(),
+                void 0,
+                eventDetail
+            );
+        }
+
+        return table.modified;
+    }
+
+    public modifyRows(
+        table: DataTable,
+        _rows: Array<(DataTable.Row|DataTable.RowObject)>,
+        _rowIndex: number,
+        _eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+
+        const modifier = this,
+            {
+                orderByColumn,
+                orderInColumn
+            } = modifier.options;
+
+        const sortedTable = new DataTable();
+
+        sortedTable.setColumns(table.getColumns(
+            orderInColumn ?
+                [orderByColumn, orderInColumn] :
+                table.getColumnNames()
+        ));
+
+        table.modified.setColumns(this.modify(sortedTable).getColumns());
+
+        return table.modified;
     }
 
     /**

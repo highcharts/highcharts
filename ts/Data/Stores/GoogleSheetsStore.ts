@@ -10,26 +10,36 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DataEventEmitter from '../DataEventEmitter';
+
 import AjaxMixin from '../../Extensions/Ajax.js';
-const {
-    ajax
-} = AjaxMixin;
+const { ajax } = AjaxMixin;
 import DataJSON from './../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 import GoogleSheetsParser from '../Parsers/GoogleSheetsParser.js';
-const {
-    merge
-} = U;
+const { merge } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * *7
 
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 
 /**
  * @private
  */
-
 class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements DataJSON.Class {
 
     /* *
@@ -42,7 +52,8 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements Da
         googleSpreadsheetKey: '',
         worksheet: 1,
         enablePolling: false,
-        dataRefreshRate: 2
+        dataRefreshRate: 2,
+        firstRowAsNames: true
     };
 
     /* *
@@ -63,7 +74,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements Da
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
@@ -89,7 +100,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements Da
     ) {
         super(table);
         this.options = merge(GoogleSheetsStore.defaultOptions, options);
-        this.parser = parser || new GoogleSheetsParser();
+        this.parser = parser || new GoogleSheetsParser({ firstRowAsNames: this.options.firstRowAsNames });
     }
 
     /* *
@@ -130,8 +141,8 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements Da
                 'public/values?alt=json'
             ].join('/');
 
-        // If already loaded, clear the current rows
-        store.table.clear();
+        // If already loaded, clear the current table
+        store.table.deleteColumns();
 
         store.emit({
             type: 'load',
@@ -210,7 +221,8 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements Da
             $class: 'GoogleSheetsStore',
             metadata: merge(this.metadata),
             options: merge(this.options),
-            table: this.table.toJSON()
+            table: this.table.toJSON(),
+            parser: this.parser.toJSON()
         };
     }
 
@@ -248,6 +260,7 @@ namespace GoogleSheetsStore {
         worksheet?: number;
         enablePolling: boolean;
         dataRefreshRate: number;
+        firstRowAsNames: boolean;
     }
 
 }

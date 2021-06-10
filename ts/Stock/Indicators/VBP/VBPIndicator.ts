@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type { AxisType } from '../../../Core/Axis/Types';
+import type AxisType from '../../../Core/Axis/AxisType';
 import type Chart from '../../../Core/Chart/Chart';
 import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
@@ -719,7 +719,7 @@ class VBPIndicator extends SMAIndicator {
         zonesStyles: CSSObject
     ): void {
         let indicator = this,
-            renderer: Highcharts.Renderer = chart.renderer,
+            renderer = chart.renderer,
             zoneLinesSVG = indicator.zoneLinesSVG,
             zoneLinesPath: SVGPath = [],
             leftLinePos = 0,

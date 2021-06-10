@@ -10,12 +10,24 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
-    HTMLDOMElement
-} from '../Renderer/DOMElementType';
+    AxisOptions,
+    YAxisOptions
+} from '../Axis/AxisOptions';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
+import type Options from '../Options';
+
 import Chart from './Chart.js';
-import O from '../../Core/Options.js';
-const { getOptions } = O;
+import D from '../DefaultOptions.js';
+const { getOptions } = D;
 import U from '../Utilities.js';
 const {
     isArray,
@@ -25,17 +37,23 @@ const {
 
 import '../../Series/Gantt/GanttSeries.js';
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            isGantt?: boolean;
-        }
+/* *
+ *
+ * Declarations
+ *
+ * */
+
+declare module '../Options' {
+    interface Options {
+        isGantt?: boolean;
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Gantt-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.
@@ -66,69 +84,19 @@ class GanttChart extends Chart {
      * @fires Highcharts.GanttChart#event:afterInit
      */
     public init(
-        userOptions: Partial<Highcharts.Options>,
+        userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
-        let seriesOptions = userOptions.series,
-            defaultOptions = getOptions(),
-            defaultLinkedTo: number;
+        const defaultOptions = getOptions(),
+            xAxisOptions = userOptions.xAxis,
+            yAxisOptions = userOptions.yAxis;
 
-        // If user hasn't defined axes as array, make it into an array and add a
-        // second axis by default.
-        if (!isArray(userOptions.xAxis)) {
-            userOptions.xAxis = [userOptions.xAxis || {}, {}];
-        }
+        let defaultLinkedTo: number;
 
-        // apply X axis options to both single and multi x axes
-        userOptions.xAxis = userOptions.xAxis.map(function (
-            xAxisOptions,
-            i
-        ): Highcharts.XAxisOptions {
-            if (i === 1) { // Second xAxis
-                defaultLinkedTo = 0;
-            }
-            return merge<Highcharts.XAxisOptions>(
-                defaultOptions.xAxis as any,
-                { // defaults
-                    grid: {
-                        enabled: true
-                    },
-                    opposite: true,
-                    linkedTo: defaultLinkedTo
-                } as Highcharts.XAxisOptions,
-                xAxisOptions, // user options
-                { // forced options
-                    type: 'datetime'
-                } as Highcharts.XAxisOptions
-            );
-        });
+        // Avoid doing these twice
+        userOptions.xAxis = userOptions.yAxis = void 0;
 
-        // apply Y axis options to both single and multi y axes
-        userOptions.yAxis = (splat(userOptions.yAxis || {})).map(function (
-            yAxisOptions: Highcharts.YAxisOptions
-        ): Highcharts.YAxisOptions {
-            return merge<Highcharts.YAxisOptions>(
-                defaultOptions.yAxis as any, // #3802
-                { // defaults
-                    grid: {
-                        enabled: true
-                    },
-
-                    staticScale: 50,
-
-                    reversed: true,
-
-                    // Set default type treegrid, but only if 'categories' is
-                    // undefined
-                    type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
-                } as Highcharts.YAxisOptions,
-                yAxisOptions // user options
-            );
-        });
-
-        delete userOptions.series;
-
-        userOptions = merge(
+        const options = merge(
             true,
             {
                 chart: {
@@ -147,19 +115,72 @@ class GanttChart extends Chart {
                         type: 'category'
                     }
                 }
-            } as Highcharts.Options,
+            } as Options,
 
             userOptions, // user's options
 
             // forced options
             {
                 isGantt: true
-            } as Highcharts.Options
+            } as Options
         );
 
-        userOptions.series = seriesOptions;
+        userOptions.xAxis = xAxisOptions;
+        userOptions.yAxis = yAxisOptions;
 
-        super.init(userOptions, callback);
+        // apply X axis options to both single and multi x axes
+        // If user hasn't defined axes as array, make it into an array and add a
+        // second axis by default.
+        options.xAxis = (
+            !isArray(userOptions.xAxis) ?
+                [userOptions.xAxis || {}, {}] :
+                userOptions.xAxis
+        ).map(function (
+            xAxisOptions,
+            i
+        ): DeepPartial<AxisOptions> {
+            if (i === 1) { // Second xAxis
+                defaultLinkedTo = 0;
+            }
+            return merge(
+                defaultOptions.xAxis,
+                { // defaults
+                    grid: {
+                        enabled: true
+                    },
+                    opposite: true,
+                    linkedTo: defaultLinkedTo
+                },
+                xAxisOptions, // user options
+                { // forced options
+                    type: 'datetime'
+                }
+            );
+        });
+
+        // apply Y axis options to both single and multi y axes
+        options.yAxis = (splat(userOptions.yAxis || {})).map(function (
+            yAxisOptions: YAxisOptions
+        ): YAxisOptions {
+            return merge(
+                defaultOptions.yAxis, // #3802
+                { // defaults
+                    grid: {
+                        enabled: true
+                    },
+
+                    staticScale: 50,
+
+                    reversed: true,
+
+                    // Set default type treegrid, but only if 'categories' is
+                    // undefined
+                    type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
+                } as YAxisOptions,
+                yAxisOptions // user options
+            );
+        });
+        super.init(options, callback);
     }
 }
 
@@ -200,8 +221,8 @@ namespace GanttChart {
      *         Returns the Chart object.
      */
     export function ganttChart(
-        a: (string|HTMLDOMElement|Highcharts.Options),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        a: (string|HTMLDOMElement|Options),
+        b?: (Chart.CallbackFunction|Options),
         c?: Chart.CallbackFunction
     ): GanttChart {
         return new GanttChart(a as any, b as any, c);

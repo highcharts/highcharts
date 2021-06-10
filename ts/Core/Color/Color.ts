@@ -8,8 +8,17 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorString from './ColorString';
 import type { ColorLike, ColorType } from './ColorType';
+
 import H from '../Globals.js';
 import U from '../Utilities.js';
 const {
@@ -17,117 +26,6 @@ const {
     merge,
     pInt
 } = U;
-
-/**
- * A valid color to be parsed and handled by Highcharts. Highcharts internally
- * supports hex colors like `#ffffff`, rgb colors like `rgb(255,255,255)` and
- * rgba colors like `rgba(255,255,255,1)`. Other colors may be supported by the
- * browsers and displayed correctly, but Highcharts is not able to process them
- * and apply concepts like opacity and brightening.
- *
- * @typedef {string} Highcharts.ColorString
- */
-
-/**
- * A valid color type than can be parsed and handled by Highcharts. It can be a
- * color string, a gradient object, or a pattern object.
- *
- * @typedef {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} Highcharts.ColorType
- */
-
-/**
- * Gradient options instead of a solid color.
- *
- * @example
- * // Linear gradient used as a color option
- * color: {
- *     linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
- *     stops: [
- *         [0, '#003399'], // start
- *         [0.5, '#ffffff'], // middle
- *         [1, '#3366AA'] // end
- *     ]
- * }
- *
- * @interface Highcharts.GradientColorObject
- *//**
- * Holds an object that defines the start position and the end position relative
- * to the shape.
- * @name Highcharts.GradientColorObject#linearGradient
- * @type {Highcharts.LinearGradientColorObject|undefined}
- *//**
- * Holds an object that defines the center position and the radius.
- * @name Highcharts.GradientColorObject#radialGradient
- * @type {Highcharts.RadialGradientColorObject|undefined}
- *//**
- * The first item in each tuple is the position in the gradient, where 0 is the
- * start of the gradient and 1 is the end of the gradient. Multiple stops can be
- * applied. The second item is the color for each stop. This color can also be
- * given in the rgba format.
- * @name Highcharts.GradientColorObject#stops
- * @type {Array<Highcharts.GradientColorStopObject>}
- */
-
-/**
- * Color stop tuple.
- *
- * @see Highcharts.GradientColorObject
- *
- * @interface Highcharts.GradientColorStopObject
- *//**
- * @name Highcharts.GradientColorStopObject#0
- * @type {number}
- *//**
- * @name Highcharts.GradientColorStopObject#1
- * @type {Highcharts.ColorString}
- *//**
- * @name Highcharts.GradientColorStopObject#color
- * @type {Highcharts.Color|undefined}
- */
-
-/**
- * Defines the start position and the end position for a gradient relative
- * to the shape. Start position (x1, y1) and end position (x2, y2) are relative
- * to the shape, where 0 means top/left and 1 is bottom/right.
- *
- * @interface Highcharts.LinearGradientColorObject
- *//**
- * Start horizontal position of the gradient. Float ranges 0-1.
- * @name Highcharts.LinearGradientColorObject#x1
- * @type {number}
- *//**
- * End horizontal position of the gradient. Float ranges 0-1.
- * @name Highcharts.LinearGradientColorObject#x2
- * @type {number}
- *//**
- * Start vertical position of the gradient. Float ranges 0-1.
- * @name Highcharts.LinearGradientColorObject#y1
- * @type {number}
- *//**
- * End vertical position of the gradient. Float ranges 0-1.
- * @name Highcharts.LinearGradientColorObject#y2
- * @type {number}
- */
-
-/**
- * Defines the center position and the radius for a gradient.
- *
- * @interface Highcharts.RadialGradientColorObject
- *//**
- * Center horizontal position relative to the shape. Float ranges 0-1.
- * @name Highcharts.RadialGradientColorObject#cx
- * @type {number}
- *//**
- * Center vertical position relative to the shape. Float ranges 0-1.
- * @name Highcharts.RadialGradientColorObject#cy
- * @type {number}
- *//**
- * Radius relative to the shape. Float ranges 0-1.
- * @name Highcharts.RadialGradientColorObject#r
- * @type {number}
- */
-
-''; // detach doclets above
 
 /* *
  *
@@ -154,8 +52,11 @@ class Color implements ColorLike {
      *
      * */
 
-    // Collection of named colors. Can be extended from the outside by adding
-    // colors to Highcharts.Color.names.
+    /**
+     * Collection of named colors. Can be extended from the outside by adding
+     * colors to Highcharts.Color.names.
+     * @private
+     */
     public static names: Record<string, ColorString> = {
         white: '#ffffff',
         black: '#000000'
@@ -191,10 +92,11 @@ class Color implements ColorLike {
     public constructor(
         input: (ColorType|undefined)
     ) {
+        const GlobalColor = (H as AnyRecord).Color;
 
         // Backwards compatibility, allow class overwrite
-        if (H.Color !== Color) {
-            return new H.Color(input);
+        if (GlobalColor && GlobalColor !== Color) {
+            return new GlobalColor(input);
         }
 
         // Backwards compatibility, allow instanciation without new (#13053)
@@ -480,7 +382,7 @@ class Color implements ColorLike {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
@@ -501,37 +403,126 @@ namespace Color {
 
 /* *
  *
- *  Backwards Compatibility
+ *  Default Export
  *
  * */
 
-type ColorClass = typeof Color; // reference workaround
+export default Color;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
 
 /**
- * Internal types
- * @private
+ * A valid color to be parsed and handled by Highcharts. Highcharts internally
+ * supports hex colors like `#ffffff`, rgb colors like `rgb(255,255,255)` and
+ * rgba colors like `rgba(255,255,255,1)`. Other colors may be supported by the
+ * browsers and displayed correctly, but Highcharts is not able to process them
+ * and apply concepts like opacity and brightening.
+ *
+ * @typedef {string} Highcharts.ColorString
  */
-declare global {
-    namespace Highcharts {
 
-        /**
-         * Highcharts.Color class
-         * @deprecated
-         */
-        let Color: ColorClass;
+/**
+ * A valid color type than can be parsed and handled by Highcharts. It can be a
+ * color string, a gradient object, or a pattern object.
+ *
+ * @typedef {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} Highcharts.ColorType
+ */
 
-        /**
-         * Highcharts.color factory
-         * @deprecated
-         */
-        function color(
-            input: (ColorType|undefined)
-        ): Color;
+/**
+ * Gradient options instead of a solid color.
+ *
+ * @example
+ * // Linear gradient used as a color option
+ * color: {
+ *     linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+ *     stops: [
+ *         [0, '#003399'], // start
+ *         [0.5, '#ffffff'], // middle
+ *         [1, '#3366AA'] // end
+ *     ]
+ * }
+ *
+ * @interface Highcharts.GradientColorObject
+ *//**
+ * Holds an object that defines the start position and the end position relative
+ * to the shape.
+ * @name Highcharts.GradientColorObject#linearGradient
+ * @type {Highcharts.LinearGradientColorObject|undefined}
+ *//**
+ * Holds an object that defines the center position and the radius.
+ * @name Highcharts.GradientColorObject#radialGradient
+ * @type {Highcharts.RadialGradientColorObject|undefined}
+ *//**
+ * The first item in each tuple is the position in the gradient, where 0 is the
+ * start of the gradient and 1 is the end of the gradient. Multiple stops can be
+ * applied. The second item is the color for each stop. This color can also be
+ * given in the rgba format.
+ * @name Highcharts.GradientColorObject#stops
+ * @type {Array<Highcharts.GradientColorStopObject>}
+ */
 
-    }
-}
+/**
+ * Color stop tuple.
+ *
+ * @see Highcharts.GradientColorObject
+ *
+ * @interface Highcharts.GradientColorStopObject
+ *//**
+ * @name Highcharts.GradientColorStopObject#0
+ * @type {number}
+ *//**
+ * @name Highcharts.GradientColorStopObject#1
+ * @type {Highcharts.ColorString}
+ *//**
+ * @name Highcharts.GradientColorStopObject#color
+ * @type {Highcharts.Color|undefined}
+ */
 
-H.Color = Color;
+/**
+ * Defines the start position and the end position for a gradient relative
+ * to the shape. Start position (x1, y1) and end position (x2, y2) are relative
+ * to the shape, where 0 means top/left and 1 is bottom/right.
+ *
+ * @interface Highcharts.LinearGradientColorObject
+ *//**
+ * Start horizontal position of the gradient. Float ranges 0-1.
+ * @name Highcharts.LinearGradientColorObject#x1
+ * @type {number}
+ *//**
+ * End horizontal position of the gradient. Float ranges 0-1.
+ * @name Highcharts.LinearGradientColorObject#x2
+ * @type {number}
+ *//**
+ * Start vertical position of the gradient. Float ranges 0-1.
+ * @name Highcharts.LinearGradientColorObject#y1
+ * @type {number}
+ *//**
+ * End vertical position of the gradient. Float ranges 0-1.
+ * @name Highcharts.LinearGradientColorObject#y2
+ * @type {number}
+ */
+
+/**
+ * Defines the center position and the radius for a gradient.
+ *
+ * @interface Highcharts.RadialGradientColorObject
+ *//**
+ * Center horizontal position relative to the shape. Float ranges 0-1.
+ * @name Highcharts.RadialGradientColorObject#cx
+ * @type {number}
+ *//**
+ * Center vertical position relative to the shape. Float ranges 0-1.
+ * @name Highcharts.RadialGradientColorObject#cy
+ * @type {number}
+ *//**
+ * Radius relative to the shape. Float ranges 0-1.
+ * @name Highcharts.RadialGradientColorObject#r
+ * @type {number}
+ */
 
 /**
  * Creates a color instance out of a color string.
@@ -544,12 +535,5 @@ H.Color = Color;
  * @return {Highcharts.Color}
  *         Color instance
  */
-H.color = Color.parse;
 
-/* *
- *
- *  Export
- *
- * */
-
-export default Color;
+(''); // detach doclets above

@@ -24,8 +24,8 @@ import H from '../../Core/Globals.js';
 const {
     charts
 } = H;
-import O from '../../Core/Options.js';
-const { setOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -45,15 +45,18 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../Core/Chart/ChartOptions'{
+    interface ChartOptions {
+        displayErrors?: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartOptions {
-            displayErrors?: boolean;
-        }
         let errorMessages: typeof ErrorMessages;
     }
 }
@@ -85,8 +88,8 @@ setOptions({
 
 /* eslint-disable no-invalid-this */
 
-addEvent(Highcharts, 'displayError', function (
-    e: Highcharts.ErrorMessageEventObject
+addEvent(H, 'displayError', function (
+    e: U.ErrorMessageEventObject
 ): void {
     // Display error on the chart causing the error or the last created chart.
     const chart = e.chart ||

@@ -10,6 +10,15 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type TickPositionsArray from './TickPositionsArray';
+import type Time from '../Time.js';
+
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
@@ -18,6 +27,25 @@ const {
     normalizeTickInterval,
     timeUnits
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisComposition' {
+    interface AxisComposition {
+        dateTime?: DateTimeAxis['dateTime'];
+    }
+}
+
+declare module './AxisOptions' {
+    interface AxisOptions {
+        dateTimeLabelFormats?: Highcharts.XAxisDateTimeLabelFormatsOptions;
+        units?: Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>;
+    }
+}
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
@@ -33,7 +61,7 @@ declare module '../Series/SeriesOptions' {
 declare global {
     namespace Highcharts {
         type DateTimeLabelFormatsKey = keyof XAxisDateTimeLabelFormatsOptions;
-        interface DateTimeAxisNormalizedObject extends TimeNormalizedObject {
+        interface DateTimeAxisNormalizedObject extends Time.TimeNormalizedObject {
             unitName: DateTimeLabelFormatsKey;
         }
         interface DateTimeLabelFormatOptionsObject {
@@ -51,20 +79,13 @@ declare global {
             week?: (string|DateTimeLabelFormatOptionsObject);
             year?: (string|DateTimeLabelFormatOptionsObject);
         }
-        interface XAxisOptions {
-            dateTimeLabelFormats?: XAxisDateTimeLabelFormatsOptions;
-            units?: Array<[DateTimeLabelFormatsKey, (Array<number>|null)]>;
-        }
     }
 }
 
 /**
  * @private
  */
-declare module './Types' {
-    interface AxisComposition {
-        dateTime?: DateTimeAxis['dateTime'];
-    }
+declare module './AxisType' {
     interface AxisTypeRegistry {
         DateTimeAxis: DateTimeAxis;
     }
@@ -252,7 +273,7 @@ class DateTimeAxis {
          *
          * @return {Highcharts.AxisTickPositionsArray}
          */
-        axisProto.getTimeTicks = function (): Highcharts.AxisTickPositionsArray {
+        axisProto.getTimeTicks = function (): TickPositionsArray {
             return this.chart.time.getTimeTicks.apply(
                 this.chart.time, arguments as any
             );

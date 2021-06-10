@@ -56,7 +56,7 @@ class OBVIndicator extends SMAIndicator {
      *         OBV indicator
      *
      * @extends      plotOptions.sma
-     * @since        next
+     * @since 9.1.0
      * @product      highstock
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/obv
@@ -220,7 +220,7 @@ export default OBVIndicator;
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.obv
- * @since     next
+ * @since 9.1.0
  * @product   highstock
  * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators

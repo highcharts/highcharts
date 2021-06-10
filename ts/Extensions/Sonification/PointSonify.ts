@@ -11,6 +11,7 @@
  * */
 
 'use strict';
+import type RangeSelector from '../../Extensions/RangeSelector';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -56,7 +57,7 @@ declare global {
             ): void;
         }
         interface PointSonifyOptionsObject {
-            dataExtremes?: Record<string, RangeObject>;
+            dataExtremes?: Record<string, RangeSelector.RangeObject>;
             instruments: Array<PointInstrumentObject>;
             onEnd?: Function;
             masterVolume?: number;
@@ -294,7 +295,7 @@ function pointSonify(
         getMappingValue = function (
             value: (number|string|Function),
             makeFunction: boolean,
-            allowedExtremes: Highcharts.RangeObject
+            allowedExtremes: RangeSelector.RangeObject
         ): (number|Function) {
             // Function. Return new function if we try to use callback,
             // otherwise call it now and return result.

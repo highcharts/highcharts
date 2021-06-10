@@ -10,8 +10,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from './Chart/Chart';
+import type Options from './Options';
 import type PointerEvent from './PointerEvent';
+
 import H from './Globals.js';
 const {
     charts,
@@ -28,22 +36,21 @@ const {
     removeEvent
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    interface Window {
-        MSPointerEvent: typeof MSPointerEvent;
-        PointerEvent: typeof PointerEvent;
-    }
-}
-
-/* globals MSPointerEvent, PointerEvent */
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 // The touches object keeps track of the points being touched at all times
 const touches = {} as Record<string, PointerEvent>;
 const hasPointerEvent = !!win.PointerEvent;
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 
@@ -71,16 +78,17 @@ function translateMSPointer(
     wktype: string,
     func: Function
 ): void {
-    let p;
+    const chart = charts[Pointer.hoverChartIndex || NaN];
 
     if (
         (
             e.pointerType === 'touch' ||
-            e.pointerType === (e as any).MSPOINTER_TYPE_TOUCH
-        ) && charts[H.hoverChartIndex as any]
+            e.pointerType === e.MSPOINTER_TYPE_TOUCH
+        ) && chart
     ) {
+        const p: AnyRecord = chart.pointer;
+
         func(e);
-        p = (charts[H.hoverChartIndex as any] as any).pointer;
         p[method]({
             type: wktype,
             target: e.currentTarget,
@@ -90,8 +98,24 @@ function translateMSPointer(
     }
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /** @private */
 class MSPointer extends Pointer {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    public static isRequired(): boolean {
+        return !!(!H.hasTouch && (win.PointerEvent || win.MSPointerEvent));
+    }
 
     /* *
      *
@@ -101,13 +125,8 @@ class MSPointer extends Pointer {
 
     /**
      * Add or remove the MS Pointer specific events
-     *
      * @private
      * @function Highcharts.Pointer#batchMSEvents
-     *
-     * @param {Function} fn
-     *
-     * @return {void}
      */
     private batchMSEvents(fn: Function): void {
         fn(
@@ -136,7 +155,7 @@ class MSPointer extends Pointer {
     }
 
     // Disable default IE actions for pinch and such on chart element
-    public init(chart: Chart, options: Highcharts.Options): void {
+    public init(chart: Chart, options: Options): void {
 
         super.init(chart, options);
 
@@ -151,10 +170,6 @@ class MSPointer extends Pointer {
     /**
      * @private
      * @function Highcharts.Pointer#onContainerPointerDown
-     *
-     * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
     private onContainerPointerDown(e: PointerEvent): void {
         translateMSPointer(
@@ -174,10 +189,6 @@ class MSPointer extends Pointer {
     /**
      * @private
      * @function Highcharts.Pointer#onContainerPointerMove
-     *
-     * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
     private onContainerPointerMove(e: PointerEvent): void {
         translateMSPointer(
@@ -198,10 +209,6 @@ class MSPointer extends Pointer {
     /**
      * @private
      * @function Highcharts.Pointer#onDocumentPointerUp
-     *
-     * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
     private onDocumentPointerUp(e: PointerEvent): void {
         translateMSPointer(
@@ -224,5 +231,11 @@ class MSPointer extends Pointer {
         }
     }
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default MSPointer;

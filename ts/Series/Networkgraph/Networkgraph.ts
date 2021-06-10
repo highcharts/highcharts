@@ -54,7 +54,7 @@ const {
     pick
 } = U;
 
-import '../../Core/Options.js';
+import '../../Core/DefaultOptions.js';
 import './Layouts.js';
 import './DraggableNodes.js';
 

@@ -7,35 +7,14 @@
 'use strict';
 
 import type PositionObject from '../../../Core/Renderer/PositionObject';
+import type MockPointOptions from '../MockPointOptions';
 import Annotation from '../Annotations.js';
-import type { AxisType } from '../../../Core/Axis/Types';
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationPitchforkOptionsObject extends AnnotationInfinityLineOptionsObject {
-            typeOptions: AnnotationPitchforkTypeOptionsObject;
-        }
-        interface AnnotationPitchforkTypeOptionsObject extends AnnotationInfinityLineTypeOptionsObject {
-            innerBackground: AnnotationsShapeOptions;
-            outerBackground: AnnotationsShapeOptions;
-        }
-        interface AnnotationTypesRegistry {
-            pitchfork: typeof Pitchfork;
-        }
-    }
-}
-
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
-
 
 class Pitchfork extends InfinityLine {
 
@@ -109,7 +88,7 @@ class Pitchfork extends InfinityLine {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationPitchforkOptionsObject) {
+    public constructor(chart: Highcharts.AnnotationChart, options: Pitchfork.Options) {
         super(chart, options);
     }
 
@@ -119,7 +98,7 @@ class Pitchfork extends InfinityLine {
      *
      * */
 
-    public midPointOptions(): Highcharts.AnnotationMockPointOptionsObject {
+    public midPointOptions(): MockPointOptions {
         const points = this.points;
 
         return {
@@ -163,13 +142,13 @@ class Pitchfork extends InfinityLine {
 
     public addBackgrounds(): void {
         const shapes = this.shapes,
-            typeOptions = this.options.typeOptions as Highcharts.AnnotationPitchforkTypeOptionsObject;
+            typeOptions = this.options.typeOptions as Pitchfork.TypeOptions;
 
         const innerBackground = (this.initShape as any)(
             merge(typeOptions.innerBackground, {
                 type: 'path',
                 points: [
-                    function (target: any): Highcharts.AnnotationMockPointOptionsObject {
+                    function (target: any): MockPointOptions {
                         const annotation = target.annotation,
                             points = annotation.points,
                             midPointOptions = annotation.midPointOptions();
@@ -183,7 +162,7 @@ class Pitchfork extends InfinityLine {
                     },
                     shapes[1].points[1],
                     shapes[2].points[1],
-                    function (target: any): Highcharts.AnnotationMockPointOptionsObject {
+                    function (target: any): MockPointOptions {
                         const annotation = target.annotation,
                             points = annotation.points,
                             midPointOptions = annotation.midPointOptions();
@@ -258,6 +237,31 @@ Pitchfork.prototype.defaultOptions = merge(
     }
 );
 
-Annotation.types.pitchfork = Pitchfork;
+namespace Pitchfork {
+    export interface Options extends InfinityLine.Options {
+        typeOptions: TypeOptions;
+    }
+    export interface TypeOptions extends InfinityLine.TypeOptions {
+        innerBackground: Highcharts.AnnotationsShapeOptions;
+        outerBackground: Highcharts.AnnotationsShapeOptions;
+    }
+}
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+Annotation.types.pitchfork = Pitchfork;
+declare module './AnnotationType'{
+    interface AnnotationTypeRegistry {
+        pitchfork: typeof Pitchfork;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default Pitchfork;

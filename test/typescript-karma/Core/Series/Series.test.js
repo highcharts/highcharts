@@ -1,7 +1,7 @@
 import Highcharts from '/base/js/masters/highcharts.src.js';
 import Series from '/base/js/Core/Series/Series.js';
 
-QUnit.test('Series.getTableFromSeriesData', function (assert) {
+QUnit.skip('Series.getTableFromSeriesData', function (assert) {
 
     const series1Data = [
             1,
@@ -45,7 +45,7 @@ QUnit.test('Series.getTableFromSeriesData', function (assert) {
 
 });
 
-QUnit.test('Series.syncTable', function (assert) {
+QUnit.skip('Series.syncTable', function (assert) {
 
     const done = assert.async(5),
         chart = new Highcharts.Chart(document.createElement('div'), {

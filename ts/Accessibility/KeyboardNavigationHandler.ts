@@ -129,13 +129,13 @@ KeyboardNavigationHandler.prototype = {
         this: Highcharts.KeyboardNavigationHandler,
         e: KeyboardEvent
     ): number {
-        let keyCode = e.which || e.keyCode,
-            response = this.response.noHandler,
-            handlerCodeSet = find(this.keyCodeMap, function (
-                codeSet: [Array<number>, Function]
-            ): boolean {
-                return codeSet[0].indexOf(keyCode) > -1;
-            });
+        const keyCode = e.which || e.keyCode;
+        let response = this.response.noHandler;
+        const handlerCodeSet = find(this.keyCodeMap, function (
+            codeSet: [Array<number>, Function]
+        ): boolean {
+            return codeSet[0].indexOf(keyCode) > -1;
+        });
 
         if (handlerCodeSet) {
             response = handlerCodeSet[1].call(this, keyCode, e);

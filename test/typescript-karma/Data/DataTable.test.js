@@ -1,11 +1,11 @@
 import DataTable from '/base/js/Data/DataTable.js';
+import SortModifier from '/base/js/Data/Modifiers/SortModifier.js';
 
 QUnit.test('DataTable Clone', function (assert) {
-
     const table = new DataTable({}, 'table');
 
     table.setRows([[ 'row1', 1 ]]);
-    table.setCell(0, '1', 100);
+    table.setCell('1', 0, 100);
     table.setColumnAlias('x', 'x-alias');
 
     const tableClone = table.clone();
@@ -97,17 +97,21 @@ QUnit.test('DataTable Column Aliases', function (assert) {
         'Table should return canonical name, after alias is removed.'
     );
 
-    assert.ok(
-        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'population', 4),
+    table.setCell('population', table.getRowIndexBy('id', 'Our Land'), 4),
+    assert.strictEqual(
+        table.getCell('population', table.getRowIndexBy('id', 'Our Land')),
+        4,
         'Table should set cell value for column name.'
     );
-    assert.ok(
-        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'x', 10),
+    table.setCell('x', table.getRowIndexBy('id', 'Our Land'), 10),
+    assert.strictEqual(
+        table.getCell('x', table.getRowIndexBy('id', 'Our Land')),
+        10,
         'Table should set cell value for column alias.'
     );
     assert.strictEqual(
-        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'population'),
-        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'x'),
+        table.getCell('population', table.getRowIndexBy('id', 'Our Land')),
+        table.getCell('x', table.getRowIndexBy('id', 'Our Land')),
         'Table should return cell value for column name and alias.'
     );
 
@@ -141,31 +145,32 @@ QUnit.test('DataTable Column Aliases', function (assert) {
     );
 
     assert.ok(
-        table.deleteColumn('Cols'),
+        table.deleteColumns(['Cols']),
         'Table should have deleted column. (1)'
     );
 
-    assert.notOk(
-        table.getColumn('Cols'),
+    assert.strictEqual(
+        typeof table.getColumns(['Cols']).Cols,
+        'undefined',
         'Table should have deleted column. (2)'
     );
 
-    const expectedValues = table.getColumn('population');
+    const expectedValues = table.getColumns(['population']);
     assert.deepEqual(
-        table.deleteColumn('population'),
+        table.deleteColumns(['population']),
         expectedValues,
         'Table should return cell values of deleted column.'
     );
 
-    assert.notOk(
-        table.getColumn('population'),
-        'Table should remove column "population".'
+    assert.ok(
+        typeof table.getColumn('population'),
+        'undefined',
+        'Table should have removed column "population".'
     )
 
 });
 
 QUnit.test('DataTable Column Rename', function (assert) {
-
     const table = new DataTable({
         column1: [ true ],
         existingColumn: [ true ]
@@ -223,21 +228,19 @@ QUnit.test('DataTable Column Rename', function (assert) {
 });
 
 QUnit.test('DataTable Column Retrieve', function (assert) {
-
     const table = new DataTable({
-        id: [ 0, 1 ],
-        a: [ 'a0', 'a1' ],
-        b: [ 0.0002, 'b1' ],
-        c: [
-            'c0',
-            new DataTable({
-                id: [ 0, 1, 2 ],
-                ca: [ 'ca0', 'ca1', 'ca2' ]
-            })
-        ]
-    });
-
-    const columns = table.getColumns();
+            id: [ 0, 1 ],
+            a: [ 'a0', 'a1' ],
+            b: [ 0.0002, 'b1' ],
+            c: [
+                'c0',
+                new DataTable({
+                    id: [ 0, 1, 2 ],
+                    ca: [ 'ca0', 'ca1', 'ca2' ]
+                })
+            ]
+        }),
+        columns = table.getColumns();
 
     assert.deepEqual(
         Object.keys(columns),
@@ -256,7 +259,6 @@ QUnit.test('DataTable Column Retrieve', function (assert) {
 });
 
 QUnit.test('DataTable Events', function (assert) {
-
     const registeredEvents = [];
 
     /** @param {DataTable.EventObject} e */
@@ -266,24 +268,18 @@ QUnit.test('DataTable Events', function (assert) {
 
     /** @param {DataTable} table */
     function registerTable(table) {
-        table.on('clearTable', registerEvent);
-        table.on('afterClearTable', registerEvent);
-        table.on('clearRows', registerEvent);
-        table.on('afterClearRows', registerEvent);
-        table.on('cloneTable', registerEvent);
-        table.on('afterCloneTable', registerEvent);
-        table.on('clearColumn', registerEvent);
-        table.on('afterClearColumn', registerEvent);
-        table.on('deleteColumn', registerEvent);
-        table.on('afterDeleteColumn', registerEvent);
-        table.on('deleteRows', registerEvent);
-        table.on('afterDeleteRows', registerEvent);
-        table.on('setCell', registerEvent);
-        table.on('afterSetCell', registerEvent);
-        table.on('setColumn', registerEvent);
-        table.on('afterSetColumn', registerEvent);
-        table.on('setRows', registerEvent);
-        table.on('afterSetRows', registerEvent);
+        const eventsToRegister = [
+            'cloneTable', 'afterCloneTable',
+            'deleteColumns', 'afterDeleteColumns',
+            'deleteRows', 'afterDeleteRows',
+            'setCell', 'afterSetCell',
+            'setColumns', 'afterSetColumns',
+            'setModifier', 'afterSetModifier',
+            'setRows', 'afterSetRows'
+        ];
+        while (eventsToRegister.length) {
+            table.on(eventsToRegister.shift(), registerEvent);
+        }
     }
 
     const table = new DataTable({
@@ -311,7 +307,7 @@ QUnit.test('DataTable Events', function (assert) {
     );
 
     registeredEvents.length = 0;
-    table.setCell(table.getRowIndexBy('id', 'a'), 'text', 'test');
+    table.setCell('text', table.getRowIndexBy('id', 'a'), 'test');
     assert.deepEqual(
         registeredEvents,
         [
@@ -343,18 +339,42 @@ QUnit.test('DataTable Events', function (assert) {
     );
 
     registeredEvents.length = 0;
+    table.setModifier(new SortModifier());
+    assert.deepEqual(
+        registeredEvents,
+        [
+            'setModifier',
+            'cloneTable',
+            'afterCloneTable',
+            'afterSetModifier'
+        ],
+        'Events for DataTable.setModifier should be in expected order.'
+    );
+
+    registeredEvents.length = 0;
+    table.setModifier();
+    assert.deepEqual(
+        registeredEvents,
+        [
+            'setModifier',
+            'afterSetModifier'
+        ],
+        'Events for DataTable.setModifier should be in expected order.'
+    );
+
+    registeredEvents.length = 0;
     table.setColumn('new', [ 'new' ]);
     assert.deepEqual(
         registeredEvents,
         [
-            'setColumn',
-            'afterSetColumn'
+            'setColumns',
+            'afterSetColumns'
         ],
         'Events for DataTable.setColumn should be in expected order.'
     );
 
     registeredEvents.length = 0;
-    table.setCell(0, 'text', 'test');
+    table.setCell('text', 0, 'test');
     assert.deepEqual(
         registeredEvents,
         [
@@ -365,25 +385,14 @@ QUnit.test('DataTable Events', function (assert) {
     );
 
     registeredEvents.length = 0;
-    table.deleteColumn('new');
+    table.deleteColumns(['new']);
     assert.deepEqual(
         registeredEvents,
         [
-            'deleteColumn',
-            'afterDeleteColumn'
+            'deleteColumns',
+            'afterDeleteColumns'
         ],
-        'Events for DataTable.deleteColumn should be in expected order.'
-    );
-
-    registeredEvents.length = 0;
-    table.clear();
-    assert.deepEqual(
-        registeredEvents,
-        [
-            'clearTable',
-            'afterClearTable'
-        ],
-        'Events for DataTable.clear should be in expected order.'
+        'Events for DataTable.deleteColumns should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -400,28 +409,26 @@ QUnit.test('DataTable Events', function (assert) {
 });
 
 QUnit.test('DataTable JSON', function (assert) {
-
     const json = {
-        $class: 'DataTable',
-        columns: {
-            A: [ 'a0', 'a1', 'a2'],
-            B: [ 0.0002, 'b1', 'b2'],
-            C: [
-                false,
-                {
-                    $class: 'DataTable',
-                    columns: {
-                        CA: [ 'ca0', 'ca1', 'ca2' ]
+            $class: 'DataTable',
+            columns: {
+                A: [ 'a0', 'a1', 'a2'],
+                B: [ 0.0002, 'b1', 'b2'],
+                C: [
+                    false,
+                    {
+                        $class: 'DataTable',
+                        columns: {
+                            CA: [ 'ca0', 'ca1', 'ca2' ]
+                        },
+                        id: 'table2'
                     },
-                    id: 'table2'
-                },
-                'c2'
-            ]
+                    'c2'
+                ]
+            },
+            id: 'table1'
         },
-        id: 'table1'
-    };
-
-    const table = DataTable.fromJSON(json);
+        table = DataTable.fromJSON(json);
 
     assert.strictEqual(
         table.getRowCount(),
@@ -456,7 +463,6 @@ QUnit.test('DataTable JSON', function (assert) {
 });
 
 QUnit.test('DataTable.getCellAsNumber', function (assert) {
-
     const table = new DataTable({
         A: [false, true, -1, 0, 1, NaN, '', '0', 'a', null, ,void 0 ]
     });
@@ -533,7 +539,6 @@ QUnit.test('DataTable.getCellAsNumber', function (assert) {
 });
 
 QUnit.test('DataTable.getColumnAsNumbers', function (assert) {
-
     const table = new DataTable({
         test1: [null, 1, 2],
         test2: [void 0, 1, 2],
@@ -594,13 +599,11 @@ QUnit.test('DataTable.getColumnAsNumbers', function (assert) {
 });
 
 QUnit.test('DataTable.setRows', function (assert) {
-
     const table = new DataTable({
-        column1: [ true ],
-        existingColumn: [ true ]
-    });
-
-    const tableClone = table.clone();
+            column1: [ true ],
+            existingColumn: [ true ]
+        }),
+        tableClone = table.clone();
 
     assert.strictEqual(
         tableClone.getRowCount(),
@@ -608,7 +611,7 @@ QUnit.test('DataTable.setRows', function (assert) {
         'Cloned table should have same rows length.'
     );
 
-    tableClone.clearRows();
+    tableClone.deleteRows();
 
     assert.deepEqual(
         tableClone.getRowCount(),
@@ -624,4 +627,83 @@ QUnit.test('DataTable.setRows', function (assert) {
         'Row values are the same after clone.'
     );
 
+});
+
+QUnit.test('DataTable.setColumns', function (assert) {
+    const table = new DataTable({
+        x: [0, 1, 2],
+        y: [3, 1, 2]
+    });
+
+    table.setColumns({
+        x: [8, 9],
+        y: [0, 1]
+    }, 0);
+
+    assert.deepEqual(
+        table.getColumns(),
+        {
+            x: [8, 9, 2],
+            y: [0, 1, 2]
+        },
+        'Table should contain three rows of valid values.'
+    );
+
+    table.setColumns({
+        x: [8, 7]
+    });
+
+    assert.deepEqual(
+        table.getColumns(),
+        {
+            x: [8, 7],
+            y: [0, 1]
+        },
+        'Table should contain two rows of valid values.'
+    );
+});
+
+QUnit.test('DataTable.setModifier', function (assert) {
+    const modifier = new SortModifier({
+            direction: 'asc',
+            orderByColumn: 'y',
+            orderInColumn: 'x'
+        }),
+        table = new DataTable({
+            x: [0, 1, 2],
+            y: [3, 1, 2]
+        });
+
+    assert.deepEqual(
+        table.modified.getColumns(),
+        {
+            x: [0, 1, 2],
+            y: [3, 1, 2]
+        },
+        'Modified table should contain unsorted columns.'
+    );
+
+    table.setModifier(modifier);
+
+    assert.deepEqual(
+        table.modified.getColumns(),
+        {
+            x: [2, 0, 1],
+            y: [3, 1, 2] 
+        },
+        'Modified table should contain sorted columns.'
+    );
+
+    delete modifier.options.orderInColumn;
+    modifier.options.direction = 'desc';
+    table.setModifier(modifier);
+
+    assert.deepEqual(
+        table.modified.getColumns(),
+        {
+            x: [0, 2, 1],
+            y: [3, 2, 1] 
+        },
+        'Modified table should contain sorted columns.'
+    );
 });

@@ -10,12 +10,21 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Axis from '../../Core/Axis/Axis';
 import type {
     DOMElementType,
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import AST from '../../Core/Renderer/HTML/AST.js';
+import Chart from '../../Core/Chart/Chart.js';
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
@@ -101,7 +110,7 @@ declare global {
             public initRegionsDefinitions(): void;
             public initSonifyButton(sonifyButtonId: string): void;
             public onChartUpdate(): void;
-            public onDataTableCreated(e: { tree: ASTNode }): void;
+            public onDataTableCreated(e: { tree: AST.Node }): void;
             public setLinkedDescriptionAttrs(): void;
             public setScreenReaderSectionAttribs(
                 sectionDiv: HTMLDOMElement,
@@ -216,7 +225,7 @@ function getTableSummary(chart: Chart): string {
  * @param {Array<string>} types The series types in this chart.
  * @return {string} The text description of the chart type.
  */
-H.Chart.prototype.getTypeDescription = function (types: Array<string>): string {
+Chart.prototype.getTypeDescription = function (types: Array<string>): string {
     const firstType = types[0],
         firstSeries = this.series && this.series[0] || {},
         formatContext: Highcharts.InfoRegionsComponentTypeDescFormatContextObject = {
@@ -265,7 +274,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         this.initRegionsDefinitions();
 
         this.addEvent(chart, 'aftergetTableAST', function (
-            e: { tree: Highcharts.ASTNode }
+            e: { tree: AST.Node }
         ): void {
             component.onDataTableCreated(e);
         });
@@ -674,7 +683,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     onDataTableCreated: function (
         this: Highcharts.InfoRegionsComponent,
-        e: { tree: Highcharts.ASTNode }
+        e: { tree: AST.Node }
     ): void {
         const chart = this.chart;
 
@@ -850,10 +859,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             ),
             {
                 chart: chart,
-                names: axes.map(function (axis: Highcharts.Axis): string {
+                names: axes.map(function (axis): string {
                     return getAxisDescription(axis);
                 }),
-                ranges: axes.map(function (axis: Highcharts.Axis): string {
+                ranges: axes.map(function (axis): string {
                     return getAxisRangeDescription(axis);
                 }),
                 numAxes: axes.length

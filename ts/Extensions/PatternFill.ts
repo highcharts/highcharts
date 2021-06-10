@@ -13,6 +13,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorString from '../Core/Color/ColorString';
@@ -21,12 +27,13 @@ import type {
     SVGDOMElement
 } from '../Core/Renderer/DOMElementType';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
-const { getOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { getOptions } = D;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
@@ -39,6 +46,24 @@ const {
     removeEvent,
     wrap
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        defIds?: Array<string>;
+        idCounter?: number;
+        patternElements?: Record<string, SVGElement>;
+        addPattern(
+            options: PatternFill.PatternOptionsObject,
+            animation?: (boolean|AnimationOptions)
+        ): (SVGElement|undefined);
+    }
+}
 
 declare module '../Core/Series/PointLike' {
     interface PointLike {
@@ -58,150 +83,43 @@ declare global {
             aspectRatio?: number;
             aspectWidth?: number;
         }
-        interface SVGRenderer {
-            defIds?: Array<string>;
-            idCounter?: number;
-            patternElements?: Record<string, SVGElement>;
-            addPattern(
-                options: PatternFill.PatternOptionsObject,
-                animation?: (boolean|AnimationOptions)
-            ): (SVGElement|undefined);
-        }
         let patterns: Array<PatternFill.PatternOptionsObject>|undefined;
     }
 }
-
-/**
- * Pattern options
- *
- * @interface Highcharts.PatternOptionsObject
- *//**
- * Background color for the pattern if a `path` is set (not images).
- * @name Highcharts.PatternOptionsObject#backgroundColor
- * @type {Highcharts.ColorString}
- *//**
- * URL to an image to use as the pattern.
- * @name Highcharts.PatternOptionsObject#image
- * @type {string}
- *//**
- * Width of the pattern. For images this is automatically set to the width of
- * the element bounding box if not supplied. For non-image patterns the default
- * is 32px. Note that automatic resizing of image patterns to fill a bounding
- * box dynamically is only supported for patterns with an automatically
- * calculated ID.
- * @name Highcharts.PatternOptionsObject#width
- * @type {number}
- *//**
- * Analogous to pattern.width.
- * @name Highcharts.PatternOptionsObject#height
- * @type {number}
- *//**
- * For automatically calculated width and height on images, it is possible to
- * set an aspect ratio. The image will be zoomed to fill the bounding box,
- * maintaining the aspect ratio defined.
- * @name Highcharts.PatternOptionsObject#aspectRatio
- * @type {number}
- *//**
- * Horizontal offset of the pattern. Defaults to 0.
- * @name Highcharts.PatternOptionsObject#x
- * @type {number|undefined}
- *//**
- * Vertical offset of the pattern. Defaults to 0.
- * @name Highcharts.PatternOptionsObject#y
- * @type {number|undefined}
- *//**
- * Either an SVG path as string, or an object. As an object, supply the path
- * string in the `path.d` property. Other supported properties are standard SVG
- * attributes like `path.stroke` and `path.fill`. If a path is supplied for the
- * pattern, the `image` property is ignored.
- * @name Highcharts.PatternOptionsObject#path
- * @type {string|Highcharts.SVGAttributes}
- *//**
- * SVG `patternTransform` to apply to the entire pattern.
- * @name Highcharts.PatternOptionsObject#patternTransform
- * @type {string}
- * @see [patternTransform demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/pattern-fill-transform)
- *//**
- * Pattern color, used as default path stroke.
- * @name Highcharts.PatternOptionsObject#color
- * @type {Highcharts.ColorString}
- *//**
- * Opacity of the pattern as a float value from 0 to 1.
- * @name Highcharts.PatternOptionsObject#opacity
- * @type {number}
- *//**
- * ID to assign to the pattern. This is automatically computed if not added, and
- * identical patterns are reused. To refer to an existing pattern for a
- * Highcharts color, use `color: "url(#pattern-id)"`.
- * @name Highcharts.PatternOptionsObject#id
- * @type {string|undefined}
- */
-
-/**
- * Holds a pattern definition.
- *
- * @sample highcharts/series/pattern-fill-area/
- *         Define a custom path pattern
- * @sample highcharts/series/pattern-fill-pie/
- *         Default patterns and a custom image pattern
- * @sample maps/demo/pattern-fill-map/
- *         Custom images on map
- *
- * @example
- * // Pattern used as a color option
- * color: {
- *     pattern: {
- *            path: {
- *                 d: 'M 3 3 L 8 3 L 8 8 Z',
- *                fill: '#102045'
- *            },
- *            width: 12,
- *            height: 12,
- *            color: '#907000',
- *            opacity: 0.5
- *     }
- * }
- *
- * @interface Highcharts.PatternObject
- *//**
- * Pattern options
- * @name Highcharts.PatternObject#pattern
- * @type {Highcharts.PatternOptionsObject}
- *//**
- * Animation options for the image pattern loading.
- * @name Highcharts.PatternObject#animation
- * @type {boolean|Partial<Highcharts.AnimationOptionsObject>|undefined}
- *//**
- * Optionally an index referencing which pattern to use. Highcharts adds
- * 10 default patterns to the `Highcharts.patterns` array. Additional
- * pattern definitions can be pushed to this array if desired. This option
- * is an index into this array.
- * @name Highcharts.PatternObject#patternIndex
- * @type {number|undefined}
- */
-
-''; // detach doclets above
 
 // Add the predefined patterns
 const patterns = H.patterns = ((): Array<PatternFill.PatternOptionsObject> => {
     const patterns: Array<PatternFill.PatternOptionsObject> = [],
         colors: Array<string> = getOptions().colors as any;
 
+    // Start with subtle patterns
     [
-        'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
-        'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9',
-        'M 3 0 L 3 10 M 8 0 L 8 10',
-        'M 0 3 L 10 3 M 0 8 L 10 8',
-        'M 0 3 L 5 3 L 5 0 M 5 10 L 5 7 L 10 7',
-        'M 3 3 L 8 3 L 8 8 L 3 8 Z',
-        'M 5 5 m -4 0 a 4 4 0 1 1 8 0 a 4 4 0 1 1 -8 0',
-        'M 10 3 L 5 3 L 5 0 M 5 10 L 5 7 L 0 7',
-        'M 2 5 L 5 2 L 8 5 L 5 8 Z',
-        'M 0 0 L 5 10 L 10 0'
+        'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
+        'M 0 5 L 5 0 M -0.5 0.5 L 0.5 -0.5 M 4.5 5.5 L 5.5 4.5',
+        'M 2 0 L 2 5 M 4 0 L 4 5',
+        'M 0 2 L 5 2 M 0 4 L 5 4',
+        'M 0 1.5 L 2.5 1.5 L 2.5 0 M 2.5 5 L 2.5 3.5 L 5 3.5'
     ].forEach((pattern: string, i: number): void => {
         patterns.push({
             path: pattern,
             color: colors[i],
+            width: 5,
+            height: 5,
+            patternTransform: 'scale(1.4 1.4)'
+        });
+    });
+
+    // Then add the more drastic ones
+    [
+        'M 0 0 L 5 10 L 10 0',
+        'M 3 3 L 8 3 L 8 8 L 3 8 Z',
+        'M 5 5 m -4 0 a 4 4 0 1 1 8 0 a 4 4 0 1 1 -8 0',
+        'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
+        'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9'
+    ].forEach((pattern: string, i: number): void => {
+        patterns.push({
+            path: pattern,
+            color: colors[i + 5],
             width: 10,
             height: 10
         });
@@ -229,9 +147,9 @@ const patterns = H.patterns = ((): Array<PatternFill.PatternOptionsObject> => {
  *         The computed hash.
  */
 function hashFromObject(obj: object, preSeed?: boolean): string {
-    let str = JSON.stringify(obj),
-        strLen = str.length || 0,
-        hash = 0,
+    const str = JSON.stringify(obj),
+        strLen = str.length || 0;
+    let hash = 0,
         i = 0,
         char,
         seedStep;
@@ -815,3 +733,120 @@ declare module '../Core/Color/ColorType' {
  * */
 
 export default PatternFill;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Pattern options
+ *
+ * @interface Highcharts.PatternOptionsObject
+ *//**
+ * Background color for the pattern if a `path` is set (not images).
+ * @name Highcharts.PatternOptionsObject#backgroundColor
+ * @type {Highcharts.ColorString}
+ *//**
+ * URL to an image to use as the pattern.
+ * @name Highcharts.PatternOptionsObject#image
+ * @type {string}
+ *//**
+ * Width of the pattern. For images this is automatically set to the width of
+ * the element bounding box if not supplied. For non-image patterns the default
+ * is 32px. Note that automatic resizing of image patterns to fill a bounding
+ * box dynamically is only supported for patterns with an automatically
+ * calculated ID.
+ * @name Highcharts.PatternOptionsObject#width
+ * @type {number}
+ *//**
+ * Analogous to pattern.width.
+ * @name Highcharts.PatternOptionsObject#height
+ * @type {number}
+ *//**
+ * For automatically calculated width and height on images, it is possible to
+ * set an aspect ratio. The image will be zoomed to fill the bounding box,
+ * maintaining the aspect ratio defined.
+ * @name Highcharts.PatternOptionsObject#aspectRatio
+ * @type {number}
+ *//**
+ * Horizontal offset of the pattern. Defaults to 0.
+ * @name Highcharts.PatternOptionsObject#x
+ * @type {number|undefined}
+ *//**
+ * Vertical offset of the pattern. Defaults to 0.
+ * @name Highcharts.PatternOptionsObject#y
+ * @type {number|undefined}
+ *//**
+ * Either an SVG path as string, or an object. As an object, supply the path
+ * string in the `path.d` property. Other supported properties are standard SVG
+ * attributes like `path.stroke` and `path.fill`. If a path is supplied for the
+ * pattern, the `image` property is ignored.
+ * @name Highcharts.PatternOptionsObject#path
+ * @type {string|Highcharts.SVGAttributes}
+ *//**
+ * SVG `patternTransform` to apply to the entire pattern.
+ * @name Highcharts.PatternOptionsObject#patternTransform
+ * @type {string}
+ * @see [patternTransform demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/pattern-fill-transform)
+ *//**
+ * Pattern color, used as default path stroke.
+ * @name Highcharts.PatternOptionsObject#color
+ * @type {Highcharts.ColorString}
+ *//**
+ * Opacity of the pattern as a float value from 0 to 1.
+ * @name Highcharts.PatternOptionsObject#opacity
+ * @type {number}
+ *//**
+ * ID to assign to the pattern. This is automatically computed if not added, and
+ * identical patterns are reused. To refer to an existing pattern for a
+ * Highcharts color, use `color: "url(#pattern-id)"`.
+ * @name Highcharts.PatternOptionsObject#id
+ * @type {string|undefined}
+ */
+
+/**
+ * Holds a pattern definition.
+ *
+ * @sample highcharts/series/pattern-fill-area/
+ *         Define a custom path pattern
+ * @sample highcharts/series/pattern-fill-pie/
+ *         Default patterns and a custom image pattern
+ * @sample maps/demo/pattern-fill-map/
+ *         Custom images on map
+ *
+ * @example
+ * // Pattern used as a color option
+ * color: {
+ *     pattern: {
+ *            path: {
+ *                 d: 'M 3 3 L 8 3 L 8 8 Z',
+ *                fill: '#102045'
+ *            },
+ *            width: 12,
+ *            height: 12,
+ *            color: '#907000',
+ *            opacity: 0.5
+ *     }
+ * }
+ *
+ * @interface Highcharts.PatternObject
+ *//**
+ * Pattern options
+ * @name Highcharts.PatternObject#pattern
+ * @type {Highcharts.PatternOptionsObject}
+ *//**
+ * Animation options for the image pattern loading.
+ * @name Highcharts.PatternObject#animation
+ * @type {boolean|Partial<Highcharts.AnimationOptionsObject>|undefined}
+ *//**
+ * Optionally an index referencing which pattern to use. Highcharts adds
+ * 10 default patterns to the `Highcharts.patterns` array. Additional
+ * pattern definitions can be pushed to this array if desired. This option
+ * is an index into this array.
+ * @name Highcharts.PatternObject#patternIndex
+ * @type {number|undefined}
+ */
+
+''; // keeps doclets above in transpiled file

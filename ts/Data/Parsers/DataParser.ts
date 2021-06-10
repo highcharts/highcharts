@@ -10,6 +10,8 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
@@ -35,6 +37,8 @@ const {
 
 /**
  * Abstract class providing an interface and basic methods for a DataParser
+ *
+ * @private
  */
 abstract class DataParser<TEventObject extends DataParser.Event>
 implements DataEventEmitter<TEventObject>, DataJSON.Class {
@@ -69,18 +73,14 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * @param {DataTable} table
      * Table to convert.
      *
-     * @param {boolean} [usePresentationOrder]
-     * Whether to use the column order of the presentation state.
-     *
      * @return {Array<DataTable.Column>}
      * An array of columns, with the second dimension as row cells.
      */
     public static getColumnsFromTable(
-        table: DataTable,
-        usePresentationOrder?: boolean
+        table: DataTable
     ): Array<DataTable.Column> {
         const columns = table.getColumns(),
-            columnNames = table.getColumnNames(usePresentationOrder),
+            columnNames = table.getColumnNames(),
             columnArray = [];
 
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {

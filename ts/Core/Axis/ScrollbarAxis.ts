@@ -8,9 +8,18 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Axis from './Axis';
 import type Scrollbar from '../Scrollbar';
-import H from '../Globals.js';
+import type ScrollbarOptions from '../ScrollbarOptions';
+
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -18,23 +27,34 @@ const {
     pick
 } = U;
 
-/**
- * @private
- */
-declare module './Types' {
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisComposition' {
     interface AxisComposition {
         scrollbar?: ScrollbarAxis['scrollbar'];
     }
+}
+
+declare module './AxisType' {
     interface AxisTypeRegistry {
         ScrollbarAxis: ScrollbarAxis;
     }
 }
 
+/* *
+ *
+ *  Composition
+ *
+ * */
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
  * Creates scrollbars if enabled.
- *
  * @private
  */
 class ScrollbarAxis {
@@ -50,7 +70,7 @@ class ScrollbarAxis {
      * @param ScrollbarClass
      * Scrollbar class to use.
      */
-    public static compose(AxisClass: typeof Axis, ScrollbarClass: typeof Scrollbar): void {
+    public static compose<T extends typeof Axis>(AxisClass: T, ScrollbarClass: typeof Scrollbar): (T&ScrollbarAxis) {
         const getExtremes = (axis: ScrollbarAxis): Record<string, number> => {
             const axisMin = pick(
                 axis.options && axis.options.min,
@@ -99,9 +119,8 @@ class ScrollbarAxis {
                     axis.chart
                 );
 
-                addEvent(axis.scrollbar as any, 'changed', function (
-                    this: Highcharts.Scrollbar,
-                    e: Highcharts.ScrollbarChangedEventObject
+                addEvent(axis.scrollbar, 'changed', function (
+                    e: Scrollbar.ChangedEvent
                 ): void {
                     let {
                             axisMin,
@@ -255,18 +274,19 @@ class ScrollbarAxis {
             }
         });
 
+        return AxisClass as (T&ScrollbarAxis);
     }
 }
 
 interface ScrollbarAxis extends Axis {
-    options: Axis['options'] & ScrollbarAxis.AxisOptions;
+    options: Axis['options'] & ScrollbarAxis.Options;
     scrollbar: Scrollbar;
 }
 
 namespace ScrollbarAxis {
 
-    export interface AxisOptions {
-        scrollbar?: Highcharts.ScrollbarOptions;
+    export interface Options {
+        scrollbar?: ScrollbarOptions;
     }
 
 }

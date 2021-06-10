@@ -9,5 +9,6 @@ skipTest: true
 tags:
   - unlisted
 categories:
-  - Highcharts Gantt
+  - Highcharts Gantt:
+      priority: 8
 ...

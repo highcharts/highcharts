@@ -23,9 +23,7 @@ import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -35,6 +33,8 @@ const {
 
 /**
  * Groups table rows into subtables depending on column values.
+ *
+ * @private
  */
 class GroupModifier extends DataModifier {
 
@@ -121,14 +121,14 @@ class GroupModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Modified table as a reference.
      */
     public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
 
-        this.emit({ type: 'execute', detail: eventDetail, table });
+        this.emit({ type: 'modify', detail: eventDetail, table });
 
         const modifier = this,
             {
@@ -182,15 +182,118 @@ class GroupModifier extends DataModifier {
             }
         }
 
-        table.clear();
+        table.deleteColumns();
         table.setColumns({
             groupBy: byGroups,
             table: tableGroups,
             value: valueGroups
         });
 
-        this.emit({ type: 'afterExecute', detail: eventDetail, table });
+        this.emit({ type: 'afterModify', detail: eventDetail, table });
 
+        return table;
+    }
+
+    /**
+     * Applies partial modifications of a cell change to the property `modified`
+     * of the given modified table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {string} columnName
+     * Column name of changed cell.
+     *
+     * @param {number|undefined} rowIndex
+     * Row index of changed cell.
+     *
+     * @param {Highcharts.DataTableCellType} cellValue
+     * Changed cell value.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Modified table as a reference.
+     */
+    public modifyCell(
+        table: DataTable,
+        columnName: string,
+        rowIndex: number,
+        cellValue: DataTable.CellType,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+        table.modified.setColumns(
+            this.modify(table.clone()).getColumns(),
+            void 0,
+            eventDetail
+        );
+        return table;
+    }
+
+    /**
+     * Applies partial modifications of column changes to the property
+     * `modified` of the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {Highcharts.DataTableColumnCollection} columns
+     * Changed columns as a collection, where the keys are the column names.
+     *
+     * @param {number} [rowIndex=0]
+     * Index of the first changed row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Modified table as a reference.
+     */
+    public modifyColumns(
+        table: DataTable,
+        columns: DataTable.ColumnCollection,
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+        table.modified.setColumns(
+            this.modify(table.clone()).getColumns(),
+            void 0,
+            eventDetail
+        );
+        return table;
+    }
+
+    /**
+     * Applies partial modifications of row changes to the property `modified`
+     * of the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {Array<(Highcharts.DataTableRow|Highcharts.DataTableRowObject)>} rows
+     * Changed rows.
+     *
+     * @param {number} [rowIndex]
+     * Index of the first changed row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Modified table as a reference.
+     */
+    public modifyRows(
+        table: DataTable,
+        rows: Array<(DataTable.Row|DataTable.RowObject)>,
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+        table.modified.setColumns(
+            this.modify(table.clone()).getColumns(),
+            void 0,
+            eventDetail
+        );
         return table;
     }
 

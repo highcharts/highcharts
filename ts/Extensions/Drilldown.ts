@@ -25,6 +25,7 @@ import type {
     CSSObject,
     CursorValue
 } from '../Core/Renderer/CSSObject';
+import type Options from '../Core/Options';
 import type {
     PointOptions,
     PointShortOptions
@@ -43,8 +44,8 @@ import F from '../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../Core/Globals.js';
 const { noop } = H;
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
@@ -64,6 +65,21 @@ const {
     syncTimeout
 } = U;
 
+declare module '../Core/Axis/AxisLike' {
+    interface AxisLike {
+        ddPoints?: Record<string, Array<(false|Point)>>;
+        oldPos?: number;
+        drilldownCategory(x: number, e: MouseEvent): void;
+        getDDPoints(x: number): Array<(false|Point)>;
+    }
+}
+
+declare module '../Core/Axis/TickLike' {
+    interface TickLike {
+        drillable(): void;
+    }
+}
+
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         ddDupes?: Array<string>;
@@ -82,6 +98,18 @@ declare module '../Core/Chart/ChartLike' {
         drillUp(): void;
         getDrilldownBackText(): (string|undefined);
         showDrillUpButton(): void;
+    }
+}
+
+declare module '../Core/Options'{
+    interface Options {
+        drilldown?: Highcharts.DrilldownOptions;
+    }
+}
+
+declare module '../Core/LangOptions' {
+    interface LangOptions {
+        drillUpText?: string;
     }
 }
 
@@ -132,12 +160,6 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            ddPoints?: Record<string, Array<(false|Point)>>;
-            oldPos?: number;
-            drilldownCategory(x: number, e: MouseEvent): void;
-            getDDPoints(x: number): Array<(false|Point)>;
-        }
         interface ChartDrilldownObject {
             update(options: DrilldownOptions, redraw?: boolean): void;
         }
@@ -219,12 +241,6 @@ declare global {
             seriesOptions?: SeriesTypeOptions;
             target: Chart;
             type: 'drillup';
-        }
-        interface LangOptions {
-            drillUpText?: string;
-        }
-        interface Options {
-            drilldown?: DrilldownOptions;
         }
         interface Tick {
             drillable(): void;
@@ -1104,8 +1120,13 @@ addEvent(Chart, 'render', function (): void {
                         if (!(axis.ddPoints as any)[xData[i]]) {
                             (axis.ddPoints as any)[xData[i]] = [];
                         }
+
+                        const index = i - (series.cropStart || 0);
+
                         (axis.ddPoints as any)[xData[i]].push(
-                            points ? points[i] : true
+                            (points && index >= 0 && index < points.length) ?
+                                points[index] :
+                                true
                         );
                     }
                 }
@@ -1546,7 +1567,7 @@ addEvent(Point, 'afterInit', function (): Point {
     return point;
 });
 
-addEvent(Point, 'update', function (e: { options: Highcharts.Options }): void {
+addEvent(Point, 'update', function (e: { options: Options }): void {
     const point = this,
         options = e.options || {};
 
@@ -1655,7 +1676,7 @@ addEvent(Point, 'afterSetState', function (): void {
 });
 
 // After zooming out, shift the drillUpButton to the previous position, #8095.
-addEvent(H.Chart, 'selection', function (event: any): void {
+addEvent(Chart, 'selection', function (event: any): void {
     if (event.resetSelection === true && this.drillUpButton) {
         const buttonOptions = this.options.drilldown && this.options.drilldown.drillUpButton;
 
@@ -1672,7 +1693,7 @@ addEvent(H.Chart, 'selection', function (event: any): void {
     }
 });
 
-addEvent(H.Chart, 'drillup', function (): void {
+addEvent(Chart, 'drillup', function (): void {
     if (this.resetZoomButton) {
         this.resetZoomButton = this.resetZoomButton.destroy();
     }

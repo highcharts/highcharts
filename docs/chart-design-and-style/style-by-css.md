@@ -9,9 +9,13 @@ Highcharts comes with a default CSS file, [css/highcharts.css](https://code.high
 
 To customize your styles, you can [create your own themes with SCSS](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-styled-mode), or just add your own individual CSS rules. See our [CodePen boilerplate](https://codepen.io/anon/pen/eQyawK) to experiment with the default SCSS.
 
-### Upgrade note
 
-Prior to Highcharts v7, styled mode was served as a separate set of files. Instead of an option `chart.styledMode`, styled mode was enabled by loading files from the `/js/` folder on `code.highcharts.com`, in the zip file and in the npm package. These files are no longer maintained.
+WHAT CAN BE STYLED?
+-------------------
+Typography, colors and visual properties like stroke width and style can be set by CSS.
+
+However, layout and positioning of elements like the title or legend can not be controlled by CSS. This is a limitation of CSS for SVG, that does not ([yet](https://github.com/w3c/svgwg/wiki/SVG-2-new-features#geometric-attributes-that-can-now-be-specified-as-style-properties)) allow geometric attributes like `x`, `y`, `width` or `height`. And even if those were settable, we would still need to compute the layout flow in JavaScript. Instead, positioning is subject to Highcharts JavaScript options like `align`, `verticalAlign` etc.
+
 
 WHAT CSS RULES APPLY
 --------------------
@@ -459,3 +463,8 @@ Styles for the tooltip. The tooltip box is the shape or path where the backgroun
 When [zones](https://api.highcharts.com/highcharts/plotOptions.series.zones) are applied, each zone is given a class name with its index. A custom _className_ option can also be set in the zone options. Replaces the color, dashStyle and fillColor options for zones.
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/color-zones/).
+
+
+### Compatibility note
+
+Prior to Highcharts v7, styled mode was served as a separate set of files. Instead of an option `chart.styledMode`, styled mode was enabled by loading files from the `/js/` folder on `code.highcharts.com`, in the zip file and in the npm package. These files are no longer maintained.

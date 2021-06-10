@@ -12,10 +12,18 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type { AlignValue } from '../../Core/Renderer/AlignObject';
+import type { LabelsItemsOptions } from '../../Core/Options';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type EventCallback from '../../Core/EventCallback';
 import type GradientColor from '../../Core/Color/GradientColor';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
@@ -24,6 +32,8 @@ import type PointerEvent from '../../Core/PointerEvent';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
+
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const color = Color.parse;
@@ -35,12 +45,13 @@ const {
     svg,
     win
 } = H;
-import O from '../../Core/Options.js';
-const { getOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { getOptions } = D;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../../Core/Pointer.js';
+import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer3D.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -60,6 +71,12 @@ const {
 } = U;
 import VMLRenderer3D from './VMLRenderer3D.js';
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         /** @requires highcharts/modules/oldies */
@@ -69,32 +86,86 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../Core/Chart/ChartOptions'{
+    interface ChartOptions {
+        /** @deprecated */
+        defaultSeriesType?: string;
+    }
+}
+
+declare module '../../Core/EventCallback'{
+    interface EventCallback<T> {
+        /** @requires highcharts/modules/oldies */
+        hcKey?: string;
+    }
+}
+
+declare module '../../Core/Options' {
+    interface Options {
+        /** @deprecated */
+        global?: GlobalOptions;
+        /** @deprecated */
+        labels?: LabelsOptions;
+    }
+}
+
+declare module '../../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        /** @requires highcharts/modules/oldies */
+        isVML?: boolean;
+        /** @requires highcharts/modules/oldies */
+        getSpanWidth(wrapper: SVGElement, tspan: HTMLDOMElement): number;
+        /** @requires highcharts/modules/oldies */
+        invertChild(
+            element: HTMLDOMElement,
+            parentNode: HTMLDOMElement
+        ): void;
+        /** @requires highcharts/modules/oldies */
+        measureSpanWidth(text: string, style: CSSObject): number;
+    }
+}
+
+interface GlobalOptions {
+    /** @deprecated */
+    canvasToolsURL?: string;
+    /** @deprecated */
+    Date?: Function;
+    /** @deprecated */
+    getTimezoneOffset?: Function;
+    /** @deprecated */
+    timezone?: string;
+    /** @deprecated */
+    timezoneOffset?: number;
+    /** @deprecated */
+    useUTC?: boolean;
+}
+
+export interface LabelsOptions {
+    items?: Array<LabelsItemsOptions>;
+    style?: CSSObject;
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface EventCallbackFunction<T> {
-            /** @requires highcharts/modules/oldies */
-            hcKey?: string;
-        }
         interface GlobalOptions {
+            /** @deprecated */
+            canvasToolsURL?: string;
+            /** @deprecated */
+            Date?: Function;
+            /** @deprecated */
+            getTimezoneOffset?: Function;
+            /** @deprecated */
+            timezone?: string;
+            /** @deprecated */
+            timezoneOffset?: number;
+            /** @deprecated */
+            useUTC?: boolean;
             /** @requires highcharts/modules/oldies */
             VMLRadialGradientURL?: string;
-        }
-        interface SVGRenderer {
-            /** @requires highcharts/modules/oldies */
-            isVML?: boolean;
-            /** @requires highcharts/modules/oldies */
-            getSpanWidth(wrapper: SVGElement, tspan: HTMLDOMElement): number;
-            /** @requires highcharts/modules/oldies */
-            invertChild(
-                element: HTMLDOMElement,
-                parentNode: HTMLDOMElement
-            ): void;
-            /** @requires highcharts/modules/oldies */
-            measureSpanWidth(text: string, style: CSSObject): number;
         }
         /** @requires highcharts/modules/oldies */
         interface VMLAttributes extends AnyRecord {
@@ -173,7 +244,7 @@ declare global {
                 key: string,
                 element: HTMLDOMElement
             ): void;
-            public destroy(): void;
+            public destroy(): undefined;
             public dSetter(
                 value: VMLPathArray,
                 key: string,
@@ -307,13 +378,13 @@ declare global {
         function addEventListenerPolyfill<T extends EventTarget>(
             this: T,
             type: string,
-            fn: EventCallbackFunction<T>
+            fn: EventCallback<T>
         ): void;
         /** @requires highcharts/modules/oldies */
         function removeEventListenerPolyfill<T extends EventTarget> (
             this: T,
             type: string,
-            fn: EventCallbackFunction<T>
+            fn: EventCallback<T>
         ): void;
     }
     interface CSSStyleSheet {
@@ -356,7 +427,7 @@ declare global {
     }
 }
 
-let VMLRenderer: typeof Highcharts.VMLRenderer,
+let VMLRenderer: ((typeof SVGRenderer)&(typeof Highcharts.VMLRenderer)),
     VMLElement: typeof Highcharts.VMLElement;
 
 /**
@@ -450,7 +521,7 @@ if (!svg) {
      */
     Pointer.prototype.normalize = function<T extends PointerEvent> (
         e: (T|MouseEvent|PointerEvent|TouchEvent),
-        chartPosition?: Highcharts.ChartPositionObject
+        chartPosition?: Pointer.ChartPositionObject
     ): T {
 
         e = e || win.event;
@@ -546,7 +617,7 @@ if (!svg) {
     H.addEventListenerPolyfill = function<T extends EventTarget> (
         this: T,
         type: string,
-        fn: Highcharts.EventCallbackFunction<T>
+        fn: EventCallback<T>
     ): void {
         const el = this;
 
@@ -586,7 +657,7 @@ if (!svg) {
     H.removeEventListenerPolyfill = function<T extends EventTarget> (
         this: T,
         type: string,
-        fn: Highcharts.EventCallbackFunction<T>
+        fn: EventCallback<T>
     ): void {
         if (this.detachEvent) {
             fn = (this.hcEventsIE as any)[fn.hcKey as any];
@@ -930,7 +1001,7 @@ if (!svg) {
         on: function (
             this: Highcharts.VMLElement,
             eventType: string,
-            handler: Highcharts.EventCallbackFunction<void>
+            handler: EventCallback<void>
         ): Highcharts.VMLElement {
             // simplest possible event model for internal use
             this.element['on' + eventType] = function (): void {
@@ -2072,7 +2143,7 @@ if (!svg) {
                 y: number,
                 w: number,
                 h: number,
-                options: Highcharts.SymbolOptionsObject
+                options: SymbolOptions
             ): SVGPath {
                 return SVGRenderer.prototype.symbols[
                     !defined(options) || !options.r ? 'square' : 'callout'
@@ -2089,7 +2160,7 @@ if (!svg) {
     extend(VMLRenderer.prototype, VMLRendererExtension as any);
 
     // general renderer
-    H.Renderer = VMLRenderer as any;
+    RendererRegistry.registerRendererType('VMLRenderer', VMLRenderer, true);
 
     // 3D additions
     VMLRenderer3D.compose(VMLRenderer, SVGRenderer);
@@ -2131,3 +2202,15 @@ SVGRenderer.prototype.measureSpanWidth = function (
     discardElement(measuringSpan); // #2463
     return offsetWidth;
 };
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Core/Renderer/RendererType' {
+    interface RendererTypeRegistry {
+        VMLRenderer: typeof VMLRenderer;
+    }
+}

@@ -6,6 +6,7 @@
 
 const Gulp = require('gulp');
 const Path = require('path');
+const { getS3Object } = require('./lib/uploadS3');
 
 /* *
  *
@@ -20,6 +21,59 @@ const TARGET_DIRECTORY = Path.join('build', 'dist');
 const TEMPLATE_FILE = Path.join(SOURCE_DIRECTORY, 'template-example.htm');
 
 const URL_REPLACEMENT = 'src="../../code/';
+
+/**
+ * Creates an index page from the supplied options
+ * @param {{title: string, content: string}} options
+ * The options for the index
+ * @return {string}
+ * An HTML string
+ */
+function indexTemplate(options) {
+    const { title, content } = options;
+    return `
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>${title} Examples</title>
+        <style>
+            * {
+                font-family: sans-serif;
+            }
+            ul.nav > li > div {
+                font-size: 1.5em;
+                font-weight: bold;
+                margin: 1em 0 0.3em 0;
+            }
+            ul.nav > li {
+                list-style: none;
+                display: black
+            }
+            div > ul > li {
+                padding-bottom: 0.5em;
+            }
+            ul ul {
+                list-style-type: initial;
+                padding-left: 1.25em;
+                font-size: 1.15em;
+            }
+            li a {
+                text-decoration: none;
+                color: #6065c8;
+            }
+            li a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body>
+    <h1>${title} Examples</h1>
+    ${content}
+    </body>
+</html>`;
+}
 
 /* *
  *
@@ -63,61 +117,74 @@ function assembleSample(template, variables) {
  * @return {Promise<void>}
  *         Promise to keep
  */
-function createExamples(title, sourcePath, targetPath, template) {
+async function createExamples(title, sourcePath, targetPath, template) {
 
     const FS = require('fs');
     const FSLib = require('./lib/fs');
     const LogLib = require('./lib/log');
     const MkDirP = require('mkdirp');
 
-    return new Promise(resolve => {
+    const directoryPaths = FSLib.getDirectoryPaths(sourcePath);
 
-        const directoryPaths = FSLib.getDirectoryPaths(sourcePath);
+    LogLib.success('Generating', targetPath + '...');
 
-        LogLib.success('Generating', targetPath + '...');
+    directoryPaths.forEach(directoryPath => {
 
-        directoryPaths.forEach(directoryPath => {
+        let path;
 
-            let path;
-
-            const content = [
-                'html', 'css', 'js'
-            ].reduce(
-                (obj, ext) => {
-                    path = Path.join(directoryPath, 'demo.' + ext);
-                    obj[ext] = (
-                        FS.existsSync(path) &&
+        const content = [
+            'html', 'css', 'js'
+        ].reduce(
+            (obj, ext) => {
+                path = Path.join(directoryPath, 'demo.' + ext);
+                obj[ext] = (
+                    FS.existsSync(path) &&
                         FS.readFileSync(path).toString() ||
                         ''
-                    );
-                    return obj;
-                },
-                { title }
-            );
-
-            const sample = assembleSample(template, content);
-
-            path = Path.join(
-                targetPath, directoryPath.substr(sourcePath.length)
-            );
-
-            MkDirP.sync(path);
-
-            FS.writeFileSync(
-                Path.join(path, 'index.htm'),
-                convertURLToLocal(sample)
-            );
-        });
-
-        FSLib.copyFile(
-            Path.join(sourcePath, 'index.htm'),
-            Path.join(targetPath, '..', 'index.htm')
+                );
+                return obj;
+            },
+            { title }
         );
 
-        LogLib.success('Created', targetPath);
+        const sample = assembleSample(template, content);
 
-        resolve();
+        path = Path.join(
+            targetPath, directoryPath.substr(sourcePath.length)
+        );
+
+        MkDirP.sync(path);
+
+        FS.writeFileSync(
+            Path.join(path, 'index.html'),
+            convertURLToLocal(sample)
+        );
     });
+
+    /**
+     *
+     * @param {string} path
+     * The subpath for the product. Will substitute 'highcharts' with ''
+     * @return {Promise<string>}
+     * The S3 promise
+     */
+    function downloadSidebar(path) {
+        return getS3Object(
+            'assets.highcharts.com',
+            `demos/demo${path === 'highcharts' ? '' : `/${path}`}/sidebar`
+        );
+    }
+
+    LogLib.success('Created', targetPath);
+    const indexContent = (await downloadSidebar(sourcePath.replace(/samples\//, '').replace(/\/demo/, '')))
+        .replace(/style=\"display:none;\"/g, '') // remove hidden style
+        .replace(/(?!href= ")(\.\/.+?)(?=")/g, 'examples\/$1\/index.html'); // replace links
+
+    // eslint-disable-next-line node/no-unsupported-features/node-builtins
+    return FS.promises.writeFile(
+        Path.join(targetPath, '..', 'index.html'),
+        indexTemplate({ title, content: indexContent })
+    );
 }
 
 /**
