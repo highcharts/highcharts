@@ -599,6 +599,10 @@ class Point {
             }
         }
 
+        if (point.resolveColor) {
+            point.resolveColor();
+        }
+
         return point;
     }
 
@@ -926,8 +930,6 @@ class Point {
 
         // Add a unique ID to the point if none is assigned
         this.id = defined(this.id) ? this.id : uniqueKey();
-
-        this.resolveColor();
 
         series.chart.pointCount++;
 
