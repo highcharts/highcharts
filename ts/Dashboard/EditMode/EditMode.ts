@@ -363,7 +363,7 @@ class EditMode {
         }
 
         if (editMode.resizer) {
-            editMode.resizer.hideSnaps();
+            editMode.resizer.disableResizer();
         }
     }
 

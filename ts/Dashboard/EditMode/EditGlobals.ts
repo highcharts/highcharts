@@ -49,7 +49,8 @@ const EditGlobals: EditGlobals = {
         editGridItems: PREFIX + 'grid-items',
         popupContentContainer: PREFIX + 'popup-content',
         popupConfirmBtn: PREFIX + 'popup-confirm-btn',
-        overlay: PREFIX + 'overlay'
+        overlay: PREFIX + 'overlay',
+        resizerMenuBtnActive: PREFIX + 'resizer-menu-btn-active'
     },
     lang: {
         editMode: 'Edit mode',
@@ -124,6 +125,7 @@ namespace EditGlobals {
         popupContentContainer: string;
         popupConfirmBtn: string;
         overlay: string;
+        resizerMenuBtnActive: string;
     }
 
     export interface LangOptions {

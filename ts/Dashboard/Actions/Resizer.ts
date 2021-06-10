@@ -347,14 +347,13 @@ class Resizer {
 
     }
 
-    public hideSnaps(): void {
+    public disableResizer(): void {
 
         this.isActive = false;
         this.currentDimension = void 0;
-
-        this.resizerBtnCallback();
         this.currentCell = void 0;
         this.resizeCellContext = void 0;
+        this.disableMenuBtn();
 
         if (this.snapXL) {
             this.snapXL.style.left = '-9999px';
@@ -885,20 +884,34 @@ class Resizer {
         const editMode = this.editMode;
 
         if (resizer && !resizer.isResizerDetectionActive) {
-            resizer.activateResizerDetection();
-            if (editMode.resizeBtn) {
-                editMode.resizeBtn.style.color = '#90ED7D';
-            }
+            this.enableMenuBtn();
         } else if (resizer) {
-            resizer.deactivateResizerDetection();
-            if (editMode.resizeBtn) {
-                editMode.resizeBtn.style.color = '#555';
-            }
+            this.disableMenuBtn();
         }
     }
 
-    public activateResizerBtn(): void {
+    private disableMenuBtn(): void {
+        const resizerMenuBtn = this.editMode.resizeBtn;
 
+        this.deactivateResizerDetection();
+
+        if (resizerMenuBtn) {
+            resizerMenuBtn.classList.remove(
+                EditGlobals.classNames.resizerMenuBtnActive
+            );
+        }
+    }
+
+    private enableMenuBtn(): void {
+        const resizer = this;
+        const resizerMenuBtn = this.editMode.resizeBtn;
+
+        resizer.activateResizerDetection();
+        if (resizerMenuBtn) {
+            resizerMenuBtn.classList.add(
+                EditGlobals.classNames.resizerMenuBtnActive
+            );
+        }
     }
 
     /**
