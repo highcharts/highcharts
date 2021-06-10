@@ -361,6 +361,10 @@ class EditMode {
         if (this.resizeBtn) {
             this.resizeBtn.style.display = 'none';
         }
+
+        if (editMode.resizer) {
+            editMode.resizer.hideSnaps();
+        }
     }
 
     public isActive(): boolean {
@@ -452,31 +456,7 @@ class EditMode {
         );
 
         // Create resizer button.
-        this.resizeBtn = EditRenderer.renderButton(
-            this.tools.container,
-            {
-                className: EditGlobals.classNames.editToolsBtn,
-                value: 'Resize',
-                callback: (): void => {
-                    const resizer = editMode.resizer;
-
-                    if (resizer && !resizer.isResizerDetectionActive) {
-                        resizer.activateResizerDetection();
-                        if (editMode.resizeBtn) {
-                            editMode.resizeBtn.style.color = '#90ED7D';
-                        }
-                    } else if (resizer) {
-                        resizer.deactivateResizerDetection();
-                        if (editMode.resizeBtn) {
-                            editMode.resizeBtn.style.color = '#555';
-                        }
-                    }
-                },
-                style: {
-                    display: 'none'
-                }
-            }
-        );
+        this.resizeBtn = Resizer.createMenuBtn(editMode);
     }
 }
 namespace EditMode {

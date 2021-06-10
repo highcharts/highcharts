@@ -8,6 +8,7 @@ import type Row from '../Layout/Row.js';
 import type Layout from '../Layout/Layout.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import GUIElement from '../Layout/GUIElement.js';
+import EditRenderer from '../EditMode/EditRenderer.js';
 
 import U from '../../Core/Utilities.js';
 
@@ -41,6 +42,26 @@ class Resizer {
         json: Resizer.ClassJSON
     ): Resizer|undefined {
         return new Resizer(editMode, json.options);
+    }
+
+    public static createMenuBtn(
+        editMode: EditMode
+    ): HTMLDOMElement|undefined {
+        return EditRenderer.renderButton(
+            editMode.tools.container as HTMLDOMElement,
+            {
+                className: EditGlobals.classNames.editToolsBtn,
+                value: 'Resize',
+                callback: (): void => {
+                    if (editMode.resizer) {
+                        editMode.resizer.resizerBtnCallback();
+                    }
+                },
+                style: {
+                    display: 'none'
+                }
+            }
+        );
     }
 
     protected static readonly defaultOptions: Resizer.Options = {
@@ -324,6 +345,32 @@ class Resizer {
 
         this.addResizeEvents();
 
+    }
+
+    public hideSnaps(): void {
+
+        this.isActive = false;
+        this.currentDimension = void 0;
+
+        this.resizerBtnCallback();
+        this.currentCell = void 0;
+        this.resizeCellContext = void 0;
+
+        if (this.snapXL) {
+            this.snapXL.style.left = '-9999px';
+        }
+
+        if (this.snapXR) {
+            this.snapXR.style.left = '-9999px';
+        }
+
+        if (this.snapYB) {
+            this.snapYB.style.left = '-9999px';
+        }
+
+        if (this.snapYT) {
+            this.snapYT.style.left = '-9999px';
+        }
     }
 
     public resizeElement(
@@ -713,10 +760,6 @@ class Resizer {
         }
 
     }
-
-    private updateCellWidth(): void {
-
-    }
     /**
      * Destroy resizer
      *
@@ -835,6 +878,27 @@ class Resizer {
             height: height + 'px',
             width: width + 'px'
         });
+    }
+
+    public resizerBtnCallback(): void {
+        const resizer = this;
+        const editMode = this.editMode;
+
+        if (resizer && !resizer.isResizerDetectionActive) {
+            resizer.activateResizerDetection();
+            if (editMode.resizeBtn) {
+                editMode.resizeBtn.style.color = '#90ED7D';
+            }
+        } else if (resizer) {
+            resizer.deactivateResizerDetection();
+            if (editMode.resizeBtn) {
+                editMode.resizeBtn.style.color = '#555';
+            }
+        }
+    }
+
+    public activateResizerBtn(): void {
+
     }
 
     /**
