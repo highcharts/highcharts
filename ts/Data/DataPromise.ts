@@ -23,23 +23,11 @@ const win: AnyRecord = H.win;
 
 /* *
  *
- *  Enums
- *
- * */
-
-enum DataPromiseState {
-    FULFILLED,
-    PENDING,
-    REJECTED
-}
-
-/* *
- *
  *  Class
  *
  * */
 
-class DataPromise<TValue = never, TError = any> {
+class DataPromise<T> implements Promise<T> {
 
     /* *
      *
@@ -47,7 +35,7 @@ class DataPromise<TValue = never, TError = any> {
      *
      * */
 
-    private static builtinPromise = true;
+    public static onlyPolyfill = false;
 
     /* *
      *
@@ -55,20 +43,24 @@ class DataPromise<TValue = never, TError = any> {
      *
      * */
 
-    public static noBuiltinPromise(disable: boolean): void {
-        DataPromise.builtinPromise = !disable;
+    private static isPromiseLike<T>(promise: unknown): promise is PromiseLike<T> {
+        return (
+            typeof promise === 'object' &&
+            promise !== null &&
+            typeof (promise as PromiseLike<T>).then === 'function'
+        );
     }
 
-    public static reject<TValue = never, TError = any>(
-        reason: (TError|DataPromise<TValue, TError>)
-    ): DataPromise<TValue, TError> {
-        if (win.Promise && DataPromise.builtinPromise) {
+    public static reject<T = never>(
+        reason: unknown
+    ): DataPromise<T> {
+        if (win.Promise && !DataPromise.onlyPolyfill) {
             return win.Promise.reject(reason);
         }
         if (reason instanceof DataPromise) {
             return reason;
         }
-        return new DataPromise<TValue, TError>(
+        return new DataPromise<T>(
             (_resolve, reject): number => setTimeout(
                 (): void => reject(reason),
                 0
@@ -76,16 +68,23 @@ class DataPromise<TValue = never, TError = any> {
         );
     }
 
-    public static resolve<TValue = never, TError = any>(
-        value: (TValue|DataPromise<TValue, TError>)
-    ): DataPromise<TValue, TError> {
-        if (win.Promise && DataPromise.builtinPromise) {
+
+    public static resolve<T>(
+        value: (T|PromiseLike<T>)
+    ): DataPromise<T>;
+    public static resolve(): DataPromise<void>;
+    public static resolve<T>(
+        value?: (T|PromiseLike<T>)
+    ): DataPromise<(T|void)> {
+        if (win.Promise && !DataPromise.onlyPolyfill) {
             return win.Promise.resolve(value);
         }
-        if (value instanceof DataPromise) {
-            return value;
+        if (DataPromise.isPromiseLike(value)) {
+            return new DataPromise((resolve, reject): void => {
+                value.then(resolve, reject);
+            });
         }
-        return new DataPromise<TValue, TError>(
+        return new DataPromise(
             (resolve): number => setTimeout(
                 (): void => resolve(value),
                 0
@@ -101,11 +100,11 @@ class DataPromise<TValue = never, TError = any> {
 
     public constructor(
         executor: (
-            resolve: (value: TValue) => void,
-            reject: (reason?: TError) => void
+            resolve: (value: (T|PromiseLike<T>)) => void,
+            reject: (reason: unknown) => void
         ) => void
     ) {
-        if (win.Promise && DataPromise.builtinPromise) {
+        if (win.Promise && !DataPromise.onlyPolyfill) {
             return new win.Promise(executor);
         }
 
@@ -113,11 +112,11 @@ class DataPromise<TValue = never, TError = any> {
 
         try {
             executor(
-                (value: TValue): void => promise.resolve(value),
-                (reason?: TError): void => promise.reject(reason)
+                (value: (T|PromiseLike<T>)): void => promise.resolved(value),
+                (reason: unknown): void => promise.rejected(reason)
             );
         } catch (e) {
-            promise.reject(e);
+            promise.rejected(e);
         }
     }
 
@@ -127,13 +126,15 @@ class DataPromise<TValue = never, TError = any> {
      *
      * */
 
-    private registry: Array<DataPromise.RegistryItem<TValue, TError>> = [];
+    private jobs: Array<DataPromise.Job<T>> = [];
 
-    private reason?: TError;
+    private reason: unknown;
 
-    private state: DataPromiseState = DataPromiseState.PENDING;
+    private state = DataPromise.State.Pending;
 
-    private value?: TValue;
+    public readonly [Symbol.toStringTag]: string = 'DataPromise';
+
+    private value: T = void 0 as unknown as T;
 
     /* *
      *
@@ -141,137 +142,115 @@ class DataPromise<TValue = never, TError = any> {
      *
      * */
 
-    private callBack(): void {
-        const promise = this,
-            registry = promise.registry;
-
-        let registryItem: (DataPromise.RegistryItem<TValue, TError>|undefined);
-
-        if (promise.state === DataPromiseState.FULFILLED) {
-            const value = promise.value as TValue;
-            while ((registryItem = registry.shift())) {
-                registryItem.resolvePromise(value);
-            }
-        } else {
-            const reason = promise.reason;
-            while ((registryItem = registry.shift())) {
-                if (registryItem.rejectPromise) {
-                    registryItem.rejectPromise(reason);
-                }
-            }
-        }
+    public 'catch'<TResult = never>(
+        onrejected?: (((reason: unknown) => (TResult|PromiseLike<TResult>))|null)
+    ): DataPromise<(T|TResult)> {
+        return this.then(null, onrejected);
     }
 
-    private reject(reason?: TError): void {
+    private rejected(reason?: unknown): void {
         const promise = this;
 
-        if (promise.state === DataPromiseState.PENDING) {
-            promise.state = DataPromiseState.REJECTED;
+        if (promise.state === DataPromise.State.Pending) {
+            promise.state = DataPromise.State.Rejected;
             promise.reason = reason;
         }
 
-        promise.callBack();
+        promise.work();
     }
 
-    private resolve(value: (TValue|DataPromise<TValue>)): void {
+    private resolved(value: (T|PromiseLike<T>)): void {
         const promise = this;
 
-        if (promise.state === DataPromiseState.PENDING) {
-            if (value instanceof DataPromise) {
-                value.then(promise.resolve, promise.reject);
+        if (promise.state === DataPromise.State.Pending) {
+            if (DataPromise.isPromiseLike(value)) {
+                value.then(
+                    (value: T): void => promise.resolved(value),
+                    (reason: unknown): void => promise.rejected(reason)
+                );
             } else {
-                promise.state = DataPromiseState.FULFILLED;
+                promise.state = DataPromise.State.Fulfilled;
                 promise.value = value;
             }
         }
 
-        promise.callBack();
+        promise.work();
     }
 
-    public then<UValue = never, UError = any>(
-        onfulfilled?: (DataPromise.OnResolved<TValue, UValue, UError>|null),
-        onrejected?: DataPromise.OnRejected<TError, UValue, UError>
-    ): DataPromise<UValue, UError> {
-        const promise = this,
-            reason = promise.reason,
-            value = promise.value;
+    public then<TResult1 = T, TResult2 = never>(
+        onfulfilled?: (((value: T) => (TResult1|PromiseLike<TResult1>))|null),
+        onrejected?: (((reason: unknown) => (TResult2|PromiseLike<TResult2>))|null)
+    ): DataPromise<(TResult1|TResult2)> {
+        const promise = this;
 
-        switch (promise.state) {
-            case DataPromiseState.FULFILLED:
-                if (onfulfilled) {
-                    try {
-                        return DataPromise.resolve(onfulfilled(value as TValue));
-                    } catch (e) {
-                        return DataPromise.reject(e);
-                    }
-                }
-                return DataPromise.resolve(void 0 as unknown as UValue);
-            case DataPromiseState.REJECTED:
-                if (onrejected) {
-                    try {
-                        return DataPromise.resolve(onrejected(reason));
-                    } catch (e) {
-                        return DataPromise.reject(e);
-                    }
-                }
-                return DataPromise.reject(reason);
-        }
-
-        return new DataPromise<UValue, UError>((resolve, reject): void => {
-            promise.registry.push({
-                resolvePromise: (value: TValue): void => {
-                    try {
-                        if (onfulfilled) {
-                            const result = onfulfilled(value);
-                            if (result instanceof DataPromise) {
-                                result.then(resolve, reject);
-                            } else {
-                                resolve(result);
-                            }
-                        } else {
-                            resolve(value as unknown as UValue);
-                        }
-                    } catch (e) {
-                        reject(e);
-                    }
-                },
-                rejectPromise: (reason?: TError): void => {
-                    try {
-                        if (onrejected) {
+        return new DataPromise<(TResult1|TResult2)>((resolve, reject): void => {
+            const rejecter = (reason: unknown): void => {
+                    if (onrejected) {
+                        try {
                             const result = onrejected(reason);
                             if (result instanceof DataPromise) {
                                 result.then(resolve, reject);
                             } else {
                                 resolve(result);
                             }
-                        } else {
-                            reject(reason as unknown as UError);
+                        } catch (e) {
+                            reject(e);
                         }
-                    } catch (e) {
-                        reject(e);
+                    } else {
+                        reject(reason);
                     }
-                }
+                },
+                resolver = (value: T): void => {
+                    if (onfulfilled) {
+                        try {
+                            const result = onfulfilled(value);
+                            if (result instanceof DataPromise) {
+                                result.then(resolve, reject);
+                            } else {
+                                resolve(result);
+                            }
+                        } catch (e) {
+                            rejecter(e);
+                        }
+                    } else {
+                        resolve(value as unknown as TResult1);
+                    }
+                };
+
+            switch (promise.state) {
+                case DataPromise.State.Fulfilled:
+                    return resolver(promise.value);
+                case DataPromise.State.Rejected:
+                    return rejecter(promise.reason);
+            }
+
+            promise.jobs.push({
+                resolve: resolver,
+                reject: rejecter
             });
         });
     }
 
-    public 'catch'<UValue = never, UError = any>(
-        onrejected: DataPromise.OnRejected<TError, UValue, UError>
-    ): DataPromise<UValue, UError> {
-        return this.then(void 0, onrejected);
+    private work(): void {
+        const promise = this,
+            jobs = promise.jobs;
+
+        let job: (DataPromise.Job<T>|undefined);
+
+        if (promise.state === DataPromise.State.Fulfilled) {
+            const value = promise.value;
+            while ((job = jobs.shift())) {
+                job.resolve(value);
+            }
+        } else {
+            const reason = promise.reason;
+            while ((job = jobs.shift())) {
+                job.reject(reason);
+            }
+        }
     }
 
 }
-
-/* *
- *
- *  Class Prototype
- *
- * */
-
-// interface DataPromise<TValue = never, TError = any> extends Promise<TValue> {
-//     // fake full API in case of browser support
-// }
 
 /* *
  *
@@ -280,16 +259,30 @@ class DataPromise<TValue = never, TError = any> {
  * */
 
 namespace DataPromise {
-    export interface RegistryItem<TValue, TError> {
-        rejectPromise?: OnRejected<TError, void>;
-        resolvePromise: OnResolved<TValue, void>;
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface Job<T> {
+        resolve: (value: T) => void;
+        reject: (reason: unknown) => void;
     }
-    export type OnRejected<TError, UValue = never, UError = any> = (
-        reason?: TError
-    ) => (UValue|DataPromise<UValue, UError>);
-    export type OnResolved<TValue, UValue = never, UError = any> = (
-        value: TValue
-    ) => (UValue|DataPromise<UValue, UError>);
+
+    /* *
+     *
+     *  Enums
+     *
+     * */
+
+    export enum State {
+        Fulfilled = 2,
+        Pending = 0,
+        Rejected = 1
+    }
+
 }
 
 /* *

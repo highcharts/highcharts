@@ -8,7 +8,7 @@ QUnit.test('DataPromise API', function (assert) {
 
     assert.expect(3);
 
-    DataPromise.noBuiltinPromise(true);
+    DataPromise.onlyPolyfill = true;
     DataPromise
         .resolve(-1)
         .then((v) => {
