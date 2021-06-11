@@ -218,6 +218,7 @@ namespace OrdinalAxis {
                         ordinalPositions = ordinalPositions.concat(
                             series.processedXData as any
                         );
+
                         len = ordinalPositions.length;
 
                         // remove duplicates (#1588)
@@ -653,8 +654,6 @@ namespace OrdinalAxis {
 
             if (defined(distance)) {
                 // Max + pointRange because we need to scroll to the last
-
-                positions.push(max);
 
                 while (
                     (max as any) <= (axis.dataMax as any) + (extraRange as any)
