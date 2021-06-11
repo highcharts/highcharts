@@ -1739,7 +1739,7 @@ class Legend {
         }, legend.options.itemCheckboxStyle, legend.chart.container) as any;
 
         addEvent(item.checkbox, 'click', function (event: PointerEvent): void {
-            const target = event.target as Legend.LegendCheckBoxElement;
+            const target = event.target as Legend.CheckBoxElement;
 
             fireEvent(
                 (item as any).series || item,
@@ -1774,7 +1774,7 @@ interface Legend extends LegendLike {
  * */
 
 namespace Legend {
-    export interface LegendCheckBoxElement extends HTMLDOMElement {
+    export interface CheckBoxElement extends HTMLDOMElement {
         checked?: boolean;
         x: number;
         y: number;
