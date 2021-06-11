@@ -46,7 +46,7 @@ declare global {
         }
         interface LegendItemObject extends LegendSymbolMixin {
             _legendItemPos?: Array<number>;
-            checkbox?: Legend.LegendCheckBoxElement;
+            checkbox?: Legend.CheckBoxElement;
             checkboxOffset?: number;
             itemHeight?: number;
             itemWidth?: number;
