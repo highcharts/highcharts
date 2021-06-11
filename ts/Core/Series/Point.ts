@@ -1680,6 +1680,8 @@ class Point {
                     state && point.isInside ? 'show' : 'hide'
                 ](); // #2450
                 (stateMarkerGraphic.element as any).point = point; // #4310
+
+                stateMarkerGraphic.addClass(point.getClassName(), true);
             }
         }
 
