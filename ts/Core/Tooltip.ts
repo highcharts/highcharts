@@ -388,7 +388,7 @@ class Tooltip {
      * @return {Array<string>}
      */
     public defaultFormatter(
-        this: Tooltip.TooltipFormatterContextObject,
+        this: Tooltip.FormatterContextObject,
         tooltip: Tooltip
     ): (string|Array<string>) {
         const items = this.points || splat(this);
@@ -1216,7 +1216,7 @@ class Tooltip {
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
             styledMode = chart.styledMode;
-        let textConfig = {} as Tooltip.TooltipFormatterContextObject;
+        let textConfig = {} as Tooltip.FormatterContextObject;
 
         if (!options.enabled) {
             return;
@@ -1574,7 +1574,7 @@ class Tooltip {
             i: number
         ): Array<AnyRecord> {
             if (str !== false && str !== '') {
-                const point: (Point|Tooltip.TooltipPositionerPointObject) = (
+                const point: (Point|Tooltip.PositionerPointObject) = (
                     points[i - 1] ||
                     {
                         // Item 0 is the header. Instead of this, we could also
@@ -1999,38 +1999,38 @@ class Tooltip {
     }
 }
 namespace Tooltip {
-    export interface TooltipFormatterCallbackFunction {
+    export interface FormatterCallbackFunction {
         (
-            this: TooltipFormatterContextObject,
+            this: FormatterContextObject,
             tooltip: Tooltip
         ): (false|string|Array<string>);
     }
-    export interface TooltipFormatterContextObject {
+    export interface FormatterContextObject {
         color: ColorType;
         colorIndex?: number;
         key: number;
         percentage?: number;
         point: Point;
-        points?: Array<TooltipFormatterContextObject>;
+        points?: Array<FormatterContextObject>;
         series: Series;
         total?: number;
         x: number;
         y: number;
     }
-    export interface TooltipPositionerCallbackFunction {
+    export interface PositionerCallbackFunction {
         (
             this: Tooltip,
             labelWidth: number,
             labelHeight: number,
-            point: (Point|TooltipPositionerPointObject)
+            point: (Point|PositionerPointObject)
         ): PositionObject;
     }
-    export interface TooltipPositionerPointObject {
+    export interface PositionerPointObject {
         isHeader: true;
         plotX: number;
         plotY: number;
     }
-    export type TooltipShapeValue = ('callout'|'circle'|'square'|'rect');
+    export type ShapeValue = ('callout'|'circle'|'square'|'rect');
 }
 
 export default Tooltip;
