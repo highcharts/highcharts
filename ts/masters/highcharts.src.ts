@@ -23,7 +23,7 @@ import '../Core/Axis/DateTimeAxis.js';
 import '../Core/Axis/LogarithmicAxis.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
 import Tick from '../Core/Axis/Tick.js';
-import '../Core/Tooltip.js';
+import Tooltip from '../Core/Tooltip.js';
 import Pointer from '../Core/Pointer.js';
 import MSPointer from '../Core/MSPointer.js';
 import '../Core/Legend.js';
@@ -65,6 +65,7 @@ G.SVGElement = SVGElement;
 G.SVGRenderer = SVGRenderer;
 G.Tick = Tick;
 G.Time = Time;
+G.Tooltip = Tooltip;
 // Color
 G.Color = Color;
 G.color = Color.parse;
