@@ -1138,16 +1138,16 @@ namespace OrdinalAxis {
                     val >= extendedOrdinalPositions[0] &&
                     val <=
                         extendedOrdinalPositions[
-                            extendedOrdinalPositions.length - 1
+                            length - 1
                         ]
                 ) {
                     // Return Value
                     ordinalIndex = getIndexInArray(extendedOrdinalPositions, val) - originalPositionsReference;
                 } else {
-                    // since ordinal.slope is the average distance between 2
+                    // Since ordinal.slope is the average distance between 2
                     // points on visible plotArea, this can be used to calculete
                     // the approximate position of the point, which is outside
-                    // the extededOrdinalPositions
+                    // the extededOrdinalPositions.
                     if (val < extendedOrdinalPositions[0]) {
                         let diff = extendedOrdinalPositions[0] - val,
                             approximateIndexOffset = diff / slope;
@@ -1158,7 +1158,7 @@ namespace OrdinalAxis {
                         let diff =
                                 val -
                                 extendedOrdinalPositions[
-                                    extendedOrdinalPositions.length - 1
+                                    length - 1
                                 ],
                             approximateIndexOffset = diff / slope;
                         ordinalIndex =
