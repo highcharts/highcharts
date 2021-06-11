@@ -69,6 +69,7 @@ declare module './Series/PointLike' {
 declare module './Series/SeriesLike' {
     interface SeriesLike {
         noSharedTooltip?: boolean;
+        noSplitTooltip?: boolean;
         tt?: SVGElement;
     }
 }
@@ -1379,6 +1380,12 @@ class Tooltip {
 
         // single point tooltip
         } else {
+            // Hovering over series that tooltip shouldn't be split, #13868.
+            if (!isArray(pointOrPoints) && pointOrPoints.series.noSplitTooltip) {
+                tooltip.options.split = false;
+                tooltip.split = false;
+            }
+
             textConfig = point.getLabelConfig() as any;
         }
         this.len = pointConfig.length; // #6128

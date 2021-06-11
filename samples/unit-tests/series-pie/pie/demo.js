@@ -328,7 +328,6 @@ QUnit.test('Pie chart initialized through the stockChart constructor, (#14773).'
             data: [3]
         }]
     });
-    chart.series[0].points[0].setState('hover');
     chart.tooltip.refresh(chart.series[0].points[0]);
     assert.ok(
         true,
