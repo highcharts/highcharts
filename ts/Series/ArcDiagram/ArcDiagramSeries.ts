@@ -223,26 +223,29 @@ class ArcDiagramSeries extends SankeySeries {
             d: [
                 ['M', nodeLeft + nodeW, fromY],
                 [
-                    'C',
+                    'A',
+                    (toY + linkHeight - fromY) / 2,
+                    (toY + linkHeight - fromY) / 2,
+                    0,
+                    0,
+                    1,
                     nodeLeft + nodeW,
-                    fromY + curvy,
-                    nodeLeft + nodeW,
-                    fromY + 100 - curvy,
-                    nodeLeft + nodeW,
-                    fromY + 100
+                    toY + linkHeight
                 ],
-                ['L', nodeLeft + nodeW, fromY + 100 + linkHeight],
+                ['L', nodeLeft + nodeW, toY],
                 [
-                    'C',
+                    'A',
+                    (toY - fromY - linkHeight) / 2,
+                    (toY - fromY - linkHeight) / 2,
+                    0,
+                    0,
+                    0,
                     nodeLeft + nodeW,
-                    fromY + 100 + linkHeight - curvy,
-                    nodeLeft + nodeW,
-                    fromY + 100 + linkHeight + curvy,
-                    nodeLeft + nodeW, fromY + linkHeight
+                    fromY + linkHeight
                 ],
                 ['Z']
             ]
-        };
+        } as any;
 
         // Place data labels in the middle
         point.dlBox = {
@@ -271,7 +274,6 @@ class ArcDiagramSeries extends SankeySeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
