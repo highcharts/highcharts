@@ -73,12 +73,6 @@ QUnit.test('Pane update, single', function (assert) {
         2,
         'New border width'
     );
-
-    assert.strictEqual(
-        chart.pane[0].options.endAngle,
-        chart.options.pane.endAngle,
-        'Pane options in chart options are updated (#9917)'
-    );
 });
 
 QUnit.test('Pane update through chart.update', function (assert) {
