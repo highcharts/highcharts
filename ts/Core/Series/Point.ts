@@ -599,10 +599,6 @@ class Point {
             }
         }
 
-        if (point.resolveColor) {
-            point.resolveColor();
-        }
-
         return point;
     }
 
@@ -931,6 +927,8 @@ class Point {
         // Add a unique ID to the point if none is assigned
         this.id = defined(this.id) ? this.id : uniqueKey();
 
+        this.resolveColor();
+
         series.chart.pointCount++;
 
         fireEvent(this, 'afterInit');
@@ -1212,6 +1210,7 @@ class Point {
         function update(): void {
 
             point.applyOptions(options);
+            point.resolveColor();
 
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
