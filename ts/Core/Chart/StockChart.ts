@@ -448,10 +448,6 @@ addEvent(Series, 'setOptions', function (
     let overrides;
 
     if (this.chart.options.isStock) {
-        if (this.is('pie') && this.chart.options.tooltip) {
-            this.chart.options.tooltip.split = false; // #13868
-        }
-
         if (this.is('column') || this.is('columnrange')) {
             overrides = {
                 borderWidth: 0,
