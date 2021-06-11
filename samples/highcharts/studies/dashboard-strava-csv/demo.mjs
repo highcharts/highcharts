@@ -135,7 +135,12 @@ const state = {
     sortColumn: 'Activity Date',
     sortDirection: 'asc',
     activityTypes: ['Run', 'Ride', 'Walk', 'Nordic Ski'],
-    loaded: false
+    loaded: false,
+    rangeFilter: {
+        column: "Distance",
+        minValue: 0,
+        maxValue: Number.MAX_SAFE_INTEGER
+    }
 };
 
 
@@ -254,6 +259,12 @@ const components = state => [
             ...generateChecks(),
             { tagName: 'br' },
             {
+                tagName: 'button',
+                textContent: "Deselect all",
+                id: 'unselectall'
+            },
+            { tagName: 'br' },
+            {
                 tagName: 'label',
                 textContent: 'Sort by:',
                 attributes: {
@@ -293,6 +304,69 @@ const components = state => [
             })),
             { tagName: 'br' },
             {
+                tagName: 'div',
+                children: [
+                    {
+                        tagName: 'label',
+                        textContent: 'Filter by:',
+                        attributes: {
+                            for: 'filterselect'
+                        }
+                    },
+                    {
+                        tagName: "select",
+                        attributes: {
+                            id: 'filterselect',
+                            selected: state.rangeFilter.column
+                        },
+                        children: [
+                            ...store.table.getColumnNames()
+                                .map(column => (
+                                    {
+                                        tagName: 'option',
+                                        textContent: column,
+                                        value: column,
+                                        attributes: column === state.rangeFilter.column ? {
+                                            selected: true
+                                        } : {}
+                                    }
+                                ))
+                        ]
+                    },
+                    {
+                        tagName: 'label',
+                        textContent: 'Min value',
+                        attributes: {
+                            for: 'filterminval'
+                        }
+                    },
+                    {
+                        tagName: 'input',
+                        attributes: {
+                            type: 'number',
+                            id: 'filterminval',
+                            value: state.rangeFilter.minValue
+                        }
+                    },
+                    {
+                        tagName: 'label',
+                        textContent: 'Max value',
+                        attributes: {
+                            for: 'filtermaxval'
+                        }
+                    },
+                    {
+                        tagName: 'input',
+                        attributes: {
+                            type: 'number',
+                            id: 'filtermaxval',
+                            value: state.rangeFilter.maxValue
+                        }
+                    }
+                ]
+            },
+            { tagName: 'br' },
+            {
                 tagName: "button",
                 textContent: 'Apply',
                 attributes: {
@@ -314,6 +388,7 @@ const components = state => [
 
                     store.table.setModifier(
                         new ChainModifier({},
+                            new RangeModifier({ ranges: [state.rangeFilter] }),
                             new RangeModifier({ ranges }),
                             new SortModifier({
                                 direction: state.sortDirection,
@@ -326,7 +401,7 @@ const components = state => [
                 function getChecked() {
                     const checked = [];
                     const checkboxes = document
-                        .querySelectorAll('input[type="checkbox"]');
+                        .querySelectorAll('#container input[type="checkbox"]');
                     for (const checkbox of checkboxes) {
                         if (checkbox.checked) {
                             checked.push(checkbox.id.replace(/check/, ""));
@@ -334,8 +409,12 @@ const components = state => [
                     }
                     return checked;
                 }
-
-                document.querySelector('#filterButton').addEventListener("click", e => {
+                document.querySelector('#unselectall').addEventListener("click", () => {
+                    const checkboxes = document
+                        .querySelectorAll('#container input[type="checkbox"]');
+                    checkboxes.forEach(el => el.checked && el.click());
+                });
+                document.querySelector('#filterButton').addEventListener("click", () => {
                     doModify(getChecked());
                 });
                 document.querySelector('#sortselect').addEventListener("change", function (e) {
@@ -343,6 +422,21 @@ const components = state => [
 
                         state.sortColumn = e.target.value;
                     }
+                });
+                document.querySelectorAll('#filterselect, #filterminval, #filtermaxval').forEach(el => {
+                    el.addEventListener("change", function (e) {
+
+                        const idKeyMap = {
+                            filterselect: 'column',
+                            filterminval: 'minValue',
+                            filtermaxval: 'maxValue'
+                        };
+
+                        const key = idKeyMap[el.id];
+                        const value = e.target.value;
+
+                        state.rangeFilter[key] = !isNaN(Number(value)) ? Number(value) : value;
+                    });
                 });
                 document.querySelectorAll('input[type="radio"]').forEach(radioButton => {
                     radioButton.addEventListener("change", function (e) {
