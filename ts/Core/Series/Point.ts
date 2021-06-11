@@ -70,28 +70,6 @@ const {
  *
  * */
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface PointGraphicalProps {
-            singular: Array<string>;
-            plural: Array<string>;
-        }
-        interface PlotSeriesPointOptions {
-            events?: PointEventsOptionsObject;
-        }
-        interface PointUpdateCallbackFunction {
-            (this: Point, event: PointUpdateEventObject): void;
-        }
-        interface PointUpdateEventObject {
-            options?: PointTypeOptions;
-        }
-    }
-}
-
 declare module './PointLike' {
     interface PointLike {
         className?: string;
@@ -481,13 +459,12 @@ class Point {
      * @function Highcharts.Point#animateBeforeDestroy
      */
     public animateBeforeDestroy(): void {
-        let point = this,
+        const point = this,
             animateParams = { x: point.startXPos, opacity: 0 },
-            isDataLabel,
             graphicalProps = point.getGraphicalProps();
 
         graphicalProps.singular.forEach(function (prop: string): void {
-            isDataLabel = prop === 'dataLabel';
+            const isDataLabel = prop === 'dataLabel';
 
             (point as any)[prop] = (point as any)[prop].animate(
                 isDataLabel ? {
@@ -610,14 +587,14 @@ class Point {
      * @function Highcharts.Point#destroy
      */
     public destroy(): void {
-        let point = this,
+        const point = this,
             series = point.series,
             chart = series.chart,
             dataSorting = series.options.dataSorting,
             hoverPoints = chart.hoverPoints,
             globalAnimation = point.series.chart.renderer.globalAnimation,
-            animation = animObject(globalAnimation),
-            prop;
+            animation = animObject(globalAnimation);
+        let prop;
 
         /**
          * Allow to call after animation.
@@ -775,13 +752,13 @@ class Point {
      * @param {Highcharts.Dictionary<number>} [kinds]
      * @return {Highcharts.PointGraphicalProps}
      */
-    public getGraphicalProps(kinds?: Record<string, number>): Highcharts.PointGraphicalProps {
-        let point = this,
+    public getGraphicalProps(kinds?: Record<string, number>): Point.GraphicalProps {
+        const point = this,
             props = [],
-            prop,
-            i,
-            graphicalProps: Highcharts.PointGraphicalProps =
+            graphicalProps: Point.GraphicalProps =
                 { singular: [], plural: [] };
+        let prop,
+            i;
 
         kinds = kinds || { graphic: 1, dataLabel: 1 };
 
@@ -856,11 +833,11 @@ class Point {
      *         The zone item.
      */
     public getZone(): SeriesZonesOptions {
-        let series = this.series,
+        const series = this.series,
             zones = series.zones,
-            zoneAxis = series.zoneAxis || 'y',
-            i = 0,
-            zone;
+            zoneAxis = series.zoneAxis || 'y';
+        let zone,
+            i = 0;
 
         zone = zones[i];
         while ((this as any)[zoneAxis] >= (zone.value as any)) {
@@ -959,11 +936,11 @@ class Point {
     public optionsToObject(
         options: (PointOptions|PointShortOptions)
     ): this['options'] {
-        let ret = {} as AnyRecord,
-            series = this.series,
+        const series = this.series,
             keys = series.options.keys,
             pointArrayMap = keys || series.pointArrayMap || ['y'],
-            valueCount = pointArrayMap.length,
+            valueCount = pointArrayMap.length;
+        let ret = {} as AnyRecord,
             firstItemType,
             i = 0,
             j = 0;
@@ -1022,13 +999,14 @@ class Point {
      * @return {void}
      */
     public resolveColor(): void {
-        let series = this.series,
-            colors,
+        const series = this.series,
             optionsChart = series.chart.options.chart,
+            styledMode = series.chart.styledMode;
+
+        let color,
+            colors,
             colorCount = optionsChart.colorCount,
-            styledMode = series.chart.styledMode,
-            colorIndex: number,
-            color;
+            colorIndex: number;
 
         // remove points nonZonedColor for later recalculation
         delete (this as any).nonZonedColor;
@@ -1195,13 +1173,12 @@ class Point {
         animation?: (boolean|Partial<AnimationOptions>),
         runEvent?: boolean
     ): void {
-        let point = this,
+        const point = this,
             series = point.series,
             graphic = point.graphic,
-            i: number,
             chart = series.chart,
             seriesOptions = series.options;
-
+        let i: number;
         redraw = pick(redraw, true);
 
         /**
@@ -1498,7 +1475,7 @@ class Point {
         state?: (StatesOptionsKey|''),
         move?: boolean
     ): void {
-        let point = this,
+        const point = this,
             series = point.series,
             previousState = point.state,
             stateOptions = (
@@ -1516,15 +1493,14 @@ class Point {
                 (markerOptions.states as any)[state || 'normal']
             ) || {}),
             stateDisabled = (markerStateOptions as any).enabled === false,
-            stateMarkerGraphic = series.stateMarkerGraphic,
             pointMarker = point.marker || {},
             chart = series.chart,
-            halo = series.halo,
-            haloOptions,
+            hasMarkers = (markerOptions && series.markerAttribs);
+        let halo = series.halo,
             markerAttribs,
             pointAttribs: SVGAttributes,
             pointAttribsAnimation: AnimationOptions,
-            hasMarkers = (markerOptions && series.markerAttribs),
+            stateMarkerGraphic = series.stateMarkerGraphic,
             newSymbol: (SymbolKey|undefined);
 
         state = state || ''; // empty string
@@ -1684,7 +1660,7 @@ class Point {
         }
 
         // Show me your halo
-        haloOptions = stateOptions.halo;
+        const haloOptions = stateOptions.halo;
         const markerGraphic = (point.graphic || stateMarkerGraphic);
         const markerVisibility = (
             markerGraphic && markerGraphic.visibility || 'inherit'
@@ -1781,6 +1757,20 @@ namespace Point {
     }
 }
 
-(H as any).Point = Point;
+namespace Point {
+    export interface GraphicalProps {
+        singular: Array<string>;
+        plural: Array<string>;
+    }
+    export interface SeriesPointsOptions {
+        events?: Highcharts.PointEventsOptionsObject;
+    }
+    export interface UpdateCallbackFunction {
+        (this: Point, event: UpdateEventObject): void;
+    }
+    export interface UpdateEventObject {
+        options?: PointTypeOptions;
+    }
+}
 
 export default Point;
