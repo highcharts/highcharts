@@ -33,7 +33,6 @@ module.exports = {
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
             'stock/candlestick-chart',
-            'stock/custom-technical-indicators',
             'stock/data-grouping',
             'stock/depth-chart',
             'stock/flag-series',

@@ -18,7 +18,7 @@ import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
 import type LangOptions from './LangOptions';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
-import type SVGRenderer from './Renderer/SVG/SVGRenderer';
+import type { SymbolKey } from './Renderer/SVG/SymbolType';
 
 /* *
  *
@@ -32,7 +32,7 @@ export interface Options {
     lang?: LangOptions;
     loading?: LoadingOptions;
     plotOptions?: SeriesTypePlotOptions;
-    symbols?: Array<SVGRenderer.SymbolKeyValue>;
+    symbols?: Array<SymbolKey>;
 }
 
 export interface LabelsItemsOptions {

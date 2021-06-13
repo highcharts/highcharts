@@ -10,26 +10,36 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DataEventEmitter from '../DataEventEmitter';
+
 import AjaxMixin from '../../Extensions/Ajax.js';
-const {
-    ajax
-} = AjaxMixin;
+const { ajax } = AjaxMixin;
 import DataJSON from './../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 import GoogleSheetsParser from '../Parsers/GoogleSheetsParser.js';
-const {
-    merge
-} = U;
+const { merge } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * *7
 
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 
 /**
  * @private
  */
-
 class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements DataJSON.Class {
 
     /* *
@@ -64,7 +74,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements Da
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 

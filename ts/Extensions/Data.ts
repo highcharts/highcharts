@@ -1459,13 +1459,13 @@ class Data {
             csvStore = this.dataStore = new CSVStore(
                 new DataTable(),
                 {
-                    csv: csv,
+                    csv,
                     csvURL: options.csvURL,
                     enablePolling: options.enablePolling,
                     dataRefreshRate: options.dataRefreshRate
                 },
                 new CSVParser({
-                    csv: csv,
+                    csv,
                     startRow: options.startRow,
                     endRow: options.endRow,
                     startColumn: options.startColumn,
@@ -1513,10 +1513,10 @@ class Data {
                     table: typeof table === 'string' ? table : table.id || ''
                 },
                 new HTMLTableParser({
-                    startRow: startRow,
-                    endRow: endRow,
-                    startColumn: startColumn,
-                    endColumn: endColumn,
+                    startRow,
+                    endRow,
+                    startColumn,
+                    endColumn,
                     firstRowAsNames: options.firstRowAsNames,
                     switchRowsAndColumns: options.switchRowsAndColumns
                 }, null, new DataConverter({
@@ -1675,8 +1675,8 @@ class Data {
 
     /**
      * Get data columns from the data table.
-     * @private
      *
+     * @private
      * @function Highcharts.Data#getDataColumnsFromDataTable
      *
      * @param {DataTable} [table]

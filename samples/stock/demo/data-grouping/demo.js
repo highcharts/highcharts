@@ -54,11 +54,13 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         },
 
         title: {
-            text: 'Hourly temperatures in Vik i Sogn, Norway, 2009-2017'
+            text: 'Hourly temperatures in Vik i Sogn, Norway, 2009-2017',
+            align: 'left'
         },
 
         subtitle: {
-            text: 'Built chart in ...' // dummy text to reserve space for dynamic subtitle
+            text: 'Built chart in ...', // dummy text to reserve space for dynamic subtitle
+            align: 'left'
         },
 
         series: [{

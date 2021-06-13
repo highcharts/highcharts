@@ -33,10 +33,12 @@ export interface SymbolFunction {
     ): SVGPath;
 }
 
-export type SymbolType = keyof SymbolTypeRegistry;
+export type SymbolKey = keyof SymbolTypeRegistry;
+
+export type SymbolType = SymbolTypeRegistry[SymbolKey];
 
 export interface SymbolTypeRegistry {
-    [key: string]: SymbolFunction;
+    // add with declare module pattern
 }
 
 /* *

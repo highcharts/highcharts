@@ -461,41 +461,6 @@ namespace error {
     export const messages: Array<string> = [];
 }
 
-// eslint-disable-next-line valid-jsdoc
-/**
- * Reduces tree-like objects to a simple object with keys in dot syntax.
- * @private
- */
-function flat(
-    obj: AnyRecord
-): AnyRecord {
-    const flatObject: AnyRecord = {},
-        hasOwnProperty = {}.hasOwnProperty,
-        keys = Object.keys(obj);
-    for (let i = 0, iEnd = keys.length, name: string; i < iEnd; ++i) {
-        name = keys[i];
-        if (hasOwnProperty.call(obj, name)) {
-            if (obj[name] instanceof Array) {
-                flatObject[name] = obj[name].map(flat);
-            } else if (
-                typeof obj[name] === 'object' &&
-                obj[name] !== null &&
-                obj[name].constructor === Object
-            ) {
-                const subObj = flat(obj[name]);
-                Object
-                    .getOwnPropertyNames(subObj)
-                    .forEach(function (subName: string): void {
-                        flatObject[`${name}.${subName}`] = subObj[subName];
-                    });
-            } else {
-                flatObject[name] = obj[name];
-            }
-        }
-    }
-    return flatObject;
-}
-
 function merge<T = object>(
     extend: true,
     a?: T,
@@ -1713,7 +1678,6 @@ function inArray(item: any, arr: Array<any>, fromIndex?: number): number {
     return arr.indexOf(item, fromIndex);
 }
 
-/* eslint-disable valid-jsdoc */
 /**
  * Return the value of the first element in the array that satisfies the
  * provided testing function.
@@ -1731,12 +1695,17 @@ function inArray(item: any, arr: Array<any>, fromIndex?: number): number {
  *         The value of the element.
  */
 const find = (Array.prototype as any).find ?
-    /* eslint-enable valid-jsdoc */
-    function<T> (arr: Array<T>, callback: Function): (T|undefined) {
+    function<T> (
+        arr: Array<T>,
+        callback: Utilities.FindCallback<T>
+    ): (T|undefined) {
         return (arr as any).find(callback as any);
     } :
     // Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
-    function<T> (arr: Array<T>, callback: Function): (T|undefined) {
+    function<T> (
+        arr: Array<T>,
+        callback: Utilities.FindCallback<T>
+    ): (T|undefined) {
         let i;
         const length = arr.length;
 
@@ -2370,40 +2339,6 @@ if ((win as any).jQuery) {
     };
 }
 
-// eslint-disable-next-line valid-jsdoc
-/**
- * Reconstructs object keys in dot syntax to tree-like objects.
- * @private
- */
-function unflat(
-    flatObj: Record<string, any>
-): Record<string, any> {
-    const obj: Record<string, any> = {};
-    Object
-        .getOwnPropertyNames(flatObj)
-        .forEach(function (name: string): void {
-            if (name.indexOf('.') === -1) {
-                if (flatObj[name] instanceof Array) {
-                    obj[name] = flatObj[name].map(unflat);
-                } else {
-                    obj[name] = flatObj[name];
-                }
-            } else {
-                const subNames = name.split('.'),
-                    subObj = subNames
-                        .slice(0, -1)
-                        .reduce(function (
-                            subObj: Record<string, any>,
-                            subName: string
-                        ): Record<string, any> {
-                            return (subObj[subName] = (subObj[subName] || {}));
-                        }, obj);
-                subObj[(subNames.pop() || '')] = flatObj[name];
-            }
-        });
-    return obj;
-}
-
 // TODO use named exports when supported.
 const Utilities = {
     addEvent,
@@ -2425,7 +2360,6 @@ const Utilities = {
     extendClass,
     find,
     fireEvent,
-    flat,
     getMagnitude,
     getNestedProperty,
     getStyle,
@@ -2451,7 +2385,6 @@ const Utilities = {
     stableSort,
     syncTimeout,
     timeUnits,
-    unflat,
     uniqueKey,
     useSerialIds,
     wrap
@@ -2475,6 +2408,12 @@ namespace Utilities {
     export interface EventWrapperObject<T> {
         fn: EventCallback<T>;
         order: number;
+    }
+    export interface FindCallback<T> {
+        (
+            value: T,
+            index: number
+        ): unknown;
     }
     export interface ObjectEachCallback<TObject, TContext> {
         (

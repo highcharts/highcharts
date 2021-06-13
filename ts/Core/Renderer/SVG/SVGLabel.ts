@@ -22,6 +22,7 @@ import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
+import type { SymbolKey } from './SymbolType';
 
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
@@ -81,7 +82,7 @@ class SVGLabel extends SVGElement {
         str: string,
         x: number,
         y?: number,
-        shape?: (SVGRenderer.SymbolKeyValue|string),
+        shape?: (SymbolKey|string),
         anchorX?: number,
         anchorY?: number,
         useHTML?: boolean,
@@ -115,7 +116,7 @@ class SVGLabel extends SVGElement {
         let hasBGImage;
         if (typeof shape === 'string') {
             hasBGImage = /^url\((.*?)\)$/.test(shape);
-            if (this.renderer.symbols[shape] || hasBGImage) {
+            if (hasBGImage || this.renderer.symbols[shape as SymbolKey]) {
                 this.symbolKey = shape;
             }
         }
@@ -455,7 +456,8 @@ class SVGLabel extends SVGElement {
         // Update the label-scoped y offset. Math.min because of inline
         // style (#9400)
         this.baselineOffset = padding + Math.min(
-            metrics.b,
+            // When applicable, use the font size of the first line (#15707)
+            (this.text.firstLineMetrics || metrics).b,
             // When the height is 0, there is no bBox, so go with the font
             // metrics. Highmaps CSS demos.
             bBox.height || Infinity

@@ -94,7 +94,16 @@ QUnit.test('Navigator (#4053)', function (assert) {
 });
 
 QUnit.test('General Navigator tests', function (assert) {
+    let left = 0;
+
     var chart = Highcharts.stockChart('container', {
+            chart: {
+                events: {
+                    afterSetChartSize() {
+                        left = this.navigator && this.navigator.left;
+                    }
+                }
+            },
             legend: {
                 enabled: true
             },
@@ -104,7 +113,10 @@ QUnit.test('General Navigator tests', function (assert) {
                 }
             },
             navigator: {
-                height: 100
+                height: 100,
+                xAxis: {
+                    left: 200
+                }
             },
             series: [
                 {
@@ -120,6 +132,12 @@ QUnit.test('General Navigator tests', function (assert) {
         secondShadeXBeforeTranslate,
         x,
         y;
+
+    assert.strictEqual(
+        left,
+        200,
+        '#15803: navigator.left should be correct after afterSetChartSize'
+    );
 
     const eventCount = el => {
         let count = 0;

@@ -178,7 +178,7 @@ async function createExamples(title, sourcePath, targetPath, template) {
     LogLib.success('Created', targetPath);
     const indexContent = (await downloadSidebar(sourcePath.replace(/samples\//, '').replace(/\/demo/, '')))
         .replace(/style=\"display:none;\"/g, '') // remove hidden style
-        .replace(/(?!href= ")(\.\/.+?)(?=")/g, 'examples\/$1\/'); // replace links
+        .replace(/(?!href= ")(\.\/.+?)(?=")/g, 'examples\/$1\/index.html'); // replace links
 
     // eslint-disable-next-line node/no-unsupported-features/node-builtins
     return FS.promises.writeFile(

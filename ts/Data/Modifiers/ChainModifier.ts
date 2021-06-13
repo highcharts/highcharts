@@ -35,6 +35,8 @@ const {
 
 /**
  * Modifies a table with the help of modifiers in an ordered chain.
+ *
+ * @private
  */
 class ChainModifier extends DataModifier<ChainModifier.Event> {
 

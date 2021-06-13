@@ -10,27 +10,40 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DataEventEmitter from '../DataEventEmitter';
 
 import Ajax from '../../Extensions/Ajax.js';
 import CSVParser from '../Parsers/CSVParser.js';
 import DataJSON from '../DataJSON.js';
-const {
-    ajax
-} = Ajax;
+const { ajax } = Ajax;
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
-    pick,
     objectEach
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 
 /**
  * Class that handles creating a datastore from CSV
+ *
+ * @private
  */
 class CSVStore extends DataStore<CSVStore.Event> implements DataJSON.Class {
 

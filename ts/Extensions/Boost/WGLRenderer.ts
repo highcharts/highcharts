@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorString from '../../Core/Color/ColorString';
 import type Point from '../../Core/Series/Point';
@@ -1127,7 +1128,7 @@ function GLRenderer(
      * @private
      * @param axis {Highcharts.Axis} - the x-axis
      */
-    function setXAxis(axis: Highcharts.Axis): void {
+    function setXAxis(axis: Axis): void {
         if (!shader) {
             return;
         }
@@ -1148,7 +1149,7 @@ function GLRenderer(
      * @private
      * @param axis {Highcharts.Axis} - the y-axis
      */
-    function setYAxis(axis: Highcharts.Axis): void {
+    function setYAxis(axis: Axis): void {
         if (!shader) {
             return;
         }

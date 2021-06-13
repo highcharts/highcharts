@@ -26,13 +26,16 @@ const {
     pick
 } = U;
 
-/**
- * @private
- */
-declare module './Types' {
+declare module './AxisComposition' {
     interface AxisComposition {
         stacking?: StackingAxis['stacking'];
     }
+}
+
+/**
+ * @private
+ */
+declare module './AxisType' {
     interface AxisTypeRegistry {
         StackingAxis: StackingAxis;
     }

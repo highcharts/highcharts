@@ -19,7 +19,7 @@ import type {
     CSSObject,
     CursorValue
 } from '../CSSObject';
-import DashStyleValue from '../DashStyleValue';
+import type DashStyleValue from '../DashStyleValue';
 import type SVGPath from './SVGPath';
 
 /* *

@@ -23,6 +23,7 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from '../DOMElementType';
+import type FontMetricsObject from '../FontMetricsObject';
 import type GradientColor from '../../Color/GradientColor';
 import type RectangleObject from '../RectangleObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
@@ -138,6 +139,7 @@ class SVGElement implements SVGElementLike {
     public doTransform?: boolean;
     public element: DOMElementType = void 0 as any;
     public fakeTS?: boolean;
+    public firstLineMetrics?: FontMetricsObject;
     public handleZ?: boolean;
     public hasBoxWidthChanged?: boolean;
     public hasStroke?: boolean;

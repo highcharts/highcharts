@@ -23,7 +23,7 @@ import type {
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type { AnnotationTypeRegistry } from './Types/AnnotationType';
 import type AST from '../../Core/Renderer/HTML/AST';
-import type { AxisType } from '../../Core/Axis/Types';
+import type AxisType from '../../Core/Axis/AxisType';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
@@ -39,7 +39,7 @@ import type Series from '../../Core/Series/Series';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
@@ -123,7 +123,7 @@ declare global {
             index?: number;
             positioner: AnnotationControlPointPositionerFunction;
             style: CSSObject;
-            symbol: string;
+            symbol: SymbolKey;
             visible: boolean;
             width: number;
         }
@@ -162,7 +162,7 @@ declare global {
             overflow: DataLabelOverflowValue;
             padding: number;
             shadow: (boolean|Partial<ShadowOptionsObject>);
-            shape: SVGRenderer.SymbolKeyValue;
+            shape: SymbolKey;
             style: CSSObject;
             text?: string;
             type?: string;

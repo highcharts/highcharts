@@ -33,6 +33,8 @@ const { merge } = U;
 
 /**
  * Groups table rows into subtables depending on column values.
+ *
+ * @private
  */
 class GroupModifier extends DataModifier {
 

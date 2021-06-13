@@ -80,6 +80,9 @@ declare global {
         cutHeight?: number;
         parentNode: SVGElement;
     }
+    interface TouchList {
+        changedTouches: Array<Touch>;
+    }
     /**
      * @private
      * @deprecated

@@ -182,7 +182,7 @@ const childProcess = require('child_process');
             }
 
             const edit = params.review ?
-                ` [<a href="https://github.com/highcharts/highcharts/pull/${change.number}">Edit</a>]` :
+                ` [Edit](https://github.com/highcharts/highcharts/pull/${change.number}).` :
                 '';
 
             // All items

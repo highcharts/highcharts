@@ -39,7 +39,9 @@ const {
  * */
 
 /**
- * Abstract class providing an interface for managing a DataStore
+ * Abstract class providing an interface for managing a DataStore.
+ *
+ * @private
  */
 abstract class DataStore<TEventObject extends DataStore.Event>
 implements DataEventEmitter<TEventObject>, DataJSON.Class {

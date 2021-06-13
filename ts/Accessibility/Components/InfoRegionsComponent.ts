@@ -12,6 +12,13 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Axis from '../../Core/Axis/Axis';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -852,10 +859,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             ),
             {
                 chart: chart,
-                names: axes.map(function (axis: Highcharts.Axis): string {
+                names: axes.map(function (axis): string {
                     return getAxisDescription(axis);
                 }),
-                ranges: axes.map(function (axis: Highcharts.Axis): string {
+                ranges: axes.map(function (axis): string {
                     return getAxisRangeDescription(axis);
                 }),
                 numAxes: axes.length
