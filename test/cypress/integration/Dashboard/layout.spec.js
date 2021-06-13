@@ -1,7 +1,7 @@
 describe('Components in layout', () => {
-    it('is able to visit', () => {
-        cy.visit('/dashboard/chart-interaction/');
-    });
+    before(() => {
+        cy.visit('/cypress/dashboard/chart-interaction/');
+    })
 
     it('should resize properly ', () => {
         cy.get('.hcd-component .chart-container').each((element, i) => {
@@ -76,9 +76,9 @@ describe('Chart synchronized series state', () => {
 });
 
 describe('Chart sync selection and panning', () => {
-    it('should be able to visit', () => {
-        cy.visit('/dashboard/chart-interaction-selection/')
-    })
+    before(() => {
+        cy.visit('/cypress/dashboard/chart-interaction-selection/')
+    });
 
     it('should sync selection', () => {
         cy.get('.highcharts-container').first().as('firstchart')

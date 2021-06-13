@@ -19,9 +19,11 @@ function checkRowsAndCells() {
 }
 
 describe('layout resize on window changes', () => {
+    before(()=>{
+        cy.visit('/cypress/dashboard/chart-interaction/');
+    });
     it('should resize rows and cells correctly on horizontal window changes', () => {
         cy.viewport(1200, 1000);
-        cy.visit('/dashboard/layout-resize');
         checkRowsAndCells();
 
         cy.viewport(600, 1000);
