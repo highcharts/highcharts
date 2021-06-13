@@ -6,9 +6,11 @@
 
 'use strict';
 
+import type AnnotationChart from '../AnnotationChart';
+import type AnnotationOptions from '../AnnotationOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type MockPointOptions from '../MockPointOptions';
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
@@ -16,7 +18,7 @@ const { merge } = U;
 
 declare module '../MockPointOptions' {
     interface MockPointOptions {
-        controlPoint?: Highcharts.AnnotationControlPointOptionsObject;
+        controlPoint?: Annotation.ControlPointOptions;
     }
 }
 
@@ -29,7 +31,7 @@ class CrookedLine extends Annotation {
      * Constructors
      *
      * */
-    public constructor(chart: Highcharts.AnnotationChart, options: CrookedLine.Options) {
+    public constructor(chart: AnnotationChart, options: CrookedLine.Options) {
         super(chart, options);
     }
 
@@ -52,7 +54,7 @@ class CrookedLine extends Annotation {
         const typeOptions = this.options.typeOptions;
 
         return (typeOptions.points || []).map(function (
-            pointOptions: Highcharts.AnnotationsTypePointsOptions
+            pointOptions: Annotation.TypePointsOptions
         ): MockPointOptions {
             pointOptions.xAxis = typeOptions.xAxis;
             pointOptions.yAxis = typeOptions.yAxis;
@@ -246,11 +248,11 @@ CrookedLine.prototype.defaultOptions = merge(
 );
 
 namespace CrookedLine {
-    export interface Options extends Highcharts.AnnotationsOptions {
+    export interface Options extends AnnotationOptions {
         typeOptions: TypeOptions;
     }
-    export interface TypeOptions extends Highcharts.AnnotationsTypeOptions {
-        points?: Array<Highcharts.AnnotationsTypePointsOptions>;
+    export interface TypeOptions extends Annotation.TypeOptions {
+        points?: Array<Annotation.TypePointsOptions>;
     }
 }
 

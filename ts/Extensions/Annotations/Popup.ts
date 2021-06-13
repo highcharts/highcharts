@@ -10,7 +10,9 @@
  *
  * */
 
-import type Annotation from './Annotations';
+import type Annotation from './Annotation';
+import type AnnotationChart from './AnnotationChart';
+import type AnnotationOptions from './AnnotationOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Series from '../../Core/Series/Series';
@@ -24,7 +26,7 @@ const {
 import NavigationBindings from './NavigationBindings.js';
 import D from '../../Core/DefaultOptions.js';
 const { getOptions } = D;
-import Pointer from '../../Core/Pointer.js';
+import Pointer from '../../Core/Pointer/Pointer.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -74,7 +76,7 @@ declare global {
             public showForm(
                 type: string,
                 chart: AnnotationChart,
-                options: AnnotationsOptions,
+                options: AnnotationOptions,
                 callback: Function
             ): void;
             public showPopup(): void;
@@ -83,7 +85,7 @@ declare global {
             addForm(
                 this: Popup,
                 chart: AnnotationChart,
-                options: AnnotationsOptions,
+                options: AnnotationOptions,
                 callback: Function,
                 isInit?: boolean
             ): void;
@@ -92,17 +94,17 @@ declare global {
                 parentDiv: HTMLDOMElement,
                 chart: AnnotationChart,
                 parentNode: string,
-                options: AnnotationsOptions,
+                options: AnnotationOptions,
                 storage: Array<unknown>,
                 isRoot?: boolean
             ): void;
-            addToolbar(this: Popup, chart: AnnotationChart, options: AnnotationsOptions, callback: Function): void;
+            addToolbar(this: Popup, chart: AnnotationChart, options: AnnotationOptions, callback: Function): void;
         }
         interface PopupConfigObject {
             annotation: Annotation;
             formType: string;
             onSubmit: Function;
-            options: AnnotationsOptions;
+            options: AnnotationOptions;
         }
         interface PopupFieldsDictionary<T> {
             [key: string]: (T | PopupFieldsDictionary<T>);
@@ -115,7 +117,7 @@ declare global {
             type?: string;
         }
         interface PopupIndicatorsObject {
-            addForm(this: Popup, chart: AnnotationChart, options: AnnotationsOptions, callback: Function): void;
+            addForm(this: Popup, chart: AnnotationChart, options: AnnotationOptions, callback: Function): void;
             addFormFields(
                 this: Popup,
                 chart: AnnotationChart,
@@ -460,8 +462,8 @@ H.Popup.prototype = {
      */
     showForm: function (
         type: string,
-        chart: Highcharts.AnnotationChart,
-        options: Highcharts.AnnotationsOptions,
+        chart: AnnotationChart,
+        options: AnnotationOptions,
         callback: Function
     ): void {
 
@@ -516,8 +518,8 @@ H.Popup.prototype = {
          */
         addToolbar: function (
             this: Highcharts.Popup,
-            chart: Highcharts.AnnotationChart,
-            options: Highcharts.AnnotationsOptions,
+            chart: AnnotationChart,
+            options: AnnotationOptions,
             callback: Function
         ): void {
             let _self = this,
@@ -596,8 +598,8 @@ H.Popup.prototype = {
          */
         addForm: function (
             this: Highcharts.Popup,
-            chart: Highcharts.AnnotationChart,
-            options: Highcharts.AnnotationsOptions,
+            chart: AnnotationChart,
+            options: AnnotationOptions,
             callback: Function,
             isInit?: boolean
         ): void {
@@ -668,9 +670,9 @@ H.Popup.prototype = {
         addFormFields: function (
             this: Highcharts.Popup,
             parentDiv: HTMLDOMElement,
-            chart: Highcharts.AnnotationChart,
+            chart: AnnotationChart,
             parentNode: string,
-            options: Highcharts.AnnotationsOptions,
+            options: AnnotationOptions,
             storage: Array<unknown>,
             isRoot?: boolean
         ): void {
@@ -765,8 +767,8 @@ H.Popup.prototype = {
          */
         addForm: function (
             this: Highcharts.Popup,
-            chart: Highcharts.AnnotationChart,
-            _options: Highcharts.AnnotationsOptions,
+            chart: AnnotationChart,
+            _options: AnnotationOptions,
             callback: Function
         ): void {
 
@@ -840,7 +842,7 @@ H.Popup.prototype = {
          */
         addIndicatorList: function (
             this: Highcharts.Popup,
-            chart: Highcharts.AnnotationChart,
+            chart: AnnotationChart,
             parentDiv: HTMLDOMElement,
             listType: string
         ): void {
@@ -974,7 +976,7 @@ H.Popup.prototype = {
             this: Highcharts.Popup,
             type: string,
             optionName: string,
-            chart: Highcharts.AnnotationChart,
+            chart: AnnotationChart,
             parentDiv: HTMLDOMElement,
             selectedOption: string
         ): void {
@@ -1055,7 +1057,7 @@ H.Popup.prototype = {
          */
         addFormFields: function (
             this: Highcharts.Popup,
-            chart: Highcharts.AnnotationChart,
+            chart: AnnotationChart,
             series: SMAIndicator,
             seriesType: string,
             rhsColWrapper: HTMLDOMElement
@@ -1139,7 +1141,7 @@ H.Popup.prototype = {
          */
         addParamInputs: function (
             this: Highcharts.Popup,
-            chart: Highcharts.AnnotationChart,
+            chart: AnnotationChart,
             parentNode: string,
             fields: Highcharts.PopupFieldsDictionary<string>,
             type: string,
@@ -1213,7 +1215,7 @@ H.Popup.prototype = {
          * @param {Highcharts.Chart} chart
          * Reference to current chart
          */
-        init: function (this: Highcharts.Popup, chart: Highcharts.AnnotationChart): void {
+        init: function (this: Highcharts.Popup, chart: AnnotationChart): void {
             let tabs = this.tabs,
                 indicatorsCount = this.indicators.getAmount.call(chart),
                 firstTab; // run by default

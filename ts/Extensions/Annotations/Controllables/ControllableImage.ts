@@ -6,7 +6,7 @@
 
 'use strict';
 
-import type Annotation from '../Annotations';
+import type Annotation from '../Annotation';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import ControllableLabel from './ControllableLabel.js';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
@@ -59,7 +59,7 @@ class ControllableImage implements ControllableMixin.Type {
 
     public constructor(
         annotation: Annotation,
-        options: Highcharts.AnnotationsShapeOptions,
+        options: Annotation.ShapeOptions,
         index: number
     ) {
         this.init(annotation, options, index);
@@ -141,7 +141,7 @@ class ControllableImage implements ControllableMixin.Type {
 
 interface ControllableImage extends ControllableMixin.Type {
     // adds mixin property types, created during init
-    options: Highcharts.AnnotationsShapeOptions;
+    options: Annotation.ShapeOptions;
 }
 
 export default ControllableImage;

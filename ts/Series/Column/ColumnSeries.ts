@@ -22,7 +22,7 @@ import type ColumnMetricsObject from './ColumnMetricsObject';
 import type ColumnPoint from './ColumnPoint';
 import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type PointerEvent from '../../Core/PointerEvent';
+import type PointerEvent from '../../Core/Pointer/PointerEvent';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';

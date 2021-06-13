@@ -26,6 +26,7 @@ import type Series from '../../Core/Series/Series';
 
 import palette from '../../Core/Color/Palette.js';
 import ColorType from '../../Core/Color/ColorType';
+import Annotation from '../../Extensions/Annotations/Annotation';
 
 /* *
  *
@@ -57,6 +58,12 @@ declare module '../../Core/LegendOptions' {
     }
 }
 
+declare module '../../Extensions/Annotations/AnnotationOptions' {
+    interface AnnotationLabelOptions {
+        accessibility?: Highcharts.AnnotationsAccessibilityOptionsObject;
+    }
+}
+
 declare module '../../Core/Options'{
     interface Options {
         accessibility?: Highcharts.AccessibilityOptions;
@@ -71,9 +78,6 @@ declare global {
     namespace Highcharts {
         interface AnnotationsAccessibilityOptionsObject {
             description?: string;
-        }
-        interface AnnotationsLabelOptions {
-            accessibility?: AnnotationsAccessibilityOptionsObject;
         }
         interface AccessibilityAnnouncementFormatter {
             (

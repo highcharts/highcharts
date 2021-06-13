@@ -10,6 +10,15 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Annotations/Annotations.js';
+import Highcharts from '../../Core/Globals.js';
+import Annotation from '../../Extensions/Annotations/Annotation.js';
+import AnnotationChart from '../../Extensions/Annotations/AnnotationChart.js';
 import '../../Extensions/Annotations/NavigationBindings.js';
 import '../../Extensions/Annotations/Popup.js';
+const G: AnyRecord = Highcharts;
+// Annotations
+G.Annotation = Annotation;
+G.extendAnnotation = Annotation.extendAnnotation;
+// Compositions
+Annotation.compose(G.Pointer);
+AnnotationChart.compose(G.Chart);

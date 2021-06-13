@@ -18,7 +18,7 @@
 
 import type Chart from './Chart/Chart';
 import type Options from './Options';
-import type PointerEvent from './PointerEvent';
+import type PointerEvent from './Pointer/PointerEvent';
 
 import H from './Globals.js';
 const {
@@ -27,7 +27,7 @@ const {
     noop,
     win
 } = H;
-import Pointer from './Pointer.js';
+import Pointer from './Pointer/Pointer.js';
 import U from './Utilities.js';
 const {
     addEvent,

@@ -4,11 +4,13 @@
  *
  * */
 
-import type Annotation from '../Annotations';
+import type Annotation from '../Annotation';
+import type AnnotationChart from '../AnnotationChart';
+import type AnnotationOptions from '../AnnotationOptions';
 import type { CursorValue } from '../../../Core/Renderer/CSSObject';
 import type DOMElementType from '../../../Core/Renderer/DOMElementType';
 import type EventCallback from '../../../Core/EventCallback';
-import type PointerEvent from '../../../Core/PointerEvent';
+import type PointerEvent from '../../../Core/Pointer/PointerEvent';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import H from '../../../Core/Globals.js';
@@ -25,13 +27,13 @@ declare global {
             hasDragged?: boolean;
             hcEvents?: unknown;
             isUpdating?: boolean;
-            labels?: Array<AnnotationLabelType>;
+            labels?: Array<Annotation.LabelType>;
             nonDOMEvents?: Array<string>;
-            options: Partial<(AnnotationControlPointOptionsObject|AnnotationsOptions)>;
+            options: Partial<(Annotation.ControlPointOptions|AnnotationOptions)>;
             points?: Array<AnnotationPointType>;
             removeDrag?: Function;
             removeMouseUp?: Function;
-            shapes?: Array<AnnotationShapeType>;
+            shapes?: Array<Annotation.ShapeType>;
             target?: AnnotationControllable;
             redraw(animation?: boolean): void;
         }

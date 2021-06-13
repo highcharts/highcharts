@@ -11,7 +11,6 @@
  *  Imports
  *
  * */
-
 import type AST from '../../../Core/Renderer/HTML/AST';
 import type ControllablePath from '../Controllables/ControllablePath';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
@@ -32,6 +31,11 @@ const {
  *  Declarations
  *
  * */
+declare module '../AnnotationChart'{
+    interface AnnotationChart {
+        afterGetContainer(): void;
+    }
+}
 declare module '../../../Core/Options'{
     interface Options {
         defs?: Record<string, AST.Node>;
@@ -50,9 +54,6 @@ declare module '../../../Core/Renderer/SVG/SVGRendererLike' {
  */
 declare global {
     namespace Highcharts {
-        interface AnnotationChart {
-            afterGetContainer(): void;
-        }
         interface AnnotationMarkerMixin {
             markerEndSetter(this: SVGElement, value: string): void;
             markerStartSetter(this: SVGElement, value: string): void;

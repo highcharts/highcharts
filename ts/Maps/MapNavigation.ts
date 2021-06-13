@@ -21,7 +21,7 @@ import type {
     MapNavigationButtonOptions,
     MapNavigationOptions
 } from './MapNavigationOptions';
-import type PointerEvent from '../Core/PointerEvent';
+import type PointerEvent from '../Core/Pointer/PointerEvent';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';

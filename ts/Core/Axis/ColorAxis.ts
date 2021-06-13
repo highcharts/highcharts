@@ -23,7 +23,7 @@ import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type GradientColor from '../Color/GradientColor';
 import type LegendOptions from '../LegendOptions';
-import type PointerEvent from '../PointerEvent';
+import type PointerEvent from '../Pointer/PointerEvent';
 import type { StatesOptionsKey } from '../Series/StatesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';

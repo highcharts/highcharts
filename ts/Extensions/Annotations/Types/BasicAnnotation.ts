@@ -6,12 +6,14 @@
 
 'use strict';
 
+import type AnnotationChart from '../AnnotationChart';
+import type AnnotationOptions from '../AnnotationOptions';
 import type ControllableCircle from '../Controllables/ControllableCircle';
 import type ControllableRect from '../Controllables/ControllableRect';
 import type MockPointOptions from '../MockPointOptions';
-import type PointerEvent from '../../../Core/PointerEvent';
+import type PointerEvent from '../../../Core/Pointer/PointerEvent';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -188,7 +190,7 @@ class BasicAnnotation extends Annotation {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationsOptions) {
+    public constructor(chart: AnnotationChart, options: AnnotationOptions) {
         super(chart, options);
     }
 
@@ -239,9 +241,9 @@ interface BasicAnnotation {
 }
 namespace BasicAnnotation {
     export interface ControlPoints {
-        label: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
-        rectangle: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
-        circle: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
+        label: DeepPartial<Annotation.ControlPointOptions>[];
+        rectangle: DeepPartial<Annotation.ControlPointOptions>[];
+        circle: DeepPartial<Annotation.ControlPointOptions>[];
     }
 }
 

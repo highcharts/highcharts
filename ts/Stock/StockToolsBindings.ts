@@ -12,7 +12,8 @@
 
 'use strict';
 
-import type Annotation from '../Extensions/Annotations/Annotations';
+import type Annotation from '../Extensions/Annotations/Annotation';
+import type AnnotationOptions from '../Extensions/Annotations/AnnotationOptions';
 import type { YAxisOptions } from '../Core/Axis/AxisOptions';
 import type AxisType from '../Core/Axis/AxisType';
 import type Chart from '../Core/Chart/Chart';
@@ -21,7 +22,7 @@ import type { FlagsShapeValue } from '../Series/Flags/FlagsPointOptions';
 import type FlagsSeriesOptions from '../Series/Flags/FlagsSeriesOptions';
 import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type Point from '../Core/Series/Point';
-import type PointerEvent from '../Core/PointerEvent';
+import type PointerEvent from '../Core/Pointer/PointerEvent';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
@@ -2479,7 +2480,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             const navigation = this,
                 chart = navigation.chart,
-                annotations: Array<Highcharts.AnnotationsOptions> = [],
+                annotations: Array<AnnotationOptions> = [],
                 indicators: Array<DeepPartial<SeriesTypeOptions>> = [],
                 flags: Array<DeepPartial<SeriesTypeOptions>> = [],
                 yAxes: Array<YAxisOptions> = [];

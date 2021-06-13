@@ -10,12 +10,13 @@
 
 'use strict';
 
+import type AnnotationChart from './AnnotationChart';
+import type AnnotationOptions from './AnnotationOptions';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type MockPointOptions from './MockPointOptions';
-import type Pointer from '../../Core/Pointer';
-import type PointerEvent from '../../Core/PointerEvent';
-
-import Annotation from './Annotations.js';
+import type Pointer from '../../Core/Pointer/Pointer';
+import type PointerEvent from '../../Core/Pointer/PointerEvent';
+import Annotation from './Annotation.js';
 import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
 import F from '../../Core/FormatUtilities.js';
@@ -37,6 +38,18 @@ const {
     pick
 } = U;
 
+declare module './AnnotationChart'{
+    interface AnnotationChart {
+        navigationBindings: NavigationBindings;
+    }
+}
+
+declare module './AnnotationOptions'{
+    interface AnnotationOptions {
+        langKey?: string;
+    }
+}
+
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         navigationBindings?: NavigationBindings;
@@ -51,7 +64,7 @@ declare module '../../Core/LangOptions'{
     }
 }
 
-declare module '../../Core/PointerEvent' {
+declare module '../../Core/Pointer/PointerEvent' {
     interface PointerEvent {
         activeAnnotation?: boolean;
     }
@@ -63,9 +76,6 @@ declare module '../../Core/PointerEvent' {
  */
 declare global {
     namespace Highcharts {
-        interface AnnotationChart {
-            navigationBindings: NavigationBindings;
-        }
         interface AnnotationEditableObject {
             basicAnnotation: Array<string>;
             circle: Array<string>;
@@ -81,9 +91,6 @@ declare global {
         }
         interface AnnotationNonEditableObject {
             rectangle: Array<string>;
-        }
-        interface AnnotationsOptions {
-            langKey?: string;
         }
         interface LangNavigationOptions {
             popup?: Record<string, string>;
@@ -111,7 +118,7 @@ declare global {
             showPopup?: Function;
         }
         interface NavigationOptions {
-            annotationsOptions?: DeepPartial<AnnotationsOptions>;
+            annotationsOptions?: DeepPartial<AnnotationOptions>;
             bindings?: Record<string, NavigationBindingsOptionsObject>;
             bindingsClassName?: string;
             events?: NavigationEventsOptions;
@@ -337,7 +344,7 @@ class NavigationBindings {
      * */
 
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         options: Highcharts.NavigationOptions
     ) {
         this.chart = chart;
@@ -356,7 +363,7 @@ class NavigationBindings {
 
     public activeAnnotation?: (false|Annotation);
     public boundClassNames: Record<string, Highcharts.NavigationBindingsOptionsObject> = void 0 as any;
-    public chart: Highcharts.AnnotationChart;
+    public chart: AnnotationChart;
     public container: HTMLCollectionOf<HTMLDOMElement>;
     public currentUserDetails?: Annotation;
     public eventsToUnbind: Array<Function>;
@@ -566,7 +573,7 @@ class NavigationBindings {
      *        Browser's click event.
      */
     public bindingsChartClick(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         clickEvent: PointerEvent
     ): void {
         chart = this.chart;
@@ -1034,7 +1041,7 @@ interface NavigationBindings {
 NavigationBindings.prototype.utils = bindingsUtils;
 
 
-Chart.prototype.initNavigationBindings = function (this: Highcharts.AnnotationChart): void {
+Chart.prototype.initNavigationBindings = function (this: AnnotationChart): void {
     const chart = this,
         options = chart.options;
 

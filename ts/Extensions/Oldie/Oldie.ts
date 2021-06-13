@@ -28,7 +28,7 @@ import type GradientColor from '../../Core/Color/GradientColor';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import type HTMLRenderer from '../../Core/Renderer/HTML/HTMLRenderer';
-import type PointerEvent from '../../Core/PointerEvent';
+import type PointerEvent from '../../Core/Pointer/PointerEvent';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -48,7 +48,7 @@ const {
 import D from '../../Core/DefaultOptions.js';
 const { getOptions } = D;
 import palette from '../../Core/Color/Palette.js';
-import Pointer from '../../Core/Pointer.js';
+import Pointer from '../../Core/Pointer/Pointer.js';
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';

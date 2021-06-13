@@ -13,7 +13,7 @@
  *  Imports
  *
  * */
-import type Annotation from '../Annotations';
+import type Annotation from '../Annotation';
 
 /* *
  *

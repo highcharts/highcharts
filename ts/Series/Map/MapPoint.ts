@@ -18,7 +18,7 @@
 
 import type MapPointOptions from './MapPointOptions';
 import type MapSeries from './MapSeries';
-import type PointerEvent from '../../Core/PointerEvent';
+import type PointerEvent from '../../Core/Pointer/PointerEvent';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type ScatterPoint from '../Scatter/ScatterPoint';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';

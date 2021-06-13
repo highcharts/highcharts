@@ -6,9 +6,11 @@
 
 'use strict';
 
+import type AnnotationChart from '../AnnotationChart';
 import type ColorType from '../../../Core/Color/ColorType';
+import type { AnnotationLabelOptions } from '../../../Extensions/Annotations/AnnotationOptions';
 import type MockPointOptions from '../MockPointOptions';
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -17,14 +19,14 @@ const {
 
 declare module '../MockPointOptions' {
     interface MockPointOptions {
-        label?: Highcharts.AnnotationsLabelOptions;
+        label?: AnnotationLabelOptions;
     }
 }
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 class ElliottWave extends CrookedLine {
-    public constructor(chart: Highcharts.AnnotationChart, options: ElliottWave.Options) {
+    public constructor(chart: AnnotationChart, options: ElliottWave.Options) {
         super(chart, options);
     }
 
@@ -101,7 +103,7 @@ ElliottWave.prototype.defaultOptions = merge(
 );
 
 namespace ElliottWave {
-    export interface LabelOptions extends Highcharts.AnnotationsLabelOptions {
+    export interface LabelOptions extends AnnotationLabelOptions {
         backgroundColor: ColorType;
         borderWidth: number;
         y: number;

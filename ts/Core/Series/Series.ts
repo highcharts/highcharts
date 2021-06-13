@@ -23,7 +23,7 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type { EventCallback } from '../Callback';
-import type PointerEvent from '../PointerEvent';
+import type PointerEvent from '../Pointer/PointerEvent';
 import type {
     PointOptions,
     PointShortOptions,

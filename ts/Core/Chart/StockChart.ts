@@ -25,7 +25,7 @@ import type CSSObject from '../Renderer/CSSObject';
 import type DataExtremesObject from '../Series/DataExtremesObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Options from '../Options';
-import type PointerEvent from '../PointerEvent';
+import type PointerEvent from '../Pointer/PointerEvent';
 import type { SeriesTypePlotOptions } from '../Series/SeriesType';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -71,7 +71,7 @@ const {
     splat
 } = U;
 
-import '../Pointer.js';
+import '../Pointer/Pointer.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
 import '../Navigator.js';

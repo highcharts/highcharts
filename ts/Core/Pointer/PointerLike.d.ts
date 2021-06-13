@@ -8,16 +8,13 @@
  *
  * */
 
-
 /* *
  *
  *  Declarations
  *
  * */
-
-export interface MockPointOptions {
-    command?: string;
-    series?: undefined;
+export interface PointerLike {
+    // use declare module pattern to extend
 }
 
 /* *
@@ -26,4 +23,4 @@ export interface MockPointOptions {
  *
  * */
 
-export default MockPointOptions;
+export default PointerLike;

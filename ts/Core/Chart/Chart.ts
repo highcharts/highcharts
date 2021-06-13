@@ -41,7 +41,7 @@ import type { ChartPanningOptions } from './ChartOptions';
 import type ColorAxis from '../Axis/ColorAxis';
 import type { LabelsOptions } from '../../Extensions/Oldie/Oldie';
 import type Point from '../Series/Point';
-import type PointerEvent from '../PointerEvent';
+import type PointerEvent from '../Pointer/PointerEvent';
 import type Series from '../Series/Series';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {
@@ -80,7 +80,7 @@ const {
     defaultTime
 } = D;
 import palette from '../../Core/Color/Palette.js';
-import Pointer from '../Pointer.js';
+import Pointer from '../Pointer/Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
 import SeriesRegistry from '../Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
