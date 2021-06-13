@@ -821,3 +821,34 @@ QUnit.test('connectNulls and stacking', assert => {
         '#14882: Area graph should have a gap'
     );
 });
+
+QUnit.test('Axis with breaks and toValue method calculation, #13238.', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 400
+        },
+        xAxis: {
+            breaks: [{
+                from: 3,
+                to: 7
+            }]
+        },
+        series: [{
+            data: [
+                [0, 1],
+                [1, 1],
+                [5, 2],
+                [6, 2],
+                [7, 2],
+                [8, 2]
+            ]
+        }]
+    });
+
+    assert.close(
+        chart.xAxis[0].toValue(100),
+        0.26227,
+        0.05,
+        'The toValue method should return correct value when breakes enabled.'
+    );
+});
