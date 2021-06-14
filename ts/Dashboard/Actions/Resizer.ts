@@ -810,6 +810,7 @@ class Resizer {
             this.enableMenuBtn();
         } else if (resizer) {
             this.disableMenuBtn();
+            this.disableResizer();
         }
     }
 
