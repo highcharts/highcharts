@@ -8,7 +8,7 @@ describe('Stock Tools', () => {
     before(() => {
         cy.intercept('https://demo-live-data.highcharts.com/*').as('data');
         cy.visit('/stock/demo/stock-tools-gui');
-        cy.wait('@data')
+        return cy.wait('@data')
             .then(cy.window)
             .then(win => {
                 chart = win.Highcharts.charts[0];
@@ -17,7 +17,7 @@ describe('Stock Tools', () => {
 
     it('#15730: Should close popup after hiding annotation', () => {
         cy.get('.highcharts-label-annotation').first().click();
-        cy.get('.highcharts-container').click().then(() =>
+        cy.get('.highcharts-container').click().should(() =>
             assert.strictEqual(chart.annotations.length, 1)
         );
         cy.get('.highcharts-annotation').click();
