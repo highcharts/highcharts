@@ -18,6 +18,11 @@ export default {
             '' + cell :
             '';
     },
+    emptyHTMLElement(element: HTMLElement): void {
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
+        }
+    },
     makeDiv: (className: string, id?: string): HTMLElement => {
         const div = document.createElement('div');
         div.className = className;
