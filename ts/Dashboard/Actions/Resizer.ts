@@ -345,11 +345,9 @@ class Resizer {
             cell,
             this.editMode.dashboard.container
         );
-        const cellContainer = cell.container;
         const left = cellOffsets.left || 0;
         const top = cellOffsets.top || 0;
-        const width = (cellContainer && cellContainer.offsetWidth) || 0;
-        const height = (cellContainer && cellContainer.offsetHeight) || 0;
+        const { width, height } = GUIElement.getDimFromOffsets(cellOffsets);
         const snapWidth = (this.options.snap.width || 0);
         const snapHeight = (this.options.snap.height || 0);
 
@@ -465,34 +463,21 @@ class Resizer {
             cellContainer &&
             !((currentCell.row.layout.dashboard.editMode || {}).dragDrop || {}).isActive
         ) {
-            const parentRow = (cellContainer.parentNode as HTMLDOMElement);
-            const parentRowWidth = parentRow.offsetWidth;
+            const cellOffsets = GUIElement.getOffsets(currentCell);
+            const { width: parentRowWidth } = GUIElement.getDimFromOffsets(
+                GUIElement.getOffsets(currentCell.row)
+            );
             const cellSiblings = this.getSiblings(currentCell);
 
             // resize width
             if (currentDimension === 'x') {
-
-                // debugger;
                 const maxWidth = parentRowWidth -
-                    this.sumCellOuterWidth(
-                        cellSiblings,
-                        currentCell.row,
-                        currentCell
-                    ) || 0;
+                    this.sumCellOuterWidth(cellSiblings, currentCell.row,currentCell) || 0;
 
-                cellContainer.style.width =
-                    (
-                        Math.min(
-                            // diff
-                            e.clientX -
-                            this.editMode.dashboard.container.offsetLeft -
-                            cellContainer.offsetLeft,
-                            // this.editMode.dashboard.container.getBoundingClientRect().left -
-                            // cellContainer.getBoundingClientRect().left,
-                            // maxSize
-                            maxWidth
-                        ) / parentRowWidth
-                    ) * 100 + '%';
+                cellContainer.style.width = (
+                    Math.min(e.clientX - cellOffsets.left, maxWidth) /
+                    parentRowWidth
+                ) * 100 + '%';
 
                 this.resizeCellSiblings(
                     ((e.clientX - this.startX) / parentRowWidth) * 100,
@@ -508,7 +493,7 @@ class Resizer {
                     (
                         Math.max(
                             // diff
-                            e.clientY - cellContainer.getBoundingClientRect().top//,
+                            e.clientY - cellOffsets.top
                             
                             // minSize
                             // (currentCell.styles || {}).minHeight || 0

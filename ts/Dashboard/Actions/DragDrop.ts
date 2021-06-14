@@ -510,6 +510,20 @@ class DragDrop {
 
                 if (cellOffsets.left <= e.clientX && cellOffsets.right >= e.clientX) {
                     // @ToDo - Mouse below or above the cell.
+                    // const { width, height } =
+                    //     GUIElement.getDimFromOffsets(cellOffsets);
+                    // const rowOffsets =
+                    //     cell.row.container?.getBoundingClientRect();
+                    // const rowHeight =
+                    //     (rowOffsets?.bottom || 0) - (rowOffsets?.top || 0);
+                    // const dashOffsets = dragDrop.editMode.dashboard.
+                    //     container.getBoundingClientRect();
+                    // dragDrop.showDropPointer(
+                    //     cellOffsets.left - dashOffsets.left,
+                    //     cellOffsets.top - dashOffsets.top + height,
+                    //     width,
+                    //     rowHeight - height
+                    // );
                 } else if (
                     (i === 0 && cellOffsets.left > e.clientX) ||
                     (i === dragDrop.mouseRowContext.cells.length - 1 && cellOffsets.right < e.clientX)
