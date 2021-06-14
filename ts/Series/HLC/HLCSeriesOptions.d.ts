@@ -14,7 +14,6 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type HLCSeries from './HLCSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';

@@ -312,7 +312,7 @@ class HLCSeries extends ColumnSeries {
         return attribs;
     }
 
-    public toYData(point: HLCPoint): HLCPoint.PointShortOptions {
+    public toYData(point: HLCPoint): Array<number> {
         // return a plain array for speedy calculation
         return [point.high, point.low, point.close];
     }
@@ -373,7 +373,7 @@ interface HLCSeries {
     pointAttrToOptions: Record<string, string>;
     pointClass: typeof HLCPoint;
     init(): void;
-    toYData(point: HLCPoint): HLCPoint.PointShortOptions;
+    toYData(point: HLCPoint): Array<number>;
 }
 extend(HLCSeries.prototype, {
     animate: null as any, // Disable animation

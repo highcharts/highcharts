@@ -67,9 +67,8 @@ class HLCPoint extends ColumnSeries.prototype.pointClass {
  * */
 
 namespace HLCPoint {
-    export type PointShortOptions = [number, number, number];
+    export type PointShortOptions = Array<number>;
 }
-
 /* *
  *
  *  Default Export

@@ -24,10 +24,12 @@ import OHLCPoint from './OHLCPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        column: ColumnSeries
+        hlc: HLCSeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import HLCPoint from '../HLC/HLCPoint';
+
 const {
     extend,
     merge
@@ -48,7 +50,8 @@ const {
  *
  * @augments Highcharts.Series
  */
-class OHLCSeries extends ColumnSeries {
+
+class OHLCSeries extends HLCSeries {
 
     /* *
      *
@@ -70,35 +73,7 @@ class OHLCSeries extends ColumnSeries {
      * @product      highstock
      * @optionparent plotOptions.ohlc
      */
-    public static defaultOptions: OHLCSeriesOptions = merge(ColumnSeries.defaultOptions, {
-
-        /**
-         * The approximate pixel width of each group. If for example a series
-         * with 30 points is displayed over a 600 pixel wide plot area, no
-         * grouping is performed. If however the series contains so many points
-         * that the spacing is less than the groupPixelWidth, Highcharts will
-         * try to group it into appropriate groups so that each is more or less
-         * two pixels wide. Defaults to `5`.
-         *
-         * @type      {number}
-         * @default   5
-         * @product   highstock
-         * @apioption plotOptions.ohlc.dataGrouping.groupPixelWidth
-         */
-
-        /**
-         * The pixel width of the line/border. Defaults to `1`.
-         *
-         * @sample {highstock} stock/plotoptions/ohlc-linewidth/
-         *         A greater line width
-         *
-         * @type    {number}
-         * @default 1
-         * @product highstock
-         *
-         * @private
-         */
-        lineWidth: 1,
+    public static defaultOptions: OHLCSeriesOptions = merge(HLCSeries.defaultOptions, {
 
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
@@ -107,28 +82,8 @@ class OHLCSeries extends ColumnSeries {
             'High: {point.high}<br/>' +
             'Low: {point.low}<br/>' +
             'Close: {point.close}<br/>'
-        },
+        }
 
-        threshold: null as any,
-
-        states: {
-
-            /**
-             * @extends plotOptions.column.states.hover
-             * @product highstock
-             */
-            hover: {
-
-                /**
-                 * The pixel width of the line representing the OHLC point.
-                 *
-                 * @type    {number}
-                 * @default 3
-                 * @product highstock
-                 */
-                lineWidth: 3
-            }
-        },
 
         /**
          * Determines which one of `open`, `high`, `low`, `close` values should
@@ -158,8 +113,6 @@ class OHLCSeries extends ColumnSeries {
          * @apioption plotOptions.ohlc.upColor
          */
 
-        stickyTracking: true
-
     } as OHLCSeriesOptions);
 
     /* *
@@ -168,7 +121,7 @@ class OHLCSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<OHLCPoint> = void 0 as any;
+    public data: Array<HLCPoint> = void 0 as any;
 
     public options: OHLCSeriesOptions = void 0 as any;
 
@@ -332,7 +285,7 @@ class OHLCSeries extends ColumnSeries {
         return attribs;
     }
 
-    public toYData(point: OHLCPoint): OHLCPoint.PointShortOptions {
+    public toYData(point: OHLCPoint): Array<number> {
         // return a plain array for speedy calculation
         return [point.open, point.high, point.low, point.close];
     }
@@ -394,7 +347,7 @@ interface OHLCSeries {
     pointAttrToOptions: Record<string, string>;
     pointClass: typeof OHLCPoint;
     init(): void;
-    toYData(point: OHLCPoint): OHLCPoint.PointShortOptions;
+    toYData(point: OHLCPoint): Array<number>;
 }
 extend(OHLCSeries.prototype, {
     animate: null as any, // Disable animation
