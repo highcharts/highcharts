@@ -61,7 +61,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type A11yOptions from '../Options/Options';
+import type Options from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
+
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
@@ -70,22 +79,25 @@ const {
     pick
 } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface XAxisOptions {
-            /** @deprecated */
-            description?: XAxisAccessibilityOptions['description'];
-        }
-        interface Options {
-            /** @deprecated */
-            exposeElementToA11y?: (
-                SeriesAccessibilityOptions['exposeAsGroupOnly']
-            );
-        }
+/* *
+ *
+ * Declarations
+ *
+ * */
+
+declare module '../../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        /** @deprecated */
+        description?: A11yOptions.AxisAccessibilityOptions['description'];
+    }
+}
+
+declare module '../../Core/Options'{
+    interface Options {
+        /** @deprecated */
+        exposeElementToA11y?: (
+            Highcharts.SeriesAccessibilityOptions['exposeAsGroupOnly']
+        );
     }
 }
 
@@ -105,7 +117,7 @@ function traverseSetOption<T>(
     optionAsArray: Array<string>,
     val: T
 ): void {
-    var opt = root,
+    let opt = root,
         prop,
         i = 0;
     for (;i < optionAsArray.length - 1; ++i) {
@@ -129,7 +141,7 @@ function deprecateFromOptionsMap(
      * @private
      */
     function getChildProp(
-        root: Highcharts.Options,
+        root: Options,
         propAsArray: Array<string>
     ): Record<string, unknown> {
         return propAsArray.reduce(function (
@@ -140,11 +152,11 @@ function deprecateFromOptionsMap(
         }, root as any);
     }
 
-    var rootOld = getChildProp(chart.options, rootOldAsArray),
+    const rootOld = getChildProp(chart.options, rootOldAsArray),
         rootNew = getChildProp(chart.options, rootNewAsArray);
 
     Object.keys(mapToNewOptions).forEach(function (oldOptionKey: string): void {
-        var val = rootOld[oldOptionKey];
+        const val = rootOld[oldOptionKey];
         if (typeof val !== 'undefined') {
             traverseSetOption(
                 rootNew,
@@ -168,7 +180,7 @@ function deprecateFromOptionsMap(
  * @private
  */
 function copyDeprecatedChartOptions(chart: Chart): void {
-    var chartOptions = chart.options.chart || {},
+    const chartOptions = chart.options.chart,
         a11yOptions = chart.options.accessibility || {};
     ['description', 'typeDescription'].forEach(function (
         prop: string
@@ -185,7 +197,7 @@ function copyDeprecatedChartOptions(chart: Chart): void {
  */
 function copyDeprecatedAxisOptions(chart: Chart): void {
     chart.axes.forEach(function (axis: Axis): void {
-        var opts = axis.options;
+        const opts = axis.options;
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
             opts.accessibility.description = opts.description;
@@ -200,7 +212,7 @@ function copyDeprecatedAxisOptions(chart: Chart): void {
 function copyDeprecatedSeriesOptions(chart: Chart): void {
     // Map of deprecated series options. New options are defined as
     // arrays of paths under series.options.
-    var oldToNewSeriesOptions = {
+    const oldToNewSeriesOptions = {
         description: ['accessibility', 'description'],
         exposeElementToA11y: ['accessibility', 'exposeAsGroupOnly'],
         pointDescriptionFormatter: [
@@ -215,7 +227,7 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
         Object.keys(oldToNewSeriesOptions).forEach(function (
             oldOption: string
         ): void {
-            var optionVal = (series.options as any)[oldOption];
+            const optionVal = (series.options as any)[oldOption];
             if (typeof optionVal !== 'undefined') {
                 // Set the new option
                 traverseSetOption(

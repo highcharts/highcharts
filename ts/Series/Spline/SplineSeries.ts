@@ -100,7 +100,7 @@ class SplineSeries extends LineSeries {
         point: SplinePoint,
         i: number
     ): SVGPath.CurveTo {
-        var
+        let
             // 1 means control points midway between points, 2 means 1/3
             // from the point, 3 is 1/4 etc
             smoothing = 1.5,
@@ -128,7 +128,7 @@ class SplineSeries extends LineSeries {
 
         // Find control points
         if (doCurve(lastPoint) && doCurve(nextPoint)) {
-            var lastX = lastPoint.plotX || 0,
+            let lastX = lastPoint.plotX || 0,
                 lastY = lastPoint.plotY || 0,
                 nextX = nextPoint.plotX || 0,
                 nextY = nextPoint.plotY || 0,

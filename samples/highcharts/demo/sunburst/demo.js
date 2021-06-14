@@ -1375,9 +1375,6 @@ var data = [{
     value: 1300
 }];
 
-// Splice in transparent for the center circle
-Highcharts.getOptions().colors.splice(0, 0, 'transparent');
-
 
 Highcharts.chart('container', {
 
@@ -1385,14 +1382,19 @@ Highcharts.chart('container', {
         height: '100%'
     },
 
+    // Let the center circle be transparent
+    colors: ['transparent'].concat(Highcharts.getOptions().colors),
+
     title: {
         text: 'World population 2017'
     },
+
     subtitle: {
-        text: 'Source <href="https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)">Wikipedia</a>'
+        text: 'Source <a href="https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)">Wikipedia</a>'
     },
+
     series: [{
-        type: "sunburst",
+        type: 'sunburst',
         data: data,
         allowDrillToNode: true,
         cursor: 'pointer',
@@ -1434,8 +1436,9 @@ Highcharts.chart('container', {
         }]
 
     }],
+
     tooltip: {
-        headerFormat: "",
+        headerFormat: '',
         pointFormat: 'The population of <b>{point.name}</b> is <b>{point.value}</b>'
     }
 });

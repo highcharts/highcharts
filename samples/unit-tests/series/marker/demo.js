@@ -72,6 +72,7 @@ QUnit.test('Marker size and position', function (assert) {
                 data: [1, 2, 3],
                 animation: false,
                 marker: {
+                    radius: 2.5,
                     animation: false,
                     states: {
                         hover: {
@@ -82,6 +83,18 @@ QUnit.test('Marker size and position', function (assert) {
             }
         ]
     }).series[0];
+
+    assert.strictEqual(
+        series.points[0].graphic.x % 1,
+        0,
+        '#15179: Position should be a whole number because of crisping'
+    );
+
+    series.update({
+        marker: {
+            radius: 4
+        }
+    });
 
     // Default size
     assert.strictEqual(

@@ -1,5 +1,4 @@
 (function (H) {
-    var each = H.each;
     Highcharts.seriesType('sociogram', 'line', {
         dataLabels: {
             enabled: true,
@@ -11,8 +10,8 @@
             var series = this,
                 chart = this.chart,
                 relations = this.relations = this.relations || {};
-            each(this.points, function (point) {
-                each(point.connections, function (connId) {
+            this.points.forEach(function (point) {
+                point.connections.forEach(function (connId) {
 
                     var key = point.id + '-' + connId,
                         connPoint = chart.get(connId);

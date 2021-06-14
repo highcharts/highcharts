@@ -48,7 +48,7 @@ function sumArray(array: Array<number>): number {
  * @private
  */
 function meanDeviation(arr: Array<number>, sma: number): number {
-    var len = arr.length,
+    let len = arr.length,
         sum = 0,
         i: number;
 
@@ -92,8 +92,11 @@ class CCIIndicator extends SMAIndicator {
      * @optionparent plotOptions.cci
      */
     public static defaultOptions: CCIOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * @excluding index
+         */
         params: {
-            period: 14
+            index: void 0 // unused index, do not inherit (#15362)
         }
     } as CCIOptions);
 
@@ -117,7 +120,7 @@ class CCIIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: CCIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = (params.period as any),
+        let period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,

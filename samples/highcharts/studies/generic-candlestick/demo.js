@@ -6,7 +6,6 @@
         defaultPlotOptions = defaultOptions.plotOptions,
         seriesTypes = HC.seriesTypes,
         merge = HC.merge,
-        each = HC.each,
         extendClass = HC.extendClass,
         Point = HC.Point,
         ColumnSeries = seriesTypes.column,
@@ -142,10 +141,12 @@
             seriesTypes.column.prototype.translate.apply(series);
 
             // do the translation
-            each(series.points, function (point) {
+            series.points.forEach(function (point) {
                 var plotYValues = [];
                 for (var i = 0; i < point.yValues.length; i++) {
-                    plotYValues.push(yAxis.translate(point.yValues[i], 0, 1, 0, 1));
+                    plotYValues.push(
+                        yAxis.translate(point.yValues[i], 0, 1, 0, 1)
+                    );
                 }
                 point.plotYValues = plotYValues;
             });
@@ -167,7 +168,7 @@
                 path,
                 halfWidth;
 
-            each(points, function (point) {
+            points.forEach(function (point) {
                 var boxpath,
                     numberOfBoxes,
                     boxes;
@@ -186,9 +187,16 @@
                     numberOfBoxes = point.plotYValues.length / 2 - 1;
                     boxes = [];
                     for (var i = 0; i < numberOfBoxes; i++) {
-                        bottomBox = mathRound(point.plotYValues[i + 1]) + crispCorr;
-                        topBox = mathRound(point.plotYValues[point.plotYValues.length - 2 - i]) + crispCorr;
-                        halfWidth = mathRound(point.shapeArgs.width / 8 * (i * 2 + 1));
+                        bottomBox = mathRound(point.plotYValues[i + 1]) +
+                            crispCorr;
+                        topBox = mathRound(
+                            point.plotYValues[
+                                point.plotYValues.length - 2 - i
+                            ]
+                        ) + crispCorr;
+                        halfWidth = mathRound(
+                            point.shapeArgs.width / 8 * (i * 2 + 1)
+                        );
 
                         //halfWidth = mathRound(point.barW / 2);
 
@@ -215,7 +223,9 @@
                         'L',
                         crispX, mathRound(point.yBottom),
                         'M',
-                        crispX, mathRound(point.plotYValues[point.plotYValues.length - 2]) + crispCorr,
+                        crispX, mathRound(
+                            point.plotYValues[point.plotYValues.length - 2]
+                        ) + crispCorr,
                         'L',
                         crispX, mathRound(point.plotY),
                         'Z'

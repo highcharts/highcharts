@@ -31,12 +31,27 @@ const {
     }
 } = SeriesRegistry;
 import XRangeSeries from './XRangeSeries.js';
+import U from '../../Core/Utilities.js';
+const { extend } = U;
 
 /* *
  *
  *  Declarations
  *
  * */
+
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        tooltipDateKeys?: Array<string>;
+    }
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
 class XRangePoint extends ColumnSeries.prototype.pointClass {
 
     /* *
@@ -62,11 +77,11 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
     public static getColorByCategory(
         series: Series,
         point: Point
-    ): Record<string, any> {
-        var colors = series.options.colors || series.chart.options.colors,
+    ): AnyRecord {
+        const colors = series.options.colors || series.chart.options.colors,
             colorCount = colors ?
                 colors.length :
-                (series.chart.options.chart as any).colorCount,
+                series.chart.options.chart.colorCount as any,
             colorIndex = (point.y as any) % colorCount,
             color = colors && colors[colorIndex];
 
@@ -112,7 +127,7 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
      * @private
      */
     public resolveColor(): void {
-        var series = this.series,
+        let series = this.series,
             colorByPoint;
 
         if (series.options.colorByPoint && !this.options.color) {
@@ -166,7 +181,7 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
      */
     // Add x2 and yCategory to the available properties for tooltip formats
     public getLabelConfig(): XRangePoint.XRangePointLabelObject {
-        var point = this,
+        const point = this,
             cfg: XRangePoint.XRangePointLabelObject =
                 Point.prototype.getLabelConfig.call(point) as any,
             yCats: Array<string> = point.series.yAxis.categories as any;
@@ -175,8 +190,6 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
         cfg.yCategory = point.yCategory = yCats && yCats[point.y as any];
         return cfg;
     }
-
-    public tooltipDateKeys = ['x', 'x2']
 
     /**
      * @private
@@ -208,6 +221,7 @@ declare namespace XRangePoint {
  * Prototype Properties
  *
  * */
+
 interface XRangePoint {
     clipRectArgs?: RectangleObject;
     len?: number;
@@ -219,6 +233,10 @@ interface XRangePoint {
     yCategory?: string;
 
 }
+extend(XRangePoint.prototype, {
+    tooltipDateKeys: ['x', 'x2']
+});
+
 
 /* *
  *

@@ -36,9 +36,13 @@ declare global {
         }
         interface TreeNodeObject {
             children: Array<TreeNodeObject>;
+            childrenTotal?: number;
             i: number;
             id: string;
+            isLeaf?: boolean;
+            levelDynamic?: number;
             level: number;
+            name?: string;
             val: number;
             visible: boolean;
         }
@@ -75,10 +79,12 @@ declare global {
         interface TreeValuesOptionsObject<T extends TreeSeries = TreeSeries> {
             before?: TreeValuesBeforeCallbackFunction<T>;
             idRoot: string;
+            index?: number;
             levelIsConstant?: boolean;
             mapIdToNode: Record<string, TreeNodeObject>;
             points: T['points'];
             series: T;
+            siblings?: number;
             visible?: boolean;
         }
     }
@@ -102,7 +108,7 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
     tree: T['tree'],
     options: Highcharts.TreeValuesOptionsObject<T>
 ): T['tree'] {
-    var before = options.before,
+    let before = options.before,
         idRoot = options.idRoot,
         mapIdToNode = options.mapIdToNode,
         nodeRoot = mapIdToNode[idRoot],
@@ -118,14 +124,13 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
         children: Array<Highcharts.TreeNodeObject> = [],
         value;
 
-    extend(tree, {
-        levelDynamic: tree.level - (levelIsConstant ? 0 : nodeRoot.level),
-        name: pick(point && point.name, ''),
-        visible: (
-            idRoot === tree.id ||
-            (isBoolean(options.visible) ? options.visible : false)
-        )
-    });
+    tree.levelDynamic = tree.level - (levelIsConstant ? 0 : nodeRoot.level);
+    tree.name = pick(point && point.name, '');
+    tree.visible = (
+        idRoot === tree.id ||
+        (isBoolean(options.visible) ? options.visible : false)
+    );
+
     if (isFn(before)) {
         tree = before(tree, options);
     }
@@ -134,7 +139,7 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
         child: Highcharts.TreeNodeObject,
         i: number
     ): void {
-        var newOptions = extend<Highcharts.TreeValuesOptionsObject>(
+        const newOptions = extend<Highcharts.TreeValuesOptionsObject<T>>(
             {} as any, options
         );
 
@@ -152,12 +157,11 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
     tree.visible = childrenTotal > 0 || tree.visible;
     // Set the values
     value = pick(optionsPoint.value, childrenTotal);
-    extend(tree, {
-        children: children,
-        childrenTotal: childrenTotal,
-        isLeaf: tree.visible && !childrenTotal,
-        val: value
-    });
+    tree.children = children;
+    tree.childrenTotal = childrenTotal;
+    tree.isLeaf = tree.visible && !childrenTotal;
+    tree.val = value;
+
     return tree;
 };
 
@@ -177,7 +181,7 @@ const getColor = function getColor(
         siblings: number;
     }
 ): Highcharts.TreeColorObject {
-    var index = options.index,
+    let index = options.index,
         mapOptionsToLevel = options.mapOptionsToLevel,
         parentColor = options.parentColor,
         parentColorIndex = options.parentColorIndex,
@@ -186,10 +190,9 @@ const getColor = function getColor(
         siblings = options.siblings,
         points = series.points,
         getColorByPoint,
-        chartOptionsChart: Highcharts.ChartOptions =
-            series.chart.options.chart as any,
+        chartOptionsChart = series.chart.options.chart,
         point,
-        level: Record<string, any>,
+        level: AnyRecord,
         colorByPoint,
         colorIndexByPoint,
         color,
@@ -199,7 +202,7 @@ const getColor = function getColor(
      * @private
      */
     function variation(color: ColorString): ColorString {
-        var colorVariation = level && level.colorVariation;
+        const colorVariation = level && level.colorVariation;
 
         if (colorVariation) {
             if (colorVariation.key === 'brightness') {
@@ -269,7 +272,7 @@ const getColor = function getColor(
 const getLevelOptions = function getLevelOptions<T extends Highcharts.TreeSeries>(
     params: any
 ): (T['mapOptionsToLevel']|null) {
-    var result = null,
+    let result = null,
         defaults: any,
         converted,
         i: number,
@@ -285,7 +288,7 @@ const getLevelOptions = function getLevelOptions<T extends Highcharts.TreeSeries
         defaults = isObject(params.defaults) ? params.defaults : {};
         if (isArray(levels)) {
             converted = levels.reduce(function (obj: any, item: any): any {
-                var level,
+                let level,
                     levelIsConstant,
                     options: any;
 
@@ -336,7 +339,7 @@ const getLevelOptions = function getLevelOptions<T extends Highcharts.TreeSeries
  *         Returns the resulting rootId after update.
  */
 const updateRootId = function (series: any): string {
-    var rootId,
+    let rootId,
         options;
 
     if (isObject(series)) {

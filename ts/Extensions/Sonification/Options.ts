@@ -12,23 +12,23 @@
 
 'use strict';
 
+/* *
+ *
+ * Declarations
+ *
+ * */
+declare module '../../Core/Options'{
+    interface Options {
+        sonification?: Highcharts.ChartSonificationOptions;
+    }
+}
+
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         sonification?: Highcharts.SeriesSonificationOptions;
     }
 }
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            sonification?: ChartSonificationOptions;
-        }
-    }
-}
 
 // Experimental, disabled by default, not exposed in API
 const options = {

@@ -124,24 +124,28 @@ module.exports = function (config) {
     }
 
     const tests = (
-        argv.tests || argv.testsAbsolutePath ?
-            // specific tests
-            argv.testsAbsolutePath ?
+        // debugger test
+        argv.testsAbsolutePath ?
                 argv.testsAbsolutePath.split(',').filter(path => !!path) :
-                argv.tests
-                    .split(',')
-                    .filter(path => !!path)
-                    .map(path => ({
-                        pattern: `test/typescript-karma/${path}/tests.js`,
-                        type: 'module'
-                    })) :
-            // default tests
+        // specific tests
+        argv.tests ?
+            argv.tests
+                .split(',')
+                .filter(path => !!path)
+                .map(path => ({
+                    pattern: `test/typescript-karma/${path}.test.js`,
+                    type: 'module'
+                }))
+                .concat([{
+                    pattern: 'test/typescript-karma/**/!(*.test).js',
+                    type: 'module'
+                }]) :
+            // all tests
             [{
-                pattern: 'test/typescript-karma/**/tests.js',
+                pattern: 'test/typescript-karma/**/!(demo).js',
                 type: 'module'
-            }
-        ]
-    )
+            }]
+    );
 
     let options = {
         basePath: '../../', // Root relative to this file
@@ -159,10 +163,6 @@ module.exports = function (config) {
             {
                 included: false,
                 pattern: 'js/**/*.js',
-                type: 'module'
-            },
-            {
-                pattern: 'test/typescript-karma/**/!(demo).js',
                 type: 'module'
             }
         ], tests),

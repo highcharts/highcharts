@@ -31,7 +31,6 @@ import type DotPlotSeriesOptions from './DotPlotSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import './DotPlotSymbols.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -95,7 +94,7 @@ class DotPlotSeries extends ColumnSeries {
      * */
 
     public drawPoints(): void {
-        var series = this,
+        const series = this,
             renderer = series.chart.renderer,
             seriesMarkerOptions = this.options.marker,
             itemPaddingTranslated = this.yAxis.transA *
@@ -104,7 +103,7 @@ class DotPlotSeries extends ColumnSeries {
             crisp = borderWidth % 2 ? 0.5 : 1;
 
         this.points.forEach(function (point: DotPlotPoint): void {
-            var yPos: number,
+            let yPos: number,
                 attr: SVGAttributes,
                 graphics: Record<string, SVGElement>,
                 itemY: (number|undefined),
@@ -127,7 +126,7 @@ class DotPlotSeries extends ColumnSeries {
             point.graphics = graphics = point.graphics || {};
             pointAttr = point.pointAttr ?
                 (
-                    point.pointAttr[point.selected ? 'selected' : ''] ||
+                    (point.pointAttr as any)[point.selected ? 'selected' : ''] ||
                     (series.pointAttr as any)['']
                 ) :
                 series.pointAttribs(point, (point.selected as any) && 'select');

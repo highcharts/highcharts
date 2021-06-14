@@ -32,7 +32,7 @@ const {
     merge
 } = U;
 
-import '../../Core/Options.js';
+import '../../Core/DefaultOptions.js';
 import '../Scatter/ScatterSeries.js';
 
 /* *

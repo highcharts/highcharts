@@ -10,6 +10,8 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
@@ -20,7 +22,6 @@ import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
 
 import DataTable from '../DataTable.js';
-import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -36,9 +37,10 @@ const {
 
 /**
  * Abstract class providing an interface and basic methods for a DataParser
+ *
  * @private
  */
-abstract class DataParser<TEventObject extends DataParser.EventObject>
+abstract class DataParser<TEventObject extends DataParser.Event>
 implements DataEventEmitter<TEventObject>, DataJSON.Class {
 
     /* *
@@ -66,119 +68,57 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * */
 
     /**
-     * Converts the DataTable instance to a record of columns.
+     * Converts the table instance to a array of columns.
      *
      * @param {DataTable} table
      * Table to convert.
      *
-     * @param {boolean} [usePresentationOrder]
-     * Whether to use the column order of the presentation state.
-     *
-     * @return {Array<Array<DataTableRow.CellType>>}
-     * A record of columns, where the key is the name of the column,
-     * and the values are the content of the column.
+     * @return {Array<DataTable.Column>}
+     * An array of columns, with the second dimension as row cells.
      */
     public static getColumnsFromTable(
-        table: DataTable,
-        usePresentationOrder?: boolean
-    ): Array<Array<DataTableRow.CellType>> {
-        const columnsObject: DataTable.ColumnCollection = {
-                id: []
-            },
-            rows = table.getAllRows();
+        table: DataTable
+    ): Array<DataTable.Column> {
+        const columns = table.getColumns(),
+            columnNames = table.getColumnNames(),
+            columnArray = [];
 
-        for (let rowIndex = 0, rowCount = rows.length; rowIndex < rowCount; rowIndex++) {
-            const row = rows[rowIndex],
-                cellNames = row.getCellNames(),
-                cellCount = cellNames.length;
-
-            columnsObject.id.push(row.id); // Push the ID column
-
-            for (let j = 0; j < cellCount; j++) {
-                const cellName = cellNames[j],
-                    cell = row.getCell(cellName);
-
-                if (!columnsObject[cellName]) {
-                    columnsObject[cellName] = [];
-                    // If row number is greater than 0
-                    // add the previous rows as undefined
-                    if (rowIndex > 0) {
-                        for (let rowNumber = 0; rowNumber < rowIndex; rowNumber++) {
-                            columnsObject[cellName][rowNumber] = void 0;
-                        }
-                    }
-                }
-                columnsObject[cellName][rowIndex] = cell;
-            }
-
-            // If the object has columns that were not in the row
-            // add them as undefined
-            const columnsInObject = Object.keys(columnsObject);
-
-            for (
-                let columnIndex = 0;
-                columnIndex < columnsInObject.length;
-                columnIndex++
-            ) {
-                const columnName = columnsInObject[columnIndex];
-
-                while (columnsObject[columnName].length - 1 < rowIndex) {
-                    columnsObject[columnName].push(void 0);
-                }
-            }
+        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            columnArray.push(columns[columnNames[i]]);
         }
 
-        const columnNames = Object.keys(columnsObject);
-
-        if (usePresentationOrder) {
-            columnNames.sort(table.presentationState.getColumnSorter());
-        }
-
-        return columnNames.map(
-            (columnName: string): Array<DataTableRow.CellType> => columnsObject[columnName]
-        );
+        return columnArray;
     }
 
     /**
-     * Converts a simple two dimensional array to a DataTable instance. The
-     * array needs to be structured like a DataFrame, so that the first
-     * dimension becomes the columns and the second dimension the rows.
+     * Converts an array of columns to a table instance. Second dimension of the
+     * array are the row cells.
      *
-     * @param {Array<Array<DataTableRow.CellType>>} [columns]
+     * @param {Array<DataTable.Column>} [columns]
      * Array to convert.
      *
      * @param {Array<string>} [headers]
      * Column names to use.
      *
-     * @param {DataConverter} [converter]
-     * Converter for value conversions in table rows.
-     *
      * @return {DataTable}
-     * DataTable instance from the arrays.
+     * Table instance from the arrays.
      */
     public static getTableFromColumns(
-        columns: Array<Array<DataTableRow.CellType>> = [],
+        columns: Array<DataTable.Column> = [],
         headers: Array<string> = []
     ): DataTable {
-        const columnsLength = columns.length,
-            table = new DataTable();
+        const table = new DataTable();
 
-        // Assign an unique id for every column
-        // without a provided name
-        while (headers.length < columnsLength) {
-            headers.push(uniqueKey());
-        }
-
-        table.presentationState.setColumnOrder(headers);
-
-        if (columnsLength) {
-            for (let i = 0, iEnd = columns[0].length; i < iEnd; ++i) {
-                const row = new DataTableRow();
-                for (let j = 0; j < columnsLength; ++j) {
-                    row.insertCell(headers[j], columns[j][i]);
-                }
-                table.insertRow(row);
-            }
+        for (
+            let i = 0,
+                iEnd = Math.max(headers.length, columns.length);
+            i < iEnd;
+            ++i
+        ) {
+            table.setColumn(
+                headers[i] || uniqueKey(),
+                columns[i]
+            );
         }
 
         return table;
@@ -191,7 +131,8 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * */
 
     /**
-     * Getter for the data table
+     * Getter for the data table.
+     *
      * @return {DataTable}
      */
     public abstract getTable(): DataTable;
@@ -199,10 +140,10 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Emits an event on the DataParser instance.
      *
-     * @param {DataParser.EventObject} [e]
+     * @param {DataParser.Event} [e]
      * Event object containing additional event data
      */
-    public emit<T extends DataEventEmitter.EventObject>(e: T): void {
+    public emit<T extends DataEventEmitter.Event>(e: T): void {
         fireEvent(this, e.type, e);
     }
 
@@ -218,9 +159,9 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * @return {Function}
      * Function to unregister callback from the modifier event.
      */
-    public on<T extends DataEventEmitter.EventObject>(
-        type: T['type'],
-        callback: DataEventEmitter.EventCallback<this, T>
+    public on<TEvent extends DataEventEmitter.Event>(
+        type: TEvent['type'],
+        callback: DataEventEmitter.EventCallback<this, TEvent>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -261,9 +202,9 @@ namespace DataParser {
      * The basic event object for a DataParser instance.
      * Valid types are `parse`, `afterParse`, and `parseError`
      */
-    export interface EventObject extends DataEventEmitter.EventObject {
+    export interface Event extends DataEventEmitter.Event {
         readonly type: ('parse' | 'afterParse' | 'parseError');
-        readonly columns: DataTableRow.CellType[][];
+        readonly columns: Array<DataTable.Column>;
         readonly error?: (string | Error);
         readonly headers: string[];
     }

@@ -26,20 +26,22 @@ module.exports = {
             'chart-concepts/labels-and-string-formatting',
             'chart-concepts/drilldown',
             'chart-concepts/3d-charts',
-            'chart-concepts/responsive'
+            'chart-concepts/responsive',
+            'chart-concepts/security'
         ],
         'Stock': [
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
             'stock/candlestick-chart',
-            'stock/custom-technical-indicators',
             'stock/data-grouping',
             'stock/depth-chart',
             'stock/flag-series',
             'stock/navigator',
             'stock/ohlc-chart',
             'stock/range-selector',
-            'stock/technical-indicator-series'
+            'stock/axis-resizer',
+            'stock/technical-indicator-series',
+            'stock/custom-technical-indicators'
         ],
         'Maps': [
             'maps/getting-started',
@@ -112,13 +114,10 @@ module.exports = {
         'Advanced chart features': [
             'advanced-chart-features/annotations-module',
             'advanced-chart-features/annotations-and-fibonacci-retracements',
-            'advanced-chart-features/axis-resizer',
             'advanced-chart-features/boost-module',
             'advanced-chart-features/data-sorting',
             'advanced-chart-features/marker-clusters',
             'chart-concepts/bubble-legend',
-            'stock/custom-technical-indicators',
-            'stock/data-grouping',
             'advanced-chart-features/debugger-mode',
             'advanced-chart-features/freeform-drawing',
             'advanced-chart-features/internationalization',

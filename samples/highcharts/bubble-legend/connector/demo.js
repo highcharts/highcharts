@@ -19,7 +19,7 @@ Highcharts.chart('container', {
             labels: {
                 align: 'left',
                 style: {
-                    fontSize: 18
+                    fontSize: '18px'
                 }
             }
         }

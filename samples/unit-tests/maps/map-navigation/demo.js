@@ -104,7 +104,7 @@ QUnit.test('Map navigation button alignment', assert => {
     const chart = Highcharts.mapChart('container', {
         chart: {
             plotBorderWidth: 1,
-            width: 600
+            width: 400
         },
 
         mapNavigation: {
@@ -127,8 +127,25 @@ QUnit.test('Map navigation button alignment', assert => {
                     }
                 ]
             }
-        ]
+        ],
+        responsive: {
+            rules: [{
+                condition: { maxWidth: 500 },
+                chartOptions: {
+                    mapNavigation: {
+                        enabled: false
+                    }
+                }
+            }]
+        }
     });
+
+    assert.ok(
+        true,
+        '#15406: Responsive rule should not make it throw'
+    );
+
+    chart.setSize(600);
 
     assert.close(
         chart.mapNavButtons[1].translateY +

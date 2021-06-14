@@ -24,6 +24,7 @@ import type {
     PointShortOptions
 } from '../Core/Series/PointOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -107,7 +108,7 @@ declare global {
     }
 }
 
-var CHUNK_SIZE = 50000,
+let CHUNK_SIZE = 50000,
     destroyLoadingDiv: number;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -122,7 +123,7 @@ const initCanvasBoost = function (): void {
         wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (
             this: HeatmapSeries
         ): void {
-            var chart = this.chart,
+            const chart = this.chart,
                 ctx = this.getContext(),
                 inverted = this.chart.inverted,
                 xAxis = this.xAxis,
@@ -132,16 +133,17 @@ const initCanvasBoost = function (): void {
 
                 // draw the columns
                 this.points.forEach(function (point): void {
-                    var plotY = point.plotY,
-                        shapeArgs: SVGAttributes,
+                    let plotY = point.plotY,
                         pointAttr: SVGAttributes;
 
                     if (
                         typeof plotY !== 'undefined' &&
                         !isNaN(plotY) &&
-                        point.y !== null
+                        point.y !== null &&
+                        ctx
                     ) {
-                        shapeArgs = point.shapeArgs as any;
+                        const { x = 0, y = 0, width = 0, height = 0 } =
+                            point.shapeArgs || {};
 
                         if (!chart.styledMode) {
                             pointAttr = point.series.pointAttribs(point);
@@ -149,21 +151,21 @@ const initCanvasBoost = function (): void {
                             pointAttr = point.series.colorAttribs(point);
                         }
 
-                        (ctx as any).fillStyle = pointAttr.fill as any;
+                        ctx.fillStyle = pointAttr.fill as any;
 
                         if (inverted) {
-                            (ctx as any).fillRect(
-                                yAxis.len - shapeArgs.y + xAxis.left,
-                                xAxis.len - shapeArgs.x + yAxis.top,
-                                -shapeArgs.height,
-                                -shapeArgs.width
+                            ctx.fillRect(
+                                yAxis.len - y + xAxis.left,
+                                xAxis.len - x + yAxis.top,
+                                -height,
+                                -width
                             );
                         } else {
-                            (ctx as any).fillRect(
-                                shapeArgs.x + xAxis.left,
-                                shapeArgs.y + yAxis.top,
-                                shapeArgs.width,
-                                shapeArgs.height
+                            ctx.fillRect(
+                                x + xAxis.left,
+                                y + yAxis.top,
+                                width,
+                                height
                             );
                         }
                     }
@@ -198,7 +200,7 @@ const initCanvasBoost = function (): void {
         getContext: function (
             this: Series
         ): (CanvasRenderingContext2D|null|undefined) {
-            var chart = this.chart,
+            let chart = this.chart,
                 width = chart.chartWidth,
                 height = chart.chartHeight,
                 targetGroup = chart.seriesGroup || this.group,
@@ -265,7 +267,7 @@ const initCanvasBoost = function (): void {
 
                 target.renderTarget.clip(target.boostClipRect);
 
-            } else if (!(target instanceof H.Chart)) {
+            } else if (!(target instanceof Chart)) {
                 // ctx.clearRect(0, 0, width, height);
             }
 
@@ -319,7 +321,7 @@ const initCanvasBoost = function (): void {
         },
 
         renderCanvas: function (this: Series): void {
-            var series = this,
+            let series = this,
                 options = series.options,
                 chart = series.chart,
                 xAxis = this.xAxis,
@@ -582,7 +584,7 @@ const initCanvasBoost = function (): void {
 
             // Loop over the points
             (H as any).eachAsync(sdata, function (d: any, i: number): boolean {
-                var x: number,
+                let x: number,
                     y: number,
                     clientX: number,
                     plotY: number,
@@ -724,7 +726,7 @@ const initCanvasBoost = function (): void {
 
                 return !chartDestroyed;
             }, function (): void {
-                var loadingDiv: HTMLElement =
+                const loadingDiv: HTMLElement =
                         chart.loadingDiv as any,
                     loadingShown = chart.loadingShown;
 
@@ -749,7 +751,7 @@ const initCanvasBoost = function (): void {
                 if (loadingShown) {
                     extend(loadingDiv.style, {
                         transition: 'opacity 250ms',
-                        opacity: 0
+                        opacity: 0 as any
                     });
                     chart.loadingShown = false;
                     destroyLoadingDiv = setTimeout(function (): void {

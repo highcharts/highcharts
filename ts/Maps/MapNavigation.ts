@@ -38,6 +38,7 @@ const {
     pick
 } = U;
 import './MapNavigationOptionsDefault.js';
+import ButtonThemeObject, { ButtonThemeStatesObject } from '../Core/Renderer/SVG/ButtonThemeObject';
 
 /* *
  *
@@ -69,7 +70,8 @@ declare global {
                 centerXArg?: number,
                 centerYArg?: number,
                 mouseX?: number,
-                mouseY?: number
+                mouseY?: number,
+                animation?: false
             ): void;
         }
         class MapNavigation {
@@ -155,16 +157,15 @@ MapNavigation.prototype.update = function (
     this: Highcharts.MapNavigation,
     options?: MapNavigationOptions
 ): void {
-    var chart = this.chart,
+    let chart = this.chart,
         o: MapNavigationOptions = chart.options.mapNavigation as any,
-        buttonOptions,
-        attr: SVGAttributes,
-        states: SVGAttributes,
-        hoverStates: SVGAttributes,
-        selectStates: SVGAttributes,
+        attr: ButtonThemeObject,
+        states: ButtonThemeStatesObject|undefined,
+        hoverStates: SVGAttributes|undefined,
+        selectStates: SVGAttributes|undefined,
         outerHandler = function (
             this: SVGElement,
-            e: (Event|Record<string, any>)
+            e: (Event|AnyRecord)
         ): void {
             this.handler.call(chart, e);
             stopEvent(e as any); // Stop default click event (#4444)
@@ -186,33 +187,34 @@ MapNavigation.prototype.update = function (
     if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
 
         objectEach(o.buttons, function (
-            button: MapNavigationButtonOptions,
+            buttonOptions: MapNavigationButtonOptions,
             n: string
         ): void {
-            buttonOptions = merge(o.buttonOptions, button);
+            buttonOptions = merge(o.buttonOptions, buttonOptions);
 
             // Presentational
-            if (!chart.styledMode) {
-                attr = buttonOptions.theme as any;
+            if (!chart.styledMode && buttonOptions.theme) {
+                attr = buttonOptions.theme;
                 attr.style = merge(
-                    (buttonOptions.theme as any).style,
+                    buttonOptions.theme.style,
                     buttonOptions.style // #3203
                 );
                 states = attr.states;
                 hoverStates = states && states.hover;
                 selectStates = states && states.select;
+                delete attr.states;
             }
 
-            button = chart.renderer
+            const button = chart.renderer
                 .button(
-                    buttonOptions.text as any,
+                    buttonOptions.text || '',
                     0,
                     0,
                     outerHandler,
                     attr,
                     hoverStates,
                     selectStates,
-                    0 as any,
+                    void 0,
                     n === 'zoomIn' ? 'topbutton' : 'bottombutton'
                 )
                 .addClass('highcharts-map-navigation highcharts-' + ({
@@ -226,27 +228,31 @@ MapNavigation.prototype.update = function (
                     padding: buttonOptions.padding,
                     zIndex: 5
                 })
-                .add() as any;
-            (button as any).handler = buttonOptions.onclick;
+                .add();
+            button.handler = buttonOptions.onclick;
 
             // Stop double click event (#4444)
-            addEvent((button as any).element, 'dblclick', stopEvent);
+            addEvent(button.element, 'dblclick', stopEvent);
 
-            mapNavButtons.push(button as any);
+            mapNavButtons.push(button);
 
-            // Align it after the plotBox is known (#12776)
-            const bo = buttonOptions;
-            const un = addEvent(chart, 'load', (): void => {
-                (button as any).align(
-                    extend(bo, {
-                        width: button.width,
-                        height: 2 * (button.height as any)
-                    }),
-                    null,
-                    bo.alignTo
-                );
-                un();
+            extend(buttonOptions, {
+                width: button.width,
+                height: 2 * button.height
             });
+
+            if (!chart.hasLoaded) {
+                // Align it after the plotBox is known (#12776)
+                const unbind = addEvent(chart, 'load', (): void => {
+                    // #15406: Make sure button hasnt been destroyed
+                    if (button.element) {
+                        button.align(buttonOptions, false, buttonOptions.alignTo);
+                    }
+                    unbind();
+                });
+            } else {
+                button.align(buttonOptions, false, buttonOptions.alignTo);
+            }
 
         });
     }
@@ -269,7 +275,7 @@ MapNavigation.prototype.updateEvents = function (
     this: Highcharts.MapNavigation,
     options: MapNavigationOptions
 ): void {
-    var chart = this.chart;
+    const chart = this.chart;
 
     // Add the double click event
     if (
@@ -292,13 +298,18 @@ MapNavigation.prototype.updateEvents = function (
     if (pick(options.enableMouseWheelZoom, options.enabled)) {
         this.unbindMouseWheel = this.unbindMouseWheel || addEvent(
             chart.container,
-            typeof doc.onmousewheel === 'undefined' ?
-                'DOMMouseScroll' : 'mousewheel',
+            doc.onwheel !== void 0 ? 'wheel' : // Newer Firefox
+                doc.onmousewheel !== void 0 ? 'mousewheel' :
+                    'DOMMouseScroll',
             function (e: PointerEvent): boolean {
-                chart.pointer.onContainerMouseWheel(e);
-                // Issue #5011, returning false from non-jQuery event does
-                // not prevent default
-                stopEvent(e as Event);
+                // Prevent scrolling when the pointer is over the element
+                // with that class, for example anotation popup #12100.
+                if (!chart.pointer.inClass(e.target as any, 'highcharts-no-mousewheel')) {
+                    chart.pointer.onContainerMouseWheel(e);
+                    // Issue #5011, returning false from non-jQuery event does
+                    // not prevent default
+                    stopEvent(e as Event);
+                }
                 return false;
             }
         );
@@ -310,7 +321,7 @@ MapNavigation.prototype.updateEvents = function (
 };
 
 // Add events to the Chart object itself
-extend(Chart.prototype, /** @lends Chart.prototype */ {
+extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.prototype */ {
 
     /**
      * Fit an inner box to an outer. If the inner box overflows left or right,
@@ -336,7 +347,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
         [['x', 'width'], ['y', 'height']].forEach(function (
             dim: Array<string>
         ): void {
-            var pos = dim[0],
+            const pos = dim[0],
                 size = dim[1];
 
             if ((inner as any)[pos] + (inner as any)[size] >
@@ -396,9 +407,10 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
         centerXArg?: number,
         centerYArg?: number,
         mouseX?: number,
-        mouseY?: number
+        mouseY?: number,
+        animation?: false
     ): void {
-        var chart = this,
+        const chart = this,
             xAxis = chart.xAxis[0],
             xRange = (xAxis.max as any) - (xAxis.min as any),
             centerX = pick(centerXArg, (xAxis.min as any) + xRange / 2),
@@ -470,7 +482,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
         }
         */
 
-        chart.redraw();
+        chart.redraw(animation);
     }
 });
 

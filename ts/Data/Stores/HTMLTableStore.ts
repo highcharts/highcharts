@@ -10,6 +10,14 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DataEventEmitter from '../DataEventEmitter';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import DataJSON from '../DataJSON.js';
@@ -20,15 +28,16 @@ import H from '../../Core/Globals.js';
 const { win } = H;
 import HTMLTableParser from '../Parsers/HTMLTableParser.js';
 import U from '../../Core/Utilities.js';
-const { merge, objectEach, extend, pick } = U;
+const { merge, objectEach, extend, pick, createElement } = U;
 
 /** eslint-disable valid-jsdoc */
 
 /**
  * Class that handles creating a datastore from an HTML table
+ *
  * @private
  */
-class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements DataJSON.Class {
+class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON.Class {
 
     /* *
      *
@@ -83,7 +92,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
      * Constructs an instance of HTMLTableDataStore
      *
      * @param {DataTable} table
-     * Optional DataTable to create the store from
+     * Optional table to create the store from
      *
      * @param {HTMLTableStore.OptionsType} options
      * Options for the store and parser
@@ -171,6 +180,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
 
         store.fetchTable();
 
+        // If already loaded, clear the current rows
+        store.table.deleteColumns();
+
         store.emit({
             type: 'load',
             detail: eventDetail,
@@ -193,7 +205,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             eventDetail
         );
 
-        store.table = store.parser.getTable();
+        store.table.setColumns(store.parser.getTable().getColumns());
 
         store.emit({
             type: 'afterLoad',
@@ -214,7 +226,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
      */
     public getTableAST(
         exportOptions: HTMLTableStore.ExportOptions = {}
-    ): Highcharts.ASTNode {
+    ): AST.Node {
 
         // Merge in the provided parser options
         objectEach(this.parserOptions, function (value, key): void {
@@ -223,7 +235,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             }
         });
 
-        const treeChildren: Highcharts.ASTNode[] = [];
+        const treeChildren: AST.Node[] = [];
         const options = exportOptions,
             decimalPoint = options.useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
             exportNames = (this.parserOptions.firstRowAsNames !== false),
@@ -234,7 +246,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             row1: Array<(number | string | undefined)>,
             row2: Array<(number | string | undefined)>
         ): boolean {
-            var i = row1.length;
+            let i = row1.length;
 
             if (row2.length === i) {
                 while (i--) {
@@ -253,10 +265,10 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             topheaders: (Array<(number|string)>|null|undefined),
             subheaders: Array<(number|string | undefined)>,
             rowLength?: number
-        ): Highcharts.ASTNode {
-            const theadChildren: Highcharts.ASTNode[] = [];
+        ): AST.Node {
+            const theadChildren: AST.Node[] = [];
 
-            var i = 0,
+            let i = 0,
                 len = rowLength || subheaders && subheaders.length,
                 next,
                 cur,
@@ -289,7 +301,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
                             {
                                 scope: 'col',
                                 colspan: curColspan + 1
-                            },
+                            } as any,
                             cur
                         ));
                         curColspan = 0;
@@ -311,7 +323,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
                         const cell = getCellHTMLFromValue(
                             'th',
                             'highcharts-table-topheading',
-                            { scope: 'col' },
+                            { scope: 'col' } as any,
                             cur
                         );
                         if (rowspan > 1 && cell.attributes) {
@@ -338,7 +350,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
                     if (typeof subheader !== 'undefined') {
                         trChildren.push(
                             getCellHTMLFromValue(
-                                'th', null, { scope: 'col' }, subheader
+                                'th', null, { scope: 'col' } as any, subheader
                             )
                         );
                     }
@@ -360,8 +372,8 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             classes: (string|null),
             attributes: SVGAttributes,
             value: (number|string)
-        ): Highcharts.ASTNode {
-            var textContent = pick(value, ''),
+        ): AST.Node {
+            let textContent = pick(value, ''),
                 className = 'text' + (classes ? ' ' + classes : '');
 
             // Convert to string if number
@@ -388,17 +400,16 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         };
 
         const { columnNames, columnValues } = this.getColumnsForExport(
-                options.exportIDColumn,
                 options.usePresentationOrder
             ),
             columnsCount = columnNames.length;
 
-        const rowArray: Array<Array<Highcharts.ASTNode>> = [];
+        const rowArray: AST.Node[][] = [];
 
         // Add table caption
         // Current exportdata falls back to chart title
         // but that should probably be handled in the export module
-        if (options?.tableCaption) {
+        if (options.tableCaption) {
             treeChildren.push({
                 tagName: 'caption',
                 attributes: {
@@ -441,7 +452,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             let columnDataType;
 
             if (columnMeta) {
-                columnDataType = columnMeta?.dataType;
+                columnDataType = columnMeta.dataType;
             }
 
             for (let rowIndex = 0; rowIndex < longestColumn; rowIndex++) {
@@ -468,7 +479,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
                 rowArray[rowIndex][columnIndex] = getCellHTMLFromValue(
                     columnIndex ? 'td' : 'th',
                     null,
-                    columnIndex ? {} : { scope: 'row' },
+                    columnIndex ? {} : { scope: 'row' } as any,
                     cellValue !== void 0 ? cellValue : ''
                 );
 
@@ -491,6 +502,14 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             tagName: 'table',
             children: treeChildren
         };
+        // Add table caption
+        // Current exportdata falls back to chart title
+        // but that should probably be handled elsewhere?
+        // if (options.tableCaption) {
+        //     caption = '<caption class="highcharts-table-caption">' +
+        //         options.tableCaption +
+        //         '</caption>';
+        // }
 
         return tree;
     }
@@ -512,11 +531,14 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
     public save(
         htmlExportOptions: Partial<HTMLTableStore.ExportOptions>,
         eventDetail?: DataEventEmitter.EventDetail
-    ): string | Highcharts.ASTNode {
+    ): string | AST.Node {
         const exportOptions = HTMLTableStore.defaultExportOptions;
 
-        // Merge in provided options
-        return AST.serialize(this.getTableAST(merge(exportOptions, htmlExportOptions)));
+        const element = createElement('div');
+
+        const nodes = [this.getTableAST(merge(exportOptions, htmlExportOptions))];
+        (new AST(nodes)).addToDOM(element as any);
+        return element.innerHTML;
     }
 
     /**
@@ -555,7 +577,7 @@ namespace HTMLTableStore {
     /**
      * Type for event object fired from HTMLTableDataStore
      */
-    export type EventObjects = (ErrorEventObject | LoadEventObject);
+    export type Event = (ErrorEvent|LoadEvent);
 
     /**
      * Options used in the constructor of HTMLTableDataStore
@@ -587,7 +609,7 @@ namespace HTMLTableStore {
     /**
      * Provided event object on errors within HTMLTableDataStore
      */
-    export interface ErrorEventObject extends DataStore.EventObject {
+    export interface ErrorEvent extends DataStore.Event {
         type: 'loadError';
         error: (string | Error);
     }
@@ -595,7 +617,7 @@ namespace HTMLTableStore {
     /**
      * Provided event object on load events within HTMLTableDataStore
      */
-    export interface LoadEventObject extends DataStore.EventObject {
+    export interface LoadEvent extends DataStore.Event {
         type: ('load' | 'afterLoad');
         tableElement?: (HTMLElement | null);
     }

@@ -32,7 +32,7 @@ QUnit.test('Element.on', function (assert) {
         );
 
         // Start transforming
-        rectNodeElement.onclick();
+        Highcharts.fireEvent(rectNodeElement, 'click');
 
         assert.strictEqual(
             rectNodeElement.getAttribute('width'),

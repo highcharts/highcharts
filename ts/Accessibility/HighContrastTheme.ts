@@ -13,6 +13,7 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
+import type Options from '../Core/Options';
 
 declare module '../Core/Series/DataLabelOptions' {
     interface DataLabelOptions {
@@ -20,7 +21,7 @@ declare module '../Core/Series/DataLabelOptions' {
     }
 }
 
-var theme: Highcharts.Options = {
+const theme: Options = {
     chart: {
         backgroundColor: 'window'
     },

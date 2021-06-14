@@ -284,9 +284,17 @@ QUnit.test('Adding and removing zones', function (assert) {
         ]
     });
 
+    const clips = chart.series[0].clips;
+
     chart.series[0].update({
         zones: []
     });
+
+    assert.strictEqual(
+        chart.series[0].clips,
+        clips,
+        '#15420: Clips array should have been preserved'
+    );
 
     assert.strictEqual(
         chart.series[0].graph.attr('visibility'),
@@ -317,6 +325,14 @@ QUnit.test('Adding and removing zones', function (assert) {
         chart.series[0].graph.attr('visibility'),
         'hidden',
         'Series line is hidden after adding zones back (#10569).'
+    );
+
+    const clip = chart.series[0].clips[0];
+    chart.series[0].destroy();
+
+    assert.notOk(
+        clip.element,
+        '#15420: Clip should have been destroyed'
     );
 });
 

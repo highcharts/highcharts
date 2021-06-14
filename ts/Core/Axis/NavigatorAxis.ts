@@ -10,11 +10,13 @@
 
 'use strict';
 
+import type RangeSelector from '../../Extensions/RangeSelector';
 import Axis from './Axis.js';
 import H from '../Globals.js';
 const {
     isTouchDevice
 } = H;
+
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -24,13 +26,16 @@ const {
     pick
 } = U;
 
-/**
- * @private
- */
-declare module './Types' {
+declare module './AxisComposition' {
     interface AxisComposition {
         navigatorAxis?: NavigatorAxis['navigatorAxis'];
     }
+}
+
+/**
+ * @private
+ */
+declare module './AxisType' {
     interface AxisTypeRegistry {
         NavigatorAxis: NavigatorAxis;
     }
@@ -94,12 +99,12 @@ class NavigatorAxisAdditions {
         pxMax?: number,
         fixedMin?: number,
         fixedMax?: number
-    ): Highcharts.RangeObject {
+    ): RangeSelector.RangeObject {
         const navigator = this;
         const axis = navigator.axis;
         const chart = axis.chart;
 
-        var fixedRange = chart && chart.fixedRange,
+        let fixedRange = chart && chart.fixedRange,
             halfPointRange = (axis.pointRange || 0) / 2,
             newMin = pick<number|undefined, number>(
                 fixedMin, axis.translate(pxMin as any, true, !axis.horiz) as any
@@ -182,7 +187,7 @@ class NavigatorAxis {
         // For Stock charts, override selection zooming with some special
         // features because X axis zooming is already allowed by the Navigator
         // and Range selector.
-        addEvent(AxisClass, 'zoom', function (e: Record<string, any>): void {
+        addEvent(AxisClass, 'zoom', function (e: AnyRecord): void {
             const axis = this as NavigatorAxis;
             const chart = axis.chart;
             const chartOptions = chart.options;

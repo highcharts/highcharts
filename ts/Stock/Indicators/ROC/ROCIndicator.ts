@@ -48,7 +48,7 @@ function populateAverage(
         Closing Price [n days ago] * 100
 
        Return y as null when avoiding division by zero */
-    var nDaysAgoY: number,
+    let nDaysAgoY: number,
         rocY: (number|null);
 
     if (index < 0) {
@@ -135,7 +135,7 @@ class ROCIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: ROCParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = (params.period as any),
+        let period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,

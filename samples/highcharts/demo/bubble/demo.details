@@ -7,5 +7,6 @@ js_wrap: b
 tags:
   - Highcharts demo
 categories:
-  - Scatter and bubble charts
+  - Scatter and bubble charts:
+      priority: 1
 ...

@@ -1,4 +1,6 @@
 QUnit.test('General dataGrouping options', function (assert) {
+    let calledWithNaN = false;
+
     var chart = Highcharts.stockChart('container', {
         chart: {
             type: 'column'
@@ -33,8 +35,55 @@ QUnit.test('General dataGrouping options', function (assert) {
             {
                 type: 'scatter',
                 data: [[1, 1]]
+            },
+            {
+                type: 'ohlc',
+                dataGrouping: {
+                    groupAll: true
+                },
+                data: [
+                    [1, 2, 1, 2],
+                    [2, 4, 2, 4],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2]
+                ]
+            },
+            {
+                type: 'ohlc',
+                dataGrouping: {
+                    groupAll: false
+                },
+                data: [
+                    [1, 2, 1, 2],
+                    [2, 4, 2, 4],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2]
+                ]
+            },
+            {
+                data: []
             }
-        ]
+        ],
+        time: {
+            getTimezoneOffset: timestamp => {
+                if (Number.isNaN(timestamp)) {
+                    calledWithNaN = true;
+                }
+                return new Date().getTimezoneOffset();
+            }
+        }
     });
 
     assert.ok(
@@ -52,6 +101,22 @@ QUnit.test('General dataGrouping options', function (assert) {
         chart.series[1].points[0].y,
         4,
         'Only visible points are used to calculate gorups (#5344)'
+    );
+
+    assert.strictEqual(
+        chart.series[3].points[0].open,
+        1,
+        'All OHLC points are used (#9738)'
+    );
+    assert.strictEqual(
+        chart.series[4].points[0].open,
+        2,
+        'Only visible OHLC points are used (#9738)'
+    );
+
+    assert.notOk(
+        calledWithNaN,
+        'Empty series should not cause getTimezoneOffset to get called with NaN timestamp (#13247)'
     );
 });
 
@@ -368,6 +433,13 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
         chart.container.querySelectorAll('.highcharts-series-0 rect').length,
         12,
         'Monthly columns'
+    );
+
+    const series = chart.addSeries({ data: chart.series[0].options.data });
+    assert.deepEqual(
+        series.currentDataGrouping,
+        chart.series[0].currentDataGrouping,
+        '#15512: Datagrouping from range selector should be used'
     );
 
     chart.rangeSelector.clickButton(0);
@@ -699,5 +771,187 @@ QUnit.test('DataGrouping and update', function (assert) {
             - updating one-to-one with IDs
             - DG enabled
         (#11471)`
+    );
+});
+
+QUnit.test('When groupAll: true, group point should have the same start regardless of axis extremes, #15005.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+            chart: {
+                type: 'column'
+            },
+            plotOptions: {
+                series: {
+                    dataGrouping: {
+                        enabled: true,
+                        forced: true,
+                        units: [
+                            ['millisecond', [5]]
+                        ]
+                    }
+                }
+            },
+            series: [{
+                dataGrouping: {
+                    groupAll: true
+                },
+                data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            }, {
+                data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            }]
+        }),
+        groupAllFirstGroupStart = chart.series[0].points[0].dataGroup.start,
+        groupAllSecondGroupStart = chart.series[0].points[1].dataGroup.start,
+        firstGroupStart = chart.series[1].points[0].dataGroup.start,
+        secondGroupStart = chart.series[1].points[1].dataGroup.start;
+
+    assert.strictEqual(
+        firstGroupStart,
+        0,
+        'When the groupAll: false, and all points visible, the first group should start from the beginning (0).'
+    );
+
+    chart.xAxis[0].setExtremes(1);
+
+    assert.strictEqual(
+        groupAllFirstGroupStart,
+        chart.series[0].points[0].dataGroup.start,
+        'When the groupAll: true, the start of the group should not be changed after changing extremes.'
+    );
+    assert.strictEqual(
+        groupAllSecondGroupStart,
+        chart.series[0].points[1].dataGroup.start,
+        'When the groupAll: true, the start of the group should not be changed after changing extremes.'
+    );
+    assert.strictEqual(
+        chart.series[1].points[0].dataGroup.start,
+        1,
+        'When the groupAll: false, and after changing extremes, the group start should be increased.'
+    );
+    assert.strictEqual(
+        secondGroupStart,
+        chart.series[1].points[1].dataGroup.start,
+        'When the groupAll: false, and new extremes don\t influence the group, the start should not be changed.'
+    );
+
+    // Change the data set to check the group start,
+    // when the extremes overlap with the point x.
+    chart.series[0].update({
+        type: 'line',
+        dataGrouping: {
+            groupAll: true,
+            units: [
+                ['minute', [5]]
+            ]
+        },
+        data: [
+            [1610028057000, 0.25],
+            [1610033040000, 0.80125],
+            [1610118031000, 0.8475],
+            [1610118209000, 0.8475],
+            [1610118426000, 0.8475],
+            [1610118691000, 0.8475],
+            [1610120241000, 0.8475],
+            [1610372248000, 0.8325],
+            [1610373264000, 0.83],
+            [1610373445000, 0.8275],
+            [1610384401000, 0.835],
+            [1610384401000, 0.835],
+            [1610392040000, 0.375],
+            [1610719978000, 0.915],
+            [1610720025000, 0.915],
+            [1610724043000, 0.91],
+            [1610724275000, 0],
+            [1610725033000, 0.9],
+            [1610725069000, 0.9],
+            [1610729723000, 0],
+            [1611071398000, 0.84375],
+            [1611138383000, 0.835],
+            [1611159135000, 0.77],
+            [1611162097000, 0.7825],
+            [1611162097000, 0.7825]
+        ]
+    }, false);
+    chart.series[1].remove();
+
+    const point = chart.series[0].points[10],
+        pointX = point.x;
+
+    assert.strictEqual(
+        point.dataGroup.start,
+        12,
+        'When groupAll: true, this point group should start from 12.'
+    );
+
+    chart.xAxis[0].setExtremes(1610033050000);
+    assert.strictEqual(
+        pointX,
+        chart.series[0].points[9].x,
+        'The same point should be selected as previously.'
+    );
+    assert.strictEqual(
+        chart.series[0].points[9].dataGroup.start,
+        12,
+        `When groupAll: true, after changing extremes, 
+        the point should have the same start.`
+    );
+
+    chart.xAxis[0].setExtremes(1610033040000);
+    assert.strictEqual(
+        chart.series[0].points[9].dataGroup.start,
+        12,
+        `When groupAll: true, after changing extremes to the same as other
+        point x, the groups should not change the start property.`
+    );
+});
+
+QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        xAxis: {
+            ordinal: true
+        },
+        rangeSelector: {
+            selected: 0
+        },
+        series: [{
+            data: usdeur,
+            dataGrouping: {
+                forced: true,
+                groupAll: true,
+                units: [['day', [1]]]
+            }
+        }]
+    });
+    // Call function responsible for calculating positions of invisible points while panning.
+    chart.xAxis[0].ordinal.getExtendedPositions();
+
+    const positions = chart.xAxis[0].ordinal.positions,
+        positionsLength = positions.length,
+        index = chart.xAxis[0].ordinal.index,
+        indexArray = index[Object.keys(index)[0]],
+        indexLength = indexArray.length,
+        splicedIndex = // get data for current extremes
+            indexArray.splice(indexLength - positionsLength, positionsLength);
+
+    assert.deepEqual(
+        positions,
+        splicedIndex,
+        `When the ordinal axis and data grouping enabled,
+        getExtendedPositions should return fake series where
+        the data is grouped the same as in the original series. 
+        Thus each element in the currently visible array of data,
+        should equal the corresponding element in the fake series array. `
+    );
+
+    chart.series[0].update({
+        dataGrouping: {
+            units: [['week', [1]]]
+        }
+    });
+    chart.xAxis[0].ordinal.getExtendedPositions();
+    assert.ok(
+        chart.xAxis[0].ordinal.index[
+            Object.keys(chart.xAxis[0].ordinal.index)[1]],
+        `After updating data grouping units to an equally spaced (like weeks),
+        the ordinal positions should be recalculated- allows panning.`
     );
 });

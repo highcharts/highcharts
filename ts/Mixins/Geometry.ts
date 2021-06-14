@@ -39,7 +39,7 @@ declare global {
 const getCenterOfPoints = function getCenterOfPoints(
     points: Array<PositionObject>
 ): PositionObject {
-    var sum = points.reduce(function (
+    const sum = points.reduce(function (
         sum: PositionObject,
         point: PositionObject
     ): PositionObject {

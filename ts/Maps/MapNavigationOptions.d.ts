@@ -19,13 +19,18 @@ import type {
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 
 /* *
  *
  *  Declarations
  *
  * */
+declare module '../Core/Options' {
+    interface Options {
+        mapNavigation?: MapNavigationOptions;
+    }
+}
 
 export type ButtonRelativeToValue = ('plotBox'|'spacingBox');
 
@@ -37,7 +42,7 @@ export interface MapNavigationButtonOptions {
     padding?: number;
     style?: CSSObject;
     text?: string;
-    theme?: SVGAttributes;
+    theme?: ButtonThemeObject;
     verticalAlign?: VerticalAlignValue;
     width?: number;
     x?: number;
@@ -54,15 +59,6 @@ export interface MapNavigationOptions {
     enableMouseWheelZoom?: boolean;
     enableTouchZoom?: boolean;
     mouseWheelSensitivity?: number;
-}
-
-// @todo declare module
-declare global {
-    namespace Highcharts {
-        interface Options {
-            mapNavigation?: MapNavigationOptions;
-        }
-    }
 }
 
 export default MapNavigationOptions;

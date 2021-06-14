@@ -134,7 +134,7 @@ class ParetoSeries extends LineSeries {
         sum: number,
         isSum?: T
     ): (T extends true ? number : Array<Array<number>>) {
-        var sumY = 0,
+        let sumY = 0,
             sumPercent = 0,
             percentPoints: Array<Array<number>> = [],
             percentPoint: (number | undefined);
@@ -167,7 +167,7 @@ class ParetoSeries extends LineSeries {
      * @requires modules/pareto
      */
     public setDerivedData(): void {
-        var xValues = (this.baseSeries as any).xData,
+        const xValues = (this.baseSeries as any).xData,
             yValues = (this.baseSeries as any).yData,
             sum = this.sumPointsPercents(
                 yValues,

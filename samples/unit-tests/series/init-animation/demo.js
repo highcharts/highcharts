@@ -24,9 +24,9 @@ QUnit.test('General aniamtion tests.', function (assert) {
                 },
                 data: [194.1, 95.6, 54.4, 29.9]
             });
-            width =
-                newSeries.sharedClipKey &&
-                chart[newSeries.sharedClipKey].element.width.baseVal.value;
+            width = newSeries.sharedClipKey &&
+                chart.sharedClips[newSeries.sharedClipKey]
+                    .element.width.baseVal.value;
 
             assert.ok(
                 width === 0,
@@ -65,9 +65,8 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
 
         setTimeout(function () {
             // animation started
-            width =
-                chart[chart.series[0].sharedClipKey].element.width.baseVal
-                    .value;
+            width = chart.sharedClips[chart.series[0].sharedClipKey]
+                .element.width.baseVal.value;
 
             assert.strictEqual(
                 width > 20 && width < 200,
@@ -77,9 +76,8 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
 
             setTimeout(function () {
                 // animation uncovers most of the plot
-                width =
-                    chart[chart.series[0].sharedClipKey].element.width.baseVal
-                        .value;
+                width = chart.sharedClips[chart.series[0].sharedClipKey]
+                    .element.width.baseVal.value;
                 assert.strictEqual(
                     width > 300 && width < 600,
                     true,
@@ -88,13 +86,16 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
             }, 300);
 
             setTimeout(function () {
+                const clipRect = chart.sharedClips[
+                    chart.series[0].sharedClipKey
+                ];
                 // animation finished
                 assert.strictEqual(
                     // Highcharts - tested in browser
-                    chart[chart.series[0].sharedClipKey] === undefined ||
-                        // Highstock - tested in headless
-                        chart[chart.series[0].sharedClipKey].element.width
-                            .baseVal.value === chart.chartWidth,
+                    clipRect === undefined ||
+                        // Highcharts Stock - tested in headless
+                        clipRect.element.width.baseVal.value ===
+                            chart.chartWidth,
                     true,
                     'Animation finished - no clip box'
                 );
@@ -144,9 +145,8 @@ QUnit.test(
 
             setTimeout(function () {
                 // animation started
-                width =
-                    chart[chart.series[0].sharedClipKey].element.width.baseVal
-                        .value;
+                width = chart.sharedClips[chart.series[0].sharedClipKey]
+                    .element.width.baseVal.value;
 
                 assert.strictEqual(
                     width === 0,
@@ -156,9 +156,8 @@ QUnit.test(
 
                 setTimeout(function () {
                     // animation uncovers most of the plot
-                    width =
-                        chart[chart.series[0].sharedClipKey].element.width
-                            .baseVal.value;
+                    width = chart.sharedClips[chart.series[0].sharedClipKey]
+                        .element.width.baseVal.value;
                     assert.strictEqual(
                         width > 300 && width < 600,
                         true,
@@ -167,13 +166,16 @@ QUnit.test(
                 }, 250);
 
                 setTimeout(function () {
+                    const clipRect = chart.sharedClips[
+                        chart.series[0].sharedClipKey
+                    ];
                     // animation finished
                     assert.strictEqual(
                         // Highcharts - tested in browser
-                        chart[chart.series[0].sharedClipKey] === undefined ||
-                            // Highstock - tested in headless
-                            chart[chart.series[0].sharedClipKey].element.width
-                                .baseVal.value === chart.chartWidth,
+                        clipRect === undefined ||
+                            // Highcharts Stock - tested in headless
+                            clipRect.element.width.baseVal.value ===
+                                chart.chartWidth,
                         true,
                         'Animation finished - no clip box'
                     );

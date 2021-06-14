@@ -23,12 +23,8 @@ import type DataEventEmitter from '../DataEventEmitter';
 import DataModifier from './DataModifier.js';
 import DataJSON from '../DataJSON.js';
 import DataTable from '../DataTable.js';
-import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    defined
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -38,6 +34,8 @@ const {
 
 /**
  * Inverts columns and rows in a table.
+ *
+ * @private
  */
 class InvertModifier extends DataModifier {
 
@@ -109,57 +107,285 @@ class InvertModifier extends DataModifier {
      * */
 
     /**
-     * Create new DataTable with inverted rows and columns.
+     * Inverts rows and columns in the table.
      *
      * @param {DataTable} table
-     * Table to modify.
+     * Table to invert.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Inverted table as a reference.
      */
-    public execute(
+    public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
-        const modifier = this,
-            newTable = new DataTable(),
-            columns = table.getColumns(),
-            newRowIds = Object.keys(columns),
-            oldRowsLength = table.getRowCount();
+        const modifier = this;
 
-        let oldRow: (DataTableRow|undefined),
-            newCells: Record<string, DataTableRow.CellType>,
-            newRow: (DataTableRow|undefined),
-            rowCell: (DataTableRow.CellType|undefined);
+        modifier.emit({ type: 'modify', detail: eventDetail, table });
 
-        modifier.emit({ type: 'execute', detail: eventDetail, table });
+        if (table.hasColumns(['columnNames'])) { // inverted table
+            const columnNames: Array<string> = (
+                    (table.deleteColumns(['columnNames']) || {}).columnNames || []
+                ).map(
+                    (column): string => `${column}`
+                ),
+                columns: DataTable.ColumnCollection = {};
 
-        for (let i = 0, iEnd = newRowIds.length; i < iEnd; i++) {
-            if (newRowIds[i] !== 'id') {
-                newCells = {
-                    id: newRowIds[i]
-                };
-
-                for (let j = 0; j < oldRowsLength; j++) {
-                    oldRow = table.getRow(j);
-                    rowCell = oldRow && oldRow.getCell(newRowIds[i]);
-
-                    if (defined(rowCell) && oldRow && oldRow.id) {
-                        newCells[oldRow.id] = rowCell;
-                    }
+            for (
+                let i = 0,
+                    iEnd = table.getRowCount(),
+                    row: (DataTable.Row|undefined);
+                i < iEnd;
+                ++i
+            ) {
+                row = table.getRow(i);
+                if (row) {
+                    columns[columnNames[i]] = row;
                 }
+            }
 
-                newRow = new DataTableRow(newCells);
-                newTable.insertRow(newRow);
+            table.deleteColumns();
+            table.setColumns(columns);
+
+        } else { // regular table
+            const columns: DataTable.ColumnCollection = {};
+
+            for (
+                let i = 0,
+                    iEnd = table.getRowCount(),
+                    row: (DataTable.Row|undefined);
+                i < iEnd;
+                ++i
+            ) {
+                row = table.getRow(i);
+                if (row) {
+                    columns[`${i}`] = row;
+                }
+            }
+            columns.columnNames = table.getColumnNames();
+
+            table.deleteColumns();
+            table.setColumns(columns);
+        }
+
+        modifier.emit({ type: 'afterModify', detail: eventDetail, table });
+
+        return table;
+    }
+
+    /**
+     * Applies partial modifications of a cell change to the property `modified`
+     * of the given modified table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {string} columnName
+     * Column name of changed cell.
+     *
+     * @param {number|undefined} rowIndex
+     * Row index of changed cell.
+     *
+     * @param {Highcharts.DataTableCellType} cellValue
+     * Changed cell value.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Modified table as a reference.
+     */
+    public modifyCell(
+        table: DataTable,
+        columnName: string,
+        rowIndex: number,
+        cellValue: DataTable.CellType,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+        const modified = table.modified,
+            modifiedRowIndex = modified.getRowIndexBy('columnNames', columnName);
+
+        if (typeof modifiedRowIndex === 'undefined') {
+            modified.setColumns(
+                this.modify(table.clone()).getColumns(),
+                void 0,
+                eventDetail
+            );
+        } else {
+            modified.setCell(
+                `${rowIndex}`,
+                modifiedRowIndex,
+                cellValue,
+                eventDetail
+            );
+        }
+
+        return table;
+    }
+
+    /**
+     * Applies partial modifications of column changes to the property
+     * `modified` of the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {Highcharts.DataTableColumnCollection} columns
+     * Changed columns as a collection, where the keys are the column names.
+     *
+     * @param {number} [rowIndex=0]
+     * Index of the first changed row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Modified table as a reference.
+     */
+    public modifyColumns(
+        table: DataTable,
+        columns: DataTable.ColumnCollection,
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+        const modified = table.modified,
+            modifiedColumnNames = modified.getColumnNames();
+
+        let columnNames = table.getColumnNames(),
+            reset = (columnNames.length !== modifiedColumnNames.length);
+
+        if (!reset) {
+            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+                if (columnNames[i] !== modifiedColumnNames[i]) {
+                    reset = true;
+                    break;
+                }
             }
         }
 
-        modifier.emit({ type: 'afterExecute', detail: eventDetail, table: newTable });
+        if (reset) {
+            modified.setColumns(
+                this.modify(table.clone()).getColumns(),
+                void 0,
+                eventDetail
+            );
+            return table;
+        }
 
-        return newTable;
+        columnNames = Object.keys(columns);
+
+        for (
+            let i = 0,
+                iEnd = columnNames.length,
+                column: DataTable.Column,
+                columnName: string,
+                modifiedRowIndex: (number|undefined);
+            i < iEnd;
+            ++i
+        ) {
+            columnName = columnNames[i];
+            column = columns[columnName];
+            modifiedRowIndex = (
+                modified.getRowIndexBy('columnNames', columnName) ||
+                modified.getRowCount()
+            );
+
+            for (
+                let j = 0,
+                    j2 = rowIndex,
+                    jEnd = column.length;
+                j < jEnd;
+                ++j, ++j2
+            ) {
+                modified.setCell(
+                    `${j2}`,
+                    modifiedRowIndex,
+                    column[j],
+                    eventDetail
+                );
+            }
+        }
+
+        return table;
+    }
+
+    /**
+     * Applies partial modifications of row changes to the property `modified`
+     * of the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {Array<(Highcharts.DataTableRow|Highcharts.DataTableRowObject)>} rows
+     * Changed rows.
+     *
+     * @param {number} [rowIndex]
+     * Index of the first changed row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Modified table as a reference.
+     */
+    public modifyRows(
+        table: DataTable,
+        rows: Array<(DataTable.Row|DataTable.RowObject)>,
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+        const columnNames = table.getColumnNames(),
+            modified = table.modified,
+            modifiedColumnNames = modified.getColumnNames();
+
+        let reset = (columnNames.length !== modifiedColumnNames.length);
+
+        if (!reset) {
+            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+                if (columnNames[i] !== modifiedColumnNames[i]) {
+                    reset = true;
+                    break;
+                }
+            }
+        }
+
+        if (reset) {
+            modified.setColumns(
+                this.modify(table.clone()).getColumns(),
+                void 0,
+                eventDetail
+            );
+            return table;
+        }
+
+        for (
+            let i = 0,
+                i2 = rowIndex,
+                iEnd = rows.length,
+                row: (DataTable.Row|DataTable.RowObject);
+            i < iEnd;
+            ++i, ++i2
+        ) {
+            row = rows[i];
+
+            if (row instanceof Array) {
+                modified.setColumn(`${i2}`, row);
+            } else {
+                for (let j = 0, jEnd = columnNames.length; j < jEnd; ++j) {
+                    modified.setCell(
+                        `${i2}`,
+                        j,
+                        row[columnNames[j]],
+                        eventDetail
+                    );
+                }
+            }
+        }
+
+        return table;
     }
 
     /**

@@ -76,8 +76,8 @@ $scrollbar-track-background: $neutral-color-5 !default;
 $scrollbar-track-border: $neutral-color-5 !default;
 
 // Indicators
-$indicator-positive-line: #06b535; // Positive indicator color
-$indicator-negative-line: #f21313; // Negative indicator color
+$positive-color: #06b535; // Positive indicator color
+$negative-color: #f21313; // Negative indicator color
 
 .highcharts-container {
     position: relative;
@@ -91,6 +91,8 @@ $indicator-negative-line: #f21313; // Negative indicator color
     font-family: $font-family;
     font-size: 12px;
     user-select: none;
+    touch-action: manipulation;
+    outline: none;
 }
 .highcharts-root {
     display: block;
@@ -137,6 +139,7 @@ $indicator-negative-line: #f21313; // Negative indicator color
 }
 .highcharts-subtitle {
     fill: $neutral-color-60;
+    font-size: $subtitle-font-size;
 }
 
 /* Axes */

@@ -76,7 +76,7 @@ Chart.prototype.getSelectedParentNodes = function (): Array<PackedBubblePoint> {
         );
     },
     barycenter: function (this: PackedBubbleLayout): void {
-        var layout = this,
+        let layout = this,
             gravitationalConstant = layout.options.gravitationalConstant,
             box = layout.box,
             nodes = layout.nodes,
@@ -112,7 +112,7 @@ Chart.prototype.getSelectedParentNodes = function (): Array<PackedBubblePoint> {
         distanceXY: Record<string, number>,
         repNode: PackedBubblePoint
     ): void {
-        var factor = (
+        const factor = (
                 force * (this.diffTemperature as any) / (node.mass as any) /
                 (node.degree as any)
             ),
@@ -144,8 +144,21 @@ H.layouts.packedbubble = extendClass(
                 });
             }
         },
+        isStable: function (this: PackedBubbleLayout): boolean { // #14439, new stable check.
+            const tempDiff = Math.abs(
+                (this.prevSystemTemperature as any) -
+                (this.systemTemperature as any)
+            );
+
+            const upScaledTemperature = 10 * (this.systemTemperature as any) /
+                Math.sqrt(this.nodes.length);
+
+            return Math.abs(upScaledTemperature) < 1 &&
+                tempDiff < 0.00001 ||
+                (this.temperature as any) <= 0;
+        },
         setCircularPositions: function (this: PackedBubbleLayout): void {
-            var layout = this,
+            let layout = this,
                 box = layout.box,
                 nodes = layout.nodes,
                 nodesLength = nodes.length + 1,
@@ -182,7 +195,7 @@ H.layouts.packedbubble = extendClass(
             });
         },
         repulsiveForces: function (this: PackedBubbleLayout): void {
-            var layout = this,
+            let layout = this,
                 force,
                 distanceR,
                 distanceXY,
@@ -242,7 +255,7 @@ H.layouts.packedbubble = extendClass(
             this: PackedBubbleLayout,
             node: PackedBubblePoint
         ): void {
-            var layout = this,
+            let layout = this,
                 distanceXY,
                 distanceR,
                 factor = 0.01;

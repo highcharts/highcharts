@@ -177,7 +177,7 @@
         runTests(chart, assert);
     });
 
-    QUnit.test('Series update with Highstock (#8196)', function (assert) {
+    QUnit.test('Series update with Highcharts Stock (#8196)', function (assert) {
         var chart = Highcharts.stockChart('container', {
             series: [
                 {

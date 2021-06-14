@@ -10,6 +10,8 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
@@ -20,8 +22,8 @@ import type DataEventEmitter from './DataEventEmitter';
 import type LineSeries from '../Series/Line/LineSeries';
 import type PointOptions from '../Core/Series/PointOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+
 import DataTable from './DataTable.js';
-import DataTableRow from './DataTableRow.js';
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -35,7 +37,10 @@ const {
  * */
 
 /**
- * Class to convert DataTable to Highcharts series data.
+ * Class to convert Highcharts series data to table and get series data from the
+ * table.
+ *
+ * @private
  */
 class DataSeriesConverter {
 
@@ -44,9 +49,24 @@ class DataSeriesConverter {
      *  Constructor
      *
      * */
-    public constructor(table: DataTable = new DataTable(), options: DataSeriesConverter.Options) {
+
+    /**
+     * Constructs an instance of the DataSeriesConverter class.
+     *
+     * @param {DataTable} [table]
+     * DataSeriesConverter table to store series data.
+     *
+     * @param {DataSeriesConverter.Options} [options]
+     * DataSeriesConverter options.
+     */
+    public constructor(
+        table: DataTable = new DataTable(),
+        options: DataSeriesConverter.Options = {}
+    ) {
         this.table = table;
         this.options = options;
+        this.seriesIdMap = {};
+        this.seriesMeta = [];
     }
 
     /* *
@@ -54,8 +74,20 @@ class DataSeriesConverter {
      *  Properties
      *
      * */
+
     public table: DataTable;
     public options: DataSeriesConverter.Options;
+
+    /**
+     * Registry as record object with series IDs and their
+     * meta information instance.
+     */
+    public seriesIdMap: Record<string, DataSeriesConverter.SeriesMeta>;
+
+    /**
+     * Array of all series meta information stored in the table.
+     */
+    public seriesMeta: Array<DataSeriesConverter.SeriesMeta>;
 
     /* *
      *
@@ -63,111 +95,103 @@ class DataSeriesConverter {
      *
      * */
 
-    getSeriesData(columnIndex: number): Array<PointOptions> {
-        const table = this.table,
-            options = this.options || {},
-            dataOptions = [],
-            seriesTypeData = this.getSeriesTypeData(options.type || 'line');
+    /**
+     * Get the specific series data stored in the converter.
+     *
+     * @param {string} seriesId
+     * The id of the series.
+     *
+     * @return {Array<PointOptions>}
+     * Returns an array of series points opitons.
+     */
+    getSeriesData(seriesId: string): Array<PointOptions> {
+        const converter = this,
+            table = converter.table,
+            seriesData = [];
 
-        let row,
-            column;
+        let pointOptions: Record<string, (number|null)>,
+            cellName,
+            cell,
+            isCellFound,
+            pointArrayMap;
 
-        for (let i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
+        if (seriesId) {
+            pointArrayMap = converter.seriesIdMap[seriesId].pointArrayMap || ['y'];
 
-            row = table.getRow(i);
+            for (let i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
+                isCellFound = false;
+                pointOptions = {
+                    x: table.getCellAsNumber('x', i, true)
+                };
 
-            if (row) {
-                column = row.getCell(row.getCellNames()[columnIndex]);
+                for (let j = 0, jEnd = pointArrayMap.length; j < jEnd; j++) {
+                    cellName = pointArrayMap[j] + '_' + seriesId;
+                    cell = table.getCell(cellName, i);
 
-                if (typeof column === 'number') {
-                    dataOptions.push(
-                        seriesTypeData(column)
-                    );
+                    if (typeof cell !== 'undefined') {
+                        isCellFound = true;
+                        pointOptions[pointArrayMap[j]] = table.getCellAsNumber(cellName, i);
+                    }
+                }
+
+                if (isCellFound) {
+                    seriesData.push(pointOptions);
                 }
             }
         }
 
-        return dataOptions;
+        return seriesData;
     }
 
-    getSeriesTypeData(type: string): Function {
-        let fcName: Function;
-
-        switch (type) {
-            case 'line':
-                fcName = this.getLinePoint;
-                break;
-            case 'pie':
-                fcName = this.getPiePoint;
-                break;
-            case 'range':
-                fcName = this.getRangePoint;
-                break;
-            default:
-                fcName = this.getLinePoint;
-                break;
-        }
-
-        return fcName;
-    }
-
-    getLinePoint(column: number): PointOptions {
-        return {
-            y: column
-        };
-    }
-
-    getPiePoint(column: number): PointOptions {
-        return {
-            y: column
-        };
-    }
-
-    getRangePoint(column: number): PointOptions {
-        return {
-            y: column
-        };
-    }
-
+    /**
+     * Get all series data stored in the converter.
+     *
+     * @return {Array<SeriesOptions>}
+     * Returns an array of series opitons.
+     */
     getAllSeriesData(): Array<SeriesOptions> {
-        const table = this.table,
-            seriesOptions = [],
-            row = table.getRow(0);
+        const converter = this,
+            seriesOptions: Array<SeriesOptions> = [];
 
-        let seriesData;
+        let id;
 
-        if (row) {
-            for (let i = 0, iEnd = row.getCellCount(); i < iEnd; i++) {
+        for (let i = 0, iEnd = converter.seriesMeta.length; i < iEnd; i++) {
+            id = converter.seriesMeta[i].id;
 
-                seriesData = this.getSeriesData(i);
-
-                if (seriesData.length > 0) {
-                    seriesOptions.push({
-                        data: seriesData
-                    });
-                }
-            }
+            seriesOptions.push({
+                id: id,
+                data: converter.getSeriesData(id)
+            });
         }
 
         return seriesOptions;
     }
 
-    setDataTable(
+    /**
+     * Update the converter with passed series options.
+     *
+     * @param {Array<LineSeries>} allSeries
+     * Array of series options to store in the converter.
+     *
+     * @param {DataEventEmitter.EventDetail} eventDetail
+     * Custom information for pending events.
+     */
+    updateTable(
         allSeries: Array<LineSeries>,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
-        const table = this.table,
-            columnMap = (this.options || {}).columnMap || {};
+    ): void {
+        const table = this.table;
 
-        let columns: Record<string, DataTableRow.CellType>,
+        let columns: DataTable.RowObject,
             series,
+            seriesMeta,
             pointArrayMap,
             pointArrayMapLength,
             options,
             keys,
             data,
             elem,
-            row,
+            rowIndex,
             y,
             needsArrayMap,
             xIndex,
@@ -177,75 +201,87 @@ class DataSeriesConverter {
             yValueId,
             id;
 
-        for (let i = 0, iEnd = allSeries.length; i < iEnd; i++) {
-            series = allSeries[i];
-            // Add a unique ID to the series if none is assigned.
-            series.id = defined(series.id) ? series.id : uniqueKey();
-            yValueId = '_' + series.id;
-            pointArrayMap = series.pointArrayMap || ['y'];
-            pointArrayMapLength = pointArrayMap.length;
-            options = series.options;
-            keys = options.keys;
-            data = series.options.data || [];
+        if (allSeries && allSeries.length) {
+            this.options.seriesOptions = [];
+            this.seriesMeta = [];
+            this.seriesIdMap = {};
 
-            for (let j = 0, jEnd = data.length; j < jEnd; j++) {
-                elem = data[j];
-                y = columnMap.y ? columnMap.y + yValueId : 'y' + yValueId;
-                columns = {};
-                needsArrayMap = pointArrayMapLength > 1;
+            for (let i = 0, iEnd = allSeries.length; i < iEnd; i++) {
+                series = allSeries[i];
+                // Add a unique ID to the series if none is assigned.
+                series.id = defined(series.id) ? series.id : uniqueKey();
+                yValueId = '_' + series.id;
+                pointArrayMap = series.pointArrayMap || ['y'];
+                pointArrayMapLength = pointArrayMap.length;
+                options = series.options;
+                keys = options.keys;
+                data = series.options.data || [];
 
-                if (typeof elem === 'number') {
-                    columns[y] = elem;
-                    columns.x = j;
-                } else if (elem instanceof Array) {
-                    xIndex = keys && keys.indexOf('x') > -1 ? keys.indexOf('x') : 0;
-                    yIndex = keys && keys.indexOf('y') > -1 ? keys.indexOf('y') : 1;
+                seriesMeta = {
+                    id: series.id,
+                    pointArrayMap: pointArrayMap,
+                    options: series.options
+                };
 
-                    if (needsArrayMap) {
-                        for (let k = 0; k < pointArrayMapLength; k++) {
-                            yValueIndex = keys && keys.indexOf(pointArrayMap[k]) > -1 ?
-                                keys.indexOf(pointArrayMap[k]) : k + elem.length - pointArrayMapLength;
+                this.options.seriesOptions.push(series.options);
+                this.seriesMeta.push(seriesMeta);
+                this.seriesIdMap[series.id] = seriesMeta;
 
-                            yValueName = columnMap[pointArrayMap[k]] ?
-                                columnMap[pointArrayMap[k]] : pointArrayMap[k];
-                            columns[yValueName + yValueId] = elem[yValueIndex];
+                for (let j = 0, jEnd = data.length; j < jEnd; j++) {
+                    elem = data[j];
+                    y = 'y' + yValueId;
+                    columns = {};
+                    needsArrayMap = pointArrayMapLength > 1;
+
+                    if (typeof elem === 'number') {
+                        columns[y] = elem;
+                        columns.x = j;
+                    } else if (elem instanceof Array) {
+                        xIndex = keys && keys.indexOf('x') > -1 ? keys.indexOf('x') : 0;
+                        yIndex = keys && keys.indexOf('y') > -1 ? keys.indexOf('y') : 1;
+
+                        if (needsArrayMap) {
+                            for (let k = 0; k < pointArrayMapLength; k++) {
+                                yValueIndex = keys && keys.indexOf(pointArrayMap[k]) > -1 ?
+                                    keys.indexOf(pointArrayMap[k]) : k + elem.length -
+                                        pointArrayMapLength;
+
+                                yValueName = pointArrayMap[k];
+                                columns[yValueName + yValueId] = elem[yValueIndex];
+                            }
+                        } else {
+                            columns[y] = elem[yIndex];
                         }
-                    } else {
-                        columns[y] = elem[yIndex];
+
+                        columns.x = elem.length - pointArrayMapLength > 0 ? elem[xIndex] : j;
+
+                    } else if (elem instanceof Object) {
+                        if (needsArrayMap) {
+                            const elemSet = elem as Record<string, DataTable.CellType>;
+
+                            for (let k = 0; k < pointArrayMapLength; k++) {
+                                yValueName = pointArrayMap[k];
+                                columns[yValueName + yValueId] = elemSet[yValueName];
+                            }
+                        } else {
+                            columns[y] = elem.y;
+                        }
+
+                        columns.x = elem.x || j;
                     }
 
-                    columns.x = elem.length - pointArrayMapLength > 0 ? elem[xIndex] : j;
+                    id = '' + columns.x;
+                    rowIndex = table.getRowIndexBy('id', id);
 
-                } else if (elem instanceof Object) {
-                    if (needsArrayMap) {
-                        const elemSet = elem as Record<string, DataTableRow.CellType>;
-
-                        for (let k = 0; k < pointArrayMapLength; k++) {
-                            yValueName = columnMap[pointArrayMap[k]] ?
-                                columnMap[pointArrayMap[k]] : pointArrayMap[k];
-                            columns[yValueName + yValueId] = elemSet[yValueName];
-                        }
-                    } else {
-                        columns[y] = elem.y;
+                    if (!rowIndex) {
+                        columns.id = id;
+                        table.setRows([columns], void 0, eventDetail);
+                    } else if (columns[y]) {
+                        table.setCell(y, rowIndex, columns[y], eventDetail);
                     }
-
-                    columns.x = elem.x || j;
-                }
-
-                id = '' + columns.x;
-                row = table.getRow(id);
-
-                if (!row) {
-                    columns.id = id;
-                    row = new DataTableRow(columns);
-                    table.insertRow(row, eventDetail);
-                } else if (columns[y]) {
-                    row.insertCell(y, columns[y], eventDetail);
                 }
             }
         }
-
-        return table;
     }
 }
 /* *
@@ -255,8 +291,13 @@ class DataSeriesConverter {
  * */
 namespace DataSeriesConverter {
     export interface Options {
-        type?: string;
-        columnMap?: Record<string, string>;
+        seriesOptions?: Array<SeriesOptions>;
+    }
+
+    export interface SeriesMeta {
+        id: string;
+        pointArrayMap: Array<string>;
+        options: SeriesOptions;
     }
 }
 /* *

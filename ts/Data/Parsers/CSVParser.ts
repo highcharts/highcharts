@@ -10,6 +10,8 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
@@ -17,7 +19,6 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
 
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
@@ -29,10 +30,11 @@ const { merge } = U;
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 
 /**
- * Handles parsing and transforming CSV to a DataTable
+ * Handles parsing and transforming CSV to a table.
+ *
  * @private
  */
-class CSVParser extends DataParser<DataParser.EventObject> {
+class CSVParser extends DataParser<DataParser.Event> {
 
     /* *
      *
@@ -97,7 +99,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
      *  Properties
      *
      * */
-    private columns: Array<Array<DataTableRow.CellType>> = [];
+    private columns: Array<DataTable.Column> = [];
     private headers: Array<string> = [];
     private dataTypes: Array<Array<string>> = [];
     private guessedItemDelimiter?: string;
@@ -126,7 +128,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         const parser = this,
             dataTypes = parser.dataTypes,
             converter = parser.converter,
-            parserOptions = merge(true, this.options, options),
+            parserOptions = merge(this.options, options),
             {
                 beforeParse,
                 lineDelimiter,
@@ -141,13 +143,11 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                 startRow,
                 endRow
             } = parserOptions,
-            column,
-            i: number,
-            colsCount: number;
+            column;
 
         parser.columns = [];
 
-        parser.emit<DataParser.EventObject>({
+        parser.emit<DataParser.Event>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -192,7 +192,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                 startRow++;
             }
 
-            var offset = 0;
+            let offset = 0;
 
             for (rowIt = startRow; rowIt <= endRow; rowIt++) {
                 if (lines[rowIt][0] === '#') {
@@ -208,7 +208,8 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                 !parser.converter.getDateFormat()
             ) {
                 parser.converter.deduceDateFormat(
-                    parser.columns[0] as Array<string>, null, true);
+                    parser.columns[0] as Array<string>, null, true
+                );
             }
 
             // Guess types.
@@ -217,13 +218,17 @@ class CSVParser extends DataParser<DataParser.EventObject> {
 
                 for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
                     if (column[j] && typeof column[j] === 'string') {
-                        parser.columns[i][j] = converter.asGuessedType(column[j] as string);
+                        let cellValue = converter.asGuessedType(column[j] as string);
+                        if (cellValue instanceof Date) {
+                            cellValue = cellValue.getTime();
+                        }
+                        parser.columns[i][j] = cellValue;
                     }
                 }
             }
         }
 
-        parser.emit<DataParser.EventObject>({
+        parser.emit<DataParser.Event>({
             type: 'afterParse',
             columns: parser.columns,
             detail: eventDetail,
@@ -388,7 +393,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
     private guessDelimiter(lines: Array<string>): string {
 
         const { decimalPoint } = this.options;
-        var points = 0,
+        let points = 0,
             commas = 0,
             guessed: string;
         const potDelimiters: Record<string, number> = {
@@ -399,7 +404,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
             linesCount = lines.length;
 
         for (let i = 0; i < linesCount; i++) {
-            var inStr = false,
+            let inStr = false,
                 c,
                 cn,
                 cl,
@@ -411,7 +416,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
             }
 
             const columnStr = lines[i];
-            for (var j = 0; j < columnStr.length; j++) {
+            for (let j = 0; j < columnStr.length; j++) {
                 c = columnStr[j];
                 cn = columnStr[j + 1];
                 cl = columnStr[j - 1];
@@ -503,10 +508,10 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         return guessed;
     }
     /**
-     * Handles converting the parsed data to a DataTable
+     * Handles converting the parsed data to a table.
      *
      * @returns {DataTable}
-     * A DataTable from the parsed CSV
+     * Table from the parsed CSV.
      */
     public getTable(): DataTable {
         return DataParser.getTableFromColumns(this.columns, this.headers);

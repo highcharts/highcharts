@@ -58,7 +58,7 @@ import './SolidGaugeComposition.js';
  * @requires     modules/solid-gauge
  * @optionparent plotOptions.solidgauge
  */
-var solidGaugeOptions: SolidGaugeSeriesOptions = {
+const solidGaugeOptions: SolidGaugeSeriesOptions = {
     /**
      * The inner radius for points in a solid gauge. Can be given as a number
      * (pixels) or percentage string.
@@ -201,7 +201,7 @@ class SolidGaugeSeries extends GaugeSeries {
     // Extend the translate function to extend the Y axis with the necessary
     // decoration (#5895).
     public translate(): void {
-        var axis = this.yAxis;
+        const axis = this.yAxis;
 
         SolidGaugeAxis.init(axis);
 
@@ -217,7 +217,7 @@ class SolidGaugeSeries extends GaugeSeries {
 
     // Draw the points where each point is one needle.
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             yAxis = series.yAxis,
             center = yAxis.center,
             options = series.options,
@@ -243,12 +243,10 @@ class SolidGaugeSeries extends GaugeSeries {
         );
 
 
-        series.points.forEach(function (
-            point: SolidGaugePoint
-        ): void {
+        series.points.forEach(function (point): void {
             // #10630 null point should not be draw
             if (!point.isNull) { // condition like in pie chart
-                var graphic = point.graphic,
+                let graphic = point.graphic,
                     rotation = (yAxis.startAngleRad +
                         (yAxis.translate(
                             point.y as any,

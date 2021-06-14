@@ -15,8 +15,8 @@
 
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
-const { setOptions } = U;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 
 H.theme = {
     colors: ['#F3E796', '#95C471', '#35729E', '#251735'],

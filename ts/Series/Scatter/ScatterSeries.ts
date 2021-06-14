@@ -171,7 +171,7 @@ class ScatterSeries extends LineSeries {
      * @private
      */
     public applyJitter(): void {
-        var series = this,
+        const series = this,
             jitter = this.options.jitter,
             len = this.points.length;
 
@@ -181,14 +181,14 @@ class ScatterSeries extends LineSeries {
          * @private
          */
         function unrandom(seed: number): number {
-            var rand = Math.sin(seed) * 10000;
+            const rand = Math.sin(seed) * 10000;
             return rand - Math.floor(rand);
         }
 
         if (jitter) {
             this.points.forEach(function (point, i): void {
                 ['x', 'y'].forEach(function (dim, j): void {
-                    var axis,
+                    let axis,
                         plotProp = 'plot' + dim.toUpperCase(),
                         min,
                         max,
@@ -229,17 +229,10 @@ class ScatterSeries extends LineSeries {
      * @function Highcharts.seriesTypes.scatter#drawGraph
      */
     public drawGraph(): void {
-        if (
-            this.options.lineWidth ||
-            // In case we have a graph from before and we update the line
-            // width to 0 (#13816)
-            (
-                this.options.lineWidth === 0 &&
-                this.graph &&
-                this.graph.strokeWidth()
-            )
-        ) {
+        if (this.options.lineWidth) {
             super.drawGraph();
+        } else if (this.graph) {
+            this.graph = this.graph.destroy();
         }
     }
 

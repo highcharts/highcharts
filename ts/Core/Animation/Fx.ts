@@ -11,15 +11,15 @@
 'use strict';
 
 import type AnimationOptions from './AnimationOptions';
-import type Chart from '../Chart/Chart';
-import type CSSObject from '../Renderer/CSSObject';
 import type FxLike from './FxLike';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type HTMLElement from '../Renderer/HTML/HTMLElement';
-import type Series from '../Series/Series';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import Color from '../Color/Color.js';
+const {
+    parse: color
+} = Color;
 import H from '../Globals.js';
 const { win } = H;
 import U from '../Utilities.js';
@@ -28,34 +28,6 @@ const {
     objectEach
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    type FxClass = typeof Fx;
-    namespace Highcharts {
-        let Fx: FxClass;
-        function animate(
-            el: (HTMLDOMElement|SVGElement),
-            params: (CSSObject|SVGAttributes),
-            opt?: Partial<AnimationOptions>
-        ): void;
-        function animObject(
-            animation?: (boolean|AnimationOptions)
-        ): AnimationOptions;
-        function getDeferredAnimation(
-            chart: Chart,
-            animation: Partial<AnimationOptions>,
-            series?: Series
-        ): Partial<AnimationOptions>;
-        function setAnimation(
-            animation: (boolean|Partial<AnimationOptions>|undefined),
-            chart: Chart
-        ): void
-    }
-}
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * An animator object used internally. One instance applies to one property
@@ -63,7 +35,7 @@ declare global {
  * through {@link SVGElement#animate}.
  *
  * @example
- * var rect = renderer.rect(0, 0, 10, 10).add();
+ * let rect = renderer.rect(0, 0, 10, 10).add();
  * rect.animate({ width: 100 });
  *
  * @private
@@ -78,7 +50,7 @@ class Fx {
      *
      * */
 
-    public static timers: Array<Highcharts.Timer> = [];
+    public static timers: Array<Fx.Timer> = [];
 
     /* *
      *
@@ -140,11 +112,11 @@ class Fx {
      * @return {void}
      */
     public dSetter(): void {
-        var paths = this.paths,
+        const paths = this.paths,
             start = paths && paths[0],
             end = paths && paths[1],
-            path: SVGPath = [],
             now = this.now || 0;
+        let path: SVGPath = [];
 
         // Land on the final path without adjustment points appended in the ends
         if (now === 1 || !start || !end) {
@@ -198,7 +170,7 @@ class Fx {
      * @return {void}
      */
     public update(): void {
-        var elem = this.elem,
+        const elem = this.elem,
             prop = this.prop, // if destroyed, it is null
             now: number = this.now as any,
             step = this.options.step;
@@ -215,7 +187,7 @@ class Fx {
 
         // HTML styles, raw HTML content like container size
         } else {
-            elem.style[prop] = now + (this.unit as any);
+            elem.style[prop as any] = now + (this.unit as any);
         }
 
         if (step) {
@@ -241,9 +213,9 @@ class Fx {
      * @return {void}
      */
     public run(from: number, to: number, unit: string): void {
-        var self = this,
+        const self = this,
             options = self.options,
-            timer: Highcharts.Timer = function (gotoEnd?: boolean): boolean {
+            timer: Fx.Timer = function (gotoEnd?: boolean): boolean {
                 return timer.stopped ? false : self.step(gotoEnd);
             },
             requestAnimationFrame =
@@ -252,7 +224,7 @@ class Fx {
                     setTimeout(step, 13);
                 },
             step = function (): void {
-                for (var i = 0; i < Fx.timers.length; i++) {
+                for (let i = 0; i < Fx.timers.length; i++) {
                     if (!Fx.timers[i]()) {
                         Fx.timers.splice(i--, 1);
                     }
@@ -297,14 +269,14 @@ class Fx {
      *         Returns `true` if animation continues.
      */
     public step(gotoEnd?: boolean): boolean {
-        var t = +new Date(),
-            ret,
-            done,
+        const t = +new Date(),
             options = this.options,
             elem = this.elem,
             complete = options.complete,
             duration: number = options.duration as any,
             curAnim: Record<string, boolean> = options.curAnim as any;
+        let ret,
+            done;
 
         if (elem.attr && !elem.element) { // #2616, element is destroyed
             ret = false;
@@ -363,16 +335,17 @@ class Fx {
         fromD: SVGPath|undefined,
         toD: SVGPath
     ): [SVGPath, SVGPath] {
-        var shift,
-            startX = elem.startX,
+        const startX = elem.startX,
             endX = elem.endX,
-            fullLength: number,
-            i: number,
-            start = fromD && fromD.slice(), // copy
             end = toD.slice(), // copy
             isArea = elem.isArea,
-            positionFactor = isArea ? 2 : 1,
-            reverse;
+            positionFactor = isArea ? 2 : 1;
+
+        let shift,
+            fullLength: number,
+            i: number,
+            reverse,
+            start = fromD && fromD.slice(); // copy
 
         if (!start) {
             return [end, end];
@@ -416,7 +389,9 @@ class Fx {
                 // For areas, the bottom path goes back again to the left, so we
                 // need to append a copy of the last point.
                 if (isArea) {
-                    arr.push(arr[arr.length - 1]);
+                    const z: any = arr.pop();
+
+                    arr.push(arr[arr.length - 1], z); // append point and the Z
                 }
             }
         }
@@ -440,7 +415,7 @@ class Fx {
                 // causing the middle two points to be sliced out, since an area
                 // path starts at left, follows the upper path then turns and
                 // follows the bottom back.
-                const segmentToAdd = arr[arr.length / positionFactor - 1].slice();
+                const segmentToAdd = arr[Math.floor(arr.length / positionFactor) - 1].slice();
 
                 // Disable the first control point of curve segments
                 if (segmentToAdd[0] === 'C') {
@@ -453,7 +428,7 @@ class Fx {
 
                 } else {
 
-                    const lowerSegmentToAdd = arr[arr.length / positionFactor].slice();
+                    const lowerSegmentToAdd = arr[Math.floor(arr.length / positionFactor)].slice();
                     arr.splice(
                         arr.length / 2,
                         0,
@@ -466,7 +441,7 @@ class Fx {
 
         // For sideways animation, find out how much we need to shift to get the
         // start path Xs to match the end path Xs.
-        if (startX && endX) {
+        if (startX && endX && endX.length) {
             for (i = 0; i < startX.length; i++) {
                 // Moving left, new points coming in on right
                 if (startX[i] === endX[0]) {
@@ -530,7 +505,7 @@ class Fx {
     public strokeSetter(): void {
         this.elem.attr(
             this.prop,
-            H.color(this.start as any).tweenTo(H.color(this.end as any), this.pos as any),
+            color(this.start as any).tweenTo(color(this.end as any), this.pos as any),
             null as any,
             true
         );
@@ -541,14 +516,14 @@ interface Fx extends FxLike {
     // Nothing here yet
 }
 
-/* *
- *
- *  Compatibility
- *
- * */
-
-H.Fx = Fx;
-(H as any).timers = Fx.timers;
+namespace Fx {
+    export interface Timer {
+        (gotoEnd?: boolean): boolean;
+        elem?: (HTMLDOMElement|SVGElement);
+        prop?: string;
+        stopped?: boolean;
+    }
+}
 
 /* *
  *

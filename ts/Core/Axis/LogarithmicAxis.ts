@@ -19,31 +19,16 @@ const {
     pick
 } = U;
 
-// HC <= 8 backwards compatibility, allow wrapping Axis.prototype.lin2log and
-// log2lin
-// @todo Remove this in next major
-/**
- * Internal, deprecated types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Axis {
-            /** @deprecated */
-            lin2log(num: number): number;
-            /** @deprecated */
-            log2lin(num: number): number;
-        }
+declare module './AxisComposition' {
+    interface AxisComposition {
+        logarithmic?: LogarithmicAxis['logarithmic'];
     }
 }
 
 /**
  * @private
  */
-declare module './Types' {
-    interface AxisComposition {
-        logarithmic?: LogarithmicAxis['logarithmic'];
-    }
+declare module './AxisType' {
     interface AxisTypeRegistry {
         LogarithmicAxis: LogarithmicAxis;
     }
@@ -115,7 +100,7 @@ class LogarithmicAxisAdditions {
         // Second case: We need intermediary ticks. For example
         // 1, 2, 4, 6, 8, 10, 20, 40 etc.
         } else if (interval >= 0.08) {
-            var roundedMin = Math.floor(min),
+            let roundedMin = Math.floor(min),
                 intermediate,
                 i,
                 j,
@@ -158,7 +143,7 @@ class LogarithmicAxisAdditions {
         // we might as well handle the tick positions like a linear axis. For
         // example 1.01, 1.02, 1.03, 1.04.
         } else {
-            var realMin = log.lin2log(min),
+            const realMin = log.lin2log(min),
                 realMax = log.lin2log(max),
                 tickIntervalOption = minor ?
                     axis.getMinorTickInterval() :
@@ -224,14 +209,6 @@ class LogarithmicAxis {
 
         AxisClass.keepProps.push('logarithmic');
 
-        // HC <= 8 backwards compatibility, allow wrapping
-        // Axis.prototype.lin2log and log2lin
-        // @todo Remove this in next major
-        const axisProto = AxisClass.prototype;
-        const logAxisProto = LogarithmicAxisAdditions.prototype;
-        axisProto.log2lin = logAxisProto.log2lin;
-        axisProto.lin2log = logAxisProto.lin2log;
-
         /* eslint-disable no-invalid-this */
 
         addEvent(AxisClass, 'init', function (e: { userOptions: Axis['options'] }): void {
@@ -245,15 +222,6 @@ class LogarithmicAxis {
             } else {
                 if (!logarithmic) {
                     logarithmic = axis.logarithmic = new LogarithmicAxisAdditions(axis as LogarithmicAxis);
-                }
-                // HC <= 8 backwards compatibility, allow wrapping
-                // Axis.prototype.lin2log and log2lin
-                // @todo Remove this in next major
-                if (axis.log2lin !== logarithmic.log2lin) {
-                    logarithmic.log2lin = axis.log2lin.bind(axis);
-                }
-                if (axis.lin2log !== logarithmic.lin2log) {
-                    logarithmic.lin2log = axis.lin2log.bind(axis);
                 }
             }
         });

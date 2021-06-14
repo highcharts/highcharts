@@ -40,7 +40,7 @@ declare global {
  * @private
  * @class
  */
-var EventProvider: typeof Highcharts.EventProvider = function (
+const EventProvider: typeof Highcharts.EventProvider = function (
     this: Highcharts.EventProvider
 ): void {
     this.eventRemovers = [];
@@ -54,7 +54,7 @@ extend(EventProvider.prototype, {
      * @return {Function}
      */
     addEvent: function (this: Highcharts.EventProvider): Function {
-        var remover = addEvent.apply(H, arguments);
+        const remover = addEvent.apply(H, arguments);
         this.eventRemovers.push(remover);
         return remover;
     },

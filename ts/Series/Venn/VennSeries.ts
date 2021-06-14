@@ -22,7 +22,7 @@
  *  Imports
  *
  * */
-
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type ScatterPoint from '../Scatter/ScatterPoint';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -269,11 +269,11 @@ class VennSeries extends ScatterSeries {
         external: Array<Highcharts.CircleObject>
     ): PositionObject {
         // Get the best label position within the internal circles.
-        var best = internal.reduce(function (
+        let best = internal.reduce(function (
             best: Highcharts.VennLabelPositionObject,
             circle: Highcharts.CircleObject
         ): Highcharts.VennLabelPositionObject {
-            var d = circle.r / 2;
+            const d = circle.r / 2;
 
             // Give a set of points with the circle to evaluate as the best
             // label position.
@@ -290,7 +290,7 @@ class VennSeries extends ScatterSeries {
                     best: Highcharts.VennLabelPositionObject,
                     point: PositionObject
                 ): Highcharts.VennLabelPositionObject {
-                    var margin = VennUtils.getMarginFromCircles(point, internal, external);
+                    const margin = VennUtils.getMarginFromCircles(point, internal, external);
 
                     // If the margin better than the current best, then update
                     // sbest.
@@ -306,7 +306,7 @@ class VennSeries extends ScatterSeries {
         }).point;
 
         // Use nelder mead to optimize the initial label position.
-        var optimal = nelderMead(
+        const optimal = nelderMead(
             function (p: Array<number>): number {
                 return -(
                     VennUtils.getMarginFromCircles({ x: p[0], y: p[1] }, internal, external)
@@ -477,7 +477,7 @@ class VennSeries extends ScatterSeries {
         targetHeight: number,
         field: Highcharts.PolygonBoxObject
     ): Record<string, number> {
-        var height = field.bottom - field.top, // top is smaller than bottom
+        const height = field.bottom - field.top, // top is smaller than bottom
             width = field.right - field.left,
             scaleX = width > 0 ? 1 / width * targetWidth : 1,
             scaleY = height > 0 ? 1 / height * targetHeight : 1,
@@ -509,7 +509,7 @@ class VennSeries extends ScatterSeries {
         field: Highcharts.PolygonBoxObject,
         circle: Highcharts.CircleObject
     ): Highcharts.PolygonBoxObject {
-        var left = circle.x - circle.r,
+        const left = circle.x - circle.r,
             right = circle.x + circle.r,
             bottom = circle.y + circle.r,
             top = circle.y - circle.r;
@@ -554,14 +554,14 @@ class VennSeries extends ScatterSeries {
 
     public animate(init?: boolean): void {
         if (!init) {
-            var series = this,
+            const series = this,
                 animOptions = animObject(series.options.animation);
 
             series.points.forEach(function (point): void {
-                var args = point.shapeArgs;
+                const args = point.shapeArgs;
 
                 if (point.graphic && args) {
-                    var attr: SVGAttributes = {},
+                    const attr: SVGAttributes = {},
                         animate: SVGAttributes = {};
 
                     if (args.d) {
@@ -598,7 +598,7 @@ class VennSeries extends ScatterSeries {
      * @private
      */
     public drawPoints(): void {
-        var series = this,
+        const series = this,
             // Series properties
             chart = series.chart,
             group: SVGElement = series.group as any,
@@ -608,7 +608,7 @@ class VennSeries extends ScatterSeries {
 
         // Iterate all points and calculate and draw their graphics.
         points.forEach(function (point: Highcharts.VennPoint): void {
-            var attribs = {
+            const attribs = {
                     zIndex: isArray(point.sets) ? point.sets.length : 0
                 },
                 shapeArgs: SVGAttributes = point.shapeArgs as any;
@@ -652,7 +652,7 @@ class VennSeries extends ScatterSeries {
         point: Highcharts.VennPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var series = this,
+        const series = this,
             seriesOptions = series.options || {},
             pointOptions = point && point.options || {},
             stateOptions =
@@ -679,21 +679,21 @@ class VennSeries extends ScatterSeries {
 
     public translate(): void {
 
-        var chart = this.chart;
+        const chart = this.chart;
 
         this.processedXData = this.xData as any;
         this.generatePoints();
 
         // Process the data before passing it into the layout function.
-        var relations = VennUtils.processVennData(this.options.data as any);
+        const relations = VennUtils.processVennData(this.options.data as any);
 
         // Calculate the positions of each circle.
         const { mapOfIdToShape, mapOfIdToLabelValues } = VennSeries.layout(relations);
 
         // Calculate the scale, and center of the plot area.
-        var field = Object.keys(mapOfIdToShape)
+        const field = Object.keys(mapOfIdToShape)
                 .filter(function (key: string): boolean {
-                    var shape = mapOfIdToShape[key];
+                    const shape = mapOfIdToShape[key];
 
                     return shape && isNumber((shape as any).r);
                 })
@@ -713,7 +713,7 @@ class VennSeries extends ScatterSeries {
 
         // Iterate all points and calculate and draw their graphics.
         this.points.forEach(function (point: Highcharts.VennPoint): void {
-            var sets: Array<string> = isArray(point.sets) ? point.sets : [],
+            let sets: Array<string> = isArray(point.sets) ? point.sets : [],
                 id = sets.join(),
                 shape = mapOfIdToShape[id],
                 shapeArgs: (SVGAttributes|undefined),
@@ -775,8 +775,8 @@ class VennSeries extends ScatterSeries {
                         style: {
                             width: dataLabelWidth
                         }
-                    },
-                    isObject(dlOptions) && dlOptions as any
+                    } as DataLabelOptions,
+                    isObject(dlOptions, true) ? dlOptions : void 0
                 );
             }
 
@@ -927,7 +927,7 @@ export default VennSeries;
 addEvent(VennSeries, 'afterSetOptions', function (
     e: { options: VennSeriesOptions }
 ): void {
-    var options = e.options,
+    const options = e.options,
         states: SeriesStatesOptions<VennSeries> = options.states as any;
 
     if (this.is('venn')) {

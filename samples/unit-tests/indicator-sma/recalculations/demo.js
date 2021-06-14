@@ -146,6 +146,33 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.ok('No errors after updating point in a cropped dataset (#8968)');
 
+    chart.xAxis[0].setExtremes(0, 30);
+    const yBefore = chart.series[1].points[0].y;
+
+    chart.series[0].update({
+        type: 'ohlc',
+        data: [
+            [20, 30, 10, 125],
+            [20, 30, 10, 123],
+            [20, 30, 10, 121],
+            [20, 30, 10, 125],
+            [20, 30, 10, 126],
+            [20, 30, 10, 123],
+            [20, 30, 10, 127],
+            [20, 30, 10, 122],
+            [20, 30, 10, 122],
+            [20, 30, 10, 123],
+            [20, 30, 10, 125],
+            [20, 30, 10, 126]
+        ]
+    });
+
+    assert.notStrictEqual(
+        chart.series[1].points[0].y,
+        yBefore,
+        '#15383: SMA indicator should have recalculated'
+    );
+
     secondChart = Highcharts.stockChart('container', {
         xAxis: {
             minRange: 1

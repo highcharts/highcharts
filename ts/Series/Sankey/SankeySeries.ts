@@ -59,18 +59,6 @@ const {
 
 /* *
  *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
-        invertable?: boolean;
-    }
-}
-
-/* *
- *
  *  Class
  *
  * */
@@ -398,7 +386,7 @@ class SankeySeries extends ColumnSeries {
             level: SankeySeriesLevelOptions;
         }
     ): SankeyDataLabelOptions {
-        var optionsPoint = (
+        const optionsPoint = (
                 isObject(params.optionsPoint) ?
                     params.optionsPoint.dataLabels :
                     {}
@@ -457,7 +445,7 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public createNodeColumn(): SankeySeries.ColumnArray {
-        var series = this,
+        const series = this,
             chart = this.chart,
             column: SankeySeries.ColumnArray = [] as any;
 
@@ -475,11 +463,11 @@ class SankeySeries extends ColumnSeries {
             node: SankeyPoint,
             factor: number
         ): (Record<string, number>|undefined) {
-            var offset = 0,
+            let offset = 0,
                 totalNodeOffset,
                 nodePadding = series.nodePadding;
 
-            for (var i = 0; i < column.length; i++) {
+            for (let i = 0; i < column.length; i++) {
                 const sum = column[i].getSum();
                 const height = Math.max(
                     sum * factor,
@@ -509,8 +497,8 @@ class SankeySeries extends ColumnSeries {
             this: SankeySeries.ColumnArray,
             factor: number
         ): number {
-            var nodePadding = series.nodePadding;
-            var height = this.reduce(function (
+            const nodePadding = series.nodePadding;
+            const height = this.reduce(function (
                 height: number,
                 node: SankeyPoint
             ): number {
@@ -536,10 +524,10 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public createNodeColumns(): Array<SankeySeries.ColumnArray> {
-        var columns: Array<SankeySeries.ColumnArray> = [];
+        const columns: Array<SankeySeries.ColumnArray> = [];
 
         this.nodes.forEach(function (node: SankeyPoint): void {
-            var fromColumn = -1,
+            let fromColumn = -1,
                 fromNode,
                 i,
                 point;
@@ -574,7 +562,7 @@ class SankeySeries extends ColumnSeries {
                                 link: SankeyPoint,
                                 index: number
                             ): boolean {
-                                var found = link.toNode === node;
+                                const found = link.toNode === node;
                                 if (found) {
                                     i = index;
                                 }
@@ -595,7 +583,7 @@ class SankeySeries extends ColumnSeries {
         }, this);
 
         // Fill in empty columns (#8865)
-        for (var i = 0; i < columns.length; i++) {
+        for (let i = 0; i < columns.length; i++) {
             if (typeof columns[i] === 'undefined') {
                 columns[i] = this.createNodeColumn();
             }
@@ -695,7 +683,7 @@ class SankeySeries extends ColumnSeries {
         if (!point) {
             return {};
         }
-        var series = this,
+        const series = this,
             level = point.isNode ? point.level : point.fromNode.level,
             levelOptions =
                 (series.mapOptionsToLevel as any)[level || 0] || {},
@@ -703,12 +691,12 @@ class SankeySeries extends ColumnSeries {
             stateOptions = (
                 levelOptions.states && levelOptions.states[state || '']
             ) || {},
-            values: Record<string, any> = [
+            values: AnyRecord = [
                 'colorByPoint', 'borderColor', 'borderWidth', 'linkOpacity'
             ].reduce(function (
-                obj: Record<string, any>,
+                obj: AnyRecord,
                 key: string
-            ): Record<string, any> {
+            ): AnyRecord {
                 obj[key] = pick(
                     stateOptions[key],
                     (options as any)[key],
@@ -745,7 +733,7 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public render(): void {
-        var points = this.points;
+        const points = this.points;
 
         this.points = this.points.concat(this.nodes || []);
         ColumnSeries.prototype.render.call(this);
@@ -807,7 +795,7 @@ class SankeySeries extends ColumnSeries {
             this.chart.plotSizeX as any
         );
 
-        var series = this,
+        const series = this,
             chart = this.chart,
             options = this.options,
             nodeWidth = this.nodeWidth,
@@ -903,12 +891,12 @@ class SankeySeries extends ColumnSeries {
             const y = Math.min(
                 node.nodeY + linkTop,
                 // Prevent links from spilling below the node (#12014)
-                node.nodeY + node.shapeArgs?.height - linkHeight
+                node.nodeY + (node.shapeArgs && node.shapeArgs.height || 0) - linkHeight
             );
             return y;
         };
 
-        var fromNode = point.fromNode,
+        let fromNode = point.fromNode,
             toNode = point.toNode,
             chart = this.chart,
             translationFactor = this.translationFactor,
@@ -982,7 +970,7 @@ class SankeySeries extends ColumnSeries {
         // - Automatically determine if the link should go up or
         //   down.
         } else if (typeof toY === 'number') {
-            var bend = 20,
+            const bend = 20,
                 vDist = chart.plotHeight - fromY - linkHeight,
                 x1 = right - bend - linkHeight,
                 x2 = right - bend,
@@ -1063,11 +1051,11 @@ class SankeySeries extends ColumnSeries {
         node: SankeyPoint,
         column: SankeySeries.ColumnArray
     ): void {
-        var translationFactor = this.translationFactor,
+        const translationFactor = this.translationFactor,
             chart = this.chart,
             options = this.options,
             sum = node.getSum(),
-            height = Math.max(
+            nodeHeight = Math.max(
                 Math.round(sum * translationFactor),
                 this.options.minLinkWidth as any
             ),
@@ -1097,23 +1085,18 @@ class SankeySeries extends ColumnSeries {
 
             node.nodeX = nodeLeft;
             node.nodeY = fromNodeTop;
-            if (!chart.inverted) {
-                node.shapeArgs = {
-                    x: nodeLeft,
-                    y: fromNodeTop,
-                    width: node.options.width || options.width || nodeWidth,
-                    height: node.options.height || options.height || height
-                };
-            } else {
-                node.shapeArgs = {
-                    x: nodeLeft - nodeWidth,
-                    y: (chart.plotSizeY as any) - fromNodeTop - height,
-                    width: node.options.height || options.height || nodeWidth,
-                    height: node.options.width || options.width || height
-                };
-            }
 
-            node.shapeArgs.display = node.hasShape() ? '' : 'none';
+            let x = nodeLeft,
+                y = fromNodeTop,
+                width = node.options.width || options.width || nodeWidth,
+                height = node.options.height || options.height || nodeHeight;
+
+            if (chart.inverted) {
+                x = nodeLeft - nodeWidth;
+                y = (chart.plotSizeY as any) - fromNodeTop - nodeHeight;
+                width = node.options.height || options.height || nodeWidth;
+                height = node.options.width || options.width || nodeHeight;
+            }
 
             // Calculate data label options for the point
             node.dlOptions = SankeySeries.getDLOptions({
@@ -1122,16 +1105,25 @@ class SankeySeries extends ColumnSeries {
             });
 
             // Pass test in drawPoints
+            node.plotX = 1;
             node.plotY = 1;
 
             // Set the anchor position for tooltips
             node.tooltipPos = chart.inverted ? [
-                (chart.plotSizeY as any) - node.shapeArgs.y - node.shapeArgs.height / 2,
-                (chart.plotSizeX as any) - node.shapeArgs.x - node.shapeArgs.width / 2
+                (chart.plotSizeY as any) - y - height / 2,
+                (chart.plotSizeX as any) - x - width / 2
             ] : [
-                node.shapeArgs.x + node.shapeArgs.width / 2,
-                node.shapeArgs.y + node.shapeArgs.height / 2
+                x + width / 2,
+                y + height / 2
             ];
+
+            node.shapeArgs = {
+                x,
+                y,
+                width,
+                height,
+                display: node.hasShape() ? '' : 'none'
+            };
         } else {
             node.dlOptions = {
                 enabled: false
@@ -1155,7 +1147,7 @@ interface SankeySeries extends Highcharts.NodesSeries {
     destroy: Highcharts.NodesMixin['destroy'];
     forceDL: boolean;
     init(chart: Chart, options: SankeySeriesOptions): void;
-    invertable: boolean;
+    invertible: boolean;
     isCartesian: boolean;
     orderNodes: boolean;
     pointArrayMap: Array<string>;
@@ -1167,10 +1159,10 @@ extend(SankeySeries.prototype, {
     animate: Series.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
-    createNode: NodesMixin.createNode,
+    createNode: NodesMixin.createNode as any,
     destroy: NodesMixin.destroy,
     forceDL: true,
-    invertable: true,
+    invertible: true,
     isCartesian: false,
     orderNodes: true,
     pointArrayMap: ['from', 'to'],

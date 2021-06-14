@@ -84,7 +84,7 @@ class LineSeries extends Series {
      * @function Highcharts.Series#drawGraph
      */
     public drawGraph(): void {
-        var series = this,
+        let series = this,
             options = this.options,
             graphPath = (this.gappedPath || this.getGraphPath).call(this),
             styledMode = this.chart.styledMode,
@@ -109,7 +109,7 @@ class LineSeries extends Series {
 
         // Draw the graph
         props.forEach(function (prop, i): void {
-            var graphKey = prop[0],
+            let graphKey = prop[0],
                 graph = (series as any)[graphKey],
                 verb = graph ? 'animate' : 'attr',
                 attribs: SVGAttributes;
@@ -159,7 +159,7 @@ class LineSeries extends Series {
                 };
 
                 if (prop[3]) {
-                    attribs.dashstyle = prop[3];
+                    attribs.dashstyle = prop[3] as any;
                 } else if (options.linecap !== 'square') {
                     attribs['stroke-linecap'] =
                         attribs['stroke-linejoin'] = 'round';
@@ -189,7 +189,7 @@ class LineSeries extends Series {
         nullsAsZeroes?: boolean,
         connectCliffs?: boolean
     ): SVGPath {
-        var series = this,
+        let series = this,
             options = series.options,
             step = options.step as any,
             reversed,
@@ -223,7 +223,7 @@ class LineSeries extends Series {
         // Build the line
         points.forEach(function (point, i): void {
 
-            var plotX = point.plotX,
+            let plotX = point.plotX,
                 plotY = point.plotY,
                 lastPoint = (points as any)[i - 1],
                 // the path to this point from the previous
@@ -339,7 +339,7 @@ class LineSeries extends Series {
     public getZonesGraphs(props: Array<Array<string>>): Array<Array<string>> {
         // Add the zone properties if any
         this.zones.forEach(function (zone, i): void {
-            var propset = [
+            const propset = [
                 'zone-graph-' + i,
                 'highcharts-graph highcharts-zone-graph-' + i + ' ' +
                     (zone.className || '')

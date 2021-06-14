@@ -13,8 +13,8 @@
 'use strict';
 
 import Highcharts from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
-const { setOptions } = U;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 
 Highcharts.theme = {
     colors: ['#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee',
@@ -90,11 +90,6 @@ Highcharts.theme = {
         backgroundColor: 'rgba(0, 0, 0, 0.75)',
         style: {
             color: '#F0F0F0'
-        }
-    },
-    toolbar: {
-        itemStyle: {
-            color: 'silver'
         }
     },
     plotOptions: {

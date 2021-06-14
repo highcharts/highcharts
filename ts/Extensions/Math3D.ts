@@ -61,7 +61,7 @@ interface Rotation3DObject {
 }
 
 // Mathematical Functionility
-var deg2rad = H.deg2rad;
+const deg2rad = H.deg2rad;
 
 /* eslint-disable max-len */
 /**
@@ -146,7 +146,7 @@ function perspective3D(
     origin: Position3DObject,
     distance: number
 ): PositionObject {
-    var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ?
+    const projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ?
         distance / (coordinate.z + origin.z + distance) :
         1;
 
@@ -186,7 +186,7 @@ function perspective(
     insidePlotArea?: boolean,
     useInvertedPersp?: boolean
 ): Array<Position3DObject> {
-    var options3d = (chart.options.chart as any).options3d,
+    const options3d = chart.options.chart.options3d as any,
         /* The useInvertedPersp argument is used for
          * inverted charts with already inverted elements,
          * such as dataLabels or tooltip positions.
@@ -215,7 +215,7 @@ function perspective(
 
     // Transform each point
     return points.map(function (point): Position3DObject {
-        var rotated = rotate3D(
+        const rotated = rotate3D(
                 (inverted ? point.y : point.x) - origin.x,
                 (inverted ? point.x : point.y) - origin.y,
                 (point.z || 0) - origin.z,
@@ -261,7 +261,7 @@ function pointCameraDistance(
     coordinates: Record<string, number>,
     chart: Chart
 ): number {
-    var options3d = (chart.options.chart as any).options3d,
+    const options3d = chart.options.chart.options3d as any,
         cameraPosition = {
             x: chart.plotWidth / 2,
             y: chart.plotHeight / 2,
@@ -295,7 +295,7 @@ H.pointCameraDistance = pointCameraDistance;
  * @requires highcharts-3d
  */
 function shapeArea(vertexes: Array<PositionObject>): number {
-    var area = 0,
+    let area = 0,
         i,
         j;
 

@@ -91,16 +91,12 @@ async function writeFileSizes() {
  * @return {void}
  */
 async function writeTable() {
-    try {
-        const { master, proposed } = argv;
-        if (master && proposed) {
-            fs.writeFileSync('./tmp/filesizes/comparison.md', makeTable(master, proposed));
-        } else {
-            log.failure('Please provide all required arguments');
-        }
-    } catch (error) {
-        log.failure(error);
+    const { master, proposed } = argv;
+    if (master && proposed) {
+        // eslint-disable-next-line node/no-unsupported-features/node-builtins
+        return fs.promises.writeFile('./tmp/filesizes/comparison.md', makeTable(master, proposed));
     }
+    throw new Error('Please provide all required arguments');
 }
 
 /**
@@ -140,3 +136,4 @@ comment.flags = {
 gulp.task('write-size-table', writeTable);
 gulp.task('write-file-sizes', writeFileSizes);
 gulp.task('pr-comment-sizes', comment);
+gulp.task('compare-size-and-comment', gulp.series(writeTable, comment));

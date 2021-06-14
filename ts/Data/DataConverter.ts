@@ -10,15 +10,18 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
  *
  * */
+
 import type DataTable from './DataTable.js';
 import type DataJSON from './DataJSON';
-import U from './../Core/Utilities.js';
 
+import U from './../Core/Utilities.js';
 const {
     merge,
     isNumber
@@ -141,11 +144,13 @@ class DataConverter {
         'dd/mm/YY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
+                const d = new Date();
+
                 if (!match) {
                     return NaN;
                 }
-                var year = +match[3],
-                    d = new Date();
+
+                let year = +match[3];
 
                 if (year > (d.getFullYear() - 2000)) {
                     year += 1900;
@@ -200,7 +205,7 @@ class DataConverter {
         if (typeof value === 'string') {
             return value !== '' && value !== '0' && value !== 'false';
         }
-        return this.asNumber(value) !== 0;
+        return !!this.asNumber(value);
     }
 
     /**
@@ -245,10 +250,13 @@ class DataConverter {
             return value ? 1 : 0;
         }
         if (typeof value === 'string') {
-            const trimVal = this.trim(value),
-                cast = parseFloat(trimVal);
-
-            return !isNaN(cast) ? cast : 0;
+            if (value.indexOf(' ') > -1) {
+                value = value.replace(/\s+/g, '');
+            }
+            if (this.decimalRegex) {
+                value = value.replace(this.decimalRegex, '$1.$2');
+            }
+            return parseFloat(value);
         }
         if (value instanceof Date) {
             return value.getDate();
@@ -256,7 +264,8 @@ class DataConverter {
         if (value) {
             return value.getRowCount();
         }
-        return 0;
+
+        return NaN;
     }
 
     /**
@@ -312,10 +321,12 @@ class DataConverter {
      *
      * @param {string} value
      * The string to examine
-     * @return {string}
+     * @return {'number'|'string'|'Date'}
      * `string`, `Date` or `number`
      */
-    public guessType(value: string): ('string' | 'Date' | 'number') {
+    public guessType(
+        value: string
+    ): ('number'|'string'|'Date') {
         const converter = this,
             trimVal = converter.trim(value),
             trimInsideVal = converter.trim(value, true),
@@ -359,12 +370,12 @@ class DataConverter {
      * @param {string} value
      * The string to examine
      *
-     * @return {number|Date|string}
+     * @return {number|string|Date}
      * The converted value
      */
-    public asGuessedType(value: string): (number | Date | string) {
+    public asGuessedType(value: string): (number|string|Date) {
         const converter = this,
-            typeMap: Record<('string' | 'Date' | 'number'), Function> = {
+            typeMap: Record<ReturnType<DataConverter['guessType']>, Function> = {
                 'number': converter.asNumber,
                 'Date': converter.asDate,
                 'string': converter.asString
@@ -447,6 +458,12 @@ class DataConverter {
                     // Timestamp
                 } else if (isNumber(match)) {
                     result = match - (new Date(match)).getTimezoneOffset() * 60000;
+                    if (// reset dates without year in Chrome
+                        value.indexOf('2001') === -1 &&
+                        (new Date(result)).getFullYear() === 2001
+                    ) {
+                        result = NaN;
+                    }
                 }
             }
         }
@@ -607,7 +624,7 @@ namespace DataConverter {
      * Contains supported types to convert values from and to.
      */
     export type Type = (
-        boolean|null|number|string|Date|DataTable|undefined
+        boolean|null|number|string|DataTable|Date|undefined
     );
 
     /**

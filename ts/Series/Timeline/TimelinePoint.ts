@@ -20,10 +20,12 @@
  *
  * */
 
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 import type TimelinePointOptions from './TimelinePointOptions';
 import type TimelineSeries from './TimelineSeries';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -76,7 +78,7 @@ class TimelinePoint extends Series.prototype.pointClass {
     /* eslint-disable valid-jsdoc */
 
     public alignConnector(): void {
-        var point = this,
+        let point = this,
             series = point.series,
             connector: SVGElement = point.connector as any,
             dl: SVGElement = point.dataLabel as any,
@@ -120,7 +122,7 @@ class TimelinePoint extends Series.prototype.pointClass {
     }
 
     public drawConnector(): void {
-        var point = this,
+        const point = this,
             series = point.series;
 
         if (!point.connector) {
@@ -140,12 +142,12 @@ class TimelinePoint extends Series.prototype.pointClass {
     }
 
     public getConnectorPath(): SVGPath {
-        var point = this,
+        let point = this,
             chart = point.series.chart,
             xAxisLen = point.series.xAxis.len,
             inverted = chart.inverted,
             direction = inverted ? 'x2' : 'y2',
-            dl: SVGElement = point.dataLabel as any,
+            dl: SVGLabel = point.dataLabel as any,
             targetDLPos = dl.targetPosition,
             coords: Record<string, (number|string)> = {
                 x1: point.plotX as any,
@@ -195,7 +197,7 @@ class TimelinePoint extends Series.prototype.pointClass {
     }
 
     public init(): TimelinePoint {
-        var point: TimelinePoint = super.init.apply(this, arguments) as any;
+        const point: TimelinePoint = super.init.apply(this, arguments) as any;
 
         point.name = pick(point.name, 'Event');
         point.y = 1;
@@ -208,7 +210,7 @@ class TimelinePoint extends Series.prototype.pointClass {
     }
 
     public setState(): void {
-        var proceed = super.setState;
+        const proceed = super.setState;
 
         // Prevent triggering the setState method on null points.
         if (!this.isNull) {
@@ -220,7 +222,7 @@ class TimelinePoint extends Series.prototype.pointClass {
         visible: boolean,
         redraw?: boolean
     ): void {
-        var point = this,
+        const point = this,
             series = point.series;
 
         redraw = pick(redraw, series.options.ignoreHiddenPoint);

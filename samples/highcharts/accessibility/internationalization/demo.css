@@ -1,0 +1,26 @@
+
+.f32 .flag {
+    display: inline-block;
+    height: 32px;
+    width: 32px;
+    vertical-align: text-top;
+    line-height: 32px;
+    background: url(flags32.png) no-repeat;
+}
+
+legend{
+	font-family: "Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;
+}
+
+.flags {
+    display: inline-block;
+    position: relative;
+    cursor: default;
+}
+
+#container {
+    height: 400px;
+    min-width: 310px;
+    max-width: 900px;
+    margin: 0 auto;
+}

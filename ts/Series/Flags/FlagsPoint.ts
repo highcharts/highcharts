@@ -61,6 +61,8 @@ class FlagsPoint extends ColumnSeries.prototype.pointClass {
 
     public style?: CSSObject;
 
+    public unbindMouseOver?: Function;
+
     /* *
      *
      *  Functions
@@ -78,6 +80,14 @@ class FlagsPoint extends ColumnSeries.prototype.pointClass {
         return isNumber(this.y) || typeof this.y === 'undefined';
     }
 
+    /**
+     * @private
+     */
+    public hasNewShapeType(): (boolean|undefined) {
+        const shape = this.options.shape || this.series.options.shape;
+
+        return this.graphic && shape && shape !== this.graphic.symbolKey;
+    }
 }
 
 /* *

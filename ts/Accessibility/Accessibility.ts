@@ -12,18 +12,20 @@
 
 'use strict';
 
-import type Chart from '../Core/Chart/Chart';
+import type { Options } from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+
+import Chart from '../Core/Chart/Chart.js';
 import ChartUtilities from './Utils/ChartUtilities.js';
 import H from '../Core/Globals.js';
 const {
     doc
 } = H;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 const {
     defaultOptions
-} = O;
+} = D;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
@@ -85,6 +87,7 @@ declare global {
             points: Array<AccessibilityPoint>;
         }
         let A11yChartUtilities: A11yChartUtilities;
+        let A11yHTMLUtilities: typeof HTMLUtilities;
     }
 }
 
@@ -102,6 +105,7 @@ import highContrastTheme from './HighContrastTheme.js';
 import defaultOptionsA11Y from './Options/Options.js';
 import defaultLangOptions from './Options/LangOptions.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
+import HTMLUtilities from './Utils/HTMLUtilities.js';
 import './A11yI18n.js';
 import './FocusBorder.js';
 
@@ -122,9 +126,9 @@ merge(
 
 // Expose functionality on Highcharts namespace
 H.A11yChartUtilities = ChartUtilities;
+H.A11yHTMLUtilities = HTMLUtilities;
 H.KeyboardNavigationHandler = KeyboardNavigationHandler as any;
 H.AccessibilityComponent = AccessibilityComponent as any;
-
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -234,7 +238,7 @@ Accessibility.prototype = {
      * Update all components.
      */
     update: function (this: Highcharts.Accessibility): void {
-        var components = this.components,
+        const components = this.components,
             chart = this.chart,
             a11yOptions = chart.options.accessibility;
 
@@ -276,10 +280,10 @@ Accessibility.prototype = {
      * Destroy all elements.
      */
     destroy: function (): void {
-        var chart: Chart = this.chart || {};
+        const chart: Chart = this.chart || {};
 
         // Destroy components
-        var components = this.components;
+        const components = this.components;
         Object.keys(components).forEach(function (componentName: string): void {
             components[componentName].destroy();
             components[componentName].destroyBase();
@@ -307,7 +311,7 @@ Accessibility.prototype = {
      * @private
      */
     getChartTypes: function (this: Highcharts.Accessibility): Array<string> {
-        var types: Record<string, number> = {};
+        const types: Record<string, number> = {};
         this.chart.series.forEach(function (series): void {
             types[series.type] = 1;
         });
@@ -319,8 +323,8 @@ Accessibility.prototype = {
 /**
  * @private
  */
-H.Chart.prototype.updateA11yEnabled = function (): void {
-    var a11y = this.accessibility,
+Chart.prototype.updateA11yEnabled = function (): void {
+    let a11y = this.accessibility,
         accessibilityOptions = this.options.accessibility;
     if (accessibilityOptions && accessibilityOptions.enabled) {
         if (a11y) {
@@ -341,7 +345,7 @@ H.Chart.prototype.updateA11yEnabled = function (): void {
 };
 
 // Handle updates to the module and send render updates to components
-addEvent(H.Chart, 'render', function (e: Event): void {
+addEvent(Chart, 'render', function (e: Event): void {
     // Update/destroy
     if (this.a11yDirty && this.renderTo) {
         delete this.a11yDirty;
@@ -359,12 +363,12 @@ addEvent(H.Chart, 'render', function (e: Event): void {
 });
 
 // Update with chart/series/point updates
-addEvent(H.Chart as any, 'update', function (
+addEvent(Chart as any, 'update', function (
     this: Highcharts.AccessibilityChart,
-    e: { options: Highcharts.Options }
+    e: { options: Options }
 ): void {
     // Merge new options
-    var newOptions = e.options.accessibility;
+    const newOptions = e.options.accessibility;
     if (newOptions) {
         // Handle custom component updating specifically
         if (newOptions.customComponents) {
@@ -391,7 +395,7 @@ addEvent(Point, 'update', function (): void {
     }
 });
 ['addSeries', 'init'].forEach(function (event: string): void {
-    addEvent(H.Chart, event, function (): void {
+    addEvent(Chart, event, function (): void {
         this.a11yDirty = true;
     });
 });
@@ -407,7 +411,7 @@ addEvent(Point, 'update', function (): void {
 [
     'afterDrilldown', 'drillupall'
 ].forEach(function (event: string): void {
-    addEvent(H.Chart, event, function (): void {
+    addEvent(Chart, event, function (): void {
         if (this.accessibility) {
             this.accessibility.update();
         }
@@ -415,7 +419,7 @@ addEvent(Point, 'update', function (): void {
 });
 
 // Destroy with chart
-addEvent(H.Chart, 'destroy', function (): void {
+addEvent(Chart, 'destroy', function (): void {
     if (this.accessibility) {
         this.accessibility.destroy();
     }

@@ -14,9 +14,11 @@ import type ColorAxis from '../Core/Axis/ColorAxis';
 import type Point from '../Core/Series/Point';
 import type Series from '../Core/Series/Series';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import H from '../Core/Globals.js';
 
-declare module '../Core/Axis/Types' {
+declare module '../Core/Axis/AxisLike' {
     interface AxisLike extends Highcharts.LegendItemObject {
         // nothing more
     }
@@ -97,7 +99,7 @@ const LegendSymbolMixin = H.LegendSymbolMixin = {
         legend: Highcharts.Legend,
         item: (Series|Point)
     ): void {
-        var options = legend.options,
+        const options = legend.options,
             symbolHeight = legend.symbolHeight,
             square = options.squareSymbol,
             symbolWidth = square ? symbolHeight : legend.symbolWidth;
@@ -132,7 +134,7 @@ const LegendSymbolMixin = H.LegendSymbolMixin = {
         legend: Highcharts.Legend
     ): void {
 
-        var options = this.options,
+        let options = this.options,
             markerOptions = options.marker,
             radius,
             legendSymbol,

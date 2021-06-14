@@ -1,4 +1,4 @@
-Highcharts.addEvent(Highcharts.Chart, 'displayError', function (event) {
+var removeEvent = Highcharts.addEvent(Highcharts, 'displayError', function (event) {
     // See https://github.com/highcharts/highcharts/blob/master/errors/errors.xml
     // for error id's
     Highcharts.charts[0].renderer
@@ -12,6 +12,7 @@ Highcharts.addEvent(Highcharts.Chart, 'displayError', function (event) {
             align: 'center',
             verticalAlign: 'middle'
         }, null, 'plotBox');
+    removeEvent();
 });
 
 

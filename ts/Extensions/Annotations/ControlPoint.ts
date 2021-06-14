@@ -162,7 +162,7 @@ class ControlPoint implements eventEmitterMixin.Type {
      * @private
      */
     public render(): void {
-        var chart = this.chart,
+        const chart = this.chart,
             options = this.options;
 
         this.graphic = chart.renderer
@@ -222,7 +222,7 @@ class ControlPoint implements eventEmitterMixin.Type {
     public update(
         userOptions: Partial<Highcharts.AnnotationControlPointOptionsObject>
     ): void {
-        var chart = this.chart,
+        const chart = this.chart,
             target = this.target,
             index = this.index,
             options = merge(true, this.options, userOptions);

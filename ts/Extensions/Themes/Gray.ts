@@ -12,10 +12,24 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
+
 import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
-const { setOptions } = U;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
+
+/* *
+ *
+ *  Theme
+ *
+ * */
 
 H.theme = {
     colors: ['#DDDF0D', '#7798BF', '#55BF3B', '#DF5353', '#aaeeee',
@@ -65,7 +79,7 @@ H.theme = {
                 ' Verdana, Arial, Helvetica, sans-serif'
             }
         }
-    } as Highcharts.XAxisOptions,
+    },
     yAxis: {
         alternateGridColor: null as any,
         minorTickInterval: null as any,
@@ -86,7 +100,7 @@ H.theme = {
                 ' Verdana, Arial, Helvetica, sans-serif'
             }
         }
-    } as Highcharts.YAxisOptions,
+    },
     legend: {
         backgroundColor: 'rgba(48, 48, 48, 0.8)',
         itemStyle: {
@@ -122,8 +136,6 @@ H.theme = {
             color: '#FFF'
         }
     },
-
-
     plotOptions: {
         series: {
             dataLabels: {
@@ -153,13 +165,6 @@ H.theme = {
             lineColor: 'white'
         }
     } as SeriesTypePlotOptions,
-
-    toolbar: {
-        itemStyle: {
-            color: '#CCC'
-        }
-    },
-
     navigation: {
         buttonOptions: {
             symbolStroke: '#DDDDDD',
@@ -175,7 +180,6 @@ H.theme = {
             }
         }
     },
-
     // scroll charts
     rangeSelector: {
         buttonTheme: {
@@ -228,7 +232,6 @@ H.theme = {
             color: 'silver'
         }
     },
-
     navigator: {
         handles: {
             backgroundColor: '#666',
@@ -241,7 +244,6 @@ H.theme = {
             lineColor: '#A6C7ED'
         }
     },
-
     scrollbar: {
         barBackgroundColor: {
             linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },

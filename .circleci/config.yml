@@ -89,10 +89,10 @@ jobs:
          keys:
            - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
            - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}
-     - run: npm install --quiet
+     - run: npm ci --quiet --cache .npm --prefer-offline
      - save_cache:
          paths:
-           - /home/circleci/repo/highcharts/node_modules
+           - /home/circleci/repo/highcharts/.npm
          key: npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
      - run: npm run gulp scripts
      - run: git diff --name-only --exit-code || (echo "Untracked files found. Did you forget to commit any transpiled files? Failing build now as this likely will trigger errors later in the build.." && exit 1)
@@ -164,6 +164,23 @@ jobs:
       - <<: *load_workspace
       - run: ./.circleci/scripts/check_and_trigger_docs_deploy.sh  --bucket=${DOCS_DEPLOY_BUCKET} --token=${CIRCLE_API_TOKEN} <<# parameters.always_deploy >>-f<</ parameters.always_deploy >>
 
+
+  check_for_samples_changes_and_deploy:
+    <<: *defaults
+    description: Checks for changes in samples/ and samples/*/demo and triggers deploy via highcharts-demo-manager
+    parameters:
+      always_deploy:
+        description: "Deploy regardless of finding changes in on last commit"
+        type: boolean
+        default: false
+      include_thumbnails:
+        description: "Include thumbnails in the build"
+        type: boolean
+        default: false
+    steps:
+      - <<: *load_workspace
+      - run: ./.circleci/scripts/check_and_trigger_samples_deploy.sh  --bucket=${SAMPLES_DEPLOY_BUCKET} --token=${CIRCLE_API_TOKEN} <<# parameters.always_deploy >>-f<</ parameters.always_deploy >> <<# parameters.include_thumbnails >>--thumbnails<</ parameters.include_thumbnails >>
+
   generate_release_reference_images:
     <<: *defaults
     description: Generate visual tests reference images
@@ -210,18 +227,18 @@ jobs:
       - run: > # checkout master at diverge point of current branch and install
           git checkout master && git fetch origin master && git reset --hard origin/master &&
           git checkout $(git merge-base master ${CIRCLE_BRANCH}) && git log --oneline -5 &&
-          npm i && npx gulp scripts
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
       - run:
           name: Write file sizes at master
           command: npx gulp write-file-sizes --filename master.json
       - generate_references_command:
           browsercount: 2
-      - run: git checkout ${CIRCLE_BRANCH}  && git log --oneline -5 && npm i && npx gulp scripts
-      # Running these in the background to save a few minutes
+      - run: git checkout ${CIRCLE_BRANCH}  && git log --oneline -5 && npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
       - run:
           name: File size comparison
-          command: (npx gulp write-file-sizes --filename ${CIRCLE_PULL_REQUEST##*/}.json && npx gulp write-size-table --master ./tmp/filesizes/master.json --proposed ./tmp/filesizes/${CIRCLE_PULL_REQUEST##*/}.json) || touch ./tmp/filesizes/comparsion.md
-          background: true
+          command: |
+            npx gulp write-file-sizes --filename ${CIRCLE_PULL_REQUEST##*/}.json &&
+            npx gulp compare-size-and-comment --master ./tmp/filesizes/master.json --proposed ./tmp/filesizes/${CIRCLE_PULL_REQUEST##*/}.json --pr ${CIRCLE_PULL_REQUEST##*/} --user circleci-mu
       # we are forcing success on the below test runs to avoid failing the PR build
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare || true
@@ -241,10 +258,6 @@ jobs:
           path: ../visual-test-results
       - store_artifacts:
           path: ../visual-test-results
-      - run:
-          name: Wait for file size comparison and comment on PR
-          command: while [ ! -f ./tmp/filesizes/comparison.md ]; do sleep 1; done && npx gulp pr-comment-sizes --pr ${CIRCLE_PULL_REQUEST##*/} --user circleci-mu
-          no_output_timeout: 2m #wait for max 2 minutes
 
   nightly_visual_diff:
     <<: *defaults
@@ -469,6 +482,17 @@ workflows:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-prod
+      - check_for_samples_changes_and_deploy:
+          # On release, make sure everything is up to date and force update thumbnails
+          requires: [generate_release_reference_images]
+          always_deploy: true
+          include_thumbnails: true
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
+          context: highcharts-prod
 
   nightly:
     triggers:
@@ -523,6 +547,7 @@ workflows:
           notify_on_failure: true
       - build_dist:
           requires: [checkout_and_install, "test-Win.IE8"]
+          context: highcharts-staging
       - deploy_code:
           requires: [build_dist]
           context: highcharts-staging
@@ -536,6 +561,13 @@ workflows:
       - deploy_to_highcharts_dist:
           requires: [build_dist]
           context: highcharts-staging
+      # Trigger samples/demo updates
+      - check_for_samples_changes_and_deploy:
+          requires: [build_dist]
+          context: highcharts-staging
+          filters:
+            branches:
+              only: [master]
 
   reset_visual_test_references:
     when: << pipeline.parameters.run_reset_tests >>

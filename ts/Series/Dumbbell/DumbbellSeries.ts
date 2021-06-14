@@ -182,7 +182,7 @@ class DumbbellSeries extends AreaRangeSeries {
      * @return {Highcharts.SVGAttributes} attribs The path and styles.
      */
     public getConnectorAttribs(point: DumbbellPoint): SVGAttributes {
-        var series = this,
+        let series = this,
             chart = series.chart,
             pointOptions = point.options,
             seriesOptions = series.options,
@@ -296,7 +296,7 @@ class DumbbellSeries extends AreaRangeSeries {
      * @return {void}
      */
     public drawConnector(point: DumbbellPoint): void {
-        var series = this,
+        const series = this,
             animationLimit = pick(series.options.animationLimit, 250),
             verb = point.connector && series.chart.pointCount < animationLimit ?
                 'animate' : 'attr';
@@ -326,7 +326,7 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      */
     public getColumnMetrics(): ColumnMetricsObject {
-        var metrics = colProto.getColumnMetrics.apply(this, arguments as any);
+        const metrics = colProto.getColumnMetrics.apply(this, arguments as any);
 
         metrics.offset += metrics.width / 2;
 
@@ -354,7 +354,7 @@ class DumbbellSeries extends AreaRangeSeries {
 
         // Correct x position
         this.points.forEach(function (point): void {
-            var shapeArgs = point.shapeArgs,
+            const shapeArgs = point.shapeArgs,
                 pointWidth = point.pointWidth;
 
             point.plotX = (shapeArgs as any).x;
@@ -377,7 +377,7 @@ class DumbbellSeries extends AreaRangeSeries {
      * @return {void}
      */
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             chart = series.chart,
             pointLength = series.points.length,
             seriesLowColor = series.lowColor = series.options.lowColor,
@@ -437,10 +437,10 @@ class DumbbellSeries extends AreaRangeSeries {
      *         CSS.
      */
     public markerAttribs(): SVGAttributes {
-        var ret = areaRangeProto.markerAttribs.apply(this, arguments as any);
+        const ret = areaRangeProto.markerAttribs.apply(this, arguments as any);
 
-        ret.x = Math.floor(ret.x);
-        ret.y = Math.floor(ret.y);
+        ret.x = Math.floor(ret.x || 0);
+        ret.y = Math.floor(ret.y || 0);
 
         return ret;
     }
@@ -460,7 +460,7 @@ class DumbbellSeries extends AreaRangeSeries {
         point: DumbbellPoint,
         state?: string
     ): SVGAttributes {
-        var pointAttribs;
+        let pointAttribs;
 
         pointAttribs = seriesProto.pointAttribs.apply(this, arguments as any);
         if (state === 'hover') {

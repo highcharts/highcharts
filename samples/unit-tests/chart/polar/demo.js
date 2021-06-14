@@ -1,6 +1,5 @@
-QUnit.test('Polar chart with no data (#5226)', function (assert) {
-    assert.expect(0);
-    Highcharts.chart('container', {
+QUnit.test('Polar chart data', function (assert) {
+    const chart = Highcharts.chart('container', {
         chart: {
             polar: true
         },
@@ -13,6 +12,41 @@ QUnit.test('Polar chart with no data (#5226)', function (assert) {
             }
         ]
     });
+
+    assert.ok(
+        true,
+        '#5226: Polar chart with no data should not throw'
+    );
+
+    chart.series[0].update({
+        data: [null]
+    });
+
+    assert.notOk(
+        Number.isNaN(chart.series[0].points[0].plotX),
+        '#15438: plotX should not be NaN with null data'
+    );
+    assert.notOk(
+        Number.isNaN(chart.series[0].points[0].plotY),
+        '#15438: plotY should not be NaN with null data'
+    );
+
+    chart.series[0].update({
+        type: 'spline',
+        data: [
+            { x: 45, y: 5 },
+            { x: 90, y: 2 },
+            { x: 180, y: void 0 },
+            { x: 270, y: 2 }
+        ]
+    });
+
+    assert.ok(
+        chart.series[0].graphPath.every(
+            p => p.slice(1).every(Highcharts.isNumber)
+        ),
+        '#15489: Graph path should not contain any NaN values'
+    );
 });
 QUnit.test(
     'Polar and categorized chart should not render extra alternate band.(#2248)',

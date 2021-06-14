@@ -90,7 +90,7 @@ declare global {
             public setProxyButtonStyle(button: HTMLDOMElement): void;
             public updateProxyButtonPosition(
                 proxy: HTMLDOMElement,
-                posElement: Highcharts.SVGElement
+                posElement: SVGElement
             ): void;
         }
         interface AccessibilityChart {
@@ -103,7 +103,7 @@ declare global {
 /* eslint-disable valid-jsdoc */
 
 /** @lends Highcharts.AccessibilityComponent */
-var functionsToOverrideByDerivedClasses: (
+const functionsToOverrideByDerivedClasses: (
     Partial<Highcharts.AccessibilityComponent>
 ) = {
     /**
@@ -264,7 +264,7 @@ AccessibilityComponent.prototype = {
     ): HTMLDOMElement {
         this.createOrUpdateProxyContainer();
 
-        var groupDiv = this.createElement('div');
+        const groupDiv = this.createElement('div');
 
         Object.keys(attrs || {}).forEach(function (prop: string): void {
             if ((attrs as any)[prop] !== null) {
@@ -284,7 +284,7 @@ AccessibilityComponent.prototype = {
     createOrUpdateProxyContainer: function (
         this: Highcharts.AccessibilityComponent
     ): void {
-        var chart = this.chart,
+        const chart = this.chart,
             rendererSVGEl = chart.renderer.box;
 
         chart.a11yProxyContainer = chart.a11yProxyContainer ||
@@ -304,7 +304,7 @@ AccessibilityComponent.prototype = {
      * @return {Highcharts.HTMLDOMElement} element
      */
     createProxyContainerElement: function (): HTMLDOMElement {
-        var pc = doc.createElement('div');
+        const pc = doc.createElement('div');
         pc.className = 'highcharts-a11y-proxy-container';
         return pc;
     },
@@ -329,25 +329,29 @@ AccessibilityComponent.prototype = {
      */
     createProxyButton: function (
         this: Highcharts.AccessibilityComponent,
-        svgElement: Highcharts.SVGElement,
+        svgElement: SVGElement,
         parentGroup: HTMLDOMElement,
         attributes?: SVGAttributes,
-        posElement?: Highcharts.SVGElement,
+        posElement?: SVGElement,
         preClickEvent?: Function
     ): HTMLDOMElement {
-        var svgEl = svgElement.element,
+        const svgEl = svgElement.element,
             proxy = this.createElement('button'),
             attrs = merge({
                 'aria-label': svgEl.getAttribute('aria-label')
             }, attributes);
 
         Object.keys(attrs).forEach(function (prop: string): void {
-            if (attrs[prop] !== null) {
-                proxy.setAttribute(prop, attrs[prop]);
+            if ((attrs as any)[prop] !== null) {
+                proxy.setAttribute(prop, (attrs as any)[prop]);
             }
         });
 
         proxy.className = 'highcharts-a11y-proxy-button';
+
+        if (svgElement.hasClass('highcharts-no-tooltip')) {
+            proxy.className += ' highcharts-no-tooltip';
+        }
 
         if (preClickEvent) {
             this.addEvent(proxy, 'click', preClickEvent);
@@ -379,11 +383,11 @@ AccessibilityComponent.prototype = {
         this: Highcharts.AccessibilityComponent,
         element: SVGElement
     ): BBoxObject {
-        var el = element.element,
+        const el = element.element,
             div: HTMLDOMElement = (this.chart as any).renderTo;
 
         if (div && el && el.getBoundingClientRect) {
-            var rectEl = el.getBoundingClientRect(),
+            const rectEl = el.getBoundingClientRect(),
                 rectDiv = div.getBoundingClientRect();
 
             return {
@@ -404,20 +408,21 @@ AccessibilityComponent.prototype = {
      */
     setProxyButtonStyle: function (button: HTMLDOMElement): void {
         merge(true, button.style, {
-            'border-width': 0,
-            'background-color': 'transparent',
+            borderWidth: '0',
+            backgroundColor: 'transparent',
             cursor: 'pointer',
             outline: 'none',
-            opacity: 0.001,
+            opacity: '0.001',
             filter: 'alpha(opacity=1)',
-            '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)',
-            zIndex: 999,
+            zIndex: '999',
             overflow: 'hidden',
-            padding: 0,
-            margin: 0,
+            padding: '0',
+            margin: '0',
             display: 'block',
             position: 'absolute'
         });
+        (button.style as any)['-ms-filter'] =
+            'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)';
     },
 
 
@@ -434,8 +439,8 @@ AccessibilityComponent.prototype = {
         merge(true, proxy.style, {
             width: (bBox.width || 1) + 'px',
             height: (bBox.height || 1) + 'px',
-            left: (bBox.x || 0) + 'px',
-            top: (bBox.y || 0) + 'px'
+            left: (Math.round(bBox.x) || 0) + 'px',
+            top: (Math.round(bBox.y) || 0) + 'px'
         });
     },
 
@@ -453,7 +458,7 @@ AccessibilityComponent.prototype = {
         ),
         button: HTMLDOMElement
     ): void {
-        var component = this;
+        const component = this;
 
         [
             'click', 'touchstart', 'touchend', 'touchcancel', 'touchmove',
@@ -471,7 +476,12 @@ AccessibilityComponent.prototype = {
                 }
 
                 e.stopPropagation();
-                e.preventDefault();
+
+                // #9682, #15318: Touch scrolling didnt work when touching a
+                // component
+                if (evtType !== 'touchstart' && evtType !== 'touchmove' && evtType !== 'touchend') {
+                    e.preventDefault();
+                }
             }, { passive: false });
         });
     },
@@ -490,7 +500,7 @@ AccessibilityComponent.prototype = {
 
         // No MouseEvent support, try using initMouseEvent
         if (doc.createEvent) {
-            var evt = doc.createEvent('MouseEvent');
+            const evt = doc.createEvent('MouseEvent');
             if (evt.initMouseEvent) {
                 evt.initMouseEvent(
                     e.type,

@@ -757,7 +757,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Show last label on category axes by default in Highstock (#6104)',
+    'Show last label on category axes by default in Highcharts Stock (#6104)',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
                 yAxis: [

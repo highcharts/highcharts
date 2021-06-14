@@ -99,7 +99,7 @@ class ControllableImage implements ControllableMixin.Type {
     public translate = ControllableMixin.translateShape;
 
     public render(parent: SVGElement): void {
-        var attrs = this.attrsFromOptions(this.options),
+        const attrs = this.attrsFromOptions(this.options),
             options = this.options;
 
         this.graphic = this.annotation.chart.renderer
@@ -114,7 +114,7 @@ class ControllableImage implements ControllableMixin.Type {
     }
 
     public redraw(animation?: boolean): void {
-        var anchor = this.anchor(this.points[0]),
+        const anchor = this.anchor(this.points[0]),
             position = ControllableLabel.prototype.position.call(
                 this,
                 anchor

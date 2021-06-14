@@ -58,7 +58,7 @@ Highcharts.chart('container', {
             ["Add ability to change Rangeselector position", 182],
             ["Draggable legend box", 157],
             ["Sankey Diagram", 149],
-            ["Add Navigation bar for Y-Axis in Highstock", 144],
+            ["Add Navigation bar for Y-Axis in Highcharts Stock", 144],
             ["Grouped x-axis", 143],
             ["ReactJS plugin", 137],
             ["3D surface charts", 134],

@@ -1,11 +1,12 @@
 QUnit.test('Error 19', function (assert) {
     assert.expect(2);
 
-    var error = Highcharts.error;
-
-    Highcharts.addEvent(Highcharts.Chart, 'displayError', function (e) {
-        assert.strictEqual(e.code, 19, 'Error 19 should be invoked');
-    });
+    var removeEvent = Highcharts.addEvent(Highcharts, 'displayError',
+        function (e) {
+            assert.strictEqual(e.code, 19, 'Error 19 should be invoked');
+            removeEvent();
+        }
+    );
 
     var chart = Highcharts.chart('container', {
         chart: {
@@ -105,20 +106,20 @@ QUnit.test('Error 19', function (assert) {
         2,
         'The axis should revert to only two tick positions'
     );
-
-    Highcharts.error = error;
 });
 
 QUnit.test('Debugger mode', function (assert) {
     var chart = Highcharts.chart('container', {
-        series: [
-            {
-                data: [1, 2, 3]
-            }
-        ]
+        series: [{
+            data: [1, 2, 3]
+        }]
     });
 
-    Highcharts.fireEvent(chart, 'displayError', { code: 18 });
+    Highcharts.fireEvent(
+        Highcharts,
+        'displayError',
+        { chart: chart, code: 18 }
+    );
 
     assert.strictEqual(
         2,
@@ -128,5 +129,19 @@ QUnit.test('Debugger mode', function (assert) {
 
     chart.redraw();
 
-    assert.strictEqual(chart.errorElements, null, 'Error correctly removed');
+    assert.strictEqual(
+        chart.errorElements,
+        undefined,
+        'Error correctly removed'
+    );
+
+    // (#15188) If the error function is called without the chart argument
+    // then the last chart in Highcharts.charts will be used as a fallback.
+    Highcharts.error('test');
+
+    assert.strictEqual(
+        2,
+        chart.errorElements.length,
+        'Error correctly shown on a chart'
+    );
 });

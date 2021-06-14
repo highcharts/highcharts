@@ -17,14 +17,14 @@ import type Point from '../../../Core/Series/Point';
 import H from '../../../Core/Globals.js';
 import Series from '../../../Core/Series/Series.js';
 import U from '../../../Core/Utilities.js';
-var extend = U.extend,
+const extend = U.extend,
     defined = U.defined;
 
 import ChartUtilities from '../../Utils/ChartUtilities.js';
-var getChartTitle = ChartUtilities.getChartTitle;
+const getChartTitle = ChartUtilities.getChartTitle;
 
 import SeriesDescriber from './SeriesDescriber.js';
-var defaultPointDescriptionFormatter = SeriesDescriber
+const defaultPointDescriptionFormatter = SeriesDescriber
         .defaultPointDescriptionFormatter,
     defaultSeriesDescriptionFormatter = SeriesDescriber
         .defaultSeriesDescriptionFormatter;
@@ -56,7 +56,7 @@ declare global {
                 dirtySeries: Array<Series>,
                 newSeries?: Series,
                 newPoint?: Point
-            ): string;
+            ): string|null;
             public destroy(): void;
             public init(): void;
             public onPointAdded(point: Point): void;
@@ -99,7 +99,7 @@ function chartHasAnnounceEnabled(chart: Chart): boolean {
 function findPointInDataArray(
     point: Point
 ): Point {
-    var candidates = point.series.data.filter(function (
+    const candidates = point.series.data.filter(function (
         candidate: Point
     ): boolean {
         return point.x === candidate.x && point.y === candidate.y;
@@ -117,7 +117,7 @@ function getUniqueSeries(
     arrayA?: Array<Series>,
     arrayB?: Array<Series>
 ): Array<Series> {
-    var uniqueSeries = (arrayA || []).concat(arrayB || [])
+    const uniqueSeries = (arrayA || []).concat(arrayB || [])
         .reduce(function (
             acc: Record<string, Series>,
             cur: Series
@@ -138,7 +138,7 @@ function getUniqueSeries(
  * @private
  * @class
  */
-var NewDataAnnouncer: typeof Highcharts.NewDataAnnouncer = function (
+const NewDataAnnouncer: typeof Highcharts.NewDataAnnouncer = function (
     this: Highcharts.NewDataAnnouncer,
     chart: Highcharts.AccessibilityChart
 ): void {
@@ -181,7 +181,7 @@ extend(NewDataAnnouncer.prototype, {
      * @private
      */
     addEventListeners: function (this: Highcharts.NewDataAnnouncer): void {
-        var announcer = this,
+        const announcer = this,
             chart = this.chart,
             e = this.eventProvider;
 
@@ -220,7 +220,7 @@ extend(NewDataAnnouncer.prototype, {
         this: Highcharts.NewDataAnnouncer,
         series: Series
     ): void {
-        var chart = this.chart;
+        const chart = this.chart;
 
         if (series.chart === chart && chartHasAnnounceEnabled(chart)) {
             this.dirty.hasDirty = true;
@@ -257,7 +257,7 @@ extend(NewDataAnnouncer.prototype, {
         this: Highcharts.NewDataAnnouncer,
         point: Point
     ): void {
-        var chart = point.series.chart;
+        const chart = point.series.chart;
 
         if (this.chart === chart && chartHasAnnounceEnabled(chart)) {
             // Add it to newPoint storage unless we already have one
@@ -272,14 +272,14 @@ extend(NewDataAnnouncer.prototype, {
      * @private
      */
     announceDirtyData: function (this: Highcharts.NewDataAnnouncer): void {
-        var chart = this.chart,
+        const chart = this.chart,
             announcer = this;
 
         if (
             (chart.options.accessibility as any).announceNewData &&
             this.dirty.hasDirty
         ) {
-            var newPoint = this.dirty.newPoint;
+            let newPoint = this.dirty.newPoint;
 
             // If we have a single new point, see if we can find it in the
             // data array. Otherwise we can only pass through options to
@@ -392,12 +392,12 @@ extend(NewDataAnnouncer.prototype, {
         newSeries?: Highcharts.AccessibilitySeries,
         newPoint?: Highcharts.AccessibilityPoint
     ): (string|null) {
-        var chart = this.chart,
+        const chart = this.chart,
             annOptions = chart.options.accessibility.announceNewData;
 
         // User supplied formatter?
         if (annOptions.announcementFormatter) {
-            var formatterRes = annOptions.announcementFormatter(
+            const formatterRes = annOptions.announcementFormatter(
                 dirtySeries, newSeries, newPoint
             );
             if (formatterRes !== false) {
@@ -406,7 +406,7 @@ extend(NewDataAnnouncer.prototype, {
         }
 
         // Default formatter - use lang options
-        var multiple = H.charts && H.charts.length > 1 ? 'Multiple' : 'Single',
+        const multiple = H.charts && H.charts.length > 1 ? 'Multiple' : 'Single',
             langKey = newSeries ? 'newSeriesAnnounce' + multiple :
                 newPoint ? 'newPointAnnounce' + multiple : 'newDataAnnounce',
             chartTitle = getChartTitle(chart);

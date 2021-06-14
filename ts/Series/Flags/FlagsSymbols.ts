@@ -5,11 +5,7 @@
  * */
 
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import H from '../../Core/Globals.js';
-const {
-    Renderer,
-    VMLRenderer
-} = H;
+import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { symbols } = SVGRenderer.prototype;
 
@@ -20,14 +16,8 @@ const { symbols } = SVGRenderer.prototype;
  * */
 
 // create the flag icon with anchor
-symbols.flag = function (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    options?: Highcharts.SymbolOptionsObject
-): SVGPath {
-    var anchorX = (options && options.anchorX) || x,
+symbols.flag = function (x, y, w, h, options): SVGPath {
+    const anchorX = (options && options.anchorX) || x,
         anchorY = (options && options.anchorY) || y;
 
     // To do: unwanted any cast because symbols.circle has wrong type, it
@@ -53,17 +43,18 @@ symbols.flag = function (
  * @return {void}
  */
 function createPinSymbol(shape: ('circle'|'square')): void {
-    symbols[shape + 'pin'] = function (
-        x: number,
-        y: number,
-        w: number,
-        h: number,
-        options?: Highcharts.SymbolOptionsObject
+    symbols[(shape + 'pin') as ('circlepin'|'squarepin')] = function (
+        x,
+        y,
+        w,
+        h,
+        options
     ): SVGPath {
 
-        var anchorX = options && options.anchorX,
-            anchorY = options && options.anchorY,
-            path: SVGPath;
+        const anchorX = options && options.anchorX,
+            anchorY = options && options.anchorY;
+
+        let path: SVGPath;
 
         // For single-letter flags, make sure circular flags are not taller
         // than their width
@@ -116,10 +107,19 @@ createPinSymbol('square');
  * Even VML browsers need this in order to generate shapes in export. Now share
  * them with the VMLRenderer.
  */
-if ((Renderer as unknown) === VMLRenderer) {
-    ['circlepin', 'flag', 'squarepin'].forEach(function (shape: string): void {
-        VMLRenderer.prototype.symbols[shape] = symbols[shape];
-    });
+const Renderer = RendererRegistry.getRendererType();
+if (Renderer !== SVGRenderer) {
+    Renderer.prototype.symbols.circlepin = symbols.circlepin;
+    Renderer.prototype.symbols.flag = symbols.flag;
+    Renderer.prototype.symbols.squarepin = symbols.squarepin;
+}
+
+declare module '../../Core/Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        'circlepin': SymbolFunction;
+        'flag': SymbolFunction;
+        'squarepin': SymbolFunction;
+    }
 }
 
 /* *

@@ -155,7 +155,7 @@ class ABandsIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: ABandsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = (params.period as any),
+        let period: number = (params.period as any),
             factor: number = (params.factor as any),
             index: number = (params.index as any),
             xVal: Array<number> = (series.xData as any),

@@ -1,4 +1,4 @@
-Annotations and fibonacci replacements
+Annotations and fibonacci retracements
 ===
 
 A Fibonacci retracement is a tool used in technical analysis which allows users to identify [reversal levels](https://www.investopedia.com/terms/f/fibonacciretracement.asp).

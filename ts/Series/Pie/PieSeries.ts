@@ -30,7 +30,7 @@ import palette from '../../Core/Color/Palette.js';
 import PiePoint from './PiePoint.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import Symbols from '../../Core/Renderer/SVG/Symbols.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -41,7 +41,7 @@ const {
     relativeLength
 } = U;
 
-import '../../Core/Options.js';
+import '../../Core/DefaultOptions.js';
 
 /* *
  *
@@ -706,13 +706,13 @@ class PieSeries extends Series {
      * @private
      */
     public animate(init?: boolean): void {
-        var series = this,
+        const series = this,
             points = series.points,
             startAngleRad = series.startAngleRad;
 
         if (!init) {
             points.forEach(function (point): void {
-                var graphic = point.graphic,
+                const graphic = point.graphic,
                     args = point.shapeArgs;
 
                 if (graphic && args) {
@@ -744,7 +744,7 @@ class PieSeries extends Series {
      * @private
      */
     public drawEmpty(): void {
-        var centerX,
+        let centerX,
             centerY,
             start = this.startAngleRad,
             end = this.endAngleRad,
@@ -763,7 +763,7 @@ class PieSeries extends Series {
             }
 
             this.graph.attr({
-                d: SVGRenderer.prototype.symbols.arc(
+                d: Symbols.arc(
                     centerX,
                     centerY,
                     this.center[2] / 2,
@@ -779,8 +779,7 @@ class PieSeries extends Series {
                 this.graph.attr({
                     'stroke-width': options.borderWidth,
                     fill: options.fillColor || 'none',
-                    stroke: (options.color as any) ||
-                    palette.neutralColor20
+                    stroke: options.color || palette.neutralColor20
                 });
             }
 
@@ -795,7 +794,7 @@ class PieSeries extends Series {
      * @private
      */
     public drawPoints(): void {
-        var renderer = this.chart.renderer;
+        const renderer = this.chart.renderer;
 
         this.points.forEach(function (point): void {
             // When updating a series between 2d and 3d or cartesian and
@@ -835,7 +834,7 @@ class PieSeries extends Series {
         left: boolean,
         point: PiePoint
     ): number {
-        var center = this.center,
+        let center = this.center,
             // Variable pie has individual radius
             radius = this.radii ?
                 this.radii[point.index as any] || 0 :
@@ -872,7 +871,7 @@ class PieSeries extends Series {
      * @private
      */
     public redrawPoints(): void {
-        var series = this,
+        let series = this,
             chart = series.chart,
             renderer = chart.renderer,
             groupTranslation,
@@ -892,9 +891,11 @@ class PieSeries extends Series {
 
         // draw the slices
         series.points.forEach(function (point): void {
-            var animateTo = {};
+            const animateTo = {};
             graphic = point.graphic;
             if (!point.isNull && graphic) {
+                let shadowGroup: (SVGElement|undefined);
+
                 shapeArgs = point.shapeArgs;
 
 
@@ -904,7 +905,7 @@ class PieSeries extends Series {
 
                 if (!chart.styledMode) {
                 // Put the shadow behind all points
-                    var shadowGroup = point.shadowGroup;
+                    shadowGroup = point.shadowGroup;
 
                     if (shadow && !shadowGroup) {
                         shadowGroup = point.shadowGroup = renderer
@@ -984,7 +985,7 @@ class PieSeries extends Series {
     public translate(positions?: Array<number>): void {
         this.generatePoints();
 
-        var series = this,
+        let series = this,
             cumulative = 0,
             precision = 1000, // issue #172
             options = series.options,
@@ -1035,8 +1036,7 @@ class PieSeries extends Series {
             end = startAngleRad + (cumulative * circ);
 
             // set the shape
-            point.shapeType = 'arc';
-            point.shapeArgs = {
+            const shapeArgs = {
                 x: positions[0],
                 y: positions[1],
                 r: positions[2] / 2,
@@ -1044,6 +1044,8 @@ class PieSeries extends Series {
                 start: Math.round(start * precision) / precision,
                 end: Math.round(end * precision) / precision
             };
+            point.shapeType = 'arc';
+            point.shapeArgs = shapeArgs;
 
             // Used for distance calculation for specific point.
             point.labelDistance = pick(
@@ -1057,8 +1059,8 @@ class PieSeries extends Series {
             // Compute point.labelDistance if it's defined as percentage
             // of slice radius (#8854)
             point.labelDistance = relativeLength(
-                point.labelDistance as any,
-                point.shapeArgs.r
+                point.labelDistance,
+                shapeArgs.r
             );
 
             // Saved for later dataLabels distance calculation.
@@ -1149,7 +1151,7 @@ class PieSeries extends Series {
      * @private
      */
     public updateTotals(): void {
-        var i,
+        let i,
             total = 0,
             points = this.points,
             len = points.length,
@@ -1190,6 +1192,7 @@ class PieSeries extends Series {
  * */
 
 interface PieSeries {
+    drawGraph: undefined;
     getCenter: typeof CenteredSeriesMixin['getCenter'];
     pointClass: typeof PiePoint;
 }
@@ -1199,7 +1202,7 @@ extend(PieSeries.prototype, {
 
     directTouch: true,
 
-    drawGraph: null as any,
+    drawGraph: void 0,
 
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
@@ -1207,7 +1210,7 @@ extend(PieSeries.prototype, {
 
     getCenter: CenteredSeriesMixin.getCenter,
 
-    getSymbol: noop as any,
+    getSymbol: noop,
 
     isCartesian: false,
 

@@ -35,7 +35,7 @@ interface NelderMeadCentroidObject {
 const getCentroid = function (
     simplex: Array<Highcharts.NelderMeadPointArray>
 ): Array<number> {
-    var arr = simplex.slice(0, -1),
+    const arr = simplex.slice(0, -1),
         length = arr.length,
         result = [] as Array<number>,
         sum = function (
@@ -46,7 +46,7 @@ const getCentroid = function (
             return data;
         };
 
-    for (var i = 0; i < length; i++) {
+    for (let i = 0; i < length; i++) {
         result[i] = arr.reduce(sum, { sum: 0, i: i }).sum / length;
     }
     return result;
@@ -68,7 +68,7 @@ const nelderMead = function nelderMead(
     fn: Highcharts.NelderMeadTestFunction,
     initial: Highcharts.NelderMeadPointArray
 ): Highcharts.NelderMeadPointArray {
-    var maxIterations = 100,
+    const maxIterations = 100,
         sortByFx = function (
             a: Highcharts.NelderMeadPointArray,
             b: Highcharts.NelderMeadPointArray
@@ -84,7 +84,7 @@ const nelderMead = function nelderMead(
     /**
      * @private
      */
-    var weightedSum = function weightedSum(
+    const weightedSum = function weightedSum(
         weight1: number,
         v1: Array<number>,
         weight2: number,
@@ -98,10 +98,10 @@ const nelderMead = function nelderMead(
     /**
      * @private
      */
-    var getSimplex = function getSimplex(
+    const getSimplex = function getSimplex(
         initial: Highcharts.NelderMeadPointArray
     ): Array<Highcharts.NelderMeadPointArray> {
-        var n = initial.length,
+        const n = initial.length,
             simplex: Array<Highcharts.NelderMeadPointArray> =
                 new Array(n + 1);
 
@@ -110,8 +110,8 @@ const nelderMead = function nelderMead(
         simplex[0].fx = fn(initial);
 
         // Create a set of extra points based on the initial.
-        for (var i = 0; i < n; ++i) {
-            var point = initial.slice() as Highcharts.NelderMeadPointArray;
+        for (let i = 0; i < n; ++i) {
+            const point = initial.slice() as Highcharts.NelderMeadPointArray;
 
             point[i] = point[i] ? point[i] * 1.05 : 0.001;
             point.fx = fn(point);
@@ -120,7 +120,7 @@ const nelderMead = function nelderMead(
         return simplex;
     };
 
-    var updateSimplex = function (
+    const updateSimplex = function (
         simplex: Array<Highcharts.NelderMeadPointArray>,
         point: Highcharts.NelderMeadPointArray
     ): Array<Highcharts.NelderMeadPointArray> {
@@ -129,15 +129,15 @@ const nelderMead = function nelderMead(
         return simplex;
     };
 
-    var shrinkSimplex = function (
+    const shrinkSimplex = function (
         simplex: Array<Highcharts.NelderMeadPointArray>
     ): Array<Highcharts.NelderMeadPointArray> {
-        var best = simplex[0];
+        const best = simplex[0];
 
         return simplex.map(function (
             point: Highcharts.NelderMeadPointArray
         ): Highcharts.NelderMeadPointArray {
-            var p = weightedSum(1 - pShrink, best, pShrink, point) as (
+            const p = weightedSum(1 - pShrink, best, pShrink, point) as (
                 Highcharts.NelderMeadPointArray
             );
 
@@ -146,13 +146,13 @@ const nelderMead = function nelderMead(
         });
     };
 
-    var getPoint = function (
+    const getPoint = function (
         centroid: Array<number>,
         worst: Array<number>,
         a: number,
         b: number
     ): Highcharts.NelderMeadPointArray {
-        var point = weightedSum(a, centroid, b, worst) as (
+        const point = weightedSum(a, centroid, b, worst) as (
             Highcharts.NelderMeadPointArray
         );
 
@@ -161,23 +161,23 @@ const nelderMead = function nelderMead(
     };
 
     // Create a simplex
-    var simplex = getSimplex(initial);
+    let simplex = getSimplex(initial);
 
     // Iterate from 0 to max iterations
-    for (var i = 0; i < maxIterations; i++) {
+    for (let i = 0; i < maxIterations; i++) {
         // Sort the simplex
         simplex.sort(sortByFx);
 
         // Create a centroid from the simplex
-        var worst = simplex[simplex.length - 1];
-        var centroid = getCentroid(simplex);
+        const worst = simplex[simplex.length - 1];
+        const centroid = getCentroid(simplex);
 
         // Calculate the reflected point.
-        var reflected = getPoint(centroid, worst, 1 + pRef, -pRef);
+        const reflected = getPoint(centroid, worst, 1 + pRef, -pRef);
 
         if (reflected.fx < simplex[0].fx) {
             // If reflected point is the best, then possibly expand.
-            var expanded = getPoint(centroid, worst, 1 + pExp, -pExp);
+            const expanded = getPoint(centroid, worst, 1 + pExp, -pExp);
 
             simplex = updateSimplex(
                 simplex,
@@ -186,7 +186,7 @@ const nelderMead = function nelderMead(
         } else if (reflected.fx >= simplex[simplex.length - 2].fx) {
             // If the reflected point is worse than the second worse, then
             // contract.
-            var contracted;
+            let contracted;
 
             if (reflected.fx > worst.fx) {
                 // If the reflected is worse than the worst point, do a

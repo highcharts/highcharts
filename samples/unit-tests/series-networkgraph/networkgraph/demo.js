@@ -29,7 +29,11 @@ QUnit.test('Network Graph', function (assert) {
         },
         keys: ['from', 'to'],
         data: [
-            ['A', 'B'],
+            {
+                from: 'A',
+                to: 'B',
+                className: 'test'
+            },
             ['A', 'C'],
             ['A', 'D'],
 
@@ -52,6 +56,12 @@ QUnit.test('Network Graph', function (assert) {
         chart.series[0].points.length,
         7,
         'Series successfully added'
+    );
+
+    assert.notStrictEqual(
+        chart.series[0].points[0].graphic.attr('class').indexOf('test'),
+        -1,
+        '#15260: Point className should have been added'
     );
 
     assert.strictEqual(
@@ -353,6 +363,12 @@ QUnit.test('Networkgraph and series updates', assert => {
             }
         ]
     });
+
+    assert.strictEqual(
+        chart.series[0].nodes[0].color,
+        'red',
+        '#15134: Updating color should work'
+    );
 
     assert.ok(
         true,

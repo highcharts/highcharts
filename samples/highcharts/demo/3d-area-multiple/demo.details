@@ -1,6 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Grzegorz Blachliński
- js_wrap: b
+name: 3D area chart
+authors:
+  - Grzegorz Blachliński
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - 3D charts
 ...

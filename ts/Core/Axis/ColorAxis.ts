@@ -10,15 +10,24 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptions from '../Animation/AnimationOptions';
-import type { AxisLike } from './Types';
+import type AxisLike from './AxisLike';
+import type AxisOptions from './AxisOptions';
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type GradientColor from '../Color/GradientColor';
+import type LegendOptions from '../LegendOptions';
 import type PointerEvent from '../PointerEvent';
 import type { StatesOptionsKey } from '../Series/StatesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import Color from '../Color/Color.js';
@@ -51,9 +60,31 @@ const {
     splat
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Axis/AxisLike' {
+    interface AxisLike {
+        labelLeft?: number;
+        labelRight?: number;
+    }
+}
+
 declare module '../Chart/ChartLike' {
     interface ChartLike {
         colorAxis?: Array<ColorAxis>;
+    }
+}
+
+declare module '../../Core/Options'{
+    interface Options {
+        colorAxis?: (
+            DeepPartial<ColorAxis.Options>|
+            Array<DeepPartial<ColorAxis.Options>>
+        );
     }
 }
 
@@ -85,13 +116,6 @@ declare module '../Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            labelLeft?: number;
-            labelRight?: number;
-        }
-        interface Options {
-            colorAxis?: (ColorAxis.Options|Array<ColorAxis.Options>);
-        }
         let ColorAxis: ColorAxisClass;
     }
 }
@@ -105,8 +129,8 @@ type ColorAxisClass = typeof ColorAxis;
 
 ''; // detach doclet above
 
-extend(Series.prototype, colorSeriesMixin);
-extend(Point.prototype, colorPointMixin);
+extend(Series.prototype, colorSeriesMixin as any);
+extend(Point.prototype, colorPointMixin as any);
 
 Chart.prototype.collectionsWithUpdate.push('colorAxis');
 Chart.prototype.collectionsWithInit.colorAxis = [Chart.prototype.addColorAxis];
@@ -189,7 +213,7 @@ class ColorAxis extends Axis implements AxisLike {
      * @optionparent colorAxis
      * @ignore
      */
-    public static defaultOptions: ColorAxis.Options = {
+    public static defaultColorAxisOptions: DeepPartial<ColorAxis.Options> = {
 
         /**
          * Whether to allow decimals on the color axis.
@@ -606,7 +630,10 @@ class ColorAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public constructor(chart: Chart, userOptions: ColorAxis.Options) {
+    public constructor(
+        chart: Chart,
+        userOptions: DeepPartial<ColorAxis.Options>
+    ) {
         super(chart, userOptions);
         this.init(chart, userOptions);
     }
@@ -653,7 +680,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public init(
         chart: Chart,
-        userOptions: ColorAxis.Options
+        userOptions: DeepPartial<ColorAxis.Options>
     ): void {
         const axis = this;
         const legend = chart.options.legend || {},
@@ -661,8 +688,8 @@ class ColorAxis extends Axis implements AxisLike {
                 userOptions.layout !== 'vertical' :
                 legend.layout !== 'vertical';
 
-        const options = merge<ColorAxis.Options>(
-            ColorAxis.defaultOptions,
+        const options = merge<DeepPartial<ColorAxis.Options>>(
+            ColorAxis.defaultColorAxisOptions,
             userOptions,
             {
                 showEmpty: false,
@@ -676,10 +703,6 @@ class ColorAxis extends Axis implements AxisLike {
         axis.side = userOptions.side || horiz ? 2 : 1;
         axis.reversed = userOptions.reversed || !horiz;
         axis.opposite = !horiz;
-
-        // Keep the options structure updated for export. Unlike xAxis and
-        // yAxis, the colorAxis is not an array. (#3207)
-        chart.options[axis.coll] = options;
 
         super.init(chart, options);
 
@@ -700,12 +723,12 @@ class ColorAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public initDataClasses(userOptions: ColorAxis.Options): void {
+    public initDataClasses(userOptions: DeepPartial<ColorAxis.Options>): void {
         const axis = this;
-        var chart = axis.chart,
+        let chart = axis.chart,
             dataClasses,
             colorCounter = 0,
-            colorCount = (chart.options.chart as any).colorCount,
+            colorCount = chart.options.chart.colorCount,
             options = axis.options,
             len = (userOptions.dataClasses as any).length;
 
@@ -716,7 +739,7 @@ class ColorAxis extends Axis implements AxisLike {
             dataClass: ColorAxis.DataClassesOptions,
             i: number
         ): void {
-            var colors: any;
+            let colors: any;
 
             dataClass = merge(dataClass);
             dataClasses.push(dataClass);
@@ -1166,7 +1189,7 @@ class ColorAxis extends Axis implements AxisLike {
 
                 if (
                     !axis.chart.styledMode &&
-                    axis.crosshair
+                    typeof axis.crosshair === 'object'
                 ) {
                     axis.cross.attr({
                         fill: axis.crosshair.color
@@ -1180,7 +1203,7 @@ class ColorAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public getPlotLinePath(options: Highcharts.AxisPlotLinePathOptionsObject): (SVGPath|null) {
+    public getPlotLinePath(options: Axis.PlotLinePathOptions): (SVGPath|null) {
         const axis = this,
             left = axis.left,
             pos = options.translatedValue,
@@ -1221,7 +1244,7 @@ class ColorAxis extends Axis implements AxisLike {
      * and call {@link Highcharts.Chart#redraw} after.
      */
     public update(
-        newOptions: ColorAxis.Options,
+        newOptions: DeepPartial<ColorAxis.Options>,
         redraw?: boolean
     ): void {
         const axis = this,
@@ -1307,7 +1330,7 @@ class ColorAxis extends Axis implements AxisLike {
                 dataClass: ColorAxis.DataClassesOptions,
                 i: number
             ): void {
-                var vis = true,
+                let vis = true,
                     from = dataClass.from,
                     to = dataClass.to;
                 const { numberFormatter } = chart;
@@ -1394,7 +1417,7 @@ H.ColorAxis = ColorAxis as any;
 
 // Extend the chart getAxes method to also get the color axis
 addEvent(Chart, 'afterGetAxes', function (): void {
-    var chart = this,
+    const chart = this,
         options = chart.options;
 
     this.colorAxis = [];
@@ -1411,7 +1434,7 @@ addEvent(Chart, 'afterGetAxes', function (): void {
 
 // Add colorAxis to series axisTypes
 addEvent(Series, 'bindAxes', function (): void {
-    var axisTypes = this.axisTypes;
+    const axisTypes = this.axisTypes;
 
     if (!axisTypes) {
         this.axisTypes = ['colorAxis'];
@@ -1427,13 +1450,22 @@ addEvent(Series, 'bindAxes', function (): void {
 addEvent(Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
     e: {
-        allItems: Array<(ColorAxis|ColorAxis.LegendItemObject)>;
+        allItems: Array<(Series|Point|ColorAxis|ColorAxis.LegendItemObject)>;
     }
 ): void {
-    var colorAxisItems = [] as Array<(ColorAxis|ColorAxis.LegendItemObject)>,
+    let colorAxisItems = [] as Array<(ColorAxis|ColorAxis.LegendItemObject)>,
         colorAxes = this.chart.colorAxis || [],
         options: ColorAxis.Options,
         i;
+
+    const destroyItem = (item: (Series|Point)): void => {
+        const i = e.allItems.indexOf(item);
+        if (i !== -1) {
+            // #15436
+            this.destroyItem(e.allItems[i]);
+            e.allItems.splice(i, 1);
+        }
+    };
 
     colorAxes.forEach(function (colorAxis: ColorAxis): void {
         options = colorAxis.options;
@@ -1457,11 +1489,11 @@ addEvent(Legend, 'afterGetAllItems', function (
                         series.points.forEach(function (
                             point: Point
                         ): void {
-                            erase(e.allItems, point);
+                            destroyItem(point);
                         });
 
                     } else {
-                        erase(e.allItems, series);
+                        destroyItem(series);
                     }
                 }
             });
@@ -1490,7 +1522,7 @@ addEvent(Legend, 'afterColorizeItem', function (
 
 // Updates in the legend need to be reflected in the color axis (6888)
 addEvent(Legend, 'afterUpdate', function (this: Highcharts.Legend): void {
-    var colorAxes = this.chart.colorAxis;
+    const colorAxes = this.chart.colorAxis;
 
     if (colorAxes) {
         colorAxes.forEach(function (colorAxis): void {
@@ -1539,11 +1571,11 @@ namespace ColorAxis {
         width?: number;
     }
 
-    export interface Options extends Highcharts.XAxisOptions {
+    export interface Options extends AxisOptions {
         dataClassColor?: string;
         dataClasses?: Array<DataClassesOptions>;
         layout?: string;
-        legend?: Highcharts.LegendOptions;
+        legend?: LegendOptions;
         marker?: MarkerOptions;
         maxColor?: ColorType;
         minColor?: ColorType;

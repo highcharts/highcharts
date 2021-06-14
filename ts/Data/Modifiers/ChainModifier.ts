@@ -35,8 +35,10 @@ const {
 
 /**
  * Modifies a table with the help of modifiers in an ordered chain.
+ *
+ * @private
  */
-class ChainModifier extends DataModifier<ChainModifier.EventObject> {
+class ChainModifier extends DataModifier<ChainModifier.Event> {
 
     /* *
      *
@@ -181,8 +183,7 @@ class ChainModifier extends DataModifier<ChainModifier.EventObject> {
     }
 
     /**
-     * Applies modifications to the table rows and returns a new table with the
-     * modified rows.
+     * Applies several modifications to the table.
      *
      * @param {DataTable} table
      * Table to modify.
@@ -191,12 +192,12 @@ class ChainModifier extends DataModifier<ChainModifier.EventObject> {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Table as a reference.
      *
      * @emits ChainDataModifier#execute
      * @emits ChainDataModifier#afterExecute
      */
-    public execute(
+    public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
@@ -206,37 +207,196 @@ class ChainModifier extends DataModifier<ChainModifier.EventObject> {
                 this.modifiers.slice()
         );
 
-        let modifier: DataModifier;
-
         this.emit({
-            type: 'execute',
+            type: 'modify',
             detail: eventDetail,
             table
         });
 
-        for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
+        for (
+            let i = 0,
+                iEnd = modifiers.length,
+                modifier: DataModifier;
+            i < iEnd;
+            ++i
+        ) {
             modifier = modifiers[i];
 
             this.emit({
-                type: 'executeModifier',
+                type: 'callModifier',
                 detail: eventDetail,
                 modifier
             });
 
-            table = modifier.execute(table);
+            table = modifier.modify(table);
 
             this.emit({
-                type: 'afterExecuteModifier',
+                type: 'afterCallModifier',
                 detail: eventDetail,
                 modifier
             });
         }
 
         this.emit({
-            type: 'afterExecute',
+            type: 'afterModify',
             detail: eventDetail,
             table
         });
+
+        return table;
+    }
+
+    /**
+     * Applies partial modifications of a cell change to the property `modified`
+     * of the given modified table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {string} columnName
+     * Column name of changed cell.
+     *
+     * @param {number|undefined} rowIndex
+     * Row index of changed cell.
+     *
+     * @param {Highcharts.DataTableCellType} cellValue
+     * Changed cell value.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Modified table as a reference.
+     */
+    public modifyCell(
+        table: DataTable,
+        columnName: string,
+        rowIndex: number,
+        cellValue: DataTable.CellType,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+        const modifiers = (
+            this.options.reverse ?
+                this.modifiers.reverse() :
+                this.modifiers
+        );
+
+        if (modifiers.length) {
+            let currentTable = table.clone();
+
+            for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
+                modifiers[i].modifyCell(
+                    currentTable,
+                    columnName,
+                    rowIndex,
+                    cellValue,
+                    eventDetail
+                );
+                currentTable = currentTable.modified;
+            }
+
+            table.modified.setColumns(currentTable.getColumns());
+        }
+
+        return table;
+    }
+
+    /**
+     * Applies partial modifications of column changes to the property
+     * `modified` of the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {Highcharts.DataTableColumnCollection} columns
+     * Changed columns as a collection, where the keys are the column names.
+     *
+     * @param {number} [rowIndex=0]
+     * Index of the first changed row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Modified table as a reference.
+     */
+    public modifyColumns(
+        table: DataTable,
+        columns: DataTable.ColumnCollection,
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+        const modifiers = (
+            this.options.reverse ?
+                this.modifiers.reverse() :
+                this.modifiers.slice()
+        );
+
+        if (modifiers.length) {
+            let currentTable = table.clone();
+
+            for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
+                modifiers[i].modifyColumns(
+                    currentTable,
+                    columns,
+                    rowIndex,
+                    eventDetail
+                );
+                currentTable = currentTable.modified;
+            }
+
+            table.modified.setColumns(currentTable.getColumns());
+        }
+
+        return table;
+    }
+
+    /**
+     * Applies partial modifications of row changes to the property `modified`
+     * of the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {Array<(Highcharts.DataTableRow|Highcharts.DataTableRowObject)>} rows
+     * Changed rows.
+     *
+     * @param {number} [rowIndex]
+     * Index of the first changed row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Modified table as a reference.
+     */
+    public modifyRows(
+        table: DataTable,
+        rows: Array<(DataTable.Row|DataTable.RowObject)>,
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+        const modifiers = (
+            this.options.reverse ?
+                this.modifiers.reverse() :
+                this.modifiers.slice()
+        );
+
+        if (modifiers.length) {
+            let currentTable = table.clone();
+
+            for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
+                modifiers[i].modifyRows(
+                    currentTable,
+                    rows,
+                    rowIndex,
+                    eventDetail
+                );
+                currentTable = currentTable.modified;
+            }
+
+            table.modified.setColumns(currentTable.getColumns());
+        }
 
         return table;
     }
@@ -310,10 +470,10 @@ namespace ChainModifier {
     /**
      * Event object
      */
-    export interface ChainEventObject extends DataEventEmitter.EventObject {
+    export interface ChainEvent extends DataEventEmitter.Event {
         readonly type: (
             'clearChain'|'afterClearChain'|
-            DataModifier.EventObject['type']
+            DataModifier.Event['type']
         );
         readonly table?: DataTable;
     }
@@ -331,15 +491,15 @@ namespace ChainModifier {
     /**
      * Event information.
      */
-    export type EventObject = (ChainEventObject|ModifierEventObject);
+    export type Event = (ChainEvent|ModifierEvent);
 
     /**
      * Event information for modifier operations.
      */
-    export interface ModifierEventObject extends DataEventEmitter.EventObject {
+    export interface ModifierEvent extends DataEventEmitter.Event {
         readonly type: (
             'addModifier'|'afterAddModifier'|
-            'executeModifier'|'afterExecuteModifier'|
+            'callModifier'|'afterCallModifier'|
             'removeModifier'|'afterRemoveModifier'
         );
         readonly modifier: DataModifier;

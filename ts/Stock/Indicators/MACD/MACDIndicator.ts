@@ -28,7 +28,6 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator,
-        ema: EMAIndicator,
         column: ColumnSeries
     }
 } = SeriesRegistry;
@@ -232,7 +231,7 @@ class MACDIndicator extends SMAIndicator {
     }
 
     public translate(): void {
-        var indicator = this,
+        const indicator = this,
             plotNames: Array<string> = ['plotSignal', 'plotMACD'];
 
         H.seriesTypes.column.prototype.translate.apply(indicator);
@@ -264,7 +263,7 @@ class MACDIndicator extends SMAIndicator {
     }
 
     public drawGraph(): void {
-        var indicator = this,
+        let indicator = this,
             mainLinePoints: Array<(
                 MACDPoint
             )> = indicator.points,
@@ -332,7 +331,7 @@ class MACDIndicator extends SMAIndicator {
     public getZonesGraphs(
         props: Array<Array<string>>
     ): Array<Array<string>> {
-        var allZones: Array<Array<string>> =
+        let allZones: Array<Array<string>> =
         super.getZonesGraphs(props),
             currentZones: Array<Array<string>> = allZones;
 
@@ -356,7 +355,7 @@ class MACDIndicator extends SMAIndicator {
     public applyZones(): void {
         // Histogram zones are handled by drawPoints method
         // Here we need to apply zones for all lines
-        var histogramZones = this.zones;
+        const histogramZones = this.zones;
 
         // signalZones.zones contains all zones:
         this.zones = (this.signalZones.zones as any);
@@ -374,7 +373,8 @@ class MACDIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var j = 0,
+        let indexToShift: number = (params.longPeriod as any) - (params.shortPeriod as any), // #14197
+            j = 0,
             MACD: Array<Array<(number|null)>> = [],
             xMACD: Array<(number|null)> = [],
             yMACD: Array<Array<(number|null)>> = [],
@@ -393,14 +393,16 @@ class MACDIndicator extends SMAIndicator {
         shortEMA = (SeriesRegistry.seriesTypes.ema.prototype.getValues(
             series,
             {
-                period: params.shortPeriod
+                period: params.shortPeriod,
+                index: params.index
             }
         ) as any);
 
         longEMA = (SeriesRegistry.seriesTypes.ema.prototype.getValues(
             series,
             {
-                period: params.longPeriod
+                period: params.longPeriod,
+                index: params.index
             }
         ) as any);
 
@@ -410,19 +412,19 @@ class MACDIndicator extends SMAIndicator {
 
         // Subtract each Y value from the EMA's and create the new dataset
         // (MACD)
-        for (i = 1; i <= shortEMA.length; i++) {
+        for (i = 0; i <= shortEMA.length; i++) {
             if (
-                defined(longEMA[i - 1]) &&
-                defined(longEMA[i - 1][1]) &&
-                defined(shortEMA[i + (params.shortPeriod as any) + 1]) &&
-                defined(shortEMA[i + (params.shortPeriod as any) + 1][0])
+                defined(longEMA[i]) &&
+                defined(longEMA[i][1]) &&
+                defined(shortEMA[i + indexToShift]) &&
+                defined(shortEMA[i + indexToShift][0])
             ) {
                 MACD.push([
-                    shortEMA[i + (params.shortPeriod as any) + 1][0],
+                    shortEMA[i + indexToShift][0],
                     0,
                     null,
-                    shortEMA[i + (params.shortPeriod as any) + 1][1] -
-                        longEMA[i - 1][1]
+                    shortEMA[i + indexToShift][1] -
+                        longEMA[i][1]
                 ]);
             }
         }
@@ -498,7 +500,7 @@ extend(MACDIndicator.prototype, {
     parallelArrays: ['x', 'y', 'signal', 'MACD'],
     pointValKey: 'y',
     // Columns support:
-    markerAttribs: (noop as any),
+    markerAttribs: noop as any,
     getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
     crispCol: H.seriesTypes.column.prototype.crispCol,
     drawPoints: H.seriesTypes.column.prototype.drawPoints

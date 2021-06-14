@@ -7,6 +7,7 @@
 import type Annotation from '../Annotations';
 import type { CursorValue } from '../../../Core/Renderer/CSSObject';
 import type DOMElementType from '../../../Core/Renderer/DOMElementType';
+import type EventCallback from '../../../Core/EventCallback';
 import type PointerEvent from '../../../Core/PointerEvent';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
@@ -84,7 +85,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
      * Add emitter events.
      */
     addEvents: function (this: Highcharts.AnnotationEventEmitter): void {
-        var emitter = this,
+        const emitter = this,
             addMouseDownEvent = function (element: DOMElementType): void {
                 addEvent(
                     element,
@@ -106,10 +107,10 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         });
 
         objectEach(emitter.options.events, function (
-            event: Highcharts.EventCallbackFunction<Annotation>,
+            event: EventCallback<Annotation>,
             type: string
         ): void {
-            var eventHandler = function (e: PointerEvent): void {
+            const eventHandler = function (e: PointerEvent): void {
                 if (type !== 'click' || !emitter.cancelClick) {
                     (event as any).call(
                         emitter,
@@ -174,7 +175,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
      * Mouse down handler.
      */
     onMouseDown: function (this: Highcharts.AnnotationEventEmitter, e: Highcharts.AnnotationEventObject): void {
-        var emitter = this,
+        let emitter = this,
             pointer = emitter.chart.pointer,
             prevChartX: number,
             prevChartY: number;
@@ -230,7 +231,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
      * Mouse up handler.
      */
     onMouseUp: function (this: Highcharts.AnnotationEventEmitter, _e: Highcharts.AnnotationEventObject): void {
-        var chart = this.chart,
+        const chart = this.chart,
             annotation: Annotation = this.target as any || this,
             annotationsOptions = chart.options.annotations,
             index = chart.annotations.indexOf(annotation);
@@ -251,10 +252,13 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         if (
             this.chart.isInsidePlot(
                 e.chartX - this.chart.plotLeft,
-                e.chartY - this.chart.plotTop
+                e.chartY - this.chart.plotTop,
+                {
+                    visiblePlotOnly: true
+                }
             )
         ) {
-            var translation = this.mouseMoveToTranslation(e);
+            const translation = this.mouseMoveToTranslation(e);
 
             if (this.options.draggable === 'x') {
                 translation.y = 0;
@@ -288,7 +292,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         cx: number,
         cy: number
     ): number {
-        var prevDy = e.prevChartY - cy,
+        let prevDy = e.prevChartY - cy,
             prevDx = e.prevChartX - cx,
             dy = e.chartY - cy,
             dx = e.chartX - cx,
@@ -314,7 +318,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         this: Highcharts.AnnotationEventEmitter,
         e: Highcharts.AnnotationEventObject
     ): PositionObject {
-        var dx = e.chartX - e.prevChartX,
+        let dx = e.chartX - e.prevChartX,
             dy = e.chartY - e.prevChartY,
             temp;
 
@@ -343,7 +347,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         cx: number,
         cy: number
     ): PositionObject {
-        var prevDx = e.prevChartX - cx,
+        let prevDx = e.prevChartX - cx,
             prevDy = e.prevChartY - cy,
             dx = e.chartX - cx,
             dy = e.chartY - cy,

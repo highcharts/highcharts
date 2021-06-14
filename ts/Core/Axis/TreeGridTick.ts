@@ -11,25 +11,37 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type PositionObject from '../Renderer/PositionObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type Tick from './Tick';
 import type TreeGridAxis from './TreeGridAxis';
+
 import palette from '../../Core/Color/Palette.js';
 import U from '../Utilities.js';
 const {
     addEvent,
-    defined,
     isObject,
     isNumber,
     pick,
     wrap
 } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * @private
@@ -39,6 +51,8 @@ interface TreeGridTick extends Tick {
     options: TreeGridAxis.Options;
     treeGrid: TreeGridTick.Additions;
 }
+
+/* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
  * @private
@@ -51,12 +65,12 @@ namespace TreeGridTick {
      *
      * */
 
-    export interface LabelIconOptionsObject {
+    export interface LabelIconObject {
         collapsed?: boolean;
         color: ColorType;
         group?: SVGElement;
-        options: SVGAttributes;
-        renderer: Highcharts.Renderer;
+        options: TreeGridAxis.LabelIconOptionsObject;
+        renderer: SVGRenderer;
         show: boolean;
         xy: PositionObject;
     }
@@ -147,17 +161,17 @@ namespace TreeGridTick {
      */
     function renderLabelIcon(
         tick: TreeGridTick,
-        params: LabelIconOptionsObject
+        params: LabelIconObject
     ): void {
         const treeGrid = tick.treeGrid,
             isNew = !treeGrid.labelIcon,
             renderer = params.renderer,
             labelBox = params.xy,
             options = params.options,
-            width = options.width,
-            height = options.height,
+            width = options.width || 0,
+            height = options.height || 0,
             iconCenter = {
-                x: labelBox.x - (width / 2) - options.padding,
+                x: labelBox.x - (width / 2) - (options.padding || 0),
                 y: labelBox.y - (height / 2)
             },
             rotation = params.collapsed ? 90 : 180,
@@ -166,9 +180,9 @@ namespace TreeGridTick {
 
         if (!icon) {
             treeGrid.labelIcon = icon = renderer
-                .path(renderer.symbols[options.type](
-                    options.x,
-                    options.y,
+                .path(renderer.symbols[(options as any).type as SymbolKey](
+                    options.x || 0,
+                    options.y || 0,
                     width,
                     height
                 ))
@@ -177,21 +191,17 @@ namespace TreeGridTick {
         }
 
         // Set the new position, and show or hide
-        if (!shouldRender) {
-            icon.attr({ y: -9999 }); // #1338
-        }
+        icon.attr({ y: shouldRender ? 0 : -9999 }); // #14904, #1338
 
         // Presentational attributes
         if (!renderer.styledMode) {
             icon
                 .attr({
-                    'stroke-width': 1,
-                    'fill': pick(params.color, palette.neutralColor60)
-                })
-                .css({
                     cursor: 'pointer',
+                    'fill': pick(params.color, palette.neutralColor60),
+                    'stroke-width': 1,
                     stroke: options.lineColor,
-                    strokeWidth: options.lineWidth
+                    strokeWidth: options.lineWidth || 0
                 });
         }
 
@@ -254,7 +264,10 @@ namespace TreeGridTick {
             level = (node && node.depth) || 1;
             result.x += (
                 // Add space for symbols
-                ((symbolOptions.width) + (symbolOptions.padding * 2)) +
+                (
+                    (symbolOptions.width || 0) +
+                    ((symbolOptions.padding || 0) * 2)
+                ) +
                 // Apply indentation
                 ((level - 1) * indentation)
             );

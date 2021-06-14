@@ -81,7 +81,7 @@ function getChartTitle(chart: Highcharts.AccessibilityChart): string {
  * @param {Highcharts.Axis} axis
  * @return {string}
  */
-function getAxisDescription(axis: Highcharts.Axis): string {
+function getAxisDescription(axis: Axis): string {
     return axis && (
         axis.userOptions && axis.userOptions.accessibility &&
             axis.userOptions.accessibility.description ||
@@ -99,7 +99,7 @@ function getAxisDescription(axis: Highcharts.Axis): string {
  * @param {Highcharts.Axis} axis The axis to get range desc of.
  * @return {string} A string with the range description for the axis.
  */
-function getAxisRangeDescription(axis: Highcharts.Axis): string {
+function getAxisRangeDescription(axis: Axis): string {
     const axisOptions = axis.options || {};
 
     // Handle overridden range description
@@ -131,7 +131,7 @@ function getAxisRangeDescription(axis: Highcharts.Axis): string {
  * @param {Highcharts.Axis} axis
  * @return {string}
  */
-function getCategoryAxisRangeDesc(axis: Highcharts.Axis): string {
+function getCategoryAxisRangeDesc(axis: Axis): string {
     const chart = axis.chart;
 
     if (axis.dataMax && axis.dataMin) {
@@ -154,7 +154,7 @@ function getCategoryAxisRangeDesc(axis: Highcharts.Axis): string {
  * @param {Highcharts.Axis} axis
  * @return {string}
  */
-function getAxisTimeLengthDesc(axis: Highcharts.Axis): string {
+function getAxisTimeLengthDesc(axis: Axis): string {
     const chart = axis.chart;
     const range: Record<string, number> = {};
     let rangeUnit = 'Seconds';
@@ -192,10 +192,14 @@ function getAxisTimeLengthDesc(axis: Highcharts.Axis): string {
  * @param {Highcharts.Axis} axis
  * @return {string}
  */
-function getAxisFromToDescription(axis: Highcharts.Axis): string {
+function getAxisFromToDescription(axis: Axis): string {
     const chart = axis.chart;
-    const dateRangeFormat = chart.options?.accessibility
-        ?.screenReaderSection.axisRangeDateFormat || '';
+    const dateRangeFormat = (
+        chart.options &&
+        chart.options.accessibility &&
+        chart.options.accessibility.screenReaderSection.axisRangeDateFormat ||
+        ''
+    );
     const format = function (axisKey: string): string {
         return axis.dateTime ? chart.time.dateFormat(
             dateRangeFormat, (axis as any)[axisKey]
@@ -225,9 +229,13 @@ function getAxisFromToDescription(axis: Highcharts.Axis): string {
 function getSeriesFirstPointElement(
     series: Series
 ): (DOMElementType|undefined) {
-    if (series.points?.length) {
+    if (series.points && series.points.length) {
         const firstPointWithGraphic = find(series.points, (p: Point): boolean => !!p.graphic);
-        return firstPointWithGraphic?.graphic?.element;
+        return (
+            firstPointWithGraphic &&
+            firstPointWithGraphic.graphic &&
+            firstPointWithGraphic.graphic.element
+        );
     }
 }
 
@@ -243,7 +251,7 @@ function getSeriesFirstPointElement(
 function getSeriesA11yElement(
     series: Series
 ): (DOMElementType|undefined) {
-    var firstPointEl = getSeriesFirstPointElement(series);
+    const firstPointEl = getSeriesFirstPointElement(series);
     return (
         firstPointEl &&
         (firstPointEl.parentNode as any) || series.graph &&
@@ -288,7 +296,7 @@ function unhideChartElementFromAT(chart: Chart, element: DOMElementType): void {
  * @return {void}
  */
 function hideSeriesFromAT(series: Series): void {
-    var seriesEl = getSeriesA11yElement(series);
+    const seriesEl = getSeriesA11yElement(series);
 
     if (seriesEl) {
         seriesEl.setAttribute('aria-hidden', true);
@@ -330,7 +338,7 @@ function getPointFromXY(
     x: number,
     y: number
 ): (Point|undefined) {
-    var i = series.length,
+    let i = series.length,
         res;
 
     while (i--) {
@@ -374,8 +382,8 @@ function getRelativePointAxisPosition(axis: Axis, point: Point): number {
 function scrollToPoint(point: Point): void {
     const xAxis = point.series.xAxis;
     const yAxis = point.series.yAxis;
-    const axis = xAxis?.scrollbar ? xAxis : yAxis;
-    const scrollbar = axis?.scrollbar;
+    const axis = (xAxis && xAxis.scrollbar ? xAxis : yAxis);
+    const scrollbar = (axis && axis.scrollbar);
 
     if (scrollbar && defined(scrollbar.to) && defined(scrollbar.from)) {
         const range = scrollbar.to - scrollbar.from;

@@ -62,7 +62,7 @@ const {
     relativeLength
 } = U;
 
-var deg2rad = H.deg2rad;
+const deg2rad = H.deg2rad;
 
 /* eslint-disable valid-jsdoc */
 
@@ -83,7 +83,7 @@ const centeredSeriesMixin = H.CenteredSeriesMixin = {
      */
     getCenter: function (this: Highcharts.CenteredSeries): Array<number> {
 
-        var options = this.options,
+        let options = this.options,
             chart = this.chart,
             slicingRoom = 2 * (options.slicedOffset || 0),
             handleSlicingRoom,
@@ -160,7 +160,7 @@ const centeredSeriesMixin = H.CenteredSeriesMixin = {
         start?: number,
         end?: number
     ): Highcharts.RadianAngles {
-        var startAngle = isNumber(start) ? start : 0, // must be a number
+        const startAngle = isNumber(start) ? start : 0, // must be a number
             endAngle = (
                 (
                     isNumber(end) && // must be a number

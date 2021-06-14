@@ -24,8 +24,8 @@ import type {
     SeriesTypeRegistry
 } from './SeriesType';
 import H from '../Globals.js';
-import O from '../Options.js';
-const { defaultOptions } = O;
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import Point from './Point.js';
 import U from '../Utilities.js';
 const {
@@ -33,30 +33,6 @@ const {
     extendClass,
     merge
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal namespace
- * @private
- * @todo remove
- */
-declare global {
-    namespace Highcharts {
-        let seriesTypes: SeriesTypeRegistry;
-        function seriesType<T extends typeof Series>(
-            type: keyof SeriesTypeRegistry,
-            parent: (keyof SeriesTypeRegistry|undefined),
-            options: T['prototype']['options'],
-            props?: DeepPartial<T['prototype']>,
-            pointProps?: DeepPartial<T['prototype']['pointClass']['prototype']>
-        ): T;
-    }
-}
 
 /* *
  *
@@ -75,7 +51,11 @@ namespace SeriesRegistry {
     /** @internal */
     export let series: typeof Series;
 
-    export const seriesTypes = {} as SeriesTypeRegistry;
+    /**
+     * @internal
+     * @todo Move `Globals.seriesTypes` code to her.
+     */
+    export const seriesTypes = H.seriesTypes;
 
     /* *
      *
@@ -93,7 +73,7 @@ namespace SeriesRegistry {
         chart: Chart,
         options: DeepPartial<SeriesTypeOptions> = {}
     ): Series {
-        const optionsChart = chart.options.chart as Highcharts.ChartOptions,
+        const optionsChart = chart.options.chart,
             type = (
                 options.type ||
                 optionsChart.type ||
@@ -210,8 +190,7 @@ namespace SeriesRegistry {
  *
  * */
 
-H.seriesType = SeriesRegistry.seriesType;
-H.seriesTypes = SeriesRegistry.seriesTypes;
+(H as AnyRecord).seriesType = SeriesRegistry.seriesType;
 
 /* *
  *

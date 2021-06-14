@@ -50,7 +50,7 @@ namespace TreemapUtilities {
     export function eachObject(
         this: any,
         list: any,
-        func: Highcharts.ObjectEachCallbackFunction<any, unknown>,
+        func: U.ObjectEachCallback<any, unknown>,
         context?: unknown
     ): void {
         context = context || this;
@@ -69,7 +69,7 @@ namespace TreemapUtilities {
         func: TreemapRecursiveCallbackFunction<TContext, TItem>,
         context: TContext = this
     ): void {
-        var next: any;
+        let next: any;
 
         next = func.call(context as any, item);
         if (next !== false) {

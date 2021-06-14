@@ -1,7 +1,7 @@
 Boost module
 ============
 
-The Boost module is a stripped down renderer and a set of data handling modifications for Highcharts. It bypasses some of the standard Highcahrts features, applies some trade-offs and focuses on handling and rendering as many data points as possible as quickly as possible. It renders the data using WebBL on a canvas inside the chart's SVG structure.
+The Boost module is a stripped down renderer and a set of data handling modifications for Highcharts. It bypasses some of the standard Highcahrts features, applies some trade-offs and focuses on handling and rendering as many data points as possible as quickly as possible. It renders the data using WebGL on a canvas inside the chart's SVG structure.
 
 This document will guide you through your first steps with the Highcharts boost module.
 
@@ -64,7 +64,7 @@ The boost module contains a WebGL renderer that replaces parts of the SVG render
 * The area of area series is drawn as 1px columns. This works well with the intended way of using the boost module, which is that it kicks in when the number of data points crosses the `boostThreshold`. But if the boost threshold is set too low, an area chart will look like a column chart. This is a limitation that we are [considering fixing](https://github.com/highcharts/highcharts/issues/14207). In addition to this, the _line_ itself is not rendered in area series.
 * Marker shapes, apart from circles, are not supported
 * Dash style for lines is not supported
-* Zones, stacking, and negative colors are not supported.
+* Stacking, and negative colors are not supported.
 * Line width is limited to 1px.
 * Point click handlers are not supported in boost mode.
 

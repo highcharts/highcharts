@@ -19,14 +19,12 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
+
 import DataModifier from './DataModifier.js';
 import DataJSON from './../DataJSON.js';
 import DataTable from './../DataTable.js';
 import U from './../../Core/Utilities.js';
-const {
-    merge
-} = U;
-import DataTableRow from './../DataTableRow.js';
+const { merge } = U;
 
 /* *
  *
@@ -34,6 +32,9 @@ import DataTableRow from './../DataTableRow.js';
  *
  * */
 
+/**
+ * @private
+ */
 class SeriesPointsModifier extends DataModifier {
 
     /* *
@@ -104,8 +105,8 @@ class SeriesPointsModifier extends DataModifier {
      * */
 
     /**
-     * Create new DataTable with the same rows and add alternative
-     * column names (alias) depending on mapping option.
+     * Renames columns to alternative column names (alias) depending on mapping
+     * option.
      *
      * @param {DataTable} table
      * Table to modify.
@@ -114,57 +115,130 @@ class SeriesPointsModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Table as a reference.
      */
-    public execute(
+    public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
         const modifier = this,
             aliasMap = modifier.options.aliasMap || {},
-            aliasKeys = Object.keys(aliasMap),
-            aliasValues = [],
-            newTable = new DataTable();
+            aliases = Object.keys(aliasMap);
 
-        let row: (DataTableRow|undefined),
-            newCells: Record<string, DataTableRow.CellType>,
-            cellName: string,
-            cellAliasOrName: string,
-            cellNames: Array<string>,
-            aliasIndex: number;
+        this.emit({ type: 'modify', detail: eventDetail, table });
 
-        this.emit({ type: 'execute', detail: eventDetail, table });
-
-        for (let k = 0, kEnd = aliasKeys.length; k < kEnd; ++k) {
-            aliasValues.push(aliasMap[aliasKeys[k]]);
+        for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
+            alias = aliases[i];
+            table.renameColumn(aliasMap[alias], alias);
         }
 
-        for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
-            row = table.getRow(i);
+        this.emit({ type: 'afterModify', detail: eventDetail, table });
 
-            if (row) {
-                newCells = {};
-                cellNames = row.getCellNames();
+        return table;
+    }
 
-                for (let j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
-                    cellName = cellNames[j];
-                    aliasIndex = aliasValues.indexOf(cellName);
-                    cellAliasOrName = (
-                        aliasIndex >= 0 ?
-                            aliasKeys[aliasIndex] :
-                            cellName
-                    );
 
-                    newCells[cellAliasOrName] = row.getCell(cellName);
-                }
+    /**
+     * Applies partial modifications of a cell change to the property `modified`
+     * of the given modified table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {string} columnName
+     * Column name of changed cell.
+     *
+     * @param {number|undefined} rowIndex
+     * Row index of changed cell.
+     *
+     * @param {Highcharts.DataTableCellType} cellValue
+     * Changed cell value.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Modified table as a reference.
+     */
+    public modifyCell(
+        table: DataTable,
+        columnName: string,
+        rowIndex: number,
+        cellValue: DataTable.CellType,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+        table.modified.setColumns(
+            this.modify(table.clone()).getColumns(),
+            void 0,
+            eventDetail
+        );
+        return table;
+    }
 
-                newTable.insertRow(new DataTableRow(newCells));
-            }
-        }
+    /**
+     * Applies partial modifications of column changes to the property
+     * `modified` of the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {Highcharts.DataTableColumnCollection} columns
+     * Changed columns as a collection, where the keys are the column names.
+     *
+     * @param {number} [rowIndex=0]
+     * Index of the first changed row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Modifier table as a reference.
+     */
+    public modifyColumns(
+        table: DataTable,
+        columns: DataTable.ColumnCollection,
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+        table.modified.setColumns(
+            this.modify(table.clone()).getColumns(),
+            void 0,
+            eventDetail
+        );
+        return table;
+    }
 
-        this.emit({ type: 'afterExecute', detail: eventDetail, table: newTable });
-
-        return newTable;
+    /**
+     * Applies partial modifications of row changes to the property `modified`
+     * of the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {Array<(Highcharts.DataTableRow|Highcharts.DataTableRowObject)>} rows
+     * Changed rows.
+     *
+     * @param {number} [rowIndex]
+     * Index of the first changed row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Modified table as a reference.
+     */
+    public modifyRows(
+        table: DataTable,
+        rows: Array<(DataTable.Row|DataTable.RowObject)>,
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
+        table.modified.setColumns(
+            this.modify(table.clone()).getColumns(),
+            void 0,
+            eventDetail
+        );
+        return table;
     }
 
     /**

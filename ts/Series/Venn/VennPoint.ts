@@ -54,7 +54,7 @@ class VennPoint extends ScatterSeries.prototype.pointClass implements DrawPointM
     }
 
     public shouldDraw(): boolean {
-        var point = this;
+        const point = this;
 
         // Only draw points with single sets.
         return !!point.shapeArgs;
@@ -71,10 +71,10 @@ class VennPoint extends ScatterSeries.prototype.pointClass implements DrawPointM
  * */
 
 interface VennPoint {
-    draw: typeof DrawPointMixin.draw;
+    draw: typeof DrawPointMixin.drawPoint;
 }
 extend(VennPoint.prototype, {
-    draw: DrawPointMixin.draw
+    draw: DrawPointMixin.drawPoint
 });
 
 /* *

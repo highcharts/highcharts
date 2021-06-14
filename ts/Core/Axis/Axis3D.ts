@@ -12,11 +12,22 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Axis from './Axis';
+import type AxisOptions from './AxisOptions';
+import type { OptionsPosition3dValue } from '../Options';
 import type Point from '../Series/Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type VMLAxis3D from '../../Extensions/Oldie/VMLAxis3D';
+
 import H from '../Globals.js';
+const { deg2rad } = H;
 import Math3D from '../../Extensions/Math3D.js';
 const {
     perspective,
@@ -33,6 +44,35 @@ const {
     wrap
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisComposition' {
+    interface AxisComposition {
+        axis3D?: Axis3D['axis3D'];
+    }
+}
+
+declare module './AxisOptions' {
+    interface AxisLabelOptions {
+        position3d?: OptionsPosition3dValue;
+        skew3d?: boolean;
+    }
+    interface AxisTitleOptions {
+        position3d?: ('chart'|'flap'|'offset'|'ortho'|null);
+        skew3d?: (boolean|null);
+    }
+}
+
+declare module './AxisType' {
+    interface AxisTypeRegistry {
+        Axis3D: Axis3D;
+    }
+}
+
 declare module '../Renderer/Position3DObject' {
     interface Position3DObject {
         matrix?: Array<number>;
@@ -48,36 +88,11 @@ declare module '../Series/PointLike' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface XAxisLabelsOptions {
-            position3d?: OptionsPosition3dValue;
-            skew3d?: boolean;
-        }
-        interface XAxisTitleOptions {
-            position3d?: ('chart'|'flap'|'offset'|'ortho'|null);
-            skew3d?: (boolean|null);
-        }
-    }
-}
-
-/**
- * @private
- */
-declare module './Types' {
-    interface AxisComposition {
-        axis3D?: Axis3D['axis3D'];
-    }
-    interface AxisTypeRegistry {
-        Axis3D: Axis3D;
-    }
-}
-
-var deg2rad = H.deg2rad;
+/* *
+ *
+ *  Classes
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 
@@ -143,28 +158,29 @@ class Axis3DAdditions {
             return pos;
         }
 
-        var alpha = deg2rad * (chart.options.chart as any).options3d.alpha,
-            beta = deg2rad * (chart.options.chart as any).options3d.beta,
+        const alpha = deg2rad * (chart.options.chart.options3d as any).alpha,
+            beta = deg2rad * (chart.options.chart.options3d as any).beta,
             positionMode = pick(
                 isTitle && (axis.options.title as any).position3d,
-                (axis.options.labels as any).position3d
+                axis.options.labels.position3d
             ),
             skew = pick(
                 isTitle && (axis.options.title as any).skew3d,
-                (axis.options.labels as any).skew3d
+                axis.options.labels.skew3d
             ),
             frame = chart.chart3d.frame3d,
             plotLeft = chart.plotLeft,
             plotRight = chart.plotWidth + plotLeft,
             plotTop = chart.plotTop,
-            plotBottom = chart.plotHeight + plotTop,
-            // Indicates that we are labelling an X or Z axis on the "back" of
-            // the chart
-            reverseFlap = false,
-            offsetX = 0,
+            plotBottom = chart.plotHeight + plotTop;
+
+        let offsetX = 0,
             offsetY = 0,
             vecX: Position3DObject,
-            vecY = { x: 0, y: 1, z: 0 };
+            vecY = { x: 0, y: 1, z: 0 },
+            // Indicates that we are labelling an X or Z axis on the "back" of
+            // the chart
+            reverseFlap = false;
 
         pos = axis.axis3D.swapZ({ x: pos.x, y: pos.y, z: 0 });
 
@@ -239,8 +255,8 @@ class Axis3DAdditions {
             if (!axis.horiz) { // Y Axis
                 vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
             } else { // X and Z Axis
-                var sin = Math.sin(alpha);
-                var cos = Math.cos(alpha);
+                let sin = Math.sin(alpha);
+                const cos = Math.cos(alpha);
 
                 if (axis.opposite) {
                     sin = -sin;
@@ -255,18 +271,18 @@ class Axis3DAdditions {
             if (!axis.horiz) { // Y Axis
                 vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
             } else { // X and Z Axis
-                var sina = Math.sin(alpha);
-                var cosa = Math.cos(alpha);
-                var sinb = Math.sin(beta);
-                var cosb = Math.cos(beta);
-                var vecZ = { x: sinb * cosa, y: -sina, z: -cosa * cosb };
+                const sina = Math.sin(alpha);
+                const cosa = Math.cos(alpha);
+                const sinb = Math.sin(beta);
+                const cosb = Math.cos(beta);
+                const vecZ = { x: sinb * cosa, y: -sina, z: -cosa * cosb };
 
                 vecY = {
                     x: vecX.y * vecZ.z - vecX.z * vecZ.y,
                     y: vecX.z * vecZ.x - vecX.x * vecZ.z,
                     z: vecX.x * vecZ.y - vecX.y * vecZ.x
                 };
-                var scale = 1 / Math.sqrt(
+                let scale = 1 / Math.sqrt(
                     vecY.x * vecY.x + vecY.y * vecY.y + vecY.z * vecY.z
                 );
 
@@ -292,11 +308,11 @@ class Axis3DAdditions {
         pos.y += offsetX * vecX.y + offsetY * vecY.y;
         pos.z += offsetX * vecX.z + offsetY * vecY.z;
 
-        var projected = perspective([pos], axis.chart)[0];
+        const projected = perspective([pos], axis.chart)[0];
 
         if (skew) {
             // Check if the label text would be mirrored
-            var isMirrored = shapeArea(perspective([
+            const isMirrored = shapeArea(perspective([
                 pos,
                 { x: pos.x + vecX.x, y: pos.y + vecX.y, z: pos.z + vecX.z },
                 { x: pos.x + vecY.x, y: pos.y + vecY.y, z: pos.z + vecY.z }
@@ -306,7 +322,7 @@ class Axis3DAdditions {
                 vecX = { x: -vecX.x, y: -vecX.y, z: -vecX.z };
             }
 
-            var pointsProjected = perspective([
+            const pointsProjected = perspective([
                 { x: pos.x, y: pos.y, z: pos.z },
                 { x: pos.x + vecX.x, y: pos.y + vecX.y, z: pos.z + vecX.z },
                 { x: pos.x + vecY.x, y: pos.y + vecY.y, z: pos.z + vecY.z }
@@ -339,7 +355,7 @@ class Axis3DAdditions {
         const axis = this.axis;
 
         if (axis.isZAxis) {
-            var plotLeft = insidePlotArea ? 0 : axis.chart.plotLeft;
+            const plotLeft = insidePlotArea ? 0 : axis.chart.plotLeft;
 
             return {
                 x: plotLeft + p.z,
@@ -368,7 +384,7 @@ class Axis3D {
     /**
      * @optionparent xAxis
      */
-    public static defaultOptions: Highcharts.AxisOptions = {
+    public static defaultOptions: DeepPartial<AxisOptions> = {
         labels: {
             /**
              * Defines how the labels are be repositioned according to the 3D
@@ -493,7 +509,6 @@ class Axis3D {
         addEvent(AxisClass, 'init', Axis3D.onInit);
         addEvent(AxisClass, 'afterSetOptions', Axis3D.onAfterSetOptions);
         addEvent(AxisClass, 'drawCrosshair', Axis3D.onDrawCrosshair);
-        addEvent(AxisClass, 'destroy', Axis3D.onDestroy);
 
         const axisProto = AxisClass.prototype as Axis3D;
 
@@ -519,19 +534,6 @@ class Axis3D {
             options.tickWidth = pick(options.tickWidth, 0);
             options.gridLineWidth = pick(options.gridLineWidth, 1);
         }
-    }
-
-    /**
-     * @private
-     */
-    public static onDestroy(this: Axis): void {
-        ['backFrame', 'bottomFrame', 'sideFrame'].forEach(function (
-            prop: string
-        ): void {
-            if ((this as any)[prop]) {
-                (this as any)[prop] = (this as any)[prop].destroy();
-            }
-        }, this);
     }
 
     /**
@@ -599,7 +601,7 @@ class Axis3D {
             return proceed.apply(this, [].slice.call(arguments, 1));
         }
 
-        var args = arguments,
+        const args = arguments,
             from = args[1],
             to = args[2],
             path: SVGPath = [],
@@ -607,7 +609,7 @@ class Axis3D {
             toPath = this.getPlotLinePath({ value: to });
 
         if (fromPath && toPath) {
-            for (var i = 0; i < fromPath.length; i += 2) {
+            for (let i = 0; i < fromPath.length; i += 2) {
                 const fromStartSeg = fromPath[i],
                     fromEndSeg = fromPath[i + 1],
                     toStartSeg = toPath[i],
@@ -640,13 +642,13 @@ class Axis3D {
         this: Axis3D,
         proceed: Function
     ): SVGPath {
-        const axis = this;
-        const axis3D = axis.axis3D;
-        const chart = axis.chart;
-        const path: SVGPath = proceed.apply(
-            axis,
-            [].slice.call(arguments, 1)
-        );
+        const axis = this,
+            axis3D = axis.axis3D,
+            chart = axis.chart,
+            path: SVGPath = proceed.apply(
+                axis,
+                [].slice.call(arguments, 1)
+            );
 
         // Do not do this if the chart is not 3D
         if (
@@ -661,12 +663,13 @@ class Axis3D {
             return path;
         }
 
-        var options3d = (chart.options.chart as any).options3d,
+        const options3d = chart.options.chart.options3d as any,
             d = axis.isZAxis ? chart.plotWidth : options3d.depth,
             frame = chart.chart3d.frame3d,
             startSegment = path[0],
-            endSegment = path[1],
-            pArr,
+            endSegment = path[1];
+
+        let pArr,
             pathSegments: Array<Position3DObject> = [];
 
         if (startSegment[0] === 'M' && endSegment[0] === 'L') {
@@ -734,10 +737,10 @@ class Axis3D {
         proceed: Function,
         tick: Tick
     ): number {
-        const axis = this;
-        const chart = axis.chart;
-        const ticks = axis.ticks;
-        const gridGroup = axis.gridGroup;
+        const axis = this,
+            chart = axis.chart,
+            ticks = axis.ticks,
+            gridGroup = axis.gridGroup;
 
         if (
             axis.categories &&
@@ -747,22 +750,22 @@ class Axis3D {
             tick &&
             tick.label
         ) {
-            var firstGridLine = (gridGroup.element.childNodes[0] as any).getBBox(),
+            const firstGridLine = (gridGroup.element.childNodes[0] as any).getBBox(),
                 frame3DLeft = chart.frameShapes.left.getBBox(),
-                options3d = (chart.options.chart as any).options3d,
+                options3d = chart.options.chart.options3d as any,
                 origin = {
                     x: chart.plotWidth / 2,
                     y: chart.plotHeight / 2,
                     z: options3d.depth / 2,
                     vd: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0)
                 },
-                labelPos,
-                prevLabelPos,
-                nextLabelPos,
-                slotWidth,
                 tickId = tick.pos,
                 prevTick = ticks[tickId - 1],
                 nextTick = ticks[tickId + 1];
+
+            let labelPos,
+                prevLabelPos,
+                nextLabelPos;
 
             // Check whether the tick is not the first one and previous tick
             // exists, then calculate position of previous label.
@@ -795,13 +798,12 @@ class Axis3D {
             // the second label. If there is no next label position calculated,
             // return the difference between the first grid line and left 3d
             // frame.
-            slotWidth = Math.abs(
+            return Math.abs(
                 prevLabelPos ?
                     labelPos.x - prevLabelPos.x : nextLabelPos ?
                         nextLabelPos.x - labelPos.x :
                         firstGridLine.x - frame3DLeft.x
             );
-            return slotWidth;
         }
         return proceed.apply(axis, [].slice.call(arguments, 1));
     }
@@ -813,7 +815,7 @@ class Axis3D {
         this: Axis3D,
         proceed: Function
     ): Position3DObject {
-        var pos: Position3DObject =
+        const pos: Position3DObject =
             proceed.apply(this, [].slice.call(arguments, 1));
 
         return this.axis3D ?
@@ -830,5 +832,11 @@ class Axis3D {
 interface Axis3D extends Axis {
     axis3D: Axis3DAdditions;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Axis3D;

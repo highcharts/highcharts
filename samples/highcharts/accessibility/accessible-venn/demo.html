@@ -1,0 +1,19 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/venn.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+<div id="outer">
+    <div id="overlay">
+        <button aria-expanded="false" class="btn btn-overlay" id="removeOverlay">Try our Venn diagram</button>
+    </div>
+    <div id="before" tabindex="0"></div>
+    <figure class="highcharts-figure" id="venn-figure" aria-hidden="true">
+        <div id="container"></div>
+        <div id="dyncaption" aria-hidden="true">
+            <div class="caption-arrow"></div>
+            <div id="caption-content"></div>
+        </div>
+    </figure>
+    <p id="after" tabindex="0" aria-live="polite" class="visually-hidden"></p>
+</div>

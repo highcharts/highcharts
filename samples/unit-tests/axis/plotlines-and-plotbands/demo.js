@@ -8,6 +8,7 @@ QUnit.test('Missing plotband when range is small (#4964)', function (assert) {
                 {
                     color: '#BDBDBD',
                     from: 1453101708000,
+                    id: 'plotband-1',
                     to: 1453109508000
                 },
                 {
@@ -26,6 +27,11 @@ QUnit.test('Missing plotband when range is small (#4964)', function (assert) {
         true,
         'Second plotband is visible'
     );
+
+    // #15639
+    chart.xAxis[0].destroy();
+    chart.xAxis[0].removePlotBand('plotband-1');
+
 });
 
 QUnit.test(
@@ -752,6 +758,13 @@ QUnit.test('Dynamically added plotbands', function (assert) {
         chart.xAxis[0].plotLinesAndBands.length,
         2,
         '#14053: plotBands from before update with redraw=false should also be added'
+    );
+
+    chart.series[0].hide();
+
+    assert.ok(
+        chart.xAxis[0].plotLinesAndBands[0].svgElem.pathArray.isFlat,
+        '#15434: plotBand should be hidden series is hidden'
     );
 });
 

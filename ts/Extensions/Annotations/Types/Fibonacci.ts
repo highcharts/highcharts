@@ -7,55 +7,26 @@
 'use strict';
 
 import type ColorString from '../../../Core/Color/ColorString';
+import type MockPointOptions from '../MockPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import Annotation from '../Annotations.js';
+import CrookedLine from './CrookedLine';
 import MockPoint from '../MockPoint.js';
 import Tunnel from './Tunnel.js';
 import U from '../../../Core/Utilities.js';
+import palette from '../../../Core/Color/Palette.js';
 const { merge } = U;
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class AnnotationFibonacci extends Tunnel {
-            public static levels: Array<number>;
-            public options: AnnotationFibonacciOptionsObject;
-            public endRetracements: Array<AnnotationMockPoint>;
-            public startRetracements: Array<AnnotationMockPoint>;
-            public addLabels(): void;
-            public addShapes(): void;
-            public linkPoints: () => undefined;
-            public linkRetracementPoint(
-                pointIndex: number,
-                x: number,
-                y: number,
-                retracements: Array<AnnotationMockPoint>
-            ): void;
-            public linkRetracementsPoints(): void;
-        }
-        interface AnnotationFibonacciOptionsObject extends AnnotationTunnelOptionsObject {
-            typeOptions: AnnotationFibonacciTypeOptionsObject;
-        }
-        interface AnnotationFibonacciTypeOptionsObject extends AnnotationTunnelTypeOptionsObject {
-            backgroundColors: Array<ColorString>;
-            labels: Array<AnnotationCrookedLineOptionsObject['labelOptions']>;
-            lineColor: ColorString;
-            lineColors: Array<ColorString>;
-        }
-    }
-}
-
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-var createPathDGenerator = function (retracementIndex: number, isBackground?: boolean): Function {
+const createPathDGenerator = function (retracementIndex: number, isBackground?: boolean): Function {
     return function (this: Highcharts.AnnotationControllable): SVGPath {
-        var annotation = this.annotation as Highcharts.AnnotationFibonacci,
-            leftTop = this.anchor(
+        const annotation = this.annotation as Fibonacci;
+        if (!annotation.startRetracements || !annotation.endRetracements) {
+            return [];
+        }
+        let leftTop = this.anchor(
                 annotation.startRetracements[retracementIndex]
             ).absolutePosition,
             rightTop = this.anchor(
@@ -103,7 +74,7 @@ class Fibonacci extends Tunnel {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationFibonacciOptionsObject) {
+    public constructor(chart: Highcharts.AnnotationChart, options: Fibonacci.Options) {
         super(chart, options);
     }
 
@@ -113,8 +84,8 @@ class Fibonacci extends Tunnel {
      *
      * */
 
-    public endRetracements?: Array<Highcharts.AnnotationMockPoint>;
-    public startRetracements?: Array<Highcharts.AnnotationMockPoint>;
+    public endRetracements?: Array<MockPoint>;
+    public startRetracements?: Array<MockPoint>;
 
     /* *
      *
@@ -131,14 +102,14 @@ class Fibonacci extends Tunnel {
     }
 
     public linkRetracementsPoints(): void {
-        var points = this.points,
+        const points = this.points,
             startDiff = (points[0].y as any) - (points[3].y as any),
             endDiff = (points[1].y as any) - (points[2].y as any),
             startX: number = points[0].x as any,
             endX: number = points[1].x as any;
 
         Fibonacci.levels.forEach(function (level: number, i: number): void {
-            var startRetracement = (points[0].y as any) - startDiff * level,
+            const startRetracement = (points[0].y as any) - startDiff * level,
                 endRetracement = (points[1].y as any) - endDiff * level;
 
             this.startRetracements = this.startRetracements || [];
@@ -164,9 +135,9 @@ class Fibonacci extends Tunnel {
         pointIndex: number,
         x: number,
         y: number,
-        retracements: Array<Highcharts.AnnotationMockPoint>
+        retracements: Array<MockPoint>
     ): void {
-        var point = retracements[pointIndex],
+        const point = retracements[pointIndex],
             typeOptions = this.options.typeOptions;
 
         if (!point) {
@@ -189,16 +160,23 @@ class Fibonacci extends Tunnel {
     }
 
     public addShapes(): void {
-        Fibonacci.levels.forEach(function (this: Highcharts.AnnotationFibonacci, _level: number, i: number): void {
+        Fibonacci.levels.forEach(function (this: Fibonacci, _level: number, i: number): void {
+            const {
+                backgroundColors,
+                lineColor,
+                lineColors
+            } = this.options.typeOptions;
+
             this.initShape({
                 type: 'path',
-                d: createPathDGenerator(i)
+                d: createPathDGenerator(i),
+                stroke: lineColors[i] || lineColor
             }, false as any);
 
             if (i > 0) {
                 (this.initShape as any)({
                     type: 'path',
-                    fill: this.options.typeOptions.backgroundColors[i - 1],
+                    fill: backgroundColors[i - 1],
                     strokeWidth: 0,
                     d: createPathDGenerator(i, true)
                 });
@@ -207,12 +185,12 @@ class Fibonacci extends Tunnel {
     }
 
     public addLabels(): void {
-        Fibonacci.levels.forEach(function (this: Highcharts.AnnotationFibonacci, level: number, i: number): void {
-            var options = this.options.typeOptions,
+        Fibonacci.levels.forEach(function (this: Fibonacci, level: number, i: number): void {
+            const options = this.options.typeOptions,
                 label = (this.initLabel as any)(
                     merge(options.labels[i], {
-                        point: function (target: any): Highcharts.AnnotationMockPointOptionsObject {
-                            var point = MockPoint.pointToOptions(
+                        point: function (target: any): MockPointOptions {
+                            const point = MockPoint.pointToOptions(
                                 target.annotation.startRetracements[i]
                             );
 
@@ -276,7 +254,7 @@ Fibonacci.prototype.defaultOptions = merge(
             /**
              * The color of line.
              */
-            lineColor: 'grey',
+            lineColor: palette.neutralColor40,
 
             /**
              * An array of colors for the lines.
@@ -312,4 +290,25 @@ Fibonacci.prototype.defaultOptions = merge(
 
 Annotation.types.fibonacci = Fibonacci;
 
+interface Fibonacci {
+    options: Fibonacci.Options;
+}
+
+namespace Fibonacci {
+    export interface Options extends Tunnel.Options {
+        typeOptions: TypeOptions;
+    }
+    export interface TypeOptions extends Tunnel.TypeOptions {
+        backgroundColors: Array<ColorString>;
+        labels: Array<CrookedLine.Options['labelOptions']>;
+        lineColor: ColorString;
+        lineColors: Array<ColorString>;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default Fibonacci;

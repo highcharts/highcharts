@@ -60,6 +60,11 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
         'Annotation options are correctly added to chart options'
     );
 
+    chart.annotations[0].labels[0].update({});
+    chart.annotations[0].labels[0].translate(0, 0);
+
+    assert.ok('#15524: Translating updated label should not throw');
+
     chart.removeAnnotation('1');
 
     assert.strictEqual(
@@ -173,6 +178,36 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
         chart.annotations.length,
         2,
         'Annotation with id=number, should be removed without errors (#10648)'
+    );
+
+    const fib = chart.addAnnotation({
+        type: 'fibonacci',
+        typeOptions: {
+            lineColor: 'blue',
+            lineColors: ['blue', 'green', 'red'],
+            points: [{}, {}]
+        }
+    });
+
+    assert.strictEqual(
+        fib.shapes[0].graphic.stroke,
+        'blue',
+        '#15424: First line should be blue (lineColors[0])'
+    );
+    assert.strictEqual(
+        fib.shapes[3].graphic.stroke,
+        'red',
+        '#15424: Third line should be red (lineColors[2])'
+    );
+    assert.strictEqual(
+        fib.shapes[5].graphic.stroke,
+        'blue',
+        '#15424: Fourth line should be blue (lineColor)'
+    );
+
+    assert.ok(
+        thirdAnnotation.labels[0].graphic.hasClass('highcharts-no-tooltip'),
+        '#14403: Annotation label should have no-tooltip class'
     );
 });
 

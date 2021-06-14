@@ -227,19 +227,23 @@ export function testStockIndicators() {
         'bb',
         'cci',
         'cmf',
+        'dmi',
         'dpo',
         'ema',
         'chaikin',
+        'cmo',
         'dema',
         'tema',
         'trix',
         'apo',
         'ikh',
         'keltnerchannels',
+        'klinger',
         'macd',
         'mfi',
         'momentum',
         'natr',
+        'obv',
         'pivotpoints',
         'ppo',
         'pc',
@@ -260,7 +264,8 @@ export function testStockIndicators() {
         'linearRegressionIntercept',
         'linearRegressionAngle',
         'abands',
-        'trendline'
+        'trendline',
+        'disparityindex'
     ];
 
     deepStrictEqual(

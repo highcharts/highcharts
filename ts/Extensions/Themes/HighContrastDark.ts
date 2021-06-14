@@ -18,10 +18,10 @@
 
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
-const { setOptions } = U;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 
-var textBright = '#F0F0F3';
+const textBright = '#F0F0F3';
 
 H.theme = {
     colors: [

@@ -2058,13 +2058,12 @@ QUnit.test(
     }
 );
 
-// Issue #14769
 QUnit.test(
-    "Formatter should not be called when labels don't exist (#14769)",
+    'Format and formatter',
     assert => {
         var results = [];
 
-        Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
             chart: {
                 height: 150,
                 width: 500
@@ -2078,14 +2077,30 @@ QUnit.test(
                 }
             },
 
+            xAxis: {
+                labels: {
+                    format: 'Dummy, I should not be called',
+                    formatter: ctx => ctx.number
+                }
+            },
+
             series: [{
                 data: [null, null]
             }]
         });
 
+        // Issue #14769
         assert.deepEqual(
             results,
             [],
-            "No values"
+            'Formatter should not be called when labels don\'t exist (#14769)'
+        );
+
+        assert.strictEqual(
+            chart.container.querySelector('.highcharts-xaxis-labels')
+                .textContent
+                .indexOf('Dummy'),
+            -1,
+            'label.formatter should take precedence over label.format'
         );
     });

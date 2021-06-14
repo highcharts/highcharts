@@ -10,6 +10,15 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type TickPositionsArray from './TickPositionsArray';
+import type Time from '../Time.js';
+
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
@@ -18,6 +27,25 @@ const {
     normalizeTickInterval,
     timeUnits
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisComposition' {
+    interface AxisComposition {
+        dateTime?: DateTimeAxis['dateTime'];
+    }
+}
+
+declare module './AxisOptions' {
+    interface AxisOptions {
+        dateTimeLabelFormats?: Highcharts.XAxisDateTimeLabelFormatsOptions;
+        units?: Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>;
+    }
+}
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
@@ -33,10 +61,11 @@ declare module '../Series/SeriesOptions' {
 declare global {
     namespace Highcharts {
         type DateTimeLabelFormatsKey = keyof XAxisDateTimeLabelFormatsOptions;
-        interface DateTimeAxisNormalizedObject extends TimeNormalizedObject {
+        interface DateTimeAxisNormalizedObject extends Time.TimeNormalizedObject {
             unitName: DateTimeLabelFormatsKey;
         }
         interface DateTimeLabelFormatOptionsObject {
+            list?: Array<string>;
             main?: string;
             range?: boolean;
         }
@@ -50,20 +79,13 @@ declare global {
             week?: (string|DateTimeLabelFormatOptionsObject);
             year?: (string|DateTimeLabelFormatOptionsObject);
         }
-        interface XAxisOptions {
-            dateTimeLabelFormats?: XAxisDateTimeLabelFormatsOptions;
-            units?: Array<[DateTimeLabelFormatsKey, (Array<number>|null)]>;
-        }
     }
 }
 
 /**
  * @private
  */
-declare module './Types' {
-    interface AxisComposition {
-        dateTime?: DateTimeAxis['dateTime'];
-    }
+declare module './AxisType' {
     interface AxisTypeRegistry {
         DateTimeAxis: DateTimeAxis;
     }
@@ -119,7 +141,7 @@ class DateTimeAxisAdditions {
         tickInterval: number,
         unitsOption?: Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>
     ): Highcharts.DateTimeAxisNormalizedObject {
-        var units = unitsOption || [[
+        let units = unitsOption || [[
                 'millisecond', // unit name
                 [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
             ], [
@@ -161,7 +183,7 @@ class DateTimeAxisAdditions {
             if (units[i + 1]) {
                 // lessThan is in the middle between the highest multiple and
                 // the next unit.
-                var lessThan = (
+                const lessThan = (
                     interval *
                     (multiples as any)[(multiples as any).length - 1] +
                     timeUnits[units[i + 1][0]]
@@ -251,7 +273,7 @@ class DateTimeAxis {
          *
          * @return {Highcharts.AxisTickPositionsArray}
          */
-        axisProto.getTimeTicks = function (): Highcharts.AxisTickPositionsArray {
+        axisProto.getTimeTicks = function (): TickPositionsArray {
             return this.chart.time.getTimeTicks.apply(
                 this.chart.time, arguments as any
             );

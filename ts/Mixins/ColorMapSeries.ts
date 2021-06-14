@@ -12,7 +12,6 @@
 
 import type ScatterPoint from '../Series/Scatter/ScatterPoint';
 import type ScatterSeries from '../Series/Scatter/ScatterSeries';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
 
@@ -30,15 +29,15 @@ declare global {
     namespace Highcharts {
         interface ColorMapPoint extends ScatterPoint {
             dataLabelOnNull: boolean;
+            moveToTopOnHover?: boolean;
             series: ColorMapSeries;
             value: (number|null);
             isValid(): boolean;
-            setState(state?: StatesOptionsKey): void;
         }
         interface ColorMapPointMixin {
             dataLabelOnNull: ColorMapPoint['dataLabelOnNull'];
+            moveToTopOnHover: ColorMapPoint['moveToTopOnHover'];
             isValid: ColorMapPoint['isValid'];
-            setState: ColorMapPoint['setState'];
         }
         interface ColorMapSeries extends ScatterSeries {
             colorProp?: string;
@@ -67,11 +66,24 @@ declare global {
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
-    defined
+    defined,
+    addEvent
 } = U;
 
-var noop = H.noop,
+const noop = H.noop,
     seriesTypes = H.seriesTypes;
+
+
+// Move points to the top of the z-index order when hovered
+addEvent(Point, 'afterSetState', function (e?: Record<string, any>): void {
+    const point = this; // eslint-disable-line no-invalid-this
+    if ((point as Highcharts.ColorMapPoint).moveToTopOnHover && point.graphic) {
+        point.graphic.attr({
+            zIndex: e && e.state === 'hover' ? 1 : 0
+        });
+    }
+});
+
 
 /**
  * Mixin for maps and heatmaps
@@ -81,6 +93,8 @@ var noop = H.noop,
  */
 const colorMapPointMixin = {
     dataLabelOnNull: true,
+    moveToTopOnHover: true,
+
     /* eslint-disable valid-jsdoc */
     /**
      * Color points have a value option that determines whether or not it is
@@ -94,21 +108,6 @@ const colorMapPointMixin = {
             this.value !== Infinity &&
             this.value !== -Infinity
         );
-    },
-
-    /**
-     * @private
-     */
-    setState: function (
-        this: Highcharts.ColorMapPoint,
-        state?: StatesOptionsKey
-    ): void {
-        Point.prototype.setState.call(this, state);
-        if (this.graphic) {
-            this.graphic.attr({
-                zIndex: state === 'hover' ? 1 : 0
-            });
-        }
     }
 
     /* eslint-enable valid-jsdoc */
@@ -140,10 +139,13 @@ const colorMapSeriesMixin = {
         this: Highcharts.ColorMapSeries,
         point: Highcharts.ColorMapPoint
     ): SVGAttributes {
-        var ret: SVGAttributes = {};
+        const ret: SVGAttributes = {};
 
-        if (defined(point.color)) {
-            ret[this.colorProp || 'fill'] = point.color;
+        if (
+            defined(point.color) &&
+            (!point.state || point.state === 'normal') // #15746
+        ) {
+            (ret as any)[this.colorProp || 'fill'] = point.color;
         }
         return ret;
     }

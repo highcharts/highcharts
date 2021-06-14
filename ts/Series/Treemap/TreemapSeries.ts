@@ -34,6 +34,8 @@ import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
@@ -142,6 +144,12 @@ class TreemapSeries extends ScatterSeries {
         allowTraversingTree: false,
 
         animationLimit: 250,
+
+        /**
+         * The border radius for each treemap item.
+         */
+        borderRadius: 0,
+
         /**
          * When the series contains less points than the crop threshold, all
          * points are drawn, event if the points fall outside the visible plot
@@ -245,7 +253,7 @@ class TreemapSeries extends ScatterSeries {
             defer: false,
             enabled: true,
             formatter: function (): string {
-                var point: TreemapPoint = this && this.point ?
+                const point: TreemapPoint = this && this.point ?
                         this.point :
                         ({} as any),
                     name = isString(point.name) ? point.name : '';
@@ -663,7 +671,7 @@ class TreemapSeries extends ScatterSeries {
         group: TreemapAlgorithmGroup,
         childrenArea: Array<unknown>
     ): void {
-        var pX,
+        let pX,
             pY,
             pW,
             pH,
@@ -730,7 +738,7 @@ class TreemapSeries extends ScatterSeries {
         parent: TreemapSeries.NodeValuesObject,
         children: Array<TreemapSeries.NodeObject>
     ): Array<unknown> {
-        var childrenArea: Array<unknown> = [],
+        let childrenArea: Array<unknown> = [],
             pTot,
             direction = parent.direction,
             x = parent.x,
@@ -778,7 +786,7 @@ class TreemapSeries extends ScatterSeries {
         parent: TreemapSeries.NodeValuesObject,
         children: Array<TreemapSeries.NodeObject>
     ): Array<unknown> {
-        var childrenArea: Array<unknown> = [],
+        let childrenArea: Array<unknown> = [],
             series = this,
             pTot,
             plot: TreemapAlgorithmGroup.PlotObject = {
@@ -833,16 +841,17 @@ class TreemapSeries extends ScatterSeries {
      */
     public alignDataLabel(
         point: TreemapPoint,
-        dataLabel: SVGElement,
+        dataLabel: SVGLabel,
         labelOptions: DataLabelOptions
     ): void {
-        var style: SVGAttributes = labelOptions.style as any;
+        const style = labelOptions.style;
 
         // #8160: Prevent the label from exceeding the point's
         // boundaries in treemaps by applying ellipsis overflow.
         // The issue was happening when datalabel's text contained a
         // long sequence of characters without a whitespace.
         if (
+            style &&
             !defined(style.textOverflow) &&
             dataLabel.text &&
             dataLabel.getBBox().width > dataLabel.text.textWidth
@@ -867,7 +876,7 @@ class TreemapSeries extends ScatterSeries {
         list: TreemapSeries.ListOfParentsObject,
         parent?: string
     ): TreemapSeries.NodeObject {
-        var series = this,
+        let series = this,
             children: Array<TreemapSeries.NodeObject> = [],
             point = series.points[i],
             height = 0,
@@ -919,7 +928,7 @@ class TreemapSeries extends ScatterSeries {
         parent: TreemapSeries.NodeObject,
         area: TreemapSeries.AreaObject
     ): void {
-        var series = this,
+        let series = this,
             options = series.options,
             mapOptionsToLevel = series.mapOptionsToLevel,
             level = mapOptionsToLevel[parent.level + 1],
@@ -953,7 +962,7 @@ class TreemapSeries extends ScatterSeries {
             child: TreemapSeries.NodeObject,
             index: number
         ): void {
-            var values: TreemapSeries.NodeValuesObject =
+            const values: TreemapSeries.NodeValuesObject =
                 childrenValues[index];
 
             child.values = merge(values, {
@@ -989,7 +998,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public drawDataLabels(): void {
-        var series = this,
+        let series = this,
             mapOptionsToLevel = series.mapOptionsToLevel,
             points = series.points.filter(function (
                 n: TreemapPoint
@@ -1036,7 +1045,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public drawPoints(): void {
-        var series = this,
+        const series = this,
             chart = series.chart,
             renderer = chart.renderer,
             points = series.points,
@@ -1049,8 +1058,8 @@ class TreemapSeries extends ScatterSeries {
             allowTraversingTree = options.allowTraversingTree;
 
         points.forEach(function (point): void {
-            var levelDynamic = point.node.levelDynamic,
-                animatableAttribs: Partial<AnimationOptions> = {},
+            const levelDynamic = point.node.levelDynamic,
+                animatableAttribs: SVGAttributes = {},
                 attribs: SVGAttributes = {},
                 css: CSSObject = {},
                 groupKey = 'level-group-' + point.node.level,
@@ -1060,6 +1069,8 @@ class TreemapSeries extends ScatterSeries {
 
             // Don't bother with calculate styling if the point is not drawn
             if (point.shouldDraw()) {
+                point.isInside = true;
+
                 if (borderRadius) {
                     attribs.r = borderRadius;
                 }
@@ -1083,7 +1094,10 @@ class TreemapSeries extends ScatterSeries {
                 // the fill attribute.
                 if (series.colorAttribs && styledMode) {
                     // Heatmap is loaded
-                    extend(css, series.colorAttribs(point as any));
+                    extend<CSSObject|SVGAttributes>(
+                        css,
+                        series.colorAttribs(point as any)
+                    );
                 }
 
                 if (!(series as any)[groupKey]) {
@@ -1126,7 +1140,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public drillToByGroup(point: TreemapPoint): (boolean|string) {
-        var series = this,
+        let series = this,
             drillId: (boolean|string) = false;
 
         if ((point.node.level - series.nodeMap[series.rootNode].level) ===
@@ -1144,7 +1158,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public drillToByLeaf(point: TreemapPoint): (boolean|string) {
-        var series = this,
+        let series = this,
             drillId: (boolean|string) = false,
             nodeParent: TreemapSeries.NodeObject;
 
@@ -1175,7 +1189,7 @@ class TreemapSeries extends ScatterSeries {
     }
 
     public drillUp(): void {
-        var series = this,
+        const series = this,
             node = series.nodeMap[series.rootNode];
 
         if (node && isString(node.parent)) {
@@ -1217,14 +1231,14 @@ class TreemapSeries extends ScatterSeries {
         data: Array<TreemapPoint>,
         existingIds: Array<string>
     ): TreemapSeries.ListOfParentsObject {
-        var arr = isArray(data) ? data : [],
+        const arr = isArray(data) ? data : [],
             ids = isArray(existingIds) ? existingIds : [],
             listOfParents = arr.reduce(function (
                 prev: TreemapSeries.ListOfParentsObject,
                 curr: TreemapPoint,
                 i: number
             ): TreemapSeries.ListOfParentsObject {
-                var parent = pick(curr.parent, '');
+                const parent = pick(curr.parent, '');
 
                 if (typeof prev[parent] === 'undefined') {
                     prev[parent] = [];
@@ -1256,7 +1270,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public getTree(): this['tree'] {
-        var series = this,
+        const series = this,
             allIds = this.data.map(function (
                 d: TreemapPoint
             ): string {
@@ -1281,7 +1295,7 @@ class TreemapSeries extends ScatterSeries {
         chart: Chart,
         options: DeepPartial<TreemapSeriesOptions>
     ): void {
-        var series = this,
+        let series = this,
             setOptionsEvent;
 
         // If color series logic is loaded, add some properties
@@ -1292,7 +1306,7 @@ class TreemapSeries extends ScatterSeries {
         setOptionsEvent = addEvent(series, 'setOptions', function (
             event: { userOptions: TreemapSeriesOptions }
         ): void {
-            var options = event.userOptions;
+            const options = event.userOptions;
 
             if (
                 defined(options.allowDrillToNode) &&
@@ -1331,7 +1345,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public onClickDrillToNode(event: { point: TreemapPoint }): void {
-        var series = this,
+        const series = this,
             point = event.point,
             drillId = point && point.drillId;
 
@@ -1350,7 +1364,7 @@ class TreemapSeries extends ScatterSeries {
         point: TreemapPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var series = this,
+        let series = this,
             mapOptionsToLevel = (
                 isObject(series.mapOptionsToLevel) ?
                     series.mapOptionsToLevel :
@@ -1412,7 +1426,7 @@ class TreemapSeries extends ScatterSeries {
     }
 
     public renderTraverseUpButton(rootId: string): void {
-        var series = this,
+        let series = this,
             nodeMap = series.nodeMap,
             node = nodeMap[rootId],
             name = node.name,
@@ -1476,7 +1490,7 @@ class TreemapSeries extends ScatterSeries {
         index?: number,
         siblings?: unknown
     ): void {
-        var series = this,
+        let series = this,
             chart = series && series.chart,
             colors = chart && chart.options && chart.options.colors,
             colorInfo: Highcharts.TreeColorObject,
@@ -1545,16 +1559,16 @@ class TreemapSeries extends ScatterSeries {
                 const y2 = Math.round(yAxis.toPixels(y + height, true)) - crispCorr;
 
                 // Set point values
-                point.shapeArgs = {
+                const shapeArgs = {
                     x: Math.min(x1, x2),
                     y: Math.min(y1, y2),
                     width: Math.abs(x2 - x1),
                     height: Math.abs(y2 - y1)
                 };
-                point.plotX =
-                    point.shapeArgs.x + (point.shapeArgs.width / 2);
-                point.plotY =
-                    point.shapeArgs.y + (point.shapeArgs.height / 2);
+                point.plotX = shapeArgs.x + (shapeArgs.width / 2);
+                point.plotY = shapeArgs.y + (shapeArgs.height / 2);
+
+                point.shapeArgs = shapeArgs;
             } else {
             // Reset visibility
                 delete point.plotX;
@@ -1601,7 +1615,7 @@ class TreemapSeries extends ScatterSeries {
         redraw?: boolean,
         eventArguments?: TreemapSeries.SetRootNodeObject
     ): void {
-        var series = this,
+        const series = this,
             eventArgs: TreemapSeries.SetRootNodeObject =
                 extend<TreemapSeries.SetRootNodeObject>({
                     newRootId: id,
@@ -1624,7 +1638,7 @@ class TreemapSeries extends ScatterSeries {
          * directly.
          * @return {void}
          */
-        var defaultFn = function (
+        const defaultFn = function (
             args: {
                 newRootId: string;
                 previousRootId: string;
@@ -1633,7 +1647,7 @@ class TreemapSeries extends ScatterSeries {
                 trigger?: string;
             }
         ): void {
-            var series = args.series;
+            const series = args.series;
 
             // Store previous and new root ids on the series.
             series.idPreviousRoot = args.previousRootId;
@@ -1663,7 +1677,7 @@ class TreemapSeries extends ScatterSeries {
     }
 
     public setTreeValues(tree: TreemapSeries.NodeObject): TreemapSeries.NodeObject {
-        var series = this,
+        let series = this,
             options = series.options,
             idRoot = series.rootNode,
             mapIdToNode = series.nodeMap,
@@ -1745,7 +1759,7 @@ class TreemapSeries extends ScatterSeries {
     }
 
     public translate(): void {
-        var series = this,
+        let series = this,
             options = series.options,
             // NOTE: updateRootId modifies series.
             rootId = updateRootId(series),
@@ -1761,6 +1775,16 @@ class TreemapSeries extends ScatterSeries {
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
         rootNode = series.nodeMap[rootId];
+
+        if (
+            rootId !== '' &&
+            (!rootNode || !rootNode.children.length)
+        ) {
+            series.setRootNode('', false);
+            rootId = series.rootNode;
+            rootNode = series.nodeMap[rootId];
+        }
+
         series.renderTraverseUpButton(rootId);
         series.mapOptionsToLevel = getLevelOptions<this>({
             from: rootNode.level + 1,
@@ -1771,19 +1795,12 @@ class TreemapSeries extends ScatterSeries {
                 colorByPoint: options.colorByPoint
             }
         }) as any;
-        if (
-            rootId !== '' &&
-            (!rootNode || !rootNode.children.length)
-        ) {
-            series.setRootNode('', false);
-            rootId = series.rootNode;
-            rootNode = series.nodeMap[rootId];
-        }
+
         // Parents of the root node is by default visible
         TreemapUtilities.recursive(series.nodeMap[series.rootNode], function (
             node: TreemapSeries.NodeObject
         ): (boolean|TreemapSeries.NodeObject) {
-            var next: (boolean|TreemapSeries.NodeObject) = false,
+            let next: (boolean|TreemapSeries.NodeObject) = false,
                 p = node.parent;
 
             node.visible = true;
@@ -1798,7 +1815,7 @@ class TreemapSeries extends ScatterSeries {
             function (
                 children: Array<TreemapSeries.NodeObject>
             ): (boolean|Array<TreemapSeries.NodeObject>) {
-                var next: (boolean|Array<TreemapSeries.NodeObject>) =
+                let next: (boolean|Array<TreemapSeries.NodeObject>) =
                         false;
 
                 children.forEach(function (
@@ -1877,12 +1894,12 @@ interface TreemapSeries extends Highcharts.TreeSeries {
     };
 }
 extend(TreemapSeries.prototype, {
-    buildKDTree: noop as any,
+    buildKDTree: noop,
     colorKey: 'colorValue', // Point color option key
     directTouch: true,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     getExtremesFromAll: true,
-    getSymbol: noop as any,
+    getSymbol: noop,
     optionalAxis: 'colorAxis',
     parallelArrays: ['x', 'y', 'value', 'colorValue'],
     pointArrayMap: ['value'],

@@ -13,26 +13,31 @@
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type FormatUtilities from '../Core/FormatUtilities';
 import type Point from '../Core/Series/Point';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SplineSeries from '../Series/Spline/SplineSeries';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
+import D from '../Core/DefaultOptions.js';
+const { setOptions } = D;
 import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+const { prototype: { symbols } } = SVGRenderer;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
     fireEvent,
-    format,
     isNumber,
     pick,
-    setOptions,
     syncTimeout
 } = U;
 
@@ -99,7 +104,7 @@ declare global {
             connectorNeighbourDistance?: number;
             enabled?: boolean;
             format?: string;
-            formatter?: FormatterCallbackFunction<Series>;
+            formatter?: FormatUtilities.FormatterCallback<Series>;
             maxFontSize?: (number|null);
             minFontSize?: (number|null);
             onArea?: (boolean|null);
@@ -290,7 +295,7 @@ function ccw(
     x3: number,
     y3: number
 ): boolean {
-    var cw = ((y3 - y1) * (x2 - x1)) - ((y2 - y1) * (x3 - x1));
+    const cw = ((y3 - y1) * (x2 - x1)) - ((y2 - y1) * (x3 - x1));
 
     return cw > 0 ? true : !(cw < 0);
 }
@@ -339,22 +344,20 @@ function boxIntersectLine(
     );
 }
 
+declare module '../Core/Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        /** @requires Extensions/SeriesLabel */
+        connector: SymbolFunction;
+    }
+}
 /**
  * General symbol definition for labels with connector.
- *
- * @private
- * @function Highcharts.SVGRenderer#symbols.connector
  */
-SVGRenderer.prototype.symbols.connector = function (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    options?: Highcharts.SymbolOptionsObject
-): SVGPath {
-    var anchorX = options && options.anchorX,
-        anchorY = options && options.anchorY,
-        path: (SVGPath|undefined),
+symbols.connector = function (x, y, w, h, options): SVGPath {
+    const anchorX = options && options.anchorX,
+        anchorY = options && options.anchorY;
+
+    let path: (SVGPath|undefined),
         yOffset: number,
         lateral = w / 2;
 
@@ -404,19 +407,9 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
         return;
     }
 
-    var distance = 16,
+    const distance = 16,
         points = this.points,
-        point: Point,
-        last: Point,
         interpolated: Array<Point> = [],
-        i: (number|undefined),
-        deltaX: (number|undefined),
-        deltaY: (number|undefined),
-        delta: (number|undefined),
-        len: (number|undefined),
-        n: (number|undefined),
-        j: (number|undefined),
-        d: (SVGPath|undefined),
         graph: SVGElement = this.graph || (this.area as any),
         node: SVGPathElement = graph.element as any,
         inverted = this.chart.inverted,
@@ -428,6 +421,17 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
         translatedThreshold = yAxis.getThreshold(this.options.threshold as any),
         grid: Record<string, number> = {};
 
+    let point: Point,
+        last: Point,
+        i: (number|undefined),
+        deltaX: (number|undefined),
+        deltaY: (number|undefined),
+        delta: (number|undefined),
+        len: (number|undefined),
+        n: (number|undefined),
+        j: (number|undefined),
+        d: (SVGPath|undefined);
+
     /**
      * Push the point to the interpolated points, but only if that position in
      * the grid has not been occupied. As a performance optimization, we divide
@@ -435,7 +439,7 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
      * @private
      */
     function pushDiscrete(point: Point): void {
-        var cellSize = 8,
+        const cellSize = 8,
             key = Math.round((point.plotX as any) / cellSize) + ',' +
             Math.round((point.plotY as any) / cellSize);
 
@@ -577,18 +581,19 @@ Series.prototype.checkClearPoint = function (
     bBox: BBoxObject,
     checkDistance?: boolean
 ): (boolean|Highcharts.LabelClearPointObject) {
-    var distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
-        distToPointSquared = Number.MAX_VALUE,
-        dist,
-        connectorPoint,
+    const chart = this.chart,
         onArea = pick((this.options.label as any).onArea, !!this.area),
         findDistanceToOthers = (
             onArea || (this.options.label as any).connectorAllowed
         ),
-        chart = this.chart,
+        leastDistance = 16;
+
+    let distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
+        distToPointSquared = Number.MAX_VALUE,
+        dist,
+        connectorPoint,
         series: (Series|undefined),
         points: (Array<Point>|undefined),
-        leastDistance = 16,
         withinRange: (boolean|undefined),
         xDist: (number|undefined),
         yDist: (number|undefined),
@@ -789,7 +794,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
     // console.time('drawSeriesLabels');
 
-    var chart = this,
+    const chart = this,
         labelSeries: Array<Series> = this.labelSeries as any;
 
     chart.boxesToAvoid = [];
@@ -813,13 +818,10 @@ Chart.prototype.drawSeriesLabels = function (): void {
             return;
         }
 
-        var bBox: (BBoxObject|undefined),
-            x: (number|undefined),
-            y: (number|undefined),
-            results: Array<Highcharts.LabelClearPointObject> = [],
-            clearPoint,
-            i: (number|undefined),
-            best,
+        const colorClass = 'highcharts-color-' + pick(series.colorIndex, 'none'),
+            isNew = !series.labelBySeries,
+            minFontSize = labelOptions.minFontSize,
+            maxFontSize = labelOptions.maxFontSize,
             inverted = chart.inverted,
             paneLeft: number = (
                 inverted ? series.yAxis.pos : (series.xAxis.pos as any)
@@ -831,14 +833,18 @@ Chart.prototype.drawSeriesLabels = function (): void {
             paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
             points: Array<Point> = series.interpolatedPoints as any,
             onArea = pick(labelOptions.onArea, !!series.area),
+            results: Array<Highcharts.LabelClearPointObject> = [];
+
+        let bBox: (BBoxObject|undefined),
+            x: (number|undefined),
+            y: (number|undefined),
+            clearPoint,
+            i: (number|undefined),
+            best,
             label: SVGElement = series.labelBySeries as any,
-            isNew = !label,
-            minFontSize = labelOptions.minFontSize,
-            maxFontSize = labelOptions.maxFontSize,
             dataExtremes,
             areaMin: (number|undefined),
-            areaMax: (number|undefined),
-            colorClass = 'highcharts-color-' + pick(series.colorIndex, 'none');
+            areaMax: (number|undefined);
 
         // Stay within the area data bounds (#10038)
         if (onArea && !inverted) {
@@ -860,7 +866,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             y: number,
             bBox: BBoxObject
         ): boolean {
-            var leftBound = Math.max(paneLeft as any, pick(areaMin, -Infinity)),
+            const leftBound = Math.max(paneLeft as any, pick(areaMin, -Infinity)),
                 rightBound = Math.min(
                     (paneLeft as any) + paneWidth,
                     pick(areaMax, Infinity)
@@ -1057,7 +1063,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                 });
 
                 // Move it if needed
-                var dist = Math.sqrt(
+                const dist = Math.sqrt(
                     Math.pow(Math.abs(best.x - (label.x || 0)), 2) +
                     Math.pow(Math.abs(best.y - (label.y || 0)), 2)
                 );
@@ -1066,7 +1072,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
                     // Move fast and fade in - pure animation movement is
                     // distractive...
-                    var attr: SVGAttributes = {
+                    let attr: SVGAttributes = {
                             opacity: chart.renderer.forExport ? 1 : 0,
                             x: best.x,
                             y: best.y
@@ -1105,7 +1111,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     // Record closest point to stick to for sync redraw
                     series.options.kdNow = true;
                     series.buildKDTree();
-                    var closest = series.searchPoint({
+                    const closest = series.searchPoint({
                         chartX: best.x,
                         chartY: best.y
                     } as any, true);
@@ -1143,8 +1149,9 @@ Chart.prototype.drawSeriesLabels = function (): void {
 function drawLabels(this: Chart, e: Event): void {
 
     if (this.renderer) {
-        var chart = this,
-            delay = animObject(chart.renderer.globalAnimation).duration;
+        const chart = this;
+
+        let delay = animObject(chart.renderer.globalAnimation).duration;
 
         chart.labelSeries = [];
         chart.labelSeriesMaxSum = 0;
@@ -1153,7 +1160,7 @@ function drawLabels(this: Chart, e: Event): void {
 
         // Which series should have labels
         chart.series.forEach(function (series): void {
-            var options: Highcharts.SeriesLabelOptionsObject =
+            const options: Highcharts.SeriesLabelOptionsObject =
                     series.options.label as any,
                 label: SVGElement = series.labelBySeries as any,
                 closest = label && label.closest;

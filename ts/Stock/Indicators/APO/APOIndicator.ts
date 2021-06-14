@@ -72,6 +72,7 @@ class APOIndicator extends EMAIndicator {
          * @excluding period
          */
         params: {
+            period: void 0, // unchangeable period, do not inherit (#15362)
             /**
              * Periods for Absolute Price Oscillator calculations.
              *
@@ -102,7 +103,7 @@ class APOIndicator extends EMAIndicator {
         series: TLinkedSeries,
         params: APOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        var periods: Array<number> = (params.periods as any),
+        let periods: Array<number> = (params.periods as any),
             index: number = (params.index as any),
             // 0- date, 1- Absolute price oscillator
             APO: Array<Array<number>> = [],
@@ -167,7 +168,7 @@ class APOIndicator extends EMAIndicator {
     }
 
     public init(this: APOIndicator): void {
-        var args = arguments,
+        const args = arguments,
             ctx = this;
 
         RequiredIndicatorMixin.isParentLoaded(

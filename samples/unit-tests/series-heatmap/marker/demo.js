@@ -20,8 +20,13 @@ QUnit.test('General marker tests', function (assert) {
         series: [
             {
                 data: [
-                    [0, 0, 1],
-                    [0, 1, 1.1],
+                    [0, 0, null],
+                    {
+                        x: 0,
+                        y: 1,
+                        value: 1.1,
+                        selected: true
+                    },
                     [0, 2, 1.2],
                     [1, 0, 2],
                     [1, 1, 2.1],
@@ -29,12 +34,23 @@ QUnit.test('General marker tests', function (assert) {
                     [2, 0, 3],
                     [2, 1, 3.1],
                     [2, 2, 3.2]
-                ]
+                ],
+                states: {
+                    select: {
+                        color: 'yellow'
+                    }
+                }
             }
         ]
     });
 
     var heatmap = chart.series[0];
+
+    assert.strictEqual(
+        heatmap.points[1].graphic.attr('fill'),
+        'yellow',
+        '#15746: Point should have selected state color'
+    );
 
     // Check setting a series marker's lineWidth and lineColor
     heatmap.update({
@@ -113,6 +129,7 @@ QUnit.test('General marker tests', function (assert) {
 
     // Test marker states
     heatmap.update({
+        borderRadius: 5,
         marker: {
             states: {
                 hover: {
@@ -124,6 +141,11 @@ QUnit.test('General marker tests', function (assert) {
             }
         }
     });
+
+    assert.ok(
+        heatmap.points[0].graphic.pathArray.length > 5,
+        '#15757: Corners should be rounded'
+    );
 
     resetState(point);
 
@@ -205,5 +227,10 @@ QUnit.test('General marker tests', function (assert) {
         point.graphic.element.tagName === 'image' && point.hasImage,
         true,
         "The image should set as a point's marker."
+    );
+
+    assert.ok(
+        heatmap.points[0].graphic.hasClass('highcharts-null-point'),
+        '#15708: Null points should have null-point class'
     );
 });

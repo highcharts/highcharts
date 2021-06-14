@@ -1,6 +1,6 @@
 /* *
  *
- *  Parabolic SAR indicator for Highstock
+ *  Parabolic SAR indicator for Highcharts Stock
  *
  *  (c) 2010-2021 Grzegorz Blachliński
  *
@@ -189,6 +189,7 @@ class PSARIndicator extends SMAIndicator {
          * @excluding period
          */
         params: {
+            period: void 0, // unchangeable period, do not inherit (#15362)
             /**
              * The initial value for acceleration factor.
              * Acceleration factor is starting with this value
@@ -244,7 +245,7 @@ class PSARIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: PSARParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var xVal: Array<number> = (series.xData as any),
+        let xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             // Extreme point is the lowest low for falling and highest high
             // for rising psar - and we are starting with falling
@@ -389,7 +390,7 @@ interface PSARIndicator {
 }
 
 extend(PSARIndicator.prototype, {
-    nameComponents: false
+    nameComponents: void 0
 });
 
 /* *

@@ -56,18 +56,17 @@ QUnit.test('Touch event test on popup', function (assert) {
         testController = new TestController(chart);
 
     // show toolbar
-    testController.triggerEvent('click', 100, 100, {}, true);
+    testController.triggerEvent('click', 100, 100);
 
     var rangeSelector = chart.rangeSelector,
         inputGroup = rangeSelector.inputGroup;
 
     // click on the first button
     testController.touchStart(
-        inputGroup.translateX + rangeSelector.minDateBox.x + 80,
+        chart.plotWidth - 120,
         chart.plotTop + inputGroup.translateY,
         undefined,
-        undefined,
-        true
+        undefined
     );
 
     assert.strictEqual(
@@ -75,9 +74,52 @@ QUnit.test('Touch event test on popup', function (assert) {
             'highcharts-annotation-toolbar'
         ),
         -1,
-        'Edit popup is displayed by touch event.'
+        'Edit popup should be displayed by touch event'
     );
 
+
+    let chartPos = Highcharts.offset(chart.container);
+    let { left, top } = Highcharts.offset(
+        chart.navigationBindings.popup.container
+    );
+
+    testController.moveTo(left - chartPos.left + 5, top - chartPos.top + 5);
+    assert.ok(
+        chart.tooltip.isHidden,
+        '#14403: Tooltip should be hidden when hovering popup'
+    );
+
+    testController.moveTo(left - chartPos.left - 5, top - chartPos.top + 5);
+    assert.notOk(
+        chart.tooltip.isHidden,
+        '#14403: Tooltip should not be hidden when not hovering popup'
+    );
+
+    let fired = false;
+    // adding event to check, if closePopup event was fired, when closing popup
+    Highcharts.addEvent(chart.navigationBindings, 'closePopup', () => {
+        fired = true;
+    });
+
+    // closing popup
+
+    const closeButton = chart.container.getElementsByClassName('highcharts-popup-close')[0];
+    // css are not loaded in karma, so it is mandatory to set the position of the button manually
+    closeButton.style.position = 'absolute';
+    closeButton.style.top = 0;
+    closeButton.style.height = 40;
+    closeButton.style.width = 40;
+    closeButton.style.right = 0;
+    ({ left, top } = Highcharts.offset(closeButton));
+
+    chartPos = Highcharts.offset(chart.container);
+    testController.triggerEvent('click', left - chartPos.left + 20, top - chartPos.top + 20, {}, true);
+
+    assert.equal(
+        fired,
+        true,
+        'Event "closePopup" should be fired when closing popup'
+    );
     // REMOVE CSS STYLES
     style.parentNode.removeChild(style);
 });

@@ -16,6 +16,7 @@
 
 import type AreaRangePointOptions from './AreaRangePointOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import AreaRangeSeries from './AreaRangeSeries.js';
@@ -57,14 +58,14 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
 
     public _plotY?: number;
     public below?: boolean;
-    public dataLabelUpper?: SVGElement;
+    public dataLabelUpper?: SVGLabel;
     public isInside?: boolean;
     public isTopInside?: boolean;
     public high: number = void 0 as any;
     public low: number = void 0 as any;
     public lowerGraphic?: SVGElement;
     public options: AreaRangePointOptions = void 0 as any;
-    public origProps?: object;
+    public origProps?: Partial<AreaRangePoint>;
     public plotHigh: number = void 0 as any;
     public plotLow: number = void 0 as any;
     public plotHighX: number = void 0 as any;
@@ -83,7 +84,7 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
      * @private
      */
     public setState(): void {
-        var prevState = this.state,
+        const prevState = this.state,
             series = this.series,
             isPolar = series.chart.polar;
 
@@ -136,7 +137,7 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
     }
 
     public haloPath(): SVGPath {
-        var isPolar = this.series.chart.polar,
+        let isPolar = this.series.chart.polar,
             path: SVGPath = [];
 
         // Bottom halo
@@ -161,22 +162,6 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
         }
 
         return path;
-    }
-
-    public destroyElements(): void {
-        var graphics = ['lowerGraphic', 'upperGraphic'];
-
-        graphics.forEach(function (graphicName): void {
-            if ((this as any)[graphicName]) {
-                (this as any)[graphicName] =
-                    (this as any)[graphicName].destroy();
-            }
-        }, this);
-
-        // Clear graphic for states, removed in the above each:
-        this.graphic = null as any;
-
-        return pointProto.destroyElements.apply(this, arguments as any);
     }
 
     public isValid(): boolean {

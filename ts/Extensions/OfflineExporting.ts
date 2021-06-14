@@ -17,6 +17,7 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from '../Core/Renderer/DOMElementType';
+import type Options from '../Core/Options';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -24,14 +25,15 @@ const {
     win,
     doc
 } = H;
-import '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
+const { getOptions } = D;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     error,
     extend,
-    getOptions,
+    fireEvent,
     merge
 } = U;
 
@@ -40,14 +42,20 @@ declare module '../Core/Chart/ChartLike' {
         unbindGetSVG?: Function;
         exportChartLocal(
             exportingOptions?: Highcharts.ExportingOptions,
-            chartOptions?: Highcharts.Options
+            chartOptions?: Partial<Options>
         ): void;
         getSVGForLocalExport(
             options: Highcharts.ExportingOptions,
-            chartOptions: Highcharts.Options,
+            chartOptions: Partial<Options>,
             failCallback: Function,
             successCallback: Function
         ): void;
+    }
+}
+
+declare module '../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        inlineWhitelist?: Array<RegExp>;
     }
 }
 
@@ -59,9 +67,6 @@ declare global {
     namespace Highcharts {
         interface ScriptOnLoadCallbackFunction {
             (this: GlobalEventHandlers, ev: Event): void;
-        }
-        interface SVGRenderer {
-            inlineWhitelist?: Array<RegExp>;
         }
         let CanVGRenderer: object;
         function downloadSVGLocal(
@@ -85,15 +90,23 @@ declare global {
         ): void;
         function svgToDataUrl(svg: string): string;
     }
-    interface CanvasRenderingContext2D {
-        drawSvg: Function;
+
+    interface Canvg {
+        fromString(
+            ctx: CanvasRenderingContext2D,
+            svg: string
+        ): Canvg;
+        start(): void;
+    }
+    interface CanvgNamespace {
+        Canvg: Canvg;
     }
     interface HTMLCanvasElement {
         /** @deprecated */
         msToBlob: Function;
     }
     interface Window {
-        canvg: unknown;
+        canvg: CanvgNamespace;
         jsPDF: typeof jsPDF;
         svg2pdf: Function;
     }
@@ -106,7 +119,7 @@ declare global {
 import DownloadURL from '../Extensions/DownloadURL.js';
 const { downloadURL } = DownloadURL;
 
-var domurl = win.URL || win.webkitURL || win,
+const domurl = win.URL || win.webkitURL || win,
     // Milliseconds to defer image load event handlers to offset IE bug
     loadEventDeferDelay = H.isMS ? 150 : 0;
 
@@ -128,7 +141,7 @@ function getScript(
     scriptLocation: string,
     callback: Highcharts.ScriptOnLoadCallbackFunction
 ): void {
-    var head = doc.getElementsByTagName('head')[0],
+    const head = doc.getElementsByTagName('head')[0],
         script = doc.createElement('script');
 
     script.type = 'text/javascript';
@@ -160,8 +173,9 @@ function svgToDataUrl(svg: string): string {
     try {
         // Safari requires data URI since it doesn't allow navigation to blob
         // URLs. Firefox has an issue with Blobs and internal references,
-        // leading to gradients not working using Blobs (#4550)
-        if (!webKit && !H.isFirefox) {
+        // leading to gradients not working using Blobs (#4550).
+        // foreignObjects also dont work well in Blobs in Chrome (#14780).
+        if (!webKit && !H.isFirefox && svg.indexOf('<foreignObject') === -1) {
             return domurl.createObjectURL(new win.Blob([svg], {
                 type: 'image/svg+xml;charset-utf-16'
             }));
@@ -217,11 +231,11 @@ function imageToDataUrl(
     failedLoadCallback: Function,
     finallyCallback?: Function
 ): void {
-    var img = new win.Image(),
+    let img = new win.Image(),
         taintedHandler: Function,
         loadHandler = function (): void {
             setTimeout(function (): void {
-                var canvas = doc.createElement('canvas'),
+                let canvas = doc.createElement('canvas'),
                     ctx = canvas.getContext && canvas.getContext('2d'),
                     dataURL;
 
@@ -334,7 +348,7 @@ function downloadSVGLocal(
     failCallback: Function,
     successCallback?: Function
 ): void {
-    var svgurl: string,
+    let svgurl: string,
         blob,
         objectURLRevoke = true,
         finallyHandler: Function,
@@ -359,7 +373,7 @@ function downloadSVGLocal(
      * @private
      */
     function svgToPdf(svgElement: SVGElement, margin: number): string {
-        var width = svgElement.width.baseVal.value + 2 * margin,
+        const width = svgElement.width.baseVal.value + 2 * margin,
             height = svgElement.height.baseVal.value + 2 * margin,
             pdf = new win.jsPDF( // eslint-disable-line new-cap
                 height > width ? 'p' : 'l', // setting orientation to portrait if height exceeds width
@@ -394,6 +408,19 @@ function downloadSVGLocal(
             }
         }
 
+        // Workaround for #15135, zero width spaces, which Highcharts uses to
+        // break lines, are not correctly rendered in PDF. Replace it with a
+        // regular space and offset by some pixels to compensate.
+        [].forEach.call(
+            svgElement.querySelectorAll('tspan'),
+            (tspan: SVGDOMElement): void => {
+                if (tspan.textContent === '\u200B') {
+                    tspan.textContent = ' ';
+                    tspan.setAttribute('dx', -5);
+                }
+            }
+        );
+
         win.svg2pdf(svgElement, pdf, { removeInvalid: true });
         return pdf.output('datauristring');
     }
@@ -404,7 +431,7 @@ function downloadSVGLocal(
      */
     function downloadPDF(): void {
         dummySVGContainer.innerHTML = svg;
-        var textElements = dummySVGContainer.getElementsByTagName('text'),
+        let textElements = dummySVGContainer.getElementsByTagName('text'),
             titleElements,
             svgData,
             // Copy style property to element from parents if it's not there.
@@ -414,7 +441,7 @@ function downloadSVGLocal(
                 el: DOMElementType,
                 propName: string
             ): void {
-                var curParent = el;
+                let curParent = el;
 
                 while (curParent && curParent !== dummySVGContainer) {
                     if (curParent.style[propName as any]) {
@@ -526,7 +553,7 @@ function downloadSVGLocal(
             }, function (): void {
                 // Failed due to tainted canvas
                 // Create new and untainted canvas
-                var canvas = doc.createElement('canvas'),
+                const canvas = doc.createElement('canvas'),
                     ctx: CanvasRenderingContext2D =
                         canvas.getContext('2d') as any,
                     imageWidth = (svg.match(
@@ -536,7 +563,8 @@ function downloadSVGLocal(
                         /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
                     ) as any)[1] * scale,
                     downloadWithCanVG = function (): void {
-                        ctx.drawSvg(svg, 0, 0, imageWidth, imageHeight);
+                        const v = win.canvg.Canvg.fromString(ctx, svg);
+                        v.start();
                         try {
                             downloadURL(
                                 win.navigator.msSaveOrOpenBlob as any ?
@@ -564,11 +592,8 @@ function downloadSVGLocal(
                     // yet since we are doing things asynchronously. A cleaner
                     // solution would be nice, but this will do for now.
                     objectURLRevoke = true;
-                    // Get RGBColor.js first, then canvg
-                    getScript(libURL + 'rgbcolor.js', function (): void {
-                        getScript(libURL + 'canvg.js', function (): void {
-                            downloadWithCanVG();
-                        });
+                    getScript(libURL + 'canvg.js', function (): void {
+                        downloadWithCanVG();
                     });
                 }
             },
@@ -604,15 +629,15 @@ function downloadSVGLocal(
  */
 Chart.prototype.getSVGForLocalExport = function (
     options: Highcharts.ExportingOptions,
-    chartOptions: Highcharts.Options,
+    chartOptions: Partial<Options>,
     failCallback: Function,
     successCallback: Function
 ): void {
-    var chart = this,
+    let chart = this,
         images,
         imagesEmbedded = 0,
         chartCopyContainer: (HTMLDOMElement|undefined),
-        chartCopyOptions: (Highcharts.Options|undefined),
+        chartCopyOptions: (Options|undefined),
         el,
         i,
         l,
@@ -732,9 +757,9 @@ Chart.prototype.getSVGForLocalExport = function (
  */
 Chart.prototype.exportChartLocal = function (
     exportingOptions?: Highcharts.ExportingOptions,
-    chartOptions?: Highcharts.Options
+    chartOptions?: Partial<Options>
 ): void {
-    var chart = this,
+    const chart = this,
         options = merge(chart.options.exporting, exportingOptions),
         fallbackToExportServer = function (err: Error): void {
             if (options.fallbackToExportServer === false) {
@@ -748,11 +773,15 @@ Chart.prototype.exportChartLocal = function (
             }
         },
         svgSuccess = function (svg: string): void {
-            // If SVG contains foreignObjects all exports except SVG will fail,
-            // as both CanVG and svg2pdf choke on this. Gracefully fall back.
+            // If SVG contains foreignObjects PDF fails in all browsers and all
+            // exports except SVG will fail in IE, as both CanVG and svg2pdf
+            // choke on this. Gracefully fall back.
             if (
                 svg.indexOf('<foreignObject') > -1 &&
-                options.type !== 'image/svg+xml'
+                options.type !== 'image/svg+xml' &&
+                (
+                    H.isMS || options.type === 'application/pdf'
+                )
             ) {
                 fallbackToExportServer(
                     'Image type not supported' +
@@ -765,7 +794,8 @@ Chart.prototype.exportChartLocal = function (
                         { filename: chart.getFilename() },
                         options
                     ),
-                    fallbackToExportServer
+                    fallbackToExportServer,
+                    (): void => fireEvent(chart, 'exportChartLocalSuccess')
                 );
             }
         },
@@ -777,7 +807,7 @@ Chart.prototype.exportChartLocal = function (
             return [].some.call(
                 chart.container.getElementsByTagName('image'),
                 function (image: HTMLDOMElement): boolean {
-                    var href = image.getAttribute('href');
+                    const href = image.getAttribute('href');
                     return href !== '' && (href as any).indexOf('data:') !== 0;
                 }
             );
@@ -843,7 +873,7 @@ Chart.prototype.exportChartLocal = function (
 
     chart.getSVGForLocalExport(
         options,
-        chartOptions as any,
+        chartOptions || {},
         fallbackToExportServer,
         svgSuccess
     );

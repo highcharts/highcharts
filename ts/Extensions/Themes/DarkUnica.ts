@@ -14,11 +14,10 @@
 
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import H from '../../Core/Globals.js';
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 import U from '../../Core/Utilities.js';
-const {
-    createElement,
-    setOptions
-} = U;
+const { createElement } = U;
 
 // Load the fonts
 createElement('link', {

@@ -64,7 +64,7 @@ const CHUNK_SIZE = 3000;
  * Max value
  */
 function patientMax(...args: Array<Array<unknown>>): number {
-    var r = -Number.MAX_VALUE;
+    let r = -Number.MAX_VALUE;
 
     args.forEach(function (t: Array<unknown>): (boolean|undefined) {
         if (
@@ -121,7 +121,7 @@ function boostEnabled(chart: Chart): boolean {
 function shouldForceChartSeriesBoosting(chart: Chart): boolean {
     // If there are more than five series currently boosting,
     // we should boost the whole chart to avoid running out of webgl contexts.
-    var sboostCount = 0,
+    let sboostCount = 0,
         canBoostCount = 0,
         allowBoostForce = pick(
             chart.options.boost && chart.options.boost.allowForce,
@@ -134,7 +134,7 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
     }
 
     if (chart.series.length > 1) {
-        for (var i = 0; i < chart.series.length; i++) {
+        for (let i = 0; i < chart.series.length; i++) {
 
             series = chart.series[i];
 
@@ -243,7 +243,7 @@ function eachAsync(
     i = i || 0;
     chunkSize = chunkSize || CHUNK_SIZE;
 
-    var threshold = i + chunkSize,
+    let threshold = i + chunkSize,
         proceed = true;
 
     while (proceed && i < threshold && i < arr.length) {
@@ -282,7 +282,7 @@ function eachAsync(
  * @return {boolean}
  */
 function hasWebGLSupport(): boolean {
-    var i = 0,
+    let i = 0,
         canvas,
         contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
         context: (false|WebGLRenderingContext|null) = false;
@@ -318,7 +318,7 @@ function hasWebGLSupport(): boolean {
  * @return {*}
  */
 function pointDrawHandler(this: Series, proceed: Function): void {
-    var enabled = true,
+    let enabled = true,
         renderer: Highcharts.BoostGLRenderer;
 
     if (this.chart.options && this.chart.options.boost) {

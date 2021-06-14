@@ -102,3 +102,40 @@ QUnit.test('Bubble positions', function (assert) {
         'dataLabels are visible with allowOverlap set to true'
     );
 });
+
+QUnit.test('PackedBubble layout simulation', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'packedbubble',
+            height: 600,
+            width: 600,
+            marginTop: 46,
+            marginBottom: 53
+        },
+        plotOptions: {
+            packedbubble: {
+                useSimulation: true,
+                minSize: '30%',
+                layoutAlgorithm: {
+                    enableSimulation: false
+                }
+            }
+        },
+        series: [{
+            data: [{
+                value: 7
+            }, {
+                value: 7
+            }]
+        }]
+    });
+
+    var temp = chart.series[0].data[0].temperature;
+
+    assert.strictEqual(
+        temp,
+        2.1283299490557193,
+        'Bubbles should not get stuck during simulation (#14439).'
+    );
+});

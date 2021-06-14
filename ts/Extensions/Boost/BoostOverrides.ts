@@ -20,8 +20,12 @@ import type {
 } from '../../Core/Series/PointOptions';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import Chart from '../../Core/Chart/Chart.js';
+import D from '../../Core/DefaultOptions.js';
+const { getOptions } = D;
 import Point from '../../Core/Series/Point.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -30,7 +34,6 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     error,
-    getOptions,
     isArray,
     isNumber,
     pick,
@@ -91,13 +94,13 @@ declare global {
     }
 }
 
-import '../../Core/Options.js';
+import '../../Core/DefaultOptions.js';
 
 import butils from './BoostUtils.js';
 import boostable from './Boostables.js';
 import boostableMap from './BoostableMap.js';
 
-var boostEnabled = butils.boostEnabled,
+const boostEnabled = butils.boostEnabled,
     shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting,
     plotOptions = getOptions().plotOptions as SeriesTypePlotOptions;
 
@@ -113,7 +116,7 @@ var boostEnabled = butils.boostEnabled,
  *         true if the chart is in series boost mode
  */
 Chart.prototype.isChartSeriesBoosting = function (): boolean {
-    var isSeriesBoosting: boolean,
+    let isSeriesBoosting: boolean,
         threshold = pick(
             this.options.boost && this.options.boost.seriesThreshold,
             50
@@ -130,7 +133,7 @@ Chart.prototype.isChartSeriesBoosting = function (): boolean {
 /**
  * Get the clip rectangle for a target, either a series or the chart. For the
  * chart, we need to consider the maximum extent of its Y axes, in case of
- * Highstock panes and navigator.
+ * Highcharts Stock panes and navigator.
  *
  * @private
  * @function Highcharts.Chart#getBoostClipRect
@@ -140,7 +143,7 @@ Chart.prototype.isChartSeriesBoosting = function (): boolean {
  * @return {Highcharts.BBoxObject}
  */
 Chart.prototype.getBoostClipRect = function (target: Chart): BBoxObject {
-    var clipBox = {
+    const clipBox = {
         x: this.plotLeft,
         y: this.plotTop,
         width: this.plotWidth,
@@ -175,7 +178,7 @@ Chart.prototype.getBoostClipRect = function (target: Chart): BBoxObject {
 Series.prototype.getPoint = function (
     boostPoint: (Record<string, number>|Point)
 ): Point {
-    var point: Point = boostPoint as any,
+    let point: Point = boostPoint as any,
         xData = (
             this.xData || (this.options as any).xData || this.processedXData ||
             false
@@ -223,7 +226,7 @@ wrap(Point.prototype, 'haloPath', function (
     this: Point,
     proceed: Function
 ): SVGPath {
-    var halo,
+    let halo,
         point = this,
         series = point.series,
         chart = series.chart,
@@ -251,7 +254,7 @@ wrap(Series.prototype, 'markerAttribs', function (
     proceed: Function,
     point: Point
 ): SVGAttributes {
-    var attribs: SVGAttributes,
+    let attribs: SVGAttributes,
         series = this,
         chart = series.chart,
         plotX: number = point.plotX as any,
@@ -279,7 +282,7 @@ wrap(Series.prototype, 'markerAttribs', function (
  * but the fake search points are not registered like that.
  */
 addEvent(Series, 'destroy', function (): void {
-    var series = this,
+    const series = this,
         chart = series.chart;
 
     if (chart.markerGroup === series.markerGroup) {
@@ -335,7 +338,7 @@ wrap(Series.prototype, 'getExtremes', function (
         this: Series,
         proceed: Function
     ): void {
-        var letItPass = this.options.stacking &&
+        const letItPass = this.options.stacking &&
             (method === 'translate' || method === 'generatePoints');
 
         if (
@@ -381,9 +384,9 @@ wrap(Series.prototype, 'processData', function (
     this: Series,
     proceed: Function
 ): void {
+    const series = this;
 
-    var series = this,
-        dataToMeasure = this.options.data;
+    let dataToMeasure = this.options.data;
 
     /**
      * Used twice in this function, first on this.options.data, the second
@@ -424,9 +427,12 @@ wrap(Series.prototype, 'processData', function (
         // Enter or exit boost mode
         if (this.isSeriesBoosting) {
             // Force turbo-mode:
-            const firstPoint = this.getFirstValidPoint(this.options.data as any);
-            if (!isNumber(firstPoint) && !isArray(firstPoint)) {
-                error(12, false, this.chart);
+            let firstPoint;
+            if (this.options.data && this.options.data.length) {
+                firstPoint = this.getFirstValidPoint(this.options.data);
+                if (!isNumber(firstPoint) && !isArray(firstPoint)) {
+                    error(12, false, this.chart);
+                }
             }
             this.enterBoost();
         } else if (this.exitBoost) {
@@ -520,7 +526,7 @@ Series.prototype.exitBoost = function (): void {
  * @return {boolean}
  */
 Series.prototype.hasExtremes = function (checkX?: boolean): boolean {
-    var options = this.options,
+    const options = this.options,
         data: Array<(PointOptions|PointShortOptions)> = options.data as any,
         xAxis = this.xAxis && this.xAxis.options,
         yAxis = this.yAxis && this.yAxis.options,
@@ -547,7 +553,7 @@ Series.prototype.hasExtremes = function (checkX?: boolean): boolean {
  * @function Highcharts.Series#destroyGraphics
  */
 Series.prototype.destroyGraphics = function (): void {
-    var series = this,
+    let series = this,
         points = this.points,
         point: Point,
         i: number;
@@ -566,6 +572,16 @@ Series.prototype.destroyGraphics = function (): void {
             (series as any)[prop] = (series as any)[prop].destroy();
         }
     });
+
+    if ((this as any).getZonesGraphs) {
+        const props: string[][] = (this as any).getZonesGraphs([['graph', 'highcharts-graph']]);
+        props.forEach((prop): void => {
+            const zoneGraph: SVGElement = (this as any)[prop[0]];
+            if (zoneGraph) {
+                (this as any)[prop[0]] = zoneGraph.destroy();
+            }
+        });
+    }
 };
 
 // Set default options

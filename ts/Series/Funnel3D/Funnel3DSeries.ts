@@ -23,8 +23,9 @@
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+
+import Funnel3DComposition from './Funnel3DComposition.js';
 import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -44,7 +45,6 @@ const {
     pick,
     relativeLength
 } = U;
-import './Funnel3DComposition.js';
 
 /* *
  *
@@ -62,6 +62,14 @@ import './Funnel3DComposition.js';
  * @requires modules/funnel3d
  */
 class Funnel3DSeries extends ColumnSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    public static compose = Funnel3DComposition.compose;
 
     /**
      * A funnel3d is a 3d version of funnel series type. Funnel charts are
@@ -188,10 +196,10 @@ class Funnel3DSeries extends ColumnSeries {
      */
     public alignDataLabel(
         point: Funnel3DPoint,
-        _dataLabel: SVGElement,
+        _dataLabel: SVGLabel,
         options: DataLabelOptions
     ): void {
-        var series = this,
+        const series = this,
             dlBoxRaw = point.dlBoxRaw,
             inverted = series.chart.inverted,
             below = (point.plotY as any) > pick(
@@ -257,12 +265,12 @@ class Funnel3DSeries extends ColumnSeries {
         extend(this.xAxis.options, {
             gridLineWidth: 0,
             lineWidth: 0,
-            title: null,
+            title: void 0,
             tickPositions: []
         });
-        extend(this.yAxis.options, {
+        merge(true, this.yAxis.options, {
             gridLineWidth: 0,
-            title: null,
+            title: void 0,
             labels: {
                 enabled: false
             }
@@ -275,7 +283,7 @@ class Funnel3DSeries extends ColumnSeries {
     public translate(): void {
         Series.prototype.translate.apply(this, arguments);
 
-        var sum = 0,
+        let sum = 0,
             series = this,
             chart = series.chart,
             options = series.options,
@@ -306,11 +314,11 @@ class Funnel3DSeries extends ColumnSeries {
             y5: (number|null),
             //
             h: number,
-            shapeArgs: SVGAttributes;
+            shapeArgs: any; // @todo: Type it. It's an extended SVGAttributes.
 
         // Return the width at a specific y coordinate
         series.getWidthAt = getWidthAt = function (y: number): number {
-            var top = (centerY - height / 2);
+            const top = (centerY - height / 2);
 
             return (y > neckY || height === neckHeight) ?
                 neckWidth :
@@ -435,7 +443,7 @@ class Funnel3DSeries extends ColumnSeries {
                 width: getWidthAt(point.plotY),
 
                 y: y1,
-                bottom: shapeArgs.height,
+                bottom: shapeArgs.height || 0,
 
                 fullWidth: width
             };
@@ -463,7 +471,7 @@ interface Funnel3DSeries {
 }
 extend(Funnel3DSeries.prototype, {
     pointClass: Funnel3DPoint,
-    translate3dShapes: noop as any
+    translate3dShapes: noop
 });
 
 /* *

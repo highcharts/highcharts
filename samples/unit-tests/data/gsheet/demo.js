@@ -9,7 +9,7 @@ QUnit.test('data-google-spreadsheetloading', function (assert) {
 
         Highcharts.addEvent(chart, 'afterUpdate', function () {
             if (!tested) {
-                var options = chart.options;
+                var options = chart.userOptions;
 
                 tested = true;
 

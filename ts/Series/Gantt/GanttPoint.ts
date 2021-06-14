@@ -120,7 +120,7 @@ class GanttPoint extends XRangePoint {
         options: GanttPointOptions,
         x: number
     ): GanttPoint {
-        var point = this,
+        let point = this,
             ganttPoint: GanttPoint;
 
         ganttPoint = super.applyOptions.call(point, options, x) as any;

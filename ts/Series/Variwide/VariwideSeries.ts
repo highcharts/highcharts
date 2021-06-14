@@ -161,7 +161,7 @@ class VariwideSeries extends ColumnSeries {
         point?: VariwidePoint
     ): number {
 
-        var axis = this.xAxis,
+        const axis = this.xAxis,
             relZ = this.relZ,
             i = axis.reversed ? relZ.length - index : index,
             goRight = axis.reversed ? -1 : 1,
@@ -194,7 +194,7 @@ class VariwideSeries extends ColumnSeries {
     public translate(): void {
 
         // Temporarily disable crisping when computing original shapeArgs
-        var crispOption = this.options.crisp,
+        const crispOption = this.options.crisp,
             xAxis = this.xAxis;
 
         this.options.crisp = false;
@@ -204,7 +204,7 @@ class VariwideSeries extends ColumnSeries {
         // Reset option
         this.options.crisp = crispOption;
 
-        var inverted = this.chart.inverted,
+        const inverted = this.chart.inverted,
             crisp = this.borderWidth % 2 / 2;
 
         // Distort the points to reflect z dimension
@@ -212,7 +212,7 @@ class VariwideSeries extends ColumnSeries {
             point: VariwidePoint,
             i: number
         ): void {
-            var left: number, right: number;
+            let left: number, right: number;
 
             if (xAxis.variwide) {
                 left = this.postTranslate(
@@ -271,7 +271,7 @@ class VariwideSeries extends ColumnSeries {
 
     // Function that corrects stack labels positions
     public correctStackLabels(): void {
-        var series = this,
+        let series = this,
             options = series.options,
             yAxis = series.yAxis as StackingAxis,
             pointStack,

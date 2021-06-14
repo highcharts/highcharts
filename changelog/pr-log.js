@@ -1,6 +1,7 @@
 /* eslint-env node, es6 */
 /* eslint camelcase: 0, func-style: 0, valid-jsdoc: 0, no-console: 0, require-jsdoc: 0 */
 
+const fs = require('fs').promises; // eslint-disable-line
 const { Octokit } = require('@octokit/rest');
 const octokit = new Octokit({
     auth: process.env.GITHUB_LIST_PRS_TOKEN
@@ -31,10 +32,7 @@ const parseUpgradeNote = p => {
     return void 0;
 };
 
-module.exports = async since => {
-
-    const included = [];
-
+const loadPulls = async since => {
     let page = 1;
     let pulls = [];
 
@@ -93,6 +91,21 @@ module.exports = async since => {
 
         pulls = pulls.concat(pageData);
         page++;
+    }
+    return pulls;
+};
+
+module.exports = async (since, fromCache) => {
+
+    const included = [];
+
+    let pulls;
+    if (fromCache) {
+        pulls = await fs.readFile('tmp/pulls.json');
+        pulls = JSON.parse(pulls);
+    } else {
+        pulls = await loadPulls(since);
+        await fs.writeFile('tmp/pulls.json', JSON.stringify(pulls));
     }
 
     // Simplify

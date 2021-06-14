@@ -18,7 +18,6 @@ import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import Fx from './Fx.js';
-import H from '../Globals.js';
 import U from '../Utilities.js';
 const {
     defined,
@@ -30,33 +29,6 @@ const {
     objectEach,
     pick
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        function animate(
-            el: (HTMLDOMElement|SVGElement),
-            params: (CSSObject|SVGAttributes),
-            opt?: Partial<AnimationOptions>
-        ): void;
-        function animObject(
-            animation?: (boolean|AnimationOptions)
-        ): AnimationOptions;
-        function getDeferredAnimation(
-            chart: Chart,
-            animation: Partial<AnimationOptions>,
-            series?: Series
-        ): Partial<AnimationOptions>;
-        function setAnimation(
-            animation: (boolean|Partial<AnimationOptions>|undefined),
-            chart: Chart
-        ): void
-        function stop(el: SVGElement, prop?: string): void;
-    }
-}
 
 /**
  * Set the global animation to either a given value, or fall back to the given
@@ -74,16 +46,16 @@ declare global {
  * This function always relates to a chart, and sets a property on the renderer,
  * so it should be moved to the SVGRenderer.
  */
-const setAnimation = H.setAnimation = function setAnimation(
+function setAnimation(
     animation: (boolean|Partial<AnimationOptions>|undefined),
     chart: Chart
 ): void {
     chart.renderer.globalAnimation = pick(
         animation,
-        (chart.options.chart as any).animation,
+        chart.options.chart.animation,
         true
     );
-};
+}
 
 /**
  * Get the animation in object form, where a disabled animation is always
@@ -98,7 +70,7 @@ const setAnimation = H.setAnimation = function setAnimation(
  * @return {Highcharts.AnimationOptionsObject}
  *         An object with at least a duration property.
  */
-const animObject = H.animObject = function animObject(
+function animObject(
     animation?: (boolean|DeepPartial<AnimationOptions>)
 ): AnimationOptions {
     return isObject(animation) ?
@@ -107,7 +79,7 @@ const animObject = H.animObject = function animObject(
             animation as AnimationOptions
         ) as any :
         { duration: animation as boolean ? 500 : 0, defer: 0 };
-};
+}
 
 /**
  * Get the defer as a number value from series animation options.
@@ -127,9 +99,9 @@ const animObject = H.animObject = function animObject(
  * @return {number}
  *        The numeric value.
  */
-const getDeferredAnimation = H.getDeferredAnimation = function (
+function getDeferredAnimation(
     chart: Chart,
-    animation: (false|DeepPartial<AnimationOptions>),
+    animation: (false|Partial<AnimationOptions>),
     series?: Series
 ): Partial<AnimationOptions> {
 
@@ -160,7 +132,7 @@ const getDeferredAnimation = H.getDeferredAnimation = function (
     };
 
     return anim;
-};
+}
 
 /**
  * The global animate method, which uses Fx to create individual animators.
@@ -180,12 +152,12 @@ const getDeferredAnimation = H.getDeferredAnimation = function (
  *
  * @return {void}
  */
-const animate = function (
+function animate(
     el: (HTMLDOMElement|SVGElement),
     params: (CSSObject|SVGAttributes),
-    opt?: Partial<AnimationOptions>
+    opt?: boolean|Partial<AnimationOptions>
 ): void {
-    var start,
+    let start,
         unit = '',
         end,
         fx,
@@ -212,15 +184,15 @@ const animate = function (
         stop(el as any, prop);
 
         fx = new Fx(el as any, opt as any, prop);
-        end = null;
+        end = void 0;
 
-        if (prop === 'd' && isArray(params.d)) {
+        if ((prop as any) === 'd' && isArray((params as any).d)) {
             fx.paths = fx.initPath(
                 el as any,
                 (el as any).pathArray,
-                params.d
+                (params as any).d
             );
-            fx.toD = params.d as any;
+            fx.toD = (params as any).d;
             start = 0;
             end = 1;
         } else if ((el as any).attr) {
@@ -235,12 +207,12 @@ const animate = function (
         if (!end) {
             end = val;
         }
-        if (end && end.match && end.match('px')) {
+        if (typeof end === 'string' && end.match('px')) {
             end = end.replace(/px/g, ''); // #4351
         }
-        fx.run(start as any, end, unit);
+        fx.run(start as any, end as any, unit);
     });
-};
+}
 
 /**
  * Stop running animation.
@@ -263,9 +235,9 @@ const animate = function (
  * improvement in all cases where we stop the animation from .attr. Instead of
  * stopping everything, we can just stop the actual attributes we're setting.
  */
-const stop = H.stop = function (el: SVGElement, prop?: string): void {
+function stop(el: SVGElement, prop?: string): void {
 
-    var i = Fx.timers.length;
+    let i = Fx.timers.length;
 
     // Remove timers related to this element (#4519)
     while (i--) {
@@ -273,7 +245,7 @@ const stop = H.stop = function (el: SVGElement, prop?: string): void {
             Fx.timers[i].stopped = true; // #4667
         }
     }
-};
+}
 
 const animationExports = {
     animate,

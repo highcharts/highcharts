@@ -7,6 +7,11 @@ QUnit.test('Pie data labels general tests', function (assert) {
                 {
                     animation: false,
                     type: 'pie',
+                    states: {
+                        inactive: {
+                            opacity: 0
+                        }
+                    },
                     data: [
                         {
                             name: 'Firefox',
@@ -49,6 +54,14 @@ QUnit.test('Pie data labels general tests', function (assert) {
         point.dataLabel.translateY - dataLabelOldY,
         offsetY,
         'A point dataLabel y option should be used in calculations (#12985).'
+    );
+
+    chart.series[0].points[0].onMouseOver();
+
+    assert.strictEqual(
+        chart.series[0].points[1].dataLabel.opacity,
+        0,
+        '#15377: Inactive point should have 0 opacity'
     );
 });
 
@@ -459,14 +472,13 @@ QUnit.test(
                 ]
             }),
             points = chart.series[0].points,
-            offset = Highcharts.offset(chart.container),
-            event = $.Event('mouseover', {
-                which: 1,
-                pageX: offset.left + points[0].labelPosition.natural.x,
-                pageY: offset.top + points[0].labelPosition.natural.y
-            });
+            offset = Highcharts.offset(chart.container);
 
-        $(points[0].dataLabel.div).trigger(event);
+        Highcharts.fireEvent(points[0].dataLabel.div, 'mouseover', {
+            which: 1,
+            pageX: offset.left + points[0].labelPosition.natural.x,
+            pageY: offset.top + points[0].labelPosition.natural.y
+        });
 
         assert.strictEqual(
             points[0] === chart.hoverPoint,
@@ -474,13 +486,11 @@ QUnit.test(
             'First point hovered.'
         );
 
-        event = $.Event('mouseover', {
+        Highcharts.fireEvent(points[4].dataLabel.div, 'mouseover', {
             which: 1,
             pageX: offset.left + points[4].labelPosition.natural.x,
             pageY: offset.top + points[4].labelPosition.natural.y
         });
-
-        $(points[4].dataLabel.div).trigger(event);
 
         assert.strictEqual(
             points[4] === chart.hoverPoint,

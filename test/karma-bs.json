@@ -1,0 +1,58 @@
+{
+    "Mac.Chrome": {
+        "base": "BrowserStack",
+        "browser": "chrome",
+        "browser_version": "90.0",
+        "os": "OS X",
+        "os_version": "Big Sur"
+    },
+    "Mac.Edge": {
+        "base": "BrowserStack",
+        "browser": "edge",
+        "browser_version": "90.0",
+        "os": "OS X",
+        "os_version": "Big Sur"
+    },
+    "Mac.Firefox": {
+        "base": "BrowserStack",
+        "browser": "firefox",
+        "browser_version": "88.0",
+        "os": "OS X",
+        "os_version": "Big Sur"
+    },
+    "Mac.Safari": {
+        "base": "BrowserStack",
+        "browser": "safari",
+        "browser_version": "14.0",
+        "os": "OS X",
+        "os_version": "Big Sur"
+    },
+    "Win.Chrome": {
+        "base": "BrowserStack",
+        "browser": "chrome",
+        "browser_version": "90.0",
+        "os": "Windows",
+        "os_version": "10"
+    },
+    "Win.Edge": {
+        "base": "BrowserStack",
+        "browser": "edge",
+        "browser_version": "90.0",
+        "os": "Windows",
+        "os_version": "10"
+    },
+    "Win.Firefox": {
+        "base": "BrowserStack",
+        "browser": "firefox",
+        "browser_version": "88.0",
+        "os": "Windows",
+        "os_version": "10"
+    },
+    "Win.IE": {
+        "base": "BrowserStack",
+        "browser": "ie",
+        "browser_version": "11.0",
+        "os": "Windows",
+        "os_version": "10"
+    }
+}

@@ -8,16 +8,18 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type CSSObject from '../CSSObject';
 import type HTMLElement from './HTMLElement';
 import type { HTMLDOMElement } from '../DOMElementType';
-import H from '../../Globals.js';
-const {
-    isFirefox,
-    isMS,
-    isWebKit,
-    win
-} = H;
+
 import AST from './AST.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
@@ -29,52 +31,43 @@ const {
     pick
 } = U;
 
-/**
- * @private
- */
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../SVG/SVGRendererLike' {
-    interface SVGElementLike {
-        /** @requires Core/Renderer/HTML/HTMLRenderer */
-        getTransformKey(): string;
+    interface SVGRendererLike {
         /** @requires Core/Renderer/HTML/HTMLRenderer */
         html(str: string, x: number, y: number): HTMLElement;
     }
 }
 
-/**
- * Renderer placebo
- * @private
- */
-const HTMLRenderer = SVGRenderer;
-interface HTMLRenderer extends SVGRenderer {
-    /** @requires Core/Renderer/HTML/HTMLRenderer */
-    getTransformKey(): string;
-    /** @requires Core/Renderer/HTML/HTMLRenderer */
-    html(str: string, x: number, y: number): HTMLElement;
-}
+/* *
+ *
+ *  Composition
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 
 // Extend SvgRenderer for useHTML option.
-extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
+class HTMLRenderer extends SVGRenderer {
 
-    /**
-     * @private
-     * @function Highcharts.SVGRenderer#getTransformKey
+    /* *
      *
-     * @return {string}
-     */
-    getTransformKey: function (this: HTMLRenderer): string {
-        return isMS && !/Edge/.test(win.navigator.userAgent) ?
-            '-ms-transform' :
-            isWebKit ?
-                '-webkit-transform' :
-                isFirefox ?
-                    'MozTransform' :
-                    win.opera ?
-                        '-o-transform' :
-                        '';
-    },
+     *  Functions
+     *
+     * */
+
+    /** @private */
+    public static compose(SVGRendererClass: typeof SVGRenderer): void {
+        const svgRendererProto = SVGRendererClass.prototype,
+            htmlRendererProto = HTMLRenderer.prototype;
+
+        svgRendererProto.html = htmlRendererProto.html;
+    }
 
     /**
      * Create HTML text node. This is used by the VML renderer as well as the
@@ -94,13 +87,13 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
      *
      * @return {Highcharts.HTMLDOMElement}
      */
-    html: function (
+    public html(
         this: HTMLRenderer,
         str: string,
         x: number,
         y: number
     ): HTMLElement {
-        var wrapper = this.createElement('span') as HTMLElement,
+        const wrapper = this.createElement('span') as HTMLElement,
             element = wrapper.element,
             renderer = wrapper.renderer,
             isSVG = renderer.isSVG,
@@ -118,7 +111,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                         key: string,
                         elem: HTMLElement
                     ): void {
-                        var styleObject = gWrapper.div ?
+                        const styleObject = gWrapper.div ?
                             gWrapper.div.style :
                             style;
                         SVGElement.prototype[prop + 'Setter']
@@ -160,7 +153,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
         ): void {
             if (key === 'align') {
                 // Do not overwrite the SVGElement.align method. Same as VML.
-                wrapper.alignValue = wrapper.textAlign = value;
+                wrapper.alignValue = wrapper.textAlign = value as any;
             } else {
                 wrapper[key as any] = value;
             }
@@ -205,7 +198,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
         if (isSVG) {
             wrapper.add = function (svgGroupWrapper?: HTMLElement): HTMLElement {
 
-                var htmlGroup: (HTMLElement|HTMLDOMElement|null|undefined),
+                let htmlGroup: (HTMLElement|HTMLDOMElement|null|undefined),
                     container = renderer.box.parentNode,
                     parentGroup,
                     parents = [] as Array<HTMLElement>;
@@ -231,7 +224,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                         // Ensure dynamically updating position when any parent
                         // is translated
                         parents.reverse().forEach(function (parentGroup): void {
-                            var htmlGroupStyle: CSSObject,
+                            let htmlGroupStyle: CSSObject,
                                 cls = attr(parentGroup.element, 'class');
 
                             /**
@@ -306,10 +299,10 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                                 }(htmlGroup as any)),
                                 on: function (): HTMLElement {
                                     if (parents[0].div) { // #6418
-                                        wrapper.on.apply(
-                                            { element: parents[0].div },
-                                            arguments as any
-                                        );
+                                        wrapper.on.apply({
+                                            element: parents[0].div,
+                                            onEvents: wrapper.onEvents
+                                        }, arguments);
                                     }
                                     return parentGroup;
                                 },
@@ -339,6 +332,12 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
         }
         return wrapper;
     }
-});
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default HTMLRenderer;

@@ -198,7 +198,7 @@ class FlagsSeries extends ColumnSeries {
          * @product   highstock
          */
         tooltip: {
-            pointFormat: '{point.text}<br/>'
+            pointFormat: '{point.text}'
         },
 
         threshold: null as any,
@@ -365,7 +365,7 @@ class FlagsSeries extends ColumnSeries {
      * @private
      */
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             points = series.points,
             chart = series.chart,
             renderer = chart.renderer,
@@ -419,6 +419,10 @@ class FlagsSeries extends ColumnSeries {
                 (plotX as any) >= 0 &&
                 !outsideRight
             ) {
+                // #15384
+                if (graphic && point.hasNewShapeType()) {
+                    graphic = graphic.destroy();
+                }
 
                 // Create the flag
                 if (!graphic) {
@@ -514,7 +518,7 @@ class FlagsSeries extends ColumnSeries {
             H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
 
             points.forEach(function (point): void {
-                var box = point.graphic && boxesMap[point.plotX as any];
+                const box = point.graphic && boxesMap[point.plotX as any];
 
                 if (box) {
                     (point.graphic as any)[
@@ -562,7 +566,7 @@ class FlagsSeries extends ColumnSeries {
      * @private
      */
     public drawTracker(): void {
-        var series = this,
+        const series = this,
             points = series.points;
 
         super.drawTracker();
@@ -573,10 +577,13 @@ class FlagsSeries extends ColumnSeries {
         * axis. #1924.
         */
         points.forEach(function (point): void {
-            var graphic = point.graphic;
+            const graphic = point.graphic;
 
             if (graphic) {
-                addEvent(graphic.element, 'mouseover', function (): void {
+                if (point.unbindMouseOver) {
+                    point.unbindMouseOver();
+                }
+                point.unbindMouseOver = addEvent(graphic.element, 'mouseover', function (): void {
 
                     // Raise this point
                     if ((point.stackIndex as any) > 0 &&
@@ -615,7 +622,7 @@ class FlagsSeries extends ColumnSeries {
         point: FlagsPoint,
         state?: string
     ): SVGAttributes {
-        var options = this.options,
+        let options = this.options,
             color = (point && point.color) || this.color,
             lineColor = options.lineColor,
             lineWidth = (point && point.lineWidth),
@@ -639,9 +646,12 @@ class FlagsSeries extends ColumnSeries {
      */
     public setClip(): void {
         Series.prototype.setClip.apply(this, arguments as any);
-        if (this.options.clip !== false && this.sharedClipKey) {
-            (this.markerGroup as any)
-                .clip((this.chart as any)[this.sharedClipKey]);
+        if (
+            this.options.clip !== false &&
+            this.sharedClipKey &&
+            this.markerGroup
+        ) {
+            this.markerGroup.clip(this.chart.sharedClips[this.sharedClipKey]);
         }
     }
 
@@ -671,7 +681,7 @@ extend(FlagsSeries.prototype, {
      * @private
      * @function Highcharts.seriesTypes.flags#buildKDTree
      */
-    buildKDTree: noop as any,
+    buildKDTree: noop,
 
     forceCrop: true,
 
@@ -691,7 +701,10 @@ extend(FlagsSeries.prototype, {
      * @private
      * @function Highcharts.seriesTypes.flags#invertGroups
      */
-    invertGroups: noop as any,
+    invertGroups: noop,
+
+    // Flags series group should not be invertible (#14063).
+    invertible: false,
 
     noSharedTooltip: true,
 

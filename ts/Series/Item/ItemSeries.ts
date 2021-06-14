@@ -22,10 +22,12 @@ import type { ItemPointMarkerOptions } from './ItemPointOptions';
 import type ItemSeriesOptions from './ItemSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
+
 import H from '../../Core/Globals.js';
 import ItemPoint from './ItemPoint.js';
-import O from '../../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -218,7 +220,7 @@ class ItemSeries extends PieSeries {
     }
 
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             options = this.options,
             renderer = series.chart.renderer,
             seriesMarkerOptions: ItemPointMarkerOptions = options.marker as any,
@@ -242,11 +244,11 @@ class ItemSeries extends PieSeries {
         //*/
 
         this.points.forEach(function (point): void {
-            var attr: SVGAttributes,
+            let attr: SVGAttributes,
                 graphics: Record<string, SVGElement>,
                 pointAttr: (SVGAttributes|undefined),
                 pointMarkerOptions = point.marker || {},
-                symbol: string = (
+                symbol: SymbolKey = (
                     pointMarkerOptions.symbol ||
                     (seriesMarkerOptions.symbol as any)
                 ),
@@ -277,13 +279,13 @@ class ItemSeries extends PieSeries {
                         .add(series.group);
                 }
 
-                for (var val = 0; val < (point.y as any); val++) {
+                for (let val = 0; val < (point.y as any); val++) {
 
                     // Semi-circle
                     if (series.center && series.slots) {
 
                         // Fill up the slots from left to right
-                        var slot: ItemSeries.GeometryObject =
+                        const slot: ItemSeries.GeometryObject =
                             series.slots.shift() as any;
                         x = slot.x - itemSize / 2;
                         y = slot.y - itemSize / 2;
@@ -353,7 +355,7 @@ class ItemSeries extends PieSeries {
     }
 
     public getRows(): number {
-        var rows = this.options.rows,
+        let rows = this.options.rows,
             cols: number,
             ratio: number;
 
@@ -390,7 +392,7 @@ class ItemSeries extends PieSeries {
      * @private
      */
     public getSlots(): (Array<ItemSeries.GeometryObject>|undefined) {
-        var center = this.center,
+        let center = this.center,
             diameter = center[2],
             innerSize = center[3],
             row: number,
@@ -478,7 +480,7 @@ class ItemSeries extends PieSeries {
         // the rows and remove the last slot until the count is correct.
         // For each iteration we sort the last slot by the angle, and
         // remove those with the highest angles.
-        var overshoot = (finalItemCount as any) - (this.total as any) -
+        let overshoot = (finalItemCount as any) - (this.total as any) -
             (isCircle ? rows.length : 0);
         /**
          * @private
@@ -517,7 +519,7 @@ class ItemSeries extends PieSeries {
         }
 
         rows.forEach(function (row): void {
-            var rowRadius = row.rowRadius,
+            const rowRadius = row.rowRadius,
                 colCount = row.colCount;
             increment = colCount ? fullAngle / colCount : 0;
             for (col = 0; col <= colCount; col += 1) {

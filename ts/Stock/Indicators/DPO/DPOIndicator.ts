@@ -42,7 +42,7 @@ function accumulatePoints(
     index: number,
     subtract?: boolean
 ): number {
-    var price = pick<(number | undefined), number>(
+    const price = pick<(number | undefined), number>(
         (yVal[i] as any)[index], (yVal[i] as any)
     );
 
@@ -92,6 +92,7 @@ class DPOIndicator extends SMAIndicator {
          * points.
          */
         params: {
+            index: 0,
             /**
              * Period for Detrended Price Oscillator
              */
@@ -123,7 +124,7 @@ class DPOIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: DPOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        var period: number = (params.period as any),
+        let period: number = (params.period as any),
             index: number = (params.index as any),
             offset: number = Math.floor(period / 2 + 1),
             range: number = period + offset,

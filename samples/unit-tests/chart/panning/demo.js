@@ -168,6 +168,8 @@ QUnit.test('Zoom and pan key', function (assert) {
                         95.6,
                         54.4
                     ]
+                }, {
+                    data: [20, 300]
                 }
             ]
         }),
@@ -225,6 +227,17 @@ QUnit.test('Zoom and pan key', function (assert) {
         xExtremes.max - xExtremes.min,
         0.00001, // Roundoff error in Firefox
         'Has preserved range'
+    );
+
+    assert.strictEqual(
+        chart.yAxis[0].panningState.startMin,
+        20,
+        '#15022: panningState should have the correct startMin'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].panningState.startMax,
+        300,
+        '#15022: panningState should have the correct startMax'
     );
 });
 
@@ -534,7 +547,7 @@ QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
 });
 
 QUnit.test(
-    'Pan in vertical direction, and both directions. (Highstock only)',
+    'Pan in vertical direction, and both directions. (Highcharts Stock only)',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
             chart: {

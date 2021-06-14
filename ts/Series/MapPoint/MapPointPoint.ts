@@ -57,7 +57,7 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
         options: (Highcharts.MapLatLonObject&MapPointPointOptions),
         x?: number
     ): MapPointPoint {
-        var mergedOptions = (
+        const mergedOptions = (
             typeof options.lat !== 'undefined' &&
             typeof options.lon !== 'undefined' ?
                 merge(

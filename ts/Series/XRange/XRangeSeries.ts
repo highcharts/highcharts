@@ -26,6 +26,7 @@ import type {
     XRangePointPartialFillOptions
 } from './XRangePointOptions';
 import type XRangeSeriesOptions from './XRangeSeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import H from '../../Core/Globals.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -139,7 +140,7 @@ class XRangeSeries extends ColumnSeries {
 
         dataLabels: {
             formatter: function (): (string|undefined) {
-                var point = this.point,
+                let point = this.point,
                     amount = (point as XRangePoint).partialFill;
 
                 if (isObject(amount)) {
@@ -202,7 +203,7 @@ class XRangeSeries extends ColumnSeries {
      * @return {Highcharts.ColumnMetricsObject}
      */
     public getColumnMetrics(): ColumnMetricsObject {
-        var metrics,
+        let metrics,
             chart = this.chart;
 
         /**
@@ -210,7 +211,7 @@ class XRangeSeries extends ColumnSeries {
          */
         function swapAxes(): void {
             chart.series.forEach(function (s): void {
-                var xAxis = s.xAxis;
+                const xAxis = s.xAxis;
 
                 s.xAxis = s.yAxis;
                 s.yAxis = xAxis;
@@ -253,7 +254,7 @@ class XRangeSeries extends ColumnSeries {
     ): Highcharts.SeriesCropDataObject {
 
         // Replace xData with x2Data to find the appropriate cropStart
-        var cropData = Series.prototype.cropData,
+        const cropData = Series.prototype.cropData,
             crop = cropData.call(this, this.x2Data as any, yData, min, max);
 
         // Re-insert the cropped xData
@@ -318,14 +319,14 @@ class XRangeSeries extends ColumnSeries {
      * @param {Highcharts.Point} point
      */
     public translatePoint(point: XRangePoint): void {
-        var series = this,
+        let series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             metrics: ColumnMetricsObject =
                 series.columnMetrics as any,
             options = series.options,
             minPointLength = options.minPointLength || 0,
-            oldColWidth = point.shapeArgs?.width / 2,
+            oldColWidth = (point.shapeArgs && point.shapeArgs.width || 0) / 2,
             seriesXOffset = series.pointXOffset = metrics.offset,
             plotX = point.plotX,
             posX = pick(point.x2, (point.x as any) + (point.len || 0)),
@@ -338,7 +339,6 @@ class XRangeSeries extends ColumnSeries {
             ),
             length = Math.abs((plotX2 as any) - (plotX as any)),
             widthDifference,
-            shapeArgs,
             partialFill: (
                 XRangePointPartialFillOptions|
                 undefined
@@ -390,19 +390,20 @@ class XRangeSeries extends ColumnSeries {
             );
         }
 
-        point.shapeArgs = {
+        const shapeArgs = {
             x: Math.floor(Math.min(plotX, plotX2)) + crisper,
             y: Math.floor((point.plotY as any) + yOffset) + crisper,
             width: Math.round(Math.abs(plotX2 - plotX)),
             height: pointHeight,
             r: series.options.borderRadius
         };
+        point.shapeArgs = shapeArgs;
 
         // Move tooltip to default position
         if (!inverted) {
             (point.tooltipPos as any)[0] -= oldColWidth +
             seriesXOffset -
-            point.shapeArgs?.width / 2;
+            shapeArgs.width / 2;
         } else {
             (point.tooltipPos as any)[1] += seriesXOffset +
             oldColWidth;
@@ -410,13 +411,13 @@ class XRangeSeries extends ColumnSeries {
 
 
         // Align data labels inside the shape and inside the plot area
-        dlLeft = point.shapeArgs.x;
-        dlRight = dlLeft + point.shapeArgs.width;
+        dlLeft = shapeArgs.x;
+        dlRight = dlLeft + shapeArgs.width;
         if (dlLeft < 0 || dlRight > xAxis.len) {
             dlLeft = clamp(dlLeft, 0, xAxis.len);
             dlRight = clamp(dlRight, 0, xAxis.len);
             dlWidth = dlRight - dlLeft;
-            point.dlBox = merge(point.shapeArgs, {
+            point.dlBox = merge(shapeArgs, {
                 x: dlLeft,
                 width: dlRight - dlLeft,
                 centerX: dlWidth ? dlWidth / 2 : null
@@ -436,9 +437,9 @@ class XRangeSeries extends ColumnSeries {
 
         // Centering tooltip position (#14147)
         if (!inverted) {
-            tooltipPos[xIndex] += (xAxis.reversed ? -1 : 0) * point.shapeArgs.width;
+            tooltipPos[xIndex] += (xAxis.reversed ? -1 : 0) * shapeArgs.width;
         } else {
-            tooltipPos[xIndex] += point.shapeArgs.width / 2;
+            tooltipPos[xIndex] += shapeArgs.width / 2;
         }
         tooltipPos[yIndex] = clamp(
             tooltipPos[yIndex] + (
@@ -459,14 +460,9 @@ class XRangeSeries extends ColumnSeries {
             if (!isNumber(partialFill)) {
                 partialFill = 0 as any;
             }
-            shapeArgs = point.shapeArgs;
-            point.partShapeArgs = {
-                x: shapeArgs.x,
-                y: shapeArgs.y,
-                width: shapeArgs.width,
-                height: shapeArgs.height,
+            point.partShapeArgs = merge(shapeArgs, {
                 r: series.options.borderRadius
-            };
+            });
 
             clipRectWidth = Math.max(
                 Math.round(
@@ -516,7 +512,7 @@ class XRangeSeries extends ColumnSeries {
         point: XRangePoint,
         verb: string
     ): void {
-        var series = this,
+        let series = this,
             seriesOpts = series.options,
             renderer = series.chart.renderer,
             graphic = point.graphic,
@@ -535,7 +531,7 @@ class XRangeSeries extends ColumnSeries {
                 'attr' : verb,
             pointAttr = series.pointAttribs(point, pointState),
             animation = pick(
-                (series.chart.options.chart as any).animation,
+                series.chart.options.chart.animation,
                 stateOpts.animation
             ),
             fill;
@@ -631,7 +627,7 @@ class XRangeSeries extends ColumnSeries {
      * @function Highcharts.Series#drawPoints
      */
     public drawPoints(): void {
-        var series = this,
+        const series = this,
             verb = series.getAnimationVerb();
 
         // Draw the columns
@@ -659,10 +655,34 @@ class XRangeSeries extends ColumnSeries {
         );
     }
 
+    /**
+     * @private
+     * @function Highcharts.XRangeSeries#isPointInside
+     */
+    public isPointInside(point: (Record<string, number>|XRangePoint)): boolean {
+        const shapeArgs = point.shapeArgs as SVGAttributes,
+            plotX = point.plotX,
+            plotY = point.plotY;
+
+        if (!shapeArgs) {
+            return super.isPointInside.apply(this, arguments);
+        }
+
+        const isInside =
+            typeof plotX !== 'undefined' &&
+            typeof plotY !== 'undefined' &&
+            plotY >= 0 &&
+            plotY <= this.yAxis.len &&
+            (shapeArgs.x || 0) + (shapeArgs.width || 0) >= 0 &&
+            plotX <= this.xAxis.len;
+
+        return isInside;
+    }
+
     /*
     // Override to remove stroke from points. For partial fill.
     pointAttribs: function () {
-        var series = this,
+        let series = this,
             retVal = columnType.prototype.pointAttribs
                 .apply(series, arguments);
 
@@ -699,7 +719,7 @@ extend(XRangeSeries.prototype, {
     cropShoulder: 1,
     getExtremesFromAll: true,
     autoIncrement: H.noop as any,
-    buildKDTree: H.noop as any,
+    buildKDTree: H.noop,
     pointClass: XRangePoint
 });
 

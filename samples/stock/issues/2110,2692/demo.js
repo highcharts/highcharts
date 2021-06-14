@@ -443,7 +443,7 @@ Highcharts.stockChart('container', {
     },
 
     title: {
-        text: 'Issue in Highstock 1.3.7 caused the data grouping to stick.<br/>Highstock <= 1.3.9 saw the same issue with multiple series.'
+        text: 'Issue in Highcharts Stock 1.3.7 caused the data grouping to stick.<br/>Highcharts Stock <= 1.3.9 saw the same issue with multiple series.'
     },
 
     rangeSelector: {

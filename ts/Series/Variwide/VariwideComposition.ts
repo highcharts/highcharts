@@ -37,11 +37,14 @@ const {
  *
  * */
 
-declare module '../../Core/Axis/Types' {
+declare module '../../Core/Axis/AxisLike' {
     interface AxisLike {
         variwide?: boolean;
         zData?: Array<number>;
     }
+}
+
+declare module '../../Core/Axis/TickLike' {
     interface TickLike {
         postTranslate(
             xy: PositionObject,
@@ -62,8 +65,9 @@ Tick.prototype.postTranslate = function (
     xOrY: keyof PositionObject,
     index: number
 ): void {
-    var axis = this.axis,
-        pos = xy[xOrY] - axis.pos;
+    const axis = this.axis;
+
+    let pos = xy[xOrY] - axis.pos;
 
     if (!axis.horiz) {
         pos = axis.len - pos;
@@ -94,7 +98,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
 // On a vertical axis, apply anti-collision logic to the labels.
 addEvent(Axis, 'afterRender', function (): void {
-    var axis = this;
+    const axis = this;
 
     if (!this.horiz && this.variwide) {
         this.chart.labelCollectors.push(
@@ -107,7 +111,7 @@ addEvent(Axis, 'afterRender', function (): void {
                         pos: number,
                         i: number
                     ): SVGElement {
-                        var label: SVGElement =
+                        const label: SVGElement =
                             axis.ticks[pos].label as any;
 
                         label.labelrank = (axis.zData as any)[i];
@@ -124,7 +128,7 @@ addEvent(Tick, 'afterGetPosition', function (
         xOrY: keyof PositionObject;
     }
 ): void {
-    var axis = this.axis,
+    const axis = this.axis,
         xOrY: keyof PositionObject = axis.horiz ? 'x' : 'y';
 
     if (axis.variwide) {
@@ -134,7 +138,7 @@ addEvent(Tick, 'afterGetPosition', function (
 });
 
 wrap(Tick.prototype, 'getLabelPosition', function (
-    this: Highcharts.Tick,
+    this: Tick,
     proceed: Function,
     x: number,
     y: number,
@@ -144,7 +148,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (
     tickmarkOffset: number,
     index: number
 ): PositionObject {
-    var args = Array.prototype.slice.call(arguments, 1),
+    let args = Array.prototype.slice.call(arguments, 1),
         xy: PositionObject,
         xOrY: keyof PositionObject = horiz ? 'x' : 'y';
 

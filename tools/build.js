@@ -185,7 +185,6 @@ const fnFirstBuild = options => {
         version
     });
     const promises = [];
-    promises.push(require('./error-messages')());
     types.forEach(type => {
         const pathSource = mapTypeToSource[type];
         const pathESMasters = join(pathSource, 'masters');

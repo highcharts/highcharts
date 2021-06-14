@@ -18,6 +18,7 @@
 
 import type DumbbellSeries from './DumbbellSeries.js';
 import type DumbbellPointOptions from './DumbbellPointOptions';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
 import U from '../../Core/Utilities.js';
@@ -42,7 +43,7 @@ class DumbbellPoint extends AreaRangePoint {
 
     public series: DumbbellSeries = void 0 as any;
     public options: DumbbellPointOptions = void 0 as any;
-    public connector: Highcharts.SVGElement = void 0 as any;
+    public connector: SVGElement = void 0 as any;
     public pointWidth: number = void 0 as any;
 
     /* *
@@ -61,7 +62,7 @@ class DumbbellPoint extends AreaRangePoint {
      * @return {void}
      */
     setState(): void {
-        var point = this,
+        let point = this,
             series = point.series,
             chart = series.chart,
             seriesLowColor = series.options.lowColor,
@@ -79,7 +80,7 @@ class DumbbellPoint extends AreaRangePoint {
             ),
             verb = 'attr',
             upperGraphicColor,
-            origProps;
+            origProps: Partial<DumbbellPoint>;
 
         this.pointSetState.apply(this, arguments);
 
@@ -112,6 +113,15 @@ class DumbbellPoint extends AreaRangePoint {
         }
 
         point.connector[verb](series.getConnectorAttribs(point));
+    }
+
+    public destroy(): void {
+        // #15560
+        if (!this.graphic) {
+            this.graphic = this.connector;
+            this.connector = void 0 as any;
+        }
+        return super.destroy();
     }
 }
 

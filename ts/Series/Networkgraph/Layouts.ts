@@ -225,7 +225,7 @@ extend(
             this.enableSimulation = pick(enable, this.options.enableSimulation);
         },
         start: function (this: Highcharts.NetworkgraphLayout): void {
-            var layout = this,
+            const layout = this,
                 series = this.series,
                 options = this.options;
 
@@ -252,7 +252,7 @@ extend(
             }
         },
         step: function (this: Highcharts.NetworkgraphLayout): void {
-            var layout = this,
+            const layout = this,
                 series = this.series,
                 options = this.options;
 
@@ -280,6 +280,7 @@ extend(
 
             layout.prevSystemTemperature = layout.systemTemperature;
             layout.systemTemperature = layout.getSystemTemperature();
+
             if (layout.enableSimulation) {
                 series.forEach(function (s): void {
                     // Chart could be destroyed during the simulation
@@ -346,7 +347,7 @@ extend(
             element: T,
             collection: Array<T>
         ): void {
-            var index = collection.indexOf(element);
+            const index = collection.indexOf(element);
 
             if (index !== -1) {
                 collection.splice(index, 1);
@@ -433,7 +434,7 @@ extend(
         initPositions: function (
             this: Highcharts.NetworkgraphLayout
         ): void {
-            var initialPositions = this.options.initialPositions;
+            const initialPositions = this.options.initialPositions;
 
             if (isFunction(initialPositions)) {
                 initialPositions.call(this);
@@ -458,7 +459,7 @@ extend(
         setCircularPositions: function (
             this: Highcharts.NetworkgraphLayout
         ): void {
-            var box = this.box,
+            let box = this.box,
                 nodes = this.nodes,
                 nodesLength = nodes.length + 1,
                 angle = 2 * Math.PI / nodesLength,
@@ -525,7 +526,7 @@ extend(
         setRandomPositions: function (
             this: Highcharts.NetworkgraphLayout
         ): void {
-            var box = this.box,
+            const box = this.box,
                 nodes = this.nodes,
                 nodesLength = nodes.length + 1;
 
@@ -535,7 +536,7 @@ extend(
              * @private
              */
             function unrandom(n: number): number {
-                var rand = n * n / Math.PI;
+                let rand = n * n / Math.PI;
 
                 rand = rand - Math.floor(rand);
                 return rand;
@@ -577,7 +578,7 @@ extend(
         getBarycenter: function (
             this: Highcharts.NetworkgraphLayout
         ): Record<string, number> {
-            var systemMass = 0,
+            let systemMass = 0,
                 cx = 0,
                 cy = 0;
 
@@ -602,7 +603,7 @@ extend(
             node: Point,
             quadNode: Highcharts.QuadTreeNode
         ): (boolean|undefined) {
-            var layout = this,
+            let layout = this,
                 distanceXY = layout.getDistXY(node, quadNode),
                 distanceR = layout.vectorLength(distanceXY),
                 goDeeper,
@@ -648,7 +649,7 @@ extend(
             return goDeeper;
         },
         repulsiveForces: function (this: Highcharts.NetworkgraphLayout): void {
-            var layout = this;
+            const layout = this;
 
             if (layout.approximation === 'barnes-hut') {
                 layout.nodes.forEach(function (node: Point): void {
@@ -667,7 +668,7 @@ extend(
             } else {
                 layout.nodes.forEach(function (node: Point): void {
                     layout.nodes.forEach(function (repNode: Point): void {
-                        var force,
+                        let force,
                             distanceR,
                             distanceXY;
 
@@ -701,7 +702,7 @@ extend(
             }
         },
         attractiveForces: function (this: Highcharts.NetworkgraphLayout): void {
-            var layout = this,
+            let layout = this,
                 distanceXY,
                 distanceR,
                 force;
@@ -729,7 +730,7 @@ extend(
             });
         },
         applyLimits: function (this: Highcharts.NetworkgraphLayout): void {
-            var layout = this,
+            const layout = this,
                 nodes = layout.nodes;
 
             nodes.forEach(function (node: Point): void {
@@ -756,7 +757,7 @@ extend(
             node: Highcharts.NetworkgraphPoint,
             box: Record<string, number>
         ): void {
-            var radius = node.radius;
+            const radius = node.radius;
             /*
             TO DO: Consider elastic collision instead of stopping.
             o' means end position when hitting plotting area edge:
@@ -820,7 +821,7 @@ extend(
 
             // Exponential:
             /*
-            var alpha = 0.1;
+            let alpha = 0.1;
             layout.temperature = Math.sqrt(layout.nodes.length) *
                 Math.pow(alpha, layout.diffTemperature);
             */
@@ -854,7 +855,7 @@ extend(
             nodeA: Highcharts.NetworkgraphPoint,
             nodeB: (Highcharts.NetworkgraphPoint|Highcharts.QuadTreeNode)
         ): number {
-            var distance = this.getDistXY(nodeA, nodeB);
+            const distance = this.getDistXY(nodeA, nodeB);
 
             return this.vectorLength(distance);
         },
@@ -863,7 +864,7 @@ extend(
             nodeA: Point,
             nodeB: (Point|Highcharts.QuadTreeNode)
         ): Record<string, number> {
-            var xDist = (nodeA.plotX as any) - (nodeB.plotX as any),
+            const xDist = (nodeA.plotX as any) - (nodeB.plotX as any),
                 yDist = (nodeA.plotY as any) - (nodeB.plotY as any);
 
             return {
@@ -894,7 +895,7 @@ addEvent(Chart as any, 'predraw', function (
 addEvent(Chart as any, 'render', function (
     this: Highcharts.NetworkgraphChart
 ): void {
-    var systemsStable,
+    let systemsStable,
         afterRender = false;
 
     /**

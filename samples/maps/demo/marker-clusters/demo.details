@@ -1,10 +1,11 @@
 ---
-name: Highcharts Demo
+name: Map with marker clusters
 authors:
   - Wojciech Chmiel
 js_wrap: b
 new_until: 2020-03-11
 tags:
   - Highcharts Maps demo
-categories: []
+categories:
+  - General
 ...

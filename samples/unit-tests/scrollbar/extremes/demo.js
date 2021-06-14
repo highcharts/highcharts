@@ -34,7 +34,7 @@ QUnit.test(
     }
 );
 
-// Highstock 4.0.1, Issue #3040
+// Highcharts Stock 4.0.1, Issue #3040
 // Scrolling outside data range possible
 QUnit.test('Scrolling outside range (#3040)', function (assert) {
     TestTemplate.test(
@@ -337,5 +337,36 @@ QUnit.test('Toggle chart.scrollbar', assert => {
         chart.xAxis[0].tickPositions[0],
         0,
         "xAxis's tick should equal min and max values (#13184)."
+    );
+});
+
+QUnit.test('#13473: Threshold', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        yAxis: {
+            max: 200,
+            scrollbar: {
+                enabled: true
+            }
+        },
+        series: [{
+            data: [100, 200, 500]
+        }]
+    });
+
+    const scrollbar = chart.yAxis[0].scrollbar;
+    scrollbar.buttonToMinClick({
+        trigger: 'scrollbar'
+    });
+    scrollbar.buttonToMaxClick({
+        trigger: 'scrollbar'
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].min,
+        0,
+        'It should be possible to scroll back down to the threshold after scrolling up'
     );
 });

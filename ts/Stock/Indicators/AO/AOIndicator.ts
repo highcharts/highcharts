@@ -23,6 +23,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
+import palette from '../../../Core/Color/Palette.js';
 const {
     extend,
     merge,
@@ -66,6 +67,11 @@ class AOIndicator extends SMAIndicator {
      */
     public static defaultOptions: AOOptions =
     merge(SMAIndicator.defaultOptions, {
+        params: {
+            // Index and period are unchangeable, do not inherit (#15362)
+            index: void 0,
+            period: void 0
+        },
         /**
          * Color of the Awesome oscillator series bar that is greater than the
          * previous one. Note that if a `color` is defined, the `color`
@@ -77,7 +83,7 @@ class AOIndicator extends SMAIndicator {
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
          */
-        greaterBarColor: '#06B535',
+        greaterBarColor: palette.positiveColor,
         /**
          * Color of the Awesome oscillator series bar that is lower than the
          * previous one. Note that if a `color` is defined, the `color`
@@ -89,7 +95,7 @@ class AOIndicator extends SMAIndicator {
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
          */
-        lowerBarColor: '#F21313',
+        lowerBarColor: palette.negativeColor,
         threshold: 0,
         groupPadding: 0.2,
         pointPadding: 0.2,
@@ -120,7 +126,7 @@ class AOIndicator extends SMAIndicator {
      */
 
     public drawGraph(this: AOIndicator): void {
-        var indicator = this,
+        let indicator = this,
             options = indicator.options,
             points = indicator.points,
             userColor = indicator.userOptions.color,
@@ -149,7 +155,7 @@ class AOIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var shortPeriod = 5,
+        let shortPeriod = 5,
             longPeriod = 34,
             xVal: Array<number> = series.xData || [],
             yVal: Array<number|null|undefined> =
@@ -244,7 +250,7 @@ extend(AOIndicator.prototype, {
     nameComponents: (false as any),
 
     // Columns support:
-    markerAttribs: (noop as any),
+    markerAttribs: noop as any,
     getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
     crispCol: ColumnSeries.prototype.crispCol,
     translate: ColumnSeries.prototype.translate,

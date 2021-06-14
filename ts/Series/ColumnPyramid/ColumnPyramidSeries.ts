@@ -97,7 +97,7 @@ class ColumnPyramidSeries extends ColumnSeries {
      * @private
      */
     public translate(): void {
-        var series = this,
+        let series = this,
             chart = series.chart,
             options = series.options,
             dense = series.dense =
@@ -137,7 +137,7 @@ class ColumnPyramidSeries extends ColumnSeries {
         series.points.forEach(function (
             point: ColumnPyramidPoint
         ): void {
-            var yBottom = pick<number|undefined, number>(
+            let yBottom = pick<number|undefined, number>(
                     point.yBottom, translatedThreshold as any
                 ),
                 safeDistance = 999 + Math.abs(yBottom),

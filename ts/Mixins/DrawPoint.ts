@@ -4,11 +4,18 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
 import type ShadowOptionsObject from '../Core/Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 const isFn = function (x: unknown): x is Function {
     return typeof x === 'function';
@@ -33,17 +40,27 @@ const draw = function draw(
     this: Mixin.DrawPoint,
     params: Mixin.DrawPointParams
 ): void {
-    var component = this,
-        graphic = component.graphic,
-        animatableAttribs = params.animatableAttribs,
-        onComplete = params.onComplete,
-        css = params.css,
-        renderer = params.renderer,
-        animation = component.series?.options.animation;
+    const {
+        animatableAttribs,
+        onComplete,
+        css,
+        renderer
+    } = params;
 
-    if (component.shouldDraw()) {
+    const animation = (this.series && this.series.chart.hasRendered) ?
+        // Chart-level animation on updates
+        void 0 :
+        // Series-level animation on new points
+        (
+            this.series &&
+            this.series.options.animation
+        );
+
+    let graphic = this.graphic;
+
+    if (this.shouldDraw()) {
         if (!graphic) {
-            component.graphic = graphic =
+            this.graphic = graphic =
                 (renderer as any)[params.shapeType](params.shapeArgs)
                     .add(params.group);
         }
@@ -56,8 +73,8 @@ const draw = function draw(
                 onComplete
             );
     } else if (graphic) {
-        var destroy = function (): void {
-            component.graphic = graphic = (graphic as any).destroy();
+        const destroy = (): void => {
+            this.graphic = graphic = (graphic && graphic.destroy());
             if (isFn(onComplete)) {
                 onComplete();
             }
@@ -84,7 +101,7 @@ const drawPoint = function drawPoint(
     this: Mixin.DrawPoint,
     params: Mixin.DrawPointParams
 ): void {
-    var point = this,
+    const point = this,
         attribs = params.attribs = params.attribs || {};
 
     // Assigning class in dot notation does go well in IE8
@@ -112,7 +129,7 @@ namespace Mixin {
         group: SVGElement;
         onComplete?: Function;
         isNew?: boolean;
-        renderer: Highcharts.Renderer;
+        renderer: SVGRenderer;
         shadow?: (boolean|Partial<ShadowOptionsObject>);
         shapeArgs?: SVGAttributes;
         shapeType: string;

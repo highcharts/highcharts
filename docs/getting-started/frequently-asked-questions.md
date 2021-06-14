@@ -2,6 +2,7 @@ Frequently asked questions
 ===
 
 *   [Does Highcharts refer to files outside our domain?](#does-highcharts-refer-to-files-outside-our-domain)
+*   [My charts are not showing in Internet Explorer 7 or 8](#my-charts-are-not-showing-in-internet-explorer-7-or-8)
 *   [Can I use Highcharts with a ... server?](#can-i-use-highcharts-with-a-server)
 *   [Can I use features from Highcharts Stock in Highcharts?](#can-i-use-features-from-highstock-in-highcharts)
 *   [Can I add a data table to the exported chart?](#can-i-add-a-data-table-to-the-exported-chart)

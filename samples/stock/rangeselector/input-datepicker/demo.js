@@ -2,13 +2,19 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
     // Create the chart
     Highcharts.stockChart('container', {
 
-
         rangeSelector: {
             selected: 1
         },
 
         title: {
             text: 'AAPL Stock Price'
+        },
+
+        subtitle: {
+            text: 'Note: This sample is obsolete as of v9.0, when native browser date pickers were implemented',
+            style: {
+                color: 'red'
+            }
         },
 
         series: [{

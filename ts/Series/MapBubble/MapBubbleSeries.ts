@@ -27,7 +27,7 @@ const {
     merge
 } = U;
 
-import '../../Core/Options.js';
+import '../../Core/DefaultOptions.js';
 import '../Bubble/BubbleSeries.js';
 import '../Map/MapSeries.js';
 

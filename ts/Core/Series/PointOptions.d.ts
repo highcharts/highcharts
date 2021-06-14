@@ -28,6 +28,7 @@ import type {
     StateSelectOptions,
     StatesOptions
 } from './StatesOptions';
+import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 
 /* *
  *
@@ -66,7 +67,7 @@ export interface PointMarkerOptions {
     radius?: number;
     radiusPlus?: number;
     states?: PointStatesOptions<Point>;
-    symbol?: string;
+    symbol?: SymbolKey;
     width?: number;
 }
 
@@ -80,7 +81,7 @@ export interface PointOptions {
     className?: string;
     color?: ColorType;
     colorIndex?: number;
-    custom?: Record<string, any>;
+    custom?: AnyRecord;
     drilldown?: string;
     events?: PointEventsOptions;
     id?: string;
@@ -126,7 +127,7 @@ export interface PointStateNormalOptions extends StateNormalOptions {
     opacity?: number;
 }
 
-export interface PointStatesOptions<T extends { options: Record<string, any> }> extends StatesOptions {
+export interface PointStatesOptions<T extends { options: AnyRecord }> extends StatesOptions {
     hover?: PointStateHoverOptions&StateGenericOptions<T>;
     inactive?: PointStateInactiveOptions&StateGenericOptions<T>;
     normal?: PointStateNormalOptions&StateGenericOptions<T>;

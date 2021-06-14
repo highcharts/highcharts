@@ -19,7 +19,6 @@ import type LinearRegressionAnglePoint from './LinearRegressionAnglePoint';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        sma: SMAIndicator,
         linearRegression: LinearRegressionIndicator
     }
 } = SeriesRegistry;
@@ -61,7 +60,7 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * @optionparent plotOptions.linearregressionangle
      */
     public static defaultOptions: LinearRegressionParamsOptions = merge(
-        SMAIndicator.defaultOptions, {
+        LinearRegressionIndicator.defaultOptions, {
             tooltip: { // add a degree symbol
                 pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
                 '{series.name}: <b>{point.y}°</b><br/>'

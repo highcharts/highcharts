@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Marensius Bae Pettersen
+ js_wrap: b
+...

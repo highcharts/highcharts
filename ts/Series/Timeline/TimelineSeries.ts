@@ -21,6 +21,7 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type RangeSelector from '../../Extensions/RangeSelector';
 import type {
     TimelineDataLabelContextObject,
     TimelineDataLabelOptions
@@ -35,6 +36,8 @@ import type {
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -107,6 +110,10 @@ class TimelineSeries extends LineSeries {
         colorByPoint: true,
         stickyTracking: false,
         ignoreHiddenPoint: true,
+        /**
+         * @ignore
+         * @private
+         */
         legendType: 'point',
         lineWidth: 4,
         tooltip: {
@@ -186,7 +193,7 @@ class TimelineSeries extends LineSeries {
             /**
              * @type    {Highcharts.TimelineDataLabelsFormatterCallbackFunction}
              * @default function () {
-             *   var format;
+             *   let format;
              *
              *   if (!this.series.chart.styledMode) {
              *       format = '<span style="color:' + this.point.color +
@@ -202,7 +209,7 @@ class TimelineSeries extends LineSeries {
             formatter: function (
                 this: (Point.PointLabelObject|TimelineDataLabelContextObject)
             ): string {
-                var format;
+                let format;
 
                 if (!this.series.chart.styledMode) {
                     format = '<span style="color:' + this.point.color +
@@ -281,11 +288,11 @@ class TimelineSeries extends LineSeries {
 
     public alignDataLabel(
         point: TimelinePoint,
-        dataLabel: SVGElement,
+        dataLabel: SVGLabel,
         _options: TimelineDataLabelOptions,
         _alignTo: BBoxObject
     ): void {
-        var series = this,
+        let series = this,
             isInverted = series.chart.inverted,
             visiblePoints = series.visibilityMap.filter(function (point): boolean {
                 return point as any;
@@ -348,7 +355,7 @@ class TimelineSeries extends LineSeries {
     }
 
     public bindAxes(): void {
-        var series = this;
+        const series = this;
 
         super.bindAxes.call(series);
 
@@ -361,7 +368,7 @@ class TimelineSeries extends LineSeries {
     }
 
     public distributeDL(): void {
-        var series = this,
+        let series = this,
             dataLabelsOptions: TimelineDataLabelOptions = series.options.dataLabels as any,
             options,
             pointDLOptions,
@@ -393,7 +400,7 @@ class TimelineSeries extends LineSeries {
     }
 
     public generatePoints(): void {
-        var series = this;
+        const series = this;
 
         super.generatePoints.apply(series);
         series.points.forEach(function (point, i): void {
@@ -404,7 +411,7 @@ class TimelineSeries extends LineSeries {
     }
 
     public getVisibilityMap(): Array<(boolean|TimelinePoint|TimelinePointOptions)> {
-        var series = this,
+        const series = this,
             map = (series.data.length ?
                 series.data : (series.userOptions.data as any)
             ).map(function (
@@ -419,8 +426,8 @@ class TimelineSeries extends LineSeries {
         return map;
     }
 
-    public getXExtremes(xData: Array<number>): Highcharts.RangeObject {
-        var series = this,
+    public getXExtremes(xData: Array<number>): RangeSelector.RangeObject {
+        const series = this,
             filteredData = xData.filter(function (
                 x: number,
                 i: number
@@ -436,12 +443,12 @@ class TimelineSeries extends LineSeries {
     }
 
     public init(): void {
-        var series = this;
+        const series = this;
 
         super.init.apply(series, arguments);
 
         series.eventsToUnbind.push(addEvent(series, 'afterTranslate', function (): void {
-            var lastPlotX: (number|undefined),
+            let lastPlotX: (number|undefined),
                 closestPointRangePx = Number.MAX_VALUE;
 
             series.points.forEach(function (point): void {
@@ -474,7 +481,7 @@ class TimelineSeries extends LineSeries {
         }));
 
         series.eventsToUnbind.push(addEvent(series, 'afterDrawDataLabels', function (): void {
-            var dataLabel; // @todo use this scope for series
+            let dataLabel; // @todo use this scope for series
 
             // Draw or align connector for each point.
             series.points.forEach(function (point): void {
@@ -486,16 +493,16 @@ class TimelineSeries extends LineSeries {
                     // target position (after animation) is needed to align
                     // connectors.
                     dataLabel.animate = function (
-                        this: SVGElement,
+                        this: SVGLabel,
                         params: SVGAttributes
-                    ): SVGElement {
+                    ): SVGLabel {
                         if (this.targetPosition) {
                             this.targetPosition = params;
                         }
                         return SVGElement.prototype.animate.apply(
                             this,
                             arguments
-                        );
+                        ) as SVGLabel;
                     };
 
                     // Initialize the targetPosition field within data label
@@ -533,7 +540,7 @@ class TimelineSeries extends LineSeries {
         point: TimelinePoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var series = this,
+        let series = this,
             seriesMarkerOptions: PointMarkerOptions = series.options.marker as any,
             seriesStateOptions: SeriesStatesOptions<TimelineSeries>,
             pointMarkerOptions = point.marker || {},
@@ -587,7 +594,7 @@ class TimelineSeries extends LineSeries {
     }
 
     public processData(): undefined {
-        var series = this,
+        let series = this,
             visiblePoints = 0,
             i: (number|undefined);
 

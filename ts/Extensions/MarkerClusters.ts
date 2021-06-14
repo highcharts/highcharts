@@ -37,14 +37,15 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+const { prototype: { symbols } } = SVGRenderer;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -301,7 +302,7 @@ declare global {
 
 import Axis from '../Core/Axis/Axis.js';
 
-var Scatter = seriesTypes.scatter,
+let Scatter = seriesTypes.scatter,
     baseGeneratePoints = Series.prototype.generatePoints,
     stateIdCounter = 0,
     // Points that ids are included in the oldPointsStateId array
@@ -635,7 +636,7 @@ const clusterDefaultOptions = {
 function getClusterPosition(
     points: Array<PositionObject>
 ): PositionObject {
-    var pointsLen = points.length,
+    let pointsLen = points.length,
         sumX = 0,
         sumY = 0,
         i;
@@ -657,7 +658,7 @@ function getDataState(
     clusteredData: Highcharts.MarkerClusterInfoObject,
     stateDataLen: number
 ): Array<Highcharts.MarkerClusterSplitDataObject|undefined> {
-    var state: Array<Highcharts.MarkerClusterSplitDataObject|undefined> = [];
+    const state: Array<Highcharts.MarkerClusterSplitDataObject|undefined> = [];
     state.length = stateDataLen;
 
     clusteredData.clusters.forEach(function (
@@ -769,7 +770,7 @@ function getStateId(): string {
 //     series: Highcharts.Series,
 //     options: Highcharts.MarkerClusterLayoutAlgorithmOptions
 // ): void {
-//     var chart = series.chart,
+//     let chart = series.chart,
 //         xAxis = series.xAxis,
 //         yAxis = series.yAxis,
 //         xAxisLen = series.xAxis.len,
@@ -824,7 +825,7 @@ function getStateId(): string {
 //                     gridOffset.plotTop + currentY < yAxisLen
 //                 ) {
 //                     if (j % 2 === 0 && i % 2 === 0) {
-//                         var rect = chart.renderer
+//                         let rect = chart.renderer
 //                             .rect(
 //                                 gridOffset.plotLeft + currentX,
 //                                 gridOffset.plotTop + currentY,
@@ -878,41 +879,40 @@ function getStateId(): string {
 // }
 /* eslint-enable require-jsdoc */
 
-
+declare module '../Core/Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        /** @requires Extensions/MarkerClusters */
+        cluster: SymbolFunction;
+    }
+}
 // Cluster symbol.
-SVGRenderer.prototype.symbols.cluster = function (
+symbols.cluster = function (
     x: number,
     y: number,
     width: number,
     height: number
 ): SVGPath {
-    var w = width / 2,
+    const w = width / 2,
         h = height / 2,
         outerWidth = 1,
         space = 1,
-        inner: SVGPath,
-        outer1: SVGPath,
-        outer2: SVGPath;
-
-    inner = this.arc(x + w, y + h, w - space * 4, h - space * 4, {
-        start: Math.PI * 0.5,
-        end: Math.PI * 2.5,
-        open: false
-    });
-
-    outer1 = this.arc(x + w, y + h, w - space * 3, h - space * 3, {
-        start: Math.PI * 0.5,
-        end: Math.PI * 2.5,
-        innerR: w - outerWidth * 2,
-        open: false
-    });
-
-    outer2 = this.arc(x + w, y + h, w - space, h - space, {
-        start: Math.PI * 0.5,
-        end: Math.PI * 2.5,
-        innerR: w,
-        open: false
-    });
+        inner = symbols.arc(x + w, y + h, w - space * 4, h - space * 4, {
+            start: Math.PI * 0.5,
+            end: Math.PI * 2.5,
+            open: false
+        }),
+        outer1 = symbols.arc(x + w, y + h, w - space * 3, h - space * 3, {
+            start: Math.PI * 0.5,
+            end: Math.PI * 2.5,
+            innerR: w - outerWidth * 2,
+            open: false
+        }),
+        outer2 = symbols.arc(x + w, y + h, w - space, h - space, {
+            start: Math.PI * 0.5,
+            end: Math.PI * 2.5,
+            innerR: w,
+            open: false
+        });
 
     return outer2.concat(outer1, inner);
 };
@@ -920,7 +920,7 @@ SVGRenderer.prototype.symbols.cluster = function (
 Scatter.prototype.animateClusterPoint = function (
     clusterObj: Highcharts.ClusterAndNoiseObject
 ): void {
-    var series = this,
+    let series = this,
         xAxis = series.xAxis,
         yAxis = series.yAxis,
         chart = series.chart,
@@ -1080,7 +1080,7 @@ Scatter.prototype.animateClusterPoint = function (
 };
 
 Scatter.prototype.getGridOffset = function (): Record<string, number> {
-    var series = this,
+    let series = this,
         chart = series.chart,
         xAxis = series.xAxis,
         yAxis = series.yAxis,
@@ -1107,7 +1107,7 @@ Scatter.prototype.getGridOffset = function (): Record<string, number> {
 Scatter.prototype.getScaledGridSize = function (
     options: Highcharts.MarkerClusterLayoutAlgorithmOptions
 ): number {
-    var series = this,
+    let series = this,
         xAxis = series.xAxis,
         search = true,
         k = 1,
@@ -1148,7 +1148,7 @@ Scatter.prototype.getScaledGridSize = function (
 };
 
 Scatter.prototype.getRealExtremes = function (): Record<string, number> {
-    var series = this,
+    let series = this,
         chart = series.chart,
         xAxis = series.xAxis,
         yAxis = series.yAxis,
@@ -1179,13 +1179,13 @@ Scatter.prototype.onDrillToCluster = function (
     this: Point,
     event: PointClickEvent
 ): void {
-    var point = event.point || event.target;
+    const point = event.point || event.target;
 
     point.firePointEvent('drillToCluster', event, function (
         this: Point,
         e: PointClickEvent
     ): void {
-        var point = e.point || e.target,
+        let point = e.point || e.target,
             series = point.series,
             xAxis = point.series.xAxis,
             yAxis = point.series.yAxis,
@@ -1247,7 +1247,7 @@ Scatter.prototype.getClusterDistancesFromPoint = function (
     pointX: number,
     pointY: number
 ): Array<Record<string, number>> {
-    var series = this,
+    let series = this,
         xAxis = series.xAxis,
         yAxis = series.yAxis,
         pointClusterDistance = [],
@@ -1286,7 +1286,7 @@ Scatter.prototype.getPointsState = function (
     oldMarkerClusterInfo: (Highcharts.MarkerClusterInfoObject|undefined),
     dataLength: number
 ): Record<string, Highcharts.MarkerClusterPointsState> {
-    var oldDataStateArr = oldMarkerClusterInfo ?
+    let oldDataStateArr = oldMarkerClusterInfo ?
             getDataState(oldMarkerClusterInfo, dataLength) : [],
         newDataStateArr = getDataState(clusteredData, dataLength),
         state: Record<string, Highcharts.MarkerClusterPointsState> = {},
@@ -1357,7 +1357,7 @@ Scatter.prototype.markerClusterAlgorithms = {
         dataIndexes: Array<number>,
         options: Highcharts.MarkerClusterLayoutAlgorithmOptions
     ): Record<string, Highcharts.MarkerClusterSplitDataArray> {
-        var series = this,
+        let series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             grid: Record<string, Highcharts.MarkerClusterSplitDataArray> = {},
@@ -1395,7 +1395,7 @@ Scatter.prototype.markerClusterAlgorithms = {
         dataIndexes: Array<number>,
         options: Highcharts.MarkerClusterLayoutAlgorithmOptions
     ): Record<string, Highcharts.MarkerClusterSplitDataArray> {
-        var series = this,
+        let series = this,
             clusters: Array<Highcharts.KmeansClusterObject> = [],
             noise = [],
             group: Record<string, Highcharts.MarkerClusterSplitDataArray> = {},
@@ -1546,7 +1546,7 @@ Scatter.prototype.markerClusterAlgorithms = {
         dataIndexes: Array<number>,
         options: Highcharts.MarkerClusterLayoutAlgorithmOptions
     ): Record<string, Highcharts.MarkerClusterSplitDataArray> {
-        var series = this,
+        let series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             pointMaxDistance = options.processedDistance ||
@@ -1654,7 +1654,7 @@ Scatter.prototype.markerClusterAlgorithms = {
 Scatter.prototype.preventClusterCollisions = function (
     props: Highcharts.MarkerClusterPreventCollisionObject
 ): PositionObject {
-    var series = this,
+    let series = this,
         xAxis = series.xAxis,
         yAxis = series.yAxis,
         [gridY, gridX] = props.key.split('-').map(parseFloat),
@@ -1807,7 +1807,7 @@ Scatter.prototype.preventClusterCollisions = function (
 Scatter.prototype.isValidGroupedDataObject = function (
     groupedData: Record<string, Highcharts.MarkerClusterSplitDataArray>
 ): boolean {
-    var result = false,
+    let result = false,
         i;
 
     if (!isObject(groupedData)) {
@@ -1839,7 +1839,7 @@ Scatter.prototype.getClusteredData = function (
     groupedData: Record<string, Highcharts.MarkerClusterSplitDataArray>,
     options: Highcharts.MarkerClusterOptions
 ): (Highcharts.MarkerClusterInfoObject | boolean) {
-    var series = this,
+    let series = this,
         groupedXData = [],
         groupedYData = [],
         clusters = [], // Container for clusters.
@@ -2027,7 +2027,7 @@ Scatter.prototype.getClusteredData = function (
 
 // Destroy clustered data points.
 Scatter.prototype.destroyClusteredData = function (): void {
-    var clusteredSeriesData = this.markerClusterSeriesData;
+    const clusteredSeriesData = this.markerClusterSeriesData;
 
     // Clear previous groups.
     (clusteredSeriesData || []).forEach(function (
@@ -2043,7 +2043,7 @@ Scatter.prototype.destroyClusteredData = function (): void {
 
 // Hide clustered data points.
 Scatter.prototype.hideClusteredData = function (): void {
-    var series = this,
+    const series = this,
         clusteredSeriesData = this.markerClusterSeriesData,
         oldState =
             ((series.markerClusterInfo || {}).pointsState || {}).oldState || {},
@@ -2076,7 +2076,7 @@ Scatter.prototype.hideClusteredData = function (): void {
 
 // Override the generatePoints method by adding a reference to grouped data.
 Scatter.prototype.generatePoints = function (): void {
-    var series = this,
+    let series = this,
         chart = series.chart,
         xAxis = series.xAxis,
         yAxis = series.yAxis,
@@ -2306,11 +2306,11 @@ Scatter.prototype.generatePoints = function (): void {
 
 // Handle animation.
 addEvent(Chart, 'render', function (): void {
-    var chart = this;
+    const chart = this;
 
     (chart.series || []).forEach(function (series): void {
         if (series.markerClusterInfo) {
-            var options = series.options.cluster,
+            const options = series.options.cluster,
                 pointsState = (series.markerClusterInfo || {}).pointsState,
                 oldState = (pointsState || {}).oldState;
 
@@ -2356,7 +2356,7 @@ addEvent(Series, 'destroy', Scatter.prototype.destroyClusteredData);
 
 // Add classes, change mouse cursor.
 addEvent(Series, 'afterRender', function (): void {
-    var series = this,
+    const series = this,
         clusterZoomEnabled = (series.options.cluster || {}).drillToCluster;
 
     if (series.markerClusterInfo && series.markerClusterInfo.clusters) {
@@ -2394,7 +2394,7 @@ addEvent(Series, 'afterRender', function (): void {
 addEvent(Point, 'drillToCluster', function (
     event: PointClickEvent
 ): void {
-    var point = event.point || event.target,
+    const point = event.point || event.target,
         series = point.series,
         clusterOptions = series.options.cluster,
         onDrillToCluster =
@@ -2406,10 +2406,8 @@ addEvent(Point, 'drillToCluster', function (
 });
 
 // Destroy the old tooltip after zoom.
-addEvent(Axis, 'setExtremes', function (
-    this: Highcharts.Axis
-): void {
-    var chart = this.chart,
+addEvent(Axis, 'setExtremes', function (): void {
+    let chart = this.chart,
         animationDuration = 0,
         animation;
 

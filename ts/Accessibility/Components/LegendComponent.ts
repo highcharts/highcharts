@@ -12,10 +12,12 @@
 
 'use strict';
 
-import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
+import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import Legend from '../../Core/Legend.js';
 import U from '../../Core/Utilities.js';
@@ -23,7 +25,8 @@ const {
     addEvent,
     extend,
     find,
-    fireEvent
+    fireEvent,
+    isNumber
 } = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
@@ -68,8 +71,10 @@ declare global {
             public highlightedLegendItemIx: number;
             public legendProxyButtonClicked?: boolean;
             public legendProxyGroup: HTMLDOMElement;
+            public legendListContainer?: HTMLDOMElement;
             public proxyElementsList: Array<A11yLegendProxyButtonReference>;
             public addLegendProxyGroup(): void;
+            public addLegendListContainer(): void;
             public getKeyboardNavigation(): KeyboardNavigationHandler;
             public init(): void;
             public onChartRender(): void;
@@ -109,7 +114,7 @@ declare global {
  * @private
  */
 function scrollLegendToItem(legend: Highcharts.Legend, itemIx: number): void {
-    var itemPage = legend.allItems[itemIx].pageIx,
+    const itemPage = legend.allItems[itemIx].pageIx,
         curPage: number = legend.currentPage as any;
 
     if (typeof itemPage !== 'undefined' && itemPage + 1 !== curPage) {
@@ -122,7 +127,7 @@ function scrollLegendToItem(legend: Highcharts.Legend, itemIx: number): void {
  * @private
  */
 function shouldDoLegendA11y(chart: Chart): boolean {
-    var items = chart.legend && chart.legend.allItems,
+    const items = chart.legend && chart.legend.allItems,
         legendA11yOptions: Highcharts.LegendAccessibilityOptions = (
             (chart.options.legend as any).accessibility || {}
         );
@@ -145,12 +150,13 @@ function shouldDoLegendA11y(chart: Chart): boolean {
  *
  * @return {boolean}
  */
-H.Chart.prototype.highlightLegendItem = function (ix: number): boolean {
-    var items = this.legend.allItems,
-        oldIx: number = this.highlightedLegendItemIx as any;
+Chart.prototype.highlightLegendItem = function (ix: number): boolean {
+    const items = this.legend.allItems,
+        oldIx = this.accessibility &&
+            this.accessibility.components.legend.highlightedLegendItemIx;
 
     if (items[ix]) {
-        if (items[oldIx]) {
+        if (isNumber(oldIx) && items[oldIx]) {
             fireEvent((items[oldIx].legendGroup as any).element, 'mouseout');
         }
 
@@ -174,7 +180,7 @@ addEvent(Legend, 'afterColorizeItem', function (
         visible: (boolean|undefined);
     }
 ): void {
-    var chart: Highcharts.AccessibilityChart = this.chart as any,
+    const chart: Highcharts.AccessibilityChart = this.chart as any,
         a11yOptions = chart.options.accessibility,
         legendItem = e.item;
 
@@ -193,7 +199,7 @@ addEvent(Legend, 'afterColorizeItem', function (
  * @class
  * @name Highcharts.LegendComponent
  */
-var LegendComponent: typeof Highcharts.LegendComponent =
+const LegendComponent: typeof Highcharts.LegendComponent =
     function (): void {} as any;
 LegendComponent.prototype = new (AccessibilityComponent as any)();
 extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
@@ -216,7 +222,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 this.chart.highlightLegendItem(component.highlightedLegendItemIx);
             }
         });
-        this.addEvent(Legend, 'afterPositionItem', function (e: Record<string, any>): void {
+        this.addEvent(Legend, 'afterPositionItem', function (e: AnyRecord): void {
             if (this.chart === component.chart && this.chart.renderer) {
                 component.updateProxyPositionForItem(e.item);
             }
@@ -230,13 +236,13 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     updateLegendItemProxyVisibility: function (
         this: Highcharts.LegendComponent
     ): void {
-        var legend = this.chart.legend,
+        const legend = this.chart.legend,
             items = legend.allItems || [],
             curPage = legend.currentPage || 1,
             clipHeight = legend.clipHeight || 0;
 
         items.forEach(function (item: LegendItem): void {
-            var itemPage = item.pageIx || 0,
+            const itemPage = item.pageIx || 0,
                 y = item._legendItemPos ? item._legendItemPos[1] : 0,
                 h = item.legendItem ? Math.round(item.legendItem.getBBox().height) : 0,
                 hide = y + h - legend.pages[itemPage] > clipHeight || itemPage !== curPage - 1;
@@ -304,6 +310,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
         if (shouldDoLegendA11y(this.chart)) {
             this.addLegendProxyGroup();
+            this.addLegendListContainer();
             this.proxyLegendItems();
             this.updateLegendItemProxyVisibility();
         }
@@ -325,7 +332,12 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     updateLegendTitle: function (this: Highcharts.LegendComponent): void {
         const chart = this.chart;
         const legendTitle = stripHTMLTags(
-            (chart.legend?.options.title?.text || '').replace(/<br ?\/?>/g, ' ')
+            (
+                chart.legend &&
+                chart.legend.options.title &&
+                chart.legend.options.title.text ||
+                ''
+            ).replace(/<br ?\/?>/g, ' ')
         );
         const legendLabel = chart.langFormat(
             'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'), {
@@ -344,7 +356,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * @private
      */
     addLegendProxyGroup: function (this: Highcharts.LegendComponent): void {
-        var a11yOptions = this.chart.options.accessibility,
+        const a11yOptions = this.chart.options.accessibility,
             groupRole = a11yOptions.landmarkVerbosity === 'all' ?
                 'region' : null;
 
@@ -358,8 +370,20 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     /**
      * @private
      */
+    addLegendListContainer: function (this: Highcharts.LegendComponent): void {
+        if (this.legendProxyGroup) {
+            const container = this.legendListContainer = this.createElement('ul');
+            container.style.listStyle = 'none';
+            this.legendProxyGroup.appendChild(container);
+        }
+    },
+
+
+    /**
+     * @private
+     */
     proxyLegendItems: function (this: Highcharts.LegendComponent): void {
-        var component = this,
+        const component = this,
             items = (
                 this.chart.legend &&
                 this.chart.legend.allItems || []
@@ -381,7 +405,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         this: Highcharts.LegendComponent,
         item: LegendItem
     ): void {
-        if (!item.legendItem || !item.legendGroup) {
+        if (!item.legendItem || !item.legendGroup || !this.legendListContainer) {
             return;
         }
 
@@ -389,7 +413,8 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 'accessibility.legend.legendItem',
                 {
                     chart: this.chart,
-                    itemName: stripHTMLTags((item as any).name)
+                    itemName: stripHTMLTags((item as any).name),
+                    item
                 }
             ),
             attribs = {
@@ -401,9 +426,12 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             proxyPositioningElement = item.legendGroup.div ?
                 item.legendItem : item.legendGroup;
 
+        const listItem = this.createElement('li');
+        this.legendListContainer.appendChild(listItem);
+
         item.a11yProxyElement = this.createProxyButton(
             item.legendItem as any,
-            this.legendProxyGroup as any,
+            listItem,
             attribs,
             proxyPositioningElement as any
         );
@@ -423,7 +451,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     getKeyboardNavigation: function (
         this: Highcharts.LegendComponent
     ): Highcharts.KeyboardNavigationHandler {
-        var keys = this.keyCodes,
+        const keys = this.keyCodes,
             component = this,
             chart = this.chart;
 
@@ -441,8 +469,12 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 [
                     [keys.enter, keys.space],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler
+                        this: Highcharts.KeyboardNavigationHandler,
+                        keyCode: number
                     ): number {
+                        if (H.isFirefox && keyCode === keys.space) { // #15520
+                            return this.response.success;
+                        }
                         return component.onKbdClick(this);
                     }
                 ]
@@ -454,6 +486,11 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
             init: function (direction: number): void {
                 return component.onKbdNavigationInit(direction);
+            },
+
+            terminate: function (): void {
+                chart.legend.allItems.forEach(
+                    (item): void => item.setState('', true));
             }
         });
     },
@@ -471,14 +508,14 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler,
         keyCode: number
     ): number {
-        var keys = this.keyCodes,
+        const keys = this.keyCodes,
             response = keyboardNavigationHandler.response,
             chart = this.chart,
             a11yOptions = chart.options.accessibility,
             numItems = chart.legend.allItems.length,
             direction = (keyCode === keys.left || keyCode === keys.up) ? -1 : 1;
 
-        var res = chart.highlightLegendItem(
+        const res = chart.highlightLegendItem(
             this.highlightedLegendItemIx + direction
         );
         if (res) {
@@ -509,7 +546,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         this: Highcharts.LegendComponent,
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
     ): number {
-        var legendItem: LegendItem = this.chart.legend.allItems[
+        const legendItem: LegendItem = this.chart.legend.allItems[
             this.highlightedLegendItemIx
         ];
 
@@ -528,7 +565,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     shouldHaveLegendNavigation: function (
         this: Highcharts.LegendComponent
     ): (boolean) {
-        var chart = this.chart,
+        const chart = this.chart,
             legendOptions = chart.options.legend || {},
             hasLegend = chart.legend && chart.legend.allItems,
             hasColorAxis = chart.colorAxis && chart.colorAxis.length,
@@ -557,7 +594,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         this: Highcharts.LegendComponent,
         direction: number
     ): void {
-        var chart = this.chart,
+        const chart = this.chart,
             lastIx = chart.legend.allItems.length - 1,
             ixToHighlight = direction > 0 ? 0 : lastIx;
 

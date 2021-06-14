@@ -39,7 +39,7 @@ declare global {
 import Instrument from './Instrument.js';
 import utilities from './Utilities.js';
 
-var instruments: Highcharts.InstrumentsDictionary = {} as any;
+const instruments: Highcharts.InstrumentsDictionary = {} as any;
 
 ['sine', 'square', 'triangle', 'sawtooth'].forEach(function (
     waveform: Highcharts.InstrumentWaveform

@@ -74,79 +74,78 @@ function checkJSWrap() {
 /**
  * @return {void}
  */
-function checkSamplesConsistency() {
+function checkDemosConsistency() {
+    const fs = require('fs');
+    const pages = require('../../samples/demo-config');
 
-    const FS = require('fs');
-    const LogLib = require('./lib/log');
+    // Get categories and tags from the demo config
+    const tags = [],
+        categories = [];
 
-    const products = [
-        { product: 'highcharts' },
-        { product: 'stock' },
-        { product: 'maps' },
-        { product: 'gantt', ignore: ['logistics'] }
-    ];
-
-    /**
-     * @param {object} product The product information
-     * @param {string} product.product Product folder name.
-     * @param {array} [product.ignore=[]] List of samples that is not listed
-     * in index.htm, that still should exist in the demo folder.
-     */
-    products.forEach(
-        ({ product, ignore = [] }) => {
-            const filename = path.join('samples', product, 'demo', 'index.htm');
-            if (!FS.existsSync(filename)) {
-                return;
-            }
-            const index = FS
-                .readFileSync(filename)
-                .toString()
-                // Remove comments from the html in index
-                .replace(/<!--[\s\S]*-->/gm, '');
-
-            const regex = /href="examples\/([a-z\-0-9]+)\/index.htm"/g;
-            const toc = [];
-
-            let matches;
-
-            while ((matches = regex.exec(index)) !== null) {
-                toc.push(matches[1]);
-            }
-
-            const folders = [];
-            FS
-                .readdirSync(`./samples/${product}/demo`).forEach(dir => {
-                    if (dir.indexOf('.') !== 0 && dir !== 'index.htm') {
-                        folders.push(dir);
-                    }
-                });
-
-            const missingTOC = folders.filter(
-                sample => !toc.includes(sample) && !ignore.includes(sample)
-            );
-            const missingFolders = toc.filter(
-                sample => !folders.includes(sample)
-            );
-
-            if (missingTOC.length) {
-                LogLib.failure(`Found demos that were not added to ./samples/${product}/demo/index.htm`.red);
-                missingTOC.forEach(sample => {
-                    LogLib.failure(` - ./samples/${product}/demo/${sample}`.red);
-                });
-
-                throw new Error('Missing sample in index.htm');
-            }
-
-            if (missingFolders.length) {
-                LogLib.failure(`Found demos in ./samples/${product}/demo/index.htm that were not present in demo folder`.red);
-                missingFolders.forEach(sample => {
-                    LogLib.failure(` - ./samples/${product}/demo/${sample}`.red);
-                });
-
-                throw new Error('Missing demo');
-            }
+    Object.keys(pages).forEach(key => {
+        const page = pages[key];
+        if (page.filter && page.filter.tags) {
+            tags.push(...page.filter.tags);
         }
-    );
+        if (page.categories) {
+            categories.push(...page.categories);
+        }
+    });
+
+    const glob = require('glob');
+    const logLib = require('./lib/log');
+    const yaml = require('js-yaml');
+
+    let errors = 0;
+
+    glob.sync(
+        process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/demo/*/demo.details'
+    ).forEach(detailsFile => {
+
+        try {
+            const details = yaml.load(
+                fs.readFileSync(detailsFile, 'utf-8')
+            );
+
+            if (typeof details !== 'object') {
+                throw new Error('Malformed details file');
+            }
+
+            const { name, categories: demoCategories, tags: demoTags } = details;
+            if (!name || /High.*demo/.test(name)) {
+                logLib.failure('no name set, or default name used:', detailsFile);
+                errors++;
+            }
+
+            if (!demoCategories || !demoCategories.length) {
+                logLib.failure('no categories found:', detailsFile);
+                errors++;
+            } else {
+                if (!demoCategories.every(category => categories.includes(typeof category === 'object' ? Object.keys(category)[0] : category))) {
+                    logLib.failure('one or more categories are missing from demo-config:', detailsFile);
+                    errors++;
+                }
+            }
+
+            if (!demoTags || !demoTags.length) {
+                logLib.failure('no tags found:', detailsFile);
+                errors++;
+            } else {
+                if (!demoTags.every(tag => tag === 'unlisted' || tags.includes(tag))) {
+                    logLib.failure('one or more tags are missing from demo-config:', detailsFile);
+                    errors++;
+                }
+            }
+
+        } catch (e) {
+            logLib.failure('File not found:', detailsFile);
+            errors++;
+        }
+    });
+
+    if (errors) {
+        throw new Error('Demo validation failed');
+    }
 }
 
 /**
@@ -371,7 +370,7 @@ Available arguments for 'gulp test':
             return;
         }
         checkDocsConsistency();
-        checkSamplesConsistency();
+        checkDemosConsistency();
         checkJSWrap();
 
         const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests || argv.testsAbsolutePath);

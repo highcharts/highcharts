@@ -91,7 +91,7 @@ QUnit.test('Highcharts', function (assert) {
     );
 });
 
-QUnit.test('Highstock', function (assert) {
+QUnit.test('Highcharts Stock', function (assert) {
     var chart, calledBack;
 
     Highcharts.setOptions({
@@ -139,7 +139,7 @@ QUnit.test('Highstock', function (assert) {
     assert.strictEqual(typeof chart.rangeSelector, 'object', 'Is stock chart');
 
     calledBack = false;
-    chart = new Highcharts.StockChart(
+    chart = Highcharts.StockChart(
         {
             chart: {
                 renderTo: 'container'
@@ -190,7 +190,7 @@ QUnit.test('Highmaps', function (assert) {
         }
     });
 
-    chart = new Highcharts.Map({
+    chart = new Highcharts.MapChart({
         chart: {
             renderTo: 'container'
         },
@@ -213,7 +213,7 @@ QUnit.test('Highmaps', function (assert) {
     );
     assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 
-    chart = new Highcharts.Map({
+    chart = Highcharts.Map({
         chart: {
             renderTo: document.getElementById('container')
         },

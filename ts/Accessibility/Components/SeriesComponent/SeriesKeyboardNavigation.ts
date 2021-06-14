@@ -17,6 +17,10 @@ import Point from '../../../Core/Series/Point.js';
 import Series from '../../../Core/Series/Series.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
+import H from '../../../Core/Globals.js';
+const {
+    doc
+} = H;
 import U from '../../../Core/Utilities.js';
 const {
     defined,
@@ -103,9 +107,11 @@ declare global {
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../Utils/EventProvider.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
-var getPointFromXY = ChartUtilities.getPointFromXY,
-    getSeriesFromName = ChartUtilities.getSeriesFromName,
-    scrollToPoint = ChartUtilities.scrollToPoint;
+const {
+    getPointFromXY,
+    getSeriesFromName,
+    scrollToPoint
+} = ChartUtilities;
 
 import '../../../Series/Column/ColumnSeries.js';
 import '../../../Series/Pie/PieSeries.js';
@@ -138,9 +144,9 @@ Series.prototype.keyboardMoveVertical = true;
  *         The index in the series.points array of the point.
  */
 function getPointIndex(point: Point): (number|undefined) {
-    var index = point.index,
-        points = point.series.points,
-        i = points.length;
+    const index = point.index,
+        points = point.series.points;
+    let i = points.length;
 
     if (points[index as any] !== point) {
         while (i--) {
@@ -167,7 +173,7 @@ function getPointIndex(point: Point): (number|undefined) {
 function isSkipSeries(
     series: Highcharts.AccessibilitySeries
 ): (boolean|number|undefined) {
-    var a11yOptions = series.chart.options.accessibility,
+    const a11yOptions = series.chart.options.accessibility,
         seriesNavOptions = a11yOptions.keyboardNavigation.seriesNavigation,
         seriesA11yOptions = series.options.accessibility || {},
         seriesKbdNavOptions = seriesA11yOptions.keyboardNavigation;
@@ -199,12 +205,17 @@ function isSkipSeries(
 function isSkipPoint(
     point: Highcharts.AccessibilityPoint
 ): (boolean|number|undefined) {
-    var a11yOptions = point.series.chart.options.accessibility;
+    const a11yOptions = point.series.chart.options.accessibility;
+    const pointA11yDisabled = (
+        point.options.accessibility &&
+        point.options.accessibility.enabled === false
+    );
 
     return point.isNull &&
         a11yOptions.keyboardNavigation.seriesNavigation.skipNullPoints ||
         point.visible === false ||
         point.isInside === false ||
+        pointA11yDisabled ||
         isSkipSeries(point.series);
 }
 
@@ -229,14 +240,14 @@ function getClosestPoint(
     xWeight?: number,
     yWeight?: number
 ): (Point|undefined) {
-    var minDistance = Infinity,
+    let minDistance = Infinity,
         dPoint: Point,
         minIx: (number|undefined),
         distance: number,
-        i = series.points.length,
-        hasUndefinedPosition = function (point: Point): boolean {
-            return !(defined(point.plotX) && defined(point.plotY));
-        };
+        i = series.points.length;
+    const hasUndefinedPosition = function (point: Point): boolean {
+        return !(defined(point.plotX) && defined(point.plotY));
+    };
 
     if (hasUndefinedPosition(point)) {
         return;
@@ -276,7 +287,7 @@ function getClosestPoint(
  *         This highlighted point.
  */
 Point.prototype.highlight = function (): Point {
-    var chart = this.series.chart;
+    const chart = this.series.chart;
 
     if (!this.isNull) {
         this.onMouseOver(); // Show the hover marker and tooltip
@@ -317,7 +328,7 @@ Chart.prototype.highlightAdjacentPoint = function (
     this: Highcharts.AccessibilityChart,
     next: boolean
 ): (boolean|Point) {
-    var chart = this,
+    const chart = this,
         series = chart.series,
         curPoint = chart.highlightedPoint,
         curPointIndex = curPoint && getPointIndex(curPoint) || 0,
@@ -325,8 +336,8 @@ Chart.prototype.highlightAdjacentPoint = function (
         (curPoint && curPoint.series.points) as any,
         lastSeries = chart.series && chart.series[chart.series.length - 1],
         lastPoint = lastSeries && lastSeries.points &&
-                    lastSeries.points[lastSeries.points.length - 1],
-        newSeries,
+                    lastSeries.points[lastSeries.points.length - 1];
+    let newSeries,
         newPoint;
 
     // If no points, return false
@@ -389,7 +400,7 @@ Chart.prototype.highlightAdjacentPoint = function (
 Series.prototype.highlightFirstValidPoint = function (
     this: Highcharts.AccessibilitySeries
 ): (boolean|Point) {
-    var curPoint = this.chart.highlightedPoint,
+    const curPoint = this.chart.highlightedPoint,
         start: number = (curPoint && curPoint.series) === this ?
             getPointIndex(curPoint as any) as any :
             0,
@@ -397,12 +408,12 @@ Series.prototype.highlightFirstValidPoint = function (
         len = points.length;
 
     if (points && len) {
-        for (var i = start; i < len; ++i) {
+        for (let i = start; i < len; ++i) {
             if (!isSkipPoint(points[i])) {
                 return points[i].highlight();
             }
         }
-        for (var j = start; j >= 0; --j) {
+        for (let j = start; j >= 0; --j) {
             if (!isSkipPoint(points[j])) {
                 return points[j].highlight();
             }
@@ -427,14 +438,14 @@ Chart.prototype.highlightAdjacentSeries = function (
     this: Highcharts.AccessibilityChart,
     down: boolean
 ): (boolean|Point) {
-    var chart = this,
-        newSeries,
-        newPoint,
-        adjacentNewPoint,
+    const chart = this,
         curPoint: Highcharts.AccessibilityPoint = chart.highlightedPoint as any,
         lastSeries = chart.series && chart.series[chart.series.length - 1],
         lastPoint = lastSeries && lastSeries.points &&
                     lastSeries.points[lastSeries.points.length - 1];
+    let newSeries,
+        newPoint,
+        adjacentNewPoint;
 
     // If no point is highlighted, highlight the first/last point
     if (!chart.highlightedPoint) {
@@ -492,8 +503,8 @@ Chart.prototype.highlightAdjacentPointVertical = function (
     this: Highcharts.AccessibilityChart,
     down: boolean
 ): (boolean|Point) {
-    var curPoint: Highcharts.AccessibilityPoint = this.highlightedPoint as any,
-        minDistance = Infinity,
+    const curPoint: Highcharts.AccessibilityPoint = this.highlightedPoint as any;
+    let minDistance = Infinity,
         bestPoint: (Point|undefined);
 
     if (!defined(curPoint.plotX) || !defined(curPoint.plotY)) {
@@ -515,8 +526,8 @@ Chart.prototype.highlightAdjacentPointVertical = function (
                 return;
             }
 
-            var yDistance = point.plotY - (curPoint.plotY as any),
-                width = Math.abs(point.plotX - (curPoint.plotX as any)),
+            let yDistance = point.plotY - (curPoint.plotY as any);
+            const width = Math.abs(point.plotX - (curPoint.plotX as any)),
                 distance = Math.abs(yDistance) * Math.abs(yDistance) +
                     width * width * 4; // Weigh horizontal distance highly
 
@@ -552,7 +563,7 @@ Chart.prototype.highlightAdjacentPointVertical = function (
 function highlightFirstValidPointInChart(
     chart: Chart
 ): (boolean|Point) {
-    var res: (boolean|Point) = false;
+    let res: (boolean|Point) = false;
 
     delete chart.highlightedPoint;
 
@@ -575,8 +586,8 @@ function highlightFirstValidPointInChart(
 function highlightLastValidPointInChart(
     chart: Chart
 ): (boolean|Point) {
-    var numSeries = chart.series.length,
-        i = numSeries,
+    const numSeries = chart.series.length;
+    let i = numSeries,
         res: (boolean|Point) = false;
 
     while (i--) {
@@ -628,7 +639,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      * Init the keyboard navigation
      */
     init: function (this: Highcharts.SeriesKeyboardNavigation): void {
-        var keyboardNavigation = this,
+        const keyboardNavigation = this,
             chart = this.chart,
             e = this.eventProvider = new EventProvider();
 
@@ -643,7 +654,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         e.addEvent(chart, 'drilldown', function (
             e: { point: Point }
         ): void {
-            var point = e.point,
+            const point = e.point,
                 series = point.series;
 
             keyboardNavigation.lastDrilledDownPoint = {
@@ -658,16 +669,31 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
                 keyboardNavigation.onDrillupAll();
             }, 10);
         });
+
+        // Heatmaps et al. alter z-index in setState, causing elements
+        // to lose focus
+        e.addEvent(Point, 'afterSetState', function (): void {
+            const point = this;
+            const pointEl = point.graphic && point.graphic.element;
+            if (
+                chart.highlightedPoint === point &&
+                doc.activeElement !== pointEl &&
+                pointEl &&
+                pointEl.focus
+            ) {
+                pointEl.focus();
+            }
+        });
     },
 
 
     onDrillupAll: function (this: Highcharts.SeriesKeyboardNavigation): void {
         // After drillup we want to find the point that was drilled down to and
         // highlight it.
-        var last = this.lastDrilledDownPoint,
+        const last = this.lastDrilledDownPoint,
             chart = this.chart,
-            series = last && getSeriesFromName(chart, last.seriesName),
-            point;
+            series = last && getSeriesFromName(chart, last.seriesName);
+        let point;
 
         if (last && series && defined(last.x) && defined(last.y)) {
             point = getPointFromXY(series, last.x, last.y);
@@ -694,7 +720,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
     getKeyboardNavigationHandler: function (
         this: Highcharts.SeriesKeyboardNavigation
     ): Highcharts.KeyboardNavigationHandler {
-        var keyboardNavigation = this,
+        const keyboardNavigation = this,
             keys = this.keyCodes,
             chart = this.chart,
             inverted = chart.inverted;
@@ -725,9 +751,8 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
                     ): number {
                         const point = chart.highlightedPoint;
                         if (point) {
-                            fireEvent(point.series, 'click', extend(event, {
-                                point
-                            }));
+                            (event as any).point = point;
+                            fireEvent(point.series, 'click', event);
                             point.firePointEvent('click');
                         }
                         return this.response.success;
@@ -760,7 +785,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         handler: Highcharts.KeyboardNavigationHandler,
         keyCode: number
     ): number {
-        var keys = this.keyCodes,
+        const keys = this.keyCodes,
             isNext = keyCode === keys.right || keyCode === keys.down;
 
         return this.attemptHighlightAdjacentPoint(handler, isNext);
@@ -779,7 +804,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         handler: Highcharts.KeyboardNavigationHandler,
         keyCode: number
     ): number {
-        var chart = this.chart,
+        const chart = this.chart,
             keys = this.keyCodes,
             isNext = keyCode === keys.down || keyCode === keys.right,
             navOptions: (
@@ -794,7 +819,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         }
 
         // Normal mode, move between series
-        var highlightMethod: (
+        const highlightMethod: (
             'highlightAdjacentPointVertical'|'highlightAdjacentSeries'
         ) = (
             chart.highlightedPoint &&
@@ -821,7 +846,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         handler: Highcharts.KeyboardNavigationHandler,
         initDirection: number
     ): number {
-        var chart = this.chart;
+        const chart = this.chart;
 
         if (initDirection > 0) {
             highlightFirstValidPointInChart(chart);
@@ -840,11 +865,20 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         this: Highcharts.SeriesKeyboardNavigation
     ): void {
         const chart = this.chart;
-        const curPoint = chart.highlightedPoint;
 
-        chart.tooltip?.hide(0);
+        if (chart.tooltip) {
+            chart.tooltip.hide(0);
+        }
 
-        curPoint?.onMouseOut?.();
+        const hoverSeries = chart.highlightedPoint && chart.highlightedPoint.series;
+        if (hoverSeries && hoverSeries.onMouseOut) {
+            hoverSeries.onMouseOut();
+        }
+
+        if (chart.highlightedPoint && chart.highlightedPoint.onMouseOut) {
+            chart.highlightedPoint.onMouseOut();
+        }
+
         delete chart.highlightedPoint;
     },
 
@@ -862,7 +896,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         handler: Highcharts.KeyboardNavigationHandler,
         directionIsNext: boolean
     ): number {
-        var chart = this.chart,
+        const chart = this.chart,
             wrapAround = (chart.options.accessibility as any).keyboardNavigation
                 .wrapAround,
             highlightSuccessful = chart.highlightAdjacentPoint(directionIsNext);
@@ -885,7 +919,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         this: Highcharts.SeriesKeyboardNavigation,
         series: Series
     ): void {
-        var chart = this.chart,
+        const chart = this.chart,
             currentHighlightedPointDestroyed = chart.highlightedPoint &&
                 chart.highlightedPoint.series === series;
 

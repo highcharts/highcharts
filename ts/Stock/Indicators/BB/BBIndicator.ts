@@ -41,7 +41,7 @@ function getStandardDeviation(
     isOHLC: boolean,
     mean: number
 ): number {
-    var variance = 0,
+    let variance = 0,
         arrLen = arr.length,
         std = 0,
         i = 0,
@@ -172,7 +172,7 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
         series: TLinkedSeries,
         params: BBParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = (params.period as any),
+        let period: number = (params.period as any),
             standardDeviation: number = (params.standardDeviation as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),

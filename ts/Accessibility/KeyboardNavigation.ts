@@ -12,11 +12,12 @@
 
 'use strict';
 
-import type Chart from '../Core/Chart/Chart';
 import type {
     DOMElementType,
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
+
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
     doc,
@@ -62,6 +63,7 @@ declare global {
             public modules: Array<KeyboardNavigationHandler>;
             public pointerIsOverChart?: boolean;
             public tabindexContainer: HTMLDOMElement;
+            public tabbingInBackwards?: boolean;
             public addExitAnchorEventsToEl(element: DOMElementType): void;
             public createExitAnchor(): void;
             public destroy(): void;
@@ -104,7 +106,7 @@ addEvent(doc, 'keydown', (e: KeyboardEvent): void => {
 /**
  * Dismiss popup content in chart, including export menu and tooltip.
  */
-H.Chart.prototype.dismissPopupContent = function (): void {
+Chart.prototype.dismissPopupContent = function (): void {
     const chart = this;
 
     fireEvent(this, 'dismissPopupContent', {}, function (): void {
@@ -202,7 +204,7 @@ KeyboardNavigation.prototype = {
         this: Highcharts.KeyboardNavigation,
         order?: Array<(keyof Highcharts.AccessibilityComponentsObject)>
     ): void {
-        var a11yOptions = this.chart.options.accessibility,
+        const a11yOptions = this.chart.options.accessibility,
             keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
             components = this.components;
 
@@ -219,7 +221,7 @@ KeyboardNavigation.prototype = {
                 modules: Array<Highcharts.KeyboardNavigationHandler>,
                 componentName: keyof Highcharts.AccessibilityComponentsObject
             ): Array<Highcharts.KeyboardNavigationHandler> {
-                var navModules = components[componentName].getKeyboardNavigation();
+                const navModules = components[componentName].getKeyboardNavigation();
                 return modules.concat(navModules);
             }, []);
 
@@ -246,9 +248,17 @@ KeyboardNavigation.prototype = {
         );
 
         // Init keyboard nav if tabbing into chart
-        if (!this.isClickingChart && !focusComesFromChart) {
-            this.modules[0]?.init(1);
+        if (
+            !this.exiting &&
+            !this.tabbingInBackwards &&
+            !this.isClickingChart &&
+            !focusComesFromChart &&
+            this.modules[0]
+        ) {
+            this.modules[0].init(1);
         }
+
+        this.exiting = false;
     },
 
 
@@ -261,7 +271,7 @@ KeyboardNavigation.prototype = {
         delete this.isClickingChart;
 
         if (!this.keyboardReset && !this.pointerIsOverChart) {
-            var chart = this.chart,
+            const chart = this.chart,
                 curMod = this.modules &&
                     this.modules[this.currentModuleIx || 0];
 
@@ -286,7 +296,7 @@ KeyboardNavigation.prototype = {
         this: Highcharts.KeyboardNavigation,
         ev: KeyboardEvent
     ): void {
-        var e = ev || win.event,
+        let e = ev || win.event,
             preventDefault,
             curNavModule = this.modules && this.modules.length &&
                 this.modules[this.currentModuleIx];
@@ -294,10 +304,13 @@ KeyboardNavigation.prototype = {
         // Used for resetting nav state when clicking outside chart
         this.keyboardReset = false;
 
+        // Used for sending focus out of the chart by the modules.
+        this.exiting = false;
+
         // If there is a nav module for the current index, run it.
         // Otherwise, we are outside of the chart in some direction.
         if (curNavModule) {
-            var response = curNavModule.run(e);
+            const response = curNavModule.run(e);
             if (response === curNavModule.response.success) {
                 preventDefault = true;
             } else if (response === curNavModule.response.prev) {
@@ -343,7 +356,7 @@ KeyboardNavigation.prototype = {
         this: Highcharts.KeyboardNavigation,
         direction: number
     ): boolean {
-        var curModule = this.modules && this.modules[this.currentModuleIx];
+        const curModule = this.modules && this.modules[this.currentModuleIx];
         if (curModule && curModule.terminate) {
             curModule.terminate(direction);
         }
@@ -354,7 +367,7 @@ KeyboardNavigation.prototype = {
         }
 
         this.currentModuleIx += direction;
-        var newModule = this.modules && this.modules[this.currentModuleIx];
+        const newModule = this.modules && this.modules[this.currentModuleIx];
         if (newModule) {
             if (newModule.validate && !newModule.validate()) {
                 return this.move(direction); // Invalid module, recurse
@@ -369,8 +382,8 @@ KeyboardNavigation.prototype = {
         this.currentModuleIx = 0; // Reset counter
 
         // Set focus to chart or exit anchor depending on direction
+        this.exiting = true;
         if (direction > 0) {
-            this.exiting = true;
             this.exitAnchor.focus();
         } else {
             this.tabindexContainer.focus();
@@ -388,7 +401,7 @@ KeyboardNavigation.prototype = {
      * @private
      */
     updateExitAnchor: function (this: Highcharts.KeyboardNavigation): void {
-        var endMarkerId = 'highcharts-end-of-chart-marker-' + this.chart.index,
+        const endMarkerId = 'highcharts-end-of-chart-marker-' + this.chart.index,
             endMarker = getElement(endMarkerId);
 
         this.removeExitAnchor();
@@ -455,7 +468,7 @@ KeyboardNavigation.prototype = {
      * @private
      */
     createExitAnchor: function (this: Highcharts.KeyboardNavigation): void {
-        var chart = this.chart,
+        const chart = this.chart,
             exitAnchor = this.exitAnchor = doc.createElement('div');
 
         chart.renderTo.appendChild(exitAnchor);
@@ -482,14 +495,14 @@ KeyboardNavigation.prototype = {
         this: Highcharts.KeyboardNavigation,
         element: HTMLDOMElement
     ): void {
-        var chart = this.chart,
+        const chart = this.chart,
             keyboardNavigation = this;
 
         this.eventProvider.addEvent(
             element,
             'focus',
             function (ev: MouseEvent): void {
-                var e = ev || win.event,
+                let e = ev || win.event,
                     curModule,
                     focusComesFromChart = (
                         e.relatedTarget &&
@@ -500,7 +513,10 @@ KeyboardNavigation.prototype = {
                     );
 
                 if (comingInBackwards) {
+                    // Focus the container instead
+                    keyboardNavigation.tabbingInBackwards = true;
                     keyboardNavigation.tabindexContainer.focus();
+                    delete keyboardNavigation.tabbingInBackwards;
                     e.preventDefault();
 
                     // Move to last valid keyboard nav module

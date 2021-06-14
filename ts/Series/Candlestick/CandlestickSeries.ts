@@ -21,8 +21,8 @@ import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import O from '../../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
@@ -44,19 +44,6 @@ const {
  * */
 
 /**
- * A candlestick chart is a style of financial chart used to describe price
- * movements over time.
- *
- * @sample stock/demo/candlestick/
- *         Candlestick chart
- *
- * @extends      plotOptions.ohlc
- * @excluding    borderColor,borderRadius,borderWidth
- * @product      highstock
- * @optionparent plotOptions.candlestick
- */
-
-/**
  * The candlestick series type.
  *
  * @private
@@ -72,6 +59,19 @@ class CandlestickSeries extends OHLCSeries {
      * Static properties
      *
      * */
+
+    /**
+     * A candlestick chart is a style of financial chart used to describe price
+     * movements over time.
+     *
+     * @sample stock/demo/candlestick/
+     *         Candlestick chart
+     *
+     * @extends      plotOptions.ohlc
+     * @excluding    borderColor,borderRadius,borderWidth
+     * @product      highstock
+     * @optionparent plotOptions.candlestick
+     */
     public static defaultOptions: CandlestickSeriesOptions =
     merge(OHLCSeries.defaultOptions, defaultOptions.plotOptions, {
         /**
@@ -201,7 +201,7 @@ class CandlestickSeries extends OHLCSeries {
         point: CandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var attribs = ColumnSeries.prototype.pointAttribs.call(
+        let attribs = ColumnSeries.prototype.pointAttribs.call(
                 this,
                 point,
                 state
@@ -239,14 +239,14 @@ class CandlestickSeries extends OHLCSeries {
      * @return {void}
      */
     public drawPoints(): void {
-        var series = this,
+        const series = this,
             points = series.points,
             chart = series.chart,
             reversedYAxis = series.yAxis.reversed;
 
         points.forEach(function (point: CandlestickPoint): void {
 
-            var graphic = point.graphic,
+            let graphic = point.graphic,
                 plotOpen,
                 plotClose,
                 topBox,
@@ -384,7 +384,7 @@ export default CandlestickSeries;
  *
  * @type      {*}
  * @extends   series,plotOptions.candlestick
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, marker
  * @product   highstock
  * @apioption series.candlestick
  */

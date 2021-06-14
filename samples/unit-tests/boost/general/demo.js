@@ -215,7 +215,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     function (assert) {
         var done = assert.async(),
             remove = Highcharts.addEvent(
-                Highcharts.Chart,
+                Highcharts,
                 'displayError',
                 function (e) {
                     assert.strictEqual(e.code, 12, 'Error 12 should be invoked');

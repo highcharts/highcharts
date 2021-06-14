@@ -14,6 +14,7 @@
 
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type AreaRangePoint from '../Series/AreaRange/AreaRangePoint';
+import type Axis from '../Core/Axis/Axis';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type BoxPlotPoint from '../Series/BoxPlot/BoxPlotPoint';
 import type BulletPoint from '../Series/Bullet/BulletPoint';
@@ -21,6 +22,7 @@ import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnPoint from '../Series/Column/ColumnPoint';
 import type ColumnRangePoint from '../Series/ColumnRange/ColumnRangePoint';
+import type EventCallback from '../Core/EventCallback';
 import type GanttPoint from '../Series/Gantt//GanttPoint';
 import type OHLCPoint from '../Series/OHLC/OHLCPoint';
 import type PointerEvent from '../Core/PointerEvent';
@@ -31,6 +33,11 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type WaterfallPoint from '../Series/Waterfall/WaterfallPoint';
 import type XRangePoint from '../Series/XRange/XRangePoint';
+
+import A from '../Core/Animation/AnimationUtilities.js';
+const {
+    animObject
+} = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
@@ -76,6 +83,12 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../Core/Chart/ChartOptions'{
+    interface ChartOptions {
+        zoomKey?: string;
+    }
+}
+
 declare module '../Core/Series/PointLike' {
     interface PointLike {
         /** @requires modules/draggable-points */
@@ -116,9 +129,6 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface ChartOptions {
-            zoomKey?: string;
-        }
         interface DragDropDataObject {
             draggedPastSensitivity?: boolean;
             groupedPoints: Array<Point>;
@@ -305,7 +315,7 @@ Supported options for each prop:
 const horizHandleFormatter = function (
     point: Point
 ): SVGPath {
-    var shapeArgs = point.shapeArgs || (point.graphic as any).getBBox(),
+    const shapeArgs = point.shapeArgs || (point.graphic as any).getBBox(),
         top = shapeArgs.r || 0, // Rounding of bar corners
         bottom = shapeArgs.height - top,
         centerY = shapeArgs.height / 2;
@@ -361,7 +371,7 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
             // We flip whether or not we update the top or bottom of the guide
             // box at threshold, but if we drag the mouse fast, the top has not
             // reached threshold before we cross over and update the bottom.
-            var threshold = point.series.translatedThreshold,
+            let threshold = point.series.translatedThreshold,
                 y = guideBox.attr('y'),
                 height,
                 diff;
@@ -390,7 +400,7 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
             pointVals: Record<string, number>,
             point: ColumnPoint
         ): string {
-            var chart = point.series.chart,
+            const chart = point.series.chart,
                 dragHandles = chart.dragHandles,
                 side = pointVals.y >= (point.series.options.threshold || 0) ?
                     'top' : 'bottom',
@@ -405,18 +415,26 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
         },
         // Position handle at bottom if column is below threshold
         handlePositioner: function (point: ColumnPoint): PositionObject {
-            var bBox: BBoxObject =
-                (point.shapeArgs as any) || (point.graphic as any).getBBox();
+            const bBox = (
+                    point.shapeArgs ||
+                    (point.graphic && point.graphic.getBBox()) ||
+                    {}
+                ),
+                reversed = point.series.yAxis.reversed,
+                threshold = point.series.options.threshold || 0,
+                y = point.y || 0,
+                bottom =
+                    (!reversed && y >= threshold) ||
+                    (reversed && y < threshold);
 
             return {
-                x: bBox.x,
-                y: (point.y as any) >= (point.series.options.threshold || 0) ?
-                    bBox.y : bBox.y + bBox.height
+                x: bBox.x || 0,
+                y: bottom ? (bBox.y || 0) : (bBox.y || 0) + (bBox.height || 0)
             };
         },
         // Horizontal handle
         handleFormatter: function (point: ColumnPoint): SVGPath {
-            var shapeArgs = point.shapeArgs || {},
+            const shapeArgs = point.shapeArgs || {},
                 radius: number = shapeArgs.r || 0, // Rounding of bar corners
                 width: number = shapeArgs.width || 0,
                 centerX = width / 2;
@@ -458,7 +476,7 @@ if (seriesTypes.bullet) {
             handlePositioner: function (
                 point: BulletPoint
             ): PositionObject {
-                var bBox: BBoxObject =
+                const bBox: BBoxObject =
                     (point.targetGraphic as any).getBBox();
 
                 return {
@@ -495,11 +513,11 @@ if (seriesTypes.columnrange) {
             handlePositioner: function (
                 point: ColumnRangePoint
             ): PositionObject {
-                var bBox = point.shapeArgs || (point.graphic as any).getBBox();
+                const bBox = point.shapeArgs || (point.graphic as any).getBBox();
 
                 return {
-                    x: bBox.x,
-                    y: bBox.y + bBox.height
+                    x: bBox.x || 0,
+                    y: (bBox.y || 0) + (bBox.height || 0)
                 };
             },
             handleFormatter: columnDragDropProps.y.handleFormatter,
@@ -527,11 +545,11 @@ if (seriesTypes.columnrange) {
             handlePositioner: function (
                 point: ColumnRangePoint
             ): PositionObject {
-                var bBox = point.shapeArgs || (point.graphic as any).getBBox();
+                const bBox = point.shapeArgs || (point.graphic as any).getBBox();
 
                 return {
-                    x: bBox.x,
-                    y: bBox.y
+                    x: bBox.x || 0,
+                    y: bBox.y || 0
                 };
             },
             handleFormatter: columnDragDropProps.y.handleFormatter,
@@ -567,7 +585,7 @@ if (seriesTypes.boxplot) {
                 point: BoxPlotPoint
             ): PositionObject {
                 return {
-                    x: point.shapeArgs.x,
+                    x: point.shapeArgs.x || 0,
                     y: point.lowPlot
                 };
             },
@@ -597,7 +615,7 @@ if (seriesTypes.boxplot) {
                 point: BoxPlotPoint
             ): PositionObject {
                 return {
-                    x: point.shapeArgs.x,
+                    x: point.shapeArgs.x || 0,
                     y: point.q1Plot
                 };
             },
@@ -633,7 +651,7 @@ if (seriesTypes.boxplot) {
                 point: BoxPlotPoint
             ): PositionObject {
                 return {
-                    x: point.shapeArgs.x,
+                    x: point.shapeArgs.x || 0,
                     y: point.q3Plot
                 };
             },
@@ -663,7 +681,7 @@ if (seriesTypes.boxplot) {
                 point: BoxPlotPoint
             ): PositionObject {
                 return {
-                    x: point.shapeArgs.x,
+                    x: point.shapeArgs.x || 0,
                     y: point.highPlot
                 };
             },
@@ -812,13 +830,13 @@ if (seriesTypes.ohlc) {
 
 // Arearange series - move x, resize or move low/high
 if (seriesTypes.arearange) {
-    var columnrangeDragDropProps =
+    const columnrangeDragDropProps =
             seriesTypes.columnrange.prototype.dragDropProps,
         // Use a circle covering the marker as drag handle
         arearangeHandleFormatter = function (
             point: AreaRangePoint
         ): SVGPath {
-            var radius = point.graphic ?
+            const radius = point.graphic ?
                 point.graphic.getBBox().width / 2 + 1 :
                 4;
 
@@ -848,7 +866,7 @@ if (seriesTypes.arearange) {
             handlePositioner: function (
                 point: AreaRangePoint
             ): PositionObject {
-                var bBox = point.lowerGraphic && point.lowerGraphic.getBBox();
+                const bBox = point.lowerGraphic && point.lowerGraphic.getBBox();
 
                 return bBox ? {
                     x: bBox.x + bBox.width / 2,
@@ -875,7 +893,7 @@ if (seriesTypes.arearange) {
             handlePositioner: function (
                 point: AreaRangePoint
             ): PositionObject {
-                var bBox = point.upperGraphic && point.upperGraphic.getBBox();
+                const bBox = point.upperGraphic && point.upperGraphic.getBBox();
 
                 return bBox ? {
                     x: bBox.x + bBox.width / 2,
@@ -908,11 +926,11 @@ if (seriesTypes.xrange) {
     // Handle positioner logic is the same for x and x2 apart from the
     // x value. shapeArgs does not take yAxis reversed etc into account, so we
     // use axis.toPixels to handle positioning.
-    var xrangeHandlePositioner = function (
+    const xrangeHandlePositioner = function (
             point: XRangePoint,
             xProp: string
         ): PositionObject {
-            var series = point.series,
+            let series = point.series,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
                 inverted = series.chart.inverted,
@@ -1447,7 +1465,7 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  *         True if the series is using drag/drop.
  */
 function isSeriesDraggable(series: Series): (boolean|undefined) {
-    var props = ['draggableX', 'draggableY'],
+    let props = ['draggableX', 'draggableY'],
         i;
 
     // Add optionNames from dragDropProps to the array of props to check for
@@ -1482,7 +1500,7 @@ function isSeriesDraggable(series: Series): (boolean|undefined) {
  *         True if the chart is drag/droppable.
  */
 function isChartDraggable(chart: Chart): (boolean|undefined) {
-    var i = chart.series ? chart.series.length : 0;
+    let i = chart.series ? chart.series.length : 0;
 
     if (chart.hasCartesianSeries && !chart.polar) {
         while (i--) {
@@ -1509,7 +1527,7 @@ function isChartDraggable(chart: Chart): (boolean|undefined) {
  *         True if the point is movable.
  */
 function isPointMovable(point: Point): (boolean|undefined) {
-    var series = point.series,
+    let series = point.series,
         seriesDragDropOptions = series.options.dragDrop || {},
         pointDragDropOptions = point.options && point.options.dragDrop,
         updateProps = series.dragDropProps,
@@ -1592,10 +1610,10 @@ function getNormalizedEvent<T extends PointerEvent>(
 function addEvents<T>(
     el: T,
     types: Array<string>,
-    fn: (Function|Highcharts.EventCallbackFunction<T>),
-    options?: Highcharts.EventOptionsObject
+    fn: (Function|EventCallback<T>),
+    options?: U.EventOptions
 ): Function {
-    var removeFuncs: Array<Function> = types.map(
+    const removeFuncs: Array<Function> = types.map(
         function (type: string): Function {
             return addEvent(el, type, fn, options);
         }
@@ -1634,7 +1652,7 @@ function hasDraggedPastSensitivity(
     chart: Chart,
     sensitivity: number
 ): boolean {
-    var orig = (chart.dragDropData as any).origin,
+    const orig = (chart.dragDropData as any).origin,
         oldX = orig.chartX,
         oldY = orig.chartY,
         newX = e.chartX,
@@ -1673,7 +1691,7 @@ function getPositionSnapshot(
     points: Array<Point>,
     guideBox?: SVGElement
 ): Highcharts.DragDropPositionObject {
-    var res: Highcharts.DragDropPositionObject = {
+    const res: Highcharts.DragDropPositionObject = {
         chartX: e.chartX,
         chartY: e.chartY,
         guideBox: guideBox && {
@@ -1687,7 +1705,7 @@ function getPositionSnapshot(
 
     // Loop over the points and add their props
     points.forEach(function (point: Point): void {
-        var pointProps: Record<string, number> = {};
+        const pointProps: Record<string, number> = {};
 
         // Add all of the props defined in the series' dragDropProps to the
         // snapshot
@@ -1695,7 +1713,7 @@ function getPositionSnapshot(
             val: (Highcharts.SeriesDragDropPropsObject|null),
             key: string
         ): void {
-            var axis = (point.series as any)[(val as any).axis + 'Axis'];
+            const axis = (point.series as any)[(val as any).axis + 'Axis'];
 
             pointProps[key] = (point as any)[key];
             // Record how far cursor was from the point when drag started.
@@ -1727,7 +1745,7 @@ function getPositionSnapshot(
  *         Array of points in this group.
  */
 function getGroupedPoints(point: Point): Array<Point> {
-    var series = point.series,
+    let series = point.series,
         points: Array<Point> = [],
         groupKey = (series.options.dragDrop as any).groupBy;
 
@@ -1780,7 +1798,7 @@ function resizeRect(
     updateSide: string,
     update: PositionObject
 ): void {
-    var resizeAttrs;
+    let resizeAttrs;
 
     switch (updateSide) {
         case 'left':
@@ -1826,7 +1844,7 @@ function initDragDrop(
     e: PointerEvent,
     point: Point
 ): void {
-    var groupedPoints = getGroupedPoints(point),
+    let groupedPoints = getGroupedPoints(point),
         series = point.series,
         chart = series.chart,
         guideBox;
@@ -1876,7 +1894,7 @@ function getNewPoints(
     dragDropData: Highcharts.DragDropDataObject,
     newPos: PointerEvent
 ): Record<string, Highcharts.DragDropPointObject> {
-    var point = dragDropData.point,
+    const point = dragDropData.point,
         series = point.series,
         options = merge(series.options.dragDrop, point.options.dragDrop),
         updateProps: (
@@ -1946,18 +1964,16 @@ function getNewPoints(
  * @function updatePoints
  * @param {Highcharts.Chart} chart
  *        A chart with dragDropData.newPoints.
- * @param {boolean} [animate=true]
+ * @param {boolean} [animation=true]
  *        Animate updating points?
  */
 function updatePoints(
     chart: Chart,
-    animate?: (boolean|Partial<AnimationOptions>)
+    animation?: (boolean|Partial<AnimationOptions>)
 ): void {
-    var newPoints: Record<string, Highcharts.DragDropPointObject> =
+    const newPoints: Record<string, Highcharts.DragDropPointObject> =
             (chart.dragDropData as any).newPoints,
-        animOptions = animate === false ? false : merge({
-            duration: 400 // 400 is the default in animate
-        }, (chart.options.chart as any).animation);
+        animOptions = animObject(animation);
 
     chart.isDragDropAnimating = true;
 
@@ -1996,7 +2012,7 @@ function updatePoints(
  *        Difference in Y position.
  */
 function resizeGuideBox(point: Point, dX: number, dY: number): void {
-    var series = point.series,
+    let series = point.series,
         chart = series.chart,
         dragDropData: Highcharts.DragDropDataObject = chart.dragDropData as any,
         resizeSide,
@@ -2045,7 +2061,7 @@ function dragMove(
     e: PointerEvent,
     point: Point
 ): void {
-    var series = point.series,
+    let series = point.series,
         chart = series.chart,
         data = chart.dragDropData,
         options = merge(series.options.dragDrop, point.options.dragDrop),
@@ -2106,7 +2122,7 @@ Chart.prototype.setGuideBoxState = function (
     state: string,
     options?: Record<string, Highcharts.DragDropGuideBoxOptionsObject>
 ): SVGElement {
-    var guideBox = this.dragGuideBox,
+    const guideBox = this.dragGuideBox,
         guideBoxOptions = merge(defaultGuideBoxOptions, options),
         stateOptions = merge(
             guideBoxOptions['default'], // eslint-disable-line dot-notation
@@ -2160,7 +2176,7 @@ Point.prototype.getDropValues = function (
     newPos: PointerEvent,
     updateProps: Record<string, Highcharts.SeriesDragDropPropsObject>
 ): Record<string, number> {
-    var point = this,
+    let point = this,
         series = point.series,
         options = merge(series.options.dragDrop, point.options.dragDrop),
         result: Record<string, number> = {},
@@ -2168,7 +2184,7 @@ Point.prototype.getDropValues = function (
         pointOrigin = origin.points[point.id];
 
     // Find out if we only have one prop to update
-    for (var key in updateProps) {
+    for (const key in updateProps) {
         if (Object.hasOwnProperty.call(updateProps, key)) {
             if (typeof updateSingleProp !== 'undefined') {
                 updateSingleProp = false;
@@ -2190,7 +2206,7 @@ Point.prototype.getDropValues = function (
      *         Limited value
      */
     const limitToRange = function (val: number, direction: string): number {
-        var defaultPrecision = (series as any)[direction.toLowerCase() + 'Axis']
+        let defaultPrecision = (series as any)[direction.toLowerCase() + 'Axis']
                 .categories ? 1 : 0,
             precision = pick<number|undefined, number>(
                 (options as any)['dragPrecision' + direction], defaultPrecision
@@ -2217,8 +2233,8 @@ Point.prototype.getDropValues = function (
         val: Highcharts.SeriesDragDropPropsObject,
         key: string
     ): void {
-        var oldVal = pointOrigin[key],
-            axis: Highcharts.Axis = (series as any)[val.axis + 'Axis'],
+        const oldVal = pointOrigin[key],
+            axis: Axis = (series as any)[val.axis + 'Axis'],
             newVal = limitToRange(
                 axis.toValue(
                     (axis.horiz ? newPos.chartX : newPos.chartY) +
@@ -2260,7 +2276,7 @@ Point.prototype.getDropValues = function (
 Series.prototype.getGuideBox = function (
     points: Array<Point>
 ): SVGElement {
-    var chart = this.chart,
+    let chart = this.chart,
         minX = Infinity,
         maxX = -Infinity,
         minY = Infinity,
@@ -2269,14 +2285,14 @@ Series.prototype.getGuideBox = function (
 
     // Find bounding box of all points
     points.forEach(function (point: Point): void {
-        var bBox = point.graphic && point.graphic.getBBox() || point.shapeArgs;
+        const bBox = point.graphic && point.graphic.getBBox() || point.shapeArgs;
 
         if (bBox && (bBox.width || bBox.height || bBox.x || bBox.y)) {
             changed = true;
-            minX = Math.min(bBox.x, minX);
-            maxX = Math.max(bBox.x + bBox.width, maxX);
-            minY = Math.min(bBox.y, minY);
-            maxY = Math.max(bBox.y + bBox.height, maxY);
+            minX = Math.min(point.plotX || 0, bBox.x || 0, minX);
+            maxX = Math.max((bBox.x || 0) + (bBox.width || 0), maxX);
+            minY = Math.min(point.plotY || 0, bBox.y || 0, minY);
+            maxY = Math.max((bBox.y || 0) + (bBox.height || 0), maxY);
         }
     });
 
@@ -2298,7 +2314,7 @@ Series.prototype.getGuideBox = function (
  *        The point mousing out of.
  */
 function mouseOut(point: Point): void {
-    var chart = point.series && point.series.chart,
+    const chart = point.series && point.series.chart,
         dragDropData = chart && chart.dragDropData;
 
     if (
@@ -2327,7 +2343,7 @@ function mouseOut(point: Point): void {
  *        The point mousing out of.
  */
 function onResizeHandleMouseOut(point: Point): void {
-    var chart = point.series.chart;
+    const chart = point.series.chart;
 
     if (
         chart.dragDropData &&
@@ -2358,7 +2374,7 @@ function onResizeHandleMouseDown(
     point: Point,
     updateProp: string
 ): void {
-    var chart = point.series.chart;
+    const chart = point.series.chart;
 
     // Ignore if zoom/pan key is pressed
     if (chart.zoomOrPanKeyPressed(e)) {
@@ -2389,7 +2405,7 @@ function onResizeHandleMouseDown(
  * @return {void}
  */
 Point.prototype.showDragHandles = function (): void {
-    var point = this,
+    const point = this,
         series = point.series,
         chart = series.chart,
         renderer = chart.renderer,
@@ -2401,13 +2417,13 @@ Point.prototype.showDragHandles = function (): void {
         val: Highcharts.SeriesDragDropPropsObject,
         key: string
     ): void {
-        var handleOptions: Highcharts.DragDropHandleOptionsObject = merge(
+        let handleOptions: Highcharts.DragDropHandleOptionsObject = merge(
                 defaultDragHandleOptions,
                 val.handleOptions,
                 options.dragHandle
             ),
             handleAttrs: SVGAttributes = {
-                className: handleOptions.className,
+                'class': handleOptions.className,
                 'stroke-width': handleOptions.lineWidth,
                 fill: handleOptions.color,
                 stroke: handleOptions.lineColor
@@ -2510,7 +2526,7 @@ Point.prototype.showDragHandles = function (): void {
  * @return {void}
  */
 Chart.prototype.hideDragHandles = function (): void {
-    var chart = this;
+    const chart = this;
 
     if (chart.dragHandles) {
         objectEach(chart.dragHandles, function (val, key): void {
@@ -2539,9 +2555,9 @@ Chart.prototype.hideDragHandles = function (): void {
  *         Number of own properties on the object.
  */
 function countProps(obj: object): number {
-    var count = 0;
+    let count = 0;
 
-    for (var p in obj) {
+    for (const p in obj) {
         if (Object.hasOwnProperty.call(obj, p)) {
             count++;
         }
@@ -2563,7 +2579,7 @@ function countProps(obj: object): number {
  * @template T
  */
 function getFirstProp<T>(obj: Record<string, T>): (T|undefined) {
-    for (var p in obj) {
+    for (const p in obj) {
         if (Object.hasOwnProperty.call(obj, p)) {
             return obj[p];
         }
@@ -2580,7 +2596,7 @@ function getFirstProp<T>(obj: Record<string, T>): (T|undefined) {
  *        The point mousing over.
  */
 function mouseOver(point: Point): void {
-    var series = point.series,
+    const series = point.series,
         chart = series && series.chart,
         dragDropData = chart && chart.dragDropData,
         is3d = chart && chart.is3d && chart.is3d();
@@ -2624,14 +2640,14 @@ function mouseMove(
         return;
     }
 
-    var dragDropData = chart.dragDropData,
+    let dragDropData = chart.dragDropData,
         point: Point,
         seriesDragDropOpts: Highcharts.DragDropOptionsObject,
         newPoints: Record<string, Highcharts.DragDropPointObject>,
         numNewPoints = 0,
         newPoint: (Highcharts.DragDropPointObject|null|undefined);
 
-    if (dragDropData && dragDropData.isDragging) {
+    if (dragDropData && dragDropData.isDragging && dragDropData.point.series) {
         point = dragDropData.point;
         seriesDragDropOpts = point.series.options.dragDrop as any;
 
@@ -2695,14 +2711,15 @@ function mouseUp(
     e: PointerEvent,
     chart: Chart
 ): void {
-    var dragDropData = chart.dragDropData;
+    const dragDropData = chart.dragDropData;
 
     if (
         dragDropData &&
         dragDropData.isDragging &&
-        dragDropData.draggedPastSensitivity
+        dragDropData.draggedPastSensitivity &&
+        dragDropData.point.series
     ) {
-        var point = dragDropData.point,
+        const point = dragDropData.point,
             newPoints: Record<string, Highcharts.DragDropPointObject> =
                 dragDropData.newPoints as any,
             numNewPoints = countProps(newPoints),
@@ -2760,7 +2777,7 @@ function mouseDown(
     e: PointerEvent,
     chart: Chart
 ): void {
-    var dragPoint = chart.hoverPoint,
+    const dragPoint = chart.hoverPoint,
         dragDropOptions = merge(
             dragPoint && dragPoint.series.options.dragDrop,
             dragPoint && dragPoint.options.dragDrop
@@ -2805,7 +2822,7 @@ function mouseDown(
 // should preferably be improved in the future. Notice that the mouseOut event
 // below must have a shorter timeout to ensure event order.
 addEvent(Point, 'mouseOver', function (): void {
-    var point = this;
+    const point = this;
 
     setTimeout(function (): void {
         mouseOver(point);
@@ -2815,7 +2832,7 @@ addEvent(Point, 'mouseOver', function (): void {
 
 // Point mouseleave event. See above function for explanation of the timeout.
 addEvent(Point, 'mouseOut', function (): void {
-    var point = this;
+    const point = this;
 
     setTimeout(function (): void {
         if (point.series) {
@@ -2827,7 +2844,7 @@ addEvent(Point, 'mouseOut', function (): void {
 
 // Hide drag handles on a point if it is removed
 addEvent(Point, 'remove', function (): void {
-    var chart = this.series.chart,
+    const chart = this.series.chart,
         dragHandles = chart.dragHandles;
 
     if (dragHandles && dragHandles.point === this.id) {
@@ -2848,7 +2865,7 @@ addEvent(Point, 'remove', function (): void {
  */
 Chart.prototype.zoomOrPanKeyPressed = function (e: Event): boolean {
     // Check whether the panKey and zoomKey are set in chart.userOptions
-    var chartOptions = this.userOptions.chart || {},
+    const chartOptions = this.userOptions.chart || {},
         panKey = chartOptions.panKey && chartOptions.panKey + 'Key',
         zoomKey = chartOptions.zoomKey && chartOptions.zoomKey + 'Key';
 
@@ -2865,7 +2882,7 @@ Chart.prototype.zoomOrPanKeyPressed = function (e: Event): boolean {
  *        The chart to add events to.
  */
 function addDragDropEvents(chart: Chart): void {
-    var container = chart.container,
+    const container = chart.container,
         doc = H.doc;
 
     // Only enable if we have a draggable chart

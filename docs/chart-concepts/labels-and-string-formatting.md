@@ -14,7 +14,16 @@ Most places where text is handled in Highcharts, it is also followed by an optio
 
 Using HTML also works around some older browser bugs with bi-directional text. Read more under [Internationalization.](https://highcharts.com/docs/advanced-chart-features/internationalization)
 
-Please note that this may become a security risk by running unauthorized code in the browser, if the content of the label comes from an untrusted source.
+### Filtering
+For security reasons, Highcharts since version 9 filters out unknown tags and attributes. See [the security page](https://highcharts.com/docs/chart-concepts/security) for details.
+
+If your config comes from a trusted source, you may add tags, attributes or reference patterns to the allow lists:
+```js
+Highcharts.AST.allowedTags.push('blink');
+Highcharts.AST.allowedAttributes.push('data-value');
+// Allow links to the `tel` protocol
+Highcharts.AST.allowedReferences.push('tel:');
+```
 
 ### Format strings
 
@@ -28,47 +37,47 @@ Format strings are templates for labels, where variables are inserted. Format st
 *   Thousands separator, no decimal places: `{point.y:,.0f}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/no-decimal-places)]
 *   Thousands separator, one decimal place: `{point.y:,.1f}` [[Demo, internationalized](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/one-decimal-place)]
 
-**Dates** allow, like numbers, the format to be appended behind a colon. The format conventions allowed are the same as those of [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts#dateFormat). For example:
+**Dates** allow, like numbers, the format to be appended behind a colon. The format conventions allowed are the same as those of [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts#.dateFormat). For example:
 
 *   Full date: `{value:%Y-%m-%d}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/full-date)]
 
 ### Formatter callbacks
 
-For full control over string handling and additional scripting capabilities around the labels, you might need to use formatter callbacks. These formatters return HTML (subset). Examples of these are [xAxis.labels.formatter](https://api.highcharts.com/highcharts/xAxis.labels.formatter), [tooltip.formatter](https://api.highcharts.com/highcharts/tooltip.formatter) and [legend.labelFormatter](https://api.highcharts.com/highcharts/legend.labelFormatter). Often times you'll need to call [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts#dateFormat) and [Highcharts.numberFormat()](https://api.highcharts.com/class-reference/Highcharts#numberFormat) from the formatters.
+For full control over string handling and additional scripting capabilities around the labels, you might need to use formatter callbacks. These formatters return HTML (subset). Examples of these are [xAxis.labels.formatter](https://api.highcharts.com/highcharts/xAxis.labels.formatter), [tooltip.formatter](https://api.highcharts.com/highcharts/tooltip.formatter) and [legend.labelFormatter](https://api.highcharts.com/highcharts/legend.labelFormatter). Often times you'll need to call [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts#.dateFormat) and [Highcharts.numberFormat()](https://api.highcharts.com/class-reference/Highcharts#.numberFormat) from the formatters.
 
 ### Advanced format strings
 
 Since 6.0.6, the [accessibility module](https://www.highcharts.com/docs/chart-concepts/accessibility) supports more advanced format strings, by also by also handling arrays and plural conditionals. The options this applies to can be found under [lang.accessibility](https://api.highcharts.com/highcharts/lang.accessibility). Arrays can be indexed as follows:
 
-    
+
     Format: 'This is the first index: {myArray[0]}. The last: {myArray[-1]}.'
     Context: { myArray: [0, 1, 2, 3, 4, 5] }
     Result: 'This is the first index: 0. The last: 5.'
 
 They can also be iterated using the `#each()` function. This will repeat the contents of the bracket expression for each element. Example:
 
-    
+
     Format: 'List contains: {#each(myArray)cm }'
     Context: { myArray: [0, 1, 2] }
     Result: 'List contains: 0cm 1cm 2cm '
 
 The `#each()` function optionally takes a length parameter. If positive, this parameter specifies the max number of elements to iterate through. If negative, the function will subtract the number from the length of the array. Use this to stop iterating before the array ends. Example:
 
-    
+
     Format: 'List contains: {#each(myArray, -1), }and {myArray[-1]}.'
     Context: { myArray: [0, 1, 2, 3] }
     Result: 'List contains: 0, 1, 2, and 3.'
 
 Use the `#plural()` function to pick a string depending on whether or not a context object is 1. Basic arguments are `#plural(obj, plural, singular)`. Example:
 
-    
+
     Format: 'Has {numPoints} {#plural(numPoints, points, point}.'
     Context: { numPoints: 5 }
     Result: 'Has 5 points.'
 
 Optionally there are additional parameters for dual and none: `#plural(obj,plural,singular,dual,none)`. Example:
 
-    
+
     Format: 'Has {#plural(numPoints, many points, one point, two points, none}.'
     Context: { numPoints: 2 }
     Result: 'Has two points.'

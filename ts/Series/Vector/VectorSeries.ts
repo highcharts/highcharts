@@ -179,7 +179,7 @@ class VectorSeries extends ScatterSeries {
      * @private
      */
     public arrow(point: VectorPoint): SVGPath {
-        var path: SVGPath,
+        let path: SVGPath,
             fraction: number = (point.length as any) / this.lengthMax,
             u: number = fraction * (this.options.vectorLength as any) / 20,
             o: number = ({
@@ -206,7 +206,7 @@ class VectorSeries extends ScatterSeries {
 
     /*
     drawLegendSymbol: function (legend, item) {
-        var options = legend.options,
+        let options = legend.options,
             symbolHeight = legend.symbolHeight,
             square = options.squareSymbol,
             symbolWidth = square ? symbolHeight : legend.symbolWidth,
@@ -235,10 +235,10 @@ class VectorSeries extends ScatterSeries {
      */
     public drawPoints(): void {
 
-        var chart = this.chart;
+        const chart = this.chart;
 
         this.points.forEach(function (point): void {
-            var plotX = point.plotX,
+            const plotX = point.plotX,
                 plotY = point.plotY;
 
             if (
@@ -246,7 +246,7 @@ class VectorSeries extends ScatterSeries {
                 chart.isInsidePlot(
                     plotX as any,
                     plotY as any,
-                    chart.inverted
+                    { inverted: chart.inverted }
                 )
             ) {
 
@@ -288,7 +288,7 @@ class VectorSeries extends ScatterSeries {
         point: VectorPoint,
         state?: string
     ): SVGAttributes {
-        var options = this.options,
+        let options = this.options,
             stroke = point.color || this.color,
             strokeWidth = this.options.lineWidth;
 
@@ -335,13 +335,13 @@ extend(VectorSeries.prototype, {
      * @ignore
      * @deprecated
      */
-    drawGraph: H.noop as any,
+    drawGraph: H.noop,
 
     /**
      * @ignore
      * @deprecated
      */
-    getSymbol: H.noop as any,
+    getSymbol: H.noop,
 
     /**
      * @ignore

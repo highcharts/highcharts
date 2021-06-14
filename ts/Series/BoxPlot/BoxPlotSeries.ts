@@ -355,7 +355,7 @@ class BoxPlotSeries extends ColumnSeries {
 
     // Translate data points from raw values x and y to plotX and plotY
     public translate(): void {
-        var series = this,
+        const series = this,
             yAxis = series.yAxis,
             pointArrayMap = series.pointArrayMap;
 
@@ -384,7 +384,7 @@ class BoxPlotSeries extends ColumnSeries {
      * @private
      */
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             points = series.points,
             options = series.options,
             chart = series.chart,
@@ -409,7 +409,7 @@ class BoxPlotSeries extends ColumnSeries {
 
         points.forEach(function (point: BoxPlotPoint): void {
 
-            var graphic = point.graphic,
+            let graphic = point.graphic,
                 verb = graphic ? 'animate' : 'attr',
                 shapeArgs = point.shapeArgs,
                 boxAttr: SVGAttributes = {},
@@ -619,8 +619,8 @@ extend(BoxPlotSeries.prototype, {
     // defines the top of the tracker
     pointValKey: 'high',
     // Disable data labels for box plot
-    drawDataLabels: noop as any,
-    setStackedPoints: noop as any // #3890
+    drawDataLabels: noop,
+    setStackedPoints: noop // #3890
 });
 
 /* *

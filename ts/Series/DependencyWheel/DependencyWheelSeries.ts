@@ -118,22 +118,24 @@ class DependencyWheelSeries extends SankeySeries {
 
     public animate(init?: boolean): void {
         if (!init) {
-            var duration = animObject(this.options.animation).duration,
+            const duration = animObject(this.options.animation).duration,
                 step = (duration / 2) / this.nodes.length;
             this.nodes.forEach(function (point, i): void {
-                var graphic = point.graphic;
+                const graphic = point.graphic;
                 if (graphic) {
                     graphic.attr({ opacity: 0 });
                     setTimeout(function (): void {
-                        (graphic as any).animate(
-                            { opacity: 1 },
-                            { duration: step }
-                        );
+                        if (point.graphic) {
+                            point.graphic.animate(
+                                { opacity: 1 },
+                                { duration: step }
+                            );
+                        }
                     }, step * i);
                 }
             }, this);
             this.points.forEach(function (point): void {
-                var graphic = point.graphic;
+                const graphic = point.graphic;
                 if (!point.isNode && graphic) {
                     graphic.attr({ opacity: 0 })
                         .animate({
@@ -146,7 +148,7 @@ class DependencyWheelSeries extends SankeySeries {
     }
 
     public createNode(id: string): DependencyWheelPoint {
-        var node = SankeySeries.prototype.createNode.call(
+        const node = SankeySeries.prototype.createNode.call(
             this,
             id
         ) as DependencyWheelPoint;
@@ -177,7 +179,7 @@ class DependencyWheelSeries extends SankeySeries {
             point: DependencyWheelPoint
         ): (number|undefined) {
 
-            var offset = 0,
+            let offset = 0,
                 i: number,
                 links = node.linksFrom.concat(node.linksTo),
                 sliced: (boolean|undefined);
@@ -228,7 +230,7 @@ class DependencyWheelSeries extends SankeySeries {
      * @private
      */
     public createNodeColumns(): Array<SankeySeriesType.ColumnArray> {
-        var columns = [this.createNodeColumn()];
+        const columns = [this.createNodeColumn()];
         this.nodes.forEach(function (
             node: DependencyWheelPoint
         ): void {
@@ -253,7 +255,7 @@ class DependencyWheelSeries extends SankeySeries {
      */
     public translate(): void {
 
-        var options = this.options,
+        const options = this.options,
             factor = 2 * Math.PI /
                 (this.chart.plotHeight + this.getNodePadding()),
             center = this.getCenter(),
@@ -264,14 +266,14 @@ class DependencyWheelSeries extends SankeySeries {
         this.nodeColumns[0].forEach(function (node): void {
             // Don't render the nodes if sum is 0 #12453
             if (node.sum) {
-                var shapeArgs = node.shapeArgs,
+                const shapeArgs = node.shapeArgs,
                     centerX = center[0],
                     centerY = center[1],
                     r = center[2] / 2,
                     innerR = r - (options.nodeWidth as any),
-                    start = startAngle + factor * shapeArgs.y,
+                    start = startAngle + factor * (shapeArgs.y || 0),
                     end = startAngle +
-                        factor * (shapeArgs.y + shapeArgs.height);
+                        factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0));
 
                 // Middle angle
                 node.angle = start + (end - start) / 2;
@@ -296,12 +298,12 @@ class DependencyWheelSeries extends SankeySeries {
                 // Draw the links from this node
                 node.linksFrom.forEach(function (point): void {
                     if (point.linkBase) {
-                        var distance;
-                        var corners = point.linkBase.map(function (
+                        let distance;
+                        const corners = point.linkBase.map(function (
                             top: number,
                             i: number
                         ): Record<string, number> {
-                            var angle = factor * top,
+                            let angle = factor * top,
                                 x = Math.cos(startAngle + angle) * (innerR + 1),
                                 y = Math.sin(startAngle + angle) * (innerR + 1),
                                 curveFactor: number = options.curveFactor as any;

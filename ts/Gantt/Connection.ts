@@ -86,8 +86,8 @@ declare global {
 
 ''; // detach doclets above
 
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -105,7 +105,7 @@ import type Pathfinder from './Pathfinder.js';
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import '../Extensions/ArrowSymbols.js';
 
-var deg2rad = H.deg2rad,
+const deg2rad = H.deg2rad,
     max = Math.max,
     min = Math.min;
 
@@ -399,16 +399,16 @@ extend(defaultOptions, {
  *         Result xMax, xMin, yMax, yMin.
  */
 function getPointBB(point: Point): (Record<string, number>|null) {
-    var shapeArgs = point.shapeArgs,
+    let shapeArgs = point.shapeArgs,
         bb;
 
     // Prefer using shapeArgs (columns)
     if (shapeArgs) {
         return {
-            xMin: shapeArgs.x,
-            xMax: shapeArgs.x + shapeArgs.width,
-            yMin: shapeArgs.y,
-            yMax: shapeArgs.y + shapeArgs.height
+            xMin: shapeArgs.x || 0,
+            xMax: (shapeArgs.x || 0) + (shapeArgs.width || 0),
+            yMin: shapeArgs.y || 0,
+            yMax: (shapeArgs.y || 0) + (shapeArgs.height || 0)
         };
     }
 
@@ -437,7 +437,7 @@ function getPointBB(point: Point): (Record<string, number>|null) {
  *         The calculated margin in pixels. At least 1.
  */
 function calculateObstacleMargin(obstacles: Array<any>): number {
-    var len = obstacles.length,
+    let len = obstacles.length,
         i = 0,
         j,
         obstacleDistance,
@@ -449,7 +449,7 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
             bbMargin?: number
         ): number {
             // Count the distance even if we are slightly off
-            var margin = pick(bbMargin, 10),
+            const margin = pick(bbMargin, 10),
                 yOverlap = a.yMax + margin > b.yMin - margin &&
                             a.yMin - margin < b.yMax + margin,
                 xOverlap = a.xMax + margin > b.xMin - margin &&
@@ -589,12 +589,11 @@ class Connection {
         attribs?: SVGAttributes,
         animation?: (boolean|DeepPartial<AnimationOptions>)
     ): void {
-        var connection = this,
+        let connection = this,
             chart = this.chart,
             styledMode = chart.styledMode,
             pathfinder = chart.pathfinder,
-            animate =
-                !(chart.options.chart as any).forExport && animation !== false,
+            animate = !chart.options.chart.forExport && animation !== false,
             pathGraphic = connection.graphics && connection.graphics.path,
             anim: SVGAttributes;
 
@@ -658,7 +657,7 @@ class Connection {
         options: Highcharts.ConnectorsMarkerOptions,
         path: SVGPath
     ): void {
-        var connection = this,
+        let connection = this,
             chart = connection.fromPoint.series.chart,
             pathfinder = chart.pathfinder,
             renderer = chart.renderer,
@@ -773,7 +772,7 @@ class Connection {
     public getPath(
         options: Highcharts.ConnectorsOptions
     ): (Highcharts.PathfinderAlgorithmResultObject) {
-        var pathfinder = this.pathfinder,
+        let pathfinder = this.pathfinder,
             chart = this.chart,
             algorithm = pathfinder.algorithms[options.type as any],
             chartObstacles = pathfinder.chartObstacles;
@@ -836,7 +835,7 @@ class Connection {
      * @function Highcharts.Connection#render
      */
     public render(): void {
-        var connection = this,
+        let connection = this,
             fromPoint = connection.fromPoint,
             series = fromPoint.series,
             chart = series.chart,
@@ -939,7 +938,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         this: Point,
         markerOptions: Highcharts.ConnectorsMarkerOptions
     ): PositionObject {
-        var bb = getPointBB(this),
+        let bb = getPointBB(this),
             x,
             y;
 
@@ -985,7 +984,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         v1: PositionObject,
         v2: PositionObject
     ): number {
-        var box: (Record<string, number>|null);
+        let box: (Record<string, number>|null);
 
         if (!defined(v2)) {
             box = getPointBB(this);
@@ -1027,7 +1026,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         markerRadius: number,
         anchor: PositionObject
     ): PositionObject {
-        var twoPI = Math.PI * 2.0,
+        let twoPI = Math.PI * 2.0,
             theta = radians,
             bb = getPointBB(this),
             rectWidth = (bb as any).xMax - (bb as any).xMin,

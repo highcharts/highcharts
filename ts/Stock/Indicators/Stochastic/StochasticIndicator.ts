@@ -63,6 +63,9 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
          * @excluding index, period
          */
         params: {
+            // Index and period are unchangeable, do not inherit (#15362)
+            index: void 0,
+            period: void 0,
             /**
              * Periods for Stochastic oscillator: [%K, %D].
              *
@@ -125,7 +128,7 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
         series: TLinkedSeries,
         params: StochasticParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var periodK: number = (params.periods as any)[0],
+        let periodK: number = (params.periods as any)[0],
             periodD: number = (params.periods as any)[1],
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),

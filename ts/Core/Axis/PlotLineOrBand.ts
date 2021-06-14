@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AlignValue,
     VerticalAlignValue
@@ -18,12 +24,53 @@ import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type FormatUtilities from '../FormatUtilities';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+
 import Axis from './Axis.js';
-import H from '../Globals.js';
 import palette from '../../Core/Color/Palette.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisLike' {
+    interface AxisLike {
+        addPlotBand(
+            options: Highcharts.AxisPlotBandsOptions
+        ): (PlotLineOrBand|undefined);
+        addPlotBandOrLine(
+            options: Highcharts.AxisPlotBandsOptions,
+            coll?: 'plotBands'
+        ): (PlotLineOrBand|undefined);
+        addPlotBandOrLine(
+            options: Highcharts.AxisPlotLinesOptions,
+            coll?: 'plotLines'
+        ): (PlotLineOrBand|undefined);
+        addPlotLine(
+            options: Highcharts.AxisPlotLinesOptions
+        ): (PlotLineOrBand|undefined);
+        getPlotBandPath(
+            from: number,
+            to: number,
+            options?: (Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions)
+        ): SVGPath;
+        removePlotBand(id: string): void;
+        removePlotBandOrLine(id: string): void;
+        removePlotLine(id: string): void;
+    }
+}
+
+declare module './AxisOptions' {
+    interface AxisOptions {
+        plotBands?: Array<Highcharts.AxisPlotBandsOptions>;
+        plotLines?: Array<Highcharts.AxisPlotLinesOptions>;
+    }
+}
 
 /**
  * Internal types
@@ -31,33 +78,9 @@ import palette from '../../Core/Color/Palette.js';
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            addPlotBand(
-                options: AxisPlotBandsOptions
-            ): (PlotLineOrBand|undefined);
-            addPlotBandOrLine(
-                options: AxisPlotBandsOptions,
-                coll?: 'plotBands'
-            ): (PlotLineOrBand|undefined);
-            addPlotBandOrLine(
-                options: AxisPlotLinesOptions,
-                coll?: 'plotLines'
-            ): (PlotLineOrBand|undefined);
-            addPlotLine(
-                options: AxisPlotLinesOptions
-            ): (PlotLineOrBand|undefined);
-            getPlotBandPath(
-                from: number,
-                to: number,
-                options?: (AxisPlotBandsOptions|AxisPlotLinesOptions)
-            ): SVGPath;
-            removePlotBand(id: string): void;
-            removePlotBandOrLine(id: string): void;
-            removePlotLine(id: string): void;
-        }
         interface AxisPlotBandsLabelOptions {
             align?: AlignValue;
-            formatter?: FormatterCallbackFunction<PlotLineOrBand>;
+            formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
             rotation?: number;
             style?: CSSObject;
             text?: string;
@@ -82,7 +105,7 @@ declare global {
         }
         interface AxisPlotLinesLabelOptions {
             align?: AlignValue;
-            formatter?: FormatterCallbackFunction<PlotLineOrBand>;
+            formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
             rotation?: number;
             style?: CSSObject;
             text?: string;
@@ -92,9 +115,6 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface PlotLineOrBandLabelFormatterCallbackFunction {
-            (this: PlotLineOrBand, value?: number, format?: string): string;
-        }
         interface AxisPlotLinesOptions {
             acrossPanes?: boolean;
             className?: string;
@@ -103,14 +123,12 @@ declare global {
             events?: any;
             id?: string;
             label?: AxisPlotLinesLabelOptions;
+            translatedValue?: number;
             value?: number;
             width?: number;
             zIndex?: number;
         }
-        interface XAxisOptions {
-            plotBands?: Array<AxisPlotBandsOptions>;
-            plotLines?: Array<AxisPlotLinesOptions>;
-        }
+        /*
         class PlotLineOrBand {
             public constructor(
                 axis: Axis,
@@ -140,6 +158,7 @@ declare global {
                 ),
             ): string
         }
+        */
     }
 }
 
@@ -176,6 +195,7 @@ const {
     erase,
     extend,
     fireEvent,
+    isNumber,
     merge,
     objectEach,
     pick
@@ -195,7 +215,7 @@ const {
  */
 class PlotLineOrBand {
     public constructor(
-        axis: Highcharts.Axis,
+        axis: Axis,
         options?: (Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions)
     ) {
         this.axis = axis;
@@ -205,12 +225,15 @@ class PlotLineOrBand {
         }
     }
 
-    public axis: Highcharts.Axis;
+    public axis: Axis;
     public id?: string;
     public isActive?: boolean;
     public eventsAdded?: boolean;
     public label?: SVGElement;
-    public options?: (Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions);
+    public options?: (
+        Highcharts.AxisPlotLinesOptions|
+        Highcharts.AxisPlotBandsOptions
+    );
     public svgElem?: SVGElement;
 
     /**
@@ -221,10 +244,10 @@ class PlotLineOrBand {
      * @function Highcharts.PlotLineOrBand#render
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
-    public render(): (Highcharts.PlotLineOrBand|undefined) {
+    public render(): (PlotLineOrBand|undefined) {
         fireEvent(this, 'render');
 
-        var plotLine = this,
+        let plotLine = this,
             axis = plotLine.axis,
             horiz = axis.horiz,
             log = axis.logarithmic,
@@ -399,7 +422,7 @@ class PlotLineOrBand {
         isBand?: boolean,
         zIndex?: number
     ): void {
-        var plotLine = this,
+        let plotLine = this,
             label = plotLine.label,
             renderer = plotLine.axis.chart.renderer,
             attribs: SVGAttributes,
@@ -475,7 +498,7 @@ class PlotLineOrBand {
     )): string | undefined {
         return defined(optionsLabel.formatter) ?
             (optionsLabel.formatter as
-              Highcharts.FormatterCallbackFunction<Highcharts.PlotLineOrBand>)
+              FormatUtilities.FormatterCallback<PlotLineOrBand>)
                 .call(this as any) :
             optionsLabel.text;
     }
@@ -1151,21 +1174,21 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         The SVG path definition in array form.
      */
     getPlotBandPath: function (
-        this: Highcharts.Axis,
+        this: Axis,
         from: number,
         to: number,
         options: (Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions) = this.options
     ): SVGPath {
-        var toPath = this.getPlotLinePath({
+        let toPath = this.getPlotLinePath({
                 value: to,
                 force: true,
                 acrossPanes: options.acrossPanes
-            } as Highcharts.AxisPlotLinePathOptionsObject),
+            }),
             path = this.getPlotLinePath({
                 value: from,
                 force: true,
                 acrossPanes: options.acrossPanes
-            } as Highcharts.AxisPlotLinePathOptionsObject),
+            }),
             result = [] as SVGPath,
             i,
             // #4964 check if chart is inverted or plotband is on yAxis
@@ -1173,8 +1196,10 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             plus = 1,
             isFlat: (boolean|undefined),
             outside =
-                (from < (this.min as any) && to < (this.min as any)) ||
-                (from > (this.max as any) && to > (this.max as any));
+                !isNumber(this.min) ||
+                !isNumber(this.max) ||
+                (from < this.min && to < this.min) ||
+                (from > this.max && to > this.max);
 
         if (path && toPath) {
 
@@ -1184,7 +1209,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 plus = 0;
             }
 
-            // Go over each subpath - for panes in Highstock
+            // Go over each subpath - for panes in Highcharts Stock
             for (i = 0; i < path.length; i += 2) {
                 const pathStart = path[i],
                     pathEnd = path[i + 1],
@@ -1242,9 +1267,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         The added plot band.
      */
     addPlotBand: function (
-        this: Highcharts.Axis,
+        this: Axis,
         options: Highcharts.AxisPlotBandsOptions
-    ): (Highcharts.PlotLineOrBand|undefined) {
+    ): (PlotLineOrBand|undefined) {
         return this.addPlotBandOrLine(options, 'plotBands');
     },
 
@@ -1264,9 +1289,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         The added plot line.
      */
     addPlotLine: function (
-        this: Highcharts.Axis,
+        this: Axis,
         options: Highcharts.AxisPlotLinesOptions
-    ): (Highcharts.PlotLineOrBand|undefined) {
+    ): (PlotLineOrBand|undefined) {
         return this.addPlotBandOrLine(options, 'plotLines');
     },
 
@@ -1287,15 +1312,15 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     addPlotBandOrLine: function <T extends (
         Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions
     )> (
-        this: Highcharts.Axis,
+        this: Axis,
         options: T,
         coll?: (
             T extends Highcharts.AxisPlotBandsOptions ?
                 'plotBands' :
                 'plotLines'
         )
-    ): (Highcharts.PlotLineOrBand|undefined) {
-        var obj: Highcharts.PlotLineOrBand|undefined = new H.PlotLineOrBand(this, options),
+    ): (PlotLineOrBand|undefined) {
+        let obj: (PlotLineOrBand|undefined) = new PlotLineOrBand(this, options),
             userOptions = this.userOptions;
 
         if (this.visible) {
@@ -1317,7 +1342,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             // Add it to the user options for exporting and Axis.update
             if (coll) {
                 // Workaround Microsoft/TypeScript issue #32693
-                var updatedOptions = (userOptions[coll] || []) as Array<T>;
+                const updatedOptions = (userOptions[coll] || []) as Array<T>;
                 updatedOptions.push(options);
                 userOptions[coll] = updatedOptions;
             }
@@ -1336,29 +1361,32 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @param {string} id
      * @return {void}
      */
-    removePlotBandOrLine: function (this: Highcharts.Axis, id: string): void {
-        var plotLinesAndBands = this.plotLinesAndBands,
+    removePlotBandOrLine: function (this: Axis, id: string): void {
+        const plotLinesAndBands = this.plotLinesAndBands,
             options = this.options,
-            userOptions = this.userOptions,
-            i = plotLinesAndBands.length;
-        while (i--) {
-            if (plotLinesAndBands[i].id === id) {
-                plotLinesAndBands[i].destroy();
-            }
-        }
-        ([
-            options.plotLines || [],
-            userOptions.plotLines || [],
-            options.plotBands || [],
-            userOptions.plotBands || []
-        ]).forEach(function (arr): void {
-            i = arr.length;
+            userOptions = this.userOptions;
+
+        if (plotLinesAndBands) { // #15639
+            let i = plotLinesAndBands.length;
             while (i--) {
-                if ((arr[i] || {}).id === id) {
-                    erase(arr, arr[i]);
+                if (plotLinesAndBands[i].id === id) {
+                    plotLinesAndBands[i].destroy();
                 }
             }
-        });
+            ([
+                options.plotLines || [],
+                userOptions.plotLines || [],
+                options.plotBands || [],
+                userOptions.plotBands || []
+            ]).forEach(function (arr): void {
+                i = arr.length;
+                while (i--) {
+                    if ((arr[i] || {}).id === id) {
+                        erase(arr, arr[i]);
+                    }
+                }
+            });
+        }
     },
 
     /**
@@ -1377,7 +1405,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @return {void}
      */
-    removePlotBand: function (this: Highcharts.Axis, id: string): void {
+    removePlotBand: function (this: Axis, id: string): void {
         this.removePlotBandOrLine(id);
     },
 
@@ -1395,10 +1423,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *        The plot line's `id` as given in the original configuration
      *        object or in the `addPlotLine` option.
      */
-    removePlotLine: function (this: Highcharts.Axis, id: string): void {
+    removePlotLine: function (this: Axis, id: string): void {
         this.removePlotBandOrLine(id);
     }
 });
 
-H.PlotLineOrBand = PlotLineOrBand as any;
-export default H.PlotLineOrBand;
+export default PlotLineOrBand;

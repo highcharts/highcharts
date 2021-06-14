@@ -14,17 +14,27 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type { YAxisOptions } from '../Core/Axis/AxisOptions';
 import type ColorType from '../Core/Color/ColorType';
 import type {
     CursorValue
 } from '../Core/Renderer/CSSObject';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import H from '../Core/Globals.js';
 const {
     hasTouch
 } = H;
 import Axis from '../Core/Axis/Axis.js';
+import AxisDefaults from '../Core/Axis/AxisDefaults.js';
 import palette from '../Core/Color/Palette.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
@@ -38,6 +48,26 @@ const {
     wrap
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Axis/AxisLike' {
+    interface AxisLike {
+        resizer?: AxisResizer;
+    }
+}
+
+declare module '../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        maxLength?: (number|string);
+        minLength?: (number|string);
+        resize?: Highcharts.YAxisResizeOptions;
+    }
+}
+
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         activeResizer?: boolean;
@@ -50,14 +80,6 @@ declare module '../Core/Chart/ChartLike' {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            resizer?: AxisResizer;
-        }
-        interface XAxisOptions {
-            maxLength?: (number|string);
-            minLength?: (number|string);
-            resize?: YAxisResizeOptions;
-        }
         interface YAxisResizeControlledAxisOptions {
             next?: Array<number|string>;
             prev?: Array<number|string>;
@@ -67,7 +89,7 @@ declare global {
             cursor?: CursorValue;
             enabled?: boolean;
             lineColor?: ColorType;
-            lineDashStyle?: string;
+            lineDashStyle?: DashStyleValue;
             lineWidth?: number;
             x?: number;
             y?: number;
@@ -96,6 +118,12 @@ declare global {
     }
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -111,7 +139,7 @@ declare global {
 class AxisResizer {
 
     // Default options for AxisResizer.
-    public static resizerOptions: Highcharts.YAxisOptions = {
+    public static resizerOptions: DeepPartial<YAxisOptions> = {
         /**
          * Minimal size of a resizable axis. Could be set as a percent
          * of plot area or pixel size.
@@ -273,14 +301,12 @@ class AxisResizer {
         }
     }
 
-    public constructor(
-        axis: Highcharts.Axis
-    ) {
+    public constructor(axis: Axis) {
         this.init(axis);
     }
     /* eslint-enable no-invalid-this */
 
-    public axis: Highcharts.Axis = void 0 as any;
+    public axis: Axis = void 0 as any;
     public controlLine: SVGElement = void 0 as any;
     public eventsToUnbind?: Array<Function>;
     public grabbed?: boolean;
@@ -300,7 +326,7 @@ class AxisResizer {
      *        Main axis for the AxisResizer.
      */
     public init(
-        axis: Highcharts.Axis,
+        axis: Axis,
         update?: boolean
     ): void {
         this.axis = axis;
@@ -319,7 +345,7 @@ class AxisResizer {
      * @function Highcharts.AxisResizer#render
      */
     public render(): void {
-        var resizer = this,
+        let resizer = this,
             axis = resizer.axis,
             chart = axis.chart,
             options = resizer.options,
@@ -376,7 +402,7 @@ class AxisResizer {
      * @function Highcharts.AxisResizer#addMouseEvents
      */
     public addMouseEvents(): void {
-        var resizer = this,
+        let resizer = this,
             ctrlLineElem = resizer.controlLine.element,
             container = resizer.axis.chart.container,
             eventsToUnbind: Array<Function> = [],
@@ -492,7 +518,7 @@ class AxisResizer {
      * @param {number} chartY
      */
     public updateAxes(chartY: number): void {
-        var resizer = this,
+        let resizer = this,
             chart = resizer.axis.chart,
             axes = resizer.options.controlledAxis,
             nextAxes: Array<(number|string)> = (axes as any).next.length === 0 ?
@@ -501,7 +527,7 @@ class AxisResizer {
             prevAxes: Array<(number|string)> =
                 [resizer.axis as any].concat((axes as any).prev),
             // prev and next configs
-            axesConfigs: Array<Record<string, any>> = [],
+            axesConfigs: Array<AnyRecord> = [],
             stopDrag = false,
             plotTop = chart.plotTop,
             plotHeight = chart.plotHeight,
@@ -538,7 +564,7 @@ class AxisResizer {
                 i: number
             ): void {
                 // Axes given as array index, axis object or axis id
-                var axis: Highcharts.Axis = isNumber(axisInfo) ?
+                let axis: Axis = isNumber(axisInfo) ?
                         // If it's a number - it's an index
                         chart.yAxis[axisInfo] :
                         (
@@ -550,7 +576,7 @@ class AxisResizer {
                                 chart.get(axisInfo)
                         ),
                     axisOptions = axis && axis.options,
-                    optionsToUpdate: Highcharts.YAxisOptions = {},
+                    optionsToUpdate: DeepPartial<YAxisOptions> = {},
                     hDelta = 0,
                     height, top,
                     minLength, maxLength;
@@ -643,7 +669,7 @@ class AxisResizer {
         if (!stopDrag) {
             // Now update axes:
             axesConfigs.forEach(function (
-                config: Record<string, any>
+                config: AnyRecord
             ): void {
                 config.axis.update(config.options, false);
             });
@@ -659,7 +685,7 @@ class AxisResizer {
      * @function Highcharts.AxisResizer#destroy
      */
     public destroy(): void {
-        var resizer = this,
+        const resizer = this,
             axis = resizer.axis;
 
         // Clear resizer in axis
@@ -688,7 +714,7 @@ Axis.keepProps.push('resizer');
 /* eslint-disable no-invalid-this */
 // Add new AxisResizer, update or remove it
 addEvent(Axis, 'afterRender', function (): void {
-    var axis = this,
+    let axis = this,
         resizer = axis.resizer,
         resizerOptions = axis.options.resize,
         enabled;
@@ -746,7 +772,7 @@ wrap(Pointer.prototype, 'drag', function (
     }
 });
 
-merge(true, Axis.defaultYAxisOptions, AxisResizer.resizerOptions);
+merge(true, AxisDefaults.defaultYAxisOptions, AxisResizer.resizerOptions);
 
 H.AxisResizer = AxisResizer as any;
 export default H.AxisResizer;

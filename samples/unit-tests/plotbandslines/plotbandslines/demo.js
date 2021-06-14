@@ -60,7 +60,7 @@ QUnit.test('Plot band labels outside plot area (#3983)', function (assert) {
         'Highcharts - after'
     );
 
-    // Create the Highstock chart
+    // Create the Highcharts Stock chart
     chart = $('#container').highcharts('StockChart', options).highcharts();
 
     assert.equal(

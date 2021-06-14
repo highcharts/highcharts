@@ -13,7 +13,7 @@ QUnit.test('#6007 - exporting after chart.update()', function (assert) {
         var done = assert.async();
 
         setTimeout(function () {
-            chart.exportSVGElements[0].element.onclick();
+            Highcharts.fireEvent(chart.exportSVGElements[0].element, 'click');
 
             chart.update({
                 exporting: {
@@ -25,7 +25,7 @@ QUnit.test('#6007 - exporting after chart.update()', function (assert) {
                 }
             });
 
-            chart.exportSVGElements[0].element.onclick();
+            Highcharts.fireEvent(chart.exportSVGElements[0].element, 'click');
 
             assert.strictEqual(
                 document.getElementsByClassName('highcharts-contextmenu')

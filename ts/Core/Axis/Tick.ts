@@ -10,17 +10,30 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Axis from './Axis.js';
+import type {
+    AxisLabelFormatterContextObject,
+    AxisLabelOptions,
+    AxisOptions
+} from './AxisOptions';
 import type CSSObject from '../Renderer/CSSObject';
 import type PositionObject from '../Renderer/PositionObject';
-import type { TickLike } from '../Axis/Types';
+import type TickLike from './TickLike';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
 import type TimeTicksInfoObject from './TimeTicksInfoObject';
+
+import F from '../FormatUtilities.js';
 import H from '../Globals.js';
-const {
-    deg2rad
-} = H;
+const { deg2rad } = H;
 import U from '../Utilities.js';
 const {
     clamp,
@@ -35,143 +48,23 @@ const {
     pick
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AxisLabelsFormatterContextObject {
-            tickPositionInfo?: TimeTicksInfoObject;
-        }
-        interface TickParametersObject {
-            category?: string;
-            options?: Record<string, any>;
-            tickmarkOffset?: number;
-        }
-        interface TickPositionObject extends PositionObject {
-            opacity?: number;
-        }
-        interface Tick extends TickLike {}
-        class Tick {
-            public constructor(
-                axis: Axis,
-                pos: number,
-                type?: string,
-                noLabel?: boolean,
-                parameters?: TickParametersObject
-            );
-            public axis: Axis;
-            public formatCtx: AxisLabelsFormatterContextObject;
-            public gridLine?: SVGElement;
-            public isActive?: boolean;
-            public isFirst?: boolean;
-            public isLast?: boolean;
-            public isNew: boolean;
-            public isNewLabel: boolean;
-            public label?: SVGElement;
-            public labelPos?: PositionObject;
-            public mark?: SVGElement;
-            public movedLabel?: SVGElement;
-            public options?: AxisOptions;
-            public parameters: TickParametersObject;
-            public prevLabel?: SVGElement;
-            public pos: number;
-            public rotation?: number;
-            public shortenLabel?: Function;
-            public tickmarkOffset?: number;
-            public type: string;
-            public addLabel(): void;
-            public createLabel(
-                this: Highcharts.Tick,
-                xy: PositionObject,
-                str: string,
-                labelOptions: XAxisLabelsOptions
-            ): SVGElement|undefined;
-            public destroy(): void;
-            public getLabelPosition(
-                x: number,
-                y: number,
-                label: SVGElement,
-                horiz: boolean,
-                labelOptions: PositionObject,
-                tickmarkOffset: number,
-                index: number,
-                step: number
-            ): PositionObject;
-            public getLabelSize(): number;
-            public getMarkPath(
-                x: number,
-                y: number,
-                tickLength: number,
-                tickWidth: number,
-                horiz: boolean,
-                renderer: Renderer
-            ): SVGPath;
-            public getPosition(
-                horiz: boolean,
-                tickPos: number,
-                tickmarkOffset: number,
-                old?: boolean
-            ): PositionObject;
-            public handleOverflow(xy: PositionObject): void;
-            public moveLabel(
-                str: string,
-                labelOptions: XAxisLabelsOptions
-            ): void;
-            public replaceMovedLabel(): void;
-            public render(index: number, old?: boolean, opacity?: number): void;
-            public renderGridLine(
-                old: boolean,
-                opacity: number,
-                reverseCrisp: number
-            ): void;
-            public renderLabel(
-                xy: PositionObject,
-                old: boolean,
-                opacity: number,
-                index: number
-            ): void;
-            public renderMark(
-                xy: PositionObject,
-                opacity: number,
-                reverseCrisp: number
-            ): void;
-        }
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisOptions' {
+    interface AxisLabelFormatterContextObject {
+        tickPositionInfo?: TimeTicksInfoObject;
     }
 }
 
-/**
- * Optional parameters for the tick.
- * @private
- * @interface Highcharts.TickParametersObject
- *//**
- * Set category for the tick.
- * @name Highcharts.TickParametersObject#category
- * @type {string|undefined}
- *//**
- * @name Highcharts.TickParametersObject#options
- * @type {Highcharts.Dictionary<any>|undefined}
- *//**
- * Set tickmarkOffset for the tick.
- * @name Highcharts.TickParametersObject#tickmarkOffset
- * @type {number|undefined}
- */
-
-/**
- * Additonal time tick information.
+/* *
  *
- * @interface Highcharts.TimeTicksInfoObject
- * @extends Highcharts.TimeNormalizedObject
- *//**
- * @name Highcharts.TimeTicksInfoObject#higherRanks
- * @type {Array<string>}
- *//**
- * @name Highcharts.TimeTicksInfoObject#totalRange
- * @type {number}
- */
-
-''; // detach doclets above
+ *  Class
+ *
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -205,11 +98,11 @@ class Tick {
      * */
 
     public constructor(
-        axis: Highcharts.Axis,
+        axis: Axis,
         pos: number,
         type?: string,
         noLabel?: boolean,
-        parameters?: Highcharts.TickParametersObject
+        parameters?: Tick.ParametersObject
     ) {
         /**
          * The related axis of the tick.
@@ -253,9 +146,7 @@ class Tick {
      *
      * */
 
-    public axis: Highcharts.Axis;
-
-    public formatCtx!: Highcharts.AxisLabelsFormatterContextObject;
+    public axis: Axis;
 
     public gridLine?: SVGElement;
 
@@ -277,9 +168,9 @@ class Tick {
 
     public movedLabel?: SVGElement;
 
-    public options?: Highcharts.AxisOptions;
+    public options?: DeepPartial<AxisOptions>;
 
-    public parameters: Highcharts.TickParametersObject;
+    public parameters: Tick.ParametersObject;
 
     public pos: number;
 
@@ -307,7 +198,7 @@ class Tick {
      * @return {void}
      */
     public addLabel(): void {
-        var tick = this,
+        const tick = this,
             axis = tick.axis,
             options = axis.options,
             chart = axis.chart,
@@ -315,27 +206,32 @@ class Tick {
             log = axis.logarithmic,
             names = axis.names,
             pos = tick.pos,
-            labelOptions: Highcharts.XAxisLabelsOptions = pick(
+            labelOptions: AxisLabelOptions = pick(
                 tick.options && tick.options.labels,
                 options.labels
             ) as any,
-            str: string,
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
             isLast = pos === tickPositions[tickPositions.length - 1],
-            value = this.parameters.category || (
-                categories ?
-                    pick((categories as any)[pos], names[pos], pos) :
-                    pos
-            ),
-            label = tick.label,
             animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
                 axis.tickInterval === 1,
-            tickPositionInfo = tickPositions.info,
+            tickPositionInfo = tickPositions.info;
+
+        let label = tick.label,
             dateTimeLabelFormat,
             dateTimeLabelFormats,
-            i,
-            list: Record<string, any>;
+            i: number;
+
+        // The context value
+        let value = this.parameters.category || (
+            categories ?
+                pick(categories[pos], names[pos], pos) :
+                pos
+        );
+        if (log && isNumber(value)) {
+            value = correctFloat(log.lin2log(value));
+        }
+
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
@@ -369,33 +265,54 @@ class Tick {
         tick.isLast = isLast;
 
         // Get the string
-        tick.formatCtx = {
-            axis: axis,
-            chart: chart,
-            isFirst: isFirst,
-            isLast: isLast,
+        const ctx: AxisLabelFormatterContextObject = {
+            axis,
+            chart,
             dateTimeLabelFormat: dateTimeLabelFormat as any,
-            tickPositionInfo: tickPositionInfo,
-            value: log ? correctFloat(log.lin2log(value)) : value,
-            pos: pos
+            isFirst,
+            isLast,
+            pos,
+            tick: tick as any,
+            tickPositionInfo,
+            value
         };
-        str = (axis.labelFormatter as any).call(tick.formatCtx, this.formatCtx);
+
+        // Fire an event that allows modifying the context for use in
+        // `labels.format` and `labels.formatter`.
+        fireEvent(this, 'labelFormat', ctx);
+
+        // Label formatting. When `labels.format` is given, we first run the
+        // defaultFormatter and append the result to the context as `text`.
+        // Handy for adding prefix or suffix while keeping default number
+        // formatting.
+        const labelFormatter = (ctx: AxisLabelFormatterContextObject): string => {
+            if (labelOptions.formatter) {
+                return labelOptions.formatter.call(ctx, ctx);
+            }
+            if (labelOptions.format) {
+                ctx.text = axis.defaultLabelFormatter.call(ctx);
+                return F.format(labelOptions.format, ctx, chart);
+            }
+            return axis.defaultLabelFormatter.call(ctx, ctx);
+        };
+        const str = labelFormatter.call(ctx, ctx);
 
         // Set up conditional formatting based on the format list if existing.
-        list = dateTimeLabelFormats && dateTimeLabelFormats.list as any;
+        const list = dateTimeLabelFormats && dateTimeLabelFormats.list as any;
         if (list) {
             tick.shortenLabel = function (): void {
                 for (i = 0; i < list.length; i++) {
+                    extend(
+                        ctx,
+                        { dateTimeLabelFormat: list[i] }
+                    );
                     (label as any).attr({
-                        text: axis.labelFormatter.call(extend(
-                            tick.formatCtx,
-                            { dateTimeLabelFormat: list[i] }
-                        ))
+                        text: labelFormatter.call(ctx, ctx)
                     });
                     if (
                         (label as any).getBBox().width <
                         axis.getSlotWidth(tick as any) - 2 *
-                            pick(labelOptions.padding, 5)
+                            labelOptions.padding
                     ) {
                         return;
                     }
@@ -404,6 +321,9 @@ class Tick {
                     text: ''
                 });
             };
+        } else {
+            // #15692
+            tick.shortenLabel = void 0;
         }
 
         // Call only after first render
@@ -432,7 +352,7 @@ class Tick {
             // (#8809)
             if (
                 label.textWidth &&
-                !(labelOptions.style && labelOptions.style.width) &&
+                !labelOptions.style.width &&
                 !(label.styles as any).width
             ) {
                 label.css({ width: null as any });
@@ -457,9 +377,9 @@ class Tick {
     public createLabel(
         xy: PositionObject,
         str: string,
-        labelOptions: Highcharts.XAxisLabelsOptions
+        labelOptions: AxisLabelOptions
     ): (SVGElement|undefined) {
-        var axis = this.axis,
+        const axis = this.axis,
             chart = axis.chart,
             label = defined(str) && labelOptions.enabled ?
                 chart.renderer
@@ -520,56 +440,54 @@ class Tick {
      * @fires Highcharts.Tick#event:afterGetPosition
      */
     public getPosition(
-        horiz: boolean,
+        horiz: boolean|undefined,
         tickPos: number,
         tickmarkOffset: number,
         old?: boolean
     ): PositionObject {
-        var axis = this.axis,
+        const axis = this.axis,
             chart = axis.chart,
             cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
-            pos;
-
-        pos = {
-            x: horiz ?
-                correctFloat(
-                    (axis.translate(
-                        tickPos + tickmarkOffset, null, null, old
-                    ) as any) +
-                    axis.transB
-                ) :
-                (
-                    axis.left +
-                    axis.offset +
+            pos = {
+                x: horiz ?
+                    correctFloat(
+                        (axis.translate(
+                            tickPos + tickmarkOffset, null, null, old
+                        ) as any) +
+                        axis.transB
+                    ) :
                     (
-                        axis.opposite ?
-                            (
+                        axis.left +
+                        axis.offset +
+                        (
+                            axis.opposite ?
                                 (
-                                    (old && chart.oldChartWidth as any) ||
-                                    (chart.chartWidth as any)
-                                ) -
-                                axis.right -
-                                axis.left
-                            ) :
-                            0
-                    )
-                ),
+                                    (
+                                        (old && chart.oldChartWidth as any) ||
+                                        (chart.chartWidth as any)
+                                    ) -
+                                    axis.right -
+                                    axis.left
+                                ) :
+                                0
+                        )
+                    ),
 
-            y: horiz ?
-                (
-                    (cHeight as any) -
-                    axis.bottom +
-                    axis.offset -
-                    (axis.opposite ? axis.height : 0)
-                ) :
-                correctFloat(
-                    (cHeight as any) -
-                    (axis.translate(
-                        tickPos + tickmarkOffset, null, null, old
-                    ) as any) -
-                    axis.transB
-                )
-        };
+                y: horiz ?
+                    (
+                        (cHeight as any) -
+                        axis.bottom +
+                        axis.offset -
+                        (axis.opposite ? axis.height : 0)
+                    ) :
+                    correctFloat(
+                        (cHeight as any) -
+                        (axis.translate(
+                            tickPos + tickmarkOffset, null, null, old
+                        ) as any) -
+                        axis.transB
+                    )
+            };
 
         // Chrome workaround for #10516
         pos.y = clamp(pos.y, -1e5, 1e5);
@@ -596,8 +514,7 @@ class Tick {
         index: number,
         step: number
     ): PositionObject {
-
-        var axis = this.axis,
+        const axis = this.axis,
             transA = axis.transA,
             reversed = ( // #7911
                 axis.isLinked && axis.linkedParent ?
@@ -606,7 +523,6 @@ class Tick {
             ),
             staggerLines = axis.staggerLines,
             rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
-            yOffset = labelOptions.y,
 
             // Adjust for label alignment if we use reserveSpace: true (#5286)
             labelOffsetCorrection = (
@@ -616,8 +532,10 @@ class Tick {
                     ) :
                     0
             ),
-            line: number,
             pos = {} as PositionObject;
+
+        let yOffset = labelOptions.y,
+            line: number;
 
         if (!defined(yOffset)) {
             if (axis.side === 0) {
@@ -689,7 +607,7 @@ class Tick {
         tickLength: number,
         tickWidth: number,
         horiz: boolean,
-        renderer: Highcharts.Renderer
+        renderer: SVGRenderer
     ): SVGPath {
         return renderer.crispLine([[
             'M',
@@ -712,7 +630,7 @@ class Tick {
      * @return {void}
      */
     public handleOverflow(xy: PositionObject): void {
-        var tick = this,
+        const tick = this,
             axis = this.axis,
             labelOptions = axis.options.labels,
             pxPos = xy.x,
@@ -740,19 +658,18 @@ class Tick {
             ],
             labelWidth = (label as any).getBBox().width,
             slotWidth = axis.getSlotWidth(tick as any),
-            modifiedSlotWidth = slotWidth,
             xCorrection = factor,
+            css: CSSObject = {};
+
+        let modifiedSlotWidth = slotWidth,
             goRight = 1,
             leftPos,
             rightPos,
-            textWidth,
-            css: CSSObject = {};
+            textWidth;
 
         // Check if the label overshoots the chart spacing box. If it does, move
         // it. If it now overshoots the slotWidth, add ellipsis.
-        if (!rotation &&
-            pick((labelOptions as any).overflow, 'justify') === 'justify'
-        ) {
+        if (!rotation && labelOptions.overflow === 'justify') {
             leftPos = pxPos - factor * labelWidth;
             rightPos = pxPos + (1 - factor) * labelWidth;
 
@@ -813,7 +730,7 @@ class Tick {
                 tick.shortenLabel();
             } else {
                 css.width = Math.floor(textWidth) + 'px';
-                if (!((labelOptions as any).style || {}).textOverflow) {
+                if (!(labelOptions.style || {}).textOverflow) {
                     css.textOverflow = 'ellipsis';
                 }
                 (label as any).css(css);
@@ -832,13 +749,14 @@ class Tick {
      *
      * @return {void}
      */
-    public moveLabel(str: string, labelOptions: Highcharts.XAxisLabelsOptions): void {
-        var tick = this,
+    public moveLabel(str: string, labelOptions: AxisLabelOptions): void {
+        const tick = this,
             label = tick.label,
-            moved = false,
             axis = tick.axis,
+            reversed = axis.reversed;
+
+        let moved = false,
             labelPos,
-            reversed = axis.reversed,
             xPos,
             yPos;
 
@@ -899,28 +817,33 @@ class Tick {
         old?: boolean,
         opacity?: number
     ): void {
-        var tick = this,
+        const tick = this,
             axis = tick.axis,
             horiz = axis.horiz,
             pos = tick.pos,
             tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
-            xy = tick.getPosition(horiz as any, pos, tickmarkOffset, old),
+            xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
             x = xy.x,
             y = xy.y,
-            reverseCrisp = ((horiz && x === (axis.pos as any) + axis.len) ||
+            reverseCrisp = ((horiz && x === axis.pos + axis.len) ||
                 (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
 
+        const labelOpacity = pick(
+            opacity,
+            tick.label && tick.label.newOpacity, // #15528
+            1
+        );
         opacity = pick(opacity, 1);
         this.isActive = true;
 
         // Create the grid line
-        this.renderGridLine(old as any, opacity as any, reverseCrisp);
+        this.renderGridLine(old, opacity, reverseCrisp);
 
         // create the tick mark
-        this.renderMark(xy, opacity as any, reverseCrisp);
+        this.renderMark(xy, opacity, reverseCrisp);
 
         // the label is created on init - now move it into place
-        this.renderLabel(xy, old as any, opacity as any, index as any);
+        this.renderLabel(xy, old, labelOpacity, index);
 
         tick.isNew = false;
 
@@ -937,32 +860,36 @@ class Tick {
      * @return {void}
      */
     public renderGridLine(
-        old: boolean,
+        old: boolean|undefined,
         opacity: number,
         reverseCrisp: number
     ): void {
-        var tick = this,
+        const tick = this,
             axis = tick.axis,
             options = axis.options,
-            gridLine = tick.gridLine,
-            gridLinePath,
             attribs: SVGAttributes = {},
             pos = tick.pos,
             type = tick.type,
             tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
-            renderer = axis.chart.renderer,
-            gridPrefix = type ? type + 'Grid' : 'grid',
-            gridLineWidth = (options as any)[gridPrefix + 'LineWidth'],
-            gridLineColor = (options as any)[gridPrefix + 'LineColor'],
-            dashStyle = (options as any)[gridPrefix + 'LineDashStyle'];
+            renderer = axis.chart.renderer;
+
+        let gridLine = tick.gridLine,
+            gridLinePath,
+            gridLineWidth = options.gridLineWidth,
+            gridLineColor = options.gridLineColor,
+            dashStyle = options.gridLineDashStyle;
+
+        if (tick.type === 'minor') {
+            gridLineWidth = options.minorGridLineWidth;
+            gridLineColor = options.minorGridLineColor;
+            dashStyle = options.minorGridLineDashStyle;
+        }
 
         if (!gridLine) {
             if (!axis.chart.styledMode) {
                 attribs.stroke = gridLineColor;
-                attribs['stroke-width'] = gridLineWidth;
-                if (dashStyle) {
-                    attribs.dashstyle = dashStyle;
-                }
+                attribs['stroke-width'] = gridLineWidth || 0;
+                attribs.dashstyle = dashStyle;
             }
             if (!type) {
                 attribs.zIndex = 1;
@@ -1019,22 +946,25 @@ class Tick {
         opacity: number,
         reverseCrisp: number
     ): void {
-        var tick = this,
+        const tick = this,
             axis = tick.axis,
             options = axis.options,
             renderer = axis.chart.renderer,
             type = tick.type,
-            tickPrefix = type ? type + 'Tick' : 'tick',
-            tickSize = axis.tickSize(tickPrefix),
-            mark = tick.mark,
-            isNewMark = !mark,
+            tickSize = axis.tickSize(type ? type + 'Tick' : 'tick'),
             x = xy.x,
             y = xy.y,
             tickWidth = pick(
-                (options as any)[tickPrefix + 'Width'],
+                options[type !== 'minor' ? 'tickWidth' : 'minorTickWidth'],
                 !type && axis.isXAxis ? 1 : 0
             ), // X axis defaults to 1
-            tickColor = (options as any)[tickPrefix + 'Color'];
+            tickColor = options[
+                type !== 'minor' ? 'tickColor' : 'minorTickColor'
+            ];
+
+        let mark = tick.mark;
+
+        const isNewMark = !mark;
 
         if (tickSize) {
 
@@ -1044,7 +974,7 @@ class Tick {
             }
 
             // First time, create it
-            if (isNewMark) {
+            if (!mark) {
                 /**
                  * The rendered mark of the tick.
                  * @name Highcharts.Tick#mark
@@ -1061,18 +991,18 @@ class Tick {
                     });
                 }
             }
-            (mark as any)[isNewMark ? 'attr' : 'animate']({
+
+            mark[isNewMark ? 'attr' : 'animate']({
                 d: tick.getMarkPath(
                     x,
                     y,
                     tickSize[0],
-                    (mark as any).strokeWidth() * reverseCrisp,
+                    mark.strokeWidth() * reverseCrisp,
                     axis.horiz as any,
                     renderer
                 ),
                 opacity: opacity
             });
-
         }
     }
 
@@ -1089,22 +1019,23 @@ class Tick {
      * @return {void}
      */
     public renderLabel(
-        xy: Highcharts.TickPositionObject,
-        old: boolean,
+        xy: Tick.LabelObject,
+        old: boolean|undefined,
         opacity: number,
         index: number
     ): void {
-        var tick = this,
+        const tick = this,
             axis = tick.axis,
             horiz = axis.horiz,
             options = axis.options,
             label = tick.label,
             labelOptions = options.labels,
-            step = (labelOptions as any).step,
+            step = labelOptions.step,
             tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
-            show = true,
             x = xy.x,
             y = xy.y;
+
+        let show = true;
 
         if (label && isNumber(x)) {
             label.xy = xy = tick.getLabelPosition(
@@ -1124,12 +1055,12 @@ class Tick {
                 (
                     tick.isFirst &&
                     !tick.isLast &&
-                    !pick(options.showFirstLabel, 1 as any)
+                    !options.showFirstLabel
                 ) ||
                 (
                     tick.isLast &&
                     !tick.isFirst &&
-                    !pick(options.showLastLabel, 1 as any)
+                    !options.showLastLabel
                 )
             ) {
                 show = false;
@@ -1137,8 +1068,8 @@ class Tick {
             // Handle label overflow and show or hide accordingly
             } else if (
                 horiz &&
-                !(labelOptions as any).step &&
-                !(labelOptions as any).rotation &&
+                !labelOptions.step &&
+                !labelOptions.rotation &&
                 !old &&
                 opacity !== 0
             ) {
@@ -1172,11 +1103,12 @@ class Tick {
      * @return {void}
      */
     public replaceMovedLabel(): void {
-        var tick = this,
+        const tick = this,
             label = tick.label,
             axis = tick.axis,
-            reversed = axis.reversed,
-            x,
+            reversed = axis.reversed;
+
+        let x,
             y;
 
         // Animate and destroy
@@ -1203,6 +1135,75 @@ class Tick {
     }
 }
 
-H.Tick = Tick as typeof Highcharts.Tick;
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
-export default H.Tick;
+interface Tick extends TickLike {
+    // nothing here yet
+}
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace Tick {
+    export interface ParametersObject {
+        category?: string;
+        options?: AnyRecord;
+        tickmarkOffset?: number;
+    }
+    export interface LabelObject extends PositionObject {
+        opacity?: number;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default Tick;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Optional parameters for the tick.
+ * @private
+ * @interface Highcharts.TickParametersObject
+ *//**
+ * Set category for the tick.
+ * @name Highcharts.TickParametersObject#category
+ * @type {string|undefined}
+ *//**
+ * @name Highcharts.TickParametersObject#options
+ * @type {Highcharts.Dictionary<any>|undefined}
+ *//**
+ * Set tickmarkOffset for the tick.
+ * @name Highcharts.TickParametersObject#tickmarkOffset
+ * @type {number|undefined}
+ */
+
+/**
+ * Additonal time tick information.
+ *
+ * @interface Highcharts.TimeTicksInfoObject
+ * @extends Highcharts.TimeNormalizedObject
+ *//**
+ * @name Highcharts.TimeTicksInfoObject#higherRanks
+ * @type {Array<string>}
+ *//**
+ * @name Highcharts.TimeTicksInfoObject#totalRange
+ * @type {number}
+ */
+
+''; // detach doclets above

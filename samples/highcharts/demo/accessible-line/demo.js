@@ -20,6 +20,9 @@ Highcharts.chart('container', {
     yAxis: {
         title: {
             text: 'Percentage usage'
+        },
+        accessibility: {
+            description: 'Percentage usage'
         }
     },
 
@@ -98,19 +101,19 @@ Highcharts.chart('container', {
                 maxWidth: 550
             },
             chartOptions: {
+                chart: {
+                    spacingLeft: 3,
+                    spacingRight: 3
+                },
                 legend: {
                     itemWidth: 150
                 },
                 xAxis: {
-                    categories: ['Dec. 2010', 'May 2012', 'Jan. 2014', 'July 2015', 'Oct. 2017', 'Sep. 2019']
+                    categories: ['Dec. 2010', 'May 2012', 'Jan. 2014', 'July 2015', 'Oct. 2017', 'Sep. 2019'],
+                    title: ''
                 },
                 yAxis: {
-                    title: {
-                        enabled: false
-                    },
-                    labels: {
-                        format: '{value}%'
-                    }
+                    visible: false
                 }
             }
         }]

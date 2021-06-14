@@ -14,7 +14,7 @@
  *
  * */
 
-import type { AxisType } from '../../../Core/Axis/Types';
+import type AxisType from '../../../Core/Axis/AxisType';
 import type Chart from '../../../Core/Chart/Chart';
 import type IndicatorLike from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
@@ -89,7 +89,7 @@ class SMAIndicator extends LineSeries {
      * Data in OHLC format is required.
      *
      * @sample {highstock} stock/indicators/use-ohlc-data
-     *         Plot line on Y axis
+     *         Use OHLC data format to plot line chart
      *
      * @type      {boolean}
      * @product   highstock
@@ -207,7 +207,7 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public getName(): string {
-        var name = this.name,
+        let name = this.name,
             params: Array<string> = [];
 
         if (!name) {
@@ -236,7 +236,7 @@ class SMAIndicator extends LineSeries {
         series: TLinkedSeries,
         params: SMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = params.period as any,
+        let period: number = params.period as any,
             xVal: Array<number> = series.xData as any,
             yVal: Array<(number|Array<(number|null)>|null)> = series.yData as any,
             yValLen = yVal.length,
@@ -294,7 +294,7 @@ class SMAIndicator extends LineSeries {
         chart: Chart,
         options: SMAOptions
     ): void {
-        var indicator = this,
+        const indicator = this,
             requiredIndicators = indicator.requireIndicators();
 
         // Check whether all required indicators are loaded.
@@ -321,7 +321,7 @@ class SMAIndicator extends LineSeries {
          * @return {void}
          */
         function recalculateValues(): void {
-            var oldData = indicator.points || [],
+            let oldData = indicator.points || [],
                 oldDataLength = (indicator.xData || []).length,
                 processedData: IndicatorValuesObject<typeof LineSeries.prototype> = (
                     indicator.getValues(
@@ -444,7 +444,7 @@ class SMAIndicator extends LineSeries {
         if (indicator.calculateOn === 'init') {
             recalculateValues();
         } else {
-            var unbinder = addEvent(
+            const unbinder = addEvent(
                 indicator.chart,
                 indicator.calculateOn,
                 function (): void {
@@ -462,7 +462,7 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public processData(): (boolean|undefined) {
-        var series = this,
+        const series = this,
             compareToMain = series.options.compareToMain,
             linkedParent = series.linkedParent;
 
@@ -479,7 +479,7 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public requireIndicators(): RequireIndicatorsResultObject {
-        var obj: RequireIndicatorsResultObject = {
+        const obj: RequireIndicatorsResultObject = {
             allLoaded: true
         };
 

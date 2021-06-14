@@ -1,9 +1,5 @@
 // Initiate the chart
-const chart = Highcharts.Map({
-    chart: {
-        renderTo: 'container'
-    },
-
+const chart = Highcharts.mapChart('container', {
     title: {
         text: 'Highmaps lat/lon demo'
     },
@@ -50,7 +46,11 @@ const chart = Highcharts.Map({
 
 document.getElementById('addCircle').onclick = () => {
     const pos = chart.fromLatLonToPoint({ lat: 51.507222, lon: -0.1275 });
-    chart.renderer.circle(chart.xAxis[0].toPixels(pos.x), chart.yAxis[0].toPixels(pos.y), 28).attr({
+    chart.renderer.circle(
+        chart.xAxis[0].toPixels(pos.x),
+        chart.yAxis[0].toPixels(pos.y),
+        28
+    ).attr({
         zIndex: 100,
         fill: '#FCFFC5',
         'fill-opacity': 0.4,

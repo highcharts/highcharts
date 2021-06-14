@@ -12,7 +12,7 @@
 
 'use strict';
 
-var frequencies: Array<number> = [
+const frequencies: Array<number> = [
     16.351597831287414, // C0
     17.323914436054505,
     18.354047994837977,

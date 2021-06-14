@@ -66,6 +66,7 @@ class WilliamsRIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
+            index: void 0, // unchangeable index, do not inherit (#15362)
             /**
              * Period for Williams %R oscillator
              */
@@ -82,7 +83,7 @@ class WilliamsRIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: WilliamsRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = params.period as any,
+        let period: number = params.period as any,
             xVal: Array<number> = series.xData as any,
             yVal: Array<Array<number>> = series.yData as any,
             yValLen = yVal ? yVal.length : 0,

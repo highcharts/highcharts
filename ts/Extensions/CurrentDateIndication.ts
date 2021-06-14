@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AlignValue,
     VerticalAlignValue
@@ -19,8 +25,29 @@ import type {
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
+import type FormatUtilities from '../Core/FormatUtilities';
+
 import Axis from '../Core/Axis/Axis.js';
-import palette from '../Core/Color/Palette.js';
+import Palette from '../Core/Color/Palette.js';
+import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    merge,
+    wrap
+} = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        currentDateIndicator?: (boolean|Highcharts.CurrentDateIndicatorOptions);
+    }
+}
 
 /**
  * Internal types
@@ -34,7 +61,7 @@ declare global {
         interface CurrentDateIndicatorLabelOptions {
             align?: AlignValue;
             format?: string;
-            formatter?: CurrentDateIndicatorLabelFormatterCallbackFunction;
+            formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
             rotation?: number;
             style?: CSSObject;
             text?: string;
@@ -55,46 +82,30 @@ declare global {
             width?: number;
             zIndex?: number;
         }
-        interface XAxisOptions {
-            currentDateIndicator?: (boolean|CurrentDateIndicatorOptions);
-        }
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    merge,
-    wrap
-} = U;
+/**
+ * Show an indicator on the axis for the current date and time. Can be a
+ * boolean or a configuration object similar to
+ * [xAxis.plotLines](#xAxis.plotLines).
+ *
+ * @sample gantt/current-date-indicator/demo
+ *         Current date indicator enabled
+ * @sample gantt/current-date-indicator/object-config
+ *         Current date indicator with custom options
+ *
+ * @declare   Highcharts.CurrentDateIndicatorOptions
+ * @type      {boolean|CurrentDateIndicatorOptions}
+ * @default   true
+ * @extends   xAxis.plotLines
+ * @excluding value
+ * @product   gantt
+ * @apioption xAxis.currentDateIndicator
+ */
 
-import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
-
-
-const defaultConfig: (
-    Highcharts.CurrentDateIndicatorOptions &
-    Highcharts.XAxisOptions
-) = {
-    /**
-     * Show an indicator on the axis for the current date and time. Can be a
-     * boolean or a configuration object similar to
-     * [xAxis.plotLines](#xAxis.plotLines).
-     *
-     * @sample gantt/current-date-indicator/demo
-     *         Current date indicator enabled
-     * @sample gantt/current-date-indicator/object-config
-     *         Current date indicator with custom options
-     *
-     * @declare   Highcharts.AxisCurrentDateIndicatorOptions
-     * @type      {boolean|*}
-     * @default   true
-     * @extends   xAxis.plotLines
-     * @excluding value
-     * @product   gantt
-     * @apioption xAxis.currentDateIndicator
-     */
-    currentDateIndicator: true,
-    color: palette.highlightColor20,
+const defaultOptions: Highcharts.CurrentDateIndicatorOptions = {
+    color: Palette.highlightColor20,
     width: 2,
     /**
      * @declare Highcharts.AxisCurrentDateIndicatorLabelOptions
@@ -102,7 +113,7 @@ const defaultConfig: (
     label: {
         /**
          * Format of the label. This options is passed as the fist argument to
-         * [dateFormat](/class-reference/Highcharts#dateFormat) function.
+         * [dateFormat](/class-reference/Highcharts#.dateFormat) function.
          *
          * @type      {string}
          * @default   %a, %b %d %Y, %H:%M
@@ -110,8 +121,12 @@ const defaultConfig: (
          * @apioption xAxis.currentDateIndicator.label.format
          */
         format: '%a, %b %d %Y, %H:%M',
-        formatter: function (value: number, format: string): string {
-            return (this as PlotLineOrBand).axis.chart.time.dateFormat(format, value);
+        formatter: function (
+            this: PlotLineOrBand,
+            value?: number,
+            format?: string
+        ): string {
+            return this.axis.chart.time.dateFormat(format || '', value);
         },
         rotation: 0,
         /**
@@ -127,21 +142,24 @@ const defaultConfig: (
 /* eslint-disable no-invalid-this */
 
 addEvent(Axis, 'afterSetOptions', function (): void {
-    var options = this.options,
+    const options = this.options,
         cdiOptions = options.currentDateIndicator;
 
 
     if (cdiOptions) {
-        cdiOptions = typeof cdiOptions === 'object' ?
-            merge(defaultConfig, cdiOptions) : merge(defaultConfig);
+        const plotLineOptions: Highcharts.AxisPlotLinesOptions =
+            typeof cdiOptions === 'object' ?
+                merge(defaultOptions, cdiOptions) :
+                merge(defaultOptions);
 
-        (cdiOptions as any).value = new Date();
+        plotLineOptions.value = Date.now();
+        plotLineOptions.className = 'highcharts-current-date-indicator';
 
         if (!options.plotLines) {
             options.plotLines = [];
         }
 
-        options.plotLines.push(cdiOptions as any);
+        options.plotLines.push(plotLineOptions);
     }
 
 });
@@ -156,19 +174,24 @@ addEvent(PlotLineOrBand, 'render', function (): void {
 });
 
 wrap(PlotLineOrBand.prototype, 'getLabelText', function (
-    this: Highcharts.PlotLineOrBand,
+    this: PlotLineOrBand,
     defaultMethod: Function,
     defaultLabelOptions: (
         Highcharts.AxisPlotLinesLabelOptions|
         Highcharts.AxisPlotBandsLabelOptions
     )
 ): string {
-    var options = this.options;
+    const options = this.options;
 
-    if ((options as any).currentDateIndicator && (options as any).label &&
-        typeof (options as any).label.formatter === 'function') {
+    if (
+        options &&
+        options.className &&
+        options.className.indexOf('highcharts-current-date-indicator') !== -1 &&
+        options.label &&
+        typeof options.label.formatter === 'function'
+    ) {
 
-        (options as any).value = new Date();
+        (options as any).value = Date.now();
         return (options as any).label.formatter
             .call(this, (options as any).value, (options as any).label.format);
     }

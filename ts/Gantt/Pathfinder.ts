@@ -18,6 +18,7 @@ import type {
 import type Axis from '../Core/Axis/Axis';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type { GanttDependencyOptions } from '../Series/Gantt/GanttSeriesOptions';
 import type GanttPointOptions from '../Series/Gantt/GanttPointOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
@@ -27,9 +28,20 @@ import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 
+/* *
+ *
+ * Declarations
+ *
+ * */
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         pathfinder?: Pathfinder;
+    }
+}
+
+declare module '../Core/Options'{
+    interface Options {
+        connectors?: Highcharts.ConnectorsOptions;
     }
 }
 
@@ -109,7 +121,7 @@ declare global {
         }
         interface ConnectorsOptions {
             algorithmMargin?: number;
-            dashStyle?: string;
+            dashStyle?: DashStyleValue;
             enabled?: boolean;
             endMarker?: ConnectorsEndMarkerOptions;
             lineColor?: ColorString;
@@ -130,9 +142,6 @@ declare global {
             symbol?: string;
             verticalAlign?: VerticalAlignValue;
             width?: number;
-        }
-        interface Options {
-            connectors?: ConnectorsOptions;
         }
         interface PointConnectOptionsObject {
             to?: string;
@@ -187,8 +196,8 @@ declare global {
 
 ''; // detach doclets above
 
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -205,7 +214,7 @@ const {
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import '../Extensions/ArrowSymbols.js';
 
-var deg2rad = H.deg2rad,
+const deg2rad = H.deg2rad,
     max = Math.max,
     min = Math.min;
 
@@ -499,16 +508,16 @@ extend(defaultOptions, {
  *         Result xMax, xMin, yMax, yMin.
  */
 function getPointBB(point: Point): (Record<string, number>|null) {
-    var shapeArgs = point.shapeArgs,
+    let shapeArgs = point.shapeArgs,
         bb;
 
     // Prefer using shapeArgs (columns)
     if (shapeArgs) {
         return {
-            xMin: shapeArgs.x,
-            xMax: shapeArgs.x + shapeArgs.width,
-            yMin: shapeArgs.y,
-            yMax: shapeArgs.y + shapeArgs.height
+            xMin: shapeArgs.x || 0,
+            xMax: (shapeArgs.x || 0) + (shapeArgs.width || 0),
+            yMin: shapeArgs.y || 0,
+            yMax: (shapeArgs.y || 0) + (shapeArgs.height || 0)
         };
     }
 
@@ -537,7 +546,7 @@ function getPointBB(point: Point): (Record<string, number>|null) {
  *         The calculated margin in pixels. At least 1.
  */
 function calculateObstacleMargin(obstacles: Array<any>): number {
-    var len = obstacles.length,
+    let len = obstacles.length,
         i = 0,
         j,
         obstacleDistance,
@@ -549,7 +558,7 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
             bbMargin?: number
         ): number {
             // Count the distance even if we are slightly off
-            var margin = pick(bbMargin, 10),
+            const margin = pick(bbMargin, 10),
                 yOverlap = a.yMax + margin > b.yMin - margin &&
                             a.yMin - margin < b.yMax + margin,
                 xOverlap = a.xMax + margin > b.xMin - margin &&
@@ -671,7 +680,7 @@ class Pathfinder {
      *        series.afterAnimate event has fired. Used on first render.
      */
     public update(deferRender?: boolean): void {
-        var chart = this.chart,
+        const chart = this.chart,
             pathfinder = this,
             oldConnections = pathfinder.connections;
 
@@ -686,7 +695,7 @@ class Pathfinder {
                     if (ganttPointOptions && ganttPointOptions.dependency) {
                         ganttPointOptions.connect = ganttPointOptions.dependency;
                     }
-                    var to: (
+                    let to: (
                             Axis|
                             Series|
                             Point|
@@ -732,7 +741,7 @@ class Pathfinder {
         // Clear connections that should not be updated, and move old info over
         // to new connections.
         for (
-            var j = 0, k, found, lenOld = oldConnections.length,
+            let j = 0, k, found, lenOld = oldConnections.length,
                 lenNew = pathfinder.connections.length;
             j < lenOld;
             ++j
@@ -781,10 +790,10 @@ class Pathfinder {
         if (deferRender) {
             // Render after series are done animating
             this.chart.series.forEach(function (series): void {
-                var render = function (): void {
+                const render = function (): void {
                     // Find pathfinder connections belonging to this series
                     // that haven't rendered, and render them now.
-                    var pathfinder = series.chart.pathfinder,
+                    const pathfinder = series.chart.pathfinder,
                         conns = pathfinder && pathfinder.connections || [];
 
                     conns.forEach(function (connection): void {
@@ -832,15 +841,15 @@ class Pathfinder {
      *         object with xMin, xMax, yMin and yMax properties.
      */
     public getChartObstacles(options: { algorithmMargin?: number }): Array<any> {
-        var obstacles = [],
+        let obstacles = [],
             series = this.chart.series,
             margin = pick(options.algorithmMargin, 0),
             calculatedMargin: number;
 
-        for (var i = 0, sLen = series.length; i < sLen; ++i) {
+        for (let i = 0, sLen = series.length; i < sLen; ++i) {
             if (series[i].visible && !series[i].options.isInternal) {
                 for (
-                    var j = 0, pLen = series[i].points.length, bb, point;
+                    let j = 0, pLen = series[i].points.length, bb, point;
                     j < pLen;
                     ++j
                 ) {
@@ -896,7 +905,7 @@ class Pathfinder {
      *         properties.
      */
     public getObstacleMetrics(obstacles: Array<any>): Record<string, number> {
-        var maxWidth = 0,
+        let maxWidth = 0,
             maxHeight = 0,
             width,
             height,
@@ -931,8 +940,10 @@ class Pathfinder {
      * @return {boolean}
      *         Returns true for X, false for Y, and undefined for autocalculate.
      */
-    public getAlgorithmStartDirection(markerOptions: Highcharts.ConnectorsMarkerOptions): (boolean|undefined) {
-        var xCenter = markerOptions.align !== 'left' &&
+    public getAlgorithmStartDirection(
+        markerOptions: Highcharts.ConnectorsMarkerOptions
+    ): (boolean|undefined) {
+        let xCenter = markerOptions.align !== 'left' &&
                         markerOptions.align !== 'right',
             yCenter = markerOptions.verticalAlign !== 'top' &&
                         markerOptions.verticalAlign !== 'bottom',
@@ -973,7 +984,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         this: Point,
         markerOptions: Highcharts.ConnectorsMarkerOptions
     ): PositionObject {
-        var bb = getPointBB(this),
+        let bb = getPointBB(this),
             x,
             y;
 
@@ -1019,7 +1030,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         v1: PositionObject,
         v2: PositionObject
     ): number {
-        var box: (Record<string, number>|null);
+        let box: (Record<string, number>|null);
 
         if (!defined(v2)) {
             box = getPointBB(this);
@@ -1061,7 +1072,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         markerRadius: number,
         anchor: PositionObject
     ): PositionObject {
-        var twoPI = Math.PI * 2.0,
+        let twoPI = Math.PI * 2.0,
             theta = radians,
             bb = getPointBB(this),
             rectWidth = (bb as any).xMax - (bb as any).xMin,
@@ -1166,7 +1177,7 @@ function warnLegacy(chart: Chart): void {
 Chart.prototype.callbacks.push(function (
     chart: Chart
 ): void {
-    var options = chart.options;
+    const options = chart.options;
 
     if ((options.connectors as any).enabled !== false) {
         warnLegacy(chart);

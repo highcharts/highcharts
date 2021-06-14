@@ -88,7 +88,7 @@ class TreemapPoint extends ScatterPoint implements DrawPointMixin.DrawPoint {
     /* eslint-disable valid-jsdoc */
 
     public getClassName(): string {
-        var className = Point.prototype.getClassName.call(this),
+        let className = Point.prototype.getClassName.call(this),
             series = this.series,
             options = series.options;
 

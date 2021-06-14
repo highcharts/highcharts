@@ -68,6 +68,12 @@
                 chart.legend.legendHeight < 150,
                 'Legend is less than full height'
             );
+
+            chart.setSize(20, 20);
+            assert.notOk(
+                chart.legend.nav,
+                '#11336: There should be no navigation if there is no space'
+            );
         }
     );
 
