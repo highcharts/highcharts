@@ -198,6 +198,7 @@ class Axis {
     public hasVisibleSeries: boolean = void 0 as any;
     public height: number = void 0 as any;
     public horiz?: boolean;
+    public index: number = void 0 as any;
     public isDirty?: boolean;
     public isLinked: boolean = void 0 as any;
     public isOrdinal?: boolean;
@@ -502,6 +503,7 @@ class Axis {
 
             (chart as any)[axis.coll].push(axis);
         }
+        chart.orderItems((chart as any)[axis.coll]);
 
         /**
          * All series associated to the axis.
@@ -558,6 +560,18 @@ class Axis {
                 userOptions
             )
         );
+
+        // @todo Use index
+        // - reindex on addAxis and Axis.remove
+        /*
+        const chart = this.chart,
+            coll = this.coll as 'yAxis'|'xAxis',
+            i = chart[coll].indexOf(this),
+            optionsArr = chart.options[coll];
+        if (i !== -1 && isArray(optionsArr)) {
+            optionsArr[i] = this.options;
+        }
+        */
 
         fireEvent(this, 'afterSetOptions', { userOptions: userOptions });
     }
@@ -4147,7 +4161,7 @@ class Axis {
      */
     public remove(redraw?: boolean): void {
         const chart = this.chart,
-            key = this.coll, // xAxis or yAxis
+            coll = this.coll, // xAxis or yAxis
             axisSeries = this.series;
 
         let i = axisSeries.length;
@@ -4161,15 +4175,9 @@ class Axis {
 
         // Remove the axis
         erase(chart.axes, this);
-        erase((chart as any)[key], this);
+        erase((chart as any)[coll], this);
 
-        (chart as any)[key].forEach(function (
-            axis: Axis,
-            i: number
-        ): void {
-            // Re-index, #1706, #8075
-            axis.options.index = axis.userOptions.index = i;
-        });
+        chart.orderItems((chart as any)[coll]);
         this.destroy();
         chart.isDirtyBox = true;
 

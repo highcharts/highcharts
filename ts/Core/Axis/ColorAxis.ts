@@ -1425,7 +1425,6 @@ addEvent(Chart, 'afterGetAxes', function (): void {
     if (options.colorAxis) {
         options.colorAxis = splat(options.colorAxis);
         options.colorAxis.forEach(function (axisOptions, i): void {
-            axisOptions.index = i;
             new ColorAxis(chart, axisOptions); // eslint-disable-line no-new
         });
     }

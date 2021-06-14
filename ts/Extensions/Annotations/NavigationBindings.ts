@@ -1287,8 +1287,8 @@ setOptions({
                                     point: {
                                         x: coordsX.value,
                                         y: coordsY.value,
-                                        xAxis: coordsX.axis.options.index,
-                                        yAxis: coordsY.axis.options.index
+                                        xAxis: coordsX.axis.index,
+                                        yAxis: coordsY.axis.index
                                     },
                                     r: 5
                                 }]
@@ -1375,8 +1375,8 @@ setOptions({
 
                     const x = coordsX.value,
                         y = coordsY.value,
-                        xAxis = coordsX.axis.options.index,
-                        yAxis = coordsY.axis.options.index,
+                        xAxis = coordsX.axis.index,
+                        yAxis = coordsY.axis.index,
                         navigation = this.chart.options.navigation;
 
                     return this.chart.addAnnotation(
@@ -1472,8 +1472,8 @@ setOptions({
                                 },
                                 labels: [{
                                     point: {
-                                        xAxis: coordsX.axis.options.index,
-                                        yAxis: coordsY.axis.options.index,
+                                        xAxis: coordsX.axis.index,
+                                        yAxis: coordsY.axis.index,
                                         x: coordsX.value,
                                         y: coordsY.value
                                     },

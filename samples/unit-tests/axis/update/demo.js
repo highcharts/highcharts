@@ -118,16 +118,11 @@ QUnit.test('General yAxis updates', function (assert) {
     chart.yAxis[2].remove();
 
     assert.strictEqual(
-        chart.yAxis[2].userOptions.index,
+        chart.yAxis[2].index,
         chart.yAxis.length - 1,
-        'Last index should be less than yAxis array length (#8075) - part I'
+        'Last index should be less than yAxis array length (#8075)'
     );
 
-    assert.strictEqual(
-        chart.yAxis[2].options.index,
-        chart.yAxis.length - 1,
-        'Last index should be less than yAxis array length (#8075) - part II'
-    );
 
     chart.update({
         series: [{

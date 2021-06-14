@@ -470,8 +470,8 @@ bindingsUtils.attractToPoint = function (
             y: closestPoint.y,
             below: y < closestPoint.y,
             series: closestPoint.series,
-            xAxis: closestPoint.series.xAxis.options.index || 0,
-            yAxis: closestPoint.series.yAxis.options.index || 0
+            xAxis: closestPoint.series.xAxis.index || 0,
+            yAxis: closestPoint.series.yAxis.index || 0
         };
     }
 };
@@ -678,7 +678,7 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
                         next: [
                             pick(
                                 nextYAxis.options.id,
-                                nextYAxis.options.index as any
+                                nextYAxis.index as any
                             )
                         ]
                     }
@@ -840,8 +840,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                     langKey: 'segment',
                     type: 'crookedLine',
                     typeOptions: {
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
+                        xAxis: coordsX.axis.index,
+                        yAxis: coordsY.axis.index,
                         points: [{
                             x: coordsX.value,
                             y: coordsY.value
@@ -898,8 +898,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         line: {
                             markerEnd: 'arrow'
                         },
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
+                        xAxis: coordsX.axis.index,
+                        yAxis: coordsY.axis.index,
                         points: [{
                             x: coordsX.value,
                             y: coordsY.value
@@ -954,8 +954,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                     type: 'infinityLine',
                     typeOptions: {
                         type: 'ray',
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
+                        xAxis: coordsX.axis.index,
+                        yAxis: coordsY.axis.index,
                         points: [{
                             x: coordsX.value,
                             y: coordsY.value
@@ -1013,8 +1013,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         line: {
                             markerEnd: 'arrow'
                         },
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
+                        xAxis: coordsX.axis.index,
+                        yAxis: coordsY.axis.index,
                         points: [{
                             x: coordsX.value,
                             y: coordsY.value
@@ -1068,8 +1068,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                     type: 'infinityLine',
                     typeOptions: {
                         type: 'line',
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
+                        xAxis: coordsX.axis.index,
+                        yAxis: coordsY.axis.index,
                         points: [{
                             x: coordsX.value,
                             y: coordsY.value
@@ -1127,8 +1127,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         line: {
                             markerEnd: 'arrow'
                         },
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
+                        xAxis: coordsX.axis.index,
+                        yAxis: coordsY.axis.index,
                         points: [{
                             x: coordsX.value,
                             y: coordsY.value
@@ -1180,8 +1180,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                     draggable: 'y',
                     typeOptions: {
                         type: 'horizontalLine',
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
+                        xAxis: coordsX.axis.index,
+                        yAxis: coordsY.axis.index,
                         points: [{
                             x: coordsX.value,
                             y: coordsY.value
@@ -1226,8 +1226,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                     draggable: 'x',
                     typeOptions: {
                         type: 'verticalLine',
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
+                        xAxis: coordsX.axis.index,
+                        yAxis: coordsY.axis.index,
                         points: [{
                             x: coordsX.value,
                             y: coordsY.value
@@ -1276,8 +1276,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         langKey: 'crooked3',
                         type: 'crookedLine',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y },
@@ -1331,8 +1331,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         langKey: 'crookedLine',
                         type: 'crookedLine',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y },
@@ -1390,8 +1390,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         langKey: 'elliott3',
                         type: 'elliottWave',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y },
@@ -1452,8 +1452,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         langKey: 'elliott5',
                         type: 'elliottWave',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y },
@@ -1519,8 +1519,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         type: 'measure',
                         typeOptions: {
                             selectType: 'x',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             point: { x, y },
                             crosshairX: {
                                 strokeWidth: 1,
@@ -1590,8 +1590,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         type: 'measure',
                         typeOptions: {
                             selectType: 'y',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             point: { x, y },
                             crosshairX: {
                                 enabled: false,
@@ -1661,8 +1661,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         type: 'measure',
                         typeOptions: {
                             selectType: 'xy',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             point: { x, y },
                             background: {
                                 width: 0,
@@ -1730,8 +1730,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         langKey: 'fibonacci',
                         type: 'fibonacci',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y }
@@ -1789,8 +1789,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         langKey: 'parallelChannel',
                         type: 'tunnel',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y }
@@ -1843,8 +1843,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         langKey: 'pitchfork',
                         type: 'pitchfork',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value,

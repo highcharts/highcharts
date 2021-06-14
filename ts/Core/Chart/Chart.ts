@@ -42,7 +42,6 @@ import type ColorAxis from '../Axis/ColorAxis';
 import type { LabelsOptions } from '../../Extensions/Oldie/Oldie';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
-import type Series from '../Series/Series';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {
     SeriesTypeOptions,
@@ -82,6 +81,7 @@ const {
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
+import Series from '../Series/Series.js';
 import SeriesRegistry from '../Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
@@ -129,12 +129,6 @@ declare module '../Axis/AxisLike' {
         extKey?: string;
         index?: number;
         touched?: boolean;
-    }
-}
-
-declare module '../Axis/AxisOptions' {
-    interface AxisOptions {
-        index?: number;
     }
 }
 
@@ -652,20 +646,21 @@ class Chart {
     }
 
     /**
-     * Order all series above a given index. When series are added and ordered
-     * by configuration, only the last series is handled (#248, #1123, #2456,
-     * #6112). This function is called on series initialization and destroy.
+     * Order all series or axes above a given index. When series or axes are
+     * added and ordered by configuration, only the last series is handled
+     * (#248, #1123, #2456, #6112). This function is called on series and axis
+     * initialization and destroy.
      *
      * @private
-     * @function Highcharts.Series#orderSeries
-     * @param {number} [fromIndex]
+     * @function Highcharts.Chart#orderItems
+     * @param {Array<Series>|Array<Axis>} collection
+     * @param {number} [fromIndex=0]
      * If this is given, only the series above this index are handled.
      */
-    public orderSeries(fromIndex?: number): void {
-        const series = this.series;
-
-        for (let i = (fromIndex || 0), iEnd = series.length; i < iEnd; ++i) {
-            if (series[i]) {
+    public orderItems(collection: Series[]|Axis[], fromIndex = 0): void {
+        for (let i = fromIndex, iEnd = collection.length; i < iEnd; ++i) {
+            const item = collection[i];
+            if (item) {
                 /**
                  * Contains the series' index in the `Chart.series` array.
                  *
@@ -673,8 +668,11 @@ class Chart {
                  * @type {number}
                  * @readonly
                  */
-                series[i].index = i;
-                series[i].name = series[i].getName();
+                item.index = i;
+
+                if (item instanceof Series) {
+                    item.name = item.getName();
+                }
             }
         }
     }
@@ -1038,12 +1036,12 @@ class Chart {
 
         // make sure the options are arrays and add some members
         xAxisOptions.forEach(function (axis: any, i: number): void {
-            axis.index = i;
+            // axis.index = i;
             axis.isX = true;
         });
 
         yAxisOptions.forEach(function (axis: any, i: number): void {
-            axis.index = i;
+            // axis.index = i;
         });
 
         // concatenate all axis options into one array
@@ -2934,7 +2932,7 @@ class Chart {
             redraw = options.redraw,
             animation = options.animation,
             userOptions = merge(axisOptions, {
-                index: (this as any)[type].length,
+                // index: (this as any)[type].length,
                 isX: type === 'xAxis'
             });
 
@@ -3317,9 +3315,9 @@ class Chart {
                 // chart.series array, but those series should not be handled
                 // here (#8196) and neither should the navigator axis (#9671).
                 indexMap = [];
-                (chart as any)[coll].forEach(function (s: (Series|Axis), i: number): void {
-                    if (!s.options.isInternal) {
-                        indexMap.push(pick(s.options.index, i));
+                (chart as any)[coll].forEach(function (item: (Series|Axis), i: number): void {
+                    if (!item.options.isInternal) {
+                        indexMap.push(pick((item.options as any).index, i));
                     }
                 });
 
