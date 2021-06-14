@@ -85,110 +85,6 @@ declare module '../Core/TooltipOptions'{
     }
 }
 
-/**
- * Callback function to format the text of the tooltip from scratch.
- *
- * In case of single or shared tooltips, a string should be be returned. In case
- * of splitted tooltips, it should return an array where the first item is the
- * header, and subsequent items are mapped to the points. Return `false` to
- * disable tooltip for a specific point on series.
- *
- * @callback Highcharts.TooltipFormatterCallbackFunction
- *
- * @param {Highcharts.TooltipFormatterContextObject} this
- *        Context to format
- *
- * @param {Highcharts.Tooltip} tooltip
- *        The tooltip instance
- *
- * @return {false|string|Array<(string|null|undefined)>|null|undefined}
- *         Formatted text or false
- */
-
-/**
- * @interface Highcharts.TooltipFormatterContextObject
- *//**
- * @name Highcharts.TooltipFormatterContextObject#color
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#colorIndex
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#key
- * @type {number}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#percentage
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#point
- * @type {Highcharts.Point}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#points
- * @type {Array<Highcharts.TooltipFormatterContextObject>|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#series
- * @type {Highcharts.Series}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#total
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#x
- * @type {number}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#y
- * @type {number}
- */
-
-/**
- * A callback function to place the tooltip in a specific position.
- *
- * @callback Highcharts.TooltipPositionerCallbackFunction
- *
- * @param {Highcharts.Tooltip} this
- * Tooltip context of the callback.
- *
- * @param {number} labelWidth
- * Width of the tooltip.
- *
- * @param {number} labelHeight
- * Height of the tooltip.
- *
- * @param {Highcharts.TooltipPositionerPointObject} point
- * Point information for positioning a tooltip.
- *
- * @return {Highcharts.PositionObject}
- * New position for the tooltip.
- */
-
-/**
- * Point information for positioning a tooltip.
- *
- * @interface Highcharts.TooltipPositionerPointObject
- * @extends Highcharts.Point
- *//**
- * If `tooltip.split` option is enabled and positioner is called for each of the
- * boxes separately, this property indicates the call on the xAxis header, which
- * is not a point itself.
- * @name Highcharts.TooltipPositionerPointObject#isHeader
- * @type {boolean}
- *//**
- * The reference point relative to the plot area. Add chart.plotLeft to get the
- * full coordinates.
- * @name Highcharts.TooltipPositionerPointObject#plotX
- * @type {number}
- *//**
- * The reference point relative to the plot area. Add chart.plotTop to get the
- * full coordinates.
- * @name Highcharts.TooltipPositionerPointObject#plotY
- * @type {number}
- */
-
-/**
- * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
- */
-
-''; // separates doclets above from variables below
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -834,8 +730,9 @@ class Tooltip {
                         chart.plotTop + chart.plotHeight
                 ]);
             };
-        let first = buildDimensionArray('y');
-        let second = buildDimensionArray('x');
+        let first = buildDimensionArray('y'),
+            second = buildDimensionArray('x'),
+            swapped: (boolean|undefined);
         // The far side is right or bottom
         const preferFarSide = !this.followPointer && pick(
                 point.ttBelow,
@@ -946,7 +843,6 @@ class Tooltip {
                     ret.x = ret.y = 0;
                 }
             };
-        let swapped: (boolean|undefined);
 
         // Under these conditions, prefer the tooltip on the side of the point
         if (chart.inverted || (this.len as any) > 1) {
@@ -2034,3 +1930,107 @@ namespace Tooltip {
 }
 
 export default Tooltip;
+
+/**
+ * Callback function to format the text of the tooltip from scratch.
+ *
+ * In case of single or shared tooltips, a string should be be returned. In case
+ * of splitted tooltips, it should return an array where the first item is the
+ * header, and subsequent items are mapped to the points. Return `false` to
+ * disable tooltip for a specific point on series.
+ *
+ * @callback Highcharts.TooltipFormatterCallbackFunction
+ *
+ * @param {Highcharts.TooltipFormatterContextObject} this
+ *        Context to format
+ *
+ * @param {Highcharts.Tooltip} tooltip
+ *        The tooltip instance
+ *
+ * @return {false|string|Array<(string|null|undefined)>|null|undefined}
+ *         Formatted text or false
+ */
+
+/**
+ * @interface Highcharts.TooltipFormatterContextObject
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#color
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#colorIndex
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#key
+ * @type {number}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#percentage
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#point
+ * @type {Highcharts.Point}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#points
+ * @type {Array<Highcharts.TooltipFormatterContextObject>|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#series
+ * @type {Highcharts.Series}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#total
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#x
+ * @type {number}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#y
+ * @type {number}
+ */
+
+/**
+ * A callback function to place the tooltip in a specific position.
+ *
+ * @callback Highcharts.TooltipPositionerCallbackFunction
+ *
+ * @param {Highcharts.Tooltip} this
+ * Tooltip context of the callback.
+ *
+ * @param {number} labelWidth
+ * Width of the tooltip.
+ *
+ * @param {number} labelHeight
+ * Height of the tooltip.
+ *
+ * @param {Highcharts.TooltipPositionerPointObject} point
+ * Point information for positioning a tooltip.
+ *
+ * @return {Highcharts.PositionObject}
+ * New position for the tooltip.
+ */
+
+/**
+ * Point information for positioning a tooltip.
+ *
+ * @interface Highcharts.TooltipPositionerPointObject
+ * @extends Highcharts.Point
+ *//**
+ * If `tooltip.split` option is enabled and positioner is called for each of the
+ * boxes separately, this property indicates the call on the xAxis header, which
+ * is not a point itself.
+ * @name Highcharts.TooltipPositionerPointObject#isHeader
+ * @type {boolean}
+ *//**
+ * The reference point relative to the plot area. Add chart.plotLeft to get the
+ * full coordinates.
+ * @name Highcharts.TooltipPositionerPointObject#plotX
+ * @type {number}
+ *//**
+ * The reference point relative to the plot area. Add chart.plotTop to get the
+ * full coordinates.
+ * @name Highcharts.TooltipPositionerPointObject#plotY
+ * @type {number}
+ */
+
+/**
+ * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
+ */
+
+''; // separates doclets above from variables below
