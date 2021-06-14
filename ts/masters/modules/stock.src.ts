@@ -17,6 +17,7 @@ import '../../Extensions/DataGrouping.js';
 import '../../Series/OHLC/OHLCSeries.js';
 import '../../Series/Candlestick/CandlestickSeries.js';
 import '../../Series/Flags/FlagsSeries.js';
+import '../../Series/HeikinAshi/HeikinAshiSeries.js';
 import Scrollbar from '../../Core/Scrollbar.js';
 import '../../Core/Navigator.js';
 import '../../Extensions/RangeSelector.js';
