@@ -12,6 +12,24 @@
 
 'use strict';
 
+/* *
+ *
+ * Import
+ *
+ * */
+import type LangOptions from '../../Core/LangOptions';
+
+/* *
+ *
+ * Declarations
+ *
+ * */
+declare module '../../Core/LangOptions'{
+    interface LangOptions {
+        accessibility?: Highcharts.LangAccessibilityOptions;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -171,13 +189,10 @@ declare global {
             mapZoomOut: string;
             resetZoomButton: string;
         }
-        interface LangOptions {
-            accessibility?: LangAccessibilityOptions;
-        }
     }
 }
 
-const langOptions: Highcharts.LangOptions = {
+const langOptions: LangOptions = {
 
     /**
      * Configure the accessibility strings in the chart. Requires the

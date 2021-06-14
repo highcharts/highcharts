@@ -8,6 +8,7 @@ QUnit.test('Missing plotband when range is small (#4964)', function (assert) {
                 {
                     color: '#BDBDBD',
                     from: 1453101708000,
+                    id: 'plotband-1',
                     to: 1453109508000
                 },
                 {
@@ -26,6 +27,11 @@ QUnit.test('Missing plotband when range is small (#4964)', function (assert) {
         true,
         'Second plotband is visible'
     );
+
+    // #15639
+    chart.xAxis[0].destroy();
+    chart.xAxis[0].removePlotBand('plotband-1');
+
 });
 
 QUnit.test(

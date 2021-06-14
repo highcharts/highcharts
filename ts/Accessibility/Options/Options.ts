@@ -12,12 +12,32 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type OptionsType from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
+
 import palette from '../../Core/Color/Palette.js';
 import ColorType from '../../Core/Color/ColorType';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        accessibility?: Options.AxisAccessibilityOptions;
+    }
+}
 
 declare module '../../Core/Series/PointOptions' {
     interface PointOptions {
@@ -28,6 +48,18 @@ declare module '../../Core/Series/PointOptions' {
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         accessibility?: Highcharts.SeriesAccessibilityOptions;
+    }
+}
+
+declare module '../../Core/LegendOptions' {
+    interface LegendOptions {
+        accessibility?: Highcharts.LegendAccessibilityOptions;
+    }
+}
+
+declare module '../../Core/Options'{
+    interface Options {
+        accessibility?: Highcharts.AccessibilityOptions;
     }
 }
 
@@ -133,12 +165,6 @@ declare global {
             enabled: boolean;
             keyboardNavigation: LegendAccessibilityKeyboardNavigationOptions;
         }
-        interface LegendOptions {
-            accessibility?: LegendAccessibilityOptions;
-        }
-        interface Options {
-            accessibility?: AccessibilityOptions;
-        }
         interface PointAccessibilityOptionsObject {
             description?: string;
             enabled?: boolean;
@@ -160,14 +186,6 @@ declare global {
                 SeriesAccessibilityKeyboardNavigationOptions
             );
             pointDescriptionFormatter?: Function;
-        }
-        interface XAxisAccessibilityOptions {
-            description?: string;
-            enabled?: boolean;
-            rangeDescription?: string;
-        }
-        interface XAxisOptions {
-            accessibility?: XAxisAccessibilityOptions;
         }
     }
 }
@@ -243,7 +261,7 @@ declare global {
  *         Formatted string for the screen reader module.
  */
 
-const options: DeepPartial<Highcharts.Options> = {
+const Options: DeepPartial<OptionsType> = {
 
     /**
      * Options for configuring accessibility for the chart. Requires the
@@ -1043,4 +1061,12 @@ const options: DeepPartial<Highcharts.Options> = {
 
 };
 
-export default options;
+namespace Options {
+    export interface AxisAccessibilityOptions {
+        description?: string;
+        enabled?: boolean;
+        rangeDescription?: string;
+    }
+}
+
+export default Options;

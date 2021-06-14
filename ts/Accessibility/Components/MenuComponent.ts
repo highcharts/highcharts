@@ -12,13 +12,13 @@
 
 'use strict';
 
-import type Chart from '../../Core/Chart/Chart';
 import type {
     HTMLDOMElement,
     SVGDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -100,7 +100,7 @@ function getExportMenuButtonElement(chart: Chart): (SVGElement|undefined) {
  * @private
  * @function Highcharts.Chart#showExportMenu
  */
-H.Chart.prototype.showExportMenu = function (): void {
+Chart.prototype.showExportMenu = function (): void {
     const exportButton = getExportMenuButtonElement(this);
 
     if (exportButton) {
@@ -116,7 +116,7 @@ H.Chart.prototype.showExportMenu = function (): void {
  * @private
  * @function Highcharts.Chart#hideExportMenu
  */
-H.Chart.prototype.hideExportMenu = function (): void {
+Chart.prototype.hideExportMenu = function (): void {
     const chart = this,
         exportList = chart.exportDivElements;
 
@@ -146,7 +146,7 @@ H.Chart.prototype.hideExportMenu = function (): void {
  *
  * @return {boolean}
  */
-H.Chart.prototype.highlightExportItem = function (
+Chart.prototype.highlightExportItem = function (
     ix: number
 ): boolean {
     let listItem = this.exportDivElements && this.exportDivElements[ix],
@@ -191,7 +191,7 @@ H.Chart.prototype.highlightExportItem = function (
  * @function Highcharts.Chart#highlightLastExportItem
  * @return {boolean}
  */
-H.Chart.prototype.highlightLastExportItem = function (): boolean {
+Chart.prototype.highlightLastExportItem = function (): boolean {
     let chart = this,
         i;
 

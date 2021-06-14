@@ -212,14 +212,15 @@ QUnit.test(
     }
 );
 
-QUnit.test('Shared tooltip with pointPlacement (#5832)', function (assert) {
+QUnit.test('Shared tooltip with pointPlacement and stickOnContact', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
 
         tooltip: {
-            shared: true
+            shared: true,
+            stickOnContact: true
         },
         plotOptions: {
             column: {
@@ -268,5 +269,13 @@ QUnit.test('Shared tooltip with pointPlacement (#5832)', function (assert) {
         target: chart.container
     });
 
-    assert.strictEqual(chart.hoverPoints.length, 5, 'All series present');
+    assert.strictEqual(chart.hoverPoints.length, 5, '#5832: All series present');
+
+    const heightBefore = chart.tooltip.tracker.attr('height');
+    chart.series[1].points[0].onMouseOver();
+    assert.strictEqual(
+        chart.tooltip.tracker.attr('height'),
+        heightBefore,
+        '#15843: Tracker height should be the same after hovering another point in the same stack'
+    );
 });

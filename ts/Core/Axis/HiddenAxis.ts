@@ -8,14 +8,13 @@
  *
  * */
 
-import type Axis from './Axis';
 import type Chart from '../Chart/Chart';
 import type RadialAxis from './RadialAxis';
 
 /**
  * @private
  */
-declare module './Types' {
+declare module './AxisType' {
     interface AxisTypeRegistry {
         HiddenAxis: HiddenAxis;
     }
@@ -36,7 +35,7 @@ class HiddenAxis {
      * @param {Highcharts.Axis} axis
      * Radial axis to augment.
      */
-    public static init(axis: RadialAxis): void {
+    public static init(axis: HiddenAxis): void {
 
         axis.getOffset = function (): void {};
 
@@ -66,7 +65,7 @@ class HiddenAxis {
 
 }
 
-interface HiddenAxis extends Axis {
+interface HiddenAxis extends RadialAxis {
     isHidden: true;
 }
 

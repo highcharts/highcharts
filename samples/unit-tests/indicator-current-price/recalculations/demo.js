@@ -14,6 +14,14 @@ QUnit.test('Test current and last price indicator.', function (assert) {
                         enabled: true
                     }
                 }
+            }, {
+                data: [0],
+                lastVisiblePrice: {
+                    enabled: true,
+                    label: {
+                        enabled: true
+                    }
+                }
             }
         ]
     });
@@ -36,6 +44,11 @@ QUnit.test('Test current and last price indicator.', function (assert) {
         chart.series[0].lastVisiblePrice.y,
         15,
         'The last visible price is correct.'
+    );
+
+    assert.ok(
+        chart.series[1].crossLabel.hasClass('highcharts-color-1'),
+        '#15706: Second lastVisiblePrice label should have correct color class'
     );
 });
 

@@ -17,7 +17,8 @@
  * */
 
 import type AnimationOptions from '../Animation/AnimationOptions';
-import type { AxisType } from '../Axis/Types';
+import type Axis from '../Axis/Axis';
+import type AxisType from '../Axis/AxisType';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
@@ -43,6 +44,9 @@ import type {
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type { SymbolKey } from '../Renderer/SVG/SymbolType';
+import type TooltipOptions from '../TooltipOptions';
+
 import A from '../Animation/AnimationUtilities.js';
 const {
     animObject,
@@ -59,8 +63,8 @@ const {
     win
 } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import O from '../Options.js';
-const { defaultOptions } = O;
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import palette from '../Color/Palette.js';
 import Point from './Point.js';
 import SeriesRegistry from './SeriesRegistry.js';
@@ -2740,11 +2744,9 @@ class Series {
 
     public stickyTracking?: boolean;
 
-    public symbol?: string;
+    public symbol?: SymbolKey;
 
-    public tooltipOptions: Highcharts.TooltipOptions = void 0 as any;
-
-    public touched?: boolean;
+    public tooltipOptions: TooltipOptions = void 0 as any;
 
     public tracker?: SVGElement;
 
@@ -2852,7 +2854,7 @@ class Series {
             selected: options.selected === true // false by default
         });
 
-        registerEventOptions(this);
+        registerEventOptions(this, options);
 
         const events = options.events;
         if (
@@ -2983,9 +2985,7 @@ class Series {
                 let index = 0;
 
                 // loop through the chart's axis objects
-                (chart as any)[AXIS].forEach(function (
-                    axis: Highcharts.Axis
-                ): void {
+                (chart as any)[AXIS].forEach(function (axis: Axis): void {
                     axisOptions = axis.options;
 
                     // apply if the series xAxis or yAxis option mathches
@@ -3630,7 +3630,7 @@ class Series {
             data.forEach(function (point, i): void {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
-                if (oldData[i].update && point !== oldData[i].y) {
+                if (point !== oldData[i].y && oldData[i].update) {
                     oldData[i].update(point, false, null as any, false);
                 }
             });
@@ -5062,8 +5062,8 @@ class Series {
                 // only draw the point if y is defined
                 if (shouldDrawMarker) {
                     // Shortcuts
-                    const symbol = pick<string|undefined, string>(
-                        pointMarkerOptions.symbol, series.symbol as any
+                    const symbol = pick(
+                        pointMarkerOptions.symbol, series.symbol, 'rect' as SymbolKey
                     );
 
                     markerAttribs = series.markerAttribs(
@@ -5435,9 +5435,9 @@ class Series {
             graph = this.graph,
             area = this.area,
             chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight),
-            axis = (this as any)[
+            axis: Axis = (this as any)[
                 (this.zoneAxis || 'y') + 'Axis'
-            ] as Highcharts.Axis,
+            ],
             extremes: RangeSelector.RangeObject,
             reversed: (boolean|undefined),
             inverted = chart.inverted,
@@ -5655,12 +5655,14 @@ class Series {
         zIndex?: number,
         parent?: SVGElement
     ): SVGElement {
-        let group = (this as any)[prop],
-            isNew = !group,
+        let group = (this as any)[prop];
+
+        const isNew = !group,
             attrs: SVGAttributes = {
                 visibility,
                 zIndex: zIndex || 0.1 // IE8 and pointer logic use this
             };
+
         // Avoid setting undefined opacity, or in styled mode
         if (
             typeof this.opacity !== 'undefined' &&
@@ -5932,8 +5934,23 @@ class Series {
     }
 
     /**
-     * @private
+     * Find the nearest point from a pointer event. This applies to series that
+     * use k-d-trees to get the nearest point. Native pointer events must be
+     * normalized using `Pointer.normalize`, that adds `chartX` and `chartY`
+     * properties.
+     *
+     * @sample highcharts/demo/synchronized-charts
+     *         Synchronized charts with tooltips
+     *
      * @function Highcharts.Series#searchPoint
+     *
+     * @param {Highcharts.PointerEvent} e
+     *        The normalized pointer event
+     * @param {boolean} [compareX=false]
+     *        Search only by the X value, not Y
+     *
+     * @return {Point|undefined}
+     *        The closest point to the pointer event
      */
     public searchPoint(
         e: PointerEvent,
