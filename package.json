@@ -55,6 +55,7 @@
     "browserify": "^17.0.0",
     "colors": "^1.4.0",
     "cross-env": "^7.0.3",
+    "cypress": "7.4.0",
     "dtslint": "^4.0.8",
     "eslint": "^7.22.0",
     "eslint-config-eslint": "5.0.1",

@@ -439,12 +439,6 @@ class Tooltip {
                 }]
             }]
         });
-        chart.renderer.definition({
-            tagName: 'style',
-            textContent: '.highcharts-tooltip-' + chart.index + '{' +
-                'filter:url(#drop-shadow-' + chart.index + ')' +
-            '}'
-        });
     }
 
     /**
@@ -848,10 +842,12 @@ class Tooltip {
                 }
             }
 
-            if (styledMode) {
+            if (styledMode && options.shadow) {
                 // Apply the drop-shadow filter
                 this.applyFilter();
-                this.label.addClass('highcharts-tooltip-' + this.chart.index);
+                this.label.attr({
+                    filter: 'url(#drop-shadow-' + this.chart.index + ')'
+                });
             }
 
             // Split tooltip use updateTooltipContainer to position the tooltip
