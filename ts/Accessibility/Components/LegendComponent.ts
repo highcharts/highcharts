@@ -17,6 +17,10 @@ import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import A from '../../Core/Animation/AnimationUtilities.js';
+const {
+    animObject
+} = A;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import Legend from '../../Core/Legend.js';
@@ -26,7 +30,9 @@ const {
     extend,
     find,
     fireEvent,
-    isNumber
+    isNumber,
+    pick,
+    syncTimeout
 } = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
@@ -261,7 +267,20 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      */
     onChartRender: function (this: Highcharts.LegendComponent): void {
         if (shouldDoLegendA11y(this.chart)) {
-            this.updateProxiesPositions();
+            if (this.proxyElementsList.every(
+                (el): boolean => !!el.posElement.element
+            )) {
+                this.updateProxiesPositions();
+            } else { // #15902
+                this.recreateProxies();
+
+                syncTimeout(
+                    (): void => this.updateProxiesPositions(),
+                    animObject(
+                        pick(this.chart.renderer.globalAnimation, true)
+                    ).duration
+                );
+            }
         } else {
             this.removeProxies();
         }
