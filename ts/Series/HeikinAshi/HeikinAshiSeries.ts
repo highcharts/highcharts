@@ -20,14 +20,6 @@ import type HeikinAshiSeriesOptions from './HeikinAshiSeriesOptions';
 import HeikinAshiPoint from './HeikinAshiPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-import Axis from '../../Core/Axis/Axis.js';
-import Series from '../../Core/Series/Series.js';
-
-const {
-    prototype: {
-        processData: seriesProcessData
-    }
-} = Series;
 
 const {
     seriesTypes: {
@@ -36,7 +28,6 @@ const {
 } = SeriesRegistry;
 
 const {
-    addEvent,
     extend,
     merge
 } = U;
@@ -72,11 +63,9 @@ class HeikinAshiSeries extends CandlestickSeries {
      * @sample stock/demo/heikinashi/
      *         Heikin Ashi series
      *
-     * @extends      plotOptions.column
-     * @excluding    borderColor, borderRadius, borderWidth, crisp, stacking,
-     *               stack
+     * @extends      plotOptions.candlestick
      * @product      highstock
-     * @optionparent plotOptions.ohlc
+     * @optionparent plotOptions.heikinashi
      */
     public static defaultOptions: HeikinAshiSeriesOptions = merge(CandlestickSeries.defaultOptions, {
 
@@ -200,7 +189,7 @@ export default HeikinAshiSeries;
  * #chart.type).
  *
  * @type      {*}
- * @extends   series,plotOptions.candlestick
+ * @extends   series,plotOptions.heikinashi
  * @excluding dataParser, dataURL, marker
  * @product   highstock
  * @apioption series.heikinashi
