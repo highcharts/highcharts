@@ -22,10 +22,8 @@ import '../../Core/Navigator.js';
 import '../../Extensions/RangeSelector.js';
 import StockChart from '../../Core/Chart/StockChart.js';
 const G: AnyRecord = Highcharts;
-// Compositions
-if (!G.Scrollbar) {
-    Scrollbar.compose(G.Axis);
-}
 // Classes
 G.Scrollbar = Scrollbar;
 G.StockChart = G.stockChart = StockChart.stockChart;
+// Compositions
+Scrollbar.compose(G.Axis);
