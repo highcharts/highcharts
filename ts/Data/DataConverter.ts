@@ -35,6 +35,7 @@ const {
 
 /**
  * Class to convert between common value types.
+ * @private
  */
 class DataConverter {
     /**

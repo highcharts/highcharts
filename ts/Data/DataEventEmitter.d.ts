@@ -16,7 +16,7 @@
  *
  * */
 
-import DataJSON from './DataJSON';
+import type DataJSON from './DataJSON';
 
 /* *
  *
