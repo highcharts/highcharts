@@ -19,7 +19,15 @@
  * */
 
 import H from '../Core/Globals.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
 const win: AnyRecord = H.win;
+const delay = setTimeout;
 
 /* *
  *
@@ -57,15 +65,7 @@ class DataPromise<T> implements Promise<T> {
         if (win.Promise && !DataPromise.onlyPolyfill) {
             return win.Promise.reject(reason);
         }
-        if (reason instanceof DataPromise) {
-            return reason;
-        }
-        return new DataPromise<T>(
-            (_resolve, reject): number => setTimeout(
-                (): void => reject(reason),
-                0
-            )
-        );
+        return new DataPromise<T>((resolve, reject): void => reject(reason));
     }
 
 
@@ -84,12 +84,7 @@ class DataPromise<T> implements Promise<T> {
                 value.then(resolve, reject);
             });
         }
-        return new DataPromise(
-            (resolve): number => setTimeout(
-                (): void => resolve(value),
-                0
-            )
-        );
+        return new DataPromise((resolve): void => resolve(value));
     }
 
     /* *
@@ -110,14 +105,16 @@ class DataPromise<T> implements Promise<T> {
 
         const promise = this;
 
-        try {
-            executor(
-                (value?: (T|PromiseLike<T>)): void => promise.resolved(value),
-                (reason?: unknown): void => promise.rejected(reason)
-            );
-        } catch (e) {
-            promise.rejected(e);
-        }
+        delay((): void => {
+            try {
+                executor(
+                    (value?: (T|PromiseLike<T>)): void => promise.resolved(value),
+                    (reason?: unknown): void => promise.rejected(reason)
+                );
+            } catch (e) {
+                promise.rejected(e);
+            }
+        }, 0);
     }
 
     /* *
@@ -126,13 +123,11 @@ class DataPromise<T> implements Promise<T> {
      *
      * */
 
-    private jobs: Array<DataPromise.Job<T>> = [];
+    private readonly jobs: Array<DataPromise.Job<T>> = [];
 
     private reason: unknown;
 
     private state = DataPromise.State.Pending;
-
-    public readonly [Symbol.toStringTag]: string = 'DataPromise';
 
     private value: T = void 0 as unknown as T;
 
@@ -154,7 +149,7 @@ class DataPromise<T> implements Promise<T> {
         if (promise.state === DataPromise.State.Pending) {
             promise.state = DataPromise.State.Rejected;
             promise.reason = reason;
-            setTimeout((): void => promise.work(), 0);
+            delay((): void => promise.work(), 0);
         }
     }
 
@@ -170,7 +165,7 @@ class DataPromise<T> implements Promise<T> {
             } else {
                 promise.state = DataPromise.State.Fulfilled;
                 promise.value = value as T;
-                setTimeout((): void => promise.work(), 0);
+                delay((): void => promise.work(), 0);
             }
         }
     }
@@ -180,60 +175,70 @@ class DataPromise<T> implements Promise<T> {
         onrejected?: (((reason: unknown) => (TResult2|PromiseLike<TResult2>))|null)
     ): DataPromise<(TResult1|TResult2)> {
         const promise = this,
-            newPromise = new DataPromise<(TResult1|TResult2)>(
-                (resolve, reject): void => {
-                    const rejecter = (reason: unknown): void => {
-                            if (onrejected) {
-                                try {
-                                    const result = onrejected(reason);
-                                    if (result instanceof DataPromise) {
-                                        result.then(resolve, reject);
-                                    } else {
-                                        resolve(result);
-                                    }
-                                    return;
-                                } catch (e) {
-                                    reason = e;
-                                }
-                            }
-                            if (newPromise.jobs.length) {
-                                reject(reason);
-                            } else if (reason) {
-                                throw reason;
-                            } else {
-                                throw new Error('Unhandled exception');
-                            }
-                        },
-                        resolver = (value: T): void => {
-                            if (onfulfilled) {
-                                try {
-                                    const result = onfulfilled(value);
-                                    if (result instanceof DataPromise) {
-                                        result.then(resolve, reject);
-                                    } else {
-                                        resolve(result);
-                                    }
-                                } catch (e) {
-                                    rejecter(e);
-                                }
-                            } else {
-                                resolve(value as unknown as TResult1);
-                            }
-                        };
-
-                    switch (promise.state) {
-                        case DataPromise.State.Fulfilled:
-                            return resolver(promise.value);
-                        case DataPromise.State.Rejected:
-                            return rejecter(promise.reason);
+            newPromise = new DataPromise<(TResult1|TResult2)>((): void => void 0),
+            rejecter = (reason: unknown): void => {
+                if (onrejected) {
+                    try {
+                        const result = onrejected(reason);
+                        if (result instanceof DataPromise) {
+                            result.then(
+                                (value?: (TResult1|TResult2|PromiseLike<(TResult1|TResult2)>)): void =>
+                                    newPromise.resolved(value),
+                                (reason?: unknown): void =>
+                                    newPromise.rejected(reason)
+                            );
+                        } else {
+                            newPromise.resolved(result);
+                        }
+                        return;
+                    } catch (e) {
+                        reason = e;
                     }
-
-                    promise.jobs.push({
-                        resolve: resolver,
-                        reject: rejecter
-                    });
                 }
-            );
+                if (newPromise.jobs.length) {
+                    newPromise.rejected(reason);
+                } else if (reason) {
+                    throw reason;
+                } else {
+                    throw new Error('Unhandled exception');
+                }
+            },
+            resolver = (value: T): void => {
+                if (onfulfilled) {
+                    try {
+                        const result = onfulfilled(value);
+                        if (result instanceof DataPromise) {
+                            result.then(
+                                (value?: (TResult1|TResult2|PromiseLike<(TResult1|TResult2)>)): void =>
+                                    newPromise.resolved(value),
+                                (reason?: unknown): void =>
+                                    newPromise.rejected(reason)
+                            );
+                        } else {
+                            newPromise.resolved(result);
+                        }
+                    } catch (e) {
+                        rejecter(e);
+                    }
+                } else {
+                    newPromise.resolved(value as unknown as TResult1);
+                }
+            };
+
+        switch (promise.state) {
+            case DataPromise.State.Fulfilled:
+                resolver(promise.value);
+                break;
+            case DataPromise.State.Rejected:
+                rejecter(promise.reason);
+                break;
+            default:
+                promise.jobs.push({
+                    resolve: resolver,
+                    reject: rejecter
+                });
+                break;
+        }
 
         return newPromise;
     }
