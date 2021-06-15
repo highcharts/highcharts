@@ -559,27 +559,13 @@ function getDataTable(
                 }, {}
             )
         );
+
+        // Remove the categories
+        rows.splice(0, 1);
     }
 
-    // Insert the new names to the store
-    // Start at 1 as first row is categories
-    const rowsLength = rows.length;
-    for (let rowIndex = 1; rowIndex < rowsLength; rowIndex++) {
-        const rowCells = rows[rowIndex];
-        /*     rowJSON: DataTableRow.ClassJSON = { */
-        /*         $class: 'DataTableRow' */
-        /*     }; */
-        /*  */
-        /* let cellIndex = 0; */
-        /* while (Object.keys(rowJSON).length <= rowCells.length) { */
-        /*     const cellValue = rowCells[cellIndex]; */
-        /*     rowJSON[names[cellIndex]] = cellValue; */
-        /*     cellIndex++; */
-        /* } */
-
-        dataStore.table.setRow(rowCells);
-    }
-
+    // Insert the rows to the store
+    dataStore.table.setRows(rows);
 }
 
 /**
