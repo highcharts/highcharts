@@ -20,13 +20,8 @@ import type HeikinAshiSeriesOptions from './HeikinAshiSeriesOptions';
 import HeikinAshiPoint from './HeikinAshiPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
+import Axis from '../../Core/Axis/Axis.js';
 import Series from '../../Core/Series/Series.js';
-
-const {
-    seriesTypes: {
-        candlestick: CandlestickSeries
-    }
-} = SeriesRegistry;
 
 const {
     prototype: {
@@ -35,6 +30,13 @@ const {
 } = Series;
 
 const {
+    seriesTypes: {
+        candlestick: CandlestickSeries
+    }
+} = SeriesRegistry;
+
+const {
+    addEvent,
     extend,
     merge
 } = U;
@@ -102,10 +104,7 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     /* eslint-disable valid-jsdoc */
 
-    public processData(): any {
-        // call base method
-        seriesProcessData.apply(this, arguments as any);
-
+    public calculatePoints(): any {
         const series = this,
             processedYData = series.processedYData;
 
@@ -139,6 +138,15 @@ class HeikinAshiSeries extends CandlestickSeries {
                 point[3] = newClose;
             }
         }
+        series.processedYData = processedYData;
+        series.options.data = processedYData;
+    }
+
+    public generatePoints(): void {
+        this.calculatePoints();
+
+        // Run base method.
+        super.generatePoints.call(this);
     }
 
     /* eslint-enable valid-jsdoc */
