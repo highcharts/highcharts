@@ -20,6 +20,7 @@
 
 import type DataEventEmitter from '../DataEventEmitter';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import DataJSON from '../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
@@ -301,7 +302,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
                             {
                                 scope: 'col',
                                 colspan: curColspan + 1
-                            } as any,
+                            },
                             cur
                         ));
                         curColspan = 0;
@@ -323,7 +324,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
                         const cell = getCellHTMLFromValue(
                             'th',
                             'highcharts-table-topheading',
-                            { scope: 'col' } as any,
+                            { scope: 'col' },
                             cur
                         );
                         if (rowspan > 1 && cell.attributes) {
@@ -350,7 +351,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
                     if (typeof subheader !== 'undefined') {
                         trChildren.push(
                             getCellHTMLFromValue(
-                                'th', null, { scope: 'col' } as any, subheader
+                                'th', null, { scope: 'col' }, subheader
                             )
                         );
                     }
@@ -370,7 +371,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
         const getCellHTMLFromValue = function (
             tagName: string,
             classes: (string|null),
-            attributes: SVGAttributes,
+            attributes: HTMLAttributes & SVGAttributes,
             value: (number|string)
         ): AST.Node {
             let textContent = pick(value, ''),
@@ -399,10 +400,11 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
             };
         };
 
-        const { columnNames, columnValues } = this.getColumnsForExport(
-                options.usePresentationOrder
-            ),
-            columnsCount = columnNames.length;
+        const {
+            columnNames,
+            columnValues
+        } = this.getColumnsForExport(options.usePresentationOrder);
+        const columnsCount = columnNames.length;
 
         const rowArray: AST.Node[][] = [];
 
@@ -479,7 +481,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
                 rowArray[rowIndex][columnIndex] = getCellHTMLFromValue(
                     columnIndex ? 'td' : 'th',
                     null,
-                    columnIndex ? {} : { scope: 'row' } as any,
+                    columnIndex ? {} : { scope: 'row' },
                     cellValue !== void 0 ? cellValue : ''
                 );
 
@@ -537,7 +539,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
         const element = createElement('div');
 
         const nodes = [this.getTableAST(merge(exportOptions, htmlExportOptions))];
-        (new AST(nodes)).addToDOM(element as any);
+        (new AST(nodes)).addToDOM(element);
         return element.innerHTML;
     }
 
