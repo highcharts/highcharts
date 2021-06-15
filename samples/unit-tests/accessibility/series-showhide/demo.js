@@ -42,5 +42,15 @@ QUnit.test(
             'true',
             'Series should be hidden from AT'
         );
+
+        chart.series[0].update({
+            name: 'Bean sprouts'
+        });
+
+        assert.notStrictEqual(
+            chart.series[0].a11yProxyElement.ariaLabel.indexOf('Bean'),
+            -1,
+            '#15902: Proxy button aria-label should have been updated'
+        );
     }
 );
