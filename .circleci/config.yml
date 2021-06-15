@@ -600,13 +600,6 @@ workflows:
       - deploy_to_highcharts_dist:
           requires: [build_dist]
           context: highcharts-staging
-      # Trigger samples/demo updates
-      - check_for_samples_changes_and_deploy:
-          requires: [build_dist]
-          context: highcharts-staging
-          filters:
-            branches:
-              only: [master]
 
   reset_visual_test_references:
     when: << pipeline.parameters.run_reset_tests >>
