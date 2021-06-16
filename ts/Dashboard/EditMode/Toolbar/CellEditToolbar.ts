@@ -22,7 +22,9 @@ class CellEditToolbar extends EditToolbar {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
         outline: true,
+        outlineClassName: EditGlobals.classNames.editToolbarCellOutline,
         menu: {
+            className: EditGlobals.classNames.editToolbarCell,
             itemsClassName: EditGlobals.classNames.editToolbarItem,
             items: ['drag', 'settings', 'destroy']
         }
@@ -118,12 +120,11 @@ class CellEditToolbar extends EditToolbar {
     *
     * */
 
-    public onMouseMove(
+    public showToolbar(
         cell: Cell
     ): void {
         const toolbar = this,
             cellCnt = cell.container,
-            width = toolbar.container.clientWidth,
             resizer = toolbar.editMode.resizer;
 
         let x, y;
@@ -136,7 +137,7 @@ class CellEditToolbar extends EditToolbar {
         ) {
             const cellOffsets = GUIElement.getOffsets(cell, toolbar.editMode.dashboard.container);
 
-            x = cellOffsets.right - width;
+            x = cellOffsets.right;
             y = cellOffsets.top;
 
             // Temp - activate all items.
@@ -153,13 +154,15 @@ class CellEditToolbar extends EditToolbar {
     }
 
     public refreshOutline(): void {
-        const toolbar = this;
+        const toolbar = this,
+            offsetWidth = -1;
 
         if (toolbar.cell && toolbar.cell.container && toolbar.outline) {
             super.refreshOutline(
-                toolbar.container.offsetWidth - toolbar.cell.container.offsetWidth,
+                -toolbar.cell.container.offsetWidth,
                 0,
-                this.cell
+                this.cell,
+                offsetWidth
             );
         }
     }

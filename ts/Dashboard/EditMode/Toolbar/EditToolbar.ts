@@ -6,7 +6,6 @@ import EditGlobals from '../EditGlobals.js';
 import Row from '../../Layout/Row.js';
 import Cell from '../../Layout/Cell.js';
 import GUIElement from '../../Layout/GUIElement.js';
-import DashboardGlobals from '../../DashboardGlobals.js';
 import type Layout from '../../Layout/Layout.js';
 
 const {
@@ -45,7 +44,7 @@ abstract class EditToolbar {
         if (this.options.outline) {
             this.outline = createElement(
                 'div', {
-                    className: EditGlobals.classNames.editToolbarOutline
+                    className: options.outlineClassName
                 }, {},
                 this.container
             );
@@ -76,7 +75,8 @@ abstract class EditToolbar {
     public refreshOutline(
         x: number,
         y: number,
-        guiElement?: GUIElement
+        guiElement?: GUIElement,
+        offset: number = 0
     ): void {
         const toolbar = this,
             guiElemCnt = (guiElement || {}).container;
@@ -84,10 +84,10 @@ abstract class EditToolbar {
         if (toolbar.outline && guiElemCnt) {
             css(toolbar.outline, {
                 display: 'block',
-                left: x + 'px',
-                top: y + 'px',
-                width: guiElemCnt.offsetWidth + 'px',
-                height: guiElemCnt.offsetHeight + 'px'
+                left: x - offset + 'px',
+                top: y - offset + 'px',
+                width: guiElemCnt.offsetWidth + offset * 2 + 'px',
+                height: guiElemCnt.offsetHeight + offset * 2 + 'px'
             });
         }
     }
@@ -194,6 +194,7 @@ namespace EditToolbar {
         enabled: boolean;
         className: string;
         outline: boolean;
+        outlineClassName: string;
         menu: Menu.Options;
     }
 }

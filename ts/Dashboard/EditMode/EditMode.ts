@@ -13,11 +13,14 @@ import EditContextMenu from './EditContextMenu.js';
 import DragDrop from './../Actions/DragDrop.js';
 import Resizer from './../Actions/Resizer.js';
 import ConfirmationPopup from './ConfirmationPopup.js';
+import ContextDetection from './../Actions/ContextDetection.js';
+import GUIElement from '../Layout/GUIElement.js';
 
 const {
     merge,
     addEvent,
-    createElement
+    createElement,
+    css
 } = U;
 
 class EditMode {
@@ -56,7 +59,18 @@ class EditMode {
         // Init renderer.
         this.renderer = new EditRenderer(this);
 
+        this.contextPointer = {
+            isVisible: false,
+            element: createElement(
+                'div',
+                { className: EditGlobals.classNames.contextDetectionPointer },
+                {},
+                this.dashboard.container
+            )
+        };
+
         this.isInitialized = false;
+        this.isContextDetectionActive = false;
         this.tools = {};
 
         this.createTools();
@@ -90,6 +104,12 @@ class EditMode {
     public resizeBtn?: HTMLDOMElement;
     public tools: EditMode.Tools;
     public confirmationPopup?: ConfirmationPopup;
+    public isContextDetectionActive: boolean;
+    public mouseCellContext?: Cell;
+    public mouseRowContext?: Row;
+    public potentialCellContext?: Cell;
+    public editCellContext?: Cell;
+    public contextPointer: EditMode.ContextPointer;
 
     /* *
     *
@@ -164,14 +184,14 @@ class EditMode {
             editMode.dragDrop = new DragDrop(editMode);
         }
 
-        // Init cellToolbar.
-        if (!editMode.cellToolbar) {
-            editMode.cellToolbar = new CellEditToolbar(editMode);
-        }
-
         // Init rowToolbar.
         if (!editMode.rowToolbar) {
             editMode.rowToolbar = new RowEditToolbar(editMode);
+        }
+
+        // Init cellToolbar.
+        if (!editMode.cellToolbar) {
+            editMode.cellToolbar = new CellEditToolbar(editMode);
         }
 
         // Init optionsToolbar.
@@ -191,25 +211,29 @@ class EditMode {
         }
 
         if (editMode.cellToolbar) {
-            // Hide row toolbar when mouse on cell toolbar.
+            // Stop context detection when mouse on cell toolbar.
             addEvent(editMode.cellToolbar.container, 'mouseenter', function (): void {
-                editMode.hideToolbars(['row']);
+                editMode.stopContextDetection();
+            });
+
+            addEvent(editMode.cellToolbar.container, 'mouseleave', function (): void {
+                editMode.isContextDetectionActive = true;
             });
         }
 
         if (editMode.rowToolbar) {
-            const rowToolbar = editMode.rowToolbar;
-
-            // Hide cell toolbar when mouse on row toolbar.
-            addEvent(rowToolbar.container, 'mouseenter', function (): void {
-                editMode.hideToolbars(['cell']);
-                rowToolbar.refreshOutline();
+            // Stop context detection when mouse on row toolbar.
+            addEvent(editMode.rowToolbar.container, 'mouseenter', function (): void {
+                editMode.stopContextDetection();
             });
 
-            addEvent(rowToolbar.container, 'mouseleave', function (): void {
-                rowToolbar.hideOutline();
+            addEvent(editMode.rowToolbar.container, 'mouseleave', function (): void {
+                editMode.isContextDetectionActive = true;
             });
         }
+
+        addEvent(dashboard.container, 'mousemove', editMode.onDetectContext.bind(editMode));
+        addEvent(dashboard.container, 'click', editMode.onContextConfirm.bind(editMode));
     }
 
     private setLayoutEvents(
@@ -232,18 +256,6 @@ class EditMode {
     ): void {
         const editMode = this;
 
-        if (editMode.rowToolbar) {
-            const rowToolbar = editMode.rowToolbar;
-
-            addEvent(row.container, 'mousemove', function (e): void {
-                rowToolbar.onMouseMove(row);
-
-                // if ((!(editMode.dragDrop || {}).isActive)) {
-                //     e.stopImmediatePropagation();
-                // }
-            });
-        }
-
         // Init dragDrop row events.
         if (editMode.dragDrop) {
             const dragDrop = editMode.dragDrop;
@@ -251,11 +263,19 @@ class EditMode {
                 if (dragDrop.isActive) {
                     dragDrop.mouseRowContext = row;
                 }
+
+                if (editMode.isContextDetectionActive) {
+                    editMode.mouseRowContext = row;
+                }
             });
 
             addEvent(row.container, 'mouseleave', function (): void {
                 if (dragDrop.isActive) {
                     dragDrop.mouseRowContext = void 0;
+                }
+
+                if (editMode.isContextDetectionActive) {
+                    editMode.mouseRowContext = void 0;
                 }
             });
         }
@@ -269,23 +289,15 @@ class EditMode {
         if (cell.nestedLayout) {
             editMode.setLayoutEvents(cell.nestedLayout);
         } else if (editMode.cellToolbar && cell.container) {
-            const cellToolbar = editMode.cellToolbar;
-
-            addEvent(cell.container, 'mousemove', function (): void {
-                cellToolbar.onMouseMove(cell);
-            });
+            // const cellToolbar = editMode.cellToolbar;
 
             // Hide cell toolbar when mouse on cell resizer.
-            const resizedCell = (cell as Resizer.ResizedCell).resizer;
-            if (resizedCell && resizedCell.snapX) {
-                addEvent(resizedCell.snapX, 'mousemove', function (e): void {
-                    cellToolbar.hide();
-
-                    // if (!(editMode.dragDrop || {}).isActive) {
-                    //     e.stopImmediatePropagation();
-                    // }
-                });
-            }
+            // const resizedCell = (cell as Resizer.ResizedCell).resizer;
+            // if (resizedCell && resizedCell.snapX) {
+            //     addEvent(resizedCell.snapX, 'mousemove', function (e): void {
+            //         cellToolbar.hide();
+            //     });
+            // }
 
             // Init dragDrop and resizer cell events.
             if (editMode.dragDrop || editMode.resizer) {
@@ -301,6 +313,10 @@ class EditMode {
                     if (resizer && resizer.isResizerDetectionActive) {
                         resizer.mouseCellContext = cell;
                     }
+
+                    if (editMode.isContextDetectionActive) {
+                        editMode.mouseCellContext = cell;
+                    }
                 });
 
                 addEvent(cell.container, 'mouseleave', function (): void {
@@ -310,6 +326,10 @@ class EditMode {
 
                     if (resizer && resizer.isResizerDetectionActive) {
                         resizer.mouseCellContext = void 0;
+                    }
+
+                    if (editMode.isContextDetectionActive) {
+                        editMode.mouseCellContext = void 0;
                     }
                 });
             }
@@ -325,6 +345,7 @@ class EditMode {
         }
 
         editMode.active = true;
+        editMode.isContextDetectionActive = true;
 
         // Set edit mode active class to dashboard.
         editMode.dashboard.container.classList.add(
@@ -345,6 +366,10 @@ class EditMode {
             dashboardCnt = editMode.dashboard.container;
 
         editMode.active = false;
+        editMode.stopContextDetection();
+
+        this.editCellContext = void 0;
+        this.potentialCellContext = void 0;
 
         dashboardCnt.classList.remove(
             EditGlobals.classNames.editModeEnabled
@@ -458,6 +483,92 @@ class EditMode {
         // Create resizer button.
         this.resizeBtn = Resizer.createMenuBtn(editMode);
     }
+
+    public onDetectContext(e: PointerEvent): void {
+        const editMode = this,
+            offset = 50; // TODO - add it from options.
+
+        if (
+            editMode.isContextDetectionActive &&
+            (editMode.mouseCellContext || editMode.mouseRowContext) &&
+            !(editMode.dragDrop || {}).isActive
+        ) {
+            let cellContext,
+                rowContext;
+
+            if (editMode.mouseCellContext) {
+                cellContext = ContextDetection.getContext(editMode.mouseCellContext, e, offset).cell;
+            } else if (editMode.mouseRowContext) {
+                rowContext = editMode.mouseRowContext;
+                cellContext = rowContext.layout.parentCell;
+            }
+
+            this.potentialCellContext = cellContext;
+
+            if (cellContext) {
+                const cellContextOffsets = GUIElement.getOffsets(cellContext, editMode.dashboard.container);
+                const { width, height } = GUIElement.getDimFromOffsets(cellContextOffsets);
+
+                editMode.showContextPointer(cellContextOffsets.left, cellContextOffsets.top, width, height);
+            }
+        }
+    }
+
+    public stopContextDetection(): void {
+        this.isContextDetectionActive = false;
+        this.hideContextPointer();
+    }
+
+    public onContextConfirm(): void {
+        if (this.isContextDetectionActive && this.potentialCellContext) {
+            this.editCellContext = this.potentialCellContext;
+
+            this.cellToolbar?.showToolbar(this.editCellContext);
+            this.rowToolbar?.showToolbar(this.editCellContext.row);
+        }
+    }
+
+    /**
+     * Method for showing and positioning context pointer.
+     *
+     * @param {number} left
+     * Context pointer left position.
+     *
+     * @param {number} top
+     * Context pointer top position.
+     *
+     * @param {number} width
+     * Context pointer width.
+     *
+     * @param {number} height
+     * Context pointer height.
+     */
+    private showContextPointer(
+        left: number,
+        top: number,
+        width: number,
+        height: number
+    ): void {
+        this.contextPointer.isVisible = true;
+
+        css(this.contextPointer.element, {
+            display: 'block',
+            left: left + 'px',
+            top: top + 'px',
+            height: height + 'px',
+            width: width + 'px'
+        });
+    }
+
+    /**
+     * Method for hiding context pointer.
+     */
+    private hideContextPointer(): void {
+        if (this.contextPointer.isVisible) {
+            this.contextPointer.isVisible = false;
+            this.contextPointer.element.style.display = 'none';
+        }
+    }
 }
 namespace EditMode {
     export interface Options {
@@ -486,6 +597,11 @@ namespace EditMode {
 
     export interface AddComponentBtn {
         icon: string;
+    }
+
+    export interface ContextPointer {
+        isVisible: boolean;
+        element: HTMLDOMElement;
     }
 }
 

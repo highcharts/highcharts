@@ -13,9 +13,11 @@ const EditGlobals: EditGlobals = {
         contextMenuItem: PREFIX + 'context-menu-item',
         editModeEnabled: PREFIX + 'enabled',
         editToolbar: PREFIX + 'toolbar',
-        editToolbarOutline: PREFIX + 'toolbar-outline',
+        editToolbarCellOutline: PREFIX + 'toolbar-cell-outline',
+        editToolbarRowOutline: PREFIX + 'toolbar-row-outline',
         editToolbarItem: PREFIX + 'toolbar-item',
         editToolbarRow: PREFIX + 'toolbar-row',
+        editToolbarCell: PREFIX + 'toolbar-cell',
         editSidebar: PREFIX + 'sidebar',
         editSidebarShow: PREFIX + 'sidebar-show',
         editSidebarHide: PREFIX + 'sidebar-hide',
@@ -28,6 +30,7 @@ const EditGlobals: EditGlobals = {
         editSidebarMenuItem: PREFIX + 'sidebar-item',
         dragMock: PREFIX + 'drag-mock',
         dropPointer: PREFIX + 'drop-pointer',
+        contextDetectionPointer: PREFIX + 'ctx-detection-pointer',
         resizePointer: PREFIX + 'resize-pointer',
         currentEditedElement: PREFIX + 'unmask',
         maskElement: PREFIX + 'mask',
@@ -88,9 +91,11 @@ namespace EditGlobals {
         contextMenuItem: string;
         editModeEnabled: string;
         editToolbar: string;
-        editToolbarOutline: string;
+        editToolbarCellOutline: string;
+        editToolbarRowOutline: string;
         editToolbarItem: string;
         editToolbarRow: string;
+        editToolbarCell: string;
         editSidebar: string;
         editSidebarShow: string;
         editSidebarHide: string;
@@ -103,6 +108,7 @@ namespace EditGlobals {
         editSidebarMenuItem: string;
         dragMock: string;
         dropPointer: string;
+        contextDetectionPointer: string;
         resizePointer: string;
         maskElement: string;
         currentEditedElement: string;

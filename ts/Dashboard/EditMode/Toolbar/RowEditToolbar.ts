@@ -22,6 +22,7 @@ class RowEditToolbar extends EditToolbar {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
         outline: true,
+        outlineClassName: EditGlobals.classNames.editToolbarRowOutline,
         menu: {
             className: EditGlobals.classNames.editToolbarRow,
             itemsClassName: EditGlobals.classNames.editToolbarItem,
@@ -118,41 +119,47 @@ class RowEditToolbar extends EditToolbar {
     *
     * */
 
-    public refreshOutline(): void {
-        const toolbar = this;
+    public refreshOutline(
+        x: number,
+        y: number
+    ): void {
+        const toolbar = this,
+            offsetWidth = 2;
 
         if (toolbar.row && toolbar.row.container) {
-            super.refreshOutline(0, 0, this.row);
+            super.refreshOutline(x, y, this.row, offsetWidth);
         }
     }
 
-    public onMouseMove(
+    public showToolbar(
         row: Row
     ): void {
         const toolbar = this,
             rowCnt = row.container,
             resizer = toolbar.editMode.resizer;
 
-        let x, y;
+        let x, y, offsetX;
 
         if (
-            row.cells.length > 1 && // -> to discuss
             rowCnt &&
             toolbar.editMode.isActive() &&
             !(toolbar.editMode.dragDrop || {}).isActive &&
             resizer && !resizer.isActive && !resizer.isResizerDetectionActive
         ) {
             const rowOffsets = GUIElement.getOffsets(row, toolbar.editMode.dashboard.container);
-
-            x = rowOffsets.left;
-            y = rowOffsets.top;
+            const rowWidth = rowOffsets.right - rowOffsets.left;
 
             // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
                 item.activate();
             });
+
+            offsetX = rowWidth / 2 - toolbar.container.clientWidth / 2;
+            x = rowOffsets.left + offsetX;
+            y = rowOffsets.top - toolbar.container.clientHeight;
             toolbar.setPosition(x, y);
             toolbar.row = row;
+            toolbar.refreshOutline(-offsetX, toolbar.container.clientHeight);
         } else if (toolbar.isVisible) {
             toolbar.hide();
         }

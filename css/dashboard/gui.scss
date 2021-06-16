@@ -95,6 +95,15 @@ body {
     opacity: 0.5;
 }
 
+.hcd-edit-ctx-detection-pointer {
+    position: absolute;
+    z-index: 101;
+    display: none;
+    pointer-events: none;
+    border: 3px solid rgb(128, 133, 232);
+    opacity: 0.6;
+}
+
 // .hcd-layout.edit-mode .hcd-row :hover .hcd-cell  {
 //     border: 1px dashed #bdbdbd;
 //     cursor: pointer;
@@ -394,28 +403,74 @@ h1 {
     box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
 }
 
-.hcd-edit-toolbar-outline {
-    position: absolute;
-    pointer-events: none;
-    display: none;
-    border: 3px solid rgb(224, 29, 90);
-    opacity: 0.3;
-}
-
 .hcd-edit-toolbar-item div {
-    min-width: 32px;
-    min-height: 32px;
+    min-width: 25px;
+    min-height: 25px;
     box-sizing: border-box;
     text-align: center;
     padding: 10px 5px;
-    background-size: 28px 28px;
+    background-size: 23px 23px;
     background-repeat: no-repeat;
     background-position: 50% 50%;
 }
 
-.hcd-edit-toolbar-item.hcd-edit-menu-destroy div {
-    background-color: #e01d5a;
+.hcd-edit-toolbar-row {
+    .hcd-edit-toolbar-item {
+        background: #8aea9f;
+
+        div {
+            min-width: 23px;
+            min-height: 23px;
+            background-size: 21px 21px;
+        }
+
+        div:first-child:before {
+            content: "";
+            border: solid transparent;
+            border-right-color: #8aea9f;
+            border-width: 23px 10px 0 0;
+            right: 100%;
+            position: absolute;
+            top: 0px;
+        }
+
+        div:last-child:after {
+            content: "";
+            border: solid transparent;
+            border-left-color: #8aea9f;
+            border-width: 23px 0 0 10px;
+            left: 100%;
+            position: absolute;
+            top: 0px;
+        }
+    }
 }
+
+.hcd-edit-toolbar-cell {
+    .hcd-edit-toolbar-item {
+        background: #30436b;
+    }
+}
+
+.hcd-edit-toolbar-cell-outline {
+    position: absolute;
+    pointer-events: none;
+    display: none;
+    border: 2px dashed #30436b;
+    opacity: 1;
+}
+
+.hcd-edit-toolbar-row-outline {
+    position: absolute;
+    pointer-events: none;
+    display: none;
+    border: 2px solid #8aea9f;
+    opacity: 1;
+}
+
+// .hcd-edit-toolbar-item.hcd-edit-menu-destroy div {
+//     background-color: #e01d5a;
+// }
 
 .hcd-edit-toolbar-item:hover div {
     cursor: pointer;
