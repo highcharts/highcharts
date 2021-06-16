@@ -7325,7 +7325,6 @@ namespace Series {
         cropStart: number;
         closestPointRange: (number|undefined);
     }
-    export type PointIntervalUnitValue = ('day'|'month'|'year');
 }
 
 /* *
