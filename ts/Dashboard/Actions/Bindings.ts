@@ -2,7 +2,6 @@
 import type ComponentTypes from '../Component/ComponentType';
 import ChartComponent from './../Component/ChartComponent.js';
 import HTMLComponent from './../Component/HTMLComponent.js';
-import GroupComponent from './../Component/GroupComponent.js';
 
 import type {
     HTMLDOMElement
@@ -113,7 +112,7 @@ class Bindings {
     ): ComponentTypes | undefined {
 
         const compontentContainer = cellContainer;
-        let component: HTMLComponent|ChartComponent|GroupComponent|undefined;
+        let component: HTMLComponent|ChartComponent|undefined;
 
         switch (json.$class) {
             case 'Chart':
@@ -184,35 +183,6 @@ class Bindings {
                 })
         );
     }
-
-    public static groupComponent(
-        compontentContainer: HTMLDOMElement
-    ): GroupComponent {
-        return new GroupComponent({
-            parentElement: compontentContainer,
-            direction: 'column',
-            components: [
-                new HTMLComponent({
-                    elements: [{
-                        tagName: 'img',
-                        attributes: {
-                            src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-                            title: 'I heard you like components'
-                        }
-                    }]
-                }),
-                new ChartComponent({
-                    chartOptions: {
-                        chart: {},
-                        series: [{
-                            type: 'pie',
-                            data: [1, 2, 3]
-                        }]
-                    }
-                })
-            ]
-        });
-    }
 }
 
 namespace Bindings {
@@ -231,7 +201,7 @@ namespace Bindings {
     }
     export interface MountedComponentsOptions {
         options: any;
-        component: ChartComponent|HTMLComponent|GroupComponent|undefined;
+        component: ChartComponent|HTMLComponent|undefined;
         cell: Cell;
     }
 }
