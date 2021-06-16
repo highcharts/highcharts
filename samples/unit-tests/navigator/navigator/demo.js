@@ -1289,3 +1289,20 @@ QUnit.test('Scrolling when the range is set, #14742.', function (assert) {
         the range should not equal zero.`
     );
 });
+
+
+QUnit.test('Initiation chart without data but with set range, #15864.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            selected: 1
+        },
+        series: [{
+            pointInterval: 36e7
+        }]
+    });
+    assert.ok(
+        chart.xAxis[0].max !== 0,
+        `After adding series to the chart that has set the range,
+        the navigator shouldn't stick to min.`
+    );
+});
