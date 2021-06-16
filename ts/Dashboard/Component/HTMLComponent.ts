@@ -22,7 +22,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
-            scaleElements: true,
+            scaleElements: false,
             elements: [],
             editableOptions: [
                 ...Component.defaultOptions.editableOptions,
@@ -112,7 +112,13 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
             type: 'load'
         });
         super.load();
-        this.elements = this.options.elements || [];
+        this.elements = this.options.elements ?
+            this.options.elements.map(
+                (element): AST.Node => (
+                    typeof element === 'string' ?
+                        new AST(element).nodes[0] :
+                        element
+                )) : [];
 
         this.constructTree();
 
@@ -223,7 +229,7 @@ namespace HTMLComponent {
 
     export type ComponentType = HTMLComponent;
     export interface HTMLComponentOptions extends Component.ComponentOptions, EditableOptions {
-        elements?: AST.Node[];
+        elements?: (AST.Node | string)[];
     }
 
     export interface EditableOptions extends Component.EditableOptions {
