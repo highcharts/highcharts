@@ -5934,8 +5934,23 @@ class Series {
     }
 
     /**
-     * @private
+     * Find the nearest point from a pointer event. This applies to series that
+     * use k-d-trees to get the nearest point. Native pointer events must be
+     * normalized using `Pointer.normalize`, that adds `chartX` and `chartY`
+     * properties.
+     *
+     * @sample highcharts/demo/synchronized-charts
+     *         Synchronized charts with tooltips
+     *
      * @function Highcharts.Series#searchPoint
+     *
+     * @param {Highcharts.PointerEvent} e
+     *        The normalized pointer event
+     * @param {boolean} [compareX=false]
+     *        Search only by the X value, not Y
+     *
+     * @return {Point|undefined}
+     *        The closest point to the pointer event
      */
     public searchPoint(
         e: PointerEvent,
