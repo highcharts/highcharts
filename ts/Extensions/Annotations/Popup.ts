@@ -22,8 +22,8 @@ const {
     isFirefox
 } = H;
 import NavigationBindings from './NavigationBindings.js';
-import O from '../../Core/Options.js';
-const { getOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { getOptions } = D;
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -202,7 +202,7 @@ H.Popup.prototype = {
 
         // create popup div
         this.container = createElement(DIV, {
-            className: PREFIX + 'popup'
+            className: PREFIX + 'popup highcharts-no-tooltip'
         }, null as any, parentDiv);
 
         this.lang = this.getLangpack();
@@ -437,6 +437,7 @@ H.Popup.prototype = {
         // add close button
         popupDiv.appendChild(popupCloseBtn);
         popupDiv.style.display = 'block';
+        popupDiv.style.height = '';
     },
     /**
      * Hide popup.
@@ -492,6 +493,9 @@ H.Popup.prototype = {
         if (type === 'flag') {
             this.annotations.addForm.call(this, chart, options, callback, true);
         }
+
+        // Explicit height is needed to make inner elements scrollable
+        this.container.style.height = this.container.offsetHeight + 'px';
     },
     /**
      * Return lang definitions for popup.

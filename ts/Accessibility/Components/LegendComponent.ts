@@ -12,12 +12,12 @@
 
 'use strict';
 
-import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import Legend from '../../Core/Legend.js';
 import U from '../../Core/Utilities.js';
@@ -71,8 +71,10 @@ declare global {
             public highlightedLegendItemIx: number;
             public legendProxyButtonClicked?: boolean;
             public legendProxyGroup: HTMLDOMElement;
+            public legendListContainer?: HTMLDOMElement;
             public proxyElementsList: Array<A11yLegendProxyButtonReference>;
             public addLegendProxyGroup(): void;
+            public addLegendListContainer(): void;
             public getKeyboardNavigation(): KeyboardNavigationHandler;
             public init(): void;
             public onChartRender(): void;
@@ -148,7 +150,7 @@ function shouldDoLegendA11y(chart: Chart): boolean {
  *
  * @return {boolean}
  */
-H.Chart.prototype.highlightLegendItem = function (ix: number): boolean {
+Chart.prototype.highlightLegendItem = function (ix: number): boolean {
     const items = this.legend.allItems,
         oldIx = this.accessibility &&
             this.accessibility.components.legend.highlightedLegendItemIx;
@@ -308,6 +310,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
         if (shouldDoLegendA11y(this.chart)) {
             this.addLegendProxyGroup();
+            this.addLegendListContainer();
             this.proxyLegendItems();
             this.updateLegendItemProxyVisibility();
         }
@@ -367,6 +370,18 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     /**
      * @private
      */
+    addLegendListContainer: function (this: Highcharts.LegendComponent): void {
+        if (this.legendProxyGroup) {
+            const container = this.legendListContainer = this.createElement('ul');
+            container.style.listStyle = 'none';
+            this.legendProxyGroup.appendChild(container);
+        }
+    },
+
+
+    /**
+     * @private
+     */
     proxyLegendItems: function (this: Highcharts.LegendComponent): void {
         const component = this,
             items = (
@@ -390,7 +405,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         this: Highcharts.LegendComponent,
         item: LegendItem
     ): void {
-        if (!item.legendItem || !item.legendGroup) {
+        if (!item.legendItem || !item.legendGroup || !this.legendListContainer) {
             return;
         }
 
@@ -411,9 +426,12 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             proxyPositioningElement = item.legendGroup.div ?
                 item.legendItem : item.legendGroup;
 
+        const listItem = this.createElement('li');
+        this.legendListContainer.appendChild(listItem);
+
         item.a11yProxyElement = this.createProxyButton(
             item.legendItem as any,
-            this.legendProxyGroup as any,
+            listItem,
             attribs,
             proxyPositioningElement as any
         );

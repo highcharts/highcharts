@@ -15,8 +15,9 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
+
+import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
-import H from '../../Core/Globals.js';
 import palette from '../../Core/Color/Palette.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -51,7 +52,7 @@ declare module '../../Core/Series/SeriesLike' {
     }
 }
 
-import '../../Core/Options.js';
+import '../../Core/DefaultOptions.js';
 
 /**
  * Returns true if the key is a direct property of the object.
@@ -979,7 +980,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 SeriesRegistry.registerSeriesType('waterfall', WaterfallSeries);
-WaterfallAxis.compose(H.Axis, Chart);
+WaterfallAxis.compose(Axis, Chart);
 
 /* *
  *

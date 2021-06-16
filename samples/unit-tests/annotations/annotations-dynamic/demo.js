@@ -221,6 +221,11 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
         rect.clipRect,
         '#15726: Rectangle annotations should be clipped'
     );
+
+    assert.ok(
+        thirdAnnotation.labels[0].graphic.hasClass('highcharts-no-tooltip'),
+        '#14403: Annotation label should have no-tooltip class'
+    );
 });
 
 QUnit.test(

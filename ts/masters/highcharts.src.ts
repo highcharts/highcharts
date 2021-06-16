@@ -9,7 +9,7 @@
 'use strict';
 import Highcharts from '../Core/Globals.js';
 import Utilities from '../Core/Utilities.js';
-import Options from '../Core/Options.js';
+import DefaultOptions from '../Core/DefaultOptions.js';
 import Fx from '../Core/Animation/Fx.js';
 import Animation from '../Core/Animation/AnimationUtilities.js';
 import AST from '../Core/Renderer/HTML/AST.js';
@@ -18,15 +18,16 @@ import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import HTMLElement from '../Core/Renderer/HTML/HTMLElement.js';
 import HTMLRenderer from '../Core/Renderer/HTML/HTMLRenderer.js';
-import '../Core/Axis/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import '../Core/Axis/DateTimeAxis.js';
 import '../Core/Axis/LogarithmicAxis.js';
-import '../Core/Axis/PlotLineOrBand.js';
+import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
+import Tick from '../Core/Axis/Tick.js';
 import '../Core/Tooltip.js';
-import '../Core/Pointer.js';
-import '../Core/MSPointer.js';
+import Pointer from '../Core/Pointer.js';
+import MSPointer from '../Core/MSPointer.js';
 import '../Core/Legend.js';
-import '../Core/Chart/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import '../Extensions/ScrollablePlotArea.js';
 import '../Extensions/Stacking.js';
 import Series from '../Core/Series/Series.js';
@@ -40,7 +41,7 @@ import '../Series/Scatter/ScatterSeries.js';
 import '../Series/Pie/PieSeries.js';
 import '../Core/Series/DataLabels.js';
 import '../Extensions/OverlappingDataLabels.js';
-import '../Core/Responsive.js';
+import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';
 import Time from '../Core/Time.js';
 const G: AnyRecord = Highcharts;
@@ -53,10 +54,16 @@ G.stop = Animation.stop;
 G.timers = Fx.timers;
 // Classes
 G.AST = AST;
+G.Axis = Axis;
+G.Chart = Chart;
+G.chart = Chart.chart;
 G.Fx = Fx;
+G.PlotLineOrBand = PlotLineOrBand;
+G.Pointer = (MSPointer.isRequired() ? MSPointer : Pointer);
 G.Series = Series;
 G.SVGElement = SVGElement;
 G.SVGRenderer = SVGRenderer;
+G.Tick = Tick;
 G.Time = Time;
 // Color
 G.Color = Color;
@@ -64,15 +71,15 @@ G.color = Color.parse;
 // Compositions
 HTMLRenderer.compose(SVGRenderer);
 HTMLElement.compose(SVGElement);
+// DefaultOptions
+G.defaultOptions = DefaultOptions.defaultOptions;
+G.getOptions = DefaultOptions.getOptions;
+G.time = DefaultOptions.defaultTime;
+G.setOptions = DefaultOptions.setOptions;
 // Format Utilities
 G.dateFormat = FormatUtilities.dateFormat;
 G.format = FormatUtilities.format;
 G.numberFormat = FormatUtilities.numberFormat;
-// Options
-G.defaultOptions = Options.defaultOptions;
-G.getOptions = Options.getOptions;
-G.time = Options.defaultTime;
-G.setOptions = Options.setOptions;
 // Utilities
 G.addEvent = Utilities.addEvent;
 G.arrayMax = Utilities.arrayMax;
@@ -118,4 +125,7 @@ G.timeUnits = Utilities.timeUnits;
 G.uniqueKey = Utilities.uniqueKey;
 G.useSerialIds = Utilities.useSerialIds;
 G.wrap = Utilities.wrap;
+// Compositions
+Responsive.compose(Chart);
+// Default Export
 export default G;
