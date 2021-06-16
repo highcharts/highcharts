@@ -1,5 +1,5 @@
 QUnit.test('Stocktools GUI', function (assert) {
-    /*const chart = */Highcharts.stockChart('container', {
+    const chart = Highcharts.stockChart('container', {
         stockTools: {
             gui: {
                 enabled: true,
@@ -60,6 +60,33 @@ QUnit.test('Stocktools GUI', function (assert) {
         '#9744: Title should have the correct position after hiding toolbar'
     );
     */
+
+    // Shorthand for selecting a button
+    function selectButton(name, index = -1) {
+
+        let button = document.getElementsByClassName('highcharts-' + name)[0];
+
+        if (button.tagName === 'UL' && index > -1) {
+            button = button.getElementsByTagName('li')[index];
+        }
+
+        button.click();
+    }
+
+    selectButton('indicators'); // Click on indicators
+    selectButton('indicator-list', 17); // Click on APO. 17 should probably not be hard-coded.
+
+    const textLabel = chart
+        .navigationBindings
+        .popup.container
+        .childNodes[3]
+        .childNodes[1]
+        .childNodes[0]
+        .childNodes[6]
+        .firstChild
+        .data; // Periods textLabel of APO
+
+    assert.strictEqual(textLabel, 'Periods', 'APO should have Periods text-label.');
 });
 
 QUnit.test('Disabling and enabling stock tools buttons, when series are invisible, #14192',
