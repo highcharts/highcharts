@@ -1343,7 +1343,9 @@ function GLRenderer(
             } else {
                 // #15869, a buffer with fewer points might already be bound by
                 // a different series/chart causing out of range errors
-                gl.disableVertexAttribArray(1);
+                gl.disableVertexAttribArray(
+                    gl.getAttribLocation(shader.program() as any, 'aColor')
+                );
             }
 
             // Set series specific uniforms
