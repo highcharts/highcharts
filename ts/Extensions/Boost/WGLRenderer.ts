@@ -1340,6 +1340,12 @@ function GLRenderer(
                 cbuffer = GLVertexBuffer(gl, shader); // eslint-disable-line new-cap
                 cbuffer.build(s.colorData, 'aColor', 4);
                 cbuffer.bind();
+            } else {
+                // #15869, a buffer with fewer points might already be bound by
+                // a different series/chart causing out of range errors
+                gl.disableVertexAttribArray(
+                    gl.getAttribLocation(shader.program() as any, 'aColor')
+                );
             }
 
             // Set series specific uniforms

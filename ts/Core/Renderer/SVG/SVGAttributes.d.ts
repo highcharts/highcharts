@@ -19,7 +19,7 @@ import type {
     CSSObject,
     CursorValue
 } from '../CSSObject';
-import DashStyleValue from '../DashStyleValue';
+import type DashStyleValue from '../DashStyleValue';
 import type SVGPath from './SVGPath';
 
 /* *
@@ -57,6 +57,7 @@ export interface SVGAttributes {
     end?: number;
     fill?: ColorType;
     'fill-opacity'?: number;
+    filter?: string;
     gradientUnits?: 'userSpaceOnUse';
     height?: number;
     href?: string;

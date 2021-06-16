@@ -10,4 +10,8 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Core/Axis/TreeGridAxis.js';
+import Highcharts from '../../Core/Globals.js';
+import TreeGridAxis from '../../Core/Axis/TreeGridAxis.js';
+const G: AnyRecord = Highcharts;
+// Compositions
+TreeGridAxis.compose(G.Axis, G.Chart, G.Series, G.Tick);

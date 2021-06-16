@@ -440,6 +440,7 @@ H.Popup.prototype = {
         // add close button
         popupDiv.appendChild(popupCloseBtn);
         popupDiv.style.display = 'block';
+        popupDiv.style.height = '';
     },
     /**
      * Hide popup.
@@ -495,6 +496,9 @@ H.Popup.prototype = {
         if (type === 'flag') {
             this.annotations.addForm.call(this, chart, options, callback, true);
         }
+
+        // Explicit height is needed to make inner elements scrollable
+        this.container.style.height = this.container.offsetHeight + 'px';
     },
     /**
      * Return lang definitions for popup.
