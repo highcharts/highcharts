@@ -72,7 +72,7 @@ class DataPromise<T> implements Promise<T> {
     public static resolve<T>(
         value: (T|PromiseLike<T>)
     ): DataPromise<T>;
-    public static resolve(): DataPromise<void>;
+    public static resolve<T>(): DataPromise<(T|void)>;
     public static resolve<T>(
         value?: (T|PromiseLike<T>)
     ): DataPromise<(T|void)> {
@@ -100,8 +100,8 @@ class DataPromise<T> implements Promise<T> {
 
     public constructor(
         executor: (
-            resolve: (value: (T|PromiseLike<T>)) => void,
-            reject: (reason: unknown) => void
+            resolve: (value?: (T|PromiseLike<T>)) => void,
+            reject: (reason?: unknown) => void
         ) => void
     ) {
         if (win.Promise && !DataPromise.onlyPolyfill) {
@@ -112,8 +112,8 @@ class DataPromise<T> implements Promise<T> {
 
         try {
             executor(
-                (value: (T|PromiseLike<T>)): void => promise.resolved(value),
-                (reason: unknown): void => promise.rejected(reason)
+                (value?: (T|PromiseLike<T>)): void => promise.resolved(value),
+                (reason?: unknown): void => promise.rejected(reason)
             );
         } catch (e) {
             promise.rejected(e);
@@ -154,12 +154,11 @@ class DataPromise<T> implements Promise<T> {
         if (promise.state === DataPromise.State.Pending) {
             promise.state = DataPromise.State.Rejected;
             promise.reason = reason;
+            setTimeout((): void => promise.work(), 0);
         }
-
-        promise.work();
     }
 
-    private resolved(value: (T|PromiseLike<T>)): void {
+    private resolved(value?: (T|PromiseLike<T>)): void {
         const promise = this;
 
         if (promise.state === DataPromise.State.Pending) {
@@ -170,86 +169,116 @@ class DataPromise<T> implements Promise<T> {
                 );
             } else {
                 promise.state = DataPromise.State.Fulfilled;
-                promise.value = value;
+                promise.value = value as T;
+                setTimeout((): void => promise.work(), 0);
             }
         }
-
-        promise.work();
     }
 
     public then<TResult1 = T, TResult2 = never>(
         onfulfilled?: (((value: T) => (TResult1|PromiseLike<TResult1>))|null),
         onrejected?: (((reason: unknown) => (TResult2|PromiseLike<TResult2>))|null)
     ): DataPromise<(TResult1|TResult2)> {
-        const promise = this;
-
-        return new DataPromise<(TResult1|TResult2)>((resolve, reject): void => {
-            const rejecter = (reason: unknown): void => {
-                    if (onrejected) {
-                        try {
-                            const result = onrejected(reason);
-                            if (result instanceof DataPromise) {
-                                result.then(resolve, reject);
-                            } else {
-                                resolve(result);
+        const promise = this,
+            newPromise = new DataPromise<(TResult1|TResult2)>(
+                (resolve, reject): void => {
+                    const rejecter = (reason: unknown): void => {
+                            if (onrejected) {
+                                try {
+                                    const result = onrejected(reason);
+                                    if (result instanceof DataPromise) {
+                                        result.then(resolve, reject);
+                                    } else {
+                                        resolve(result);
+                                    }
+                                    return;
+                                } catch (e) {
+                                    reason = e;
+                                }
                             }
-                        } catch (e) {
-                            reject(e);
-                        }
-                    } else {
-                        reject(reason);
-                    }
-                },
-                resolver = (value: T): void => {
-                    if (onfulfilled) {
-                        try {
-                            const result = onfulfilled(value);
-                            if (result instanceof DataPromise) {
-                                result.then(resolve, reject);
+                            if (newPromise.jobs.length) {
+                                reject(reason);
+                            } else if (reason) {
+                                throw reason;
                             } else {
-                                resolve(result);
+                                throw new Error('Unhandled exception');
                             }
-                        } catch (e) {
-                            rejecter(e);
-                        }
-                    } else {
-                        resolve(value as unknown as TResult1);
+                        },
+                        resolver = (value: T): void => {
+                            if (onfulfilled) {
+                                try {
+                                    const result = onfulfilled(value);
+                                    if (result instanceof DataPromise) {
+                                        result.then(resolve, reject);
+                                    } else {
+                                        resolve(result);
+                                    }
+                                } catch (e) {
+                                    rejecter(e);
+                                }
+                            } else {
+                                resolve(value as unknown as TResult1);
+                            }
+                        };
+
+                    switch (promise.state) {
+                        case DataPromise.State.Fulfilled:
+                            return resolver(promise.value);
+                        case DataPromise.State.Rejected:
+                            return rejecter(promise.reason);
                     }
-                };
 
-            switch (promise.state) {
-                case DataPromise.State.Fulfilled:
-                    return resolver(promise.value);
-                case DataPromise.State.Rejected:
-                    return rejecter(promise.reason);
-            }
+                    promise.jobs.push({
+                        resolve: resolver,
+                        reject: rejecter
+                    });
+                }
+            );
 
-            promise.jobs.push({
-                resolve: resolver,
-                reject: rejecter
-            });
-        });
+        return newPromise;
     }
 
     private work(): void {
         const promise = this,
             jobs = promise.jobs;
 
-        let job: (DataPromise.Job<T>|undefined);
+        let job: (DataPromise.Job<T>|undefined),
+            rejectHandled: (boolean|undefined);
 
-        if (promise.state === DataPromise.State.Fulfilled) {
-            const value = promise.value;
-            while ((job = jobs.shift())) {
-                job.resolve(value);
+        while ((job = jobs.shift())) {
+            try {
+                if (promise.state === DataPromise.State.Fulfilled) {
+                    job.resolve(promise.value);
+                } else if (job.reject) {
+                    rejectHandled = true;
+                    job.reject(promise.reason);
+                }
+            } catch (e) {
+                rejectHandled = false;
+                promise.reason = e;
+                promise.state = DataPromise.State.Rejected;
             }
-        } else {
-            const reason = promise.reason;
-            while ((job = jobs.shift())) {
-                job.reject(reason);
+        }
+
+        if (rejectHandled === false) {
+            if (promise.reason) {
+                throw promise.reason;
+            } else {
+                throw new Error('Unhandled rejection');
             }
         }
     }
 
+}
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface DataPromise<T> extends Promise<T> {
+    // applies all promise typing to class
 }
 
 /* *
