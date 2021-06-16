@@ -218,10 +218,6 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         className: 'hcd-component',
         parentElement: document.body,
         parentCell: void 0,
-        dimensions: {
-            width: '100%',
-            height: '100%'
-        },
         type: '',
         id: '',
         title: false,
@@ -231,7 +227,6 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             'flex-direction': 'column'
         },
         editableOptions: [
-            'dimensions',
             'id',
             'store',
             'style',
@@ -244,7 +239,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public parentElement: HTMLElement;
     public parentCell?: Cell;
     public store?: Component.StoreTypes; // the attached store
-    public dimensions: { width: number | null; height: number | null };
+    protected dimensions: { width: number | null; height: number | null };
     public element: HTMLElement;
     public titleElement?: HTMLElement;
     public captionElement?: HTMLElement;
@@ -829,7 +824,6 @@ namespace Component {
     export type StoreTypes = DataStore<DataStore.Event>
 
     export interface EditableOptions {
-        dimensions?: { width?: number | string; height?: number | string };
         store?: StoreTypes;
         id?: string;
         style?: CSSObject;
