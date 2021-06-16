@@ -20,8 +20,10 @@
 
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
-import type ModifierType from './ModifierType';
 import type DataTable from '../DataTable';
+import type ModifierType from './ModifierType';
+
+import DataPromise from '../DataPromise.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -186,7 +188,7 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
         const results: Array<number> = [];
         const modifier = this as DataModifier<DataModifier.BenchmarkEvent|DataModifier.Event>;
         const execute = (): void => {
-            modifier.modify(dataTable);
+            modifier.modifyTable(dataTable);
             modifier.emit({ type: 'afterBenchmarkIteration' });
         };
 
@@ -252,13 +254,21 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {Highcharts.DataTable}
-     * Modified copy.
+     * @return {Promise<Highcharts.DataTable>}
+     * Table with `modified` property as a reference.
      */
-    public abstract modify(
-        table: DataTable,
+    public modify<T extends DataTable>(
+        table: T,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable;
+    ): DataPromise<T> {
+        const modifier = this;
+        return new DataPromise((resolve): void => {
+            if (table.modified === table) {
+                table.modified = table.clone(false, eventDetail);
+            }
+            resolve(modifier.modifyTable(table, eventDetail));
+        });
+    }
 
     /**
      * Applies partial modifications of a cell change to the property `modified`
@@ -280,15 +290,15 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Table with `modified` property as a reference.
      */
-    public abstract modifyCell(
-        table: DataTable,
+    public abstract modifyCell<T extends DataTable>(
+        table: T,
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable;
+    ): T;
 
     /**
      * Applies partial modifications of column changes to the property
@@ -307,14 +317,14 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Table with `modified` property as a reference.
      */
-    public abstract modifyColumns(
-        table: DataTable,
+    public abstract modifyColumns<T extends DataTable>(
+        table: T,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable;
+    ): T;
 
     /**
      * Applies partial modifications of row changes to the property `modified`
@@ -333,14 +343,32 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Table with `modified` property as a reference.
      */
-    public abstract modifyRows(
-        table: DataTable,
+    public abstract modifyRows<T extends DataTable>(
+        table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable;
+    ): T;
+
+    /**
+     * Applies modifications of row changes to the property `modified` of the
+     * given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Table to modify.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Table with `modified` property as a reference.
+     */
+    public abstract modifyTable<T extends DataTable>(
+        table: T,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): T;
 
     /**
      * Registers a callback for a specific modifier event.

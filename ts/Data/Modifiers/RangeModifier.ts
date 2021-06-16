@@ -111,6 +111,94 @@ class RangeModifier extends DataModifier {
      * */
 
     /**
+     * Applies partial modifications of a cell change to the property `modified`
+     * of the given modified table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {string} columnName
+     * Column name of changed cell.
+     *
+     * @param {number|undefined} rowIndex
+     * Row index of changed cell.
+     *
+     * @param {Highcharts.DataTableCellType} cellValue
+     * Changed cell value.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Table with `modified` property as a reference.
+     */
+    public modifyCell<T extends DataTable>(
+        table: T,
+        columnName: string,
+        rowIndex: number,
+        cellValue: DataTable.CellType,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): T {
+        return this.modifyTable(table);
+    }
+
+    /**
+     * Applies partial modifications of column changes to the property
+     * `modified` of the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {Highcharts.DataTableColumnCollection} columns
+     * Changed columns as a collection, where the keys are the column names.
+     *
+     * @param {number} [rowIndex=0]
+     * Index of the first changed row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Table with `modified` property as a reference.
+     */
+    public modifyColumns<T extends DataTable>(
+        table: T,
+        columns: DataTable.ColumnCollection,
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): T {
+        return this.modifyTable(table);
+    }
+
+    /**
+     * Applies partial modifications of row changes to the property `modified`
+     * of the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {Array<(Highcharts.DataTableRow|Highcharts.DataTableRowObject)>} rows
+     * Changed rows.
+     *
+     * @param {number} [rowIndex]
+     * Index of the first changed row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Table with `modified` property as a reference.
+     */
+    public modifyRows<T extends DataTable>(
+        table: T,
+        rows: Array<(DataTable.Row|DataTable.RowObject)>,
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): T {
+        return this.modifyTable(table);
+    }
+
+    /**
      * Replaces table rows with filtered rows.
      *
      * @param {DataTable} table
@@ -120,23 +208,25 @@ class RangeModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * Table as a reference.
+     * Table with `modified` property as a reference.
      */
-    public modify(
-        table: DataTable,
+    public modifyTable<T extends DataTable>(
+        table: T,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
-        const modifier = this,
-            {
-                ranges,
-                strict
-            } = modifier.options;
+    ): T {
+        const modifier = this;
 
-        this.emit({ type: 'modify', detail: eventDetail, table });
+        modifier.emit({ type: 'modify', detail: eventDetail, table });
+
+        const {
+            ranges,
+            strict
+        } = modifier.options;
 
         if (ranges.length) {
             const columns = table.getColumns(),
-                rows: Array<DataTable.Row> = [];
+                rows: Array<DataTable.Row> = [],
+                modified = table.modified;
 
             for (
                 let i = 0,
@@ -196,120 +286,12 @@ class RangeModifier extends DataModifier {
                 }
             }
 
-            table.deleteRows();
-            table.setRows(rows);
+            modified.deleteRows();
+            modified.setRows(rows);
         }
 
-        this.emit({
-            type: 'afterModify',
-            detail: eventDetail,
-            table
-        });
+        modifier.emit({ type: 'afterModify', detail: eventDetail, table });
 
-        return table;
-    }
-
-
-    /**
-     * Applies partial modifications of a cell change to the property `modified`
-     * of the given modified table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {string} columnName
-     * Column name of changed cell.
-     *
-     * @param {number|undefined} rowIndex
-     * Row index of changed cell.
-     *
-     * @param {Highcharts.DataTableCellType} cellValue
-     * Changed cell value.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Modified table as a reference.
-     */
-    public modifyCell(
-        table: DataTable,
-        columnName: string,
-        rowIndex: number,
-        cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
-        table.modified.setColumns(
-            this.modify(table.clone()).getColumns(),
-            void 0,
-            eventDetail
-        );
-        return table;
-    }
-
-    /**
-     * Applies partial modifications of column changes to the property
-     * `modified` of the given table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {Highcharts.DataTableColumnCollection} columns
-     * Changed columns as a collection, where the keys are the column names.
-     *
-     * @param {number} [rowIndex=0]
-     * Index of the first changed row.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Modified table as a reference.
-     */
-    public modifyColumns(
-        table: DataTable,
-        columns: DataTable.ColumnCollection,
-        rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
-        table.modified.setColumns(
-            this.modify(table.clone()).getColumns(),
-            void 0,
-            eventDetail
-        );
-        return table;
-    }
-
-    /**
-     * Applies partial modifications of row changes to the property `modified`
-     * of the given table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {Array<(Highcharts.DataTableRow|Highcharts.DataTableRowObject)>} rows
-     * Changed rows.
-     *
-     * @param {number} [rowIndex]
-     * Index of the first changed row.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Modified table as a reference.
-     */
-    public modifyRows(
-        table: DataTable,
-        rows: Array<(DataTable.Row|DataTable.RowObject)>,
-        rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
-        table.modified.setColumns(
-            this.modify(table.clone()).getColumns(),
-            void 0,
-            eventDetail
-        );
         return table;
     }
 
