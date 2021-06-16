@@ -1,7 +1,7 @@
 ---
-name: OHLC
+name: HLC
 authors:
-  - Torstein Hønsi
+  - Pawel Lysy
 compareTooltips: true
 js_wrap: b
 tags:
