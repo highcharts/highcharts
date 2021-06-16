@@ -212,6 +212,17 @@ declare global {
 
 import '../Core/Axis/Axis.js';
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        dataGroup?: Highcharts.DataGroupingInfoObject;
+    }
+}
 
 /* ************************************************************************** *
  *  Start data grouping module                                                *
