@@ -17,7 +17,28 @@
  * */
 
 import type AnimationOptions from '../Animation/AnimationOptions';
+import A from '../Animation/AnimationUtilities.js';
+import type { EventCallback } from '../Callback';
+import type Chart from '../Chart/Chart';
+import Color from '../Color/Color.js';
+import Palette from '../Color/Palette.js';
+import D from '../DefaultOptions.js';
+import F from '../Foundation.js';
+import H from '../Globals.js';
+import type PointerEvent from '../PointerEvent';
+import type { AlignValue } from '../Renderer/AlignObject';
+import type CSSObject from '../Renderer/CSSObject';
+import type FontMetricsObject from '../Renderer/FontMetricsObject';
+import type PositionObject from '../Renderer/PositionObject';
+import type SizeObject from '../Renderer/SizeObject';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGElement';
+import type SVGPath from '../Renderer/SVG/SVGPath';
+import type Point from '../Series/Point';
+import type Series from '../Series/Series';
+import U from '../Utilities.js';
 import type AxisComposition from './AxisComposition';
+import AxisDefaults from './AxisDefaults.js';
 import type AxisLike from './AxisLike';
 import type {
     AxisCrosshairOptions,
@@ -29,36 +50,15 @@ import type {
     YAxisOptions
 } from './AxisOptions';
 import type { AxisTypeOptions } from './AxisType';
-import type TickPositionsArray from './TickPositionsArray';
-import type { AlignValue } from '../Renderer/AlignObject';
-import type Chart from '../Chart/Chart';
-import type CSSObject from '../Renderer/CSSObject';
-import type { EventCallback } from '../Callback';
-import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type PlotLineOrBand from './PlotLineOrBand';
-import type Point from '../Series/Point';
-import type PointerEvent from '../PointerEvent';
-import type PositionObject from '../Renderer/PositionObject';
-import type Series from '../Series/Series';
-import type SizeObject from '../Renderer/SizeObject';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import type SVGPath from '../Renderer/SVG/SVGPath';
-import A from '../Animation/AnimationUtilities.js';
+import Tick from './Tick.js';
+import type TickPositionsArray from './TickPositionsArray';
 const { animObject } = A;
-import AxisDefaults from './AxisDefaults.js';
-import Color from '../Color/Color.js';
-import F from '../Foundation.js';
 const {
     registerEventOptions
 } = F;
-import H from '../Globals.js';
 const { deg2rad } = H;
-import Palette from '../Color/Palette.js';
-import D from '../DefaultOptions.js';
 const { defaultOptions } = D;
-import Tick from './Tick.js';
-import U from '../Utilities.js';
 const {
     arrayMax,
     arrayMin,
@@ -3537,10 +3537,12 @@ class Axis {
      *
      * @param {number} pos
      * The position in axis values.
+     *
+     * @param {boolean} slideIn
+     * Whether the tick should animate in from last computed position
      */
-    public renderMinorTick(pos: number): void {
+    public renderMinorTick(pos: number, slideIn?: boolean): void {
         const axis = this;
-        const slideInTicks = axis.chart.hasRendered && axis.old;
         const minorTicks = axis.minorTicks;
 
         if (!minorTicks[pos]) {
@@ -3548,7 +3550,7 @@ class Axis {
         }
 
         // Render new ticks in old position
-        if (slideInTicks && minorTicks[pos].isNew) {
+        if (slideIn && minorTicks[pos].isNew) {
             minorTicks[pos].render(null as any, true);
         }
 
@@ -3566,12 +3568,14 @@ class Axis {
      *
      * @param {number} i
      * The tick index.
+     *
+     * @param {boolean} slideIn
+     * Whether the tick should animate in from last computed position
      */
-    public renderTick(pos: number, i: number): void {
+    public renderTick(pos: number, i: number, slideIn?: boolean): void {
         const axis = this,
             isLinked = axis.isLinked,
-            ticks = axis.ticks,
-            slideInTicks = axis.chart.hasRendered && axis.old;
+            ticks = axis.ticks;
 
         // Linked axes need an extra check to find out if
         if (
@@ -3586,7 +3590,7 @@ class Axis {
             // NOTE this seems like overkill. Could be handled in tick.render by
             // setting old position in attr, then set new position in animate.
             // render new ticks in old position
-            if (slideInTicks && ticks[pos].isNew) {
+            if (slideIn && ticks[pos].isNew) {
                 // Start with negative opacity so that it is visible from
                 // halfway into the animation
                 ticks[pos].render(i, true, -1);
@@ -3642,12 +3646,15 @@ class Axis {
         // If the series has data draw the ticks. Else only the line and title
         if (axis.hasData() || isLinked) {
 
+            const slideInTicks = axis.chart.hasRendered &&
+                axis.old && isNumber(axis.old.min);
+
             // minor ticks
             if (axis.minorTickInterval && !axis.categories) {
                 axis.getMinorTickPositions().forEach(function (
                     pos: number
                 ): void {
-                    axis.renderMinorTick(pos);
+                    axis.renderMinorTick(pos, slideInTicks);
                 });
             }
 
@@ -3655,7 +3662,7 @@ class Axis {
             // we can get the position of the neighbour label. #808.
             if (tickPositions.length) { // #1300
                 tickPositions.forEach(function (pos: number, i: number): void {
-                    axis.renderTick(pos, i);
+                    axis.renderTick(pos, i, slideInTicks);
                 });
                 // In a categorized axis, the tick marks are displayed
                 // between labels. So we need to add a tick mark and
