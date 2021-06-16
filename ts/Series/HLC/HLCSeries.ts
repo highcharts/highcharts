@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2021 Pawel Lysy
  *
  *  License: www.highcharts.com/license
  *
@@ -263,7 +263,7 @@ class HLCSeries extends ColumnSeries {
                 if (point.close !== null) {
                     plotClose = Math.round(point.plotClose) + crispCorr;
                     path.push(
-                        ['M', crispX, plotClose],
+                        ['M', crispX - halfWidth, plotClose],
                         ['L', crispX + halfWidth, plotClose]
                     );
 

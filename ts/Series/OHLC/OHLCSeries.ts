@@ -23,6 +23,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import OHLCPoint from './OHLCPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
         hlc: HLCSeries
     }
@@ -31,6 +32,7 @@ import U from '../../Core/Utilities.js';
 import HLCPoint from '../HLC/HLCPoint';
 
 const {
+    addEvent,
     extend,
     merge
 } = U;
@@ -382,6 +384,26 @@ SeriesRegistry.registerSeriesType('ohlc', OHLCSeries);
  * */
 
 export default OHLCSeries;
+
+addEvent(Series, 'init', function (
+    eventOptions: { options: OHLCSeriesOptions }
+): void {
+    // eslint-disable-next-line no-invalid-this
+    const series = this,
+        options = eventOptions.options;
+
+    if (
+        options.useOhlcData &&
+        options.id !== 'highcharts-navigator-series'
+    ) {
+        extend(series, {
+            pointValKey: OHLCSeries.prototype.pointValKey,
+            // keys: ohlcProto.keys, // @todo potentially nonsense
+            pointArrayMap: OHLCSeries.prototype.pointArrayMap,
+            toYData: OHLCSeries.prototype.toYData
+        });
+    }
+});
 
 /* *
  *
