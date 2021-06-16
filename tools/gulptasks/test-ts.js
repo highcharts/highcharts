@@ -110,7 +110,7 @@ function shouldRun() {
     ) {
 
         logLib.success(
-            '✓ Source code and unit tests have been not modified' +
+            '✓ Source code and unit tests have not been modified' +
             ' since the last successful test run.'
         );
 

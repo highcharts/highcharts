@@ -1238,9 +1238,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {Promise}
-     * Resolves to the table if successful, otherwise rejects promise.
-     *
      * @emits #setCell
      * @emits #afterSetCell
      */
@@ -1249,7 +1246,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataPromise<this> {
+    ): void {
         const table = this,
             columns = table.columns,
             modifier = table.modifier;
@@ -1261,10 +1258,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
         let column = columns[columnNameOrAlias];
 
-        if (!column) {
-            column = columns[columnNameOrAlias] = new Array(table.rowCount);
-        } else if (column[rowIndex] === cellValue) {
-            return DataPromise.resolve(table);
+        if (column && column[rowIndex] === cellValue) {
+            return;
         }
 
         table.emit({
@@ -1274,6 +1269,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             detail: eventDetail,
             rowIndex
         });
+
+        if (!column) {
+            column = columns[columnNameOrAlias] = new Array(table.rowCount);
+        }
 
         if (rowIndex >= table.rowCount) {
             table.rowCount = (rowIndex + 1);
@@ -1292,8 +1291,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             detail: eventDetail,
             rowIndex
         });
-
-        return DataPromise.resolve(this);
     }
 
     /**
@@ -1308,13 +1305,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * Values to set in the column.
      *
      * @param {number} [rowIndex=0]
-     * Index of the first row to change.
+     * Index of the first row to change. (Default: 0)
      *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
-     *
-     * @return {Promise}
-     * Resolves to the table if successful, otherwise rejects promise.
      *
      * @emits #setColumns
      * @emits #afterSetColumns
@@ -1324,8 +1318,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         column: DataTable.Column = [],
         rowIndex: number = 0,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataPromise<this> {
-        return this.setColumns({ [columnNameOrAlias]: column }, rowIndex, eventDetail);
+    ): void {
+        this.setColumns({ [columnNameOrAlias]: column }, rowIndex, eventDetail);
     }
 
     /**
@@ -1371,9 +1365,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {Promise}
-     * Resolves to the table if successful, otherwise rejects promise.
-     *
      * @emits #setColumns
      * @emits #afterSetColumns
      */
@@ -1381,7 +1372,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         columns: DataTable.ColumnCollection,
         rowIndex?: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataPromise<this> {
+    ): void {
         const table = this,
             tableColumns = table.columns,
             tableModifier = table.modifier,
@@ -1452,25 +1443,31 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             detail: eventDetail,
             rowIndex
         });
-
-        return DataPromise.resolve(table);
     }
 
     /**
      * Sets or unsets the modifier for the table.
      * @private
      *
-     * @param {Highcharts.DataModifier|undefined} modifier
+     * @param {Highcharts.DataModifier} [modifier]
      * Modifier to set, or `undefined` to unset.
      *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
+     *
+     * @return {Promise<Highcharts.DataTable>}
+     * Resolves to this table if successfull, or rejects on failure.
+     *
+     * @emits #setModifier
+     * @emits #afterSetModifier
      */
     public setModifier(
-        modifier: (DataModifier | undefined),
+        modifier?: DataModifier,
         eventDetail?: DataEventEmitter.EventDetail
-    ): void {
+    ): DataPromise<this> {
         const table = this;
+
+        let promise: DataPromise<this>;
 
         table.emit({
             type: 'setModifier',
@@ -1482,17 +1479,26 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         table.modifier = modifier;
 
         if (modifier) {
-            table.modified = modifier.modify(table.clone());
-        } else if (table.modified !== table) {
-            table.modified = table;
+            promise = modifier.modify(table);
+        } else {
+            promise = DataPromise
+                .resolve(table)
+                .then((table): this => {
+                    table.modified = table;
+                    return table;
+                });
         }
 
-        this.emit({
-            type: 'afterSetModifier',
-            detail: eventDetail,
-            modifier,
-            modified: table.modified
-        });
+        return promise
+            .then((table): this => {
+                this.emit({
+                    type: 'afterSetModifier',
+                    detail: eventDetail,
+                    modifier,
+                    modified: table.modified
+                });
+                return table;
+            });
     }
 
     /**
@@ -1513,9 +1519,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {Promise}
-     * Resolves to the table if successful, otherwise rejects promise.
-     *
      * @emits #setRows
      * @emits #afterSetRows
      */
@@ -1523,8 +1526,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         row: (DataTable.Row|DataTable.RowObject),
         rowIndex?: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataPromise<this> {
-        return this.setRows([row], rowIndex, eventDetail);
+    ): void {
+        this.setRows([row], rowIndex, eventDetail);
     }
 
     /**
@@ -1543,9 +1546,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {Promise}
-     * Resolves to the table if successful, otherwise rejects promise.
-     *
      * @emits #setRows
      * @emits #afterSetRows
      */
@@ -1553,7 +1553,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number = this.rowCount,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataPromise<this> {
+    ): void {
         const table = this,
             aliasMap = table.aliasMap,
             columns = table.columns,
@@ -1623,8 +1623,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             rowIndex,
             rows
         });
-
-        return DataPromise.resolve(table);
     }
 
     /**

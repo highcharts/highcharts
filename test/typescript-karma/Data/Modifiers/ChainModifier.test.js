@@ -5,6 +5,7 @@ import RangeModifier from '/base/js/Data/Modifiers/RangeModifier.js';
 import SortModifier from '/base/js/Data/Modifiers/SortModifier.js';
 
 QUnit.test('ChainModifier.benchmark', function (assert) {
+
     const modifier = new ChainModifier(
             {},
             new GroupModifier({
@@ -53,7 +54,9 @@ QUnit.test('ChainModifier.benchmark', function (assert) {
 });
 
 QUnit.test('ChainModifier.modify', function (assert) {
-    const modifier = new ChainModifier(
+
+    const done = assert.async(),
+        modifier = new ChainModifier(
             {},
             new GroupModifier({
                 groupColumn: 'y'
@@ -71,184 +74,232 @@ QUnit.test('ChainModifier.modify', function (assert) {
             y: ['a', 'a', 'b', 'b', 'c', 'c']
         });
 
-    modifier.modify(table);
+    modifier
+        .modify(table)
+        .then((table) => {
 
-    assert.equal(
-        table.getRowCount(),
-        2,
-        'Modified table should contain two rows, one for each group.'
-    );
-    assert.deepEqual(
-        table.toJSON(),
-        {
-            $class: 'DataTable',
-            columns: {
-                groupBy: ['y', 'y'],
-                table: [{
+            assert.equal(
+                table.modified.getRowCount(),
+                2,
+                'Modified table should contain two rows, one for each group.'
+            );
+
+            assert.deepEqual(
+                table.modified.toJSON(),
+                {
                     $class: 'DataTable',
                     columns: {
-                        x: [1, 2],
-                        y: ['a', 'a']
+                        groupBy: ['y', 'y'],
+                        table: [{
+                            $class: 'DataTable',
+                            columns: {
+                                x: [1, 2],
+                                y: ['a', 'a']
+                            }
+                        }, {
+                            $class: 'DataTable',
+                            columns: {
+                                x: [3, 4],
+                                y: ['b', 'b']
+                            }
+                        }],
+                        value: ['a', 'b']
                     }
-                }, {
-                    $class: 'DataTable',
-                    columns: {
-                        x: [3, 4],
-                        y: ['b', 'b']
-                    }
-                }],
-                value: ['a', 'b']
-            }
-        },
-        'Modified table should have expected structure of two rows with sub tables.'
-    );
+                },
+                'Modified table should have expected structure of two rows with sub tables.'
+            );
+
+        })
+        .catch((e) =>
+            assert.notOk(true, e)
+        )
+        .then(() =>
+            done()
+        );
+
 });
 
 QUnit.test('ChainModifier.modifyCell', function (assert) {
-    const table = new DataTable({
-        x: [1, 2, 3, 4, 5, 6]
-    });
 
-    table.setModifier(new ChainModifier({
-            columns: ['x', 'y']
-        },
-        new RangeModifier({
-            ranges: [{
-                column: 'x',
-                minValue: 2,
-                maxValue: 5
-            }]
-        }),
-        new SortModifier({
-            direction: 'desc',
-            sortByColumn: 'x',
+    const done = assert.async(),
+        table = new DataTable({
+            x: [1, 2, 3, 4, 5, 6]
+        });
+
+    table
+        .setModifier(new ChainModifier({
+                columns: ['x', 'y']
+            },
+            new RangeModifier({
+                ranges: [{
+                    column: 'x',
+                    minValue: 2,
+                    maxValue: 5
+                }]
+            }),
+            new SortModifier({
+                direction: 'desc',
+                sortByColumn: 'x',
+            })
+        ))
+        .then((table) => {
+
+            assert.strictEqual(
+                table.getRowCount(),
+                6,
+                'DataTable should contain six rows.'
+            );
+
+            assert.strictEqual(
+                table.modified.getRowCount(),
+                4,
+                'DataTable.modified should contain four rows.'
+            );
+
+            table.setCell('x', 2, 0);
+
+            assert.strictEqual(
+                table.getRowCount(),
+                6,
+                'DataTable should contain six rows.'
+            );
+
+            assert.strictEqual(
+                table.modified.getRowCount(),
+                3,
+                'DataTable.modified should contain three rows.'
+            );
+
         })
-    ));
-
-    assert.strictEqual(
-        table.getRowCount(),
-        6,
-        'DataTable should contain six rows.'
-    );
-
-    assert.strictEqual(
-        table.modified.getRowCount(),
-        4,
-        'DataTable.modified should contain four rows.'
-    );
-
-    table.setCell('x', 2, 0);
-
-    assert.strictEqual(
-        table.getRowCount(),
-        6,
-        'DataTable should contain six rows.'
-    );
-
-    assert.strictEqual(
-        table.modified.getRowCount(),
-        3,
-        'DataTable.modified should contain three rows.'
-    );
+        .catch((e) =>
+            assert.notOk(true, e)
+        )
+        .then(() =>
+            done()
+        );
 
 });
 
 QUnit.test('ChainModifier.modifyColumns', function (assert) {
-    const table = new DataTable({
-        x: [1, 2, 3, 4, 5, 6]
-    });
 
-    table.setModifier(new ChainModifier({
-            columns: ['x', 'y']
-        },
-        new RangeModifier({
-            ranges: [{
-                column: 'x',
-                minValue: 2,
-                maxValue: 5
-            }]
-        }),
-        new SortModifier({
-            direction: 'desc',
-            sortByColumn: 'x',
+    const done = assert.async(),
+        table = new DataTable({
+            x: [1, 2, 3, 4, 5, 6]
+        });
+
+    table
+        .setModifier(new ChainModifier({
+                columns: ['x', 'y']
+            },
+            new RangeModifier({
+                ranges: [{
+                    column: 'x',
+                    minValue: 2,
+                    maxValue: 5
+                }]
+            }),
+            new SortModifier({
+                direction: 'desc',
+                sortByColumn: 'x',
+            })
+        ))
+        .then((table) => {
+
+            assert.strictEqual(
+                table.getRowCount(),
+                6,
+                'DataTable should contain six rows.'
+            );
+
+            assert.strictEqual(
+                table.modified.getRowCount(),
+                4,
+                'DataTable.modified should contain four rows.'
+            );
+
+            table.setColumn('x', [8, 3, 7, 4, 6, 5]);
+
+            assert.strictEqual(
+                table.getRowCount(),
+                6,
+                'DataTable should contain six rows.'
+            );
+
+            assert.strictEqual(
+                table.modified.getRowCount(),
+                3,
+                'DataTable.modified should contain three rows.'
+            );
+
         })
-    ));
-
-    assert.strictEqual(
-        table.getRowCount(),
-        6,
-        'DataTable should contain six rows.'
-    );
-
-    assert.strictEqual(
-        table.modified.getRowCount(),
-        4,
-        'DataTable.modified should contain four rows.'
-    );
-
-    table.setColumn('x', [8, 3, 7, 4, 6, 5]);
-
-    assert.strictEqual(
-        table.getRowCount(),
-        6,
-        'DataTable should contain six rows.'
-    );
-
-    assert.strictEqual(
-        table.modified.getRowCount(),
-        3,
-        'DataTable.modified should contain three rows.'
-    );
+        .catch((e) =>
+            assert.notOk(true, e)
+        )
+        .then(() =>
+            done()
+        );
 
 });
 
 
 QUnit.test('ChainModifier.modifyRows', function (assert) {
-    const table = new DataTable({
-        x: [6, 5, 4, 3, 2, 1],
-        ignoredColumn: ['a', 'b', 'c', 'd', 'e', 'f']
-    });
 
-    table.setModifier(new ChainModifier({
-            columns: ['x', 'y']
-        },
-        new RangeModifier({
-            ranges: [{
-                column: 'x',
-                minValue: 2,
-                maxValue: 5
-            }]
-        }),
-        new SortModifier({
-            direction: 'asc',
-            sortByColumn: 'x',
+    const done = assert.async(),
+        table = new DataTable({
+            x: [6, 5, 4, 3, 2, 1],
+            ignoredColumn: ['a', 'b', 'c', 'd', 'e', 'f']
+        });
+
+    table
+        .setModifier(new ChainModifier({
+                columns: ['x', 'y']
+            },
+            new RangeModifier({
+                ranges: [{
+                    column: 'x',
+                    minValue: 2,
+                    maxValue: 5
+                }]
+            }),
+            new SortModifier({
+                direction: 'asc',
+                sortByColumn: 'x',
+            })
+        ))
+        .then((table) => {
+
+            assert.strictEqual(
+                table.getRowCount(),
+                6,
+                'DataTable should contain six rows.'
+            );
+
+            assert.strictEqual(
+                table.modified.getRowCount(),
+                4,
+                'DataTable.modified should contain four rows.'
+            );
+
+            table.setRows([{ x: 1 }, { ignoredColumn: 'z' }, { x: 5 }], 4);
+
+            assert.strictEqual(
+                table.getRowCount(),
+                7,
+                'DataTable should contain seven rows.'
+            );
+
+            assert.strictEqual(
+                table.modified.getRowCount(),
+                4,
+                'DataTable.modified should contain three rows.'
+            );
+
         })
-    ));
-
-    assert.strictEqual(
-        table.getRowCount(),
-        6,
-        'DataTable should contain six rows.'
-    );
-
-    assert.strictEqual(
-        table.modified.getRowCount(),
-        4,
-        'DataTable.modified should contain four rows.'
-    );
-
-    table.setRows([{ x: 1 }, { ignoredColumn: 'z' }, { x: 5 }], 4);
-
-    assert.strictEqual(
-        table.getRowCount(),
-        7,
-        'DataTable should contain seven rows.'
-    );
-
-    assert.strictEqual(
-        table.modified.getRowCount(),
-        4,
-        'DataTable.modified should contain three rows.'
-    );
+        .catch((e) =>
+            assert.notOk(true, e)
+        )
+        .then(() =>
+            done()
+        );
 
 });

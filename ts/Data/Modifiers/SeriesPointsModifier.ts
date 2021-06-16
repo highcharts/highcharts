@@ -21,9 +21,9 @@
 import type DataEventEmitter from '../DataEventEmitter';
 
 import DataModifier from './DataModifier.js';
-import DataJSON from './../DataJSON.js';
-import DataTable from './../DataTable.js';
-import U from './../../Core/Utilities.js';
+import DataJSON from '../DataJSON.js';
+import DataTable from '../DataTable.js';
+import U from '../../Core/Utilities.js';
 const { merge } = U;
 
 /* *
@@ -105,40 +105,6 @@ class SeriesPointsModifier extends DataModifier {
      * */
 
     /**
-     * Renames columns to alternative column names (alias) depending on mapping
-     * option.
-     *
-     * @param {DataTable} table
-     * Table to modify.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {DataTable}
-     * Table as a reference.
-     */
-    public modify(
-        table: DataTable,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
-        const modifier = this,
-            aliasMap = modifier.options.aliasMap || {},
-            aliases = Object.keys(aliasMap);
-
-        this.emit({ type: 'modify', detail: eventDetail, table });
-
-        for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
-            alias = aliases[i];
-            table.renameColumn(aliasMap[alias], alias);
-        }
-
-        this.emit({ type: 'afterModify', detail: eventDetail, table });
-
-        return table;
-    }
-
-
-    /**
      * Applies partial modifications of a cell change to the property `modified`
      * of the given modified table.
      *
@@ -158,21 +124,16 @@ class SeriesPointsModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * Modified table as a reference.
+     * Table with `modified` property as a reference.
      */
-    public modifyCell(
-        table: DataTable,
+    public modifyCell<T extends DataTable>(
+        table: T,
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
-        table.modified.setColumns(
-            this.modify(table.clone()).getColumns(),
-            void 0,
-            eventDetail
-        );
-        return table;
+    ): T {
+        return this.modifyTable(table);
     }
 
     /**
@@ -192,20 +153,15 @@ class SeriesPointsModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * Modifier table as a reference.
+     * Table with `modified` property as a reference.
      */
-    public modifyColumns(
-        table: DataTable,
+    public modifyColumns<T extends DataTable>(
+        table: T,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
-        table.modified.setColumns(
-            this.modify(table.clone()).getColumns(),
-            void 0,
-            eventDetail
-        );
-        return table;
+    ): T {
+        return this.modifyTable(table);
     }
 
     /**
@@ -225,19 +181,49 @@ class SeriesPointsModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * Modified table as a reference.
+     * Table with `modified` property as a reference.
      */
-    public modifyRows(
-        table: DataTable,
+    public modifyRows<T extends DataTable>(
+        table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
-        table.modified.setColumns(
-            this.modify(table.clone()).getColumns(),
-            void 0,
-            eventDetail
-        );
+    ): T {
+        return this.modifyTable(table);
+    }
+
+    /**
+     * Renames columns to alternative column names (alias) depending on mapping
+     * option.
+     *
+     * @param {DataTable} table
+     * Table to modify.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {DataTable}
+     * Table with `modified` property as a reference.
+     */
+    public modifyTable<T extends DataTable>(
+        table: T,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): T {
+        const modifier = this;
+
+        modifier.emit({ type: 'modify', detail: eventDetail, table });
+
+        const aliasMap = modifier.options.aliasMap || {},
+            aliases = Object.keys(aliasMap),
+            modified = table.modified = table.clone(false, eventDetail);
+
+        for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
+            alias = aliases[i];
+            modified.renameColumn(aliasMap[alias], alias);
+        }
+
+        modifier.emit({ type: 'afterModify', detail: eventDetail, table });
+
         return table;
     }
 

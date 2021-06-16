@@ -115,14 +115,16 @@ QUnit.test('DataTable Column Aliases', function (assert) {
         'Table should return cell value for column name and alias.'
     );
 
-    assert.ok(
-        table.setRows(
-            [{
-                id: 'All Land',
-                population: 4
-            }],
-            table.getRowIndexBy('id', 'All Land')
-        ),
+    table.setRows(
+        [{
+            id: 'All Land',
+            population: 4
+        }],
+        table.getRowIndexBy('id', 'All Land')
+    );
+    assert.strictEqual(
+        table.getRowIndexBy('id', 'All Land'),
+        3,
         'Table should insert a new row with cell values.'
     )
 
@@ -259,7 +261,8 @@ QUnit.test('DataTable Column Retrieve', function (assert) {
 });
 
 QUnit.test('DataTable Events', function (assert) {
-    const registeredEvents = [];
+    const done = assert.async(),
+        registeredEvents = [];
 
     /** @param {DataTable.EventObject} e */
     function registerEvent(e) {
@@ -339,30 +342,6 @@ QUnit.test('DataTable Events', function (assert) {
     );
 
     registeredEvents.length = 0;
-    table.setModifier(new SortModifier());
-    assert.deepEqual(
-        registeredEvents,
-        [
-            'setModifier',
-            'cloneTable',
-            'afterCloneTable',
-            'afterSetModifier'
-        ],
-        'Events for DataTable.setModifier should be in expected order.'
-    );
-
-    registeredEvents.length = 0;
-    table.setModifier();
-    assert.deepEqual(
-        registeredEvents,
-        [
-            'setModifier',
-            'afterSetModifier'
-        ],
-        'Events for DataTable.setModifier should be in expected order.'
-    );
-
-    registeredEvents.length = 0;
     table.setColumn('new', [ 'new' ]);
     assert.deepEqual(
         registeredEvents,
@@ -405,6 +384,44 @@ QUnit.test('DataTable Events', function (assert) {
         ],
         'Events for DataTable.clone should be in expected order.'
     );
+
+    registeredEvents.length = 0;
+    table
+        .setModifier(new SortModifier())
+        .then((table) => {
+            assert.deepEqual(
+                registeredEvents,
+                [
+                    'setModifier',
+                    'cloneTable',
+                    'afterCloneTable',
+                    'afterSetModifier'
+                ],
+                'Events for DataTable.setModifier should be in expected order.'
+            );
+            return table;
+        })
+        .then((table) => {
+            registeredEvents.length = 0;
+            return table.setModifier();
+        })
+        .then((table) => {
+            assert.deepEqual(
+                registeredEvents,
+                [
+                    'setModifier',
+                    'afterSetModifier'
+                ],
+                'Events for DataTable.setModifier should be in expected order.'
+            );
+            return table;
+        })
+        .catch((e) =>
+            assert.notOk(true, e)
+        )
+        .then(() =>
+            done()
+        );
 
 });
 
@@ -664,7 +681,8 @@ QUnit.test('DataTable.setColumns', function (assert) {
 });
 
 QUnit.test('DataTable.setModifier', function (assert) {
-    const modifier = new SortModifier({
+    const done = assert.async(),
+        modifier = new SortModifier({
             direction: 'asc',
             orderByColumn: 'y',
             orderInColumn: 'x'
@@ -683,27 +701,39 @@ QUnit.test('DataTable.setModifier', function (assert) {
         'Modified table should contain unsorted columns.'
     );
 
-    table.setModifier(modifier);
-
-    assert.deepEqual(
-        table.modified.getColumns(),
-        {
-            x: [2, 0, 1],
-            y: [3, 1, 2] 
-        },
-        'Modified table should contain sorted columns.'
-    );
-
-    delete modifier.options.orderInColumn;
-    modifier.options.direction = 'desc';
-    table.setModifier(modifier);
-
-    assert.deepEqual(
-        table.modified.getColumns(),
-        {
-            x: [0, 2, 1],
-            y: [3, 2, 1] 
-        },
-        'Modified table should contain sorted columns.'
-    );
+    table
+        .setModifier(modifier)
+        .then((table) => {
+            assert.deepEqual(
+                table.modified.getColumns(),
+                {
+                    x: [2, 0, 1],
+                    y: [3, 1, 2] 
+                },
+                'Modified table should contain sorted columns.'
+            );
+            return table;
+        })
+        .then((table) => {
+            delete modifier.options.orderInColumn;
+            modifier.options.direction = 'desc';
+            return table.setModifier(modifier);
+        })
+        .then((table) => {
+            assert.deepEqual(
+                table.modified.getColumns(),
+                {
+                    x: [0, 2, 1],
+                    y: [3, 2, 1] 
+                },
+                'Modified table should contain sorted columns.'
+            )
+            return table;
+        })
+        .catch((e) =>
+            assert.notOk(true, e)
+        )
+        .then(() =>
+            done()
+        );
 });
