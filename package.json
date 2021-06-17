@@ -104,7 +104,7 @@
     "semver": "^7.3.5",
     "ts-node": "^9.1.1",
     "tsutils": "^3.21.0",
-    "typescript": "~3.9.9",
+    "typescript": "~3.9.10",
     "undertaker-forward-reference": "^1.0.2",
     "webpack": "^5.28.0",
     "yargs": "^16.2.0"
