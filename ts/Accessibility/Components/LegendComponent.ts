@@ -233,6 +233,22 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 component.updateProxyPositionForItem(e.item);
             }
         });
+        this.addEvent(Legend, 'afterRender', function (): void { // #15902
+            if (
+                this.chart === component.chart &&
+                this.chart.renderer &&
+                shouldDoLegendA11y(this.chart)
+            ) {
+                component.recreateProxies();
+
+                syncTimeout(
+                    (): void => component.updateProxiesPositions(),
+                    animObject(
+                        pick(this.chart.renderer.globalAnimation, true)
+                    ).duration
+                );
+            }
+        });
     },
 
 
@@ -266,22 +282,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * of the proxy overlays.
      */
     onChartRender: function (this: Highcharts.LegendComponent): void {
-        if (shouldDoLegendA11y(this.chart)) {
-            if (this.proxyElementsList.every(
-                (el): boolean => !!el.posElement.element
-            )) {
-                this.updateProxiesPositions();
-            } else { // #15902
-                this.recreateProxies();
-
-                syncTimeout(
-                    (): void => this.updateProxiesPositions(),
-                    animObject(
-                        pick(this.chart.renderer.globalAnimation, true)
-                    ).duration
-                );
-            }
-        } else {
+        if (!shouldDoLegendA11y(this.chart)) {
             this.removeProxies();
         }
     },
