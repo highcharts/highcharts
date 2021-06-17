@@ -82,29 +82,21 @@ declare global {
     }
 }
 
-/**
- * @private
- */
 declare module './AxisType' {
     interface AxisTypeRegistry {
         DateTimeAxis: DateTimeAxis.Composition;
     }
 }
 
-/* eslint-disable valid-jsdoc */
-
 /* *
  *
- *  Compositions
+ *  Composition
  *
  * */
 
-/**
- * DateTimeAxis composition
- *
- * Use `DateTimeAxis.compose` to create composed axis class.
- */
-namespace DateTimeAxis {
+/* eslint-disable valid-jsdoc */
+
+namespace DateTimeAxis{
 
     /* *
      *
@@ -113,16 +105,10 @@ namespace DateTimeAxis {
      * */
 
     export declare class Composition extends Axis {
-        dateTime: DateTimeAxis.Additions;
+        dateTime: Additions;
     }
 
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-    const composedClasses: Array<typeof Axis> = [];
+    export type PointIntervalUnitValue = ('day'|'month'|'year');
 
     /* *
      *
@@ -135,12 +121,6 @@ namespace DateTimeAxis {
      * @private
      */
     export function compose<T extends typeof Axis>(AxisClass: T): (typeof Composition&T) {
-
-        if (composedClasses.indexOf(AxisClass) !== -1) {
-            return AxisClass as (typeof Composition&T);
-        }
-
-        composedClasses.push(AxisClass);
 
         AxisClass.keepProps.push('dateTime');
 
@@ -186,7 +166,7 @@ namespace DateTimeAxis {
             }
 
             if (!axis.dateTime) {
-                axis.dateTime = new Additions(axis as Composition);
+                axis.dateTime = new Additions(axis as DateTimeAxis.Composition);
             }
         });
 
@@ -197,35 +177,35 @@ namespace DateTimeAxis {
 
     /* *
      *
-     *  Class
+     *  Classes
      *
      * */
 
     export class Additions {
 
         /* *
-        *
-        *  Constructors
-        *
-        * */
+         *
+         *  Constructors
+         *
+         * */
 
         public constructor(axis: DateTimeAxis.Composition) {
             this.axis = axis;
         }
 
         /* *
-        *
-        *  Properties
-        *
-        * */
+         *
+         *  Properties
+         *
+         * */
 
         public axis: Axis;
 
         /* *
-        *
-        *  Functions
-        *
-        * */
+         *
+         *  Functions
+         *
+         * */
 
         /**
          * Get a normalized tick interval for dates. Returns a configuration
@@ -241,8 +221,7 @@ namespace DateTimeAxis {
             tickInterval: number,
             unitsOption?: Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>
         ): Highcharts.DateTimeAxisNormalizedObject {
-            const units = (
-                unitsOption || [[
+            let units = unitsOption || [[
                     'millisecond', // unit name
                     [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
                 ], [
@@ -266,12 +245,11 @@ namespace DateTimeAxis {
                 ], [
                     'year',
                     null
-                ]] as Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>
-            );
-
-            let unit = units[units.length - 1], // default unit is years
+                ]] as Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>,
+                unit = units[units.length - 1], // default unit is years
                 interval = timeUnits[unit[0]],
                 multiples = unit[1],
+                count,
                 i;
 
             // loop through the units to find the one that best fits the
@@ -304,7 +282,7 @@ namespace DateTimeAxis {
             }
 
             // get the count
-            const count = normalizeTickInterval(
+            count = normalizeTickInterval(
                 tickInterval / interval,
                 multiples as any,
                 unit[0] === 'year' ? // #1913, #2360
@@ -314,7 +292,7 @@ namespace DateTimeAxis {
 
             return {
                 unitRange: interval,
-                count,
+                count: count,
                 unitName: unit[0]
             };
         }
@@ -330,3 +308,5 @@ namespace DateTimeAxis {
  * */
 
 export default DateTimeAxis;
+
+DateTimeAxis.compose(Axis);

@@ -350,6 +350,180 @@ H.approximations = {
     }
 };
 
+const applyGrouping = function (this: Series): void {
+    let series = this,
+        chart = series.chart,
+        options = series.options,
+        dataGroupingOptions = options.dataGrouping,
+        groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
+            pick(dataGroupingOptions.enabled, chart.options.isStock),
+        visible = (
+            series.visible || !chart.options.chart.ignoreHiddenSeries
+        ),
+        hasGroupedData,
+        skip,
+        lastDataGrouping = this.currentDataGrouping,
+        currentDataGrouping,
+        croppedData,
+        revertRequireSorting = false;
+
+    // Data needs to be sorted for dataGrouping
+    if (groupingEnabled && !series.requireSorting) {
+        series.requireSorting = revertRequireSorting = true;
+    }
+
+    // Skip if processData returns false or if grouping is disabled (in that
+    // order)
+    skip = skipDataGrouping(series) || !groupingEnabled;
+
+    // Revert original requireSorting value if changed
+    if (revertRequireSorting) {
+        series.requireSorting = false;
+    }
+
+    if (!skip) {
+        series.destroyGroupedData();
+
+        let i,
+            processedXData = (dataGroupingOptions as any).groupAll ?
+                series.xData :
+                series.processedXData,
+            processedYData = (dataGroupingOptions as any).groupAll ?
+                series.yData :
+                series.processedYData,
+            plotSizeX = chart.plotSizeX,
+            xAxis = series.xAxis,
+            ordinal = xAxis.options.ordinal,
+            groupPixelWidth = series.groupPixelWidth;
+
+        // Execute grouping if the amount of points is greater than the limit
+        // defined in groupPixelWidth
+        if (
+            groupPixelWidth &&
+            processedXData &&
+            processedXData.length
+        ) {
+            hasGroupedData = true;
+
+            // Force recreation of point instances in series.translate, #5699
+            series.isDirty = true;
+            series.points = null as any; // #6709
+
+            let extremes = xAxis.getExtremes(),
+                xMin = extremes.min,
+                xMax = extremes.max,
+                groupIntervalFactor = (
+                    ordinal &&
+                    xAxis.ordinal &&
+                    xAxis.ordinal.getGroupIntervalFactor(xMin, xMax, series)
+                ) || 1,
+                interval =
+                    (groupPixelWidth * (xMax - xMin) / (plotSizeX as any)) *
+                    groupIntervalFactor,
+                groupPositions = xAxis.getTimeTicks(
+                    DateTimeAxis.Additions.prototype.normalizeTimeTickInterval(
+                        interval,
+                        (dataGroupingOptions as any).units ||
+                        defaultDataGroupingUnits
+                    ),
+                    // Processed data may extend beyond axis (#4907)
+                    Math.min(xMin, processedXData[0]),
+                    Math.max(
+                        xMax,
+                        processedXData[processedXData.length - 1]
+                    ),
+                    xAxis.options.startOfWeek,
+                    processedXData,
+                    series.closestPointRange
+                ),
+                groupedData = seriesProto.groupData.apply(
+                    series,
+                    [
+                        processedXData,
+                        processedYData as any,
+                        groupPositions,
+                        (dataGroupingOptions as any).approximation
+                    ]
+                ),
+                groupedXData = groupedData.groupedXData,
+                groupedYData = groupedData.groupedYData,
+                gapSize = 0;
+
+            // The smoothed option is deprecated, instead,
+            // there is a fallback to the new anchoring mechanism. #12455.
+            if (dataGroupingOptions && dataGroupingOptions.smoothed && groupedXData.length) {
+                dataGroupingOptions.firstAnchor = 'firstPoint';
+                dataGroupingOptions.anchor = 'middle';
+                dataGroupingOptions.lastAnchor = 'lastPoint';
+
+                error(32, false, chart, { 'dataGrouping.smoothed': 'use dataGrouping.anchor' });
+            }
+
+            anchorPoints(series, groupedXData, xMax);
+
+            // Record what data grouping values were used
+            for (i = 1; i < groupPositions.length; i++) {
+                // The grouped gapSize needs to be the largest distance between
+                // the group to capture varying group sizes like months or DST
+                // crossing (#10000). Also check that the gap is not at the
+                // start of a segment.
+                if (!(groupPositions.info as any).segmentStarts ||
+                    (groupPositions.info as any).segmentStarts.indexOf(i) === -1
+                ) {
+                    gapSize = Math.max(
+                        groupPositions[i] - groupPositions[i - 1],
+                        gapSize
+                    );
+                }
+            }
+            currentDataGrouping = groupPositions.info;
+            (currentDataGrouping as any).gapSize = gapSize;
+            series.closestPointRange = (groupPositions.info as any).totalRange;
+            series.groupMap = groupedData.groupMap;
+
+            if (visible) {
+                adjustExtremes(xAxis, groupedXData);
+            }
+
+            // We calculated all group positions but we should render
+            // only the ones within the visible range
+            if ((dataGroupingOptions as any).groupAll) {
+                croppedData = series.cropData(
+                    groupedXData,
+                    groupedYData as any,
+                    xAxis.min as any,
+                    xAxis.max as any,
+                    1 // Ordinal xAxis will remove left-most points otherwise
+                );
+                groupedXData = croppedData.xData;
+                groupedYData = croppedData.yData;
+                series.cropStart = croppedData.start; // #15005
+            }
+            // Set series props
+            series.processedXData = groupedXData;
+            series.processedYData = groupedYData as any;
+        } else {
+            series.groupMap = null as any;
+        }
+        series.hasGroupedData = hasGroupedData;
+        series.currentDataGrouping = currentDataGrouping;
+
+        series.preventGraphAnimation =
+            (lastDataGrouping && lastDataGrouping.totalRange) !==
+            (currentDataGrouping && currentDataGrouping.totalRange);
+    }
+};
+
+const skipDataGrouping = function (series: Series): void|false {
+    if (series.isCartesian &&
+        !series.isDirty &&
+        !series.xAxis.isDirty &&
+        !series.yAxis.isDirty
+    ) {
+        return false;
+    }
+};
+
 const groupData = function (
     this: Series,
     xData: Array<number>,
