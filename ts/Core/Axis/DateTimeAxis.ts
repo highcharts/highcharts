@@ -36,7 +36,7 @@ const {
 
 declare module './AxisComposition' {
     interface AxisComposition {
-        dateTime?: DateTimeAxis.Additions;
+        dateTime?: DateTimeAxis.Composition['dateTime'];
     }
 }
 
@@ -112,7 +112,7 @@ namespace DateTimeAxis {
      *
      * */
 
-    export interface Composition extends Axis {
+    export declare class Composition extends Axis {
         dateTime: DateTimeAxis.Additions;
     }
 
@@ -122,7 +122,7 @@ namespace DateTimeAxis {
      *
      * */
 
-    const composedAxis: Array<typeof Axis> = [];
+    const composedClasses: Array<typeof Axis> = [];
 
     /* *
      *
@@ -134,13 +134,13 @@ namespace DateTimeAxis {
      * Extends axis class with date and time support.
      * @private
      */
-    export function compose<T extends typeof Axis>(AxisClass: T): (typeof DateTimeAxis&T) {
+    export function compose<T extends typeof Axis>(AxisClass: T): (typeof Composition&T) {
 
-        if (composedAxis.indexOf(AxisClass) !== -1) {
-            return AxisClass as (typeof DateTimeAxis&T);
+        if (composedClasses.indexOf(AxisClass) !== -1) {
+            return AxisClass as (typeof Composition&T);
         }
 
-        composedAxis.push(AxisClass);
+        composedClasses.push(AxisClass);
 
         AxisClass.keepProps.push('dateTime');
 
@@ -186,13 +186,13 @@ namespace DateTimeAxis {
             }
 
             if (!axis.dateTime) {
-                axis.dateTime = new Additions(axis as DateTimeAxis.Composition);
+                axis.dateTime = new Additions(axis as Composition);
             }
         });
 
         /* eslint-enable no-invalid-this */
 
-        return AxisClass as (typeof DateTimeAxis&T);
+        return AxisClass as (typeof Composition&T);
     }
 
     /* *
