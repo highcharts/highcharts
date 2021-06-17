@@ -62,19 +62,31 @@ QUnit.test('Stocktools GUI', function (assert) {
     */
 
     // Shorthand for selecting a button
-    function selectButton(name, index = -1) {
+    function selectButton(name, text = '') {
 
         let button = document.getElementsByClassName('highcharts-' + name)[0];
 
-        if (button.tagName === 'UL' && index > -1) {
-            button = button.getElementsByTagName('li')[index];
+        if (button.tagName === 'UL' && text !== '') {
+
+            button = button.getElementsByTagName('li');
+            let found = false,
+                i = -1;
+
+            while (!found && ++i < button.length) { // Find the button with text
+                if (button[i].innerHTML.indexOf(text) !== -1) {
+                    found = true;
+                    button = button[i];
+                    button.click();
+                }
+            }
+        } else {
+            button.click();
         }
 
-        button.click();
     }
 
     selectButton('indicators'); // Click on indicators
-    selectButton('indicator-list', 17); // Click on APO. 17 should probably not be hard-coded.
+    selectButton('indicator-list', 'APO'); // Click on APO.
 
     const textLabel = chart
         .navigationBindings
