@@ -190,12 +190,19 @@ class TextBuilder {
 
         const wrapper = this.svgElement;
         const x = attr(wrapper.element, 'x');
+        wrapper.firstLineMetrics = void 0;
 
         // Modify hard line breaks by applying the rendered line height
         [].forEach.call(
             wrapper.element.querySelectorAll('tspan.highcharts-br'),
-            (br: SVGDOMElement): void => {
+            (br: SVGDOMElement, i): void => {
                 if (br.nextSibling && br.previousSibling) { // #5261
+
+                    if (i === 0 && br.previousSibling.nodeType === 1) {
+                        wrapper.firstLineMetrics = wrapper.renderer
+                            .fontMetrics(void 0, br.previousSibling as any);
+                    }
+
                     attr(br, {
                         // Since the break is inserted in front of the next
                         // line, we need to use the next sibling for the line

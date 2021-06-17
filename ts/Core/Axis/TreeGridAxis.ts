@@ -31,11 +31,14 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../Series/PointOptions';
+import type Series from '../Series/Series';
 import type SizeObject from '../Renderer/SizeObject';
 import type { ChartAddSeriesEventObject } from '../Chart/ChartOptions';
 
-import Axis from './Axis.js';
-import Tick from './Tick.js';
+import type Axis from './Axis.js';
+import BrokenAxis from './BrokenAxis.js';
+import GridAxis from './GridAxis.js';
+import type Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import mixinTreeSeries from '../../Mixins/TreeSeries.js';
@@ -46,7 +49,6 @@ const {
     find,
     fireEvent,
     isArray,
-    isNumber,
     isObject,
     isString,
     merge,
@@ -54,8 +56,6 @@ const {
     wrap
 } = U;
 
-import './GridAxis.js';
-import './BrokenAxis.js';
 
 /* *
  *
@@ -88,6 +88,12 @@ declare module '../Series/PointOptions' {
     }
 }
 
+/* *
+ *
+ *  Composition
+ *
+ * */
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -114,7 +120,7 @@ namespace TreeGridAxis {
 
     /* *
      *
-     *  Interfaces
+     *  Declarations
      *
      * */
 
@@ -178,7 +184,7 @@ namespace TreeGridAxis {
      *
      * */
 
-    let applied: boolean = false;
+    let TickConstructor: (typeof Tick|undefined);
 
     /* *
      *
@@ -189,19 +195,31 @@ namespace TreeGridAxis {
     /**
      * @private
      */
-    export function compose(AxisClass: typeof Axis): void {
-
-        if (!applied) {
+    export function compose<T extends typeof Axis>(
+        AxisClass: T,
+        ChartClass: typeof Chart,
+        SeriesClass: typeof Series,
+        TickClass: typeof Tick
+    ): (T&typeof TreeGridAxis) {
+        if (AxisClass.keepProps.indexOf('treeGrid') === -1) {
+            AxisClass.keepProps.push('treeGrid');
+            TickConstructor = TickClass;
 
             wrap(AxisClass.prototype, 'generateTick', wrapGenerateTick);
-            wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
             wrap(AxisClass.prototype, 'init', wrapInit);
             wrap(AxisClass.prototype, 'setTickInterval', wrapSetTickInterval);
 
-            TreeGridTick.compose(Tick);
+            // Make utility functions available for testing.
+            AxisClass.prototype.utils = {
+                getNode: Tree.getNode
+            };
 
-            applied = true;
+            GridAxis.compose(AxisClass, ChartClass, TickClass);
+            BrokenAxis.compose(AxisClass, SeriesClass);
+            TreeGridTick.compose(TickClass);
         }
+
+        return AxisClass as (T&typeof TreeGridAxis);
     }
 
     /**
@@ -211,8 +229,9 @@ namespace TreeGridAxis {
         node: GridNode,
         max: number
     ): AxisBreakObject {
-        let from = node.collapseStart || 0,
-            to = node.collapseEnd || 0;
+        const to = node.collapseEnd || 0;
+
+        let from = node.collapseStart || 0;
 
         // In broken-axis, the axis.max is minimized until it is not within a
         // break. Therefore, if break.to is larger than axis.max, the axis.to
@@ -260,20 +279,21 @@ namespace TreeGridAxis {
         uniqueNames: boolean,
         numberOfSeries: number
     ): TreeGridObject {
-        let categories: Array<string> = [],
+        const categories: Array<string> = [],
             collapsedNodes: Array<GridNode> = [],
             mapOfIdToNode: Record<string, TreeGridNode> = {},
-            mapOfPosToGridNode: Record<string, GridNode> = {},
-            posIterator = -1,
-            uniqueNamesEnabled = typeof uniqueNames === 'boolean' ? uniqueNames : false,
-            tree: Highcharts.TreeNode;
+            uniqueNamesEnabled = typeof uniqueNames === 'boolean' ? uniqueNames : false;
+
+        let mapOfPosToGridNode: Record<string, GridNode> = {},
+            posIterator = -1;
 
         // Build the tree from the series data.
         const treeParams: Highcharts.TreeGetOptionsObject = {
             // After the children has been created.
             after: function (node: Highcharts.TreeNode): void {
-                let gridNode = mapOfPosToGridNode[(node as TreeGridNode).pos],
-                    height = 0,
+                const gridNode = mapOfPosToGridNode[(node as TreeGridNode).pos];
+
+                let height = 0,
                     descendants = 0;
 
                 gridNode.children.forEach(function (child: GridNode): void {
@@ -288,7 +308,7 @@ namespace TreeGridAxis {
             },
             // Before the children has been created.
             before: function (node: Highcharts.TreeNode): void {
-                let data = isObject(node.data, true) ? (node as TreeGridNode).data : {},
+                const data = isObject(node.data, true) ? (node as TreeGridNode).data : {},
                     name = isString(data.name) ? data.name : '',
                     parentNode = mapOfIdToNode[node.parent],
                     parentGridNode = (
@@ -298,8 +318,9 @@ namespace TreeGridAxis {
                     ),
                     hasSameName = function (x: GridNode): boolean {
                         return x.name === name;
-                    },
-                    gridNode: (GridNode | undefined),
+                    };
+
+                let gridNode: (GridNode | undefined),
                     pos;
 
                 // If not unique names, look for sibling node with the same name
@@ -367,10 +388,12 @@ namespace TreeGridAxis {
                 start: number,
                 result: Record<string, GridNode>
             ): Record<string, GridNode> {
-                let nodes = gridNode.nodes,
-                    end = start + (start === -1 ? 0 : numberOfSeries - 1),
-                    diff = (end - start) / 2,
-                    padding = 0.5,
+                const nodes = gridNode.nodes,
+                    padding = 0.5;
+
+                let end = start + (start === -1 ? 0 : numberOfSeries - 1);
+
+                const diff = (end - start) / 2,
                     pos = start + diff;
 
                 nodes.forEach(function (node: TreeGridNode): void {
@@ -406,7 +429,7 @@ namespace TreeGridAxis {
         };
 
         // Create tree from data
-        tree = Tree.getTree(data, treeParams);
+        const tree = Tree.getTree(data, treeParams);
 
         // Update y values of data, and set calculate tick positions.
         mapOfPosToGridNode = updateYValuesAndTickPos(
@@ -444,26 +467,26 @@ namespace TreeGridAxis {
             return axis.options.type === 'treegrid';
         }) as Array<TreeGridAxis>).forEach(
             function (axis: TreeGridAxis): void {
-                let options = axis.options || {},
+                const options = axis.options || {},
                     labelOptions = options.labels,
                     uniqueNames = options.uniqueNames,
-                    numberOfSeries = 0,
-                    isDirty: (boolean | undefined),
+                    max = options.max,
+                    // Check whether any of series is rendering for the first
+                    // time, visibility has changed, or its data is dirty, and
+                    // only then update. #10570, #10580
+                    // Also check if mapOfPosToGridNode exists. #10887
+                    isDirty = (
+                        !axis.treeGrid.mapOfPosToGridNode ||
+                        axis.series.some(function (series): (boolean|undefined) {
+                            return !series.hasRendered ||
+                                series.isDirtyData ||
+                                series.isDirty;
+                        })
+                    );
+
+                let numberOfSeries = 0,
                     data: Array<PointOptions>,
-                    treeGrid: TreeGridObject,
-                    max = options.max;
-                // Check whether any of series is rendering for the first time,
-                // visibility has changed, or its data is dirty,
-                // and only then update. #10570, #10580
-                // Also check if mapOfPosToGridNode exists. #10887
-                isDirty = (
-                    !axis.treeGrid.mapOfPosToGridNode ||
-                    axis.series.some(function (series): (boolean|undefined) {
-                        return !series.hasRendered ||
-                            series.isDirtyData ||
-                            series.isDirty;
-                    })
-                );
+                    treeGrid: TreeGridObject;
 
                 if (isDirty) {
                     // Concatenate data from all series assigned to this axis.
@@ -602,9 +625,12 @@ namespace TreeGridAxis {
                 };
             }
 
-            if (!tick) {
+            if (
+                !tick &&
+                TickConstructor
+            ) {
                 ticks[pos] = tick =
-                    new Tick(axis, pos, void 0, void 0, {
+                    new TickConstructor(axis, pos, void 0, void 0, {
                         category: gridNode.name,
                         tickmarkOffset: gridNode.tickmarkOffset,
                         options: options
@@ -618,33 +644,6 @@ namespace TreeGridAxis {
         } else {
             proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
         }
-    }
-
-    /**
-     * Override to add indentation to axis.maxLabelDimensions.
-     *
-     * @private
-     * @function Highcharts.GridAxis#getMaxLabelDimensions
-     *
-     * @param {Function} proceed
-     * The original function
-     */
-    function wrapGetMaxLabelDimensions(
-        this: TreeGridAxis,
-        proceed: Function
-    ): SizeObject {
-        const axis = this,
-            options = axis.options,
-            retVal = proceed.apply(axis, Array.prototype.slice.call(arguments, 1)),
-            isTreeGrid = options.type === 'treegrid';
-        let treeDepth: number;
-
-        if (isTreeGrid && axis.treeGrid.mapOfPosToGridNode) {
-            treeDepth = axis.treeGrid.mapOfPosToGridNode[-1].height || 0;
-            retVal.width += options.labels.indentation * (treeDepth - 1);
-        }
-
-        return retVal;
     }
 
     /**
@@ -1074,12 +1073,5 @@ namespace TreeGridAxis {
     }
 
 }
-
-// Make utility functions available for testing.
-(Axis.prototype as TreeGridAxis).utils = {
-    getNode: Tree.getNode
-};
-
-TreeGridAxis.compose(Axis);
 
 export default TreeGridAxis;

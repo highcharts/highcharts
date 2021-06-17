@@ -35,7 +35,6 @@ declare module '../../Core/Series/PointLike' {
     interface PointLike {
         category?: string;
         clientX?: number;
-        dataGroup?: Highcharts.DataGroupingInfoObject;
         dist?: number;
         distX?: number;
         hasImage?: boolean;

@@ -9,6 +9,7 @@
 /js
 /build
 /code
+/cypress
 /errors/errors.json
 /errors/errors.xml
 /git-ignore-me.properties
