@@ -653,25 +653,45 @@ class Chart {
      *
      * @private
      * @function Highcharts.Chart#orderItems
-     * @param {Array<Series>|Array<Axis>} collection
+     * @param {string} coll The collection name
      * @param {number} [fromIndex=0]
      * If this is given, only the series above this index are handled.
      */
-    public orderItems(collection: Series[]|Axis[], fromIndex = 0): void {
-        for (let i = fromIndex, iEnd = collection.length; i < iEnd; ++i) {
-            const item = collection[i];
-            if (item) {
-                /**
-                 * Contains the series' index in the `Chart.series` array.
-                 *
-                 * @name Highcharts.Series#index
-                 * @type {number}
-                 * @readonly
-                 */
-                item.index = i;
+    public orderItems(
+        coll: ('colorAxis'|'series'|'xAxis'|'yAxis'|'zAxis'),
+        fromIndex = 0
+    ): void {
+        const collection = this[coll];
 
-                if (item instanceof Series) {
-                    item.name = item.getName();
+        // Item options should be reflected in chart.options.series,
+        // chart.options.yAxis etc
+        let optionsArray = this.options[coll];
+        if (!isArray(optionsArray)) {
+            this.options[coll] = optionsArray = [];
+        }
+        if (this.hasRendered) {
+            // Remove all above index
+            optionsArray.splice(fromIndex);
+        }
+
+        if (collection) {
+            for (let i = fromIndex, iEnd = collection.length; i < iEnd; ++i) {
+                const item = collection[i];
+                if (item) {
+                    /**
+                     * Contains the series' index in the `Chart.series` array.
+                     *
+                     * @name Highcharts.Series#index
+                     * @type {number}
+                     * @readonly
+                     */
+                    item.index = i;
+
+                    (this.options as any)[coll][i] = item.options;
+
+                    if (item instanceof Series) {
+                        item.name = item.getName();
+                    }
                 }
             }
         }
@@ -2682,7 +2702,9 @@ class Chart {
         chart.getAxes();
 
         // Initialize the series
-        (isArray(options.series) ? options.series : []).forEach(
+        const series = isArray(options.series) ? options.series : [];
+        options.series = []; // Avoid mutation
+        series.forEach(
             // #9680
             function (serieOptions): void {
                 chart.initSeries(serieOptions);

@@ -20,6 +20,7 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 import type AxisComposition from './AxisComposition';
 import type AxisLike from './AxisLike';
 import type {
+    AxisCollectionKey,
     AxisCrosshairOptions,
     AxisLabelFormatterCallback,
     AxisLabelFormatterContextObject,
@@ -134,7 +135,7 @@ declare module '../Series/SeriesOptions' {
  * The Chart instance to apply the axis on.
  *
  * @param {Highcharts.AxisOptions} userOptions
- * Axis options.
+ * Axis options
  */
 class Axis {
 
@@ -183,7 +184,7 @@ class Axis {
     public categories: Array<string> = void 0 as any;
     public chart: Chart = void 0 as any;
     public closestPointRange: number = void 0 as any;
-    public coll: string = void 0 as any;
+    public coll: AxisCollectionKey = void 0 as any;
     public cross?: SVGElement;
     public crosshair?: AxisCrosshairOptions;
     public dataMax?: (null|number);
@@ -503,7 +504,7 @@ class Axis {
 
             (chart as any)[axis.coll].push(axis);
         }
-        chart.orderItems((chart as any)[axis.coll]);
+        chart.orderItems(axis.coll);
 
         /**
          * All series associated to the axis.
@@ -556,22 +557,10 @@ class Axis {
             ][this.side],
             merge(
                 // if set in setOptions (#1053):
-                (defaultOptions as any)[this.coll],
+                defaultOptions[this.coll],
                 userOptions
             )
         );
-
-        // @todo Use index
-        // - reindex on addAxis and Axis.remove
-        /*
-        const chart = this.chart,
-            coll = this.coll as 'yAxis'|'xAxis',
-            i = chart[coll].indexOf(this),
-            optionsArr = chart.options[coll];
-        if (i !== -1 && isArray(optionsArr)) {
-            optionsArr[i] = this.options;
-        }
-        */
 
         fireEvent(this, 'afterSetOptions', { userOptions: userOptions });
     }
@@ -4161,7 +4150,7 @@ class Axis {
      */
     public remove(redraw?: boolean): void {
         const chart = this.chart,
-            coll = this.coll, // xAxis or yAxis
+            coll = this.coll,
             axisSeries = this.series;
 
         let i = axisSeries.length;
@@ -4175,9 +4164,9 @@ class Axis {
 
         // Remove the axis
         erase(chart.axes, this);
-        erase((chart as any)[coll], this);
+        erase(chart[coll] || [], this);
 
-        chart.orderItems((chart as any)[coll]);
+        chart.orderItems(coll);
         this.destroy();
         chart.isDirtyBox = true;
 

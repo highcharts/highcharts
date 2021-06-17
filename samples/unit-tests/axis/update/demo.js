@@ -80,7 +80,7 @@ QUnit.test('Update to non-ordinal (#4196)', function (assert) {
 });
 
 QUnit.test('General yAxis updates', function (assert) {
-    var chart = new Highcharts.StockChart({
+    const chart = new Highcharts.StockChart({
         chart: {
             type: 'column',
             renderTo: 'container',
@@ -92,6 +92,24 @@ QUnit.test('General yAxis updates', function (assert) {
             }
         }
     });
+
+    const checkOptionsConsistency = () => {
+        assert.strictEqual(
+            chart.options.yAxis.length,
+            chart.yAxis.length,
+            'Chart Options yAxis should be the same length as Chart yAxis'
+        );
+
+        for (let i = 0; i < chart.yAxis.length; i++) {
+            assert.strictEqual(
+                chart.options.yAxis[i],
+                chart.yAxis[i].options,
+                'Current axis options should be available in chart options'
+            );
+        }
+    };
+
+    checkOptionsConsistency();
 
     // #5323
     chart.yAxis[0].setTitle({
@@ -106,6 +124,8 @@ QUnit.test('General yAxis updates', function (assert) {
         ]
     });
 
+    checkOptionsConsistency();
+
     assert.strictEqual(
         chart.series[0].points.length,
         3,
@@ -117,12 +137,14 @@ QUnit.test('General yAxis updates', function (assert) {
     chart.addAxis({}, false, false);
     chart.yAxis[2].remove();
 
+
+    checkOptionsConsistency();
+
     assert.strictEqual(
         chart.yAxis[2].index,
         chart.yAxis.length - 1,
         'Last index should be less than yAxis array length (#8075)'
     );
-
 
     chart.update({
         series: [{
@@ -143,6 +165,8 @@ QUnit.test('General yAxis updates', function (assert) {
         chart.yAxis[2],
         '#9671: The second series should be bound to the second axis'
     );
+
+    checkOptionsConsistency();
 });
 
 // Highcharts 4.1.1, Issue #3830

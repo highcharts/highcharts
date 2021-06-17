@@ -439,7 +439,7 @@ namespace GridAxis {
                 // Remove column axis from chart axes array, and place it
                 // in the columns array.
                 erase(chart.axes, column);
-                erase((chart as any)[axis.coll], column);
+                erase(chart[axis.coll] || [], column);
                 columns.push(column);
             }
         }

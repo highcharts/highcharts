@@ -2895,7 +2895,7 @@ class Series {
 
         // Insert the series and re-order all series above the insertion
         // point.
-        chart.orderItems(chartSeries, this.insert(chartSeries));
+        chart.orderItems('series', this.insert(chartSeries));
 
         // Set options for series with sorting and set data later.
         if (options.dataSorting && options.dataSorting.enabled) {
@@ -5407,7 +5407,7 @@ class Series {
             chart.hoverSeries = void 0;
         }
         erase(chart.series, series);
-        chart.orderItems(chart.series);
+        chart.orderItems('series');
 
         // clear all members
         objectEach(series, function (val: any, prop: string): void {
