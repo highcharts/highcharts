@@ -154,8 +154,11 @@ class MapSeries extends ScatterSeries {
 
         dataLabels: {
             crop: false,
-            formatter: function (): (number|null) { // #2945
-                return (this.point as MapPoint).value;
+            formatter: function (): string { // #2945
+                const { numberFormatter } = this.point.series.chart;
+                const { value } = this.point as MapPoint;
+
+                return isNumber(value) ? numberFormatter(value, -1) : '';
             },
             inside: true, // for the color
             overflow: false as any,
