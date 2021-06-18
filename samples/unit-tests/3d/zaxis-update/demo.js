@@ -68,6 +68,10 @@ QUnit.test('zAxis update through chart.update() (#6566)', function (assert) {
         ]
     });
 
+    let updates = 0;
+
+    Highcharts.addEvent(Highcharts.Axis, 'afterInit', () => updates++);
+
     chart.update({
         zAxis: {
             min: 0,
@@ -89,5 +93,11 @@ QUnit.test('zAxis update through chart.update() (#6566)', function (assert) {
         chart.zAxis[0].isZAxis,
         true,
         '#14793: isZAxis should still be true after update'
+    );
+
+    assert.strictEqual(
+        updates,
+        1,
+        'zAxis should only have updated once'
     );
 });
