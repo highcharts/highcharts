@@ -308,5 +308,3 @@ namespace DateTimeAxis{
  * */
 
 export default DateTimeAxis;
-
-DateTimeAxis.compose(Axis);
