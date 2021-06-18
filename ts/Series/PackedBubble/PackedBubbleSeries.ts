@@ -208,7 +208,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                     PackedBubbleDataLabelFormatterObject
                 )
             ): string {
-                const { numberFormatter } = this.point.series.chart;
+                const { numberFormatter } = this.series.chart;
                 const { value } = this.point as PackedBubblePoint;
 
                 return isNumber(value) ? numberFormatter(value, -1) : '';
