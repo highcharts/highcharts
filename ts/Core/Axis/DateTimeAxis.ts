@@ -16,7 +16,7 @@
  *
  * */
 
-import type Series from '../Series/Series';
+import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time.js';
 
@@ -43,8 +43,14 @@ declare module './AxisComposition' {
 
 declare module './AxisOptions' {
     interface AxisOptions {
-        dateTimeLabelFormats?: Highcharts.XAxisDateTimeLabelFormatsOptions;
-        units?: Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>;
+        dateTimeLabelFormats?: DateTimeAxis.LabelFormatOptions;
+        units?: Array<[DateTimeAxis.LabelFormatsKey, (Array<number>|null)]>;
+    }
+}
+
+declare module './AxisType' {
+    interface AxisTypeRegistry {
+        DateTimeAxis: DateTimeAxis.Composition;
     }
 }
 
@@ -55,37 +61,9 @@ declare module '../Series/SeriesOptions' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        type DateTimeLabelFormatsKey = keyof XAxisDateTimeLabelFormatsOptions;
-        interface DateTimeAxisNormalizedObject extends Time.TimeNormalizedObject {
-            unitName: DateTimeLabelFormatsKey;
-        }
-        interface DateTimeLabelFormatOptionsObject {
-            list?: Array<string>;
-            main?: string;
-            range?: boolean;
-        }
-        interface XAxisDateTimeLabelFormatsOptions {
-            day?: (string|DateTimeLabelFormatOptionsObject);
-            hour?: (string|DateTimeLabelFormatOptionsObject);
-            millisecond?: (string|DateTimeLabelFormatOptionsObject);
-            minute?: (string|DateTimeLabelFormatOptionsObject);
-            month?: (string|DateTimeLabelFormatOptionsObject);
-            second?: (string|DateTimeLabelFormatOptionsObject);
-            week?: (string|DateTimeLabelFormatOptionsObject);
-            year?: (string|DateTimeLabelFormatOptionsObject);
-        }
-    }
-}
-
-declare module './AxisType' {
-    interface AxisTypeRegistry {
-        DateTimeAxis: DateTimeAxis.Composition;
+declare module './TimeTicksInfoObject' {
+    interface TimeTicksInfoObject extends DateTimeAxis.NormalizedObject {
+        // nothing to add
     }
 }
 
@@ -107,6 +85,29 @@ namespace DateTimeAxis{
 
     export declare class Composition extends Axis {
         dateTime: Additions;
+    }
+
+    export type LabelFormatsKey = keyof LabelFormatOptions;
+
+    export interface LabelFormatOptions {
+        day?: (string|LabelFormatOptionsObject);
+        hour?: (string|LabelFormatOptionsObject);
+        millisecond?: (string|LabelFormatOptionsObject);
+        minute?: (string|LabelFormatOptionsObject);
+        month?: (string|LabelFormatOptionsObject);
+        second?: (string|LabelFormatOptionsObject);
+        week?: (string|LabelFormatOptionsObject);
+        year?: (string|LabelFormatOptionsObject);
+    }
+
+    export interface LabelFormatOptionsObject {
+        list?: Array<string>;
+        main?: string;
+        range?: boolean;
+    }
+
+    export interface NormalizedObject extends Time.TimeNormalizedObject {
+        unitName: LabelFormatsKey;
     }
 
     export type PointIntervalUnitValue = ('day'|'month'|'year');
@@ -220,9 +221,10 @@ namespace DateTimeAxis{
          */
         public normalizeTimeTickInterval(
             tickInterval: number,
-            unitsOption?: Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>
-        ): Highcharts.DateTimeAxisNormalizedObject {
-            let units = unitsOption || [[
+            unitsOption?: AxisOptions['units']
+        ): DateTimeAxis.NormalizedObject {
+            const units = (
+                unitsOption || [[
                     'millisecond', // unit name
                     [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
                 ], [
@@ -246,11 +248,12 @@ namespace DateTimeAxis{
                 ], [
                     'year',
                     null
-                ]] as Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>,
-                unit = units[units.length - 1], // default unit is years
+                ]] as Required<AxisOptions>['units']
+            );
+
+            let unit = units[units.length - 1], // default unit is years
                 interval = timeUnits[unit[0]],
                 multiples = unit[1],
-                count,
                 i;
 
             // loop through the units to find the one that best fits the
@@ -283,7 +286,7 @@ namespace DateTimeAxis{
             }
 
             // get the count
-            count = normalizeTickInterval(
+            const count = normalizeTickInterval(
                 tickInterval / interval,
                 multiples as any,
                 unit[0] === 'year' ? // #1913, #2360
