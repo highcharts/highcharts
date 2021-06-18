@@ -16,6 +16,7 @@
  *
  * */
 
+import type Series from '../Series/Series';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time.js';
 
@@ -50,7 +51,7 @@ declare module './AxisOptions' {
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
         pointInterval?: number;
-        pointIntervalUnit?: Highcharts.SeriesPointIntervalUnitValue;
+        pointIntervalUnit?: DateTimeAxis.PointIntervalUnitValue;
     }
 }
 

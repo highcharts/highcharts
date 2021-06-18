@@ -84,14 +84,14 @@ class LineSeries extends Series {
      * @function Highcharts.Series#drawGraph
      */
     public drawGraph(): void {
-        let series = this,
+        const series = this,
             options = this.options,
             graphPath = (this.gappedPath || this.getGraphPath).call(this),
-            styledMode = this.chart.styledMode,
-            props = [[
-                'graph',
-                'highcharts-graph'
-            ]];
+            styledMode = this.chart.styledMode;
+        let props = [[
+            'graph',
+            'highcharts-graph'
+        ]];
 
         // Presentational properties
         if (!styledMode) {
@@ -109,10 +109,10 @@ class LineSeries extends Series {
 
         // Draw the graph
         props.forEach(function (prop, i): void {
-            let graphKey = prop[0],
-                graph = (series as any)[graphKey],
-                verb = graph ? 'animate' : 'attr',
-                attribs: SVGAttributes;
+            const graphKey = prop[0];
+            let attribs: SVGAttributes,
+                graph = (series as any)[graphKey];
+            const verb = graph ? 'animate' : 'attr';
 
             if (graph) {
                 graph.endX = series.preventGraphAnimation ?
@@ -189,18 +189,17 @@ class LineSeries extends Series {
         nullsAsZeroes?: boolean,
         connectCliffs?: boolean
     ): SVGPath {
-        let series = this,
+        const series = this,
             options = series.options,
-            step = options.step as any,
-            reversed,
             graphPath = [] as SVGPath,
-            xMap = [] as Array<(number|null)>,
-            gap: boolean;
+            xMap = [] as Array<(number|null)>;
+        let gap: boolean,
+            step = options.step as any;
 
         points = points || series.points;
 
         // Bottom of a stack is reversed
-        reversed = (points as any).reversed;
+        const reversed = (points as any).reversed;
         if (reversed) {
             points.reverse();
         }
@@ -223,11 +222,11 @@ class LineSeries extends Series {
         // Build the line
         points.forEach(function (point, i): void {
 
-            let plotX = point.plotX,
+            const plotX = point.plotX,
                 plotY = point.plotY,
-                lastPoint = (points as any)[i - 1],
-                // the path to this point from the previous
-                pathToPoint: SVGPath;
+                lastPoint = (points as any)[i - 1];
+            // the path to this point from the previous
+            let pathToPoint: SVGPath;
 
             if (
                 (point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&

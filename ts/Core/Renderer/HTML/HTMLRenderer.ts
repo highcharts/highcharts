@@ -301,7 +301,7 @@ class HTMLRenderer extends SVGRenderer {
                                     if (parents[0].div) { // #6418
                                         wrapper.on.apply({
                                             element: parents[0].div,
-                                            onEvents: wrapper.onEvents
+                                            onEvents: parentGroup.onEvents
                                         }, arguments);
                                     }
                                     return parentGroup;
