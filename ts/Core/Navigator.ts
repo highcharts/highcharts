@@ -10,13 +10,25 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    AxisOptions,
+    YAxisOptions
+} from './Axis/AxisOptions';
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
 import type PointerEvent from './PointerEvent';
 import type RangeSelector from '../Extensions/RangeSelector';
+import type ScrollbarOptions from './ScrollbarOptions';
 import type { SeriesTypeOptions } from './Series/SeriesType';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
+
 import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
 import Color from './Color/Color.js';
@@ -54,6 +66,24 @@ const {
     removeEvent,
     splat
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './Axis/AxisOptions' {
+    interface AxisOptions {
+        maxRange?: number;
+        toFixedRange?: (
+            pxMin: number,
+            pxMax: number,
+            fixedMin: number,
+            fixedMax: number
+        ) => RangeSelector.RangeObject;
+    }
+}
 
 declare module './Chart/ChartLike'{
     interface ChartLike {
@@ -114,17 +144,8 @@ declare global {
             outlineWidth?: number;
             series?: SeriesTypeOptions;
             top?: number;
-            xAxis?: DeepPartial<XAxisOptions>;
+            xAxis?: DeepPartial<AxisOptions>;
             yAxis?: DeepPartial<YAxisOptions>;
-        }
-        interface XAxisOptions {
-            maxRange?: number;
-            toFixedRange?: (
-                pxMin: number,
-                pxMax: number,
-                fixedMin: number,
-                fixedMax: number
-            ) => RangeSelector.RangeObject;
         }
         class Navigator {
             public constructor(chart: Chart);
@@ -841,10 +862,10 @@ class Navigator {
     public range: number = void 0 as any;
     public rendered: boolean = void 0 as any;
     public reversedExtremes?: boolean;
-    public scrollbar?: Highcharts.Scrollbar;
+    public scrollbar?: Scrollbar;
     public scrollbarEnabled?: boolean;
     public scrollbarHeight?: number;
-    public scrollbarOptions?: Highcharts.ScrollbarOptions;
+    public scrollbarOptions?: ScrollbarOptions;
     public series?: Array<Series>;
     public shades: Array<SVGElement> = void 0 as any;
     public size: number = void 0 as any;
@@ -1893,7 +1914,7 @@ class Navigator {
 
         if (navigator.navigatorEnabled) {
             // an x axis is required for scrollbar also
-            navigator.xAxis = new Axis(chart, merge<DeepPartial<Highcharts.XAxisOptions>>({
+            navigator.xAxis = new Axis(chart, merge<DeepPartial<AxisOptions>>({
                 // inherit base xAxis' break and ordinal options
                 breaks: baseXaxis.options.breaks,
                 ordinal: baseXaxis.options.ordinal
@@ -1920,7 +1941,7 @@ class Navigator {
             })) as NavigatorAxis;
 
             navigator.yAxis = new Axis(chart, merge(
-                navigatorOptions.yAxis as Highcharts.YAxisOptions,
+                navigatorOptions.yAxis,
                 {
                     id: 'navigator-y-axis',
                     alignTicks: false,
@@ -2022,14 +2043,13 @@ class Navigator {
         if ((chart.options.scrollbar as any).enabled) {
             chart.scrollbar = navigator.scrollbar = new Scrollbar(
                 chart.renderer,
-                merge(chart.options.scrollbar as Highcharts.ScrollbarOptions, {
+                merge(chart.options.scrollbar, {
                     margin: navigator.navigatorEnabled ? 0 : 10,
                     vertical: chart.inverted
-                } as Highcharts.ScrollbarOptions),
+                } as DeepPartial<ScrollbarOptions>),
                 chart
             );
             addEvent(navigator.scrollbar, 'changed', function (
-                this: Highcharts.Scrollbar,
                 e: PointerEvent
             ): void {
                 const range = navigator.size,
@@ -2455,7 +2475,7 @@ class Navigator {
      * @private
      * @function Highcharts.Navigator#modifyBaseAxisExtremes
      */
-    public modifyBaseAxisExtremes(this: Highcharts.Axis): void {
+    public modifyBaseAxisExtremes(this: Axis): void {
         let baseXAxis = this,
             navigator = baseXAxis.chart.navigator,
             baseExtremes = baseXAxis.getExtremes(),
@@ -2750,7 +2770,10 @@ if (!H.Navigator) {
                     this.spacing[3] + (scrollbarHeight as any);
                 navigator.top = this.plotTop + (scrollbarHeight as any);
             } else {
-                navigator.left = this.plotLeft + (scrollbarHeight as any);
+                navigator.left = pick(
+                    xAxis.left,
+                    this.plotLeft + (scrollbarHeight as any)
+                );
                 navigator.top = (navigator.navigatorOptions.top as any) ||
                     this.chartHeight -
                     navigator.height -
@@ -2855,5 +2878,11 @@ if (!H.Navigator) {
 }
 
 H.Navigator = Navigator;
+
+declare module './Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        'navigator-handle': SymbolFunction;
+    }
+}
 
 export default H.Navigator;

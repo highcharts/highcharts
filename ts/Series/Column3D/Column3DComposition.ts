@@ -19,6 +19,7 @@
 import type Axis from '../../Core/Axis/Axis';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
+import type Chart3D from '../../Core/Chart/Chart3D';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColumnPoint from '../Column/ColumnPoint';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
@@ -26,6 +27,7 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Position3DObject from '../../Core/Renderer/Position3DObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
 import H from '../../Core/Globals.js';
@@ -106,9 +108,9 @@ declare module '../../Core/Series/SeriesOptions' {
 function retrieveStacks(
     chart: Chart,
     stacking?: string
-): Highcharts.Stack3DDictionary {
+): Chart3D.Stack3DDictionary {
     const series = chart.series as Array<Series>,
-        stacks = {} as Highcharts.Stack3DDictionary;
+        stacks: Chart3D.Stack3DDictionary = { totalStacks: 0 };
 
     let stackNumber: number,
         i = 1;

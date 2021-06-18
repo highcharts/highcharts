@@ -65,6 +65,21 @@ const {
     syncTimeout
 } = U;
 
+declare module '../Core/Axis/AxisLike' {
+    interface AxisLike {
+        ddPoints?: Record<string, Array<(false|Point)>>;
+        oldPos?: number;
+        drilldownCategory(x: number, e: MouseEvent): void;
+        getDDPoints(x: number): Array<(false|Point)>;
+    }
+}
+
+declare module '../Core/Axis/TickLike' {
+    interface TickLike {
+        drillable(): void;
+    }
+}
+
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         ddDupes?: Array<string>;
@@ -107,10 +122,11 @@ declare module '../Core/Renderer/SVG/SVGElementLike' {
 declare module '../Core/Series/PointLike' {
     interface PointLike {
         drilldown?: string;
-        doDrilldown(
-            _holdRedraw: (boolean|undefined),
-            category: (number|undefined),
-            originalEvent: Event
+        doDrilldown(): void;
+        runDrilldown(
+            holdRedraw?: boolean,
+            category?: number,
+            originalEvent?: Event
         ): void;
         unbindDrilldownClick?: Function;
     }
@@ -145,12 +161,6 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            ddPoints?: Record<string, Array<(false|Point)>>;
-            oldPos?: number;
-            drilldownCategory(x: number, e: MouseEvent): void;
-            getDDPoints(x: number): Array<(false|Point)>;
-        }
         interface ChartDrilldownObject {
             update(options: DrilldownOptions, redraw?: boolean): void;
         }
@@ -925,6 +935,9 @@ Chart.prototype.showDrillUpButton = function (): void {
  * @requires  modules/drilldown
  *
  * @function Highcharts.Chart#drillUp
+ *
+ * @sample {highcharts} highcharts/drilldown/programmatic
+ *         Programmatic drilldown
  */
 Chart.prototype.drillUp = function (): void {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
@@ -1086,8 +1099,13 @@ addEvent(Chart, 'render', function (): void {
                         if (!(axis.ddPoints as any)[xData[i]]) {
                             (axis.ddPoints as any)[xData[i]] = [];
                         }
+
+                        const index = i - (series.cropStart || 0);
+
                         (axis.ddPoints as any)[xData[i]].push(
-                            points ? points[i] : true
+                            (points && index >= 0 && index < points.length) ?
+                                points[index] :
+                                true
                         );
                     }
                 }
@@ -1359,15 +1377,35 @@ if (PieSeries) {
     });
 }
 
-Point.prototype.doDrilldown = function (
-    _holdRedraw: (boolean|undefined),
+/**
+ * Perform drilldown on a point instance. The [drilldown](https://api.highcharts.com/highcharts/series.line.data.drilldown)
+ * property must be set on the point options.
+ *
+ * To drill down multiple points in the same category, use
+ * `Axis.drilldownCategory` instead.
+ *
+ * @requires  modules/drilldown
+ *
+ * @function Highcharts.Point#doDrilldown
+ *
+ * @sample {highcharts} highcharts/drilldown/programmatic
+ *         Programmatic drilldown
+ */
+Point.prototype.doDrilldown = function (): void {
+    this.runDrilldown();
+};
+
+Point.prototype.runDrilldown = function (
+    holdRedraw: (boolean|undefined),
     category: (number|undefined),
-    originalEvent: Event
+    originalEvent: Event|undefined
 ): void {
-    let series = this.series,
+
+    const series = this.series,
         chart = series.chart,
-        drilldown = chart.options.drilldown,
-        i: number = ((drilldown as any).series || []).length,
+        drilldown = chart.options.drilldown;
+
+    let i: number = ((drilldown as any).series || []).length,
         seriesOptions: (SeriesOptions|undefined);
 
     if (!chart.ddDupes) {
@@ -1402,7 +1440,7 @@ Point.prototype.doDrilldown = function (
             seriesOptions = e.seriesOptions;
 
         if (chart && seriesOptions) {
-            if (_holdRedraw) {
+            if (holdRedraw) {
                 chart.addSingleSeriesAsDrilldown(e.point, seriesOptions);
             } else {
                 chart.addSeriesAsDrilldown(e.point, seriesOptions);
@@ -1413,27 +1451,33 @@ Point.prototype.doDrilldown = function (
 
 /**
  * Drill down to a given category. This is the same as clicking on an axis
- * label.
+ * label. If multiple series with drilldown are present, all will drill down to
+ * the given category.
  *
- * @private
+ * See also `Point.doDrilldown` for drilling down on a single point instance.
+ *
  * @function Highcharts.Axis#drilldownCategory
+ *
+ * @sample {highcharts} highcharts/drilldown/programmatic
+ *         Programmatic drilldown
+ *
  * @param {number} x
- *        Tick position
- * @param {global.MouseEvent} e
- *        Click event
+ *        The index of the category
+ * @param {global.MouseEvent} [originalEvent]
+ *        The original event, used internally.
  */
 Axis.prototype.drilldownCategory = function (
     x: number,
-    e: MouseEvent
+    originalEvent?: MouseEvent
 ): void {
     this.getDDPoints(x).forEach(function (point): void {
         if (
             point &&
             point.series &&
             point.series.visible &&
-            point.doDrilldown
+            point.runDrilldown
         ) { // #3197
-            point.doDrilldown(true, x, e);
+            point.runDrilldown(true, x, originalEvent);
         }
     });
     this.chart.applyDrilldown();
@@ -1559,7 +1603,7 @@ const handlePointClick = function (
         // #5822, x changed
         series.xAxis.drilldownCategory(point.x as any, e);
     } else {
-        point.doDrilldown(void 0, void 0, e);
+        point.runDrilldown(void 0, void 0, e);
     }
 };
 

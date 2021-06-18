@@ -10,8 +10,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Series from '../Series/Series';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time.js';
+
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
@@ -21,10 +29,29 @@ const {
     timeUnits
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisComposition' {
+    interface AxisComposition {
+        dateTime?: DateTimeAxis['dateTime'];
+    }
+}
+
+declare module './AxisOptions' {
+    interface AxisOptions {
+        dateTimeLabelFormats?: Highcharts.XAxisDateTimeLabelFormatsOptions;
+        units?: Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>;
+    }
+}
+
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
         pointInterval?: number;
-        pointIntervalUnit?: Highcharts.SeriesPointIntervalUnitValue;
+        pointIntervalUnit?: DateTimeAxis.PointIntervalUnitValue;
     }
 }
 
@@ -53,20 +80,13 @@ declare global {
             week?: (string|DateTimeLabelFormatOptionsObject);
             year?: (string|DateTimeLabelFormatOptionsObject);
         }
-        interface XAxisOptions {
-            dateTimeLabelFormats?: XAxisDateTimeLabelFormatsOptions;
-            units?: Array<[DateTimeLabelFormatsKey, (Array<number>|null)]>;
-        }
     }
 }
 
 /**
  * @private
  */
-declare module './Types' {
-    interface AxisComposition {
-        dateTime?: DateTimeAxis['dateTime'];
-    }
+declare module './AxisType' {
     interface AxisTypeRegistry {
         DateTimeAxis: DateTimeAxis;
     }
@@ -287,5 +307,9 @@ interface DateTimeAxis extends Axis {
 }
 
 DateTimeAxis.compose(Axis);
+
+namespace DateTimeAxis{
+    export type PointIntervalUnitValue = ('day'|'month'|'year');
+}
 
 export default DateTimeAxis;

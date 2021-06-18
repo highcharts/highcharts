@@ -16,6 +16,7 @@
  *
  * */
 
+import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
@@ -438,12 +439,6 @@ class Tooltip {
                 }]
             }]
         });
-        chart.renderer.definition({
-            tagName: 'style',
-            textContent: '.highcharts-tooltip-' + chart.index + '{' +
-                'filter:url(#drop-shadow-' + chart.index + ')' +
-            '}'
-        });
     }
 
     /**
@@ -574,8 +569,8 @@ class Tooltip {
             plotLeft = chart.plotLeft,
             plotX = 0,
             plotY = 0,
-            yAxis: Highcharts.Axis|undefined,
-            xAxis: Highcharts.Axis|undefined;
+            yAxis: (Axis|undefined),
+            xAxis: (Axis|undefined);
 
         points = splat(points);
 
@@ -847,10 +842,12 @@ class Tooltip {
                 }
             }
 
-            if (styledMode) {
+            if (styledMode && options.shadow) {
                 // Apply the drop-shadow filter
                 this.applyFilter();
-                this.label.addClass('highcharts-tooltip-' + this.chart.index);
+                this.label.attr({
+                    filter: 'url(#drop-shadow-' + this.chart.index + ')'
+                });
             }
 
             // Split tooltip use updateTooltipContainer to position the tooltip
@@ -1094,7 +1091,7 @@ class Tooltip {
     public getXDateFormat(
         point: Point,
         options: TooltipOptions,
-        xAxis: Highcharts.Axis
+        xAxis: Axis
     ): string {
         let xDateFormat,
             dateTimeLabelFormats = options.dateTimeLabelFormats,
@@ -1912,9 +1909,9 @@ class Tooltip {
 
         const chart = tooltip.chart;
         const label = tooltip.label;
-        const point = chart.hoverPoint;
+        const points = tooltip.shared ? chart.hoverPoints : chart.hoverPoint;
 
-        if (!label || !point) {
+        if (!label || !points) {
             return;
         }
 
@@ -1926,7 +1923,7 @@ class Tooltip {
         };
 
         // Combine anchor and tooltip
-        const anchorPos = this.getAnchor(point);
+        const anchorPos = this.getAnchor(points);
         const labelBBox = label.getBBox();
 
         anchorPos[0] += chart.plotLeft - label.translateX;

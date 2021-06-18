@@ -955,3 +955,35 @@ QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (asser
         the ordinal positions should be recalculated- allows panning.`
     );
 });
+
+QUnit.test('Grouping each series when the only one requires that, #6765.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            width: 400
+        },
+        plotOptions: {
+            series: {
+                dataGrouping: {
+                    groupPixelWidth: 50,
+                    units: [
+                        ['millisecond', [2]]
+                    ]
+                }
+            }
+        },
+        series: [{
+            data: [0, 5, 3, 4]
+        }, {
+            data: [2, 2, 3, 5, 6, 7, 2, 4, 5, 4, 6, 7, 5, 6]
+        }
+        ]
+    });
+
+    assert.strictEqual(
+        chart.series[0].processedXData.length,
+        2,
+        `Even if the first series doesn't require grouping,
+        It should be grouped the same as the second one is.
+        Thus only two grouped points should be visible.`
+    );
+});

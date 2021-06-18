@@ -10,8 +10,15 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptions from '../Animation/AnimationOptions';
-import type { AxisLike } from './Types';
+import type AxisLike from './AxisLike';
+import type AxisOptions from './AxisOptions';
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type GradientColor from '../Color/GradientColor';
@@ -20,6 +27,7 @@ import type PointerEvent from '../PointerEvent';
 import type { StatesOptionsKey } from '../Series/StatesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import Color from '../Color/Color.js';
@@ -51,6 +59,19 @@ const {
     pick,
     splat
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Axis/AxisLike' {
+    interface AxisLike {
+        labelLeft?: number;
+        labelRight?: number;
+    }
+}
 
 declare module '../Chart/ChartLike' {
     interface ChartLike {
@@ -95,10 +116,6 @@ declare module '../Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            labelLeft?: number;
-            labelRight?: number;
-        }
         let ColorAxis: ColorAxisClass;
     }
 }
@@ -1186,7 +1203,7 @@ class ColorAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public getPlotLinePath(options: Highcharts.AxisPlotLinePathOptionsObject): (SVGPath|null) {
+    public getPlotLinePath(options: Axis.PlotLinePathOptions): (SVGPath|null) {
         const axis = this,
             left = axis.left,
             pos = options.translatedValue,
@@ -1431,7 +1448,7 @@ addEvent(Series, 'bindAxes', function (): void {
 // Add the color axis. This also removes the axis' own series to prevent
 // them from showing up individually.
 addEvent(Legend, 'afterGetAllItems', function (
-    this: Highcharts.Legend,
+    this: Legend,
     e: {
         allItems: Array<(Series|Point|ColorAxis|ColorAxis.LegendItemObject)>;
     }
@@ -1490,7 +1507,7 @@ addEvent(Legend, 'afterGetAllItems', function (
 });
 
 addEvent(Legend, 'afterColorizeItem', function (
-    this: Highcharts.Legend,
+    this: Legend,
     e: {
         item: ColorAxis;
         visible: boolean;
@@ -1504,7 +1521,7 @@ addEvent(Legend, 'afterColorizeItem', function (
 });
 
 // Updates in the legend need to be reflected in the color axis (6888)
-addEvent(Legend, 'afterUpdate', function (this: Highcharts.Legend): void {
+addEvent(Legend, 'afterUpdate', function (this: Legend): void {
     const colorAxes = this.chart.colorAxis;
 
     if (colorAxes) {
@@ -1554,7 +1571,7 @@ namespace ColorAxis {
         width?: number;
     }
 
-    export interface Options extends Highcharts.XAxisOptions {
+    export interface Options extends AxisOptions {
         dataClassColor?: string;
         dataClasses?: Array<DataClassesOptions>;
         layout?: string;

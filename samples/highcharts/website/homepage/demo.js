@@ -1,7 +1,9 @@
 let demoChart;
 
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 const baseColor = 'rgba(72,72,72,.2)';
-const networklinkColor = 'rgba(72,72,72,.4)';
+const networklinkColor = '#000';
 const baseTextColor = '#222';
 const axisColor = '#333';
 const streamLine = '#ebebeb';
@@ -1999,31 +2001,15 @@ const kernelSeries = [
 
     }];
 
-let hasHTML = false;
-if ($('h2.fakeTitle').length > 0) {
-    hasHTML = true;
-}
-
 //homepage chart animation chart
 /****************************************/
 ///Section 4 Network graph
 
 function section4() {
-
-    clearTimeout(currentTimeout);
-
-    ///shows the networkgraph, sets up the splines,
-    //shows new title and tab
-    const p1 = function () {
-        $('.highcharts-spline-series').hide();
-        $('.highcharts-scatter-series').hide();
-        $('.highcharts-networkgraph-series').fadeIn();
-        ///html elements
-        if (hasHTML) {
-            $('h2.fakeTitle').html('science');
-            $('h2.fakeTitle').animate({ opacity: 1 }, 100);
-            $('#science').addClass('active');
-        }
+    ///show everything immediately for accessibility
+    if (reduced) {
+        $('.highcharts-spline-series').fadeIn(100);
+        $('.highcharts-scatter-series').fadeIn(100);
         demoChart.update({
             legend: {
                 labelFormat: '{name} <span style="opacity: 0.4">{y}</span>',
@@ -2040,10 +2026,10 @@ function section4() {
                     color: Highcharts.getOptions().colors[3],
                     dataGrouping: {
                         enabled: false
-                    },
-                    label: {
-                        enabled: true
                     }
+                    // label: {
+                    //     enabled: true
+                    // }
                 },
                 scatter: {
                     lineWidth: 1,
@@ -2059,105 +2045,163 @@ function section4() {
                 }
             }
         });
-        $('.highcharts-pie-series').hide();
-        $('.highcharts-spline-series').hide();
-        $('.highcharts-scatter-series').hide();
-    };
-    currentTimeout = window.setTimeout(p1, 700);
+        setTimeout(function () {
+            demoChart.update({
+                plotOptions: {
+                    spline: {
+                        label: {
+                            enabled: true
+                        }
+                    },
+                    scatter: {
+                        label: {
+                            enabled: true
+                        }
+                    }
+                }
+            });
+        }, 500);
+        $('.highcharts-legend').fadeIn();
+        demoChart.series[19].update({ color: '#1E90FF' });
+    }
 
+    clearTimeout(currentTimeout);
+
+    ///shows the networkgraph, sets up the splines,
+    //shows new title and tab
+    const p1 = function () {
+        ///don't show network graph for accessibility
+        if (!reduced) {
+            $('.highcharts-networkgraph-series').fadeIn();
+            $('.highcharts-spline-series').hide();
+            $('.highcharts-scatter-series').hide();
+            demoChart.update({
+                legend: {
+                    labelFormat: '{name} <span style="opacity: 0.4">{y}</span>',
+                    width: 1000,
+                    floating: true,
+                    verticalAlign: 'bottom'
+                },
+                plotOptions: {
+                    spline: {
+                        lineWidth: 2,
+                        xAxis: 5,
+                        yAxis: 4,
+                        dashStyle: 'dot',
+                        color: Highcharts.getOptions().colors[3],
+                        dataGrouping: {
+                            enabled: false
+                        },
+                        label: {
+                            enabled: true
+                        }
+                    },
+                    scatter: {
+                        lineWidth: 1,
+                        xAxis: 5,
+                        yAxis: 4,
+                        dashStyle: "shortdot",
+                        color: Highcharts.getOptions().colors[5],
+                        pointStart: xiData[0],
+                        label: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                }
+            });
+            $('.highcharts-pie-series').hide();
+            $('.highcharts-spline-series').hide();
+            $('.highcharts-scatter-series').hide();
+        }
+    };
+    currentTimeout = window.setTimeout(p1, 100);
 
     //moves the node on the network graph
     const p2 = function () {
-        demoChart.series[3].nodes[0].update({
-            plotX: demoChart.chartWidth / 2 + 100,
-            plotY: demoChart.chartHeight
-        });
+        ///don't show for accessibility
+        if (!reduced) {
+            demoChart.series[3].nodes[0].update({
+                plotX: demoChart.chartWidth / 2 + 100,
+                plotY: demoChart.chartHeight
+            });
+        }
     };
-    currentTimeout = window.setTimeout(p2, 1200);
+    currentTimeout = window.setTimeout(p2, 500);
 
     //shows the splines
     const p25 = function () {
-        //html element
-        if (hasHTML) {
-            $('#c3').animate({ opacity: 1 }, 1000);
+        ///don't show the splines now for accessibility
+        if (!reduced) {
+            $('.highcharts-spline-series').fadeIn(100);
+            $('.highcharts-scatter-series').fadeIn(100);
+            $('.highcharts-legend').fadeIn();
         }
-        $('.highcharts-spline-series').fadeIn(100);
-        $('.highcharts-scatter-series').fadeIn(100);
-        $('.highcharts-legend').fadeIn();
-
         demoChart.series[19].update({ color: '#1E90FF' });
     };
-    currentTimeout = window.setTimeout(p25, 2500);
+    currentTimeout = window.setTimeout(p25, 1000);
 
     //moves the node again
     const p3 = function () {
-        demoChart.update({
-            chart: {
-                animation: {
-                    duration: 1000
+        ///only do the network stuff for the full animation
+        if (!reduced) {
+            demoChart.update({
+                chart: {
+                    animation: {
+                        duration: 1000
+                    }
                 }
-            }
-        });
-        demoChart.series[3].nodes[0].update({
-            mass: 1,
-            plotX: demoChart.series[3].nodes[1].plotX,
-            plotY: demoChart.series[3].nodes[1].plotY
+            });
+            demoChart.series[3].nodes[0].update({
+                mass: 1,
+                plotX: demoChart.series[3].nodes[1].plotX,
+                plotY: demoChart.series[3].nodes[1].plotY
 
-        });
-        demoChart.xAxis[5].setExtremes(78, 107);
+            });
+            demoChart.xAxis[5].setExtremes(78, 107);
+        }
     };
-    currentTimeout = window.setTimeout(p3, 4000);
+    currentTimeout = window.setTimeout(p3, 2000);
+
+    const p31 = function () {
+        if (reduced) {
+            top.window.endAnimation();
+        }
+    };
+    currentTimeout = window.setTimeout(p31, 4500);
 
     ///consolidates all the nodes, hides most everything else,
     //shows the title and content
     const p4 = function () {
+        // $('.highcharts-label').fadeOut();
+        // $('.highcharts-streamgraph-series').fadeOut();
+        // $('.highcharts-spline-series').fadeOut();
+        // $('.highcharts-scatter-series').fadeOut();
+        // $('.highcharts-legend').fadeOut();
+        ///only manipulate the nodes for the full animation
+        if (!reduced) {
+            // demoChart.series[3].nodes[0].update({
+            //     plotX: demoChart.chartWidth / 2,
+            //     plotY: demoChart.chartHeight / 2
 
-        $('.highcharts-label').fadeOut();
-        $('.highcharts-streamgraph-series').fadeOut();
-        $('.highcharts-spline-series').fadeOut();
-        $('.highcharts-scatter-series').fadeOut();
-
-        //html elements
-        if (hasHTML) {
-            $('#science').removeClass('active');
-            $('h2.fakeTitle').hide();
-            $('#c3').animate({ opacity: 0 }, 100);
-            $('h1.title').css({ opacity: 0 });
-            $('h1.title').html('Elevate your data');
+            // });
+            // let pointCount = 0;
+            // const updatePoints = setInterval(function () {
+            //     demoChart.series[3].nodes[pointCount].plotY =
+            //             demoChart.series[3].nodes[0].plotY;
+            //     demoChart.series[3].nodes[pointCount].plotX =
+            //             demoChart.series[3].nodes[0].plotX;
+            //     demoChart.series[3].nodes[pointCount].mass = 1;
+            //     pointCount = pointCount + 1;
+            //     const nodeLength = demoChart.series[3].nodes.length;
+            //     if (pointCount === nodeLength) {
+            //         clearInterval(updatePoints);
+            //         demoChart.series[3].hide();
+            //     }
+            // }, 10);
         }
-
-        $('.highcharts-legend').fadeOut();
-
-        demoChart.series[3].nodes[0].update({
-            plotX: demoChart.chartWidth / 2,
-            plotY: demoChart.chartHeight / 2
-
-        });
-        let pointCount = 0;
-        const updatePoints = setInterval(function () {
-            demoChart.series[3].nodes[pointCount].plotY =
-                        demoChart.series[3].nodes[0].plotY;
-            demoChart.series[3].nodes[pointCount].plotX =
-                        demoChart.series[3].nodes[0].plotX;
-            demoChart.series[3].nodes[pointCount].mass = 1;
-            pointCount = pointCount + 1;
-            const nodeLength = demoChart.series[3].nodes.length;
-            if (pointCount === nodeLength) {
-                clearInterval(updatePoints);
-                demoChart.series[3].hide();
-                ///HTML elements
-                if (hasHTML) {
-                    $('h1.title').animate({ opacity: 1 }, 1000);
-                    $('#cContent').animate({ opacity: 1 }, 2000);
-                    $('.cTab').css({ display: 'block' });
-                    $('#developersCharts4').animate({ opacity: 1 }, 2000);
-                    $('#heroTitle').css({ gridTemplateColumns: '300px' });
-                    $('#developers').trigger('click');
-                }
-            }
-        }, 10);
     };
-    currentTimeout = window.setTimeout(p4, 9000);
+    currentTimeout = window.setTimeout(p4, 5000);
 }
 /****************************************/
 ////Section 3 Streamgraph
@@ -2167,55 +2211,89 @@ function section3() {
     //sets up new title, sets the plot options for
     //the streamgraph
     const s1 = function () {
-
-        if (hasHTML) {
-            $('h2.fakeTitle').html('publishing');
-        }
-
-        demoChart.update({
-            plotOptions: {
-                streamgraph: {
-                    fillOpacity: 0,
-                    lineWidth: 1,
-                    lineColor: streamLine,
-                    states: {
-                        inactive: {
-                            enabled: false
+        ///set the axes first and turn off animation for the series
+        ///for accessibility
+        if (!reduced) {
+            demoChart.update({
+                plotOptions: {
+                    streamgraph: {
+                        fillOpacity: 1,
+                        lineWidth: 1,
+                        lineColor: streamLine,
+                        states: {
+                            inactive: {
+                                enabled: false
+                            }
                         }
                     }
-                }
 
-            }
-        });
+                }
+            });
+        }
     };
     currentTimeout = window.setTimeout(s1, 0);
 
+    const s11 = function () {
+        ///show everything immediatley for accessibility
+        if (reduced) {
+            let yearMax = 1860;
+            if (demoChart.chartWidth < 500) {
+                yearMax = 1920;
+            }
+            demoChart.xAxis[4].setExtremes(Date.UTC(yearMax, 7, 1)
+                , Date.UTC(2016, 11, 1));
+
+            demoChart.series[5].update({
+                animation: false
+            });
+            demoChart.series[6].update({
+                animation: false
+            });
+            demoChart.series[7].update({
+                animation: false
+            });
+            demoChart.update({
+                plotOptions: {
+                    streamgraph: {
+                        fillOpacity: 1,
+                        lineColor: streamLine,
+                        label: {
+                            enabled: true
+                        },
+                        lineWidth: 1
+
+                    }
+
+                }
+            });
+            $('.highcharts-streamgraph-series').fadeIn(1000);
+            $('.highcharts-plot-line-label').hide();
+            $('.highcharts-axis-labels').fadeIn(100);
+            $('.highcharts-annotation-label').fadeIn(100);
+            demoChart.xAxis[4].update({
+                visible: true
+            });
+        }
+    };
+    currentTimeout = window.setTimeout(s11, 300);
+
     //sets animation duration to 1000, shows streamgraph
     const s2 = function () {
-        $('.highcharts-streamgraph-series').fadeIn(500);
-        $('.highcharts-plot-line-label').hide();
-        demoChart.update({
-            chart: {
-                animation: {
-                    duration: 1000
+        if (!reduced) {
+            $('.highcharts-streamgraph-series').fadeIn(1000);
+            $('.highcharts-plot-line-label').hide();
+            demoChart.update({
+                chart: {
+                    animation: {
+                        duration: 1000
+                    }
                 }
-            }
-        });
-    };
-
-    currentTimeout = window.setTimeout(s2, 500);
-
-    //shows the title and activates the right tab
-    const s3 = () => {
-        //html elements
-        if (hasHTML) {
-            $('h2.fakeTitle').animate({ opacity: 1 }, 1000);
-            $('#c2').animate({ opacity: 1 }, 2000);
-            $('#publishing').addClass('active');
+            });
         }
-
     };
-    currentTimeout = window.setTimeout(s3, 1000);
+
+    currentTimeout = window.setTimeout(s2, 200);
+
 
     //shows the xAxis, sets the xAxis extremes for the
     //streamgraph, shows the labels, sets streamgraph
@@ -2225,49 +2303,61 @@ function section3() {
         if (demoChart.chartWidth < 500) {
             yearMax = 1920;
         }
-        demoChart.xAxis[4].setExtremes(Date.UTC(yearMax, 7, 1)
-            , Date.UTC(2016, 11, 1));
+        ///adjust the axes for full animation
+        if (!reduced) {
+            demoChart.xAxis[4].setExtremes(Date.UTC(yearMax, 7, 1)
+                , Date.UTC(2016, 11, 1));
 
-        $('.highcharts-axis-labels').fadeIn();
-        $('.highcharts-pie-series').hide();
-        $('.highcharts-annotation-label').fadeIn();
-        demoChart.xAxis[4].update({
-            visible: true
-        });
+            $('.highcharts-axis-labels').fadeIn(100);
+            $('.highcharts-pie-series').hide();
+            $('.highcharts-annotation-label').fadeIn(100);
+            demoChart.xAxis[4].update({
+                visible: true
+            });
+        }
+    };
+    currentTimeout = window.setTimeout(s4, 1000);
 
-        demoChart.update({
-            plotOptions: {
-                streamgraph: {
-                    fillOpacity: 1,
-                    label: {
-                        enabled: true
-                    },
-                    lineWidth: 1
+    const s41 = function () {
+        if (!reduced) {
+            demoChart.update({
+                plotOptions: {
+                    streamgraph: {
+                        fillOpacity: 1,
+                        label: {
+                            enabled: true
+                        },
+                        lineWidth: 1
+
+                    }
 
                 }
-
-            }
-        });
+            });
+        }
     };
-    currentTimeout = window.setTimeout(s4, 2000);
+    currentTimeout = window.setTimeout(s41, 3000);
 
     //sets the fill opacity to 0, hides the annotations,
     //sets the xAxis extremes
     const s5 = function () {
-
-        demoChart.update({
-            plotOptions: {
-                streamgraph: {
-                    fillOpacity: 0,
-                    label: {
-                        enabled: false
-                    },
-                    lineWidth: 1
-
+        ///set the axis for the fourth section now for accessibility
+        if (reduced) {
+            $('.highcharts-streamgraph-series').fadeOut(500);
+            demoChart.xAxis[5].setExtremes(78, 107);
+        } else {
+            demoChart.update({
+                plotOptions: {
+                    streamgraph: {
+                        fillOpacity: 0,
+                        label: {
+                            enabled: false
+                        },
+                        lineWidth: 1
+                    }
                 }
+            });
+        }
 
-            }
-        });
         $('.highcharts-annotation-label').hide();
         demoChart.xAxis[4].update({
             visible: false
@@ -2275,41 +2365,61 @@ function section3() {
     };
     currentTimeout = window.setTimeout(s5, 5500);
 
+    const s51 = function () {
+        ///go to section 4 now for accessibility
+        if (reduced) {
+            section4();
+        }
+    };
+    currentTimeout = window.setTimeout(s51, 6000);
+
     //hides the xAxis
     const s6 = function () {
-
-        demoChart.update({
-            plotOptions: {
-                streamgraph: {
-                    label: {
-                        enabled: false
+        if (!reduced) {
+            demoChart.update({
+                plotOptions: {
+                    streamgraph: {
+                        fillOpacity: 0,
+                        label: {
+                            enabled: false
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        demoChart.xAxis[4].setExtremes(Date.UTC(1970, 7, 1),
-            Date.UTC(2016, 11, 1));
+            demoChart.xAxis[4].setExtremes(Date.UTC(1970, 7, 1),
+                Date.UTC(2016, 11, 1));
+        }
     };
-    currentTimeout = window.setTimeout(s6, 7000);
+    currentTimeout = window.setTimeout(s6, 6700);
 
     //turns off series labels, fades the titles,
     //goes to section 4
     const s7 = function () {
-        //html elements
-        if (hasHTML) {
-            $('h2.fakeTitle').animate({ opacity: 0 }, 1000);
-            $('#c2').animate({ opacity: 0 }, 1000);
-            $('#publishing').removeClass('active');
+        if (!reduced) {
+            section4();
         }
-        section4();
     };
-    currentTimeout = window.setTimeout(s7, 8000);
+    currentTimeout = window.setTimeout(s7, 7000);
 }
 /****************************************/
 ////Section 2 Splines and candlestick
 
 function section2() {
+    ///show everything immediately for accessibility
+    if (reduced) {
+        demoChart.series[19].update({
+            animation: false
+        });
+        demoChart.series[20].update({
+            animation: false
+        });
+        demoChart.series[21].update({
+            animation: false
+        });
+        $('.highcharts-spline-series').fadeIn(100);
+        $('.highcharts-candlestick-series').fadeIn(100);
+    }
 
     ///update animation duration to 1000, hide the item series
     const f1 = function () {
@@ -2323,46 +2433,60 @@ function section2() {
         demoChart.series[0].update({
             opacity: 0
         });
+        ///set up the finance stuff for section 2 for accessibility
+        if (reduced) {
+            demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
+                Date.UTC(2010, 9, 1));
+            demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
+                Date.UTC(2020, 1, 13));
+            demoChart.update({
+                tooltip: {
+                    enabled: true
+                }
+            });
+            demoChart.tooltip.refresh(
+                [demoChart.series[2].points[22]]);
+            $('.highcharts-tooltip').hide();
+            $('.highcharts-tooltip').fadeIn(1000);
+        }
     };
     currentTimeout = setTimeout(f1, 500);
 
     //set axes extremes for splines and candlestick,
     //show new title
     const f2 = function () {
-        if (hasHTML) {
-            $('h2.fakeTitle').html('finance');
-            $('h2.fakeTitle').animate({ opacity: 1 }, 1000);
-        }
-        $('.highcharts-networkgraph-series').hide();
-        $('.highcharts-candlestick-series').show();
-        demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
-            Date.UTC(2010, 9, 1));
-        demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
-            Date.UTC(2020, 1, 13));
+        if (!reduced) {
+            $('.highcharts-networkgraph-series').hide();
 
+            demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
+                Date.UTC(2010, 9, 1));
+            demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
+                Date.UTC(2020, 1, 13));
+
+            $('.highcharts-candlestick-series').show();
+        }
     };
     currentTimeout = setTimeout(f2, 1500);
 
     ///show candlestick tooltip
     const f3 = function () {
-        demoChart.update({
-            tooltip: {
-                enabled: true
-            }
-        });
-        if (hasHTML) {
-            $('#c1').animate({ opacity: 1 }, 1000);
+        if (!reduced) {
+            demoChart.update({
+                tooltip: {
+                    enabled: true
+                }
+            });
+            demoChart.tooltip.refresh(
+                [demoChart.series[2].points[22]]);
+            $('.highcharts-tooltip').hide();
+            $('.highcharts-tooltip').fadeIn(1000);
         }
-        demoChart.tooltip.refresh(
-            [demoChart.series[2].points[22]]);
-        $('.highcharts-tooltip').hide();
-        $('.highcharts-tooltip').fadeIn(1000);
     };
     currentTimeout = setTimeout(f3, 2500);
 
     //hide the tooltip and candlestick, remove all the splines
     const f4 = function () {
-        $('.highcharts-candlestick-series').fadeOut(1000);
+        $('.highcharts-candlestick-series').hide();
         $('.highcharts-tooltip').hide();
 
         demoChart.update({
@@ -2397,12 +2521,6 @@ function section2() {
                 }
             }
         });
-        //html elements
-        if (hasHTML) {
-            $('h2.fakeTitle').animate({ opacity: 0 }, 100);
-            $('#c1').animate({ opacity: 0 }, 1000);
-            $('#finance').removeClass('active');
-        }
         $('.highcharts-spline-series').fadeOut(1000);
 
     };
@@ -2419,29 +2537,11 @@ function section2() {
 ////Section 1 Pie and item
 
 function section1() {
-    ///show title
-    const s10 = function () {
-        if (hasHTML) {
-            $('h2.fakeTitle').animate({ opacity: 1 }, 1000);
-        }
-    };
-    currentTimeout = setTimeout(s10, 100);
-    ///show subtitle
-    const s11 = function () {
-        if (hasHTML) {
-            $('#c0').animate({ opacity: 1 }, 1000);
-        }
-    };
-    currentTimeout = setTimeout(s11, 500);
-    ///swap graphs
-    const s12 = function () {
-        $('.highcharts-series-0').fadeIn();
-        $('.highcharts-series-4').fadeOut(1000);
-    };
-    currentTimeout = setTimeout(s12, 1500);
-    //make an arch
 
-    const s13 =  function () {
+    ///show immediately for accessibility
+    if (reduced) {
+        $('.highcharts-series-0').show();
+        $('.highcharts-series-4').hide();
         demoChart.series[0].update({
             data: [
                 {
@@ -2478,6 +2578,51 @@ function section1() {
                 radius: 10
             }
         });
+    }
+    ///swap graphs
+    const s12 = function () {
+        ///show for regular animation
+        if (!reduced) {
+            demoChart.series[0].update({
+                data: [
+                    {
+                        y: 20,
+                        color: Highcharts.getOptions().colors[7]
+                    },
+                    {
+                        y: 20,
+                        color: Highcharts.getOptions().colors[0]
+                    },
+                    {
+                        y: 20,
+                        color: { patternIndex: 7 }
+                    },
+                    {
+                        y: 20,
+                        color: Highcharts.getOptions().colors[2]
+                    },
+                    {
+                        y: 20,
+                        color: Highcharts.getOptions().colors[4]
+                    },
+                    {
+                        y: 20,
+                        color: { patternIndex: 0 }
+                    },
+                    {
+                        y: 20,
+                        color: Highcharts.getOptions().colors[9]
+                    }
+                ],
+                opacity: 1,
+                marker: {
+                    radius: 10
+                }
+            });
+            $('.highcharts-series-0').fadeIn();
+            $('.highcharts-series-4').fadeOut(100);
+        }
+        //make an arch
         demoChart.update({
             plotOptions: {
                 item: {
@@ -2488,23 +2633,39 @@ function section1() {
             }
         });
     };
-    currentTimeout = setTimeout(s13, 2500);
+    currentTimeout = setTimeout(s12, 1500);
     ///expand the arch
     const s14 =  function () {
-        $('.highcharts-spline-series').show();
-        demoChart.series[0].update({
-            showInLegend: false,
-            innerSize: '200%'
-        });
+        ///don't show the splines now for accessibility
+        ///otherwise, they will animate when added
+        ///do not make the item chart really big
+        if (!reduced) {
+            $('.highcharts-spline-series').show();
+            demoChart.series[0].update({
+                showInLegend: false,
+                innerSize: '200%'
+            });
+        }
         $('.highcharts-item-series').fadeOut(700);
         let count = 0;
         const addSeries = setInterval(function () {
             demoChart.addSeries(splineSeries[count]);
+            ///show the spline after they are added for accessibility
+            if (reduced) {
+                $('.highcharts-spline-series').hide();
+            }
             count = count + 1;
             if (count === splineSeries.length) {
                 clearInterval(addSeries);
             }
         }, 0);
+        ///set the axes now so they're ready for section 2 without animation
+        if (reduced) {
+            demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
+                Date.UTC(2010, 9, 1));
+            demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
+                Date.UTC(2020, 1, 13));
+        }
     };
     currentTimeout = setTimeout(s14, 4000);
     ///set current tab, go to section 2
@@ -2527,7 +2688,8 @@ const heroChart = {
         margin: [0, 0, 0, 0],
         animation: {
             easing: 'easeOutQuint',
-            duration: 1000
+            duration: 1000,
+            enabled: true
         },
         events: {
             load: function () {
@@ -2549,10 +2711,6 @@ const heroChart = {
                 $('.highcharts-annotation-label').hide();
 
                 section1();
-                if (hasHTML) {
-                    $('h2.fakeTitle').animate({ opacity: 1 }, 1000);
-                    $('h1.title').animate({ opacity: 1 }, 1000);
-                }
             }
         }
     },
@@ -2596,9 +2754,10 @@ const heroChart = {
 {
     enabled: false,
     backgroundColor: '#fff',
-    borderColor: 'transparent',
+    shadow: false,
+    borderColor: '#FF9D00',
+    borderWidth: 3,
     borderRadius: 10,
-    shadow: true,
     useHTML: true,
     distance: 20,
     formatter: function () {

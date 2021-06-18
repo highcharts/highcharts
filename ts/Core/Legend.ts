@@ -17,6 +17,7 @@ import type ColorAxis from './Axis/ColorAxis';
 import type CSSObject from './Renderer/CSSObject';
 import type FontMetricsObject from './Renderer/FontMetricsObject';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
+import type LegendLike from './LegendLike';
 import type LegendOptions from './LegendOptions';
 import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
@@ -59,104 +60,6 @@ declare module './Series/SeriesOptions' {
         legendType?: ('point'|'series');
         showCheckbox?: boolean;
         showInLegend?: boolean;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface LegendCheckBoxElement extends HTMLDOMElement {
-            checked?: boolean;
-            x: number;
-            y: number;
-        }
-        class Legend {
-            public constructor(chart: Chart, options: LegendOptions);
-            public allItems: Array<(BubbleLegend|Series|Point)>;
-            public baseline?: number;
-            public box: SVGElement;
-            public chart: Chart;
-            public clipHeight?: number;
-            public clipRect?: SVGElement
-            public contentGroup: SVGElement;
-            public currentPage?: number;
-            public display: boolean;
-            public down?: SVGElement;
-            public downTracker?: SVGElement;
-            public fontMetrics?: FontMetricsObject;
-            public fullHeight?: number;
-            public group: SVGElement;
-            public initialItemY: number;
-            public itemHeight: number;
-            public itemHiddenStyle?: CSSObject;
-            public itemMarginBottom: number;
-            public itemMarginTop: number;
-            public itemStyle?: CSSObject;
-            public itemX: number;
-            public itemY: number;
-            public lastItemY: number;
-            public lastLineHeight: number;
-            public legendHeight: number;
-            public legendWidth: number;
-            public maxItemWidth: number;
-            public maxLegendWidth: number;
-            public nav?: SVGElement;
-            public offsetWidth: number;
-            public options: LegendOptions;
-            public padding: number;
-            public pager?: SVGElement;
-            public pages: Array<number>;
-            public proximate: boolean;
-            public scrollGroup: SVGElement;
-            public scrollOffset?: number;
-            public symbolHeight: number;
-            public symbolWidth: number;
-            public title?: SVGElement;
-            public titleHeight: number;
-            public totalItemWidth: number;
-            public unchartrender?: Function;
-            public up?: SVGElement;
-            public upTracker?: SVGElement;
-            public widthOption: number;
-            public adjustMargins(
-                margin: Array<number>,
-                spacing: Array<number>
-            ): void;
-            public align(alignTo?: BBoxObject): void;
-            public colorizeItem(
-                item: (BubbleLegend|Series|Point),
-                visible?: boolean
-            ): void;
-            public createCheckboxForItem(
-                item: (BubbleLegend|Series|Point)
-            ): void;
-            public destroy(): void;
-            public destroyItem(
-                item: (BubbleLegend|ColorAxis|ColorAxis.LegendItemObject|Series|Point)
-            ): void;
-            public getAlignment(): string;
-            public getAllItems(): Array<(BubbleLegend|Series|Point)>;
-            public handleOverflow(legendHeight: number): number;
-            public init(chart: Chart, options: LegendOptions): void;
-            public layoutItem(item: (BubbleLegend|Series|Point)): void;
-            public render(): void;
-            public positionCheckboxes(): void;
-            public positionItem(item: (BubbleLegend|Series|Point)): void;
-            public positionItems(): void;
-            public proximatePositions(): void;
-            public renderItem(item: (BubbleLegend|Series|Point)): void;
-            public renderTitle(): void;
-            public scroll(
-                scrollBy: number,
-                animation?: (boolean|Partial<AnimationOptions>)
-            ): void;
-            public setOptions(options: LegendOptions): void;
-            public setText(item: (BubbleLegend|Series|Point)): void;
-            public update(options: LegendOptions, redraw?: boolean): void;
-        }
     }
 }
 
@@ -505,7 +408,7 @@ class Legend {
         );
 
         if (!this.chart.styledMode) {
-            let legend = this,
+            const legend = this,
                 options = legend.options,
                 legendItem = item.legendItem,
                 legendLine = item.legendLine,
@@ -517,8 +420,8 @@ class Legend {
                 symbolColor = visible ?
                     ((item as any).color || hiddenColor) :
                     hiddenColor,
-                markerOptions = item.options && (item.options as any).marker,
-                symbolAttr: SVGAttributes = { fill: symbolColor };
+                markerOptions = item.options && (item.options as any).marker;
+            let symbolAttr: SVGAttributes = { fill: symbolColor };
 
             if (legendItem) {
                 legendItem.css({
@@ -650,7 +553,7 @@ class Legend {
          * @param {string} key
          * @return {void}
          */
-        function destroyItems(this: Highcharts.Legend, key: string): void {
+        function destroyItems(this: Legend, key: string): void {
             if ((this as any)[key]) {
                 (this as any)[key] = (this as any)[key].destroy();
             }
@@ -682,16 +585,16 @@ class Legend {
      * @function Highcharts.Legend#positionCheckboxes
      */
     public positionCheckboxes(): void {
-        let alignAttr = this.group && this.group.alignAttr,
-            translateY: number,
+        const alignAttr = this.group && this.group.alignAttr,
             clipHeight = this.clipHeight || this.legendHeight,
             titleHeight = this.titleHeight;
+        let translateY: number;
 
         if (alignAttr) {
             translateY = alignAttr.translateY;
             this.allItems.forEach(function (item): void {
-                let checkbox = item.checkbox,
-                    top;
+                const checkbox = item.checkbox;
+                let top;
 
                 if (checkbox) {
                     top = translateY + titleHeight + checkbox.y +
@@ -719,11 +622,11 @@ class Legend {
      * @function Highcharts.Legend#renderTitle
      */
     public renderTitle(): void {
-        let options = this.options,
+        const options = this.options,
             padding = this.padding,
-            titleOptions = options.title,
-            titleHeight = 0,
-            bBox;
+            titleOptions = options.title;
+        let bBox,
+            titleHeight = 0;
 
         if ((titleOptions as any).text) {
             if (!this.title) {
@@ -796,7 +699,7 @@ class Legend {
      * The item to render.
      */
     public renderItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
-        let legend = this,
+        const legend = this,
             chart = legend.chart,
             renderer = chart.renderer,
             options = legend.options,
@@ -807,8 +710,6 @@ class Legend {
             itemHiddenStyle = legend.itemHiddenStyle,
             itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
             ltr = !options.rtl,
-            bBox,
-            li = item.legendItem,
             isSeries = !(item as any).series,
             series = !isSeries && (item as any).series.drawLegendSymbol ?
                 (item as any).series :
@@ -817,11 +718,12 @@ class Legend {
             showCheckbox = legend.createCheckboxForItem &&
                 seriesOptions &&
                 seriesOptions.showCheckbox,
-            // full width minus text width
-            itemExtraWidth = symbolWidth + symbolPadding +
-                itemDistance + (showCheckbox ? 20 : 0),
             useHTML = options.useHTML,
             itemClassName = item.options.className;
+        let li = item.legendItem,
+            // full width minus text width
+            itemExtraWidth = symbolWidth + symbolPadding +
+                itemDistance + (showCheckbox ? 20 : 0);
 
         if (!li) { // generate it once, later move it
 
@@ -929,7 +831,7 @@ class Legend {
         legend.setText(item);
 
         // calculate the positions for the next line
-        bBox = li.getBBox();
+        const bBox = li.getBBox();
 
         item.itemWidth = item.checkboxOffset =
             options.itemWidth ||
@@ -1200,18 +1102,19 @@ class Legend {
      * @function Highcharts.Legend#render
      */
     public render(): void {
-        let legend = this,
+        const legend = this,
             chart = legend.chart,
             renderer = chart.renderer,
-            legendGroup = legend.group,
-            allItems: Array<(Highcharts.BubbleLegend|Series|Point)>,
-            display,
-            legendWidth,
-            legendHeight,
-            box = legend.box,
             options = legend.options,
             padding = legend.padding,
-            allowedWidth: number;
+            // add each series or point
+            allItems: Array<(Highcharts.BubbleLegend|Series|Point)> = legend.getAllItems();
+        let display,
+            legendWidth,
+            legendHeight,
+            legendGroup = legend.group,
+            allowedWidth: number,
+            box = legend.box;
 
         legend.itemX = padding;
         legend.itemY = legend.initialItemY;
@@ -1250,9 +1153,6 @@ class Legend {
         }
 
         legend.renderTitle();
-
-        // add each series or point
-        allItems = legend.getAllItems();
 
         // sort by legendIndex
         stableSort(allItems, function (
@@ -1408,26 +1308,18 @@ class Legend {
      * @return {number}
      */
     public handleOverflow(legendHeight: number): number {
-        let legend = this,
+        const legend = this,
             chart = this.chart,
             renderer = chart.renderer,
             options = this.options,
             optionsY = options.y,
             alignTop = options.verticalAlign === 'top',
             padding = this.padding,
-            spaceHeight = (
-                (chart.spacingBox as any).height +
-                (alignTop ? -(optionsY as any) : optionsY) - padding
-            ),
             maxHeight = options.maxHeight,
-            clipHeight: number,
-            clipRect = this.clipRect,
             navOptions = options.navigation,
             animation = pick((navOptions as any).animation, true),
             arrowSize = (navOptions as any).arrowSize || 12,
-            nav = this.nav,
             pages = this.pages,
-            lastY: number,
             allItems = this.allItems,
             clipToHeight = function (height?: number): void {
                 if (typeof height === 'number') {
@@ -1457,6 +1349,14 @@ class Legend {
                 }
                 return (legend as any)[key];
             };
+        let clipHeight: number,
+            lastY: number,
+            spaceHeight = (
+                (chart.spacingBox as any).height +
+                (alignTop ? -(optionsY as any) : optionsY) - padding
+            ),
+            nav = this.nav,
+            clipRect = this.clipRect;
 
 
         // Adjust the height
@@ -1488,9 +1388,9 @@ class Legend {
             // Fill pages with Y positions so that the top of each a legend item
             // defines the scroll top for each page (#2098)
             allItems.forEach(function (item, i): void {
-                let y = (item._legendItemPos as any)[1],
-                    h = Math.round((item.legendItem as any).getBBox().height),
-                    len = pages.length;
+                const y = (item._legendItemPos as any)[1],
+                    h = Math.round((item.legendItem as any).getBBox().height);
+                let len = pages.length;
 
                 if (!len || (y - pages[len - 1] > clipHeight &&
                         (lastY || y) !== pages[len - 1])) {
@@ -1605,14 +1505,14 @@ class Legend {
      * @return {void}
      */
     public scroll(scrollBy: number, animation?: (boolean|Partial<AnimationOptions>)): void {
-        let chart = this.chart,
+        const chart = this.chart,
             pages = this.pages,
             pageCount = pages.length,
-            currentPage = (this.currentPage as any) + scrollBy,
             clipHeight = this.clipHeight,
             navOptions = this.options.navigation,
             pager = this.pager,
             padding = this.padding;
+        let currentPage = (this.currentPage as any) + scrollBy;
 
         // When resizing while looking at the last page
         if (currentPage > pageCount) {
@@ -1839,7 +1739,7 @@ class Legend {
         }, legend.options.itemCheckboxStyle, legend.chart.container) as any;
 
         addEvent(item.checkbox, 'click', function (event: PointerEvent): void {
-            const target = event.target as Highcharts.LegendCheckBoxElement;
+            const target = event.target as Legend.CheckBoxElement;
 
             fireEvent(
                 (item as any).series || item,
@@ -1857,6 +1757,30 @@ class Legend {
 
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface Legend extends LegendLike {
+    // use declare module pattern to add
+}
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace Legend {
+    export interface CheckBoxElement extends HTMLDOMElement {
+        checked?: boolean;
+        x: number;
+        y: number;
+    }
+}
+
 // Workaround for #2030, horizontal legend items not displaying in IE11 Preview,
 // and for #2580, a similar drawing flaw in Firefox 26.
 // Explore if there's a general cause for this. The problem may be related
@@ -1867,7 +1791,7 @@ if (
     isFirefox
 ) {
     wrap(Legend.prototype, 'positionItem', function (
-        this: Highcharts.Legend,
+        this: Legend,
         proceed: Function,
         item: (Series|Point)
     ): void {
@@ -1889,6 +1813,10 @@ if (
     });
 }
 
-H.Legend = Legend as any;
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
-export default H.Legend;
+export default Legend;
