@@ -195,7 +195,7 @@ class HeatmapSeries extends ScatterSeries {
 
         dataLabels: {
             formatter: function (): string { // #2945
-                const { numberFormatter } = this.point.series.chart;
+                const { numberFormatter } = this.series.chart;
                 const { value } = this.point as HeatmapPoint;
 
                 return isNumber(value) ? numberFormatter(value, -1) : '';
