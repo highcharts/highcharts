@@ -94,7 +94,7 @@ declare global {
             public onKbdNavigationInit(direction: number): void;
             public proxyLegendItem(item: LegendItem): void;
             public proxyLegendItems(): void;
-            public recreateProxies(): void;
+            public recreateProxies(): boolean;
             public removeProxies(): void;
             public shouldHaveLegendNavigation(): (boolean);
             public updateLegendItemProxyVisibility(): void;
@@ -237,10 +237,8 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             if (
                 this.chart === component.chart &&
                 this.chart.renderer &&
-                shouldDoLegendA11y(this.chart)
+                component.recreateProxies()
             ) {
-                component.recreateProxies();
-
                 syncTimeout(
                     (): void => component.updateProxiesPositions(),
                     animObject(
@@ -325,7 +323,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     /**
      * @private
      */
-    recreateProxies: function (this: Highcharts.LegendComponent): void {
+    recreateProxies: function (this: Highcharts.LegendComponent): boolean {
         this.removeProxies();
 
         if (shouldDoLegendA11y(this.chart)) {
@@ -333,7 +331,9 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             this.addLegendListContainer();
             this.proxyLegendItems();
             this.updateLegendItemProxyVisibility();
+            return true;
         }
+        return false;
     },
 
 
