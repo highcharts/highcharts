@@ -23,6 +23,7 @@ import type Series from './Series/Series';
 import type { StatesOptionsKey } from './Series/StatesOptions';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
+
 import A from './Animation/AnimationUtilities.js';
 const {
     animObject,
@@ -171,7 +172,7 @@ class Legend {
      *
      * */
 
-    public allItems: Array<(Highcharts.BubbleLegend|Series|Point)> = [];
+    public allItems: Array<(Highcharts.BubbleLegendItem|Series|Point)> = [];
 
     public baseline?: number;
 
@@ -392,7 +393,7 @@ class Legend {
      *
      * @private
      * @function Highcharts.Legend#colorizeItem
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      *        A Series or Point instance
      * @param {boolean} [visible=false]
      *        Dimmed or colored
@@ -401,7 +402,7 @@ class Legend {
      * Make events official: Fires the event `afterColorizeItem`.
      */
     public colorizeItem(
-        item: (Highcharts.BubbleLegend|Series|Point),
+        item: (Highcharts.BubbleLegendItem|Series|Point),
         visible?: boolean
     ): void {
         (item.legendGroup as any)[visible ? 'removeClass' : 'addClass'](
@@ -472,10 +473,10 @@ class Legend {
      *
      * @private
      * @function Highcharts.Legend#positionItem
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      * The item to position
      */
-    public positionItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
+    public positionItem(item: (Highcharts.BubbleLegendItem|Series|Point)): void {
         const legend = this,
             options = legend.options,
             symbolPadding = options.symbolPadding,
@@ -516,12 +517,12 @@ class Legend {
      *
      * @private
      * @function Highcharts.Legend#destroyItem
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      * The item to remove
      */
     public destroyItem(
         item: (
-            Highcharts.BubbleLegend|ColorAxis|ColorAxis.LegendItemObject|
+            Highcharts.BubbleLegendItem|ColorAxis|ColorAxis.LegendItemObject|
             Series|Point
         )
     ): void {
@@ -680,7 +681,7 @@ class Legend {
      * @param {Highcharts.Point|Highcharts.Series} item
      *        The item for which to update the text in the legend.
      */
-    public setText(item: (Highcharts.BubbleLegend|Series|Point)): void {
+    public setText(item: (Highcharts.BubbleLegendItem|Series|Point)): void {
         const options = this.options;
 
         (item.legendItem as any).attr({
@@ -696,10 +697,10 @@ class Legend {
      *
      * @private
      * @function Highcharts.Legend#renderItem
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      * The item to render.
      */
-    public renderItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
+    public renderItem(item: (Highcharts.BubbleLegendItem|Series|Point)): void {
         const legend = this,
             chart = legend.chart,
             renderer = chart.renderer,
@@ -853,9 +854,9 @@ class Legend {
      *
      * @private
      * @function Highcharts.Legend#layoutItem
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      */
-    public layoutItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
+    public layoutItem(item: (Highcharts.BubbleLegendItem|Series|Point)): void {
 
         const options = this.options,
             padding = this.padding,
@@ -928,12 +929,12 @@ class Legend {
      *
      * @private
      * @function Highcharts.Legend#getAllItems
-     * @return {Array<(Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)>}
+     * @return {Array<(Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series)>}
      * The current items in the legend.
      * @fires Highcharts.Legend#event:afterGetAllItems
      */
-    public getAllItems(): Array<(Highcharts.BubbleLegend|Series|Point)> {
-        let allItems = [] as Array<(Highcharts.BubbleLegend|Series|Point)>;
+    public getAllItems(): Array<(Highcharts.BubbleLegendItem|Series|Point)> {
+        let allItems = [] as Array<(Highcharts.BubbleLegendItem|Series|Point)>;
 
         this.chart.series.forEach(function (series): void {
             const seriesOptions = series && series.options;
@@ -1109,7 +1110,7 @@ class Legend {
             options = legend.options,
             padding = legend.padding,
             // add each series or point
-            allItems: Array<(Highcharts.BubbleLegend|Series|Point)> = legend.getAllItems();
+            allItems: Array<(Highcharts.BubbleLegendItem|Series|Point)> = legend.getAllItems();
         let display,
             legendWidth,
             legendHeight,
@@ -1602,14 +1603,14 @@ class Legend {
     /**
      * @private
      * @function Highcharts.Legend#setItemEvents
-     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
      * @param {Highcharts.SVGElement} legendItem
      * @param {boolean} [useHTML=false]
      * @fires Highcharts.Point#event:legendItemClick
      * @fires Highcharts.Series#event:legendItemClick
      */
     public setItemEvents(
-        item: (Highcharts.BubbleLegend|Series|Point),
+        item: (Highcharts.BubbleLegendItem|Series|Point),
         legendItem: SVGElement,
         useHTML?: boolean
     ): void {
@@ -1721,11 +1722,11 @@ class Legend {
     /**
      * @private
      * @function Highcharts.Legend#createCheckboxForItem
-     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
      * @fires Highcharts.Series#event:checkboxClick
      */
     public createCheckboxForItem(
-        item: (Highcharts.BubbleLegend|Series|Point)
+        item: (Highcharts.BubbleLegendItem|Series|Point)
     ): void {
         const legend = this;
 

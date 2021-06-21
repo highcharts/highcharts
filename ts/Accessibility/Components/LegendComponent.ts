@@ -44,7 +44,7 @@ const {
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
 
-type LegendItem = (Highcharts.BubbleLegend|Series|Point);
+type LegendItem = (Highcharts.BubbleLegendItem|Series|Point);
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -107,7 +107,7 @@ declare global {
             element: HTMLDOMElement;
             posElement: SVGElement;
         }
-        interface BubbleLegend {
+        interface BubbleLegendItem {
             a11yProxyElement?: HTMLDOMElement;
         }
     }
@@ -419,7 +419,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
     /**
      * @private
-     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
      */
     proxyLegendItem: function (
         this: Highcharts.LegendComponent,

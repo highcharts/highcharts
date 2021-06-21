@@ -42,8 +42,6 @@ declare module '../Core/Series/SeriesLike' {
  */
 declare global {
     namespace Highcharts {
-        interface BubbleLegend extends LegendItemObject {
-        }
         interface LegendItemObject extends LegendSymbolMixin {
             _legendItemPos?: Array<number>;
             checkbox?: Legend.CheckBoxElement;

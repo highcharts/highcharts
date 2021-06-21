@@ -31,6 +31,7 @@ import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import BubbleLegendDefaults from './BubbleLegendDefaults.js';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -61,17 +62,9 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
-        getVisibleBubbleSeriesIndex(): number;
-    }
-}
-
 declare module '../../Core/LegendLike' {
     interface LegendLike {
-        bubbleLegend?: Highcharts.BubbleLegend;
-        getLinesHeights(): Array<Record<string, number>>;
-        retranslateItems(lines: Array<Record<string, number>>): void;
+        bubbleLegend?: Highcharts.BubbleLegendItem;
     }
 }
 
@@ -154,7 +147,7 @@ declare global {
         interface LegendItemObject {
             ignoreSeries?: boolean;
         }
-        class BubbleLegend implements LegendItemObject {
+        class BubbleLegendItem implements LegendItemObject {
             public constructor(options: BubbleLegendOptions, legend: Legend);
             public chart: Chart;
             public fontMetrics: FontMetricsObject;
@@ -187,6 +180,8 @@ declare global {
             public setOptions(): void;
             public updateRanges(min: number, max: number): void;
         }
+        interface BubbleLegendItem extends LegendItemObject {
+        }
     }
 }
 
@@ -208,255 +203,11 @@ declare global {
 
 ''; // detach doclets above
 
-import './BubbleSeries.js';
-
-setOptions({ // Set default bubble legend options
-    legend: {
-        /**
-         * The bubble legend is an additional element in legend which
-         * presents the scale of the bubble series. Individual bubble ranges
-         * can be defined by user or calculated from series. In the case of
-         * automatically calculated ranges, a 1px margin of error is
-         * permitted.
-         *
-         * @since        7.0.0
-         * @product      highcharts highstock highmaps
-         * @requires     highcharts-more
-         * @optionparent legend.bubbleLegend
-         */
-        bubbleLegend: {
-            /**
-             * The color of the ranges borders, can be also defined for an
-             * individual range.
-             *
-             * @sample highcharts/bubble-legend/similartoseries/
-             *         Similar look to the bubble series
-             * @sample highcharts/bubble-legend/bordercolor/
-             *         Individual bubble border color
-             *
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             */
-            borderColor: void 0,
-            /**
-             * The width of the ranges borders in pixels, can be also
-             * defined for an individual range.
-             */
-            borderWidth: 2,
-            /**
-             * An additional class name to apply to the bubble legend'
-             * circle graphical elements. This option does not replace
-             * default class names of the graphical element.
-             *
-             * @sample {highcharts} highcharts/css/bubble-legend/
-             *         Styling by CSS
-             *
-             * @type {string}
-             */
-            className: void 0,
-            /**
-             * The main color of the bubble legend. Applies to ranges, if
-             * individual color is not defined.
-             *
-             * @sample highcharts/bubble-legend/similartoseries/
-             *         Similar look to the bubble series
-             * @sample highcharts/bubble-legend/color/
-             *         Individual bubble color
-             *
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             */
-            color: void 0,
-            /**
-             * An additional class name to apply to the bubble legend's
-             * connector graphical elements. This option does not replace
-             * default class names of the graphical element.
-             *
-             * @sample {highcharts} highcharts/css/bubble-legend/
-             *         Styling by CSS
-             *
-             * @type {string}
-             */
-            connectorClassName: void 0,
-            /**
-             * The color of the connector, can be also defined
-             * for an individual range.
-             *
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             */
-            connectorColor: void 0,
-            /**
-             * The length of the connectors in pixels. If labels are
-             * centered, the distance is reduced to 0.
-             *
-             * @sample highcharts/bubble-legend/connectorandlabels/
-             *         Increased connector length
-             */
-            connectorDistance: 60,
-            /**
-             * The width of the connectors in pixels.
-             *
-             * @sample highcharts/bubble-legend/connectorandlabels/
-             *         Increased connector width
-             */
-            connectorWidth: 1,
-            /**
-             * Enable or disable the bubble legend.
-             */
-            enabled: false,
-            /**
-             * Options for the bubble legend labels.
-             */
-            labels: {
-                /**
-                 * An additional class name to apply to the bubble legend
-                 * label graphical elements. This option does not replace
-                 * default class names of the graphical element.
-                 *
-                 * @sample {highcharts} highcharts/css/bubble-legend/
-                 *         Styling by CSS
-                 *
-                 * @type {string}
-                 */
-                className: void 0,
-                /**
-                 * Whether to allow data labels to overlap.
-                 */
-                allowOverlap: false,
-                /**
-                 * A format string for the bubble legend labels. Available
-                 * variables are the same as for `formatter`.
-                 *
-                 * @sample highcharts/bubble-legend/format/
-                 *         Add a unit
-                 *
-                 * @type {string}
-                 */
-                format: '',
-                /**
-                 * Available `this` properties are:
-                 *
-                 * - `this.value`: The bubble value.
-                 *
-                 * - `this.radius`: The radius of the bubble range.
-                 *
-                 * - `this.center`: The center y position of the range.
-                 *
-                 * @type {Highcharts.FormatterCallbackFunction<Highcharts.BubbleLegendFormatterContextObject>}
-                 */
-                formatter: void 0,
-                /**
-                 * The alignment of the labels compared to the bubble
-                 * legend. Can be one of `left`, `center` or `right`.
-                 *
-                 * @sample highcharts/bubble-legend/connectorandlabels/
-                 *         Labels on left
-                 *
-                 * @type {Highcharts.AlignValue}
-                 */
-                align: 'right',
-                /**
-                 * CSS styles for the labels.
-                 *
-                 * @type {Highcharts.CSSObject}
-                 */
-                style: {
-                    /** @ignore-option */
-                    fontSize: '10px',
-                    /** @ignore-option */
-                    color: palette.neutralColor100
-                },
-                /**
-                 * The x position offset of the label relative to the
-                 * connector.
-                 */
-                x: 0,
-                /**
-                 * The y position offset of the label relative to the
-                 * connector.
-                 */
-                y: 0
-            },
-            /**
-             * Miximum bubble legend range size. If values for ranges are
-             * not specified, the `minSize` and the `maxSize` are calculated
-             * from bubble series.
-             */
-            maxSize: 60, // Number
-            /**
-             * Minimum bubble legend range size. If values for ranges are
-             * not specified, the `minSize` and the `maxSize` are calculated
-             * from bubble series.
-             */
-            minSize: 10, // Number
-            /**
-             * The position of the bubble legend in the legend.
-             * @sample highcharts/bubble-legend/connectorandlabels/
-             *         Bubble legend as last item in legend
-             */
-            legendIndex: 0, // Number
-            /**
-             * Options for specific range. One range consists of bubble,
-             * label and connector.
-             *
-             * @sample highcharts/bubble-legend/ranges/
-             *         Manually defined ranges
-             * @sample highcharts/bubble-legend/autoranges/
-             *         Auto calculated ranges
-             *
-             * @type {Array<*>}
-             */
-            ranges: {
-                /**
-                 * Range size value, similar to bubble Z data.
-                 * @type {number}
-                 */
-                value: void 0,
-                /**
-                 * The color of the border for individual range.
-                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-                 */
-                borderColor: void 0,
-                /**
-                 * The color of the bubble for individual range.
-                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-                 */
-                color: void 0,
-                /**
-                 * The color of the connector for individual range.
-                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-                 */
-                connectorColor: void 0
-            } as any,
-            /**
-             * Whether the bubble legend range value should be represented
-             * by the area or the width of the bubble. The default, area,
-             * corresponds best to the human perception of the size of each
-             * bubble.
-             *
-             * @sample highcharts/bubble-legend/ranges/
-             *         Size by width
-             *
-             * @type {Highcharts.BubbleSizeByValue}
-             */
-            sizeBy: 'area',
-            /**
-             * When this is true, the absolute value of z determines the
-             * size of the bubble. This means that with the default
-             * zThreshold of 0, a bubble of value -1 will have the same size
-             * as a bubble of value 1, while a bubble of value 0 will have a
-             * smaller size according to minSize.
-             */
-            sizeByAbsoluteValue: false,
-            /**
-             * Define the visual z index of the bubble legend.
-             */
-            zIndex: 1,
-            /**
-             * Ranges with with lower value than zThreshold, are skipped.
-             */
-            zThreshold: 0
-        }
-    }
-});
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -467,11 +218,12 @@ setOptions({ // Set default bubble legend options
  * @class
  * @name Highcharts.BubbleLegend
  * @param {Highcharts.LegendBubbleLegendOptions} options
- *        Bubble legend options
+ * Options of BubbleLegendItem.
+ *
  * @param {Highcharts.Legend} legend
- *        Legend
+ * Legend of item.
  */
-class BubbleLegend {
+class BubbleLegendItem {
     public constructor(
         options: Highcharts.BubbleLegendOptions,
         legend: Legend
@@ -1107,260 +859,5 @@ class BubbleLegend {
     }
 }
 
-// Start the bubble legend creation process.
-addEvent(Legend, 'afterGetAllItems', function (
-    this: Legend,
-    e: { allItems: Array<(Series|Point)> }
-): void {
-    const legend = this,
-        bubbleLegend = legend.bubbleLegend,
-        legendOptions = legend.options,
-        options = legendOptions.bubbleLegend,
-        bubbleSeriesIndex = legend.chart.getVisibleBubbleSeriesIndex();
-
-    // Remove unnecessary element
-    if (bubbleLegend && bubbleLegend.ranges && bubbleLegend.ranges.length) {
-        // Allow change the way of calculating ranges in update
-        if ((options as any).ranges.length) {
-            (options as any).autoRanges =
-                !!(options as any).ranges[0].autoRanges;
-        }
-        // Update bubbleLegend dimensions in each redraw
-        legend.destroyItem(bubbleLegend);
-    }
-    // Create bubble legend
-    if (bubbleSeriesIndex >= 0 &&
-            legendOptions.enabled &&
-            (options as any).enabled
-    ) {
-        (options as any).seriesIndex = bubbleSeriesIndex;
-        legend.bubbleLegend = new H.BubbleLegend(options as any, legend);
-        legend.bubbleLegend.addToLegend(e.allItems);
-    }
-});
-
-/**
- * Check if there is at least one visible bubble series.
- *
- * @private
- * @function Highcharts.Chart#getVisibleBubbleSeriesIndex
- * @return {number}
- *         First visible bubble series index
- */
-Chart.prototype.getVisibleBubbleSeriesIndex = function (): number {
-    const series = this.series;
-    let i = 0;
-
-    while (i < series.length) {
-        if (
-            series[i] &&
-            series[i].isBubble &&
-            series[i].visible &&
-            (series[i] as any).zData.length
-        ) {
-            return i;
-        }
-        i++;
-    }
-    return -1;
-};
-
-/**
- * Calculate height for each row in legend.
- *
- * @private
- * @function Highcharts.Legend#getLinesHeights
- * @return {Array<Highcharts.Dictionary<number>>}
- *         Informations about line height and items amount
- */
-Legend.prototype.getLinesHeights = function (
-    this: Legend
-): Array<Record<string, number>> {
-    const items = this.allItems,
-        lines = [] as Array<Record<string, number>>,
-        length = items.length;
-    let lastLine,
-        i = 0,
-        j = 0;
-
-    for (i = 0; i < length; i++) {
-        if (items[i].legendItemHeight) {
-            // for bubbleLegend
-            (items[i] as any).itemHeight = items[i].legendItemHeight;
-        }
-        if ( // Line break
-            items[i] === items[length - 1] ||
-            items[i + 1] &&
-            (items[i]._legendItemPos as any)[1] !==
-            (items[i + 1]._legendItemPos as any)[1]
-        ) {
-            lines.push({ height: 0 });
-            lastLine = lines[lines.length - 1];
-            // Find the highest item in line
-            for (j; j <= i; j++) {
-                if ((items[j] as any).itemHeight > lastLine.height) {
-                    lastLine.height = (items[j] as any).itemHeight;
-                }
-            }
-            lastLine.step = i;
-        }
-    }
-    return lines;
-};
-
-/**
- * Correct legend items translation in case of different elements heights.
- *
- * @private
- * @function Highcharts.Legend#retranslateItems
- * @param {Array<Highcharts.Dictionary<number>>} lines
- *        Informations about line height and items amount
- * @return {void}
- */
-Legend.prototype.retranslateItems = function (
-    this: Legend,
-    lines: Array<Record<string, number>>
-): void {
-    const items = this.allItems,
-        rtl = this.options.rtl;
-    let orgTranslateX,
-        orgTranslateY,
-        movementX,
-        actualLine = 0;
-
-    items.forEach(function (
-        item: (Highcharts.BubbleLegend|Series|Point),
-        index: number
-    ): void {
-        orgTranslateX = (item.legendGroup as any).translateX;
-        orgTranslateY = (item._legendItemPos as any)[1];
-
-        movementX = (item as any).movementX;
-
-        if (movementX || (rtl && (item as any).ranges)) {
-            movementX = rtl ?
-                orgTranslateX - (item as any).options.maxSize / 2 :
-                orgTranslateX + movementX;
-
-            (item.legendGroup as any).attr({ translateX: movementX });
-        }
-        if (index > lines[actualLine].step) {
-            actualLine++;
-        }
-
-        (item.legendGroup as any).attr({
-            translateY: Math.round(
-                orgTranslateY + lines[actualLine].height / 2
-            )
-        });
-        (item._legendItemPos as any)[1] = orgTranslateY +
-            lines[actualLine].height / 2;
-    });
-};
-
-// Toggle bubble legend depending on the visible status of bubble series.
-addEvent(Series, 'legendItemClick', function (): void {
-    const series = this,
-        chart = series.chart,
-        visible = series.visible,
-        legend = series.chart.legend;
-    let status;
-
-    if (legend && legend.bubbleLegend) {
-        // Temporary correct 'visible' property
-        series.visible = !visible;
-        // Save future status for getRanges method
-        series.ignoreSeries = visible;
-        // Check if at lest one bubble series is visible
-        status = chart.getVisibleBubbleSeriesIndex() >= 0;
-
-        // Hide bubble legend if all bubble series are disabled
-        if (legend.bubbleLegend.visible !== status) {
-            // Show or hide bubble legend
-            legend.update({
-                bubbleLegend: { enabled: status }
-            });
-
-            legend.bubbleLegend.visible = status; // Restore default status
-        }
-        series.visible = visible;
-    }
-});
-
-// If ranges are not specified, determine ranges from rendered bubble series
-// and render legend again.
-wrap(Chart.prototype, 'drawChartBox', function (
-    this: Chart,
-    proceed: Function,
-    options: Options,
-    callback: Chart.CallbackFunction
-): void {
-    const chart = this,
-        legend = chart.legend,
-        bubbleSeries = chart.getVisibleBubbleSeriesIndex() >= 0;
-    let bubbleLegendOptions: Highcharts.BubbleLegendOptions,
-        bubbleSizes;
-
-    if (
-        legend && legend.options.enabled && legend.bubbleLegend &&
-        (legend.options.bubbleLegend as any).autoRanges && bubbleSeries
-    ) {
-        bubbleLegendOptions = legend.bubbleLegend.options;
-        bubbleSizes = legend.bubbleLegend.predictBubbleSizes();
-
-        legend.bubbleLegend.updateRanges(bubbleSizes[0], bubbleSizes[1]);
-        // Disable animation on init
-        if (!bubbleLegendOptions.placed) {
-            legend.group.placed = false;
-
-            legend.allItems.forEach(function (item): void {
-                (item.legendGroup as any).translateY = null;
-            });
-        }
-
-        // Create legend with bubbleLegend
-        legend.render();
-
-        chart.getMargins();
-
-        chart.axes.forEach(function (axis): void {
-            if (axis.visible) { // #11448
-                axis.render();
-            }
-
-            if (!bubbleLegendOptions.placed) {
-                axis.setScale();
-                axis.updateNames();
-                // Disable axis animation on init
-                objectEach(axis.ticks, function (tick): void {
-                    tick.isNew = true;
-                    tick.isNewLabel = true;
-                });
-            }
-        });
-        bubbleLegendOptions.placed = true;
-
-        // After recalculate axes, calculate margins again.
-        chart.getMargins();
-
-        // Call default 'drawChartBox' method.
-        proceed.call(chart, options, callback);
-
-        // Check bubble legend sizes and correct them if necessary.
-        legend.bubbleLegend.correctSizes();
-
-        // Correct items positions with different dimensions in legend.
-        legend.retranslateItems(legend.getLinesHeights());
-
-    } else {
-        proceed.call(chart, options, callback);
-        // Allow color change on static bubble legend after click on legend
-        if (legend && legend.options.enabled && legend.bubbleLegend) {
-            legend.render();
-            legend.retranslateItems(legend.getLinesHeights());
-        }
-    }
-});
-
-H.BubbleLegend = BubbleLegend as any;
-export default H.BubbleLegend;
+H.BubbleLegendItem = BubbleLegendItem as any;
+export default H.BubbleLegendItem;
