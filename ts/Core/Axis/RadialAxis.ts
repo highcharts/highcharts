@@ -27,8 +27,9 @@ import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
 
 import Axis from './Axis.js';
 import AxisDefaults from './AxisDefaults.js';
+import H from '../Globals.js';
+const { noop } = H;
 import Tick from './Tick.js';
-import HiddenAxis from './HiddenAxis.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -214,7 +215,53 @@ class RadialAxis {
      *
      * */
 
-    public static init(axis: RadialAxis): void {
+    public static modifyAsHidden(axis: RadialAxis): void {
+
+        axis.getOffset = function (): void {};
+
+        axis.redraw = function (): void {
+            this.isDirty = false; // prevent setting Y axis dirty
+        };
+
+        axis.render = function (): void {
+            this.isDirty = false; // prevent setting Y axis dirty
+        };
+
+        axis.createLabelCollector = function (): Chart.LabelCollectorFunction {
+            return function (): undefined {
+                return;
+            };
+        };
+
+        axis.setScale = function (): void {};
+
+        axis.setCategories = function (): void {};
+
+        axis.setTitle = function (): void {};
+
+        axis.isHidden = true;
+
+    }
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Creates an empty collector function.
+     */
+    private static createLabelCollector(): Chart.LabelCollectorFunction {
+        return noop as Chart.LabelCollectorFunction;
+    }
+
+    /**
+     * Prevent setting Y axis dirty.
+     */
+    private static markClean(this: RadialAxis): void {
+        this.isDirty = false;
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+    public static modify(axis: RadialAxis): void {
 
         const axisProto = Axis.prototype;
 
@@ -925,9 +972,9 @@ class RadialAxis {
             if (angular) {
 
                 if (isHidden) {
-                    HiddenAxis.init(axis as HiddenAxis);
+                    RadialAxis.modifyAsHidden(axis);
                 } else {
-                    RadialAxis.init(axis);
+                    RadialAxis.modify(axis);
                 }
                 isCircular = !isX;
                 if (isCircular) {
@@ -935,7 +982,7 @@ class RadialAxis {
                 }
 
             } else if (polar) {
-                RadialAxis.init(axis);
+                RadialAxis.modify(axis);
 
                 // Check which axis is circular
                 isCircular = axis.horiz;
@@ -1286,6 +1333,7 @@ interface RadialAxis extends Axis {
     defaultPolarOptions: DeepPartial<RadialAxisOptions>;
     endAngleRad: number;
     isCircular?: boolean;
+    isHidden?: boolean;
     labelCollector?: Chart.LabelCollectorFunction;
     max: number;
     min: number;
