@@ -56,7 +56,8 @@ export function testStockSeries() {
         'pie',
         'ohlc',
         'candlestick',
-        'flags'
+        'flags',
+        'hollowcandlestick',
     ];
 
     const seriesTypes = Object.keys(Highstock.seriesTypes);
@@ -218,6 +219,7 @@ export function testStockIndicators() {
         'ohlc',
         'candlestick',
         'flags',
+        'hollowcandlestick',
         'sma',
         'ad',
         'ao',
