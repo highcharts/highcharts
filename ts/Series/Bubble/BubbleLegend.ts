@@ -543,16 +543,13 @@ class BubbleLegend {
      * @return {void}
      */
     public drawLegendSymbol(legend: Legend): void {
-        let chart = this.chart,
+        const chart = this.chart,
             options = this.options,
-            size,
             itemDistance = pick(legend.options.itemDistance, 20),
-            connectorSpace,
             ranges =
                 options.ranges as Array<Highcharts.BubbleLegendRangesOptions>,
-            radius,
-            maxLabel,
             connectorDistance = options.connectorDistance;
+        let connectorSpace;
 
         // Predict label dimensions
         this.fontMetrics = chart.renderer.fontMetrics(
@@ -580,9 +577,9 @@ class BubbleLegend {
         this.render();
 
         // Get max label size
-        maxLabel = this.getMaxLabelSize();
-        radius = this.ranges[0].radius;
-        size = (radius as any) * 2;
+        const maxLabel = this.getMaxLabelSize(),
+            radius = this.ranges[0].radius,
+            size = (radius as any) * 2;
 
         // Space for connectors and labels.
         connectorSpace =
@@ -755,7 +752,7 @@ class BubbleLegend {
      * @return {void}
      */
     public renderRange(range: Highcharts.BubbleLegendRangesOptions): void {
-        let mainRange = this.ranges[0],
+        const mainRange = this.ranges[0],
             legend = this.legend,
             options = this.options,
             labelsOptions = options.labels as any,
@@ -764,27 +761,24 @@ class BubbleLegend {
             renderer = chart.renderer,
             symbols = this.symbols,
             labels = symbols.labels,
-            label,
             elementCenter = range.center,
             absoluteRadius = Math.abs(range.radius as any),
             connectorDistance = options.connectorDistance || 0,
             labelsAlign = (labelsOptions as any).align,
             rtl = legend.options.rtl,
-            connectorLength = rtl || labelsAlign === 'left' ?
-                -connectorDistance : connectorDistance,
             borderWidth = options.borderWidth,
             connectorWidth = options.connectorWidth,
             posX = mainRange.radius || 0,
             posY = (elementCenter as any) - absoluteRadius -
                 (borderWidth as any) / 2 + (connectorWidth as any) / 2,
-            labelY,
-            labelX,
             fontMetrics = this.fontMetrics,
             labelMovement = fontMetrics.f / 2 -
                 (fontMetrics.h - fontMetrics.f) / 2,
             crispMovement = (posY % 1 ? 1 : 0.5) -
                 ((connectorWidth as any) % 2 ? 0 : 0.5),
             styledMode = renderer.styledMode;
+        let connectorLength = rtl || labelsAlign === 'left' ?
+            -connectorDistance : connectorDistance;
 
         // Set options for centered labels
         if (labelsAlign === 'center') {
@@ -793,8 +787,8 @@ class BubbleLegend {
             (range.labelAttribs as any).align = 'center';
         }
 
-        labelY = posY + (options.labels as any).y;
-        labelX = posX + connectorLength + (options.labels as any).x;
+        const labelY = posY + (options.labels as any).y,
+            labelX = posX + connectorLength + (options.labels as any).x;
 
         // Render bubble symbol
         symbols.bubbleItems.push(
@@ -848,7 +842,7 @@ class BubbleLegend {
         );
 
         // Render label
-        label = renderer
+        const label = renderer
             .text(
                 this.formatLabel(range),
                 labelX,
@@ -882,8 +876,8 @@ class BubbleLegend {
      * @return {Highcharts.BBoxObject}
      */
     public getMaxLabelSize(): BBoxObject {
-        let labels = this.symbols.labels,
-            maxLabel: (BBoxObject|undefined),
+        const labels = this.symbols.labels;
+        let maxLabel: (BBoxObject|undefined),
             labelSize: BBoxObject;
 
         labels.forEach(function (label: SVGElement): void {
@@ -960,10 +954,10 @@ class BubbleLegend {
      *         Array of range objects
      */
     public getRanges(): Array<Highcharts.BubbleLegendRangesOptions> {
-        let bubbleLegend = this.legend.bubbleLegend,
+        const bubbleLegend = this.legend.bubbleLegend,
             series = (bubbleLegend as any).chart.series,
-            ranges: Array<Highcharts.BubbleLegendRangesOptions>,
-            rangesOptions = (bubbleLegend as any).options.ranges,
+            rangesOptions = (bubbleLegend as any).options.ranges;
+        let ranges: Array<Highcharts.BubbleLegendRangesOptions>,
             zData,
             minZ = Number.MAX_VALUE,
             maxZ = -Number.MAX_VALUE;
@@ -1029,7 +1023,7 @@ class BubbleLegend {
      *         Calculated min and max bubble sizes
      */
     public predictBubbleSizes(): [number, number] {
-        let chart = this.chart,
+        const chart = this.chart,
             fontMetrics = this.fontMetrics,
             legendOptions = chart.legend.options,
             floating = legendOptions.floating,
@@ -1040,9 +1034,9 @@ class BubbleLegend {
             bubbleSeries: BubbleSeries = chart.series[this.options.seriesIndex as any] as any,
             minSize = Math.ceil(bubbleSeries.minPxSize),
             maxPxSize = Math.ceil(bubbleSeries.maxPxSize),
-            maxSize = bubbleSeries.options.maxSize,
-            plotSize = Math.min(plotSizeY as any, plotSizeX as any),
-            calculatedSize;
+            plotSize = Math.min(plotSizeY as any, plotSizeX as any);
+        let calculatedSize,
+            maxSize = bubbleSeries.options.maxSize;
 
         // Calculate prediceted max size of bubble
         if (floating || !(/%$/.test(maxSize as any))) {
@@ -1154,8 +1148,8 @@ addEvent(Legend, 'afterGetAllItems', function (
  *         First visible bubble series index
  */
 Chart.prototype.getVisibleBubbleSeriesIndex = function (): number {
-    let series = this.series,
-        i = 0;
+    const series = this.series;
+    let i = 0;
 
     while (i < series.length) {
         if (
@@ -1182,10 +1176,10 @@ Chart.prototype.getVisibleBubbleSeriesIndex = function (): number {
 Legend.prototype.getLinesHeights = function (
     this: Legend
 ): Array<Record<string, number>> {
-    let items = this.allItems,
+    const items = this.allItems,
         lines = [] as Array<Record<string, number>>,
-        lastLine,
-        length = items.length,
+        length = items.length;
+    let lastLine,
         i = 0,
         j = 0;
 
@@ -1227,11 +1221,11 @@ Legend.prototype.retranslateItems = function (
     this: Legend,
     lines: Array<Record<string, number>>
 ): void {
-    let items = this.allItems,
-        orgTranslateX,
+    const items = this.allItems,
+        rtl = this.options.rtl;
+    let orgTranslateX,
         orgTranslateY,
         movementX,
-        rtl = this.options.rtl,
         actualLine = 0;
 
     items.forEach(function (
@@ -1266,11 +1260,11 @@ Legend.prototype.retranslateItems = function (
 
 // Toggle bubble legend depending on the visible status of bubble series.
 addEvent(Series, 'legendItemClick', function (): void {
-    let series = this,
+    const series = this,
         chart = series.chart,
         visible = series.visible,
-        legend = series.chart.legend,
-        status;
+        legend = series.chart.legend;
+    let status;
 
     if (legend && legend.bubbleLegend) {
         // Temporary correct 'visible' property
@@ -1301,10 +1295,10 @@ wrap(Chart.prototype, 'drawChartBox', function (
     options: Options,
     callback: Chart.CallbackFunction
 ): void {
-    let chart = this,
+    const chart = this,
         legend = chart.legend,
-        bubbleSeries = chart.getVisibleBubbleSeriesIndex() >= 0,
-        bubbleLegendOptions: Highcharts.BubbleLegendOptions,
+        bubbleSeries = chart.getVisibleBubbleSeriesIndex() >= 0;
+    let bubbleLegendOptions: Highcharts.BubbleLegendOptions,
         bubbleSizes;
 
     if (
