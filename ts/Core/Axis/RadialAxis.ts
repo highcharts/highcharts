@@ -19,11 +19,14 @@
 import type { YAxisOptions } from './AxisOptions';
 import type Chart from '../Chart/Chart';
 import type Pane from '../../Extensions/Pane';
+import type PlotBandOptions from './PlotBandOptions';
+import type PlotLineOptions from './PlotLineOptions';
 import type Point from '../Series/Point';
 import type PositionObject from '../Renderer/PositionObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+import type TickType from './Tick';
 
 import Axis from './Axis.js';
 import AxisDefaults from './AxisDefaults.js';
@@ -52,13 +55,7 @@ const {
 declare module './AxisOptions' {
     interface AxisOptions {
         angle?: number;
-        gridLineInterpolation?: Highcharts.AxisGridLineInterpolationValue;
-    }
-}
-
-declare module '../Chart/ChartLike'{
-    interface ChartLike {
-        inverted?: boolean;
+        gridLineInterpolation?: ('circle'|'polygon');
     }
 }
 
@@ -67,31 +64,28 @@ declare module './AxisType' {
         RadialAxis: RadialAxis.Composition;
     }
 }
-
-interface RadialTick extends Tick {
-    axis: RadialAxis.Composition;
+declare module '../Chart/ChartLike'{
+    interface ChartLike {
+        inverted?: boolean;
+    }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        type AxisGridLineInterpolationValue = ('circle'|'polygon');
-        interface AxisPlotBandsOptions {
-            innerRadius?: (number|string);
-            outerRadius?: (number|string);
-            shape?: PaneBackgroundShapeValue;
-            thickness?: (number|string);
-        }
-        interface AxisPlotLinesOptions {
-            chartX?: number;
-            chartY?: number;
-            isCrosshair?: boolean;
-            point?: Point;
-            reverse?: boolean;
-        }
+declare module './PlotBandOptions' {
+    interface PlotBandOptions {
+        innerRadius?: (number|string);
+        outerRadius?: (number|string);
+        shape?: Highcharts.PaneBackgroundShapeValue;
+        thickness?: (number|string);
+    }
+}
+
+declare module './PlotLineOptions' {
+    interface PlotLineOptions {
+        chartX?: number;
+        chartY?: number;
+        isCrosshair?: boolean;
+        point?: Point;
+        reverse?: boolean;
     }
 }
 
@@ -109,11 +103,19 @@ namespace RadialAxis {
      *
      * */
 
+    interface AfterGetPositionEvent extends Event {
+        pos: PositionObject;
+    }
+
+    interface AutoAlignEvent extends Event {
+        align?: string;
+    }
+
     export declare class Composition extends Axis {
         angleRad: number;
         autoConnect?: boolean;
         center: Array<number>;
-        defaultPolarOptions: DeepPartial<RadialAxisOptions>;
+        defaultPolarOptions: DeepPartial<Options>;
         endAngleRad: number;
         isCircular?: boolean;
         isHidden?: boolean;
@@ -122,7 +124,7 @@ namespace RadialAxis {
         min: number;
         minPointOffset: number;
         offset: number;
-        options: RadialAxisOptions;
+        options: Options;
         pane: Pane;
         isRadial: true;
         sector?: number;
@@ -130,7 +132,7 @@ namespace RadialAxis {
         createLabelCollector(): Chart.LabelCollectorFunction;
         beforeSetTickPositions(): void;
         getCrosshairPosition(
-            options: Highcharts.AxisPlotLinesOptions,
+            options: PlotLineOptions,
             x1: number,
             y1: number
         ): [(number | undefined), number, number];
@@ -143,9 +145,9 @@ namespace RadialAxis {
         getPlotBandPath(
             from: number,
             to: number,
-            options: Highcharts.AxisPlotBandsOptions
-        ): RadialAxisPath;
-        getPlotLinePath(options: Highcharts.AxisPlotLinesOptions): SVGPath;
+            options: PlotBandOptions
+        ): Path;
+        getPlotLinePath(options: PlotLineOptions): SVGPath;
         getPosition(
             value: number,
             length?: number
@@ -157,7 +159,20 @@ namespace RadialAxis {
         ): PositionObject;
         setAxisSize(): void;
         setAxisTranslation(): void;
-        setOptions(userOptions: DeepPartial<RadialAxisOptions>): void;
+        setOptions(userOptions: DeepPartial<Options>): void;
+    }
+
+    interface Options extends YAxisOptions {
+        // nothing to add yet
+    }
+
+    interface Path extends SVGPath {
+        xBounds?: Array<number>;
+        yBounds?: Array<number>;
+    }
+
+    export interface Tick extends TickType {
+        axis: RadialAxis.Composition;
     }
 
     /* *
@@ -170,7 +185,7 @@ namespace RadialAxis {
      * Circular axis around the perimeter of a polar chart.
      * @private
      */
-    const defaultCircularOptions: DeepPartial<RadialAxisOptions> = {
+    const defaultCircularOptions: DeepPartial<Options> = {
         gridLineWidth: 1, // spokes
         labels: {
             align: void 0, // auto
@@ -191,7 +206,7 @@ namespace RadialAxis {
      * The default options extend defaultYAxisOptions.
      * @private
      */
-    const defaultRadialGaugeOptions: DeepPartial<RadialAxisOptions> = {
+    const defaultRadialGaugeOptions: DeepPartial<Options> = {
         labels: {
             align: 'center',
             x: 0,
@@ -215,7 +230,7 @@ namespace RadialAxis {
      * Radial axis, like a spoke in a polar chart.
      * @private
      */
-    const defaultRadialOptions: DeepPartial<RadialAxisOptions> = {
+    const defaultRadialOptions: DeepPartial<Options> = {
 
         /**
          * In a polar chart, this is the angle of the Y axis in degrees, where
@@ -291,7 +306,7 @@ namespace RadialAxis {
         /* eslint-disable no-invalid-this */
 
         // Actions before axis init.
-        addEvent(AxisClass, 'init', function (e: { userOptions: RadialAxisOptions }): void {
+        addEvent(AxisClass, 'init', function (e: { userOptions: Options }): void {
             const axis = this as RadialAxis.Composition,
                 chart = axis.chart;
 
@@ -405,7 +420,7 @@ namespace RadialAxis {
 
         // Wrap auto label align to avoid setting axis-wide rotation on radial
         // axes. (#4920)
-        addEvent(AxisClass, 'autoLabelAlign', function (e: RadialAutoAlignEvent): void {
+        addEvent(AxisClass, 'autoLabelAlign', function (e: AutoAlignEvent): void {
             if (this.isRadial) {
                 e.align = void 0;
                 e.preventDefault();
@@ -443,8 +458,8 @@ namespace RadialAxis {
         });
 
         // Add special cases within the Tick class' methods for radial axes.
-        addEvent(TickClass, 'afterGetPosition', function (e: RadialAfterGetPositionEvent): void {
-            const tick = this as RadialTick;
+        addEvent(TickClass, 'afterGetPosition', function (e: AfterGetPositionEvent): void {
+            const tick = this as Tick;
 
             if (tick.axis.getPosition) {
                 extend(e.pos, tick.axis.getPosition(this.pos));
@@ -452,7 +467,7 @@ namespace RadialAxis {
         });
 
         // Find the center position of the label based on the distance option.
-        addEvent(TickClass, 'afterGetLabelPosition', function (e: RadialAfterGetPositionEvent): void {
+        addEvent(TickClass, 'afterGetLabelPosition', function (e: AfterGetPositionEvent): void {
             const tick = this,
                 axis = tick.axis as RadialAxis.Composition,
                 label = tick.label;
@@ -690,9 +705,9 @@ namespace RadialAxis {
         const axisProto = Axis.prototype;
 
         // Merge and set options.
-        axis.setOptions = function (userOptions: DeepPartial<RadialAxisOptions>): void {
+        axis.setOptions = function (userOptions: DeepPartial<Options>): void {
 
-            const options = this.options = merge<RadialAxisOptions>(
+            const options = this.options = merge<Options>(
                 (axis.constructor as typeof Axis).defaultOptions,
                 this.defaultPolarOptions,
                 userOptions
@@ -736,20 +751,20 @@ namespace RadialAxis {
          * @param {number} [innerRadius]
          * Inner radius of radial path.
          *
-         * @return {RadialAxisPath}
+         * @return {Highcharts.RadialAxisPath}
          */
         axis.getLinePath = function (
             _lineWidth: number,
             radius?: number,
             innerRadius?: number
-        ): RadialAxisPath {
+        ): Path {
             let center = this.pane.center,
                 end,
                 chart = this.chart,
                 r = pick(radius, center[2] / 2 - this.offset),
                 left = this.left || 0,
                 top = this.top || 0,
-                path: RadialAxisPath;
+                path: Path;
 
             if (typeof innerRadius === 'undefined') {
                 innerRadius = this.horiz ? 0 : this.center && -this.center[3] / 2;
@@ -976,13 +991,13 @@ namespace RadialAxis {
          * @param {Highcharts.AxisPlotBandsOptions} options
          * Band options.
          *
-         * @return {RadialAxisPath}
+         * @return {Highcharts.RadialAxisPath}
          */
         axis.getPlotBandPath = function (
             from: number,
             to: number,
-            options: Highcharts.AxisPlotBandsOptions
-        ): RadialAxisPath {
+            options: PlotBandOptions
+        ): Path {
 
             const radiusToPixels = (radius: number|string|undefined): (number|undefined) => {
                 if (typeof radius === 'string') {
@@ -1008,7 +1023,7 @@ namespace RadialAxis {
                 xOnPerimeter,
                 open,
                 isCircular = this.isCircular, // X axis in a polar chart
-                path: RadialAxisPath,
+                path: Path,
                 outerRadius = pick(
                     radiusToPixels(options.outerRadius),
                     fullRadius
@@ -1101,7 +1116,7 @@ namespace RadialAxis {
 
         // Find the correct end values of crosshair in polar.
         axis.getCrosshairPosition = function (
-            options: Highcharts.AxisPlotLinesOptions,
+            options: PlotLineOptions,
             x1: number,
             y1: number
         ): [(number | undefined), number, number] {
@@ -1158,7 +1173,7 @@ namespace RadialAxis {
 
         // Find the path for plot lines perpendicular to the radial axis.
         axis.getPlotLinePath = function (
-            options: Highcharts.AxisPlotLinesOptions
+            options: PlotLineOptions
         ): SVGPath {
             let axis = this,
                 center = axis.pane.center,
@@ -1392,22 +1407,6 @@ namespace RadialAxis {
 
     /* eslint-enable valid-jsdoc */
 
-}
-
-interface RadialAfterGetPositionEvent extends Event {
-    pos: PositionObject;
-}
-
-interface RadialAutoAlignEvent extends Event {
-    align?: string;
-}
-
-interface RadialAxisOptions extends YAxisOptions {
-}
-
-interface RadialAxisPath extends SVGPath {
-    xBounds?: Array<number>;
-    yBounds?: Array<number>;
 }
 
 RadialAxis.compose(Axis, Tick); // @todo move outside
