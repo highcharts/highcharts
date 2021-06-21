@@ -20,6 +20,7 @@ import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type LegendLike from './LegendLike';
 import type LegendOptions from './LegendOptions';
 import type Series from './Series/Series';
+import type { StatesOptionsKey } from './Series/StatesOptions';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import A from './Animation/AnimationUtilities.js';
@@ -1624,6 +1625,19 @@ class Legend {
                 [legendItem, item.legendSymbol] :
                 [item.legendGroup];
 
+        const setOtherItemsState = (state: StatesOptionsKey): void => {
+            legend.allItems.forEach((otherItem): void => {
+                if (item !== otherItem) {
+                    otherItem.setState(state, !isPoint);
+                    if ((otherItem as Series).linkedSeries) {
+                        (otherItem as Series).linkedSeries.forEach((s): void => {
+                            s.setState(state, true);
+                        });
+                    }
+                }
+            });
+        };
+
         // Set the events on the item group, or in case of useHTML, the item
         // itself (#1249)
         legendItems.forEach(function (element): void {
@@ -1631,11 +1645,7 @@ class Legend {
                 element
                     .on('mouseover', function (): void {
                         if (item.visible) {
-                            legend.allItems.forEach(function (inactiveItem): void {
-                                if (item !== inactiveItem) {
-                                    inactiveItem.setState('inactive', !isPoint);
-                                }
-                            });
+                            setOtherItemsState('inactive');
                         }
 
                         item.setState('hover');
@@ -1664,11 +1674,7 @@ class Legend {
                             );
                         }
 
-                        legend.allItems.forEach(function (inactiveItem): void {
-                            if (item !== inactiveItem) {
-                                inactiveItem.setState('', !isPoint);
-                            }
-                        });
+                        setOtherItemsState('');
 
                         // A CSS class to dim or hide other than the hovered
                         // series.
@@ -1683,14 +1689,7 @@ class Legend {
                                     (item as any).setVisible();
                                 }
                                 // Reset inactive state
-                                legend.allItems.forEach(function (inactiveItem): void {
-                                    if (item !== inactiveItem) {
-                                        inactiveItem.setState(
-                                            item.visible ? 'inactive' : '',
-                                            !isPoint
-                                        );
-                                    }
-                                });
+                                setOtherItemsState(item.visible ? 'inactive' : '');
                             };
 
                         // A CSS class to dim or hide other than the hovered
