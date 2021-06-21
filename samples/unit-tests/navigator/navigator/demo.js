@@ -1300,8 +1300,9 @@ QUnit.test('Initiation chart without data but with set range, #15864.', function
             pointInterval: 36e7
         }]
     });
-    assert.ok(
-        chart.xAxis[0].max !== 0,
+    assert.notStrictEqual(
+        chart.xAxis[0].max,
+        0,
         `After adding series to the chart that has set the range,
         the navigator shouldn't stick to min.`
     );
