@@ -1065,7 +1065,7 @@ addEvent(Point, 'update', function (): (boolean|undefined) {
 // Extend the original method, make the tooltip's header reflect the grouped
 // range.
 addEvent(Tooltip, 'headerFormatter', function (
-    this: Highcharts.Tooltip,
+    this: Tooltip,
     e: AnyRecord
 ): void {
     let tooltip = this,
