@@ -12,8 +12,7 @@ QUnit.module('Color axis for series types', function () {
                 type !== 'sankey' &&
                 type !== 'dependencywheel' &&
                 type !== 'venn' &&
-                type !== 'wordcloud' &&
-                type !== 'heikinashi'
+                type !== 'wordcloud'
             ) {
                 QUnit.test('Color axis for ' + type, function (assert) {
                     var cfg = {

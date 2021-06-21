@@ -93,49 +93,26 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     /* eslint-disable valid-jsdoc */
 
-    public calculatePoints(): any {
+    public translate(): void {
+        // Run the base method.
+        super.translate.apply(this);
+
         const series = this,
-            processedYData = series.processedYData;
+            firstPoint = series.points[0];
 
-        if (processedYData && processedYData.length) {
-            const firstPoint = (processedYData[0] as any),
-                firstPointOpen = firstPoint[0],
-                firstPointClose = firstPoint[3],
-                newOpen = (firstPointOpen + firstPointClose) / 2,
-                newClose = (firstPointOpen + firstPoint[1] + firstPoint[2] + firstPointClose) / 4;
+        // Modify the first point.
+        if (series.points && series.points.length) {
+            firstPoint.modifyFirstPointValue();
+            firstPoint.doTranslation();
 
-            firstPoint[0] = newOpen;
-            firstPoint[3] = newClose;
+            // Modify other points.
+            for (let i = 1; i < series.points.length; i++) {
+                const point = series.points[i];
 
-            for (let i = 1; i < processedYData.length; i++) {
-                const point = (processedYData[i] as any),
-                    open = point[0],
-                    high = point[1],
-                    low = point[2],
-                    close = point[3];
-
-                const previousOpen = (processedYData[i - 1] as any)[0],
-                    previousClose = (processedYData[i - 1] as any)[3],
-                    newOpen = (previousOpen + previousClose) / 2,
-                    newClose = (open + high + low + close) / 4,
-                    newHigh = Math.max(high, newClose, newOpen),
-                    newLow = Math.min(low, newClose, newOpen);
-
-                point[0] = newOpen;
-                point[1] = newHigh;
-                point[2] = newLow;
-                point[3] = newClose;
+                point.modifyValue(series.points[i - 1]);
+                point.doTranslation();
             }
         }
-        series.processedYData = processedYData;
-        series.options.data = processedYData;
-    }
-
-    public generatePoints(): void {
-        this.calculatePoints();
-
-        // Run base method.
-        super.generatePoints.call(this);
     }
 
     /* eslint-enable valid-jsdoc */
