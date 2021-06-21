@@ -81,7 +81,7 @@ declare global {
         }
         class Pane {
             public constructor(options: PaneOptions, chart: Chart);
-            public axis?: RadialAxis;
+            public axis?: RadialAxis.Composition;
             public background: Array<SVGElement>;
             public center: Array<number>;
             public chart: PaneChart;
@@ -98,7 +98,7 @@ declare global {
             ): void;
             public setOptions(options: PaneOptions): void;
             public update(options: PaneOptions, redraw?: boolean): void;
-            public updateCenter(axis?: RadialAxis): void;
+            public updateCenter(axis?: RadialAxis.Composition): void;
         }
     }
 }
@@ -132,7 +132,7 @@ class Pane {
         this.init(options, chart);
     }
 
-    public axis?: RadialAxis;
+    public axis?: RadialAxis.Composition;
     public background: Array<SVGElement> = void 0 as any;
     public center: Array<number> = void 0 as any;
     public chart: Highcharts.PaneChart = void 0 as any;
@@ -465,7 +465,7 @@ class Pane {
      * @param {Highcharts.Axis} [axis]
      * @return {void}
      */
-    public updateCenter(axis?: RadialAxis): void {
+    public updateCenter(axis?: RadialAxis.Composition): void {
         this.center = (
             axis ||
             this.axis ||

@@ -35,7 +35,7 @@ const {
 /**
  * @private
  */
-interface SolidGaugeAxis extends RadialAxis {
+interface SolidGaugeAxis extends RadialAxis.Composition {
     dataClasses: ColorAxis['dataClasses'];
     options: SolidGaugeAxis.Options;
     stops: ColorAxis['stops'];
@@ -202,8 +202,8 @@ namespace SolidGaugeAxis {
     /**
      * @private
      */
-    export function init(axis: RadialAxis): void {
-        extend<SolidGaugeAxis|RadialAxis>(axis, methods);
+    export function init(axis: RadialAxis.Composition): void {
+        extend<SolidGaugeAxis|RadialAxis.Composition>(axis, methods);
     }
 
 }
