@@ -26,12 +26,10 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FontMetricsObject from '../../Core/Renderer/FontMetricsObject';
 import type FormatUtilities from '../../Core/FormatUtilities';
-import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import BubbleLegendDefaults from './BubbleLegendDefaults.js';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -39,21 +37,15 @@ import F from '../../Core/FormatUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend.js';
-import D from '../../Core/DefaultOptions.js';
-const { setOptions } = D;
-import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     arrayMax,
     arrayMin,
     isNumber,
     merge,
-    objectEach,
     pick,
-    stableSort,
-    wrap
+    stableSort
 } = U;
 
 /* *
@@ -64,7 +56,7 @@ const {
 
 declare module '../../Core/LegendLike' {
     interface LegendLike {
-        bubbleLegend?: Highcharts.BubbleLegendItem;
+        bubbleLegend?: BubbleLegendItem;
     }
 }
 
@@ -83,105 +75,7 @@ declare module '../../Core/Series/SeriesLike' {
 
 declare module '../../Core/LegendOptions'{
     interface LegendOptions {
-        bubbleLegend?: Highcharts.BubbleLegendOptions;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface BubbleLegendFormatterContextObject {
-            center: number;
-            radius: (number|null);
-            value: number;
-        }
-        interface BubbleLegendLabelsOptions {
-            align?: AlignValue;
-            allowOverlap?: boolean;
-            className?: string;
-            format?: string;
-            formatter?: (
-                FormatUtilities.FormatterCallback<BubbleLegendFormatterContextObject>
-            );
-            style?: CSSObject;
-            x?: number;
-            y?: number;
-        }
-        interface BubbleLegendOptions {
-            borderColor?: ColorType;
-            borderWidth?: number;
-            className?: string;
-            color?: ColorType;
-            connectorClassName?: string;
-            connectorColor?: ColorType;
-            connectorDistance?: number;
-            connectorWidth?: number;
-            enabled?: boolean;
-            labels?: BubbleLegendLabelsOptions;
-            legendIndex?: number;
-            maxSize?: number;
-            minSize?: number;
-            placed?: boolean;
-            ranges?: Array<BubbleLegendRangesOptions>;
-            seriesIndex?: number;
-            sizeBy?: BubbleSizeByValue;
-            sizeByAbsoluteValue?: boolean;
-            zIndex?: number;
-            zThreshold?: number;
-        }
-        interface BubbleLegendRangesOptions
-            extends Partial<BubbleLegendFormatterContextObject>
-        {
-            autoRanges?: boolean;
-            borderColor?: ColorType;
-            color?: ColorType;
-            connectorColor?: ColorType;
-            bubbleAttribs?: SVGAttributes;
-            connectorAttribs?: SVGAttributes;
-            labelAttribs?: SVGAttributes;
-            value?: any;
-        }
-        interface LegendItemObject {
-            ignoreSeries?: boolean;
-        }
-        class BubbleLegendItem implements LegendItemObject {
-            public constructor(options: BubbleLegendOptions, legend: Legend);
-            public chart: Chart;
-            public fontMetrics: FontMetricsObject;
-            public legend: Legend;
-            public legendGroup: SVGElement;
-            public legendItem: SVGElement;
-            public legendItemHeight: number;
-            public legendItemWidth: number;
-            public legendSymbol: SVGElement;
-            public maxLabel: BBoxObject;
-            public movementX: number;
-            public ranges: Array<BubbleLegendRangesOptions>;
-            public selected: undefined;
-            public setState: Function;
-            public symbols: Record<string, Array<SVGElement>>;
-            public options: BubbleLegendOptions;
-            public visible: boolean;
-            public addToLegend(items: Array<(Series|Point)>): void;
-            public correctSizes(): void;
-            public drawLegendSymbol(legend: Legend): void;
-            public formatLabel(range: BubbleLegendRangesOptions): string;
-            public getMaxLabelSize(): BBoxObject;
-            public getRangeRadius(value: number): (number|null);
-            public getRanges(): Array<BubbleLegendRangesOptions>;
-            public hideOverlappingLabels(): void;
-            public init(options: BubbleLegendOptions, legend: Legend): void;
-            public predictBubbleSizes(): [number, number];
-            public render(): void;
-            public renderRange(range: BubbleLegendRangesOptions): void;
-            public setOptions(): void;
-            public updateRanges(min: number, max: number): void;
-        }
-        interface BubbleLegendItem extends LegendItemObject {
-        }
+        bubbleLegend?: BubbleLegendItem.Options;
     }
 }
 
@@ -225,7 +119,7 @@ declare global {
  */
 class BubbleLegendItem {
     public constructor(
-        options: Highcharts.BubbleLegendOptions,
+        options: BubbleLegendItem.Options,
         legend: Legend
     ) {
         this.init(options, legend);
@@ -241,10 +135,11 @@ class BubbleLegendItem {
     public legendSymbol: SVGElement = void 0 as any;
     public maxLabel: BBoxObject = void 0 as any;
     public movementX: number = void 0 as any;
-    public ranges: Array<Highcharts.BubbleLegendRangesOptions> = void 0 as any;
+    public ranges: Array<BubbleLegendItem.RangesOptions> = void 0 as any;
+    public selected: undefined = void 0 as any;
     public visible: boolean = void 0 as any;
     public symbols: Record<string, Array<SVGElement>>= void 0 as any;
-    public options: Highcharts.BubbleLegendOptions = void 0 as any;
+    public options: BubbleLegendItem.Options = void 0 as any;
 
 
     /**
@@ -259,7 +154,7 @@ class BubbleLegendItem {
      * @return {void}
      */
     public init(
-        options: Highcharts.BubbleLegendOptions,
+        options: BubbleLegendItem.Options,
         legend: Legend
     ): void {
         this.options = options;
@@ -299,7 +194,7 @@ class BubbleLegendItem {
             options = this.options,
             itemDistance = pick(legend.options.itemDistance, 20),
             ranges =
-                options.ranges as Array<Highcharts.BubbleLegendRangesOptions>,
+                options.ranges as Array<BubbleLegendItem.RangesOptions>,
             connectorDistance = options.connectorDistance;
         let connectorSpace;
 
@@ -317,8 +212,8 @@ class BubbleLegendItem {
 
         // Sort ranges to right render order
         stableSort(ranges, function (
-            a: Highcharts.BubbleLegendRangesOptions,
-            b: Highcharts.BubbleLegendRangesOptions
+            a: BubbleLegendItem.RangesOptions,
+            b: BubbleLegendItem.RangesOptions
         ): number {
             return b.value - a.value;
         });
@@ -378,7 +273,7 @@ class BubbleLegendItem {
 
         // Allow to parts of styles be used individually for range
         ranges.forEach(function (
-            range: Highcharts.BubbleLegendRangesOptions,
+            range: BubbleLegendItem.RangesOptions,
             i: number
         ): void {
             if (!styledMode) {
@@ -481,7 +376,7 @@ class BubbleLegendItem {
         this.legendSymbol.translateY = 0;
 
         this.ranges.forEach(function (
-            range: Highcharts.BubbleLegendRangesOptions
+            range: BubbleLegendItem.RangesOptions
         ): void {
             if (range.value >= (zThreshold as any)) {
                 this.renderRange(range);
@@ -503,7 +398,7 @@ class BubbleLegendItem {
      *        Range options
      * @return {void}
      */
-    public renderRange(range: Highcharts.BubbleLegendRangesOptions): void {
+    public renderRange(range: BubbleLegendItem.RangesOptions): void {
         const mainRange = this.ranges[0],
             legend = this.legend,
             options = this.options,
@@ -656,7 +551,7 @@ class BubbleLegendItem {
      * @return {string}
      *         Range label text
      */
-    public formatLabel(range: Highcharts.BubbleLegendRangesOptions): string {
+    public formatLabel(range: BubbleLegendItem.RangesOptions): string {
         const options = this.options,
             formatter = (options.labels as any).formatter,
             format = (options.labels as any).format;
@@ -705,11 +600,11 @@ class BubbleLegendItem {
      * @return {Array<Highcharts.LegendBubbleLegendRangesOptions>}
      *         Array of range objects
      */
-    public getRanges(): Array<Highcharts.BubbleLegendRangesOptions> {
+    public getRanges(): Array<BubbleLegendItem.RangesOptions> {
         const bubbleLegend = this.legend.bubbleLegend,
             series = (bubbleLegend as any).chart.series,
             rangesOptions = (bubbleLegend as any).options.ranges;
-        let ranges: Array<Highcharts.BubbleLegendRangesOptions>,
+        let ranges: Array<BubbleLegendItem.RangesOptions>,
             zData,
             minZ = Number.MAX_VALUE,
             maxZ = -Number.MAX_VALUE;
@@ -755,7 +650,7 @@ class BubbleLegendItem {
 
         // Merge ranges values with user options
         ranges.forEach(function (
-            range: Highcharts.BubbleLegendRangesOptions,
+            range: BubbleLegendItem.RangesOptions,
             i: number
         ): void {
             if (rangesOptions && rangesOptions[i]) {
@@ -859,5 +754,79 @@ class BubbleLegendItem {
     }
 }
 
-H.BubbleLegendItem = BubbleLegendItem as any;
-export default H.BubbleLegendItem;
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface BubbleLegendItem extends Highcharts.LegendItemObject {
+    // nothing more to add
+}
+
+/* *
+ *
+ * Class Namespace
+ *
+ * */
+namespace BubbleLegendItem {
+    export interface FormatterContextObject {
+        center: number;
+        radius: (number|null);
+        value: number;
+    }
+    export interface LabelsOptions {
+        align?: AlignValue;
+        allowOverlap?: boolean;
+        className?: string;
+        format?: string;
+        formatter?: (
+            FormatUtilities.FormatterCallback<FormatterContextObject>
+        );
+        style?: CSSObject;
+        x?: number;
+        y?: number;
+    }
+    export interface Options {
+        borderColor?: ColorType;
+        borderWidth?: number;
+        className?: string;
+        color?: ColorType;
+        connectorClassName?: string;
+        connectorColor?: ColorType;
+        connectorDistance?: number;
+        connectorWidth?: number;
+        enabled?: boolean;
+        labels?: LabelsOptions;
+        legendIndex?: number;
+        maxSize?: number;
+        minSize?: number;
+        placed?: boolean;
+        ranges?: Array<RangesOptions>;
+        seriesIndex?: number;
+        sizeBy?: BubbleSizeByValue;
+        sizeByAbsoluteValue?: boolean;
+        zIndex?: number;
+        zThreshold?: number;
+    }
+    export interface RangesOptions
+        extends Partial<FormatterContextObject>
+    {
+        autoRanges?: boolean;
+        borderColor?: ColorType;
+        color?: ColorType;
+        connectorColor?: ColorType;
+        bubbleAttribs?: SVGAttributes;
+        connectorAttribs?: SVGAttributes;
+        labelAttribs?: SVGAttributes;
+        value?: any;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default BubbleLegendItem;

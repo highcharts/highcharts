@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type BubbleLegendItem from '../../Series/Bubble/BubbleLegendItem';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
@@ -44,7 +45,7 @@ const {
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
 
-type LegendItem = (Highcharts.BubbleLegendItem|Series|Point);
+type LegendItem = (BubbleLegendItem|Series|Point);
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -107,7 +108,7 @@ declare global {
             element: HTMLDOMElement;
             posElement: SVGElement;
         }
-        interface BubbleLegendItem {
+        interface LegendItemObject {
             a11yProxyElement?: HTMLDOMElement;
         }
     }
@@ -510,7 +511,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
             terminate: function (): void {
                 chart.legend.allItems.forEach(
-                    (item): void => item.setState('', true));
+                    (item): unknown => item.setState('', true));
             }
         });
     },

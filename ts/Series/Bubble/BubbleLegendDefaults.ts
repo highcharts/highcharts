@@ -18,6 +18,7 @@
  *
  * */
 
+import type BubbleLegendItem from './BubbleLegendItem';
 import Palette from '../../Core/Color/Palette.js';
 
 /* *
@@ -38,7 +39,7 @@ import Palette from '../../Core/Color/Palette.js';
  * @requires     highcharts-more
  * @optionparent legend.bubbleLegend
  */
-const BubbleLegendDefaults: Highcharts.BubbleLegendOptions = {
+const BubbleLegendDefaults: BubbleLegendItem.Options = {
     /**
      * The color of the ranges borders, can be also defined for an
      * individual range.
