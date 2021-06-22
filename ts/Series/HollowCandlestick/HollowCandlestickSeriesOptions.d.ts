@@ -21,6 +21,7 @@ import CandlestickSeriesOptions from '../Candlestick/CandlestickSeriesOptions';
  *  Declarations
  *
  * */
+
 export interface HollowCandlestickSeriesOptions extends CandlestickSeriesOptions {
 
 }
@@ -30,4 +31,5 @@ export interface HollowCandlestickSeriesOptions extends CandlestickSeriesOptions
  *  Export
  *
  * */
+
 export default HollowCandlestickSeriesOptions;

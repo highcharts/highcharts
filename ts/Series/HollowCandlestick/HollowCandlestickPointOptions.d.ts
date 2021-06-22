@@ -14,14 +14,16 @@
  *
  * */
 
-import CandlestickPoint from '../Candlestick/CandlestickPoint';
+import CandlestickPointOptions from '../Candlestick/CandlestickPointOptions';
 
 /* *
  *
  *  Declarations
  *
  * */
-export interface HollowCandlestickPointOptions extends CandlestickPoint {
+
+export interface HollowCandlestickPointOptions extends CandlestickPointOptions {
+
 }
 
 /* *
@@ -29,4 +31,5 @@ export interface HollowCandlestickPointOptions extends CandlestickPoint {
  *  Export
  *
  * */
+
 export default HollowCandlestickPointOptions;

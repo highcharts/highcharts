@@ -16,22 +16,25 @@
  *
  * */
 
-import HollowCandlestickPoint from './HollowCandlestickPoint';
+import HollowCandlestickPoint from './HollowCandlestickPoint.js';
 import type HollowCandlestickSeriesOptions from './HollowCandlestickSeriesOptions';
-import D from '../../Core/DefaultOptions.js';
-const { defaultOptions } = D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import U from '../../Core/Utilities.js';
+import { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import palette from '../../Core/Color/Palette.js';
+
 
 const {
     seriesTypes: {
-        column: ColumnSeries,
-        ohlc: OHLCSeries,
         candlestick: CandlestickSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
+
 const {
-    merge
+    extend,
+    merge,
+    pick
 } = U;
 
 /* *
@@ -41,7 +44,7 @@ const {
  * */
 
 /**
- * The hollowcandlestick series type.
+ * The hollowcandlestick series.
  *
  * @private
  * @class
@@ -69,8 +72,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @product      highstock
      * @optionparent plotOptions.hollowcandlestick
      */
-    public static defaultOptions: HollowCandlestickSeriesOptions =
-    merge(OHLCSeries.defaultOptions, defaultOptions.plotOptions, {
+    public static defaultOptions: HollowCandlestickSeriesOptions = merge(CandlestickSeries.defaultOptions, {
 
     } as HollowCandlestickSeriesOptions);
 
@@ -90,13 +92,79 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Functions
      *
      * */
-    /* eslint-disable valid-jsdoc */
 
+    /**
+     * Add fill attribute for each points based on
+     * the previously calculated value.
+     * @private
+     *
+     * @function Highcharts.seriesTypes.hollowcandlestick#pointAttribs
+     *
+     * @param {HollowCandlestickPoint} point
+     *        Point to which we are adding attributes.
+     * @param {StatesOptionsKey} state
+     *        Current point state.
+     *
+     * @return {SVGAttributes}
+     *
+     */
+    public pointAttribs(
+        point: HollowCandlestickPoint,
+        state?: StatesOptionsKey
+    ): SVGAttributes {
+        let attribs = super.pointAttribs.call(this, point, state);
+
+        attribs.fill = pick((point as any).fill || attribs.fill);
+
+        return attribs;
+    }
+
+    /**
+     * Translate from value to pixel as a base method and loop through points
+     * in order to calculate the fill.
+     * @private
+     *
+     * @function Highcharts.seriesTypes.hollowcandlestick#translate
+     *
+     * @return {void}
+     *
+     */
+    public translate(): void {
+        // Run the base method.
+        super.translate.apply(this);
+
+        const series = this,
+            points = series.points;
+
+        if (points && points.length) {
+            // The first point always color red.
+            (points[0] as any).fill = palette.negativeColor;
+
+            for (let i = 1; i < points.length; i++) {
+                const point = points[i],
+                    previousPoint = points[i - 1];
+
+                (point as any).fill = point.getPointFill(previousPoint);
+            }
+        }
+    }
+    /* eslint-disable valid-jsdoc */
 }
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
 
 interface HollowCandlestickSeries {
-    pointClass: typeof HollowCandlestickPoint;
+
 }
+extend(HollowCandlestickSeries.prototype, {
+
+});
+
+HollowCandlestickSeries.prototype.pointClass = HollowCandlestickPoint;
 
 /* *
  *
