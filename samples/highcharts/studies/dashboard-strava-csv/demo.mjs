@@ -510,9 +510,9 @@ const components = state => [
         events: {
             // Further modify
             afterPresentationModifier: function (e) {
-                const summedTable = sumTable(e.target.presentationTable);
+                const summedTable = sumTable(e.table);
                 if (summedTable.getColumnNames().length) {
-                    this.presentationTable = summedTable;
+                    e.table.modified = summedTable;
                 }
             }
         },
@@ -546,9 +546,9 @@ const components = state => [
         events: {
             // Further modify
             afterPresentationModifier: function (e) {
-                const summedTable = reduceTable(e.target.presentationTable, state.sortColumn);
+                const summedTable = reduceTable(e.table, state.sortColumn);
                 if (summedTable.getColumnNames().length) {
-                    this.presentationTable = summedTable;
+                    e.table.modified = summedTable;
                 }
             },
             tableChanged: function () {

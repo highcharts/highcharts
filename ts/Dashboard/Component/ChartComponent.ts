@@ -236,8 +236,8 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
             const xKeyMap: Record<string, string> = {};
 
             if (this.presentationModifier) {
-                this.presentationModifier.modify(this.presentationTable);
-                this.emit({ type: 'afterPresentationModifier' });
+                this.presentationTable = this.presentationModifier.modifyTable(this.presentationTable).modified;
+                this.emit({ type: 'afterPresentationModifier', table: this.presentationTable });
             }
 
             const table = this.presentationTable;

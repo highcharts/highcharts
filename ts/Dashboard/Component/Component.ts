@@ -798,7 +798,7 @@ namespace Component {
         json: DataJSON.ClassJSON;
     }>;
     export type TableChangedEvent = Event<'tableChanged', {}>
-    export type PresentationModifierEvent = Component.Event<'afterPresentationModifier', {}>
+    export type PresentationModifierEvent = Component.Event<'afterPresentationModifier', { table: DataTable }>
 
     export type Event<
         EventType extends DataEventEmitter.Event['type'],
