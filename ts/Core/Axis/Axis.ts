@@ -591,8 +591,8 @@ class Axis {
             categories = axis.categories,
             dateTimeLabelFormat = this.dateTimeLabelFormat,
             lang = defaultOptions.lang,
-            numericSymbols = (lang as any).numericSymbols,
-            numSymMagnitude = (lang as any).numericSymbolMagnitude || 1000,
+            numericSymbols = lang.numericSymbols,
+            numSymMagnitude = lang.numericSymbolMagnitude || 1000,
             // make sure the same symbol is added for all labels on a linear
             // axis
             numericSymbolDetector = axis.logarithmic ?

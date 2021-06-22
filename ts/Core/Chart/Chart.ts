@@ -3022,7 +3022,7 @@ class Chart {
         // Update text
         AST.setElementHTML(
             loadingSpan,
-            pick(str, (options.lang as any).loading, '')
+            pick(str, options.lang.loading, '')
         );
 
         if (!chart.styledMode) {
@@ -3501,7 +3501,7 @@ class Chart {
         fireEvent(this, 'beforeShowResetZoom', null as any, function (): void {
             chart.resetZoomButton = chart.renderer
                 .button(
-                    (lang as any).resetZoom,
+                    lang.resetZoom,
                     null as any,
                     null as any,
                     zoomOut,
@@ -3510,7 +3510,7 @@ class Chart {
                 )
                 .attr({
                     align: btnOptions.position.align,
-                    title: (lang as any).resetZoomTitle
+                    title: lang.resetZoomTitle
                 })
                 .addClass('highcharts-reset-zoom')
                 .add()

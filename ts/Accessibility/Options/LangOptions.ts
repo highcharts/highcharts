@@ -192,7 +192,7 @@ declare global {
     }
 }
 
-const langOptions: LangOptions = {
+const langOptions: Partial<LangOptions> = {
 
     /**
      * Configure the accessibility strings in the chart. Requires the

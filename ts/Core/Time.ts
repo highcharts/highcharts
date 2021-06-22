@@ -524,9 +524,9 @@ class Time {
 
                     // Month
                     // Short month, like 'Jan'
-                    b: (lang as any).shortMonths[month],
+                    b: lang.shortMonths[month],
                     // Long month, like 'January'
-                    B: (lang as any).months[month],
+                    B: lang.months[month],
                     // Two digit month number, 01 through 12
                     m: pad(month + 1),
                     // Month number, 1 through 12 (#8150)
