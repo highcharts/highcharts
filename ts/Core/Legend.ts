@@ -1628,12 +1628,11 @@ class Legend {
         const setOtherItemsState = (state: StatesOptionsKey): void => {
             legend.allItems.forEach((otherItem): void => {
                 if (item !== otherItem) {
-                    otherItem.setState(state, !isPoint);
-                    if ((otherItem as Series).linkedSeries) {
-                        (otherItem as Series).linkedSeries.forEach((s): void => {
-                            s.setState(state, true);
+                    [otherItem]
+                        .concat((otherItem as Series).linkedSeries || [])
+                        .forEach((otherItem): void => {
+                            otherItem.setState(state, !isPoint);
                         });
-                    }
                 }
             });
         };
