@@ -18,11 +18,10 @@
 
 import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type CorePositionObject from '../../Core/Renderer/PositionObject';
 import type PieDataLabelOptions from './PieDataLabelOptions';
 import type PiePointOptions from './PiePointOptions';
-import type PiePositionObject from './PiePositionObject';
 import type PieSeries from './PieSeries';
-import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -101,17 +100,19 @@ class PiePoint extends Point {
      * @private
      */
     public getConnectorPath(): void {
-        let labelPosition = this.labelPosition,
-            options = this.series.options.dataLabels,
-            connectorShape = (options as any).connectorShape,
-            predefinedShapes = this.connectorShapes;
+        const point = this,
+            labelPosition = point.labelPosition,
+            options = point.series.options.dataLabels,
+            predefinedShapes = point.connectorShapes;
+
+        let connectorShape = (options as any).connectorShape;
 
         // find out whether to use the predefined shape
         if ((predefinedShapes as any)[connectorShape]) {
             connectorShape = (predefinedShapes as any)[connectorShape];
         }
 
-        return connectorShape.call(this, {
+        return connectorShape.call(point, {
             // pass simplified label position object for user's convenience
             x: (labelPosition as any).final.x,
             y: (labelPosition as any).final.y,
@@ -123,7 +124,8 @@ class PiePoint extends Point {
      * @private
      */
     public getTranslate(): PiePoint.TranslationAttributes {
-        return this.sliced ? (this.slicedTranslation as any) : {
+        const point = this;
+        return point.sliced ? (point.slicedTranslation as any) : {
             translateX: 0,
             translateY: 0
         };
@@ -159,13 +161,12 @@ class PiePoint extends Point {
 
         Point.prototype.init.apply(this, arguments as any);
 
-        let point = this,
-            toggleSlice;
+        const point = this;
 
         point.name = pick(point.name, 'Slice');
 
         // add event listener for select
-        toggleSlice = function (
+        const toggleSlice = function (
             e: (AnyRecord|Event)
         ): void {
             point.slice(e.type === 'select');
@@ -181,7 +182,8 @@ class PiePoint extends Point {
      * @private
      */
     public isValid(): boolean {
-        return isNumber(this.y) && this.y >= 0;
+        const point = this;
+        return isNumber(point.y) && point.y >= 0;
     }
 
     /**
@@ -284,11 +286,11 @@ class PiePoint extends Point {
             point.options;
 
         if (point.graphic) {
-            point.graphic.animate(this.getTranslate());
+            point.graphic.animate(point.getTranslate());
         }
 
         if (point.shadowGroup) {
-            point.shadowGroup.animate(this.getTranslate());
+            point.shadowGroup.animate(point.getTranslate());
         }
     }
 }
@@ -306,7 +308,7 @@ extend(PiePoint.prototype, {
     connectorShapes: {
         // only one available before v7.0.0
         fixedOffset: function (
-            labelPosition: PiePositionObject,
+            labelPosition: PiePoint.PositionObject,
             connectorPosition: PiePoint.LabelConnectorPositionObject,
             options: PieDataLabelOptions
         ): SVGPath {
@@ -338,7 +340,7 @@ extend(PiePoint.prototype, {
         },
 
         straight: function (
-            labelPosition: PiePositionObject,
+            labelPosition: PiePoint.PositionObject,
             connectorPosition: PiePoint.LabelConnectorPositionObject
         ): SVGPath {
             const touchingSliceAt = connectorPosition.touchingSliceAt;
@@ -352,18 +354,18 @@ extend(PiePoint.prototype, {
 
         crookedLine: function (
             this: PiePoint,
-            labelPosition: PiePositionObject,
+            labelPosition: PiePoint.PositionObject,
             connectorPosition: PiePoint.LabelConnectorPositionObject,
             options: PieDataLabelOptions
         ): SVGPath {
-
-            let touchingSliceAt = connectorPosition.touchingSliceAt,
-                series = this.series,
+            const point = this,
+                touchingSliceAt = connectorPosition.touchingSliceAt,
+                series = point.series,
                 pieCenterX = series.center[0],
                 plotWidth = series.chart.plotWidth,
                 plotLeft = series.chart.plotLeft,
                 alignment = labelPosition.alignment,
-                radius = (this.shapeArgs as any).r,
+                radius = (point.shapeArgs as any).r,
                 crookDistance = relativeLength( // % to fraction
                     options.crookDistance as any, 1
                 ),
@@ -375,8 +377,9 @@ extend(PiePoint.prototype, {
                     'L',
                     crookX,
                     labelPosition.y
-                ],
-                useCrook = true;
+                ];
+
+            let useCrook = true;
 
             // crookedLine formula doesn't make sense if the path overlaps
             // the label - use straight line instead in that case
@@ -410,14 +413,17 @@ namespace PiePoint {
         (...args: Array<any>): SVGPath;
     }
     export interface LabelConnectorPositionObject {
-        breakAt: PositionObject;
-        touchingSliceAt: PositionObject;
+        breakAt: CorePositionObject;
+        touchingSliceAt: CorePositionObject;
     }
     export interface LabelPositionObject {
         alignment: AlignValue;
         connectorPosition: LabelConnectorPositionObject;
         'final': Record<string, undefined>;
-        natural: PositionObject;
+        natural: CorePositionObject;
+    }
+    export interface PositionObject extends CorePositionObject {
+        alignment: AlignValue;
     }
     export interface TranslationAttributes extends SVGAttributes {
         translateX: number;
