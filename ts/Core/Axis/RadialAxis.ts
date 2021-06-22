@@ -180,6 +180,9 @@ namespace RadialAxis {
      *
      * */
 
+    const composedAxisClasses: Array<typeof Axis> = [];
+    const composedTickClasses: Array<typeof Tick> = [];
+
     /**
      * Circular axis around the perimeter of a polar chart.
      * @private
@@ -342,19 +345,28 @@ namespace RadialAxis {
      * @return {Highcharts.Axis}
      * Axis composition.
      */
-    export function compose<T extends typeof Axis>(AxisClass: T, TickClass: typeof Tick): (T&typeof AxisComposition) {
+    export function compose<T extends typeof Axis>(
+        AxisClass: T,
+        TickClass: typeof Tick
+    ): (T&typeof AxisComposition) {
 
-        /* eslint-disable no-invalid-this */
+        if (composedAxisClasses.indexOf(AxisClass) === -1) {
+            composedAxisClasses.push(AxisClass);
 
-        addEvent(AxisClass, 'afterInit', onAxisAfterInit);
-        addEvent(AxisClass, 'autoLabelAlign', onAxisAutoLabelAlign);
-        addEvent(AxisClass, 'destroy', onAxisDestroy);
-        addEvent(AxisClass, 'init', onAxisInit);
-        addEvent(AxisClass, 'initialAxisTranslation', onAxisInitialAxisTranslation);
+            addEvent(AxisClass, 'afterInit', onAxisAfterInit);
+            addEvent(AxisClass, 'autoLabelAlign', onAxisAutoLabelAlign);
+            addEvent(AxisClass, 'destroy', onAxisDestroy);
+            addEvent(AxisClass, 'init', onAxisInit);
+            addEvent(AxisClass, 'initialAxisTranslation', onAxisInitialAxisTranslation);
+        }
 
-        addEvent(TickClass, 'afterGetLabelPosition', onTickAfterGetLabelPosition);
-        addEvent(TickClass, 'afterGetPosition', onTickAfterGetPosition);
-        wrap(TickClass.prototype, 'getMarkPath', wrapTickGetMarkPath);
+        if (composedTickClasses.indexOf(TickClass) === -1) {
+            composedTickClasses.push(TickClass);
+
+            addEvent(TickClass, 'afterGetLabelPosition', onTickAfterGetLabelPosition);
+            addEvent(TickClass, 'afterGetPosition', onTickAfterGetPosition);
+            wrap(TickClass.prototype, 'getMarkPath', wrapTickGetMarkPath);
+        }
 
         return AxisClass as (T&typeof AxisComposition);
     }
