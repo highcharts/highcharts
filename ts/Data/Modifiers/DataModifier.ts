@@ -45,7 +45,7 @@ const {
  * @private
  */
 abstract class DataModifier<TEvent extends DataEventEmitter.Event = DataModifier.Event>
-implements DataEventEmitter<TEvent>, DataJSON.Class {
+implements DataEventEmitter<(TEvent|DataModifier.Event)>, DataJSON.Class {
 
     /* *
      *
@@ -241,7 +241,7 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
      * @param {DataEventEmitter.Event} [e]
      * Event object containing additonal event information.
      */
-    public emit(e: TEvent): void {
+    public emit(e: (TEvent|DataModifier.Event)): void {
         fireEvent(this, e.type, e);
     }
 
@@ -262,11 +262,20 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
         eventDetail?: DataEventEmitter.EventDetail
     ): DataPromise<T> {
         const modifier = this;
-        return new DataPromise((resolve): void => {
+        return new DataPromise((resolve, reject): void => {
             if (table.modified === table) {
                 table.modified = table.clone(false, eventDetail);
             }
-            resolve(modifier.modifyTable(table, eventDetail));
+            try {
+                resolve(modifier.modifyTable(table, eventDetail));
+            } catch (e) {
+                modifier.emit({
+                    type: 'error',
+                    detail: eventDetail,
+                    table
+                });
+                reject(e);
+            }
         });
     }
 
@@ -456,9 +465,17 @@ namespace DataModifier {
     }
 
     /**
+     * Error event with additional event information.
+     */
+    export interface ErrorEvent extends DataEventEmitter.Event {
+        readonly type: 'error';
+        readonly table: DataTable;
+    }
+
+    /**
      * Event information.
      */
-    export type Event = (BenchmarkEvent|ModifyEvent);
+    export type Event = (BenchmarkEvent|ErrorEvent|ModifyEvent);
 
     /**
      * Modify event with additional event information.

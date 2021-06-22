@@ -1516,13 +1516,22 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
         return promise
             .then((table): this => {
-                this.emit({
+                table.emit({
                     type: 'afterSetModifier',
                     detail: eventDetail,
                     modifier,
                     modified: table.modified
                 });
                 return table;
+            })
+            .catch((error): this => {
+                table.emit({
+                    type: 'setModifierError',
+                    error,
+                    modifier,
+                    modified: table.modified
+                });
+                throw error;
             });
     }
 
@@ -1874,8 +1883,10 @@ namespace DataTable {
     */
     export interface SetModifierEvent extends DataEventEmitter.Event {
         readonly type: (
-            'setModifier' | 'afterSetModifier'
+            'setModifier'|'afterSetModifier'|
+            'setModifierError'
         );
+        readonly error?: unknown;
         readonly modifier?: DataModifier;
         readonly modified?: DataTable;
     }
