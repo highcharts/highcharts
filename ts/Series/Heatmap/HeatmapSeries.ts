@@ -194,8 +194,11 @@ class HeatmapSeries extends ScatterSeries {
         nullColor: palette.neutralColor3,
 
         dataLabels: {
-            formatter: function (): (number|null) { // #2945
-                return (this.point as HeatmapPoint).value;
+            formatter: function (): string { // #2945
+                const { numberFormatter } = this.series.chart;
+                const { value } = this.point as HeatmapPoint;
+
+                return isNumber(value) ? numberFormatter(value, -1) : '';
             },
             inside: true,
             verticalAlign: 'middle',
@@ -578,10 +581,12 @@ class HeatmapSeries extends ScatterSeries {
             brightness,
             // Get old properties in order to keep backward compatibility
             borderColor =
+                (point && point.options.borderColor) ||
                 seriesOptions.borderColor ||
                 heatmapPlotOptions.borderColor ||
                 seriesPlotOptions.borderColor,
             borderWidth =
+                (point && point.options.borderWidth) ||
                 seriesOptions.borderWidth ||
                 heatmapPlotOptions.borderWidth ||
                 seriesPlotOptions.borderWidth ||

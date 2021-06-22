@@ -469,7 +469,7 @@ class WordcloudSeries extends ColumnSeries {
         );
     }
 
-    public getPlotBox(): Highcharts.SeriesPlotBoxObject {
+    public getPlotBox(): Series.PlotBoxObject {
         const series = this,
             chart = series.chart,
             inverted = chart.inverted,

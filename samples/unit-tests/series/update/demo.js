@@ -126,7 +126,19 @@ QUnit.test('Series.update', function (assert) {
     assert.strictEqual(
         chart.series[0].points[0].graphic.symbolName,
         'square',
-        'The symbol name should update for all markers (#10870'
+        'The symbol name should update for all markers (#10870)'
+    );
+
+    const graphic = chart.series[0].points[0].graphic;
+    chart.series[0].update({
+        marker: {
+            symbol: 'square'
+        }
+    });
+    assert.strictEqual(
+        chart.series[0].points[0].graphic,
+        graphic,
+        'Graphic should not be destroyed if symbol didnt change (#15946)'
     );
 
     // Color

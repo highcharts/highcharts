@@ -18,6 +18,7 @@ import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
 import type F from './FormatUtilities';
 import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
+import type Tooltip from './Tooltip';
 import Point from '../Core/Series/Point.js';
 
 /* *
@@ -47,19 +48,19 @@ export interface TooltipOptions {
     followPointer?: boolean;
     followTouchMove?: boolean;
     footerFormat?: string;
-    formatter?: Highcharts.TooltipFormatterCallbackFunction;
+    formatter?: Tooltip.FormatterCallbackFunction;
     headerFormat?: string;
-    headerShape?: Highcharts.TooltipShapeValue;
+    headerShape?: Tooltip.ShapeValue;
     hideDelay?: number;
     nullFormat?: string;
-    nullFormatter?: Highcharts.TooltipFormatterCallbackFunction;
+    nullFormatter?: Tooltip.FormatterCallbackFunction;
     outside?: boolean;
     padding?: number;
     pointFormat?: string;
     pointFormatter?: F.FormatterCallback<Point>;
-    positioner?: Highcharts.TooltipPositionerCallbackFunction;
+    positioner?: Tooltip.PositionerCallbackFunction;
     shadow?: (boolean|Partial<ShadowOptionsObject>);
-    shape?: Highcharts.TooltipShapeValue;
+    shape?: Tooltip.ShapeValue;
     shared?: boolean;
     snap?: number;
     split?: boolean;

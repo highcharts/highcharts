@@ -10,21 +10,20 @@
 
 /* *
  *
+ *  Import
+ *
+ * */
+
+/* *
+ *
  *  Declarations
  *
  * */
 
-export interface AxisBreakBorderObject {
-    move: string;
-    size?: number;
-    value: number;
+export interface LegendLike {
+
 }
 
-export interface AxisBreakObject {
-    from: number;
-    len: number;
-    to: number;
-}
 
 /* *
  *
@@ -32,4 +31,4 @@ export interface AxisBreakObject {
  *
  * */
 
-export default AxisBreakBorderObject;
+export default LegendLike;

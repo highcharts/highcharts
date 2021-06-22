@@ -10,9 +10,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Series from '../Series/Series';
 import type StackItem from '../../Extensions/Stacking';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import Axis from './Axis.js';
@@ -22,9 +29,14 @@ const {
     destroyObjectProperties,
     fireEvent,
     isNumber,
-    objectEach,
-    pick
+    objectEach
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module './AxisComposition' {
     interface AxisComposition {
@@ -32,9 +44,6 @@ declare module './AxisComposition' {
     }
 }
 
-/**
- * @private
- */
 declare module './AxisType' {
     interface AxisTypeRegistry {
         StackingAxis: StackingAxis;

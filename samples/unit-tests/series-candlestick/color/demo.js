@@ -103,4 +103,16 @@ QUnit.test('Candlestick series colors tests.', function (assert) {
         [upColor, color, upColor, negativeColor],
         'Split tooltip should have appropriate stroke color for default, up and negative point (#14826).'
     );
+
+    points[0].update([3, 5.5, 6, 3, 4.5]);
+    assert.strictEqual(
+        points[0].graphic.attr('fill'),
+        color,
+        '#15849: Point fill should use series color after updating from up to down'
+    );
+    assert.strictEqual(
+        points[0].color,
+        color,
+        '#15849: Point should use series color after updating from up to down'
+    );
 });

@@ -173,6 +173,10 @@ function GLVertexBuffer(
             to = length;
         }
 
+        if (from >= to) {
+            return false;
+        }
+
         drawMode = drawMode || 'points';
 
         gl.drawArrays(
