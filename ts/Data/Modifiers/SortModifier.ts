@@ -161,7 +161,7 @@ class SortModifier extends DataModifier {
                         .getColumn(orderInColumn)
                 );
             } else {
-                modifier.modifyTable(table);
+                modifier.modifyTable(table, eventDetail);
             }
         }
 
@@ -202,7 +202,10 @@ class SortModifier extends DataModifier {
             columnNames = Object.keys(columns);
 
         if (columnNames.indexOf(orderByColumn) > -1) {
-            if (orderInColumn) {
+            if (
+                orderInColumn &&
+                columns[columnNames[0]].length
+            ) {
                 table.modified.setColumns(columns, rowIndex);
                 table.modified.setColumn(
                     orderInColumn,
@@ -214,7 +217,7 @@ class SortModifier extends DataModifier {
                         .getColumn(orderInColumn)
                 );
             } else {
-                modifier.modifyTable(table);
+                modifier.modifyTable(table, eventDetail);
             }
         }
 
@@ -254,7 +257,10 @@ class SortModifier extends DataModifier {
                 orderInColumn
             } = modifier.options;
 
-        if (orderInColumn) {
+        if (
+            orderInColumn &&
+            rows.length
+        ) {
             table.modified.setRows(rows, rowIndex);
             table.modified.setColumn(
                 orderInColumn,
@@ -266,7 +272,7 @@ class SortModifier extends DataModifier {
                     .getColumn(orderInColumn)
             );
         } else {
-            modifier.modifyTable(table);
+            modifier.modifyTable(table, eventDetail);
         }
 
         return table;

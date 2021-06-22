@@ -292,13 +292,15 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
-    public abstract modifyCell<T extends DataTable>(
+    public modifyCell<T extends DataTable>(
         table: T,
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEventEmitter.EventDetail
-    ): T;
+    ): T {
+        return this.modifyTable(table);
+    }
 
     /**
      * Applies partial modifications of column changes to the property
@@ -319,12 +321,14 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
-    public abstract modifyColumns<T extends DataTable>(
+    public modifyColumns<T extends DataTable>(
         table: T,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): T;
+    ): T {
+        return this.modifyTable(table);
+    }
 
     /**
      * Applies partial modifications of row changes to the property `modified`
@@ -345,12 +349,14 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
-    public abstract modifyRows<T extends DataTable>(
+    public modifyRows<T extends DataTable>(
         table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): T;
+    ): T {
+        return this.modifyTable(table);
+    }
 
     /**
      * Applies modifications of row changes to the property `modified` of the

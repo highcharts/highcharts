@@ -348,12 +348,21 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     public deleteColumnAlias(alias: string): (string|undefined) {
         const table = this,
             aliasMap = table.aliasMap,
-            deletedAlias = aliasMap[alias];
+            deletedAlias = aliasMap[alias],
+            modifier = table.modifier;
 
         if (deletedAlias) {
             delete table.aliasMap[alias];
-            return deletedAlias;
+            if (modifier) {
+                modifier.modifyColumns(
+                    table,
+                    { [deletedAlias]: new Array(table.rowCount) },
+                    0
+                );
+            }
         }
+
+        return deletedAlias;
     }
 
     /**
@@ -380,7 +389,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     ): (DataTable.ColumnCollection|undefined) {
         const table = this,
             columns = table.columns,
-            deletedColumns: DataTable.ColumnCollection = {};
+            deletedColumns: DataTable.ColumnCollection = {},
+            modifiedColumns: DataTable.ColumnCollection = {},
+            modifier = table.modifier,
+            rowCount = table.rowCount;
 
         columnNames = (columnNames || Object.keys(columns));
 
@@ -403,12 +415,17 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
                 column = columns[columnName];
                 if (column) {
                     deletedColumns[columnName] = column;
+                    modifiedColumns[columnName] = new Array(rowCount);
                 }
                 delete columns[columnName];
             }
 
             if (!Object.keys(columns).length) {
                 table.rowCount = 0;
+            }
+
+            if (modifier) {
+                modifier.modifyColumns(table, modifiedColumns, 0, eventDetail);
             }
 
             table.emit({
@@ -449,7 +466,9 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         eventDetail?: DataEventEmitter.EventDetail
     ): Array<DataTable.Row> {
         const table = this,
-            deletedRows: Array<DataTable.Row> = [];
+            deletedRows: Array<DataTable.Row> = [],
+            modifiedRows: Array<DataTable.Row> = [],
+            modifier = table.modifier;
 
         table.emit({
             type: 'deleteRows',
@@ -486,7 +505,13 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
                     deletedRows[j] = (deletedRows[j] || []);
                     deletedRows[j][i] = deletedCells[j];
                 }
+
+                modifiedRows.push(new Array(iEnd));
             }
+        }
+
+        if (modifier) {
+            modifier.modifyRows(table, modifiedRows, (rowIndex || 0), eventDetail);
         }
 
         table.emit({

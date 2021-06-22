@@ -182,10 +182,10 @@ class InvertModifier extends DataModifier {
         eventDetail?: DataEventEmitter.EventDetail
     ): T {
         const modified = table.modified,
-            modifiedColumnNames = modified.getColumnNames();
+            modifiedColumnNames = (modified.getColumn('columnNames') || []);
 
         let columnNames = table.getColumnNames(),
-            reset = (columnNames.length !== modifiedColumnNames.length);
+            reset = (table.getRowCount() !== modifiedColumnNames.length);
 
         if (!reset) {
             for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
@@ -197,12 +197,7 @@ class InvertModifier extends DataModifier {
         }
 
         if (reset) {
-            modified.setColumns(
-                this.modifyTable(table.clone()).getColumns(),
-                void 0,
-                eventDetail
-            );
-            return table;
+            return this.modifyTable(table, eventDetail);
         }
 
         columnNames = Object.keys(columns);
@@ -269,9 +264,9 @@ class InvertModifier extends DataModifier {
     ): T {
         const columnNames = table.getColumnNames(),
             modified = table.modified,
-            modifiedColumnNames = modified.getColumnNames();
+            modifiedColumnNames = (modified.getColumn('columnNames') || []);
 
-        let reset = (columnNames.length !== modifiedColumnNames.length);
+        let reset = (table.getRowCount() !== modifiedColumnNames.length);
 
         if (!reset) {
             for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
@@ -283,12 +278,7 @@ class InvertModifier extends DataModifier {
         }
 
         if (reset) {
-            modified.setColumns(
-                this.modifyTable(table.clone()).getColumns(),
-                void 0,
-                eventDetail
-            );
-            return table;
+            return this.modifyTable(table, eventDetail);
         }
 
         for (
