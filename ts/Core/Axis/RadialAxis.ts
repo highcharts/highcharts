@@ -16,7 +16,6 @@
  *
  * */
 
-import type { YAxisOptions } from './AxisOptions';
 import type Chart from '../Chart/Chart';
 import type Pane from '../../Extensions/Pane';
 import type PlotBandOptions from './PlotBandOptions';
@@ -27,6 +26,7 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
 import type TickType from './Tick';
+import type { YAxisOptions } from './AxisOptions';
 
 import Axis from './Axis.js';
 import AxisDefaults from './AxisDefaults.js';
@@ -308,18 +308,18 @@ namespace RadialAxis {
         // Actions before axis init.
         addEvent(AxisClass, 'init', function (e: { userOptions: Options }): void {
             const axis = this as RadialAxis.Composition,
-                chart = axis.chart;
-
-            let inverted = chart.inverted,
+                chart = axis.chart,
+                inverted = chart.inverted,
                 angular = chart.angular,
                 polar = chart.polar,
                 isX = axis.isXAxis,
                 coll = axis.coll,
                 isHidden = angular && isX,
-                isCircular: (boolean|undefined),
                 chartOptions = chart.options,
                 paneIndex = e.userOptions.pane || 0,
                 pane = axis.pane = chart.pane && chart.pane[paneIndex] as any;
+
+            let isCircular: (boolean|undefined);
 
             // Prevent changes for colorAxis
             if (coll === 'colorAxis') {
@@ -469,34 +469,35 @@ namespace RadialAxis {
         // Find the center position of the label based on the distance option.
         addEvent(TickClass, 'afterGetLabelPosition', function (e: AfterGetPositionEvent): void {
             const tick = this,
-                axis = tick.axis as RadialAxis.Composition,
                 label = tick.label;
 
             if (!label) {
                 return;
             }
 
-            let labelBBox = label.getBBox(),
+            const axis = tick.axis as RadialAxis.Composition,
+                labelBBox = label.getBBox(),
                 labelOptions = axis.options.labels as any,
-                optionsY = labelOptions.y,
-                ret,
-                centerSlot = 20, // 20 degrees to each side at the top and bottom
-                align = labelOptions.align,
                 angle = (
                     (
-                        (axis.translate(this.pos) as any) + axis.startAngleRad +
+                        (axis.translate(tick.pos) as any) + axis.startAngleRad +
                         Math.PI / 2
                     ) / Math.PI * 180
                 ) % 360,
                 correctAngle = Math.round(angle),
+                labelYPosCorrection =
+                    !defined(labelOptions.y) ? -labelBBox.height * 0.3 : 0;
+
+            let optionsY = labelOptions.y,
+                ret,
+                centerSlot = 20, // 20 degrees to each side at the top and bottom
+                align = labelOptions.align,
                 labelDir = 'end', // Direction of the label 'start' or 'end'
                 reducedAngle1 = correctAngle < 0 ?
                     correctAngle + 360 : correctAngle,
                 reducedAngle2 = reducedAngle1,
                 translateY = 0,
-                translateX = 0,
-                labelYPosCorrection =
-                    !defined(optionsY) ? -labelBBox.height * 0.3 : 0;
+                translateX = 0;
 
             if (axis.isRadial) { // Both X and Y axes in a polar chart
                 ret = axis.getPosition(
@@ -758,16 +759,18 @@ namespace RadialAxis {
             radius?: number,
             innerRadius?: number
         ): Path {
-            let center = this.pane.center,
-                end,
-                chart = this.chart,
-                r = pick(radius, center[2] / 2 - this.offset),
-                left = this.left || 0,
-                top = this.top || 0,
+            const axis = this,
+                center = axis.pane.center,
+                chart = axis.chart,
+                left = axis.left || 0,
+                top = axis.top || 0;
+
+            let end,
+                r = pick(radius, center[2] / 2 - axis.offset),
                 path: Path;
 
             if (typeof innerRadius === 'undefined') {
-                innerRadius = this.horiz ? 0 : this.center && -this.center[3] / 2;
+                innerRadius = axis.horiz ? 0 : axis.center && -axis.center[3] / 2;
             }
 
             // In case when innerSize of pane is set, it must be included
@@ -775,15 +778,15 @@ namespace RadialAxis {
                 r += innerRadius;
             }
 
-            if (this.isCircular || typeof radius !== 'undefined') {
-                path = this.chart.renderer.symbols.arc(
+            if (axis.isCircular || typeof radius !== 'undefined') {
+                path = axis.chart.renderer.symbols.arc(
                     left + center[0],
                     top + center[1],
                     r,
                     r,
                     {
-                        start: this.startAngleRad,
-                        end: this.endAngleRad,
+                        start: axis.startAngleRad,
+                        end: axis.endAngleRad,
                         open: true,
                         innerR: 0
                     }
@@ -795,9 +798,9 @@ namespace RadialAxis {
                 path.yBounds = [top + center[1] - r];
 
             } else {
-                end = this.postTranslate(this.angleRad, r);
+                end = axis.postTranslate(axis.angleRad, r);
                 path = [
-                    ['M', this.center[0] + chart.plotLeft, this.center[1] + chart.plotTop],
+                    ['M', axis.center[0] + chart.plotLeft, axis.center[1] + chart.plotTop],
                     ['L', end.x, end.y]
                 ];
             }
@@ -999,30 +1002,32 @@ namespace RadialAxis {
             options: PlotBandOptions
         ): Path {
 
-            const radiusToPixels = (radius: number|string|undefined): (number|undefined) => {
-                if (typeof radius === 'string') {
-                    let r = parseInt(radius, 10);
-                    if (percentRegex.test(radius)) {
-                        r = (r * fullRadius) / 100;
+            const axis = this,
+                chart = axis.chart,
+                radiusToPixels = (radius: number|string|undefined): (number|undefined) => {
+                    if (typeof radius === 'string') {
+                        let r = parseInt(radius, 10);
+                        if (percentRegex.test(radius)) {
+                            r = (r * fullRadius) / 100;
+                        }
+                        return r;
                     }
-                    return r;
-                }
-                return radius;
-            };
-
-            let center = this.center,
-                startAngleRad = this.startAngleRad,
+                    return radius;
+                },
+                center = axis.center,
+                startAngleRad = axis.startAngleRad,
                 fullRadius = center[2] / 2,
-                offset = Math.min(this.offset, 0),
-                left = this.left || 0,
-                top = this.top || 0,
+                offset = Math.min(axis.offset, 0),
+                left = axis.left || 0,
+                top = axis.top || 0,
                 percentRegex = /%$/,
-                start,
+                isCircular = axis.isCircular; // X axis in a polar chart
+
+            let start,
                 end,
                 angle,
                 xOnPerimeter,
                 open,
-                isCircular = this.isCircular, // X axis in a polar chart
                 path: Path,
                 outerRadius = pick(
                     radiusToPixels(options.outerRadius),
@@ -1032,20 +1037,20 @@ namespace RadialAxis {
                 thickness = pick(radiusToPixels(options.thickness), 10);
 
             // Polygonal plot bands
-            if (this.options.gridLineInterpolation === 'polygon') {
-                path = this.getPlotLinePath({ value: from }).concat(
-                    this.getPlotLinePath({ value: to, reverse: true })
+            if (axis.options.gridLineInterpolation === 'polygon') {
+                path = axis.getPlotLinePath({ value: from }).concat(
+                    axis.getPlotLinePath({ value: to, reverse: true })
                 );
 
             // Circular grid bands
             } else {
 
                 // Keep within bounds
-                from = Math.max(from, this.min);
-                to = Math.min(to, this.max);
+                from = Math.max(from, axis.min);
+                to = Math.min(to, axis.max);
 
-                const transFrom = this.translate(from);
-                const transTo = this.translate(to);
+                const transFrom = axis.translate(from);
+                const transTo = axis.translate(to);
 
                 // Plot bands on Y axis (radial axis) - inner and outer
                 // radius depend on to and from
@@ -1067,7 +1072,7 @@ namespace RadialAxis {
                 outerRadius -= offset; // #5283
                 thickness -= offset; // #5283
 
-                path = this.chart.renderer.symbols.arc(
+                path = chart.renderer.symbols.arc(
                     left + center[0],
                     top + center[1],
                     outerRadius,
@@ -1095,7 +1100,7 @@ namespace RadialAxis {
 
                     path.xBounds = angle > -Math.PI / 2 && angle < Math.PI / 2 ?
                         // Right hemisphere
-                        [xOnPerimeter, this.chart.plotWidth] :
+                        [xOnPerimeter, chart.plotWidth] :
                         // Left hemisphere
                         [0, xOnPerimeter];
 
@@ -1120,9 +1125,10 @@ namespace RadialAxis {
             x1: number,
             y1: number
         ): [(number | undefined), number, number] {
-            let axis = this,
-                value = options.value,
-                center = axis.pane.center,
+            const axis = this,
+                center = axis.pane.center;
+
+            let value = options.value,
                 shapeArgs,
                 end,
                 x2,
@@ -1175,13 +1181,12 @@ namespace RadialAxis {
         axis.getPlotLinePath = function (
             options: PlotLineOptions
         ): SVGPath {
-            let axis = this,
+            const axis = this,
                 center = axis.pane.center,
                 chart = axis.chart,
                 inverted = chart.inverted,
-                value = options.value,
                 reverse = options.reverse,
-                end = axis.getPosition(value as any),
+
                 background = axis.pane.options.background ?
                     (axis.pane.options.background[0] ||
                         axis.pane.options.background) :
@@ -1190,11 +1195,12 @@ namespace RadialAxis {
                 outerRadius = background.outerRadius || '100%',
                 x1 = center[0] + chart.plotLeft,
                 y1 = center[1] + chart.plotTop,
-                x2 = end.x,
-                y2 = end.y,
                 height = axis.height,
                 isCrosshair = options.isCrosshair,
-                paneInnerR = center[3] / 2,
+                paneInnerR = center[3] / 2;
+
+
+            let value = options.value,
                 innerRatio,
                 distance,
                 a,
@@ -1205,11 +1211,16 @@ namespace RadialAxis {
                 crossPos,
                 path: SVGPath;
 
+            const end = axis.getPosition(value as any);
+
+            let x2 = end.x,
+                y2 = end.y;
+
             // Crosshair logic
             if (isCrosshair) {
                 // Find crosshair's position and perform destructuring
                 // assignment
-                crossPos = this.getCrosshairPosition(options, x1, y1);
+                crossPos = axis.getCrosshairPosition(options, x1, y1);
                 value = crossPos[0];
                 x2 = crossPos[1];
                 y2 = crossPos[2];
@@ -1308,9 +1319,10 @@ namespace RadialAxis {
 
         // Find the position for the axis title, by default inside the gauge.
         axis.getTitlePosition = function (): PositionObject {
-            const center = this.center,
-                chart = this.chart,
-                titleOptions = this.options.title;
+            const axis = this,
+                center = axis.center,
+                chart = axis.chart,
+                titleOptions = axis.options.title;
 
             return {
                 x: chart.plotLeft + center[0] + ((titleOptions as any).x || 0),
