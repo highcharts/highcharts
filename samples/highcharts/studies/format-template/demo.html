@@ -1,0 +1,18 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+
+<textarea id="input" style="min-width: 500px; min-height: 300px">
+<h4>{header}</h4>
+Before looping
+<ul>
+{#foreach items}
+<li>
+Print item {this}
+</li>
+{/foreach}
+</ul>
+After looping<br>
+<small>{footer}</small>
+
+</textarea>
+
+<div id="output"></div>
