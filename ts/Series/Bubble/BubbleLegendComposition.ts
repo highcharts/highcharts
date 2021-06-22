@@ -64,7 +64,7 @@ namespace BubbleLegendComposition {
         const chart = this,
             legend = chart.legend,
             bubbleSeries = getVisibleBubbleSeriesIndex(chart) >= 0;
-        let bubbleLegendOptions: Highcharts.BubbleLegendOptions,
+        let bubbleLegendOptions: BubbleLegendItem.Options,
             bubbleSizes;
 
         if (
@@ -326,7 +326,7 @@ namespace BubbleLegendComposition {
             actualLine = 0;
 
         items.forEach(function (
-            item: (Highcharts.BubbleLegendItem|Series|Point),
+            item: (BubbleLegendItem|Series|Point),
             index: number
         ): void {
             orgTranslateX = (item.legendGroup as any).translateX;
