@@ -8,8 +8,11 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import Highcharts from '../Core/Globals.js';
+import RadialAxis from '../Core/Axis/RadialAxis.js';
+const G: AnyRecord = Highcharts;
 import '../Extensions/Pane.js';
-import '../Core/Axis/RadialAxis.js';
+RadialAxis.compose(G.Axis, G.Tick);
 import '../Series/AreaRange/AreaRangeSeries.js';
 import '../Series/AreaSplineRange/AreaSplineRangeSeries.js';
 import '../Series/ColumnRange/ColumnRangeSeries.js';

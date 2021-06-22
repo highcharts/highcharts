@@ -146,8 +146,8 @@ declare global {
                     PolarSeries['searchPointByAngle'] :
                     Series['searchPoint']
             );
-            xAxis: RadialAxis.Composition;
-            yAxis: RadialAxis.Composition;
+            xAxis: RadialAxis.AxisComposition;
+            yAxis: RadialAxis.AxisComposition;
             getConnectors(
                 segment: Array<Point>,
                 index: number,
