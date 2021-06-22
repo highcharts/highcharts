@@ -56,8 +56,6 @@ declare module './AxisType' {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
-
 /**
  * @private
  */
@@ -75,17 +73,33 @@ namespace StackingAxis {
 
     /* *
      *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<typeof Axis> = [];
+
+    /* *
+     *
      *  Functions
      *
      * */
+
+    /* eslint-disable valid-jsdoc */
 
     /**
      * Extends axis with stacking support.
      * @private
      */
     export function compose<T extends typeof Axis>(AxisClass: T): (T&typeof Composition) {
-        addEvent(AxisClass, 'init', onInit);
-        addEvent(AxisClass, 'destroy', onDestroy);
+
+        if (composedClasses.indexOf(AxisClass) === -1) {
+            composedClasses.push(AxisClass);
+
+            addEvent(AxisClass, 'init', onInit);
+            addEvent(AxisClass, 'destroy', onDestroy);
+        }
+
         return AxisClass as (T&typeof Composition);
     }
 
@@ -206,8 +220,8 @@ namespace StackingAxis {
          * @private
          */
         public cleanStacks(): void {
-            const stacking = this;
-            const axis = stacking.axis;
+            const stacking = this,
+                axis = stacking.axis;
 
             let stacks;
 
@@ -232,7 +246,11 @@ namespace StackingAxis {
          * @private
          */
         public resetStacks(): void {
-            const { axis, stacks } = this;
+            const stacking = this,
+                {
+                    axis,
+                    stacks
+                } = stacking;
 
             if (!axis.isXAxis) {
 
@@ -241,7 +259,7 @@ namespace StackingAxis {
                         // Clean up memory after point deletion (#1044, #4320)
                         if (
                             isNumber(stack.touched) &&
-                            stack.touched < this.stacksTouched
+                            stack.touched < stacking.stacksTouched
                         ) {
                             stack.destroy();
                             delete type[x];
@@ -260,24 +278,24 @@ namespace StackingAxis {
          * @private
          */
         public renderStackTotals(): void {
-            const stacking = this;
-            const axis = stacking.axis;
-            const chart = axis.chart;
-            const renderer = chart.renderer;
-            const stacks = stacking.stacks;
-            const stackLabelsAnim = axis.options.stackLabels && axis.options.stackLabels.animation;
-            const animationConfig = getDeferredAnimation(chart, stackLabelsAnim || false);
-            const stackTotalGroup = stacking.stackTotalGroup = (
-                stacking.stackTotalGroup ||
-                renderer
-                    .g('stack-labels')
-                    .attr({
-                        visibility: 'visible',
-                        zIndex: 6,
-                        opacity: 0
-                    })
-                    .add()
-            );
+            const stacking = this,
+                axis = stacking.axis,
+                chart = axis.chart,
+                renderer = chart.renderer,
+                stacks = stacking.stacks,
+                stackLabelsAnim = axis.options.stackLabels && axis.options.stackLabels.animation,
+                animationConfig = getDeferredAnimation(chart, stackLabelsAnim || false),
+                stackTotalGroup = stacking.stackTotalGroup = (
+                    stacking.stackTotalGroup ||
+                    renderer
+                        .g('stack-labels')
+                        .attr({
+                            visibility: 'visible',
+                            zIndex: 6,
+                            opacity: 0
+                        })
+                        .add()
+                );
 
             // plotLeft/Top will change when y axis gets wider so we need to
             // translate the stackTotalGroup at every render call. See bug #506
