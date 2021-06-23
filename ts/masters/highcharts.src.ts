@@ -19,8 +19,8 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import HTMLElement from '../Core/Renderer/HTML/HTMLElement.js';
 import HTMLRenderer from '../Core/Renderer/HTML/HTMLRenderer.js';
 import Axis from '../Core/Axis/Axis.js';
-import '../Core/Axis/DateTimeAxis.js';
-import '../Core/Axis/LogarithmicAxis.js';
+import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
+import LogarithmicAxis from '../Core/Axis/LogarithmicAxis.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
 import Tick from '../Core/Axis/Tick.js';
 import Tooltip from '../Core/Tooltip.js';
@@ -131,6 +131,8 @@ G.uniqueKey = Utilities.uniqueKey;
 G.useSerialIds = Utilities.useSerialIds;
 G.wrap = Utilities.wrap;
 // Compositions
+DateTimeAxis.compose(Axis);
+LogarithmicAxis.compose(Axis);
 Responsive.compose(Chart);
 // Default Export
 export default G;

@@ -12,6 +12,7 @@
 
 import type AnimationOptions from './Animation/AnimationOptions';
 import type BBoxObject from './Renderer/BBoxObject';
+import type BubbleLegendItem from '../Series/Bubble/BubbleLegendItem';
 import type Chart from './Chart/Chart';
 import type ColorAxis from './Axis/ColorAxis';
 import type CSSObject from './Renderer/CSSObject';
@@ -20,8 +21,10 @@ import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type LegendLike from './LegendLike';
 import type LegendOptions from './LegendOptions';
 import type Series from './Series/Series';
+import type { StatesOptionsKey } from './Series/StatesOptions';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
+
 import A from './Animation/AnimationUtilities.js';
 const {
     animObject,
@@ -170,7 +173,7 @@ class Legend {
      *
      * */
 
-    public allItems: Array<(Highcharts.BubbleLegend|Series|Point)> = [];
+    public allItems: Array<(BubbleLegendItem|Series|Point)> = [];
 
     public baseline?: number;
 
@@ -391,7 +394,7 @@ class Legend {
      *
      * @private
      * @function Highcharts.Legend#colorizeItem
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      *        A Series or Point instance
      * @param {boolean} [visible=false]
      *        Dimmed or colored
@@ -400,7 +403,7 @@ class Legend {
      * Make events official: Fires the event `afterColorizeItem`.
      */
     public colorizeItem(
-        item: (Highcharts.BubbleLegend|Series|Point),
+        item: (BubbleLegendItem|Series|Point),
         visible?: boolean
     ): void {
         (item.legendGroup as any)[visible ? 'removeClass' : 'addClass'](
@@ -471,10 +474,10 @@ class Legend {
      *
      * @private
      * @function Highcharts.Legend#positionItem
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      * The item to position
      */
-    public positionItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
+    public positionItem(item: (BubbleLegendItem|Series|Point)): void {
         const legend = this,
             options = legend.options,
             symbolPadding = options.symbolPadding,
@@ -515,12 +518,12 @@ class Legend {
      *
      * @private
      * @function Highcharts.Legend#destroyItem
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      * The item to remove
      */
     public destroyItem(
         item: (
-            Highcharts.BubbleLegend|ColorAxis|ColorAxis.LegendItemObject|
+            BubbleLegendItem|ColorAxis|ColorAxis.LegendItemObject|
             Series|Point
         )
     ): void {
@@ -679,7 +682,7 @@ class Legend {
      * @param {Highcharts.Point|Highcharts.Series} item
      *        The item for which to update the text in the legend.
      */
-    public setText(item: (Highcharts.BubbleLegend|Series|Point)): void {
+    public setText(item: (BubbleLegendItem|Series|Point)): void {
         const options = this.options;
 
         (item.legendItem as any).attr({
@@ -695,10 +698,10 @@ class Legend {
      *
      * @private
      * @function Highcharts.Legend#renderItem
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      * The item to render.
      */
-    public renderItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
+    public renderItem(item: (BubbleLegendItem|Series|Point)): void {
         const legend = this,
             chart = legend.chart,
             renderer = chart.renderer,
@@ -852,9 +855,9 @@ class Legend {
      *
      * @private
      * @function Highcharts.Legend#layoutItem
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      */
-    public layoutItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
+    public layoutItem(item: (BubbleLegendItem|Series|Point)): void {
 
         const options = this.options,
             padding = this.padding,
@@ -927,12 +930,12 @@ class Legend {
      *
      * @private
      * @function Highcharts.Legend#getAllItems
-     * @return {Array<(Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)>}
+     * @return {Array<(Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series)>}
      * The current items in the legend.
      * @fires Highcharts.Legend#event:afterGetAllItems
      */
-    public getAllItems(): Array<(Highcharts.BubbleLegend|Series|Point)> {
-        let allItems = [] as Array<(Highcharts.BubbleLegend|Series|Point)>;
+    public getAllItems(): Array<(BubbleLegendItem|Series|Point)> {
+        let allItems = [] as Array<(BubbleLegendItem|Series|Point)>;
 
         this.chart.series.forEach(function (series): void {
             const seriesOptions = series && series.options;
@@ -1108,7 +1111,7 @@ class Legend {
             options = legend.options,
             padding = legend.padding,
             // add each series or point
-            allItems: Array<(Highcharts.BubbleLegend|Series|Point)> = legend.getAllItems();
+            allItems: Array<(BubbleLegendItem|Series|Point)> = legend.getAllItems();
         let display,
             legendWidth,
             legendHeight,
@@ -1601,14 +1604,14 @@ class Legend {
     /**
      * @private
      * @function Highcharts.Legend#setItemEvents
-     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
      * @param {Highcharts.SVGElement} legendItem
      * @param {boolean} [useHTML=false]
      * @fires Highcharts.Point#event:legendItemClick
      * @fires Highcharts.Series#event:legendItemClick
      */
     public setItemEvents(
-        item: (Highcharts.BubbleLegend|Series|Point),
+        item: (BubbleLegendItem|Series|Point),
         legendItem: SVGElement,
         useHTML?: boolean
     ): void {
@@ -1624,6 +1627,18 @@ class Legend {
                 [legendItem, item.legendSymbol] :
                 [item.legendGroup];
 
+        const setOtherItemsState = (state: StatesOptionsKey): void => {
+            legend.allItems.forEach((otherItem): void => {
+                if (item !== otherItem) {
+                    [otherItem]
+                        .concat((otherItem as Series).linkedSeries || [])
+                        .forEach((otherItem): void => {
+                            otherItem.setState(state, !isPoint);
+                        });
+                }
+            });
+        };
+
         // Set the events on the item group, or in case of useHTML, the item
         // itself (#1249)
         legendItems.forEach(function (element): void {
@@ -1631,11 +1646,7 @@ class Legend {
                 element
                     .on('mouseover', function (): void {
                         if (item.visible) {
-                            legend.allItems.forEach(function (inactiveItem): void {
-                                if (item !== inactiveItem) {
-                                    inactiveItem.setState('inactive', !isPoint);
-                                }
-                            });
+                            setOtherItemsState('inactive');
                         }
 
                         item.setState('hover');
@@ -1664,11 +1675,7 @@ class Legend {
                             );
                         }
 
-                        legend.allItems.forEach(function (inactiveItem): void {
-                            if (item !== inactiveItem) {
-                                inactiveItem.setState('', !isPoint);
-                            }
-                        });
+                        setOtherItemsState('');
 
                         // A CSS class to dim or hide other than the hovered
                         // series.
@@ -1683,14 +1690,7 @@ class Legend {
                                     (item as any).setVisible();
                                 }
                                 // Reset inactive state
-                                legend.allItems.forEach(function (inactiveItem): void {
-                                    if (item !== inactiveItem) {
-                                        inactiveItem.setState(
-                                            item.visible ? 'inactive' : '',
-                                            !isPoint
-                                        );
-                                    }
-                                });
+                                setOtherItemsState(item.visible ? 'inactive' : '');
                             };
 
                         // A CSS class to dim or hide other than the hovered
@@ -1723,11 +1723,11 @@ class Legend {
     /**
      * @private
      * @function Highcharts.Legend#createCheckboxForItem
-     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
      * @fires Highcharts.Series#event:checkboxClick
      */
     public createCheckboxForItem(
-        item: (Highcharts.BubbleLegend|Series|Point)
+        item: (BubbleLegendItem|Series|Point)
     ): void {
         const legend = this;
 
