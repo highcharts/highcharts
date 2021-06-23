@@ -13,33 +13,78 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Options from '../../Core/Options';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
-import H from '../../Core/Globals.js';
+
 import D from '../../Core/DefaultOptions.js';
 const { setOptions } = D;
+import H from '../../Core/Globals.js';
 
-H.theme = {
-    colors: ['#F3E796', '#95C471', '#35729E', '#251735'],
+/* *
+ *
+ *  Theme
+ *
+ * */
 
-    colorAxis: {
-        maxColor: '#05426E',
-        minColor: '#F3E796'
-    },
+namespace AvocadoTheme {
 
-    plotOptions: {
-        map: {
-            nullColor: '#FCFEFE'
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    export const options: Partial<Options> = {
+        colors: ['#F3E796', '#95C471', '#35729E', '#251735'],
+
+        colorAxis: {
+            maxColor: '#05426E',
+            minColor: '#F3E796'
+        },
+
+        plotOptions: {
+            map: {
+                nullColor: '#FCFEFE'
+            }
+        } as SeriesTypePlotOptions,
+
+        navigator: {
+            maskFill: 'rgba(170, 205, 170, 0.5)',
+            series: {
+                color: '#95C471',
+                lineColor: '#35729E'
+            }
         }
-    } as SeriesTypePlotOptions,
+    };
 
-    navigator: {
-        maskFill: 'rgba(170, 205, 170, 0.5)',
-        series: {
-            color: '#95C471',
-            lineColor: '#35729E'
-        }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Apply the theme.
+     */
+    export function apply(): void {
+        H.theme = options;
+        setOptions(options);
     }
-};
 
-// Apply the theme
-setOptions(H.theme);
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default AvocadoTheme;
