@@ -6821,7 +6821,8 @@ class Series {
                 if (
                     marker && (
                         marker.enabled === false ||
-                        'symbol' in marker // #10870
+                        (oldOptions.marker && oldOptions.marker.symbol) !==
+                            marker.symbol // #10870, #15946
                     )
                 ) {
                     kinds.graphic = 1;

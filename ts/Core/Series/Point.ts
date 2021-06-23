@@ -978,6 +978,7 @@ class Point {
         function update(): void {
 
             point.applyOptions(options);
+            point.resolveColor();
 
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
@@ -1447,6 +1448,8 @@ class Point {
                     state && point.isInside ? 'show' : 'hide'
                 ](); // #2450
                 (stateMarkerGraphic.element as any).point = point; // #4310
+
+                stateMarkerGraphic.addClass(point.getClassName(), true);
             }
         }
 

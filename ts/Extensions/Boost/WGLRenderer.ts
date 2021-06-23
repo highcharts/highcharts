@@ -1378,13 +1378,11 @@ function GLRenderer(
             // If the line width is < 0, skip rendering of the lines. See #7833.
             if (lineWidth > 0 || s.drawMode !== 'line_strip') {
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
-                    // if (s.segments[sindex].from < s.segments[sindex].to) {
                     vbuffer.render(
                         s.segments[sindex].from,
                         s.segments[sindex].to,
                         s.drawMode
                     );
-                    // }
                 }
             }
 
@@ -1396,13 +1394,11 @@ function GLRenderer(
                 }
                 shader.setDrawAsCircle(true);
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
-                    // if (s.segments[sindex].from < s.segments[sindex].to) {
                     vbuffer.render(
                         s.segments[sindex].from,
                         s.segments[sindex].to,
                         'POINTS'
                     );
-                    // }
                 }
             }
         });
