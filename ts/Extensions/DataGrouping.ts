@@ -20,6 +20,7 @@ import type {
     SeriesTypePlotOptions
 } from '../Core/Series/SeriesType';
 import type TimeTicksInfoObject from '../Core/Axis/TimeTicksInfoObject';
+
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import F from '../Core/FormatUtilities.js';
@@ -432,7 +433,7 @@ const applyGrouping = function (this: Series): void {
                     (groupPixelWidth * (xMax - xMin) / (plotSizeX as any)) *
                     groupIntervalFactor,
                 groupPositions = xAxis.getTimeTicks(
-                    DateTimeAxis.AdditionsClass.prototype.normalizeTimeTickInterval(
+                    DateTimeAxis.Additions.prototype.normalizeTimeTickInterval(
                         interval,
                         (dataGroupingOptions as any).units ||
                         defaultDataGroupingUnits

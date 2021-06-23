@@ -3871,7 +3871,6 @@ extend(Chart.prototype, {
     collectionsWithUpdate: [
         'xAxis',
         'yAxis',
-        'zAxis',
         'series'
     ],
 
