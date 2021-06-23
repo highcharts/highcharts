@@ -1,0 +1,8 @@
+.main {
+    display: flex;
+    margin: 0 -15px;
+}
+#input, #output {
+    min-width: 400px;
+    margin: 0 15px;
+}

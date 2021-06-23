@@ -1,5 +1,6 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 
+<div class="main">
 <textarea id="input" style="min-width: 500px; min-height: 300px">
 <h4>{header}</h4>
 Before looping
@@ -11,8 +12,17 @@ Print item {this}
 {/foreach}
 </ul>
 After looping<br>
+
+{#if condition}
+<div style="color: green">
+    {#if innerCondition}
+    If this is true print header: {header}
+    {/if}
+</div>
+{/if}
 <small>{footer}</small>
 
 </textarea>
 
 <div id="output"></div>
+</div>
