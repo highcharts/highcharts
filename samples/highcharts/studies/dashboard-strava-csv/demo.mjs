@@ -547,15 +547,14 @@ const components = state => [
             // Further modify
             afterPresentationModifier: function (e) {
                 const summedTable = reduceTable(e.table, state.sortColumn);
-                if (summedTable.getColumnNames().length) {
+                if (summedTable.getRowCount()) {
                     e.table.modified = summedTable;
                 }
-            },
-            tableChanged: function () {
-                const newTitle = state.sortColumn + ' totals by type';
+                const newTitle = state.sortColumn + ' totals by activity type';
                 if (this.chartOptions.title.text !== newTitle) {
-                    this.chartOptions.title.text = state.sortColumn + ' totals by type';
-                    this.redraw();
+                    this.chart.setTitle({
+                        text: newTitle
+                    });
                 }
             }
         },

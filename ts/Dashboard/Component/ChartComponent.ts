@@ -176,7 +176,9 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
     public render(): this {
         this.emit({ type: 'beforeRender' });
         super.render();
-        this.initChart();
+        this.chart = this.initChart();
+        this.updateSeries();
+        this.setupSync();
         this.emit({ type: 'afterRender' });
         return this;
     }
@@ -237,10 +239,12 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
             if (this.presentationModifier) {
                 this.presentationTable = this.presentationModifier.modifyTable(this.presentationTable).modified;
-                this.emit({ type: 'afterPresentationModifier', table: this.presentationTable });
             }
 
             const table = this.presentationTable;
+
+            this.emit({ type: 'afterPresentationModifier', table: table });
+
             // Remove series names that match the xKeys
             const seriesNames = table.modified.getColumnNames()
                 .filter((name): boolean => {
@@ -269,10 +273,23 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
                 let i = 0;
                 while (i < chart.series.length) {
                     const series = chart.series[i];
-                    if (series.options.id === `${storeTableID}-series-${index}`) {
+                    const seriesFromStore = series.options.id === `${storeTableID}-series-${index}`;
+                    const existingSeries = seriesNames.indexOf(series.name) !== -1;
+                    i++;
+
+                    if (
+                        existingSeries &&
+                        seriesFromStore
+                    ) {
                         return series;
                     }
-                    i++;
+
+                    if (
+                        !existingSeries &&
+                        seriesFromStore
+                    ) {
+                        series.destroy();
+                    }
                 }
 
                 return chart.addSeries({
@@ -301,10 +318,10 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
                     return arr;
                 }, []);
 
-                series.setData(seriesData, false);
+                series.setData(seriesData);
             });
 
-            chart.redraw();
+            /* chart.redraw(); */
         }
     }
 
@@ -319,13 +336,12 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
     private initChart(): Chart {
         if (this.chart) {
+            if (this.chart.series.length) {
+                return this.chart;
+            }
             this.chart.destroy();
         }
-        this.chart = this.constructChart();
-        this.updateSeries();
-        this.setupSync();
-
-        return this.chart;
+        return this.constructChart();
     }
 
     private setupSync(): void {
