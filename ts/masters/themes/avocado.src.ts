@@ -8,4 +8,5 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Themes/Avocado.js';
+import AvocadoTheme from '../../Extensions/Themes/Avocado.js';
+AvocadoTheme.apply();
