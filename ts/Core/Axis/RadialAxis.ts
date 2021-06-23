@@ -180,8 +180,7 @@ namespace RadialAxis {
      *
      * */
 
-    const composedAxisClasses: Array<typeof Axis> = [];
-    const composedTickClasses: Array<typeof Tick> = [];
+    const composedClasses: Array<(typeof Axis|typeof Tick)> = [];
 
     /**
      * Circular axis around the perimeter of a polar chart.
@@ -350,8 +349,8 @@ namespace RadialAxis {
         TickClass: typeof Tick
     ): (T&typeof AxisComposition) {
 
-        if (composedAxisClasses.indexOf(AxisClass) === -1) {
-            composedAxisClasses.push(AxisClass);
+        if (composedClasses.indexOf(AxisClass) === -1) {
+            composedClasses.push(AxisClass);
 
             addEvent(AxisClass, 'afterInit', onAxisAfterInit);
             addEvent(AxisClass, 'autoLabelAlign', onAxisAutoLabelAlign);
@@ -360,8 +359,8 @@ namespace RadialAxis {
             addEvent(AxisClass, 'initialAxisTranslation', onAxisInitialAxisTranslation);
         }
 
-        if (composedTickClasses.indexOf(TickClass) === -1) {
-            composedTickClasses.push(TickClass);
+        if (composedClasses.indexOf(TickClass) === -1) {
+            composedClasses.push(TickClass);
 
             addEvent(TickClass, 'afterGetLabelPosition', onTickAfterGetLabelPosition);
             addEvent(TickClass, 'afterGetPosition', onTickAfterGetPosition);
