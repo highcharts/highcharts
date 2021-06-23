@@ -5043,13 +5043,8 @@ class Series {
                     }
 
                     const isInside = point.isInside !== false;
-                    if (graphic) { // update
-                        // Since the marker group isn't clipped, each
-                        // individual marker must be toggled
-                        graphic[isInside ? 'show' : 'hide'](isInside)
-                            .animate(markerAttribs);
-
-                    } else if (
+                    if (
+                        !graphic &&
                         isInside &&
                         ((markerAttribs.width || 0) > 0 || point.hasImage)
                     ) {
@@ -5100,8 +5095,13 @@ class Series {
                     }
 
                     // Presentational attributes
-                    if (graphic && !chart.styledMode) {
-                        graphic[verb](
+                    if (graphic && (!chart.styledMode || series.colorAxis)) {
+                        graphic[
+                            // #14114
+                            chart.styledMode && series.colorAxis ?
+                                'css' :
+                                verb
+                        ](
                             series.pointAttribs(
                                 point,
                                 (point.selected && 'select') as any
