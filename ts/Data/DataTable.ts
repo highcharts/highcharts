@@ -1523,8 +1523,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
                     modified: table.modified
                 });
                 return table;
-            })
-            .catch((error): this => {
+            })['catch']((error): this => {
                 table.emit({
                     type: 'setModifierError',
                     error,
