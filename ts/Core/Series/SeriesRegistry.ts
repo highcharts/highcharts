@@ -187,14 +187,6 @@ namespace SeriesRegistry {
 
 /* *
  *
- *  Compatibility
- *
- * */
-
-(H as AnyRecord).seriesType = SeriesRegistry.seriesType;
-
-/* *
- *
  *  Export
  *
  * */
