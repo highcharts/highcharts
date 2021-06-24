@@ -19,7 +19,6 @@
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
-import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type PositionObject from './Renderer/PositionObject';
@@ -38,6 +37,7 @@ import palette from './Color/Palette.js';
 import RendererRegistry from './Renderer/RendererRegistry.js';
 import U from './Utilities.js';
 const {
+    addEvent,
     clamp,
     css,
     defined,
@@ -524,12 +524,18 @@ class Tooltip {
             onMouseEnter = function (): void {
                 tooltip.inContact = true;
             },
-            onMouseLeave = function (): void {
+            onMouseLeave = function (e: MouseEvent): void {
                 const series = tooltip.chart.hoverSeries;
 
-                tooltip.inContact = false;
+                // #14143: tooltip.options.useHTML
+                tooltip.inContact = tooltip.shouldStickOnContact() &&
+                    tooltip.chart.pointer.inClass(
+                        e.relatedTarget as any,
+                        'highcharts-tooltip'
+                    );
 
                 if (
+                    !tooltip.inContact &&
                     series &&
                     series.onMouseOut
                 ) {
@@ -565,6 +571,9 @@ class Tooltip {
                         (chartStyle && chartStyle.zIndex || 0) + 3
                     )
                 });
+
+                addEvent(container, 'mouseenter', onMouseEnter);
+                addEvent(container, 'mouseleave', onMouseLeave);
 
                 H.doc.body.appendChild(container);
 
@@ -1018,15 +1027,15 @@ class Tooltip {
         );
     }
 
+    public shouldStickOnContact(): boolean {
+        return !!(!this.followPointer && this.options.stickOnContact);
+    }
+
     /**
      * Returns true, if the pointer is in contact with the tooltip tracker.
      */
     public isStickyOnContact(): boolean {
-        return !!(
-            !this.followPointer &&
-            this.options.stickOnContact &&
-            this.inContact
-        );
+        return !!(this.shouldStickOnContact() && this.inContact);
     }
 
     /**
