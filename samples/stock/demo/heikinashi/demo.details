@@ -1,5 +1,5 @@
 ---
-name: Candlestick
+name: Heikin Ashi
 authors:
   - Karol Kolodziej
 js_wrap: b
