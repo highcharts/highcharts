@@ -406,30 +406,21 @@ namespace RadialAxis {
     function createLabelCollector(
         this: AxisComposition
     ): Chart.LabelCollectorFunction {
-        const axis = this;
-
-        return function (
-            this: null
-        ): (Array<(SVGElement|undefined)>|undefined) {
-
+        return (): (Array<(SVGElement|undefined)>|undefined) => {
             if (
-                axis.isRadial &&
-                axis.tickPositions &&
+                this.isRadial &&
+                this.tickPositions &&
                 // undocumented option for now, but working
-                axis.options.labels &&
-                axis.options.labels.allowOverlap !== true
+                this.options.labels &&
+                this.options.labels.allowOverlap !== true
             ) {
-                return axis.tickPositions
-                    .map(function (
-                        pos: number
-                    ): (SVGElement|undefined) {
-                        return axis.ticks[pos] && axis.ticks[pos].label;
-                    })
-                    .filter(function (
-                        label: (SVGElement|undefined)
-                    ): boolean {
-                        return Boolean(label);
-                    });
+                return this.tickPositions
+                    .map((pos: number): (SVGElement|undefined) =>
+                        this.ticks[pos] && this.ticks[pos].label
+                    )
+                    .filter((label: (SVGElement|undefined)): boolean =>
+                        Boolean(label)
+                    );
             }
         };
     }
@@ -736,21 +727,20 @@ namespace RadialAxis {
         this: AxisComposition,
         options: PlotLineOptions
     ): SVGPath {
-        const axis = this,
-            center = axis.pane.center,
-            chart = axis.chart,
+        const center = this.pane.center,
+            chart = this.chart,
             inverted = chart.inverted,
             reverse = options.reverse,
 
-            background = axis.pane.options.background ?
-                (axis.pane.options.background[0] ||
-                    axis.pane.options.background) :
+            background = this.pane.options.background ?
+                (this.pane.options.background[0] ||
+                    this.pane.options.background) :
                 {},
             innerRadius = background.innerRadius || '0%',
             outerRadius = background.outerRadius || '100%',
             x1 = center[0] + chart.plotLeft,
             y1 = center[1] + chart.plotTop,
-            height = axis.height,
+            height = this.height,
             isCrosshair = options.isCrosshair,
             paneInnerR = center[3] / 2;
 
@@ -766,7 +756,7 @@ namespace RadialAxis {
             crossPos,
             path: SVGPath;
 
-        const end = axis.getPosition(value as any);
+        const end = this.getPosition(value as any);
 
         let x2 = end.x,
             y2 = end.y;
@@ -775,14 +765,14 @@ namespace RadialAxis {
         if (isCrosshair) {
             // Find crosshair's position and perform destructuring
             // assignment
-            crossPos = axis.getCrosshairPosition(options, x1, y1);
+            crossPos = this.getCrosshairPosition(options, x1, y1);
             value = crossPos[0];
             x2 = crossPos[1];
             y2 = crossPos[2];
         }
 
         // Spokes
-        if (axis.isCircular) {
+        if (this.isCircular) {
             distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 
             a = (typeof innerRadius === 'string') ?
@@ -813,7 +803,7 @@ namespace RadialAxis {
         } else {
             // Pick the right values depending if it is grid line or
             // crosshair
-            value = axis.translate(value as any);
+            value = this.translate(value as any);
 
             // This is required in case when xAxis is non-circular to
             // prevent grid lines (or crosshairs, if enabled) from
@@ -825,22 +815,21 @@ namespace RadialAxis {
                 }
             }
 
-            if (axis.options.gridLineInterpolation === 'circle') {
+            if (this.options.gridLineInterpolation === 'circle') {
                 // A value of 0 is in the center, so it won't be
                 // visible, but draw it anyway for update and animation
                 // (#2366)
-                path = axis.getLinePath(0, value, paneInnerR);
+                path = this.getLinePath(0, value, paneInnerR);
                 // Concentric polygons
             } else {
                 path = [];
 
                 // Find the other axis (a circular one) in the same pane
-                chart[inverted ? 'yAxis' : 'xAxis'].forEach(
-                    function (a): void {
-                        if (a.pane === axis.pane) {
-                            otherAxis = a as RadialAxis.AxisComposition;
-                        }
-                    });
+                chart[inverted ? 'yAxis' : 'xAxis'].forEach((a): void => {
+                    if (a.pane === this.pane) {
+                        otherAxis = a as RadialAxis.AxisComposition;
+                    }
+                });
 
                 if (otherAxis) {
                     tickPositions = otherAxis.tickPositions;
@@ -982,11 +971,10 @@ namespace RadialAxis {
     function onAxisAfterInit(
         this: AxisComposition
     ): void {
-        const axis = this as RadialAxis.AxisComposition,
-            chart = axis.chart,
-            options = axis.options,
-            isHidden = chart.angular && axis.isXAxis,
-            pane = axis.pane,
+        const chart = this.chart,
+            options = this.options,
+            isHidden = chart.angular && this.isXAxis,
+            pane = this.pane,
             paneOptions = pane && pane.options;
 
         if (!isHidden && pane && (chart.angular || chart.polar)) {
@@ -996,14 +984,14 @@ namespace RadialAxis {
             // right (like SVG).
 
             // Y axis in polar charts
-            axis.angleRad = (options.angle || 0) * Math.PI / 180;
+            this.angleRad = (options.angle || 0) * Math.PI / 180;
             // Gauges
-            axis.startAngleRad =
+            this.startAngleRad =
                 ((paneOptions.startAngle as any) - 90) * Math.PI / 180;
-            axis.endAngleRad = (pick(
+            this.endAngleRad = (pick(
                 paneOptions.endAngle, (paneOptions.startAngle as any) + 360
             ) - 90) * Math.PI / 180; // Gauges
-            axis.offset = options.offset || 0;
+            this.offset = options.offset || 0;
 
         }
     }
@@ -1028,22 +1016,20 @@ namespace RadialAxis {
     function onAxisDestroy(
         this: AxisComposition
     ): void {
-        const axis = this as RadialAxis.AxisComposition;
-
         if (
-            axis.chart &&
-            axis.chart.labelCollectors
+            this.chart &&
+            this.chart.labelCollectors
         ) {
             const index = (
-                axis.labelCollector ?
-                    axis.chart.labelCollectors.indexOf(
-                        axis.labelCollector
+                this.labelCollector ?
+                    this.chart.labelCollectors.indexOf(
+                        this.labelCollector
                     ) :
                     -1
             );
 
             if (index >= 0) {
-                axis.chart.labelCollectors.splice(index, 1);
+                this.chart.labelCollectors.splice(index, 1);
             }
         }
     }
