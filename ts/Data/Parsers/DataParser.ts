@@ -68,29 +68,6 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * */
 
     /**
-     * Converts the table instance to a array of columns.
-     *
-     * @param {DataTable} table
-     * Table to convert.
-     *
-     * @return {Array<DataTable.Column>}
-     * An array of columns, with the second dimension as row cells.
-     */
-    public static getColumnsFromTable(
-        table: DataTable
-    ): Array<DataTable.Column> {
-        const columns = table.getColumns(),
-            columnNames = table.getColumnNames(),
-            columnArray = [];
-
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            columnArray.push(columns[columnNames[i]]);
-        }
-
-        return columnArray;
-    }
-
-    /**
      * Converts an array of columns to a table instance. Second dimension of the
      * array are the row cells.
      *
@@ -116,7 +93,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
             ++i
         ) {
             table.setColumn(
-                headers[i] || uniqueKey(),
+                headers[i] || `${i}`,
                 columns[i]
             );
         }
