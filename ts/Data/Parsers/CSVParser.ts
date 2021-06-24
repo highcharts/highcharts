@@ -104,7 +104,6 @@ class CSVParser extends DataParser<DataParser.Event> {
     private dataTypes: Array<Array<string>> = [];
     private guessedItemDelimiter?: string;
     private guessedDecimalPoint?: string;
-    private decimalRegex?: RegExp;
     private options: CSVParser.ClassJSONOptions;
     public converter: DataConverter;
 
@@ -392,7 +391,6 @@ class CSVParser extends DataParser<DataParser.Event> {
      */
     private guessDelimiter(lines: Array<string>): string {
 
-        const { decimalPoint } = this.options;
         let points = 0,
             commas = 0,
             guessed: string;
@@ -494,15 +492,6 @@ class CSVParser extends DataParser<DataParser.Event> {
             this.guessedDecimalPoint = '.';
         } else {
             this.guessedDecimalPoint = ',';
-        }
-
-        if (!decimalPoint) {
-            // Apply a new decimal regex based on the presumed decimal sep.
-            this.decimalRegex = new RegExp(
-                '^(-?[0-9]+)' +
-                this.guessedDecimalPoint +
-                '([0-9]+)$'
-            );
         }
 
         return guessed;
