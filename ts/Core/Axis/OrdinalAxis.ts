@@ -16,9 +16,10 @@
  *
  * */
 
-import type TickPositionsArray from './TickPositionsArray';
+import type DateTimeAxis from './DateTimeAxis';
 import type NavigatorAxis from './NavigatorAxis';
 import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
+import type TickPositionsArray from './TickPositionsArray';
 
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
@@ -50,7 +51,7 @@ declare module './AxisComposition' {
         ordinal?: OrdinalAxis['ordinal'];
         /** @deprecated */
         getTimeTicks(
-            normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
+            normalizedInterval: DateTimeAxis.NormalizedObject,
             min: number,
             max: number,
             startOfWeek?: number,
@@ -72,7 +73,7 @@ declare module './AxisOptions' {
 }
 
 declare module './TimeTicksInfoObject' {
-    interface TimeTicksInfoObject extends Highcharts.DateTimeAxisNormalizedObject {
+    interface TimeTicksInfoObject {
         segmentStarts?: Array<number>;
     }
 }
@@ -110,7 +111,7 @@ interface OrdinalAxis extends Axis {
     isInternal?: boolean;
     ordinal: OrdinalAxis.Composition;
     getTimeTicks(
-        normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
+        normalizedInterval: DateTimeAxis.NormalizedObject,
         min: number,
         max: number,
         startOfWeek: number,
@@ -741,7 +742,7 @@ namespace OrdinalAxis {
          * @private
          */
         AxisClass.prototype.getTimeTicks = function (
-            normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
+            normalizedInterval: DateTimeAxis.NormalizedObject,
             min: number,
             max: number,
             startOfWeek?: number,

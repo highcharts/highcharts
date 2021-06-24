@@ -42,5 +42,30 @@ QUnit.test(
             'true',
             'Series should be hidden from AT'
         );
+
+        chart.series[0].update({
+            name: 'Bean sprouts'
+        });
+
+        assert.notStrictEqual(
+            chart.series[0].a11yProxyElement.getAttribute('aria-label').indexOf('Bean'),
+            -1,
+            '#15902: Proxy button aria-label should have been updated'
+        );
+
+        const added = chart.addSeries({ data: [1, 2, 3] });
+
+        assert.ok(
+            added.a11yProxyElement,
+            '#15902: New legend item should have proxy button'
+        );
+
+        added.remove();
+
+        assert.strictEqual(
+            chart.accessibility.components.legend.proxyElementsList.length,
+            2,
+            '#15902: Proxy items should be recreated after removing legend item'
+        );
     }
 );

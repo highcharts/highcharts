@@ -44,7 +44,7 @@ declare module '../Core/Chart/ChartLike'{
 
 declare module '../Core/Options'{
     interface Options {
-        pane?: Highcharts.PaneOptions;
+        pane?: Highcharts.PaneOptions|Array<Highcharts.PaneOptions>;
     }
 }
 
@@ -173,8 +173,8 @@ class Pane {
 
         // Set options. Angular charts have a default background (#3318)
         this.options = options = merge(
-            this.defaultOptions as any,
-            this.chart.angular ? { background: ({} as any) } : void 0,
+            this.defaultOptions,
+            this.chart.angular ? { background: {} } : void 0,
             options
         );
     }
@@ -505,7 +505,6 @@ class Pane {
         redraw?: boolean
     ): void {
         merge(true, this.options, options);
-        merge(true, this.chart.options.pane, options); // #9917
 
         this.setOptions(this.options);
         this.render();

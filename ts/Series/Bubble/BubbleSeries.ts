@@ -19,7 +19,9 @@
 import type BubbleSeriesOptions from './BubbleSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import Axis from '../../Core/Axis/Axis.js';
+import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -48,7 +50,7 @@ const {
 
 import '../Column/ColumnSeries.js';
 import '../Scatter/ScatterSeries.js';
-import './BubbleLegend.js';
+import './BubbleLegendItem.js';
 
 /* *
  *
@@ -87,6 +89,8 @@ class BubbleSeries extends ScatterSeries {
      *
      * */
 
+    public static compose = BubbleLegendComposition.compose;
+
     /**
      * A bubble series is a three dimensional series type where each point
      * renders an X, Y and Z value. Each points is drawn as a bubble where the
@@ -107,8 +111,11 @@ class BubbleSeries extends ScatterSeries {
         dataLabels: {
             formatter: function (
                 this: Point.PointLabelObject
-            ): (number|null|undefined) { // #2945
-                return (this.point as BubblePoint).z;
+            ): string { // #2945
+                const { numberFormatter } = this.series.chart;
+                const { z } = (this.point as BubblePoint);
+
+                return isNumber(z) ? numberFormatter(z, -1) : '';
             },
             inside: true,
             verticalAlign: 'middle'
