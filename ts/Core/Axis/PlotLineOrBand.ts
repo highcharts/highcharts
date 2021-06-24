@@ -454,7 +454,7 @@ class PlotLineOrBand {
                 })
                 .add();
 
-            if (!this.axis.chart.styledMode) {
+            if (!axis.chart.styledMode) {
                 label.css(merge({
                     textOverflow: 'ellipsis'
                 }, optionsLabel.style));
@@ -472,28 +472,19 @@ class PlotLineOrBand {
         const y = arrayMin(yBounds);
 
         label.align(optionsLabel, false, {
-            x: x,
-            y: y,
+            x,
+            y,
             width: arrayMax(xBounds) - x,
             height: arrayMax(yBounds) - y
         });
 
-        const rotation = label.rotation || 0;
-        let width = 0;
-
-        if (!rotation) {
-            width = axis.width - (label.alignAttr.x - axis.left);
-        } else if (rotation === 90) {
-            width = axis.height - (label.alignAttr.y - axis.top);
-        } else if (rotation === 180) {
-            width = label.alignAttr.x - axis.left;
-        } else if (rotation === 270) {
-            width = label.alignAttr.y - axis.top;
-        }
-
-        if (width) {
-            label.css({ width: width + 'px' });
-        }
+        label.css({
+            width: (
+                label.rotation === 90 ?
+                    axis.height - (label.alignAttr.y - axis.top) :
+                    axis.width - (label.alignAttr.x - axis.left)
+            ) + 'px'
+        });
 
         label.show(true);
     }
