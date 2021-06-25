@@ -29,7 +29,9 @@ import F from '../FormatUtilities.js';
 const { format } = F;
 import H from '../Globals.js';
 const { noop } = H;
-import palette from '../Color/Palette.js';
+import Palette from '../Color/Palette.js';
+import R from '../Renderer/RendererUtilities.js';
+const { distribute } = R;
 import Series from '../Series/Series.js';
 import SeriesRegistry from './SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
@@ -45,8 +47,7 @@ const {
     objectEach,
     pick,
     relativeLength,
-    splat,
-    stableSort
+    splat
 } = U;
 
 declare module './PointLike' {
@@ -59,7 +60,7 @@ declare module './PointLike' {
         dataLabelOnNull?: boolean;
         dataLabelPath?: SVGElement;
         dataLabels?: Array<SVGElement>;
-        distributeBox?: Highcharts.DataLabelsBoxObject;
+        distributeBox?: R.BoxObject;
         dlBox?: BBoxObject;
         dlOptions?: DataLabelOptions;
         graphic?: SVGElement;
@@ -123,17 +124,6 @@ declare module './SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface DataLabelsBoxArray extends Array<DataLabelsBoxObject> {
-            reducedLen?: number;
-        }
-        interface DataLabelsBoxObject {
-            align?: number;
-            pos?: number;
-            rank?: (number|null);
-            size: number;
-            target: number;
-            targets?: Array<number>;
-        }
         interface SeriesDataLabelPositionersObject {
             alignToConnectors(
                 points: Array<Point>,
@@ -160,11 +150,6 @@ declare global {
             ): number;
             radialDistributionY(point: Point): number;
         }
-        function distribute(
-            boxes: DataLabelsBoxArray,
-            len: number,
-            maxDistance?: number
-        ): void;
     }
 }
 
@@ -194,183 +179,6 @@ declare global {
 ''; // detach doclets above
 
 /* eslint-disable valid-jsdoc */
-
-/**
- * General distribution algorithm for distributing labels of differing size
- * along a confined length in two dimensions. The algorithm takes an array of
- * objects containing a size, a target and a rank. It will place the labels as
- * close as possible to their targets, skipping the lowest ranked labels if
- * necessary.
- *
- * @private
- * @function Highcharts.distribute
- * @param {Highcharts.DataLabelsBoxArray} boxes
- * @param {number} len
- * @param {number} [maxDistance]
- * @return {void}
- */
-H.distribute = function (
-    boxes: Highcharts.DataLabelsBoxArray,
-    len: number,
-    maxDistance?: number
-): void {
-
-    let i: number,
-        overlapping = true,
-        origBoxes = boxes, // Original array will be altered with added .pos
-        restBoxes: Highcharts.DataLabelsBoxArray = [], // The outranked overshoot
-        box,
-        target,
-        total = 0,
-        reducedLen = origBoxes.reducedLen || len;
-
-    /**
-     * @private
-     */
-    function sortByTarget(
-        a: Highcharts.DataLabelsBoxObject,
-        b: Highcharts.DataLabelsBoxObject
-    ): number {
-        return a.target - b.target;
-    }
-
-    // If the total size exceeds the len, remove those boxes with the lowest
-    // rank
-    i = boxes.length;
-    while (i--) {
-        total += boxes[i].size;
-    }
-
-    // Sort by rank, then slice away overshoot
-    if (total > reducedLen) {
-        stableSort(boxes, function (
-            a: Highcharts.DataLabelsBoxObject,
-            b: Highcharts.DataLabelsBoxObject
-        ): number {
-            return (b.rank || 0) - (a.rank || 0);
-        });
-        i = 0;
-        total = 0;
-        while (total <= reducedLen) {
-            total += boxes[i].size;
-            i++;
-        }
-        restBoxes = boxes.splice(i - 1, boxes.length);
-    }
-
-    // Order by target
-    stableSort(boxes, sortByTarget);
-
-
-    // So far we have been mutating the original array. Now
-    // create a copy with target arrays
-    boxes = boxes.map(function (
-        box: Highcharts.DataLabelsBoxObject
-    ): Highcharts.DataLabelsBoxObject {
-        return {
-            size: box.size,
-            targets: [box.target],
-            align: pick(box.align, 0.5)
-        } as any;
-    }) as any;
-
-    while (overlapping) {
-        // Initial positions: target centered in box
-        i = boxes.length;
-        while (i--) {
-            box = boxes[i];
-            // Composite box, average of targets
-            target = (
-                Math.min.apply(0, box.targets as any) +
-                Math.max.apply(0, box.targets as any)
-            ) / 2;
-            box.pos = clamp(
-                target - box.size * (box.align as any), 0, len - box.size
-            );
-        }
-
-        // Detect overlap and join boxes
-        i = boxes.length;
-        overlapping = false;
-        while (i--) {
-            // Overlap
-            if (i > 0 &&
-                (boxes[i - 1].pos as any) + boxes[i - 1].size >
-                (boxes[i].pos as any)
-            ) {
-                // Add this size to the previous box
-                boxes[i - 1].size += boxes[i].size;
-                boxes[i - 1].targets = (boxes[i - 1]
-                    .targets as any)
-                    .concat(boxes[i].targets);
-                boxes[i - 1].align = 0.5;
-
-                // Overlapping right, push left
-                if ((boxes[i - 1].pos as any) + boxes[i - 1].size > len) {
-                    boxes[i - 1].pos = len - boxes[i - 1].size;
-                }
-                boxes.splice(i, 1); // Remove this item
-                overlapping = true;
-            }
-        }
-    }
-
-    // Add the rest (hidden boxes)
-    origBoxes.push.apply(origBoxes, restBoxes);
-
-
-    // Now the composite boxes are placed, we need to put the original boxes
-    // within them
-    i = 0;
-    boxes.some(function (
-        box: Highcharts.DataLabelsBoxObject
-    ): (boolean|undefined) {
-        let posInCompositeBox = 0;
-
-        if ((box.targets as any).some(function (): (boolean|undefined) {
-            origBoxes[i].pos = (box.pos as any) + posInCompositeBox;
-
-            // If the distance between the position and the target exceeds
-            // maxDistance, abort the loop and decrease the length in increments
-            // of 10% to recursively reduce the  number of visible boxes by
-            // rank. Once all boxes are within the maxDistance, we're good.
-            if (
-                typeof maxDistance !== 'undefined' &&
-                Math.abs((origBoxes[i].pos as any) - origBoxes[i].target) > maxDistance
-            ) {
-                // Reset the positions that are already set
-                origBoxes.slice(0, i + 1).forEach(
-                    function (box: Highcharts.DataLabelsBoxObject): void {
-                        delete box.pos;
-                    }
-                );
-
-                // Try with a smaller length
-                origBoxes.reducedLen =
-                    (origBoxes.reducedLen || len) - (len * 0.1);
-
-                // Recurse
-                if (origBoxes.reducedLen > len * 0.1) {
-                    H.distribute(origBoxes, len, maxDistance);
-                }
-
-                // Exceeded maxDistance => abort
-                return true;
-            }
-
-            posInCompositeBox += origBoxes[i].size;
-            i++;
-
-        } as any)) {
-            // Exceeded maxDistance => abort
-            return true;
-        }
-    } as any);
-
-    // Add the rest (hidden) boxes and sort by target
-    stableSort(origBoxes, sortByTarget);
-};
-
 
 /**
  * Draw the data labels
@@ -579,7 +387,7 @@ Series.prototype.drawDataLabels = function (): void {
                             labelOptions.color,
                             (style as any).color,
                             series.color,
-                            palette.neutralColor100
+                            Palette.neutralColor100
                         );
                         // Get automated contrast color
                         if ((style as any).color === 'contrast') {
@@ -593,7 +401,7 @@ Series.prototype.drawDataLabels = function (): void {
                                 labelDistance < 0 ||
                                 !!seriesOptions.stacking ?
                                 point.contrastColor :
-                                palette.neutralColor100;
+                                Palette.neutralColor100;
                         } else {
                             delete point.contrastColor;
                         }
@@ -1317,8 +1125,7 @@ if (seriesTypes.pie) {
             let top,
                 bottom,
                 length = points.length,
-                positions =
-                    [] as Array<Highcharts.DataLabelsBoxObject>,
+                positions: Array<R.BoxObject> = [],
                 naturalY,
                 sideOverflow,
                 size: any,
@@ -1369,7 +1176,7 @@ if (seriesTypes.pie) {
                     }
                 });
                 distributionLength = bottom + size - top;
-                H.distribute(
+                distribute(
                     positions,
                     distributionLength,
                     distributionLength / 5
@@ -1572,7 +1379,7 @@ if (seriesTypes.pie) {
                                             pointDataLabelsOptions as any
                                         ).connectorColor ||
                                         point.color ||
-                                        palette.neutralColor60
+                                        Palette.neutralColor60
                                     )
                                 });
                             }

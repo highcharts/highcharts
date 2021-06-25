@@ -43,7 +43,7 @@ declare module '../Core/Series/SeriesLike' {
 declare global {
     namespace Highcharts {
         interface LegendItemObject extends LegendSymbolMixin {
-            _legendItemPos?: Array<number>;
+            _legendItemPos: Array<number>;
             checkbox?: Legend.CheckBoxElement;
             checkboxOffset?: number;
             itemHeight?: number;
