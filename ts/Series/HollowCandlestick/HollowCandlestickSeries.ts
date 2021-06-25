@@ -24,7 +24,6 @@ import { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import palette from '../../Core/Color/Palette.js';
 
-
 const {
     seriesTypes: {
         candlestick: CandlestickSeries
@@ -80,7 +79,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @sample stock/demo/hollow-candlestick/
          *     Custom colors
          *
-         * @type    {string | GradientColor | PatternFill.PatternObject }
+         * @type    {ColorType}
          * @default #f21313
          * @product highstock
          */
@@ -93,7 +92,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @sample stock/demo/hollow-candlestick/
          *     Custom colors
          *
-         * @type    {string | GradientColor | PatternFill.PatternObject }
+         * @type    {ColorType}
          * @default #f21313
          * @product highstock
          */
@@ -106,7 +105,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @sample stock/demo/hollow-candlestick/
          *     Custom colors
          *
-         * @type    {string | GradientColor | PatternFill.PatternObject }
+         * @type    {ColorType}
          * @default #06b535
          * @product highstock
          */
@@ -119,7 +118,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @sample stock/demo/hollow-candlestick/
          *     Custom colors
          *
-         * @type    {string | GradientColor | PatternFill.PatternObject }
+         * @type    {ColorType}
          * @default #06b535
          * @product highstock
          */
