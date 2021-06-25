@@ -2,7 +2,7 @@
  *
  *  Arc diagram module
  *
- *  (c) 2021 Piotr Madej
+ *  (c) 2021 Piotr Madej, Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -35,7 +35,8 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    merge
+    merge,
+    pick
 } = U;
 
 /* *
@@ -187,28 +188,41 @@ class ArcDiagramSeries extends SankeySeries {
             toNode = point.toNode,
             chart = this.chart,
             translationFactor = this.translationFactor,
-            linkHeight = Math.max(
+            linkHeight = pick((point.series.options as any).linkHeight, Math.max(
                 (point.weight as any) * translationFactor,
                 (this.options.minLinkWidth as any)
-            ),
-            options = this.options,
-            curvy = (
-                (chart.inverted ? -this.colDistance : this.colDistance) *
-                (options.curveFactor as any)
-            ),
-            fromY = getY(fromNode, 'linksFrom'),
-            toY = getY(toNode, 'linksTo'),
+            )),
+            offsetLinks = (point.series.options as any).offsetLinks,
+            fromY = offsetLinks ? getY(fromNode, 'linksFrom') : fromNode.nodeY,
+            toY = offsetLinks ? getY(toNode, 'linksTo') : toNode.nodeY,
             nodeLeft = fromNode.nodeX,
             nodeW = this.nodeWidth,
             right = nodeLeft + nodeW,
-            outgoing = point.outgoing,
-            straight = right > nodeLeft + nodeW;
+            majorRadius = pick(
+                (point.series.options as any).majorRadius,
+                Math.min(chart.plotWidth / 2, chart.plotHeight / 2)
+            ),
+            linkWidth = linkHeight;
+
+        if (fromY > toY) {
+            [fromY, toY] = [toY, fromY];
+        }
+
         if (chart.inverted) {
             fromY = (chart.plotSizeY as any) - fromY;
             toY = (chart.plotSizeY || 0) - toY;
-            right = (chart.plotSizeX as any) - right;
+            right = right - 2 * nodeW;
             nodeW = -nodeW;
-            straight = nodeLeft > right;
+            linkHeight = -linkHeight;
+        }
+
+        if ((chart as any).options.chart.reversed) {
+            [fromY, toY] = [toY, fromY];
+            right = (chart.plotSizeX as any) - right;
+            if (chart.inverted) {
+                right -= nodeW;
+            }
+            linkWidth = -linkWidth;
         }
 
         point.shapeType = 'path';
@@ -221,26 +235,26 @@ class ArcDiagramSeries extends SankeySeries {
 
         point.shapeArgs = {
             d: [
-                ['M', nodeLeft + nodeW, fromY],
+                ['M', right, fromY],
                 [
                     'A',
-                    (toY + linkHeight - fromY) / 2,
+                    majorRadius,
                     (toY + linkHeight - fromY) / 2,
                     0,
                     0,
                     1,
-                    nodeLeft + nodeW,
+                    right,
                     toY + linkHeight
                 ],
-                ['L', nodeLeft + nodeW, toY],
+                ['L', right, toY],
                 [
                     'A',
+                    majorRadius - linkWidth,
                     (toY - fromY - linkHeight) / 2,
-                    (toY - fromY - linkHeight) / 2,
                     0,
                     0,
                     0,
-                    nodeLeft + nodeW,
+                    right,
                     fromY + linkHeight
                 ],
                 ['Z']
@@ -271,6 +285,98 @@ class ArcDiagramSeries extends SankeySeries {
             point.color = fromNode.color;
         }
 
+    }
+
+    /**
+     * Run translation operations for one node.
+     * @private
+     */
+    public translateNode(
+        node: DependencyWheelPoint,
+        column: ArcDiagramSeries.ColumnArray
+    ): void {
+        const translationFactor = this.translationFactor,
+            chart = this.chart,
+            options = this.options,
+            sum = node.getSum(),
+            nodeHeight = Math.max(
+                Math.round(sum * translationFactor),
+                this.options.minLinkWidth as any
+            ),
+            crisp = Math.round(options.borderWidth as any) % 2 / 2,
+            nodeOffset = column.offset(node, translationFactor),
+            fromNodeTop = Math.floor(pick(
+                (nodeOffset as any).absoluteTop,
+                (
+                    column.top(translationFactor) +
+                    (nodeOffset as any).relativeTop
+                )
+            )) + crisp,
+            left = Math.floor(
+                this.colDistance * (node.column as any) +
+                (options.borderWidth as any) / 2
+            ) + crisp;
+        let nodeWidth = Math.round(this.nodeWidth);
+
+        let nodeLeft = chart.inverted ?
+            (chart.plotSizeX as any) - left :
+            left;
+
+        node.sum = sum;
+        // If node sum is 0, don’t render the rect #12453
+        if (sum) {
+            // Draw the node
+            node.shapeType = 'rect';
+
+            node.nodeX = nodeLeft;
+            node.nodeY = fromNodeTop;
+
+            let x = nodeLeft,
+                y = fromNodeTop,
+                width = node.options.width || options.width || nodeWidth,
+                height = node.options.height || options.height || nodeHeight;
+
+            if (chart.inverted) {
+                x = nodeLeft - nodeWidth;
+                y = (chart.plotSizeY as any) - fromNodeTop - nodeHeight;
+                width = node.options.height || options.height || nodeWidth;
+                height = node.options.width || options.width || nodeHeight;
+                nodeWidth = -nodeWidth;
+            }
+            if ((chart as any).options.chart.reversed) {
+                x = (chart.plotSizeX as any) - nodeLeft - nodeWidth;
+            }
+            // Calculate data label options for the point
+            node.dlOptions = SankeySeries.getDLOptions({
+                level: (this.mapOptionsToLevel as any)[node.level],
+                optionsPoint: node.options
+            });
+
+            // Pass test in drawPoints
+            node.plotX = 1;
+            node.plotY = 1;
+
+            // Set the anchor position for tooltips
+            node.tooltipPos = chart.inverted ? [
+                (chart.plotSizeY as any) - y - height / 2,
+                (chart.plotSizeX as any) - x - width / 2
+            ] : [
+                x + width / 2,
+                y + height / 2
+            ];
+
+            node.shapeArgs = {
+                x,
+                y,
+                width,
+                height,
+                display: node.hasShape() ? '' : 'none'
+            };
+        } else {
+            node.dlOptions = {
+                enabled: false
+            };
+        }
     }
 
     /* eslint-enable valid-jsdoc */
