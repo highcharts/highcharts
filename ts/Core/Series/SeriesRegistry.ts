@@ -23,6 +23,7 @@ import type {
     SeriesTypeOptions,
     SeriesTypeRegistry
 } from './SeriesType';
+
 import H from '../Globals.js';
 import D from '../DefaultOptions.js';
 const { defaultOptions } = D;
@@ -44,7 +45,7 @@ namespace SeriesRegistry {
 
     /* *
      *
-     *  Static Properties
+     *  Properties
      *
      * */
 
@@ -59,7 +60,7 @@ namespace SeriesRegistry {
 
     /* *
      *
-     *  Static Functions
+     *  Functions
      *
      * */
 
@@ -187,7 +188,7 @@ namespace SeriesRegistry {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
