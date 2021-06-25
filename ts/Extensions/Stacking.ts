@@ -613,16 +613,6 @@ Series.prototype.setGroupedPoints = function (): void {
         this.chart.series.length > 1
     ) {
         Series.prototype.setStackedPoints.call(this, 'group');
-
-    // After updating, if we now have proper stacks, we must delete the group
-    // pseudo stacks (#14986)
-    } else if (stacking) {
-        objectEach(stacking.stacks, (type, key): void => {
-            if (key.slice(-5) === 'group') {
-                objectEach(type, (stack): void => stack.destroy());
-                delete stacking.stacks[key];
-            }
-        });
     }
 };
 
