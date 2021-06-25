@@ -2,17 +2,16 @@ import type Series from '../../Core/Series/Series.js';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type Options from '../../Core/Options.js';
 import type AxisOptions from '../../Core/Axis/AxisOptions.js';
+import SyncEmitter from './Sync/Emitter.js';
+import SyncHandler from './Sync/Handler.js';
+
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 import DataJSON from '../../Data/DataJSON.js';
 import DataTable from '../../Data/DataTable.js';
 import Highcharts from '../../masters/highcharts.src.js';
-import {
-    ChartSyncHandler,
-    ChartSyncEmitter,
-    defaults as defaultHandlers
-} from './ChartSyncHandlers.js';
+import defaultHandlers from './Sync/ChartSyncHandlers.js';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -97,7 +96,11 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
     public syncEvents: ChartComponent.syncEventsType[];
     public syncHandlers: Record<string, ChartComponent.syncHandlersType>;
 
-    private syncHandlerRegistry: Record<string, ChartSyncHandler>
+    /**
+     * Registry for the synchandlers used within the component
+     */
+    private registeredSyncHandlers: SyncHandler['id'][]
+
     /* *
      *
      *  Constructor
@@ -134,7 +137,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
         this.syncEvents = this.options.syncEvents;
         this.syncHandlers = this.options.syncHandlers;
-        this.syncHandlerRegistry = {};
+        this.registeredSyncHandlers = [];
         this.chartOptions = this.options.chartOptions || { chart: {} };
 
         if (this.store) {
@@ -325,13 +328,13 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
         }
     }
 
-    public registerSyncHandler(handler: ChartSyncHandler): void {
+    public registerSyncHandler(handler: SyncHandler): void {
         const { id } = handler;
-        this.syncHandlerRegistry[id] = handler;
+        this.registeredSyncHandlers.push(id);
     }
 
-    public getSyncHandler(handlerID: string): ChartSyncHandler | undefined {
-        return this.syncHandlerRegistry[handlerID];
+    public isRegisteredHandler(handlerID: string): boolean {
+        return this.registeredSyncHandlers.indexOf(handlerID) > -1;
     }
 
     private initChart(): Chart {
@@ -348,11 +351,10 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
         Object.keys(this.syncHandlers).forEach((id: string): void => {
             if (this.syncEvents.indexOf(id as ChartComponent.syncEventsType) > -1) {
                 const { emitter, handler } = this.syncHandlers[id];
-                if (handler instanceof ChartSyncHandler) {
+                if (handler instanceof SyncHandler) {
                     // Avoid registering the same handler multiple times
                     // i.e. panning and selection uses the same handler
-                    const existingHandler = this.getSyncHandler(handler.id);
-                    if (!existingHandler) {
+                    if (!this.isRegisteredHandler(handler.id)) {
                         this.registerSyncHandler(handler);
                         handler.createHandler(this)();
                     }
@@ -361,7 +363,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
                 }
 
                 // Probably should register this also
-                if (emitter instanceof ChartSyncEmitter) {
+                if (emitter instanceof SyncEmitter) {
                     emitter.createEmitter(this)();
                 } else if (emitter instanceof Function) {
                     emitter(this);
@@ -491,7 +493,7 @@ namespace ChartComponent {
     export type constructorType = 'chart' | 'stock' | 'map' | 'gantt';
 
     export type syncEventsType = 'visibility'| 'selection' | 'tooltip' | 'panning';
-    export type syncHandlersType = { emitter: Function | ChartSyncEmitter; handler: Function | ChartSyncHandler };
+    export type syncHandlersType = { emitter: Function | SyncEmitter; handler: Function | SyncHandler };
 
     export type ChartComponentEvents =
         JSONEvent |

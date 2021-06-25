@@ -1,68 +1,24 @@
 /* eslint-disable no-invalid-this, require-jsdoc */
-import type ChartComponent from './ChartComponent';
-import type Chart from '../../Core/Chart/Chart';
-import type Point from '../../Core/Series/Point';
-import type SharedState from './SharedComponentState';
+import type ChartComponent from '../ChartComponent';
+import type Chart from '../../../Core/Chart/Chart';
+import type Point from '../../../Core/Series/Point';
+import type SharedState from '../SharedComponentState';
 
-import ComponentGroup from './ComponentGroup.js';
-import U from '../../Core/Utilities.js';
+import ComponentGroup from '../ComponentGroup.js';
+import U from '../../../Core/Utilities.js';
 const {
     addEvent
 } = U;
 
-export class ChartSyncHandler {
-
-    public id: string;
-    public presentationStateTrigger: SharedState.eventTypes;
-    public func: Function;
-
-    constructor(id: string, trigger: SharedState.eventTypes, func: Function) {
-        this.id = id;
-        this.presentationStateTrigger = trigger;
-        this.func = func;
-    }
-
-    public createHandler(component: ChartComponent): Function {
-        return (): void => {
-            const { id } = component;
-
-            const groups = ComponentGroup.getGroupsFromComponent(component.id);
-            groups.forEach((group): void => {
-                group.getSharedState().on(this.presentationStateTrigger, (e): void => {
-                    if (id !== (e.detail ? e.detail.sender : void 0)) {
-                        this.func.bind(component)(e);
-                    }
-                });
-            });
-        };
-    }
-}
-
-// Two kinds: one that modifies data in table (drilldown),
-// one that modifies presentationstate
-export class ChartSyncEmitter {
-    public id: string;
-    public type: 'data' | 'presentation'; // Might not be necessary
-    public func: Function;
-
-    constructor(id: string, type: 'data' | 'presentation', func: Function) {
-        this.id = id;
-        this.type = type;
-        this.func = func;
-    }
-
-    public createEmitter(component: ChartComponent): Function {
-        return this.func.bind(component);
-    }
-
-}
+import SyncHandler from './Handler.js';
+import SyncEmitter from './Emitter.js';
 
 /**
  * Sets dataPresentationState on chart hover events
  * @param {ChartComponent} component
  * The component to attach to
  */
-export const tooltipEmitter = new ChartSyncEmitter(
+export const tooltipEmitter = new SyncEmitter(
     'tooltipEmitter',
     'presentation',
     function (this: ChartComponent): void {
@@ -121,7 +77,7 @@ export const tooltipEmitter = new ChartSyncEmitter(
  * @param {ChartComponent} component
  * The component to work on
  */
-export const seriesVisibilityEmitter = new ChartSyncEmitter(
+export const seriesVisibilityEmitter = new SyncEmitter(
     'seriesVisibilityEmitter',
     'presentation',
     function (this: ChartComponent): void {
@@ -158,7 +114,7 @@ export const seriesVisibilityEmitter = new ChartSyncEmitter(
  * Handles updating chart on series visibily changing in dataPresentationState
  */
 export const seriesVisibilityHandler =
-    new ChartSyncHandler(
+    new SyncHandler(
         'seriesVisibilityHandler',
         'afterColumnVisibilityChange',
         function (this: ChartComponent, e: SharedState.ColumnVisibilityEvent): void {
@@ -210,7 +166,7 @@ function findMatchingPoint(
  * the component to attach to
  */
 export const tooltipHandler =
-    new ChartSyncHandler(
+    new SyncHandler(
         'tooltipHandler',
         'afterHoverPointChange',
         function (this: ChartComponent, e: SharedState.PointHoverEvent): void {
@@ -236,7 +192,7 @@ export const tooltipHandler =
  * @param {ChartComponent} component
  * The component to work on
  */
-export const selectionEmitter = new ChartSyncEmitter(
+export const selectionEmitter = new SyncEmitter(
     'selectionEmitter',
     'presentation',
     function (this: ChartComponent): void {
@@ -314,7 +270,7 @@ export const selectionEmitter = new ChartSyncEmitter(
  * Handles changes in datapresentationstate selection
  */
 export const selectionHandler =
-    new ChartSyncHandler(
+    new SyncHandler(
         'selectionHandler',
         'afterSelectionChange',
         function (this: ChartComponent, e: SharedState.SelectionEvent): void {
@@ -374,7 +330,7 @@ function getAxisMinMaxMap(chart: Chart): Array<{
         );
 }
 
-export const panEmitter = new ChartSyncEmitter(
+export const panEmitter = new SyncEmitter(
     'panEmitter',
     'presentation',
     function (this: ChartComponent): void {
@@ -411,9 +367,11 @@ export const panEmitter = new ChartSyncEmitter(
     }
 );
 
-export const defaults: Record<string, { emitter: ChartSyncEmitter; handler: ChartSyncHandler }> = {
+export const defaults: Record<string, { emitter: SyncEmitter; handler: SyncHandler }> = {
     panning: { emitter: panEmitter, handler: selectionHandler },
     selection: { emitter: selectionEmitter, handler: selectionHandler },
     tooltip: { emitter: tooltipEmitter, handler: tooltipHandler },
     visibility: { emitter: seriesVisibilityEmitter, handler: seriesVisibilityHandler }
 };
+
+export default defaults;
