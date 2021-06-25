@@ -64,7 +64,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * A hollow candlestick chart is a style of financial chart used to
      * describe price movements over time.
      *
-     * @sample stock/demo/hollowcandlestick/
+     * @sample stock/demo/hollow-candlestick/
      *         Hollow Candlestick chart
      *
      * @extends      plotOptions.candlestick
@@ -77,7 +77,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * The fill color of the candlestick when the current
          * close is lower than the previous one.
          *
-         * @type    {Highcharts.ColorString|sting}
+         * @sample stock/demo/hollow-candlestick/
+         *     Custom colors
+         *
+         * @type    {string | GradientColor | PatternFill.PatternObject }
          * @default #f21313
          * @product highstock
          */
@@ -87,7 +90,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * The color of the line/border of the hollow candlestick when
          * the current close is lower than the previous one.
          *
-         * @type    {Highcharts.ColorString|sting}
+         * @sample stock/demo/hollow-candlestick/
+         *     Custom colors
+         *
+         * @type    {string | GradientColor | PatternFill.PatternObject }
          * @default #f21313
          * @product highstock
          */
@@ -97,7 +103,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * The fill color of the candlestick when the current
          * close is higher than the previous one.
          *
-         * @type    {Highcharts.ColorString|sting}
+         * @sample stock/demo/hollow-candlestick/
+         *     Custom colors
+         *
+         * @type    {string | GradientColor | PatternFill.PatternObject }
          * @default #06b535
          * @product highstock
          */
@@ -107,7 +116,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * The color of the line/border of the hollow candlestick when
          * the current close is higher than the previous one.
          *
-         * @type    {Highcharts.ColorString|sting}
+         * @sample stock/demo/hollow-candlestick/
+         *     Custom colors
+         *
+         * @type    {string | GradientColor | PatternFill.PatternObject }
          * @default #06b535
          * @product highstock
          */
@@ -135,7 +147,6 @@ class HollowCandlestickSeries extends CandlestickSeries {
     /**
      * Add fill attribute for each points based on
      * the previously calculated value.
-     * @private
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#pointAttribs
      *
@@ -161,7 +172,6 @@ class HollowCandlestickSeries extends CandlestickSeries {
     /**
      * Translate from value to pixel as a base method and loop through points
      * in order to calculate the fill.
-     * @private
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#translate
      *

@@ -20,6 +20,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import HollowCandlestickSeries from './HollowCandlestickSeries.js';
 import palette from '../../Core/Color/Palette.js';
 import ColorString from '../../Core/Color/ColorString.js';
+import GradientColor from '../../Core/Color/GradientColor.js';
+import PatternFill from '../../Extensions/PatternFill.js';
 
 const {
     seriesTypes: {
@@ -40,7 +42,7 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      *
      * */
 
-    public candleFill: ColorString|string = void 0 as any;
+    public candleFill: string | GradientColor | PatternFill.PatternObject = void 0 as any;
 
     public series: HollowCandlestickSeries = void 0 as any;
 
@@ -65,15 +67,15 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      * @return {void}
      *
      */
-    public getLineColor(previousPoint: HollowCandlestickPoint): any {
+    public getLineColor(previousPoint: HollowCandlestickPoint): string | GradientColor | PatternFill.PatternObject {
         const point = this;
 
         // Apply fill only for bullish candles.
         if (point.close < previousPoint.close) {
-            return palette.negativeColor;
+            return point.series.options.lineColor || palette.negativeColor;
         }
 
-        return palette.positiveColor;
+        return point.series.options.upLineColor || palette.positiveColor;
     }
 
     /**
@@ -89,16 +91,16 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      * @return {void}
      *
      */
-    public getPointFill(previousPoint: HollowCandlestickPoint): any {
+    public getPointFill(previousPoint: HollowCandlestickPoint): string | GradientColor | PatternFill.PatternObject {
         const point = this;
 
         // Apply fill only for bullish candles.
         if (point.open > point.close) {
             if (point.close < previousPoint.close) {
-                return palette.negativeColor;
+                return point.series.options.color || palette.negativeColor;
             }
 
-            return palette.positiveColor;
+            return point.series.options.upColor || palette.positiveColor;
         }
         return 'transparent';
     }
