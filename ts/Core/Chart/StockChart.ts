@@ -1214,6 +1214,11 @@ addEvent(Series, 'render', function (): void {
 
 // After animating, create final shared clips (#4406)
 addEvent(Series, 'afterRemoveClip', function (): void {
+    // Only for none 3d charts with axes
+    if ((this.chart.is3d && this.chart.is3d()) || !this.xAxis) {
+        return;
+    }
+
     // Prepare for animating
     delete this.sharedClipKey;
     this.finishedAnimating = true;
