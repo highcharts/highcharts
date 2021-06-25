@@ -19,6 +19,7 @@
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import HollowCandlestickSeries from './HollowCandlestickSeries.js';
 import palette from '../../Core/Color/Palette.js';
+import ColorString from '../../Core/Color/ColorString.js';
 
 const {
     seriesTypes: {
@@ -39,6 +40,8 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      *
      * */
 
+    public candleFill: ColorString|string = void 0 as any;
+
     public series: HollowCandlestickSeries = void 0 as any;
 
     /* *
@@ -48,6 +51,30 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      * */
 
     /* eslint-disable valid-jsdoc */
+
+    /**
+     * Based on the open and close values of the current and previous point,
+     * calculate what color the point line/border should have.
+     * @private
+     *
+     * @function Highcharts.seriesTypes.hollowcandlestick#getPointFill
+     *
+     * @param {HollowCandlestickPoint} previousPoint
+     *        Previous point.
+     *
+     * @return {void}
+     *
+     */
+    public getLineColor(previousPoint: HollowCandlestickPoint): any {
+        const point = this;
+
+        // Apply fill only for bullish candles.
+        if (point.close < previousPoint.close) {
+            return palette.negativeColor;
+        }
+
+        return palette.positiveColor;
+    }
 
     /**
      * Based on the open and close values of the current and previous point,
@@ -73,7 +100,7 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
 
             return palette.positiveColor;
         }
-
+        return 'transparent';
     }
     /* eslint-enable valid-jsdoc */
 }

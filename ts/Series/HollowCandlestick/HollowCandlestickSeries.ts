@@ -73,6 +73,45 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @optionparent plotOptions.hollowcandlestick
      */
     public static defaultOptions: HollowCandlestickSeriesOptions = merge(CandlestickSeries.defaultOptions, {
+        /**
+         * The fill color of the candlestick when the current
+         * close is lower than the previous one.
+         *
+         * @type    {Highcharts.ColorString|sting}
+         * @default #f21313
+         * @product highstock
+         */
+        color: palette.negativeColor,
+
+        /**
+         * The color of the line/border of the hollow candlestick when
+         * the current close is lower than the previous one.
+         *
+         * @type    {Highcharts.ColorString|sting}
+         * @default #f21313
+         * @product highstock
+         */
+        lineColor: palette.negativeColor,
+
+        /**
+         * The fill color of the candlestick when the current
+         * close is higher than the previous one.
+         *
+         * @type    {Highcharts.ColorString|sting}
+         * @default #06b535
+         * @product highstock
+         */
+        upColor: palette.positiveColor,
+
+        /**
+         * The color of the line/border of the hollow candlestick when
+         * the current close is higher than the previous one.
+         *
+         * @type    {Highcharts.ColorString|sting}
+         * @default #06b535
+         * @product highstock
+         */
+        upLineColor: palette.positiveColor
 
     } as HollowCandlestickSeriesOptions);
 
@@ -114,8 +153,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
     ): SVGAttributes {
         let attribs = super.pointAttribs.call(this, point, state);
 
-        attribs.fill = pick((point as any).fill || attribs.fill);
-
+        attribs.fill = point.candleFill || attribs.fill;
+        attribs.stroke = point.color || attribs.stroke;
         return attribs;
     }
 
@@ -137,14 +176,16 @@ class HollowCandlestickSeries extends CandlestickSeries {
             points = series.points;
 
         if (points && points.length) {
-            // The first point always color red.
-            (points[0] as any).fill = palette.negativeColor;
+            // The first point always without fill,
+            // because of lacking the previous point.
+            points[0].candleFill = 'transparent';
 
             for (let i = 1; i < points.length; i++) {
                 const point = points[i],
                     previousPoint = points[i - 1];
 
-                (point as any).fill = point.getPointFill(previousPoint);
+                point.candleFill = point.getPointFill(previousPoint);
+                point.color = point.getLineColor(previousPoint);
             }
         }
     }
