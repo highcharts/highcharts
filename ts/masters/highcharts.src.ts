@@ -25,7 +25,6 @@ import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
 import Tick from '../Core/Axis/Tick.js';
 import Tooltip from '../Core/Tooltip.js';
 import Point from '../Core/Series/Point.js';
-import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 import Pointer from '../Core/Pointer.js';
 import MSPointer from '../Core/MSPointer.js';
 import Legend from '../Core/Legend.js';
@@ -86,8 +85,6 @@ G.setOptions = DefaultOptions.setOptions;
 G.dateFormat = FormatUtilities.dateFormat;
 G.format = FormatUtilities.format;
 G.numberFormat = FormatUtilities.numberFormat;
-// Series Registry
-G.SeriesRegistry = SeriesRegistry;
 // Utilities
 G.addEvent = Utilities.addEvent;
 G.arrayMax = Utilities.arrayMax;
