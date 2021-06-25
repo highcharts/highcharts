@@ -37,7 +37,8 @@ import '../Series/Line/LineSeries.js';
 import '../Series/Area/AreaSeries.js';
 import '../Series/Spline/SplineSeries.js';
 import '../Series/AreaSpline/AreaSplineSeries.js';
-import '../Series/Column/ColumnSeries.js';
+import ColumnSeries from '../Series/Column/ColumnSeries.js';
+import ColumnDataLabel from '../Series/Column/ColumnDataLabel.js';
 import '../Series/Bar/BarSeries.js';
 import '../Series/Scatter/ScatterSeries.js';
 import '../Series/Pie/PieSeries.js';
@@ -132,6 +133,7 @@ G.uniqueKey = Utilities.uniqueKey;
 G.useSerialIds = Utilities.useSerialIds;
 G.wrap = Utilities.wrap;
 // Compositions
+ColumnDataLabel.compose(ColumnSeries);
 DateTimeAxis.compose(Axis);
 LogarithmicAxis.compose(Axis);
 Responsive.compose(Chart);
