@@ -33,6 +33,7 @@ const {
  * Static class to manage JSON-based conversion of registered classes. It
  * provides static methods to register classes, that can convert their instance
  * to JSON and can create instances from JSON.
+ * @private
  */
 class DataJSON {
 

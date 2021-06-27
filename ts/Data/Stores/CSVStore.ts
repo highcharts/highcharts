@@ -62,7 +62,9 @@ class CSVStore extends DataStore<CSVStore.Event> implements DataJSON.Class {
     static readonly defaultExportOptions: CSVStore.ExportOptions = {
         decimalPoint: null,
         itemDelimiter: null,
-        lineDelimiter: '\n'
+        lineDelimiter: '\n',
+        exportIDColumn: false,
+        usePresentationOrder: true
     }
 
     /* *
@@ -314,6 +316,7 @@ class CSVStore extends DataStore<CSVStore.Event> implements DataJSON.Class {
         const { columnNames, columnValues } = this.getColumnsForExport(
             exportOptions.usePresentationOrder
         );
+
         const csvRows: Array<string> = [],
             columnsCount = columnNames.length;
 
@@ -483,17 +486,17 @@ namespace CSVStore {
         dataRefreshRate: number;
     }
 
+
     /**
      * The available options when exporting the table as CSV.
      */
-    export interface ExportOptions extends DataJSON.JSONObject {
+    export interface ExportOptions extends Record<string, unknown>{
         decimalPoint: string | null;
         itemDelimiter: string | null;
         lineDelimiter: string;
         useLocalDecimalPoint?: boolean;
         usePresentationOrder?: boolean;
     }
-
 }
 
 /* *

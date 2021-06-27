@@ -124,7 +124,9 @@ test('CSV with ""s', (assert) => {
         'Headers should not contain ""s'
     )
 
+    datastore.setColumnOrder(datastore.table.getColumnNames()); // Save the order
     datastore.describeColumn('test', {
+        ...datastore.whatIs('test'),
         dataType: 'string'
     })
 

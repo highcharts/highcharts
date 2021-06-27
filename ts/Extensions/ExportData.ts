@@ -26,6 +26,8 @@ import type Series from '../Core/Series/Series.js';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import CSVStore from '../Data/Stores/CSVStore.js';
+import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
 import AST from '../Core/Renderer/HTML/AST.js';
 import H from '../Core/Globals.js';
 const {
@@ -130,7 +132,7 @@ declare global {
         interface ExportingOptions {
             csv?: ExportingCsvOptions;
             showTable?: boolean;
-            tableCaption?: (boolean|string);
+            tableCaption?: (undefined | string);
         }
         interface ExportDataPoint {
             series: ExportDataSeries;
@@ -184,6 +186,7 @@ declare global {
 
 import DownloadURL from '../Extensions/DownloadURL.js';
 import HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
+import DataTable from '../Data/DataTable';
 const { downloadURL } = DownloadURL;
 
 setOptions({
@@ -491,6 +494,79 @@ Chart.prototype.setUpKeyToAxis = function (): void {
         };
     }
 };
+
+/**
+ * Adds rows from getDataRows to a data table
+ *
+ * @private
+ *
+ * @function Highcharts.Chart#getDataTable
+ *
+ * @param {Chart} chart the
+ * Chart to get the data from from
+ *
+ * @param {CSVStore | HTMLTableStore} dataStore
+ * The DataStore to insert the values to
+ *
+ */
+function getDataTable(
+    chart: Chart,
+    dataStore: (CSVStore | HTMLTableStore)
+): void {
+
+    // Dont use multilevel headers with CSV export
+    const useMultiLevelHeaders = chart.options.exporting &&
+        chart.options.exporting.useMultiLevelHeaders &&
+        dataStore instanceof HTMLTableStore;
+
+    const rows = chart.getDataRows(useMultiLevelHeaders),
+        categories = rows[0];
+
+    // loop over the top level categories and replace duplicate names
+    const names: string[] = [];
+    if (categories) {
+        for (let index = 0; index < categories.length; index++) {
+            const categoryName = categories[index].toString(),
+                firstCategoryIndex = categories.indexOf(categoryName),
+                lastCategoryIndex = categories.lastIndexOf(categoryName);
+
+            // If there are duplicate category names, replace the column names
+            // and set a metadata title (which takes precedence on export)
+            if (firstCategoryIndex < lastCategoryIndex) {
+                let categoryCount = 1,
+                    categoryIndex = firstCategoryIndex + 1;
+                while (categoryIndex <= lastCategoryIndex) {
+                    if (categories[categoryIndex] === categoryName) {
+                        categories[categoryIndex] += `_${categoryCount}`;
+                        dataStore.describeColumn(categories[categoryIndex].toString(), {
+                            title: categoryName
+                        });
+                        categoryCount++;
+                    }
+                    categoryIndex++;
+                }
+            }
+            names[index] = categoryName;
+        }
+
+
+        dataStore.setColumnOrder(names);
+        dataStore.table.setColumns(
+            names.reduce(
+                (obj: DataTable.ColumnCollection, name: string): DataTable.ColumnCollection => {
+                    obj[name] = [];
+                    return obj;
+                }, {}
+            )
+        );
+
+        // Remove the categories
+        rows.splice(0, 1);
+    }
+
+    // Insert the rows to the store
+    dataStore.table.setRows(rows);
+}
 
 /**
  * Export-data module required. Returns a two-dimensional array containing the
@@ -862,52 +938,19 @@ Chart.prototype.getDataRows = function (
  *         CSV representation of the data
  */
 Chart.prototype.getCSV = function (
-    useLocalDecimalPoint?: boolean
+    useLocalDecimalPoint: boolean = false
 ): string {
-    let csv = '';
-    const rows = this.getDataRows(),
-        csvOptions: Highcharts.ExportingCsvOptions =
-            (this.options.exporting as any).csv,
-        decimalPoint = pick(
-            csvOptions.decimalPoint,
-            csvOptions.itemDelimiter !== ',' && useLocalDecimalPoint ?
-                (1.1).toLocaleString()[1] :
-                '.'
-        ),
-        // use ';' for direct to Excel
-        itemDelimiter = pick(
-            csvOptions.itemDelimiter,
-            decimalPoint === ',' ? ';' : ','
-        ),
-        // '\n' isn't working with the js csv data extraction
-        lineDelimiter = csvOptions.lineDelimiter;
+    const dataStore = new CSVStore();
 
-    // Transform the rows to CSV
-    rows.forEach(function (row: Array<(number|string)>, i: number): void {
-        let val: (number|string) = '',
-            j = row.length;
+    getDataTable(this, dataStore);
 
-        while (j--) {
-            val = row[j];
-            if (typeof val === 'string') {
-                val = '"' + val + '"';
-            }
-            if (typeof val === 'number') {
-                if (decimalPoint !== '.') {
-                    val = val.toString().replace('.', decimalPoint);
-                }
-            }
-            row[j] = val;
-        }
-        // Add the values
-        csv += row.join(itemDelimiter);
-
-        // Add the line delimiter
-        if (i < rows.length - 1) {
-            csv += lineDelimiter;
-        }
+    const csvOptions = this.options.exporting ? this.options.exporting.csv : {};
+    return dataStore.save({
+        ...csvOptions,
+        exportIDColumn: false,
+        useLocalDecimalPoint,
+        usePresentationOrder: true
     });
-    return csv;
 };
 
 /**
@@ -981,234 +1024,27 @@ Chart.prototype.getTable = function (
 Chart.prototype.getTableAST = function (
     useLocalDecimalPoint?: boolean
 ): AST.Node {
-    let rowLength = 0;
-    const treeChildren: AST.Node[] = [];
-    const options = this.options,
-        decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
-        useMultiLevelHeaders = pick(
-            (options.exporting as any).useMultiLevelHeaders, true
-        ),
-        rows = this.getDataRows(useMultiLevelHeaders),
-        topHeaders = useMultiLevelHeaders ? rows.shift() : null,
-        subHeaders = rows.shift(),
-        // Compare two rows for equality
-        isRowEqual = function (
-            row1: Array<(number|string)>,
-            row2: Array<(number|string)>
-        ): boolean {
-            let i = row1.length;
 
-            if (row2.length === i) {
-                while (i--) {
-                    if (row1[i] !== row2[i]) {
-                        return false;
-                    }
-                }
-            } else {
-                return false;
-            }
-            return true;
-        },
-        // Get table cell HTML from value
-        getCellHTMLFromValue = function (
-            tagName: string,
-            classes: (string|null),
-            attributes: HTMLAttributes,
-            value: (number|string)
-        ): AST.Node {
-            let textContent = pick(value, ''),
-                className = 'text' + (classes ? ' ' + classes : '');
+    const dataStore = new HTMLTableStore(),
+        { exporting } = this.options,
+        tableCaption = exporting && exporting.tableCaption ?
+            exporting.tableCaption :
+            this.options.title && this.options.title.text ?
+                this.options.title.text :
+                'Chart';
 
-            // Convert to string if number
-            if (typeof textContent === 'number') {
-                textContent = textContent.toString();
-                if (decimalPoint === ',') {
-                    textContent = textContent.replace('.', decimalPoint);
-                }
-                className = 'number';
-            } else if (!value) {
-                className = 'empty';
-            }
+    getDataTable(this, dataStore);
 
-            attributes = extend(
-                { 'class': className },
-                attributes
-            );
-
-            return {
-                tagName,
-                attributes,
-                textContent
-            };
-
-        },
-        // Get table header markup from row data
-        getTableHeaderHTML = function (
-            topheaders: (Array<(number|string)>|null|undefined),
-            subheaders: Array<(number|string)>,
-            rowLength?: number
-        ): AST.Node {
-            const theadChildren: AST.Node[] = [];
-
-            let i = 0,
-                len = rowLength || subheaders && subheaders.length,
-                next,
-                cur,
-                curColspan = 0,
-                rowspan;
-
-            // Clean up multiple table headers. Chart.getDataRows() returns two
-            // levels of headers when using multilevel, not merged. We need to
-            // merge identical headers, remove redundant headers, and keep it
-            // all marked up nicely.
-            if (
-                useMultiLevelHeaders &&
-                topheaders &&
-                subheaders &&
-                !isRowEqual(topheaders, subheaders)
-            ) {
-                const trChildren = [];
-                for (; i < len; ++i) {
-                    cur = topheaders[i];
-                    next = topheaders[i + 1];
-                    if (cur === next) {
-                        ++curColspan;
-                    } else if (curColspan) {
-                        // Ended colspan
-                        // Add cur to HTML with colspan.
-                        trChildren.push(getCellHTMLFromValue(
-                            'th',
-                            'highcharts-table-topheading',
-                            {
-                                scope: 'col',
-                                colspan: curColspan + 1
-                            },
-                            cur
-                        ));
-                        curColspan = 0;
-                    } else {
-                        // Cur is standalone. If it is same as sublevel,
-                        // remove sublevel and add just toplevel.
-                        if (cur === subheaders[i]) {
-                            if ((options.exporting as any).useRowspanHeaders) {
-                                rowspan = 2;
-                                delete subheaders[i];
-                            } else {
-                                rowspan = 1;
-                                subheaders[i] = '';
-                            }
-                        } else {
-                            rowspan = 1;
-                        }
-
-                        const cell = getCellHTMLFromValue(
-                            'th',
-                            'highcharts-table-topheading',
-                            { scope: 'col' },
-                            cur
-                        );
-                        if (rowspan > 1 && cell.attributes) {
-                            cell.attributes.valign = 'top';
-                            cell.attributes.rowspan = rowspan;
-                        }
-
-                        trChildren.push(cell);
-                    }
-                }
-
-                theadChildren.push({
-                    tagName: 'tr',
-                    children: trChildren
-                });
-            }
-
-            // Add the subheaders (the only headers if not using multilevels)
-            if (subheaders) {
-                const trChildren = [];
-
-                for (i = 0, len = subheaders.length; i < len; ++i) {
-                    if (typeof subheaders[i] !== 'undefined') {
-                        trChildren.push(
-                            getCellHTMLFromValue(
-                                'th', null, { scope: 'col' }, subheaders[i]
-                            )
-                        );
-                    }
-                }
-
-                theadChildren.push({
-                    tagName: 'tr',
-                    children: trChildren
-                });
-            }
-            return {
-                tagName: 'thead',
-                children: theadChildren
-            };
-        };
-
-    // Add table caption
-    if ((options.exporting as any).tableCaption !== false) {
-        treeChildren.push({
-            tagName: 'caption',
-            attributes: {
-                'class': 'highcharts-table-caption'
-            },
-            textContent: pick(
-                (options.exporting as any).tableCaption,
-                (
-                    (options.title as any).text ?
-                        (options.title as any).text :
-                        'Chart'
-                )
-            )
-        });
-    }
-
-    // Find longest row
-    for (let i = 0, len = rows.length; i < len; ++i) {
-        if (rows[i].length > rowLength) {
-            rowLength = rows[i].length;
-        }
-    }
-
-    // Add header
-    treeChildren.push(getTableHeaderHTML(
-        topHeaders,
-        subHeaders as any,
-        Math.max(rowLength, (subHeaders as any).length)
-    ));
-
-    // Transform the rows to HTML
-    const trs: AST.Node[] = [];
-    rows.forEach(function (row: Array<(number|string)>): void {
-        const trChildren = [];
-        for (let j = 0; j < rowLength; j++) {
-            // Make first column a header too. Especially important for
-            // category axes, but also might make sense for datetime? Should
-            // await user feedback on this.
-            trChildren.push(getCellHTMLFromValue(
-                j ? 'td' : 'th',
-                null,
-                j ? {} : { scope: 'row' },
-                row[j]
-            ));
-        }
-        trs.push({
-            tagName: 'tr',
-            children: trChildren
-        });
-    });
-    treeChildren.push({
-        tagName: 'tbody',
-        children: trs
+    const tree = dataStore.getTableAST({
+        ...exporting,
+        tableCaption,
+        useLocalDecimalPoint
     });
 
     const e = {
         tree: {
-            tagName: 'table',
-            id: `highcharts-data-table-${this.index}`,
-            children: treeChildren
+            ...tree,
+            id: `highcharts-data-table-${this.index}`
         } as AST.Node
     };
     fireEvent(this, 'aftergetTableAST', e);
@@ -1276,7 +1112,7 @@ Chart.prototype.downloadCSV = function (): void {
 
     downloadURL(
         getBlobFromContent(csv, 'text/csv') ||
-            'data:text/csv,\uFEFF' + encodeURIComponent(csv),
+        'data:text/csv,\uFEFF' + encodeURIComponent(csv),
         this.getFilename() + '.csv'
     );
 };
@@ -1316,7 +1152,7 @@ Chart.prototype.downloadXLS = function (): void {
 
     downloadURL(
         getBlobFromContent(template, 'application/vnd.ms-excel') ||
-            uri + base64(template),
+        uri + base64(template),
         this.getFilename() + '.xls'
     );
 };

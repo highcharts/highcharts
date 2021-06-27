@@ -19,18 +19,17 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import DataJSON from '../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
+import AST from '../../Core/Renderer/HTML/AST.js';
 import H from '../../Core/Globals.js';
 const { win } = H;
 import HTMLTableParser from '../Parsers/HTMLTableParser.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    objectEach
-} = U;
+const { merge, objectEach, extend, pick, createElement } = U;
 
 /** eslint-disable valid-jsdoc */
 
@@ -55,7 +54,8 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
         decimalPoint: null,
         exportIDColumn: false,
         useRowspanHeaders: true,
-        useMultiLevelHeaders: true
+        useMultiLevelHeaders: true,
+        usePresentationOrder: true
     }
     /* *
      *
@@ -225,9 +225,18 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
      * @return {string}
      * The HTML table.
      */
-    private getHTMLTableForExport(
+    public getTableAST(
         exportOptions: HTMLTableStore.ExportOptions = {}
-    ): string {
+    ): AST.Node {
+
+        // Merge in the provided parser options
+        objectEach(this.parserOptions, function (value, key): void {
+            if (key in exportOptions) {
+                exportOptions[key] = value;
+            }
+        });
+
+        const treeChildren: AST.Node[] = [];
         const options = exportOptions,
             decimalPoint = options.useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
             exportNames = (this.parserOptions.firstRowAsNames !== false),
@@ -254,12 +263,13 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
 
         // Get table header markup from row data
         const getTableHeaderHTML = function (
-            topheaders: (Array<(number | string)> | null | undefined),
-            subheaders: Array<(number | string | undefined)>,
+            topheaders: (Array<(number|string)>|null|undefined),
+            subheaders: Array<(number|string | undefined)>,
             rowLength?: number
-        ): string {
-            let html = '<thead>',
-                i = 0,
+        ): AST.Node {
+            const theadChildren: AST.Node[] = [];
+
+            let i = 0,
                 len = rowLength || subheaders && subheaders.length,
                 next,
                 cur,
@@ -276,7 +286,8 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
                 subheaders &&
                 !isRowEqual(topheaders, subheaders)
             ) {
-                html += '<tr>';
+                const trChildren = [];
+
                 for (; i < len; ++i) {
                     cur = topheaders[i];
                     next = topheaders[i + 1];
@@ -285,13 +296,15 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
                     } else if (curColspan) {
                         // Ended colspan
                         // Add cur to HTML with colspan.
-                        html += getCellHTMLFromValue(
+                        trChildren.push(getCellHTMLFromValue(
                             'th',
                             'highcharts-table-topheading',
-                            'scope="col" ' +
-                            'colspan="' + (curColspan + 1) + '"',
+                            {
+                                scope: 'col',
+                                colspan: curColspan + 1
+                            },
                             cur
-                        );
+                        ));
                         curColspan = 0;
                     } else {
                         // Cur is standalone. If it is same as sublevel,
@@ -307,74 +320,109 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
                         } else {
                             rowspan = 1;
                         }
-                        html += getCellHTMLFromValue(
+
+                        const cell = getCellHTMLFromValue(
                             'th',
                             'highcharts-table-topheading',
-                            'scope="col"' +
-                            (rowspan > 1 ?
-                                ' valign="top" rowspan="' + rowspan + '"' :
-                                ''),
+                            { scope: 'col' },
                             cur
                         );
+                        if (rowspan > 1 && cell.attributes) {
+                            cell.attributes.valign = 'top';
+                            cell.attributes.rowspan = rowspan;
+                        }
+
+                        trChildren.push(cell);
                     }
                 }
-                html += '</tr>';
+
+                theadChildren.push({
+                    tagName: 'tr',
+                    children: trChildren
+                });
             }
 
             // Add the subheaders (the only headers if not using multilevels)
             if (subheaders) {
-                html += '<tr>';
+                const trChildren = [];
+
                 for (i = 0, len = subheaders.length; i < len; ++i) {
-                    if (typeof subheaders[i] !== 'undefined') {
-                        html += getCellHTMLFromValue(
-                            'th', null, 'scope="col"', subheaders[i]
+                    const subheader = subheaders[i];
+                    if (typeof subheader !== 'undefined') {
+                        trChildren.push(
+                            getCellHTMLFromValue(
+                                'th', null, { scope: 'col' }, subheader
+                            )
                         );
                     }
                 }
-                html += '</tr>';
+
+                theadChildren.push({
+                    tagName: 'tr',
+                    children: trChildren
+                });
             }
-            html += '</thead>';
-            return html;
+            return {
+                tagName: 'thead',
+                children: theadChildren
+            };
         };
 
         const getCellHTMLFromValue = function (
-            tag: string,
-            classes: (string | null),
-            attrs: string,
-            value: (number | string | undefined)
-        ): string {
-            let val = value,
+            tagName: string,
+            classes: (string|null),
+            attributes: HTMLAttributes & SVGAttributes,
+            value: (number|string)
+        ): AST.Node {
+            let textContent = pick(value, ''),
                 className = 'text' + (classes ? ' ' + classes : '');
 
             // Convert to string if number
-            if (typeof val === 'number') {
-                val = val.toString();
+            if (typeof textContent === 'number') {
+                textContent = textContent.toString();
                 if (decimalPoint === ',') {
-                    val = val.replace('.', decimalPoint);
+                    textContent = textContent.replace('.', decimalPoint);
                 }
                 className = 'number';
             } else if (!value) {
-                val = '';
                 className = 'empty';
             }
-            return '<' + tag + (attrs ? ' ' + attrs : '') +
-                ' class="' + className + '">' +
-                val + '</' + tag + '>';
+
+            attributes = extend(
+                { 'class': className },
+                attributes
+            );
+
+            return {
+                tagName,
+                attributes,
+                textContent
+            };
         };
 
-        const { columnNames, columnValues } = this.getColumnsForExport(
-                options.usePresentationOrder
-            ),
-            htmlRows: Array<string> = [],
-            columnsCount = columnNames.length;
+        const {
+            columnNames,
+            columnValues
+        } = this.getColumnsForExport(options.usePresentationOrder);
+        const columnsCount = columnNames.length;
 
-        const rowArray: Array<DataTable.Row> = [];
+        const rowArray: AST.Node[][] = [];
 
-        let tableHead = '';
-
+        // Add table caption
+        // Current exportdata falls back to chart title
+        // but that should probably be handled in the export module
+        if (options.tableCaption) {
+            treeChildren.push({
+                tagName: 'caption',
+                attributes: {
+                    'class': 'highcharts-table-caption'
+                },
+                textContent: options.tableCaption
+            });
+        }
         // Add the names as the first row if they should be exported
         if (exportNames) {
-            const subcategories: (string | undefined)[] = [];
+            const subcategories: (string | number)[] = [];
 
             // If using multilevel headers, the first value
             // of each column is a subcategory
@@ -384,16 +432,23 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
                     subcategories.push(subhead);
                 });
 
-                tableHead = getTableHeaderHTML(columnNames, subcategories);
+                treeChildren.push(getTableHeaderHTML(columnNames, subcategories));
             } else {
-                tableHead = getTableHeaderHTML(null, columnNames);
+                treeChildren.push(getTableHeaderHTML(null, columnNames));
             }
         }
 
+        const astRows = [];
+        let longestColumn = 0;
         for (let columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
             const columnName = columnNames[columnIndex],
                 column = columnValues[columnIndex],
                 columnLength = column.length;
+
+            if (columnLength > longestColumn) {
+                longestColumn = columnLength;
+            }
+
 
             const columnMeta = this.whatIs(columnName);
             let columnDataType;
@@ -402,7 +457,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
                 columnDataType = columnMeta.dataType;
             }
 
-            for (let rowIndex = 0; rowIndex < columnLength; rowIndex++) {
+            for (let rowIndex = 0; rowIndex < longestColumn; rowIndex++) {
                 let cellValue = column[rowIndex];
 
                 if (!rowArray[rowIndex]) {
@@ -426,39 +481,39 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
                 rowArray[rowIndex][columnIndex] = getCellHTMLFromValue(
                     columnIndex ? 'td' : 'th',
                     null,
-                    columnIndex ? '' : 'scope="row"',
-                    cellValue
+                    columnIndex ? {} : { scope: 'row' },
+                    cellValue !== void 0 ? cellValue : ''
                 );
 
                 // On the final column, push the row to the array
                 if (columnIndex === columnsCount - 1) {
-                    htmlRows.push('<tr>' +
-                        rowArray[rowIndex].join('') +
-                        '</tr>');
+                    astRows.push({
+                        tagName: 'tr',
+                        children: rowArray[rowIndex]
+                    });
                 }
             }
         }
 
-        let caption = '';
+        treeChildren.push({
+            tagName: 'tbody',
+            children: astRows
+        });
 
+        const tree = {
+            tagName: 'table',
+            children: treeChildren
+        };
         // Add table caption
         // Current exportdata falls back to chart title
         // but that should probably be handled elsewhere?
-        if (options.tableCaption) {
-            caption = '<caption class="highcharts-table-caption">' +
-                options.tableCaption +
-                '</caption>';
-        }
+        // if (options.tableCaption) {
+        //     caption = '<caption class="highcharts-table-caption">' +
+        //         options.tableCaption +
+        //         '</caption>';
+        // }
 
-        return (
-            '<table>' +
-            caption +
-            tableHead +
-            '<tbody>' +
-            htmlRows.join('') +
-            '</tbody>' +
-            '</table>'
-        );
+        return tree;
     }
 
     /**
@@ -475,19 +530,17 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
      * HTML from the current dataTable.
      *
      */
-    public save(htmlExportOptions: HTMLTableStore.ExportOptions, eventDetail?: DataEventEmitter.EventDetail): string {
+    public save(
+        htmlExportOptions: Partial<HTMLTableStore.ExportOptions>,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): string | AST.Node {
         const exportOptions = HTMLTableStore.defaultExportOptions;
 
-        // Merge in the provided parser options
-        objectEach(this.parserOptions, function (value, key): void {
-            if (key in exportOptions) {
-                exportOptions[key] = value;
-            }
-        });
+        const element = createElement('div');
 
-        // Merge in provided options
-
-        return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
+        const nodes = [this.getTableAST(merge(exportOptions, htmlExportOptions))];
+        (new AST(nodes)).addToDOM(element);
+        return element.innerHTML;
     }
 
     /**
@@ -545,7 +598,7 @@ namespace HTMLTableStore {
     /**
      * Options for exporting the store as an HTML table
      */
-    export interface ExportOptions extends DataJSON.JSONObject {
+    export interface ExportOptions extends Record<string, unknown> {
         decimalPoint?: string | null;
         exportIDColumn?: boolean;
         tableCaption?: string;

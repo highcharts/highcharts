@@ -257,14 +257,12 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     public getColumnOrder(usePresentationState?: boolean): Array<string> {
         const store = this,
             metadata = store.metadata,
-            columns = metadata.columns,
+            columns = metadata.columns, //
             columnNames = Object.keys(columns),
             columnOrder: Array<string> = [];
 
-        let columnName: string;
-
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            columnName = columnNames[i];
+            const columnName = columnNames[i];
             columnOrder[pick(columns[columnName].index, i)] = columnName;
         }
 
@@ -293,17 +291,20 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         if (columnOrder.length) {
             columnNames.sort((a, b): number => {
                 if (columnOrder.indexOf(a) < columnOrder.indexOf(b)) {
-                    return 1;
+                    return -1;
                 }
                 if (columnOrder.indexOf(a) > columnOrder.indexOf(b)) {
-                    return -1;
+                    return 1;
                 }
                 return 0;
             });
         }
 
         return ({
-            columnNames,
+            columnNames: columnNames.map((name): string => {
+                const { title } = this.whatIs(name) || {};
+                return title || name; // Prefer a title set in the metadata
+            }),
             columnValues: columnNames.map(
                 (name: string): DataTable.Column => columnsRecord[name]
             )
@@ -347,7 +348,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         const store = this;
 
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            store.describeColumn(columnNames[i], { index: i });
+            store.describeColumn(columnNames[i], { ...store.whatIs(columnNames[i]), index: i });
         }
     }
 
