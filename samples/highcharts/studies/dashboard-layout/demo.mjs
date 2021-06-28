@@ -182,11 +182,13 @@ let dashboard = new Dashboard('container', {
                 // id: 'dashboard-row-0',
                 cells: [{
                     id: 'dashboard-col-0',
+                    width: 100,
                     style: {
                         color: 'yellow'
                     }
                 }, {
                     id: 'dashboard-col-1',
+                    width: 100,
                     style: {
                     // color: 'orange'
                     }
@@ -495,7 +497,7 @@ Highcharts.addEvent(
     }
 );*/
 
-/*
+
 const dashboardBootstrap = new Dashboard('container-bootstrap', {
     gui: {
         enabled: false,
@@ -540,8 +542,29 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
                 title: 'I heard you like components'
             }
         }]
+    }, {
+        cell: 'chart-3',
+        ...chartDemo
+    }, {
+        cell: 'title-1',
+        ...chartDemo
+    }, {
+        cell: 'title-2',
+        ...chartDemo
+    }, {
+        cell: 'chart-4',
+        ...chartDemo
+    }, {
+        cell: 'chart-5',
+        ...chartDemo
+    }, {
+        cell: 'chart-6',
+        ...chartDemo
+    }, {
+        cell: 'chart-7',
+        ...chartDemo
     }]
-});*/
+});
 
 // console.log(dashboardBootstrap);
 

@@ -229,12 +229,17 @@ class Row extends GUIElement {
      */
     public addCell(
         options: Cell.Options,
-        cellElement?: HTMLElement
+        cellElement?: HTMLElement,
+        index?: number
     ): Cell {
         const row = this,
             cell = new Cell(row, options, cellElement);
 
-        row.cells.push(cell);
+        if (!defined(index)) {
+            row.cells.push(cell);
+        } else {
+            row.mountCell(cell, index);
+        }
 
         // Set editMode events.
         if (row.layout.dashboard.editMode) {

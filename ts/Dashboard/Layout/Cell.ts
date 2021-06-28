@@ -348,7 +348,7 @@ namespace Cell {
         style?: CSSJSONObject;
         parentContainerId?: string;
         mountedComponentJSON?: Component.ClassJSON;
-        layout?: Layout;
+        layout?: Layout.Options;
     }
 
     export interface ClassJSON extends DataJSON.ClassJSON {

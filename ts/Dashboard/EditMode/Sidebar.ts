@@ -10,12 +10,12 @@ import DashboardGlobals from '../DashboardGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer, { FormField } from './EditRenderer.js';
 import Bindings from '../Actions/Bindings.js';
+import GUIElement from '../Layout/GUIElement.js';
 
 const {
     merge,
     createElement,
-    addEvent,
-    uniqueKey
+    addEvent
 } = U;
 
 class Sidebar {
@@ -804,8 +804,7 @@ class Sidebar {
 
         if (dragDrop) {
             const row = dropContext.getType() === 'cell' ? (dropContext as Cell).row : (dropContext as Row),
-                key = uniqueKey().slice(11), // @ToDo - change it to dashboard unique key generation?
-                newCell = row.addCell({ id: DashboardGlobals.prefix + 'col-' + key });
+                newCell = row.addCell({ id: GUIElement.createElementId('col') });
 
             dragDrop.onCellDragEnd(newCell);
             const component = Bindings.addComponent(merge(componentOptions, {

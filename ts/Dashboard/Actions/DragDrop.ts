@@ -12,6 +12,7 @@ const {
     addEvent,
     merge,
     css,
+    fireEvent,
     createElement
 } = U;
 
@@ -140,45 +141,6 @@ class DragDrop {
      * */
 
     /**
-     * Method for getting overlapped layout level.
-     *
-     * @param {Cell} mouseContext
-     * Reference to the mouse context.
-     *
-     * @param {number} offset
-     * Drop offset from the element edge.
-     *
-     * @param {number} mouseDropEdgeOffset
-     * Mouse offset from the drop edge.
-     *
-     * @return {number}
-     * Overlapped layout level.
-     */
-    private getDropContextLevel(
-        mouseContext: Cell,
-        offset: number,
-        mouseDropEdgeOffset: number
-    ): number {
-        // Array of overlapped levels.
-        const overlappedLevels = mouseContext.getOverlappingLevels(this.dropPointer.align, offset / 2);
-
-        // Divide offset to level sections (eg 3 nested layouts -
-        // cell edge will have 3 sections each 1/3 offset width).
-        const divOffset = offset / overlappedLevels.length;
-
-        // Overlapped nested layout level.
-        const lastOverlappedLevel = overlappedLevels[overlappedLevels.length - 1];
-
-        let level = mouseContext.row.layout.level - Math.floor(mouseDropEdgeOffset / divOffset);
-        level = level < lastOverlappedLevel ? lastOverlappedLevel : (
-            level > mouseContext.row.layout.level ?
-                mouseContext.row.layout.level : level
-        );
-
-        return level;
-    }
-
-    /**
      * Method for showing and positioning drop pointer.
      *
      * @param {number} left
@@ -218,31 +180,6 @@ class DragDrop {
             this.dropPointer.align = '';
             this.dropPointer.element.style.display = 'none';
         }
-    }
-
-    /**
-     * Method for checking if gui element is on parent edge.
-     *
-     * @param {Cell} mouseContext
-     * Reference to the mouseContext.
-     *
-     * @return {boolean}
-     */
-    private isGUIElementOnEdge(
-        mouseContext: Cell
-    ): boolean {
-        const dragDrop = this,
-            align = dragDrop.dropPointer.align;
-
-        const visibleElements = (align === 'top' || align === 'bottom') ? mouseContext.row.layout.getVisibleRows() :
-            (align === 'left' || align === 'right') ? mouseContext.row.getVisibleCells() : [];
-
-        return (
-            (visibleElements[visibleElements.length - 1] === mouseContext && align === 'right') ||
-            (visibleElements[visibleElements.length - 1] === mouseContext.row && align === 'bottom') ||
-            (visibleElements[0] === mouseContext && align === 'left') ||
-            (visibleElements[0] === mouseContext.row && align === 'top')
-        );
     }
 
     /**
@@ -299,6 +236,14 @@ class DragDrop {
         if (context) {
             this.context = context;
             context.hide();
+
+            if (context.getType() === DashboardGlobals.guiElementType.cell) {
+                const draggedCell = context as Cell;
+
+                // Call cellResize dashboard event.
+                fireEvent(this.editMode.dashboard, 'cellResize', { cell: context });
+                fireEvent(draggedCell.row, 'cellChange', { cell: context, row: draggedCell.row });
+            }
         } else if (dragEndCallback) {
             this.dragEndCallback = dragEndCallback;
         }
@@ -439,6 +384,12 @@ class DragDrop {
                 (dropContext.layout.getRowIndex(dropContext) || 0) +
                     (dragDrop.dropPointer.align === 'bottom' ? 1 : 0)
             );
+
+            // Call cellResize dashboard event.
+            if (draggedRow.cells[0]) {
+                fireEvent(dragDrop.editMode.dashboard, 'cellResize', { cell: draggedRow.cells[0] });
+                fireEvent(draggedRow, 'cellChange', { cell: draggedRow.cells[0], row: draggedRow });
+            }
         }
 
         dragDrop.hideDropPointer();
@@ -446,8 +397,8 @@ class DragDrop {
     }
 
     /**
-     * Sets appropriate drop context and refresh drop pointer
-     * position when cell is dragged.
+     * Method used as middleware when cell is dragged.
+     * Decides where to pass an event depending on the mouse context.
      *
      * @param {PointerEvent} e
      * Mouse event.
@@ -460,79 +411,152 @@ class DragDrop {
         contextDetails?: ContextDetection.ContextDetails
     ): void {
         const dragDrop = this,
-            mouseCellContext = dragDrop.mouseCellContext,
-            dropPointerSize = dragDrop.options.dropPointerSize,
+            mouseCellContext = dragDrop.mouseCellContext as Cell,
             offset = dragDrop.options.cellDropOffset;
+
+        if (mouseCellContext || contextDetails) {
+            dragDrop.onCellDragCellCtx(
+                e,
+                contextDetails || ContextDetection.getContext(mouseCellContext, e, offset)
+            );
+        } else if (dragDrop.mouseRowContext) {
+            dragDrop.onCellDragRowCtx(e, dragDrop.mouseRowContext);
+        }
+    }
+
+    /**
+     * Sets appropriate drop context and refreshes the drop pointer
+     * position when a cell is dragged and a cell context is detected.
+     *
+     * @param {PointerEvent} e
+     * Mouse event.
+     *
+     * @param {ContextDetection.ContextDetails} context
+     * Context details (cell, side)
+     */
+    public onCellDragCellCtx(
+        e: PointerEvent,
+        context: ContextDetection.ContextDetails
+    ): void {
+        const dragDrop = this,
+            dropPointerSize = dragDrop.options.dropPointerSize,
+            align = context.side;
 
         let updateDropPointer = false;
 
-        if (mouseCellContext || contextDetails) {
-            const context = contextDetails || ContextDetection.getContext(mouseCellContext as Cell, e, offset);
-            const align = context.side;
+        if (
+            dragDrop.dropPointer.align !== align ||
+            dragDrop.dropContext !== context.cell
+        ) {
+            updateDropPointer = true;
+            dragDrop.dropPointer.align = align;
+            dragDrop.dropContext = context.cell;
+        }
 
-            if (
-                dragDrop.dropPointer.align !== align ||
-                dragDrop.dropContext !== context.cell
-            ) {
-                updateDropPointer = true;
-                dragDrop.dropPointer.align = align;
-                dragDrop.dropContext = context.cell;
+        if (align === 'right' || align === 'left') {
+            const dropContextOffsets = GUIElement.getOffsets(
+                dragDrop.dropContext, dragDrop.editMode.dashboard.container);
+            const { width, height } = GUIElement.getDimFromOffsets(dropContextOffsets);
+
+            // Update or show drop pointer.
+            if (!dragDrop.dropPointer.isVisible || updateDropPointer) {
+                const pointerHeight = (dragDrop.dropContext.row.container || {}).offsetHeight || height;
+
+                dragDrop.showDropPointer(
+                    dropContextOffsets.left + (align === 'right' ? width : 0) -
+                        dropPointerSize / 2,
+                    dropContextOffsets.top,
+                    dropPointerSize,
+                    pointerHeight
+                );
             }
+        } else if (align === 'top' || align === 'bottom') {
+            // Check if cell is dragged as row.
+            dragDrop.onRowDrag(e, context);
+        } else {
+            dragDrop.dropContext = void 0;
+            dragDrop.hideDropPointer();
+        }
+    }
 
-            if (align === 'right' || align === 'left') {
-                const dropContextOffsets = GUIElement.getOffsets(
-                    dragDrop.dropContext, dragDrop.editMode.dashboard.container);
-                const { width, height } = GUIElement.getDimFromOffsets(dropContextOffsets);
+    /**
+     * Sets appropriate drop context and refreshes the drop pointer
+     * position when a cell is dragged and a row context is detected.
+     *
+     * @param {PointerEvent} e
+     * Mouse event.
+     *
+     * @param {Row} mouseRowContext
+     * Row context.
+     */
+    public onCellDragRowCtx(
+        e: PointerEvent,
+        mouseRowContext: Row
+    ): void {
+        const dragDrop = this,
+            dropPointerSize = dragDrop.options.dropPointerSize,
+            rowOffsets = GUIElement.getOffsets(mouseRowContext),
+            { height: rowHeight } = GUIElement.getDimFromOffsets(rowOffsets);
 
-                // Update or show drop pointer.
-                if (!dragDrop.dropPointer.isVisible || updateDropPointer) {
-                    dragDrop.showDropPointer(
-                        dropContextOffsets.left + (align === 'right' ? width : 0) -
-                            dropPointerSize / 2,
-                        dropContextOffsets.top,
-                        dropPointerSize,
-                        height
-                    );
-                }
-            } else if (align === 'top' || align === 'bottom') {
-                // Check if cell is dragged as row.
-                dragDrop.onRowDrag(e, context);
-            } else {
-                dragDrop.dropContext = void 0;
-                dragDrop.hideDropPointer();
-            }
-        } else if (dragDrop.mouseRowContext) {
-            let cell, cellOffsets;
+        let cell, cellOffsets;
 
-            for (let i = 0, iEnd = dragDrop.mouseRowContext.cells.length; i < iEnd; ++i) {
-                cell = dragDrop.mouseRowContext.cells[i];
-                cellOffsets = GUIElement.getOffsets(cell);
+        for (let i = 0, iEnd = mouseRowContext.cells.length; i < iEnd; ++i) {
+            cell = mouseRowContext.cells[i];
+            cellOffsets = GUIElement.getOffsets(cell);
 
-                if (cellOffsets.left <= e.clientX && cellOffsets.right >= e.clientX) {
-                    // @ToDo - Mouse below or above the cell.
-                    // const { width, height } =
-                    //     GUIElement.getDimFromOffsets(cellOffsets);
-                    // const rowOffsets =
-                    //     cell.row.container?.getBoundingClientRect();
-                    // const rowHeight =
-                    //     (rowOffsets?.bottom || 0) - (rowOffsets?.top || 0);
-                    // const dashOffsets = dragDrop.editMode.dashboard.
-                    //     container.getBoundingClientRect();
-                    // dragDrop.showDropPointer(
-                    //     cellOffsets.left - dashOffsets.left,
-                    //     cellOffsets.top - dashOffsets.top + height,
-                    //     width,
-                    //     rowHeight - height
-                    // );
+            const { width, height } = GUIElement.getDimFromOffsets(cellOffsets);
+            const dashOffsets = dragDrop.editMode.dashboard.container.getBoundingClientRect();
+
+            if (cell.isVisible) {
+                if (
+                    height < 0.8 * rowHeight &&
+                    cellOffsets.left <= e.clientX &&
+                    cellOffsets.right >= e.clientX
+                ) {
+                    if (cellOffsets.top > e.clientY) {
+                        // @ToDo - Mouse above the cell.
+                    } else if (cellOffsets.bottom < e.clientY) {
+                        // Mouse below the cell.
+                        dragDrop.showDropPointer(
+                            cellOffsets.left - dashOffsets.left,
+                            cellOffsets.top - dashOffsets.top + height,
+                            width,
+                            rowHeight - height
+                        );
+
+                        dragDrop.dropPointer.align = 'nestedBottom';
+                        dragDrop.dropContext = cell;
+                    }
+
+                    i = iEnd; // stop the loop
                 } else if (
                     (i === 0 && cellOffsets.left > e.clientX) ||
-                    (i === dragDrop.mouseRowContext.cells.length - 1 && cellOffsets.right < e.clientX)
+                    (i === iEnd - 1 && cellOffsets.right < e.clientX)
                 ) {
-                    dragDrop.onCellDrag(e, {
-                        cell,
-                        side: (i === 0 && cellOffsets.left > e.clientX) ? 'left' : 'right'
-                    });
+                    if (cellOffsets.left > e.clientX) {
+                        // @ToDo - Mouse on the cell left side.
+                    } else if (cellOffsets.right < e.clientX) {
+                        // Mouse on the cell right side.
+                        const pointerWidth = rowOffsets.right - cellOffsets.right;
+
+                        dragDrop.showDropPointer(
+                            cellOffsets.left + ((i === 0 && cellOffsets.left > e.clientX) ? 0 : width) -
+                                dropPointerSize / 2 - dashOffsets.left,
+                            cellOffsets.top - dashOffsets.top,
+                            pointerWidth > dropPointerSize ? pointerWidth : dropPointerSize,
+                            rowHeight || height
+                        );
+
+                        dragDrop.dropPointer.align = 'right';
+                        dragDrop.dropContext = cell;
+                    }
+
+                    i = iEnd; // stop the loop
                 }
+            } else if (!cell.isVisible && cell === dragDrop.context) {
+                // Element is not visible.
+                dragDrop.dropContext = void 0;
+                dragDrop.hideDropPointer();
             }
         }
     }
@@ -576,16 +600,68 @@ class DragDrop {
 
                 newRow.mountCell(draggedCell, 0);
             } else if (
+                dragDrop.dropPointer.align === 'nestedBottom' &&
                 dropContext.getType() === DashboardGlobals.guiElementType.cell
             ) {
+                // Create nesting.
+                const dropContextCell = dropContext as Cell;
+                const row = dropContextCell.row;
+                const dropContextCellIndex = row.getCellIndex(dropContextCell);
+                row.unmountCell(dropContextCell);
+
+                const newCell = row.addCell({
+                    id: GUIElement.createElementId('col-nested-'),
+                    layout: {
+                        rows: [{}, {}]
+                    }
+                }, void 0, dropContextCellIndex);
+
+                if (newCell.nestedLayout) {
+
+                    // @ToDo temp dimensions - improve when responsive grid.
+                    if (draggedCell.container) {
+                        draggedCell.container.style.width = '100%';
+                        draggedCell.container.style.height = dragDrop.dropPointer.element.offsetHeight + 'px';
+                    }
+
+                    // @ToDo temp dimensions - improve when responsive grid.
+                    if (dropContextCell.container) {
+                        dropContextCell.container.style.width = '100%';
+                    }
+
+                    newCell.nestedLayout.rows[0].mountCell(dropContextCell);
+                    newCell.nestedLayout.rows[1].mountCell(draggedCell);
+                }
+            } else if (dropContext.getType() === DashboardGlobals.guiElementType.cell) {
                 dropContext = dropContext as Cell;
+
+                // @ToDo temp dimensions - improve when responsive grid.
+                if (draggedCell.container && dropContext.container) {
+                    draggedCell.container.style.height = dropContext.container.offsetHeight + 'px';
+                }
+
                 dropContext.row.mountCell(
                     draggedCell,
                     (dropContext.row.getCellIndex(dropContext) || 0) +
                         (dragDrop.dropPointer.align === 'right' ? 1 : 0)
                 );
+
+                // @ToDo temp dimensions - improve when responsive grid.
+                const cellsLength = dropContext.row.cells.length;
+                const newWidth = 100 / cellsLength;
+                for (let i = 0, iEnd = cellsLength; i < iEnd; ++i) {
+                    const cell = dropContext.row.cells[i];
+
+                    if (cell.container) {
+                        cell.container.style.width = newWidth + '%';
+                    }
+                }
             }
         }
+
+        // Call cellResize dashboard event.
+        fireEvent(dragDrop.editMode.dashboard, 'cellResize', { cell: draggedCell });
+        fireEvent(draggedCell.row, 'cellChange', { cell: draggedCell, row: draggedCell.row });
 
         dragDrop.hideDropPointer();
         draggedCell.show();
@@ -604,6 +680,7 @@ namespace DragDrop {
         isVisible: boolean;
         element: HTMLDOMElement;
         align: string;
+        nested?: boolean;
     }
 }
 

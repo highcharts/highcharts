@@ -6,10 +6,12 @@ import type {
 } from '../../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import U from '../../Core/Utilities.js';
+import DashboardGlobals from '../DashboardGlobals.js';
 
 const {
     addEvent,
     createElement,
+    uniqueKey,
     objectEach
 } = U;
 
@@ -51,6 +53,13 @@ abstract class GUIElement {
             width: offsets.right - offsets.left,
             height: offsets.bottom - offsets.top
         };
+    }
+
+    // Method for element id generation.
+    public static createElementId(
+        elementType: string // col, row, layout
+    ): string {
+        return DashboardGlobals.prefix + elementType + '-' + uniqueKey().slice(11);
     }
 
     /* *

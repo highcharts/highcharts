@@ -260,17 +260,19 @@ class EditMode {
         if (editMode.dragDrop) {
             const dragDrop = editMode.dragDrop;
             addEvent(row.container, 'mouseenter', function (): void {
-                if (dragDrop.isActive) {
-                    dragDrop.mouseRowContext = row;
-                }
-
                 if (editMode.isContextDetectionActive) {
                     editMode.mouseRowContext = row;
                 }
             });
 
-            addEvent(row.container, 'mouseleave', function (): void {
-                if (dragDrop.isActive) {
+            addEvent(row.container, 'mousemove', function (e: PointerEvent): void {
+                if (dragDrop.isActive && e.target === row.container) {
+                    dragDrop.mouseRowContext = row;
+                }
+            });
+
+            addEvent(row.container, 'mouseleave', function (e: PointerEvent): void {
+                if (dragDrop.isActive && dragDrop.mouseRowContext === row) {
                     dragDrop.mouseRowContext = void 0;
                 }
 
@@ -305,11 +307,6 @@ class EditMode {
                     resizer = editMode.resizer;
 
                 addEvent(cell.container, 'mouseenter', function (e: PointerEvent): void {
-                    if (dragDrop && dragDrop.isActive) {
-                        dragDrop.mouseCellContext = cell;
-                        dragDrop.onDrag(e);
-                    }
-
                     if (resizer && resizer.isResizerDetectionActive) {
                         resizer.mouseCellContext = cell;
                     }
@@ -319,8 +316,15 @@ class EditMode {
                     }
                 });
 
+                addEvent(cell.container, 'mousemove', function (e: PointerEvent): void {
+                    if (dragDrop && dragDrop.isActive && e.target === cell.container) {
+                        dragDrop.mouseCellContext = cell;
+                        dragDrop.mouseRowContext = void 0;
+                    }
+                });
+
                 addEvent(cell.container, 'mouseleave', function (): void {
-                    if (dragDrop && dragDrop.isActive) {
+                    if (dragDrop && dragDrop.isActive && dragDrop.mouseCellContext === cell) {
                         dragDrop.mouseCellContext = void 0;
                     }
 
