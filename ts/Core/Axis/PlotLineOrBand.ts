@@ -354,7 +354,7 @@ class PlotLineOrBand {
             height: arrayMax(yBounds) - y
         });
 
-        if (!optionsLabel.align || optionsLabel.align === 'left') {
+        if (!label.alignValue || label.alignValue === 'left') {
             label.css({
                 width: (
                     label.rotation === 90 ?
