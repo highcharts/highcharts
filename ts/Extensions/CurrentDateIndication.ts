@@ -26,6 +26,11 @@ import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type FormatUtilities from '../Core/FormatUtilities';
+import type { PlotBandLabelOptions } from '../Core/Axis/PlotBandOptions';
+import type {
+    PlotLineLabelOptions,
+    PlotLineOptions
+} from '../Core/Axis/PlotLineOptions';
 
 import Axis from '../Core/Axis/Axis.js';
 import Palette from '../Core/Color/Palette.js';
@@ -147,7 +152,7 @@ addEvent(Axis, 'afterSetOptions', function (): void {
 
 
     if (cdiOptions) {
-        const plotLineOptions: Highcharts.AxisPlotLinesOptions =
+        const plotLineOptions: PlotLineOptions =
             typeof cdiOptions === 'object' ?
                 merge(defaultOptions, cdiOptions) :
                 merge(defaultOptions);
@@ -176,10 +181,7 @@ addEvent(PlotLineOrBand, 'render', function (): void {
 wrap(PlotLineOrBand.prototype, 'getLabelText', function (
     this: PlotLineOrBand,
     defaultMethod: Function,
-    defaultLabelOptions: (
-        Highcharts.AxisPlotLinesLabelOptions|
-        Highcharts.AxisPlotBandsLabelOptions
-    )
+    defaultLabelOptions: (PlotBandLabelOptions|PlotLineLabelOptions)
 ): string {
     const options = this.options;
 

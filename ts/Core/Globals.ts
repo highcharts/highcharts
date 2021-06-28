@@ -223,7 +223,8 @@ namespace Globals {
      *
      * */
 
-    export let chartCount: 0;
+    // eslint-disable-next-line prefer-const
+    export let chartCount = 0;
 
     /**
      * Theme options that should get applied to the chart. In module mode it
