@@ -78,6 +78,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
          *
          * @sample stock/demo/hollow-candlestick/
          *     Custom colors
+         * @sample {highstock} highcharts/css/hollow-candlestick/
+         *         Colors in styled mode
          *
          * @type    {ColorType}
          * @default #f21313
@@ -91,6 +93,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
          *
          * @sample stock/demo/hollow-candlestick/
          *     Custom colors
+         * @sample {highstock} highcharts/css/hollow-candlestick/
+         *         Colors in styled mode
          *
          * @type    {ColorType}
          * @default #f21313
@@ -104,6 +108,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
          *
          * @sample stock/demo/hollow-candlestick/
          *     Custom colors
+         * @sample {highstock} highcharts/css/hollow-candlestick/
+         *         Colors in styled mode
          *
          * @type    {ColorType}
          * @default #06b535
@@ -117,6 +123,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
          *
          * @sample stock/demo/hollow-candlestick/
          *     Custom colors
+         * @sample {highstock} highcharts/css/hollow-candlestick/
+         *         Colors in styled mode
          *
          * @type    {ColorType}
          * @default #06b535
@@ -197,6 +205,34 @@ class HollowCandlestickSeries extends CandlestickSeries {
                 point.color = point.getLineColor(previousPoint);
             }
         }
+    }
+
+    /**
+     * In order to distinguish two types of bearish points,
+     * add the class to a point if needed.
+     *
+     * @function Highcharts.seriesTypes.hollowcandlestick#drawPoints
+     *
+     * @return {void}
+     *
+     */
+    public drawPoints(): void {
+        // Run the base method.
+        super.drawPoints.apply(this);
+
+        const series = this,
+            points = series.points;
+
+        if (points && points.length) {
+            for (let i = 1; i < points.length; i++) {
+                const point = points[i],
+                    previousPoint = points[i - 1];
+                if (point.graphic && point.close > previousPoint.close && point.candleFill !== 'transparent') {
+                    point.graphic.addClass(point.getClassName() + '-bearish-up', true);
+                }
+            }
+        }
+
     }
     /* eslint-disable valid-jsdoc */
 }

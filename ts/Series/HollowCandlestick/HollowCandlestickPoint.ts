@@ -20,8 +20,6 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import HollowCandlestickSeries from './HollowCandlestickSeries.js';
 import palette from '../../Core/Color/Palette.js';
 import type ColorType from '../../Core/Color/ColorType';
-import GradientColor from '../../Core/Color/GradientColor.js';
-import PatternFill from '../../Extensions/PatternFill.js';
 
 const {
     seriesTypes: {
@@ -70,7 +68,7 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
     public getLineColor(previousPoint: HollowCandlestickPoint): ColorType {
         const point = this;
 
-        // Apply fill only for bullish candles.
+        // Return line color only for bullish candles.
         if (point.close < previousPoint.close) {
             return point.series.options.lineColor || palette.negativeColor;
         }
@@ -94,7 +92,7 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
     public getPointFill(previousPoint: HollowCandlestickPoint): ColorType {
         const point = this;
 
-        // Apply fill only for bullish candles.
+        // Return fill color only for bullish candles.
         if (point.open > point.close) {
             if (point.close < previousPoint.close) {
                 return point.series.options.color || palette.negativeColor;
