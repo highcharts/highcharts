@@ -478,13 +478,15 @@ class PlotLineOrBand {
             height: arrayMax(yBounds) - y
         });
 
-        label.css({
-            width: (
-                label.rotation === 90 ?
-                    axis.height - (label.alignAttr.y - axis.top) :
-                    axis.width - (label.alignAttr.x - axis.left)
-            ) + 'px'
-        });
+        if (!optionsLabel.align || optionsLabel.align === 'left') {
+            label.css({
+                width: (
+                    label.rotation === 90 ?
+                        axis.height - (label.alignAttr.y - axis.top) :
+                        axis.width - (label.alignAttr.x - axis.left)
+                ) + 'px'
+            });
+        }
 
         label.show(true);
     }
