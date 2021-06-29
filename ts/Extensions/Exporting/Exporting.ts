@@ -18,42 +18,37 @@
  *
  * */
 
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type Axis from '../../Core/Axis/Axis';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type EventCallback from '../../Core/EventCallback';
 import type {
-    AlignValue,
-    VerticalAlignValue
-} from '../Core/Renderer/AlignObject';
-import type AnimationOptions from '../Core/Animation/AnimationOptions';
-import type Axis from '../Core/Axis/Axis';
-import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
-import type ColorString from '../Core/Color/ColorString';
-import type CSSObject from '../Core/Renderer/CSSObject';
-import type EventCallback from '../Core/EventCallback';
-import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
-import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
-import type Options from '../Core/Options';
-import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import type { SymbolKey } from '../Core/Renderer/SVG/SymbolType';
+    ExportingOptions,
+    ExportingButtonOptions
+} from './ExportingOptions';
+import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type NavigationOptions from './NavigationOptions';
+import type Options from '../../Core/Options';
+import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import AST from '../Core/Renderer/HTML/AST.js';
-import Chart from '../Core/Chart/Chart.js';
-import chartNavigationMixin from '../Mixins/Navigation.js';
-import H from '../Core/Globals.js';
+import AST from '../../Core/Renderer/HTML/AST.js';
+import Chart from '../../Core/Chart/Chart.js';
+import chartNavigationMixin from '../../Mixins/Navigation.js';
+import H from '../../Core/Globals.js';
 const {
     doc,
     isTouchDevice,
     win
 } = H;
-import D from '../Core/DefaultOptions.js';
-const {
-    defaultOptions
-} = D;
-import palette from '../Core/Color/Palette.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-const { prototype: { symbols } } = SVGRenderer;
-import U from '../Core/Utilities.js';
+import D from '../../Core/DefaultOptions.js';
+const { defaultOptions } = D;
+import palette from '../../Core/Color/Palette.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     css,
@@ -69,6 +64,7 @@ const {
     removeEvent,
     uniqueKey
 } = U;
+import './ExportingDefaults.js';
 
 /* *
  *
@@ -76,13 +72,13 @@ const {
  *
  * */
 
-declare module '../Core/Axis/AxisOptions' {
+declare module '../../Core/Axis/AxisOptions' {
     interface AxisOptions {
         internalKey?: string;
     }
 }
 
-declare module '../Core/Chart/ChartLike' {
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         btnCount?: number;
         buttonOffset?: number;
@@ -100,7 +96,7 @@ declare module '../Core/Chart/ChartLike' {
         openMenu?: boolean;
         printReverseInfo?: Highcharts.PrintReverseInfoObject;
         /** @requires modules/exporting */
-        addButton(options: Highcharts.ExportingButtonOptions): void;
+        addButton(options: ExportingButtonOptions): void;
         /** @requires modules/exporting */
         afterPrint(): void;
         /** @requires modules/exporting */
@@ -119,7 +115,7 @@ declare module '../Core/Chart/ChartLike' {
         destroyExport(e?: Event): void;
         /** @requires modules/exporting */
         exportChart(
-            exportingOptions?: Highcharts.ExportingOptions,
+            exportingOptions?: ExportingOptions,
             chartOptions?: Options
         ): void;
         /** @requires modules/exporting */
@@ -130,13 +126,19 @@ declare module '../Core/Chart/ChartLike' {
         getSVG(chartOptions?: Options): string;
         /** @requires modules/exporting */
         getSVGForExport(
-            options: Highcharts.ExportingOptions,
+            options: ExportingOptions,
             chartOptions: Partial<Options>
         ): string;
         /** @requires modules/exporting */
         inlineStyles(): void;
         /** @requires modules/exporting */
         moveContainers(moveTo: HTMLDOMElement): void;
+        /** @requires modules/exporting */
+        post(
+            url: string,
+            data: object,
+            formAttributes?: HTMLAttributes
+        ): void;
         /** @requires modules/exporting */
         print(): void;
         /** @requires modules/exporting */
@@ -146,7 +148,7 @@ declare module '../Core/Chart/ChartLike' {
     }
 }
 
-declare module '../Core/LangOptions'{
+declare module '../../Core/LangOptions'{
     interface LangOptions {
         contextButtonTitle?: string;
         exitFullscreen?: string;
@@ -159,14 +161,14 @@ declare module '../Core/LangOptions'{
     }
 }
 
-declare module '../Core/Options'{
+declare module '../../Core/Options'{
     interface Options {
-        exporting?: Highcharts.ExportingOptions;
-        navigation?: Highcharts.NavigationOptions;
+        exporting?: ExportingOptions;
+        navigation?: NavigationOptions;
     }
 }
 
-declare module '../Core/Renderer/SVG/SVGRendererLike' {
+declare module '../../Core/Renderer/SVG/SVGRendererLike' {
     interface SVGRendererLike {
         inlineBlacklist?: Array<RegExp>;
         inlineToAttributes?: Array<string>;
@@ -193,35 +195,6 @@ declare global {
         interface ExportingBeforePrintCallbackFunction {
             (chart: Chart, event: Event): void;
         }
-        interface ExportingButtonOptions {
-            _titleKey?: string;
-            align?: AlignValue;
-            buttonSpacing?: number;
-            className?: string;
-            enabled?: boolean;
-            height?: number;
-            menuClassName?: string;
-            menuItems?: Array<string>;
-            onclick?: Function;
-            symbol?: ('menu'|'menuball'|SymbolKey);
-            symbolFill?: ColorString;
-            symbolSize?: number;
-            symbolStroke?: ColorString;
-            symbolStrokeWidth?: number;
-            symbolX?: number;
-            symbolY?: number;
-            text?: string;
-            theme?: ButtonThemeObject;
-            titleKey?: string;
-            verticalAlign?: VerticalAlignValue;
-            width?: number;
-            x?: number;
-            y?: number;
-        }
-        interface ExportingButtonsOptions {
-            [key: string]: ExportingButtonOptions;
-            contextButton: ExportingButtonOptions;
-        }
         interface ExportingErrorCallbackFunction {
             (options: ExportingOptions, err: Error): void;
         }
@@ -235,34 +208,6 @@ declare global {
             text?: string;
             textKey?: string;
         }
-        interface ExportingOptions {
-            allowHTML?: boolean;
-            buttons?: ExportingButtonsOptions;
-            chartOptions?: Options;
-            enabled?: boolean;
-            error?: ExportingErrorCallbackFunction;
-            fallbackToExportServer?: boolean;
-            filename?: string;
-            formAttributes?: HTMLAttributes;
-            libURL?: string;
-            menuItemDefinitions?: Record<string, ExportingMenuObject>;
-            printMaxWidth?: number;
-            scale?: number;
-            sourceHeight?: number;
-            sourceWidth?: number;
-            type?: string;
-            url?: string;
-            useMultiLevelHeaders?: boolean;
-            useRowspanHeaders?: boolean;
-            width?: number;
-        }
-        interface NavigationOptions {
-            bindingsClassName?: string;
-            buttonOptions?: ExportingButtonOptions;
-            menuItemHoverStyle?: CSSObject;
-            menuItemStyle?: CSSObject;
-            menuStyle?: CSSObject;
-        }
         interface PrintReverseInfoObject {
             childNodes: NodeListOf<ChildNode>;
             origDisplay: Array<(string|null)> ;
@@ -272,989 +217,7 @@ declare global {
                 (boolean|Partial<AnimationOptions>)?
             ];
         }
-        /** @requires modules/exporting */
-        function post(
-            url: string,
-            data: object,
-            formAttributes?: Record<string, string>
-        ): void;
-
-        let printingChart: (Chart|undefined);
     }
-}
-
-// Add language
-extend(defaultOptions.lang
-    /**
-     * @optionparent lang
-     */
-    , {
-
-        /**
-         * Exporting module only. The text for the menu item to view the chart
-         * in full screen.
-         *
-         * @since 8.0.1
-         *
-         * @private
-         */
-        viewFullscreen: 'View in full screen',
-
-        /**
-         * Exporting module only. The text for the menu item to exit the chart
-         * from full screen.
-         *
-         * @since 8.0.1
-         *
-         * @private
-         */
-        exitFullscreen: 'Exit from full screen',
-
-
-        /**
-         * Exporting module only. The text for the menu item to print the chart.
-         *
-         * @since    3.0.1
-         * @requires modules/exporting
-         *
-         * @private
-         */
-        printChart: 'Print chart',
-
-        /**
-         * Exporting module only. The text for the PNG download menu item.
-         *
-         * @since    2.0
-         * @requires modules/exporting
-         *
-         * @private
-         */
-        downloadPNG: 'Download PNG image',
-
-        /**
-         * Exporting module only. The text for the JPEG download menu item.
-         *
-         * @since    2.0
-         * @requires modules/exporting
-         *
-         * @private
-         */
-        downloadJPEG: 'Download JPEG image',
-
-        /**
-         * Exporting module only. The text for the PDF download menu item.
-         *
-         * @since    2.0
-         * @requires modules/exporting
-         *
-         * @private
-         */
-        downloadPDF: 'Download PDF document',
-
-        /**
-         * Exporting module only. The text for the SVG download menu item.
-         *
-         * @since    2.0
-         * @requires modules/exporting
-         *
-         * @private
-         */
-        downloadSVG: 'Download SVG vector image',
-
-        /**
-         * Exporting module menu. The tooltip title for the context menu holding
-         * print and export menu items.
-         *
-         * @since    3.0
-         * @requires modules/exporting
-         *
-         * @private
-         */
-        contextButtonTitle: 'Chart context menu'
-
-    });
-
-if (!defaultOptions.navigation) {
-    // Buttons and menus are collected in a separate config option set called
-    // 'navigation'. This can be extended later to add control buttons like
-    // zoom and pan right click menus.
-    /**
-     * A collection of options for buttons and menus appearing in the exporting
-     * module.
-     *
-     * @requires     modules/exporting
-     * @optionparent navigation
-     */
-    defaultOptions.navigation = {};
-}
-merge(true, defaultOptions.navigation, {
-
-    /**
-     * @optionparent navigation.buttonOptions
-     *
-     * @private
-     */
-    buttonOptions: {
-
-        theme: {},
-
-        /**
-         * Whether to enable buttons.
-         *
-         * @sample highcharts/navigation/buttonoptions-enabled/
-         *         Exporting module loaded but buttons disabled
-         *
-         * @type      {boolean}
-         * @default   true
-         * @since     2.0
-         * @apioption navigation.buttonOptions.enabled
-         */
-
-        /**
-         * The pixel size of the symbol on the button.
-         *
-         * @sample highcharts/navigation/buttonoptions-height/
-         *         Bigger buttons
-         *
-         * @since 2.0
-         */
-        symbolSize: 14,
-
-        /**
-         * The x position of the center of the symbol inside the button.
-         *
-         * @sample highcharts/navigation/buttonoptions-height/
-         *         Bigger buttons
-         *
-         * @since 2.0
-         */
-        symbolX: 12.5,
-
-        /**
-         * The y position of the center of the symbol inside the button.
-         *
-         * @sample highcharts/navigation/buttonoptions-height/
-         *         Bigger buttons
-         *
-         * @since 2.0
-         */
-        symbolY: 10.5,
-
-        /**
-         * Alignment for the buttons.
-         *
-         * @sample highcharts/navigation/buttonoptions-align/
-         *         Center aligned
-         *
-         * @type  {Highcharts.AlignValue}
-         * @since 2.0
-         */
-        align: 'right',
-
-        /**
-         * The pixel spacing between buttons.
-         *
-         * @since 2.0
-         */
-        buttonSpacing: 3,
-
-        /**
-         * Pixel height of the buttons.
-         *
-         * @sample highcharts/navigation/buttonoptions-height/
-         *         Bigger buttons
-         *
-         * @since 2.0
-         */
-        height: 22,
-
-        /**
-         * A text string to add to the individual button.
-         *
-         * @sample highcharts/exporting/buttons-text/
-         *         Full text button
-         * @sample highcharts/exporting/buttons-text-symbol/
-         *         Combined symbol and text
-         *
-         * @type      {string}
-         * @default   null
-         * @since     3.0
-         * @apioption navigation.buttonOptions.text
-         */
-
-        /**
-         * The vertical offset of the button's position relative to its
-         * `verticalAlign`.
-         *
-         * @sample highcharts/navigation/buttonoptions-verticalalign/
-         *         Buttons at lower right
-         *
-         * @type      {number}
-         * @default   0
-         * @since     2.0
-         * @apioption navigation.buttonOptions.y
-         */
-
-        /**
-         * The vertical alignment of the buttons. Can be one of `"top"`,
-         * `"middle"` or `"bottom"`.
-         *
-         * @sample highcharts/navigation/buttonoptions-verticalalign/
-         *         Buttons at lower right
-         *
-         * @type  {Highcharts.VerticalAlignValue}
-         * @since 2.0
-         */
-        verticalAlign: 'top',
-
-        /**
-         * The pixel width of the button.
-         *
-         * @sample highcharts/navigation/buttonoptions-height/
-         *         Bigger buttons
-         *
-         * @since 2.0
-         */
-        width: 24
-
-    }
-
-});
-
-// Presentational attributes
-merge(
-    true,
-    defaultOptions.navigation,
-    /**
-     * A collection of options for buttons and menus appearing in the exporting
-     * module.
-     *
-     * @optionparent navigation
-     */
-    {
-
-        /**
-         * CSS styles for the popup menu appearing by default when the export
-         * icon is clicked. This menu is rendered in HTML.
-         *
-         * @see In styled mode, the menu is styled with the `.highcharts-menu`
-         *      class.
-         *
-         * @sample highcharts/navigation/menustyle/
-         *         Light gray menu background
-         *
-         * @type    {Highcharts.CSSObject}
-         * @default {"border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0"}
-         * @since   2.0
-         *
-         * @private
-         */
-        menuStyle: {
-            /** @ignore-option */
-            border: `1px solid ${palette.neutralColor40}`,
-            /** @ignore-option */
-            background: palette.backgroundColor,
-            /** @ignore-option */
-            padding: '5px 0'
-        },
-
-        /**
-         * CSS styles for the individual items within the popup menu appearing
-         * by default when the export icon is clicked. The menu items are
-         * rendered in HTML. Font size defaults to `11px` on desktop and `14px`
-         * on touch devices.
-         *
-         * @see In styled mode, the menu items are styled with the
-         *      `.highcharts-menu-item` class.
-         *
-         * @sample {highcharts} highcharts/navigation/menuitemstyle/
-         *         Add a grey stripe to the left
-         *
-         * @type    {Highcharts.CSSObject}
-         * @default {"padding": "0.5em 1em", "color": "#333333", "background": "none", "fontSize": "11px/14px", "transition": "background 250ms, color 250ms"}
-         * @since   2.0
-         *
-         * @private
-         */
-        menuItemStyle: {
-            /** @ignore-option */
-            padding: '0.5em 1em',
-            /** @ignore-option */
-            color: palette.neutralColor80,
-            /** @ignore-option */
-            background: 'none',
-            /** @ignore-option */
-            fontSize: isTouchDevice ? '14px' : '11px',
-            /** @ignore-option */
-            transition: 'background 250ms, color 250ms'
-        },
-
-        /**
-         * CSS styles for the hover state of the individual items within the
-         * popup menu appearing by default when the export icon is clicked. The
-         * menu items are rendered in HTML.
-         *
-         * @see In styled mode, the menu items are styled with the
-         *      `.highcharts-menu-item` class.
-         *
-         * @sample highcharts/navigation/menuitemhoverstyle/
-         *         Bold text on hover
-         *
-         * @type    {Highcharts.CSSObject}
-         * @default {"background": "#335cad", "color": "#ffffff"}
-         * @since   2.0
-         *
-         * @private
-         */
-        menuItemHoverStyle: {
-            /** @ignore-option */
-            background: palette.highlightColor80,
-            /** @ignore-option */
-            color: palette.backgroundColor
-        },
-
-        /**
-         * A collection of options for buttons appearing in the exporting
-         * module.
-         *
-         * In styled mode, the buttons are styled with the
-         * `.highcharts-contextbutton` and `.highcharts-button-symbol` classes.
-         *
-         * @requires modules/exporting
-         *
-         * @private
-         */
-        buttonOptions: {
-
-            /**
-             * Fill color for the symbol within the button.
-             *
-             * @sample highcharts/navigation/buttonoptions-symbolfill/
-             *         Blue symbol stroke for one of the buttons
-             *
-             * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since 2.0
-             */
-            symbolFill: palette.neutralColor60,
-
-            /**
-             * The color of the symbol's stroke or line.
-             *
-             * @sample highcharts/navigation/buttonoptions-symbolstroke/
-             *         Blue symbol stroke
-             *
-             * @type  {Highcharts.ColorString}
-             * @since 2.0
-             */
-            symbolStroke: palette.neutralColor60,
-
-            /**
-             * The pixel stroke width of the symbol on the button.
-             *
-             * @sample highcharts/navigation/buttonoptions-height/
-             *         Bigger buttons
-             *
-             * @since 2.0
-             */
-            symbolStrokeWidth: 3,
-
-            /**
-             * A configuration object for the button theme. The object accepts
-             * SVG properties like `stroke-width`, `stroke` and `fill`.
-             * Tri-state button styles are supported by the `states.hover` and
-             * `states.select` objects.
-             *
-             * @sample highcharts/navigation/buttonoptions-theme/
-             *         Theming the buttons
-             *
-             * @requires modules/exporting
-             *
-             * @since 3.0
-             */
-            theme: {
-
-                /**
-                 * The default fill exists only to capture hover events.
-                 *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-                 * @default   ${palette.backgroundColor}
-                 * @apioption navigation.buttonOptions.theme.fill
-                 */
-
-                /**
-                 * Default stroke for the buttons.
-                 * @type      {Highcharts.ColorString}
-                 * @default   none
-                 * @apioption navigation.buttonOptions.theme.stroke
-                 */
-
-                /**
-                 * Padding for the button.
-                 */
-                padding: 5
-
-            }
-
-        }
-
-    });
-
-
-// Add the export related options
-
-/**
- * Options for the exporting module. For an overview on the matter, see
- * [the docs](https://www.highcharts.com/docs/export-module/export-module-overview).
- *
- * @requires     modules/exporting
- * @optionparent exporting
- */
-defaultOptions.exporting = {
-
-    /**
-     * Experimental setting to allow HTML inside the chart (added through
-     * the `useHTML` options), directly in the exported image. This allows
-     * you to preserve complicated HTML structures like tables or bi-directional
-     * text in exported charts.
-     *
-     * Disclaimer: The HTML is rendered in a `foreignObject` tag in the
-     * generated SVG. The official export server is based on PhantomJS,
-     * which supports this, but other SVG clients, like Batik, does not
-     * support it. This also applies to downloaded SVG that you want to
-     * open in a desktop client.
-     *
-     * @type      {boolean}
-     * @default   false
-     * @since     4.1.8
-     * @apioption exporting.allowHTML
-     */
-
-    /**
-     * Additional chart options to be merged into the chart before exporting to
-     * an image format. This does not apply to printing the chart via the export
-     * menu.
-     *
-     * For example, a common use case is to add data labels to improve
-     * readability of the exported chart, or to add a printer-friendly color
-     * scheme to exported PDFs.
-     *
-     * @sample {highcharts} highcharts/exporting/chartoptions-data-labels/
-     *         Added data labels
-     * @sample {highstock} highcharts/exporting/chartoptions-data-labels/
-     *         Added data labels
-     *
-     * @type      {Highcharts.Options}
-     * @apioption exporting.chartOptions
-     */
-
-    /**
-     * Whether to enable the exporting module. Disabling the module will
-     * hide the context button, but API methods will still be available.
-     *
-     * @sample {highcharts} highcharts/exporting/enabled-false/
-     *         Exporting module is loaded but disabled
-     * @sample {highstock} highcharts/exporting/enabled-false/
-     *         Exporting module is loaded but disabled
-     *
-     * @type      {boolean}
-     * @default   true
-     * @since     2.0
-     * @apioption exporting.enabled
-     */
-
-    /**
-     * Function to call if the offline-exporting module fails to export
-     * a chart on the client side, and [fallbackToExportServer](
-     * #exporting.fallbackToExportServer) is disabled. If left undefined, an
-     * exception is thrown instead. Receives two parameters, the exporting
-     * options, and the error from the module.
-     *
-     * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
-     *
-     * @type      {Highcharts.ExportingErrorCallbackFunction}
-     * @since     5.0.0
-     * @requires  modules/exporting
-     * @requires  modules/offline-exporting
-     * @apioption exporting.error
-     */
-
-    /**
-     * Whether or not to fall back to the export server if the offline-exporting
-     * module is unable to export the chart on the client side. This happens for
-     * certain browsers, and certain features (e.g.
-     * [allowHTML](#exporting.allowHTML)), depending on the image type exporting
-     * to. For very complex charts, it is possible that export can fail in
-     * browsers that don't support Blob objects, due to data URL length limits.
-     * It is recommended to define the [exporting.error](#exporting.error)
-     * handler if disabling fallback, in order to notify users in case export
-     * fails.
-     *
-     * @type      {boolean}
-     * @default   true
-     * @since     4.1.8
-     * @requires  modules/exporting
-     * @requires  modules/offline-exporting
-     * @apioption exporting.fallbackToExportServer
-     */
-
-    /**
-     * The filename, without extension, to use for the exported chart.
-     *
-     * @sample {highcharts} highcharts/exporting/filename/
-     *         Custom file name
-     * @sample {highstock} highcharts/exporting/filename/
-     *         Custom file name
-     *
-     * @type      {string}
-     * @default   chart
-     * @since     2.0
-     * @apioption exporting.filename
-     */
-
-    /**
-     * An object containing additional key value data for the POST form that
-     * sends the SVG to the export server. For example, a `target` can be set to
-     * make sure the generated image is received in another frame, or a custom
-     * `enctype` or `encoding` can be set.
-     *
-     * @type      {Highcharts.HTMLAttributes}
-     * @since     3.0.8
-     * @apioption exporting.formAttributes
-     */
-
-    /**
-     * Path where Highcharts will look for export module dependencies to
-     * load on demand if they don't already exist on `window`. Should currently
-     * point to location of [CanVG](https://github.com/canvg/canvg) library,
-     * [jsPDF](https://github.com/yWorks/jsPDF) and
-     * [svg2pdf.js](https://github.com/yWorks/svg2pdf.js), required for client
-     * side export in certain browsers.
-     *
-     * @type      {string}
-     * @default   https://code.highcharts.com/{version}/lib
-     * @since     5.0.0
-     * @apioption exporting.libURL
-     */
-
-    /**
-     * Analogous to [sourceWidth](#exporting.sourceWidth).
-     *
-     * @type      {number}
-     * @since     3.0
-     * @apioption exporting.sourceHeight
-     */
-
-    /**
-     * The width of the original chart when exported, unless an explicit
-     * [chart.width](#chart.width) is set, or a pixel width is set on the
-     * container. The width exported raster image is then multiplied by
-     * [scale](#exporting.scale).
-     *
-     * @sample {highcharts} highcharts/exporting/sourcewidth/
-     *         Source size demo
-     * @sample {highstock} highcharts/exporting/sourcewidth/
-     *         Source size demo
-     * @sample {highmaps} maps/exporting/sourcewidth/
-     *         Source size demo
-     *
-     * @type      {number}
-     * @since     3.0
-     * @apioption exporting.sourceWidth
-     */
-
-    /**
-     * The pixel width of charts exported to PNG or JPG. As of Highcharts
-     * 3.0, the default pixel width is a function of the [chart.width](
-     * #chart.width) or [exporting.sourceWidth](#exporting.sourceWidth) and the
-     * [exporting.scale](#exporting.scale).
-     *
-     * @sample {highcharts} highcharts/exporting/width/
-     *         Export to 200px wide images
-     * @sample {highstock} highcharts/exporting/width/
-     *         Export to 200px wide images
-     *
-     * @type      {number}
-     * @since     2.0
-     * @apioption exporting.width
-     */
-
-    /**
-     * Default MIME type for exporting if `chart.exportChart()` is called
-     * without specifying a `type` option. Possible values are `image/png`,
-     *  `image/jpeg`, `application/pdf` and `image/svg+xml`.
-     *
-     * @type  {Highcharts.ExportingMimeTypeValue}
-     * @since 2.0
-     */
-    type: 'image/png',
-
-    /**
-     * The URL for the server module converting the SVG string to an image
-     * format. By default this points to Highchart's free web service.
-     *
-     * @since 2.0
-     */
-    url: 'https://export.highcharts.com/',
-
-    /**
-     * When printing the chart from the menu item in the burger menu, if
-     * the on-screen chart exceeds this width, it is resized. After printing
-     * or cancelled, it is restored. The default width makes the chart
-     * fit into typical paper format. Note that this does not affect the
-     * chart when printing the web page as a whole.
-     *
-     * @since 4.2.5
-     */
-    printMaxWidth: 780,
-
-    /**
-     * Defines the scale or zoom factor for the exported image compared
-     * to the on-screen display. While for instance a 600px wide chart
-     * may look good on a website, it will look bad in print. The default
-     * scale of 2 makes this chart export to a 1200px PNG or JPG.
-     *
-     * @see [chart.width](#chart.width)
-     * @see [exporting.sourceWidth](#exporting.sourceWidth)
-     *
-     * @sample {highcharts} highcharts/exporting/scale/
-     *         Scale demonstrated
-     * @sample {highstock} highcharts/exporting/scale/
-     *         Scale demonstrated
-     * @sample {highmaps} maps/exporting/scale/
-     *         Scale demonstrated
-     *
-     * @since 3.0
-     */
-    scale: 2,
-
-    /**
-     * Options for the export related buttons, print and export. In addition
-     * to the default buttons listed here, custom buttons can be added.
-     * See [navigation.buttonOptions](#navigation.buttonOptions) for general
-     * options.
-     *
-     * @type     {Highcharts.Dictionary<*>}
-     * @requires modules/exporting
-     */
-    buttons: {
-
-        /**
-         * Options for the export button.
-         *
-         * In styled mode, export button styles can be applied with the
-         * `.highcharts-contextbutton` class.
-         *
-         * @declare  Highcharts.ExportingButtonsOptionsObject
-         * @extends  navigation.buttonOptions
-         * @requires modules/exporting
-         */
-        contextButton: {
-
-            /**
-             * A click handler callback to use on the button directly instead of
-             * the popup menu.
-             *
-             * @sample highcharts/exporting/buttons-contextbutton-onclick/
-             *         Skip the menu and export the chart directly
-             *
-             * @type      {Function}
-             * @since     2.0
-             * @apioption exporting.buttons.contextButton.onclick
-             */
-
-            /**
-             * See [navigation.buttonOptions.symbolFill](
-             * #navigation.buttonOptions.symbolFill).
-             *
-             * @type      {Highcharts.ColorString}
-             * @default   #666666
-             * @since     2.0
-             * @apioption exporting.buttons.contextButton.symbolFill
-             */
-
-            /**
-             * The horizontal position of the button relative to the `align`
-             * option.
-             *
-             * @type      {number}
-             * @default   -10
-             * @since     2.0
-             * @apioption exporting.buttons.contextButton.x
-             */
-
-            /**
-             * The class name of the context button.
-             */
-            className: 'highcharts-contextbutton',
-
-            /**
-             * The class name of the menu appearing from the button.
-             */
-            menuClassName: 'highcharts-contextmenu',
-
-            /**
-             * The symbol for the button. Points to a definition function in
-             * the `Highcharts.Renderer.symbols` collection. The default
-             * `menu` function is part of the exporting module. Possible
-             * values are "circle", "square", "diamond", "triangle",
-             * "triangle-down", "menu", "menuball" or custom shape.
-             *
-             * @sample highcharts/exporting/buttons-contextbutton-symbol/
-             *         Use a circle for symbol
-             * @sample highcharts/exporting/buttons-contextbutton-symbol-custom/
-             *         Custom shape as symbol
-             *
-             * @type  {Highcharts.SymbolKeyValue|"menu"|"menuball"|string}
-             * @since 2.0
-             */
-            symbol: 'menu',
-
-            /**
-             * The key to a [lang](#lang) option setting that is used for the
-             * button's title tooltip. When the key is `contextButtonTitle`, it
-             * refers to [lang.contextButtonTitle](#lang.contextButtonTitle)
-             * that defaults to "Chart context menu".
-             *
-             * @since 6.1.4
-             */
-            titleKey: 'contextButtonTitle',
-
-            /**
-             * This option is deprecated, use
-             * [titleKey](#exporting.buttons.contextButton.titleKey) instead.
-             *
-             * @deprecated
-             * @type      {string}
-             * @apioption exporting.buttons.contextButton._titleKey
-             */
-
-            /**
-             * A collection of strings pointing to config options for the menu
-             * items. The config options are defined in the
-             * `menuItemDefinitions` option.
-             *
-             * By default, there is the "View in full screen" and "Print" menu
-             * items, plus one menu item for each of the available export types.
-             *
-             * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
-             *         Menu item definitions
-             * @sample {highstock} highcharts/exporting/menuitemdefinitions/
-             *         Menu item definitions
-             * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
-             *         Menu item definitions
-             *
-             * @type    {Array<string>}
-             * @default ["viewFullscreen", "printChart", "separator", "downloadPNG", "downloadJPEG", "downloadPDF", "downloadSVG"]
-             * @since   2.0
-             */
-            menuItems: [
-                'viewFullscreen',
-                'printChart',
-                'separator',
-                'downloadPNG',
-                'downloadJPEG',
-                'downloadPDF',
-                'downloadSVG'
-            ]
-
-        }
-
-    },
-    /**
-     * An object consisting of definitions for the menu items in the context
-     * menu. Each key value pair has a `key` that is referenced in the
-     * [menuItems](#exporting.buttons.contextButton.menuItems) setting,
-     * and a `value`, which is an object with the following properties:
-     *
-     * - **onclick:** The click handler for the menu item
-     *
-     * - **text:** The text for the menu item
-     *
-     * - **textKey:** If internationalization is required, the key to a language
-     *   string
-     *
-     * Custom text for the "exitFullScreen" can be set only in lang options
-     * (it is not a separate button).
-     *
-     * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
-     *         Menu item definitions
-     * @sample {highstock} highcharts/exporting/menuitemdefinitions/
-     *         Menu item definitions
-     * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
-     *         Menu item definitions
-     *
-     *
-     * @type    {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
-     * @default {"viewFullscreen": {}, "printChart": {}, "separator": {}, "downloadPNG": {}, "downloadJPEG": {}, "downloadPDF": {}, "downloadSVG": {}}
-     * @since   5.0.13
-     */
-    menuItemDefinitions: {
-
-        /**
-         * @ignore
-         */
-        viewFullscreen: {
-            textKey: 'viewFullscreen',
-            onclick: function (): void {
-                this.fullscreen.toggle();
-            }
-        },
-
-        /**
-         * @ignore
-         */
-        printChart: {
-            textKey: 'printChart',
-            onclick: function (): void {
-                this.print();
-            }
-        },
-
-        /**
-         * @ignore
-         */
-        separator: {
-            separator: true
-        },
-
-        /**
-         * @ignore
-         */
-        downloadPNG: {
-            textKey: 'downloadPNG',
-            onclick: function (): void {
-                this.exportChart();
-            }
-        },
-
-        /**
-         * @ignore
-         */
-        downloadJPEG: {
-            textKey: 'downloadJPEG',
-            onclick: function (): void {
-                this.exportChart({
-                    type: 'image/jpeg'
-                });
-            }
-        },
-
-        /**
-         * @ignore
-         */
-        downloadPDF: {
-            textKey: 'downloadPDF',
-            onclick: function (): void {
-                this.exportChart({
-                    type: 'application/pdf'
-                });
-            }
-        },
-
-        /**
-         * @ignore
-         */
-        downloadSVG: {
-            textKey: 'downloadSVG',
-            onclick: function (): void {
-                this.exportChart({
-                    type: 'image/svg+xml'
-                });
-            }
-        }
-
-    }
-
-};
-
-/**
- * Fires after a chart is printed through the context menu item or the
- * `Chart.print` method.
- *
- * @sample highcharts/chart/events-beforeprint-afterprint/
- *         Rescale the chart to print
- *
- * @type      {Highcharts.ExportingAfterPrintCallbackFunction}
- * @since     4.1.0
- * @context   Highcharts.Chart
- * @requires  modules/exporting
- * @apioption chart.events.afterPrint
- */
-
-/**
- * Fires before a chart is printed through the context menu item or
- * the `Chart.print` method.
- *
- * @sample highcharts/chart/events-beforeprint-afterprint/
- *         Rescale the chart to print
- *
- * @type      {Highcharts.ExportingBeforePrintCallbackFunction}
- * @since     4.1.0
- * @context   Highcharts.Chart
- * @requires  modules/exporting
- * @apioption chart.events.beforePrint
- */
-
-/**
- * The post utility
- *
- * @private
- * @function Highcharts.post
- * @param {string} url
- *        Post URL
- * @param {object} data
- *        Post data
- * @param {Highcharts.Dictionary<string>} [formAttributes]
- *        Additional attributes for the post request
- * @return {void}
- */
-H.post = function (
-    url: string,
-    data: object,
-    formAttributes?: HTMLAttributes
-): void {
-    // create the form
-    const form: HTMLFormElement = createElement('form', merge({
-        method: 'post',
-        action: url,
-        enctype: 'multipart/form-data'
-    }, formAttributes), {
-        display: 'none'
-    }, doc.body) as unknown as HTMLFormElement;
-
-    // add the data
-    objectEach(data, function (val: string, name: string): void {
-        createElement('input', {
-            type: 'hidden',
-            name: name,
-            value: val
-        }, null as any, form);
-    });
-
-    // submit
-    form.submit();
-
-    // clean up
-    discardElement(form);
-};
-
-
-if (H.isSafari) {
-    H.win.matchMedia('print').addListener(
-        function (
-            this: MediaQueryList,
-            mqlEvent: MediaQueryListEvent
-        ): void {
-            if (!H.printingChart) {
-                return void 0;
-            }
-            if (mqlEvent.matches) {
-                H.printingChart.beforePrint();
-            } else {
-                H.printingChart.afterPrint();
-            }
-        }
-    );
 }
 
 extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
@@ -1282,8 +245,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         options: Options
     ): string {
 
-        let split = svg.indexOf('</svg>') + 6,
-            html = svg.substr(split);
+        const split = svg.indexOf('</svg>') + 6;
+        let html = svg.substr(split);
 
         // Remove any HTML added to the container after the SVG (#894, #9087)
         svg = svg.substr(0, split);
@@ -1380,15 +343,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this: Chart,
         chartOptions?: DeepPartial<Options>
     ): string {
-        let chart = this,
-            chartCopy: Chart,
-            sandbox,
-            svg,
+        const chart = this;
+        let svg,
             seriesOptions: DeepPartial<SeriesTypeOptions>,
-            sourceWidth: number,
-            sourceHeight: number,
-            cssWidth: string,
-            cssHeight: string,
             // Copy the options and add extra options
             options = merge(chart.options, chartOptions);
 
@@ -1405,7 +362,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         );
 
         // create a sandbox where a new chart will be generated
-        sandbox = createElement('div', null as any, {
+        const sandbox = createElement('div', null as any, {
             position: 'absolute',
             top: '-9999em',
             width: chart.chartWidth + 'px',
@@ -1413,16 +370,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }, doc.body);
 
         // get the source size
-        cssWidth = chart.renderTo.style.width as any;
-        cssHeight = chart.renderTo.style.height as any;
-        sourceWidth = (options.exporting as any).sourceWidth ||
-            options.chart.width ||
-            (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
-            (options.isGantt ? 800 : 600);
-        sourceHeight = (options.exporting as any).sourceHeight ||
-            options.chart.height ||
-            (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
-            400;
+        const cssWidth: string = chart.renderTo.style.width as any,
+            cssHeight: string = chart.renderTo.style.height as any,
+            sourceWidth: number = (options.exporting as any).sourceWidth ||
+                options.chart.width ||
+                (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
+                (options.isGantt ? 800 : 600),
+            sourceHeight: number = (options.exporting as any).sourceHeight ||
+                options.chart.height ||
+                (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
+                400;
 
         // override some options
         extend(options.chart, {
@@ -1472,7 +429,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         });
 
         // generate the chart copy
-        chartCopy = new Chart(options, chart.callback);
+        const chartCopy: Chart = new Chart(options, chart.callback);
 
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {
@@ -1535,10 +492,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     getSVGForExport: function (
         this: Chart,
-        options: Highcharts.ExportingOptions,
+        options: ExportingOptions,
         chartOptions: Partial<Options>
     ): string {
-        const chartExportingOptions: Highcharts.ExportingOptions =
+        const chartExportingOptions: ExportingOptions =
             this.options.exporting as any;
 
         return this.getSVG(merge(
@@ -1571,8 +528,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     getFilename: function (this: Chart): string {
-        let s = this.userOptions.title && this.userOptions.title.text,
-            filename: string = (this.options.exporting as any).filename;
+        const s = this.userOptions.title && this.userOptions.title.text;
+        let filename: string = (this.options.exporting as any).filename;
 
         if (filename) {
             return filename.replace(/\//g, '-');
@@ -1595,56 +552,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         return filename;
-    },
-
-    /**
-     * Exporting module required. Submit an SVG version of the chart to a server
-     * along with some parameters for conversion.
-     *
-     * @sample highcharts/members/chart-exportchart/
-     *         Export with no options
-     * @sample highcharts/members/chart-exportchart-filename/
-     *         PDF type and custom filename
-     * @sample highcharts/members/chart-exportchart-custom-background/
-     *         Different chart background in export
-     * @sample stock/members/chart-exportchart/
-     *         Export with Highcharts Stock
-     *
-     * @function Highcharts.Chart#exportChart
-     *
-     * @param {Highcharts.ExportingOptions} exportingOptions
-     *        Exporting options in addition to those defined in
-     *        [exporting](https://api.highcharts.com/highcharts/exporting).
-     *
-     * @param {Highcharts.Options} chartOptions
-     *        Additional chart options for the exported chart. For example a
-     *        different background color can be added here, or `dataLabels` for
-     *        export only.
-     *
-     * @return {void}
-     *
-     * @requires modules/exporting
-     */
-    exportChart: function (
-        this: Chart,
-        exportingOptions: Highcharts.ExportingOptions,
-        chartOptions: Options
-    ): void {
-
-        const svg = this.getSVGForExport(exportingOptions, chartOptions);
-
-        // merge the options
-        exportingOptions = merge(this.options.exporting, exportingOptions);
-
-        // do the post
-        H.post(exportingOptions.url as any, {
-            filename: exportingOptions.filename ? exportingOptions.filename.replace(/\//g, '-') : this.getFilename(),
-            type: exportingOptions.type,
-            // IE8 fails to post undefined correctly, so use 0
-            width: exportingOptions.width || 0,
-            scale: exportingOptions.scale,
-            svg: svg
-        }, exportingOptions.formAttributes as any);
     },
 
     /**
@@ -1692,15 +599,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 resetParams: void 0
             };
 
-        let handleMaxWidth: (boolean|number);
-
         chart.isPrinting = true;
         chart.pointer.reset(null as any, 0);
 
         fireEvent(chart, 'beforePrint');
 
         // Handle printMaxWidth
-        handleMaxWidth = printMaxWidth && chart.chartWidth > printMaxWidth;
+        const handleMaxWidth: (boolean|number) = printMaxWidth && chart.chartWidth > printMaxWidth;
         if (handleMaxWidth) {
             printReverseInfo.resetParams = [
                 chart.options.chart.width,
@@ -1725,103 +630,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.moveContainers(body);
         // Storage details for undo action after printing
         chart.printReverseInfo = printReverseInfo;
-    },
-
-    /**
-    * Clena up after printing a chart.
-    *
-    * @function Highcharts#afterPrint
-    *
-    * @private
-    *
-    * @param {Highcharts.Chart} chart
-    *        Chart that was (or suppose to be) printed
-    * @return {void}
-    *
-    * @fires Highcharts.Chart#event:afterPrint
-    */
-    afterPrint: function (this: Chart): void {
-        const chart = this;
-
-        if (!chart.printReverseInfo) {
-            return void 0;
-        }
-        const childNodes = chart.printReverseInfo.childNodes,
-            origDisplay = chart.printReverseInfo.origDisplay,
-            resetParams = chart.printReverseInfo.resetParams;
-
-        // put the chart back in
-        chart.moveContainers(chart.renderTo);
-
-        // restore all body content
-        [].forEach.call(childNodes, function (
-            node: HTMLDOMElement,
-            i: number
-        ): void {
-            if (node.nodeType === 1) {
-                node.style.display = (origDisplay[i] || '');
-            }
-        });
-
-        chart.isPrinting = false;
-
-        // Reset printMaxWidth
-        if (resetParams) {
-            chart.setSize.apply(chart, resetParams);
-        }
-
-        delete chart.printReverseInfo;
-        delete H.printingChart;
-
-        fireEvent(chart, 'afterPrint');
-    },
-
-    /**
-     * Exporting module required. Clears away other elements in the page and
-     * prints the chart as it is displayed. By default, when the exporting
-     * module is enabled, a context button with a drop down menu in the upper
-     * right corner accesses this function.
-     *
-     * @sample highcharts/members/chart-print/
-     *         Print from a HTML button
-     *
-     * @function Highcharts.Chart#print
-     *
-     * @return {void}
-     *
-     * @fires Highcharts.Chart#event:beforePrint
-     * @fires Highcharts.Chart#event:afterPrint
-     *
-     * @requires modules/exporting
-     */
-    print: function (this: Chart): void {
-        const chart = this;
-
-        if (chart.isPrinting) { // block the button while in printing mode
-            return;
-        }
-
-        H.printingChart = chart;
-
-        if (!H.isSafari) {
-            chart.beforePrint();
-        }
-
-        // Give the browser time to draw WebGL content, an issue that randomly
-        // appears (at least) in Chrome ~67 on the Mac (#8708).
-        setTimeout(function (): void {
-
-            win.focus(); // #1510
-            win.print();
-
-            // allow the browser to prepare before reverting
-            if (!H.isSafari) {
-                setTimeout(function (): void {
-                    chart.afterPrint();
-                }, 1000);
-            }
-        }, 1);
-
     },
 
     /**
@@ -1854,16 +662,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         height: number,
         button: SVGElement
     ): void {
-        let chart = this,
-            navOptions: Highcharts.NavigationOptions =
+        const chart = this,
+            navOptions: NavigationOptions =
                 chart.options.navigation as any,
             chartWidth = chart.chartWidth,
             chartHeight = chart.chartHeight,
             cacheName = 'cache-' + className,
-            menu: Highcharts.ExportingDivElement = (chart as any)[cacheName],
-            menuPadding = Math.max(width, height), // for mouse leave detection
-            innerMenu: HTMLDOMElement,
-            menuStyle: CSSObject;
+            menuPadding = Math.max(width, height); // for mouse leave detection
+        let innerMenu: HTMLDOMElement,
+            menu: Highcharts.ExportingDivElement = (chart as any)[cacheName];
 
         // create the menu only the first time
         if (!menu) {
@@ -2017,7 +824,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.exportMenuHeight = menu.offsetHeight;
         }
 
-        menuStyle = { display: 'block' };
+        const menuStyle: CSSObject = { display: 'block' };
 
         // if outside right, right align it
         if (x + (chart.exportMenuWidth as any) > chartWidth) {
@@ -2054,19 +861,18 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     addButton: function (
         this: Chart,
-        options: Highcharts.ExportingButtonOptions
+        options: ExportingButtonOptions
     ): void {
-        let chart = this,
+        const chart = this,
             renderer = chart.renderer,
-            btnOptions = merge<Highcharts.ExportingButtonOptions>(
+            btnOptions = merge<ExportingButtonOptions>(
                 (chart.options.navigation as any).buttonOptions,
                 options
             ),
             onclick = btnOptions.onclick,
             menuItems = btnOptions.menuItems,
-            symbol,
-            button: SVGElement,
             symbolSize = btnOptions.symbolSize || 12;
+        let symbol;
 
         if (!chart.btnCount) {
             chart.btnCount = 0;
@@ -2083,14 +889,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
 
-        let attr = btnOptions.theme,
+        const attr = btnOptions.theme,
             states = attr.states,
             hover = states && states.hover,
-            select = states && states.select,
-            callback: (
-                EventCallback<SVGElement>|
-                undefined
-            );
+            select = states && states.select;
+        let callback: (
+            EventCallback<SVGElement>|
+            undefined
+        );
 
         if (!chart.styledMode) {
             attr.fill = pick(attr.fill, palette.backgroundColor);
@@ -2151,7 +957,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             attr.stroke = pick(attr.stroke, 'none');
         }
 
-        button = renderer
+        const button: SVGElement = renderer
             .button(
                 btnOptions.text as any,
                 0,
@@ -2230,11 +1036,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this: Chart,
         e?: Event
     ): void {
-        let chart: Chart = e ? (e.target as any) : this,
+        const chart: Chart = e ? (e.target as any) : this,
             exportSVGElements = chart.exportSVGElements,
             exportDivElements = chart.exportDivElements,
-            exportEvents = chart.exportEvents,
-            cacheName;
+            exportEvents = chart.exportEvents;
+        let cacheName;
 
         // Destroy the extra buttons added
         if (exportSVGElements) {
@@ -2345,26 +1151,24 @@ SVGRenderer.prototype.unstyledElements = [
  * @requires modules/exporting
  */
 Chart.prototype.inlineStyles = function (): void {
-    let renderer = this.renderer,
+    const renderer = this.renderer,
         inlineToAttributes = renderer.inlineToAttributes,
         blacklist = renderer.inlineBlacklist,
         whitelist = renderer.inlineWhitelist, // For IE
         unstyledElements = renderer.unstyledElements,
-        defaultStyles: Record<string, CSSObject> = {},
-        dummySVG: SVGElement,
-        iframe: HTMLIFrameElement,
-        iframeDoc: Document;
+        defaultStyles: Record<string, CSSObject> = {};
+    let dummySVG: SVGElement;
 
     // Create an iframe where we read default styles without pollution from this
     // body
-    iframe = doc.createElement('iframe');
+    const iframe: HTMLIFrameElement = doc.createElement('iframe');
     css(iframe, {
         width: '1px',
         height: '1px',
         visibility: 'hidden'
     });
     doc.body.appendChild(iframe);
-    iframeDoc = (iframe.contentWindow as any).document;
+    const iframeDoc: Document = (iframe.contentWindow as any).document;
     iframeDoc.open();
     iframeDoc.write('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
     iframeDoc.close();
@@ -2553,48 +1357,6 @@ Chart.prototype.inlineStyles = function (): void {
 
 };
 
-declare module '../Core/Renderer/SVG/SymbolType' {
-    interface SymbolTypeRegistry {
-        /** @requires Extensions/Exporting */
-        menu: SymbolFunction;
-        /** @requires Extensions/Exporting */
-        menuball: SymbolFunction;
-    }
-}
-symbols.menu = function (
-    x: number,
-    y: number,
-    width: number,
-    height: number
-): SVGPath {
-    const arr: SVGPath = [
-        ['M', x, y + 2.5],
-        ['L', x + width, y + 2.5],
-        ['M', x, y + height / 2 + 0.5],
-        ['L', x + width, y + height / 2 + 0.5],
-        ['M', x, y + height - 1.5],
-        ['L', x + width, y + height - 1.5]
-    ];
-
-    return arr;
-};
-symbols.menuball = function (
-    x: number,
-    y: number,
-    width: number,
-    height: number
-): SVGPath {
-    let path: SVGPath = [],
-        h = (height / 3) - 2;
-
-    path = path.concat(
-        symbols.circle(width - h, y, h, h),
-        symbols.circle(width - h, y + h + 4, h, h),
-        symbols.circle(width - h, y + 2 * (h + 4), h, h)
-    );
-    return path;
-};
-
 /**
  * Add the buttons on chart load
  * @private
@@ -2604,7 +1366,7 @@ symbols.menuball = function (
  */
 Chart.prototype.renderExporting = function (): void {
     const chart = this,
-        exportingOptions: Highcharts.ExportingOptions =
+        exportingOptions: ExportingOptions =
             chart.options.exporting as any,
         buttons = exportingOptions.buttons,
         isDirty = chart.isDirtyExporting || !chart.exportSVGElements;
@@ -2623,7 +1385,7 @@ Chart.prototype.renderExporting = function (): void {
             }).add();
 
         objectEach(buttons, function (
-            button: Highcharts.ExportingButtonOptions
+            button: ExportingButtonOptions
         ): void {
             chart.addButton(button);
         });
@@ -2653,7 +1415,7 @@ addEvent(Chart, 'init', function (): void {
      */
     function update(
         prop: 'exporting'|'navigation',
-        options: (Highcharts.ExportingOptions|Highcharts.NavigationOptions),
+        options: (ExportingOptions|NavigationOptions),
         redraw?: boolean
     ): void {
         chart.isDirtyExporting = true;
@@ -2665,7 +1427,7 @@ addEvent(Chart, 'init', function (): void {
 
     chart.exporting = {
         update: function (
-            options: Highcharts.ExportingOptions,
+            options: ExportingOptions,
             redraw?: boolean
         ): void {
             update('exporting', options, redraw);
@@ -2677,7 +1439,7 @@ addEvent(Chart, 'init', function (): void {
     // has separate update() logic.
     chartNavigationMixin.addUpdate(
         function (
-            options: Highcharts.NavigationOptions,
+            options: NavigationOptions,
             redraw?: boolean
         ): void {
             update('navigation', options, redraw);
@@ -2732,6 +1494,315 @@ Chart.prototype.callbacks.push(function (chart: Chart): void {
     }
     //*/
 });
+
+namespace Exporting {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export declare interface ChartComposition extends Chart {
+    // public constructor(
+    //     options: Partial<Options>,
+    //     callback?: Chart.CallbackFunction
+    // );
+    // public constructor(
+    //     renderTo: (string|globalThis.HTMLElement),
+    //     options: Partial<Options>,
+    //     callback?: Chart.CallbackFunction
+    // );
+    // public constructor(
+    //     a: (string|globalThis.HTMLElement|Partial<Options>),
+    //     b?: (Chart.CallbackFunction|Partial<Options>),
+    //     c?: Chart.CallbackFunction
+    // ) {
+    //     this.getArgs(a, b, c);
+    // }
+        new(
+            options: Partial<Options>,
+            callback?: Chart.CallbackFunction
+        ): this;
+        new(
+            renderTo: (string|globalThis.HTMLElement),
+            options: Partial<Options>,
+            callback?: Chart.CallbackFunction
+        ): this;
+    }
+
+    export declare class ChartComposition extends Chart {
+
+    }
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<(typeof Chart|typeof SVGRenderer)> = [];
+
+    /* *
+     *
+     *  Variables
+     *
+     * */
+
+    let printingChart: (Chart|undefined);
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Clena up after printing a chart.
+     *
+     * @function Highcharts#afterPrint
+     *
+     * @private
+     *
+     * @param {Highcharts.Chart} chart
+     *        Chart that was (or suppose to be) printed
+     * @return {void}
+     *
+     * @fires Highcharts.Chart#event:afterPrint
+     */
+    function afterPrint(
+        this: Chart
+    ): void {
+        const chart = this;
+
+        if (!chart.printReverseInfo) {
+            return void 0;
+        }
+        const childNodes = chart.printReverseInfo.childNodes,
+            origDisplay = chart.printReverseInfo.origDisplay,
+            resetParams = chart.printReverseInfo.resetParams;
+
+        // put the chart back in
+        chart.moveContainers(chart.renderTo);
+
+        // restore all body content
+        [].forEach.call(childNodes, function (
+            node: HTMLDOMElement,
+            i: number
+        ): void {
+            if (node.nodeType === 1) {
+                node.style.display = (origDisplay[i] || '');
+            }
+        });
+
+        chart.isPrinting = false;
+
+        // Reset printMaxWidth
+        if (resetParams) {
+            chart.setSize.apply(chart, resetParams);
+        }
+
+        delete chart.printReverseInfo;
+        printingChart = void 0;
+
+        fireEvent(chart, 'afterPrint');
+    }
+
+    /**
+     * @private
+     */
+    export function compose(
+        ChartClass: typeof Chart,
+        SVGRendererClass: typeof SVGRenderer
+    ): void {
+
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+
+            ChartClass.prototype.afterPrint = afterPrint;
+            ChartClass.prototype.exportChart = exportChart;
+            ChartClass.prototype.print = print;
+            ChartClass.prototype.post = post;
+
+            if (H.isSafari) {
+                H.win.matchMedia('print').addListener(
+                    function (
+                        this: MediaQueryList,
+                        mqlEvent: MediaQueryListEvent
+                    ): void {
+                        if (!printingChart) {
+                            return void 0;
+                        }
+                        if (mqlEvent.matches) {
+                            printingChart.beforePrint();
+                        } else {
+                            printingChart.afterPrint();
+                        }
+                    }
+                );
+            }
+        }
+    }
+
+
+    /**
+     * Exporting module required. Submit an SVG version of the chart to a server
+     * along with some parameters for conversion.
+     *
+     * @sample highcharts/members/chart-exportchart/
+     *         Export with no options
+     * @sample highcharts/members/chart-exportchart-filename/
+     *         PDF type and custom filename
+     * @sample highcharts/members/chart-exportchart-custom-background/
+     *         Different chart background in export
+     * @sample stock/members/chart-exportchart/
+     *         Export with Highcharts Stock
+     *
+     * @function Highcharts.Chart#exportChart
+     *
+     * @param {Highcharts.ExportingOptions} exportingOptions
+     *        Exporting options in addition to those defined in
+     *        [exporting](https://api.highcharts.com/highcharts/exporting).
+     *
+     * @param {Highcharts.Options} chartOptions
+     *        Additional chart options for the exported chart. For example a
+     *        different background color can be added here, or `dataLabels` for
+     *        export only.
+     *
+     * @requires modules/exporting
+     */
+    function exportChart(
+        this: Chart,
+        exportingOptions: ExportingOptions,
+        chartOptions: Options
+    ): void {
+
+        const svg = this.getSVGForExport(exportingOptions, chartOptions);
+
+        // merge the options
+        exportingOptions = merge(this.options.exporting, exportingOptions);
+
+        // do the post
+        this.post(exportingOptions.url as any, {
+            filename: exportingOptions.filename ?
+                exportingOptions.filename.replace(/\//g, '-') :
+                this.getFilename(),
+            type: exportingOptions.type,
+            // IE8 fails to post undefined correctly, so use 0
+            width: exportingOptions.width || 0,
+            scale: exportingOptions.scale,
+            svg: svg
+        }, exportingOptions.formAttributes as any);
+    }
+
+    /**
+     * The post utility
+     *
+     * @private
+     * @function Highcharts.post
+     *
+     * @param {string} url
+     * Post URL
+     *
+     * @param {object} data
+     * Post data
+     *
+     * @param {Highcharts.Dictionary<string>} [formAttributes]
+     * Additional attributes for the post request
+     */
+    function post(
+        this: Chart,
+        url: string,
+        data: object,
+        formAttributes?: HTMLAttributes
+    ): void {
+        // create the form
+        const form: HTMLFormElement = createElement('form', merge({
+            method: 'post',
+            action: url,
+            enctype: 'multipart/form-data'
+        }, formAttributes), {
+            display: 'none'
+        }, doc.body) as unknown as HTMLFormElement;
+
+        // add the data
+        objectEach(data, function (val: string, name: string): void {
+            createElement('input', {
+                type: 'hidden',
+                name: name,
+                value: val
+            }, null as any, form);
+        });
+
+        // submit
+        form.submit();
+
+        // clean up
+        discardElement(form);
+    }
+
+    /**
+     * Exporting module required. Clears away other elements in the page and
+     * prints the chart as it is displayed. By default, when the exporting
+     * module is enabled, a context button with a drop down menu in the upper
+     * right corner accesses this function.
+     *
+     * @sample highcharts/members/chart-print/
+     *         Print from a HTML button
+     *
+     * @function Highcharts.Chart#print
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.Chart#event:beforePrint
+     * @fires Highcharts.Chart#event:afterPrint
+     *
+     * @requires modules/exporting
+     */
+    function print(
+        this: Chart
+    ): void {
+        const chart = this;
+
+        if (chart.isPrinting) { // block the button while in printing mode
+            return;
+        }
+
+        printingChart = chart;
+
+        if (!H.isSafari) {
+            chart.beforePrint();
+        }
+
+        // Give the browser time to draw WebGL content, an issue that randomly
+        // appears (at least) in Chrome ~67 on the Mac (#8708).
+        setTimeout((): void => {
+
+            win.focus(); // #1510
+            win.print();
+
+            // allow the browser to prepare before reverting
+            if (!H.isSafari) {
+                setTimeout((): void => {
+                    chart.afterPrint();
+                }, 1000);
+            }
+        }, 1);
+
+    }
+}
+
+Exporting.compose(Chart, SVGRenderer);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default Exporting;
 
 /* *
  *
@@ -2808,6 +1879,42 @@ Chart.prototype.callbacks.push(function (chart: Chart): void {
  * Possible MIME types for exporting.
  *
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
+ */
+
+(''); // keeps doclets above in transpiled file
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * Fires after a chart is printed through the context menu item or the
+ * `Chart.print` method.
+ *
+ * @sample highcharts/chart/events-beforeprint-afterprint/
+ *         Rescale the chart to print
+ *
+ * @type      {Highcharts.ExportingAfterPrintCallbackFunction}
+ * @since     4.1.0
+ * @context   Highcharts.Chart
+ * @requires  modules/exporting
+ * @apioption chart.events.afterPrint
+ */
+
+/**
+ * Fires before a chart is printed through the context menu item or
+ * the `Chart.print` method.
+ *
+ * @sample highcharts/chart/events-beforeprint-afterprint/
+ *         Rescale the chart to print
+ *
+ * @type      {Highcharts.ExportingBeforePrintCallbackFunction}
+ * @since     4.1.0
+ * @context   Highcharts.Chart
+ * @requires  modules/exporting
+ * @apioption chart.events.beforePrint
  */
 
 (''); // keeps doclets above in transpiled file

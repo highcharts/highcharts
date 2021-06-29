@@ -46,6 +46,12 @@ const {
     uniqueKey
 } = U;
 
+declare module '../Extensions/Exporting/NavigationOptions' {
+    interface NavigationOptions {
+        bindings?: Record<string, Highcharts.NavigationBindingsOptionsObject>;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -103,9 +109,6 @@ declare global {
             manageIndicators(this: NavigationBindings, data: StockToolsFieldsObject): void;
             updateHeight(this: NavigationBindings, e: PointerEvent, annotation: Annotation): void;
             updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject['updateHeight'];
-        }
-        interface NavigationOptions {
-            bindings?: Record<string, NavigationBindingsOptionsObject>;
         }
         interface StockToolsFieldsObject {
             [key: string]: any;

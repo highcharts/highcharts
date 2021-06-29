@@ -17,6 +17,7 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from '../Core/Renderer/DOMElementType';
+import type ExportingOptions from './Exporting/ExportingOptions';
 import type Options from '../Core/Options';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
@@ -41,11 +42,11 @@ declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         unbindGetSVG?: Function;
         exportChartLocal(
-            exportingOptions?: Highcharts.ExportingOptions,
+            exportingOptions?: ExportingOptions,
             chartOptions?: Partial<Options>
         ): void;
         getSVGForLocalExport(
-            options: Highcharts.ExportingOptions,
+            options: ExportingOptions,
             chartOptions: Partial<Options>,
             failCallback: Function,
             successCallback: Function
@@ -344,7 +345,7 @@ function imageToDataUrl(
  */
 function downloadSVGLocal(
     svg: string,
-    options: Highcharts.ExportingOptions,
+    options: ExportingOptions,
     failCallback: Function,
     successCallback?: Function
 ): void {
@@ -628,7 +629,7 @@ function downloadSVGLocal(
  * @return {void}
  */
 Chart.prototype.getSVGForLocalExport = function (
-    options: Highcharts.ExportingOptions,
+    options: ExportingOptions,
     chartOptions: Partial<Options>,
     failCallback: Function,
     successCallback: Function
@@ -756,7 +757,7 @@ Chart.prototype.getSVGForLocalExport = function (
  * @requires modules/exporting
  */
 Chart.prototype.exportChartLocal = function (
-    exportingOptions?: Highcharts.ExportingOptions,
+    exportingOptions?: ExportingOptions,
     chartOptions?: Partial<Options>
 ): void {
     const chart = this,

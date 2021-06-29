@@ -11,6 +11,7 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type NavigationOptions from '../Extensions/Exporting/NavigationOptions';
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {

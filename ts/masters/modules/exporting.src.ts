@@ -11,4 +11,4 @@
  */
 'use strict';
 import '../../Extensions/FullScreen.js';
-import '../../Extensions/Exporting.js';
+import '../../Extensions/Exporting/Exporting.js';

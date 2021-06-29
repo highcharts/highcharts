@@ -45,7 +45,7 @@ Highcharts.exportCharts = function (charts, options) {
     options = Highcharts.merge(Highcharts.getOptions().exporting, options);
 
     // Post to export server
-    Highcharts.post(options.url, {
+    Highcharts.Chart.prototype.post(options.url, {
         filename: options.filename || 'chart',
         type: options.type,
         width: options.width,
