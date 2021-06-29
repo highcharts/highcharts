@@ -225,16 +225,6 @@ namespace Globals {
 
     export let chartCount = 0;
 
-    /**
-     * Theme options that should get applied to the chart. In module mode it
-     * might not be possible to change this property because of read-only
-     * restrictions, instead use {@link Highcharts.setOptions}.
-     *
-     * @name Highcharts.theme
-     * @type {Highcharts.Options}
-     */
-    export let theme: (DeepPartial<Options>|undefined);
-
 }
 
 /* *
@@ -244,3 +234,21 @@ namespace Globals {
  * */
 
 export default Globals as unknown as GlobalsLike;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Theme options that should get applied to the chart. In module mode it
+ * might not be possible to change this property because of read-only
+ * restrictions, instead use {@link Highcharts.setOptions}.
+ *
+ * @deprecated
+ * @name Highcharts.theme
+ * @type {Highcharts.Options}
+ */
+
+(''); // keeps doclets above in JS file
