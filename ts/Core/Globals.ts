@@ -223,6 +223,7 @@ namespace Globals {
      *
      * */
 
+    // eslint-disable-next-line prefer-const
     export let chartCount = 0;
 
     /**

@@ -1570,9 +1570,9 @@ class RangeSelector {
         }
 
         // Create the text label
-        const text: string = (lang as any)[
+        const text = lang[
             isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'
-        ];
+        ] || '';
         const label = renderer
             .label(text, 0)
             .addClass('highcharts-range-label')

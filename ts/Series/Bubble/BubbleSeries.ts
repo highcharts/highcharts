@@ -19,7 +19,9 @@
 import type BubbleSeriesOptions from './BubbleSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import Axis from '../../Core/Axis/Axis.js';
+import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -48,7 +50,7 @@ const {
 
 import '../Column/ColumnSeries.js';
 import '../Scatter/ScatterSeries.js';
-import './BubbleLegend.js';
+import './BubbleLegendItem.js';
 
 /* *
  *
@@ -86,6 +88,8 @@ class BubbleSeries extends ScatterSeries {
      *  Static Properties
      *
      * */
+
+    public static compose = BubbleLegendComposition.compose;
 
     /**
      * A bubble series is a three dimensional series type where each point
