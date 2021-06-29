@@ -47,7 +47,6 @@ const {
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import palette from '../../Core/Color/Palette.js';
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -165,14 +164,6 @@ declare module '../../Core/Options'{
     interface Options {
         exporting?: ExportingOptions;
         navigation?: NavigationOptions;
-    }
-}
-
-declare module '../../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
-        inlineBlacklist?: Array<RegExp>;
-        inlineToAttributes?: Array<string>;
-        unstyledElements?: Array<string>;
     }
 }
 
@@ -1106,257 +1097,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 });
 
-// These ones are translated to attributes rather than styles
-SVGRenderer.prototype.inlineToAttributes = [
-    'fill',
-    'stroke',
-    'strokeLinecap',
-    'strokeLinejoin',
-    'strokeWidth',
-    'textAnchor',
-    'x',
-    'y'
-];
-
-// These CSS properties are not inlined. Remember camelCase.
-SVGRenderer.prototype.inlineBlacklist = [
-    /-/, // In Firefox, both hyphened and camelCased names are listed
-    /^(clipPath|cssText|d|height|width)$/, // Full words
-    /^font$/, // more specific props are set
-    /[lL]ogical(Width|Height)$/,
-    /perspective/,
-    /TapHighlightColor/,
-    /^transition/,
-    /^length$/ // #7700
-    // /^text (border|color|cursor|height|webkitBorder)/
-];
-
-SVGRenderer.prototype.unstyledElements = [
-    'clipPath',
-    'defs',
-    'desc'
-];
-
-/**
- * Analyze inherited styles from stylesheets and add them inline
- *
- * @private
- * @function Highcharts.Chart#inlineStyles
- * @return {void}
- *
- * @todo: What are the border styles for text about? In general, text has a lot
- * of properties.
- * @todo: Make it work with IE9 and IE10.
- *
- * @requires modules/exporting
- */
-Chart.prototype.inlineStyles = function (): void {
-    const renderer = this.renderer,
-        inlineToAttributes = renderer.inlineToAttributes,
-        blacklist = renderer.inlineBlacklist,
-        whitelist = renderer.inlineWhitelist, // For IE
-        unstyledElements = renderer.unstyledElements,
-        defaultStyles: Record<string, CSSObject> = {};
-    let dummySVG: SVGElement;
-
-    // Create an iframe where we read default styles without pollution from this
-    // body
-    const iframe: HTMLIFrameElement = doc.createElement('iframe');
-    css(iframe, {
-        width: '1px',
-        height: '1px',
-        visibility: 'hidden'
-    });
-    doc.body.appendChild(iframe);
-    const iframeDoc: Document = (iframe.contentWindow as any).document;
-    iframeDoc.open();
-    iframeDoc.write('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
-    iframeDoc.close();
-
-
-    /**
-     * Make hyphenated property names out of camelCase
-     * @private
-     * @param {string} prop
-     *        Property name in camelCase
-     * @return {string}
-     *         Hyphenated property name
-     */
-    function hyphenate(prop: string): string {
-        return prop.replace(
-            /([A-Z])/g,
-            function (a: string, b: string): string {
-                return '-' + b.toLowerCase();
-            }
-        );
-    }
-
-    /**
-     * Call this on all elements and recurse to children
-     * @private
-     * @param {Highcharts.HTMLDOMElement} node
-     *        Element child
-     * @return {void}
-     */
-    function recurse(node: HTMLDOMElement): void {
-        let styles: CSSObject,
-            parentStyles: (CSSObject|SVGAttributes),
-            cssText = '',
-            dummy: Element,
-            styleAttr,
-            blacklisted: (boolean|undefined),
-            whitelisted: (boolean|undefined),
-            i: number;
-
-        /**
-         * Check computed styles and whether they are in the white/blacklist for
-         * styles or atttributes.
-         * @private
-         * @param {string} val
-         *        Style value
-         * @param {string} prop
-         *        Style property name
-         * @return {void}
-         */
-        function filterStyles(val: (string|number|boolean|undefined), prop: string): void {
-
-            // Check against whitelist & blacklist
-            blacklisted = whitelisted = false;
-            if (whitelist) {
-                // Styled mode in IE has a whitelist instead.
-                // Exclude all props not in this list.
-                i = whitelist.length;
-                while (i-- && !whitelisted) {
-                    whitelisted = whitelist[i].test(prop);
-                }
-                blacklisted = !whitelisted;
-            }
-
-            // Explicitly remove empty transforms
-            if (prop === 'transform' && val === 'none') {
-                blacklisted = true;
-            }
-
-            i = (blacklist as any).length;
-            while (i-- && !blacklisted) {
-                blacklisted = (
-                    (blacklist as any)[i].test(prop) ||
-                    typeof val === 'function'
-                );
-            }
-
-            if (!blacklisted) {
-                // If parent node has the same style, it gets inherited, no need
-                // to inline it. Top-level props should be diffed against parent
-                // (#7687).
-                if (
-                    (
-                        (parentStyles as any)[prop] !== val ||
-                        node.nodeName === 'svg'
-                    ) &&
-                    (defaultStyles[node.nodeName] as any)[prop] !== val
-                ) {
-                    // Attributes
-                    if (
-                        !inlineToAttributes ||
-                        inlineToAttributes.indexOf(prop) !== -1
-                    ) {
-                        if (val) {
-                            node.setAttribute(hyphenate(prop), val);
-                        }
-                    // Styles
-                    } else {
-                        cssText += hyphenate(prop) + ':' + val + ';';
-                    }
-                }
-            }
-        }
-
-        if (
-            node.nodeType === 1 &&
-            (unstyledElements as any).indexOf(node.nodeName) === -1
-        ) {
-            styles = win.getComputedStyle(node, null) as any;
-            parentStyles = node.nodeName === 'svg' ?
-                {} :
-                win.getComputedStyle(node.parentNode as any, null) as any;
-
-            // Get default styles from the browser so that we don't have to add
-            // these
-            if (!defaultStyles[node.nodeName]) {
-                /*
-                if (!dummySVG) {
-                    dummySVG = doc.createElementNS(H.SVG_NS, 'svg');
-                    dummySVG.setAttribute('version', '1.1');
-                    doc.body.appendChild(dummySVG);
-                }
-                */
-                dummySVG = iframeDoc.getElementsByTagName('svg')[0] as any;
-                dummy = iframeDoc.createElementNS(
-                    node.namespaceURI,
-                    node.nodeName
-                );
-                dummySVG.appendChild(dummy);
-                // Copy, so we can remove the node
-                defaultStyles[node.nodeName] = merge(
-                    win.getComputedStyle(dummy, null) as any
-                );
-                // Remove default fill, otherwise text disappears when exported
-                if (node.nodeName === 'text') {
-                    delete defaultStyles.text.fill;
-                }
-                dummySVG.removeChild(dummy);
-            }
-
-            // Loop through all styles and add them inline if they are ok
-            if (H.isFirefox || H.isMS) {
-                // Some browsers put lots of styles on the prototype
-                for (const p in styles) { // eslint-disable-line guard-for-in
-                    filterStyles((styles as any)[p], p);
-                }
-            } else {
-                objectEach(styles, filterStyles as any);
-            }
-
-            // Apply styles
-            if (cssText) {
-                styleAttr = node.getAttribute('style');
-                node.setAttribute(
-                    'style',
-                    (styleAttr ? styleAttr + ';' : '') + cssText
-                );
-            }
-
-            // Set default stroke width (needed at least for IE)
-            if (node.nodeName === 'svg') {
-                node.setAttribute('stroke-width', '1px');
-            }
-
-            if (node.nodeName === 'text') {
-                return;
-            }
-
-            // Recurse
-            [].forEach.call(node.children || node.childNodes, recurse);
-        }
-    }
-
-    /**
-     * Remove the dummy objects used to get defaults
-     * @private
-     * @return {void}
-     */
-    function tearDown(): void {
-        dummySVG.parentNode.removeChild(dummySVG);
-        // Remove trash from DOM that stayed after each exporting
-        iframe.parentNode.removeChild(iframe);
-    }
-
-    recurse(this.container.querySelector('svg') as any);
-    tearDown();
-
-};
-
 /**
  * Add the buttons on chart load
  * @private
@@ -1541,7 +1281,41 @@ namespace Exporting {
      *
      * */
 
-    const composedClasses: Array<(typeof Chart|typeof SVGRenderer)> = [];
+    const composedClasses: Array<typeof Chart> = [];
+
+
+    // These CSS properties are not inlined. Remember camelCase.
+    const inlineBlacklist: Array<RegExp> = [
+        /-/, // In Firefox, both hyphened and camelCased names are listed
+        /^(clipPath|cssText|d|height|width)$/, // Full words
+        /^font$/, // more specific props are set
+        /[lL]ogical(Width|Height)$/,
+        /perspective/,
+        /TapHighlightColor/,
+        /^transition/,
+        /^length$/ // #7700
+        // /^text (border|color|cursor|height|webkitBorder)/
+    ];
+
+    // These ones are translated to attributes rather than styles
+    const inlineToAttributes: Array<string> = [
+        'fill',
+        'stroke',
+        'strokeLinecap',
+        'strokeLinejoin',
+        'strokeWidth',
+        'textAnchor',
+        'x',
+        'y'
+    ];
+
+    export const inlineWhitelist: Array<RegExp> = [];
+
+    const unstyledElements: Array<string> = [
+        'clipPath',
+        'defs',
+        'desc'
+    ];
 
     /* *
      *
@@ -1614,8 +1388,7 @@ namespace Exporting {
      * @private
      */
     export function compose(
-        ChartClass: typeof Chart,
-        SVGRendererClass: typeof SVGRenderer
+        ChartClass: typeof Chart
     ): void {
 
         if (composedClasses.indexOf(ChartClass) === -1) {
@@ -1623,8 +1396,9 @@ namespace Exporting {
 
             ChartClass.prototype.afterPrint = afterPrint;
             ChartClass.prototype.exportChart = exportChart;
-            ChartClass.prototype.print = print;
+            ChartClass.prototype.inlineStyles = inlineStyles;
             ChartClass.prototype.post = post;
+            ChartClass.prototype.print = print;
 
             if (H.isSafari) {
                 H.win.matchMedia('print').addListener(
@@ -1695,6 +1469,227 @@ namespace Exporting {
             scale: exportingOptions.scale,
             svg: svg
         }, exportingOptions.formAttributes as any);
+    }
+
+
+    /**
+     * Make hyphenated property names out of camelCase
+     * @private
+     * @param {string} prop
+     *        Property name in camelCase
+     * @return {string}
+     *         Hyphenated property name
+     */
+    function hyphenate(prop: string): string {
+        return prop.replace(
+            /([A-Z])/g,
+            function (a: string, b: string): string {
+                return '-' + b.toLowerCase();
+            }
+        );
+    }
+
+    /**
+     * Analyze inherited styles from stylesheets and add them inline
+     *
+     * @private
+     * @function Highcharts.Chart#inlineStyles
+     * @return {void}
+     *
+     * @todo: What are the border styles for text about? In general, text has a
+     * lot of properties.
+     * @todo: Make it work with IE9 and IE10.
+     *
+     * @requires modules/exporting
+     */
+    function inlineStyles(
+        this: ChartComposition
+    ): void {
+        const renderer = this.renderer,
+            blacklist = inlineBlacklist,
+            whitelist = inlineWhitelist, // For IE
+            defaultStyles: Record<string, CSSObject> = {};
+        let dummySVG: SVGElement;
+
+        // Create an iframe where we read default styles without pollution from
+        // this body
+        const iframe: HTMLIFrameElement = doc.createElement('iframe');
+        css(iframe, {
+            width: '1px',
+            height: '1px',
+            visibility: 'hidden'
+        });
+        doc.body.appendChild(iframe);
+        const iframeDoc: Document = (iframe.contentWindow as any).document;
+        iframeDoc.open();
+        iframeDoc.write('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
+        iframeDoc.close();
+
+        /**
+         * Call this on all elements and recurse to children
+         * @private
+         * @param {Highcharts.HTMLDOMElement} node
+         *        Element child
+         * @return {void}
+         */
+        function recurse(node: HTMLDOMElement): void {
+            let styles: CSSObject,
+                parentStyles: (CSSObject|SVGAttributes),
+                cssText = '',
+                dummy: Element,
+                styleAttr,
+                blacklisted: (boolean|undefined),
+                whitelisted: (boolean|undefined),
+                i: number;
+
+            /**
+             * Check computed styles and whether they are in the white/blacklist
+             * for styles or atttributes.
+             * @private
+             * @param {string} val
+             *        Style value
+             * @param {string} prop
+             *        Style property name
+             * @return {void}
+             */
+            function filterStyles(val: (string|number|boolean|undefined), prop: string): void {
+
+                // Check against whitelist & blacklist
+                blacklisted = whitelisted = false;
+                if (whitelist) {
+                    // Styled mode in IE has a whitelist instead.
+                    // Exclude all props not in this list.
+                    i = whitelist.length;
+                    while (i-- && !whitelisted) {
+                        whitelisted = whitelist[i].test(prop);
+                    }
+                    blacklisted = !whitelisted;
+                }
+
+                // Explicitly remove empty transforms
+                if (prop === 'transform' && val === 'none') {
+                    blacklisted = true;
+                }
+
+                i = (blacklist as any).length;
+                while (i-- && !blacklisted) {
+                    blacklisted = (
+                        (blacklist as any)[i].test(prop) ||
+                        typeof val === 'function'
+                    );
+                }
+
+                if (!blacklisted) {
+                    // If parent node has the same style, it gets inherited, no
+                    // need to inline it. Top-level props should be diffed
+                    // against parent (#7687).
+                    if (
+                        (
+                            (parentStyles as any)[prop] !== val ||
+                            node.nodeName === 'svg'
+                        ) &&
+                        (defaultStyles[node.nodeName] as any)[prop] !== val
+                    ) {
+                        // Attributes
+                        if (
+                            !inlineToAttributes ||
+                            inlineToAttributes.indexOf(prop) !== -1
+                        ) {
+                            if (val) {
+                                node.setAttribute(hyphenate(prop), val);
+                            }
+                        // Styles
+                        } else {
+                            cssText += hyphenate(prop) + ':' + val + ';';
+                        }
+                    }
+                }
+            }
+
+            if (
+                node.nodeType === 1 &&
+                (unstyledElements as any).indexOf(node.nodeName) === -1
+            ) {
+                styles = win.getComputedStyle(node, null) as any;
+                parentStyles = node.nodeName === 'svg' ?
+                    {} :
+                    win.getComputedStyle(node.parentNode as any, null) as any;
+
+                // Get default styles from the browser so that we don't have to
+                // add these
+                if (!defaultStyles[node.nodeName]) {
+                    /*
+                    if (!dummySVG) {
+                        dummySVG = doc.createElementNS(H.SVG_NS, 'svg');
+                        dummySVG.setAttribute('version', '1.1');
+                        doc.body.appendChild(dummySVG);
+                    }
+                    */
+                    dummySVG = iframeDoc.getElementsByTagName('svg')[0] as any;
+                    dummy = iframeDoc.createElementNS(
+                        node.namespaceURI,
+                        node.nodeName
+                    );
+                    dummySVG.appendChild(dummy);
+                    // Copy, so we can remove the node
+                    defaultStyles[node.nodeName] = merge(
+                        win.getComputedStyle(dummy, null) as any
+                    );
+                    // Remove default fill, otherwise text disappears when
+                    // exported
+                    if (node.nodeName === 'text') {
+                        delete defaultStyles.text.fill;
+                    }
+                    dummySVG.removeChild(dummy);
+                }
+
+                // Loop through all styles and add them inline if they are ok
+                if (H.isFirefox || H.isMS) {
+                    // Some browsers put lots of styles on the prototype
+                    for (const p in styles) { // eslint-disable-line guard-for-in
+                        filterStyles((styles as any)[p], p);
+                    }
+                } else {
+                    objectEach(styles, filterStyles as any);
+                }
+
+                // Apply styles
+                if (cssText) {
+                    styleAttr = node.getAttribute('style');
+                    node.setAttribute(
+                        'style',
+                        (styleAttr ? styleAttr + ';' : '') + cssText
+                    );
+                }
+
+                // Set default stroke width (needed at least for IE)
+                if (node.nodeName === 'svg') {
+                    node.setAttribute('stroke-width', '1px');
+                }
+
+                if (node.nodeName === 'text') {
+                    return;
+                }
+
+                // Recurse
+                [].forEach.call(node.children || node.childNodes, recurse);
+            }
+        }
+
+        /**
+         * Remove the dummy objects used to get defaults
+         * @private
+         * @return {void}
+         */
+        function tearDown(): void {
+            dummySVG.parentNode.removeChild(dummySVG);
+            // Remove trash from DOM that stayed after each exporting
+            iframe.parentNode.removeChild(iframe);
+        }
+
+        recurse(this.container.querySelector('svg') as any);
+        tearDown();
+
     }
 
     /**
@@ -1794,7 +1789,7 @@ namespace Exporting {
     }
 }
 
-Exporting.compose(Chart, SVGRenderer);
+Exporting.compose(Chart);
 
 /* *
  *
