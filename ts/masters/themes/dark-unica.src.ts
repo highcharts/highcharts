@@ -8,4 +8,5 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Themes/DarkUnica.js';
+import DarkUnicaTheme from '../../Extensions/Themes/DarkUnica.js';
+DarkUnicaTheme.apply();

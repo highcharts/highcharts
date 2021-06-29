@@ -42,7 +42,7 @@ namespace AvocadoTheme {
      *
      * */
 
-    export const options: Partial<Options> = {
+    export const options: DeepPartial<Options> = {
         colors: ['#F3E796', '#95C471', '#35729E', '#251735'],
 
         colorAxis: {
