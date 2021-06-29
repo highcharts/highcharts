@@ -2931,7 +2931,7 @@ function getOptions(): Options {
  *         Updated options.
  */
 function setOptions(
-    options: Partial<Options>
+    options: DeepPartial<Options>
 ): Options {
 
     // Copy in the default options

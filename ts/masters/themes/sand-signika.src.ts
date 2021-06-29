@@ -8,4 +8,5 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Themes/SandSignika.js';
+import SandSignikaTheme from '../../Extensions/Themes/SandSignika.js';
+SandSignikaTheme.apply();

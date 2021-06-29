@@ -233,7 +233,7 @@ namespace Globals {
      * @name Highcharts.theme
      * @type {Highcharts.Options}
      */
-    export let theme: (Options|undefined);
+    export let theme: (DeepPartial<Options>|undefined);
 
 }
 

@@ -8,4 +8,5 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Themes/Gray.js';
+import GrayTheme from '../../Extensions/Themes/Gray.js';
+GrayTheme.apply();

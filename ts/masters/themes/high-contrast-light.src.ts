@@ -8,4 +8,5 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Themes/HighContrastLight.js';
+import HighContrastLightTheme from '../../Extensions/Themes/HighContrastLight.js';
+HighContrastLightTheme.apply();
