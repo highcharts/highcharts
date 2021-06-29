@@ -42,12 +42,12 @@ QUnit.test('Testing exportChart', function (assert) {
         }
     });
 
-    var originalPost = Highcharts.post;
+    var originalPost = Highcharts.Chart.prototype.post;
 
     try {
         var postData;
 
-        Highcharts.post = function (url, data) {
+        Highcharts.Chart.prototype.post = function (url, data) {
             postData = data;
         };
 
@@ -60,6 +60,6 @@ QUnit.test('Testing exportChart', function (assert) {
             'Custom filename'
         );
     } finally {
-        Highcharts.post = originalPost;
+        Highcharts.Chart.prototype.post = originalPost;
     }
 });

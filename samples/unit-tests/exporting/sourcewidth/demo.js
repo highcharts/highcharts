@@ -56,9 +56,9 @@ QUnit.skip('Exported chart sourceWidth and sourceHeight', function (assert) {
         }),
         done = assert.async();
 
-    var originalPost = Highcharts.post;
+    var originalPost = Highcharts.Chart.prototype.post;
 
-    Highcharts.post = function (url, data) {
+    Highcharts.Chart.prototype.post = function (url, data) {
         function serialize(obj) {
             var str = [];
 
@@ -98,12 +98,12 @@ QUnit.skip('Exported chart sourceWidth and sourceHeight', function (assert) {
 
                     document.body.appendChild(img);
 
-                    Highcharts.post = originalPost;
+                    Highcharts.Chart.prototype.post = originalPost;
                     done();
                 };
             },
             error: function () {
-                Highcharts.post = originalPost;
+                Highcharts.Chart.prototype.post = originalPost;
 
                 console.log(
                     assert.test.testName,

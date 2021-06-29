@@ -102,6 +102,14 @@ declare module '../Core/Series/SeriesOptions' {
     }
 }
 
+declare module './Exporting/ExportingOptions' {
+    interface ExportingOptions {
+        csv?: Highcharts.ExportingCsvOptions;
+        showTable?: boolean;
+        tableCaption?: (boolean|string);
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -126,11 +134,6 @@ declare global {
             decimalPoint?: (string|null);
             itemDelimiter?: (string|null);
             lineDelimiter?: string;
-        }
-        interface ExportingOptions {
-            csv?: ExportingCsvOptions;
-            showTable?: boolean;
-            tableCaption?: (boolean|string);
         }
         interface ExportDataPoint {
             series: ExportDataSeries;
@@ -1241,7 +1244,7 @@ function getBlobFromContent(
 
     try {
         // MS specific
-        if (nav.msSaveOrOpenBlob && win.MSBlobBuilder) {
+        if ((nav.msSaveOrOpenBlob) && win.MSBlobBuilder) {
             const blob = new win.MSBlobBuilder();
             blob.append(content);
             return blob.getBlob('image/svg+xml') as any;

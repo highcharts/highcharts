@@ -92,12 +92,12 @@ QUnit.test('POST filename', function (assert) {
         }
     });
 
-    var originalPost = Highcharts.post;
+    var originalPost = Highcharts.Chart.prototype.post;
 
     try {
         var postData;
 
-        Highcharts.post = function (url, data) {
+        Highcharts.Chart.prototype.post = function (url, data) {
             postData = data;
         };
 
@@ -114,10 +114,10 @@ QUnit.test('POST filename', function (assert) {
             'File name came through'
         );
     } finally {
-        Highcharts.post = originalPost;
+        Highcharts.Chart.prototype.post = originalPost;
     }
     try {
-        Highcharts.post = function (url, data) {
+        Highcharts.Chart.prototype.post = function (url, data) {
             postData = data;
         };
 
@@ -133,7 +133,7 @@ QUnit.test('POST filename', function (assert) {
             'Forward slash in filename was replaced'
         );
     } finally {
-        Highcharts.post = originalPost;
+        Highcharts.Chart.prototype.post = originalPost;
     }
 });
 

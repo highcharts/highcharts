@@ -48,10 +48,10 @@ QUnit.test('Test type option with exportChart', function (assert) {
         }),
         postData;
 
-    var originalPost = Highcharts.post;
+    var originalPost = Highcharts.Chart.prototype.post;
 
     try {
-        Highcharts.post = function (url, data) {
+        Highcharts.Chart.prototype.post = function (url, data) {
             postData = data;
         };
 
@@ -59,6 +59,6 @@ QUnit.test('Test type option with exportChart', function (assert) {
         chart.exportChart();
         assert.strictEqual(postData.type, 'image/jpeg', 'Posting for JPG');
     } finally {
-        Highcharts.post = originalPost;
+        Highcharts.Chart.prototype.post = originalPost;
     }
 });
