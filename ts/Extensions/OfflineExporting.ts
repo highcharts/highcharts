@@ -20,7 +20,9 @@ import type {
 import type ExportingOptions from './Exporting/ExportingOptions';
 import type Options from '../Core/Options';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import Chart from '../Core/Chart/Chart.js';
+import Exporting from './Exporting/Exporting.js';
 import H from '../Core/Globals.js';
 const {
     win,
@@ -818,7 +820,7 @@ Chart.prototype.exportChartLocal = function (
     // inline styles that we want to pass through. There are so many styles by
     // default in IE that we don't want to blacklist them all.
     if (H.isMS && chart.styledMode) {
-        SVGRenderer.prototype.inlineWhitelist = [
+        Exporting.inlineWhitelist.push(
             /^blockSize/,
             /^border/,
             /^caretColor/,
@@ -847,7 +849,7 @@ Chart.prototype.exportChartLocal = function (
             /^visibility/,
             /^x$/,
             /^y$/
-        ];
+        );
     }
 
     // Always fall back on:
