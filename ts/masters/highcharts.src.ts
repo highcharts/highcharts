@@ -41,8 +41,9 @@ import ColumnSeries from '../Series/Column/ColumnSeries.js';
 import ColumnDataLabel from '../Series/Column/ColumnDataLabel.js';
 import '../Series/Bar/BarSeries.js';
 import '../Series/Scatter/ScatterSeries.js';
-import '../Series/Pie/PieSeries.js';
-import '../Core/Series/DataLabels.js';
+import PieSeries from '../Series/Pie/PieSeries.js';
+import PieDataLabel from '../Series/Pie/PieDataLabel.js';
+import DataLabel from '../Core/Series/DataLabel.js';
 import '../Extensions/OverlappingDataLabels.js';
 import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';
@@ -134,8 +135,10 @@ G.useSerialIds = Utilities.useSerialIds;
 G.wrap = Utilities.wrap;
 // Compositions
 ColumnDataLabel.compose(ColumnSeries);
+DataLabel.compose(Series);
 DateTimeAxis.compose(Axis);
 LogarithmicAxis.compose(Axis);
+PieDataLabel.compose(PieSeries);
 Responsive.compose(Chart);
 // Default Export
 export default G;
