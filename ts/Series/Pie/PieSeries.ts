@@ -20,20 +20,26 @@ import type PieSeriesOptions from './PieSeriesOptions';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 const { getStartAndEndRadians } = CenteredSeriesMixin;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import Palette from '../../Core/Color/Palette.js';
+import PieDataLabelPositioners from './PieDataLabelPositioners.js';
 import PiePoint from './PiePoint.js';
+import R from '../../Core/Renderer/RendererUtilities.js';
+const { distribute } = R;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Symbols from '../../Core/Renderer/SVG/Symbols.js';
 import U from '../../Core/Utilities.js';
 const {
+    arrayMax,
     clamp,
+    defined,
     extend,
     fireEvent,
     merge,
@@ -612,7 +618,7 @@ class PieSeries extends Series {
          *
          * @private
          */
-        borderColor: palette.backgroundColor,
+        borderColor: Palette.backgroundColor,
 
         /**
          * The width of the border surrounding each slice.
@@ -699,6 +705,7 @@ class PieSeries extends Series {
 
     /* eslint-disable valid-jsdoc */
 
+
     /**
      * Animates the pies in.
      * @private
@@ -729,6 +736,389 @@ class PieSeries extends Series {
                         start: args.start,
                         end: args.end
                     }, series.options.animation);
+                }
+            });
+        }
+    }
+
+    /**
+     * Override the base drawDataLabels method by pie specific functionality
+     * @private
+     */
+    public drawDataLabels(): void {
+        const series = this,
+            data = series.data,
+            chart = series.chart,
+            options = series.options.dataLabels || {},
+            connectorPadding = (options as any).connectorPadding,
+            plotWidth = chart.plotWidth,
+            plotHeight = chart.plotHeight,
+            plotLeft = chart.plotLeft,
+            maxWidth = Math.round(chart.chartWidth / 3),
+            seriesCenter = series.center,
+            radius = seriesCenter[2] / 2,
+            centerY = seriesCenter[1],
+            // divide the points into right and left halves for anti collision
+            halves = [
+                [], // right
+                [] // left
+            ] as [Array<PiePoint>, Array<PiePoint>],
+            overflow = [0, 0, 0, 0]; // top, right, bottom, left
+
+        let point,
+            connectorWidth,
+            connector,
+            dataLabel,
+            dataLabelWidth,
+            // labelPos,
+            labelPosition,
+            labelHeight: number,
+            x,
+            y,
+            visibility,
+            j,
+            pointDataLabelsOptions;
+
+        // get out if not enabled
+        if (!series.visible ||
+            (!(options as any).enabled &&
+            !series._hasPointLabels)
+        ) {
+            return;
+        }
+
+        // Reset all labels that have been shortened
+        data.forEach(function (point): void {
+            if (point.dataLabel && point.visible && point.dataLabel.shortened) {
+                point.dataLabel
+                    .attr({
+                        width: 'auto'
+                    } as unknown as SVGAttributes).css({
+                        width: 'auto',
+                        textOverflow: 'clip'
+                    });
+                point.dataLabel.shortened = false;
+            }
+        });
+
+
+        // run parent method
+        Series.prototype.drawDataLabels.apply(series);
+
+        data.forEach(function (point): void {
+            if (point.dataLabel) {
+
+                if (point.visible) { // #407, #2510
+
+                    // Arrange points for detection collision
+                    halves[point.half as any].push(point);
+
+                    // Reset positions (#4905)
+                    point.dataLabel._pos = null;
+
+                    // Avoid long labels squeezing the pie size too far down
+                    if (!defined((options as any).style.width) &&
+                        !defined(
+                            point.options.dataLabels &&
+                            (point.options.dataLabels as any).style &&
+                            (point.options.dataLabels as any).style.width
+                        )
+                    ) {
+                        if (point.dataLabel.getBBox().width > maxWidth) {
+                            point.dataLabel.css({
+                                // Use a fraction of the maxWidth to avoid
+                                // wrapping close to the end of the string.
+                                width: Math.round(maxWidth * 0.7) + 'px'
+                            });
+                            point.dataLabel.shortened = true;
+                        }
+                    }
+                } else {
+                    point.dataLabel = point.dataLabel.destroy();
+                    // Workaround to make pies destroy multiple datalabels
+                    // correctly. This logic needs rewriting to support multiple
+                    // datalabels fully.
+                    if (point.dataLabels && point.dataLabels.length === 1) {
+                        delete point.dataLabels;
+                    }
+                }
+            }
+        });
+
+        /* Loop over the points in each half, starting from the top and bottom
+         * of the pie to detect overlapping labels.
+         */
+        halves.forEach((points, i): void => {
+            const length = points.length,
+                positions: Array<R.BoxObject> = [];
+
+            let top,
+                bottom,
+                naturalY,
+                sideOverflow,
+                size: any,
+                distributionLength;
+
+            if (!length) {
+                return;
+            }
+
+            // Sort by angle
+            series.sortByAngle(points, i - 0.5);
+            // Only do anti-collision when we have dataLabels outside the pie
+            // and have connectors. (#856)
+            if (series.maxLabelDistance > 0) {
+                top = Math.max(
+                    0,
+                    centerY - radius - series.maxLabelDistance
+                );
+                bottom = Math.min(
+                    centerY + radius + series.maxLabelDistance,
+                    chart.plotHeight
+                );
+                points.forEach(function (point): void {
+                    // check if specific points' label is outside the pie
+                    if ((point.labelDistance as any) > 0 && point.dataLabel) {
+                        // point.top depends on point.labelDistance value
+                        // Used for calculation of y value in getX method
+                        point.top = Math.max(
+                            0,
+                            centerY - radius - (point.labelDistance as any)
+                        );
+                        point.bottom = Math.min(
+                            centerY + radius + (point.labelDistance as any),
+                            chart.plotHeight
+                        );
+                        size = point.dataLabel.getBBox().height || 21;
+
+                        // point.positionsIndex is needed for getting index of
+                        // parameter related to specific point inside positions
+                        // array - not every point is in positions array.
+                        point.distributeBox = {
+                            target: (point.labelPosition as any).natural.y -
+                                point.top + size / 2,
+                            size: size,
+                            rank: point.y
+                        };
+                        positions.push(point.distributeBox);
+                    }
+                });
+                distributionLength = bottom + size - top;
+                distribute(
+                    positions,
+                    distributionLength,
+                    distributionLength / 5
+                );
+            }
+
+            // Now the used slots are sorted, fill them up sequentially
+            for (j = 0; j < length; j++) {
+
+                point = points[j];
+                // labelPos = point.labelPos;
+                labelPosition = point.labelPosition;
+                dataLabel = point.dataLabel;
+                visibility = point.visible === false ? 'hidden' : 'inherit';
+                naturalY = (labelPosition as any).natural.y;
+                y = naturalY;
+
+                if (positions && defined(point.distributeBox)) {
+                    if (
+                        typeof (point.distributeBox as any).pos === 'undefined'
+                    ) {
+                        visibility = 'hidden';
+                    } else {
+                        labelHeight = (point.distributeBox as any).size;
+                        // Find label's y position
+                        y = PieDataLabelPositioners.radialDistributionY(point);
+                    }
+                }
+
+                // It is needed to delete point.positionIndex for
+                // dynamically added points etc.
+
+                delete point.positionIndex; // @todo unused
+
+                // Find label's x position
+                // justify is undocumented in the API - preserve support for it
+                if ((options as any).justify) {
+                    x = PieDataLabelPositioners.justify(
+                        point,
+                        radius,
+                        seriesCenter
+                    );
+                } else {
+                    switch ((options as any).alignTo) {
+                    case 'connectors':
+                        x = PieDataLabelPositioners.alignToConnectors(
+                            points,
+                            i as any,
+                            plotWidth,
+                            plotLeft
+                        );
+                        break;
+                    case 'plotEdges':
+                        x = PieDataLabelPositioners.alignToPlotEdges(
+                            dataLabel as any,
+                            i as any,
+                            plotWidth,
+                            plotLeft
+                        );
+                        break;
+                    default:
+                        x = PieDataLabelPositioners.radialDistributionX(
+                            series,
+                            point,
+                            y,
+                            naturalY
+                        );
+                    }
+                }
+
+                // Record the placement and visibility
+                (dataLabel as any)._attr = {
+                    visibility: visibility,
+                    align: (labelPosition as any).alignment
+                };
+
+                pointDataLabelsOptions = point.options.dataLabels || {};
+
+                (dataLabel as any)._pos = {
+                    x: (
+                        x +
+                        pick(pointDataLabelsOptions.x, options.x, 0) + // (#12985)
+                        (({
+                            left: connectorPadding,
+                            right: -connectorPadding
+                        } as any)[(labelPosition as any).alignment] || 0)
+                    ),
+
+                    // 10 is for the baseline (label vs text)
+                    y: (
+                        y +
+                        pick(pointDataLabelsOptions.y, options.y) - // (#12985)
+                        10
+                    )
+                };
+                // labelPos.x = x;
+                // labelPos.y = y;
+                (labelPosition as any).final.x = x;
+                (labelPosition as any).final.y = y;
+
+                // Detect overflowing data labels
+                if (pick((options as any).crop, true)) {
+                    dataLabelWidth = (dataLabel as any).getBBox().width;
+
+                    sideOverflow = null;
+                    // Overflow left
+                    if (
+                        x - dataLabelWidth < connectorPadding &&
+                        i === 1 // left half
+                    ) {
+                        sideOverflow = Math.round(
+                            dataLabelWidth - x + connectorPadding
+                        );
+                        overflow[3] = Math.max(sideOverflow, overflow[3]);
+
+                    // Overflow right
+                    } else if (
+                        x + dataLabelWidth > plotWidth - connectorPadding &&
+                        i === 0 // right half
+                    ) {
+                        sideOverflow = Math.round(
+                            x + dataLabelWidth - plotWidth + connectorPadding
+                        );
+                        overflow[1] = Math.max(sideOverflow, overflow[1]);
+                    }
+
+                    // Overflow top
+                    if (y - labelHeight / 2 < 0) {
+                        overflow[0] = Math.max(
+                            Math.round(-y + labelHeight / 2),
+                            overflow[0]
+                        );
+
+                    // Overflow left
+                    } else if (y + labelHeight / 2 > plotHeight) {
+                        overflow[2] = Math.max(
+                            Math.round(y + labelHeight / 2 - plotHeight),
+                            overflow[2]
+                        );
+                    }
+                    (dataLabel as any).sideOverflow = sideOverflow;
+                }
+            } // for each point
+        }); // for each half
+
+        // Do not apply the final placement and draw the connectors until we
+        // have verified that labels are not spilling over.
+        if (arrayMax(overflow) === 0 ||
+            (this.verifyDataLabelOverflow as any)(overflow)
+        ) {
+
+            // Place the labels in the final position
+            (this.placeDataLabels as any)();
+
+
+            this.points.forEach(function (point): void {
+                // #8864: every connector can have individual options
+                pointDataLabelsOptions =
+                    merge(options, point.options.dataLabels);
+                connectorWidth =
+                    pick((pointDataLabelsOptions as any).connectorWidth, 1);
+
+                // Draw the connector
+                if (connectorWidth) {
+                    let isNew;
+
+                    connector = point.connector;
+                    dataLabel = point.dataLabel;
+
+                    if (dataLabel &&
+                        dataLabel._pos &&
+                        point.visible &&
+                        (point.labelDistance as any) > 0
+                    ) {
+                        visibility = dataLabel._attr.visibility;
+
+                        isNew = !connector;
+
+                        if (isNew) {
+                            point.connector = connector = chart.renderer
+                                .path()
+                                .addClass(
+                                    'highcharts-data-label-connector ' +
+                                    ' highcharts-color-' + point.colorIndex +
+                                    (
+                                        point.className ?
+                                            ' ' + point.className :
+                                            ''
+                                    )
+                                )
+                                .add(series.dataLabelsGroup);
+
+
+                            if (!chart.styledMode) {
+                                connector.attr({
+                                    'stroke-width': connectorWidth,
+                                    'stroke': (
+                                        (
+                                            pointDataLabelsOptions as any
+                                        ).connectorColor ||
+                                        point.color ||
+                                        Palette.neutralColor60
+                                    )
+                                });
+                            }
+                        }
+                        (connector as any)[isNew ? 'attr' : 'animate']({
+                            d: point.getConnectorPath()
+                        });
+                        (connector as any).attr('visibility', visibility);
+
+                    } else if (connector) {
+                        point.connector = connector.destroy();
+                    }
                 }
             });
         }
@@ -777,7 +1167,7 @@ class PieSeries extends Series {
                 this.graph.attr({
                     'stroke-width': options.borderWidth,
                     fill: options.fillColor || 'none',
-                    stroke: options.color || palette.neutralColor20
+                    stroke: options.color || Palette.neutralColor20
                 });
             }
 
@@ -860,6 +1250,49 @@ class PieSeries extends Series {
      */
     public hasData(): boolean {
         return !!this.processedXData.length; // != 0
+    }
+
+    /**
+     * Perform the final placement of the data labels after we have verified
+     * that they fall within the plot area.
+     * @private
+     */
+    public placeDataLabels(): void {
+        this.points.forEach(function (point: Point): void {
+            const dataLabel = point.dataLabel;
+
+            if (dataLabel && point.visible) {
+                const _pos = dataLabel._pos;
+                if (_pos) {
+
+                    // Shorten data labels with ellipsis if they still overflow
+                    // after the pie has reached minSize (#223).
+                    if (dataLabel.sideOverflow) {
+                        dataLabel._attr.width =
+                            Math.max(dataLabel.getBBox().width -
+                            dataLabel.sideOverflow, 0);
+
+                        dataLabel.css({
+                            width: dataLabel._attr.width + 'px',
+                            textOverflow: (
+                                ((this.options.dataLabels as any).style || {})
+                                    .textOverflow ||
+                                'ellipsis'
+                            )
+                        });
+                        dataLabel.shortened = true;
+                    }
+
+                    dataLabel.attr(dataLabel._attr);
+                    dataLabel[dataLabel.moved ? 'animate' : 'attr'](_pos);
+                    dataLabel.moved = true;
+                } else if (dataLabel) {
+                    dataLabel.attr({ y: -9999 });
+                }
+            }
+            // Clear for update
+            delete point.distributeBox;
+        }, this);
     }
 
     /**
@@ -1177,6 +1610,81 @@ class PieSeries extends Series {
         }
     }
 
+    /**
+     * Verify whether the data labels are allowed to draw, or we should run more
+     * translation and data label positioning to keep them inside the plot area.
+     * Returns true when data labels are ready to draw.
+     * @private
+     */
+    public verifyDataLabelOverflow(
+        overflow: Array<number>
+    ): boolean {
+        const center = this.center,
+            options = this.options,
+            centerOption = options.center,
+            minSize = options.minSize || 80;
+
+        let newSize = minSize,
+            // If a size is set, return true and don't try to shrink the pie
+            // to fit the labels.
+            ret = options.size !== null;
+
+        if (!ret) {
+            // Handle horizontal size and center
+            if ((centerOption as any)[0] !== null) { // Fixed center
+                newSize = Math.max(center[2] -
+                    Math.max(overflow[1], overflow[3]), minSize as any);
+
+            } else { // Auto center
+                newSize = Math.max(
+                    // horizontal overflow
+                    center[2] - overflow[1] - overflow[3],
+                    minSize as any
+                );
+                // horizontal center
+                center[0] += (overflow[3] - overflow[1]) / 2;
+            }
+
+            // Handle vertical size and center
+            if ((centerOption as any)[1] !== null) { // Fixed center
+                newSize = clamp(
+                    newSize,
+                    minSize as any,
+                    center[2] - Math.max(overflow[0], overflow[2])
+                );
+            } else { // Auto center
+                newSize = clamp(
+                    newSize,
+                    minSize as any,
+                    // vertical overflow
+                    center[2] - overflow[0] - overflow[2]
+                );
+                // vertical center
+                center[1] += (overflow[0] - overflow[2]) / 2;
+            }
+
+            // If the size must be decreased, we need to run translate and
+            // drawDataLabels again
+            if (newSize < center[2]) {
+                center[2] = newSize;
+                center[3] = Math.min( // #3632
+                    relativeLength(options.innerSize || 0, newSize),
+                    newSize
+                );
+                this.translate(center);
+
+                if (this.drawDataLabels) {
+                    this.drawDataLabels();
+                }
+            // Else, return true to indicate that the pie and its labels is
+            // within the plot area
+            } else {
+                ret = true;
+            }
+        }
+        return ret;
+    }
+
     /* eslint-enable valid-jsdoc */
 
 }
@@ -1193,6 +1701,8 @@ interface PieSeries {
     pointClass: typeof PiePoint;
 }
 extend(PieSeries.prototype, {
+
+    alignDataLabel: noop,
 
     axisTypes: [],
 

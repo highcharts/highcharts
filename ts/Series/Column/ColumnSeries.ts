@@ -16,17 +16,21 @@
  *
  * */
 
+import type AreaRangePoint from '../AreaRange/AreaRangePoint';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
 import type ColumnMetricsObject from './ColumnMetricsObject';
 import type ColumnPoint from './ColumnPoint';
 import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type Point from '../../Core/Series/Point';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../../Core/Color/Color.js';
@@ -37,7 +41,7 @@ const {
     noop
 } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import Palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
@@ -66,6 +70,12 @@ declare module '../../Core/Series/SeriesLike' {
         pointXOffset?: number;
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The column series type.
@@ -390,7 +400,7 @@ class ColumnSeries extends Series {
                  * @default #cccccc
                  * @product highcharts highstock gantt
                  */
-                color: palette.neutralColor20,
+                color: Palette.neutralColor20,
 
                 /**
                  * A specific border color for the selected point.
@@ -399,7 +409,7 @@ class ColumnSeries extends Series {
                  * @default #000000
                  * @product highcharts highstock gantt
                  */
-                borderColor: palette.neutralColor100
+                borderColor: Palette.neutralColor100
             }
         },
 
@@ -474,7 +484,7 @@ class ColumnSeries extends Series {
          *
          * @private
          */
-        borderColor: palette.backgroundColor
+        borderColor: Palette.backgroundColor
 
     });
 
@@ -515,6 +525,97 @@ class ColumnSeries extends Series {
      * */
 
     /* eslint-disable valid-jsdoc */
+
+    /**
+     * Override the basic data label alignment by adjusting for the position of
+     * the column.
+     * @private
+     */
+    public alignDataLabel(
+        point: Point,
+        dataLabel: SVGElement,
+        options: DataLabelOptions,
+        alignTo: BBoxObject,
+        isNew?: boolean
+    ): void {
+        let inverted = this.chart.inverted,
+            series = point.series,
+            // data label box for alignment
+            dlBox = point.dlBox || point.shapeArgs,
+            below = pick(
+                (point as AreaRangePoint).below, // range series
+                (point.plotY as any) >
+                    pick(this.translatedThreshold, series.yAxis.len)
+            ),
+            // draw it inside the box?
+            inside = pick(options.inside, !!this.options.stacking),
+            overshoot;
+
+        // Align to the column itself, or the top of it
+        if (dlBox) { // Area range uses this method but not alignTo
+            alignTo = merge(dlBox) as any;
+            if (alignTo.y < 0) {
+                alignTo.height += alignTo.y;
+                alignTo.y = 0;
+            }
+
+            // If parts of the box overshoots outside the plot area, modify the
+            // box to center the label inside
+            overshoot = alignTo.y + alignTo.height - series.yAxis.len;
+            if (overshoot > 0 && overshoot < alignTo.height) {
+                alignTo.height -= overshoot;
+            }
+
+            if (inverted) {
+                alignTo = {
+                    x: series.yAxis.len - alignTo.y - alignTo.height,
+                    y: series.xAxis.len - alignTo.x - alignTo.width,
+                    width: alignTo.height,
+                    height: alignTo.width
+                };
+            }
+
+            // Compute the alignment box
+            if (!inside) {
+                if (inverted) {
+                    alignTo.x += below ? 0 : alignTo.width;
+                    alignTo.width = 0;
+                } else {
+                    alignTo.y += below ? alignTo.height : 0;
+                    alignTo.height = 0;
+                }
+            }
+        }
+
+
+        // When alignment is undefined (typically columns and bars), display the
+        // individual point below or above the point depending on the threshold
+        options.align = pick(
+            options.align,
+            !inverted || inside ? 'center' : below ? 'right' : 'left'
+        );
+        options.verticalAlign = pick(
+            options.verticalAlign,
+            inverted || inside ? 'middle' : below ? 'top' : 'bottom'
+        );
+
+        // Call the parent method
+        Series.prototype.alignDataLabel.call(
+            this,
+            point,
+            dataLabel,
+            options,
+            alignTo,
+            isNew
+        );
+
+        // If label was justified and we have contrast, set it:
+        if (options.inside && point.contrastColor) {
+            dataLabel.css({
+                color: point.contrastColor
+            });
+        }
+    }
 
     /**
      * Animate the column heights one by one from zero.
