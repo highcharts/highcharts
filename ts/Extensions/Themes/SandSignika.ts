@@ -155,7 +155,6 @@ namespace SandSignikaTheme {
         });
 
         // Apply the theme
-        H.theme = options;
         setOptions(options);
     }
 

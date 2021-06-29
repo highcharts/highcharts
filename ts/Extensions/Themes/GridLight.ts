@@ -114,7 +114,7 @@ namespace GridLightTheme {
             type: 'text/css'
         }, null as any, document.getElementsByTagName('head')[0]);
 
-        H.theme = options;
+        // Apply the theme
         setOptions(options);
     }
 

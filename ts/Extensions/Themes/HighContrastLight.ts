@@ -74,7 +74,6 @@ namespace HighContrastLightTheme {
      * Apply the theme.
      */
     export function apply(): void {
-        H.theme = options;
         setOptions(options);
     }
 
