@@ -636,7 +636,7 @@ Chart.prototype.getSVGForLocalExport = function (
     failCallback: Function,
     successCallback: Function
 ): void {
-    let chart = this,
+    let chart = this as Exporting.ChartComposition,
         images,
         imagesEmbedded = 0,
         chartCopyContainer: (HTMLDOMElement|undefined),
@@ -762,7 +762,7 @@ Chart.prototype.exportChartLocal = function (
     exportingOptions?: ExportingOptions,
     chartOptions?: Partial<Options>
 ): void {
-    const chart = this,
+    const chart = this as Exporting.ChartComposition,
         options = merge(chart.options.exporting, exportingOptions),
         fallbackToExportServer = function (err: Error): void {
             if (options.fallbackToExportServer === false) {

@@ -19,6 +19,7 @@ import type {
 } from '../../Core/Renderer/AlignObject';
 import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../../Core/Color/ColorString';
+import type Exporting from '../../Extensions/Exporting/Exporting';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import type Options from '../../Core/Options';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
@@ -34,12 +35,12 @@ export interface ExportingOptions {
     buttons?: ExportingButtonsOptions;
     chartOptions?: Options;
     enabled?: boolean;
-    error?: Highcharts.ExportingErrorCallbackFunction;
+    error?: Exporting.ErrorCallbackFunction;
     fallbackToExportServer?: boolean;
     filename?: string;
     formAttributes?: HTMLAttributes;
     libURL?: string;
-    menuItemDefinitions?: Record<string, Highcharts.ExportingMenuObject>;
+    menuItemDefinitions?: Record<string, Exporting.MenuObject>;
     printMaxWidth?: number;
     scale?: number;
     sourceHeight?: number;
