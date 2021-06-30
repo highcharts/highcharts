@@ -194,7 +194,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
         if (points && points.length) {
             // The first point always without fill,
-            // because of lacking the previous point.
+            // because of the lack of the previous point.
             points[0].candleFill = 'transparent';
 
             for (let i = 1; i < points.length; i++) {

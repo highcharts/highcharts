@@ -53,8 +53,8 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
     /* eslint-disable valid-jsdoc */
 
     /**
-     * Based on the open and close values of the current and previous point,
-     * calculate what color the point line/border should have.
+     * Basing on the open and close values of the current and previous point,
+     * determine what color the point should have.
      * @private
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#getPointFill
@@ -68,12 +68,9 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
     public getLineColor(previousPoint: HollowCandlestickPoint): ColorType {
         const point = this;
 
-        // Return line color only for bullish candles.
-        if (point.close < previousPoint.close) {
-            return point.series.options.lineColor || palette.negativeColor;
-        }
-
-        return point.series.options.upLineColor || palette.positiveColor;
+        return point.close < previousPoint.close ?
+            point.series.options.lineColor || palette.negativeColor :
+            point.series.options.upLineColor || palette.positiveColor;
     }
 
     /**
@@ -92,15 +89,13 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
     public getPointFill(previousPoint: HollowCandlestickPoint): ColorType {
         const point = this;
 
-        // Return fill color only for bullish candles.
-        if (point.open > point.close) {
-            if (point.close < previousPoint.close) {
-                return point.series.options.color || palette.negativeColor;
-            }
-
-            return point.series.options.upColor || palette.positiveColor;
+        // Return fill color only for bearish candles.
+        if (point.open < point.close) {
+            return 'transparent';
         }
-        return 'transparent';
+        return point.close < previousPoint.close ?
+            point.series.options.color || palette.negativeColor :
+            point.series.options.upColor || palette.positiveColor;
     }
     /* eslint-enable valid-jsdoc */
 }
@@ -111,9 +106,6 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
  *
  * */
 
-namespace HollowCandlestickPoint {
-    export type PointShortOptions = [number, number, number, number];
-}
 
 /* *
  *
