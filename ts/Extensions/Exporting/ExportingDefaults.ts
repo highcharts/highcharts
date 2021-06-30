@@ -19,16 +19,9 @@
 import type ExportingOptions from './ExportingOptions';
 import type NavigationOptions from './NavigationOptions';
 
-import D from '../../Core/DefaultOptions.js';
-const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
-import palette from '../../Core/Color/Palette.js';
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+import Palette from '../../Core/Color/Palette.js';
 
 /* *
  *
@@ -503,96 +496,94 @@ const exporting: ExportingOptions = {
 };
 
 // Add language
-extend(defaultOptions.lang
+/**
+ * @optionparent lang
+ */
+const lang = {
+
     /**
-     * @optionparent lang
+     * Exporting module only. The text for the menu item to view the chart
+     * in full screen.
+     *
+     * @since 8.0.1
+     *
+     * @private
      */
-    , {
+    viewFullscreen: 'View in full screen',
 
-        /**
-         * Exporting module only. The text for the menu item to view the chart
-         * in full screen.
-         *
-         * @since 8.0.1
-         *
-         * @private
-         */
-        viewFullscreen: 'View in full screen',
-
-        /**
-         * Exporting module only. The text for the menu item to exit the chart
-         * from full screen.
-         *
-         * @since 8.0.1
-         *
-         * @private
-         */
-        exitFullscreen: 'Exit from full screen',
+    /**
+     * Exporting module only. The text for the menu item to exit the chart
+     * from full screen.
+     *
+     * @since 8.0.1
+     *
+     * @private
+     */
+    exitFullscreen: 'Exit from full screen',
 
 
-        /**
-         * Exporting module only. The text for the menu item to print the chart.
-         *
-         * @since    3.0.1
-         * @requires modules/exporting
-         *
-         * @private
-         */
-        printChart: 'Print chart',
+    /**
+     * Exporting module only. The text for the menu item to print the chart.
+     *
+     * @since    3.0.1
+     * @requires modules/exporting
+     *
+     * @private
+     */
+    printChart: 'Print chart',
 
-        /**
-         * Exporting module only. The text for the PNG download menu item.
-         *
-         * @since    2.0
-         * @requires modules/exporting
-         *
-         * @private
-         */
-        downloadPNG: 'Download PNG image',
+    /**
+     * Exporting module only. The text for the PNG download menu item.
+     *
+     * @since    2.0
+     * @requires modules/exporting
+     *
+     * @private
+     */
+    downloadPNG: 'Download PNG image',
 
-        /**
-         * Exporting module only. The text for the JPEG download menu item.
-         *
-         * @since    2.0
-         * @requires modules/exporting
-         *
-         * @private
-         */
-        downloadJPEG: 'Download JPEG image',
+    /**
+     * Exporting module only. The text for the JPEG download menu item.
+     *
+     * @since    2.0
+     * @requires modules/exporting
+     *
+     * @private
+     */
+    downloadJPEG: 'Download JPEG image',
 
-        /**
-         * Exporting module only. The text for the PDF download menu item.
-         *
-         * @since    2.0
-         * @requires modules/exporting
-         *
-         * @private
-         */
-        downloadPDF: 'Download PDF document',
+    /**
+     * Exporting module only. The text for the PDF download menu item.
+     *
+     * @since    2.0
+     * @requires modules/exporting
+     *
+     * @private
+     */
+    downloadPDF: 'Download PDF document',
 
-        /**
-         * Exporting module only. The text for the SVG download menu item.
-         *
-         * @since    2.0
-         * @requires modules/exporting
-         *
-         * @private
-         */
-        downloadSVG: 'Download SVG vector image',
+    /**
+     * Exporting module only. The text for the SVG download menu item.
+     *
+     * @since    2.0
+     * @requires modules/exporting
+     *
+     * @private
+     */
+    downloadSVG: 'Download SVG vector image',
 
-        /**
-         * Exporting module menu. The tooltip title for the context menu holding
-         * print and export menu items.
-         *
-         * @since    3.0
-         * @requires modules/exporting
-         *
-         * @private
-         */
-        contextButtonTitle: 'Chart context menu'
+    /**
+     * Exporting module menu. The tooltip title for the context menu holding
+     * print and export menu items.
+     *
+     * @since    3.0
+     * @requires modules/exporting
+     *
+     * @private
+     */
+    contextButtonTitle: 'Chart context menu'
 
-    }
-);
+};
 
 /**
  * A collection of options for buttons and menus appearing in the exporting
@@ -743,7 +734,7 @@ const navigation: NavigationOptions = {
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 2.0
          */
-        symbolFill: palette.neutralColor60,
+        symbolFill: Palette.neutralColor60,
 
         /**
          * The color of the symbol's stroke or line.
@@ -754,7 +745,7 @@ const navigation: NavigationOptions = {
          * @type  {Highcharts.ColorString}
          * @since 2.0
          */
-        symbolStroke: palette.neutralColor60,
+        symbolStroke: Palette.neutralColor60,
 
         /**
          * The pixel stroke width of the symbol on the button.
@@ -823,9 +814,9 @@ const navigation: NavigationOptions = {
      */
     menuStyle: {
         /** @ignore-option */
-        border: `1px solid ${palette.neutralColor40}`,
+        border: `1px solid ${Palette.neutralColor40}`,
         /** @ignore-option */
-        background: palette.backgroundColor,
+        background: Palette.backgroundColor,
         /** @ignore-option */
         padding: '5px 0'
     },
@@ -852,7 +843,7 @@ const navigation: NavigationOptions = {
         /** @ignore-option */
         padding: '0.5em 1em',
         /** @ignore-option */
-        color: palette.neutralColor80,
+        color: Palette.neutralColor80,
         /** @ignore-option */
         background: 'none',
         /** @ignore-option */
@@ -880,29 +871,12 @@ const navigation: NavigationOptions = {
      */
     menuItemHoverStyle: {
         /** @ignore-option */
-        background: palette.highlightColor80,
+        background: Palette.highlightColor80,
         /** @ignore-option */
-        color: palette.backgroundColor
+        color: Palette.backgroundColor
     }
 
 };
-
-if (!defaultOptions.navigation) {
-    // Buttons and menus are collected in a separate config option set called
-    // 'navigation'. This can be extended later to add control buttons like
-    // zoom and pan right click menus.
-    /**
-     * A collection of options for buttons and menus appearing in the exporting
-     * module.
-     *
-     * @requires     modules/exporting
-     * @optionparent navigation
-     */
-    defaultOptions.navigation = {};
-}
-merge(true, defaultOptions.navigation, navigation);
-
-defaultOptions.exporting = exporting;
 
 /* *
  *
@@ -912,6 +886,7 @@ defaultOptions.exporting = exporting;
 
 const ExportingDefaults = {
     exporting,
+    lang,
     navigation
 };
 

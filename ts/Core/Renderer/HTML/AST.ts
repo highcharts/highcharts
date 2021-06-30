@@ -288,17 +288,21 @@ class AST {
      * `innerHTML` in all cases where the content is not fully trusted.
      *
      * @static
-     *
      * @function Highcharts.AST#setElementHTML
      *
-     * @param {SVGDOMElement|HTMLDOMElement} el The node to set content of
-     * @param {string} html The markup string
+     * @param {SVGDOMElement|HTMLDOMElement|null} el
+     * Node to set content of.
+     *
+     * @param {string} html
+     * Markup string
      */
-    public static setElementHTML(el: Element, html: string): void {
-        el.innerHTML = ''; // Clear previous
-        if (html) {
-            const ast = new AST(html);
-            ast.addToDOM(el);
+    public static setElementHTML(el: (Element|null), html: string): void {
+        if (el) {
+            el.innerHTML = ''; // Clear previous
+            if (html) {
+                const ast = new AST(html);
+                ast.addToDOM(el);
+            }
         }
     }
 

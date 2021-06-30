@@ -38,15 +38,15 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
+import ExportingDefaults from './ExportingDefaults.js';
 import H from '../../Core/Globals.js';
 const {
     doc,
-    isTouchDevice,
     win
 } = H;
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
-import palette from '../../Core/Color/Palette.js';
+import Palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -63,7 +63,6 @@ const {
     removeEvent,
     uniqueKey
 } = U;
-import './ExportingDefaults.js';
 
 /* *
  *
@@ -79,21 +78,110 @@ declare module '../../Core/Axis/AxisOptions' {
 
 declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
+        exportContextMenu?: Exporting.ChartComposition['exportContextMenu'];
+        exportDivElements?: Exporting.ChartComposition['exportDivElements'];
+        exporting?: Exporting.ChartAdditions;
+        exportingGroup?: Exporting.ChartComposition['exportingGroup'];
+        exportSVGElements?: Exporting.ChartComposition['exportSVGElements'];
+        isPrinting?: Exporting.ChartComposition['isPrinting'];
+        openMenu?: Exporting.ChartComposition['openMenu'];
+        /** @requires modules/exporting */
+        exportChart(
+            exportingOptions?: ExportingOptions,
+            chartOptions?: Options
+        ): void;
+        /** @requires modules/exporting */
+        post(
+            url: string,
+            data: object,
+            formAttributes?: HTMLAttributes
+        ): void;
+        /** @requires modules/exporting */
+        print(): void;
+    }
+}
+
+declare module '../../Core/Chart/ChartOptions' {
+    interface ChartEventsOptions {
+        afterPrint?: Exporting.AfterPrintCallbackFunction;
+        beforePrint?: Exporting.BeforePrintCallbackFunction;
+    }
+}
+
+declare module '../../Core/LangOptions' {
+    interface LangOptions {
+        contextButtonTitle?: string;
+        exitFullscreen?: string;
+        downloadJPEG?: string;
+        downloadPDF?: string;
+        downloadPNG?: string;
+        downloadSVG?: string;
+        printChart?: string;
+        viewFullscreen?: string;
+    }
+}
+
+declare module '../../Core/Options' {
+    interface Options {
+        exporting?: ExportingOptions;
+        navigation?: NavigationOptions;
+    }
+}
+
+/* *
+ *
+ *  Composition
+ *
+ * */
+
+namespace Exporting {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface AfterPrintCallbackFunction {
+        (chart: Chart, event: Event): void;
+    }
+
+    export interface BeforePrintCallbackFunction {
+        (chart: Chart, event: Event): void;
+    }
+
+    export declare interface ChartAdditions {
+        update(options: ExportingOptions, redraw?: boolean): void;
+    }
+
+    export declare interface ChartComposition extends Chart {
+        new(
+            options: Partial<Options>,
+            callback?: Chart.CallbackFunction
+        ): this;
+        new(
+            renderTo: (string|globalThis.HTMLElement),
+            options: Partial<Options>,
+            callback?: Chart.CallbackFunction
+        ): this;
+    }
+
+    export declare class ChartComposition extends Chart {
         btnCount?: number;
         buttonOffset?: number;
-        exportContextMenu?: Highcharts.ExportingDivElement;
-        exportDivElements?: Array<Highcharts.ExportingDivElement>;
+        exportContextMenu?: Exporting.DivElement;
+        exportDivElements?: Array<(Exporting.DivElement|null)>;
         exportEvents?: Array<Function>;
-        exporting?: Highcharts.ChartExportingObject;
+        exporting: ChartAdditions;
         exportingGroup?: SVGElement;
         exportMenuHeight?: number;
         exportMenuWidth?: number;
-        exportSVGElements?: Array<SVGElement>;
+        exportSVGElements?: Array<(SVGElement|undefined)>;
         forExport?: boolean;
         isDirtyExporting?: boolean;
         isPrinting?: boolean;
         openMenu?: boolean;
-        printReverseInfo?: Highcharts.PrintReverseInfoObject;
+        printReverseInfo?: PrintReverseInfoObject;
         /** @requires modules/exporting */
         addButton(options: ExportingButtonOptions): void;
         /** @requires modules/exporting */
@@ -103,7 +191,7 @@ declare module '../../Core/Chart/ChartLike' {
         /** @requires modules/exporting */
         contextMenu(
             className: string,
-            items: Array<(string|Highcharts.ExportingMenuObject)>,
+            items: Array<(string|Exporting.MenuObject)>,
             x: number,
             y: number,
             width: number,
@@ -133,6 +221,8 @@ declare module '../../Core/Chart/ChartLike' {
         /** @requires modules/exporting */
         moveContainers(moveTo: HTMLDOMElement): void;
         /** @requires modules/exporting */
+        renderExporting(): void;
+        /** @requires modules/exporting */
         post(
             url: string,
             data: object,
@@ -141,450 +231,339 @@ declare module '../../Core/Chart/ChartLike' {
         /** @requires modules/exporting */
         print(): void;
         /** @requires modules/exporting */
-        renderExporting(): void;
-        /** @requires modules/exporting */
         sanitizeSVG(svg: string, options: Options): string;
     }
-}
 
-declare module '../../Core/LangOptions'{
-    interface LangOptions {
-        contextButtonTitle?: string;
-        exitFullscreen?: string;
-        downloadJPEG?: string;
-        downloadPDF?: string;
-        downloadPNG?: string;
-        downloadSVG?: string;
-        printChart?: string;
-        viewFullscreen?: string;
+    export interface DivElement extends HTMLDOMElement {
+        hideTimer?: number;
+        hideMenu(): void;
     }
-}
 
-declare module '../../Core/Options'{
-    interface Options {
-        exporting?: ExportingOptions;
-        navigation?: NavigationOptions;
+    export interface ErrorCallbackFunction {
+        (options: ExportingOptions, err: Error): void;
     }
-}
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface ChartEventsOptions {
-            afterPrint?: ExportingAfterPrintCallbackFunction;
-            beforePrint?: ExportingBeforePrintCallbackFunction;
-        }
-        interface ChartExportingObject {
-            update(options: ExportingOptions, redraw?: boolean): void;
-        }
-        interface ExportingAfterPrintCallbackFunction {
-            (chart: Chart, event: Event): void;
-        }
-        interface ExportingBeforePrintCallbackFunction {
-            (chart: Chart, event: Event): void;
-        }
-        interface ExportingErrorCallbackFunction {
-            (options: ExportingOptions, err: Error): void;
-        }
-        interface ExportingDivElement extends HTMLDOMElement {
-            hideTimer?: number;
-            hideMenu(): void;
-        }
-        interface ExportingMenuObject {
-            onclick?: EventCallback<Chart>;
-            separator?: boolean;
-            text?: string;
-            textKey?: string;
-        }
-        interface PrintReverseInfoObject {
-            childNodes: NodeListOf<ChildNode>;
-            origDisplay: Array<(string|null)> ;
-            resetParams?: [
-                (number|null)?,
-                (number|null)?,
-                (boolean|Partial<AnimationOptions>)?
-            ];
-        }
+    export interface MenuObject {
+        onclick?: EventCallback<Chart>;
+        separator?: boolean;
+        text?: string;
+        textKey?: string;
     }
-}
 
-extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
+    export interface PrintReverseInfoObject {
+        childNodes: NodeListOf<ChildNode>;
+        origDisplay: Array<(string|null)> ;
+        resetParams?: [
+            (number|null)?,
+            (number|null)?,
+            (boolean|Partial<AnimationOptions>)?
+        ];
+    }
 
-    /* eslint-disable no-invalid-this, valid-jsdoc */
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<typeof Chart> = [];
+
+    // These CSS properties are not inlined. Remember camelCase.
+    const inlineBlacklist: Array<RegExp> = [
+        /-/, // In Firefox, both hyphened and camelCased names are listed
+        /^(clipPath|cssText|d|height|width)$/, // Full words
+        /^font$/, // more specific props are set
+        /[lL]ogical(Width|Height)$/,
+        /perspective/,
+        /TapHighlightColor/,
+        /^transition/,
+        /^length$/ // #7700
+        // /^text (border|color|cursor|height|webkitBorder)/
+    ];
+
+    // These ones are translated to attributes rather than styles
+    const inlineToAttributes: Array<string> = [
+        'fill',
+        'stroke',
+        'strokeLinecap',
+        'strokeLinejoin',
+        'strokeWidth',
+        'textAnchor',
+        'x',
+        'y'
+    ];
+
+    export const inlineWhitelist: Array<RegExp> = [];
+
+    const unstyledElements: Array<string> = [
+        'clipPath',
+        'defs',
+        'desc'
+    ];
+
+    /* *
+     *
+     *  Variables
+     *
+     * */
+
+    let printingChart: (ChartComposition|undefined);
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
 
     /**
-     * Exporting module only. A collection of fixes on the produced SVG to
-     * account for expando properties, browser bugs, VML problems and other.
-     * Returns a cleaned SVG.
+     * Add the export button to the chart, with options.
      *
      * @private
-     * @function Highcharts.Chart#sanitizeSVG
-     * @param {string} svg
-     *        SVG code to sanitize
-     * @param {Highcharts.Options} options
-     *        Chart options to apply
-     * @return {string}
-     *         Sanitized SVG code
+     * @function Highcharts.Chart#addButton
+     * @param {Highcharts.NavigationButtonOptions} options
+     * @return {void}
      * @requires modules/exporting
      */
-    sanitizeSVG: function (
-        this: Chart,
-        svg: string,
-        options: Options
-    ): string {
+    function addButton(
+        this: ChartComposition,
+        options: ExportingButtonOptions
+    ): void {
+        const chart = this,
+            renderer = chart.renderer,
+            btnOptions = merge<ExportingButtonOptions>(
+                (chart.options.navigation as any).buttonOptions,
+                options
+            ),
+            onclick = btnOptions.onclick,
+            menuItems = btnOptions.menuItems,
+            symbolSize = btnOptions.symbolSize || 12;
+        let symbol;
 
-        const split = svg.indexOf('</svg>') + 6;
-        let html = svg.substr(split);
-
-        // Remove any HTML added to the container after the SVG (#894, #9087)
-        svg = svg.substr(0, split);
-
-        // Move HTML into a foreignObject
-        if (options && options.exporting && options.exporting.allowHTML) {
-            if (html) {
-                html = '<foreignObject x="0" y="0" ' +
-                            'width="' + options.chart.width + '" ' +
-                            'height="' + options.chart.height + '">' +
-                    '<body xmlns="http://www.w3.org/1999/xhtml">' +
-                    // Some tags needs to be closed in xhtml (#13726)
-                    html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
-                    '</body>' +
-                    '</foreignObject>';
-                svg = svg.replace('</svg>', html + '</svg>');
-            }
-
+        if (!chart.btnCount) {
+            chart.btnCount = 0;
         }
 
-        svg = svg
-            .replace(/zIndex="[^"]+"/g, '')
-            .replace(/symbolName="[^"]+"/g, '')
-            .replace(/jQuery[0-9]+="[^"]+"/g, '')
-            .replace(/url\(("|&quot;)(.*?)("|&quot;)\;?\)/g, 'url($2)')
-            .replace(/url\([^#]+#/g, 'url(#')
-            .replace(
-                /<svg /,
-                '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
-            )
-            .replace(/ (|NS[0-9]+\:)href=/g, ' xlink:href=') // #3567
-            .replace(/\n/, ' ')
-            // Batik doesn't support rgba fills and strokes (#3095)
-            .replace(
-                /(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, // eslint-disable-line max-len
-                '$1="rgb($2)" $1-opacity="$3"'
-            )
-
-            // Replace HTML entities, issue #347
-            .replace(/&nbsp;/g, '\u00A0') // no-break space
-            .replace(/&shy;/g, '\u00AD'); // soft hyphen
-
-        // Further sanitize for oldIE
-        if (this.ieSanitizeSVG) {
-            svg = this.ieSanitizeSVG(svg);
+        // Keeps references to the button elements
+        if (!chart.exportDivElements) {
+            chart.exportDivElements = [];
+            chart.exportSVGElements = [];
         }
 
-        return svg;
-    },
-
-    /**
-     * Return the unfiltered innerHTML of the chart container. Used as hook for
-     * plugins. In styled mode, it also takes care of inlining CSS style rules.
-     *
-     * @see Chart#getSVG
-     *
-     * @function Highcharts.Chart#getChartHTML
-     *
-     * @returns {string}
-     *          The unfiltered SVG of the chart.
-     *
-     * @requires modules/exporting
-     */
-    getChartHTML: function (this: Chart): string {
-        if (this.styledMode) {
-            this.inlineStyles();
+        if (btnOptions.enabled === false || !btnOptions.theme) {
+            return;
         }
 
-        return this.container.innerHTML;
-    },
 
-    /**
-     * Return an SVG representation of the chart.
-     *
-     * @sample highcharts/members/chart-getsvg/
-     *         View the SVG from a button
-     *
-     * @function Highcharts.Chart#getSVG
-     *
-     * @param {Highcharts.Options} [chartOptions]
-     *        Additional chart options for the generated SVG representation. For
-     *        collections like `xAxis`, `yAxis` or `series`, the additional
-     *        options is either merged in to the original item of the same
-     *        `id`, or to the first item if a common id is not found.
-     *
-     * @return {string}
-     *         The SVG representation of the rendered chart.
-     *
-     * @fires Highcharts.Chart#event:getSVG
-     *
-     * @requires modules/exporting
-     */
-    getSVG: function (
-        this: Chart,
-        chartOptions?: DeepPartial<Options>
-    ): string {
-        const chart = this;
-        let svg,
-            seriesOptions: DeepPartial<SeriesTypeOptions>,
-            // Copy the options and add extra options
-            options = merge(chart.options, chartOptions);
-
-        // Use userOptions to make the options chain in series right (#3881)
-        options.plotOptions = merge(
-            chart.userOptions.plotOptions,
-            chartOptions && chartOptions.plotOptions
-        );
-        // ... and likewise with time, avoid that undefined time properties are
-        // merged over legacy global time options
-        options.time = merge(
-            chart.userOptions.time,
-            chartOptions && chartOptions.time
+        const attr = btnOptions.theme,
+            states = attr.states,
+            hover = states && states.hover,
+            select = states && states.select;
+        let callback: (
+            EventCallback<SVGElement>|
+            undefined
         );
 
-        // create a sandbox where a new chart will be generated
-        const sandbox = createElement('div', null as any, {
-            position: 'absolute',
-            top: '-9999em',
-            width: chart.chartWidth + 'px',
-            height: chart.chartHeight + 'px'
-        }, doc.body);
+        if (!chart.styledMode) {
+            attr.fill = pick(attr.fill, Palette.backgroundColor);
+            attr.stroke = pick(attr.stroke, 'none');
+        }
 
-        // get the source size
-        const cssWidth: string = chart.renderTo.style.width as any,
-            cssHeight: string = chart.renderTo.style.height as any,
-            sourceWidth: number = (options.exporting as any).sourceWidth ||
-                options.chart.width ||
-                (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
-                (options.isGantt ? 800 : 600),
-            sourceHeight: number = (options.exporting as any).sourceHeight ||
-                options.chart.height ||
-                (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
-                400;
+        delete attr.states;
 
-        // override some options
-        extend(options.chart, {
-            animation: false,
-            renderTo: sandbox,
-            forExport: true,
-            renderer: 'SVGRenderer',
-            width: sourceWidth,
-            height: sourceHeight
-        });
-        (options.exporting as any).enabled = false; // hide buttons in print
-        delete options.data; // #3004
-
-        // prepare for replicating the chart
-        options.series = [];
-        chart.series.forEach(function (serie): void {
-            seriesOptions = merge(serie.userOptions, { // #4912
-                animation: false, // turn off animation
-                enableMouseTracking: false,
-                showCheckbox: false,
-                visible: serie.visible
-            });
-
-            // Used for the navigator series that has its own option set
-            if (!seriesOptions.isInternal) {
-                (options.series as any).push(seriesOptions);
-            }
-        });
-
-        const colls: Record<string, boolean> = {};
-        chart.axes.forEach(function (axis): void {
-            // Assign an internal key to ensure a one-to-one mapping (#5924)
-            if (!axis.userOptions.internalKey) { // #6444
-                axis.userOptions.internalKey = uniqueKey();
-            }
-
-            if (!axis.options.isInternal) {
-                if (!colls[axis.coll]) {
-                    colls[axis.coll] = true;
-                    (options as any)[axis.coll] = [];
+        if (onclick) {
+            callback = function (
+                this: SVGElement,
+                e: (Event|AnyRecord)
+            ): void {
+                if (e) {
+                    e.stopPropagation();
                 }
+                (onclick as any).call(chart, e);
+            };
 
-                (options as any)[axis.coll].push(merge(axis.userOptions, {
-                    visible: axis.visible
-                }));
-            }
-        });
-
-        // generate the chart copy
-        const chartCopy: Chart = new Chart(options, chart.callback);
-
-        // Axis options and series options  (#2022, #3900, #5982)
-        if (chartOptions) {
-            ['xAxis', 'yAxis', 'series'].forEach(function (coll: string): void {
-                const collOptions: Partial<Options> = {};
-
-                if ((chartOptions as any)[coll]) {
-                    (collOptions as any)[coll] = (chartOptions as any)[coll];
-                    chartCopy.update(collOptions);
+        } else if (menuItems) {
+            callback = function (
+                this: SVGElement,
+                e: (Event|AnyRecord)
+            ): void {
+                // consistent with onclick call (#3495)
+                if (e) {
+                    e.stopPropagation();
                 }
+                chart.contextMenu(
+                    button.menuClassName,
+                    menuItems as any,
+                    button.translateX,
+                    button.translateY,
+                    button.width,
+                    button.height,
+                    button
+                );
+                button.setState(2);
+            };
+        }
+
+
+        if (btnOptions.text && btnOptions.symbol) {
+            attr.paddingLeft = pick(attr.paddingLeft, 30);
+
+        } else if (!btnOptions.text) {
+            extend(attr, {
+                width: btnOptions.width,
+                height: btnOptions.height,
+                padding: 0
             });
         }
 
-        // Reflect axis extremes in the export (#5924)
-        chart.axes.forEach(function (axis): void {
-            const axisCopy = find(chartCopy.axes, function (
-                    copy: Axis
-                ): boolean {
-                    return copy.options.internalKey ===
-                        axis.userOptions.internalKey;
-                }),
-                extremes = axis.getExtremes(),
-                userMin = extremes.userMin,
-                userMax = extremes.userMax;
 
-            if (
-                axisCopy &&
-                ((
-                    typeof userMin !== 'undefined' &&
-                    userMin !== axisCopy.min) || (
-                    typeof userMax !== 'undefined' &&
-                    userMax !== axisCopy.max
-                ))
-            ) {
-                axisCopy.setExtremes(userMin, userMax, true, false);
+        if (!chart.styledMode) {
+            attr['stroke-linecap'] = 'round';
+            attr.fill = pick(attr.fill, Palette.backgroundColor);
+            attr.stroke = pick(attr.stroke, 'none');
+        }
+
+        const button: SVGElement = renderer
+            .button(
+                btnOptions.text as any,
+                0,
+                0,
+                callback as any,
+                attr,
+                hover,
+                select
+            )
+            .addClass(options.className as any)
+            .attr({
+                title: pick((chart.options.lang as any)[
+                    btnOptions._titleKey || (btnOptions.titleKey as any)
+                ], '')
+            });
+
+        button.menuClassName = (
+            options.menuClassName ||
+            'highcharts-menu-' + chart.btnCount++
+        );
+
+        if (btnOptions.symbol) {
+            symbol = renderer
+                .symbol(
+                    btnOptions.symbol,
+                    (btnOptions.symbolX as any) - (symbolSize / 2),
+                    (btnOptions.symbolY as any) - (symbolSize / 2),
+                    symbolSize,
+                    symbolSize
+                    // If symbol is an image, scale it (#7957)
+                    , {
+                        width: symbolSize,
+                        height: symbolSize
+                    }
+                )
+                .addClass('highcharts-button-symbol')
+                .attr({
+                    zIndex: 1
+                })
+                .add(button);
+
+            if (!chart.styledMode) {
+                symbol.attr({
+                    stroke: btnOptions.symbolStroke,
+                    fill: btnOptions.symbolFill,
+                    'stroke-width': btnOptions.symbolStrokeWidth || 1
+                });
             }
-        });
+        }
 
-        // Get the SVG from the container's innerHTML
-        svg = chartCopy.getChartHTML();
-        fireEvent(this, 'getSVG', { chartCopy: chartCopy });
+        button
+            .add(chart.exportingGroup)
+            .align(extend(btnOptions, {
+                width: button.width,
+                x: pick(btnOptions.x, chart.buttonOffset) // #1654
+            }), true, 'spacingBox');
 
-        svg = chart.sanitizeSVG(svg, options);
+        (chart.buttonOffset as any) += (
+            (button.width + btnOptions.buttonSpacing) *
+            (btnOptions.align === 'right' ? -1 : 1)
+        );
 
-        // free up memory
-        options = null as any;
-        chartCopy.destroy();
-        discardElement(sandbox);
+        (chart.exportSVGElements as any).push(button, symbol as any);
 
-        return svg;
-    },
+    }
 
     /**
+     * Clena up after printing a chart.
+     *
+     * @function Highcharts#afterPrint
+     *
      * @private
-     * @function Highcharts.Chart#getSVGForExport
-     * @param {Highcharts.ExportingOptions} options
-     * @param {Highcharts.Options} chartOptions
-     * @return {string}
-     * @requires modules/exporting
+     *
+     * @param {Highcharts.Chart} chart
+     *        Chart that was (or suppose to be) printed
+     * @return {void}
+     *
+     * @fires Highcharts.Chart#event:afterPrint
      */
-    getSVGForExport: function (
-        this: Chart,
-        options: ExportingOptions,
-        chartOptions: Partial<Options>
-    ): string {
-        const chartExportingOptions: ExportingOptions =
-            this.options.exporting as any;
-
-        return this.getSVG(merge(
-            { chart: { borderRadius: 0 } },
-            chartExportingOptions.chartOptions,
-            chartOptions,
-            {
-                exporting: {
-                    sourceWidth: (
-                        (options && options.sourceWidth) ||
-                        chartExportingOptions.sourceWidth
-                    ),
-                    sourceHeight: (
-                        (options && options.sourceHeight) ||
-                        chartExportingOptions.sourceHeight
-                    )
-                }
-            }
-        ));
-    },
-
-    /**
-     * Get the default file name used for exported charts. By default it creates
-     * a file name based on the chart title.
-     *
-     * @function Highcharts.Chart#getFilename
-     *
-     * @return {string} A file name without extension.
-     *
-     * @requires modules/exporting
-     */
-    getFilename: function (this: Chart): string {
-        const s = this.userOptions.title && this.userOptions.title.text;
-        let filename: string = (this.options.exporting as any).filename;
-
-        if (filename) {
-            return filename.replace(/\//g, '-');
-        }
-
-        if (typeof s === 'string') {
-            filename = s
-                .toLowerCase()
-                .replace(/<\/?[^>]+(>|$)/g, '') // strip HTML tags
-                .replace(/[\s_]+/g, '-')
-                .replace(/[^a-z0-9\-]/g, '') // preserve only latin
-                .replace(/^[\-]+/g, '') // dashes in the start
-                .replace(/[\-]+/g, '-') // dashes in a row
-                .substr(0, 24)
-                .replace(/[\-]+$/g, ''); // dashes in the end;
-        }
-
-        if (!filename || filename.length < 5) {
-            filename = 'chart';
-        }
-
-        return filename;
-    },
-
-    /**
-    * Move the chart container(s) to another div.
-    *
-    * @function Highcharts#moveContainers
-    *
-    * @private
-    *
-    * @param {Highcharts.HTMLDOMElement} moveTo
-    *        Move target
-    * @return {void}
-    */
-    moveContainers: function (this: Chart, moveTo: HTMLDOMElement): void {
+    function afterPrint(
+        this: ChartComposition
+    ): void {
         const chart = this;
-        (
-            chart.fixedDiv ? // When scrollablePlotArea is active (#9533)
-                [chart.fixedDiv, chart.scrollingContainer as any] :
-                [chart.container]
 
-        ).forEach(function (div: HTMLDOMElement): void {
-            moveTo.appendChild(div);
+        if (!chart.printReverseInfo) {
+            return void 0;
+        }
+
+        const {
+            childNodes,
+            origDisplay,
+            resetParams
+        } = chart.printReverseInfo;
+
+        // put the chart back in
+        chart.moveContainers(chart.renderTo);
+
+        // restore all body content
+        [].forEach.call(childNodes, function (
+            node: HTMLDOMElement,
+            i: number
+        ): void {
+            if (node.nodeType === 1) {
+                node.style.display = (origDisplay[i] || '');
+            }
         });
-    },
+
+        chart.isPrinting = false;
+
+        // Reset printMaxWidth
+        if (resetParams) {
+            chart.setSize.apply(chart, resetParams);
+        }
+
+        delete chart.printReverseInfo;
+        printingChart = void 0;
+
+        fireEvent(chart, 'afterPrint');
+    }
 
     /**
-    * Prepare chart and document before printing a chart.
-    *
-    * @function Highcharts#beforePrint
-    *
-    * @private
-    *
-    * @return {void}
-    *
-    * @fires Highcharts.Chart#event:beforePrint
-    */
-    beforePrint: function (this: Chart): void {
+     * Prepare chart and document before printing a chart.
+     *
+     * @function Highcharts#beforePrint
+     *
+     * @private
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.Chart#event:beforePrint
+     */
+    function beforePrint(
+        this: ChartComposition
+    ): void {
         const chart = this,
             body = doc.body,
             printMaxWidth: number =
                 (chart.options.exporting as any).printMaxWidth,
-            printReverseInfo: Highcharts.PrintReverseInfoObject = {
+            printReverseInfo: PrintReverseInfoObject = {
                 childNodes: body.childNodes,
                 origDisplay: [],
                 resetParams: void 0
@@ -621,7 +600,106 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.moveContainers(body);
         // Storage details for undo action after printing
         chart.printReverseInfo = printReverseInfo;
-    },
+    }
+
+    /**
+     * @private
+     */
+    function chartCallback(chart: Chart): void {
+        const composition = chart as ChartComposition;
+
+        composition.renderExporting();
+
+        addEvent(chart, 'redraw', composition.renderExporting);
+        // Destroy the export elements at chart destroy
+        addEvent(chart, 'destroy', composition.destroyExport);
+
+        // Uncomment this to see a button directly below the chart, for quick
+        // testing of export
+        /*
+        let button, viewImage, viewSource;
+        if (!chart.renderer.forExport) {
+            viewImage = function () {
+                let div = doc.createElement('div');
+                div.innerHTML = chart.getSVGForExport();
+                chart.renderTo.parentNode.appendChild(div);
+            };
+
+            viewSource = function () {
+                let pre = doc.createElement('pre');
+                pre.innerHTML = chart.getSVGForExport()
+                    .replace(/</g, '\n&lt;')
+                    .replace(/>/g, '&gt;');
+                chart.renderTo.parentNode.appendChild(pre);
+            };
+
+            viewImage();
+
+            // View SVG Image
+            button = doc.createElement('button');
+            button.innerHTML = 'View SVG Image';
+            chart.renderTo.parentNode.appendChild(button);
+            button.onclick = viewImage;
+
+            // View SVG Source
+            button = doc.createElement('button');
+            button.innerHTML = 'View SVG Source';
+            chart.renderTo.parentNode.appendChild(button);
+            button.onclick = viewSource;
+        }
+        //*/
+    }
+
+    /**
+     * @private
+     */
+    export function compose(
+        ChartClass: typeof Chart
+    ): void {
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+
+            const chartProto = ChartClass.prototype as ChartComposition;
+
+            chartProto.afterPrint = afterPrint;
+            chartProto.exportChart = exportChart;
+            chartProto.inlineStyles = inlineStyles;
+            chartProto.post = post;
+            chartProto.print = print;
+            chartProto.sanitizeSVG = sanitizeSVG;
+            chartProto.getChartHTML = getChartHTML;
+            chartProto.getSVG = getSVG;
+            chartProto.getSVGForExport = getSVGForExport;
+            chartProto.getFilename = getFilename;
+            chartProto.moveContainers = moveContainers;
+            chartProto.beforePrint = beforePrint;
+            chartProto.contextMenu = contextMenu;
+            chartProto.addButton = addButton;
+            chartProto.destroyExport = destroyExport;
+            chartProto.renderExporting = renderExporting;
+
+            chartProto.callbacks.push(chartCallback);
+            addEvent(ChartClass as typeof ChartComposition, 'init', onChartInit);
+
+            if (H.isSafari) {
+                H.win.matchMedia('print').addListener(
+                    function (
+                        this: MediaQueryList,
+                        mqlEvent: MediaQueryListEvent
+                    ): void {
+                        if (!printingChart) {
+                            return void 0;
+                        }
+                        if (mqlEvent.matches) {
+                            printingChart.beforePrint();
+                        } else {
+                            printingChart.afterPrint();
+                        }
+                    }
+                );
+            }
+        }
+    }
 
     /**
      * Display a popup menu for choosing the export type.
@@ -643,10 +721,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {void}
      * @requires modules/exporting
      */
-    contextMenu: function (
-        this: Chart,
+    function contextMenu(
+        this: ChartComposition,
         className: string,
-        items: Array<(string|Highcharts.ExportingMenuObject)>,
+        items: Array<(string|Exporting.MenuObject)>,
         x: number,
         y: number,
         width: number,
@@ -661,7 +739,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             cacheName = 'cache-' + className,
             menuPadding = Math.max(width, height); // for mouse leave detection
         let innerMenu: HTMLDOMElement,
-            menu: Highcharts.ExportingDivElement = (chart as any)[cacheName];
+            menu: Exporting.DivElement = (chart as any)[cacheName];
 
         // create the menu only the first time
         if (!menu) {
@@ -679,7 +757,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         pointerEvents: 'auto'
                     },
                     chart.fixedDiv || chart.container
-                ) as Highcharts.ExportingDivElement;
+                ) as Exporting.DivElement;
 
             innerMenu = createElement(
                 'ul',
@@ -741,7 +819,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             // create the items
             items.forEach(function (
-                item: (string|Highcharts.ExportingMenuObject)
+                item: (string|Exporting.MenuObject)
             ): void {
 
                 if (typeof item === 'string') {
@@ -839,181 +917,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         css(chart.container, { overflow: '' });
         chart.openMenu = true;
         fireEvent(chart, 'exportMenuShown');
-    },
-
-    /**
-     * Add the export button to the chart, with options.
-     *
-     * @private
-     * @function Highcharts.Chart#addButton
-     * @param {Highcharts.NavigationButtonOptions} options
-     * @return {void}
-     * @requires modules/exporting
-     */
-    addButton: function (
-        this: Chart,
-        options: ExportingButtonOptions
-    ): void {
-        const chart = this,
-            renderer = chart.renderer,
-            btnOptions = merge<ExportingButtonOptions>(
-                (chart.options.navigation as any).buttonOptions,
-                options
-            ),
-            onclick = btnOptions.onclick,
-            menuItems = btnOptions.menuItems,
-            symbolSize = btnOptions.symbolSize || 12;
-        let symbol;
-
-        if (!chart.btnCount) {
-            chart.btnCount = 0;
-        }
-
-        // Keeps references to the button elements
-        if (!chart.exportDivElements) {
-            chart.exportDivElements = [];
-            chart.exportSVGElements = [];
-        }
-
-        if (btnOptions.enabled === false || !btnOptions.theme) {
-            return;
-        }
-
-
-        const attr = btnOptions.theme,
-            states = attr.states,
-            hover = states && states.hover,
-            select = states && states.select;
-        let callback: (
-            EventCallback<SVGElement>|
-            undefined
-        );
-
-        if (!chart.styledMode) {
-            attr.fill = pick(attr.fill, palette.backgroundColor);
-            attr.stroke = pick(attr.stroke, 'none');
-        }
-
-        delete attr.states;
-
-        if (onclick) {
-            callback = function (
-                this: SVGElement,
-                e: (Event|AnyRecord)
-            ): void {
-                if (e) {
-                    e.stopPropagation();
-                }
-                (onclick as any).call(chart, e);
-            };
-
-        } else if (menuItems) {
-            callback = function (
-                this: SVGElement,
-                e: (Event|AnyRecord)
-            ): void {
-                // consistent with onclick call (#3495)
-                if (e) {
-                    e.stopPropagation();
-                }
-                chart.contextMenu(
-                    button.menuClassName,
-                    menuItems as any,
-                    button.translateX,
-                    button.translateY,
-                    button.width,
-                    button.height,
-                    button
-                );
-                button.setState(2);
-            };
-        }
-
-
-        if (btnOptions.text && btnOptions.symbol) {
-            attr.paddingLeft = pick(attr.paddingLeft, 30);
-
-        } else if (!btnOptions.text) {
-            extend(attr, {
-                width: btnOptions.width,
-                height: btnOptions.height,
-                padding: 0
-            });
-        }
-
-
-        if (!chart.styledMode) {
-            attr['stroke-linecap'] = 'round';
-            attr.fill = pick(attr.fill, palette.backgroundColor);
-            attr.stroke = pick(attr.stroke, 'none');
-        }
-
-        const button: SVGElement = renderer
-            .button(
-                btnOptions.text as any,
-                0,
-                0,
-                callback as any,
-                attr,
-                hover,
-                select
-            )
-            .addClass(options.className as any)
-            .attr({
-                title: pick((chart.options.lang as any)[
-                    btnOptions._titleKey || (btnOptions.titleKey as any)
-                ], '')
-            });
-
-        button.menuClassName = (
-            options.menuClassName ||
-            'highcharts-menu-' + chart.btnCount++
-        );
-
-        if (btnOptions.symbol) {
-            symbol = renderer
-                .symbol(
-                    btnOptions.symbol,
-                    (btnOptions.symbolX as any) - (symbolSize / 2),
-                    (btnOptions.symbolY as any) - (symbolSize / 2),
-                    symbolSize,
-                    symbolSize
-                    // If symbol is an image, scale it (#7957)
-                    , {
-                        width: symbolSize,
-                        height: symbolSize
-                    }
-                )
-                .addClass('highcharts-button-symbol')
-                .attr({
-                    zIndex: 1
-                })
-                .add(button);
-
-            if (!chart.styledMode) {
-                symbol.attr({
-                    stroke: btnOptions.symbolStroke,
-                    fill: btnOptions.symbolFill,
-                    'stroke-width': btnOptions.symbolStrokeWidth || 1
-                });
-            }
-        }
-
-        button
-            .add(chart.exportingGroup)
-            .align(extend(btnOptions, {
-                width: button.width,
-                x: pick(btnOptions.x, chart.buttonOffset) // #1654
-            }), true, 'spacingBox');
-
-        (chart.buttonOffset as any) += (
-            (button.width + btnOptions.buttonSpacing) *
-            (btnOptions.align === 'right' ? -1 : 1)
-        );
-
-        (chart.exportSVGElements as any).push(button, symbol as any);
-
-    },
+    }
 
     /**
      * Destroy the export buttons.
@@ -1023,11 +927,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {void}
      * @requires modules/exporting
      */
-    destroyExport: function (
-        this: Chart,
+    function destroyExport(
+        this: ChartComposition,
         e?: Event
     ): void {
-        const chart: Chart = e ? (e.target as any) : this,
+        const chart = e ? (e.target as unknown as ChartComposition) : this,
             exportSVGElements = chart.exportSVGElements,
             exportDivElements = chart.exportDivElements,
             exportEvents = chart.exportEvents;
@@ -1035,10 +939,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Destroy the extra buttons added
         if (exportSVGElements) {
-            exportSVGElements.forEach(function (
-                elem: SVGElement,
-                i: number
-            ): void {
+            exportSVGElements.forEach((elem, i): void => {
 
                 // Destroy and null the svg elements
                 if (elem) { // #1822
@@ -1049,7 +950,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         delete (chart as any)[cacheName];
                     }
 
-                    (chart.exportSVGElements as any)[i] = elem.destroy();
+                    exportSVGElements[i] = elem.destroy();
                 }
             });
             exportSVGElements.length = 0;
@@ -1064,23 +965,25 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Destroy the divs for the menu
         if (exportDivElements) {
             exportDivElements.forEach(function (
-                elem: Highcharts.ExportingDivElement,
+                elem: (Exporting.DivElement|null),
                 i: number
             ): void {
+                if (elem) {
+                    // Remove the event handler
+                    U.clearTimeout(elem.hideTimer as any); // #5427
+                    removeEvent(elem, 'mouseleave');
 
-                // Remove the event handler
-                U.clearTimeout(elem.hideTimer as any); // #5427
-                removeEvent(elem, 'mouseleave');
+                    // Remove inline events
+                    // (chart.exportDivElements as any)[i] =
+                    exportDivElements[i] =
+                        elem.onmouseout =
+                        elem.onmouseover =
+                        elem.ontouchstart =
+                        elem.onclick = null;
 
-                // Remove inline events
-                (chart.exportDivElements as any)[i] =
-                    elem.onmouseout =
-                    elem.onmouseover =
-                    elem.ontouchstart =
-                    elem.onclick = null;
-
-                // Destroy the div by moving to garbage bin
-                discardElement(elem);
+                    // Destroy the div by moving to garbage bin
+                    discardElement(elem);
+                }
             });
             exportDivElements.length = 0;
         }
@@ -1092,334 +995,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             exportEvents.length = 0;
         }
     }
-
-    /* eslint-enable no-invalid-this, valid-jsdoc */
-
-});
-
-/**
- * Add the buttons on chart load
- * @private
- * @function Highcharts.Chart#renderExporting
- * @return {void}
- * @requires modules/exporting
- */
-Chart.prototype.renderExporting = function (): void {
-    const chart = this,
-        exportingOptions: ExportingOptions =
-            chart.options.exporting as any,
-        buttons = exportingOptions.buttons,
-        isDirty = chart.isDirtyExporting || !chart.exportSVGElements;
-
-    chart.buttonOffset = 0;
-    if (chart.isDirtyExporting) {
-        chart.destroyExport();
-    }
-
-    if (isDirty && (exportingOptions as any).enabled !== false) {
-        chart.exportEvents = [];
-
-        chart.exportingGroup = chart.exportingGroup ||
-            chart.renderer.g('exporting-group').attr({
-                zIndex: 3 // #4955, // #8392
-            }).add();
-
-        objectEach(buttons, function (
-            button: ExportingButtonOptions
-        ): void {
-            chart.addButton(button);
-        });
-
-        chart.isDirtyExporting = false;
-    }
-};
-
-/* eslint-disable no-invalid-this */
-
-// Add update methods to handle chart.update and chart.exporting.update and
-// chart.navigation.update. These must be added to the chart instance rather
-// than the Chart prototype in order to use the chart instance inside the update
-// function.
-addEvent(Chart, 'init', function (): void {
-    const chart = this;
-
-    /**
-     * @private
-     * @param {"exporting"|"navigation"} prop
-     *        Property name in option root
-     * @param {Highcharts.ExportingOptions|Highcharts.NavigationOptions} options
-     *        Options to update
-     * @param {boolean} [redraw=true]
-     *        Whether to redraw
-     * @return {void}
-     */
-    function update(
-        prop: 'exporting'|'navigation',
-        options: (ExportingOptions|NavigationOptions),
-        redraw?: boolean
-    ): void {
-        chart.isDirtyExporting = true;
-        merge(true, (chart.options as any)[prop], options);
-        if (pick(redraw, true)) {
-            chart.redraw();
-        }
-    }
-
-    chart.exporting = {
-        update: function (
-            options: ExportingOptions,
-            redraw?: boolean
-        ): void {
-            update('exporting', options, redraw);
-        }
-    };
-
-    // Register update() method for navigation. Can not be set the same way as
-    // for exporting, because navigation options are shared with bindings which
-    // has separate update() logic.
-    chartNavigationMixin.addUpdate(
-        function (
-            options: NavigationOptions,
-            redraw?: boolean
-        ): void {
-            update('navigation', options, redraw);
-        },
-        chart
-    );
-});
-
-/* eslint-enable no-invalid-this */
-
-Chart.prototype.callbacks.push(function (chart: Chart): void {
-
-    chart.renderExporting();
-
-    addEvent(chart, 'redraw', chart.renderExporting);
-    // Destroy the export elements at chart destroy
-    addEvent(chart, 'destroy', chart.destroyExport);
-
-
-    // Uncomment this to see a button directly below the chart, for quick
-    // testing of export
-    /*
-    let button, viewImage, viewSource;
-    if (!chart.renderer.forExport) {
-        viewImage = function () {
-            let div = doc.createElement('div');
-            div.innerHTML = chart.getSVGForExport();
-            chart.renderTo.parentNode.appendChild(div);
-        };
-
-        viewSource = function () {
-            let pre = doc.createElement('pre');
-            pre.innerHTML = chart.getSVGForExport()
-                .replace(/</g, '\n&lt;')
-                .replace(/>/g, '&gt;');
-            chart.renderTo.parentNode.appendChild(pre);
-        };
-
-        viewImage();
-
-        // View SVG Image
-        button = doc.createElement('button');
-        button.innerHTML = 'View SVG Image';
-        chart.renderTo.parentNode.appendChild(button);
-        button.onclick = viewImage;
-
-        // View SVG Source
-        button = doc.createElement('button');
-        button.innerHTML = 'View SVG Source';
-        chart.renderTo.parentNode.appendChild(button);
-        button.onclick = viewSource;
-    }
-    //*/
-});
-
-namespace Exporting {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    export declare interface ChartComposition extends Chart {
-    // public constructor(
-    //     options: Partial<Options>,
-    //     callback?: Chart.CallbackFunction
-    // );
-    // public constructor(
-    //     renderTo: (string|globalThis.HTMLElement),
-    //     options: Partial<Options>,
-    //     callback?: Chart.CallbackFunction
-    // );
-    // public constructor(
-    //     a: (string|globalThis.HTMLElement|Partial<Options>),
-    //     b?: (Chart.CallbackFunction|Partial<Options>),
-    //     c?: Chart.CallbackFunction
-    // ) {
-    //     this.getArgs(a, b, c);
-    // }
-        new(
-            options: Partial<Options>,
-            callback?: Chart.CallbackFunction
-        ): this;
-        new(
-            renderTo: (string|globalThis.HTMLElement),
-            options: Partial<Options>,
-            callback?: Chart.CallbackFunction
-        ): this;
-    }
-
-    export declare class ChartComposition extends Chart {
-
-    }
-
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-    const composedClasses: Array<typeof Chart> = [];
-
-
-    // These CSS properties are not inlined. Remember camelCase.
-    const inlineBlacklist: Array<RegExp> = [
-        /-/, // In Firefox, both hyphened and camelCased names are listed
-        /^(clipPath|cssText|d|height|width)$/, // Full words
-        /^font$/, // more specific props are set
-        /[lL]ogical(Width|Height)$/,
-        /perspective/,
-        /TapHighlightColor/,
-        /^transition/,
-        /^length$/ // #7700
-        // /^text (border|color|cursor|height|webkitBorder)/
-    ];
-
-    // These ones are translated to attributes rather than styles
-    const inlineToAttributes: Array<string> = [
-        'fill',
-        'stroke',
-        'strokeLinecap',
-        'strokeLinejoin',
-        'strokeWidth',
-        'textAnchor',
-        'x',
-        'y'
-    ];
-
-    export const inlineWhitelist: Array<RegExp> = [];
-
-    const unstyledElements: Array<string> = [
-        'clipPath',
-        'defs',
-        'desc'
-    ];
-
-    /* *
-     *
-     *  Variables
-     *
-     * */
-
-    let printingChart: (Chart|undefined);
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * Clena up after printing a chart.
-     *
-     * @function Highcharts#afterPrint
-     *
-     * @private
-     *
-     * @param {Highcharts.Chart} chart
-     *        Chart that was (or suppose to be) printed
-     * @return {void}
-     *
-     * @fires Highcharts.Chart#event:afterPrint
-     */
-    function afterPrint(
-        this: Chart
-    ): void {
-        const chart = this;
-
-        if (!chart.printReverseInfo) {
-            return void 0;
-        }
-        const childNodes = chart.printReverseInfo.childNodes,
-            origDisplay = chart.printReverseInfo.origDisplay,
-            resetParams = chart.printReverseInfo.resetParams;
-
-        // put the chart back in
-        chart.moveContainers(chart.renderTo);
-
-        // restore all body content
-        [].forEach.call(childNodes, function (
-            node: HTMLDOMElement,
-            i: number
-        ): void {
-            if (node.nodeType === 1) {
-                node.style.display = (origDisplay[i] || '');
-            }
-        });
-
-        chart.isPrinting = false;
-
-        // Reset printMaxWidth
-        if (resetParams) {
-            chart.setSize.apply(chart, resetParams);
-        }
-
-        delete chart.printReverseInfo;
-        printingChart = void 0;
-
-        fireEvent(chart, 'afterPrint');
-    }
-
-    /**
-     * @private
-     */
-    export function compose(
-        ChartClass: typeof Chart
-    ): void {
-
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
-            ChartClass.prototype.afterPrint = afterPrint;
-            ChartClass.prototype.exportChart = exportChart;
-            ChartClass.prototype.inlineStyles = inlineStyles;
-            ChartClass.prototype.post = post;
-            ChartClass.prototype.print = print;
-
-            if (H.isSafari) {
-                H.win.matchMedia('print').addListener(
-                    function (
-                        this: MediaQueryList,
-                        mqlEvent: MediaQueryListEvent
-                    ): void {
-                        if (!printingChart) {
-                            return void 0;
-                        }
-                        if (mqlEvent.matches) {
-                            printingChart.beforePrint();
-                        } else {
-                            printingChart.afterPrint();
-                        }
-                    }
-                );
-            }
-        }
-    }
-
 
     /**
      * Exporting module required. Submit an SVG version of the chart to a server
@@ -1448,11 +1023,10 @@ namespace Exporting {
      * @requires modules/exporting
      */
     function exportChart(
-        this: Chart,
+        this: ChartComposition,
         exportingOptions: ExportingOptions,
         chartOptions: Options
     ): void {
-
         const svg = this.getSVGForExport(exportingOptions, chartOptions);
 
         // merge the options
@@ -1471,6 +1045,266 @@ namespace Exporting {
         }, exportingOptions.formAttributes as any);
     }
 
+    /**
+     * Return the unfiltered innerHTML of the chart container. Used as hook for
+     * plugins. In styled mode, it also takes care of inlining CSS style rules.
+     *
+     * @see Chart#getSVG
+     *
+     * @function Highcharts.Chart#getChartHTML
+     *
+     * @returns {string}
+     *          The unfiltered SVG of the chart.
+     *
+     * @requires modules/exporting
+     */
+    function getChartHTML(
+        this: ChartComposition
+    ): string {
+        if (this.styledMode) {
+            this.inlineStyles();
+        }
+
+        return this.container.innerHTML;
+    }
+
+    /**
+     * Get the default file name used for exported charts. By default it creates
+     * a file name based on the chart title.
+     *
+     * @function Highcharts.Chart#getFilename
+     *
+     * @return {string} A file name without extension.
+     *
+     * @requires modules/exporting
+     */
+    function getFilename(
+        this: ChartComposition
+    ): string {
+        const s = this.userOptions.title && this.userOptions.title.text;
+        let filename: string = (this.options.exporting as any).filename;
+
+        if (filename) {
+            return filename.replace(/\//g, '-');
+        }
+
+        if (typeof s === 'string') {
+            filename = s
+                .toLowerCase()
+                .replace(/<\/?[^>]+(>|$)/g, '') // strip HTML tags
+                .replace(/[\s_]+/g, '-')
+                .replace(/[^a-z0-9\-]/g, '') // preserve only latin
+                .replace(/^[\-]+/g, '') // dashes in the start
+                .replace(/[\-]+/g, '-') // dashes in a row
+                .substr(0, 24)
+                .replace(/[\-]+$/g, ''); // dashes in the end;
+        }
+
+        if (!filename || filename.length < 5) {
+            filename = 'chart';
+        }
+
+        return filename;
+    }
+
+    /**
+     * Return an SVG representation of the chart.
+     *
+     * @sample highcharts/members/chart-getsvg/
+     *         View the SVG from a button
+     *
+     * @function Highcharts.Chart#getSVG
+     *
+     * @param {Highcharts.Options} [chartOptions]
+     *        Additional chart options for the generated SVG representation. For
+     *        collections like `xAxis`, `yAxis` or `series`, the additional
+     *        options is either merged in to the original item of the same
+     *        `id`, or to the first item if a common id is not found.
+     *
+     * @return {string}
+     *         The SVG representation of the rendered chart.
+     *
+     * @fires Highcharts.Chart#event:getSVG
+     *
+     * @requires modules/exporting
+     */
+    function getSVG(
+        this: ChartComposition,
+        chartOptions?: DeepPartial<Options>
+    ): string {
+        const chart = this;
+        let svg,
+            seriesOptions: DeepPartial<SeriesTypeOptions>,
+            // Copy the options and add extra options
+            options = merge(chart.options, chartOptions);
+
+        // Use userOptions to make the options chain in series right (#3881)
+        options.plotOptions = merge(
+            chart.userOptions.plotOptions,
+            chartOptions && chartOptions.plotOptions
+        );
+        // ... and likewise with time, avoid that undefined time properties are
+        // merged over legacy global time options
+        options.time = merge(
+            chart.userOptions.time,
+            chartOptions && chartOptions.time
+        );
+
+        // create a sandbox where a new chart will be generated
+        const sandbox = createElement('div', null as any, {
+            position: 'absolute',
+            top: '-9999em',
+            width: chart.chartWidth + 'px',
+            height: chart.chartHeight + 'px'
+        }, doc.body);
+
+        // get the source size
+        const cssWidth: string = chart.renderTo.style.width as any,
+            cssHeight: string = chart.renderTo.style.height as any,
+            sourceWidth: number = (options.exporting as any).sourceWidth ||
+                options.chart.width ||
+                (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
+                (options.isGantt ? 800 : 600),
+            sourceHeight: number = (options.exporting as any).sourceHeight ||
+                options.chart.height ||
+                (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
+                400;
+
+        // override some options
+        extend(options.chart, {
+            animation: false,
+            renderTo: sandbox,
+            forExport: true,
+            renderer: 'SVGRenderer',
+            width: sourceWidth,
+            height: sourceHeight
+        });
+        (options.exporting as any).enabled = false; // hide buttons in print
+        delete options.data; // #3004
+
+        // prepare for replicating the chart
+        options.series = [];
+        chart.series.forEach(function (serie): void {
+            seriesOptions = merge(serie.userOptions, { // #4912
+                animation: false, // turn off animation
+                enableMouseTracking: false,
+                showCheckbox: false,
+                visible: serie.visible
+            });
+
+            // Used for the navigator series that has its own option set
+            if (!seriesOptions.isInternal) {
+                (options.series as any).push(seriesOptions);
+            }
+        });
+
+        const colls: Record<string, boolean> = {};
+        chart.axes.forEach(function (axis): void {
+            // Assign an internal key to ensure a one-to-one mapping (#5924)
+            if (!axis.userOptions.internalKey) { // #6444
+                axis.userOptions.internalKey = uniqueKey();
+            }
+
+            if (!axis.options.isInternal) {
+                if (!colls[axis.coll]) {
+                    colls[axis.coll] = true;
+                    (options as any)[axis.coll] = [];
+                }
+
+                (options as any)[axis.coll].push(merge(axis.userOptions, {
+                    visible: axis.visible
+                }));
+            }
+        });
+
+        // generate the chart copy
+        const chartCopy = new Chart(options, chart.callback) as ChartComposition;
+
+        // Axis options and series options  (#2022, #3900, #5982)
+        if (chartOptions) {
+            ['xAxis', 'yAxis', 'series'].forEach(function (coll: string): void {
+                const collOptions: Partial<Options> = {};
+
+                if ((chartOptions as any)[coll]) {
+                    (collOptions as any)[coll] = (chartOptions as any)[coll];
+                    chartCopy.update(collOptions);
+                }
+            });
+        }
+
+        // Reflect axis extremes in the export (#5924)
+        chart.axes.forEach(function (axis): void {
+            const axisCopy = find(chartCopy.axes, function (
+                    copy: Axis
+                ): boolean {
+                    return copy.options.internalKey ===
+                        axis.userOptions.internalKey;
+                }),
+                extremes = axis.getExtremes(),
+                userMin = extremes.userMin,
+                userMax = extremes.userMax;
+
+            if (
+                axisCopy &&
+                ((
+                    typeof userMin !== 'undefined' &&
+                    userMin !== axisCopy.min) || (
+                    typeof userMax !== 'undefined' &&
+                    userMax !== axisCopy.max
+                ))
+            ) {
+                axisCopy.setExtremes(userMin, userMax, true, false);
+            }
+        });
+
+        // Get the SVG from the container's innerHTML
+        svg = chartCopy.getChartHTML();
+        fireEvent(this, 'getSVG', { chartCopy: chartCopy });
+
+        svg = chart.sanitizeSVG(svg, options);
+
+        // free up memory
+        options = null as any;
+        chartCopy.destroy();
+        discardElement(sandbox);
+
+        return svg;
+    }
+
+    /**
+     * @private
+     * @function Highcharts.Chart#getSVGForExport
+     * @param {Highcharts.ExportingOptions} options
+     * @param {Highcharts.Options} chartOptions
+     * @return {string}
+     * @requires modules/exporting
+     */
+    function getSVGForExport(
+        this: ChartComposition,
+        options: ExportingOptions,
+        chartOptions: Partial<Options>
+    ): string {
+        const chartExportingOptions: ExportingOptions =
+            this.options.exporting as any;
+
+        return this.getSVG(merge(
+            { chart: { borderRadius: 0 } },
+            chartExportingOptions.chartOptions,
+            chartOptions,
+            {
+                exporting: {
+                    sourceWidth: (
+                        (options && options.sourceWidth) ||
+                        chartExportingOptions.sourceWidth
+                    ),
+                    sourceHeight: (
+                        (options && options.sourceHeight) ||
+                        chartExportingOptions.sourceHeight
+                    )
+                }
+            }
+        ));
+    }
 
     /**
      * Make hyphenated property names out of camelCase
@@ -1693,6 +1527,85 @@ namespace Exporting {
     }
 
     /**
+     * Move the chart container(s) to another div.
+     *
+     * @function Highcharts#moveContainers
+     *
+     * @private
+     *
+     * @param {Highcharts.HTMLDOMElement} moveTo
+     *        Move target
+     * @return {void}
+     */
+    function moveContainers(this: Chart, moveTo: HTMLDOMElement): void {
+        const chart = this;
+        (
+            chart.fixedDiv ? // When scrollablePlotArea is active (#9533)
+                [chart.fixedDiv, chart.scrollingContainer as any] :
+                [chart.container]
+
+        ).forEach(function (div: HTMLDOMElement): void {
+            moveTo.appendChild(div);
+        });
+    }
+
+    /**
+     * Add update methods to handle chart.update and chart.exporting.update and
+     * chart.navigation.update. These must be added to the chart instance rather
+     * than the Chart prototype in order to use the chart instance inside the
+     * update function.
+     * @private
+     */
+    function onChartInit(
+        this: ChartComposition
+    ): void {
+        const chart = this,
+            /**
+             * @private
+             * @param {"exporting"|"navigation"} prop
+             *        Property name in option root
+             * @param {Highcharts.ExportingOptions|Highcharts.NavigationOptions} options
+             *        Options to update
+             * @param {boolean} [redraw=true]
+             *        Whether to redraw
+             * @return {void}
+             */
+            update = (
+                prop: ('exporting'|'navigation'),
+                options: (ExportingOptions|NavigationOptions),
+                redraw?: boolean
+            ): void => {
+                chart.isDirtyExporting = true;
+                merge(true, chart.options[prop], options);
+                if (pick(redraw, true)) {
+                    chart.redraw();
+                }
+            };
+
+        chart.exporting = {
+            update: function (
+                options: ExportingOptions,
+                redraw?: boolean
+            ): void {
+                update('exporting', options, redraw);
+            }
+        };
+
+        // Register update() method for navigation. Can not be set the same way
+        // as for exporting, because navigation options are shared with bindings
+        // which has separate update() logic.
+        chartNavigationMixin.addUpdate(
+            function (
+                options: NavigationOptions,
+                redraw?: boolean
+            ): void {
+                update('navigation', options, redraw);
+            },
+            chart
+        );
+    }
+
+    /**
      * The post utility
      *
      * @private
@@ -1757,7 +1670,7 @@ namespace Exporting {
      * @requires modules/exporting
      */
     function print(
-        this: Chart
+        this: ChartComposition
     ): void {
         const chart = this;
 
@@ -1787,9 +1700,139 @@ namespace Exporting {
         }, 1);
 
     }
+
+    /**
+     * Add the buttons on chart load
+     * @private
+     * @function Highcharts.Chart#renderExporting
+     * @return {void}
+     * @requires modules/exporting
+     */
+    function renderExporting(this: ChartComposition): void {
+        const chart = this as Exporting.ChartComposition,
+            exportingOptions: ExportingOptions =
+                chart.options.exporting as any,
+            buttons = exportingOptions.buttons,
+            isDirty = chart.isDirtyExporting || !chart.exportSVGElements;
+
+        chart.buttonOffset = 0;
+        if (chart.isDirtyExporting) {
+            chart.destroyExport();
+        }
+
+        if (isDirty && (exportingOptions as any).enabled !== false) {
+            chart.exportEvents = [];
+
+            chart.exportingGroup = chart.exportingGroup ||
+                chart.renderer.g('exporting-group').attr({
+                    zIndex: 3 // #4955, // #8392
+                }).add();
+
+            objectEach(buttons, function (
+                button: ExportingButtonOptions
+            ): void {
+                chart.addButton(button);
+            });
+
+            chart.isDirtyExporting = false;
+        }
+    }
+
+    /**
+     * Exporting module only. A collection of fixes on the produced SVG to
+     * account for expando properties, browser bugs, VML problems and other.
+     * Returns a cleaned SVG.
+     *
+     * @private
+     * @function Highcharts.Chart#sanitizeSVG
+     * @param {string} svg
+     *        SVG code to sanitize
+     * @param {Highcharts.Options} options
+     *        Chart options to apply
+     * @return {string}
+     *         Sanitized SVG code
+     * @requires modules/exporting
+     */
+    function sanitizeSVG(
+        this: Chart,
+        svg: string,
+        options: Options
+    ): string {
+
+        const split = svg.indexOf('</svg>') + 6;
+        let html = svg.substr(split);
+
+        // Remove any HTML added to the container after the SVG (#894, #9087)
+        svg = svg.substr(0, split);
+
+        // Move HTML into a foreignObject
+        if (options && options.exporting && options.exporting.allowHTML) {
+            if (html) {
+                html = '<foreignObject x="0" y="0" ' +
+                            'width="' + options.chart.width + '" ' +
+                            'height="' + options.chart.height + '">' +
+                    '<body xmlns="http://www.w3.org/1999/xhtml">' +
+                    // Some tags needs to be closed in xhtml (#13726)
+                    html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
+                    '</body>' +
+                    '</foreignObject>';
+                svg = svg.replace('</svg>', html + '</svg>');
+            }
+
+        }
+
+        svg = svg
+            .replace(/zIndex="[^"]+"/g, '')
+            .replace(/symbolName="[^"]+"/g, '')
+            .replace(/jQuery[0-9]+="[^"]+"/g, '')
+            .replace(/url\(("|&quot;)(.*?)("|&quot;)\;?\)/g, 'url($2)')
+            .replace(/url\([^#]+#/g, 'url(#')
+            .replace(
+                /<svg /,
+                '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
+            )
+            .replace(/ (|NS[0-9]+\:)href=/g, ' xlink:href=') // #3567
+            .replace(/\n/, ' ')
+            // Batik doesn't support rgba fills and strokes (#3095)
+            .replace(
+                /(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, // eslint-disable-line max-len
+                '$1="rgb($2)" $1-opacity="$3"'
+            )
+
+            // Replace HTML entities, issue #347
+            .replace(/&nbsp;/g, '\u00A0') // no-break space
+            .replace(/&shy;/g, '\u00AD'); // soft hyphen
+
+        // Further sanitize for oldIE
+        if (this.ieSanitizeSVG) {
+            svg = this.ieSanitizeSVG(svg);
+        }
+
+        return svg;
+    }
+
 }
 
-Exporting.compose(Chart);
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+defaultOptions.exporting = merge(ExportingDefaults.exporting, defaultOptions.exporting);
+defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
+
+// Buttons and menus are collected in a separate config option set called
+// 'navigation'. This can be extended later to add control buttons like
+// zoom and pan right click menus.
+/**
+ * A collection of options for buttons and menus appearing in the exporting
+ * module.
+ *
+ * @requires     modules/exporting
+ * @optionparent navigation
+ */
+defaultOptions.navigation = merge(ExportingDefaults.navigation, defaultOptions.navigation);
 
 /* *
  *

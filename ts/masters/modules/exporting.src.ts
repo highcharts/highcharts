@@ -10,5 +10,8 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import Highcharts from '../../Core/Globals.js';
+const G: AnyRecord = Highcharts;
 import '../../Extensions/FullScreen.js';
-import '../../Extensions/Exporting/Exporting.js';
+import Exporting from '../../Extensions/Exporting/Exporting.js';
+Exporting.compose(G.Chart);

@@ -16,6 +16,7 @@
 
 'use strict';
 
+import type Exporting from '../Extensions/Exporting/Exporting';
 import type LangOptions from '../Core/LangOptions';
 import type Point from '../Core/Series/Point';
 import type {
@@ -1263,6 +1264,7 @@ function getBlobFromContent(
     }
 }
 
+/* eslint-disable valid-jsdoc */
 
 /**
  * Generates a data URL of CSV for local download in the browser. This is the
@@ -1274,7 +1276,9 @@ function getBlobFromContent(
  *
  * @requires modules/exporting
  */
-Chart.prototype.downloadCSV = function (): void {
+Chart.prototype.downloadCSV = function (
+    this: Exporting.ChartComposition
+): void {
     const csv = this.getCSV(true);
 
     downloadURL(
@@ -1294,7 +1298,9 @@ Chart.prototype.downloadCSV = function (): void {
  *
  * @requires modules/exporting
  */
-Chart.prototype.downloadXLS = function (): void {
+Chart.prototype.downloadXLS = function (
+    this: Exporting.ChartComposition
+): void {
     const uri = 'data:application/vnd.ms-excel;base64,',
         template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
             'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
@@ -1426,7 +1432,7 @@ if (exportingOptions) {
                 this.toggleDataTable();
             }
         }
-    } as Record<string, Highcharts.ExportingMenuObject>);
+    } as Record<string, Exporting.MenuObject>);
 
     if (exportingOptions.buttons) {
         (exportingOptions.buttons.contextButton.menuItems as any).push(
