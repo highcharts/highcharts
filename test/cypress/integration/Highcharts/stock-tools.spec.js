@@ -9,7 +9,8 @@ describe('Stock Tools', () => {
 
     it('#15730: Should close popup after hiding annotation', () => {
         cy.get('.highcharts-label-annotation').first().click();
-        cy.get('.highcharts-container').click().chart().should(chart =>
+        cy.get('.highcharts-container').click();
+        cy.chart().should(chart =>
             assert.strictEqual(chart.annotations.length, 1)
         );
         cy.get('.highcharts-annotation').click();
