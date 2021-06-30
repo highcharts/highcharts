@@ -67,7 +67,7 @@ class HeikinAshiPoint extends CandlestickSeries.prototype.pointClass {
                 'plotLow',
                 'plotClose',
                 'yBottom'
-            ]; // translate OHLC for
+            ]; // Translate OHLC into the point attributes.
 
         [point.open, point.high, point.low, point.close, point.low]
             .forEach(
@@ -95,16 +95,12 @@ class HeikinAshiPoint extends CandlestickSeries.prototype.pointClass {
      *
      */
     public modifyFirstPointValue(): void {
-        const point = this,
-            newClose = (point.open + point.high + point.low + point.close) / 4,
-            newOpen = (point.open + point.close) / 2;
-
-        point.open = newOpen;
-        point.close = newClose;
+        this.open = (this.open + this.high + this.low + this.close) / 4;
+        this.close = (this.open + this.close) / 2;
     }
 
     /**
-     * Calculate and modify the point value.
+     * Calculate and modify the point's value.
      * @private
      *
      * @function Highcharts.seriesTypes.heikinashi#modifyValue
