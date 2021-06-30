@@ -11,10 +11,6 @@ interface ComponentGroup {
 
     addComponents(components: componentID[]): void;
     removeComponents(components: componentID[]): void;
-
-    // Maybe
-    on(): void;
-    emit(): void;
 }
 
 class ComponentGroup {

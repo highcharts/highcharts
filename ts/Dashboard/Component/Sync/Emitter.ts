@@ -1,11 +1,12 @@
 import type ComponentTypes from '../ComponentType';
+import type Sync from './Sync';
 
 /* *
  *
  *  Wrapper for event listeners on a component
  *
  * */
-export default class SyncEmitter {
+class SyncEmitter implements Sync.Emitter {
 
 
     /**
@@ -31,9 +32,13 @@ export default class SyncEmitter {
         this.id = id;
         this.type = type;
         this.func = func;
+
+        SyncEmitter.register(this);
     }
 
     public createEmitter(component: ComponentTypes): Function {
         return this.func.bind(component);
     }
 }
+
+export default SyncEmitter;

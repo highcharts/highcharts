@@ -71,6 +71,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     private elements: AST.Node[];
     private scaleElements: boolean;
     public options: HTMLComponent.HTMLComponentOptions;
+    public sync: Component['sync'];
 
     /* *
      *
@@ -91,6 +92,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         this.innerElements = [];
         this.elements = [];
         this.scaleElements = this.options.scaleElements;
+        this.sync = new Component.Sync(this, this.options.syncEvents, this.options.syncHandlers);
 
         this.on('tableChanged', (e): void => {
             if ('detail' in e && e.detail && e.detail.sender !== this.id) {

@@ -1,10 +1,6 @@
 /* eslint-disable require-jsdoc */
 import type ComponentType from './ComponentType';
-import type StoreType from '../../Data/Stores/StoreType';
-import type CSVStore from '../../Data/Stores/CSVStore';
-import type HTMLTableStore from '../../Data/Stores/HTMLTableStore';
-import type GoogleSheetsStore from '../../Data/Stores/GoogleSheetsStore';
-import Cell from '../Layout/Cell.js';
+import type Cell from '../Layout/Cell.js';
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
@@ -30,6 +26,7 @@ const {
 
 import { getMargins, getPaddings } from './Utils.js';
 import ComponentGroup from './ComponentGroup.js';
+import Sync from './Sync/Sync.js';
 
 abstract class Component<TEventObject extends Component.EventTypes = Component.EventTypes> {
 
@@ -214,6 +211,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             });
         }
     }
+
+    public static Sync = Sync;
     public static defaultOptions: Component.ComponentOptions = {
         className: 'hcd-component',
         parentElement: document.body,
@@ -226,6 +225,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             display: 'flex',
             'flex-direction': 'column'
         },
+        syncEvents: [],
+        syncHandlers: Sync.defaultHandlers,
         editableOptions: [
             'id',
             'store',
@@ -258,6 +259,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public presentationTable?: DataTable;
 
     public activeGroup: ComponentGroup | undefined = void 0;
+
+    public abstract sync: Sync;
 
     /**
      * Timeouts for calls to `Component.resizeTo()`
@@ -800,6 +803,7 @@ namespace Component {
     export type TableChangedEvent = Event<'tableChanged', {}>
     export type PresentationModifierEvent = Component.Event<'afterPresentationModifier', { table: DataTable }>
 
+
     export type Event<
         EventType extends DataEventEmitter.Event['type'],
         EventRecord extends Record<string, any>> = {
@@ -819,6 +823,8 @@ namespace Component {
         editableOptions: Array<keyof EditableOptions>;
         editableOptionsBindings?: EditableOptions.BindingsType;
         presentationModifier?: DataModifier;
+        syncEvents: Sync.EventType[];
+        syncHandlers: Sync.OptionsRecord;
     }
 
     export type StoreTypes = DataStore<DataStore.Event>

@@ -3,6 +3,7 @@ import type ChartComponent from '../ChartComponent';
 import type Chart from '../../../Core/Chart/Chart';
 import type Point from '../../../Core/Series/Point';
 import type SharedState from '../SharedComponentState';
+import type Sync from './Sync';
 
 import ComponentGroup from '../ComponentGroup.js';
 import U from '../../../Core/Utilities.js';
@@ -367,7 +368,7 @@ export const panEmitter = new SyncEmitter(
     }
 );
 
-export const defaults: Record<string, { emitter: SyncEmitter; handler: SyncHandler }> = {
+export const defaults: Sync.OptionsRecord = {
     panning: { emitter: panEmitter, handler: selectionHandler },
     selection: { emitter: selectionEmitter, handler: selectionHandler },
     tooltip: { emitter: tooltipEmitter, handler: tooltipHandler },

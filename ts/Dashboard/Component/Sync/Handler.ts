@@ -1,4 +1,4 @@
-import type ChartComponent from '../ChartComponent';
+import type ComponentTypes from '../ComponentType';
 import type SharedState from '../SharedComponentState';
 
 /* *
@@ -34,7 +34,7 @@ export default class SyncHandler {
         SyncHandler.register(this);
     }
 
-    public createHandler(component: ChartComponent): Function {
+    public createHandler(component: ComponentTypes): Function {
         return (): void => {
             const { id, activeGroup } = component;
             if (activeGroup) {
