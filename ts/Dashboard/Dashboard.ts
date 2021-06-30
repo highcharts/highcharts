@@ -40,7 +40,12 @@ class Dashboard {
         componentOptions: {
             isResizable: true
         },
-        components: []
+        components: [],
+        respoBreakpoints: {
+            small: 576,
+            medium: 992,
+            large: 1200
+        }
     };
 
     public static fromJSON(json: Dashboard.ClassJSON): Dashboard {
@@ -49,7 +54,8 @@ class Dashboard {
                 options.containerId,
                 {
                     layoutsJSON: options.layouts,
-                    componentOptions: options.componentOptions
+                    componentOptions: options.componentOptions,
+                    respoBreakpoints: options.respoBreakpoints
                 }
             );
 
@@ -268,7 +274,8 @@ class Dashboard {
                 containerId: dashboard.container.id,
                 guiEnabled: dashboard.guiEnabled,
                 layouts: layouts,
-                componentOptions: dashboard.options.componentOptions
+                componentOptions: dashboard.options.componentOptions,
+                respoBreakpoints: dashboard.options.respoBreakpoints
             }
         };
     }
@@ -296,6 +303,13 @@ namespace Dashboard {
         components?: Array<Bindings.ComponentOptions>;
         componentOptions?: Partial<Bindings.ComponentOptions>;
         layoutsJSON?: Array<Layout.ClassJSON>;
+        respoBreakpoints?: RespoBreakpoints;
+    }
+
+    export interface RespoBreakpoints extends DataJSON.JSONObject {
+        small: number;
+        medium: number;
+        large: number;
     }
 
     export interface GUIOptions {
@@ -313,6 +327,7 @@ namespace Dashboard {
         layouts: Array<Layout.ClassJSON>;
         guiEnabled?: boolean;
         componentOptions?: Partial<Bindings.ComponentOptions>;
+        respoBreakpoints?: RespoBreakpoints;
     }
 }
 

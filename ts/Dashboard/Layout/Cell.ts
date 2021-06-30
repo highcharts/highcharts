@@ -110,7 +110,14 @@ class Cell extends GUIElement {
         if (parentContainer) {
             const layoutOptions = row.layout.options || {},
                 rowOptions = row.options || {},
-                cellClassName = layoutOptions.cellClassName || '';
+                cellClassName = layoutOptions.cellClassName || '',
+                width = GUIElement.getPercentageWidth(this.options.width || ''),
+                style = options.style ? options.style : {};
+
+            if (width) {
+                style.width = '';
+                style.flex = '0 0 ' + width;
+            }
 
             this.setElementContainer({
                 render: row.layout.dashboard.guiEnabled,
@@ -125,7 +132,7 @@ class Cell extends GUIElement {
                 style: merge(
                     layoutOptions.style,
                     rowOptions.style,
-                    options.style
+                    style
                 )
             });
 
@@ -344,11 +351,18 @@ class Cell extends GUIElement {
 namespace Cell {
     export interface Options {
         id: string;
-        width?: number;
+        width?: string; // eg 50%, 1/2
+        height?: number;
         style?: CSSJSONObject;
         parentContainerId?: string;
         mountedComponentJSON?: Component.ClassJSON;
         layout?: Layout.Options;
+        responsive?: Record<string, CellResponsiveOptions>;
+    }
+
+    export interface CellResponsiveOptions {
+        width: string;
+        // visible: boolean;
     }
 
     export interface ClassJSON extends DataJSON.ClassJSON {

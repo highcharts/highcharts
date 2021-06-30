@@ -62,6 +62,29 @@ abstract class GUIElement {
         return DashboardGlobals.prefix + elementType + '-' + uniqueKey().slice(11);
     }
 
+    // Get width in percentages.
+    public static getPercentageWidth(
+        width: string // supported formats '50%' or '1/2'
+    ): string | undefined {
+        const percentageRegEx = new RegExp('^([0-9]{1,2})%$');
+        const fractionRegEx = new RegExp('^([0-9]{1})[\-\/\.]([0-9]{1,2})$');
+
+        let result;
+
+        if (percentageRegEx.test(width)) {
+            result = width;
+        } else if (fractionRegEx.test(width)) {
+            const match = width.match(fractionRegEx) || [],
+                multiplier = +match[1],
+                divider = +match[2];
+
+            result = 100 * multiplier / divider;
+            result = (result <= 100 ? result : 100) + '%';
+        }
+
+        return result;
+    }
+
     /* *
     *
     *  Properties

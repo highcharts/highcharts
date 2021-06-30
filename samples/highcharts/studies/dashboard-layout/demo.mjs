@@ -182,13 +182,13 @@ let dashboard = new Dashboard('container', {
                 // id: 'dashboard-row-0',
                 cells: [{
                     id: 'dashboard-col-0',
-                    width: 100,
+                    width: '50%',
                     style: {
                         color: 'yellow'
                     }
                 }, {
                     id: 'dashboard-col-1',
-                    width: 100,
+                    width: '1/2',
                     style: {
                     // color: 'orange'
                     }
@@ -199,11 +199,14 @@ let dashboard = new Dashboard('container', {
                     // color: 'red'
                 },
                 cells: [{
-                    id: 'dashboard-col-2'
+                    id: 'dashboard-col-2',
+                    width: '2/3'
                 }, {
-                    id: 'dashboard-col-21'
+                    id: 'dashboard-col-21',
+                    width: '1/6'
                 }, {
-                    id: 'dashboard-col-22'
+                    id: 'dashboard-col-22',
+                    width: '1/6'
                 }]
             }, {
                 id: 'dashboard-row-3',
