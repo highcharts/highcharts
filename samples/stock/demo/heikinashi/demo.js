@@ -8,7 +8,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
         },
         yAxis: [{
             title: {
-                text: 'OHLC'
+                text: 'Candlestick'
             },
             height: '50%'
         }, {
