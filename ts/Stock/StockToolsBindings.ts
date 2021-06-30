@@ -2320,7 +2320,10 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             this.chart.series[0].update({
                 type: 'hlc',
-                useOhlcData: true
+                useOhlcData: true,
+                dataGrouping: {
+                    approximation: 'hlc'
+                }
             });
             fireEvent(this, 'deselectButton', { button });
         }

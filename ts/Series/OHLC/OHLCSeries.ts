@@ -30,6 +30,7 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import HLCPoint from '../HLC/HLCPoint';
+import LineSeriesOptions from '../Line/LineSeriesOptions';
 
 const {
     addEvent,
@@ -404,6 +405,22 @@ addEvent(Series, 'init', function (
         });
     }
 });
+
+addEvent(Series, 'afterSetOptions', function (
+    e: { options: LineSeriesOptions }
+): void {
+    const options = e.options,
+        dataGrouping = options.dataGrouping;
+
+    if (
+        dataGrouping &&
+        options.useOhlcData &&
+        options.id !== 'highcharts-navigator-series'
+    ) {
+        dataGrouping.approximation = 'ohlc';
+    }
+});
+
 
 /* *
  *

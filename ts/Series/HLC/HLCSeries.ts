@@ -263,8 +263,8 @@ class HLCSeries extends ColumnSeries {
                 if (point.close !== null) {
                     plotClose = Math.round(point.plotClose) + crispCorr;
                     path.push(
-                        ['M', crispX - halfWidth, plotClose],
-                        ['L', crispX + halfWidth, plotClose]
+                        ['M', crispX, plotClose],
+                        ['L', crispX + halfWidth * 2, plotClose]
                     );
 
                     extendStem(path, strokeWidth / 2, plotClose);
