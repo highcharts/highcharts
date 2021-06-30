@@ -2305,6 +2305,27 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         }
     },
     /**
+     * Change main series to `'hlc'` type.
+     *
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
+     * @product highstock
+     * @default {"className": "highcharts-series-type-hlc", "init": function () {}}
+     */
+
+    seriesTypeHLC: {
+        className: 'highcharts-series-type-hlc',
+        init: function (
+            this: NavigationBindings,
+            button: HTMLDOMElement
+        ): void {
+            this.chart.series[0].update({
+                type: 'hlc',
+                useOhlcData: true
+            });
+            fireEvent(this, 'deselectButton', { button });
+        }
+    },
+    /**
      * Displays chart in fullscreen.
      *
      * **Note**: Fullscreen is not supported on iPhone due to iOS limitations.
