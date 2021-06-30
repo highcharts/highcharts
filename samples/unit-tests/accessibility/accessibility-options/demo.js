@@ -351,9 +351,7 @@ QUnit.test('Focus border in wordcloud', function (assert) {
         focusBorderY = chart.focusElement.focusBorder.attr('y'),
         focusBorderHeight = chart.focusElement.focusBorder.attr('height'),
         focusElementX = chart.focusElement.attr('x'),
-        focusElementY = chart.focusElement.attr('y'),
-        focusElementHeight = point.graphic.getBBox().height,
-        H = Highcharts;
+        focusElementY = chart.focusElement.attr('y');
 
     assert.strictEqual(
         focusBorderX + focusBorderWidth / 2,
@@ -361,10 +359,9 @@ QUnit.test('Focus border in wordcloud', function (assert) {
         'should be correctly applied for text elements horizontally, #11397'
     );
 
-    // Correct baseline position on Firefox.
     assert.strictEqual(
         focusBorderY + focusBorderHeight / 2,
-        H.isFirefox ? focusElementY - focusElementHeight * 0.25 : focusElementY,
+        focusElementY,
         'should be correctly applied for text elements vertically, #11397'
     );
 });
