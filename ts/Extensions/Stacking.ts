@@ -328,10 +328,10 @@ class StackItem {
                 .label(
                     str,
                     null as any,
-                    null as any,
+                    void 0,
                     (options as any).shape,
-                    null as any,
-                    null as any,
+                    void 0,
+                    void 0,
                     options.useHTML,
                     false,
                     'stack-labels'
@@ -340,7 +340,7 @@ class StackItem {
             attr = {
                 r: options.borderRadius || 0,
                 text: str,
-                rotation: (options as any).rotation,
+                rotation: options.rotation,
                 padding: pick((options as any).padding, 5), // set default padding to 5 as it is in datalabels #12308
                 visibility: 'hidden' // hidden until setOffset is called
             };
@@ -358,6 +358,13 @@ class StackItem {
                 this.label.add(group); // add to the labels-group
             }
         }
+
+        // #15129
+        const bb = this.label.getBBox();
+        this.label.attr({
+            rotationOriginX: bb.width / 2,
+            rotationOriginY: bb.height / 2
+        });
 
         // Rank it higher than data labels (#8742)
         this.label.labelrank = chart.plotSizeY;
