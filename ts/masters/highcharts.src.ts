@@ -41,7 +41,6 @@ import '../Series/Column/ColumnSeries.js';
 import '../Series/Bar/BarSeries.js';
 import '../Series/Scatter/ScatterSeries.js';
 import '../Series/Pie/PieSeries.js';
-import '../Core/Series/DataLabels.js';
 import '../Extensions/OverlappingDataLabels.js';
 import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';

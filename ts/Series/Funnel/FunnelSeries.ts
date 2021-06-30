@@ -630,7 +630,7 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function (): void {
             dataLabelsOptions = dataLabelsOptions[0];
         }
         if (
-            series.is('pie') &&
+            series instanceof PieSeries &&
             series.placeDataLabels &&
             dataLabelsOptions &&
             !dataLabelsOptions.inside
@@ -639,18 +639,6 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function (): void {
         }
     });
 });
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-type BBoxObjectImport = BBoxObject;
-namespace FunnelSeries {
-
-
-}
 
 /* *
  *

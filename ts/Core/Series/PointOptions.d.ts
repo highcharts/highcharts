@@ -16,6 +16,7 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
+import type DataLabelOptions from './DataLabelOptions';
 import type { EventCallback } from '../Callback';
 import type Point from './Point';
 import type PointerEvent from '../PointerEvent';
@@ -82,6 +83,7 @@ export interface PointOptions {
     color?: ColorType;
     colorIndex?: number;
     custom?: AnyRecord;
+    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
     drilldown?: string;
     events?: PointEventsOptions;
     id?: string;

@@ -19,6 +19,7 @@ import type { EventCallback } from '../Callback';
 import type ColorType from '../Color/ColorType';
 import type { CursorValue } from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type DataLabelOptions from './DataLabelOptions';
 import type Point from './Point';
 import type {
     PointEventsOptions,
@@ -99,6 +100,7 @@ export interface SeriesOptions {
     cursor?: CursorValue;
     dashStyle?: DashStyleValue;
     data?: Array<(PointOptions|PointShortOptions)>;
+    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
     dataSorting?: SeriesDataSortingOptions;
     enableMouseTracking?: boolean;
     events?: SeriesEventsOptions;

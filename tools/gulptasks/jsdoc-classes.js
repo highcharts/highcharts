@@ -32,7 +32,6 @@ const SOURCE_GLOBS = [
     'js/Core/Renderer/SVG/SVGElement.js',
     'js/Core/Renderer/SVG/SVGRenderer.js',
     'js/Extensions/DataGrouping.js',
-    'js/Core/Series/DataLabels.js',
     'js/Core/Series/Point.js',
     'js/Core/Series/Series.js',
     'js/Core/Globals.js',
