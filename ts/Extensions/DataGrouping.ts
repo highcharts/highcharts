@@ -923,6 +923,9 @@ const baseProcessData = seriesProto.processData,
         },
         ohlc: {
             groupPixelWidth: 5
+        },
+        heikinashi: {
+            groupPixelWidth: 10
         }
     } as SeriesTypePlotOptions,
 
