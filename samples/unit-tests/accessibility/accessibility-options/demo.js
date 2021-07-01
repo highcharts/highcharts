@@ -249,6 +249,12 @@ QUnit.test('Chart description', function (assert) {
             -1,
         'Chart description included in screen reader region'
     );
+
+    chart.update({});
+    assert.ok(
+        document.querySelector('.highcharts-exit-anchor'),
+        '#15986: There should still be an exit anchor after updating'
+    );
 });
 
 QUnit.test('Landmark verbosity', function (assert) {
