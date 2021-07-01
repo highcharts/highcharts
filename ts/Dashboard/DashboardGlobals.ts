@@ -14,6 +14,11 @@ const DashboardGlobals: DashboardGlobals = {
         cell: 'cell',
         layout: 'layout'
     },
+    respoBreakpoints: {
+        small: 'small',
+        medium: 'medium',
+        large: 'large'
+    },
     classNames: {
         layout: PREFIX + 'layout',
         cell: PREFIX + 'cell',
@@ -24,6 +29,7 @@ const DashboardGlobals: DashboardGlobals = {
 interface DashboardGlobals {
     prefix: string;
     guiElementType: Record<string, GUIElement.GUIElementType>;
+    respoBreakpoints: Record<string, string>;
     classNames: EditGlobals.ClassNamesOptions;
 }
 

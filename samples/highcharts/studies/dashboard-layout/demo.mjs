@@ -200,13 +200,37 @@ let dashboard = new Dashboard('container', {
                 },
                 cells: [{
                     id: 'dashboard-col-2',
-                    width: '2/3'
+                    width: '2/3',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '100%'
+                        }
+                    }
                 }, {
                     id: 'dashboard-col-21',
-                    width: '1/6'
+                    width: '1/6',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '2/3'
+                        }
+                    }
                 }, {
                     id: 'dashboard-col-22',
-                    width: '1/6'
+                    width: '1/6',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '1/3'
+                        }
+                    }
                 }]
             }, {
                 id: 'dashboard-row-3',

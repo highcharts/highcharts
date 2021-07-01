@@ -14,6 +14,7 @@ const {
 
 const {
     merge,
+    addEvent,
     error,
     isString,
     objectEach,
@@ -130,6 +131,9 @@ class Dashboard {
         if (options.components) {
             this.setComponents(options.components);
         }
+
+        // Init events.
+        this.initEvents();
     }
 
     /* *
@@ -149,6 +153,14 @@ class Dashboard {
      *  Functions
      *
      * */
+
+    private initEvents(): void {
+        const dashboard = this;
+
+        addEvent(window, 'resize', function (): void {
+            dashboard.reflow();
+        });
+    }
 
     /**
      * initContainer
@@ -293,6 +305,43 @@ class Dashboard {
 
     public importLayoutLocal(id: string): Layout|undefined {
         return Layout.importLocal(id, this);
+    }
+
+    public getContainerSize(): string {
+        const dashboard = this,
+            respoOptions = dashboard.options.respoBreakpoints,
+            cntWidth = dashboard.container.offsetWidth;
+
+        let size = DashboardGlobals.respoBreakpoints.large;
+
+        if (respoOptions) {
+            if (cntWidth <= respoOptions.small) {
+                size = DashboardGlobals.respoBreakpoints.small;
+            } else if (cntWidth > respoOptions.small && cntWidth <= respoOptions.medium) {
+                size = DashboardGlobals.respoBreakpoints.medium;
+            }
+        }
+
+        return size;
+    }
+
+    public reflow(): void {
+        const dashboard = this,
+            cntSize = dashboard.getContainerSize();
+
+        let layout, row;
+
+        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
+            layout = dashboard.layouts[i];
+
+            for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
+                row = layout.rows[j];
+
+                for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
+                    row.cells[k].updateSize(cntSize);
+                }
+            }
+        }
     }
 }
 
