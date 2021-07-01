@@ -33,7 +33,6 @@ import type Options from '../../Core/Options';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -1620,7 +1619,7 @@ namespace Exporting {
      * @param {Highcharts.Dictionary<string>} [formAttributes]
      * Additional attributes for the post request
      */
-    function post(
+    export function post(
         this: Chart,
         url: string,
         data: object,

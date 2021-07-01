@@ -138,7 +138,6 @@ H.CanVGRenderer = {};
  * @function getScript
  * @param {string} scriptLocation
  * @param {Function} callback
- * @return {void}
  */
 function getScript(
     scriptLocation: string,
@@ -220,8 +219,6 @@ function svgToDataUrl(svg: string): string {
  *        finallyCallback is always called at the end of the process. All
  *        callbacks receive four arguments: imageURL, imageType, callbackArgs,
  *        and scale.
- *
- * @return {void}
  */
 function imageToDataUrl(
     imageURL: string,

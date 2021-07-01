@@ -50,9 +50,9 @@ QUnit.skip('Exported chart scale', function (assert) {
         count = 0;
 
     function testScale(scale) {
-        var originalPost = Highcharts.Chart.prototype.post;
+        var originalPost = Highcharts.post;
 
-        Highcharts.Chart.prototype.post = function (url, data) {
+        Highcharts.post = function (url, data) {
             function serialize(obj) {
                 var str = [];
 

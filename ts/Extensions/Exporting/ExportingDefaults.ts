@@ -25,7 +25,7 @@ import Palette from '../../Core/Color/Palette.js';
 
 /* *
  *
- * Constants
+ *  Constants
  *
  * */
 
@@ -880,7 +880,7 @@ const navigation: NavigationOptions = {
 
 /* *
  *
- * Default export
+ *  Default Export
  *
  * */
 
