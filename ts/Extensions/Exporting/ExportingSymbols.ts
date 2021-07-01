@@ -20,7 +20,6 @@
 
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type Symbols from '../../Core/Renderer/SVG/Symbols';
-import type { SymbolFunction } from '../../Core/Renderer/SVG/SymbolType';
 
 /* *
  *
@@ -105,6 +104,7 @@ namespace ExportingSymbols {
         height: number
     ): SVGPath {
         const h = (height / 3) - 2;
+
         let path: SVGPath = [];
 
         path = path.concat(

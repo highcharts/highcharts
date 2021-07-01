@@ -15,3 +15,4 @@ const G: AnyRecord = Highcharts;
 import '../../Extensions/FullScreen.js';
 import Exporting from '../../Extensions/Exporting/Exporting.js';
 Exporting.compose(G.Chart);
+G.post = Exporting.post;
