@@ -92,6 +92,20 @@ QUnit.test('Left trim (#5261)', function (assert) {
         null,
         'Ending break should have no dy'
     );
+
+    label = ren
+        .label('<span>Hello</span> <span>World</span>', 100, 50)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .add();
+
+    assert.strictEqual(
+        label.text.element.childNodes.length,
+        3,
+        '#15235: Whitespace between spans should not be removed'
+    );
 });
 
 QUnit.test('Image labels should have no fill (#4324)', function (assert) {
