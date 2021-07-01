@@ -110,14 +110,7 @@ class Cell extends GUIElement {
         if (parentContainer) {
             const layoutOptions = row.layout.options || {},
                 rowOptions = row.options || {},
-                cellClassName = layoutOptions.cellClassName || '',
-                width = GUIElement.getPercentageWidth(this.options.width || ''),
-                style = options.style ? options.style : {};
-
-            if (width) {
-                style.width = '';
-                style.flex = '0 0 ' + width;
-            }
+                cellClassName = layoutOptions.cellClassName || '';
 
             this.setElementContainer({
                 render: row.layout.dashboard.guiEnabled,
@@ -132,9 +125,12 @@ class Cell extends GUIElement {
                 style: merge(
                     layoutOptions.style,
                     rowOptions.style,
-                    style
+                    options.style
                 )
             });
+
+            // Set cell width respecting responsive options.
+            this.updateSize();
 
             // Mount component from JSON.
             if (this.options.mountedComponentJSON) {
@@ -345,6 +341,29 @@ class Cell extends GUIElement {
         }
 
         return levels;
+    }
+
+    public updateSize(
+        dashContainerSize?: string
+    ) {
+        const cell = this,
+            cntSize = dashContainerSize || cell.row.layout.dashboard.getContainerSize(),
+            respoOptions = cell.options.responsive;
+
+        let width;
+
+        if (respoOptions && respoOptions[cntSize] && respoOptions[cntSize].width) {
+            width = GUIElement.getPercentageWidth(respoOptions[cntSize].width);
+        } else if (cell.options.width) {
+            width = GUIElement.getPercentageWidth(cell.options.width);
+        }
+
+        // @ToDo
+        // 1) check if width is different that currently set.
+        // 2) fire mounted component event to update size?
+        if (width && cell.container) {
+            cell.container.style.flex = '0 0 ' + width;
+        }
     }
 }
 
