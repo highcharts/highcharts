@@ -25,19 +25,9 @@ const dashboard = new Dashboard('container', {
             rows: [{
                 // id: 'dashboard-row-0',
                 cells: [{
-                    width: 0.7,
-                    id: 'dashboard-col-0',
-                    style: {
-                        color: 'yellow',
-                        flex: 2,
-                        height: '250px'
-                    }
+                    id: 'dashboard-col-0'
                 }, {
-                    id: 'dashboard-col-1',
-                    style: {
-                        color: 'orange',
-                        width: '400px'
-                    }
+                    id: 'dashboard-col-1'
                 }]
             }, {
                 id: 'dashboard-row-1',
