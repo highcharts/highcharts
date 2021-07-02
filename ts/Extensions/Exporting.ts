@@ -23,17 +23,21 @@ import type {
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type Axis from '../Core/Axis/Axis';
 import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type EventCallback from '../Core/EventCallback';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
+import type Options from '../Core/Options';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type { SymbolKey } from '../Core/Renderer/SVG/SymbolType';
 
+import AST from '../Core/Renderer/HTML/AST.js';
 import Chart from '../Core/Chart/Chart.js';
 import chartNavigationMixin from '../Mixins/Navigation.js';
 import H from '../Core/Globals.js';
@@ -42,10 +46,10 @@ const {
     isTouchDevice,
     win
 } = H;
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 const {
     defaultOptions
-} = O;
+} = D;
 import palette from '../Core/Color/Palette.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
@@ -71,6 +75,12 @@ const {
  *  Declarations
  *
  * */
+
+declare module '../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        internalKey?: string;
+    }
+}
 
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
@@ -110,18 +120,18 @@ declare module '../Core/Chart/ChartLike' {
         /** @requires modules/exporting */
         exportChart(
             exportingOptions?: Highcharts.ExportingOptions,
-            chartOptions?: Highcharts.Options
+            chartOptions?: Options
         ): void;
         /** @requires modules/exporting */
         getChartHTML(): string;
         /** @requires modules/exporting */
         getFilename(): string;
         /** @requires modules/exporting */
-        getSVG(chartOptions?: Highcharts.Options): string;
+        getSVG(chartOptions?: Options): string;
         /** @requires modules/exporting */
         getSVGForExport(
             options: Highcharts.ExportingOptions,
-            chartOptions: Partial<Highcharts.Options>
+            chartOptions: Partial<Options>
         ): string;
         /** @requires modules/exporting */
         inlineStyles(): void;
@@ -132,7 +142,27 @@ declare module '../Core/Chart/ChartLike' {
         /** @requires modules/exporting */
         renderExporting(): void;
         /** @requires modules/exporting */
-        sanitizeSVG(svg: string, options: Highcharts.Options): string;
+        sanitizeSVG(svg: string, options: Options): string;
+    }
+}
+
+declare module '../Core/LangOptions'{
+    interface LangOptions {
+        contextButtonTitle?: string;
+        exitFullscreen?: string;
+        downloadJPEG?: string;
+        downloadPDF?: string;
+        downloadPNG?: string;
+        downloadSVG?: string;
+        printChart?: string;
+        viewFullscreen?: string;
+    }
+}
+
+declare module '../Core/Options'{
+    interface Options {
+        exporting?: Highcharts.ExportingOptions;
+        navigation?: Highcharts.NavigationOptions;
     }
 }
 
@@ -173,7 +203,7 @@ declare global {
             menuClassName?: string;
             menuItems?: Array<string>;
             onclick?: Function;
-            symbol?: ('menu'|'menuball'|'exportIcon'|string|SVGRenderer.SymbolKeyValue);
+            symbol?: ('menu'|'menuball'|SymbolKey);
             symbolFill?: ColorString;
             symbolSize?: number;
             symbolStroke?: ColorString;
@@ -233,20 +263,6 @@ declare global {
             menuItemStyle?: CSSObject;
             menuStyle?: CSSObject;
         }
-        interface LangOptions {
-            contextButtonTitle?: string;
-            exitFullscreen?: string;
-            downloadJPEG?: string;
-            downloadPDF?: string;
-            downloadPNG?: string;
-            downloadSVG?: string;
-            printChart?: string;
-            viewFullscreen?: string;
-        }
-        interface Options {
-            exporting?: ExportingOptions;
-            navigation?: NavigationOptions;
-        }
         interface PrintReverseInfoObject {
             childNodes: NodeListOf<ChildNode>;
             origDisplay: Array<(string|null)> ;
@@ -255,9 +271,6 @@ declare global {
                 (number|null)?,
                 (boolean|Partial<AnimationOptions>)?
             ];
-        }
-        interface XAxisOptions {
-            internalKey?: string;
         }
         /** @requires modules/exporting */
         function post(
@@ -813,7 +826,6 @@ defaultOptions.exporting = {
      * Path where Highcharts will look for export module dependencies to
      * load on demand if they don't already exist on `window`. Should currently
      * point to location of [CanVG](https://github.com/canvg/canvg) library,
-     * [RGBColor.js](https://github.com/canvg/canvg),
      * [jsPDF](https://github.com/yWorks/jsPDF) and
      * [svg2pdf.js](https://github.com/yWorks/svg2pdf.js), required for client
      * side export in certain browsers.
@@ -983,7 +995,7 @@ defaultOptions.exporting = {
             /**
              * The symbol for the button. Points to a definition function in
              * the `Highcharts.Renderer.symbols` collection. The default
-             * `exportIcon` function is part of the exporting module. Possible
+             * `menu` function is part of the exporting module. Possible
              * values are "circle", "square", "diamond", "triangle",
              * "triangle-down", "menu", "menuball" or custom shape.
              *
@@ -992,7 +1004,7 @@ defaultOptions.exporting = {
              * @sample highcharts/exporting/buttons-contextbutton-symbol-custom/
              *         Custom shape as symbol
              *
-             * @type  {Highcharts.SymbolKeyValue|"exportIcon"|"menu"|"menuball"|string}
+             * @type  {Highcharts.SymbolKeyValue|"menu"|"menuball"|string}
              * @since 2.0
              */
             symbol: 'menu',
@@ -1267,7 +1279,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     sanitizeSVG: function (
         this: Chart,
         svg: string,
-        options: Highcharts.Options
+        options: Options
     ): string {
 
         let split = svg.indexOf('</svg>') + 6,
@@ -1366,7 +1378,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     getSVG: function (
         this: Chart,
-        chartOptions?: DeepPartial<Highcharts.Options>
+        chartOptions?: DeepPartial<Options>
     ): string {
         let chart = this,
             chartCopy: Chart,
@@ -1441,7 +1453,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         });
 
         const colls: Record<string, boolean> = {};
-        chart.axes.forEach(function (axis: Highcharts.Axis): void {
+        chart.axes.forEach(function (axis): void {
             // Assign an internal key to ensure a one-to-one mapping (#5924)
             if (!axis.userOptions.internalKey) { // #6444
                 axis.userOptions.internalKey = uniqueKey();
@@ -1465,7 +1477,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {
             ['xAxis', 'yAxis', 'series'].forEach(function (coll: string): void {
-                const collOptions: Partial<Highcharts.Options> = {};
+                const collOptions: Partial<Options> = {};
 
                 if ((chartOptions as any)[coll]) {
                     (collOptions as any)[coll] = (chartOptions as any)[coll];
@@ -1475,9 +1487,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // Reflect axis extremes in the export (#5924)
-        chart.axes.forEach(function (axis: Highcharts.Axis): void {
+        chart.axes.forEach(function (axis): void {
             const axisCopy = find(chartCopy.axes, function (
-                    copy: Highcharts.Axis
+                    copy: Axis
                 ): boolean {
                     return copy.options.internalKey ===
                         axis.userOptions.internalKey;
@@ -1524,7 +1536,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     getSVGForExport: function (
         this: Chart,
         options: Highcharts.ExportingOptions,
-        chartOptions: Partial<Highcharts.Options>
+        chartOptions: Partial<Options>
     ): string {
         const chartExportingOptions: Highcharts.ExportingOptions =
             this.options.exporting as any;
@@ -1616,7 +1628,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     exportChart: function (
         this: Chart,
         exportingOptions: Highcharts.ExportingOptions,
-        chartOptions: Highcharts.Options
+        chartOptions: Options
     ): void {
 
         const svg = this.getSVGForExport(exportingOptions, chartOptions);
@@ -1942,11 +1954,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 if (isObject(item, true)) {
                     let element;
 
-                    if ((item as any).separator) {
+                    if (item.separator) {
                         element = createElement(
                             'hr',
-                            null as any,
-                            null as any,
+                            void 0,
+                            void 0,
                             innerMenu
                         );
 
@@ -1963,20 +1975,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                                 if (e) { // IE7
                                     e.stopPropagation();
                                 }
-                                (menu as any).hideMenu();
+                                menu.hideMenu();
                                 if ((item as any).onclick) {
                                     (item as any).onclick
                                         .apply(chart, arguments);
                                 }
                             }
-                        }, null as any, innerMenu);
+                        }, void 0, innerMenu);
 
-                        element.appendChild(doc.createTextNode(
-                            (item as any).text ||
-                            (chart.options.lang as any)[
-                                (item as any).textKey as any
-                            ]
-                        ));
+                        AST.setElementHTML(element, item.text ||
+                            (chart.options.lang as any)[item.textKey as any]
+                        );
 
                         if (!chart.styledMode) {
                             element.onmouseover = function (

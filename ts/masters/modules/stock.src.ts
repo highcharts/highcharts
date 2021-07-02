@@ -17,9 +17,13 @@ import '../../Extensions/DataGrouping.js';
 import '../../Series/OHLC/OHLCSeries.js';
 import '../../Series/Candlestick/CandlestickSeries.js';
 import '../../Series/Flags/FlagsSeries.js';
-import '../../Core/Scrollbar.js';
+import Scrollbar from '../../Core/Scrollbar.js';
 import '../../Core/Navigator.js';
 import '../../Extensions/RangeSelector.js';
 import StockChart from '../../Core/Chart/StockChart.js';
-
-(Highcharts as any).StockChart = (Highcharts as any).stockChart = StockChart.stockChart;
+const G: AnyRecord = Highcharts;
+// Classes
+G.Scrollbar = Scrollbar;
+G.StockChart = G.stockChart = StockChart.stockChart;
+// Compositions
+Scrollbar.compose(G.Axis);

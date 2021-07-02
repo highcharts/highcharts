@@ -16,6 +16,7 @@
  *
  * */
 
+import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
@@ -27,6 +28,7 @@ import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGRenderer from './Renderer/SVG/SVGRenderer';
+import type TooltipOptions from './TooltipOptions';
 
 import F from './FormatUtilities.js';
 const { format } = F;
@@ -73,232 +75,15 @@ declare module './Series/SeriesLike' {
 
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
-        tooltip?: Highcharts.TooltipOptions;
+        tooltip?: TooltipOptions;
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class Tooltip {
-            public constructor(chart: Chart, options: TooltipOptions);
-            public chart: Chart;
-            public container?: HTMLDOMElement;
-            public crosshairs: Array<null>;
-            public distance: number;
-            public followPointer?: boolean;
-            public hideTimer?: number;
-            public isHidden: boolean;
-            public isSticky: boolean;
-            public label?: SVGElement;
-            public len?: number;
-            public now: Record<string, number>;
-            public options: TooltipOptions;
-            public outside?: boolean;
-            public renderer?: SVGRenderer;
-            public shared?: boolean;
-            public split?: boolean;
-            public tooltipTimeout?: number;
-            public tracker?: SVGElement;
-            public tt?: SVGElement;
-            public applyFilter(): void;
-            public bodyFormatter(items: Array<(Series|Point)>): Array<string>;
-            public cleanSplit(force?: boolean): void;
-            public defaultFormatter(
-                this: TooltipFormatterContextObject,
-                tooltip: Tooltip
-            ): (string|Array<string>);
-            public destroy(): void;
-            public getAnchor(
-                points: (Point|Array<Point>),
-                mouseEvent?: PointerEvent
-            ): Array<number>;
-            public getDateFormat(
-                range: number,
-                date: number,
-                startOfWeek: number,
-                dateTimeLabelFormats: Record<string, string>
-            ): string;
-            public getLabel(): SVGElement;
-            public getPosition(
-                boxWidth: number,
-                boxHeight: number,
-                point: Point
-            ): PositionObject;
-            public getXDateFormat(
-                point: Point,
-                options: TooltipOptions,
-                xAxis: Axis
-            ): string;
-            public hide(delay?: number): void;
-            public init(chart: Chart, options: TooltipOptions): void;
-            public isStickyOnContact(): boolean;
-            public move(
-                x: number,
-                y: number,
-                anchorX: number,
-                anchorY: number
-            ): void;
-            public refresh(
-                pointOrPoints: (Point|Array<Point>),
-                mouseEvent?: PointerEvent
-            ): void;
-            public renderSplit(
-                labels: (string|Array<(boolean|string)>),
-                points: Array<Point>
-            ): void;
-            public styledModeFormat(formatString: string): string;
-            public tooltipFooterHeaderFormatter(
-                labelConfig: Point.PointLabelObject,
-                isFooter?: boolean
-            ): string;
-            public update(options: TooltipOptions): void;
-            public updatePosition(point: Point): void;
-        }
-        interface TooltipFormatterCallbackFunction {
-            (
-                this: TooltipFormatterContextObject,
-                tooltip: Tooltip
-            ): (false|string|Array<string>);
-        }
-        interface TooltipFormatterContextObject {
-            color: ColorType;
-            colorIndex?: number;
-            key: number;
-            percentage?: number;
-            point: Point;
-            points?: Array<Highcharts.TooltipFormatterContextObject>;
-            series: Series;
-            total?: number;
-            x: number;
-            y: number;
-        }
-        interface TooltipOptions {
-            distance?: number;
-        }
-        interface TooltipPositionerCallbackFunction {
-            (
-                this: Tooltip,
-                labelWidth: number,
-                labelHeight: number,
-                point: (Point|TooltipPositionerPointObject)
-            ): PositionObject;
-        }
-        interface TooltipPositionerPointObject {
-            isHeader: true;
-            plotX: number;
-            plotY: number;
-        }
-        type TooltipShapeValue = ('callout'|'circle'|'square'|'rect');
+declare module '../Core/TooltipOptions'{
+    interface TooltipOptions {
+        distance?: number;
     }
 }
-
-/**
- * Callback function to format the text of the tooltip from scratch.
- *
- * In case of single or shared tooltips, a string should be be returned. In case
- * of splitted tooltips, it should return an array where the first item is the
- * header, and subsequent items are mapped to the points. Return `false` to
- * disable tooltip for a specific point on series.
- *
- * @callback Highcharts.TooltipFormatterCallbackFunction
- *
- * @param {Highcharts.TooltipFormatterContextObject} this
- *        Context to format
- *
- * @param {Highcharts.Tooltip} tooltip
- *        The tooltip instance
- *
- * @return {false|string|Array<(string|null|undefined)>|null|undefined}
- *         Formatted text or false
- */
-
-/**
- * @interface Highcharts.TooltipFormatterContextObject
- *//**
- * @name Highcharts.TooltipFormatterContextObject#color
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#colorIndex
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#key
- * @type {number}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#percentage
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#point
- * @type {Highcharts.Point}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#points
- * @type {Array<Highcharts.TooltipFormatterContextObject>|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#series
- * @type {Highcharts.Series}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#total
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#x
- * @type {number}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#y
- * @type {number}
- */
-
-/**
- * A callback function to place the tooltip in a specific position.
- *
- * @callback Highcharts.TooltipPositionerCallbackFunction
- *
- * @param {Highcharts.Tooltip} this
- * Tooltip context of the callback.
- *
- * @param {number} labelWidth
- * Width of the tooltip.
- *
- * @param {number} labelHeight
- * Height of the tooltip.
- *
- * @param {Highcharts.TooltipPositionerPointObject} point
- * Point information for positioning a tooltip.
- *
- * @return {Highcharts.PositionObject}
- * New position for the tooltip.
- */
-
-/**
- * Point information for positioning a tooltip.
- *
- * @interface Highcharts.TooltipPositionerPointObject
- * @extends Highcharts.Point
- *//**
- * If `tooltip.split` option is enabled and positioner is called for each of the
- * boxes separately, this property indicates the call on the xAxis header, which
- * is not a point itself.
- * @name Highcharts.TooltipPositionerPointObject#isHeader
- * @type {boolean}
- *//**
- * The reference point relative to the plot area. Add chart.plotLeft to get the
- * full coordinates.
- * @name Highcharts.TooltipPositionerPointObject#plotX
- * @type {number}
- *//**
- * The reference point relative to the plot area. Add chart.plotTop to get the
- * full coordinates.
- * @name Highcharts.TooltipPositionerPointObject#plotY
- * @type {number}
- */
-
-/**
- * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
- */
-
-''; // separates doclets above from variables below
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -324,7 +109,7 @@ class Tooltip {
 
     public constructor(
         chart: Chart,
-        options: Highcharts.TooltipOptions
+        options: TooltipOptions
     ) {
         this.chart = chart;
         this.init(chart, options);
@@ -360,7 +145,7 @@ class Tooltip {
 
     public now: Record<string, number> = {};
 
-    public options: Highcharts.TooltipOptions = {};
+    public options: TooltipOptions = {};
 
     public outside: boolean = false;
 
@@ -434,12 +219,6 @@ class Tooltip {
                 }]
             }]
         });
-        chart.renderer.definition({
-            tagName: 'style',
-            textContent: '.highcharts-tooltip-' + chart.index + '{' +
-                'filter:url(#drop-shadow-' + chart.index + ')' +
-            '}'
-        });
     }
 
     /**
@@ -505,11 +284,11 @@ class Tooltip {
      * @return {Array<string>}
      */
     public defaultFormatter(
-        this: Highcharts.TooltipFormatterContextObject,
-        tooltip: Highcharts.Tooltip
+        this: Tooltip.FormatterContextObject,
+        tooltip: Tooltip
     ): (string|Array<string>) {
-        let items = this.points || splat(this),
-            s: (string|Array<string>);
+        const items = this.points || splat(this);
+        let s: (string|Array<string>);
 
         // Build the header
         s = [tooltip.tooltipFooterHeaderFormatter(items[0])];
@@ -562,16 +341,16 @@ class Tooltip {
         points: (Point|Array<Point>),
         mouseEvent?: PointerEvent
     ): Array<number> {
-        let ret: number[],
-            chart = this.chart,
+        const chart = this.chart,
             pointer = chart.pointer,
             inverted = chart.inverted,
             plotTop = chart.plotTop,
-            plotLeft = chart.plotLeft,
+            plotLeft = chart.plotLeft;
+        let ret: number[],
+            yAxis: (Axis|undefined),
+            xAxis: (Axis|undefined),
             plotX = 0,
-            plotY = 0,
-            yAxis: Highcharts.Axis|undefined,
-            xAxis: Highcharts.Axis|undefined;
+            plotY = 0;
 
         points = splat(points);
 
@@ -664,10 +443,8 @@ class Tooltip {
         startOfWeek: number,
         dateTimeLabelFormats: Record<string, string>
     ): string {
-        let time = this.chart.time,
+        const time = this.chart.time,
             dateStr = time.dateFormat('%m-%d %H:%M:%S.%L', date),
-            format,
-            n,
             blank = '01-01 00:00:00.000',
             strpos = {
                 millisecond: 15,
@@ -675,7 +452,9 @@ class Tooltip {
                 minute: 9,
                 hour: 6,
                 day: 3
-            } as Record<string, number>,
+            } as Record<string, number>;
+        let format,
+            n,
             lastN = 'millisecond'; // for sub-millisecond data, #4223
 
         for (n in timeUnits) { // eslint-disable-line guard-for-in
@@ -728,8 +507,7 @@ class Tooltip {
      */
     public getLabel(): SVGElement {
 
-        let tooltip = this,
-            renderer: SVGRenderer = this.chart.renderer,
+        const tooltip = this,
             styledMode = this.chart.styledMode,
             options = this.options,
             className = (
@@ -743,7 +521,6 @@ class Tooltip {
                 (options.style && options.style.pointerEvents) ||
                 (!this.followPointer && options.stickOnContact ? 'auto' : 'none')
             ),
-            container: globalThis.HTMLElement,
             onMouseEnter = function (): void {
                 tooltip.inContact = true;
             },
@@ -759,6 +536,8 @@ class Tooltip {
                     series.onMouseOut();
                 }
             };
+        let container: globalThis.HTMLElement,
+            renderer: SVGRenderer = this.chart.renderer;
 
         if (!this.label) {
 
@@ -843,10 +622,12 @@ class Tooltip {
                 }
             }
 
-            if (styledMode) {
+            if (styledMode && options.shadow) {
                 // Apply the drop-shadow filter
                 this.applyFilter();
-                this.label.addClass('highcharts-tooltip-' + this.chart.index);
+                this.label.attr({
+                    filter: 'url(#drop-shadow-' + this.chart.index + ')'
+                });
             }
 
             // Split tooltip use updateTooltipContainer to position the tooltip
@@ -895,12 +676,11 @@ class Tooltip {
      */
     public getPosition(boxWidth: number, boxHeight: number, point: Point): PositionObject {
 
-        let chart = this.chart,
+        const chart = this.chart,
             distance = this.distance,
             ret = {} as PositionObject,
             // Don't use h if chart isn't inverted (#7242) ???
             h = (chart.inverted && (point as any).h) || 0, // #4117 ???
-            swapped: (boolean|undefined),
             outside = this.outside,
             outerWidth = outside ?
                 // substract distance to prevent scrollbars
@@ -949,11 +729,12 @@ class Tooltip {
                     isX ? chart.plotLeft + chart.plotWidth :
                         chart.plotTop + chart.plotHeight
                 ]);
-            },
-            first = buildDimensionArray('y'),
+            };
+        let first = buildDimensionArray('y'),
             second = buildDimensionArray('x'),
-            // The far side is right or bottom
-            preferFarSide = !this.followPointer && pick(
+            swapped: (boolean|undefined);
+        // The far side is right or bottom
+        const preferFarSide = !this.followPointer && pick(
                 point.ttBelow,
                 !chart.inverted === !!point.negative
             ), // #4984
@@ -1089,12 +870,12 @@ class Tooltip {
      */
     public getXDateFormat(
         point: Point,
-        options: Highcharts.TooltipOptions,
-        xAxis: Highcharts.Axis
+        options: TooltipOptions,
+        xAxis: Axis
     ): string {
-        let xDateFormat,
-            dateTimeLabelFormats = options.dateTimeLabelFormats,
+        const dateTimeLabelFormats = options.dateTimeLabelFormats,
             closestPointRange = xAxis && xAxis.closestPointRange;
+        let xDateFormat;
 
         if (closestPointRange) {
             xDateFormat = this.getDateFormat(
@@ -1147,7 +928,7 @@ class Tooltip {
      * @param {Highcharts.TooltipOptions} options
      *        Tooltip options.
      */
-    public init(chart: Chart, options: Highcharts.TooltipOptions): void {
+    public init(chart: Chart, options: TooltipOptions): void {
 
         /**
          * Chart of the tooltip.
@@ -1322,20 +1103,16 @@ class Tooltip {
         pointOrPoints: (Point|Array<Point>),
         mouseEvent?: PointerEvent
     ): void {
-        let tooltip = this,
+        const tooltip = this,
             chart = this.chart,
             options = tooltip.options,
-            x,
-            y,
             points: Array<Point> = splat(pointOrPoints),
             point = points[0],
-            anchor,
-            textConfig = {} as Highcharts.TooltipFormatterContextObject,
-            text: (boolean|string),
             pointConfig = [] as Array<Point.PointLabelObject>,
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
             styledMode = chart.styledMode;
+        let textConfig = {} as Tooltip.FormatterContextObject;
 
         if (!options.enabled) {
             return;
@@ -1345,9 +1122,9 @@ class Tooltip {
 
         // get the reference point coordinates (pie charts use tooltipPos)
         tooltip.followPointer = !tooltip.split && point.series.tooltipOptions.followPointer;
-        anchor = tooltip.getAnchor(pointOrPoints, mouseEvent);
-        x = anchor[0];
-        y = anchor[1];
+        const anchor = tooltip.getAnchor(pointOrPoints, mouseEvent),
+            x = anchor[0],
+            y = anchor[1];
 
         // shared tooltip, array is sent over
         if (
@@ -1377,7 +1154,7 @@ class Tooltip {
             textConfig = point.getLabelConfig() as any;
         }
         this.len = pointConfig.length; // #6128
-        text = (formatter as any).call(textConfig, tooltip);
+        const text: (boolean|string) = (formatter as any).call(textConfig, tooltip);
 
         // register the current series
         const currentSeries = point.series;
@@ -1693,7 +1470,7 @@ class Tooltip {
             i: number
         ): Array<AnyRecord> {
             if (str !== false && str !== '') {
-                const point: (Point|Highcharts.TooltipPositionerPointObject) = (
+                const point: (Point|Tooltip.PositionerPointObject) = (
                     points[i - 1] ||
                     {
                         // Item 0 is the header. Instead of this, we could also
@@ -1908,9 +1685,9 @@ class Tooltip {
 
         const chart = tooltip.chart;
         const label = tooltip.label;
-        const point = chart.hoverPoint;
+        const points = tooltip.shared ? chart.hoverPoints : chart.hoverPoint;
 
-        if (!label || !point) {
+        if (!label || !points) {
             return;
         }
 
@@ -1922,7 +1699,7 @@ class Tooltip {
         };
 
         // Combine anchor and tooltip
-        const anchorPos = this.getAnchor(point);
+        const anchorPos = this.getAnchor(points);
         const labelBBox = label.getBBox();
 
         anchorPos[0] += chart.plotLeft - label.translateX;
@@ -1985,24 +1762,23 @@ class Tooltip {
      * @return {string}
      */
     public tooltipFooterHeaderFormatter(labelConfig: Point.PointLabelObject, isFooter?: boolean): string {
-        let footOrHead = isFooter ? 'footer' : 'header',
+        const footOrHead = isFooter ? 'footer' : 'header',
             series = labelConfig.series,
             tooltipOptions = series.tooltipOptions,
-            xDateFormat = tooltipOptions.xDateFormat,
             xAxis = series.xAxis,
             isDateTime = (
                 xAxis &&
                 xAxis.options.type === 'datetime' &&
                 isNumber(labelConfig.key)
             ),
-            formatString = (tooltipOptions as any)[footOrHead + 'Format'],
             e = {
                 isFooter: isFooter,
                 labelConfig: labelConfig
             } as AnyRecord;
-
+        let xDateFormat = tooltipOptions.xDateFormat,
+            formatString = (tooltipOptions as any)[footOrHead + 'Format'];
         fireEvent(this, 'headerFormatter', e, function (
-            this: Highcharts.Tooltip,
+            this: Tooltip,
             e: AnyRecord
         ): void {
 
@@ -2051,7 +1827,7 @@ class Tooltip {
      * @param {Highcharts.TooltipOptions} options
      *        The tooltip options to update.
      */
-    public update(options: Highcharts.TooltipOptions): void {
+    public update(options: TooltipOptions): void {
         this.destroy();
         // Update user options (#6218)
         merge(true, (this.chart.options.tooltip as any).userOptions, options);
@@ -2067,23 +1843,20 @@ class Tooltip {
      * @param {Highcharts.Point} point
      */
     public updatePosition(point: Point): void {
-        let chart = this.chart,
+        const chart = this.chart,
             pointer = chart.pointer,
             label = this.getLabel(),
-            pos,
-            anchorX = (point.plotX as any) + chart.plotLeft,
+            // Needed for outside: true (#11688)
+            chartPosition = pointer.getChartPosition(),
+            pos = (this.options.positioner || this.getPosition).call(
+                this,
+                label.width,
+                label.height,
+                point
+            );
+        let anchorX = (point.plotX as any) + chart.plotLeft,
             anchorY = (point.plotY as any) + chart.plotTop,
             pad;
-
-        // Needed for outside: true (#11688)
-        const chartPosition = pointer.getChartPosition();
-
-        pos = (this.options.positioner || this.getPosition).call(
-            this,
-            label.width,
-            label.height,
-            point
-        );
 
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
@@ -2121,7 +1894,143 @@ class Tooltip {
         );
     }
 }
+namespace Tooltip {
+    export interface FormatterCallbackFunction {
+        (
+            this: FormatterContextObject,
+            tooltip: Tooltip
+        ): (false|string|Array<string>);
+    }
+    export interface FormatterContextObject {
+        color: ColorType;
+        colorIndex?: number;
+        key: number;
+        percentage?: number;
+        point: Point;
+        points?: Array<FormatterContextObject>;
+        series: Series;
+        total?: number;
+        x: number;
+        y: number;
+    }
+    export interface PositionerCallbackFunction {
+        (
+            this: Tooltip,
+            labelWidth: number,
+            labelHeight: number,
+            point: (Point|PositionerPointObject)
+        ): PositionObject;
+    }
+    export interface PositionerPointObject {
+        isHeader: true;
+        plotX: number;
+        plotY: number;
+    }
+    export type ShapeValue = ('callout'|'circle'|'square'|'rect');
+}
 
-H.Tooltip = Tooltip;
+export default Tooltip;
 
-export default H.Tooltip;
+/**
+ * Callback function to format the text of the tooltip from scratch.
+ *
+ * In case of single or shared tooltips, a string should be be returned. In case
+ * of splitted tooltips, it should return an array where the first item is the
+ * header, and subsequent items are mapped to the points. Return `false` to
+ * disable tooltip for a specific point on series.
+ *
+ * @callback Highcharts.TooltipFormatterCallbackFunction
+ *
+ * @param {Highcharts.TooltipFormatterContextObject} this
+ *        Context to format
+ *
+ * @param {Highcharts.Tooltip} tooltip
+ *        The tooltip instance
+ *
+ * @return {false|string|Array<(string|null|undefined)>|null|undefined}
+ *         Formatted text or false
+ */
+
+/**
+ * @interface Highcharts.TooltipFormatterContextObject
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#color
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#colorIndex
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#key
+ * @type {number}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#percentage
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#point
+ * @type {Highcharts.Point}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#points
+ * @type {Array<Highcharts.TooltipFormatterContextObject>|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#series
+ * @type {Highcharts.Series}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#total
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#x
+ * @type {number}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#y
+ * @type {number}
+ */
+
+/**
+ * A callback function to place the tooltip in a specific position.
+ *
+ * @callback Highcharts.TooltipPositionerCallbackFunction
+ *
+ * @param {Highcharts.Tooltip} this
+ * Tooltip context of the callback.
+ *
+ * @param {number} labelWidth
+ * Width of the tooltip.
+ *
+ * @param {number} labelHeight
+ * Height of the tooltip.
+ *
+ * @param {Highcharts.TooltipPositionerPointObject} point
+ * Point information for positioning a tooltip.
+ *
+ * @return {Highcharts.PositionObject}
+ * New position for the tooltip.
+ */
+
+/**
+ * Point information for positioning a tooltip.
+ *
+ * @interface Highcharts.TooltipPositionerPointObject
+ * @extends Highcharts.Point
+ *//**
+ * If `tooltip.split` option is enabled and positioner is called for each of the
+ * boxes separately, this property indicates the call on the xAxis header, which
+ * is not a point itself.
+ * @name Highcharts.TooltipPositionerPointObject#isHeader
+ * @type {boolean}
+ *//**
+ * The reference point relative to the plot area. Add chart.plotLeft to get the
+ * full coordinates.
+ * @name Highcharts.TooltipPositionerPointObject#plotX
+ * @type {number}
+ *//**
+ * The reference point relative to the plot area. Add chart.plotTop to get the
+ * full coordinates.
+ * @name Highcharts.TooltipPositionerPointObject#plotY
+ * @type {number}
+ */
+
+/**
+ * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
+ */
+
+''; // separates doclets above from variables below

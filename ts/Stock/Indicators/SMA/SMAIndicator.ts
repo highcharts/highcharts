@@ -14,7 +14,7 @@
  *
  * */
 
-import type { AxisType } from '../../../Core/Axis/Types';
+import type AxisType from '../../../Core/Axis/AxisType';
 import type Chart from '../../../Core/Chart/Chart';
 import type IndicatorLike from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
@@ -89,7 +89,7 @@ class SMAIndicator extends LineSeries {
      * Data in OHLC format is required.
      *
      * @sample {highstock} stock/indicators/use-ohlc-data
-     *         Plot line on Y axis
+     *         Use OHLC data format to plot line chart
      *
      * @type      {boolean}
      * @product   highstock

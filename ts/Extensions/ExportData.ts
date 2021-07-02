@@ -16,6 +16,7 @@
 
 'use strict';
 
+import type LangOptions from '../Core/LangOptions';
 import type Point from '../Core/Series/Point';
 import type {
     PointOptions,
@@ -32,11 +33,11 @@ const {
     seriesTypes,
     win
 } = H;
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 const {
     getOptions,
     setOptions
-} = O;
+} = D;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -75,6 +76,16 @@ declare module '../Core/Chart/ChartLike'{
         hideData(): void;
         /** @requires modules/export-data */
         isDataTableVisible: boolean;
+    }
+}
+
+declare module '../Core/LangOptions'{
+    interface LangOptions {
+        downloadCSV?: string;
+        downloadXLS?: string;
+        exportData?: Highcharts.ExportDataOptions;
+        viewData?: string;
+        hideData?: string;
     }
 }
 
@@ -136,13 +147,6 @@ declare global {
             categoryHeader?: string;
             categoryDatetimeHeader?: string;
         }
-        interface LangOptions {
-            downloadCSV?: string;
-            downloadXLS?: string;
-            exportData?: ExportDataOptions;
-            viewData?: string;
-            hideData?: string;
-        }
     }
     interface MSBlobBuilder extends Blob {
     }
@@ -181,24 +185,6 @@ declare global {
 import DownloadURL from '../Extensions/DownloadURL.js';
 import HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 const { downloadURL } = DownloadURL;
-
-
-// Can we add this to utils? Also used in screen-reader.js
-/**
- * HTML encode some characters vulnerable for XSS.
- * @private
- * @param  {string} html The input string
- * @return {string} The excaped string
- */
-function htmlencode(html: string): string {
-    return html
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#x27;')
-        .replace(/\//g, '&#x2F;');
-}
 
 setOptions({
     /**
@@ -530,7 +516,7 @@ Chart.prototype.getDataRows = function (
         csvOptions = (
             (this.options.exporting && this.options.exporting.csv) || {}
         ),
-        xAxis: Highcharts.Axis,
+        xAxis: Axis,
         xAxes = this.xAxis,
         rows: Record<string, (Array<any>&AnyRecord)> =
             {},
@@ -542,7 +528,7 @@ Chart.prototype.getDataRows = function (
         i: number,
         x,
         xTitle: string,
-        langOptions: Highcharts.LangOptions = this.options.lang as any,
+        langOptions = this.options.lang,
         exportDataOptions: Highcharts.ExportDataOptions = langOptions.exportData as any,
         categoryHeader = exportDataOptions.categoryHeader as any,
         categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,
@@ -617,7 +603,7 @@ Chart.prototype.getDataRows = function (
         // or point.name is defined #13293
         getPointArray = function (
             series: Series,
-            xAxis: Highcharts.Axis
+            xAxis: Axis
         ): string[] {
             const namedPoints = series.data.filter((d): string | false =>
                 (typeof d.y !== 'undefined') && d.name
@@ -648,14 +634,14 @@ Chart.prototype.getDataRows = function (
     this.setUpKeyToAxis();
 
     this.series.forEach(function (series: Series): void {
-        let keys = series.options.keys,
+        const keys = series.options.keys,
             xAxis = series.xAxis,
             pointArrayMap = keys || getPointArray(series, xAxis),
             valueCount = pointArrayMap.length,
             xTaken: (false|Record<string, unknown>) =
                 !series.requireSorting && {},
-            xAxisIndex = xAxes.indexOf(xAxis),
-            categoryAndDatetimeMap = getCategoryAndDateTimeMap(
+            xAxisIndex = xAxes.indexOf(xAxis);
+        let categoryAndDatetimeMap = getCategoryAndDateTimeMap(
                 series,
                 pointArrayMap
             ),
@@ -878,8 +864,8 @@ Chart.prototype.getDataRows = function (
 Chart.prototype.getCSV = function (
     useLocalDecimalPoint?: boolean
 ): string {
-    let csv = '',
-        rows = this.getDataRows(),
+    let csv = '';
+    const rows = this.getDataRows(),
         csvOptions: Highcharts.ExportingCsvOptions =
             (this.options.exporting as any).csv,
         decimalPoint = pick(
@@ -995,14 +981,14 @@ Chart.prototype.getTable = function (
 Chart.prototype.getTableAST = function (
     useLocalDecimalPoint?: boolean
 ): AST.Node {
+    let rowLength = 0;
     const treeChildren: AST.Node[] = [];
-    let options = this.options,
+    const options = this.options,
         decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
         useMultiLevelHeaders = pick(
             (options.exporting as any).useMultiLevelHeaders, true
         ),
         rows = this.getDataRows(useMultiLevelHeaders),
-        rowLength = 0,
         topHeaders = useMultiLevelHeaders ? rows.shift() : null,
         subHeaders = rows.shift(),
         // Compare two rows for equality
@@ -1172,7 +1158,7 @@ Chart.prototype.getTableAST = function (
                 (options.exporting as any).tableCaption,
                 (
                     (options.title as any).text ?
-                        htmlencode((options.title as any).text) :
+                        (options.title as any).text :
                         'Chart'
                 )
             )

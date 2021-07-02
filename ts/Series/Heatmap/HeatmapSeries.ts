@@ -119,7 +119,12 @@ class HeatmapSeries extends ScatterSeries {
         animation: false,
 
         /**
-         * The border width for each heat map item.
+         * The border radius for each heatmap item.
+         */
+        borderRadius: 0,
+
+        /**
+         * The border width for each heatmap item.
          */
         borderWidth: 0,
 
@@ -189,8 +194,11 @@ class HeatmapSeries extends ScatterSeries {
         nullColor: palette.neutralColor3,
 
         dataLabels: {
-            formatter: function (): (number|null) { // #2945
-                return (this.point as HeatmapPoint).value;
+            formatter: function (): string { // #2945
+                const { numberFormatter } = this.series.chart;
+                const { value } = this.point as HeatmapPoint;
+
+                return isNumber(value) ? numberFormatter(value, -1) : '';
             },
             inside: true,
             verticalAlign: 'middle',
@@ -425,6 +433,12 @@ class HeatmapSeries extends ScatterSeries {
                         this.chart.styledMode ? 'css' : 'animate'
                     ](this.colorAttribs(point));
 
+                    if (this.options.borderRadius) {
+                        point.graphic.attr({
+                            r: this.options.borderRadius
+                        });
+                    }
+
                     if (point.value === null) { // #15708
                         point.graphic.addClass('highcharts-null-point');
                     }
@@ -567,10 +581,12 @@ class HeatmapSeries extends ScatterSeries {
             brightness,
             // Get old properties in order to keep backward compatibility
             borderColor =
+                (point && point.options.borderColor) ||
                 seriesOptions.borderColor ||
                 heatmapPlotOptions.borderColor ||
                 seriesPlotOptions.borderColor,
             borderWidth =
+                (point && point.options.borderWidth) ||
                 seriesOptions.borderWidth ||
                 heatmapPlotOptions.borderWidth ||
                 seriesPlotOptions.borderWidth ||
@@ -632,7 +648,7 @@ class HeatmapSeries extends ScatterSeries {
     public translate(): void {
         const series = this,
             options = series.options,
-            symbol = options.marker && options.marker.symbol || '',
+            symbol = options.marker && options.marker.symbol || 'rect',
             shape = symbols[symbol] ? symbol : 'rect',
             hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
 

@@ -8,8 +8,18 @@
  *
  * */
 
-import type { AxisLike } from './Types';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AxisLike from './AxisLike';
+import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
+
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
@@ -19,34 +29,31 @@ const {
     splat
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisType' {
+    interface AxisTypeRegistry {
+        ZAxis: ZAxis;
+    }
+}
+
 declare module '../Chart/ChartLike'{
     interface ChartLike {
         zAxis?: Array<ZAxis>;
-        addZAxis(options: Highcharts.AxisOptions): Axis;
+        addZAxis(options: AxisOptions): Axis;
     }
 }
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            zAxis?: (
-                DeepPartial<Highcharts.AxisOptions>|
-                Array<DeepPartial<Highcharts.AxisOptions>>
-            );
-        }
-    }
-}
-
-/**
- * @private
- */
-declare module './Types' {
-    interface AxisTypeRegistry {
-        ZAxis: ZAxis;
+declare module '../Options' {
+    interface Options {
+        zAxis?: (
+            DeepPartial<AxisOptions>|
+            Array<DeepPartial<AxisOptions>>
+        );
     }
 }
 
@@ -90,7 +97,7 @@ class ZChart {
         }
         chart.zAxis = [];
         zAxisOptions.forEach(function (
-            axisOptions: Highcharts.AxisOptions,
+            axisOptions: AxisOptions,
             i: number
         ): void {
             axisOptions.index = i;
@@ -107,8 +114,8 @@ class ZChart {
      */
     public static wrapAddZAxis(
         this: Chart,
-        options: Highcharts.AxisOptions
-    ): Highcharts.Axis {
+        options: AxisOptions
+    ): Axis {
         return new ZAxis(this, options);
     }
 
@@ -140,7 +147,7 @@ class ZAxis extends Axis implements AxisLike {
      *
      * */
 
-    public constructor(chart: Chart, userOptions: Highcharts.AxisOptions) {
+    public constructor(chart: Chart, userOptions: AxisOptions) {
         super(chart, userOptions);
     }
 
@@ -226,9 +233,9 @@ class ZAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public setOptions(userOptions: DeepPartial<Highcharts.AxisOptions>): void {
+    public setOptions(userOptions: DeepPartial<AxisOptions>): void {
 
-        userOptions = merge<DeepPartial<Highcharts.AxisOptions>>({
+        userOptions = merge<DeepPartial<AxisOptions>>({
             offset: 0,
             lineWidth: 0
         }, userOptions);

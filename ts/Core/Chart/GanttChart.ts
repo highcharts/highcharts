@@ -10,12 +10,24 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
-    HTMLDOMElement
-} from '../Renderer/DOMElementType';
+    AxisOptions,
+    YAxisOptions
+} from '../Axis/AxisOptions';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
+import type Options from '../Options';
+
 import Chart from './Chart.js';
-import O from '../../Core/Options.js';
-const { getOptions } = O;
+import D from '../DefaultOptions.js';
+const { getOptions } = D;
 import U from '../Utilities.js';
 const {
     isArray,
@@ -25,17 +37,23 @@ const {
 
 import '../../Series/Gantt/GanttSeries.js';
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            isGantt?: boolean;
-        }
+/* *
+ *
+ * Declarations
+ *
+ * */
+
+declare module '../Options' {
+    interface Options {
+        isGantt?: boolean;
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Gantt-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.
@@ -66,7 +84,7 @@ class GanttChart extends Chart {
      * @fires Highcharts.GanttChart#event:afterInit
      */
     public init(
-        userOptions: Partial<Highcharts.Options>,
+        userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
         const defaultOptions = getOptions(),
@@ -97,14 +115,14 @@ class GanttChart extends Chart {
                         type: 'category'
                     }
                 }
-            } as Highcharts.Options,
+            } as Options,
 
             userOptions, // user's options
 
             // forced options
             {
                 isGantt: true
-            } as Highcharts.Options
+            } as Options
         );
 
         userOptions.xAxis = xAxisOptions;
@@ -120,32 +138,32 @@ class GanttChart extends Chart {
         ).map(function (
             xAxisOptions,
             i
-        ): Highcharts.XAxisOptions {
+        ): DeepPartial<AxisOptions> {
             if (i === 1) { // Second xAxis
                 defaultLinkedTo = 0;
             }
-            return merge<Highcharts.XAxisOptions>(
-                defaultOptions.xAxis as any,
+            return merge(
+                defaultOptions.xAxis,
                 { // defaults
                     grid: {
                         enabled: true
                     },
                     opposite: true,
                     linkedTo: defaultLinkedTo
-                } as Highcharts.XAxisOptions,
+                },
                 xAxisOptions, // user options
                 { // forced options
                     type: 'datetime'
-                } as Highcharts.XAxisOptions
+                }
             );
         });
 
         // apply Y axis options to both single and multi y axes
         options.yAxis = (splat(userOptions.yAxis || {})).map(function (
-            yAxisOptions: Highcharts.YAxisOptions
-        ): Highcharts.YAxisOptions {
-            return merge<Highcharts.YAxisOptions>(
-                defaultOptions.yAxis as any, // #3802
+            yAxisOptions: YAxisOptions
+        ): YAxisOptions {
+            return merge(
+                defaultOptions.yAxis, // #3802
                 { // defaults
                     grid: {
                         enabled: true
@@ -158,11 +176,10 @@ class GanttChart extends Chart {
                     // Set default type treegrid, but only if 'categories' is
                     // undefined
                     type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
-                } as Highcharts.YAxisOptions,
+                } as YAxisOptions,
                 yAxisOptions // user options
             );
         });
-
         super.init(options, callback);
     }
 }
@@ -204,8 +221,8 @@ namespace GanttChart {
      *         Returns the Chart object.
      */
     export function ganttChart(
-        a: (string|HTMLDOMElement|Highcharts.Options),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        a: (string|HTMLDOMElement|Options),
+        b?: (Chart.CallbackFunction|Options),
         c?: Chart.CallbackFunction
     ): GanttChart {
         return new GanttChart(a as any, b as any, c);

@@ -13,7 +13,8 @@
 'use strict';
 
 import type Annotation from '../Extensions/Annotations/Annotations';
-import type { AxisType } from '../Core/Axis/Types';
+import type { YAxisOptions } from '../Core/Axis/AxisOptions';
+import type AxisType from '../Core/Axis/AxisType';
 import type Chart from '../Core/Chart/Chart';
 import type FlagsPoint from '../Series/Flags/FlagsPoint';
 import type { FlagsShapeValue } from '../Series/Flags/FlagsPointOptions';
@@ -26,11 +27,11 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 const {
     getOptions,
     setOptions
-} = O;
+} = D;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 import palette from '../Core/Color/Palette.js';
@@ -2481,7 +2482,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                 annotations: Array<Highcharts.AnnotationsOptions> = [],
                 indicators: Array<DeepPartial<SeriesTypeOptions>> = [],
                 flags: Array<DeepPartial<SeriesTypeOptions>> = [],
-                yAxes: Array<Highcharts.YAxisOptions> = [];
+                yAxes: Array<YAxisOptions> = [];
 
             chart.annotations.forEach(function (
                 annotation: Annotation,

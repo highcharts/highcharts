@@ -23,9 +23,10 @@ import type {
     SeriesTypeOptions,
     SeriesTypeRegistry
 } from './SeriesType';
+
 import H from '../Globals.js';
-import O from '../Options.js';
-const { defaultOptions } = O;
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import Point from './Point.js';
 import U from '../Utilities.js';
 const {
@@ -44,7 +45,7 @@ namespace SeriesRegistry {
 
     /* *
      *
-     *  Static Properties
+     *  Properties
      *
      * */
 
@@ -59,7 +60,7 @@ namespace SeriesRegistry {
 
     /* *
      *
-     *  Static Functions
+     *  Functions
      *
      * */
 
@@ -187,15 +188,7 @@ namespace SeriesRegistry {
 
 /* *
  *
- *  Compatibility
- *
- * */
-
-(H as AnyRecord).seriesType = SeriesRegistry.seriesType;
-
-/* *
- *
- *  Export
+ *  Default Export
  *
  * */
 
