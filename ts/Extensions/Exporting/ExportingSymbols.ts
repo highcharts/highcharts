@@ -19,6 +19,7 @@
  * */
 
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import type Symbols from '../../Core/Renderer/SVG/Symbols';
 
 /* *
@@ -50,7 +51,7 @@ namespace ExportingSymbols {
      *
      * */
 
-    const modifiedObjects: Array<typeof Symbols> = [];
+    const modifiedClasses: Array<Function> = [];
 
     /* *
      *
@@ -63,9 +64,13 @@ namespace ExportingSymbols {
     /**
      * @private
      */
-    function compose(symbols: typeof Symbols): void {
-        if (modifiedObjects.indexOf(symbols) === -1) {
-            modifiedObjects.push(symbols);
+    export function compose(
+        SVGRendererClass: typeof SVGRenderer
+    ): void {
+        if (modifiedClasses.indexOf(SVGRendererClass) === -1) {
+            modifiedClasses.push(SVGRendererClass);
+
+            const symbols = SVGRendererClass.prototype.symbols;
 
             symbols.menu = menu;
             symbols.menuball = menuball.bind(symbols);

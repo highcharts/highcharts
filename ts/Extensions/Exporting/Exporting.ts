@@ -33,6 +33,7 @@ import type Options from '../../Core/Options';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -45,8 +46,10 @@ const {
 } = H;
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
+import ExportingSymbols from './ExportingSymbols.js';
 import Palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
+
 const {
     addEvent,
     css,
@@ -653,8 +656,11 @@ namespace Exporting {
      * @private
      */
     export function compose(
-        ChartClass: typeof Chart
+        ChartClass: typeof Chart,
+        SVGRendererClass: typeof SVGRenderer
     ): void {
+        ExportingSymbols.compose(SVGRendererClass);
+
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
 
