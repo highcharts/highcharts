@@ -218,7 +218,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             function (e: Highcharts.AnnotationEventObject): void {
                 if (emitter.target) {
                     // Keep annotation selected after dragging control point
-                    (emitter.target as Annotation).cancelClick = emitter.hasDragged;
+                    emitter.target.annotation.cancelClick = emitter.hasDragged;
                 }
 
                 emitter.cancelClick = emitter.hasDragged;
