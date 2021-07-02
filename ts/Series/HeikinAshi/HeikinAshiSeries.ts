@@ -97,11 +97,12 @@ class HeikinAshiSeries extends CandlestickSeries {
         // Run the base method.
         super.translate.apply(this);
 
-        const series = this,
-            firstPoint = series.points[0];
+        const series = this;
 
-        // Modify the first point.
         if (series.points && series.points.length) {
+            const firstPoint = series.points[0];
+
+            // Modify the first point.
             firstPoint.modifyFirstPointValue();
             firstPoint.doTranslation();
 
