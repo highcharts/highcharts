@@ -65,6 +65,7 @@ class HeikinAshiSeries extends CandlestickSeries {
      *
      * @extends      plotOptions.candlestick
      * @product      highstock
+     * @requires  modules/heikinashi
      * @optionparent plotOptions.heikinashi
      */
     public static defaultOptions: HeikinAshiSeriesOptions = merge(CandlestickSeries.defaultOptions, {
@@ -170,6 +171,7 @@ export default HeikinAshiSeries;
  * @extends   series,plotOptions.heikinashi
  * @excluding dataParser, dataURL, marker
  * @product   highstock
+ * @requires  modules/heikinashi
  * @apioption series.heikinashi
  */
 
