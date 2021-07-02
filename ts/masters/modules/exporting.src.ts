@@ -14,5 +14,5 @@ import Highcharts from '../../Core/Globals.js';
 const G: AnyRecord = Highcharts;
 import '../../Extensions/FullScreen.js';
 import Exporting from '../../Extensions/Exporting/Exporting.js';
-Exporting.compose(G.Chart);
+Exporting.compose(G.Chart, G.Renderer);
 G.post = Exporting.post;
