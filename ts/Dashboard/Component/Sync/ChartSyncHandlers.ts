@@ -1,5 +1,4 @@
-/* eslint-disable no-invalid-this, require-jsdoc */
-import type ChartComponent from '../ChartComponent';
+/* eslint-disable no-invalid-this, require-jsdoc, max-len */
 import type Chart from '../../../Core/Chart/Chart';
 import type Point from '../../../Core/Series/Point';
 import type SharedState from '../SharedComponentState';
@@ -14,6 +13,8 @@ const {
 import SyncHandler from './Handler.js';
 import SyncEmitter from './Emitter.js';
 
+import ChartComponent from '../ChartComponent.js';
+
 /**
  * Sets dataPresentationState on chart hover events
  * @param {ChartComponent} component
@@ -22,53 +23,57 @@ import SyncEmitter from './Emitter.js';
 export const tooltipEmitter = new SyncEmitter(
     'tooltipEmitter',
     'presentation',
-    function (this: ChartComponent): void {
-        const { chart, id } = this;
-        const groups = ComponentGroup.getGroupsFromComponent(this.id);
+    function (callbackarray: Function[]): void {
+        if (this instanceof ChartComponent) {
+            const { chart, id } = this;
+            const groups = ComponentGroup.getGroupsFromComponent(this.id);
 
-        if (chart) {
-            const setHoverPointWithDetail = (
-                hoverPoint: SharedState.PresentationHoverPointType | undefined
-            ): void => {
-                groups.forEach((group): void => {
-                    requestAnimationFrame((): void => {
-                        group.getSharedState().setHoverPoint(hoverPoint, {
-                            sender: id
+            if (chart) {
+                const setHoverPointWithDetail = (
+                    hoverPoint: SharedState.PresentationHoverPointType | undefined
+                ): void => {
+                    groups.forEach((group): void => {
+                        requestAnimationFrame((): void => {
+                            group.getSharedState().setHoverPoint(hoverPoint, {
+                                sender: id
+                            });
                         });
                     });
-                });
-            };
-
-            // Listen for the tooltip changes
-            addEvent(chart.tooltip, 'refresh', (): void => {
-                const isSamePoint = (
-                    pointA?: SharedState.PresentationHoverPointType,
-                    pointB?: SharedState.PresentationHoverPointType
-                ): boolean => {
-                    if (!pointA || !pointB) {
-                        return false;
-                    }
-
-                    return pointA.x === pointB.x && pointA.y === pointB.y;
                 };
-                groups.forEach((group): void => {
-                    if (!isSamePoint(group.getSharedState().getHoverPoint(), chart.hoverPoint)) {
-                        setHoverPointWithDetail(chart.hoverPoint);
-                    }
-                });
-            });
 
-            // Listen to the pointer to get when the hoverpoint is undefined
-            addEvent(chart.pointer, 'afterGetHoverData', (): void => {
-                if (chart.hoverPoint === null) {
-                    setHoverPointWithDetail(void 0);
-                }
-            });
+                callbackarray.push(
+                    // Listen for the tooltip changes
+                    addEvent(chart.tooltip, 'refresh', (): void => {
+                        const isSamePoint = (
+                            pointA?: SharedState.PresentationHoverPointType,
+                            pointB?: SharedState.PresentationHoverPointType
+                        ): boolean => {
+                            if (!pointA || !pointB) {
+                                return false;
+                            }
 
-            // TODO: check if sticky is set, etc.
-            addEvent(chart.renderTo, 'mouseleave', (): void => {
-                setHoverPointWithDetail(void 0);
-            });
+                            return pointA.x === pointB.x && pointA.y === pointB.y;
+                        };
+                        groups.forEach((group): void => {
+                            if (!isSamePoint(group.getSharedState().getHoverPoint(), chart.hoverPoint)) {
+                                setHoverPointWithDetail(chart.hoverPoint);
+                            }
+                        });
+                    }),
+
+                    // Listen to the pointer to get when the hoverpoint is undefined
+                    addEvent(chart.pointer, 'afterGetHoverData', (): void => {
+                        if (chart.hoverPoint === null) {
+                            setHoverPointWithDetail(void 0);
+                        }
+                    }),
+
+                    // TODO: check if sticky is set, etc.
+                    addEvent(chart.renderTo, 'mouseleave', (): void => {
+                        setHoverPointWithDetail(void 0);
+                    })
+                );
+            }
         }
     }
 );
@@ -81,33 +86,36 @@ export const tooltipEmitter = new SyncEmitter(
 export const seriesVisibilityEmitter = new SyncEmitter(
     'seriesVisibilityEmitter',
     'presentation',
-    function (this: ChartComponent): void {
-        const { chart, store, id } = this;
-
-        addEvent(chart, 'redraw', (): void => {
-            const groups = ComponentGroup.getGroupsFromComponent(this.id);
-            if (
-                store && // has a store
-                chart &&
-                chart.hasRendered
-            ) {
-                const { series } = chart;
-                const visibilityMap: Record<string, boolean> = {};
-                for (let i = 0; i < series.length; i++) {
-                    const seriesID = series[i].options.id;
-                    if (seriesID) {
-                        visibilityMap[seriesID] = series[i].visible;
+    function (callbackarray): void {
+        if (this instanceof ChartComponent) {
+            const { chart, store, id } = this;
+            callbackarray.push(
+                addEvent(chart, 'redraw', (): void => {
+                    const groups = ComponentGroup.getGroupsFromComponent(this.id);
+                    if (
+                        store && // has a store
+                        chart &&
+                        chart.hasRendered
+                    ) {
+                        const { series } = chart;
+                        const visibilityMap: Record<string, boolean> = {};
+                        for (let i = 0; i < series.length; i++) {
+                            const seriesID = series[i].options.id;
+                            if (seriesID) {
+                                visibilityMap[seriesID] = series[i].visible;
+                            }
+                        }
+                        if (Object.keys(visibilityMap).length) {
+                            groups.forEach((group): void => {
+                                group.getSharedState().setColumnVisibility(visibilityMap, {
+                                    sender: id
+                                });
+                            });
+                        }
                     }
-                }
-                if (Object.keys(visibilityMap).length) {
-                    groups.forEach((group): void => {
-                        group.getSharedState().setColumnVisibility(visibilityMap, {
-                            sender: id
-                        });
-                    });
-                }
-            }
-        });
+                })
+            );
+        }
     }
 );
 
@@ -196,73 +204,74 @@ export const tooltipHandler =
 export const selectionEmitter = new SyncEmitter(
     'selectionEmitter',
     'presentation',
-    function (this: ChartComponent): void {
-        const {
-            chart,
-            store,
-            id,
-            options: {
-                tableAxisMap
-            }
-        } = this;
-
-        function getX(): string | undefined {
-            if (tableAxisMap) {
-                const keys = Object.keys(tableAxisMap);
-
-                let i = 0;
-                while (i < keys.length) {
-                    const key = keys[i];
-                    if (tableAxisMap[key] === 'x') {
-                        return key;
-                    }
-
-                    i++;
+    function (): void {
+        if (this instanceof ChartComponent) {
+            const {
+                chart,
+                store,
+                id,
+                options: {
+                    tableAxisMap
                 }
-            }
-        }
+            } = this;
 
+            const getX = (): string | undefined => {
+                if (tableAxisMap) {
+                    const keys = Object.keys(tableAxisMap);
 
-        if (store && chart) {
-            addEvent(chart, 'selection', (e): void => {
-                const groups = ComponentGroup.getGroupsFromComponent(id);
-                if ((e as any).resetSelection) {
-                    const selection: SharedState.selectionObjectType = {};
-                    chart.axes.forEach((axis): void => {
-                        selection[axis.coll] = {
-                            columnName: axis.coll === 'xAxis' ? getX() : void 0
-                        };
-                    });
+                    let i = 0;
+                    while (i < keys.length) {
+                        const key = keys[i];
+                        if (tableAxisMap[key] === 'x') {
+                            return key;
+                        }
 
-                    groups.forEach((group): void => {
-                        group.getSharedState().setSelection(selection, true, {
-                            sender: id
+                        i++;
+                    }
+                }
+            };
+
+            if (store && chart) {
+                addEvent(chart, 'selection', (e): void => {
+                    const groups = ComponentGroup.getGroupsFromComponent(id);
+                    if ((e as any).resetSelection) {
+                        const selection: SharedState.selectionObjectType = {};
+                        chart.axes.forEach((axis): void => {
+                            selection[axis.coll] = {
+                                columnName: axis.coll === 'xAxis' ? getX() : void 0
+                            };
                         });
-                    });
 
-                    if (chart.resetZoomButton) {
-                        chart.resetZoomButton = chart.resetZoomButton.destroy();
-                    }
-                    return;
-                }
-
-                // Smooth it out a bit
-                requestAnimationFrame((): void => {
-                    const minMaxes = getAxisMinMaxMap(chart);
-                    minMaxes.forEach((minMax): void => {
-                        const { coll, extremes } = minMax;
                         groups.forEach((group): void => {
-                            group.getSharedState().setSelection(
-                                { [coll]: { ...extremes, columnName: coll === 'xAxis' ? getX() : void 0 } },
-                                false,
-                                {
-                                    sender: id
-                                }
-                            );
+                            group.getSharedState().setSelection(selection, true, {
+                                sender: id
+                            });
+                        });
+
+                        if (chart.resetZoomButton) {
+                            chart.resetZoomButton = chart.resetZoomButton.destroy();
+                        }
+                        return;
+                    }
+
+                    // Smooth it out a bit
+                    requestAnimationFrame((): void => {
+                        const minMaxes = getAxisMinMaxMap(chart);
+                        minMaxes.forEach((minMax): void => {
+                            const { coll, extremes } = minMax;
+                            groups.forEach((group): void => {
+                                group.getSharedState().setSelection(
+                                    { [coll]: { ...extremes, columnName: coll === 'xAxis' ? getX() : void 0 } },
+                                    false,
+                                    {
+                                        sender: id
+                                    }
+                                );
+                            });
                         });
                     });
                 });
-            });
+            }
         }
     }
 );
@@ -334,36 +343,38 @@ function getAxisMinMaxMap(chart: Chart): Array<{
 export const panEmitter = new SyncEmitter(
     'panEmitter',
     'presentation',
-    function (this: ChartComponent): void {
-        const { store, chart, id } = this;
-        if (store && chart) {
-            const ticks: number[] = [];
-            addEvent(chart, 'pan', (): void => {
-                const groups = ComponentGroup.getGroupsFromComponent(id);
-                // Cancel previous ticks
-                while (ticks.length) {
-                    const tick = ticks.pop();
-                    if (tick) {
-                        clearTimeout(tick);
+    function (this): void {
+        if (this instanceof ChartComponent) {
+            const { store, chart, id } = this;
+            if (store && chart) {
+                const ticks: number[] = [];
+                addEvent(chart, 'pan', (): void => {
+                    const groups = ComponentGroup.getGroupsFromComponent(id);
+                    // Cancel previous ticks
+                    while (ticks.length) {
+                        const tick = ticks.pop();
+                        if (tick) {
+                            clearTimeout(tick);
+                        }
                     }
-                }
 
-                ticks.push(setTimeout((): void => {
-                    const minMaxes = getAxisMinMaxMap(chart);
-                    minMaxes.forEach((minMax): void => {
-                        const { coll, extremes } = minMax;
-                        groups.forEach((group): void => {
-                            group.getSharedState().setSelection(
-                                { [coll]: extremes },
-                                false,
-                                {
-                                    sender: id
-                                }
-                            );
+                    ticks.push(setTimeout((): void => {
+                        const minMaxes = getAxisMinMaxMap(chart);
+                        minMaxes.forEach((minMax): void => {
+                            const { coll, extremes } = minMax;
+                            groups.forEach((group): void => {
+                                group.getSharedState().setSelection(
+                                    { [coll]: extremes },
+                                    false,
+                                    {
+                                        sender: id
+                                    }
+                                );
+                            });
                         });
-                    });
-                }, 100));
-            });
+                    }, 100));
+                });
+            }
         }
     }
 );

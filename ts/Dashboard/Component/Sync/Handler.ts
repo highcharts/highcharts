@@ -6,6 +6,7 @@ import type SharedState from '../SharedComponentState';
  *  Adds listeners to the Component group for a given "trigger" event
  *
  * */
+
 export default class SyncHandler {
 
     /**
@@ -25,6 +26,7 @@ export default class SyncHandler {
     public id: string;
     public presentationStateTrigger: SharedState.eventTypes;
     public func: Function;
+    public callback?: Function;
 
     constructor(id: string, trigger: SharedState.eventTypes, func: Function) {
         this.id = id;
@@ -38,12 +40,19 @@ export default class SyncHandler {
         return (): void => {
             const { id, activeGroup } = component;
             if (activeGroup) {
-                activeGroup.getSharedState().on(this.presentationStateTrigger, (e): void => {
+                this.callback = activeGroup.getSharedState().on(this.presentationStateTrigger, (e): void => {
                     if (id !== (e.detail ? e.detail.sender : void 0)) {
                         this.func.bind(component)(e);
                     }
                 });
             }
         };
+    }
+
+    public remove(): void {
+        const { callback } = this;
+        if (callback) {
+            return callback();
+        }
     }
 }

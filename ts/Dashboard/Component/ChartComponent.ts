@@ -171,7 +171,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
         super.render();
         this.chart = this.initChart();
         this.updateSeries();
-        this.sync.setup();
+        this.sync.start();
         this.emit({ type: 'afterRender' });
         return this;
     }

@@ -1,25 +1,22 @@
 import type ComponentTypes from '../ComponentType';
 
 import defaultHandlers from './ChartSyncHandlers.js';
+import type SyncEmitter from './Emitter';
+import type SyncHandler from './Handler';
 
 namespace Sync {
     export type EventType = 'visibility' | 'selection' | 'tooltip' | 'panning'
 
+    export type Handler = SyncHandler;
+    export type Emitter = SyncEmitter;
+
+    export type EmitterFunction = (this: ComponentTypes, callbacks: Function[]) => void;
     export interface OptionsEntry {
-        emitter: Function | Emitter;
-        handler: Function | Handler;
+        emitter: Function | SyncEmitter;
+        handler: Function | SyncHandler;
     }
 
     export type OptionsRecord = Record<EventType, OptionsEntry>
-
-    export interface Handler {
-        id: string;
-        createHandler: Function;
-    }
-    export interface Emitter {
-        id: string;
-        createEmitter: Function;
-    }
 }
 /* *
  *
@@ -30,19 +27,28 @@ class Sync {
 
     public static defaultHandlers = defaultHandlers;
 
-    /**
-     * Registry for the synchandlers used within the component
-     */
-    private registeredSyncHandlers: Sync.Handler['id'][]
+    public registerSyncEmitter(emitter: Sync.Emitter): void {
+        const { id } = emitter;
+        this.registeredSyncEmitters[id] = emitter;
+    }
 
+    public isRegisteredEmitter(id: string): boolean {
+        return Boolean(this.registeredSyncEmitters[id]);
+    }
     public registerSyncHandler(handler: Sync.Handler): void {
         const { id } = handler;
-        this.registeredSyncHandlers.push(id);
+        this.registeredSyncHandlers[id] = handler;
     }
 
     public isRegisteredHandler(handlerID: string): boolean {
-        return this.registeredSyncHandlers.indexOf(handlerID) > -1;
+        return Boolean(this.registeredSyncHandlers[handlerID]);
     }
+
+    /**
+     * Registry for the synchandlers used within the component
+     */
+    private registeredSyncHandlers: Record<Sync.Handler['id'], Sync.Handler>;
+    private registeredSyncEmitters: Record<Sync.Emitter['id'], Sync.Emitter>;
 
     /**
      * The component
@@ -63,13 +69,14 @@ class Sync {
         this.component = component;
         this.syncEvents = syncEvents;
         this.syncHandlers = syncHandlers;
-        this.registeredSyncHandlers = [];
+        this.registeredSyncHandlers = {};
+        this.registeredSyncEmitters = {};
     }
 
     /**
      * Registers the handlers and emitters on the component
      */
-    public setup(): void {
+    public start(): void {
         const { syncHandlers, syncEvents, component } = this;
         Object.keys(syncHandlers).forEach((id: string): void => {
             if (syncEvents.indexOf(id as Sync.EventType) > -1) {
@@ -88,9 +95,26 @@ class Sync {
                 if (typeof emitter === 'function') {
                     emitter(this);
                 } else {
-                    emitter.createEmitter(component)();
+                    if (!this.isRegisteredEmitter(emitter.id)) {
+                        this.registerSyncEmitter(emitter);
+                        emitter.createEmitter(component)();
+                    }
                 }
             }
+        });
+    }
+
+    public stop(): void {
+        const {
+            registeredSyncHandlers,
+            registeredSyncEmitters
+        } = this;
+
+        Object.keys(registeredSyncHandlers).forEach((id): void => {
+            registeredSyncHandlers[id].remove();
+        });
+        Object.keys(registeredSyncEmitters).forEach((id): void => {
+            registeredSyncEmitters[id].remove();
         });
     }
 

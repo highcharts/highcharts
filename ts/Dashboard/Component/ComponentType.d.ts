@@ -11,7 +11,7 @@
  * */
 
 import type ChartComponent from './ChartComponent';
-import HTMLComponent from './HTMLComponent';
+import type HTMLComponent from './HTMLComponent';
 
 /* *
  *
