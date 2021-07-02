@@ -37,9 +37,6 @@ const {
     timeUnits
 } = U;
 
-// Has a dependency on Navigator due to the use of Axis.toFixedRange
-import '../Navigator.js';
-
 /* *
  *
  *  Declarations
@@ -48,7 +45,7 @@ import '../Navigator.js';
 
 declare module './AxisComposition' {
     interface AxisComposition {
-        ordinal?: OrdinalAxis.Composition['ordinal'];
+        ordinal?: OrdinalAxis.Additions;
         /** @deprecated */
         getTimeTicks(
             normalizedInterval: DateTimeAxis.NormalizedObject,
@@ -84,25 +81,15 @@ declare module './AxisType' {
     }
 }
 
+/* *
+ *
+ * Constants
+ *
+ * */
+
+const composedClasses: Array<Function> = [];
+
 /* eslint-disable valid-jsdoc */
-
-/**
- * @private
- * Internal function to calculate the precise index
- * in ordinalPositions array.
- */
-function getIndexInArray(ordinalPositions: Array<number>, val: number): number {
-    const index =
-    OrdinalAxis.Additions.findIndexOf(ordinalPositions, val, true);
-    if (ordinalPositions[index] === val) {
-        return index;
-    }
-    const percent =
-        (val - ordinalPositions[index]) /
-        (ordinalPositions[index + 1] - ordinalPositions[index]);
-    return index + percent;
-}
-
 
 /**
  * Extends the axis with ordinal support.
@@ -119,7 +106,7 @@ namespace OrdinalAxis {
     export declare class Composition extends Axis {
         forceOrdinal?: boolean;
         isInternal?: boolean;
-        ordinal: OrdinalAxis.Additions;
+        ordinal: Additions;
         getTimeTicks(
             normalizedInterval: DateTimeAxis.NormalizedObject,
             min: number,
@@ -131,7 +118,7 @@ namespace OrdinalAxis {
         ): TickPositionsArray;
         index2val(val: number): number;
         lin2val(val: number): number;
-        ordinal2lin: OrdinalAxis.Composition['val2lin'];
+        ordinal2lin: Composition['val2lin'];
         val2lin(val: number, toIndex?: boolean): number;
     }
 
@@ -149,7 +136,7 @@ namespace OrdinalAxis {
         /**
          * @private
          */
-        public constructor(axis: OrdinalAxis.Composition) {
+        public constructor(axis: Composition) {
             this.axis = axis;
         }
 
@@ -159,7 +146,7 @@ namespace OrdinalAxis {
          *
          * */
 
-        public axis: OrdinalAxis.Composition;
+        public axis: Composition;
         public extendedOrdinalPositions?: Array<number>;
         public groupIntervalFactor?: number;
         public index: Record<string, Array<number>> = {};
@@ -440,7 +427,7 @@ namespace OrdinalAxis {
                     'raw',
                 overscroll = axis.options.overscroll,
                 extremes = axis.getExtremes();
-            let fakeAxis: OrdinalAxis.Composition,
+            let fakeAxis: Composition,
                 fakeSeries: Series,
                 ordinalIndex = ordinal.index;
 
@@ -699,6 +686,412 @@ namespace OrdinalAxis {
 
     }
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Extends the axis with ordinal support.
+     *
+     * @private
+     *
+     * @param AxisClass
+     * Axis class to extend.
+     *
+     * @param ChartClass
+     * Chart class to use.
+     *
+     * @param SeriesClass
+     * Series class to use.
+     */
+    export function compose<T extends typeof Axis>(
+        AxisClass: T,
+        SeriesClass: typeof Series,
+        ChartClass: typeof Chart
+    ): (typeof Composition&T) {
+
+        if (composedClasses.indexOf(AxisClass) === -1) {
+            composedClasses.push(AxisClass);
+
+            const axisProto = AxisClass.prototype as Composition;
+
+            axisProto.getTimeTicks = getTimeTicks;
+            axisProto.index2val = index2val;
+            axisProto.lin2val = lin2val;
+            axisProto.val2lin = val2lin;
+            // Record this to prevent overwriting by broken-axis module (#5979)
+            axisProto.ordinal2lin = axisProto.val2lin;
+
+            addEvent(AxisClass, 'afterInit', onAxisAfterInit);
+            addEvent(AxisClass as (T&typeof Composition), 'foundExtremes', onAxisFoundExtremes);
+            addEvent(AxisClass, 'afterSetScale', onAxisAfterSetScale);
+            addEvent(AxisClass, 'initialAxisTranslation', onAxisInitialAxisTranslation);
+        }
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+            addEvent(ChartClass, 'pan', onChartPan);
+        }
+        if (composedClasses.indexOf(SeriesClass) === -1) {
+            composedClasses.push(SeriesClass);
+            addEvent(SeriesClass, 'updatedData', onSeriesUpdatedData);
+        }
+        /* eslint-enable no-invalid-this */
+        return AxisClass as (typeof Composition&T);
+    }
+    /**
+     * In an ordinal axis, there might be areas with dense consentrations of
+     * points, then large gaps between some. Creating equally distributed
+     * ticks over this entire range may lead to a huge number of ticks that
+     * will later be removed. So instead, break the positions up in
+     * segments, find the tick positions for each segment then concatenize
+     * them. This method is used from both data grouping logic and X axis
+     * tick position logic.
+     *
+     * @private
+     */
+    function getTimeTicks(
+        this: Axis,
+        normalizedInterval: DateTimeAxis.NormalizedObject,
+        min: number,
+        max: number,
+        startOfWeek?: number,
+        positions: Array<number> = [],
+        closestDistance: number = 0,
+        findHigherRanks?: boolean
+    ): TickPositionsArray {
+
+        const higherRanks = {} as Record<string, string>,
+            tickPixelIntervalOption = this.options.tickPixelInterval,
+            time = this.chart.time,
+            // Record all the start positions of a segment, to use when
+            // deciding what's a gap in the data.
+            segmentStarts = [];
+        let end,
+            segmentPositions,
+            hasCrossedHigherRank,
+            info,
+            outsideMax,
+            start = 0,
+            groupPositions = [] as TickPositionsArray,
+            lastGroupPosition = -Number.MAX_VALUE;
+
+        // The positions are not always defined, for example for ordinal
+        // positions when data has regular interval (#1557, #2090)
+        if (
+            (!this.options.ordinal && !this.options.breaks) ||
+            !positions ||
+            positions.length < 3 ||
+            typeof min === 'undefined'
+        ) {
+            return time.getTimeTicks.apply(time, arguments as any);
+        }
+
+        // Analyze the positions array to split it into segments on gaps
+        // larger than 5 times the closest distance. The closest distance is
+        // already found at this point, so we reuse that instead of
+        // computing it again.
+        const posLength = positions.length;
+
+        for (end = 0; end < posLength; end++) {
+
+            outsideMax = end && positions[end - 1] > max;
+
+            if (positions[end] < min) { // Set the last position before min
+                start = end;
+            }
+
+            if (
+                end === posLength - 1 ||
+                positions[end + 1] - positions[end] > closestDistance * 5 ||
+                outsideMax
+            ) {
+
+                // For each segment, calculate the tick positions from the
+                // getTimeTicks utility function. The interval will be the
+                // same regardless of how long the segment is.
+                if (positions[end] > lastGroupPosition) { // #1475
+
+                    segmentPositions = time.getTimeTicks(
+                        normalizedInterval,
+                        positions[start],
+                        positions[end],
+                        startOfWeek
+                    );
+
+                    // Prevent duplicate groups, for example for multiple
+                    // segments within one larger time frame (#1475)
+                    while (
+                        segmentPositions.length &&
+                        segmentPositions[0] <= lastGroupPosition
+                    ) {
+                        segmentPositions.shift();
+                    }
+                    if (segmentPositions.length) {
+                        lastGroupPosition =
+                            segmentPositions[segmentPositions.length - 1];
+                    }
+
+                    segmentStarts.push(groupPositions.length);
+                    groupPositions = groupPositions.concat(segmentPositions) as any;
+                }
+                // Set start of next segment
+                start = end + 1;
+            }
+
+            if (outsideMax) {
+                break;
+            }
+        }
+
+        // Get the grouping info from the last of the segments. The info is
+        // the same for all segments.
+        if (segmentPositions) {
+            info = (segmentPositions as any).info;
+
+            // Optionally identify ticks with higher rank, for example
+            // when the ticks have crossed midnight.
+            if (findHigherRanks && info.unitRange <= timeUnits.hour) {
+                end = groupPositions.length - 1;
+
+                // Compare points two by two
+                for (start = 1; start < end; start++) {
+                    if (
+                        time.dateFormat('%d', groupPositions[start]) !==
+                        time.dateFormat('%d', groupPositions[start - 1])
+                    ) {
+                        higherRanks[groupPositions[start]] = 'day';
+                        hasCrossedHigherRank = true;
+                    }
+                }
+
+                // If the complete array has crossed midnight, we want
+                // to mark the first positions also as higher rank
+                if (hasCrossedHigherRank) {
+                    higherRanks[groupPositions[0]] = 'day';
+                }
+                info.higherRanks = higherRanks;
+            }
+
+            // Save the info
+            info.segmentStarts = segmentStarts;
+            groupPositions.info = info;
+
+        } else {
+            error(12, false, this.chart);
+        }
+        // Don't show ticks within a gap in the ordinal axis, where the
+        // space between two points is greater than a portion of the tick
+        // pixel interval
+        if (findHigherRanks && defined(tickPixelIntervalOption)) {
+
+            const length = groupPositions.length,
+                translatedArr = [],
+                distances = [];
+            let itemToRemove,
+                translated,
+                lastTranslated,
+                medianDistance,
+                distance,
+                i = length;
+            // Find median pixel distance in order to keep a reasonably even
+            // distance between ticks (#748)
+            while (i--) {
+                translated = this.translate(groupPositions[i]);
+                if (lastTranslated) {
+                    distances[i] = lastTranslated - (translated as any);
+                }
+                translatedArr[i] = lastTranslated = translated;
+            }
+            distances.sort();
+            medianDistance = distances[Math.floor(distances.length / 2)];
+            if (medianDistance < (tickPixelIntervalOption as any) * 0.6) {
+                medianDistance = null;
+            }
+
+            // Now loop over again and remove ticks where needed
+            i = groupPositions[length - 1] > max ? length - 1 : length; // #817
+            lastTranslated = void 0;
+            while (i--) {
+                translated = translatedArr[i];
+                distance = Math.abs((lastTranslated as any) - (translated as any));
+                // #4175 - when axis is reversed, the distance, is negative
+                // but tickPixelIntervalOption positive, so we need to
+                // compare the same values
+
+                // Remove ticks that are closer than 0.6 times the pixel
+                // interval from the one to the right, but not if it is
+                // close to the median distance (#748).
+                if (
+                    lastTranslated &&
+                    distance < (tickPixelIntervalOption as any) * 0.8 &&
+                    (medianDistance === null || distance < medianDistance * 0.8)
+                ) {
+
+                    // Is this a higher ranked position with a normal
+                    // position to the right?
+                    if (
+                        higherRanks[groupPositions[i]] &&
+                        !higherRanks[groupPositions[i + 1]]
+                    ) {
+
+                        // Yes: remove the lower ranked neighbour to the
+                        // right
+                        itemToRemove = i + 1;
+                        lastTranslated = translated; // #709
+
+                    } else {
+
+                        // No: remove this one
+                        itemToRemove = i;
+                    }
+
+                    groupPositions.splice(itemToRemove, 1);
+
+                } else {
+                    lastTranslated = translated;
+                }
+            }
+        }
+        return groupPositions;
+    }
+
+    /**
+     * Get axis position of given index of the extended ordinal positions.
+     * Used only when panning an ordinal axis.
+     *
+     * @private
+     * @function Highcharts.Axis#index2val
+     *
+     * @param {number} index
+     *        The index value of searched point
+     *
+     * @return {number}
+     */
+    function index2val(this: OrdinalAxis.Composition, index: number): number {
+        const axis = this,
+            ordinal = axis.ordinal,
+            // Context could be changed to extendedOrdinalPositions.
+            ordinalPositions = ordinal.positions;
+
+        // The visible range contains only equally spaced values.
+        if (!ordinalPositions) {
+            return index;
+        }
+
+        let i = ordinalPositions.length - 1,
+            distance;
+
+        if (index < 0) { // out of range, in effect panning to the left
+            index = ordinalPositions[0];
+        } else if (index > i) { // out of range, panning to the right
+            index = ordinalPositions[i];
+        } else { // split it up
+            i = Math.floor(index);
+            distance = index - i; // the decimal
+        }
+
+        if (typeof distance !== 'undefined' &&
+            typeof ordinalPositions[i] !== 'undefined') {
+            return ordinalPositions[i] + (distance ?
+                distance *
+                    (ordinalPositions[i + 1] - ordinalPositions[i]) :
+                0);
+        }
+        return index;
+    }
+
+    /**
+     * Translate from linear (internal) to axis value.
+     *
+     * @private
+     * @function Highcharts.Axis#lin2val
+     *
+     * @param {number} val
+     *        The linear abstracted value.
+     *
+     * @return {number}
+     */
+    function lin2val(this: OrdinalAxis.Composition, val: number): number {
+        const axis = this,
+            ordinal = axis.ordinal,
+            isInside = val > axis.left && val < axis.left + axis.len,
+            localMin = axis.old ? axis.old.min : axis.min,
+            localA = axis.old ? axis.old.transA : axis.transA;
+        let positions = ordinal.positions; // for the current visible range
+
+        // The visible range contains only equally spaced values.
+        if (!positions) {
+            return val;
+        }
+
+        // Convert back from modivied value to pixels.
+        const pixelVal = (val - (localMin as any)) * localA;
+
+        // If the value is not inside the plot area,
+        // use the extended positions.
+        // (array contains also points that are outside of the plotArea).
+        if (!isInside) {
+            // When iterating for the first time,
+            // get the extended ordinal positional and assign them.
+            if (!ordinal.extendedOrdinalPositions) {
+                ordinal.extendedOrdinalPositions = ordinal.getExtendedPositions();
+            }
+            positions = ordinal.extendedOrdinalPositions;
+        }
+
+        // In some cases (especially in early stages of the chart creation)
+        // the getExtendedPositions might return undefined.
+        if (positions && positions.length) {
+            const index = ordinal.getIndexOfPoint(pixelVal, positions),
+                mantissa = correctFloat(index % 1);
+
+            // Check if the index is inside position array.
+            // If true, read/approximate value for that exact index.
+            if (index >= 0 && index < positions.length) {
+                const leftNeighbour = positions[Math.floor(index)],
+                    rightNeighbour = positions[Math.ceil(index)],
+                    distance = rightNeighbour - leftNeighbour;
+
+                return positions[Math.floor(index)] + mantissa * distance;
+            }
+
+            // For cases when the index is not in the extended ordinal
+            // position array, like when the value we are looking
+            // for exceed the available data,
+            // approximate that value based on the calculated slope.
+            const positionsLength = positions.length,
+                firstPositionsValue = positions[0],
+                lastPositionsValue = positions[positionsLength - 1],
+                slope = (lastPositionsValue - firstPositionsValue) / (positionsLength - 1);
+
+            if (index < 0) {
+                return firstPositionsValue + slope * index;
+            }
+
+            return lastPositionsValue + slope * (index - positionsLength);
+        }
+        return val;
+    }
+
+    /**
+     * @private
+     * Internal function to calculate the precise index
+     * in ordinalPositions array.
+     */
+    function getIndexInArray(ordinalPositions: Array<number>, val: number): number {
+        const index =
+        OrdinalAxis.Additions.findIndexOf(ordinalPositions, val, true);
+        if (ordinalPositions[index] === val) {
+            return index;
+        }
+        const percent =
+            (val - ordinalPositions[index]) /
+            (ordinalPositions[index + 1] - ordinalPositions[index]);
+        return index + percent;
+    }
+
     /**
     * @private
     */
@@ -706,15 +1099,15 @@ namespace OrdinalAxis {
         const axis = this;
 
         if (!axis.ordinal) {
-            axis.ordinal = new OrdinalAxis.Additions(axis as OrdinalAxis.Composition);
+            axis.ordinal = new OrdinalAxis.Additions(axis as Composition);
         }
     }
 
     /**
      * @private
      */
-    function onAxisFoundExtremes(this: OrdinalAxis.Composition): void {
-        const axis = this as OrdinalAxis.Composition;
+    function onAxisFoundExtremes(this: Composition): void {
+        const axis = this as Composition;
 
         if (
             axis.isXAxis &&
@@ -900,498 +1293,126 @@ namespace OrdinalAxis {
      * @private
      */
     function onSeriesUpdatedData(this: Series): void {
-        const xAxis = this.xAxis as OrdinalAxis.Composition;
+        const xAxis = this.xAxis as Composition;
         // Destroy the extended ordinal index on updated data
         if (xAxis && xAxis.options.ordinal) {
             delete xAxis.ordinal.index;
         }
     }
 
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
     /**
-     * Extends the axis with ordinal support.
+     * Translate from a linear axis value to the corresponding ordinal axis
+     * position. If there are no gaps in the ordinal axis this will be the
+     * same. The translated value is the value that the point would have if
+     * the axis was linear, using the same min and max.
      *
      * @private
+     * @function Highcharts.Axis#val2lin
      *
-     * @param AxisClass
-     * Axis class to extend.
+     * @param {number} val
+     * The axis value.
      *
-     * @param ChartClass
-     * Chart class to use.
+     * @param {boolean} [toIndex]
+     * Whether to return the index in the ordinalPositions or the new value.
      *
-     * @param SeriesClass
-     * Series class to use.
+     * @return {number}
      */
-    export function compose<T extends typeof Axis>(
-        AxisClass: T,
-        SeriesClass: typeof Series,
-        ChartClass: typeof Chart
-    ): (typeof Composition&T) {
+    function val2lin(this: OrdinalAxis.Composition, val: number, toIndex?: boolean): number {
+        const axis = this,
+            ordinal = axis.ordinal,
+            ordinalPositions = ordinal.positions;
+        let slope = ordinal.slope,
+            extendedOrdinalPositions = ordinal.extendedOrdinalPositions;
 
-        AxisClass.keepProps.push('ordinal');
-
-        const axisProto = AxisClass.prototype as OrdinalAxis.Composition;
-
-        /**
-         * In an ordinal axis, there might be areas with dense consentrations of
-         * points, then large gaps between some. Creating equally distributed
-         * ticks over this entire range may lead to a huge number of ticks that
-         * will later be removed. So instead, break the positions up in
-         * segments, find the tick positions for each segment then concatenize
-         * them. This method is used from both data grouping logic and X axis
-         * tick position logic.
-         *
-         * @private
-         */
-        AxisClass.prototype.getTimeTicks = function (
-            normalizedInterval: DateTimeAxis.NormalizedObject,
-            min: number,
-            max: number,
-            startOfWeek?: number,
-            positions: Array<number> = [],
-            closestDistance: number = 0,
-            findHigherRanks?: boolean
-        ): TickPositionsArray {
-
-            const higherRanks = {} as Record<string, string>,
-                tickPixelIntervalOption = this.options.tickPixelInterval,
-                time = this.chart.time,
-                // Record all the start positions of a segment, to use when
-                // deciding what's a gap in the data.
-                segmentStarts = [];
-            let end,
-                segmentPositions,
-                hasCrossedHigherRank,
-                info,
-                outsideMax,
-                start = 0,
-                groupPositions = [] as TickPositionsArray,
-                lastGroupPosition = -Number.MAX_VALUE;
-
-            // The positions are not always defined, for example for ordinal
-            // positions when data has regular interval (#1557, #2090)
-            if (
-                (!this.options.ordinal && !this.options.breaks) ||
-                !positions ||
-                positions.length < 3 ||
-                typeof min === 'undefined'
-            ) {
-                return time.getTimeTicks.apply(time, arguments as any);
-            }
-
-            // Analyze the positions array to split it into segments on gaps
-            // larger than 5 times the closest distance. The closest distance is
-            // already found at this point, so we reuse that instead of
-            // computing it again.
-            const posLength = positions.length;
-
-            for (end = 0; end < posLength; end++) {
-
-                outsideMax = end && positions[end - 1] > max;
-
-                if (positions[end] < min) { // Set the last position before min
-                    start = end;
-                }
-
-                if (
-                    end === posLength - 1 ||
-                    positions[end + 1] - positions[end] > closestDistance * 5 ||
-                    outsideMax
-                ) {
-
-                    // For each segment, calculate the tick positions from the
-                    // getTimeTicks utility function. The interval will be the
-                    // same regardless of how long the segment is.
-                    if (positions[end] > lastGroupPosition) { // #1475
-
-                        segmentPositions = time.getTimeTicks(
-                            normalizedInterval,
-                            positions[start],
-                            positions[end],
-                            startOfWeek
-                        );
-
-                        // Prevent duplicate groups, for example for multiple
-                        // segments within one larger time frame (#1475)
-                        while (
-                            segmentPositions.length &&
-                            segmentPositions[0] <= lastGroupPosition
-                        ) {
-                            segmentPositions.shift();
-                        }
-                        if (segmentPositions.length) {
-                            lastGroupPosition =
-                                segmentPositions[segmentPositions.length - 1];
-                        }
-
-                        segmentStarts.push(groupPositions.length);
-                        groupPositions = groupPositions.concat(segmentPositions) as any;
-                    }
-                    // Set start of next segment
-                    start = end + 1;
-                }
-
-                if (outsideMax) {
-                    break;
-                }
-            }
-
-            // Get the grouping info from the last of the segments. The info is
-            // the same for all segments.
-            if (segmentPositions) {
-                info = (segmentPositions as any).info;
-
-                // Optionally identify ticks with higher rank, for example
-                // when the ticks have crossed midnight.
-                if (findHigherRanks && info.unitRange <= timeUnits.hour) {
-                    end = groupPositions.length - 1;
-
-                    // Compare points two by two
-                    for (start = 1; start < end; start++) {
-                        if (
-                            time.dateFormat('%d', groupPositions[start]) !==
-                            time.dateFormat('%d', groupPositions[start - 1])
-                        ) {
-                            higherRanks[groupPositions[start]] = 'day';
-                            hasCrossedHigherRank = true;
-                        }
-                    }
-
-                    // If the complete array has crossed midnight, we want
-                    // to mark the first positions also as higher rank
-                    if (hasCrossedHigherRank) {
-                        higherRanks[groupPositions[0]] = 'day';
-                    }
-                    info.higherRanks = higherRanks;
-                }
-
-                // Save the info
-                info.segmentStarts = segmentStarts;
-                groupPositions.info = info;
-
-            } else {
-                error(12, false, this.chart);
-            }
-            // Don't show ticks within a gap in the ordinal axis, where the
-            // space between two points is greater than a portion of the tick
-            // pixel interval
-            if (findHigherRanks && defined(tickPixelIntervalOption)) {
-
-                const length = groupPositions.length,
-                    translatedArr = [],
-                    distances = [];
-                let itemToRemove,
-                    translated,
-                    lastTranslated,
-                    medianDistance,
-                    distance,
-                    i = length;
-                // Find median pixel distance in order to keep a reasonably even
-                // distance between ticks (#748)
-                while (i--) {
-                    translated = this.translate(groupPositions[i]);
-                    if (lastTranslated) {
-                        distances[i] = lastTranslated - (translated as any);
-                    }
-                    translatedArr[i] = lastTranslated = translated;
-                }
-                distances.sort();
-                medianDistance = distances[Math.floor(distances.length / 2)];
-                if (medianDistance < (tickPixelIntervalOption as any) * 0.6) {
-                    medianDistance = null;
-                }
-
-                // Now loop over again and remove ticks where needed
-                i = groupPositions[length - 1] > max ? length - 1 : length; // #817
-                lastTranslated = void 0;
-                while (i--) {
-                    translated = translatedArr[i];
-                    distance = Math.abs((lastTranslated as any) - (translated as any));
-                    // #4175 - when axis is reversed, the distance, is negative
-                    // but tickPixelIntervalOption positive, so we need to
-                    // compare the same values
-
-                    // Remove ticks that are closer than 0.6 times the pixel
-                    // interval from the one to the right, but not if it is
-                    // close to the median distance (#748).
-                    if (
-                        lastTranslated &&
-                        distance < (tickPixelIntervalOption as any) * 0.8 &&
-                        (medianDistance === null || distance < medianDistance * 0.8)
-                    ) {
-
-                        // Is this a higher ranked position with a normal
-                        // position to the right?
-                        if (
-                            higherRanks[groupPositions[i]] &&
-                            !higherRanks[groupPositions[i + 1]]
-                        ) {
-
-                            // Yes: remove the lower ranked neighbour to the
-                            // right
-                            itemToRemove = i + 1;
-                            lastTranslated = translated; // #709
-
-                        } else {
-
-                            // No: remove this one
-                            itemToRemove = i;
-                        }
-
-                        groupPositions.splice(itemToRemove, 1);
-
-                    } else {
-                        lastTranslated = translated;
-                    }
-                }
-            }
-            return groupPositions;
-        };
-
-        /**
-         * Get axis position of given index of the extended ordinal positions.
-         * Used only when panning an ordinal axis.
-         *
-         * @private
-         * @function Highcharts.Axis#index2val
-         *
-         * @param {number} index
-         *        The index value of searched point
-         *
-         * @return {number}
-         */
-        axisProto.index2val = function (index: number): number {
-            const axis = this,
-                ordinal = axis.ordinal,
-                // Context could be changed to extendedOrdinalPositions.
-                ordinalPositions = ordinal.positions;
-
-            // The visible range contains only equally spaced values.
-            if (!ordinalPositions) {
-                return index;
-            }
-
-            let i = ordinalPositions.length - 1,
-                distance;
-
-            if (index < 0) { // out of range, in effect panning to the left
-                index = ordinalPositions[0];
-            } else if (index > i) { // out of range, panning to the right
-                index = ordinalPositions[i];
-            } else { // split it up
-                i = Math.floor(index);
-                distance = index - i; // the decimal
-            }
-
-            if (typeof distance !== 'undefined' &&
-                typeof ordinalPositions[i] !== 'undefined') {
-                return ordinalPositions[i] + (distance ?
-                    distance *
-                        (ordinalPositions[i + 1] - ordinalPositions[i]) :
-                    0);
-            }
-            return index;
-        };
-
-        /**
-         * Translate from linear (internal) to axis value.
-         *
-         * @private
-         * @function Highcharts.Axis#lin2val
-         *
-         * @param {number} val
-         *        The linear abstracted value.
-         *
-         * @return {number}
-         */
-        axisProto.lin2val = function (val: number): number {
-            const axis = this,
-                ordinal = axis.ordinal,
-                isInside = val > axis.left && val < axis.left + axis.len,
-                localMin = axis.old ? axis.old.min : axis.min,
-                localA = axis.old ? axis.old.transA : axis.transA;
-            let positions = ordinal.positions; // for the current visible range
-
-            // The visible range contains only equally spaced values.
-            if (!positions) {
-                return val;
-            }
-
-            // Convert back from modivied value to pixels.
-            const pixelVal = (val - (localMin as any)) * localA;
-
-            // If the value is not inside the plot area,
-            // use the extended positions.
-            // (array contains also points that are outside of the plotArea).
-            if (!isInside) {
-                // When iterating for the first time,
-                // get the extended ordinal positional and assign them.
-                if (!ordinal.extendedOrdinalPositions) {
-                    ordinal.extendedOrdinalPositions = ordinal.getExtendedPositions();
-                }
-                positions = ordinal.extendedOrdinalPositions;
-            }
-
-            // In some cases (especially in early stages of the chart creation)
-            // the getExtendedPositions might return undefined.
-            if (positions && positions.length) {
-                const index = ordinal.getIndexOfPoint(pixelVal, positions),
-                    mantissa = correctFloat(index % 1);
-
-                // Check if the index is inside position array.
-                // If true, read/approximate value for that exact index.
-                if (index >= 0 && index < positions.length) {
-                    const leftNeighbour = positions[Math.floor(index)],
-                        rightNeighbour = positions[Math.ceil(index)],
-                        distance = rightNeighbour - leftNeighbour;
-
-                    return positions[Math.floor(index)] + mantissa * distance;
-                }
-
-                // For cases when the index is not in the extended ordinal
-                // position array, like when the value we are looking
-                // for exceed the available data,
-                // approximate that value based on the calculated slope.
-                const positionsLength = positions.length,
-                    firstPositionsValue = positions[0],
-                    lastPositionsValue = positions[positionsLength - 1],
-                    slope = (lastPositionsValue - firstPositionsValue) / (positionsLength - 1);
-
-                if (index < 0) {
-                    return firstPositionsValue + slope * index;
-                }
-
-                return lastPositionsValue + slope * (index - positionsLength);
-            }
+        if (!ordinalPositions) {
             return val;
-        };
+        }
 
-        /**
-         * Translate from a linear axis value to the corresponding ordinal axis
-         * position. If there are no gaps in the ordinal axis this will be the
-         * same. The translated value is the value that the point would have if
-         * the axis was linear, using the same min and max.
-         *
-         * @private
-         * @function Highcharts.Axis#val2lin
-         *
-         * @param {number} val
-         * The axis value.
-         *
-         * @param {boolean} [toIndex]
-         * Whether to return the index in the ordinalPositions or the new value.
-         *
-         * @return {number}
-         */
-        axisProto.val2lin = function (val: number, toIndex?: boolean): number {
-            const axis = this,
-                ordinal = axis.ordinal,
-                ordinalPositions = ordinal.positions;
-            let slope = ordinal.slope,
-                extendedOrdinalPositions = ordinal.extendedOrdinalPositions;
+        const ordinalLength = ordinalPositions.length;
+        let ordinalIndex;
+        // If the searched value is inside visible plotArea, ivastigate the
+        // value basing on ordinalPositions.
+        if (
+            ordinalPositions[0] <= val &&
+            ordinalPositions[ordinalLength - 1] >= val
+        ) {
+            ordinalIndex = getIndexInArray(ordinalPositions, val);
+            // final return value is based on ordinalIndex
+        } else {
 
-            if (!ordinalPositions) {
+            if (!extendedOrdinalPositions) {
+                extendedOrdinalPositions =
+                    ordinal.getExtendedPositions &&
+                    ordinal.getExtendedPositions();
+                ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
+            }
+            if (!(extendedOrdinalPositions && extendedOrdinalPositions.length)) {
+
                 return val;
             }
 
-            const ordinalLength = ordinalPositions.length;
-            let ordinalIndex;
-            // If the searched value is inside visible plotArea, ivastigate the
-            // value basing on ordinalPositions.
+            const length = extendedOrdinalPositions.length;
+
+            if (!slope) {
+                slope =
+                    (extendedOrdinalPositions[length - 1] -
+                        extendedOrdinalPositions[0]) /
+                    length;
+            }
+            // OriginalPointReference is equal to the index of
+            // first point of ordinalPositions in extendedOrdinalPositions.
+
+            const originalPositionsReference = getIndexInArray(
+                extendedOrdinalPositions,
+                ordinalPositions[0]
+            );
+
+            // If the searched value is outside the visiblePlotArea,
+            // check if it is inside extendedOrdinalPositions.
             if (
-                ordinalPositions[0] <= val &&
-                ordinalPositions[ordinalLength - 1] >= val
+                val >= extendedOrdinalPositions[0] &&
+                val <=
+                    extendedOrdinalPositions[
+                        length - 1
+                    ]
             ) {
-                ordinalIndex = getIndexInArray(ordinalPositions, val);
-                // final return value is based on ordinalIndex
+                // Return Value
+                ordinalIndex = getIndexInArray(extendedOrdinalPositions, val) - originalPositionsReference;
             } else {
-
-                if (!extendedOrdinalPositions) {
-                    extendedOrdinalPositions =
-                        ordinal.getExtendedPositions &&
-                        ordinal.getExtendedPositions();
-                    ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
-                }
-                if (!(extendedOrdinalPositions && extendedOrdinalPositions.length)) {
-
-                    return val;
-                }
-
-                const length = extendedOrdinalPositions.length;
-
-                if (!slope) {
-                    slope =
-                        (extendedOrdinalPositions[length - 1] -
-                            extendedOrdinalPositions[0]) /
-                        length;
-                }
-                // OriginalPointReference is equal to the index of
-                // first point of ordinalPositions in extendedOrdinalPositions.
-
-                const originalPositionsReference = getIndexInArray(
-                    extendedOrdinalPositions,
-                    ordinalPositions[0]
-                );
-
-                // If the searched value is outside the visiblePlotArea,
-                // check if it is inside extendedOrdinalPositions.
-                if (
-                    val >= extendedOrdinalPositions[0] &&
-                    val <=
-                        extendedOrdinalPositions[
-                            length - 1
-                        ]
-                ) {
-                    // Return Value
-                    ordinalIndex = getIndexInArray(extendedOrdinalPositions, val) - originalPositionsReference;
+                // Since ordinal.slope is the average distance between 2
+                // points on visible plotArea, this can be used to calculete
+                // the approximate position of the point, which is outside
+                // the extededOrdinalPositions.
+                if (val < extendedOrdinalPositions[0]) {
+                    const diff = extendedOrdinalPositions[0] - val,
+                        approximateIndexOffset = diff / slope;
+                    ordinalIndex =
+                        -originalPositionsReference -
+                        approximateIndexOffset;
                 } else {
-                    // Since ordinal.slope is the average distance between 2
-                    // points on visible plotArea, this can be used to calculete
-                    // the approximate position of the point, which is outside
-                    // the extededOrdinalPositions.
-                    if (val < extendedOrdinalPositions[0]) {
-                        const diff = extendedOrdinalPositions[0] - val,
-                            approximateIndexOffset = diff / slope;
-                        ordinalIndex =
-                            -originalPositionsReference -
-                            approximateIndexOffset;
-                    } else {
-                        const diff =
-                                val -
-                                extendedOrdinalPositions[
-                                    length - 1
-                                ],
-                            approximateIndexOffset = diff / slope;
-                        ordinalIndex =
-                            approximateIndexOffset +
-                            length -
-                            originalPositionsReference;
-                    }
+                    const diff =
+                            val -
+                            extendedOrdinalPositions[
+                                length - 1
+                            ],
+                        approximateIndexOffset = diff / slope;
+                    ordinalIndex =
+                        approximateIndexOffset +
+                        length -
+                        originalPositionsReference;
                 }
             }
+        }
 
-            return toIndex ? ordinalIndex : (slope as any) * (ordinalIndex || 0) +
-                      (ordinal.offset as any);
-        };
-        // Record this to prevent overwriting by broken-axis module (#5979)
-        axisProto.ordinal2lin = axisProto.val2lin;
-
-        addEvent(AxisClass, 'afterInit', onAxisAfterInit);
-        addEvent(AxisClass as (T&typeof Composition), 'foundExtremes', onAxisFoundExtremes);
-        addEvent(AxisClass, 'afterSetScale', onAxisAfterSetScale);
-        addEvent(AxisClass, 'initialAxisTranslation', onAxisInitialAxisTranslation);
-        addEvent(ChartClass, 'pan', onChartPan);
-        addEvent(SeriesClass, 'updatedData', onSeriesUpdatedData);
-
-
-        /* eslint-enable no-invalid-this */
-        return AxisClass as (typeof Composition&T);
+        return toIndex ? ordinalIndex : (slope as any) * (ordinalIndex || 0) +
+                    (ordinal.offset as any);
     }
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default OrdinalAxis;
