@@ -2,6 +2,7 @@ QUnit.test('Annotations events - general', function (assert) {
     var addEventCalled = 0,
         afterUpdateEventCalled = 0,
         removeEventCalled = 0,
+        closeEventCalled = 0,
         circleAfterUpdateCalled = 0,
         popupOptions,
         getShapes = function () {
@@ -68,6 +69,9 @@ QUnit.test('Annotations events - general', function (assert) {
                 events: {
                     showPopup: function (event) {
                         popupOptions = event.options;
+                    },
+                    closePopup: function () {
+                        closeEventCalled++;
                     }
                 }
             },
@@ -199,5 +203,11 @@ QUnit.test('Annotations events - general', function (assert) {
             type: 'basicAnnotation'
         },
         "Annotations' popup should get correct config for fields (#11716)"
+    );
+
+    chart.navigationBindings.activeAnnotation.setVisibility();
+    assert.ok(
+        closeEventCalled,
+        '#15730: Popup should close when hiding annotation'
     );
 });
