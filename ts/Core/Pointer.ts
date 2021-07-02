@@ -1330,8 +1330,18 @@ class Pointer {
             lastValidTouch.y = [pinchDown[0].chartY, pinchDown[1] &&
                 pinchDown[1].chartY];
 
+            let pinchedAxes = chart.axes.filter((axis: Axis): boolean => {
+                if (!axis.zoomEnabled) {
+                    return false;
+                }
+                // buba
+                if (axis.horiz) {
+                    return (touches[0] as any).chartY > axis.left && (touches[0] as any).chartY < axis.left + axis.len;
+                }
+                return (touches[0] as any).chartX > axis.top && (touches[0] as any).chartX < axis.top + axis.len;
+            });
             // Identify the data bounds in pixels
-            chart.axes.forEach(function (axis: Axis): void {
+            pinchedAxes.forEach(function (axis: Axis): void {
                 if (axis.zoomEnabled) {
                     const bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
                         minPixelPadding = axis.minPixelPadding,
