@@ -21,7 +21,6 @@ import Scrollbar from '../../Core/Scrollbar.js';
 import '../../Core/Navigator.js';
 import '../../Extensions/RangeSelector.js';
 import StockChart from '../../Core/Chart/StockChart.js';
-import '../../Series/HeikinAshi/HeikinAshiSeries.js';
 const G: AnyRecord = Highcharts;
 // Classes
 G.Scrollbar = Scrollbar;
