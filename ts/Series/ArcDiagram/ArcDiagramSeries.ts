@@ -192,16 +192,18 @@ class ArcDiagramSeries extends SankeySeries {
                 (point.weight as any) * translationFactor,
                 (this.options.minLinkWidth as any)
             )),
-            offsetLinks = (point.series.options as any).offsetLinks,
-            fromY = offsetLinks ? getY(fromNode, 'linksFrom') : fromNode.nodeY,
-            toY = offsetLinks ? getY(toNode, 'linksTo') : toNode.nodeY,
+            centeredLinks = (point.series.options as any).centeredLinks,
+            fromY = centeredLinks ?
+                fromNode.nodeY +
+                    ((fromNode.shapeArgs.height || 0) - linkHeight) / 2 :
+                getY(fromNode, 'linksFrom'),
+            toY = centeredLinks ? toNode.nodeY +
+                ((fromNode.shapeArgs.height || 0) - linkHeight) / 2 :
+                getY(toNode, 'linksTo'),
             nodeLeft = fromNode.nodeX,
             nodeW = this.nodeWidth,
             right = nodeLeft + nodeW,
-            majorRadius = pick(
-                (point.series.options as any).majorRadius,
-                Math.min(chart.plotWidth / 2, chart.plotHeight / 2)
-            ),
+            majorRadius,
             linkWidth = linkHeight;
 
         if (fromY > toY) {
@@ -233,6 +235,11 @@ class ArcDiagramSeries extends SankeySeries {
             toY + linkHeight
         ];
 
+        majorRadius = pick(
+            (point.series.options as any).majorRadius,
+            Math.min((toY + linkHeight - fromY) / 2, chart.plotWidth / 2, chart.plotHeight / 2)
+        );
+
         point.shapeArgs = {
             d: [
                 ['M', right, fromY],
@@ -249,7 +256,7 @@ class ArcDiagramSeries extends SankeySeries {
                 ['L', right, toY],
                 [
                     'A',
-                    majorRadius - linkWidth,
+                    majorRadius - linkHeight,
                     (toY - fromY - linkHeight) / 2,
                     0,
                     0,
@@ -297,12 +304,16 @@ class ArcDiagramSeries extends SankeySeries {
     ): void {
         const translationFactor = this.translationFactor,
             chart = this.chart,
+            maxNodesLength = chart.inverted ? chart.plotWidth : chart.plotHeight,
             options = this.options,
+            centeredLinks = (node.series.options as any).centeredLinks,
             sum = node.getSum(),
-            nodeHeight = Math.max(
-                Math.round(sum * translationFactor),
-                this.options.minLinkWidth as any
-            ),
+            nodeHeight = centeredLinks ?
+                maxNodesLength / node.series.nodes.length - this.nodePadding :
+                Math.max(
+                    Math.round(sum * translationFactor),
+                    this.options.minLinkWidth as any
+                ),
             crisp = Math.round(options.borderWidth as any) % 2 / 2,
             nodeOffset = column.offset(node, translationFactor),
             fromNodeTop = Math.floor(pick(
