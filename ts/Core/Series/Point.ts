@@ -70,28 +70,6 @@ const {
  *
  * */
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface PointGraphicalProps {
-            singular: Array<string>;
-            plural: Array<string>;
-        }
-        interface PlotSeriesPointOptions {
-            events?: PointEventsOptionsObject;
-        }
-        interface PointUpdateCallbackFunction {
-            (this: Point, event: PointUpdateEventObject): void;
-        }
-        interface PointUpdateEventObject {
-            options?: PointTypeOptions;
-        }
-    }
-}
-
 declare module './PointLike' {
     interface PointLike {
         className?: string;
@@ -111,217 +89,6 @@ declare module './PointLike' {
         ): void;
     }
 }
-
-/**
- * Function callback when a series point is clicked. Return false to cancel the
- * action.
- *
- * @callback Highcharts.PointClickCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        The point where the event occured.
- *
- * @param {Highcharts.PointClickEventObject} event
- *        Event arguments.
- */
-
-/**
- * Common information for a click event on a series point.
- *
- * @interface Highcharts.PointClickEventObject
- * @extends Highcharts.PointerEventObject
- *//**
- * Clicked point.
- * @name Highcharts.PointClickEventObject#point
- * @type {Highcharts.Point}
- */
-
-/**
- * Configuration hash for the data label and tooltip formatters.
- *
- * @interface Highcharts.PointLabelObject
- *//**
- * The point's current color.
- * @name Highcharts.PointLabelObject#color
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
- *//**
- * The point's current color index, used in styled mode instead of `color`. The
- * color index is inserted in class names used for styling.
- * @name Highcharts.PointLabelObject#colorIndex
- * @type {number}
- *//**
- * The name of the related point.
- * @name Highcharts.PointLabelObject#key
- * @type {string|undefined}
- *//**
- * The percentage for related points in a stacked series or pies.
- * @name Highcharts.PointLabelObject#percentage
- * @type {number}
- *//**
- * The related point. The point name, if defined, is available through
- * `this.point.name`.
- * @name Highcharts.PointLabelObject#point
- * @type {Highcharts.Point}
- *//**
- * The related series. The series name is available through `this.series.name`.
- * @name Highcharts.PointLabelObject#series
- * @type {Highcharts.Series}
- *//**
- * The total of values in either a stack for stacked series, or a pie in a pie
- * series.
- * @name Highcharts.PointLabelObject#total
- * @type {number|undefined}
- *//**
- * For categorized axes this property holds the category name for the point. For
- * other axes it holds the X value.
- * @name Highcharts.PointLabelObject#x
- * @type {number|string|undefined}
- *//**
- * The y value of the point.
- * @name Highcharts.PointLabelObject#y
- * @type {number|undefined}
- */
-
-/**
- * Gets fired when the mouse leaves the area close to the point.
- *
- * @callback Highcharts.PointMouseOutCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        Point where the event occured.
- *
- * @param {global.PointerEvent} event
- *        Event that occured.
- */
-
-/**
- * Gets fired when the mouse enters the area close to the point.
- *
- * @callback Highcharts.PointMouseOverCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        Point where the event occured.
- *
- * @param {global.Event} event
- *        Event that occured.
- */
-
-/**
- * The generic point options for all series.
- *
- * In TypeScript you have to extend `PointOptionsObject` with an additional
- * declaration to allow custom data options:
- *
- * ```
- * declare interface PointOptionsObject {
- *     customProperty: string;
- * }
- * ```
- *
- * @interface Highcharts.PointOptionsObject
- */
-
-/**
- * Possible option types for a data point. Use `null` to indicate a gap.
- *
- * @typedef {number|string|Highcharts.PointOptionsObject|Array<(number|string|null)>|null} Highcharts.PointOptionsType
- */
-
-/**
- * Gets fired when the point is removed using the `.remove()` method.
- *
- * @callback Highcharts.PointRemoveCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        Point where the event occured.
- *
- * @param {global.Event} event
- *        Event that occured.
- */
-
-/**
- * Possible key values for the point state options.
- *
- * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.PointStateValue
- */
-
-/**
- * Gets fired when the point is updated programmatically through the `.update()`
- * method.
- *
- * @callback Highcharts.PointUpdateCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        Point where the event occured.
- *
- * @param {Highcharts.PointUpdateEventObject} event
- *        Event that occured.
- */
-
-/**
- * Information about the update event.
- *
- * @interface Highcharts.PointUpdateEventObject
- * @extends global.Event
- *//**
- * Options data of the update event.
- * @name Highcharts.PointUpdateEventObject#options
- * @type {Highcharts.PointOptionsType}
- */
-
-/**
- * @interface Highcharts.PointEventsOptionsObject
- *//**
- * Fires when the point is selected either programmatically or following a click
- * on the point. One parameter, `event`, is passed to the function. Returning
- * `false` cancels the operation.
- * @name Highcharts.PointEventsOptionsObject#select
- * @type {Highcharts.PointSelectCallbackFunction|undefined}
- *//**
- * Fires when the point is unselected either programmatically or following a
- * click on the point. One parameter, `event`, is passed to the function.
- * Returning `false` cancels the operation.
- * @name Highcharts.PointEventsOptionsObject#unselect
- * @type {Highcharts.PointUnselectCallbackFunction|undefined}
- */
-
-/**
- * Information about the select/unselect event.
- *
- * @interface Highcharts.PointInteractionEventObject
- * @extends global.Event
- *//**
- * @name Highcharts.PointInteractionEventObject#accumulate
- * @type {boolean}
- */
-
-/**
- * Gets fired when the point is selected either programmatically or following a
- * click on the point.
- *
- * @callback Highcharts.PointSelectCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        Point where the event occured.
- *
- * @param {Highcharts.PointInteractionEventObject} event
- *        Event that occured.
- */
-
-/**
- * Fires when the point is unselected either programmatically or following a
- * click on the point.
- *
- * @callback Highcharts.PointUnselectCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        Point where the event occured.
- *
- * @param {Highcharts.PointInteractionEventObject} event
- *        Event that occured.
- */
-
-''; // detach doclet above
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -481,13 +248,12 @@ class Point {
      * @function Highcharts.Point#animateBeforeDestroy
      */
     public animateBeforeDestroy(): void {
-        let point = this,
+        const point = this,
             animateParams = { x: point.startXPos, opacity: 0 },
-            isDataLabel,
             graphicalProps = point.getGraphicalProps();
 
         graphicalProps.singular.forEach(function (prop: string): void {
-            isDataLabel = prop === 'dataLabel';
+            const isDataLabel = prop === 'dataLabel';
 
             (point as any)[prop] = (point as any)[prop].animate(
                 isDataLabel ? {
@@ -593,10 +359,12 @@ class Point {
         }
         if (typeof point.x === 'undefined' && series) {
             if (typeof x === 'undefined') {
-                point.x = (series.autoIncrement as any)(point);
+                point.x = series.autoIncrement();
             } else {
                 point.x = x;
             }
+        } else if (isNumber(options.x) && series.options.relativeXValue) {
+            point.x = series.autoIncrement(options.x);
         }
 
         return point;
@@ -610,14 +378,14 @@ class Point {
      * @function Highcharts.Point#destroy
      */
     public destroy(): void {
-        let point = this,
+        const point = this,
             series = point.series,
             chart = series.chart,
             dataSorting = series.options.dataSorting,
             hoverPoints = chart.hoverPoints,
             globalAnimation = point.series.chart.renderer.globalAnimation,
-            animation = animObject(globalAnimation),
-            prop;
+            animation = animObject(globalAnimation);
+        let prop;
 
         /**
          * Allow to call after animation.
@@ -775,13 +543,13 @@ class Point {
      * @param {Highcharts.Dictionary<number>} [kinds]
      * @return {Highcharts.PointGraphicalProps}
      */
-    public getGraphicalProps(kinds?: Record<string, number>): Highcharts.PointGraphicalProps {
-        let point = this,
+    public getGraphicalProps(kinds?: Record<string, number>): Point.GraphicalProps {
+        const point = this,
             props = [],
-            prop,
-            i,
-            graphicalProps: Highcharts.PointGraphicalProps =
+            graphicalProps: Point.GraphicalProps =
                 { singular: [], plural: [] };
+        let prop,
+            i;
 
         kinds = kinds || { graphic: 1, dataLabel: 1 };
 
@@ -856,11 +624,11 @@ class Point {
      *         The zone item.
      */
     public getZone(): SeriesZonesOptions {
-        let series = this.series,
+        const series = this.series,
             zones = series.zones,
-            zoneAxis = series.zoneAxis || 'y',
-            i = 0,
-            zone;
+            zoneAxis = series.zoneAxis || 'y';
+        let zone,
+            i = 0;
 
         zone = zones[i];
         while ((this as any)[zoneAxis] >= (zone.value as any)) {
@@ -959,11 +727,11 @@ class Point {
     public optionsToObject(
         options: (PointOptions|PointShortOptions)
     ): this['options'] {
-        let ret = {} as AnyRecord,
-            series = this.series,
+        const series = this.series,
             keys = series.options.keys,
             pointArrayMap = keys || series.pointArrayMap || ['y'],
-            valueCount = pointArrayMap.length,
+            valueCount = pointArrayMap.length;
+        let ret = {} as AnyRecord,
             firstItemType,
             i = 0,
             j = 0;
@@ -1022,13 +790,14 @@ class Point {
      * @return {void}
      */
     public resolveColor(): void {
-        let series = this.series,
-            colors,
+        const series = this.series,
             optionsChart = series.chart.options.chart,
+            styledMode = series.chart.styledMode;
+
+        let color,
+            colors,
             colorCount = optionsChart.colorCount,
-            styledMode = series.chart.styledMode,
-            colorIndex: number,
-            color;
+            colorIndex: number;
 
         // remove points nonZonedColor for later recalculation
         delete (this as any).nonZonedColor;
@@ -1195,13 +964,12 @@ class Point {
         animation?: (boolean|Partial<AnimationOptions>),
         runEvent?: boolean
     ): void {
-        let point = this,
+        const point = this,
             series = point.series,
             graphic = point.graphic,
-            i: number,
             chart = series.chart,
             seriesOptions = series.options;
-
+        let i: number;
         redraw = pick(redraw, true);
 
         /**
@@ -1210,6 +978,7 @@ class Point {
         function update(): void {
 
             point.applyOptions(options);
+            point.resolveColor();
 
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
@@ -1498,7 +1267,7 @@ class Point {
         state?: (StatesOptionsKey|''),
         move?: boolean
     ): void {
-        let point = this,
+        const point = this,
             series = point.series,
             previousState = point.state,
             stateOptions = (
@@ -1516,15 +1285,14 @@ class Point {
                 (markerOptions.states as any)[state || 'normal']
             ) || {}),
             stateDisabled = (markerStateOptions as any).enabled === false,
-            stateMarkerGraphic = series.stateMarkerGraphic,
             pointMarker = point.marker || {},
             chart = series.chart,
-            halo = series.halo,
-            haloOptions,
+            hasMarkers = (markerOptions && series.markerAttribs);
+        let halo = series.halo,
             markerAttribs,
             pointAttribs: SVGAttributes,
             pointAttribsAnimation: AnimationOptions,
-            hasMarkers = (markerOptions && series.markerAttribs),
+            stateMarkerGraphic = series.stateMarkerGraphic,
             newSymbol: (SymbolKey|undefined);
 
         state = state || ''; // empty string
@@ -1680,11 +1448,13 @@ class Point {
                     state && point.isInside ? 'show' : 'hide'
                 ](); // #2450
                 (stateMarkerGraphic.element as any).point = point; // #4310
+
+                stateMarkerGraphic.addClass(point.getClassName(), true);
             }
         }
 
         // Show me your halo
-        haloOptions = stateOptions.halo;
+        const haloOptions = stateOptions.halo;
         const markerGraphic = (point.graphic || stateMarkerGraphic);
         const markerVisibility = (
             markerGraphic && markerGraphic.visibility || 'inherit'
@@ -1781,6 +1551,231 @@ namespace Point {
     }
 }
 
-(H as any).Point = Point;
+namespace Point {
+    export interface GraphicalProps {
+        singular: Array<string>;
+        plural: Array<string>;
+    }
+    export interface SeriesPointsOptions {
+        events?: Highcharts.PointEventsOptionsObject;
+    }
+    export interface UpdateCallbackFunction {
+        (this: Point, event: UpdateEventObject): void;
+    }
+    export interface UpdateEventObject {
+        options?: PointTypeOptions;
+    }
+}
 
 export default Point;
+
+/**
+ * Function callback when a series point is clicked. Return false to cancel the
+ * action.
+ *
+ * @callback Highcharts.PointClickCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        The point where the event occured.
+ *
+ * @param {Highcharts.PointClickEventObject} event
+ *        Event arguments.
+ */
+
+/**
+ * Common information for a click event on a series point.
+ *
+ * @interface Highcharts.PointClickEventObject
+ * @extends Highcharts.PointerEventObject
+ *//**
+ * Clicked point.
+ * @name Highcharts.PointClickEventObject#point
+ * @type {Highcharts.Point}
+ */
+
+/**
+ * Configuration hash for the data label and tooltip formatters.
+ *
+ * @interface Highcharts.PointLabelObject
+ *//**
+ * The point's current color.
+ * @name Highcharts.PointLabelObject#color
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
+ *//**
+ * The point's current color index, used in styled mode instead of `color`. The
+ * color index is inserted in class names used for styling.
+ * @name Highcharts.PointLabelObject#colorIndex
+ * @type {number}
+ *//**
+ * The name of the related point.
+ * @name Highcharts.PointLabelObject#key
+ * @type {string|undefined}
+ *//**
+ * The percentage for related points in a stacked series or pies.
+ * @name Highcharts.PointLabelObject#percentage
+ * @type {number}
+ *//**
+ * The related point. The point name, if defined, is available through
+ * `this.point.name`.
+ * @name Highcharts.PointLabelObject#point
+ * @type {Highcharts.Point}
+ *//**
+ * The related series. The series name is available through `this.series.name`.
+ * @name Highcharts.PointLabelObject#series
+ * @type {Highcharts.Series}
+ *//**
+ * The total of values in either a stack for stacked series, or a pie in a pie
+ * series.
+ * @name Highcharts.PointLabelObject#total
+ * @type {number|undefined}
+ *//**
+ * For categorized axes this property holds the category name for the point. For
+ * other axes it holds the X value.
+ * @name Highcharts.PointLabelObject#x
+ * @type {number|string|undefined}
+ *//**
+ * The y value of the point.
+ * @name Highcharts.PointLabelObject#y
+ * @type {number|undefined}
+ */
+
+/**
+ * Gets fired when the mouse leaves the area close to the point.
+ *
+ * @callback Highcharts.PointMouseOutCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {global.PointerEvent} event
+ *        Event that occured.
+ */
+
+/**
+ * Gets fired when the mouse enters the area close to the point.
+ *
+ * @callback Highcharts.PointMouseOverCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {global.Event} event
+ *        Event that occured.
+ */
+
+/**
+ * The generic point options for all series.
+ *
+ * In TypeScript you have to extend `PointOptionsObject` with an additional
+ * declaration to allow custom data options:
+ *
+ * ```
+ * declare interface PointOptionsObject {
+ *     customProperty: string;
+ * }
+ * ```
+ *
+ * @interface Highcharts.PointOptionsObject
+ */
+
+/**
+ * Possible option types for a data point. Use `null` to indicate a gap.
+ *
+ * @typedef {number|string|Highcharts.PointOptionsObject|Array<(number|string|null)>|null} Highcharts.PointOptionsType
+ */
+
+/**
+ * Gets fired when the point is removed using the `.remove()` method.
+ *
+ * @callback Highcharts.PointRemoveCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {global.Event} event
+ *        Event that occured.
+ */
+
+/**
+ * Possible key values for the point state options.
+ *
+ * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.PointStateValue
+ */
+
+/**
+ * Gets fired when the point is updated programmatically through the `.update()`
+ * method.
+ *
+ * @callback Highcharts.PointUpdateCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.PointUpdateEventObject} event
+ *        Event that occured.
+ */
+
+/**
+ * Information about the update event.
+ *
+ * @interface Highcharts.PointUpdateEventObject
+ * @extends global.Event
+ *//**
+ * Options data of the update event.
+ * @name Highcharts.PointUpdateEventObject#options
+ * @type {Highcharts.PointOptionsType}
+ */
+
+/**
+ * @interface Highcharts.PointEventsOptionsObject
+ *//**
+ * Fires when the point is selected either programmatically or following a click
+ * on the point. One parameter, `event`, is passed to the function. Returning
+ * `false` cancels the operation.
+ * @name Highcharts.PointEventsOptionsObject#select
+ * @type {Highcharts.PointSelectCallbackFunction|undefined}
+ *//**
+ * Fires when the point is unselected either programmatically or following a
+ * click on the point. One parameter, `event`, is passed to the function.
+ * Returning `false` cancels the operation.
+ * @name Highcharts.PointEventsOptionsObject#unselect
+ * @type {Highcharts.PointUnselectCallbackFunction|undefined}
+ */
+
+/**
+ * Information about the select/unselect event.
+ *
+ * @interface Highcharts.PointInteractionEventObject
+ * @extends global.Event
+ *//**
+ * @name Highcharts.PointInteractionEventObject#accumulate
+ * @type {boolean}
+ */
+
+/**
+ * Gets fired when the point is selected either programmatically or following a
+ * click on the point.
+ *
+ * @callback Highcharts.PointSelectCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.PointInteractionEventObject} event
+ *        Event that occured.
+ */
+
+/**
+ * Fires when the point is unselected either programmatically or following a
+ * click on the point.
+ *
+ * @callback Highcharts.PointUnselectCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.PointInteractionEventObject} event
+ *        Event that occured.
+ */
+
+''; // detach doclet above

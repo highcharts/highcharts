@@ -198,7 +198,7 @@ defaultOptions.noData = {
 chartPrototype.showNoData = function (str?: string): void {
     const chart = this,
         options = chart.options,
-        text = str || (options && (options.lang as any).noData),
+        text = str || (options && options.lang.noData) || '',
         noDataOptions: Highcharts.NoDataOptions =
             options && (options.noData || {});
 

@@ -310,17 +310,20 @@ H.Popup.prototype = {
         }
 
         // add input
-        createElement(
-            INPUT,
-            {
-                name: inputName,
-                value: value[0],
-                type: value[1],
-                className: PREFIX + 'popup-field'
-            },
-            void 0,
-            parentDiv
-        ).setAttribute(PREFIX + 'data-name', option);
+        if (value !== '') {
+
+            createElement(
+                INPUT,
+                {
+                    name: inputName,
+                    value: value[0],
+                    type: value[1],
+                    className: PREFIX + 'popup-field'
+                },
+                void 0,
+                parentDiv
+            ).setAttribute(PREFIX + 'data-name', option);
+        }
     },
     /**
      * Create button.
@@ -1165,6 +1168,13 @@ H.Popup.prototype = {
 
                 if (value !== void 0) { // skip if field is unnecessary, #15362
                     if (isObject(value)) {
+                        addInput.call( // (15733) 'Periods' has an arrayed value. Label must be created here.
+                            _self,
+                            parentFullName,
+                            type,
+                            parentDiv,
+                            ''
+                        );
                         addParamInputs.call(
                             _self,
                             chart,
@@ -1174,7 +1184,7 @@ H.Popup.prototype = {
                             parentDiv
                         );
                     } else if (
-                    // skip volume field which is created by addFormFields
+                        // skip volume field which is created by addFormFields
                         parentFullName !== 'params.volumeSeriesID'
                     ) {
                         addInput.call(

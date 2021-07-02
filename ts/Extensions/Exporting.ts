@@ -37,6 +37,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Core/Renderer/SVG/SymbolType';
 
+import AST from '../Core/Renderer/HTML/AST.js';
 import Chart from '../Core/Chart/Chart.js';
 import chartNavigationMixin from '../Mixins/Navigation.js';
 import H from '../Core/Globals.js';
@@ -1953,11 +1954,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 if (isObject(item, true)) {
                     let element;
 
-                    if ((item as any).separator) {
+                    if (item.separator) {
                         element = createElement(
                             'hr',
-                            null as any,
-                            null as any,
+                            void 0,
+                            void 0,
                             innerMenu
                         );
 
@@ -1974,20 +1975,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                                 if (e) { // IE7
                                     e.stopPropagation();
                                 }
-                                (menu as any).hideMenu();
+                                menu.hideMenu();
                                 if ((item as any).onclick) {
                                     (item as any).onclick
                                         .apply(chart, arguments);
                                 }
                             }
-                        }, null as any, innerMenu);
+                        }, void 0, innerMenu);
 
-                        element.appendChild(doc.createTextNode(
-                            (item as any).text ||
-                            (chart.options.lang as any)[
-                                (item as any).textKey as any
-                            ]
-                        ));
+                        AST.setElementHTML(element, item.text ||
+                            (chart.options.lang as any)[item.textKey as any]
+                        );
 
                         if (!chart.styledMode) {
                             element.onmouseover = function (

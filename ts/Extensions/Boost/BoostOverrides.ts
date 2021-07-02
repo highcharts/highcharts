@@ -392,12 +392,16 @@ wrap(Series.prototype, 'processData', function (
     /**
      * Used twice in this function, first on this.options.data, the second
      * time it runs the check again after processedXData is built.
+     * If the data is going to be grouped, the series shouldn't be boosted.
      * @private
-     * @todo Check what happens with data grouping
      */
     function getSeriesBoosting(
         data?: Array<(PointOptions|PointShortOptions)>
     ): boolean {
+        // Check if will be grouped.
+        if (series.forceCrop) {
+            return false;
+        }
         return series.chart.isChartSeriesBoosting() || (
             (data ? data.length : 0) >=
             (series.options.boostThreshold || Number.MAX_VALUE)

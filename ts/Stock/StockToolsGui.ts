@@ -313,6 +313,7 @@ setOptions({
                 // Indicators' params (#15170):
                 index: 'Index',
                 period: 'Period',
+                periods: 'Periods',
                 standardDeviation: 'Standard deviation',
                 periodTenkan: 'Tenkan period',
                 periodSenkouSpanB: 'Senkou Span B period',

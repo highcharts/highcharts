@@ -47,18 +47,18 @@ declare module './Chart/ChartOptions'{
 
 declare module './LangOptions'{
     export interface LangOptions {
-        decimalPoint?: string;
+        decimalPoint: string;
         invalidDate?: string;
-        loading?: string;
-        months?: Array<string>;
+        loading: string;
+        months: Array<string>;
         numericSymbolMagnitude?: number;
-        numericSymbols?: Array<string>;
-        resetZoom?: string;
-        resetZoomTitle?: string;
-        shortMonths?: Array<string>;
+        numericSymbols: Array<string>;
+        resetZoom: string;
+        resetZoomTitle: string;
+        shortMonths: Array<string>;
         shortWeekdays?: Array<string>;
-        thousandsSep?: string;
-        weekdays?: Array<string>;
+        thousandsSep: string;
+        weekdays: Array<string>;
         zoomIn?: string;
         zoomOut?: string;
     }
@@ -2931,7 +2931,7 @@ function getOptions(): Options {
  *         Updated options.
  */
 function setOptions(
-    options: Partial<Options>
+    options: DeepPartial<Options>
 ): Options {
 
     // Copy in the default options

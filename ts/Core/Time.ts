@@ -58,10 +58,16 @@ declare module './Axis/TickPositionsArray'{
  *
  * */
 
-const hasNewSafariBug = (H.isSafari && Intl && Intl.DateTimeFormat.prototype.formatRange);
+const hasNewSafariBug =
+    H.isSafari &&
+    win.Intl &&
+    win.Intl.DateTimeFormat.prototype.formatRange;
 
 // To do: Remove this when we no longer need support for Safari < v14.1
-const hasOldSafariBug = (H.isSafari && Intl && !Intl.DateTimeFormat.prototype.formatRange);
+const hasOldSafariBug =
+    H.isSafari &&
+    win.Intl &&
+    !win.Intl.DateTimeFormat.prototype.formatRange;
 
 /* *
  *
@@ -518,9 +524,9 @@ class Time {
 
                     // Month
                     // Short month, like 'Jan'
-                    b: (lang as any).shortMonths[month],
+                    b: lang.shortMonths[month],
                     // Long month, like 'January'
-                    B: (lang as any).months[month],
+                    B: lang.months[month],
                     // Two digit month number, 01 through 12
                     m: pad(month + 1),
                     // Month number, 1 through 12 (#8150)
