@@ -24,11 +24,7 @@ describe('Stock Tools', () => {
 
         cy.get('.highcharts-annotation')
             .click()
-            .trigger('mousedown');
-        cy.get('.highcharts-container')
-            .trigger('mousemove', 300, 100)
-            .trigger('mouseup', 300, 100)
-            .trigger('click');
+            .dragTo('.highcharts-container', 300, 100);
         cy.get('.highcharts-popup').should('be.visible');
     });
 
@@ -36,11 +32,7 @@ describe('Stock Tools', () => {
         cy.get('.highcharts-control-points')
             .children()
             .first()
-            .trigger('mousedown');
-        cy.get('.highcharts-container')
-            .trigger('mousemove', 600, 200)
-            .trigger('mouseup', 600, 200)
-            .trigger('click');
+            .dragTo('.highcharts-container', 600, 200);
         cy.get('.highcharts-popup').should('be.visible');
     });
 });
