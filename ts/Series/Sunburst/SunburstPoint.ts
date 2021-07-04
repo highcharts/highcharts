@@ -20,6 +20,7 @@
  *
  * */
 
+import type DrawPointMixin from '../../Mixins/DrawPoint';
 import type SunburstPointOptions from './SunburstPointOptions';
 import type SunburstSeries from './SunburstSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -47,7 +48,7 @@ const { correctFloat, extend } = U;
  *
  * */
 
-class SunburstPoint extends TreemapPoint implements Highcharts.DrawPoint {
+class SunburstPoint extends TreemapPoint implements DrawPointMixin.DrawPoint {
 
     /* *
      *

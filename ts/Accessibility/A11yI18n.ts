@@ -138,17 +138,17 @@ function formatExtendedStatement(
             num = Number(ctx[pluralArguments[0]]);
 
         switch (num) {
-        case 0:
-            result = pick(pluralArguments[4], pluralArguments[1]);
-            break;
-        case 1:
-            result = pick(pluralArguments[2], pluralArguments[1]);
-            break;
-        case 2:
-            result = pick(pluralArguments[3], pluralArguments[1]);
-            break;
-        default:
-            result = pluralArguments[1];
+            case 0:
+                result = pick(pluralArguments[4], pluralArguments[1]);
+                break;
+            case 1:
+                result = pick(pluralArguments[2], pluralArguments[1]);
+                break;
+            case 2:
+                result = pick(pluralArguments[3], pluralArguments[1]);
+                break;
+            default:
+                result = pluralArguments[1];
         }
         return result ? stringTrim(result) : '';
     }

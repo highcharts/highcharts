@@ -26,7 +26,7 @@
     "lib"
   ],
   "scripts": {
-    "test": "npx gulp test --force --speak",
+    "test": "npx gulp test-ts --force && npx gulp test --force --speak",
     "testall": "npx gulp test --browsers all --force --speak",
     "prebuild": "rimraf build/*.zip build/dist/ code/",
     "build": "npx gulp dist",
@@ -40,7 +40,7 @@
   "husky": {
     "hooks": {
       "commit-msg": "node tools/validate-commit-msg.js ${HUSKY_GIT_PARAMS}",
-      "pre-commit": "npx lint-staged && npx gulp lint-ts && npx gulp scripts && npx ts-node ./test/ts-node-unit-tests && npx gulp test"
+      "pre-commit": "npx lint-staged && npx gulp lint-ts && npx gulp scripts && npx ts-node ./test/ts-node-unit-tests && npx gulp test && npx gulp test-ts"
     }
   },
   "devDependencies": {

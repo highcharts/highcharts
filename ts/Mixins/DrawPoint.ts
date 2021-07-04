@@ -17,30 +17,6 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface DrawPoint extends Point {
-            shouldDraw(): boolean;
-        }
-        interface DrawPointParams {
-            animatableAttribs: SVGAttributes;
-            attribs: SVGAttributes;
-            css?: CSSObject;
-            group: SVGElement;
-            onComplete?: Function;
-            isNew?: boolean;
-            renderer: SVGRenderer;
-            shadow?: (boolean|Partial<ShadowOptionsObject>);
-            shapeArgs?: SVGAttributes;
-            shapeType: string;
-        }
-    }
-}
-
 const isFn = function (x: unknown): x is Function {
     return typeof x === 'function';
 };
@@ -61,8 +37,8 @@ const isFn = function (x: unknown): x is Function {
  * @todo export this function to enable usage
  */
 const draw = function draw(
-    this: Highcharts.DrawPoint,
-    params: Highcharts.DrawPointParams
+    this: Mixin.DrawPoint,
+    params: Mixin.DrawPointParams
 ): void {
     const {
         animatableAttribs,
@@ -122,8 +98,8 @@ const draw = function draw(
  * @param {Highcharts.Dictionary<any>} params Parameters
  */
 const drawPoint = function drawPoint(
-    this: Highcharts.DrawPoint,
-    params: Highcharts.DrawPointParams
+    this: Mixin.DrawPoint,
+    params: Mixin.DrawPointParams
 ): void {
     const point = this,
         attribs = params.attribs = params.attribs || {};
@@ -136,10 +112,28 @@ const drawPoint = function drawPoint(
     draw.call(point, params);
 };
 
-const drawPointModule = {
+const Mixin = {
     draw,
     drawPoint,
     isFn
 };
 
-export default drawPointModule;
+namespace Mixin {
+    export interface DrawPoint extends Point {
+        shouldDraw(): boolean;
+    }
+    export interface DrawPointParams {
+        animatableAttribs: SVGAttributes;
+        attribs: SVGAttributes;
+        css?: CSSObject;
+        group: SVGElement;
+        onComplete?: Function;
+        isNew?: boolean;
+        renderer: SVGRenderer;
+        shadow?: (boolean|Partial<ShadowOptionsObject>);
+        shapeArgs?: SVGAttributes;
+        shapeType: string;
+    }
+}
+
+export default Mixin;
