@@ -46,6 +46,12 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
             }
         ],
         drilldown: {
+            breadcrumbs: {
+                position: {
+                    x: 100
+                },
+                showFullPath: false
+            },
             series: [
                 {
                     name: 'Microsoft Internet Explorer',
@@ -159,12 +165,24 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
         'object',
         'Reset zoom button should also be visible.'
     );
+    const drillUpButtonxSetting = chart.drillUpButton.xSetting;
     assert.ok(
         chart.resetZoomButton.xSetting >
             chart.drillUpButton.xSetting + chart.drillUpButton.width,
         'Buttons should not overlap.'
     );
 
+    // Click reset zoom.
+    Highcharts.fireEvent(chart.resetZoomButton.element, 'click');
+    assert.strictEqual(
+        drillUpButtonxSetting,
+        chart.drillUpButton.xSetting,
+        `After resetting the zoom, the drillup button should
+        stay at the same position.`
+    );
+
+    // Zoom again on second level
+    controller.pan([300, 200], [200, 200]);
     controller.moveTo(
         chart.resetZoomButton.translateX + 5,
         chart.resetZoomButton.translateY + 5
@@ -175,8 +193,8 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
     );
 
     controller.moveTo(
-        chart.drillUpButton.translateX + 5,
-        chart.drillUpButton.translateY + 5
+        chart.drillUpButton.parentGroup.translateX + 5,
+        chart.drillUpButton.parentGroup.translateY + 5
     );
     assert.ok(
         chart.tooltip.isHidden,
@@ -184,8 +202,8 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
     );
 
     controller.moveTo(
-        chart.drillUpButton.translateX - 5,
-        chart.drillUpButton.translateY + 5
+        chart.drillUpButton.parentGroup.translateX - 5,
+        chart.drillUpButton.parentGroup.translateY + 5
     );
     assert.notOk(
         chart.tooltip.isHidden,
@@ -193,7 +211,8 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
     );
 
     // Drill up
-    chart.drillUp();
+    // chart.drillUp();
+    chart.breadcrumbs.jumpBy(null);
     assert.strictEqual(
         typeof chart.drillUpButton,
         'undefined',
@@ -212,9 +231,6 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
         'undefined',
         'resetZoomButton removed'
     );
-
-    chart.series[0].points[0].doDrilldown();
-    controller.pan([300, 200], [200, 200]);
 });
 
 QUnit.test('Drilldown and reset zoom should not crash the chart, #8095.', function (assert) {
@@ -236,6 +252,9 @@ QUnit.test('Drilldown and reset zoom should not crash the chart, #8095.', functi
             }]
         }],
         drilldown: {
+            breadcrumbs: {
+                showFullPath: false
+            },
             series: [{
                 id: 'drill',
                 data: [8, 9, 8]
@@ -264,7 +283,8 @@ QUnit.test('Drilldown and reset zoom should not crash the chart, #8095.', functi
         'Buttons should not overlap.'
     );
 
-    chart.drillUp();
+    //chart.drillUp();
+    chart.breadcrumbs.jumpBy(null);
     chart.series[0].points[0].doDrilldown();
 
     assert.ok(

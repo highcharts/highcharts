@@ -9,4 +9,8 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import Highcharts from '../../Core/Globals.js';
 import '../../Series/Treemap/TreemapSeries.js';
+import Breadcrumbs from '../../Extensions/Breadcrumbs.js';
+const G: AnyRecord = Highcharts;
+G.Breadcrumbs = Breadcrumbs;
