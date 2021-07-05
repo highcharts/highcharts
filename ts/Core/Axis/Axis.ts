@@ -2034,18 +2034,6 @@ class Axis {
                 }
             }
 
-        } else if (axis.dateTime) { // #1441
-            const interval = axis.dateTime.normalizeTimeTickInterval(
-                this.tickInterval,
-                options.units
-            );
-            tickPositions.info = merge(
-                interval,
-                {
-                    higherRanks: {},
-                    totalRange: interval.unitRange * interval.count
-                }
-            );
         }
 
         // Reset min/max or remove extremes based on start/end on tick

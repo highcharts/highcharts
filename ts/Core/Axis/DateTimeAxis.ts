@@ -323,6 +323,38 @@ namespace DateTimeAxis{
             };
         }
 
+        /**
+         * Get the best X date format based on the closest point range on the
+         * axis.
+         *
+         * @private
+         *
+         * @param {number} x
+         *
+         * @param {Highcharts.Dictionary<string>} dateTimeLabelFormats
+         *
+         * @return {string}
+         */
+        public getXDateFormat(
+            x: number,
+            dateTimeLabelFormats: Record<string, string>
+        ): string {
+            const { axis } = this;
+            let xDateFormat;
+
+            if (axis.closestPointRange) {
+                xDateFormat = axis.chart.time.getDateFormat(
+                    axis.closestPointRange,
+                    x,
+                    axis.options.startOfWeek,
+                    dateTimeLabelFormats
+                );
+            } else {
+                xDateFormat = dateTimeLabelFormats.day;
+            }
+
+            return xDateFormat || dateTimeLabelFormats.year; // #2546, 2581
+        }
     }
 
 }

@@ -342,24 +342,19 @@ function getPointA11yTimeDescription(
     const series = point.series,
         chart = series.chart,
         a11yOptions = chart.options.accessibility.point || {},
-        hasDateXAxis = series.xAxis && series.xAxis.dateTime;
+        dateXAxis = series.xAxis && series.xAxis.dateTime;
 
-    if (hasDateXAxis) {
-        const tooltipDateFormat = Tooltip.prototype.getXDateFormat.call(
-                {
-                    getDateFormat: Tooltip.prototype.getDateFormat,
-                    chart: chart
-                },
-                point,
-                chart.options.tooltip,
-                series.xAxis
+    if (dateXAxis) {
+        const tooltipDateFormat = dateXAxis.getXDateFormat(
+                point.x || 0,
+                chart.options.tooltip.dateTimeLabelFormats || {}
             ),
             dateFormat = a11yOptions.dateFormatter &&
                 a11yOptions.dateFormatter(point) ||
                 a11yOptions.dateFormat ||
                 tooltipDateFormat;
 
-        return chart.time.dateFormat(dateFormat, (point.x as any), void 0);
+        return chart.time.dateFormat(dateFormat, point.x || 0, void 0);
     }
 }
 
