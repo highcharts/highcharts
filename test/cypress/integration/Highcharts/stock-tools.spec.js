@@ -17,11 +17,10 @@ describe('Stock Tools', () => {
         cy.get('.highcharts-popup').should('be.visible');
         cy.get('.highcharts-toggle-annotations').click();
         cy.get('.highcharts-popup').should('be.hidden');
+        cy.get('.highcharts-toggle-annotations').click();
     });
 
     it('#15729: Should keep annotation selected after dragging', () => {
-        cy.get('.highcharts-toggle-annotations').click();
-
         cy.get('.highcharts-annotation')
             .click()
             .dragTo('.highcharts-container', 300, 100);
