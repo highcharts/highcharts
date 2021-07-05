@@ -52,6 +52,18 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
 
     /* eslint-disable valid-jsdoc */
 
+    public getClassName(): string {
+        let className = super.getClassName.apply(this);
+        const point = this,
+            previousPoint = point.series.points[point.index as any];
+
+        if (previousPoint && point.graphic && point.close > previousPoint.close && point.candleFill !== 'transparent') {
+            className += '-bearish-up';
+        }
+
+        return className;
+    }
+
     /**
      * Basing on the open and close values of the current and previous point,
      * determine what color the point should have.
