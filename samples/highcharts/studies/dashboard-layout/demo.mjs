@@ -211,7 +211,6 @@ let dashboard = new Dashboard('container', {
                     }
                 }, {
                     id: 'dashboard-col-21',
-                    width: '1/6',
                     responsive: {
                         small: {
                             width: '100%'

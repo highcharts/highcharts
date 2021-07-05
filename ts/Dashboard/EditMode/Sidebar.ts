@@ -271,7 +271,6 @@ class Sidebar {
         this.container = this.renderContainer();
 
         this.renderCloseButton();
-        this.renderDragDropButton();
         this.renderTitle();
         this.initTabs(
             Sidebar.tabs,
@@ -428,13 +427,6 @@ class Sidebar {
     private initEvents(): void {
         const sidebar = this;
 
-        // Hide row and cell toolbars when mouse on sidebar.
-        addEvent(sidebar.container, 'mouseenter', (event): void => {
-            if (sidebar.isVisible) {
-                sidebar.editMode.hideToolbars(['row', 'cell']);
-            }
-        });
-
         // Call onCellResize events in active sidebar items.
         addEvent(sidebar.editMode.dashboard, 'cellResize', function (): void {
             let item;
@@ -449,10 +441,6 @@ class Sidebar {
                 }
             }
         });
-
-        // Add sidebar drag drop events.
-        addEvent(document, 'mousemove', sidebar.onDrag.bind(sidebar));
-        addEvent(document, 'mouseup', sidebar.onDragEnd.bind(sidebar));
     }
 
     public updateTitle(
@@ -505,7 +493,7 @@ class Sidebar {
         }
 
         // run current tab
-        this.update(context);
+        sidebar.update(context);
 
         if (context) {
             if (sidebar.rowCellTab) {
@@ -517,60 +505,67 @@ class Sidebar {
             }
         }
 
-        if (!this.isVisible) {
-            this.container.style.left = '0px';
-            this.container.style.top = '0px';
-            this.container.classList.add(
+        if (!sidebar.isVisible) {
+            sidebar.editMode.dashboard.container.style.paddingLeft = '210px';
+
+            sidebar.container.classList.add(
                 EditGlobals.classNames.editSidebarShow
             );
-            this.isVisible = true;
+            sidebar.isVisible = true;
 
             // Hide row and cell toolbars.
-            this.editMode.hideToolbars(['cell', 'row']);
+            sidebar.editMode.hideToolbars(['cell', 'row']);
+            sidebar.editMode.stopContextDetection();
+
+            // Refresh layout
+            sidebar.afterCSSAnimate((): void => {
+                sidebar.editMode.dashboard.reflow();
+                sidebar.editMode.isContextDetectionActive = true;
+            });
         }
     }
 
     public update(
         context: Cell|Row|undefined
     ): void {
-        const sidebarContainer = this.container;
-
         this.context = context;
+
         // activate first tab.
         this.onTabClick(this.tabs[
             context ? Sidebar.tabs[0].type : Sidebar.tabsGeneralOptions[0].type
         ]);
-
-        // set the position
-        sidebarContainer.style.marginTop = '0px';
-        const offsetTop = sidebarContainer.getBoundingClientRect().top;
-
-        sidebarContainer.style.marginTop = (
-            offsetTop < 0 ? Math.abs(offsetTop) : 0
-        ) + 'px';
-
-        // reset drag X, Y dimension
-        sidebarContainer.style.top = '0px';
-        sidebarContainer.style.left = '0px';
     }
 
     public hide(): void {
-        this.context = void 0;
+        const sidebar = this;
 
-        this.container.classList.remove(
+        sidebar.context = void 0;
+        sidebar.container.classList.remove(
             EditGlobals.classNames.editSidebarShow
         );
 
-        if (this.editMode.cellToolbar) {
-            this.editMode.cellToolbar.resetEditedCell();
+        sidebar.editMode.dashboard.container.style.paddingLeft = '';
+
+        if (sidebar.editMode.cellToolbar) {
+            sidebar.editMode.cellToolbar.resetEditedCell();
         }
 
-        if (this.editMode.rowToolbar) {
-            this.editMode.rowToolbar.resetEditedRow();
+        if (sidebar.editMode.rowToolbar) {
+            sidebar.editMode.rowToolbar.resetEditedRow();
         }
 
-        this.isVisible = false;
-        this.guiElement = void 0;
+        sidebar.isVisible = false;
+        sidebar.guiElement = void 0;
+
+        // Hide row and cell toolbars.
+        sidebar.editMode.hideToolbars(['cell', 'row']);
+        sidebar.editMode.stopContextDetection();
+
+        // Refresh layout
+        sidebar.afterCSSAnimate((): void => {
+            sidebar.editMode.dashboard.reflow();
+            sidebar.editMode.isContextDetectionActive = true;
+        });
     }
 
 
@@ -590,62 +585,14 @@ class Sidebar {
         );
     }
 
-    public renderDragDropButton(): void {
-        const sidebar = this;
-        const dragIcon = sidebar.options && sidebar.options.dragIcon;
-
-        sidebar.dragDropButton = EditRenderer.renderButton(
-            sidebar.container,
-            {
-                className: EditGlobals.classNames.sidebarNavButton,
-                style: {
-                    cursor: 'grab'
-                },
-                icon: dragIcon
-            }
-        ) as HTMLDOMElement;
-
-        sidebar.dragDropButton.onmousedown = sidebar.onDragStart.bind(sidebar);
-        sidebar.dragDropButton.onmouseup = sidebar.onDragEnd.bind(sidebar);
-    }
-
-    public onDragStart(): void {
-        this.isDragged = true;
-
-        if (this.dragDropButton) {
-            this.dragDropButton.style.cursor = 'grabbing';
-        }
-    }
-
-    public onDrag(e: any): void {
-        if (this.isDragged) {
-            const cntStyle = this.container.style;
-
-            this.container.style.left = +cntStyle.left.slice(0, -2) +
-                e.movementX + 'px';
-            this.container.style.top = +cntStyle.top.slice(0, -2) +
-                e.movementY + 'px';
-        }
-    }
-
-    public onDragEnd(): void {
-        if (this.isDragged) {
-            this.isDragged = false;
-
-            if (this.dragDropButton) {
-                this.dragDropButton.style.cursor = 'grab';
-            }
-        }
-    }
-
-    // Currently for the future, remove when not use.
     public afterCSSAnimate(
-        element: HTMLDOMElement,
         callback: Function
     ): void {
-        addEvent(element, 'transitionend', callback);
-        addEvent(element, 'oTransitionEnd', callback);
-        addEvent(element, 'webkitTransitionEnd', callback);
+        const sidebar = this;
+
+        addEvent(sidebar.container, 'transitionend', callback);
+        addEvent(sidebar.container, 'oTransitionEnd', callback);
+        addEvent(sidebar.container, 'webkitTransitionEnd', callback);
     }
 
     public getComponentEditableOptions(): void {

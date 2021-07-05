@@ -15,6 +15,7 @@ const {
 const {
     merge,
     addEvent,
+    fireEvent,
     error,
     isString,
     objectEach,
@@ -310,7 +311,7 @@ class Dashboard {
     public getContainerSize(): string {
         const dashboard = this,
             respoOptions = dashboard.options.respoBreakpoints,
-            cntWidth = dashboard.container.offsetWidth;
+            cntWidth = dashboard.container.clientWidth;
 
         let size = DashboardGlobals.respoBreakpoints.large;
 
@@ -329,7 +330,7 @@ class Dashboard {
         const dashboard = this,
             cntSize = dashboard.getContainerSize();
 
-        let layout, row;
+        let layout, row, cell;
 
         for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
             layout = dashboard.layouts[i];
@@ -338,7 +339,8 @@ class Dashboard {
                 row = layout.rows[j];
 
                 for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
-                    row.cells[k].updateSize(cntSize);
+                    cell = row.cells[k];
+                    cell.updateSize(cntSize);
                 }
             }
         }

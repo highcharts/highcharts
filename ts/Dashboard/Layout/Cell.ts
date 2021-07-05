@@ -350,19 +350,26 @@ class Cell extends GUIElement {
             cntSize = dashContainerSize || cell.row.layout.dashboard.getContainerSize(),
             respoOptions = cell.options.responsive;
 
-        let width;
+        let width, flexAuto;
 
-        if (respoOptions && respoOptions[cntSize] && respoOptions[cntSize].width) {
-            width = GUIElement.getPercentageWidth(respoOptions[cntSize].width);
-        } else if (cell.options.width) {
-            width = GUIElement.getPercentageWidth(cell.options.width);
-        }
+        if (cell.container) {
+            if (respoOptions && respoOptions[cntSize] && respoOptions[cntSize].width) {
+                width = GUIElement.getPercentageWidth(respoOptions[cntSize].width);
+            } else if (cell.options.width) {
+                width = GUIElement.getPercentageWidth(cell.options.width);
+            } else {
+                flexAuto = true;
+            }
 
-        // @ToDo
-        // 1) check if width is different that currently set.
-        // 2) fire mounted component event to update size?
-        if (width && cell.container) {
-            cell.container.style.flex = '0 0 ' + width;
+            if (width && cell.container.style.flex !== '0 0 ' + width) {
+                cell.container.style.flex = '0 0 ' + width;
+            } else if (flexAuto && cell.container.style.flex !== '1 1 0%') {
+                cell.container.style.flex = '1 1 0%';
+            }
+
+            // Call cellResize dashboard event.
+            fireEvent(cell.row.layout.dashboard, 'cellResize', { cell: cell });
+            fireEvent(cell.row, 'cellChange', { cell: cell, row: cell.row });
         }
     }
 }

@@ -720,7 +720,7 @@ class Resizer {
 
     public activateResizerDetection(): void {
         this.isResizerDetectionActive = true;
-        this.editMode.hideToolbars();
+        this.editMode.hideToolbars(['row', 'cell']);
     }
 
     public deactivateResizerDetection(): void {

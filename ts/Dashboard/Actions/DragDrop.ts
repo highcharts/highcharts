@@ -230,7 +230,7 @@ class DragDrop {
         dragEndCallback?: Function
     ): void {
         this.isActive = true;
-        this.editMode.hideToolbars();
+        this.editMode.hideToolbars(['cell', 'row']);
         this.setMockElementPosition(e);
 
         if (context) {

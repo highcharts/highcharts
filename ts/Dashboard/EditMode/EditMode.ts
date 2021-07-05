@@ -363,6 +363,12 @@ class EditMode {
         if (this.resizeBtn) {
             this.resizeBtn.style.display = 'block';
         }
+
+        // Open the sidebar.
+        if (editMode.sidebar) {
+            editMode.sidebar.show();
+            editMode.sidebar.updateTitle('General');
+        }
     }
 
     public deactivateEditMode(): void {

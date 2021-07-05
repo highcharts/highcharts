@@ -14,6 +14,7 @@ body {
     position: relative;
     overflow: hidden;
     min-height: 500px;
+    transition: 0.5s;
 }
 
 .main-title {
@@ -489,15 +490,17 @@ h1 {
 
 .hcd-edit-sidebar {
     top: 0px;
-    left: -200px;
-    background: #252526;
+    left: -210px;
+    transition: 0.5s;
+    width: 200px;
+    margin: 5px;
+    background: #fff;
+    border: 1px solid #efefef;
     color:#a6a6a6;
     position: absolute;
     z-index: 1000;
     min-height: 500px;
-    height: auto;
-    width: 200px;
-    display: none;
+    height: 100%;
 }
 
 .hcd-edit-sidebar-tab-btn,
@@ -529,9 +532,9 @@ h1 {
 .hcd-edit-sidebar-item textarea,
 .hcd-edit-sidebar-item select {
     border: none;
-    background: #4f4f51;
     width: 100%;
-    color: #fff ;
+    color: #000;
+    border: 1px solid #ededed;
 }
 
 .hcd-edit-sidebar .hcd-edit-button,
@@ -540,7 +543,6 @@ h1 {
     float: right;
     margin-top: 20px;
     border: none;
-    background: #aac6ff;
 }
 
 .hcd-edit-sidebar-button-nav {
@@ -555,8 +557,6 @@ h1 {
 }
 
 .hcd-edit-sidebar-show {
-    /* transition: 1s;*/
-    display: block;
     left: 0;
 }
 
@@ -571,8 +571,7 @@ h1 {
 .hcd-edit-sidebar-title {
     padding: 5px;
     text-transform: uppercase;
-    background: #141414;
-    border-bottom: 1px solid #444;
+    background: #efefef;
 }
 
 .hcd-edit-sidebar-tab-wrapper {
@@ -594,12 +593,12 @@ h1 {
     padding: 10px;
     text-align: center;
     display: inline-block;
-    background-color: #474747;
+    background-color: #efefef;
     cursor: grab;
 }
 
 .hcd-edit-grid-items div:hover {
-    background-color :#aac6ff; 
+    background-color :#dedede; 
 }
 
 .hcd-edit-sidebar-tabs {
@@ -607,7 +606,6 @@ h1 {
     justify-content: center;
     font-size: 0.876em;
     text-transform: uppercase;
-    background: #141414;
 }
 
 .hcd-edit-sidebar-tab {
@@ -628,7 +626,7 @@ h1 {
 .hcd-edit-toolbar-tab-active {
     cursor: pointer;
     opacity: 1;
-    border-color: #aac6ff;
+    border-color: #8aea9f;
 }
 
 .hcd-edit-mask {
