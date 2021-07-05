@@ -34,4 +34,18 @@ describe('Stock Tools', () => {
             .dragTo('.highcharts-container', 600, 200);
         cy.get('.highcharts-popup').should('be.visible');
     });
+
+    it('#15725: Should use the same axis for all points in multi-step annotation', () => {
+        cy.get('.highcharts-elliott3').first().click();
+        cy.get('.highcharts-container')
+            .click(100, 210)
+            .click(120, 260)
+            .click(140, 210)
+            .click(160, 260);
+        cy.chart().should(chart =>
+            chart.annotations[1].points.forEach(point =>
+                assert.ok(point.y > -50 && point.y < 50)
+            )
+        );
+    });
 });
