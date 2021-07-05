@@ -162,10 +162,20 @@ class HollowCandlestickSeries extends CandlestickSeries {
         point: HollowCandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        let attribs = super.pointAttribs.call(this, point, state);
+        let attribs = super.pointAttribs.call(this, point, state),
+            stateOptions;
 
         attribs.fill = point.candleFill || attribs.fill;
         attribs.stroke = point.color || attribs.stroke;
+
+        // Select or hover states
+        if (state) {
+            stateOptions = (this.options.states as any)[state];
+            attribs.fill = stateOptions.color || attribs.fill;
+            attribs.stroke = stateOptions.lineColor || attribs.stroke;
+            attribs['stroke-width'] =
+                stateOptions.lineWidth || attribs['stroke-width'];
+        }
         return attribs;
     }
 
