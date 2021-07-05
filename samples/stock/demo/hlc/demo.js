@@ -16,16 +16,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
             type: 'hlc',
             name: 'AAPL Stock Price',
             useOhlcdata: true,
-            data: data,
-            dataGrouping: {
-                units: [[
-                    'week', // unit name
-                    [1] // allowed multiples
-                ], [
-                    'month',
-                    [1, 2, 3, 4, 6]
-                ]]
-            }
+            data: data
         }]
     });
 });

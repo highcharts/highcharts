@@ -215,7 +215,7 @@ setOptions({
                 typeOHLC: 'OHLC',
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
-                typeHLC: 'hlc',
+                typeHLC: 'HLC',
 
                 // Basic shapes:
                 circle: 'Circle',

@@ -8,5 +8,6 @@ tags:
   - Highcharts Stock demo
 categories:
   - Chart types:
-      priority: 3
+      priority: 14
+      new_nutil: 2021-11-01
 ...

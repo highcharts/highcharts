@@ -315,8 +315,8 @@ H.approximations = {
             arr[arr.length - 1] :
             (arr.hasNulls ? null : void 0);
     },
-    // ohlc and range are special cases where a multidimensional array is
-    // input and an array is output
+    // HLC, OHLC and range are special cases where a multidimensional array is
+    // input and an array is output.
     hlc: function (
         high: Highcharts.DataGroupingApproximationsArray,
         low: Highcharts.DataGroupingApproximationsArray,
@@ -333,7 +333,6 @@ H.approximations = {
         ) {
             return [high, low, close] as any;
         }
-        // else, return is undefined
     },
     ohlc: function (
         open: Highcharts.DataGroupingApproximationsArray,
@@ -354,7 +353,6 @@ H.approximations = {
         ) {
             return [open, high, low, close] as any;
         }
-        // else, return is undefined
     },
     range: function (
         low: Highcharts.DataGroupingApproximationsArray,
@@ -761,7 +759,7 @@ const baseProcessData = seriesProto.processData,
             groupPixelWidth: 5
         },
         hlc: {
-            groupPixelWidth: 10
+            groupPixelWidth: 5
         }
     } as SeriesTypePlotOptions,
 

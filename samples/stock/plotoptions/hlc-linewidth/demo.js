@@ -1,7 +1,7 @@
 Highcharts.stockChart('container', {
 
     title: {
-        text: 'OHLC series with line width 3'
+        text: 'HLC series with line width 3'
     },
 
     plotOptions: {

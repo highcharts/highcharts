@@ -5,4 +5,4 @@ The High-Low-Close chart is typically used to show the change in price over a pe
 
 ![hlc.png](hlc-chart.png)
 
-For more information on the hlc chart, see the [API reference](https://api.highcharts.com/highstock/plotOptions.hlc).
+For more information on the HLC chart, see the [API reference](https://api.highcharts.com/highstock/plotOptions.hlc).
