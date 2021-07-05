@@ -12,12 +12,20 @@
 
 'use strict';
 
-import type { AxisType } from '../Core/Axis/Types';
-import type { ChartOptions } from '../Core/Chart/ChartOptions';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AxisOptions from '../Core/Axis/AxisOptions';
+import type AxisType from '../Core/Axis/AxisType';
+import type ChartOptions from '../Core/Chart/ChartOptions';
 import type Options from '../Core/Options';
 import type Point from '../Core/Series/Point';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import F from '../Core/FormatUtilities.js';
@@ -45,6 +53,26 @@ const {
  * Declarations
  *
  * */
+
+declare module '../Core/Axis/AxisComposition' {
+    interface AxisComposition {
+        parallelCoordinates?: ParallelAxis['parallelCoordinates'];
+    }
+}
+
+declare module '../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        angle?: number;
+        tooltipValueFormat?: string;
+    }
+}
+
+declare module '../Core/Axis/AxisType' {
+    interface AxisTypeRegistry {
+        ParallelAxis: ParallelAxis;
+    }
+}
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         hasParallelCoordinates?: Highcharts.ParallelChart['hasParallelCoordinates'];
@@ -55,7 +83,7 @@ declare module '../Core/Chart/ChartLike'{
 }
 declare module '../Core/Chart/ChartOptions'{
     interface ChartOptions {
-        parallelAxes?: DeepPartial<Highcharts.XAxisOptions>;
+        parallelAxes?: DeepPartial<AxisOptions>;
         parallelCoordinates?: boolean;
     }
 }
@@ -73,24 +101,14 @@ declare global {
         interface ParallelInfoObject {
             counter: number;
         }
-        interface XAxisOptions {
-            angle?: number;
-            tooltipValueFormat?: string;
-        }
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Axis/Types' {
-    interface AxisComposition {
-        parallelCoordinates?: ParallelAxis['parallelCoordinates'];
-    }
-    interface AxisTypeRegistry {
-        ParallelAxis: ParallelAxis;
-    }
-}
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 // Extensions for parallel coordinates plot.
 const ChartProto = Chart.prototype;
@@ -363,7 +381,7 @@ addEvent(Series, 'afterTranslate', function (): void {
             point = points[i];
             if (defined(point.y)) {
                 if (chart.polar) {
-                    point.plotX = (chart.yAxis[i] as RadialAxis).angleRad || 0;
+                    point.plotX = (chart.yAxis[i] as RadialAxis.AxisComposition).angleRad || 0;
                 } else if (chart.inverted) {
                     point.plotX = (
                         chart.plotHeight -
@@ -550,7 +568,7 @@ class ParallelAxisAdditions {
      */
     public setPosition(
         axisPosition: Array<('left'|'width'|'height'|'top')>,
-        options: Highcharts.AxisOptions
+        options: AxisOptions
     ): void {
         const parallel = this,
             axis = parallel.axis,
@@ -599,7 +617,7 @@ namespace ParallelAxis {
      */
     function onAfterSetOptions(
         this: Axis,
-        e: { userOptions: Highcharts.XAxisOptions }
+        e: { userOptions: AxisOptions }
     ): void {
         const axis = this as ParallelAxis,
             chart = axis.chart,

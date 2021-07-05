@@ -144,6 +144,12 @@ class TreemapSeries extends ScatterSeries {
         allowTraversingTree: false,
 
         animationLimit: 250,
+
+        /**
+         * The border radius for each treemap item.
+         */
+        borderRadius: 0,
+
         /**
          * When the series contains less points than the crop threshold, all
          * points are drawn, event if the points fall outside the visible plot

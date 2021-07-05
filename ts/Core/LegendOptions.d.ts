@@ -45,6 +45,7 @@ export interface LegendOptions {
     borderColor?: ColorType;
     borderRadius?: number;
     borderWidth?: number;
+    className?: string;
     enabled?: boolean;
     floating?: boolean;
     itemCheckboxStyle?: CSSObject;

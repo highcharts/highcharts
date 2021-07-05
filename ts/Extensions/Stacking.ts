@@ -10,12 +10,19 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AlignObject,
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type { YAxisOptions } from '../Core/Axis/AxisOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
@@ -42,6 +49,18 @@ const {
     objectEach,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        stackLabels?: Highcharts.YAxisStackLabelsOptions;
+    }
+}
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -104,7 +123,7 @@ declare global {
         }
         interface StackItemObject {
             alignOptions: AlignObject;
-            axis: StackingAxis;
+            axis: StackingAxis.Composition;
             cumulative?: number;
             crop?: boolean;
             isNegative: boolean;
@@ -115,12 +134,6 @@ declare global {
             rotation: number;
             total: number;
             x: number;
-        }
-        interface XAxisOptions {
-            stackLabels?: YAxisStackLabelsOptions;
-        }
-        interface YAxisOptions {
-            stackLabels?: YAxisStackLabelsOptions;
         }
         interface YAxisStackLabelsOptions {
             animation?: (false|Partial<AnimationOptions>);
@@ -148,19 +161,19 @@ declare global {
         }
         class StackItem {
             public constructor(
-                axis: StackingAxis,
+                axis: StackingAxis.Composition,
                 options: YAxisStackLabelsOptions,
                 isNegative: boolean,
                 x: number,
                 stackOption?: OptionsStackingValue
             );
             public alignOptions: AlignObject;
-            public axis: StackingAxis;
+            public axis: StackingAxis.Composition;
             public base?: string;
             public cumulative?: (null|number);
             public hasValidPoints: boolean;
             public isNegative: boolean;
-            public label?: SVGElement;
+            public label?: SVGLabel;
             public leftCliff: number;
             public options: YAxisStackLabelsOptions;
             public points: Record<string, Array<number>>;
@@ -192,47 +205,11 @@ declare global {
     }
 }
 
-/**
- * Stack of data points
+/* *
  *
- * @product highcharts
+ *  Class
  *
- * @interface Highcharts.StackItemObject
- *//**
- * Alignment settings
- * @name Highcharts.StackItemObject#alignOptions
- * @type {Highcharts.AlignObject}
- *//**
- * Related axis
- * @name Highcharts.StackItemObject#axis
- * @type {Highcharts.Axis}
- *//**
- * Cumulative value of the stacked data points
- * @name Highcharts.StackItemObject#cumulative
- * @type {number}
- *//**
- * True if on the negative side
- * @name Highcharts.StackItemObject#isNegative
- * @type {boolean}
- *//**
- * Related SVG element
- * @name Highcharts.StackItemObject#label
- * @type {Highcharts.SVGElement}
- *//**
- * Related stack options
- * @name Highcharts.StackItemObject#options
- * @type {Highcharts.YAxisStackLabelsOptions}
- *//**
- * Total value of the stacked data points
- * @name Highcharts.StackItemObject#total
- * @type {number}
- *//**
- * Shared x value of the stack
- * @name Highcharts.StackItemObject#x
- * @type {number}
- */
-
-''; // detached doclets above
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -251,7 +228,7 @@ declare global {
  */
 class StackItem {
     public constructor(
-        axis: StackingAxis,
+        axis: StackingAxis.Composition,
         options: Highcharts.YAxisStackLabelsOptions,
         isNegative: boolean,
         x: number,
@@ -301,7 +278,7 @@ class StackItem {
     }
 
     public alignOptions: AlignObject;
-    public axis: StackingAxis;
+    public axis: StackingAxis.Composition;
     public base?: string;
     public cumulative?: (null|number);
     public hasValidPoints: boolean;
@@ -544,7 +521,7 @@ class StackItem {
         y: number,
         xWidth: number,
         h: number,
-        axis: Highcharts.Axis
+        axis: Axis
     ): BBoxObject {
         const reversed = stackItem.axis.reversed,
             inverted = chart.inverted,
@@ -678,7 +655,7 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
         stackKey = stackingParam ? `${series.type},${stacking}` : series.stackKey,
         negKey = '-' + stackKey,
         negStacks = series.negStacks,
-        yAxis = series.yAxis as StackingAxis,
+        yAxis = series.yAxis as StackingAxis.Composition,
         stacks = yAxis.stacking.stacks,
         oldStacks = yAxis.stacking.oldStacks,
         stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),
@@ -712,8 +689,7 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
 
         // Create empty object for this stack if it doesn't exist yet
         if (!stacks[key as any]) {
-            stacks[key as any] =
-                {} as Record<string, Highcharts.StackItem>;
+            stacks[key as any] = {};
         }
 
         // Initialize StackItem for this x
@@ -727,7 +703,7 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
                 stacks[key as any][x] = new StackItem(
                     yAxis,
                     (
-                        yAxis.options as Highcharts.YAxisOptions
+                        yAxis.options as YAxisOptions
                     ).stackLabels as any,
                     isNegative,
                     x,
@@ -829,7 +805,7 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
  */
 Series.prototype.modifyStacks = function (): void {
     let series = this,
-        yAxis = series.yAxis as StackingAxis,
+        yAxis = series.yAxis as StackingAxis.Composition,
         stackKey = series.stackKey,
         stacks = yAxis.stacking.stacks,
         processedXData = series.processedXData,
@@ -926,6 +902,54 @@ Series.prototype.getStackIndicator = function (
     return stackIndicator;
 };
 
-H.StackItem = StackItem;
+H.StackItem = StackItem; // @todo -> master
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default H.StackItem;
+
+/**
+ * Stack of data points
+ *
+ * @product highcharts
+ *
+ * @interface Highcharts.StackItemObject
+ *//**
+ * Alignment settings
+ * @name Highcharts.StackItemObject#alignOptions
+ * @type {Highcharts.AlignObject}
+ *//**
+ * Related axis
+ * @name Highcharts.StackItemObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * Cumulative value of the stacked data points
+ * @name Highcharts.StackItemObject#cumulative
+ * @type {number}
+ *//**
+ * True if on the negative side
+ * @name Highcharts.StackItemObject#isNegative
+ * @type {boolean}
+ *//**
+ * Related SVG element
+ * @name Highcharts.StackItemObject#label
+ * @type {Highcharts.SVGElement}
+ *//**
+ * Related stack options
+ * @name Highcharts.StackItemObject#options
+ * @type {Highcharts.YAxisStackLabelsOptions}
+ *//**
+ * Total value of the stacked data points
+ * @name Highcharts.StackItemObject#total
+ * @type {number}
+ *//**
+ * Shared x value of the stack
+ * @name Highcharts.StackItemObject#x
+ * @type {number}
+ */
+
+''; // keeps doclets above in JS file

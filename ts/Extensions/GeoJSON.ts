@@ -10,7 +10,6 @@
 
 'use strict';
 
-import type { CreditsOptions } from '../Core/Options';
 import type Series from '../Core/Series/Series';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
@@ -668,7 +667,7 @@ H.geojson = function (
 wrap(Chart.prototype, 'addCredits', function (
     this: Chart,
     proceed: Function,
-    credits: CreditsOptions
+    credits: Chart.CreditsOptions
 ): void {
 
     credits = merge(true, this.options.credits, credits);

@@ -7,6 +7,7 @@
     max-width: 820px;
 	margin: 1em auto;
 	font-size: 0.9em;
+    font-family: Verdana, sans-serif;
 }
 
 .highcharts-data-table table {

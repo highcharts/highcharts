@@ -8,6 +8,7 @@ samples/static/*.js
 test/test-controller.js
 test/test-template.js
 test/test-utilities.js
+test/cypress
 tools/eslint-plugin-highcharts/node_modules/**
 tools/jsdoc/storage/**/*.js
 ts/**/*.js

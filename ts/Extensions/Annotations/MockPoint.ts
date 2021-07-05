@@ -6,7 +6,6 @@
 
 'use strict';
 
-import type { AxisType } from '../../Core/Axis/Types';
 import type MockPointOptions from './MockPointOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import Series from '../../Core/Series/Series.js';
@@ -193,7 +192,7 @@ class MockPoint {
             chart = series.chart,
             x: number = point.plotX as any,
             y: number = point.plotY as any,
-            plotBox: (Highcharts.SeriesPlotBoxObject|undefined);
+            plotBox: (Series.PlotBoxObject|undefined);
 
         if (chart.inverted) {
             if (point.mock) {

@@ -10,4 +10,8 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Core/Axis/GridAxis.js';
+import Highcharts from '../../Core/Globals.js';
+import GridAxis from '../../Core/Axis/GridAxis.js';
+const G: AnyRecord = Highcharts;
+// Compositions
+GridAxis.compose(G.Axis, G.Chart, G.Tick);

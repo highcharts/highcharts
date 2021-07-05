@@ -12,7 +12,9 @@
 
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type MockPointOptions from './MockPointOptions';
+import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
+
 import Annotation from './Annotations.js';
 import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
@@ -255,8 +257,8 @@ const bindingsUtils = {
      *         is currently pointing.
      */
     getAssignedAxis(
-        coords: Array<Highcharts.PointerAxisCoordinateObject>
-    ): Highcharts.PointerAxisCoordinateObject {
+        coords: Array<Pointer.AxisCoordinateObject>
+    ): Pointer.AxisCoordinateObject {
         return coords.filter(function (coord): boolean {
             const axisMin = coord.axis.min,
                 axisMax = coord.axis.max,
@@ -1564,7 +1566,7 @@ setOptions({
         }
     }
 });
-addEvent(H.Chart, 'render', function (): void {
+addEvent(Chart, 'render', function (): void {
     const chart = this,
         navigationBindings = chart.navigationBindings,
         disabledClassName = 'highcharts-disabled-btn';

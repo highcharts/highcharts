@@ -21,7 +21,7 @@ declare module '../Core/Series/DataLabelOptions' {
     }
 }
 
-const theme: Options = {
+const theme: DeepPartial<Options> = {
     chart: {
         backgroundColor: 'window'
     },

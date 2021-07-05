@@ -60,6 +60,12 @@ const {
  *
  * */
 
+declare module '../Core/Axis/AxisLike' {
+    interface AxisLike {
+        center?: Array<number>;
+    }
+}
+
 declare module '../Core/Renderer/SVG/SVGRendererLike' {
     interface SVGRendererLike {
         clipCircle(
@@ -104,9 +110,6 @@ declare global {
         interface AreaRangeSeries {
             findAlignments: PolarSeries['findAlignments'];
         }
-        interface Axis {
-            center?: Array<number>;
-        }
         interface PolarConnector {
             leftContX: number;
             leftContY: number;
@@ -143,8 +146,8 @@ declare global {
                     PolarSeries['searchPointByAngle'] :
                     Series['searchPoint']
             );
-            xAxis: RadialAxis;
-            yAxis: RadialAxis;
+            xAxis: RadialAxis.AxisComposition;
+            yAxis: RadialAxis.AxisComposition;
             getConnectors(
                 segment: Array<Point>,
                 index: number,
@@ -1080,16 +1083,16 @@ wrap(pointerProto, 'getCoordinates', function (
     this: Highcharts.PolarSeries,
     proceed: Pointer['getCoordinates'],
     e: PointerEvent
-): Highcharts.PointerAxisCoordinatesObject {
+): Pointer.AxesCoordinatesObject {
     let chart = this.chart,
-        ret: Highcharts.PointerAxisCoordinatesObject = {
+        ret: Pointer.AxesCoordinatesObject = {
             xAxis: [],
             yAxis: []
         };
 
     if (chart.polar) {
 
-        chart.axes.forEach(function (axis: Highcharts.Axis): void {
+        chart.axes.forEach(function (axis): void {
             let isXAxis = axis.isXAxis,
                 center = axis.center,
                 x,
@@ -1150,7 +1153,8 @@ addEvent(Chart, 'getAxes', function (): void {
     if (!this.pane) {
         this.pane = [];
     }
-    splat(this.options.pane).forEach(function (
+    this.options.pane = splat(this.options.pane);
+    this.options.pane.forEach(function (
         paneOptions: Highcharts.PaneOptions
     ): void {
         new Pane( // eslint-disable-line no-new
