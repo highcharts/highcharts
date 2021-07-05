@@ -149,14 +149,6 @@ class HLCSeries extends ColumnSeries {
          * @apioption plotOptions.hlc.colorKey
          */
 
-        /**
-         * Line color for up points.
-         *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @product   highstock
-         * @apioption plotOptions.hlc.upColor
-         */
-
         stickyTracking: true
 
     } as HLCSeriesOptions);
@@ -187,96 +179,100 @@ class HLCSeries extends ColumnSeries {
      * Draw the data points
      * @private
      */
+
+    public extendStem(
+        path: SVGPath,
+        halfStrokeWidth: number,
+        close: number
+    ): void {
+        const start = path[0];
+        const end = path[1];
+
+        // We don't need to worry about crisp - close value
+        // is already crisped and halfStrokeWidth should remove it.
+        if (typeof start[2] === 'number') {
+            start[2] = Math.max(
+                close + halfStrokeWidth,
+                start[2]
+            );
+        }
+        if (typeof end[2] === 'number') {
+            end[2] = Math.min(
+                close - halfStrokeWidth,
+                end[2]
+            );
+        }
+
+    }
+    public drawSinglePoint(point: HLCPoint): void {
+
+        const series = point.series,
+            chart = series.chart;
+        let plotClose,
+            crispCorr,
+            halfWidth,
+            path: SVGPath,
+            graphic = point.graphic,
+            crispX,
+            isNew = !graphic,
+            strokeWidth;
+
+        if (typeof point.plotY !== 'undefined') {
+
+            // Create and/or update the graphic
+            if (!graphic) {
+                point.graphic = graphic = chart.renderer.path()
+                    .add(series.group);
+            }
+
+            if (!chart.styledMode) {
+                graphic.attr(
+                    series.pointAttribs(
+                        point,
+                        (point.selected && 'select') as any
+                    )
+                ); // #3897
+            }
+
+            // crisp vector coordinates
+            strokeWidth = graphic.strokeWidth();
+            crispCorr = (strokeWidth % 2) / 2;
+            // #2596:
+            crispX = Math.round(point.plotX as any) - crispCorr;
+            halfWidth = Math.round((point.shapeArgs as any).width / 2);
+
+            // the vertical stem
+            path = [
+                ['M', crispX, Math.round(point.yBottom as any)],
+                ['L', crispX, Math.round(point.plotHigh as any)]
+            ];
+
+            // close
+            if (point.close !== null) {
+                plotClose = Math.round(point.plotClose) + crispCorr;
+                path.push(
+                    ['M', crispX, plotClose],
+                    ['L', crispX + halfWidth * 2, plotClose]
+                );
+
+                series.extendStem(path, strokeWidth / 2, plotClose);
+            }
+
+            graphic[isNew ? 'attr' : 'animate']({ d: path })
+                .addClass(point.getClassName(), true);
+
+        }
+
+
+    }
     public drawPoints(): void {
         const series = this,
-            points = series.points,
-            chart = series.chart,
+            points = series.points;
             /**
              * Extend vertical stem to close values.
              */
-            extendStem = function (
-                path: SVGPath,
-                halfStrokeWidth: number,
-                close: number
-            ): void {
-                const start = path[0];
-                const end = path[1];
 
-                // We don't need to worry about crisp - close value
-                // is already crisped and halfStrokeWidth should remove it.
-                if (typeof start[2] === 'number') {
-                    start[2] = Math.max(
-                        close + halfStrokeWidth,
-                        start[2]
-                    );
-                }
-                if (typeof end[2] === 'number') {
-                    end[2] = Math.min(
-                        close - halfStrokeWidth,
-                        end[2]
-                    );
-                }
-            };
-
-
-        points.forEach(function (point): void {
-            let plotClose,
-                crispCorr,
-                halfWidth,
-                path: SVGPath,
-                graphic = point.graphic,
-                crispX,
-                isNew = !graphic,
-                strokeWidth;
-
-            if (typeof point.plotY !== 'undefined') {
-
-                // Create and/or update the graphic
-                if (!graphic) {
-                    point.graphic = graphic = chart.renderer.path()
-                        .add(series.group);
-                }
-
-                if (!chart.styledMode) {
-                    graphic.attr(
-                        series.pointAttribs(
-                            point,
-                            (point.selected && 'select') as any
-                        )
-                    ); // #3897
-                }
-
-                // crisp vector coordinates
-                strokeWidth = graphic.strokeWidth();
-                crispCorr = (strokeWidth % 2) / 2;
-                // #2596:
-                crispX = Math.round(point.plotX as any) - crispCorr;
-                halfWidth = Math.round((point.shapeArgs as any).width / 2);
-
-                // the vertical stem
-                path = [
-                    ['M', crispX, Math.round(point.yBottom as any)],
-                    ['L', crispX, Math.round(point.plotHigh as any)]
-                ];
-
-                // close
-                if (point.close !== null) {
-                    plotClose = Math.round(point.plotClose) + crispCorr;
-                    path.push(
-                        ['M', crispX, plotClose],
-                        ['L', crispX + halfWidth * 2, plotClose]
-                    );
-
-                    extendStem(path, strokeWidth / 2, plotClose);
-                }
-
-                graphic[isNew ? 'attr' : 'animate']({ d: path })
-                    .addClass(point.getClassName(), true);
-
-            }
-
-
-        });
+        points.forEach(this.drawSinglePoint);
 
     }
 
@@ -432,7 +428,7 @@ export default HLCSeries;
  * 1. An array of arrays with 4 or 3 values. In this case, the values correspond
  *    to `x,high,low,close`. If the first value is a string, it is applied
  *    as the name of the point, and the `x` value is inferred. The `x` value can
- *    also be omitted, in which case the inner arrays should be of length 4\.
+ *    also be omitted, in which case the inner arrays should be of length of 3\.
  *    Then the `x` value is automatically calculated, either starting at 0 and
  *    incremented by 1, or from `pointStart` and `pointInterval` given in the
  *    series options.
