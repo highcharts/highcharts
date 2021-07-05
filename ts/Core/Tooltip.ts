@@ -19,7 +19,6 @@
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
-import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type PositionObject from './Renderer/PositionObject';
@@ -1894,6 +1893,13 @@ class Tooltip {
         );
     }
 }
+
+/* *
+ *
+ * Class namespace
+ *
+ * */
+
 namespace Tooltip {
     export interface FormatterCallbackFunction {
         (
@@ -1929,7 +1935,19 @@ namespace Tooltip {
     export type ShapeValue = ('callout'|'circle'|'square'|'rect');
 }
 
+/* *
+ *
+ * Default export
+ *
+ * */
+
 export default Tooltip;
+
+/* *
+ *
+ * API Declarations
+ *
+ * */
 
 /**
  * Callback function to format the text of the tooltip from scratch.
