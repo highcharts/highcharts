@@ -23,7 +23,7 @@ import ChartComponent from '../ChartComponent.js';
 export const tooltipEmitter = new SyncEmitter(
     'tooltipEmitter',
     'presentation',
-    function (callbackarray: Function[]): void {
+    function (): Function | void {
         if (this instanceof ChartComponent) {
             const { chart, id } = this;
             const groups = ComponentGroup.getGroupsFromComponent(this.id);
@@ -41,7 +41,7 @@ export const tooltipEmitter = new SyncEmitter(
                     });
                 };
 
-                callbackarray.push(
+                const callbacks = [
                     // Listen for the tooltip changes
                     addEvent(chart.tooltip, 'refresh', (): void => {
                         const isSamePoint = (
@@ -72,7 +72,12 @@ export const tooltipEmitter = new SyncEmitter(
                     addEvent(chart.renderTo, 'mouseleave', (): void => {
                         setHoverPointWithDetail(void 0);
                     })
-                );
+                ];
+
+                // Return a function that calls the callbacks
+                return function (): void {
+                    callbacks.forEach((callback): void => callback());
+                };
             }
         }
     }
@@ -86,35 +91,34 @@ export const tooltipEmitter = new SyncEmitter(
 export const seriesVisibilityEmitter = new SyncEmitter(
     'seriesVisibilityEmitter',
     'presentation',
-    function (callbackarray): void {
+    function (): Function | void {
         if (this instanceof ChartComponent) {
             const { chart, store, id } = this;
-            callbackarray.push(
-                addEvent(chart, 'redraw', (): void => {
-                    const groups = ComponentGroup.getGroupsFromComponent(this.id);
-                    if (
-                        store && // has a store
-                        chart &&
-                        chart.hasRendered
-                    ) {
-                        const { series } = chart;
-                        const visibilityMap: Record<string, boolean> = {};
-                        for (let i = 0; i < series.length; i++) {
-                            const seriesID = series[i].options.id;
-                            if (seriesID) {
-                                visibilityMap[seriesID] = series[i].visible;
-                            }
-                        }
-                        if (Object.keys(visibilityMap).length) {
-                            groups.forEach((group): void => {
-                                group.getSharedState().setColumnVisibility(visibilityMap, {
-                                    sender: id
-                                });
-                            });
+            return addEvent(chart, 'redraw', (): void => {
+                const groups = ComponentGroup.getGroupsFromComponent(id);
+                if (
+                    store && // has a store
+                    chart &&
+                    chart.hasRendered
+                ) {
+                    const { series } = chart;
+                    const visibilityMap: Record<string, boolean> = {};
+                    for (let i = 0; i < series.length; i++) {
+                        const seriesID = series[i].options.id;
+                        if (seriesID) {
+                            visibilityMap[seriesID] = series[i].visible;
                         }
                     }
-                })
-            );
+                    if (Object.keys(visibilityMap).length) {
+                        groups.forEach((group): void => {
+                            group.getSharedState().setColumnVisibility(visibilityMap, {
+                                sender: id
+                            });
+                        });
+                    }
+
+                }
+            });
         }
     }
 );
@@ -204,7 +208,7 @@ export const tooltipHandler =
 export const selectionEmitter = new SyncEmitter(
     'selectionEmitter',
     'presentation',
-    function (): void {
+    function (): Function | void {
         if (this instanceof ChartComponent) {
             const {
                 chart,
@@ -232,7 +236,7 @@ export const selectionEmitter = new SyncEmitter(
             };
 
             if (store && chart) {
-                addEvent(chart, 'selection', (e): void => {
+                return addEvent(chart, 'selection', (e): void => {
                     const groups = ComponentGroup.getGroupsFromComponent(id);
                     if ((e as any).resetSelection) {
                         const selection: SharedState.selectionObjectType = {};
@@ -343,12 +347,12 @@ function getAxisMinMaxMap(chart: Chart): Array<{
 export const panEmitter = new SyncEmitter(
     'panEmitter',
     'presentation',
-    function (this): void {
+    function (this): Function | void {
         if (this instanceof ChartComponent) {
             const { store, chart, id } = this;
             if (store && chart) {
                 const ticks: number[] = [];
-                addEvent(chart, 'pan', (): void => {
+                return addEvent(chart, 'pan', (): void => {
                     const groups = ComponentGroup.getGroupsFromComponent(id);
                     // Cancel previous ticks
                     while (ticks.length) {

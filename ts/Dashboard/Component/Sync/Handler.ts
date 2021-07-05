@@ -36,17 +36,15 @@ export default class SyncHandler {
         SyncHandler.register(this);
     }
 
-    public createHandler(component: ComponentTypes): Function {
-        return (): void => {
-            const { id, activeGroup } = component;
-            if (activeGroup) {
-                this.callback = activeGroup.getSharedState().on(this.presentationStateTrigger, (e): void => {
-                    if (id !== (e.detail ? e.detail.sender : void 0)) {
-                        this.func.bind(component)(e);
-                    }
-                });
-            }
-        };
+    public create(component: ComponentTypes): void {
+        const { id, activeGroup } = component;
+        if (activeGroup) {
+            this.callback = activeGroup.getSharedState().on(this.presentationStateTrigger, (e): void => {
+                if (id !== (e.detail ? e.detail.sender : void 0)) {
+                    this.func.call(component, e);
+                }
+            });
+        }
     }
 
     public remove(): void {

@@ -1,6 +1,7 @@
 import type ComponentTypes from '../ComponentType';
-import type Sync from './Sync';
 
+
+export type EmitterFunction = (this: ComponentTypes) => Function | void;
 
 /* *
  *
@@ -26,24 +27,26 @@ class SyncEmitter {
 
     public id: string;
     public type: 'data' | 'presentation'; // Might not be necessary
-    public func: Sync.EmitterFunction;
-    public callbacks: Function[];
+    public func: EmitterFunction;
+    public callback?: ReturnType<EmitterFunction>;
 
-    constructor(id: string, type: 'data' | 'presentation', func: Sync.EmitterFunction) {
+    constructor(id: string, type: 'data' | 'presentation', func: EmitterFunction) {
         this.id = id;
         this.type = type;
         this.func = func;
-        this.callbacks = [];
 
         SyncEmitter.register(this);
     }
 
-    public createEmitter(component: ComponentTypes): Function {
-        return this.func.bind(component, this.callbacks);
+    public create(component: ComponentTypes): void {
+        this.callback = this.func.call(component);
     }
 
     public remove(): void {
-        this.callbacks.forEach((callback): void => callback());
+        const { callback } = this;
+        if (callback) {
+            return callback();
+        }
     }
 }
 
