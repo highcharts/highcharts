@@ -137,9 +137,9 @@ let dashboard = new Dashboard('container', {
             chartOptions: 'Chart options EN'
         },
         tools: {
-            // addComponentBtn: {
-            //     icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/add.svg'
-            // },
+            addComponentBtn: {
+                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/add.svg'
+            },
             rwdIcons: {
                 small: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/smartphone.svg',
                 medium: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/tablet.svg',

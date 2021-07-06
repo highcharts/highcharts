@@ -32,6 +32,9 @@ class EditMode {
     protected static readonly defaultOptions: EditMode.Options = {
         enabled: true,
         tools: {
+            addComponentBtn: {
+                icon: EditGlobals.iconsURL + 'add.svg'
+            },
             rwdIcons: {
                 small: EditGlobals.iconsURL + 'smartphone.svg',
                 medium: EditGlobals.iconsURL + 'tablet.svg',
@@ -103,7 +106,7 @@ class EditMode {
     public dragDrop?: DragDrop;
     public resizer?: Resizer;
     public isInitialized: boolean;
-    // public addComponentBtn?: HTMLDOMElement;
+    public addComponentBtn?: HTMLDOMElement;
     // public resizeBtn?: HTMLDOMElement;
     public rwdMode: string = void 0 as any;
     public rwdMenu: Array<HTMLDOMElement|undefined> = void 0 as any;
@@ -362,9 +365,9 @@ class EditMode {
         );
 
         // TODO all buttons should be activated, add some wrapper?
-        // if (this.addComponentBtn) {
-        //     this.addComponentBtn.style.display = 'block';
-        // }
+        if (this.addComponentBtn) {
+            this.addComponentBtn.style.display = 'block';
+        }
         // if (this.resizeBtn) {
         //     this.resizeBtn.style.display = 'block';
         // }
@@ -397,9 +400,9 @@ class EditMode {
         editMode.hideToolbars();
 
         // TODO all buttons should be deactivated.
-        // if (this.addComponentBtn) {
-        //     this.addComponentBtn.style.display = 'none';
-        // }
+        if (this.addComponentBtn) {
+            this.addComponentBtn.style.display = 'none';
+        }
 
         // if (this.resizeBtn) {
         //     this.resizeBtn.style.display = 'none';
@@ -483,27 +486,27 @@ class EditMode {
         this.createRwdMenu();
 
         // create add button
-        // const addIconURL = options && options.tools &&
-        // options.tools.addComponentBtn && options.tools.addComponentBtn.icon;
+        const addIconURL = options && options.tools &&
+        options.tools.addComponentBtn && options.tools.addComponentBtn.icon;
 
-        // this.addComponentBtn = EditRenderer.renderButton(
-        //     this.tools.container,
-        //     {
-        //         className: EditGlobals.classNames.editToolsBtn,
-        //         icon: addIconURL,
-        //         value: 'Add',
-        //         callback: (): void => {
-        //             // sidebar trigger
-        //             if (editMode.sidebar) {
-        //                 editMode.sidebar.show();
-        //                 editMode.sidebar.updateTitle('General');
-        //             }
-        //         },
-        //         style: {
-        //             display: 'none'
-        //         }
-        //     }
-        // );
+        this.addComponentBtn = EditRenderer.renderButton(
+            this.tools.container,
+            {
+                className: EditGlobals.classNames.editToolsBtn,
+                icon: addIconURL,
+                value: 'Add',
+                callback: (): void => {
+                    // sidebar trigger
+                    if (editMode.sidebar) {
+                        editMode.sidebar.show();
+                        editMode.sidebar.updateTitle('General');
+                    }
+                },
+                style: {
+                    display: 'none'
+                }
+            }
+        );
 
         // // Create resizer button.
         // this.resizeBtn = Resizer.createMenuBtn(editMode);
@@ -526,8 +529,7 @@ class EditMode {
                             value: key,
                             callback: (): void => {
                                 this.dashboard.layoutsWrapper.style.width =
-                                    key === 'large' ?
-                                        '100%' : rwdBreakingPoints[key] + 'px';
+                                    rwdBreakingPoints[key] + 'px';
 
                                 this.rwdMode = key;
 
