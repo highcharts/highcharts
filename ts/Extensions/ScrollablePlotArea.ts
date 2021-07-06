@@ -230,6 +230,7 @@ Chart.prototype.setUpScrolling = function (): void {
     addEvent(this.scrollingContainer, 'scroll', (): void => {
         if (this.pointer) {
             delete this.pointer.chartPosition;
+            this.pointer.runPointActions(void 0, void 0, true);
         }
     });
 
