@@ -2700,7 +2700,8 @@ const defaultOptions: Options = {
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         backgroundColor: color(palette.neutralColor3)
-            .setOpacity(0.85).get() as ColorType,
+            // @todo: Disallow undefined as input for colors
+            .setOpacity(0.85).get() as any,
 
         /**
          * The pixel width of the tooltip border.
