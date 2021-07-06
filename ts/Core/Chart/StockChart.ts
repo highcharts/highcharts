@@ -117,10 +117,15 @@ declare module '../Series/SeriesLike' {
     interface SeriesLike {
         clipBox?: BBoxObject;
         compareValue?: number;
+        modifiers: Array<ModifierFunction>;
         forceCropping(): boolean|undefined;
-        modifyValue?(value?: number, point?: Point): (number|undefined);
         setCompare(compare?: string): void;
         initCompare(compare?: string): void;
+        percentCompare: ModifierFunction;
+        valueCompare: ModifierFunction;
+    }
+    interface ModifierFunction {
+        (value?: number|null|undefined, point?: Point, index?: number): number;
     }
 }
 
@@ -926,8 +931,13 @@ Series.prototype.init = function (): void {
     // Call base method
     seriesInit.apply(this, arguments as any);
 
-    // Set comparison mode
-    this.initCompare(this.options.compare as any);
+    // Add modifiers array to each series.
+    this.modifiers = [];
+
+    // Set comparison mode.
+    if (this.options.compare) {
+        this.initCompare(this.options.compare);
+    }
 };
 
 /**
@@ -950,46 +960,92 @@ Series.prototype.setCompare = function (compare?: string): void {
 
 /**
  * @ignore
+ * @function Highcharts.Series#valueCompare
+ *
+ * @param {number} [value]
+ *        Value which should be modified.
+ * @param {Point} [point]
+ *        Point which should be modified.
+ * @param {number} [index]
+ *        Index of point which should be modified.
+ */
+Series.prototype.valueCompare = function (
+    this: Series,
+    value?: number|null|undefined,
+    point?: Point
+): number {
+    const compareValue = this.compareValue;
+
+    if (
+        defined(value) &&
+        typeof compareValue !== 'undefined' &&
+        value
+    ) { // #2601, #5814
+
+        // Get the modified value
+        value -= compareValue;
+
+        // record for tooltip etc.
+        if (point) {
+            point.change = value;
+        }
+
+        return value;
+    }
+    return 0;
+};
+
+/**
+ * @ignore
+ * @function Highcharts.Series#percentCompare
+ *
+ * @param {number} [value]
+ *        Value which should be modified.
+ * @param {Point} [point]
+ *        Point which should be modified.
+ * @param {number} [index]
+ *        Index of point which should be modified.
+ */
+Series.prototype.percentCompare = function (
+    this: Series,
+    value?: number|null|undefined,
+    point?: Point
+): number {
+    const compareValue = this.compareValue;
+
+    if (
+        defined(value) &&
+        typeof compareValue !== 'undefined'
+    ) { // #2601, #5814
+
+        value = 100 * (value / compareValue) -
+            (this.options.compareBase === 100 ? 0 : 100);
+
+        // record for tooltip etc.
+        if (point) {
+            point.change = value;
+        }
+
+        return value;
+    }
+    return 0;
+};
+
+/**
+ * @ignore
  * @function Highcharts.Series#initCompare
  *
  * @param {string} [compare]
  *        Can be one of `null` (default), `"percent"` or `"value"`.
  */
 Series.prototype.initCompare = function (compare?: string): void {
-    // Set or unset the modifyValue method
-    this.modifyValue = (compare === 'value' || compare === 'percent') ?
-        function (
-            this: Series,
-            value?: number,
-            point?: Point
-        ): (number|undefined) {
-            const compareValue = this.compareValue;
 
-            if (
-                typeof value !== 'undefined' &&
-                typeof compareValue !== 'undefined'
-            ) { // #2601, #5814
-
-                // Get the modified value
-                if (compare === 'value') {
-                    value -= compareValue;
-
-                // Compare percent
-                } else {
-                    value = 100 * (value / compareValue) -
-                        (this.options.compareBase === 100 ? 0 : 100);
-                }
-
-                // record for tooltip etc.
-                if (point) {
-                    point.change = value;
-                }
-
-                return value;
-            }
-            return 0;
-        } :
-        null as any;
+    if (compare === 'value') {
+        this.modifiers.push(this.valueCompare);
+    }
+    if (compare === 'percent') {
+        this.modifiers.push(this.percentCompare);
+    }
 
     // Mark dirty
     if (this.chart.hasRendered) {
@@ -1075,10 +1131,10 @@ addEvent(
     'afterGetExtremes',
     function (e): void {
         const dataExtremes: DataExtremesObject = (e as any).dataExtremes;
-        if (this.modifyValue && dataExtremes) {
+        if (this.modifiers && !!this.modifiers.length && dataExtremes) {
             const extremes = [
-                this.modifyValue(dataExtremes.dataMin),
-                this.modifyValue(dataExtremes.dataMax)
+                this.modifiers[0].call(this, dataExtremes.dataMin),
+                this.modifiers[0].call(this, dataExtremes.dataMax)
             ];
 
             dataExtremes.dataMin = arrayMin(extremes);

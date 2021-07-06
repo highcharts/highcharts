@@ -4560,7 +4560,8 @@ class Series {
             yAxis = series.yAxis,
             points = series.points,
             dataLength = points.length,
-            hasModifyValue = !!series.modifyValue,
+            modifiers = series.modifiers,
+            hasModifyValue = modifiers && !!modifiers.length,
             pointPlacement = series.pointPlacementToXValue(), // #7860
             dynamicallyPlaced = Boolean(pointPlacement),
             threshold = options.threshold,
@@ -4687,7 +4688,9 @@ class Series {
 
             // general hook, used for Highcharts Stock compare mode
             if (hasModifyValue) {
-                yValue = (series.modifyValue as any)(yValue, point);
+                modifiers.forEach(function (modifier): void {
+                    yValue = modifier.call(series, point.y, point, point.index);
+                });
             }
 
             // Set the the plotY value, reset it for redraws

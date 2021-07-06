@@ -347,7 +347,8 @@ class OHLCSeries extends ColumnSeries {
     public translate(): void {
         const series = this,
             yAxis = series.yAxis,
-            hasModifyValue = !!series.modifyValue,
+            modifiers = series.modifiers,
+            hasModifyValue = modifiers && !!modifiers.length,
             translated = [
                 'plotOpen',
                 'plotHigh',
@@ -365,7 +366,7 @@ class OHLCSeries extends ColumnSeries {
                     function (value, i): void {
                         if (value !== null) {
                             if (hasModifyValue) {
-                                value = (series.modifyValue as any)(value);
+                                value = modifiers[0].call(series, value);
                             }
                             (point as any)[translated[i]] =
                                 yAxis.toPixels(value, true);
