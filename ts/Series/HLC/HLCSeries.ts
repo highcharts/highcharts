@@ -19,6 +19,7 @@
 import type HLCSeriesOptions from './HLCSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import HLCPoint from './HLCPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -180,10 +181,10 @@ class HLCSeries extends ColumnSeries {
      * @private
      */
 
-    public extendStem(
+    protected extendStem(
         path: SVGPath,
         halfStrokeWidth: number,
-        close: number
+        value: number
     ): void {
         const start = path[0];
         const end = path[1];
@@ -192,30 +193,58 @@ class HLCSeries extends ColumnSeries {
         // is already crisped and halfStrokeWidth should remove it.
         if (typeof start[2] === 'number') {
             start[2] = Math.max(
-                close + halfStrokeWidth,
+                value + halfStrokeWidth,
                 start[2]
             );
         }
         if (typeof end[2] === 'number') {
             end[2] = Math.min(
-                close - halfStrokeWidth,
+                value - halfStrokeWidth,
                 end[2]
             );
         }
 
     }
+
+    protected getPointPath(point: HLCPoint, graphic: SVGElement): SVGPath {
+        // crisp vector coordinates
+        const strokeWidth = graphic.strokeWidth(),
+            series = point.series,
+            crispCorr = (strokeWidth % 2) / 2,
+            // #2596:
+            crispX = Math.round(point.plotX as any) - crispCorr,
+            halfWidth = Math.round((point.shapeArgs as any).width / 2);
+
+        let path: SVGPath,
+            plotClose = point.plotClose;
+
+        // the vertical stem
+        path = [
+            ['M', crispX, Math.round(point.yBottom as any)],
+            ['L', crispX, Math.round(point.plotHigh as any)]
+        ];
+
+        // close
+        if (point.close !== null) {
+            plotClose = Math.round(point.plotClose) + crispCorr;
+            path.push(
+                ['M', crispX, plotClose],
+                ['L', crispX + halfWidth, plotClose]
+            );
+
+            series.extendStem(path, strokeWidth / 2, plotClose);
+        }
+        return path;
+    }
+
+
     public drawSinglePoint(point: HLCPoint): void {
 
         const series = point.series,
             chart = series.chart;
-        let plotClose,
-            crispCorr,
-            halfWidth,
-            path: SVGPath,
+        let path: SVGPath,
             graphic = point.graphic,
-            crispX,
-            isNew = !graphic,
-            strokeWidth;
+            isNew = !graphic;
 
         if (typeof point.plotY !== 'undefined') {
 
@@ -235,29 +264,7 @@ class HLCSeries extends ColumnSeries {
             }
 
             // crisp vector coordinates
-            strokeWidth = graphic.strokeWidth();
-            crispCorr = (strokeWidth % 2) / 2;
-            // #2596:
-            crispX = Math.round(point.plotX as any) - crispCorr;
-            halfWidth = Math.round((point.shapeArgs as any).width / 2);
-
-            // the vertical stem
-            path = [
-                ['M', crispX, Math.round(point.yBottom as any)],
-                ['L', crispX, Math.round(point.plotHigh as any)]
-            ];
-
-            // close
-            if (point.close !== null) {
-                plotClose = Math.round(point.plotClose) + crispCorr;
-                path.push(
-                    ['M', crispX, plotClose],
-                    ['L', crispX + halfWidth * 2, plotClose]
-                );
-
-                series.extendStem(path, strokeWidth / 2, plotClose);
-            }
-
+            path = series.getPointPath(point, graphic);
             graphic[isNew ? 'attr' : 'animate']({ d: path })
                 .addClass(point.getClassName(), true);
 
@@ -320,33 +327,30 @@ class HLCSeries extends ColumnSeries {
      * @function Highcharts.seriesTypes.hlc#translate
      * @return {void}
      */
+
     public translate(): void {
         const series = this,
             yAxis = series.yAxis,
             hasModifyValue = !!series.modifyValue,
-            translated = [
-                'plotHigh',
-                'plotLow',
-                'plotClose',
-                'yBottom'
-            ]; // translate HLC for
-
+            names = this.pointArrayMap && this.pointArrayMap.slice() || [],
+            translated = names.map((name: string): string => `plot${name.charAt(0).toUpperCase() + name.slice(1)}`);
+        translated.push('yBottom');
+        names.push('low');
         super.translate.apply(series);
 
         // Do the translation
         series.points.forEach(function (point): void {
-            [point.high, point.low, point.close, point.low]
-                .forEach(
-                    function (value, i): void {
-                        if (value !== null) {
-                            if (hasModifyValue) {
-                                value = (series.modifyValue as any)(value);
-                            }
-                            (point as any)[translated[i]] =
-                                yAxis.toPixels(value, true);
+            names.forEach(
+                function (name: string, i: number): void {
+                    let value = (point as any)[name];
+                    if (value !== null) {
+                        if (hasModifyValue) {
+                            value = (series.modifyValue as any)(value);
                         }
+                        (point as any)[translated[i]] =
+                            yAxis.toPixels(value, true);
                     }
-                );
+                });
 
             // Align the tooltip to the high value to avoid covering the
             // point

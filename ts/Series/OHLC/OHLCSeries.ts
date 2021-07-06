@@ -19,6 +19,7 @@
 import type OHLCSeriesOptions from './OHLCSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import OHLCPoint from './OHLCPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -55,7 +56,6 @@ const {
  */
 
 class OHLCSeries extends HLCSeries {
-
     /* *
      *
      *  Static Properties
@@ -77,16 +77,15 @@ class OHLCSeries extends HLCSeries {
      * @optionparent plotOptions.ohlc
      */
     public static defaultOptions: OHLCSeriesOptions = merge(HLCSeries.defaultOptions, {
-
         tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-            '<b> {series.name}</b><br/>' +
-            'Open: {point.open}<br/>' +
-            'High: {point.high}<br/>' +
-            'Low: {point.low}<br/>' +
-            'Close: {point.close}<br/>'
+            pointFormat:
+                '<span style="color:{point.color}">\u25CF</span> ' +
+                '<b> {series.name}</b><br/>' +
+                'Open: {point.open}<br/>' +
+                'High: {point.high}<br/>' +
+                'Low: {point.low}<br/>' +
+                'Close: {point.close}<br/>'
         }
-
 
         /**
          * Determines which one of `open`, `high`, `low`, `close` values should
@@ -115,7 +114,6 @@ class OHLCSeries extends HLCSeries {
          * @product   highstock
          * @apioption plotOptions.ohlc.upColor
          */
-
     } as OHLCSeriesOptions);
 
     /* *
@@ -138,116 +136,30 @@ class OHLCSeries extends HLCSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
+    public getPointPath(point: OHLCPoint, graphic: SVGElement): SVGPath {
+        const path = super.getPointPath(point, graphic),
+            strokeWidth = graphic.strokeWidth(),
+            crispCorr = (strokeWidth % 2) / 2,
+            crispX = Math.round(point.plotX as any) - crispCorr,
+            halfWidth = Math.round((point.shapeArgs as any).width / 2);
 
-    /**
-     * Draw the data points
-     * @private
-     */
-    public drawPoints(): void {
-        const series = this,
-            points = series.points,
-            chart = series.chart,
-            /**
-             * Extend vertical stem to open and close values.
-             */
-            extendStem = function (
-                path: SVGPath,
-                halfStrokeWidth: number,
-                openOrClose: number
-            ): void {
-                const start = path[0];
-                const end = path[1];
+        let plotOpen = point.plotOpen;
+        // crisp vector coordinates
 
-                // We don't need to worry about crisp - openOrClose value
-                // is already crisped and halfStrokeWidth should remove it.
-                if (typeof start[2] === 'number') {
-                    start[2] = Math.max(
-                        openOrClose + halfStrokeWidth,
-                        start[2]
-                    );
-                }
-                if (typeof end[2] === 'number') {
-                    end[2] = Math.min(
-                        openOrClose - halfStrokeWidth,
-                        end[2]
-                    );
-                }
-            };
+        if (point.open !== null) {
+            plotOpen = Math.round(point.plotOpen) + crispCorr;
+            path.push(
+                ['M', crispX, plotOpen],
+                ['L', crispX - halfWidth, plotOpen]
+            );
 
-
-        points.forEach(function (point): void {
-            let plotOpen,
-                plotClose,
-                crispCorr,
-                halfWidth,
-                path: SVGPath,
-                graphic = point.graphic,
-                crispX,
-                isNew = !graphic,
-                strokeWidth;
-
-            if (typeof point.plotY !== 'undefined') {
-
-                // Create and/or update the graphic
-                if (!graphic) {
-                    point.graphic = graphic = chart.renderer.path()
-                        .add(series.group);
-                }
-
-                if (!chart.styledMode) {
-                    graphic.attr(
-                        series.pointAttribs(
-                            point,
-                            (point.selected && 'select') as any
-                        )
-                    ); // #3897
-                }
-
-                // crisp vector coordinates
-                strokeWidth = graphic.strokeWidth();
-                crispCorr = (strokeWidth % 2) / 2;
-                // #2596:
-                crispX = Math.round(point.plotX as any) - crispCorr;
-                halfWidth = Math.round((point.shapeArgs as any).width / 2);
-
-                // the vertical stem
-                path = [
-                    ['M', crispX, Math.round(point.yBottom as any)],
-                    ['L', crispX, Math.round(point.plotHigh as any)]
-                ];
-
-                // open
-                if (point.open !== null) {
-                    plotOpen = Math.round(point.plotOpen) + crispCorr;
-                    path.push(
-                        ['M', crispX, plotOpen],
-                        ['L', crispX - halfWidth, plotOpen]
-                    );
-
-                    extendStem(path, strokeWidth / 2, plotOpen);
-                }
-
-                // close
-                if (point.close !== null) {
-                    plotClose = Math.round(point.plotClose) + crispCorr;
-                    path.push(
-                        ['M', crispX, plotClose],
-                        ['L', crispX + halfWidth, plotClose]
-                    );
-
-                    extendStem(path, strokeWidth / 2, plotClose);
-                }
-
-                graphic[isNew ? 'attr' : 'animate']({ d: path })
-                    .addClass(point.getClassName(), true);
-
-            }
-
-
-        });
-
+            super.extendStem(path, strokeWidth / 2, plotOpen);
+        }
+        return path;
     }
+
+
+    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -268,19 +180,15 @@ class OHLCSeries extends HLCSeries {
         point: OHLCPoint,
         state: StatesOptionsKey
     ): SVGAttributes {
-        const attribs = super.pointAttribs.call(
-                this,
-                point,
-                state
-            ),
+        const attribs = super.pointAttribs.call(this, point, state),
             options = this.options;
 
         delete attribs.fill;
 
         if (
             !point.options.color &&
-        options.upColor &&
-        point.open < point.close
+            options.upColor &&
+            point.open < point.close
         ) {
             attribs.stroke = options.upColor;
         }
@@ -293,56 +201,12 @@ class OHLCSeries extends HLCSeries {
         return [point.open, point.high, point.low, point.close];
     }
 
-    /**
-     * Translate data points from raw values x and y to plotX and plotY
-     *
-     * @private
-     * @function Highcharts.seriesTypes.ohlc#translate
-     * @return {void}
-     */
-    public translate(): void {
-        const series = this,
-            yAxis = series.yAxis,
-            hasModifyValue = !!series.modifyValue,
-            translated = [
-                'plotOpen',
-                'plotHigh',
-                'plotLow',
-                'plotClose',
-                'yBottom'
-            ]; // translate OHLC for
-
-        super.translate.apply(series);
-
-        // Do the translation
-        series.points.forEach(function (point): void {
-            [point.open, point.high, point.low, point.close, point.low]
-                .forEach(
-                    function (value, i): void {
-                        if (value !== null) {
-                            if (hasModifyValue) {
-                                value = (series.modifyValue as any)(value);
-                            }
-                            (point as any)[translated[i]] =
-                                yAxis.toPixels(value, true);
-                        }
-                    }
-                );
-
-            // Align the tooltip to the high value to avoid covering the
-            // point
-            (point.tooltipPos as any)[1] =
-                (point.plotHigh as any) + yAxis.pos - series.chart.plotTop;
-        });
-    }
-
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
  *
  *  Prototype Properties
+ *
  *
  * */
 
@@ -386,6 +250,7 @@ SeriesRegistry.registerSeriesType('ohlc', OHLCSeries);
 
 export default OHLCSeries;
 
+// Add useOhlcData option
 addEvent(Series, 'init', function (
     eventOptions: { options: OHLCSeriesOptions }
 ): void {
