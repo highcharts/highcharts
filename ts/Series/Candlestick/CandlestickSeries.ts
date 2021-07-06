@@ -87,13 +87,6 @@ class CandlestickSeries extends OHLCSeries {
          * @apioption plotOptions.candlestick.upLineColor
          */
 
-        /**
-         * @type      {Highcharts.DataGroupingApproximationValue|Function}
-         * @default   ohlc
-         * @product   highstock
-         * @apioption plotOptions.candlestick.dataGrouping.approximation
-         */
-
         states: {
 
             /**

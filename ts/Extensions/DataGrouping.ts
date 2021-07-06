@@ -174,7 +174,7 @@ declare global {
         let defaultDataGroupingUnits: Array<[string, (Array<number>|null)]>;
         type DataGroupingApproximationValue = (
             'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'|
-            'windbarb'|'ichimoku-averages'|'hlc'
+            'windbarb'|'ichimoku-averages'|'hlc'|'ohlc'
         );
         type DataGroupingAnchor = ('start'|'middle'|'end');
         type DataGroupingAnchorExtremes = ('start'|'middle'|'end'|'firstPoint'|'lastPoint');
@@ -1378,7 +1378,7 @@ export default dataGrouping;
  * from the raw data.
  *
  * Defaults to `average` for line-type series, `sum` for columns, `range`
- * for range series and `ohlc` for OHLC and candlestick.
+ * for range series `hlc` for HLC `ohlc` for OHLC and candlestick.
  *
  * @sample {highstock} stock/plotoptions/series-datagrouping-approximation
  *         Approximation callback with custom data

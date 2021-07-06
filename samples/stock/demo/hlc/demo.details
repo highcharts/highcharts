@@ -4,9 +4,11 @@ authors:
   - Pawel Lysy
 compareTooltips: true
 js_wrap: b
+new_until: 2021-11-01
 tags:
   - Highcharts Stock demo
 categories:
   - Chart types:
-      priority: 3
+      priority: 14
+
 ...

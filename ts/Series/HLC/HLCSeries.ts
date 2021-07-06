@@ -88,6 +88,18 @@ class HLCSeries extends ColumnSeries {
          */
 
         /**
+         * @type      {Highcharts.DataGroupingApproximationValue|Function}
+         * @default   hlc
+         * @product   highstock
+         * @apioption plotOptions.hlc.dataGrouping.approximation
+         */
+
+        /**
+         * @default   close
+         * @apioption plotOptions.hlc.colorKey
+         */
+
+        /**
          * The pixel width of the line/border. Defaults to `1`.
          *
          * @sample {highstock} stock/plotoptions/hlc-linewidth/

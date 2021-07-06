@@ -15,7 +15,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
         series: [{
             type: 'hlc',
             name: 'AAPL Stock Price',
-            useOhlcdata: true,
+            useOhlcData: true,
             data: data
         }]
     });

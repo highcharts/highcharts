@@ -70,13 +70,19 @@ class OHLCSeries extends HLCSeries {
      * @sample stock/demo/ohlc/
      *         OHLC chart
      *
-     * @extends      plotOptions.column
-     * @excluding    borderColor, borderRadius, borderWidth, crisp, stacking,
-     *               stack
+     * @extends      plotOptions.hlc
      * @product      highstock
      * @optionparent plotOptions.ohlc
      */
     public static defaultOptions: OHLCSeriesOptions = merge(HLCSeries.defaultOptions, {
+
+        /**
+         * @type      {Highcharts.DataGroupingApproximationValue|Function}
+         * @default   ohlc
+         * @product   highstock
+         * @apioption plotOptions.ohlc.dataGrouping.approximation
+         */
+
         tooltip: {
             pointFormat:
                 '<span style="color:{point.color}">\u25CF</span> ' +
@@ -88,23 +94,14 @@ class OHLCSeries extends HLCSeries {
         }
 
         /**
-         * Determines which one of `open`, `high`, `low`, `close` values should
+         * Determines which one of  `open` `high`, `low`, `close` values should
          * be represented as `point.y`, which is later used to set dataLabel
          * position and [compare](#plotOptions.series.compare).
          *
-         * @sample {highstock} stock/plotoptions/ohlc-pointvalkey/
-         *         Possible values
-         *
-         * @type       {string}
          * @default    close
          * @validvalue ["open", "high", "low", "close"]
          * @product    highstock
-         * @apioption  plotOptions.ohlc.pointValKey
-         */
-
-        /**
-         * @default   close
-         * @apioption plotOptions.ohlc.colorKey
+         * @apioption  plotOptions.hlc.pointValKey
          */
 
         /**
@@ -127,8 +124,6 @@ class OHLCSeries extends HLCSeries {
     public options: OHLCSeriesOptions = void 0 as any;
 
     public points: Array<OHLCPoint> = void 0 as any;
-
-    public yData: Array<Array<number>> = void 0 as any;
 
     /* *
      *
@@ -202,7 +197,6 @@ class OHLCSeries extends HLCSeries {
 interface OHLCSeries {
     pointAttrToOptions: Record<string, string>;
     pointClass: typeof OHLCPoint;
-    init(): void;
     toYData(point: OHLCPoint): Array<number>;
 }
 extend(OHLCSeries.prototype, {
@@ -341,14 +335,6 @@ addEvent(Series, 'afterSetOptions', function (
  * @excluding y, marker
  * @product   highstock
  * @apioption series.ohlc.data
- */
-
-/**
- * The closing value of each data point.
- *
- * @type      {number}
- * @product   highstock
- * @apioption series.ohlc.data.close
  */
 
 /**
