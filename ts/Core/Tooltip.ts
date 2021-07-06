@@ -75,7 +75,7 @@ declare module './Series/SeriesLike' {
 
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
-        tooltip?: TooltipOptions;
+        tooltip?: DeepPartial<TooltipOptions>;
     }
 }
 
@@ -145,7 +145,7 @@ class Tooltip {
 
     public now: Record<string, number> = {};
 
-    public options: TooltipOptions = {};
+    public options: TooltipOptions = {} as any;
 
     public outside: boolean = false;
 
@@ -518,7 +518,7 @@ class Tooltip {
                 )
             ),
             pointerEvents = (
-                (options.style && options.style.pointerEvents) ||
+                options.style.pointerEvents ||
                 (!this.followPointer && options.stickOnContact ? 'auto' : 'none')
             ),
             onMouseEnter = function (): void {
@@ -561,7 +561,7 @@ class Tooltip {
                     top: '1px',
                     pointerEvents,
                     zIndex: Math.max(
-                        (this.options.style && this.options.style.zIndex || 0),
+                        this.options.style.zIndex || 0,
                         (chartStyle && chartStyle.zIndex || 0) + 3
                     )
                 });
@@ -597,11 +597,11 @@ class Tooltip {
                         '',
                         0,
                         0,
-                        options.shape || 'callout',
-                        null as any,
-                        null as any,
+                        options.shape,
+                        void 0,
+                        void 0,
                         options.useHTML,
-                        null as any,
+                        void 0,
                         className
                     )
                     .attr({
@@ -616,7 +616,7 @@ class Tooltip {
                             'stroke-width': options.borderWidth
                         })
                         // #2301, #2657
-                        .css(options.style as any)
+                        .css(options.style)
                         .css({ pointerEvents })
                         .shadow(options.shadow);
                 }
@@ -906,7 +906,7 @@ class Tooltip {
 
         // disallow duplicate timers (#1728, #1766)
         U.clearTimeout(this.hideTimer as any);
-        delay = pick(delay, this.options.hideDelay, 500);
+        delay = pick(delay, this.options.hideDelay);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function (): void {
                 // If there is a delay, do fadeOut with the default duration. If
@@ -1186,7 +1186,7 @@ class Tooltip {
 
                     // Prevent the tooltip from flowing over the chart box
                     // (#6659)
-                    if (!(options.style as any).width || styledMode) {
+                    if (!options.style.width || styledMode) {
                         label.css({
                             width: this.chart.spacingBox.width + 'px'
                         });
@@ -1425,8 +1425,7 @@ class Tooltip {
                         '',
                         0,
                         0,
-                        (options[isHeader ? 'headerShape' : 'shape']) ||
-                        'callout',
+                        (options[isHeader ? 'headerShape' : 'shape']),
                         void 0,
                         void 0,
                         options.useHTML
@@ -1445,7 +1444,7 @@ class Tooltip {
                 text: str
             });
             if (!styledMode) {
-                tt.css(options.style as any)
+                tt.css(options.style)
                     .shadow(options.shadow)
                     .attr({
                         stroke: (
@@ -1762,8 +1761,7 @@ class Tooltip {
      * @return {string}
      */
     public tooltipFooterHeaderFormatter(labelConfig: Point.PointLabelObject, isFooter?: boolean): string {
-        const footOrHead = isFooter ? 'footer' : 'header',
-            series = labelConfig.series,
+        const series = labelConfig.series,
             tooltipOptions = series.tooltipOptions,
             xAxis = series.xAxis,
             isDateTime = (
@@ -1776,7 +1774,7 @@ class Tooltip {
                 labelConfig: labelConfig
             } as AnyRecord;
         let xDateFormat = tooltipOptions.xDateFormat,
-            formatString = (tooltipOptions as any)[footOrHead + 'Format'];
+            formatString = tooltipOptions[isFooter ? 'footerFormat' : 'headerFormat'];
         fireEvent(this, 'headerFormatter', e, function (
             this: Tooltip,
             e: AnyRecord
@@ -1844,11 +1842,12 @@ class Tooltip {
      */
     public updatePosition(point: Point): void {
         const chart = this.chart,
+            options = this.options,
             pointer = chart.pointer,
             label = this.getLabel(),
             // Needed for outside: true (#11688)
             chartPosition = pointer.getChartPosition(),
-            pos = (this.options.positioner || this.getPosition).call(
+            pos = (options.positioner || this.getPosition).call(
                 this,
                 label.width,
                 label.height,
@@ -1860,7 +1859,7 @@ class Tooltip {
 
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
-            pad = (this.options.borderWidth || 0) + 2 * this.distance;
+            pad = options.borderWidth + 2 * this.distance;
             (this.renderer as any).setSize(
                 label.width + pad,
                 label.height + pad,
