@@ -1645,17 +1645,14 @@ class Tooltip {
             series = labelConfig.series,
             tooltipOptions = series.tooltipOptions,
             xAxis = series.xAxis,
-            isDateTime = (
-                xAxis &&
-                xAxis.options.type === 'datetime' &&
-                isNumber(labelConfig.key)
-            ),
+            dateTime = xAxis && xAxis.dateTime,
             e = {
                 isFooter: isFooter,
                 labelConfig: labelConfig
             } as AnyRecord;
         let xDateFormat = tooltipOptions.xDateFormat,
             formatString = (tooltipOptions as any)[footOrHead + 'Format'];
+
         fireEvent(this, 'headerFormatter', e, function (
             this: Tooltip,
             e: AnyRecord
@@ -1663,15 +1660,15 @@ class Tooltip {
 
             // Guess the best date format based on the closest point distance
             // (#568, #3418)
-            if (isDateTime && !xDateFormat && xAxis.dateTime) {
-                xDateFormat = xAxis.dateTime.getXDateFormat(
-                    Number(labelConfig.x || ''),
+            if (dateTime && !xDateFormat && isNumber(labelConfig.key)) {
+                xDateFormat = dateTime.getXDateFormat(
+                    labelConfig.key,
                     tooltipOptions.dateTimeLabelFormats || {}
                 );
             }
 
             // Insert the footer date format if any
-            if (isDateTime && xDateFormat) {
+            if (dateTime && xDateFormat) {
                 ((labelConfig.point && labelConfig.point.tooltipDateKeys) ||
                         ['key']).forEach(
                     function (key: string): void {

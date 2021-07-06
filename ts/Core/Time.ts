@@ -860,8 +860,8 @@ class Time {
      * @param {number} range
      *        The time range
      *
-     * @param {number} date
-     *        The date of the point in question
+     * @param {number} timestamp
+     *        The timestamp of the date
      *
      * @param {number} startOfWeek
      *        An integer representing the first day of the week, where 0 is
@@ -875,11 +875,11 @@ class Time {
      */
     public getDateFormat(
         range: number,
-        date: number,
+        timestamp: number,
         startOfWeek: number,
         dateTimeLabelFormats: Record<string, string>
-    ): string {
-        const dateStr = this.dateFormat('%m-%d %H:%M:%S.%L', date),
+    ): string|undefined {
+        const dateStr = this.dateFormat('%m-%d %H:%M:%S.%L', timestamp),
             blank = '01-01 00:00:00.000',
             strpos = {
                 millisecond: 15,
@@ -888,7 +888,8 @@ class Time {
                 hour: 6,
                 day: 3
             } as Record<string, number>;
-        let format,
+
+        let format: string|undefined,
             n,
             lastN = 'millisecond'; // for sub-millisecond data, #4223
 
@@ -898,7 +899,7 @@ class Time {
             // Sunday/Monday, go for the week format
             if (
                 range === timeUnits.week &&
-                +this.dateFormat('%w', date) === startOfWeek &&
+                +this.dateFormat('%w', timestamp) === startOfWeek &&
                 dateStr.substr(6) === blank.substr(6)
             ) {
                 n = 'week';
