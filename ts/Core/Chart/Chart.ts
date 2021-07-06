@@ -38,7 +38,7 @@ import type {
 import type ChartLike from './ChartLike';
 import type ChartOptions from './ChartOptions';
 import type { ChartPanningOptions } from './ChartOptions';
-import type ColorAxis from '../Axis/ColorAxis';
+import type ColorAxis from '../Axis/Color/ColorAxis';
 import type { LabelsOptions } from '../../Extensions/Oldie/Oldie';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
@@ -2924,40 +2924,13 @@ class Chart {
         type: string,
         options: Chart.CreateAxisOptionsObject
     ): Axis {
-        const isColorAxis = type === 'colorAxis',
-            axisOptions = options.axis,
-            redraw = options.redraw,
-            animation = options.animation,
-            userOptions = merge(axisOptions, {
-                index: (this as any)[type].length,
-                isX: type === 'xAxis'
-            });
+        const axis = new Axis(this, merge(options.axis, {
+            index: (this as AnyRecord)[type].length,
+            isX: type === 'xAxis'
+        }));
 
-        let axis: (Axis|ColorAxis);
-
-        if (isColorAxis) {
-            axis = new H.ColorAxis(this, userOptions);
-
-        } else {
-            axis = new Axis(this, userOptions);
-        }
-
-        if (isColorAxis) {
-            this.isDirtyLegend = true;
-
-            // Clear before 'bindAxes' (#11924)
-            this.axes.forEach(function (axis): void {
-                axis.series = [];
-            });
-
-            this.series.forEach(function (series): void {
-                series.bindAxes();
-                series.isDirtyData = true;
-            });
-        }
-
-        if (pick(redraw, true)) {
-            this.redraw(animation);
+        if (pick(options.redraw, true)) {
+            this.redraw(options.animation);
         }
 
         return axis;
