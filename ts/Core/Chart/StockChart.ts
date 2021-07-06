@@ -1241,8 +1241,8 @@ addEvent(Series, 'afterRemoveClip', function (): void {
     // it's width is 0px, so change it
     if (sharedClip) {
         sharedClip.attr({
-            width: width,
-            x: x
+            width,
+            x
         });
     }
 
