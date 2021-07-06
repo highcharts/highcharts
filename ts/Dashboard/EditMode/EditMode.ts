@@ -413,8 +413,11 @@ class EditMode {
         }
 
 
-        // show reponsive buttons
+        // hide reponsive buttons
         this.hideRwdButtons();
+
+        // disable responsive width
+        this.dashboard.layoutsWrapper.style.width = '100%';
     }
 
     public isActive(): boolean {
