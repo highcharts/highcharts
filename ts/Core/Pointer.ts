@@ -148,6 +148,8 @@ class Pointer {
 
     public isDirectTouch?: boolean;
 
+    public lastPointActionEvent?: PointerEvent;
+
     public lastValidTouch: object = {};
 
     public mouseDownX?: number;
@@ -1740,7 +1742,17 @@ class Pointer {
      * @emits Highcharts.Point#event:mouseOut
      * @emits Highcharts.Point#event:mouseOver
      */
-    public runPointActions(e: PointerEvent, p?: Point): void {
+    public runPointActions(e?: PointerEvent, p?: Point, force?: boolean): void {
+        if (!e) { // #12416
+            if (force && this.lastPointActionEvent) {
+                e = this.normalize(this.lastPointActionEvent);
+            } else {
+                return;
+            }
+        } else {
+            this.lastPointActionEvent = e;
+        }
+
         const pointer = this,
             chart = pointer.chart,
             series = chart.series,
@@ -1792,8 +1804,11 @@ class Pointer {
         // #3926, #4200
         if (
             hoverPoint &&
-            // !(hoverSeries && hoverSeries.directTouch) &&
-            (hoverPoint !== chart.hoverPoint || (tooltip && tooltip.isHidden))
+            (
+                force ||
+                // !(hoverSeries && hoverSeries.directTouch) &&
+                (hoverPoint !== chart.hoverPoint || (tooltip && tooltip.isHidden))
+            )
         ) {
             (chart.hoverPoints || []).forEach(function (p: Point): void {
                 if (points.indexOf(p) === -1) {
