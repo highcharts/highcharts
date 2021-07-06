@@ -17,7 +17,6 @@
 'use strict';
 
 import type Exporting from '../Extensions/Exporting/Exporting';
-import type LangOptions from '../Core/LangOptions';
 import type Point from '../Core/Series/Point';
 import type {
     PointOptions,
@@ -1398,13 +1397,15 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
         lang.viewData &&
         lang.hideData &&
         menuItems &&
-        exportDivElements &&
-        exportDivElements.length
+        exportDivElements
     ) {
-        AST.setElementHTML(
-            exportDivElements[menuItems.indexOf('viewData')],
-            this.isDataTableVisible ? lang.hideData : lang.viewData
-        );
+        const exportDivElement = exportDivElements[menuItems.indexOf('viewData')];
+        if (exportDivElement) {
+            AST.setElementHTML(
+                exportDivElement,
+                this.isDataTableVisible ? lang.hideData : lang.viewData
+            );
+        }
     }
 };
 

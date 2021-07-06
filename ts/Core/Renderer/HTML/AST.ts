@@ -290,19 +290,17 @@ class AST {
      * @static
      * @function Highcharts.AST#setElementHTML
      *
-     * @param {SVGDOMElement|HTMLDOMElement|null} el
+     * @param {SVGDOMElement|HTMLDOMElement} el
      * Node to set content of.
      *
      * @param {string} html
      * Markup string
      */
-    public static setElementHTML(el: (Element|null), html: string): void {
-        if (el) {
-            el.innerHTML = ''; // Clear previous
-            if (html) {
-                const ast = new AST(html);
-                ast.addToDOM(el);
-            }
+    public static setElementHTML(el: Element, html: string): void {
+        el.innerHTML = ''; // Clear previous
+        if (html) {
+            const ast = new AST(html);
+            ast.addToDOM(el);
         }
     }
 
