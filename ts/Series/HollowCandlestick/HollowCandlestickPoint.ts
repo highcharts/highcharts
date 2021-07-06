@@ -55,7 +55,7 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
     public getClassName(): string {
         let className = super.getClassName.apply(this);
         const point = this,
-            previousPoint = point.series.points[point.index as any];
+            previousPoint = point.series.data[point.index - 1];
 
         if (previousPoint && point.graphic && point.close > previousPoint.close && point.candleFill !== 'transparent') {
             className += '-bearish-up';
@@ -74,7 +74,7 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      * @param {HollowCandlestickPoint} previousPoint
      *        Previous point.
      *
-     * @return {void}
+     * @return {ColorType}
      *
      */
     public getLineColor(previousPoint: HollowCandlestickPoint): ColorType {
@@ -95,7 +95,7 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      * @param {HollowCandlestickPoint} previousPoint
      *        Previous point.
      *
-     * @return {void}
+     * @return {ColorType}
      *
      */
     public getPointFill(previousPoint: HollowCandlestickPoint): ColorType {

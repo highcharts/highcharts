@@ -163,10 +163,22 @@ class HollowCandlestickSeries extends CandlestickSeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         let attribs = super.pointAttribs.call(this, point, state),
-            stateOptions;
+            stateOptions,
+            candleFill,
+            color;
 
-        attribs.fill = point.candleFill || attribs.fill;
-        attribs.stroke = point.color || attribs.stroke;
+        const index = point.index,
+            previousPoint = point.series.data[index - 1];
+
+        if (previousPoint) {
+            candleFill = point.getPointFill(previousPoint);
+            color = point.getLineColor(previousPoint);
+        } else {
+            candleFill = 'transparent';
+        }
+
+        attribs.fill = candleFill || attribs.fill;
+        attribs.stroke = color || attribs.stroke;
 
         // Select or hover states
         if (state) {
@@ -177,37 +189,6 @@ class HollowCandlestickSeries extends CandlestickSeries {
                 stateOptions.lineWidth || attribs['stroke-width'];
         }
         return attribs;
-    }
-
-    /**
-     * Translate from value to pixel as a base method and loop through points
-     * in order to calculate the fill.
-     *
-     * @function Highcharts.seriesTypes.hollowcandlestick#translate
-     *
-     * @return {void}
-     *
-     */
-    public translate(): void {
-        // Run the base method.
-        super.translate.apply(this);
-
-        const series = this,
-            points = series.points;
-
-        if (points && points.length) {
-            // The first point always without fill,
-            // because of the lack of the previous point.
-            points[0].candleFill = 'transparent';
-
-            for (let i = 1; i < points.length; i++) {
-                const point = points[i],
-                    previousPoint = points[i - 1];
-
-                point.candleFill = point.getPointFill(previousPoint);
-                point.color = point.getLineColor(previousPoint);
-            }
-        }
     }
 
     /* eslint-disable valid-jsdoc */
