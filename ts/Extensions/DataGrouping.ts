@@ -1084,8 +1084,8 @@ addEvent(Tooltip, 'headerFormatter', function (
         dateTimeLabelFormats,
         labelFormats,
         formattedKey,
-        formatString = (tooltipOptions as any)[
-            (e.isFooter ? 'footer' : 'header') + 'Format'
+        formatString = tooltipOptions[
+            e.isFooter ? 'footerFormat' : 'headerFormat'
         ];
 
     // apply only to grouped series
@@ -1119,7 +1119,7 @@ addEvent(Tooltip, 'headerFormatter', function (
         } else if (!xDateFormat && dateTimeLabelFormats && xAxis.dateTime) {
             xDateFormat = xAxis.dateTime.getXDateFormat(
                 labelConfig.x,
-                tooltipOptions.dateTimeLabelFormats || {}
+                tooltipOptions.dateTimeLabelFormats
             );
         }
 

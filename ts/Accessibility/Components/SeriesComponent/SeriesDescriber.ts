@@ -347,7 +347,7 @@ function getPointA11yTimeDescription(
     if (dateXAxis) {
         const tooltipDateFormat = dateXAxis.getXDateFormat(
                 point.x || 0,
-                chart.options.tooltip.dateTimeLabelFormats || {}
+                chart.options.tooltip.dateTimeLabelFormats
             ),
             dateFormat = a11yOptions.dateFormatter &&
                 a11yOptions.dateFormatter(point) ||

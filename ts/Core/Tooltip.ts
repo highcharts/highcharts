@@ -1661,7 +1661,7 @@ class Tooltip {
             if (dateTime && !xDateFormat && isNumber(labelConfig.key)) {
                 xDateFormat = dateTime.getXDateFormat(
                     labelConfig.key,
-                    tooltipOptions.dateTimeLabelFormats || {}
+                    tooltipOptions.dateTimeLabelFormats
                 );
             }
 
