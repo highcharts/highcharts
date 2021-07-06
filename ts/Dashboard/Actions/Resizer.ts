@@ -800,27 +800,27 @@ class Resizer {
     }
 
     private disableMenuBtn(): void {
-        const resizerMenuBtn = this.editMode.resizeBtn;
+        // const resizerMenuBtn = this.editMode.resizeBtn;
 
-        this.deactivateResizerDetection();
+        // this.deactivateResizerDetection();
 
-        if (resizerMenuBtn) {
-            resizerMenuBtn.classList.remove(
-                EditGlobals.classNames.resizerMenuBtnActive
-            );
-        }
+        // if (resizerMenuBtn) {
+        //     resizerMenuBtn.classList.remove(
+        //         EditGlobals.classNames.resizerMenuBtnActive
+        //     );
+        // }
     }
 
     private enableMenuBtn(): void {
-        const resizer = this;
-        const resizerMenuBtn = this.editMode.resizeBtn;
+        // const resizer = this;
+        // const resizerMenuBtn = this.editMode.resizeBtn;
 
-        resizer.activateResizerDetection();
-        if (resizerMenuBtn) {
-            resizerMenuBtn.classList.add(
-                EditGlobals.classNames.resizerMenuBtnActive
-            );
-        }
+        // resizer.activateResizerDetection();
+        // if (resizerMenuBtn) {
+        //     resizerMenuBtn.classList.add(
+        //         EditGlobals.classNames.resizerMenuBtnActive
+        //     );
+        // }
     }
 
     /**

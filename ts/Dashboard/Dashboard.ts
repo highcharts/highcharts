@@ -321,7 +321,7 @@ class Dashboard {
     public getContainerSize(): string {
         const dashboard = this,
             respoOptions = dashboard.options.respoBreakpoints,
-            cntWidth = dashboard.container.clientWidth;
+            cntWidth = dashboard.layoutsWrapper.clientWidth;
 
         let size = DashboardGlobals.respoBreakpoints.large;
 

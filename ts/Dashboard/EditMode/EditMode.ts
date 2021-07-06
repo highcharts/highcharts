@@ -32,8 +32,10 @@ class EditMode {
     protected static readonly defaultOptions: EditMode.Options = {
         enabled: true,
         tools: {
-            addComponentBtn: {
-                icon: EditGlobals.iconsURL + 'add.svg'
+            rwdIcons: {
+                small: EditGlobals.iconsURL + 'smartphone.svg',
+                medium: EditGlobals.iconsURL + 'tablet.svg',
+                large: EditGlobals.iconsURL + 'computer.svg'
             }
         },
         confirmationPopup: {
@@ -72,6 +74,7 @@ class EditMode {
         this.isInitialized = false;
         this.isContextDetectionActive = false;
         this.tools = {};
+        this.rwdMenu = [];
 
         this.createTools();
 
@@ -100,8 +103,10 @@ class EditMode {
     public dragDrop?: DragDrop;
     public resizer?: Resizer;
     public isInitialized: boolean;
-    public addComponentBtn?: HTMLDOMElement;
-    public resizeBtn?: HTMLDOMElement;
+    // public addComponentBtn?: HTMLDOMElement;
+    // public resizeBtn?: HTMLDOMElement;
+    public rwdMode: string = void 0 as any;
+    public rwdMenu: Array<HTMLDOMElement|undefined> = void 0 as any;
     public tools: EditMode.Tools;
     public confirmationPopup?: ConfirmationPopup;
     public isContextDetectionActive: boolean;
@@ -357,18 +362,21 @@ class EditMode {
         );
 
         // TODO all buttons should be activated, add some wrapper?
-        if (this.addComponentBtn) {
-            this.addComponentBtn.style.display = 'block';
-        }
-        if (this.resizeBtn) {
-            this.resizeBtn.style.display = 'block';
-        }
+        // if (this.addComponentBtn) {
+        //     this.addComponentBtn.style.display = 'block';
+        // }
+        // if (this.resizeBtn) {
+        //     this.resizeBtn.style.display = 'block';
+        // }
 
         // Open the sidebar.
         if (editMode.sidebar) {
             editMode.sidebar.show();
             editMode.sidebar.updateTitle('General');
         }
+
+        // show reponsive buttons
+        this.showRwdButtons();
     }
 
     public deactivateEditMode(): void {
@@ -389,17 +397,21 @@ class EditMode {
         editMode.hideToolbars();
 
         // TODO all buttons should be deactivated.
-        if (this.addComponentBtn) {
-            this.addComponentBtn.style.display = 'none';
-        }
+        // if (this.addComponentBtn) {
+        //     this.addComponentBtn.style.display = 'none';
+        // }
 
-        if (this.resizeBtn) {
-            this.resizeBtn.style.display = 'none';
-        }
+        // if (this.resizeBtn) {
+        //     this.resizeBtn.style.display = 'none';
+        // }
 
         if (editMode.resizer) {
             editMode.resizer.disableResizer();
         }
+
+
+        // show reponsive buttons
+        this.hideRwdButtons();
     }
 
     public isActive(): boolean {
@@ -467,31 +479,82 @@ class EditMode {
             );
         }
 
+        // create rwd menu
+        this.createRwdMenu();
+
         // create add button
-        const addIconURL = options && options.tools &&
-            options.tools.addComponentBtn && options.tools.addComponentBtn.icon;
+        // const addIconURL = options && options.tools &&
+        // options.tools.addComponentBtn && options.tools.addComponentBtn.icon;
 
-        this.addComponentBtn = EditRenderer.renderButton(
-            this.tools.container,
-            {
-                className: EditGlobals.classNames.editToolsBtn,
-                icon: addIconURL,
-                value: 'Add',
-                callback: (): void => {
-                    // sidebar trigger
-                    if (editMode.sidebar) {
-                        editMode.sidebar.show();
-                        editMode.sidebar.updateTitle('General');
-                    }
-                },
-                style: {
-                    display: 'none'
-                }
+        // this.addComponentBtn = EditRenderer.renderButton(
+        //     this.tools.container,
+        //     {
+        //         className: EditGlobals.classNames.editToolsBtn,
+        //         icon: addIconURL,
+        //         value: 'Add',
+        //         callback: (): void => {
+        //             // sidebar trigger
+        //             if (editMode.sidebar) {
+        //                 editMode.sidebar.show();
+        //                 editMode.sidebar.updateTitle('General');
+        //             }
+        //         },
+        //         style: {
+        //             display: 'none'
+        //         }
+        //     }
+        // );
+
+        // // Create resizer button.
+        // this.resizeBtn = Resizer.createMenuBtn(editMode);
+    }
+
+    private createRwdMenu(): void {
+        const rwdBreakingPoints = this.dashboard.options.respoBreakpoints;
+        const toolsContainer = this.tools.container;
+        const options = this.options;
+        const rwdIcons = (options && options.tools && options.tools.rwdIcons) || {};
+
+        for (const key in rwdBreakingPoints) {
+            if (toolsContainer) {
+                this.rwdMenu.push(
+                    EditRenderer.renderButton(
+                        toolsContainer,
+                        {
+                            className: EditGlobals.classNames.editToolsBtn,
+                            icon: (rwdIcons as any)[key] || '',
+                            value: key,
+                            callback: (): void => {
+                                this.dashboard.layoutsWrapper.style.width =
+                                    key === 'large' ?
+                                        '100%' : rwdBreakingPoints[key] + 'px';
+
+                                this.rwdMode = key;
+
+                                // reflow elements
+                                this.dashboard.reflow();
+
+                            },
+                            style: {
+                                display: 'none'
+                            }
+                        }
+                    )
+                );
             }
-        );
+        }
+    }
 
-        // Create resizer button.
-        this.resizeBtn = Resizer.createMenuBtn(editMode);
+    public showRwdButtons(): void {
+        for (let i = 0, iEnd = this.rwdMenu.length; i < iEnd; ++i) {
+            (this.rwdMenu[i] as HTMLDOMElement).style.display = 'block';
+        }
+    }
+
+    public hideRwdButtons(): void {
+        for (let i = 0, iEnd = this.rwdMenu.length; i < iEnd; ++i) {
+            (this.rwdMenu[i] as HTMLDOMElement).style.display = 'none';
+        }
     }
 
     public onDetectContext(e: PointerEvent): void {
@@ -533,8 +596,13 @@ class EditMode {
         if (this.isContextDetectionActive && this.potentialCellContext) {
             this.editCellContext = this.potentialCellContext;
 
-            this.cellToolbar?.showToolbar(this.editCellContext);
-            this.rowToolbar?.showToolbar(this.editCellContext.row);
+            if (this.cellToolbar) {
+                this.cellToolbar.showToolbar(this.editCellContext);
+            }
+
+            if (this.rowToolbar) {
+                this.rowToolbar.showToolbar(this.editCellContext.row);
+            }
         }
     }
 
@@ -603,10 +671,17 @@ namespace EditMode {
         contextButtonElement?: HTMLDOMElement;
         addComponentBtn?: AddComponentBtn;
         container?: HTMLDOMElement;
+        rwdIcons?: RwdIcons;
     }
 
     export interface AddComponentBtn {
         icon: string;
+    }
+
+    export interface RwdIcons {
+        small: string;
+        medium: string;
+        large: string;
     }
 
     export interface ContextPointer {
