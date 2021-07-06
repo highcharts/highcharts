@@ -162,17 +162,6 @@ class OHLCSeries extends HLCSeries {
     /* eslint-disable valid-jsdoc */
 
     /**
-     * @private
-     * @function Highcarts.seriesTypes.ohlc#init
-     * @return {void}
-     */
-    public init(): void {
-        super.init.apply(this, arguments as any);
-
-        this.options.stacking = void 0; // #8817
-    }
-
-    /**
      * Postprocess mapping between options and SVG attributes
      * @private
      */
