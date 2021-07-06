@@ -22,7 +22,8 @@ const DashboardGlobals: DashboardGlobals = {
     classNames: {
         layout: PREFIX + 'layout',
         cell: PREFIX + 'cell',
-        row: PREFIX + 'row'
+        row: PREFIX + 'row',
+        layoutsWrapper: PREFIX + 'layouts-wrapper'
     }
 };
 
@@ -38,6 +39,7 @@ namespace EditGlobals {
         layout: string;
         cell: string;
         row: string;
+        layoutsWrapper: string;
     }
 }
 

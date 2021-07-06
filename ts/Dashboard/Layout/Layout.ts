@@ -104,7 +104,7 @@ class Layout extends GUIElement {
         // Get parent container
         const parentContainer = document.getElementById(
             options.parentContainerId || ''
-        ) || dashboard.container;
+        ) || dashboard.layoutsWrapper;
 
         // Set layout level.
         if (parentCell) {

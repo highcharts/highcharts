@@ -19,7 +19,8 @@ const {
     error,
     isString,
     objectEach,
-    uniqueKey
+    uniqueKey,
+    createElement
 } = U;
 
 class Dashboard {
@@ -149,6 +150,7 @@ class Dashboard {
     public guiEnabled: (boolean|undefined);
     public id: string;
     public editMode?: EditMode;
+    public layoutsWrapper: globalThis.HTMLElement = void 0 as any;
     /* *
      *
      *  Functions
@@ -189,6 +191,14 @@ class Dashboard {
     public setLayouts(guiOptions: Dashboard.GUIOptions): void {
         const dashboard = this,
             layoutsOptions = guiOptions.layouts;
+
+        // create layouts wrapper
+        this.layoutsWrapper = createElement(
+            'div', {
+                className: DashboardGlobals.classNames.layoutsWrapper
+            }, {},
+            dashboard.container
+        );
 
         for (let i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
             dashboard.layouts.push(
