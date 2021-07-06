@@ -300,28 +300,14 @@ class PlotLineOrBand {
         isBand?: boolean,
         zIndex?: number
     ): void {
-        let plotLine = this,
-            label = plotLine.label,
-            renderer = plotLine.axis.chart.renderer,
-            attribs: SVGAttributes,
-            xBounds,
-            yBounds,
-            x,
-            y,
-            labelText;
+        const plotLine = this,
+            axis = plotLine.axis,
+            renderer = axis.chart.renderer;
+
+        let label = plotLine.label;
 
         // add the SVG element
         if (!label) {
-            attribs = {
-                align: optionsLabel.textAlign || optionsLabel.align,
-                rotation: optionsLabel.rotation,
-                'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
-                    '-label ' + ((optionsLabel as any).className || '')
-            };
-
-            attribs.zIndex = zIndex;
-            labelText = this.getLabelText(optionsLabel);
-
             /**
              * SVG element of the label.
              *
@@ -330,35 +316,54 @@ class PlotLineOrBand {
              */
             plotLine.label = label = renderer
                 .text(
-                    labelText as any,
+                    this.getLabelText(optionsLabel),
                     0,
                     0,
                     optionsLabel.useHTML
                 )
-                .attr(attribs)
+                .attr({
+                    align: optionsLabel.textAlign || optionsLabel.align,
+                    rotation: optionsLabel.rotation,
+                    'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
+                        '-label ' + ((optionsLabel as any).className || ''),
+                    zIndex
+                })
                 .add();
 
-            if (!this.axis.chart.styledMode) {
-                label.css(optionsLabel.style as any);
+            if (!axis.chart.styledMode) {
+                label.css(merge({
+                    textOverflow: 'ellipsis'
+                }, optionsLabel.style));
             }
         }
 
         // get the bounding box and align the label
         // #3000 changed to better handle choice between plotband or plotline
-        xBounds = (path as any).xBounds ||
+        const xBounds = (path as any).xBounds ||
             [path[0][1], path[1][1], (isBand ? path[2][1] : path[0][1])];
-        yBounds = (path as any).yBounds ||
+        const yBounds = (path as any).yBounds ||
             [path[0][2], path[1][2], (isBand ? path[2][2] : path[0][2])];
 
-        x = arrayMin(xBounds);
-        y = arrayMin(yBounds);
+        const x = arrayMin(xBounds);
+        const y = arrayMin(yBounds);
 
         label.align(optionsLabel, false, {
-            x: x,
-            y: y,
+            x,
+            y,
             width: arrayMax(xBounds) - x,
             height: arrayMax(yBounds) - y
         });
+
+        if (!label.alignValue || label.alignValue === 'left') {
+            label.css({
+                width: (
+                    label.rotation === 90 ?
+                        axis.height - (label.alignAttr.y - axis.top) :
+                        axis.width - (label.alignAttr.x - axis.left)
+                ) + 'px'
+            });
+        }
+
         label.show(true);
     }
 
