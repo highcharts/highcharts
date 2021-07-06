@@ -181,3 +181,73 @@ QUnit.test('Each series should have their own clip-path, (#14549).', assert => {
         "The sum of the series clip-paths should not be bigger than the plot height."
     );
 });
+
+QUnit.test('Stock: the added series were not animating, (#4406).', assert => {
+    var clock = TestUtilities.lolexInstall();
+
+    try {
+        const chart = Highcharts.stockChart('container', {
+
+                plotOptions: {
+                    series: {
+                        animation: {
+                            duration: 40
+                        }
+                    }
+                },
+
+                series: []
+
+            }),
+            done = assert.async();
+
+        setTimeout(() => {
+            chart.update(
+                {
+                    series: [{
+                        data: [10, 10, 10, 10]
+                    }]
+                },
+                true,
+                true,
+                {
+                    duration: 40
+                }
+            );
+        }, 20);
+
+        let clipKey;
+
+        setTimeout(() => {
+            chart.addSeries({
+                data: [1, 1, 1, 1]
+            });
+            clipKey = chart.series[1].sharedClipKey;
+        }, 75);
+
+        let clipWidth,
+            clipWidthAfterSomeTime;
+
+        setTimeout(() => {
+            clipWidth = chart.sharedClips[clipKey].attr('width');
+        }, 90);
+
+        setTimeout(() => {
+            clipWidthAfterSomeTime = chart.sharedClips[clipKey].attr('width');
+        }, 100);
+
+        setTimeout(() => {
+            assert.ok(
+                clipWidth !== clipWidthAfterSomeTime,
+                '#4406: The added series should animate.'
+            );
+
+            done();
+        }, 110);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
+
+});
