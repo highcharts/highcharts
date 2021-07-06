@@ -588,6 +588,7 @@ class NavigationBindings {
             ) {
                 fireEvent(navigation, 'closePopup');
             } else if (activeAnnotation.cancelClick) {
+                // Reset cancelClick after the other event handlers have run
                 setTimeout((): void => {
                     activeAnnotation.cancelClick = false;
                 }, 0);
