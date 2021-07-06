@@ -1743,8 +1743,8 @@ class Pointer {
      * @emits Highcharts.Point#event:mouseOver
      */
     public runPointActions(e?: PointerEvent, p?: Point, force?: boolean): void {
-        if (!e) { // #12416
-            if (force && this.lastPointActionEvent) {
+        if (!e && force) { // #12416
+            if (this.lastPointActionEvent) {
                 e = this.normalize(this.lastPointActionEvent);
             } else {
                 return;
