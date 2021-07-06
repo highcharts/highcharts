@@ -16,7 +16,7 @@ const SOURCE_GLOBS = [
     'js/Accessibility/*.js',
     'js/Core/Animation/*.js',
     'js/Core/Axis/Axis.js',
-    'js/Core/Axis/ColorAxis.js',
+    'js/Core/Axis/Color/ColorAxis.js',
     'js/Core/Axis/PlotLineOrBand.js',
     'js/Core/Axis/Tick.js',
     'js/Core/Axis/TreeGridAxis.js',
