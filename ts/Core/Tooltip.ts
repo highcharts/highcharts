@@ -416,90 +416,6 @@ class Tooltip {
     }
 
     /**
-     * Get the optimal date format for a point, based on a range.
-     *
-     * @private
-     * @function Highcharts.Tooltip#getDateFormat
-     *
-     * @param {number} range
-     *        The time range
-     *
-     * @param {number} date
-     *        The date of the point in question
-     *
-     * @param {number} startOfWeek
-     *        An integer representing the first day of the week, where 0 is
-     *        Sunday.
-     *
-     * @param {Highcharts.Dictionary<string>} dateTimeLabelFormats
-     *        A map of time units to formats.
-     *
-     * @return {string}
-     *         The optimal date format for a point.
-     */
-    public getDateFormat(
-        range: number,
-        date: number,
-        startOfWeek: number,
-        dateTimeLabelFormats: Record<string, string>
-    ): string {
-        const time = this.chart.time,
-            dateStr = time.dateFormat('%m-%d %H:%M:%S.%L', date),
-            blank = '01-01 00:00:00.000',
-            strpos = {
-                millisecond: 15,
-                second: 12,
-                minute: 9,
-                hour: 6,
-                day: 3
-            } as Record<string, number>;
-        let format,
-            n,
-            lastN = 'millisecond'; // for sub-millisecond data, #4223
-
-        for (n in timeUnits) { // eslint-disable-line guard-for-in
-
-            // If the range is exactly one week and we're looking at a
-            // Sunday/Monday, go for the week format
-            if (
-                range === timeUnits.week &&
-                +time.dateFormat('%w', date) === startOfWeek &&
-                dateStr.substr(6) === blank.substr(6)
-            ) {
-                n = 'week';
-                break;
-            }
-
-            // The first format that is too great for the range
-            if (timeUnits[n] > range) {
-                n = lastN;
-                break;
-            }
-
-            // If the point is placed every day at 23:59, we need to show
-            // the minutes as well. #2637.
-            if (
-                strpos[n] &&
-                dateStr.substr(strpos[n]) !== blank.substr(strpos[n])
-            ) {
-                break;
-            }
-
-            // Weeks are outside the hierarchy, only apply them on
-            // Mondays/Sundays like in the first condition
-            if (n !== 'week') {
-                lastN = n;
-            }
-        }
-
-        if (n) {
-            format = time.resolveDTLFormat(dateTimeLabelFormats[n]).main as any;
-        }
-
-        return format;
-    }
-
-    /**
      * Creates the Tooltip label element if it does not exist, then returns it.
      *
      * @function Highcharts.Tooltip#getLabel
@@ -852,43 +768,6 @@ class Tooltip {
 
         return ret;
 
-    }
-
-    /**
-     * Get the best X date format based on the closest point range on the axis.
-     *
-     * @private
-     * @function Highcharts.Tooltip#getXDateFormat
-     *
-     * @param {Highcharts.Point} point
-     *
-     * @param {Highcharts.TooltipOptions} options
-     *
-     * @param {Highcharts.Axis} xAxis
-     *
-     * @return {string}
-     */
-    public getXDateFormat(
-        point: Point,
-        options: TooltipOptions,
-        xAxis: Axis
-    ): string {
-        const dateTimeLabelFormats = options.dateTimeLabelFormats,
-            closestPointRange = xAxis && xAxis.closestPointRange;
-        let xDateFormat;
-
-        if (closestPointRange) {
-            xDateFormat = this.getDateFormat(
-                closestPointRange,
-                point.x as any,
-                xAxis.options.startOfWeek as any,
-                dateTimeLabelFormats as any
-            );
-        } else {
-            xDateFormat = (dateTimeLabelFormats as any).day;
-        }
-
-        return xDateFormat || (dateTimeLabelFormats as any).year; // #2546, 2581
     }
 
     /**
@@ -1764,17 +1643,14 @@ class Tooltip {
         const series = labelConfig.series,
             tooltipOptions = series.tooltipOptions,
             xAxis = series.xAxis,
-            isDateTime = (
-                xAxis &&
-                xAxis.options.type === 'datetime' &&
-                isNumber(labelConfig.key)
-            ),
+            dateTime = xAxis && xAxis.dateTime,
             e = {
                 isFooter: isFooter,
                 labelConfig: labelConfig
             } as AnyRecord;
         let xDateFormat = tooltipOptions.xDateFormat,
             formatString = tooltipOptions[isFooter ? 'footerFormat' : 'headerFormat'];
+
         fireEvent(this, 'headerFormatter', e, function (
             this: Tooltip,
             e: AnyRecord
@@ -1782,16 +1658,15 @@ class Tooltip {
 
             // Guess the best date format based on the closest point distance
             // (#568, #3418)
-            if (isDateTime && !xDateFormat) {
-                xDateFormat = this.getXDateFormat(
-                    labelConfig as any,
-                    tooltipOptions,
-                    xAxis
+            if (dateTime && !xDateFormat && isNumber(labelConfig.key)) {
+                xDateFormat = dateTime.getXDateFormat(
+                    labelConfig.key,
+                    tooltipOptions.dateTimeLabelFormats
                 );
             }
 
             // Insert the footer date format if any
-            if (isDateTime && xDateFormat) {
+            if (dateTime && xDateFormat) {
                 ((labelConfig.point && labelConfig.point.tooltipDateKeys) ||
                         ['key']).forEach(
                     function (key: string): void {
