@@ -10,4 +10,11 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import Highcharts from '../../Core/Globals.js';
+import HttpUtilities from '../../Core/HttpUtilities.js';
+const G: AnyRecord = Highcharts;
+G.HttpUtilities = HttpUtilities;
+G.ajax = HttpUtilities.ajax;
+G.getJSON = HttpUtilities.getJSON;
+G.post = HttpUtilities.post;
 import '../../Extensions/Data.js';

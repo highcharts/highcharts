@@ -176,6 +176,11 @@ QUnit.test('Marker size and position', function (assert) {
         Math.floor(series.stateMarkerGraphic.attr('y')),
         'Correct image y-position (#7273)'
     );
+
+    assert.ok(
+        series.stateMarkerGraphic.attr('class'),
+        '#5430: State marker should have class set'
+    );
 });
 
 QUnit.test('visibility', assert => {

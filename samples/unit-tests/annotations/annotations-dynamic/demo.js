@@ -204,6 +204,28 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
         'blue',
         '#15424: Fourth line should be blue (lineColor)'
     );
+
+    const rect = chart.addAnnotation({
+        shapes: [{
+            type: 'path',
+            points: [
+                { xAxis: 0, yAxis: 0, x: 1, y: 150000 },
+                { xAxis: 0, yAxis: 0, x: 3, y: 150000 },
+                { xAxis: 0, yAxis: 0, x: 3, y: 100000 },
+                { xAxis: 0, yAxis: 0, x: 1, y: 100000 }
+            ]
+        }]
+    });
+
+    assert.ok(
+        rect.clipRect,
+        '#15726: Rectangle annotations should be clipped'
+    );
+
+    assert.ok(
+        thirdAnnotation.labels[0].graphic.hasClass('highcharts-no-tooltip'),
+        '#14403: Annotation label should have no-tooltip class'
+    );
 });
 
 QUnit.test(

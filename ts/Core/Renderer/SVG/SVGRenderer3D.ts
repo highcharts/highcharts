@@ -24,7 +24,9 @@ import type Position3DObject from '../../Renderer/Position3DObject';
 import type PositionObject from '../../Renderer/PositionObject';
 import type SVGArc3D from './SVGArc3D';
 import type SVGAttributes from './SVGAttributes';
+import type SVGAttributes3D from './SVGAttributes3D';
 import type SVGCuboid from './SVGCuboid';
+import type SVGElement3DLike from './SVGElement3DLike';
 import type SVGPath from './SVGPath';
 
 import A from '../../Animation/AnimationUtilities.js';
@@ -72,30 +74,20 @@ declare module './SVGElementLike' {
 
 declare module './SVGRendererLike' {
     interface SVGRendererLike {
-        elements3d: SVGElement3D;
+        elements3d: typeof SVGElement3D;
         arc3d(attribs: SVGAttributes): SVGElement;
         arc3dPath(shapeArgs: SVGAttributes): SVGArc3D;
         cuboid(shapeArgs: SVGAttributes): SVGElement;
         cuboidPath(shapeArgs: SVGAttributes): SVGCuboid;
         element3d(type: string, shapeArgs: SVGAttributes): SVGElement;
         face3d(args?: SVGAttributes): SVGElement;
-        polyhedron(args?: SVGAttributes): SVGElement;
+        polyhedron(args?: SVGAttributes): SVGElement3DLike;
         toLinePath(
             points: Array<PositionObject>,
             closed?: boolean
         ): SVGPath;
         toLineSegments(points: Array<PositionObject>): SVGPath;
     }
-}
-
-interface SVGAttributesExtended extends SVGAttributes {
-    alpha?: number;
-    beta?: number;
-    center?: number;
-    enabled?: boolean;
-    faces?: SVGElement[];
-    insidePlotArea?: boolean;
-    vertexes?: Position3DObject[];
 }
 
 /* *
@@ -119,7 +111,7 @@ const cos = Math.cos,
 
 /* *
  *
- *  Composition
+ *  Class
  *
  * */
 
@@ -262,7 +254,7 @@ class SVGRenderer3D extends SVGRenderer {
 
         ret.attr = function (
             this: SVGElement,
-            hash?: (string|SVGAttributesExtended)
+            hash?: (string|SVGAttributes3D)
         ): (number|string|SVGElement) {
 
             if (
@@ -300,7 +292,7 @@ class SVGRenderer3D extends SVGRenderer {
 
         ret.animate = function (
             this: SVGElement,
-            params: SVGAttributesExtended
+            params: SVGAttributes3D
         ): SVGElement {
             if (
                 typeof params === 'object' &&
@@ -348,7 +340,7 @@ class SVGRenderer3D extends SVGRenderer {
      * instances.
      * @private
      */
-    public polyhedron(args?: SVGAttributes): SVGElement {
+    public polyhedron(args?: SVGAttributes): SVGElement3DLike {
         const renderer = this,
             result = this.g(),
             destroy = result.destroy;
@@ -373,7 +365,7 @@ class SVGRenderer3D extends SVGRenderer {
 
         result.attr = function (
             this: SVGElement,
-            hash?: (string|SVGAttributesExtended),
+            hash?: (string|SVGAttributes3D),
             val?: string,
             complete?: Function,
             continueAnimation?: boolean
@@ -403,7 +395,7 @@ class SVGRenderer3D extends SVGRenderer {
 
         result.animate = function (
             this: SVGElement,
-            params: SVGAttributesExtended,
+            params: SVGAttributes3D,
             duration?: (boolean|Partial<AnimationOptions>),
             complete?: Function
         ): SVGElement {
@@ -424,7 +416,7 @@ class SVGRenderer3D extends SVGRenderer {
 
         /* eslint-enable no-invalid-this */
 
-        return result.attr(args);
+        return result.attr(args) as unknown as SVGElement3DLike;
     }
 
     /**
@@ -458,7 +450,7 @@ class SVGRenderer3D extends SVGRenderer {
      * Generates a cuboid path and zIndexes
      * @private
      */
-    public cuboidPath(shapeArgs: SVGAttributesExtended): SVGCuboid {
+    public cuboidPath(shapeArgs: SVGAttributes3D): SVGCuboid {
         let x = shapeArgs.x || 0,
             y = shapeArgs.y || 0,
             z = shapeArgs.z || 0,
@@ -702,7 +694,7 @@ class SVGRenderer3D extends SVGRenderer {
     }
 
     /** @private */
-    public arc3d(attribs: SVGAttributesExtended): SVGElement {
+    public arc3d(attribs: SVGAttributes3D): SVGElement {
 
         const wrapper = this.g(),
             renderer = wrapper.renderer,
@@ -713,7 +705,7 @@ class SVGRenderer3D extends SVGRenderer {
          * object with only custom attr.
          * @private
          */
-        function suckOutCustom(params: SVGAttributesExtended): (SVGAttributesExtended|undefined) {
+        function suckOutCustom(params: SVGAttributes3D): (SVGAttributes3D|undefined) {
             let hasCA = false,
                 ca = {} as SVGAttributes,
                 key: string;
@@ -779,7 +771,7 @@ class SVGRenderer3D extends SVGRenderer {
          * Compute the transformed paths and set them to the composite shapes
          * @private
          */
-        wrapper.setPaths = function (attribs: SVGAttributesExtended): void {
+        wrapper.setPaths = function (attribs: SVGAttributes3D): void {
 
             const paths = wrapper.renderer.arc3dPath(attribs),
                 zIndex = paths.zTop * 100;
@@ -869,7 +861,7 @@ class SVGRenderer3D extends SVGRenderer {
         // animation step.
         wrapper.animate = function (
             this: SVGElement,
-            params: SVGAttributesExtended,
+            params: SVGAttributes3D,
             animation?: (boolean|Partial<AnimationOptions>),
             complete?: Function
         ): SVGElement {
@@ -973,7 +965,7 @@ class SVGRenderer3D extends SVGRenderer {
      * Generate the paths required to draw a 3D arc.
      * @private
      */
-    public arc3dPath(shapeArgs: SVGAttributesExtended): SVGArc3D {
+    public arc3dPath(shapeArgs: SVGAttributes3D): SVGArc3D {
         const cx = shapeArgs.x || 0, // x coordinate of the center
             cy = shapeArgs.y || 0, // y coordinate of the center
             start = shapeArgs.start || 0, // start angle

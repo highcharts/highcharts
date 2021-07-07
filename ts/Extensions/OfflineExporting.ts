@@ -17,15 +17,19 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from '../Core/Renderer/DOMElementType';
+import type ExportingOptions from './Exporting/ExportingOptions';
+import type Options from '../Core/Options';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import Chart from '../Core/Chart/Chart.js';
+import Exporting from './Exporting/Exporting.js';
 import H from '../Core/Globals.js';
 const {
     win,
     doc
 } = H;
-import O from '../Core/Options.js';
-const { getOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { getOptions } = D;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -40,12 +44,12 @@ declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         unbindGetSVG?: Function;
         exportChartLocal(
-            exportingOptions?: Highcharts.ExportingOptions,
-            chartOptions?: Partial<Highcharts.Options>
+            exportingOptions?: ExportingOptions,
+            chartOptions?: Partial<Options>
         ): void;
         getSVGForLocalExport(
-            options: Highcharts.ExportingOptions,
-            chartOptions: Partial<Highcharts.Options>,
+            options: ExportingOptions,
+            chartOptions: Partial<Options>,
             failCallback: Function,
             successCallback: Function
         ): void;
@@ -89,15 +93,23 @@ declare global {
         ): void;
         function svgToDataUrl(svg: string): string;
     }
-    interface CanvasRenderingContext2D {
-        drawSvg: Function;
+
+    interface Canvg {
+        fromString(
+            ctx: CanvasRenderingContext2D,
+            svg: string
+        ): Canvg;
+        start(): void;
+    }
+    interface CanvgNamespace {
+        Canvg: Canvg;
     }
     interface HTMLCanvasElement {
         /** @deprecated */
         msToBlob: Function;
     }
     interface Window {
-        canvg: unknown;
+        canvg: CanvgNamespace;
         jsPDF: typeof jsPDF;
         svg2pdf: Function;
     }
@@ -126,7 +138,6 @@ H.CanVGRenderer = {};
  * @function getScript
  * @param {string} scriptLocation
  * @param {Function} callback
- * @return {void}
  */
 function getScript(
     scriptLocation: string,
@@ -164,8 +175,9 @@ function svgToDataUrl(svg: string): string {
     try {
         // Safari requires data URI since it doesn't allow navigation to blob
         // URLs. Firefox has an issue with Blobs and internal references,
-        // leading to gradients not working using Blobs (#4550)
-        if (!webKit && !H.isFirefox) {
+        // leading to gradients not working using Blobs (#4550).
+        // foreignObjects also dont work well in Blobs in Chrome (#14780).
+        if (!webKit && !H.isFirefox && svg.indexOf('<foreignObject') === -1) {
             return domurl.createObjectURL(new win.Blob([svg], {
                 type: 'image/svg+xml;charset-utf-16'
             }));
@@ -207,8 +219,6 @@ function svgToDataUrl(svg: string): string {
  *        finallyCallback is always called at the end of the process. All
  *        callbacks receive four arguments: imageURL, imageType, callbackArgs,
  *        and scale.
- *
- * @return {void}
  */
 function imageToDataUrl(
     imageURL: string,
@@ -334,7 +344,7 @@ function imageToDataUrl(
  */
 function downloadSVGLocal(
     svg: string,
-    options: Highcharts.ExportingOptions,
+    options: ExportingOptions,
     failCallback: Function,
     successCallback?: Function
 ): void {
@@ -553,7 +563,8 @@ function downloadSVGLocal(
                         /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
                     ) as any)[1] * scale,
                     downloadWithCanVG = function (): void {
-                        ctx.drawSvg(svg, 0, 0, imageWidth, imageHeight);
+                        const v = win.canvg.Canvg.fromString(ctx, svg);
+                        v.start();
                         try {
                             downloadURL(
                                 win.navigator.msSaveOrOpenBlob as any ?
@@ -581,11 +592,8 @@ function downloadSVGLocal(
                     // yet since we are doing things asynchronously. A cleaner
                     // solution would be nice, but this will do for now.
                     objectURLRevoke = true;
-                    // Get RGBColor.js first, then canvg
-                    getScript(libURL + 'rgbcolor.js', function (): void {
-                        getScript(libURL + 'canvg.js', function (): void {
-                            downloadWithCanVG();
-                        });
+                    getScript(libURL + 'canvg.js', function (): void {
+                        downloadWithCanVG();
                     });
                 }
             },
@@ -620,16 +628,16 @@ function downloadSVGLocal(
  * @return {void}
  */
 Chart.prototype.getSVGForLocalExport = function (
-    options: Highcharts.ExportingOptions,
-    chartOptions: Partial<Highcharts.Options>,
+    options: ExportingOptions,
+    chartOptions: Partial<Options>,
     failCallback: Function,
     successCallback: Function
 ): void {
-    let chart = this,
+    let chart = this as Exporting.ChartComposition,
         images,
         imagesEmbedded = 0,
         chartCopyContainer: (HTMLDOMElement|undefined),
-        chartCopyOptions: (Highcharts.Options|undefined),
+        chartCopyOptions: (Options|undefined),
         el,
         i,
         l,
@@ -748,10 +756,10 @@ Chart.prototype.getSVGForLocalExport = function (
  * @requires modules/exporting
  */
 Chart.prototype.exportChartLocal = function (
-    exportingOptions?: Highcharts.ExportingOptions,
-    chartOptions?: Partial<Highcharts.Options>
+    exportingOptions?: ExportingOptions,
+    chartOptions?: Partial<Options>
 ): void {
-    const chart = this,
+    const chart = this as Exporting.ChartComposition,
         options = merge(chart.options.exporting, exportingOptions),
         fallbackToExportServer = function (err: Error): void {
             if (options.fallbackToExportServer === false) {
@@ -765,11 +773,15 @@ Chart.prototype.exportChartLocal = function (
             }
         },
         svgSuccess = function (svg: string): void {
-            // If SVG contains foreignObjects all exports except SVG will fail,
-            // as both CanVG and svg2pdf choke on this. Gracefully fall back.
+            // If SVG contains foreignObjects PDF fails in all browsers and all
+            // exports except SVG will fail in IE, as both CanVG and svg2pdf
+            // choke on this. Gracefully fall back.
             if (
                 svg.indexOf('<foreignObject') > -1 &&
-                options.type !== 'image/svg+xml'
+                options.type !== 'image/svg+xml' &&
+                (
+                    H.isMS || options.type === 'application/pdf'
+                )
             ) {
                 fallbackToExportServer(
                     'Image type not supported' +
@@ -805,7 +817,7 @@ Chart.prototype.exportChartLocal = function (
     // inline styles that we want to pass through. There are so many styles by
     // default in IE that we don't want to blacklist them all.
     if (H.isMS && chart.styledMode) {
-        SVGRenderer.prototype.inlineWhitelist = [
+        Exporting.inlineWhitelist.push(
             /^blockSize/,
             /^border/,
             /^caretColor/,
@@ -834,7 +846,7 @@ Chart.prototype.exportChartLocal = function (
             /^visibility/,
             /^x$/,
             /^y$/
-        ];
+        );
     }
 
     // Always fall back on:

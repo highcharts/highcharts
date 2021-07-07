@@ -23,7 +23,7 @@ import type {
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type { AnnotationTypeRegistry } from './Types/AnnotationType';
 import type AST from '../../Core/Renderer/HTML/AST';
-import type { AxisType } from '../../Core/Axis/Types';
+import type AxisType from '../../Core/Axis/AxisType';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
@@ -33,12 +33,14 @@ import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions'
 import type EventCallback from '../../Core/EventCallback';
 import type FormatUtilities from '../../Core/FormatUtilities';
 import type MockPointOptions from './MockPointOptions';
+import type NavigationOptions from '../Exporting/NavigationOptions';
+import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
@@ -71,12 +73,23 @@ const {
     wrap
 } = U;
 
+/* *
+ *
+ * Declarations
+ *
+ * */
 declare module './MockPointOptions' {
     interface MockPointOptions {
         x: number;
         xAxis?: (number|AxisType|null);
         y: number;
         yAxis?: (number|AxisType|null);
+    }
+}
+
+declare module '../../Core/Options'{
+    interface Options {
+        annotations?: (Highcharts.AnnotationsOptions|Array<Highcharts.AnnotationsOptions>);
     }
 }
 
@@ -111,7 +124,7 @@ declare global {
             index?: number;
             positioner: AnnotationControlPointPositionerFunction;
             style: CSSObject;
-            symbol: string;
+            symbol: SymbolKey;
             visible: boolean;
             width: number;
         }
@@ -150,7 +163,7 @@ declare global {
             overflow: DataLabelOverflowValue;
             padding: number;
             shadow: (boolean|Partial<ShadowOptionsObject>);
-            shape: SVGRenderer.SymbolKeyValue;
+            shape: SymbolKey;
             style: CSSObject;
             text?: string;
             type?: string;
@@ -166,6 +179,8 @@ declare global {
             point?: (string|MockPointOptions);
             itemType?: string;
             vertical?: VerticalAlignValue;
+            xAxis?: number|string;
+            yAxis?: number|string;
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject { // @todo AnnotationOptions.d.ts
             animation: Partial<AnimationOptions>;
@@ -224,9 +239,6 @@ declare global {
             prototype: Partial<T['prototype']>,
             defaultOptions?: DeepPartial<T['prototype']['options']>
         ): void;
-        interface Options {
-            annotations?: (AnnotationsOptions|Array<AnnotationsOptions>);
-        }
     }
 }
 
@@ -546,17 +558,15 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
                         axes: Array<AxisType>,
                         labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
                     ): Array<AxisType> {
+                        const point = labelOrShape &&
+                            (
+                                labelOrShape.point ||
+                                (labelOrShape.points && labelOrShape.points[0])
+                            );
+
                         return [
-                            xAxes[
-                                labelOrShape &&
-                                labelOrShape.point &&
-                                (labelOrShape.point as any).xAxis
-                            ] || axes[0],
-                            yAxes[
-                                labelOrShape &&
-                                labelOrShape.point &&
-                                (labelOrShape.point as any).yAxis
-                            ] || axes[1]
+                            xAxes[point && (point as any).xAxis] || axes[0],
+                            yAxes[point && (point as any).yAxis] || axes[1]
                         ];
                     },
                     []
@@ -713,6 +723,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      */
     public setVisibility(visible?: boolean): void {
         const options = this.options,
+            navigation = this.chart.navigationBindings,
             visibility = pick(visible, !options.visible);
 
         this.graphic.attr(
@@ -722,6 +733,14 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         if (!visibility) {
             this.setControlPointsVisibility(false);
+
+            if (
+                navigation.activeAnnotation === this &&
+                navigation.popup &&
+                navigation.popup.formType === 'annotation-toolbar'
+            ) {
+                fireEvent(navigation, 'closePopup');
+            }
         }
 
         options.visible = visibility;
@@ -1146,7 +1165,7 @@ merge<Annotation>(
                      *
                      * @since 6.0.5
                      */
-                    className: '',
+                    className: 'highcharts-no-tooltip',
 
                     /**
                      * Whether to hide the annotation's label

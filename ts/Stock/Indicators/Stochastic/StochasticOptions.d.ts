@@ -18,6 +18,7 @@ import type {
 } from '../SMA/SMAOptions';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
+import type TooltipOptions from '../../../Core/TooltipOptions';
 
 /* *
  *
@@ -30,7 +31,6 @@ export interface StochasticOptions extends SMAOptions, Highcharts.MultipleLinesI
     marker?: PointMarkerOptions;
     params?: StochasticParamsOptions;
     smoothedLine?: Record<string, CSSObject>;
-    tooltip?: Highcharts.TooltipOptions;
 }
 
 export interface StochasticParamsOptions extends SMAParamsOptions {

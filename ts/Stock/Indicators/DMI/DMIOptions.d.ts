@@ -17,6 +17,7 @@ import type {
     SMAOptions,
     SMAParamsOptions
 } from '../SMA/SMAOptions';
+import type TooltipOptions from '../../../Core/TooltipOptions';
 
 /* *
  *
@@ -26,7 +27,6 @@ import type {
 
 export interface DMIOptions extends SMAOptions {
     params?: DMIParamsOptions;
-    tooltip?: Highcharts.TooltipOptions;
     plusDILine?: DMILineOptions;
     minusDILine?: DMILineOptions;
 }

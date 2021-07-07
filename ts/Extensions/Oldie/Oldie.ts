@@ -19,6 +19,7 @@
  * */
 
 import type { AlignValue } from '../../Core/Renderer/AlignObject';
+import type { LabelsItemsOptions } from '../../Core/Options';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
@@ -44,8 +45,8 @@ const {
     svg,
     win
 } = H;
-import O from '../../Core/Options.js';
-const { getOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { getOptions } = D;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../../Core/Pointer.js';
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
@@ -85,10 +86,26 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../Core/Chart/ChartOptions'{
+    interface ChartOptions {
+        /** @deprecated */
+        defaultSeriesType?: string;
+    }
+}
+
 declare module '../../Core/EventCallback'{
     interface EventCallback<T> {
         /** @requires highcharts/modules/oldies */
         hcKey?: string;
+    }
+}
+
+declare module '../../Core/Options' {
+    interface Options {
+        /** @deprecated */
+        global?: GlobalOptions;
+        /** @deprecated */
+        labels?: LabelsOptions;
     }
 }
 
@@ -108,6 +125,26 @@ declare module '../../Core/Renderer/SVG/SVGRendererLike' {
     }
 }
 
+interface GlobalOptions {
+    /** @deprecated */
+    canvasToolsURL?: string;
+    /** @deprecated */
+    Date?: Function;
+    /** @deprecated */
+    getTimezoneOffset?: Function;
+    /** @deprecated */
+    timezone?: string;
+    /** @deprecated */
+    timezoneOffset?: number;
+    /** @deprecated */
+    useUTC?: boolean;
+}
+
+export interface LabelsOptions {
+    items?: Array<LabelsItemsOptions>;
+    style?: CSSObject;
+}
+
 /**
  * Internal types
  * @private
@@ -115,6 +152,18 @@ declare module '../../Core/Renderer/SVG/SVGRendererLike' {
 declare global {
     namespace Highcharts {
         interface GlobalOptions {
+            /** @deprecated */
+            canvasToolsURL?: string;
+            /** @deprecated */
+            Date?: Function;
+            /** @deprecated */
+            getTimezoneOffset?: Function;
+            /** @deprecated */
+            timezone?: string;
+            /** @deprecated */
+            timezoneOffset?: number;
+            /** @deprecated */
+            useUTC?: boolean;
             /** @requires highcharts/modules/oldies */
             VMLRadialGradientURL?: string;
         }
@@ -195,7 +244,7 @@ declare global {
                 key: string,
                 element: HTMLDOMElement
             ): void;
-            public destroy(): void;
+            public destroy(): undefined;
             public dSetter(
                 value: VMLPathArray,
                 key: string,
@@ -472,7 +521,7 @@ if (!svg) {
      */
     Pointer.prototype.normalize = function<T extends PointerEvent> (
         e: (T|MouseEvent|PointerEvent|TouchEvent),
-        chartPosition?: Highcharts.ChartPositionObject
+        chartPosition?: Pointer.ChartPositionObject
     ): T {
 
         e = e || win.event;

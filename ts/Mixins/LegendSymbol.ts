@@ -11,6 +11,7 @@
 'use strict';
 
 import type ColorAxis from '../Core/Axis/ColorAxis';
+import type Legend from '../Core/Legend';
 import type Point from '../Core/Series/Point';
 import type Series from '../Core/Series/Series';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -18,7 +19,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import H from '../Core/Globals.js';
 
-declare module '../Core/Axis/Types' {
+declare module '../Core/Axis/AxisLike' {
     interface AxisLike extends Highcharts.LegendItemObject {
         // nothing more
     }
@@ -41,11 +42,9 @@ declare module '../Core/Series/SeriesLike' {
  */
 declare global {
     namespace Highcharts {
-        interface BubbleLegend extends LegendItemObject {
-        }
         interface LegendItemObject extends LegendSymbolMixin {
             _legendItemPos?: Array<number>;
-            checkbox?: LegendCheckBoxElement;
+            checkbox?: Legend.CheckBoxElement;
             checkboxOffset?: number;
             itemHeight?: number;
             itemWidth?: number;
@@ -96,7 +95,7 @@ const LegendSymbolMixin = H.LegendSymbolMixin = {
      */
     drawRectangle: function (
         this: Series,
-        legend: Highcharts.Legend,
+        legend: Legend,
         item: (Series|Point)
     ): void {
         const options = legend.options,
@@ -131,7 +130,7 @@ const LegendSymbolMixin = H.LegendSymbolMixin = {
      */
     drawLineMarker: function (
         this: Series,
-        legend: Highcharts.Legend
+        legend: Legend
     ): void {
 
         let options = this.options,

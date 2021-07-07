@@ -383,7 +383,7 @@ class GaugeSeries extends Series {
     public points: Array<GaugePoint> = void 0 as any;
     public options: GaugeSeriesOptions = void 0 as any;
 
-    public yAxis: RadialAxis = void 0 as any;
+    public yAxis: RadialAxis.AxisComposition = void 0 as any;
     public pivot?: SVGElement;
 
     /* *

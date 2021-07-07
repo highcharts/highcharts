@@ -273,7 +273,7 @@ class VariwideSeries extends ColumnSeries {
     public correctStackLabels(): void {
         let series = this,
             options = series.options,
-            yAxis = series.yAxis as StackingAxis,
+            yAxis = series.yAxis as StackingAxis.Composition,
             pointStack,
             pointWidth,
             stack,

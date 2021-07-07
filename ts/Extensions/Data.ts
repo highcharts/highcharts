@@ -12,16 +12,20 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
-import Ajax from '../Extensions/Ajax.js';
-const {
-    ajax
-} = Ajax;
+
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
+import G from '../Core/Globals.js';
+const { doc } = G;
+import HU from '../Core/HttpUtilities.js';
+const { ajax } = HU;
 import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
@@ -38,11 +42,22 @@ const {
     splat
 } = U;
 
+/* *
+ *
+ * Declarations
+ *
+ * */
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         data?: Highcharts.Data;
         hasDataDef?: boolean;
         liveDataURL?: string;
+    }
+}
+declare module '../Core/Options' {
+    interface Options {
+        data?: Highcharts.DataOptions;
     }
 }
 
@@ -115,9 +130,6 @@ declare global {
             individual: Array<number>;
             seriesBuilders: Array<SeriesBuilder>;
             xColumns: Array<number>;
-        }
-        interface Options {
-            data?: DataOptions;
         }
         interface SeriesBuilderReaderObject {
             columnIndex: (number|undefined);
@@ -690,7 +702,7 @@ class Data {
 
     public constructor(
         dataOptions: Highcharts.DataOptions,
-        chartOptions?: Highcharts.Options,
+        chartOptions?: Options,
         chart?: Chart
     ) {
         this.init(dataOptions, chartOptions, chart);
@@ -704,7 +716,7 @@ class Data {
 
     public alternativeFormat?: string;
     public chart: Chart = void 0 as any;
-    public chartOptions: Highcharts.Options = void 0 as any;
+    public chartOptions: Options = void 0 as any;
     public columns?: Array<Array<Highcharts.DataValueType>>;
     public dateFormat?: string;
     public decimalRegex?: RegExp;
@@ -731,7 +743,7 @@ class Data {
      */
     public init(
         options: Highcharts.DataOptions,
-        chartOptions?: Highcharts.Options,
+        chartOptions?: Options,
         chart?: Chart
     ): void {
 
@@ -2364,7 +2376,7 @@ class Data {
             j: number,
             r: number,
             seriesIndex,
-            chartOptions: Partial<Highcharts.Options>,
+            chartOptions: Partial<Options>,
             allSeriesBuilders = [],
             builder,
             freeIndexes,
@@ -2535,7 +2547,7 @@ class Data {
         if (options) {
             // Set the complete handler
             options.afterComplete = function (
-                dataOptions?: Partial<Highcharts.Options>
+                dataOptions?: Partial<Options>
             ): void {
                 // Avoid setting axis options unless the type changes. Running
                 // Axis.update will cause the whole structure to be destroyed
@@ -2577,12 +2589,12 @@ class Data {
  *
  * @return {Highcharts.Data}
  */
-H.data = function (
+G.data = function (
     dataOptions: Highcharts.DataOptions,
-    chartOptions?: Highcharts.Options,
+    chartOptions?: Options,
     chart?: Chart
 ): Highcharts.Data {
-    return new H.Data(dataOptions, chartOptions, chart);
+    return new G.Data(dataOptions, chartOptions, chart);
 };
 
 // Extend Chart.init so that the Chart constructor accepts a new configuration
@@ -2593,13 +2605,13 @@ addEvent(
     function (
         e: Event & {
             args: [
-                (Partial<Highcharts.Options>|undefined),
+                (Partial<Options>|undefined),
                 (Chart.CallbackFunction|undefined)
             ];
         }
     ): void {
         let chart = this, // eslint-disable-line no-invalid-this
-            userOptions: Partial<Highcharts.Options> = (e.args[0] || {}),
+            userOptions: Partial<Options> = (e.args[0] || {}),
             callback = e.args[1];
 
         if (userOptions && userOptions.data && !chart.hasDataDef) {
@@ -2610,10 +2622,10 @@ addEvent(
              * @name Highcharts.Chart#data
              * @type {Highcharts.Data|undefined}
              */
-            chart.data = new H.Data(extend(userOptions.data, {
+            chart.data = new G.Data(extend(userOptions.data, {
 
                 afterComplete: function (
-                    dataOptions?: Partial<Highcharts.Options>
+                    dataOptions?: Partial<Options>
                 ): void {
                     let i, series;
 
@@ -2857,5 +2869,5 @@ class SeriesBuilder {
     }
 }
 
-H.Data = Data as any;
-export default H.Data;
+G.Data = Data as any;
+export default G.Data;

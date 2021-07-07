@@ -17,6 +17,7 @@
  * */
 
 import type GlobalsLike from './GlobalsLike';
+import type Options from './Options';
 
 /* *
  *
@@ -78,6 +79,9 @@ declare global {
          */
         cutHeight?: number;
         parentNode: SVGElement;
+    }
+    interface TouchList {
+        changedTouches: Array<Touch>;
     }
     /**
      * @private
@@ -219,17 +223,8 @@ namespace Globals {
      *
      * */
 
-    export let chartCount: 0;
-
-    /**
-     * Theme options that should get applied to the chart. In module mode it
-     * might not be possible to change this property because of read-only
-     * restrictions, instead use {@link Highcharts.setOptions}.
-     *
-     * @name Highcharts.theme
-     * @type {Highcharts.Options}
-     */
-    export let theme: (Highcharts.Options|undefined);
+    // eslint-disable-next-line prefer-const
+    export let chartCount = 0;
 
 }
 
@@ -240,3 +235,21 @@ namespace Globals {
  * */
 
 export default Globals as unknown as GlobalsLike;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Theme options that should get applied to the chart. In module mode it
+ * might not be possible to change this property because of read-only
+ * restrictions, instead use {@link Highcharts.setOptions}.
+ *
+ * @deprecated
+ * @name Highcharts.theme
+ * @type {Highcharts.Options}
+ */
+
+(''); // keeps doclets above in JS file

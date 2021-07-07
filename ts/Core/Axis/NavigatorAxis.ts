@@ -26,13 +26,16 @@ const {
     pick
 } = U;
 
-/**
- * @private
- */
-declare module './Types' {
+declare module './AxisComposition' {
     interface AxisComposition {
         navigatorAxis?: NavigatorAxis['navigatorAxis'];
     }
+}
+
+/**
+ * @private
+ */
+declare module './AxisType' {
     interface AxisTypeRegistry {
         NavigatorAxis: NavigatorAxis;
     }

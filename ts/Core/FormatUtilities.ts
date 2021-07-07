@@ -18,11 +18,11 @@
 
 import type Chart from './Chart/Chart';
 
-import O from './Options.js';
+import D from './DefaultOptions.js';
 const {
     defaultOptions,
     defaultTime
-} = O;
+} = D;
 import U from './Utilities.js';
 const {
     getNestedProperty,
@@ -155,8 +155,8 @@ function format(str: string, ctx: any, chart?: Chart): string {
                         val = numberFormatter(
                             val,
                             decimals,
-                            (lang as any).decimalPoint,
-                            segment.indexOf(',') > -1 ? (lang as any).thousandsSep : ''
+                            lang.decimalPoint,
+                            segment.indexOf(',') > -1 ? lang.thousandsSep : ''
                         );
                     }
                 } else {
@@ -264,8 +264,8 @@ function numberFormat(
     const thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
 
     // Language
-    decimalPoint = pick(decimalPoint, (lang as any).decimalPoint);
-    thousandsSep = pick(thousandsSep, (lang as any).thousandsSep);
+    decimalPoint = pick(decimalPoint, lang.decimalPoint);
+    thousandsSep = pick(thousandsSep, lang.thousandsSep);
 
     // Start building the return
     ret = number < 0 ? '-' : '';

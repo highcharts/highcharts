@@ -28,11 +28,23 @@ const {
     splat
 } = U;
 
+declare module '../Core/Axis/AxisLike' {
+    interface AxisLike {
+        pane?: Pane;
+    }
+}
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         pane?: Array<Highcharts.Pane>;
         hoverPane?: Highcharts.Pane;
         getHoverPane?(eventArgs: any): Highcharts.Pane|undefined;
+    }
+}
+
+declare module '../Core/Options'{
+    interface Options {
+        pane?: Highcharts.PaneOptions|Array<Highcharts.PaneOptions>;
     }
 }
 
@@ -43,12 +55,6 @@ declare module '../Core/Chart/ChartLike'{
 declare global {
     namespace Highcharts {
         type PaneBackgroundShapeValue = ('arc'|'circle'|'solid');
-        interface Axis {
-            pane?: Pane;
-        }
-        interface Options {
-            pane?: PaneOptions;
-        }
         interface PaneBackgroundOptions {
             backgroundColor?: ColorType;
             borderColor?: ColorType;
@@ -75,12 +81,12 @@ declare global {
         }
         class Pane {
             public constructor(options: PaneOptions, chart: Chart);
-            public axis?: RadialAxis;
+            public axis?: RadialAxis.AxisComposition;
             public background: Array<SVGElement>;
             public center: Array<number>;
             public chart: PaneChart;
             public coll: 'pane';
-            public defaultBackgroundOptions?: PaneBackgroundOptions;
+            public defaultBackgroundOptions: PaneBackgroundOptions;
             public defaultOptions: PaneOptions;
             public group?: SVGElement;
             public options: PaneOptions;
@@ -92,7 +98,7 @@ declare global {
             ): void;
             public setOptions(options: PaneOptions): void;
             public update(options: PaneOptions, redraw?: boolean): void;
-            public updateCenter(axis?: RadialAxis): void;
+            public updateCenter(axis?: RadialAxis.AxisComposition): void;
         }
     }
 }
@@ -126,7 +132,7 @@ class Pane {
         this.init(options, chart);
     }
 
-    public axis?: RadialAxis;
+    public axis?: RadialAxis.AxisComposition;
     public background: Array<SVGElement> = void 0 as any;
     public center: Array<number> = void 0 as any;
     public chart: Highcharts.PaneChart = void 0 as any;
@@ -167,8 +173,8 @@ class Pane {
 
         // Set options. Angular charts have a default background (#3318)
         this.options = options = merge(
-            this.defaultOptions as any,
-            this.chart.angular ? { background: ({} as any) } : void 0,
+            this.defaultOptions,
+            this.chart.angular ? { background: {} } : void 0,
             options
         );
     }
@@ -459,7 +465,7 @@ class Pane {
      * @param {Highcharts.Axis} [axis]
      * @return {void}
      */
-    public updateCenter(axis?: RadialAxis): void {
+    public updateCenter(axis?: RadialAxis.AxisComposition): void {
         this.center = (
             axis ||
             this.axis ||
@@ -499,11 +505,10 @@ class Pane {
         redraw?: boolean
     ): void {
         merge(true, this.options, options);
-        merge(true, this.chart.options.pane, options); // #9917
 
         this.setOptions(this.options);
         this.render();
-        this.chart.axes.forEach(function (axis: Highcharts.Axis): void {
+        this.chart.axes.forEach(function (axis): void {
             if (axis.pane === this) {
                 axis.pane = null as any;
                 axis.update({}, redraw);
@@ -598,7 +603,7 @@ addEvent(Pointer, 'beforeGetHoverData', function (
 });
 
 addEvent(Pointer, 'afterGetHoverData', function (
-    eventArgs: Highcharts.PointerEventArgsObject
+    eventArgs: Pointer.EventArgsObject
 ): void {
     const chart = this.chart;
     if (

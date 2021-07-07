@@ -361,6 +361,7 @@ class WordcloudSeries extends ColumnSeries {
                     {
                         align: 'center',
                         'alignment-baseline': 'middle',
+                        'dominant-baseline': 'middle', // #15973: Firefox
                         x: placement.x,
                         y: placement.y,
                         text: point.name,
@@ -469,7 +470,7 @@ class WordcloudSeries extends ColumnSeries {
         );
     }
 
-    public getPlotBox(): Highcharts.SeriesPlotBoxObject {
+    public getPlotBox(): Series.PlotBoxObject {
         const series = this,
             chart = series.chart,
             inverted = chart.inverted,

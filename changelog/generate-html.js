@@ -163,7 +163,7 @@ function generateHTML() {
                     `<p class="release-header">
                         <a id="${id}"></a>
                         <a href="#${id}">${changelog.header.productName} v${version} ${changelog.header.date}</a>
-                        <span class="download-link" ><a href="${downloadLink}" title="Download the zip archive for ${changelog.header.productName} v${version}"><i class="fas fa-download"></i></a></span>    
+                        <span class="download-link" ><a href="${downloadLink}" title="Download the zip archive for ${changelog.header.productName} v${version}"><i class="fas fa-download"></i></a></span>
                     </p>
                     ${marked.parser(changelog.features)}`
                 );
@@ -275,6 +275,13 @@ function generateHTML() {
                 var content = fs.readFileSync(
                     path.join(__dirname, product.name, file), 'utf8'
                 );
+
+                if (content.indexOf('[Edit]') !== -1) {
+                    throw new Error(
+                        'Review links found inside the markdown. Generate again without --review.'
+                    );
+                }
+
                 sortMarkdownFileContent(content);
                 changelog.header.version = formatVersionNumber(file);
                 htmlContent += featureHTMLStructure();
@@ -290,9 +297,11 @@ function generateHTML() {
 // If called directly, run generateHTML now. Otherwise, it's called from
 // upload.js
 if (require.main === module) {
-    generateHTML().then(params => {
-        console.log(params.outputFile + ' was successfully created!');
-    });
+    generateHTML()
+        .then(params => {
+            console.log(params.outputFile + ' was successfully created!');
+        })
+        .catch(e => console.error(e));
 }
 
 module.exports = { generateHTML };
