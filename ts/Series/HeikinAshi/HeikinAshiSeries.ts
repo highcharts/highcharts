@@ -21,6 +21,7 @@ import HeikinAshiPoint from './HeikinAshiPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 import Series from '../../Core/Series/Series';
+import Axis from '../../Core/Axis/Axis.js';
 
 const {
     seriesTypes: {
@@ -125,40 +126,35 @@ class HeikinAshiSeries extends CandlestickSeries {
     }
 
     /**
-     * Extend the base method in order to calculate the whole data set
-     * for the heikinashi series before creating the points.
+     * Calculate data set for the heikinashi series before creating the points.
      * @private
      *
      * @function Highcharts.seriesTypes.heikinashi#getProcessedData
      *
-     * @param {boolean} [forceExtremesFromAll]
-     *        Force getting extremes of a total series data range.
-     *
-     * @return {Series.ProcessedDataObject}
+     * @return {void}
      *
      */
-    public getProcessedData(forceExtremesFromAll?: boolean): Series.ProcessedDataObject {
-        // Run the base method.
-        const processedData = super.getProcessedData.apply(this),
-            series = this,
-            yData = series.yData, // unmodified data
+    public getHeikinashiData(): void {
+        const series = this,
+            processedYData = series.processedYData, // procesed and grouped data
             heikiashiData = series.heikiashiData;
 
-        if (!heikiashiData.length && yData && yData.length) {
-            const firstPoint = yData[0];
+        if (!heikiashiData.length && processedYData && processedYData.length) {
+            const firstPoint = processedYData[0];
 
             // Modify the first point.
             this.modifyFirstPointValue(firstPoint as any);
 
-            // Modify points.
-            for (let i = 1; i < yData.length; i++) {
-                const dataPoint = yData[i],
+            // Modify other points.
+            for (let i = 1; i < processedYData.length; i++) {
+                const dataPoint = processedYData[i],
                     previousDataPoint = heikiashiData[i - 1];
 
+                // Cast to `any` in order to avoid checks before calculation.
+                // Adding null doesn't change anything.
                 this.modifyDataPoint(dataPoint as any, previousDataPoint as any);
             }
         }
-        return processedData;
     }
 
     /**
@@ -207,14 +203,35 @@ addEvent(HeikinAshiSeries, 'afterTranslate', function (): void {
     this.assignDataPoints();
 });
 
-// Force to recalculate the heikinashi data set after updating data.
-addEvent(HeikinAshiSeries, 'updatedData', function (): void {
-    if (!this.heikiashiData) {
-        this.heikiashiData = [];
-    }
-    if (this.heikiashiData.length) {
-        this.heikiashiData.length = 0;
-    }
+// // Force to recalculate the heikinashi data set after updating data.
+// addEvent(HeikinAshiSeries, 'updatedData', function (): void {
+//     if (!this.heikiashiData) {
+//         this.heikiashiData = [];
+//     }
+//     if (this.heikiashiData.length) {
+//         this.heikiashiData.length = 0;
+//     }
+// });
+
+// After processing and grouping the data,
+// calculate how the heikeinashi data set should look like.
+addEvent(Axis, 'postProcessData', function (): void {
+    const axis = this,
+        series = axis.series;
+
+    series.forEach(function (series): void {
+        if (series.is('heikinashi')) {
+            const heikinashiSeries = series as HeikinAshiSeries;
+
+            if (!heikinashiSeries.heikiashiData) {
+                heikinashiSeries.heikiashiData = [];
+            }
+            if (heikinashiSeries.heikiashiData.length) {
+                heikinashiSeries.heikiashiData.length = 0;
+            }
+            heikinashiSeries.getHeikinashiData();
+        }
+    });
 });
 
 /* *
