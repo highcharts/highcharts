@@ -19,8 +19,8 @@
 import type Axis from './Axis.js';
 import type Chart from '../Chart/Chart';
 import type Pane from '../../Extensions/Pane';
-import type PlotBandOptions from './PlotBandOptions';
-import type PlotLineOptions from './PlotLineOptions';
+import type PlotBandOptions from './PlotLineOrBand/PlotBandOptions';
+import type PlotLineOptions from './PlotLineOrBand/PlotLineOptions';
 import type Point from '../Series/Point';
 import type PositionObject from '../Renderer/PositionObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -69,7 +69,7 @@ declare module '../Chart/ChartLike'{
     }
 }
 
-declare module './PlotBandOptions' {
+declare module './PlotLineOrBand/PlotBandOptions' {
     interface PlotBandOptions {
         innerRadius?: (number|string);
         outerRadius?: (number|string);
@@ -78,7 +78,7 @@ declare module './PlotBandOptions' {
     }
 }
 
-declare module './PlotLineOptions' {
+declare module './PlotLineOrBand/PlotLineOptions' {
     interface PlotLineOptions {
         chartX?: number;
         chartY?: number;
