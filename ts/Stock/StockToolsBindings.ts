@@ -415,14 +415,14 @@ bindingsUtils.updateHeight = function (
     e: PointerEvent,
     annotation: Annotation
 ): void {
-    const coordsY =
-        this.utils.getAssignedAxis(this.chart.pointer.getCoordinates(e).yAxis);
+    const options = annotation.options.typeOptions,
+        yAxis = isNumber(options.yAxis) && this.chart.yAxis[options.yAxis];
 
-    if (coordsY) {
+    if (yAxis && options.points) {
         annotation.update({
             typeOptions: {
-                height: coordsY.value -
-                    (annotation.options.typeOptions.points as any)[1].y
+                height: yAxis.toValue(e[yAxis.horiz ? 'chartX' : 'chartY']) -
+                    (options.points[1].y || 0)
             }
         });
     }
@@ -537,18 +537,17 @@ bindingsUtils.updateNthPoint = function (
         annotation: Annotation
     ): void {
         const options = annotation.options.typeOptions,
-            coords = this.chart.pointer.getCoordinates(e),
-            coordsX = this.utils.getAssignedAxis(coords.xAxis),
-            coordsY = this.utils.getAssignedAxis(coords.yAxis);
+            xAxis = isNumber(options.xAxis) && this.chart.xAxis[options.xAxis],
+            yAxis = isNumber(options.yAxis) && this.chart.yAxis[options.yAxis];
 
-        if (coordsX && coordsY) {
+        if (xAxis && yAxis) {
             (options.points as any).forEach(function (
                 point: Point,
                 index: number
             ): void {
                 if (index >= startIndex) {
-                    point.x = coordsX.value;
-                    point.y = coordsY.value;
+                    point.x = xAxis.toValue(e[xAxis.horiz ? 'chartX' : 'chartY']);
+                    point.y = yAxis.toValue(e[yAxis.horiz ? 'chartX' : 'chartY']);
                 }
             });
             annotation.update({

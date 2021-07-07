@@ -430,6 +430,8 @@ class AST {
 
         const nodes: Array<AST.Node> = [];
 
+        markup = markup.trim();
+
         let doc;
         let body;
         if (hasValidDOMParser) {
@@ -453,8 +455,8 @@ class AST {
             if (tagName === '#text') {
                 const textContent = node.textContent || '';
 
-                // Whitespace text node, don't append it to the AST
-                if (/^[\s]*$/.test(textContent)) {
+                // Leading whitespace text node, don't append it to the AST
+                if (nodes.length === 0 && /^[\s]*$/.test(textContent)) {
                     return;
                 }
 

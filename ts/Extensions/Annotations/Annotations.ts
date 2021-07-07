@@ -558,17 +558,15 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
                         axes: Array<AxisType>,
                         labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
                     ): Array<AxisType> {
+                        const point = labelOrShape &&
+                            (
+                                labelOrShape.point ||
+                                (labelOrShape.points && labelOrShape.points[0])
+                            );
+
                         return [
-                            xAxes[
-                                labelOrShape &&
-                                labelOrShape.point &&
-                                (labelOrShape.point as any).xAxis
-                            ] || axes[0],
-                            yAxes[
-                                labelOrShape &&
-                                labelOrShape.point &&
-                                (labelOrShape.point as any).yAxis
-                            ] || axes[1]
+                            xAxes[point && (point as any).xAxis] || axes[0],
+                            yAxes[point && (point as any).yAxis] || axes[1]
                         ];
                     },
                     []
@@ -725,6 +723,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      */
     public setVisibility(visible?: boolean): void {
         const options = this.options,
+            navigation = this.chart.navigationBindings,
             visibility = pick(visible, !options.visible);
 
         this.graphic.attr(
@@ -734,6 +733,14 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         if (!visibility) {
             this.setControlPointsVisibility(false);
+
+            if (
+                navigation.activeAnnotation === this &&
+                navigation.popup &&
+                navigation.popup.formType === 'annotation-toolbar'
+            ) {
+                fireEvent(navigation, 'closePopup');
+            }
         }
 
         options.visible = visibility;

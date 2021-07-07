@@ -225,17 +225,16 @@ const bindingsUtils = {
      * Annotation to be updated
      */
     updateRectSize: function (event: PointerEvent, annotation: Annotation): void {
-        let chart = annotation.chart,
+        const chart = annotation.chart,
             options = annotation.options.typeOptions,
-            coords = chart.pointer.getCoordinates(event),
-            coordsX = chart.navigationBindings.utils.getAssignedAxis(coords.xAxis),
-            coordsY = chart.navigationBindings.utils.getAssignedAxis(coords.yAxis),
-            width,
-            height;
+            xAxis = isNumber(options.xAxis) && chart.xAxis[options.xAxis],
+            yAxis = isNumber(options.yAxis) && chart.yAxis[options.yAxis];
 
-        if (coordsX && coordsY) {
-            width = coordsX.value - options.point.x;
-            height = options.point.y - coordsY.value;
+        if (xAxis && yAxis) {
+            const x = xAxis.toValue(event[xAxis.horiz ? 'chartX' : 'chartY']),
+                y = yAxis.toValue(event[yAxis.horiz ? 'chartX' : 'chartY']),
+                width = x - options.point.x,
+                height = options.point.y - y;
 
             annotation.update({
                 typeOptions: {
