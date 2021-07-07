@@ -100,7 +100,6 @@ class ZChart {
             axisOptions: AxisOptions,
             i: number
         ): void {
-            axisOptions.index = i;
             // Z-Axis is shown horizontally, so it's kind of a X-Axis
             axisOptions.isX = true;
             chart

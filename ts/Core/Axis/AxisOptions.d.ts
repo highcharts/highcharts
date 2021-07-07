@@ -42,6 +42,8 @@ declare module '../../Core/Options'{
     }
 }
 
+export type AxisCollectionKey = ('colorAxis'|'xAxis'|'yAxis'|'zAxis');
+
 export interface AxisCrosshairLabelOptions {
     align?: AlignValue;
     backgroundColor?: ColorType;

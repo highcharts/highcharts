@@ -2903,7 +2903,7 @@ class Series {
 
         // Insert the series and re-order all series above the insertion
         // point.
-        chart.orderSeries(this.insert(chartSeries));
+        chart.orderItems('series', this.insert(chartSeries));
 
         // Set options for series with sorting and set data later.
         if (options.dataSorting && options.dataSorting.enabled) {
@@ -2989,11 +2989,11 @@ class Series {
         fireEvent(this, 'bindAxes', null as any, function (): void {
 
             // repeat for xAxis and yAxis
-            (series.axisTypes || []).forEach(function (AXIS: string): void {
+            (series.axisTypes || []).forEach(function (coll: string): void {
                 let index = 0;
 
                 // loop through the chart's axis objects
-                (chart as any)[AXIS].forEach(function (axis: Axis): void {
+                (chart as any)[coll].forEach(function (axis: Axis): void {
                     axisOptions = axis.options;
 
                     // apply if the series xAxis or yAxis option mathches
@@ -3001,18 +3001,18 @@ class Series {
                     // first axis
                     if (
                         (
-                            (seriesOptions as any)[AXIS] === index &&
+                            (seriesOptions as any)[coll] === index &&
                             !axisOptions.isInternal
                         ) ||
                         (
-                            typeof (seriesOptions as any)[AXIS] !==
+                            typeof (seriesOptions as any)[coll] !==
                             'undefined' &&
-                            (seriesOptions as any)[AXIS] === axisOptions.id
+                            (seriesOptions as any)[coll] === axisOptions.id
                         ) ||
                         (
-                            typeof (seriesOptions as any)[AXIS] ===
+                            typeof (seriesOptions as any)[coll] ===
                             'undefined' &&
-                            axisOptions.index === 0
+                            axis.index === 0
                         )
                     ) {
 
@@ -3034,7 +3034,7 @@ class Series {
                          * @name Highcharts.Series#yAxis
                          * @type {Highcharts.Axis}
                          */
-                        (series as any)[AXIS] = axis;
+                        (series as any)[coll] = axis;
 
                         // mark dirty for redraw
                         axis.isDirty = true;
@@ -3046,8 +3046,8 @@ class Series {
                 });
 
                 // The series needs an X and an Y axis
-                if (!(series as any)[AXIS] &&
-                    series.optionalAxis !== AXIS
+                if (!(series as any)[coll] &&
+                    series.optionalAxis !== coll
                 ) {
                     error(18, true, chart);
                 }
@@ -5430,7 +5430,7 @@ class Series {
             chart.hoverSeries = void 0;
         }
         erase(chart.series, series);
-        chart.orderSeries();
+        chart.orderItems('series');
 
         // clear all members
         objectEach(series, function (val: any, prop: string): void {
