@@ -92,12 +92,12 @@ QUnit.test('POST filename', function (assert) {
         }
     });
 
-    var originalPost = Highcharts.Chart.prototype.post;
+    var originalPost = Highcharts.HttpUtilities.post;
 
     try {
         var postData;
 
-        Highcharts.Chart.prototype.post = function (url, data) {
+        Highcharts.HttpUtilities.post = function (url, data) {
             postData = data;
         };
 
@@ -113,13 +113,6 @@ QUnit.test('POST filename', function (assert) {
             'my-pdf',
             'File name came through'
         );
-    } finally {
-        Highcharts.Chart.prototype.post = originalPost;
-    }
-    try {
-        Highcharts.Chart.prototype.post = function (url, data) {
-            postData = data;
-        };
 
         // Run export width custom file name
         chart.exportChart({
@@ -133,7 +126,7 @@ QUnit.test('POST filename', function (assert) {
             'Forward slash in filename was replaced'
         );
     } finally {
-        Highcharts.Chart.prototype.post = originalPost;
+        Highcharts.HttpUtilities.post = originalPost;
     }
 });
 

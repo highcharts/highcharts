@@ -53,12 +53,12 @@ QUnit.test('Capture POST', function (assert) {
         }
     });
 
-    var originalPost = Highcharts.Chart.prototype.post;
+    var originalPost = Highcharts.HttpUtilities.post;
 
     try {
         var postData;
 
-        Highcharts.Chart.prototype.post = function (url, data) {
+        Highcharts.HttpUtilities.post = function (url, data) {
             postData = data;
         };
 
@@ -85,6 +85,6 @@ QUnit.test('Capture POST', function (assert) {
             'Solid background is there'
         );
     } finally {
-        Highcharts.Chart.prototype.post = originalPost;
+        Highcharts.HttpUtilities.post = originalPost;
     }
 });
