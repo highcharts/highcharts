@@ -683,6 +683,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         // Unregister events
         this.tableEvents.forEach((eventCallback): void => eventCallback());
         this.element.remove();
+
+        Component.removeInstance(this);
     }
 
     public on(

@@ -9,8 +9,6 @@ export type EmitterFunction = (this: ComponentTypes) => Function | void;
  *
  * */
 class SyncEmitter {
-
-
     /**
      * Registry for reusable handlers
      */
@@ -26,13 +24,11 @@ class SyncEmitter {
     }
 
     public id: string;
-    public type: 'data' | 'presentation'; // Might not be necessary
     public func: EmitterFunction;
     public callback?: ReturnType<EmitterFunction>;
 
-    constructor(id: string, type: 'data' | 'presentation', func: EmitterFunction) {
+    constructor(id: string, func: EmitterFunction) {
         this.id = id;
-        this.type = type;
         this.func = func;
 
         SyncEmitter.register(this);
@@ -43,9 +39,8 @@ class SyncEmitter {
     }
 
     public remove(): void {
-        const { callback } = this;
-        if (callback) {
-            return callback();
+        if (this.callback) {
+            this.callback();
         }
     }
 }
