@@ -51,6 +51,20 @@ class Sidebar {
         }
     }]
 
+    public static predefinedWidth: Array<Sidebar.PredefinedWidth> = [{
+        name: '1/1',
+        value: '100',
+        icon: ''
+    }, {
+        name: '1/3',
+        value: '33.333',
+        icon: ''
+    }, {
+        name: '1/6',
+        value: '16.666',
+        icon: ''
+    }]
+
     public static components: Array<Sidebar.AddComponentDetails> = [
         {
             text: 'layout',
@@ -183,7 +197,11 @@ class Sidebar {
                         item.innerElement.tagName === 'INPUT' &&
                         (item.innerElement as any).value !== cell.container.offsetWidth
                     ) {
-                        (item.innerElement as any).value = cell.container.offsetWidth;
+                        const sidebar = ((this as MenuItem).menu.parent as Sidebar);
+
+                        (item.innerElement as any).value = sidebar.getCellWidth(cell);
+
+                        sidebar.getWidthGridOptions();
                     }
                 },
                 onCellResize: function (this: MenuItem, e: any): void {
@@ -760,6 +778,100 @@ class Sidebar {
             newCell.mountedComponent = component;
         }
     }
+
+    private getCellWidth(
+        cell: Cell
+    ): number|string {
+        const convertWidthToPercent = this.convertWidthToPercent;
+        const cellRwd = cell.options.responsive;
+        const currentRwdMode = (cell.row.layout.dashboard.editMode &&
+            cell.row.layout.dashboard.editMode.rwdMode) || 'large';
+
+        let cellWidth;
+
+        if (currentRwdMode === 'large') {
+            cellWidth =
+                convertWidthToPercent(cell.options.width) || 'calculate';
+        } else {
+            cellWidth = convertWidthToPercent(
+                ((cellRwd && cellRwd[currentRwdMode]) || {}).width
+            ) || 'calculate';
+        }
+
+        return cellWidth;
+    }
+
+    private convertWidthToPercent(
+        value: string|undefined
+    ): number|undefined {
+        let convertedValue;
+
+        if (!value) {
+            return;
+        }
+
+        if (value.match(/%/g)) {
+
+            // percent value like 33.333%
+            convertedValue = parseFloat(value);
+        } else if (value.match(/\//g)) {
+
+            // radio value like 1/3
+            const ratioValue = value.split('/');
+
+            if (ratioValue) {
+                convertedValue = (Math.round(
+                    (
+                        parseFloat(ratioValue[0]) /
+                        parseFloat(ratioValue[1])
+                    ) * 100
+                ) * 100) / 100;
+            }
+        }
+
+        return convertedValue;
+    }
+
+    private getWidthGridOptions(): void {
+        const sidebar = this;
+        const activeTab = sidebar.activeTab && sidebar.activeTab;
+        const activeTabContainer = activeTab && activeTab.content &&
+            activeTab && activeTab.content.container && activeTab.content.container;
+        const predefinedWidth = Sidebar.predefinedWidth;
+        const item = activeTab && activeTab.content.activeItems[0];
+
+        if (activeTab) {
+            if (activeTab.customFields) {
+                return;
+            }
+
+            activeTab.customFields = [];
+        }
+
+        for (let i = 0, iEnd = predefinedWidth.length; i < iEnd; ++i) {
+            const predefinedBtnWidth = createElement(
+                'div', {
+                    className: '',
+                    textContent: predefinedWidth[i].name,
+                    onclick: function (): void {
+                        if (item) {
+                            (item.innerElement as any).value =
+                                predefinedWidth[i].value;
+                        }
+                    }
+                },
+                {},
+                activeTabContainer
+            );
+
+            if (activeTab && activeTab.customFields) {
+                activeTab.customFields.push({
+                    name: predefinedWidth[i].name,
+                    graphic: predefinedBtnWidth
+                });
+            }
+        }
+    }
 }
 
 interface Sidebar {
@@ -789,11 +901,18 @@ namespace Sidebar {
         contentContainer: HTMLDOMElement;
         saveBtn: HTMLDOMElement;
         listComponent?: boolean;
+        customFields?: Array<unknown>;
     }
 
     export interface AddComponentDetails {
         text: string;
         onDrop: Function;
+    }
+
+    export interface PredefinedWidth {
+        name: string;
+        value: string;
+        icon: string;
     }
 }
 
