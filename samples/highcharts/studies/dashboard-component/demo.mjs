@@ -1,25 +1,14 @@
 import ChartComponent from  '../../../../code/es-modules/Dashboard/Component/ChartComponent.js';
 import DOMComponent from  '../../../../code/es-modules/Dashboard/Component/HTMLComponent.js';
-import GroupComponent from  '../../../../code/es-modules/Dashboard/Component/GroupComponent.js';
 import CSVStore from '../../../../code/es-modules/Data/Stores/CSVStore.js';
-import HTMLComponent from '../../../../code/es-modules/Dashboard/Component/HTMLComponent.js';
 
 // Bring in other forms of Highcharts
 import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
-import Stock from 'https://code.highcharts.com/stock/es-modules/masters/highstock.src.js';
-import Gantt from 'https://code.highcharts.com/stock/es-modules/masters/highcharts-gantt.src.js';
 import Maps from 'https://code.highcharts.com/stock/es-modules/masters/highmaps.src.js';
 
 const style = {
     height: 300
 };
-// ((async () => {
-//     const issues = await getJSON(FR_ISSUES_URL);
-//     const issueReactions = issues.map(async issue => {
-//         await getJSON(reactionURL(issue.number));
-//     });
-//     console.log(issueReactions);
-// }))();
 
 const target = document.querySelector('#container');
 
@@ -52,8 +41,7 @@ components.push(new ChartComponent({
         Country: 'x'
     },
     syncEvents: [
-        'visibility',
-        'tooltip'
+        'visibility'
     ],
     style,
     chartOptions: {
@@ -67,48 +55,46 @@ components.push(new ChartComponent({
     }
 }));
 
-components.push(new DOMComponent({
-    store,
-    parentElement: target,
-    elements: [
-        {
-            tagName: 'p',
-            textContent: 'Datatable as CSV:'
-        },
-        {
-            tagName: 'textArea',
-            attributes: {
-                id: 'csvedit',
-                rows: 10,
-                onchange: () => {
-                    store.options.csv = document.querySelector('textArea').value;
-                    store.load();
-                },
-                onclick: () => {
-                    console.log('hello');
-                }
-            },
-            textContent: store.save({})
-        }],
-    events: {
-        redraw: e => {
-            // Insert the updated store data to the textArea
-            e.component.elements = e.component.elements.map(el => {
-                if (el.tagName === 'textArea') {
-                    el.textContent = e.component.store.save({});
-                }
-                return el;
-            });
-        }
-    }
-}));
+
+/* components.push(new DOMComponent({ */
+/*     store, */
+/*     parentElement: target, */
+/*     elements: [ */
+/*         { */
+/*             tagName: 'p', */
+/*             textContent: 'Datatable as CSV:' */
+/*         }, */
+/*         { */
+/*             tagName: 'textArea', */
+/*             attributes: { */
+/*                 id: 'csvedit', */
+/*                 rows: 10, */
+/*                 onchange: () => { */
+/*                     store.options.csv = document.querySelector('textArea').value; */
+/*                     store.load(); */
+/*                 } */
+/*             }, */
+/*             textContent: store.save({}) */
+/*         }], */
+/*     events: { */
+/*         redraw: e => { */
+/*             // Insert the updated store data to the textArea */
+/*             e.component.elements = e.component.elements.map(el => { */
+/*                 if (el.tagName === 'textArea') { */
+/*                     el.textContent = e.component.store.save({}); */
+/*                 } */
+/*                 return el; */
+/*             }); */
+/*         } */
+/*     } */
+/* })); */
 
 
-components.forEach(comp => {
+components.map(comp => {
     comp.parentElement = document.createElement('div');
     target.appendChild(comp.parentElement);
     comp.render();
-    console.log(comp.chart);
+    return comp;
 });
 
 
@@ -133,8 +119,7 @@ components.forEach(comp => {
             Country: null
         },
         syncEvents: [
-            'visibility',
-            'tooltip'
+            'visibility'
         ],
         chartOptions: {
             tooltip: {
@@ -144,29 +129,7 @@ components.forEach(comp => {
                 series: {
                     events: {
                         click: e => {
-                            const group = component.activeGroup;
-                            if (group) {
-                                const hidden = group.state.getHiddenRows();
-                                if (hidden.indexOf(e.point.index) === -1) {
-                                    group.state.setHiddenRows([e.point.index], true);
-                                } else {
-                                    group.state.setHiddenRows([e.point.index], false);
-                                }
-                            }
-                            component.postMessage({
-                                callback: function () {
-                                    const group = this.activeGroup;
-                                    if (group) {
-                                        const hidden = group.state.getHiddenRows();
-                                        this.chart.series.forEach(series => {
-                                            series.points.forEach(point => {
-                                                const isHidden = hidden.indexOf(point.index) === -1;
-                                                point.setVisible(isHidden);
-                                            });
-                                        });
-                                    }
-                                }
-                            });
+                            e.point.series.hide();
                         }
                     }
                 }
@@ -191,18 +154,18 @@ components.forEach(comp => {
     component.parentElement = document.createElement('div');
     target.appendChild(component.parentElement);
 
-    // component.on('afterRender', e => {
-    //     console.log(e);
-    //     e.component.chart.addSeries({
-    //         data: [
-    //             ['no', true],
-    //             ['se', true],
-    //             ['dk', true]
-    //         ],
-    //         name: 'tests'
-    //     });
-    //     console.log(e.component.chart.series);
-    // });
-
     component.render();
-}());
+}()).then(() => {
+    const component = components[0];
+    console.log(component.activeGroup.getSharedState());
+    document.querySelector("#stopsync").addEventListener('click', () => {
+        console.log(component.sync);
+        component.sync.stop();
+    });
+    document.querySelector("#startsync").addEventListener('click', () => {
+        component.sync.start();
+    });
+    component.activeGroup.getSharedState().on('afterColumnVisibilityChange', e => {
+        console.log(e);
+    });
+});

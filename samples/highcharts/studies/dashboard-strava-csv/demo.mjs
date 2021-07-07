@@ -7,13 +7,13 @@ import GroupModifier from '../../../../code/es-modules/Data/Modifiers/GroupModif
 import SortModifier from '../../../../code/es-modules/Data/Modifiers/SortModifier.js';
 import DataStore from '../../../../code/es-modules/Data/Stores/DataStore.js';
 import DataTable from '../../../../code/es-modules/Data/DataTable.js';
-import { ChartSyncHandler } from '../../../../code/es-modules/Dashboard/Component/ChartSyncHandlers.js';
+import ChartSyncHandler from '../../../../code/es-modules/Dashboard/Component/Sync/Handler.js';
 
 const defaultstyle = {};
 
 // Alternative handler using the presentationModifier instead of calling chart methods
-const altSelectionHandler = new ChartSyncHandler(
-    'selectionHandler',
+const altSyncHandler = [
+    'altSelectionHandler',
     'afterSelectionChange',
     function (e) {
         const component = this;
@@ -41,7 +41,8 @@ const altSelectionHandler = new ChartSyncHandler(
         }
 
         component.redraw();
-    });
+    }
+];
 
 const gui = {
     enabled: true,
@@ -519,7 +520,7 @@ const components = state => [
         syncEvents: ['selection'],
         syncHandlers: {
             selection: {
-                handler: altSelectionHandler
+                handler: altSyncHandler
             }
         }
     },
@@ -561,7 +562,7 @@ const components = state => [
         syncEvents: ['selection'],
         syncHandlers: {
             selection: {
-                handler: altSelectionHandler
+                handler: altSyncHandler
             }
         }
     },
