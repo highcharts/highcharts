@@ -3568,8 +3568,10 @@ class Chart {
 
                 // Check if zoomed area is within the pane (#1289).
                 // In case of multiple panes only one pane should be zoomed.
+                // handle pinch zoom on multiple panes.
+                // pinch has already filtered the zoomed axes. #13217.
                 if (
-                    (
+                    pointer.hasPinched || (
                         !isXAxis &&
                         (mouseDownPos as any) >= axisStartPos &&
                         (mouseDownPos as any) <= axisEndPos

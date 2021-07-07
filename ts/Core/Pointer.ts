@@ -34,6 +34,7 @@ const {
 import Palette from '../Core/Color/Palette.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
+import BBoxObject from './Renderer/BBoxObject';
 const {
     addEvent,
     attr,
@@ -126,6 +127,8 @@ class Pointer {
      * */
 
     public chart: Chart;
+
+    public pinchedAxes?: Axis[];
 
     public chartPosition?: Pointer.ChartPositionObject;
 
@@ -436,7 +439,8 @@ class Pointer {
             if (this.hasDragged || hasPinched) {
 
                 // record each axis' min and max
-                chart.axes.forEach(function (axis: Axis): void {
+                let axes = this.pinchedAxes || chart.axes;
+                axes.forEach(function (axis: Axis): void {
                     if (
                         axis.zoomEnabled &&
                         defined(axis.min) &&
@@ -514,6 +518,7 @@ class Pointer {
             css(chart.container, { cursor: chart._cursor as any });
             chart.cancelClick = this.hasDragged > 10; // #370
             chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
+            delete this.pinchedAxes;
             this.pinchDown = [];
         }
     }
@@ -1288,6 +1293,7 @@ class Pointer {
             lastValidTouch = self.lastValidTouch as any,
             hasZoom = self.hasZoom,
             transform: Series.PlotBoxObject = {} as any,
+
             fireClickEvent = touchesLength === 1 && (
                 (
                     self.inClass(e.target as any, 'highcharts-tracker') &&
@@ -1317,6 +1323,15 @@ class Pointer {
             return self.normalize(e);
         });
 
+        self.pinchedAxes = self.pinchedAxes || chart.axes.filter((axis: Axis): boolean => {
+            if ((!self.zoomX && axis.isXAxis) || (!self.zoomY && !axis.isXAxis) || !axis.zoomEnabled) {
+                return false;
+            }
+            if (axis.horiz) {
+                return (touches[0] as any).chartX > axis.left && (touches[0] as any).chartX < axis.left + axis.len;
+            }
+            return (touches[0] as any).chartY > axis.top && (touches[0] as any).chartY < axis.top + axis.len;
+        });
         // Register the touch start position
         if (e.type === 'touchstart') {
             [].forEach.call(touches, function (
@@ -1330,18 +1345,8 @@ class Pointer {
             lastValidTouch.y = [pinchDown[0].chartY, pinchDown[1] &&
                 pinchDown[1].chartY];
 
-            let pinchedAxes = chart.axes.filter((axis: Axis): boolean => {
-                if (!axis.zoomEnabled) {
-                    return false;
-                }
-                // buba
-                if (axis.horiz) {
-                    return (touches[0] as any).chartY > axis.left && (touches[0] as any).chartY < axis.left + axis.len;
-                }
-                return (touches[0] as any).chartX > axis.top && (touches[0] as any).chartX < axis.top + axis.len;
-            });
             // Identify the data bounds in pixels
-            pinchedAxes.forEach(function (axis: Axis): void {
+            self.pinchedAxes.forEach(function (axis: Axis): void {
                 if (axis.zoomEnabled) {
                     const bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
                         minPixelPadding = axis.minPixelPadding,
@@ -1405,7 +1410,7 @@ class Pointer {
 
             // Scale and translate the groups to provide visual feedback during
             // pinching
-            self.scaleGroups(transform, clip as any);
+            self.scaleGroups(transform, clip as any, self.pinchedAxes);
 
             if (self.res) {
                 self.res = false;
@@ -1550,8 +1555,7 @@ class Pointer {
         selectionMarker[wh] = selectionWH;
         selectionMarker[xy] = selectionXY;
         transform[scaleKey] = scale;
-        transform['translate' + XY] = (transformScale * plotLeftTop) +
-            (touch0Now - (transformScale * touch0Start));
+        transform['translate' + XY] = (touch0Now - (transformScale * touch0Start));
     }
 
     /**
@@ -1840,25 +1844,36 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#scaleGroups
      */
-    public scaleGroups(attribs?: Series.PlotBoxObject, clip?: boolean): void {
+    public scaleGroups(attribs?: Series.PlotBoxObject, clip?: BBoxObject, pinchedAxes?: Axis[]): void {
 
         const chart = this.chart;
-
+        let axes = pinchedAxes || chart.axes;
         // Scale each series
-        chart.series.forEach(function (series): void {
-            const seriesAttribs = attribs || series.getPlotBox(); // #1701
-            if (series.xAxis && series.xAxis.zoomEnabled && series.group) {
-                series.group.attr(seriesAttribs);
-                if (series.markerGroup) {
-                    series.markerGroup.attr(seriesAttribs);
-                    series.markerGroup.clip(
-                        clip ? (chart.clipRect as any) : (null as any)
-                    );
+        axes.forEach((axis: Axis): void => {
+            axis.series.forEach((series: Series): void => {
+                const seriesAttribs = attribs || series.getPlotBox(); // #1701
+                const isX = axis.isXAxis;
+
+                const attr: any = {};
+                let scale = `scale${isX ? 'X' : 'Y'}`;
+                let translate = `translate${isX ? 'X' : 'Y'}`;
+                attr[scale] = (seriesAttribs as any)[scale];
+                const transformScale = chart.inverted ? 1 / attr[scale] : attr[scale];
+                attr[translate] = (seriesAttribs as any)[translate] + (attribs ? (transformScale * axis.pos) : 0);
+
+                if (series.xAxis && series.xAxis.zoomEnabled && series.group) {
+                    series.group.attr(attr);
+                    if (series.markerGroup) {
+                        series.markerGroup.attr(attr);
+                        series.markerGroup.clip(
+                            clip ? (chart.clipRect as any) : (null as any)
+                        );
+                    }
+                    if (series.dataLabelsGroup) {
+                        series.dataLabelsGroup.attr(attr);
+                    }
                 }
-                if (series.dataLabelsGroup) {
-                    series.dataLabelsGroup.attr(seriesAttribs);
-                }
-            }
+            });
         });
 
         // Clip
