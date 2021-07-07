@@ -26,7 +26,6 @@ import type {
     ExportingOptions,
     ExportingButtonOptions
 } from './ExportingOptions';
-import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type NavigationOptions from './NavigationOptions';
 import type Options from '../../Core/Options';
@@ -38,18 +37,18 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
+import D from '../../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import ExportingDefaults from './ExportingDefaults.js';
-import H from '../../Core/Globals.js';
+import ExportingSymbols from './ExportingSymbols.js';
+import G from '../../Core/Globals.js';
 const {
     doc,
     win
-} = H;
-import D from '../../Core/DefaultOptions.js';
-const { defaultOptions } = D;
-import ExportingSymbols from './ExportingSymbols.js';
+} = G;
+import HU from '../../Core/HttpUtilities.js';
 import Palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
-
 const {
     addEvent,
     css,
@@ -91,12 +90,6 @@ declare module '../../Core/Chart/ChartLike' {
         exportChart(
             exportingOptions?: ExportingOptions,
             chartOptions?: Options
-        ): void;
-        /** @requires modules/exporting */
-        post(
-            url: string,
-            data: object,
-            formAttributes?: HTMLAttributes
         ): void;
         /** @requires modules/exporting */
         print(): void;
@@ -225,11 +218,6 @@ namespace Exporting {
         /** @requires modules/exporting */
         renderExporting(): void;
         /** @requires modules/exporting */
-        post(
-            url: string,
-            data: object,
-            formAttributes?: HTMLAttributes
-        ): void;
         /** @requires modules/exporting */
         print(): void;
         /** @requires modules/exporting */
@@ -669,7 +657,6 @@ namespace Exporting {
             chartProto.afterPrint = afterPrint;
             chartProto.exportChart = exportChart;
             chartProto.inlineStyles = inlineStyles;
-            chartProto.post = post;
             chartProto.print = print;
             chartProto.sanitizeSVG = sanitizeSVG;
             chartProto.getChartHTML = getChartHTML;
@@ -686,8 +673,8 @@ namespace Exporting {
             chartProto.callbacks.push(chartCallback);
             addEvent(ChartClass as typeof ChartComposition, 'init', onChartInit);
 
-            if (H.isSafari) {
-                H.win.matchMedia('print').addListener(
+            if (G.isSafari) {
+                G.win.matchMedia('print').addListener(
                     function (
                         this: MediaQueryList,
                         mqlEvent: MediaQueryListEvent
@@ -1038,7 +1025,7 @@ namespace Exporting {
         exportingOptions = merge(this.options.exporting, exportingOptions);
 
         // do the post
-        this.post(exportingOptions.url as any, {
+        HU.post(exportingOptions.url as any, {
             filename: exportingOptions.filename ?
                 exportingOptions.filename.replace(/\//g, '-') :
                 this.getFilename(),
@@ -1483,7 +1470,7 @@ namespace Exporting {
                 }
 
                 // Loop through all styles and add them inline if they are ok
-                if (H.isFirefox || H.isMS) {
+                if (G.isFirefox || G.isMS) {
                     // Some browsers put lots of styles on the prototype
                     for (const p in styles) { // eslint-disable-line guard-for-in
                         filterStyles((styles as any)[p], p);
@@ -1611,52 +1598,6 @@ namespace Exporting {
     }
 
     /**
-     * The post utility
-     *
-     * @private
-     * @function Highcharts.post
-     *
-     * @param {string} url
-     * Post URL
-     *
-     * @param {object} data
-     * Post data
-     *
-     * @param {Highcharts.Dictionary<string>} [formAttributes]
-     * Additional attributes for the post request
-     */
-    export function post(
-        this: Chart,
-        url: string,
-        data: object,
-        formAttributes?: HTMLAttributes
-    ): void {
-        // create the form
-        const form: HTMLFormElement = createElement('form', merge({
-            method: 'post',
-            action: url,
-            enctype: 'multipart/form-data'
-        }, formAttributes), {
-            display: 'none'
-        }, doc.body) as unknown as HTMLFormElement;
-
-        // add the data
-        objectEach(data, function (val: string, name: string): void {
-            createElement('input', {
-                type: 'hidden',
-                name: name,
-                value: val
-            }, null as any, form);
-        });
-
-        // submit
-        form.submit();
-
-        // clean up
-        discardElement(form);
-    }
-
-    /**
      * Exporting module required. Clears away other elements in the page and
      * prints the chart as it is displayed. By default, when the exporting
      * module is enabled, a context button with a drop down menu in the upper
@@ -1685,7 +1626,7 @@ namespace Exporting {
 
         printingChart = chart;
 
-        if (!H.isSafari) {
+        if (!G.isSafari) {
             chart.beforePrint();
         }
 
@@ -1697,7 +1638,7 @@ namespace Exporting {
             win.print();
 
             // allow the browser to prepare before reverting
-            if (!H.isSafari) {
+            if (!G.isSafari) {
                 setTimeout((): void => {
                     chart.afterPrint();
                 }, 1000);

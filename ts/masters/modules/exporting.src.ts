@@ -11,8 +11,12 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-const G: AnyRecord = Highcharts;
 import '../../Extensions/FullScreen.js';
 import Exporting from '../../Extensions/Exporting/Exporting.js';
+import HttpUtilities from '../../Core/HttpUtilities.js';
+const G: AnyRecord = Highcharts;
+G.HttpUtilities = HttpUtilities;
+G.ajax = HttpUtilities.ajax;
+G.getJSON = HttpUtilities.getJSON;
+G.post = HttpUtilities.post;
 Exporting.compose(G.Chart, G.Renderer);
-G.post = Exporting.post;
