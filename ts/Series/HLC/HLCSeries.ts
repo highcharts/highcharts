@@ -189,8 +189,11 @@ class HLCSeries extends ColumnSeries {
     /* eslint-disable valid-jsdoc */
 
     /**
-     * Draw the data points
-     * @private
+     * Extend the path if close is not between high and low.
+     *
+     * @param {SVGPath} path the path array of the point
+     * @param {number} halfStrokeWidth
+     * @param {number} value value of the point to which the stem should be extended
      */
 
     protected extendStem(
@@ -217,6 +220,15 @@ class HLCSeries extends ColumnSeries {
         }
 
     }
+
+    /**
+     * Function to create SVGPath of the point based on the
+     * plot positions of this point.
+     *
+     * @param {SVGPath} point
+     * @param {SVGElement} graphic
+     * @returns {SVGPath}
+     */
 
     protected getPointPath(point: HLCPoint, graphic: SVGElement): SVGPath {
         // crisp vector coordinates
@@ -250,6 +262,11 @@ class HLCSeries extends ColumnSeries {
     }
 
 
+    /**
+     * @private
+     * draw single point
+     */
+
     public drawSinglePoint(point: HLCPoint): void {
 
         const series = point.series,
@@ -281,9 +298,13 @@ class HLCSeries extends ColumnSeries {
                 .addClass(point.getClassName(), true);
 
         }
-
-
     }
+
+    /**
+     * Draw the data points
+     * @private
+     */
+
     public drawPoints(): void {
         const series = this,
             points = series.points;
