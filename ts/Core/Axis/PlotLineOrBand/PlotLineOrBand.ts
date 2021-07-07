@@ -16,7 +16,7 @@
  *
  * */
 
-import type FormatUtilities from '../FormatUtilities';
+import type FormatUtilities from '../../FormatUtilities';
 import type {
     PlotBandLabelOptions,
     PlotBandOptions
@@ -25,12 +25,26 @@ import type {
     PlotLineLabelOptions,
     PlotLineOptions
 } from './PlotLineOptions';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import type SVGPath from '../Renderer/SVG/SVGPath';
+import type SVGAttributes from '../../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Renderer/SVG/SVGElement';
+import type SVGPath from '../../Renderer/SVG/SVGPath';
 
-import Axis from './Axis.js';
-import palette from '../../Core/Color/Palette.js';
+import Axis from '../Axis.js';
+import Palette from '../../Color/Palette.js';
+import U from '../../Utilities.js';
+const {
+    arrayMax,
+    arrayMin,
+    defined,
+    destroyObjectProperties,
+    erase,
+    extend,
+    fireEvent,
+    isNumber,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /* *
  *
@@ -38,7 +52,7 @@ import palette from '../../Core/Color/Palette.js';
  *
  * */
 
-declare module './AxisLike' {
+declare module '../AxisLike' {
     interface AxisLike {
         addPlotBand(
             options: PlotBandOptions
@@ -65,27 +79,18 @@ declare module './AxisLike' {
     }
 }
 
-declare module './AxisOptions' {
+declare module '../AxisOptions' {
     interface AxisOptions {
         plotBands?: Array<PlotBandOptions>;
         plotLines?: Array<PlotLineOptions>;
     }
 }
 
-import U from '../Utilities.js';
-const {
-    arrayMax,
-    arrayMin,
-    defined,
-    destroyObjectProperties,
-    erase,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    objectEach,
-    pick
-} = U;
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -100,6 +105,13 @@ const {
  * @param {Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions} [options]
  */
 class PlotLineOrBand {
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     public constructor(
         axis: Axis,
         options?: (PlotBandOptions|PlotLineOptions)
@@ -111,6 +123,12 @@ class PlotLineOrBand {
         }
     }
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public axis: Axis;
     public id?: string;
     public isActive?: boolean;
@@ -119,13 +137,17 @@ class PlotLineOrBand {
     public options?: (PlotBandOptions|PlotLineOptions);
     public svgElem?: SVGElement;
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /**
      * Render the plot line or plot band. If it is already existing,
      * move it.
-     *
      * @private
      * @function Highcharts.PlotLineOrBand#render
-     * @return {Highcharts.PlotLineOrBand|undefined}
      */
     public render(): (PlotLineOrBand|undefined) {
         fireEvent(this, 'render');
@@ -167,7 +189,7 @@ class PlotLineOrBand {
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
             if (isLine) {
-                attribs.stroke = color || palette.neutralColor40;
+                attribs.stroke = color || Palette.neutralColor40;
                 attribs['stroke-width'] = pick(
                     (options as PlotLineOptions).width,
                     1
@@ -178,7 +200,7 @@ class PlotLineOrBand {
                 }
 
             } else if (isBand) { // plot band
-                attribs.fill = color || palette.highlightColor10;
+                attribs.fill = color || Palette.highlightColor10;
                 if ((options as PlotBandOptions).borderWidth) {
                     attribs.stroke = (
                         options as PlotBandOptions
@@ -285,14 +307,8 @@ class PlotLineOrBand {
 
     /**
      * Render and align label for plot line or band.
-     *
      * @private
      * @function Highcharts.PlotLineOrBand#renderLabel
-     * @param {Highcharts.AxisPlotLinesLabelOptions|Highcharts.AxisPlotBandsLabelOptions} optionsLabel
-     * @param {Highcharts.SVGPathArray} path
-     * @param {boolean} [isBand]
-     * @param {number} [zIndex]
-     * @return {void}
      */
     public renderLabel(
         optionsLabel: (PlotBandLabelOptions|PlotLineLabelOptions),
@@ -369,11 +385,8 @@ class PlotLineOrBand {
 
     /**
      * Get label's text content.
-     *
      * @private
      * @function Highcharts.PlotLineOrBand#getLabelText
-     * @param {Highcharts.AxisPlotLinesLabelOptions|Highcharts.AxisPlotBandsLabelOptions} optionsLabel
-     * @return {string}
      */
     public getLabelText(
         optionsLabel: (PlotBandLabelOptions|PlotLineLabelOptions)
@@ -389,7 +402,6 @@ class PlotLineOrBand {
      * Remove the plot line or band.
      *
      * @function Highcharts.PlotLineOrBand#destroy
-     * @return {void}
      */
     public destroy(): void {
         // remove it from the lookup
@@ -404,6 +416,12 @@ class PlotLineOrBand {
 
 // Object with members for extending the Axis prototype
 extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
+
+    /* *
+    *
+    *  API Options
+    *
+    * */
 
     /**
      * An array of colored bands stretching across the plot area marking an
@@ -976,7 +994,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
 
     /**
-     *
      * @type      {Array<*>}
      * @extends   xAxis.plotBands
      * @apioption yAxis.plotBands
@@ -1044,16 +1061,16 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @function Highcharts.Axis#getPlotBandPath
      *
      * @param {number} from
-     *        The axis value to start from.
+     * The axis value to start from.
      *
      * @param {number} to
-     *        The axis value to end on.
+     * The axis value to end on.
      *
      * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
-     *        The plotBand or plotLine configuration object.
+     * The plotBand or plotLine configuration object.
      *
      * @return {Highcharts.SVGPathArray}
-     *         The SVG path definition in array form.
+     * The SVG path definition in array form.
      */
     getPlotBandPath: function (
         this: Axis,
@@ -1142,11 +1159,11 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @function Highcharts.Axis#addPlotBand
      *
      * @param {Highcharts.AxisPlotBandsOptions} options
-     *        A configuration object for the plot band, as defined in
-     *        [xAxis.plotBands](https://api.highcharts.com/highcharts/xAxis.plotBands).
+     * A configuration object for the plot band, as defined in
+     * [xAxis.plotBands](https://api.highcharts.com/highcharts/xAxis.plotBands).
      *
      * @return {Highcharts.PlotLineOrBand|undefined}
-     *         The added plot band.
+     * The added plot band.
      */
     addPlotBand: function (
         this: Axis,
@@ -1164,11 +1181,11 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @function Highcharts.Axis#addPlotLine
      *
      * @param {Highcharts.AxisPlotLinesOptions} options
-     *        A configuration object for the plot line, as defined in
-     *        [xAxis.plotLines](https://api.highcharts.com/highcharts/xAxis.plotLines).
+     * A configuration object for the plot line, as defined in
+     * [xAxis.plotLines](https://api.highcharts.com/highcharts/xAxis.plotLines).
      *
      * @return {Highcharts.PlotLineOrBand|undefined}
-     *         The added plot line.
+     * The added plot line.
      */
     addPlotLine: function (
         this: Axis,
@@ -1185,7 +1202,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @function Highcharts.Axis#addPlotBandOrLine
      *
      * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
-     *        The plotBand or plotLine configuration object.
+     * The plotBand or plotLine configuration object.
      *
      * @param {"plotBands"|"plotLines"} [coll]
      *

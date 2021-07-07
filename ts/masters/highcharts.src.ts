@@ -21,7 +21,7 @@ import HTMLRenderer from '../Core/Renderer/HTML/HTMLRenderer.js';
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import LogarithmicAxis from '../Core/Axis/LogarithmicAxis.js';
-import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
+import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
 import Tick from '../Core/Axis/Tick.js';
 import Tooltip from '../Core/Tooltip.js';
 import Point from '../Core/Series/Point.js';
