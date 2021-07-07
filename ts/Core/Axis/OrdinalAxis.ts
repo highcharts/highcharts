@@ -163,7 +163,6 @@ namespace OrdinalAxis {
 
         /**
          * Calculate the ordinal positions before tick positions are calculated.
-         *
          * @private
          */
         public beforeSetTickPositions(): void {
@@ -413,7 +412,6 @@ namespace OrdinalAxis {
          * operation starts, if an index for the given grouping does not exists,
          * it is created and cached. This index is deleted on updated data, so
          * it will be regenerated the next time a panning operation starts.
-         *
          * @private
          */
         public getExtendedPositions(): Array<number> {
@@ -540,7 +538,6 @@ namespace OrdinalAxis {
          * logic, where we do another run with a greater interval if the number
          * of data groups is more than a certain fraction of the desired group
          * count.
-         *
          * @private
          */
         public getGroupIntervalFactor(
@@ -628,7 +625,6 @@ namespace OrdinalAxis {
          * pointRange and generate these ticks between Axis.dataMax,
          * Axis.dataMax + Axis.overscroll evenly spaced. Used in panning and
          * navigator scrolling.
-         *
          * @private
          */
         public getOverscrollPositions(): Array<number> {
@@ -656,7 +652,6 @@ namespace OrdinalAxis {
         /**
          * Make the tick intervals closer because the ordinal gaps make the
          * ticks spread out or cluster.
-         *
          * @private
          */
         public postProcessTickInterval(tickInterval: number): number {
@@ -748,7 +743,6 @@ namespace OrdinalAxis {
      * segments, find the tick positions for each segment then concatenize
      * them. This method is used from both data grouping logic and X axis
      * tick position logic.
-     *
      * @private
      */
     function getTimeTicks(
@@ -1076,9 +1070,9 @@ namespace OrdinalAxis {
     }
 
     /**
-     * @private
      * Internal function to calculate the precise index
      * in ordinalPositions array.
+     * @private
      */
     function getIndexInArray(ordinalPositions: Array<number>, val: number): number {
         const index =
@@ -1134,11 +1128,10 @@ namespace OrdinalAxis {
     }
 
     /**
-     * @private
-     *
      * For ordinal axis, that loads data async, redraw axis after data is
      * loaded. If we don't do that, axis will have the same extremes as
      * previously, but ordinal positions won't be calculated. See #10290
+     * @private
      */
     function onAxisAfterSetScale(this: Axis): void {
         const axis = this;
