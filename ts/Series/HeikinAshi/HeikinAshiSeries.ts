@@ -20,6 +20,7 @@ import type HeikinAshiSeriesOptions from './HeikinAshiSeriesOptions';
 import HeikinAshiPoint from './HeikinAshiPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
+import Series from '../../Core/Series/Series';
 
 const {
     seriesTypes: {
@@ -28,6 +29,7 @@ const {
 } = SeriesRegistry;
 
 const {
+    addEvent,
     extend,
     merge
 } = U;
@@ -80,6 +82,8 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     public data: Array<HeikinAshiPoint> = void 0 as any;
 
+    public heikiashiData: Array<Array<number>> = [];
+
     public options: HeikinAshiSeriesOptions = void 0 as any;
 
     public points: Array<HeikinAshiPoint> = void 0 as any;
@@ -94,31 +98,124 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     /* eslint-disable valid-jsdoc */
 
-    public translate(): void {
+    /**
+     * Assign haikinashi data into the points.
+     * @private
+     *
+     * @function Highcharts.seriesTypes.heikinashi#translatePoints
+     *
+     * @return {void}
+     *
+     */
+    public assignDataPoints(): void {
+        const series = this,
+            points = series.points,
+            heikiashiData = series.heikiashiData;
+
+        // Modify points.
+        for (let i = 0; i < points.length; i++) {
+            const point = points[i],
+                heikiashiDataPoint = heikiashiData[i];
+
+            point.open = heikiashiDataPoint[0];
+            point.high = heikiashiDataPoint[1];
+            point.low = heikiashiDataPoint[2];
+            point.close = heikiashiDataPoint[3];
+        }
+    }
+
+    /**
+     * Extend the base method in order to calculate the whole data set
+     * for the heikinashi series before creating the points.
+     * @private
+     *
+     * @function Highcharts.seriesTypes.heikinashi#getProcessedData
+     *
+     * @param {boolean} [forceExtremesFromAll]
+     *        Force getting extremes of a total series data range.
+     *
+     * @return {Series.ProcessedDataObject}
+     *
+     */
+    public getProcessedData(forceExtremesFromAll?: boolean): Series.ProcessedDataObject {
         // Run the base method.
-        super.translate.apply(this);
+        const processedData = super.getProcessedData.apply(this),
+            series = this,
+            yData = series.yData, // unmodified data
+            heikiashiData = series.heikiashiData;
 
-        const series = this;
-
-        if (series.points && series.points.length) {
-            const firstPoint = series.points[0];
+        if (!heikiashiData.length && yData && yData.length) {
+            const firstPoint = yData[0];
 
             // Modify the first point.
-            firstPoint.modifyFirstPointValue();
-            firstPoint.doTranslation();
+            this.modifyFirstPointValue(firstPoint as any);
 
-            // Modify other points.
-            for (let i = 1; i < series.points.length; i++) {
-                const point = series.points[i];
+            // Modify points.
+            for (let i = 1; i < yData.length; i++) {
+                const dataPoint = yData[i],
+                    previousDataPoint = heikiashiData[i - 1];
 
-                point.modifyValue(series.points[i - 1]);
-                point.doTranslation();
+                this.modifyDataPoint(dataPoint as any, previousDataPoint as any);
             }
         }
+        return processedData;
+    }
+
+    /**
+     * Calculate and modify the first data point value.
+     * @private
+     *
+     * @function Highcharts.seriesTypes.heikinashi#modifyFirstPointValue
+     *
+     * @return {void}
+     *
+     */
+    public modifyFirstPointValue(dataPoint: Array<(number)>): void {
+        const open = (dataPoint[0] + dataPoint[1] + dataPoint[2] + dataPoint[3]) / 4, // open
+            close = (dataPoint[0] + dataPoint[3]) / 2; // close
+
+        this.heikiashiData.push([open, dataPoint[1], dataPoint[2], close]);
+    }
+
+    /**
+     * Calculate and modify the data point's value.
+     * @private
+     *
+     * @function Highcharts.seriesTypes.heikinashi#modifyValue
+     *
+     * @param {HeikinAshiPoint} previousPoint
+     *        Previous point.
+     *
+     * @return {void}
+     *
+     */
+    public modifyDataPoint(dataPoint: Array<(number)>, previousDataPoint: Array<(number)>): void {
+        const point = this,
+            newOpen = (previousDataPoint[0] + previousDataPoint[3]) / 2,
+            newClose = (dataPoint[0] + dataPoint[1] + dataPoint[2] + dataPoint[3]) / 4,
+            newHigh = Math.max(dataPoint[1], newClose, newOpen),
+            newLow = Math.min(dataPoint[2], newClose, newOpen);
+
+        this.heikiashiData.push([newOpen, newHigh, newLow, newClose]);
     }
 
     /* eslint-enable valid-jsdoc */
 }
+
+// Modify points after base translation.
+addEvent(HeikinAshiSeries, 'afterTranslate', function (): void {
+    this.assignDataPoints();
+});
+
+// Force to recalculate the heikinashi data set after updating data.
+addEvent(HeikinAshiSeries, 'updatedData', function (): void {
+    if (!this.heikiashiData) {
+        this.heikiashiData = [];
+    }
+    if (this.heikiashiData.length) {
+        this.heikiashiData.length = 0;
+    }
+});
 
 /* *
  *
