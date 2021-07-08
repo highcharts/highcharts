@@ -53,33 +53,6 @@ const {
  *
  * */
 
-declare module '../AxisLike' {
-    interface AxisLike {
-        addPlotBand(
-            options: PlotBandOptions
-        ): (PlotLineOrBand|undefined);
-        addPlotBandOrLine(
-            options: PlotBandOptions,
-            coll?: 'plotBands'
-        ): (PlotLineOrBand|undefined);
-        addPlotBandOrLine(
-            options: PlotLineOptions,
-            coll?: 'plotLines'
-        ): (PlotLineOrBand|undefined);
-        addPlotLine(
-            options: PlotLineOptions
-        ): (PlotLineOrBand|undefined);
-        getPlotBandPath(
-            from: number,
-            to: number,
-            options?: (PlotBandOptions|PlotLineOptions)
-        ): SVGPath;
-        removePlotBand(id: string): void;
-        removePlotBandOrLine(id: string): void;
-        removePlotLine(id: string): void;
-    }
-}
-
 declare module '../AxisOptions' {
     interface AxisOptions {
         plotBands?: Array<PlotBandOptions>;
@@ -126,7 +99,7 @@ class PlotLineOrBand {
      * */
 
     public constructor(
-        axis: Axis,
+        axis: PlotLineOrBandAxis.Composition,
         options?: (PlotBandOptions|PlotLineOptions)
     ) {
         this.axis = axis;
@@ -142,7 +115,7 @@ class PlotLineOrBand {
      *
      * */
 
-    public axis: Axis;
+    public axis: PlotLineOrBandAxis.Composition;
     public id?: string;
     public isActive?: boolean;
     public eventsAdded?: boolean;
@@ -429,6 +402,30 @@ class PlotLineOrBand {
     /* eslint-enable no-invalid-this, valid-jsdoc */
 
 }
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace PlotLineOrBand {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export type Axis = PlotLineOrBandAxis.Composition;
+
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default PlotLineOrBand;
 
