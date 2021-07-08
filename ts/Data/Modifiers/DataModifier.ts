@@ -19,8 +19,8 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataJSON from '../DataJSON';
 import type DataTable from '../DataTable';
+import type JSON from '../../Core/JSON';
 import type ModifierType from './ModifierType';
 
 import DataPromise from '../DataPromise.js';
@@ -45,7 +45,7 @@ const {
  * @private
  */
 abstract class DataModifier<TEvent extends DataEventEmitter.Event = DataModifier.Event>
-implements DataEventEmitter<(TEvent|DataModifier.Event)>, DataJSON.Class {
+implements DataEventEmitter<(TEvent|DataModifier.Event)> {
 
     /* *
      *
@@ -404,14 +404,6 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)>, DataJSON.Class {
         return addEvent(this, type, callback);
     }
 
-    /**
-     * Converts the modifier instance to a class JSON.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this modifier instance.
-     */
-    public abstract toJSON(): DataModifier.ClassJSON;
-
 }
 
 /* *
@@ -434,16 +426,6 @@ namespace DataModifier {
      */
     export interface ClassConstructor {
         new(options?: DeepPartial<Options>): DataModifier;
-    }
-
-    /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        /**
-         * Options to configure the modifier.
-         */
-        options: Options;
     }
 
     /**
@@ -490,7 +472,7 @@ namespace DataModifier {
     /**
      * Options to configure the modifier.
      */
-    export interface Options extends DataJSON.JSONObject {
+    export interface Options extends JSON.Object {
         /**
          * Name of the related modifier for these options.
          */

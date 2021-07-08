@@ -425,60 +425,6 @@ QUnit.test('DataTable Events', function (assert) {
 
 });
 
-QUnit.test('DataTable JSON', function (assert) {
-    const json = {
-            $class: 'DataTable',
-            columns: {
-                A: [ 'a0', 'a1', 'a2'],
-                B: [ 0.0002, 'b1', 'b2'],
-                C: [
-                    false,
-                    {
-                        $class: 'DataTable',
-                        columns: {
-                            CA: [ 'ca0', 'ca1', 'ca2' ]
-                        },
-                        id: 'table2'
-                    },
-                    'c2'
-                ]
-            },
-            id: 'table1'
-        },
-        table = DataTable.fromJSON(json);
-
-    assert.strictEqual(
-        table.getRowCount(),
-        3,
-        'Table should contain three rows.'
-    );
-
-    assert.deepEqual(
-        table.getRow(0),
-        [
-            'a0',
-            0.0002,
-            false
-        ],
-        'First row should contain three columns.'
-    );
-
-    const tableC1 = table.getColumn('C')[1];
-
-    assert.deepEqual(
-        tableC1.getColumn('CA'),
-        [ 'ca0', 'ca1', 'ca2' ],
-        'Inner table should contain three rows.'
-    );
-
-    assert.deepEqual(
-        table.toJSON(),
-        json,
-        'Exported JSON of table should be equal to imported JSON.'
-    );
-
-});
-
 QUnit.test('DataTable.getCellAsNumber', function (assert) {
     const table = new DataTable({
         A: [false, true, -1, 0, 1, NaN, '', '0', 'a', null, ,void 0 ]

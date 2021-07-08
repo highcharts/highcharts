@@ -19,8 +19,8 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
+import type JSON from '../../Core/JSON';
 
-import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -55,25 +55,6 @@ class RangeModifier extends DataModifier {
         strict: false,
         ranges: []
     };
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Converts a class JSON to a range modifier.
-     *
-     * @param {RangeModifier.ClassJSON} json
-     * Class JSON to convert to an instance of range modifier.
-     *
-     * @return {RangeModifier}
-     * GrouRangep modifier of the class JSON.
-     */
-    public static fromJSON(json: RangeModifier.ClassJSON): RangeModifier {
-        return new RangeModifier(json.options);
-    }
 
     /* *
      *
@@ -207,19 +188,6 @@ class RangeModifier extends DataModifier {
         return table;
     }
 
-    /**
-     * Converts the range modifier to a class JSON, including all containing all
-     * modifiers.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this range modifier.
-     */
-    public toJSON(): RangeModifier.ClassJSON {
-        return {
-            $class: 'RangeModifier',
-            options: merge(this.options)
-        };
-    }
 }
 
 /* *
@@ -233,13 +201,6 @@ class RangeModifier extends DataModifier {
  * conversion.
  */
 namespace RangeModifier {
-
-    /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataModifier.ClassJSON {
-        options: Options;
-    }
 
     /**
      * Options to configure the modifier.
@@ -258,7 +219,7 @@ namespace RangeModifier {
     /**
      * Options to configure a range.
      */
-    export interface RangeOptions extends DataJSON.JSONObject {
+    export interface RangeOptions extends JSON.Object {
         /**
          * Column containing the filtered values. This can be an index or a
          * name.
@@ -282,7 +243,6 @@ namespace RangeModifier {
  *
  * */
 
-DataJSON.addClass(RangeModifier);
 DataModifier.addModifier(RangeModifier);
 
 declare module './ModifierType' {

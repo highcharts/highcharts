@@ -21,7 +21,6 @@
 import type DataEventEmitter from '../DataEventEmitter';
 
 import DataModifier from './DataModifier.js';
-import DataJSON from '../DataJSON.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
@@ -49,25 +48,6 @@ class SeriesPointsModifier extends DataModifier {
     public static readonly defaultOptions: SeriesPointsModifier.Options = {
         modifier: 'SeriesPoints'
     };
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Converts a class JSON to a series points modifier.
-     *
-     * @param {SeriesPointsModifier.ClassJSON} json
-     * Class JSON to convert to an instance of series points modifier.
-     *
-     * @return {SeriesPointsModifier}
-     * Series points modifier of the class JSON.
-     */
-    public static fromJSON(json: SeriesPointsModifier.ClassJSON): SeriesPointsModifier {
-        return new SeriesPointsModifier(json.options);
-    }
 
     /* *
      *
@@ -139,21 +119,6 @@ class SeriesPointsModifier extends DataModifier {
         return table;
     }
 
-    /**
-     * Converts the series points modifier to a class JSON,
-     * including all containing all modifiers.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this series points modifier.
-     */
-    public toJSON(): SeriesPointsModifier.ClassJSON {
-        const json = {
-            $class: 'SeriesPointsModifier',
-            options: merge(this.options)
-        };
-
-        return json;
-    }
 }
 
 /* *
@@ -169,13 +134,6 @@ class SeriesPointsModifier extends DataModifier {
 namespace SeriesPointsModifier {
 
     /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataModifier.ClassJSON {
-        // nothing here yet
-    }
-
-    /**
      * Options to configure the modifier.
      */
     export interface Options extends DataModifier.Options {
@@ -189,7 +147,6 @@ namespace SeriesPointsModifier {
  *
  * */
 
-DataJSON.addClass(SeriesPointsModifier);
 DataModifier.addModifier(SeriesPointsModifier);
 
 declare module './ModifierType' {

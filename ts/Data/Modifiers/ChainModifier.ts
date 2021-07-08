@@ -19,7 +19,7 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import DataJSON from '../DataJSON.js';
+
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -53,38 +53,6 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         modifier: 'Chain',
         reverse: false
     };
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Converts a class JSON to a modifier chain. All modifier references in the
-     * JSON have to be registered on call to get converted to an instance.
-     *
-     * @param {ChainModifier.ClassJSON} json
-     * Class JSON to convert to an instance of modifier chain.
-     *
-     * @return {ChainModifier}
-     * Modifier chain of the class JSON.
-     */
-    public static fromJSON(json: ChainModifier.ClassJSON): ChainModifier {
-        const jsonModifiers = json.modifiers,
-            modifiers: Array<DataModifier> = [];
-
-        let modifier: (DataModifier|undefined);
-
-        for (let i = 0, iEnd = jsonModifiers.length; i < iEnd; ++i) {
-            modifier = DataJSON.fromJSON(jsonModifiers[i]) as (DataModifier|undefined);
-            if (modifier) {
-                modifiers.push(modifier);
-            }
-        }
-
-        return new ChainModifier(json.options, ...modifiers);
-    }
 
     /* *
      *
@@ -424,28 +392,6 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         });
     }
 
-    /**
-     * Converts the modifier chain to a class JSON, including all containing all
-     * modifiers.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this modifier chain.
-     */
-    public toJSON(): ChainModifier.ClassJSON {
-        const modifiers = this.modifiers,
-            json: ChainModifier.ClassJSON = {
-                $class: 'ChainModifier',
-                modifiers: [],
-                options: merge(this.options)
-            };
-
-        for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
-            json.modifiers.push(modifiers[i].toJSON());
-        }
-
-        return json;
-    }
-
 }
 
 /* *
@@ -469,16 +415,6 @@ namespace ChainModifier {
             DataModifier.Event['type']
         );
         readonly table?: DataTable;
-    }
-
-    /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataModifier.ClassJSON {
-        /**
-         * Class JSON of all modifiers, the chain contains.
-         */
-        modifiers: Array<DataModifier.ClassJSON>;
     }
 
     /**
@@ -515,7 +451,6 @@ namespace ChainModifier {
  *
  * */
 
-DataJSON.addClass(ChainModifier);
 DataModifier.addModifier(ChainModifier);
 
 declare module './ModifierType' {

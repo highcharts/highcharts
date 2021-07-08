@@ -19,7 +19,7 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataJSON from '../DataJSON';
+import type JSON from '../../Core/JSON';
 import type StoreType from './StoreType';
 
 import DataParser from '../Parsers/DataParser.js';
@@ -43,8 +43,7 @@ const {
  *
  * @private
  */
-abstract class DataStore<TEventObject extends DataStore.Event>
-implements DataEventEmitter<TEventObject>, DataJSON.Class {
+abstract class DataStore<TEventObject extends DataStore.Event> implements DataEventEmitter<TEventObject> {
     /* *
      *
      *  Static Properties
@@ -352,20 +351,6 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     }
 
     /**
-     * Converts the class instance to a class JSON.
-     *
-     * @return {DataStore.ClassJSON}
-     * Class JSON of this DataStore instance.
-     */
-    public toJSON(): DataStore.ClassJSON {
-        return {
-            $class: DataStore.getName(this.constructor),
-            metadata: merge(this.metadata),
-            table: this.table.toJSON()
-        };
-    }
-
-    /**
      * Method for retriving metadata from a single column.
      *
      * @param {string} name
@@ -389,14 +374,6 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
 namespace DataStore {
 
     /**
-     * Interface of the class JSON to convert to class instances.
-     */
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        table: DataTable.ClassJSON;
-        metadata: DataStore.Metadata;
-    }
-
-    /**
      * The default event object for a datastore
      */
     export interface Event extends DataEventEmitter.Event {
@@ -416,10 +393,10 @@ namespace DataStore {
      * Metadata entry containing the name of the column
      * and a metadata object
      */
-    export interface MetaColumn extends DataJSON.JSONObject {
+    export interface MetaColumn extends JSON.Object {
         dataType?: string;
         // validator: Function;
-        defaultValue?: DataJSON.JSONPrimitive;
+        defaultValue?: JSON.Primitive;
         index?: number;
         title?: string;
     }
@@ -427,7 +404,7 @@ namespace DataStore {
     /**
      * Metadata
      */
-    export interface Metadata extends DataJSON.JSONObject {
+    export interface Metadata extends JSON.Object {
         columns: Record<string, MetaColumn>;
     }
 

@@ -20,7 +20,6 @@
 
 import type DataEventEmitter from '../DataEventEmitter';
 
-import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import DataConverter from '../DataConverter.js';
@@ -49,25 +48,6 @@ class CSVParser extends DataParser<DataParser.Event> {
         ...DataParser.defaultOptions,
         lineDelimiter: '\n'
     };
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Creates a CSVDataParser instance from ClassJSON.
-     *
-     * @param {CSVParser.ClassJSON} json
-     * Class JSON to convert to the parser instance.
-     *
-     * @return {CSVParser}
-     * An instance of CSVDataParser.
-     */
-    public static fromJSON(json: CSVParser.ClassJSON): CSVParser {
-        return new CSVParser(json.options);
-    }
 
     /* *
      *
@@ -506,34 +486,9 @@ class CSVParser extends DataParser<DataParser.Event> {
         return DataParser.getTableFromColumns(this.columns, this.headers);
     }
 
-    /**
-     * Converts the parser instance to ClassJSON.
-     *
-     * @returns {CSVParser.ClassJSON}
-     * ClassJSON from the parser instance.
-     */
-    public toJSON(): CSVParser.ClassJSON {
-        const parser = this,
-            {
-                options
-            } = parser,
-            json: CSVParser.ClassJSON = {
-                $class: 'CSVDataParser',
-                options
-            };
-
-        return json;
-    }
 }
 
 namespace CSVParser {
-
-    /**
-     * ClassJSON for CSVDataParser
-     */
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        options: ClassJSONOptions;
-    }
 
     /**
      * Interface for the BeforeParse callback function
@@ -566,14 +521,6 @@ namespace CSVParser {
         decimalRegex?: RegExp;
     }
 }
-
-/* *
- *
- *  Register
- *
- * */
-
-DataJSON.addClass(CSVParser);
 
 /* *
  *

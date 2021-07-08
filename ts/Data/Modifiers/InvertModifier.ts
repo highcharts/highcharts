@@ -21,7 +21,6 @@
 import type DataEventEmitter from '../DataEventEmitter';
 
 import DataModifier from './DataModifier.js';
-import DataJSON from '../DataJSON.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
@@ -51,25 +50,6 @@ class InvertModifier extends DataModifier {
     public static readonly defaultOptions: InvertModifier.Options = {
         modifier: 'InvertModifier'
     };
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Converts a class JSON to a invert modifier.
-     *
-     * @param {InvertModifier.ClassJSON} json
-     * Class JSON to convert to an instance of invert modifier.
-     *
-     * @return {InvertModifier}
-     * Series points modifier of the class JSON.
-     */
-    public static fromJSON(json: InvertModifier.ClassJSON): InvertModifier {
-        return new InvertModifier(json.options);
-    }
 
     /* *
      *
@@ -381,19 +361,6 @@ class InvertModifier extends DataModifier {
         return table;
     }
 
-    /**
-     * Converts the invert modifier to a class JSON,
-     * including all containing all modifiers.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this invert modifier.
-     */
-    public toJSON(): InvertModifier.ClassJSON {
-        return {
-            $class: 'InvertModifier',
-            options: merge(this.options)
-        };
-    }
 }
 
 /* *
@@ -409,13 +376,6 @@ class InvertModifier extends DataModifier {
 namespace InvertModifier {
 
     /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataModifier.ClassJSON {
-        // nothing here yet
-    }
-
-    /**
      * Options to configure the modifier.
      */
     export interface Options extends DataModifier.Options {
@@ -429,7 +389,6 @@ namespace InvertModifier {
  *
  * */
 
-DataJSON.addClass(InvertModifier);
 DataModifier.addModifier(InvertModifier);
 
 declare module './ModifierType' {

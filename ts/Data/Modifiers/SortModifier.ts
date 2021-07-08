@@ -345,19 +345,6 @@ class SortModifier extends DataModifier {
         return table;
     }
 
-    /**
-     * Converts the sort modifier to a class JSON.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this sort modifier.
-     */
-    public toJSON(): SortModifier.ClassJSON {
-        return {
-            $class: 'SortModifier',
-            options: merge(this.options)
-        };
-    }
-
 }
 
 /* *
@@ -371,13 +358,6 @@ class SortModifier extends DataModifier {
  * conversion.
  */
 namespace SortModifier {
-
-    /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataModifier.ClassJSON {
-        options: Options;
-    }
 
     /**
      * Options to configure the modifier.

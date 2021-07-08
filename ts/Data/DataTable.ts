@@ -20,8 +20,8 @@
 
 import type DataEventEmitter from './DataEventEmitter';
 import type DataModifier from './Modifiers/DataModifier';
+import type JSON from '../Core/JSON';
 
-import DataJSON from './DataJSON.js';
 import DataPromise from './DataPromise.js';
 import U from '../Core/Utilities.js';
 const {
@@ -49,7 +49,7 @@ const {
  * @param {string} [id]
  * DataTable identifier.
  */
-class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
+class DataTable implements DataEventEmitter<DataTable.Event> {
 
     /* *
      *
@@ -75,69 +75,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      *  Static Functions
      *
      * */
-
-    /**
-     * Converts a supported class JSON to a DataTable instance.
-     *
-     * @param {DataTable.ClassJSON} json
-     * Class JSON (usually with a $class property) to convert.
-     *
-     * @return {DataTable}
-     * DataTable instance from the class JSON.
-     */
-    public static fromJSON(json: DataTable.ClassJSON): DataTable {
-        const columns: DataTable.ColumnCollection = {},
-            jsonColumns = json.columns,
-            columnNames = Object.keys(jsonColumns);
-
-        for (
-            let i = 0,
-                iEnd = columnNames.length,
-                columnName: string,
-                column: DataTable.Column,
-                jsonColumn: DataTable.ColumnJSON;
-            i < iEnd;
-            ++i
-        ) {
-            columnName = columnNames[i];
-            columns[columnName] = column = [];
-            jsonColumn = jsonColumns[columnName];
-            for (
-                let j = 0,
-                    jEnd = jsonColumn.length,
-                    jsonCell: DataTable.ColumnJSON[0];
-                j < jEnd;
-                ++j
-            ) {
-                jsonCell = jsonColumn[j];
-                if (typeof jsonCell === 'object' && jsonCell) {
-                    column[j] = DataTable.fromJSON(jsonCell);
-                } else {
-                    column[j] = jsonCell;
-                }
-            }
-        }
-
-        const table = new DataTable(columns, json.id);
-
-        if (json.aliasMap) {
-            const aliasMap = (json.aliasMap || {}),
-                aliases = Object.keys(aliasMap);
-
-            for (
-                let i = 0,
-                    iEnd = aliases.length,
-                    alias: string;
-                i < iEnd;
-                ++i
-            ) {
-                alias = aliases[i];
-                table.aliasMap[alias] = aliasMap[alias];
-            }
-        }
-
-        return table;
-    }
 
     /**
      * Tests whether a row contains only null values.
@@ -1658,76 +1595,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         });
     }
 
-    /**
-     * Converts the table to a class JSON.
-     * @private
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this table.
-     */
-    public toJSON(): DataTable.ClassJSON {
-        const table = this,
-            aliasMap = table.aliasMap,
-            aliases = Object.keys(aliasMap),
-            columns = table.columns,
-            columnNames = Object.keys(columns),
-            json: DataTable.ClassJSON = {
-                $class: 'DataTable',
-                columns: {}
-            },
-            jsonColumns = json.columns,
-            rowCount = table.rowCount;
-
-        if (!table.autoId) {
-            json.id = table.id;
-        }
-
-        if (aliases.length) {
-            const jsonAliasMap: Record<string, string> = json.aliasMap = {};
-
-            for (
-                let i = 0,
-                    iEnd = aliases.length,
-                    alias: string;
-                i < iEnd;
-                ++i
-            ) {
-                alias = aliases[i];
-                jsonAliasMap[alias] = aliasMap[alias];
-            }
-        }
-
-        for (
-            let i = 0,
-                iEnd = columnNames.length,
-                column: DataTable.Column,
-                columnJSON: DataTable.ColumnJSON,
-                columnName: string;
-            i < iEnd;
-            ++i
-        ) {
-            columnName = columnNames[i];
-            column = columns[columnName];
-            jsonColumns[columnName] = columnJSON = [];
-            for (
-                let j = 0,
-                    jEnd = rowCount,
-                    cell: DataTable.CellType;
-                j < jEnd;
-                ++j
-            ) {
-                cell = column[j];
-                if (typeof cell === 'object' && cell) {
-                    columnJSON[j] = cell.toJSON();
-                } else {
-                    columnJSON[j] = cell;
-                }
-            }
-        }
-
-        return json;
-    }
-
 }
 
 /* *
@@ -1766,16 +1633,7 @@ namespace DataTable {
     /**
      * Possible value types for a table cell.
      */
-    export type CellType = (DataTable|DataJSON.JSONPrimitive);
-
-    /**
-     * Class JSON of a DataTable.
-     */
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        aliasMap?: Record<string, string>;
-        columns: ColumnCollectionJSON;
-        id?: string;
-    }
+    export type CellType = (DataTable|JSON.Primitive);
 
     /**
      * Event object for clone-related events.
@@ -1795,26 +1653,11 @@ namespace DataTable {
     }
 
     /**
-     * JSON Array of column values.
-     */
-    export interface ColumnJSON extends DataJSON.JSONArray {
-        [index: number]: (DataJSON.JSONPrimitive|ClassJSON);
-    }
-
-    /**
      * Collection of columns, where the key is the column name (or alias) and
      * the value is an array of column values.
      */
     export interface ColumnCollection {
         [columnNameOrAlias: string]: Column;
-    }
-
-    /**
-     * Collection of columns, where the key is the column name and the value is
-     * an array of column values.
-     */
-    export interface ColumnCollectionJSON {
-        [columnNameOrAlias: string]: ColumnJSON;
     }
 
     /**
@@ -1891,14 +1734,6 @@ namespace DataTable {
     }
 
 }
-
-/* *
- *
- *  Registry
- *
- * */
-
-DataJSON.addClass(DataTable);
 
 /* *
  *

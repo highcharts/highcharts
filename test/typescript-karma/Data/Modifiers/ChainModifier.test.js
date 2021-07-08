@@ -85,26 +85,10 @@ QUnit.test('ChainModifier.modify', function (assert) {
             );
 
             assert.deepEqual(
-                table.modified.toJSON(),
+                table.modified.getColumn('table')[1].getColumns(),
                 {
-                    $class: 'DataTable',
-                    columns: {
-                        groupBy: ['y', 'y'],
-                        table: [{
-                            $class: 'DataTable',
-                            columns: {
-                                x: [1, 2],
-                                y: ['a', 'a']
-                            }
-                        }, {
-                            $class: 'DataTable',
-                            columns: {
-                                x: [3, 4],
-                                y: ['b', 'b']
-                            }
-                        }],
-                        value: ['a', 'b']
-                    }
+                    x: [3, 4],
+                    y: ['b', 'b']
                 },
                 'Modified table should have expected structure of two rows with sub tables.'
             );

@@ -37,8 +37,8 @@ QUnit.test('InvertModifier.modify', function (assert) {
                 .modify(table.modified.clone())
                 .then((modified) =>
                     assert.deepEqual(
-                        modified.modified.toJSON(),
-                        table.toJSON(),
+                        modified.modified.getColumns(),
+                        table.getColumns(),
                         'Double inverted table should be the same as original table.'
                     )
                 );

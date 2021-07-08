@@ -16,7 +16,7 @@
  *
  * */
 
-import DataJSON from './DataJSON';
+import type JSON from '../Core/JSON';
 
 /* *
  *
@@ -105,7 +105,7 @@ declare namespace DataEventEmitter {
     /**
      * Custom information for an event object.
      */
-    export type EventDetail = DataJSON.JSONObject;
+    export type EventDetail = JSON.Object;
 
     /**
      * Event object with additional event information. This interface can be
