@@ -16,15 +16,15 @@
  *
  * */
 
-import type {
-    AlignValue,
-    VerticalAlignValue
-} from '../Renderer/AlignObject';
-import type ColorString from '../Color/ColorString';
-import type ColorType from '../Color/ColorType';
-import type CSSObject from '../Renderer/CSSObject';
-import type DashStyleValue from '../Renderer/DashStyleValue';
 import type FormatUtilities from '../FormatUtilities';
+import type {
+    PlotBandLabelOptions,
+    PlotBandOptions
+} from './PlotBandOptions';
+import type {
+    PlotLineLabelOptions,
+    PlotLineOptions
+} from './PlotLineOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -41,23 +41,23 @@ import palette from '../../Core/Color/Palette.js';
 declare module './AxisLike' {
     interface AxisLike {
         addPlotBand(
-            options: Highcharts.AxisPlotBandsOptions
+            options: PlotBandOptions
         ): (PlotLineOrBand|undefined);
         addPlotBandOrLine(
-            options: Highcharts.AxisPlotBandsOptions,
+            options: PlotBandOptions,
             coll?: 'plotBands'
         ): (PlotLineOrBand|undefined);
         addPlotBandOrLine(
-            options: Highcharts.AxisPlotLinesOptions,
+            options: PlotLineOptions,
             coll?: 'plotLines'
         ): (PlotLineOrBand|undefined);
         addPlotLine(
-            options: Highcharts.AxisPlotLinesOptions
+            options: PlotLineOptions
         ): (PlotLineOrBand|undefined);
         getPlotBandPath(
             from: number,
             to: number,
-            options?: (Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions)
+            options?: (PlotBandOptions|PlotLineOptions)
         ): SVGPath;
         removePlotBand(id: string): void;
         removePlotBandOrLine(id: string): void;
@@ -67,124 +67,10 @@ declare module './AxisLike' {
 
 declare module './AxisOptions' {
     interface AxisOptions {
-        plotBands?: Array<Highcharts.AxisPlotBandsOptions>;
-        plotLines?: Array<Highcharts.AxisPlotLinesOptions>;
+        plotBands?: Array<PlotBandOptions>;
+        plotLines?: Array<PlotLineOptions>;
     }
 }
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AxisPlotBandsLabelOptions {
-            align?: AlignValue;
-            formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
-            rotation?: number;
-            style?: CSSObject;
-            text?: string;
-            textAlign?: AlignValue;
-            useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
-            x?: number;
-            y?: number;
-        }
-        interface AxisPlotBandsOptions {
-            acrossPanes?: boolean;
-            borderColor?: ColorString;
-            borderWidth?: number;
-            className?: string;
-            color?: ColorType;
-            events?: any;
-            from?: number;
-            id?: string;
-            label?: AxisPlotBandsLabelOptions;
-            to?: number;
-            zIndex?: number;
-        }
-        interface AxisPlotLinesLabelOptions {
-            align?: AlignValue;
-            formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
-            rotation?: number;
-            style?: CSSObject;
-            text?: string;
-            textAlign?: AlignValue;
-            useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
-            x?: number;
-            y?: number;
-        }
-        interface AxisPlotLinesOptions {
-            acrossPanes?: boolean;
-            className?: string;
-            color?: ColorString;
-            dashStyle?: DashStyleValue;
-            events?: any;
-            id?: string;
-            label?: AxisPlotLinesLabelOptions;
-            translatedValue?: number;
-            value?: number;
-            width?: number;
-            zIndex?: number;
-        }
-        /*
-        class PlotLineOrBand {
-            public constructor(
-                axis: Axis,
-                options?: (AxisPlotLinesOptions|AxisPlotBandsOptions)
-            );
-            public axis: Axis;
-            public id?: string;
-            public isActive?: boolean;
-            public label?: SVGElement;
-            public options?: (AxisPlotLinesOptions|AxisPlotBandsOptions);
-            public svgElem?: SVGElement;
-            public destroy(): void;
-            public render(): (PlotLineOrBand|undefined);
-            public renderLabel(
-                optionsLabel: (
-                    AxisPlotBandsLabelOptions|
-                    AxisPlotLinesLabelOptions
-                ),
-                path: SVGPath,
-                isBand?: boolean,
-                zIndex?: number
-            ): void;
-            public getLabelText(
-                optionsLabel: (
-                    AxisPlotBandsLabelOptions|
-                    AxisPlotLinesLabelOptions
-                ),
-            ): string
-        }
-        */
-    }
-}
-
-/**
- * Options for plot bands on axes.
- *
- * @typedef {Highcharts.XAxisPlotBandsOptions|Highcharts.YAxisPlotBandsOptions|Highcharts.ZAxisPlotBandsOptions} Highcharts.AxisPlotBandsOptions
- */
-
-/**
- * Options for plot band labels on axes.
- *
- * @typedef {Highcharts.XAxisPlotBandsLabelOptions|Highcharts.YAxisPlotBandsLabelOptions|Highcharts.ZAxisPlotBandsLabelOptions} Highcharts.AxisPlotBandsLabelOptions
- */
-
-/**
- * Options for plot lines on axes.
- *
- * @typedef {Highcharts.XAxisPlotLinesOptions|Highcharts.YAxisPlotLinesOptions|Highcharts.ZAxisPlotLinesOptions} Highcharts.AxisPlotLinesOptions
- */
-
-/**
- * Options for plot line labels on axes.
- *
- * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
- */
 
 import U from '../Utilities.js';
 const {
@@ -216,7 +102,7 @@ const {
 class PlotLineOrBand {
     public constructor(
         axis: Axis,
-        options?: (Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions)
+        options?: (PlotBandOptions|PlotLineOptions)
     ) {
         this.axis = axis;
         if (options) {
@@ -230,10 +116,7 @@ class PlotLineOrBand {
     public isActive?: boolean;
     public eventsAdded?: boolean;
     public label?: SVGElement;
-    public options?: (
-        Highcharts.AxisPlotLinesOptions|
-        Highcharts.AxisPlotBandsOptions
-    );
+    public options?: (PlotBandOptions|PlotLineOptions);
     public svgElem?: SVGElement;
 
     /**
@@ -251,9 +134,7 @@ class PlotLineOrBand {
             axis = plotLine.axis,
             horiz = axis.horiz,
             log = axis.logarithmic,
-            options = plotLine.options as (
-                Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions
-            ),
+            options = plotLine.options as (PlotBandOptions|PlotLineOptions),
             optionsLabel = options.label,
             label = plotLine.label,
             to = (options as any).to,
@@ -288,22 +169,22 @@ class PlotLineOrBand {
             if (isLine) {
                 attribs.stroke = color || palette.neutralColor40;
                 attribs['stroke-width'] = pick(
-                    (options as Highcharts.AxisPlotLinesOptions).width,
+                    (options as PlotLineOptions).width,
                     1
                 );
-                if ((options as Highcharts.AxisPlotLinesOptions).dashStyle) {
+                if ((options as PlotLineOptions).dashStyle) {
                     attribs.dashstyle =
-                        (options as Highcharts.AxisPlotLinesOptions).dashStyle;
+                        (options as PlotLineOptions).dashStyle;
                 }
 
             } else if (isBand) { // plot band
                 attribs.fill = color || palette.highlightColor10;
-                if ((options as Highcharts.AxisPlotBandsOptions).borderWidth) {
+                if ((options as PlotBandOptions).borderWidth) {
                     attribs.stroke = (
-                        options as Highcharts.AxisPlotBandsOptions
+                        options as PlotBandOptions
                     ).borderColor;
                     attribs['stroke-width'] = (
-                        options as Highcharts.AxisPlotBandsOptions
+                        options as PlotBandOptions
                     ).borderWidth;
                 }
             }
@@ -390,7 +271,7 @@ class PlotLineOrBand {
                 verticalAlign: !horiz && isBand && 'middle',
                 y: horiz ? isBand ? 16 : 10 : isBand ? 6 : -4,
                 rotation: horiz && !isBand && 90
-            } as Highcharts.AxisPlotLinesLabelOptions, optionsLabel);
+            } as PlotLineLabelOptions, optionsLabel);
 
             this.renderLabel(optionsLabel, path, isBand, zIndex);
 
@@ -414,36 +295,19 @@ class PlotLineOrBand {
      * @return {void}
      */
     public renderLabel(
-        optionsLabel: (
-            Highcharts.AxisPlotLinesLabelOptions|
-            Highcharts.AxisPlotBandsLabelOptions
-        ),
+        optionsLabel: (PlotBandLabelOptions|PlotLineLabelOptions),
         path: SVGPath,
         isBand?: boolean,
         zIndex?: number
     ): void {
-        let plotLine = this,
-            label = plotLine.label,
-            renderer = plotLine.axis.chart.renderer,
-            attribs: SVGAttributes,
-            xBounds,
-            yBounds,
-            x,
-            y,
-            labelText;
+        const plotLine = this,
+            axis = plotLine.axis,
+            renderer = axis.chart.renderer;
+
+        let label = plotLine.label;
 
         // add the SVG element
         if (!label) {
-            attribs = {
-                align: optionsLabel.textAlign || optionsLabel.align,
-                rotation: optionsLabel.rotation,
-                'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
-                    '-label ' + ((optionsLabel as any).className || '')
-            };
-
-            attribs.zIndex = zIndex;
-            labelText = this.getLabelText(optionsLabel);
-
             /**
              * SVG element of the label.
              *
@@ -452,35 +316,54 @@ class PlotLineOrBand {
              */
             plotLine.label = label = renderer
                 .text(
-                    labelText as any,
+                    this.getLabelText(optionsLabel),
                     0,
                     0,
                     optionsLabel.useHTML
                 )
-                .attr(attribs)
+                .attr({
+                    align: optionsLabel.textAlign || optionsLabel.align,
+                    rotation: optionsLabel.rotation,
+                    'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
+                        '-label ' + ((optionsLabel as any).className || ''),
+                    zIndex
+                })
                 .add();
 
-            if (!this.axis.chart.styledMode) {
-                label.css(optionsLabel.style as any);
+            if (!axis.chart.styledMode) {
+                label.css(merge({
+                    textOverflow: 'ellipsis'
+                }, optionsLabel.style));
             }
         }
 
         // get the bounding box and align the label
         // #3000 changed to better handle choice between plotband or plotline
-        xBounds = (path as any).xBounds ||
+        const xBounds = (path as any).xBounds ||
             [path[0][1], path[1][1], (isBand ? path[2][1] : path[0][1])];
-        yBounds = (path as any).yBounds ||
+        const yBounds = (path as any).yBounds ||
             [path[0][2], path[1][2], (isBand ? path[2][2] : path[0][2])];
 
-        x = arrayMin(xBounds);
-        y = arrayMin(yBounds);
+        const x = arrayMin(xBounds);
+        const y = arrayMin(yBounds);
 
         label.align(optionsLabel, false, {
-            x: x,
-            y: y,
+            x,
+            y,
             width: arrayMax(xBounds) - x,
             height: arrayMax(yBounds) - y
         });
+
+        if (!label.alignValue || label.alignValue === 'left') {
+            label.css({
+                width: (
+                    label.rotation === 90 ?
+                        axis.height - (label.alignAttr.y - axis.top) :
+                        axis.width - (label.alignAttr.x - axis.left)
+                ) + 'px'
+            });
+        }
+
         label.show(true);
     }
 
@@ -492,10 +375,9 @@ class PlotLineOrBand {
      * @param {Highcharts.AxisPlotLinesLabelOptions|Highcharts.AxisPlotBandsLabelOptions} optionsLabel
      * @return {string}
      */
-    public getLabelText(optionsLabel: (
-        Highcharts.AxisPlotLinesLabelOptions|
-        Highcharts.AxisPlotBandsLabelOptions
-    )): string | undefined {
+    public getLabelText(
+        optionsLabel: (PlotBandLabelOptions|PlotLineLabelOptions)
+    ): string | undefined {
         return defined(optionsLabel.formatter) ?
             (optionsLabel.formatter as
               FormatUtilities.FormatterCallback<PlotLineOrBand>)
@@ -1177,7 +1059,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         this: Axis,
         from: number,
         to: number,
-        options: (Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions) = this.options
+        options: (PlotBandOptions|PlotLineOptions) = this.options
     ): SVGPath {
         let toPath = this.getPlotLinePath({
                 value: to,
@@ -1268,7 +1150,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
     addPlotBand: function (
         this: Axis,
-        options: Highcharts.AxisPlotBandsOptions
+        options: PlotBandOptions
     ): (PlotLineOrBand|undefined) {
         return this.addPlotBandOrLine(options, 'plotBands');
     },
@@ -1290,7 +1172,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
     addPlotLine: function (
         this: Axis,
-        options: Highcharts.AxisPlotLinesOptions
+        options: PlotLineOptions
     ): (PlotLineOrBand|undefined) {
         return this.addPlotBandOrLine(options, 'plotLines');
     },
@@ -1309,13 +1191,11 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
-    addPlotBandOrLine: function <T extends (
-        Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions
-    )> (
+    addPlotBandOrLine: function <T extends (PlotBandOptions|PlotLineOptions)> (
         this: Axis,
         options: T,
         coll?: (
-            T extends Highcharts.AxisPlotBandsOptions ?
+            T extends PlotBandOptions ?
                 'plotBands' :
                 'plotLines'
         )
@@ -1429,3 +1309,35 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 });
 
 export default PlotLineOrBand;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * Options for plot bands on axes.
+ *
+ * @typedef {Highcharts.XAxisPlotBandsOptions|Highcharts.YAxisPlotBandsOptions|Highcharts.ZAxisPlotBandsOptions} Highcharts.AxisPlotBandsOptions
+ */
+
+/**
+ * Options for plot band labels on axes.
+ *
+ * @typedef {Highcharts.XAxisPlotBandsLabelOptions|Highcharts.YAxisPlotBandsLabelOptions|Highcharts.ZAxisPlotBandsLabelOptions} Highcharts.AxisPlotBandsLabelOptions
+ */
+
+/**
+ * Options for plot lines on axes.
+ *
+ * @typedef {Highcharts.XAxisPlotLinesOptions|Highcharts.YAxisPlotLinesOptions|Highcharts.ZAxisPlotLinesOptions} Highcharts.AxisPlotLinesOptions
+ */
+
+/**
+ * Options for plot line labels on axes.
+ *
+ * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
+ */
+
+('');

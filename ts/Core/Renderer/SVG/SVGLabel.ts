@@ -468,18 +468,6 @@ class SVGLabel extends SVGElement {
             this.baselineOffset += (this.heightSetting - metrics.h) / 2;
         }
 
-        // Preliminary workaround for passing visual tests of default tooltip
-        // @todo: Remove last minute before next release
-        if (
-            this.hasClass('highcharts-tooltip') &&
-            this.text.firstLineMetrics &&
-            this.text.firstLineMetrics.b === 10 &&
-            style &&
-            style.fontSize === '12px'
-        ) {
-            this.baselineOffset += 2;
-        }
-
         if (this.needsBox) {
 
             // Create the border box if it is not already present

@@ -464,7 +464,7 @@ QUnit.test(
                         data: [
                             ['Firefox', 44.2],
                             ['IE7', 26.6],
-                            ['IE6', 20],
+                            { name: 'IE6', y: 20, visible: false },
                             ['Chrome', 3.1],
                             ['Other', 5.4]
                         ]
@@ -473,6 +473,11 @@ QUnit.test(
             }),
             points = chart.series[0].points,
             offset = Highcharts.offset(chart.container);
+
+        assert.ok(
+            true,
+            '#15909: Hidden point with useHTML dataLabels should not throw'
+        );
 
         Highcharts.fireEvent(points[0].dataLabel.div, 'mouseover', {
             which: 1,

@@ -1,25 +1,20 @@
-function getColorPattern(i) {
-    var colors = Highcharts.getOptions().colors,
-        patternColors = [colors[2], colors[0], colors[3], colors[1], colors[4]],
-        patterns = [
-            'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
-            'M 0 5 L 5 0 M -0.5 0.5 L 0.5 -0.5 M 4.5 5.5 L 5.5 4.5',
-            'M 1.5 0 L 1.5 5 M 4 0 L 4 5',
-            'M 0 1.5 L 5 1.5 M 0 4 L 5 4',
-            'M 0 1.5 L 2.5 1.5 L 2.5 0 M 2.5 5 L 2.5 3.5 L 5 3.5'
-        ];
+var clrs = Highcharts.getOptions().colors;
+var pieColors = [clrs[2], clrs[0], clrs[3], clrs[1], clrs[4]];
 
+// Get a default pattern, but using the pieColors above.
+// The i-argument refers to which default pattern to use
+function getPattern(i) {
     return {
-        pattern: {
-            path: patterns[i],
-            color: patternColors[i],
-            width: 5,
-            height: 5
-        }
+        pattern: Highcharts.merge(Highcharts.patterns[i], {
+            color: pieColors[i]
+        })
     };
 }
 
-Highcharts.chart('container', {
+// Get 5 patterns
+var patterns = [0, 1, 2, 3, 4].map(getPattern);
+
+var chart = Highcharts.chart('container', {
     chart: {
         type: 'pie'
     },
@@ -31,6 +26,8 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: WebAIM. Click on point to visit official website'
     },
+
+    colors: patterns,
 
     tooltip: {
         valueSuffix: '%',
@@ -61,7 +58,6 @@ Highcharts.chart('container', {
         data: [{
             name: 'NVDA',
             y: 40.6,
-            color: getColorPattern(0),
             website: 'https://www.nvaccess.org',
             accessibility: {
                 description: 'This is the most used desktop screen reader'
@@ -69,22 +65,18 @@ Highcharts.chart('container', {
         }, {
             name: 'JAWS',
             y: 40.1,
-            color: getColorPattern(1),
             website: 'https://www.freedomscientific.com/Products/Blindness/JAWS'
         }, {
             name: 'VoiceOver',
             y: 12.9,
-            color: getColorPattern(2),
             website: 'http://www.apple.com/accessibility/osx/voiceover'
         }, {
             name: 'ZoomText',
             y: 2,
-            color: getColorPattern(3),
             website: 'http://www.zoomtext.com/products/zoomtext-magnifierreader'
         }, {
             name: 'Other',
             y: 4.4,
-            color: getColorPattern(4),
             website: 'http://www.disabled-world.com/assistivedevices/computer/screen-readers.php'
         }]
     }],
@@ -106,3 +98,10 @@ Highcharts.chart('container', {
         }]
     }
 });
+
+// Toggle patterns enabled
+document.getElementById('patterns-enabled').onclick = function () {
+    chart.update({
+        colors: this.checked ? patterns : pieColors
+    });
+};

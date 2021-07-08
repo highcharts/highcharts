@@ -19,6 +19,7 @@
  * */
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
+import type SeriesClass from '../../Core/Series/Series';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type {
@@ -251,7 +252,7 @@ class XRangeSeries extends ColumnSeries {
         yData: Array<number>,
         min: number,
         max: number
-    ): Highcharts.SeriesCropDataObject {
+    ): SeriesClass.CropDataObject {
 
         // Replace xData with x2Data to find the appropriate cropStart
         const cropData = Series.prototype.cropData,

@@ -1073,23 +1073,18 @@ class Chart {
      *         The currently selected points.
      */
     public getSelectedPoints(): Array<Point> {
-        let points = [] as Array<Point>;
-
-        this.series.forEach(function (serie): void {
+        return this.series.reduce((acc: Point[], series): Point[] => {
             // For one-to-one points inspect series.data in order to retrieve
             // points outside the visible range (#6445). For grouped data,
             // inspect the generated series.points.
-            points = points.concat(
-                serie.getPointsCollection().filter(
-                    function (point: Point): boolean {
-                        return pick(
-                            point.selectedStaging, point.selected as any
-                        );
+            series.getPointsCollection()
+                .forEach((point): void => {
+                    if (pick(point.selectedStaging, point.selected)) {
+                        acc.push(point);
                     }
-                )
-            );
-        });
-        return points;
+                });
+            return acc;
+        }, []);
     }
 
     /**
@@ -3027,7 +3022,7 @@ class Chart {
         // Update text
         AST.setElementHTML(
             loadingSpan,
-            pick(str, (options.lang as any).loading, '')
+            pick(str, options.lang.loading, '')
         );
 
         if (!chart.styledMode) {
@@ -3385,7 +3380,7 @@ class Chart {
         });
 
         itemsForRemoval.forEach(function (item: any): void {
-            if (item.chart) { // #9097, avoid removing twice
+            if (item.chart && item.remove) { // #9097, avoid removing twice
                 item.remove(false);
             }
         });
@@ -3506,7 +3501,7 @@ class Chart {
         fireEvent(this, 'beforeShowResetZoom', null as any, function (): void {
             chart.resetZoomButton = chart.renderer
                 .button(
-                    (lang as any).resetZoom,
+                    lang.resetZoom,
                     null as any,
                     null as any,
                     zoomOut,
@@ -3515,7 +3510,7 @@ class Chart {
                 )
                 .attr({
                     align: btnOptions.position.align,
-                    title: (lang as any).resetZoomTitle
+                    title: lang.resetZoomTitle
                 })
                 .addClass('highcharts-reset-zoom')
                 .add()
@@ -3876,7 +3871,6 @@ extend(Chart.prototype, {
     collectionsWithUpdate: [
         'xAxis',
         'yAxis',
-        'zAxis',
         'series'
     ],
 

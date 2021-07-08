@@ -1472,7 +1472,6 @@ function correctFloat(num: number, prec?: number): number {
     );
 }
 
-
 /**
  * The time unit lookup
  *

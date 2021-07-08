@@ -118,6 +118,7 @@ declare module '../Series/SeriesLike' {
     interface SeriesLike {
         clipBox?: BBoxObject;
         compareValue?: number;
+        forceCropping(): boolean|undefined;
         modifyValue?(value?: number, point?: Point): (number|undefined);
         setCompare(compare?: string): void;
         initCompare(compare?: string): void;
@@ -995,6 +996,23 @@ Series.prototype.initCompare = function (compare?: string): void {
     if (this.chart.hasRendered) {
         this.isDirty = true;
     }
+};
+
+/**
+ * Based on the data grouping options decides whether
+ * the data should be cropped while processing.
+ *
+ * @ignore
+ * @function Highcharts.Series#forceCropping
+ */
+Series.prototype.forceCropping = function (this: Series): (boolean|undefined) {
+    const chart = this.chart,
+        options = this.options,
+        dataGroupingOptions = options.dataGrouping,
+        groupingEnabled = this.allowDG !== false && dataGroupingOptions &&
+            pick(dataGroupingOptions.enabled, chart.options.isStock);
+
+    return groupingEnabled;
 };
 
 /**
