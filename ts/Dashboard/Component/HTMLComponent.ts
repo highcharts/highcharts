@@ -9,7 +9,7 @@ import DataStore from '../../Data/Stores/DataStore.js';
 
 // TODO: This may affect the AST parsing in Highcharts
 // should look into adding these as options if possible
-AST.allowedTags = [...AST.allowedTags, 'option', 'select', 'label', 'input'];
+AST.allowedTags = [...AST.allowedTags, 'option', 'select', 'label', 'input', 'textarea'];
 AST.allowedAttributes = [...AST.allowedAttributes, 'for', 'value', 'checked', 'src', 'name', 'selected'];
 AST.allowedReferences = [...AST.allowedReferences, 'data:image/'];
 class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
