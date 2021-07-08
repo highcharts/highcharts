@@ -39,26 +39,11 @@ const {
     defined,
     destroyObjectProperties,
     erase,
-    extend,
     fireEvent,
-    isNumber,
     merge,
     objectEach,
     pick
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../AxisOptions' {
-    interface AxisOptions {
-        plotBands?: Array<PlotBandOptions>;
-        plotLines?: Array<PlotLineOptions>;
-    }
-}
 
 /* *
  *
@@ -140,32 +125,35 @@ class PlotLineOrBand {
     public render(): (PlotLineOrBand|undefined) {
         fireEvent(this, 'render');
 
-        let plotLine = this,
+        const plotLine = this,
             axis = plotLine.axis,
             horiz = axis.horiz,
             log = axis.logarithmic,
             options = plotLine.options as (PlotBandOptions|PlotLineOptions),
-            optionsLabel = options.label,
+            color = options.color,
+            zIndex = pick(options.zIndex, 0),
+            events = options.events,
+            groupAttribs: SVGAttributes = {},
+            renderer = axis.chart.renderer;
+
+        let optionsLabel = options.label,
             label = plotLine.label,
             to = (options as any).to,
             from = (options as any).from,
             value = (options as any).value,
-            isBand = defined(from) && defined(to),
-            isLine = defined(value),
             svgElem = plotLine.svgElem,
-            isNew = !svgElem,
             path = [] as SVGPath,
-            color = options.color,
-            zIndex = pick(options.zIndex, 0),
-            events = options.events,
+            group;
+
+        const isBand = defined(from) && defined(to),
+            isLine = defined(value),
+            isNew = !svgElem,
             attribs: SVGAttributes = {
                 'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') +
                     (options.className || '')
-            },
-            groupAttribs: SVGAttributes = {},
-            renderer = axis.chart.renderer,
-            groupName = isBand ? 'bands' : 'lines',
-            group;
+            };
+
+        let groupName = isBand ? 'bands' : 'lines';
 
         // logarithmic conversion
         if (log) {

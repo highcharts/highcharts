@@ -1,5 +1,17 @@
 /* *
  *
+ *  (c) 2010-2021 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+'use strict';
+
+/* *
+ *
  *  Imports
  *
  * */
@@ -16,6 +28,19 @@ const {
     extend,
     isNumber
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../AxisOptions' {
+    interface AxisOptions {
+        plotBands?: Array<PlotBandOptions>;
+        plotLines?: Array<PlotLineOptions>;
+    }
+}
 
 /* *
  *
@@ -144,27 +169,28 @@ namespace PlotLineOrBandAxis {
             to: number,
             options: (PlotBandOptions|PlotLineOptions) = this.options
         ): SVGPath {
-            let toPath = this.getPlotLinePath({
+            const toPath = this.getPlotLinePath({
                     value: to,
                     force: true,
                     acrossPanes: options.acrossPanes
                 }),
-                path = this.getPlotLinePath({
-                    value: from,
-                    force: true,
-                    acrossPanes: options.acrossPanes
-                }),
                 result = [] as SVGPath,
-                i,
-                // #4964 check if chart is inverted or plotband is on yAxis
                 horiz = this.horiz,
-                plus = 1,
-                isFlat: (boolean|undefined),
                 outside =
                     !isNumber(this.min) ||
                     !isNumber(this.max) ||
                     (from < this.min && to < this.min) ||
                     (from > this.max && to > this.max);
+
+            let path = this.getPlotLinePath({
+                    value: from,
+                    force: true,
+                    acrossPanes: options.acrossPanes
+                }),
+                i,
+                // #4964 check if chart is inverted or plotband is on yAxis
+                plus = 1,
+                isFlat: (boolean|undefined);
 
             if (path && toPath) {
 
@@ -283,8 +309,9 @@ namespace PlotLineOrBandAxis {
                     'plotLines'
             )
         ): (PlotLineOrBand|undefined) {
-            let obj: (PlotLineOrBand|undefined) = new PlotLineOrBandClass(this, options),
-                userOptions = this.userOptions;
+            const userOptions = this.userOptions;
+
+            let obj: (PlotLineOrBand|undefined) = new PlotLineOrBandClass(this, options);
 
             if (this.visible) {
                 obj = obj.render();
