@@ -78,6 +78,7 @@ class EditMode {
         this.isContextDetectionActive = false;
         this.tools = {};
         this.rwdMenu = [];
+        this.rwdMode = this.dashboard.getLayoutContainerSize();
 
         this.createTools();
 
@@ -108,8 +109,8 @@ class EditMode {
     public isInitialized: boolean;
     public addComponentBtn?: HTMLDOMElement;
     // public resizeBtn?: HTMLDOMElement;
-    public rwdMode: string = void 0 as any;
-    public rwdMenu: Array<HTMLDOMElement|undefined> = void 0 as any;
+    public rwdMode: string;
+    public rwdMenu: Array<HTMLDOMElement>;
     public tools: EditMode.Tools;
     public confirmationPopup?: ConfirmationPopup;
     public isContextDetectionActive: boolean;
@@ -378,6 +379,15 @@ class EditMode {
             editMode.sidebar.updateTitle('General');
         }
 
+        // Sets proper rwd mode.
+        if (editMode.sidebar) {
+            editMode.sidebar.afterCSSAnimate((): void => {
+                editMode.rwdMode = editMode.dashboard.getLayoutContainerSize();
+            });
+        } else {
+            editMode.rwdMode = editMode.dashboard.getLayoutContainerSize();
+        }
+
         // show reponsive buttons
         this.showRwdButtons();
     }
@@ -523,29 +533,28 @@ class EditMode {
 
         for (const key in rwdBreakingPoints) {
             if (toolsContainer) {
-                this.rwdMenu.push(
-                    EditRenderer.renderButton(
-                        toolsContainer,
-                        {
-                            className: EditGlobals.classNames.editToolsBtn,
-                            icon: (rwdIcons as any)[key] || '',
-                            value: key,
-                            callback: (): void => {
-                                this.dashboard.layoutsWrapper.style.width =
-                                    rwdBreakingPoints[key] + 'px';
+                const btn = EditRenderer.renderButton(
+                    toolsContainer,
+                    {
+                        className: EditGlobals.classNames.editToolsBtn,
+                        icon: (rwdIcons as any)[key] || '',
+                        value: key,
+                        callback: (): void => {
+                            this.dashboard.layoutsWrapper.style.width = rwdBreakingPoints[key] + 'px';
+                            this.rwdMode = key;
 
-                                this.rwdMode = key;
-
-                                // reflow elements
-                                this.dashboard.reflow();
-
-                            },
-                            style: {
-                                display: 'none'
-                            }
+                            // reflow elements
+                            this.dashboard.reflow();
+                        },
+                        style: {
+                            display: 'none'
                         }
-                    )
+                    }
                 );
+
+                if (btn) {
+                    this.rwdMenu.push(btn);
+                }
             }
         }
     }

@@ -347,7 +347,7 @@ class Cell extends GUIElement {
         dashContainerSize?: string
     ) {
         const cell = this,
-            cntSize = dashContainerSize || cell.row.layout.dashboard.getContainerSize(),
+            cntSize = dashContainerSize || cell.row.layout.dashboard.getLayoutContainerSize(),
             respoOptions = cell.options.responsive;
 
         let width, flexAuto;
