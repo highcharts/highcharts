@@ -842,10 +842,17 @@ class Sidebar {
             activeTab.customFields = [];
         }
 
+        const gridWrapper = createElement(
+            'div', {
+                className: EditGlobals.classNames.editGridItems
+            },
+            {},
+            activeTabContainer
+        );
+
         for (let i = 0, iEnd = predefinedWidth.length; i < iEnd; ++i) {
             const predefinedBtnWidth = createElement(
                 'div', {
-                    className: '',
                     textContent: predefinedWidth[i].name,
                     onclick: function (): void {
                         if (item) {
@@ -854,7 +861,7 @@ class Sidebar {
                     }
                 },
                 {},
-                activeTabContainer
+                gridWrapper
             );
 
             if (activeTab && activeTab.customFields) {
