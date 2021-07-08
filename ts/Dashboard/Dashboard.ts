@@ -119,6 +119,14 @@ class Dashboard {
             this.editMode = new EditMode(this, this.options.editMode);
         }
 
+        // Create layouts wrapper.
+        this.layoutsWrapper = createElement(
+            'div', {
+                className: DashboardGlobals.classNames.layoutsWrapper
+            }, {},
+            this.container
+        );
+
         // Init layouts from options.
         if (options.gui && this.options.gui) {
             this.setLayouts(this.options.gui);
@@ -150,7 +158,7 @@ class Dashboard {
     public guiEnabled: (boolean|undefined);
     public id: string;
     public editMode?: EditMode;
-    public layoutsWrapper: globalThis.HTMLElement = void 0 as any;
+    public layoutsWrapper: globalThis.HTMLElement;
     /* *
      *
      *  Functions
@@ -191,14 +199,6 @@ class Dashboard {
     public setLayouts(guiOptions: Dashboard.GUIOptions): void {
         const dashboard = this,
             layoutsOptions = guiOptions.layouts;
-
-        // create layouts wrapper
-        this.layoutsWrapper = createElement(
-            'div', {
-                className: DashboardGlobals.classNames.layoutsWrapper
-            }, {},
-            dashboard.container
-        );
 
         for (let i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
             dashboard.layouts.push(
@@ -318,10 +318,10 @@ class Dashboard {
         return Layout.importLocal(id, this);
     }
 
-    public getContainerSize(): string {
+    public getLayoutContainerSize(): string {
         const dashboard = this,
             respoOptions = dashboard.options.respoBreakpoints,
-            cntWidth = dashboard.layoutsWrapper.clientWidth;
+            cntWidth = (dashboard.layoutsWrapper || {}).clientWidth;
 
         let size = DashboardGlobals.respoBreakpoints.large;
 
@@ -338,7 +338,7 @@ class Dashboard {
 
     public reflow(): void {
         const dashboard = this,
-            cntSize = dashboard.getContainerSize();
+            cntSize = dashboard.getLayoutContainerSize();
 
         let layout, row, cell;
 

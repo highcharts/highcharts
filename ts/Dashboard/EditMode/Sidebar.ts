@@ -779,57 +779,33 @@ class Sidebar {
         }
     }
 
+    // Get width from options or calculate it.
     private getCellWidth(
         cell: Cell
-    ): number|string {
-        const convertWidthToPercent = this.convertWidthToPercent;
-        const cellRwd = cell.options.responsive;
-        const currentRwdMode = (cell.row.layout.dashboard.editMode &&
-            cell.row.layout.dashboard.editMode.rwdMode) || 'large';
+    ): number {
+        const sidebar = this,
+            currentRwdMode = sidebar.editMode.rwdMode,
+            cellRwd = (cell.options.responsive || {})[currentRwdMode],
+            definedWidth = cellRwd && cellRwd.width || cell.options.width;
 
-        let cellWidth;
+        if (definedWidth) {
+            const percentageValue = GUIElement.getPercentageWidth(definedWidth);
 
-        if (currentRwdMode === 'large') {
-            cellWidth =
-                convertWidthToPercent(cell.options.width) || 'calculate';
-        } else {
-            cellWidth = convertWidthToPercent(
-                ((cellRwd && cellRwd[currentRwdMode]) || {}).width
-            ) || 'calculate';
-        }
-
-        return cellWidth;
-    }
-
-    private convertWidthToPercent(
-        value: string|undefined
-    ): number|undefined {
-        let convertedValue;
-
-        if (!value) {
-            return;
-        }
-
-        if (value.match(/%/g)) {
-
-            // percent value like 33.333%
-            convertedValue = parseFloat(value);
-        } else if (value.match(/\//g)) {
-
-            // radio value like 1/3
-            const ratioValue = value.split('/');
-
-            if (ratioValue) {
-                convertedValue = (Math.round(
-                    (
-                        parseFloat(ratioValue[0]) /
-                        parseFloat(ratioValue[1])
-                    ) * 100
-                ) * 100) / 100;
+            if (percentageValue) {
+                return parseFloat(percentageValue);
             }
         }
 
-        return convertedValue;
+        const cellOffsets = GUIElement.getOffsets(cell),
+            rowOffsets = GUIElement.getOffsets(cell.row);
+
+        // @ToDo improve calculations
+        // analyze other cells in the row (on the same level)
+        const cellWidth = (
+            (cellOffsets.right - cellOffsets.left) / (rowOffsets.right - rowOffsets.left)
+        ) * 100;
+
+        return cellWidth;
     }
 
     private getWidthGridOptions(): void {
