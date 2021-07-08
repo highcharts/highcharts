@@ -134,6 +134,7 @@ G.wrap = Utilities.wrap;
 // Compositions
 DateTimeAxis.compose(Axis);
 LogarithmicAxis.compose(Axis);
+PlotLineOrBand.compose(Axis);
 Responsive.compose(Chart);
 // Default Export
 export default G;
