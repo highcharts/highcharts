@@ -55,20 +55,20 @@ class Cell extends GUIElement {
         dimensions: { width?: number | string; height?: number | string },
         cellContainer: HTMLDOMElement
     ): void {
-        const width = dimensions.width;
-        const height = dimensions.width;
+        // const width = dimensions.width;
+        // const height = dimensions.width;
 
-        if (width) {
-            cellContainer.style.width = isNumber(width) ?
-                dimensions.width + 'px' : width;
+        // if (width) {
+        //     cellContainer.style.width = isNumber(width) ?
+        //         dimensions.width + 'px' : width;
 
-            cellContainer.style.flex = 'none';
-        }
+        //     cellContainer.style.flex = 'none';
+        // }
 
-        if (height) {
-            cellContainer.style.height = isNumber(height) ?
-                dimensions.height + 'px' : height;
-        }
+        // if (height) {
+        //     cellContainer.style.height = isNumber(height) ?
+        //         dimensions.height + 'px' : height;
+        // }
     }
 
     /* *
@@ -130,7 +130,7 @@ class Cell extends GUIElement {
             });
 
             // Set cell width respecting responsive options.
-            this.updateSize();
+            this.reflow();
 
             // Mount component from JSON.
             if (this.options.mountedComponentJSON) {
@@ -268,14 +268,14 @@ class Cell extends GUIElement {
         };
     }
 
-    public setSize(
-        dimensions: { width?: number | string; height?: number | string }
-    ): void {
-        Cell.setContainerSize(
-            dimensions,
-            this.container as HTMLDOMElement
-        );
-    }
+    // public setSize(
+    //     dimensions: { width?: number | string; height?: number | string }
+    // ): void {
+    //     Cell.setContainerSize(
+    //         dimensions,
+    //         this.container as HTMLDOMElement
+    //     );
+    // }
 
     protected changeVisibility(
         setVisible: boolean = true
@@ -343,34 +343,55 @@ class Cell extends GUIElement {
         return levels;
     }
 
-    public updateSize(
+    public reflow(
         dashContainerSize?: string
     ) {
         const cell = this,
             cntSize = dashContainerSize || cell.row.layout.dashboard.getLayoutContainerSize(),
             respoOptions = cell.options.responsive;
 
-        let width, flexAuto;
+        let width;
 
         if (cell.container) {
             if (respoOptions && respoOptions[cntSize] && respoOptions[cntSize].width) {
                 width = GUIElement.getPercentageWidth(respoOptions[cntSize].width);
             } else if (cell.options.width) {
                 width = GUIElement.getPercentageWidth(cell.options.width);
-            } else {
-                flexAuto = true;
             }
 
+            cell.setSize(width);
+        }
+    }
+
+    public setSize(
+        width?: string // % value
+    ): void {
+        const cell = this,
+            editMode = cell.row.layout.dashboard.editMode;
+
+        if (cell.container) {
             if (width && cell.container.style.flex !== '0 0 ' + width) {
                 cell.container.style.flex = '0 0 ' + width;
-            } else if (flexAuto && cell.container.style.flex !== '1 1 0%') {
+            } else if (cell.container.style.flex !== '1 1 0%') {
                 cell.container.style.flex = '1 1 0%';
             }
 
+            if (editMode) {
+                editMode.hideContextPointer();
+
+                if (editMode.cellToolbar && editMode.cellToolbar.isVisible) {
+                    editMode.cellToolbar.refreshOutline();
+                }
+            }
+    
             // Call cellResize dashboard event.
             fireEvent(cell.row.layout.dashboard, 'cellResize', { cell: cell });
             fireEvent(cell.row, 'cellChange', { cell: cell, row: cell.row });
         }
+    }
+
+    public updateSize() {
+        // update responsive options
     }
 }
 

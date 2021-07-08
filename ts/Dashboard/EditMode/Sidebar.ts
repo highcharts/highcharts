@@ -426,6 +426,22 @@ class Sidebar {
                             if (isComponentSettings) {
                                 sidebar.updateComponent();
                             }
+
+                            // @ToDo - only for testing should be refactored
+                            // probably the whole save button
+                            if (
+                                sidebar.context &&
+                                sidebar.activeTab &&
+                                sidebar.activeTab.content.activeItems &&
+                                sidebar.activeTab.content.activeItems[0] &&
+                                sidebar.activeTab.content.activeItems[0].innerElement
+                            ) {
+                                const value = (
+                                    sidebar.activeTab.content.activeItems[0].innerElement as any
+                                ).value;
+
+                                sidebar.context.setSize(value + '%');
+                            }
                         }
                     }
                 );
@@ -813,9 +829,8 @@ class Sidebar {
 
     private getWidthGridOptions(): void {
         const sidebar = this;
-        const activeTab = sidebar.activeTab && sidebar.activeTab;
-        const activeTabContainer = activeTab && activeTab.content &&
-            activeTab && activeTab.content.container && activeTab.content.container;
+        const activeTab = sidebar.activeTab;
+        const activeTabContainer = activeTab && activeTab.content && activeTab.content.container;
         const predefinedWidth = Sidebar.predefinedWidth;
         const item = activeTab && activeTab.content.activeItems[0];
 
@@ -834,8 +849,7 @@ class Sidebar {
                     textContent: predefinedWidth[i].name,
                     onclick: function (): void {
                         if (item) {
-                            (item.innerElement as any).value =
-                                predefinedWidth[i].value;
+                            (item.innerElement as any).value = predefinedWidth[i].value;
                         }
                     }
                 },

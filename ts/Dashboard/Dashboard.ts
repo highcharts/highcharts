@@ -355,7 +355,7 @@ class Dashboard {
 
                 for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
                     cell = row.cells[k];
-                    cell.updateSize(cntSize);
+                    cell.reflow(cntSize);
                 }
             }
         }
