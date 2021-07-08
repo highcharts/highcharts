@@ -203,7 +203,7 @@ class EditMode {
             editMode.cellToolbar = new CellEditToolbar(editMode);
         }
 
-        // Init optionsToolbar.
+        // Init Sidebar.
         if (!editMode.sidebar) {
             editMode.sidebar = new Sidebar(editMode);
         }
@@ -357,9 +357,6 @@ class EditMode {
             editMode.initEvents();
         }
 
-        editMode.active = true;
-        editMode.isContextDetectionActive = true;
-
         // Set edit mode active class to dashboard.
         editMode.dashboard.container.classList.add(
             EditGlobals.classNames.editModeEnabled
@@ -390,14 +387,14 @@ class EditMode {
 
         // show reponsive buttons
         this.showRwdButtons();
+
+        editMode.active = true;
+        editMode.isContextDetectionActive = true;
     }
 
     public deactivateEditMode(): void {
         const editMode = this,
             dashboardCnt = editMode.dashboard.container;
-
-        editMode.active = false;
-        editMode.stopContextDetection();
 
         this.editCellContext = void 0;
         this.potentialCellContext = void 0;
@@ -428,6 +425,9 @@ class EditMode {
 
         // disable responsive width
         this.dashboard.layoutsWrapper.style.width = '100%';
+
+        editMode.active = false;
+        editMode.stopContextDetection();
     }
 
     public isActive(): boolean {
@@ -576,6 +576,7 @@ class EditMode {
             offset = 50; // TODO - add it from options.
 
         if (
+            editMode.isActive() &&
             editMode.isContextDetectionActive &&
             (editMode.mouseCellContext || editMode.mouseRowContext) &&
             !(editMode.dragDrop || {}).isActive
@@ -655,7 +656,7 @@ class EditMode {
     /**
      * Method for hiding context pointer.
      */
-    private hideContextPointer(): void {
+    public hideContextPointer(): void {
         if (this.contextPointer.isVisible) {
             this.contextPointer.isVisible = false;
             this.contextPointer.element.style.display = 'none';

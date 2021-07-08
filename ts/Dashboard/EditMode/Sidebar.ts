@@ -582,7 +582,10 @@ class Sidebar {
         // Refresh layout
         sidebar.afterCSSAnimate((): void => {
             sidebar.editMode.dashboard.reflow();
-            sidebar.editMode.isContextDetectionActive = true;
+
+            if (sidebar.editMode.isActive()) {
+                sidebar.editMode.isContextDetectionActive = true;
+            }
         });
     }
 

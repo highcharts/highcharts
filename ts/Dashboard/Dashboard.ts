@@ -342,6 +342,11 @@ class Dashboard {
 
         let layout, row, cell;
 
+        if (dashboard.editMode) {
+            dashboard.editMode.hideToolbars(['cell', 'row']);
+            dashboard.editMode.hideContextPointer();
+        }
+
         for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
             layout = dashboard.layouts[i];
 
