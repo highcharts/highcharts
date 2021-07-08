@@ -499,14 +499,18 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach(function (name: ('labels'|'shapes')): void {
             if (baseOptions[name]) {
-                mergedOptions[name] = splat(newOptions[name]).map(
-                    function (
-                        basicOptions: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions),
-                        i: number
-                    ): (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions) {
-                        return merge(baseOptions[name][i], basicOptions);
-                    }
-                ) as any;
+                if (newOptions[name]) {
+                    mergedOptions[name] = splat(newOptions[name]).map(
+                        function (
+                            basicOptions: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions),
+                            i: number
+                        ): (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions) {
+                            return merge(baseOptions[name][i], basicOptions);
+                        }
+                    ) as any;
+                } else {
+                    mergedOptions[name] = baseOptions[name] as any;
+                }
             }
         });
 
