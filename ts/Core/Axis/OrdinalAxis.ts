@@ -37,9 +37,6 @@ const {
     timeUnits
 } = U;
 
-// Has a dependency on Navigator due to the use of Axis.toFixedRange
-import '../Navigator.js';
-
 /* *
  *
  *  Declarations
@@ -1317,7 +1314,7 @@ namespace OrdinalAxis {
                     // smaller and faster.
                     chart.fixedRange = max - min;
 
-                    trimmedRange = (xAxis as NavigatorAxis).navigatorAxis.toFixedRange(
+                    trimmedRange = (xAxis as NavigatorAxis.Composition).navigatorAxis.toFixedRange(
                         null as any,
                         null as any,
                         index2val.apply(searchAxisLeft, [

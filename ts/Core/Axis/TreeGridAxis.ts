@@ -17,12 +17,14 @@
  *
  * */
 
+import type Axis from './Axis.js';
 import type {
     AxisBreakOptions,
     AxisLabelOptions,
     AxisOptions
 } from './AxisOptions';
 import type Chart from '../Chart/Chart';
+import type { ChartAddSeriesEventObject } from '../Chart/ChartOptions';
 import type ColorType from '../Color/ColorType';
 import type GanttPoint from '../../Series/Gantt/GanttPoint';
 import type GanttPointOptions from '../../Series/Gantt/GanttPointOptions';
@@ -32,13 +34,10 @@ import type {
     PointShortOptions
 } from '../Series/PointOptions';
 import type Series from '../Series/Series';
-import type SizeObject from '../Renderer/SizeObject';
-import type { ChartAddSeriesEventObject } from '../Chart/ChartOptions';
+import type Tick from './Tick.js';
 
-import type Axis from './Axis.js';
 import BrokenAxis from './BrokenAxis.js';
 import GridAxis from './GridAxis.js';
-import type Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import mixinTreeSeries from '../../Mixins/TreeSeries.js';

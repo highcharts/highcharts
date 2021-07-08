@@ -74,7 +74,8 @@ const {
 import '../Pointer.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
-import '../Navigator.js';
+import Navigator from '../Navigator/Navigator.js';
+Navigator.compose();
 // Has a dependency on Scrollbar due to the use of
 // defaultOptions.scrollbar
 import '../Scrollbar.js';
