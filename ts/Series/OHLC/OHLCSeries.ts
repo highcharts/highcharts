@@ -101,7 +101,7 @@ class OHLCSeries extends HLCSeries {
          * @default    close
          * @validvalue ["open", "high", "low", "close"]
          * @product    highstock
-         * @apioption  plotOptions.hlc.pointValKey
+         * @apioption  plotOptions.ohlc.pointValKey
          */
 
         /**
@@ -200,14 +200,7 @@ interface OHLCSeries {
     toYData(point: OHLCPoint): Array<number>;
 }
 extend(OHLCSeries.prototype, {
-    animate: null as any, // Disable animation
-    directTouch: false,
-    pointArrayMap: ['open', 'high', 'low', 'close'],
-    pointAttrToOptions: {
-        stroke: 'color',
-        'stroke-width': 'lineWidth'
-    },
-    pointValKey: 'close'
+    pointArrayMap: ['open', 'high', 'low', 'close']
 });
 
 OHLCSeries.prototype.pointClass = OHLCPoint;

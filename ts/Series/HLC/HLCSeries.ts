@@ -109,7 +109,7 @@ class HLCSeries extends ColumnSeries {
          * @default 1
          * @product highstock
          *
-         * @private
+         * @public
          */
         lineWidth: 1,
 
@@ -308,17 +308,13 @@ class HLCSeries extends ColumnSeries {
     public drawPoints(): void {
         const series = this,
             points = series.points;
-            /**
-             * Extend vertical stem to close values.
-             */
-
         points.forEach(this.drawSinglePoint);
 
     }
 
     /**
      * @private
-     * @function Highcarts.seriesTypes.hlc#init
+     * @function Highcharts.seriesTypes.hlc#init
      * @return {void}
      */
     public init(): void {
@@ -336,14 +332,12 @@ class HLCSeries extends ColumnSeries {
         state: StatesOptionsKey
     ): SVGAttributes {
         const attribs = super.pointAttribs.call(
-                this,
-                point,
-                state
-            ),
-            options = this.options;
+            this,
+            point,
+            state
+        );
 
         delete attribs.fill;
-
 
         return attribs;
     }
@@ -365,8 +359,11 @@ class HLCSeries extends ColumnSeries {
         const series = this,
             yAxis = series.yAxis,
             hasModifyValue = !!series.modifyValue,
-            names = this.pointArrayMap && this.pointArrayMap.slice() || [],
-            translated = names.map((name: string): string => `plot${name.charAt(0).toUpperCase() + name.slice(1)}`);
+            names = (this.pointArrayMap && this.pointArrayMap.slice()) || [],
+            translated = names.map(
+                (name: string): string =>
+                    `plot${name.charAt(0).toUpperCase() + name.slice(1)}`
+            );
         translated.push('yBottom');
         names.push('low');
         super.translate.apply(series);
