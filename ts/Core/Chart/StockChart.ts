@@ -61,6 +61,7 @@ const {
     arrayMax,
     arrayMin,
     clamp,
+    correctFloat,
     defined,
     extend,
     find,
@@ -110,6 +111,7 @@ declare module '../Options'{
 declare module '../Series/PointLike' {
     interface PointLike {
         change?: number;
+        cumulativeSum?: number;
     }
 }
 
@@ -121,6 +123,7 @@ declare module '../Series/SeriesLike' {
         modifyValue?(value?: number, point?: Point): (number|undefined);
         setCompare(compare?: string): void;
         initCompare(compare?: string): void;
+        initCumulative(): void;
     }
 }
 
@@ -129,6 +132,7 @@ declare module '../Series/SeriesOptions' {
         compare?: string;
         compareBase?: (0|100);
         compareStart?: boolean;
+        cumulative?: boolean;
     }
 }
 
@@ -926,8 +930,13 @@ Series.prototype.init = function (): void {
     // Call base method
     seriesInit.apply(this, arguments as any);
 
-    // Set comparison mode
-    this.initCompare(this.options.compare as any);
+    if (this.options.compare) {
+        // Set comparison mode
+        this.initCompare(this.options.compare);
+    } else if (this.options.cumulative) {
+        // Set cumulative sum mode
+        this.initCumulative();
+    }
 };
 
 /**
@@ -946,6 +955,46 @@ Series.prototype.setCompare = function (compare?: string): void {
 
     // Survive to export, #5485
     this.userOptions.compare = compare;
+};
+
+/**
+ * @ignore
+ * @function Highcharts.Series#initCumulativeSum
+ */
+Series.prototype.initCumulative = function (): void {
+    // Set or unset the modifyValue method
+    this.modifyValue = function (
+        this: Series,
+        value?: number,
+        previousPoint?: Point,
+        point?: Point
+    ): (number|undefined) {
+        if (typeof value !== 'undefined') {
+            // Get the modified value
+            if (previousPoint) {
+                value = (this as any).cumulativeTotal =
+                    correctFloat(pick((this as any).cumulativeTotal || previousPoint.y) + value);
+            }
+
+            // Record for tooltip etc.
+            if (point) {
+                point.cumulativeSum = value;
+            }
+
+            if (previousPoint) {
+                (this as any).minCumValue = Math.min((this as any).minCumValue || 0, value);
+                (this as any).maxCumValue = Math.max((this as any).maxCumValue || 0, value);
+            }
+
+            return value;
+        }
+        return 0;
+    };
+
+    // Mark dirty
+    if (this.chart.hasRendered) {
+        this.isDirty = true;
+    }
 };
 
 /**
@@ -1130,16 +1179,21 @@ Axis.prototype.setCompare = function (
  * @param {string} pointFormat
  */
 Point.prototype.tooltipFormatter = function (pointFormat: string): string {
-    const point = this;
-    const { numberFormatter } = point.series.chart;
+    const point: any = this,
+        { numberFormatter } = point.series.chart,
+        replace = function (value: string): void {
+            pointFormat = pointFormat.replace(
+                '{point.' + value + '}',
+                ((point[value] as any) > 0 && value === 'change' ? '+' : '') +
+                    numberFormatter(
+                        point[value] as any,
+                        pick(point.series.tooltipOptions.changeDecimals, 2)
+                    )
+            );
+        };
 
-    pointFormat = pointFormat.replace(
-        '{point.change}',
-        ((point.change as any) > 0 ? '+' : '') + numberFormatter(
-            point.change as any,
-            pick(point.series.tooltipOptions.changeDecimals, 2)
-        )
-    );
+    replace('change');
+    replace('cumulativeSum');
 
     return pointTooltipFormatter.apply(this, [pointFormat]);
 };

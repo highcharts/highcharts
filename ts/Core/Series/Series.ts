@@ -4417,7 +4417,11 @@ class Series {
             j,
             xMin = 0,
             xMax = 0,
-            activeCounter = 0;
+            activeCounter = 0,
+            cumulative = this.options.cumulative,
+            cumDataMin = Infinity,
+            cumDataMax = -Infinity,
+            cumSum = 0;
 
         yData = yData || this.stackedYData || this.processedYData || [];
         const yDataLength = yData.length;
@@ -4463,12 +4467,18 @@ class Series {
                 } else {
                     activeYData[activeCounter++] = y;
                 }
+
+                if (cumulative) {
+                    cumSum += activeYData[activeCounter - 1];
+                    cumDataMin = Math.min(cumDataMin, cumSum);
+                    cumDataMax = Math.max(cumDataMax, cumSum);
+                }
             }
         }
 
         const dataExtremes = {
-            dataMin: arrayMin(activeYData),
-            dataMax: arrayMax(activeYData)
+            dataMin: cumulative ? cumDataMin : arrayMin(activeYData),
+            dataMax: cumulative ? cumDataMax : arrayMax(activeYData)
         };
 
         fireEvent(this, 'afterGetExtremes', { dataExtremes });
@@ -4582,9 +4592,12 @@ class Series {
             return clamp(val, -1e5, 1e5);
         }
 
+        (series as any).cumulativeTotal = 0;
+
         // Translate each point
         for (i = 0; i < dataLength; i++) {
             const point = points[i],
+                previousPoint = i > 0 ? points[i - 1] : null,
                 xValue = point.x;
             let pointStack,
                 stackValues: (Array<number>|undefined),
@@ -4687,7 +4700,11 @@ class Series {
 
             // general hook, used for Highcharts Stock compare mode
             if (hasModifyValue) {
-                yValue = (series.modifyValue as any)(yValue, point);
+                if (series.options.compare) {
+                    yValue = (series.modifyValue as any)(yValue, point);
+                } else if (series.options.cumulative) {
+                    yValue = (series.modifyValue as any)(yValue, previousPoint, point);
+                }
             }
 
             // Set the the plotY value, reset it for redraws
