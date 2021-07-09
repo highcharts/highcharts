@@ -30,7 +30,6 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import HLCPoint from '../HLC/HLCPoint';
 import LineSeriesOptions from '../Line/LineSeriesOptions';
 
 const {
@@ -44,6 +43,12 @@ const {
  *  Class
  *
  * */
+
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        useOhlcData?: boolean;
+    }
+}
 
 /**
  * The ohlc series type.
@@ -70,10 +75,23 @@ class OHLCSeries extends HLCSeries {
      * @sample stock/demo/ohlc/
      *         OHLC chart
      *
-     * @extends      plotOptions.hlc
+     * @extends      plotOptions.ohlc
      * @product      highstock
      * @optionparent plotOptions.ohlc
      */
+
+    /**
+     * The parameter allows setting line series type and use OHLC indicators.
+     * Data in OHLC format is required.
+     *
+     * @sample {highstock} stock/indicators/use-ohlc-data
+     *         Use OHLC data format to plot line chart
+     *
+     * @type      {boolean}
+     * @product   highstock
+     * @apioption plotOptions.line.useOhlcData
+     */
+
     public static defaultOptions: OHLCSeriesOptions = merge(HLCSeries.defaultOptions, {
 
         /**
@@ -119,7 +137,7 @@ class OHLCSeries extends HLCSeries {
      *
      * */
 
-    public data: Array<HLCPoint> = void 0 as any;
+    public data: Array<OHLCPoint> = void 0 as any;
 
     public options: OHLCSeriesOptions = void 0 as any;
 
