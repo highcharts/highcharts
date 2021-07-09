@@ -257,7 +257,8 @@ class AreaRangeSeries extends AreaSeries {
     public translate(): void {
         const series = this,
             yAxis = series.yAxis,
-            hasModifyValue = !!series.modifyValue;
+            modifiers = series.modifiers,
+            hasModifyValue = modifiers && !!modifiers.length;
 
         areaProto.translate.apply(series);
 
@@ -275,7 +276,7 @@ class AreaRangeSeries extends AreaSeries {
                 point.plotLow = plotY as any;
                 point.plotHigh = yAxis.translate(
                     hasModifyValue ?
-                        (series.modifyValue as any)(high, point) :
+                        modifiers[0].call(series, high, point) :
                         high,
                     0 as any,
                     1 as any,
