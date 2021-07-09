@@ -4840,12 +4840,13 @@ class Series {
                 x: -(xAxis.pos as any)
             };
             // x and width will be changed later when setting for animation
-            // initial state in Series.setClip
+            // initial state in Series.addAnimationClip
         } else {
             clipBox = series.clipBox || chart.clipBox;
 
             if (finalBox) {
                 clipBox.width = chart.plotSizeX as any;
+
                 clipBox.x = (chart.scrollablePixelsX || 0) *
                     (scrollablePlotAreaOptions.scrollPositionX || 0);
             }
@@ -4874,7 +4875,8 @@ class Series {
             animation && animation.defer,
             this.getClipBox(animation).height,
             this.options.xAxis,
-            this.options.yAxis
+            this.options.yAxis,
+            this.finishedAnimating
         ].join(',');
 
         if (this.options.clip !== false || animation) {
@@ -4885,30 +4887,28 @@ class Series {
     }
 
     /**
-     * Set the clipping for the series. For animated series it is called
-     * twice, first to initiate animating the clip then the second time
-     * without the animation to set the final clip.
+     * Set the animating clip for the series.
      *
      * @private
-     * @function Highcharts.Series#setClip
+     * @function Highcharts.Series#addAnimationClip
      */
-    public setClip(animation?: AnimationOptions): void {
+    public addAnimationClip(
+        animation?: AnimationOptions,
+        skipMarkerClip?: true
+    ): void {
         const chart = this.chart,
             options = this.options,
             renderer = chart.renderer,
             inverted = chart.inverted,
-            seriesClipBox = this.clipBox,
             clipBox = this.getClipBox(animation),
             sharedClipKey = this.getSharedClipKey(animation); // #4526
         let clipRect = chart.sharedClips[sharedClipKey],
             markerClipRect = chart.sharedClips[sharedClipKey + 'm'];
 
-        if (animation) {
-            clipBox.width = 0;
-            if (inverted) {
-                clipBox.x = chart.plotHeight +
-                    (options.clip !== false ? 0 : chart.plotTop);
-            }
+        clipBox.width = 0;
+        if (inverted) {
+            clipBox.x = chart.plotHeight +
+                (options.clip !== false ? 0 : chart.plotTop);
         }
 
         // If a clipping rectangle with the same properties is currently
@@ -4916,7 +4916,7 @@ class Series {
         if (!clipRect) {
 
             // When animation is set, prepare the initial positions
-            if (animation) {
+            if (!skipMarkerClip) {
                 chart.sharedClips[sharedClipKey + 'm'] = markerClipRect =
                     renderer.clipRect(
                         // include the width of the first marker
@@ -4925,10 +4925,10 @@ class Series {
                         99,
                         inverted ? chart.chartWidth : chart.chartHeight
                     );
-
-
             }
-            chart.sharedClips[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
+
+            chart.sharedClips[sharedClipKey] =
+                clipRect = renderer.clipRect(clipBox);
 
             // Create hashmap for series indexes
             clipRect.count = { length: 0 };
@@ -4939,37 +4939,53 @@ class Series {
             clipRect.attr(clipBox);
         }
 
-        if (animation) {
-            if (!clipRect.count[this.index]) {
-                clipRect.count[this.index] = true;
-                clipRect.count.length += 1;
-            }
+        if (!clipRect.count[this.index]) {
+            clipRect.count[this.index] = true;
+            clipRect.count.length += 1;
         }
 
+        (this.group as any).clip(clipRect);
 
-        if (options.clip !== false || animation) {
-            (this.group as any).clip(
-                animation || seriesClipBox ? clipRect : chart.clipRect
-            );
+        if (!this.finishedAnimating) {
+            (this.markerGroup as any).clip(markerClipRect);
+        }
+    }
+
+    /**
+     * Remove the clipping for the series and set the final shared clip.
+     *
+     * @private
+     * @function Highcharts.Series#removeClip
+     */
+    public removeClip(): void {
+        let chart = this.chart,
+            options = this.options,
+            sharedClipKey = this.getSharedClipKey(), // #4526
+            clipRect = chart.sharedClips[sharedClipKey],
+            markerClipRect = chart.sharedClips[sharedClipKey + 'm'];
+
+        if (options.clip !== false) {
+            (this.group as any).clip(chart.clipRect);
             (this.markerGroup as any).clip(markerClipRect);
         }
 
         // Remove the shared clipping rectangle when all series are shown
-        if (!animation) {
-            if (clipRect.count[this.index]) {
-                delete clipRect.count[this.index];
-                clipRect.count.length -= 1;
-            }
+        if (clipRect && clipRect.count[this.index]) {
+            delete clipRect.count[this.index];
+            clipRect.count.length -= 1;
+        }
 
-            if (clipRect.count.length === 0) {
-                if (!seriesClipBox) {
-                    chart.sharedClips[sharedClipKey] = clipRect.destroy();
-                }
-                if (markerClipRect) {
-                    chart.sharedClips[sharedClipKey + 'm'] = markerClipRect.destroy();
-                }
+        if (clipRect && clipRect.count.length === 0) {
+            clipRect.destroy();
+            delete chart.sharedClips[sharedClipKey];
+            if (markerClipRect) {
+                markerClipRect.destroy();
+                delete chart.sharedClips[sharedClipKey + 'm'];
             }
         }
+
+        // Handle final shared clip in Stock (#4406)
+        fireEvent(this, 'afterRemoveClip');
     }
 
     /**
@@ -4992,9 +5008,7 @@ class Series {
 
         // Initialize the animation. Set up the clipping rectangle.
         if (init) {
-
-            series.setClip(animation);
-
+            series.addAnimationClip(animation);
         // Run the animation
         } else if (sharedClipKey) {
             const clipRect = chart.sharedClips[sharedClipKey];
@@ -5023,7 +5037,7 @@ class Series {
      * @fires Highcharts.Series#event:afterAnimate
      */
     public afterAnimate(): void {
-        this.setClip();
+        this.removeClip();
         fireEvent(this, 'afterAnimate');
         this.finishedAnimating = true;
     }
