@@ -359,21 +359,28 @@ class Cell extends GUIElement {
                 width = GUIElement.getPercentageWidth(cell.options.width);
             }
 
-            cell.setSize(width);
+            cell.setSize(width || 'auto');
         }
     }
 
     public setSize(
-        width?: string // % value
+        width: string // % value or 'auto'
     ): void {
         const cell = this,
             editMode = cell.row.layout.dashboard.editMode;
 
         if (cell.container) {
-            if (width && cell.container.style.flex !== '0 0 ' + width) {
-                cell.container.style.flex = '0 0 ' + width;
-            } else if (cell.container.style.flex !== '1 1 0%') {
+            if (width === 'auto' && cell.container.style.flex !== '1 1 0%') {
                 cell.container.style.flex = '1 1 0%';
+            } else {
+                const percentageWidth = GUIElement.getPercentageWidth(width);
+
+                if (
+                    percentageWidth &&
+                    cell.container.style.flex !== '0 0 ' + percentageWidth
+                ) {
+                    cell.container.style.flex = '0 0 ' + percentageWidth;
+                }
             }
 
             if (editMode) {
@@ -390,8 +397,21 @@ class Cell extends GUIElement {
         }
     }
 
-    public updateSize() {
-        // update responsive options
+    // Updates width in responsive options.
+    public updateSize(
+        width: string, // % value or 'auto'
+        rwdMode?: string // small, medium, large
+    ): void {
+        const cell = this,
+            cntSize = rwdMode || cell.row.layout.dashboard.getLayoutContainerSize();
+
+        if (!cell.options.responsive) {
+            cell.options.responsive = {};
+        }
+
+        cell.options.responsive[cntSize] = {
+            width: width
+        }
     }
 }
 

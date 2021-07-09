@@ -279,7 +279,6 @@ class Sidebar {
     ) {
         this.tabs = {};
         this.isVisible = false;
-        this.isDragged = false;
         this.options = merge(
             Sidebar.defaultOptions,
             (editMode.options.toolbars || {}).settings
@@ -314,7 +313,6 @@ class Sidebar {
     public tabs: Record<string, Sidebar.Tab>;
     public activeTab?: Sidebar.Tab;
     public context?: Cell|Row;
-    public isDragged: boolean;
     public rowCellTab?: HTMLDOMElement;
     public generalOptionsTab?: HTMLDOMElement;
 
@@ -440,7 +438,12 @@ class Sidebar {
                                     sidebar.activeTab.content.activeItems[0].innerElement as any
                                 ).value;
 
-                                sidebar.context.setSize(value + '%');
+                                if (sidebar.context.getType() === DashboardGlobals.guiElementType.cell) {
+                                    const ctxCell = sidebar.context as Cell;
+
+                                    ctxCell.setSize(value + '%');
+                                    ctxCell.updateSize(value + '%', sidebar.editMode.rwdMode);
+                                }
                             }
                         }
                     }
