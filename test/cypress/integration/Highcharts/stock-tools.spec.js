@@ -20,6 +20,21 @@ describe('Stock Tools', () => {
         cy.get('.highcharts-toggle-annotations').click();
     });
 
+    it('#15729: Should keep annotation selected after dragging', () => {
+        cy.get('.highcharts-annotation')
+            .click()
+            .dragTo('.highcharts-container', 300, 100);
+        cy.get('.highcharts-popup').should('be.visible');
+    });
+
+    it('#15729: Should keep annotation selected after dragging control point', () => {
+        cy.get('.highcharts-control-points')
+            .children()
+            .first()
+            .dragTo('.highcharts-container', 600, 200);
+        cy.get('.highcharts-popup').should('be.visible');
+    });
+
     it('#15725: Should use the same axis for all points in multi-step annotation', () => {
         cy.get('.highcharts-elliott3').first().click();
         cy.get('.highcharts-container')
