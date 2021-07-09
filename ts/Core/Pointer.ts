@@ -1293,7 +1293,6 @@ class Pointer {
             lastValidTouch = self.lastValidTouch as any,
             hasZoom = self.hasZoom,
             transform: Series.PlotBoxObject = {} as any,
-
             fireClickEvent = touchesLength === 1 && (
                 (
                     self.inClass(e.target as any, 'highcharts-tracker') &&
@@ -1323,15 +1322,27 @@ class Pointer {
             return self.normalize(e);
         });
 
-        self.pinchedAxes = self.pinchedAxes || chart.axes.filter((axis: Axis): boolean => {
-            if ((!self.zoomX && axis.isXAxis) || (!self.zoomY && !axis.isXAxis) || !axis.zoomEnabled) {
-                return false;
-            }
-            if (axis.horiz) {
-                return (touches[0] as any).chartX > axis.left && (touches[0] as any).chartX < axis.left + axis.len;
-            }
-            return (touches[0] as any).chartY > axis.top && (touches[0] as any).chartY < axis.top + axis.len;
-        });
+        self.pinchedAxes =
+            self.pinchedAxes ||
+            chart.axes.filter((axis: Axis): boolean => {
+                if (
+                    (!self.zoomX && axis.isXAxis) ||
+                    (!self.zoomY && !axis.isXAxis) ||
+                    !axis.zoomEnabled
+                ) {
+                    return false;
+                }
+                if (axis.horiz) {
+                    return (
+                        (touches[0] as any).chartX > axis.left &&
+                        (touches[0] as any).chartX < axis.left + axis.len
+                    );
+                }
+                return (
+                    (touches[0] as any).chartY > axis.top &&
+                    (touches[0] as any).chartY < axis.top + axis.len
+                );
+            });
         // Register the touch start position
         if (e.type === 'touchstart') {
             [].forEach.call(touches, function (
@@ -1851,12 +1862,11 @@ class Pointer {
         // Scale each series
         axes.forEach((axis: Axis): void => {
             axis.series.forEach((series: Series): void => {
-                const seriesAttribs = attribs || series.getPlotBox(); // #1701
-                const isX = axis.isXAxis;
-
-                const attr: any = {};
-                let scale = `scale${isX ? 'X' : 'Y'}`;
-                let translate = `translate${isX ? 'X' : 'Y'}`;
+                const seriesAttribs = attribs || series.getPlotBox(), // #1701
+                    isX = axis.isXAxis,
+                    attr: any = {};
+                let scale = `scale${isX ? 'X' : 'Y'}`,
+                    translate = `translate${isX ? 'X' : 'Y'}`;
                 attr[scale] = (seriesAttribs as any)[scale];
                 const transformScale = chart.inverted ? 1 / attr[scale] : attr[scale];
                 attr[translate] = (seriesAttribs as any)[translate] + (attribs ? (transformScale * axis.pos) : 0);
