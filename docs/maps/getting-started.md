@@ -19,7 +19,7 @@ If you already have Highcharts installed in the web page and want to run Highcha
 Load the map
 ------------
 
-Highcharts Maps loads its maps from [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON), an open standard for description of geographic features. Most GIS software supports this format as export from for instance Shapefile or KML export. Read more in the [API reference](https://api.highcharts.com/highmaps#Highcharts.geojson) and [see the live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/geojson-multiple-types/).
+Highcharts Maps loads its maps from [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON), an open standard for description of geographic features. Most GIS software supports this format as export from for instance Shapefile or KML export. Read more in the [API reference](https://api.highcharts.com/highmaps/Highcharts.geojson) and [see the live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/geojson-multiple-types/).
 
 There are three basic sources for your map:
 
