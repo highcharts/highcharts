@@ -306,10 +306,7 @@ class HLCSeries extends ColumnSeries {
      */
 
     public drawPoints(): void {
-        const series = this,
-            points = series.points;
-        points.forEach(this.drawSinglePoint);
-
+        this.points.forEach(this.drawSinglePoint);
     }
 
     /**
