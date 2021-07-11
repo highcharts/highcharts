@@ -73,4 +73,9 @@ QUnit.test('fixedRenderer options', function (assert) {
         chart.options.chart.style.fontFamily,
         'fixedRenderer should inherit style from options'
     );
+
+    assert.notOk(
+        chart.series[0].clipBox,
+        '#15676: Stock clipping should not be applied when scrollablePlotArea is enabled'
+    );
 });
