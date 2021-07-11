@@ -605,14 +605,17 @@ namespace OrdinalAxis {
         ): number {
             const ordinal = this,
                 axis = ordinal.axis,
+                min = axis.min || 0, // #15987
                 firstPointVal = ordinal.positions ? ordinal.positions[0] : 0,
-                // toValue for the first point.
-                firstPointX = ordinal.slope ? ordinal.slope * axis.transA : 0;
+                secondPointVal = ordinal.positions ? ordinal.positions[1] : 0;
 
             // Distance in pixels between two points
             // on the ordinal axis in the current zoom.
             const ordinalPointPixelInterval = axis.translationSlope *
                 (ordinal.slope || axis.closestPointRange || ordinal.overscrollPointsRange as number),
+                // toValue for the first point.
+                firstPointX = ((firstPointVal - min)) /
+                    (secondPointVal - firstPointVal) * ordinalPointPixelInterval, // #15987
                 shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
 
             return Additions.findIndexOf(ordinalArray, firstPointVal) + shiftIndex;

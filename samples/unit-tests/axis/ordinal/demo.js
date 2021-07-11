@@ -284,7 +284,7 @@ QUnit.test('findIndexOf', assert => {
 QUnit.test('lin2val- unit test for values outside the plotArea.', function (assert) {
     const axis = {
         transA: -0.04,
-        min: 3,
+        min: 3.24,
         len: 500,
         translationSlope: 0.2,
         ordinal: {
