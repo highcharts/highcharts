@@ -121,6 +121,11 @@ class HTMLRenderer extends SVGRenderer {
                         }
                     };
                 });
+                // Handle visibility set on the parent group before adding
+                // setters
+                gWrapper.attr({
+                    visibility: gWrapper.visibility
+                });
                 gWrapper.addedSetters = true;
             };
 
