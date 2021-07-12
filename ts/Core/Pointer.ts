@@ -70,12 +70,6 @@ declare module './Chart/ChartLike'{
     }
 }
 
-type Scale = {
-    translateX: number;
-    translateY: number;
-    scaleX: number;
-    scaleY: number;
-}
 /* *
  *
  *  Class
@@ -1870,7 +1864,8 @@ class Pointer {
             axis.series.forEach((series: Series): void => {
                 const seriesAttribs = attribs || series.getPlotBox(), // #1701
                     isX = axis.isXAxis,
-                    attr: Partial<Scale> = {};
+                    attr: Partial<Series.PlotBoxObject> = {};
+
                 if (isX) {
                     attr.scaleX = seriesAttribs.scaleX;
                     const transformScale = chart.inverted ? 1 / attr.scaleX : attr.scaleX;
