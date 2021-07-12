@@ -70,6 +70,12 @@ declare module './Chart/ChartLike'{
     }
 }
 
+type Scale = {
+    translateX: number;
+    translateY: number;
+    scaleX: number;
+    scaleY: number;
+}
 /* *
  *
  *  Class
@@ -1292,7 +1298,7 @@ class Pointer {
             touchesLength = touches.length,
             lastValidTouch = self.lastValidTouch as any,
             hasZoom = self.hasZoom,
-            transform: Series.PlotBoxObject = {} as any,
+            transform: Partial<Series.PlotBoxObject> = {},
             fireClickEvent = touchesLength === 1 && (
                 (
                     self.inClass(e.target as any, 'highcharts-tracker') &&
@@ -1421,7 +1427,7 @@ class Pointer {
 
             // Scale and translate the groups to provide visual feedback during
             // pinching
-            self.scaleGroups(transform, clip as any, self.pinchedAxes);
+            self.scaleGroups(transform as any, clip as any, self.pinchedAxes);
 
             if (self.res) {
                 self.res = false;
@@ -1864,19 +1870,23 @@ class Pointer {
             axis.series.forEach((series: Series): void => {
                 const seriesAttribs = attribs || series.getPlotBox(), // #1701
                     isX = axis.isXAxis,
-                    attr: any = {};
-                let scale = `scale${isX ? 'X' : 'Y'}`,
-                    translate = `translate${isX ? 'X' : 'Y'}`;
-                attr[scale] = (seriesAttribs as any)[scale];
-                const transformScale = chart.inverted ? 1 / attr[scale] : attr[scale];
-                attr[translate] = (seriesAttribs as any)[translate] + (attribs ? (transformScale * axis.pos) : 0);
+                    attr: Partial<Scale> = {};
+                if (isX) {
+                    attr.scaleX = seriesAttribs.scaleX;
+                    const transformScale = chart.inverted ? 1 / attr.scaleX : attr.scaleX;
+                    attr.translateX = seriesAttribs.translateX + (attribs ? (transformScale * axis.pos) : 0);
+                } else {
+                    attr.scaleY = seriesAttribs.scaleY;
+                    const transformScale = chart.inverted ? 1 / attr.scaleY : attr.scaleY;
+                    attr.translateY = seriesAttribs.translateY + (attribs ? (transformScale * axis.pos) : 0);
+                }
 
                 if (series.xAxis && series.xAxis.zoomEnabled && series.group) {
                     series.group.attr(attr);
                     if (series.markerGroup) {
                         series.markerGroup.attr(attr);
                         series.markerGroup.clip(
-                            clip ? (chart.clipRect as any) : (null as any)
+                            clip ? chart.clipRect : clip
                         );
                     }
                     if (series.dataLabelsGroup) {
@@ -1887,7 +1897,9 @@ class Pointer {
         });
 
         // Clip
-        (chart.clipRect as any).attr(clip || chart.clipBox);
+        if (chart.clipRect) {
+            chart.clipRect.attr(clip || chart.clipBox);
+        }
     }
 
     /**
