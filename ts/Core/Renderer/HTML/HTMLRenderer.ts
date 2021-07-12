@@ -268,7 +268,8 @@ class HTMLRenderer extends SVGRenderer {
                                     opacity: parentGroup.opacity, // #5075
                                     cursor: parentGroupStyles.cursor, // #6794
                                     pointerEvents:
-                                        parentGroupStyles.pointerEvents // #5595
+                                        parentGroupStyles.pointerEvents, // #5595
+                                    visibility: parentGroup.visibility
 
                                 // the top group is appended to container
                                 },
