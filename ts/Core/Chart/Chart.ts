@@ -39,7 +39,7 @@ import type ChartLike from './ChartLike';
 import type ChartOptions from './ChartOptions';
 import type { ChartPanningOptions } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
-import type { LabelsOptions } from '../../Extensions/Oldie/Oldie';
+import type Oldie from '../../Extensions/Oldie/Oldie';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type Series from '../Series/Series';
@@ -2350,7 +2350,7 @@ class Chart {
      */
     public renderLabels(): void {
         const chart = this,
-            labels = chart.options.labels as LabelsOptions;
+            labels = chart.options.labels as Oldie.LabelsOptions;
 
         if (labels.items) {
             labels.items.forEach(function (

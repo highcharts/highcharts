@@ -77,7 +77,7 @@ import VMLRenderer3D from './VMLRenderer3D.js';
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         /** @requires highcharts/modules/oldies */
         ieSanitizeSVG(svg: string): string;
@@ -86,26 +86,32 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../../Core/Chart/ChartOptions'{
+declare module '../../Core/Chart/ChartOptions' {
     interface ChartOptions {
         /** @deprecated */
         defaultSeriesType?: string;
     }
 }
 
-declare module '../../Core/EventCallback'{
+declare module '../../Core/EventCallback' {
     interface EventCallback<T> {
         /** @requires highcharts/modules/oldies */
         hcKey?: string;
     }
 }
 
+declare module '../../Core/GlobalsLike' {
+    interface GlobalsLike extends OldInterface {
+        // nothing more to add
+    }
+}
+
 declare module '../../Core/Options' {
     interface Options {
         /** @deprecated */
-        global?: GlobalOptions;
+        global?: Oldie.GlobalOptions;
         /** @deprecated */
-        labels?: LabelsOptions;
+        labels?: Oldie.LabelsOptions;
     }
 }
 
@@ -125,31 +131,19 @@ declare module '../../Core/Renderer/SVG/SVGRendererLike' {
     }
 }
 
-interface GlobalOptions {
-    /** @deprecated */
-    canvasToolsURL?: string;
-    /** @deprecated */
-    Date?: Function;
-    /** @deprecated */
-    getTimezoneOffset?: Function;
-    /** @deprecated */
-    timezone?: string;
-    /** @deprecated */
-    timezoneOffset?: number;
-    /** @deprecated */
-    useUTC?: boolean;
-}
-
-export interface LabelsOptions {
-    items?: Array<LabelsItemsOptions>;
-    style?: CSSObject;
-}
+type OldInterface = typeof Highcharts;
 
 /**
  * Internal types
  * @private
  */
 declare global {
+
+    /**
+     * [[include:README.md]]
+     * @deprecated
+     * @todo remove
+     */
     namespace Highcharts {
         interface GlobalOptions {
             /** @deprecated */
@@ -387,10 +381,12 @@ declare global {
             fn: EventCallback<T>
         ): void;
     }
+
     interface CSSStyleSheet {
         /** @deprecated */
         cssText: string;
     }
+
     interface Document {
         /** @deprecated */
         documentMode?: number;
@@ -399,6 +395,7 @@ declare global {
         /** @deprecated */
         createStyleSheet(url?: string, index?: number): CSSStyleSheet;
     }
+
     interface EventTarget {
         /** @requires highcharts/modules/oldies */
         hcEventsIE?: { [key: string]: (e: Event) => void };
@@ -407,6 +404,49 @@ declare global {
         /** @deprecated */
         detachEvent(event: string, pDisp: Function): (number|true);
     }
+
+    interface Document {
+        /** @deprecated */
+        exitFullscreen: () => Promise<void>;
+        /** @deprecated */
+        mozCancelFullScreen: Function;
+        /** @deprecated */
+        msExitFullscreen: Function;
+        /** @deprecated */
+        msHidden: boolean;
+        /** @deprecated */
+        webkitExitFullscreen: Function;
+        /** @deprecated */
+        webkitHidden: boolean;
+    }
+
+    interface Element {
+        /** @deprecated */
+        currentStyle?: ElementCSSInlineStyle;
+        /** @deprecated */
+        mozRequestFullScreen: Function;
+        /** @deprecated */
+        msMatchesSelector: Element['matches'];
+        /** @deprecated */
+        msRequestFullscreen: Function;
+        /** @deprecated */
+        webkitMatchesSelector: Element['matches'];
+        /** @deprecated */
+        webkitRequestFullScreen: Function;
+    }
+
+    interface MSPointerEvent {
+        /** @deprecated */
+        readonly MSPOINTER_TYPE_TOUCH: string;
+    }
+
+    interface PointerEvent {
+        /** @deprecated */
+        readonly MSPOINTER_TYPE_TOUCH: string;
+        /** @deprecated */
+        readonly toElement: Element;
+    }
+
     /** @deprecated */
     interface TridentNamespace {
         readonly name: string;
@@ -419,12 +459,25 @@ declare global {
         detachEvent(evtName: string, fn: Function): void;
         doImport(url: string): void;
     }
+
     /** @deprecated */
     interface TridentNamespaceCollection {
         [key: string]: (Function|TridentNamespace);
         add(name: string, urn: string, url?: string): TridentNamespace;
         item(name: string): TridentNamespace;
     }
+
+    interface Window {
+        /** @deprecated */
+        createObjectURL?: (typeof URL)['createObjectURL'];
+        /** @deprecated */
+        opera?: unknown;
+        /** @deprecated */
+        webkitAudioContext?: typeof AudioContext;
+        /** @deprecated */
+        webkitURL?: typeof URL;
+    }
+
 }
 
 let VMLRenderer: ((typeof SVGRenderer)&(typeof Highcharts.VMLRenderer)),
@@ -2205,6 +2258,42 @@ SVGRenderer.prototype.measureSpanWidth = function (
 
 /* *
  *
+ *  Namespace
+ *
+ * */
+
+namespace Oldie {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface GlobalOptions {
+        /** @deprecated */
+        canvasToolsURL?: string;
+        /** @deprecated */
+        Date?: Function;
+        /** @deprecated */
+        getTimezoneOffset?: Function;
+        /** @deprecated */
+        timezone?: string;
+        /** @deprecated */
+        timezoneOffset?: number;
+        /** @deprecated */
+        useUTC?: boolean;
+    }
+
+    export interface LabelsOptions {
+        items?: Array<LabelsItemsOptions>;
+        style?: CSSObject;
+    }
+
+}
+
+/* *
+ *
  *  Registry
  *
  * */
@@ -2214,3 +2303,11 @@ declare module '../../Core/Renderer/RendererType' {
         VMLRenderer: typeof VMLRenderer;
     }
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default Oldie;
