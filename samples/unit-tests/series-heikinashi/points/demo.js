@@ -1,4 +1,4 @@
-QUnit.test('directTouch', function (assert) {
+QUnit.test('Heikinashi point calculation.', function (assert) {
     const chart = Highcharts.stockChart('container', {
             series: [{
                 type: 'heikinashi',

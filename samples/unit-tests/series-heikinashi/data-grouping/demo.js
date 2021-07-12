@@ -1,4 +1,4 @@
-QUnit.test('directTouch', function (assert) {
+QUnit.test('Heikinashi with data grouping.', function (assert) {
     var chart = Highcharts.stockChart('container', {
             series: [
                 {
