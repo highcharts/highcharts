@@ -4417,11 +4417,7 @@ class Series {
             j,
             xMin = 0,
             xMax = 0,
-            activeCounter = 0,
-            cumulative = this.options.cumulative,
-            cumDataMin = Infinity,
-            cumDataMax = -Infinity,
-            cumSum = 0;
+            activeCounter = 0;
 
         yData = yData || this.stackedYData || this.processedYData || [];
         const yDataLength = yData.length;
@@ -4467,18 +4463,13 @@ class Series {
                 } else {
                     activeYData[activeCounter++] = y;
                 }
-
-                if (cumulative) {
-                    cumSum += activeYData[activeCounter - 1];
-                    cumDataMin = Math.min(cumDataMin, cumSum);
-                    cumDataMax = Math.max(cumDataMax, cumSum);
-                }
             }
         }
 
         const dataExtremes = {
-            dataMin: cumulative ? cumDataMin : arrayMin(activeYData),
-            dataMax: cumulative ? cumDataMax : arrayMax(activeYData)
+            activeYData, // Needed for Stock Cumulative Sum
+            dataMin: arrayMin(activeYData),
+            dataMax: arrayMax(activeYData)
         };
 
         fireEvent(this, 'afterGetExtremes', { dataExtremes });
@@ -4570,7 +4561,6 @@ class Series {
             yAxis = series.yAxis,
             points = series.points,
             dataLength = points.length,
-            hasModifyValue = !!series.modifyValue,
             pointPlacement = series.pointPlacementToXValue(), // #7860
             dynamicallyPlaced = Boolean(pointPlacement),
             threshold = options.threshold,
@@ -4592,12 +4582,9 @@ class Series {
             return clamp(val, -1e5, 1e5);
         }
 
-        (series as any).cumulativeTotal = 0;
-
         // Translate each point
         for (i = 0; i < dataLength; i++) {
             const point = points[i],
-                previousPoint = i > 0 ? points[i - 1] : null,
                 xValue = point.x;
             let pointStack,
                 stackValues: (Array<number>|undefined),
@@ -4698,13 +4685,9 @@ class Series {
                 ) as any) :
                 null as any;
 
-            // general hook, used for Highcharts Stock compare mode
-            if (hasModifyValue) {
-                if (series.options.compare) {
-                    yValue = (series.modifyValue as any)(yValue, point);
-                } else if (series.options.cumulative) {
-                    yValue = (series.modifyValue as any)(yValue, previousPoint, point);
-                }
+            // general hook, used for Highcharts Stock compare and cumulative
+            if (series.modifyValue) {
+                yValue = series.modifyValue(yValue, i);
             }
 
             // Set the the plotY value, reset it for redraws
