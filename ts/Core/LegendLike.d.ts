@@ -10,12 +10,6 @@
 
 /* *
  *
- *  Import
- *
- * */
-
-/* *
- *
  *  Declarations
  *
  * */
@@ -23,7 +17,6 @@
 export interface LegendLike {
 
 }
-
 
 /* *
  *

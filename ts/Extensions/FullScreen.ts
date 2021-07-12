@@ -312,17 +312,19 @@ class Fullscreen {
             lang.exitFullscreen &&
             lang.viewFullscreen &&
             menuItems &&
-            exportDivElements &&
-            exportDivElements.length
+            exportDivElements
         ) {
-            AST.setElementHTML(
-                exportDivElements[menuItems.indexOf('viewFullscreen')],
-                !this.isOpen ?
-                    (
-                        exportingOptions.menuItemDefinitions.viewFullscreen.text ||
-                        lang.viewFullscreen
-                    ) : lang.exitFullscreen
-            );
+            const exportDivElement = exportDivElements[menuItems.indexOf('viewFullscreen')];
+            if (exportDivElement) {
+                AST.setElementHTML(
+                    exportDivElement,
+                    !this.isOpen ?
+                        (
+                            exportingOptions.menuItemDefinitions.viewFullscreen.text ||
+                            lang.viewFullscreen
+                        ) : lang.exitFullscreen
+                );
+            }
         }
     }
     /**

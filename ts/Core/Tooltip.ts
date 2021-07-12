@@ -77,7 +77,7 @@ declare module './Series/SeriesLike' {
 
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
-        tooltip?: TooltipOptions;
+        tooltip?: DeepPartial<TooltipOptions>;
     }
 }
 
@@ -162,7 +162,7 @@ class Tooltip {
 
     public now: Record<string, number> = {};
 
-    public options: TooltipOptions = {};
+    public options: TooltipOptions = {} as any;
 
     public outside: boolean = false;
 
@@ -433,90 +433,6 @@ class Tooltip {
     }
 
     /**
-     * Get the optimal date format for a point, based on a range.
-     *
-     * @private
-     * @function Highcharts.Tooltip#getDateFormat
-     *
-     * @param {number} range
-     *        The time range
-     *
-     * @param {number} date
-     *        The date of the point in question
-     *
-     * @param {number} startOfWeek
-     *        An integer representing the first day of the week, where 0 is
-     *        Sunday.
-     *
-     * @param {Highcharts.Dictionary<string>} dateTimeLabelFormats
-     *        A map of time units to formats.
-     *
-     * @return {string}
-     *         The optimal date format for a point.
-     */
-    public getDateFormat(
-        range: number,
-        date: number,
-        startOfWeek: number,
-        dateTimeLabelFormats: Record<string, string>
-    ): string {
-        const time = this.chart.time,
-            dateStr = time.dateFormat('%m-%d %H:%M:%S.%L', date),
-            blank = '01-01 00:00:00.000',
-            strpos = {
-                millisecond: 15,
-                second: 12,
-                minute: 9,
-                hour: 6,
-                day: 3
-            } as Record<string, number>;
-        let format,
-            n,
-            lastN = 'millisecond'; // for sub-millisecond data, #4223
-
-        for (n in timeUnits) { // eslint-disable-line guard-for-in
-
-            // If the range is exactly one week and we're looking at a
-            // Sunday/Monday, go for the week format
-            if (
-                range === timeUnits.week &&
-                +time.dateFormat('%w', date) === startOfWeek &&
-                dateStr.substr(6) === blank.substr(6)
-            ) {
-                n = 'week';
-                break;
-            }
-
-            // The first format that is too great for the range
-            if (timeUnits[n] > range) {
-                n = lastN;
-                break;
-            }
-
-            // If the point is placed every day at 23:59, we need to show
-            // the minutes as well. #2637.
-            if (
-                strpos[n] &&
-                dateStr.substr(strpos[n]) !== blank.substr(strpos[n])
-            ) {
-                break;
-            }
-
-            // Weeks are outside the hierarchy, only apply them on
-            // Mondays/Sundays like in the first condition
-            if (n !== 'week') {
-                lastN = n;
-            }
-        }
-
-        if (n) {
-            format = time.resolveDTLFormat(dateTimeLabelFormats[n]).main as any;
-        }
-
-        return format;
-    }
-
-    /**
      * Creates the Tooltip label element if it does not exist, then returns it.
      *
      * @function Highcharts.Tooltip#getLabel
@@ -535,7 +451,7 @@ class Tooltip {
                 )
             ),
             pointerEvents = (
-                (options.style && options.style.pointerEvents) ||
+                options.style.pointerEvents ||
                 (!this.followPointer && options.stickOnContact ? 'auto' : 'none')
             ),
             onMouseEnter = function (): void {
@@ -578,7 +494,7 @@ class Tooltip {
                     top: '1px',
                     pointerEvents,
                     zIndex: Math.max(
-                        (this.options.style && this.options.style.zIndex || 0),
+                        this.options.style.zIndex || 0,
                         (chartStyle && chartStyle.zIndex || 0) + 3
                     )
                 });
@@ -614,11 +530,11 @@ class Tooltip {
                         '',
                         0,
                         0,
-                        options.shape || 'callout',
-                        null as any,
-                        null as any,
+                        options.shape,
+                        void 0,
+                        void 0,
                         options.useHTML,
-                        null as any,
+                        void 0,
                         className
                     )
                     .attr({
@@ -633,7 +549,7 @@ class Tooltip {
                             'stroke-width': options.borderWidth
                         })
                         // #2301, #2657
-                        .css(options.style as any)
+                        .css(options.style)
                         .css({ pointerEvents })
                         .shadow(options.shadow);
                 }
@@ -872,43 +788,6 @@ class Tooltip {
     }
 
     /**
-     * Get the best X date format based on the closest point range on the axis.
-     *
-     * @private
-     * @function Highcharts.Tooltip#getXDateFormat
-     *
-     * @param {Highcharts.Point} point
-     *
-     * @param {Highcharts.TooltipOptions} options
-     *
-     * @param {Highcharts.Axis} xAxis
-     *
-     * @return {string}
-     */
-    public getXDateFormat(
-        point: Point,
-        options: TooltipOptions,
-        xAxis: Axis
-    ): string {
-        const dateTimeLabelFormats = options.dateTimeLabelFormats,
-            closestPointRange = xAxis && xAxis.closestPointRange;
-        let xDateFormat;
-
-        if (closestPointRange) {
-            xDateFormat = this.getDateFormat(
-                closestPointRange,
-                point.x as any,
-                xAxis.options.startOfWeek as any,
-                dateTimeLabelFormats as any
-            );
-        } else {
-            xDateFormat = (dateTimeLabelFormats as any).day;
-        }
-
-        return xDateFormat || (dateTimeLabelFormats as any).year; // #2546, 2581
-    }
-
-    /**
      * Hides the tooltip with a fade out animation.
      *
      * @function Highcharts.Tooltip#hide
@@ -923,7 +802,7 @@ class Tooltip {
 
         // disallow duplicate timers (#1728, #1766)
         U.clearTimeout(this.hideTimer as any);
-        delay = pick(delay, this.options.hideDelay, 500);
+        delay = pick(delay, this.options.hideDelay);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function (): void {
                 // If there is a delay, do fadeOut with the default duration. If
@@ -1203,7 +1082,7 @@ class Tooltip {
 
                     // Prevent the tooltip from flowing over the chart box
                     // (#6659)
-                    if (!(options.style as any).width || styledMode) {
+                    if (!options.style.width || styledMode) {
                         label.css({
                             width: this.chart.spacingBox.width + 'px'
                         });
@@ -1450,8 +1329,7 @@ class Tooltip {
                         '',
                         0,
                         0,
-                        (options[isHeader ? 'headerShape' : 'shape']) ||
-                        'callout',
+                        (options[isHeader ? 'headerShape' : 'shape']),
                         void 0,
                         void 0,
                         options.useHTML
@@ -1470,7 +1348,7 @@ class Tooltip {
                 text: str
             });
             if (!styledMode) {
-                tt.css(options.style as any)
+                tt.css(options.style)
                     .shadow(options.shadow)
                     .attr({
                         stroke: (
@@ -1787,21 +1665,17 @@ class Tooltip {
      * @return {string}
      */
     public tooltipFooterHeaderFormatter(labelConfig: Point.PointLabelObject, isFooter?: boolean): string {
-        const footOrHead = isFooter ? 'footer' : 'header',
-            series = labelConfig.series,
+        const series = labelConfig.series,
             tooltipOptions = series.tooltipOptions,
             xAxis = series.xAxis,
-            isDateTime = (
-                xAxis &&
-                xAxis.options.type === 'datetime' &&
-                isNumber(labelConfig.key)
-            ),
+            dateTime = xAxis && xAxis.dateTime,
             e = {
                 isFooter: isFooter,
                 labelConfig: labelConfig
             } as AnyRecord;
         let xDateFormat = tooltipOptions.xDateFormat,
-            formatString = (tooltipOptions as any)[footOrHead + 'Format'];
+            formatString = tooltipOptions[isFooter ? 'footerFormat' : 'headerFormat'];
+
         fireEvent(this, 'headerFormatter', e, function (
             this: Tooltip,
             e: AnyRecord
@@ -1809,16 +1683,15 @@ class Tooltip {
 
             // Guess the best date format based on the closest point distance
             // (#568, #3418)
-            if (isDateTime && !xDateFormat) {
-                xDateFormat = this.getXDateFormat(
-                    labelConfig as any,
-                    tooltipOptions,
-                    xAxis
+            if (dateTime && !xDateFormat && isNumber(labelConfig.key)) {
+                xDateFormat = dateTime.getXDateFormat(
+                    labelConfig.key,
+                    tooltipOptions.dateTimeLabelFormats
                 );
             }
 
             // Insert the footer date format if any
-            if (isDateTime && xDateFormat) {
+            if (dateTime && xDateFormat) {
                 ((labelConfig.point && labelConfig.point.tooltipDateKeys) ||
                         ['key']).forEach(
                     function (key: string): void {
@@ -1869,11 +1742,12 @@ class Tooltip {
      */
     public updatePosition(point: Point): void {
         const chart = this.chart,
+            options = this.options,
             pointer = chart.pointer,
             label = this.getLabel(),
             // Needed for outside: true (#11688)
             chartPosition = pointer.getChartPosition(),
-            pos = (this.options.positioner || this.getPosition).call(
+            pos = (options.positioner || this.getPosition).call(
                 this,
                 label.width,
                 label.height,
@@ -1885,7 +1759,7 @@ class Tooltip {
 
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
-            pad = (this.options.borderWidth || 0) + 2 * this.distance;
+            pad = options.borderWidth + 2 * this.distance;
             (this.renderer as any).setSize(
                 label.width + pad,
                 label.height + pad,

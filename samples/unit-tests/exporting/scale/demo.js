@@ -50,9 +50,9 @@ QUnit.skip('Exported chart scale', function (assert) {
         count = 0;
 
     function testScale(scale) {
-        var originalPost = Highcharts.post;
+        var originalPost = Highcharts.HttpUtilities.post;
 
-        Highcharts.post = function (url, data) {
+        Highcharts.HttpUtilities.post = function (url, data) {
             function serialize(obj) {
                 var str = [];
 
@@ -88,7 +88,7 @@ QUnit.skip('Exported chart scale', function (assert) {
 
                         count++;
                         if (count === 2) {
-                            Highcharts.post = originalPost;
+                            Highcharts.HttpUtilities.post = originalPost;
                             done();
                         }
                     };
@@ -96,7 +96,7 @@ QUnit.skip('Exported chart scale', function (assert) {
                 error: function () {
                     count++;
                     if (count === 2) {
-                        Highcharts.post = originalPost;
+                        Highcharts.HttpUtilities.post = originalPost;
 
                         console.log(
                             assert.test.testName,

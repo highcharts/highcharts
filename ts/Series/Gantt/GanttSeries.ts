@@ -86,7 +86,6 @@ class GanttSeries extends XRangeSeries {
             pointFormatter: function (this: GanttPoint): string {
                 let point = this,
                     series = point.series,
-                    tooltip = series.chart.tooltip,
                     xAxis = series.xAxis,
                     formats = series.tooltipOptions.dateTimeLabelFormats,
                     startOfWeek = xAxis.options.startOfWeek,
@@ -101,15 +100,13 @@ class GanttSeries extends XRangeSeries {
                     return point.tooltipFormatter(ttOptions.pointFormat);
                 }
 
-                if (!format) {
-                    format = splat(
-                        (tooltip as any).getDateFormat(
-                            xAxis.closestPointRange,
-                            point.start,
-                            startOfWeek,
-                            formats
-                        )
-                    )[0];
+                if (!format && isNumber(point.start)) {
+                    format = series.chart.time.getDateFormat(
+                        xAxis.closestPointRange,
+                        point.start,
+                        startOfWeek,
+                        formats || {}
+                    );
                 }
 
                 start = series.chart.time.dateFormat(format as any, point.start as any);
