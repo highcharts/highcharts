@@ -121,11 +121,6 @@ class HTMLRenderer extends SVGRenderer {
                         }
                     };
                 });
-                // Handle visibility set on the parent group before adding
-                // setters
-                gWrapper.attr({
-                    visibility: gWrapper.visibility
-                });
                 gWrapper.addedSetters = true;
             };
 
@@ -273,7 +268,8 @@ class HTMLRenderer extends SVGRenderer {
                                     opacity: parentGroup.opacity, // #5075
                                     cursor: parentGroupStyles.cursor, // #6794
                                     pointerEvents:
-                                        parentGroupStyles.pointerEvents // #5595
+                                        parentGroupStyles.pointerEvents, // #5595
+                                    visibility: parentGroup.visibility
 
                                 // the top group is appended to container
                                 },
