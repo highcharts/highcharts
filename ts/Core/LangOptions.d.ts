@@ -15,12 +15,10 @@
  * */
 
 /**
- *
- * Helper interface for LangOptions.
- *
+ * Helper interface for `lang` options.
  */
 export interface LangOptions {
-    // add with `declare module` pattern
+    // add properties with the `declare module` pattern
 }
 
 
