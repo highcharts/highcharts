@@ -44,6 +44,10 @@ const {
     removeElement,
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
+import ChartUtils from '../Utils/ChartUtilities.js';
+const {
+    getChartTitle
+} = ChartUtils;
 
 type LegendItem = (BubbleLegendItem|Series|Point);
 
@@ -363,7 +367,8 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         const legendLabel = chart.langFormat(
             'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'), {
                 chart,
-                legendTitle
+                legendTitle,
+                chartTitle: getChartTitle(chart)
             }
         );
 
