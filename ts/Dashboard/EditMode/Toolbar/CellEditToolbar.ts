@@ -133,7 +133,7 @@ class CellEditToolbar extends EditToolbar {
             cellCnt &&
             toolbar.editMode.isActive() &&
             !(toolbar.editMode.dragDrop || {}).isActive &&
-            resizer && !resizer.isActive && !resizer.isResizerDetectionActive
+            (!resizer || resizer && !resizer.isActive && !resizer.isResizerDetectionActive)
         ) {
             const cellOffsets = GUIElement.getOffsets(cell, toolbar.editMode.dashboard.container);
 
@@ -173,16 +173,17 @@ class CellEditToolbar extends EditToolbar {
         const toolbar = this;
 
         if (toolbar.editMode.sidebar) {
-            // debugger;
             toolbar.editMode.sidebar.show(toolbar.cell);
             toolbar.editMode.sidebar.updateTitle('CELL OPTIONS');
 
-            if (this.cell) {
-                super.maskNotEditedElements(
-                    this.cell
-                );
-                this.editedCell = this.cell;
-            }
+
+            // @ToDo - mask is buggy - should be refactored or removed.
+            // if (this.cell) {
+            //     super.maskNotEditedElements(
+            //         this.cell
+            //     );
+            //     this.editedCell = this.cell;
+            // }
         }
     }
 

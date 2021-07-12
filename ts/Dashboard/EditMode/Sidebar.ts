@@ -8,7 +8,7 @@ import Menu from './Menu/Menu.js';
 import type MenuItem from './Menu/MenuItem.js';
 import DashboardGlobals from '../DashboardGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
-import EditRenderer, { FormField } from './EditRenderer.js';
+import EditRenderer from './EditRenderer.js';
 import Bindings from '../Actions/Bindings.js';
 import GUIElement from '../Layout/GUIElement.js';
 
@@ -52,6 +52,10 @@ class Sidebar {
     }]
 
     public static predefinedWidth: Array<Sidebar.PredefinedWidth> = [{
+        name: 'auto',
+        value: 'auto',
+        icon: ''
+    }, {
         name: '1/1',
         value: '100',
         icon: ''
@@ -434,15 +438,16 @@ class Sidebar {
                                 sidebar.activeTab.content.activeItems[0] &&
                                 sidebar.activeTab.content.activeItems[0].innerElement
                             ) {
-                                const value = (
+                                let value = (
                                     sidebar.activeTab.content.activeItems[0].innerElement as any
                                 ).value;
 
                                 if (sidebar.context.getType() === DashboardGlobals.guiElementType.cell) {
                                     const ctxCell = sidebar.context as Cell;
 
-                                    ctxCell.setSize(value + '%');
-                                    ctxCell.updateSize(value + '%', sidebar.editMode.rwdMode);
+                                    value = value === 'auto' ? value : value + '%';
+                                    ctxCell.setSize(value);
+                                    ctxCell.updateSize(value, sidebar.editMode.rwdMode);
                                 }
                             }
                         }
@@ -804,13 +809,13 @@ class Sidebar {
     // Get width from options or calculate it.
     private getCellWidth(
         cell: Cell
-    ): number {
+    ): number | string {
         const sidebar = this,
             currentRwdMode = sidebar.editMode.rwdMode,
             cellRwd = (cell.options.responsive || {})[currentRwdMode],
             definedWidth = cellRwd && cellRwd.width || cell.options.width;
 
-        if (definedWidth) {
+        if (definedWidth && definedWidth !== 'auto') {
             const percentageValue = GUIElement.getPercentageWidth(definedWidth);
 
             if (percentageValue) {
@@ -818,16 +823,7 @@ class Sidebar {
             }
         }
 
-        const cellOffsets = GUIElement.getOffsets(cell),
-            rowOffsets = GUIElement.getOffsets(cell.row);
-
-        // @ToDo improve calculations
-        // analyze other cells in the row (on the same level)
-        const cellWidth = (
-            (cellOffsets.right - cellOffsets.left) / (rowOffsets.right - rowOffsets.left)
-        ) * 100;
-
-        return cellWidth;
+        return 'auto';
     }
 
     private getWidthGridOptions(): void {

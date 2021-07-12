@@ -174,12 +174,13 @@ class EditMode {
         // }
         const guiOptions = dashboard.options.gui;
 
-        if (
-            !(editMode.options.resize &&
-                !editMode.options.resize.enabled)
-        ) {
-            editMode.resizer = new Resizer(editMode);
-        }
+        // @ToDo refactor resizer.
+        // if (
+        //     !(editMode.options.resize &&
+        //         !editMode.options.resize.enabled)
+        // ) {
+        //     editMode.resizer = new Resizer(editMode);
+        // }
 
         //     editMode.resizer = Resizer.fromJSON(
         //         editMode, guiOptions.layoutOptions.resizerJSON
@@ -241,8 +242,11 @@ class EditMode {
             });
         }
 
-        addEvent(dashboard.container, 'mousemove', editMode.onDetectContext.bind(editMode));
-        addEvent(dashboard.container, 'click', editMode.onContextConfirm.bind(editMode));
+        addEvent(dashboard.layoutsWrapper, 'mousemove', editMode.onDetectContext.bind(editMode));
+        addEvent(dashboard.layoutsWrapper, 'click', editMode.onContextConfirm.bind(editMode));
+        addEvent(dashboard.layoutsWrapper, 'mouseleave', (): void => {
+            editMode.hideContextPointer();
+        });
     }
 
     private setLayoutEvents(
@@ -617,6 +621,10 @@ class EditMode {
 
             if (this.rowToolbar) {
                 this.rowToolbar.showToolbar(this.editCellContext.row);
+            }
+
+            if (this.sidebar) {
+                this.sidebar.show(this.editCellContext);
             }
         }
     }

@@ -144,7 +144,7 @@ class RowEditToolbar extends EditToolbar {
             rowCnt &&
             toolbar.editMode.isActive() &&
             !(toolbar.editMode.dragDrop || {}).isActive &&
-            resizer && !resizer.isActive && !resizer.isResizerDetectionActive
+            (!resizer || resizer && !resizer.isActive && !resizer.isResizerDetectionActive)
         ) {
             const rowOffsets = GUIElement.getOffsets(row, toolbar.editMode.dashboard.container);
             const rowWidth = rowOffsets.right - rowOffsets.left;
@@ -174,13 +174,14 @@ class RowEditToolbar extends EditToolbar {
             toolbar.editMode.sidebar.show(toolbar.row);
             toolbar.editMode.sidebar.updateTitle('ROW OPTIONS');
 
-            if (this.row) {
-                super.maskNotEditedElements(
-                    this.row,
-                    true
-                );
-                this.editedRow = this.row;
-            }
+            // @ToDo - mask is buggy - should be refactored or removed.
+            // if (this.row) {
+            //     super.maskNotEditedElements(
+            //         this.row,
+            //         true
+            //     );
+            //     this.editedRow = this.row;
+            // }
         }
     }
 

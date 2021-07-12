@@ -386,8 +386,15 @@ class Cell extends GUIElement {
             if (editMode) {
                 editMode.hideContextPointer();
 
-                if (editMode.cellToolbar && editMode.cellToolbar.isVisible) {
-                    editMode.cellToolbar.refreshOutline();
+                if (
+                    editMode.cellToolbar &&
+                    editMode.cellToolbar.isVisible
+                ) {
+                    if (editMode.cellToolbar.cell === cell) {
+                        editMode.cellToolbar.showToolbar(cell);
+                    } else {
+                        editMode.cellToolbar.hide();
+                    }
                 }
             }
     
