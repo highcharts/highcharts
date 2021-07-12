@@ -929,6 +929,7 @@ const baseProcessData = seriesProto.processData,
         ohlc: {
             groupPixelWidth: 5
         },
+        // Move to HeikinAshiSeries.ts aftre refactoring data grouping.
         heikinashi: {
             groupPixelWidth: 10
         }
