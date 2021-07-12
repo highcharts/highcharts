@@ -51,6 +51,7 @@ import type {
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+import type SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 
 import A from '../Animation/AnimationUtilities.js';
 const {
@@ -84,7 +85,6 @@ import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
 import SeriesRegistry from '../Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
 import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
@@ -151,7 +151,7 @@ declare module './ChartLike' {
 declare module './ChartOptions' {
     interface ChartOptions {
         forExport?: boolean;
-        renderer?: string;
+        renderer?: (string|typeof SVGRenderer);
         skipClone?: boolean;
     }
 }
@@ -1593,7 +1593,9 @@ class Chart {
         chart._cursor = container.style.cursor as CursorValue;
 
         // Initialize the renderer
-        const Renderer = RendererRegistry.getRendererType(optionsChart.renderer);
+        const Renderer = typeof optionsChart.renderer === 'function' ?
+            optionsChart.renderer :
+            RendererRegistry.getRendererType(optionsChart.renderer);
 
         /**
          * The renderer instance of the chart. Each chart instance has only one
