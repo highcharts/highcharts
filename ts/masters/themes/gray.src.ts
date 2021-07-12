@@ -8,4 +8,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Themes/Gray.js';
+import H from '../../Core/Globals.js';
+import GrayTheme from '../../Extensions/Themes/Gray.js';
+H.theme = GrayTheme.options;
+GrayTheme.apply();

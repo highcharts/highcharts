@@ -29,7 +29,6 @@ export interface AroonOptions extends SMAOptions, Highcharts.MultipleLinesIndica
     aroonDown?: Record<string, CSSObject>;
     marker?: PointMarkerOptions;
     params?: AroonParamsOptions;
-    tooltip?: TooltipOptions;
 }
 
 export interface AroonParamsOptions extends SMAParamsOptions {

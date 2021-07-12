@@ -34,8 +34,8 @@ import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
-import type PlotLineOptions from './PlotLineOptions';
-import type PlotLineOrBand from './PlotLineOrBand';
+import type PlotLineOptions from './PlotLineOrBand/PlotLineOptions';
+import type PlotLineOrBand from './PlotLineOrBand/PlotLineOrBand';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type PositionObject from '../Renderer/PositionObject';
@@ -3723,7 +3723,7 @@ class Axis {
                     .concat((options.plotBands as any) || [])
                     .forEach(
                         function (plotLineOptions: any): void {
-                            axis.addPlotBandOrLine(plotLineOptions);
+                            (axis as unknown as PlotLineOrBand.Axis).addPlotBandOrLine(plotLineOptions);
                         }
                     );
             }

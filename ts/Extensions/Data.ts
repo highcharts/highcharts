@@ -12,17 +12,20 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
-import Ajax from '../Extensions/Ajax.js';
-const {
-    ajax
-} = Ajax;
+
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
+import G from '../Core/Globals.js';
+const { doc } = G;
+import HU from '../Core/HttpUtilities.js';
+const { ajax } = HU;
 import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
@@ -44,6 +47,7 @@ const {
  * Declarations
  *
  * */
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         data?: Highcharts.Data;
@@ -2585,12 +2589,12 @@ class Data {
  *
  * @return {Highcharts.Data}
  */
-H.data = function (
+G.data = function (
     dataOptions: Highcharts.DataOptions,
     chartOptions?: Options,
     chart?: Chart
 ): Highcharts.Data {
-    return new H.Data(dataOptions, chartOptions, chart);
+    return new G.Data(dataOptions, chartOptions, chart);
 };
 
 // Extend Chart.init so that the Chart constructor accepts a new configuration
@@ -2618,7 +2622,7 @@ addEvent(
              * @name Highcharts.Chart#data
              * @type {Highcharts.Data|undefined}
              */
-            chart.data = new H.Data(extend(userOptions.data, {
+            chart.data = new G.Data(extend(userOptions.data, {
 
                 afterComplete: function (
                     dataOptions?: Partial<Options>
@@ -2865,5 +2869,5 @@ class SeriesBuilder {
     }
 }
 
-H.Data = Data as any;
-export default H.Data;
+G.Data = Data as any;
+export default G.Data;

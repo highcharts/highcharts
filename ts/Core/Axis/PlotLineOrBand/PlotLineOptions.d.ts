@@ -17,11 +17,11 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../Renderer/AlignObject';
-import type ColorString from '../Color/ColorString';
-import type ColorType from '../Color/ColorType';
-import type CSSObject from '../Renderer/CSSObject';
-import type FormatUtilities from '../FormatUtilities';
+} from '../../Renderer/AlignObject';
+import type ColorString from '../../Color/ColorString';
+import type CSSObject from '../../Renderer/CSSObject';
+import type DashStyleValue from '../../Renderer/DashStyleValue';
+import type FormatUtilities from '../../FormatUtilities';
 import type PlotLineOrBand from './PlotLineOrBand';
 
 /* *
@@ -30,7 +30,7 @@ import type PlotLineOrBand from './PlotLineOrBand';
  *
  * */
 
-export interface PlotBandLabelOptions {
+export interface PlotLineLabelOptions {
     align?: AlignValue;
     formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
     rotation?: number;
@@ -43,17 +43,17 @@ export interface PlotBandLabelOptions {
     y?: number;
 }
 
-export interface PlotBandOptions {
+export interface PlotLineOptions {
     acrossPanes?: boolean;
-    borderColor?: ColorString;
-    borderWidth?: number;
     className?: string;
-    color?: ColorType;
+    color?: ColorString;
+    dashStyle?: DashStyleValue;
     events?: any;
-    from?: number;
     id?: string;
-    label?: PlotBandLabelOptions;
-    to?: number;
+    label?: PlotLineLabelOptions;
+    translatedValue?: number;
+    value?: number;
+    width?: number;
     zIndex?: number;
 }
 
@@ -63,4 +63,4 @@ export interface PlotBandOptions {
  *
  * */
 
-export default PlotBandOptions;
+export default PlotLineOptions;

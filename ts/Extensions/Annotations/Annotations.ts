@@ -33,6 +33,7 @@ import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions'
 import type EventCallback from '../../Core/EventCallback';
 import type FormatUtilities from '../../Core/FormatUtilities';
 import type MockPointOptions from './MockPointOptions';
+import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
@@ -557,17 +558,15 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
                         axes: Array<AxisType>,
                         labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
                     ): Array<AxisType> {
+                        const point = labelOrShape &&
+                            (
+                                labelOrShape.point ||
+                                (labelOrShape.points && labelOrShape.points[0])
+                            );
+
                         return [
-                            xAxes[
-                                labelOrShape &&
-                                labelOrShape.point &&
-                                (labelOrShape.point as any).xAxis
-                            ] || axes[0],
-                            yAxes[
-                                labelOrShape &&
-                                labelOrShape.point &&
-                                (labelOrShape.point as any).yAxis
-                            ] || axes[1]
+                            xAxes[point && (point as any).xAxis] || axes[0],
+                            yAxes[point && (point as any).yAxis] || axes[1]
                         ];
                     },
                     []

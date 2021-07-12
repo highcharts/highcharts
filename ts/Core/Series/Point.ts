@@ -1543,7 +1543,7 @@ namespace Point {
         y?: (number|null);
         color?: ColorType;
         colorIndex?: number;
-        key?: string;
+        key?: number|string;
         series: Series;
         point: Point;
         percentage?: number;
