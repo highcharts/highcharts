@@ -33,22 +33,6 @@ import Palette from '../Color/Palette.js';
  */
 const ChartDefaults: ChartOptions = {
 
-    /* eslint-disable max-len */
-    /**
-     * Class or constructor for the SVGRenderer instance to create. This option
-     * is used mainly in module-based chart solutions.
-     *
-     * @example
-     * import SVGRenderer from 'highcharts/es-modules/Core/Renderer/SVG/SVGRenderer.js';
-     * import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
-     * const chart = new Chart('container', { chart: { renderer: SVGRenderer } });
-     *
-     * @type      {Function}
-     * @since     next
-     * @apioption chart.renderer
-     */
-    /* eslint-enable max-len */
-
     /**
      * Default `mapData` for all series. If set to a string, it functions
      * as an index into the `Highcharts.maps` array. Otherwise it is
