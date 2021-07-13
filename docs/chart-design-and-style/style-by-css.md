@@ -92,6 +92,13 @@ Rules to differentiate between up or down points in Highcharts Stock candlestick
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/candlestick/).
 
+    .highcharts-hollowcandlestick-series .highcharts-point-down
+    .highcharts-hollowcandlestick-series .highcharts-point-down-bearish-up
+    .highcharts-hollowcandlestick-series .highcharts-point-up
+
+Rules to differentiate between up or down points in Highcharts Stock hollow candlesticks.
+
+[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/hollow-candlestick/).
 
     .highcharts-color-{n}
 

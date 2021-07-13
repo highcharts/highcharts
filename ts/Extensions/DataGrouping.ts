@@ -63,6 +63,7 @@ declare module '../Core/Axis/TimeTicksInfoObject' {
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
+        allGroupedData?: Array<(number|null|undefined)>|Array<Array<(number|null|undefined)>>;
         cropStart?: number;
         currentDataGrouping?: TimeTicksInfoObject;
         dataGroupInfo?: Highcharts.DataGroupingInfoObject;
@@ -500,6 +501,10 @@ const applyGrouping = function (this: Series): void {
             // We calculated all group positions but we should render
             // only the ones within the visible range
             if ((dataGroupingOptions as any).groupAll) {
+                // Keep the reference to all grouped points
+                // for further calculation (eg. heikinashi).
+                series.allGroupedData = groupedYData;
+
                 croppedData = series.cropData(
                     groupedXData,
                     groupedYData as any,

@@ -38,7 +38,7 @@ declare module '../../Core/Series/PointLike' {
         dist?: number;
         distX?: number;
         hasImage?: boolean;
-        index?: number;
+        index: number;
         isInside?: boolean;
         low?: number;
         negative?: boolean;
