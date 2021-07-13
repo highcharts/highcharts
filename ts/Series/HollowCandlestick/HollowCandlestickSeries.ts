@@ -69,6 +69,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      *
      * @extends      plotOptions.candlestick
      * @product      highstock
+     * @requires     modules/hollowcandlestick
      * @optionparent plotOptions.hollowcandlestick
      */
     public static defaultOptions: HollowCandlestickSeriesOptions = merge(CandlestickSeries.defaultOptions, {
@@ -155,7 +156,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * */
 
     /**
-     * Iterate through all points and get their type..
+     * Iterate through all points and get their type.
      * @private
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#getPriceMovement
@@ -186,7 +187,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Return line color based on candle type.
      * @private
      *
-     * @function Highcharts.seriesTypes.hollowcandlestick#getPointFill
+     * @function Highcharts.seriesTypes.hollowcandlestick#getLineColor
      *
      * @param {boolean|string} isBullish
      *        Type of candle (bearish/bullish).
@@ -245,7 +246,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Check if the candle is bearish or bullish. For bullish one, return true.
      * For bearish, return string depending on the previous point.
      *
-     * @function Highcharts.seriesTypes.hollowcandlestick#pointAttribs
+     * @function Highcharts.seriesTypes.hollowcandlestick#isBullish
      *
      * @param {Array<(number)>} dataPoint
      *        Current point which we calculate.
@@ -308,7 +309,6 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
 // Force to recalculate the hollowcandlestick data set after updating data.
 addEvent(HollowCandlestickSeries, 'updatedData', function (): void {
-
     if (this.hollowCandlestickData.length) {
         this.hollowCandlestickData.length = 0;
     }

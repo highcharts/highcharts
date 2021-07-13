@@ -11,6 +11,8 @@ Else (the close is higher than the previous close), the greenish color is applie
 
 Candles without the fill are called bullish candles and the ones with filling are bearish.
 
+When the data grouping is enabled, points are grouped and then the candles are colored based on grouped points.
+
 ![hollow-candlestick.png](hollow-candlestick.png)
 
 
