@@ -20,7 +20,6 @@ import type HeikinAshiSeriesOptions from './HeikinAshiSeriesOptions';
 import HeikinAshiPoint from './HeikinAshiPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-import Series from '../../Core/Series/Series';
 import Axis from '../../Core/Axis/Axis.js';
 
 const {
@@ -109,7 +108,7 @@ class HeikinAshiSeries extends CandlestickSeries {
      * Assign haikinashi data into the points.
      * @private
      *
-     * @function Highcharts.seriesTypes.heikinashi#translatePoints
+     * @function Highcharts.seriesTypes.heikinashi#assignDataPoints
      *
      * @return {void}
      *
@@ -120,7 +119,7 @@ class HeikinAshiSeries extends CandlestickSeries {
             heikiashiData = series.heikiashiData;
         let cropStart = series.cropStart || 0;
 
-        // Rested the proccesed data.
+        // Reset the proccesed data.
         series.processedYData.length = 0;
 
         // Modify points.
@@ -133,9 +132,7 @@ class HeikinAshiSeries extends CandlestickSeries {
             point.low = heikiashiDataPoint[2];
             point.close = heikiashiDataPoint[3];
 
-            const dataPoint = [point.open, point.high, point.low, point.close];
-
-            series.processedYData.push(dataPoint);
+            series.processedYData.push([point.open, point.high, point.low, point.close]);
         }
     }
 
@@ -143,7 +140,7 @@ class HeikinAshiSeries extends CandlestickSeries {
      * Calculate data set for the heikinashi series before creating the points.
      * @private
      *
-     * @function Highcharts.seriesTypes.heikinashi#getProcessedData
+     * @function Highcharts.seriesTypes.heikinashi#getHeikinashiData
      *
      * @return {void}
      *
@@ -154,6 +151,8 @@ class HeikinAshiSeries extends CandlestickSeries {
             heikiashiData = series.heikiashiData;
 
         if (!heikiashiData.length && processedYData && processedYData.length) {
+            // Cast to `any` in order to avoid checks before calculation.
+            // Adding null doesn't change anything.
             const firstPoint: any = processedYData[0];
 
             // Modify the first point.
@@ -164,8 +163,6 @@ class HeikinAshiSeries extends CandlestickSeries {
                 const dataPoint: any = processedYData[i],
                     previousDataPoint: any = heikiashiData[i - 1];
 
-                // Cast to `any` in order to avoid checks before calculation.
-                // Adding null doesn't change anything.
                 this.modifyDataPoint(dataPoint, previousDataPoint);
             }
         }
@@ -174,7 +171,7 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     /**
      * @private
-     * @function Highcarts.seriesTypes.ohlc#init
+     * @function Highcarts.seriesTypes.heikinashi#init
      * @return {void}
      */
     public init(): void {
@@ -188,6 +185,9 @@ class HeikinAshiSeries extends CandlestickSeries {
      * @private
      *
      * @function Highcharts.seriesTypes.heikinashi#modifyFirstPointValue
+     *
+     * @param {Array<(number)>} dataPoint
+     *        Current data point.
      *
      * @return {void}
      *
@@ -203,10 +203,13 @@ class HeikinAshiSeries extends CandlestickSeries {
      * Calculate and modify the data point's value.
      * @private
      *
-     * @function Highcharts.seriesTypes.heikinashi#modifyValue
+     * @function Highcharts.seriesTypes.heikinashi#modifyDataPoint
      *
-     * @param {HeikinAshiPoint} previousPoint
-     *        Previous point.
+     * @param {Array<(number)>} dataPoint
+     *        Current data point.
+     *
+     * @param {Array<(number)>} previousDataPoint
+     *        Previous data point.
      *
      * @return {void}
      *
@@ -232,9 +235,6 @@ addEvent(HeikinAshiSeries, 'afterTranslate', function (): void {
 
 // Force to recalculate the heikinashi data set after updating data.
 addEvent(HeikinAshiSeries, 'updatedData', function (): void {
-    if (!this.heikiashiData) {
-        this.heikiashiData = [];
-    }
     if (this.heikiashiData.length) {
         this.heikiashiData.length = 0;
     }
