@@ -80,6 +80,7 @@ declare global {
         interface AnnotationEditableObject {
             basicAnnotation: Array<string>;
             circle: Array<string>;
+            ellipse: Array<string>;
             crookedLine: Array<string>;
             fibonacci: Array<string>;
             label: Array<string>;

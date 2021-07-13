@@ -49,6 +49,7 @@ const chartProto: Highcharts.AnnotationChart = Chart.prototype as any;
 import ControllableMixin from './Mixins/ControllableMixin.js';
 import ControllableRect from './Controllables/ControllableRect.js';
 import ControllableCircle from './Controllables/ControllableCircle.js';
+import ControllableEllipse from './Controllables/ControllableEllipse.js';
 import ControllablePath from './Controllables/ControllablePath.js';
 import ControllableImage from './Controllables/ControllableImage.js';
 import ControllableLabel from './Controllables/ControllableLabel.js';
@@ -203,6 +204,8 @@ declare global {
             fill: ColorType;
             height?: number;
             r: number;
+            rx: number;
+            ry: number;
             shapes: Array<AnnotationsShapeOptions>;
             snap: number;
             src: string;
@@ -316,6 +319,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public static shapesMap: Record<string, Function> = {
         'rect': ControllableRect,
         'circle': ControllableCircle,
+        'ellipse': ControllableEllipse,
         'path': ControllablePath,
         'image': ControllableImage
     };

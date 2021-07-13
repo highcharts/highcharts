@@ -7,6 +7,7 @@
 'use strict';
 
 import type ControllableCircle from '../Controllables/ControllableCircle';
+import type ControllableEllipse from '../Controllables/ControllableEllipse';
 import type ControllableRect from '../Controllables/ControllableRect';
 import type MockPointOptions from '../MockPointOptions';
 import type PointerEvent from '../../../Core/PointerEvent';
@@ -179,6 +180,22 @@ class BasicAnnotation extends Annotation {
                     target.redraw(false);
                 }
             }
+        }],
+        ellipse: [{
+            positioner: function (
+                this: Highcharts.AnnotationControlPoint,
+                target: Highcharts.AnnotationControllable
+            ): PositionObject {
+                const xy = MockPoint.pointToPixels(target.points[0]),
+                    rx: number = target.options.rx as any,
+                    ry: number = target.options.ry as any;
+                return {
+                    x: xy.x + rx * Math.cos(Math.PI / 4) -
+                    this.graphic.width / 2,
+                    y: xy.y + ry * Math.sin(Math.PI / 4) -
+                    this.graphic.height / 2
+                };
+            }
         }]
     };
 
@@ -241,6 +258,7 @@ namespace BasicAnnotation {
     export interface ControlPoints {
         label: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
         rectangle: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
+        ellipse: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
         circle: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
     }
 }
