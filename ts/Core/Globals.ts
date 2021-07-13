@@ -17,7 +17,6 @@
  * */
 
 import type GlobalsLike from './GlobalsLike';
-import type Options from './Options';
 
 /* *
  *
@@ -83,6 +82,11 @@ declare global {
     interface TouchList {
         changedTouches: Array<Touch>;
     }
+    interface Window {
+        canvg: CanvgNamespace;
+        jsPDF: typeof jsPDF;
+        svg2pdf: Function;
+    }
     /**
      * @private
      * @deprecated
@@ -90,6 +94,7 @@ declare global {
      */
     const win: Window|undefined;
 }
+
 
 /* *
  *
