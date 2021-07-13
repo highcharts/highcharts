@@ -341,6 +341,7 @@ class Tooltip {
      *  Properties
      *
      * */
+    public anchor: Array<number> = []
 
     public chart: Chart;
 
@@ -1354,6 +1355,7 @@ class Tooltip {
         anchor = tooltip.getAnchor(pointOrPoints, mouseEvent);
         x = anchor[0];
         y = anchor[1];
+        tooltip.anchor = anchor;
 
         // shared tooltip, array is sent over
         if (
@@ -1380,12 +1382,6 @@ class Tooltip {
 
         // single point tooltip
         } else {
-            // Hovering over series that tooltip shouldn't be split, #13868.
-            if (!isArray(pointOrPoints) && pointOrPoints.series.noSplitTooltip) {
-                tooltip.options.split = false;
-                tooltip.split = false;
-            }
-
             textConfig = point.getLabelConfig() as any;
         }
         this.len = pointConfig.length; // #6128
@@ -1698,6 +1694,9 @@ class Tooltip {
         if (isString(labels)) {
             labels = [false, labels];
         }
+        if (points[0].series.noSplitTooltip) {
+            labels[0] = '';
+        }
         // Create the individual labels for header and points, ignore footer
         let boxes = labels.slice(0, points.length + 1).reduce(function (
             boxes: Array<AnyRecord>,
@@ -1735,8 +1734,16 @@ class Tooltip {
                         distributionBoxTop -= headerHeight;
                     }
                 }
+                let anchorX,
+                    anchorY;
+                if (!point.series.noSplitTooltip) {
+                    anchorX = getAnchor(point).anchorX;
+                    anchorY = getAnchor(point).anchorY;
+                } else {
+                    anchorX = tooltip.anchor[0];
+                    anchorY = tooltip.anchor[1];
+                }
 
-                const { anchorX, anchorY } = getAnchor(point);
                 if (typeof anchorY === 'number') {
                     const size = bBox.height + 1;
                     const boxPosition = (
