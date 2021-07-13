@@ -117,6 +117,8 @@ declare global {
             point?: (string|MockPointOptions);
             points?: Array<(string|MockPointOptions)>;
             r?: number;
+            rx?: number;
+            ry?: number;
             x?: number;
             y?: number;
         }
