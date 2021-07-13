@@ -14,7 +14,6 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
 import type CandlestickPointOptions from '../Candlestick/CandlestickPointOptions';
 
 /* *
@@ -24,7 +23,6 @@ import type CandlestickPointOptions from '../Candlestick/CandlestickPointOptions
  * */
 
 export interface HeikinAshiPointOptions extends CandlestickPointOptions {
-    upColor?: ColorType;
 }
 
 export default HeikinAshiPointOptions;
