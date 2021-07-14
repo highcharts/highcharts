@@ -43,9 +43,21 @@ class ControllableEllipse extends ControllableCircle {
         ControllableMixin.redraw.call(this, animation);
     }
 
-    public setRadius(rx: number, ry?: number): void {
+    public setYRadius(ry: number): void {
+        this.options.ry = ry;
+    }
+
+    public setXRadius(rx: number): void {
         this.options.rx = rx;
-        this.options.ry = ry || rx;
+    }
+
+    public setRadius(rx?: number, ry?: number): void {
+        if (rx) {
+            this.options.rx = rx;
+        }
+        if (ry) {
+            this.options.ry = ry;
+        }
     }
 }
 

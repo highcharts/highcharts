@@ -181,22 +181,74 @@ class BasicAnnotation extends Annotation {
                 }
             }
         }],
-        ellipse: [{
-            positioner: function (
-                this: Highcharts.AnnotationControlPoint,
-                target: Highcharts.AnnotationControllable
-            ): PositionObject {
-                const xy = MockPoint.pointToPixels(target.points[0]),
-                    rx: number = target.options.rx as any,
-                    ry: number = target.options.ry as any;
-                return {
-                    x: xy.x + rx * Math.cos(Math.PI / 4) -
-                    this.graphic.width / 2,
-                    y: xy.y + ry * Math.sin(Math.PI / 4) -
-                    this.graphic.height / 2
-                };
+        ellipse: [
+            {
+                positioner: function (
+                    this: Highcharts.AnnotationControlPoint,
+                    target: Highcharts.AnnotationControllable
+                ): PositionObject {
+                    const xy = MockPoint.pointToPixels(target.points[0]),
+                        ry: number = target.options.ry as any;
+                    return {
+                        x: xy.x - this.graphic.width / 2,
+                        y: xy.y - this.graphic.height / 2 - ry
+                    };
+                },
+                events: {
+                    drag: function (
+                        this: Annotation,
+                        e: Highcharts.AnnotationEventObject,
+                        target: ControllableEllipse
+                    ): void {
+                        const translation = this.mouseMoveToTranslation(e),
+                            radiusTranslation = target.chart.inverted ?
+                                translation.x :
+                                translation.y;
+
+                        target.setYRadius(
+                            Math.max(
+                                5,
+                                Math.abs(target.options.ry - radiusTranslation)
+                            )
+                        );
+
+                        target.redraw(false);
+                    }
+                }
+            },
+            {
+                positioner: function (
+                    this: Highcharts.AnnotationControlPoint,
+                    target: Highcharts.AnnotationControllable
+                ): PositionObject {
+                    const xy = MockPoint.pointToPixels(target.points[0]),
+                        rx = target.options.rx as number;
+                    return {
+                        x: xy.x - this.graphic.width / 2 - rx,
+                        y: xy.y - this.graphic.height / 2
+                    };
+                },
+                events: {
+                    drag: function (
+                        this: Annotation,
+                        e: Highcharts.AnnotationEventObject,
+                        target: ControllableEllipse
+                    ): void {
+                        const translation = this.mouseMoveToTranslation(e),
+                            radiusTranslation = target.chart.inverted ?
+                                translation.y : translation.x;
+
+                        target.setXRadius(
+                            Math.max(
+                                5,
+                                Math.abs(radiusTranslation - target.options.rx)
+                            )
+                        );
+                        target.redraw(false);
+                    }
+                }
             }
-        }]
+        ]
     };
 
     /* *
