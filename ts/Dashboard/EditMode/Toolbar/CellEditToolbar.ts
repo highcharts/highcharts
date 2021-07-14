@@ -9,6 +9,7 @@ import GUIElement from '../../Layout/GUIElement.js';
 
 const {
     merge,
+    fireEvent,
     objectEach
 } = U;
 
@@ -191,14 +192,20 @@ class CellEditToolbar extends EditToolbar {
         const toolbar = this;
 
         if (toolbar.cell) {
+            const row = toolbar.cell.row;
 
-            this.resetEditedCell();
-
+            toolbar.resetEditedCell();
             toolbar.cell.destroy();
             toolbar.cell = void 0;
 
             // Hide row and cell toolbars.
             toolbar.editMode.hideToolbars(['cell', 'row']);
+
+            // Call cellResize dashboard event.
+            if (row && row.cells && row.cells.length) {
+                fireEvent(toolbar.editMode.dashboard, 'cellResize', { cell: row.cells[0] });
+                fireEvent(row, 'cellChange', { cell: row.cells[0], row });
+            }
         }
     }
 

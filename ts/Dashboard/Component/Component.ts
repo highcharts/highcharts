@@ -333,7 +333,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             }
         }
 
-        if (this.parentCell) {
+        if (this.parentCell && Object.keys(this.parentCell).length) {
             const dashboard = this.parentCell.row.layout.dashboard;
             this.cellListeners.push(
                 // Listen for resize on dashboard
