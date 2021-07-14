@@ -11,4 +11,10 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/OfflineExporting.js';
+import Highcharts from '../../Core/Globals.js';
+import OfflineExporting from '../../Extensions/OfflineExporting/OfflineExporting.js';
+const G: AnyRecord = Highcharts;
+// Compatibility
+G.downloadSVGLocal = OfflineExporting.downloadSVGLocal;
+// Compose
+OfflineExporting.compose(G.Chart);
