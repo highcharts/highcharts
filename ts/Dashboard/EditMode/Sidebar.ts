@@ -819,7 +819,7 @@ class Sidebar {
             const percentageValue = GUIElement.getPercentageWidth(definedWidth);
 
             if (percentageValue) {
-                return parseFloat(percentageValue);
+                return Math.round(parseFloat(percentageValue) * 100) / 100;
             }
         }
 
@@ -830,6 +830,9 @@ class Sidebar {
         const sidebar = this;
         const activeTab = sidebar.activeTab;
         const activeTabContainer = activeTab && activeTab.content && activeTab.content.container;
+        const currentRwdMode = sidebar && sidebar.editMode.rwdMode;
+        const currentCell = this.editMode.cellToolbar && this.editMode.cellToolbar.cell;
+        const cellRwd = currentCell && (currentCell.options.responsive || {})[currentRwdMode || 'large'];
         const predefinedWidth = Sidebar.predefinedWidth;
         const item = activeTab && activeTab.content.activeItems[0];
 

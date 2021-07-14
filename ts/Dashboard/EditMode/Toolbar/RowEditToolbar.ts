@@ -143,8 +143,7 @@ class RowEditToolbar extends EditToolbar {
         if (
             rowCnt &&
             toolbar.editMode.isActive() &&
-            !(toolbar.editMode.dragDrop || {}).isActive &&
-            (!resizer || resizer && !resizer.isActive && !resizer.isResizerDetectionActive)
+            !(toolbar.editMode.dragDrop || {}).isActive
         ) {
             const rowOffsets = GUIElement.getOffsets(row, toolbar.editMode.dashboard.container);
             const rowWidth = rowOffsets.right - rowOffsets.left;

@@ -174,13 +174,12 @@ class EditMode {
         // }
         const guiOptions = dashboard.options.gui;
 
-        // @ToDo refactor resizer.
-        // if (
-        //     !(editMode.options.resize &&
-        //         !editMode.options.resize.enabled)
-        // ) {
-        //     editMode.resizer = new Resizer(editMode);
-        // }
+        if (
+            !(editMode.options.resize &&
+                !editMode.options.resize.enabled)
+        ) {
+            editMode.resizer = new Resizer(editMode);
+        }
 
         //     editMode.resizer = Resizer.fromJSON(
         //         editMode, guiOptions.layoutOptions.resizerJSON
@@ -320,10 +319,6 @@ class EditMode {
                     resizer = editMode.resizer;
 
                 addEvent(cell.container, 'mouseenter', function (e: PointerEvent): void {
-                    if (resizer && resizer.isResizerDetectionActive) {
-                        resizer.mouseCellContext = cell;
-                    }
-
                     if (editMode.isContextDetectionActive) {
                         editMode.mouseCellContext = cell;
                     }
@@ -467,6 +462,55 @@ class EditMode {
                 case 'sidebar': {
                     if (editMode.sidebar && editMode.sidebar.isVisible) {
                         editMode.sidebar.hide();
+                    }
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Method for hiding edit toolbars.
+     *
+     * @param {Array<string>} toolbarTypes
+     * The array of toolbar names to hide ('cell', 'row', 'sidebar').
+     *
+     * @param {Cell} currentCell
+     * The cell reference for toolbar
+     *
+     * @param {Row} currentRow
+     * The row reference for toolbar
+     */
+    public showToolbars(
+        toolbarTypes?: Array<string>,
+        currentCell?: Cell
+    ): void {
+        console.log('showToolbar');
+        const editMode = this,
+            toolbarsToShow = toolbarTypes || ['cell', 'row', 'sidebar'];
+
+        for (let i = 0, iEnd = toolbarsToShow.length; i < iEnd; ++i) {
+            switch (toolbarsToShow[i]) {
+                case 'cell': {
+                    if (currentCell && editMode.cellToolbar) {
+                        editMode.cellToolbar.isVisible = true;
+                        editMode.cellToolbar.showToolbar(currentCell);
+                    }
+                    break;
+                }
+                case 'row': {
+                    if (currentCell && currentCell.row && editMode.rowToolbar) {
+                        editMode.rowToolbar.isVisible = true;
+                        editMode.rowToolbar.showToolbar(currentCell && currentCell.row);
+                    }
+                    break;
+                }
+                case 'sidebar': {
+                    if (editMode.sidebar && !editMode.sidebar.isVisible) {
+                        editMode.sidebar.show();
                     }
                     break;
                 }
@@ -625,6 +669,12 @@ class EditMode {
 
             if (this.sidebar) {
                 this.sidebar.show(this.editCellContext);
+            }
+
+            if (this.resizer) {
+                this.resizer.isResizerDetectionActive = true;
+                this.resizer.mouseCellContext = this.resizer.resizeCellContext = this.editCellContext;
+                this.resizer.onResizeElementConfirm();
             }
         }
     }

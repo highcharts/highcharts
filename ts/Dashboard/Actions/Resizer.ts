@@ -45,26 +45,6 @@ class Resizer {
         return new Resizer(editMode, json.options);
     }
 
-    public static createMenuBtn(
-        editMode: EditMode
-    ): HTMLDOMElement|undefined {
-        return EditRenderer.renderButton(
-            editMode.tools.container as HTMLDOMElement,
-            {
-                className: EditGlobals.classNames.editToolsBtn,
-                value: 'Resize',
-                callback: (): void => {
-                    if (editMode.resizer) {
-                        editMode.resizer.resizerBtnCallback();
-                    }
-                },
-                style: {
-                    display: 'none'
-                }
-            }
-        );
-    }
-
     protected static readonly defaultOptions: Resizer.Options = {
         enabled: true,
         styles: {
@@ -100,8 +80,6 @@ class Resizer {
         this.isY = this.options.type.indexOf('y') > -1;
         this.isActive = false;
         this.startX = 0;
-
-        this.init();
 
         this.addSnaps(
             this.options
@@ -146,126 +124,12 @@ class Resizer {
      *  Functions
      *
      * */
-    public init(): void {
-        const layouts = this.editMode.dashboard.layouts;
-
-        for (let i = 0, iEnd = layouts.length; i < iEnd; ++i) {
-            this.setInitWidth(layouts[i]);
-        }
-    }
-
     public initEvents(): void {
         const resizer = this;
 
         // Resizer events.
         addEvent(document, 'mousemove', resizer.onDetectContext.bind(resizer));
         addEvent(document, 'click', resizer.onResizeElementConfirm.bind(resizer));
-    }
-
-    public setInitWidth(
-        layout?: Layout
-    ): void {
-        const rows = layout && layout.rows;
-        let cellStyle;
-        let sumMinWidth;
-        let prevIndexRow = 0;
-
-        for (let i = 0, iEnd = (rows || []).length; i < iEnd; ++i) {
-
-            const cells = rows && rows[i].cells;
-            
-            if (cells) {
-                for (let j = 0, jEnd = cells.length; j < jEnd; ++j) {
-
-                    const cellContainer = (cells[j].container as HTMLElement);
-                    sumMinWidth = 0;
-
-                    for (let k = 0, kEnd = cells[j].row.cells.length; k < kEnd; ++k) {
-                        const prevCell = cells[j].row.cells[k];
-
-                        if (k <= j) {
-                            sumMinWidth += (
-                                ((cells[j].row.cells[k].options.style?.minWidth as number) || 0) || ((this.options.styles || {}).minWidth || 0)
-                            );
-                        }
-                    }
-
-                    if (cells[j].nestedLayout) {
-                        this.setInitWidth(cells[j].nestedLayout);
-                    } else {
-                        // set min-size
-                        cellContainer.style.minWidth =
-                            this.options.styles.minWidth + 'px';
-
-                        cellStyle = cells[j].options.style;
-
-                        if (cellStyle) {
-                            cellStyle.minWidth = this.options.styles.minWidth;
-                        } else {
-                            cells[j].options.style = {
-                                minWidth: this.options.styles.minWidth
-                            }
-                        }
-
-                        this.updateParentMinWidth(
-                            cells[j],
-                            sumMinWidth
-                        );
-                    }
-
-                    cellContainer.style.width = (
-                        (
-                            (cellContainer.offsetWidth) /
-                            ((cells[j].row.container as HTMLElement).offsetWidth || 1)
-                        ) * 100
-                    ) + '%';               
-                    cellContainer.style.flex = 'none';
-                }
-            }
-
-            prevIndexRow = i;
-        }
-    }
-
-    public updateParentMinWidth(
-        cell: Cell,
-        sumMinWidth: number,
-        sumParentMinWidth?: boolean
-    ): void {
-        const parentCell = cell.row.layout.parentCell;
-
-        if (!parentCell) {
-            return;
-        }
-
-        const parentCellStyle = parentCell.options.style;
-
-        if (parentCellStyle) {
-            if (sumParentMinWidth) {
-                if ((parentCellStyle.minWidth || 0) <= sumMinWidth) {
-                    parentCellStyle.minWidth = (
-                        ((parentCellStyle.minWidth as number) || 0) + (this.options.styles.minWidth || 0)
-                    );
-                }
-            } else {
-                if ((parentCellStyle.minWidth || 0) <= sumMinWidth) {
-                    parentCellStyle.minWidth = (
-                        sumMinWidth
-                    );
-                }
-            }
-        } else {
-
-            parentCell.options.style = {
-                minWidth: (sumMinWidth || 0)
-            }
-        }
-
-        if (parentCell.container) {
-
-            parentCell.container.style.minWidth =
-                (parentCell.options.style || {}).minWidth + 'px';
-        }
     }
 
     /**
@@ -323,7 +187,6 @@ class Resizer {
         this.currentDimension = void 0;
         this.currentCell = void 0;
         this.resizeCellContext = void 0;
-        this.disableMenuBtn();
 
         if (this.snapXR) {
             this.snapXR.style.left = '-9999px';
@@ -388,6 +251,7 @@ class Resizer {
             resizer.isActive = true;
             resizer.currentDimension = 'x';
             resizer.deactivateResizerDetection();
+            resizer.editMode.hideToolbars(['row', 'cell']);
 
             resizer.startX = e.clientX;
         };
@@ -398,6 +262,7 @@ class Resizer {
             resizer.isActive = true;
             resizer.currentDimension = 'y';
             resizer.deactivateResizerDetection();
+            resizer.editMode.hideToolbars(['row', 'cell']);
         };
 
         resizer.mouseMoveSnap = mouseMoveSnap = function (
@@ -417,6 +282,10 @@ class Resizer {
                 resizer.isActive = false;
                 resizer.currentDimension = void 0;
                 resizer.activateResizerDetection();
+                resizer.editMode.showToolbars(
+                    ['row', 'cell'],
+                    resizer.currentCell
+                );
             }
         };
 
@@ -457,6 +326,9 @@ class Resizer {
         const currentCell = this.currentCell as Resizer.ResizedCell;
         const cellContainer = currentCell && currentCell.container;
         const currentDimension = this.currentDimension;
+        const sidebar = this.editMode.sidebar;
+        const currentRwdMode = sidebar && sidebar.editMode.rwdMode;
+        const cellRwd = (currentCell.options.responsive || {})[currentRwdMode || 'large'];
 
         if (
             currentCell &&
@@ -467,22 +339,19 @@ class Resizer {
             const { width: parentRowWidth } = GUIElement.getDimFromOffsets(
                 GUIElement.getOffsets(currentCell.row)
             );
-            const cellSiblings = this.getSiblings(currentCell);
-
             // resize width
             if (currentDimension === 'x') {
-                const maxWidth = parentRowWidth -
-                    this.sumCellOuterWidth(cellSiblings, currentCell.row,currentCell) || 0;
-
-                cellContainer.style.width = (
-                    Math.min(e.clientX - cellOffsets.left, maxWidth) /
+                const newWidth = (
+                    Math.min(e.clientX - cellOffsets.left, parentRowWidth) /
                     parentRowWidth
                 ) * 100 + '%';
 
-                this.resizeCellSiblings(
-                    ((e.clientX - this.startX) / parentRowWidth) * 100,
-                    cellSiblings.next
-                );
+                cellContainer.style.flex = '0 0 ' + newWidth;
+                currentCell.options.width = newWidth;
+
+                if (cellRwd) {
+                    (currentCell.options.responsive || {})[currentRwdMode || 'large'].width = newWidth;
+                }
 
                 this.startX = e.clientX;
             }
@@ -491,181 +360,15 @@ class Resizer {
             if (currentDimension === 'y') {
                 cellContainer.style.height =
                     (
-                        Math.max(
-                            // diff
-                            e.clientY - cellOffsets.top
-                            
-                            // minSize
-                            // (currentCell.styles || {}).minHeight || 0
-                        )
+                        e.clientY - cellOffsets.top
                     ) + 'px';
             }
             // Call cellResize dashboard event.
             fireEvent(this.editMode.dashboard, 'cellResize', { cell: currentCell });
             fireEvent(currentCell.row, 'cellChange', { cell: currentCell, row: currentCell.row });
 
-            console.log('resize cell');
             this.resizeElement(currentCell);
         }
-    }
-    /**
-     * Sum min width and current width of cells in the row.
-     *
-     * @param {Row} row
-     * Row contains cells
-     *
-     * @param {cell} cell
-     * Optional parameter, the cell which is resized and should be excluded
-     * in calculations. In case of nested layouts, we calculate all cells.
-     *
-     * @return {number}
-     * Sum
-     */
-    public sumCellOuterWidth(
-        cellSiblings: Resizer.CellSiblings,
-        row: Row,
-        cell?: Cell
-    ): number {
-
-        const cellContainer = cell && cell.container as HTMLElement;
-        const parentRowWidth = row.container && row.container.offsetWidth;
-
-        let sum = 0;
-        let rowCell;
-        let rowCellContainer;
-
-        // TEMP
-        let prevCellsWidth = 0;
-        let prevCellContainer;
-
-        // sum prev
-        for (let i = 0, iEnd = cellSiblings.prev.length; i < iEnd; ++i) {
-
-            prevCellContainer = cellSiblings.prev[i].container;
-
-            if (prevCellContainer) {
-                prevCellsWidth += prevCellContainer.offsetWidth;
-            }
-        }
-
-        const cells = cellSiblings.next;
-
-        for (let i = 0, iEnd = cells.length; i < iEnd; ++i) {
-
-            rowCell = cells[i] as Resizer.ResizedCell;
-            rowCellContainer = rowCell.container as HTMLDOMElement;
-
-            if (rowCellContainer !== cellContainer) {
-
-                // find all cells in nested layout to calculate
-                // min-width / width each of them
-                const cellRows = (cells[i].nestedLayout || {}).rows;
-
-                if (cellRows) {
-                    let maxRow = row;
-                    let maxCells = 0;
-
-                    // find a row with maximum cells
-                    for (let j = 0, jEnd = cellRows.length; j < jEnd; ++j) {
-                        if (cellRows[j].cells.length > maxCells) {
-                            maxCells = cellRows[j].cells.length;
-                            maxRow = cellRows[j];
-                        }
-                    }
-
-                    // call reccurent calculation of cells (nested layouts)
-                    if (maxRow) {
-                        sum += this.sumCellOuterWidth(
-                            {
-                                next: maxRow.cells,
-                                prev: []
-                            },
-                            maxRow,
-                            void 0
-                        );
-                    }
-                } else {
-                    // add min-size if "resized" width does not exist or is
-                    // bigger then width
-                    sum += (this.options.styles || {}).minWidth || 0;
-                }
-            }
-        }
-
-        sum += prevCellsWidth;
-
-        return sum;
-    }
-
-    public getSiblings(
-        currentCell: Cell|undefined
-    ): Resizer.CellSiblings {
-        const siblings = {
-            prev: [] as Array<Cell>,
-            next: [] as Array<Cell>
-        };
-
-        if (!currentCell) {
-            return siblings;
-        }
-
-        const row = currentCell.row;
-        const cells = row.cells;
-        let currentCellIndex = Infinity;
-
-        
-        for (let i = 0, iEnd = cells.length; i < iEnd; i++) {
-            if (cells[i].id !== currentCell.id) {
-                // detect prev or next sibbling
-                if (i < currentCellIndex) {
-                    siblings.prev.push(
-                        cells[i]
-                    );
-                } else {
-                    siblings.next.push(
-                        cells[i]
-                    );
-                }
-            } else {
-                // make breaking point for detection of prev / next
-                currentCellIndex = i;
-            }
-        }
-
-        return siblings;
-    }
-
-    public resizeCellSiblings(
-        diffWidth: number,
-        cellSiblings: Array<Cell>
-    ): void {
-        let cellsToChange = cellSiblings.length;
-        let cellContainer;
-
-        for (let i = 0, iEnd = cellSiblings.length; i < iEnd; ++i) {
-            cellContainer = cellSiblings[i].container;
-            const cellStyle = cellSiblings[i].options.style;
-            const cellWidth = cellContainer && parseFloat(cellContainer.style.getPropertyValue('width')) || 0;
-            const minWidthPercent =
-                (
-                    (((cellStyle || {}).minWidth as number) || 0) /
-                    (((cellSiblings[i].row.container as HTMLDOMElement).offsetWidth) || 0)
-                ) * 100
-
-            // detect achieve the minWidth
-            if (minWidthPercent >= cellWidth) {
-                cellsToChange--;
-            }
-
-            if (cellContainer) {
-                (cellContainer).style.width =
-                    // bug, missing padding/margin
-                    cellWidth +
-                        -(diffWidth / cellsToChange) + '%'; 
-            }
-
-        }
-
     }
     /**
      * Destroy resizer
@@ -720,7 +423,6 @@ class Resizer {
 
     public activateResizerDetection(): void {
         this.isResizerDetectionActive = true;
-        this.editMode.hideToolbars(['row', 'cell']);
     }
 
     public deactivateResizerDetection(): void {
@@ -785,42 +487,6 @@ class Resizer {
             height: height + 'px',
             width: width + 'px'
         });
-    }
-
-    public resizerBtnCallback(): void {
-        const resizer = this;
-        const editMode = this.editMode;
-
-        if (resizer && !resizer.isResizerDetectionActive) {
-            this.enableMenuBtn();
-        } else if (resizer) {
-            this.disableMenuBtn();
-            this.disableResizer();
-        }
-    }
-
-    private disableMenuBtn(): void {
-        // const resizerMenuBtn = this.editMode.resizeBtn;
-
-        // this.deactivateResizerDetection();
-
-        // if (resizerMenuBtn) {
-        //     resizerMenuBtn.classList.remove(
-        //         EditGlobals.classNames.resizerMenuBtnActive
-        //     );
-        // }
-    }
-
-    private enableMenuBtn(): void {
-        // const resizer = this;
-        // const resizerMenuBtn = this.editMode.resizeBtn;
-
-        // resizer.activateResizerDetection();
-        // if (resizerMenuBtn) {
-        //     resizerMenuBtn.classList.add(
-        //         EditGlobals.classNames.resizerMenuBtnActive
-        //     );
-        // }
     }
 
     /**

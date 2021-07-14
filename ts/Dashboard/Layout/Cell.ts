@@ -418,7 +418,9 @@ class Cell extends GUIElement {
 
         cell.options.responsive[cntSize] = {
             width: width
-        }
+        };
+
+        cell.options.width = width;
     }
 }
 
