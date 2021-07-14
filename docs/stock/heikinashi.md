@@ -6,13 +6,18 @@ A Heiken Ashi point is composed of a body and an upper and a lower wick similarl
 
 When the data grouping is enabled, points are grouped and then the Heiken Ashi values are calculated based on grouped points.
 
+![heikinashi.png](heikinashi.png)
+
+### Calculating Heikin Ashi points
+
 ``` TS
-newOpen = (open + high + low + close) / 4;
 newOpen = (previousOpen + previousClose) / 2;
+newClose = (open + high + low + close) / 4;
 newHigh = Math.max(high, newClose, newOpen);
 newClose = Math.min(low, newClose, newOpen);
 ```
 
-![heikinashi.png](heikinashi.png)
+![heikinashi-calculation.png](heikinashi-calculation.png)
+
 
 For more information on the Heiken Ashi chart, see the [API reference](https://api.highcharts.com/highstock/plotOptions.heikinashi).
