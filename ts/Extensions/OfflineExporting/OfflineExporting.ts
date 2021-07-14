@@ -12,6 +12,8 @@
 
 /* global MSBlobBuilder */
 
+'use strict';
+
 /* *
  *
  * Imports
@@ -120,17 +122,12 @@ namespace OfflineExporting {
      *
      * */
 
-    /* eslint-disable require-jsdoc */
+    /* eslint-disable valid-jsdoc */
 
     /**
-     * Compose
-     *
+     * Extends OfflineExporting with Chart.
      * @private
-     *
-     * @param ChartClass
-     * Axis class to extend.
      */
-
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (typeof Composition&T) {
@@ -560,19 +557,19 @@ namespace OfflineExporting {
     }
 
     /**
-         * Get SVG of chart prepared for client side export. This converts
-         * embedded images in the SVG to data URIs. It requires the regular
-         * exporting module. The options and chartOptions arguments are passed
-         * to the getSVGForExport function.
-         *
-         * @private
-         * @function Highcharts.Chart#getSVGForLocalExport
-         * @param {Highcharts.ExportingOptions} options
-         * @param {Highcharts.Options} chartOptions
-         * @param {Function} failCallback
-         * @param {Function} successCallback
-         * @return {void}
-         */
+     * Get SVG of chart prepared for client side export. This converts
+     * embedded images in the SVG to data URIs. It requires the regular
+     * exporting module. The options and chartOptions arguments are passed
+     * to the getSVGForExport function.
+     *
+     * @private
+     * @function Highcharts.Chart#getSVGForLocalExport
+     * @param {Highcharts.ExportingOptions} options
+     * @param {Highcharts.Options} chartOptions
+     * @param {Function} failCallback
+     * @param {Function} successCallback
+     * @return {void}
+     */
     function getSVGForLocalExport(
         this: Chart,
         options: ExportingOptions,
