@@ -8,6 +8,12 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type SVGElement from '../Renderer/SVG/SVGElement';
 
 /* *
@@ -24,6 +30,7 @@ export interface AnimationOptions {
     easing?: (string|Function);
     step?: AnimationStepCallbackFunction;
 }
+
 export interface AnimationStepCallbackFunction {
     (this: SVGElement, ...args: Array<any>): void;
 }

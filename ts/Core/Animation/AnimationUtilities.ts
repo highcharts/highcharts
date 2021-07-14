@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptions from './AnimationOptions';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
@@ -17,6 +23,7 @@ import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+
 import Fx from './Fx.js';
 import U from '../Utilities.js';
 const {
@@ -29,6 +36,12 @@ const {
     objectEach,
     pick
 } = U;
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Set the global animation to either a given value, or fall back to the given
@@ -104,11 +117,10 @@ function getDeferredAnimation(
     animation: (false|Partial<AnimationOptions>),
     series?: Series
 ): Partial<AnimationOptions> {
-
-    const labelAnimation = animObject(animation);
-    const s = series ? [series] : chart.series;
-    let defer = 0;
-    let duration = 0;
+    const labelAnimation = animObject(animation),
+        s = series ? [series] : chart.series;
+    let defer = 0,
+        duration = 0;
 
     s.forEach((series): void => {
         const seriesAnim = animObject(series.options.animation);
@@ -236,7 +248,6 @@ function animate(
  * stopping everything, we can just stop the actual attributes we're setting.
  */
 function stop(el: SVGElement, prop?: string): void {
-
     let i = Fx.timers.length;
 
     // Remove timers related to this element (#4519)
