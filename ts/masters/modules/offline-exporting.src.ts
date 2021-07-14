@@ -16,3 +16,5 @@ import OfflineExporting from '../../Extensions/OfflineExporting/OfflineExporting
 const G: AnyRecord = Highcharts;
 // Compatibility
 G.downloadSVGLocal = OfflineExporting.downloadSVGLocal;
+// Compose
+OfflineExporting.compose(G.Chart);

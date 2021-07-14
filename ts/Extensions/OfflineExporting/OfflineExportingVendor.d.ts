@@ -33,6 +33,11 @@ declare global {
     interface CanvgNamespace {
         Canvg: Canvg;
     }
+    interface Window {
+        canvg: CanvgNamespace;
+        jsPDF: typeof jsPDF;
+        svg2pdf: Function;
+    }
     class jsPDF { // eslint-disable-line @typescript-eslint/class-name-casing
         constructor (a: string, b: string, c: Array<number>);
         output: Function;
