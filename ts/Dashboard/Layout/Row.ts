@@ -11,6 +11,7 @@ const {
     pick,
     defined,
     merge,
+    objectEach,
     fireEvent
 } = U;
 class Row extends GUIElement {
@@ -406,6 +407,58 @@ class Row extends GUIElement {
     public show(): void {
         this.changeVisibility(true, 'flex');
     }
+
+    // Row can have cells below each others.
+    // This method returns cells split into levels.
+    public getRowLevels(): Array<Row.RowLevel> {
+        const row = this,
+            rowLevels: Record<string, Row.RowLevel> = {},
+            rowLevelsArray: Array<Row.RowLevel> = [];
+
+        let cell, cellOffsets;
+
+        for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
+            cell = row.cells[k];
+            cellOffsets = GUIElement.getOffsets(cell);
+
+            if (!rowLevels[cellOffsets.top]) {
+                rowLevels[cellOffsets.top] = {
+                    top: cellOffsets.top,
+                    bottom: cellOffsets.bottom,
+                    cells: []
+                };
+            }
+
+            if (rowLevels[cellOffsets.top].bottom < cellOffsets.bottom) {
+                rowLevels[cellOffsets.top].bottom = cellOffsets.bottom;
+            }
+
+            rowLevels[cellOffsets.top].cells.push(cell);
+        }
+
+        objectEach(rowLevels, (value): void => {
+            rowLevelsArray.push(value);
+        });
+
+        return rowLevelsArray;
+    }
+
+    // Get row level on a specific Y position.
+    public getRowLevel(
+        posY: number
+    ): Row.RowLevel|undefined {
+        const rowCellsLevels = this.getRowLevels();
+
+        let rowCellsLevel;
+
+        for (let i = 0, iEnd = rowCellsLevels.length; i < iEnd; ++i) {
+            if (rowCellsLevels[i].top <= posY && rowCellsLevels[i].bottom > posY) {
+                rowCellsLevel = rowCellsLevels[i];
+            }
+        }
+
+        return rowCellsLevel;
+    }
 }
 
 namespace Row {
@@ -426,6 +479,12 @@ namespace Row {
         parentContainerId: string;
         cells: Array<Cell.ClassJSON>;
         style?: CSSJSONObject;
+    }
+
+    export interface RowLevel {
+        top: number;
+        bottom: number;
+        cells: Array<Cell>;
     }
 }
 

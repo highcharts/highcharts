@@ -763,7 +763,8 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
                     layout: {
                         rows: [{
                             cells: [{
-                                id: 'dashboard-col-layout-1'
+                                id: 'dashboard-col-layout-1',
+                                width: '1/2'
                             }, {
                                 id: 'dashboard-col-layout-2',
                                 layout: {
@@ -784,9 +785,11 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
                                     }]
                                 }
                             }, {
-                                id: 'dashboard-col-layout-4'
+                                id: 'dashboard-col-layout-4',
+                                width: '1/2'
                             }, {
-                                id: 'dashboard-col-layout-5'
+                                id: 'dashboard-col-layout-5',
+                                width: '1/3'
                             }]
                         }, {
                             cells: [{

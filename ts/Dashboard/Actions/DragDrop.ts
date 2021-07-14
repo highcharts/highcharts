@@ -12,6 +12,7 @@ const {
     addEvent,
     merge,
     css,
+    objectEach,
     fireEvent,
     createElement
 } = U;
@@ -460,7 +461,8 @@ class DragDrop {
 
             // Update or show drop pointer.
             if (!dragDrop.dropPointer.isVisible || updateDropPointer) {
-                const pointerHeight = (dragDrop.dropContext.row.container || {}).offsetHeight || height;
+                const rowLevel = dragDrop.dropContext.row.getRowLevel(e.clientY),
+                    pointerHeight = rowLevel ? rowLevel.bottom - rowLevel.top : height;
 
                 dragDrop.showDropPointer(
                     dropContextOffsets.left + (align === 'right' ? width : 0) -
@@ -496,67 +498,70 @@ class DragDrop {
         const dragDrop = this,
             dropPointerSize = dragDrop.options.dropPointerSize,
             rowOffsets = GUIElement.getOffsets(mouseRowContext),
-            { height: rowHeight } = GUIElement.getDimFromOffsets(rowOffsets);
+            rowLevel = mouseRowContext.getRowLevel(e.clientY);
 
         let cell, cellOffsets;
 
-        for (let i = 0, iEnd = mouseRowContext.cells.length; i < iEnd; ++i) {
-            cell = mouseRowContext.cells[i];
-            cellOffsets = GUIElement.getOffsets(cell);
+        if (rowLevel) {
+            for (let i = 0, iEnd = rowLevel.cells.length; i < iEnd; ++i) {
+                cell = rowLevel.cells[i];
+                cellOffsets = GUIElement.getOffsets(cell);
 
-            const { width, height } = GUIElement.getDimFromOffsets(cellOffsets);
-            const dashOffsets = dragDrop.editMode.dashboard.container.getBoundingClientRect();
+                const { width, height } = GUIElement.getDimFromOffsets(cellOffsets),
+                    dashOffsets = dragDrop.editMode.dashboard.container.getBoundingClientRect(),
+                    levelHeight = rowLevel.bottom - rowLevel.top;
 
-            if (cell.isVisible) {
-                if (
-                    height < 0.8 * rowHeight &&
-                    cellOffsets.left <= e.clientX &&
-                    cellOffsets.right >= e.clientX
-                ) {
-                    if (cellOffsets.top > e.clientY) {
-                        // @ToDo - Mouse above the cell.
-                    } else if (cellOffsets.bottom < e.clientY) {
-                        // Mouse below the cell.
-                        dragDrop.showDropPointer(
-                            cellOffsets.left - dashOffsets.left,
-                            cellOffsets.top - dashOffsets.top + height,
-                            width,
-                            rowHeight - height
-                        );
+                if (cell.isVisible) {
+                    if (
+                        height < 0.8 * levelHeight &&
+                        cellOffsets.left <= e.clientX &&
+                        cellOffsets.right >= e.clientX
+                    ) {
+                        if (cellOffsets.top > e.clientY) {
+                            // @ToDo - Mouse above the cell.
+                        } else if (cellOffsets.bottom < e.clientY) {
+                            // Mouse below the cell.
+                            dragDrop.showDropPointer(
+                                cellOffsets.left - dashOffsets.left,
+                                cellOffsets.top - dashOffsets.top + height,
+                                width,
+                                levelHeight - height
+                            );
 
-                        dragDrop.dropPointer.align = 'nestedBottom';
-                        dragDrop.dropContext = cell;
+                            dragDrop.dropPointer.align = 'nestedBottom';
+                            dragDrop.dropContext = cell;
+                        }
+
+                        i = iEnd; // stop the loop
+                    } else if (
+                        (i === 0 && cellOffsets.left > e.clientX) ||
+                        (i === iEnd - 1 && cellOffsets.right < e.clientX)
+                    ) {
+                        if (cellOffsets.left > e.clientX) {
+                            // @ToDo - Mouse on the cell left side.
+                        } else if (cellOffsets.right < e.clientX) {
+                            // Mouse on the cell right side.
+                            const pointerWidth = rowOffsets.right - cellOffsets.right;
+
+                            dragDrop.showDropPointer(
+                                cellOffsets.left + ((i === 0 && cellOffsets.left > e.clientX) ? 0 : width) -
+                                    dropPointerSize / 2 - dashOffsets.left,
+                                cellOffsets.top - dashOffsets.top,
+                                pointerWidth > dropPointerSize ? pointerWidth : dropPointerSize,
+                                levelHeight || height
+                            );
+
+                            dragDrop.dropPointer.align = 'right';
+                            dragDrop.dropContext = cell;
+                        }
+
+                        i = iEnd; // stop the loop
                     }
-
-                    i = iEnd; // stop the loop
-                } else if (
-                    (i === 0 && cellOffsets.left > e.clientX) ||
-                    (i === iEnd - 1 && cellOffsets.right < e.clientX)
-                ) {
-                    if (cellOffsets.left > e.clientX) {
-                        // @ToDo - Mouse on the cell left side.
-                    } else if (cellOffsets.right < e.clientX) {
-                        // Mouse on the cell right side.
-                        const pointerWidth = rowOffsets.right - cellOffsets.right;
-
-                        dragDrop.showDropPointer(
-                            cellOffsets.left + ((i === 0 && cellOffsets.left > e.clientX) ? 0 : width) -
-                                dropPointerSize / 2 - dashOffsets.left,
-                            cellOffsets.top - dashOffsets.top,
-                            pointerWidth > dropPointerSize ? pointerWidth : dropPointerSize,
-                            rowHeight || height
-                        );
-
-                        dragDrop.dropPointer.align = 'right';
-                        dragDrop.dropContext = cell;
-                    }
-
-                    i = iEnd; // stop the loop
+                } else if (!cell.isVisible && cell === dragDrop.context) {
+                    // Element is not visible.
+                    dragDrop.dropContext = void 0;
+                    dragDrop.hideDropPointer();
                 }
-            } else if (!cell.isVisible && cell === dragDrop.context) {
-                // Element is not visible.
-                dragDrop.dropContext = void 0;
-                dragDrop.hideDropPointer();
             }
         }
     }
