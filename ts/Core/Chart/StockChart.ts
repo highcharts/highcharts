@@ -94,7 +94,7 @@ declare module '../Axis/AxisLike' {
     interface AxisLike {
         crossLabel?: SVGElement;
         setCompare(compare?: string, redraw?: boolean): void;
-        setCumulative(redraw?: boolean): void;
+        setCumulative(cumulative?: boolean, redraw?: boolean): void;
     }
 }
 
@@ -125,10 +125,10 @@ declare module '../Series/SeriesLike' {
         forceCropping(): boolean|undefined;
         getCumulativeExtremes(activeYData?: Array<number>): [number, number];
         initCompare(compare?: string): void;
-        initCumulative(): void;
+        initCumulative(cumulative?: boolean): void;
         modifyValue?(value?: number|null, index?: number): (number|undefined);
         setCompare(compare?: string): void;
-        setCumulative(): void;
+        setCumulative(cumulative?: boolean): void;
     }
 }
 
@@ -940,7 +940,7 @@ Series.prototype.init = function (): void {
         this.initCompare(this.options.compare);
     } else if (this.options.cumulative) {
         // Set Cumulative Sum mode
-        this.initCumulative();
+        this.initCumulative(this.options.cumulative);
     }
 };
 
@@ -949,7 +949,8 @@ addEvent(
     Series,
     'afterGetExtremes',
     function (e): void {
-        const dataExtremes: DataExtremesObject = (e as any).dataExtremes;
+        const dataExtremes: DataExtremesObject = (e as any).dataExtremes,
+            activeYData = dataExtremes.activeYData;
 
         if (this.modifyValue && dataExtremes) {
             let extremes;
@@ -959,9 +960,12 @@ addEvent(
                     this.modifyValue(dataExtremes.dataMin),
                     this.modifyValue(dataExtremes.dataMax)
                 ];
-            } else if (this.options.cumulative) {
-                extremes =
-                    this.getCumulativeExtremes(dataExtremes.activeYData);
+            } else if (
+                this.options.cumulative &&
+                isArray(activeYData) &&
+                activeYData.length
+            ) {
+                extremes = this.getCumulativeExtremes(activeYData);
             }
 
             if (extremes) {
@@ -1024,7 +1028,7 @@ Series.prototype.setCompare = function (compare?: string): void {
     this.initCompare(compare);
 
     // Survive to export, #5485
-    this.userOptions.compare = compare;
+    this.options.compare = this.userOptions.compare = compare;
 };
 
 /**
@@ -1201,26 +1205,30 @@ Axis.prototype.setCompare = function (
  * Highcharts Stock only. Set the
  * [cumulative](https://api.highcharts.com/highstock/plotOptions.series.cumulative)
  * mode of the series after render time. In most cases it is more useful running
- * {@link Axis#setCumulative} on the X axis to update all its series.
+ * {@link Axis#setCumulative} on the Y axis to update all its series.
  *
  * @function Highcharts.Series#setCumulative
+ *
+ * @param {boolean} [cumulative]
+ *        Either enable or disable Cumulative Sum mode.
+ *        Can be one of `false` (default) or `true`.
  */
-Series.prototype.setCumulative = function (): void {
-    this.initCumulative();
+Series.prototype.setCumulative = function (cumulative?: boolean): void {
+    this.initCumulative(cumulative);
 
     // Survive to export, #5485
-    this.userOptions.cumulative = true;
+    this.options.cumulative = this.userOptions.cumulative = cumulative;
 };
 
 /**
  * @ignore
  * @function Highcharts.Series#initCumulative
  */
-Series.prototype.initCumulative = function (): void {
+Series.prototype.initCumulative = function (cumulative?: boolean): void {
     this.cumulativeTotal = 0; // init and start summing from 0
 
     // Set or unset the modifyValue method
-    this.modifyValue = function (
+    this.modifyValue = cumulative ? function (
         this: Series,
         value?: number|null,
         index?: number
@@ -1253,7 +1261,7 @@ Series.prototype.initCumulative = function (): void {
         }
 
         return 0;
-    };
+    } : null as any;
 
     // Mark dirty
     if (this.chart.hasRendered) {
@@ -1279,7 +1287,7 @@ Series.prototype.getCumulativeExtremes = function (
         const sum = prev + cur;
 
         cumulativeDataMin = Math.min(cumulativeDataMin, sum, prev);
-        cumulativeDataMax = Math.max(cumulativeDataMax, sum);
+        cumulativeDataMax = Math.max(cumulativeDataMax, sum, prev);
 
         return sum;
     });
@@ -1303,11 +1311,12 @@ Series.prototype.getCumulativeExtremes = function (
  *        {@link Chart#redraw}.
  */
 Axis.prototype.setCumulative = function (
+    cumulative?: boolean,
     redraw?: boolean
 ): void {
     if (!this.isXAxis) {
         this.series.forEach(function (series): void {
-            series.setCumulative();
+            series.setCumulative(cumulative);
         });
         if (pick(redraw, true)) {
             this.chart.redraw();
@@ -1437,7 +1446,6 @@ export default StockChart;
  *
  * @see [compareBase](#plotOptions.series.compareBase)
  * @see [Axis.setCompare()](/class-reference/Highcharts.Axis#setCompare)
- * @see [plotOptions.series.cumulative](https://api.highcharts.com/highstock/plotOptions.series.cumulative)
  *
  * @sample {highstock} stock/plotoptions/series-compare-percent/
  *         Percent
@@ -1492,7 +1500,7 @@ export default StockChart;
  * @see [Axis.setCumulative()](/class-reference/Highcharts.Axis#setCumulative)
  * @see [plotOptions.series.compare](https://api.highcharts.com/highstock/plotOptions.series.compare)
  *
- * @sample {highstock} stock/plotoptions/series-cumulative/
+ * @sample {highstock} stock/plotoptions/series-cumulative-sum/
  *         Cumulative Sum
  *
  * @type      {boolean}
