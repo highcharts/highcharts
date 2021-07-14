@@ -30,7 +30,6 @@ const {
 
 const {
     addEvent,
-    extend,
     merge
 } = U;
 
@@ -70,13 +69,13 @@ class HeikinAshiSeries extends CandlestickSeries {
      * @requires  modules/heikinashi
      * @optionparent plotOptions.heikinashi
      */
-    public static defaultOptions: HeikinAshiSeriesOptions = merge(CandlestickSeries.defaultOptions, {
-
-        dataGrouping: {
-            groupAll: true
-        }
-
-    } as HeikinAshiSeriesOptions);
+    public static defaultOptions: HeikinAshiSeriesOptions = merge(
+        CandlestickSeries.defaultOptions,
+        {
+            dataGrouping: {
+                groupAll: true
+            }
+        } as HeikinAshiSeriesOptions);
 
     /* *
      *
@@ -105,38 +104,6 @@ class HeikinAshiSeries extends CandlestickSeries {
     /* eslint-disable valid-jsdoc */
 
     /**
-     * Assign haikinashi data into the points.
-     * @private
-     *
-     * @function Highcharts.seriesTypes.heikinashi#assignDataPoints
-     *
-     * @return {void}
-     *
-     */
-    public assignDataPoints(): void {
-        const series = this,
-            points = series.points,
-            heikiashiData = series.heikiashiData;
-        let cropStart = series.cropStart || 0;
-
-        // Reset the proccesed data.
-        series.processedYData.length = 0;
-
-        // Modify points.
-        for (let i = 0; i < points.length; i++) {
-            const point = points[i],
-                heikiashiDataPoint = heikiashiData[i + cropStart];
-
-            point.open = heikiashiDataPoint[0];
-            point.high = heikiashiDataPoint[1];
-            point.low = heikiashiDataPoint[2];
-            point.close = heikiashiDataPoint[3];
-
-            series.processedYData.push([point.open, point.high, point.low, point.close]);
-        }
-    }
-
-    /**
      * Calculate data set for the heikinashi series before creating the points.
      * @private
      *
@@ -147,7 +114,7 @@ class HeikinAshiSeries extends CandlestickSeries {
      */
     public getHeikinashiData(): void {
         const series = this,
-            processedYData = series.allGroupedData || series.yData, // procesed and grouped data
+            processedYData = series.allGroupedData || series.yData,
             heikiashiData = series.heikiashiData;
 
         if (!heikiashiData.length && processedYData && processedYData.length) {
@@ -193,8 +160,8 @@ class HeikinAshiSeries extends CandlestickSeries {
      *
      */
     public modifyFirstPointValue(dataPoint: Array<(number)>): void {
-        const open = (dataPoint[0] + dataPoint[1] + dataPoint[2] + dataPoint[3]) / 4, // open
-            close = (dataPoint[0] + dataPoint[3]) / 2; // close
+        const open = (dataPoint[0] + dataPoint[1] + dataPoint[2] + dataPoint[3]) / 4,
+            close = (dataPoint[0] + dataPoint[3]) / 2;
 
         this.heikiashiData.push([open, dataPoint[1], dataPoint[2], close]);
     }
@@ -214,9 +181,11 @@ class HeikinAshiSeries extends CandlestickSeries {
      * @return {void}
      *
      */
-    public modifyDataPoint(dataPoint: Array<(number)>, previousDataPoint: Array<(number)>): void {
-        const point = this,
-            newOpen = (previousDataPoint[0] + previousDataPoint[3]) / 2,
+    public modifyDataPoint(
+        dataPoint: Array<(number)>,
+        previousDataPoint: Array<(number)>
+    ): void {
+        const newOpen = (previousDataPoint[0] + previousDataPoint[3]) / 2,
             newClose = (dataPoint[0] + dataPoint[1] + dataPoint[2] + dataPoint[3]) / 4,
             newHigh = Math.max(dataPoint[1], newClose, newOpen),
             newLow = Math.min(dataPoint[2], newClose, newOpen);
@@ -228,9 +197,28 @@ class HeikinAshiSeries extends CandlestickSeries {
     /* eslint-enable valid-jsdoc */
 }
 
-// Modify points after base translation.
+// Assign haikinashi data into the points.
 addEvent(HeikinAshiSeries, 'afterTranslate', function (): void {
-    this.assignDataPoints();
+    const series = this,
+        points = series.points,
+        heikiashiData = series.heikiashiData;
+    let cropStart = series.cropStart || 0;
+
+    // Reset the proccesed data.
+    series.processedYData.length = 0;
+
+    // Modify points.
+    for (let i = 0; i < points.length; i++) {
+        const point = points[i],
+            heikiashiDataPoint = heikiashiData[i + cropStart];
+
+        point.open = heikiashiDataPoint[0];
+        point.high = heikiashiDataPoint[1];
+        point.low = heikiashiDataPoint[2];
+        point.close = heikiashiDataPoint[3];
+
+        series.processedYData.push([point.open, point.high, point.low, point.close]);
+    }
 });
 
 // Force to recalculate the heikinashi data set after updating data.
@@ -243,8 +231,7 @@ addEvent(HeikinAshiSeries, 'updatedData', function (): void {
 // After processing and grouping the data,
 // calculate how the heikeinashi data set should look like.
 addEvent(Axis, 'postProcessData', function (): void {
-    const axis = this,
-        series = axis.series;
+    const series = this.series;
 
     series.forEach(function (series): void {
         if (series.is('heikinashi')) {
@@ -260,13 +247,6 @@ addEvent(Axis, 'postProcessData', function (): void {
  *  Prototype Properties
  *
  * */
-
-interface HeikinAshiSeries {
-
-}
-extend(HeikinAshiSeries.prototype, {
-
-});
 
 HeikinAshiSeries.prototype.pointClass = HeikinAshiPoint;
 
