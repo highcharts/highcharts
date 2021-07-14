@@ -1781,10 +1781,10 @@ export default Legend;
  * @callback Highcharts.PointLegendItemClickCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        The point on which the event occured.
+ * The point on which the event occured.
  *
  * @param {Highcharts.PointLegendItemClickEventObject} event
- *        The event that occured.
+ * The event that occured.
  */
 
 /**
@@ -1844,3 +1844,5 @@ export default Legend;
  * @name Highcharts.SeriesLegendItemClickEventObject#type
  * @type {"legendItemClick"}
  */
+
+(''); // keeps doclets above in JS file
