@@ -31,7 +31,7 @@ const {
     merge
 } = U;
 
-import '../../Core/Legend.js';
+import '../../Core/Legend/Legend.js';
 
 /* *
  *

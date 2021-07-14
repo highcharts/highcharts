@@ -10,7 +10,7 @@ import type Axis from '../Axis';
 import type Chart from '../../Chart/Chart';
 import type ColorAxis from './ColorAxis';
 import type Fx from '../../Animation/Fx';
-import type Legend from '../../Legend';
+import type Legend from '../../Legend/Legend';
 import type Point from '../../Series/Point';
 import type Series from '../../Series/Series';
 import type TreemapSeries from '../../../Series/Treemap/TreemapSeries';

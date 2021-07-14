@@ -11,7 +11,7 @@
 'use strict';
 
 import type ColorAxis from '../Core/Axis/Color/ColorAxis';
-import type Legend from '../Core/Legend';
+import type Legend from '../Core/Legend/Legend';
 import type Point from '../Core/Series/Point';
 import type Series from '../Core/Series/Series';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';

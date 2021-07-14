@@ -10,36 +10,42 @@
 
 'use strict';
 
-import type AnimationOptions from './Animation/AnimationOptions';
-import type BBoxObject from './Renderer/BBoxObject';
-import type BubbleLegendItem from '../Series/Bubble/BubbleLegendItem';
-import type Chart from './Chart/Chart';
-import type ColorAxis from './Axis/Color/ColorAxis';
-import type CSSObject from './Renderer/CSSObject';
-import type FontMetricsObject from './Renderer/FontMetricsObject';
-import type { HTMLDOMElement } from './Renderer/DOMElementType';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AnimationOptions from '../Animation/AnimationOptions';
+import type BBoxObject from '../Renderer/BBoxObject';
+import type BubbleLegendItem from '../../Series/Bubble/BubbleLegendItem';
+import type Chart from '../Chart/Chart';
+import type ColorAxis from '../Axis/Color/ColorAxis';
+import type CSSObject from '../Renderer/CSSObject';
+import type FontMetricsObject from '../Renderer/FontMetricsObject';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type LegendLike from './LegendLike';
 import type LegendOptions from './LegendOptions';
-import type Series from './Series/Series';
-import type { StatesOptionsKey } from './Series/StatesOptions';
-import type SVGAttributes from './Renderer/SVG/SVGAttributes';
-import type SVGElement from './Renderer/SVG/SVGElement';
+import type Series from '../Series/Series';
+import type { StatesOptionsKey } from '../Series/StatesOptions';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 
-import A from './Animation/AnimationUtilities.js';
+import A from '../Animation/AnimationUtilities.js';
 const {
     animObject,
     setAnimation
 } = A;
-import F from './FormatUtilities.js';
+import F from '../FormatUtilities.js';
 const { format } = F;
-import H from './Globals.js';
+import H from '../Globals.js';
 const {
     isFirefox,
     marginNames,
     win
 } = H;
-import Point from './Series/Point.js';
-import U from './Utilities.js';
+import Point from '../Series/Point.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     createElement,
@@ -57,7 +63,13 @@ const {
     wrap
 } = U;
 
-declare module './Series/SeriesOptions' {
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
         legendIndex?: number;
         legendType?: ('point'|'series');
@@ -66,79 +78,13 @@ declare module './Series/SeriesOptions' {
     }
 }
 
-/**
- * Gets fired when the legend item belonging to a point is clicked. The default
- * action is to toggle the visibility of the point. This can be prevented by
- * returning `false` or calling `event.preventDefault()`.
- *
- * @callback Highcharts.PointLegendItemClickCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        The point on which the event occured.
- *
- * @param {Highcharts.PointLegendItemClickEventObject} event
- *        The event that occured.
- */
-
-/**
- * Information about the legend click event.
- *
- * @interface Highcharts.PointLegendItemClickEventObject
- *//**
- * Related browser event.
- * @name Highcharts.PointLegendItemClickEventObject#browserEvent
- * @type {Highcharts.PointerEvent}
- *//**
- * Prevent the default action of toggle the visibility of the point.
- * @name Highcharts.PointLegendItemClickEventObject#preventDefault
- * @type {Function}
- *//**
- * Related point.
- * @name Highcharts.PointLegendItemClickEventObject#target
- * @type {Highcharts.Point}
- *//**
- * Event type.
- * @name Highcharts.PointLegendItemClickEventObject#type
- * @type {"legendItemClick"}
- */
-
-/**
- * Gets fired when the legend item belonging to a series is clicked. The default
- * action is to toggle the visibility of the series. This can be prevented by
- * returning `false` or calling `event.preventDefault()`.
- *
- * @callback Highcharts.SeriesLegendItemClickCallbackFunction
- *
- * @param {Highcharts.Series} this
- *        The series where the event occured.
- *
- * @param {Highcharts.SeriesLegendItemClickEventObject} event
- *        The event that occured.
- */
-
-/**
- * Information about the legend click event.
- *
- * @interface Highcharts.SeriesLegendItemClickEventObject
- *//**
- * Related browser event.
- * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
- * @type {Highcharts.PointerEvent}
- *//**
- * Prevent the default action of toggle the visibility of the series.
- * @name Highcharts.SeriesLegendItemClickEventObject#preventDefault
- * @type {Function}
- *//**
- * Related series.
- * @name Highcharts.SeriesLegendItemClickEventObject#target
- * @type {Highcharts.Series}
- *//**
- * Event type.
- * @name Highcharts.SeriesLegendItemClickEventObject#type
- * @type {"legendItemClick"}
- */
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The overview of the chart's series. The legend object is instanciated
@@ -1820,3 +1766,81 @@ if (
  * */
 
 export default Legend;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Gets fired when the legend item belonging to a point is clicked. The default
+ * action is to toggle the visibility of the point. This can be prevented by
+ * returning `false` or calling `event.preventDefault()`.
+ *
+ * @callback Highcharts.PointLegendItemClickCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        The point on which the event occured.
+ *
+ * @param {Highcharts.PointLegendItemClickEventObject} event
+ *        The event that occured.
+ */
+
+/**
+ * Information about the legend click event.
+ *
+ * @interface Highcharts.PointLegendItemClickEventObject
+ *//**
+ * Related browser event.
+ * @name Highcharts.PointLegendItemClickEventObject#browserEvent
+ * @type {Highcharts.PointerEvent}
+ *//**
+ * Prevent the default action of toggle the visibility of the point.
+ * @name Highcharts.PointLegendItemClickEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * Related point.
+ * @name Highcharts.PointLegendItemClickEventObject#target
+ * @type {Highcharts.Point}
+ *//**
+ * Event type.
+ * @name Highcharts.PointLegendItemClickEventObject#type
+ * @type {"legendItemClick"}
+ */
+
+/**
+ * Gets fired when the legend item belonging to a series is clicked. The default
+ * action is to toggle the visibility of the series. This can be prevented by
+ * returning `false` or calling `event.preventDefault()`.
+ *
+ * @callback Highcharts.SeriesLegendItemClickCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occured.
+ *
+ * @param {Highcharts.SeriesLegendItemClickEventObject} event
+ *        The event that occured.
+ */
+
+/**
+ * Information about the legend click event.
+ *
+ * @interface Highcharts.SeriesLegendItemClickEventObject
+ *//**
+ * Related browser event.
+ * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
+ * @type {Highcharts.PointerEvent}
+ *//**
+ * Prevent the default action of toggle the visibility of the series.
+ * @name Highcharts.SeriesLegendItemClickEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * Related series.
+ * @name Highcharts.SeriesLegendItemClickEventObject#target
+ * @type {Highcharts.Series}
+ *//**
+ * Event type.
+ * @name Highcharts.SeriesLegendItemClickEventObject#type
+ * @type {"legendItemClick"}
+ */

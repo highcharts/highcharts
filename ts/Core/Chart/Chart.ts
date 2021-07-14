@@ -72,7 +72,7 @@ const {
     marginNames,
     win
 } = H;
-import Legend from '../Legend.js';
+import Legend from '../Legend/Legend.js';
 import MSPointer from '../MSPointer.js';
 import D from '../DefaultOptions.js';
 const {

@@ -36,7 +36,7 @@ const { parse: color } = Color;
 import F from '../../Core/FormatUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import Legend from '../../Core/Legend.js';
+import Legend from '../../Core/Legend/Legend.js';
 import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -54,7 +54,7 @@ const {
  *
  * */
 
-declare module '../../Core/LegendLike' {
+declare module '../../Core/Legend/LegendLike' {
     interface LegendLike {
         bubbleLegend?: BubbleLegendItem;
     }
@@ -73,7 +73,7 @@ declare module '../../Core/Series/SeriesLike' {
     }
 }
 
-declare module '../../Core/LegendOptions'{
+declare module '../../Core/Legend/LegendOptions'{
     interface LegendOptions {
         bubbleLegend?: BubbleLegendItem.Options;
     }
