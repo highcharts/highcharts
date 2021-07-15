@@ -62,9 +62,7 @@ import Axis from '../Axis/Axis.js';
 import FormatUtilities from '../FormatUtilities.js';
 const { numberFormat } = FormatUtilities;
 import Foundation from '../Foundation.js';
-const {
-    registerEventOptions
-} = Foundation;
+const { registerEventOptions } = Foundation;
 import H from '../Globals.js';
 const {
     charts,
@@ -156,6 +154,17 @@ declare module './ChartOptions' {
     }
 }
 
+declare module '../Options' {
+    interface Options {
+        chart: ChartOptions;
+        caption?: Chart.CaptionOptions;
+        credits?: Chart.CreditsOptions;
+        subtitle?: Chart.SubtitleOptions;
+        series?: Array<SeriesTypeOptions>;
+        title?: Chart.TitleOptions;
+    }
+}
+
 declare module '../Series/PointLike' {
     interface PointLike {
         touched?: boolean;
@@ -166,17 +175,6 @@ declare module '../Series/SeriesLike' {
     interface SeriesLike {
         index?: number;
         touched?: boolean;
-    }
-}
-
-declare module '../Options' {
-    interface Options {
-        chart: ChartOptions;
-        caption?: Chart.CaptionOptions;
-        credits?: Chart.CreditsOptions;
-        subtitle?: Chart.SubtitleOptions;
-        series?: Array<SeriesTypeOptions>;
-        title?: Chart.TitleOptions;
     }
 }
 
@@ -3806,7 +3804,7 @@ class Chart {
 
 /* *
  *
- *  Class Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -3993,7 +3991,7 @@ namespace Chart {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
@@ -4121,4 +4119,4 @@ export default Chart;
  * @type {boolean|undefined}
  */
 
-''; // include doclets above in transpilat
+''; // keeps doclets above in JS file
