@@ -108,7 +108,6 @@ class EditMode {
     public resizer?: Resizer;
     public isInitialized: boolean;
     public addComponentBtn?: HTMLDOMElement;
-    // public resizeBtn?: HTMLDOMElement;
     public rwdMode: string;
     public rwdMenu: Array<HTMLDOMElement>;
     public tools: EditMode.Tools;
@@ -336,10 +335,6 @@ class EditMode {
                         dragDrop.mouseCellContext = void 0;
                     }
 
-                    if (resizer && resizer.isResizerDetectionActive) {
-                        resizer.mouseCellContext = void 0;
-                    }
-
                     if (editMode.isContextDetectionActive) {
                         editMode.mouseCellContext = void 0;
                     }
@@ -365,9 +360,6 @@ class EditMode {
         if (this.addComponentBtn) {
             this.addComponentBtn.style.display = 'block';
         }
-        // if (this.resizeBtn) {
-        //     this.resizeBtn.style.display = 'block';
-        // }
 
         // Open the sidebar.
         if (editMode.sidebar) {
@@ -409,10 +401,6 @@ class EditMode {
         if (this.addComponentBtn) {
             this.addComponentBtn.style.display = 'none';
         }
-
-        // if (this.resizeBtn) {
-        //     this.resizeBtn.style.display = 'none';
-        // }
 
         if (editMode.resizer) {
             editMode.resizer.disableResizer();
@@ -568,9 +556,6 @@ class EditMode {
                 }
             }
         );
-
-        // // Create resizer button.
-        // this.resizeBtn = Resizer.createMenuBtn(editMode);
     }
 
     private createRwdMenu(): void {
@@ -673,8 +658,7 @@ class EditMode {
 
             if (this.resizer) {
                 this.resizer.isResizerDetectionActive = true;
-                this.resizer.mouseCellContext = this.resizer.resizeCellContext = this.editCellContext;
-                this.resizer.onResizeElementConfirm();
+                this.resizer.resizeElement(this.editCellContext);
             }
         }
     }

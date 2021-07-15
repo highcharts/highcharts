@@ -113,8 +113,6 @@ class Resizer {
     public snapYB: HTMLDOMElement|undefined;
     public isActive: boolean;
     public editMode: EditMode;
-    public mouseCellContext?: Cell;
-    public resizeCellContext?: Cell;
     public isResizerDetectionActive: boolean;
     public resizePointer: Resizer.ResizePointer;
     public startX: number;
@@ -129,7 +127,6 @@ class Resizer {
 
         // Resizer events.
         addEvent(document, 'mousemove', resizer.onDetectContext.bind(resizer));
-        addEvent(document, 'click', resizer.onResizeElementConfirm.bind(resizer));
     }
 
     /**
@@ -186,7 +183,6 @@ class Resizer {
         this.isActive = false;
         this.currentDimension = void 0;
         this.currentCell = void 0;
-        this.resizeCellContext = void 0;
 
         if (this.snapXR) {
             this.snapXR.style.left = '-9999px';
@@ -423,7 +419,6 @@ class Resizer {
 
     public deactivateResizerDetection(): void {
         this.isResizerDetectionActive = false;
-        this.mouseCellContext = void 0;
         this.hideResizePointer();
     }
 
@@ -431,26 +426,14 @@ class Resizer {
         const resizer = this,
             offset = 50; // TODO - add it from options.
 
-        if (resizer.isResizerDetectionActive && resizer.mouseCellContext) {
-            const resizeCellContext = this.resizeCellContext =
-                ContextDetection.getContext(resizer.mouseCellContext, e, offset).cell;
+        if (resizer.isResizerDetectionActive && this.currentCell) {
+            const resizeCellContextOffsets = GUIElement.getOffsets(
+                this.currentCell, resizer.editMode.dashboard.container);
+            const { width, height } = GUIElement.getDimFromOffsets(resizeCellContextOffsets);
 
-            if (resizeCellContext) {
-                const resizeCellContextOffsets = GUIElement.getOffsets(
-                    resizeCellContext, resizer.editMode.dashboard.container);
-                const { width, height } = GUIElement.getDimFromOffsets(resizeCellContextOffsets);
-
-                resizer.showResizePointer(
-                    resizeCellContextOffsets.left, resizeCellContextOffsets.top, width, height
-                );
-            }
-        }
-    }
-
-    // Used when gui element is selected and resizing is confirmed by click.
-    public onResizeElementConfirm(): void {
-        if (this.isResizerDetectionActive && this.resizeCellContext) {
-            this.resizeElement(this.resizeCellContext);
+            resizer.showResizePointer(
+                resizeCellContextOffsets.left, resizeCellContextOffsets.top, width, height
+            );
         }
     }
 
