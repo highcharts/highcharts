@@ -18,6 +18,7 @@
 
 import type ColorString from './ColorString';
 import type { ColorLike, ColorType } from './ColorType';
+import type GradientColor from './GradientColor';
 
 import H from '../Globals.js';
 import U from '../Utilities.js';
@@ -33,7 +34,7 @@ const {
  *
  * */
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable valid-jsdoc */
 
 /**
  * Handle color operations. Some object methods are chainable.
@@ -62,6 +63,34 @@ class Color implements ColorLike {
         black: '#000000'
     };
 
+    /**
+     * Collection of parsers. This can be extended from the outside by pushing
+     * parsers to `Color.parsers`.
+     */
+    public static parsers = [{
+        // RGBA color
+        // eslint-disable-next-line max-len
+        regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
+        parse: function (result: RegExpExecArray): Color.RGBA {
+            return [
+                pInt(result[1]),
+                pInt(result[2]),
+                pInt(result[3]),
+                (parseFloat as Function)(result[4], 10)
+            ];
+        }
+    }, {
+        // RGB color
+        regex:
+            /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
+        parse: function (result: RegExpExecArray): Color.RGBA {
+            return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
+        }
+    }];
+
+    // Must be last static member for init cycle
+    public static readonly None = new Color('');
+
     /* *
      *
      *  Static Functions
@@ -73,25 +102,27 @@ class Color implements ColorLike {
      *
      * @function Highcharts.Color.parse
      *
-     * @param {Highcharts.ColorType} input
+     * @param {Highcharts.ColorType} [input]
      * The input color in either rbga or hex format.
      *
      * @return {Highcharts.Color}
      * Color instance.
      */
-    public static parse(input: (ColorType|undefined)): Color {
-        return new Color(input);
+    public static parse(input?: ColorType): Color {
+        return input ? new Color(input) : Color.None;
     }
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
     public constructor(
-        input: (ColorType|undefined)
+        input: ColorType
     ) {
+        this.input = input;
+
         const GlobalColor = (H as AnyRecord).Color;
 
         // Backwards compatibility, allow class overwrite
@@ -113,32 +144,8 @@ class Color implements ColorLike {
      *
      * */
 
-    public input: (ColorType|undefined)
-
-    // Collection of parsers. This can be extended from the outside by pushing
-    // parsers to Highcharts.Color.prototype.parsers.
-    public parsers = [{
-        // RGBA color
-        // eslint-disable-next-line max-len
-        regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
-        parse: function (result: RegExpExecArray): Color.RGBA {
-            return [
-                pInt(result[1]),
-                pInt(result[2]),
-                pInt(result[3]),
-                (parseFloat as any)(result[4], 10)
-            ];
-        }
-    }, {
-        // RGB color
-        regex:
-            /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
-        parse: function (result: RegExpExecArray): Color.RGBA {
-            return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
-        }
-    }];
-
-    public rgba: (Color.None|Color.RGBA) = [];
+    public input: ColorType;
+    public rgba: Color.RGBA = [NaN, NaN, NaN, NaN];
     public stops?: Array<Color>;
 
     /* *
@@ -154,52 +161,41 @@ class Color implements ColorLike {
      * @function Highcharts.Color#init
      *
      * @param {Highcharts.ColorType} input
-     *        The input color in either rbga or hex format
-     *
-     * @return {void}
+     * The input color in either rbga or hex format
      */
     private init(
-        input: (ColorType|undefined)
+        input: ColorType
     ): void {
         let result: (RegExpExecArray|null),
-            rgba: any,
+            rgba: (Color.RGBA|undefined),
             i: number,
-            parser: Color.Parser,
-            len: number;
-
-        this.input = input = Color.names[
-            input && (input as any).toLowerCase ?
-                (input as any).toLowerCase() :
-                ''
-        ] || input;
+            parser: Color.Parser;
 
         // Gradients
-        if (input && (input as any).stops) {
-            this.stops = (input as any).stops.map(function (
-                stop: [number, ColorString]
-            ): Color {
-                return new Color(stop[1]);
-            });
+        if (
+            typeof input === 'object' &&
+            typeof (input as GradientColor).stops !== 'undefined'
+        ) {
+            this.stops = (input as GradientColor).stops.map(
+                (stop): Color => new Color(stop[1])
+            );
 
         // Solid colors
-        } else {
+        } else if (typeof input === 'string') {
+            this.input = input = (Color.names[input.toLowerCase()] || input);
 
             // Bitmasking as input[0] is not working for legacy IE.
-            if (input &&
-                (input as any).charAt &&
-                (input as any).charAt() === '#'
-            ) {
-
-                len = (input as any).length;
-                input = parseInt((input as any).substr(1), 16) as any;
+            if (input.charAt(0) === '#') {
+                const len = input.length,
+                    col = parseInt(input.substr(1), 16);
 
                 // Handle long-form, e.g. #AABBCC
                 if (len === 7) {
 
                     rgba = [
-                        ((input as any) & 0xFF0000) >> 16,
-                        ((input as any) & 0xFF00) >> 8,
-                        ((input as any) & 0xFF),
+                        (col & 0xFF0000) >> 16,
+                        (col & 0xFF00) >> 8,
+                        (col & 0xFF),
                         1
                     ];
 
@@ -210,14 +206,14 @@ class Color implements ColorLike {
 
                     rgba = [
                         (
-                            (((input as any) & 0xF00) >> 4) |
-                            ((input as any) & 0xF00) >> 8
+                            ((col & 0xF00) >> 4) |
+                            (col & 0xF00) >> 8
                         ),
                         (
-                            (((input as any) & 0xF0) >> 4) |
-                            ((input as any) & 0xF0)
+                            ((col & 0xF0) >> 4) |
+                            (col & 0xF0)
                         ),
-                        (((input as any) & 0xF) << 4) | ((input as any) & 0xF),
+                        ((col & 0xF) << 4) | (col & 0xF),
                         1
                     ];
                 }
@@ -225,17 +221,20 @@ class Color implements ColorLike {
 
             // Otherwise, check regex parsers
             if (!rgba) {
-                i = this.parsers.length;
+                i = Color.parsers.length;
                 while (i-- && !rgba) {
-                    parser = this.parsers[i];
-                    result = parser.regex.exec(input as ColorString);
+                    parser = Color.parsers[i];
+                    result = parser.regex.exec(input);
                     if (result) {
                         rgba = parser.parse(result);
                     }
                 }
             }
         }
-        this.rgba = rgba || [];
+
+        if (rgba) {
+            this.rgba = rgba;
+        }
     }
 
     /**
@@ -244,39 +243,40 @@ class Color implements ColorLike {
      * @function Highcharts.Color#get
      *
      * @param {string} [format]
-     *        Possible values are 'a', 'rgb', 'rgba' (default).
+     * Possible values are 'a', 'rgb', 'rgba' (default).
      *
      * @return {Highcharts.ColorType}
-     *         This color as a string or gradient stops.
+     * This color as a string or gradient stops.
      */
-    public get(format?: ('a'|'rgb'|'rgba')): Color['input'] {
-        let input = this.input,
-            rgba = this.rgba,
-            ret: Color['input'];
+    public get(format?: ('a'|'rgb'|'rgba')): ColorType {
+        const input = this.input,
+            rgba = this.rgba;
 
-        if (typeof this.stops !== 'undefined') {
-            ret = merge(input as any);
-            (ret as any).stops = [].concat((ret as any).stops);
+        if (
+            typeof input === 'object' &&
+            typeof this.stops !== 'undefined'
+        ) {
+            const ret = merge(input as GradientColor);
+            ret.stops = [].slice.call(ret.stops);
             this.stops.forEach((stop: Color, i: number): void => {
-                (ret as any).stops[i] = [
-                    (ret as any).stops[i][0],
-                    stop.get(format)
+                ret.stops[i] = [
+                    ret.stops[i][0],
+                    stop.get(format) as string
                 ];
             });
 
         // it's NaN if gradient colors on a column chart
         } else if (rgba && isNumber(rgba[0])) {
             if (format === 'rgb' || (!format && rgba[3] === 1)) {
-                ret = 'rgb(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ')';
-            } else if (format === 'a') {
-                ret = rgba[3] as any;
-            } else {
-                ret = 'rgba(' + rgba.join(',') + ')';
+                return 'rgb(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ')';
             }
-        } else {
-            ret = input;
+            if (format === 'a') {
+                return `${rgba[3]}`;
+            }
+            return 'rgba(' + rgba.join(',') + ')';
         }
-        return ret as any;
+
+        return input;
     }
 
     /**
@@ -285,14 +285,13 @@ class Color implements ColorLike {
      * @function Highcharts.Color#brighten
      *
      * @param {number} alpha
-     *        The alpha value.
+     * The alpha value.
      *
      * @return {Highcharts.Color}
-     *         This color with modifications.
+     * This color with modifications.
      */
     public brighten(alpha: number): this {
-        let i: number,
-            rgba = this.rgba;
+        const rgba = this.rgba;
 
         if (this.stops) {
             this.stops.forEach(function (stop: Color): void {
@@ -300,7 +299,7 @@ class Color implements ColorLike {
             });
 
         } else if (isNumber(alpha) && alpha !== 0) {
-            for (i = 0; i < 3; i++) {
+            for (let i = 0; i < 3; i++) {
                 rgba[i] += pInt(alpha * 255);
 
                 if (rgba[i] < 0) {
@@ -311,6 +310,7 @@ class Color implements ColorLike {
                 }
             }
         }
+
         return this;
     }
 
@@ -336,47 +336,43 @@ class Color implements ColorLike {
      * @function Highcharts.Color#tweenTo
      *
      * @param {Highcharts.Color} to
-     *        The color object to tween to.
+     * The color object to tween to.
      *
      * @param {number} pos
-     *        The intermediate position, where 0 is the from color (current
-     *        color item), and 1 is the `to` color.
+     * The intermediate position, where 0 is the from color (current color
+     * item), and 1 is the `to` color.
      *
-     * @return {Highcharts.ColorString}
-     *         The intermediate color in rgba notation.
+     * @return {Highcharts.ColorType}
+     * The intermediate color in rgba notation, or unsupported type.
      */
-    public tweenTo(to: Color, pos: number): ColorString {
-        // Check for has alpha, because rgba colors perform worse due to lack of
-        // support in WebKit.
-        let fromRgba = this.rgba,
-            toRgba = to.rgba,
-            hasAlpha,
-            ret: ColorString;
+    public tweenTo(to: Color, pos: number): ColorType {
+        const fromRgba = this.rgba,
+            toRgba = to.rgba;
 
         // Unsupported color, return to-color (#3920, #7034)
-        if (!toRgba.length || !fromRgba || !fromRgba.length) {
-            ret = to.input as any || 'none';
-
-        // Interpolate
-        } else {
-            hasAlpha = (toRgba[3] !== 1 || fromRgba[3] !== 1);
-            ret = (hasAlpha ? 'rgba(' : 'rgb(') +
-                Math.round(toRgba[0] + (fromRgba[0] - toRgba[0]) * (1 - pos)) +
-                ',' +
-                Math.round(toRgba[1] + (fromRgba[1] - toRgba[1]) * (1 - pos)) +
-                ',' +
-                Math.round(toRgba[2] + (fromRgba[2] - toRgba[2]) * (1 - pos)) +
-                (
-                    hasAlpha ?
-                        (
-                            ',' +
-                            (toRgba[3] + (fromRgba[3] - toRgba[3]) * (1 - pos))
-                        ) :
-                        ''
-                ) +
-                ')';
+        if (!isNumber(fromRgba[0]) || !isNumber(toRgba[0])) {
+            return to.input || 'none';
         }
-        return ret;
+
+        // Check for has alpha, because rgba colors perform worse due to
+        // lack of support in WebKit.
+        const hasAlpha = (toRgba[3] !== 1 || fromRgba[3] !== 1);
+
+        return (hasAlpha ? 'rgba(' : 'rgb(') +
+            Math.round(toRgba[0] + (fromRgba[0] - toRgba[0]) * (1 - pos)) +
+            ',' +
+            Math.round(toRgba[1] + (fromRgba[1] - toRgba[1]) * (1 - pos)) +
+            ',' +
+            Math.round(toRgba[2] + (fromRgba[2] - toRgba[2]) * (1 - pos)) +
+            (
+                hasAlpha ?
+                    (
+                        ',' +
+                        (toRgba[3] + (fromRgba[3] - toRgba[3]) * (1 - pos))
+                    ) :
+                    ''
+            ) +
+            ')';
     }
 }
 
@@ -387,8 +383,6 @@ class Color implements ColorLike {
  * */
 
 namespace Color {
-
-    export type None = [];
 
     export interface Parser {
         regex: RegExp;

@@ -587,8 +587,8 @@ QUnit.test(
 
 QUnit.test('Point with state options (#6401)', function (assert) {
     // Boost module adds hex aliases
-    var names = Highcharts.Color.prototype.names;
-    Highcharts.Color.prototype.names = {};
+    var names = Highcharts.Color.names;
+    Highcharts.Color.names = {};
 
     var color = 'red',
         chart = Highcharts.chart('container', {
@@ -628,7 +628,7 @@ QUnit.test('Point with state options (#6401)', function (assert) {
         'Correct fill color on hover'
     );
 
-    Highcharts.Color.prototype.names = names;
+    Highcharts.Color.names = names;
 });
 
 QUnit.test('Select and unselect', function (assert) {
