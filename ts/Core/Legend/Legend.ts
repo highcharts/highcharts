@@ -1713,20 +1713,6 @@ interface Legend extends LegendLike {
     // use declare module pattern to add
 }
 
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace Legend {
-    export interface CheckBoxElement extends HTMLDOMElement {
-        checked?: boolean;
-        x: number;
-        y: number;
-    }
-}
-
 // Workaround for #2030, horizontal legend items not displaying in IE11 Preview,
 // and for #2580, a similar drawing flaw in Firefox 26.
 // Explore if there's a general cause for this. The problem may be related
@@ -1757,6 +1743,20 @@ if (
             setTimeout(runPositionItem);
         }
     });
+}
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace Legend {
+    export interface CheckBoxElement extends HTMLDOMElement {
+        checked?: boolean;
+        x: number;
+        y: number;
+    }
 }
 
 /* *
