@@ -326,9 +326,7 @@ class Color implements ColorLike {
      *         Color with modifications.
      */
     public setOpacity(alpha: number): this {
-        if (this.rgba) {
-            this.rgba[3] = alpha;
-        }
+        this.rgba[3] = alpha;
         return this;
     }
 
