@@ -266,4 +266,10 @@ const animationExports = {
     stop
 };
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default animationExports;

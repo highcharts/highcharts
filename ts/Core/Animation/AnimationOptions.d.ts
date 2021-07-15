@@ -37,7 +37,7 @@ export interface AnimationStepCallbackFunction {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
