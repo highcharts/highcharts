@@ -346,12 +346,8 @@ class Resizer {
                     parentRowWidth
                 ) * 100 + '%';
 
-                cellContainer.style.flex = '0 0 ' + newWidth;
-                currentCell.options.width = newWidth;
-
-                if (cellRwd) {
-                    (currentCell.options.responsive || {})[currentRwdMode || 'large'].width = newWidth;
-                }
+                currentCell.setSize(newWidth);
+                currentCell.updateSize(newWidth, currentRwdMode);
 
                 this.startX = e.clientX;
             }
