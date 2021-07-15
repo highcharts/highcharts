@@ -1,3 +1,13 @@
+/* *
+ *
+ *  (c) 2010-2021 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
 'use strict';
 
 /* *
@@ -223,6 +233,7 @@ namespace ColorAxisComposition {
 
     /**
      * Updates in the legend need to be reflected in the color axis. (#6888)
+     * @private
      */
     function onLegendAfterUpdate(this: Legend): void {
         const colorAxes = this.chart.colorAxis;

@@ -927,6 +927,12 @@ class ColorAxis extends Axis implements AxisLike {
 
 namespace ColorAxis {
 
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface DataClassesOptions {
         color?: ColorType;
         colorIndex?: number;
