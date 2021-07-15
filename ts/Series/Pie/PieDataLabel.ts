@@ -53,6 +53,8 @@ namespace ColumnDataLabel {
      *
      * */
 
+    const composedClasses: Array<Function> = [];
+
     const dataLabelPositioners = {
 
         // Based on the value computed in Highcharts' distribute algorithm.
@@ -139,13 +141,19 @@ namespace ColumnDataLabel {
 
     /** @private */
     export function compose(PieSeriesClass: typeof PieSeries): void {
-        const pieProto = PieSeriesClass.prototype;
 
-        pieProto.dataLabelPositioners = dataLabelPositioners;
-        pieProto.alignDataLabel = noop;
-        pieProto.drawDataLabels = drawDataLabels;
-        pieProto.placeDataLabels = placeDataLabels;
-        pieProto.verifyDataLabelOverflow = verifyDataLabelOverflow;
+        if (composedClasses.indexOf(PieSeriesClass) === -1) {
+            composedClasses.push(PieSeriesClass);
+
+            const pieProto = PieSeriesClass.prototype;
+
+            pieProto.dataLabelPositioners = dataLabelPositioners;
+            pieProto.alignDataLabel = noop;
+            pieProto.drawDataLabels = drawDataLabels;
+            pieProto.placeDataLabels = placeDataLabels;
+            pieProto.verifyDataLabelOverflow = verifyDataLabelOverflow;
+        }
+
     }
 
     /**

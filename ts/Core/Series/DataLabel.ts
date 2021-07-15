@@ -45,6 +45,12 @@ const {
     splat
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module './PointLike' {
     interface PointLike {
         bottom?: number;
@@ -162,7 +168,7 @@ namespace DataLabel {
      *
      * */
 
-    const composedClasses: Array<typeof Series> = [];
+    const composedClasses: Array<Function> = [];
 
     /* *
      *
@@ -955,4 +961,4 @@ export default DataLabel;
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 
-''; // detach doclets above
+''; // keeps doclets above in JS file

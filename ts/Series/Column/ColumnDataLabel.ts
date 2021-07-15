@@ -41,6 +41,14 @@ namespace ColumnDataLabel {
 
     /* *
      *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
+
+    /* *
+     *
      *  Functions
      *
      * */
@@ -141,7 +149,13 @@ namespace ColumnDataLabel {
 
     /** @private */
     export function compose(ColumnSeriesClass: typeof ColumnSeries): void {
-        ColumnSeriesClass.prototype.alignDataLabel = alignDataLabel;
+
+        if (composedClasses.indexOf(ColumnSeriesClass) === -1) {
+            composedClasses.push(ColumnSeriesClass);
+
+            ColumnSeriesClass.prototype.alignDataLabel = alignDataLabel;
+        }
+
     }
 
 }
