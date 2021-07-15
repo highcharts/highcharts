@@ -73,7 +73,7 @@ class SVGLabel extends SVGElement {
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
@@ -569,5 +569,11 @@ class SVGLabel extends SVGElement {
         this.attr('translateY', this.ySetting);
     }
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SVGLabel;
