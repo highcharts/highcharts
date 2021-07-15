@@ -26,4 +26,10 @@ export interface BarPointOptions extends ColumnPointOptions {
     // nothing here yet
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default BarPointOptions;

@@ -14,13 +14,15 @@
  *  Declarations
  *
  * */
+
 export interface TickPositionsArray extends Array<number> {
 
 }
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
+
 export default TickPositionsArray;

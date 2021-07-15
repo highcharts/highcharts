@@ -39,7 +39,7 @@ import type ChartLike from './ChartLike';
 import type ChartOptions from './ChartOptions';
 import type { ChartPanningOptions } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
-import type { LabelsOptions } from '../../Extensions/Oldie/Oldie';
+import type Oldie from '../../Extensions/Oldie/Oldie';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type Series from '../Series/Series';
@@ -62,9 +62,7 @@ import Axis from '../Axis/Axis.js';
 import FormatUtilities from '../FormatUtilities.js';
 const { numberFormat } = FormatUtilities;
 import Foundation from '../Foundation.js';
-const {
-    registerEventOptions
-} = Foundation;
+const { registerEventOptions } = Foundation;
 import H from '../Globals.js';
 const {
     charts,
@@ -72,7 +70,7 @@ const {
     marginNames,
     win
 } = H;
-import Legend from '../Legend.js';
+import Legend from '../Legend/Legend.js';
 import MSPointer from '../MSPointer.js';
 import D from '../DefaultOptions.js';
 const {
@@ -156,6 +154,17 @@ declare module './ChartOptions' {
     }
 }
 
+declare module '../Options' {
+    interface Options {
+        chart: ChartOptions;
+        caption?: Chart.CaptionOptions;
+        credits?: Chart.CreditsOptions;
+        subtitle?: Chart.SubtitleOptions;
+        series?: Array<SeriesTypeOptions>;
+        title?: Chart.TitleOptions;
+    }
+}
+
 declare module '../Series/PointLike' {
     interface PointLike {
         touched?: boolean;
@@ -166,17 +175,6 @@ declare module '../Series/SeriesLike' {
     interface SeriesLike {
         index?: number;
         touched?: boolean;
-    }
-}
-
-declare module '../Options' {
-    interface Options {
-        chart: ChartOptions;
-        caption?: Chart.CaptionOptions;
-        credits?: Chart.CreditsOptions;
-        subtitle?: Chart.SubtitleOptions;
-        series?: Array<SeriesTypeOptions>;
-        title?: Chart.TitleOptions;
     }
 }
 
@@ -2350,7 +2348,7 @@ class Chart {
      */
     public renderLabels(): void {
         const chart = this,
-            labels = chart.options.labels as LabelsOptions;
+            labels = chart.options.labels as Oldie.LabelsOptions;
 
         if (labels.items) {
             labels.items.forEach(function (
@@ -3806,7 +3804,7 @@ class Chart {
 
 /* *
  *
- *  Class Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -3993,7 +3991,7 @@ namespace Chart {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
@@ -4121,4 +4119,4 @@ export default Chart;
  * @type {boolean|undefined}
  */
 
-''; // include doclets above in transpilat
+''; // keeps doclets above in JS file

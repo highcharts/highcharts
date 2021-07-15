@@ -92,13 +92,21 @@ declare module '../SVG/SVGElementLike' {
 
 /* *
  *
- *  Composition
+ *  Class
  *
  * */
 
 /* eslint-disable valid-jsdoc */
 
 class HTMLElement extends SVGElement {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    private static readonly composedClasses: Array<Function> = [];
 
     /* *
      *
@@ -110,15 +118,24 @@ class HTMLElement extends SVGElement {
      * Modifies SVGElement to support HTML elements.
      * @private
      */
-    public static compose(SVGElementClass: typeof SVGElement): void {
-        const svgElementProto = SVGElementClass.prototype,
-            htmlElementProto = HTMLElement.prototype;
+    public static compose<T extends typeof SVGElement>(
+        SVGElementClass: T
+    ): (T&typeof HTMLElement) {
 
-        svgElementProto.getSpanCorrection = htmlElementProto.getSpanCorrection;
-        svgElementProto.htmlCss = htmlElementProto.htmlCss;
-        svgElementProto.htmlGetBBox = htmlElementProto.htmlGetBBox;
-        svgElementProto.htmlUpdateTransform = htmlElementProto.htmlUpdateTransform;
-        svgElementProto.setSpanRotation = htmlElementProto.setSpanRotation;
+        if (HTMLElement.composedClasses.indexOf(SVGElementClass) === -1) {
+            HTMLElement.composedClasses.push(SVGElementClass);
+
+            const htmlElementProto = HTMLElement.prototype,
+                svgElementProto = SVGElementClass.prototype;
+
+            svgElementProto.getSpanCorrection = htmlElementProto.getSpanCorrection;
+            svgElementProto.htmlCss = htmlElementProto.htmlCss;
+            svgElementProto.htmlGetBBox = htmlElementProto.htmlGetBBox;
+            svgElementProto.htmlUpdateTransform = htmlElementProto.htmlUpdateTransform;
+            svgElementProto.setSpanRotation = htmlElementProto.setSpanRotation;
+        }
+
+        return SVGElementClass as (T&typeof HTMLElement);
     }
 
     /* *
@@ -392,6 +409,12 @@ class HTMLElement extends SVGElement {
         }
     }
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface HTMLElement {
     element: HTMLDOMElement;

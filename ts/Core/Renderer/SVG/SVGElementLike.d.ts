@@ -24,7 +24,7 @@ export interface SVGElementLike {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

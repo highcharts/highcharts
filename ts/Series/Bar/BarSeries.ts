@@ -18,6 +18,7 @@
 
 import type BarPoint from './BarPoint';
 import type BarSeriesOptions from './BarSeriesOptions';
+
 import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
@@ -78,7 +79,7 @@ class BarSeries extends ColumnSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

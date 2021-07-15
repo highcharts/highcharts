@@ -33,4 +33,10 @@ export interface SVGCuboid extends SVGPath3D {
     forcedSides?: Array<string>;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default SVGCuboid;

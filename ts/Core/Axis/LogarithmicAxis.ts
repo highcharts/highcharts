@@ -16,7 +16,8 @@
  *
  * */
 
-import Axis from './Axis.js';
+import type Axis from './Axis';
+
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -70,7 +71,7 @@ namespace LogarithmicAxis {
      *
      * */
 
-    const composedClasses: Array<typeof Axis> = [];
+    const composedClasses: Array<Function> = [];
 
     /* *
      *

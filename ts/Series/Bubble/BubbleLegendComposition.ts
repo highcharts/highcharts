@@ -19,7 +19,7 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
-import type Legend from '../../Core/Legend';
+import type Legend from '../../Core/Legend/Legend';
 import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';

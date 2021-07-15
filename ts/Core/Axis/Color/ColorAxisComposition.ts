@@ -1,3 +1,13 @@
+/* *
+ *
+ *  (c) 2010-2021 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
 'use strict';
 
 /* *
@@ -10,7 +20,7 @@ import type Axis from '../Axis';
 import type Chart from '../../Chart/Chart';
 import type ColorAxis from './ColorAxis';
 import type Fx from '../../Animation/Fx';
-import type Legend from '../../Legend';
+import type Legend from '../../Legend/Legend';
 import type Point from '../../Series/Point';
 import type Series from '../../Series/Series';
 import type TreemapSeries from '../../../Series/Treemap/TreemapSeries';
@@ -223,6 +233,7 @@ namespace ColorAxisComposition {
 
     /**
      * Updates in the legend need to be reflected in the color axis. (#6888)
+     * @private
      */
     function onLegendAfterUpdate(this: Legend): void {
         const colorAxes = this.chart.colorAxis;

@@ -29,4 +29,10 @@ export interface PiePointOptions extends LinePointOptions {
     visible?: boolean;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default PiePointOptions;

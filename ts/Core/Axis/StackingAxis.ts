@@ -77,7 +77,7 @@ namespace StackingAxis {
      *
      * */
 
-    const composedClasses: Array<typeof Axis> = [];
+    const composedClasses: Array<Function> = [];
 
     /* *
      *

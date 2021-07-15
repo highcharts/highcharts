@@ -114,7 +114,7 @@ export interface CSSObject {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

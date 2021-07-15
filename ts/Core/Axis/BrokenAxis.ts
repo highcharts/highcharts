@@ -17,6 +17,7 @@
  * */
 
 import type AnimationOptions from '../Animation/AnimationOptions';
+import type Axis from './Axis';
 import type {
     AxisBreakOptions,
     YAxisOptions
@@ -24,10 +25,9 @@ import type {
 import type { AxisBreakBorderObject, AxisBreakObject } from './BreakObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
+import type Series from '../Series/Series';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
-import Axis from './Axis.js';
-import Series from '../Series/Series.js';
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
 const {
@@ -47,7 +47,7 @@ const {
 
 declare module './AxisComposition' {
     interface AxisComposition {
-        brokenAxis?: BrokenAxis['brokenAxis'];
+        brokenAxis?: BrokenAxis.Additions;
     }
 }
 
@@ -66,7 +66,7 @@ declare module './AxisOptions' {
 
 declare module './AxisType' {
     interface AxisTypeRegistry {
-        BrokenAxis: BrokenAxis;
+        BrokenAxis: BrokenAxis.Composition;
     }
 }
 
@@ -92,24 +92,37 @@ declare module '../Series/SeriesOptions' {
  *
  * */
 
-interface BrokenAxis extends Axis {
-    /**
-     * HC <= 8 backwards compatibility, used by demo samples.
-     * @deprecated
-     * @private
-     * @requires modules/broken-axis
-     */
-    breakArray: Array<AxisBreakObject>;
-    /** @requires modules/broken-axis */
-    brokenAxis: BrokenAxis.Additions;
-}
-
 /**
  * Axis with support of broken data rows.
  * @private
- * @class
  */
 namespace BrokenAxis {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export declare class Composition extends Axis {
+        /**
+         * HC <= 8 backwards compatibility, used by demo samples.
+         * @deprecated
+         * @private
+         * @requires modules/broken-axis
+         */
+        breakArray: Array<AxisBreakObject>;
+        /** @requires modules/broken-axis */
+        brokenAxis: Additions;
+    }
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
 
     /* *
      *
@@ -128,19 +141,24 @@ namespace BrokenAxis {
         SeriesClass: typeof Series
     ): (T&typeof BrokenAxis) {
 
-        if (AxisClass.keepProps.indexOf('brokenAxis') === -1) {
+        if (composedClasses.indexOf(AxisClass) === -1) {
+            composedClasses.push(AxisClass);
 
             AxisClass.keepProps.push('brokenAxis');
 
-            const seriesProto = Series.prototype;
+            addEvent(AxisClass, 'init', onAxisInit);
+            addEvent(AxisClass, 'afterInit', onAxisAfterInit);
+            addEvent(AxisClass, 'afterSetTickPositions', onAxisAfterSetTickPositions);
+            addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
+        }
+
+        if (composedClasses.indexOf(SeriesClass) === -1) {
+            composedClasses.push(SeriesClass);
+
+            const seriesProto = SeriesClass.prototype;
 
             seriesProto.drawBreaks = seriesDrawBreaks;
             seriesProto.gappedPath = seriesGappedPath;
-
-            addEvent(AxisClass, 'init', onInit);
-            addEvent(AxisClass, 'afterInit', onAfterInit);
-            addEvent(AxisClass, 'afterSetTickPositions', onAfterSetTickPositions);
-            addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions);
 
             addEvent(SeriesClass, 'afterGeneratePoints', onSeriesAfterGeneratePoints);
             addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
@@ -152,7 +170,7 @@ namespace BrokenAxis {
     /**
      * @private
      */
-    function onAfterInit(this: Axis): void {
+    function onAxisAfterInit(this: Axis): void {
         if (typeof this.brokenAxis !== 'undefined') {
             this.brokenAxis.setBreaks(this.options.breaks, false);
         }
@@ -162,7 +180,7 @@ namespace BrokenAxis {
      * Force Axis to be not-ordinal when breaks are defined.
      * @private
      */
-    function onAfterSetOptions(this: Axis): void {
+    function onAxisAfterSetOptions(this: Axis): void {
         const axis = this;
         if (axis.brokenAxis && axis.brokenAxis.hasBreaks) {
             axis.options.ordinal = false;
@@ -172,7 +190,7 @@ namespace BrokenAxis {
     /**
      * @private
      */
-    function onAfterSetTickPositions(this: Axis): void {
+    function onAxisAfterSetTickPositions(this: Axis): void {
         const axis = this,
             brokenAxis = axis.brokenAxis;
 
@@ -198,11 +216,11 @@ namespace BrokenAxis {
     /**
      * @private
      */
-    function onInit(this: Axis): void {
+    function onAxisInit(this: Axis): void {
         const axis = this;
 
         if (!axis.brokenAxis) {
-            axis.brokenAxis = new Additions(axis as BrokenAxis);
+            axis.brokenAxis = new Additions(axis as Composition);
         }
     }
 
@@ -582,7 +600,7 @@ namespace BrokenAxis {
          *
          * */
 
-        public constructor(axis: Axis) {
+        public constructor(axis: Composition) {
             this.axis = axis;
         }
 
@@ -592,7 +610,7 @@ namespace BrokenAxis {
          *
          * */
 
-        public axis: Axis;
+        public axis: Composition;
         public breakArray?: Array<AxisBreakObject>;
         public hasBreaks: boolean = false;
         public unitLength?: number;
@@ -733,7 +751,7 @@ namespace BrokenAxis {
                             newMax = newMin;
                         }
                     }
-                    Axis.prototype.setExtremes.call(
+                    axis.constructor.prototype.setExtremes.call(
                         this,
                         newMin,
                         newMax,
@@ -744,7 +762,7 @@ namespace BrokenAxis {
                 };
 
                 axis.setAxisTranslation = function (): void {
-                    Axis.prototype.setAxisTranslation.call(this);
+                    axis.constructor.prototype.setAxisTranslation.call(this);
 
                     brokenAxis.unitLength = void 0;
                     if (brokenAxis.hasBreaks) {
@@ -878,6 +896,7 @@ namespace BrokenAxis {
             }
         }
     }
+
 }
 
 /* *

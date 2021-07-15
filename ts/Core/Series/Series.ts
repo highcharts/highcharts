@@ -52,6 +52,8 @@ const {
     animObject,
     setAnimation
 } = A;
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import F from '../Foundation.js';
 const {
     registerEventOptions
@@ -63,8 +65,6 @@ const {
     win
 } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import D from '../DefaultOptions.js';
-const { defaultOptions } = D;
 import palette from '../Color/Palette.js';
 import Point from './Point.js';
 import SeriesRegistry from './SeriesRegistry.js';
@@ -7367,6 +7367,7 @@ SeriesRegistry.series = Series;
  * Class Namespace
  *
  * */
+
 namespace Series {
     export interface CropDataObject {
         end: number;

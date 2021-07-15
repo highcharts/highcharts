@@ -24,7 +24,7 @@ const {
 } = A;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
-import Legend from '../../Core/Legend.js';
+import Legend from '../../Core/Legend/Legend.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

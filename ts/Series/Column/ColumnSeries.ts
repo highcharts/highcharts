@@ -27,6 +27,7 @@ import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../../Core/Color/Color.js';
@@ -37,7 +38,7 @@ const {
     noop
 } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import Palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
@@ -66,6 +67,12 @@ declare module '../../Core/Series/SeriesLike' {
         pointXOffset?: number;
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The column series type.
@@ -390,7 +397,7 @@ class ColumnSeries extends Series {
                  * @default #cccccc
                  * @product highcharts highstock gantt
                  */
-                color: palette.neutralColor20,
+                color: Palette.neutralColor20,
 
                 /**
                  * A specific border color for the selected point.
@@ -399,7 +406,7 @@ class ColumnSeries extends Series {
                  * @default #000000
                  * @product highcharts highstock gantt
                  */
-                borderColor: palette.neutralColor100
+                borderColor: Palette.neutralColor100
             }
         },
 
@@ -474,7 +481,7 @@ class ColumnSeries extends Series {
          *
          * @private
          */
-        borderColor: palette.backgroundColor
+        borderColor: Palette.backgroundColor
 
     });
 
@@ -1338,7 +1345,7 @@ SeriesRegistry.registerSeriesType('column', ColumnSeries);
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
@@ -1509,4 +1516,4 @@ export default ColumnSeries;
  * @apioption series.column.states.select
  */
 
-''; // includes above doclets in transpilat
+''; // keeps doclets above in JS file

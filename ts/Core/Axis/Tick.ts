@@ -195,7 +195,6 @@ class Tick {
      *
      * @private
      * @function Highcharts.Tick#addLabel
-     * @return {void}
      */
     public addLabel(): void {
         const tick = this,
@@ -376,10 +375,6 @@ class Tick {
      *
      * @private
      * @function Highcharts.Tick#createLabel
-     * @param {Highcharts.PositionObject} xy
-     * @param {string} str
-     * @param {Highcharts.XAxisLabelsOptions} labelOptions
-     * @return {Highcharts.SVGElement|undefined}
      */
     public createLabel(
         xy: PositionObject,
@@ -417,7 +412,6 @@ class Tick {
      *
      * @private
      * @function Highcharts.Tick#destroy
-     * @return {void}
      */
     public destroy(): void {
         destroyObjectProperties(this, this.axis);
@@ -594,7 +588,6 @@ class Tick {
      *
      * @private
      * @function Highcharts.Tick#getLabelSize
-     * @return {number}
      */
     public getLabelSize(): number {
         return this.label ?
@@ -604,9 +597,7 @@ class Tick {
 
     /**
      * Extendible method to return the path of the marker
-     *
      * @private
-     *
      */
     public getMarkPath(
         x: number,
@@ -633,8 +624,6 @@ class Tick {
      *
      * @private
      * @function Highcharts.Tick#handleOverflow
-     * @param {Highcharts.PositionObject} xy
-     * @return {void}
      */
     public handleOverflow(xy: PositionObject): void {
         const tick = this,
@@ -751,10 +740,6 @@ class Tick {
      *
      * @private
      * @function Highcharts.Tick#moveLabel
-     * @param {string} str
-     * @param {Highcharts.XAxisLabelsOptions} labelOptions
-     *
-     * @return {void}
      */
     public moveLabel(str: string, labelOptions: AxisLabelOptions): void {
         const tick = this,
@@ -814,10 +799,11 @@ class Tick {
      *
      * @private
      * @param {number} index
+     *
      * @param {boolean} [old]
-     *        Use old coordinates to prepare an animation into new position
+     * Use old coordinates to prepare an animation into new position
+     *
      * @param {number} [opacity]
-     * @return {voids}
      */
     public render(
         index: number,
@@ -861,10 +847,10 @@ class Tick {
      * Renders the gridLine.
      *
      * @private
+     * @function Highcharts.Tick#renderGridLine
      * @param {boolean} old  Whether or not the tick is old
      * @param {number} opacity  The opacity of the grid line
      * @param {number} reverseCrisp  Modifier for avoiding overlapping 1 or -1
-     * @return {void}
      */
     public renderGridLine(
         old: boolean|undefined,
@@ -943,10 +929,10 @@ class Tick {
      * Renders the tick mark.
      *
      * @private
+     * @function Highcharts.Tick#renderMark
      * @param {Highcharts.PositionObject} xy  The position vector of the mark
      * @param {number} opacity  The opacity of the mark
      * @param {number} reverseCrisp  Modifier for avoiding overlapping 1 or -1
-     * @return {void}
      */
     public renderMark(
         xy: PositionObject,
@@ -1019,11 +1005,11 @@ class Tick {
      * have to be moved into place.
      *
      * @private
+     * @function Highcharts.Tick#renderLabel
      * @param {Highcharts.PositionObject} xy  The position vector of the label
      * @param {boolean} old  Whether or not the tick is old
      * @param {number} opacity  The opacity of the label
      * @param {number} index  The index of the tick
-     * @return {void}
      */
     public renderLabel(
         xy: Tick.LabelObject,
@@ -1107,7 +1093,6 @@ class Tick {
      *
      * @private
      * @function Highcharts.Tick#replaceMovedLabel
-     * @return {void}
      */
     public replaceMovedLabel(): void {
         const tick = this,
@@ -1159,6 +1144,13 @@ interface Tick extends TickLike {
  * */
 
 namespace Tick {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface ParametersObject {
         category?: string;
         options?: AnyRecord;
@@ -1213,4 +1205,4 @@ export default Tick;
  * @type {number}
  */
 
-''; // detach doclets above
+(''); // keeps doclets above in JS file

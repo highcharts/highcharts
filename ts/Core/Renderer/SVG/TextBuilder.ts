@@ -84,28 +84,26 @@ class TextBuilder {
      * @return {void}.
      */
     public buildSVG(): void {
-        const wrapper = this.svgElement;
-        let textNode = wrapper.element,
+        const wrapper = this.svgElement,
+            textNode = wrapper.element,
             renderer = wrapper.renderer,
             textStr = pick(wrapper.textStr, '').toString() as string,
             hasMarkup = textStr.indexOf('<') !== -1,
             childNodes = textNode.childNodes,
-            textCache,
-            i = childNodes.length,
-            tempParent = this.width && !wrapper.added && renderer.box;
-        const regexMatchBreaks = /<br.*?>/g;
+            tempParent = this.width && !wrapper.added && renderer.box,
+            regexMatchBreaks = /<br.*?>/g,
+            // The buildText code is quite heavy, so if we're not changing
+            // something that affects the text, skip it (#6113).
+            textCache = [
+                textStr,
+                this.ellipsis,
+                this.noWrap,
+                this.textLineHeight,
+                this.textOutline,
+                this.fontSize,
+                this.width
+            ].join(',');
 
-        // The buildText code is quite heavy, so if we're not changing something
-        // that affects the text, skip it (#6113).
-        textCache = [
-            textStr,
-            this.ellipsis,
-            this.noWrap,
-            this.textLineHeight,
-            this.textOutline,
-            this.fontSize,
-            this.width
-        ].join(',');
         if (textCache === wrapper.textCache) {
             return;
         }
@@ -113,7 +111,7 @@ class TextBuilder {
         delete wrapper.actualWidth;
 
         // Remove old text
-        while (i--) {
+        for (let i = childNodes.length; i--;) {
             textNode.removeChild(childNodes[i]);
         }
 
