@@ -1476,7 +1476,6 @@ interface PackedBubbleSeries {
     forces: Array<string>;
     hasDraggableNodes: boolean;
     isCartesian: boolean;
-    noSharedTooltip: boolean;
     onMouseDown: Highcharts.DragNodesMixin['onMouseDown'];
     onMouseMove: Highcharts.DragNodesMixin['onMouseMove'];
     pointArrayMap: Array<string>;
@@ -1509,6 +1508,8 @@ extend(PackedBubbleSeries.prototype, {
     isCartesian: false,
 
     noSharedTooltip: true,
+
+    noSplitTooltip: true,
 
     /**
      * Mouse down action, initializing drag&drop mode.

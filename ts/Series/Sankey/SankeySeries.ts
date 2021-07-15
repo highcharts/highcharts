@@ -1165,6 +1165,8 @@ extend(SankeySeries.prototype, {
     invertible: true,
     isCartesian: false,
     orderNodes: true,
+    noSharedTooltip: true,
+    noSplitTooltip: true,
     pointArrayMap: ['from', 'to'],
     pointClass: SankeyPoint,
     searchPoint: H.noop as any,

@@ -449,7 +449,6 @@ addEvent(Series, 'setOptions', function (
     let overrides;
 
     if (this.chart.options.isStock) {
-
         if (this.is('column') || this.is('columnrange')) {
             overrides = {
                 borderWidth: 0,

@@ -69,6 +69,7 @@ declare module './Series/PointLike' {
 declare module './Series/SeriesLike' {
     interface SeriesLike {
         noSharedTooltip?: boolean;
+        noSplitTooltip?: boolean;
         tt?: SVGElement;
     }
 }
@@ -120,7 +121,6 @@ class Tooltip {
      *  Properties
      *
      * */
-
     public chart: Chart;
 
     public container: globalThis.HTMLElement = void 0 as any;
@@ -419,9 +419,13 @@ class Tooltip {
      * Creates the Tooltip label element if it does not exist, then returns it.
      *
      * @function Highcharts.Tooltip#getLabel
+     *
+     * @param {boolean} preventSplit
+     *        Prevents rendering split tooltip.
+     *
      * @return {Highcharts.SVGElement}
      */
-    public getLabel(): SVGElement {
+    public getLabel(preventSplit?: boolean): SVGElement {
 
         const tooltip = this,
             styledMode = this.chart.styledMode,
@@ -505,7 +509,7 @@ class Tooltip {
 
 
             // Create the label
-            if (this.split) {
+            if (this.split && !preventSplit) {
                 this.label = renderer.g(className);
             } else {
                 this.label = renderer
@@ -1043,8 +1047,25 @@ class Tooltip {
         if (text === false) {
             this.hide();
         } else {
+            // When previously split tooltip was rendered and now if
+            // hovering over another series where split tooltip should not
+            // be used, destroy the label in order to create ordinary one.
+            // #13868
+            if (tooltip.split && point.series.noSplitTooltip && tooltip.tt && tooltip.label) {
+                tooltip.label = tooltip.label.destroy();
+                tooltip.tt = tooltip.tt.destroy();
+                this.cleanSplit();
+            }
+            // When previously tooltip was generated for noSplitTooltip series
+            // and now split one should be rendered, destroy the label.
+            if (tooltip.split && !point.series.noSplitTooltip &&
+                !(tooltip.tt || !tooltip.options.headerFormat) && tooltip.label
+            ) {
+                tooltip.label = tooltip.label.destroy();
+            }
+
             // update text
-            if (tooltip.split) {
+            if (tooltip.split && !point.series.noSplitTooltip) { // #13868
                 this.renderSplit(text as any, points);
             } else {
                 let checkX = x;
@@ -1061,7 +1082,7 @@ class Tooltip {
                     currentSeries.options.clip === false ||
                     currentSeries.shouldShowTooltip(checkX, checkY)
                 ) {
-                    const label = tooltip.getLabel();
+                    const label = tooltip.getLabel(true);
 
                     // Prevent the tooltip from flowing over the chart box
                     // (#6659)
