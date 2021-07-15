@@ -5,4 +5,4 @@ The Open-High-Low-Close chart is typically used to show the change in price over
 
 ![ohlc.png](ohlc.png)
 
-For more information on the candlestick chart, see the [API reference](https://api.highcharts.com/highstock/plotOptions.ohlc).
+For more information on the OHLC chart, see the [API reference](https://api.highcharts.com/highstock/plotOptions.ohlc).

@@ -20,10 +20,11 @@ import type OHLCPointOptions from './OHLCPointOptions';
 import type OHLCSeries from './OHLCSeries';
 import type { SeriesZonesOptions } from './../../Core/Series/SeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import HLCPoint from '../HLC/HLCPoint';
 
 const {
     seriesTypes: {
-        column: ColumnSeries
+        hlc: HLCSeries
     }
 } = SeriesRegistry;
 
@@ -33,7 +34,7 @@ const {
  *
  * */
 
-class OHLCPoint extends ColumnSeries.prototype.pointClass {
+class OHLCPoint extends HLCSeries.prototype.pointClass {
 
     /* *
      *
@@ -41,27 +42,13 @@ class OHLCPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
-    public close: number = void 0 as any;
-
-    public high: number = void 0 as any;
-
-    public low: number = void 0 as any;
-
     public open: number = void 0 as any;
 
     public options: OHLCPointOptions = void 0 as any;
 
-    public plotClose: number = void 0 as any;
-
-    public plotHigh?: number;
-
-    public plotLow?: number;
-
     public plotOpen: number = void 0 as any;
 
     public series: OHLCSeries = void 0 as any;
-
-    public yBottom?: number;
 
     /* *
      *
@@ -137,7 +124,7 @@ class OHLCPoint extends ColumnSeries.prototype.pointClass {
  * */
 
 namespace OHLCPoint {
-    export type PointShortOptions = [number, number, number, number];
+    export type PointShortOptions = Array<number>;
 }
 
 /* *
