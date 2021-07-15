@@ -4467,6 +4467,7 @@ class Series {
         }
 
         const dataExtremes = {
+            activeYData, // Needed for Stock Cumulative Sum
             dataMin: arrayMin(activeYData),
             dataMax: arrayMax(activeYData)
         };
@@ -4560,7 +4561,6 @@ class Series {
             yAxis = series.yAxis,
             points = series.points,
             dataLength = points.length,
-            hasModifyValue = !!series.modifyValue,
             pointPlacement = series.pointPlacementToXValue(), // #7860
             dynamicallyPlaced = Boolean(pointPlacement),
             threshold = options.threshold,
@@ -4685,9 +4685,9 @@ class Series {
                 ) as any) :
                 null as any;
 
-            // general hook, used for Highcharts Stock compare mode
-            if (hasModifyValue) {
-                yValue = (series.modifyValue as any)(yValue, point);
+            // General hook, used for Highcharts Stock compare and cumulative
+            if (series.modifyValue) {
+                yValue = series.modifyValue(yValue, i);
             }
 
             // Set the the plotY value, reset it for redraws
