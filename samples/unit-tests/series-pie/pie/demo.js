@@ -335,3 +335,26 @@ QUnit.test('Pie chart initialized through the stockChart constructor, (#14773).'
         constructor should not produce errors in the console.`
     );
 });
+
+QUnit.test('Splitted tooltip for noSplitTooltip series, (#14773).', function (assert) {
+    const chart = Highcharts.chart('container', {
+        tooltip: {
+            split: true
+        },
+        series: [{
+            type: 'pie',
+            data: [3]
+        }, {
+            data: [2, 3, 5, 6]
+        }]
+    });
+    chart.tooltip.refresh(chart.series[0].points[0]);
+    chart.tooltip.refresh(chart.series[1].points[0]);
+    chart.tooltip.refresh(chart.series[0].points[0]);
+    assert.ok(
+        true,
+        `After hovering over two series where one of them should not have
+        a splitter tooltip, while tooltip split explicitly set to true,
+        there should be no errors in the console.`
+    );
+});

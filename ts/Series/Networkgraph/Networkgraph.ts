@@ -670,7 +670,6 @@ interface NetworkgraphSeries {
     layout: Highcharts.NetworkgraphLayout;
     nodeLookup: Highcharts.NodesSeries['nodeLookup'];
     nodes: Array<NetworkgraphPoint>;
-    noSharedTooltip: boolean;
     onMouseDown: Highcharts.DragNodesMixin['onMouseDown'];
     onMouseMove: Highcharts.DragNodesMixin['onMouseMove'];
     onMouseUp: Highcharts.DragNodesMixin['onMouseUp'];
@@ -712,6 +711,7 @@ extend(NetworkgraphSeries.prototype, {
     requireSorting: false,
     directTouch: true,
     noSharedTooltip: true,
+    noSplitTooltip: true,
     pointArrayMap: ['from', 'to'],
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
     drawTracker: seriesTypes.column.prototype.drawTracker,
