@@ -10,12 +10,19 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptions from './AnimationOptions';
 import type FxLike from './FxLike';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type HTMLElement from '../Renderer/HTML/HTMLElement';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+
 import Color from '../Color/Color.js';
 const {
     parse: color
@@ -29,6 +36,13 @@ const {
 } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * An animator object used internally. One instance applies to one property
  * (attribute or style prop) on one element. Animation is always initiated
@@ -38,15 +52,24 @@ const {
  * let rect = renderer.rect(0, 0, 10, 10).add();
  * rect.animate({ width: 100 });
  *
- * @private
  * @class
  * @name Highcharts.Fx
+ *
+ * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} elem
+ * The element to animate.
+ *
+ * @param {Partial<Highcharts.AnimationOptionsObject>} options
+ * Animation options.
+ *
+ * @param {string} prop
+ * The single attribute or CSS property to animate.
  */
+
 class Fx {
 
     /* *
      *
-     * Static properties
+     *  Static Properties
      *
      * */
 
@@ -58,17 +81,6 @@ class Fx {
      *
      * */
 
-    /**
-     *
-     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} elem
-     *        The element to animate.
-     *
-     * @param {Partial<Highcharts.AnimationOptionsObject>} options
-     *        Animation options.
-     *
-     * @param {string} prop
-     *        The single attribute or CSS property to animate.
-     */
     public constructor(
         elem: (HTMLElement|SVGElement),
         options: Partial<AnimationOptions>,
@@ -512,9 +524,21 @@ class Fx {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface Fx extends FxLike {
     // Nothing here yet
 }
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
 
 namespace Fx {
     export interface Timer {
