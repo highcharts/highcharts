@@ -4685,7 +4685,7 @@ class Series {
                 ) as any) :
                 null as any;
 
-            // general hook, used for Highcharts Stock compare and cumulative
+            // General hook, used for Highcharts Stock compare and cumulative
             if (series.modifyValue) {
                 yValue = series.modifyValue(yValue, i);
             }

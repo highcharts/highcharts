@@ -123,11 +123,11 @@ declare module '../Series/SeriesLike' {
         compareValue?: number;
         cumulativeTotal?: number;
         forceCropping(): boolean|undefined;
-        getCumulativeExtremes(activeYData?: Array<number>): [number, number];
+        getCumulativeExtremes(activeYData: Array<number>): [number, number];
         initCompare(compare?: string): void;
         initCumulative(cumulative?: boolean): void;
         modifyValue?(value?: number|null, index?: number): (number|undefined);
-        setCompare(compare?: string): void;
+        setCompare(compare?: string, redraw?: boolean): void;
         setCumulative(cumulative?: boolean): void;
     }
 }
@@ -963,7 +963,9 @@ addEvent(
             } else if (
                 this.options.cumulative &&
                 isArray(activeYData) &&
-                activeYData.length
+                // If only one y visible, sum doesn't change
+                // so no need to change extremes
+                activeYData.length >= 2
             ) {
                 extremes = this.getCumulativeExtremes(activeYData);
             }
@@ -1024,11 +1026,18 @@ Point.prototype.tooltipFormatter = function (pointFormat: string): string {
  * @param {string} [compare]
  *        Can be one of `null` (default), `"percent"` or `"value"`.
  */
-Series.prototype.setCompare = function (compare?: string): void {
+Series.prototype.setCompare = function (
+    compare?: string,
+    redraw?: boolean
+): void {
     this.initCompare(compare);
 
     // Survive to export, #5485
     this.options.compare = this.userOptions.compare = compare;
+
+    if (pick(redraw, true)) {
+        this.chart.redraw();
+    }
 };
 
 /**
@@ -1213,11 +1222,18 @@ Axis.prototype.setCompare = function (
  *        Either enable or disable Cumulative Sum mode.
  *        Can be one of `false` (default) or `true`.
  */
-Series.prototype.setCumulative = function (cumulative?: boolean): void {
+Series.prototype.setCumulative = function (
+    cumulative?: boolean,
+    redraw?: boolean
+): void {
     this.initCumulative(cumulative);
 
     // Survive to export, #5485
     this.options.cumulative = this.userOptions.cumulative = cumulative;
+
+    if (pick(redraw, true)) {
+        this.chart.redraw();
+    }
 };
 
 /**
@@ -1225,8 +1241,6 @@ Series.prototype.setCumulative = function (cumulative?: boolean): void {
  * @function Highcharts.Series#initCumulative
  */
 Series.prototype.initCumulative = function (cumulative?: boolean): void {
-    this.cumulativeTotal = 0; // init and start summing from 0
-
     // Set or unset the modifyValue method
     this.modifyValue = cumulative ? function (
         this: Series,
@@ -1241,14 +1255,9 @@ Series.prototype.initCumulative = function (cumulative?: boolean): void {
             const prevPoint = index > 0 ? this.points[index - 1] : null;
 
             // Get the modified value
-            if (prevPoint) {
-                value = correctFloat(
-                    pick(this.cumulativeTotal, prevPoint.y, 0) + value
-                );
+            if (prevPoint && prevPoint.cumulativeSum) {
+                value = correctFloat(prevPoint.cumulativeSum + value);
             }
-
-            // Store the sum of all the points' values
-            this.cumulativeTotal = value;
 
             // Record for tooltip etc.
             const point = this.points[index];
@@ -1278,12 +1287,12 @@ Series.prototype.initCumulative = function (cumulative?: boolean): void {
  */
 Series.prototype.getCumulativeExtremes = function (
     this: Series,
-    activeYData?: Array<number>
+    activeYData: Array<number>
 ): [number, number] {
     let cumulativeDataMin = Infinity,
         cumulativeDataMax = -Infinity;
 
-    (activeYData || []).reduce((prev, cur): number => {
+    activeYData.reduce((prev, cur): number => {
         const sum = prev + cur;
 
         cumulativeDataMin = Math.min(cumulativeDataMin, sum, prev);
