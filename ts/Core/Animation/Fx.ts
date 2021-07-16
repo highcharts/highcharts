@@ -24,9 +24,7 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import Color from '../Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import H from '../Globals.js';
 const { win } = H;
 import U from '../Utilities.js';
@@ -52,6 +50,7 @@ const {
  * let rect = renderer.rect(0, 0, 10, 10).add();
  * rect.animate({ width: 100 });
  *
+ * @private
  * @class
  * @name Highcharts.Fx
  *
