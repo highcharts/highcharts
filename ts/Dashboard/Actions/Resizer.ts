@@ -19,9 +19,7 @@ const {
     createElement,
     fireEvent,
     removeEvent,
-    pick,
-    getStyle,
-    isObject
+    pick
 } = U;
 
 import H from '../../Core/Globals.js';
@@ -340,7 +338,6 @@ class Resizer {
                 );
 
                 resizer.setTempWidthSiblings(true);
-                // resizer.editMode.dashboard.reflow();
             }
         };
 
