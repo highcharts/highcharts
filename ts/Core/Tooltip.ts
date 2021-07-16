@@ -49,8 +49,7 @@ const {
     merge,
     pick,
     splat,
-    syncTimeout,
-    timeUnits
+    syncTimeout
 } = U;
 
 /* *
@@ -1770,7 +1769,7 @@ class Tooltip {
 
 /* *
  *
- * Class namespace
+ *  Class namespace
  *
  * */
 
@@ -1811,7 +1810,7 @@ namespace Tooltip {
 
 /* *
  *
- * Default export
+ *  Default export
  *
  * */
 
@@ -1819,7 +1818,7 @@ export default Tooltip;
 
 /* *
  *
- * API Declarations
+ *  API Declarations
  *
  * */
 
@@ -1925,4 +1924,4 @@ export default Tooltip;
  * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
  */
 
-''; // separates doclets above from variables below
+''; // keeps doclets above in JS file

@@ -17,10 +17,9 @@
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
 import type F from './FormatUtilities';
+import type Point from '../Core/Series/Point';
 import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
 import type Tooltip from './Tooltip';
-
-import Point from '../Core/Series/Point.js';
 
 /* *
  *
