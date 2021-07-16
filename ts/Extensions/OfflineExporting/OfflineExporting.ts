@@ -74,7 +74,15 @@ declare module '../../Core/Chart/ChartLike' {
 
 /* *
  *
- *  Class namespace
+ * Constants
+ *
+ * */
+
+const composedClasses: Array<Function> = [];
+
+/* *
+ *
+ *  Composition
  *
  * */
 
@@ -132,13 +140,17 @@ namespace OfflineExporting {
         ChartClass: T
     ): (typeof Composition&T) {
 
-        const chartProto = ChartClass.prototype as Composition;
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
 
-        chartProto.getSVGForLocalExport = getSVGForLocalExport;
-        chartProto.exportChartLocal = exportChartLocal;
+            const chartProto = ChartClass.prototype as Composition;
 
-        // Extend the default options to use the local exporter logic
-        merge(true, defaultOptions.exporting, OfflineExportingDefaults);
+            chartProto.getSVGForLocalExport = getSVGForLocalExport;
+            chartProto.exportChartLocal = exportChartLocal;
+
+            // Extend the default options to use the local exporter logic
+            merge(true, defaultOptions.exporting, OfflineExportingDefaults);
+        }
 
         return ChartClass as (typeof Composition&T);
     }
