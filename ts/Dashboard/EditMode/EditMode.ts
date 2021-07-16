@@ -476,7 +476,6 @@ class EditMode {
         toolbarTypes?: Array<string>,
         currentCell?: Cell
     ): void {
-        console.log('showToolbar');
         const editMode = this,
             toolbarsToShow = toolbarTypes || ['cell', 'row', 'sidebar'];
 

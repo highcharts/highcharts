@@ -192,6 +192,7 @@ class Cell extends GUIElement {
      * Layout nested in the cell.
      */
     public nestedLayout?: Layout;
+    public isTempWidth?: Boolean;
 
     /**
      * Mount component from JSON.

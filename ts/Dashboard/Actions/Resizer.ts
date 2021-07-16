@@ -20,12 +20,14 @@ const {
     fireEvent,
     removeEvent,
     pick,
-    getStyle
+    getStyle,
+    isObject
 } = U;
 
 import H from '../../Core/Globals.js';
 import EditMode from '../EditMode/EditMode';
 import ContextDetection from './ContextDetection.js';
+import { isEmptyObject } from 'jquery';
 
 const {
     hasTouch
@@ -227,6 +229,58 @@ class Resizer {
         }
     }
 
+    public setTempWidthSiblings(
+        revertAuto?: boolean
+    ): void {
+        const currentCell = this.currentCell;
+        const currentRwdMode = this.editMode.rwdMode;
+
+        if (currentCell) {
+            const cellOffsets = GUIElement.getOffsets(currentCell);
+            const cellLevel = currentCell.row.getRowLevel(cellOffsets.top);
+            const cellsSiblings = cellLevel && cellLevel.cells || [];
+            let newWidth;
+            let cellContainer;
+            let cell;
+            let optionsWidth;
+
+            for (let i = 0, iEnd = cellsSiblings.length; i < iEnd; ++i) {
+                cell = cellsSiblings[i];
+                cellContainer = cellsSiblings[i].container;
+                optionsWidth = pick(
+                    cell.options.width,
+                    ((cell.options.responsive || {})[currentRwdMode] || {}).width
+                );
+
+                if (
+                    cell !== currentCell &&
+                    cellContainer &&
+                    !optionsWidth
+                ) {
+                    // const a = GUIElement.getOffsets(cell);
+                    // const b = GUIElement.getDimFromOffsets(a);
+                    // const d = GUIElement.getOffsets(cell.row);
+                    // const e = GUIElement.getDimFromOffsets(d);
+
+                    // newWidth = (
+                    //     b.width / (e.width || 1)
+                    //     // cellContainer.offsetWidth / (cell.row.container?.offsetWidth || 1)
+                    // ) * 100 + '%';
+
+                    // cell.setSize(newWidth);
+
+                    cellContainer.style.flex = revertAuto ?
+                        ('1 1 0%') :
+                        ('0 0 ' + (cellContainer.offsetWidth + 'px'));
+
+                    fireEvent(this.editMode.dashboard, 'cellResize', { cell: cell });
+
+                }
+            }
+        }
+
+    }
+
     /**
      * Add events
      *
@@ -248,6 +302,8 @@ class Resizer {
             resizer.currentDimension = 'x';
             resizer.deactivateResizerDetection();
             resizer.editMode.hideToolbars(['row', 'cell']);
+
+            resizer.setTempWidthSiblings();
 
             resizer.startX = e.clientX;
         };
@@ -282,6 +338,9 @@ class Resizer {
                     ['row', 'cell'],
                     resizer.currentCell
                 );
+
+                resizer.setTempWidthSiblings(true);
+                // resizer.editMode.dashboard.reflow();
             }
         };
 
