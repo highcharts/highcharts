@@ -67,6 +67,14 @@ declare module '../../Core/Chart/ChartLike' {
     }
 }
 
+declare module '../../Core/LegendLike' {
+    interface LegendLike {
+        bubbleLegend?: Highcharts.BubbleLegend;
+        getLinesHeights(): Array<Record<string, number>>;
+        retranslateItems(lines: Array<Record<string, number>>): void;
+    }
+}
+
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
         isBubble?: boolean;
@@ -142,11 +150,6 @@ declare global {
             connectorAttribs?: SVGAttributes;
             labelAttribs?: SVGAttributes;
             value?: any;
-        }
-        interface Legend {
-            bubbleLegend?: BubbleLegend;
-            getLinesHeights(): Array<Record<string, number>>;
-            retranslateItems(lines: Array<Record<string, number>>): void;
         }
         interface LegendItemObject {
             ignoreSeries?: boolean;
@@ -471,14 +474,14 @@ setOptions({ // Set default bubble legend options
 class BubbleLegend {
     public constructor(
         options: Highcharts.BubbleLegendOptions,
-        legend: Highcharts.Legend
+        legend: Legend
     ) {
         this.init(options, legend);
     }
 
     public chart: Chart = void 0 as any;
     public fontMetrics: FontMetricsObject = void 0 as any;
-    public legend: Highcharts.Legend = void 0 as any;
+    public legend: Legend = void 0 as any;
     public legendGroup: SVGElement = void 0 as any;
     public legendItem: SVGElement = void 0 as any;
     public legendItemHeight: number = void 0 as any;
@@ -505,7 +508,7 @@ class BubbleLegend {
      */
     public init(
         options: Highcharts.BubbleLegendOptions,
-        legend: Highcharts.Legend
+        legend: Legend
     ): void {
         this.options = options;
         this.visible = true;
@@ -539,7 +542,7 @@ class BubbleLegend {
      *        Legend instance
      * @return {void}
      */
-    public drawLegendSymbol(legend: Highcharts.Legend): void {
+    public drawLegendSymbol(legend: Legend): void {
         let chart = this.chart,
             options = this.options,
             size,
@@ -1112,7 +1115,7 @@ class BubbleLegend {
 
 // Start the bubble legend creation process.
 addEvent(Legend, 'afterGetAllItems', function (
-    this: Highcharts.Legend,
+    this: Legend,
     e: { allItems: Array<(Series|Point)> }
 ): void {
     const legend = this,
@@ -1177,7 +1180,7 @@ Chart.prototype.getVisibleBubbleSeriesIndex = function (): number {
  *         Informations about line height and items amount
  */
 Legend.prototype.getLinesHeights = function (
-    this: Highcharts.Legend
+    this: Legend
 ): Array<Record<string, number>> {
     let items = this.allItems,
         lines = [] as Array<Record<string, number>>,
@@ -1221,7 +1224,7 @@ Legend.prototype.getLinesHeights = function (
  * @return {void}
  */
 Legend.prototype.retranslateItems = function (
-    this: Highcharts.Legend,
+    this: Legend,
     lines: Array<Record<string, number>>
 ): void {
     let items = this.allItems,

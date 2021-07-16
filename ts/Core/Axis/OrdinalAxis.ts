@@ -16,9 +16,10 @@
  *
  * */
 
-import type TickPositionsArray from './TickPositionsArray';
+import type DateTimeAxis from './DateTimeAxis';
 import type NavigatorAxis from './NavigatorAxis';
 import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
+import type TickPositionsArray from './TickPositionsArray';
 
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
@@ -50,7 +51,7 @@ declare module './AxisComposition' {
         ordinal?: OrdinalAxis['ordinal'];
         /** @deprecated */
         getTimeTicks(
-            normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
+            normalizedInterval: DateTimeAxis.NormalizedObject,
             min: number,
             max: number,
             startOfWeek?: number,
@@ -72,7 +73,7 @@ declare module './AxisOptions' {
 }
 
 declare module './TimeTicksInfoObject' {
-    interface TimeTicksInfoObject extends Highcharts.DateTimeAxisNormalizedObject {
+    interface TimeTicksInfoObject {
         segmentStarts?: Array<number>;
     }
 }
@@ -87,13 +88,30 @@ declare module './AxisType' {
 
 /**
  * @private
+ * Internal function to calculate the precise index
+ * in ordinalPositions array.
+ */
+function getIndexInArray(ordinalPositions: Array<number>, val: number): number {
+    const index =
+    OrdinalAxis.Composition.findIndexOf(ordinalPositions, val, true);
+    if (ordinalPositions[index] === val) {
+        return index;
+    }
+    const percent =
+        (val - ordinalPositions[index]) /
+        (ordinalPositions[index + 1] - ordinalPositions[index]);
+    return index + percent;
+}
+
+/**
+ * @private
  */
 interface OrdinalAxis extends Axis {
     forceOrdinal?: boolean;
     isInternal?: boolean;
     ordinal: OrdinalAxis.Composition;
     getTimeTicks(
-        normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
+        normalizedInterval: DateTimeAxis.NormalizedObject,
         min: number,
         max: number,
         startOfWeek: number,
@@ -201,6 +219,7 @@ namespace OrdinalAxis {
                         ordinalPositions = ordinalPositions.concat(
                             series.processedXData as any
                         );
+
                         len = ordinalPositions.length;
 
                         // remove duplicates (#1588)
@@ -371,7 +390,7 @@ namespace OrdinalAxis {
          *        The key to being found.
          * @param {boolean} indirectSearch
          *        In case of lack of the point in the array, should return
-         *        value be equal to -1 or the closest bigger index.
+         *        value be equal to -1 or the closest smaller index.
          *  @private
          */
         public static findIndexOf(
@@ -383,23 +402,23 @@ namespace OrdinalAxis {
                 end = sortedArray.length - 1,
                 middle;
 
-            while (start <= end) {
-                middle = Math.floor((start + end) / 2);
+            while (start < end) {
+                middle = Math.ceil((start + end) / 2);
 
                 // Key found as the middle element.
-                if (sortedArray[middle] === key) {
-                    return middle;
-                }
-                if (sortedArray[middle] < key) {
+                if (sortedArray[middle] <= key) {
                     // Continue searching to the right.
-                    start = middle + 1;
+                    start = middle;
                 } else {
                     // Continue searching to the left.
                     end = middle - 1;
                 }
             }
+            if (sortedArray[start] === key) {
+                return start;
+            }
             // Key could not be found.
-            return !indirectSearch ? -1 : (middle as number);
+            return !indirectSearch ? -1 : start;
         }
 
         /**
@@ -458,6 +477,7 @@ namespace OrdinalAxis {
                         getGroupIntervalFactor: this.getGroupIntervalFactor
                     },
                     ordinal2lin: axisProto.ordinal2lin, // #6276
+                    getIndexOfPoint: axisProto.getIndexOfPoint,
                     val2lin: axisProto.val2lin // #2590
                 } as any;
                 fakeAxis.ordinal.axis = fakeAxis;
@@ -479,6 +499,9 @@ namespace OrdinalAxis {
 
                     fakeSeries.options = {
                         dataGrouping: grouping ? {
+                            firstAnchor: 'firstPoint',
+                            anchor: 'middle',
+                            lastAnchor: 'lastPoint',
                             enabled: true,
                             forced: true,
                             // doesn't matter which, use the fastest
@@ -633,8 +656,6 @@ namespace OrdinalAxis {
             if (defined(distance)) {
                 // Max + pointRange because we need to scroll to the last
 
-                positions.push(max);
-
                 while (
                     (max as any) <= (axis.dataMax as any) + (extraRange as any)
                 ) {
@@ -721,7 +742,7 @@ namespace OrdinalAxis {
          * @private
          */
         AxisClass.prototype.getTimeTicks = function (
-            normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
+            normalizedInterval: DateTimeAxis.NormalizedObject,
             min: number,
             max: number,
             startOfWeek?: number,
@@ -1028,7 +1049,7 @@ namespace OrdinalAxis {
                 }
 
                 // For cases when the index is not in the extended ordinal
-                // position array (EOP), like when the value we are looking
+                // position array, like when the value we are looking
                 // for exceed the available data,
                 // approximate that value based on the calculated slope.
                 const positionsLength = positions.length,
@@ -1049,7 +1070,7 @@ namespace OrdinalAxis {
          * Translate from a linear axis value to the corresponding ordinal axis
          * position. If there are no gaps in the ordinal axis this will be the
          * same. The translated value is the value that the point would have if
-         * the axis were linear, using the same min and max.
+         * the axis was linear, using the same min and max.
          *
          * @private
          * @function Highcharts.Axis#val2lin
@@ -1062,53 +1083,95 @@ namespace OrdinalAxis {
          *
          * @return {number}
          */
-        axisProto.val2lin = function (
-            val: number,
-            toIndex?: boolean
-        ): number {
+        axisProto.val2lin = function (val: number, toIndex?: boolean): number {
             let axis = this,
                 ordinal = axis.ordinal,
+                slope = ordinal.slope,
                 ordinalPositions = ordinal.positions,
-                ret;
+                extendedOrdinalPositions = ordinal.extendedOrdinalPositions;
 
             if (!ordinalPositions) {
-                ret = val;
+                return val;
+            }
 
+            let ordinalLength = ordinalPositions.length,
+                ordinalIndex;
+            // If the searched value is inside visible plotArea, ivastigate the
+            // value basing on ordinalPositions.
+            if (
+                ordinalPositions[0] <= val &&
+                ordinalPositions[ordinalLength - 1] >= val
+            ) {
+                ordinalIndex = getIndexInArray(ordinalPositions, val);
+                // final return value is based on ordinalIndex
             } else {
 
-                let ordinalLength = ordinalPositions.length,
-                    i,
-                    distance,
-                    ordinalIndex;
+                if (!extendedOrdinalPositions) {
+                    extendedOrdinalPositions =
+                        ordinal.getExtendedPositions &&
+                        ordinal.getExtendedPositions();
+                    ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
+                }
+                if (!(extendedOrdinalPositions && extendedOrdinalPositions.length)) {
 
-                // first look for an exact match in the ordinalpositions array
-                i = ordinalLength;
-                while (i--) {
-                    if (ordinalPositions[i] === val) {
-                        ordinalIndex = i;
-                        break;
-                    }
+                    return val;
                 }
 
-                // if that failed, find the intermediate position between the
-                // two nearest values
-                i = ordinalLength - 1;
-                while (i--) {
-                    if (val > ordinalPositions[i] || i === 0) { // interpolate
-                        // something between 0 and 1
-                        distance = (val - ordinalPositions[i]) /
-                            (ordinalPositions[i + 1] - ordinalPositions[i]);
-                        ordinalIndex = i + distance;
-                        break;
+                const length = extendedOrdinalPositions.length;
+
+                if (!slope) {
+                    slope =
+                        (extendedOrdinalPositions[length - 1] -
+                            extendedOrdinalPositions[0]) /
+                        length;
+                }
+                // OriginalPointReference is equal to the index of
+                // first point of ordinalPositions in extendedOrdinalPositions.
+
+                let originalPositionsReference = getIndexInArray(
+                    extendedOrdinalPositions,
+                    ordinalPositions[0]
+                );
+
+                // If the searched value is outside the visiblePlotArea,
+                // check if it is inside extendedOrdinalPositions.
+                if (
+                    val >= extendedOrdinalPositions[0] &&
+                    val <=
+                        extendedOrdinalPositions[
+                            length - 1
+                        ]
+                ) {
+                    // Return Value
+                    ordinalIndex = getIndexInArray(extendedOrdinalPositions, val) - originalPositionsReference;
+                } else {
+                    // Since ordinal.slope is the average distance between 2
+                    // points on visible plotArea, this can be used to calculete
+                    // the approximate position of the point, which is outside
+                    // the extededOrdinalPositions.
+                    if (val < extendedOrdinalPositions[0]) {
+                        let diff = extendedOrdinalPositions[0] - val,
+                            approximateIndexOffset = diff / slope;
+                        ordinalIndex =
+                            -originalPositionsReference -
+                            approximateIndexOffset;
+                    } else {
+                        let diff =
+                                val -
+                                extendedOrdinalPositions[
+                                    length - 1
+                                ],
+                            approximateIndexOffset = diff / slope;
+                        ordinalIndex =
+                            approximateIndexOffset +
+                            length -
+                            originalPositionsReference;
                     }
                 }
-                ret = toIndex ?
-                    ordinalIndex :
-                    (ordinal.slope as any) *
-                    (ordinalIndex || 0) +
-                    (ordinal.offset as any);
             }
-            return ret;
+
+            return toIndex ? ordinalIndex : (slope as any) * (ordinalIndex || 0) +
+                      (ordinal.offset as any);
         };
         // Record this to prevent overwriting by broken-axis module (#5979)
         axisProto.ordinal2lin = axisProto.val2lin;
@@ -1253,6 +1316,7 @@ namespace OrdinalAxis {
                     // range, else it happens on the current x axis which is
                     // smaller and faster.
                     chart.fixedRange = max - min;
+
                     trimmedRange = (xAxis as NavigatorAxis).navigatorAxis.toFixedRange(
                         null as any,
                         null as any,

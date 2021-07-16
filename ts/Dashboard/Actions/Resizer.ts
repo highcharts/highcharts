@@ -2,7 +2,8 @@
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
-import type DataJSON from '../../Data/DataJSON';
+import type JSON from '../../Core/JSON';
+import type JSONUtilities from '../JSONUtilities';
 import type Cell from '../Layout/Cell.js';
 import type Row from '../Layout/Row.js';
 import type Layout from '../Layout/Layout.js';
@@ -574,21 +575,21 @@ namespace Resizer {
         hcEvents: Record<string, Array<Function>>;
     }
 
-    export interface ClassJSON extends DataJSON.ClassJSON {
+    export interface ClassJSON extends JSONUtilities.ClassJSON {
         options: JSONOptions;
     }
 
-    export interface JSONOptions extends DataJSON.JSONObject {
+    export interface JSONOptions extends JSON.Object {
         enabled: boolean;
         styles: ElementStylesJSON;
         type: string;
         snap: SnapJSON;
     }
-    export interface SnapJSON extends DataJSON.JSONObject {
+    export interface SnapJSON extends JSON.Object {
         width?: number;
         height?: number;
     }
-    export interface ElementStylesJSON extends DataJSON.JSONObject {
+    export interface ElementStylesJSON extends JSON.Object {
         borderLeft?: number;
         borderRight?: number;
         borderTop?: number;

@@ -1,6 +1,8 @@
 /* eslint-disable */
 import type { CSSJSONObject } from './../../Data/DataCSSObject';
-import type DataJSON from '../../Data/DataJSON';
+import type JSON from '../../Core/JSON';
+import type JSONUtilities from '../JSONUtilities';
+
 import DashboardGlobals from './../DashboardGlobals.js';
 import Layout from './Layout.js';
 import Cell from './Cell.js';
@@ -470,11 +472,11 @@ namespace Row {
         cellsJSON?: Array<Cell.ClassJSON>;
     }
 
-    export interface ClassJSON extends DataJSON.ClassJSON {
+    export interface ClassJSON extends JSONUtilities.ClassJSON {
         options: JSONOptions;
     }
 
-    export interface JSONOptions extends DataJSON.JSONObject {
+    export interface JSONOptions extends JSON.Object {
         containerId: string;
         parentContainerId: string;
         cells: Array<Cell.ClassJSON>;

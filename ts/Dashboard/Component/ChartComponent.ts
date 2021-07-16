@@ -1,14 +1,13 @@
+import type AxisOptions from '../../Core/Axis/AxisOptions.js';
 import type Series from '../../Core/Series/Series.js';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type Options from '../../Core/Options.js';
-import type AxisOptions from '../../Core/Axis/AxisOptions.js';
 import SyncEmitter from './Sync/Emitter.js';
 import SyncHandler from './Sync/Handler.js';
 
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import DataStore from '../../Data/Stores/DataStore.js';
-import DataJSON from '../../Data/DataJSON.js';
 import DataTable from '../../Data/DataTable.js';
 import Highcharts from '../../masters/highcharts.src.js';
 import defaultHandlers from './Sync/ChartSyncHandlers.js';
@@ -57,7 +56,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
     public static fromJSON(json: ChartComponent.ClassJSON): ChartComponent {
         const options = json.options;
         const chartOptions = JSON.parse(json.options.chartOptions || '');
-        const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
+        // const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
 
         const component = new ChartComponent(
             merge(
@@ -65,14 +64,14 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
                 {
                     chartOptions,
                     Highcharts, // TODO: Find a solution
-                    store: store instanceof DataStore ? store : void 0,
+                    // store: store instanceof DataStore ? store : void 0,
                     syncHandlers: ChartComponent.syncHandlers // Get from static registry
                 }
             )
         );
 
         component.emit({
-            type: 'fromJSOM',
+            type: 'fromJSON',
             json
         });
 
@@ -454,7 +453,7 @@ namespace ChartComponent {
         JSONEvent |
         Component.EventTypes;
 
-    export type JSONEvent = Component.Event<'toJSON' | 'fromJSOM', {
+    export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: ChartComponent.ClassJSON;
     }>;
 

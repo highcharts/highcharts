@@ -15,9 +15,10 @@
  *  Imports
  *
  * */
-import type DataJSON from './DataJSON';
+
 import type CSSObject from './../Core/Renderer/CSSObject';
 import type ColorString from './../Core/Color/ColorString';
+import type JSON from '../Core/JSON';
 
 /* *
  *
@@ -25,6 +26,6 @@ import type ColorString from './../Core/Color/ColorString';
  *
  * */
 
-interface CSSJSONObject extends CSSObject, DataJSON.JSONObject {
+interface CSSJSONObject extends CSSObject, JSON.Object {
     fill?: ColorString;
 }

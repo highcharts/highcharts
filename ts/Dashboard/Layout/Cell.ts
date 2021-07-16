@@ -1,8 +1,10 @@
 /* eslint-disable */
 import type { CSSJSONObject } from './../../Data/DataCSSObject';
-import type DataJSON from '../../Data/DataJSON';
 import type Component from './../Component/Component.js';
-import type ComponentType from '../Component/ComponentType'
+import type ComponentType from '../Component/ComponentType';
+import type JSON from '../../Core/JSON';
+import type JSONUtilities from '../JSONUtilities';
+
 import DashboardGlobals from './../DashboardGlobals.js';
 import Row from './Row.js';
 import GUIElement from './GUIElement.js';
@@ -439,11 +441,11 @@ namespace Cell {
         // visible: boolean;
     }
 
-    export interface ClassJSON extends DataJSON.ClassJSON {
+    export interface ClassJSON extends JSONUtilities.ClassJSON {
         options: JSONOptions;
     }
 
-    export interface JSONOptions extends DataJSON.JSONObject {
+    export interface JSONOptions extends JSON.Object {
         containerId: string;
         parentContainerId: string;
         mountedComponentJSON: Component.ClassJSON|undefined;

@@ -21,7 +21,6 @@
 import type DataEventEmitter from '../DataEventEmitter';
 
 import DataModifier from './DataModifier.js';
-import DataJSON from '../DataJSON.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
@@ -49,25 +48,6 @@ class SeriesPointsModifier extends DataModifier {
     public static readonly defaultOptions: SeriesPointsModifier.Options = {
         modifier: 'SeriesPoints'
     };
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Converts a class JSON to a series points modifier.
-     *
-     * @param {SeriesPointsModifier.ClassJSON} json
-     * Class JSON to convert to an instance of series points modifier.
-     *
-     * @return {SeriesPointsModifier}
-     * Series points modifier of the class JSON.
-     */
-    public static fromJSON(json: SeriesPointsModifier.ClassJSON): SeriesPointsModifier {
-        return new SeriesPointsModifier(json.options);
-    }
 
     /* *
      *
@@ -105,94 +85,6 @@ class SeriesPointsModifier extends DataModifier {
      * */
 
     /**
-     * Applies partial modifications of a cell change to the property `modified`
-     * of the given modified table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {string} columnName
-     * Column name of changed cell.
-     *
-     * @param {number|undefined} rowIndex
-     * Row index of changed cell.
-     *
-     * @param {Highcharts.DataTableCellType} cellValue
-     * Changed cell value.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Table with `modified` property as a reference.
-     */
-    public modifyCell<T extends DataTable>(
-        table: T,
-        columnName: string,
-        rowIndex: number,
-        cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): T {
-        return this.modifyTable(table);
-    }
-
-    /**
-     * Applies partial modifications of column changes to the property
-     * `modified` of the given table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {Highcharts.DataTableColumnCollection} columns
-     * Changed columns as a collection, where the keys are the column names.
-     *
-     * @param {number} [rowIndex=0]
-     * Index of the first changed row.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Table with `modified` property as a reference.
-     */
-    public modifyColumns<T extends DataTable>(
-        table: T,
-        columns: DataTable.ColumnCollection,
-        rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): T {
-        return this.modifyTable(table);
-    }
-
-    /**
-     * Applies partial modifications of row changes to the property `modified`
-     * of the given table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {Array<(Highcharts.DataTableRow|Highcharts.DataTableRowObject)>} rows
-     * Changed rows.
-     *
-     * @param {number} [rowIndex]
-     * Index of the first changed row.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Table with `modified` property as a reference.
-     */
-    public modifyRows<T extends DataTable>(
-        table: T,
-        rows: Array<(DataTable.Row|DataTable.RowObject)>,
-        rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): T {
-        return this.modifyTable(table);
-    }
-
-    /**
      * Renames columns to alternative column names (alias) depending on mapping
      * option.
      *
@@ -227,21 +119,6 @@ class SeriesPointsModifier extends DataModifier {
         return table;
     }
 
-    /**
-     * Converts the series points modifier to a class JSON,
-     * including all containing all modifiers.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this series points modifier.
-     */
-    public toJSON(): SeriesPointsModifier.ClassJSON {
-        const json = {
-            $class: 'SeriesPointsModifier',
-            options: merge(this.options)
-        };
-
-        return json;
-    }
 }
 
 /* *
@@ -257,13 +134,6 @@ class SeriesPointsModifier extends DataModifier {
 namespace SeriesPointsModifier {
 
     /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataModifier.ClassJSON {
-        // nothing here yet
-    }
-
-    /**
      * Options to configure the modifier.
      */
     export interface Options extends DataModifier.Options {
@@ -277,7 +147,6 @@ namespace SeriesPointsModifier {
  *
  * */
 
-DataJSON.addClass(SeriesPointsModifier);
 DataModifier.addModifier(SeriesPointsModifier);
 
 declare module './ModifierType' {

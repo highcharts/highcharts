@@ -1,11 +1,13 @@
 /* eslint-disable require-jsdoc */
-import type ComponentType from './ComponentType';
 import type Cell from '../Layout/Cell.js';
+import type ComponentType from './ComponentType';
+import type JSON from '../../Core/JSON';
+import type JSONUtilities from '../JSONUtilities';
+
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import DataTable from '../../Data/DataTable.js';
-import type DataJSON from '../../Data/DataJSON';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
@@ -745,7 +747,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
         const json = {
             $class: Component.getName(this.constructor),
-            store: this.store ? this.store.toJSON() : void 0,
+            // store: this.store ? this.store.toJSON() : void 0,
             options: {
                 parentElement: this.parentElement.id,
                 dimensions,
@@ -760,8 +762,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
 namespace Component {
 
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        store?: DataStore.ClassJSON;
+    export interface ClassJSON extends JSONUtilities.ClassJSON {
+        // store?: DataStore.ClassJSON;
         options: ComponentJSONOptions;
     }
 
@@ -799,8 +801,8 @@ namespace Component {
             target: string;
         };
     }>;
-    export type JSONEvent = Event<'toJSON' | 'fromJSOM', {
-        json: DataJSON.ClassJSON;
+    export type JSONEvent = Event<'toJSON' | 'fromJSON', {
+        json: JSONUtilities.ClassJSON;
     }>;
     export type TableChangedEvent = Event<'tableChanged', {}>
     export type PresentationModifierEvent = Component.Event<'afterPresentationModifier', { table: DataTable }>
@@ -842,8 +844,8 @@ namespace Component {
     export type textOptionsType = string | false | TextOptions | undefined;
 
     // JSON compatible options for exprot
-    export interface ComponentJSONOptions extends DataJSON.JSONObject {
-        store?: DataStore.ClassJSON; // store id
+    export interface ComponentJSONOptions extends JSON.Object {
+        // store?: DataStore.ClassJSON; // store id
         parentElement: string; // ID?
         style?: {};
         dimensions?: { width: number; height: number };

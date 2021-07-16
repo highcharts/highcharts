@@ -1,4 +1,5 @@
-import type DataJSON from '../Data/DataJSON';
+import type JSON from '../Core/JSON';
+import type JSONUtilities from './JSONUtilities';
 
 import Layout from './Layout/Layout.js';
 import Bindings from './Actions/Bindings.js';
@@ -372,7 +373,7 @@ namespace Dashboard {
         respoBreakpoints?: RespoBreakpoints;
     }
 
-    export interface RespoBreakpoints extends DataJSON.JSONObject {
+    export interface RespoBreakpoints extends JSON.Object {
         small: number;
         medium: number;
         large: number;
@@ -384,11 +385,11 @@ namespace Dashboard {
         layouts: Array<Layout.Options>;
     }
 
-    export interface ClassJSON extends DataJSON.ClassJSON {
+    export interface ClassJSON extends JSONUtilities.ClassJSON {
         options: DashboardJSONOptions;
     }
 
-    export interface DashboardJSONOptions extends DataJSON.JSONObject {
+    export interface DashboardJSONOptions extends JSON.Object {
         containerId: string;
         layouts: Array<Layout.ClassJSON>;
         guiEnabled?: boolean;

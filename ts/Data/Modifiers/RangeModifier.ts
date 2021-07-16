@@ -19,8 +19,8 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
+import type JSON from '../../Core/JSON';
 
-import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -58,25 +58,6 @@ class RangeModifier extends DataModifier {
 
     /* *
      *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Converts a class JSON to a range modifier.
-     *
-     * @param {RangeModifier.ClassJSON} json
-     * Class JSON to convert to an instance of range modifier.
-     *
-     * @return {RangeModifier}
-     * GrouRangep modifier of the class JSON.
-     */
-    public static fromJSON(json: RangeModifier.ClassJSON): RangeModifier {
-        return new RangeModifier(json.options);
-    }
-
-    /* *
-     *
      *  Constructor
      *
      * */
@@ -109,94 +90,6 @@ class RangeModifier extends DataModifier {
      *  Functions
      *
      * */
-
-    /**
-     * Applies partial modifications of a cell change to the property `modified`
-     * of the given modified table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {string} columnName
-     * Column name of changed cell.
-     *
-     * @param {number|undefined} rowIndex
-     * Row index of changed cell.
-     *
-     * @param {Highcharts.DataTableCellType} cellValue
-     * Changed cell value.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Table with `modified` property as a reference.
-     */
-    public modifyCell<T extends DataTable>(
-        table: T,
-        columnName: string,
-        rowIndex: number,
-        cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): T {
-        return this.modifyTable(table);
-    }
-
-    /**
-     * Applies partial modifications of column changes to the property
-     * `modified` of the given table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {Highcharts.DataTableColumnCollection} columns
-     * Changed columns as a collection, where the keys are the column names.
-     *
-     * @param {number} [rowIndex=0]
-     * Index of the first changed row.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Table with `modified` property as a reference.
-     */
-    public modifyColumns<T extends DataTable>(
-        table: T,
-        columns: DataTable.ColumnCollection,
-        rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): T {
-        return this.modifyTable(table);
-    }
-
-    /**
-     * Applies partial modifications of row changes to the property `modified`
-     * of the given table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {Array<(Highcharts.DataTableRow|Highcharts.DataTableRowObject)>} rows
-     * Changed rows.
-     *
-     * @param {number} [rowIndex]
-     * Index of the first changed row.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Table with `modified` property as a reference.
-     */
-    public modifyRows<T extends DataTable>(
-        table: T,
-        rows: Array<(DataTable.Row|DataTable.RowObject)>,
-        rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): T {
-        return this.modifyTable(table);
-    }
 
     /**
      * Replaces table rows with filtered rows.
@@ -295,19 +188,6 @@ class RangeModifier extends DataModifier {
         return table;
     }
 
-    /**
-     * Converts the range modifier to a class JSON, including all containing all
-     * modifiers.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this range modifier.
-     */
-    public toJSON(): RangeModifier.ClassJSON {
-        return {
-            $class: 'RangeModifier',
-            options: merge(this.options)
-        };
-    }
 }
 
 /* *
@@ -321,13 +201,6 @@ class RangeModifier extends DataModifier {
  * conversion.
  */
 namespace RangeModifier {
-
-    /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataModifier.ClassJSON {
-        options: Options;
-    }
 
     /**
      * Options to configure the modifier.
@@ -346,7 +219,7 @@ namespace RangeModifier {
     /**
      * Options to configure a range.
      */
-    export interface RangeOptions extends DataJSON.JSONObject {
+    export interface RangeOptions extends JSON.Object {
         /**
          * Column containing the filtered values. This can be an index or a
          * name.
@@ -370,7 +243,6 @@ namespace RangeModifier {
  *
  * */
 
-DataJSON.addClass(RangeModifier);
 DataModifier.addModifier(RangeModifier);
 
 declare module './ModifierType' {

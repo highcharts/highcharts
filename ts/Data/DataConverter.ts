@@ -19,7 +19,7 @@
  * */
 
 import type DataTable from './DataTable.js';
-import type DataJSON from './DataJSON';
+import type JSON from '../Core/JSON';
 
 import U from './../Core/Utilities.js';
 const {
@@ -630,7 +630,7 @@ namespace DataConverter {
     /**
      * Internal options for DataConverter.
      */
-    export interface Options extends DataJSON.JSONObject {
+    export interface Options extends JSON.Object {
         dateFormat?: string;
         alternativeFormat?: string;
         decimalPoint?: string;

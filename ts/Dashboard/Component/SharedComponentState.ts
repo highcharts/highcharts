@@ -10,6 +10,8 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
@@ -17,8 +19,9 @@
  * */
 
 import type DataEventEmitter from '../../Data/DataEventEmitter';
-import type DataJSON from '../../Data/DataJSON.js';
+import type JSONUtilities from '../JSONUtilities';
 import type PointType from '../../Core/Series/PointType';
+
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -36,7 +39,7 @@ const {
  * Contains presentation information like column order, usually in relation to a
  * table instance.
  */
-class DataPresentationState implements DataEventEmitter<DataPresentationState.Event>, DataJSON.Class {
+class DataPresentationState implements DataEventEmitter<DataPresentationState.Event> /* , JSON.Class */ {
 
     /**
      * Converts a supported class JSON to a DataPresentationState instance.
@@ -291,7 +294,7 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
     /**
      * Converts the presentation state to a class JSON.
      *
-     * @return {DataJSON.ClassJSON}
+     * @return {JSON.ClassJSON}
      * Class JSON of this table.
      */
     public toJSON(): DataPresentationState.ClassJSON {
@@ -338,7 +341,7 @@ namespace DataPresentationState {
     /**
      * Describes the class JSON of a DataPresentationState.
      */
-    export interface ClassJSON extends DataJSON.ClassJSON {
+    export interface ClassJSON extends JSONUtilities.ClassJSON {
         columnOrder?: Array<string>;
         visibilityMap?: columnVisibilityType;
         hoverpoint?: { x: number; y: number; id: string };

@@ -293,10 +293,10 @@ test('HTMLTableStore from HTML element', function (assert) {
             'Datastore loaded from HTML element has same amount of rows minus the column names'
         )
 
-        const datastoreFromJSON = HTMLTableStore.fromJSON(datastore.toJSON());
-        datastoreFromJSON.load();
+        // const datastoreFromJSON = HTMLTableStore.fromJSON(datastore.toJSON());
+        // datastoreFromJSON.load();
 
-        testExportedDataTable(e.table, datastoreFromJSON.table, assert);
+        // testExportedDataTable(e.table, datastoreFromJSON.table, assert);
 
         doneLoading();
     });
@@ -314,9 +314,8 @@ test('HTMLTableParser', function (assert) {
     const done = assert.async();
 
     dataparser.on('afterParse', e => {
-        const result = dataparser.toJSON();
         assert.strictEqual(
-            result.tableElementID,
+            dataparser.tableElementID,
             tableElement.id,
             'exported parser has correct `tableElementID`'
         );

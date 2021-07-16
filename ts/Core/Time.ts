@@ -58,10 +58,16 @@ declare module './Axis/TickPositionsArray'{
  *
  * */
 
-const hasNewSafariBug = (H.isSafari && Intl && Intl.DateTimeFormat.prototype.formatRange);
+const hasNewSafariBug =
+    H.isSafari &&
+    win.Intl &&
+    win.Intl.DateTimeFormat.prototype.formatRange;
 
 // To do: Remove this when we no longer need support for Safari < v14.1
-const hasOldSafariBug = (H.isSafari && Intl && !Intl.DateTimeFormat.prototype.formatRange);
+const hasOldSafariBug =
+    H.isSafari &&
+    win.Intl &&
+    !win.Intl.DateTimeFormat.prototype.formatRange;
 
 /* *
  *

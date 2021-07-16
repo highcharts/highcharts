@@ -19,7 +19,7 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataJSON from '../DataJSON';
+import type JSON from '../../Core/JSON';
 
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -40,8 +40,7 @@ const {
  *
  * @private
  */
-abstract class DataParser<TEventObject extends DataParser.Event>
-implements DataEventEmitter<TEventObject>, DataJSON.Class {
+abstract class DataParser<TEventObject extends DataParser.Event> implements DataEventEmitter<TEventObject> {
 
     /* *
      *
@@ -66,29 +65,6 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      *  Static Functions
      *
      * */
-
-    /**
-     * Converts the table instance to a array of columns.
-     *
-     * @param {DataTable} table
-     * Table to convert.
-     *
-     * @return {Array<DataTable.Column>}
-     * An array of columns, with the second dimension as row cells.
-     */
-    public static getColumnsFromTable(
-        table: DataTable
-    ): Array<DataTable.Column> {
-        const columns = table.getColumns(),
-            columnNames = table.getColumnNames(),
-            columnArray = [];
-
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            columnArray.push(columns[columnNames[i]]);
-        }
-
-        return columnArray;
-    }
 
     /**
      * Converts an array of columns to a table instance. Second dimension of the
@@ -116,7 +92,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
             ++i
         ) {
             table.setColumn(
-                headers[i] || uniqueKey(),
+                headers[i] || `${i}`,
                 columns[i]
             );
         }
@@ -175,13 +151,6 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     public abstract parse(options: DataParser.Options): void;
 
     /**
-     * Converts the class instance to ClassJSON
-     *
-     * @return {DataJSON.ClassJSON}
-     */
-    public abstract toJSON(): DataJSON.ClassJSON;
-
-    /**
      * DataConverter for the parser.
      */
     public abstract converter: DataConverter;
@@ -212,7 +181,7 @@ namespace DataParser {
     /**
      * The shared options for all DataParser instances
      */
-    export interface Options extends DataJSON.JSONObject {
+    export interface Options extends JSON.Object {
         startRow: number;
         endRow: number;
         startColumn: number;

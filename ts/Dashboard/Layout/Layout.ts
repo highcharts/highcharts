@@ -1,9 +1,11 @@
 /* eslint-disable */
+import type { CSSJSONObject } from './../../Data/DataCSSObject';
+import type JSON from '../../Core/JSON';
+import type JSONUtilities from '../JSONUtilities';
+
 import Row from './Row.js';
 import Dashboard from '../Dashboard.js';
 import GUIElement from './GUIElement.js';
-import type DataJSON from '../../Data/DataJSON';
-import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import DashboardGlobals from './../DashboardGlobals.js';
 
 import U from '../../Core/Utilities.js';
@@ -404,11 +406,11 @@ namespace Layout {
         resizerJSON?: Resizer.ClassJSON;
     }
 
-    export interface ClassJSON extends DataJSON.ClassJSON {
+    export interface ClassJSON extends JSONUtilities.ClassJSON {
         options: LayoutJSONOptions;
     }
 
-    export interface LayoutJSONOptions extends DataJSON.JSONObject {
+    export interface LayoutJSONOptions extends JSON.Object {
         containerId: string;
         parentContainerId: string;
         rows: Array<Row.ClassJSON>;

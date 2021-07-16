@@ -20,7 +20,6 @@
 
 import type DataEventEmitter from '../DataEventEmitter';
 
-import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import DataConverter from '../DataConverter.js';
@@ -51,29 +50,6 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
      */
     protected static readonly defaultOptions: HTMLTableParser.ClassJSONOptions = {
         ...DataParser.defaultOptions
-    }
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-
-    /**
-     * Creates a HTMLTableParser instance from ClassJSON.
-     *
-     * @param {HTMLTableParser.ClassJSON} json
-     * Class JSON to convert to the parser instance.
-     *
-     * @return {HTMLTableParser}
-     * An instance of CSVDataParser.
-     */
-    public static fromJSON(json: HTMLTableParser.ClassJSON): HTMLTableParser {
-        return new HTMLTableParser(
-            json.options,
-            document.getElementById(json.tableElementID)
-        );
     }
 
     /* *
@@ -286,27 +262,6 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
         return DataParser.getTableFromColumns(this.columns, this.headers);
     }
 
-    /**
-     * Converts the parser instance to ClassJSON.
-     *
-     * @return {HTMLTableParser.ClassJSON}
-     * ClassJSON from the parser instance.
-     */
-    public toJSON(): HTMLTableParser.ClassJSON {
-        const parser = this,
-            {
-                options,
-                tableElementID
-            } = parser,
-            json: HTMLTableParser.ClassJSON = {
-                $class: 'HTMLTableParser',
-                options,
-                tableElementID: tableElementID ? tableElementID : ''
-            };
-
-        return json;
-    }
-
 }
 
 /* *
@@ -323,14 +278,6 @@ namespace HTMLTableParser {
     export type OptionsType = Partial<ParserOptions & DataParser.Options>
 
     /**
-     * ClassJSON for HTMLTableParser
-     */
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        options: ClassJSONOptions;
-        tableElementID: string;
-    }
-
-    /**
      * Options for the parser compatible with ClassJSON
      */
     export interface ClassJSONOptions extends DataParser.Options {
@@ -344,14 +291,6 @@ namespace HTMLTableParser {
     }
 
 }
-
-/* *
- *
- *  Register
- *
- * */
-
-DataJSON.addClass(HTMLTableParser);
 
 /* *
  *

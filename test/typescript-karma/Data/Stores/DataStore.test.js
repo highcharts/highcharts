@@ -18,11 +18,11 @@ test('DataStore metadata', function (assert) {
     });
 
     const description = datastore.whatIs('column1');
-    const metaJSON = datastore.toJSON().metadata;
+    const metadata = datastore.metadata;
 
     assert.ok(description, 'Managed to get `column1`');
 
-    datastore.describeColumns(metaJSON.columns)
+    datastore.describeColumns(metadata.columns)
 
     assert.deepEqual(
         datastore.whatIs('column1',),

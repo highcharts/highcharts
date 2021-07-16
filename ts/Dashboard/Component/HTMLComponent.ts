@@ -1,10 +1,13 @@
+'use strict';
+
+import type JSON from '../../Core/JSON';
+
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
 const {
     merge
 } = U;
 import AST from '../../Core/Renderer/HTML/AST.js';
-import DataJSON from '../../Data/DataJSON.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 
 // TODO: This may affect the AST parsing in Highcharts
@@ -41,20 +44,20 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     public static fromJSON(json: HTMLComponent.ClassJSON): HTMLComponent {
         const options = json.options;
         const elements = json.elements ? json.elements.map((el): AST.Node => JSON.parse(el)) : [];
-        const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
+        // const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
 
         const component = new HTMLComponent(
             merge(
                 options,
                 {
-                    elements,
-                    store: store instanceof DataStore ? store : void 0
+                    elements
+                    // store: store instanceof DataStore ? store : void 0
                 }
             )
         );
 
         component.emit({
-            type: 'fromJSOM',
+            type: 'fromJSON',
             json
         });
 
@@ -239,14 +242,14 @@ namespace HTMLComponent {
     }
 
     export interface HTMLComponentJSONOptions extends Component.ComponentJSONOptions {
-        elements: DataJSON.JSONObject[];
+        elements: Array<JSON.Object>;
         scaleElements: boolean;
     }
 
     export type HTMLComponentEvents =
         Component.EventTypes | JSONEvent;
 
-    export type JSONEvent = Component.Event<'toJSON' | 'fromJSOM', {
+    export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: HTMLComponent.ClassJSON;
     }>;
     export interface ClassJSON extends Component.ClassJSON {

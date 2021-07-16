@@ -19,8 +19,8 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
+import type JSON from '../../Core/JSON';
 
-import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -52,25 +52,6 @@ class GroupModifier extends DataModifier {
         modifier: 'Group',
         groupColumn: ''
     };
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Converts a class JSON to a group modifier.
-     *
-     * @param {ChainDataModifier.ClassJSON} json
-     * Class JSON to convert to an instance of group modifier.
-     *
-     * @return {ChainDataModifier}
-     * Group modifier of the class JSON.
-     */
-    public static fromJSON(json: GroupModifier.ClassJSON): GroupModifier {
-        return new GroupModifier(json.options);
-    }
 
     /* *
      *
@@ -108,95 +89,6 @@ class GroupModifier extends DataModifier {
      * */
 
     /**
-     * Applies partial modifications of a cell change to the property `modified`
-     * of the given modified table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {string} columnName
-     * Column name of changed cell.
-     *
-     * @param {number|undefined} rowIndex
-     * Row index of changed cell.
-     *
-     * @param {Highcharts.DataTableCellType} cellValue
-     * Changed cell value.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Table with `modified` property as a reference.
-     */
-    public modifyCell<T extends DataTable>(
-        table: T,
-        columnName: string,
-        rowIndex: number,
-        cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): T {
-        return this.modifyTable(table);
-    }
-
-    /**
-     * Applies partial modifications of column changes to the property
-     * `modified` of the given table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {Highcharts.DataTableColumnCollection} columns
-     * Changed columns as a collection, where the keys are the column names.
-     *
-     * @param {number} [rowIndex=0]
-     * Index of the first changed row.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Table with `modified` property as a reference.
-     */
-    public modifyColumns<T extends DataTable>(
-        table: T,
-        columns: DataTable.ColumnCollection,
-        rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): T {
-        return this.modifyTable(table);
-    }
-
-    /**
-     * Applies partial modifications of row changes to the property `modified`
-     * of the given table.
-     *
-     * @param {Highcharts.DataTable} table
-     * Modified table.
-     *
-     * @param {Array<(Highcharts.DataTableRow|Highcharts.DataTableRowObject)>} rows
-     * Changed rows.
-     *
-     * @param {number} [rowIndex]
-     * Index of the first changed row.
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Highcharts.DataTable}
-     * Table with `modified` property as a reference.
-     */
-    public modifyRows<T extends DataTable>(
-        table: T,
-        rows: Array<(DataTable.Row|DataTable.RowObject)>,
-        rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): T {
-        return this.modifyTable(table);
-    }
-
-
-    /**
      * Applies modifications to the table rows and returns a new table with
      * subtable, containing the grouped rows. The rows of the new table contain
      * three columns:
@@ -223,7 +115,7 @@ class GroupModifier extends DataModifier {
 
         const byGroups: Array<string> = [],
             tableGroups: Array<DataTable> = [],
-            valueGroups: Array<DataJSON.JSONPrimitive> = [],
+            valueGroups: Array<JSON.Primitive> = [],
             groupColumn = (
                 modifier.options.groupColumn ||
                 table.getColumnNames()[0]
@@ -285,22 +177,6 @@ class GroupModifier extends DataModifier {
         return table;
     }
 
-    /**
-     * Converts the group modifier to a class JSON, including all containing all
-     * modifiers.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this group modifier.
-     */
-    public toJSON(): GroupModifier.ClassJSON {
-        const json = {
-            $class: 'GroupModifier',
-            options: merge(this.options)
-        };
-
-        return json;
-    }
-
 }
 
 /* *
@@ -316,13 +192,6 @@ class GroupModifier extends DataModifier {
 namespace GroupModifier {
 
     /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataModifier.ClassJSON {
-        // nothing here yet
-    }
-
-    /**
      * Options to configure the modifier.
      */
     export interface Options extends DataModifier.Options {
@@ -333,11 +202,11 @@ namespace GroupModifier {
         /**
          * Array of invalid group values.
          */
-        invalidValues?: Array<DataJSON.JSONPrimitive>;
+        invalidValues?: Array<JSON.Primitive>;
         /**
          * Array of valid group values.
          */
-        validValues?: Array<DataJSON.JSONPrimitive>;
+        validValues?: Array<JSON.Primitive>;
     }
 
 }
@@ -348,7 +217,6 @@ namespace GroupModifier {
  *
  * */
 
-DataJSON.addClass(GroupModifier);
 DataModifier.addModifier(GroupModifier);
 
 declare module './ModifierType' {
