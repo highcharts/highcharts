@@ -55,9 +55,7 @@ const {
 import D from '../DefaultOptions.js';
 const { defaultOptions } = D;
 import F from '../Foundation.js';
-const {
-    registerEventOptions
-} = F;
+const { registerEventOptions } = F;
 import H from '../Globals.js';
 const {
     hasTouch,
@@ -123,9 +121,6 @@ declare module './SeriesLike' {
     }
 }
 
-/**
- * @private
- */
 interface KDNode {
     [side: string]: (KDNode|Point|undefined);
     left?: KDNode;
@@ -133,9 +128,6 @@ interface KDNode {
     right?: KDNode;
 }
 
-/**
- * @private
- */
 interface KDPointSearchObject {
     clientX: number;
     plotY?: number;
@@ -207,7 +199,7 @@ class Series {
 
     /* *
      *
-     *  Static Functions
+     *  Static Properties
      *
      * */
 
@@ -7315,7 +7307,7 @@ class Series {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -7356,14 +7348,6 @@ extend(Series.prototype, {
 
 /* *
  *
- *  Registry
- *
- * */
-
-SeriesRegistry.series = Series;
-
-/* *
- *
  * Class Namespace
  *
  * */
@@ -7389,6 +7373,14 @@ namespace Series {
         closestPointRange: (number|undefined);
     }
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+SeriesRegistry.series = Series;
 
 /* *
  *
