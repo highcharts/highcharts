@@ -774,6 +774,22 @@ QUnit.test('Complete callback', function (assert) {
             );
         }, 150);
 
+        let completeCalled = false;
+
+        circle.animate(
+            { opacity: 0 },
+            {
+                duration: 0,
+                complete: () => {
+                    completeCalled = true;
+                }
+            }
+        );
+        assert.ok(
+            completeCalled,
+            '#16045: complete callback in options should be called when duration=0'
+        );
+
         // Run and reset animation
         TestUtilities.lolexRunAndUninstall(clock);
     } finally {
