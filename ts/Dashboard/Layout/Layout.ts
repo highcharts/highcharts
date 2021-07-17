@@ -1,7 +1,7 @@
 /* eslint-disable */
 import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type JSON from '../../Core/JSON';
-import type JSONUtilities from '../JSONUtilities';
+import type Serializer from '../Serializer';
 
 import Row from './Row.js';
 import Dashboard from '../Dashboard.js';
@@ -406,7 +406,7 @@ namespace Layout {
         resizerJSON?: Resizer.ClassJSON;
     }
 
-    export interface ClassJSON extends JSONUtilities.ClassJSON {
+    export interface ClassJSON extends Serializer.JSON {
         options: LayoutJSONOptions;
     }
 

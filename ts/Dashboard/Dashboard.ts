@@ -1,5 +1,5 @@
 import type JSON from '../Core/JSON';
-import type JSONUtilities from './JSONUtilities';
+import type Serializer from './Serializer';
 
 import Layout from './Layout/Layout.js';
 import Bindings from './Actions/Bindings.js';
@@ -385,7 +385,7 @@ namespace Dashboard {
         layouts: Array<Layout.Options>;
     }
 
-    export interface ClassJSON extends JSONUtilities.ClassJSON {
+    export interface ClassJSON extends Serializer.JSON {
         options: DashboardJSONOptions;
     }
 

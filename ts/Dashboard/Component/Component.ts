@@ -2,7 +2,7 @@
 import type Cell from '../Layout/Cell.js';
 import type ComponentType from './ComponentType';
 import type JSON from '../../Core/JSON';
-import type JSONUtilities from '../JSONUtilities';
+import type Serializer from '../Serializer';
 
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
@@ -762,7 +762,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
 namespace Component {
 
-    export interface ClassJSON extends JSONUtilities.ClassJSON {
+    export interface ClassJSON extends Serializer.JSON {
         // store?: DataStore.ClassJSON;
         options: ComponentJSONOptions;
     }
@@ -802,7 +802,7 @@ namespace Component {
         };
     }>;
     export type JSONEvent = Event<'toJSON' | 'fromJSON', {
-        json: JSONUtilities.ClassJSON;
+        json: Serializer.JSON;
     }>;
     export type TableChangedEvent = Event<'tableChanged', {}>
     export type PresentationModifierEvent = Component.Event<'afterPresentationModifier', { table: DataTable }>

@@ -19,8 +19,8 @@
  * */
 
 import type DataEventEmitter from '../../Data/DataEventEmitter';
-import type JSONUtilities from '../JSONUtilities';
 import type PointType from '../../Core/Series/PointType';
+import type Serializer from '../Serializer';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -39,7 +39,7 @@ const {
  * Contains presentation information like column order, usually in relation to a
  * table instance.
  */
-class DataPresentationState implements DataEventEmitter<DataPresentationState.Event> /* , JSON.Class */ {
+class DataPresentationState implements DataEventEmitter<DataPresentationState.Event>, Serializer.Object {
 
     /**
      * Converts a supported class JSON to a DataPresentationState instance.
@@ -341,7 +341,7 @@ namespace DataPresentationState {
     /**
      * Describes the class JSON of a DataPresentationState.
      */
-    export interface ClassJSON extends JSONUtilities.ClassJSON {
+    export interface ClassJSON extends Serializer.JSON {
         columnOrder?: Array<string>;
         visibilityMap?: columnVisibilityType;
         hoverpoint?: { x: number; y: number; id: string };

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type JSON from '../../Core/JSON';
-import type JSONUtilities from '../JSONUtilities';
+import type Serializer from '../Serializer';
 
 import DashboardGlobals from './../DashboardGlobals.js';
 import Layout from './Layout.js';
@@ -472,7 +472,7 @@ namespace Row {
         cellsJSON?: Array<Cell.ClassJSON>;
     }
 
-    export interface ClassJSON extends JSONUtilities.ClassJSON {
+    export interface ClassJSON extends Serializer.JSON {
         options: JSONOptions;
     }
 

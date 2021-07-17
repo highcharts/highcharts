@@ -3,10 +3,10 @@ import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import type JSON from '../../Core/JSON';
-import type JSONUtilities from '../JSONUtilities';
 import type Cell from '../Layout/Cell.js';
 import type Row from '../Layout/Row.js';
 import type Layout from '../Layout/Layout.js';
+import type Serializer from '../Serializer';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import GUIElement from '../Layout/GUIElement.js';
 import EditRenderer from '../EditMode/EditRenderer.js';
@@ -575,7 +575,7 @@ namespace Resizer {
         hcEvents: Record<string, Array<Function>>;
     }
 
-    export interface ClassJSON extends JSONUtilities.ClassJSON {
+    export interface ClassJSON extends Serializer.JSON {
         options: JSONOptions;
     }
 
