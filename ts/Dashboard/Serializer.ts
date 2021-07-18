@@ -1,10 +1,76 @@
 /* *
  *
+ *  Highsoft Dashboards
+ *
+ *  (c) 2020 - 2021 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
+ *
+ * */
+
+'use strict';
+
+/* *
+ *
  *  Imports
  *
  * */
 
 import type CoreJSON from '../Core/JSON';
+
+import DataTableSerializer from './DataTableSerializer.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/**
+ * Interface to convert objects from and to JSON.
+ */
+interface Serializer<T> {
+
+    /**
+     * Converts the given JSON to a class instance.
+     *
+     * @param {Serializer.JSON} json
+     * JSON to deserialize as a class instance or object.
+     *
+     * @return {AnyRecord}
+     * Returns the class instance or object, or throws an exception.
+     */
+    fromJSON(json: Serializer.JSON): T;
+
+    /**
+     * Validates the given class instance for JSON support.
+     *
+     * @param {AnyRecord} obj
+     * Class instance or object to validate.
+     *
+     * @return {boolean}
+     * Returns true, if the function set can convert the given object, otherwise
+     * false.
+     */
+    jsonSupportFor?(obj: AnyRecord): obj is T;
+
+    /**
+     * Converts the given class instance to JSON.
+     *
+     * @param {AnyRecord} obj
+     * Class instance or object to serialize as JSON.
+     *
+     * @return {Serializer.JSON}
+     * Returns the JSON of the class instance or object.
+     */
+    toJSON(obj?: T): Serializer.JSON;
+
+}
 
 /* *
  *
@@ -24,20 +90,8 @@ namespace Serializer {
      *
      * */
 
-    export interface Class {
-        fromJSON(json: JSON): object;
-    }
-
-    export interface Helper extends Class, Object {
-        $class: string;
-    }
-
     export interface JSON extends CoreJSON.Object {
         $class: string;
-    }
-
-    export interface Object {
-        toJSON(): JSON;
     }
 
     /* *
@@ -46,9 +100,7 @@ namespace Serializer {
      *
      * */
 
-    const classRegistry: Record<string, Class> = {};
-
-    const helperRegistry: Record<string, Helper> = {};
+    const registry: Record<string, Serializer<AnyRecord>> = {};
 
     /* *
      *
@@ -57,49 +109,57 @@ namespace Serializer {
      * */
 
     /**
-     * Adds a compatible class with a static fromJSON function to the registry.
+     * Creates a class instance from the given JSON, if a suitable serializer
+     * has been found.
      *
-     * @function Serializer.addClass
+     * @function Serializer.fromJSON
      *
-     * @param {Serializer.Class} Class
-     * Class to register.
+     * @param {AnyRecord} json
+     * JSON to create a class instance or object from.
+     *
+     * @return {AnyRecord}
+     * Returns the class instance or object, or throws an exception.
      */
-    export function addClass(
-        Class: Class
-    ): void {
-        const $class = (/function (\w+)/.exec(`${Class}`) || [])[1];
+    export function fromJSON(
+        json: AnyRecord
+    ): AnyRecord {
+        const $class: string = json.$class;
 
-        if (classRegistry[$class]) {
-            throw new Error(`A class '${$class}' is already registered.`);
+        if (typeof $class !== 'string') {
+            throw new Error('JSON has no $class property.');
         }
 
-        classRegistry[$class] = Class;
+        const serializer = registry[$class];
+
+        if (serializer) {
+            return serializer.fromJSON(json as JSON);
+        }
+
+        throw new Error(`Serializer for '${$class}' not found.`);
     }
 
     /**
-     * Creates a class instance from the given JSON, if the class is known.
+     * Registers a class prototype or function set for the given JSON $class.
      *
-     * @function JSONRegistry.deserialize
+     * @function Serializer.register
      *
-     * @param {JSONUtilities.ClassJSON} json
-     * JSON to create a class instance from.
+     * @param {string} $class
+     * JSON $class to register for.
      *
-     * @return {object}
-     * Returns the class instance, or throws an exception.
+     * @param {Serializer<AnyRecord>} serializer
+     * Class or function set to register.
      */
-    export function fromJSON(
-        json: JSON
-    ): (object|undefined) {
-        const $class = json.$class,
-            Class = classRegistry[$class];
+    export function register(
+        $class: string,
+        serializer: Serializer<AnyRecord>
+    ): void {
 
-        if (Class) {
-            return Class.fromJSON(json);
+        if (registry[$class]) {
+            throw new Error(`A serializer for '${$class}' is already registered.`);
         }
 
-        throw new Error(`Class '${$class}' unknown.`);
+        registry[$class] = serializer;
     }
-
 
     /**
      * Creates JSON from a class instance.
@@ -107,7 +167,7 @@ namespace Serializer {
      * @function JSONRegistry.serialize
      *
      * @param {AnyRecord} obj
-     * Class instance (object) to serialize as JSON.
+     * Class instance or object to serialize as JSON.
      *
      * @return {Serializer.JSON}
      * JSON of the class instance.
@@ -116,14 +176,42 @@ namespace Serializer {
         obj: AnyRecord
     ): JSON {
 
-        if (typeof obj.toJSON === 'function') {
+        if (
+            typeof obj.fromJSON === 'function' &&
+            typeof obj.toJSON === 'function'
+        ) {
             return obj.toJSON();
         }
 
-        throw new Error('Object has no toJSON function.');
+        const classes = Object.keys(registry),
+            numberOfClasses = classes.length;
+
+        let $class: string,
+            serializer: Serializer<AnyRecord>;
+
+        for (let i = 0; i < numberOfClasses; ++i) {
+            $class = classes[i];
+            serializer = registry[$class];
+            if (
+                (serializer.jsonSupportFor) &&
+                serializer.jsonSupportFor(obj)
+            ) {
+                return serializer.toJSON(obj);
+            }
+        }
+
+        throw new Error('Object is not supported.');
     }
 
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+Serializer.register('DataTable', DataTableSerializer);
 
 /* *
  *

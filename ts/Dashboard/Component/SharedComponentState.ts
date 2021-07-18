@@ -20,8 +20,8 @@
 
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type PointType from '../../Core/Series/PointType';
-import type Serializer from '../Serializer';
 
+import Serializer from '../Serializer.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -39,38 +39,7 @@ const {
  * Contains presentation information like column order, usually in relation to a
  * table instance.
  */
-class DataPresentationState implements DataEventEmitter<DataPresentationState.Event>, Serializer.Object {
-
-    /**
-     * Converts a supported class JSON to a DataPresentationState instance.
-     *
-     * @param {DataPresentationState.ClassJSON} json
-     * Class JSON (usually with a $class property) to convert.
-     *
-     * @return {DataPresentationState}
-     * DataPresentationState instance from the class JSON.
-     */
-    public static fromJSON(
-        json: DataPresentationState.ClassJSON
-    ): DataPresentationState {
-        const presentationState = new DataPresentationState();
-
-        const { columnOrder, visibilityMap, selection, hoverpoint } = json;
-        if (columnOrder) {
-            presentationState.setColumnOrder(columnOrder);
-        }
-        if (visibilityMap) {
-            presentationState.setColumnVisibility(visibilityMap);
-        }
-        if (selection) {
-            presentationState.setSelection(selection);
-        }
-        if (hoverpoint) {
-            presentationState.setHoverPoint(hoverpoint);
-        }
-
-        return presentationState;
-    }
+class SharedComponentState implements DataEventEmitter<SharedComponentState.Event>, Serializer<SharedComponentState> {
 
     /* *
      *
@@ -87,7 +56,7 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
 
     private hiddenRowIndexes: number[] = [];
 
-    private hoverPoint?: DataPresentationState.PresentationHoverPointType;
+    private hoverPoint?: SharedComponentState.PresentationHoverPointType;
 
     private selection: Record<string, { min?: number; max?: number }> = {};
 
@@ -109,7 +78,7 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
      * @param {DataPresentationState.Event} e
      * Event object with event information.
      */
-    public emit(e: DataPresentationState.Event): void {
+    public emit(e: SharedComponentState.Event): void {
         fireEvent(this, e.type, e);
     }
 
@@ -134,7 +103,7 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
      * @return {DataPresentationState.ColumnOrderCallback}
      * Sort function to change the order.
      */
-    public getColumnSorter(): DataPresentationState.ColumnOrderCallback {
+    public getColumnSorter(): SharedComponentState.ColumnOrderCallback {
         const columnOrder = (this.columnOrder || []).slice();
 
         if (!columnOrder.length) {
@@ -182,8 +151,8 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
      * Function to unregister callback from the event.
      */
     public on(
-        type: DataPresentationState.Event['type'],
-        callback: DataEventEmitter.EventCallback<this, DataPresentationState.Event>
+        type: SharedComponentState.Event['type'],
+        callback: DataEventEmitter.EventCallback<this, SharedComponentState.Event>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -255,7 +224,7 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         return this.hiddenRowIndexes;
     }
 
-    public setHoverPoint(point: DataPresentationState.PresentationHoverPointType | undefined, eventDetail?: {}): void {
+    public setHoverPoint(point: SharedComponentState.PresentationHoverPointType | undefined, eventDetail?: {}): void {
         this.hoverPoint = point;
         this.emit({
             type: 'afterHoverPointChange',
@@ -264,16 +233,16 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         });
     }
 
-    public getHoverPoint(): DataPresentationState.PresentationHoverPointType | undefined {
+    public getHoverPoint(): SharedComponentState.PresentationHoverPointType | undefined {
         return this.hoverPoint;
     }
 
-    public getSelection(): DataPresentationState.selectionObjectType {
+    public getSelection(): SharedComponentState.selectionObjectType {
         return this.selection;
     }
 
     public setSelection(
-        selection: DataPresentationState.selectionObjectType,
+        selection: SharedComponentState.selectionObjectType,
         reset = false,
         eventDetail?: {}
     ): void {
@@ -292,14 +261,45 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
     }
 
     /**
+     * Converts a supported class JSON to a DataPresentationState instance.
+     *
+     * @param {DataPresentationState.ClassJSON} json
+     * Class JSON (usually with a $class property) to convert.
+     *
+     * @return {DataPresentationState}
+     * DataPresentationState instance from the class JSON.
+     */
+    public fromJSON(
+        json: SharedComponentState.ClassJSON
+    ): SharedComponentState {
+        const presentationState = new SharedComponentState();
+
+        const { columnOrder, visibilityMap, selection, hoverpoint } = json;
+        if (columnOrder) {
+            presentationState.setColumnOrder(columnOrder);
+        }
+        if (visibilityMap) {
+            presentationState.setColumnVisibility(visibilityMap);
+        }
+        if (selection) {
+            presentationState.setSelection(selection);
+        }
+        if (hoverpoint) {
+            presentationState.setHoverPoint(hoverpoint);
+        }
+
+        return presentationState;
+    }
+
+    /**
      * Converts the presentation state to a class JSON.
      *
-     * @return {JSON.ClassJSON}
+     * @return {SharedComponentState.ClassJSON}
      * Class JSON of this table.
      */
-    public toJSON(): DataPresentationState.ClassJSON {
-        const json: DataPresentationState.ClassJSON = {
-            $class: 'DataPresentationState'
+    public toJSON(): SharedComponentState.ClassJSON {
+        const json: SharedComponentState.ClassJSON = {
+            $class: 'Dashboard.SharedComponentState'
         };
 
         if (this.columnOrder) {
@@ -330,7 +330,7 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
 /**
  * Additionally provided types for events and JSON conversion.
  */
-namespace DataPresentationState {
+namespace SharedComponentState {
 
     /* *
      *
@@ -421,8 +421,16 @@ namespace DataPresentationState {
 
 /* *
  *
+ *  Registry
+ *
+ * */
+
+Serializer.register('Dashboard.SharedComponentState', SharedComponentState.prototype);
+
+/* *
+ *
  *  Default Export
  *
  * */
 
-export default DataPresentationState;
+export default SharedComponentState;

@@ -21,15 +21,15 @@ export namespace JSON {
     /**
      * Type structor of arrays as it is supported in JSON.
      */
-    export interface Array extends globalThis.Array<(Primitive|Type)> {
-        [index: number]: (Primitive|Type);
+    export interface Array<T extends (Primitive|Type)=(Primitive|Type)> extends globalThis.Array<T> {
+        [index: number]: T;
     }
 
     /**
      * Type structure of a record object as it is supported in JSON.
      */
-    export interface Object {
-        [key: string]: (Primitive|Type);
+    export interface Object<T extends (Primitive|Type)=(Primitive|Type)> {
+        [key: string]: T;
     }
 
     /**
