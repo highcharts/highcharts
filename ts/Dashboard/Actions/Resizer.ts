@@ -236,8 +236,8 @@ class Resizer {
 
         if (currentCell) {
             const cellOffsets = GUIElement.getOffsets(currentCell);
-            const cellLevel = currentCell.row.getRowLevel(cellOffsets.top);
-            const cellsSiblings = cellLevel && cellLevel.cells || [];
+            const rowLevelInfo = currentCell.row.getRowLevelInfo(cellOffsets.top);
+            const cellsSiblings = rowLevelInfo && rowLevelInfo.rowLevel.cells || [];
             let newWidth;
             let cellContainer;
             let cell;

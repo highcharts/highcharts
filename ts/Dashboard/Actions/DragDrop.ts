@@ -461,8 +461,9 @@ class DragDrop {
 
             // Update or show drop pointer.
             if (!dragDrop.dropPointer.isVisible || updateDropPointer) {
-                const rowLevel = dragDrop.dropContext.row.getRowLevel(e.clientY),
-                    pointerHeight = rowLevel ? rowLevel.bottom - rowLevel.top : height;
+                const rowLevelInfo = dragDrop.dropContext.row.getRowLevelInfo(e.clientY),
+                    pointerHeight = rowLevelInfo ?
+                        rowLevelInfo.rowLevel.bottom - rowLevelInfo.rowLevel.top : height;
 
                 dragDrop.showDropPointer(
                     dropContextOffsets.left + (align === 'right' ? width : 0) -
@@ -473,8 +474,20 @@ class DragDrop {
                 );
             }
         } else if (align === 'top' || align === 'bottom') {
-            // Check if cell is dragged as row.
-            dragDrop.onRowDrag(e, context);
+            const dropContextOffsets = GUIElement.getOffsets(dragDrop.dropContext),
+                rowLevelInfo = dragDrop.dropContext.row.getRowLevelInfo(dropContextOffsets.top);
+
+            if (
+                rowLevelInfo &&
+                (
+                    (rowLevelInfo.index === 0 && align === 'top') ||
+                    (rowLevelInfo.index === rowLevelInfo.rowLevels.length - 1 && align === 'bottom')
+                )
+            ) {
+                // Checks if a cell is dragged as a row
+                // (only when a cell edge is on a row edge)
+                dragDrop.onRowDrag(e, context);
+            }
         } else {
             dragDrop.dropContext = void 0;
             dragDrop.hideDropPointer();
@@ -498,18 +511,18 @@ class DragDrop {
         const dragDrop = this,
             dropPointerSize = dragDrop.options.dropPointerSize,
             rowOffsets = GUIElement.getOffsets(mouseRowContext),
-            rowLevel = mouseRowContext.getRowLevel(e.clientY);
+            rowLevelInfo = mouseRowContext.getRowLevelInfo(e.clientY);
 
         let cell, cellOffsets;
 
-        if (rowLevel) {
-            for (let i = 0, iEnd = rowLevel.cells.length; i < iEnd; ++i) {
-                cell = rowLevel.cells[i];
+        if (rowLevelInfo) {
+            for (let i = 0, iEnd = rowLevelInfo.rowLevel.cells.length; i < iEnd; ++i) {
+                cell = rowLevelInfo.rowLevel.cells[i];
                 cellOffsets = GUIElement.getOffsets(cell);
 
                 const { width, height } = GUIElement.getDimFromOffsets(cellOffsets),
                     dashOffsets = dragDrop.editMode.dashboard.container.getBoundingClientRect(),
-                    levelHeight = rowLevel.bottom - rowLevel.top;
+                    levelHeight = rowLevelInfo.rowLevel.bottom - rowLevelInfo.rowLevel.top;
 
                 if (cell.isVisible) {
                     if (

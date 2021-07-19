@@ -12,6 +12,7 @@ import Cell from './Cell.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import { NumberFormatterCallbackFunction } from '../../Core/Options';
 const {
     pick,
     defined,
@@ -424,21 +425,24 @@ class Row extends GUIElement {
 
         for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
             cell = row.cells[k];
-            cellOffsets = GUIElement.getOffsets(cell);
 
-            if (!rowLevels[cellOffsets.top]) {
-                rowLevels[cellOffsets.top] = {
-                    top: cellOffsets.top,
-                    bottom: cellOffsets.bottom,
-                    cells: []
-                };
+            if (cell.isVisible) {
+                cellOffsets = GUIElement.getOffsets(cell);
+
+                if (!rowLevels[cellOffsets.top]) {
+                    rowLevels[cellOffsets.top] = {
+                        top: cellOffsets.top,
+                        bottom: cellOffsets.bottom,
+                        cells: []
+                    };
+                }
+    
+                if (rowLevels[cellOffsets.top].bottom < cellOffsets.bottom) {
+                    rowLevels[cellOffsets.top].bottom = cellOffsets.bottom;
+                }
+    
+                rowLevels[cellOffsets.top].cells.push(cell);
             }
-
-            if (rowLevels[cellOffsets.top].bottom < cellOffsets.bottom) {
-                rowLevels[cellOffsets.top].bottom = cellOffsets.bottom;
-            }
-
-            rowLevels[cellOffsets.top].cells.push(cell);
         }
 
         objectEach(rowLevels, (value): void => {
@@ -448,21 +452,26 @@ class Row extends GUIElement {
         return rowLevelsArray;
     }
 
-    // Get row level on a specific Y position.
-    public getRowLevel(
+    // Get row level with additional info 
+    // on a specific Y position.
+    public getRowLevelInfo(
         posY: number
-    ): Row.RowLevel|undefined {
-        const rowCellsLevels = this.getRowLevels();
+    ): Row.RowLevelInfo|undefined {
+        const rowLevels = this.getRowLevels();
 
-        let rowCellsLevel;
+        let rowLevelInfo;
 
-        for (let i = 0, iEnd = rowCellsLevels.length; i < iEnd; ++i) {
-            if (rowCellsLevels[i].top <= posY && rowCellsLevels[i].bottom > posY) {
-                rowCellsLevel = rowCellsLevels[i];
+        for (let i = 0, iEnd = rowLevels.length; i < iEnd; ++i) {
+            if (rowLevels[i].top <= posY && rowLevels[i].bottom > posY) {
+                rowLevelInfo = {
+                    index: i,
+                    rowLevels: rowLevels,
+                    rowLevel: rowLevels[i]
+                }
             }
         }
 
-        return rowCellsLevel;
+        return rowLevelInfo;
     }
 }
 
@@ -491,6 +500,12 @@ namespace Row {
         top: number;
         bottom: number;
         cells: Array<Cell>;
+    }
+
+    export interface RowLevelInfo {
+        index: number; // level position in RowLevels Array
+        rowLevels: Array<RowLevel>;
+        rowLevel: RowLevel;
     }
 }
 
