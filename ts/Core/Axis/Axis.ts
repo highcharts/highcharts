@@ -16,30 +16,9 @@
  *
  * */
 
-import type AnimationOptions from '../Animation/AnimationOptions';
-import A from '../Animation/AnimationUtilities.js';
-import type { EventCallback } from '../Callback';
-import type Chart from '../Chart/Chart';
-import Color from '../Color/Color.js';
-import Palette from '../Color/Palette.js';
-import D from '../DefaultOptions.js';
-import F from '../Foundation.js';
-import H from '../Globals.js';
-import type PointerEvent from '../PointerEvent';
 import type { AlignValue } from '../Renderer/AlignObject';
-import type CSSObject from '../Renderer/CSSObject';
-import type FontMetricsObject from '../Renderer/FontMetricsObject';
-import type PositionObject from '../Renderer/PositionObject';
-import type SizeObject from '../Renderer/SizeObject';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import type SVGPath from '../Renderer/SVG/SVGPath';
-import type Point from '../Series/Point';
-import type Series from '../Series/Series';
-import U from '../Utilities.js';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type AxisComposition from './AxisComposition';
-import AxisDefaults from './AxisDefaults.js';
-import type AxisLike from './AxisLike';
 import type {
     AxisCrosshairOptions,
     AxisLabelFormatterCallback,
@@ -49,16 +28,37 @@ import type {
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
+import type AxisLike from './AxisLike';
 import type { AxisTypeOptions } from './AxisType';
-import type PlotLineOrBand from './PlotLineOrBand';
-import Tick from './Tick.js';
+import type Chart from '../Chart/Chart';
+import type CSSObject from '../Renderer/CSSObject';
+import type { EventCallback } from '../Callback';
+import type FontMetricsObject from '../Renderer/FontMetricsObject';
+import type PlotLineOptions from './PlotLineOrBand/PlotLineOptions';
+import type PlotLineOrBand from './PlotLineOrBand/PlotLineOrBand';
+import type Point from '../Series/Point';
+import type PointerEvent from '../PointerEvent';
+import type PositionObject from '../Renderer/PositionObject';
+import type Series from '../Series/Series';
+import type SizeObject from '../Renderer/SizeObject';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGElement';
+import type SVGPath from '../Renderer/SVG/SVGPath';
 import type TickPositionsArray from './TickPositionsArray';
+
+import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
-const {
-    registerEventOptions
-} = F;
-const { deg2rad } = H;
+import AxisDefaults from './AxisDefaults.js';
+import Color from '../Color/Color.js';
+import Palette from '../Color/Palette.js';
+import D from '../DefaultOptions.js';
 const { defaultOptions } = D;
+import F from '../Foundation.js';
+const { registerEventOptions } = F;
+import H from '../Globals.js';
+const { deg2rad } = H;
+import Tick from './Tick.js';
+import U from '../Utilities.js';
 const {
     arrayMax,
     arrayMin,
@@ -591,8 +591,8 @@ class Axis {
             categories = axis.categories,
             dateTimeLabelFormat = this.dateTimeLabelFormat,
             lang = defaultOptions.lang,
-            numericSymbols = (lang as any).numericSymbols,
-            numSymMagnitude = (lang as any).numericSymbolMagnitude || 1000,
+            numericSymbols = lang.numericSymbols,
+            numSymMagnitude = lang.numericSymbolMagnitude || 1000,
             // make sure the same symbol is added for all labels on a linear
             // axis
             numericSymbolDetector = axis.logarithmic ?
@@ -3723,7 +3723,7 @@ class Axis {
                     .concat((options.plotBands as any) || [])
                     .forEach(
                         function (plotLineOptions: any): void {
-                            axis.addPlotBandOrLine(plotLineOptions);
+                            (axis as unknown as PlotLineOrBand.Axis).addPlotBandOrLine(plotLineOptions);
                         }
                     );
             }
@@ -3945,7 +3945,7 @@ class Axis {
             pos,
             categorized,
             graphic = this.cross,
-            crossOptions: Highcharts.AxisPlotLinesOptions;
+            crossOptions: PlotLineOptions;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
 

@@ -1,12 +1,13 @@
 /* *
  *
- *  Data Layer
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
  *
  * */
 
@@ -21,15 +22,15 @@ export namespace JSON {
     /**
      * Type structor of arrays as it is supported in JSON.
      */
-    export interface Array extends globalThis.Array<(Primitive|Type)> {
-        [index: number]: (Primitive|Type);
+    export interface Array<T extends (Primitive|Type)=(Primitive|Type)> extends globalThis.Array<T> {
+        [index: number]: T;
     }
 
     /**
      * Type structure of a record object as it is supported in JSON.
      */
-    export interface Object {
-        [key: string]: (Primitive|Type);
+    export interface Object<T extends (Primitive|Type)=(Primitive|Type)> {
+        [key: string]: T;
     }
 
     /**

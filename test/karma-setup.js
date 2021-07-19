@@ -127,7 +127,7 @@ Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 
 // Override Highcharts and jQuery ajax functions to load from local
-Highcharts.wrap(Highcharts, 'ajax', function (proceed, attr) {
+function ajax(proceed, attr) {
     var success = attr.success;
     attr.error = function (e) {
         throw new Error('Failed to load: ' + attr.url);
@@ -142,7 +142,9 @@ Highcharts.wrap(Highcharts, 'ajax', function (proceed, attr) {
         };
         return proceed.call(this, attr);
     }
-});
+}
+Highcharts.wrap(Highcharts.HttpUtilities, 'ajax', ajax);
+Highcharts.wrap(Highcharts, 'ajax', ajax);
 if (window.$) {
     $.getJSON = function (url, callback) { // eslint-disable-line no-undef
         callback(window.JSONSources[url]);

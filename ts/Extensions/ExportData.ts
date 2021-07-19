@@ -16,7 +16,7 @@
 
 'use strict';
 
-import type LangOptions from '../Core/LangOptions';
+import type Exporting from '../Extensions/Exporting/Exporting';
 import type Point from '../Core/Series/Point';
 import type {
     PointOptions,
@@ -102,6 +102,14 @@ declare module '../Core/Series/SeriesOptions' {
     }
 }
 
+declare module './Exporting/ExportingOptions' {
+    interface ExportingOptions {
+        csv?: Highcharts.ExportingCsvOptions;
+        showTable?: boolean;
+        tableCaption?: (boolean|string);
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -126,11 +134,6 @@ declare global {
             decimalPoint?: (string|null);
             itemDelimiter?: (string|null);
             lineDelimiter?: string;
-        }
-        interface ExportingOptions {
-            csv?: ExportingCsvOptions;
-            showTable?: boolean;
-            tableCaption?: (boolean|string);
         }
         interface ExportDataPoint {
             series: ExportDataSeries;
@@ -528,7 +531,7 @@ Chart.prototype.getDataRows = function (
         i: number,
         x,
         xTitle: string,
-        langOptions: LangOptions = this.options.lang as any,
+        langOptions = this.options.lang,
         exportDataOptions: Highcharts.ExportDataOptions = langOptions.exportData as any,
         categoryHeader = exportDataOptions.categoryHeader as any,
         categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,
@@ -1241,7 +1244,7 @@ function getBlobFromContent(
 
     try {
         // MS specific
-        if (nav.msSaveOrOpenBlob && win.MSBlobBuilder) {
+        if ((nav.msSaveOrOpenBlob) && win.MSBlobBuilder) {
             const blob = new win.MSBlobBuilder();
             blob.append(content);
             return blob.getBlob('image/svg+xml') as any;
@@ -1260,6 +1263,7 @@ function getBlobFromContent(
     }
 }
 
+/* eslint-disable valid-jsdoc */
 
 /**
  * Generates a data URL of CSV for local download in the browser. This is the
@@ -1271,7 +1275,9 @@ function getBlobFromContent(
  *
  * @requires modules/exporting
  */
-Chart.prototype.downloadCSV = function (): void {
+Chart.prototype.downloadCSV = function (
+    this: Exporting.ChartComposition
+): void {
     const csv = this.getCSV(true);
 
     downloadURL(
@@ -1291,7 +1297,9 @@ Chart.prototype.downloadCSV = function (): void {
  *
  * @requires modules/exporting
  */
-Chart.prototype.downloadXLS = function (): void {
+Chart.prototype.downloadXLS = function (
+    this: Exporting.ChartComposition
+): void {
     const uri = 'data:application/vnd.ms-excel;base64,',
         template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
             'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
@@ -1389,13 +1397,15 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
         lang.viewData &&
         lang.hideData &&
         menuItems &&
-        exportDivElements &&
-        exportDivElements.length
+        exportDivElements
     ) {
-        AST.setElementHTML(
-            exportDivElements[menuItems.indexOf('viewData')],
-            this.isDataTableVisible ? lang.hideData : lang.viewData
-        );
+        const exportDivElement = exportDivElements[menuItems.indexOf('viewData')];
+        if (exportDivElement) {
+            AST.setElementHTML(
+                exportDivElement,
+                this.isDataTableVisible ? lang.hideData : lang.viewData
+            );
+        }
     }
 };
 
@@ -1423,7 +1433,7 @@ if (exportingOptions) {
                 this.toggleDataTable();
             }
         }
-    } as Record<string, Highcharts.ExportingMenuObject>);
+    } as Record<string, Exporting.MenuObject>);
 
     if (exportingOptions.buttons) {
         (exportingOptions.buttons.contextButton.menuItems as any).push(

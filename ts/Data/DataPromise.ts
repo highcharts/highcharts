@@ -1,12 +1,13 @@
 /* *
  *
- *  Data Layer
- *
  *  (c) 2020-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
  *
  * */
 
@@ -35,6 +36,9 @@ const delay = setTimeout;
  *
  * */
 
+/**
+ * Simplified wrapper for Promise-support in outdated browsers.
+ */
 class DataPromise<T> implements Promise<T> {
 
     /* *
@@ -307,7 +311,7 @@ namespace DataPromise {
 
     /* *
      *
-     *  Enums
+     *  Enumerations
      *
      * */
 

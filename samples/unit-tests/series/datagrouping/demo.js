@@ -891,7 +891,7 @@ QUnit.test('When groupAll: true, group point should have the same start regardle
     assert.strictEqual(
         chart.series[0].points[9].dataGroup.start,
         12,
-        `When groupAll: true, after changing extremes, 
+        `When groupAll: true, after changing extremes,
         the point should have the same start.`
     );
 
@@ -937,7 +937,7 @@ QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (asser
         splicedIndex,
         `When the ordinal axis and data grouping enabled,
         getExtendedPositions should return fake series where
-        the data is grouped the same as in the original series. 
+        the data is grouped the same as in the original series.
         Thus each element in the currently visible array of data,
         should equal the corresponding element in the fake series array. `
     );

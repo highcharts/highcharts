@@ -1,12 +1,13 @@
 /* *
  *
- *  Data Layer
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Gøran Slettemark
  *
  * */
 
@@ -16,6 +17,12 @@
  *
  * */
 
-export type DataValueType = (string | number | null);
+export type DataValueType = (string|number|null);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default DataValueType;

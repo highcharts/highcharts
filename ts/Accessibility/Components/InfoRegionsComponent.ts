@@ -350,6 +350,12 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                     chart.renderTo.insertBefore(
                         el, chart.container.nextSibling
                     );
+                },
+                afterInserted: function (): void {
+                    if (component.chart.accessibility) {
+                        component.chart.accessibility
+                            .keyboardNavigation.updateExitAnchor(); // #15986
+                    }
                 }
             }
         };

@@ -72,36 +72,53 @@ QUnit.test('Point interval unit across DST (#4958)', function (assert) {
         ]
     });
 
-    // Autumn crossover
-    assert.deepEqual(
-        chart.series[0].points.map(function (point) {
-            return Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x);
-        }),
-        [
-            '2022-10-29 00:00',
-            '2022-10-30 00:00',
-            '2022-10-31 00:00',
-            '2022-11-01 00:00'
-        ],
-        'Points should land on local timezone midnight'
-    );
+    const testAutumn = s => {
+        assert.deepEqual(
+            chart.series[0].points.map(function (point) {
+                return Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x);
+            }),
+            [
+                '2022-10-29 00:00',
+                '2022-10-30 00:00',
+                '2022-10-31 00:00',
+                '2022-11-01 00:00'
+            ],
+            s
+        );
+    };
+
+    const testSpring = s => {
+        assert.deepEqual(
+            chart.series[0].points.map(function (point) {
+                return Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x);
+            }),
+            [
+                '2022-03-26 00:00',
+                '2022-03-27 00:00',
+                '2022-03-28 00:00',
+                '2022-03-29 00:00'
+            ],
+            s
+        );
+    };
+
+    // Autumn
+    testAutumn('Points should land on local timezone midnight');
+
+    chart.series[0].update({
+        data: [[0, 1], [1, 1], [2, 1], [3, 1]],
+        relativeXValue: true
+    });
+    testAutumn('Relative X value, points should land on local midnight');
+
 
     // Spring crossover
     chart.series[0].update({
-        pointStart: Date.UTC(2022, 2, 26, 0)
+        data: [0, 1, 2, 3],
+        pointStart: Date.UTC(2022, 2, 26, 0),
+        relativeXValue: false
     });
-    assert.deepEqual(
-        chart.series[0].points.map(function (point) {
-            return Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x);
-        }),
-        [
-            '2022-03-26 00:00',
-            '2022-03-27 00:00',
-            '2022-03-28 00:00',
-            '2022-03-29 00:00'
-        ],
-        'Points should land on local timezone midnight'
-    );
+    testSpring('Points should land on local timezone midnight');
 
     // Reset
     Highcharts.setOptions({

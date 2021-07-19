@@ -359,10 +359,12 @@ class Point {
         }
         if (typeof point.x === 'undefined' && series) {
             if (typeof x === 'undefined') {
-                point.x = (series.autoIncrement as any)(point);
+                point.x = series.autoIncrement();
             } else {
                 point.x = x;
             }
+        } else if (isNumber(options.x) && series.options.relativeXValue) {
+            point.x = series.autoIncrement(options.x);
         }
 
         return point;
@@ -1542,7 +1544,7 @@ namespace Point {
         y?: (number|null);
         color?: ColorType;
         colorIndex?: number;
-        key?: string;
+        key?: number|string;
         series: Series;
         point: Point;
         percentage?: number;
