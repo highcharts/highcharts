@@ -1,12 +1,14 @@
 /* *
  *
- *  Data Layer
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020 - 2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
+ *  - Gøran Slettemark
  *
  * */
 
@@ -21,7 +23,7 @@
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type PointType from '../../Core/Series/PointType';
 
-import Serializer from '../Serializer.js';
+import Serializable from '../Serializable.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -39,7 +41,9 @@ const {
  * Contains presentation information like column order, usually in relation to a
  * table instance.
  */
-class SharedComponentState implements DataEventEmitter<SharedComponentState.Event>, Serializer<SharedComponentState> {
+class SharedComponentState implements
+DataEventEmitter<SharedComponentState.Event>,
+Serializable<SharedComponentState, SharedComponentState.JSON> {
 
     /* *
      *
@@ -237,12 +241,12 @@ class SharedComponentState implements DataEventEmitter<SharedComponentState.Even
         return this.hoverPoint;
     }
 
-    public getSelection(): SharedComponentState.selectionObjectType {
+    public getSelection(): SharedComponentState.SelectionObjectType {
         return this.selection;
     }
 
     public setSelection(
-        selection: SharedComponentState.selectionObjectType,
+        selection: SharedComponentState.SelectionObjectType,
         reset = false,
         eventDetail?: {}
     ): void {
@@ -261,16 +265,16 @@ class SharedComponentState implements DataEventEmitter<SharedComponentState.Even
     }
 
     /**
-     * Converts a supported class JSON to a DataPresentationState instance.
+     * Converts JSON to a presentation state.
      *
      * @param {DataPresentationState.ClassJSON} json
-     * Class JSON (usually with a $class property) to convert.
+     * JSON (usually with a $class property) to convert.
      *
      * @return {DataPresentationState}
-     * DataPresentationState instance from the class JSON.
+     * Class instance from the JSON.
      */
     public fromJSON(
-        json: SharedComponentState.ClassJSON
+        json: SharedComponentState.JSON
     ): SharedComponentState {
         const presentationState = new SharedComponentState();
 
@@ -292,13 +296,13 @@ class SharedComponentState implements DataEventEmitter<SharedComponentState.Even
     }
 
     /**
-     * Converts the presentation state to a class JSON.
+     * Converts the presentation state to JSON.
      *
-     * @return {SharedComponentState.ClassJSON}
-     * Class JSON of this table.
+     * @return {SharedComponentState.JSON}
+     * JSON of this class instance.
      */
-    public toJSON(): SharedComponentState.ClassJSON {
-        const json: SharedComponentState.ClassJSON = {
+    public toJSON(): SharedComponentState.JSON {
+        const json: SharedComponentState.JSON = {
             $class: 'Dashboard.SharedComponentState'
         };
 
@@ -337,16 +341,6 @@ namespace SharedComponentState {
      *  Declarations
      *
      * */
-
-    /**
-     * Describes the class JSON of a DataPresentationState.
-     */
-    export interface ClassJSON extends Serializer.JSON {
-        columnOrder?: Array<string>;
-        visibilityMap?: columnVisibilityType;
-        hoverpoint?: { x: number; y: number; id: string };
-        selection?: selectionObjectType;
-    }
 
     /**
      * Event types related to the column order.
@@ -405,9 +399,9 @@ namespace SharedComponentState {
         hoverPoint: PresentationHoverPointType | undefined;
     }
 
-    export type columnVisibilityType = Record<string, boolean>;
+    export type ColumnVisibilityType = Record<string, boolean>;
 
-    export type selectionObjectType = Record<string, { columnName?: string; min?: number; max?: number }>;
+    export type SelectionObjectType = Record<string, { columnName?: string; min?: number; max?: number }>;
 
     export type PresentationHoverPointType = Partial<PointType>;
 
@@ -415,6 +409,16 @@ namespace SharedComponentState {
         type: selectionEventType;
         selection: Record<string, {min?: number | undefined; max?: number | undefined}>;
         reset: boolean;
+    }
+
+    /**
+     * Describes the class JSON of a presentation state.
+     */
+    export interface JSON extends Serializable.JSON<'Dashboard.SharedComponentState'> {
+        columnOrder?: Array<string>;
+        visibilityMap?: ColumnVisibilityType;
+        hoverpoint?: { x: number; y: number; id: string };
+        selection?: SelectionObjectType;
     }
 
 }
@@ -425,7 +429,7 @@ namespace SharedComponentState {
  *
  * */
 
-Serializer.register('Dashboard.SharedComponentState', SharedComponentState.prototype);
+Serializable.register('Dashboard.SharedComponentState', SharedComponentState.prototype);
 
 /* *
  *

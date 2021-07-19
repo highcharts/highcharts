@@ -6,7 +6,7 @@ import type JSON from '../../Core/JSON';
 import type Cell from '../Layout/Cell.js';
 import type Row from '../Layout/Row.js';
 import type Layout from '../Layout/Layout.js';
-import type Serializer from '../Serializer';
+import type Serializable from '../Serializable';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import GUIElement from '../Layout/GUIElement.js';
 import EditRenderer from '../EditMode/EditRenderer.js';
@@ -41,7 +41,7 @@ class Resizer {
 
     public static fromJSON(
         editMode: EditMode,
-        json: Resizer.ClassJSON
+        json: Resizer.JSON
     ): Resizer|undefined {
         return new Resizer(editMode, json.options);
     }
@@ -447,14 +447,14 @@ class Resizer {
     /**
      * Converts the class instance to a class JSON.
      *
-     * @return {Resizer.ClassJSON}
+     * @return {Resizer.JSON}
      * Class JSON of this Resizer instance.
      */
-    public toJSON(): Resizer.ClassJSON {
+    public toJSON(): Resizer.JSON {
         const options = this.options;
 
         return {
-            $class: 'Resizer',
+            $class: 'Dashboard.Action.Resizer',
             options: {
                 enabled: options.enabled,
                 styles: {
@@ -575,7 +575,7 @@ namespace Resizer {
         hcEvents: Record<string, Array<Function>>;
     }
 
-    export interface ClassJSON extends Serializer.JSON {
+    export interface JSON extends Serializable.JSON<'Dashboard.Action.Resizer'> {
         options: JSONOptions;
     }
 

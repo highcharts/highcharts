@@ -1,4 +1,13 @@
-/* eslint-disable no-invalid-this, require-jsdoc, max-len */
+/* eslint-disable require-jsdoc, max-len */
+
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from '../../../Core/Chart/Chart';
 import type Point from '../../../Core/Series/Point';
 import type SharedState from '../SharedComponentState';
@@ -230,7 +239,7 @@ export const configs: {
                         return addEvent(chart, 'selection', (e): void => {
                             const groups = ComponentGroup.getGroupsFromComponent(id);
                             if ((e as any).resetSelection) {
-                                const selection: SharedState.selectionObjectType = {};
+                                const selection: SharedState.SelectionObjectType = {};
                                 chart.axes.forEach((axis): void => {
                                     selection[axis.coll] = {
                                         columnName: axis.coll === 'xAxis' ? getX() : void 0

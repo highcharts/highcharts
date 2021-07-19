@@ -1,9 +1,12 @@
 /* eslint-disable */
+
+'use strict';
+
 import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type Component from './../Component/Component.js';
 import type ComponentType from '../Component/ComponentType';
 import type JSON from '../../Core/JSON';
-import type Serializer from '../Serializer';
+import type Serializable from '../Serializable';
 
 import DashboardGlobals from './../DashboardGlobals.js';
 import Row from './Row.js';
@@ -26,7 +29,7 @@ class Cell extends GUIElement {
     * */
 
     public static fromJSON(
-        json: Cell.ClassJSON,
+        json: Cell.JSON,
         row: Row
     ): Cell|undefined {
         if (row instanceof Row) {
@@ -198,7 +201,7 @@ class Cell extends GUIElement {
     /**
      * Mount component from JSON.
      *
-     * @param {Component.ClassJSON} [json]
+     * @param {Component.JSON} [json]
      * Component JSON.
      *
      * @param {HTMLDOMElement} cellContainer
@@ -207,7 +210,7 @@ class Cell extends GUIElement {
      * @return {boolean}
      */
     public mountComponentFromJSON(
-        json: Component.ClassJSON,
+        json: Component.JSON,
         cellContainer: HTMLDOMElement|undefined
     ): boolean {
         const cell = this;
@@ -252,15 +255,15 @@ class Cell extends GUIElement {
     /**
      * Converts the class instance to a class JSON.
      *
-     * @return {Cell.ClassJSON}
+     * @return {Cell.JSON}
      * Class JSON of this Cell instance.
      */
-    public toJSON(): Cell.ClassJSON {
+    public toJSON(): Cell.JSON {
         const cell = this,
             rowContainerId = (cell.row.container || {}).id || '';
 
         return {
-            $class: 'Cell',
+            $class: 'Dashboard.Layout.Cell',
             options: {
                 containerId: (cell.container as HTMLElement).id,
                 parentContainerId: rowContainerId,
@@ -425,32 +428,34 @@ class Cell extends GUIElement {
 }
 
 namespace Cell {
-    export interface Options {
-        id: string;
-        width?: string; // eg 50%, 1/2
-        height?: number;
-        style?: CSSJSONObject;
-        parentContainerId?: string;
-        mountedComponentJSON?: Component.ClassJSON;
-        layout?: Layout.Options;
-        responsive?: Record<string, CellResponsiveOptions>;
-    }
 
     export interface CellResponsiveOptions {
         width: string;
         // visible: boolean;
     }
 
-    export interface ClassJSON extends Serializer.JSON {
-        options: JSONOptions;
+    export interface JSON extends Serializable.JSON<'Dashboard.Layout.Cell'> {
+        options: OptionsJSON;
     }
 
-    export interface JSONOptions extends JSON.Object {
+    export interface Options {
+        id: string;
+        width?: string; // eg 50%, 1/2
+        height?: number;
+        style?: CSSJSONObject;
+        parentContainerId?: string;
+        mountedComponentJSON?: Component.JSON;
+        layout?: Layout.Options;
+        responsive?: Record<string, CellResponsiveOptions>;
+    }
+
+    export interface OptionsJSON extends JSON.Object {
         containerId: string;
         parentContainerId: string;
-        mountedComponentJSON: Component.ClassJSON|undefined;
+        mountedComponentJSON: Component.JSON|undefined;
         style?: CSSJSONObject;
     }
+
 }
 
 export default Cell;

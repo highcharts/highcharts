@@ -1,5 +1,11 @@
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type JSON from '../../Core/JSON';
 
 import Component from './Component.js';
@@ -241,7 +247,7 @@ namespace HTMLComponent {
         scaleElements: boolean;
     }
 
-    export interface HTMLComponentJSONOptions extends Component.ComponentJSONOptions {
+    export interface HTMLComponentJSONOptions extends Component.ComponentOptionsJSON {
         elements: Array<JSON.Object>;
         scaleElements: boolean;
     }
@@ -252,7 +258,7 @@ namespace HTMLComponent {
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: HTMLComponent.ClassJSON;
     }>;
-    export interface ClassJSON extends Component.ClassJSON {
+    export interface ClassJSON extends Component.JSON {
         elements?: string[];
         events?: string[];
     }

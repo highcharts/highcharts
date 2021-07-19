@@ -1,7 +1,10 @@
 /* eslint-disable */
+
+'use strict';
+
 import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type JSON from '../../Core/JSON';
-import type Serializer from '../Serializer';
+import type Serializable from '../Serializable';
 
 import DashboardGlobals from './../DashboardGlobals.js';
 import Layout from './Layout.js';
@@ -24,7 +27,7 @@ class Row extends GUIElement {
     * */
 
     public static fromJSON(
-        json: Row.ClassJSON,
+        json: Row.JSON,
         layout: Layout
     ): Row|undefined {
         if (layout instanceof Layout) {
@@ -177,7 +180,7 @@ class Row extends GUIElement {
     }
 
     public setCellsFromJSON(
-        json: Array<Cell.ClassJSON>
+        json: Array<Cell.JSON>
     ): void {
         const row = this,
             componentsToMount = [];
@@ -280,10 +283,10 @@ class Row extends GUIElement {
     /**
      * Converts the class instance to a class JSON.
      *
-     * @return {Row.ClassJSON}
+     * @return {Row.JSON}
      * Class JSON of this Row instance.
      */
-    public toJSON(): Row.ClassJSON {
+    public toJSON(): Row.JSON {
         const row = this,
             layoutContainerId = (row.layout.container || {}).id || '',
             cells = [];
@@ -294,7 +297,7 @@ class Row extends GUIElement {
         }
 
         return {
-            $class: 'Row',
+            $class: 'Dashboard.Layout.Row',
             options: {
                 containerId: (row.container as HTMLElement).id,
                 parentContainerId: layoutContainerId,
@@ -464,22 +467,23 @@ class Row extends GUIElement {
 }
 
 namespace Row {
+
+    export interface JSON extends Serializable.JSON<'Dashboard.Layout.Row'> {
+        options: OptionsJSON;
+    }
+
     export interface Options {
         id?: string;
         parentContainerId?: string;
         cells?: Array<Cell.Options>;
         style?: CSSJSONObject;
-        cellsJSON?: Array<Cell.ClassJSON>;
+        cellsJSON?: Array<Cell.JSON>;
     }
 
-    export interface ClassJSON extends Serializer.JSON {
-        options: JSONOptions;
-    }
-
-    export interface JSONOptions extends JSON.Object {
+    export interface OptionsJSON extends JSON.Object {
         containerId: string;
         parentContainerId: string;
-        cells: Array<Cell.ClassJSON>;
+        cells: Array<Cell.JSON>;
         style?: CSSJSONObject;
     }
 

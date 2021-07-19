@@ -1,7 +1,5 @@
 /* *
  *
- *  Highsoft Dashboards
- *
  *  (c) 2020 - 2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
@@ -21,24 +19,22 @@
  *
  * */
 
-import type JSON from '../Core/JSON';
-import type Serializer from './Serializer';
+import type CoreJSON from '../../Core/JSON';
 
-import DataTable from '../Data/DataTable.js';
+import DataTable from '../../Data/DataTable.js';
+import Serializable from '../Serializable.js';
 
 /* *
  *
- *  Declarations
+ *  Constants
  *
  * */
 
-type DataTableColumnJSON = JSON.Array<(DataTableJSON|JSON.Primitive)>;
-
-interface DataTableJSON extends Serializer.JSON {
-    $class: 'DataTable';
-    columns: JSON.Object<DataTableColumnJSON>;
-    id?: string;
-}
+const DataTableSerializer: Serializable<DataTable, DataTableSerializer.JSON> = {
+    fromJSON,
+    jsonSupportFor,
+    toJSON
+};
 
 /* *
  *
@@ -49,14 +45,14 @@ interface DataTableJSON extends Serializer.JSON {
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {Serializer.JSON} json
+ * @param {Serializable.JSON} json
  * JSON to deserialize as a class instance or object.
  *
  * @return {DataTable}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: DataTableJSON
+    json: DataTableSerializer.JSON
 ): DataTable {
     const jsonColumns = json.columns,
         columnNames = Object.keys(jsonColumns),
@@ -69,7 +65,7 @@ function fromJSON(
         let i = 0,
             column: DataTable.Column,
             columnName: string,
-            jsonColumn: DataTableColumnJSON;
+            jsonColumn: DataTableSerializer.ColumnJSON;
         i < iEnd;
         ++i
     ) {
@@ -79,7 +75,7 @@ function fromJSON(
         for (
             let j = 0,
                 jEnd = column.length,
-                cell: (DataTableJSON|JSON.Primitive);
+                cell: (DataTableSerializer.JSON|CoreJSON.Primitive);
             j < jEnd;
             ++j
         ) {
@@ -93,13 +89,9 @@ function fromJSON(
         columns[columnName] = column;
     }
 
-    // deserialize custom id
-
-    const table = new DataTable(columns, json.id);
-
     // done
 
-    return table;
+    return new DataTable(columns, json.id);
 }
 
 /**
@@ -129,9 +121,9 @@ function jsonSupportFor(
  */
 function toJSON(
     obj?: DataTable
-): DataTableJSON {
-    const json: DataTableJSON = {
-            $class: 'DataTable',
+): DataTableSerializer.JSON {
+    const json: DataTableSerializer.JSON = {
+            $class: 'Data.DataTable',
             columns: {}
         },
         jsonColumns = json.columns;
@@ -148,7 +140,7 @@ function toJSON(
             let i = 0,
                 column: DataTable.Column,
                 columnName: string,
-                jsonColumn: DataTableColumnJSON;
+                jsonColumn: DataTableSerializer.ColumnJSON;
             i < iEnd;
             ++i
         ) {
@@ -186,14 +178,31 @@ function toJSON(
 
 /* *
  *
+ *  Namespace
+ *
+ * */
+
+namespace DataTableSerializer {
+
+    /* *
+    *
+    *  Declarations
+    *
+    * */
+
+    export type ColumnJSON = CoreJSON.Array<(JSON|CoreJSON.Primitive)>;
+
+    export interface JSON extends Serializable.JSON<'Data.DataTable'> {
+        columns: CoreJSON.Object<ColumnJSON>;
+        id?: string;
+    }
+
+}
+
+/* *
+ *
  *  Default Export
  *
  * */
 
-const exports = {
-    fromJSON,
-    jsonSupportFor,
-    toJSON
-};
-
-export default exports;
+export default DataTableSerializer;

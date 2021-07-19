@@ -1,3 +1,11 @@
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AxisOptions from '../../Core/Axis/AxisOptions.js';
 import type Series from '../../Core/Series/Series.js';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
@@ -84,7 +92,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
      *
      * */
 
-    public chartOptions: Options;
+    public chartOptions: Partial<Options>;
     public chart: Chart | undefined;
     public chartContainer: HTMLElement;
     public options: ChartComponent.ComponentOptions;
@@ -469,7 +477,7 @@ namespace ChartComponent {
         tableAxisMap?: Record<string, string | null>;
     }
 
-    export interface ComponentJSONOptions extends Component.ComponentJSONOptions {
+    export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
         chartOptions?: string;
         chartClassName?: string;
         chartID?: string;
@@ -478,7 +486,7 @@ namespace ChartComponent {
     }
 
 
-    export interface ClassJSON extends Component.ClassJSON {
+    export interface ClassJSON extends Component.JSON {
         options: ChartComponent.ComponentJSONOptions;
     }
 }

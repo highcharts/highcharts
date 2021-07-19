@@ -1,18 +1,39 @@
-import type JSON from '../Core/JSON';
-import type Serializer from './Serializer';
+/* *
+ *
+ *  (c) 2020 - 2021 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sebastian Bochan
+ *  - Wojciech Chmiel
+ *  - Gøran Slettemark
+ *  - Sophie Bremer
+ *
+ * */
 
-import Layout from './Layout/Layout.js';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type JSON from '../Core/JSON';
+
 import Bindings from './Actions/Bindings.js';
 import DashboardGlobals from './DashboardGlobals.js';
-
-import U from '../Core/Utilities.js';
-import H from '../Core/Globals.js';
 import EditMode from './EditMode/EditMode.js';
-
+import H from '../Core/Globals.js';
 const {
     doc
 } = H;
-
+import Layout from './Layout/Layout.js';
+import Serializable from './Serializable.js';
+import U from '../Core/Utilities.js';
 const {
     merge,
     addEvent,
@@ -24,13 +45,19 @@ const {
     createElement
 } = U;
 
-class Dashboard {
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
 
     /* *
-    *
-    *  Static Properties
-    *
-    * */
+     *
+     *  Static Properties
+     *
+     * */
 
     protected static readonly defaultOptions: Dashboard.Options = {
         gui: {
@@ -52,40 +79,30 @@ class Dashboard {
         }
     };
 
-    public static fromJSON(json: Dashboard.ClassJSON): Dashboard {
-        const options = json.options,
-            dashboard = new Dashboard(
-                options.containerId,
-                {
-                    layoutsJSON: options.layouts,
-                    componentOptions: options.componentOptions,
-                    respoBreakpoints: options.respoBreakpoints
-                }
-            );
-
-        return dashboard;
-    }
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
 
     /**
      * Import layouts from the local storage
      *
      * @return {Dashboard|undefined}
      */
-    public static importLocal(): Dashboard|undefined {
+    public static importLocal(): (Dashboard|undefined) {
         const dashboardJSON = localStorage.getItem(
             // Dashboard.prefix + this.id,
             DashboardGlobals.prefix + '1' // temporary for demo test
         );
 
-        let dashboard;
-
         if (dashboardJSON) {
-            dashboard = Dashboard.fromJSON(
-                JSON.parse(dashboardJSON)
-            );
+            try {
+                return Serializable.fromJSON(JSON.parse(dashboardJSON)) as Dashboard;
+            } catch (e) {
+                // nothing to do
+            }
         }
-
-        return dashboard;
     }
 
     public static getCopyId(): string {
@@ -94,10 +111,11 @@ class Dashboard {
     }
 
     /* *
-    *
-    *  Constructors
-    *
-    * */
+     *
+     *  Constructor
+     *
+     * */
+
     public constructor(
         renderTo: (string|globalThis.HTMLElement),
         options: Dashboard.Options
@@ -148,10 +166,11 @@ class Dashboard {
     }
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
+
     public options: Dashboard.Options;
     public layouts: Array<Layout>;
     public mountedComponents: Array<Bindings.MountedComponentsOptions>;
@@ -160,6 +179,7 @@ class Dashboard {
     public id: string;
     public editMode?: EditMode;
     public layoutsWrapper: globalThis.HTMLElement;
+
     /* *
      *
      *  Functions
@@ -211,7 +231,7 @@ class Dashboard {
         }
     }
 
-    public setLayoutsFromJSON(json: Array<Layout.ClassJSON>): void {
+    public setLayoutsFromJSON(json: Array<Layout.JSON>): void {
         const dashboard = this;
 
         let layout;
@@ -225,7 +245,7 @@ class Dashboard {
         }
     }
 
-    public addLayoutFromJSON(json: Layout.ClassJSON): Layout|undefined {
+    public addLayoutFromJSON(json: Layout.JSON): Layout|undefined {
         return Layout.fromJSON(json, this);
     }
 
@@ -275,33 +295,6 @@ class Dashboard {
         });
 
         return;
-    }
-
-    /**
-     * Converts the class instance to a class JSON.
-     *
-     * @return {Dashboard.ClassJSON}
-     * Class JSON of this Dashboard instance.
-     */
-    public toJSON(): Dashboard.ClassJSON {
-        const dashboard = this,
-            layouts = [];
-
-        // Get layouts JSON.
-        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
-            layouts.push(dashboard.layouts[i].toJSON());
-        }
-
-        return {
-            $class: 'Dashboard',
-            options: {
-                containerId: dashboard.container.id,
-                guiEnabled: dashboard.guiEnabled,
-                layouts: layouts,
-                componentOptions: dashboard.options.componentOptions,
-                respoBreakpoints: dashboard.options.respoBreakpoints
-            }
-        };
     }
 
     /**
@@ -361,15 +354,89 @@ class Dashboard {
             }
         }
     }
+
+    /**
+     * Converts the given JSON to a class instance.
+     *
+     * @param {Serializable.JSON} json
+     * JSON to deserialize as a class instance or object.
+     *
+     * @return {DataTable}
+     * Returns the class instance or object, or throws an exception.
+     */
+    public fromJSON(
+        json: Dashboard.JSON
+    ): Dashboard {
+        const options = json.options;
+
+        return new Dashboard(
+            options.containerId,
+            {
+                layoutsJSON: options.layouts,
+                componentOptions: options.componentOptions,
+                respoBreakpoints: options.respoBreakpoints
+            }
+        );
+    }
+
+
+    /**
+     * Converts the class instance to a class JSON.
+     *
+     * @return {Dashboard.JSON}
+     * Class JSON of this Dashboard instance.
+     */
+    public toJSON(): Dashboard.JSON {
+        const dashboard = this,
+            layouts = [];
+
+        // Get layouts JSON.
+        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
+            layouts.push(dashboard.layouts[i].toJSON());
+        }
+
+        return {
+            $class: 'Dashboard',
+            options: {
+                containerId: dashboard.container.id,
+                guiEnabled: dashboard.guiEnabled,
+                layouts: layouts,
+                componentOptions: dashboard.options.componentOptions,
+                respoBreakpoints: dashboard.options.respoBreakpoints
+            }
+        };
+    }
+
 }
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace Dashboard {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface Options {
         gui?: GUIOptions;
         editMode?: EditMode.Options;
         components?: Array<Bindings.ComponentOptions>;
         componentOptions?: Partial<Bindings.ComponentOptions>;
-        layoutsJSON?: Array<Layout.ClassJSON>;
+        layoutsJSON?: Array<Layout.JSON>;
+        respoBreakpoints?: RespoBreakpoints;
+    }
+
+    export interface OptionsJSON extends JSON.Object {
+        containerId: string;
+        layouts: Array<Layout.JSON>;
+        guiEnabled?: boolean;
+        componentOptions?: Partial<Bindings.ComponentOptions>;
         respoBreakpoints?: RespoBreakpoints;
     }
 
@@ -385,17 +452,24 @@ namespace Dashboard {
         layouts: Array<Layout.Options>;
     }
 
-    export interface ClassJSON extends Serializer.JSON {
-        options: DashboardJSONOptions;
+    export interface JSON extends Serializable.JSON<'Dashboard'> {
+        options: OptionsJSON;
     }
 
-    export interface DashboardJSONOptions extends JSON.Object {
-        containerId: string;
-        layouts: Array<Layout.ClassJSON>;
-        guiEnabled?: boolean;
-        componentOptions?: Partial<Bindings.ComponentOptions>;
-        respoBreakpoints?: RespoBreakpoints;
-    }
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+Serializable.register('Dashboard', Dashboard.prototype);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Dashboard;

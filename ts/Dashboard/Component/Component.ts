@@ -1,8 +1,11 @@
 /* eslint-disable require-jsdoc */
+
+'use strict';
+
 import type Cell from '../Layout/Cell.js';
 import type ComponentType from './ComponentType';
 import type JSON from '../../Core/JSON';
-import type Serializer from '../Serializer';
+import type Serializable from '../Serializable';
 
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
@@ -194,7 +197,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public static createTextElement(
         tagName: string,
         elementName: string,
-        textOptions: Component.textOptionsType
+        textOptions: Component.TextOptionsType
     ): HTMLElement | undefined {
         const classBase = 'hcd';
 
@@ -581,14 +584,14 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         return this;
     }
 
-    public setTitle(titleOptions: Component.textOptionsType): void {
+    public setTitle(titleOptions: Component.TextOptionsType): void {
         const titleElement = Component.createTextElement('h1', 'title', titleOptions);
         if (titleElement) {
             this.titleElement = titleElement;
         }
     }
 
-    public setCaption(captionOptions: Component.textOptionsType): void {
+    public setCaption(captionOptions: Component.TextOptionsType): void {
         const captionElement = Component.createTextElement('div', 'caption', captionOptions);
         if (captionElement) {
             this.captionElement = captionElement;
@@ -730,10 +733,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
      * Converts the class instance to a class JSON.
      *
-     * @return {Component.ClassJSON}
+     * @return {Component.JSON}
      * Class JSON of this Component instance.
      */
-    public toJSON(): Component.ClassJSON {
+    public toJSON(): Component.JSON {
         const dimensions: Record<'width' | 'height', number> = {
             width: 0,
             height: 0
@@ -745,7 +748,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             dimensions[key] = value;
         });
 
-        const json = {
+        const json: Component.JSON = {
             $class: Component.getName(this.constructor),
             // store: this.store ? this.store.toJSON() : void 0,
             options: {
@@ -760,11 +763,23 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 }
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace Component {
 
-    export interface ClassJSON extends Serializer.JSON {
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface JSON extends Serializable.JSON<string> {
         // store?: DataStore.ClassJSON;
-        options: ComponentJSONOptions;
+        options: ComponentOptionsJSON;
     }
 
     /**
@@ -802,7 +817,7 @@ namespace Component {
         };
     }>;
     export type JSONEvent = Event<'toJSON' | 'fromJSON', {
-        json: Serializer.JSON;
+        json: Serializable.JSON<string>;
     }>;
     export type TableChangedEvent = Event<'tableChanged', {}>
     export type PresentationModifierEvent = Component.Event<'afterPresentationModifier', { table: DataTable }>
@@ -831,20 +846,8 @@ namespace Component {
         syncHandlers: Sync.OptionsRecord;
     }
 
-    export type StoreTypes = DataStore<DataStore.Event>
-
-    export interface EditableOptions {
-        store?: StoreTypes;
-        id?: string;
-        style?: CSSObject;
-        title: textOptionsType;
-        caption: textOptionsType;
-    }
-
-    export type textOptionsType = string | false | TextOptions | undefined;
-
-    // JSON compatible options for exprot
-    export interface ComponentJSONOptions extends JSON.Object {
+    // JSON compatible options for export
+    export interface ComponentOptionsJSON extends JSON.Object {
         // store?: DataStore.ClassJSON; // store id
         parentElement: string; // ID?
         style?: {};
@@ -853,6 +856,19 @@ namespace Component {
         type: string;
         id: string;
     }
+
+    export type StoreTypes = DataStore<DataStore.Event>
+
+    export interface EditableOptions {
+        store?: StoreTypes;
+        id?: string;
+        style?: CSSObject;
+        title: TextOptionsType;
+        caption: TextOptionsType;
+    }
+
+    export type TextOptionsType = string | false | TextOptions | undefined;
+
     export interface MessageTarget {
         type: 'group' | 'componentType' | 'componentID';
         target: ComponentType['id'] | ComponentType['type'] | ComponentGroup['id'];

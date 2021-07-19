@@ -1,7 +1,5 @@
 /* *
  *
- *  Highsoft Dashboards
- *
  *  (c) 2020 - 2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
@@ -23,8 +21,6 @@
 
 import type CoreJSON from '../Core/JSON';
 
-import DataTableSerializer from './DataTableSerializer.js';
-
 /* *
  *
  *  Declarations
@@ -33,22 +29,28 @@ import DataTableSerializer from './DataTableSerializer.js';
 
 /**
  * Interface to convert objects from and to JSON.
+ *
+ * @interface Serializable
  */
-interface Serializer<T> {
+interface Serializable<T, TJSON extends Serializable.JSON<string>> {
 
     /**
      * Converts the given JSON to a class instance.
      *
-     * @param {Serializer.JSON} json
+     * @function Serializable.fromJSON
+     *
+     * @param {Serializable.JSON} json
      * JSON to deserialize as a class instance or object.
      *
      * @return {AnyRecord}
      * Returns the class instance or object, or throws an exception.
      */
-    fromJSON(json: Serializer.JSON): T;
+    fromJSON(json: TJSON): T;
 
     /**
      * Validates the given class instance for JSON support.
+     *
+     * @function Serializable.jsonSupportFor
      *
      * @param {AnyRecord} obj
      * Class instance or object to validate.
@@ -62,13 +64,15 @@ interface Serializer<T> {
     /**
      * Converts the given class instance to JSON.
      *
+     * @function Serializable.toJSON
+     *
      * @param {AnyRecord} obj
      * Class instance or object to serialize as JSON.
      *
-     * @return {Serializer.JSON}
+     * @return {Serializable.JSON}
      * Returns the JSON of the class instance or object.
      */
-    toJSON(obj?: T): Serializer.JSON;
+    toJSON(obj?: T): TJSON;
 
 }
 
@@ -81,8 +85,9 @@ interface Serializer<T> {
 /**
  * Contains the toolset to serialize classes to JSON and deserialize classes
  * from JSON.
+ * @private
  */
-namespace Serializer {
+namespace Serializable {
 
     /* *
      *
@@ -90,8 +95,8 @@ namespace Serializer {
      *
      * */
 
-    export interface JSON extends CoreJSON.Object {
-        $class: string;
+    export interface JSON<T extends string> extends CoreJSON.Object {
+        $class: T;
     }
 
     /* *
@@ -100,7 +105,10 @@ namespace Serializer {
      *
      * */
 
-    const registry: Record<string, Serializer<AnyRecord>> = {};
+    /**
+     * The registry of serializable classes and function sets.
+     */
+    const registry: Record<string, Serializable<AnyRecord, JSON<string>>> = {};
 
     /* *
      *
@@ -132,7 +140,7 @@ namespace Serializer {
         const serializer = registry[$class];
 
         if (serializer) {
-            return serializer.fromJSON(json as JSON);
+            return serializer.fromJSON(json as JSON<string>);
         }
 
         throw new Error(`Serializer for '${$class}' not found.`);
@@ -141,40 +149,46 @@ namespace Serializer {
     /**
      * Registers a class prototype or function set for the given JSON $class.
      *
-     * @function Serializer.register
+     * @function Serializable.register
      *
      * @param {string} $class
      * JSON $class to register for.
      *
-     * @param {Serializer<AnyRecord>} serializer
+     * @param {Serializable<AnyRecord>} classPrototypeOrFunctionSet
      * Class or function set to register.
      */
-    export function register(
-        $class: string,
-        serializer: Serializer<AnyRecord>
+    export function register<T, TJSON extends JSON<string>>(
+        $class: TJSON['$class'],
+        classPrototypeOrFunctionSet: Serializable<T, TJSON>
     ): void {
 
         if (registry[$class]) {
             throw new Error(`A serializer for '${$class}' is already registered.`);
         }
 
-        registry[$class] = serializer;
+        registry[$class] = classPrototypeOrFunctionSet;
     }
 
+    export function toJSON<T, TJSON extends JSON<string>>(
+        obj: Serializable<T, TJSON>
+    ): TJSON;
+    export function toJSON(
+        obj: AnyRecord
+    ): JSON<string>;
     /**
      * Creates JSON from a class instance.
      *
-     * @function JSONRegistry.serialize
+     * @function Serializable.serialize
      *
      * @param {AnyRecord} obj
      * Class instance or object to serialize as JSON.
      *
-     * @return {Serializer.JSON}
+     * @return {Serializable.JSON}
      * JSON of the class instance.
      */
     export function toJSON(
         obj: AnyRecord
-    ): JSON {
+    ): JSON<string> {
 
         if (
             typeof obj.fromJSON === 'function' &&
@@ -187,7 +201,7 @@ namespace Serializer {
             numberOfClasses = classes.length;
 
         let $class: string,
-            serializer: Serializer<AnyRecord>;
+            serializer: Serializable<AnyRecord, JSON<string>>;
 
         for (let i = 0; i < numberOfClasses; ++i) {
             $class = classes[i];
@@ -207,16 +221,8 @@ namespace Serializer {
 
 /* *
  *
- *  Registry
- *
- * */
-
-Serializer.register('DataTable', DataTableSerializer);
-
-/* *
- *
  *  Default Export
  *
  * */
 
-export default Serializer;
+export default Serializable;

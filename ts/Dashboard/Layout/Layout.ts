@@ -1,7 +1,7 @@
 /* eslint-disable */
 import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type JSON from '../../Core/JSON';
-import type Serializer from '../Serializer';
+import type Serializable from '../Serializable';
 
 import Row from './Row.js';
 import Dashboard from '../Dashboard.js';
@@ -25,7 +25,7 @@ class Layout extends GUIElement {
     * */
 
     public static fromJSON(
-        json: Layout.ClassJSON,
+        json: Layout.JSON,
         dashboard: Dashboard
     ): Layout|undefined {
         if (dashboard instanceof Dashboard) {
@@ -211,7 +211,7 @@ class Layout extends GUIElement {
     }
 
     public setRowsFromJSON(
-        json: Array<Row.ClassJSON>
+        json: Array<Row.JSON>
     ): void {
         const layout = this;
 
@@ -362,10 +362,10 @@ class Layout extends GUIElement {
     /**
      * Converts the class instance to a class JSON.
      *
-     * @return {Layout.ClassJSON}
+     * @return {Layout.JSON}
      * Class JSON of this Layout instance.
      */
-    public toJSON(): Layout.ClassJSON {
+    public toJSON(): Layout.JSON {
         const layout = this,
             dashboardContainerId = (layout.dashboard.container || {}).id || '',
             rows = [];
@@ -376,7 +376,7 @@ class Layout extends GUIElement {
         }
 
         return {
-            $class: 'Layout',
+            $class: 'Dashboard.Layout',
             options: {
                 containerId: (layout.container as HTMLElement).id,
                 parentContainerId: dashboardContainerId,
@@ -392,6 +392,11 @@ interface Layout {
     options: Layout.Options;
 }
 namespace Layout {
+
+    export interface JSON extends Serializable.JSON<'Dashboard.Layout'> {
+        options: OptionsJSON;
+    }
+
     export interface Options {
         id?: string;
         parentContainerId?: string;
@@ -401,22 +406,19 @@ namespace Layout {
         cellClassName?: string;
         rows?: Array<Row.Options>;
         style?: CSSJSONObject;
-        rowsJSON?: Array<Row.ClassJSON>;
+        rowsJSON?: Array<Row.JSON>;
         resize?: Resizer.Options;
-        resizerJSON?: Resizer.ClassJSON;
+        resizerJSON?: Resizer.JSON;
     }
 
-    export interface ClassJSON extends Serializer.JSON {
-        options: LayoutJSONOptions;
-    }
-
-    export interface LayoutJSONOptions extends JSON.Object {
+    export interface OptionsJSON extends JSON.Object {
         containerId: string;
         parentContainerId: string;
-        rows: Array<Row.ClassJSON>;
-        resizer?: Resizer.ClassJSON;
+        rows: Array<Row.JSON>;
+        resizer?: Resizer.JSON;
         style?: CSSJSONObject;
     }
+
 }
 
 export default Layout;
