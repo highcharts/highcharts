@@ -657,7 +657,7 @@ class EditMode {
 
             if (this.resizer) {
                 this.resizer.isResizerDetectionActive = true;
-                this.resizer.resizeElement(this.editCellContext);
+                this.resizer.setSnapPositions(this.editCellContext);
             }
         }
     }

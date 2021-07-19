@@ -4,12 +4,9 @@ import type {
 } from '../../Core/Renderer/DOMElementType';
 import type JSON from '../../Core/JSON';
 import type Cell from '../Layout/Cell.js';
-import type Row from '../Layout/Row.js';
-import type Layout from '../Layout/Layout.js';
 import type Serializable from '../Serializable';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import GUIElement from '../Layout/GUIElement.js';
-import EditRenderer from '../EditMode/EditRenderer.js';
 
 import U from '../../Core/Utilities.js';
 
@@ -25,13 +22,14 @@ const {
 
 import H from '../../Core/Globals.js';
 import EditMode from '../EditMode/EditMode';
-import ContextDetection from './ContextDetection.js';
-import { isEmptyObject } from 'jquery';
 
 const {
     hasTouch
 } = H;
 
+/**
+ * Class providing a resizing functionality.
+ */
 class Resizer {
     /* *
     *
@@ -64,6 +62,16 @@ class Resizer {
     *  Constructors
     *
     * */
+
+    /**
+     * Constructor for the Resizer class.
+     *
+     * @param {EditMode} editMode
+     * The parent editMode reference.
+     *
+     * @param {Resizer.Options} options
+     * Options for the Resizer.
+     */
     public constructor(
         editMode: EditMode,
         options?: Resizer.Options
@@ -81,6 +89,7 @@ class Resizer {
         this.isY = this.options.type.indexOf('y') > -1;
         this.isActive = false;
         this.startX = 0;
+        this.tempSiblingsWidth = [];
 
         this.addSnaps(
             this.options
@@ -105,24 +114,82 @@ class Resizer {
     *  Properties
     *
     * */
-    public options: Resizer.Options;
-    public currentCell: Cell|undefined;
-    public currentDimension: string|undefined;
-    public isX: boolean;
-    public isY: boolean;
-    public snapXR: HTMLDOMElement|undefined;
-    public snapYB: HTMLDOMElement|undefined;
-    public isActive: boolean;
+
+    /**
+     * The editMode reference.
+     */
     public editMode: EditMode;
+
+    /**
+     * Resizer options.
+     */
+    public options: Resizer.Options;
+
+    /**
+     * Resized element reference.
+     */
+    public currentCell: Cell|undefined;
+    
+    /**
+     * Dimension of current resizing (x or y).
+     */
+    public currentDimension: string|undefined;
+
+    /**
+     * Type of resizing.
+     */
+    public isX: boolean;
+
+    /**
+     * Type of resizing.
+     */
+    public isY: boolean;
+
+    /**
+     * Reference to right handler
+     */
+    public snapXR: HTMLDOMElement|undefined;
+
+    /**
+     * Reference to bottom handler
+     */
+    public snapYB: HTMLDOMElement|undefined;
+
+    /**
+     * Pending resizer flag
+     */
+    public isActive: boolean;
+
+    /**
+     * Pending context dection flag
+     */
     public isResizerDetectionActive: boolean;
+
+    /**
+     * Reference to pointer of current resized element
+     */
     public resizePointer: Resizer.ResizePointer;
+
+    /**
+     * Reference to start position of resizer
+     */
     public startX: number;
+
+    /**
+     * Array of siblings which have auto-flex width and we need to apply static
+     * width for resizing event. After resizing cells revert widths to auto.
+     */
+    public tempSiblingsWidth: Array<Cell>;
 
     /* *
      *
      *  Functions
      *
      * */
+
+    /**
+     * Method for initializing resizing events.
+     */
     public initEvents(): void {
         const resizer = this;
 
@@ -131,10 +198,10 @@ class Resizer {
     }
 
     /**
-     * Add Snap - create snapXs and add events.
+     * Add Snap - create snaps and add events.
      *
-     * @param {Resizer.ResizedCell} cell
-     * Reference to cell
+     * @param {Resizer.Options} options
+     * Reference to options of snaps
      *
      */
     public addSnaps(
@@ -179,6 +246,10 @@ class Resizer {
 
     }
 
+    /**
+     * Hide snaps
+     *
+     */
     public disableResizer(): void {
 
         this.isActive = false;
@@ -193,8 +264,14 @@ class Resizer {
             this.snapYB.style.left = '-9999px';
         }
     }
-
-    public resizeElement(
+    /**
+     * Update snap position.
+     *
+     * @param {PointerEvent} e
+     * Mouse event.
+     * 
+     */
+    public setSnapPositions(
         cell: Cell
     ): void {
         // set current cell
@@ -228,9 +305,12 @@ class Resizer {
         }
     }
 
-    public setTempWidthSiblings(
-        revertAuto?: boolean
-    ): void {
+    /**
+     * Method detecs siblings and auto-width applied by flex. The resizer
+     * requires static widths for correct calculations, so we need to apply
+     * temporary width on siblings.
+     */
+    public setTempWidthSiblings(): void {
         const currentCell = this.currentCell;
         const currentRwdMode = this.editMode.rwdMode;
 
@@ -238,7 +318,6 @@ class Resizer {
             const cellOffsets = GUIElement.getOffsets(currentCell);
             const rowLevelInfo = currentCell.row.getRowLevelInfo(cellOffsets.top);
             const cellsSiblings = rowLevelInfo && rowLevelInfo.rowLevel.cells || [];
-            let newWidth;
             let cellContainer;
             let cell;
             let optionsWidth;
@@ -256,21 +335,14 @@ class Resizer {
                     cellContainer &&
                     !optionsWidth
                 ) {
-                    // const a = GUIElement.getOffsets(cell);
-                    // const b = GUIElement.getDimFromOffsets(a);
-                    // const d = GUIElement.getOffsets(cell.row);
-                    // const e = GUIElement.getDimFromOffsets(d);
+                    cellContainer.style.flex = (
+                        '0 0 ' +
+                        (cellContainer.offsetWidth + 'px')
+                    );
 
-                    // newWidth = (
-                    //     b.width / (e.width || 1)
-                    //     // cellContainer.offsetWidth / (cell.row.container?.offsetWidth || 1)
-                    // ) * 100 + '%';
-
-                    // cell.setSize(newWidth);
-
-                    cellContainer.style.flex = revertAuto ?
-                        ('1 1 0%') :
-                        ('0 0 ' + (cellContainer.offsetWidth + 'px'));
+                    this.tempSiblingsWidth.push(
+                        cell
+                    );
 
                     fireEvent(this.editMode.dashboard, 'cellResize', { cell: cell });
 
@@ -281,10 +353,25 @@ class Resizer {
     }
 
     /**
-     * Add events
-     *
-     * @param {Resizer.ResizedCell} element
-     * Reference to cell
+     * Revert widths to auto.
+     */
+    public revertSiblingsAutoWidth(): void {
+        const tempSiblingsWidth = this.tempSiblingsWidth;
+        let cellContainer;
+        
+        for (let i = 0, iEnd = tempSiblingsWidth.length; i < iEnd; ++i) {
+            cellContainer = tempSiblingsWidth[i].container;
+
+            if (cellContainer) {
+                cellContainer.style.flex = ('1 1 0%');
+            }
+        }
+
+        this.tempSiblingsWidth = [];
+    }
+
+    /**
+     * Add mouse events to snaps 
      *
      */
     public addResizeEvents(): void {
@@ -338,7 +425,7 @@ class Resizer {
                     resizer.currentCell
                 );
 
-                resizer.setTempWidthSiblings(true);
+                resizer.revertSiblingsAutoWidth();
             }
         };
 
@@ -361,16 +448,10 @@ class Resizer {
         // }
     }
     /**
-     * Mouse move function
-     *
-     * @param {boolean} currentCell
-     * Flag determinates allowance to grab or not
+     * General method used on resizing.
      *
      * @param {global.Event} e
      * A mouse event.
-     *
-     * @param {Resizer.ResizedCell} cell
-     * Reference to cell
      *
      */
     public onMouseMove(
@@ -416,7 +497,7 @@ class Resizer {
             fireEvent(this.editMode.dashboard, 'cellResize', { cell: currentCell });
             fireEvent(currentCell.row, 'cellChange', { cell: currentCell, row: currentCell.row });
 
-            this.resizeElement(currentCell);
+            this.setSnapPositions(currentCell);
         }
     }
     /**
@@ -470,15 +551,30 @@ class Resizer {
         };
     }
 
+    /**
+     * Activate resizer detection
+     *
+     */
     public activateResizerDetection(): void {
         this.isResizerDetectionActive = true;
     }
 
+    /**
+     * Deactivate resizer detection
+     * 
+     */
     public deactivateResizerDetection(): void {
         this.isResizerDetectionActive = false;
         this.hideResizePointer();
     }
 
+    /**
+     * Action called when context (cell or row) is detected
+     *
+     * @param {PointerEvent} e
+     * Mouse event.
+     * 
+     */
     public onDetectContext(e: PointerEvent): void {
         const resizer = this,
             offset = 50; // TODO - add it from options.
