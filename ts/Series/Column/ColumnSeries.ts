@@ -37,7 +37,7 @@ const {
     hasTouch,
     noop
 } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import Palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -1319,7 +1319,7 @@ extend(ColumnSeries.prototype, {
      * @param {Highcharts.Series|Highcharts.Point} item
      *        The series (this) or point
      */
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     getSymbol: noop,
 
