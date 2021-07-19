@@ -22,10 +22,6 @@ import type Chart from '../../Core/Chart/Chart';
 import type Options from '../../Core/Options';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
-import Ajax from '../Ajax.js';
-const {
-    ajax
-} = Ajax;
 import CSVParser from '../../Data/Parsers/CSVParser.js';
 import CSVStore from '../../Data/Stores/CSVStore.js';
 import DataComposition from './DataComposition.js';
@@ -36,12 +32,14 @@ import GoogleSheetsStore from '../../Data/Stores/GoogleSheetsStore.js';
 import HTMLTableParser from '../../Data/Parsers/HTMLTableParser.js';
 import HTMLTableStore from '../../Data/Stores/HTMLTableStore.js';
 import SeriesBuilder from './SeriesBuilder.js';
+
+import HU from '../../Core/HttpUtilities.js';
+const { ajax } = HU;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     defined,
-    fireEvent,
     isNumber,
     isString,
     merge,
@@ -55,6 +53,14 @@ const {
  *  Declarations
  *
  * */
+
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        data?: Data;
+        hasDataDef?: boolean;
+        liveDataURL?: string;
+    }
+}
 
 declare module '../../Core/Options' {
     interface Options {
@@ -139,85 +145,6 @@ declare global {
     }
 }
 
-/**
- * Callback function to modify the CSV before parsing it by the data module.
- *
- * @callback Highcharts.DataBeforeParseCallbackFunction
- *
- * @param {string} csv
- *        The CSV to modify.
- *
- * @return {string}
- *         The CSV to parse.
- */
-
-/**
- * Callback function that gets called after parsing data.
- *
- * @callback Highcharts.DataCompleteCallbackFunction
- *
- * @param {Highcharts.Options} chartOptions
- *        The chart options that were used.
- */
-
-/**
- * Callback function that returns the correspondig Date object to a match.
- *
- * @callback Highcharts.DataDateFormatCallbackFunction
- *
- * @param {Array<number>} match
- *
- * @return {number}
- */
-
-/**
- * Structure for alternative date formats to parse.
- *
- * @interface Highcharts.DataDateFormatObject
- *//**
- * @name Highcharts.DataDateFormatObject#alternative
- * @type {string|undefined}
- *//**
- * @name Highcharts.DataDateFormatObject#parser
- * @type {Highcharts.DataDateFormatCallbackFunction}
- *//**
- * @name Highcharts.DataDateFormatObject#regex
- * @type {global.RegExp}
- */
-
-/**
- * Possible types for a data item in a column or row.
- *
- * @typedef {number|string|null} Highcharts.DataValueType
- */
-
-/**
- * Callback function to parse string representations of dates into
- * JavaScript timestamps (milliseconds since 1.1.1970).
- *
- * @callback Highcharts.DataParseDateCallbackFunction
- *
- * @param {string} dateValue
- *
- * @return {number}
- *         Timestamp (milliseconds since 1.1.1970) as integer for Date class.
- */
-
-/**
- * Callback function to access the parsed columns, the two-dimentional
- * input data array directly, before they are interpreted into series
- * data and categories.
- *
- * @callback Highcharts.DataParsedCallbackFunction
- *
- * @param {Array<Array<*>>} columns
- *        The parsed columns by the data module.
- *
- * @return {boolean|undefined}
- *         Return `false` to stop completion, or call `this.complete()` to
- *         continue async.
- */
-
 /* *
  *
  *  Class
@@ -267,7 +194,7 @@ class Data {
      */
     public static data(
         dataOptions: Highcharts.DataOptions,
-        chartOptions?: Options,
+        chartOptions?: Partial<Options>,
         chart?: Chart
     ): Data {
         return new Data(dataOptions, chartOptions, chart);
@@ -445,10 +372,7 @@ class Data {
                 (
                     chartOptions &&
                     chartOptions.series &&
-                    chartOptions.series.map(function (
-                    ): Record<string, number> {
-                        return { x: 0 };
-                    })
+                    chartOptions.series.map((): Record<string, number> => ({ x: 0 }))
                 ) ||
                 []
             );
@@ -1625,10 +1549,96 @@ export default Data;
 
 /* *
  *
- *  API Options
+ *  API Declarations
  *
  * */
 
+/**
+ * Callback function to modify the CSV before parsing it by the data module.
+ *
+ * @callback Highcharts.DataBeforeParseCallbackFunction
+ *
+ * @param {string} csv
+ *        The CSV to modify.
+ *
+ * @return {string}
+ *         The CSV to parse.
+ */
+
+/**
+ * Callback function that gets called after parsing data.
+ *
+ * @callback Highcharts.DataCompleteCallbackFunction
+ *
+ * @param {Highcharts.Options} chartOptions
+ *        The chart options that were used.
+ */
+
+/**
+ * Callback function that returns the correspondig Date object to a match.
+ *
+ * @callback Highcharts.DataDateFormatCallbackFunction
+ *
+ * @param {Array<number>} match
+ *
+ * @return {number}
+ */
+
+/**
+ * Structure for alternative date formats to parse.
+ *
+ * @interface Highcharts.DataDateFormatObject
+ *//**
+ * @name Highcharts.DataDateFormatObject#alternative
+ * @type {string|undefined}
+ *//**
+ * @name Highcharts.DataDateFormatObject#parser
+ * @type {Highcharts.DataDateFormatCallbackFunction}
+ *//**
+ * @name Highcharts.DataDateFormatObject#regex
+ * @type {global.RegExp}
+ */
+
+/**
+ * Possible types for a data item in a column or row.
+ *
+ * @typedef {number|string|null} Highcharts.DataValueType
+ */
+
+/**
+ * Callback function to parse string representations of dates into
+ * JavaScript timestamps (milliseconds since 1.1.1970).
+ *
+ * @callback Highcharts.DataParseDateCallbackFunction
+ *
+ * @param {string} dateValue
+ *
+ * @return {number}
+ *         Timestamp (milliseconds since 1.1.1970) as integer for Date class.
+ */
+
+/**
+ * Callback function to access the parsed columns, the two-dimentional
+ * input data array directly, before they are interpreted into series
+ * data and categories.
+ *
+ * @callback Highcharts.DataParsedCallbackFunction
+ *
+ * @param {Array<Array<*>>} columns
+ *        The parsed columns by the data module.
+ *
+ * @return {boolean|undefined}
+ *         Return `false` to stop completion, or call `this.complete()` to
+ *         continue async.
+ */
+
+(''); // detach doclets above
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * The Data module provides a simplified interface for adding data to

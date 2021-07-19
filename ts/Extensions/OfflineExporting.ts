@@ -17,9 +17,12 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from '../Core/Renderer/DOMElementType';
+import type ExportingOptions from './Exporting/ExportingOptions';
 import type Options from '../Core/Options';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import Chart from '../Core/Chart/Chart.js';
+import Exporting from './Exporting/Exporting.js';
 import H from '../Core/Globals.js';
 const {
     win,
@@ -41,11 +44,11 @@ declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         unbindGetSVG?: Function;
         exportChartLocal(
-            exportingOptions?: Highcharts.ExportingOptions,
+            exportingOptions?: ExportingOptions,
             chartOptions?: Partial<Options>
         ): void;
         getSVGForLocalExport(
-            options: Highcharts.ExportingOptions,
+            options: ExportingOptions,
             chartOptions: Partial<Options>,
             failCallback: Function,
             successCallback: Function
@@ -135,7 +138,6 @@ H.CanVGRenderer = {};
  * @function getScript
  * @param {string} scriptLocation
  * @param {Function} callback
- * @return {void}
  */
 function getScript(
     scriptLocation: string,
@@ -217,8 +219,6 @@ function svgToDataUrl(svg: string): string {
  *        finallyCallback is always called at the end of the process. All
  *        callbacks receive four arguments: imageURL, imageType, callbackArgs,
  *        and scale.
- *
- * @return {void}
  */
 function imageToDataUrl(
     imageURL: string,
@@ -344,7 +344,7 @@ function imageToDataUrl(
  */
 function downloadSVGLocal(
     svg: string,
-    options: Highcharts.ExportingOptions,
+    options: ExportingOptions,
     failCallback: Function,
     successCallback?: Function
 ): void {
@@ -628,12 +628,12 @@ function downloadSVGLocal(
  * @return {void}
  */
 Chart.prototype.getSVGForLocalExport = function (
-    options: Highcharts.ExportingOptions,
+    options: ExportingOptions,
     chartOptions: Partial<Options>,
     failCallback: Function,
     successCallback: Function
 ): void {
-    let chart = this,
+    let chart = this as Exporting.ChartComposition,
         images,
         imagesEmbedded = 0,
         chartCopyContainer: (HTMLDOMElement|undefined),
@@ -756,10 +756,10 @@ Chart.prototype.getSVGForLocalExport = function (
  * @requires modules/exporting
  */
 Chart.prototype.exportChartLocal = function (
-    exportingOptions?: Highcharts.ExportingOptions,
+    exportingOptions?: ExportingOptions,
     chartOptions?: Partial<Options>
 ): void {
-    const chart = this,
+    const chart = this as Exporting.ChartComposition,
         options = merge(chart.options.exporting, exportingOptions),
         fallbackToExportServer = function (err: Error): void {
             if (options.fallbackToExportServer === false) {
@@ -817,7 +817,7 @@ Chart.prototype.exportChartLocal = function (
     // inline styles that we want to pass through. There are so many styles by
     // default in IE that we don't want to blacklist them all.
     if (H.isMS && chart.styledMode) {
-        SVGRenderer.prototype.inlineWhitelist = [
+        Exporting.inlineWhitelist.push(
             /^blockSize/,
             /^border/,
             /^caretColor/,
@@ -846,7 +846,7 @@ Chart.prototype.exportChartLocal = function (
             /^visibility/,
             /^x$/,
             /^y$/
-        ];
+        );
     }
 
     // Always fall back on:

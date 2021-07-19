@@ -24,6 +24,7 @@ import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type Series from './Series/Series';
 import type SVGElement from './Renderer/SVG/SVGElement';
+
 import Color from './Color/Color.js';
 const { parse: color } = Color;
 import H from './Globals.js';

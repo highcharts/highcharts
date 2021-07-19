@@ -1,12 +1,16 @@
 /* *
  *
- *  Data module
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2012-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Torstein Hønsi
+ *  - Gøran Slettemark
+ *  - Wojciech Chmiel
+ *  - Sophie Bremer
  *
  * */
 
@@ -21,12 +25,12 @@
 import type DataEventEmitter from '../DataEventEmitter';
 import type JSON from '../../Core/JSON';
 
-import AjaxMixin from '../../Extensions/Ajax.js';
-const { ajax } = AjaxMixin;
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
-import U from '../../Core/Utilities.js';
 import GoogleSheetsParser from '../Parsers/GoogleSheetsParser.js';
+import HU from '../../Core/HttpUtilities.js';
+const { ajax } = HU;
+import U from '../../Core/Utilities.js';
 const { merge } = U;
 
 /* *

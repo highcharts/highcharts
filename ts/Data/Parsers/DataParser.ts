@@ -1,12 +1,15 @@
 /* *
  *
- *  Data module
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
+ *  - Sebastian Bochan
+ *  - Gøran Slettemark
  *
  * */
 
@@ -18,6 +21,7 @@
  *
  * */
 
+import type DataConverter from '../DataConverter';
 import type DataEventEmitter from '../DataEventEmitter';
 import type JSON from '../../Core/JSON';
 

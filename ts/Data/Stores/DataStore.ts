@@ -1,12 +1,15 @@
 /* *
  *
- *  Data module
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
+ *  - Wojciech Chmiel
+ *  - Gøran Slettemark
  *
  * */
 
@@ -44,6 +47,7 @@ const {
  * @private
  */
 abstract class DataStore<TEventObject extends DataStore.Event> implements DataEventEmitter<TEventObject> {
+
     /* *
      *
      *  Static Properties
@@ -148,10 +152,10 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
     }
 
     /* *
-    *
-    *  Constructors
-    *
-    * */
+     *
+     *  Constructor
+     *
+     * */
 
     /**
      * Constructor for the store class.
@@ -171,10 +175,10 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
     }
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     /**
      * The DataParser responsible for handling converting the provided data to
