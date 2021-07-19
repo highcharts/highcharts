@@ -26,6 +26,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FontMetricsObject from '../../Core/Renderer/FontMetricsObject';
 import type FormatUtilities from '../../Core/FormatUtilities';
+import type LegendItemObject from '../../Core/Legend/LegendItemObject';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -760,7 +761,7 @@ class BubbleLegendItem {
  *
  * */
 
-interface BubbleLegendItem extends Highcharts.LegendItemObject {
+interface BubbleLegendItem extends LegendItemObject {
     // nothing more to add
 }
 

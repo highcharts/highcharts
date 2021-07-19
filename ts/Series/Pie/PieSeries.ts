@@ -26,7 +26,7 @@ const { getStartAndEndRadians } = CenteredSeriesMixin;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import Palette from '../../Core/Color/Palette.js';
 import PiePoint from './PiePoint.js';
 import Series from '../../Core/Series/Series.js';
@@ -1190,6 +1190,7 @@ class PieSeries extends Series {
 
 interface PieSeries {
     drawGraph: undefined;
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getCenter: typeof CenteredSeriesMixin['getCenter'];
     pointClass: typeof PiePoint;
 }
@@ -1201,7 +1202,7 @@ extend(PieSeries.prototype, {
 
     drawGraph: void 0,
 
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     drawTracker: ColumnSeries.prototype.drawTracker,
 

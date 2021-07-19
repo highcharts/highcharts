@@ -62,7 +62,7 @@ const {
     svg,
     win
 } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LegendSymbol from '../Legend/LegendSymbol.js';
 import Palette from '../Color/Palette.js';
 import Point from './Point.js';
 import SeriesDefaults from './SeriesDefaults.js';
@@ -4885,10 +4885,6 @@ interface Series extends SeriesLike {
     colorCounter: number;
     cropShoulder: number;
     directTouch: boolean;
-    drawLegendSymbol: (
-        Highcharts.LegendSymbolMixin['drawLineMarker']|
-        Highcharts.LegendSymbolMixin['drawRectangle']
-    );
     hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
     isCartesian: boolean;
     kdAxisArray: Array<string>;
@@ -4904,7 +4900,7 @@ extend(Series.prototype, {
     colorCounter: 0,
     cropShoulder: 1,
     directTouch: false,
-    drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
+    drawLegendSymbol: LegendSymbol.drawLineMarker,
     isCartesian: true,
     kdAxisArray: ['clientX', 'plotY'],
     // each point's x and y values are stored in this.xData and this.yData:

@@ -47,11 +47,17 @@ const {
 
 type LegendItem = (BubbleLegendItem|Series|Point);
 
-declare module '../../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         highlightedLegendItemIx?: number;
         /** @requires modules/accessibility */
         highlightLegendItem(ix: number): boolean;
+    }
+}
+
+declare module '../../Core/Legend/LegendItemObject' {
+    interface LegendItemObject {
+        a11yProxyElement?: HTMLDOMElement;
     }
 }
 
@@ -107,9 +113,6 @@ declare global {
             item: LegendItem;
             element: HTMLDOMElement;
             posElement: SVGElement;
-        }
-        interface LegendItemObject {
-            a11yProxyElement?: HTMLDOMElement;
         }
     }
 }
