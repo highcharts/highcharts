@@ -15,7 +15,7 @@
  * */
 
 import type AxisType from '../../../Core/Axis/AxisType';
-import type Chart from '../../../Core/Chart/Chart';
+import Chart from '../../../Core/Chart/Chart.js';
 import type IndicatorLike from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type RequireIndicatorsResultObject from '../RequireIndicatorsResultObject';
@@ -45,7 +45,6 @@ const {
 } = U;
 
 import './SMAComposition.js';
-import StockChart from '../../../Core/Chart/StockChart.js';
 
 /* *
  *
@@ -313,7 +312,7 @@ class SMAIndicator extends LineSeries {
         );
 
         // Only after series are linked indicator can be processed.
-        const linkedSeriesUnbiner = addEvent(StockChart, 'afterLinkSeries', function (): void {
+        const linkedSeriesUnbiner = addEvent(Chart, 'afterLinkSeries', function (): void {
             const hasEvents = !!indicator.dataEventsToUnbind.length;
 
             if (indicator.linkedParent) {
