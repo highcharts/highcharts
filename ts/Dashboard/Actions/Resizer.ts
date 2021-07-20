@@ -330,8 +330,12 @@ class Resizer {
                     ((cell.options.responsive || {})[currentRwdMode] || {}).width
                 );
 
+                // Do not convert width on the current cell and next siblings.
+                if (cell === currentCell) {
+                    break;
+                }
+
                 if (
-                    cell !== currentCell &&
                     cellContainer &&
                     !optionsWidth
                 ) {
