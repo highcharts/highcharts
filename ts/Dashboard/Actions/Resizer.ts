@@ -13,19 +13,13 @@ import U from '../../Core/Utilities.js';
 const {
     merge,
     addEvent,
-    css,
     createElement,
     fireEvent,
     removeEvent,
     pick
 } = U;
 
-import H from '../../Core/Globals.js';
 import EditMode from '../EditMode/EditMode';
-
-const {
-    hasTouch
-} = H;
 
 /**
  * Class providing a resizing functionality.
@@ -279,22 +273,21 @@ class Resizer {
      */
     public setTempWidthSiblings(): void {
         const currentCell = this.currentCell;
-        const currentRwdMode = this.editMode.rwdMode;
 
         if (currentCell) {
-            const cellOffsets = GUIElement.getOffsets(currentCell);
-            const rowLevelInfo = currentCell.row.getRowLevelInfo(cellOffsets.top);
-            const cellsSiblings = rowLevelInfo && rowLevelInfo.rowLevel.cells || [];
-            let cellContainer;
-            let cell;
-            let optionsWidth;
+            const currentRwdMode = this.editMode.rwdMode,
+                cellOffsets = GUIElement.getOffsets(currentCell),
+                rowLevelInfo = currentCell.row.getRowLevelInfo(cellOffsets.top),
+                rowLevelCells = rowLevelInfo && rowLevelInfo.rowLevel.cells || [];
 
-            for (let i = 0, iEnd = cellsSiblings.length; i < iEnd; ++i) {
-                cell = cellsSiblings[i];
-                cellContainer = cellsSiblings[i].container;
+            let cellContainer, cell, optionsWidth;
+
+            for (let i = 0, iEnd = rowLevelCells.length; i < iEnd; ++i) {
+                cell = rowLevelCells[i];
+                cellContainer = cell.container;
                 optionsWidth = pick(
-                    cell.options.width,
-                    ((cell.options.responsive || {})[currentRwdMode] || {}).width
+                    ((cell.options.responsive || {})[currentRwdMode] || {}).width,
+                    cell.options.width
                 );
 
                 // Do not convert width on the current cell and next siblings.
@@ -302,21 +295,9 @@ class Resizer {
                     break;
                 }
 
-                if (
-                    cellContainer &&
-                    !optionsWidth
-                ) {
-                    cellContainer.style.flex = (
-                        '0 0 ' +
-                        (cellContainer.offsetWidth + 'px')
-                    );
-
-                    this.tempSiblingsWidth.push(
-                        cell
-                    );
-
-                    fireEvent(this.editMode.dashboard, 'cellResize', { cell: cell });
-
+                if (cellContainer && (!optionsWidth || optionsWidth === 'auto')) {
+                    cellContainer.style.flex = '0 0 ' + cellContainer.offsetWidth + 'px';
+                    this.tempSiblingsWidth.push(cell);
                 }
             }
         }
@@ -328,17 +309,24 @@ class Resizer {
      */
     public revertSiblingsAutoWidth(): void {
         const tempSiblingsWidth = this.tempSiblingsWidth;
-        let cellContainer;
+        let cellContainer, cellResize;
         
         for (let i = 0, iEnd = tempSiblingsWidth.length; i < iEnd; ++i) {
             cellContainer = tempSiblingsWidth[i].container;
 
             if (cellContainer) {
-                cellContainer.style.flex = ('1 1 0%');
+                cellContainer.style.flex = '1 1 0%';
+                cellResize = tempSiblingsWidth[i];
             }
         }
 
         this.tempSiblingsWidth = [];
+
+        // Call cellResize dashboard event.
+        if (cellResize) {
+            fireEvent(this.editMode.dashboard, 'cellResize', { cell: cellResize });
+            fireEvent(cellResize.row, 'cellChange', { cell: cellResize, row: cellResize.row });
+        }
     }
 
     /**
@@ -388,12 +376,14 @@ class Resizer {
             if (resizer.isActive) {
                 resizer.isActive = false;
                 resizer.currentDimension = void 0;
+                resizer.revertSiblingsAutoWidth();
                 resizer.editMode.showToolbars(
                     ['row', 'cell'],
                     resizer.currentCell
                 );
-
-                resizer.revertSiblingsAutoWidth();
+                if (resizer.currentCell) {
+                    resizer.setSnapPositions(resizer.currentCell);
+                }
             }
         };
 
