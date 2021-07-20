@@ -491,7 +491,7 @@ class EditMode {
                 case 'row': {
                     if (currentCell && currentCell.row && editMode.rowToolbar) {
                         editMode.rowToolbar.isVisible = true;
-                        editMode.rowToolbar.showToolbar(currentCell && currentCell.row);
+                        editMode.rowToolbar.showToolbar(currentCell.row);
                     }
                     break;
                 }
@@ -643,13 +643,7 @@ class EditMode {
         if (this.isContextDetectionActive && this.potentialCellContext) {
             this.editCellContext = this.potentialCellContext;
 
-            if (this.cellToolbar) {
-                this.cellToolbar.showToolbar(this.editCellContext);
-            }
-
-            if (this.rowToolbar) {
-                this.rowToolbar.showToolbar(this.editCellContext.row);
-            }
+            this.showToolbars(['row', 'cell'], this.editCellContext);
 
             if (this.sidebar) {
                 this.sidebar.show(this.editCellContext);

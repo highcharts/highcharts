@@ -12,7 +12,6 @@ const {
     addEvent,
     merge,
     css,
-    objectEach,
     fireEvent,
     createElement
 } = U;
@@ -232,6 +231,9 @@ class DragDrop {
     ): void {
         this.isActive = true;
         this.editMode.hideToolbars(['cell', 'row']);
+        if (this.editMode.resizer) {
+            this.editMode.resizer.disableResizer();
+        }
         this.setMockElementPosition(e);
 
         if (context) {
@@ -300,6 +302,15 @@ class DragDrop {
                 }
 
                 dragDrop.context = void 0;
+
+                // Show toolbars and snaps.
+                if (dragDrop.editMode.editCellContext) {
+                    dragDrop.editMode.showToolbars(['row', 'cell'], dragDrop.editMode.editCellContext);
+
+                    if (dragDrop.editMode.resizer) {
+                        dragDrop.editMode.resizer.setSnapPositions(dragDrop.editMode.editCellContext);
+                    }
+                }
             } else if (dragDrop.dragEndCallback) {
                 dragDrop.dragEndCallback(dragDrop.dropContext);
                 dragDrop.dragEndCallback = void 0;
