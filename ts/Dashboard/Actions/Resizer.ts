@@ -94,19 +94,6 @@ class Resizer {
         this.addSnaps(
             this.options
         );
-
-        this.resizePointer = {
-            isVisible: false,
-            element: createElement(
-                'div',
-                { className: EditGlobals.classNames.resizePointer },
-                {},
-                editMode.dashboard.container
-            )
-        };
-
-        this.isResizerDetectionActive = false;
-        this.initEvents();
     }
 
     /* *
@@ -161,16 +148,6 @@ class Resizer {
     public isActive: boolean;
 
     /**
-     * Pending context dection flag
-     */
-    public isResizerDetectionActive: boolean;
-
-    /**
-     * Reference to pointer of current resized element
-     */
-    public resizePointer: Resizer.ResizePointer;
-
-    /**
      * Reference to start position of resizer
      */
     public startX: number;
@@ -186,16 +163,6 @@ class Resizer {
      *  Functions
      *
      * */
-
-    /**
-     * Method for initializing resizing events.
-     */
-    public initEvents(): void {
-        const resizer = this;
-
-        // Resizer events.
-        addEvent(document, 'mousemove', resizer.onDetectContext.bind(resizer));
-    }
 
     /**
      * Add Snap - create snaps and add events.
@@ -390,7 +357,6 @@ class Resizer {
         ): void {
             resizer.isActive = true;
             resizer.currentDimension = 'x';
-            resizer.deactivateResizerDetection();
             resizer.editMode.hideToolbars(['row', 'cell']);
 
             resizer.setTempWidthSiblings();
@@ -403,7 +369,6 @@ class Resizer {
         ): void {
             resizer.isActive = true;
             resizer.currentDimension = 'y';
-            resizer.deactivateResizerDetection();
             resizer.editMode.hideToolbars(['row', 'cell']);
         };
 
@@ -423,7 +388,6 @@ class Resizer {
             if (resizer.isActive) {
                 resizer.isActive = false;
                 resizer.currentDimension = void 0;
-                resizer.activateResizerDetection();
                 resizer.editMode.showToolbars(
                     ['row', 'cell'],
                     resizer.currentCell
@@ -553,86 +517,6 @@ class Resizer {
                 }
             }
         };
-    }
-
-    /**
-     * Activate resizer detection
-     *
-     */
-    public activateResizerDetection(): void {
-        this.isResizerDetectionActive = true;
-    }
-
-    /**
-     * Deactivate resizer detection
-     * 
-     */
-    public deactivateResizerDetection(): void {
-        this.isResizerDetectionActive = false;
-        this.hideResizePointer();
-    }
-
-    /**
-     * Action called when context (cell or row) is detected
-     *
-     * @param {PointerEvent} e
-     * Mouse event.
-     * 
-     */
-    public onDetectContext(e: PointerEvent): void {
-        const resizer = this,
-            offset = 50; // TODO - add it from options.
-
-        if (resizer.isResizerDetectionActive && this.currentCell) {
-            const resizeCellContextOffsets = GUIElement.getOffsets(
-                this.currentCell, resizer.editMode.dashboard.container);
-            const { width, height } = GUIElement.getDimFromOffsets(resizeCellContextOffsets);
-
-            resizer.showResizePointer(
-                resizeCellContextOffsets.left, resizeCellContextOffsets.top, width, height
-            );
-        }
-    }
-
-    /**
-     * Method for showing and positioning resize pointer.
-     *
-     * @param {number} left
-     * Resize pointer left position.
-     *
-     * @param {number} top
-     * Resize pointer top position.
-     *
-     * @param {number} width
-     * Resize pointer width.
-     *
-     * @param {number} height
-     * Resize pointer height.
-     */
-    private showResizePointer(
-        left: number,
-        top: number,
-        width: number,
-        height: number
-    ): void {
-        this.resizePointer.isVisible = true;
-        css(this.resizePointer.element, {
-            display: 'block',
-            left: left + 'px',
-            top: top + 'px',
-            height: height + 'px',
-            width: width + 'px'
-        });
-    }
-
-    /**
-     * Method for hiding resize pointer.
-     */
-    private hideResizePointer(): void {
-        if (this.resizePointer.isVisible) {
-            this.resizePointer.isVisible = false;
-            this.resizePointer.element.style.display = 'none';
-        }
     }
 }
 interface Resizer {
