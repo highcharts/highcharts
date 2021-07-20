@@ -542,7 +542,10 @@ class SankeySeries extends ColumnSeries {
                 } else {
                     for (i = 0; i < node.linksTo.length; i++) {
                         point = node.linksTo[0];
-                        if ((point.fromNode.column as any) > fromColumn) {
+                        if (
+                            (point.fromNode.column as any) > fromColumn &&
+                            point.fromNode !== node // #16080
+                        ) {
                             fromNode = point.fromNode;
                             fromColumn = (fromNode.column as any);
                         }
