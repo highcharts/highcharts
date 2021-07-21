@@ -381,11 +381,13 @@ class TimelineSeries extends LineSeries {
                     const pointDLOptions = point.options.dataLabels;
 
                     if (!series.hasRendered && pointDLOptions) {
-                        point.userDLOptions = {
-                            x: pointDLOptions.x,
-                            y: pointDLOptions.y,
-                            width: pointDLOptions.width
-                        };
+                        point.userDLOptions = {};
+                        ['x', 'y', 'width'].forEach((prop): void => {
+                            if (prop in pointDLOptions) {
+                                (point.userDLOptions as any)[prop] =
+                                    (pointDLOptions as any)[prop];
+                            }
+                        });
                     }
 
                     const newOptions = {
