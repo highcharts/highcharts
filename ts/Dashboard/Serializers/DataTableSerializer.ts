@@ -45,7 +45,7 @@ const DataTableSerializer: Serializable<DataTable, DataTableSerializer.JSON> = {
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {Serializable.JSON} json
+ * @param {DataTableSerializer.JSON} json
  * JSON to deserialize as a class instance or object.
  *
  * @return {DataTable}
@@ -116,7 +116,7 @@ function jsonSupportFor(
  * @param {DataTable} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {DataTableJSON}
+ * @return {DataTableSerializer.JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
@@ -185,10 +185,10 @@ function toJSON(
 namespace DataTableSerializer {
 
     /* *
-    *
-    *  Declarations
-    *
-    * */
+     *
+     *  Declarations
+     *
+     * */
 
     export type ColumnJSON = CoreJSON.Array<(JSON|CoreJSON.Primitive)>;
 
