@@ -66,7 +66,12 @@ declare global {
             ): HTMLDOMElement;
             public addCloseBtn(): void;
             public addColsContainer(container: HTMLDOMElement): Record<string, HTMLDOMElement>;
-            public addInput(option: string, type: string, parentDiv: HTMLDOMElement, value: string): void;
+            public addInput(
+                option: string,
+                type: string,
+                parentDiv: HTMLDOMElement,
+                inputAttributes: InputAttributes
+            ): void;
             public closePopup(): void;
             public deselectAll(): void;
             public getFields(parentDiv: HTMLDOMElement, type: string): PopupFieldsObject;
@@ -125,6 +130,7 @@ declare global {
                 rhsColWrapper: HTMLDOMElement
             ): void;
             addIndicatorList(this: Popup, chart: AnnotationChart, parentDiv: HTMLDOMElement, listType: string): void;
+            addSearchBox(this: Popup, chart: AnnotationChart, parentDiv: HTMLDOMElement): void;
             addParamInputs(
                 this: Popup,
                 chart: AnnotationChart,
@@ -151,6 +157,10 @@ declare global {
             init(this: Popup, chart: AnnotationChart): void;
             selectTab(this: Popup, tab: Element, index: number): void;
             switchTabs(this: Popup, disableTab: number): void;
+        }
+        interface InputAttributes {
+            value: string|number;
+            type: string;
         }
     }
 }
@@ -290,7 +300,11 @@ H.Popup.prototype = {
      * Default value of input i.e period value is 14, extracted from
      * defaultOptions (ADD mode) or series options (EDIT mode)
      */
-    addInput: function (option: string, type: string, parentDiv: HTMLDOMElement, value: string): void {
+    addInput: function (
+        option: string, type: string,
+        parentDiv: HTMLDOMElement,
+        inputAttributes: Highcharts.InputAttributes
+    ): void {
         const optionParamList = option.split('.'),
             optionName = optionParamList[optionParamList.length - 1],
             lang = this.lang,
@@ -310,14 +324,13 @@ H.Popup.prototype = {
         }
 
         // add input
-        if (value !== '') {
-
+        if (inputAttributes) {
             createElement(
                 INPUT,
                 {
                     name: inputName,
-                    value: value[0],
-                    type: value[1],
+                    value: inputAttributes.value as any,
+                    type: inputAttributes.type,
                     className: PREFIX + 'popup-field'
                 },
                 void 0,
@@ -796,13 +809,17 @@ H.Popup.prototype = {
 
             // ADD tab
             this.addColsContainer(tabsContainers[0] as any);
+            indicators.addSearchBox.call(
+                this,
+                chart,
+                tabsContainers[0] as any
+            );
             indicators.addIndicatorList.call(
                 this,
                 chart,
                 tabsContainers[0] as any,
                 'add'
             );
-
             buttonParentDiv = tabsContainers[0]
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0];
 
@@ -931,6 +948,33 @@ H.Popup.prototype = {
             if (indicatorList.childNodes.length > 0) {
                 (indicatorList.childNodes[0] as any).click();
             }
+        },
+        /**
+         * Add searchbox.
+         * @private
+         */
+        addSearchBox: function (
+            this: Highcharts.Popup,
+            chart: Highcharts.AnnotationChart,
+            parentDiv: HTMLDOMElement
+        ): void {
+            // Main parrent.
+            const lhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-lhs-col')[0],
+                options = 'type.searchIndicators',
+                inputAttributes = {
+                    value: '',
+                    type: 'text'
+                },
+                clearFilterText = this.lang.clearFilter;
+
+            const handleResetInput = function (): void {
+            };
+
+            // Add input field with the label.
+            this.addInput(options, INPUT, lhsCol as any, inputAttributes);
+
+            // Add button to reset the input.
+            const button = this.addButton(lhsCol as any, clearFilterText, 'button', handleResetInput, lhsCol as any);
         },
         /**
          * Extract full name and type of requested indicator.
@@ -1173,7 +1217,7 @@ H.Popup.prototype = {
                             parentFullName,
                             type,
                             parentDiv,
-                            ''
+                            '' as any
                         );
                         addParamInputs.call(
                             _self,
@@ -1192,7 +1236,10 @@ H.Popup.prototype = {
                             parentFullName,
                             type,
                             parentDiv,
-                            [value, 'text'] as any // all inputs are text type
+                            {
+                                value: value,
+                                type: 'text'
+                            } // all inputs are text type
                         );
                     }
                 }

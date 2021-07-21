@@ -31,6 +31,7 @@ export interface HTMLAttributes {
     name?: string;
     onclick?: any;
     onload?: any;
+    placeholder?: string;
     scope?: string;
     textContent?: string;
     title?: string;
