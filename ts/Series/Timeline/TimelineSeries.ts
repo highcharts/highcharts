@@ -374,35 +374,14 @@ class TimelineSeries extends LineSeries {
 
         if (dataLabelsOptions) {
             const distance = dataLabelsOptions.distance || 0;
-            const alternate = dataLabelsOptions.alternate;
 
             series.points.forEach((point): void => {
-                if (point.visible && !point.isNull) {
-                    const pointDLOptions = point.options.dataLabels;
-
-                    if (!series.hasRendered && pointDLOptions) {
-                        point.userDLOptions = {};
-                        ['x', 'y', 'width'].forEach((prop): void => {
-                            if (prop in pointDLOptions) {
-                                (point.userDLOptions as any)[prop] =
-                                    (pointDLOptions as any)[prop];
-                            }
-                        });
-                    }
-
-                    const newOptions = {
-                        [series.chart.inverted ? 'x' : 'y']:
-                            alternate && visibilityIndex % 2 ?
-                                -distance : distance
-                    };
-
-                    point.options.dataLabels = merge(
-                        pointDLOptions,
-                        newOptions,
-                        point.userDLOptions
-                    );
-                    visibilityIndex++;
-                }
+                point.options.dataLabels = merge({
+                    [series.chart.inverted ? 'x' : 'y']:
+                        dataLabelsOptions.alternate && visibilityIndex % 2 ?
+                            -distance : distance
+                }, point.userDLOptions);
+                visibilityIndex++;
             });
         }
     }
