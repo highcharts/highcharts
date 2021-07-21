@@ -20,9 +20,9 @@
  * */
 
 import type CoreJSON from '../../Core/JSON';
+import type Serializable from '../Serializable';
 
 import DataTable from '../../Data/DataTable.js';
-import Serializable from '../Serializable.js';
 
 /* *
  *

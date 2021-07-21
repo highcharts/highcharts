@@ -24,7 +24,7 @@ import type DataStore from '../../Data/Stores/DataStore';
 import type Serializable from '../Serializable';
 
 import DataTableSerializer from './DataTableSerializer.js';
-import HTMLTableStore from '../../Data/Stores/HTMLTableStore.js';
+import GoogleSheetsStore from '../../Data/Stores/GoogleSheetsStore.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -34,7 +34,7 @@ const { merge } = U;
  *
  * */
 
-const HTMLTableStoreSerializer: Serializable<HTMLTableStore, HTMLTableStoreSerializer.JSON> = {
+const GoogleSheetsStoreSerializer: Serializable<GoogleSheetsStore, GoogleSheetsStoreSerializer.JSON> = {
     fromJSON,
     jsonSupportFor,
     toJSON
@@ -49,17 +49,20 @@ const HTMLTableStoreSerializer: Serializable<HTMLTableStore, HTMLTableStoreSeria
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {HTMLTableStoreSerializer.JSON} json
+ * @param {GoogleSheetsStoreSerializer.JSON} json
  * JSON to deserialize as a class instance or object.
  *
- * @return {HTMLTableStore}
+ * @return {GoogleSheetsStore}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: HTMLTableStoreSerializer.JSON
-): HTMLTableStore {
+    json: GoogleSheetsStoreSerializer.JSON
+): GoogleSheetsStore {
     const table = DataTableSerializer.fromJSON(json.table),
-        store = new HTMLTableStore(table, json.options);
+        store = new GoogleSheetsStore(
+            table,
+            json.options || { googleSpreadsheetKey: '' }
+        );
 
     merge(true, store.metadata, json.metadata);
 
@@ -78,47 +81,28 @@ function fromJSON(
  */
 function jsonSupportFor(
     obj: AnyRecord
-): obj is HTMLTableStore {
-    return obj instanceof HTMLTableStore;
+): obj is GoogleSheetsStore {
+    return obj instanceof GoogleSheetsStore;
 }
 
 /**
  * Converts the given class instance to JSON.
  *
- * @param {HTMLTableStore} obj
+ * @param {GoogleSheetsStore} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {HTMLTableStoreSerializer.JSON}
+ * @return {GoogleSheetsStoreSerializer.JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
-    obj?: HTMLTableStore
-): HTMLTableStoreSerializer.JSON {
-    const json: HTMLTableStoreSerializer.JSON = {
-        $class: 'Data.HTMLTableStore',
-        metadata: obj && obj.metadata,
+    obj?: GoogleSheetsStore
+): GoogleSheetsStoreSerializer.JSON {
+    return {
+        $class: 'Data.GoogleSheetsStore',
+        metadata: (obj && obj.metadata),
+        options: (obj && obj.options),
         table: DataTableSerializer.toJSON(obj && obj.table)
     };
-
-    if (obj) {
-        const jsonOptions: HTMLTableStoreSerializer.OptionsJSON = json.options = {},
-            options = obj.options;
-
-        jsonOptions.endColumn = options.endColumn;
-        jsonOptions.endRow = options.endRow;
-        jsonOptions.firstRowAsNames = options.firstRowAsNames;
-        jsonOptions.startColumn = options.startColumn;
-        jsonOptions.startRow = options.startRow;
-        jsonOptions.switchRowsAndColumns = options.switchRowsAndColumns;
-
-        if (typeof options.table === 'string') {
-            jsonOptions.table = options.table;
-        } else {
-            jsonOptions.table = options.table.id;
-        }
-    }
-
-    return json;
 }
 
 /* *
@@ -127,7 +111,7 @@ function toJSON(
  *
  * */
 
-namespace HTMLTableStoreSerializer {
+namespace GoogleSheetsStoreSerializer {
 
     /* *
      *
@@ -135,14 +119,18 @@ namespace HTMLTableStoreSerializer {
      *
      * */
 
-    export interface JSON extends Serializable.JSON<'Data.HTMLTableStore'> {
+    export interface JSON extends Serializable.JSON<'Data.GoogleSheetsStore'> {
         metadata?: DataStore.Metadata;
         options?: OptionsJSON;
         table: DataTableSerializer.JSON;
     }
 
     export interface OptionsJSON extends Partial<DataParser.Options> {
-        table?: string;
+        dataRefreshRate: number;
+        enablePolling: boolean;
+        firstRowAsNames: boolean;
+        googleSpreadsheetKey: GoogleSheetsStore.Options['googleSpreadsheetKey'];
+        worksheet?: number;
     }
 
 }
@@ -153,4 +141,4 @@ namespace HTMLTableStoreSerializer {
  *
  * */
 
-export default HTMLTableStoreSerializer;
+export default GoogleSheetsStoreSerializer;
