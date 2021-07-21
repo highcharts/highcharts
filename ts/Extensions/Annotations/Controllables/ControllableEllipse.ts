@@ -11,9 +11,7 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -32,9 +30,15 @@ const {
  */
 interface EllipseShapeOptions extends Highcharts.AnnotationsShapeOptions {
     angle: number;
+    referencePoints: Array<ReferencePointsOptions>;
+}
+interface ReferencePointsOptions {
+    x: number;
+    y: number;
+    xAxis: number;
+    yAxis: number;
 }
 class ControllableEllipse implements ControllableMixin.Type {
-
     /* *
      *
      *  Static Properties
@@ -83,11 +87,11 @@ class ControllableEllipse implements ControllableMixin.Type {
     public attrsFromOptions = ControllableMixin.attrsFromOptions;
     public destroy = ControllableMixin.destroy;
     public getPointsOptions = ControllableMixin.getPointsOptions;
-    public init = ControllableMixin.init;
     public linkPoints = ControllableMixin.linkPoints;
     public point = ControllableMixin.point;
     public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
+    public setControlPointsVisibility =
+    ControllableMixin.setControlPointsVisibility;
     public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
     public transform = ControllableMixin.transform;
     public transformPoint = ControllableMixin.transformPoint;
@@ -95,6 +99,7 @@ class ControllableEllipse implements ControllableMixin.Type {
     public translateShape = ControllableMixin.translateShape;
     public update = ControllableMixin.update;
     public angle: number = void 0 as any;
+    public referencePoints: Array<ReferencePointsOptions> = void 0 as any;
 
     /**
      * @type 'ellipse'
@@ -103,6 +108,12 @@ class ControllableEllipse implements ControllableMixin.Type {
 
     public translate = ControllableMixin.translateShape;
 
+
+    public init(annotation: Annotation, options: EllipseShapeOptions, index: number): void {
+        ControllableMixin.init.call(this, annotation, options, index);
+        this.savePoints();
+
+    }
     /* *
      *
      *  Functions
@@ -120,14 +131,13 @@ class ControllableEllipse implements ControllableMixin.Type {
 
     public redraw(animation?: boolean): void {
         const position = this.anchor(this.points[0]).absolutePosition;
-
         if (position) {
             this.graphic[animation ? 'animate' : 'attr']({
                 cx: position.x,
                 cy: position.y,
                 rx: this.options.rx,
                 ry: this.options.ry,
-                transform: `rotate(${this.angle})`
+                transform: `rotate(${this.angle}, ${position.x}, ${position.y})`
             });
         } else {
             this.graphic.attr({
@@ -135,9 +145,7 @@ class ControllableEllipse implements ControllableMixin.Type {
                 y: -9e9
             });
         }
-
         this.graphic.placed = Boolean(position);
-
         ControllableMixin.redraw.call(this, animation);
     }
 
@@ -166,12 +174,13 @@ class ControllableEllipse implements ControllableMixin.Type {
     public setAngle(angle: number): void {
         this.angle = angle;
     }
+    public savePoints(): void {
+    }
 }
 
 interface ControllableEllipse extends ControllableMixin.Type {
     // adds mixin property types, created during init
     options: EllipseShapeOptions;
 }
-
 
 export default ControllableEllipse;

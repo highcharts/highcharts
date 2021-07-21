@@ -185,13 +185,20 @@ class BasicAnnotation extends Annotation {
             {
                 positioner: function (
                     this: Highcharts.AnnotationControlPoint,
-                    target: Highcharts.AnnotationControllable
+                    target: ControllableEllipse
                 ): PositionObject {
                     const xy = MockPoint.pointToPixels(target.points[0]),
-                        ry: number = target.options.ry as any;
+                        ry = target.options.ry || 0;
+
                     return {
-                        x: xy.x - this.graphic.width / 2,
-                        y: xy.y - this.graphic.height / 2 - ry
+                        x:
+                            xy.x -
+                            this.graphic.width / 2 +
+                            ry * Math.sin((target.angle * Math.PI) / 180),
+                        y:
+                            xy.y -
+                            this.graphic.height / 2 -
+                            ry * Math.cos((target.angle * Math.PI) / 180)
                     };
                 },
                 events: {
@@ -203,15 +210,14 @@ class BasicAnnotation extends Annotation {
                         const translation = this.mouseMoveToTranslation(e),
                             radiusTranslation = target.chart.inverted ?
                                 translation.x :
-                                translation.y;
+                                translation.y,
+                            newValue = Math.abs(
+                                radiusTranslation *
+                                Math.cos((target.angle * Math.PI) / 180) -
+                                target.options.ry
+                            );
 
-                        target.setYRadius(
-                            Math.max(
-                                5,
-                                Math.abs(target.options.ry - radiusTranslation)
-                            )
-                        );
-
+                        target.setYRadius(newValue);
                         target.redraw(false);
                     }
                 }
@@ -219,13 +225,21 @@ class BasicAnnotation extends Annotation {
             {
                 positioner: function (
                     this: Highcharts.AnnotationControlPoint,
-                    target: Highcharts.AnnotationControllable
+                    target: ControllableEllipse
                 ): PositionObject {
                     const xy = MockPoint.pointToPixels(target.points[0]),
-                        rx = target.options.rx as number;
+                        angle = target.angle;
+
                     return {
-                        x: xy.x - this.graphic.width / 2 - rx,
-                        y: xy.y - this.graphic.height / 2
+                        x:
+                            xy.x -
+                            this.graphic.width / 2 -
+                            target.options.rx *
+                                Math.cos((angle * Math.PI) / 180),
+                        y:
+                            xy.y -
+                            this.graphic.height / 2 -
+                            target.options.rx * Math.sin((angle * Math.PI) / 180)
                     };
                 },
                 events: {
@@ -235,15 +249,18 @@ class BasicAnnotation extends Annotation {
                         target: ControllableEllipse
                     ): void {
                         const translation = this.mouseMoveToTranslation(e),
-                            radiusTranslation = target.chart.inverted ?
-                                translation.y : translation.x;
+                            plotX = target.points[0].plotX || 0,
+                            plotY = target.points[0].plotY || 0,
+                            dx = e.x - (plotX + target.chart.plotLeft),
+                            dy = e.y - (plotY + target.chart.plotTop),
+                            newR = Math.sqrt(dx * dx + dy * dy);
+                        let newAngle = (-Math.atan(dx / dy) * 180) / Math.PI - 90;
 
-                        target.setXRadius(
-                            Math.max(
-                                5,
-                                Math.abs(radiusTranslation - target.options.rx)
-                            )
-                        );
+                        if (dy < 0) {
+                            newAngle += 180;
+                        }
+                        target.setXRadius(newR);
+                        target.setAngle(newAngle);
                         target.redraw(false);
                     }
                 }
