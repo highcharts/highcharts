@@ -1602,27 +1602,30 @@ addEvent(Chart, 'render', function (): void {
 
                     if (buttonNode) {
                         if (value.noDataState === 'normal') {
-                            buttonNode.forEach(function (button): void {
+                            for (let i = 0; i < buttonNode.length; i++) {
+                                const button = buttonNode[i];
                                 // If button has noDataState: 'normal',
                                 // and has disabledClassName,
                                 // remove this className.
                                 if (button.className.indexOf(disabledClassName) !== -1) {
                                     button.classList.remove(disabledClassName);
                                 }
-                            });
+                            }
                         } else if (!buttonsEnabled) {
-                            buttonNode.forEach(function (button): void {
+                            for (let i = 0; i < buttonNode.length; i++) {
+                                const button = buttonNode[i];
                                 if (button.className.indexOf(disabledClassName) === -1) {
                                     button.className += ' ' + disabledClassName;
                                 }
-                            });
+                            }
                         } else {
-                            buttonNode.forEach(function (button): void {
+                            for (let i = 0; i < buttonNode.length; i++) {
+                                const button = buttonNode[i];
                                 // Enable all buttons by deleting the className.
                                 if (button.className.indexOf(disabledClassName) !== -1) {
                                     button.classList.remove(disabledClassName);
                                 }
-                            });
+                            }
                         }
                     }
                 }
