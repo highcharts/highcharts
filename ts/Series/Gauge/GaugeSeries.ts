@@ -625,6 +625,8 @@ interface GaugeSeries {
     drawGraph(): void;
     fixedBox: boolean;
     forceDL: boolean;
+    noSharedTooltip: boolean;
+    noSplitTooltip: boolean;
     pointClass: typeof GaugePoint;
 }
 

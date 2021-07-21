@@ -1400,15 +1400,21 @@ class Tooltip {
             // hovering over another series where split tooltip should not
             // be used, destroy the label in order to create ordinary one.
             // #13868
-            if (tooltip.split && point.series.noSplitTooltip && tooltip.tt && tooltip.label) {
+            if (tooltip.split &&
+                point.series.noSplitTooltip &&
+                tooltip.tt &&
+                tooltip.label
+            ) {
                 tooltip.label = tooltip.label.destroy();
                 tooltip.tt = tooltip.tt.destroy();
                 this.cleanSplit();
             }
             // When previously tooltip was generated for noSplitTooltip series
             // and now split one should be rendered, destroy the label.
-            if (tooltip.split && !point.series.noSplitTooltip &&
-                !(tooltip.tt || !tooltip.options.headerFormat) && tooltip.label
+            if (tooltip.split &&
+                !point.series.noSplitTooltip &&
+                !(tooltip.tt || !tooltip.options.headerFormat) &&
+                tooltip.label
             ) {
                 tooltip.label = tooltip.label.destroy();
             }

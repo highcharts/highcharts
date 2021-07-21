@@ -670,6 +670,8 @@ interface NetworkgraphSeries {
     layout: Highcharts.NetworkgraphLayout;
     nodeLookup: Highcharts.NodesSeries['nodeLookup'];
     nodes: Array<NetworkgraphPoint>;
+    noSharedTooltip: boolean;
+    noSplitTooltip: boolean;
     onMouseDown: Highcharts.DragNodesMixin['onMouseDown'];
     onMouseMove: Highcharts.DragNodesMixin['onMouseMove'];
     onMouseUp: Highcharts.DragNodesMixin['onMouseUp'];

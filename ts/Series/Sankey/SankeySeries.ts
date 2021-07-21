@@ -1149,6 +1149,8 @@ interface SankeySeries extends Highcharts.NodesSeries {
     init(chart: Chart, options: SankeySeriesOptions): void;
     invertible: boolean;
     isCartesian: boolean;
+    noSharedTooltip: boolean;
+    noSplitTooltip: boolean;
     orderNodes: boolean;
     pointArrayMap: Array<string>;
     pointClass: typeof SankeyPoint;

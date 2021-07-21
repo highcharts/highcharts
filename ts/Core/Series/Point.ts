@@ -1670,7 +1670,9 @@ class Point {
                     }
                 }
 
-                if (!chart.styledMode && stateMarkerGraphic && point.state !== 'inactive') {
+                if (!chart.styledMode && stateMarkerGraphic &&
+                    point.state !== 'inactive'
+                ) {
                     stateMarkerGraphic.attr(series.pointAttribs(point, state));
                 }
             }
