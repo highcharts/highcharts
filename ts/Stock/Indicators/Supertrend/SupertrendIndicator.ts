@@ -195,7 +195,7 @@ class SupertrendIndicator extends SMAIndicator {
         const indicator = this;
 
         // Only after series are linked add some additional logic/properties.
-        addEvent(StockChart, 'afterLinkSeries', function (): void {
+        const unbinder = addEvent(StockChart, 'afterLinkSeries', function (): void {
             // Protection for a case where the indicator is being updated,
             // for a brief moment the indicator is deleted.
             if (indicator.options) {
@@ -210,6 +210,7 @@ class SupertrendIndicator extends SMAIndicator {
                     ((options.params as any).period - 1)
                 );
             }
+            unbinder();
         }, {
             order: 1
         });
