@@ -15,7 +15,6 @@
  * */
 
 import type AxisType from '../../../Core/Axis/AxisType';
-import Chart from '../../../Core/Chart/Chart.js';
 import type IndicatorLike from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type RequireIndicatorsResultObject from '../RequireIndicatorsResultObject';
@@ -26,6 +25,7 @@ import type {
 } from './SMAOptions';
 import type SMAPoint from './SMAPoint';
 
+import Chart from '../../../Core/Chart/Chart.js';
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {

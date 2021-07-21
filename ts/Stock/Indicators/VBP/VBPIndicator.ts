@@ -220,7 +220,7 @@ class VBPIndicator extends SMAIndicator {
         H.seriesTypes.sma.prototype.init.apply(indicator, arguments);
 
         // Only after series are linked add some additional logic/properties.
-        addEvent(StockChart, 'afterLinkSeries', function (): void {
+        const unbinder = addEvent(StockChart, 'afterLinkSeries', function (): void {
             // Protection for a case where the indicator is being updated,
             // for a brief moment the indicator is deleted.
             if (indicator.options) {
@@ -231,6 +231,7 @@ class VBPIndicator extends SMAIndicator {
                 indicator.addCustomEvents(baseSeries, volumeSeries);
 
             }
+            unbinder();
         }, {
             order: 1
         });
