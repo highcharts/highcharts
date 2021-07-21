@@ -368,35 +368,41 @@ class TimelineSeries extends LineSeries {
     }
 
     public distributeDL(): void {
-        let series = this,
-            dataLabelsOptions: TimelineDataLabelOptions = series.options.dataLabels as any,
-            options,
-            pointDLOptions,
-            newOptions: TimelineDataLabelOptions = {} as any,
-            visibilityIndex = 1,
-            distance: number = dataLabelsOptions.distance as any;
+        const series = this,
+            dataLabelsOptions = series.options.dataLabels;
+        let visibilityIndex = 1;
 
-        series.points.forEach(function (point): void {
-            if (point.visible && !point.isNull) {
-                options = point.options;
-                pointDLOptions = point.options.dataLabels;
+        if (dataLabelsOptions) {
+            const distance = dataLabelsOptions.distance || 0;
+            const alternate = dataLabelsOptions.alternate;
 
-                if (!series.hasRendered) {
-                    point.userDLOptions =
-                        merge(
-                            {} as TimelineDataLabelContextObject,
-                            pointDLOptions
-                        );
+            series.points.forEach((point): void => {
+                if (point.visible && !point.isNull) {
+                    const pointDLOptions = point.options.dataLabels;
+
+                    if (!series.hasRendered && pointDLOptions) {
+                        point.userDLOptions = {
+                            x: pointDLOptions.x,
+                            y: pointDLOptions.y,
+                            width: pointDLOptions.width
+                        };
+                    }
+
+                    const newOptions = {
+                        [series.chart.inverted ? 'x' : 'y']:
+                            alternate && visibilityIndex % 2 ?
+                                -distance : distance
+                    };
+
+                    point.options.dataLabels = merge(
+                        pointDLOptions,
+                        newOptions,
+                        point.userDLOptions
+                    );
+                    visibilityIndex++;
                 }
-
-                newOptions[series.chart.inverted ? 'x' : 'y'] =
-                    dataLabelsOptions.alternate && visibilityIndex % 2 ?
-                        -distance : distance;
-
-                options.dataLabels = merge(newOptions, point.userDLOptions);
-                visibilityIndex++;
-            }
-        });
+            });
+        }
     }
 
     public generatePoints(): void {
