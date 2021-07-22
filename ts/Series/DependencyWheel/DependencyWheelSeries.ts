@@ -35,7 +35,8 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    merge
+    merge,
+    pick
 } = U;
 
 /* *
@@ -152,7 +153,7 @@ class DependencyWheelSeries extends SankeySeries {
             this,
             id
         ) as DependencyWheelPoint;
-        node.index = this.nodes.length - 1;
+        node.index = pick(node.index, this.nodes.length - 1);
 
         /**
          * Return the sum of incoming and outgoing links.

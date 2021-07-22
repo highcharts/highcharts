@@ -978,7 +978,9 @@ class Point {
         function update(): void {
 
             point.applyOptions(options);
-            point.resolveColor();
+            if (!series.options.colorByPoint) {
+                point.resolveColor();
+            }
 
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
@@ -1009,19 +1011,21 @@ class Point {
                 }
             }
 
-            // record changes in the parallel arrays
-            i = point.index as any;
-            series.updateParallelArrays(point, i);
+            if (!(point as any).isNode) { // #11712
+                // record changes in the parallel arrays
+                i = point.index as any;
+                series.updateParallelArrays(point, i);
 
-            // Record the options to options.data. If the old or the new config
-            // is an object, use point options, otherwise use raw options
-            // (#4701, #4916).
-            (seriesOptions.data as any)[i] = (
-                isObject((seriesOptions.data as any)[i], true) ||
-                    isObject(options, true)
-            ) ?
-                point.options :
-                pick(options, (seriesOptions.data as any)[i]);
+                // Record the options to options.data. If the old or the new
+                // config is an object, use point options, otherwise use raw
+                // options (#4701, #4916).
+                (seriesOptions.data as any)[i] = (
+                    isObject((seriesOptions.data as any)[i], true) ||
+                        isObject(options, true)
+                ) ?
+                    point.options :
+                    pick(options, (seriesOptions.data as any)[i]);
+            }
 
             // redraw
             series.isDirty = series.isDirtyData = true;

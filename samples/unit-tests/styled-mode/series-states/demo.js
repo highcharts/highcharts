@@ -47,4 +47,18 @@ QUnit.test('Inactive state and styledMode', function (assert) {
         'Series should not have inactive state class, ' +
             'when points within inherit state'
     );
+
+    chart.series[0].nodes[0].update({});
+    assert.strictEqual(
+        chart.series[0].nodes[0].index,
+        0,
+        '#11712: Node index should be correct after update'
+    );
+
+    chart.series[0].nodes[2].update({});
+    assert.strictEqual(
+        chart.series[0].points.length,
+        2,
+        '#11712: There should still only be 2 points after updating 3rd node'
+    );
 });
