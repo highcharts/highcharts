@@ -61,8 +61,8 @@ declare global {
                 parentDiv: HTMLDOMElement,
                 label: string,
                 type: string,
-                callback: Function,
-                fieldsDiv: HTMLDOMElement
+                fieldsDiv: HTMLDOMElement,
+                callback?: Function
             ): HTMLDOMElement;
             public addCloseBtn(): void;
             public addColsContainer(container: HTMLDOMElement): Record<string, HTMLDOMElement>;
@@ -71,7 +71,7 @@ declare global {
                 type: string,
                 parentDiv: HTMLDOMElement,
                 inputAttributes: InputAttributes
-            ): void;
+            ): HTMLDOMElement;
             public closePopup(): void;
             public deselectAll(): void;
             public getFields(parentDiv: HTMLDOMElement, type: string): PopupFieldsObject;
@@ -84,6 +84,9 @@ declare global {
                 callback: Function
             ): void;
             public showPopup(): void;
+        }
+        interface FilteredSeries {
+            [key: string]: Series;
         }
         interface PopupAnnotationsObject {
             addForm(
@@ -129,7 +132,13 @@ declare global {
                 seriesType: string,
                 rhsColWrapper: HTMLDOMElement
             ): void;
-            addIndicatorList(this: Popup, chart: AnnotationChart, parentDiv: HTMLDOMElement, listType: string): void;
+            addIndicatorList(
+                this: Popup,
+                chart: AnnotationChart,
+                parentDiv: HTMLDOMElement,
+                listType: string,
+                filter?: string
+            ): void;
             addSearchBox(this: Popup, chart: AnnotationChart, parentDiv: HTMLDOMElement): void;
             addParamInputs(
                 this: Popup,
@@ -139,6 +148,8 @@ declare global {
                 type: string,
                 parentDiv: HTMLDOMElement
             ): void;
+            filterSeries(series: SeriesTypePlotOptions, filter?: string): SeriesTypePlotOptions;
+            sortSeries(series: any): any;
             getAmount(this: Chart): number;
             getNameType(series: SMAIndicator, type: string): Record<string, string>;
             listAllSeries(
@@ -304,11 +315,12 @@ H.Popup.prototype = {
         option: string, type: string,
         parentDiv: HTMLDOMElement,
         inputAttributes: Highcharts.InputAttributes
-    ): void {
+    ): HTMLDOMElement {
         const optionParamList = option.split('.'),
             optionName = optionParamList[optionParamList.length - 1],
             lang = this.lang,
             inputName = PREFIX + type + '-' + optionName;
+        let input;
 
         if (!inputName.match(indexFilter)) {
             // add label
@@ -324,19 +336,19 @@ H.Popup.prototype = {
         }
 
         // add input
-        if (inputAttributes) {
-            createElement(
-                INPUT,
-                {
-                    name: inputName,
-                    value: inputAttributes.value as any,
-                    type: inputAttributes.type,
-                    className: PREFIX + 'popup-field'
-                },
-                void 0,
-                parentDiv
-            ).setAttribute(PREFIX + 'data-name', option);
-        }
+        input = createElement(
+            INPUT,
+            {
+                name: inputName,
+                value: inputAttributes.value as any,
+                type: inputAttributes.type,
+                className: PREFIX + 'popup-field'
+            },
+            void 0,
+            parentDiv
+        );
+        input.setAttribute(PREFIX + 'data-name', option);
+        return input;
     },
     /**
      * Create button.
@@ -358,8 +370,8 @@ H.Popup.prototype = {
         parentDiv: HTMLDOMElement,
         label: string,
         type: string,
-        callback: Function,
-        fieldsDiv: HTMLDOMElement
+        fieldsDiv: HTMLDOMElement,
+        callback?: Function
     ): HTMLDOMElement {
         let _self = this,
             closePopup = this.closePopup,
@@ -369,15 +381,17 @@ H.Popup.prototype = {
         button = createElement(BUTTON, void 0, void 0, parentDiv);
         button.appendChild(doc.createTextNode(label));
 
-        ['click', 'touchstart'].forEach(function (eventName: string): void {
-            addEvent(button, eventName, function (): void {
-                closePopup.call(_self);
+        if (callback) {
+            ['click', 'touchstart'].forEach(function (eventName: string): void {
+                addEvent(button, eventName, function (): void {
+                    closePopup.call(_self);
 
-                return callback(
-                    getFields(fieldsDiv, type)
-                );
+                    return callback(
+                        getFields(fieldsDiv, type)
+                    );
+                });
             });
-        });
+        }
 
         return button;
     },
@@ -573,8 +587,8 @@ H.Popup.prototype = {
                 popupDiv,
                 lang.removeButton || 'remove',
                 'remove',
-                callback,
-                popupDiv
+                popupDiv,
+                callback
             );
 
             button.className += ' ' + PREFIX + 'annotation-remove-button';
@@ -585,6 +599,7 @@ H.Popup.prototype = {
                 popupDiv,
                 lang.editButton || 'edit',
                 'edit',
+                popupDiv,
                 function (): void {
                     showForm.call(
                         _self,
@@ -593,8 +608,7 @@ H.Popup.prototype = {
                         options,
                         callback
                     );
-                },
-                popupDiv
+                }
             );
 
             button.className += ' ' + PREFIX + 'annotation-edit-button';
@@ -666,8 +680,8 @@ H.Popup.prototype = {
                     (lang.addButton || 'add') :
                     (lang.saveButton || 'save'),
                 isInit ? 'add' : 'save',
-                callback,
-                popupDiv
+                popupDiv,
+                callback
             );
         },
         /**
@@ -827,8 +841,8 @@ H.Popup.prototype = {
                 buttonParentDiv as any,
                 lang.addButton || 'add',
                 'add',
-                callback,
-                buttonParentDiv as any
+                buttonParentDiv as any,
+                callback
             );
 
             // EDIT tab
@@ -847,16 +861,61 @@ H.Popup.prototype = {
                 buttonParentDiv as any,
                 lang.saveButton || 'save',
                 'edit',
-                callback,
-                buttonParentDiv as any
+                buttonParentDiv as any,
+                callback
             );
             this.addButton(
                 buttonParentDiv as any,
                 lang.removeButton || 'remove',
                 'remove',
-                callback,
-                buttonParentDiv as any
+                buttonParentDiv as any,
+                callback
             );
+        },
+        /**
+         * Sort the series in the object.
+         * @private
+         */
+        sortSeries: function (series: Highcharts.FilteredSeries): Highcharts.FilteredSeries {
+            let sorted: Highcharts.FilteredSeries = {},
+                array = [],
+                key;
+
+            for (key in series) {
+                if (Object.prototype.hasOwnProperty.call(series, key)) {
+                    array.push(key);
+                }
+            }
+
+            array.sort();
+
+            for (key = 0; key < array.length; key++) {
+                sorted[array[key]] = series[array[key]];
+            }
+            return sorted;
+        },
+        /**
+         * Create an array of filtered and sorted series based on the filter.
+         * @private
+         */
+        filterSeries: function (series: Highcharts.FilteredSeries, filter?: string): Highcharts.FilteredSeries {
+            let filteredSeries = {} as Highcharts.FilteredSeries;
+
+            if (filter) {
+                objectEach(series, function (
+                    series: Series,
+                    value: string
+                ): void {
+                    const filterLength = filter.length,
+                        slicedValue = value.slice(0, filterLength);
+                    if (slicedValue === filter) {
+                        filteredSeries[value] = series;
+                    }
+                });
+                return this.sortSeries(filteredSeries);
+            }
+            // First iteration when filter doesn't exist.
+            return this.sortSeries(series);
         },
         /**
          * Create HTML list of all indicators (ADD mode) or added indicators
@@ -867,51 +926,78 @@ H.Popup.prototype = {
             this: Highcharts.Popup,
             chart: Highcharts.AnnotationChart,
             parentDiv: HTMLDOMElement,
-            listType: string
+            listType: string,
+            filter?: string
         ): void {
-            let _self = this,
-                lhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-lhs-col')[0],
-                rhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0],
+            const popup = this,
+                indicators = popup.indicators,
+                lhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-lhs-col')[0] as HTMLElement,
+                rhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0] as HTMLElement,
                 isEdit = listType === 'edit',
-                series = (
+                addFormFields = this.indicators.addFormFields;
+            let series = (
                     isEdit ?
                         chart.series : // EDIT mode
                         chart.options.plotOptions // ADD mode
                 ),
-                addFormFields = this.indicators.addFormFields,
+
                 rhsColWrapper: Element,
                 indicatorList: HTMLDOMElement,
-                item: HTMLDOMElement;
+                item: HTMLDOMElement,
+                filteredSeries: Series[] | SeriesTypePlotOptions | undefined | Highcharts.FilteredSeries;
 
-            if (!chart) {
+            if (!chart && series) {
                 return;
             }
 
-            // create wrapper for list
-            indicatorList = createElement(UL, {
-                className: PREFIX + 'indicator-list'
-            }, null as any, lhsCol as any);
+            // Filter and sort the series.
+            if (!isEdit && series && !isArray(series)) {
+                // Apply filters only for the 'add' indicator list.
+                filteredSeries = indicators.filterSeries(series, filter);
+            } else {
+                filteredSeries = series;
+            }
+
+            // If the list exists remove it from the DOM
+            // in order to create a new one with different filters.
+            if (lhsCol.children[3]) {
+                lhsCol.children[3].remove();
+            }
+
+            // Create wrapper for list.
+            indicatorList = createElement(
+                UL,
+                {
+                    className: PREFIX + 'indicator-list'
+                },
+                void 0,
+                lhsCol
+            );
 
             rhsColWrapper = rhsCol
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0];
 
-            objectEach(series, function (
-                serie: (Series|SeriesTypePlotOptions),
+            objectEach(filteredSeries, function (
+                series: (Series|SeriesTypePlotOptions),
                 value: string
             ): void {
-                const seriesOptions = serie.options;
+                const seriesOptions = series.options;
 
                 if (
-                    (serie as any).params ||
+                    (series as any).params ||
                     seriesOptions && (seriesOptions as any).params
                 ) {
-
-                    const indicatorNameType = _self.indicators.getNameType(serie as any, value),
+                    const indicatorNameType = popup.indicators.getNameType(series as any, value),
                         indicatorType = indicatorNameType.type;
 
-                    item = createElement(LI, {
-                        className: PREFIX + 'indicator-list'
-                    }, void 0, indicatorList);
+                    item = createElement(
+                        LI,
+                        {
+                            className: PREFIX + 'indicator-list'
+                        },
+                        void 0,
+                        indicatorList
+                    );
                     item.appendChild(doc.createTextNode(
                         indicatorNameType.name
                     ));
@@ -920,24 +1006,28 @@ H.Popup.prototype = {
                         addEvent(item, eventName, function (): void {
 
                             addFormFields.call(
-                                _self,
+                                popup,
                                 chart,
-                                isEdit ? serie : (series as any)[indicatorType],
+                                isEdit ? series : (filteredSeries as any)[indicatorType],
                                 indicatorNameType.type,
                                 rhsColWrapper as any
                             );
 
                             // add hidden input with series.id
-                            if (isEdit && serie.options) {
-                                createElement(INPUT, {
-                                    type: 'hidden',
-                                    name: PREFIX + 'id-' + indicatorType,
-                                    value: (serie as any).options.id
-                                }, null as any, rhsColWrapper as any)
-                                    .setAttribute(
-                                        PREFIX + 'data-series-id',
-                                        (serie as any).options.id
-                                    );
+                            if (isEdit && series.options) {
+                                createElement(
+                                    INPUT,
+                                    {
+                                        type: 'hidden',
+                                        name: PREFIX + 'id-' + indicatorType,
+                                        value: (series as any).options.id
+                                    },
+                                    void 0,
+                                    rhsColWrapper as any
+                                ).setAttribute(
+                                    PREFIX + 'data-series-id',
+                                    (series as any).options.id
+                                );
                             }
                         });
                     });
@@ -958,23 +1048,42 @@ H.Popup.prototype = {
             chart: Highcharts.AnnotationChart,
             parentDiv: HTMLDOMElement
         ): void {
-            // Main parrent.
-            const lhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-lhs-col')[0],
-                options = 'type.searchIndicators',
+            const popup = this,
+                lhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-lhs-col')[0] as HTMLElement,
+                options = 'type.search-indicators',
                 inputAttributes = {
                     value: '',
                     type: 'text'
                 },
                 clearFilterText = this.lang.clearFilter;
 
-            const handleResetInput = function (): void {
+            const handleInputChange = function (inputText: string): void {
+                // Apply some filters.
+                popup.indicators.addIndicatorList.call(popup, chart, popup.container, 'add', inputText);
             };
 
-            // Add input field with the label.
-            this.addInput(options, INPUT, lhsCol as any, inputAttributes);
+            // Add input field with the label and button.
+            const input = this.addInput(options, INPUT, lhsCol, inputAttributes) as HTMLInputElement,
+                button = this.addButton(lhsCol, clearFilterText, 'button', lhsCol);
 
-            // Add button to reset the input.
-            const button = this.addButton(lhsCol as any, clearFilterText, 'button', handleResetInput, lhsCol as any);
+            // Add input change events.
+            ['input'].forEach(function (eventName: string): void {
+                addEvent(input, eventName, function (): void {
+                    const inputText = this.value;
+
+                    handleInputChange(inputText);
+                });
+            });
+
+            // Add clear filter click event.
+            ['click', 'touchstart'].forEach(function (eventName: string): void {
+                addEvent(button, eventName, function (): void {
+
+                    // Clear the input.
+                    input.value = '';
+                    handleInputChange('');
+                });
+            });
         },
         /**
          * Extract full name and type of requested indicator.
