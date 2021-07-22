@@ -1,4 +1,4 @@
-describe('Stock Tools', () => {
+describe('Stock Tools annotation popup, #15725', () => {
     beforeEach(() => {
         cy.viewport(1000, 500);
     });
@@ -32,5 +32,27 @@ describe('Stock Tools', () => {
                 assert.ok(point.y > -50 && point.y < 50)
             )
         );
+    });
+});
+
+describe('Indicator popup searchbox, #16019.', () => {
+    beforeEach(() => {
+        cy.viewport(1000, 800);
+    });
+
+    before(() => {
+        cy.visit('/stock/demo/stock-tools-gui');
+    });
+
+    it('After typing `a` into the searchbox, the list should contain 7 elements.', () => {
+        cy.get('.highcharts-menu-item-btn').first().click();
+        cy.get('input[name="highcharts-input-search-indicators"]').click().type('a')
+        cy.get('.highcharts-indicator-list').should(($p) => {
+            expect($p).to.have.length(9)
+        })
+    });
+
+    it('After clicking the `clear filter` button, the list should be reseted.', () => {
+
     });
 });
