@@ -17,8 +17,6 @@
 import type Chart from '../Chart/Chart';
 import type ColorAxis from '../Axis/Color/ColorAxis';
 import type Legend from './Legend';
-import type Point from '../Series/Point';
-import type Series from '../Series/Series';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 
