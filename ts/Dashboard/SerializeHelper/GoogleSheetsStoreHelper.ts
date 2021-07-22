@@ -23,22 +23,10 @@ import type DataParser from '../../Data/Parsers/DataParser';
 import type DataStore from '../../Data/Stores/DataStore';
 import type Serializable from '../Serializable';
 
-import DataTableSerializer from './DataTableSerializer.js';
+import DataTableHelper from './DataTableHelper.js';
 import GoogleSheetsStore from '../../Data/Stores/GoogleSheetsStore.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const GoogleSheetsStoreSerializer: Serializable<GoogleSheetsStore, GoogleSheetsStoreSerializer.JSON> = {
-    fromJSON,
-    jsonSupportFor,
-    toJSON
-};
 
 /* *
  *
@@ -49,16 +37,16 @@ const GoogleSheetsStoreSerializer: Serializable<GoogleSheetsStore, GoogleSheetsS
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {GoogleSheetsStoreSerializer.JSON} json
+ * @param {GoogleSheetsStoreHelper.JSON} json
  * JSON to deserialize as a class instance or object.
  *
  * @return {GoogleSheetsStore}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: GoogleSheetsStoreSerializer.JSON
+    json: GoogleSheetsStoreHelper.JSON
 ): GoogleSheetsStore {
-    const table = DataTableSerializer.fromJSON(json.table),
+    const table = DataTableHelper.fromJSON(json.table),
         store = new GoogleSheetsStore(
             table,
             json.options || { googleSpreadsheetKey: '' }
@@ -91,17 +79,17 @@ function jsonSupportFor(
  * @param {GoogleSheetsStore} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {GoogleSheetsStoreSerializer.JSON}
+ * @return {GoogleSheetsStoreHelper.JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
-    obj?: GoogleSheetsStore
-): GoogleSheetsStoreSerializer.JSON {
+    obj: GoogleSheetsStore
+): GoogleSheetsStoreHelper.JSON {
     return {
         $class: 'Data.GoogleSheetsStore',
-        metadata: (obj && obj.metadata),
-        options: (obj && obj.options),
-        table: DataTableSerializer.toJSON(obj && obj.table)
+        metadata: obj.metadata,
+        options: obj.options,
+        table: DataTableHelper.toJSON(obj.table)
     };
 }
 
@@ -111,7 +99,7 @@ function toJSON(
  *
  * */
 
-namespace GoogleSheetsStoreSerializer {
+namespace GoogleSheetsStoreHelper {
 
     /* *
      *
@@ -120,9 +108,9 @@ namespace GoogleSheetsStoreSerializer {
      * */
 
     export interface JSON extends Serializable.JSON<'Data.GoogleSheetsStore'> {
-        metadata?: DataStore.Metadata;
-        options?: OptionsJSON;
-        table: DataTableSerializer.JSON;
+        metadata: DataStore.Metadata;
+        options: OptionsJSON;
+        table: DataTableHelper.JSON;
     }
 
     export interface OptionsJSON extends Partial<DataParser.Options> {
@@ -141,4 +129,11 @@ namespace GoogleSheetsStoreSerializer {
  *
  * */
 
-export default GoogleSheetsStoreSerializer;
+const GoogleSheetsStoreSerializer: Serializable.Helper<GoogleSheetsStore, GoogleSheetsStoreHelper.JSON> = {
+    $class: 'Data.GoogleSheetsStore',
+    fromJSON,
+    jsonSupportFor,
+    toJSON
+};
+
+export default GoogleSheetsStoreHelper;

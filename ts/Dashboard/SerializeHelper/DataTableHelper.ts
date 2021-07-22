@@ -26,18 +26,6 @@ import DataTable from '../../Data/DataTable.js';
 
 /* *
  *
- *  Constants
- *
- * */
-
-const DataTableSerializer: Serializable<DataTable, DataTableSerializer.JSON> = {
-    fromJSON,
-    jsonSupportFor,
-    toJSON
-};
-
-/* *
- *
  *  Functions
  *
  * */
@@ -45,14 +33,14 @@ const DataTableSerializer: Serializable<DataTable, DataTableSerializer.JSON> = {
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {DataTableSerializer.JSON} json
+ * @param {DataTableHelper.JSON} json
  * JSON to deserialize as a class instance or object.
  *
  * @return {DataTable}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: DataTableSerializer.JSON
+    json: DataTableHelper.JSON
 ): DataTable {
     const jsonColumns = json.columns,
         columnNames = Object.keys(jsonColumns),
@@ -65,7 +53,7 @@ function fromJSON(
         let i = 0,
             column: DataTable.Column,
             columnName: string,
-            jsonColumn: DataTableSerializer.ColumnJSON;
+            jsonColumn: DataTableHelper.ColumnJSON;
         i < iEnd;
         ++i
     ) {
@@ -75,7 +63,7 @@ function fromJSON(
         for (
             let j = 0,
                 jEnd = column.length,
-                cell: (DataTableSerializer.JSON|CoreJSON.Primitive);
+                cell: (DataTableHelper.JSON|CoreJSON.Primitive);
             j < jEnd;
             ++j
         ) {
@@ -116,59 +104,56 @@ function jsonSupportFor(
  * @param {DataTable} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {DataTableSerializer.JSON}
+ * @return {DataTableHelper.JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
-    obj?: DataTable
-): DataTableSerializer.JSON {
-    const json: DataTableSerializer.JSON = {
+    obj: DataTable
+): DataTableHelper.JSON {
+    const json: DataTableHelper.JSON = {
             $class: 'Data.DataTable',
             columns: {}
         },
         jsonColumns = json.columns;
 
-    if (obj) {
+    // serialize columns
 
-        // serialize columns
+    const columns = obj.getColumns(),
+        columnNames = Object.keys(columns),
+        iEnd = columnNames.length;
 
-        const columns = obj.getColumns(),
-            columnNames = Object.keys(columns),
-            iEnd = columnNames.length;
-
+    for (
+        let i = 0,
+            column: DataTable.Column,
+            columnName: string,
+            jsonColumn: DataTableHelper.ColumnJSON;
+        i < iEnd;
+        ++i
+    ) {
+        columnName = columnNames[i];
+        column = columns[columnName];
+        jsonColumn = [];
         for (
-            let i = 0,
-                column: DataTable.Column,
-                columnName: string,
-                jsonColumn: DataTableSerializer.ColumnJSON;
-            i < iEnd;
-            ++i
+            let j = 0,
+                jEnd = column.length,
+                cell: DataTable.CellType;
+            j < jEnd;
+            ++j
         ) {
-            columnName = columnNames[i];
-            column = columns[columnName];
-            jsonColumn = [];
-            for (
-                let j = 0,
-                    jEnd = column.length,
-                    cell: DataTable.CellType;
-                j < jEnd;
-                ++j
-            ) {
-                cell = column[j];
-                if (cell instanceof DataTable) {
-                    jsonColumn[j] = toJSON(cell);
-                } else {
-                    jsonColumn[j] = cell;
-                }
+            cell = column[j];
+            if (cell instanceof DataTable) {
+                jsonColumn[j] = toJSON(cell);
+            } else {
+                jsonColumn[j] = cell;
             }
-            jsonColumns[columnName] = jsonColumn;
         }
+        jsonColumns[columnName] = jsonColumn;
+    }
 
-        // serialize custom id
+    // serialize custom id
 
-        if (!obj.autoId) {
-            json.id = obj.id;
-        }
+    if (!obj.autoId) {
+        json.id = obj.id;
     }
 
     // done
@@ -182,7 +167,7 @@ function toJSON(
  *
  * */
 
-namespace DataTableSerializer {
+namespace DataTableHelper {
 
     /* *
      *
@@ -205,4 +190,12 @@ namespace DataTableSerializer {
  *
  * */
 
-export default DataTableSerializer;
+
+const DataTableHelper: Serializable.Helper<DataTable, DataTableHelper.JSON> = {
+    $class: 'Data.DataTable',
+    fromJSON,
+    jsonSupportFor,
+    toJSON
+};
+
+export default DataTableHelper;

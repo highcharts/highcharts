@@ -464,7 +464,7 @@ namespace Dashboard {
  *
  * */
 
-Serializable.register('Dashboard', Dashboard.prototype);
+Serializable.registerClassPrototype('Dashboard', Dashboard.prototype);
 
 /* *
  *

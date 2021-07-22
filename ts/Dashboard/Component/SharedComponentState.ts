@@ -429,7 +429,7 @@ namespace SharedComponentState {
  *
  * */
 
-Serializable.register('Dashboard.SharedComponentState', SharedComponentState.prototype);
+Serializable.registerClassPrototype('Dashboard.SharedComponentState', SharedComponentState.prototype);
 
 /* *
  *

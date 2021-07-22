@@ -22,22 +22,10 @@
 import type DataStore from '../../Data/Stores/DataStore';
 import type Serializable from '../Serializable';
 
-import DataTableSerializer from './DataTableSerializer.js';
+import DataTableHelper from './DataTableHelper.js';
 import CSVStore from '../../Data/Stores/CSVStore.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const CSVStoreSerializer: Serializable<CSVStore, CSVStoreSerializer.JSON> = {
-    fromJSON,
-    jsonSupportFor,
-    toJSON
-};
 
 /* *
  *
@@ -48,16 +36,16 @@ const CSVStoreSerializer: Serializable<CSVStore, CSVStoreSerializer.JSON> = {
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {CSVStoreSerializer.JSON} json
+ * @param {CSVStoreHelper.JSON} json
  * JSON to deserialize as a class instance or object.
  *
  * @return {CSVStore}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: CSVStoreSerializer.JSON
+    json: CSVStoreHelper.JSON
 ): CSVStore {
-    const table = DataTableSerializer.fromJSON(json.table),
+    const table = DataTableHelper.fromJSON(json.table),
         store = new CSVStore(table, json.options);
 
     merge(true, store.metadata, json.metadata);
@@ -87,17 +75,17 @@ function jsonSupportFor(
  * @param {CSVStore} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {CSVStoreSerializer.JSON}
+ * @return {CSVStoreHelper.JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
-    obj?: CSVStore
-): CSVStoreSerializer.JSON {
+    obj: CSVStore
+): CSVStoreHelper.JSON {
     return {
         $class: 'Data.CSVStore',
-        metadata: (obj && obj.metadata),
-        options: (obj && obj.options),
-        table: DataTableSerializer.toJSON(obj && obj.table)
+        metadata: (obj.metadata),
+        options: (obj.options),
+        table: DataTableHelper.toJSON(obj.table)
     };
 }
 
@@ -107,7 +95,7 @@ function toJSON(
  *
  * */
 
-namespace CSVStoreSerializer {
+namespace CSVStoreHelper {
 
     /* *
      *
@@ -116,9 +104,9 @@ namespace CSVStoreSerializer {
      * */
 
     export interface JSON extends Serializable.JSON<'Data.CSVStore'> {
-        metadata?: DataStore.Metadata;
-        options?: CSVStore.Options;
-        table: DataTableSerializer.JSON;
+        metadata: DataStore.Metadata;
+        options: CSVStore.Options;
+        table: DataTableHelper.JSON;
     }
 
 }
@@ -129,4 +117,11 @@ namespace CSVStoreSerializer {
  *
  * */
 
-export default CSVStoreSerializer;
+const CSVStoreHelper: Serializable.Helper<CSVStore, CSVStoreHelper.JSON> = {
+    $class: 'Data.CSVStore',
+    fromJSON,
+    jsonSupportFor,
+    toJSON
+};
+
+export default CSVStoreHelper;

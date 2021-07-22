@@ -23,19 +23,8 @@ import type CoreJSON from '../../Core/JSON';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 
 import ChainModifier from '../../Data/Modifiers/ChainModifier.js';
+import GroupModifierHelper from './GroupModifierHelper.js';
 import Serializable from '../Serializable.js';
-
-/* *
- *
- *  Constants
- *
- * */
-
-const ChainModifierSerializer: Serializable<ChainModifier, ChainModifierSerializer.JSON> = {
-    fromJSON,
-    jsonSupportFor,
-    toJSON
-};
 
 /* *
  *
@@ -64,12 +53,19 @@ function fromJSON(
     for (
         let i = 0,
             modifier: DataModifier,
-            modifierJSON: CoreJSON.Object;
+            modifierJSON: Serializable.JSON<string>;
         i < iEnd;
         ++i
     ) {
         modifierJSON = jsonModifiers[i];
-        modifier = Serializable.fromJSON(modifierJSON) as DataModifier;
+        switch (modifierJSON.$class) {
+            case GroupModifierHelper.$class:
+                modifier = GroupModifierHelper.fromJSON(modifierJSON as GroupModifierHelper.JSON);
+                break;
+            default:
+                modifier = Serializable.fromJSON(modifierJSON) as DataModifier;
+                break;
+        }
         modifiers.push(modifier);
     }
 
@@ -104,27 +100,34 @@ function jsonSupportFor(
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
-    obj?: ChainModifier
+    obj: ChainModifier
 ): ChainModifierSerializer.JSON {
     const json: ChainModifierSerializer.JSON = {
         $class: 'Data.ChainModifier',
         modifiers: [],
-        options: (obj && obj.options)
+        options: obj.options
     };
 
-    if (obj) {
+    // modifiers
 
-        // modifiers
+    const jsonModifiers = json.modifiers,
+        modifiers = obj.modifiers,
+        iEnd = modifiers.length;
 
-        const jsonModifiers = json.modifiers,
-            modifiers = obj.modifiers,
-            iEnd = modifiers.length;
-
-        for (let i = 0, modifierJSON: CoreJSON.Object; i < iEnd; ++i) {
+    for (
+        let i = 0,
+            modifier: DataModifier,
+            modifierJSON: Serializable.JSON<string>;
+        i < iEnd;
+        ++i
+    ) {
+        modifier = modifiers[i];
+        if (GroupModifierHelper.jsonSupportFor(modifier)) {
+            modifierJSON = GroupModifierHelper.toJSON(modifier);
+        } else {
             modifierJSON = Serializable.toJSON(modifiers[i]);
-            jsonModifiers.push(modifierJSON);
         }
-
+        jsonModifiers.push(modifierJSON);
     }
 
     // done
@@ -147,8 +150,8 @@ namespace ChainModifierSerializer {
      * */
 
     export interface JSON extends Serializable.JSON<'Data.ChainModifier'> {
-        modifiers: CoreJSON.Array<CoreJSON.Object>;
-        options?: ChainModifier.Options;
+        modifiers: CoreJSON.Array<Serializable.JSON<string>>;
+        options: ChainModifier.Options;
     }
 
 }
@@ -158,5 +161,12 @@ namespace ChainModifierSerializer {
  *  Default Export
  *
  * */
+
+const ChainModifierSerializer: Serializable.Helper<ChainModifier, ChainModifierSerializer.JSON> = {
+    $class: 'Data.ChainModifier',
+    fromJSON,
+    jsonSupportFor,
+    toJSON
+};
 
 export default ChainModifierSerializer;

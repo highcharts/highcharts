@@ -23,22 +23,10 @@ import type DataParser from '../../Data/Parsers/DataParser';
 import type DataStore from '../../Data/Stores/DataStore';
 import type Serializable from '../Serializable';
 
-import DataTableSerializer from './DataTableSerializer.js';
+import DataTableHelper from './DataTableHelper.js';
 import HTMLTableStore from '../../Data/Stores/HTMLTableStore.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const HTMLTableStoreSerializer: Serializable<HTMLTableStore, HTMLTableStoreSerializer.JSON> = {
-    fromJSON,
-    jsonSupportFor,
-    toJSON
-};
 
 /* *
  *
@@ -49,16 +37,16 @@ const HTMLTableStoreSerializer: Serializable<HTMLTableStore, HTMLTableStoreSeria
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {HTMLTableStoreSerializer.JSON} json
+ * @param {HTMLTableStoreHelper.JSON} json
  * JSON to deserialize as a class instance or object.
  *
  * @return {HTMLTableStore}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: HTMLTableStoreSerializer.JSON
+    json: HTMLTableStoreHelper.JSON
 ): HTMLTableStore {
-    const table = DataTableSerializer.fromJSON(json.table),
+    const table = DataTableHelper.fromJSON(json.table),
         store = new HTMLTableStore(table, json.options);
 
     merge(true, store.metadata, json.metadata);
@@ -88,35 +76,37 @@ function jsonSupportFor(
  * @param {HTMLTableStore} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {HTMLTableStoreSerializer.JSON}
+ * @return {HTMLTableStoreHelper.JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
-    obj?: HTMLTableStore
-): HTMLTableStoreSerializer.JSON {
-    const json: HTMLTableStoreSerializer.JSON = {
-        $class: 'Data.HTMLTableStore',
-        metadata: obj && obj.metadata,
-        table: DataTableSerializer.toJSON(obj && obj.table)
-    };
+    obj: HTMLTableStore
+): HTMLTableStoreHelper.JSON {
+    const json: HTMLTableStoreHelper.JSON = {
+            $class: 'Data.HTMLTableStore',
+            metadata: obj.metadata,
+            options: {},
+            table: DataTableHelper.toJSON(obj.table)
+        },
+        jsonOptions: HTMLTableStoreHelper.OptionsJSON = json.options,
+        options = obj.options;
 
-    if (obj) {
-        const jsonOptions: HTMLTableStoreSerializer.OptionsJSON = json.options = {},
-            options = obj.options;
+    // options
 
-        jsonOptions.endColumn = options.endColumn;
-        jsonOptions.endRow = options.endRow;
-        jsonOptions.firstRowAsNames = options.firstRowAsNames;
-        jsonOptions.startColumn = options.startColumn;
-        jsonOptions.startRow = options.startRow;
-        jsonOptions.switchRowsAndColumns = options.switchRowsAndColumns;
+    jsonOptions.endColumn = options.endColumn;
+    jsonOptions.endRow = options.endRow;
+    jsonOptions.firstRowAsNames = options.firstRowAsNames;
+    jsonOptions.startColumn = options.startColumn;
+    jsonOptions.startRow = options.startRow;
+    jsonOptions.switchRowsAndColumns = options.switchRowsAndColumns;
 
-        if (typeof options.table === 'string') {
-            jsonOptions.table = options.table;
-        } else {
-            jsonOptions.table = options.table.id;
-        }
+    if (typeof options.table === 'string') {
+        jsonOptions.table = options.table;
+    } else {
+        jsonOptions.table = options.table.id;
     }
+
+    // done
 
     return json;
 }
@@ -127,7 +117,7 @@ function toJSON(
  *
  * */
 
-namespace HTMLTableStoreSerializer {
+namespace HTMLTableStoreHelper {
 
     /* *
      *
@@ -136,9 +126,9 @@ namespace HTMLTableStoreSerializer {
      * */
 
     export interface JSON extends Serializable.JSON<'Data.HTMLTableStore'> {
-        metadata?: DataStore.Metadata;
-        options?: OptionsJSON;
-        table: DataTableSerializer.JSON;
+        metadata: DataStore.Metadata;
+        options: OptionsJSON;
+        table: DataTableHelper.JSON;
     }
 
     export interface OptionsJSON extends Partial<DataParser.Options> {
@@ -153,4 +143,11 @@ namespace HTMLTableStoreSerializer {
  *
  * */
 
-export default HTMLTableStoreSerializer;
+const HTMLTableStoreHelper: Serializable.Helper<HTMLTableStore, HTMLTableStoreHelper.JSON> = {
+    $class: 'Data.HTMLTableStore',
+    fromJSON,
+    jsonSupportFor,
+    toJSON
+};
+
+export default HTMLTableStoreHelper;
