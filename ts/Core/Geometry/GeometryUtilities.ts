@@ -1,5 +1,9 @@
 /* *
  *
+ *  (c) 2010-2021 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
@@ -42,15 +46,11 @@ namespace GeometryUtilities {
     export function getCenterOfPoints(
         points: Array<PositionObject>
     ): PositionObject {
-        const sum = points.reduce(
-            (sum, point): PositionObject => {
-                sum.x += point.x;
-                sum.y += point.y;
-                return sum;
-            },
-            { x: 0, y: 0 }
-        );
-
+        const sum = points.reduce((sum, point): PositionObject => {
+            sum.x += point.x;
+            sum.y += point.y;
+            return sum;
+        }, { x: 0, y: 0 } as PositionObject);
         return {
             x: sum.x / points.length,
             y: sum.y / points.length

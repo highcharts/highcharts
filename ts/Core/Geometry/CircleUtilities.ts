@@ -1,5 +1,9 @@
 /* *
  *
+ *  (c) 2010-2021 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
@@ -53,7 +57,6 @@ namespace CircleUtilities {
      */
     export function round(x: number, decimals: number): number {
         const a = Math.pow(10, decimals);
-
         return Math.round(x * a) / a;
     }
 
@@ -208,32 +211,21 @@ namespace CircleUtilities {
     export function getCirclesIntersectionPoints(
         circles: Array<CircleObject>
     ): Array<GeometryObject> {
-        return circles.reduce(
-            function (points, c1, i, arr): Array<GeometryObject> {
-                const additional = arr
-                    .slice(i + 1)
-                    .reduce(
-                        function (points, c2, j, arr): Array<GeometryObject> {
-                            const indexes: [number, number] = [i, j + i + 1];
+        return circles.reduce((points, c1, i, arr): Array<GeometryObject> => {
+            const additional = arr
+                .slice(i + 1)
+                .reduce((points, c2, j, arr): Array<GeometryObject> => {
+                    const indexes: [number, number] = [i, j + i + 1];
+                    return points.concat(getCircleCircleIntersection(c1, c2).map((
+                        p: GeometryObject
+                    ): GeometryObject => {
+                        p.indexes = indexes;
+                        return p;
+                    }));
+                }, [] as Array<GeometryObject>);
 
-                            return points.concat(
-                                getCircleCircleIntersection(c1, c2).map(
-                                    function (
-                                        p: GeometryObject
-                                    ): GeometryObject {
-                                        p.indexes = indexes;
-                                        return p;
-                                    }
-                                )
-                            );
-                        },
-                        [] as Array<GeometryObject>
-                    );
-
-                return points.concat(additional);
-            },
-            [] as Array<GeometryObject>
-        );
+            return points.concat(additional);
+        }, [] as Array<GeometryObject>);
     }
 
     /**
