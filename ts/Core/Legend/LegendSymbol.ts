@@ -88,18 +88,18 @@ namespace LegendSymbol {
         legend: Legend
     ): void {
 
-        let options = this.options,
-            markerOptions = options.marker,
-            radius,
-            legendSymbol,
+        const options = this.options,
             symbolWidth = legend.symbolWidth,
             symbolHeight = legend.symbolHeight,
             generalRadius = symbolHeight / 2,
             renderer = this.chart.renderer,
             legendItemGroup = this.legendGroup,
             verticalCenter = (legend.baseline as any) -
-                Math.round((legend.fontMetrics as any).b * 0.3),
-            attr: SVGAttributes = {};
+                Math.round((legend.fontMetrics as any).b * 0.3);
+
+        let attr: SVGAttributes = {},
+            legendSymbol,
+            markerOptions = options.marker;
 
         // Draw the line
         if (!this.chart.styledMode) {
@@ -124,7 +124,7 @@ namespace LegendSymbol {
         if (markerOptions && markerOptions.enabled !== false && symbolWidth) {
 
             // Do not allow the marker to be larger than the symbolHeight
-            radius = Math.min(
+            let radius = Math.min(
                 pick(markerOptions.radius, generalRadius),
                 generalRadius
             );
