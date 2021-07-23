@@ -57,6 +57,16 @@ declare global {
     }
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const BoostDefaults: Highcharts.BoostOptions = {};
+
+export default BoostDefaults;
+
 /**
  * Options for the Boost module. The Boost module allows certain series types
  * to be rendered by WebGL instead of the default SVG. This allows hundreds of
@@ -277,4 +287,4 @@ declare global {
  * @apioption  plotOptions.series.boostBlending
  */
 
-''; // adds doclets above to transpiled file
+''; // keeps doclets above in JS file

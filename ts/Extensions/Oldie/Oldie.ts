@@ -2202,15 +2202,3 @@ SVGRenderer.prototype.measureSpanWidth = function (
     discardElement(measuringSpan); // #2463
     return offsetWidth;
 };
-
-/* *
- *
- *  Registry
- *
- * */
-
-declare module '../../Core/Renderer/RendererType' {
-    interface RendererTypeRegistry {
-        VMLRenderer: typeof VMLRenderer;
-    }
-}

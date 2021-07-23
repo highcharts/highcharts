@@ -92,8 +92,8 @@ const registerEventOptions = (
  *
  * */
 
-const exports = {
+const Foundation = {
     registerEventOptions
 };
 
-export default exports;
+export default Foundation;

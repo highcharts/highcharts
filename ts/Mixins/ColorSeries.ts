@@ -149,9 +149,9 @@ const colorSeriesMixin: Highcharts.ColorSeriesMixin = {
 
 };
 
-const exports = {
+const ColorSeries = {
     colorPointMixin,
     colorSeriesMixin
 };
 
-export default exports;
+export default ColorSeries;

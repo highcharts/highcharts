@@ -25,6 +25,7 @@ import type {
 } from '../Core/Series/PointOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
+import BoostDefaults from './Boost/BoostDefaults.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -326,7 +327,7 @@ const initCanvasBoost = function (): void {
                 chart = series.chart,
                 xAxis = this.xAxis,
                 yAxis = this.yAxis,
-                activeBoostSettings = chart.options.boost || {},
+                activeBoostSettings = chart.options.boost || BoostDefaults,
                 boostSettings = {
                     timeRendering: activeBoostSettings.timeRendering || false,
                     timeSeriesProcessing:

@@ -151,9 +151,9 @@ const colorMapSeriesMixin = {
     }
 };
 
-const exports = {
+const ColorMapSeries = {
     colorMapPointMixin,
     colorMapSeriesMixin
 };
 
-export default exports;
+export default ColorMapSeries;
