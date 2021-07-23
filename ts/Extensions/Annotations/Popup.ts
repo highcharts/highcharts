@@ -88,6 +88,10 @@ declare global {
         interface FilteredSeries {
             [key: string]: Series;
         }
+        interface IndicatorNameCouple {
+            indicatorFullName: string;
+            indicatorType: string;
+        }
         interface PopupAnnotationsObject {
             addForm(
                 this: Popup,
@@ -128,7 +132,7 @@ declare global {
             addFormFields(
                 this: Popup,
                 chart: AnnotationChart,
-                series: SMAIndicator,
+                series: Series,
                 seriesType: string,
                 rhsColWrapper: HTMLDOMElement
             ): void;
@@ -148,10 +152,11 @@ declare global {
                 type: string,
                 parentDiv: HTMLDOMElement
             ): void;
-            filterSeries(series: SeriesTypePlotOptions, filter?: string): SeriesTypePlotOptions;
+            filterSeries(series: SeriesTypePlotOptions, filter?: string): [[string, string, Series]];
+            filterSeriesArray(series: Array<Series>): [[string, string, Series]];
             sortSeries(series: any): any;
             getAmount(this: Chart): number;
-            getNameType(series: SMAIndicator, type: string): Record<string, string>;
+            getNameType(series: Series, type: string): IndicatorNameCouple;
             listAllSeries(
                 this: Popup,
                 type: string,
@@ -872,55 +877,116 @@ H.Popup.prototype = {
                 callback
             );
         },
+
         /**
-         * Sort the series in the object.
+         * Filter object of series which are not indicators.
+         * If the filter string exists, check against it.
+         *
          * @private
+         *
+         * @param {Highcharts.FilteredSeries} series
+         *        All series are available in the plotOptions.
+         *
+         * @param {string|undefined} filter
+         *        Applied filter string from the input.
+         *        For the first iteration, it's an empty string.
+         *
+         * @return {void}
          */
-        sortSeries: function (series: Highcharts.FilteredSeries): Highcharts.FilteredSeries {
-            let sorted: Highcharts.FilteredSeries = {},
-                array = [],
-                key;
+        filterSeries: function (
+            this: Highcharts.Popup,
+            series: Highcharts.FilteredSeries,
+            filter?: string
+        ): [[string, string, Series]] {
+            const popup = this,
+                indicators = popup.indicators;
+            let filteredSeries: [[string, string, Series]] = [] as any;
 
-            for (key in series) {
-                if (Object.prototype.hasOwnProperty.call(series, key)) {
-                    array.push(key);
-                }
-            }
+            objectEach(series, function (
+                series: Series,
+                value: string
+            ): void {
+                const seriesOptions = series.options;
+                // Allow only indicators.
+                if ((series as any).params || seriesOptions && (seriesOptions as any).params) {
+                    const { indicatorFullName, indicatorType } = indicators.getNameType(series, value);
 
-            array.sort();
-
-            for (key = 0; key < array.length; key++) {
-                sorted[array[key]] = series[array[key]];
-            }
-            return sorted;
-        },
-        /**
-         * Create an array of filtered and sorted series based on the filter.
-         * @private
-         */
-        filterSeries: function (series: Highcharts.FilteredSeries, filter?: string): Highcharts.FilteredSeries {
-            let filteredSeries = {} as Highcharts.FilteredSeries;
-
-            if (filter) {
-                objectEach(series, function (
-                    series: Series,
-                    value: string
-                ): void {
-                    const filterLength = filter.length,
-                        slicedValue = value.slice(0, filterLength);
-                    if (slicedValue === filter) {
-                        filteredSeries[value] = series;
+                    if (filter) {
+                        const filterLength = filter.length,
+                            slicedValue = indicatorFullName.slice(0, filterLength);
+                        if (slicedValue.toLocaleLowerCase() === filter.toLocaleLowerCase()) {
+                            filteredSeries.push([indicatorFullName, indicatorType, series]);
+                        }
+                    } else {
+                        filteredSeries.push([indicatorFullName, indicatorType, series]);
                     }
-                });
-                return this.sortSeries(filteredSeries);
-            }
-            // First iteration when filter doesn't exist.
-            return this.sortSeries(series);
+                }
+            });
+
+            // Sort indicators alphabeticaly.
+            return filteredSeries.sort(function (a, b): number {
+                const seriesAName = a[0].toLowerCase(),
+                    seriesBName = b[0].toLowerCase();
+                return (seriesAName < seriesBName) ? -1 : (seriesAName > seriesBName) ? 1 : 0;
+            });
         },
+
+        /**
+         * Filter an array of series and map its names and types.
+         *
+         * @private
+         *
+         * @param {Highcharts.FilteredSeries} series
+         *        All series are available in the plotOptions.
+         *
+         * @return {void}
+         */
+        filterSeriesArray: function (
+            this: Highcharts.Popup,
+            series: Array<Series>
+        ): [[string, string, Series]] {
+            let filteredSeries: [[string, string, Series]] = [] as any;
+
+            // Allow only indicators.
+            series.forEach(function (series): void {
+                const seriesOptions = series.options;
+
+                if ((series as any).params || seriesOptions && (seriesOptions as any).params) {
+                    filteredSeries.push([series.name, series.type, series]);
+                }
+            });
+
+            return filteredSeries.sort(function (a, b): number {
+                const seriesAName = a[0].toLowerCase(),
+                    seriesBName = b[0].toLowerCase();
+                return (seriesAName < seriesBName) ? -1 : (seriesAName > seriesBName) ? 1 : 0;
+            });
+        },
+
         /**
          * Create HTML list of all indicators (ADD mode) or added indicators
          * (EDIT mode).
+         *
          * @private
+         *
+         * @param {Highcharts.AnnotationChart} chart
+         *        The chart object.
+         *
+         * @param {string} [optionName]
+         *        Name of the option into which selection is being added.
+         *
+         * @param {HTMLDOMElement} [parentDiv]
+         *        HTML parent element.
+         *
+         * @param {string} listType
+         *        Type of list depending on the selected bookmark.
+         *        Might be 'add' or 'edit'.
+         *
+         * @param {string|undefined} filter
+         *        Applied filter string from the input.
+         *        For the first iteration, it's an empty string.
+         *
+         * @return {void}
          */
         addIndicatorList: function (
             this: Highcharts.Popup,
@@ -934,17 +1000,17 @@ H.Popup.prototype = {
                 lhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-lhs-col')[0] as HTMLElement,
                 rhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0] as HTMLElement,
                 isEdit = listType === 'edit',
-                addFormFields = this.indicators.addFormFields;
-            let series = (
+                addFormFields = this.indicators.addFormFields,
+                series = (
                     isEdit ?
                         chart.series : // EDIT mode
                         chart.options.plotOptions // ADD mode
-                ),
+                );
 
-                rhsColWrapper: Element,
+            let rhsColWrapper: HTMLElement,
                 indicatorList: HTMLDOMElement,
                 item: HTMLDOMElement,
-                filteredSeries: Series[] | SeriesTypePlotOptions | undefined | Highcharts.FilteredSeries;
+                filteredSeries: Highcharts.FilteredSeries | any;
 
             if (!chart && series) {
                 return;
@@ -953,9 +1019,9 @@ H.Popup.prototype = {
             // Filter and sort the series.
             if (!isEdit && series && !isArray(series)) {
                 // Apply filters only for the 'add' indicator list.
-                filteredSeries = indicators.filterSeries(series, filter);
-            } else {
-                filteredSeries = series;
+                filteredSeries = indicators.filterSeries.call(this, series, filter);
+            } else if (series && isArray(series)) {
+                filteredSeries = indicators.filterSeriesArray.call(this, series);
             }
 
             // If the list exists remove it from the DOM
@@ -975,63 +1041,54 @@ H.Popup.prototype = {
             );
 
             rhsColWrapper = rhsCol
-                .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0];
+                .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0] as HTMLElement;
 
-            objectEach(filteredSeries, function (
-                series: (Series|SeriesTypePlotOptions),
-                value: string
-            ): void {
-                const seriesOptions = series.options;
+            filteredSeries.forEach(function (seriesSet: [string, string, Series]): void {
+                const indicatorFullName = seriesSet[0],
+                    indicatorType = seriesSet[1],
+                    series = seriesSet[2];
 
-                if (
-                    (series as any).params ||
-                    seriesOptions && (seriesOptions as any).params
-                ) {
-                    const indicatorNameType = popup.indicators.getNameType(series as any, value),
-                        indicatorType = indicatorNameType.type;
+                item = createElement(
+                    LI,
+                    {
+                        className: PREFIX + 'indicator-list'
+                    },
+                    void 0,
+                    indicatorList
+                );
+                item.appendChild(doc.createTextNode(
+                    indicatorFullName
+                ));
 
-                    item = createElement(
-                        LI,
-                        {
-                            className: PREFIX + 'indicator-list'
-                        },
-                        void 0,
-                        indicatorList
-                    );
-                    item.appendChild(doc.createTextNode(
-                        indicatorNameType.name
-                    ));
+                ['click', 'touchstart'].forEach(function (eventName: string): void {
+                    addEvent(item, eventName, function (): void {
 
-                    ['click', 'touchstart'].forEach(function (eventName: string): void {
-                        addEvent(item, eventName, function (): void {
+                        addFormFields.call(
+                            popup,
+                            chart,
+                            series,
+                            indicatorType,
+                            rhsColWrapper
+                        );
 
-                            addFormFields.call(
-                                popup,
-                                chart,
-                                isEdit ? series : (filteredSeries as any)[indicatorType],
-                                indicatorNameType.type,
-                                rhsColWrapper as any
+                        // add hidden input with series.id
+                        if (isEdit && series.options) {
+                            createElement(
+                                INPUT,
+                                {
+                                    type: 'hidden',
+                                    name: PREFIX + 'id-' + indicatorType,
+                                    value: series.options.id
+                                },
+                                void 0,
+                                rhsColWrapper
+                            ).setAttribute(
+                                PREFIX + 'data-series-id',
+                                (series as any).options.id
                             );
-
-                            // add hidden input with series.id
-                            if (isEdit && series.options) {
-                                createElement(
-                                    INPUT,
-                                    {
-                                        type: 'hidden',
-                                        name: PREFIX + 'id-' + indicatorType,
-                                        value: (series as any).options.id
-                                    },
-                                    void 0,
-                                    rhsColWrapper as any
-                                ).setAttribute(
-                                    PREFIX + 'data-series-id',
-                                    (series as any).options.id
-                                );
-                            }
-                        });
+                        }
                     });
-                }
+                });
             });
 
             // select first item from the list
@@ -1039,9 +1096,19 @@ H.Popup.prototype = {
                 (indicatorList.childNodes[0] as any).click();
             }
         },
+
         /**
-         * Add searchbox.
+         * Add selection HTML element and its' label.
+         *
          * @private
+         *
+         * @param {Highcharts.AnnotationChart} chart
+         *        The chart object.
+         *
+         * @param {HTMLDOMElement} [parentDiv]
+         *        HTML parent element.
+         *
+         * @return {HTMLSelectElement}
          */
         addSearchBox: function (
             this: Highcharts.Popup,
@@ -1085,25 +1152,32 @@ H.Popup.prototype = {
                 });
             });
         },
+
         /**
          * Extract full name and type of requested indicator.
+         *
          * @private
+         *
          * @param {Highcharts.Series} series
-         * Series which name is needed. (EDIT mode - defaultOptions.series, ADD
-         * mode - indicator series).
-         * @param {string} - indicator type like: sma, ema, etc.
-         * @return {Object} - series name and type like: sma, ema, etc.
+         *        Series which name is needed(EDITmode - defaultOptions.series,
+         *        ADDmode - indicator series).
+         *
+         * @param {string} [IndicatorType]
+         *        Type of the indicator i.e. sma, ema...
+         *
+         * @return {Highcharts.IndicatorNameCouple}
+         *        Full name and series type.
          */
         getNameType: function (
-            series: SMAIndicator,
-            type: string
-        ): Record<string, string> {
-            let options = series.options,
-                seriesTypes = H.seriesTypes,
-                // add mode
-                seriesName = seriesTypes[type] &&
-                    (seriesTypes[type].prototype as any).nameBase || type.toUpperCase(),
-                seriesType = type;
+            series: Series,
+            indicatorType: string
+        ): Highcharts.IndicatorNameCouple {
+            const options = series.options,
+                seriesTypes = H.seriesTypes;
+            // add mode
+            let seriesName = seriesTypes[indicatorType] &&
+                    (seriesTypes[indicatorType].prototype as SMAIndicator).nameBase || indicatorType.toUpperCase(),
+                seriesType = indicatorType;
 
             // edit
             if (options && options.type) {
@@ -1112,8 +1186,8 @@ H.Popup.prototype = {
             }
 
             return {
-                name: seriesName,
-                type: seriesType
+                indicatorFullName: seriesName,
+                indicatorType: seriesType
             };
         },
         /**
@@ -1236,7 +1310,7 @@ H.Popup.prototype = {
                 void 0,
                 rhsColWrapper
             ).appendChild(
-                doc.createTextNode(getNameType(series, seriesType).name)
+                doc.createTextNode(getNameType(series, seriesType).indicatorFullName)
             );
 
             // input type
