@@ -37,7 +37,6 @@ import palette from './Color/Palette.js';
 import RendererRegistry from './Renderer/RendererRegistry.js';
 import U from './Utilities.js';
 const {
-    addEvent,
     clamp,
     css,
     defined,
@@ -524,18 +523,12 @@ class Tooltip {
             onMouseEnter = function (): void {
                 tooltip.inContact = true;
             },
-            onMouseLeave = function (e: MouseEvent): void {
+            onMouseLeave = function (): void {
                 const series = tooltip.chart.hoverSeries;
 
-                // #14143: tooltip.options.useHTML
-                tooltip.inContact = tooltip.shouldStickOnContact() &&
-                    tooltip.chart.pointer.inClass(
-                        e.relatedTarget as any,
-                        'highcharts-tooltip'
-                    );
+                tooltip.inContact = false;
 
                 if (
-                    !tooltip.inContact &&
                     series &&
                     series.onMouseOut
                 ) {
@@ -571,9 +564,6 @@ class Tooltip {
                         (chartStyle && chartStyle.zIndex || 0) + 3
                     )
                 });
-
-                addEvent(container, 'mouseenter', onMouseEnter);
-                addEvent(container, 'mouseleave', onMouseLeave);
 
                 H.doc.body.appendChild(container);
 

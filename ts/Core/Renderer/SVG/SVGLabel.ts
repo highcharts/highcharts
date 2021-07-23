@@ -316,6 +316,8 @@ class SVGLabel extends SVGElement {
                     e.relatedTarget instanceof Element &&
                     (
                         // #14110
+                        label.element === e.relatedTarget ||
+                        span.element === e.relatedTarget ||
                         label.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY ||
                         span.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY
                     )
