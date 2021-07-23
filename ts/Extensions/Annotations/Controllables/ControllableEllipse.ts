@@ -11,6 +11,7 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
+import Axis from '../../../Core/Axis/Axis';
 const { merge } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -32,11 +33,16 @@ interface EllipseShapeOptions extends Highcharts.AnnotationsShapeOptions {
     angle: number;
     referencePoints: Array<ReferencePointsOptions>;
 }
+interface EllispseShapeSVGOptions {
+    cx: number;
+    cy: number;
+    rx: number;
+    ry: number;
+    angle: number;
+}
 interface ReferencePointsOptions {
     x: number;
     y: number;
-    xAxis: number;
-    yAxis: number;
 }
 class ControllableEllipse implements ControllableMixin.Type {
     /* *
@@ -96,7 +102,6 @@ class ControllableEllipse implements ControllableMixin.Type {
     public transform = ControllableMixin.transform;
     public transformPoint = ControllableMixin.transformPoint;
     public translatePoint = ControllableMixin.translatePoint;
-    public translateShape = ControllableMixin.translateShape;
     public update = ControllableMixin.update;
     public angle: number = void 0 as any;
     public referencePoints: Array<ReferencePointsOptions> = void 0 as any;
@@ -108,17 +113,24 @@ class ControllableEllipse implements ControllableMixin.Type {
 
     public translate = ControllableMixin.translateShape;
 
-
-    public init(annotation: Annotation, options: EllipseShapeOptions, index: number): void {
+    public init(
+        annotation: Annotation,
+        options: EllipseShapeOptions,
+        index: number
+    ): void {
         ControllableMixin.init.call(this, annotation, options, index);
         this.savePoints();
-
     }
     /* *
      *
      *  Functions
      *
      * */
+
+    public translateShape = ControllableMixin.translateShape;
+    // (dx: number, dy: number): void{
+    //     ControllableMixin.translateShape.call(this, dx, dy);
+    // }
 
     public render(parent: SVGElement): void {
         const attrs = this.attrsFromOptions(this.options);
@@ -130,14 +142,15 @@ class ControllableEllipse implements ControllableMixin.Type {
     }
 
     public redraw(animation?: boolean): void {
-        const position = this.anchor(this.points[0]).absolutePosition;
+        const position = this.anchor(this.points[0]).absolutePosition,
+            attrs = this.getAttrsFromPoints();
         if (position) {
             this.graphic[animation ? 'animate' : 'attr']({
-                cx: position.x,
-                cy: position.y,
-                rx: this.options.rx,
-                ry: this.options.ry,
-                transform: `rotate(${this.angle}, ${position.x}, ${position.y})`
+                cx: attrs.cx,
+                cy: attrs.cy,
+                rx: attrs.rx,
+                ry: attrs.ry,
+                transform: `rotate(${attrs.angle}, ${position.x}, ${position.y})`
             });
         } else {
             this.graphic.attr({
@@ -174,7 +187,62 @@ class ControllableEllipse implements ControllableMixin.Type {
     public setAngle(angle: number): void {
         this.angle = angle;
     }
-    public savePoints(): void {
+
+    public savePoints(x?: number, y?: number, rx?: number, ry?: number): void {
+        const xAxis = this.chart.xAxis[(this.options.point as any).xAxis],
+            yAxis = this.chart.yAxis[(this.options.point as any).yAxis],
+            position = this.anchor(this.points[0]).absolutePosition;
+        x = x || position.x;
+        y = y || position.y;
+        rx = rx || this.options.rx;
+        ry = ry || this.options.ry;
+
+        const angle = this.angle,
+            pointX1 = x - rx * Math.cos((angle * Math.PI) / 180),
+            pointY1 = y - rx * Math.sin((angle * Math.PI) / 180),
+            pointX2 = x + ry * Math.sin((angle * Math.PI) / 180),
+            pointY2 = y - ry * Math.cos((angle * Math.PI) / 180),
+            points = [
+                {
+                    x: xAxis.toValue(pointX1),
+                    y: yAxis.toValue(pointY1)
+                },
+                {
+                    x: xAxis.toValue(pointX2),
+                    y: yAxis.toValue(pointY2)
+                }
+            ];
+
+        this.referencePoints = points;
+    }
+
+    public getAttrsFromPoints(): EllispseShapeSVGOptions {
+        const points = this.referencePoints,
+            position = this.anchor(this.points[0]).absolutePosition,
+            xAxis = this.chart.xAxis[(this.options.point as any).xAxis],
+            yAxis = this.chart.yAxis[(this.options.point as any).yAxis],
+            cx = position.x,
+            cy = position.y,
+            x1 = xAxis.toPixels(points[0].x),
+            x2 = xAxis.toPixels(points[1].x),
+            y1 = yAxis.toPixels(points[0].y),
+            y2 = yAxis.toPixels(points[1].y),
+            rx = Math.sqrt((cx - x1) * (cx - x1) + (cy - y1) * (cy - y1)),
+            ry = Math.sqrt((cx - x2) * (cx - x2) + (cy - y2) * (cy - y2));
+
+        let angle = (-Math.atan((cx - x1) / (cy - y1)) * 180) / Math.PI - 90;
+
+        if (cy < y1) {
+            angle += 180;
+        }
+
+        return {
+            cx,
+            cy,
+            rx,
+            ry,
+            angle
+        };
     }
 }
 
