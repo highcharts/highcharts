@@ -77,6 +77,9 @@ class PivotPointsIndicator extends SMAIndicator {
              */
             algorithm: 'standard'
         },
+        options: {
+            algorithm: ['standard', 'fibonacci', 'camarilla']
+        },
         marker: {
             enabled: false
         },
