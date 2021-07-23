@@ -31,3 +31,7 @@ Cypress.Commands.add('chart', () =>
         }
     }))
 );
+
+Cypress.Commands.add('openIndicators', () =>
+    cy.get('.highcharts-menu-item-btn').first().click()
+);

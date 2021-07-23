@@ -34,3 +34,28 @@ describe('Stock Tools', () => {
         );
     });
 });
+
+describe('Popup for the pivot point indicator and the selection box, #15497.', () => {
+    beforeEach(() => {
+        cy.viewport(1000, 800);
+    });
+
+    before(() => {
+        cy.visit('/stock/demo/stock-tools-gui');
+    });
+
+    it('Popup for the Pivot Point indicator should contain a selection box for the algorithm, #15497.', () => {
+        cy.openIndicators();
+
+        cy.get('.highcharts-indicator-list')
+            .eq(27)
+            .click(); // Pivot Point
+
+        cy.contains('label', 'Algorithm')            
+            .should('be.visible');
+
+        cy.get('select[name="highcharts-params.algorithm-type-pivotpoints"]')
+            .should('be.visible')
+            .select('fibonacci');
+    });
+});
