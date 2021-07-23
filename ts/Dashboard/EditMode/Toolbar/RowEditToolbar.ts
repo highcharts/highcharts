@@ -135,8 +135,7 @@ class RowEditToolbar extends EditToolbar {
         row: Row
     ): void {
         const toolbar = this,
-            rowCnt = row.container,
-            resizer = toolbar.editMode.resizer;
+            rowCnt = row.container;
 
         let x, y, offsetX;
 

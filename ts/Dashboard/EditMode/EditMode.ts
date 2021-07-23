@@ -97,8 +97,6 @@ class EditMode {
     private active: boolean = false;
     public options: EditMode.Options;
     public dashboard: Dashboard;
-    // public contextButtonElement?: HTMLDOMElement;
-    // public contextMenu?: EditContextMenu;
     public lang: EditGlobals.LangOptions;
     public renderer: EditRenderer;
     public cellToolbar?: CellEditToolbar;
@@ -158,20 +156,7 @@ class EditMode {
     }
 
     public initEditMode(): void {
-        const editMode = this,
-            dashboard = editMode.dashboard;
-
-        let layout;
-
-        // Init resizers.
-        // for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
-        //     layout = dashboard.layouts[i];
-
-        //     if (!layout.resizer) {
-        //         editMode.initLayoutResizer(layout);
-        //     }
-        // }
-        const guiOptions = dashboard.options.gui;
+        const editMode = this;
 
         if (
             !(editMode.options.resize &&
@@ -179,10 +164,6 @@ class EditMode {
         ) {
             editMode.resizer = new Resizer(editMode);
         }
-
-        //     editMode.resizer = Resizer.fromJSON(
-        //         editMode, guiOptions.layoutOptions.resizerJSON
-        //     );
 
         // Init dragDrop.
         if (
@@ -302,20 +283,9 @@ class EditMode {
         if (cell.nestedLayout) {
             editMode.setLayoutEvents(cell.nestedLayout);
         } else if (editMode.cellToolbar && cell.container) {
-            // const cellToolbar = editMode.cellToolbar;
-
-            // Hide cell toolbar when mouse on cell resizer.
-            // const resizedCell = (cell as Resizer.ResizedCell).resizer;
-            // if (resizedCell && resizedCell.snapX) {
-            //     addEvent(resizedCell.snapX, 'mousemove', function (e): void {
-            //         cellToolbar.hide();
-            //     });
-            // }
-
-            // Init dragDrop and resizer cell events.
+            // Init dragDrop cell events.
             if (editMode.dragDrop || editMode.resizer) {
-                const dragDrop = editMode.dragDrop,
-                    resizer = editMode.resizer;
+                const dragDrop = editMode.dragDrop;
 
                 addEvent(cell.container, 'mouseenter', function (e: PointerEvent): void {
                     if (editMode.isContextDetectionActive) {

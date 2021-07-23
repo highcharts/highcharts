@@ -54,7 +54,7 @@ class CellEditToolbar extends EditToolbar {
             icon: EditGlobals.iconsURL + 'settings.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {
-                    (this.menu.parent as CellEditToolbar).onCellOptions(e);
+                    (this.menu.parent as CellEditToolbar).onCellOptions();
                 }
             }
         },
@@ -125,8 +125,7 @@ class CellEditToolbar extends EditToolbar {
         cell: Cell
     ): void {
         const toolbar = this,
-            cellCnt = cell.container,
-            resizer = toolbar.editMode.resizer;
+            cellCnt = cell.container;
 
         let x, y;
 
@@ -167,9 +166,7 @@ class CellEditToolbar extends EditToolbar {
         }
     }
 
-    public onCellOptions(
-        e: any
-    ): void {
+    public onCellOptions(): void {
         const toolbar = this;
 
         if (toolbar.editMode.sidebar) {
@@ -187,7 +184,7 @@ class CellEditToolbar extends EditToolbar {
         }
     }
 
-    public onCellDestroy(e: any): void {
+    public onCellDestroy(): void {
         const toolbar = this;
 
         if (toolbar.cell) {

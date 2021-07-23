@@ -341,7 +341,6 @@ class Sidebar {
 
     private renderTitle(): void {
         const sidebar = this;
-        const sidebarContainer = this.container;
 
         sidebar.title = createElement(
             'div', {
@@ -830,9 +829,6 @@ class Sidebar {
         const sidebar = this;
         const activeTab = sidebar.activeTab;
         const activeTabContainer = activeTab && activeTab.content && activeTab.content.container;
-        const currentRwdMode = sidebar && sidebar.editMode.rwdMode;
-        const currentCell = this.editMode.cellToolbar && this.editMode.cellToolbar.cell;
-        const cellRwd = currentCell && (currentCell.options.responsive || {})[currentRwdMode || 'large'];
         const predefinedWidth = Sidebar.predefinedWidth;
         const item = activeTab && activeTab.content.activeItems[0];
 

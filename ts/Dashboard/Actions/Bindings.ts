@@ -13,32 +13,15 @@ import Row from '../Layout/Row.js';
 import Layout from '../Layout/Layout.js';
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     fireEvent,
-    objectEach,
     merge
 } = U;
 class Bindings {
     /* *
     *
-    *  Constructors
-    *
-    * */
-    // public constructor() {
-    // }
-
-    /* *
-    *
-    *  Properties
-    *
-    * */
-
-    /* *
-    *
     *  Functions
     *
     * */
-
     private static getGUIElement(idOrElement: string): GUIElement|undefined {
         const container = typeof idOrElement === 'string' ?
             document.getElementById(idOrElement) : idOrElement;
@@ -60,7 +43,6 @@ class Bindings {
         options: Bindings.ComponentOptions
     ): ComponentTypes | undefined {
         const compontentContainer = document.getElementById(options.cell);
-        const events = options.events;
 
         let component: ComponentTypes|undefined;
 
@@ -93,9 +75,6 @@ class Bindings {
 
             // update cell size (when component is wider, cell should adjust)
             // this.updateSize();
-            if (options && options.dimensions) {
-                Cell.setContainerSize(options.dimensions, compontentContainer);
-            }
         }
 
         // add events
@@ -110,8 +89,6 @@ class Bindings {
         json: HTMLComponent.ClassJSON|ChartComponent.ClassJSON,
         cellContainer: HTMLDOMElement|undefined
     ): ComponentTypes | undefined {
-
-        const compontentContainer = cellContainer;
         let component: HTMLComponent|ChartComponent|undefined;
 
         switch (json.$class) {
@@ -127,12 +104,8 @@ class Bindings {
 
         component?.render();
 
-
         // update cell size (when component is wider, cell should adjust)
         // this.updateSize();
-        if (json.options.dimensions && cellContainer) {
-            Cell.setContainerSize(json.options.dimensions, cellContainer);
-        }
 
         // TODO - events
 

@@ -9,7 +9,6 @@ import GUIElement from './GUIElement.js';
 import DashboardGlobals from './../DashboardGlobals.js';
 
 import U from '../../Core/Utilities.js';
-import Resizer from '../Actions/Resizer.js';
 import Cell from './Cell.js';
 
 const {
@@ -40,7 +39,6 @@ class Layout extends GUIElement {
                         parentContainerId: dashboard.container.id ||
                             options.parentContainerId,
                         rowsJSON: options.rows,
-                        resizerJSON: options.resizer,
                         style: options.style
                     }
                 );
@@ -171,8 +169,6 @@ class Layout extends GUIElement {
      * The layout options.
      */
     public options: Layout.Options;
-
-    public resizer?: Resizer;
 
     public copyId?: string;
 
@@ -381,7 +377,6 @@ class Layout extends GUIElement {
                 containerId: (layout.container as HTMLElement).id,
                 parentContainerId: dashboardContainerId,
                 rows: rows,
-                resizer: layout.resizer?.toJSON(),
                 style: layout.options.style
             }
         };
@@ -407,18 +402,14 @@ namespace Layout {
         rows?: Array<Row.Options>;
         style?: CSSJSONObject;
         rowsJSON?: Array<Row.JSON>;
-        resize?: Resizer.Options;
-        resizerJSON?: Resizer.JSON;
     }
 
     export interface OptionsJSON extends JSON.Object {
         containerId: string;
         parentContainerId: string;
         rows: Array<Row.JSON>;
-        resizer?: Resizer.JSON;
         style?: CSSJSONObject;
     }
-
 }
 
 export default Layout;

@@ -37,7 +37,6 @@ import U from '../Core/Utilities.js';
 const {
     merge,
     addEvent,
-    fireEvent,
     error,
     isString,
     objectEach,
@@ -120,6 +119,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         renderTo: (string|globalThis.HTMLElement),
         options: Dashboard.Options
     ) {
+        debugger;
         this.options = merge(Dashboard.defaultOptions, options);
         this.layouts = [];
         this.guiEnabled = (this.options.gui || {}).enabled;

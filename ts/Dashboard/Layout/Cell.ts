@@ -18,7 +18,6 @@ import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 
 const {
     merge,
-    isNumber,
     fireEvent
 } = U;
 class Cell extends GUIElement {
@@ -54,26 +53,6 @@ class Cell extends GUIElement {
         }
 
         return void 0;
-    }
-
-    public static setContainerSize(
-        dimensions: { width?: number | string; height?: number | string },
-        cellContainer: HTMLDOMElement
-    ): void {
-        // const width = dimensions.width;
-        // const height = dimensions.width;
-
-        // if (width) {
-        //     cellContainer.style.width = isNumber(width) ?
-        //         dimensions.width + 'px' : width;
-
-        //     cellContainer.style.flex = 'none';
-        // }
-
-        // if (height) {
-        //     cellContainer.style.height = isNumber(height) ?
-        //         dimensions.height + 'px' : height;
-        // }
     }
 
     /* *
@@ -272,15 +251,6 @@ class Cell extends GUIElement {
             }
         };
     }
-
-    // public setSize(
-    //     dimensions: { width?: number | string; height?: number | string }
-    // ): void {
-    //     Cell.setContainerSize(
-    //         dimensions,
-    //         this.container as HTMLDOMElement
-    //     );
-    // }
 
     protected changeVisibility(
         setVisible: boolean = true

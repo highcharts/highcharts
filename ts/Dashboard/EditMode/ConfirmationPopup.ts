@@ -3,7 +3,6 @@ import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import Popup from '../../Extensions/Annotations/Popup.js';
 import EditGlobals from './EditGlobals.js';
 import EditRenderer from './EditRenderer.js';
-import { Callbacks } from 'jquery';
 import CellEditToolbar from './Toolbar/CellEditToolbar.js';
 import RowEditToolbar from './Toolbar/RowEditToolbar.js';
 
