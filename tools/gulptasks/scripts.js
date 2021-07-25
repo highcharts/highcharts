@@ -161,8 +161,7 @@ function task() {
             gulp.series(
                 'scripts-ts',
                 'scripts-css',
-                'scripts-js',
-                'scripts-code'
+                'scripts-js'
             )(
                 function (error) {
 

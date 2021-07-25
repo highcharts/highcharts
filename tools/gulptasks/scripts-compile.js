@@ -34,16 +34,17 @@ function chunk(arr, numParts) {
 }
 
 /**
- * Compile the JS files in the /code folder
+ * Compiles `.src.js`-files (masters) of the `/code` folder.
  *
  * @return {Promise<void>}
- *         Promise to keep
+ * Promise to keep
  */
 async function task() {
     const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
 
-    const fileBatches = [];
+    const numberOfThreads = Math.max(2, os.cpus().length - 2);
+    const threads = [];
 
     if (isMainThread) {
         logLib.warn('Warning: This task may take a few minutes.');
@@ -60,13 +61,12 @@ async function task() {
                     .map(path => path.substr(SOURCE_DIRECTORY.length + 1))
         );
 
-        const numThreads = argv.numThreads ? argv.numThreads : Math.max(2, os.cpus().length - 2);
-        const batches = chunk(files, numThreads);
+        const batches = chunk(files, numberOfThreads);
 
-        logLib.message(`Splitting files to compile in ${batches.length} batches/threads..`);
+        logLib.message(`Splitting files to compile in ${batches.length} batches.`);
         logLib.message('Compiling', SOURCE_DIRECTORY + '...');
         batches.forEach((batch, index) => {
-            fileBatches.push(new Promise((resolve, reject) => {
+            threads.push(new Promise((resolve, reject) => {
 
                 const worker = new Worker(__filename, { workerData: { files: batch, batchNum: (index + 1) } });
                 worker.on('message', resolve);
@@ -81,12 +81,14 @@ async function task() {
         });
     } else {
         const compileTool = require('../compile');
-        await compileTool.compile(workerData.files, (SOURCE_DIRECTORY + '/'));
-        parentPort.postMessage({ done: true });
-
-        logLib.success(`Compilation of batch #${workerData.batchNum} complete`);
+        threads.push(
+            compileTool
+                .compile(workerData.files, (SOURCE_DIRECTORY + '/'))
+                .then(() => parentPort.postMessage({ done: true }))
+                .then(logLib.success(`Compilation of batch #${workerData.batchNum} complete`))
+        );
     }
-    return Promise.all(fileBatches);
+    return Promise.all(threads);
 }
 
 if (isMainThread) {
