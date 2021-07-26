@@ -20,9 +20,13 @@ const argv = require('yargs').argv,
  *
  * */
 
-const DEFINE_PATTERN = /(define\()(\["require", "exports")((?:, "[\/\.\w]+")*)(\], factory\);)/;
+// const DEFINE_PATTERN = /(define\()(\["require", "exports")((?:, "[\/\.\w]+")*)(\], factory\);)/;
 
 const FACTORY_HEADER = /(\}\)\(function \()(require, exports)(\) \{)/;
+
+const DEFAULT_PATTERN = /(var __importDefault =.*?)(?=\s+\(function \(factory)/;
+
+const PRODUCT_MASTERS = ['highcharts', 'highcharts-gantt', 'highmaps', 'highstock'];
 
 const REQUIRE_PATTERN = /(require\(")([\/\.\w]+)("\))/g;
 
@@ -37,78 +41,113 @@ const TARGET_FOLDER = path.join('build', 'v2');
  * */
 
 /**
+ * Creates package of required files.
+ *
  * @param {string} filePath
- * Path to file
+ * Path to file to assemble.
  *
  * @return {Promise}
  * Promise to keep.
  */
-function assemble(filePath) {
-    const fs = require('fs').promises,
-        logLib = require('./lib/log');
+function assemblePackage(filePath) {
+    const fs = require('fs').promises;
 
     return fs
         .readFile(filePath)
-        .then(fileBuffer => {
-            const amdPath = getAMDPath(filePath),
-                fileFolder = path.dirname(filePath),
-                isMaster = filePath.endsWith('.src.js');
+        .then(
+            fileBuffer => Promise.all(
+                getRequiredModules(
+                    filePath,
+                    isProductMaster(filePath)
+                ).map(modulePath => fs.readFile(
+                    path.join(TARGET_FOLDER, modulePath)
+                ))
+            ).then(moduleBuffers => fs.writeFile(
+                filePath,
+                moduleBuffers
+                    .map(moduleBuffer => moduleBuffer.toString())
+                    .map((module, i) => (
+                        i ?
+                            module.replace(DEFAULT_PATTERN, '') :
+                            module
+                    ))
+                    .join('') + fileBuffer
+            ))
+        );
+}
 
-            let file = fileBuffer.toString();
+/**
+ * Adds additional logic for classic namespace to TypeScript UMD.
+ *
+ * @param {string} filePath
+ * Path to file to clean up.
+ *
+ * @return {Promise}
+ * Promise to keep.
+ */
+function extendUMD(filePath) {
+    const fs = require('fs').promises;
 
-            file = file
-                .replace(DEFINE_PATTERN, (
-                    _match,
-                    defineOpen,
-                    moduleDefaults,
-                    modulePaths,
-                    defineClose
-                ) => {
-                    defineOpen = `${defineOpen}"${amdPath}", `;
-                    defineClose = `${defineClose}`;
-                    modulePaths = ', "highcharts"';
-                    return `${defineOpen}${moduleDefaults}${modulePaths}${defineClose}`;
-                })
-                .replace(FACTORY_HEADER, (
-                    _match,
-                    factoryOpen,
-                    factoryArguments,
-                    factoryClose
-                ) => [
-                    '    else {',
-                    (
-                        isMaster ?
-                            '        if (window.Highcharts) window.Highcharts.error(16, true);' :
-                            ''
-                    ),
-                    '        var H = window.Highcharts || (window.Highcharts = {}),',
-                    '            modules = H._modules || (H._modules = {}),',
-                    `            module = modules["${amdPath}"] || (modules["${amdPath}"] = {})`,
-                    '        if (!module) {',
-                    '            factory(function (module) { return modules[module]; }, module, H);',
-                    '        }',
-                    '    }',
-                    ''
-                ].join('\n') + [
-                    factoryOpen,
-                    factoryArguments,
-                    ', Highcharts',
-                    factoryClose
-                ].join(''))
-                .replace(REQUIRE_PATTERN, (
-                    _match,
-                    requireOpen,
-                    modulePath,
-                    requireClose
-                ) => [
-                    requireOpen,
-                    getAMDPath(path.posix.join(fileFolder, modulePath)),
-                    requireClose
-                ].join(''));
+    return fs.readFile(filePath).then(fileBuffer => {
+        const amdPath = getAMDPath(filePath);
 
-            logLib.warn('Write', filePath);
-            return fs.writeFile(filePath, file);
-        });
+        let file = fileBuffer.toString();
+
+        file = file
+
+            // .replace(DEFINE_PATTERN, (
+            //     _match,
+            //     defineOpen,
+            //     moduleDefaults,
+            //     modulePaths,
+            //     defineClose
+            // ) => {
+            //     defineOpen = `${defineOpen}"${amdPath}", `;
+            //     defineClose = `${defineClose}`;
+            //     modulePaths = ', "highcharts"';
+            //     return `${defineOpen}${moduleDefaults}${modulePaths}${defineClose}`;
+            // })
+            //
+            .replace(FACTORY_HEADER, (
+                _match,
+                factoryOpen,
+                factoryArguments,
+                factoryClose
+            ) => [
+                '    else {',
+                (
+                    isProductMaster(filePath) ?
+                        '        if (window.Highcharts) window.Highcharts.error(16, true);' :
+                        ''
+                ),
+                '        var H = window.Highcharts || (window.Highcharts = {}),',
+                '            modules = H._modules || (H._modules = {}),',
+                `            module = modules["${amdPath}"] || (modules["${amdPath}"] = {})`,
+                '        if (!module) {',
+                '            factory(function (required) { return modules[required]; }, module, H);',
+                '        }',
+                '    }',
+                ''
+            ].join('\n') + [
+                factoryOpen,
+                factoryArguments,
+                // ', Highcharts',
+                factoryClose
+            ].join(''))
+
+            .replace(REQUIRE_PATTERN, (
+                _match,
+                requireOpen,
+                modulePath,
+                requireClose
+            ) => [
+                requireOpen,
+                getAMDPath(path.posix.join(path.dirname(filePath), modulePath)),
+                requireClose
+            ].join(''));
+
+        return fs.writeFile(filePath, file);
+    });
 }
 
 /**
@@ -119,19 +158,63 @@ function assemble(filePath) {
  * AMD path.
  */
 function getAMDPath(filePath) {
-    const folder = path.relative(TARGET_FOLDER, path.dirname(filePath)),
-        fileName = path.basename(filePath),
-        isMaster = filePath.endsWith('.src.js');
+    const amdFolder = path.relative(TARGET_FOLDER, path.dirname(filePath)),
+        fileName = path.basename(filePath);
 
-    if (isMaster) {
-        return path.posix.join(
-            'highcharts',
-            folder.substr(8),
-            fileName.substr(0, fileName.indexOf('.'))
-        );
+    return path.posix.join(amdFolder, fileName);
+}
+
+/**
+ * @param {string} filePath
+ * Path to file.
+ *
+ * @param {string} recursive
+ * Whether to include indirect required modules.
+ *
+ * @return {Array<string>}
+ * Ordered array of required modules.
+ */
+function getRequiredModules(filePath, recursive) {
+    const fs = require('fs');
+
+    const file = fs
+            .readFileSync(filePath)
+            .toString(),
+        requiredModules = Array
+            .from(file.matchAll(REQUIRE_PATTERN))
+            .map(match => match[2]);
+
+    if (recursive) {
+        for (let i = 0; i < requiredModules.length; ++i) {
+            getRequiredModules(path.join(TARGET_FOLDER, requiredModules[i]), true)
+                .forEach(modulePath => {
+                    const requiredIndex = requiredModules.indexOf(modulePath);
+
+                    if (requiredIndex === -1) {
+                        requiredModules.splice(i++, 0, modulePath);
+                    } else if (requiredIndex > i) {
+                        requiredModules.splice(
+                            i,
+                            0,
+                            ...requiredModules.splice(requiredIndex, 1)
+                        );
+                    }
+                });
+        }
     }
 
-    return path.posix.join(folder, fileName);
+    return requiredModules;
+}
+
+/**
+ * @param {string} filePath
+ * File path to test.
+ *
+ * @return {boolean}
+ * Whether file is product master.
+ */
+function isProductMaster(filePath) {
+    return PRODUCT_MASTERS.includes(path.basename(filePath, '.src.js'));
 }
 
 /* *
@@ -171,7 +254,13 @@ function scriptsTSv2() {
         .resolve(processLib.isRunning('scripts-ts', true))
         .then(() => fsLib.deleteDirectory(TARGET_FOLDER, true))
         .then(() => processLib.exec(`npx tsc --project "${SOURCE_FOLDER}" --module UMD --outDir "${TARGET_FOLDER}"`))
-        .then(() => Promise.all(fsLib.getFilePaths(TARGET_FOLDER, true).map(assemble)))
+        .then(() => Promise.all(fsLib
+            .getFilePaths(TARGET_FOLDER, true)
+            .map(extendUMD)))
+        .then(() => Promise.all(fsLib
+            .getFilePaths(TARGET_FOLDER, true)
+            .filter(filePath => filePath.endsWith('highcharts.src.js'))
+            .map(assemblePackage)))
         .then(() => processLib.isRunning('scripts-ts', false))
         .catch(error => {
             processLib.isRunning('scripts-ts', false);
