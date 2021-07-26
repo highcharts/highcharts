@@ -21,7 +21,7 @@
 
 import type Serializable from '../Serializable.js';
 
-import GroupModifier from '../../Data/Modifiers/GroupModifier.js';
+import InvertModifier from '../../Data/Modifiers/InvertModifier';
 
 /* *
  *
@@ -32,16 +32,16 @@ import GroupModifier from '../../Data/Modifiers/GroupModifier.js';
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {GroupModifierHelper.JSON} json
+ * @param {ChainModifierSerializer.JSON} json
  * JSON to deserialize as a class instance or object.
  *
- * @return {GroupModifier}
+ * @return {ChainModifier}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: GroupModifierHelper.JSON
-): GroupModifier {
-    return new GroupModifier(json.options);
+    json: InvertModifierHelper.JSON
+): InvertModifier {
+    return new InvertModifier(json.options);
 }
 
 /**
@@ -56,24 +56,24 @@ function fromJSON(
  */
 function jsonSupportFor(
     obj: AnyRecord
-): obj is GroupModifier {
-    return obj instanceof GroupModifier;
+): obj is InvertModifier {
+    return obj instanceof InvertModifier;
 }
 
 /**
  * Converts the given class instance to JSON.
  *
- * @param {GroupModifier} obj
+ * @param {InvertModifier} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {GroupModifierHelper.JSON}
+ * @return {InvertModifierHelper.JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
-    obj: GroupModifier
-): GroupModifierHelper.JSON {
+    obj: InvertModifier
+): InvertModifierHelper.JSON {
     return {
-        $class: 'Data.GroupModifier',
+        $class: 'Data.InvertModifier',
         options: obj.options
     };
 }
@@ -84,7 +84,7 @@ function toJSON(
  *
  * */
 
-namespace GroupModifierHelper {
+namespace InvertModifierHelper {
 
     /* *
      *
@@ -92,8 +92,8 @@ namespace GroupModifierHelper {
      *
      * */
 
-    export interface JSON extends Serializable.JSON<'Data.GroupModifier'> {
-        options: GroupModifier.Options;
+    export interface JSON extends Serializable.JSON<'Data.InvertModifier'> {
+        options: InvertModifier.Options;
     }
 
 }
@@ -104,11 +104,11 @@ namespace GroupModifierHelper {
  *
  * */
 
-const GroupModifierHelper: Serializable.Helper<GroupModifier, GroupModifierHelper.JSON> = {
-    $class: 'Data.GroupModifier',
+const InvertModifierHelper: Serializable.Helper<InvertModifier, InvertModifierHelper.JSON> = {
+    $class: 'Data.InvertModifier',
     fromJSON,
     jsonSupportFor,
     toJSON
 };
 
-export default GroupModifierHelper;
+export default InvertModifierHelper;

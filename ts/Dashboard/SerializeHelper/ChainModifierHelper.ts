@@ -24,6 +24,7 @@ import type DataModifier from '../../Data/Modifiers/DataModifier';
 
 import ChainModifier from '../../Data/Modifiers/ChainModifier.js';
 import GroupModifierHelper from './GroupModifierHelper.js';
+import InvertModifierHelper from './InvertModifierHelper.js';
 import Serializable from '../Serializable.js';
 
 /* *
@@ -35,14 +36,14 @@ import Serializable from '../Serializable.js';
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {ChainModifierSerializer.JSON} json
+ * @param {ChainModifierHelper.JSON} json
  * JSON to deserialize as a class instance or object.
  *
  * @return {ChainModifier}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: ChainModifierSerializer.JSON
+    json: ChainModifierHelper.JSON
 ): ChainModifier {
     const jsonModifiers = json.modifiers,
         modifiers: Array<DataModifier> = [],
@@ -61,6 +62,9 @@ function fromJSON(
         switch (modifierJSON.$class) {
             case GroupModifierHelper.$class:
                 modifier = GroupModifierHelper.fromJSON(modifierJSON as GroupModifierHelper.JSON);
+                break;
+            case InvertModifierHelper.$class:
+                modifier = InvertModifierHelper.fromJSON(modifierJSON as InvertModifierHelper.JSON);
                 break;
             default:
                 modifier = Serializable.fromJSON(modifierJSON) as DataModifier;
@@ -93,16 +97,16 @@ function jsonSupportFor(
 /**
  * Converts the given class instance to JSON.
  *
- * @param {DataTable} obj
+ * @param {ChainModifier} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {DataTableJSON}
+ * @return {ChainModifierHelper.JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
     obj: ChainModifier
-): ChainModifierSerializer.JSON {
-    const json: ChainModifierSerializer.JSON = {
+): ChainModifierHelper.JSON {
+    const json: ChainModifierHelper.JSON = {
         $class: 'Data.ChainModifier',
         modifiers: [],
         options: obj.options
@@ -124,6 +128,8 @@ function toJSON(
         modifier = modifiers[i];
         if (GroupModifierHelper.jsonSupportFor(modifier)) {
             modifierJSON = GroupModifierHelper.toJSON(modifier);
+        } else if (InvertModifierHelper.jsonSupportFor(modifier)) {
+            modifierJSON = InvertModifierHelper.toJSON(modifier);
         } else {
             modifierJSON = Serializable.toJSON(modifiers[i]);
         }
@@ -141,7 +147,7 @@ function toJSON(
  *
  * */
 
-namespace ChainModifierSerializer {
+namespace ChainModifierHelper {
 
     /* *
      *
@@ -162,11 +168,11 @@ namespace ChainModifierSerializer {
  *
  * */
 
-const ChainModifierSerializer: Serializable.Helper<ChainModifier, ChainModifierSerializer.JSON> = {
+const ChainModifierHelper: Serializable.Helper<ChainModifier, ChainModifierHelper.JSON> = {
     $class: 'Data.ChainModifier',
     fromJSON,
     jsonSupportFor,
     toJSON
 };
 
-export default ChainModifierSerializer;
+export default ChainModifierHelper;
