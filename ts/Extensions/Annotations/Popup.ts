@@ -129,7 +129,8 @@ declare global {
                 optionName: string,
                 selectBox: HTMLSelectElement,
                 indicatorType?: string,
-                paramterName?: string
+                paramterName?: string,
+                selectedOption?: string
             ): HTMLSelectElement;
             addFormFields(
                 this: Popup,
@@ -151,7 +152,7 @@ declare global {
             getNameType(series: SMAIndicator, type: string): Record<string, string>;
             listAllSeries(
                 this: Popup,
-                indicatorTypepor: string,
+                indicatorType: string,
                 optionName: string,
                 chart: AnnotationChart,
                 parentDiv: HTMLDOMElement,
@@ -190,6 +191,12 @@ const indexFilter = /\d/g,
 enum DropdownProperties {
     'params.algorithm'
 }
+
+/**
+ * List of available algorithms for the pivot point indicator.
+ * @private
+ */
+const pivotPointsAlgorithm = ['standard', 'fibonacci', 'camarilla'];
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -392,35 +399,39 @@ H.Popup.prototype = {
         return button;
     },
     /**
-     * Get values from all inputs and create JSON.
+     * Get values from all inputs and selections then create JSON.
+     *
      * @private
-     * @param {Highcharts.HTMLDOMElement} - container where inputs are created
-     * @param {string} - add | edit | remove
-     * @return {Highcharts.PopupFieldsObject} - fields
+     *
+     * @param {Highcharts.HTMLDOMElement} parentDiv
+     *        The container where inputs and selections are created.
+     *
+     * @param {string} type
+     *         Type of the popup bookmark (add|edit|remove).
+     *
+     * @return {Highcharts.PopupFieldsObject}
      */
     getFields: function (
         parentDiv: HTMLDOMElement,
         type: string
     ): Highcharts.PopupFieldsObject {
-
-        let inputList = parentDiv.querySelectorAll('input'),
+        const inputList = parentDiv.querySelectorAll(INPUT),
+            selectList = parentDiv.querySelectorAll(SELECT),
             optionSeries = '#' + PREFIX + 'select-series > option:checked',
             optionVolume = '#' + PREFIX + 'select-volume > option:checked',
             linkedTo = parentDiv.querySelectorAll(optionSeries)[0],
-            volumeTo = parentDiv.querySelectorAll(optionVolume)[0],
-            seriesId,
-            param,
-            fieldsOutput: Highcharts.PopupFieldsObject;
+            volumeTo = parentDiv.querySelectorAll(optionVolume)[0];
+        let fieldsOutput: Highcharts.PopupFieldsObject;
 
         fieldsOutput = {
             actionType: type,
-            linkedTo: linkedTo && linkedTo.getAttribute('value'),
+            linkedTo: linkedTo && linkedTo.getAttribute('value') || '',
             fields: { }
-        } as any;
+        };
 
-        [].forEach.call(inputList, function (input: HTMLInputElement): void {
-            param = input.getAttribute(PREFIX + 'data-name');
-            seriesId = input.getAttribute(PREFIX + 'data-series-id');
+        inputList.forEach(function (input: HTMLInputElement): void {
+            const param = input.getAttribute(PREFIX + 'data-name'),
+                seriesId = input.getAttribute(PREFIX + 'data-series-id');
 
             // params
             if (seriesId) {
@@ -433,11 +444,22 @@ H.Popup.prototype = {
             }
         });
 
+        selectList.forEach(function (select: HTMLSelectElement): void {
+            const id = select.id;
+
+            // Get inputs only for the parameters, not for series and volume.
+            if (id !== PREFIX + 'select-series' && id !== PREFIX + 'select-volume') {
+                const parameter = select.id.split('highcharts-select-')[1];
+
+                fieldsOutput.fields[parameter] = select.value;
+            }
+        });
+
         if (volumeTo) {
-            fieldsOutput.fields['params.volumeSeriesID'] = volumeTo.getAttribute('value') as any;
+            fieldsOutput.fields['params.volumeSeriesID'] = volumeTo.getAttribute('value') || '';
         }
 
-        return fieldsOutput as any;
+        return fieldsOutput;
     },
     /**
      * Reset content of the current popup and show.
@@ -1026,8 +1048,11 @@ H.Popup.prototype = {
          * @param {string|undefined} indicatorType
          *        Type of the indicator i.e. sma, ema...
          *
-         * @param {string|undefined} indicatorType
+         * @param {string|undefined} parameterName
          *        Name of the parameter which should be applied.
+         *
+         * @param {string|undefined} selectedOption
+         *        Default value in dropdown.
          *
          * @return {void}
          */
@@ -1037,7 +1062,8 @@ H.Popup.prototype = {
             optionName: string,
             selectBox: HTMLSelectElement,
             indicatorType?: string,
-            parameterName?: string
+            parameterName?: string,
+            selectedOption?: string
         ): void {
             const popup = this;
 
@@ -1066,8 +1092,7 @@ H.Popup.prototype = {
                 });
             } else if (chart.options.plotOptions && indicatorType && parameterName) {
                 // Get and apply options for the possible parameters.
-                const indicatorOptions = (chart.options.plotOptions[indicatorType] as any).options,
-                    parameterOption = indicatorOptions && indicatorOptions[parameterName] as Array<string>;
+                const parameterOption = pivotPointsAlgorithm;
 
                 parameterOption && parameterOption.forEach(function (element): void {
                     createElement(
@@ -1079,6 +1104,11 @@ H.Popup.prototype = {
                         selectBox
                     ).appendChild(doc.createTextNode(element));
                 });
+            }
+
+            // Add the default dropdown value if defined.
+            if (defined(selectedOption)) {
+                selectBox.value = selectedOption;
             }
         },
         /**
@@ -1307,10 +1337,23 @@ H.Popup.prototype = {
                     // add the selection box for it.
                     if (parentFullName in DropdownProperties) {
                         // Add selection boxes.
-                        const selectBox = indicators.addSelection.call(popup, type, parentFullName, parentDiv);
+                        const selectBox = indicators.addSelection.call(
+                            popup,
+                            type,
+                            parentFullName,
+                            parentDiv
+                        );
 
                         // Add possible dropdown options.
-                        indicators.addSelectionOptions.call(popup, chart, parentNode, selectBox, type, fieldName);
+                        indicators.addSelectionOptions.call(
+                            popup,
+                            chart,
+                            parentNode,
+                            selectBox,
+                            type,
+                            fieldName,
+                            value as any
+                        );
                     } else if (
                         // Skip volume field which is created by addFormFields.
                         parentFullName !== 'params.volumeSeriesID'

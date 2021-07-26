@@ -33,5 +33,6 @@ Cypress.Commands.add('chart', () =>
 );
 
 Cypress.Commands.add('openIndicators', () =>
-    cy.get('.highcharts-menu-item-btn').first().click()
+    cy.get('.highcharts-indicators .highcharts-menu-item-btn')
+        .click()
 );

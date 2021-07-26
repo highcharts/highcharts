@@ -24,9 +24,6 @@ import type {
 
 export interface PivotPointsOptions extends SMAOptions {
     params?: PivotPointsParamsOptions;
-    options: {
-        algorithm: Array<string>;
-    };
 }
 
 export interface PivotPointsParamsOptions extends SMAParamsOptions {

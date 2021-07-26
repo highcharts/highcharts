@@ -57,5 +57,53 @@ describe('Popup for the pivot point indicator and the selection box, #15497.', (
         cy.get('select[name="highcharts-params.algorithm-type-pivotpoints"]')
             .should('be.visible')
             .select('fibonacci');
+        cy.get('.highcharts-popup-rhs-col')
+            .children('.highcharts-popup button')
+            .eq(0)
+            .click(); // Add indicator with fibonacci algorythm.
+    });
+
+    it('Two indicators with different algorithms should have different points, #15497.', () => {
+        cy.openIndicators();
+
+        cy.get('.highcharts-indicator-list')
+            .eq(27)
+            .click(); // Pivot Point
+
+        cy.get('.highcharts-popup-rhs-col')
+            .children('.highcharts-popup button')
+            .eq(0)
+            .click(); // Add indicator with standard algorythm.
+
+        cy.chart().should(chart =>
+            assert.notStrictEqual(
+                chart.series[2].points[0].R3,
+                chart.series[3].points[0].R3
+            )
+        );
+    });
+
+    it('Changing the algorithm to the same as the second series should result in identical points, #15497.', () => {
+        cy.openIndicators();
+
+        cy.get('.highcharts-tab-item')
+            .eq(1)
+            .click(); // Open EDIT bookmark.
+
+        cy.get('select[name="highcharts-params.algorithm-type-pivotpoints"]')
+            .should('have.value', 'fibonacci')
+            .select('standard');
+
+        cy.get('.highcharts-popup-rhs-col')
+            .children('.highcharts-popup button')
+            .eq(1)
+            .click();
+
+        cy.chart().should(chart =>
+            assert.strictEqual(
+                chart.series[2].points[0].R3,
+                chart.series[3].points[0].R3
+            )
+        );
     });
 });
