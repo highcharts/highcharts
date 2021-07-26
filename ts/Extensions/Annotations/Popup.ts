@@ -177,6 +177,7 @@ declare global {
         interface InputAttributes {
             value: string|number;
             type: string;
+            htmlFor?: string;
         }
     }
 }
@@ -303,34 +304,43 @@ H.Popup.prototype = {
             rhsCol: rhsCol
         };
     },
+
     /**
      * Create input with label.
+     *
      * @private
+     *
      * @param {string} option
-     * Chain of fields i.e params.styles.fontSize
-     * @param {string} type
-     * Indicator type
-     * @param {Highhcharts.HTMLDOMElement}
-     * Container where elements should be added
-     * @param {string} value
-     * Default value of input i.e period value is 14, extracted from
-     * defaultOptions (ADD mode) or series options (EDIT mode)
+     *        Chain of fields i.e params.styles.fontSize separeted by the dot.
+     *
+     * @param {string} indicatorType
+     *        Type of the indicator i.e. sma, ema...
+     *
+     * @param {HTMLDOMElement} parentDiv
+     *        HTML parent element.
+     *
+     * @param {Highcharts.InputAttributes} inputAttributes
+     *        Attributes of the input.
+     *
+     * @return {HTMLSelectElement}
      */
     addInput: function (
-        option: string, type: string,
+        option: string,
+        indicatorType: string,
         parentDiv: HTMLDOMElement,
         inputAttributes: Highcharts.InputAttributes
     ): HTMLDOMElement {
         const optionParamList = option.split('.'),
             optionName = optionParamList[optionParamList.length - 1],
             lang = this.lang,
-            inputName = PREFIX + type + '-' + optionName;
+            inputName = PREFIX + indicatorType + '-' + pick(inputAttributes.htmlFor, optionName);
         let input;
 
         if (!inputName.match(indexFilter)) {
             // add label
             createElement(
-                LABEL, {
+                LABEL,
+                {
                     htmlFor: inputName
                 },
                 void 0,
@@ -1098,14 +1108,14 @@ H.Popup.prototype = {
         },
 
         /**
-         * Add selection HTML element and its' label.
+         * Add searchbox HTML element and its' label.
          *
          * @private
          *
          * @param {Highcharts.AnnotationChart} chart
          *        The chart object.
          *
-         * @param {HTMLDOMElement} [parentDiv]
+         * @param {HTMLDOMElement} parentDiv
          *        HTML parent element.
          *
          * @return {HTMLSelectElement}
@@ -1117,10 +1127,11 @@ H.Popup.prototype = {
         ): void {
             const popup = this,
                 lhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-lhs-col')[0] as HTMLElement,
-                options = 'type.search-indicators',
+                options = 'searchIndicators',
                 inputAttributes = {
                     value: '',
-                    type: 'text'
+                    type: 'text',
+                    htmlFor: 'search-indicators'
                 },
                 clearFilterText = this.lang.clearFilter;
 
@@ -1132,6 +1143,8 @@ H.Popup.prototype = {
             // Add input field with the label and button.
             const input = this.addInput(options, INPUT, lhsCol, inputAttributes) as HTMLInputElement,
                 button = this.addButton(lhsCol, clearFilterText, 'button', lhsCol);
+
+            button.classList.add('clear-filter-button');
 
             // Add input change events.
             ['input'].forEach(function (eventName: string): void {

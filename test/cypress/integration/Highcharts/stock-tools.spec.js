@@ -45,14 +45,28 @@ describe('Indicator popup searchbox, #16019.', () => {
     });
 
     it('After typing `a` into the searchbox, the list should contain 7 elements.', () => {
-        cy.get('.highcharts-menu-item-btn').first().click();
-        cy.get('input[name="highcharts-input-search-indicators"]').click().type('a')
+        cy.openIndicators();
+        cy.get('input[name="highcharts-input-search-indicators"]')
+            .click()
+            .type('a');
         cy.get('.highcharts-indicator-list').should(($p) => {
             expect($p).to.have.length(9)
         })
+        cy.get('input[name="highcharts-input-search-indicators"]')
+            .type('c');
+        cy.get('.highcharts-indicator-list li:first')
+            .eq(0)
+            .should('contain.text', 'Acceleration Bands');
     });
 
     it('After clicking the `clear filter` button, the list should be reseted.', () => {
+        cy.get('.clear-filter-button')
+        .click();
 
+        cy.get('input[name="highcharts-input-search-indicators"]')
+            .should('have.value', '')
+
+        cy.get('.highcharts-indicator-list')
+            .should('have.length', 50)
     });
 });

@@ -58,6 +58,7 @@ $button-hover-color: #e6ebf5;
 
 .highcharts-popup input {
   border: 1px solid #e6e6e6;
+  border-radius: 0.3rem;
   padding: 5px;
   width: 100%;
 }
@@ -182,6 +183,7 @@ $button-hover-color: #e6ebf5;
 .highcharts-popup button.highcharts-annotation-edit-button:hover,
 .highcharts-popup button.highcharts-annotation-remove-button:hover {
   background-color: $button-hover-color;
+  cursor: pointer;
 }
 
 .highcharts-popup button {
@@ -238,4 +240,23 @@ $button-hover-color: #e6ebf5;
 .highcharts-indicator-title {
   float: left;
   padding-bottom: 15px;
+}
+
+label[for="highcharts-input-search-indicators"] {
+  text-align: center;
+  font-weight: bold;
+  color: black;
+  margin-top: 0.5rem;
+}
+
+input[name="highcharts-input-search-indicators"] {
+   width: 80%;
+   margin-left: 10%;
+}
+
+.highcharts-popup button.clear-filter-button {
+  margin: 0 auto;
+  display: block;
+  float: unset;
+  color: blue;
 }

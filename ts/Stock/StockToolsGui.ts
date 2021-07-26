@@ -311,8 +311,8 @@ setOptions({
                 background: 'Background',
 
                 // Indicators' params (#15170):
-                'search-indicators': 'Search Indicators',
-                clearFilter: 'clear filter',
+                searchIndicators: 'Search Indicators',
+                clearFilter: '\u2715 clear filter',
                 index: 'Index',
                 period: 'Period',
                 periods: 'Periods',
