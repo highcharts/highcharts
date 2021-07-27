@@ -1365,45 +1365,6 @@ merge<Annotation>(
                  */
 
                 /**
-                 * The x position of the point. Units can be either in axis
-                 * or chart pixel coordinates.
-                 *
-                 * @type      {number}
-                 * @apioption annotations.labels.point.x
-                 */
-
-                /**
-                 * The y position of the point. Units can be either in axis
-                 * or chart pixel coordinates.
-                 *
-                 * @type      {number}
-                 * @apioption annotations.labels.point.y
-                 */
-
-                /**
-                 * This number defines which xAxis the point is connected to.
-                 * It refers to either the axis id or the index of the axis in
-                 * the xAxis array. If the option is not configured or the axis
-                 * is not found the point's x coordinate refers to the chart
-                 * pixels.
-                 *
-                 * @type      {number|string|null}
-                 * @apioption annotations.labels.point.xAxis
-                 */
-
-                /**
-                 * This number defines which yAxis the point is connected to.
-                 * It refers to either the axis id or the index of the axis in
-                 * the yAxis array. If the option is not configured or the axis
-                 * is not found the point's y coordinate refers to the chart
-                 * pixels.
-                 *
-                 * @type      {number|string|null}
-                 * @apioption annotations.labels.point.yAxis
-                 */
-
-
-                /**
                  * An array of shapes for the annotation. For options that apply
                  * to multiple shapes, then can be added to the
                  * [shapeOptions](annotations.shapeOptions.html).
@@ -1426,14 +1387,16 @@ merge<Annotation>(
                  */
 
                 /**
-                 * An array of points for the shape. This option is available
+                 * An array of points for the shape
+                 * or a callback function that returns that shape point.
+                 *
+                 * This option is available
                  * for shapes which can use multiple points such as path. A
                  * point can be either a point object or a point's id.
                  *
                  * @see [annotations.shapes.point](annotations.shapes.point.html)
                  *
-                 * @declare   Highcharts.AnnotationMockPointOptionsObject
-                 * @type      {Array<string|*>}
+                 * @type      {Highcharts.AnnotationMockPointOptionsObject|Highcharts.AnnotationsShapePointsFunction}
                  * @extends   annotations.labels.point
                  * @apioption annotations.shapes.points
                  */
@@ -1975,3 +1938,63 @@ wrap(
 (H as any).Annotation = Annotation as any;
 
 export default Annotation;
+
+/* eslint-enable no-invalid-this, valid-jsdoc */
+
+/**
+ * Object of shape point.
+ *
+ * @interface Highcharts.AnnotationMockPointOptionsObject
+ *
+ */
+/**
+ * The x position of the point. Units can be either in axis
+ * or chart pixel coordinates.
+ *
+ * @type      {number}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.x
+ */
+/**
+ * The y position of the point. Units can be either in axis
+ * or chart pixel coordinates.
+ *
+ * @type      {number}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.y
+ */
+/**
+ * This number defines which xAxis the point is connected to.
+ * It refers to either the axis id or the index of the axis in
+ * the xAxis array. If the option is not configured or the axis
+ * is not found the point's x coordinate refers to the chart
+ * pixels.
+ *
+ * @type      {number|string|null}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.xAxis
+ */
+/**
+ * This number defines which yAxis the point is connected to.
+ * It refers to either the axis id or the index of the axis in
+ * the yAxis array. If the option is not configured or the axis
+ * is not found the point's y coordinate refers to the chart
+ * pixels.
+ *
+ * @type      {number|string|null}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.yAxis
+ */
+
+/**
+ * Callback function that returns the annotation shape point.
+ *
+ * @callback Highcharts.AnnotationsShapePointsFunction
+ *
+ * @param {Highcharts.AnnotationPointType} this
+ *         Context - a mock point or a point used in series.
+ *
+ * @param  {Highcharts.Annotation} annotation
+ *         An annotation instance.
+ *
+ * @return {Highcharts.AnnotationMockPointOptionsObject}
+ *         Annotations shape point.
+ */
+
+''; // required by JSDoc parsing
