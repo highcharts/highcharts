@@ -1,12 +1,14 @@
 /* *
  *
- *  Data Layer
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
+ *  - Gøran Slettemark
  *
  * */
 
@@ -19,9 +21,11 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataJSON from '../DataJSON';
-import type ModifierType from './ModifierType';
 import type DataTable from '../DataTable';
+import type JSON from '../../Core/JSON';
+import type ModifierType from './ModifierType';
+
+import DataPromise from '../DataPromise.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -43,7 +47,7 @@ const {
  * @private
  */
 abstract class DataModifier<TEvent extends DataEventEmitter.Event = DataModifier.Event>
-implements DataEventEmitter<TEvent>, DataJSON.Class {
+implements DataEventEmitter<(TEvent|DataModifier.Event)> {
 
     /* *
      *
@@ -186,7 +190,7 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
         const results: Array<number> = [];
         const modifier = this as DataModifier<DataModifier.BenchmarkEvent|DataModifier.Event>;
         const execute = (): void => {
-            modifier.modify(dataTable);
+            modifier.modifyTable(dataTable);
             modifier.emit({ type: 'afterBenchmarkIteration' });
         };
 
@@ -239,7 +243,7 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
      * @param {DataEventEmitter.Event} [e]
      * Event object containing additonal event information.
      */
-    public emit(e: TEvent): void {
+    public emit(e: (TEvent|DataModifier.Event)): void {
         fireEvent(this, e.type, e);
     }
 
@@ -252,13 +256,30 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {Highcharts.DataTable}
-     * Modified copy.
+     * @return {Promise<Highcharts.DataTable>}
+     * Table with `modified` property as a reference.
      */
-    public abstract modify(
-        table: DataTable,
+    public modify<T extends DataTable>(
+        table: T,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable;
+    ): DataPromise<T> {
+        const modifier = this;
+        return new DataPromise((resolve, reject): void => {
+            if (table.modified === table) {
+                table.modified = table.clone(false, eventDetail);
+            }
+            try {
+                resolve(modifier.modifyTable(table, eventDetail));
+            } catch (e) {
+                modifier.emit({
+                    type: 'error',
+                    detail: eventDetail,
+                    table
+                });
+                reject(e);
+            }
+        });
+    }
 
     /**
      * Applies partial modifications of a cell change to the property `modified`
@@ -280,15 +301,17 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Table with `modified` property as a reference.
      */
-    public abstract modifyCell(
-        table: DataTable,
+    public modifyCell<T extends DataTable>(
+        table: T,
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable;
+    ): T {
+        return this.modifyTable(table);
+    }
 
     /**
      * Applies partial modifications of column changes to the property
@@ -307,14 +330,16 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Table with `modified` property as a reference.
      */
-    public abstract modifyColumns(
-        table: DataTable,
+    public modifyColumns<T extends DataTable>(
+        table: T,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable;
+    ): T {
+        return this.modifyTable(table);
+    }
 
     /**
      * Applies partial modifications of row changes to the property `modified`
@@ -333,14 +358,34 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * `table.modified` as a reference.
+     * Table with `modified` property as a reference.
      */
-    public abstract modifyRows(
-        table: DataTable,
+    public modifyRows<T extends DataTable>(
+        table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable;
+    ): T {
+        return this.modifyTable(table);
+    }
+
+    /**
+     * Applies modifications of row changes to the property `modified` of the
+     * given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Table to modify.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Table with `modified` property as a reference.
+     */
+    public abstract modifyTable<T extends DataTable>(
+        table: T,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): T;
 
     /**
      * Registers a callback for a specific modifier event.
@@ -360,14 +405,6 @@ implements DataEventEmitter<TEvent>, DataJSON.Class {
     ): Function {
         return addEvent(this, type, callback);
     }
-
-    /**
-     * Converts the modifier instance to a class JSON.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this modifier instance.
-     */
-    public abstract toJSON(): DataModifier.ClassJSON;
 
 }
 
@@ -394,16 +431,6 @@ namespace DataModifier {
     }
 
     /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        /**
-         * Options to configure the modifier.
-         */
-        options: Options;
-    }
-
-    /**
      * Benchmark event with additional event information.
      */
     export interface BenchmarkEvent extends DataEventEmitter.Event {
@@ -422,9 +449,17 @@ namespace DataModifier {
     }
 
     /**
+     * Error event with additional event information.
+     */
+    export interface ErrorEvent extends DataEventEmitter.Event {
+        readonly type: 'error';
+        readonly table: DataTable;
+    }
+
+    /**
      * Event information.
      */
-    export type Event = (BenchmarkEvent|ModifyEvent);
+    export type Event = (BenchmarkEvent|ErrorEvent|ModifyEvent);
 
     /**
      * Modify event with additional event information.
@@ -439,7 +474,7 @@ namespace DataModifier {
     /**
      * Options to configure the modifier.
      */
-    export interface Options extends DataJSON.JSONObject {
+    export interface Options extends JSON.Object {
         /**
          * Name of the related modifier for these options.
          */

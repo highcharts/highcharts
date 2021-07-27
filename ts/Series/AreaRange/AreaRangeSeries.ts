@@ -217,7 +217,7 @@ class AreaRangeSeries extends AreaSeries {
     public points: Array<AreaRangePoint> = void 0 as any;
     public lowerStateMarkerGraphic?: SVGElement = void 0;
     public upperStateMarkerGraphic?: SVGElement;
-    public xAxis: RadialAxis = void 0 as any;
+    public xAxis: RadialAxis.AxisComposition = void 0 as any;
 
     /* *
      *

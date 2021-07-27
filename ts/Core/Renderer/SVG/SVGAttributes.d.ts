@@ -52,11 +52,13 @@ export interface SVGAttributes {
     dashstyle?: DashStyleValue;
     depth?: number;
     display?: ''|'block'|'none';
+    'dominant-baseline'?: string;
     dx?: number;
     dy?: number;
     end?: number;
     fill?: ColorType;
     'fill-opacity'?: number;
+    filter?: string;
     gradientUnits?: 'userSpaceOnUse';
     height?: number;
     href?: string;

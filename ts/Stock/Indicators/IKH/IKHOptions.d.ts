@@ -68,6 +68,5 @@ export interface IKHOptions extends SMAOptions {
     senkouSpanA?: Record<string, CSSObject>;
     senkouSpanB?: Record<string, CSSObject>;
     tenkanLine?: Record<string, CSSObject>;
-    tooltip?: TooltipOptions;
 }
 /* eslint-enable @typescript-eslint/interface-name-prefix */

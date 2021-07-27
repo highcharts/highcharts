@@ -7,6 +7,7 @@ samples/data-grid/**/*.js
 samples/cloud/**/**/*.js
 samples/static/*.js
 samples/highcharts/studies/data-layer/**/*.js
+test/cypress
 test/test-controller.js
 test/test-template.js
 test/test-utilities.js

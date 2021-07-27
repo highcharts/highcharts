@@ -1,12 +1,16 @@
 /* *
  *
- *  Data module
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2012-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Torstein Hønsi
+ *  - Gøran Slettemark
+ *  - Wojciech Chmiel
+ *  - Sophie Bremer
  *
  * */
 
@@ -19,14 +23,14 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
+import type JSON from '../../Core/JSON';
 
-import AjaxMixin from '../../Extensions/Ajax.js';
-const { ajax } = AjaxMixin;
-import DataJSON from './../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
-import U from '../../Core/Utilities.js';
 import GoogleSheetsParser from '../Parsers/GoogleSheetsParser.js';
+import HU from '../../Core/HttpUtilities.js';
+const { ajax } = HU;
+import U from '../../Core/Utilities.js';
 const { merge } = U;
 
 /* *
@@ -40,7 +44,7 @@ const { merge } = U;
 /**
  * @private
  */
-class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements DataJSON.Class {
+class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
 
     /* *
      *
@@ -55,22 +59,6 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements Da
         dataRefreshRate: 2,
         firstRowAsNames: true
     };
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    public static fromJSON(json: GoogleSheetsStore.ClassJSON): GoogleSheetsStore {
-        const options = json.options,
-            table = DataTable.fromJSON(json.table),
-            store = new GoogleSheetsStore(table, options);
-
-        store.metadata = merge(json.metadata);
-
-        return store;
-    }
 
     /* *
      *
@@ -210,22 +198,6 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements Da
         }
     }
 
-    /**
-     * Converts the store to a class JSON.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this store.
-     */
-    public toJSON(): GoogleSheetsStore.ClassJSON {
-        return {
-            $class: 'GoogleSheetsStore',
-            metadata: merge(this.metadata),
-            options: merge(this.options),
-            table: this.table.toJSON(),
-            parser: this.parser.toJSON()
-        };
-    }
-
     /* *
      * TODO:
      * public save() {}
@@ -237,10 +209,6 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements Da
 }
 
 namespace GoogleSheetsStore {
-
-    export interface ClassJSON extends DataStore.ClassJSON {
-        options: Options;
-    }
 
     export type Event = (ErrorEvent|LoadEvent);
 
@@ -255,7 +223,7 @@ namespace GoogleSheetsStore {
         readonly url: string;
     }
 
-    export interface Options extends DataJSON.JSONObject {
+    export interface Options extends JSON.Object {
         googleSpreadsheetKey: string;
         worksheet?: number;
         enablePolling: boolean;
@@ -271,7 +239,6 @@ namespace GoogleSheetsStore {
  *
  * */
 
-DataJSON.addClass(GoogleSheetsStore);
 DataStore.addStore(GoogleSheetsStore);
 
 declare module './StoreType' {

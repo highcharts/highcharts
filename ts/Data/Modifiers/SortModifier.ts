@@ -1,12 +1,13 @@
 /* *
  *
- *  Data Layer
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
  *
  * */
 
@@ -114,79 +115,6 @@ class SortModifier extends DataModifier {
      * */
 
     /**
-     * Sorts rows in the table.
-     *
-     * @param {DataTable} table
-     * Table to sort in.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {DataTable}
-     * Sorted table as a reference.
-     */
-    public modify(
-        table: DataTable,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
-        const modifier = this,
-            {
-                direction,
-                orderByColumn,
-                orderInColumn
-            } = modifier.options,
-            compare = (
-                direction === 'asc' ?
-                    SortModifier.ascending :
-                    SortModifier.descending
-            );
-
-        modifier.emit({
-            type: 'modify',
-            detail: eventDetail,
-            table
-        });
-
-        const columnNames = table.getColumnNames(),
-            orderByColumnIndex = columnNames.indexOf(orderByColumn),
-            rowReferences = table
-                .getRows()
-                .map((row, index): SortModifier.RowReference => ({
-                    index,
-                    row
-                })),
-            rowCount = table.getRowCount();
-
-        if (orderByColumnIndex !== -1) {
-            rowReferences.sort((a, b): number => compare(
-                a.row[orderByColumnIndex],
-                b.row[orderByColumnIndex]
-            ));
-        }
-        if (orderInColumn) {
-            const column: DataTable.Column = [];
-            for (let i = 0; i < rowCount; ++i) {
-                column[rowReferences[i].index] = i;
-            }
-            table.setColumns({ [orderInColumn]: column });
-        } else {
-            const rows: Array<DataTable.Row> = [];
-            for (let i = 0; i < rowCount; ++i) {
-                rows.push(rowReferences[i].row);
-            }
-            table.setRows(rows, 0);
-        }
-
-        modifier.emit({
-            type: 'afterModify',
-            detail: eventDetail,
-            table
-        });
-
-        return table;
-    }
-
-    /**
      * Applies partial modifications of a cell change to the property `modified`
      * of the given modified table.
      *
@@ -206,15 +134,15 @@ class SortModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * Reference of `table.modified` with the additional modifications.
+     * Table with `modified` property as a reference.
      */
-    public modifyCell(
-        table: DataTable,
+    public modifyCell<T extends DataTable>(
+        table: T,
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
+    ): T {
         const modifier = this,
             {
                 orderByColumn,
@@ -222,30 +150,50 @@ class SortModifier extends DataModifier {
             } = modifier.options;
 
         if (columnName === orderByColumn) {
-            const sortedTable = new DataTable();
-
-            sortedTable.setColumns(table.getColumns(
-                orderInColumn ?
-                    [orderByColumn, orderInColumn] :
-                    table.getColumnNames()
-            ));
-
-            table.modified.setColumns(
-                this.modify(sortedTable).getColumns(),
-                void 0,
-                eventDetail
-            );
+            if (orderInColumn) {
+                table.modified.setCell(columnName, rowIndex, cellValue);
+                table.modified.setColumn(
+                    orderInColumn,
+                    modifier
+                        .modifyTable(new DataTable(
+                            table.getColumns([orderByColumn, orderInColumn])
+                        ))
+                        .modified
+                        .getColumn(orderInColumn)
+                );
+            } else {
+                modifier.modifyTable(table, eventDetail);
+            }
         }
 
-        return table.modified;
+        return table;
     }
 
-    public modifyColumns(
-        table: DataTable,
+    /**
+     * Applies partial modifications of column changes to the property
+     * `modified` of the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {Highcharts.DataTableColumnCollection} columns
+     * Changed columns as a collection, where the keys are the column names.
+     *
+     * @param {number} [rowIndex=0]
+     * Index of the first changed row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Table with `modified` property as a reference.
+     */
+    public modifyColumns<T extends DataTable>(
+        table: T,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
+    ): T {
 
         const modifier = this,
             {
@@ -255,30 +203,54 @@ class SortModifier extends DataModifier {
             columnNames = Object.keys(columns);
 
         if (columnNames.indexOf(orderByColumn) > -1) {
-            const sortedTable = new DataTable();
-
-            sortedTable.setColumns(table.getColumns(
-                orderInColumn ?
-                    [orderByColumn, orderInColumn] :
-                    table.getColumnNames()
-            ));
-
-            table.modified.setColumns(
-                this.modify(sortedTable).getColumns(),
-                void 0,
-                eventDetail
-            );
+            if (
+                orderInColumn &&
+                columns[columnNames[0]].length
+            ) {
+                table.modified.setColumns(columns, rowIndex);
+                table.modified.setColumn(
+                    orderInColumn,
+                    modifier
+                        .modifyTable(new DataTable(
+                            table.getColumns([orderByColumn, orderInColumn])
+                        ))
+                        .modified
+                        .getColumn(orderInColumn)
+                );
+            } else {
+                modifier.modifyTable(table, eventDetail);
+            }
         }
 
-        return table.modified;
+        return table;
     }
 
-    public modifyRows(
-        table: DataTable,
-        _rows: Array<(DataTable.Row|DataTable.RowObject)>,
-        _rowIndex: number,
-        _eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
+
+    /**
+     * Applies partial modifications of row changes to the property `modified`
+     * of the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {Array<(Highcharts.DataTableRow|Highcharts.DataTableRowObject)>} rows
+     * Changed rows.
+     *
+     * @param {number} [rowIndex]
+     * Index of the first changed row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Table with `modified` property as a reference.
+     */
+    public modifyRows<T extends DataTable>(
+        table: T,
+        rows: Array<(DataTable.Row|DataTable.RowObject)>,
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): T {
 
         const modifier = this,
             {
@@ -286,30 +258,92 @@ class SortModifier extends DataModifier {
                 orderInColumn
             } = modifier.options;
 
-        const sortedTable = new DataTable();
+        if (
+            orderInColumn &&
+            rows.length
+        ) {
+            table.modified.setRows(rows, rowIndex);
+            table.modified.setColumn(
+                orderInColumn,
+                modifier
+                    .modifyTable(new DataTable(
+                        table.getColumns([orderByColumn, orderInColumn])
+                    ))
+                    .modified
+                    .getColumn(orderInColumn)
+            );
+        } else {
+            modifier.modifyTable(table, eventDetail);
+        }
 
-        sortedTable.setColumns(table.getColumns(
-            orderInColumn ?
-                [orderByColumn, orderInColumn] :
-                table.getColumnNames()
-        ));
-
-        table.modified.setColumns(this.modify(sortedTable).getColumns());
-
-        return table.modified;
+        return table;
     }
 
     /**
-     * Converts the sort modifier to a class JSON.
+     * Sorts rows in the table.
      *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this sort modifier.
+     * @param {DataTable} table
+     * Table to sort in.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {DataTable}
+     * Table with `modified` property as a reference.
      */
-    public toJSON(): SortModifier.ClassJSON {
-        return {
-            $class: 'SortModifier',
-            options: merge(this.options)
-        };
+    public modifyTable<T extends DataTable>(
+        table: T,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): T {
+        const modifier = this;
+
+        modifier.emit({ type: 'modify', detail: eventDetail, table });
+
+        const columnNames = table.getColumnNames(),
+            rowCount = table.getRowCount(),
+            rowReferences = table.getRows().map(
+                (row, index): SortModifier.RowReference => ({
+                    index,
+                    row
+                })
+            ),
+            {
+                direction,
+                orderByColumn,
+                orderInColumn
+            } = modifier.options,
+            compare = (
+                direction === 'asc' ?
+                    SortModifier.ascending :
+                    SortModifier.descending
+            ),
+            orderByColumnIndex = columnNames.indexOf(orderByColumn),
+            modified = table.modified;
+
+        if (orderByColumnIndex !== -1) {
+            rowReferences.sort((a, b): number => compare(
+                a.row[orderByColumnIndex],
+                b.row[orderByColumnIndex]
+            ));
+        }
+
+        if (orderInColumn) {
+            const column: DataTable.Column = [];
+            for (let i = 0; i < rowCount; ++i) {
+                column[rowReferences[i].index] = i;
+            }
+            modified.setColumns({ [orderInColumn]: column });
+        } else {
+            const rows: Array<DataTable.Row> = [];
+            for (let i = 0; i < rowCount; ++i) {
+                rows.push(rowReferences[i].row);
+            }
+            modified.setRows(rows, 0);
+        }
+
+        modifier.emit({ type: 'afterModify', detail: eventDetail, table });
+
+        return table;
     }
 
 }
@@ -325,13 +359,6 @@ class SortModifier extends DataModifier {
  * conversion.
  */
 namespace SortModifier {
-
-    /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataModifier.ClassJSON {
-        options: Options;
-    }
 
     /**
      * Options to configure the modifier.

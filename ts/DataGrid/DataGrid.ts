@@ -2,11 +2,14 @@
  *
  *  Data Grid class
  *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Øystein Moseng
  *
  * */
 
@@ -144,9 +147,6 @@ class DataGrid {
     private initDataTable(): DataTable {
         if (this.options.dataTable) {
             return this.options.dataTable;
-        }
-        if (this.options.json) {
-            return DataTable.fromJSON(this.options.json);
         }
         return new DataTable();
     }

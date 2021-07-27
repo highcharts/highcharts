@@ -10,11 +10,18 @@
 
 'use strict';
 
-import type ColorAxis from '../Core/Axis/ColorAxis';
+import type ColorAxis from '../Core/Axis/Color/ColorAxis';
 import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
 import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        /** @requires ColorSeriesMixin */
+        setVisible(vis?: boolean): void;
+    }
+}
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
@@ -46,7 +53,6 @@ declare global {
             translateColors(): void;
         }
         interface ColorSeriesMixin {
-            colorAxis: number;
             optionalAxis: ColorSeries['optionalAxis'];
             translateColors: ColorSeries['translateColors'];
         }
@@ -64,7 +70,7 @@ declare global {
  * @private
  * @mixin Highcharts.colorPointMixin
  */
-const colorPointMixin = {
+const colorPointMixin: Highcharts.ColorPointMixin = {
 
     /* eslint-disable valid-jsdoc */
 
@@ -97,9 +103,8 @@ const colorPointMixin = {
  * @private
  * @mixin Highcharts.colorSeriesMixin
  */
-const colorSeriesMixin = {
+const colorSeriesMixin: Highcharts.ColorSeriesMixin = {
     optionalAxis: 'colorAxis',
-    colorAxis: 0,
 
     /* eslint-disable valid-jsdoc */
 

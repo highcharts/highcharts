@@ -1,12 +1,14 @@
 /* *
  *
- *  Data Layer
- *
- *  (c) 2012-2021 Torstein Honsi
+ *  (c) 2020-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
+ *  - Gøran Slettemark
  *
  * */
 
@@ -20,8 +22,8 @@
 
 import type DataEventEmitter from './DataEventEmitter';
 import type DataModifier from './Modifiers/DataModifier';
+import type JSON from '../Core/JSON';
 
-import DataJSON from './DataJSON.js';
 import DataPromise from './DataPromise.js';
 import U from '../Core/Utilities.js';
 const {
@@ -49,7 +51,7 @@ const {
  * @param {string} [id]
  * DataTable identifier.
  */
-class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
+class DataTable implements DataEventEmitter<DataTable.Event> {
 
     /* *
      *
@@ -75,69 +77,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      *  Static Functions
      *
      * */
-
-    /**
-     * Converts a supported class JSON to a DataTable instance.
-     *
-     * @param {DataTable.ClassJSON} json
-     * Class JSON (usually with a $class property) to convert.
-     *
-     * @return {DataTable}
-     * DataTable instance from the class JSON.
-     */
-    public static fromJSON(json: DataTable.ClassJSON): DataTable {
-        const columns: DataTable.ColumnCollection = {},
-            jsonColumns = json.columns,
-            columnNames = Object.keys(jsonColumns);
-
-        for (
-            let i = 0,
-                iEnd = columnNames.length,
-                columnName: string,
-                column: DataTable.Column,
-                jsonColumn: DataTable.ColumnJSON;
-            i < iEnd;
-            ++i
-        ) {
-            columnName = columnNames[i];
-            columns[columnName] = column = [];
-            jsonColumn = jsonColumns[columnName];
-            for (
-                let j = 0,
-                    jEnd = jsonColumn.length,
-                    jsonCell: DataTable.ColumnJSON[0];
-                j < jEnd;
-                ++j
-            ) {
-                jsonCell = jsonColumn[j];
-                if (typeof jsonCell === 'object' && jsonCell) {
-                    column[j] = DataTable.fromJSON(jsonCell);
-                } else {
-                    column[j] = jsonCell;
-                }
-            }
-        }
-
-        const table = new DataTable(columns, json.id);
-
-        if (json.aliasMap) {
-            const aliasMap = (json.aliasMap || {}),
-                aliases = Object.keys(aliasMap);
-
-            for (
-                let i = 0,
-                    iEnd = aliases.length,
-                    alias: string;
-                i < iEnd;
-                ++i
-            ) {
-                alias = aliases[i];
-                table.aliasMap[alias] = aliasMap[alias];
-            }
-        }
-
-        return table;
-    }
 
     /**
      * Tests whether a row contains only null values.
@@ -348,12 +287,21 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     public deleteColumnAlias(alias: string): (string|undefined) {
         const table = this,
             aliasMap = table.aliasMap,
-            deletedAlias = aliasMap[alias];
+            deletedAlias = aliasMap[alias],
+            modifier = table.modifier;
 
         if (deletedAlias) {
             delete table.aliasMap[alias];
-            return deletedAlias;
+            if (modifier) {
+                modifier.modifyColumns(
+                    table,
+                    { [deletedAlias]: new Array(table.rowCount) },
+                    0
+                );
+            }
         }
+
+        return deletedAlias;
     }
 
     /**
@@ -380,7 +328,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     ): (DataTable.ColumnCollection|undefined) {
         const table = this,
             columns = table.columns,
-            deletedColumns: DataTable.ColumnCollection = {};
+            deletedColumns: DataTable.ColumnCollection = {},
+            modifiedColumns: DataTable.ColumnCollection = {},
+            modifier = table.modifier,
+            rowCount = table.rowCount;
 
         columnNames = (columnNames || Object.keys(columns));
 
@@ -403,12 +354,17 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
                 column = columns[columnName];
                 if (column) {
                     deletedColumns[columnName] = column;
+                    modifiedColumns[columnName] = new Array(rowCount);
                 }
                 delete columns[columnName];
             }
 
             if (!Object.keys(columns).length) {
                 table.rowCount = 0;
+            }
+
+            if (modifier) {
+                modifier.modifyColumns(table, modifiedColumns, 0, eventDetail);
             }
 
             table.emit({
@@ -449,7 +405,9 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         eventDetail?: DataEventEmitter.EventDetail
     ): Array<DataTable.Row> {
         const table = this,
-            deletedRows: Array<DataTable.Row> = [];
+            deletedRows: Array<DataTable.Row> = [],
+            modifiedRows: Array<DataTable.Row> = [],
+            modifier = table.modifier;
 
         table.emit({
             type: 'deleteRows',
@@ -486,7 +444,13 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
                     deletedRows[j] = (deletedRows[j] || []);
                     deletedRows[j][i] = deletedCells[j];
                 }
+
+                modifiedRows.push(new Array(iEnd));
             }
+        }
+
+        if (modifier) {
+            modifier.modifyRows(table, modifiedRows, (rowIndex || 0), eventDetail);
         }
 
         table.emit({
@@ -1238,9 +1202,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {Promise}
-     * Resolves to the table if successful, otherwise rejects promise.
-     *
      * @emits #setCell
      * @emits #afterSetCell
      */
@@ -1249,7 +1210,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataPromise<this> {
+    ): void {
         const table = this,
             columns = table.columns,
             modifier = table.modifier;
@@ -1261,10 +1222,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
         let column = columns[columnNameOrAlias];
 
-        if (!column) {
-            column = columns[columnNameOrAlias] = new Array(table.rowCount);
-        } else if (column[rowIndex] === cellValue) {
-            return DataPromise.resolve(table);
+        if (column && column[rowIndex] === cellValue) {
+            return;
         }
 
         table.emit({
@@ -1274,6 +1233,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             detail: eventDetail,
             rowIndex
         });
+
+        if (!column) {
+            column = columns[columnNameOrAlias] = new Array(table.rowCount);
+        }
 
         if (rowIndex >= table.rowCount) {
             table.rowCount = (rowIndex + 1);
@@ -1292,8 +1255,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             detail: eventDetail,
             rowIndex
         });
-
-        return DataPromise.resolve(this);
     }
 
     /**
@@ -1308,13 +1269,10 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * Values to set in the column.
      *
      * @param {number} [rowIndex=0]
-     * Index of the first row to change.
+     * Index of the first row to change. (Default: 0)
      *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
-     *
-     * @return {Promise}
-     * Resolves to the table if successful, otherwise rejects promise.
      *
      * @emits #setColumns
      * @emits #afterSetColumns
@@ -1324,8 +1282,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         column: DataTable.Column = [],
         rowIndex: number = 0,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataPromise<this> {
-        return this.setColumns({ [columnNameOrAlias]: column }, rowIndex, eventDetail);
+    ): void {
+        this.setColumns({ [columnNameOrAlias]: column }, rowIndex, eventDetail);
     }
 
     /**
@@ -1371,9 +1329,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {Promise}
-     * Resolves to the table if successful, otherwise rejects promise.
-     *
      * @emits #setColumns
      * @emits #afterSetColumns
      */
@@ -1381,7 +1336,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         columns: DataTable.ColumnCollection,
         rowIndex?: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataPromise<this> {
+    ): void {
         const table = this,
             tableColumns = table.columns,
             tableModifier = table.modifier,
@@ -1452,25 +1407,31 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             detail: eventDetail,
             rowIndex
         });
-
-        return DataPromise.resolve(table);
     }
 
     /**
      * Sets or unsets the modifier for the table.
      * @private
      *
-     * @param {Highcharts.DataModifier|undefined} modifier
+     * @param {Highcharts.DataModifier} [modifier]
      * Modifier to set, or `undefined` to unset.
      *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
+     *
+     * @return {Promise<Highcharts.DataTable>}
+     * Resolves to this table if successfull, or rejects on failure.
+     *
+     * @emits #setModifier
+     * @emits #afterSetModifier
      */
     public setModifier(
-        modifier: (DataModifier | undefined),
+        modifier?: DataModifier,
         eventDetail?: DataEventEmitter.EventDetail
-    ): void {
+    ): DataPromise<this> {
         const table = this;
+
+        let promise: DataPromise<this>;
 
         table.emit({
             type: 'setModifier',
@@ -1482,17 +1443,34 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         table.modifier = modifier;
 
         if (modifier) {
-            table.modified = modifier.modify(table.clone());
-        } else if (table.modified !== table) {
-            table.modified = table;
+            promise = modifier.modify(table);
+        } else {
+            promise = DataPromise
+                .resolve(table)
+                .then((table): this => {
+                    table.modified = table;
+                    return table;
+                });
         }
 
-        this.emit({
-            type: 'afterSetModifier',
-            detail: eventDetail,
-            modifier,
-            modified: table.modified
-        });
+        return promise
+            .then((table): this => {
+                table.emit({
+                    type: 'afterSetModifier',
+                    detail: eventDetail,
+                    modifier,
+                    modified: table.modified
+                });
+                return table;
+            })['catch']((error): this => {
+                table.emit({
+                    type: 'setModifierError',
+                    error,
+                    modifier,
+                    modified: table.modified
+                });
+                throw error;
+            });
     }
 
     /**
@@ -1513,9 +1491,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {Promise}
-     * Resolves to the table if successful, otherwise rejects promise.
-     *
      * @emits #setRows
      * @emits #afterSetRows
      */
@@ -1523,8 +1498,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         row: (DataTable.Row|DataTable.RowObject),
         rowIndex?: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataPromise<this> {
-        return this.setRows([row], rowIndex, eventDetail);
+    ): void {
+        this.setRows([row], rowIndex, eventDetail);
     }
 
     /**
@@ -1543,9 +1518,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {Promise}
-     * Resolves to the table if successful, otherwise rejects promise.
-     *
      * @emits #setRows
      * @emits #afterSetRows
      */
@@ -1553,7 +1525,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number = this.rowCount,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataPromise<this> {
+    ): void {
         const table = this,
             aliasMap = table.aliasMap,
             columns = table.columns,
@@ -1623,78 +1595,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             rowIndex,
             rows
         });
-
-        return DataPromise.resolve(table);
-    }
-
-    /**
-     * Converts the table to a class JSON.
-     * @private
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this table.
-     */
-    public toJSON(): DataTable.ClassJSON {
-        const table = this,
-            aliasMap = table.aliasMap,
-            aliases = Object.keys(aliasMap),
-            columns = table.columns,
-            columnNames = Object.keys(columns),
-            json: DataTable.ClassJSON = {
-                $class: 'DataTable',
-                columns: {}
-            },
-            jsonColumns = json.columns,
-            rowCount = table.rowCount;
-
-        if (!table.autoId) {
-            json.id = table.id;
-        }
-
-        if (aliases.length) {
-            const jsonAliasMap: Record<string, string> = json.aliasMap = {};
-
-            for (
-                let i = 0,
-                    iEnd = aliases.length,
-                    alias: string;
-                i < iEnd;
-                ++i
-            ) {
-                alias = aliases[i];
-                jsonAliasMap[alias] = aliasMap[alias];
-            }
-        }
-
-        for (
-            let i = 0,
-                iEnd = columnNames.length,
-                column: DataTable.Column,
-                columnJSON: DataTable.ColumnJSON,
-                columnName: string;
-            i < iEnd;
-            ++i
-        ) {
-            columnName = columnNames[i];
-            column = columns[columnName];
-            jsonColumns[columnName] = columnJSON = [];
-            for (
-                let j = 0,
-                    jEnd = rowCount,
-                    cell: DataTable.CellType;
-                j < jEnd;
-                ++j
-            ) {
-                cell = column[j];
-                if (typeof cell === 'object' && cell) {
-                    columnJSON[j] = cell.toJSON();
-                } else {
-                    columnJSON[j] = cell;
-                }
-            }
-        }
-
-        return json;
     }
 
 }
@@ -1735,16 +1635,7 @@ namespace DataTable {
     /**
      * Possible value types for a table cell.
      */
-    export type CellType = (DataTable|DataJSON.JSONPrimitive);
-
-    /**
-     * Class JSON of a DataTable.
-     */
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        aliasMap?: Record<string, string>;
-        columns: ColumnCollectionJSON;
-        id?: string;
-    }
+    export type CellType = (DataTable|JSON.Primitive);
 
     /**
      * Event object for clone-related events.
@@ -1764,26 +1655,11 @@ namespace DataTable {
     }
 
     /**
-     * JSON Array of column values.
-     */
-    export interface ColumnJSON extends DataJSON.JSONArray {
-        [index: number]: (DataJSON.JSONPrimitive|ClassJSON);
-    }
-
-    /**
      * Collection of columns, where the key is the column name (or alias) and
      * the value is an array of column values.
      */
     export interface ColumnCollection {
         [columnNameOrAlias: string]: Column;
-    }
-
-    /**
-     * Collection of columns, where the key is the column name and the value is
-     * an array of column values.
-     */
-    export interface ColumnCollectionJSON {
-        [columnNameOrAlias: string]: ColumnJSON;
     }
 
     /**
@@ -1851,21 +1727,15 @@ namespace DataTable {
     */
     export interface SetModifierEvent extends DataEventEmitter.Event {
         readonly type: (
-            'setModifier' | 'afterSetModifier'
+            'setModifier'|'afterSetModifier'|
+            'setModifierError'
         );
+        readonly error?: unknown;
         readonly modifier?: DataModifier;
         readonly modified?: DataTable;
     }
 
 }
-
-/* *
- *
- *  Registry
- *
- * */
-
-DataJSON.addClass(DataTable);
 
 /* *
  *

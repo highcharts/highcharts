@@ -1,12 +1,13 @@
 /* *
  *
- *  Data Layer
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
  *
  * */
 
@@ -19,7 +20,7 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import DataJSON from '../DataJSON.js';
+
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -53,38 +54,6 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         modifier: 'Chain',
         reverse: false
     };
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Converts a class JSON to a modifier chain. All modifier references in the
-     * JSON have to be registered on call to get converted to an instance.
-     *
-     * @param {ChainModifier.ClassJSON} json
-     * Class JSON to convert to an instance of modifier chain.
-     *
-     * @return {ChainModifier}
-     * Modifier chain of the class JSON.
-     */
-    public static fromJSON(json: ChainModifier.ClassJSON): ChainModifier {
-        const jsonModifiers = json.modifiers,
-            modifiers: Array<DataModifier> = [];
-
-        let modifier: (DataModifier|undefined);
-
-        for (let i = 0, iEnd = jsonModifiers.length; i < iEnd; ++i) {
-            modifier = DataJSON.fromJSON(jsonModifiers[i]) as (DataModifier|undefined);
-            if (modifier) {
-                modifiers.push(modifier);
-            }
-        }
-
-        return new ChainModifier(json.options, ...modifiers);
-    }
 
     /* *
      *
@@ -183,72 +152,10 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
     }
 
     /**
-     * Applies several modifications to the table.
-     *
-     * @param {DataTable} table
-     * Table to modify.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {DataTable}
-     * Table as a reference.
-     *
-     * @emits ChainDataModifier#execute
-     * @emits ChainDataModifier#afterExecute
-     */
-    public modify(
-        table: DataTable,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
-        const modifiers = (
-            this.options.reverse ?
-                this.modifiers.reverse() :
-                this.modifiers.slice()
-        );
-
-        this.emit({
-            type: 'modify',
-            detail: eventDetail,
-            table
-        });
-
-        for (
-            let i = 0,
-                iEnd = modifiers.length,
-                modifier: DataModifier;
-            i < iEnd;
-            ++i
-        ) {
-            modifier = modifiers[i];
-
-            this.emit({
-                type: 'callModifier',
-                detail: eventDetail,
-                modifier
-            });
-
-            table = modifier.modify(table);
-
-            this.emit({
-                type: 'afterCallModifier',
-                detail: eventDetail,
-                modifier
-            });
-        }
-
-        this.emit({
-            type: 'afterModify',
-            detail: eventDetail,
-            table
-        });
-
-        return table;
-    }
-
-    /**
      * Applies partial modifications of a cell change to the property `modified`
      * of the given modified table.
+     *
+     * *Note:* The `modified` property of the table gets replaced.
      *
      * @param {Highcharts.DataTable} table
      * Modified table.
@@ -266,15 +173,15 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * Modified table as a reference.
+     * Table with `modified` property as a reference.
      */
-    public modifyCell(
-        table: DataTable,
+    public modifyCell<T extends DataTable>(
+        table: T,
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
+    ): T {
         const modifiers = (
             this.options.reverse ?
                 this.modifiers.reverse() :
@@ -282,20 +189,20 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         );
 
         if (modifiers.length) {
-            let currentTable = table.clone();
+            let clone = table.clone();
 
             for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
                 modifiers[i].modifyCell(
-                    currentTable,
+                    clone,
                     columnName,
                     rowIndex,
                     cellValue,
                     eventDetail
                 );
-                currentTable = currentTable.modified;
+                clone = clone.modified;
             }
 
-            table.modified.setColumns(currentTable.getColumns());
+            table.modified = clone;
         }
 
         return table;
@@ -304,6 +211,8 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
     /**
      * Applies partial modifications of column changes to the property
      * `modified` of the given table.
+     *
+     * *Note:* The `modified` property of the table gets replaced.
      *
      * @param {Highcharts.DataTable} table
      * Modified table.
@@ -318,14 +227,14 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * Modified table as a reference.
+     * Table with `modified` property as a reference.
      */
-    public modifyColumns(
-        table: DataTable,
+    public modifyColumns<T extends DataTable>(
+        table: T,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
+    ): T {
         const modifiers = (
             this.options.reverse ?
                 this.modifiers.reverse() :
@@ -333,19 +242,19 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         );
 
         if (modifiers.length) {
-            let currentTable = table.clone();
+            let clone = table.clone();
 
             for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
                 modifiers[i].modifyColumns(
-                    currentTable,
+                    clone,
                     columns,
                     rowIndex,
                     eventDetail
                 );
-                currentTable = currentTable.modified;
+                clone = clone.modified;
             }
 
-            table.modified.setColumns(currentTable.getColumns());
+            table.modified = clone;
         }
 
         return table;
@@ -354,6 +263,8 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
     /**
      * Applies partial modifications of row changes to the property `modified`
      * of the given table.
+     *
+     * *Note:* The `modified` property of the table gets replaced.
      *
      * @param {Highcharts.DataTable} table
      * Modified table.
@@ -368,14 +279,14 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
-     * Modified table as a reference.
+     * Table with `modified` property as a reference.
      */
-    public modifyRows(
-        table: DataTable,
+    public modifyRows<T extends DataTable>(
+        table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
+    ): T {
         const modifiers = (
             this.options.reverse ?
                 this.modifiers.reverse() :
@@ -383,20 +294,71 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         );
 
         if (modifiers.length) {
-            let currentTable = table.clone();
+            let clone = table.clone();
 
             for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
                 modifiers[i].modifyRows(
-                    currentTable,
+                    clone,
                     rows,
                     rowIndex,
                     eventDetail
                 );
-                currentTable = currentTable.modified;
+                clone = clone.modified;
             }
 
-            table.modified.setColumns(currentTable.getColumns());
+            table.modified = clone;
         }
+
+        return table;
+    }
+
+    /**
+     * Applies several modifications to the table.
+     *
+     * *Note:* The `modified` property of the table gets replaced.
+     *
+     * @param {DataTable} table
+     * Table to modify.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {DataTable}
+     * Table as a reference.
+     *
+     * @emits ChainDataModifier#execute
+     * @emits ChainDataModifier#afterExecute
+     */
+    public modifyTable<T extends DataTable>(
+        table: T,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): T {
+        const chain = this;
+
+        chain.emit({ type: 'modify', detail: eventDetail, table });
+
+        const modifiers = (
+            chain.options.reverse ?
+                chain.modifiers.reverse() :
+                chain.modifiers.slice()
+        );
+
+        let modified = table.modified;
+
+        for (
+            let i = 0,
+                iEnd = modifiers.length,
+                modifier: DataModifier;
+            i < iEnd;
+            ++i
+        ) {
+            modifier = modifiers[i];
+            modified = modifier.modifyTable(modified).modified;
+        }
+
+        table.modified = modified;
+
+        chain.emit({ type: 'afterModify', detail: eventDetail, table });
 
         return table;
     }
@@ -431,28 +393,6 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         });
     }
 
-    /**
-     * Converts the modifier chain to a class JSON, including all containing all
-     * modifiers.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this modifier chain.
-     */
-    public toJSON(): ChainModifier.ClassJSON {
-        const modifiers = this.modifiers,
-            json: ChainModifier.ClassJSON = {
-                $class: 'ChainModifier',
-                modifiers: [],
-                options: merge(this.options)
-            };
-
-        for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
-            json.modifiers.push(modifiers[i].toJSON());
-        }
-
-        return json;
-    }
-
 }
 
 /* *
@@ -479,16 +419,6 @@ namespace ChainModifier {
     }
 
     /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataModifier.ClassJSON {
-        /**
-         * Class JSON of all modifiers, the chain contains.
-         */
-        modifiers: Array<DataModifier.ClassJSON>;
-    }
-
-    /**
      * Event information.
      */
     export type Event = (ChainEvent|ModifierEvent);
@@ -499,7 +429,6 @@ namespace ChainModifier {
     export interface ModifierEvent extends DataEventEmitter.Event {
         readonly type: (
             'addModifier'|'afterAddModifier'|
-            'callModifier'|'afterCallModifier'|
             'removeModifier'|'afterRemoveModifier'
         );
         readonly modifier: DataModifier;
@@ -523,7 +452,6 @@ namespace ChainModifier {
  *
  * */
 
-DataJSON.addClass(ChainModifier);
 DataModifier.addModifier(ChainModifier);
 
 declare module './ModifierType' {

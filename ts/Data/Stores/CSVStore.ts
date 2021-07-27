@@ -1,12 +1,16 @@
 /* *
  *
- *  Data module
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2012-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Torstein Hønsi
+ *  - Christer Vasseng
+ *  - Gøran Slettemark
+ *  - Sophie Bremer
  *
  * */
 
@@ -19,13 +23,13 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
+import type JSON from '../../Core/JSON';
 
-import Ajax from '../../Extensions/Ajax.js';
 import CSVParser from '../Parsers/CSVParser.js';
-import DataJSON from '../DataJSON.js';
-const { ajax } = Ajax;
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
+import HU from '../../Core/HttpUtilities.js';
+const { ajax } = HU;
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -45,7 +49,7 @@ const {
  *
  * @private
  */
-class CSVStore extends DataStore<CSVStore.Event> implements DataJSON.Class {
+class CSVStore extends DataStore<CSVStore.Event> {
 
     /* *
      *
@@ -63,32 +67,6 @@ class CSVStore extends DataStore<CSVStore.Event> implements DataJSON.Class {
         decimalPoint: null,
         itemDelimiter: null,
         lineDelimiter: '\n'
-    }
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Creates a CSVDatastore from a ClassJSON object.
-     *
-     * @param {CSVStore.ClassJSON} json
-     * Class JSON (usually with a $class property) to convert.
-     *
-     * @return {CSVStore}
-     * CSVDataStore from the ClassJSON.
-     */
-    public static fromJSON(json: CSVStore.ClassJSON): CSVStore {
-        const options = json.options,
-            parser = CSVParser.fromJSON(json.parser),
-            table = DataTable.fromJSON(json.table),
-            store = new CSVStore(table, options, parser);
-
-        store.metadata = merge(json.metadata);
-
-        return store;
     }
 
     /* *
@@ -401,23 +379,6 @@ class CSVStore extends DataStore<CSVStore.Event> implements DataJSON.Class {
         return this.getCSVForExport(merge(exportOptions, csvExportOptions));
     }
 
-    /**
-     * Converts the store to a class JSON.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this store.
-     */
-    public toJSON(): CSVStore.ClassJSON {
-        const json: CSVStore.ClassJSON = {
-            $class: 'CSVStore',
-            metadata: merge(this.metadata),
-            options: merge(this.options),
-            parser: this.parser.toJSON(),
-            table: this.table.toJSON()
-        };
-
-        return json;
-    }
 }
 
 /**
@@ -440,14 +401,6 @@ namespace CSVStore {
      * Options for the CSVDataStore class constructor
      */
     export type OptionsType = Partial<(CSVStore.Options & CSVParser.OptionsType)>
-
-    /**
-     * The class JSON when importing/exporting CSVDataStore
-     */
-    export interface ClassJSON extends DataStore.ClassJSON {
-        options: Options;
-        parser: CSVParser.ClassJSON;
-    }
 
     /**
      * @todo move this to the dataparser?
@@ -476,7 +429,7 @@ namespace CSVStore {
     /**
      * Internal options for CSVDataStore
      */
-    export interface Options extends DataJSON.JSONObject {
+    export interface Options extends JSON.Object {
         csv: string;
         csvURL: string;
         enablePolling: boolean;
@@ -486,7 +439,7 @@ namespace CSVStore {
     /**
      * The available options when exporting the table as CSV.
      */
-    export interface ExportOptions extends DataJSON.JSONObject {
+    export interface ExportOptions extends JSON.Object {
         decimalPoint: string | null;
         itemDelimiter: string | null;
         lineDelimiter: string;
@@ -501,7 +454,7 @@ namespace CSVStore {
  *  Registry
  *
  * */
-DataJSON.addClass(CSVStore);
+
 DataStore.addStore(CSVStore);
 
 declare module './StoreType' {

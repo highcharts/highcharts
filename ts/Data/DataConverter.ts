@@ -1,12 +1,16 @@
 /* *
  *
- *  Data Layer
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2012-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
+ *  - Gøran Slettemark
+ *  - Torstein Hønsi
+ *  - Wojciech Chmiel
  *
  * */
 
@@ -19,7 +23,7 @@
  * */
 
 import type DataTable from './DataTable.js';
-import type DataJSON from './DataJSON';
+import type JSON from '../Core/JSON';
 
 import U from './../Core/Utilities.js';
 const {
@@ -630,7 +634,7 @@ namespace DataConverter {
     /**
      * Internal options for DataConverter.
      */
-    export interface Options extends DataJSON.JSONObject {
+    export interface Options extends JSON.Object {
         dateFormat?: string;
         alternativeFormat?: string;
         decimalPoint?: string;

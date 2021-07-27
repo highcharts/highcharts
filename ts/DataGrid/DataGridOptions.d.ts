@@ -2,11 +2,14 @@
  *
  *  Data Grid options
  *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Øystein Moseng
  *
  * */
 
@@ -20,7 +23,6 @@ import type DataTable from '../Data/DataTable';
 
 export interface DataGridOptions {
     dataTable?: DataTable;
-    json?: DataTable.ClassJSON;
 }
 
 export default DataGridOptions;

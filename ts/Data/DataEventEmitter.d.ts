@@ -1,12 +1,13 @@
 /* *
  *
- *  Data Layer
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
  *
  * */
 
@@ -16,7 +17,7 @@
  *
  * */
 
-import DataJSON from './DataJSON';
+import type JSON from '../Core/JSON';
 
 /* *
  *
@@ -105,7 +106,7 @@ declare namespace DataEventEmitter {
     /**
      * Custom information for an event object.
      */
-    export type EventDetail = DataJSON.JSONObject;
+    export type EventDetail = JSON.Object;
 
     /**
      * Event object with additional event information. This interface can be

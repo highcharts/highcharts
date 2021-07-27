@@ -73,12 +73,6 @@ QUnit.test('Pane update, single', function (assert) {
         2,
         'New border width'
     );
-
-    assert.strictEqual(
-        chart.pane[0].options.endAngle,
-        chart.options.pane.endAngle,
-        'Pane options in chart options are updated (#9917)'
-    );
 });
 
 QUnit.test('Pane update through chart.update', function (assert) {
@@ -197,6 +191,15 @@ QUnit.test('Pane update through chart.update', function (assert) {
         chart.pane[1].background[0].attr('fill'),
         'silver',
         'Pane updated by id'
+    );
+
+    chart.update({
+        pane: []
+    }, true, true);
+
+    assert.ok(
+        true,
+        '#15862: oneToOne update attempting to remove pane should not throw'
     );
 });
 

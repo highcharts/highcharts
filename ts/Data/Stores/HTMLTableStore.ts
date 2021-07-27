@@ -1,12 +1,16 @@
 /* *
  *
- *  Data module
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2012-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Torstein Hønsi
+ *  - Gøran Slettemark
+ *  - Wojciech Chmiel
+ *  - Sophie Bremer
  *
  * */
 
@@ -19,8 +23,8 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
+import type JSON from '../../Core/JSON';
 
-import DataJSON from '../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import H from '../../Core/Globals.js';
@@ -39,7 +43,7 @@ const {
  *
  * @private
  */
-class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON.Class {
+class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
     /* *
      *
@@ -56,31 +60,6 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
         exportIDColumn: false,
         useRowspanHeaders: true,
         useMultiLevelHeaders: true
-    }
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Creates an HTMLTableStore from ClassJSON
-     *
-     * @param {HTMLTableStore.ClassJSON} json
-     * Class JSON (usually with a $class property) to convert.
-     *
-     * @return {HTMLTableStore}
-     * HTMLTableStore from the ClassJSON
-     */
-    public static fromJSON(json: HTMLTableStore.ClassJSON): HTMLTableStore {
-        const options = json.options,
-            parser = HTMLTableParser.fromJSON(json.parser),
-            table = DataTable.fromJSON(json.table),
-            store = new HTMLTableStore(table, options, parser);
-
-        store.metadata = merge(json.metadata);
-
-        return store;
     }
 
     /* *
@@ -490,25 +469,6 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> implements DataJSON
         return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
     }
 
-    /**
-     * Converts the store to a class JSON.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this store.
-     */
-    public toJSON(): HTMLTableStore.ClassJSON {
-        const store = this,
-            json: HTMLTableStore.ClassJSON = {
-                $class: 'HTMLTableStore',
-                metadata: merge(store.metadata),
-                options: merge(this.options),
-                parser: store.parser.toJSON(),
-                table: store.table.toJSON(),
-                tableElementID: store.tableID || ''
-            };
-
-        return json;
-    }
 }
 
 
@@ -534,18 +494,9 @@ namespace HTMLTableStore {
     export type OptionsType = Partial<(HTMLTableStore.Options & HTMLTableParser.OptionsType)>
 
     /**
-     * The ClassJSON used to import/export HTMLTableDataStore
-     */
-    export interface ClassJSON extends DataStore.ClassJSON {
-        options: HTMLTableStore.OptionsType;
-        parser: HTMLTableParser.ClassJSON;
-        tableElementID: string;
-    }
-
-    /**
      * Options for exporting the store as an HTML table
      */
-    export interface ExportOptions extends DataJSON.JSONObject {
+    export interface ExportOptions extends JSON.Object {
         decimalPoint?: string | null;
         exportIDColumn?: boolean;
         tableCaption?: string;
@@ -586,7 +537,6 @@ namespace HTMLTableStore {
  *
  * */
 
-DataJSON.addClass(HTMLTableStore);
 DataStore.addStore(HTMLTableStore);
 
 declare module './StoreType' {

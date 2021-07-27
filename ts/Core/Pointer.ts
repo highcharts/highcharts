@@ -24,6 +24,7 @@ import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type Series from './Series/Series';
 import type SVGElement from './Renderer/SVG/SVGElement';
+
 import Color from './Color/Color.js';
 const { parse: color } = Color;
 import H from './Globals.js';
@@ -1287,7 +1288,7 @@ class Pointer {
             touchesLength = touches.length,
             lastValidTouch = self.lastValidTouch as any,
             hasZoom = self.hasZoom,
-            transform: Highcharts.SeriesPlotBoxObject = {} as any,
+            transform: Series.PlotBoxObject = {} as any,
             fireClickEvent = touchesLength === 1 && (
                 (
                     self.inClass(e.target as any, 'highcharts-tracker') &&
@@ -1830,7 +1831,7 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#scaleGroups
      */
-    public scaleGroups(attribs?: Highcharts.SeriesPlotBoxObject, clip?: boolean): void {
+    public scaleGroups(attribs?: Series.PlotBoxObject, clip?: boolean): void {
 
         const chart = this.chart;
 
