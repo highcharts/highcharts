@@ -17,6 +17,7 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import Chart from '../Core/Chart/Chart.js';
 import ChartUtilities from './Utils/ChartUtilities.js';
+import ProxyProvider from './ProxyProvider.js';
 import H from '../Core/Globals.js';
 const {
     doc
@@ -57,6 +58,7 @@ declare global {
             public chart: AccessibilityChart;
             public components: AccessibilityComponentsObject;
             public keyboardNavigation: KeyboardNavigation;
+            public proxyProvider: ProxyProvider;
             public destroy(): void;
             public getChartTypes(): Array<string>;
             public init(chart: Chart): void;
@@ -163,7 +165,7 @@ Accessibility.prototype = {
         this: Highcharts.Accessibility,
         chart: Chart
     ): void {
-        this.chart = chart as any;
+        this.chart = chart as Highcharts.AccessibilityChart;
 
         // Abort on old browsers
         if (!doc.addEventListener || !chart.renderer.isSVG) {
@@ -175,6 +177,7 @@ Accessibility.prototype = {
         // every update, but it is probably not needed.
         copyDeprecatedOptions(chart);
 
+        this.proxyProvider = new ProxyProvider(this.chart);
         this.initComponents();
         this.keyboardNavigation = new (KeyboardNavigation as any)(
             chart, this.components
@@ -187,8 +190,9 @@ Accessibility.prototype = {
      * @private
      */
     initComponents: function (this: Highcharts.Accessibility): void {
-        const chart = this.chart,
-            a11yOptions = chart.options.accessibility;
+        const chart = this.chart;
+        const proxyProvider = this.proxyProvider;
+        const a11yOptions = chart.options.accessibility;
 
         this.components = {
             container: new ContainerComponent(),
@@ -206,7 +210,7 @@ Accessibility.prototype = {
 
         const components = this.components;
         this.getComponentOrder().forEach(function (componentName: string): void {
-            components[componentName].initBase(chart);
+            components[componentName].initBase(chart, proxyProvider);
             components[componentName].init();
         });
     },
@@ -247,6 +251,11 @@ Accessibility.prototype = {
         // Update the chart type list as this is used by multiple modules
         chart.types = this.getChartTypes();
 
+        // Update proxies. We don't update proxy positions since most likely we
+        // need to recreate the proxies on update.
+        const kbdNavOrder = a11yOptions.keyboardNavigation.order;
+        this.proxyProvider.updateGroupOrder(kbdNavOrder);
+
         // Update markup
         this.getComponentOrder().forEach(function (componentName: string): void {
             components[componentName].onChartUpdate();
@@ -258,9 +267,7 @@ Accessibility.prototype = {
         });
 
         // Update keyboard navigation
-        this.keyboardNavigation.update(
-            (a11yOptions.keyboardNavigation as any).order
-        );
+        this.keyboardNavigation.update(kbdNavOrder);
 
         // Handle high contrast mode
         if (
@@ -324,8 +331,9 @@ Accessibility.prototype = {
  * @private
  */
 Chart.prototype.updateA11yEnabled = function (): void {
-    let a11y = this.accessibility,
-        accessibilityOptions = this.options.accessibility;
+    let a11y = this.accessibility;
+    const accessibilityOptions = this.options.accessibility;
+
     if (accessibilityOptions && accessibilityOptions.enabled) {
         if (a11y) {
             a11y.update();
@@ -345,7 +353,7 @@ Chart.prototype.updateA11yEnabled = function (): void {
 };
 
 // Handle updates to the module and send render updates to components
-addEvent(Chart, 'render', function (e: Event): void {
+addEvent(Chart, 'render', function (): void {
     // Update/destroy
     if (this.a11yDirty && this.renderTo) {
         delete this.a11yDirty;
@@ -354,6 +362,7 @@ addEvent(Chart, 'render', function (e: Event): void {
 
     const a11y = this.accessibility;
     if (a11y) {
+        a11y.proxyProvider.updateProxyElementPositions();
         a11y.getComponentOrder().forEach(function (
             componentName: string
         ): void {

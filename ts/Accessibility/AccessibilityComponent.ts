@@ -25,6 +25,7 @@ import ChartUtilities from './Utils/ChartUtilities.js';
 const { unhideChartElementFromAT } = ChartUtilities;
 import DOMElementProvider from './Utils/DOMElementProvider.js';
 import EventProvider from './Utils/EventProvider.js';
+import type ProxyProvider from './ProxyProvider';
 import H from '../Core/Globals.js';
 const {
     doc,
@@ -54,6 +55,7 @@ declare global {
             public domElementProvider: DOMElementProvider;
             public eventProvider: EventProvider;
             public keyCodes: Record<string, number>;
+            public proxyProvider: ProxyProvider;
             public addEvent: EventProvider['addEvent'];
             public createElement: DOMElementProvider['createElement'];
             public addProxyGroup(attrs?: HTMLAttributes): HTMLDOMElement;
@@ -76,7 +78,10 @@ declare global {
                 KeyboardNavigationHandler|Array<KeyboardNavigationHandler>
             );
             public init(): void;
-            public initBase(chart: AccessibilityChart): void;
+            public initBase(
+                chart: AccessibilityChart,
+                proxyProvider: ProxyProvider
+            ): void;
             public onChartRender(): void;
             public onChartUpdate(): void;
             public proxyMouseEventsForButton(
@@ -159,17 +164,19 @@ AccessibilityComponent.prototype = {
     /**
      * Initialize the class
      * @private
-     * @param {Highcharts.Chart} chart
-     *        Chart object
+     * @param {Highcharts.Chart} chart The chart object
+     * @param {Highcharts.ProxyProvider} proxyProvider The proxy provider of the accessibility module
      */
     initBase: function (
         this: Highcharts.AccessibilityComponent,
-        chart: Highcharts.AccessibilityChart
+        chart: Highcharts.AccessibilityChart,
+        proxyProvider: ProxyProvider
     ): void {
         this.chart = chart;
 
         this.eventProvider = new EventProvider();
         this.domElementProvider = new DOMElementProvider();
+        this.proxyProvider = proxyProvider;
 
         // Key code enum for common keys
         this.keyCodes = {

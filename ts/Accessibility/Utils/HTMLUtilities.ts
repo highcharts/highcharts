@@ -22,6 +22,7 @@ const {
     win
 } = H;
 import U from '../../Core/Utilities.js';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 const {
     merge
 } = U;
@@ -43,6 +44,91 @@ function addClass(el: HTMLDOMElement, className: string): void {
         // that contains the className.
         el.className += className;
     }
+}
+
+
+/**
+ * Utility function to clone a mouse event for re-dispatching.
+ * @private
+ */
+function cloneMouseEvent(e: MouseEvent): MouseEvent {
+    if (typeof win.MouseEvent === 'function') {
+        return new win.MouseEvent(e.type, e);
+    }
+
+    // No MouseEvent support, try using initMouseEvent
+    if (doc.createEvent) {
+        const evt = doc.createEvent('MouseEvent');
+        if (evt.initMouseEvent) {
+            evt.initMouseEvent(
+                e.type,
+                e.bubbles, // #10561, #12161
+                e.cancelable,
+                e.view || win,
+                e.detail,
+                e.screenX,
+                e.screenY,
+                e.clientX,
+                e.clientY,
+                e.ctrlKey,
+                e.altKey,
+                e.shiftKey,
+                e.metaKey,
+                e.button,
+                e.relatedTarget
+            );
+            return evt;
+        }
+    }
+
+    return getFakeMouseEvent(e.type);
+}
+
+
+/**
+ * Utility function to clone a touch event for re-dispatching.
+ * @private
+ */
+function cloneTouchEvent(e: TouchEvent): TouchEvent {
+    const touchListToTouchArray = (l: TouchList): Touch[] => {
+        const touchArray = [];
+        for (let i = 0; i < l.length; ++i) {
+            const item = l.item(i);
+            if (item) {
+                touchArray.push(item);
+            }
+        }
+        return touchArray;
+    };
+
+    if (typeof win.TouchEvent === 'function') {
+        const newEvent = new win.TouchEvent(e.type, {
+            touches: touchListToTouchArray(e.touches),
+            targetTouches: touchListToTouchArray(e.targetTouches),
+            changedTouches: touchListToTouchArray(e.changedTouches),
+            ctrlKey: e.ctrlKey,
+            shiftKey: e.shiftKey,
+            altKey: e.altKey,
+            metaKey: e.metaKey,
+            bubbles: e.bubbles,
+            cancelable: e.cancelable,
+            composed: e.composed,
+            detail: e.detail,
+            view: e.view
+        });
+        if (e.defaultPrevented) {
+            newEvent.preventDefault();
+        }
+        return newEvent;
+    }
+
+    // Fallback to mouse event
+    type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+    const fakeEvt = cloneMouseEvent(e as unknown as MouseEvent) as unknown as Writeable<TouchEvent>;
+    fakeEvt.touches = e.touches;
+    fakeEvt.changedTouches = e.changedTouches;
+    fakeEvt.targetTouches = e.targetTouches;
+    return fakeEvt;
 }
 
 
@@ -81,9 +167,24 @@ function getElement(
  * @private
  * @return {global.MouseEvent}
  */
-function getFakeMouseEvent(type: string): MouseEvent {
+function getFakeMouseEvent(type: string, position?: BBoxObject): MouseEvent {
+    const pos = position || {
+        x: 0,
+        y: 0
+    };
+
     if (typeof win.MouseEvent === 'function') {
-        return new win.MouseEvent(type);
+        return new win.MouseEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            composed: true,
+            view: win,
+            detail: type === 'click' ? 1 : 0,
+            screenX: pos.x,
+            screenY: pos.y,
+            clientX: pos.x,
+            clientY: pos.y
+        });
     }
 
     // No MouseEvent support, try using initMouseEvent
@@ -97,10 +198,10 @@ function getFakeMouseEvent(type: string): MouseEvent {
                 win, // View
                 type === 'click' ? 1 : 0, // Detail
                 // Coords
-                0,
-                0,
-                0,
-                0,
+                pos.x,
+                pos.y,
+                pos.x,
+                pos.y,
                 // Pressed keys
                 false,
                 false,
@@ -113,7 +214,7 @@ function getFakeMouseEvent(type: string): MouseEvent {
         }
     }
 
-    return { type: type } as any;
+    return { type: type } as MouseEvent;
 }
 
 
@@ -182,6 +283,19 @@ function getHeadingTagNameForElement(element: HTMLDOMElement): string {
 function removeElement(element?: DOMElementType): void {
     if (element && element.parentNode) {
         element.parentNode.removeChild(element);
+    }
+}
+
+
+/**
+ * Remove all child nodes from an element.
+ * @private
+ * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} [element]
+ * @return {void}
+ */
+function removeChildNodes(element: DOMElementType): void {
+    while (element.lastChild) {
+        element.removeChild(element.lastChild);
     }
 }
 
@@ -261,11 +375,14 @@ function visuallyHideElement(element: HTMLDOMElement): void {
 
 const HTMLUtilities = {
     addClass,
+    cloneMouseEvent,
+    cloneTouchEvent,
     escapeStringForHTML,
     getElement,
     getFakeMouseEvent,
     getHeadingTagNameForElement,
     removeElement,
+    removeChildNodes,
     reverseChildNodes,
     setElAttrs,
     stripHTMLTagsFromString,
