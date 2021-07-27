@@ -969,7 +969,7 @@ Axis.prototype.setModifier = function (
             } else if (
                 mode === 'cumulative' &&
                 (
-                    typeof(modeState) === 'boolean' ||
+                    typeof modeState === 'boolean' ||
                     typeof modeState === 'undefined'
                 )
             ) {
@@ -1135,7 +1135,7 @@ Series.prototype.initCompare = function (compare?: string): void {
                 return value;
             }
             return 0;
-        }
+        };
     } else {
         // When disabling, unset the modifyValue method and clear the points
         this.modifyValue = null as any;
@@ -1267,7 +1267,7 @@ Axis.prototype.setCompare = function (
  * @param {boolean} [cumulative=false]
  *        Either enable or disable Cumulative Sum mode.
  *        Can be one of `false` (default) or `true`.
- * 
+ *
  * @param {boolean} [redraw=true]
  *        Whether to redraw the chart or to wait for a later call to
  *        {@link Chart#redraw}.
@@ -1324,7 +1324,7 @@ Series.prototype.initCumulative = function (cumulative?: boolean): void {
             }
 
             return 0;
-        }
+        };
     } else {
         // When disabling, unset the modifyValue method and clear the points
         this.modifyValue = null as any;
@@ -1375,7 +1375,7 @@ Series.prototype.getCumulativeExtremes = function (
  *         Set cumulative
  *
  * @function Highcharts.Axis#setCumulative
- * 
+ *
  * @param {boolean} [cumulative]
  *        Whether to disable or enable the cumulative mode.
  *        Can be one of `undefined` (default, treated as `false`),
