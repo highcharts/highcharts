@@ -159,36 +159,11 @@ class DataGrid {
     private render(): void {
         emptyHTMLElement(this.innerContainer);
         this.updateScrollingLength();
-        this.applyContainerStyles();
         this.updateInnerContainerWidth();
         this.renderColumnHeaders();
         this.renderInitialRows();
         this.renderColumnDragHandles();
         this.addEvents();
-    }
-
-
-    /**
-     * Apply CSS.
-     */
-    private applyContainerStyles(): void {
-        // TODO: Use stylesheets.
-        this.outerContainer.style.cssText =
-            'width: 100%;' +
-            'height: 100%;' +
-            'overflow: scroll;' +
-            'position: relative;';
-        this.scrollContainer.style.cssText =
-            'height: 1000px;' +
-            'position: relative;' +
-            'z-index: 1;';
-        this.innerContainer.style.cssText =
-            'display: flex;' +
-            'flex-direction: column;' +
-            'position: fixed;' +
-            'overflow: hidden;' +
-            'min-height: 20px;' +
-            'z-index: -1;';
     }
 
 
@@ -240,7 +215,7 @@ class DataGrid {
             // Replace cell contents with an input element
             cellEl.textContent = '';
             input = this.cellInputEl = document.createElement('input');
-            input.style.width = '60px';
+            input.className = 'hc-dg-cell-input';
             cellEl.appendChild(input);
             input.focus();
             input.value = cellValue || '';
@@ -307,11 +282,6 @@ class DataGrid {
      */
     private renderCell(parentRow: HTMLElement, cellValue: DataTable.CellType): void {
         const cellEl = makeDiv('hc-dg-cell');
-        cellEl.style.cssText = 'border: 1px solid black;' +
-            'overflow: hidden;' +
-            'padding: 0 10px;' +
-            'z-index: -1;' +
-            'flex: 1;';
 
         cellEl.textContent = dataTableCellToString(cellValue);
 
@@ -326,11 +296,6 @@ class DataGrid {
      */
     private renderRow(row: DataTable.Row): void {
         const rowEl = makeDiv('hc-dg-row');
-        rowEl.style.cssText = 'display: flex;' +
-            'background-color: white;' +
-            'max-height: 20px;' +
-            'z-index: -1;' +
-            'width: 100%;';
 
         row.forEach(this.renderCell.bind(this, rowEl));
 
@@ -346,10 +311,7 @@ class DataGrid {
      */
     private renderColumnHeader(parentEl: HTMLElement, columnName: string): void {
         const headerEl = makeDiv('hc-dg-column-header');
-        headerEl.style.cssText = 'border: 1px solid black;' +
-            'overflow: hidden;' +
-            'padding: 0 10px;' +
-            'flex: 1;';
+
         headerEl.textContent = columnName;
         parentEl.appendChild(headerEl);
     }
@@ -362,10 +324,6 @@ class DataGrid {
         const columnNames = this.dataTable.getColumnNames();
         const columnHeadersContainer = this.columnHeadersContainer =
             this.columnHeadersContainer || makeDiv('hc-dg-column-headers');
-        columnHeadersContainer.style.cssText = 'display: flex;' +
-            'background-color: white;' +
-            'max-height: 20px;' +
-            'width: 100%;';
 
         emptyHTMLElement(columnHeadersContainer);
 
@@ -408,12 +366,6 @@ class DataGrid {
         for (let i = 1; i < columnEls.length; ++i) {
             const col = columnEls[i] as HTMLElement;
             const handle = makeDiv('hc-dg-col-resize-handle');
-            handle.style.cssText = 'cursor: ew-resize;' +
-                'opacity: 0;' +
-                'background-color: rgba(255, 0, 0, 0.5);' +
-                'position: absolute;' +
-                'top: 0;' +
-                'width: 6px';
             handle.style.height = handleHeight + 'px';
             handle.style.left = col.offsetLeft - 3 + 'px';
             handle.addEventListener('mouseover', (): void => {
@@ -455,12 +407,6 @@ class DataGrid {
     private renderColumnResizeCrosshair(container: HTMLElement): void {
         const el = this.columnResizeCrosshair = this.columnResizeCrosshair || makeDiv('hc-dg-col-resize-crosshair');
         const handleHeight = 20;
-
-        el.style.cssText = 'position: absolute;' +
-            'background-color: rgba(255, 0, 0, 0.5);' +
-            'width: 4px;' +
-            'left: 0;' +
-            'opacity: 0;';
 
         el.style.top = handleHeight + 'px';
         el.style.height = this.innerContainer.offsetHeight - handleHeight + 'px';
@@ -535,8 +481,12 @@ class DataGrid {
         const newWidthRight = colRight.offsetWidth - diff;
         const diffRatioLeft = newWidthLeft / colLeft.offsetWidth;
         const diffRatioRight = newWidthRight / colRight.offsetWidth;
-        const leftFlexRatio = colLeft.style.flex = (parseFloat(colLeft.style.flex) * diffRatioLeft).toFixed(3);
-        const rightFlexRatio = colRight.style.flex = (parseFloat(colRight.style.flex) * diffRatioRight).toFixed(3);
+        const leftFlexRatio = colLeft.style.flex = (
+            (colLeft.style.flex ? parseFloat(colLeft.style.flex) : 1) * diffRatioLeft
+        ).toFixed(3);
+        const rightFlexRatio = colRight.style.flex = (
+            (colRight.style.flex ? parseFloat(colRight.style.flex) : 1) * diffRatioRight
+        ).toFixed(3);
 
         this.rowElements.forEach((row): void => {
             const cellElements = row.children;

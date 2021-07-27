@@ -1,4 +1,5 @@
 @import 'https://code.highcharts.com/css/highcharts.css';
+@import 'https://code.highcharts.com/css/datagrid.css';
 
 #container {
 	height: 400px;
