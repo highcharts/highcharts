@@ -65,7 +65,18 @@ QUnit.test('Stock: general tests for the Cumulative Sum', function (assert) {
         'The points should have the same sum value and overlap (sum to 10).'
     );
 
+    assert.strictEqual(
+        chart.series[0].points[1].cumulativeSum,
+        5,
+        'Cumulative enabled - point.cumulativeSum should exist.'
+    );
+
     chart.yAxis[0].setCumulative(false);
+
+    assert.notOk(
+        chart.series[0].points[1].cumulativeSum,
+        'Cumulative disabled - point.cumulativeSum should be deleted.'
+    );
 
     assert.strictEqual(
         chart.plotTop + chart.series[0].points[1].plotY,

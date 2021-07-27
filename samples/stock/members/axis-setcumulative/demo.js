@@ -5,7 +5,6 @@ Highcharts.stockChart('container', {
     },
 
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.cumulativeSum})<br/>',
         changeDecimals: 2,
         valueDecimals: 2
     },
@@ -22,11 +21,21 @@ Highcharts.stockChart('container', {
     // Buttons behaviour
     document.querySelector('button.enable-cumulative')
         .addEventListener('click', function () {
-            chart.yAxis[0].setCumulative(true);
+            chart.yAxis[0].setCumulative(true, false);
+            chart.update({
+                tooltip: {
+                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.cumulativeSum})<br/>'
+                }
+            });
         });
 
     document.querySelector('button.disable-cumulative')
         .addEventListener('click', function () {
-            chart.yAxis[0].setCumulative(false);
+            chart.yAxis[0].setCumulative(false, false);
+            chart.update({
+                tooltip: {
+                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>'
+                }
+            });
         });
 });

@@ -2513,11 +2513,13 @@ const defaultOptions: Options = {
          */
 
         /**
-         * How many decimals to show for the `point.change` value when the
-         * `series.compare` option is set. This is overridable in each series'
-         * tooltip options object. The default is to preserve all decimals.
+         * How many decimals to show for the `point.change`
+         * or the `point.cumulativeSum` value when the `series.compare`
+         * or the `series.cumulative` option is set.
+         * This is overridable in each series' tooltip options object.
          *
          * @type      {number}
+         * @default   2
          * @since     1.0.1
          * @product   highstock
          * @apioption tooltip.changeDecimals

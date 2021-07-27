@@ -95,6 +95,11 @@ declare module '../Axis/AxisLike' {
         crossLabel?: SVGElement;
         setCompare(compare?: string, redraw?: boolean): void;
         setCumulative(cumulative?: boolean, redraw?: boolean): void;
+        setModifier(
+            mode: 'compare'|'cumulative',
+            modeState?: boolean|string,
+            redraw?: boolean
+        ): void;
     }
 }
 
@@ -128,7 +133,7 @@ declare module '../Series/SeriesLike' {
         initCumulative(cumulative?: boolean): void;
         modifyValue?(value?: number|null, index?: number): (number|undefined);
         setCompare(compare?: string, redraw?: boolean): void;
-        setCumulative(cumulative?: boolean): void;
+        setCumulative(cumulative?: boolean, redraw?: boolean): void;
     }
 }
 
@@ -924,8 +929,9 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
 /**
  * Extend series.init by adding a methods to modify the y values used
- * for plotting on the y axis. This method is called both from the axis
- * when finding dataMin and dataMax, and from the series.translate method.
+ * for plotting on the y axis. For compare mode, this method is called both
+ * from the axis when finding dataMin and dataMax,
+ * and from the series.translate method.
  *
  * @ignore
  * @function Highcharts.Series#init
@@ -941,6 +947,39 @@ Series.prototype.init = function (): void {
     } else if (this.options.cumulative) {
         // Set Cumulative Sum mode
         this.initCumulative(this.options.cumulative);
+    }
+};
+
+/**
+ * Shared code for the axis.setCompare() and the axis.setCumulative() methods.
+ * @private
+ */
+Axis.prototype.setModifier = function (
+    mode: 'compare'|'cumulative',
+    modeState?: boolean|string,
+    redraw?: boolean
+): void {
+    if (!this.isXAxis) {
+        this.series.forEach(function (series): void {
+            if (
+                mode === 'compare' &&
+                (isString(modeState) || typeof modeState === 'undefined')
+            ) {
+                series.setCompare(modeState, false);
+            } else if (
+                mode === 'cumulative' &&
+                (
+                    typeof(modeState) === 'boolean' ||
+                    typeof modeState === 'undefined'
+                )
+            ) {
+                series.setCumulative(modeState, false);
+            }
+        });
+
+        if (pick(redraw, true)) {
+            this.chart.redraw();
+        }
     }
 };
 
@@ -1001,8 +1040,13 @@ Point.prototype.tooltipFormatter = function (pointFormat: string): string {
             );
         };
 
-    replace('change');
-    replace('cumulativeSum');
+    if (defined(point.change)) {
+        replace('change');
+    }
+
+    if (defined(point.cumulativeSum)) {
+        replace('cumulativeSum');
+    }
 
     return pointTooltipFormatter.apply(this, [pointFormat]);
 };
@@ -1024,7 +1068,11 @@ Point.prototype.tooltipFormatter = function (pointFormat: string): string {
  * @function Highcharts.Series#setCompare
  *
  * @param {string} [compare]
- *        Can be one of `null` (default), `"percent"` or `"value"`.
+ *        Can be one of `undefined` (default), `"percent"` or `"value"`.
+ *
+ * @param {boolean} [redraw=true]
+ *        Whether to redraw the chart or to wait for a later call to
+ *        {@link Chart#redraw}.
  */
 Series.prototype.setCompare = function (
     compare?: string,
@@ -1048,9 +1096,9 @@ Series.prototype.setCompare = function (
  *        Can be one of `null` (default), `"percent"` or `"value"`.
  */
 Series.prototype.initCompare = function (compare?: string): void {
-    // Set or unset the modifyValue method
-    this.modifyValue = (compare === 'value' || compare === 'percent') ?
-        function (
+    if (compare === 'value' || compare === 'percent') {
+        // Set the modifyValue method
+        this.modifyValue = function (
             this: Series,
             value?: number|null,
             index?: number
@@ -1069,7 +1117,6 @@ Series.prototype.initCompare = function (compare?: string): void {
                 // Get the modified value
                 if (compare === 'value') {
                     value -= compareValue;
-
                 // Compare percent
                 } else {
                     value = 100 * (value / compareValue) -
@@ -1088,8 +1135,14 @@ Series.prototype.initCompare = function (compare?: string): void {
                 return value;
             }
             return 0;
-        } :
-        null as any;
+        }
+    } else {
+        // When disabling, unset the modifyValue method and clear the points
+        this.modifyValue = null as any;
+        this.points.forEach((point): void => {
+            delete point.change;
+        });
+    }
 
     // Mark dirty
     if (this.chart.hasRendered) {
@@ -1171,12 +1224,12 @@ Series.prototype.processData = function (force?: boolean): (boolean|undefined) {
 
 /**
  * Highcharts Stock only. Set the compare mode on all series
- * belonging to an Y axis after render time.
+ * belonging to a Y axis.
  *
  * @see [plotOptions.series.compare](https://api.highcharts.com/highstock/plotOptions.series.compare)
  *
  * @sample stock/members/axis-setcompare/
- *         Set compoare
+ *         Set compare
  *
  * @function Highcharts.Axis#setCompare
  *
@@ -1192,14 +1245,7 @@ Axis.prototype.setCompare = function (
     compare?: string,
     redraw?: boolean
 ): void {
-    if (!this.isXAxis) {
-        this.series.forEach(function (series): void {
-            series.setCompare(compare);
-        });
-        if (pick(redraw, true)) {
-            this.chart.redraw();
-        }
-    }
+    this.setModifier('compare', compare, redraw);
 };
 
 /* ************************************************************************** *
@@ -1218,14 +1264,21 @@ Axis.prototype.setCompare = function (
  *
  * @function Highcharts.Series#setCumulative
  *
- * @param {boolean} [cumulative]
+ * @param {boolean} [cumulative=false]
  *        Either enable or disable Cumulative Sum mode.
  *        Can be one of `false` (default) or `true`.
+ * 
+ * @param {boolean} [redraw=true]
+ *        Whether to redraw the chart or to wait for a later call to
+ *        {@link Chart#redraw}.
  */
 Series.prototype.setCumulative = function (
     cumulative?: boolean,
     redraw?: boolean
 ): void {
+    // Set default value to false
+    cumulative = pick(cumulative, false);
+
     this.initCumulative(cumulative);
 
     // Survive to export, #5485
@@ -1241,36 +1294,44 @@ Series.prototype.setCumulative = function (
  * @function Highcharts.Series#initCumulative
  */
 Series.prototype.initCumulative = function (cumulative?: boolean): void {
-    // Set or unset the modifyValue method
-    this.modifyValue = cumulative ? function (
-        this: Series,
-        value?: number|null,
-        index?: number
-    ): (number|undefined) {
-        if (value === null) {
-            value = 0;
-        }
-
-        if (typeof value !== 'undefined' && typeof index !== 'undefined') {
-            const prevPoint = index > 0 ? this.points[index - 1] : null;
-
-            // Get the modified value
-            if (prevPoint && prevPoint.cumulativeSum) {
-                value = correctFloat(prevPoint.cumulativeSum + value);
+    if (cumulative) {
+        // Set the modifyValue method
+        this.modifyValue = function (
+            this: Series,
+            value?: number|null,
+            index?: number
+        ): (number|undefined) {
+            if (value === null) {
+                value = 0;
             }
 
-            // Record for tooltip etc.
-            const point = this.points[index];
+            if (typeof value !== 'undefined' && typeof index !== 'undefined') {
+                const prevPoint = index > 0 ? this.points[index - 1] : null;
 
-            if (point) {
-                point.cumulativeSum = value;
+                // Get the modified value
+                if (prevPoint && prevPoint.cumulativeSum) {
+                    value = correctFloat(prevPoint.cumulativeSum + value);
+                }
+
+                // Record for tooltip etc.
+                const point = this.points[index];
+
+                if (point) {
+                    point.cumulativeSum = value;
+                }
+
+                return value;
             }
 
-            return value;
+            return 0;
         }
-
-        return 0;
-    } : null as any;
+    } else {
+        // When disabling, unset the modifyValue method and clear the points
+        this.modifyValue = null as any;
+        this.points.forEach((point): void => {
+            delete point.cumulativeSum;
+        });
+    }
 
     // Mark dirty
     if (this.chart.hasRendered) {
@@ -1306,14 +1367,19 @@ Series.prototype.getCumulativeExtremes = function (
 
 /**
  * Highcharts Stock only. Set the cumulative mode on all series
- * belonging to an Y axis after render time.
+ * belonging to a Y axis.
  *
  * @see [plotOptions.series.cumulative](https://api.highcharts.com/highstock/plotOptions.series.cumulative)
  *
  * @sample stock/members/axis-setcumulative/
- *         Set compoare
+ *         Set cumulative
  *
  * @function Highcharts.Axis#setCumulative
+ * 
+ * @param {boolean} [cumulative]
+ *        Whether to disable or enable the cumulative mode.
+ *        Can be one of `undefined` (default, treated as `false`),
+ *        `false` or `true`.
  *
  * @param {boolean} [redraw=true]
  *        Whether to redraw the chart or to wait for a later call to
@@ -1323,14 +1389,7 @@ Axis.prototype.setCumulative = function (
     cumulative?: boolean,
     redraw?: boolean
 ): void {
-    if (!this.isXAxis) {
-        this.series.forEach(function (series): void {
-            series.setCumulative(cumulative);
-        });
-        if (pick(redraw, true)) {
-            this.chart.redraw();
-        }
-    }
+    this.setModifier('cumulative', cumulative, redraw);
 };
 
 /* ************************************************************************** *
@@ -1455,6 +1514,7 @@ export default StockChart;
  *
  * @see [compareBase](#plotOptions.series.compareBase)
  * @see [Axis.setCompare()](/class-reference/Highcharts.Axis#setCompare)
+ * @see [Series.setCompare()](/class-reference/Highcharts.Series#setCompare)
  *
  * @sample {highstock} stock/plotoptions/series-compare-percent/
  *         Percent
@@ -1501,13 +1561,14 @@ export default StockChart;
  */
 
 /**
- * Cumulative Sum feature replaces points' values with a following formula:
+ * Cumulative Sum feature replaces points' values with the following formula:
  * `sum of all previous points' values + current point's value`.
  * Works only for points in a visible range.
- * Adds a `cumulativeSum` field to every point object.
+ * Adds the `cumulativeSum` field to each point object that can be accessed
+ * e.g. in the [tooltip.pointFormat](https://api.highcharts.com/highstock/tooltip.pointFormat).
  *
  * @see [Axis.setCumulative()](/class-reference/Highcharts.Axis#setCumulative)
- * @see [plotOptions.series.compare](https://api.highcharts.com/highstock/plotOptions.series.compare)
+ * @see [Series.setCumulative()](/class-reference/Highcharts.Series#setCumulative)
  *
  * @sample {highstock} stock/plotoptions/series-cumulative-sum/
  *         Cumulative Sum
