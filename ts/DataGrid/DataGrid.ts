@@ -36,19 +36,6 @@ const {
     merge
 } = U;
 
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        let DataGrid: DataGridClass;
-    }
-}
-type DataGridClass = typeof DataGrid;
-
-
 /* *
  *
  *  Class
@@ -500,7 +487,5 @@ class DataGrid {
         this.renderColumnDragHandles();
     }
 }
-
-H.DataGrid = DataGrid;
 
 export default DataGrid;
