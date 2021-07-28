@@ -3,6 +3,13 @@
     height: 100%;
     overflow: scroll;
     position: relative;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    box-sizing: border-box;
+}
+
+.hc-dg-outer-container * {
+    box-sizing: border-box;
 }
 
 .hc-dg-scroll-container {
@@ -16,41 +23,53 @@
     flex-direction: column;
     position: fixed;
     overflow: hidden;
-    min-height: 20px;
+    min-height: 25px;
     z-index: -1;
 }
 
 .hc-dg-cell {
-    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    border-left: 1px solid #ddd;
+    border-top: 1px solid #ddd;
     overflow: hidden;
-    padding: 0 10px;
+    padding: 0 8px;
+    height: 25px;
     z-index: -1;
     flex: 1;
 }
 
 .hc-dg-cell-input {
-    width: 60px;
+    width: calc(100% + 16px);
+    height: 100%;
+    margin: 0 -8px;
+    padding: 0 8px;
 }
 
 .hc-dg-row {
     display: flex;
     background-color: white;
-    max-height: 20px;
+    max-height: 25px;
     z-index: -1;
     width: 100%;
 }
 
 .hc-dg-column-header {
-    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    border-left: 1px solid #ddd;
+    border-top: 1px solid #ddd;
     overflow: hidden;
-    padding: 0 10px;
+    padding: 0 8px;
     flex: 1;
+    font-weight: 700;
+    height: 25px;
 }
 
 .hc-dg-column-headers {
     display: flex;
-    background-color: white;
-    max-height: 20px;
+    background-color: #eee;
+    max-height: 25px;
     width: 100%;
 }
 
@@ -60,13 +79,13 @@
     background-color: rgba(255, 0, 0, 0.5);
     position: absolute;
     top: 0;
-    width: 6px;
+    width: 5px;
 }
 
 .hc-dg-col-resize-crosshair {
     position: absolute;
     background-color: rgba(255, 0, 0, 0.5);
-    width: 4px;
+    width: 3px;
     left: 0;
     opacity: 0;
 }

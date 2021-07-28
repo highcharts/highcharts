@@ -67,7 +67,7 @@ class DataGrid {
         // nothing here yet
     };
 
-    public static cellHeight = 20; // TODO: Make dynamic, and add style options
+    public static cellHeight = 25; // TODO: Make dynamic, and add style options
 
     /* *
      *
@@ -270,7 +270,7 @@ class DataGrid {
     private getNumRowsToDraw(): number {
         return Math.min(
             this.getRowCount() + 1,
-            Math.floor(this.outerContainer.clientHeight / DataGrid.cellHeight) - 1
+            Math.floor(this.outerContainer.offsetHeight / DataGrid.cellHeight) - 1
         );
     }
 
@@ -359,7 +359,7 @@ class DataGrid {
         const container = this.columnDragHandlesContainer = this.columnDragHandlesContainer ||
             makeDiv('hc-dg-col-resize-container');
         const columnEls = this.columnHeadersContainer.children;
-        const handleHeight = 20;
+        const handleHeight = DataGrid.cellHeight;
 
         emptyHTMLElement(container);
 
@@ -367,7 +367,7 @@ class DataGrid {
             const col = columnEls[i] as HTMLElement;
             const handle = makeDiv('hc-dg-col-resize-handle');
             handle.style.height = handleHeight + 'px';
-            handle.style.left = col.offsetLeft - 3 + 'px';
+            handle.style.left = col.offsetLeft - 2 + 'px';
             handle.addEventListener('mouseover', (): void => {
                 if (!this.draggedResizeHandle) {
                     handle.style.opacity = '1';
@@ -406,7 +406,7 @@ class DataGrid {
      */
     private renderColumnResizeCrosshair(container: HTMLElement): void {
         const el = this.columnResizeCrosshair = this.columnResizeCrosshair || makeDiv('hc-dg-col-resize-crosshair');
-        const handleHeight = 20;
+        const handleHeight = DataGrid.cellHeight;
 
         el.style.top = handleHeight + 'px';
         el.style.height = this.innerContainer.offsetHeight - handleHeight + 'px';
