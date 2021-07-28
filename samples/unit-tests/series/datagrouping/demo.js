@@ -608,7 +608,7 @@ QUnit.test('Data grouping and extremes change', function (assert) {
         ]
     });
 
-    chart.xAxis[0].setExtremes(chart.xAxis[0].toValue(100, true), null);
+    chart.xAxis[0].setExtremes(chart.xAxis[0].toValue(200, true), null);
 
     expectedMax = chart.xAxis[0].max;
     panTo('left', series.points[150].plotX, series.points[7].plotY, 30);
@@ -625,7 +625,6 @@ QUnit.test('Data grouping and extremes change', function (assert) {
         expectedMax,
         'DataGrouping should not prevent panning to the RIGHT (#12099)'
     );
-    chart.xAxis[0].setExtremes(null, null); // reset old extremes
 });
 
 QUnit.test('Data grouping, keys and turboThreshold', function (assert) {
