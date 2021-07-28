@@ -86,7 +86,9 @@ declare global {
             public showPopup(): void;
         }
         interface FilteredSeries {
-            [key: string]: Series;
+            indicatorFullName: string;
+            indicatorType: string;
+            series: Series;
         }
         interface IndicatorNameCouple {
             indicatorFullName: string;
@@ -152,9 +154,8 @@ declare global {
                 type: string,
                 parentDiv: HTMLDOMElement
             ): void;
-            filterSeries(series: SeriesTypePlotOptions, filter?: string): [[string, string, Series]];
-            filterSeriesArray(series: Array<Series>): [[string, string, Series]];
-            sortSeries(series: any): any;
+            filterSeries(series: SeriesTypePlotOptions, filter?: string): [Highcharts.FilteredSeries];
+            filterSeriesArray(series: Array<Series>): [Highcharts.FilteredSeries];
             getAmount(this: Chart): number;
             getNameType(series: Series, type: string): IndicatorNameCouple;
             listAllSeries(
@@ -175,9 +176,10 @@ declare global {
             switchTabs(this: Popup, disableTab: number): void;
         }
         interface InputAttributes {
-            value: string|number;
+            value: string|undefined;
             type: string;
             htmlFor?: string;
+            labelClassName?: string;
         }
     }
 }
@@ -229,9 +231,14 @@ H.Popup.prototype = {
         this.chart = chart;
 
         // create popup div
-        this.container = createElement(DIV, {
-            className: PREFIX + 'popup highcharts-no-tooltip'
-        }, null as any, parentDiv);
+        this.container = createElement(
+            DIV,
+            {
+                className: PREFIX + 'popup highcharts-no-tooltip'
+            },
+            void 0,
+            parentDiv
+        );
 
         this.lang = this.getLangpack();
         this.iconsURL = iconsURL;
@@ -250,9 +257,14 @@ H.Popup.prototype = {
         const iconsURL = this.iconsURL;
 
         // create close popup btn
-        closeBtn = createElement(DIV, {
-            className: PREFIX + 'popup-close'
-        }, null as any, this.container);
+        closeBtn = createElement(
+            DIV,
+            {
+                className: PREFIX + 'popup-close'
+            },
+            void 0,
+            this.container
+        );
 
         closeBtn.style['background-image' as any] = 'url(' +
                 (
@@ -285,19 +297,34 @@ H.Popup.prototype = {
             lhsCol;
 
         // left column
-        lhsCol = createElement(DIV, {
-            className: PREFIX + 'popup-lhs-col'
-        }, null as any, container);
+        lhsCol = createElement(
+            DIV,
+            {
+                className: PREFIX + 'popup-lhs-col'
+            },
+            void 0,
+            container
+        );
 
         // right column
-        rhsCol = createElement(DIV, {
-            className: PREFIX + 'popup-rhs-col'
-        }, null as any, container);
+        rhsCol = createElement(
+            DIV,
+            {
+                className: PREFIX + 'popup-rhs-col'
+            },
+            void 0,
+            container
+        );
 
         // wrapper content
-        createElement(DIV, {
-            className: PREFIX + 'popup-rhs-col-wrapper'
-        }, null as any, rhsCol);
+        createElement(
+            DIV,
+            {
+                className: PREFIX + 'popup-rhs-col-wrapper'
+            },
+            void 0,
+            rhsCol
+        );
 
         return {
             lhsCol: lhsCol,
@@ -341,7 +368,8 @@ H.Popup.prototype = {
             createElement(
                 LABEL,
                 {
-                    htmlFor: inputName
+                    htmlFor: inputName,
+                    className: inputAttributes.labelClassName
                 },
                 void 0,
                 parentDiv
@@ -355,7 +383,7 @@ H.Popup.prototype = {
             INPUT,
             {
                 name: inputName,
-                value: inputAttributes.value as any,
+                value: inputAttributes.value,
                 type: inputAttributes.type,
                 className: PREFIX + 'popup-field'
             },
@@ -671,13 +699,23 @@ H.Popup.prototype = {
             );
 
             // left column
-            lhsCol = createElement(DIV, {
-                className: PREFIX + 'popup-lhs-col ' + PREFIX + 'popup-lhs-full'
-            }, null as any, popupDiv);
+            lhsCol = createElement(
+                DIV,
+                {
+                    className: PREFIX + 'popup-lhs-col ' + PREFIX + 'popup-lhs-full'
+                },
+                void 0,
+                popupDiv
+            );
 
-            bottomRow = createElement(DIV, {
-                className: PREFIX + 'popup-bottom-row'
-            }, null as any, popupDiv);
+            bottomRow = createElement(
+                DIV,
+                {
+                    className: PREFIX + 'popup-bottom-row'
+                },
+                void 0,
+                popupDiv
+            );
 
             this.annotations.addFormFields.call(
                 this,
@@ -837,35 +875,35 @@ H.Popup.prototype = {
                 .querySelectorAll('.' + PREFIX + 'tab-item-content');
 
             // ADD tab
-            this.addColsContainer(tabsContainers[0] as any);
+            this.addColsContainer(tabsContainers[0] as HTMLDOMElement);
             indicators.addSearchBox.call(
                 this,
                 chart,
-                tabsContainers[0] as any
+                tabsContainers[0] as HTMLDOMElement
             );
             indicators.addIndicatorList.call(
                 this,
                 chart,
-                tabsContainers[0] as any,
+                tabsContainers[0] as HTMLDOMElement,
                 'add'
             );
             buttonParentDiv = tabsContainers[0]
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0];
 
             this.addButton(
-                buttonParentDiv as any,
+                buttonParentDiv as HTMLDOMElement,
                 lang.addButton || 'add',
                 'add',
-                buttonParentDiv as any,
+                buttonParentDiv as HTMLDOMElement,
                 callback
             );
 
             // EDIT tab
-            this.addColsContainer(tabsContainers[1] as any);
+            this.addColsContainer(tabsContainers[1] as HTMLDOMElement);
             indicators.addIndicatorList.call(
                 this,
                 chart,
-                tabsContainers[1] as any,
+                tabsContainers[1] as HTMLDOMElement,
                 'edit'
             );
 
@@ -873,17 +911,17 @@ H.Popup.prototype = {
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0];
 
             this.addButton(
-                buttonParentDiv as any,
+                buttonParentDiv as HTMLDOMElement,
                 lang.saveButton || 'save',
                 'edit',
-                buttonParentDiv as any,
+                buttonParentDiv as HTMLDOMElement,
                 callback
             );
             this.addButton(
-                buttonParentDiv as any,
+                buttonParentDiv as HTMLDOMElement,
                 lang.removeButton || 'remove',
                 'remove',
-                buttonParentDiv as any,
+                buttonParentDiv as HTMLDOMElement,
                 callback
             );
         },
@@ -905,12 +943,14 @@ H.Popup.prototype = {
          */
         filterSeries: function (
             this: Highcharts.Popup,
-            series: Highcharts.FilteredSeries,
+            series: Series,
             filter?: string
-        ): [[string, string, Series]] {
+        ): [Highcharts.FilteredSeries] {
             const popup = this,
                 indicators = popup.indicators;
-            let filteredSeries: [[string, string, Series]] = [] as any;
+            let filteredSeriesArray: [Highcharts.FilteredSeries] = [] as any,
+                filteredSeries: Highcharts.FilteredSeries;
+
 
             objectEach(series, function (
                 series: Series,
@@ -918,25 +958,40 @@ H.Popup.prototype = {
             ): void {
                 const seriesOptions = series.options;
                 // Allow only indicators.
-                if ((series as any).params || seriesOptions && (seriesOptions as any).params) {
-                    const { indicatorFullName, indicatorType } = indicators.getNameType(series, value);
+                if (
+                    (series as any).params || seriesOptions &&
+                    (seriesOptions as any).params
+                ) {
+                    const { indicatorFullName, indicatorType } =
+                        indicators.getNameType(series, value);
 
                     if (filter) {
-                        const filterLength = filter.length,
-                            slicedValue = indicatorFullName.slice(0, filterLength);
+                        const slicedValue = indicatorFullName.slice(0, filter.length);
                         if (slicedValue.toLocaleLowerCase() === filter.toLocaleLowerCase()) {
-                            filteredSeries.push([indicatorFullName, indicatorType, series]);
+                            filteredSeries = {
+                                indicatorFullName,
+                                indicatorType,
+                                series
+                            };
+
+                            filteredSeriesArray.push(filteredSeries);
                         }
                     } else {
-                        filteredSeries.push([indicatorFullName, indicatorType, series]);
+                        filteredSeries = {
+                            indicatorFullName,
+                            indicatorType,
+                            series
+                        };
+
+                        filteredSeriesArray.push(filteredSeries);
                     }
                 }
             });
 
             // Sort indicators alphabeticaly.
-            return filteredSeries.sort(function (a, b): number {
-                const seriesAName = a[0].toLowerCase(),
-                    seriesBName = b[0].toLowerCase();
+            return filteredSeriesArray.sort(function (a, b): number {
+                const seriesAName = a.indicatorFullName.toLowerCase(),
+                    seriesBName = b.indicatorFullName.toLowerCase();
                 return (seriesAName < seriesBName) ? -1 : (seriesAName > seriesBName) ? 1 : 0;
             });
         },
@@ -947,28 +1002,36 @@ H.Popup.prototype = {
          * @private
          *
          * @param {Highcharts.FilteredSeries} series
-         *        All series are available in the plotOptions.
+         *        All series that are available in the plotOptions.
          *
          * @return {void}
          */
         filterSeriesArray: function (
             this: Highcharts.Popup,
             series: Array<Series>
-        ): [[string, string, Series]] {
-            let filteredSeries: [[string, string, Series]] = [] as any;
+        ): [Highcharts.FilteredSeries] {
+            let filteredSeriesArray: [Highcharts.FilteredSeries] = [] as any,
+                filteredSeries: Highcharts.FilteredSeries;
 
             // Allow only indicators.
             series.forEach(function (series): void {
                 const seriesOptions = series.options;
 
-                if ((series as any).params || seriesOptions && (seriesOptions as any).params) {
-                    filteredSeries.push([series.name, series.type, series]);
+                if (series.is('sma')) {
+                    filteredSeries = {
+                        indicatorFullName: series.name,
+                        indicatorType: series.type,
+                        series
+                    };
+
+                    filteredSeriesArray.push(filteredSeries);
                 }
             });
 
-            return filteredSeries.sort(function (a, b): number {
-                const seriesAName = a[0].toLowerCase(),
-                    seriesBName = b[0].toLowerCase();
+            // Sort indicators alphabeticaly.
+            return filteredSeriesArray.sort(function (a, b): number {
+                const seriesAName = a.indicatorFullName.toLowerCase(),
+                    seriesBName = b.indicatorFullName.toLowerCase();
                 return (seriesAName < seriesBName) ? -1 : (seriesAName > seriesBName) ? 1 : 0;
             });
         },
@@ -1020,7 +1083,7 @@ H.Popup.prototype = {
             let rhsColWrapper: HTMLElement,
                 indicatorList: HTMLDOMElement,
                 item: HTMLDOMElement,
-                filteredSeries: Highcharts.FilteredSeries | any;
+                filteredSeriesArray: [Highcharts.FilteredSeries] = [] as any;
 
             if (!chart && series) {
                 return;
@@ -1029,9 +1092,9 @@ H.Popup.prototype = {
             // Filter and sort the series.
             if (!isEdit && series && !isArray(series)) {
                 // Apply filters only for the 'add' indicator list.
-                filteredSeries = indicators.filterSeries.call(this, series, filter);
+                filteredSeriesArray = indicators.filterSeries.call(this, series, filter);
             } else if (series && isArray(series)) {
-                filteredSeries = indicators.filterSeriesArray.call(this, series);
+                filteredSeriesArray = indicators.filterSeriesArray.call(this, series);
             }
 
             // If the list exists remove it from the DOM
@@ -1053,10 +1116,8 @@ H.Popup.prototype = {
             rhsColWrapper = rhsCol
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0] as HTMLElement;
 
-            filteredSeries.forEach(function (seriesSet: [string, string, Series]): void {
-                const indicatorFullName = seriesSet[0],
-                    indicatorType = seriesSet[1],
-                    series = seriesSet[2];
+            filteredSeriesArray.forEach(function (seriesSet: Highcharts.FilteredSeries): void {
+                const { indicatorFullName, indicatorType, series } = seriesSet;
 
                 item = createElement(
                     LI,
@@ -1103,7 +1164,7 @@ H.Popup.prototype = {
 
             // select first item from the list
             if (indicatorList.childNodes.length > 0) {
-                (indicatorList.childNodes[0] as any).click();
+                (indicatorList.childNodes[0] as HTMLDOMElement).click();
             }
         },
 
@@ -1131,7 +1192,8 @@ H.Popup.prototype = {
                 inputAttributes = {
                     value: '',
                     type: 'text',
-                    htmlFor: 'search-indicators'
+                    htmlFor: 'search-indicators',
+                    labelClassName: 'highcharts-input-search-indicators-label'
                 },
                 clearFilterText = this.lang.clearFilter;
 
@@ -1144,15 +1206,12 @@ H.Popup.prototype = {
             const input = this.addInput(options, INPUT, lhsCol, inputAttributes) as HTMLInputElement,
                 button = this.addButton(lhsCol, clearFilterText, 'button', lhsCol);
 
+            input.classList.add('highcharts-input-search-indicators');
             button.classList.add('clear-filter-button');
 
             // Add input change events.
-            ['input'].forEach(function (eventName: string): void {
-                addEvent(input, eventName, function (): void {
-                    const inputText = this.value;
-
-                    handleInputChange(inputText);
-                });
+            addEvent(input, 'input', function (): void {
+                handleInputChange(this.value);
             });
 
             // Add clear filter click event.
@@ -1236,10 +1295,11 @@ H.Popup.prototype = {
             }
 
             createElement(
-                LABEL, {
+                LABEL,
+                {
                     htmlFor: selectName
                 },
-                null as any,
+                void 0,
                 parentDiv
             ).appendChild(doc.createTextNode(
                 lang[optionName] || optionName
@@ -1252,7 +1312,7 @@ H.Popup.prototype = {
                     name: selectName,
                     className: PREFIX + 'popup-field'
                 },
-                null as any,
+                void 0,
                 parentDiv
             ) as any;
 
@@ -1273,7 +1333,7 @@ H.Popup.prototype = {
                         {
                             value: seriesOptions.id
                         },
-                        null as any,
+                        void 0,
                         selectBox
                     ).appendChild(doc.createTextNode(
                         seriesOptions.name || seriesOptions.id
@@ -1334,7 +1394,7 @@ H.Popup.prototype = {
                     name: PREFIX + 'type-' + seriesType,
                     value: seriesType
                 },
-                null as any,
+                void 0,
                 rhsColWrapper
             );
 
@@ -1547,7 +1607,7 @@ H.Popup.prototype = {
                 {
                     className: PREFIX + 'tab-item-content ' + PREFIX + 'no-mousewheel'// #12100
                 },
-                null as any,
+                void 0,
                 popupDiv
             );
         },

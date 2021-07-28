@@ -1,6 +1,8 @@
 // Colors for buttons.
 $button-background-color: #f7f7f7;
 $button-hover-color: #e6ebf5;
+$black: #000;
+$blue: #0000ff;
 
 
 .highcharts-popup.highcharts-annotation-toolbar {
@@ -242,21 +244,23 @@ $button-hover-color: #e6ebf5;
   padding-bottom: 15px;
 }
 
-label[for="highcharts-input-search-indicators"] {
+.highcharts-input-search-indicators-label {
   text-align: center;
   font-weight: bold;
-  color: black;
+  color: $black;
   margin-top: 0.5rem;
 }
 
-input[name="highcharts-input-search-indicators"] {
-   width: 80%;
-   margin-left: 10%;
+input.highcharts-input-search-indicators {
+  width: 80%;
+  margin: 0 auto;
+  display: block;
+  float: none;
 }
 
 .highcharts-popup button.clear-filter-button {
   margin: 0 auto;
   display: block;
   float: unset;
-  color: blue;
+  color: $blue;
 }
