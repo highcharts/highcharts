@@ -520,15 +520,15 @@ namespace OrdinalAxis {
 
                     series.processData.apply(fakeSeries);
 
-                    // Apply grouping if needed.
-                    fireEvent(axis, 'postProcessData', { fakeAxis: fakeAxis });
-
                     // Force to use the ordinal when points are evenly spaced
                     // (e.g. weeks), #3825.
                     if (fakeSeries.closestPointRange !== fakeSeries.basePointRange && fakeSeries.currentDataGrouping) {
                         fakeAxis.forceOrdinal = true;
                     }
                 });
+
+                // Apply grouping if needed.
+                this.fakePostProcessData(axis, fakeAxis);
 
                 // Run beforeSetTickPositions to compute the ordinalPositions
                 axis.ordinal.beforeSetTickPositions.apply({ axis: fakeAxis });
@@ -537,6 +537,37 @@ namespace OrdinalAxis {
                 ordinalIndex[key] = fakeAxis.ordinal.positions as any;
             }
             return ordinalIndex[key];
+        }
+
+        /**
+         * Method added as a replacement for the postProcessData event.
+         * Allows grouping the data in the fake series.
+         *
+         * @private
+         *
+         * @param {Axis} axis
+         *       The main xAxis.
+         *
+         * @param {Axis} fakeAxis
+         *       Fake axis.
+         *
+         * @return {void}
+         */
+        public fakePostProcessData(axis: Axis, fakeAxis: Axis): void {
+            const series = pick(fakeAxis && fakeAxis.series, axis.series);
+
+            series.forEach(function (series: Series): void {
+                // Reset the groupPixelWidth, then calculate if needed.
+                series.groupPixelWidth = void 0; // #2110
+
+                series.groupPixelWidth = axis.getGroupPixelWidth && axis.getGroupPixelWidth();
+
+                if (series.groupPixelWidth) {
+                    series.hasProcessed = true; // #2692
+
+                    series.applyGrouping();
+                }
+            });
         }
 
         /**
@@ -633,7 +664,7 @@ namespace OrdinalAxis {
                 axis.series[0].points[0].plotX ||
                 axis.minPixelPadding; // #15987
 
-            // When more series asign to axis, find the smalles one, #15987.
+            // When more series assign to axis, find the smallest one, #15987.
             if (axis.series.length > 1) {
                 axis.series.forEach(function (series): void {
                     if (

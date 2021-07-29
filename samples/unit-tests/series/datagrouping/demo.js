@@ -909,7 +909,7 @@ QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (asser
             ordinal: true
         },
         rangeSelector: {
-            selected: 0
+            selected: 3
         },
         series: [{
             data: usdeur,
@@ -943,7 +943,7 @@ QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (asser
 
     chart.series[0].update({
         dataGrouping: {
-            units: [['week', [1]]]
+            units: [['day', [3]]]
         }
     });
     chart.xAxis[0].ordinal.getExtendedPositions();
