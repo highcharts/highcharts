@@ -1987,9 +1987,6 @@ export default Annotation;
  *
  * @callback Highcharts.AnnotationsShapePointsFunction
  *
- * @param {Highcharts.AnnotationPointType} this
- *         Context - a mock point or a point used in series.
- *
  * @param  {Highcharts.Annotation} annotation
  *         An annotation instance.
  *
