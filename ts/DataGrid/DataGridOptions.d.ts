@@ -22,7 +22,10 @@ import type DataTable from '../Data/DataTable';
  * */
 
 export interface DataGridOptions {
+    cellHeight: number;
     dataTable?: DataTable;
+    editable?: boolean;
+    resizableColumns?: boolean;
 }
 
 export default DataGridOptions;

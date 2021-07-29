@@ -34,7 +34,6 @@
     border-top: 1px solid #ddd;
     overflow: hidden;
     padding: 0 8px;
-    height: 25px;
     z-index: -1;
     flex: 1;
 }
@@ -49,7 +48,6 @@
 .hc-dg-row {
     display: flex;
     background-color: white;
-    max-height: 25px;
     z-index: -1;
     width: 100%;
 }
@@ -63,13 +61,11 @@
     padding: 0 8px;
     flex: 1;
     font-weight: 700;
-    height: 25px;
 }
 
 .hc-dg-column-headers {
     display: flex;
     background-color: #eee;
-    max-height: 25px;
     width: 100%;
 }
 

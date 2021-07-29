@@ -27,6 +27,7 @@ const {
     emptyHTMLElement,
     makeDiv
 } = DataGridUtils;
+import defaultOptions from './DataGridDefaults.js';
 import H from '../Core/Globals.js';
 const {
     doc
@@ -50,11 +51,7 @@ class DataGrid {
      *
      * */
 
-    private static defaultOptions: DataGridOptions = {
-        // nothing here yet
-    };
-
-    public static cellHeight = 25; // TODO: Make dynamic, and add style options
+    public static readonly defaultOptions = defaultOptions;
 
     /* *
      *
@@ -149,7 +146,9 @@ class DataGrid {
         this.updateInnerContainerWidth();
         this.renderColumnHeaders();
         this.renderInitialRows();
-        this.renderColumnDragHandles();
+        if (this.options.resizableColumns) {
+            this.renderColumnDragHandles();
+        }
         this.addEvents();
     }
 
@@ -171,7 +170,7 @@ class DataGrid {
         e.preventDefault();
         window.requestAnimationFrame((): void => {
             const columnsInPresentationOrder = this.dataTable.getColumnNames();
-            let i = Math.floor(this.outerContainer.scrollTop / DataGrid.cellHeight) || 0;
+            let i = Math.floor(this.outerContainer.scrollTop / this.options.cellHeight) || 0;
 
             for (const tableRow of this.rowElements) {
                 const dataTableRow = this.dataTable.getRow(i, columnsInPresentationOrder);
@@ -193,19 +192,21 @@ class DataGrid {
      * @param {HTMLElement} cellEl The clicked cell.
      */
     private onCellClick(cellEl: HTMLElement): void {
-        let input = cellEl.querySelector('input');
-        const cellValue = cellEl.textContent;
+        if (this.options.editable) {
+            let input = cellEl.querySelector('input');
+            const cellValue = cellEl.textContent;
 
-        if (!input) {
-            this.removeCellInputElement();
+            if (!input) {
+                this.removeCellInputElement();
 
-            // Replace cell contents with an input element
-            cellEl.textContent = '';
-            input = this.cellInputEl = document.createElement('input');
-            input.className = 'hc-dg-cell-input';
-            cellEl.appendChild(input);
-            input.focus();
-            input.value = cellValue || '';
+                // Replace cell contents with an input element
+                cellEl.textContent = '';
+                input = this.cellInputEl = document.createElement('input');
+                input.className = 'hc-dg-cell-input';
+                cellEl.appendChild(input);
+                input.focus();
+                input.value = cellValue || '';
+            }
         }
     }
 
@@ -249,7 +250,7 @@ class DataGrid {
 
 
     private updateScrollingLength(): void {
-        const height = (this.getRowCount() + 1) * DataGrid.cellHeight;
+        const height = (this.getRowCount() + 1) * this.options.cellHeight;
         this.scrollContainer.style.height = height + 'px';
     }
 
@@ -257,7 +258,7 @@ class DataGrid {
     private getNumRowsToDraw(): number {
         return Math.min(
             this.getRowCount() + 1,
-            Math.floor(this.outerContainer.offsetHeight / DataGrid.cellHeight) - 1
+            Math.floor(this.outerContainer.offsetHeight / this.options.cellHeight) - 1
         );
     }
 
@@ -269,6 +270,7 @@ class DataGrid {
      */
     private renderCell(parentRow: HTMLElement, cellValue: DataTable.CellType): void {
         const cellEl = makeDiv('hc-dg-cell');
+        cellEl.style.height = this.options.cellHeight + 'px';
 
         cellEl.textContent = dataTableCellToString(cellValue);
 
@@ -298,6 +300,7 @@ class DataGrid {
      */
     private renderColumnHeader(parentEl: HTMLElement, columnName: string): void {
         const headerEl = makeDiv('hc-dg-column-header');
+        headerEl.style.height = this.options.cellHeight + 'px';
 
         headerEl.textContent = columnName;
         parentEl.appendChild(headerEl);
@@ -346,7 +349,7 @@ class DataGrid {
         const container = this.columnDragHandlesContainer = this.columnDragHandlesContainer ||
             makeDiv('hc-dg-col-resize-container');
         const columnEls = this.columnHeadersContainer.children;
-        const handleHeight = DataGrid.cellHeight;
+        const handleHeight = this.options.cellHeight;
 
         emptyHTMLElement(container);
 
@@ -393,7 +396,7 @@ class DataGrid {
      */
     private renderColumnResizeCrosshair(container: HTMLElement): void {
         const el = this.columnResizeCrosshair = this.columnResizeCrosshair || makeDiv('hc-dg-col-resize-crosshair');
-        const handleHeight = DataGrid.cellHeight;
+        const handleHeight = this.options.cellHeight;
 
         el.style.top = handleHeight + 'px';
         el.style.height = this.innerContainer.offsetHeight - handleHeight + 'px';
