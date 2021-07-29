@@ -22,6 +22,8 @@
     display: flex;
     flex-direction: column;
     position: fixed;
+    position: -webkit-sticky;
+    position: sticky;
     overflow: hidden;
     min-height: 25px;
     z-index: -1;
@@ -84,4 +86,10 @@
     width: 3px;
     left: 0;
     opacity: 0;
+}
+
+@supports (position: sticky) or (position: -webkit-sticky) {
+    .hc-dg-inner-container {
+        top: 0;
+    }
 }
