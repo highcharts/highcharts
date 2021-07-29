@@ -176,8 +176,8 @@ declare global {
             switchTabs(this: Popup, disableTab: number): void;
         }
         interface InputAttributes {
-            value: string|undefined;
-            type: string;
+            value?: string|undefined;
+            type?: string;
             htmlFor?: string;
             labelClassName?: string;
         }
@@ -826,20 +826,25 @@ H.Popup.prototype = {
                     storage.reverse(); // (#14691)
                 }
 
-                storage.forEach(function (genInput): void {
+                storage.forEach(function (genInput: any): void {
                     if ((genInput as any)[0] === true) {
                         createElement(
                             SPAN, {
                                 className: PREFIX + 'annotation-title'
                             },
                             void 0,
-                            (genInput as any)[2]
+                            genInput[2]
                         ).appendChild(doc.createTextNode(
-                            (genInput as any)[1]
+                            genInput[1]
                         ));
 
                     } else {
-                        addInput.apply((genInput as any)[0], (genInput as any).splice(1));
+                        const inputAttributes = {
+                            value: genInput[4][0],
+                            type: genInput[4][1]
+                        };
+                        genInput[4] = inputAttributes;
+                        addInput.apply(genInput[0], genInput.splice(1));
                     }
                 });
             }
@@ -966,8 +971,8 @@ H.Popup.prototype = {
                         indicators.getNameType(series, value);
 
                     if (filter) {
-                        const slicedValue = indicatorFullName.slice(0, filter.length);
-                        if (slicedValue.toLocaleLowerCase() === filter.toLocaleLowerCase()) {
+                        const regex = new RegExp(filter, 'i');
+                        if (indicatorFullName.match(regex)) {
                             filteredSeries = {
                                 indicatorFullName,
                                 indicatorType,
@@ -988,12 +993,7 @@ H.Popup.prototype = {
                 }
             });
 
-            // Sort indicators alphabeticaly.
-            return filteredSeriesArray.sort(function (a, b): number {
-                const seriesAName = a.indicatorFullName.toLowerCase(),
-                    seriesBName = b.indicatorFullName.toLowerCase();
-                return (seriesAName < seriesBName) ? -1 : (seriesAName > seriesBName) ? 1 : 0;
-            });
+            return filteredSeriesArray;
         },
 
         /**
@@ -1028,12 +1028,7 @@ H.Popup.prototype = {
                 }
             });
 
-            // Sort indicators alphabeticaly.
-            return filteredSeriesArray.sort(function (a, b): number {
-                const seriesAName = a.indicatorFullName.toLowerCase(),
-                    seriesBName = b.indicatorFullName.toLowerCase();
-                return (seriesAName < seriesBName) ? -1 : (seriesAName > seriesBName) ? 1 : 0;
-            });
+            return filteredSeriesArray;
         },
 
         /**
@@ -1097,6 +1092,16 @@ H.Popup.prototype = {
                 filteredSeriesArray = indicators.filterSeriesArray.call(this, series);
             }
 
+            // Sort indicators alphabeticaly.
+            stableSort(
+                filteredSeriesArray,
+                function (a: Highcharts.FilteredSeries, b: Highcharts.FilteredSeries
+                ): number {
+                    const seriesAName = a.indicatorFullName.toLowerCase(),
+                        seriesBName = b.indicatorFullName.toLowerCase();
+                    return (seriesAName < seriesBName) ? -1 : (seriesAName > seriesBName) ? 1 : 0;
+                });
+
             // If the list exists remove it from the DOM
             // in order to create a new one with different filters.
             if (lhsCol.children[3]) {
@@ -1116,7 +1121,9 @@ H.Popup.prototype = {
             rhsColWrapper = rhsCol
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0] as HTMLElement;
 
-            filteredSeriesArray.forEach(function (seriesSet: Highcharts.FilteredSeries): void {
+            filteredSeriesArray.forEach(function (
+                seriesSet: Highcharts.FilteredSeries
+            ): void {
                 const { indicatorFullName, indicatorType, series } = seriesSet;
 
                 item = createElement(
@@ -1473,7 +1480,7 @@ H.Popup.prototype = {
                             parentFullName,
                             type,
                             parentDiv,
-                            '' as any
+                            {}
                         );
                         addParamInputs.call(
                             _self,

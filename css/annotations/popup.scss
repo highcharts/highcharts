@@ -1,9 +1,6 @@
 // Colors for buttons.
 $button-background-color: #f7f7f7;
 $button-hover-color: #e6ebf5;
-$black: #000;
-$blue: #0000ff;
-
 
 .highcharts-popup.highcharts-annotation-toolbar {
   right: 10%;
@@ -247,7 +244,7 @@ $blue: #0000ff;
 .highcharts-input-search-indicators-label {
   text-align: center;
   font-weight: bold;
-  color: $black;
+  color: #000;
   margin-top: 0.5rem;
 }
 
@@ -262,5 +259,5 @@ input.highcharts-input-search-indicators {
   margin: 0 auto;
   display: block;
   float: unset;
-  color: $blue;
+  color: #0000ff;
 }
