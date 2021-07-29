@@ -108,6 +108,9 @@ declare global {
         interface PopupFieldsDictionary<T> {
             [key: string]: (T | PopupFieldsDictionary<T>);
         }
+        interface DropdownParameters {
+            [key: string]: Array<string>;
+        }
         interface PopupFieldsObject {
             actionType: string;
             fields: PopupFieldsDictionary<string>;
@@ -193,10 +196,12 @@ enum DropdownProperties {
 }
 
 /**
- * List of available algorithms for the pivot point indicator.
+ * List of available algorithms for the specific indicator.
  * @private
  */
-const pivotPointsAlgorithm = ['standard', 'fibonacci', 'camarilla'];
+const dropdownParameters: Highcharts.DropdownParameters = {
+    'algorithm-pivotpoints': ['standard', 'fibonacci', 'camarilla']
+};
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -449,7 +454,7 @@ H.Popup.prototype = {
 
             // Get inputs only for the parameters, not for series and volume.
             if (id !== PREFIX + 'select-series' && id !== PREFIX + 'select-volume') {
-                const parameter = select.id.split('highcharts-select-')[1];
+                const parameter = id.split('highcharts-select-')[1];
 
                 fieldsOutput.fields[parameter] = select.value;
             }
@@ -1021,13 +1026,12 @@ H.Popup.prototype = {
                 SELECT,
                 {
                     name: selectName,
-                    className: PREFIX + 'popup-field'
+                    className: PREFIX + 'popup-field',
+                    id: PREFIX + 'select-' + optionName
                 },
                 null as any,
                 parentDiv
             ) as HTMLSelectElement;
-
-            selectBox.setAttribute('id', PREFIX + 'select-' + optionName);
 
             return selectBox;
         },
@@ -1070,8 +1074,8 @@ H.Popup.prototype = {
             // Get and apply selection options for the possible series.
             if (optionName === 'series') {
                 // List all series which have id - mandatory for indicator.
-                chart.series.forEach(function (serie): void {
-                    const seriesOptions = serie.options;
+                chart.series.forEach(function (series): void {
+                    const seriesOptions = series.options;
 
                     if (
                         !(seriesOptions as any).params &&
@@ -1090,11 +1094,12 @@ H.Popup.prototype = {
                         ));
                     }
                 });
-            } else if (chart.options.plotOptions && indicatorType && parameterName) {
+            } else if (indicatorType && parameterName) {
                 // Get and apply options for the possible parameters.
-                const parameterOption = pivotPointsAlgorithm;
+                const dropdownKey = parameterName + '-' + indicatorType,
+                    parameterOption = dropdownParameters[dropdownKey];
 
-                parameterOption && parameterOption.forEach(function (element): void {
+                parameterOption.forEach(function (element): void {
                     createElement(
                         OPTION,
                         {
