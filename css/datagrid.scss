@@ -2,31 +2,23 @@
     width: 100%;
     height: 100%;
     overflow: scroll;
-    position: relative;
     border-right: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
     box-sizing: border-box;
 }
 
-.hc-dg-outer-container * {
-    box-sizing: border-box;
-}
-
 .hc-dg-scroll-container {
     height: 1000px;
-    position: relative;
-    z-index: 1;
 }
 
 .hc-dg-inner-container {
     display: flex;
     flex-direction: column;
-    position: fixed;
     position: -webkit-sticky;
     position: sticky;
+    top: 0;
     overflow: hidden;
     min-height: 25px;
-    z-index: -1;
 }
 
 .hc-dg-cell {
@@ -36,8 +28,8 @@
     border-top: 1px solid #ddd;
     overflow: hidden;
     padding: 0 8px;
-    z-index: -1;
     flex: 1;
+    box-sizing: border-box;
 }
 
 .hc-dg-cell-input {
@@ -50,7 +42,6 @@
 .hc-dg-row {
     display: flex;
     background-color: white;
-    z-index: -1;
     width: 100%;
 }
 
@@ -63,6 +54,7 @@
     padding: 0 8px;
     flex: 1;
     font-weight: 700;
+    box-sizing: border-box;
 }
 
 .hc-dg-column-headers {
@@ -86,10 +78,4 @@
     width: 3px;
     left: 0;
     opacity: 0;
-}
-
-@supports (position: sticky) or (position: -webkit-sticky) {
-    .hc-dg-inner-container {
-        top: 0;
-    }
 }
