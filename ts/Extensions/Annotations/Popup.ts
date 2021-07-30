@@ -434,7 +434,7 @@ H.Popup.prototype = {
             fields: { }
         };
 
-        inputList.forEach(function (input: HTMLInputElement): void {
+        [].forEach.call(inputList, function (input: HTMLInputElement): void {
             const param = input.getAttribute(PREFIX + 'data-name'),
                 seriesId = input.getAttribute(PREFIX + 'data-series-id');
 
@@ -449,7 +449,7 @@ H.Popup.prototype = {
             }
         });
 
-        selectList.forEach(function (select: HTMLSelectElement): void {
+        [].forEach.call(selectList, function (select: HTMLInputElement): void {
             const id = select.id;
 
             // Get inputs only for the parameters, not for series and volume.
