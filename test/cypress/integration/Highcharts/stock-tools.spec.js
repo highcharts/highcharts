@@ -44,22 +44,33 @@ describe('Indicator popup searchbox, #16019.', () => {
         cy.visit('/stock/demo/stock-tools-gui');
     });
 
-    it('After typing `a` into the searchbox, the list should contain 7 elements.', () => {
+    it('Search indicator input should filter and sort the list, #16019.', () => {
         cy.openIndicators();
+
+        // Test if searching works.
         cy.get('input[name="highcharts-input-search-indicators"]')
             .click()
-            .type('a');
+            .type('ac');
         cy.get('.highcharts-indicator-list').should(($p) => {
-            expect($p).to.have.length(9)
+            expect($p).to.have.length(5)
         })
+
+        // Test the sorting.
         cy.get('input[name="highcharts-input-search-indicators"]')
             .type('c');
         cy.get('.highcharts-indicator-list li:first')
-            .eq(0)
             .should('contain.text', 'Acceleration Bands');
+
+        // Test if regex works.
+        cy.get('input[name="highcharts-input-search-indicators"]')
+            .clear();
+        cy.get('input[name="highcharts-input-search-indicators"]')
+            .type('cd');
+        cy.get('.highcharts-indicator-list li:first')
+            .should('contain.text', 'MACD');
     });
 
-    it('After clicking the `clear filter` button, the list should be reseted.', () => {
+    it('Clicking the reset button should reset the indicator list, #16019.', () => {
         cy.get('.clear-filter-button')
         .click();
 
