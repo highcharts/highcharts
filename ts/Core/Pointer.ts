@@ -1305,6 +1305,10 @@ class Pointer {
         // (#4210).
         if (touchesLength > 1) {
             self.initiated = true;
+        } else if (touchesLength === 1 && this.followTouchMove) {
+            // #16119: Prevent blocking scroll when single-finger panning is
+            // not enabled
+            self.initiated = false;
         }
 
         // On touch devices, only proceed to trigger click if a handler is
