@@ -33,6 +33,10 @@ import ChartUtilities from './Utils/ChartUtilities.js';
 const {
     unhideChartElementFromAT
 } = ChartUtilities;
+import H from '../Core/Globals.js';
+const {
+    doc
+} = H;
 import U from '../Core/Utilities.js';
 const {
     merge
@@ -42,7 +46,8 @@ const {
 /* eslint-disable valid-jsdoc */
 
 interface ProxyGroup {
-    container: HTMLDOMElement;
+    proxyContainerElement: HTMLDOMElement;
+    groupElement: HTMLDOMElement;
     type: ProxyGroupTypes;
     proxyElements: ProxyElement[];
 }
@@ -87,7 +92,7 @@ class ProxyProvider {
 
         const proxy = new ProxyElement(this.chart, target, group.type, attributes);
 
-        group.container.appendChild(proxy.element);
+        group.proxyContainerElement.appendChild(proxy.element);
         group.proxyElements.push(proxy);
 
         return proxy;
@@ -98,26 +103,45 @@ class ProxyProvider {
      * Create a group that will contain proxy elements. The group order is
      * automatically updated according to the last group order keys.
      */
-    public addGroup(groupKey: string, groupType: ProxyGroupTypes, attributes: HTMLAttributes): void {
+    public addGroup(groupKey: string, groupType: ProxyGroupTypes, attributes?: HTMLAttributes): void {
         if (this.groups[groupKey]) {
             return;
         }
 
-        const groupEl = this.domElementProvider.createElement(groupType);
+        const proxyContainer = this.domElementProvider.createElement(groupType);
 
-        groupEl.className = 'highcharts-a11y-proxy-group-' + groupKey.replace(/\W/g, '-');
+        // If we want to add a role to the group, and still use e.g.
+        // a list group, we need a wrapper div.
+        let groupElement;
+        if (attributes && attributes.role && groupType !== 'div') {
+            groupElement = this.domElementProvider.createElement('div');
+            groupElement.appendChild(proxyContainer);
+        } else {
+            groupElement = proxyContainer;
+        }
+
+        groupElement.className = 'highcharts-a11y-proxy-group-' + groupKey.replace(/\W/g, '-');
 
         this.groups[groupKey] = {
-            container: groupEl,
+            proxyContainerElement: proxyContainer,
+            groupElement,
             type: groupType,
             proxyElements: []
         };
 
-        setElAttrs(groupEl, merge(attributes, { 'aria-hidden': false }));
+        setElAttrs(groupElement, merge(attributes, {
+            margin: '0',
+            padding: '0'
+        }));
+
         if (groupType === 'ul') {
-            groupEl.style.listStyle = 'none';
-            groupEl.setAttribute('role', 'list'); // Needed for safari/VO with list-style: none
+            proxyContainer.style.listStyle = 'none';
+            proxyContainer.setAttribute('role', 'list'); // Needed for webkit
         }
+
+        // Add the group to the end by default, and perhaps then we
+        // won't have to reorder the whole set of groups.
+        this.afterChartProxyPosContainer.appendChild(groupElement);
 
         this.updateGroupOrder(this.groupOrder);
     }
@@ -131,7 +155,7 @@ class ProxyProvider {
         if (!group) {
             throw new Error('ProxyProvider.updateGroupAttrs: Invalid group key ' + groupKey);
         }
-        setElAttrs(group.container, attributes);
+        setElAttrs(group.groupElement, attributes);
     }
 
 
@@ -146,10 +170,19 @@ class ProxyProvider {
         // Store so that we can update order when a new group is created
         this.groupOrder = groupKeys.slice();
 
+        // Don't unnecessarily reorder, because keyboard focus is lost
+        if (this.isDOMOrderGroupOrder()) {
+            return;
+        }
+
         const seriesIx = groupKeys.indexOf('series');
         const beforeKeys = seriesIx > -1 ? groupKeys.slice(0, seriesIx) : groupKeys;
         const afterKeys = seriesIx > -1 ? groupKeys.slice(seriesIx + 1) : [];
 
+        // Store focused element since it will be lost when reordering
+        const activeElement = doc.activeElement;
+
+        // Add groups to correct container
         ['before', 'after'].forEach((pos): void => {
             const posContainer = this[
                 pos === 'before' ?
@@ -163,10 +196,20 @@ class ProxyProvider {
             keys.forEach((groupKey): void => {
                 const group = this.groups[groupKey];
                 if (group) {
-                    posContainer.appendChild(group.container);
+                    posContainer.appendChild(group.groupElement);
                 }
             });
         });
+
+        // Attempt to restore focus after reordering, but note that this may
+        // cause screen readers re-announcing the button.
+        if (
+            (this.beforeChartProxyPosContainer.contains(activeElement) ||
+            this.afterChartProxyPosContainer.contains(activeElement)) &&
+            activeElement && (activeElement as HTMLElement).focus
+        ) {
+            (activeElement as HTMLElement).focus();
+        }
     }
 
 
@@ -178,7 +221,7 @@ class ProxyProvider {
         if (!group) {
             throw new Error('ProxyProvider.clearGroup: Invalid group key ' + groupKey);
         }
-        removeChildNodes(group.container);
+        removeChildNodes(group.proxyContainerElement);
     }
 
 
@@ -190,7 +233,7 @@ class ProxyProvider {
     public removeGroup(groupKey: string): void {
         const group = this.groups[groupKey];
         if (group) {
-            removeElement(group.container);
+            removeElement(group.groupElement);
             delete this.groups[groupKey];
         }
     }
@@ -243,8 +286,70 @@ class ProxyProvider {
      */
     private createProxyPosContainer(classNamePostfix?: string): HTMLDivElement {
         const el = this.domElementProvider.createElement('div');
+        el.setAttribute('aria-hidden', 'false');
         el.className = 'highcharts-a11y-proxy-container' + (classNamePostfix ? '-' + classNamePostfix : '');
+        merge(true, el.style, {
+            whiteSpace: 'nowrap',
+            position: 'absolute',
+            top: '0',
+            left: '0'
+        });
         return el;
+    }
+
+
+    /**
+     * Get an array of group keys that corresponds to the current group order
+     * in the DOM.
+     */
+    private getCurrentGroupOrderInDOM(): string[] {
+        const getGroupKeyFromElement = (el: Element): string|undefined => {
+            const allGroups = Object.keys(this.groups);
+            let i = allGroups.length;
+            while (i--) {
+                const groupKey = allGroups[i];
+                const group = this.groups[groupKey];
+                if (group && el === group.groupElement) {
+                    return groupKey;
+                }
+            }
+        };
+        const getChildrenGroupOrder = (el: HTMLDOMElement): string[] => {
+            const childrenOrder: string[] = [];
+            const children = el.children;
+            for (let i = 0; i < children.length; ++i) {
+                const groupKey = getGroupKeyFromElement(children[i]);
+                if (groupKey) {
+                    childrenOrder.push(groupKey);
+                }
+            }
+            return childrenOrder;
+        };
+        const before = getChildrenGroupOrder(this.beforeChartProxyPosContainer);
+        const after = getChildrenGroupOrder(this.afterChartProxyPosContainer);
+        before.push('series');
+        return before.concat(after);
+    }
+
+
+    /**
+     * Check if the current DOM order matches the current group order, so that
+     * a reordering/update is unnecessary.
+     */
+    private isDOMOrderGroupOrder(): boolean {
+        const domOrder = this.getCurrentGroupOrderInDOM();
+        const groupOrderWithGroups = this.groupOrder.filter((x): boolean => x === 'series' || !!this.groups[x]);
+
+        let i = domOrder.length;
+        if (i !== groupOrderWithGroups.length) {
+            return false;
+        }
+        while (i--) {
+            if (domOrder[i] !== groupOrderWithGroups[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
