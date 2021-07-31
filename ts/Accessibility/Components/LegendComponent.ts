@@ -158,11 +158,9 @@ Chart.prototype.highlightLegendItem = function (ix: number): boolean {
         scrollLegendToItem(this.legend, ix);
 
         const legendItemProp = itemToHighlight.legendItem;
-        if (legendItemProp && legendItemProp.element) {
-            this.setFocusToElement(
-                legendItemProp as SVGElement,
-                itemToHighlight.a11yProxyElement && itemToHighlight.a11yProxyElement.buttonElement
-            );
+        const proxyBtn = itemToHighlight.a11yProxyElement && itemToHighlight.a11yProxyElement.buttonElement;
+        if (legendItemProp && legendItemProp.element && proxyBtn) {
+            this.setFocusToElement(legendItemProp as SVGElement, proxyBtn);
         }
 
         if (itemToHighlight.legendGroup) {
