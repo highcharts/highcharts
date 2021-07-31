@@ -27,6 +27,10 @@ const {
     merge
 } = U;
 
+type Nullable<T> = {
+    [P in keyof T]: T[P] | null;
+};
+
 /* eslint-disable valid-jsdoc */
 
 /**
@@ -323,7 +327,7 @@ function reverseChildNodes(node: DOMElementType): void {
  */
 function setElAttrs(
     el: DOMElementType,
-    attrs: (HTMLAttributes|SVGAttributes)
+    attrs: Nullable<(HTMLAttributes|SVGAttributes)>
 ): void {
     Object.keys(attrs).forEach(function (attr: string): void {
         const val = (attrs as any)[attr];
