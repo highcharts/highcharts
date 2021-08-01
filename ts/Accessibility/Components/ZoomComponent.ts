@@ -14,15 +14,15 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type {
-    DOMElementType,
-    HTMLDOMElement
+    DOMElementType, SVGDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type ProxyElement from '../ProxyElement';
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
-import Axis from '../../Core/Axis/Axis.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
+    fireEventOnWrappedOrUnwrappedElement,
     unhideChartElementFromAT
 } = ChartUtilities;
 import H from '../../Core/Globals.js';
@@ -31,7 +31,7 @@ const {
 } = H;
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
-    removeElement,
+    getFakeMouseEvent,
     setElAttrs
 } = HTMLUtilities;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -54,14 +54,17 @@ declare global {
     namespace Highcharts {
         class ZoomComponent extends AccessibilityComponent {
             public constructor();
-            public drillUpProxyButton?: HTMLDOMElement;
-            public drillUpProxyGroup?: HTMLDOMElement;
+            public drillUpProxyButton?: ProxyElement;
+            public resetZoomProxyButton?: ProxyElement;
             public focusedMapNavButtonIx: number;
-            public resetZoomProxyButton?: HTMLDOMElement;
-            public resetZoomProxyGroup?: HTMLDOMElement;
             getKeyboardNavigation(): Array<KeyboardNavigationHandler>;
             getMapZoomNavigation(): KeyboardNavigationHandler;
             init(): void;
+            createZoomProxyButton(
+                buttonEl: SVGElement,
+                buttonProp: ('drillUpProxyButton'|'resetZoomProxyButton'),
+                label: string
+            ): void;
             onChartRender(): void;
             onChartUpdate(): void;
             onMapKbdArrow(
@@ -76,12 +79,6 @@ declare global {
                 keyboardNavigationHandler: KeyboardNavigationHandler,
                 event: Event
             ): number;
-            recreateProxyButtonAndGroup(
-                buttonEl: SVGElement,
-                buttonProp: ('drillUpProxyButton'|'resetZoomProxyButton'),
-                groupProp: ('drillUpProxyGroup'|'resetZoomProxyGroup'),
-                label: string
-            ): void;
             setMapNavButtonAttrs(
                 button: DOMElementType,
                 labelFormatKey: string
@@ -127,12 +124,12 @@ function chartHasMapZoom(
     direction: number,
     granularity?: number
 ): void {
-    let gran = granularity || 3,
-        extremes = this.getExtremes(),
-        step = (extremes.max - extremes.min) / gran * direction,
-        newMax = extremes.max + step,
-        newMin = extremes.min + step,
-        size = newMax - newMin;
+    const gran = granularity || 3;
+    const extremes = this.getExtremes();
+    const step = (extremes.max - extremes.min) / gran * direction;
+    let newMax = extremes.max + step;
+    let newMin = extremes.min + step;
+    const size = newMax - newMin;
 
     if (direction < 0 && newMin < extremes.dataMin) {
         newMin = extremes.dataMin;
@@ -162,6 +159,9 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
     init: function (this: Highcharts.ZoomComponent): void {
         const component = this,
             chart = this.chart;
+
+        this.proxyProvider.addGroup('zoom', 'div');
+
         [
             'afterShowResetZoom', 'afterDrilldown', 'drillupall'
         ].forEach(function (eventType: string): void {
@@ -235,13 +235,12 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         const chart = this.chart;
 
         // Always start with a clean slate
-        removeElement(this.drillUpProxyGroup);
-        removeElement(this.resetZoomProxyGroup);
+        this.proxyProvider.clearGroup('zoom');
 
         if (chart.resetZoomButton) {
-            this.recreateProxyButtonAndGroup(
+            this.createZoomProxyButton(
                 chart.resetZoomButton, 'resetZoomProxyButton',
-                'resetZoomProxyGroup', chart.langFormat(
+                chart.langFormat(
                     'accessibility.zoom.resetZoomButton',
                     { chart: chart }
                 )
@@ -249,9 +248,9 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         }
 
         if (chart.drillUpButton) {
-            this.recreateProxyButtonAndGroup(
+            this.createZoomProxyButton(
                 chart.drillUpButton, 'drillUpProxyButton',
-                'drillUpProxyGroup', chart.langFormat(
+                chart.langFormat(
                     'accessibility.drillUpButton',
                     {
                         chart: chart,
@@ -267,23 +266,20 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
      * @private
      * @param {Highcharts.SVGElement} buttonEl
      * @param {string} buttonProp
-     * @param {string} groupProp
      * @param {string} label
      */
-    recreateProxyButtonAndGroup: function (
+    createZoomProxyButton: function (
         this: Highcharts.ZoomComponent,
         buttonEl: SVGElement,
         buttonProp: ('drillUpProxyButton'|'resetZoomProxyButton'),
-        groupProp: ('drillUpProxyGroup'|'resetZoomProxyGroup'),
         label: string
     ): void {
-        removeElement(this[groupProp]);
-        this[groupProp] = this.addProxyGroup();
-        this[buttonProp] = this.createProxyButton(
-            buttonEl,
-            this[groupProp] as any,
-            { 'aria-label': label, tabindex: -1 }
-        );
+        this[buttonProp] = this.proxyProvider.addProxyElement('zoom', {
+            click: buttonEl
+        }, {
+            'aria-label': label,
+            tabindex: -1
+        });
     },
 
 
@@ -376,11 +372,10 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler,
         event: KeyboardEvent
     ): number {
-        let button: (SVGElement|undefined),
-            chart: Highcharts.MapNavigationChart = this.chart as any,
-            response = keyboardNavigationHandler.response,
-            isBackwards = event.shiftKey,
-            isMoveOutOfRange = isBackwards && !this.focusedMapNavButtonIx ||
+        const chart: Highcharts.MapNavigationChart = this.chart as Highcharts.MapNavigationChart;
+        const response = keyboardNavigationHandler.response;
+        const isBackwards = event.shiftKey;
+        const isMoveOutOfRange = isBackwards && !this.focusedMapNavButtonIx ||
                 !isBackwards && this.focusedMapNavButtonIx;
 
         // Deselect old
@@ -393,7 +388,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
 
         // Select other button
         this.focusedMapNavButtonIx += isBackwards ? -1 : 1;
-        button = chart.mapNavButtons[this.focusedMapNavButtonIx];
+        const button = chart.mapNavButtons[this.focusedMapNavButtonIx];
         chart.setFocusToElement(button.box, button.element);
         button.setState(2);
 
@@ -410,10 +405,9 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         this: Highcharts.ZoomComponent,
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
     ): number {
-        this.fakeClickEvent(
-            (this.chart as any).mapNavButtons[this.focusedMapNavButtonIx]
-                .element
-        );
+        const fakeEvent = getFakeMouseEvent('click');
+        const el: SVGDOMElement = (this.chart as any).mapNavButtons[this.focusedMapNavButtonIx].element;
+        fireEventOnWrappedOrUnwrappedElement(el, fakeEvent);
         return keyboardNavigationHandler.response.success;
     },
 
@@ -487,7 +481,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
                 const hasButton = (
                     (chart as any)[buttonProp] &&
                     (chart as any)[buttonProp].box &&
-                    (component as any)[proxyProp]
+                    (component as any)[proxyProp].buttonElement
                 );
                 return hasButton;
             },
@@ -495,7 +489,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
             init: function (): void {
                 chart.setFocusToElement(
                     (chart as any)[buttonProp].box,
-                    (component as any)[proxyProp]
+                    (component as any)[proxyProp].buttonElement
                 );
             }
         });
