@@ -22,7 +22,6 @@ import type ProxyElement from '../ProxyElement';
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
-    fireEventOnWrappedOrUnwrappedElement,
     unhideChartElementFromAT
 } = ChartUtilities;
 import H from '../../Core/Globals.js';
@@ -31,7 +30,6 @@ const {
 } = H;
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
-    getFakeMouseEvent,
     setElAttrs
 } = HTMLUtilities;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -405,9 +403,8 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         this: Highcharts.ZoomComponent,
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
     ): number {
-        const fakeEvent = getFakeMouseEvent('click');
         const el: SVGDOMElement = (this.chart as any).mapNavButtons[this.focusedMapNavButtonIx].element;
-        fireEventOnWrappedOrUnwrappedElement(el, fakeEvent);
+        this.fakeClickEvent(el);
         return keyboardNavigationHandler.response.success;
     },
 
