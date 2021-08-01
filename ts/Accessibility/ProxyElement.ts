@@ -30,6 +30,10 @@ import H from '../Core/Globals.js';
 const {
     doc
 } = H;
+import ChartUtilities from './Utils/ChartUtilities.js';
+const {
+    fireEventOnWrappedOrUnwrappedElement
+} = ChartUtilities;
 import HTMLUtilities from './Utils/HTMLUtilities.js';
 const {
     cloneMouseEvent,
@@ -40,7 +44,6 @@ const {
 } = HTMLUtilities;
 import U from '../Core/Utilities.js';
 const {
-    fireEvent,
     merge
 } = U;
 
@@ -103,7 +106,7 @@ class ProxyElement {
         pos.x += pos.width / 2;
         pos.y += pos.height / 2;
         const fakeEventObject = getFakeMouseEvent('click', pos);
-        this.fireEventOnWrappedOrUnwrappedElement(this.target.click, fakeEventObject);
+        fireEventOnWrappedOrUnwrappedElement(this.target.click, fakeEventObject);
     }
 
 
@@ -189,7 +192,7 @@ class ProxyElement {
                     cloneMouseEvent(e as MouseEvent);
 
                 if (target) {
-                    this.fireEventOnWrappedOrUnwrappedElement(target, clonedEvent);
+                    fireEventOnWrappedOrUnwrappedElement(target, clonedEvent);
                 }
 
                 e.stopPropagation();
@@ -200,31 +203,6 @@ class ProxyElement {
                 }
             }, { passive: false });
         });
-    }
-
-
-    /**
-     * Fire an event on an element that is either wrapped by Highcharts,
-     * or a DOM element
-     */
-    private fireEventOnWrappedOrUnwrappedElement(
-        el: (HTMLElement|SVGElement|DOMElementType),
-        eventObject: Event
-    ): void {
-        const type = eventObject.type;
-        const hcEvents = (el as SVGElement).hcEvents;
-
-        if (doc.createEvent && ((el as Element).dispatchEvent || (el as SVGElement).fireEvent)) {
-            if (el.dispatchEvent) {
-                el.dispatchEvent(eventObject);
-            } else {
-                (el as SVGElement).fireEvent(type, eventObject);
-            }
-        } else if (hcEvents && hcEvents[type]) {
-            fireEvent(el, type, eventObject);
-        } else if ((el as SVGElement).element) {
-            this.fireEventOnWrappedOrUnwrappedElement((el as SVGElement).element, eventObject);
-        }
     }
 
 
