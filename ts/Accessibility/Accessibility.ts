@@ -59,6 +59,7 @@ declare global {
             public components: AccessibilityComponentsObject;
             public keyboardNavigation: KeyboardNavigation;
             public proxyProvider: ProxyProvider;
+            public zombie?: boolean; // Zombie object on old browsers
             public destroy(): void;
             public getChartTypes(): Array<string>;
             public init(chart: Chart): void;
@@ -169,6 +170,8 @@ Accessibility.prototype = {
 
         // Abort on old browsers
         if (!doc.addEventListener || !chart.renderer.isSVG) {
+            this.zombie = true;
+            this.components = {} as Highcharts.AccessibilityComponentsObject;
             chart.renderTo.setAttribute('aria-hidden', true);
             return;
         }
@@ -335,7 +338,7 @@ Chart.prototype.updateA11yEnabled = function (): void {
     const accessibilityOptions = this.options.accessibility;
 
     if (accessibilityOptions && accessibilityOptions.enabled) {
-        if (a11y) {
+        if (a11y && !a11y.zombie) {
             a11y.update();
         } else {
             this.accessibility = a11y = new (Accessibility as any)(this);
@@ -361,7 +364,7 @@ addEvent(Chart, 'render', function (): void {
     }
 
     const a11y = this.accessibility;
-    if (a11y) {
+    if (a11y && !a11y.zombie) {
         a11y.proxyProvider.updateProxyElementPositions();
         a11y.getComponentOrder().forEach(function (
             componentName: string
@@ -421,8 +424,9 @@ addEvent(Point, 'update', function (): void {
     'afterDrilldown', 'drillupall'
 ].forEach(function (event: string): void {
     addEvent(Chart, event, function (): void {
-        if (this.accessibility) {
-            this.accessibility.update();
+        const a11y = this.accessibility;
+        if (a11y && !a11y.zombie) {
+            a11y.update();
         }
     });
 });
