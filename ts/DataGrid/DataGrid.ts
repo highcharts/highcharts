@@ -34,6 +34,7 @@ const {
 } = H;
 import U from '../Core/Utilities.js';
 const {
+    clamp,
     merge
 } = U;
 
@@ -169,8 +170,17 @@ class DataGrid {
     private onScroll(e: Event): void {
         e.preventDefault();
         window.requestAnimationFrame((): void => {
+            let scrollTop = this.outerContainer.scrollTop;
+            if (H.isSafari) {
+                scrollTop = clamp(
+                    scrollTop,
+                    0,
+                    this.outerContainer.scrollHeight - this.outerContainer.clientHeight
+                );
+            }
+
             const columnsInPresentationOrder = this.dataTable.getColumnNames();
-            let i = Math.floor(this.outerContainer.scrollTop / this.options.cellHeight) || 0;
+            let i = Math.floor(scrollTop / this.options.cellHeight) || 0;
 
             for (const tableRow of this.rowElements) {
                 const dataTableRow = this.dataTable.getRow(i, columnsInPresentationOrder);
