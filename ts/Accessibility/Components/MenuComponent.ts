@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Exporting from '../../Extensions/Exporting/Exporting';
 import type {
     HTMLDOMElement,
     SVGDOMElement
@@ -122,8 +123,12 @@ Chart.prototype.hideExportMenu = function (): void {
 
     if (exportList && chart.exportContextMenu) {
         // Reset hover states etc.
-        exportList.forEach(function (el: Highcharts.ExportingDivElement): void {
-            if (el.className === 'highcharts-menu-item' && el.onmouseout) {
+        exportList.forEach((el): void => {
+            if (
+                el &&
+                el.className === 'highcharts-menu-item' &&
+                el.onmouseout
+            ) {
                 el.onmouseout(getFakeMouseEvent('mouseout'));
             }
         });
@@ -259,7 +264,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * @private
      */
     onMenuHidden: function (this: Highcharts.MenuComponent): void {
-        const menu: Highcharts.ExportingDivElement =
+        const menu: Exporting.DivElement =
             (this.chart as any).exportContextMenu;
         if (menu) {
             menu.setAttribute('aria-hidden', 'true');
@@ -355,28 +360,28 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         if (exportList && exportList.length) {
             // Set tabindex on the menu items to allow focusing by script
             // Set role to give screen readers a chance to pick up the contents
-            exportList.forEach(function (
-                item: Highcharts.ExportingDivElement
-            ): void {
-                if (item.tagName === 'LI' &&
-                    !(item.children && item.children.length)) {
-                    item.setAttribute('tabindex', -1);
-                } else {
-                    item.setAttribute('aria-hidden', 'true');
+            exportList.forEach((item): void => {
+                if (item) {
+                    if (item.tagName === 'LI' &&
+                        !(item.children && item.children.length)) {
+                        item.setAttribute('tabindex', -1);
+                    } else {
+                        item.setAttribute('aria-hidden', 'true');
+                    }
                 }
             });
 
             // Set accessibility properties on parent div
-            const parentDiv: HTMLDOMElement = (
-                exportList[0].parentNode as any
-            );
-            parentDiv.removeAttribute('aria-hidden');
-            parentDiv.setAttribute(
-                'aria-label',
-                chart.langFormat(
-                    'accessibility.exporting.chartMenuLabel', { chart: chart }
-                )
-            );
+            const parentDiv = (exportList[0] && exportList[0].parentNode);
+            if (parentDiv) {
+                parentDiv.removeAttribute('aria-hidden');
+                parentDiv.setAttribute(
+                    'aria-label',
+                    chart.langFormat(
+                        'accessibility.exporting.chartMenuLabel', { chart: chart }
+                    )
+                );
+            }
         }
     },
 
@@ -428,7 +433,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             // Only run exporting navigation if exporting support exists and is
             // enabled on chart
             validate: function (): boolean {
-                return chart.exportChart &&
+                return !!chart.exporting &&
                     chart.options.exporting.enabled !== false &&
                     (chart.options.exporting.accessibility as any).enabled !==
                     false;

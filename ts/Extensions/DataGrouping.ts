@@ -1071,8 +1071,8 @@ addEvent(Tooltip, 'headerFormatter', function (
         dateTimeLabelFormats,
         labelFormats,
         formattedKey,
-        formatString = (tooltipOptions as any)[
-            (e.isFooter ? 'footer' : 'header') + 'Format'
+        formatString = tooltipOptions[
+            e.isFooter ? 'footerFormat' : 'headerFormat'
         ];
 
     // apply only to grouped series
@@ -1103,11 +1103,10 @@ addEvent(Tooltip, 'headerFormatter', function (
         // if not grouped, and we don't have set the xDateFormat option, get the
         // best fit, so if the least distance between points is one minute, show
         // it, but if the least distance is one day, skip hours and minutes etc.
-        } else if (!xDateFormat && dateTimeLabelFormats) {
-            xDateFormat = tooltip.getXDateFormat(
-                labelConfig,
-                tooltipOptions,
-                xAxis
+        } else if (!xDateFormat && dateTimeLabelFormats && xAxis.dateTime) {
+            xDateFormat = xAxis.dateTime.getXDateFormat(
+                labelConfig.x,
+                tooltipOptions.dateTimeLabelFormats
             );
         }
 

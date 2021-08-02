@@ -34,39 +34,39 @@ declare module './Options' {
 }
 
 export interface TooltipOptions {
-    animation?: boolean;
-    backgroundColor?: ColorType;
+    animation: boolean;
+    backgroundColor: ColorType;
     borderColor?: ColorType;
-    borderRadius?: number;
-    borderWidth?: number;
+    borderRadius: number;
+    borderWidth: number;
     className?: string;
     changeDecimals?: number;
     /** @deprecated */
     crosshairs?: any;
-    dateTimeLabelFormats?: Record<string, string>;
-    enabled?: boolean;
+    dateTimeLabelFormats: Record<string, string>;
+    enabled: boolean;
     followPointer?: boolean;
     followTouchMove?: boolean;
-    footerFormat?: string;
+    footerFormat: string;
     formatter?: Tooltip.FormatterCallbackFunction;
-    headerFormat?: string;
-    headerShape?: Tooltip.ShapeValue;
-    hideDelay?: number;
+    headerFormat: string;
+    headerShape: Tooltip.ShapeValue;
+    hideDelay: number;
     nullFormat?: string;
     nullFormatter?: Tooltip.FormatterCallbackFunction;
     outside?: boolean;
-    padding?: number;
-    pointFormat?: string;
+    padding: number;
+    pointFormat: string;
     pointFormatter?: F.FormatterCallback<Point>;
     positioner?: Tooltip.PositionerCallbackFunction;
-    shadow?: (boolean|Partial<ShadowOptionsObject>);
-    shape?: Tooltip.ShapeValue;
-    shared?: boolean;
-    snap?: number;
+    shadow: (boolean|Partial<ShadowOptionsObject>);
+    shape: Tooltip.ShapeValue;
+    shared: boolean;
+    snap: number;
     split?: boolean;
-    stickOnContact?: boolean;
-    style?: CSSObject;
-    useHTML?: boolean;
+    stickOnContact: boolean;
+    style: CSSObject;
+    useHTML: boolean;
     valueDecimals?: number;
     valuePrefix?: string;
     valueSuffix?: string;

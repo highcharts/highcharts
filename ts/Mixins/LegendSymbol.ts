@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type ColorAxis from '../Core/Axis/ColorAxis';
+import type ColorAxis from '../Core/Axis/Color/ColorAxis';
 import type Legend from '../Core/Legend';
 import type Point from '../Core/Series/Point';
 import type Series from '../Core/Series/Series';

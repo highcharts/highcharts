@@ -14,7 +14,7 @@ import type AnimationOptions from './Animation/AnimationOptions';
 import type BBoxObject from './Renderer/BBoxObject';
 import type BubbleLegendItem from '../Series/Bubble/BubbleLegendItem';
 import type Chart from './Chart/Chart';
-import type ColorAxis from './Axis/ColorAxis';
+import type ColorAxis from './Axis/Color/ColorAxis';
 import type CSSObject from './Renderer/CSSObject';
 import type FontMetricsObject from './Renderer/FontMetricsObject';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
