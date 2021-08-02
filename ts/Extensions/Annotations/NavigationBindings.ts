@@ -1610,26 +1610,20 @@ addEvent(Chart, 'render', function (): void {
                     const buttonNode = chart.navigationBindings.container[0].querySelectorAll('.' + key);
 
                     if (buttonNode) {
-                        if (value.noDataState === 'normal') {
-                            for (let i = 0; i < buttonNode.length; i++) {
-                                const button = buttonNode[i];
+                        for (let i = 0; i < buttonNode.length; i++) {
+                            const button = buttonNode[i];
+                            if (value.noDataState === 'normal') {
                                 // If button has noDataState: 'normal',
                                 // and has disabledClassName,
                                 // remove this className.
                                 if (button.className.indexOf(disabledClassName) !== -1) {
                                     button.classList.remove(disabledClassName);
                                 }
-                            }
-                        } else if (!buttonsEnabled) {
-                            for (let i = 0; i < buttonNode.length; i++) {
-                                const button = buttonNode[i];
+                            } else if (!buttonsEnabled) {
                                 if (button.className.indexOf(disabledClassName) === -1) {
                                     button.className += ' ' + disabledClassName;
                                 }
-                            }
-                        } else {
-                            for (let i = 0; i < buttonNode.length; i++) {
-                                const button = buttonNode[i];
+                            } else {
                                 // Enable all buttons by deleting the className.
                                 if (button.className.indexOf(disabledClassName) !== -1) {
                                     button.classList.remove(disabledClassName);
