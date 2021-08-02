@@ -112,8 +112,6 @@ class DataGrid {
         this.draggedResizeHandle = null;
         this.draggedColumnRightIx = null;
         this.render();
-
-        this.scrollContainer.appendChild(this.innerContainer);
     }
 
 
@@ -148,10 +146,13 @@ class DataGrid {
         this.updateInnerContainerWidth();
         this.renderColumnHeaders();
         this.renderInitialRows();
+        this.addEvents();
+
+        this.scrollContainer.appendChild(this.innerContainer);
+
         if (this.options.resizableColumns) {
             this.renderColumnDragHandles();
         }
-        this.addEvents();
     }
 
 
