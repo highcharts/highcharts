@@ -120,6 +120,20 @@ class DataGrid {
     }
 
 
+    /**
+     * Update the data grid with new options.
+     *
+     * @param {DataGridOptions} options
+     *        An object with new options.
+     */
+    public update(options: DeepPartial<DataGridOptions>): void {
+        this.options = merge(this.options, options);
+
+        this.scrollContainer.removeChild(this.innerContainer);
+        this.render();
+    }
+
+
     // ---------------- Private methods
 
 
