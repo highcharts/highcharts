@@ -99,7 +99,6 @@ class DataGrid {
         this.outerContainer = makeDiv('hc-dg-outer-container');
         this.scrollContainer = makeDiv('hc-dg-scroll-container');
         this.innerContainer = makeDiv('hc-dg-inner-container');
-        this.scrollContainer.appendChild(this.innerContainer);
         this.outerContainer.appendChild(this.scrollContainer);
         this.container.appendChild(this.outerContainer);
 
@@ -113,6 +112,8 @@ class DataGrid {
         this.draggedResizeHandle = null;
         this.draggedColumnRightIx = null;
         this.render();
+
+        this.scrollContainer.appendChild(this.innerContainer);
     }
 
 
@@ -163,37 +164,38 @@ class DataGrid {
     }
 
 
+    private updateVisibleCells = (): void => {
+        let scrollTop = this.outerContainer.scrollTop;
+        if (H.isSafari) {
+            scrollTop = clamp(
+                scrollTop,
+                0,
+                this.outerContainer.scrollHeight - this.outerContainer.clientHeight
+            );
+        }
+
+        const columnsInPresentationOrder = this.dataTable.getColumnNames();
+        let i = Math.floor(scrollTop / this.options.cellHeight) || 0;
+
+        for (let j = 0; j < this.rowElements.length; j++, i++) {
+            const dataTableRow = this.dataTable.getRow(i, columnsInPresentationOrder);
+            if (dataTableRow) {
+                const cellElements = this.rowElements[j].childNodes;
+                for (let k = 0; k < dataTableRow.length; k++) {
+                    cellElements[k].textContent = dataTableCellToString(dataTableRow[k]);
+                }
+            }
+        }
+    };
+
+
     /**
      * Handle user scrolling the grid
      * @param {Event} e Event object
      */
     private onScroll(e: Event): void {
         e.preventDefault();
-        window.requestAnimationFrame((): void => {
-            let scrollTop = this.outerContainer.scrollTop;
-            if (H.isSafari) {
-                scrollTop = clamp(
-                    scrollTop,
-                    0,
-                    this.outerContainer.scrollHeight - this.outerContainer.clientHeight
-                );
-            }
-
-            const columnsInPresentationOrder = this.dataTable.getColumnNames();
-            let i = Math.floor(scrollTop / this.options.cellHeight) || 0;
-
-            for (const tableRow of this.rowElements) {
-                const dataTableRow = this.dataTable.getRow(i, columnsInPresentationOrder);
-                if (dataTableRow) {
-                    const cellElements = tableRow.querySelectorAll('div');
-                    dataTableRow.forEach((columnValue: DataTable.CellType, j: number): void => {
-                        const cell = cellElements[j];
-                        cell.textContent = dataTableCellToString(columnValue);
-                    });
-                }
-                i++;
-            }
-        });
+        window.requestAnimationFrame(this.updateVisibleCells);
     }
 
 
