@@ -47,6 +47,7 @@ const {
 
 declare module '../Core/Axis/AxisLike' {
     interface AxisLike {
+        applyGroupingAfterProcessingData(): void;
         getGroupPixelWidth(): number;
         setDataGrouping(
             dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
@@ -1037,21 +1038,7 @@ seriesProto.generatePoints = function (): void {
 // When all series are processed, calculate the group pixel width and then
 // if this value is different than zero apply groupings.
 addEvent(Axis, 'postProcessData', function (): void {
-    const axis = this,
-        series = axis.series;
-
-    series.forEach(function (series): void {
-        // Reset the groupPixelWidth, then calculate if needed.
-        series.groupPixelWidth = void 0; // #2110
-
-        series.groupPixelWidth = axis.getGroupPixelWidth && axis.getGroupPixelWidth();
-
-        if (series.groupPixelWidth) {
-            series.hasProcessed = true; // #2692
-
-            series.applyGrouping();
-        }
-    });
+    this.applyGroupingAfterProcessingData();
 });
 
 // Override point prototype to throw a warning when trying to update grouped
@@ -1201,6 +1188,32 @@ addEvent(Axis, 'afterSetScale', function (): void {
         series.hasProcessed = false;
     });
 });
+
+/**
+ * Check the groupPixelWidth and apply the grouping if needed.
+ * Fired only after processing the data.
+ *
+ * @product highstock
+ *
+ * @function Highcharts.Axis#applyGroupingAfterProcessingData
+ */
+Axis.prototype.applyGroupingAfterProcessingData = function (this: Axis): void {
+    const axis = this,
+        series = axis.series;
+
+    series.forEach(function (series): void {
+        // Reset the groupPixelWidth, then calculate if needed.
+        series.groupPixelWidth = void 0; // #2110
+
+        series.groupPixelWidth = axis.getGroupPixelWidth && axis.getGroupPixelWidth();
+
+        if (series.groupPixelWidth) {
+            series.hasProcessed = true; // #2692
+
+            series.applyGrouping();
+        }
+    });
+};
 
 // Get the data grouping pixel width based on the greatest defined individual
 // width of the axis' series, and if whether one of the axes need grouping.
