@@ -149,7 +149,8 @@ class CandlestickSeries extends OHLCSeries {
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @default #ffffff
              * @product highstock
-/
+            */
+
             upColor: palette.backgroundColor,
             /**
              * @product highstock
