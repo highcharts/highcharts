@@ -420,8 +420,8 @@ H.Popup.prototype = {
         parentDiv: HTMLDOMElement,
         type: string
     ): Highcharts.PopupFieldsObject {
-        const inputList = parentDiv.querySelectorAll(INPUT),
-            selectList = parentDiv.querySelectorAll(SELECT),
+        const inputList = Array.prototype.slice.call(parentDiv.querySelectorAll(INPUT)),
+            selectList = Array.prototype.slice.call(parentDiv.querySelectorAll(SELECT)),
             optionSeries = '#' + PREFIX + 'select-series > option:checked',
             optionVolume = '#' + PREFIX + 'select-volume > option:checked',
             linkedTo = parentDiv.querySelectorAll(optionSeries)[0],
@@ -434,7 +434,7 @@ H.Popup.prototype = {
             fields: { }
         };
 
-        [].forEach.call(inputList, function (input: HTMLInputElement): void {
+        inputList.forEach(function (input: HTMLInputElement): void {
             const param = input.getAttribute(PREFIX + 'data-name'),
                 seriesId = input.getAttribute(PREFIX + 'data-series-id');
 
@@ -449,7 +449,7 @@ H.Popup.prototype = {
             }
         });
 
-        [].forEach.call(selectList, function (select: HTMLInputElement): void {
+        selectList.forEach(function (select: HTMLInputElement): void {
             const id = select.id;
 
             // Get inputs only for the parameters, not for series and volume.
