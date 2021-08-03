@@ -1,8 +1,13 @@
+$grid-color: #ddd !default;
+$background-color: #fff !default;
+$header-background-color: #eee !default;
+$highlight-color: rgba(255, 0, 0, 0.5) !default;
+
 .hc-dg-container {
     position: relative;
     height: 100%;
     box-sizing: border-box;
-    border: 1px solid #ddd;
+    border: 1px solid $grid-color;
 }
 
 .hc-dg-outer-container {
@@ -29,8 +34,8 @@
 .hc-dg-cell {
     display: flex;
     align-items: center;
-    border-left: 1px solid #ddd;
-    border-top: 1px solid #ddd;
+    border-left: 1px solid $grid-color;
+    border-top: 1px solid $grid-color;
     overflow: hidden;
     padding: 0 8px;
     flex: 1;
@@ -45,12 +50,16 @@
     width: calc(100% + 16px);
     height: 100%;
     margin: 0 -8px;
-    padding: 0 8px;
+    padding: 0 6px;
+    box-sizing: border-box;
+    border: 2px solid $highlight-color;
+    outline: none;
+    font: inherit;
 }
 
 .hc-dg-row {
     display: flex;
-    background-color: white;
+    background: $background-color;
     width: 100%;
 }
 
@@ -61,8 +70,8 @@
 .hc-dg-column-header {
     display: flex;
     align-items: center;
-    border-left: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
+    border-left: 1px solid $grid-color;
+    border-bottom: 1px solid $grid-color;
     overflow: hidden;
     padding: 0 8px;
     flex: 1;
@@ -76,14 +85,14 @@
 
 .hc-dg-column-headers {
     display: flex;
-    background-color: #eee;
+    background-color: $header-background-color;
     width: 100%;
 }
 
 .hc-dg-col-resize-handle {
     cursor: ew-resize;
     opacity: 0;
-    background-color: rgba(255, 0, 0, 0.5);
+    background-color: $highlight-color;
     position: absolute;
     top: 0;
     width: 5px;
@@ -91,7 +100,7 @@
 
 .hc-dg-col-resize-crosshair {
     position: absolute;
-    background-color: rgba(255, 0, 0, 0.5);
+    background-color: $highlight-color;
     width: 3px;
     left: 0;
     opacity: 0;
