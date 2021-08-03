@@ -514,7 +514,7 @@ namespace OrdinalAxis {
                 });
 
                 // Apply grouping if needed.
-                axis.applyGroupingAfterProcessingData.call(fakeAxis);
+                axis.applyGrouping.call(fakeAxis);
 
                 // Run beforeSetTickPositions to compute the ordinalPositions
                 axis.ordinal.beforeSetTickPositions.apply({ axis: fakeAxis });
