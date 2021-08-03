@@ -1400,7 +1400,7 @@ merge<Annotation>(
                  *
                  * @see [annotations.shapes.point](annotations.shapes.point.html)
                  *
-                 * @type      {Highcharts.AnnotationMockPointOptionsObject|Highcharts.AnnotationsShapePointsFunction}
+                 * @type      {Array<Highcharts.AnnotationShapePointOptions>}
                  * @extends   annotations.labels.point
                  * @apioption annotations.shapes.points
                  */
@@ -1989,13 +1989,20 @@ export default Annotation;
 /**
  * Callback function that returns the annotation shape point.
  *
- * @callback Highcharts.AnnotationsShapePointsFunction
+ * @callback Highcharts.AnnotationShapePointFunction
  *
  * @param  {Highcharts.Annotation} annotation
  *         An annotation instance.
  *
  * @return {Highcharts.AnnotationMockPointOptionsObject}
  *         Annotations shape point.
+ */
+
+/**
+ * Shape point as object or function.
+ *
+ * @type {Highcharts.AnnotationMockPointOptionsObject|Highcharts.AnnotationShapePointFunction}
+ * @name Highcharts.AnnotationShapePointOptions
  */
 
 ''; // required by JSDoc parsing
