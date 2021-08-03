@@ -1312,8 +1312,10 @@ namespace OrdinalAxis {
     function onSeriesUpdatedData(this: Series): void {
         const xAxis = this.xAxis as Composition;
         // Destroy the extended ordinal index on updated data
+        // and destroy extendedOrdinalPositions, #16055.
         if (xAxis && xAxis.options.ordinal) {
             delete xAxis.ordinal.index;
+            delete xAxis.ordinal.extendedOrdinalPositions;
         }
     }
 
