@@ -158,19 +158,25 @@ class DataGrid {
      * options change, or the underlying data changes.
      */
     private render(): void {
+        const { options } = this;
+
         emptyHTMLElement(this.innerContainer);
 
-        this.outerContainer.style.top = this.options.cellHeight + 'px';
+        if (options.columnHeaders.enabled) {
+            this.outerContainer.style.top = this.options.cellHeight + 'px';
+            this.renderColumnHeaders();
+        } else {
+            this.outerContainer.style.top = '0';
+        }
 
         this.updateScrollingLength();
         this.updateInnerContainerWidth();
-        this.renderColumnHeaders();
         this.renderInitialRows();
         this.addEvents();
 
         this.scrollContainer.appendChild(this.innerContainer);
 
-        if (this.options.resizableColumns) {
+        if (options.columnHeaders.enabled && options.resizableColumns) {
             this.renderColumnDragHandles();
         }
     }
