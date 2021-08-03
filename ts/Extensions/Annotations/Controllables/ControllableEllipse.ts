@@ -12,7 +12,7 @@ import ControllableMixin from '../Mixins/ControllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
 import Axis from '../../../Core/Axis/Axis';
-const { merge } = U;
+const { merge, defined } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -100,7 +100,6 @@ class ControllableEllipse implements ControllableMixin.Type {
     ControllableMixin.setControlPointsVisibility;
     public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
     public transform = ControllableMixin.transform;
-    public transformPoint = ControllableMixin.transformPoint;
     public translatePoint = ControllableMixin.translatePoint;
     public update = ControllableMixin.update;
     public angle: number = void 0 as any;
@@ -112,6 +111,11 @@ class ControllableEllipse implements ControllableMixin.Type {
     public type = 'ellipse';
 
     public translate = ControllableMixin.translateShape;
+
+    public transformPoint(): void {
+        this.savePoints();
+        ControllableMixin.transformPoint.apply(this, arguments);
+    }
 
     public init(
         annotation: Annotation,
@@ -126,11 +130,6 @@ class ControllableEllipse implements ControllableMixin.Type {
      *  Functions
      *
      * */
-
-    public translateShape = ControllableMixin.translateShape;
-    // (dx: number, dy: number): void{
-    //     ControllableMixin.translateShape.call(this, dx, dy);
-    // }
 
     public render(parent: SVGElement): void {
         const attrs = this.attrsFromOptions(this.options);
@@ -188,7 +187,13 @@ class ControllableEllipse implements ControllableMixin.Type {
         this.angle = angle;
     }
 
-    public savePoints(x?: number, y?: number, rx?: number, ry?: number): void {
+    public savePoints(
+        x?: number,
+        y?: number,
+        rx?: number,
+        ry?: number,
+        angle?: number
+    ): void {
         const xAxis = this.chart.xAxis[(this.options.point as any).xAxis],
             yAxis = this.chart.yAxis[(this.options.point as any).yAxis],
             position = this.anchor(this.points[0]).absolutePosition;
@@ -196,9 +201,8 @@ class ControllableEllipse implements ControllableMixin.Type {
         y = y || position.y;
         rx = rx || this.options.rx;
         ry = ry || this.options.ry;
-
-        const angle = this.angle,
-            pointX1 = x - rx * Math.cos((angle * Math.PI) / 180),
+        angle = angle || this.angle;
+        const pointX1 = x - rx * Math.cos((angle * Math.PI) / 180),
             pointY1 = y - rx * Math.sin((angle * Math.PI) / 180),
             pointX2 = x + ry * Math.sin((angle * Math.PI) / 180),
             pointY2 = y - ry * Math.cos((angle * Math.PI) / 180),
@@ -219,29 +223,40 @@ class ControllableEllipse implements ControllableMixin.Type {
     public getAttrsFromPoints(): EllispseShapeSVGOptions {
         const points = this.referencePoints,
             position = this.anchor(this.points[0]).absolutePosition,
-            xAxis = this.chart.xAxis[(this.options.point as any).xAxis],
-            yAxis = this.chart.yAxis[(this.options.point as any).yAxis],
+            xAxisIndex = (this.options.point as any).xAxis,
+            yAxisIndex = (this.options.point as any).yAxis,
             cx = position.x,
-            cy = position.y,
-            x1 = xAxis.toPixels(points[0].x),
-            x2 = xAxis.toPixels(points[1].x),
-            y1 = yAxis.toPixels(points[0].y),
-            y2 = yAxis.toPixels(points[1].y),
-            rx = Math.sqrt((cx - x1) * (cx - x1) + (cy - y1) * (cy - y1)),
-            ry = Math.sqrt((cx - x2) * (cx - x2) + (cy - y2) * (cy - y2));
+            cy = position.y;
+        if (defined(yAxisIndex) && defined(xAxisIndex)) {
+            const xAxis = this.chart.xAxis[xAxisIndex],
+                yAxis = this.chart.yAxis[yAxisIndex],
+                x1 = xAxis.toPixels(points[0].x),
+                x2 = xAxis.toPixels(points[1].x),
+                y1 = yAxis.toPixels(points[0].y),
+                y2 = yAxis.toPixels(points[1].y),
+                rx = Math.sqrt((cx - x1) * (cx - x1) + (cy - y1) * (cy - y1)),
+                ry = Math.sqrt((cx - x2) * (cx - x2) + (cy - y2) * (cy - y2));
 
-        let angle = (-Math.atan((cx - x1) / (cy - y1)) * 180) / Math.PI - 90;
+            let angle = (Math.atan((cy - y1) / (cx - x1)) * 180) / Math.PI;
 
-        if (cy < y1) {
-            angle += 180;
+            if (cx < x1) {
+                angle += 180;
+            }
+
+            return {
+                cx,
+                cy,
+                rx,
+                ry,
+                angle
+            };
         }
-
         return {
             cx,
             cy,
-            rx,
-            ry,
-            angle
+            angle: this.angle,
+            rx: this.options.rx,
+            ry: this.options.ry
         };
     }
 }
