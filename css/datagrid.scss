@@ -1,10 +1,16 @@
-.hc-dg-outer-container {
-    width: 100%;
+.hc-dg-container {
+    position: relative;
     height: 100%;
-    overflow: scroll;
-    border-right: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
     box-sizing: border-box;
+    border: 1px solid #ddd;
+}
+
+.hc-dg-outer-container {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    overflow: scroll;
+    z-index: 0;
 }
 
 .hc-dg-scroll-container {
@@ -18,7 +24,6 @@
     position: sticky;
     top: 0;
     overflow: hidden;
-    min-height: 25px;
 }
 
 .hc-dg-cell {
@@ -30,6 +35,10 @@
     padding: 0 8px;
     flex: 1;
     box-sizing: border-box;
+}
+
+.hc-dg-cell:first-child {
+    border-left: none;
 }
 
 .hc-dg-cell-input {
@@ -45,16 +54,24 @@
     width: 100%;
 }
 
+.hc-dg-row:first-child .hc-dg-cell {
+    border-top: none;
+}
+
 .hc-dg-column-header {
     display: flex;
     align-items: center;
     border-left: 1px solid #ddd;
-    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
     overflow: hidden;
     padding: 0 8px;
     flex: 1;
     font-weight: 700;
     box-sizing: border-box;
+}
+
+.hc-dg-column-header:first-child {
+    border-left: none;
 }
 
 .hc-dg-column-headers {
@@ -78,4 +95,5 @@
     width: 3px;
     left: 0;
     opacity: 0;
+    z-index: 1;
 }

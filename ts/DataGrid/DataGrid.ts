@@ -65,6 +65,7 @@ class DataGrid {
     public dataTable: DataTable;
 
     private rowElements: Array<HTMLElement>;
+    private gridContainer: HTMLElement;
     private outerContainer: HTMLElement;
     private scrollContainer: HTMLElement;
     private innerContainer: HTMLElement;
@@ -96,11 +97,13 @@ class DataGrid {
         } else {
             this.container = container;
         }
+        this.gridContainer = makeDiv('hc-dg-container');
         this.outerContainer = makeDiv('hc-dg-outer-container');
         this.scrollContainer = makeDiv('hc-dg-scroll-container');
         this.innerContainer = makeDiv('hc-dg-inner-container');
         this.outerContainer.appendChild(this.scrollContainer);
-        this.container.appendChild(this.outerContainer);
+        this.gridContainer.appendChild(this.outerContainer);
+        this.container.appendChild(this.gridContainer);
 
         // Init options
         this.options = merge(DataGrid.defaultOptions, options);
@@ -156,6 +159,9 @@ class DataGrid {
      */
     private render(): void {
         emptyHTMLElement(this.innerContainer);
+
+        this.outerContainer.style.top = this.options.cellHeight + 'px';
+
         this.updateScrollingLength();
         this.updateInnerContainerWidth();
         this.renderColumnHeaders();
@@ -277,15 +283,15 @@ class DataGrid {
 
 
     private updateScrollingLength(): void {
-        const height = (this.getRowCount() + 1) * this.options.cellHeight;
+        const height = this.getRowCount() * this.options.cellHeight;
         this.scrollContainer.style.height = height + 'px';
     }
 
 
     private getNumRowsToDraw(): number {
         return Math.min(
-            this.getRowCount() + 1,
-            Math.floor(this.outerContainer.offsetHeight / this.options.cellHeight) - 1
+            this.getRowCount(),
+            Math.floor(this.outerContainer.offsetHeight / this.options.cellHeight)
         );
     }
 
@@ -348,7 +354,7 @@ class DataGrid {
 
         this.headerContainer = makeDiv('hc-dg-header-container');
         this.headerContainer.appendChild(columnHeadersContainer);
-        this.innerContainer.appendChild(this.headerContainer);
+        this.gridContainer.insertBefore(this.headerContainer, this.outerContainer);
     }
 
 
@@ -426,7 +432,7 @@ class DataGrid {
         const handleHeight = this.options.cellHeight;
 
         el.style.top = handleHeight + 'px';
-        el.style.height = this.innerContainer.offsetHeight - handleHeight + 'px';
+        el.style.height = this.innerContainer.offsetHeight + 'px';
 
         container.appendChild(el);
     }
