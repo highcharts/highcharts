@@ -1989,7 +1989,7 @@ export default Annotation;
 /**
  * Callback function that returns the annotation shape point.
  *
- * @callback Highcharts.AnnotationShapePointFunction
+ * @callback Highcharts.AnnotationMockPointFunction
  *
  * @param  {Highcharts.Annotation} annotation
  *         An annotation instance.
@@ -2001,8 +2001,10 @@ export default Annotation;
 /**
  * Shape point as object or function.
  *
- * @type {Highcharts.AnnotationMockPointOptionsObject|Highcharts.AnnotationShapePointFunction}
- * @name Highcharts.AnnotationShapePointOptions
+ * @typedef {
+ *          Highcharts.AnnotationMockPointOptionsObject|
+ *          Highcharts.AnnotationMockPointFunction
+ *     }Highcharts.AnnotationShapePointOptions
  */
 
 ''; // required by JSDoc parsing
