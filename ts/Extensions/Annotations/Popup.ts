@@ -1072,7 +1072,7 @@ H.Popup.prototype = {
             const popup = this;
 
             // Get and apply selection options for the possible series.
-            if (optionName === 'series') {
+            if (optionName === 'series' || optionName === 'volume') {
                 // List all series which have id - mandatory for indicator.
                 chart.series.forEach(function (series): void {
                     const seriesOptions = series.options;
@@ -1319,7 +1319,10 @@ H.Popup.prototype = {
                 // create name like params.styles.fontSize
                 parentFullName = parentNode + '.' + fieldName;
 
-                if (value !== void 0 && parentFullName) { // skip if field is unnecessary, #15362
+                if (
+                    defined(value) && // skip if field is unnecessary, #15362
+                    parentFullName
+                ) {
                     if (isObject(value)) {
                         addInput.call( // (15733) 'Periods' has an arrayed value. Label must be created here.
                             popup,
@@ -1361,7 +1364,8 @@ H.Popup.prototype = {
                         );
                     } else if (
                         // Skip volume field which is created by addFormFields.
-                        parentFullName !== 'params.volumeSeriesID'
+                        parentFullName !== 'params.volumeSeriesID' &&
+                        !isArray(value) // Skip params declared in array.
                     ) {
                         addInput.call(
                             popup,

@@ -106,4 +106,63 @@ describe('Popup for the pivot point indicator and the selection box, #15497.', (
             )
         );
     });
+
+    it('Series and volume in the indicator popup should have a dropdown with series to choose from, #15497. ', () => {
+        cy.openIndicators();
+
+        cy.get('.highcharts-indicator-list')
+            .eq(2)
+            .click(); // Accumulation/Distribution
+
+        cy.get('#highcharts-select-series')
+            .select('aapl-ohlc')
+            .select('aapl-volume')
+
+        cy.get('#highcharts-select-volume')
+            .select('aapl-ohlc')
+            .select('aapl-volume')
+    });
+
+    it(
+        'In the case of indicators where parameters are declared in array, inputs should nott be duplicated. #15497. ',
+        () => {
+        cy.openIndicators();
+
+        cy.get('.highcharts-indicator-list')
+            .eq(34)
+            .click(); // Stochastic
+        
+        cy.get('input[name="highcharts-stochastic-0"]')
+            .should('have.value', '14');
+        cy.get('input[name="highcharts-stochastic-1"]')
+            .should('have.value', '3');
+        cy.get('input[name="highcharts-stochastic-periods"]')
+            .should('not.exist');
+
+         cy.get('.highcharts-popup-rhs-col')
+            .children('.highcharts-popup button')
+            .eq(0)
+            .click(); // Add indicator.
+
+        cy.openIndicators();
+        cy.get('.highcharts-indicator-list')
+            .eq(34)
+            .click(); // Stochastic
+        cy.get('input[name="highcharts-stochastic-0"]')
+            .eq(0)
+            .clear()
+            .type('20');
+        cy.get('.highcharts-popup-rhs-col')
+            .children('.highcharts-popup button')
+            .eq(0)
+            .click(); // Add indicator.
+
+        cy.chart().should(chart =>
+            assert.notStrictEqual(
+                chart.series[3].points[0].x,
+                chart.series[4].points[0].x,
+                'With diferent periods, indicators should start from diferent place.'
+            )
+        );
+    });
 });
