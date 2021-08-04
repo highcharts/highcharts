@@ -77,6 +77,10 @@ class DataGrid {
     private draggedResizeHandle: null|HTMLElement;
     private draggedColumnRightIx: null|number;
     private dragResizeStart?: number;
+    private prevTop = -1;
+    private scrollEndRowCount = 0;
+    private scrollEndTop = 0;
+    private bottom = false;
 
 
     /* *
@@ -159,6 +163,8 @@ class DataGrid {
      */
     private render(): void {
         const { options } = this;
+        this.prevTop = -1;
+        this.bottom = false;
 
         emptyHTMLElement(this.innerContainer);
 
@@ -169,12 +175,14 @@ class DataGrid {
             this.outerContainer.style.top = '0';
         }
 
-        this.updateScrollingLength();
         this.updateInnerContainerWidth();
         this.renderInitialRows();
         this.addEvents();
 
         this.scrollContainer.appendChild(this.innerContainer);
+
+        this.updateScrollingLength();
+        this.updateVisibleCells();
 
         if (options.columnHeaders.enabled && options.resizableColumns) {
             this.renderColumnDragHandles();
@@ -201,17 +209,39 @@ class DataGrid {
             );
         }
 
-        const columnsInPresentationOrder = this.dataTable.getColumnNames();
-        let i = Math.floor(scrollTop / this.options.cellHeight) || 0;
+        let i = Math.floor(scrollTop / this.options.cellHeight);
+        if (i === this.prevTop) {
+            return;
+        }
+        this.prevTop = i;
 
-        for (let j = 0; j < this.rowElements.length; j++, i++) {
+        const columnsInPresentationOrder = this.dataTable.getColumnNames();
+        const rowCount = this.getRowCount();
+
+        for (let j = 0; j < this.rowElements.length && i < rowCount; j++, i++) {
             const dataTableRow = this.dataTable.getRow(i, columnsInPresentationOrder);
+            const cellElements = this.rowElements[j].childNodes;
             if (dataTableRow) {
-                const cellElements = this.rowElements[j].childNodes;
                 for (let k = 0; k < dataTableRow.length; k++) {
                     cellElements[k].textContent = dataTableCellToString(dataTableRow[k]);
                 }
+            } else {
+                for (let k = 0; k < cellElements.length; k++) {
+                    cellElements[k].textContent = '';
+                }
             }
+        }
+
+        // Scroll innerContainer to align the bottom of the last row with the
+        // bottom of the grid when scrolled to the end
+        if (this.prevTop + this.scrollEndRowCount === rowCount) {
+            if (!this.bottom) {
+                this.bottom = true;
+                this.innerContainer.scrollTop = this.scrollEndTop;
+            }
+        } else if (this.bottom) {
+            this.bottom = false;
+            this.innerContainer.scrollTop = 0;
         }
     };
 
@@ -239,8 +269,10 @@ class DataGrid {
                 this.removeCellInputElement();
 
                 // Replace cell contents with an input element
+                const inputHeight = cellEl.clientHeight;
                 cellEl.textContent = '';
                 input = this.cellInputEl = document.createElement('input');
+                input.style.height = inputHeight + 'px';
                 input.className = 'hc-dg-cell-input';
                 cellEl.appendChild(input);
                 input.focus();
@@ -289,15 +321,51 @@ class DataGrid {
 
 
     private updateScrollingLength(): void {
-        const height = this.getRowCount() * this.options.cellHeight;
-        this.scrollContainer.style.height = height + 'px';
+        const columnsInPresentationOrder = this.dataTable.getColumnNames();
+        let i = this.dataTable.getRowCount() - 1;
+        let top = i - this.getNumRowsToDraw();
+        let height = 0;
+        const outerHeight = this.outerContainer.clientHeight;
+
+        // Explicit height is needed for overflow: hidden to work, to make sure
+        // innerContainer is not scrollable by user input
+        this.innerContainer.style.height = outerHeight + 'px';
+
+        // Calculate how many of the bottom rows is needed to potentially
+        // overflow innerContainer and use it to add extra rows to scrollHeight
+        // to ensure it is possible to scroll to the last row when rows have
+        // variable heights
+        for (let j = 0; i > top; i--, j++) {
+            const dataTableRow = this.dataTable.getRow(i, columnsInPresentationOrder);
+            if (dataTableRow) {
+                const cellElements = this.rowElements[j].childNodes;
+                for (let k = 0; k < dataTableRow.length; k++) {
+                    cellElements[k].textContent = dataTableCellToString(dataTableRow[k]);
+                }
+                height += this.rowElements[j].offsetHeight;
+
+                if (height > outerHeight) {
+                    i--;
+                    break;
+                }
+            }
+        }
+
+        const extraRows = i - top;
+        this.scrollEndRowCount = this.rowElements.length - extraRows;
+        // How much innerContainer needs to be scrolled to fully show the last
+        // row when scrolled to the end
+        this.scrollEndTop = height - outerHeight;
+
+        const scrollHeight = (this.getRowCount() + extraRows) * this.options.cellHeight;
+        this.scrollContainer.style.height = scrollHeight + 'px';
     }
 
 
     private getNumRowsToDraw(): number {
         return Math.min(
             this.getRowCount(),
-            Math.floor(this.outerContainer.offsetHeight / this.options.cellHeight)
+            Math.ceil(this.outerContainer.offsetHeight / this.options.cellHeight)
         );
     }
 
@@ -309,9 +377,7 @@ class DataGrid {
      */
     private renderCell(parentRow: HTMLElement, cellValue: DataTable.CellType): void {
         const cellEl = makeDiv('hc-dg-cell');
-        cellEl.style.height = this.options.cellHeight + 'px';
-
-        cellEl.textContent = dataTableCellToString(cellValue);
+        cellEl.style.minHeight = this.options.cellHeight + 'px';
 
         cellEl.addEventListener('click', (): void => this.onCellClick(cellEl));
         parentRow.appendChild(cellEl);
