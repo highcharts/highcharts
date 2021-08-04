@@ -1065,8 +1065,12 @@ H.Popup.prototype = {
         ): void {
             const popup = this,
                 indicators = popup.indicators,
-                lhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-lhs-col')[0] as HTMLElement,
-                rhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0] as HTMLElement,
+                lhsCol = parentDiv.querySelectorAll(
+                    '.' + PREFIX + 'popup-lhs-col'
+                )[0] as HTMLElement,
+                rhsCol = parentDiv.querySelectorAll(
+                    '.' + PREFIX + 'popup-rhs-col'
+                )[0] as HTMLElement,
                 isEdit = listType === 'edit',
                 addFormFields = this.indicators.addFormFields,
                 series = (
@@ -1095,12 +1099,17 @@ H.Popup.prototype = {
             // Sort indicators alphabeticaly.
             stableSort(
                 filteredSeriesArray,
-                function (a: Highcharts.FilteredSeries, b: Highcharts.FilteredSeries
+                function (
+                    a: Highcharts.FilteredSeries,
+                    b: Highcharts.FilteredSeries
                 ): number {
                     const seriesAName = a.indicatorFullName.toLowerCase(),
                         seriesBName = b.indicatorFullName.toLowerCase();
-                    return (seriesAName < seriesBName) ? -1 : (seriesAName > seriesBName) ? 1 : 0;
-                });
+
+                    return (seriesAName < seriesBName) ?
+                        -1 : (seriesAName > seriesBName) ? 1 : 0;
+                }
+            );
 
             // If the list exists remove it from the DOM
             // in order to create a new one with different filters.
@@ -1194,7 +1203,9 @@ H.Popup.prototype = {
             parentDiv: HTMLDOMElement
         ): void {
             const popup = this,
-                lhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-lhs-col')[0] as HTMLElement,
+                lhsCol = parentDiv.querySelectorAll(
+                    '.' + PREFIX + 'popup-lhs-col'
+                )[0] as HTMLElement,
                 options = 'searchIndicators',
                 inputAttributes = {
                     value: '',
@@ -1206,12 +1217,28 @@ H.Popup.prototype = {
 
             const handleInputChange = function (inputText: string): void {
                 // Apply some filters.
-                popup.indicators.addIndicatorList.call(popup, chart, popup.container, 'add', inputText);
+                popup.indicators.addIndicatorList.call(
+                    popup,
+                    chart,
+                    popup.container,
+                    'add',
+                    inputText
+                );
             };
 
             // Add input field with the label and button.
-            const input = this.addInput(options, INPUT, lhsCol, inputAttributes) as HTMLInputElement,
-                button = this.addButton(lhsCol, clearFilterText, 'button', lhsCol);
+            const input = this.addInput(
+                    options,
+                    INPUT,
+                    lhsCol,
+                    inputAttributes
+                ) as HTMLInputElement,
+                button = this.addButton(
+                    lhsCol,
+                    clearFilterText,
+                    'button',
+                    lhsCol
+                );
 
             input.classList.add('highcharts-input-search-indicators');
             button.classList.add('clear-filter-button');
@@ -1254,8 +1281,9 @@ H.Popup.prototype = {
             const options = series.options,
                 seriesTypes = H.seriesTypes;
             // add mode
-            let seriesName = seriesTypes[indicatorType] &&
-                    (seriesTypes[indicatorType].prototype as SMAIndicator).nameBase || indicatorType.toUpperCase(),
+            let seriesName = (seriesTypes[indicatorType] &&
+                    (seriesTypes[indicatorType].prototype as SMAIndicator).nameBase) ||
+                    indicatorType.toUpperCase(),
                 seriesType = indicatorType;
 
             // edit
