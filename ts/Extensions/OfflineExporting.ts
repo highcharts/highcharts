@@ -635,12 +635,11 @@ Chart.prototype.getSVGForLocalExport = function (
 ): void {
     let chart = this as Exporting.ChartComposition,
         images,
+        imagesLength = 0,
         imagesEmbedded = 0,
         chartCopyContainer: (HTMLDOMElement|undefined),
         chartCopyOptions: (Options|undefined),
         el,
-        i,
-        l,
         href: (string|undefined),
         // After grabbing the SVG of the chart's copy container we need to do
         // sanitation on the SVG
@@ -649,7 +648,7 @@ Chart.prototype.getSVGForLocalExport = function (
         },
         // When done with last image we have our SVG
         checkDone = function (): void {
-            if (imagesEmbedded === images.length) {
+            if (imagesEmbedded === imagesLength) {
                 successCallback(sanitize(
                     (chartCopyContainer as any).innerHTML
                 ));
@@ -688,6 +687,7 @@ Chart.prototype.getSVGForLocalExport = function (
     // Trigger hook to get chart copy
     chart.getSVGForExport(options, chartOptions);
     images = (chartCopyContainer as any).getElementsByTagName('image');
+    imagesLength = images.length;
 
     try {
         // If there are no images to embed, the SVG is okay now.
@@ -698,7 +698,7 @@ Chart.prototype.getSVGForLocalExport = function (
         }
 
         // Go through the images we want to embed
-        for (i = 0, l = images.length; i < l; ++i) {
+        for (let i = 0; i < images.length; i++) {
             el = images[i];
             href = el.getAttributeNS(
                 'http://www.w3.org/1999/xlink',
@@ -721,8 +721,9 @@ Chart.prototype.getSVGForLocalExport = function (
 
             // Hidden, boosted series have blank href (#10243)
             } else {
-                ++imagesEmbedded;
+                imagesEmbedded++;
                 el.parentNode.removeChild(el);
+                i--;
                 checkDone();
             }
         }
