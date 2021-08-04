@@ -259,5 +259,11 @@ input.highcharts-input-search-indicators {
   margin: 0 auto;
   display: block;
   float: unset;
-  color: #0000ff;
+  color: #424BCD;
+  background-color: #fff;
+}
+
+.highcharts-popup button.clear-filter-button:hover {
+  color: #fff;
+  background-color: #424BCD;
 }
