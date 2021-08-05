@@ -3206,8 +3206,8 @@ class Chart {
                 }
             });
 
-            if (!chart.styledMode && 'style' in optionsChart) {
-                chart.renderer.setStyle(optionsChart.style as any);
+            if (!chart.styledMode && optionsChart.style) {
+                chart.renderer.setStyle(chart.options.chart.style || {});
             }
         }
 
