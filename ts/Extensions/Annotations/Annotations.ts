@@ -1359,7 +1359,7 @@ merge<Annotation>(
                  *         Attach annotation to a mock point
                  *
                  * @declare   Highcharts.AnnotationMockPointOptionsObject
-                 * @type      {string|*}
+                 * @type      {string|Highcharts.AnnotationMockPointOptionsObject}
                  * @requires  modules/annotations
                  * @apioption annotations.labels.point
                  */
@@ -1380,9 +1380,13 @@ merge<Annotation>(
                  * series - it is referenced by the point's id - or a new point
                  * with defined x, y properties and optionally axes.
                  *
+                 * @sample highcharts/annotations/mock-points/
+                 *         Attach annotation to a mock point
+                 *
                  * @declare   Highcharts.AnnotationMockPointOptionsObject
                  * @type      {string|Highcharts.AnnotationMockPointOptionsObject}
                  * @extends   annotations.labels.point
+                 * @requires  modules/annotations
                  * @apioption annotations.shapes.point
                  */
 
