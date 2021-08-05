@@ -251,15 +251,15 @@ namespace OrdinalAxis {
                         }
                     }
 
-                    if (series.isSeriesBoosting) {
-                        hasBoostedSeries = true;
-                    }
+                    // if (series.isSeriesBoosting) {
+                    //     hasBoostedSeries = true;
+                    // }
 
                 });
 
-                if (hasBoostedSeries) {
-                    ordinalPositions.length = 0;
-                }
+                // if (hasBoostedSeries) {
+                //     ordinalPositions.length = 0;
+                // }
 
                 // cache the length
                 len = ordinalPositions.length;
