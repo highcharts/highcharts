@@ -81,6 +81,7 @@ class DataGrid {
     private scrollEndRowCount = 0;
     private scrollEndTop = 0;
     private bottom = false;
+    private columnNames: Array<string>;
 
 
     /* *
@@ -114,6 +115,7 @@ class DataGrid {
 
         // Init data table
         this.dataTable = this.initDataTable();
+        this.columnNames = this.dataTable.getColumnNames();
 
         this.rowElements = [];
         this.draggedResizeHandle = null;
@@ -178,9 +180,6 @@ class DataGrid {
         this.updateInnerContainerWidth();
         this.renderInitialRows();
         this.addEvents();
-
-        this.scrollContainer.appendChild(this.innerContainer);
-
         this.updateScrollingLength();
         this.updateVisibleCells();
 
@@ -215,7 +214,7 @@ class DataGrid {
         }
         this.prevTop = i;
 
-        const columnsInPresentationOrder = this.dataTable.getColumnNames();
+        const columnsInPresentationOrder = this.columnNames;
         const rowCount = this.getRowCount();
 
         for (let j = 0; j < this.rowElements.length && i < rowCount; j++, i++) {
@@ -230,7 +229,7 @@ class DataGrid {
         // Scroll innerContainer to align the bottom of the last row with the
         // bottom of the grid when scrolled to the end
         if (this.prevTop + this.scrollEndRowCount === rowCount) {
-            if (!this.bottom) {
+            if (!this.bottom && this.scrollEndTop) {
                 this.bottom = true;
                 this.innerContainer.scrollTop = this.scrollEndTop;
             }
@@ -316,7 +315,7 @@ class DataGrid {
 
 
     private updateScrollingLength(): void {
-        const columnsInPresentationOrder = this.dataTable.getColumnNames();
+        const columnsInPresentationOrder = this.columnNames;
         let i = this.dataTable.getRowCount() - 1;
         let top = i - this.getNumRowsToDraw();
         let height = 0;
@@ -330,15 +329,19 @@ class DataGrid {
         // overflow innerContainer and use it to add extra rows to scrollHeight
         // to ensure it is possible to scroll to the last row when rows have
         // variable heights
-        for (let j = 0; i > top; i--, j++) {
+        for (let j = 0; j < this.rowElements.length; j++) {
             const cellElements = this.rowElements[j].childNodes;
             for (let k = 0; k < columnsInPresentationOrder.length; k++) {
                 cellElements[k].textContent = dataTableCellToString(
-                    this.dataTable.getCell(columnsInPresentationOrder[k], i)
+                    this.dataTable.getCell(columnsInPresentationOrder[k], i - j)
                 );
             }
-            height += this.rowElements[j].offsetHeight;
+        }
 
+        this.scrollContainer.appendChild(this.innerContainer);
+
+        for (let j = 0; i > top; i--, j++) {
+            height += this.rowElements[j].offsetHeight;
             if (height > outerHeight) {
                 i--;
                 break;
