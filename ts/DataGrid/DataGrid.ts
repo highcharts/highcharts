@@ -219,16 +219,11 @@ class DataGrid {
         const rowCount = this.getRowCount();
 
         for (let j = 0; j < this.rowElements.length && i < rowCount; j++, i++) {
-            const dataTableRow = this.dataTable.getRow(i, columnsInPresentationOrder);
             const cellElements = this.rowElements[j].childNodes;
-            if (dataTableRow) {
-                for (let k = 0; k < dataTableRow.length; k++) {
-                    cellElements[k].textContent = dataTableCellToString(dataTableRow[k]);
-                }
-            } else {
-                for (let k = 0; k < cellElements.length; k++) {
-                    cellElements[k].textContent = '';
-                }
+            for (let k = 0; k < columnsInPresentationOrder.length; k++) {
+                cellElements[k].textContent = dataTableCellToString(
+                    this.dataTable.getCell(columnsInPresentationOrder[k], i)
+                );
             }
         }
 
@@ -336,18 +331,17 @@ class DataGrid {
         // to ensure it is possible to scroll to the last row when rows have
         // variable heights
         for (let j = 0; i > top; i--, j++) {
-            const dataTableRow = this.dataTable.getRow(i, columnsInPresentationOrder);
-            if (dataTableRow) {
-                const cellElements = this.rowElements[j].childNodes;
-                for (let k = 0; k < dataTableRow.length; k++) {
-                    cellElements[k].textContent = dataTableCellToString(dataTableRow[k]);
-                }
-                height += this.rowElements[j].offsetHeight;
+            const cellElements = this.rowElements[j].childNodes;
+            for (let k = 0; k < columnsInPresentationOrder.length; k++) {
+                cellElements[k].textContent = dataTableCellToString(
+                    this.dataTable.getCell(columnsInPresentationOrder[k], i)
+                );
+            }
+            height += this.rowElements[j].offsetHeight;
 
-                if (height > outerHeight) {
-                    i--;
-                    break;
-                }
+            if (height > outerHeight) {
+                i--;
+                break;
             }
         }
 
