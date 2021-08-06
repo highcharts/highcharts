@@ -5,6 +5,7 @@ const defaultOptions: DataGridOptions = {
     columnHeaders: {
         enabled: true
     },
+    columns: {},
     editable: true,
     resizableColumns: true
 };

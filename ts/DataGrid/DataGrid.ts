@@ -35,7 +35,8 @@ const {
 import U from '../Core/Utilities.js';
 const {
     clamp,
-    merge
+    merge,
+    pick
 } = U;
 
 /* *
@@ -146,6 +147,15 @@ class DataGrid {
     // ---------------- Private methods
 
 
+    private isColumnEditable(columnName: string): boolean {
+        const columnOptions = this.options.columns[columnName] || {};
+        return pick(
+            columnOptions.editable,
+            this.options.editable
+        );
+    }
+
+
     /**
      * Get a reference to the underlying DataTable from options, or create one
      * if needed.
@@ -253,9 +263,10 @@ class DataGrid {
     /**
      * Handle the user starting interaction with a cell.
      * @param {HTMLElement} cellEl The clicked cell.
+     * @param {string} columnName The column the clicked cell belongs to.
      */
-    private onCellClick(cellEl: HTMLElement): void {
-        if (this.options.editable) {
+    private onCellClick(cellEl: HTMLElement, columnName: string): void {
+        if (this.isColumnEditable(columnName)) {
             let input = cellEl.querySelector('input');
             const cellValue = cellEl.textContent;
 
@@ -370,25 +381,34 @@ class DataGrid {
     /**
      * Render a data cell.
      * @param {HTMLElement} parentRow The parent row to add the cell to.
-     * @param {DataTable.CellType} cellValue The value to add in the data cell.
+     * @param {string} columnName The column the cell belongs to.
      */
-    private renderCell(parentRow: HTMLElement, cellValue: DataTable.CellType): void {
-        const cellEl = makeDiv('hc-dg-cell');
+    private renderCell(parentRow: HTMLElement, columnName: string): void {
+        let className = 'hc-dg-cell';
+
+        if (!this.isColumnEditable(columnName)) {
+            className += ' hc-dg-cell-readonly';
+        }
+
+        const cellEl = makeDiv(className);
         cellEl.style.minHeight = this.options.cellHeight + 'px';
 
-        cellEl.addEventListener('click', (): void => this.onCellClick(cellEl));
+        cellEl.addEventListener('click', (): void =>
+            this.onCellClick(cellEl, columnName)
+        );
         parentRow.appendChild(cellEl);
     }
 
 
     /**
      * Render a row of data.
-     * @param {DataTable.Row} row The row data to render. The data should be in presentation order.
      */
-    private renderRow(row: DataTable.Row): void {
+    private renderRow(): void {
         const rowEl = makeDiv('hc-dg-row');
 
-        row.forEach(this.renderCell.bind(this, rowEl));
+        for (let i = 0; i < this.columnNames.length; i++) {
+            this.renderCell(rowEl, this.columnNames[i]);
+        }
 
         this.innerContainer.appendChild(rowEl);
         this.rowElements.push(rowEl);
@@ -401,7 +421,13 @@ class DataGrid {
      * @param {string} columnName The name of the column.
      */
     private renderColumnHeader(parentEl: HTMLElement, columnName: string): void {
-        const headerEl = makeDiv('hc-dg-column-header');
+        let className = 'hc-dg-column-header';
+
+        if (!this.isColumnEditable(columnName)) {
+            className += ' hc-dg-column-header-readonly';
+        }
+
+        const headerEl = makeDiv(className);
         headerEl.style.height = this.options.cellHeight + 'px';
 
         headerEl.textContent = columnName;
@@ -433,10 +459,8 @@ class DataGrid {
     private renderInitialRows(): void {
         this.rowElements = [];
         const rowsToDraw = this.getNumRowsToDraw();
-        const columnsInPresentationOrder = this.dataTable.getColumnNames();
-        if (rowsToDraw > 0) {
-            const rowData = this.dataTable.getRows(0, rowsToDraw, columnsInPresentationOrder);
-            rowData.forEach(this.renderRow.bind(this));
+        for (let i = 0; i < rowsToDraw; i++) {
+            this.renderRow();
         }
     }
 

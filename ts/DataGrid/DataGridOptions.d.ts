@@ -24,13 +24,18 @@ import type DataTable from '../Data/DataTable';
 export interface DataGridOptions {
     cellHeight: number;
     columnHeaders: ColumnHeaderOptions;
+    columns: Record<string, ColumnOptions>;
     dataTable?: DataTable;
-    editable?: boolean;
-    resizableColumns?: boolean;
+    editable: boolean;
+    resizableColumns: boolean;
 }
 
 export interface ColumnHeaderOptions {
     enabled: boolean;
+}
+
+export interface ColumnOptions {
+    editable?: boolean;
 }
 
 export default DataGridOptions;
