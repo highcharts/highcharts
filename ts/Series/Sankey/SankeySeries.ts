@@ -463,20 +463,17 @@ class SankeySeries extends ColumnSeries {
             node: SankeyPoint,
             factor: number
         ): (Record<string, number>|undefined) {
-            const centeredLinks = (node.series.options as any).centeredLinks;
-            const maxNodesLength = chart.inverted ? chart.plotWidth : chart.plotHeight;
+
             let offset = 0,
                 totalNodeOffset,
                 nodePadding = series.nodePadding;
 
             for (let i = 0; i < column.length; i++) {
                 const sum = column[i].getSum();
-                const height = centeredLinks ?
-                    maxNodesLength / node.series.nodes.length - nodePadding :
-                    Math.max(
-                        sum * factor,
-                        series.options.minLinkWidth as any
-                    );
+                const height = Math.max(
+                    sum * factor,
+                    series.options.minLinkWidth as any
+                );
 
                 if (sum) {
                     totalNodeOffset = height + nodePadding;
@@ -502,9 +499,7 @@ class SankeySeries extends ColumnSeries {
             factor: number
         ): number {
 
-            const centeredLinks = (series.options as any).centeredLinks;
-            const maxNodesLength = chart.inverted ? chart.plotWidth : chart.plotHeight,
-                nodePadding = series.nodePadding;
+            const nodePadding = series.nodePadding;
             const height = this.reduce(function (
                 height: number,
                 node: SankeyPoint
@@ -512,12 +507,10 @@ class SankeySeries extends ColumnSeries {
                 if (height > 0) {
                     height += nodePadding;
                 }
-                const nodeHeight = centeredLinks ?
-                    maxNodesLength / node.series.nodes.length - nodePadding :
-                    Math.max(
-                        node.getSum() * factor,
-                        series.options.minLinkWidth as any
-                    );
+                const nodeHeight = Math.max(
+                    node.getSum() * factor,
+                    series.options.minLinkWidth as any
+                );
                 height += nodeHeight;
                 return height;
             }, 0);
