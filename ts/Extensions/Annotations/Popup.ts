@@ -1019,15 +1019,14 @@ H.Popup.prototype = {
             selectBox.setAttribute('id', PREFIX + 'select-' + optionName);
 
             // list all series which have id - mandatory for creating indicator
-            chart.series.forEach(function (serie): void {
+            chart.series.forEach(function (series): void {
+                seriesOptions = series.options as any;
 
-                seriesOptions = serie.options;
+                if (seriesOptions.id !== PREFIX + 'navigator-series') {
+                    const seriesName = seriesOptions.params ?
+                        seriesOptions.name || series.name :
+                        seriesOptions.name || seriesOptions.id || '';
 
-                if (
-                    !(seriesOptions as any).params &&
-                    seriesOptions.id &&
-                    seriesOptions.id !== PREFIX + 'navigator-series'
-                ) {
                     createElement(
                         OPTION,
                         {
@@ -1035,9 +1034,7 @@ H.Popup.prototype = {
                         },
                         null as any,
                         selectBox
-                    ).appendChild(doc.createTextNode(
-                        seriesOptions.name || seriesOptions.id
-                    ));
+                    ).appendChild(doc.createTextNode(seriesName));
                 }
             });
 
