@@ -1361,9 +1361,15 @@ merge<Annotation>(
                  *
                  * @sample highcharts/annotations/mock-point/
                  *         Attach annotation to a mock point
+                 * @sample highcharts/annotations/mock-points/
+                 *         Attach annotation to a mock point with different ways
                  *
                  * @declare   Highcharts.AnnotationMockPointOptionsObject
-                 * @type      {string|Highcharts.AnnotationMockPointOptionsObject}
+                 * @type      {
+                 *               string|
+                 *               Highcharts.AnnotationMockPointOptionsObject|
+                 *               Highcharts.AnnotationMockPointFunction
+                 *            }
                  * @requires  modules/annotations
                  * @apioption annotations.labels.point
                  */
@@ -1385,10 +1391,14 @@ merge<Annotation>(
                  * with defined x, y properties and optionally axes.
                  *
                  * @sample highcharts/annotations/mock-points/
-                 *         Attach annotation to a mock point
+                 *         Attach annotation to a mock point with different ways
                  *
                  * @declare   Highcharts.AnnotationMockPointOptionsObject
-                 * @type      {string|Highcharts.AnnotationMockPointOptionsObject}
+                 * @type      {
+                 *               string|
+                 *               Highcharts.AnnotationMockPointOptionsObject|
+                 *               Highcharts.AnnotationMockPointFunction
+                 *            }
                  * @extends   annotations.labels.point
                  * @requires  modules/annotations
                  * @apioption annotations.shapes.point
@@ -2003,9 +2013,10 @@ export default Annotation;
  */
 
 /**
- * Shape point as object or function.
+ * Shape point as string, object or function.
  *
  * @typedef {
+ *          string|
  *          Highcharts.AnnotationMockPointOptionsObject|
  *          Highcharts.AnnotationMockPointFunction
  *     }Highcharts.AnnotationShapePointOptions
