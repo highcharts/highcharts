@@ -463,3 +463,80 @@ QUnit.test('val2lin- unit tests', function (assert) {
         extrapolated from the slope of the array`
     );
 });
+
+QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            data: [
+                [1, 1],
+                [2, 2],
+                [3, 3],
+                [10, 4],
+                [11, 1],
+                [12, 2],
+                [14, 3]
+            ]
+        }]
+    });
+
+    assert.ok(
+        chart.xAxis[0].ordinal.positions.length,
+        `When the boost module is present and the chart is initiated with
+        the default options, the ordinal positions should be calculated.`
+    );
+    assert.notOk(
+        chart.series[0].currentDataGrouping,
+        `When the boost module is present and the chart is initiated with
+        the default options, the data should not be grouped.`
+    );
+    assert.notOk(
+        chart.series[0].boostClipRect,
+        `When the boost module is present and the chart is initiated with
+        the default options, the chart should not be boosted.`
+    );
+
+    chart.series[0].update({
+        boostThreshold: 1
+    });
+    assert.ok(
+        chart.xAxis[0].ordinal.positions.length,
+        `After updating the boostThreshold,
+        ordinal positions should be still calculated.`
+    );
+    assert.notOk(
+        chart.series[0].boostClipRect && chart.series[0].currentDataGrouping,
+        `After updating the boostThreshold,
+        the chart should not be boosted nor grouped.`
+    );
+
+    chart.series[0].update({
+        dataGrouping: {
+            forced: true,
+            units: [
+                ['millisecond', [2]]
+            ]
+        }
+    });
+    assert.ok(
+        chart.xAxis[0].ordinal.positions.length &&
+            chart.series[0].currentDataGrouping,
+        `When data grouping is enabled (forced) for the chart,
+        series should be boosted and grouped.`
+    );
+    assert.notOk(
+        chart.series[0].boostClipRect && chart.series[0].currentDataGrouping,
+        `When data grouping is enabled (forced), chart should not be boosted.`
+    );
+
+    chart.series[0].update({
+        dataGrouping: {
+            enabled: false
+        }
+    });
+    assert.ok(
+        chart.xAxis[0].ordinal.positions.length &&
+            chart.series[0].boostClipRect,
+        `Only after explicitly disabling the data grouping
+        chart should be boosted.`
+    );
+});
