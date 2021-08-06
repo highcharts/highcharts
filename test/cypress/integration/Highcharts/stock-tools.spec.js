@@ -33,4 +33,18 @@ describe('Stock Tools', () => {
             )
         );
     });
+
+    it('#16158: Should use correct default series in popup', () => {
+        cy.get('.highcharts-indicators').click();
+        cy.get('.highcharts-indicator-list').contains('Accumulation').click();
+        cy.get('.highcharts-tab-item-show #highcharts-select-series').should('have.value', 'aapl-ohlc');
+        cy.get('.highcharts-tab-item-show #highcharts-select-volume').should('have.value', 'aapl-volume');
+        cy.get('.highcharts-popup-rhs-col button').contains('add').click();
+
+        cy.get('.highcharts-indicators').click();
+        cy.get('.highcharts-tab-item').contains('edit').click();
+        cy.get('.highcharts-tab-item-show #highcharts-select-series').should('have.value', 'aapl-ohlc');
+        cy.get('.highcharts-tab-item-show #highcharts-select-volume').should('have.value', 'aapl-volume');
+        cy.get('.highcharts-popup-rhs-col button').contains('save').click();
+    });
 });
