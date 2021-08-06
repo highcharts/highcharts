@@ -21,7 +21,8 @@ import type HistogramPoint from './HistogramPoint';
 import type HistogramPointOptions from './HistogramPointOptions';
 import type HistogramSeriesOptions from './HistogramSeriesOptions';
 import type Series from '../../Core/Series/Series';
-import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+
+import DerivedSeries from '../DerivedSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -311,24 +312,21 @@ class HistogramSeries extends ColumnSeries {
  *
  * */
 
-interface HistogramSeries {
-    addBaseSeriesEvents: Highcharts.DerivedSeriesMixin['addBaseSeriesEvents'];
-    addEvents: Highcharts.DerivedSeriesMixin['addEvents'];
-    eventRemovers: Highcharts.DerivedSeries['eventRemovers'];
-    hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'];
-    init: Highcharts.DerivedSeriesMixin['init'];
-    initialised: Highcharts.DerivedSeries['initialised'];
+interface HistogramSeries extends DerivedSeries.Composition {
+    animate: typeof ColumnSeries.prototype.animate;
+    destroy: typeof ColumnSeries.prototype.destroy;
+    group: typeof ColumnSeries.prototype.group;
+    init: typeof ColumnSeries.prototype.init;
+    pointAttribs: typeof ColumnSeries.prototype.pointAttribs;
     pointClass: typeof HistogramPoint;
-    setBaseSeries: Highcharts.DerivedSeriesMixin['setBaseSeries'];
+    remove: typeof ColumnSeries.prototype.remove;
 }
+
 extend(HistogramSeries.prototype, {
-    addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
-    addEvents: DerivedSeriesMixin.addEvents,
-    destroy: DerivedSeriesMixin.destroy,
-    hasDerivedData: DerivedSeriesMixin.hasDerivedData,
-    init: DerivedSeriesMixin.init,
-    setBaseSeries: DerivedSeriesMixin.setBaseSeries
+    hasDerivedData: DerivedSeries.hasDerivedData
 });
+
+DerivedSeries.compose(HistogramSeries);
 
 /* *
  *
