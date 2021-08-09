@@ -1020,12 +1020,11 @@ H.Popup.prototype = {
 
             // list all series which have id - mandatory for creating indicator
             chart.series.forEach(function (series): void {
-                seriesOptions = series.options as any;
+                seriesOptions = series.options;
 
                 if (seriesOptions.id !== PREFIX + 'navigator-series') {
-                    const seriesName = seriesOptions.params ?
-                        seriesOptions.name || series.name :
-                        seriesOptions.name || seriesOptions.id || '';
+                    const seriesName = seriesOptions.name ||
+                        (seriesOptions as any).params ? series.name : seriesOptions.id || '';
 
                     createElement(
                         OPTION,
