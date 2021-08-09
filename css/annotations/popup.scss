@@ -16,6 +16,7 @@ $white: #fff;
 
 .highcharts-popup.highcharts-annotation-toolbar button {
   margin-top:0px;
+  color: blue;
 }
 
 .highcharts-popup.highcharts-annotation-toolbar > span {
@@ -180,21 +181,28 @@ $white: #fff;
 }
 
 .highcharts-popup-close:hover,
-.highcharts-popup button:hover,
 .highcharts-popup button.highcharts-annotation-edit-button:hover,
 .highcharts-popup button.highcharts-annotation-remove-button:hover {
   background-color: $button-hover-color;
+  border-width: 0;
   cursor: pointer;
 }
 
 .highcharts-popup button {
   float: right;
   border: none;
-  background: $button-background-color;
-  color: #666;
+  background: $blue;
+  color: $white;
+  border-radius: 4px;
   margin-left:5px;
   margin-top:12px;
 }
+.highcharts-popup button:hover {
+  background-color: $white;
+  color: $blue;
+  border: 1px solid $blue;
+}
+
 .highcharts-popup button:first-child {
   margin-left: 0;
 }
@@ -207,6 +215,8 @@ $white: #fff;
 .highcharts-popup button.highcharts-annotation-edit-button,
 .highcharts-popup button.highcharts-annotation-remove-button {
   width: 20px;
+  background-color: $white;
+  color: $blue;
   height: 40px;
   padding: 20px;
 }
