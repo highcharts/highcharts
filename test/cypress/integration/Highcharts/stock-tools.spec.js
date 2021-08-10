@@ -64,10 +64,7 @@ describe('An indicator on indicator, #15696.', () => {
 
         cy.addIndicator(); // Add SMA indicator with period 20.
 
-        cy.window().then((win) => {
-            const H = win.Highcharts,
-                chart = H.charts[0];
-
+        cy.chart().then((chart) => {
             // Select the first 3m period.
             chart.xAxis[0].setExtremes(1565098200000, 1565098200000 + 36e5 *24 *90);
         });
