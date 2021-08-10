@@ -278,7 +278,7 @@ bindingsUtils.indicatorsWithAxes = [
     'linearRegressionIntercept',
     'linearRegressionAngle',
     'klinger'
-]
+];
 
 bindingsUtils.manageIndicators = function (
     this: Highcharts.StockToolsNavigationBindings,
