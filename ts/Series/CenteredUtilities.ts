@@ -72,17 +72,17 @@ namespace CenteredUtilities {
      */
     export function getCenter(this: CenteredSeries): Array<number> {
 
-        let options = this.options,
+        const options = this.options,
             chart = this.chart,
             slicingRoom = 2 * (options.slicedOffset || 0),
-            handleSlicingRoom,
             plotWidth = chart.plotWidth - 2 * slicingRoom,
             plotHeight = chart.plotHeight - 2 * slicingRoom,
             centerOption: Array<(number|string|null)> = options.center as any,
-            smallestSize = Math.min(plotWidth, plotHeight),
+            smallestSize = Math.min(plotWidth, plotHeight);
+
+        let handleSlicingRoom,
             size = options.size,
             innerSize = options.innerSize || 0,
-            positions: Array<number>,
             i: number,
             value: number;
 
@@ -94,7 +94,7 @@ namespace CenteredUtilities {
             innerSize = parseFloat(innerSize);
         }
 
-        positions = [
+        const positions: Array<number> = [
             pick(centerOption[0] as any, '50%' as any),
             pick(centerOption[1] as any, '50%' as any),
             // Prevent from negative values
