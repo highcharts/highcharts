@@ -11,7 +11,6 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
-import Axis from '../../../Core/Axis/Axis';
 const { merge, defined } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -71,11 +70,7 @@ class ControllableEllipse implements ControllableMixin.Type {
      *
      * */
 
-    public constructor(
-        annotation: Annotation,
-        options: EllipseShapeOptions,
-        index: number
-    ) {
+    public constructor(annotation: Annotation, options: EllipseShapeOptions, index: number) {
         this.angle = options.angle;
         this.init(annotation, options, index);
         this.collection = 'shapes';
@@ -96,8 +91,7 @@ class ControllableEllipse implements ControllableMixin.Type {
     public linkPoints = ControllableMixin.linkPoints;
     public point = ControllableMixin.point;
     public scale = ControllableMixin.scale;
-    public setControlPointsVisibility =
-    ControllableMixin.setControlPointsVisibility;
+    public setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
     public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
     public transform = ControllableMixin.transform;
     public translatePoint = ControllableMixin.translatePoint;
@@ -117,11 +111,7 @@ class ControllableEllipse implements ControllableMixin.Type {
         ControllableMixin.transformPoint.apply(this, arguments);
     }
 
-    public init(
-        annotation: Annotation,
-        options: EllipseShapeOptions,
-        index: number
-    ): void {
+    public init(annotation: Annotation, options: EllipseShapeOptions, index: number): void {
         ControllableMixin.init.call(this, annotation, options, index);
         this.savePoints();
     }
@@ -187,13 +177,7 @@ class ControllableEllipse implements ControllableMixin.Type {
         this.angle = angle;
     }
 
-    public savePoints(
-        x?: number,
-        y?: number,
-        rx?: number,
-        ry?: number,
-        angle?: number
-    ): void {
+    public savePoints(x?: number, y?: number, rx?: number, ry?: number, angle?: number): void {
         const xAxis = this.chart.xAxis[(this.options.point as any).xAxis],
             yAxis = this.chart.yAxis[(this.options.point as any).yAxis],
             position = this.anchor(this.points[0]).absolutePosition;
@@ -216,7 +200,6 @@ class ControllableEllipse implements ControllableMixin.Type {
                     y: yAxis.toValue(pointY2)
                 }
             ];
-
         this.referencePoints = points;
     }
 
@@ -237,7 +220,15 @@ class ControllableEllipse implements ControllableMixin.Type {
                 rx = Math.sqrt((cx - x1) * (cx - x1) + (cy - y1) * (cy - y1)),
                 ry = Math.sqrt((cx - x2) * (cx - x2) + (cy - y2) * (cy - y2));
 
-            let angle = (Math.atan((cy - y1) / (cx - x1)) * 180) / Math.PI;
+            let tan;
+
+            if (rx > ry) {
+                tan = (cy - y1) / (cx - x1);
+            } else {
+                tan = (x2 - cx) / (cy - y2);
+            }
+
+            let angle = (Math.atan(tan) * 180) / Math.PI;
 
             if (cx < x1) {
                 angle += 180;
