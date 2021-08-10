@@ -11,6 +11,7 @@
 'use strict';
 
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+
 import H from '../Core/Globals.js';
 import Series from '../Core/Series/Series.js';
 

@@ -20,7 +20,7 @@ import type PieSeriesOptions from './PieSeriesOptions';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
+import CenteredSeriesMixin from '../CenteredUtilities.js';
 const { getStartAndEndRadians } = CenteredSeriesMixin;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';

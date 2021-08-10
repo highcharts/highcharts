@@ -30,7 +30,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type TreemapSeriesType from '../Treemap/TreemapSeries';
 
-import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
+import CenteredSeriesMixin from '../CenteredUtilities.js';
 const {
     getCenter,
     getStartAndEndRadians

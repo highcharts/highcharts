@@ -107,7 +107,7 @@ declare global {
  * @typedef {"arc"|"circle"|"solid"} Highcharts.PaneBackgroundShapeValue
  */
 
-import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
+import centeredSeriesMixin from '../Series/CenteredUtilities.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
