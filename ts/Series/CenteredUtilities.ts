@@ -10,52 +10,17 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import H from '../Core/Globals.js';
+const { deg2rad } = H;
 import Series from '../Core/Series/Series.js';
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface CenteredSeries extends Series {
-            options: CenteredSeriesOptions;
-        }
-        interface CenteredSeriesMixin {
-            getCenter(this: Series): Array<number>;
-            getStartAndEndRadians(
-                start?: number,
-                end?: number
-            ): RadianAngles;
-        }
-        interface CenteredSeriesOptions extends SeriesOptions {
-            center?: Array<(number|string|null)>;
-            innerSize?: (number|string);
-            size?: (number|string);
-            slicedOffset?: number;
-        }
-        interface RadianAngles {
-            end: number;
-            start: number;
-        }
-        let CenteredSeriesMixin: CenteredSeriesMixin;
-    }
-}
-
-/**
- * @private
- * @interface Highcharts.RadianAngles
- *//**
- * @name Highcharts.RadianAngles#end
- * @type {number}
- *//**
- * @name Highcharts.RadianAngles#start
- * @type {number}
- */
-
 import U from '../Core/Utilities.js';
 const {
     isNumber,
@@ -63,15 +28,40 @@ const {
     relativeLength
 } = U;
 
-const deg2rad = H.deg2rad;
-
-/* eslint-disable valid-jsdoc */
-
 /**
  * @private
- * @mixin Highcharts.CenteredSeriesMixin
  */
-const centeredSeriesMixin = H.CenteredSeriesMixin = {
+namespace CenteredUtilities {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface CenteredSeries extends Series {
+        options: CenteredSeriesOptions;
+    }
+
+    export interface CenteredSeriesOptions extends SeriesOptions {
+        center?: Array<(number|string|null)>;
+        innerSize?: (number|string);
+        size?: (number|string);
+        slicedOffset?: number;
+    }
+
+    export interface RadianAngles {
+        end: number;
+        start: number;
+    }
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
 
     /**
      * Get the center of the pie based on the size and center options relative
@@ -79,10 +69,8 @@ const centeredSeriesMixin = H.CenteredSeriesMixin = {
      *
      * @private
      * @function Highcharts.CenteredSeriesMixin.getCenter
-     *
-     * @return {Array<number>}
      */
-    getCenter: function (this: Highcharts.CenteredSeries): Array<number> {
+    export function getCenter(this: CenteredSeries): Array<number> {
 
         let options = this.options,
             chart = this.chart,
@@ -139,7 +127,7 @@ const centeredSeriesMixin = H.CenteredSeriesMixin = {
             positions[3] = positions[2];
         }
         return positions;
-    },
+    }
 
     /**
      * getStartAndEndRadians - Calculates start and end angles in radians.
@@ -157,10 +145,10 @@ const centeredSeriesMixin = H.CenteredSeriesMixin = {
      * @return {Highcharts.RadianAngles}
      *         Returns an object containing start and end angles as radians.
      */
-    getStartAndEndRadians: function (
+    export function getStartAndEndRadians(
         start?: number,
         end?: number
-    ): Highcharts.RadianAngles {
+    ): RadianAngles {
         const startAngle = isNumber(start) ? start : 0, // must be a number
             endAngle = (
                 (
@@ -179,6 +167,32 @@ const centeredSeriesMixin = H.CenteredSeriesMixin = {
             end: deg2rad * (endAngle + correction)
         };
     }
-};
 
-export default centeredSeriesMixin;
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default CenteredUtilities;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * @private
+ * @interface Highcharts.RadianAngles
+ *//**
+ * @name Highcharts.RadianAngles#end
+ * @type {number}
+ *//**
+ * @name Highcharts.RadianAngles#start
+ * @type {number}
+ */
+
+''; // keeps doclets above in JS file
