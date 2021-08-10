@@ -141,7 +141,8 @@ declare global {
                 optionName: string,
                 chart: AnnotationChart,
                 parentDiv: HTMLDOMElement,
-                selectedOption: string
+                selectedOption: string,
+                series?: SMAIndicator
             ): void;
         }
         interface PopupTabsObject {
@@ -984,7 +985,8 @@ H.Popup.prototype = {
             optionName: string,
             chart: Highcharts.AnnotationChart,
             parentDiv: HTMLDOMElement,
-            selectedOption: string
+            selectedOption: string,
+            currentSeries: SMAIndicator
         ): void {
             let selectName = PREFIX + optionName + '-type-' + type,
                 lang = this.lang,
@@ -1022,7 +1024,12 @@ H.Popup.prototype = {
             chart.series.forEach(function (series): void {
                 seriesOptions = series.options;
 
-                if (seriesOptions.id !== PREFIX + 'navigator-series') {
+                if (
+                    seriesOptions.id !== PREFIX + 'navigator-series' &&
+                    seriesOptions.id !== (
+                        currentSeries && currentSeries.options && currentSeries.options.id
+                    )
+                ) {
                     const seriesName = seriesOptions.name ||
                         (seriesOptions as any).params ? series.name : seriesOptions.id || '';
 
@@ -1101,7 +1108,8 @@ H.Popup.prototype = {
                 'series',
                 chart,
                 rhsColWrapper,
-                series.linkedParent && fields.volumeSeriesID
+                series.linkedParent && fields.volumeSeriesID,
+                series
             );
 
             if (fields.volumeSeriesID) {

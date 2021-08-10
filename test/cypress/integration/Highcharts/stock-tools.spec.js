@@ -44,7 +44,7 @@ describe('An indicator on indicator, #15696.', () => {
         cy.visit('/stock/demo/stock-tools-gui');
     });
 
-    it('Popup for the Pivot Point indicator should contain a selection box for the algorithm, #15497.', () => {
+    it('There should be a possibility to add indicators based on other indicator, #15696.', () => {
         cy.openIndicators();
 
         cy.addIndicator(); // Add SMA indicator.
@@ -64,10 +64,13 @@ describe('An indicator on indicator, #15696.', () => {
 
         cy.addIndicator(); // Add SMA indicator with period 20.
 
-        cy.chart().should(chart =>
+        cy.window().then((win) => {
+            const H = win.Highcharts,
+                chart = H.charts[0];
+
             // Select the first 3m period.
-            chart.xAxis[0].setExtremes(1565098200000, 1565098200000 + 36e5 *24 *90),
-        );
+            chart.xAxis[0].setExtremes(1565098200000, 1565098200000 + 36e5 *24 *90);
+        });
 
         cy.chart().should(chart =>
             // Select the first 3m period.
@@ -83,5 +86,13 @@ describe('An indicator on indicator, #15696.', () => {
 
         cy.get('#highcharts-select-series')
             .contains('SMA (20)')
+
+        cy.get('.highcharts-tab-item')
+            .eq(1)
+            .click(); // Open EDIT bookmark.
+
+        cy.get('#highcharts-select-series')
+            .contains('SMA (20)')
+            .should('not.contain', 'SMA (14)')
     });
 });
