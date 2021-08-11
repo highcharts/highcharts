@@ -28,7 +28,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import ColorMapMixin from '../ColorMapSeries.js';
+import ColorMapMixin from '../ColorMap.js';
 const { colorMapSeriesMixin } = ColorMapMixin;
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -1379,6 +1379,8 @@ extend(MapSeries.prototype, {
     useMapGeometry: true
 
 });
+
+ColorMapMixin.compose(MapSeries, MapPoint);
 
 /* *
  *

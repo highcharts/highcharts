@@ -16,14 +16,13 @@
  *
  * */
 
+import type ColorMapComposition from '../ColorMap';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeries from './MapSeries';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type ScatterPoint from '../Scatter/ScatterPoint';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import ColorMapMixin from '../ColorMapSeries.js';
-const { colorMapPointMixin } = ColorMapMixin;
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
@@ -153,16 +152,10 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
  *
  * */
 
-interface MapPoint extends ScatterPoint, Highcharts.ColorMapPoint {
-    dataLabelOnNull: typeof colorMapPointMixin.dataLabelOnNull;
-    isValid: typeof colorMapPointMixin.isValid;
-    moveToTopOnHover: typeof colorMapPointMixin.moveToTopOnHover;
+interface MapPoint extends ColorMapComposition.PointComposition {
+    dataLabelOnNull: ColorMapComposition.PointComposition['dataLabelOnNull'];
+    isValid: ColorMapComposition.PointComposition['isValid'];
 }
-extend(MapPoint.prototype, {
-    dataLabelOnNull: colorMapPointMixin.dataLabelOnNull,
-    isValid: colorMapPointMixin.isValid,
-    moveToTopOnHover: colorMapPointMixin.moveToTopOnHover
-});
 
 /* *
  *

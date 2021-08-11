@@ -13,6 +13,7 @@
 import type ScatterPoint from './Scatter/ScatterPoint';
 import type ScatterSeries from './Scatter/ScatterSeries';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+
 import H from '../Core/Globals.js';
 
 declare module '../Core/Series/PointLike' {
@@ -84,40 +85,11 @@ addEvent(Point, 'afterSetState', function (e?: Record<string, any>): void {
     }
 });
 
-
-/**
- * Mixin for maps and heatmaps
- *
- * @private
- * @mixin Highcharts.colorMapPointMixin
- */
-const colorMapPointMixin = {
-    dataLabelOnNull: true,
-    moveToTopOnHover: true,
-
-    /* eslint-disable valid-jsdoc */
-    /**
-     * Color points have a value option that determines whether or not it is
-     * a null point
-     * @private
-     */
-    isValid: function (this: Highcharts.ColorMapPoint): boolean {
-        // undefined is allowed
-        return (
-            this.value !== null &&
-            this.value !== Infinity &&
-            this.value !== -Infinity
-        );
-    }
-
-    /* eslint-enable valid-jsdoc */
-};
-
 /**
  * @private
  * @mixin Highcharts.colorMapSeriesMixin
  */
-const colorMapSeriesMixin = {
+const colorMapSeriesMixinOld = {
     pointArrayMap: ['value'],
     axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
@@ -151,9 +123,95 @@ const colorMapSeriesMixin = {
     }
 };
 
-const exports = {
-    colorMapPointMixin,
-    colorMapSeriesMixin
-};
+/* *
+ *
+ *  Composition
+ *
+ * */
 
-export default exports;
+namespace ColorMapSeries {
+
+    export const colorMapSeriesMixin = colorMapSeriesMixinOld;
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export declare class SeriesComposition extends ScatterSeries {
+        pointClass: typeof PointComposition;
+    }
+
+    export declare class PointComposition extends ScatterPoint {
+        dataLabelOnNull: boolean;
+        moveToTopOnHover?: boolean;
+        series: SeriesComposition;
+        value: (number|null);
+        isValid(): boolean;
+    }
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    export function compose<T extends typeof ScatterSeries>(
+        SeriesClass: T,
+        PointClass?: T['prototype']['pointClass']
+    ): (T&typeof SeriesComposition) {
+
+        if (PointClass && composedClasses.indexOf(PointClass) === -1) {
+            composedClasses.push(PointClass);
+
+            const pointProto = PointClass.prototype as PointComposition;
+
+            pointProto.dataLabelOnNull = true;
+            pointProto.moveToTopOnHover = true;
+            pointProto.isValid = pointIsValid;
+        }
+
+        if (composedClasses.indexOf(SeriesClass) === -1) {
+            composedClasses.push(SeriesClass);
+        }
+
+        return SeriesClass as (T&typeof SeriesComposition);
+    }
+
+    /**
+     * Color points have a value option that determines whether or not it is
+     * a null point
+     * @private
+     */
+    export function pointIsValid(this: PointComposition): boolean {
+        // undefined is allowed
+        return (
+            this.value !== null &&
+            this.value !== Infinity &&
+            this.value !== -Infinity
+        );
+    }
+
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default ColorMapSeries;

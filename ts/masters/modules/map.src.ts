@@ -13,7 +13,6 @@
 import Highcharts from '../../Core/Globals.js';
 import '../../Core/Axis/MapAxis.js';
 import ColorAxis from '../../Core/Axis/Color/ColorAxis.js';
-import '../../Series/ColorMapSeries.js';
 import '../../Maps/MapNavigation.js';
 import '../../Maps/MapPointer.js';
 import '../../Series/Map/MapSeries.js';
