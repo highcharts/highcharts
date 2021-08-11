@@ -17,6 +17,7 @@ import '../../Extensions/Annotations/Types/ElliottWave.js';
 import '../../Extensions/Annotations/Types/Tunnel.js';
 import '../../Extensions/Annotations/Types/InfinityLine.js';
 import '../../Extensions/Annotations/Types/Fibonacci.js';
+import '../../Extensions/Annotations/Types/FibonacciTimezones.js';
 import '../../Extensions/Annotations/Types/Pitchfork.js';
 import '../../Extensions/Annotations/Types/VerticalLine.js';
 import '../../Extensions/Annotations/Types/Measure.js';

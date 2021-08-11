@@ -181,8 +181,6 @@ Tunnel.prototype.defaultOptions = merge(
      */
     {
         typeOptions: {
-            xAxis: 0,
-            yAxis: 0,
             /**
              * Background options.
              *
