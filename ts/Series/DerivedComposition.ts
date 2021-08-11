@@ -13,7 +13,7 @@
  * */
 
 import type Chart from '../Core/Chart/Chart';
-import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type CoreSeriesOptions from '../Core/Series/SeriesOptions';
 
 import H from '../Core/Globals.js';
 const { noop } = H;
@@ -32,7 +32,7 @@ const {
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
-        hasDerivedData?: DerivedSeries.Composition['hasDerivedData'];
+        hasDerivedData?: DerivedComposition.SeriesComposition['hasDerivedData'];
     }
 }
 
@@ -47,7 +47,7 @@ declare module '../Core/Series/SeriesLike' {
  * series data.
  * @private
  */
-namespace DerivedSeries {
+namespace DerivedComposition {
 
     /* *
      *
@@ -55,21 +55,21 @@ namespace DerivedSeries {
      *
      * */
 
-    export declare class Composition extends Series {
+    export declare class SeriesComposition extends Series {
         baseSeries?: Series;
         eventRemovers: Array<Function>;
         hasDerivedData?: boolean;
         initialised?: boolean;
-        options: Options;
+        options: SeriesOptions;
         addBaseSeriesEvents(): void;
         addEvents(): void;
         destroy(keepEventsForUpdate?: boolean): void;
-        init(chart: Chart, userOptions: DeepPartial<SeriesOptions>): void;
+        init(chart: Chart, userOptions: DeepPartial<CoreSeriesOptions>): void;
         setBaseSeries(): void;
         setDerivedData(): void;
     }
 
-    export interface Options extends SeriesOptions {
+    export interface SeriesOptions extends CoreSeriesOptions {
         baseSeries?: (number|string);
     }
 
@@ -105,12 +105,12 @@ namespace DerivedSeries {
      */
     export function compose<T extends typeof Series>(
         SeriesClass: T
-    ): (T&typeof Composition) {
+    ): (T&typeof SeriesComposition) {
 
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
-            const seriesProto = SeriesClass.prototype as Composition;
+            const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.addBaseSeriesEvents = addBaseSeriesEvents;
             seriesProto.addEvents = addEvents;
@@ -119,14 +119,14 @@ namespace DerivedSeries {
             seriesProto.setBaseSeries = setBaseSeries;
         }
 
-        return SeriesClass as (T&typeof Composition);
+        return SeriesClass as (T&typeof SeriesComposition);
     }
 
     /**
      * Initialise series
      * @private
      */
-    export function init(this: Composition): void {
+    export function init(this: SeriesComposition): void {
         Series.prototype.init.apply(this, arguments as any);
 
         this.initialised = false;
@@ -140,7 +140,7 @@ namespace DerivedSeries {
      * Sets base series for the series
      * @private
      */
-    export function setBaseSeries(this: Composition): void {
+    export function setBaseSeries(this: SeriesComposition): void {
         const chart = this.chart,
             baseSeriesOptions = this.options.baseSeries,
             baseSeries = (
@@ -158,7 +158,7 @@ namespace DerivedSeries {
      * Adds events for the series
      * @private
      */
-    export function addEvents(this: Composition): void {
+    export function addEvents(this: SeriesComposition): void {
         this.eventRemovers.push(
             addEvent(
                 this.chart,
@@ -181,7 +181,7 @@ namespace DerivedSeries {
      * in the series if the base series is updated / removed / etc.
      * @private
      */
-    export function addBaseSeriesEvents(this: Composition): void {
+    export function addBaseSeriesEvents(this: SeriesComposition): void {
         this.eventRemovers.push(
             addEvent(
                 this.baseSeries,
@@ -205,7 +205,7 @@ namespace DerivedSeries {
      * Destroys the series
      * @private
      */
-    export function destroy(this: Composition): void {
+    export function destroy(this: SeriesComposition): void {
         this.eventRemovers.forEach((remover: Function): void => {
             remover();
         });
@@ -220,4 +220,4 @@ namespace DerivedSeries {
  *
  * */
 
-export default DerivedSeries;
+export default DerivedComposition;

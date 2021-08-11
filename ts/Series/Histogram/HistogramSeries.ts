@@ -22,7 +22,7 @@ import type HistogramPointOptions from './HistogramPointOptions';
 import type HistogramSeriesOptions from './HistogramSeriesOptions';
 import type Series from '../../Core/Series/Series';
 
-import DerivedSeries from '../DerivedSeries.js';
+import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -312,7 +312,7 @@ class HistogramSeries extends ColumnSeries {
  *
  * */
 
-interface HistogramSeries extends DerivedSeries.Composition {
+interface HistogramSeries extends DerivedComposition.SeriesComposition {
     animate: typeof ColumnSeries.prototype.animate;
     destroy: typeof ColumnSeries.prototype.destroy;
     group: typeof ColumnSeries.prototype.group;
@@ -323,10 +323,10 @@ interface HistogramSeries extends DerivedSeries.Composition {
 }
 
 extend(HistogramSeries.prototype, {
-    hasDerivedData: DerivedSeries.hasDerivedData
+    hasDerivedData: DerivedComposition.hasDerivedData
 });
 
-DerivedSeries.compose(HistogramSeries);
+DerivedComposition.compose(HistogramSeries);
 
 /* *
  *
