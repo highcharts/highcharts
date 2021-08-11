@@ -19,7 +19,7 @@
 import type ParetoPoint from './ParetoPoint';
 import type ParetoSeriesOptions from './ParetoSeriesOptions';
 
-import DerivedSeries from '../DerivedSeries.js';
+import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -189,15 +189,15 @@ class ParetoSeries extends LineSeries {
  *
  * */
 
-interface ParetoSeries extends DerivedSeries.Composition {
+interface ParetoSeries extends DerivedComposition.SeriesComposition {
     pointClass: typeof ParetoPoint;
 }
 
 extend(ParetoSeries.prototype, {
-    hasDerivedData: DerivedSeries.hasDerivedData
+    hasDerivedData: DerivedComposition.hasDerivedData
 });
 
-DerivedSeries.compose(ParetoSeries);
+DerivedComposition.compose(ParetoSeries);
 
 
 /* *

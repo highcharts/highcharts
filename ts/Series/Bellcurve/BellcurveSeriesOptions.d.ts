@@ -18,7 +18,7 @@
 
 import type AreaSplineSeriesOptions from '../AreaSpline/AreaSplineSeriesOptions';
 import type BellcurveSeries from './BellcurveSeries';
-import type DerivedSeries from '../DerivedSeries';
+import type DerivedComposition from '../DerivedComposition';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -27,7 +27,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-export interface BellcurveSeriesOptions extends AreaSplineSeriesOptions, DerivedSeries.Options {
+export interface BellcurveSeriesOptions extends AreaSplineSeriesOptions, DerivedComposition.SeriesOptions {
     baseSeries?: (number|string);
     data?: undefined;
     intervals?: number;

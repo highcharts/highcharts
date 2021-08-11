@@ -25,7 +25,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 
-import DerivedSeries from '../DerivedSeries.js';
+import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -276,12 +276,12 @@ class BellcurveSeries extends AreaSplineSeries {
  *
  * */
 
-interface BellcurveSeries extends DerivedSeries.Composition {
+interface BellcurveSeries extends DerivedComposition.SeriesComposition {
     drawLegendSymbol: typeof AreaSplineSeries.prototype.drawLegendSymbol;
     pointClass: typeof BellcurvePoint;
 }
 
-DerivedSeries.compose(BellcurveSeries);
+DerivedComposition.compose(BellcurveSeries);
 
 /* *
  *
