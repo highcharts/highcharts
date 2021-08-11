@@ -10,7 +10,7 @@
 'use strict';
 import Highcharts from '../../Core/Globals.js';
 import ColorAxis from '../../Core/Axis/Color/ColorAxis.js';
-import '../../Mixins/ColorMapSeries.js';
+import '../../Series/ColorMapSeries.js';
 import '../../Series/Heatmap/HeatmapSeries.js';
 const G: AnyRecord = Highcharts;
 G.ColorAxis = ColorAxis;
