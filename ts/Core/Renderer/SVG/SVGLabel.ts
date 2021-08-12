@@ -110,7 +110,9 @@ class SVGLabel extends SVGElement {
             this.addClass('highcharts-' + className);
         }
 
-        this.text = renderer.text('', 0, 0, useHTML).attr({ zIndex: 1 });
+        // Create the text element. An undefined text content prevents redundant
+        // box calculation (#16121)
+        this.text = renderer.text(void 0, 0, 0, useHTML).attr({ zIndex: 1 });
 
         // Validate the shape argument
         let hasBGImage;
@@ -268,6 +270,7 @@ class SVGLabel extends SVGElement {
         // If we have a text string and the DOM bBox was 0, it typically means
         // that the label was first rendered hidden, so we need to update the
         // bBox (#15246)
+        // console.count('@getBBox')
         if (this.textStr && this.bBox.width === 0 && this.bBox.height === 0) {
             this.updateBoxSize();
         }
