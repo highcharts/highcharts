@@ -1,0 +1,6 @@
+---
+ name: Highcharts Annotations Demo
+ authors:
+   - Rafal Sebestjanski
+ js_wrap: b
+...
