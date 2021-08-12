@@ -1340,11 +1340,9 @@ setOptions({
                         }
 
                         annotation.update({
-                            shapes: [
-                                {
-                                    r: distance
-                                }
-                            ]
+                            shapes: [{
+                                r: distance
+                            }]
                         });
                     }
                 ]
@@ -1414,13 +1412,10 @@ setOptions({
                         }
 
                         annotation.update({
-                            shapes: [
-                                {
-                                    rx: distance,
-                                    angle: newAngle
-
-                                }
-                            ]
+                            shapes: [{
+                                rx: distance,
+                                angle: newAngle
+                            }]
                         });
                     },
 
