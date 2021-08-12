@@ -1,43 +1,60 @@
-Highcharts.chart('container', {
-    chart: {
-        zoomType: 'xy',
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
-        }
-    },
+Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (data) {
+    var length = data.length;
 
-    annotations: [{
-        type: 'fibonacciTimezones',
-        typeOptions: {
-            points: [{
-                x: 0
-            }, {
-                x: 1
-            }]
+    // Create the chart
+    Highcharts.stockChart('container', {
+
+        chart: {
+            events: {
+                load: function () {
+                    this.annotations.forEach(function (annotation) {
+                        annotation.setControlPointsVisibility(true);
+                        annotation.cpVisibility = true;
+                    });
+                }
+            }
         },
 
-        events: {
-            click: function () {
-                this.cpVisibility = !this.cpVisibility;
-                this.setControlPointsVisibility(this.cpVisibility);
+        rangeSelector: {
+            selected: 1
+        },
+
+        title: {
+            text: 'AAPL Stock Price'
+        },
+
+        subtitle: {
+            text: 'With Fibonacci Timezones'
+        },
+
+        annotations: [{
+            type: 'fibonacciTimezones',
+            typeOptions: {
+                points: [{
+                    x: data[length - 60][0]
+                }, {
+                    x: data[length - 59][0]
+                }]
+            },
+            events: {
+                click: function () {
+                    this.cpVisibility = !this.cpVisibility;
+                    this.setControlPointsVisibility(this.cpVisibility);
+                }
             }
-        }
-    }],
+        }],
 
-    series: [{
-        data: (function () {
-            var data = [];
+        xAxis: {
+            ordinal: false
+        },
 
-            for (var i = 0; i < 40; i++) {
-                data.push(i % 10);
+        series: [{
+            name: 'AAPL',
+            data: data,
+            tooltip: {
+                valueDecimals: 2
             }
+        }]
 
-            return data;
-        })()
-    }]
+    });
 });
