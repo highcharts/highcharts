@@ -314,6 +314,7 @@ class NavigationBindings {
         } as Record<string, Array<string>>,
         // Simple shapes:
         circle: ['shapes'],
+        ellipse: ['shapes'],
         verticalLine: [],
         label: ['labelOptions'],
         // Measure
@@ -1190,6 +1191,7 @@ setOptions({
                 simpleShapes: 'Simple shapes',
                 lines: 'Lines',
                 circle: 'Circle',
+                ellipse: 'Ellipse',
                 rectangle: 'Rectangle',
                 label: 'Label',
                 shapeOptions: 'Shape options',
@@ -1267,10 +1269,7 @@ setOptions({
                 /** @ignore-option */
                 className: 'highcharts-circle-annotation',
                 /** @ignore-option */
-                start: function (
-                    this: NavigationBindings,
-                    e: PointerEvent
-                ): Annotation|void {
+                start: function (this: NavigationBindings, e: PointerEvent): Annotation | void {
                     const coords = this.chart.pointer.getCoordinates(e),
                         coordsX = this.utils.getAssignedAxis(coords.xAxis),
                         coordsY = this.utils.getAssignedAxis(coords.yAxis),
@@ -1286,23 +1285,21 @@ setOptions({
                             {
                                 langKey: 'circle',
                                 type: 'basicAnnotation',
-                                shapes: [{
-                                    type: 'circle',
-                                    point: {
-                                        x: coordsX.value,
-                                        y: coordsY.value,
-                                        xAxis: coordsX.axis.options.index,
-                                        yAxis: coordsY.axis.options.index
-                                    },
-                                    r: 5
-                                }]
+                                shapes: [
+                                    {
+                                        type: 'circle',
+                                        point: {
+                                            x: coordsX.value,
+                                            y: coordsY.value,
+                                            xAxis: coordsX.axis.options.index,
+                                            yAxis: coordsY.axis.options.index
+                                        },
+                                        r: 5
+                                    }
+                                ]
                             },
-                            navigation
-                                .annotationsOptions,
-                            (navigation
-                                .bindings as any)
-                                .circleAnnotation
-                                .annotationsOptions
+                            navigation.annotationsOptions,
+                            (navigation.bindings as any).circleAnnotation.annotationsOptions
                         )
                     );
                 },
@@ -1313,33 +1310,128 @@ setOptions({
                         e: PointerEvent,
                         annotation: Annotation
                     ): void {
-                        let mockPointOpts = annotation.options.shapes[0]
-                                .point as MockPointOptions,
+                        let mockPointOpts = annotation.options.shapes[0].point as MockPointOptions,
                             inverted = this.chart.inverted,
                             x,
                             y,
                             distance;
 
-                        if (
-                            isNumber(mockPointOpts.xAxis) &&
-                            isNumber(mockPointOpts.yAxis)
-                        ) {
-                            x = this.chart.xAxis[mockPointOpts.xAxis]
-                                .toPixels(mockPointOpts.x);
+                        if (isNumber(mockPointOpts.xAxis) && isNumber(mockPointOpts.yAxis)) {
+                            x = this.chart.xAxis[mockPointOpts.xAxis].toPixels(mockPointOpts.x);
 
-                            y = this.chart.yAxis[mockPointOpts.yAxis]
-                                .toPixels(mockPointOpts.y);
+                            y = this.chart.yAxis[mockPointOpts.yAxis].toPixels(mockPointOpts.y);
 
                             distance = Math.max(
                                 Math.sqrt(
-                                    Math.pow(
-                                        inverted ? y - e.chartX : x - e.chartX,
-                                        2
-                                    ) +
-                                    Math.pow(
-                                        inverted ? x - e.chartY : y - e.chartY,
-                                        2
-                                    )
+                                    Math.pow(inverted ? y - e.chartX : x - e.chartX, 2) +
+                                        Math.pow(inverted ? x - e.chartY : y - e.chartY, 2)
+                                ),
+                                5
+                            );
+                        }
+
+                        annotation.update({
+                            shapes: [
+                                {
+                                    r: distance
+                                }
+                            ]
+                        });
+                    }
+                ]
+            },
+            ellipseAnnotation: {
+                className: 'highcharts-ellipse-annotation',
+                start: function (this: NavigationBindings, e: PointerEvent): Annotation | void {
+                    const coords = this.chart.pointer.getCoordinates(e),
+                        coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                        coordsY = this.utils.getAssignedAxis(coords.yAxis),
+                        navigation = this.chart.options.navigation;
+
+                    if (!coordsX || !coordsY) {
+                        return;
+                    }
+
+                    return this.chart.addAnnotation(
+                        merge(
+                            {
+                                langKey: 'ellipse',
+                                type: 'basicAnnotation',
+                                shapes: [
+                                    {
+                                        type: 'ellipse',
+                                        point: {
+                                            x: coordsX.value,
+                                            y: coordsY.value,
+                                            xAxis: coordsX.axis.options.index,
+                                            yAxis: coordsY.axis.options.index
+                                        },
+                                        rx: 10,
+                                        ry: 10,
+                                        angle: 0
+                                    }
+                                ]
+                            },
+                            navigation.annotationsOptions,
+                            (navigation.bindings as any).ellipseAnnotation.annotationOptions
+                        )
+                    );
+                },
+                steps: [
+                    function (this: NavigationBindings, e: PointerEvent, annotation: Annotation): void {
+
+                        let mockPointOpts = annotation.options.shapes[0].point as MockPointOptions,
+                            inverted = this.chart.inverted,
+                            x,
+                            y,
+                            dx,
+                            dy,
+                            distance,
+                            newAngle;
+
+                        if (isNumber(mockPointOpts.xAxis) && isNumber(mockPointOpts.yAxis)) {
+                            x = this.chart.xAxis[mockPointOpts.xAxis].toPixels(mockPointOpts.x);
+
+                            y = this.chart.yAxis[mockPointOpts.yAxis].toPixels(mockPointOpts.y);
+                            dx = inverted ? y - e.chartX : x - e.chartX;
+                            dy = inverted ? x - e.chartY : y - e.chartY;
+                            newAngle = -Math.atan(dx / dy) * 180 / Math.PI - 90;
+                            distance = Math.max(
+                                Math.sqrt(
+                                    dx * dx + dy * dy
+                                ),
+                                5
+                            );
+                        }
+
+                        annotation.update({
+                            shapes: [
+                                {
+                                    rx: distance,
+                                    angle: newAngle
+
+                                }
+                            ]
+                        });
+                    },
+
+                    function (this: NavigationBindings, e: PointerEvent, annotation: Annotation): void {
+                        let mockPointOpts = annotation.options.shapes[0].point as MockPointOptions,
+                            inverted = this.chart.inverted,
+                            x,
+                            y,
+                            dx,
+                            dy,
+                            distance;
+
+                        if (isNumber(mockPointOpts.xAxis) && isNumber(mockPointOpts.yAxis)) {
+                            x = this.chart.xAxis[mockPointOpts.xAxis].toPixels(mockPointOpts.x);
+                            y = this.chart.yAxis[mockPointOpts.yAxis].toPixels(mockPointOpts.y);
+                            dx = inverted ? y - e.chartX : x - e.chartX;
+                            dy = inverted ? x - e.chartY : y - e.chartY;
+                            distance = Math.max(
+                                Math.sqrt(
+                                    dx * dx + dy * dy
                                 ),
                                 5
                             );
@@ -1347,7 +1439,7 @@ setOptions({
 
                         annotation.update({
                             shapes: [{
-                                r: distance
+                                ry: distance
                             }]
                         });
                     }

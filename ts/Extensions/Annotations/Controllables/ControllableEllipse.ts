@@ -1,5 +1,7 @@
 /* *
  *
+ * Author: Pawel Lysy
+ *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
