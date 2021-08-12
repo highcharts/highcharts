@@ -203,8 +203,8 @@ class BasicAnnotation extends Annotation {
                     target: ControllableEllipse
                 ): void {
 
-                    const dx = e.x - (target.points[0].plotX || 0 + target.chart.plotLeft),
-                        dy = e.y - (target.points[0].plotY || 0 + target.chart.plotTop),
+                    const dx = e.x - (target.points[0].plotX as number + target.chart.plotLeft),
+                        dy = e.y - (target.points[0].plotY as number + target.chart.plotTop),
                         newR = Math.max(Math.sqrt(dx * dx + dy * dy), 5);
 
                     target.setYRadius(newR);
@@ -231,17 +231,19 @@ class BasicAnnotation extends Annotation {
                     e: Highcharts.AnnotationEventObject,
                     target: ControllableEllipse
                 ): void {
-                    const dx = e.x - (target.points[0].plotX || 0 + target.chart.plotLeft),
-                        dy = e.y - (target.points[0].plotY || 0 + target.chart.plotTop),
+                    const dx = e.x - (target.points[0].plotX as number + target.chart.plotLeft),
+                        dy = e.y - (target.points[0].plotY as number + target.chart.plotTop),
                         newR = Math.max(Math.sqrt(dx * dx + dy * dy), 5);
                     let newAngle = -Math.atan(dx / dy) * 180 / Math.PI - 90;
 
                     if (dy < 0) {
                         newAngle += 180;
                     }
+
                     target.setXRadius(newR);
                     target.setAngle(newAngle);
                     target.savePoints();
+
                     target.redraw(false);
                 }
             }
