@@ -15,6 +15,7 @@ import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotations.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
+import RendererRegistry from '../../../Core/Renderer/RendererRegistry';
 const {
     merge
 } = U;
@@ -181,91 +182,70 @@ class BasicAnnotation extends Annotation {
                 }
             }
         }],
-        ellipse: [
-            {
-                positioner: function (
-                    this: Highcharts.AnnotationControlPoint,
-                    target: ControllableEllipse
-                ): PositionObject {
-                    const xy = MockPoint.pointToPixels(target.points[0]),
-                        ry = target.options.ry || 0;
+        ellipse: [{
+            positioner: function (
+                this: Highcharts.AnnotationControlPoint,
+                target: ControllableEllipse
+            ): PositionObject {
+                const xy = MockPoint.pointToPixels(target.points[0]),
+                    attrs = target.getAttrsFromPoints();
 
-                    return {
-                        x:
-                            xy.x -
-                            this.graphic.width / 2 +
-                            ry * Math.sin((target.angle * Math.PI) / 180),
-                        y:
-                            xy.y -
-                            this.graphic.height / 2 -
-                            ry * Math.cos((target.angle * Math.PI) / 180)
-                    };
-                },
-                events: {
-                    drag: function (
-                        this: Annotation,
-                        e: Highcharts.AnnotationEventObject,
-                        target: ControllableEllipse
-                    ): void {
-                        const translation = this.mouseMoveToTranslation(e),
-                            radiusTranslation = target.chart.inverted ?
-                                translation.x :
-                                translation.y,
-                            newValue = Math.abs(
-                                radiusTranslation *
-                                Math.cos((target.angle * Math.PI) / 180) -
-                                target.options.ry
-                            );
+                return {
+                    x: xy.x - this.graphic.width / 2 + (attrs.ry * Math.sin(attrs.angle * Math.PI / 180)),
+                    y: xy.y - this.graphic.height / 2 - (attrs.ry * Math.cos(attrs.angle * Math.PI / 180))
+                };
 
-                        target.setYRadius(newValue);
-                        target.redraw(false);
-                    }
-                }
             },
-            {
-                positioner: function (
-                    this: Highcharts.AnnotationControlPoint,
+            events: {
+                drag: function (
+                    this: Annotation,
+                    e: Highcharts.AnnotationEventObject,
                     target: ControllableEllipse
-                ): PositionObject {
-                    const xy = MockPoint.pointToPixels(target.points[0]),
-                        angle = target.angle;
+                ): void {
 
-                    return {
-                        x:
-                            xy.x -
-                            this.graphic.width / 2 -
-                            target.options.rx *
-                                Math.cos((angle * Math.PI) / 180),
-                        y:
-                            xy.y -
-                            this.graphic.height / 2 -
-                            target.options.rx * Math.sin((angle * Math.PI) / 180)
-                    };
-                },
-                events: {
-                    drag: function (
-                        this: Annotation,
-                        e: Highcharts.AnnotationEventObject,
-                        target: ControllableEllipse
-                    ): void {
-                        const translation = this.mouseMoveToTranslation(e),
-                            plotX = target.points[0].plotX || 0,
-                            plotY = target.points[0].plotY || 0,
-                            dx = e.x - (plotX + target.chart.plotLeft),
-                            dy = e.y - (plotY + target.chart.plotTop),
-                            newR = Math.sqrt(dx * dx + dy * dy);
-                        let newAngle = (-Math.atan(dx / dy) * 180) / Math.PI - 90;
+                    const dx = e.x - (target.points[0].plotX || 0 + target.chart.plotLeft),
+                        dy = e.y - (target.points[0].plotY || 0 + target.chart.plotTop),
+                        newR = Math.max(Math.sqrt(dx * dx + dy * dy), 5);
 
-                        if (dy < 0) {
-                            newAngle += 180;
-                        }
-                        target.setXRadius(newR);
-                        target.setAngle(newAngle);
-                        target.redraw(false);
-                    }
+                    target.setYRadius(newR);
+                    target.savePoints();
+                    target.redraw(false);
                 }
             }
-        ]
+        }, {
+            positioner: function (
+                this: Highcharts.AnnotationControlPoint,
+                target: ControllableEllipse
+            ): PositionObject {
+                const xy = MockPoint.pointToPixels(target.points[0]),
+                    attrs = target.getAttrsFromPoints();
+
+                return {
+                    x: xy.x - this.graphic.width / 2 - (attrs.rx * Math.cos(attrs.angle * Math.PI / 180)),
+                    y: xy.y - this.graphic.height / 2 - (attrs.rx * Math.sin(attrs.angle * Math.PI / 180))
+                };
+            },
+            events: {
+                drag: function (
+                    this: Annotation,
+                    e: Highcharts.AnnotationEventObject,
+                    target: ControllableEllipse
+                ): void {
+                    const dx = e.x - (target.points[0].plotX || 0 + target.chart.plotLeft),
+                        dy = e.y - (target.points[0].plotY || 0 + target.chart.plotTop),
+                        newR = Math.max(Math.sqrt(dx * dx + dy * dy), 5);
+                    let newAngle = -Math.atan(dx / dy) * 180 / Math.PI - 90;
+
+                    if (dy < 0) {
+                        newAngle += 180;
+                    }
+                    target.setXRadius(newR);
+                    target.setAngle(newAngle);
+                    target.savePoints();
+                    target.redraw(false);
+                }
+            }
+        }]
     };
 
     /* *
@@ -302,8 +282,11 @@ class BasicAnnotation extends Annotation {
 
         if (options.shapes) {
             delete options.labelOptions;
+            // TODO ZROBIĆ to lepiej
             if (options.shapes[0].type === 'circle') {
                 this.basicType = 'circle';
+            } else if (options.shapes[0].type === 'ellipse') {
+                this.basicType = 'ellipse';
             } else {
                 this.basicType = 'rectangle';
             }

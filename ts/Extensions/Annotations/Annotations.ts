@@ -200,6 +200,7 @@ declare global {
             zIndex: number;
         }
         interface AnnotationsShapeOptions extends AnnotationControllableOptionsObject {
+            angle: number;
             d?: (string|Function|SVGPath);
             fill: ColorType;
             height?: number;
