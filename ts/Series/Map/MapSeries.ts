@@ -28,8 +28,8 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import ColorMapMixin from '../ColorMap.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
+import ColorMapComposition from '../ColorMapComposition.js';
+const { colorMapSeriesMixin } = ColorMapComposition;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
@@ -91,10 +91,10 @@ declare module '../../Core/Series/SeriesOptions' {
 
 declare global {
     namespace Highcharts {
-        class MapPoint extends ScatterPoint implements ColorMapPoint {
+        class MapPoint extends ScatterPoint implements ColorMapComposition.PointComposition {
             public colorInterval?: unknown;
-            public dataLabelOnNull: ColorMapPointMixin['dataLabelOnNull'];
-            public isValid: ColorMapPointMixin['isValid'];
+            public dataLabelOnNull: ColorMapComposition.PointComposition['dataLabelOnNull'];
+            public isValid: ColorMapComposition.PointComposition['isValid'];
             public middleX: number;
             public middleY: number;
             public options: MapPointOptions;
@@ -1360,7 +1360,7 @@ extend(MapSeries.prototype, {
 
     getExtremesFromAll: true,
 
-    getSymbol: colorMapSeriesMixin.getSymbol,
+    getSymbol: noop,
 
     parallelArrays: colorMapSeriesMixin.parallelArrays,
 
@@ -1380,7 +1380,7 @@ extend(MapSeries.prototype, {
 
 });
 
-ColorMapMixin.compose(MapSeries, MapPoint);
+ColorMapComposition.compose(MapSeries, MapPoint);
 
 /* *
  *

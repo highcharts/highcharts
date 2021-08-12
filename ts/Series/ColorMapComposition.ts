@@ -12,13 +12,19 @@
 
 import type ScatterPoint from './Scatter/ScatterPoint';
 import type ScatterSeries from './Scatter/ScatterSeries';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
-import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
+const {
+    defined,
+    addEvent,
+    wrap
+} = U;
 
 declare module '../Core/Series/PointLike' {
     interface PointLike {
-        dataLabelOnNull?: boolean;
+        moveToTopOnHover?: boolean;
     }
 }
 
@@ -28,26 +34,26 @@ declare module '../Core/Series/PointLike' {
  */
 declare global {
     namespace Highcharts {
-        interface ColorMapPoint extends ScatterPoint {
-            dataLabelOnNull: boolean;
-            moveToTopOnHover?: boolean;
-            series: ColorMapSeries;
-            value: (number|null);
-            isValid(): boolean;
-        }
-        interface ColorMapPointMixin {
-            dataLabelOnNull: ColorMapPoint['dataLabelOnNull'];
-            moveToTopOnHover: ColorMapPoint['moveToTopOnHover'];
-            isValid: ColorMapPoint['isValid'];
-        }
+        // interface ColorMapPoint extends ScatterPoint {
+        //     dataLabelOnNull: boolean;
+        //     moveToTopOnHover?: boolean;
+        //     series: ColorMapSeries;
+        //     value: (number|null);
+        //     isValid(): boolean;
+        // }
+        // interface ColorMapPointMixin {
+        //     dataLabelOnNull: ColorMapPoint['dataLabelOnNull'];
+        //     moveToTopOnHover: ColorMapPoint['moveToTopOnHover'];
+        //     isValid: ColorMapPoint['isValid'];
+        // }
         interface ColorMapSeries extends ScatterSeries {
             colorProp?: string;
-            data: Array<ColorMapPoint>;
+            data: Array<ColorMapComposition.PointComposition>;
             parallelArrays: Array<string>;
             pointArrayMap: Array<string>;
-            points: Array<ColorMapPoint>;
+            points: Array<ColorMapComposition.PointComposition>;
             trackerGroups: Array<string>;
-            colorAttribs(point: ColorMapPoint): SVGAttributes;
+            colorAttribs(point: ColorMapComposition.PointComposition): SVGAttributes;
         }
         interface ColorMapSeriesMixin {
             axisTypes: ColorSeries['axisTypes'];
@@ -59,31 +65,9 @@ declare global {
             pointAttribs: ColorMapSeries['pointAttribs'];
             trackerGroups: ColorMapSeries['trackerGroups'];
         }
-        let colorMapPointMixin: ColorMapPointMixin;
         let colorMapSeriesMixin: ColorMapSeriesMixin;
     }
 }
-
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    addEvent
-} = U;
-
-const noop = H.noop,
-    seriesTypes = H.seriesTypes;
-
-
-// Move points to the top of the z-index order when hovered
-addEvent(Point, 'afterSetState', function (e?: Record<string, any>): void {
-    const point = this; // eslint-disable-line no-invalid-this
-    if ((point as Highcharts.ColorMapPoint).moveToTopOnHover && point.graphic) {
-        point.graphic.attr({
-            zIndex: e && e.state === 'hover' ? 1 : 0
-        });
-    }
-});
 
 /**
  * @private
@@ -93,10 +77,10 @@ const colorMapSeriesMixinOld = {
     pointArrayMap: ['value'],
     axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    getSymbol: noop,
+    // getSymbol: noop,
     parallelArrays: ['x', 'y', 'value'],
     colorKey: 'value',
-    pointAttribs: seriesTypes.column.prototype.pointAttribs,
+    // pointAttribs: seriesTypes.column.prototype.pointAttribs,
 
     /* eslint-disable valid-jsdoc */
 
@@ -109,7 +93,7 @@ const colorMapSeriesMixinOld = {
      */
     colorAttribs: function (
         this: Highcharts.ColorMapSeries,
-        point: Highcharts.ColorMapPoint
+        point: ColorMapComposition.PointComposition
     ): SVGAttributes {
         const ret: SVGAttributes = {};
 
@@ -129,7 +113,7 @@ const colorMapSeriesMixinOld = {
  *
  * */
 
-namespace ColorMapSeries {
+namespace ColorMapComposition {
 
     export const colorMapSeriesMixin = colorMapSeriesMixinOld;
 
@@ -140,7 +124,6 @@ namespace ColorMapSeries {
      * */
 
     export declare class SeriesComposition extends ScatterSeries {
-        pointClass: typeof PointComposition;
     }
 
     export declare class PointComposition extends ScatterPoint {
@@ -187,6 +170,10 @@ namespace ColorMapSeries {
 
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
+
+            const seriesProto = SeriesClass.prototype;
+
+            wrap(seriesProto, 'pointAttribs', seriesWrapPointAttribs);
         }
 
         return SeriesClass as (T&typeof SeriesComposition);
@@ -197,13 +184,30 @@ namespace ColorMapSeries {
      * a null point
      * @private
      */
-    export function pointIsValid(this: PointComposition): boolean {
+    function pointIsValid(this: PointComposition): boolean {
         // undefined is allowed
         return (
             this.value !== null &&
             this.value !== Infinity &&
             this.value !== -Infinity
         );
+    }
+
+    /**
+     * Move points to the top of the z-index order when hovered
+     * @private
+     */
+    function seriesWrapPointAttribs(
+        this: SeriesComposition,
+        original: ScatterSeries['pointAttribs'],
+        point: PointComposition,
+        state?: StatesOptionsKey
+    ): SVGAttributes {
+        const attribs = original.call(this, point, state);
+        if (point.moveToTopOnHover) {
+            attribs.zIndex = state === 'hover' ? 1 : 0;
+        }
+        return attribs;
     }
 
 }
@@ -214,4 +218,4 @@ namespace ColorMapSeries {
  *
  * */
 
-export default ColorMapSeries;
+export default ColorMapComposition;

@@ -16,7 +16,7 @@
  *
  * */
 
-import type ColorMapComposition from '../ColorMap';
+import type ColorMapComposition from '../ColorMapComposition';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeries from './MapSeries';
 import type PointerEvent from '../../Core/PointerEvent';

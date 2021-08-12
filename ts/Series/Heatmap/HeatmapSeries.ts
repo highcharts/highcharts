@@ -25,8 +25,8 @@ import type { PointStateHoverOptions } from '../../Core/Series/PointOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import Color from '../../Core/Color/Color.js';
-import ColorMapMixin from '../ColorMap.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
+import ColorMapComposition from '../ColorMapComposition.js';
+const { colorMapSeriesMixin } = ColorMapComposition;
 import HeatmapPoint from './HeatmapPoint.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
@@ -764,7 +764,7 @@ extend(HeatmapSeries.prototype, {
 
 });
 
-ColorMapMixin.compose(HeatmapSeries);
+ColorMapComposition.compose(HeatmapSeries);
 
 /* *
  *

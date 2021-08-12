@@ -38,8 +38,8 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColorMapMixin from '../ColorMap.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
+import ColorMapComposition from '../ColorMapComposition.js';
+const { colorMapSeriesMixin } = ColorMapComposition;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
@@ -1949,7 +1949,7 @@ namespace TreemapSeries {
     }
 }
 
-ColorMapMixin.compose(TreemapSeries);
+ColorMapComposition.compose(TreemapSeries);
 
 /* *
  *

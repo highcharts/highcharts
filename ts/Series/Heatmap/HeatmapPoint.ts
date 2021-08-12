@@ -16,7 +16,7 @@
  *
  * */
 
-import type ColorMapComposition from '../ColorMap.js';
+import type ColorMapComposition from '../ColorMapComposition';
 import type HeatmapPointOptions from './HeatmapPointOptions';
 import type HeatmapSeries from './HeatmapSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
