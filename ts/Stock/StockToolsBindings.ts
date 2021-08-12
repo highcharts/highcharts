@@ -2075,6 +2075,78 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
             (annotation.options.events.click as any).call(annotation, {});
         }
     },
+    /**
+     * The Fibonacci Timezones annotation bindings. Includes `start` and one
+     * event in `steps` array.
+     *
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
+     * @product highstock
+     * @default {"className": "highcharts-fibonacci-timezones", "start": function() {}, "steps": [function() {}], "annotationsOptions": {}}
+     */
+    fibonacciTimezones: {
+        /** @ignore-option */
+        className: 'highcharts-fibonacci-timezones',
+        // eslint-disable-next-line valid-jsdoc
+        /** @ignore-option */
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
+            const coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        type: 'fibonacciTimezones',
+                        typeOptions: {
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [{
+                                x: coordsX.value
+                            }]
+                        }
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).fibonacciTimezones.annotationsOptions
+                );
+
+            return this.chart.addAnnotation(options);
+        },
+        /** @ignore-option */
+        // eslint-disable-next-line valid-jsdoc
+        steps: [
+            function (
+                this: NavigationBindings,
+                e: PointerEvent,
+                annotation: Annotation
+            ): void {
+                const mockPointOpts = annotation.options.typeOptions.points,
+                    x = mockPointOpts && mockPointOpts[0].x,
+                    coords = this.chart.pointer.getCoordinates(e),
+                    coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                    coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+                annotation.update({
+                    typeOptions: {
+                        xAxis: coordsX.axis.options.index,
+                        yAxis: coordsY.axis.options.index,
+                        points: [{
+                            x: x
+                        }, {
+                            x: coordsX.value
+                        }]
+                    }
+                });
+            }
+        ]
+    },
     // Flag types:
     /**
      * A flag series bindings. Includes `start` event. On click, finds the

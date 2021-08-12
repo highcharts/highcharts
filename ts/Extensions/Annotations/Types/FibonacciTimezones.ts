@@ -275,12 +275,18 @@ export default FibonacciTimezones;
 /**
  * The Fibonacci Timezones annotation.
  *
- * @sample highcharts/annotations-advanced/infinity-line/
- *         Infinity Line
+ * @sample highcharts/annotations-advanced/fibonacci-timezones/
+ *         Fibonacci Timezones
  *
  * @extends   annotations.crookedLine
  * @product   highstock
  * @apioption annotations.fibonacciTimezones
+ */
+
+/**
+ * @exclude   y
+ * @product   highstock
+ * @apioption annotations.fibonacciTimezones.typeOptions.points
  */
 
 (''); // keeps doclets above in transpiled file

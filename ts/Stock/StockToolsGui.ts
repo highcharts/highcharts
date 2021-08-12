@@ -256,6 +256,7 @@ setOptions({
 
                 // Advanced:
                 fibonacci: 'Fibonacci',
+                fibonacciTimezones: 'Fibonacci Timezones',
                 pitchfork: 'Pitchfork',
                 parallelChannel: 'Parallel channel'
             }
@@ -282,6 +283,7 @@ setOptions({
                 verticalLabel: 'Vertical label',
                 verticalArrow: 'Vertical arrow',
                 fibonacci: 'Fibonacci',
+                fibonacciTimezones: 'Fibonacci Timezones',
                 pitchfork: 'Pitchfork',
                 parallelChannel: 'Parallel channel',
                 infinityLine: 'Infinity line',
@@ -740,12 +742,14 @@ setOptions({
                      * @type {array}
                      * @default [
                      *   'fibonacci',
+                     *   'fibonacciTimezones',
                      *   'pitchfork',
                      *   'parallelChannel'
                      * ]
                      */
                     items: [
                         'fibonacci',
+                        'fibonacciTimezones',
                         'pitchfork',
                         'parallelChannel'
                     ],
@@ -764,6 +768,14 @@ setOptions({
                          * @type   {string}
                          */
                         symbol: 'fibonacci.svg'
+                    },
+                    fibonacciTimezones: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'fibonacci-timezone.svg'
                     },
                     parallelChannel: {
                         /**
@@ -1687,6 +1699,7 @@ Toolbar.prototype.classMapping = {
     elliott5: PREFIX + 'elliott5',
     pitchfork: PREFIX + 'pitchfork',
     fibonacci: PREFIX + 'fibonacci',
+    fibonacciTimezones: PREFIX + 'fibonacci-timezones',
     parallelChannel: PREFIX + 'parallel-channel',
     measureX: PREFIX + 'measure-x',
     measureY: PREFIX + 'measure-y',
