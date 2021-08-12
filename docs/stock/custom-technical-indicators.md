@@ -283,7 +283,7 @@ Highcharts.seriesType(
 );
 ```
 
-A live demo of the above multiline indicator can be found [here](https://jsfiddle.net/BlackLabel/6ueky3x2).
+A live demo of the above multiline indicator can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-regression-multiple-lines/).
 
 _For more detailed samples and documentation check the [API](https://api.highcharts.com/highstock/series.trendline)._
 
