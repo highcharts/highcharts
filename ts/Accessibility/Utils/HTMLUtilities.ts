@@ -10,12 +10,21 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     DOMElementType,
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import H from '../../Core/Globals.js';
 const {
     doc,
@@ -27,6 +36,12 @@ const {
 } = U;
 
 /* eslint-disable valid-jsdoc */
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * @private
@@ -134,8 +149,8 @@ function getFakeMouseEvent(type: string): MouseEvent {
  */
 function getHeadingTagNameForElement(element: HTMLDOMElement): string {
     const getIncreasedHeadingLevel = (tagName: string): string => {
-        const headingLevel = parseInt(tagName.slice(1), 10);
-        const newLevel = Math.min(6, headingLevel + 1);
+        const headingLevel = parseInt(tagName.slice(1), 10),
+            newLevel = Math.min(6, headingLevel + 1);
         return 'h' + newLevel;
     };
 
@@ -258,7 +273,6 @@ function visuallyHideElement(element: HTMLDOMElement): void {
     merge(true, element.style, hiddenStyle);
 }
 
-
 const HTMLUtilities = {
     addClass,
     escapeStringForHTML,
@@ -271,5 +285,11 @@ const HTMLUtilities = {
     stripHTMLTagsFromString,
     visuallyHideElement
 };
+
+/* *
+ *
+ *  Default export
+ *
+ * */
 
 export default HTMLUtilities;
