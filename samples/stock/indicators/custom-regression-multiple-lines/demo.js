@@ -9,7 +9,7 @@ function getLinearRegressionZones(xData, yData) {
         n = xData.length,
         alpha, beta, i, x, y,
         zoneDistance = this.options.params.zoneDistance / 100,
-        y1, y1, y3, y4;
+        y1, y2, y3, y4;
 
     // Get sums:
     for (i = 0; i < n; i++) {
@@ -51,7 +51,7 @@ function getLinearRegressionZones(xData, yData) {
     };
 }
 
-var multipleLinesMixin = Highcharts._modules['Mixins/MultipleLines.js'];
+var multipleLinesMixin = Highcharts['_modules']['Mixins/MultipleLines.js'];
 
 Highcharts.seriesType(
     'linearregressionzones',
