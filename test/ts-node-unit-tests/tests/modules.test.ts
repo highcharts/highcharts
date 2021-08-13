@@ -159,15 +159,15 @@ export function testHighchartsMoreSeries() {
         'pie',
         'arearange',
         'areasplinerange',
+        'boxplot',
+        'bubble',
         'columnrange',
         'columnpyramid',
-        'gauge',
-        'boxplot',
         'errorbar',
-        'waterfall',
+        'gauge',
+        'packedbubble',
         'polygon',
-        'bubble',
-        'packedbubble'
+        'waterfall'
     ];
 
     const seriesTypes = Object.keys(Highcharts.seriesTypes);

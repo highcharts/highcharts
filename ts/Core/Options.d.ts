@@ -29,7 +29,7 @@ import type { SymbolKey } from './Renderer/SVG/SymbolType';
 
 export interface Options {
     colors?: Array<ColorString>;
-    lang?: LangOptions;
+    lang: LangOptions;
     loading?: LoadingOptions;
     plotOptions?: SeriesTypePlotOptions;
     symbols?: Array<SymbolKey>;

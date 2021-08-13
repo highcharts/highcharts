@@ -528,9 +528,7 @@ class SankeySeries extends ColumnSeries {
 
         this.nodes.forEach(function (node: SankeyPoint): void {
             let fromColumn = -1,
-                fromNode,
-                i,
-                point;
+                fromNode;
 
             if (!defined(node.options.column)) {
                 // No links to this node, place it left
@@ -540,9 +538,12 @@ class SankeySeries extends ColumnSeries {
                 // There are incoming links, place it to the right of the
                 // highest order column that links to this one.
                 } else {
-                    for (i = 0; i < node.linksTo.length; i++) {
-                        point = node.linksTo[0];
-                        if ((point.fromNode.column as any) > fromColumn) {
+                    for (let i = 0; i < node.linksTo.length; i++) {
+                        const point = node.linksTo[i];
+                        if (
+                            (point.fromNode.column as any) > fromColumn &&
+                            point.fromNode !== node // #16080
+                        ) {
                             fromNode = point.fromNode;
                             fromColumn = (fromNode.column as any);
                         }
@@ -555,7 +556,7 @@ class SankeySeries extends ColumnSeries {
                         (fromNode.options as any).layout === 'hanging'
                     ) {
                         node.hangsFrom = fromNode;
-                        i = -1; // Reuse existing variable i
+                        let i = -1;
                         find(
                             fromNode.linksFrom,
                             function (

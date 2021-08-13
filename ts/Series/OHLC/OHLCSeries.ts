@@ -112,7 +112,7 @@ class OHLCSeries extends HLCSeries {
         }
 
         /**
-         * Determines which one of  `open` `high`, `low`, `close` values should
+         * Determines which one of  `open`, `high`, `low`, `close` values should
          * be represented as `point.y`, which is later used to set dataLabel
          * position and [compare](#plotOptions.series.compare).
          *

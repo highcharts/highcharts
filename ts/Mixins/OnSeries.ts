@@ -42,7 +42,7 @@ declare global {
     namespace Highcharts {
         const OnSeriesMixin: OnSeriesMixin;
         interface OnSeriesMixin {
-            getPlotBox(this: OnSeriesSeries): SeriesPlotBoxObject;
+            getPlotBox(this: OnSeriesSeries): Series.PlotBoxObject;
             translate(): void;
         }
         interface OnSeriesPoint extends Point {
@@ -76,7 +76,7 @@ const onSeriesMixin = {
      */
     getPlotBox: function (
         this: Highcharts.OnSeriesSeries
-    ): Highcharts.SeriesPlotBoxObject {
+    ): Series.PlotBoxObject {
         return seriesProto.getPlotBox.call(
             (
                 this.options.onSeries &&

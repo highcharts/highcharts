@@ -798,7 +798,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
         // no graphic in line series with markers disabled
         bBox: point.graphic ? point.graphic.getBBox() : {},
         color: point.isNull ?
-            new Color(colorProp.color).setOpacity(0).get() :
+            Color.parse(colorProp.color).setOpacity(0).get() :
             colorProp.color,
         lowerSeriesOptions: ddOptions,
         pointOptions: (oldSeries.options.data as any)[pointIndex],
@@ -879,7 +879,7 @@ Chart.prototype.getDrilldownBackText = function (): (string|undefined) {
     if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
         lastLevel = drilldownLevels[drilldownLevels.length - 1];
         (lastLevel as any).series = lastLevel.seriesOptions;
-        return format((this.options.lang as any).drillUpText, lastLevel);
+        return format(this.options.lang.drillUpText || '', lastLevel);
     }
 };
 

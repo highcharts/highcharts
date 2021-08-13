@@ -268,7 +268,8 @@ class HTMLRenderer extends SVGRenderer {
                                     opacity: parentGroup.opacity, // #5075
                                     cursor: parentGroupStyles.cursor, // #6794
                                     pointerEvents:
-                                        parentGroupStyles.pointerEvents // #5595
+                                        parentGroupStyles.pointerEvents, // #5595
+                                    visibility: parentGroup.visibility
 
                                 // the top group is appended to container
                                 },
@@ -301,7 +302,7 @@ class HTMLRenderer extends SVGRenderer {
                                     if (parents[0].div) { // #6418
                                         wrapper.on.apply({
                                             element: parents[0].div,
-                                            onEvents: wrapper.onEvents
+                                            onEvents: parentGroup.onEvents
                                         }, arguments);
                                     }
                                     return parentGroup;

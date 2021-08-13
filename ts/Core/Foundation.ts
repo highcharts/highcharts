@@ -63,21 +63,21 @@ const registerEventOptions = (
     objectEach(
         options.events,
         function (event: any, eventType: string): void {
-            if (isFunction(event)) {
+            // If event does not exist, or is changed by the .update()
+            // function
+            if (component.eventOptions[eventType] !== event) {
 
-                // If event does not exist, or is changed by the .update()
-                // function
-                if (component.eventOptions[eventType] !== event) {
+                // Remove existing if set by option
+                if (component.eventOptions[eventType]) {
+                    removeEvent(
+                        component,
+                        eventType,
+                        component.eventOptions[eventType]
+                    );
+                    delete component.eventOptions[eventType];
+                }
 
-                    // Remove existing if set by option
-                    if (isFunction(component.eventOptions[eventType])) {
-                        removeEvent(
-                            component,
-                            eventType,
-                            component.eventOptions[eventType]
-                        );
-                    }
-
+                if (isFunction(event)) {
                     component.eventOptions[eventType] = event;
                     addEvent(component, eventType, event);
                 }

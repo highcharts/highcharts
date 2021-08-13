@@ -27,6 +27,7 @@ import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../../Core/Color/Color.js';
@@ -526,13 +527,13 @@ class ColumnSeries extends Series {
      *        Whether to initialize the animation or run it
      */
     public animate(init: boolean): void {
-        let series = this,
+        const series = this,
             yAxis = this.yAxis,
             options = series.options,
             inverted = this.chart.inverted,
             attr: SVGAttributes = {},
-            translateProp: 'translateX'|'translateY' = inverted ? 'translateX' : 'translateY',
-            translateStart: number,
+            translateProp: 'translateX'|'translateY' = inverted ? 'translateX' : 'translateY';
+        let translateStart: number,
             translatedThreshold;
 
         if (init) {
@@ -609,7 +610,7 @@ class ColumnSeries extends Series {
      * @return {Highcharts.ColumnMetricsObject}
      */
     public getColumnMetrics(): ColumnMetricsObject {
-        let series = this,
+        const series = this,
             options = series.options,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
@@ -618,8 +619,8 @@ class ColumnSeries extends Series {
             // stacks
             reverseStacks = (xAxis.reversed && !reversedStacks) ||
             (!xAxis.reversed && reversedStacks),
-            stackKey,
-            stackGroups: Record<string, number> = {},
+            stackGroups: Record<string, number> = {};
+        let stackKey,
             columnCount = 0;
 
         // Get the total number of column type series. This is called on
@@ -629,9 +630,9 @@ class ColumnSeries extends Series {
             columnCount = 1;
         } else {
             series.chart.series.forEach(function (otherSeries): void {
-                let otherYAxis = otherSeries.yAxis,
-                    otherOptions = otherSeries.options,
-                    columnIndex;
+                const otherYAxis = otherSeries.yAxis,
+                    otherOptions = otherSeries.options;
+                let columnIndex;
 
                 if (otherSeries.type === series.type &&
                     (
@@ -714,13 +715,11 @@ class ColumnSeries extends Series {
         w: number,
         h: number
     ): BBoxObject {
-        let chart = this.chart,
+        const chart = this.chart,
             borderWidth = this.borderWidth,
-            xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0),
-            yCrisp = (borderWidth as any) % 2 ? 0.5 : 1,
-            right,
-            bottom,
-            fromTop;
+            xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0);
+        let right,
+            yCrisp = (borderWidth as any) % 2 ? 0.5 : 1;
 
         if (chart.inverted && chart.renderer.isVML) {
             yCrisp += 1;
@@ -735,8 +734,8 @@ class ColumnSeries extends Series {
         }
 
         // Vertical
-        bottom = Math.round(y + h) + yCrisp;
-        fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
+        const bottom = Math.round(y + h) + yCrisp,
+            fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
         y = Math.round(y) + yCrisp;
         h = bottom - y;
 
@@ -843,7 +842,7 @@ class ColumnSeries extends Series {
      * @function Highcharts.seriesTypes.column#translate
      */
     public translate(): void {
-        let series = this,
+        const series = this,
             chart = series.chart,
             options = series.options,
             dense = series.dense =
@@ -860,12 +859,12 @@ class ColumnSeries extends Series {
             minPointLength = pick(options.minPointLength, 5),
             metrics = series.getColumnMetrics(),
             seriesPointWidth = metrics.width,
-            // postprocessed for border width
-            seriesBarW = series.barW =
-                Math.max(seriesPointWidth, 1 + 2 * borderWidth),
             seriesXOffset = series.pointXOffset = metrics.offset,
             dataMin = series.dataMin,
             dataMax = series.dataMax;
+        // postprocessed for border width
+        let seriesBarW = series.barW =
+            Math.max(seriesPointWidth, 1 + 2 * borderWidth);
 
         if (chart.inverted) {
             (translatedThreshold as any) -= 0.5; // #3355
@@ -883,9 +882,8 @@ class ColumnSeries extends Series {
 
         // Record the new values
         series.points.forEach(function (point): void {
-            let yBottom = pick(point.yBottom, translatedThreshold as any),
+            const yBottom = pick(point.yBottom, translatedThreshold as any),
                 safeDistance = 999 + Math.abs(yBottom),
-                pointWidth = seriesPointWidth,
                 plotX = point.plotX || 0,
                 // Don't draw too far outside plot area (#1303, #2241,
                 // #4264)
@@ -893,12 +891,13 @@ class ColumnSeries extends Series {
                     point.plotY as any,
                     -safeDistance,
                     yAxis.len + safeDistance
-                ),
-                barX = plotX + seriesXOffset,
-                barW = seriesBarW,
+                );
+            let up,
                 barY = Math.min(plotY, yBottom),
-                up,
-                barH = Math.max(plotY, yBottom) - barY;
+                barH = Math.max(plotY, yBottom) - barY,
+                pointWidth = seriesPointWidth,
+                barX = plotX + seriesXOffset,
+                barW = seriesBarW;
 
             // Handle options.minPointLength
             if (minPointLength && Math.abs(barH) < minPointLength) {
@@ -1013,12 +1012,13 @@ class ColumnSeries extends Series {
         point?: ColumnPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        let options = this.options,
-            stateOptions: SeriesStateHoverOptions,
-            ret: SVGAttributes,
+        const options = this.options,
             p2o = (this as any).pointAttrToOptions || {},
             strokeOption = p2o.stroke || 'borderColor',
-            strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
+            strokeWidthOption = p2o['stroke-width'] || 'borderWidth';
+        let stateOptions: SeriesStateHoverOptions,
+            zone,
+            brightness,
             fill = (point && point.color) || this.color,
             // set to fill when borderColor null:
             stroke = (
@@ -1026,14 +1026,12 @@ class ColumnSeries extends Series {
                 (options as any)[strokeOption] ||
                 fill
             ),
+            dashstyle =
+                (point && point.options.dashStyle) || options.dashStyle,
             strokeWidth = (point && (point as any)[strokeWidthOption]) ||
                 (options as any)[strokeWidthOption] ||
                 (this as any)[strokeWidthOption] || 0,
-            dashstyle =
-                (point && point.options.dashStyle) || options.dashStyle,
-            opacity = pick(point && point.opacity, options.opacity, 1),
-            zone,
-            brightness;
+            opacity = pick(point && point.opacity, options.opacity, 1);
 
         // Handle zone colors
         if (point && this.zones.length) {
@@ -1077,7 +1075,7 @@ class ColumnSeries extends Series {
             opacity = pick(stateOptions.opacity, opacity);
         }
 
-        ret = {
+        const ret: SVGAttributes = {
             fill: fill as any,
             stroke: stroke,
             'stroke-width': strokeWidth,
@@ -1100,17 +1098,17 @@ class ColumnSeries extends Series {
      * @function Highcharts.seriesTypes.column#drawPoints
      */
     public drawPoints(): void {
-        let series = this,
+        const series = this,
             chart = this.chart,
             options = series.options,
             renderer = chart.renderer,
-            animationLimit = options.animationLimit || 250,
-            shapeArgs;
+            animationLimit = options.animationLimit || 250;
+        let shapeArgs;
 
         // draw the columns
         series.points.forEach(function (point): void {
-            let plotY = point.plotY,
-                graphic = point.graphic,
+            const plotY = point.plotY;
+            let graphic = point.graphic,
                 hasGraphic = !!graphic,
                 verb = graphic && chart.pointCount < animationLimit ?
                     'animate' : 'attr';
@@ -1196,7 +1194,7 @@ class ColumnSeries extends Series {
      * @private
      */
     public drawTracker(): void {
-        let series = this,
+        const series = this,
             chart = series.chart,
             pointer = chart.pointer,
             onMouseOver = function (e: PointerEvent): void {
@@ -1207,8 +1205,8 @@ class ColumnSeries extends Series {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);
                 }
-            },
-            dataLabels;
+            };
+        let dataLabels;
 
         // Add reference to the point
         series.points.forEach(function (point): void {

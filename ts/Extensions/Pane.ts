@@ -44,7 +44,7 @@ declare module '../Core/Chart/ChartLike'{
 
 declare module '../Core/Options'{
     interface Options {
-        pane?: Highcharts.PaneOptions;
+        pane?: Highcharts.PaneOptions|Array<Highcharts.PaneOptions>;
     }
 }
 
@@ -81,7 +81,7 @@ declare global {
         }
         class Pane {
             public constructor(options: PaneOptions, chart: Chart);
-            public axis?: RadialAxis;
+            public axis?: RadialAxis.AxisComposition;
             public background: Array<SVGElement>;
             public center: Array<number>;
             public chart: PaneChart;
@@ -98,7 +98,7 @@ declare global {
             ): void;
             public setOptions(options: PaneOptions): void;
             public update(options: PaneOptions, redraw?: boolean): void;
-            public updateCenter(axis?: RadialAxis): void;
+            public updateCenter(axis?: RadialAxis.AxisComposition): void;
         }
     }
 }
@@ -132,7 +132,7 @@ class Pane {
         this.init(options, chart);
     }
 
-    public axis?: RadialAxis;
+    public axis?: RadialAxis.AxisComposition;
     public background: Array<SVGElement> = void 0 as any;
     public center: Array<number> = void 0 as any;
     public chart: Highcharts.PaneChart = void 0 as any;
@@ -173,8 +173,8 @@ class Pane {
 
         // Set options. Angular charts have a default background (#3318)
         this.options = options = merge(
-            this.defaultOptions as any,
-            this.chart.angular ? { background: ({} as any) } : void 0,
+            this.defaultOptions,
+            this.chart.angular ? { background: {} } : void 0,
             options
         );
     }
@@ -465,7 +465,7 @@ class Pane {
      * @param {Highcharts.Axis} [axis]
      * @return {void}
      */
-    public updateCenter(axis?: RadialAxis): void {
+    public updateCenter(axis?: RadialAxis.AxisComposition): void {
         this.center = (
             axis ||
             this.axis ||
@@ -505,7 +505,6 @@ class Pane {
         redraw?: boolean
     ): void {
         merge(true, this.options, options);
-        merge(true, this.chart.options.pane, options); // #9917
 
         this.setOptions(this.options);
         this.render();

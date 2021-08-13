@@ -63,6 +63,12 @@ declare module '../../Core/Options'{
     }
 }
 
+declare module '../../Extensions/Exporting/ExportingOptions' {
+    interface ExportingOptions {
+        accessibility?: Highcharts.ExportingAccessibilityOptions;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -149,9 +155,6 @@ declare global {
         }
         interface ExportingAccessibilityOptions {
             enabled: boolean;
-        }
-        interface ExportingOptions {
-            accessibility?: ExportingAccessibilityOptions;
         }
         interface FocusBorderStyleObject {
             borderRadius?: number;

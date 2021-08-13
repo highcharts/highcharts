@@ -368,35 +368,22 @@ class TimelineSeries extends LineSeries {
     }
 
     public distributeDL(): void {
-        let series = this,
-            dataLabelsOptions: TimelineDataLabelOptions = series.options.dataLabels as any,
-            options,
-            pointDLOptions,
-            newOptions: TimelineDataLabelOptions = {} as any,
-            visibilityIndex = 1,
-            distance: number = dataLabelsOptions.distance as any;
+        const series = this,
+            dataLabelsOptions = series.options.dataLabels;
+        let visibilityIndex = 1;
 
-        series.points.forEach(function (point): void {
-            if (point.visible && !point.isNull) {
-                options = point.options;
-                pointDLOptions = point.options.dataLabels;
+        if (dataLabelsOptions) {
+            const distance = dataLabelsOptions.distance || 0;
 
-                if (!series.hasRendered) {
-                    point.userDLOptions =
-                        merge(
-                            {} as TimelineDataLabelContextObject,
-                            pointDLOptions
-                        );
-                }
-
-                newOptions[series.chart.inverted ? 'x' : 'y'] =
-                    dataLabelsOptions.alternate && visibilityIndex % 2 ?
-                        -distance : distance;
-
-                options.dataLabels = merge(newOptions, point.userDLOptions);
+            series.points.forEach((point): void => {
+                point.options.dataLabels = merge({
+                    [series.chart.inverted ? 'x' : 'y']:
+                        dataLabelsOptions.alternate && visibilityIndex % 2 ?
+                            -distance : distance
+                }, point.userDLOptions);
                 visibilityIndex++;
-            }
-        });
+            });
+        }
     }
 
     public generatePoints(): void {

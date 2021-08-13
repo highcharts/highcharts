@@ -52,6 +52,7 @@ export interface SVGAttributes {
     dashstyle?: DashStyleValue;
     depth?: number;
     display?: ''|'block'|'none';
+    'dominant-baseline'?: string;
     dx?: number;
     dy?: number;
     end?: number;

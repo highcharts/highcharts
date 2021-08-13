@@ -216,6 +216,7 @@ setOptions({
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
                 typeHLC: 'HLC',
+                typeHeikinAshi: 'Heikin Ashi',
 
                 // Basic shapes:
                 circle: 'Circle',
@@ -314,6 +315,7 @@ setOptions({
                 // Indicators' params (#15170):
                 index: 'Index',
                 period: 'Period',
+                periods: 'Periods',
                 standardDeviation: 'Standard deviation',
                 periodTenkan: 'Tenkan period',
                 periodSenkouSpanB: 'Senkou Span B period',
@@ -898,7 +900,8 @@ setOptions({
                         'typeOHLC',
                         'typeLine',
                         'typeCandlestick',
-                        'typeHLC'
+                        'typeHLC',
+                        'typeHeikinAshi'
                     ],
                     typeOHLC: {
                         /**
@@ -925,7 +928,20 @@ setOptions({
                         symbol: 'series-candlestick.svg'
                     },
                     typeHLC: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'series-hlc.svg'
+                    },
+                    typeHeikinAshi: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-heikin-ashi.svg'
                     }
                 },
                 fullScreen: {
@@ -1437,6 +1453,7 @@ class Toolbar {
 
         // Mimic event behaviour of being outside chart.container
         [
+            'mousedown',
             'mousemove',
             'click',
             'touchstart'
@@ -1555,7 +1572,7 @@ class Toolbar {
         redraw?: boolean
     ): void {
         const buttonWrapper = button.parentNode,
-            buttonWrapperClass = buttonWrapper.classList.value,
+            buttonWrapperClass = buttonWrapper.className,
             // main button in first level og GUI
             mainNavButton = buttonWrapper.parentNode.parentNode;
 
@@ -1710,6 +1727,7 @@ Toolbar.prototype.classMapping = {
     typeOHLC: PREFIX + 'series-type-ohlc',
     typeHLC: PREFIX + 'series-type-hlc',
     typeCandlestick: PREFIX + 'series-type-candlestick',
+    typeHeikinAshi: PREFIX + 'series-type-heikinashi',
     fullScreen: PREFIX + 'full-screen',
     toggleAnnotations: PREFIX + 'toggle-annotations',
     saveChart: PREFIX + 'save-chart',

@@ -16,9 +16,9 @@
  *
  * */
 
+import type { AlignValue } from '../Renderer/AlignObject';
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type AxisComposition from './AxisComposition';
-import type AxisLike from './AxisLike';
 import type {
     AxisCrosshairOptions,
     AxisLabelFormatterCallback,
@@ -28,14 +28,14 @@ import type {
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
+import type AxisLike from './AxisLike';
 import type { AxisTypeOptions } from './AxisType';
-import type TickPositionsArray from './TickPositionsArray';
-import type { AlignValue } from '../Renderer/AlignObject';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
-import type PlotLineOrBand from './PlotLineOrBand';
+import type PlotLineOptions from './PlotLineOrBand/PlotLineOptions';
+import type PlotLineOrBand from './PlotLineOrBand/PlotLineOrBand';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type PositionObject from '../Renderer/PositionObject';
@@ -44,19 +44,19 @@ import type SizeObject from '../Renderer/SizeObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type TickPositionsArray from './TickPositionsArray';
+
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import AxisDefaults from './AxisDefaults.js';
 import Color from '../Color/Color.js';
-import F from '../Foundation.js';
-const {
-    registerEventOptions
-} = F;
-import H from '../Globals.js';
-const { deg2rad } = H;
 import Palette from '../Color/Palette.js';
 import D from '../DefaultOptions.js';
 const { defaultOptions } = D;
+import F from '../Foundation.js';
+const { registerEventOptions } = F;
+import H from '../Globals.js';
+const { deg2rad } = H;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
@@ -591,8 +591,8 @@ class Axis {
             categories = axis.categories,
             dateTimeLabelFormat = this.dateTimeLabelFormat,
             lang = defaultOptions.lang,
-            numericSymbols = (lang as any).numericSymbols,
-            numSymMagnitude = (lang as any).numericSymbolMagnitude || 1000,
+            numericSymbols = lang.numericSymbols,
+            numSymMagnitude = lang.numericSymbolMagnitude || 1000,
             // make sure the same symbol is added for all labels on a linear
             // axis
             numericSymbolDetector = axis.logarithmic ?
@@ -1832,12 +1832,18 @@ class Axis {
         // This is in turn needed in order to find tick positions in ordinal
         // axes.
         if (isXAxis && !secondPass) {
+            // First process all series assigned to that axis.
             axis.series.forEach(function (series): void {
+                // Allows filtering out points outside the plot area.
+                series.forceCrop = series.forceCropping && series.forceCropping();
+
                 series.processData(
                     axis.min !== (axis.old && axis.old.min) ||
                     axis.max !== (axis.old && axis.old.max)
                 );
             });
+            // Then apply grouping if needed.
+            fireEvent(this, 'postProcessData');
         }
 
         // set the translation factor used in translate function
@@ -3537,10 +3543,12 @@ class Axis {
      *
      * @param {number} pos
      * The position in axis values.
+     *
+     * @param {boolean} slideIn
+     * Whether the tick should animate in from last computed position
      */
-    public renderMinorTick(pos: number): void {
+    public renderMinorTick(pos: number, slideIn?: boolean): void {
         const axis = this;
-        const slideInTicks = axis.chart.hasRendered && axis.old;
         const minorTicks = axis.minorTicks;
 
         if (!minorTicks[pos]) {
@@ -3548,7 +3556,7 @@ class Axis {
         }
 
         // Render new ticks in old position
-        if (slideInTicks && minorTicks[pos].isNew) {
+        if (slideIn && minorTicks[pos].isNew) {
             minorTicks[pos].render(null as any, true);
         }
 
@@ -3566,12 +3574,14 @@ class Axis {
      *
      * @param {number} i
      * The tick index.
+     *
+     * @param {boolean} slideIn
+     * Whether the tick should animate in from last computed position
      */
-    public renderTick(pos: number, i: number): void {
+    public renderTick(pos: number, i: number, slideIn?: boolean): void {
         const axis = this,
             isLinked = axis.isLinked,
-            ticks = axis.ticks,
-            slideInTicks = axis.chart.hasRendered && axis.old;
+            ticks = axis.ticks;
 
         // Linked axes need an extra check to find out if
         if (
@@ -3586,7 +3596,7 @@ class Axis {
             // NOTE this seems like overkill. Could be handled in tick.render by
             // setting old position in attr, then set new position in animate.
             // render new ticks in old position
-            if (slideInTicks && ticks[pos].isNew) {
+            if (slideIn && ticks[pos].isNew) {
                 // Start with negative opacity so that it is visible from
                 // halfway into the animation
                 ticks[pos].render(i, true, -1);
@@ -3642,12 +3652,15 @@ class Axis {
         // If the series has data draw the ticks. Else only the line and title
         if (axis.hasData() || isLinked) {
 
+            const slideInTicks = axis.chart.hasRendered &&
+                axis.old && isNumber(axis.old.min);
+
             // minor ticks
             if (axis.minorTickInterval && !axis.categories) {
                 axis.getMinorTickPositions().forEach(function (
                     pos: number
                 ): void {
-                    axis.renderMinorTick(pos);
+                    axis.renderMinorTick(pos, slideInTicks);
                 });
             }
 
@@ -3655,7 +3668,7 @@ class Axis {
             // we can get the position of the neighbour label. #808.
             if (tickPositions.length) { // #1300
                 tickPositions.forEach(function (pos: number, i: number): void {
-                    axis.renderTick(pos, i);
+                    axis.renderTick(pos, i, slideInTicks);
                 });
                 // In a categorized axis, the tick marks are displayed
                 // between labels. So we need to add a tick mark and
@@ -3710,7 +3723,7 @@ class Axis {
                     .concat((options.plotBands as any) || [])
                     .forEach(
                         function (plotLineOptions: any): void {
-                            axis.addPlotBandOrLine(plotLineOptions);
+                            (axis as unknown as PlotLineOrBand.Axis).addPlotBandOrLine(plotLineOptions);
                         }
                     );
             }
@@ -3932,7 +3945,7 @@ class Axis {
             pos,
             categorized,
             graphic = this.cross,
-            crossOptions: Highcharts.AxisPlotLinesOptions;
+            crossOptions: PlotLineOptions;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
 

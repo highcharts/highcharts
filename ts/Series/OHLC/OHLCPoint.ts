@@ -20,7 +20,6 @@ import type OHLCPointOptions from './OHLCPointOptions';
 import type OHLCSeries from './OHLCSeries';
 import type { SeriesZonesOptions } from './../../Core/Series/SeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import HLCPoint from '../HLC/HLCPoint';
 
 const {
     seriesTypes: {

@@ -12,11 +12,16 @@
 
 'use strict';
 
+import type BubbleLegendItem from '../../Series/Bubble/BubbleLegendItem';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import A from '../../Core/Animation/AnimationUtilities.js';
+const {
+    animObject
+} = A;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import Legend from '../../Core/Legend.js';
@@ -26,7 +31,9 @@ const {
     extend,
     find,
     fireEvent,
-    isNumber
+    isNumber,
+    pick,
+    syncTimeout
 } = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
@@ -37,8 +44,12 @@ const {
     removeElement,
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
+import ChartUtils from '../Utils/ChartUtilities.js';
+const {
+    getChartTitle
+} = ChartUtils;
 
-type LegendItem = (Highcharts.BubbleLegend|Series|Point);
+type LegendItem = (BubbleLegendItem|Series|Point);
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -88,7 +99,7 @@ declare global {
             public onKbdNavigationInit(direction: number): void;
             public proxyLegendItem(item: LegendItem): void;
             public proxyLegendItems(): void;
-            public recreateProxies(): void;
+            public recreateProxies(): boolean;
             public removeProxies(): void;
             public shouldHaveLegendNavigation(): (boolean);
             public updateLegendItemProxyVisibility(): void;
@@ -101,7 +112,7 @@ declare global {
             element: HTMLDOMElement;
             posElement: SVGElement;
         }
-        interface BubbleLegend {
+        interface LegendItemObject {
             a11yProxyElement?: HTMLDOMElement;
         }
     }
@@ -113,7 +124,7 @@ declare global {
 /**
  * @private
  */
-function scrollLegendToItem(legend: Highcharts.Legend, itemIx: number): void {
+function scrollLegendToItem(legend: Legend, itemIx: number): void {
     const itemPage = legend.allItems[itemIx].pageIx,
         curPage: number = legend.currentPage as any;
 
@@ -227,6 +238,20 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 component.updateProxyPositionForItem(e.item);
             }
         });
+        this.addEvent(Legend, 'afterRender', function (): void { // #15902
+            if (
+                this.chart === component.chart &&
+                this.chart.renderer &&
+                component.recreateProxies()
+            ) {
+                syncTimeout(
+                    (): void => component.updateProxiesPositions(),
+                    animObject(
+                        pick(this.chart.renderer.globalAnimation, true)
+                    ).duration
+                );
+            }
+        });
     },
 
 
@@ -260,9 +285,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * of the proxy overlays.
      */
     onChartRender: function (this: Highcharts.LegendComponent): void {
-        if (shouldDoLegendA11y(this.chart)) {
-            this.updateProxiesPositions();
-        } else {
+        if (!shouldDoLegendA11y(this.chart)) {
             this.removeProxies();
         }
     },
@@ -305,7 +328,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     /**
      * @private
      */
-    recreateProxies: function (this: Highcharts.LegendComponent): void {
+    recreateProxies: function (this: Highcharts.LegendComponent): boolean {
         this.removeProxies();
 
         if (shouldDoLegendA11y(this.chart)) {
@@ -313,7 +336,9 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             this.addLegendListContainer();
             this.proxyLegendItems();
             this.updateLegendItemProxyVisibility();
+            return true;
         }
+        return false;
     },
 
 
@@ -342,7 +367,8 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         const legendLabel = chart.langFormat(
             'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'), {
                 chart,
-                legendTitle
+                legendTitle,
+                chartTitle: getChartTitle(chart)
             }
         );
 
@@ -399,7 +425,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
     /**
      * @private
-     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
      */
     proxyLegendItem: function (
         this: Highcharts.LegendComponent,
@@ -490,7 +516,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
             terminate: function (): void {
                 chart.legend.allItems.forEach(
-                    (item): void => item.setState('', true));
+                    (item): unknown => item.setState('', true));
             }
         });
     },
