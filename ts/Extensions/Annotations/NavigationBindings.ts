@@ -575,19 +575,28 @@ class NavigationBindings {
         chart = this.chart;
 
         const navigation = this,
+            activeAnnotation = navigation.activeAnnotation,
             selectedButton = navigation.selectedButton,
             svgContainer = chart.renderer.boxWrapper;
 
-        // Click outside popups, should close them and deselect the annotation
-        if (
-            navigation.activeAnnotation &&
-            !clickEvent.activeAnnotation &&
-            // Element could be removed in the child action, e.g. button
-            (clickEvent.target as any).parentNode &&
-            // TO DO: Polyfill for IE11?
-            !closestPolyfill(clickEvent.target as any, '.' + PREFIX + 'popup')
-        ) {
-            fireEvent(navigation, 'closePopup');
+        if (activeAnnotation) {
+            // Click outside popups, should close them and deselect the
+            // annotation
+            if (
+                !activeAnnotation.cancelClick && // #15729
+                !clickEvent.activeAnnotation &&
+                // Element could be removed in the child action, e.g. button
+                (clickEvent.target as any).parentNode &&
+                // TO DO: Polyfill for IE11?
+                !closestPolyfill(clickEvent.target as any, '.' + PREFIX + 'popup')
+            ) {
+                fireEvent(navigation, 'closePopup');
+            } else if (activeAnnotation.cancelClick) {
+                // Reset cancelClick after the other event handlers have run
+                setTimeout((): void => {
+                    activeAnnotation.cancelClick = false;
+                }, 0);
+            }
         }
 
         if (!selectedButton || !selectedButton.start) {
