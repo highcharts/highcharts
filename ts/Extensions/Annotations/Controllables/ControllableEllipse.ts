@@ -108,7 +108,17 @@ class ControllableEllipse implements ControllableMixin.Type {
 
     public translate = ControllableMixin.translateShape;
 
+    /**
+     * Functions
+     */
+
+    /**
+     * Transform the middle point (center of an ellipse).
+     * Mostly used to handle dragging of the ellipse.
+     */
     public transformPoint(): void {
+        // Call save points, to handle the pinning of the angle
+        // and radius to axes points.
         this.savePoints();
         ControllableMixin.transformPoint.apply(this, arguments);
     }
@@ -154,18 +164,29 @@ class ControllableEllipse implements ControllableMixin.Type {
     }
 
     /**
-     * Set the radius.
+     * Set the radius Y.
      *
-     * @param {number} r a radius to be set
+     * @param {number} ry a radius in y direction to be set
      */
     public setYRadius(ry: number): void {
         this.options.ry = ry;
     }
 
+    /**
+     * Set the radius X.
+     *
+     * @param {number} rx a radius in x direction to be set
+     */
     public setXRadius(rx: number): void {
         this.options.rx = rx;
     }
 
+    /**
+     * Set both radius properties.
+     *
+     * @param {number} rx a radius in x direction to be set
+     * @param {number} ry a radius in y direction to be set
+     */
     public setRadius(rx?: number, ry?: number): void {
         if (rx) {
             this.options.rx = rx;
@@ -174,11 +195,27 @@ class ControllableEllipse implements ControllableMixin.Type {
             this.options.ry = ry;
         }
     }
-
+    /**
+     * Set the angle of the ellipse.
+     *
+     * @param {number} angle the value of the angle on which the ellipse
+     * is rotated (clockwise driection).
+     */
     public setAngle(angle: number): void {
         this.angle = angle;
     }
 
+    /**
+     * Save the reference point positions, to pin the ellipse to the axes.
+     *
+     * @param x x position of the center of the ellipse
+     * (in pixels or in xAxis value if xAxis is defined)
+     * @param y y position of the center of the ellipse
+     * (in pixels or in yAxis value if yAxis is defined)
+     * @param rx x radius of the ellipse in pixels
+     * @param ry y radius of the ellipse in pixels
+     * @param angle angle in degrees
+     */
     public savePoints(x?: number, y?: number, rx?: number, ry?: number, angle?: number): void {
         const xAxis = this.chart.xAxis[(this.options.point as any).xAxis],
             yAxis = this.chart.yAxis[(this.options.point as any).yAxis],
@@ -205,6 +242,10 @@ class ControllableEllipse implements ControllableMixin.Type {
         this.referencePoints = points;
     }
 
+    /**
+     * Retrieve the attributes needed to plot
+     * the ellipse from the reference points.
+     */
     public getAttrsFromPoints(): EllispseShapeSVGOptions {
         const points = this.referencePoints,
             position = this.anchor(this.points[0]).absolutePosition,
