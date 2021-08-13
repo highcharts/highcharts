@@ -31,7 +31,6 @@ export interface StochasticOptions extends SMAOptions, Highcharts.MultipleLinesI
     marker?: PointMarkerOptions;
     params?: StochasticParamsOptions;
     smoothedLine?: Record<string, CSSObject>;
-    tooltip?: TooltipOptions;
 }
 
 export interface StochasticParamsOptions extends SMAParamsOptions {

@@ -727,13 +727,21 @@ class Series {
          * It can be also be combined with `pointIntervalUnit` to draw irregular
          * time intervals.
          *
+         * If combined with `relativeXValue`, an x value can be set on each
+         * point, and the `pointInterval` is added x times to the `pointStart`
+         * setting.
+         *
          * Please note that this options applies to the _series data_, not the
          * interval of the axis ticks, which is independent.
          *
          * @sample {highcharts} highcharts/plotoptions/series-pointstart-datetime/
          *         Datetime X axis
+         * @sample {highcharts} highcharts/plotoptions/series-relativexvalue/
+         *         Relative x value
          * @sample {highstock} stock/plotoptions/pointinterval-pointstart/
          *         Using pointStart and pointInterval
+         * @sample {highstock} stock/plotoptions/relativexvalue/
+         *         Relative x value
          *
          * @type      {number}
          * @default   1
@@ -811,17 +819,46 @@ class Series {
          * defines on what value to start. For example, if a series contains one
          * yearly value starting from 1945, set pointStart to 1945.
          *
+         * If combined with `relativeXValue`, an x value can be set on each
+         * point. The x value from the point options is multiplied by
+         * `pointInterval` and added to `pointStart` to produce a modified x
+         * value.
+         *
          * @sample {highcharts} highcharts/plotoptions/series-pointstart-linear/
          *         Linear
          * @sample {highcharts} highcharts/plotoptions/series-pointstart-datetime/
          *         Datetime
+         * @sample {highcharts} highcharts/plotoptions/series-relativexvalue/
+         *         Relative x value
          * @sample {highstock} stock/plotoptions/pointinterval-pointstart/
          *         Using pointStart and pointInterval
+         * @sample {highstock} stock/plotoptions/relativexvalue/
+         *         Relative x value
          *
          * @type      {number}
          * @default   0
          * @product   highcharts highstock gantt
          * @apioption plotOptions.series.pointStart
+         */
+
+        /**
+         * When true, X values in the data set are relative to the current
+         * `pointStart`, `pointInterval` and `pointIntervalUnit` settings. This
+         * allows compression of the data for datasets with irregular X values.
+         *
+         * The real X values are computed on the formula `f(x) = ax + b`, where
+         * `a` is the `pointInterval` (optionally with a time unit given by
+         * `pointIntervalUnit`), and `b` is the `pointStart`.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-relativexvalue/
+         *         Relative X value
+         * @sample {highstock} stock/plotoptions/relativexvalue/
+         *         Relative X value
+         *
+         * @type      {boolean}
+         * @default   false
+         * @product   highcharts highstock
+         * @apioption plotOptions.series.relativeXValue
          */
 
         /**
@@ -3087,14 +3124,16 @@ class Series {
      * @function Highcharts.Series#autoIncrement
      * @return {number}
      */
-    public autoIncrement(): number {
+    public autoIncrement(x?: number): number {
 
-        const options: SeriesTypeOptions = this.options,
+        const options = this.options,
             pointIntervalUnit = options.pointIntervalUnit,
+            relativeXValue = options.relativeXValue,
             time = this.chart.time;
-        let date,
-            xIncrement = this.xIncrement as number,
-            pointInterval;
+
+        let xIncrement = this.xIncrement,
+            date,
+            pointInterval: number;
 
         xIncrement = pick(xIncrement, options.pointStart, 0);
 
@@ -3103,6 +3142,10 @@ class Series {
             options.pointInterval,
             1
         );
+
+        if (relativeXValue && isNumber(x)) {
+            pointInterval *= x;
+        }
 
         // Added code for pointInterval strings
         if (pointIntervalUnit) {
@@ -3132,6 +3175,9 @@ class Series {
 
         }
 
+        if (relativeXValue && isNumber(x)) {
+            return xIncrement + pointInterval;
+        }
         this.xIncrement = xIncrement + pointInterval;
         return xIncrement;
     }
@@ -3426,28 +3472,40 @@ class Series {
             x = optionsObject.x,
             oldData = this.points,
             dataSorting = this.options.dataSorting;
-        let matchingPoint,
-            matchedById,
-            pointIndex,
-            matchKey: string;
+
+        let matchingPoint: Point|undefined,
+            matchedById: boolean|undefined,
+            pointIndex: number|undefined;
 
         if (id) {
-            matchingPoint = this.chart.get(id);
+            const item = this.chart.get(id);
+            if (item instanceof Point) {
+                matchingPoint = item;
+            }
 
-        } else if (this.linkedParent || this.enabledDataSorting) {
-            matchKey = (dataSorting && dataSorting.matchByName) ?
-                'name' : 'index';
+        } else if (
+            this.linkedParent ||
+            this.enabledDataSorting ||
+            this.options.relativeXValue
+        ) {
 
-            matchingPoint = find(oldData, function (
-                oldPoint: Point
-            ): boolean {
-                return !oldPoint.touched && (oldPoint as any)[matchKey] ===
-                    (optionsObject as any)[matchKey];
-            });
+            let matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
+                oldPoint.index === optionsObject.index;
+
+            if (dataSorting && dataSorting.matchByName) {
+                matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
+                    oldPoint.name === optionsObject.name;
+
+            } else if (this.options.relativeXValue) {
+                matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
+                    oldPoint.options.x === optionsObject.x;
+            }
+
+            matchingPoint = find(oldData, matcher);
+
             // Add unmatched point as a new point
             if (!matchingPoint) {
                 return void 0;
-
             }
         }
 
@@ -3472,7 +3530,9 @@ class Series {
                 pointIndex - (this.cropStart as any) : pointIndex;
         }
 
-        if (!matchedById &&
+        if (
+            !matchedById &&
+            isNumber(pointIndex) &&
             oldData[pointIndex] && oldData[pointIndex].touched
         ) {
             pointIndex = void 0;
@@ -3958,7 +4018,8 @@ class Series {
             processedYData: (
                 Array<(number|null)>|Array<Array<(number|null)>>
             ) = (series.yData as any),
-            throwOnUnsorted = series.requireSorting;
+            throwOnUnsorted = series.requireSorting,
+            updatingNames = false;
         const dataLength = (processedXData as any).length;
 
         if (xAxis) {
@@ -3966,6 +4027,7 @@ class Series {
             xExtremes = xAxis.getExtremes();
             min = xExtremes.min;
             max = xExtremes.max;
+            updatingNames = xAxis.categories && !xAxis.names.length;
         }
 
         // optionally filter out points outside the plot area
@@ -4028,8 +4090,10 @@ class Series {
 
             // Unsorted data is not supported by the line tooltip, as well
             // as data grouping and navigation in Stock charts (#725) and
-            // width calculation of columns (#1900)
-            } else if (distance < 0 && throwOnUnsorted) {
+            // width calculation of columns (#1900).
+            // Avoid warning during the premature processing pass in
+            // updateNames (#16104).
+            } else if (distance < 0 && throwOnUnsorted && !updatingNames) {
                 error(15, false, series.chart);
                 throwOnUnsorted = false; // Only once
             }
@@ -6599,17 +6663,18 @@ class Series {
             // Indicators, histograms etc recalculate the data. It should be
             // possible to omit this.
             this.hasDerivedData ||
-        // New type requires new point classes
-        (newType && newType !== this.type) ||
-        // New options affecting how the data points are built
-        typeof options.pointStart !== 'undefined' ||
-        typeof options.pointInterval !== 'undefined' ||
-        // Changes to data grouping requires new points in new group
-        series.hasOptionChanged('dataGrouping') ||
-        series.hasOptionChanged('pointStart') ||
-        series.hasOptionChanged('pointInterval') ||
-        series.hasOptionChanged('pointIntervalUnit') ||
-        series.hasOptionChanged('keys')
+            // New type requires new point classes
+            (newType && newType !== this.type) ||
+            // New options affecting how the data points are built
+            typeof options.pointStart !== 'undefined' ||
+            typeof options.pointInterval !== 'undefined' ||
+            typeof options.relativeXValue !== 'undefined' ||
+            // Changes to data grouping requires new points in new group
+            series.hasOptionChanged('dataGrouping') ||
+            series.hasOptionChanged('pointStart') ||
+            series.hasOptionChanged('pointInterval') ||
+            series.hasOptionChanged('pointIntervalUnit') ||
+            series.hasOptionChanged('keys')
         );
 
         newType = newType || initialType;

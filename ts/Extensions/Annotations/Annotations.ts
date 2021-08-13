@@ -33,6 +33,7 @@ import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions'
 import type EventCallback from '../../Core/EventCallback';
 import type FormatUtilities from '../../Core/FormatUtilities';
 import type MockPointOptions from './MockPointOptions';
+import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
@@ -499,14 +500,18 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach(function (name: ('labels'|'shapes')): void {
             if (baseOptions[name]) {
-                mergedOptions[name] = splat(newOptions[name]).map(
-                    function (
-                        basicOptions: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions),
-                        i: number
-                    ): (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions) {
-                        return merge(baseOptions[name][i], basicOptions);
-                    }
-                ) as any;
+                if (newOptions[name]) {
+                    mergedOptions[name] = splat(newOptions[name]).map(
+                        function (
+                            basicOptions: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions),
+                            i: number
+                        ): (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions) {
+                            return merge(baseOptions[name][i], basicOptions);
+                        }
+                    ) as any;
+                } else {
+                    mergedOptions[name] = baseOptions[name] as any;
+                }
             }
         });
 
@@ -557,17 +562,15 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
                         axes: Array<AxisType>,
                         labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
                     ): Array<AxisType> {
+                        const point = labelOrShape &&
+                            (
+                                labelOrShape.point ||
+                                (labelOrShape.points && labelOrShape.points[0])
+                            );
+
                         return [
-                            xAxes[
-                                labelOrShape &&
-                                labelOrShape.point &&
-                                (labelOrShape.point as any).xAxis
-                            ] || axes[0],
-                            yAxes[
-                                labelOrShape &&
-                                labelOrShape.point &&
-                                (labelOrShape.point as any).yAxis
-                            ] || axes[1]
+                            xAxes[point && (point as any).xAxis] || axes[0],
+                            yAxes[point && (point as any).yAxis] || axes[1]
                         ];
                     },
                     []
@@ -724,6 +727,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      */
     public setVisibility(visible?: boolean): void {
         const options = this.options,
+            navigation = this.chart.navigationBindings,
             visibility = pick(visible, !options.visible);
 
         this.graphic.attr(
@@ -733,6 +737,14 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         if (!visibility) {
             this.setControlPointsVisibility(false);
+
+            if (
+                navigation.activeAnnotation === this &&
+                navigation.popup &&
+                navigation.popup.formType === 'annotation-toolbar'
+            ) {
+                fireEvent(navigation, 'closePopup');
+            }
         }
 
         options.visible = visibility;

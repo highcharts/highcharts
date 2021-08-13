@@ -7,6 +7,7 @@ In most of these cases you can use our built-in data parsing features from the _
 
 We will cover the following topics:
 
+*   [Data compression](https://highcharts.com/docs/working-with-data/data-compression)
 *   [Using the Data module](https://highcharts.com/docs/working-with-data/data-module)
 *   [Custom preprocesssing](https://highcharts.com/docs/working-with-data/custom-preprocessing)
 *   [Live data](https://highcharts.com/docs/working-with-data/live-data)

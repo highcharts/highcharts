@@ -27,7 +27,6 @@ import type TooltipOptions from '../../../Core/TooltipOptions';
 
 export interface DMIOptions extends SMAOptions {
     params?: DMIParamsOptions;
-    tooltip?: TooltipOptions;
     plusDILine?: DMILineOptions;
     minusDILine?: DMILineOptions;
 }

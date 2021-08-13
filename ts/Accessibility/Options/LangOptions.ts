@@ -192,7 +192,7 @@ declare global {
     }
 }
 
-const langOptions: LangOptions = {
+const langOptions: DeepPartial<LangOptions> = {
 
     /**
      * Configure the accessibility strings in the chart. Requires the
@@ -255,7 +255,7 @@ const langOptions: LangOptions = {
          * @since 8.0.0
          */
         screenReaderSection: {
-            beforeRegionLabel: 'Chart screen reader information.',
+            beforeRegionLabel: 'Chart screen reader information, {chartTitle}.',
             afterRegionLabel: '',
 
             /**
@@ -295,7 +295,7 @@ const langOptions: LangOptions = {
          * @since 8.0.0
          */
         legend: {
-            legendLabelNoTitle: 'Toggle series visibility',
+            legendLabelNoTitle: 'Toggle series visibility, {chartTitle}',
             legendLabel: 'Chart legend: {legendTitle}',
             legendItem: 'Show {itemName}'
         },
@@ -450,7 +450,7 @@ const langOptions: LangOptions = {
         exporting: {
             chartMenuLabel: 'Chart menu',
             menuButtonLabel: 'View chart menu',
-            exportRegionLabel: 'Chart menu'
+            exportRegionLabel: 'Chart menu, {chartTitle}'
         },
 
         /**

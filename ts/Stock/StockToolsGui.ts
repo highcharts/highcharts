@@ -216,6 +216,7 @@ setOptions({
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
                 typeHollowCandlestick: 'Hollow Candlestick',
+                typeHeikinAshi: 'Heikin Ashi',
 
                 // Basic shapes:
                 circle: 'Circle',
@@ -900,7 +901,8 @@ setOptions({
                         'typeOHLC',
                         'typeLine',
                         'typeCandlestick',
-                        'typeHollowCandlestick'
+                        'typeHollowCandlestick',
+                        'typeHeikinAshi'
                     ],
                     typeOHLC: {
                         /**
@@ -925,6 +927,14 @@ setOptions({
                          * @type   {string}
                          */
                         symbol: 'series-candlestick.svg'
+                    },
+                    typeHeikinAshi: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-heikin-ashi.svg'
                     },
                     typeHollowCandlestick: {
                         /**
@@ -1444,6 +1454,7 @@ class Toolbar {
 
         // Mimic event behaviour of being outside chart.container
         [
+            'mousedown',
             'mousemove',
             'click',
             'touchstart'
@@ -1562,7 +1573,7 @@ class Toolbar {
         redraw?: boolean
     ): void {
         const buttonWrapper = button.parentNode,
-            buttonWrapperClass = buttonWrapper.classList.value,
+            buttonWrapperClass = buttonWrapper.className,
             // main button in first level og GUI
             mainNavButton = buttonWrapper.parentNode.parentNode;
 
@@ -1717,6 +1728,7 @@ Toolbar.prototype.classMapping = {
     typeOHLC: PREFIX + 'series-type-ohlc',
     typeCandlestick: PREFIX + 'series-type-candlestick',
     typeHollowCandlestick: PREFIX + 'series-type-hollowcandlestick',
+    typeHeikinAshi: PREFIX + 'series-type-heikinashi',
     fullScreen: PREFIX + 'full-screen',
     toggleAnnotations: PREFIX + 'toggle-annotations',
     saveChart: PREFIX + 'save-chart',

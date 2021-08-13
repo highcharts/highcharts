@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type ColorAxis from '../Core/Axis/ColorAxis';
+import type ColorAxis from '../Core/Axis/Color/ColorAxis';
 import type Legend from '../Core/Legend';
 import type Point from '../Core/Series/Point';
 import type Series from '../Core/Series/Series';
@@ -43,7 +43,7 @@ declare module '../Core/Series/SeriesLike' {
 declare global {
     namespace Highcharts {
         interface LegendItemObject extends LegendSymbolMixin {
-            _legendItemPos?: Array<number>;
+            _legendItemPos: Array<number>;
             checkbox?: Legend.CheckBoxElement;
             checkboxOffset?: number;
             itemHeight?: number;

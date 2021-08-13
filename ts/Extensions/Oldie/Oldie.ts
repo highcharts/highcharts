@@ -407,6 +407,10 @@ declare global {
         /** @deprecated */
         detachEvent(event: string, pDisp: Function): (number|true);
     }
+    interface HTMLCanvasElement {
+        /** @deprecated */
+        msToBlob: Function;
+    }
     /** @deprecated */
     interface TridentNamespace {
         readonly name: string;

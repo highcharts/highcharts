@@ -210,10 +210,22 @@ QUnit.test('Solid gauge null point (#10630)', function (assert) {
 });
 
 QUnit.test('Solid gauge updates', function (assert) {
+    Highcharts.setOptions({
+        yAxis: {
+            labels: {
+                style: {
+                    color: 'red'
+                }
+            }
+        }
+    });
+
     var chart = Highcharts.chart('container', {
             chart: {
                 type: 'solidgauge'
             },
+
+            yAxis: [{}],
 
             series: [
                 {
@@ -223,6 +235,12 @@ QUnit.test('Solid gauge updates', function (assert) {
             ]
         }),
         point = chart.series[0].points[0];
+
+    assert.strictEqual(
+        chart.yAxis[0].options.labels.style.color,
+        'red',
+        '#16112: Axis options set by setOptions should be picked up'
+    );
 
     chart.series[0].update({
         linecap: 'round',
