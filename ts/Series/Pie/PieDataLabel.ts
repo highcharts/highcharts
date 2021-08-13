@@ -22,6 +22,7 @@ import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import DataLabel from '../../Core/Series/DataLabel.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Palette from '../../Core/Color/Palette.js';
@@ -141,6 +142,8 @@ namespace ColumnDataLabel {
 
     /** @private */
     export function compose(PieSeriesClass: typeof PieSeries): void {
+
+        DataLabel.compose(Series);
 
         if (composedClasses.indexOf(PieSeriesClass) === -1) {
             composedClasses.push(PieSeriesClass);
