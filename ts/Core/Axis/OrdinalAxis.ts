@@ -33,6 +33,7 @@ const {
     css,
     defined,
     error,
+    fireEvent,
     pick,
     timeUnits
 } = U;
@@ -473,7 +474,8 @@ namespace OrdinalAxis {
                         xData: (series.xData as any).slice(),
                         chart: chart,
                         destroyGroupedData: H.noop,
-                        getProcessedData: Series.prototype.getProcessedData
+                        getProcessedData: Series.prototype.getProcessedData,
+                        applyGrouping: Series.prototype.applyGrouping
                     } as any;
 
                     fakeSeries.xData = (fakeSeries.xData as any).concat(
@@ -503,10 +505,16 @@ namespace OrdinalAxis {
 
                     // Force to use the ordinal when points are evenly spaced
                     // (e.g. weeks), #3825.
-                    if (fakeSeries.closestPointRange !== fakeSeries.basePointRange && fakeSeries.currentDataGrouping) {
+                    if (
+                        fakeSeries.closestPointRange !== fakeSeries.basePointRange &&
+                        fakeSeries.currentDataGrouping
+                    ) {
                         fakeAxis.forceOrdinal = true;
                     }
                 });
+
+                // Apply grouping if needed.
+                axis.applyGrouping.call(fakeAxis);
 
                 // Run beforeSetTickPositions to compute the ordinalPositions
                 axis.ordinal.beforeSetTickPositions.apply({ axis: fakeAxis });
@@ -605,14 +613,30 @@ namespace OrdinalAxis {
         ): number {
             const ordinal = this,
                 axis = ordinal.axis,
-                firstPointVal = ordinal.positions ? ordinal.positions[0] : 0,
-                // toValue for the first point.
-                firstPointX = ordinal.slope ? ordinal.slope * axis.transA : 0;
+                firstPointVal = ordinal.positions ? ordinal.positions[0] : 0;
+            let firstPointX = axis.series[0].points &&
+                axis.series[0].points[0] &&
+                axis.series[0].points[0].plotX ||
+                axis.minPixelPadding; // #15987
+
+            // When more series assign to axis, find the smallest one, #15987.
+            if (axis.series.length > 1) {
+                axis.series.forEach(function (series): void {
+                    if (
+                        defined(series.points[0]) &&
+                        defined(series.points[0].plotX) &&
+                        series.points[0].plotX < firstPointX
+                    ) {
+                        firstPointX = series.points[0].plotX;
+                    }
+                });
+            }
 
             // Distance in pixels between two points
             // on the ordinal axis in the current zoom.
             const ordinalPointPixelInterval = axis.translationSlope *
                 (ordinal.slope || axis.closestPointRange || ordinal.overscrollPointsRange as number),
+                // toValue for the first point.
                 shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
 
             return Additions.findIndexOf(ordinalArray, firstPointVal) + shiftIndex;
@@ -1010,7 +1034,6 @@ namespace OrdinalAxis {
     function lin2val(this: OrdinalAxis.Composition, val: number): number {
         const axis = this,
             ordinal = axis.ordinal,
-            isInside = val > axis.left && val < axis.left + axis.len,
             localMin = axis.old ? axis.old.min : axis.min,
             localA = axis.old ? axis.old.transA : axis.transA;
         let positions = ordinal.positions; // for the current visible range
@@ -1020,8 +1043,9 @@ namespace OrdinalAxis {
             return val;
         }
 
-        // Convert back from modivied value to pixels.
-        const pixelVal = (val - (localMin as any)) * localA;
+        // Convert back from modivied value to pixels. // #15970
+        const pixelVal = (val - (localMin as any)) * localA + axis.minPixelPadding,
+            isInside = pixelVal > 0 && pixelVal < axis.left + axis.len;
 
         // If the value is not inside the plot area,
         // use the extended positions.
