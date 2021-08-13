@@ -13,7 +13,7 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
-const { merge, defined } = U;
+const { merge, defined, correctFloat } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -278,11 +278,11 @@ class ControllableEllipse implements ControllableMixin.Type {
             }
 
             return {
-                cx,
-                cy,
-                rx,
-                ry,
-                angle
+                cx: correctFloat(cx),
+                cy: correctFloat(cy),
+                rx: correctFloat(rx),
+                ry: correctFloat(ry),
+                angle: correctFloat(angle)
             };
         }
         return {
