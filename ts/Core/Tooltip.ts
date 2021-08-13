@@ -19,7 +19,6 @@
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
-import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type PositionObject from './Renderer/PositionObject';
@@ -35,6 +34,8 @@ const { format } = F;
 import H from './Globals.js';
 const { doc } = H;
 import palette from './Color/Palette.js';
+import R from './Renderer/RendererUtilities.js';
+const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';
 import U from './Utilities.js';
 const {
@@ -62,6 +63,7 @@ const {
 
 declare module './Series/PointLike' {
     interface PointLike {
+        isHeader?: boolean;
         tooltipPos?: Array<number>;
     }
 }
@@ -84,6 +86,21 @@ declare module '../Core/TooltipOptions'{
         distance?: number;
     }
 }
+
+interface BoxObject extends R.BoxObject {
+    anchorX: number;
+    anchorY: number;
+    boxWidth: number;
+    point: Point;
+    tt: SVGElement;
+    x: number;
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -1227,17 +1244,25 @@ class Tooltip {
          * Calculates the position of the partial tooltip
          *
          * @private
-         * @param {number} anchorX The partial tooltip anchor x position
-         * @param {number} anchorY The partial tooltip anchor y position
-         * @param {boolean} isHeader Whether the partial tooltip is a header
-         * @param {number} boxWidth Width of the partial tooltip
-         * @return {Highcharts.PositionObject} Returns the partial tooltip x and
-         * y position
+         * @param {number} anchorX
+         * The partial tooltip anchor x position
+         *
+         * @param {number} anchorY
+         * The partial tooltip anchor y position
+         *
+         * @param {boolean|undefined} isHeader
+         * Whether the partial tooltip is a header
+         *
+         * @param {number} boxWidth
+         * Width of the partial tooltip
+         *
+         * @return {Highcharts.PositionObject}
+         * Returns the partial tooltip x and y position
          */
         function defaultPositioner(
             anchorX: number,
             anchorY: number,
-            isHeader: boolean,
+            isHeader: (boolean|undefined),
             boxWidth: number,
             alignedLeft = true
         ): PositionObject {
@@ -1343,10 +1368,10 @@ class Tooltip {
         }
         // Create the individual labels for header and points, ignore footer
         let boxes = labels.slice(0, points.length + 1).reduce(function (
-            boxes: Array<AnyRecord>,
+            boxes: Array<BoxObject>,
             str: (boolean|string),
             i: number
-        ): Array<AnyRecord> {
+        ): Array<BoxObject> {
             if (str !== false && str !== '') {
                 const point: (Point|Tooltip.PositionerPointObject) = (
                     points[i - 1] ||
@@ -1435,7 +1460,7 @@ class Tooltip {
             return boxStart < (chartLeft - bounds.left) + box.boxWidth &&
                 bounds.right - boxStart > boxStart;
         })) {
-            boxes = boxes.map((box): AnyRecord => {
+            boxes = boxes.map((box): BoxObject => {
                 const { x, y } = defaultPositioner(
                     box.anchorX,
                     box.anchorY,
@@ -1454,7 +1479,7 @@ class Tooltip {
         tooltip.cleanSplit();
 
         // Distribute and put in place
-        H.distribute(boxes as any, adjustedPlotHeight);
+        distribute(boxes, adjustedPlotHeight);
         const boxExtremes = {
             left: chartLeft,
             right: chartLeft
