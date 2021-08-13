@@ -1578,7 +1578,8 @@ class Series {
             processedYData: (
                 Array<(number|null)>|Array<Array<(number|null)>>
             ) = (series.yData as any),
-            throwOnUnsorted = series.requireSorting;
+            throwOnUnsorted = series.requireSorting,
+            updatingNames = false;
         const dataLength = (processedXData as any).length;
 
         if (xAxis) {
@@ -1586,6 +1587,7 @@ class Series {
             xExtremes = xAxis.getExtremes();
             min = xExtremes.min;
             max = xExtremes.max;
+            updatingNames = xAxis.categories && !xAxis.names.length;
         }
 
         // optionally filter out points outside the plot area
@@ -1648,8 +1650,10 @@ class Series {
 
             // Unsorted data is not supported by the line tooltip, as well
             // as data grouping and navigation in Stock charts (#725) and
-            // width calculation of columns (#1900)
-            } else if (distance < 0 && throwOnUnsorted) {
+            // width calculation of columns (#1900).
+            // Avoid warning during the premature processing pass in
+            // updateNames (#16104).
+            } else if (distance < 0 && throwOnUnsorted && !updatingNames) {
                 error(15, false, series.chart);
                 throwOnUnsorted = false; // Only once
             }

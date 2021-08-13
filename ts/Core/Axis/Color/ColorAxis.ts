@@ -224,7 +224,8 @@ class ColorAxis extends Axis implements AxisLike {
         const legend = chart.options.legend || {},
             horiz = userOptions.layout ?
                 userOptions.layout !== 'vertical' :
-                legend.layout !== 'vertical';
+                legend.layout !== 'vertical',
+            visible = userOptions.visible;
 
         const options = merge(
             ColorAxis.defaultColorAxisOptions,
@@ -232,8 +233,7 @@ class ColorAxis extends Axis implements AxisLike {
             {
                 showEmpty: false,
                 title: null,
-                visible: legend.enabled &&
-                    (userOptions ? userOptions.visible !== false : true)
+                visible: legend.enabled && visible !== false
             }
         );
 
@@ -243,6 +243,10 @@ class ColorAxis extends Axis implements AxisLike {
         axis.opposite = !horiz;
 
         super.init(chart, options);
+
+        // #16053: Restore the actual userOptions.visible so the color axis
+        // doesnt stay hidden forever when hiding and showing legend
+        axis.userOptions.visible = visible;
 
         // Base init() pushes it to the xAxis array, now pop it again
         // chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();

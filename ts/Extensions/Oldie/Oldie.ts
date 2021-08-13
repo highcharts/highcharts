@@ -447,6 +447,11 @@ declare global {
         readonly toElement: Element;
     }
 
+    interface HTMLCanvasElement {
+        /** @deprecated */
+        msToBlob: Function;
+    }
+
     /** @deprecated */
     interface TridentNamespace {
         readonly name: string;

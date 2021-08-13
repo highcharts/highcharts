@@ -45,6 +45,8 @@ const {
     win
 } = H;
 import Point from '../Series/Point.js';
+import R from '../Renderer/RendererUtilities.js';
+const { distribute } = R;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -78,7 +80,9 @@ declare module '../Series/SeriesOptions' {
     }
 }
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+interface BoxObject extends R.BoxObject {
+    item: Legend.Item;
+}
 
 /* *
  *
@@ -119,7 +123,7 @@ class Legend {
      *
      * */
 
-    public allItems: Array<(BubbleLegendItem|Series|Point)> = [];
+    public allItems: Array<Legend.Item> = [];
 
     public baseline?: number;
 
@@ -216,6 +220,8 @@ class Legend {
      *  Functions
      *
      * */
+
+    /* eslint-disable valid-jsdoc */
 
     /**
      * Initialize the legend.
@@ -349,7 +355,7 @@ class Legend {
      * Make events official: Fires the event `afterColorizeItem`.
      */
     public colorizeItem(
-        item: (BubbleLegendItem|Series|Point),
+        item: Legend.Item,
         visible?: boolean
     ): void {
         (item.legendGroup as any)[visible ? 'removeClass' : 'addClass'](
@@ -423,7 +429,9 @@ class Legend {
      * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      * The item to position
      */
-    public positionItem(item: (BubbleLegendItem|Series|Point)): void {
+    public positionItem(
+        item: Legend.Item
+    ): void {
         const legend = this,
             options = legend.options,
             symbolPadding = options.symbolPadding,
@@ -628,7 +636,9 @@ class Legend {
      * @param {Highcharts.Point|Highcharts.Series} item
      *        The item for which to update the text in the legend.
      */
-    public setText(item: (BubbleLegendItem|Series|Point)): void {
+    public setText(
+        item: Legend.Item
+    ): void {
         const options = this.options;
 
         (item.legendItem as any).attr({
@@ -647,7 +657,9 @@ class Legend {
      * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      * The item to render.
      */
-    public renderItem(item: (BubbleLegendItem|Series|Point)): void {
+    public renderItem(
+        item: Legend.Item
+    ): void {
         const legend = this,
             chart = legend.chart,
             renderer = chart.renderer,
@@ -803,7 +815,9 @@ class Legend {
      * @function Highcharts.Legend#layoutItem
      * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      */
-    public layoutItem(item: (BubbleLegendItem|Series|Point)): void {
+    public layoutItem(
+        item: Legend.Item
+    ): void {
 
         const options = this.options,
             padding = this.padding,
@@ -880,8 +894,8 @@ class Legend {
      * The current items in the legend.
      * @fires Highcharts.Legend#event:afterGetAllItems
      */
-    public getAllItems(): Array<(BubbleLegendItem|Series|Point)> {
-        let allItems = [] as Array<(BubbleLegendItem|Series|Point)>;
+    public getAllItems(): Array<Legend.Item> {
+        let allItems: Array<Legend.Item> = [];
 
         this.chart.series.forEach(function (series): void {
             const seriesOptions = series && series.options;
@@ -986,7 +1000,7 @@ class Legend {
      */
     public proximatePositions(): void {
         const chart = this.chart,
-            boxes = [] as Array<AnyRecord>,
+            boxes: Array<BoxObject> = [],
             alignLeft = this.options.align === 'left';
 
         this.allItems.forEach(function (item): void {
@@ -1029,14 +1043,15 @@ class Legend {
                 boxes.push({
                     target: target,
                     size: height,
-                    item: item
+                    item
                 });
             }
         }, this);
-        (H.distribute as any)(boxes, chart.plotHeight);
-        boxes.forEach(function (box): void {
-            box.item._legendItemPos[1] =
-                chart.plotTop - chart.spacing[0] + box.pos;
+        distribute(boxes, chart.plotHeight).forEach((box): void => {
+            if (box.item._legendItemPos) {
+                box.item._legendItemPos[1] =
+                    chart.plotTop - chart.spacing[0] + box.pos;
+            }
         });
 
     }
@@ -1057,7 +1072,7 @@ class Legend {
             options = legend.options,
             padding = legend.padding,
             // add each series or point
-            allItems: Array<(BubbleLegendItem|Series|Point)> = legend.getAllItems();
+            allItems = legend.getAllItems();
         let display,
             legendWidth,
             legendHeight,
@@ -1557,7 +1572,7 @@ class Legend {
      * @fires Highcharts.Series#event:legendItemClick
      */
     public setItemEvents(
-        item: (BubbleLegendItem|Series|Point),
+        item: Legend.Item,
         legendItem: SVGElement,
         useHTML?: boolean
     ): void {
@@ -1673,7 +1688,7 @@ class Legend {
      * @fires Highcharts.Series#event:checkboxClick
      */
     public createCheckboxForItem(
-        item: (BubbleLegendItem|Series|Point)
+        item: Legend.Item
     ): void {
         const legend = this;
 
@@ -1751,12 +1766,23 @@ if (
  *
  * */
 
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace Legend {
+
     export interface CheckBoxElement extends HTMLDOMElement {
         checked?: boolean;
         x: number;
         y: number;
     }
+
+    export type Item = (BubbleLegendItem|Series|Point);
+
 }
 
 /* *
@@ -1781,10 +1807,10 @@ export default Legend;
  * @callback Highcharts.PointLegendItemClickCallbackFunction
  *
  * @param {Highcharts.Point} this
- * The point on which the event occured.
+ *        The point on which the event occured.
  *
  * @param {Highcharts.PointLegendItemClickEventObject} event
- * The event that occured.
+ *        The event that occured.
  */
 
 /**

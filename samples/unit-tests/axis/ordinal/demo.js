@@ -257,6 +257,16 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
         `After panning 20px, the axis extremes should not be reset
         but changed respectively.`
     );
+
+    const extendedOrdinalPositionsLength =
+        chart.xAxis[0].ordinal.extendedOrdinalPositions.length;
+    chart.series[0].addPoint([1585666260000 + 36e7, 1171.11]);
+    assert.notStrictEqual(
+        extendedOrdinalPositionsLength,
+        chart.xAxis[0].ordinal.extendedOrdinalPositions.length,
+        `After adding the point, the extendedOrdinalPositions array
+        should be recalculated, #16055.`
+    );
 });
 
 QUnit.test('findIndexOf', assert => {
@@ -284,9 +294,10 @@ QUnit.test('findIndexOf', assert => {
 QUnit.test('lin2val- unit test for values outside the plotArea.', function (assert) {
     const axis = {
         transA: -0.04,
-        min: 3,
+        min: 3.24,
         len: 500,
         translationSlope: 0.2,
+        minPixelPadding: 0,
         ordinal: {
             extendedOrdinalPositions: [0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9],
             positions: [3, 4.2, 4.8, 5, 7],
