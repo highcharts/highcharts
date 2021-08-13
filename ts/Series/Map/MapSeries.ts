@@ -1312,8 +1312,7 @@ class MapSeries extends ScatterSeries {
  *
  * */
 
-interface MapSeries extends Highcharts.ColorMapSeries {
-    colorAttribs: typeof colorMapSeriesMixin['colorAttribs'];
+interface MapSeries extends ColorMapComposition.SeriesComposition {
     drawLegendSymbol: Highcharts.LegendSymbolMixin['drawRectangle'];
     pointArrayMap: typeof colorMapSeriesMixin['pointArrayMap'];
     pointClass: typeof MapPoint;
@@ -1339,9 +1338,7 @@ extend(MapSeries.prototype, {
 
     axisTypes: colorMapSeriesMixin.axisTypes,
 
-    colorAttribs: colorMapSeriesMixin.colorAttribs,
-
-    colorKey: colorMapSeriesMixin.colorKey,
+    colorKey: 'value',
 
     // When tooltip is not shared, this series (and derivatives) requires
     // direct touch/hover. KD-tree does not apply.

@@ -597,7 +597,7 @@ function GLRenderer(
                         point.shapeArgs;
 
                     pointAttr = chart.styledMode ?
-                        (point.series as Highcharts.ColorMapSeries)
+                        (point.series as ColorMapComposition.SeriesComposition)
                             .colorAttribs(point as ColorMapComposition.PointComposition) :
                         pointAttr = point.series.pointAttribs(point);
 

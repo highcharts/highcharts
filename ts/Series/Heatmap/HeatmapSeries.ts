@@ -719,10 +719,8 @@ class HeatmapSeries extends ScatterSeries {
  *
  * */
 
-interface HeatmapSeries {
+interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     axisTypes: typeof colorMapSeriesMixin.axisTypes;
-    colorAttribs: typeof colorMapSeriesMixin.colorAttribs;
-    colorKey: typeof colorMapSeriesMixin.colorKey;
     drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
     getSymbol: typeof Series.prototype.getSymbol;
     parallelArrays: typeof colorMapSeriesMixin.parallelArrays;
@@ -739,9 +737,7 @@ extend(HeatmapSeries.prototype, {
 
     axisTypes: colorMapSeriesMixin.axisTypes,
 
-    colorAttribs: colorMapSeriesMixin.colorAttribs,
-
-    colorKey: colorMapSeriesMixin.colorKey,
+    colorKey: 'value',
 
     directTouch: true,
 

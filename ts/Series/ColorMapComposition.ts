@@ -47,18 +47,14 @@ declare global {
         //     isValid: ColorMapPoint['isValid'];
         // }
         interface ColorMapSeries extends ScatterSeries {
-            colorProp?: string;
             data: Array<ColorMapComposition.PointComposition>;
             parallelArrays: Array<string>;
             pointArrayMap: Array<string>;
             points: Array<ColorMapComposition.PointComposition>;
             trackerGroups: Array<string>;
-            colorAttribs(point: ColorMapComposition.PointComposition): SVGAttributes;
         }
         interface ColorMapSeriesMixin {
             axisTypes: ColorSeries['axisTypes'];
-            colorAttribs: ColorMapSeries['colorAttribs'];
-            colorKey?: ColorSeries['colorKey'];
             getSymbol: () => void;
             parallelArrays: ColorMapSeries['parallelArrays'];
             pointArrayMap: ColorMapSeries['pointArrayMap'];
@@ -79,32 +75,11 @@ const colorMapSeriesMixinOld = {
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
     // getSymbol: noop,
     parallelArrays: ['x', 'y', 'value'],
-    colorKey: 'value',
+    colorKey: 'value'
     // pointAttribs: seriesTypes.column.prototype.pointAttribs,
 
     /* eslint-disable valid-jsdoc */
 
-    /**
-     * Get the color attibutes to apply on the graphic
-     * @private
-     * @function Highcharts.colorMapSeriesMixin.colorAttribs
-     * @param {Highcharts.Point} point
-     * @return {Highcharts.SVGAttributes}
-     */
-    colorAttribs: function (
-        this: Highcharts.ColorMapSeries,
-        point: ColorMapComposition.PointComposition
-    ): SVGAttributes {
-        const ret: SVGAttributes = {};
-
-        if (
-            defined(point.color) &&
-            (!point.state || point.state === 'normal') // #15746
-        ) {
-            (ret as any)[this.colorProp || 'fill'] = point.color;
-        }
-        return ret;
-    }
 };
 
 /* *
@@ -124,6 +99,9 @@ namespace ColorMapComposition {
      * */
 
     export declare class SeriesComposition extends ScatterSeries {
+        colorProp?: string;
+        colorKey?: string;
+        colorAttribs(point: PointComposition): SVGAttributes;
     }
 
     export declare class PointComposition extends ScatterPoint {
@@ -171,7 +149,9 @@ namespace ColorMapComposition {
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
-            const seriesProto = SeriesClass.prototype;
+            const seriesProto = SeriesClass.prototype as SeriesComposition;
+
+            seriesProto.colorAttribs = seriesColorAttribs;
 
             wrap(seriesProto, 'pointAttribs', seriesWrapPointAttribs);
         }
@@ -191,6 +171,25 @@ namespace ColorMapComposition {
             this.value !== Infinity &&
             this.value !== -Infinity
         );
+    }
+
+    /**
+     * Get the color attibutes to apply on the graphic
+     * @private
+     */
+    export function seriesColorAttribs(
+        this: SeriesComposition,
+        point: PointComposition
+    ): SVGAttributes {
+        const ret: SVGAttributes = {};
+
+        if (
+            defined(point.color) &&
+            (!point.state || point.state === 'normal') // #15746
+        ) {
+            (ret as any)[this.colorProp || 'fill'] = point.color;
+        }
+        return ret;
     }
 
     /**

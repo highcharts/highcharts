@@ -1300,7 +1300,7 @@ class TreemapSeries extends ScatterSeries {
 
         // If color series logic is loaded, add some properties
         if (colorMapSeriesMixin) {
-            this.colorAttribs = colorMapSeriesMixin.colorAttribs;
+            this.colorAttribs = ColorMapComposition.seriesColorAttribs;
         }
 
         setOptionsEvent = addEvent(series, 'setOptions', function (
@@ -1880,7 +1880,7 @@ class TreemapSeries extends ScatterSeries {
  * */
 
 interface TreemapSeries extends Highcharts.TreeSeries {
-    colorAttribs: Highcharts.ColorMapSeriesMixin['colorAttribs'];
+    colorAttribs?: ColorMapComposition.SeriesComposition['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
     getExtremesFromAll: boolean;
