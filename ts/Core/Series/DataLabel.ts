@@ -22,6 +22,7 @@ import type ColorString from '../Color/ColorString';
 import type ColumnPoint from '../../Series/Column/ColumnPoint';
 import type DataLabelOptions from './DataLabelOptions';
 import type Point from './Point';
+import type Series from './Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGLabel from '../Renderer/SVG/SVGLabel';
@@ -32,7 +33,6 @@ import F from '../FormatUtilities.js';
 const { format } = F;
 import Palette from '../Color/Palette.js';
 import R from '../Renderer/RendererUtilities.js';
-import Series from './Series.js';
 import U from '../Utilities.js';
 const {
     defined,
