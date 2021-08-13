@@ -201,6 +201,106 @@ var chart = Highcharts.chart('container', {
                     }
                 }
             }]
+        }, {
+            type: 'ellipse',
+            point: {
+                x: 10,
+                y: 0,
+                xAxis: 0,
+                yAxis: 0
+            },
+            angle: 45,
+            rx: 40,
+            ry: 30,
+            controlPoints: [
+                {
+                    positioner: function (target) {
+                        var xy = Highcharts.Annotation.MockPoint.pointToPixels(
+                                target.points[0]
+                            ),
+                            attrs = target.getAttrsFromPoints();
+
+                        return {
+                            x:
+                                xy.x -
+                                this.graphic.width / 2 +
+                                attrs.ry *
+                                Math.sin((attrs.angle * Math.PI) / 180),
+                            y:
+                                xy.y -
+                                this.graphic.height / 2 -
+                                attrs.ry *
+                                Math.cos((attrs.angle * Math.PI) / 180)
+                        };
+                    },
+                    events: {
+                        drag: function (e, target) {
+                            var dx =
+                                    e.x -
+                                    (target.points[0].plotX +
+                                        target.chart.plotLeft),
+                                dy =
+                                    e.y -
+                                    (target.points[0].plotY +
+                                        target.chart.plotTop),
+                                newR = Math.max(Math.sqrt(dx * dx +
+                                    dy * dy), 5);
+
+                            target.setYRadius(newR);
+                            target.savePoints();
+
+                            target.redraw(false);
+                        }
+                    }
+                },
+                {
+                    positioner: function (target) {
+                        var xy = Highcharts.Annotation.MockPoint.pointToPixels(
+                                target.points[0]
+                            ),
+                            attrs = target.getAttrsFromPoints();
+
+                        return {
+                            x:
+                                xy.x -
+                                this.graphic.width / 2 -
+                                attrs.rx *
+                                Math.cos((attrs.angle * Math.PI) / 180),
+                            y:
+                                xy.y -
+                                this.graphic.height / 2 -
+                                attrs.rx *
+                                Math.sin((attrs.angle * Math.PI) / 180)
+                        };
+                    },
+                    events: {
+                        drag: function (e, target) {
+                            var dx =
+                                    e.x -
+                                    (target.points[0].plotX +
+                                        target.chart.plotLeft),
+                                dy =
+                                    e.y -
+                                    (target.points[0].plotY +
+                                        target.chart.plotTop),
+                                newR =
+                                Math.max(Math.sqrt(dx * dx + dy * dy), 5),
+                                newAngle =
+                                (-Math.atan(dx / dy) * 180) / Math.PI - 90;
+
+                            if (dy < 0) {
+                                newAngle += 180;
+                            }
+
+                            target.setXRadius(newR);
+                            target.setAngle(newAngle);
+                            target.savePoints();
+
+                            target.redraw(false);
+                        }
+                    }
+                }
+            ]
         }],
 
         labels: [{
