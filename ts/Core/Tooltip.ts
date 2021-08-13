@@ -33,7 +33,7 @@ import F from './FormatUtilities.js';
 const { format } = F;
 import H from './Globals.js';
 const { doc } = H;
-import Palette from './Color/Palette.js';
+import palette from './Color/Palette.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';
@@ -1110,7 +1110,7 @@ class Tooltip {
                                 options.borderColor ||
                                 point.color ||
                                 currentSeries.color ||
-                                Palette.neutralColor60
+                                palette.neutralColor60
                             )
                         });
                     }
@@ -1355,7 +1355,7 @@ class Tooltip {
                             options.borderColor ||
                             point.color ||
                             series.color ||
-                            Palette.neutralColor80
+                            palette.neutralColor80
                         )
                     });
             }
