@@ -4,6 +4,7 @@ module.exports = {
         'Getting started': [
             'getting-started/system-requirements',
             'getting-started/installation',
+            'getting-started/installation-with-esm',
             'getting-started/install-from-npm',
             'getting-started/install-from-bower',
             'getting-started/your-first-chart',
