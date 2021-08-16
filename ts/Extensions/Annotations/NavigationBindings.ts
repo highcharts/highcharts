@@ -28,6 +28,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     attr,
+    correctFloat,
     fireEvent,
     isArray,
     isFunction,
@@ -1388,64 +1389,51 @@ setOptions({
                     function (this: NavigationBindings, e: PointerEvent, annotation: Annotation): void {
 
                         let mockPointOpts = annotation.options.shapes[0].point as MockPointOptions,
-                            inverted = this.chart.inverted,
-                            x,
-                            y,
-                            dx,
-                            dy,
-                            distance,
-                            newAngle;
+                            inverted = this.chart.inverted;
 
                         if (isNumber(mockPointOpts.xAxis) && isNumber(mockPointOpts.yAxis)) {
-                            x = this.chart.xAxis[mockPointOpts.xAxis].toPixels(mockPointOpts.x);
-
-                            y = this.chart.yAxis[mockPointOpts.yAxis].toPixels(mockPointOpts.y);
-                            dx = inverted ? y - e.chartX : x - e.chartX;
-                            dy = inverted ? x - e.chartY : y - e.chartY;
-                            newAngle = -Math.atan(dx / dy) * 180 / Math.PI - 90;
-                            distance = Math.max(
-                                Math.sqrt(
-                                    dx * dx + dy * dy
-                                ),
-                                5
-                            );
+                            const x = this.chart.xAxis[mockPointOpts.xAxis].toPixels(mockPointOpts.x),
+                                y = this.chart.yAxis[mockPointOpts.yAxis].toPixels(mockPointOpts.y),
+                                dx = inverted ? y - e.chartX : x - e.chartX,
+                                dy = inverted ? x - e.chartY : y - e.chartY,
+                                newAngle = -Math.atan(dx / dy) * 180 / Math.PI - 90,
+                                distance = Math.max(
+                                    Math.sqrt(
+                                        dx * dx + dy * dy
+                                    ),
+                                    5
+                                );
+                            annotation.update({
+                                shapes: [{
+                                    rx: correctFloat(distance),
+                                    angle: correctFloat(newAngle)
+                                }]
+                            });
                         }
-
-                        annotation.update({
-                            shapes: [{
-                                rx: distance,
-                                angle: newAngle
-                            }]
-                        });
                     },
 
                     function (this: NavigationBindings, e: PointerEvent, annotation: Annotation): void {
                         let mockPointOpts = annotation.options.shapes[0].point as MockPointOptions,
-                            inverted = this.chart.inverted,
-                            x,
-                            y,
-                            dx,
-                            dy,
-                            distance;
+                            inverted = this.chart.inverted;
 
                         if (isNumber(mockPointOpts.xAxis) && isNumber(mockPointOpts.yAxis)) {
-                            x = this.chart.xAxis[mockPointOpts.xAxis].toPixels(mockPointOpts.x);
-                            y = this.chart.yAxis[mockPointOpts.yAxis].toPixels(mockPointOpts.y);
-                            dx = inverted ? y - e.chartX : x - e.chartX;
-                            dy = inverted ? x - e.chartY : y - e.chartY;
-                            distance = Math.max(
-                                Math.sqrt(
-                                    dx * dx + dy * dy
-                                ),
-                                5
-                            );
+                            const x = this.chart.xAxis[mockPointOpts.xAxis].toPixels(mockPointOpts.x),
+                                y = this.chart.yAxis[mockPointOpts.yAxis].toPixels(mockPointOpts.y),
+                                dx = inverted ? y - e.chartX : x - e.chartX,
+                                dy = inverted ? x - e.chartY : y - e.chartY,
+                                distance = Math.max(
+                                    Math.sqrt(
+                                        dx * dx + dy * dy
+                                    ),
+                                    5
+                                );
+                            annotation.update({
+                                shapes: [{
+                                    ry: correctFloat(distance)
+                                }]
+                            });
                         }
 
-                        annotation.update({
-                            shapes: [{
-                                ry: distance
-                            }]
-                        });
                     }
                 ]
             },
