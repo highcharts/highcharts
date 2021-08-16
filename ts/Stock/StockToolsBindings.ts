@@ -2338,6 +2338,33 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         }
     },
     /**
+     * Changes main series to `'hollowcandlestick'` type.
+     *
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
+     * @product highstock
+     * @default {"className": "highcharts-series-type-hollowcandlestick", "init": function() {}}
+     */
+    seriesTypeHollowCandlestick: {
+        /** @ignore-option */
+        className: 'highcharts-series-type-hollowcandlestick',
+        // eslint-disable-next-line valid-jsdoc
+        /** @ignore-option */
+        init: function (
+            this: NavigationBindings,
+            button: HTMLDOMElement
+        ): void {
+            this.chart.series[0].update({
+                type: 'hollowcandlestick'
+            });
+
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
+        }
+    },
+    /**
      * Displays chart in fullscreen.
      *
      * **Note**: Fullscreen is not supported on iPhone due to iOS limitations.
