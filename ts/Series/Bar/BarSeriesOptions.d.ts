@@ -26,4 +26,10 @@ export interface BarSeriesOptions extends ColumnSeriesOptions {
     // nothing here yet
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default BarSeriesOptions;

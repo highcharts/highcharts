@@ -476,6 +476,19 @@ QUnit.test('Labels with useHTML', assert => {
         '200px',
         'The span width should adapt to shorter text (#10009)'
     );
+
+    const g = ren.g('parent')
+        .attr({
+            visibility: 'hidden'
+        })
+        .add();
+    ren.label('Foo', 0, 0, void 0, 0, 0, true).add(g);
+
+    assert.strictEqual(
+        g.div.style.visibility,
+        'hidden',
+        'Visibility should be set on parent group div'
+    );
 });
 
 QUnit.test('Change of label alignment after add (#4652)', function (assert) {

@@ -28,6 +28,11 @@ export type NonPlotOptions = (
 );
 
 /**
+ * All possible series types.
+ */
+export type SeriesType = SeriesTypeRegistry[keyof SeriesTypeRegistry]['prototype'];
+
+/**
  * All possible series options.
  */
 export type SeriesTypeOptions = SeriesType['options'];
@@ -40,11 +45,6 @@ export type SeriesTypePlotOptions = {
 };
 
 /**
- * All possible series types.
- */
-export type SeriesType = SeriesTypeRegistry[keyof SeriesTypeRegistry]['prototype'];
-
-/**
  * Helper interface to add series types to `SeriesOptionsType` and `SeriesType`.
  *
  * Use the `declare module 'SeriesType'` pattern to overload the interface in
@@ -53,5 +53,11 @@ export type SeriesType = SeriesTypeRegistry[keyof SeriesTypeRegistry]['prototype
 export interface SeriesTypeRegistry {
     [key: string]: typeof Series;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SeriesType;

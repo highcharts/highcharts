@@ -46,4 +46,10 @@ export interface HTMLAttributes {
     value?: string;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default HTMLAttributes;

@@ -20,6 +20,21 @@ describe('Stock Tools annotation popup, #15725', () => {
         cy.get('.highcharts-toggle-annotations').click();
     });
 
+    it('#15729: Should keep annotation selected after dragging', () => {
+        cy.get('.highcharts-annotation')
+            .click()
+            .dragTo('.highcharts-container', 300, 100);
+        cy.get('.highcharts-popup').should('be.visible');
+    });
+
+    it('#15729: Should keep annotation selected after dragging control point', () => {
+        cy.get('.highcharts-control-points')
+            .children()
+            .first()
+            .dragTo('.highcharts-container', 600, 200);
+        cy.get('.highcharts-popup').should('be.visible');
+    });
+
     it('#15725: Should use the same axis for all points in multi-step annotation', () => {
         cy.get('.highcharts-elliott3').first().click();
         cy.get('.highcharts-container')
@@ -30,6 +45,55 @@ describe('Stock Tools annotation popup, #15725', () => {
         cy.chart().should(chart =>
             chart.annotations[1].points.forEach(point =>
                 assert.ok(point.y > -50 && point.y < 50)
+            )
+        );
+    });
+});
+
+describe('Adding custom indicator on a separate axis through indicator popup, #15804.', () => {
+    beforeEach(() => {
+        cy.viewport(1000, 500);
+    });
+
+    before(() => {
+        cy.visit('/stock/demo/stock-tools-gui');
+    });
+
+    it('#15730: Should close popup after hiding annotation', () => {
+        // Add custom indicator which should use another axis.
+        cy.window().then((win) => {
+            const H = win.Highcharts,
+                bindingsUtils = H._modules['Extensions/Annotations/NavigationBindings.js'].prototype.utils;
+            
+            H.seriesType(
+                'customIndicatorBasedOnRSI',
+                'rsi', {
+                name: 'Custom Indicator',
+                color: 'red'
+                }, {
+
+                }
+            );
+            bindingsUtils.indicatorsWithAxes.push('customIndicatorBasedOnRSI');
+        });
+
+        cy.get('.highcharts-indicators')
+            .click();
+
+        cy.get('.highcharts-indicator-list')
+            .contains('CUSTOMINDICATORBASEDONRSI')
+            .click();
+
+        cy.get('.highcharts-popup-rhs-col')
+            .children('.highcharts-popup button')
+            .eq(0)
+            .click(); // Add indicator.
+        cy.chart().should(chart =>
+            assert.strictEqual(
+                chart.yAxis.length,
+                4,
+                `After adding a custom indicator that is based on other oscillators,
+                another axis should be added.`
             )
         );
     });
