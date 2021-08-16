@@ -30,17 +30,23 @@ namespace RendererRegistry {
 
     /* *
      *
-     *  Static Properties
+     *  Constants
      *
      * */
-
-    let defaultRenderer: string;
 
     export const rendererTypes: Record<string, typeof SVGRenderer> = {};
 
     /* *
      *
-     *  Static Functions
+     *  Variables
+     *
+     * */
+
+    let defaultRenderer: string;
+
+    /* *
+     *
+     *  Functions
      *
      * */
 
@@ -88,7 +94,7 @@ namespace RendererRegistry {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

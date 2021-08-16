@@ -24,7 +24,7 @@ import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
 import type Fx from '../../Animation/Fx';
 import type GradientColor from '../../Color/GradientColor';
-import type LegendOptions from '../../LegendOptions';
+import type LegendOptions from '../../Legend/LegendOptions';
 import type Point from '../../Series/Point.js';
 import type PointerEvent from '../../PointerEvent';
 import type { StatesOptionsKey } from '../../Series/StatesOptions';
@@ -38,8 +38,8 @@ import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
 import H from '../../Globals.js';
 const { noop } = H;
-import Legend from '../../Legend.js';
-import LegendSymbolMixin from '../../../Mixins/LegendSymbol.js';
+import Legend from '../../Legend/Legend.js';
+import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
@@ -896,7 +896,7 @@ class ColorAxis extends Axis implements AxisLike {
                         chart: chart,
                         name: name,
                         options: {},
-                        drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+                        drawLegendSymbol: LegendSymbol.drawRectangle,
                         visible: true,
                         setState: noop,
                         isDataClass: true,
@@ -931,6 +931,12 @@ class ColorAxis extends Axis implements AxisLike {
 
 namespace ColorAxis {
 
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface DataClassesOptions {
         color?: ColorType;
         colorIndex?: number;
@@ -944,7 +950,7 @@ namespace ColorAxis {
         chart: Chart;
         name: string;
         options: object;
-        drawLegendSymbol: typeof LegendSymbolMixin['drawRectangle'];
+        drawLegendSymbol: typeof LegendSymbol['drawRectangle'];
         visible: boolean;
         setState: Function;
         isDataClass: true;

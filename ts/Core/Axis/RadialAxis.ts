@@ -182,7 +182,7 @@ namespace RadialAxis {
      *
      * */
 
-    const composedClasses: Array<(typeof Axis|typeof Tick)> = [];
+    const composedClasses: Array<Function> = [];
 
     /**
      * Circular axis around the perimeter of a polar chart.
