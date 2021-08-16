@@ -26,6 +26,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FontMetricsObject from '../../Core/Renderer/FontMetricsObject';
 import type FormatUtilities from '../../Core/FormatUtilities';
+import type LegendItemObject from '../../Core/Legend/LegendItemObject';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -36,7 +37,7 @@ const { parse: color } = Color;
 import F from '../../Core/FormatUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import Legend from '../../Core/Legend.js';
+import Legend from '../../Core/Legend/Legend.js';
 import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -54,7 +55,7 @@ const {
  *
  * */
 
-declare module '../../Core/LegendLike' {
+declare module '../../Core/Legend/LegendLike' {
     interface LegendLike {
         bubbleLegend?: BubbleLegendItem;
     }
@@ -73,7 +74,7 @@ declare module '../../Core/Series/SeriesLike' {
     }
 }
 
-declare module '../../Core/LegendOptions'{
+declare module '../../Core/Legend/LegendOptions'{
     interface LegendOptions {
         bubbleLegend?: BubbleLegendItem.Options;
     }
@@ -760,7 +761,7 @@ class BubbleLegendItem {
  *
  * */
 
-interface BubbleLegendItem extends Highcharts.LegendItemObject {
+interface BubbleLegendItem extends LegendItemObject {
     // nothing more to add
 }
 

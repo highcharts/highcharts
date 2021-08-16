@@ -42,7 +42,7 @@ import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const { colorMapSeriesMixin } = ColorMapMixin;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -1883,6 +1883,7 @@ interface TreemapSeries extends Highcharts.TreeSeries {
     colorAttribs: Highcharts.ColorMapSeriesMixin['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getExtremesFromAll: boolean;
     optionalAxis: string;
     parallelArrays: Array<string>;
@@ -1897,7 +1898,7 @@ extend(TreemapSeries.prototype, {
     buildKDTree: noop,
     colorKey: 'colorValue', // Point color option key
     directTouch: true,
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
     getExtremesFromAll: true,
     getSymbol: noop,
     optionalAxis: 'colorAxis',

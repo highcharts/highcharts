@@ -28,11 +28,12 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const { colorMapSeriesMixin } = ColorMapMixin;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import MapChart from '../../Core/Chart/MapChart.js';
 const {
     maps,
@@ -1314,7 +1315,7 @@ class MapSeries extends ScatterSeries {
 
 interface MapSeries extends Highcharts.ColorMapSeries {
     colorAttribs: typeof colorMapSeriesMixin['colorAttribs'];
-    drawLegendSymbol: Highcharts.LegendSymbolMixin['drawRectangle'];
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     pointArrayMap: typeof colorMapSeriesMixin['pointArrayMap'];
     pointClass: typeof MapPoint;
     preserveAspectRatio: boolean;
@@ -1354,7 +1355,7 @@ extend(MapSeries.prototype, {
     // No graph for the map series
     drawGraph: noop,
 
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     forceDL: true,
 

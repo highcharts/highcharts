@@ -73,7 +73,7 @@ class SVGLabel extends SVGElement {
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
@@ -110,7 +110,9 @@ class SVGLabel extends SVGElement {
             this.addClass('highcharts-' + className);
         }
 
-        this.text = renderer.text('', 0, 0, useHTML).attr({ zIndex: 1 });
+        // Create the text element. An undefined text content prevents redundant
+        // box calculation (#16121)
+        this.text = renderer.text(void 0, 0, 0, useHTML).attr({ zIndex: 1 });
 
         // Validate the shape argument
         let hasBGImage;
@@ -525,5 +527,11 @@ class SVGLabel extends SVGElement {
         this.attr('translateY', this.ySetting);
     }
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SVGLabel;
