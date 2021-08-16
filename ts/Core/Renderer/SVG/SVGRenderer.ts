@@ -1631,7 +1631,7 @@ class SVGRenderer implements SVGRendererLike {
 
         const wrapper = renderer.createElement('text').attr(attribs);
 
-        if (!useHTML) {
+        if (!useHTML || (renderer.forExport && !renderer.allowHTML)) {
             wrapper.xSetter = function (
                 value: string,
                 key: string,

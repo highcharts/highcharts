@@ -70,6 +70,7 @@ const {
     charts,
     doc,
     marginNames,
+    svg,
     win
 } = H;
 import Legend from '../Legend.js';
@@ -1593,7 +1594,9 @@ class Chart {
         chart._cursor = container.style.cursor as CursorValue;
 
         // Initialize the renderer
-        const Renderer = RendererRegistry.getRendererType(optionsChart.renderer);
+        const Renderer = optionsChart.renderer || !svg ?
+            RendererRegistry.getRendererType(optionsChart.renderer) :
+            SVGRenderer;
 
         /**
          * The renderer instance of the chart. Each chart instance has only one
@@ -3206,8 +3209,8 @@ class Chart {
                 }
             });
 
-            if (!chart.styledMode && 'style' in optionsChart) {
-                chart.renderer.setStyle(optionsChart.style as any);
+            if (!chart.styledMode && optionsChart.style) {
+                chart.renderer.setStyle(chart.options.chart.style || {});
             }
         }
 
