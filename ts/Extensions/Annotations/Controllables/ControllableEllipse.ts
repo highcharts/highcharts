@@ -220,26 +220,27 @@ class ControllableEllipse implements ControllableMixin.Type {
         const xAxis = this.chart.xAxis[(this.options.point as any).xAxis],
             yAxis = this.chart.yAxis[(this.options.point as any).yAxis],
             position = this.anchor(this.points[0]).absolutePosition;
+        let points;
         x = x || position.x;
         y = y || position.y;
         rx = rx || this.options.rx;
         ry = ry || this.options.ry;
         angle = angle || this.angle;
-        const pointX1 = x - rx * Math.cos((angle * Math.PI) / 180),
-            pointY1 = y - rx * Math.sin((angle * Math.PI) / 180),
-            pointX2 = x + ry * Math.sin((angle * Math.PI) / 180),
-            pointY2 = y - ry * Math.cos((angle * Math.PI) / 180),
-            points = [
-                {
-                    x: xAxis.toValue(pointX1),
-                    y: yAxis.toValue(pointY1)
-                },
-                {
-                    x: xAxis.toValue(pointX2),
-                    y: yAxis.toValue(pointY2)
-                }
-            ];
-        this.referencePoints = points;
+        if (xAxis && yAxis) {
+
+            const pointX1 = x - rx * Math.cos((angle * Math.PI) / 180),
+                pointY1 = y - rx * Math.sin((angle * Math.PI) / 180),
+                pointX2 = x + ry * Math.sin((angle * Math.PI) / 180),
+                pointY2 = y - ry * Math.cos((angle * Math.PI) / 180);
+            points = [{
+                x: xAxis.toValue(pointX1),
+                y: yAxis.toValue(pointY1)
+            }, {
+                x: xAxis.toValue(pointX2),
+                y: yAxis.toValue(pointY2)
+            }];
+            this.referencePoints = points;
+        }
     }
 
     /**
