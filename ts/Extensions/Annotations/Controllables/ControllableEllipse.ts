@@ -182,20 +182,6 @@ class ControllableEllipse implements ControllableMixin.Type {
     }
 
     /**
-     * Set both radius properties.
-     *
-     * @param {number} rx a radius in x direction to be set
-     * @param {number} ry a radius in y direction to be set
-     */
-    public setRadius(rx?: number, ry?: number): void {
-        if (rx) {
-            this.options.rx = rx;
-        }
-        if (ry) {
-            this.options.ry = ry;
-        }
-    }
-    /**
      * Set the angle of the ellipse.
      *
      * @param {number} angle the value of the angle on which the ellipse
@@ -208,13 +194,13 @@ class ControllableEllipse implements ControllableMixin.Type {
     /**
      * Save the reference point positions, to pin the ellipse to the axes.
      *
-     * @param x x position of the center of the ellipse
+     * @param {number} x x position of the center of the ellipse
      * (in pixels or in xAxis value if xAxis is defined)
-     * @param y y position of the center of the ellipse
+     * @param {number} y y position of the center of the ellipse
      * (in pixels or in yAxis value if yAxis is defined)
-     * @param rx x radius of the ellipse in pixels
-     * @param ry y radius of the ellipse in pixels
-     * @param angle angle in degrees
+     * @param {number} rx x radius of the ellipse in pixels
+     * @param {number} ry y radius of the ellipse in pixels
+     * @param {number} angle angle in degrees
      */
     public savePoints(x?: number, y?: number, rx?: number, ry?: number, angle?: number): void {
         const xAxis = this.chart.xAxis[(this.options.point as any).xAxis],
