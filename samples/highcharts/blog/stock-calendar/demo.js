@@ -1,19 +1,19 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
+Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', data => {
 
-    var DAY = 1000 * 60 * 60 * 24;
+    const DAY = 1000 * 60 * 60 * 24;
 
     // Correct the x values to show full day (-13.5h)
-    data = data.map(function (point) {
+    data = data.map(point => {
         point[0] = point[0] - DAY / 24 * 13.5;
 
         return point;
     });
 
-    var dateFormat = Highcharts.dateFormat,
+    const dateFormat = Highcharts.dateFormat,
         firstX = data[0][0],
         lastX = data[data.length - 1][0],
-        showDataInfo = function (chart, point, date) {
-            var plotLinesAndBands = chart.xAxis[0].plotLinesAndBands;
+        showDataInfo = (chart, point, date) => {
+            const plotLinesAndBands = chart.xAxis[0].plotLinesAndBands;
 
             if (plotLinesAndBands && plotLinesAndBands.length) {
                 plotLinesAndBands[0].destroy();
@@ -63,7 +63,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             point: {
                 events: {
                     mouseOver: function () {
-                        var point = this,
+                        const point = this,
                             chart = point.series.chart;
 
                         $('#date-picker').datepicker(
@@ -79,8 +79,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }
         }]
 
-    }, function (chart) {
-        var lastPoint =
+    }, chart => {
+        const lastPoint =
             chart.series[0].points[chart.series[0].points.length - 1];
 
         // Highlight the current (last) point
@@ -97,9 +97,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             // Set the datepicker's date format
             dateFormat: 'yy-mm-dd',
             onSelect: function (dateText) {
-                var points,
-                    point,
-                    clickedDateStr = dateText.split('-'),
+                const clickedDateStr = dateText.split('-'),
                     clickedDate = Date.UTC(
                         clickedDateStr[0],
                         clickedDateStr[1] - 1,
@@ -112,9 +110,10 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     clickedDate + DAY * 10
                 );
 
-                points = chart.series[0].points;
+                let points = chart.series[0].points,
+                    point;
 
-                for (var i in points) {
+                for (let i in points) {
                     if (dateFormat('%Y-%m-%d', points[i].x) === dateText) {
                         point = points[i];
                         break;
