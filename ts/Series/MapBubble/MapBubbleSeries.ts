@@ -53,7 +53,7 @@ class MapBubbleSeries extends BubbleSeries {
      *  Static Properties
      *
      * */
-    public static compose = BubbleLegendComposition.compose;
+    public static compose = BubbleSeries.compose;
 
     /**
      * A map bubble series is a bubble series laid out on top of a map
