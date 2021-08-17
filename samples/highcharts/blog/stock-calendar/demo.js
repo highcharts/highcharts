@@ -25,10 +25,14 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', data
                 lineWidth: 3
             });
 
-            openCell.innerText = (point.custom.open).toFixed(2) + '$';
-            highCell.innerText = (point.custom.high).toFixed(2) + '$';
-            lowCell.innerText = (point.custom.low).toFixed(2) + '$';
-            closeCell.innerText = (point.y).toFixed(2) + '$';
+            document.getElementById('openCell').innerText =
+                (point.custom.open).toFixed(2) + '$';
+            document.getElementById('highCell').innerText =
+                (point.custom.high).toFixed(2) + '$';
+            document.getElementById('lowCell').innerText =
+                (point.custom.low).toFixed(2) + '$';
+            document.getElementById('closeCell').innerText =
+                (point.y).toFixed(2) + '$';
         };
 
     Highcharts.stockChart('chart-container', {
@@ -86,45 +90,48 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', data
         // Highlight the current (last) point
         showDataInfo(chart, lastPoint, lastPoint.x);
 
-        $('#date-picker').datepicker({
-            beforeShowDay: $.datepicker.noWeekends,
-            // First available date
-            minDate: -Math.ceil(lastX - firstX) / DAY - 1,
-            maxDate: -1 // today
-        });
+        if ($.datepicker) {
 
-        $.datepicker.setDefaults({
-            // Set the datepicker's date format
-            dateFormat: 'yy-mm-dd',
-            onSelect: function (dateText) {
-                const clickedDateStr = dateText.split('-'),
-                    clickedDate = Date.UTC(
-                        clickedDateStr[0],
-                        clickedDateStr[1] - 1,
-                        clickedDateStr[2]
+            $('#date-picker').datepicker({
+                beforeShowDay: $.datepicker.noWeekends,
+                // First available date
+                minDate: -Math.ceil(lastX - firstX) / DAY - 1,
+                maxDate: -1 // today
+            });
+
+            $.datepicker.setDefaults({
+                // Set the datepicker's date format
+                dateFormat: 'yy-mm-dd',
+                onSelect: function (dateText) {
+                    const clickedDateStr = dateText.split('-'),
+                        clickedDate = Date.UTC(
+                            clickedDateStr[0],
+                            clickedDateStr[1] - 1,
+                            clickedDateStr[2]
+                        );
+
+                    // Show 20 points on the graph
+                    chart.xAxis[0].setExtremes(
+                        clickedDate - DAY * 10,
+                        clickedDate + DAY * 10
                     );
 
-                // Show 20 points on the graph
-                chart.xAxis[0].setExtremes(
-                    clickedDate - DAY * 10,
-                    clickedDate + DAY * 10
-                );
+                    const points = chart.series[0].points;
 
-                let points = chart.series[0].points,
-                    point;
+                    let point;
 
-                for (let i in points) {
-                    if (dateFormat('%Y-%m-%d', points[i].x) === dateText) {
-                        point = points[i];
-                        break;
+                    for (const i in points) {
+                        if (dateFormat('%Y-%m-%d', points[i].x) === dateText) {
+                            point = points[i];
+                            break;
+                        }
+                    }
+
+                    if (point) {
+                        showDataInfo(chart, point, clickedDate);
                     }
                 }
-
-                if (point) {
-                    showDataInfo(chart, point, clickedDate);
-                }
-            }
-        });
-
+            });
+        }
     });
 });
