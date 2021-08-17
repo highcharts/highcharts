@@ -53,17 +53,14 @@ class FibonacciTimeZones extends CrookedLine {
      * */
 
     /*
-     Method taken (and slightly changed) from the InfinityLine annotation.
+    Method taken (and slightly changed) from the InfinityLine annotation.
 
-     It uses x coordinate to create two mock points on the same x. Then,
-     is uses some logic from InfinityLine to find equation of line passing
-     through our two points and, using that equation, if finds and returns
-     the coordinates of where the line intersects the plot area edges.
+    It uses x coordinate to create two mock points on the same x. Then,
+    it uses some logic from InfinityLine to find equation of the line passing
+    through our two points and, using that equation, if finds and returns
+    the coordinates of where the line intersects the plot area edges.
 
-     This is being done for each fibonacci time zone line.
-    */
-
-    /*
+    This is being done for each fibonacci time zone line.
 
             this point here is found
      |---------*--------------------------------------------------------|
@@ -78,7 +75,7 @@ class FibonacciTimeZones extends CrookedLine {
      |---------*--------------------------------------------------------|
             and this point here is found
 
-     */
+    */
     private static edgePoint(
         startIndex: number,
         endIndex: number,
