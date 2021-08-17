@@ -16,7 +16,7 @@ $white: #fff;
 
 .highcharts-popup.highcharts-annotation-toolbar button {
   margin-top:0px;
-  color: blue;
+  color: $blue;
 }
 
 .highcharts-popup.highcharts-annotation-toolbar > span {
@@ -184,15 +184,16 @@ $white: #fff;
 .highcharts-popup button.highcharts-annotation-edit-button:hover,
 .highcharts-popup button.highcharts-annotation-remove-button:hover {
   background-color: $button-hover-color;
-  border-width: 0;
+  border: none;
   cursor: pointer;
 }
 
 .highcharts-popup button {
   float: right;
   border: none;
-  background: $blue;
+  background-color: $blue;
   color: $white;
+  padding: 10px;
   border-radius: 4px;
   margin-left:5px;
   margin-top:12px;
@@ -272,6 +273,7 @@ input.highcharts-input-search-indicators {
   display: block;
   float: unset;
   color: $blue;
+  padding: 5px 10px;
   background-color: #fff;
   border: 1px solid $blue;
 }
