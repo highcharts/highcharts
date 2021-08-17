@@ -154,24 +154,24 @@ if (window.$) {
 */
 
 // Hijack XHMLHttpRequest to run local JSON sources
-const open = XMLHttpRequest.prototype.open;
-const send = XMLHttpRequest.prototype.send;
+var open = XMLHttpRequest.prototype.open;
+var send = XMLHttpRequest.prototype.send;
 XMLHttpRequest.prototype.open = function (type, url) {
 	this.requestURL = url;
     return open.apply(this, arguments);
 }
 
 XMLHttpRequest.prototype.send = function () {
-    const localData = this.requestURL && window.JSONSources[this.requestURL];
+    var localData = this.requestURL && window.JSONSources[this.requestURL];
 	if (localData) {
         Object.defineProperty(this, 'readyState', {
-            get: () => 4
+            get: function () { return 4; }
         });
         Object.defineProperty(this, 'status', {
-            get: () => 200
+            get: function () { return 200; }
         });
         Object.defineProperty(this, 'responseText', {
-            get: () => JSON.stringify(localData)
+            get: function () { return JSON.stringify(localData); }
         });
 
         this.onreadystatechange();
