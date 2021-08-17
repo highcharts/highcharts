@@ -22,8 +22,9 @@ function getRandomData(geojson) {
     return geojson.features.map(() => Math.round(Math.random() * 100));
 }
 
+// Source: https://github.com/leakyMirror/map-of-europe
 Highcharts.getJSON(
-    'https://cdn.jsdelivr.net/gh/leakyMirror/map-of-europe@master/TopoJSON/europe.topojson',
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@06382af96d/samples/data/europe.topo.json',
     function (topology) {
 
         // Convert the topoJSON feature into geoJSON

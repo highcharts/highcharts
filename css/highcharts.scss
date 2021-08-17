@@ -689,6 +689,18 @@ input.highcharts-range-selector {
 .highcharts-candlestick-series .highcharts-point-up {
     fill: $background-color;
 }
+.highcharts-hollowcandlestick-series .highcharts-point-down {
+    fill: $negative-color;
+    stroke: $negative-color;
+}
+.highcharts-hollowcandlestick-series .highcharts-point-down-bearish-up {
+    fill: $positive-color;
+    stroke: $positive-color;
+}
+.highcharts-hollowcandlestick-series .highcharts-point-up {
+    fill: transparent;
+    stroke: $positive-color;
+}
 .highcharts-ohlc-series .highcharts-point-hover {
     stroke-width: 3px;
 }

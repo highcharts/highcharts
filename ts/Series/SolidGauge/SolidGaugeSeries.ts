@@ -22,7 +22,8 @@ import type SolidGaugePoint from './SolidGaugePoint';
 import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -376,10 +377,10 @@ class SolidGaugeSeries extends GaugeSeries {
 
 interface SolidGaugeSeries {
     pointClass: typeof SolidGaugePoint;
-    drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
 }
 extend(SolidGaugeSeries.prototype, {
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle
+    drawLegendSymbol: LegendSymbol.drawRectangle
 });
 
 

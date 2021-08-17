@@ -176,6 +176,7 @@ const multipleLinesMixin: Highcharts.MultipleLinesMixin = {
             pointArrayMap: Array<string> = (indicator.pointArrayMap as any),
             LinesNames = [] as Array<string>,
             value;
+        const modfidyValue = indicator.modifyValue;
 
         LinesNames = indicator.getTranslatedLinesNames();
 
@@ -187,6 +188,12 @@ const multipleLinesMixin: Highcharts.MultipleLinesMixin = {
                 i: number
             ): void {
                 value = (point as any)[propertyName];
+
+                // If the modifier, like for example compare exists,
+                // modified the original value by that method, #15867.
+                if (modfidyValue) {
+                    value = modfidyValue.call(indicator, value);
+                }
 
                 if (value !== null) {
                     (point as any)[LinesNames[i]] = indicator.yAxis.toPixels(

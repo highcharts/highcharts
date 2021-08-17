@@ -20,7 +20,6 @@ import type {
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Chart from '../../Core/Chart/Chart.js';
-import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
     extend
@@ -30,7 +29,10 @@ import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 import ChartUtilities from '../Utils/ChartUtilities.js';
-const unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+const {
+    getChartTitle,
+    unhideChartElementFromAT
+} = ChartUtilities;
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const removeElement = HTMLUtilities.removeElement,
@@ -326,7 +328,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                 a11yOptions.landmarkVerbosity === 'all' ? {
                     'aria-label': chart.langFormat(
                         'accessibility.exporting.exportRegionLabel',
-                        { chart: chart }
+                        { chart: chart, chartTitle: getChartTitle(chart) }
                     ),
                     'role': 'region'
                 } : {}
