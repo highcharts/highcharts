@@ -13,6 +13,7 @@
 .highcharts-label-annotation .highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/label.svg'); } 
 .highcharts-circle-annotation .highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/circle.svg'); } 
 .highcharts-rectangle-annotation .highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/rectangle.svg'); } 
+.highcharts-ellipse-annotation .highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/ellipse.svg'); } 
 
 .highcharts-active { background-color: #e6ebf5; }
 
