@@ -21,6 +21,7 @@ import type Scrollbar from '../Scrollbar';
 import type ScrollbarOptions from '../ScrollbarOptions';
 
 import U from '../Utilities.js';
+import Chart from '../Chart/Chart.js';
 const {
     addEvent,
     defined,
@@ -219,9 +220,16 @@ class ScrollbarAxis {
                         (scrollbarsOffsets as any)[0] += offset;
                     }
 
+                    let xPosition;
+                    if (scrollbar.userOptions.positioning === 'left') {
+                        xPosition = axis.opposite ? 0 : axisMargin;
+                    } else {
+                        xPosition = axis.left + axis.width + 2 + (scrollbarsOffsets as any)[0] -
+                            (axis.opposite ? 0 : axisMargin);
+                    }
+
                     scrollbar.position(
-                        axis.left + axis.width + 2 + (scrollbarsOffsets as any)[0] -
-                            (axis.opposite ? 0 : axisMargin),
+                        xPosition,
                         axis.top,
                         axis.width,
                         axis.height
@@ -271,7 +279,9 @@ class ScrollbarAxis {
         // Make space for a scrollbar:
         addEvent(AxisClass, 'afterGetOffset', function (): void {
             const axis = this as ScrollbarAxis,
-                index = axis.horiz ? 2 : 1,
+                positionedLeft = axis.scrollbar &&
+                    axis.scrollbar.options.positioning === 'left',
+                index = axis.horiz ? 2 : positionedLeft ? 3 : 1,
                 scrollbar = axis.scrollbar;
 
             if (scrollbar) {
