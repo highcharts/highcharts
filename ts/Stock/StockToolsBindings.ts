@@ -2076,16 +2076,16 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         }
     },
     /**
-     * The Fibonacci Timezones annotation bindings. Includes `start` and one
+     * The Fibonacci Time Zones annotation bindings. Includes `start` and one
      * event in `steps` array.
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-fibonacci-timezones", "start": function() {}, "steps": [function() {}], "annotationsOptions": {}}
+     * @default {"className": "highcharts-fibonacci-time-zones", "start": function() {}, "steps": [function() {}], "annotationsOptions": {}}
      */
-    fibonacciTimezones: {
+    fibonacciTimeZones: {
         /** @ignore-option */
-        className: 'highcharts-fibonacci-timezones',
+        className: 'highcharts-fibonacci-time-zones',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
@@ -2104,7 +2104,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
             const navigation = this.chart.options.navigation,
                 options = merge(
                     {
-                        type: 'fibonacciTimezones',
+                        langKey: 'Fibonacci Time Zones',
+                        type: 'fibonacciTimeZones',
                         typeOptions: {
                             xAxis: coordsX.axis.options.index,
                             yAxis: coordsY.axis.options.index,
@@ -2114,7 +2115,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).fibonacciTimezones.annotationsOptions
+                    (navigation.bindings as any).fibonacciTimeZones.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);

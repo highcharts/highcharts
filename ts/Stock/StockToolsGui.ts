@@ -256,7 +256,7 @@ setOptions({
 
                 // Advanced:
                 fibonacci: 'Fibonacci',
-                fibonacciTimezones: 'Fibonacci Timezones',
+                fibonacciTimeZones: 'Fibonacci Time Zones',
                 pitchfork: 'Pitchfork',
                 parallelChannel: 'Parallel channel'
             }
@@ -283,7 +283,7 @@ setOptions({
                 verticalLabel: 'Vertical label',
                 verticalArrow: 'Vertical arrow',
                 fibonacci: 'Fibonacci',
-                fibonacciTimezones: 'Fibonacci Timezones',
+                fibonacciTimeZones: 'Fibonacci Time Zones',
                 pitchfork: 'Pitchfork',
                 parallelChannel: 'Parallel channel',
                 infinityLine: 'Infinity line',
@@ -742,14 +742,14 @@ setOptions({
                      * @type {array}
                      * @default [
                      *   'fibonacci',
-                     *   'fibonacciTimezones',
+                     *   'fibonacciTimeZones',
                      *   'pitchfork',
                      *   'parallelChannel'
                      * ]
                      */
                     items: [
                         'fibonacci',
-                        'fibonacciTimezones',
+                        'fibonacciTimeZones',
                         'pitchfork',
                         'parallelChannel'
                     ],
@@ -769,13 +769,13 @@ setOptions({
                          */
                         symbol: 'fibonacci.svg'
                     },
-                    fibonacciTimezones: {
+                    fibonacciTimeZones: {
                         /**
                          * A predefined background symbol for the button.
                          *
                          * @type   {string}
                          */
-                        symbol: 'fibonacci-timezone.svg'
+                        symbol: 'fibonacci-time-zone.svg'
                     },
                     parallelChannel: {
                         /**
@@ -1699,7 +1699,7 @@ Toolbar.prototype.classMapping = {
     elliott5: PREFIX + 'elliott5',
     pitchfork: PREFIX + 'pitchfork',
     fibonacci: PREFIX + 'fibonacci',
-    fibonacciTimezones: PREFIX + 'fibonacci-timezones',
+    fibonacciTimeZones: PREFIX + 'fibonacci-time-zones',
     parallelChannel: PREFIX + 'parallel-channel',
     measureX: PREFIX + 'measure-x',
     measureY: PREFIX + 'measure-y',

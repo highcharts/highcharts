@@ -546,10 +546,16 @@ class Measure extends Annotation {
             return;
         }
 
-        this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
-            type: 'path',
-            points: this.shapePointsOptions()
-        }, this.options.typeOptions.background), false as any);
+        this.initShape(
+            extend<Partial<Highcharts.AnnotationsShapeOptions>>(
+                {
+                    type: 'path',
+                    points: this.shapePointsOptions()
+                },
+                this.options.typeOptions.background
+            ),
+            2
+        );
     }
 
     /**
@@ -624,13 +630,21 @@ class Measure extends Annotation {
             crosshairOptionsX = merge(defaultOptions, options.crosshairX);
             crosshairOptionsY = merge(defaultOptions, options.crosshairY);
 
-            this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
-                d: pathH
-            }, crosshairOptionsX), false as any);
+            this.initShape(
+                extend<Partial<Highcharts.AnnotationsShapeOptions>>(
+                    { d: pathH },
+                    crosshairOptionsX
+                ),
+                0
+            );
 
-            this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
-                d: pathV
-            }, crosshairOptionsY), false as any);
+            this.initShape(
+                extend<Partial<Highcharts.AnnotationsShapeOptions>>(
+                    { d: pathV },
+                    crosshairOptionsY
+                ),
+                1
+            );
 
         }
     }

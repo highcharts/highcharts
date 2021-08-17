@@ -24,11 +24,11 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
         },
 
         subtitle: {
-            text: 'With Fibonacci Timezones'
+            text: 'With Fibonacci Time Zones'
         },
 
         annotations: [{
-            type: 'fibonacciTimezones',
+            type: 'fibonacciTimeZones',
             typeOptions: {
                 points: [{
                     x: data[length - 60][0]

@@ -44,7 +44,7 @@ declare global {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-class FibonacciTimezones extends CrookedLine {
+class FibonacciTimeZones extends CrookedLine {
 
     /* *
      *
@@ -52,21 +52,47 @@ class FibonacciTimezones extends CrookedLine {
      *
      * */
 
+    /*
+     Method taken (and slightly changed) from the InfinityLine annotation.
+
+     It uses x coordinate to create two mock points on the same x. Then,
+     is uses some logic from InfinityLine to find equation of line passing
+     through our two points and, using that equation, if finds and returns
+     the coordinates of where the line intersects the plot area edges.
+
+     This is being done for each fibonacci time zone line.
+    */
+
+    /*
+
+            this point here is found
+     |---------*--------------------------------------------------------|
+     |                                                                  |
+     |                                                                  |
+     |                                                                  |
+     |                                                                  |
+     |         *   copy of the primary point                            |
+     |                                                                  |
+     |         *   primary point (e.g. the one given in options)        |
+     |                                                                  |
+     |---------*--------------------------------------------------------|
+            and this point here is found
+
+     */
     private static edgePoint(
         startIndex: number,
         endIndex: number,
         fibonacciIndex: number
     ): Function {
         return function (target: any): PositionObject {
-            let annotation = target.annotation,
-                points = annotation.points,
-                // Offset between the first and the second line
-                deltaX = points.length > 1 ? points[1].x - points[0].x : 0,
+            const annotation = target.annotation;
+            let points = annotation.points;
+            // Offset between the first and the second line
+            const deltaX = points.length > 1 ? points[1].x - points[0].x : 0,
                 // firstLine.x + fibb * offset
                 x = points[0].x + fibonacciIndex * deltaX;
 
-            // Horizontal and vertical lines have only one point,
-            // make a copy of it:
+            // We need 2 mock points with the same x coordinate, different y
             points = [
                 new MockPoint(
                     annotation.chart,
@@ -99,36 +125,27 @@ class FibonacciTimezones extends CrookedLine {
 
     /* *
      *
-     *  Constructors
-     *
-     * */
-
-    public constructor(chart: Highcharts.AnnotationChart, options: FibonacciTimezones.Options) {
-        super(chart, options);
-    }
-
-    /* *
-     *
      *  Functions
      *
      * */
 
     public addShapes(): void {
+        const numberOfLines = 11;
         let fibb = 1,
-            nextFibb = 1,
-            temp: number;
+            nextFibb = 1;
 
-        for (let i = 0; i < 11; i++) {
-            const points = [
-                // Correct the first line position (we cannot correct the fibb
-                // variable because it's needed for further iterations)
-                FibonacciTimezones.edgePoint(1, 0, !i ? 0 : fibb),
-                FibonacciTimezones.edgePoint(0, 1, !i ? 0 : fibb)
-            ];
+        for (let i = 0; i < numberOfLines; i++) {
+            // The fibb variable equals to 1 twice - correct it in the first
+            // iteration so the lines don't overlap
+            const correctedFibb = !i ? 0 : fibb,
+                points = [
+                    FibonacciTimeZones.edgePoint(1, 0, correctedFibb),
+                    FibonacciTimeZones.edgePoint(0, 1, correctedFibb)
+                ];
 
-            temp = nextFibb;
+            // Calculate fibbonacci
             nextFibb = fibb + nextFibb;
-            fibb = temp;
+            fibb = nextFibb - fibb;
 
             // Save the second line for the control point
             if (i === 1) {
@@ -143,14 +160,14 @@ class FibonacciTimezones extends CrookedLine {
                         points: points
                     }
                 ),
-                false as any
+                i // shape's index. Can be found in annotation.shapes[i].index
             );
         }
     }
 
     public addControlPoints(): void {
         const options = this.options,
-            typeOptions = options.typeOptions as FibonacciTimezones.TypeOptions,
+            typeOptions = options.typeOptions as FibonacciTimeZones.TypeOptions,
             controlPoint = new ControlPoint(
                 this.chart,
                 this,
@@ -173,10 +190,10 @@ class FibonacciTimezones extends CrookedLine {
  *
  * */
 
-interface FibonacciTimezones {
+interface FibonacciTimeZones {
     defaultOptions: CrookedLine['defaultOptions'];
 }
-FibonacciTimezones.prototype.defaultOptions = merge(
+FibonacciTimeZones.prototype.defaultOptions = merge(
     CrookedLine.prototype.defaultOptions,
     {
         typeOptions: {
@@ -203,9 +220,9 @@ FibonacciTimezones.prototype.defaultOptions = merge(
                 },
                 events: {
                     drag: function (
-                        this: FibonacciTimezones,
+                        this: FibonacciTimeZones,
                         e: Highcharts.AnnotationEventObject,
-                        target: FibonacciTimezones
+                        target: FibonacciTimeZones
                     ): void {
                         const isInsidePlot = target.chart.isInsidePlot(
                             e.chartX - target.chart.plotLeft,
@@ -235,7 +252,7 @@ FibonacciTimezones.prototype.defaultOptions = merge(
  *
  * */
 
-namespace FibonacciTimezones {
+namespace FibonacciTimeZones {
     export interface Options extends CrookedLine.Options{
         typeOptions: TypeOptions;
     }
@@ -251,10 +268,10 @@ namespace FibonacciTimezones {
  *
  * */
 
-Annotation.types.fibonacciTimezones = FibonacciTimezones;
+Annotation.types.fibonacciTimeZones = FibonacciTimeZones;
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
-        fibonacciTimezones: typeof FibonacciTimezones;
+        fibonacciTimeZones: typeof FibonacciTimeZones;
     }
 }
 
@@ -264,7 +281,7 @@ declare module './AnnotationType'{
  *
  * */
 
-export default FibonacciTimezones;
+export default FibonacciTimeZones;
 
 /* *
  *
@@ -273,20 +290,20 @@ export default FibonacciTimezones;
  * */
 
 /**
- * The Fibonacci Timezones annotation.
+ * The Fibonacci Time Zones annotation.
  *
- * @sample highcharts/annotations-advanced/fibonacci-timezones/
- *         Fibonacci Timezones
+ * @sample highcharts/annotations-advanced/fibonacci-time-zones/
+ *         Fibonacci Time Zones
  *
  * @extends   annotations.crookedLine
  * @product   highstock
- * @apioption annotations.fibonacciTimezones
+ * @apioption annotations.fibonacciTimeZones
  */
 
 /**
  * @exclude   y
  * @product   highstock
- * @apioption annotations.fibonacciTimezones.typeOptions.points
+ * @apioption annotations.fibonacciTimeZones.typeOptions.points
  */
 
 (''); // keeps doclets above in transpiled file
