@@ -141,7 +141,6 @@ class BubbleLegendItem {
     public symbols: Record<string, Array<SVGElement>>= void 0 as any;
     public options: BubbleLegendItem.Options = void 0 as any;
 
-
     /**
      * Create basic bubbleLegend properties similar to item in legend.
      *
