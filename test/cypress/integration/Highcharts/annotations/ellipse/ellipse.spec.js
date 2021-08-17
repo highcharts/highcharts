@@ -1,4 +1,4 @@
-describe('Stock tools', () => {
+describe('Stock tools Ellipse Annotation, #15008', () => {
     beforeEach(() => {
         cy.viewport(1000, 500);
     });
@@ -7,7 +7,7 @@ describe('Stock tools', () => {
         cy.visit('/stock/demo/stock-tools-gui');
     });
 
-    it('Should create Ellipse annotation', () => {
+    it('Should create Ellipse annotation via stock tools and test its params', () => {
         cy.get('.highcharts-label-annotation').children().eq(1).click();
         cy.get('.highcharts-ellipse-annotation').click();
 
@@ -26,35 +26,35 @@ describe('Stock tools', () => {
                 ellipse.options.rx,
                 70,
                 1,
-                'Calculated rx should be close to expected value'
+                'Calculated rx should be close to expected value.'
             );
             assert.strictEqual(
                 ellipse.options.ry,
                 20,
-                'Calculated ry should be equal to expected value'
+                'Calculated ry should be equal to expected value.'
             );
             assert.closeTo(
                 ellipse.angle,
                 -45,
                 1,
-                'Angle should be equal to given number'
+                'Angle should be equal to given number.'
             );
             assert.closeTo(
                 x,
                 300,
                 1,
-                'Center of the ellipse should be close to the place, where it was clicked'
+                'Center of the ellipse should be close to the place, where it was clicked.'
             );
             assert.closeTo(
                 y,
                 150,
                 1,
-                'Center of the ellipse should be close to the place, where it was clicked'
+                'Center of the ellipse should be close to the place, where it was clicked.'
             );
         });
     });
 
-    it('Should drag the ellipse Annotation', () => {
+    it('Should drag the ellipse annotation and update its params', () => {
         cy.get('.highcharts-annotation')
             .first()
             .click()
@@ -69,18 +69,18 @@ describe('Stock tools', () => {
                 x,
                 350,
                 5,
-                'Center of the ellipse should be close to the place, where it was clicked'
+                'Center of the ellipse should be close to the place, where it was clicked.'
             );
             assert.closeTo(
                 y,
                 100,
                 5,
-                'Center of the ellipse should be close to the place, where it was clicked'
+                'Center of the ellipse should be close to the place, where it was clicked.'
             );
         });
     });
 
-    it('Should change the rx, ry and angle when dragging control Points', () => {
+    it('Should change the rx, ry and angle when dragging control Points.', () => {
         cy.get('.highcharts-control-points')
             .children()
             .last()
@@ -103,19 +103,19 @@ describe('Stock tools', () => {
                 ellipse.options.rx,
                 100,
                 5,
-                'Calculated rx should be close to expected value'
+                'Calculated rx should be close to expected value.'
             );
             assert.closeTo(
                 ellipse.options.ry,
                 50,
                 5,
-                'Calculated ry should be equal to expected value'
+                'Calculated ry should be equal to expected value.'
             );
             assert.closeTo(
                 ellipse.angle,
                 0,
                 5,
-                'Angle should be equal to given number'
+                'Angle should be equal to given number.'
             );
         });
     });

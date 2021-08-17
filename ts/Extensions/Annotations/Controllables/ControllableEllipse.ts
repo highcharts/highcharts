@@ -13,7 +13,11 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
-const { merge, defined, correctFloat } = U;
+const {
+    merge,
+    defined,
+    correctFloat
+} = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -133,14 +137,25 @@ class ControllableEllipse implements ControllableMixin.Type {
      *
      * */
 
-    public render(parent: SVGElement): void {
-        const attrs = this.attrsFromOptions(this.options);
+    /**
+     *
+     * Render the element
+     * @param parent parent SVG element.
+     */
 
-        const graphic = this.annotation.chart.renderer.createElement('ellipse');
+    public render(parent: SVGElement): void {
+        const attrs = this.attrsFromOptions(this.options),
+            graphic = this.annotation.chart.renderer.createElement('ellipse');
         graphic.attr(attrs).add(parent);
         this.graphic = graphic;
         ControllableMixin.render.call(this);
     }
+
+    /**
+     *
+     * Redraw the element
+     * @param animation display an annimation
+     */
 
     public redraw(animation?: boolean): void {
         const position = this.anchor(this.points[0]).absolutePosition,
@@ -240,6 +255,7 @@ class ControllableEllipse implements ControllableMixin.Type {
             yAxisIndex = (this.options.point as any).yAxis,
             cx = position.x,
             cy = position.y;
+            // Handle the ellipse if it is not pinned to the axes.
         if (defined(yAxisIndex) && defined(xAxisIndex)) {
             const xAxis = this.chart.xAxis[xAxisIndex],
                 yAxis = this.chart.yAxis[yAxisIndex],

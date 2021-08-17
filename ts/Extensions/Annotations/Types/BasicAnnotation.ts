@@ -15,7 +15,7 @@ import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotations.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
-import RendererRegistry from '../../../Core/Renderer/RendererRegistry';
+
 const {
     merge
 } = U;
