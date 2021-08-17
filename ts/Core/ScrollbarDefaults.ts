@@ -119,6 +119,16 @@ const ScrollbarDefaults: ScrollbarOptions = {
     minWidth: 6,
 
     /**
+     * Defines the position of the scrollbar. By default, it is positioned
+     * on the right side of the chart.
+     * However, in the case of RTL languages could be set to `left`.
+     *
+     * @type      {string|undefined}
+     * @default   undefined
+     * @apioption scrollbar.positioning
+     */
+
+    /**
      * Whether to show or hide the scrollbar when the scrolled content is
      * zoomed out to it full extent.
      *
