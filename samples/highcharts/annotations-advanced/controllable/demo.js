@@ -205,7 +205,7 @@ var chart = Highcharts.chart('container', {
             type: 'ellipse',
             point: {
                 x: 10,
-                y: 0,
+                y: 6,
                 xAxis: 0,
                 yAxis: 0
             },

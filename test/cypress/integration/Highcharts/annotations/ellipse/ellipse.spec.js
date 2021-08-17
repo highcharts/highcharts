@@ -84,7 +84,7 @@ describe('Stock tools', () => {
         cy.get('.highcharts-control-points')
             .children()
             .last()
-            .dragTo('.highcharts-container', 450, 100);
+            .dragTo('.highcharts-container', 250, 100);
 
         cy.get('.highcharts-control-points')
             .children()
@@ -113,7 +113,7 @@ describe('Stock tools', () => {
             );
             assert.closeTo(
                 ellipse.angle,
-                180,
+                0,
                 5,
                 'Angle should be equal to given number'
             );
