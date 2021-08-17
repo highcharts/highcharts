@@ -126,6 +126,7 @@ handleDefaultOptionsFunctions(true);
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 
+/*
 // Override Highcharts and jQuery ajax functions to load from local
 function ajax(proceed, attr) {
     var success = attr.success;
@@ -149,6 +150,34 @@ if (window.$) {
     $.getJSON = function (url, callback) { // eslint-disable-line no-undef
         callback(window.JSONSources[url]);
     };
+}
+*/
+
+// Hijack XHMLHttpRequest to run local JSON sources
+const open = XMLHttpRequest.prototype.open;
+const send = XMLHttpRequest.prototype.send;
+XMLHttpRequest.prototype.open = function (type, url) {
+	this.requestURL = url;
+    return open.apply(this, arguments);
+}
+
+XMLHttpRequest.prototype.send = function () {
+    const localData = this.requestURL && window.JSONSources[this.requestURL];
+	if (localData) {
+        Object.defineProperty(this, 'readyState', {
+            get: () => 4
+        });
+        Object.defineProperty(this, 'status', {
+            get: () => 200
+        });
+        Object.defineProperty(this, 'responseText', {
+            get: () => JSON.stringify(localData)
+        });
+
+        this.onreadystatechange();
+    } else {
+        return send.apply(this, arguments);
+    }
 }
 
 function resetDefaultOptions(testName) {
