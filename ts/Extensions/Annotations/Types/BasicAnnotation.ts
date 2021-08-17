@@ -284,12 +284,10 @@ class BasicAnnotation extends Annotation {
 
         if (options.shapes) {
             delete options.labelOptions;
-            // TODO ZROBIĆ to lepiej
-            if (options.shapes[0].type === 'circle') {
-                this.basicType = 'circle';
-            } else if (options.shapes[0].type === 'ellipse') {
-                this.basicType = 'ellipse';
+            if (options.shapes[0].type) {
+                this.basicType = options.shapes[0].type;
             } else {
+                // Defalut shape would be rectangle.
                 this.basicType = 'rectangle';
             }
         } else {
