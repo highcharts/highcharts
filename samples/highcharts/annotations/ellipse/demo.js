@@ -4,7 +4,7 @@ Highcharts.chart('container', {
         events: {
             load: function () {
                 this.annotations.forEach(function (annotation) {
-                    // showControlPoints/hide
+                    // Show control points.
                     annotation.setControlPointsVisibility(true);
                 });
             }
