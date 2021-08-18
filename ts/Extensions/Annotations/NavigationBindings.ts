@@ -1295,18 +1295,16 @@ setOptions({
                             {
                                 langKey: 'circle',
                                 type: 'basicAnnotation',
-                                shapes: [
-                                    {
-                                        type: 'circle',
-                                        point: {
-                                            x: coordsX.value,
-                                            y: coordsY.value,
-                                            xAxis: coordsX.axis.options.index,
-                                            yAxis: coordsY.axis.options.index
-                                        },
-                                        r: 5
-                                    }
-                                ]
+                                shapes: [{
+                                    type: 'circle',
+                                    point: {
+                                        x: coordsX.value,
+                                        y: coordsY.value,
+                                        xAxis: coordsX.axis.options.index,
+                                        yAxis: coordsY.axis.options.index
+                                    },
+                                    r: 5
+                                }]
                             },
                             navigation.annotationsOptions,
                             (navigation.bindings as any).circleAnnotation.annotationsOptions

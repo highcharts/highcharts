@@ -227,12 +227,13 @@ class ControllableEllipse implements ControllableMixin.Type {
         rx = rx || this.options.rx;
         ry = ry || this.options.ry;
         angle = angle || this.angle;
-        if (xAxis && yAxis) {
 
+        if (xAxis && yAxis) {
             const pointX1 = x - rx * Math.cos((angle * Math.PI) / 180),
                 pointY1 = y - rx * Math.sin((angle * Math.PI) / 180),
                 pointX2 = x + ry * Math.sin((angle * Math.PI) / 180),
                 pointY2 = y - ry * Math.cos((angle * Math.PI) / 180);
+
             points = [{
                 x: xAxis.toValue(pointX1),
                 y: yAxis.toValue(pointY1)
