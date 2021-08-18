@@ -77,7 +77,7 @@ Highcharts.data({
             });
         });
 
-        drawChart();
+        drawChart(data);
     },
 
     error: function (html, xhr) {
