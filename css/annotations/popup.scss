@@ -274,11 +274,11 @@ input.highcharts-input-search-indicators {
   float: unset;
   color: $blue;
   padding: 5px 10px;
-  background-color: #fff;
+  background-color: $white;
   border: 1px solid $blue;
 }
 
 .highcharts-popup button.clear-filter-button:hover {
-  color: #fff;
+  color: $white;
   background-color: $blue;
 }
