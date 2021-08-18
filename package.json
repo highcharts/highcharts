@@ -98,7 +98,6 @@
     "pngjs": "^6.0.0",
     "pretty": "^2.0.0",
     "qunit": "^2.14.1",
-    "replace-string": "^3.1.0",
     "request": "^2.88.2",
     "rimraf": "^3.0.2",
     "semver": "^7.3.5",
