@@ -51,7 +51,8 @@ function getLinearRegressionZones(xData, yData) {
     };
 }
 
-var multipleLinesMixin = Highcharts['_modules']['Mixins/MultipleLines.js'];
+// eslint-disable-next-line no-underscore-dangle
+var multipleLinesMixin = Highcharts._modules['Mixins/MultipleLines.js'];
 
 Highcharts.seriesType(
     'linearregressionzones',

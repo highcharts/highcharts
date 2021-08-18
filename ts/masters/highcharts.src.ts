@@ -28,7 +28,7 @@ import Tooltip from '../Core/Tooltip.js';
 import Point from '../Core/Series/Point.js';
 import Pointer from '../Core/Pointer.js';
 import MSPointer from '../Core/MSPointer.js';
-import Legend from '../Core/Legend.js';
+import Legend from '../Core/Legend/Legend.js';
 import Chart from '../Core/Chart/Chart.js';
 import '../Extensions/ScrollablePlotArea.js';
 import '../Extensions/Stacking.js';
