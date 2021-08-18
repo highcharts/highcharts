@@ -232,14 +232,13 @@ var chart = Highcharts.chart('container', {
                 },
                 events: {
                     drag: function (e, target) {
-                        var dx = e.x -
-                                (target.points[0].plotX +
-                                    target.chart.plotLeft),
-                            dy = e.y -
-                                (target.points[0].plotY +
-                                    target.chart.plotTop),
-                            newR = Math.max(Math.sqrt(dx * dx +
-                                dy * dy), 5);
+                        var pointPlotX = target.points[0].plotX,
+                            pointPlotY = target.points[0].plotY,
+                            plotLeft = target.chart.plotLeft,
+                            plotTop = target.chart.plotTop,
+                            dx = e.x - (pointPlotX + plotLeft),
+                            dy = e.y - (pointPlotY + plotTop),
+                            newR = Math.max(Math.sqrt(dx * dx + dy * dy), 5);
 
                         target.setYRadius(newR);
                         target.savePoints();
@@ -267,16 +266,15 @@ var chart = Highcharts.chart('container', {
                 },
                 events: {
                     drag: function (e, target) {
-                        var dx = e.x -
-                                (target.points[0].plotX +
-                                    target.chart.plotLeft),
-                            dy = e.y -
-                                (target.points[0].plotY +
-                                    target.chart.plotTop),
-                            newR =
-                            Math.max(Math.sqrt(dx * dx + dy * dy), 5),
-                            newAngle =
-                            (-Math.atan(dx / dy) * 180) / Math.PI - 90;
+                        var pointPlotX = target.points[0].plotX,
+                            pointPlotY = target.points[0].plotY,
+                            plotLeft = target.chart.plotLeft,
+                            plotTop = target.chart.plotTop,
+                            dx = e.x - (pointPlotX + plotLeft),
+                            dy = e.y - (pointPlotY + plotTop),
+                            newR = Math.max(Math.sqrt(dx * dx + dy * dy), 5),
+                            newAngle = (-Math.atan(dx / dy) * 180) /
+                                Math.PI - 90;
 
                         if (dy < 0) {
                             newAngle += 180;
