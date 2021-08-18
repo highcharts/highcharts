@@ -39,11 +39,11 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import F from '../FormatUtilities.js';
 const { format } = F;
 import H from '../Globals.js';
-import D from '../DefaultOptions.js';
-const { defaultOptions } = D;
 import U from '../Utilities.js';
 const {
     addEvent,
