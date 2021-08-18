@@ -777,7 +777,7 @@ setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'fibonacci-time-zone.svg'
+                        symbol: 'fibonacci-timezone.svg'
                     },
                     parallelChannel: {
                         /**
