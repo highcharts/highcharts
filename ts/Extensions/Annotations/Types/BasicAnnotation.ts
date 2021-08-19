@@ -267,7 +267,7 @@ class BasicAnnotation extends Annotation {
                         ),
                         5
                     );
-                    let newAngle = -Math.atan(dx / dy) * 180 / Math.PI - 90;
+                    let newAngle = -Math.atan(dx / dy) * 180 / Math.PI + 90;
 
                     if (dy < 0) {
                         newAngle += 180;

@@ -94,11 +94,7 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
         cy.get('.highcharts-popup').should('be.visible');
 
         cy.chart().then(chart => {
-            const ellipse = chart.annotations[0].shapes[0],
-                xAxis = chart.xAxis[ellipse.points[0].options.xAxis],
-                yAxis = chart.yAxis[ellipse.points[0].options.yAxis],
-                x = xAxis.toPixels(ellipse.points[0].x),
-                y = yAxis.toPixels(ellipse.points[0].y);
+            const ellipse = chart.annotations[0].shapes[0];
             assert.closeTo(
                 ellipse.options.rx,
                 100,
