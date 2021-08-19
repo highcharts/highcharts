@@ -1,3 +1,72 @@
+function drawChart(data) {
+    return Highcharts.mapChart('container', {
+        chart: {
+            borderWidth: 1
+        },
+
+        colors: ['rgba(19,64,117,0.1)', 'rgba(19,64,117,0.5)', 'rgba(19,64,117,1)'],
+
+        title: {
+            text: 'Data classes with legend label formatter'
+        },
+
+        mapNavigation: {
+            enabled: true
+        },
+
+        legend: {
+            title: {
+                text: 'Population density'
+            },
+            align: 'left',
+            verticalAlign: 'bottom',
+            floating: true,
+            labelFormatter: function () {
+                if (this.from === undefined) {
+                    return 'Below ' + this.to;
+                }
+
+                if (this.to === undefined) {
+                    return 'Above ' + this.from;
+                }
+
+                return this.from + ' to ' + this.to;
+            },
+            layout: 'vertical',
+            valueDecimals: 0,
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            symbolRadius: 0,
+            symbolHeight: 14
+        },
+
+        colorAxis: {
+            dataClasses: [{
+                to: 20
+            }, {
+                from: 20,
+                to: 200
+            }, {
+                from: 200
+            }]
+        },
+
+        series: [{
+            data: data,
+            mapData: Highcharts.maps['custom/world'],
+            joinBy: ['iso-a2', 'code'],
+            name: 'Population density',
+            states: {
+                hover: {
+                    color: '#a4edba'
+                }
+            },
+            tooltip: {
+                valueSuffix: '/km²'
+            }
+        }]
+    });
+}
+
 // Load the data from a Google Spreadsheet
 // https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc&output=html
 Highcharts.data({
@@ -15,72 +84,12 @@ Highcharts.data({
             });
         });
 
-        // Initiate the chart
-        Highcharts.mapChart('container', {
-            chart: {
-                borderWidth: 1
-            },
+        drawChart(data);
+    },
 
-            colors: ['rgba(19,64,117,0.1)', 'rgba(19,64,117,0.5)', 'rgba(19,64,117,1)'],
-
-            title: {
-                text: 'Data classes with legend label formatter'
-            },
-
-            mapNavigation: {
-                enabled: true
-            },
-
-            legend: {
-                title: {
-                    text: 'Population density'
-                },
-                align: 'left',
-                verticalAlign: 'bottom',
-                floating: true,
-                labelFormatter: function () {
-                    if (this.from === undefined) {
-                        return 'Below ' + this.to;
-                    }
-
-                    if (this.to === undefined) {
-                        return 'Above ' + this.from;
-                    }
-
-                    return this.from + ' to ' + this.to;
-                },
-                layout: 'vertical',
-                valueDecimals: 0,
-                backgroundColor: 'rgba(255,255,255,0.9)',
-                symbolRadius: 0,
-                symbolHeight: 14
-            },
-
-            colorAxis: {
-                dataClasses: [{
-                    to: 20
-                }, {
-                    from: 20,
-                    to: 200
-                }, {
-                    from: 200
-                }]
-            },
-
-            series: [{
-                data: data,
-                mapData: Highcharts.maps['custom/world'],
-                joinBy: ['iso-a2', 'code'],
-                name: 'Population density',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                },
-                tooltip: {
-                    valueSuffix: '/km²'
-                }
-            }]
-        });
+    error: function (html, xhr) {
+        const chart = drawChart();
+        chart.showLoading('Error loading sample data: ' + xhr.status);
     }
+
 });

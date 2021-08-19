@@ -19,6 +19,7 @@
 import type OHLCPointOptions from './OHLCPointOptions';
 import type OHLCSeries from './OHLCSeries';
 import type { SeriesZonesOptions } from './../../Core/Series/SeriesOptions';
+import Point from './../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 const {
@@ -124,6 +125,18 @@ class OHLCPoint extends ColumnSeries.prototype.pointClass {
         this.resolveUpColor();
 
         return zone;
+    }
+
+    /**
+     * Extend the parent method by resolving up/down colors (#15849)
+     * @private
+     **/
+    public applyOptions(): Point {
+        super.applyOptions.apply(this, arguments);
+        if (this.resolveColor) {
+            this.resolveColor();
+        }
+        return this;
     }
 
     /* eslint-enable valid-jsdoc */

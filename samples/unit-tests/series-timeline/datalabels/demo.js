@@ -26,7 +26,10 @@ QUnit.test('Timeline: General tests.', function (assert) {
                     },
                     {
                         name: 'Date 3',
-                        label: 'Some label'
+                        label: 'Some label',
+                        dataLabels: {
+                            enabled: false
+                        }
                     }
                 ]
             }
@@ -41,6 +44,30 @@ QUnit.test('Timeline: General tests.', function (assert) {
         secondDL.absoluteBox.y - firstDL.absoluteBox.y,
         50,
         "Data label's position is set from point configuration level."
+    );
+
+    assert.notOk(
+        series.points[2].dataLabel,
+        '#16084: dataLabel should be disabled');
+
+    series.points[2].update({
+        dataLabels: {
+            enabled: true
+        }
+    });
+    assert.ok(
+        series.points[2].dataLabel,
+        '#16084: Enabling dataLabel through point.update should work'
+    );
+
+    series.points[2].update({
+        dataLabels: {
+            enabled: false
+        }
+    });
+    assert.notOk(
+        series.points[2].dataLabel,
+        '#16084: Disabling dataLabel through point.update should work'
     );
 
     var oldWidth = firstDL.width;
