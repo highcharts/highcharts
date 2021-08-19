@@ -120,13 +120,18 @@ const ScrollbarDefaults: ScrollbarOptions = {
 
     /**
      * Defines the position of the scrollbar. By default, it is positioned
-     * on the right side of the chart.
-     * However, in the case of RTL languages could be set to `left`.
+     * on the opposite of the main axis (right side of the chart).
+     * However, in the case of RTL languages could be set to `false`
+     * which positions the scrollbar on the left.
      *
-     * @type      {string|undefined}
-     * @default   undefined
-     * @apioption scrollbar.positioning
+     * @sample stock/yaxis/scrollbar-opposite/
+     *         A scrollbar not on the opposite side
+     *
+     * @type      {boolean}
+     * @default   true
+     * @apioption scrollbar.opposite
      */
+    opposite: true,
 
     /**
      * Whether to show or hide the scrollbar when the scrolled content is
