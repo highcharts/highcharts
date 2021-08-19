@@ -19,10 +19,8 @@
  * */
 
 import type ChartSonify from './ChartSonify';
-import type {
-    EarconConfiguration,
-    SonificationInstrumentOptions
-} from './SonificationOptions';
+import type Earcon from './Earcon';
+import type { SonificationInstrumentOptions } from './SonificationOptions';
 import type RangeSelector from '../../Extensions/RangeSelector';
 import type Series from '../../Core/Series/Series';
 import type {
@@ -82,7 +80,7 @@ namespace SeriesSonify {
     export interface SonifySeriesOptions extends SeriesOptions {
         dataExtremes?: Record<string, RangeSelector.RangeObject>;
         duration: number;
-        earcons?: Array<EarconConfiguration>;
+        earcons?: Array<Earcon.Configuration>;
         events?: SeriesSonificationEventsOptions;
         instruments: Array<Highcharts.PointInstrumentObject>;
         masterVolume?: number;
@@ -102,7 +100,7 @@ namespace SeriesSonify {
     }
 
     export interface SeriesSonificationOptions {
-        earcons?: Array<EarconConfiguration>;
+        earcons?: Array<Earcon.Configuration>;
         enabled?: boolean;
         events?: SeriesSonificationEventsOptions;
         duration?: number;
@@ -293,7 +291,7 @@ namespace SeriesSonify {
                     }),
                     // Earcons
                     earcons.map(function (
-                        earcon: Highcharts.Earcon
+                        earcon: Earcon
                     ): Highcharts.TimelineEvent {
                         return new Sonification.TimelineEvent({
                             eventObject: earcon,
@@ -428,13 +426,13 @@ namespace SeriesSonify {
      */
     function getPointEarcons(
         point: Point,
-        earconDefinitions: Array<EarconConfiguration>
-    ): Array<Highcharts.Earcon> {
+        earconDefinitions: Array<Earcon.Configuration>
+    ): Array<Earcon> {
         return earconDefinitions.reduce(
             function (
-                earcons: Array<Highcharts.Earcon>,
-                earconDefinition: EarconConfiguration
-            ): Array<Highcharts.Earcon> {
+                earcons: Array<Earcon>,
+                earconDefinition: Earcon.Configuration
+            ): Array<Earcon> {
                 const earcon = earconDefinition.earcon;
                 let cond;
 
