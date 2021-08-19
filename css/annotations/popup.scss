@@ -191,7 +191,7 @@ $white: #fff;
 .highcharts-popup button {
   float: right;
   border: none;
-  background-color: $blue;
+  background-color: $dark-blue;
   color: $white;
   padding: 10px;
   border-radius: 4px;
@@ -200,8 +200,8 @@ $white: #fff;
 }
 .highcharts-popup button:hover {
   background-color: $white;
-  color: $blue;
-  border: 1px solid $blue;
+  color: $dark-blue;
+  border: 1px solid $dark-blue;
 }
 
 .highcharts-popup button:first-child {
@@ -217,7 +217,7 @@ $white: #fff;
 .highcharts-popup button.highcharts-annotation-remove-button {
   width: 20px;
   background-color: $white;
-  color: $blue;
+  color: $dark-blue;
   height: 40px;
   padding: 20px;
 }
@@ -272,13 +272,13 @@ input.highcharts-input-search-indicators {
   margin: 0 auto;
   display: block;
   float: unset;
-  color: $blue;
+  color: $dark-blue;
   padding: 5px 10px;
   background-color: $white;
-  border: 1px solid $blue;
+  border: 1px solid $dark-blue;
 }
 
 .highcharts-popup button.clear-filter-button:hover {
   color: $white;
-  background-color: $blue;
+  background-color: $dark-blue;
 }
