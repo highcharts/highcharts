@@ -20,12 +20,14 @@
  *
  * */
 
+import type { PointShortOptions, PointOptions } from '../../Core/Series/PointOptions';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 import type TimelinePointOptions from './TimelinePointOptions';
 import type TimelineSeries from './TimelineSeries';
 
+import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -234,6 +236,15 @@ class TimelinePoint extends Series.prototype.pointClass {
         if (redraw) {
             series.chart.redraw();
         }
+    }
+
+    public applyOptions(
+        options: (PointOptions|PointShortOptions),
+        x?: number
+    ): Point {
+        options = Point.prototype.optionsToObject.call(this, options);
+        this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
+        return super.applyOptions(options, x);
     }
 
     /* eslint-enable valid-jsdoc */

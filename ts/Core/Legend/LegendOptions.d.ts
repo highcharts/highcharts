@@ -10,21 +10,21 @@
 
 /* *
  *
- *  Import
+ *  Imports
  *
  * */
 
 import type {
     AlignValue,
     VerticalAlignValue
-} from './Renderer/AlignObject';
-import type AnimationOptions from './Animation/AnimationOptions';
-import type ColorType from './Color/ColorType';
-import type CSSObject from './Renderer/CSSObject';
-import type F from './FormatUtilities';
-import type Point from './Series/Point';
-import type Series from './Series/Series';
-import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
+} from '../Renderer/AlignObject';
+import type AnimationOptions from '../Animation/AnimationOptions';
+import type ColorType from '../Color/ColorType';
+import type CSSObject from '../Renderer/CSSObject';
+import type F from '../FormatUtilities';
+import type Point from '../Series/Point';
+import type Series from '../Series/Series';
+import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 
 /* *
  *
@@ -32,7 +32,7 @@ import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
  *
  * */
 
-declare module './Options' {
+declare module '../Options' {
     interface Options {
         legend?: LegendOptions;
     }

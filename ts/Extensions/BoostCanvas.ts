@@ -388,7 +388,7 @@ const initCanvasBoost = function (): void {
                 ),
                 fillColor = (
                     series.fillOpacity ?
-                        new Color(series.color).setOpacity(
+                        Color.parse(series.color).setOpacity(
                             pick((options as any).fillOpacity, 0.75)
                         ).get() :
                         series.color
