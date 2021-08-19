@@ -183,7 +183,7 @@ class MockPoint {
             chart = series.chart,
             x: number = point.plotX as any,
             y: number = point.plotY as any,
-            plotBox: (Highcharts.SeriesPlotBoxObject|undefined);
+            plotBox: (Series.PlotBoxObject|undefined);
 
         if (chart.inverted) {
             if (point.mock) {

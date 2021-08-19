@@ -20,6 +20,7 @@ import type { AnnotationOptions } from './AnnotationOptions';
 import type AST from '../../Core/Renderer/HTML/AST';
 import type Chart from '../../Core/Chart/Chart';
 import type NavigationBindings from './NavigationBindings';
+import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Options from '../../Core/Options';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
@@ -413,7 +414,7 @@ namespace AnnotationChart {
     export interface GlobalOptions extends Options {
         annotations: Array<AnnotationOptions>;
         defs: Record<string, AST.Node>;
-        navigation: Highcharts.NavigationOptions;
+        navigation: NavigationOptions;
     }
 }
 

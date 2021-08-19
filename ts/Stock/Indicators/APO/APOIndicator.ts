@@ -103,8 +103,8 @@ class APOIndicator extends EMAIndicator {
         series: TLinkedSeries,
         params: APOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        let periods: Array<number> = (params.periods as any),
-            index: number = (params.index as any),
+        let periods: Array<number> = (params.periods as number[]),
+            index: number = (params.index as number),
             // 0- date, 1- Absolute price oscillator
             APO: Array<Array<number>> = [],
             xData: Array<number> = [],

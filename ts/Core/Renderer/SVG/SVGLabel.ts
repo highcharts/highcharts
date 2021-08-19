@@ -73,7 +73,7 @@ class SVGLabel extends SVGElement {
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
@@ -110,7 +110,9 @@ class SVGLabel extends SVGElement {
             this.addClass('highcharts-' + className);
         }
 
-        this.text = renderer.text('', 0, 0, useHTML).attr({ zIndex: 1 });
+        // Create the text element. An undefined text content prevents redundant
+        // box calculation (#16121)
+        this.text = renderer.text(void 0, 0, 0, useHTML).attr({ zIndex: 1 });
 
         // Validate the shape argument
         let hasBGImage;
@@ -291,50 +293,6 @@ class SVGLabel extends SVGElement {
         this.heightSetting = value;
     }
 
-    // Event handling. In case of useHTML, we need to make sure that events
-    // are captured on the span as well, and that mouseenter/mouseleave
-    // between the SVG group and the HTML span are not treated as real
-    // enter/leave events. #13310.
-    public on(
-        eventType: string,
-        handler: Function
-    ): this {
-        const label = this;
-        const text = label.text;
-        const span: SVGElement|undefined =
-            text && text.element.tagName === 'SPAN' ? text : void 0;
-
-        let selectiveHandler: Function|undefined;
-
-        if (span) {
-            selectiveHandler = function (e: MouseEvent): void {
-                if (
-                    (
-                        eventType === 'mouseenter' ||
-                        eventType === 'mouseleave'
-                    ) &&
-                    e.relatedTarget instanceof Element &&
-                    (
-                        // #14110
-                        label.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY ||
-                        span.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY
-                    )
-                ) {
-                    return;
-                }
-                handler.call(label.element, e);
-            };
-            span.on(eventType, selectiveHandler);
-        }
-        SVGElement.prototype.on.call(
-            label,
-            eventType,
-            selectiveHandler || handler
-        );
-
-        return label;
-    }
-
     /*
      * After the text element is added, get the desired size of the border
      * box and add it before the text in the DOM.
@@ -468,18 +426,6 @@ class SVGLabel extends SVGElement {
             this.baselineOffset += (this.heightSetting - metrics.h) / 2;
         }
 
-        // Preliminary workaround for passing visual tests of default tooltip
-        // @todo: Remove last minute before next release
-        if (
-            this.hasClass('highcharts-tooltip') &&
-            this.text.firstLineMetrics &&
-            this.text.firstLineMetrics.b === 10 &&
-            style &&
-            style.fontSize === '12px'
-        ) {
-            this.baselineOffset += 2;
-        }
-
         if (this.needsBox) {
 
             // Create the border box if it is not already present
@@ -581,5 +527,11 @@ class SVGLabel extends SVGElement {
         this.attr('translateY', this.ySetting);
     }
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SVGLabel;

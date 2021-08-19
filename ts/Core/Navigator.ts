@@ -2599,6 +2599,8 @@ class Navigator {
                 // updated dataset, we must adjust.
                 stickToMin = min <= xDataMin;
             }
+        } else {
+            stickToMin = false; // #15864
         }
 
         return stickToMin;

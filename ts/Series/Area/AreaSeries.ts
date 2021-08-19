@@ -22,9 +22,10 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type StackingAxis from '../../Core/Axis/StackingAxis';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -323,7 +324,7 @@ class AreaSeries extends LineSeries {
             graphPath: SVGPath,
             options = this.options,
             stacking = options.stacking,
-            yAxis = this.yAxis as StackingAxis,
+            yAxis = this.yAxis as StackingAxis.Composition,
             topPath: SVGPath,
             bottomPath,
             bottomPoints: Array<AreaPoint> = [],
@@ -475,7 +476,7 @@ class AreaSeries extends LineSeries {
             segment: Array<AreaPoint> = [],
             keys: Array<string> = [],
             xAxis = this.xAxis,
-            yAxis: StackingAxis = this.yAxis as any,
+            yAxis: StackingAxis.Composition = this.yAxis as any,
             stack = yAxis.stacking.stacks[this.stackKey as any],
             pointMap: Record<string, AreaPoint> = {},
             yAxisSeries = yAxis.series,
@@ -627,14 +628,12 @@ class AreaSeries extends LineSeries {
  * */
 
 interface AreaSeries {
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     pointClass: typeof AreaPoint;
 }
 extend(AreaSeries.prototype, {
-
     singleStacks: false,
-
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle
-
+    drawLegendSymbol: LegendSymbol.drawRectangle
 });
 
 /* *

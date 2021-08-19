@@ -14,8 +14,10 @@ import type AnnotationChart from './AnnotationChart';
 import type AnnotationOptions from './AnnotationOptions';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type MockPointOptions from './MockPointOptions';
+import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Pointer from '../../Core/Pointer/Pointer';
 import type PointerEvent from '../../Core/Pointer/PointerEvent';
+
 import Annotation from './Annotation.js';
 import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
@@ -70,6 +72,16 @@ declare module '../../Core/Pointer/PointerEvent' {
     }
 }
 
+declare module '../Exporting/NavigationOptions' {
+    interface NavigationOptions {
+        annotationsOptions?: DeepPartial<AnnotationOptions>;
+        bindings?: Record<string, Highcharts.NavigationBindingsOptionsObject>;
+        bindingsClassName?: string;
+        events?: Highcharts.NavigationEventsOptions;
+        iconsURL?: string;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -116,13 +128,6 @@ declare global {
             deselectButton?: Function;
             selectButton?: Function;
             showPopup?: Function;
-        }
-        interface NavigationOptions {
-            annotationsOptions?: DeepPartial<AnnotationOptions>;
-            bindings?: Record<string, NavigationBindingsOptionsObject>;
-            bindingsClassName?: string;
-            events?: NavigationEventsOptions;
-            iconsURL?: string;
         }
     }
 }
@@ -228,17 +233,16 @@ const bindingsUtils = {
      * Annotation to be updated
      */
     updateRectSize: function (event: PointerEvent, annotation: Annotation): void {
-        let chart = annotation.chart,
+        const chart = annotation.chart,
             options = annotation.options.typeOptions,
-            coords = chart.pointer.getCoordinates(event),
-            coordsX = chart.navigationBindings.utils.getAssignedAxis(coords.xAxis),
-            coordsY = chart.navigationBindings.utils.getAssignedAxis(coords.yAxis),
-            width,
-            height;
+            xAxis = isNumber(options.xAxis) && chart.xAxis[options.xAxis],
+            yAxis = isNumber(options.yAxis) && chart.yAxis[options.yAxis];
 
-        if (coordsX && coordsY) {
-            width = coordsX.value - options.point.x;
-            height = options.point.y - coordsY.value;
+        if (xAxis && yAxis) {
+            const x = xAxis.toValue(event[xAxis.horiz ? 'chartX' : 'chartY']),
+                y = yAxis.toValue(event[yAxis.horiz ? 'chartX' : 'chartY']),
+                width = x - options.point.x,
+                height = options.point.y - y;
 
             annotation.update({
                 typeOptions: {
@@ -345,7 +349,7 @@ class NavigationBindings {
 
     public constructor(
         chart: AnnotationChart,
-        options: Highcharts.NavigationOptions
+        options: NavigationOptions
     ) {
         this.chart = chart;
         this.options = options;
@@ -369,7 +373,7 @@ class NavigationBindings {
     public eventsToUnbind: Array<Function>;
     public mouseMoveEvent?: (false|Function);
     public nextEvent?: (false|Function);
-    public options: Highcharts.NavigationOptions;
+    public options: NavigationOptions;
     public popup?: Highcharts.Popup;
     public selectedButtonElement?: (HTMLDOMElement|null);
     public selectedButton: (Highcharts.NavigationBindingsOptionsObject|null) = void 0 as any;
@@ -495,7 +499,7 @@ class NavigationBindings {
     public initUpdate(): void {
         const navigation = this;
         chartNavigationMixin.addUpdate(
-            function (options: Highcharts.NavigationOptions): void {
+            function (options: NavigationOptions): void {
                 navigation.update(options);
             },
             this.chart
@@ -579,19 +583,28 @@ class NavigationBindings {
         chart = this.chart;
 
         const navigation = this,
+            activeAnnotation = navigation.activeAnnotation,
             selectedButton = navigation.selectedButton,
             svgContainer = chart.renderer.boxWrapper;
 
-        // Click outside popups, should close them and deselect the annotation
-        if (
-            navigation.activeAnnotation &&
-            !clickEvent.activeAnnotation &&
-            // Element could be removed in the child action, e.g. button
-            (clickEvent.target as any).parentNode &&
-            // TO DO: Polyfill for IE11?
-            !closestPolyfill(clickEvent.target as any, '.' + PREFIX + 'popup')
-        ) {
-            fireEvent(navigation, 'closePopup');
+        if (activeAnnotation) {
+            // Click outside popups, should close them and deselect the
+            // annotation
+            if (
+                !activeAnnotation.cancelClick && // #15729
+                !clickEvent.activeAnnotation &&
+                // Element could be removed in the child action, e.g. button
+                (clickEvent.target as any).parentNode &&
+                // TO DO: Polyfill for IE11?
+                !closestPolyfill(clickEvent.target as any, '.' + PREFIX + 'popup')
+            ) {
+                fireEvent(navigation, 'closePopup');
+            } else if (activeAnnotation.cancelClick) {
+                // Reset cancelClick after the other event handlers have run
+                setTimeout((): void => {
+                    activeAnnotation.cancelClick = false;
+                }, 0);
+            }
         }
 
         if (!selectedButton || !selectedButton.start) {
@@ -1006,7 +1019,7 @@ class NavigationBindings {
      * @private
      * @function Highcharts.NavigationBindings#update
      */
-    public update(options?: Highcharts.NavigationOptions): void {
+    public update(options?: NavigationOptions): void {
         this.options = merge(true, this.options, options);
         this.removeEvents();
         this.initEvents();
@@ -1605,28 +1618,25 @@ addEvent(Chart, 'render', function (): void {
                     const buttonNode = chart.navigationBindings.container[0].querySelectorAll('.' + key);
 
                     if (buttonNode) {
-                        if (value.noDataState === 'normal') {
-                            buttonNode.forEach(function (button): void {
+                        for (let i = 0; i < buttonNode.length; i++) {
+                            const button = buttonNode[i];
+                            if (value.noDataState === 'normal') {
                                 // If button has noDataState: 'normal',
                                 // and has disabledClassName,
                                 // remove this className.
                                 if (button.className.indexOf(disabledClassName) !== -1) {
                                     button.classList.remove(disabledClassName);
                                 }
-                            });
-                        } else if (!buttonsEnabled) {
-                            buttonNode.forEach(function (button): void {
+                            } else if (!buttonsEnabled) {
                                 if (button.className.indexOf(disabledClassName) === -1) {
                                     button.className += ' ' + disabledClassName;
                                 }
-                            });
-                        } else {
-                            buttonNode.forEach(function (button): void {
+                            } else {
                                 // Enable all buttons by deleting the className.
                                 if (button.className.indexOf(disabledClassName) !== -1) {
                                     button.classList.remove(disabledClassName);
                                 }
-                            });
+                            }
                         }
                     }
                 }

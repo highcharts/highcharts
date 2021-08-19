@@ -52,7 +52,7 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
-declare module '../../Core/LegendOptions' {
+declare module '../../Core/Legend/LegendOptions' {
     interface LegendOptions {
         accessibility?: Highcharts.LegendAccessibilityOptions;
     }
@@ -67,6 +67,12 @@ declare module '../../Extensions/Annotations/AnnotationOptions' {
 declare module '../../Core/Options'{
     interface Options {
         accessibility?: Highcharts.AccessibilityOptions;
+    }
+}
+
+declare module '../../Extensions/Exporting/ExportingOptions' {
+    interface ExportingOptions {
+        accessibility?: Highcharts.ExportingAccessibilityOptions;
     }
 }
 
@@ -153,9 +159,6 @@ declare global {
         }
         interface ExportingAccessibilityOptions {
             enabled: boolean;
-        }
-        interface ExportingOptions {
-            accessibility?: ExportingAccessibilityOptions;
         }
         interface FocusBorderStyleObject {
             borderRadius?: number;
