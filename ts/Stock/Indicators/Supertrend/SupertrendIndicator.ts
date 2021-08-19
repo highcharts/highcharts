@@ -33,7 +33,9 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
+import StockChart from '../../../Core/Chart/StockChart.js';
 const {
+    addEvent,
     correctFloat,
     isArray,
     extend,
@@ -190,17 +192,28 @@ class SupertrendIndicator extends SMAIndicator {
             parentOptions: SeriesOptions;
 
         SMAIndicator.prototype.init.apply(this, arguments);
+        const indicator = this;
 
-        options = this.options;
-        parentOptions = this.linkedParent.options;
+        // Only after series are linked add some additional logic/properties.
+        const unbinder = addEvent(StockChart, 'afterLinkSeries', function (): void {
+            // Protection for a case where the indicator is being updated,
+            // for a brief moment the indicator is deleted.
+            if (indicator.options) {
+                const options = indicator.options;
+                parentOptions = indicator.linkedParent.options;
 
-        // Indicator cropThreshold has to be equal linked series one
-        // reduced by period due to points comparison in drawGraph method
-        // (#9787)
-        options.cropThreshold = (
-            (parentOptions.cropThreshold as any) -
-            ((options.params as any).period - 1)
-        );
+                // Indicator cropThreshold has to be equal linked series one
+                // reduced by period due to points comparison in drawGraph
+                // (#9787)
+                options.cropThreshold = (
+                    (parentOptions.cropThreshold as any) -
+                    ((options.params as any).period - 1)
+                );
+            }
+            unbinder();
+        }, {
+            order: 1
+        });
     }
 
     public drawGraph(): void {

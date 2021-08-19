@@ -608,7 +608,7 @@ QUnit.test('Data grouping and extremes change', function (assert) {
         ]
     });
 
-    chart.xAxis[0].setExtremes(chart.xAxis[0].toValue(100, true), null);
+    chart.xAxis[0].setExtremes(chart.xAxis[0].toValue(200, true), null);
 
     expectedMax = chart.xAxis[0].max;
     panTo('left', series.points[150].plotX, series.points[7].plotY, 30);
@@ -625,7 +625,6 @@ QUnit.test('Data grouping and extremes change', function (assert) {
         expectedMax,
         'DataGrouping should not prevent panning to the RIGHT (#12099)'
     );
-    chart.xAxis[0].setExtremes(null, null); // reset old extremes
 });
 
 QUnit.test('Data grouping, keys and turboThreshold', function (assert) {
@@ -910,7 +909,7 @@ QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (asser
             ordinal: true
         },
         rangeSelector: {
-            selected: 0
+            selected: 3
         },
         series: [{
             data: usdeur,
@@ -944,7 +943,7 @@ QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (asser
 
     chart.series[0].update({
         dataGrouping: {
-            units: [['week', [1]]]
+            units: [['day', [3]]]
         }
     });
     chart.xAxis[0].ordinal.getExtendedPositions();

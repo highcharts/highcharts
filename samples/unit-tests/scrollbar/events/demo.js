@@ -41,11 +41,11 @@ QUnit.test(
 
         controller.pan([x, y], [x + 90, y]);
 
-        // No lolex should be needed for this
+        // No lolex should be needed for this. 6ms to be sure in CI.
         setTimeout(function () {
             assert.strictEqual(counter, 1, 'afterSetExtremes called just once');
             done();
-        }, 5);
+        }, 6);
     }
 );
 
@@ -78,7 +78,7 @@ QUnit.test(
 
         controller.click(group.translateX + 5, group.translateY + 5);
 
-        // No lolex should be needed for this
+        // No lolex should be needed for this. 6ms to be sure in CI.
         setTimeout(function () {
             extremes = chart.xAxis[0].getExtremes();
             assert.strictEqual(
@@ -87,7 +87,7 @@ QUnit.test(
                 'Scrollbar moved to the left'
             );
             done();
-        }, 5);
+        }, 6);
     }
 );
 

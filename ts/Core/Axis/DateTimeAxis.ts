@@ -16,11 +16,11 @@
  *
  * */
 
+import type Axis from './Axis';
 import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
-import type Time from '../Time.js';
+import type Time from '../Time';
 
-import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -118,7 +118,7 @@ namespace DateTimeAxis{
      *
      * */
 
-    const composedClasses: Array<typeof Axis> = [];
+    const composedClasses: Array<Function> = [];
 
     /* *
      *
