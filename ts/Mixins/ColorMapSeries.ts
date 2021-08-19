@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type ColorAxisComposition from '../Core/Axis/Color/ColorAxisComposition';
 import type ScatterPoint from '../Series/Scatter/ScatterPoint';
 import type ScatterSeries from '../Series/Scatter/ScatterSeries';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -49,9 +50,9 @@ declare global {
             colorAttribs(point: ColorMapPoint): SVGAttributes;
         }
         interface ColorMapSeriesMixin {
-            axisTypes: ColorSeries['axisTypes'];
+            axisTypes: ColorAxisComposition.SeriesComposition['axisTypes'];
             colorAttribs: ColorMapSeries['colorAttribs'];
-            colorKey?: ColorSeries['colorKey'];
+            colorKey?: ColorAxisComposition.SeriesComposition['colorKey'];
             getSymbol: () => void;
             parallelArrays: ColorMapSeries['parallelArrays'];
             pointArrayMap: ColorMapSeries['pointArrayMap'];
