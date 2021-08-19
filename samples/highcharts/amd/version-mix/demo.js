@@ -1,3 +1,4 @@
+/* eslint no-useless-concat: 0 */
 // Tell RequireJS how and where to search for the highcharts package
 require.config({
     packages: [{
@@ -14,8 +15,8 @@ require.config({
         highcharts6: 'https://code.highcharts.com/6.2',
         highcharts7: 'https://code.highcharts.com/7.0.3',
         highcharts: (
-            location.host === 'utils.highcharts.local' ?
-                'http://code.highcharts.local' :
+            location.host === 'utils.highcharts' + '.local' ?
+                'http://code.highcharts' + '.local' :
                 'https://code.highcharts.com'
         )
     }
@@ -36,7 +37,7 @@ require(
         ExportingModule(Highcharts);
         AccessibilityModule(Highcharts);
 
-        Highcharts.chart('container6', {
+        Highcharts.chart('container1', {
             title: {
                 text: 'My chart in v' + Highcharts.version
             },
@@ -62,7 +63,7 @@ require(
         ExportingModule(Highcharts);
         AccessibilityModule(Highcharts);
 
-        Highcharts.chart('container7', {
+        Highcharts.chart('container2', {
             title: {
                 text: 'My chart in v' + Highcharts.version
             },
@@ -88,7 +89,7 @@ require(
         ExportingModule(Highcharts);
         AccessibilityModule(Highcharts);
 
-        Highcharts.chart('container', {
+        Highcharts.chart('container3', {
             title: {
                 text: 'My chart in the latest version'
             },

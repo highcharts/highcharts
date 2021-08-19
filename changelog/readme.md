@@ -27,7 +27,7 @@ describing the internals of how it was fixed.
     node changelog/generate
     ```
 
-3. Manually edit these generated markdown files to your wish.
+3. Manually edit these generated markdown files to your wish (or run `node changelog/generate --review` and make edits upstream first).
 
 4. Run the script that assembles the content of all markdown files in to a HTML file and uploads it to S3, where the website will pick it up. If testing, run `node changelog/generate-html` first.
 
