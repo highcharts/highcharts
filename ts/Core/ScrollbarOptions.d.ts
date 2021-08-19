@@ -44,7 +44,7 @@ export interface ScrollbarOptions {
     liveRedraw?: boolean;
     margin?: number;
     minWidth?: number;
-    positioning?: string;
+    opposite?: boolean;
     rifleColor?: ColorType;
     showFull?: boolean;
     size?: number;
