@@ -20,13 +20,14 @@ import type PieSeriesOptions from './PieSeriesOptions';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import CU from '../CenteredUtilities.js';
 const { getStartAndEndRadians } = CU;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
+import Palette from '../../Core/Color/Palette.js';
 import PiePoint from './PiePoint.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -612,7 +613,7 @@ class PieSeries extends Series {
          *
          * @private
          */
-        borderColor: palette.backgroundColor,
+        borderColor: Palette.backgroundColor,
 
         /**
          * The width of the border surrounding each slice.
@@ -777,7 +778,7 @@ class PieSeries extends Series {
                 this.graph.attr({
                     'stroke-width': options.borderWidth,
                     fill: options.fillColor || 'none',
-                    stroke: options.color || palette.neutralColor20
+                    stroke: options.color || Palette.neutralColor20
                 });
             }
 
@@ -1183,12 +1184,13 @@ class PieSeries extends Series {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
 interface PieSeries {
     drawGraph: undefined;
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getCenter: typeof CU['getCenter'];
     pointClass: typeof PiePoint;
 }
@@ -1200,7 +1202,7 @@ extend(PieSeries.prototype, {
 
     drawGraph: void 0,
 
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     drawTracker: ColumnSeries.prototype.drawTracker,
 

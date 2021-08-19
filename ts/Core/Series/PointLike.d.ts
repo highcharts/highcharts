@@ -37,7 +37,7 @@ export interface PointLike {
 
 /* *
  *
- *  Exports
+ *  Default Export
  *
  * */
 

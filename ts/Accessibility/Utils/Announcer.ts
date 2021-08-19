@@ -12,10 +12,17 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from '../../Core/Chart/Chart';
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+
 import H from '../../Core/Globals.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
 const {
@@ -28,6 +35,11 @@ const {
     visuallyHideElement
 } = HTMLUtilities;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types.
@@ -38,36 +50,48 @@ declare module '../../Core/Chart/ChartLike'{
         announcerContainer?: HTMLDOMElement;
     }
 }
-declare global {
-    namespace Highcharts {
-        type AnnouncerType = ('assertive'|'polite');
-        class Announcer {
-            public constructor(chart: Chart, type: AnnouncerType);
-            public destroy(): void;
-            public announce(message: string): void;
-        }
-    }
-}
 
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class Announcer {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     private domElementProvider: Highcharts.DOMElementProvider;
     private announceRegion: HTMLDOMElement;
     private clearAnnouncementRegionTimer?: number;
 
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     constructor(
         private chart: Chart,
-        type: Highcharts.AnnouncerType
+        type: Announcer.Type
     ) {
         this.domElementProvider = new DOMElementProvider();
         this.announceRegion = this.addAnnounceRegion(type);
     }
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public destroy(): void {
         this.domElementProvider.destroyCreatedElements();
     }
-
 
     public announce(message: string): void {
         AST.setElementHTML(this.announceRegion, message);
@@ -83,10 +107,9 @@ class Announcer {
         }, 1000);
     }
 
-
-    private addAnnounceRegion(type: Highcharts.AnnouncerType): HTMLDOMElement {
-        const chartContainer = this.chart.announcerContainer || this.createAnnouncerContainer();
-        const div = this.domElementProvider.createElement('div');
+    private addAnnounceRegion(type: Announcer.Type): HTMLDOMElement {
+        const chartContainer = this.chart.announcerContainer || this.createAnnouncerContainer(),
+            div = this.domElementProvider.createElement('div');
 
         setElAttrs(div, {
             'aria-hidden': false,
@@ -98,10 +121,9 @@ class Announcer {
         return div;
     }
 
-
     private createAnnouncerContainer(): HTMLDOMElement {
-        const chart = this.chart;
-        const container = doc.createElement('div');
+        const chart = this.chart,
+            container = doc.createElement('div');
 
         setElAttrs(container, {
             'aria-hidden': false,
@@ -115,6 +137,20 @@ class Announcer {
     }
 }
 
-H.Announcer = Announcer;
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace Announcer {
+    export type Type = ('assertive'|'polite');
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Announcer;

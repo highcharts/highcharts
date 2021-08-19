@@ -25,6 +25,7 @@ import type PieSeries from './PieSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
 import Point from '../../Core/Series/Point.js';
@@ -287,7 +288,7 @@ class PiePoint extends Point {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -391,31 +392,43 @@ extend(PiePoint.prototype, {
 
 /* *
  *
- *  Class Declarations
+ *  Class Namespace
  *
  * */
 
 namespace PiePoint {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface ConnectorShapeFunction {
         (...args: Array<any>): SVGPath;
     }
+
     export interface LabelConnectorPositionObject {
         breakAt: CorePositionObject;
         touchingSliceAt: CorePositionObject;
     }
+
     export interface LabelPositionObject {
         alignment: AlignValue;
         connectorPosition: LabelConnectorPositionObject;
         'final': Record<string, undefined>;
         natural: CorePositionObject;
     }
+
     export interface PositionObject extends CorePositionObject {
         alignment: AlignValue;
     }
+
     export interface TranslationAttributes extends SVGAttributes {
         translateX: number;
         translateY: number;
     }
+
 }
 
 /* *

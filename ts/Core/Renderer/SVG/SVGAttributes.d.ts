@@ -131,7 +131,7 @@ export interface SVGAttributes {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
