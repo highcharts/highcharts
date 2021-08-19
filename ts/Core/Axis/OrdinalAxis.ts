@@ -1160,7 +1160,7 @@ namespace OrdinalAxis {
                 overscroll = axis.options.overscroll,
                 extremes = axis.getExtremes();
             let fakeAxis: Composition,
-                fakeSeries: Series,
+                fakeSeries: Series = void 0 as any,
                 ordinalIndex = ordinal.index;
 
             // If this is the first time, or the ordinal index is deleted by
@@ -1235,19 +1235,19 @@ namespace OrdinalAxis {
                     fakeAxis.series.push(fakeSeries);
 
                     series.processData.apply(fakeSeries);
-
-                    // Force to use the ordinal when points are evenly spaced
-                    // (e.g. weeks), #3825.
-                    if (
-                        fakeSeries.closestPointRange !== fakeSeries.basePointRange &&
-                        fakeSeries.currentDataGrouping
-                    ) {
-                        fakeAxis.forceOrdinal = true;
-                    }
                 });
 
                 // Apply grouping if needed.
                 axis.applyGrouping.call(fakeAxis);
+
+                // Force to use the ordinal when points are evenly spaced
+                // (e.g. weeks), #3825.
+                if (
+                    fakeSeries.closestPointRange !== fakeSeries.basePointRange &&
+                    fakeSeries.currentDataGrouping
+                ) {
+                    fakeAxis.forceOrdinal = true;
+                }
 
                 // Run beforeSetTickPositions to compute the ordinalPositions
                 axis.ordinal.beforeSetTickPositions.apply({ axis: fakeAxis });
