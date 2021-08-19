@@ -29,8 +29,8 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
+import ColorMapComposition from '../ColorMapComposition.js';
+const { colorMapSeriesMixin } = ColorMapComposition;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
@@ -92,10 +92,10 @@ declare module '../../Core/Series/SeriesOptions' {
 
 declare global {
     namespace Highcharts {
-        class MapPoint extends ScatterPoint implements ColorMapPoint {
+        class MapPoint extends ScatterPoint implements ColorMapComposition.PointComposition {
             public colorInterval?: unknown;
-            public dataLabelOnNull: ColorMapPointMixin['dataLabelOnNull'];
-            public isValid: ColorMapPointMixin['isValid'];
+            public dataLabelOnNull: ColorMapComposition.PointComposition['dataLabelOnNull'];
+            public isValid: ColorMapComposition.PointComposition['isValid'];
             public middleX: number;
             public middleY: number;
             public options: MapPointOptions;
@@ -1313,7 +1313,7 @@ class MapSeries extends ScatterSeries {
  *
  * */
 
-interface MapSeries extends Highcharts.ColorMapSeries {
+interface MapSeries extends ColorMapComposition.SeriesComposition {
     colorAttribs: typeof colorMapSeriesMixin['colorAttribs'];
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     pointArrayMap: typeof colorMapSeriesMixin['pointArrayMap'];

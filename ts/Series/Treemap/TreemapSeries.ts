@@ -38,8 +38,8 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
+import ColorMapComposition from '../ColorMapComposition.js';
+const { colorMapSeriesMixin } = ColorMapComposition;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
@@ -1880,7 +1880,7 @@ class TreemapSeries extends ScatterSeries {
  * */
 
 interface TreemapSeries extends Highcharts.TreeSeries {
-    colorAttribs: Highcharts.ColorMapSeriesMixin['colorAttribs'];
+    colorAttribs: ColorMapComposition.SeriesComposition['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
