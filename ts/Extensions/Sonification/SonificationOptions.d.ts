@@ -33,9 +33,3 @@ export interface SonificationInstrumentMappingOptions {
     pan?: (number|string|Function);
     volume?: (number|string|Function);
 }
-
-export interface EarconConfiguration {
-    condition: Function;
-    earcon: Highcharts.Earcon;
-    onPoint?: string;
-}
