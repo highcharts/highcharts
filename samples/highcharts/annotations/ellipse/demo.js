@@ -97,12 +97,10 @@ Highcharts.chart('container', {
                         },
                         events: {
                             drag: function (e, target) {
-                                var dx =
-                                        e.chartX -
+                                var dx = e.chartX -
                                         (target.points[0].plotX +
                                             target.chart.plotLeft),
-                                    dy =
-                                        e.chartY -
+                                    dy = e.chartY -
                                         (target.points[0].plotY +
                                             target.chart.plotTop),
                                     newR = Math.max(
