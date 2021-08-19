@@ -146,6 +146,11 @@
         var chart = Highcharts.chart(
             $('<div>').appendTo('#container')[0],
             Highcharts.merge(getConfig(), {
+                chart: {
+                    style: {
+                        fontFamily: 'ProximaNova, Arial, \'Helvetica Neue\', Helvetica, sans-serif'
+                    }
+                },
                 title: {
                     text: 'Colors update'
                 }
@@ -157,6 +162,20 @@
         });
 
         assert.strictEqual(chart.series[0].color, '#68266f', 'Color updated');
+
+        chart.update({
+            chart: {
+                style: {
+                    color: 'red'
+                }
+            }
+        });
+
+        assert.strictEqual(
+            chart.renderer.style.fontFamily,
+            'ProximaNova, Arial, \'Helvetica Neue\', Helvetica, sans-serif',
+            '#16153: fontFamily should not reset when updating chart.style'
+        );
     });
 
     QUnit.test('Loading update', function (assert) {

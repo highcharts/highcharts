@@ -15,8 +15,10 @@
  *  Imports
  *
  * */
+
 import type TickPositionsArray from './Axis/TickPositionsArray';
 import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
+
 import H from './Globals.js';
 const {
     win
@@ -40,6 +42,7 @@ const {
  *  Declarations
  *
  * */
+
 declare module './Options' {
     interface Options {
         time?: Time.TimeOptions;
@@ -936,6 +939,12 @@ class Time {
     }
 }
 
+/* *
+ *
+ * Class namespace
+ *
+ * */
+
 namespace Time {
     export interface TimeOptions {
         Date?: any;
@@ -964,7 +973,19 @@ namespace Time {
     );
 }
 
+/* *
+ *
+ * Default export
+ *
+ * */
+
 export default Time;
+
+/* *
+ *
+ * API Declarations
+ *
+ * */
 
 /**
  * Normalized interval.

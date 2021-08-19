@@ -7,8 +7,7 @@
  * This node script is used to assemble the content for all markdown files
  * in each sub-directory of this directory into a new html output file.
  */
-var path = require('path'),
-    replaceString = require('replace-string');
+var path = require('path');
 
 function generateHTML() {
     return new Promise(function (resolve, reject) {
@@ -53,22 +52,6 @@ function generateHTML() {
 
         var htmlContent = '';
 
-        function addLinkToIssues(items) {
-            (items || []).forEach(item => {
-                if (typeof item.text === 'string') {
-                    var issues = item.text.match(/#[0-9]+/g);
-                    if (issues !== null) {
-                        issues.forEach(issue => {
-                            var issued = issue.substring(1),
-                                issueLink = 'https://github.com/highcharts/highcharts/issues/' + issued,
-                                formatIssue = '[' + issue + '](' + issueLink + ')';
-                            item.text = replaceString(item.text, issue, formatIssue);
-                        });
-                    }
-                }
-            });
-        }
-
 
         function sortMarkdownFileContent(mdContent) {
             let write = 'New features';
@@ -100,15 +83,12 @@ function generateHTML() {
                 }
                 switch (write) {
                     case 'New features':
-                        addLinkToIssues(token.items);
                         changelog.features.push(token);
                         break;
                     case 'Upgrade notes':
-                        addLinkToIssues(token.items);
                         changelog.upgradeNotes.push(token);
                         break;
                     case 'Bug fixes':
-                        addLinkToIssues(token.items);
                         changelog.bugFixes.push(token);
                         break;
                     default:

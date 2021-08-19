@@ -133,7 +133,8 @@ function uploadFiles(params) {
     const upload = require('../../upload');
     const { files, name, bucket } = params;
 
-    log.starting(`Uploading ${files.length} files for ${name} to bucket ${bucket}:\n`);
+    const nFiles = files.length === 1 ? '1 file' : `${files.length} files`;
+    log.starting(`Uploading ${nFiles} for ${name} to bucket ${bucket}:\n`);
 
     if (files.length === 0) {
         log.message('Upload initiated, but no files specified.');
