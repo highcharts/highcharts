@@ -233,11 +233,9 @@ var chart = Highcharts.chart('container', {
                 events: {
                     drag: function (e, target) {
                         var dx = e.chartX -
-                            (target.points[0].plotX +
-                                target.chart.plotLeft),
+                            (target.points[0].plotX + target.chart.plotLeft),
                             dy = e.chartY -
-                                (target.points[0].plotY +
-                                target.chart.plotTop),
+                            (target.points[0].plotY + target.chart.plotTop),
                             newR = Math.max(Math.sqrt(dx * dx + dy * dy), 5);
 
                         target.setYRadius(newR);
@@ -267,11 +265,9 @@ var chart = Highcharts.chart('container', {
                 events: {
                     drag: function (e, target) {
                         var dx = e.chartX -
-                                (target.points[0].plotX +
-                                target.chart.plotLeft),
+                            (target.points[0].plotX + target.chart.plotLeft),
                             dy = e.chartY -
-                                (target.points[0].plotY +
-                                target.chart.plotTop),
+                            (target.points[0].plotY + target.chart.plotTop),
                             newR = Math.max(
                                 Math.sqrt(dx * dx + dy * dy),
                                 5
