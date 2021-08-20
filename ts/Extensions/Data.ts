@@ -477,6 +477,9 @@ declare global {
  * [developers.google.com](https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get)
  * for details.
  *
+ * If given, it takes precedence over `startColumn`, `endColumn`, `startRow` and
+ * `endRow`.
+ *
  * @example
  * googleSpreadsheetRange: 'Fruit Consumption' // Load a named worksheet
  * googleSpreadsheetRange: 'A-Z' // Load columns A to Z
@@ -484,7 +487,7 @@ declare global {
  * @sample {highcharts} highcharts/data/google-spreadsheet/
  *         Load a Google Spreadsheet
  *
- * @type      {string}
+ * @type      {string|undefined}
  * @since     9.2.2
  * @apioption data.googleSpreadsheetRange
  */
@@ -1786,15 +1789,28 @@ class Data {
             options = this.options,
             googleSpreadsheetKey = options.googleSpreadsheetKey,
             chart = this.chart,
-            refreshRate = Math.min((options.dataRefreshRate || 2) * 1000, 4000),
-            // use sheet 1 as the default rather than od6
-            // as the latter sometimes cause issues (it looks like it can
-            // be renamed in some cases, ref. a fogbugz case).
-            // worksheet = options.googleSpreadsheetWorksheet || 1,
-            startRow = options.startRow || 0,
-            endRow = options.endRow || Number.MAX_VALUE,
-            startColumn = options.startColumn || 0,
-            endColumn = options.endColumn || Number.MAX_VALUE;
+            refreshRate = Math.min((options.dataRefreshRate || 2) * 1000, 4000);
+
+        /**
+         * Form the `values` field after range settings, unless the
+         * googleSpreadsheetRange option is set.
+         */
+        const getRange = (): string => {
+            if (options.googleSpreadsheetRange) {
+                return options.googleSpreadsheetRange;
+            }
+
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const start = (alphabet.charAt(options.startColumn || 0) || 'A') +
+                ((options.startRow || 0) + 1);
+
+            let end = alphabet.charAt(pick(options.endColumn, -1)) || 'ZZ';
+            if (defined(options.endRow)) {
+                end += options.endRow;
+            }
+
+            return `${start}:${end}`;
+        };
 
         /**
          * Fetch the actual spreadsheet using XMLHttpRequest.
@@ -1805,7 +1821,7 @@ class Data {
                 'https://sheets.googleapis.com/v4/spreadsheets',
                 googleSpreadsheetKey,
                 'values',
-                options.googleSpreadsheetRange || 'A:Z',
+                getRange(),
                 '?alt=json&' +
                 'majorDimension=COLUMNS&' +
                 'valueRenderOption=UNFORMATTED_VALUE&' +
@@ -1825,7 +1841,7 @@ class Data {
                             function (): void {
                                 fetchSheet(fn);
                             },
-                            (options.dataRefreshRate || 2) * 1000
+                            refreshRate
                         );
                     }
                 },
