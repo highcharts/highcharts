@@ -1806,7 +1806,7 @@ class Data {
 
             let end = alphabet.charAt(pick(options.endColumn, -1)) || 'ZZ';
             if (defined(options.endRow)) {
-                end += options.endRow;
+                end += options.endRow + 1;
             }
 
             return `${start}:${end}`;
