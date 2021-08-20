@@ -1871,18 +1871,15 @@ class Data {
 
                 // Find the maximum row count in order to extend shorter columns
                 const rowCount = columns.reduce(
-                    (rowCount, column): number =>
-                        Math.max(rowCount, column.length)
-                    ,
+                    (rowCount, column): number => Math.max(
+                        rowCount,
+                        column.length
+                    ),
                     0
                 );
 
-                // @todo: Detect datetime columns
-
                 // Insert null for empty spreadsheet cells (#5298)
-                columns.forEach(function (
-                    column: Array<Highcharts.DataValueType>
-                ): void {
+                columns.forEach((column): void => {
                     for (let i = 0; i < rowCount; i++) {
                         if (typeof column[i] === 'undefined') {
                             column[i] = null;
