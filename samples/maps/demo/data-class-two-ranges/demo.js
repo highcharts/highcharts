@@ -1,6 +1,7 @@
 // Load the data from a Google Spreadsheet
 // https://docs.google.com/spreadsheets/d/14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY/pubhtml
 Highcharts.data({
+    googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
     googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY',
 
     // Custom handler for columns
@@ -135,7 +136,7 @@ Highcharts.data({
         keys = keys.map(function (key) {
             return key.toUpperCase();
         });
-        Highcharts.each(mapData.features, function (mapPoint) {
+        mapData.features.forEach(function (mapPoint) {
             if (mapPoint.properties['postal-code']) {
                 var postalCode = mapPoint.properties['postal-code'],
                     i = $.inArray(postalCode, keys);
@@ -148,8 +149,7 @@ Highcharts.data({
             }
         });
 
-        // Initiate the chart
-
+        // Initialize the chart
         window.chart = new Highcharts.Map(options);
     },
 
