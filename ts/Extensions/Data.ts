@@ -103,8 +103,9 @@ declare global {
             endRow?: number;
             error?: Function;
             firstRowAsNames?: boolean;
+            googleAPIKey?: string;
             googleSpreadsheetKey?: string;
-            googleSpreadsheetWorksheet?: string;
+            googleSpreadsheetRange?: string;
             itemDelimiter?: string;
             lineDelimiter?: string;
             parsed?: DataParsedCallbackFunction;
@@ -447,6 +448,18 @@ declare global {
  */
 
 /**
+ * The Google Spreadsheet API key required for access generated at [API Services
+ * / Credentials](https://console.cloud.google.com/apis/credentials).
+ *
+ * @sample {highcharts} highcharts/data/google-spreadsheet/
+ *         Load a Google Spreadsheet
+ *
+ * @type      {string}
+ * @since     9.2.2
+ * @apioption data.googleAPIKey
+ */
+
+/**
  * The key for a Google Spreadsheet to load. See [general information
  * on GS](https://developers.google.com/gdata/samples/spreadsheet_sample).
  *
@@ -459,13 +472,33 @@ declare global {
  */
 
 /**
- * The Google Spreadsheet worksheet to use in combination with
+ * The Google Spreadsheet `range` to use in combination with
+ * [googleSpreadsheetKey](#data.googleSpreadsheetKey). See
+ * [developers.google.com](https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get)
+ * for details.
+ *
+ * @example
+ * googleSpreadsheetRange: 'Fruit Consumption' // Load a named worksheet
+ * googleSpreadsheetRange: 'A-Z' // Load columns A to Z
+ *
+ * @sample {highcharts} highcharts/data/google-spreadsheet/
+ *         Load a Google Spreadsheet
+ *
+ * @type      {string}
+ * @since     9.2.2
+ * @apioption data.googleSpreadsheetRange
+ */
+
+/**
+ * No longer works since v9.2.2, that uses Google Sheets API v4. The Google
+ * Spreadsheet worksheet to use in combination with
  * [googleSpreadsheetKey](#data.googleSpreadsheetKey). The available id's from
  * your sheet can be read from `https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic`.
  *
  * @sample {highcharts} highcharts/data/google-spreadsheet/
  *         Load a Google Spreadsheet
  *
+ * @deprecated
  * @type      {string}
  * @since     4.0
  * @apioption data.googleSpreadsheetWorksheet
@@ -1749,23 +1782,19 @@ class Data {
      *         Always returns false, because it is an intermediate fetch.
      */
     public parseGoogleSpreadsheet(): boolean {
-        let data = this,
+        const data = this,
             options = this.options,
             googleSpreadsheetKey = options.googleSpreadsheetKey,
             chart = this.chart,
+            refreshRate = Math.min((options.dataRefreshRate || 2) * 1000, 4000),
             // use sheet 1 as the default rather than od6
             // as the latter sometimes cause issues (it looks like it can
             // be renamed in some cases, ref. a fogbugz case).
-            worksheet = options.googleSpreadsheetWorksheet || 1,
+            // worksheet = options.googleSpreadsheetWorksheet || 1,
             startRow = options.startRow || 0,
             endRow = options.endRow || Number.MAX_VALUE,
             startColumn = options.startColumn || 0,
-            endColumn = options.endColumn || Number.MAX_VALUE,
-            refreshRate = (options.dataRefreshRate || 2) * 1000;
-
-        if (refreshRate < 4000) {
-            refreshRate = 4000;
-        }
+            endColumn = options.endColumn || Number.MAX_VALUE;
 
         /**
          * Fetch the actual spreadsheet using XMLHttpRequest.
@@ -1773,14 +1802,20 @@ class Data {
          */
         function fetchSheet(fn: Function): void {
             const url = [
-                'https://spreadsheets.google.com/feeds/cells',
+                'https://sheets.googleapis.com/v4/spreadsheets',
                 googleSpreadsheetKey,
-                worksheet,
-                'public/values?alt=json'
+                'values',
+                options.googleSpreadsheetRange || 'A:Z',
+                '?alt=json&' +
+                'majorDimension=COLUMNS&' +
+                'valueRenderOption=UNFORMATTED_VALUE&' +
+                'dateTimeRenderOption=FORMATTED_STRING&' +
+                'key=' + options.googleAPIKey
+
             ].join('/');
 
             ajax({
-                url: url,
+                url,
                 dataType: 'json',
                 success: function (json: Highcharts.JSONType): void {
                     fn(json);
@@ -1811,81 +1846,30 @@ class Data {
                 json: Highcharts.JSONType
             ): (boolean|undefined) {
                 // Prepare the data from the spreadsheat
-                let columns: Array<Array<Highcharts.DataValueType>> = [],
-                    cells = json.feed.entry,
-                    cell,
-                    cellCount = (cells || []).length,
-                    colCount = 0,
-                    rowCount = 0,
-                    val,
-                    gr,
-                    gc,
-                    cellInner,
-                    i: number;
+                const columns: Array<Array<Highcharts.DataValueType>> =
+                    json.values;
 
-                if (!cells || cells.length === 0) {
+                if (!columns || columns.length === 0) {
                     return false;
                 }
 
-                // First, find the total number of columns and rows that
-                // are actually filled with data
-                for (i = 0; i < cellCount; i++) {
-                    cell = cells[i];
-                    colCount = Math.max(colCount, cell.gs$cell.col);
-                    rowCount = Math.max(rowCount, cell.gs$cell.row);
-                }
+                // Find the maximum row count in order to extend shorter columns
+                const rowCount = columns.reduce(
+                    (rowCount, column): number =>
+                        Math.max(rowCount, column.length)
+                    ,
+                    0
+                );
 
-                // Set up arrays containing the column data
-                for (i = 0; i < colCount; i++) {
-                    if (i >= startColumn && i <= endColumn) {
-                        // Create new columns with the length of either
-                        // end-start or rowCount
-                        columns[i - startColumn] = [];
-                    }
-                }
-
-                // Loop over the cells and assign the value to the right
-                // place in the column arrays
-                for (i = 0; i < cellCount; i++) {
-                    cell = cells[i];
-                    gr = cell.gs$cell.row - 1; // rows start at 1
-                    gc = cell.gs$cell.col - 1; // columns start at 1
-
-                    // If both row and col falls inside start and end set the
-                    // transposed cell value in the newly created columns
-                    if (gc >= startColumn && gc <= endColumn &&
-                        gr >= startRow && gr <= endRow) {
-
-                        cellInner = cell.gs$cell || cell.content;
-
-                        val = null;
-
-                        if (cellInner.numericValue) {
-                            if (cellInner.$t.indexOf('/') >= 0 ||
-                                cellInner.$t.indexOf('-') >= 0) {
-                                // This is a date - for future reference.
-                                val = cellInner.$t;
-                            } else if (cellInner.$t.indexOf('%') > 0) {
-                                // Percentage
-                                val = parseFloat(cellInner.numericValue) * 100;
-                            } else {
-                                val = parseFloat(cellInner.numericValue);
-                            }
-                        } else if (cellInner.$t && cellInner.$t.length) {
-                            val = cellInner.$t;
-                        }
-
-                        columns[gc - startColumn][gr - startRow] = val;
-                    }
-                }
+                // @todo: Detect datetime columns
 
                 // Insert null for empty spreadsheet cells (#5298)
                 columns.forEach(function (
                     column: Array<Highcharts.DataValueType>
                 ): void {
-                    for (i = 0; i < column.length; i++) {
+                    for (let i = 0; i < rowCount; i++) {
                         if (typeof column[i] === 'undefined') {
-                            column[i] = null as any;
+                            column[i] = null;
                         }
                     }
                 });
