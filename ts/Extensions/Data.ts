@@ -500,7 +500,9 @@ declare global {
  */
 
 /**
- * No longer works since v9.2.2, that uses Google Sheets API v4.
+ * No longer works since v9.2.2, that uses Google Sheets API v4. Instead, use
+ * the [googleSpreadsheetRange](#data.googleSpreadsheetRange) option to load a
+ * specific sheet.
  *
  * @deprecated
  * @type      {string}
