@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -22,10 +28,10 @@ const {
 } = U;
 
 /* *
-*
-*  Class
-*
-* */
+ *
+ *  Class
+ *
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -94,9 +100,7 @@ class Earcon {
      * @function Highcharts.Earcon#sonify
      *
      * @param {Highcharts.EarconOptionsObject} options
-     *        Override existing options.
-     *
-     * @return {void}
+     * Override existing options.
      */
     public sonify(
         options: Partial<Earcon.Options>
@@ -162,8 +166,6 @@ class Earcon {
      * @param {boolean} [fadeOut=false]
      *        Whether or not to fade out as we stop. If false, the earcon is
      *        cancelled synchronously.
-     *
-     * @return {void}
      */
     public cancelSonify(
         fadeOut?: boolean
@@ -199,7 +201,7 @@ namespace Earcon {
         playOptions: Highcharts.InstrumentPlayOptionsObject;
     }
 
-    export interface Options {
+    export interface Options{
         id?: string;
         instruments: Array<Instrument>;
         onEnd?: Function;
@@ -218,7 +220,7 @@ export default Earcon;
 
 /* *
  *
- *  API Options
+ *  API Declarations
  *
  * */
 
@@ -271,3 +273,5 @@ export default Earcon;
  * @name Highcharts.EarconOptionsObject#onEnd
  * @type {Function|undefined}
  */
+
+(''); // detach doclets above
