@@ -449,7 +449,10 @@ declare global {
 
 /**
  * The Google Spreadsheet API key required for access generated at [API Services
- * / Credentials](https://console.cloud.google.com/apis/credentials).
+ * / Credentials](https://console.cloud.google.com/apis/credentials). See a
+ * comprehensive tutorial for setting up the key at the
+ * [Hands-On Data Visualization](https://handsondataviz.org/google-sheets-api-key.html)
+ * book website.
  *
  * @sample {highcharts} highcharts/data/google-spreadsheet/
  *         Load a Google Spreadsheet
@@ -460,8 +463,12 @@ declare global {
  */
 
 /**
- * The key for a Google Spreadsheet to load. See [general information
- * on GS](https://developers.google.com/gdata/samples/spreadsheet_sample).
+ * The key or `spreadsheetId` value for a Google Spreadsheet to load. See
+ * [developers.google.com](https://developers.google.com/sheets/api/guides/concepts)
+ * for how to find the `spreadsheetId`.
+ *
+ * In order for Google Sheets to load, a valid [googleAPIKey](#data.googleAPIKey)
+ * must also be given.
  *
  * @sample {highcharts} highcharts/data/google-spreadsheet/
  *         Load a Google Spreadsheet
@@ -493,13 +500,7 @@ declare global {
  */
 
 /**
- * No longer works since v9.2.2, that uses Google Sheets API v4. The Google
- * Spreadsheet worksheet to use in combination with
- * [googleSpreadsheetKey](#data.googleSpreadsheetKey). The available id's from
- * your sheet can be read from `https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic`.
- *
- * @sample {highcharts} highcharts/data/google-spreadsheet/
- *         Load a Google Spreadsheet
+ * No longer works since v9.2.2, that uses Google Sheets API v4.
  *
  * @deprecated
  * @type      {string}
