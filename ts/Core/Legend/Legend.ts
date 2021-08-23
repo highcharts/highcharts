@@ -10,36 +10,44 @@
 
 'use strict';
 
-import type AnimationOptions from './Animation/AnimationOptions';
-import type BBoxObject from './Renderer/BBoxObject';
-import type BubbleLegendItem from '../Series/Bubble/BubbleLegendItem';
-import type Chart from './Chart/Chart';
-import type ColorAxis from './Axis/Color/ColorAxis';
-import type CSSObject from './Renderer/CSSObject';
-import type FontMetricsObject from './Renderer/FontMetricsObject';
-import type { HTMLDOMElement } from './Renderer/DOMElementType';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AnimationOptions from '../Animation/AnimationOptions';
+import type BBoxObject from '../Renderer/BBoxObject';
+import type BubbleLegendItem from '../../Series/Bubble/BubbleLegendItem';
+import type Chart from '../Chart/Chart';
+import type ColorAxis from '../Axis/Color/ColorAxis';
+import type CSSObject from '../Renderer/CSSObject';
+import type FontMetricsObject from '../Renderer/FontMetricsObject';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type LegendLike from './LegendLike';
 import type LegendOptions from './LegendOptions';
-import type Series from './Series/Series';
-import type { StatesOptionsKey } from './Series/StatesOptions';
-import type SVGAttributes from './Renderer/SVG/SVGAttributes';
-import type SVGElement from './Renderer/SVG/SVGElement';
+import type Series from '../Series/Series';
+import type { StatesOptionsKey } from '../Series/StatesOptions';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 
-import A from './Animation/AnimationUtilities.js';
+import A from '../Animation/AnimationUtilities.js';
 const {
     animObject,
     setAnimation
 } = A;
-import F from './FormatUtilities.js';
+import F from '../FormatUtilities.js';
 const { format } = F;
-import H from './Globals.js';
+import H from '../Globals.js';
 const {
     isFirefox,
     marginNames,
     win
 } = H;
-import Point from './Series/Point.js';
-import U from './Utilities.js';
+import Point from '../Series/Point.js';
+import R from '../Renderer/RendererUtilities.js';
+const { distribute } = R;
+import U from '../Utilities.js';
 const {
     addEvent,
     createElement,
@@ -57,7 +65,13 @@ const {
     wrap
 } = U;
 
-declare module './Series/SeriesOptions' {
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
         legendIndex?: number;
         legendType?: ('point'|'series');
@@ -66,79 +80,15 @@ declare module './Series/SeriesOptions' {
     }
 }
 
-/**
- * Gets fired when the legend item belonging to a point is clicked. The default
- * action is to toggle the visibility of the point. This can be prevented by
- * returning `false` or calling `event.preventDefault()`.
- *
- * @callback Highcharts.PointLegendItemClickCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        The point on which the event occured.
- *
- * @param {Highcharts.PointLegendItemClickEventObject} event
- *        The event that occured.
- */
+interface BoxObject extends R.BoxObject {
+    item: Legend.Item;
+}
 
-/**
- * Information about the legend click event.
+/* *
  *
- * @interface Highcharts.PointLegendItemClickEventObject
- *//**
- * Related browser event.
- * @name Highcharts.PointLegendItemClickEventObject#browserEvent
- * @type {Highcharts.PointerEvent}
- *//**
- * Prevent the default action of toggle the visibility of the point.
- * @name Highcharts.PointLegendItemClickEventObject#preventDefault
- * @type {Function}
- *//**
- * Related point.
- * @name Highcharts.PointLegendItemClickEventObject#target
- * @type {Highcharts.Point}
- *//**
- * Event type.
- * @name Highcharts.PointLegendItemClickEventObject#type
- * @type {"legendItemClick"}
- */
-
-/**
- * Gets fired when the legend item belonging to a series is clicked. The default
- * action is to toggle the visibility of the series. This can be prevented by
- * returning `false` or calling `event.preventDefault()`.
+ *  Class
  *
- * @callback Highcharts.SeriesLegendItemClickCallbackFunction
- *
- * @param {Highcharts.Series} this
- *        The series where the event occured.
- *
- * @param {Highcharts.SeriesLegendItemClickEventObject} event
- *        The event that occured.
- */
-
-/**
- * Information about the legend click event.
- *
- * @interface Highcharts.SeriesLegendItemClickEventObject
- *//**
- * Related browser event.
- * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
- * @type {Highcharts.PointerEvent}
- *//**
- * Prevent the default action of toggle the visibility of the series.
- * @name Highcharts.SeriesLegendItemClickEventObject#preventDefault
- * @type {Function}
- *//**
- * Related series.
- * @name Highcharts.SeriesLegendItemClickEventObject#target
- * @type {Highcharts.Series}
- *//**
- * Event type.
- * @name Highcharts.SeriesLegendItemClickEventObject#type
- * @type {"legendItemClick"}
- */
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+ * */
 
 /**
  * The overview of the chart's series. The legend object is instanciated
@@ -173,7 +123,7 @@ class Legend {
      *
      * */
 
-    public allItems: Array<(BubbleLegendItem|Series|Point)> = [];
+    public allItems: Array<Legend.Item> = [];
 
     public baseline?: number;
 
@@ -270,6 +220,8 @@ class Legend {
      *  Functions
      *
      * */
+
+    /* eslint-disable valid-jsdoc */
 
     /**
      * Initialize the legend.
@@ -403,7 +355,7 @@ class Legend {
      * Make events official: Fires the event `afterColorizeItem`.
      */
     public colorizeItem(
-        item: (BubbleLegendItem|Series|Point),
+        item: Legend.Item,
         visible?: boolean
     ): void {
         (item.legendGroup as any)[visible ? 'removeClass' : 'addClass'](
@@ -477,7 +429,9 @@ class Legend {
      * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      * The item to position
      */
-    public positionItem(item: (BubbleLegendItem|Series|Point)): void {
+    public positionItem(
+        item: Legend.Item
+    ): void {
         const legend = this,
             options = legend.options,
             symbolPadding = options.symbolPadding,
@@ -682,7 +636,9 @@ class Legend {
      * @param {Highcharts.Point|Highcharts.Series} item
      *        The item for which to update the text in the legend.
      */
-    public setText(item: (BubbleLegendItem|Series|Point)): void {
+    public setText(
+        item: Legend.Item
+    ): void {
         const options = this.options;
 
         (item.legendItem as any).attr({
@@ -701,7 +657,9 @@ class Legend {
      * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      * The item to render.
      */
-    public renderItem(item: (BubbleLegendItem|Series|Point)): void {
+    public renderItem(
+        item: Legend.Item
+    ): void {
         const legend = this,
             chart = legend.chart,
             renderer = chart.renderer,
@@ -857,7 +815,9 @@ class Legend {
      * @function Highcharts.Legend#layoutItem
      * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      */
-    public layoutItem(item: (BubbleLegendItem|Series|Point)): void {
+    public layoutItem(
+        item: Legend.Item
+    ): void {
 
         const options = this.options,
             padding = this.padding,
@@ -934,8 +894,8 @@ class Legend {
      * The current items in the legend.
      * @fires Highcharts.Legend#event:afterGetAllItems
      */
-    public getAllItems(): Array<(BubbleLegendItem|Series|Point)> {
-        let allItems = [] as Array<(BubbleLegendItem|Series|Point)>;
+    public getAllItems(): Array<Legend.Item> {
+        let allItems: Array<Legend.Item> = [];
 
         this.chart.series.forEach(function (series): void {
             const seriesOptions = series && series.options;
@@ -1040,7 +1000,7 @@ class Legend {
      */
     public proximatePositions(): void {
         const chart = this.chart,
-            boxes = [] as Array<AnyRecord>,
+            boxes: Array<BoxObject> = [],
             alignLeft = this.options.align === 'left';
 
         this.allItems.forEach(function (item): void {
@@ -1083,14 +1043,15 @@ class Legend {
                 boxes.push({
                     target: target,
                     size: height,
-                    item: item
+                    item
                 });
             }
         }, this);
-        (H.distribute as any)(boxes, chart.plotHeight);
-        boxes.forEach(function (box): void {
-            box.item._legendItemPos[1] =
-                chart.plotTop - chart.spacing[0] + box.pos;
+        distribute(boxes, chart.plotHeight).forEach((box): void => {
+            if (box.item._legendItemPos) {
+                box.item._legendItemPos[1] =
+                    chart.plotTop - chart.spacing[0] + box.pos;
+            }
         });
 
     }
@@ -1111,7 +1072,7 @@ class Legend {
             options = legend.options,
             padding = legend.padding,
             // add each series or point
-            allItems: Array<(BubbleLegendItem|Series|Point)> = legend.getAllItems();
+            allItems = legend.getAllItems();
         let display,
             legendWidth,
             legendHeight,
@@ -1611,7 +1572,7 @@ class Legend {
      * @fires Highcharts.Series#event:legendItemClick
      */
     public setItemEvents(
-        item: (BubbleLegendItem|Series|Point),
+        item: Legend.Item,
         legendItem: SVGElement,
         useHTML?: boolean
     ): void {
@@ -1727,7 +1688,7 @@ class Legend {
      * @fires Highcharts.Series#event:checkboxClick
      */
     public createCheckboxForItem(
-        item: (BubbleLegendItem|Series|Point)
+        item: Legend.Item
     ): void {
         const legend = this;
 
@@ -1767,20 +1728,6 @@ interface Legend extends LegendLike {
     // use declare module pattern to add
 }
 
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace Legend {
-    export interface CheckBoxElement extends HTMLDOMElement {
-        checked?: boolean;
-        x: number;
-        y: number;
-    }
-}
-
 // Workaround for #2030, horizontal legend items not displaying in IE11 Preview,
 // and for #2580, a similar drawing flaw in Firefox 26.
 // Explore if there's a general cause for this. The problem may be related
@@ -1815,8 +1762,113 @@ if (
 
 /* *
  *
+ *  Class Namespace
+ *
+ * */
+
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace Legend {
+
+    export interface CheckBoxElement extends HTMLDOMElement {
+        checked?: boolean;
+        x: number;
+        y: number;
+    }
+
+    export type Item = (BubbleLegendItem|Series|Point);
+
+}
+
+/* *
+ *
  *  Default Export
  *
  * */
 
 export default Legend;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Gets fired when the legend item belonging to a point is clicked. The default
+ * action is to toggle the visibility of the point. This can be prevented by
+ * returning `false` or calling `event.preventDefault()`.
+ *
+ * @callback Highcharts.PointLegendItemClickCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        The point on which the event occured.
+ *
+ * @param {Highcharts.PointLegendItemClickEventObject} event
+ *        The event that occured.
+ */
+
+/**
+ * Information about the legend click event.
+ *
+ * @interface Highcharts.PointLegendItemClickEventObject
+ *//**
+ * Related browser event.
+ * @name Highcharts.PointLegendItemClickEventObject#browserEvent
+ * @type {Highcharts.PointerEvent}
+ *//**
+ * Prevent the default action of toggle the visibility of the point.
+ * @name Highcharts.PointLegendItemClickEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * Related point.
+ * @name Highcharts.PointLegendItemClickEventObject#target
+ * @type {Highcharts.Point}
+ *//**
+ * Event type.
+ * @name Highcharts.PointLegendItemClickEventObject#type
+ * @type {"legendItemClick"}
+ */
+
+/**
+ * Gets fired when the legend item belonging to a series is clicked. The default
+ * action is to toggle the visibility of the series. This can be prevented by
+ * returning `false` or calling `event.preventDefault()`.
+ *
+ * @callback Highcharts.SeriesLegendItemClickCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occured.
+ *
+ * @param {Highcharts.SeriesLegendItemClickEventObject} event
+ *        The event that occured.
+ */
+
+/**
+ * Information about the legend click event.
+ *
+ * @interface Highcharts.SeriesLegendItemClickEventObject
+ *//**
+ * Related browser event.
+ * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
+ * @type {Highcharts.PointerEvent}
+ *//**
+ * Prevent the default action of toggle the visibility of the series.
+ * @name Highcharts.SeriesLegendItemClickEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * Related series.
+ * @name Highcharts.SeriesLegendItemClickEventObject#target
+ * @type {Highcharts.Series}
+ *//**
+ * Event type.
+ * @name Highcharts.SeriesLegendItemClickEventObject#type
+ * @type {"legendItemClick"}
+ */
+
+(''); // keeps doclets above in JS file

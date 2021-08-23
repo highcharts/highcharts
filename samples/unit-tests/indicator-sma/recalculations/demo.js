@@ -284,3 +284,34 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'Correct last point position after addPoint() with shift parameter and cropped data (#8572)'
     );
 });
+
+QUnit.test('Order of series and indicators, #15892.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        navigator: {
+            enabled: false
+        },
+        series: [{
+            id: 'main',
+            data: [13, 14, 15, 13, 14, 15, 13, 14, 15]
+        },
+        {
+            type: 'sma',
+            linkedTo: 'main',
+            params: {
+                period: 4
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series.length,
+        2, // main, sma
+        `When an indicator is declared before the main series,
+        both should be initialized.`
+    );
+    assert.ok(
+        chart.series[0].processedXData.length,
+        `When an indicator is declared before the main series,
+        indicator data should be procesed.`
+    );
+});

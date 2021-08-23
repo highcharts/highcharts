@@ -500,14 +500,18 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach(function (name: ('labels'|'shapes')): void {
             if (baseOptions[name]) {
-                mergedOptions[name] = splat(newOptions[name]).map(
-                    function (
-                        basicOptions: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions),
-                        i: number
-                    ): (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions) {
-                        return merge(baseOptions[name][i], basicOptions);
-                    }
-                ) as any;
+                if (newOptions[name]) {
+                    mergedOptions[name] = splat(newOptions[name]).map(
+                        function (
+                            basicOptions: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions),
+                            i: number
+                        ): (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions) {
+                            return merge(baseOptions[name][i], basicOptions);
+                        }
+                    ) as any;
+                } else {
+                    mergedOptions[name] = baseOptions[name] as any;
+                }
             }
         });
 
@@ -1357,51 +1361,18 @@ merge<Annotation>(
                  *
                  * @sample highcharts/annotations/mock-point/
                  *         Attach annotation to a mock point
+                 * @sample highcharts/annotations/mock-points/
+                 *         Attach annotation to a mock point with different ways
                  *
                  * @declare   Highcharts.AnnotationMockPointOptionsObject
-                 * @type      {string|*}
+                 * @type      {
+                 *               string|
+                 *               Highcharts.AnnotationMockPointOptionsObject|
+                 *               Highcharts.AnnotationMockPointFunction
+                 *            }
                  * @requires  modules/annotations
                  * @apioption annotations.labels.point
                  */
-
-                /**
-                 * The x position of the point. Units can be either in axis
-                 * or chart pixel coordinates.
-                 *
-                 * @type      {number}
-                 * @apioption annotations.labels.point.x
-                 */
-
-                /**
-                 * The y position of the point. Units can be either in axis
-                 * or chart pixel coordinates.
-                 *
-                 * @type      {number}
-                 * @apioption annotations.labels.point.y
-                 */
-
-                /**
-                 * This number defines which xAxis the point is connected to.
-                 * It refers to either the axis id or the index of the axis in
-                 * the xAxis array. If the option is not configured or the axis
-                 * is not found the point's x coordinate refers to the chart
-                 * pixels.
-                 *
-                 * @type      {number|string|null}
-                 * @apioption annotations.labels.point.xAxis
-                 */
-
-                /**
-                 * This number defines which yAxis the point is connected to.
-                 * It refers to either the axis id or the index of the axis in
-                 * the yAxis array. If the option is not configured or the axis
-                 * is not found the point's y coordinate refers to the chart
-                 * pixels.
-                 *
-                 * @type      {number|string|null}
-                 * @apioption annotations.labels.point.yAxis
-                 */
-
 
                 /**
                  * An array of shapes for the annotation. For options that apply
@@ -1419,21 +1390,31 @@ merge<Annotation>(
                  * series - it is referenced by the point's id - or a new point
                  * with defined x, y properties and optionally axes.
                  *
+                 * @sample highcharts/annotations/mock-points/
+                 *         Attach annotation to a mock point with different ways
+                 *
                  * @declare   Highcharts.AnnotationMockPointOptionsObject
-                 * @type      {string|Highcharts.AnnotationMockPointOptionsObject}
+                 * @type      {
+                 *               string|
+                 *               Highcharts.AnnotationMockPointOptionsObject|
+                 *               Highcharts.AnnotationMockPointFunction
+                 *            }
                  * @extends   annotations.labels.point
+                 * @requires  modules/annotations
                  * @apioption annotations.shapes.point
                  */
 
                 /**
-                 * An array of points for the shape. This option is available
+                 * An array of points for the shape
+                 * or a callback function that returns that shape point.
+                 *
+                 * This option is available
                  * for shapes which can use multiple points such as path. A
                  * point can be either a point object or a point's id.
                  *
                  * @see [annotations.shapes.point](annotations.shapes.point.html)
                  *
-                 * @declare   Highcharts.AnnotationMockPointOptionsObject
-                 * @type      {Array<string|*>}
+                 * @type      {Array<Highcharts.AnnotationShapePointOptions>}
                  * @extends   annotations.labels.point
                  * @apioption annotations.shapes.points
                  */
@@ -1975,3 +1956,70 @@ wrap(
 (H as any).Annotation = Annotation as any;
 
 export default Annotation;
+
+/* eslint-enable no-invalid-this, valid-jsdoc */
+
+/**
+ * Object of shape point.
+ *
+ * @interface Highcharts.AnnotationMockPointOptionsObject
+ *
+ */
+/**
+ * The x position of the point. Units can be either in axis
+ * or chart pixel coordinates.
+ *
+ * @type      {number}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.x
+ */
+/**
+ * The y position of the point. Units can be either in axis
+ * or chart pixel coordinates.
+ *
+ * @type      {number}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.y
+ */
+/**
+ * This number defines which xAxis the point is connected to.
+ * It refers to either the axis id or the index of the axis in
+ * the xAxis array. If the option is not configured or the axis
+ * is not found the point's x coordinate refers to the chart
+ * pixels.
+ *
+ * @type      {number|string|null}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.xAxis
+ */
+/**
+ * This number defines which yAxis the point is connected to.
+ * It refers to either the axis id or the index of the axis in
+ * the yAxis array. If the option is not configured or the axis
+ * is not found the point's y coordinate refers to the chart
+ * pixels.
+ *
+ * @type      {number|string|null}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.yAxis
+ */
+
+/**
+ * Callback function that returns the annotation shape point.
+ *
+ * @callback Highcharts.AnnotationMockPointFunction
+ *
+ * @param  {Highcharts.Annotation} annotation
+ *         An annotation instance.
+ *
+ * @return {Highcharts.AnnotationMockPointOptionsObject}
+ *         Annotations shape point.
+ */
+
+/**
+ * Shape point as string, object or function.
+ *
+ * @typedef {
+ *          string|
+ *          Highcharts.AnnotationMockPointOptionsObject|
+ *          Highcharts.AnnotationMockPointFunction
+ *     }Highcharts.AnnotationShapePointOptions
+ */
+
+''; // required by JSDoc parsing
