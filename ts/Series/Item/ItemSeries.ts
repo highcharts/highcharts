@@ -18,10 +18,13 @@
  *
  * */
 
+import type CoreGeometryObject from '../../Core/Geometry/GeometryObject';
 import type { ItemPointMarkerOptions } from './ItemPointOptions';
 import type ItemSeriesOptions from './ItemSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
+
 import H from '../../Core/Globals.js';
 import ItemPoint from './ItemPoint.js';
 import D from '../../Core/DefaultOptions.js';
@@ -246,7 +249,7 @@ class ItemSeries extends PieSeries {
                 graphics: Record<string, SVGElement>,
                 pointAttr: (SVGAttributes|undefined),
                 pointMarkerOptions = point.marker || {},
-                symbol: string = (
+                symbol: SymbolKey = (
                     pointMarkerOptions.symbol ||
                     (seriesMarkerOptions.symbol as any)
                 ),
@@ -586,7 +589,7 @@ extend(ItemSeries.prototype, {
  * */
 
 namespace ItemSeries {
-    export interface GeometryObject extends Highcharts.GeometryObject {
+    export interface GeometryObject extends CoreGeometryObject {
         angle: number;
     }
     export interface RowContainerObject {

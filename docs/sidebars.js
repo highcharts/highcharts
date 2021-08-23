@@ -33,7 +33,8 @@ module.exports = {
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
             'stock/candlestick-chart',
-            'stock/custom-technical-indicators',
+            'stock/hollow-candlestick-chart',
+            'stock/heikinashi',
             'stock/data-grouping',
             'stock/depth-chart',
             'stock/flag-series',
@@ -135,6 +136,7 @@ module.exports = {
         ],
         'Working with data': [
             'working-with-data/data-intro',
+            'working-with-data/data-compression',
             'working-with-data/data-module',
             'working-with-data/custom-preprocessing',
             'working-with-data/live-data',

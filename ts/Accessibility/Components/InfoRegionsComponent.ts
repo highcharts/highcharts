@@ -12,6 +12,13 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Axis from '../../Core/Axis/Axis';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -46,7 +53,6 @@ const {
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
     addClass,
-    escapeStringForHTML,
     getElement,
     getHeadingTagNameForElement,
     setElAttrs,
@@ -343,6 +349,12 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                     chart.renderTo.insertBefore(
                         el, chart.container.nextSibling
                     );
+                },
+                afterInserted: function (): void {
+                    if (component.chart.accessibility) {
+                        component.chart.accessibility
+                            .keyboardNavigation.updateExitAnchor(); // #15986
+                    }
                 }
             }
         };
@@ -453,7 +465,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 'accessibility.screenReaderSection.' + regionKey + 'RegionLabel'
             ),
             chart = this.chart,
-            labelText = chart.langFormat(labelLangKey, { chart: chart }),
+            labelText = chart.langFormat(labelLangKey, { chart: chart, chartTitle: getChartTitle(chart) }),
             sectionId = 'highcharts-screen-reader-region-' + regionKey + '-' +
                 chart.index;
 
@@ -852,10 +864,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             ),
             {
                 chart: chart,
-                names: axes.map(function (axis: Highcharts.Axis): string {
+                names: axes.map(function (axis): string {
                     return getAxisDescription(axis);
                 }),
-                ranges: axes.map(function (axis: Highcharts.Axis): string {
+                ranges: axes.map(function (axis): string {
                     return getAxisRangeDescription(axis);
                 }),
                 numAxes: axes.length

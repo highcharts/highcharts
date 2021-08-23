@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type { AxisType } from '../../../Core/Axis/Types';
+import type AxisType from '../../../Core/Axis/AxisType';
 import type Chart from '../../../Core/Chart/Chart';
 import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
@@ -25,7 +25,7 @@ import type {
     VBPOptions,
     VBPParamsOptions
 } from './VBPOptions';
-import VBPPoint from './VBPPoint';
+import VBPPoint from './VBPPoint.js';
 
 import A from '../../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -40,6 +40,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
+import StockChart from '../../../Core/Chart/StockChart.js';
 const {
     addEvent,
     arrayMax,
@@ -218,11 +219,22 @@ class VBPIndicator extends SMAIndicator {
 
         H.seriesTypes.sma.prototype.init.apply(indicator, arguments);
 
-        params = (indicator.options.params as any);
-        baseSeries = indicator.linkedParent;
-        volumeSeries = (chart.get((params.volumeSeriesID as any)) as any);
+        // Only after series are linked add some additional logic/properties.
+        const unbinder = addEvent(StockChart, 'afterLinkSeries', function (): void {
+            // Protection for a case where the indicator is being updated,
+            // for a brief moment the indicator is deleted.
+            if (indicator.options) {
+                params = (indicator.options.params as any);
+                baseSeries = indicator.linkedParent;
+                volumeSeries = (chart.get((params.volumeSeriesID as any)) as any);
 
-        indicator.addCustomEvents(baseSeries, volumeSeries);
+                indicator.addCustomEvents(baseSeries, volumeSeries);
+
+            }
+            unbinder();
+        }, {
+            order: 1
+        });
 
         return indicator;
     }
@@ -798,6 +810,7 @@ extend(VBPIndicator.prototype, {
         eventName: 'afterSetExtremes'
     },
     calculateOn: 'render',
+    pointClass: VBPPoint,
     markerAttribs: noop as any,
     drawGraph: noop,
     getColumnMetrics: columnPrototype.getColumnMetrics,

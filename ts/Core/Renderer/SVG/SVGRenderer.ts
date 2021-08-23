@@ -32,6 +32,7 @@ import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRendererLike from './SVGRendererLike';
 import type SymbolOptions from './SymbolOptions';
+import type { SymbolKey } from './SymbolType';
 
 import AST from '../HTML/AST.js';
 import Color from '../../Color/Color.js';
@@ -670,7 +671,7 @@ class SVGRenderer implements SVGRendererLike {
         hoverState?: SVGAttributes,
         pressedState?: SVGAttributes,
         disabledState?: SVGAttributes,
-        shape?: SVGRenderer.SymbolKeyValue,
+        shape?: SymbolKey,
         useHTML?: boolean
     ): SVGElement {
         const label = this.label(
@@ -1333,7 +1334,7 @@ class SVGRenderer implements SVGRendererLike {
      * @return {Highcharts.SVGElement}
      */
     public symbol(
-        symbol: string,
+        symbol: SymbolKey,
         x?: number,
         y?: number,
         width?: number,
@@ -1355,7 +1356,7 @@ class SVGRenderer implements SVGRendererLike {
         if (symbolFn) {
             // Check if there's a path defined for this symbol
             if (typeof x === 'number') {
-                path = symbolFn.call(
+                path = (symbolFn as any).call(
                     this.symbols,
                     Math.round(x || 0),
                     Math.round(y || 0),
@@ -1630,7 +1631,7 @@ class SVGRenderer implements SVGRendererLike {
 
         const wrapper = renderer.createElement('text').attr(attribs);
 
-        if (!useHTML) {
+        if (!useHTML || (renderer.forExport && !renderer.allowHTML)) {
             wrapper.xSetter = function (
                 value: string,
                 key: string,
@@ -2044,7 +2045,7 @@ class SVGRenderer implements SVGRendererLike {
         str: string,
         x: number,
         y?: number,
-        shape?: SVGRenderer.SymbolKeyValue,
+        shape?: SymbolKey,
         anchorX?: number,
         anchorY?: number,
         useHTML?: boolean,
@@ -2151,10 +2152,6 @@ extend(SVGRenderer.prototype, {
 
 namespace SVGRenderer {
     export type ClipRectElement = SVGElement;
-    export type SymbolKeyValue = (
-        'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|'rect'|
-        'square'|'topbutton'|'triangle'|'triangle-down'
-    );
 }
 
 /* *

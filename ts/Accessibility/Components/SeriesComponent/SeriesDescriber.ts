@@ -12,11 +12,13 @@
 
 'use strict';
 
+import type Axis from '../../../Core/Axis/Axis';
 import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type Series from '../../../Core/Series/Series';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+
 import AnnotationsA11y from '../AnnotationsA11y.js';
 const {
     getPointAnnotationTexts
@@ -313,7 +315,7 @@ function getSeriesAxisDescriptionText(
     series: Series,
     axisCollection: string
 ): string {
-    const axis: Highcharts.Axis = (series as any)[axisCollection];
+    const axis: Axis = (series as any)[axisCollection];
 
     return series.chart.langFormat(
         'accessibility.series.' + axisCollection + 'Description',
@@ -340,24 +342,19 @@ function getPointA11yTimeDescription(
     const series = point.series,
         chart = series.chart,
         a11yOptions = chart.options.accessibility.point || {},
-        hasDateXAxis = series.xAxis && series.xAxis.dateTime;
+        dateXAxis = series.xAxis && series.xAxis.dateTime;
 
-    if (hasDateXAxis) {
-        const tooltipDateFormat = Tooltip.prototype.getXDateFormat.call(
-                {
-                    getDateFormat: Tooltip.prototype.getDateFormat,
-                    chart: chart
-                },
-                point,
-                chart.options.tooltip,
-                series.xAxis
+    if (dateXAxis) {
+        const tooltipDateFormat = dateXAxis.getXDateFormat(
+                point.x || 0,
+                chart.options.tooltip.dateTimeLabelFormats
             ),
             dateFormat = a11yOptions.dateFormatter &&
                 a11yOptions.dateFormatter(point) ||
                 a11yOptions.dateFormat ||
                 tooltipDateFormat;
 
-        return chart.time.dateFormat(dateFormat, (point.x as any), void 0);
+        return chart.time.dateFormat(dateFormat, point.x || 0, void 0);
     }
 }
 
@@ -600,7 +597,7 @@ function defaultSeriesDescriptionFormatter(
         description = getSeriesDescriptionText(series),
         shouldDescribeAxis = function (
             coll: ('xAxis'|'yAxis')
-        ): (boolean|Highcharts.Axis) {
+        ): (boolean|Axis) {
             return chart[coll] && chart[coll].length > 1 && series[coll];
         },
         xAxisInfo = getSeriesAxisDescriptionText(series, 'xAxis'),

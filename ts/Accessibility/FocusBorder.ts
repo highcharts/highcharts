@@ -211,8 +211,7 @@ extend(SVGElement.prototype, {
                 posYCorrection = 0;
 
             if (text.attr('text-anchor') === 'middle') {
-                posXCorrection = H.isFirefox && text.rotation ? 0.25 : 0.5;
-                posYCorrection = H.isFirefox && !text.rotation ? 0.75 : 0.5;
+                posXCorrection = posYCorrection = 0.5;
             } else if (!text.rotation) {
                 posYCorrection = 0.75;
             } else {

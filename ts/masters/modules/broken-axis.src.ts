@@ -8,4 +8,8 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Core/Axis/BrokenAxis.js';
+import Highcharts from '../../Core/Globals.js';
+import BrokenAxis from '../../Core/Axis/BrokenAxis.js';
+const G: AnyRecord = Highcharts;
+// Compositions
+BrokenAxis.compose(G.Axis, G.Series);

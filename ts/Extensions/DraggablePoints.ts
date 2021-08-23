@@ -14,6 +14,7 @@
 
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type AreaRangePoint from '../Series/AreaRange/AreaRangePoint';
+import type Axis from '../Core/Axis/Axis';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type BoxPlotPoint from '../Series/BoxPlot/BoxPlotPoint';
 import type BulletPoint from '../Series/Bullet/BulletPoint';
@@ -32,6 +33,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type WaterfallPoint from '../Series/Waterfall/WaterfallPoint';
 import type XRangePoint from '../Series/XRange/XRangePoint';
+
 import A from '../Core/Animation/AnimationUtilities.js';
 const {
     animObject
@@ -48,6 +50,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,
+    isNumber,
     merge,
     objectEach,
     pick
@@ -2232,7 +2235,7 @@ Point.prototype.getDropValues = function (
         key: string
     ): void {
         const oldVal = pointOrigin[key],
-            axis: Highcharts.Axis = (series as any)[val.axis + 'Axis'],
+            axis: Axis = (series as any)[val.axis + 'Axis'],
             newVal = limitToRange(
                 axis.toValue(
                     (axis.horiz ? newPos.chartX : newPos.chartY) +
@@ -2285,12 +2288,45 @@ Series.prototype.getGuideBox = function (
     points.forEach(function (point: Point): void {
         const bBox = point.graphic && point.graphic.getBBox() || point.shapeArgs;
 
-        if (bBox && (bBox.width || bBox.height || bBox.x || bBox.y)) {
+        if (bBox) {
+            let plotX2;
+            const x2 = (point as XRangePoint).x2;
+            if (isNumber(x2)) {
+                plotX2 = point.series.xAxis.translate(
+                    x2,
+                    false,
+                    false,
+                    false,
+                    true
+                );
+            }
+
+            // Avoid a 0 min when some of the points being dragged are
+            // completely outside the plot
+            const skipBBox = !(bBox.width || bBox.height || bBox.x || bBox.y);
+
             changed = true;
-            minX = Math.min(point.plotX || 0, bBox.x || 0, minX);
-            maxX = Math.max((bBox.x || 0) + (bBox.width || 0), maxX);
-            minY = Math.min(point.plotY || 0, bBox.y || 0, minY);
-            maxY = Math.max((bBox.y || 0) + (bBox.height || 0), maxY);
+            minX = Math.min(
+                point.plotX || 0,
+                plotX2 || 0,
+                skipBBox ? Infinity : bBox.x || 0,
+                minX
+            );
+            maxX = Math.max(
+                point.plotX || 0,
+                plotX2 || 0,
+                (bBox.x || 0) + (bBox.width || 0),
+                maxX
+            );
+            minY = Math.min(
+                point.plotY || 0,
+                skipBBox ? Infinity : bBox.y || 0,
+                minY
+            );
+            maxY = Math.max(
+                (bBox.y || 0) + (bBox.height || 0),
+                maxY
+            );
         }
     });
 

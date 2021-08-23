@@ -21,6 +21,10 @@ import HTMLUtilities from './HTMLUtilities.js';
 const {
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
+import H from '../../Core/Globals.js';
+const {
+    doc
+} = H;
 import U from '../../Core/Utilities.js';
 const {
     defined,
@@ -81,7 +85,7 @@ function getChartTitle(chart: Highcharts.AccessibilityChart): string {
  * @param {Highcharts.Axis} axis
  * @return {string}
  */
-function getAxisDescription(axis: Highcharts.Axis): string {
+function getAxisDescription(axis: Axis): string {
     return axis && (
         axis.userOptions && axis.userOptions.accessibility &&
             axis.userOptions.accessibility.description ||
@@ -99,7 +103,7 @@ function getAxisDescription(axis: Highcharts.Axis): string {
  * @param {Highcharts.Axis} axis The axis to get range desc of.
  * @return {string} A string with the range description for the axis.
  */
-function getAxisRangeDescription(axis: Highcharts.Axis): string {
+function getAxisRangeDescription(axis: Axis): string {
     const axisOptions = axis.options || {};
 
     // Handle overridden range description
@@ -131,7 +135,7 @@ function getAxisRangeDescription(axis: Highcharts.Axis): string {
  * @param {Highcharts.Axis} axis
  * @return {string}
  */
-function getCategoryAxisRangeDesc(axis: Highcharts.Axis): string {
+function getCategoryAxisRangeDesc(axis: Axis): string {
     const chart = axis.chart;
 
     if (axis.dataMax && axis.dataMin) {
@@ -154,7 +158,7 @@ function getCategoryAxisRangeDesc(axis: Highcharts.Axis): string {
  * @param {Highcharts.Axis} axis
  * @return {string}
  */
-function getAxisTimeLengthDesc(axis: Highcharts.Axis): string {
+function getAxisTimeLengthDesc(axis: Axis): string {
     const chart = axis.chart;
     const range: Record<string, number> = {};
     let rangeUnit = 'Seconds';
@@ -192,7 +196,7 @@ function getAxisTimeLengthDesc(axis: Highcharts.Axis): string {
  * @param {Highcharts.Axis} axis
  * @return {string}
  */
-function getAxisFromToDescription(axis: Highcharts.Axis): string {
+function getAxisFromToDescription(axis: Axis): string {
     const chart = axis.chart;
     const dateRangeFormat = (
         chart.options &&
@@ -270,7 +274,11 @@ function getSeriesA11yElement(
  */
 function unhideChartElementFromAT(chart: Chart, element: DOMElementType): void {
     element.setAttribute('aria-hidden', false);
-    if (element === chart.renderTo || !element.parentNode) {
+    if (
+        element === chart.renderTo ||
+        !element.parentNode ||
+        element.parentNode === doc.body // #16126: Full screen printing
+    ) {
         return;
     }
 
@@ -284,7 +292,7 @@ function unhideChartElementFromAT(chart: Chart, element: DOMElementType): void {
         }
     );
     // Repeat for parent
-    unhideChartElementFromAT(chart, element.parentNode as any);
+    unhideChartElementFromAT(chart, element.parentNode);
 }
 
 

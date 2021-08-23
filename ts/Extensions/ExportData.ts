@@ -16,7 +16,7 @@
 
 'use strict';
 
-import type LangOptions from '../Core/LangOptions';
+import type Exporting from '../Extensions/Exporting/Exporting';
 import type Point from '../Core/Series/Point';
 import type {
     PointOptions,
@@ -102,6 +102,14 @@ declare module '../Core/Series/SeriesOptions' {
     }
 }
 
+declare module './Exporting/ExportingOptions' {
+    interface ExportingOptions {
+        csv?: Highcharts.ExportingCsvOptions;
+        showTable?: boolean;
+        tableCaption?: (boolean|string);
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -126,11 +134,6 @@ declare global {
             decimalPoint?: (string|null);
             itemDelimiter?: (string|null);
             lineDelimiter?: string;
-        }
-        interface ExportingOptions {
-            csv?: ExportingCsvOptions;
-            showTable?: boolean;
-            tableCaption?: (boolean|string);
         }
         interface ExportDataPoint {
             series: ExportDataSeries;
@@ -185,24 +188,6 @@ declare global {
 import DownloadURL from '../Extensions/DownloadURL.js';
 import HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 const { downloadURL } = DownloadURL;
-
-
-// Can we add this to utils? Also used in screen-reader.js
-/**
- * HTML encode some characters vulnerable for XSS.
- * @private
- * @param  {string} html The input string
- * @return {string} The excaped string
- */
-function htmlencode(html: string): string {
-    return html
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#x27;')
-        .replace(/\//g, '&#x2F;');
-}
 
 setOptions({
     /**
@@ -534,7 +519,7 @@ Chart.prototype.getDataRows = function (
         csvOptions = (
             (this.options.exporting && this.options.exporting.csv) || {}
         ),
-        xAxis: Highcharts.Axis,
+        xAxis: Axis,
         xAxes = this.xAxis,
         rows: Record<string, (Array<any>&AnyRecord)> =
             {},
@@ -546,7 +531,7 @@ Chart.prototype.getDataRows = function (
         i: number,
         x,
         xTitle: string,
-        langOptions: LangOptions = this.options.lang as any,
+        langOptions = this.options.lang,
         exportDataOptions: Highcharts.ExportDataOptions = langOptions.exportData as any,
         categoryHeader = exportDataOptions.categoryHeader as any,
         categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,
@@ -621,7 +606,7 @@ Chart.prototype.getDataRows = function (
         // or point.name is defined #13293
         getPointArray = function (
             series: Series,
-            xAxis: Highcharts.Axis
+            xAxis: Axis
         ): string[] {
             const namedPoints = series.data.filter((d): string | false =>
                 (typeof d.y !== 'undefined') && d.name
@@ -652,14 +637,14 @@ Chart.prototype.getDataRows = function (
     this.setUpKeyToAxis();
 
     this.series.forEach(function (series: Series): void {
-        let keys = series.options.keys,
+        const keys = series.options.keys,
             xAxis = series.xAxis,
             pointArrayMap = keys || getPointArray(series, xAxis),
             valueCount = pointArrayMap.length,
             xTaken: (false|Record<string, unknown>) =
                 !series.requireSorting && {},
-            xAxisIndex = xAxes.indexOf(xAxis),
-            categoryAndDatetimeMap = getCategoryAndDateTimeMap(
+            xAxisIndex = xAxes.indexOf(xAxis);
+        let categoryAndDatetimeMap = getCategoryAndDateTimeMap(
                 series,
                 pointArrayMap
             ),
@@ -882,8 +867,8 @@ Chart.prototype.getDataRows = function (
 Chart.prototype.getCSV = function (
     useLocalDecimalPoint?: boolean
 ): string {
-    let csv = '',
-        rows = this.getDataRows(),
+    let csv = '';
+    const rows = this.getDataRows(),
         csvOptions: Highcharts.ExportingCsvOptions =
             (this.options.exporting as any).csv,
         decimalPoint = pick(
@@ -999,14 +984,14 @@ Chart.prototype.getTable = function (
 Chart.prototype.getTableAST = function (
     useLocalDecimalPoint?: boolean
 ): AST.Node {
+    let rowLength = 0;
     const treeChildren: AST.Node[] = [];
-    let options = this.options,
+    const options = this.options,
         decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
         useMultiLevelHeaders = pick(
             (options.exporting as any).useMultiLevelHeaders, true
         ),
         rows = this.getDataRows(useMultiLevelHeaders),
-        rowLength = 0,
         topHeaders = useMultiLevelHeaders ? rows.shift() : null,
         subHeaders = rows.shift(),
         // Compare two rows for equality
@@ -1176,7 +1161,7 @@ Chart.prototype.getTableAST = function (
                 (options.exporting as any).tableCaption,
                 (
                     (options.title as any).text ?
-                        htmlencode((options.title as any).text) :
+                        (options.title as any).text :
                         'Chart'
                 )
             )
@@ -1259,7 +1244,7 @@ function getBlobFromContent(
 
     try {
         // MS specific
-        if (nav.msSaveOrOpenBlob && win.MSBlobBuilder) {
+        if ((nav.msSaveOrOpenBlob) && win.MSBlobBuilder) {
             const blob = new win.MSBlobBuilder();
             blob.append(content);
             return blob.getBlob('image/svg+xml') as any;
@@ -1278,6 +1263,7 @@ function getBlobFromContent(
     }
 }
 
+/* eslint-disable valid-jsdoc */
 
 /**
  * Generates a data URL of CSV for local download in the browser. This is the
@@ -1289,7 +1275,9 @@ function getBlobFromContent(
  *
  * @requires modules/exporting
  */
-Chart.prototype.downloadCSV = function (): void {
+Chart.prototype.downloadCSV = function (
+    this: Exporting.ChartComposition
+): void {
     const csv = this.getCSV(true);
 
     downloadURL(
@@ -1309,7 +1297,9 @@ Chart.prototype.downloadCSV = function (): void {
  *
  * @requires modules/exporting
  */
-Chart.prototype.downloadXLS = function (): void {
+Chart.prototype.downloadXLS = function (
+    this: Exporting.ChartComposition
+): void {
     const uri = 'data:application/vnd.ms-excel;base64,',
         template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
             'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
@@ -1407,13 +1397,15 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
         lang.viewData &&
         lang.hideData &&
         menuItems &&
-        exportDivElements &&
-        exportDivElements.length
+        exportDivElements
     ) {
-        AST.setElementHTML(
-            exportDivElements[menuItems.indexOf('viewData')],
-            this.isDataTableVisible ? lang.hideData : lang.viewData
-        );
+        const exportDivElement = exportDivElements[menuItems.indexOf('viewData')];
+        if (exportDivElement) {
+            AST.setElementHTML(
+                exportDivElement,
+                this.isDataTableVisible ? lang.hideData : lang.viewData
+            );
+        }
     }
 };
 
@@ -1441,7 +1433,7 @@ if (exportingOptions) {
                 this.toggleDataTable();
             }
         }
-    } as Record<string, Highcharts.ExportingMenuObject>);
+    } as Record<string, Exporting.MenuObject>);
 
     if (exportingOptions.buttons) {
         (exportingOptions.buttons.contextButton.menuItems as any).push(

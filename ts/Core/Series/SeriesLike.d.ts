@@ -56,7 +56,7 @@ export interface SeriesLike {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

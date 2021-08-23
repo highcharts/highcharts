@@ -19,12 +19,12 @@ If you already have Highcharts installed in the web page and want to run Highcha
 Load the map
 ------------
 
-Highcharts Maps loads its maps from [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON), an open standard for description of geographic features. Most GIS software supports this format as export from for instance Shapefile or KML export. Read more in the [API reference](https://api.highcharts.com/highmaps#Highcharts.geojson) and [see the live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/geojson-multiple-types/).
+Highcharts Maps loads its maps from [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON), an open standard for description of geographic features. Most GIS software supports this format as export from for instance Shapefile or KML export. Read more in the [API reference](https://api.highcharts.com/class-reference/Highcharts.GeoJSON) and [see the live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/geojson-multiple-types/).
 
 There are three basic sources for your map:
 
 1.  Use our [Map collection](https://code.highcharts.com/mapdata/). Read the [tutorial article](https://highcharts.com/docs/maps/map-collection) on the map collection to get started.
-2.  Find an SVG map online and convert it using our (experimental) [online converter](https://highcharts.com/studies/map-from-svg.htm). 
+2.  Find an SVG map online and convert it using our (experimental) [online converter](https://highcharts.github.io/map-from-svg). 
 3.  Create your own map from scratch using an SVG editor, then convert them online. Read our tutorial on [Custom maps for Highcharts Maps](https://highcharts.com/docs/maps/custom-maps).
 
 Initialize the map

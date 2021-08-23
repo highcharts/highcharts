@@ -22,6 +22,7 @@ import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
+import type { SymbolKey } from './SymbolType';
 
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
@@ -72,7 +73,7 @@ class SVGLabel extends SVGElement {
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
@@ -81,7 +82,7 @@ class SVGLabel extends SVGElement {
         str: string,
         x: number,
         y?: number,
-        shape?: (SVGRenderer.SymbolKeyValue|string),
+        shape?: (SymbolKey|string),
         anchorX?: number,
         anchorY?: number,
         useHTML?: boolean,
@@ -109,13 +110,15 @@ class SVGLabel extends SVGElement {
             this.addClass('highcharts-' + className);
         }
 
-        this.text = renderer.text('', 0, 0, useHTML).attr({ zIndex: 1 });
+        // Create the text element. An undefined text content prevents redundant
+        // box calculation (#16121)
+        this.text = renderer.text(void 0, 0, 0, useHTML).attr({ zIndex: 1 });
 
         // Validate the shape argument
         let hasBGImage;
         if (typeof shape === 'string') {
             hasBGImage = /^url\((.*?)\)$/.test(shape);
-            if (this.renderer.symbols[shape] || hasBGImage) {
+            if (hasBGImage || this.renderer.symbols[shape as SymbolKey]) {
                 this.symbolKey = shape;
             }
         }
@@ -290,50 +293,6 @@ class SVGLabel extends SVGElement {
         this.heightSetting = value;
     }
 
-    // Event handling. In case of useHTML, we need to make sure that events
-    // are captured on the span as well, and that mouseenter/mouseleave
-    // between the SVG group and the HTML span are not treated as real
-    // enter/leave events. #13310.
-    public on(
-        eventType: string,
-        handler: Function
-    ): this {
-        const label = this;
-        const text = label.text;
-        const span: SVGElement|undefined =
-            text && text.element.tagName === 'SPAN' ? text : void 0;
-
-        let selectiveHandler: Function|undefined;
-
-        if (span) {
-            selectiveHandler = function (e: MouseEvent): void {
-                if (
-                    (
-                        eventType === 'mouseenter' ||
-                        eventType === 'mouseleave'
-                    ) &&
-                    e.relatedTarget instanceof Element &&
-                    (
-                        // #14110
-                        label.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY ||
-                        span.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY
-                    )
-                ) {
-                    return;
-                }
-                handler.call(label.element, e);
-            };
-            span.on(eventType, selectiveHandler);
-        }
-        SVGElement.prototype.on.call(
-            label,
-            eventType,
-            selectiveHandler || handler
-        );
-
-        return label;
-    }
-
     /*
      * After the text element is added, get the desired size of the border
      * box and add it before the text in the DOM.
@@ -455,7 +414,8 @@ class SVGLabel extends SVGElement {
         // Update the label-scoped y offset. Math.min because of inline
         // style (#9400)
         this.baselineOffset = padding + Math.min(
-            metrics.b,
+            // When applicable, use the font size of the first line (#15707)
+            (this.text.firstLineMetrics || metrics).b,
             // When the height is 0, there is no bBox, so go with the font
             // metrics. Highmaps CSS demos.
             bBox.height || Infinity
@@ -567,5 +527,11 @@ class SVGLabel extends SVGElement {
         this.attr('translateY', this.ySetting);
     }
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SVGLabel;

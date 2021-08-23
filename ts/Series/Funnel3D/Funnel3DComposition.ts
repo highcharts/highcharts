@@ -127,7 +127,7 @@ namespace Funnel3DComposition {
         wrapRenderer3D(SVGRendererClass);
     }
 
-    function wrapElement3D(elements3d: SVGElement3D): void {
+    function wrapElement3D(elements3d: typeof SVGElement3D): void {
         elements3d.funnel3d = merge(elements3d.cuboid, {
             parts: [
                 'top', 'bottom',

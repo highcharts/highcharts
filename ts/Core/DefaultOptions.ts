@@ -10,18 +10,25 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type ColorType from './Color/ColorType';
 import type { Options } from './Options';
 import type Point from './Series/Point';
 import type Series from './Series/Series';
 
+import ChartDefaults from './Chart/ChartDefaults.js';
+import Color from './Color/Color.js';
+const { parse: color } = Color;
 import H from './Globals.js';
 const {
     isTouchDevice,
     svg
 } = H;
-import ChartDefaults from './Chart/ChartDefaults.js';
-import Color from './Color/Color.js';
-const { parse: color } = Color;
 import palette from './Color/Palette.js';
 import Time from './Time.js';
 import U from './Utilities.js';
@@ -47,208 +54,22 @@ declare module './Chart/ChartOptions'{
 
 declare module './LangOptions'{
     export interface LangOptions {
-        decimalPoint?: string;
+        decimalPoint: string;
         invalidDate?: string;
-        loading?: string;
-        months?: Array<string>;
+        loading: string;
+        months: Array<string>;
         numericSymbolMagnitude?: number;
-        numericSymbols?: Array<string>;
-        resetZoom?: string;
-        resetZoomTitle?: string;
-        shortMonths?: Array<string>;
+        numericSymbols: Array<string>;
+        resetZoom: string;
+        resetZoomTitle: string;
+        shortMonths: Array<string>;
         shortWeekdays?: Array<string>;
-        thousandsSep?: string;
-        weekdays?: Array<string>;
+        thousandsSep: string;
+        weekdays: Array<string>;
         zoomIn?: string;
         zoomOut?: string;
     }
 }
-
-/* *
- *
- *  API Declarations
- *
- * */
-
-/**
- * @typedef {"plotBox"|"spacingBox"} Highcharts.ButtonRelativeToValue
- */
-
-/**
- * Gets fired when a series is added to the chart after load time, using the
- * `addSeries` method. Returning `false` prevents the series from being added.
- *
- * @callback Highcharts.ChartAddSeriesCallbackFunction
- *
- * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
- *
- * @param {Highcharts.ChartAddSeriesEventObject} event
- *        The event that occured.
- */
-
-/**
- * Contains common event information. Through the `options` property you can
- * access the series options that were passed to the `addSeries` method.
- *
- * @interface Highcharts.ChartAddSeriesEventObject
- *//**
- * The series options that were passed to the `addSeries` method.
- * @name Highcharts.ChartAddSeriesEventObject#options
- * @type {Highcharts.SeriesOptionsType}
- *//**
- * Prevents the default behaviour of the event.
- * @name Highcharts.ChartAddSeriesEventObject#preventDefault
- * @type {Function}
- *//**
- * The event target.
- * @name Highcharts.ChartAddSeriesEventObject#target
- * @type {Highcharts.Chart}
- *//**
- * The event type.
- * @name Highcharts.ChartAddSeriesEventObject#type
- * @type {"addSeries"}
- */
-
-/**
- * Gets fired when clicking on the plot background.
- *
- * @callback Highcharts.ChartClickCallbackFunction
- *
- * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
- *
- * @param {Highcharts.PointerEventObject} event
- *        The event that occured.
- */
-
-/**
- * Contains an axes of the clicked spot.
- *
- * @interface Highcharts.ChartClickEventAxisObject
- *//**
- * Axis at the clicked spot.
- * @name Highcharts.ChartClickEventAxisObject#axis
- * @type {Highcharts.Axis}
- *//**
- * Axis value at the clicked spot.
- * @name Highcharts.ChartClickEventAxisObject#value
- * @type {number}
- */
-
-/**
- * Contains information about the clicked spot on the chart. Remember the unit
- * of a datetime axis is milliseconds since 1970-01-01 00:00:00.
- *
- * @interface Highcharts.ChartClickEventObject
- * @extends Highcharts.PointerEventObject
- *//**
- * Information about the x-axis on the clicked spot.
- * @name Highcharts.ChartClickEventObject#xAxis
- * @type {Array<Highcharts.ChartClickEventAxisObject>}
- *//**
- * Information about the y-axis on the clicked spot.
- * @name Highcharts.ChartClickEventObject#yAxis
- * @type {Array<Highcharts.ChartClickEventAxisObject>}
- *//**
- * Information about the z-axis on the clicked spot.
- * @name Highcharts.ChartClickEventObject#zAxis
- * @type {Array<Highcharts.ChartClickEventAxisObject>|undefined}
- */
-
-/**
- * Gets fired when the chart is finished loading.
- *
- * @callback Highcharts.ChartLoadCallbackFunction
- *
- * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
- *
- * @param {global.Event} event
- *        The event that occured.
- */
-
-/**
- * Fires when the chart is redrawn, either after a call to `chart.redraw()` or
- * after an axis, series or point is modified with the `redraw` option set to
- * `true`.
- *
- * @callback Highcharts.ChartRedrawCallbackFunction
- *
- * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
- *
- * @param {global.Event} event
- *        The event that occured.
- */
-
-/**
- * Gets fired after initial load of the chart (directly after the `load` event),
- * and after each redraw (directly after the `redraw` event).
- *
- * @callback Highcharts.ChartRenderCallbackFunction
- *
- * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
- *
- * @param {global.Event} event
- *        The event that occured.
- */
-
-/**
- * Gets fired when an area of the chart has been selected. The default action
- * for the selection event is to zoom the chart to the selected area. It can be
- * prevented by calling `event.preventDefault()` or return false.
- *
- * @callback Highcharts.ChartSelectionCallbackFunction
- *
- * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
- *
- * @param {global.ChartSelectionContextObject} event
- *        Event informations
- *
- * @return {boolean|undefined}
- *         Return false to prevent the default action, usually zoom.
- */
-
-/**
- * The primary axes are `xAxis[0]` and `yAxis[0]`. Remember the unit of a
- * datetime axis is milliseconds since 1970-01-01 00:00:00.
- *
- * @interface Highcharts.ChartSelectionContextObject
- * @extends global.Event
- *//**
- * Arrays containing the axes of each dimension and each axis' min and max
- * values.
- * @name Highcharts.ChartSelectionContextObject#xAxis
- * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
- *//**
- * Arrays containing the axes of each dimension and each axis' min and max
- * values.
- * @name Highcharts.ChartSelectionContextObject#yAxis
- * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
- */
-
-/**
- * Axis context of the selection.
- *
- * @interface Highcharts.ChartSelectionAxisContextObject
- *//**
- * The selected Axis.
- * @name Highcharts.ChartSelectionAxisContextObject#axis
- * @type {Highcharts.Axis}
- *//**
- * The maximum axis value, either automatic or set manually.
- * @name Highcharts.ChartSelectionAxisContextObject#max
- * @type {number}
- *//**
- * The minimum axis value, either automatic or set manually.
- * @name Highcharts.ChartSelectionAxisContextObject#min
- * @type {number}
- */
-
-(''); // detach doclets above
 
 /* *
  *
@@ -2260,16 +2081,6 @@ const defaultOptions: Options = {
 
 
         /**
-         * The number of milliseconds to wait until the tooltip is hidden when
-         * mouse out from a point or chart.
-         *
-         * @type      {number}
-         * @default   500
-         * @since     3.0
-         * @apioption tooltip.hideDelay
-         */
-
-        /**
          * Whether to allow the tooltip to render outside the chart's SVG
          * element box. By default (`false`), the tooltip is rendered within the
          * chart's SVG element, which results in the tooltip being aligned
@@ -2332,72 +2143,6 @@ const defaultOptions: Options = {
          * @type      {Highcharts.TooltipPositionerCallbackFunction}
          * @since     2.2.4
          * @apioption tooltip.positioner
-         */
-
-        /**
-         * The name of a symbol to use for the border around the tooltip. Can
-         * be one of: `"callout"`, `"circle"` or `"rect"`. When
-         * [tooltip.split](#tooltip.split)
-         * option is enabled, shape is applied to all boxes except header, which
-         * is controlled by
-         * [tooltip.headerShape](#tooltip.headerShape).
-         *
-         * Custom callbacks for symbol path generation can also be added to
-         * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
-         * [series.marker.symbol](plotOptions.line.marker.symbol).
-         *
-         * @type      {Highcharts.TooltipShapeValue}
-         * @default   callout
-         * @since     4.0
-         * @apioption tooltip.shape
-         */
-
-        /**
-         * The name of a symbol to use for the border around the tooltip
-         * header. Applies only when [tooltip.split](#tooltip.split) is
-         * enabled.
-         *
-         * Custom callbacks for symbol path generation can also be added to
-         * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
-         * [series.marker.symbol](plotOptions.line.marker.symbol).
-         *
-         * @see [tooltip.shape](#tooltip.shape)
-         *
-         * @sample {highstock} stock/tooltip/split-positioner/
-         *         Different shapes for header and split boxes
-         *
-         * @type       {Highcharts.TooltipShapeValue}
-         * @default    callout
-         * @validvalue ["callout", "square"]
-         * @since      7.0
-         * @apioption  tooltip.headerShape
-         */
-
-        /**
-         * When the tooltip is shared, the entire plot area will capture mouse
-         * movement or touch events. Tooltip texts for series types with ordered
-         * data (not pie, scatter, flags etc) will be shown in a single bubble.
-         * This is recommended for single series charts and for tablet/mobile
-         * optimized charts.
-         *
-         * See also [tooltip.split](#tooltip.split), that is better suited for
-         * charts with many series, especially line-type series. The
-         * `tooltip.split` option takes precedence over `tooltip.shared`.
-         *
-         * @sample {highcharts} highcharts/tooltip/shared-false/
-         *         False by default
-         * @sample {highcharts} highcharts/tooltip/shared-true/
-         *         True
-         * @sample {highcharts} highcharts/tooltip/shared-x-crosshair/
-         *         True with x axis crosshair
-         * @sample {highcharts} highcharts/tooltip/shared-true-mixed-types/
-         *         True with mixed series types
-         *
-         * @type      {boolean}
-         * @default   false
-         * @since     2.1
-         * @product   highcharts highstock
-         * @apioption tooltip.shared
          */
 
         /**
@@ -2466,7 +2211,7 @@ const defaultOptions: Options = {
          * @sample {highmaps} maps/tooltip/valuedecimals/
          *         Set decimals, prefix and suffix for the value
          *
-         * @type      {number}
+         * @type      {number|undefined}
          * @since     2.2
          * @apioption tooltip.valueDecimals
          */
@@ -2598,11 +2343,81 @@ const defaultOptions: Options = {
         footerFormat: '',
 
         /**
+         * The name of a symbol to use for the border around the tooltip
+         * header. Applies only when [tooltip.split](#tooltip.split) is
+         * enabled.
+         *
+         * Custom callbacks for symbol path generation can also be added to
+         * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
+         * [series.marker.symbol](plotOptions.line.marker.symbol).
+         *
+         * @see [tooltip.shape](#tooltip.shape)
+         *
+         * @sample {highstock} stock/tooltip/split-positioner/
+         *         Different shapes for header and split boxes
+         *
+         * @type       {Highcharts.TooltipShapeValue}
+         * @validvalue ["callout", "square"]
+         * @since      7.0
+         */
+        headerShape: 'callout',
+
+        /**
+         * The number of milliseconds to wait until the tooltip is hidden when
+         * mouse out from a point or chart.
+         *
+         * @since     3.0
+         */
+        hideDelay: 500,
+
+        /**
          * Padding inside the tooltip, in pixels.
          *
          * @since      5.0.0
          */
         padding: 8,
+
+        /**
+         * The name of a symbol to use for the border around the tooltip. Can
+         * be one of: `"callout"`, `"circle"` or `"rect"`. When
+         * [tooltip.split](#tooltip.split)
+         * option is enabled, shape is applied to all boxes except header, which
+         * is controlled by
+         * [tooltip.headerShape](#tooltip.headerShape).
+         *
+         * Custom callbacks for symbol path generation can also be added to
+         * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
+         * [series.marker.symbol](plotOptions.line.marker.symbol).
+         *
+         * @type      {Highcharts.TooltipShapeValue}
+         * @since     4.0
+         */
+        shape: 'callout',
+
+        /**
+         * When the tooltip is shared, the entire plot area will capture mouse
+         * movement or touch events. Tooltip texts for series types with ordered
+         * data (not pie, scatter, flags etc) will be shown in a single bubble.
+         * This is recommended for single series charts and for tablet/mobile
+         * optimized charts.
+         *
+         * See also [tooltip.split](#tooltip.split), that is better suited for
+         * charts with many series, especially line-type series. The
+         * `tooltip.split` option takes precedence over `tooltip.shared`.
+         *
+         * @sample {highcharts} highcharts/tooltip/shared-false/
+         *         False by default
+         * @sample {highcharts} highcharts/tooltip/shared-true/
+         *         True
+         * @sample {highcharts} highcharts/tooltip/shared-x-crosshair/
+         *         True with x axis crosshair
+         * @sample {highcharts} highcharts/tooltip/shared-true-mixed-types/
+         *         True with mixed series types
+         *
+         * @since     2.1
+         * @product   highcharts highstock
+         */
+        shared: false,
 
         /**
          * Proximity snap for graphs or single points. It defaults to 10 for
@@ -2625,6 +2440,7 @@ const defaultOptions: Options = {
          * @product highcharts highstock
          */
         snap: isTouchDevice ? 25 : 10,
+
         /**
          * The HTML of the tooltip header line. Variables are enclosed by
          * curly brackets. Available variables are `point.key`, `series.name`,
@@ -2704,7 +2520,8 @@ const defaultOptions: Options = {
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         backgroundColor: color(palette.neutralColor3)
-            .setOpacity(0.85).get(),
+            // @todo: Disallow undefined as input for colors
+            .setOpacity(0.85).get() as any,
 
         /**
          * The pixel width of the tooltip border.
@@ -2744,6 +2561,17 @@ const defaultOptions: Options = {
         shadow: true,
 
         /**
+         * Prevents the tooltip from switching or closing when touched or
+         * pointed.
+         *
+         * @sample highcharts/tooltip/stickoncontact/
+         *         Tooltip sticks on pointer contact
+         *
+         * @since     8.0.1
+         */
+        stickOnContact: false,
+
+        /**
          * CSS styles for the tooltip. The tooltip can also be styled through
          * the CSS class `.highcharts-tooltip`.
          *
@@ -2765,7 +2593,24 @@ const defaultOptions: Options = {
             fontSize: '12px',
             /** @internal */
             whiteSpace: 'nowrap'
-        }
+        },
+
+        /**
+         * Use HTML to render the contents of the tooltip instead of SVG. Using
+         * HTML allows advanced formatting like tables and images in the
+         * tooltip. It is also recommended for rtl languages as it works around
+         * rtl bugs in early Firefox.
+         *
+         * @sample {highcharts|highstock} highcharts/tooltip/footerformat/
+         *         A table for value alignment
+         * @sample {highcharts|highstock} highcharts/tooltip/fullhtml/
+         *         Full HTML tooltip
+         * @sample {highmaps} maps/tooltip/usehtml/
+         *         Pure HTML tooltip
+         *
+         * @since     2.2
+         */
+        useHTML: false
     },
 
 
@@ -2931,7 +2776,7 @@ function getOptions(): Options {
  *         Updated options.
  */
 function setOptions(
-    options: Partial<Options>
+    options: DeepPartial<Options>
 ): Options {
 
     // Copy in the default options
@@ -2977,3 +2822,189 @@ const DefaultOptions = {
 };
 
 export default DefaultOptions;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * @typedef {"plotBox"|"spacingBox"} Highcharts.ButtonRelativeToValue
+ */
+
+/**
+ * Gets fired when a series is added to the chart after load time, using the
+ * `addSeries` method. Returning `false` prevents the series from being added.
+ *
+ * @callback Highcharts.ChartAddSeriesCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {Highcharts.ChartAddSeriesEventObject} event
+ *        The event that occured.
+ */
+
+/**
+ * Contains common event information. Through the `options` property you can
+ * access the series options that were passed to the `addSeries` method.
+ *
+ * @interface Highcharts.ChartAddSeriesEventObject
+ *//**
+ * The series options that were passed to the `addSeries` method.
+ * @name Highcharts.ChartAddSeriesEventObject#options
+ * @type {Highcharts.SeriesOptionsType}
+ *//**
+ * Prevents the default behaviour of the event.
+ * @name Highcharts.ChartAddSeriesEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * The event target.
+ * @name Highcharts.ChartAddSeriesEventObject#target
+ * @type {Highcharts.Chart}
+ *//**
+ * The event type.
+ * @name Highcharts.ChartAddSeriesEventObject#type
+ * @type {"addSeries"}
+ */
+
+/**
+ * Gets fired when clicking on the plot background.
+ *
+ * @callback Highcharts.ChartClickCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {Highcharts.PointerEventObject} event
+ *        The event that occured.
+ */
+
+/**
+ * Contains an axes of the clicked spot.
+ *
+ * @interface Highcharts.ChartClickEventAxisObject
+ *//**
+ * Axis at the clicked spot.
+ * @name Highcharts.ChartClickEventAxisObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * Axis value at the clicked spot.
+ * @name Highcharts.ChartClickEventAxisObject#value
+ * @type {number}
+ */
+
+/**
+ * Contains information about the clicked spot on the chart. Remember the unit
+ * of a datetime axis is milliseconds since 1970-01-01 00:00:00.
+ *
+ * @interface Highcharts.ChartClickEventObject
+ * @extends Highcharts.PointerEventObject
+ *//**
+ * Information about the x-axis on the clicked spot.
+ * @name Highcharts.ChartClickEventObject#xAxis
+ * @type {Array<Highcharts.ChartClickEventAxisObject>}
+ *//**
+ * Information about the y-axis on the clicked spot.
+ * @name Highcharts.ChartClickEventObject#yAxis
+ * @type {Array<Highcharts.ChartClickEventAxisObject>}
+ *//**
+ * Information about the z-axis on the clicked spot.
+ * @name Highcharts.ChartClickEventObject#zAxis
+ * @type {Array<Highcharts.ChartClickEventAxisObject>|undefined}
+ */
+
+/**
+ * Gets fired when the chart is finished loading.
+ *
+ * @callback Highcharts.ChartLoadCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {global.Event} event
+ *        The event that occured.
+ */
+
+/**
+ * Fires when the chart is redrawn, either after a call to `chart.redraw()` or
+ * after an axis, series or point is modified with the `redraw` option set to
+ * `true`.
+ *
+ * @callback Highcharts.ChartRedrawCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {global.Event} event
+ *        The event that occured.
+ */
+
+/**
+ * Gets fired after initial load of the chart (directly after the `load` event),
+ * and after each redraw (directly after the `redraw` event).
+ *
+ * @callback Highcharts.ChartRenderCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {global.Event} event
+ *        The event that occured.
+ */
+
+/**
+ * Gets fired when an area of the chart has been selected. The default action
+ * for the selection event is to zoom the chart to the selected area. It can be
+ * prevented by calling `event.preventDefault()` or return false.
+ *
+ * @callback Highcharts.ChartSelectionCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {global.ChartSelectionContextObject} event
+ *        Event informations
+ *
+ * @return {boolean|undefined}
+ *         Return false to prevent the default action, usually zoom.
+ */
+
+/**
+ * The primary axes are `xAxis[0]` and `yAxis[0]`. Remember the unit of a
+ * datetime axis is milliseconds since 1970-01-01 00:00:00.
+ *
+ * @interface Highcharts.ChartSelectionContextObject
+ * @extends global.Event
+ *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
+ * @name Highcharts.ChartSelectionContextObject#xAxis
+ * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
+ *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
+ * @name Highcharts.ChartSelectionContextObject#yAxis
+ * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
+ */
+
+/**
+ * Axis context of the selection.
+ *
+ * @interface Highcharts.ChartSelectionAxisContextObject
+ *//**
+ * The selected Axis.
+ * @name Highcharts.ChartSelectionAxisContextObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * The maximum axis value, either automatic or set manually.
+ * @name Highcharts.ChartSelectionAxisContextObject#max
+ * @type {number}
+ *//**
+ * The minimum axis value, either automatic or set manually.
+ * @name Highcharts.ChartSelectionAxisContextObject#min
+ * @type {number}
+ */
+
+(''); // detach doclets above

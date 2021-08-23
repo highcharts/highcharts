@@ -32,7 +32,7 @@ export interface ShadowOptionsObject {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

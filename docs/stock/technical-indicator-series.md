@@ -3,7 +3,7 @@ Technical indicators
 
 Technical Indicators, like annotations, are powerful tools that help to understand charts and make decisions with ease. The mathematical algorithms use the existing data to indicate trends, events, etc. and help to set up boundaries for strategies and to look for patterns.
 
-Technical indicators require the [indicators/indicators.js](https://code.highcharts.com/stock/indicators/indicators.js) main module. The main module includes SMA (Simple Moving Average). Each technical indicator, except the SMA, is a separate module and should be loaded after the main module. 
+Technical indicators require the [indicators/indicators.js](https://code.highcharts.com/stock/indicators/indicators.js) main module. The main module includes SMA (Simple Moving Average). Each technical indicator, except the SMA, is a separate module and should be loaded after the main module.
 
 A full list of supported technical indicators could be divided into two main groups. Overlays use the same scale and are plotted on the same xAxis and yAxis as the main series. The second group (oscillators and other technical indicators) requires additional yAxis because of the different extremes.
 
@@ -39,7 +39,7 @@ A full list of supported technical indicators could be divided into two main gro
 | | [Stochastic](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/stochastic/) |
 | | [TRIX (Triple exponential average)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/trix/) |
 | | [Williams %R](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/williams-r/) |
-    
+
 
 _For more detailed samples and documentation check the [API.](https://api.highcharts.com/highstock/plotOptions.sma)_
 
@@ -49,23 +49,23 @@ There are no limitations to the number of technical indicators that can be bound
 
 ```js
 series: [{
-  id: ‘main-series’,
+  id: 'main-series',
   data: [ … ]
 }, {
-  type: ‘sma’,
-  linkedTo: ‘main-series’,
+  type: 'sma',
+  linkedTo: 'main-series',
   params: {
     period: 14
   }
 }, {
-  type: ‘sma’,
-  linkedTo: ‘main-series’,
+  type: 'sma',
+  linkedTo: 'main-series',
   params: {
     period: 28
   }
 }, {
-  type: ‘ema’,
-  linkedTo: ‘main-series’,
+  type: 'ema',
+  linkedTo: 'main-series',
   params: {
     period: 7
   }
@@ -86,23 +86,21 @@ All Overlay type technical indicators (the ones listed in the left column of the
 ```js
 yAxis: [{
   // Main series yAxis:
-  height: ‘50%’
-}, {
+  height: '50%'}, {
   // yAxis for Stochastic technical indicator:
-  top: ‘50%’,
-  height: ‘50%’
-}]
+  top: '50%',
+  height: '50%'}]
 ```
 
 2. Bind indicator to this yAxis:
 
 ```js
 series: [{
-  id: ‘main-series’,
+  id: 'main-series',
   data: [ … ]
 }, {
-  type: ‘stochastic’,
-  linkedTo: ‘main-series’,
+  type: 'stochastic',
+  linkedTo: 'main-series',
   yAxis: 1
 }]
 ```
@@ -124,18 +122,18 @@ These indicators require the following parameter `params.volumeSeriesID` to calc
 
 ```js
 series: [{
-  id: ‘main-series’,
+  id: 'main-series',
   data: [ … ]
 }, {
-  id: ‘volume-series’,
+  id: 'volume-series',
   yAxis: 1,
   data: [ … ]
 }, {
-  type: ‘mfi’,
-  linkedTo: ‘main-series’,
+  type: 'mfi',
+  linkedTo: 'main-series',
   yAxis: 2,
   params: {
-    volumeSeriesID: ‘volume-series’
+    volumeSeriesID: 'volume-series'
   }
 }]
 ```

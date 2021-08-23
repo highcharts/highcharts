@@ -18,13 +18,18 @@ import type ColumnSeries from './ColumnSeries';
 import type ColumnPointOptions from './ColumnPointOptions';
 import type Point from '../../Core/Series/Point.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BBoxObject from '../../Core/Renderer/BBoxObject';
 
 /* *
  *
  *  Declarations
  *
  * */
+
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        allowShadow?: boolean;
+    }
+}
 
 export class ColumnPoint extends Point {
     allowShadow?: boolean;
@@ -34,12 +39,6 @@ export class ColumnPoint extends Point {
     options: ColumnPointOptions;
     pointWidth: number;
     series: ColumnSeries;
-}
-
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
-        allowShadow?: boolean;
-    }
 }
 
 /* *

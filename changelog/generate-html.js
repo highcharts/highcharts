@@ -7,8 +7,7 @@
  * This node script is used to assemble the content for all markdown files
  * in each sub-directory of this directory into a new html output file.
  */
-var path = require('path'),
-    replaceString = require('replace-string');
+var path = require('path');
 
 function generateHTML() {
     return new Promise(function (resolve, reject) {
@@ -53,22 +52,6 @@ function generateHTML() {
 
         var htmlContent = '';
 
-        function addLinkToIssues(items) {
-            (items || []).forEach(item => {
-                if (typeof item.text === 'string') {
-                    var issues = item.text.match(/#[0-9]+/g);
-                    if (issues !== null) {
-                        issues.forEach(issue => {
-                            var issued = issue.substring(1),
-                                issueLink = 'https://github.com/highcharts/highcharts/issues/' + issued,
-                                formatIssue = '[' + issue + '](' + issueLink + ')';
-                            item.text = replaceString(item.text, issue, formatIssue);
-                        });
-                    }
-                }
-            });
-        }
-
 
         function sortMarkdownFileContent(mdContent) {
             let write = 'New features';
@@ -100,15 +83,12 @@ function generateHTML() {
                 }
                 switch (write) {
                     case 'New features':
-                        addLinkToIssues(token.items);
                         changelog.features.push(token);
                         break;
                     case 'Upgrade notes':
-                        addLinkToIssues(token.items);
                         changelog.upgradeNotes.push(token);
                         break;
                     case 'Bug fixes':
-                        addLinkToIssues(token.items);
                         changelog.bugFixes.push(token);
                         break;
                     default:
@@ -163,7 +143,7 @@ function generateHTML() {
                     `<p class="release-header">
                         <a id="${id}"></a>
                         <a href="#${id}">${changelog.header.productName} v${version} ${changelog.header.date}</a>
-                        <span class="download-link" ><a href="${downloadLink}" title="Download the zip archive for ${changelog.header.productName} v${version}"><i class="fas fa-download"></i></a></span>    
+                        <span class="download-link" ><a href="${downloadLink}" title="Download the zip archive for ${changelog.header.productName} v${version}"><i class="fas fa-download"></i></a></span>
                     </p>
                     ${marked.parser(changelog.features)}`
                 );
@@ -275,6 +255,13 @@ function generateHTML() {
                 var content = fs.readFileSync(
                     path.join(__dirname, product.name, file), 'utf8'
                 );
+
+                if (content.indexOf('[Edit]') !== -1) {
+                    throw new Error(
+                        'Review links found inside the markdown. Generate again without --review.'
+                    );
+                }
+
                 sortMarkdownFileContent(content);
                 changelog.header.version = formatVersionNumber(file);
                 htmlContent += featureHTMLStructure();
@@ -290,9 +277,11 @@ function generateHTML() {
 // If called directly, run generateHTML now. Otherwise, it's called from
 // upload.js
 if (require.main === module) {
-    generateHTML().then(params => {
-        console.log(params.outputFile + ' was successfully created!');
-    });
+    generateHTML()
+        .then(params => {
+            console.log(params.outputFile + ' was successfully created!');
+        })
+        .catch(e => console.error(e));
 }
 
 module.exports = { generateHTML };
