@@ -33,6 +33,8 @@ module.exports = {
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
             'stock/candlestick-chart',
+            'stock/compare',
+            'stock/cumulative-sum',
             'stock/hollow-candlestick-chart',
             'stock/heikinashi',
             'stock/data-grouping',
