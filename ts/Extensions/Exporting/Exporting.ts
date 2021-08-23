@@ -1331,8 +1331,7 @@ namespace Exporting {
     function inlineStyles(
         this: ChartComposition
     ): void {
-        const renderer = this.renderer,
-            blacklist = inlineBlacklist,
+        const blacklist = inlineBlacklist,
             whitelist = inlineWhitelist, // For IE
             defaultStyles: Record<string, CSSObject> = {};
         let dummySVG: SVGElement;
@@ -1382,7 +1381,7 @@ namespace Exporting {
 
                 // Check against whitelist & blacklist
                 blacklisted = whitelisted = false;
-                if (whitelist) {
+                if (whitelist.length) {
                     // Styled mode in IE has a whitelist instead.
                     // Exclude all props not in this list.
                     i = whitelist.length;
@@ -1397,10 +1396,10 @@ namespace Exporting {
                     blacklisted = true;
                 }
 
-                i = (blacklist as any).length;
+                i = blacklist.length;
                 while (i-- && !blacklisted) {
                     blacklisted = (
-                        (blacklist as any)[i].test(prop) ||
+                        blacklist[i].test(prop) ||
                         typeof val === 'function'
                     );
                 }
@@ -1434,12 +1433,12 @@ namespace Exporting {
 
             if (
                 node.nodeType === 1 &&
-                (unstyledElements as any).indexOf(node.nodeName) === -1
+                unstyledElements.indexOf(node.nodeName) === -1
             ) {
                 styles = win.getComputedStyle(node, null) as any;
                 parentStyles = node.nodeName === 'svg' ?
                     {} :
-                    win.getComputedStyle(node.parentNode as any, null) as any;
+                    win.getComputedStyle(node.parentNode, null) as any;
 
                 // Get default styles from the browser so that we don't have to
                 // add these

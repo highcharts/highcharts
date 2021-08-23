@@ -480,7 +480,7 @@ namespace OfflineExporting {
         // renderer for inline styles that we want to pass through. There
         // are so many styles by default in IE that we don't want to
         // blacklist them all.
-        if (H.isMS && chart.styledMode) {
+        if (H.isMS && chart.styledMode && !Exporting.inlineWhitelist.length) {
             Exporting.inlineWhitelist.push(
                 /^blockSize/,
                 /^border/,
