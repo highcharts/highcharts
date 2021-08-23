@@ -986,3 +986,45 @@ QUnit.test('Grouping each series when the only one requires that, #6765.', funct
         Thus only two grouped points should be visible.`
     );
 });
+
+QUnit.test(
+    'When grouping gets off, the properties should be deleted #16238.',
+    assert => {
+        const chart = Highcharts.stockChart('container', {
+
+            series: [{
+                data: [2, 2, 3, 5, 6, 7, 2, 4, 5, 4, 6, 7, 5, 6],
+                dataGrouping: {
+                    groupPixelWidth: 50,
+                    units: [
+                        ['millisecond', [2]]
+                    ]
+                }
+            }]
+        }),
+        series = chart.series[0],
+        mapArray = [
+            'groupMap',
+            'hasGroupedData', 
+            'currentDataGrouping'
+        ];
+
+        mapArray.forEach(prop => {
+            assert.ok(
+                series[prop],
+                `When the dataGrouping is enabled,
+                the series.${prop} property should be defined.`
+            );
+        });
+
+        // Set extremes to turn the dataGrouping off
+        chart.xAxis[0].setExtremes(0, 5);
+
+        mapArray.forEach(prop => {
+            assert.notOk(
+                series[prop],
+                `When the dataGrouping gets disabled,
+                the series.${prop} property should be deleted.`
+            );
+        });
+});
