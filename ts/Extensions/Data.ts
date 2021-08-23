@@ -489,7 +489,7 @@ declare global {
  *
  * @example
  * googleSpreadsheetRange: 'Fruit Consumption' // Load a named worksheet
- * googleSpreadsheetRange: 'A-Z' // Load columns A to Z
+ * googleSpreadsheetRange: 'A:Z' // Load columns A to Z
  *
  * @sample {highcharts} highcharts/data/google-spreadsheet/
  *         Load a Google Spreadsheet
@@ -1792,7 +1792,7 @@ class Data {
             options = this.options,
             googleSpreadsheetKey = options.googleSpreadsheetKey,
             chart = this.chart,
-            refreshRate = Math.min((options.dataRefreshRate || 2) * 1000, 4000);
+            refreshRate = Math.max((options.dataRefreshRate || 2) * 1000, 4000);
 
         /**
          * Form the `values` field after range settings, unless the
