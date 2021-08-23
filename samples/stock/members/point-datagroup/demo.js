@@ -1,7 +1,6 @@
 Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => {
 
     const click = e => {
-        console.log(e);
         const point = e.point;
         console.log('dataGroup', point.dataGroup);
 
