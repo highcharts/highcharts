@@ -107,10 +107,10 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
                 5,
                 'Calculated ry should be equal to expected value.'
             );
-            assert.closeTo(
-                ellipse.angle,
-                0,
-                5,
+            assert.isTrue(
+                // If the angle is close to 0, its value can either be
+                // bigger then 0, or smaller then 360.
+                ellipse.angle < 5 || ellipse.angle > 355,
                 'Angle should be equal to given number.'
             );
         });
