@@ -17,6 +17,7 @@
  *  Imports
  *
  * */
+import type InstrumentType from './Instrument';
 
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
@@ -72,7 +73,7 @@ class Earcon {
      * */
 
     public id: string = void 0 as any;
-    public instrumentsPlaying: Record<string, Highcharts.Instrument> = void 0 as any;
+    public instrumentsPlaying: Record<string, InstrumentType> = void 0 as any;
     public options: Earcon.Options = void 0 as any;
 
     /* *
@@ -197,8 +198,8 @@ namespace Earcon {
     }
 
     export interface Instrument {
-        instrument: (string|Highcharts.Instrument);
-        playOptions: Highcharts.InstrumentPlayOptionsObject;
+        instrument: (string|InstrumentType);
+        playOptions: InstrumentType.PlayOptions;
     }
 
     export interface Options{
