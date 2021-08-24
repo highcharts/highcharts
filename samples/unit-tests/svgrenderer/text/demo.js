@@ -527,6 +527,26 @@ QUnit.test('HTML', function (assert) {
             '',
             'The style width should be removed when setting to undefined'
         );
+
+        renderer = new Highcharts.SVGRenderer(
+            document.getElementById('container'),
+            500,
+            500,
+            void 0,
+            true
+        );
+
+        text = renderer.text('Line<br>break', 0, 10, true)
+            .add()
+            .attr({
+                x: 10
+            });
+
+        assert.strictEqual(
+            text.element.querySelector('tspan').getAttribute('x'),
+            '10',
+            '#16062: tspan breaks should have correct x when exporting useHTML=true text with allowHTML=false'
+        );
     } finally {
         renderer.destroy();
     }

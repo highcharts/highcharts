@@ -608,7 +608,7 @@ QUnit.test('Data grouping and extremes change', function (assert) {
         ]
     });
 
-    chart.xAxis[0].setExtremes(chart.xAxis[0].toValue(100, true), null);
+    chart.xAxis[0].setExtremes(chart.xAxis[0].toValue(200, true), null);
 
     expectedMax = chart.xAxis[0].max;
     panTo('left', series.points[150].plotX, series.points[7].plotY, 30);
@@ -625,7 +625,6 @@ QUnit.test('Data grouping and extremes change', function (assert) {
         expectedMax,
         'DataGrouping should not prevent panning to the RIGHT (#12099)'
     );
-    chart.xAxis[0].setExtremes(null, null); // reset old extremes
 });
 
 QUnit.test('Data grouping, keys and turboThreshold', function (assert) {
@@ -910,7 +909,7 @@ QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (asser
             ordinal: true
         },
         rangeSelector: {
-            selected: 0
+            selected: 3
         },
         series: [{
             data: usdeur,
@@ -944,7 +943,7 @@ QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (asser
 
     chart.series[0].update({
         dataGrouping: {
-            units: [['week', [1]]]
+            units: [['day', [3]]]
         }
     });
     chart.xAxis[0].ordinal.getExtendedPositions();
@@ -956,7 +955,7 @@ QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (asser
     );
 });
 
-QUnit.test('Grouping each series when the only one requires that, #6765.', function (assert) {
+QUnit.test('The dataGrouping enabling/disabling.', function (assert) {
     const chart = Highcharts.stockChart('container', {
         chart: {
             width: 400
@@ -979,6 +978,7 @@ QUnit.test('Grouping each series when the only one requires that, #6765.', funct
         ]
     });
 
+    // Grouping each series when the only one requires that, #6765.
     assert.strictEqual(
         chart.series[0].processedXData.length,
         2,
@@ -986,4 +986,34 @@ QUnit.test('Grouping each series when the only one requires that, #6765.', funct
         It should be grouped the same as the second one is.
         Thus only two grouped points should be visible.`
     );
+    
+    chart.series[0].remove();
+
+    const series = chart.series[0],
+        mapArray = [
+            'groupMap',
+            'hasGroupedData', 
+            'currentDataGrouping'
+        ];
+
+    // When the dataGrouping is enabled, the properties should exist.
+    mapArray.forEach(prop => {
+        assert.ok(
+            series[prop],
+            `When the dataGrouping is enabled,
+            the series.${prop} property should be defined.`
+        );
+    });
+
+    // Set extremes to turn the dataGrouping off
+    chart.xAxis[0].setExtremes(0, 5);
+
+    // When the dataGrouping gets off, the properties should be deleted, #16238.
+    mapArray.forEach(prop => {
+        assert.notOk(
+            series[prop],
+            `When the dataGrouping gets disabled,
+            the series.${prop} property should be deleted.`
+        );
+    });
 });

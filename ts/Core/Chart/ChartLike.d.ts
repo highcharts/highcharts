@@ -10,16 +10,10 @@
 
 /* *
  *
- *  Imports
- *
- * */
-
-
-/* *
- *
  *  Declatations
  *
  * */
+
 export interface ChartLike {
     // nothing here yet
 }
@@ -27,7 +21,7 @@ export interface ChartLike {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

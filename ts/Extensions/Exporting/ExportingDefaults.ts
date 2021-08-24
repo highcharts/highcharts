@@ -25,7 +25,7 @@ import Palette from '../../Core/Color/Palette.js';
 
 /* *
  *
- *  Constants
+ *  API Options
  *
  * */
 
