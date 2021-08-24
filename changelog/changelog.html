@@ -15,6 +15,45 @@
           </div>
           <div class="changelog-container">
             <p class="release-header">
+              <a id="highcharts-v9.2.2"></a>
+              <a href="#highcharts-v9.2.2">Highcharts Basic v9.2.2 (2021-08-24)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-9.2.2.zip" title="Download the zip archive for Highcharts Basic v9.2.2"><i class="fas fa-download"></i></a></span>
+            </p>
+            <ul>
+              <li>Added internal support for Google Sheets API v4, fixing stability problems with loading data from spreadsheets.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+                <div id="heading-9-2-2-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#9-2-2-upgrade-notes"><span> Upgrade notes </span></button>
+                  </h4>
+                </div>
+                <div id="9-2-2-upgrade-notes" class="collapse" aria-labelledby="heading-9-2-2-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Existing setups with Google Sheets stopped working in August 2021 as Google phased out version 3 of their Google Sheets API. Highcharts has now been upgraded to version 4 of the API, but this will not work unless an API key is given in the <a href="https://api.highcharts.com/highcharts/data.googleAPIKey">data.googleAPIKey</a> option. See the <a href="https://handsondataviz.org/google-sheets-api-key.html">comprehensive tutorial</a> from Hands-On Data Visualization on how to obtain the key. Additionally, <a href="https://api.highcharts.com/highcharts/data.googleSpreadsheetWorksheet">data.googleSpreadsheetWorksheet</a> is deprecated and replaced by <a href="https://api.highcharts.com/highcharts/data.googleSpreadsheetRange">data.googleSpreadsheetRange</a>, which allows for more detailed instructions on what data to load.</li>
+                    </ul>
+
+                  </div>
+                </div>
+                <div id="heading-9-2-2-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#9-2-2-bug-fixes"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="9-2-2-bug-fixes" class="collapse" aria-labelledby="heading-9-2-2-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/16231">#16231</a>, a regresssion in v9.2 causing exporting not to work with <a href="https://api.highcharts.com/highcharts/chart.styledMode">styledMode</a> enabled.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
               <a id="highcharts-v9.2.1"></a>
               <a href="#highcharts-v9.2.1">Highcharts Basic v9.2.1 (2021-08-19)</a>
               <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-9.2.1.zip" title="Download the zip archive for Highcharts Basic v9.2.1"><i class="fas fa-download"></i></a></span>
@@ -6099,6 +6138,33 @@
           </div>
           <div class="changelog-container">
             <p class="release-header">
+              <a id="highcharts-stock-v9.2.2"></a>
+              <a href="#highcharts-stock-v9.2.2">Highcharts Stock v9.2.2 (2021-08-24)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Stock-9.2.2.zip" title="Download the zip archive for Highcharts Stock v9.2.2"><i class="fas fa-download"></i></a></span>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 9.2.2 above also apply to Highcharts Stock 9.2.2.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hs-heading-9-2-2-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#hs-9-2-2-bug-fixes"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="hs-9-2-2-bug-fixes" class="collapse" aria-labelledby="hs-heading-9-2-2-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/16238">#16238</a>, a regression causing data grouping information not to reset when zooming in, both in the tooltip and in internal properties.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
               <a id="highcharts-stock-v9.2.1"></a>
               <a href="#highcharts-stock-v9.2.1">Highcharts Stock v9.2.1 (2021-08-19)</a>
               <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Stock-9.2.1.zip" title="Download the zip archive for Highcharts Stock v9.2.1"><i class="fas fa-download"></i></a></span>
@@ -9365,6 +9431,14 @@
           </div>
           <div class="changelog-container">
             <p class="release-header">
+              <a id="highcharts-maps-v9.2.2"></a>
+              <a href="#highcharts-maps-v9.2.2">Highcharts Maps v9.2.2 (2021-08-24)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Maps-9.2.2.zip" title="Download the zip archive for Highcharts Maps v9.2.2"><i class="fas fa-download"></i></a></span>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 9.2.2 above also apply to Highcharts Maps 9.2.2.</li>
+            </ul>
+            <p class="release-header">
               <a id="highcharts-maps-v9.2.1"></a>
               <a href="#highcharts-maps-v9.2.1">Highcharts Maps v9.2.1 (2021-08-19)</a>
               <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Maps-9.2.1.zip" title="Download the zip archive for Highcharts Maps v9.2.1"><i class="fas fa-download"></i></a></span>
@@ -10760,6 +10834,14 @@
             <h4 id="highcharts-gantt">Highcharts Gantt</h4>
           </div>
           <div class="changelog-container">
+            <p class="release-header">
+              <a id="highcharts-gantt-v9.2.2"></a>
+              <a href="#highcharts-gantt-v9.2.2">Highcharts Gantt v9.2.2 (2021-08-24)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Gantt-9.2.2.zip" title="Download the zip archive for Highcharts Gantt v9.2.2"><i class="fas fa-download"></i></a></span>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 9.2.2 above also apply to Highcharts Gantt 9.2.2.</li>
+            </ul>
             <p class="release-header">
               <a id="highcharts-gantt-v9.2.1"></a>
               <a href="#highcharts-gantt-v9.2.1">Highcharts Gantt v9.2.1 (2021-08-19)</a>
