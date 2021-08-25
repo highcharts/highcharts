@@ -30,7 +30,7 @@ import type {
 
 import Point from '../../Core/Series/Point.js';
 import Sonification from './Sonification.js';
-import SU from './Utilities.js';
+import SU from './SonificationUtilities.js';
 const {
     getExtremesForInstrumentProps,
     virtualAxisTranslate

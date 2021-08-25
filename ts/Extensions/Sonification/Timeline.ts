@@ -18,6 +18,7 @@
  *
  * */
 import type Earcon from './Earcon';
+import type SignalHandler from './SignalHandler';
 
 import Sonification from './Sonification.js';
 import U from '../../Core/Utilities.js';
@@ -164,7 +165,7 @@ declare global {
  */
 
 
-import utilities from './Utilities.js';
+import SU from './SonificationUtilities.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -346,7 +347,7 @@ TimelinePath.prototype.init = function (
     this.updateEventIdMap();
 
     // Signal events to fire
-    this.signalHandler = new utilities.SignalHandler(
+    this.signalHandler = new SU.SignalHandler(
         ['playOnEnd', 'masterOnEnd', 'onStart', 'onEventStart', 'onEventEnd']
     );
     this.signalHandler.registerSignalCallbacks(
@@ -662,7 +663,7 @@ Timeline.prototype.init = function (
     this.cursor = 0;
     this.paths = options.paths || [];
     this.pathsPlaying = {};
-    this.signalHandler = new utilities.SignalHandler(
+    this.signalHandler = new SU.SignalHandler(
         ['playOnEnd', 'masterOnEnd', 'onPathStart', 'onPathEnd']
     );
     this.signalHandler.registerSignalCallbacks(

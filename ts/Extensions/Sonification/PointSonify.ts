@@ -252,7 +252,7 @@ declare global {
  */
 
 
-import utilities from './Utilities.js';
+import SU from './SonificationUtilities.js';
 
 // Defaults for the instrument options
 // NOTE: Also change defaults in Highcharts.PointInstrumentOptionsObject if
@@ -323,12 +323,12 @@ function pointSonify(
 
                 // Find data extremes if we don't have them
                 dataExtremes[dataProp] = dataExtremes[dataProp] ||
-                    utilities.calculateDataExtremes(
+                    SU.calculateDataExtremes(
                         point.series.chart, dataProp
                     );
 
                 // Find the value
-                return utilities.virtualAxisTranslate(
+                return SU.virtualAxisTranslate(
                     pointValue,
                     dataExtremes[dataProp],
                     allowedExtremes,
@@ -350,7 +350,7 @@ function pointSonify(
     // Register signal handler for the point
     const signalHandler = point.sonification.signalHandler =
         point.sonification.signalHandler ||
-        new utilities.SignalHandler(['onEnd']);
+        new SU.SignalHandler(['onEnd']);
 
     signalHandler.clearSignalCallbacks();
     signalHandler.registerSignalCallbacks({ onEnd: options.onEnd });
