@@ -48,7 +48,7 @@ class FibonacciTimeZones extends CrookedLine {
 
     /* *
      *
-     * Static Functions
+     *  Functions
      *
      * */
 
@@ -119,12 +119,6 @@ class FibonacciTimeZones extends CrookedLine {
             );
         };
     }
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
 
     public addShapes(): void {
         const numberOfLines = 11;
