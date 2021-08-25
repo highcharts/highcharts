@@ -1,12 +1,31 @@
 /* *
  *
+ *  Experimental Highcharts module which enables visualization of a Venn
+ *  diagram.
+ *
+ *  (c) 2016-2021 Highsoft AS
+ *  Authors: Jon Arild Nygard
+ *
+ *  Layout algorithm by Ben Frederickson:
+ *  https://www.benfrederickson.com/better-venn-diagrams/
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+'use strict';
+
+/* *
+ *
  *  Imports
  *
  * */
 
 import type VennPointOptions from './VennPointOptions';
 import type VennSeries from './VennSeries';
-import DrawPointMixin from '../../Mixins/DrawPoint.js';
+import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -71,10 +90,10 @@ class VennPoint extends ScatterSeries.prototype.pointClass implements Highcharts
  * */
 
 interface VennPoint {
-    draw: typeof DrawPointMixin.drawPoint;
+    draw: typeof DrawPointComposition.drawPoint;
 }
 extend(VennPoint.prototype, {
-    draw: DrawPointMixin.drawPoint
+    draw: DrawPointComposition.drawPoint
 });
 
 /* *
