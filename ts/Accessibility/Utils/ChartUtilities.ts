@@ -307,7 +307,11 @@ function getSeriesA11yElement(
  */
 function unhideChartElementFromAT(chart: Chart, element: DOMElementType): void {
     element.setAttribute('aria-hidden', false);
-    if (element === chart.renderTo || !element.parentNode) {
+    if (
+        element === chart.renderTo ||
+        !element.parentNode ||
+        element.parentNode === doc.body // #16126: Full screen printing
+    ) {
         return;
     }
 
@@ -321,7 +325,7 @@ function unhideChartElementFromAT(chart: Chart, element: DOMElementType): void {
         }
     );
     // Repeat for parent
-    unhideChartElementFromAT(chart, element.parentNode as any);
+    unhideChartElementFromAT(chart, element.parentNode);
 }
 
 

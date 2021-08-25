@@ -18,7 +18,7 @@ import type AnimationOptions from '../../Animation/AnimationOptions';
 import type AxisOptions from '../AxisOptions';
 import type ColorType from '../../Color/ColorType';
 import type GradientColor from '../../Color/GradientColor';
-import type LegendOptions from '../../LegendOptions';
+import type LegendOptions from '../../Legend/LegendOptions';
 
 /* *
  *

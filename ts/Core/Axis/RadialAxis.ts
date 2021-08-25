@@ -30,6 +30,8 @@ import type Tick from './Tick';
 import type { YAxisOptions } from './AxisOptions';
 
 import AxisDefaults from './AxisDefaults.js';
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import H from '../Globals.js';
 const { noop } = H;
 import U from '../Utilities.js';
@@ -180,7 +182,7 @@ namespace RadialAxis {
      *
      * */
 
-    const composedClasses: Array<(typeof Axis|typeof Tick)> = [];
+    const composedClasses: Array<Function> = [];
 
     /**
      * Circular axis around the perimeter of a polar chart.
@@ -1448,6 +1450,7 @@ namespace RadialAxis {
         const options = this.options = merge<Options>(
             (this.constructor as typeof Axis).defaultOptions,
             this.defaultPolarOptions,
+            (defaultOptions as any)[this.coll], // #16112
             userOptions
         );
 

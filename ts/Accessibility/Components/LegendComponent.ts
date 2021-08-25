@@ -24,7 +24,7 @@ const {
 } = A;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
-import Legend from '../../Core/Legend.js';
+import Legend from '../../Core/Legend/Legend.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -42,14 +42,24 @@ import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
+import ChartUtils from '../Utils/ChartUtilities.js';
+const {
+    getChartTitle
+} = ChartUtils;
 
 type LegendItem = (BubbleLegendItem|Series|Point);
 
-declare module '../../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         highlightedLegendItemIx?: number;
         /** @requires modules/accessibility */
         highlightLegendItem(ix: number): boolean;
+    }
+}
+
+declare module '../../Core/Legend/LegendItemObject' {
+    interface LegendItemObject {
+        a11yProxyElement?: ProxyElement;
     }
 }
 
@@ -94,9 +104,6 @@ declare global {
             public updateLegendItemProxyVisibility(): void;
             public updateLegendTitle(): void;
             public updateProxyPositionForItem(item: LegendItem): void;
-        }
-        interface LegendItemObject {
-            a11yProxyElement?: ProxyElement;
         }
     }
 }
@@ -340,7 +347,8 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         const legendLabel = chart.langFormat(
             'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'), {
                 chart,
-                legendTitle
+                legendTitle,
+                chartTitle: getChartTitle(chart)
             }
         );
 

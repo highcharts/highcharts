@@ -46,6 +46,44 @@ declare module '../Options' {
     }
 }
 
+export interface ChartAddSeriesCallbackFunction {
+    (this: Chart, event: ChartAddSeriesEventObject): void;
+}
+
+export interface ChartAddSeriesEventObject {
+    options: SeriesTypeOptions;
+    preventDefault: Function;
+    target: Chart;
+    type: 'addSeries';
+}
+
+export interface ChartClickCallbackFunction {
+    (this: Chart, event: PointerEvent): void;
+}
+
+export interface ChartClickEventAxisObject {
+    axis: Axis;
+    value: number;
+}
+
+export interface ChartClickEventObject {
+    xAxis: Array<ChartClickEventAxisObject>;
+    yAxis: Array<ChartClickEventAxisObject>;
+    zAxis?: Array<ChartClickEventAxisObject>;
+}
+
+export interface ChartEventsOptions {
+    addSeries?: ChartAddSeriesCallbackFunction;
+    click?: ChartClickCallbackFunction;
+    load?: ChartLoadCallbackFunction;
+    redraw?: ChartRedrawCallbackFunction;
+    render?: ChartRenderCallbackFunction;
+    selection?: ChartSelectionCallbackFunction;
+}
+
+export interface ChartLoadCallbackFunction {
+    (this: Chart, event: Event): void;
+}
 export interface ChartOptions {
     alignTicks?: boolean;
     animation?: (boolean|Partial<AnimationOptions>);
@@ -95,46 +133,31 @@ export interface ChartOptions {
     zoomType?: ('x'|'xy'|'y');
 }
 
-export interface ChartAddSeriesCallbackFunction {
-    (this: Chart, event: ChartAddSeriesEventObject): void;
-}
-
-export interface ChartAddSeriesEventObject {
-    options: SeriesTypeOptions;
-    preventDefault: Function;
-    target: Chart;
-    type: 'addSeries';
-}
-export interface ChartClickCallbackFunction {
-    (this: Chart, event: PointerEvent): void;
-}
-export interface ChartClickEventAxisObject {
-    axis: Axis;
-    value: number;
-}
-export interface ChartClickEventObject {
-    xAxis: Array<ChartClickEventAxisObject>;
-    yAxis: Array<ChartClickEventAxisObject>;
-    zAxis?: Array<ChartClickEventAxisObject>;
-}
-export interface ChartLoadCallbackFunction {
-    (this: Chart, event: Event): void;
-}
 export interface ChartPanningOptions {
     type: ('x'|'y'|'xy');
     enabled: boolean;
 }
+
 export interface ChartRedrawCallbackFunction {
     (this: Chart, event: Event): void;
 }
+
 export interface ChartRenderCallbackFunction {
     (this: Chart, event: Event): void;
 }
+
 export interface ChartResetZoomButtonOptions {
     position?: AlignObject;
     relativeTo?: ButtonRelativeToValue;
     theme?: SVGAttributes;
 }
+
+export interface ChartSelectionAxisContextObject {
+    axis: Axis;
+    max: number;
+    min: number;
+}
+
 export interface ChartSelectionCallbackFunction {
     (
         this: Chart,
@@ -145,21 +168,6 @@ export interface ChartSelectionCallbackFunction {
 export interface ChartSelectionContextObject {
     xAxis: Array<ChartSelectionAxisContextObject>;
     yAxis: Array<ChartSelectionAxisContextObject>;
-}
-
-export interface ChartSelectionAxisContextObject {
-    axis: Axis;
-    max: number;
-    min: number;
-}
-
-export interface ChartEventsOptions {
-    addSeries?: ChartAddSeriesCallbackFunction;
-    click?: ChartClickCallbackFunction;
-    load?: ChartLoadCallbackFunction;
-    redraw?: ChartRedrawCallbackFunction;
-    render?: ChartRenderCallbackFunction;
-    selection?: ChartSelectionCallbackFunction;
 }
 
 /* *

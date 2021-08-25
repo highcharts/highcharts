@@ -38,5 +38,11 @@ QUnit.test(
             0,
             "Exported chart CSS 'url' values does not have any unnecessary '&quot;' strings."
         );
+
+        assert.notStrictEqual(
+            svg.indexOf('style="'),
+            -1,
+            '#16231: Styles should have been inlined'
+        );
     }
 );

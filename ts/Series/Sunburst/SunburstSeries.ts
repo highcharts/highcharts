@@ -524,20 +524,6 @@ class SunburstSeries extends TreemapSeries {
          */
 
         /**
-         * Can set a `rotation` on all points which lies on the same level.
-         *
-         * @type      {number}
-         * @apioption plotOptions.sunburst.levels.rotation
-         */
-
-        /**
-         * Can set a `rotationMode` on all points which lies on the same level.
-         *
-         * @type      {string}
-         * @apioption plotOptions.sunburst.levels.rotationMode
-         */
-
-        /**
          * When enabled the user can click on a point which is a parent and
          * zoom in on its children. Deprecated and replaced by
          * [allowTraversingTree](#plotOptions.sunburst.allowTraversingTree).
@@ -598,8 +584,7 @@ class SunburstSeries extends TreemapSeries {
              * resulting in a better layout, however multiple lines and
              * `textOutline` are not supported.
              *
-             * The `series.rotation` option takes precedence over
-             * `rotationMode`.
+             * The `rotation` option takes precedence over `rotationMode`.
              *
              * @type       {string}
              * @sample {highcharts} highcharts/plotoptions/sunburst-datalabels-rotationmode-circular/

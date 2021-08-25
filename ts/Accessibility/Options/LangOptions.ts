@@ -255,7 +255,7 @@ const langOptions: DeepPartial<LangOptions> = {
          * @since 8.0.0
          */
         screenReaderSection: {
-            beforeRegionLabel: 'Chart screen reader information.',
+            beforeRegionLabel: 'Chart screen reader information, {chartTitle}.',
             afterRegionLabel: '',
 
             /**
@@ -295,7 +295,7 @@ const langOptions: DeepPartial<LangOptions> = {
          * @since 8.0.0
          */
         legend: {
-            legendLabelNoTitle: 'Toggle series visibility',
+            legendLabelNoTitle: 'Toggle series visibility, {chartTitle}',
             legendLabel: 'Chart legend: {legendTitle}',
             legendItem: 'Show {itemName}'
         },
