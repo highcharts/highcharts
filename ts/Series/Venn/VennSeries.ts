@@ -40,7 +40,7 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import DrawPointMixin from '../../Mixins/DrawPoint.js';
+import DrawPointComposition from '../DrawPointComposition.js';
 import CU from '../../Core/Geometry/CircleUtilities.js';
 const {
     getAreaOfIntersectionBetweenCircles,
@@ -80,7 +80,7 @@ const {
 declare global {
     namespace Highcharts {
         class VennPoint extends ScatterPoint implements DrawPoint {
-            public draw: typeof DrawPointMixin.drawPoint;
+            public draw: typeof DrawPointComposition.drawPoint;
             public isValid: () => boolean;
             public options: VennPointOptions;
             public series: VennSeries;

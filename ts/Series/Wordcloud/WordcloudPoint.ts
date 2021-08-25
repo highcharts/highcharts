@@ -10,10 +10,17 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
 
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type WordcloudPointOptions from './WordcloudPointOptions';
-import DrawPointMixin from '../../Mixins/DrawPoint.js';
+import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -54,12 +61,12 @@ class WordcloudPoint extends ColumnSeries.prototype.pointClass implements Highch
 }
 
 interface WordcloudPoint {
-    draw: typeof DrawPointMixin.drawPoint;
+    draw: typeof DrawPointComposition.drawPoint;
     weight: number;
 }
 
 extend(WordcloudPoint.prototype, {
-    draw: DrawPointMixin.drawPoint,
+    draw: DrawPointComposition.drawPoint,
     weight: 1
 });
 
