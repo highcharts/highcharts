@@ -3,7 +3,7 @@ Installation with ES6 modules
 
 Our product packages are available as ES6-compatible modules since
 Highcharts v6.1. Some core files can also be loaded directly as ES6 modules
-since Highcharts v9.2. Latter allows you to make use of tree shaking to only
+since Highcharts v9.2. The latter allows you to make use of tree shaking to only
 load or bundle what is needed and reduce download and package sizes.
 
 
@@ -14,7 +14,8 @@ Including a product package (ES6 module)
 For debugging and development purposes you can load core files directly in your
 browser page and make use of tree shaking. Please note that this results in a
 decreased download size but in an increased delay caused by the amount of
-(small) files to load. This approach is therefor not recommend for production.
+(small) files to load. This approach is therefore not recommended for
+production.
 
 ```html
     <script type="module">
@@ -29,11 +30,10 @@ decreased download size but in an increased delay caused by the amount of
 Creating a custom bundle (ES6 module)
 -------------------------------------
 
-The advantage of core files in comparison to packages is, that one loads only
-the functions and series that are needed. This reduces the total download size.
-We can create a bundle of all files to improve the load size and load time
-further. Create a NodeJS project and install Highcharts and Webpack as NPM
-packages.
+The advantage of core files over packages is, that only the required features
+are loaded. This reduces the total download size. We can create a bundle of all
+files to improve the load size and load time further. Create a NodeJS project
+and install Highcharts and Webpack as NPM packages.
 
 For a line chart create the JavaScript files as shown below.
 
@@ -43,7 +43,12 @@ import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
 import LineSeries from 'highcharts/es-modules/Series/Line/LineSeries.js';
 
 // Example to create a simple line chart in a div#container:
-const myChart = new Chart('container', { series: [{ type: 'line', data: [1, 2, 3]}] });
+const myChart = new Chart('container', {
+    series: [{
+        type: 'line',
+        data: [1, 2, 3]
+    }]
+});
 ```
 
 ```js
@@ -91,11 +96,11 @@ const myChart = new Chart('container', { series: [{ type: 'pie', data: [1, 2, 3]
 Optional functionality via compositions
 ---------------------------------------
 
-Unlike packages the core files provide not all funcationality out of the box.
+Unlike packages the core files do not provide all functionality out of the box.
 You can find details about optional functionality in the source code of product
 packages.
 
-Do as below to activate data labels for example. 
+Do as below to activate data labels for example.
 
 ```js
     import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
