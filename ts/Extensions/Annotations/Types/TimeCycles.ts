@@ -17,12 +17,8 @@
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 
 import Annotation from '../Annotations.js';
-import ControlPoint from '../ControlPoint.js';
 import CrookedLine from './CrookedLine.js';
-import InfinityLine from './InfinityLine.js';
-import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
-import MockPointOptions from '../MockPointOptions';
 const { merge } = U;
 
 /**
@@ -55,9 +51,9 @@ function getStartingPath(x: number, y: number): string {
  * @return {string} path
  */
 function getCirclePath(r: number, numberOfCircles: number): string {
-    const strToRepeat = `a 1 1 0 1 1 ${2 * r} 0 `;
-    let path = '';
-    for (let i = 0; i < numberOfCircles; i++) {
+    const strToRepeat = `a 1 1 0 1 1 ${r} 0 `;
+    let path = strToRepeat;
+    for (let i = 1; i < numberOfCircles; i++) {
         path += strToRepeat;
     }
 
@@ -75,18 +71,25 @@ function getCirclePath(r: number, numberOfCircles: number): string {
 class TimeCycles extends CrookedLine {
 
 
-    public getD(): string {
-        const point = this.options.point as MockPointOptions,
-            x = point.x,
-            xAxisNumber = point.xAxis as number || 0,
+    public getPath(): string {
+        const point = (this.options.typeOptions.points as any)[0],
+            xValue = point.x,
+            xAxisNumber = (point.xAxis as number) || 0,
             xAxis = this.chart.xAxis[xAxisNumber],
             y = point.y || xAxis.top + xAxis.height,
             xAxisLength = xAxis.len,
-            r = this.options.r as number,
-            numberOfCircles = Math.floor(xAxisLength / r) + 2,
-            pixelShift = (Math.floor((x - xAxis.left) / r) + 1) * r;
+            x = xAxis.toPixels(xValue),
+            r = this.options.r,
+            pixelInterval = r ?
+                r * 2 :
+                (xAxisLength * (this.options as any).period) /
+                    ((xAxis.max as number) - (xAxis.min as number)),
+            numberOfCircles = Math.floor(xAxisLength / pixelInterval) + 2,
+            pixelShift =
+                (Math.floor((x - xAxis.left) / pixelInterval) + 1) *
+                pixelInterval;
 
-        return `${getStartingPath(x - pixelShift, y)} ${getCirclePath(r, numberOfCircles)}`;
+        return `${getStartingPath(x - pixelShift, y)} ${getCirclePath(pixelInterval, numberOfCircles)}`;
     }
 
     public addShapes(): void {
@@ -94,22 +97,21 @@ class TimeCycles extends CrookedLine {
             shape = this.initShape(
                 merge(typeOptions.line, {
                     type: 'path',
-                    d: this.getD(),
-                    points: this.points.map(function (
-                        _point: Highcharts.AnnotationPointType,
-                        i: number
-                    ): any {
-                        return function (
-                            target: Highcharts.AnnotationControllable
-                        ): Highcharts.AnnotationPointType {
-                            return target.annotation.points[i];
-                        } as any;
-                    })
+                    d: this.getPath(),
+                    points: this.options.typeOptions.points
                 }),
                 false as any
             );
 
         typeOptions.line = shape.options;
+    }
+
+    public redraw(animation: boolean): void {
+        super.redraw(animation);
+
+        if (this.shapes[0]) {
+            this.shapes[0].attr({ d: this.getPath() });
+        }
     }
 }
 
