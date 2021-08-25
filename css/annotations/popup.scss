@@ -16,7 +16,7 @@ $white: #fff;
 
 .highcharts-popup.highcharts-annotation-toolbar button {
   margin-top:0px;
-  color: $blue;
+  color: $dark-blue;
 }
 
 .highcharts-popup.highcharts-annotation-toolbar > span {
@@ -71,7 +71,7 @@ $white: #fff;
   overflow-y: auto;
 }
 
-.highcharts-popup-lhs-col.highcharts-popup-lhs-full { 
+.highcharts-popup-lhs-col.highcharts-popup-lhs-full {
   width: 100%;
   overflow-x: hidden;
   height: calc(100% - 104px);
@@ -155,7 +155,7 @@ $white: #fff;
 }
 
 .highcharts-tab-item-content {
-  display: none; 
+  display: none;
   float: left;
   height: 100%;
   overflow: hidden;
