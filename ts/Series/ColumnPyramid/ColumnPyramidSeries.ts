@@ -228,9 +228,9 @@ class ColumnPyramidSeries extends ColumnSeries {
 
             // inverted chart
             if (chart.inverted) {
-                invBarPos = chart.plotWidth - barY;
+                invBarPos = yAxis.width - barY;
                 stackHeight = (topPointY -
-                (chart.plotWidth - (translatedThreshold as any)));
+                (yAxis.width - (translatedThreshold as any)));
 
                 // proportion tanges
                 topXwidth = (barW *
