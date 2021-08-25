@@ -1842,6 +1842,9 @@ class Series {
                  *
                  * @name Highcharts.Point#dataGroup
                  * @type {Highcharts.DataGroupingInfoObject|undefined}
+                 *
+                 * @sample stock/members/point-datagroup
+                 *         Click to inspect raw data points
                  */
                 point.dataGroup = (series.groupMap as any)[groupCropStartIndex + i];
                 if ((point.dataGroup as any).options) {
