@@ -76,7 +76,7 @@ class FibonacciTimeZones extends CrookedLine {
             and this point here is found
 
     */
-    private static edgePoint(
+    private edgePoint(
         startIndex: number,
         endIndex: number,
         fibonacciIndex: number
@@ -136,8 +136,8 @@ class FibonacciTimeZones extends CrookedLine {
             // iteration so the lines don't overlap
             const correctedFibb = !i ? 0 : fibb,
                 points = [
-                    FibonacciTimeZones.edgePoint(1, 0, correctedFibb),
-                    FibonacciTimeZones.edgePoint(0, 1, correctedFibb)
+                    this.edgePoint(1, 0, correctedFibb),
+                    this.edgePoint(0, 1, correctedFibb)
                 ];
 
             // Calculate fibbonacci
