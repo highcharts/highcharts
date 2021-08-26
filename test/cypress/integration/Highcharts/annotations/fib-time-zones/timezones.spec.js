@@ -69,7 +69,7 @@ describe('Stock Tools Fibonacci Tome Zones, #15825', () => {
             assert.closeTo(
                 chart.annotations[0].points[0].plotX + chart.plotLeft,
                 100,
-                1,
+                1.01,
                 `The line's position should be updated after dragging.`
             );
         });
