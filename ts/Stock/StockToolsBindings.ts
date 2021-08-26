@@ -1960,6 +1960,13 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
      * @product highstock
      * @default {"className": "highcharts-vertical-label", "start": function() {}, "annotationsOptions": {}}
      */
+    timeCycles: {
+
+        className: 'highcharts-time-cycles',
+        start: function (this: NavigationBindings, e: PointerEvent): void {
+
+        }
+    },
     verticalLabel: {
         /** @ignore-option */
         className: 'highcharts-vertical-label',

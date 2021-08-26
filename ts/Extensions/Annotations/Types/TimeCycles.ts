@@ -18,6 +18,7 @@ import type PositionObject from '../../../Core/Renderer/PositionObject';
 
 import Annotation from '../Annotations.js';
 import CrookedLine from './CrookedLine.js';
+import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
@@ -46,12 +47,12 @@ function getStartingPath(x: number, y: number): string {
 /**
  * function to create circle paths
  *
- * @param {number} r radius
+ * @param {number} pixelInterval diameter of the circle in pixels
  * @param {number} numberOfCircles number of cricles
  * @return {string} path
  */
-function getCirclePath(r: number, numberOfCircles: number): string {
-    const strToRepeat = `a 1 1 0 1 1 ${r} 0 `;
+function getCirclePath(pixelInterval: number, numberOfCircles: number): string {
+    const strToRepeat = `a 1 1 0 1 1 ${pixelInterval} 0 `;
     let path = strToRepeat;
     for (let i = 1; i < numberOfCircles; i++) {
         path += strToRepeat;
@@ -69,7 +70,9 @@ function getCirclePath(r: number, numberOfCircles: number): string {
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 class TimeCycles extends CrookedLine {
-
+    startX: number = void 0 as any;
+    y: number = void 0 as any;
+    pixelInterval: number = void 0 as any;
 
     public getPath(): string {
         const point = (this.options.typeOptions.points as any)[0],
@@ -80,16 +83,21 @@ class TimeCycles extends CrookedLine {
             xAxisLength = xAxis.len,
             x = xAxis.toPixels(xValue),
             r = this.options.r,
-            pixelInterval = r ?
-                r * 2 :
-                (xAxisLength * (this.options as any).period) /
-                    ((xAxis.max as number) - (xAxis.min as number)),
+            pixelInterval = r ? r * 2 :
+                (xAxisLength * (this.options.typeOptions as any).period) /
+                ((xAxis.max as number) - (xAxis.min as number)),
             numberOfCircles = Math.floor(xAxisLength / pixelInterval) + 2,
             pixelShift =
                 (Math.floor((x - xAxis.left) / pixelInterval) + 1) *
                 pixelInterval;
 
-        return `${getStartingPath(x - pixelShift, y)} ${getCirclePath(pixelInterval, numberOfCircles)}`;
+        this.startX = x - pixelShift;
+        this.y = y;
+        this.pixelInterval = pixelInterval;
+        return `${getStartingPath(x - pixelShift, y)} ${getCirclePath(
+            pixelInterval,
+            numberOfCircles
+        )}`;
     }
 
     public addShapes(): void {
@@ -104,6 +112,24 @@ class TimeCycles extends CrookedLine {
             );
 
         typeOptions.line = shape.options;
+    }
+
+    public addControlPoints(): void {
+        const options = this.options,
+            typeOptions = options.typeOptions as TimeCycles.TypeOptions,
+            controlPoint = new ControlPoint(
+                this.chart,
+                this,
+                merge(
+                    options.controlPointOptions,
+                    typeOptions.controlPointOptions
+                ),
+                0
+            );
+
+        this.controlPoints.push(controlPoint);
+
+        typeOptions.controlPointOptions = controlPoint.options;
     }
 
     public redraw(animation: boolean): void {
@@ -130,46 +156,30 @@ TimeCycles.prototype.defaultOptions = merge(
         typeOptions: {
             controlPointOptions: {
                 positioner: function (
-                    this: Highcharts.AnnotationControlPoint
+                    this: Highcharts.AnnotationControlPoint,
+                    target: TimeCycles
                 ): PositionObject {
-                    // The control point is in the middle of the second line
-                    const target = this.target,
-                        graphic = this.graphic,
-                        edgePoints = target.secondLineEdgePoints,
-                        args = { annotation: target },
-                        firstEdgePointY: number = edgePoints[0](args).y,
-                        secondEdgePointY: number = edgePoints[1](args).y,
-                        x: number = edgePoints[0](args).x,
-                        y: number = (firstEdgePointY + secondEdgePointY) / 2,
-                        plotLeft = this.chart.plotLeft,
-                        plotTop = this.chart.plotTop;
-
                     return {
-                        x: plotLeft + x - graphic.width / 2,
-                        y: plotTop + y - graphic.height / 2
+                        x:
+                            target.startX +
+                            target.pixelInterval * 1.5 -
+                            this.graphic.width / 2,
+                        y:
+                            target.y -
+                            target.pixelInterval / 2 -
+                            this.graphic.height / 2
                     };
                 },
                 events: {
                     drag: function (
-                        this: TimeCycles,
+                        this: ControlPoint,
                         e: Highcharts.AnnotationEventObject,
                         target: TimeCycles
                     ): void {
-                        const isInsidePlot = target.chart.isInsidePlot(
-                            e.chartX - target.chart.plotLeft,
-                            e.chartY - target.chart.plotTop,
-                            {
-                                visiblePlotOnly: true
-                            }
-                        );
-
-                        if (isInsidePlot) {
-                            const translation = this.mouseMoveToTranslation(e);
-
-                            target.translatePoint(translation.x, 0, 1);
-
-                            target.redraw(false);
-                        }
+                        const y = target.y,
+                            dy = Math.abs(e.chartY - y);
+                        target.options.r = dy;
+                        target.redraw(false);
                     }
                 }
             }
@@ -184,7 +194,7 @@ TimeCycles.prototype.defaultOptions = merge(
  * */
 
 namespace TimeCycles {
-    export interface Options extends CrookedLine.Options{
+    export interface Options extends CrookedLine.Options {
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
@@ -200,7 +210,7 @@ namespace TimeCycles {
  * */
 
 Annotation.types.timeCycles = TimeCycles;
-declare module './AnnotationType'{
+declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         timeCycles: typeof TimeCycles;
     }
