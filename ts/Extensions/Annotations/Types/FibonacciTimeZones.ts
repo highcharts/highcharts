@@ -287,12 +287,14 @@ export default FibonacciTimeZones;
  *         Fibonacci Time Zones
  *
  * @extends   annotations.crookedLine
+ * @since     next
  * @product   highstock
  * @apioption annotations.fibonacciTimeZones
  */
 
 /**
  * @exclude   y
+ * @since     next
  * @product   highstock
  * @apioption annotations.fibonacciTimeZones.typeOptions.points
  */

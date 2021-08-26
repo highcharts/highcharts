@@ -1,5 +1,7 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (data) {
-    var length = data.length;
+Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => {
+    const length = data.length;
+    // The control point's visibility
+    let cpVisibility = true;
 
     // Create the chart
     Highcharts.stockChart('container', {
@@ -9,7 +11,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
                 load: function () {
                     this.annotations.forEach(function (annotation) {
                         annotation.setControlPointsVisibility(true);
-                        annotation.cpVisibility = true;
                     });
                 }
             }
@@ -38,8 +39,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
             },
             events: {
                 click: function () {
-                    this.cpVisibility = !this.cpVisibility;
-                    this.setControlPointsVisibility(this.cpVisibility);
+                    cpVisibility = !cpVisibility;
+                    this.setControlPointsVisibility(cpVisibility);
                 }
             }
         }],
