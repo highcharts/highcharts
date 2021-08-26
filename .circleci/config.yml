@@ -228,7 +228,7 @@ jobs:
       - aws-s3/sync:
           from: "/home/circleci/repo/tmp/latest/"
           to: 's3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/visualtests/reference/latest/' # delete existing latest references in S3 location
-          overwrite: true
+          arguments: '--delete'
       - run:
           name: "Upload test results"
           command: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}"
