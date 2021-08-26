@@ -1235,7 +1235,12 @@ class Axis {
             !log
         ) {
 
-            if (defined(options.min) || defined(options.max)) {
+            if (
+                defined(options.min) ||
+                defined(options.max) ||
+                defined(options.floor) ||
+                defined(options.ceiling)
+            ) {
                 axis.minRange = null; // don't do this again
 
             } else {
