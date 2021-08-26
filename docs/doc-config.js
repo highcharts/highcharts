@@ -6,7 +6,9 @@ module.exports = {
      * Refer to doc by relative path without extension, i.e.: 'maps/drilldown'
      */
     unlisted: [
-        'export-module/legacy-export-servers'
+        'export-module/legacy-export-servers',
+        'stock/compare',
+        'stock/cumulative-sum'
     ],
     /* List of old paths that should be redirected */
     redirects: [

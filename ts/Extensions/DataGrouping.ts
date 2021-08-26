@@ -1093,9 +1093,11 @@ Axis.prototype.applyGrouping = function (this: Axis): void {
 
         if (series.groupPixelWidth) {
             series.hasProcessed = true; // #2692
-
-            series.applyGrouping();
         }
+
+        // Fire independing on series.groupPixelWidth to always set a proper
+        // dataGrouping state, (#16238)
+        series.applyGrouping();
     });
 };
 

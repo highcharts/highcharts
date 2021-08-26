@@ -61,9 +61,9 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
         let className = super.getClassName.apply(this);
         const point = this,
             index = point.index,
-            isBullish = point.series.hollowCandlestickData[index];
+            currentPoint = point.series.hollowCandlestickData[index];
 
-        if (isBullish === 'up') {
+        if (!currentPoint.isBullish && currentPoint.trendDirection === 'up') {
             className += '-bearish-up';
         }
 

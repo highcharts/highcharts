@@ -480,7 +480,7 @@ namespace OfflineExporting {
         // renderer for inline styles that we want to pass through. There
         // are so many styles by default in IE that we don't want to
         // blacklist them all.
-        if (H.isMS && chart.styledMode) {
+        if (H.isMS && chart.styledMode && !Exporting.inlineWhitelist.length) {
             Exporting.inlineWhitelist.push(
                 /^blockSize/,
                 /^border/,
@@ -595,7 +595,7 @@ namespace OfflineExporting {
             sanitize = (svg: string): string => chart.sanitizeSVG(svg, chartCopyOptions as any),
             // When done with last image we have our SVG
             checkDone = (): void => {
-                if (images && imagesEmbedded === images.length) {
+                if (images && imagesEmbedded === imagesLength) {
                     successCallback(sanitize(
                         (chartCopyContainer as any).innerHTML
                     ));
@@ -622,12 +622,11 @@ namespace OfflineExporting {
             };
 
         let el: SVGImageElement,
-            i: number,
-            l: number,
             chartCopyContainer: (HTMLDOMElement|undefined),
             chartCopyOptions: (Options|undefined),
             href: (string|null) = null,
             images: (Array<SVGImageElement>|HTMLCollectionOf<SVGImageElement>|undefined),
+            imagesLength = 0,
             imagesEmbedded = 0;
 
         // Hook into getSVG to get a copy of the chart copy's
@@ -638,6 +637,7 @@ namespace OfflineExporting {
             chartCopyOptions = e.chartCopy.options;
             chartCopyContainer = e.chartCopy.container.cloneNode(true) as any;
             images = chartCopyContainer && chartCopyContainer.getElementsByTagName('image') || [];
+            imagesLength = images.length;
         });
 
         // Trigger hook to get chart copy
@@ -652,7 +652,7 @@ namespace OfflineExporting {
             }
 
             // Go through the images we want to embed
-            for (i = 0, l = images.length; i < l; ++i) {
+            for (let i = 0; i < images.length; i++) {
                 el = images[i];
                 href = el.getAttributeNS(
                     'http://www.w3.org/1999/xlink',
@@ -675,8 +675,9 @@ namespace OfflineExporting {
 
                 // Hidden, boosted series have blank href (#10243)
                 } else {
-                    ++imagesEmbedded;
+                    imagesEmbedded++;
                     el.parentNode.removeChild(el);
+                    i--;
                     checkDone();
                 }
             }
