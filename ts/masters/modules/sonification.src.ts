@@ -12,4 +12,11 @@
 
 'use strict';
 
-import '../../Extensions/Sonification/Sonification.js';
+import Highcharts from '../../Core/Globals.js';
+import ChartSonify from '../../Extensions/Sonification/ChartSonify.js';
+import SeriesSonify from '../../Extensions/Sonification/SeriesSonify.js';
+import Sonification from '../../Extensions/Sonification/Sonification.js';
+const G: AnyRecord = Highcharts;
+G.sonification = Sonification;
+ChartSonify.compose(G.Chart);
+SeriesSonify.compose(G.Series);

@@ -16,9 +16,17 @@ import type Chart from '../../Core/Chart/Chart';
 import type Point from '../../Core/Series/Point';
 import type RangeSelector from '../../Extensions/RangeSelector';
 import type Series from '../../Core/Series/Series';
-import musicalFrequencies from './MusicalFrequencies.js';
+import type {
+    DefaultSonificationInstrumentOptions,
+    SonificationInstrumentOptions
+} from './SonificationOptions';
+
+import MusicalFrequencies from './MusicalFrequencies.js';
 import U from '../../Core/Utilities.js';
-const { clamp } = U;
+const {
+    clamp,
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -44,6 +52,11 @@ declare global {
             SignalHandler: typeof SignalHandler;
             musicalFrequencies: Array<number>;
             calculateDataExtremes(chart: Chart, prop: string): RangeSelector.RangeObject;
+            getExtremesForInstrumentProps(
+                chart: Chart,
+                instruments?: Array<Highcharts.PointInstrumentObject>,
+                dataExtremes?: Record<string, RangeSelector.RangeObject>
+            ): Record<string, RangeSelector.RangeObject>;
             getMusicalScale(semitones: Array<number>): Array<number>;
             virtualAxisTranslate(
                 value: number,
@@ -166,14 +179,81 @@ SignalHandler.prototype.emitSignal = function (
     return retval;
 };
 
+/**
+ * Calculate value extremes for used instrument data properties on a chart.
+ * @private
+ * @param {Highcharts.Chart} chart
+ * The chart to calculate extremes from.
+ * @param {Array<Highcharts.PointInstrumentObject>} [instruments]
+ * Additional instrument definitions to inspect for data props used, in
+ * addition to the instruments defined in the chart options.
+ * @param {Highcharts.Dictionary<Highcharts.RangeObject>} [dataExtremes]
+ * Predefined extremes for each data prop.
+ * @return {Highcharts.Dictionary<Highcharts.RangeObject>}
+ * New extremes with data properties mapped to min/max objects.
+ */
+function getExtremesForInstrumentProps(
+    chart: Chart,
+    instruments?: Array<Highcharts.PointInstrumentObject>,
+    dataExtremes?: Record<string, RangeSelector.RangeObject>
+): Record<string, RangeSelector.RangeObject> {
+    const defaultInstrumentDef = (
+            chart.options.sonification &&
+            chart.options.sonification.defaultInstrumentOptions
+        ),
+        optionDefToInstrDef = (
+            optionDef: SonificationInstrumentOptions|DefaultSonificationInstrumentOptions
+        ): Highcharts.PointInstrumentObject => ({
+            instrumentMapping: optionDef.mapping
+        } as Highcharts.PointInstrumentObject);
+    let allInstrumentDefinitions = (instruments || []).slice(0);
+
+    if (defaultInstrumentDef) {
+        allInstrumentDefinitions.push(optionDefToInstrDef(defaultInstrumentDef));
+    }
+
+    chart.series.forEach((series): void => {
+        const instrOptions = (
+            series.options.sonification &&
+            series.options.sonification.instruments
+        );
+        if (instrOptions) {
+            allInstrumentDefinitions = allInstrumentDefinitions.concat(instrOptions.map(optionDefToInstrDef));
+        }
+    });
+
+    return (allInstrumentDefinitions).reduce(function (
+        newExtremes: Record<string, RangeSelector.RangeObject>,
+        instrumentDefinition: Highcharts.PointInstrumentObject
+    ): Record<string, RangeSelector.RangeObject> {
+        Object.keys(instrumentDefinition.instrumentMapping || {}).forEach(
+            function (instrumentParameter: string): void {
+                const value = instrumentDefinition.instrumentMapping[
+                    instrumentParameter
+                ];
+
+                if (typeof value === 'string' && !newExtremes[value]) {
+                    // This instrument parameter is mapped to a data prop.
+                    // If we don't have predefined data extremes, find them.
+                    newExtremes[value] = utilities.calculateDataExtremes(
+                        chart, value
+                    );
+                }
+            }
+        );
+        return newExtremes;
+    }, merge(dataExtremes));
+}
 
 const utilities: Highcharts.SonificationUtilitiesObject = {
 
     // List of musical frequencies from C0 to C8
-    musicalFrequencies: musicalFrequencies,
+    musicalFrequencies: MusicalFrequencies,
 
     // SignalHandler class
     SignalHandler: SignalHandler as any,
+
+    getExtremesForInstrumentProps,
 
     /**
      * Get a musical scale by specifying the semitones from 1-12 to include.
@@ -187,7 +267,7 @@ const utilities: Highcharts.SonificationUtilitiesObject = {
      * Array of frequencies from C0 to C8 that are included in this scale.
      */
     getMusicalScale: function (semitones: Array<number>): Array<number> {
-        return musicalFrequencies.filter(function (
+        return MusicalFrequencies.filter(function (
             freq: number,
             i: number
         ): boolean {

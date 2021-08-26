@@ -11,8 +11,16 @@
  * */
 
 'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type RangeSelector from '../../Extensions/RangeSelector';
-import H from '../../Core/Globals.js';
+
+import Sonification from './Sonification.js';
 import U from '../../Core/Utilities.js';
 const {
     error,
@@ -357,7 +365,7 @@ function pointSonify(
         instrumentDefinition: Highcharts.PointInstrumentObject
     ): void {
         const instrument = typeof instrumentDefinition.instrument === 'string' ?
-                H.sonification.instruments[instrumentDefinition.instrument] :
+                Sonification.instruments[instrumentDefinition.instrument] :
                 instrumentDefinition.instrument,
             mapping = instrumentDefinition.instrumentMapping || {},
             extremes = merge(
