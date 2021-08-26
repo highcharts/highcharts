@@ -1611,7 +1611,10 @@ class Axis {
             minPadding = options.minPadding,
             length,
             linkedParentExtremes,
-            tickIntervalOption = options.tickInterval,
+            // Only non-negative tickInterval is valid, #12961
+            tickIntervalOption =
+                isNumber(options.tickInterval) && options.tickInterval >= 0 ?
+                    options.tickInterval : void 0,
             threshold = isNumber(axis.threshold) ? axis.threshold : null,
             thresholdMin,
             thresholdMax,
