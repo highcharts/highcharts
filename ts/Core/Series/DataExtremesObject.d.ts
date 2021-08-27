@@ -20,4 +20,10 @@ export interface DataExtremesObject {
     dataMax?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default DataExtremesObject;

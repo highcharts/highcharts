@@ -257,12 +257,22 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
         `After panning 20px, the axis extremes should not be reset
         but changed respectively.`
     );
+
+    const extendedOrdinalPositionsLength =
+        chart.xAxis[0].ordinal.extendedOrdinalPositions.length;
+    chart.series[0].addPoint([1585666260000 + 36e7, 1171.11]);
+    assert.notStrictEqual(
+        extendedOrdinalPositionsLength,
+        chart.xAxis[0].ordinal.extendedOrdinalPositions.length,
+        `After adding the point, the extendedOrdinalPositions array
+        should be recalculated, #16055.`
+    );
 });
 
 QUnit.test('findIndexOf', assert => {
     const findIndexOf =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.findIndexOf;
+        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.findIndexOf;
     const array = [0, 1, 3, 5, 10, 12, 13, 15];
     assert.equal(findIndexOf(array, 3), 2);
     assert.equal(findIndexOf(array, 0), 0);
@@ -284,9 +294,10 @@ QUnit.test('findIndexOf', assert => {
 QUnit.test('lin2val- unit test for values outside the plotArea.', function (assert) {
     const axis = {
         transA: -0.04,
-        min: 3,
+        min: 3.24,
         len: 500,
         translationSlope: 0.2,
+        minPixelPadding: 0,
         ordinal: {
             extendedOrdinalPositions: [0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9],
             positions: [3, 4.2, 4.8, 5, 7],
@@ -312,10 +323,10 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
 
     axis.ordinal.getIndexOfPoint =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.getIndexOfPoint;
+        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.prototype.getIndexOfPoint;
     axis.ordinal.findIndexOf =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.findIndexOf;
+        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.prototype.findIndexOf;
     function lin2val(val) {
         return Highcharts.Axis.prototype.lin2val.call(axis, val);
     }

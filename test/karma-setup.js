@@ -126,8 +126,9 @@ handleDefaultOptionsFunctions(true);
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 
+/*
 // Override Highcharts and jQuery ajax functions to load from local
-Highcharts.wrap(Highcharts, 'ajax', function (proceed, attr) {
+function ajax(proceed, attr) {
     var success = attr.success;
     attr.error = function (e) {
         throw new Error('Failed to load: ' + attr.url);
@@ -142,11 +143,41 @@ Highcharts.wrap(Highcharts, 'ajax', function (proceed, attr) {
         };
         return proceed.call(this, attr);
     }
-});
+}
+Highcharts.wrap(Highcharts.HttpUtilities, 'ajax', ajax);
+Highcharts.wrap(Highcharts, 'ajax', ajax);
 if (window.$) {
     $.getJSON = function (url, callback) { // eslint-disable-line no-undef
         callback(window.JSONSources[url]);
     };
+}
+*/
+
+// Hijack XHMLHttpRequest to run local JSON sources
+var open = XMLHttpRequest.prototype.open;
+var send = XMLHttpRequest.prototype.send;
+XMLHttpRequest.prototype.open = function (type, url) {
+	this.requestURL = url;
+    return open.apply(this, arguments);
+}
+
+XMLHttpRequest.prototype.send = function () {
+    var localData = this.requestURL && window.JSONSources[this.requestURL];
+	if (localData) {
+        Object.defineProperty(this, 'readyState', {
+            get: function () { return 4; }
+        });
+        Object.defineProperty(this, 'status', {
+            get: function () { return 200; }
+        });
+        Object.defineProperty(this, 'responseText', {
+            get: function () { return JSON.stringify(localData); }
+        });
+
+        this.onreadystatechange();
+    } else {
+        return send.apply(this, arguments);
+    }
 }
 
 function resetDefaultOptions(testName) {

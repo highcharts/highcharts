@@ -8,11 +8,29 @@
  *
  * */
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 export interface SVGPath extends globalThis.Array<SVGPath.Segment> {
     // nothing here yet
 }
 
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
 export namespace SVGPath {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     export type Arc = ['A'|'a', number, number, number, number, number, number, number];
     export type Close = ['Z'|'z'];
@@ -40,5 +58,11 @@ export namespace SVGPath {
     }
 
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SVGPath;

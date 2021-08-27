@@ -11,7 +11,7 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import '../../Core/Axis/OrdinalAxis.js';
+import OrdinalAxis from '../../Core/Axis/OrdinalAxis.js';
 import './broken-axis.src.js';
 import '../../Extensions/DataGrouping.js';
 import '../../Series/OHLC/OHLCSeries.js';
@@ -22,8 +22,10 @@ import '../../Core/Navigator.js';
 import '../../Extensions/RangeSelector.js';
 import StockChart from '../../Core/Chart/StockChart.js';
 const G: AnyRecord = Highcharts;
+
 // Classes
 G.Scrollbar = Scrollbar;
 G.StockChart = G.stockChart = StockChart.stockChart;
 // Compositions
 Scrollbar.compose(G.Axis);
+OrdinalAxis.compose(G.Axis, G.Series, G.Chart);

@@ -154,9 +154,9 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
             childrenTotal += child.val;
         }
     });
-    tree.visible = childrenTotal > 0 || tree.visible;
     // Set the values
     value = pick(optionsPoint.value, childrenTotal);
+    tree.visible = value >= 0 && (childrenTotal > 0 || tree.visible);
     tree.children = children;
     tree.childrenTotal = childrenTotal;
     tree.isLeaf = tree.visible && !childrenTotal;

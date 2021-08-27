@@ -11,7 +11,14 @@
  * */
 
 'use strict';
-import H from '../../Core/Globals.js';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import Sonification from './Sonification.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -779,7 +786,7 @@ Timeline.prototype.playPaths = function (
             // Leave a timeout to let notes fade out before next play
             setTimeout(function (): void {
                 playPath(path);
-            }, H.sonification.fadeOutDuration);
+            }, Sonification.fadeOutDuration);
         }
     });
 };

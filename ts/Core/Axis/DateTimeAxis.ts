@@ -16,11 +16,11 @@
  *
  * */
 
+import type Axis from './Axis';
 import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
-import type Time from '../Time.js';
+import type Time from '../Time';
 
-import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -118,7 +118,7 @@ namespace DateTimeAxis{
      *
      * */
 
-    const composedClasses: Array<typeof Axis> = [];
+    const composedClasses: Array<Function> = [];
 
     /* *
      *
@@ -323,6 +323,33 @@ namespace DateTimeAxis{
             };
         }
 
+        /**
+         * Get the best date format for a specific X value based on the closest
+         * point range on the axis.
+         *
+         * @private
+         *
+         * @param {number} x
+         *
+         * @param {Highcharts.Dictionary<string>} dateTimeLabelFormats
+         *
+         * @return {string}
+         */
+        public getXDateFormat(
+            x: number,
+            dateTimeLabelFormats: Record<string, string>
+        ): string {
+            const { axis } = this;
+
+            return axis.closestPointRange ?
+                axis.chart.time.getDateFormat(
+                    axis.closestPointRange,
+                    x,
+                    axis.options.startOfWeek,
+                    dateTimeLabelFormats
+                ) || dateTimeLabelFormats.year : // #2546, 2581
+                dateTimeLabelFormats.day;
+        }
     }
 
 }

@@ -38,11 +38,11 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
+import ColorMapComposition from '../ColorMapComposition.js';
+const { colorMapSeriesMixin } = ColorMapComposition;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -1300,7 +1300,7 @@ class TreemapSeries extends ScatterSeries {
 
         // If color series logic is loaded, add some properties
         if (colorMapSeriesMixin) {
-            this.colorAttribs = colorMapSeriesMixin.colorAttribs;
+            this.colorAttribs = ColorMapComposition.seriesColorAttribs;
         }
 
         setOptionsEvent = addEvent(series, 'setOptions', function (
@@ -1880,9 +1880,10 @@ class TreemapSeries extends ScatterSeries {
  * */
 
 interface TreemapSeries extends Highcharts.TreeSeries {
-    colorAttribs: Highcharts.ColorMapSeriesMixin['colorAttribs'];
+    colorAttribs?: ColorMapComposition.SeriesComposition['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getExtremesFromAll: boolean;
     optionalAxis: string;
     parallelArrays: Array<string>;
@@ -1897,7 +1898,7 @@ extend(TreemapSeries.prototype, {
     buildKDTree: noop,
     colorKey: 'colorValue', // Point color option key
     directTouch: true,
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
     getExtremesFromAll: true,
     getSymbol: noop,
     optionalAxis: 'colorAxis',
@@ -1948,6 +1949,8 @@ namespace TreemapSeries {
         trigger?: string;
     }
 }
+
+ColorMapComposition.compose(TreemapSeries);
 
 /* *
  *
@@ -2021,7 +2024,7 @@ export default TreemapSeries;
  *
  * @type      {Array<number|null|*>}
  * @extends   series.heatmap.data
- * @excluding x, y
+ * @excluding x, y, pointPadding
  * @product   highcharts
  * @apioption series.treemap.data
  */

@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-<!-- Before submitting a feature request, please consider searching for a similar request allready made, and upvote that instead. This makes it easier for us to filter on the most requested features. -->
+<!-- Before submitting a feature request, please consider searching for a similar request already made, and upvote that instead. This makes it easier for us to filter on the most requested features. -->
 
 # Description of the feature
 <!-- Add information about the feature along with typical use-cases. -->
