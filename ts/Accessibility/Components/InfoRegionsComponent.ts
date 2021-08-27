@@ -19,6 +19,7 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
+import type ChartSonify from '../../Extensions/Sonification/ChartSonify';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -729,7 +730,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         sonifyButtonId: string
     ): void {
         const el = this.sonifyButton = getElement(sonifyButtonId);
-        const chart = this.chart as Highcharts.SonifyableChart;
+        const chart = this.chart as ChartSonify.SonifyableChart;
         const defaultHandler = (e: Event): void => {
             if (el) {
                 el.setAttribute('aria-hidden', 'true');

@@ -12,7 +12,13 @@
 
 'use strict';
 
-import H from '../../Core/Globals.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import Sonification from './Sonification.js';
 import U from '../../Core/Utilities.js';
 const {
     error,
@@ -166,7 +172,7 @@ Earcon.prototype.sonify = function (
         opts: Highcharts.EarconInstrument
     ): void {
         let instrument = typeof opts.instrument === 'string' ?
-                H.sonification.instruments[opts.instrument] : opts.instrument,
+                Sonification.instruments[opts.instrument] : opts.instrument,
             instrumentOpts = merge(opts.playOptions),
             instrOnEnd: (Function|undefined),
             instrumentCopy,
