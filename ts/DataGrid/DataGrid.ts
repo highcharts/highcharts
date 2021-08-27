@@ -19,6 +19,7 @@
  *
  * */
 
+import type DataEventEmitter from '../Data/DataEventEmitter';
 import type DataGridOptions from './DataGridOptions';
 import DataTable from '../Data/DataTable.js';
 import DataGridUtils from './DataGridUtils.js';
@@ -34,7 +35,10 @@ const {
 } = H;
 import U from '../Core/Utilities.js';
 const {
+    addEvent,
     clamp,
+    fireEvent,
+    isNumber,
     merge,
     pick
 } = U;
@@ -45,7 +49,7 @@ const {
  *
  * */
 
-class DataGrid {
+class DataGrid implements DataEventEmitter<DataGrid.Event> {
 
     /* *
      *
@@ -141,6 +145,99 @@ class DataGrid {
 
         this.scrollContainer.removeChild(this.innerContainer);
         this.render();
+    }
+
+
+    /**
+     * Resize a column.
+     *
+     * @param {number} width
+     *        New column width.
+     *
+     * @param {string|number|undefined} columnNameOrIndex
+     *        Name or index of the column to resize, omit to resize all
+     *        columns.
+     *
+     * @emits #afterResizeColumn
+     */
+    public resizeColumn(width: number, columnNameOrIndex?: (string|number)): void {
+        const headers = this.columnHeadersContainer;
+        const index = typeof columnNameOrIndex === 'string' ?
+            this.columnNames.indexOf(columnNameOrIndex) :
+            columnNameOrIndex;
+        const flex = `${width}`;
+
+        if (isNumber(index)) {
+            if (index !== -1) {
+                if (headers) {
+                    const header = headers.children[index] as HTMLElement;
+                    if (header) {
+                        header.style.flex = flex;
+                    }
+                }
+                this.rowElements.forEach((row): void => {
+                    const cellElement = row.children[index] as HTMLElement;
+                    if (cellElement) {
+                        cellElement.style.flex = flex;
+                    }
+                });
+            }
+        } else {
+            if (headers) {
+                for (let i = 0; i < headers.children.length; i++) {
+                    (headers.children[i] as HTMLElement).style.flex = flex;
+                }
+            }
+            this.rowElements.forEach((row): void => {
+                for (let i = 0; i < row.children.length; i++) {
+                    (row.children[i] as HTMLElement).style.flex = flex;
+                }
+            });
+        }
+
+        this.renderColumnDragHandles();
+
+        this.emit({
+            type: 'afterResizeColumn',
+            width,
+            index,
+            name: isNumber(index) ? this.columnNames[index] : void 0
+        });
+    }
+
+
+    /**
+     * Emits an event on this data grid to all registered callbacks of the
+     * given event.
+     * @private
+     *
+     * @param {DataGrid.Event} e
+     * Event object with event information.
+     */
+    public emit(e: DataGrid.Event): void {
+        fireEvent(this, e.type, e);
+    }
+
+
+    /**
+     * Registers a callback for a specific event.
+     *
+     * @function Highcharts.DataGrid#on
+     *
+     * @param {string} type
+     * Event type as a string.
+     *
+     * @param {Highcharts.EventCallbackFunction<Highcharts.DataGrid>} callback
+     * Function to register for an event callback.
+     *
+     * @return {Function}
+     * Function to unregister callback from the event.
+     */
+    public on(
+        type: DataGrid.Event['type'],
+        callback: DataEventEmitter.EventCallback<this, DataGrid.Event>
+    ): Function {
+        return addEvent(this, type, callback);
     }
 
 
@@ -597,23 +694,29 @@ class DataGrid {
         const newWidthRight = colRight.offsetWidth - diff;
         const diffRatioLeft = newWidthLeft / colLeft.offsetWidth;
         const diffRatioRight = newWidthRight / colRight.offsetWidth;
-        const leftFlexRatio = colLeft.style.flex = (
-            (colLeft.style.flex ? parseFloat(colLeft.style.flex) : 1) * diffRatioLeft
-        ).toFixed(3);
-        const rightFlexRatio = colRight.style.flex = (
-            (colRight.style.flex ? parseFloat(colRight.style.flex) : 1) * diffRatioRight
-        ).toFixed(3);
+        const leftFlexRatio =
+            (colLeft.style.flex ? parseFloat(colLeft.style.flex) : 1) * diffRatioLeft;
+        const rightFlexRatio =
+            (colRight.style.flex ? parseFloat(colRight.style.flex) : 1) * diffRatioRight;
 
-        this.rowElements.forEach((row): void => {
-            const cellElements = row.children;
-            (cellElements[colRightIx - 1] as HTMLElement).style.flex = leftFlexRatio;
-            (cellElements[colRightIx] as HTMLElement).style.flex = rightFlexRatio;
-        });
+        this.resizeColumn(leftFlexRatio, colRightIx - 1);
+        this.resizeColumn(rightFlexRatio, colRightIx);
 
         this.draggedResizeHandle = null;
         this.draggedColumnRightIx = null;
+    }
+}
 
-        this.renderColumnDragHandles();
+namespace DataGrid {
+    export type Event = (
+        ColumnResizeEvent
+    );
+
+    export interface ColumnResizeEvent {
+        readonly type: 'afterResizeColumn';
+        readonly width: number;
+        readonly index?: number;
+        readonly name?: string;
     }
 }
 
