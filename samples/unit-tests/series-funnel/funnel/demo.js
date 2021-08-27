@@ -174,6 +174,14 @@ QUnit.test('Top path of funnel intact', function (assert) {
 });
 
 QUnit.test('Funnel dataLabels', function (assert) {
+    const data = [
+        ['Website visits', 5654],
+        ['Downloads', 4064],
+        ['Requested price list', 1987],
+        ['Invoice sent', 1976],
+        ['Finalized', 4201]
+    ];
+
     var chart = Highcharts.chart('container', {
             chart: {
                 type: 'funnel'
@@ -192,13 +200,7 @@ QUnit.test('Funnel dataLabels', function (assert) {
             series: [
                 {
                     name: 'Unique users',
-                    data: [
-                        ['Website visits', 5654],
-                        ['Downloads', 4064],
-                        ['Requested price list', 1987],
-                        ['Invoice sent', 1976],
-                        ['Finalized', 4201]
-                    ]
+                    data
                 }
             ]
         }),
@@ -348,5 +350,23 @@ QUnit.test('Funnel dataLabels', function (assert) {
         dataLabel.x,
         dataLabel.alignAttr.x,
         'DataLabels with allowOverlap set to false should be positioned correctly after point hide (#12350)'
+    );
+
+    chart.update({
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    rotation: 1
+                }
+            }
+        }
+    });
+
+    // Force dataLabel re-creation
+    chart.series[0].setData(data, true, false, false);
+
+    assert.ok(
+        Highcharts.isNumber(chart.series[0].points[1].dataLabel.alignAttr.y),
+        '#16176: dataLabel.alignAttr.y should be a number when rotation is set'
     );
 });

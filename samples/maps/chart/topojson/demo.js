@@ -24,7 +24,7 @@ function getRandomData(geojson) {
 
 // Source: https://github.com/leakyMirror/map-of-europe
 Highcharts.getJSON(
-    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@06382af96d/samples/data/europe.topo.json',
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v9.2.0/samples/data/europe.topo.json',
     function (topology) {
 
         // Convert the topoJSON feature into geoJSON

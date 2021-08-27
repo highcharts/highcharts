@@ -90,48 +90,45 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', data
         // Highlight the current (last) point
         showDataInfo(chart, lastPoint, lastPoint.x);
 
-        if ($.datepicker) {
+        $('#date-picker').datepicker({
+            beforeShowDay: $.datepicker.noWeekends,
+            // First available date
+            minDate: -Math.ceil(lastX - firstX) / DAY - 1,
+            maxDate: -1 // today
+        });
 
-            $('#date-picker').datepicker({
-                beforeShowDay: $.datepicker.noWeekends,
-                // First available date
-                minDate: -Math.ceil(lastX - firstX) / DAY - 1,
-                maxDate: -1 // today
-            });
-
-            $.datepicker.setDefaults({
-                // Set the datepicker's date format
-                dateFormat: 'yy-mm-dd',
-                onSelect: function (dateText) {
-                    const clickedDateStr = dateText.split('-'),
-                        clickedDate = Date.UTC(
-                            clickedDateStr[0],
-                            clickedDateStr[1] - 1,
-                            clickedDateStr[2]
-                        );
-
-                    // Show 20 points on the graph
-                    chart.xAxis[0].setExtremes(
-                        clickedDate - DAY * 10,
-                        clickedDate + DAY * 10
+        $.datepicker.setDefaults({
+            // Set the datepicker's date format
+            dateFormat: 'yy-mm-dd',
+            onSelect: function (dateText) {
+                const clickedDateStr = dateText.split('-'),
+                    clickedDate = Date.UTC(
+                        clickedDateStr[0],
+                        clickedDateStr[1] - 1,
+                        clickedDateStr[2]
                     );
 
-                    const points = chart.series[0].points;
+                // Show 20 points on the graph
+                chart.xAxis[0].setExtremes(
+                    clickedDate - DAY * 10,
+                    clickedDate + DAY * 10
+                );
 
-                    let point;
+                const points = chart.series[0].points;
 
-                    for (const i in points) {
-                        if (dateFormat('%Y-%m-%d', points[i].x) === dateText) {
-                            point = points[i];
-                            break;
-                        }
-                    }
+                let point;
 
-                    if (point) {
-                        showDataInfo(chart, point, clickedDate);
+                for (const i in points) {
+                    if (dateFormat('%Y-%m-%d', points[i].x) === dateText) {
+                        point = points[i];
+                        break;
                     }
                 }
-            });
-        }
+
+                if (point) {
+                    showDataInfo(chart, point, clickedDate);
+                }
+            }
+        });
     });
 });
