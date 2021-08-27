@@ -20,6 +20,7 @@
 
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type WordcloudPointOptions from './WordcloudPointOptions';
+
 import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -31,7 +32,7 @@ import WordcloudSeries from './WordcloudSeries';
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 
-class WordcloudPoint extends ColumnSeries.prototype.pointClass implements Highcharts.DrawPoint {
+class WordcloudPoint extends ColumnSeries.prototype.pointClass {
 
     /* *
      *
@@ -51,23 +52,32 @@ class WordcloudPoint extends ColumnSeries.prototype.pointClass implements Highch
      * Functions
      *
      * */
-    public shouldDraw(): boolean {
-        const point = this;
-        return !point.isNull;
-    }
+
     public isValid(): boolean {
         return true;
     }
 }
 
-interface WordcloudPoint {
-    draw: typeof DrawPointComposition.drawPoint;
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface WordcloudPoint extends DrawPointComposition.Composition {
     weight: number;
 }
 
 extend(WordcloudPoint.prototype, {
-    draw: DrawPointComposition.drawPoint,
     weight: 1
 });
+
+DrawPointComposition.compose(WordcloudPoint);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default WordcloudPoint;

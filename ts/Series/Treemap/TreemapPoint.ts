@@ -21,6 +21,7 @@
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
 import type TreemapSeries from './TreemapSeries';
+
 import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -55,7 +56,7 @@ const {
  *
  * */
 
-class TreemapPoint extends ScatterPoint implements Highcharts.DrawPoint {
+class TreemapPoint extends ScatterPoint {
 
     /* *
      *
@@ -140,18 +141,18 @@ class TreemapPoint extends ScatterPoint implements Highcharts.DrawPoint {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface TreemapPoint extends Highcharts.DrawPoint {
-    draw: typeof DrawPointComposition.drawPoint;
+interface TreemapPoint extends DrawPointComposition.Composition {
     setVisible: typeof PiePoint.prototype.setVisible;
 }
 extend(TreemapPoint.prototype, {
-    draw: DrawPointComposition.drawPoint,
     setVisible: PiePoint.prototype.setVisible
 });
+
+DrawPointComposition.compose(TreemapPoint);
 
 /* *
  *
