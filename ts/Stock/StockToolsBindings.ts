@@ -35,6 +35,7 @@ const {
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 import palette from '../Core/Color/Palette.js';
+import TimeCycles from '../Extensions/Annotations/Types/TimeCycles';
 const {
     correctFloat,
     defined,
@@ -1964,7 +1965,39 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
 
         className: 'highcharts-time-cycles',
         start: function (this: NavigationBindings, e: PointerEvent): void {
+            let closestPoint = bindingsUtils.attractToPoint(e, this.chart),
+                navigation = this.chart.options.navigation,
+                options,
+                annotation;
 
+            // Exit if clicked out of axes area
+            if (!closestPoint) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'timeCycles',
+                    type: 'timeCycles',
+                    r: 10,
+                    typeOptions: {
+                        points: [{
+                            x: closestPoint.x,
+                            xAxis: closestPoint.xAxis
+                        }]
+                    },
+                    shapeOptions: {
+                        stroke: 'rgba(0, 0, 0, 0.75)',
+                        strokeWidth: 1
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).timeCycles.annotationsOptions
+            );
+
+            annotation = this.chart.addAnnotation(options);
+
+            (annotation.options.events.click as any).call(annotation, {});
         }
     },
     verticalLabel: {

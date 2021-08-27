@@ -1,6 +1,6 @@
 /* *
  *
- *  Author: Rafal Sebestjanski
+ *  Authors: Rafal Sebestjanski and Pawel Lysy
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
@@ -90,7 +90,6 @@ class TimeCycles extends CrookedLine {
             pixelShift =
                 (Math.floor((x - xAxis.left) / pixelInterval) + 1) *
                 pixelInterval;
-
         this.startX = x - pixelShift;
         this.y = y;
         this.pixelInterval = pixelInterval;
@@ -178,7 +177,7 @@ TimeCycles.prototype.defaultOptions = merge(
                     ): void {
                         const y = target.y,
                             dy = Math.abs(e.chartY - y);
-                        target.options.r = dy;
+                        target.options.r = Math.max(dy, 5);
                         target.redraw(false);
                     }
                 }
