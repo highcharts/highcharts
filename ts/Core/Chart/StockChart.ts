@@ -97,7 +97,7 @@ declare module '../Axis/AxisLike' {
         setCumulative(cumulative?: boolean, redraw?: boolean): void;
         setModifier(
             mode: 'compare'|'cumulative',
-            modeState?: boolean|string,
+            modeState?: boolean|null|string,
             redraw?: boolean
         ): void;
     }
@@ -129,17 +129,17 @@ declare module '../Series/SeriesLike' {
         cumulativeTotal?: number;
         forceCropping(): boolean|undefined;
         getCumulativeExtremes(activeYData: Array<number>): [number, number];
-        initCompare(compare?: string): void;
+        initCompare(compare?: string|null): void;
         initCumulative(cumulative?: boolean): void;
         modifyValue?(value?: number|null, index?: number): (number|undefined);
-        setCompare(compare?: string, redraw?: boolean): void;
-        setCumulative(cumulative?: boolean, redraw?: boolean): void;
+        setCompare(compare?: string|null, redraw?: boolean): void;
+        setCumulative(cumulative?: boolean|null, redraw?: boolean): void;
     }
 }
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
-        compare?: string;
+        compare?: string|null;
         compareBase?: (0|100);
         compareStart?: boolean;
         cumulative?: boolean;
@@ -952,25 +952,31 @@ Series.prototype.init = function (): void {
 
 /**
  * Shared code for the axis.setCompare() and the axis.setCumulative() methods.
+ * Inits the 'compare' or the 'cumulative' mode.
  * @private
  */
 Axis.prototype.setModifier = function (
     mode: 'compare'|'cumulative',
-    modeState?: boolean|string,
+    modeState?: boolean|null|string,
     redraw?: boolean
 ): void {
     if (!this.isXAxis) {
         this.series.forEach(function (series): void {
             if (
                 mode === 'compare' &&
-                (isString(modeState) || typeof modeState === 'undefined')
+                (
+                    isString(modeState) ||
+                    typeof modeState === 'undefined' ||
+                    modeState === null
+                )
             ) {
                 series.setCompare(modeState, false);
             } else if (
                 mode === 'cumulative' &&
                 (
                     typeof modeState === 'boolean' ||
-                    typeof modeState === 'undefined'
+                    typeof modeState === 'undefined' ||
+                    modeState === null
                 )
             ) {
                 series.setCumulative(modeState, false);
@@ -1032,9 +1038,9 @@ Point.prototype.tooltipFormatter = function (pointFormat: string): string {
         replace = function (value: string): void {
             pointFormat = pointFormat.replace(
                 '{point.' + value + '}',
-                ((point[value] as any) > 0 && value === 'change' ? '+' : '') +
+                (point[value] > 0 && value === 'change' ? '+' : '') +
                     numberFormatter(
-                        point[value] as any,
+                        point[value],
                         pick(point.series.tooltipOptions.changeDecimals, 2)
                     )
             );
@@ -1067,15 +1073,15 @@ Point.prototype.tooltipFormatter = function (pointFormat: string): string {
  *
  * @function Highcharts.Series#setCompare
  *
- * @param {string} [compare]
- *        Can be one of `undefined` (default), `"percent"` or `"value"`.
+ * @param {string|null} [compare]
+ *        Can be one of `undefined` (default), `null`, `"percent"` or `"value"`.
  *
  * @param {boolean} [redraw=true]
  *        Whether to redraw the chart or to wait for a later call to
  *        {@link Chart#redraw}.
  */
 Series.prototype.setCompare = function (
-    compare?: string,
+    compare?: string|null,
     redraw?: boolean
 ): void {
     this.initCompare(compare);
@@ -1233,16 +1239,16 @@ Series.prototype.processData = function (force?: boolean): (boolean|undefined) {
  *
  * @function Highcharts.Axis#setCompare
  *
- * @param {string} [compare]
- *        The compare mode. Can be one of `null` (default), `"value"` or
- *        `"percent"`.
+ * @param {string|null} [compare]
+ *        The compare mode. Can be one of `undefined` (default), `null`,
+ *        `"value"` or `"percent"`.
  *
  * @param {boolean} [redraw=true]
  *        Whether to redraw the chart or to wait for a later call to
  *        {@link Chart#redraw}.
  */
 Axis.prototype.setCompare = function (
-    compare?: string,
+    compare?: string|null,
     redraw?: boolean
 ): void {
     this.setModifier('compare', compare, redraw);
@@ -1273,7 +1279,7 @@ Axis.prototype.setCompare = function (
  *        {@link Chart#redraw}.
  */
 Series.prototype.setCumulative = function (
-    cumulative?: boolean,
+    cumulative?: boolean|null,
     redraw?: boolean
 ): void {
     // Set default value to false
@@ -1305,7 +1311,7 @@ Series.prototype.initCumulative = function (cumulative?: boolean): void {
                 value = 0;
             }
 
-            if (typeof value !== 'undefined' && typeof index !== 'undefined') {
+            if (value !== void 0 && index !== void 0) {
                 const prevPoint = index > 0 ? this.points[index - 1] : null;
 
                 // Get the modified value
