@@ -25,6 +25,7 @@
 
 import type VennPointOptions from './VennPointOptions';
 import type VennSeries from './VennSeries';
+
 import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -44,7 +45,7 @@ const {
  *
  * */
 
-class VennPoint extends ScatterSeries.prototype.pointClass implements Highcharts.DrawPoint {
+class VennPoint extends ScatterSeries.prototype.pointClass {
 
     /* *
      *
@@ -73,10 +74,8 @@ class VennPoint extends ScatterSeries.prototype.pointClass implements Highcharts
     }
 
     public shouldDraw(): boolean {
-        const point = this;
-
         // Only draw points with single sets.
-        return !!point.shapeArgs;
+        return !!this.shapeArgs;
     }
 
     /* eslint-enable valid-jsdoc */
@@ -89,12 +88,11 @@ class VennPoint extends ScatterSeries.prototype.pointClass implements Highcharts
  *
  * */
 
-interface VennPoint {
-    draw: typeof DrawPointComposition.drawPoint;
+interface VennPoint extends DrawPointComposition.Composition {
+    // nothing to add
 }
-extend(VennPoint.prototype, {
-    draw: DrawPointComposition.drawPoint
-});
+
+DrawPointComposition.compose(VennPoint);
 
 /* *
  *
