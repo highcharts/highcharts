@@ -20,7 +20,7 @@ import Annotation from '../Annotations.js';
 import CrookedLine from './CrookedLine.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
-const { merge } = U;
+const { merge, isNumber } = U;
 
 /**
  * Internal types.
@@ -70,45 +70,31 @@ function getCirclePath(pixelInterval: number, numberOfCircles: number): string {
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 class TimeCycles extends CrookedLine {
-    startX: number = void 0 as any;
-    y: number = void 0 as any;
-    pixelInterval: number = void 0 as any;
 
     public getPath(): string {
-        const point = (this.options.typeOptions.points as any)[0],
-            xValue = point.x,
-            xAxisNumber = (point.xAxis as number) || 0,
-            xAxis = this.chart.xAxis[xAxisNumber],
-            y = point.y || xAxis.top + xAxis.height,
-            xAxisLength = xAxis.len,
-            x = xAxis.toPixels(xValue),
-            r = this.options.r,
-            pixelInterval = r ? r * 2 :
-                (xAxisLength * (this.options.typeOptions as any).period) /
-                ((xAxis.max as number) - (xAxis.min as number)),
-            numberOfCircles = Math.floor(xAxisLength / pixelInterval) + 2,
-            pixelShift =
-                (Math.floor((x - xAxis.left) / pixelInterval) + 1) *
-                pixelInterval;
-        this.startX = x - pixelShift;
-        this.y = y;
-        this.pixelInterval = pixelInterval;
-        return `${getStartingPath(x - pixelShift, y)} ${getCirclePath(
-            pixelInterval,
-            numberOfCircles
+
+        return `${getStartingPath(this.startX, this.y)} ${getCirclePath(
+            this.pixelInterval,
+            this.numberOfCircles
         )}`;
     }
 
+    public setControlPointsVisibility(): void {
+
+        super.setControlPointsVisibility.apply(this, arguments);
+    }
+
     public addShapes(): void {
-        const typeOptions = this.options.typeOptions,
-            shape = this.initShape(
-                merge(typeOptions.line, {
-                    type: 'path',
-                    d: this.getPath(),
-                    points: this.options.typeOptions.points
-                }),
-                false as any
-            );
+        const typeOptions = this.options.typeOptions;
+        const shape = this.initShape(
+            merge(typeOptions.line, {
+                type: 'path',
+
+                d: this.getPath(),
+                points: this.options.typeOptions.points
+            }),
+            false as any
+        );
 
         typeOptions.line = shape.options;
     }
@@ -131,9 +117,36 @@ class TimeCycles extends CrookedLine {
         typeOptions.controlPointOptions = controlPoint.options;
     }
 
+    public setPathProperties(): void {
+        const point = (this.options.typeOptions.points as any)[0],
+            // If point.x and point.y are undefined,
+            // the dragging in given direction is disabled.
+            xValue = point.x,
+            yValue = point.y,
+            xAxisNumber = (point.xAxis as number) || 0,
+            yAxisNumber = (point.yAxis as number) || 0,
+            xAxis = this.chart.xAxis[xAxisNumber],
+            yAxis = this.chart.yAxis[yAxisNumber],
+            y = isNumber(yValue) && !isNaN(yValue) ? yAxis.toPixels(yValue) : yAxis.top + yAxis.height,
+            x = isNumber(xValue) && !isNaN(xValue) ? xAxis.toPixels(xValue) : xAxis.left,
+            r = this.options.r,
+            xAxisLength = xAxis.len,
+            pixelInterval = r ? r * 2 :
+                (xAxisLength * (this.options.typeOptions as any).period) /
+                ((xAxis.max as number) - (xAxis.min as number)),
+            numberOfCircles = Math.floor(xAxisLength / pixelInterval) + 2,
+            pixelShift =
+                (Math.floor((x - xAxis.left) / pixelInterval) + 1) *
+                pixelInterval;
+        this.startX = (x - pixelShift);
+        this.y = y;
+        this.pixelInterval = pixelInterval;
+        this.numberOfCircles = numberOfCircles;
+    }
+
     public redraw(animation: boolean): void {
         super.redraw(animation);
-
+        // this.setPosition();
         if (this.shapes[0]) {
             this.shapes[0].attr({ d: this.getPath() });
         }
@@ -148,6 +161,10 @@ class TimeCycles extends CrookedLine {
 
 interface TimeCycles {
     defaultOptions: CrookedLine['defaultOptions'];
+    startX: number;
+    pixelInterval: number;
+    numberOfCircles: number;
+    y: number;
 }
 TimeCycles.prototype.defaultOptions = merge(
     CrookedLine.prototype.defaultOptions,
@@ -158,7 +175,7 @@ TimeCycles.prototype.defaultOptions = merge(
                     this: Highcharts.AnnotationControlPoint,
                     target: TimeCycles
                 ): PositionObject {
-                    return {
+                    const postion = {
                         x:
                             target.startX +
                             target.pixelInterval * 1.5 -
@@ -168,6 +185,7 @@ TimeCycles.prototype.defaultOptions = merge(
                             target.pixelInterval / 2 -
                             this.graphic.height / 2
                     };
+                    return postion;
                 },
                 events: {
                     drag: function (

@@ -1996,7 +1996,6 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
             );
 
             annotation = this.chart.addAnnotation(options);
-
             (annotation.options.events.click as any).call(annotation, {});
         }
     },
