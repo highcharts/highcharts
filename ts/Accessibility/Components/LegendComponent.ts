@@ -96,6 +96,7 @@ declare global {
                 keyboardNavigationHandler: KeyboardNavigationHandler
             ): number;
             public onKbdNavigationInit(direction: number): void;
+            public highlightAdjacentLegendPage(direction: number): void;
             public proxyLegendItem(item: LegendItem): void;
             public proxyLegendItems(): void;
             public recreateProxies(): boolean;
@@ -294,6 +295,31 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     /**
      * @private
      */
+    highlightAdjacentLegendPage: function (this: Highcharts.LegendComponent, direction: number): void {
+        const chart = this.chart;
+        const legend = chart.legend;
+        const curPageIx = legend.currentPage || 1;
+        const newPageIx = curPageIx + direction;
+        const pages = legend.pages || [];
+
+        if (newPageIx > 0 && newPageIx <= pages.length) {
+            const len = legend.allItems.length;
+            for (let i = 0; i < len; ++i) {
+                if ((legend.allItems[i].pageIx as number) + 1 === newPageIx) {
+                    const res = chart.highlightLegendItem(i);
+                    if (res) {
+                        this.highlightedLegendItemIx = i;
+                    }
+                    return;
+                }
+            }
+        }
+    },
+
+
+    /**
+     * @private
+     */
     updateProxyPositionForItem: function (
         this: Highcharts.LegendComponent,
         item: LegendItem
@@ -457,6 +483,17 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                             return this.response.success;
                         }
                         return component.onKbdClick(this);
+                    }
+                ],
+                [
+                    [keys.pageDown, keys.pageUp],
+                    function (
+                        this: Highcharts.KeyboardNavigationHandler,
+                        keyCode: number
+                    ): number {
+                        const direction = keyCode === keys.pageDown ? 1 : -1;
+                        component.highlightAdjacentLegendPage(direction);
+                        return this.response.success;
                     }
                 ]
             ],
