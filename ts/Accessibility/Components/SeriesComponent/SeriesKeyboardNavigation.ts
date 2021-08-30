@@ -675,9 +675,19 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         e.addEvent(Point, 'afterSetState', function (): void {
             const point = this;
             const pointEl = point.graphic && point.graphic.element;
+            const focusedElement = doc.activeElement;
+            // VO brings focus with it to container, causing series nav to run.
+            // If then navigating with virtual cursor, it is possible to leave
+            // keyboard nav module state on the data points and still activate
+            // proxy buttons.
+            const focusedElClassName = focusedElement && focusedElement.getAttribute('class');
+            const isProxyFocused = focusedElClassName &&
+                focusedElClassName.indexOf('highcharts-a11y-proxy-button') > -1;
+
             if (
                 chart.highlightedPoint === point &&
-                doc.activeElement !== pointEl &&
+                focusedElement !== pointEl &&
+                !isProxyFocused &&
                 pointEl &&
                 pointEl.focus
             ) {

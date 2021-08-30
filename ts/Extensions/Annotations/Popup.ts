@@ -141,7 +141,7 @@ declare global {
                 optionName: string,
                 chart: AnnotationChart,
                 parentDiv: HTMLDOMElement,
-                selectedOption: string
+                selectedOption?: string
             ): void;
         }
         interface PopupTabsObject {
@@ -984,7 +984,7 @@ H.Popup.prototype = {
             optionName: string,
             chart: Highcharts.AnnotationChart,
             parentDiv: HTMLDOMElement,
-            selectedOption: string
+            selectedOption?: string
         ): void {
             let selectName = PREFIX + optionName + '-type-' + type,
                 lang = this.lang,
@@ -1028,6 +1028,14 @@ H.Popup.prototype = {
                     seriesOptions.id &&
                     seriesOptions.id !== PREFIX + 'navigator-series'
                 ) {
+                    if (
+                        !defined(selectedOption) &&
+                        optionName === 'volume' &&
+                        serie.type === 'column'
+                    ) {
+                        selectedOption = seriesOptions.id;
+                    }
+
                     createElement(
                         OPTION,
                         {
@@ -1105,7 +1113,7 @@ H.Popup.prototype = {
                 'series',
                 chart,
                 rhsColWrapper,
-                series.linkedParent && fields.volumeSeriesID
+                series.linkedParent && series.linkedParent.options.id
             );
 
             if (fields.volumeSeriesID) {
@@ -1115,7 +1123,7 @@ H.Popup.prototype = {
                     'volume',
                     chart,
                     rhsColWrapper,
-                    series.linkedParent && series.linkedParent.options.id as any
+                    series.linkedParent && fields.volumeSeriesID
                 );
             }
 
