@@ -31,6 +31,7 @@ const {
 import DOMElementProvider from './DOMElementProvider.js';
 import HTMLUtilities from './HTMLUtilities.js';
 const {
+    addClass,
     setElAttrs,
     visuallyHideElement
 } = HTMLUtilities;
@@ -116,7 +117,12 @@ class Announcer {
             'aria-live': type
         });
 
-        visuallyHideElement(div);
+        if (this.chart.styledMode) {
+            addClass(div, 'highcharts-visually-hidden');
+        } else {
+            visuallyHideElement(div);
+        }
+
         chartContainer.appendChild(div);
         return div;
     }
@@ -127,9 +133,9 @@ class Announcer {
 
         setElAttrs(container, {
             'aria-hidden': false,
-            style: 'position:relative',
             'class': 'highcharts-announcer-container'
         });
+        container.style.position = 'relative';
 
         chart.renderTo.insertBefore(container, chart.renderTo.firstChild);
         chart.announcerContainer = container;

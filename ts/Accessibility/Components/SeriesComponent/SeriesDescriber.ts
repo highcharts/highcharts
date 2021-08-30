@@ -571,7 +571,9 @@ function describePointsInSeries(series: Highcharts.AccessibilitySeries): void {
                 // When setting tabindex, also remove default outline to
                 // avoid ugly border on click.
                 pointEl.setAttribute('tabindex', '-1');
-                pointEl.style.outline = '0';
+                if (!series.chart.styledMode) {
+                    pointEl.style.outline = 'none';
+                }
 
                 if (setScreenReaderProps && !pointA11yDisabled) {
                     setPointScreenReaderAttribs(point, pointEl);
@@ -648,7 +650,9 @@ function describeSeriesElement(
     } /* else do not add role */
 
     seriesElement.setAttribute('tabindex', '-1');
-    seriesElement.style.outline = '0'; // Don't show browser outline on click, despite tabindex
+    if (!series.chart.styledMode) {
+        seriesElement.style.outline = 'none'; // Don't show browser outline on click, despite tabindex
+    }
     seriesElement.setAttribute(
         'aria-label',
         stripHTMLTags(
