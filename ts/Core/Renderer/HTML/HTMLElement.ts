@@ -252,6 +252,9 @@ class HTMLElement extends SVGElement {
 
         /** @private */
         function getTextPxLength(): number {
+            if (wrapper.textPxLength) {
+                return wrapper.textPxLength;
+            }
             // Reset multiline/ellipsis in order to read width (#4928,
             // #5417)
             css(elem, {
@@ -305,8 +308,8 @@ class HTMLElement extends SVGElement {
             if (
                 textWidth !== wrapper.oldTextWidth &&
                 (
-                    ((textWidth as any) > wrapper.oldTextWidth) ||
-                    (wrapper.textPxLength || getTextPxLength()) > (textWidth as any)
+                    (textWidth > wrapper.oldTextWidth) ||
+                    getTextPxLength() > textWidth
                 ) && (
                     // Only set the width if the text is able to word-wrap, or
                     // text-overflow is ellipsis (#9537)
@@ -315,7 +318,9 @@ class HTMLElement extends SVGElement {
                 )
             ) { // #983, #1254
                 css(elem, {
-                    width: textWidth + 'px',
+                    width: (getTextPxLength() > textWidth) || rotation ?
+                        textWidth + 'px' :
+                        'auto', // #16261
                     display: 'block',
                     whiteSpace: whiteSpace || 'normal' // #3331
                 });
