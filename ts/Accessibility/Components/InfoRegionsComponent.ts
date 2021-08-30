@@ -444,7 +444,11 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         sectionDiv.appendChild(hiddenDiv);
         region.insertIntoDOM(sectionDiv, chart);
 
-        visuallyHideElement(hiddenDiv);
+        if (chart.styledMode) {
+            addClass(hiddenDiv, 'highcharts-visually-hidden');
+        } else {
+            visuallyHideElement(hiddenDiv);
+        }
         unhideChartElementFromAT(chart, hiddenDiv);
         if (region.afterInserted) {
             region.afterInserted();

@@ -61,7 +61,7 @@ function addClass(el: HTMLDOMElement, className: string): void {
         // Note: Dumb check for class name exists, should be fine for practical
         // use cases, but will return false positives if the element has a class
         // that contains the className.
-        el.className += className;
+        el.className += ' ' + className;
     }
 }
 

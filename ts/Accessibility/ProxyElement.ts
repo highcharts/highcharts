@@ -85,7 +85,10 @@ class ProxyElement {
 
         const wrapperEl = groupType === 'ul' ? doc.createElement('li') : null;
         const btnEl = this.buttonElement = doc.createElement('button');
-        this.hideButtonVisually(btnEl);
+
+        if (!chart.styledMode) {
+            this.hideButtonVisually(btnEl);
+        }
 
         if (wrapperEl) {
             wrapperEl.appendChild(btnEl);

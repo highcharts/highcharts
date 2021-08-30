@@ -120,7 +120,8 @@ class ProxyProvider {
             groupElement = proxyContainer;
         }
 
-        groupElement.className = 'highcharts-a11y-proxy-group-' + groupKey.replace(/\W/g, '-');
+        groupElement.className = 'highcharts-a11y-proxy-group highcharts-a11y-proxy-group-' +
+            groupKey.replace(/\W/g, '-');
 
         this.groups[groupKey] = {
             proxyContainerElement: proxyContainer,
@@ -135,7 +136,9 @@ class ProxyProvider {
         }));
 
         if (groupType === 'ul') {
-            proxyContainer.style.listStyle = 'none';
+            if (!this.chart.styledMode) {
+                proxyContainer.style.listStyle = 'none';
+            }
             proxyContainer.setAttribute('role', 'list'); // Needed for webkit
         }
 
@@ -289,11 +292,15 @@ class ProxyProvider {
         el.setAttribute('aria-hidden', 'false');
         el.className = 'highcharts-a11y-proxy-container' + (classNamePostfix ? '-' + classNamePostfix : '');
         merge(true, el.style, {
-            whiteSpace: 'nowrap',
-            position: 'absolute',
             top: '0',
             left: '0'
         });
+
+        if (!this.chart.styledMode) {
+            el.style.whiteSpace = 'nowrap';
+            el.style.position = 'absolute';
+        }
+
         return el;
     }
 
