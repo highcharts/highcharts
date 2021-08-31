@@ -39,11 +39,11 @@ const {
     cloneMouseEvent,
     cloneTouchEvent,
     getFakeMouseEvent,
-    removeElement,
-    setElAttrs
+    removeElement
 } = HTMLUtilities;
 import U from '../Core/Utilities.js';
 const {
+    attr,
     css,
     merge
 } = U;
@@ -124,7 +124,7 @@ class ProxyElement {
         this.target = target;
         this.updateCSSClassName();
 
-        setElAttrs(this.buttonElement, merge({
+        attr(this.buttonElement, merge({
             'aria-label': this.getTargetAttr(target.click, 'aria-label')
         }, attributes));
 
@@ -139,7 +139,7 @@ class ProxyElement {
      */
     public refreshPosition(): void {
         const bBox = this.getTargetPosition();
-        merge(true, this.buttonElement.style, {
+        css(this.buttonElement, {
             width: (bBox.width || 1) + 'px',
             height: (bBox.height || 1) + 'px',
             left: (Math.round(bBox.x) || 0) + 'px',
@@ -223,8 +223,8 @@ class ProxyElement {
             filter: 'alpha(opacity=1)',
             zIndex: 999,
             overflow: 'hidden',
-            padding: '0',
-            margin: '0',
+            padding: 0,
+            margin: 0,
             display: 'block',
             position: 'absolute',
             '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)'

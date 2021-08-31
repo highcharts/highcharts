@@ -28,11 +28,14 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 const {
     doc
 } = H;
+import U from '../../Core/Utilities.js';
+const {
+    attr
+} = U;
 import DOMElementProvider from './DOMElementProvider.js';
 import HTMLUtilities from './HTMLUtilities.js';
 const {
     addClass,
-    setElAttrs,
     visuallyHideElement
 } = HTMLUtilities;
 
@@ -112,7 +115,7 @@ class Announcer {
         const chartContainer = this.chart.announcerContainer || this.createAnnouncerContainer(),
             div = this.domElementProvider.createElement('div');
 
-        setElAttrs(div, {
+        attr(div, {
             'aria-hidden': false,
             'aria-live': type
         });
@@ -131,7 +134,7 @@ class Announcer {
         const chart = this.chart,
             container = doc.createElement('div');
 
-        setElAttrs(container, {
+        attr(container, {
             'aria-hidden': false,
             'class': 'highcharts-announcer-container'
         });

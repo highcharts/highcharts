@@ -22,8 +22,6 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
-import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import H from '../../Core/Globals.js';
 const {
@@ -33,12 +31,9 @@ const {
 import U from '../../Core/Utilities.js';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 const {
-    merge
+    css
 } = U;
 
-type Nullable<T> = {
-    [P in keyof T]: T[P] | null;
-};
 
 /* eslint-disable valid-jsdoc */
 
@@ -351,28 +346,6 @@ function reverseChildNodes(node: DOMElementType): void {
 
 
 /**
- * Set attributes on element. Set to null to remove attribute.
- * @private
- * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} el
- * @param {Highcharts.HTMLAttributes|Highcharts.SVGAttributes} attrs
- * @return {void}
- */
-function setElAttrs(
-    el: DOMElementType,
-    attrs: Nullable<(HTMLAttributes|SVGAttributes)>
-): void {
-    Object.keys(attrs).forEach(function (attr: string): void {
-        const val = (attrs as any)[attr];
-        if (val === null) {
-            el.removeAttribute(attr);
-        } else {
-            el.setAttribute(attr, val);
-        }
-    });
-}
-
-
-/**
  * Used for aria-label attributes, painting on a canvas will fail if the
  * text contains tags.
  * @private
@@ -393,7 +366,7 @@ function stripHTMLTagsFromString(str: string): string {
  * @return {void}
  */
 function visuallyHideElement(element: HTMLDOMElement): void {
-    const hiddenStyle = {
+    css(element, {
         position: 'absolute',
         width: '1px',
         height: '1px',
@@ -403,9 +376,8 @@ function visuallyHideElement(element: HTMLDOMElement): void {
         marginTop: '-3px',
         '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)',
         filter: 'alpha(opacity=1)',
-        opacity: '0.01'
-    };
-    merge(true, element.style, hiddenStyle);
+        opacity: 0.01
+    });
 }
 
 const HTMLUtilities = {
@@ -420,7 +392,6 @@ const HTMLUtilities = {
     removeClass,
     removeElement,
     reverseChildNodes,
-    setElAttrs,
     stripHTMLTagsFromString,
     visuallyHideElement
 };
