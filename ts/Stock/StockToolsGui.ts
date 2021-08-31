@@ -215,6 +215,8 @@ setOptions({
                 typeOHLC: 'OHLC',
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
+                typeHollowCandlestick: 'Hollow Candlestick',
+                typeHeikinAshi: 'Heikin Ashi',
 
                 // Basic shapes:
                 circle: 'Circle',
@@ -892,12 +894,15 @@ setOptions({
                      *   'typeOHLC',
                      *   'typeLine',
                      *   'typeCandlestick'
+                     *   'typeHollowCandlestick'
                      * ]
                      */
                     items: [
                         'typeOHLC',
                         'typeLine',
-                        'typeCandlestick'
+                        'typeCandlestick',
+                        'typeHollowCandlestick',
+                        'typeHeikinAshi'
                     ],
                     typeOHLC: {
                         /**
@@ -922,6 +927,22 @@ setOptions({
                          * @type   {string}
                          */
                         symbol: 'series-candlestick.svg'
+                    },
+                    typeHeikinAshi: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-heikin-ashi.svg'
+                    },
+                    typeHollowCandlestick: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-hollow-candlestick.svg'
                     }
                 },
                 fullScreen: {
@@ -1552,7 +1573,7 @@ class Toolbar {
         redraw?: boolean
     ): void {
         const buttonWrapper = button.parentNode,
-            buttonWrapperClass = buttonWrapper.classList.value,
+            buttonWrapperClass = buttonWrapper.className,
             // main button in first level og GUI
             mainNavButton = buttonWrapper.parentNode.parentNode;
 
@@ -1706,6 +1727,8 @@ Toolbar.prototype.classMapping = {
     typeLine: PREFIX + 'series-type-line',
     typeOHLC: PREFIX + 'series-type-ohlc',
     typeCandlestick: PREFIX + 'series-type-candlestick',
+    typeHollowCandlestick: PREFIX + 'series-type-hollowcandlestick',
+    typeHeikinAshi: PREFIX + 'series-type-heikinashi',
     fullScreen: PREFIX + 'full-screen',
     toggleAnnotations: PREFIX + 'toggle-annotations',
     saveChart: PREFIX + 'save-chart',

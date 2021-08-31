@@ -85,15 +85,11 @@ if (!isNaN(Date.parse('Jan 16'))) {
             'X axis is date/time'
         );
 
-        assert.strictEqual(
-            options.series[0].data[0][0],
-            Highcharts.isSafari ?
+        assert.ok(
+            // Chrome Date.parse assumes year 2001
+            options.series[0].data[0][0] === 979603200000 ||
                 // Safari Date.parse assumes year 2000
-                947980800000 :
-                // Chrome Date.parse assumes year 2001 local
-                979603200000 + (
-                    60000 * new Date(2001, 0, 16).getTimezoneOffset()
-                ),
+                options.series[0].data[0][0] === 947980800000,
             'Date for point one is correct'
         );
 
@@ -702,6 +698,7 @@ QUnit.test(
             seriesMapping: [{
                 color: 2
             }],
+
             parsed: function () {
                 assert.strictEqual(
                     this.columns[2][1],

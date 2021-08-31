@@ -11,7 +11,15 @@
  * */
 
 'use strict';
-import H from '../../Core/Globals.js';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+import type Earcon from './Earcon';
+
+import Sonification from './Sonification.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -73,7 +81,7 @@ declare global {
             eventObject?: TimelineEventObject;
             id?: string;
             onEnd?: Function;
-            playOptions?: PointSonifyOptionsObject|Partial<EarconOptionsObject>;
+            playOptions?: PointSonifyOptionsObject|Partial<Earcon.Options>;
             time?: number;
         }
         interface TimelineOptionsObject {
@@ -779,7 +787,7 @@ Timeline.prototype.playPaths = function (
             // Leave a timeout to let notes fade out before next play
             setTimeout(function (): void {
                 playPath(path);
-            }, H.sonification.fadeOutDuration);
+            }, Sonification.fadeOutDuration);
         }
     });
 };

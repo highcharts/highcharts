@@ -24,7 +24,7 @@ export interface SVGRendererLike {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

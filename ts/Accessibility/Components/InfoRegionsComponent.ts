@@ -19,6 +19,7 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
+import type ChartSonify from '../../Extensions/Sonification/ChartSonify';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -53,7 +54,6 @@ const {
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
     addClass,
-    escapeStringForHTML,
     getElement,
     getHeadingTagNameForElement,
     setElAttrs,
@@ -466,7 +466,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 'accessibility.screenReaderSection.' + regionKey + 'RegionLabel'
             ),
             chart = this.chart,
-            labelText = chart.langFormat(labelLangKey, { chart: chart }),
+            labelText = chart.langFormat(labelLangKey, { chart: chart, chartTitle: getChartTitle(chart) }),
             sectionId = 'highcharts-screen-reader-region-' + regionKey + '-' +
                 chart.index;
 
@@ -730,7 +730,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         sonifyButtonId: string
     ): void {
         const el = this.sonifyButton = getElement(sonifyButtonId);
-        const chart = this.chart as Highcharts.SonifyableChart;
+        const chart = this.chart as ChartSonify.SonifyableChart;
         const defaultHandler = (e: Event): void => {
             if (el) {
                 el.setAttribute('aria-hidden', 'true');
