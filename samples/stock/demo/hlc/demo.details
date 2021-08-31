@@ -4,7 +4,7 @@ authors:
   - Pawel Lysy
 compareTooltips: true
 js_wrap: b
-new_until: 2021-11-01
+new_until: 2021-12-31
 tags:
   - Highcharts Stock demo
 categories:
