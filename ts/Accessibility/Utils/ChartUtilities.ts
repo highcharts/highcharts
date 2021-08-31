@@ -391,33 +391,7 @@ function scrollToPoint(point: Point): void {
     }
 }
 
-namespace ChartUtilities {
-    export interface A11yChartUtilities {
-        getChartTitle(chart: Chart): string;
-        getAxisDescription(axis: Axis): string;
-        getAxisRangeDescription(axis: Axis): string;
-        getPointFromXY(
-            series: Array<Series>,
-            x: number,
-            y: number
-        ): (Point|undefined);
-        getSeriesFirstPointElement(
-            series: Series
-        ): (DOMElementType|undefined);
-        getSeriesFromName(chart: Chart, name: string): Array<Series>;
-        getSeriesA11yElement(
-            series: Series
-        ): (DOMElementType|undefined);
-        unhideChartElementFromAT(
-            chart: Chart,
-            element: DOMElementType
-        ): void;
-        hideSeriesFromAT(series: Series): void;
-        scrollToPoint(point: Point): void;
-    }
-}
-
-const ChartUtilities: ChartUtilities.A11yChartUtilities = {
+const ChartUtilities = {
     getChartTitle,
     getAxisDescription,
     getAxisRangeDescription,

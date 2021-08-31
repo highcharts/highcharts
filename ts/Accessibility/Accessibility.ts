@@ -12,7 +12,6 @@
 
 'use strict';
 
-import type ChartUtilties from './Utils/ChartUtilities';
 import type { Options } from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
@@ -87,7 +86,7 @@ declare global {
             options: Required<SeriesOptions>;
             points: Array<AccessibilityPoint>;
         }
-        let A11yChartUtilities: ChartUtilties.A11yChartUtilities;
+        let A11yChartUtilities: typeof ChartUtilities;
         let A11yHTMLUtilities: typeof HTMLUtilities;
     }
 }
