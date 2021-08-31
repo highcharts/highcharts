@@ -34,4 +34,10 @@ export interface PieDataLabelOptions extends DataLabelOptions {
     softConnector?: boolean;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default PieDataLabelOptions;

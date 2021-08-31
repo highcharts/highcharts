@@ -38,8 +38,8 @@ import type {
 import type ChartLike from './ChartLike';
 import type ChartOptions from './ChartOptions';
 import type { ChartPanningOptions } from './ChartOptions';
-import type ColorAxis from '../Axis/ColorAxis';
-import type { LabelsOptions } from '../../Extensions/Oldie/Oldie';
+import type ColorAxis from '../Axis/Color/ColorAxis';
+import type Oldie from '../../Extensions/Oldie/Oldie';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type Series from '../Series/Series';
@@ -62,17 +62,16 @@ import Axis from '../Axis/Axis.js';
 import FormatUtilities from '../FormatUtilities.js';
 const { numberFormat } = FormatUtilities;
 import Foundation from '../Foundation.js';
-const {
-    registerEventOptions
-} = Foundation;
+const { registerEventOptions } = Foundation;
 import H from '../Globals.js';
 const {
     charts,
     doc,
     marginNames,
+    svg,
     win
 } = H;
-import Legend from '../Legend.js';
+import Legend from '../Legend/Legend.js';
 import MSPointer from '../MSPointer.js';
 import D from '../DefaultOptions.js';
 const {
@@ -156,6 +155,17 @@ declare module './ChartOptions' {
     }
 }
 
+declare module '../Options' {
+    interface Options {
+        chart: ChartOptions;
+        caption?: Chart.CaptionOptions;
+        credits?: Chart.CreditsOptions;
+        subtitle?: Chart.SubtitleOptions;
+        series?: Array<SeriesTypeOptions>;
+        title?: Chart.TitleOptions;
+    }
+}
+
 declare module '../Series/PointLike' {
     interface PointLike {
         touched?: boolean;
@@ -166,17 +176,6 @@ declare module '../Series/SeriesLike' {
     interface SeriesLike {
         index?: number;
         touched?: boolean;
-    }
-}
-
-declare module '../Options' {
-    interface Options {
-        chart: ChartOptions;
-        caption?: Chart.CaptionOptions;
-        credits?: Chart.CreditsOptions;
-        subtitle?: Chart.SubtitleOptions;
-        series?: Array<SeriesTypeOptions>;
-        title?: Chart.TitleOptions;
     }
 }
 
@@ -1593,7 +1592,9 @@ class Chart {
         chart._cursor = container.style.cursor as CursorValue;
 
         // Initialize the renderer
-        const Renderer = RendererRegistry.getRendererType(optionsChart.renderer);
+        const Renderer = optionsChart.renderer || !svg ?
+            RendererRegistry.getRendererType(optionsChart.renderer) :
+            SVGRenderer;
 
         /**
          * The renderer instance of the chart. Each chart instance has only one
@@ -2350,7 +2351,7 @@ class Chart {
      */
     public renderLabels(): void {
         const chart = this,
-            labels = chart.options.labels as LabelsOptions;
+            labels = chart.options.labels as Oldie.LabelsOptions;
 
         if (labels.items) {
             labels.items.forEach(function (
@@ -2924,40 +2925,13 @@ class Chart {
         type: string,
         options: Chart.CreateAxisOptionsObject
     ): Axis {
-        const isColorAxis = type === 'colorAxis',
-            axisOptions = options.axis,
-            redraw = options.redraw,
-            animation = options.animation,
-            userOptions = merge(axisOptions, {
-                index: (this as any)[type].length,
-                isX: type === 'xAxis'
-            });
+        const axis = new Axis(this, merge(options.axis, {
+            index: (this as AnyRecord)[type].length,
+            isX: type === 'xAxis'
+        }));
 
-        let axis: (Axis|ColorAxis);
-
-        if (isColorAxis) {
-            axis = new H.ColorAxis(this, userOptions);
-
-        } else {
-            axis = new Axis(this, userOptions);
-        }
-
-        if (isColorAxis) {
-            this.isDirtyLegend = true;
-
-            // Clear before 'bindAxes' (#11924)
-            this.axes.forEach(function (axis): void {
-                axis.series = [];
-            });
-
-            this.series.forEach(function (series): void {
-                series.bindAxes();
-                series.isDirtyData = true;
-            });
-        }
-
-        if (pick(redraw, true)) {
-            this.redraw(animation);
+        if (pick(options.redraw, true)) {
+            this.redraw(options.animation);
         }
 
         return axis;
@@ -3233,8 +3207,8 @@ class Chart {
                 }
             });
 
-            if (!chart.styledMode && 'style' in optionsChart) {
-                chart.renderer.setStyle(optionsChart.style as any);
+            if (!chart.styledMode && optionsChart.style) {
+                chart.renderer.setStyle(chart.options.chart.style || {});
             }
         }
 
@@ -3833,7 +3807,7 @@ class Chart {
 
 /* *
  *
- *  Class Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -4020,7 +3994,7 @@ namespace Chart {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
@@ -4148,4 +4122,4 @@ export default Chart;
  * @type {boolean|undefined}
  */
 
-''; // include doclets above in transpilat
+''; // keeps doclets above in JS file

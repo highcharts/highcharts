@@ -12,18 +12,20 @@
 'use strict';
 import Highcharts from '../../Core/Globals.js';
 import '../../Core/Axis/MapAxis.js';
-import '../../Core/Axis/ColorAxis.js';
-import '../../Mixins/ColorMapSeries.js';
+import ColorAxis from '../../Core/Axis/Color/ColorAxis.js';
 import '../../Maps/MapNavigation.js';
 import '../../Maps/MapPointer.js';
 import '../../Series/Map/MapSeries.js';
 import '../../Series/MapLine/MapLineSeries.js';
 import '../../Series/MapPoint/MapPointSeries.js';
-import '../../Series/MapBubble/MapBubbleSeries.js';
+import MapBubbleSeries from '../../Series/MapBubble/MapBubbleSeries.js';
 import '../../Series/Heatmap/HeatmapSeries.js';
 import '../../Extensions/GeoJSON.js';
 import MapChart from '../../Core/Chart/MapChart.js';
-
-(Highcharts as any).MapChart = MapChart;
-(Highcharts as any).mapChart = (Highcharts as any).Map = MapChart.mapChart;
-(Highcharts as any).maps = MapChart.maps;
+const G: AnyRecord = Highcharts;
+G.ColorAxis = ColorAxis;
+G.MapChart = MapChart;
+G.mapChart = G.Map = MapChart.mapChart;
+G.maps = MapChart.maps;
+ColorAxis.compose(G.Chart, G.Fx, G.Legend, G.Series);
+MapBubbleSeries.compose(G.Chart, G.Legend, G.Series);

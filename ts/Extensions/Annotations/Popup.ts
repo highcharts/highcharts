@@ -50,6 +50,7 @@ declare global {
             public constructor(parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart);
             public annotations: PopupAnnotationsObject;
             public container: HTMLDOMElement;
+            public formType?: string;
             public iconsURL: string;
             public indicators: PopupIndicatorsObject;
             public lang: Record<string, string>;
@@ -140,7 +141,7 @@ declare global {
                 optionName: string,
                 chart: AnnotationChart,
                 parentDiv: HTMLDOMElement,
-                selectedOption: string
+                selectedOption?: string
             ): void;
         }
         interface PopupTabsObject {
@@ -426,6 +427,8 @@ H.Popup.prototype = {
             popupCloseBtn = popupDiv
                 .querySelectorAll('.' + PREFIX + 'popup-close')[0];
 
+        this.formType = void 0;
+
         // reset content
         popupDiv.innerHTML = '';
 
@@ -496,6 +499,8 @@ H.Popup.prototype = {
         if (type === 'flag') {
             this.annotations.addForm.call(this, chart, options, callback, true);
         }
+
+        this.formType = type;
 
         // Explicit height is needed to make inner elements scrollable
         this.container.style.height = this.container.offsetHeight + 'px';
@@ -979,7 +984,7 @@ H.Popup.prototype = {
             optionName: string,
             chart: Highcharts.AnnotationChart,
             parentDiv: HTMLDOMElement,
-            selectedOption: string
+            selectedOption?: string
         ): void {
             let selectName = PREFIX + optionName + '-type-' + type,
                 lang = this.lang,
@@ -1023,6 +1028,14 @@ H.Popup.prototype = {
                     seriesOptions.id &&
                     seriesOptions.id !== PREFIX + 'navigator-series'
                 ) {
+                    if (
+                        !defined(selectedOption) &&
+                        optionName === 'volume' &&
+                        serie.type === 'column'
+                    ) {
+                        selectedOption = seriesOptions.id;
+                    }
+
                     createElement(
                         OPTION,
                         {
@@ -1100,7 +1113,7 @@ H.Popup.prototype = {
                 'series',
                 chart,
                 rhsColWrapper,
-                series.linkedParent && fields.volumeSeriesID
+                series.linkedParent && series.linkedParent.options.id
             );
 
             if (fields.volumeSeriesID) {
@@ -1110,7 +1123,7 @@ H.Popup.prototype = {
                     'volume',
                     chart,
                     rhsColWrapper,
-                    series.linkedParent && series.linkedParent.options.id as any
+                    series.linkedParent && fields.volumeSeriesID
                 );
             }
 

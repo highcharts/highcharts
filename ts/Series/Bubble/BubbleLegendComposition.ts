@@ -19,7 +19,7 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
-import type Legend from '../../Core/Legend';
+import type Legend from '../../Core/Legend/Legend';
 import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
@@ -42,6 +42,14 @@ const {
  * */
 
 namespace BubbleLegendComposition {
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
 
     /* *
      *
@@ -147,18 +155,30 @@ namespace BubbleLegendComposition {
         SeriesClass: typeof Series
     ): void {
 
-        setOptions({
-            // Set default bubble legend options
-            legend: {
-                bubbleLegend: BubbleLegendDefaults
-            }
-        });
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
 
-        addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
+            setOptions({
+                // Set default bubble legend options
+                legend: {
+                    bubbleLegend: BubbleLegendDefaults
+                }
+            });
 
-        addEvent(SeriesClass, 'legendItemClick', onSeriesLegendItemClick);
+            wrap(ChartClass.prototype, 'drawChartBox', chartDrawChartBox);
+        }
 
-        wrap(ChartClass.prototype, 'drawChartBox', chartDrawChartBox);
+        if (composedClasses.indexOf(LegendClass) === -1) {
+            composedClasses.push(LegendClass);
+
+            addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
+        }
+
+        if (composedClasses.indexOf(SeriesClass) === -1) {
+            composedClasses.push(SeriesClass);
+
+            addEvent(SeriesClass, 'legendItemClick', onSeriesLegendItemClick);
+        }
 
     }
 

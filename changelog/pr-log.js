@@ -109,12 +109,14 @@ module.exports = async (since, fromCache) => {
     }
 
     // Simplify
-    pulls = pulls.map(p => ({
-        description: p.body.split('\n')[0].trim(),
-        upgradeNote: parseUpgradeNote(p),
-        labels: p.labels,
-        number: p.number
-    }));
+    pulls = pulls
+        .filter(p => Boolean(p.body))
+        .map(p => ({
+            description: p.body.split('\n')[0].trim(),
+            upgradeNote: parseUpgradeNote(p),
+            labels: p.labels,
+            number: p.number
+        }));
 
     pulls.forEach(p => {
         p.product = 'Highcharts';

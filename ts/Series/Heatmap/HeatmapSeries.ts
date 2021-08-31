@@ -17,18 +17,19 @@
  * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type ColorAxis from '../../Core/Axis/ColorAxis';
+import type ColorAxis from '../../Core/Axis/Color/ColorAxis';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
 import type Point from '../../Core/Series/Point.js';
 import type { PointStateHoverOptions } from '../../Core/Series/PointOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import Color from '../../Core/Color/Color.js';
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
+import ColorMapComposition from '../ColorMapComposition.js';
+const { colorMapSeriesMixin } = ColorMapComposition;
 import HeatmapPoint from './HeatmapPoint.js';
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -719,11 +720,9 @@ class HeatmapSeries extends ScatterSeries {
  *
  * */
 
-interface HeatmapSeries {
+interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     axisTypes: typeof colorMapSeriesMixin.axisTypes;
-    colorAttribs: typeof colorMapSeriesMixin.colorAttribs;
-    colorKey: typeof colorMapSeriesMixin.colorKey;
-    drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getSymbol: typeof Series.prototype.getSymbol;
     parallelArrays: typeof colorMapSeriesMixin.parallelArrays;
     pointArrayMap: Array<string>;
@@ -739,16 +738,14 @@ extend(HeatmapSeries.prototype, {
 
     axisTypes: colorMapSeriesMixin.axisTypes,
 
-    colorAttribs: colorMapSeriesMixin.colorAttribs,
-
-    colorKey: colorMapSeriesMixin.colorKey,
+    colorKey: 'value',
 
     directTouch: true,
 
     /**
      * @private
      */
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     getExtremesFromAll: true,
 
@@ -763,6 +760,8 @@ extend(HeatmapSeries.prototype, {
     trackerGroups: colorMapSeriesMixin.trackerGroups
 
 });
+
+ColorMapComposition.compose(HeatmapSeries);
 
 /* *
  *

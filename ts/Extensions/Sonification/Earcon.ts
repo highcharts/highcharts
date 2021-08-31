@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -21,34 +27,202 @@ const {
     uniqueKey
 } = U;
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
+/* eslint-disable no-invalid-this, valid-jsdoc */
+
 /**
- * Internal types.
- * @private
+ * The Earcon class. Earcon objects represent a certain sound consisting of
+ * one or more instruments playing a predefined sound.
+ *
+ * @sample highcharts/sonification/earcon/
+ *         Using earcons directly
+ *
+ * @requires module:modules/sonification
+ *
+ * @class
+ * @name Highcharts.Earcon
+ *
+ * @param {Highcharts.EarconOptionsObject} options
+ *        Options for the Earcon instance.
  */
-declare global {
-    namespace Highcharts {
-        class Earcon {
-            public constructor(options: EarconOptionsObject);
-            public id: string;
-            public instrumentsPlaying: Record<string, Instrument>;
-            public options: EarconOptionsObject;
-            public cancelSonify(fadeOut?: boolean): void;
-            public init(options: EarconOptionsObject): void;
-            public sonify(options: EarconOptionsObject): void;
+class Earcon {
+
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    public constructor(
+        options: Earcon.Options
+    ) {
+        this.init(options || {});
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public id: string = void 0 as any;
+    public instrumentsPlaying: Record<string, Highcharts.Instrument> = void 0 as any;
+    public options: Earcon.Options = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    public init(
+        options: Earcon.Options
+    ): void {
+        this.options = options;
+        if (!this.options.id) {
+            this.options.id = this.id = uniqueKey();
         }
-        interface EarconInstrument {
-            instrument: (string|Instrument);
-            playOptions: InstrumentPlayOptionsObject;
-        }
-        interface EarconOptionsObject {
-            id?: string;
-            instruments: Array<EarconInstrument>;
-            onEnd?: Function;
-            pan?: number;
-            volume?: number;
+        this.instrumentsPlaying = {};
+    }
+
+    /**
+     * Play the earcon, optionally overriding init options.
+     *
+     * @sample highcharts/sonification/earcon/
+     *         Using earcons directly
+     *
+     * @function Highcharts.Earcon#sonify
+     *
+     * @param {Highcharts.EarconOptionsObject} options
+     * Override existing options.
+     */
+    public sonify(
+        options: Partial<Earcon.Options>
+    ): void {
+        const playOptions = merge(this.options, options),
+            // Find master volume/pan settings
+            masterVolume = pick(playOptions.volume, 1),
+            masterPan = playOptions.pan,
+            earcon = this,
+            playOnEnd = options && options.onEnd,
+            masterOnEnd = earcon.options.onEnd;
+
+        // Go through the instruments and play them
+        playOptions.instruments.forEach(function (
+            opts: Earcon.Instrument
+        ): void {
+            const instrument = typeof opts.instrument === 'string' ?
+                    H.sonification.instruments[opts.instrument] : opts.instrument,
+                instrumentOpts = merge(opts.playOptions);
+            let instrOnEnd: (Function|undefined),
+                instrumentCopy,
+                copyId = '';
+
+            if (instrument && instrument.play) {
+                if (opts.playOptions) {
+                    instrumentOpts.pan = pick(masterPan, instrumentOpts.pan);
+
+                    // Handle onEnd
+                    instrOnEnd = instrumentOpts.onEnd;
+                    instrumentOpts.onEnd = function (): void {
+                        delete earcon.instrumentsPlaying[copyId];
+                        if (instrOnEnd) {
+                            instrOnEnd.apply(this, arguments);
+                        }
+                        if (!Object.keys(earcon.instrumentsPlaying).length) {
+                            if (playOnEnd) {
+                                playOnEnd.apply(this, arguments);
+                            }
+                            if (masterOnEnd) {
+                                masterOnEnd.apply(this, arguments);
+                            }
+                        }
+                    };
+
+                    // Play the instrument. Use a copy so we can play multiple
+                    // at the same time.
+                    instrumentCopy = instrument.copy();
+                    instrumentCopy.setMasterVolume(masterVolume);
+                    copyId = instrumentCopy.id;
+                    earcon.instrumentsPlaying[copyId] = instrumentCopy;
+                    instrumentCopy.play(instrumentOpts);
+                }
+            } else {
+                error(30);
+            }
+        });
+    }
+    /**
+     * Cancel any current sonification of the Earcon. Calls onEnd functions.
+     *
+     * @function Highcharts.Earcon#cancelSonify
+     *
+     * @param {boolean} [fadeOut=false]
+     *        Whether or not to fade out as we stop. If false, the earcon is
+     *        cancelled synchronously.
+     */
+    public cancelSonify(
+        fadeOut?: boolean
+    ): void {
+        const playing = this.instrumentsPlaying,
+            instrIds = playing && Object.keys(playing);
+
+        if (instrIds && instrIds.length) {
+            instrIds.forEach(function (instr: string): void {
+                playing[instr].stop(!fadeOut, null as any, 'cancelled');
+            });
+            this.instrumentsPlaying = {};
         }
     }
 }
+
+/* *
+ *
+ *  Class namespace
+ *
+ * */
+
+namespace Earcon {
+
+    export interface Configuration {
+        condition: Function;
+        earcon: Earcon;
+        onPoint?: string;
+    }
+
+    export interface Instrument {
+        instrument: (string|Highcharts.Instrument);
+        playOptions: Highcharts.InstrumentPlayOptionsObject;
+    }
+
+    export interface Options{
+        id?: string;
+        instruments: Array<Instrument>;
+        onEnd?: Function;
+        pan?: number;
+        volume?: number;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default Earcon;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
 
 /**
  * Define an Instrument and the options for playing it.
@@ -100,139 +274,4 @@ declare global {
  * @type {Function|undefined}
  */
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
-/**
- * The Earcon class. Earcon objects represent a certain sound consisting of
- * one or more instruments playing a predefined sound.
- *
- * @sample highcharts/sonification/earcon/
- *         Using earcons directly
- *
- * @requires module:modules/sonification
- *
- * @class
- * @name Highcharts.Earcon
- *
- * @param {Highcharts.EarconOptionsObject} options
- *        Options for the Earcon instance.
- */
-function Earcon(
-    this: Highcharts.Earcon,
-    options: Highcharts.EarconOptionsObject
-): void {
-    this.init(options || {});
-}
-Earcon.prototype.init = function (
-    this: Highcharts.Earcon,
-    options: Highcharts.EarconOptionsObject
-): void {
-    this.options = options;
-    if (!this.options.id) {
-        this.options.id = this.id = uniqueKey();
-    }
-    this.instrumentsPlaying = {};
-};
-
-
-/**
- * Play the earcon, optionally overriding init options.
- *
- * @sample highcharts/sonification/earcon/
- *         Using earcons directly
- *
- * @function Highcharts.Earcon#sonify
- *
- * @param {Highcharts.EarconOptionsObject} options
- *        Override existing options.
- *
- * @return {void}
- */
-Earcon.prototype.sonify = function (
-    this: Highcharts.Earcon,
-    options: Partial<Highcharts.EarconOptionsObject>
-): void {
-    const playOptions = merge(this.options, options);
-
-    // Find master volume/pan settings
-    const masterVolume = pick(playOptions.volume, 1),
-        masterPan = playOptions.pan,
-        earcon = this,
-        playOnEnd = options && options.onEnd,
-        masterOnEnd = earcon.options.onEnd;
-
-    // Go through the instruments and play them
-    playOptions.instruments.forEach(function (
-        opts: Highcharts.EarconInstrument
-    ): void {
-        let instrument = typeof opts.instrument === 'string' ?
-                H.sonification.instruments[opts.instrument] : opts.instrument,
-            instrumentOpts = merge(opts.playOptions),
-            instrOnEnd: (Function|undefined),
-            instrumentCopy,
-            copyId = '';
-
-        if (instrument && instrument.play) {
-            if (opts.playOptions) {
-                instrumentOpts.pan = pick(masterPan, instrumentOpts.pan);
-
-                // Handle onEnd
-                instrOnEnd = instrumentOpts.onEnd;
-                instrumentOpts.onEnd = function (): void {
-                    delete earcon.instrumentsPlaying[copyId];
-                    if (instrOnEnd) {
-                        instrOnEnd.apply(this, arguments);
-                    }
-                    if (!Object.keys(earcon.instrumentsPlaying).length) {
-                        if (playOnEnd) {
-                            playOnEnd.apply(this, arguments);
-                        }
-                        if (masterOnEnd) {
-                            masterOnEnd.apply(this, arguments);
-                        }
-                    }
-                };
-
-                // Play the instrument. Use a copy so we can play multiple at
-                // the same time.
-                instrumentCopy = instrument.copy();
-                instrumentCopy.setMasterVolume(masterVolume);
-                copyId = instrumentCopy.id;
-                earcon.instrumentsPlaying[copyId] = instrumentCopy;
-                instrumentCopy.play(instrumentOpts);
-            }
-        } else {
-            error(30);
-        }
-    });
-};
-
-
-/**
- * Cancel any current sonification of the Earcon. Calls onEnd functions.
- *
- * @function Highcharts.Earcon#cancelSonify
- *
- * @param {boolean} [fadeOut=false]
- *        Whether or not to fade out as we stop. If false, the earcon is
- *        cancelled synchronously.
- *
- * @return {void}
- */
-Earcon.prototype.cancelSonify = function (
-    this: Highcharts.Earcon,
-    fadeOut?: boolean
-): void {
-    const playing = this.instrumentsPlaying,
-        instrIds = playing && Object.keys(playing);
-
-    if (instrIds && instrIds.length) {
-        instrIds.forEach(function (instr: string): void {
-            playing[instr].stop(!fadeOut, null as any, 'cancelled');
-        });
-        this.instrumentsPlaying = {};
-    }
-};
-
-
-export default Earcon;
+(''); // detach doclets above

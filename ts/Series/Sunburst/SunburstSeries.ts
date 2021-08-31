@@ -30,11 +30,11 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type TreemapSeriesType from '../Treemap/TreemapSeries';
 
-import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
+import CU from '../CenteredUtilities.js';
 const {
     getCenter,
     getStartAndEndRadians
-} = CenteredSeriesMixin;
+} = CU;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -524,20 +524,6 @@ class SunburstSeries extends TreemapSeries {
          */
 
         /**
-         * Can set a `rotation` on all points which lies on the same level.
-         *
-         * @type      {number}
-         * @apioption plotOptions.sunburst.levels.rotation
-         */
-
-        /**
-         * Can set a `rotationMode` on all points which lies on the same level.
-         *
-         * @type      {string}
-         * @apioption plotOptions.sunburst.levels.rotationMode
-         */
-
-        /**
          * When enabled the user can click on a point which is a parent and
          * zoom in on its children. Deprecated and replaced by
          * [allowTraversingTree](#plotOptions.sunburst.allowTraversingTree).
@@ -598,8 +584,7 @@ class SunburstSeries extends TreemapSeries {
              * resulting in a better layout, however multiple lines and
              * `textOutline` are not supported.
              *
-             * The `series.rotation` option takes precedence over
-             * `rotationMode`.
+             * The `rotation` option takes precedence over `rotationMode`.
              *
              * @type       {string}
              * @sample {highcharts} highcharts/plotoptions/sunburst-datalabels-rotationmode-circular/
@@ -707,7 +692,7 @@ class SunburstSeries extends TreemapSeries {
 
     public shapeRoot?: SunburstSeries.NodeValuesObject = void 0 as any;
 
-    public startAndEndRadians: Highcharts.RadianAngles = void 0 as any;
+    public startAndEndRadians: CU.RadianAngles = void 0 as any;
 
     public tree: SunburstSeries.NodeObject = void 0 as any;
 
@@ -1144,24 +1129,33 @@ extend(SunburstSeries.prototype, {
  * */
 
 namespace SunburstSeries {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface AnimationParams {
         center: PositionObject;
         idPreviousRoot?: string;
         idRoot: string;
         innerR: number;
         point: SunburstPoint;
-        radians: Highcharts.RadianAngles;
+        radians: CU.RadianAngles;
         shapeExisting: NodeValuesObject;
         shapePreviousRoot?: NodeValuesObject;
         shapeRoot?: NodeValuesObject;
         visible: boolean;
     }
+
     export interface DlOptionsParams {
         level: SunburstSeriesOptions;
         optionsPoint: SunburstPointOptions;
         point: SunburstPoint;
         shapeArgs: NodeValuesObject;
     }
+
     export interface NodeObject extends TreemapSeriesType.NodeObject {
         children: Array<NodeObject>;
         childrenTotal: number;
@@ -1174,9 +1168,10 @@ namespace SunburstSeries {
         val: number;
         values?: NodeValuesObject;
     }
+
     export interface NodeValuesObject
         extends
-        Highcharts.RadianAngles,
+        CU.RadianAngles,
         TreemapSeriesType.NodeValuesObject,
         Highcharts.TreeValuesOptionsObject<SunburstSeries>
     {
@@ -1188,6 +1183,7 @@ namespace SunburstSeries {
         radius: number;
         siblings: number;
     }
+
 }
 
 /* *

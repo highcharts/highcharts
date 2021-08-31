@@ -51,7 +51,7 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
-declare module '../../Core/LegendOptions' {
+declare module '../../Core/Legend/LegendOptions' {
     interface LegendOptions {
         accessibility?: Highcharts.LegendAccessibilityOptions;
     }
@@ -60,6 +60,12 @@ declare module '../../Core/LegendOptions' {
 declare module '../../Core/Options'{
     interface Options {
         accessibility?: Highcharts.AccessibilityOptions;
+    }
+}
+
+declare module '../../Extensions/Exporting/ExportingOptions' {
+    interface ExportingOptions {
+        accessibility?: Highcharts.ExportingAccessibilityOptions;
     }
 }
 
@@ -149,9 +155,6 @@ declare global {
         }
         interface ExportingAccessibilityOptions {
             enabled: boolean;
-        }
-        interface ExportingOptions {
-            accessibility?: ExportingAccessibilityOptions;
         }
         interface FocusBorderStyleObject {
             borderRadius?: number;
@@ -533,7 +536,7 @@ const Options: DeepPartial<OptionsType> = {
          * landmarks can make navigation with screen readers easier, but can
          * be distracting if there are lots of charts on the page. Three modes
          * are available:
-         *  - `all`: Adds regions for all series, legend, menu, information
+         *  - `all`: Adds regions for all series, legend, information
          *      region.
          *  - `one`: Adds a single landmark per chart.
          *  - `disabled`: No landmarks are added.
