@@ -94,8 +94,7 @@ function shouldRunInputNavigation(chart: Chart): boolean {
     return Boolean(
         chart.rangeSelector &&
         chart.rangeSelector.inputGroup &&
-        chart.rangeSelector.inputGroup.element
-            .getAttribute('visibility') !== 'hidden' &&
+        chart.rangeSelector.inputGroup.element.style.visibility !== 'hidden' &&
         (chart.options.rangeSelector as any).inputEnabled !== false &&
         chart.rangeSelector.minInput &&
         chart.rangeSelector.maxInput

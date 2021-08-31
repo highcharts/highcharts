@@ -67,6 +67,23 @@ function addClass(el: HTMLDOMElement, className: string): void {
 
 
 /**
+ * @private
+ * @param {Highcharts.HTMLDOMElement} el
+ * @param {string} className
+ * @return {void}
+ */
+function removeClass(el: HTMLDOMElement, className: string): void {
+    if (el.classList) {
+        el.classList.remove(className);
+    } else {
+        // Note: Dumb logic that will break if the element has a class name that
+        // consists of className plus something else.
+        el.className = el.className.replace(new RegExp(className, 'g'), '');
+    }
+}
+
+
+/**
  * Utility function to clone a mouse event for re-dispatching.
  * @private
  */
@@ -399,8 +416,9 @@ const HTMLUtilities = {
     getElement,
     getFakeMouseEvent,
     getHeadingTagNameForElement,
-    removeElement,
     removeChildNodes,
+    removeClass,
+    removeElement,
     reverseChildNodes,
     setElAttrs,
     stripHTMLTagsFromString,

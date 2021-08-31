@@ -40,7 +40,9 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
-    stripHTMLTagsFromString: stripHTMLTags
+    stripHTMLTagsFromString: stripHTMLTags,
+    addClass,
+    removeClass
 } = HTMLUtilities;
 import ChartUtils from '../Utils/ChartUtilities.js';
 const {
@@ -251,30 +253,40 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
 
     /**
+     * Update visibility of legend items when using paged legend
      * @private
      */
     updateLegendItemProxyVisibility: function (
         this: Highcharts.LegendComponent
     ): void {
-        const legend = this.chart.legend,
-            items = legend.allItems || [],
-            curPage = legend.currentPage || 1,
-            clipHeight = legend.clipHeight || 0;
+        const chart = this.chart;
+        const legend = chart.legend;
+        const items = legend.allItems || [];
+        const curPage = legend.currentPage || 1;
+        const clipHeight = legend.clipHeight || 0;
 
         items.forEach(function (item: LegendItem): void {
             if (item.a11yProxyElement) {
                 const hasPages = legend.pages && legend.pages.length;
-                const elStyle = item.a11yProxyElement.element.style;
+                const proxyEl = item.a11yProxyElement.element;
+                let hide = false;
 
                 if (hasPages) {
                     const itemPage = item.pageIx || 0;
                     const y = item._legendItemPos ? item._legendItemPos[1] : 0;
                     const h = item.legendItem ? Math.round(item.legendItem.getBBox().height) : 0;
-                    const hide = y + h - legend.pages[itemPage] > clipHeight || itemPage !== curPage - 1;
+                    hide = y + h - legend.pages[itemPage] > clipHeight || itemPage !== curPage - 1;
+                }
 
-                    elStyle.visibility = hide ? 'hidden' : 'visible';
+                if (hide) {
+                    if (chart.styledMode) {
+                        addClass(proxyEl, 'highcharts-a11y-invisible');
+                    } else {
+                        proxyEl.style.visibility = 'hidden';
+                    }
                 } else {
-                    elStyle.visibility = 'visible';
+                    removeClass(proxyEl, 'highcharts-a11y-invisible');
+                    proxyEl.style.visibility = '';
                 }
             }
         });
