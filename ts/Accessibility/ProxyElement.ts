@@ -44,6 +44,7 @@ const {
 } = HTMLUtilities;
 import U from '../Core/Utilities.js';
 const {
+    css,
     merge
 } = U;
 
@@ -213,22 +214,21 @@ class ProxyElement {
      * Set visually hidden style on a proxy button
      */
     private hideButtonVisually(button: HTMLDOMElement): void {
-        merge(true, button.style, {
-            borderWidth: '0',
+        css(button, {
+            borderWidth: 0,
             backgroundColor: 'transparent',
             cursor: 'pointer',
             outline: 'none',
-            opacity: '0.001',
+            opacity: 0.001,
             filter: 'alpha(opacity=1)',
-            zIndex: '999',
+            zIndex: 999,
             overflow: 'hidden',
             padding: '0',
             margin: '0',
             display: 'block',
-            position: 'absolute'
+            position: 'absolute',
+            '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)'
         });
-        (button.style as any)['-ms-filter'] =
-            'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)';
     }
 
 
