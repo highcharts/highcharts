@@ -18,9 +18,9 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
+import type ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
@@ -637,7 +637,7 @@ class TreemapSeries extends ScatterSeries {
 
     public colorValueData?: Array<number>;
 
-    public colorAxis?: Highcharts.ColorSeries['colorAxis'];
+    public colorAxis?: ColorAxisComposition.SeriesComposition['colorAxis'];
 
     public data: Array<TreemapPoint> = void 0 as any;
 
