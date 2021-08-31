@@ -19,6 +19,12 @@ QUnit.test('Floor and ceiling', function (assert) {
         'Lower data should be preserved'
     );
 
+    assert.strictEqual(
+        axis.minRange,
+        null,
+        '#16245: automatic minRange should not be set when ceiling is set'
+    );
+
     chart.series[0].setData([1, 2, 3, 4, 5, 6, 7, 8]);
 
     assert.deepEqual([axis.min, axis.max], [0, 5], 'Axis should be capped');
