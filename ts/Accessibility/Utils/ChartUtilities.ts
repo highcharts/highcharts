@@ -23,6 +23,8 @@ import type Chart from '../../Core/Chart/Chart';
 import type { DOMElementType } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
+import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import HTMLUtilities from './HTMLUtilities.js';
 const {
@@ -46,6 +48,31 @@ const {
  *  Functions
  *
  * */
+
+/**
+ * Fire an event on an element that is either wrapped by Highcharts,
+ * or a DOM element
+ */
+function fireEventOnWrappedOrUnwrappedElement(
+    el: (HTMLElement|SVGElement|DOMElementType),
+    eventObject: Event
+): void {
+    const type = eventObject.type;
+    const hcEvents = (el as SVGElement).hcEvents;
+
+    if (doc.createEvent && ((el as Element).dispatchEvent || (el as SVGElement).fireEvent)) {
+        if (el.dispatchEvent) {
+            el.dispatchEvent(eventObject);
+        } else {
+            (el as SVGElement).fireEvent(type, eventObject);
+        }
+    } else if (hcEvents && hcEvents[type]) {
+        fireEvent(el, type, eventObject);
+    } else if ((el as SVGElement).element) {
+        fireEventOnWrappedOrUnwrappedElement((el as SVGElement).element, eventObject);
+    }
+}
+
 
 /**
  * @return {string}
@@ -392,6 +419,7 @@ function scrollToPoint(point: Point): void {
 }
 
 const ChartUtilities = {
+    fireEventOnWrappedOrUnwrappedElement,
     getChartTitle,
     getAxisDescription,
     getAxisRangeDescription,

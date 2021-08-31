@@ -161,7 +161,6 @@ KeyboardNavigation.prototype = {
         this.modules = [];
         this.currentModuleIx = 0;
 
-        // Run an update to get all modules
         this.update();
 
         ep.addEvent(this.tabindexContainer, 'keydown',
@@ -187,11 +186,6 @@ KeyboardNavigation.prototype = {
         ep.addEvent(chart.renderTo, 'mouseout', (): void => {
             this.pointerIsOverChart = false;
         });
-
-        // Init first module
-        if (this.modules.length) {
-            this.modules[0].init(1);
-        }
     },
 
 

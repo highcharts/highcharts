@@ -36,38 +36,3 @@ const {
  *  Composition
  *
  * */
-
-addEvent(Series, 'init', function (
-    eventOptions: { options: SMAOptions }
-): void {
-    // eslint-disable-next-line no-invalid-this
-    const series = this,
-        options = eventOptions.options;
-
-    if (
-        options.useOhlcData &&
-        options.id !== 'highcharts-navigator-series'
-    ) {
-        extend(series, {
-            pointValKey: ohlcProto.pointValKey,
-            // keys: ohlcProto.keys, // @todo potentially nonsense
-            pointArrayMap: ohlcProto.pointArrayMap,
-            toYData: ohlcProto.toYData
-        });
-    }
-});
-
-addEvent(Series, 'afterSetOptions', function (
-    e: { options: LineSeriesOptions }
-): void {
-    const options = e.options,
-        dataGrouping = options.dataGrouping;
-
-    if (
-        dataGrouping &&
-        options.useOhlcData &&
-        options.id !== 'highcharts-navigator-series'
-    ) {
-        dataGrouping.approximation = 'ohlc';
-    }
-});

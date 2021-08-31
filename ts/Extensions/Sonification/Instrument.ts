@@ -11,7 +11,16 @@
  * */
 
 'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import H from '../../Core/Globals.js';
+const { win } = H;
+import Sonification from './Sonification.js';
 import U from '../../Core/Utilities.js';
 const {
     error,
@@ -89,7 +98,6 @@ declare global {
         interface OscillatorOptionsObject {
             waveformShape?: InstrumentWaveform;
         }
-        let audioContext: AudioContext;
     }
 }
 
@@ -245,7 +253,7 @@ Instrument.prototype.init = function (
     this.masterVolume = this.options.masterVolume || 0;
 
     // Init the audio nodes
-    const ctx = H.audioContext;
+    const ctx = Instrument.audioContext;
     // Note: Destination node can be overridden by setting
     // Highcharts.sonification.Instrument.prototype.destinationNode.
     // This allows for inserting an additional chain of nodes after
@@ -305,22 +313,22 @@ Instrument.prototype.copy = function (
 Instrument.prototype.initAudioContext = function (
     this: Highcharts.Instrument
 ): boolean {
-    const Context = H.win.AudioContext || H.win.webkitAudioContext,
-        hasOldContext = !!H.audioContext;
+    const Context = win.AudioContext || win.webkitAudioContext,
+        hasOldContext = !!Instrument.audioContext;
 
     if (Context) {
-        H.audioContext = H.audioContext || new Context();
+        Instrument.audioContext = Instrument.audioContext || new Context();
         if (
             !hasOldContext &&
-            H.audioContext &&
-            H.audioContext.state === 'running'
+            Instrument.audioContext &&
+            Instrument.audioContext.state === 'running'
         ) {
-            H.audioContext.suspend(); // Pause until we need it
+            Instrument.audioContext.suspend(); // Pause until we need it
         }
         return !!(
-            H.audioContext &&
-            H.audioContext.createOscillator &&
-            H.audioContext.createGain
+            Instrument.audioContext &&
+            Instrument.audioContext.createOscillator &&
+            Instrument.audioContext.createGain
         );
     }
     return false;
@@ -338,7 +346,7 @@ Instrument.prototype.initOscillator = function (
     this: Highcharts.Instrument,
     options: Highcharts.OscillatorOptionsObject
 ): void {
-    const ctx = H.audioContext;
+    const ctx = Instrument.audioContext;
 
     this.oscillator = ctx.createOscillator();
     this.oscillator.type = options.waveformShape as any;
@@ -359,7 +367,7 @@ Instrument.prototype.setPan = function (
     panValue: number
 ): void {
     if (this.panNode) {
-        this.panNode.pan.setValueAtTime(panValue, H.audioContext.currentTime);
+        this.panNode.pan.setValueAtTime(panValue, Instrument.audioContext.currentTime);
     }
 };
 
@@ -392,15 +400,15 @@ Instrument.prototype.setGain = function (
         }
         if (rampTime) {
             gainNode.gain.setValueAtTime(
-                gainNode.gain.value, H.audioContext.currentTime
+                gainNode.gain.value, Instrument.audioContext.currentTime
             );
             gainNode.gain.linearRampToValueAtTime(
                 newVal,
-                H.audioContext.currentTime + rampTime / 1000
+                Instrument.audioContext.currentTime + rampTime / 1000
             );
         } else {
             gainNode.gain.setValueAtTime(
-                newVal, H.audioContext.currentTime
+                newVal, Instrument.audioContext.currentTime
             );
         }
     }
@@ -521,7 +529,7 @@ Instrument.prototype.oscillatorPlay = function (
     }
 
     (this.oscillator as any).frequency.setValueAtTime(
-        frequency, H.audioContext.currentTime
+        frequency, Instrument.audioContext.currentTime
     );
 };
 
@@ -535,8 +543,8 @@ Instrument.prototype.preparePlay = function (
     this: Highcharts.Instrument
 ): void {
     this.setGain(0.001);
-    if (H.audioContext.state === 'suspended') {
-        H.audioContext.resume();
+    if (Instrument.audioContext.state === 'suspended') {
+        Instrument.audioContext.resume();
     }
     if (this.oscillator && !this.oscillatorStarted) {
         this.oscillator.start();
@@ -606,7 +614,7 @@ Instrument.prototype.play = function (
 
     // If the AudioContext is suspended we have to resume it before playing
     if (
-        H.audioContext.state === 'suspended' ||
+        Instrument.audioContext.state === 'suspended' ||
         this.oscillator && !this.oscillatorStarted
     ) {
         instrument.preparePlay();
@@ -650,7 +658,7 @@ Instrument.prototype.play = function (
 
     // Stop the note without fadeOut if the duration is too short to hear the
     // note otherwise.
-    const immediate = duration < H.sonification.fadeOutDuration + 20;
+    const immediate = duration < Sonification.fadeOutDuration + 20;
 
     // Stop the instrument after the duration of the note
     instrument.stopCallback = options.onEnd;
@@ -689,7 +697,7 @@ Instrument.prototype.play = function (
  * @function Highcharts.Instrument#mute
  */
 Instrument.prototype.mute = function (this: Highcharts.Instrument): void {
-    this.setGain(0.0001, H.sonification.fadeOutDuration * 0.8);
+    this.setGain(0.0001, Sonification.fadeOutDuration * 0.8);
 };
 
 
@@ -758,5 +766,10 @@ Instrument.prototype.stop = function (
     }
 };
 
+namespace Instrument {
+
+    export let audioContext: AudioContext;
+
+}
 
 export default Instrument;

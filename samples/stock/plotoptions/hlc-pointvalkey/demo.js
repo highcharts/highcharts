@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'candlestick'
+        type: 'hlc'
     },
 
     title: {
@@ -22,25 +22,14 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['on open', 'on high', 'on low', 'on close (default)']
+        categories: ['on high', 'on low', 'on close (default)']
     },
 
     series: [{
-        name: 'open',
-        pointValKey: 'open',
-        data: [{
-            x: 0,
-            high: 100,
-            low: 0,
-            open: 30,
-            close: 50
-        }]
-    }, {
         name: 'high',
         pointValKey: 'high',
         data: [{
             x: 1,
-            high: 100,
             low: 0,
             open: 30,
             close: 50
@@ -50,7 +39,6 @@ Highcharts.chart('container', {
         pointValKey: 'low',
         data: [{
             x: 2,
-            high: 100,
             low: 0,
             open: 30,
             close: 50
@@ -60,7 +48,6 @@ Highcharts.chart('container', {
         pointValKey: 'close', // default
         data: [{
             x: 3,
-            high: 100,
             low: 0,
             open: 30,
             close: 50
