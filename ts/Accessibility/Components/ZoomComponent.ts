@@ -28,14 +28,13 @@ import H from '../../Core/Globals.js';
 const {
     noop
 } = H;
-import HTMLUtilities from '../Utils/HTMLUtilities.js';
-const {
-    setElAttrs
-} = HTMLUtilities;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
-const extend = U.extend,
-    pick = U.pick;
+const {
+    attr,
+    extend,
+    pick
+} = U;
 
 declare module '../../Core/Axis/AxisLike' {
     interface AxisLike {
@@ -209,7 +208,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
                 { chart: chart }
             );
 
-        setElAttrs(button, {
+        attr(button, {
             tabindex: -1,
             role: 'button',
             'aria-label': label
