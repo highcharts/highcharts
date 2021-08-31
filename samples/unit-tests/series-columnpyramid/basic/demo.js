@@ -56,49 +56,37 @@ QUnit.test('Column pyramid series - 0 dataLabel #12514', function (assert) {
 });
 
 QUnit.test(
-    "Column pyramid series inverted - yAxis width #16150",
-    function (assert) {
-        const chart = Highcharts.chart("container", {
+    'The columnpyramid series inverted with yAxis.width, #16150',
+    assert => {
+        const chart = Highcharts.chart('container', {
             chart: {
-                type: "columnpyramid",
-                inverted: true,
-                width: 600,
-                animation: false,
-                height: 600
+                type: 'columnpyramid',
+                inverted: true
             },
             yAxis: {
-                width: "40%"
+                width: '40%'
             },
-
-            series: [
-                {
-                    data: [5, 4, 2]
-                }
-            ]
+            series: [{
+                data: [5, 4, 2]
+            }]
         });
 
-        var roundPath = function (dArray) {
-            return dArray.map(item =>
-                Highcharts.map(item, function (value) {
-                    var number = Math.round(value);
-                    return Highcharts.isNumber(number) ? number : value;
-                })
-            );
-        };
+        const [, x1, y1] = chart.series[0].points[0].shapeArgs.d[0],
+            [, x2, y2] = chart.series[0].points[0].shapeArgs.d[1];
 
-        const validPath = [
-            ["M", 370, 37],
-            ["L", 370, 37],
-            ["L", 335, 223],
-            ["L", 406, 223],
-            ["Z"]
-        ];
-
-        const testedPath = roundPath(chart.series[0].points[0].shapeArgs.d);
-        assert.deepEqual(
-            testedPath,
-            validPath,
-            "testedPath should be equal to validPath, #16150"
+        assert.close(
+            x1,
+            x2,
+            0.5,
+            `The pyramid shape should be correct (the point has always 4
+            coordinates, 2 of them should be the same to get triangle), #16150.`
+        );
+        assert.close(
+            y1,
+            y2,
+            0.5,
+            `The pyramid shape should be correct (the point has always 4
+            coordinates, 2 of them should be the same to get triangle), #16150.`
         );
     }
 );
