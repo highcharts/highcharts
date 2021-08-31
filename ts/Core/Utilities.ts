@@ -533,7 +533,11 @@ function attr(
     // else if prop is defined, it is a hash of key/value pairs
     } else {
         objectEach(prop, function (val, key): void {
-            elem.setAttribute(key, val as any);
+            if (defined(val)) {
+                elem.setAttribute(key, val as any);
+            } else {
+                elem.removeAttribute(key);
+            }
         });
     }
     return ret;
