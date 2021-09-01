@@ -1059,12 +1059,8 @@ class Tooltip {
                 if (
                     chart.polar ||
                     currentSeries.options.clip === false ||
-                    (
-                        points.length === 1 ?
-                            currentSeries.shouldShowTooltip(checkX, checkY) :
-                            points.some((p): boolean => // #16004
-                                p.series.shouldShowTooltip(checkX, checkY)
-                            )
+                    points.some((p): boolean => // #16004
+                        p.series.shouldShowTooltip(checkX, checkY)
                     )
                 ) {
                     const label = tooltip.getLabel();
