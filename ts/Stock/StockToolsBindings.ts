@@ -46,6 +46,12 @@ const {
     uniqueKey
 } = U;
 
+declare module '../Extensions/Exporting/NavigationOptions' {
+    interface NavigationOptions {
+        bindings?: Record<string, Highcharts.NavigationBindingsOptionsObject>;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -96,6 +102,8 @@ declare global {
             enabled: boolean;
         }
         interface StockToolsNavigationBindingsUtilsObject extends NavigationBindingUtils {
+            indicatorsWithAxes: Array<string>;
+
             addFlagFromForm(this: NavigationBindings, type: string): Function;
             attractToPoint(e: Event, chart: Chart): NavigationBindingsAttractionObject|void;
             isNotNavigatorYAxis(axis: AxisType): boolean;
@@ -104,9 +112,7 @@ declare global {
             updateHeight(this: NavigationBindings, e: PointerEvent, annotation: Annotation): void;
             updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject['updateHeight'];
         }
-        interface NavigationOptions {
-            bindings?: Record<string, NavigationBindingsOptionsObject>;
-        }
+
         interface StockToolsFieldsObject {
             [key: string]: any;
         }
@@ -244,6 +250,38 @@ bindingsUtils.addFlagFromForm = function (
     };
 };
 
+bindingsUtils.indicatorsWithAxes = [
+
+    'ad',
+    'atr',
+    'cci',
+    'cmf',
+    'disparityindex',
+    'cmo',
+    'dmi',
+    'macd',
+    'mfi',
+    'roc',
+    'rsi',
+    'ao',
+    'aroon',
+    'aroonoscillator',
+    'trix',
+    'apo',
+    'dpo',
+    'ppo',
+    'natr',
+    'obv',
+    'williamsr',
+    'stochastic',
+    'slowstochastic',
+    'linearRegression',
+    'linearRegressionSlope',
+    'linearRegressionIntercept',
+    'linearRegressionAngle',
+    'klinger'
+];
+
 bindingsUtils.manageIndicators = function (
     this: Highcharts.StockToolsNavigationBindings,
     data: Highcharts.StockToolsFieldsObject
@@ -263,36 +301,7 @@ bindingsUtils.manageIndicators = function (
             'vbp',
             'vwap'
         ],
-        indicatorsWithAxes = [
-            'ad',
-            'atr',
-            'cci',
-            'cmf',
-            'disparityindex',
-            'cmo',
-            'dmi',
-            'macd',
-            'mfi',
-            'roc',
-            'rsi',
-            'ao',
-            'aroon',
-            'aroonoscillator',
-            'trix',
-            'apo',
-            'dpo',
-            'ppo',
-            'natr',
-            'obv',
-            'williamsr',
-            'stochastic',
-            'slowstochastic',
-            'linearRegression',
-            'linearRegressionSlope',
-            'linearRegressionIntercept',
-            'linearRegressionAngle',
-            'klinger'
-        ],
+        indicatorsWithAxes = bindingsUtils.indicatorsWithAxes,
         yAxis,
         parentSeries,
         defaultOptions,
@@ -536,6 +545,7 @@ bindingsUtils.updateNthPoint = function (
         const options = annotation.options.typeOptions,
             xAxis = isNumber(options.xAxis) && this.chart.xAxis[options.xAxis],
             yAxis = isNumber(options.yAxis) && this.chart.yAxis[options.yAxis];
+
 
         if (xAxis && yAxis) {
             (options.points as any).forEach(function (
@@ -2294,6 +2304,81 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             this.chart.series[0].update({
                 type: 'candlestick'
+            });
+
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
+        }
+    },
+    /**
+     * Changes main series to `'heikinashi'` type.
+     *
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
+     * @product highstock
+     * @default {"className": "highcharts-series-type-heikinashi", "init": function() {}}
+     */
+    seriesTypeHeikinAshi: {
+        /** @ignore-option */
+        className: 'highcharts-series-type-heikinashi',
+        // eslint-disable-next-line valid-jsdoc
+        /** @ignore-option */
+        init: function (
+            this: NavigationBindings,
+            button: HTMLDOMElement
+        ): void {
+            this.chart.series[0].update({
+                type: 'heikinashi'
+            });
+
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
+        }
+    },
+    /**
+     * Change main series to `'hlc'` type.
+     *
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
+     * @product highstock
+     * @default {"className": "highcharts-series-type-hlc", "init": function () {}}
+     */
+
+    seriesTypeHLC: {
+        className: 'highcharts-series-type-hlc',
+        init: function (
+            this: NavigationBindings,
+            button: HTMLDOMElement
+        ): void {
+            this.chart.series[0].update({
+                type: 'hlc',
+                useOhlcData: true
+            });
+            fireEvent(this, 'deselectButton', { button });
+        }
+    },
+    /**
+     * Changes main series to `'hollowcandlestick'` type.
+     *
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
+     * @product highstock
+     * @default {"className": "highcharts-series-type-hollowcandlestick", "init": function() {}}
+     */
+    seriesTypeHollowCandlestick: {
+        /** @ignore-option */
+        className: 'highcharts-series-type-hollowcandlestick',
+        // eslint-disable-next-line valid-jsdoc
+        /** @ignore-option */
+        init: function (
+            this: NavigationBindings,
+            button: HTMLDOMElement
+        ): void {
+            this.chart.series[0].update({
+                type: 'hollowcandlestick'
             });
 
             fireEvent(

@@ -22,8 +22,8 @@
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type TilemapPointOptions from './TilemapPointOptions';
 import type TilemapSeries from './TilemapSeries';
-import ColorSeriesModule from '../../Mixins/ColorSeries.js';
-const { colorPointMixin } = ColorSeriesModule;
+
+import ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -95,11 +95,11 @@ class TilemapPoint extends HeatmapPoint {
  * */
 
 interface TilemapPoint {
-    setVisible: typeof colorPointMixin.setVisible;
+    setVisible: ColorAxisComposition.PointComposition['setVisible'];
 }
 extend(TilemapPoint.prototype, {
     setState: Point.prototype.setState,
-    setVisible: colorPointMixin.setVisible
+    setVisible: ColorAxisComposition.pointSetVisible
 });
 
 /* *

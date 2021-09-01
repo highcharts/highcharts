@@ -19,8 +19,8 @@
 import type Axis from './Axis.js';
 import type Chart from '../Chart/Chart';
 import type Pane from '../../Extensions/Pane';
-import type PlotBandOptions from './PlotBandOptions';
-import type PlotLineOptions from './PlotLineOptions';
+import type PlotBandOptions from './PlotLineOrBand/PlotBandOptions';
+import type PlotLineOptions from './PlotLineOrBand/PlotLineOptions';
 import type Point from '../Series/Point';
 import type PositionObject from '../Renderer/PositionObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -30,6 +30,8 @@ import type Tick from './Tick';
 import type { YAxisOptions } from './AxisOptions';
 
 import AxisDefaults from './AxisDefaults.js';
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import H from '../Globals.js';
 const { noop } = H;
 import U from '../Utilities.js';
@@ -69,7 +71,7 @@ declare module '../Chart/ChartLike'{
     }
 }
 
-declare module './PlotBandOptions' {
+declare module './PlotLineOrBand/PlotBandOptions' {
     interface PlotBandOptions {
         innerRadius?: (number|string);
         outerRadius?: (number|string);
@@ -78,7 +80,7 @@ declare module './PlotBandOptions' {
     }
 }
 
-declare module './PlotLineOptions' {
+declare module './PlotLineOrBand/PlotLineOptions' {
     interface PlotLineOptions {
         chartX?: number;
         chartY?: number;
@@ -180,7 +182,7 @@ namespace RadialAxis {
      *
      * */
 
-    const composedClasses: Array<(typeof Axis|typeof Tick)> = [];
+    const composedClasses: Array<Function> = [];
 
     /**
      * Circular axis around the perimeter of a polar chart.
@@ -1448,6 +1450,7 @@ namespace RadialAxis {
         const options = this.options = merge<Options>(
             (this.constructor as typeof Axis).defaultOptions,
             this.defaultPolarOptions,
+            (defaultOptions as any)[this.coll], // #16112
             userOptions
         );
 

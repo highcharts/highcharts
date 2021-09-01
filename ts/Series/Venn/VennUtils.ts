@@ -15,15 +15,19 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
  *
  * */
 
+import type CircleObject from '../../Core/Geometry/CircleObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type VennPointOptions from './VennPointOptions';
-import GeometryCirclesModule from '../../Mixins/GeometryCircles.js';
+
+import CU from '../../Core/Geometry/CircleUtilities.js';
 const {
     getAreaOfCircle,
     getCircleCircleIntersection,
@@ -31,10 +35,10 @@ const {
     isPointInsideAllCircles,
     isPointInsideCircle,
     isPointOutsideAllCircles
-} = GeometryCirclesModule;
-import GeometryMixin from '../../Mixins/Geometry.js';
+} = CU;
+import GU from '../../Core/Geometry/GeometryUtilities.js';
+const { getDistanceBetweenPoints } = GU;
 import NelderMeadMixin from '../../Mixins/NelderMead.js';
-const { getDistanceBetweenPoints } = GeometryMixin;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -58,9 +62,9 @@ namespace VennUtils {
      *
      * */
 
-    export const geometry = GeometryMixin;
+    export const geometry = GU;
 
-    export const geometryCircles = GeometryCirclesModule;
+    export const geometryCircles = CU;
 
     export const nelderMead = NelderMeadMixin;
 
@@ -89,38 +93,30 @@ namespace VennUtils {
         // Calculate the amount of overlap per set.
         const mapOfIdToProps = relations
             // Filter out relations consisting of 2 sets.
-            .filter(function (relation: Highcharts.VennRelationObject): boolean {
-                return relation.sets.length === 2;
-            })
+            .filter((relation): boolean => (relation.sets.length === 2))
             // Sum up the amount of overlap for each set.
-            .reduce(function (
-                map: Record<string, Highcharts.VennPropsObject>,
-                relation: Highcharts.VennRelationObject
-            ): Record<string, Highcharts.VennPropsObject> {
-                const sets = relation.sets;
-
-                sets.forEach(function (
-                    set: string,
-                    i: number,
-                    arr: Array<string>
-                ): void {
-                    if (!isObject(map[set])) {
-                        map[set] = {
-                            overlapping: {},
-                            totalOverlap: 0
-                        };
-                    }
-                    map[set].totalOverlap += relation.value;
-                    map[set].overlapping[arr[1 - i]] = relation.value;
-                });
-                return map;
-            }, {});
+            .reduce(
+                (map, relation): Record<string, Highcharts.VennPropsObject> => {
+                    relation.sets.forEach((set, i, arr): void => {
+                        if (!isObject(map[set])) {
+                            map[set] = {
+                                overlapping: {},
+                                totalOverlap: 0
+                            };
+                        }
+                        map[set].totalOverlap += relation.value;
+                        map[set].overlapping[arr[1 - i]] = relation.value;
+                    });
+                    return map;
+                },
+                {} as Record<string, Highcharts.VennPropsObject>
+            );
 
         relations
             // Filter out single sets
             .filter(isSet)
             // Extend the set with the calculated properties.
-            .forEach(function (set: Highcharts.VennRelationObject): void {
+            .forEach((set): void => {
                 const properties = mapOfIdToProps[set.sets[0]];
 
                 extend(set, properties);
@@ -227,7 +223,7 @@ namespace VennUtils {
             // circle, then it is completely overlapping.
             distance = 0;
         } else {
-            distance = bisect(function (x: number): number {
+            distance = bisect((x: number): number => {
                 const actualOverlap = getOverlapBetweenCirclesByDistance(r1, r2, x);
 
                 // Return the differance between wanted and actual overlap.
@@ -254,18 +250,16 @@ namespace VennUtils {
      */
     export function getLabelWidth(
         pos: PositionObject,
-        internal: Array<Highcharts.CircleObject>,
-        external: Array<Highcharts.CircleObject>
+        internal: Array<CircleObject>,
+        external: Array<CircleObject>
     ): number {
-        const radius = internal.reduce(function (
-                min: number,
-                circle: Highcharts.CircleObject
-            ): number {
-                return Math.min(circle.r, min);
-            }, Infinity),
+        const radius = internal.reduce(
+                (min, circle): number => Math.min(circle.r, min),
+                Infinity
+            ),
             // Filter out external circles that are completely overlapping.
             filteredExternals = external.filter(
-                function (circle: Highcharts.CircleObject): boolean {
+                function (circle): boolean {
                     return !isPointInsideCircle(pos, circle);
                 }
             );
@@ -312,22 +306,16 @@ namespace VennUtils {
      */
     export function getMarginFromCircles(
         point: PositionObject,
-        internal: Array<Highcharts.CircleObject>,
-        external: Array<Highcharts.CircleObject>
+        internal: Array<CircleObject>,
+        external: Array<CircleObject>
     ): number {
-        let margin = internal.reduce(function (
-            margin: number,
-            circle: Highcharts.CircleObject
-        ): number {
+        let margin = internal.reduce(function (margin, circle): number {
             const m = circle.r - getDistanceBetweenPoints(point, circle);
 
             return (m <= margin) ? m : margin;
         }, Number.MAX_VALUE);
 
-        margin = external.reduce(function (
-            margin: number,
-            circle: Highcharts.CircleObject
-        ): number {
+        margin = external.reduce(function (margin, circle): number {
             const m = getDistanceBetweenPoints(point, circle) - circle.r;
 
             return (m <= margin) ? m : margin;
@@ -346,7 +334,7 @@ namespace VennUtils {
      * Returns the area of overlap between all the circles.
      */
     function getOverlapBetweenCircles(
-        circles: Array<Highcharts.CircleObject>
+        circles: Array<CircleObject>
     ): number {
         let overlap = 0;
 
@@ -413,10 +401,9 @@ namespace VennUtils {
      */
     export function layoutGreedyVenn(
         relations: Array<Highcharts.VennRelationObject>
-    ): Record<string, Highcharts.CircleObject> {
+    ): Record<string, CircleObject> {
         const positionedSets: Array<Highcharts.VennRelationObject> = [],
-            mapOfIdToCircles: Record<string, Highcharts.CircleObject> =
-                {};
+            mapOfIdToCircles: Record<string, CircleObject> = {};
 
         // Define a circle for each set.
         relations
@@ -476,12 +463,8 @@ namespace VennUtils {
                 radius = circle.r,
                 overlapping = set.overlapping;
 
-            const bestPosition = positionedSets
-                .reduce(function (
-                    best: Highcharts.VennLabelOverlapObject,
-                    positionedSet: Highcharts.VennRelationObject,
-                    i: number
-                ): Highcharts.VennLabelOverlapObject {
+            const bestPosition = positionedSets.reduce(
+                (best, positionedSet, i): Highcharts.VennLabelOverlapObject => {
                     const positionedCircle = positionedSet.circle,
                         overlap = overlapping[positionedSet.sets[0]];
 
@@ -551,7 +534,8 @@ namespace VennUtils {
                 }, {
                     loss: Number.MAX_VALUE,
                     coordinates: void 0 as any
-                });
+                }
+            );
 
             // Add the set to its final position.
             positionSet(set, bestPosition.coordinates);
@@ -574,7 +558,7 @@ namespace VennUtils {
      * relations.
      */
     export function loss(
-        mapOfIdToCircle: Record<string, Highcharts.CircleObject>,
+        mapOfIdToCircle: Record<string, CircleObject>,
         relations: Array<Highcharts.VennRelationObject>
     ): number {
         const precision = 10e10;
@@ -591,9 +575,7 @@ namespace VennUtils {
                 // Calculate the actual overlap between the sets.
                 const actualOverlap = getOverlapBetweenCircles(
                     // Get the circles for the given sets.
-                    relation.sets.map(function (
-                        set: string
-                    ): Highcharts.CircleObject {
+                    relation.sets.map(function (set): CircleObject {
                         return mapOfIdToCircle[set];
                     })
                 );

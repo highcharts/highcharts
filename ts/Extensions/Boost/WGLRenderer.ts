@@ -14,12 +14,13 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
+import type ColorMapComposition from '../../Series/ColorMapComposition';
 import type ColorString from '../../Core/Color/ColorString';
 import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type Series from '../../Core/Series/Series';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import GLShader from './WGLShader.js';
@@ -596,8 +597,8 @@ function GLRenderer(
                         point.shapeArgs;
 
                     pointAttr = chart.styledMode ?
-                        (point.series as Highcharts.ColorMapSeries)
-                            .colorAttribs(point as Highcharts.ColorMapPoint) :
+                        (point.series as ColorMapComposition.SeriesComposition)
+                            .colorAttribs(point as ColorMapComposition.PointComposition) :
                         pointAttr = point.series.pointAttribs(point);
 
                     swidth = pointAttr['stroke-width'] || 0;
