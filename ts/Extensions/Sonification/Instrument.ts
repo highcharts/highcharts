@@ -55,6 +55,12 @@ const {
  */
 class Instrument {
 
+    /* *
+     *
+     *  Static properties
+     *
+     * */
+
     // Default options for Instrument constructor
     public static defaultOptions: Instrument.Options = {
         type: 'oscillator',
@@ -64,6 +70,8 @@ class Instrument {
             waveformShape: 'sine'
         }
     };
+
+    public static audioContext: AudioContext;
 
 
     /* *
@@ -636,8 +644,6 @@ class Instrument {
  * */
 
 namespace Instrument {
-
-    export let audioContext: AudioContext;
 
     export interface Options {
         allowedFrequencies?: Array<number>;
