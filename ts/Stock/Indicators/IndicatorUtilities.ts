@@ -16,7 +16,7 @@
  *
  * */
 
-import type SMAIndicator from '../Stock/Indicators/SMA/SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
 
 /**
  * Internal types
@@ -46,7 +46,7 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     error
 } = U;

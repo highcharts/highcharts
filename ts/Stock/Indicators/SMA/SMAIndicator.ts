@@ -26,7 +26,7 @@ import type {
 import type SMAPoint from './SMAPoint';
 
 import Chart from '../../../Core/Chart/Chart.js';
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import RequiredIndicatorMixin from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -302,7 +302,7 @@ class SMAIndicator extends LineSeries {
             return error(generateMessage(
                 indicator.type,
                 requiredIndicators.needed as any
-            )) as any;
+            ));
         }
 
         super.init.call(

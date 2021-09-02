@@ -24,7 +24,7 @@ import type {
 import type DisparityIndexPoint from './DisparityIndexPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import RequiredIndicatorMixin from '../IndicatorUtilities.js';
 import Series from '../../../Core/Series/Series';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {

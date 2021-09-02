@@ -16,7 +16,7 @@ import type {
 } from './PPOOptions';
 import type PPOPoint from './PPOPoint';
 
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import RequiredIndicatorMixin from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {

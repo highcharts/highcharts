@@ -17,7 +17,7 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import multipleLinesMixin from '../../../Mixins/MultipleLines.js';
-import requiredIndicator from '../../../Mixins/IndicatorRequired.js';
+import requiredIndicator from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {

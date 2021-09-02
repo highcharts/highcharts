@@ -14,7 +14,7 @@ import type {
 } from './TRIXOptions';
 import type TRIXPoint from './TRIXPoint';
 
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import RequiredIndicatorMixin from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {

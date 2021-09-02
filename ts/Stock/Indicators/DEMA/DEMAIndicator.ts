@@ -15,7 +15,7 @@ import type {
 import type DEMAPoint from './DEMAPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import RequiredIndicatorMixin from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
