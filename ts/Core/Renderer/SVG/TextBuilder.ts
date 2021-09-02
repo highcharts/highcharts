@@ -28,7 +28,8 @@ import AST from '../HTML/AST.js';
 import H from '../../Globals.js';
 const {
     doc,
-    SVG_NS
+    SVG_NS,
+    win
 } = H;
 import U from '../../Utilities.js';
 const {
@@ -344,7 +345,7 @@ class TextBuilder {
         const modifyChildren = ((node: DOMElementType): void => {
             const childNodes = [].slice.call(node.childNodes);
             childNodes.forEach((childNode: ChildNode): void => {
-                if (childNode.nodeType === Node.TEXT_NODE) {
+                if (childNode.nodeType === win.Node.TEXT_NODE) {
                     modifyTextNode(childNode as Text, node);
                 } else {
                     // Reset word-wrap width readings after hard breaks
@@ -373,7 +374,7 @@ class TextBuilder {
         let fontSizeStyle;
 
         // If the node is a text node, use its parent
-        const element: DOMElementType|null = node.nodeType === Node.TEXT_NODE ?
+        const element: DOMElementType|null = node.nodeType === win.Node.TEXT_NODE ?
             node.parentElement :
             node as DOMElementType;
 
