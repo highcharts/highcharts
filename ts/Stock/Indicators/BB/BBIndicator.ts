@@ -15,7 +15,8 @@ import type {
 import type BBPoint from './BBPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -244,10 +245,10 @@ interface BBIndicator {
     pointValKey: string;
     nameComponents: Array<string>;
     linesApiNames: Array<string>;
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    translate: typeof MultipleLinesMixin.translate;
-    toYData: typeof MultipleLinesMixin.toYData;
+    drawGraph: typeof MultipleLinesComposition.drawGraph;
+    getTranslatedLinesNames: typeof MultipleLinesComposition.getTranslatedLinesNames;
+    translate: typeof MultipleLinesComposition.translate;
+    toYData: typeof MultipleLinesComposition.toYData;
     pointClass: typeof BBPoint;
 }
 extend(BBIndicator.prototype, {
@@ -255,10 +256,10 @@ extend(BBIndicator.prototype, {
     pointValKey: 'middle',
     nameComponents: ['period', 'standardDeviation'],
     linesApiNames: ['topLine', 'bottomLine'],
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    drawGraph: MultipleLinesComposition.drawGraph,
+    getTranslatedLinesNames: MultipleLinesComposition.getTranslatedLinesNames,
+    translate: MultipleLinesComposition.translate,
+    toYData: MultipleLinesComposition.toYData
 });
 
 /* *

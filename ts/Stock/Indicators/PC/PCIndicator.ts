@@ -15,8 +15,9 @@ import type {
     PCParamsOptions
 } from '../PC/PCOptions';
 import type PCPoint from './PCPoint';
-import palette from '../../../Core/Color/Palette.js';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import Palette from '../../../Core/Color/Palette.js';
 import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -83,7 +84,7 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.colors[2],
+                lineColor: Palette.colors[2],
                 /**
                  * Pixel width of the line.
                  */
@@ -98,7 +99,7 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.colors[8],
+                lineColor: Palette.colors[8],
                 /**
                  * Pixel width of the line.
                  */
@@ -180,11 +181,11 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
 * */
 
 interface PCIndicator {
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    toYData: typeof MultipleLinesMixin.toYData;
-    translate: typeof MultipleLinesMixin.translate;
-    linesApiNames: typeof MultipleLinesMixin.linesApiNames;
+    getTranslatedLinesNames: typeof MultipleLinesComposition.getTranslatedLinesNames;
+    drawGraph: typeof MultipleLinesComposition.drawGraph;
+    toYData: typeof MultipleLinesComposition.toYData;
+    translate: typeof MultipleLinesComposition.translate;
+    linesApiNames: typeof MultipleLinesComposition.linesApiNames;
     nameBase: string;
     nameComponents: Array<string>;
     pointArrayMap: Array<string>;
@@ -193,15 +194,15 @@ interface PCIndicator {
 }
 
 extend(PCIndicator.prototype, {
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    drawGraph: MultipleLinesMixin.drawGraph,
-    toYData: MultipleLinesMixin.toYData,
+    getTranslatedLinesNames: MultipleLinesComposition.getTranslatedLinesNames,
+    drawGraph: MultipleLinesComposition.drawGraph,
+    toYData: MultipleLinesComposition.toYData,
     pointArrayMap: ['top', 'middle', 'bottom'],
     pointValKey: 'middle',
     nameBase: 'Price Channel',
     nameComponents: ['period'],
     linesApiNames: ['topLine', 'bottomLine'],
-    translate: MultipleLinesMixin.translate
+    translate: MultipleLinesComposition.translate
 });
 
 /* *

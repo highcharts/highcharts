@@ -24,7 +24,8 @@ import type {
 import type DMIPoint from './DMIPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import palette from '../../../Core/Color/Palette.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -337,10 +338,10 @@ interface DMIIndicator {
     linesApiNames: Array<string>;
     pointClass: typeof DMIPoint;
 
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    translate: typeof MultipleLinesMixin.translate;
-    toYData: typeof MultipleLinesMixin.toYData;
+    drawGraph: typeof MultipleLinesComposition.drawGraph;
+    getTranslatedLinesNames: typeof MultipleLinesComposition.getTranslatedLinesNames;
+    translate: typeof MultipleLinesComposition.translate;
+    toYData: typeof MultipleLinesComposition.toYData;
 }
 extend(DMIIndicator.prototype, {
     nameBase: 'DMI',
@@ -349,10 +350,10 @@ extend(DMIIndicator.prototype, {
     pointValKey: 'y',
     linesApiNames: ['plusDILine', 'minusDILine'],
 
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    drawGraph: MultipleLinesComposition.drawGraph,
+    getTranslatedLinesNames: MultipleLinesComposition.getTranslatedLinesNames,
+    translate: MultipleLinesComposition.translate,
+    toYData: MultipleLinesComposition.toYData
 });
 
 /* *

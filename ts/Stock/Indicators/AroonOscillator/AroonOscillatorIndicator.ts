@@ -16,7 +16,7 @@ import type AroonOscillatorPoint from '../AroonOscillator/AroonOscillatorPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
-import multipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import multipleLinesMixin from '../MultipleLinesComposition.js';
 import requiredIndicator from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {

@@ -15,7 +15,8 @@ import type {
 } from './KeltnerChannelsOptions';
 import type KeltnerChannelsPoint from './KeltnerChannelsPoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -210,10 +211,10 @@ interface KeltnerChannelsIndicator {
 
     pointClass: typeof KeltnerChannelsPoint;
 
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    translate: typeof MultipleLinesMixin.translate;
-    toYData: typeof MultipleLinesMixin.toYData;
+    drawGraph: typeof MultipleLinesComposition.drawGraph;
+    getTranslatedLinesNames: typeof MultipleLinesComposition.getTranslatedLinesNames;
+    translate: typeof MultipleLinesComposition.translate;
+    toYData: typeof MultipleLinesComposition.toYData;
 }
 extend(KeltnerChannelsIndicator.prototype, {
     pointArrayMap: ['top', 'middle', 'bottom'],
@@ -222,10 +223,10 @@ extend(KeltnerChannelsIndicator.prototype, {
     nameComponents: ['period', 'periodATR', 'multiplierATR'],
     linesApiNames: ['topLine', 'bottomLine'],
     requiredIndicators: ['ema', 'atr'],
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    drawGraph: MultipleLinesComposition.drawGraph,
+    getTranslatedLinesNames: MultipleLinesComposition.getTranslatedLinesNames,
+    translate: MultipleLinesComposition.translate,
+    toYData: MultipleLinesComposition.toYData
 });
 
 declare module '../../../Core/Series/SeriesType' {
