@@ -653,7 +653,7 @@ class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, H
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -1127,7 +1127,7 @@ class NetworkgraphPoint
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

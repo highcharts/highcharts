@@ -16,7 +16,7 @@ import type {
 } from './SlowStochasticOptions';
 import type SlowStochasticPoint from './SlowStochasticPoint';
 
-import RequiredIndicatorMixin from '../IndicatorUtilities.js';
+import IndicatorUtilities from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -77,11 +77,11 @@ class SlowStochasticIndicator extends StochasticIndicator {
         const args = arguments,
             ctx = this;
 
-        RequiredIndicatorMixin.isParentLoaded(
-            (seriesTypes.stochastic as any),
+        IndicatorUtilities.isParentLoaded(
+            StochasticIndicator,
             'stochastic',
             ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
+            function (indicator): undefined {
                 indicator.prototype.init.apply(ctx, args);
                 return;
             }

@@ -325,7 +325,7 @@ class LinearRegressionIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 interface LinearRegressionIndicator {

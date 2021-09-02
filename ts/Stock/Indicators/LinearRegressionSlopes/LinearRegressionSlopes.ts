@@ -88,7 +88,7 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 interface LinearRegressionSlopesIndicator {

@@ -633,7 +633,7 @@ class OrganizationSeries extends SankeySeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

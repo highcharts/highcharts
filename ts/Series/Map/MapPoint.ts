@@ -148,7 +148,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

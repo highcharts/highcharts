@@ -48,6 +48,13 @@ const AROON = SeriesRegistry.seriesTypes.aroon;
  * @augments Highcharts.Series
  */
 class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.MultipleLinesIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Aroon Oscillator. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js` and
@@ -126,15 +133,15 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
         } as IndicatorValuesObject<TLinkedSeries>;
     }
 
-    public init(this: AroonOscillatorIndicator): void {
+    public init(): void {
         const args = arguments,
             ctx = this;
 
         requiredIndicator.isParentLoaded(
-            (AROON as any),
+            AROON,
             'aroon',
             ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
+            function (indicator): undefined {
                 indicator.prototype.init.apply(ctx, args);
                 return;
             }
@@ -143,10 +150,10 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
 }
 
 /* *
-*
-*   Prototype Properties
-*
-* */
+ *
+ * Class Prototype
+ *
+ * */
 
 interface AroonOscillatorIndicator {
     nameBase: string;

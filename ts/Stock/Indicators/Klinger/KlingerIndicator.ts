@@ -15,7 +15,7 @@ import type {
 import type KlingerPoint from './KlingerPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import RequiredIndicatorMixin from '../IndicatorUtilities.js';
+import IndicatorUtilities from '../IndicatorUtilities.js';
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -134,11 +134,11 @@ class KlingerIndicator extends SMAIndicator {
             ctx = this;
 
         // Check if the EMA module is added.
-        RequiredIndicatorMixin.isParentLoaded(
-            (EMAIndicator as any),
+        IndicatorUtilities.isParentLoaded(
+            EMAIndicator,
             'ema',
             ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
+            function (indicator): undefined {
                 indicator.prototype.init.apply(ctx, args);
                 return;
             }
@@ -367,7 +367,7 @@ class KlingerIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

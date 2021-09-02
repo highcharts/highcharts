@@ -272,7 +272,7 @@ class BellcurveSeries extends AreaSplineSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

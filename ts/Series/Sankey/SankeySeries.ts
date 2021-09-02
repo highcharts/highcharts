@@ -1138,7 +1138,7 @@ class SankeySeries extends ColumnSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

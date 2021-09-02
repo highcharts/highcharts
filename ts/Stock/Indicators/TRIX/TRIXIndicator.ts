@@ -14,7 +14,7 @@ import type {
 } from './TRIXOptions';
 import type TRIXPoint from './TRIXPoint';
 
-import RequiredIndicatorMixin from '../IndicatorUtilities.js';
+import IndicatorUtilities from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -62,15 +62,15 @@ class TRIXIndicator extends TEMAIndicator {
     public options: TRIXOptions = void 0 as any;
     public points: Array<TRIXPoint> = void 0 as any;
 
-    public init(this: TRIXIndicator): void {
+    public init(): void {
         const args = arguments,
             ctx = this;
 
-        RequiredIndicatorMixin.isParentLoaded(
-            (SeriesRegistry.seriesTypes.tema as any),
+        IndicatorUtilities.isParentLoaded(
+            TEMAIndicator,
             'tema',
             ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
+            function (indicator): undefined {
                 indicator.prototype.init.apply(ctx, args);
                 return;
             }

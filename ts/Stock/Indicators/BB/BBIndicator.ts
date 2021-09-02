@@ -140,7 +140,7 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
 
     /* *
     *
-    *  Prototype Properties
+    *  Class Prototype
     *
     * */
 

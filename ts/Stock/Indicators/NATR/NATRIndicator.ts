@@ -111,7 +111,7 @@ class NATRIndicator extends ATRIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 interface NATRIndicator {

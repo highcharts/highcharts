@@ -20,7 +20,7 @@ import type {
 import type APOPoint from './APOPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import RequiredIndicatorMixin from '../IndicatorUtilities.js';
+import IndicatorUtilities from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -45,6 +45,13 @@ const {
  * @augments Highcharts.Series
  */
 class APOIndicator extends EMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Absolute Price Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`
@@ -85,19 +92,20 @@ class APOIndicator extends EMAIndicator {
     } as APOOptions);
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
+
     public data: Array<APOPoint> = void 0 as any;
     public options: APOOptions = void 0 as any;
     public points: Array<APOPoint> = void 0 as any;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
@@ -167,15 +175,15 @@ class APOIndicator extends EMAIndicator {
         } as IndicatorValuesObject<TLinkedSeries>;
     }
 
-    public init(this: APOIndicator): void {
+    public init(): void {
         const args = arguments,
             ctx = this;
 
-        RequiredIndicatorMixin.isParentLoaded(
-            (EMAIndicator as any),
+        IndicatorUtilities.isParentLoaded(
+            EMAIndicator,
             'ema',
             ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
+            function (indicator): undefined {
                 indicator.prototype.init.apply(ctx, args);
                 return;
             }

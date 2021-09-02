@@ -16,7 +16,7 @@ import type {
 } from './PPOOptions';
 import type PPOPoint from './PPOPoint';
 
-import RequiredIndicatorMixin from '../IndicatorUtilities.js';
+import IndicatorUtilities from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -101,15 +101,15 @@ class PPOIndicator extends EMAIndicator {
      *
      * */
 
-    public init(this: PPOIndicator): void {
+    public init(): void {
         const args = arguments,
             ctx = this;
 
-        RequiredIndicatorMixin.isParentLoaded(
-            (EMAIndicator as any),
+        IndicatorUtilities.isParentLoaded(
+            EMAIndicator,
             'ema',
             ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
+            function (indicator): undefined {
                 indicator.prototype.init.apply(ctx, args);
                 return;
             }

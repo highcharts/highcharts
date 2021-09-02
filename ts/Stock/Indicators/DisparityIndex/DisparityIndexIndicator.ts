@@ -24,8 +24,8 @@ import type {
 import type DisparityIndexPoint from './DisparityIndexPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import RequiredIndicatorMixin from '../IndicatorUtilities.js';
-import Series from '../../../Core/Series/Series';
+
+import IndicatorUtilities from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -57,6 +57,13 @@ const {
  * @augments Highcharts.Series
  */
 class DisparityIndexIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Disparity Index.
      * This series requires the `linkedTo` option to be set and should
@@ -102,7 +109,7 @@ class DisparityIndexIndicator extends SMAIndicator {
      *
      * */
 
-    public averageIndicator: typeof Series = void 0 as any;
+    public averageIndicator: typeof SMAIndicator = void 0 as any;
     public data: Array<DisparityIndexPoint> = void 0 as any;
     public options: DisparityIndexOptions = void 0 as any;
     public points: Array<DisparityIndexPoint> = void 0 as any;
@@ -113,21 +120,20 @@ class DisparityIndexIndicator extends SMAIndicator {
      *
      * */
 
-    public init(this: DisparityIndexIndicator): void {
+    public init(): void {
         const args = arguments,
             ctx = this, // Disparity Index indicator
             params = args[1].params, // options.params
             averageType = params && params.average ? params.average : void 0;
 
-        ctx.averageIndicator =
-            SeriesRegistry.seriesTypes[averageType] || SMAIndicator;
+        ctx.averageIndicator = SeriesRegistry.seriesTypes[averageType] as typeof SMAIndicator || SMAIndicator;
 
         // Check if the required average indicator modules is loaded
-        RequiredIndicatorMixin.isParentLoaded(
-            ctx.averageIndicator as any,
+        IndicatorUtilities.isParentLoaded(
+            ctx.averageIndicator,
             averageType,
             ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
+            function (indicator): undefined {
                 indicator.prototype.init.apply(ctx, args);
                 return;
             }
@@ -193,13 +199,18 @@ class DisparityIndexIndicator extends SMAIndicator {
 
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface DisparityIndexIndicator {
     nameBase: string;
     nameComponents: Array<string>;
 
     pointClass: typeof DisparityIndexPoint;
 }
-
 extend(DisparityIndexIndicator.prototype, {
     nameBase: 'Disparity Index',
     nameComponents: ['period', 'average']
@@ -226,6 +237,12 @@ SeriesRegistry.registerSeriesType('disparityindex', DisparityIndexIndicator);
  * */
 
 export default DisparityIndexIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * The Disparity Index indicator series.

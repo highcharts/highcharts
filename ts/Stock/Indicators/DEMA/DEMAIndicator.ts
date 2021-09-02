@@ -15,7 +15,7 @@ import type {
 import type DEMAPoint from './DEMAPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import RequiredIndicatorMixin from '../IndicatorUtilities.js';
+import IndicatorUtilities from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -66,15 +66,15 @@ class DEMAIndicator extends EMAIndicator {
     public options: DEMAOptions = void 0 as any;
     public points: Array<DEMAPoint> = void 0 as any;
 
-    public init(this: DEMAIndicator): void {
+    public init(): void {
         const args = arguments,
             ctx = this;
 
-        RequiredIndicatorMixin.isParentLoaded(
-            (EMAIndicator as any),
+        IndicatorUtilities.isParentLoaded(
+            EMAIndicator,
             'ema',
             ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
+            function (indicator): undefined {
                 indicator.prototype.init.apply(ctx, args);
                 return;
             }
@@ -82,7 +82,6 @@ class DEMAIndicator extends EMAIndicator {
     }
 
     public getEMA(
-        this: DEMAIndicator,
         yVal: (Array<number>|Array<Array<number>>),
         prevEMA: (number|undefined),
         SMA: number,
@@ -102,10 +101,7 @@ class DEMAIndicator extends EMAIndicator {
         );
     }
 
-    public getValues<
-        TLinkedSeries extends LineSeries
-    >(
-        this: DEMAIndicator,
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: DEMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -203,16 +199,27 @@ class DEMAIndicator extends EMAIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface DEMAIndicator {
     pointClass: typeof DEMAPoint;
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dema: typeof DEMAIndicator;
     }
 }
-
 SeriesRegistry.registerSeriesType('dema', DEMAIndicator);
 
 /* *

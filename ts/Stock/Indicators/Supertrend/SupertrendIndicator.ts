@@ -629,7 +629,7 @@ class SupertrendIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 interface SupertrendIndicator {

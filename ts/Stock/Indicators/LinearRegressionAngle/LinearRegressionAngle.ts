@@ -106,7 +106,7 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

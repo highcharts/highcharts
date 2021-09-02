@@ -88,7 +88,7 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 interface LinearRegressionInterceptIndicator {
