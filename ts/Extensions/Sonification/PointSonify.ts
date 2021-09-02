@@ -18,6 +18,7 @@
  *
  * */
 
+import type Instrument from './Instrument';
 import type RangeSelector from '../../Extensions/RangeSelector';
 
 import Sonification from './Sonification.js';
