@@ -1271,7 +1271,7 @@ export default SankeySeries;
  *//**
  * This option is deprecated, use
  * {@link Highcharts.SankeyNodeObject#offsetHorizontal} and
- * {@link Highcharts.SankeyNodeObject#offsetVertical}  instead.
+ * {@link Highcharts.SankeyNodeObject#offsetVertical} instead.
  *
  * The vertical offset of a node in terms of weight. Positive values shift the
  * node downwards, negative shift it upwards.
