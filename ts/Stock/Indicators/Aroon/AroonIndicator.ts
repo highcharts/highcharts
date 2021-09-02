@@ -16,7 +16,7 @@ import type AroonPoint from '../Aroon/AroonPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -216,10 +216,10 @@ interface AroonIndicator {
     pointValKey: string;
     nameComponents: Array<string>;
     linesApiNames: Array<string>;
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    toYData: typeof MultipleLinesMixin.toYData;
-    translate: typeof MultipleLinesMixin.translate;
+    drawGraph: typeof MultipleLinesComposition.drawGraph;
+    getTranslatedLinesNames: typeof MultipleLinesComposition.getTranslatedLinesNames;
+    toYData: typeof MultipleLinesComposition.toYData;
+    translate: typeof MultipleLinesComposition.translate;
     pointClass: typeof AroonPoint;
 }
 
@@ -228,10 +228,10 @@ extend(AroonIndicator.prototype, {
     nameBase: 'Aroon',
     pointArrayMap: ['y', 'aroonDown'],
     pointValKey: 'y',
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    toYData: MultipleLinesMixin.toYData,
-    translate: MultipleLinesMixin.translate
+    drawGraph: MultipleLinesComposition.drawGraph,
+    getTranslatedLinesNames: MultipleLinesComposition.getTranslatedLinesNames,
+    toYData: MultipleLinesComposition.toYData,
+    translate: MultipleLinesComposition.translate
 });
 
 /* *

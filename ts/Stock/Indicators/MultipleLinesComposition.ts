@@ -10,11 +10,11 @@
 
 'use strict';
 
-import type Point from '../Core/Series/Point';
-import type Series from '../Core/Series/Series';
-import H from '../Core/Globals.js';
+import type Point from '../../Core/Series/Point';
+import type Series from '../../Core/Series/Series';
+import H from '../../Core/Globals.js';
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         toYData?(point: Point): Array<number>;
     }
@@ -56,7 +56,7 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     defined,
     error,

@@ -15,8 +15,9 @@ import type {
 import type KlingerPoint from './KlingerPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -381,10 +382,10 @@ interface KlingerIndicator {
 
     pointClass: typeof KlingerPoint;
 
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    translate: typeof MultipleLinesMixin.translate;
-    toYData: typeof MultipleLinesMixin.toYData;
+    drawGraph: typeof MultipleLinesComposition.drawGraph;
+    getTranslatedLinesNames: typeof MultipleLinesComposition.getTranslatedLinesNames;
+    translate: typeof MultipleLinesComposition.translate;
+    toYData: typeof MultipleLinesComposition.toYData;
 }
 
 extend(KlingerIndicator.prototype, {
@@ -395,10 +396,10 @@ extend(KlingerIndicator.prototype, {
     parallelArrays: ['x', 'y', 'signal'],
     pointValKey: 'y',
 
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    drawGraph: MultipleLinesComposition.drawGraph,
+    getTranslatedLinesNames: MultipleLinesComposition.getTranslatedLinesNames,
+    translate: MultipleLinesComposition.translate,
+    toYData: MultipleLinesComposition.toYData
 });
 
 /* *
