@@ -15,7 +15,7 @@ Highcharts.getJSON(
   //"https://cdn.jsdelivr.net/gh/highcharts/highcharts@dac9b997d8/samples/data/denmark-export-2018.json",
 
   function (dataJson) {
-    return;
+    return false;
     Highcharts.chart("container", {
       accessibility: {
         screenReaderSection: {
