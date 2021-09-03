@@ -73,7 +73,7 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
  * @augments Highcharts.Series
  */
 
-class AroonIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndicator {
+class AroonIndicator extends SMAIndicator {
     /**
      * Aroon. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.
@@ -211,28 +211,21 @@ class AroonIndicator extends SMAIndicator implements Highcharts.MultipleLinesInd
 *
 * */
 
-interface AroonIndicator {
+interface AroonIndicator extends MultipleLinesComposition.Composition {
     pointArrayMap: Array<string>;
     pointValKey: string;
     nameComponents: Array<string>;
     linesApiNames: Array<string>;
-    drawGraph: typeof MultipleLinesComposition.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesComposition.getTranslatedLinesNames;
-    toYData: typeof MultipleLinesComposition.toYData;
-    translate: typeof MultipleLinesComposition.translate;
     pointClass: typeof AroonPoint;
+    toYData: MultipleLinesComposition.Composition['toYData'];
 }
-
 extend(AroonIndicator.prototype, {
     linesApiNames: ['aroonDown'],
     nameBase: 'Aroon',
     pointArrayMap: ['y', 'aroonDown'],
-    pointValKey: 'y',
-    drawGraph: MultipleLinesComposition.drawGraph,
-    getTranslatedLinesNames: MultipleLinesComposition.getTranslatedLinesNames,
-    toYData: MultipleLinesComposition.toYData,
-    translate: MultipleLinesComposition.translate
+    pointValKey: 'y'
 });
+MultipleLinesComposition.compose(AroonIndicator);
 
 /* *
  *

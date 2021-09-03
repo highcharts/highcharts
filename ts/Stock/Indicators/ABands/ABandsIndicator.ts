@@ -251,30 +251,22 @@ class ABandsIndicator extends SMAIndicator {
  *
  * */
 
-interface ABandsIndicator {
-    getTranslatedLinesNames: typeof MultipleLinesComposition.getTranslatedLinesNames;
-    linesApiNames: typeof MultipleLinesComposition.linesApiNames;
+interface ABandsIndicator extends MultipleLinesComposition.Composition {
     nameBase: string;
     nameComponents: Array<string>;
     pointArrayMap: Array<string>;
     pointValKey: string;
     pointClass: typeof ABandsPoint;
-    toYData: typeof MultipleLinesComposition.toYData;
-    translate: typeof MultipleLinesComposition.translate;
-    drawGraph: typeof MultipleLinesComposition.drawGraph;
+    toYData: MultipleLinesComposition.Composition['toYData'];
 }
-
 extend(ABandsIndicator.prototype, {
-    drawGraph: MultipleLinesComposition.drawGraph,
-    getTranslatedLinesNames: MultipleLinesComposition.getTranslatedLinesNames,
     linesApiNames: ['topLine', 'bottomLine'],
     nameBase: 'Acceleration Bands',
     nameComponents: ['period', 'factor'],
     pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
-    toYData: MultipleLinesComposition.toYData,
-    translate: MultipleLinesComposition.translate
+    pointValKey: 'middle'
 });
+MultipleLinesComposition.compose(ABandsIndicator);
 
 /* *
  *
