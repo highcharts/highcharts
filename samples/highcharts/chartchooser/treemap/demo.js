@@ -12,8 +12,10 @@ let colors = [
 
 Highcharts.getJSON(
   "https://raw.githubusercontent.com/mekhatria/demo_highcharts/master/denmarkExportIn2018.json?callback=?",
+  //"https://cdn.jsdelivr.net/gh/highcharts/highcharts@dac9b997d8/samples/data/denmark-export-2018.json",
 
   function (dataJson) {
+    return;
     Highcharts.chart("container", {
       accessibility: {
         screenReaderSection: {
