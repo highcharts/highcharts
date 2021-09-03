@@ -44,6 +44,13 @@ const {
  * @augments Highcharts.Series
  */
 class KlingerIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Klinger oscillator. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js` file.
@@ -368,39 +375,29 @@ class KlingerIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface KlingerIndicator {
+interface KlingerIndicator extends MultipleLinesComposition.Composition {
     linesApiNames: Array<string>;
     nameBase: string;
     nameComponents: Array<string>;
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
-    pointValKey: string;
-
     pointClass: typeof KlingerPoint;
-
-    drawGraph: typeof MultipleLinesComposition.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesComposition.getTranslatedLinesNames;
-    translate: typeof MultipleLinesComposition.translate;
-    toYData: typeof MultipleLinesComposition.toYData;
+    pointValKey: string;
+    toYData: MultipleLinesComposition.Composition['toYData'];
 }
-
 extend(KlingerIndicator.prototype, {
     linesApiNames: ['signalLine'],
     nameBase: 'Klinger',
     nameComponents: ['fastAvgPeriod', 'slowAvgPeriod'],
     pointArrayMap: ['y', 'signal'],
     parallelArrays: ['x', 'y', 'signal'],
-    pointValKey: 'y',
-
-    drawGraph: MultipleLinesComposition.drawGraph,
-    getTranslatedLinesNames: MultipleLinesComposition.getTranslatedLinesNames,
-    translate: MultipleLinesComposition.translate,
-    toYData: MultipleLinesComposition.toYData
+    pointValKey: 'y'
 });
+MultipleLinesComposition.compose(KlingerIndicator);
 
 /* *
  *
@@ -413,7 +410,6 @@ declare module '../../../Core/Series/SeriesType' {
         klinger: typeof KlingerIndicator;
     }
 }
-
 SeriesRegistry.registerSeriesType('klinger', KlingerIndicator);
 
 /* *

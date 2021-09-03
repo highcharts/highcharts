@@ -48,7 +48,14 @@ const getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
  *
  * @augments Highcharts.Series
  */
-class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndicator {
+class PCIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Price channel (PC). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.
@@ -175,35 +182,27 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
 }
 
 /* *
-*
-*   Prototype Properties
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
 
-interface PCIndicator {
-    getTranslatedLinesNames: typeof MultipleLinesComposition.getTranslatedLinesNames;
-    drawGraph: typeof MultipleLinesComposition.drawGraph;
-    toYData: typeof MultipleLinesComposition.toYData;
-    translate: typeof MultipleLinesComposition.translate;
-    linesApiNames: typeof MultipleLinesComposition.linesApiNames;
+interface PCIndicator extends MultipleLinesComposition.Composition {
     nameBase: string;
     nameComponents: Array<string>;
     pointArrayMap: Array<string>;
     pointClass: typeof PCPoint;
     pointValKey: string;
+    toYData: MultipleLinesComposition.Composition['toYData'];
 }
-
 extend(PCIndicator.prototype, {
-    getTranslatedLinesNames: MultipleLinesComposition.getTranslatedLinesNames,
-    drawGraph: MultipleLinesComposition.drawGraph,
-    toYData: MultipleLinesComposition.toYData,
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
     nameBase: 'Price Channel',
     nameComponents: ['period'],
     linesApiNames: ['topLine', 'bottomLine'],
-    translate: MultipleLinesComposition.translate
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle'
 });
+MultipleLinesComposition.compose(PCIndicator);
 
 /* *
  *

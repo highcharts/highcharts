@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     BBOptions,
     BBParamsOptions
@@ -29,6 +35,12 @@ const {
     isArray,
     merge
 } = U;
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 
@@ -58,7 +70,11 @@ function getStandardDeviation(
     return std;
 }
 
-/* eslint-enable valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Bollinger Bands series type.
@@ -69,7 +85,14 @@ function getStandardDeviation(
  *
  * @augments Highcharts.Series
  */
-class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndicator {
+class BBIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Bollinger bands (BB). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
@@ -140,16 +163,22 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
     } as BBOptions)
 
     /* *
-    *
-    *  Prototype Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<BBPoint> = void 0 as any;
 
     public options: BBOptions = void 0 as any;
 
     public points: Array<BBPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public init(this: BBIndicator): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
@@ -240,27 +269,27 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
     }
 }
 
-interface BBIndicator {
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface BBIndicator extends MultipleLinesComposition.Composition {
     pointArrayMap: Array<string>;
     pointValKey: string;
     nameComponents: Array<string>;
     linesApiNames: Array<string>;
-    drawGraph: typeof MultipleLinesComposition.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesComposition.getTranslatedLinesNames;
-    translate: typeof MultipleLinesComposition.translate;
-    toYData: typeof MultipleLinesComposition.toYData;
     pointClass: typeof BBPoint;
+    toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(BBIndicator.prototype, {
     pointArrayMap: ['top', 'middle', 'bottom'],
     pointValKey: 'middle',
     nameComponents: ['period', 'standardDeviation'],
-    linesApiNames: ['topLine', 'bottomLine'],
-    drawGraph: MultipleLinesComposition.drawGraph,
-    getTranslatedLinesNames: MultipleLinesComposition.getTranslatedLinesNames,
-    translate: MultipleLinesComposition.translate,
-    toYData: MultipleLinesComposition.toYData
+    linesApiNames: ['topLine', 'bottomLine']
 });
+MultipleLinesComposition.compose(BBIndicator);
 
 /* *
  *

@@ -57,6 +57,13 @@ const {
  * @augments Highcharts.Series
  */
 class DMIIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Directional Movement Index (DMI).
      * This series requires the `linkedTo` option to be set and should
@@ -137,6 +144,14 @@ class DMIIndicator extends SMAIndicator {
             approximation: 'averages'
         }
     } as DMIOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public options: DMIOptions = void 0 as any;
 
     /* *
      *
@@ -330,31 +345,23 @@ class DMIIndicator extends SMAIndicator {
 
 }
 
-interface DMIIndicator {
+interface DMIIndicator extends MultipleLinesComposition.Composition {
     nameBase: string;
     pointArrayMap: Array<string>;
     parallelArrays: Array<string>;
     pointValKey: string;
     linesApiNames: Array<string>;
     pointClass: typeof DMIPoint;
-
-    drawGraph: typeof MultipleLinesComposition.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesComposition.getTranslatedLinesNames;
-    translate: typeof MultipleLinesComposition.translate;
-    toYData: typeof MultipleLinesComposition.toYData;
+    toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(DMIIndicator.prototype, {
     nameBase: 'DMI',
+    linesApiNames: ['plusDILine', 'minusDILine'],
     pointArrayMap: ['y', 'plusDI', 'minusDI'],
     parallelArrays: ['x', 'y', 'plusDI', 'minusDI'],
-    pointValKey: 'y',
-    linesApiNames: ['plusDILine', 'minusDILine'],
-
-    drawGraph: MultipleLinesComposition.drawGraph,
-    getTranslatedLinesNames: MultipleLinesComposition.getTranslatedLinesNames,
-    translate: MultipleLinesComposition.translate,
-    toYData: MultipleLinesComposition.toYData
+    pointValKey: 'y'
 });
+MultipleLinesComposition.compose(DMIIndicator);
 
 /* *
  *
