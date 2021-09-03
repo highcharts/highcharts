@@ -1,152 +1,147 @@
-var colors = Highcharts.getOptions().colors,
-    categories = ['America', 'Asia', 'Europe', 'Other'],
-    data = [
+let data = [
+  {
+    id: "1",
+    name: "America",
+    color: "#f15c80",
+  },
+  {
+    id: "2",
+    name: "Asia",
+    color: "#7cb5ec",
+  },
+  {
+    id: "3",
+    name: "Europe",
+    color: "#90ed7d",
+  },
+  {
+    id: "4",
+    color: "#f7a35c",
+    name: "OTH",
+  },
+
+  /* America */
+  {
+    parent: "1",
+    name: "US",
+    value: 151,
+    color: "#ff8fb3",
+  },
+  {
+    parent: "1",
+    name: "CA",
+    color: "#ff7ea2",
+    value: 8,
+  },
+  {
+    parent: "1",
+    name: "BR",
+    color: "#ff6d91",
+    value: 1,
+  },
+  /* Asia */
+  {
+    parent: "2",
+    name: "RU",
+    color: "#afe8ff",
+    value: 49,
+  },
+  {
+    parent: "2",
+    name: "JP",
+    color: "#9ed7ff",
+    value: 9,
+  },
+  {
+    parent: "2",
+    name: "OTH",
+    color: "#8dc6fd",
+    value: 3,
+  },
+  /* Europe */
+  {
+    parent: "3",
+    name: "IT",
+    color: "#c3ffb0",
+    value: 5,
+  },
+  {
+    parent: "3",
+    name: "FR",
+    color: "#b6ffa3",
+    value: 4,
+  },
+  {
+    parent: "3",
+    name: "UK",
+    color: "#a9ff96",
+    value: 3,
+  },
+  {
+    parent: "3",
+    name: "OTH",
+    color: "#9cf989",
+    value: 6,
+  },
+  /* Other */
+  {
+    parent: "4",
+    name: "OTH",
+    color: "#ffd68f",
+    value: 2,
+  },
+];
+
+Highcharts.chart("container", {
+  title: {
+    text: "Visitors to the International Space Station by Country",
+  },
+
+  subtitle: {
+    text: "Source: <a href='https://www.nasa.gov/feature/visitors-to-the-station-by-country/'>NASA</a>",
+  },
+  accessibility: {
+    typeDescription:
+      "Sunburst chart with 2 levels. The inner level represents continents, and the outer level represents the countries within the continents.",
+    point: {
+      valueSuffix: " visitors",
+    },
+  },
+  series: [
+    {
+      type: "sunburst",
+      data: data,
+      allowDrillToNode: true,
+      cursor: "pointer",
+      dataLabels: {
+        format: "{point.name}",
+        color: "#000000",
+        style: {
+          textOutline: false,
+        },
+      },
+      levels: [
         {
-            y: 160,
-            color: colors[5],
-            drilldown: {
-                name: categories[0],
-                categories: ['US', 'CA', 'BR'],
-                data: [151, 8, 1]
-            }
+          level: 1,
+          levelIsConstant: false,
+          dataLabels: {
+            filter: {
+              property: "outerArcLength",
+              operator: ">",
+              value: 64,
+            },
+          },
         },
         {
-            y: 61,
-            color: colors[0],
-            drilldown: {
-                name: categories[1],
-                categories: ['RU', 'JP', 'OTH'],
-                data: [49, 9, 3]
-            }
+          level: 2,
+          colorByPoint: true,
         },
-        {
-            y: 18,
-            color: colors[2],
-            drilldown: {
-                name: categories[2],
-                categories: [
-                    'IT',
-                    'FR',
-                    'GR',
-                    'OTH'
-                ],
-                data: [5, 4, 3, 6]
-            }
-        },
-        {
-            y: 2,
-            color: colors[3],
-            drilldown: {
-                name: categories[3],
-                categories: ['Other'],
-                data: [2]
-            }
-        }
-    ],
-    categoryData = [],
-    foodData = [],
-    i,
-    j,
-    dataLen = data.length,
-    drillDataLen,
-    brightness;
+      ],
+    },
+  ],
 
-// Build the data arrays
-for (i = 0; i < dataLen; i += 1) {
-    // add browser data
-    categoryData.push({
-        name: categories[i],
-        y: data[i].y,
-        color: data[i].color
-    });
-
-    // add version data
-    drillDataLen = data[i].drilldown.data.length;
-    for (j = 0; j < drillDataLen; j += 1) {
-        brightness = 0.2 - j / drillDataLen / 5;
-        foodData.push({
-            name: data[i].drilldown.categories[j],
-            y: data[i].drilldown.data[j],
-            color: Highcharts.Color(data[i].color).brighten(brightness).get()
-        });
-    }
-}
-
-// Create the chart
-Highcharts.chart('container', {
-    chart: {
-        type: 'pie'
-    },
-    title: {
-        text: 'Visitors to the International Space Station by Country'
-    },
-    accessibility: {
-        typeDescription: 'Pie chart with 2 pies. The inner pie represents continents, and the outer pie represents the countries within the continents.',
-        point: {
-            valueSuffix: ' visitors'
-        }
-    },
-    subtitle: {
-        text:
-      'Source: <a href="https://www.nasa.gov/feature/visitors-to-the-station-by-country/">NASA</a>'
-    },
-    plotOptions: {
-        pie: {
-            shadow: false,
-            center: ['50%', '50%']
-        }
-    },
-
-    tooltip: {
-        headerFormat: '',
-        pointFormat: 'Visitors from <b>{point.name}</b> represent <b>{point.percentage:.0f}%</b>'
-    },
-    series: [
-        {
-            name: 'Continents',
-            data: categoryData,
-            size: '60%',
-            dataLabels: {
-                formatter: function () {
-                    return this.y > 5 ? this.point.name : null;
-                },
-                color: '#ffffff',
-                distance: -30
-            }
-        },
-        {
-            name: 'Countries',
-            data: foodData,
-            size: '80%',
-            innerSize: '60%',
-            dataLabels: {
-                formatter: function () {
-                    // display only if larger than 1
-                    return this.y > 1 ?
-                        '<b>' + this.point.name + ':</b> ' + this.y :
-                        null;
-                }
-            }
-        }
-    ],
-    responsive: {
-        rules: [
-            {
-                condition: {
-                    maxWidth: 400
-                },
-                chartOptions: {
-                    series: [
-                        {},
-                        {
-                            id: 'versions',
-                            dataLabels: {
-                                enabled: false
-                            }
-                        }
-                    ]
-                }
-            }
-        ]
-    }
+  tooltip: {
+    headerFormat: "",
+    pointFormat: "<b>{point.name}</b>: <b>{point.value}</b> visitors",
+  },
 });
