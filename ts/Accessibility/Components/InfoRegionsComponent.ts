@@ -19,6 +19,7 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
+import type ChartSonify from '../../Extensions/Sonification/ChartSonify';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -33,6 +34,7 @@ const {
 } = H;
 import U from '../../Core/Utilities.js';
 const {
+    attr,
     extend,
     pick
 } = U;
@@ -53,10 +55,8 @@ const {
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
     addClass,
-    escapeStringForHTML,
     getElement,
     getHeadingTagNameForElement,
-    setElAttrs,
     stripHTMLTagsFromString,
     visuallyHideElement
 } = HTMLUtilities;
@@ -444,7 +444,11 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         sectionDiv.appendChild(hiddenDiv);
         region.insertIntoDOM(sectionDiv, chart);
 
-        visuallyHideElement(hiddenDiv);
+        if (chart.styledMode) {
+            addClass(hiddenDiv, 'highcharts-visually-hidden');
+        } else {
+            visuallyHideElement(hiddenDiv);
+        }
         unhideChartElementFromAT(chart, hiddenDiv);
         if (region.afterInserted) {
             region.afterInserted();
@@ -466,11 +470,11 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 'accessibility.screenReaderSection.' + regionKey + 'RegionLabel'
             ),
             chart = this.chart,
-            labelText = chart.langFormat(labelLangKey, { chart: chart }),
+            labelText = chart.langFormat(labelLangKey, { chart: chart, chartTitle: getChartTitle(chart) }),
             sectionId = 'highcharts-screen-reader-region-' + regionKey + '-' +
                 chart.index;
 
-        setElAttrs(sectionDiv, {
+        attr(sectionDiv, {
             id: sectionId,
             'aria-label': labelText
         });
@@ -730,7 +734,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         sonifyButtonId: string
     ): void {
         const el = this.sonifyButton = getElement(sonifyButtonId);
-        const chart = this.chart as Highcharts.SonifyableChart;
+        const chart = this.chart as ChartSonify.SonifyableChart;
         const defaultHandler = (e: Event): void => {
             if (el) {
                 el.setAttribute('aria-hidden', 'true');
@@ -758,9 +762,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         };
 
         if (el && chart) {
-            setElAttrs(el, {
-                tabindex: -1
-            });
+            el.setAttribute('tabindex', -1);
 
             el.onclick = function (e): void {
                 const onPlayAsSoundClick = (
@@ -790,7 +792,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             tableId = tableButtonId.replace('hc-linkto-', '');
 
         if (el) {
-            setElAttrs(el, {
+            attr(el, {
                 tabindex: -1,
                 'aria-expanded': !!getElement(tableId)
             });

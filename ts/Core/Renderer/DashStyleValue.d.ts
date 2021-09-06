@@ -19,4 +19,10 @@ export type DashStyleValue = (
     'ShortDash'|'ShortDashDot'|'ShortDashDotDot'|'ShortDot'|'Solid'
 );
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default DashStyleValue;

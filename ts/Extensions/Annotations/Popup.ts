@@ -141,8 +141,9 @@ declare global {
                 optionName: string,
                 chart: AnnotationChart,
                 parentDiv: HTMLDOMElement,
-                selectedOption: string,
-                series?: SMAIndicator
+                currentSeries: SMAIndicator,
+                selectedOption?: string
+
             ): void;
         }
         interface PopupTabsObject {
@@ -985,8 +986,8 @@ H.Popup.prototype = {
             optionName: string,
             chart: Highcharts.AnnotationChart,
             parentDiv: HTMLDOMElement,
-            selectedOption: string,
-            currentSeries: SMAIndicator
+            currentSeries: SMAIndicator,
+            selectedOption?: string
         ): void {
             let selectName = PREFIX + optionName + '-type-' + type,
                 lang = this.lang,
@@ -1032,6 +1033,14 @@ H.Popup.prototype = {
                 ) {
                     const seriesName = seriesOptions.name ||
                         (seriesOptions as any).params ? series.name : seriesOptions.id || '';
+
+                    if (
+                        !defined(selectedOption) &&
+                        optionName === 'volume' &&
+                        series.type === 'column'
+                    ) {
+                        selectedOption = seriesOptions.id;
+                    }
 
                     createElement(
                         OPTION,
@@ -1108,8 +1117,8 @@ H.Popup.prototype = {
                 'series',
                 chart,
                 rhsColWrapper,
-                series.linkedParent && fields.volumeSeriesID,
-                series
+                series,
+                series.linkedParent && series.linkedParent.options.id
             );
 
             if (fields.volumeSeriesID) {
@@ -1119,7 +1128,8 @@ H.Popup.prototype = {
                     'volume',
                     chart,
                     rhsColWrapper,
-                    series.linkedParent && series.linkedParent.options.id as any
+                    series,
+                    series.linkedParent && fields.volumeSeriesID
                 );
             }
 
