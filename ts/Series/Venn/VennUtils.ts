@@ -15,6 +15,8 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports

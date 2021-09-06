@@ -1235,7 +1235,12 @@ class Axis {
             !log
         ) {
 
-            if (defined(options.min) || defined(options.max)) {
+            if (
+                defined(options.min) ||
+                defined(options.max) ||
+                defined(options.floor) ||
+                defined(options.ceiling)
+            ) {
                 axis.minRange = null; // don't do this again
 
             } else {
@@ -1611,7 +1616,10 @@ class Axis {
             minPadding = options.minPadding,
             length,
             linkedParentExtremes,
-            tickIntervalOption = options.tickInterval,
+            // Only non-negative tickInterval is valid, #12961
+            tickIntervalOption =
+                isNumber(options.tickInterval) && options.tickInterval >= 0 ?
+                    options.tickInterval : void 0,
             threshold = isNumber(axis.threshold) ? axis.threshold : null,
             thresholdMin,
             thresholdMax,

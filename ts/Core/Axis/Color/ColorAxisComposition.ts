@@ -19,19 +19,16 @@
 import type Axis from '../Axis';
 import type Chart from '../../Chart/Chart';
 import type ColorAxis from './ColorAxis';
+import type ColorType from '../../Color/ColorType';
 import type Fx from '../../Animation/Fx';
 import type Legend from '../../Legend/Legend';
 import type Point from '../../Series/Point';
 import type Series from '../../Series/Series';
+import type SeriesOptions from '../../Series/SeriesOptions';
 import type TreemapSeries from '../../../Series/Treemap/TreemapSeries';
 
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
-import ColorSeriesMixins from '../../../Mixins/ColorSeries.js';
-const {
-    colorPointMixin,
-    colorSeriesMixin
-} = ColorSeriesMixins;
 import U from '../../Utilities.js';
 const {
     addEvent,
@@ -43,11 +40,56 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Series/PointLike' {
+    interface PointLike {
+        /** @requires ColorSeriesMixin */
+        setVisible(vis?: boolean): void;
+    }
+}
+
+declare module '../../Series/SeriesLike' {
+    interface SeriesLike {
+        /** @requires ColorSeriesMixin */
+        translateColors(): void;
+    }
+}
+
+/* *
+ *
  *  Composition
  *
  * */
 
 namespace ColorAxisComposition {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface PointComposition extends Point {
+        series: SeriesComposition;
+        value?: (number|null);
+        setVisible(vis?: boolean): void;
+    }
+
+    export interface SeriesComposition extends Series {
+        colorAxis: ColorAxis;
+        data: Array<PointComposition>;
+        points: Array<PointComposition>;
+        options: SeriesCompositionOptions;
+        optionalAxis?: string;
+        translateColors(): void;
+    }
+
+    export interface SeriesCompositionOptions extends SeriesOptions {
+        nullColor?: ColorType;
+    }
 
     /* *
      *
@@ -118,11 +160,16 @@ namespace ColorAxisComposition {
 
             extend(
                 SeriesClass.prototype,
-                colorSeriesMixin
+                {
+                    optionalAxis: 'colorAxis',
+                    translateColors: seriesTranslateColors
+                }
             );
             extend(
                 SeriesClass.prototype.pointClass.prototype,
-                colorPointMixin
+                {
+                    setVisible: pointSetVisible
+                }
             );
 
             addEvent(SeriesClass, 'afterTranslate', onSeriesAfterTranslate);
@@ -276,6 +323,62 @@ namespace ColorAxisComposition {
         } else if (axisTypes.indexOf('colorAxis') === -1) {
             axisTypes.push('colorAxis');
         }
+    }
+
+    /**
+     * Set the visibility of a single point
+     * @private
+     * @function Highcharts.colorPointMixin.setVisible
+     * @param {boolean} visible
+     * @return {void}
+     */
+    export function pointSetVisible(this: PointComposition, vis?: boolean): void {
+        const point = this,
+            method = vis ? 'show' : 'hide';
+
+        point.visible = point.options.visible = Boolean(vis);
+
+        // Show and hide associated elements
+        ['graphic', 'dataLabel'].forEach(function (key: string): void {
+            if ((point as any)[key]) {
+                (point as any)[key][method]();
+            }
+        });
+        this.series.buildKDTree(); // rebuild kdtree #13195
+    }
+
+    /**
+     * In choropleth maps, the color is a result of the value, so this needs
+     * translation too
+     * @private
+     * @function Highcharts.colorSeriesMixin.translateColors
+     * @return {void}
+     */
+    function seriesTranslateColors(this: SeriesComposition): void {
+        const series = this,
+            points = this.data.length ? this.data : this.points,
+            nullColor = this.options.nullColor,
+            colorAxis = this.colorAxis,
+            colorKey = this.colorKey;
+
+        points.forEach((point): void => {
+            const value = point.getNestedProperty(colorKey) as number,
+                color = point.options.color || (
+                    point.isNull || point.value === null ?
+                        nullColor :
+                        (colorAxis && typeof value !== 'undefined') ?
+                            colorAxis.toColor(value, point) :
+                            point.color || series.color
+                );
+
+            if (color && point.color !== color) {
+                point.color = color;
+
+                if (series.options.legendType === 'point' && point.legendItem) {
+                    series.chart.legend.colorizeItem(point, point.visible);
+                }
+            }
+        });
     }
 
     /**

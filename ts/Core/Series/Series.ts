@@ -1383,11 +1383,18 @@ class Series {
                 // Assume all points are arrays when first point is
                 } else if (isArray(firstPoint)) {
                     if (valueCount) { // [x, low, high] or [x, o, h, l, c]
-                        for (i = 0; i < dataLength; i++) {
-                            pt = data[i];
-                            (xData as any)[i] = (pt as any)[0];
-                            (yData as any)[i] =
-                                (pt as any).slice(1, valueCount + 1);
+                        if (firstPoint.length === valueCount) {
+                            for (i = 0; i < dataLength; i++) {
+                                (xData as any)[i] = this.autoIncrement();
+                                (yData as any)[i] = data[i];
+                            }
+                        } else {
+                            for (i = 0; i < dataLength; i++) {
+                                pt = data[i];
+                                (xData as any)[i] = (pt as any)[0];
+                                (yData as any)[i] =
+                                    (pt as any).slice(1, valueCount + 1);
+                            }
                         }
                     } else { // [x, y]
                         if (keys) {
@@ -1398,10 +1405,21 @@ class Series {
                             indexOfY = indexOfY >= 0 ? indexOfY : 1;
                         }
 
-                        for (i = 0; i < dataLength; i++) {
-                            pt = data[i];
-                            (xData as any)[i] = (pt as any)[indexOfX];
-                            (yData as any)[i] = (pt as any)[indexOfY];
+                        if (firstPoint.length === 1) {
+                            indexOfY = 0;
+                        }
+
+                        if (indexOfX === indexOfY) {
+                            for (i = 0; i < dataLength; i++) {
+                                (xData as any)[i] = this.autoIncrement();
+                                (yData as any)[i] = (data[i] as any)[indexOfY];
+                            }
+                        } else {
+                            for (i = 0; i < dataLength; i++) {
+                                pt = data[i];
+                                (xData as any)[i] = (pt as any)[indexOfX];
+                                (yData as any)[i] = (pt as any)[indexOfY];
+                            }
                         }
                     }
                 } else {
@@ -1842,6 +1860,9 @@ class Series {
                  *
                  * @name Highcharts.Point#dataGroup
                  * @type {Highcharts.DataGroupingInfoObject|undefined}
+                 *
+                 * @sample stock/members/point-datagroup
+                 *         Click to inspect raw data points
                  */
                 point.dataGroup = (series.groupMap as any)[groupCropStartIndex + i];
                 if ((point.dataGroup as any).options) {

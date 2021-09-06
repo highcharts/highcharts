@@ -1982,7 +1982,7 @@ class SVGElement implements SVGElementLike {
                 for (let i = 0; i < childNodes.length; i++) {
                     const childNode: any = childNodes[i];
                     if (
-                        childNode.nodeType === Node.TEXT_NODE ||
+                        childNode.nodeType === win.Node.TEXT_NODE ||
                         childNode.nodeName === 'tspan'
                     ) {
                         textPathElement.appendChild(childNode);
