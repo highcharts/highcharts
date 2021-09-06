@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type ColorAxisComposition from '../Core/Axis/Color/ColorAxisComposition';
 import type ScatterPoint from './Scatter/ScatterPoint';
 import type ScatterSeries from './Scatter/ScatterSeries';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
@@ -18,7 +19,6 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import U from '../Core/Utilities.js';
 const {
     defined,
-    addEvent,
     wrap
 } = U;
 
@@ -54,7 +54,7 @@ declare global {
             trackerGroups: Array<string>;
         }
         interface ColorMapSeriesMixin {
-            axisTypes: ColorSeries['axisTypes'];
+            axisTypes: ColorAxisComposition.SeriesComposition['axisTypes'];
             getSymbol: () => void;
             parallelArrays: ColorMapSeries['parallelArrays'];
             pointArrayMap: ColorMapSeries['pointArrayMap'];

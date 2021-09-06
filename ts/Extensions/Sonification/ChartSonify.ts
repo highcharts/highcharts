@@ -19,10 +19,8 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
-import type {
-    DefaultSonificationInstrumentOptions,
-    EarconConfiguration
-} from './SonificationOptions';
+import type { DefaultSonificationInstrumentOptions } from './SonificationOptions';
+import type Earcon from './Earcon';
 import type Options from '../../Core/Options';
 import type RangeSelector from '../../Extensions/RangeSelector';
 
@@ -94,8 +92,8 @@ declare class Composition { // = interface SonifyableChart extends Chart {
  */
 function buildPathOrder(
     orderOptions: (
-        string|Array<(string|Highcharts.Earcon|
-        Array<(string|Highcharts.Earcon)>)>
+        string|Array<(string|Earcon|
+        Array<(string|Earcon)>)>
     ),
     chart: ChartSonify.SonifyableChart,
     seriesOptionsCallback: Function
@@ -139,7 +137,7 @@ function buildPathOrder(
                 SonifySeriesOrderObject|Highcharts.TimelinePath
             )>>,
             orderDef: (
-                string|Highcharts.Earcon|Array<string|Highcharts.Earcon>
+                string|Earcon|Array<string|Earcon>
             )
         ): Array<Array<(
                 SonifySeriesOrderObject|Highcharts.TimelinePath
@@ -151,7 +149,7 @@ function buildPathOrder(
                 items: Array<(
                     SonifySeriesOrderObject|Highcharts.TimelinePath
                 )>,
-                item: (string|Highcharts.Earcon)
+                item: (string|Earcon)
             ): Array<(
                     SonifySeriesOrderObject|Highcharts.TimelinePath
                 )> {
@@ -818,11 +816,11 @@ namespace ChartSonify {
         dataExtremes?: Record<string, RangeSelector.RangeObject>;
         defaultInstrumentOptions?: DefaultSonificationInstrumentOptions;
         duration: number;
-        earcons?: Array<EarconConfiguration>;
+        earcons?: Array<Earcon.Configuration>;
         enabled?: boolean;
         events?: ChartSonificationEventsOptions;
         masterVolume?: number;
-        order: (string|Array<string|Highcharts.Earcon|Array<string|Highcharts.Earcon>>);
+        order: (string|Array<string|Earcon|Array<string|Earcon>>);
     }
 
     export interface ChartSonificationStateObject {
@@ -849,13 +847,13 @@ namespace ChartSonify {
         afterSeriesWait?: number;
         dataExtremes?: Record<string, RangeSelector.RangeObject>;
         duration: number;
-        earcons?: Array<EarconConfiguration>;
+        earcons?: Array<Earcon.Configuration>;
         instruments?: Array<Highcharts.PointInstrumentObject>;
         masterVolume?: number;
         onSeriesEnd?: Function;
         onSeriesStart?: Function;
         onEnd?: Function;
-        order: (string|Array<string|Highcharts.Earcon|Array<string|Highcharts.Earcon>>);
+        order: (string|Array<string|Earcon|Array<string|Earcon>>);
         pointPlayTime: (string|Function);
         seriesOptions?: (
             SeriesSonify.SonifySeriesOptions|Array<SeriesSonify.SonifySeriesOptions>

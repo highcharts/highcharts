@@ -40,7 +40,7 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import DrawPointMixin from '../../Mixins/DrawPoint.js';
+import DrawPointComposition from '../DrawPointComposition.js';
 import CU from '../../Core/Geometry/CircleUtilities.js';
 const {
     getAreaOfIntersectionBetweenCircles,
@@ -79,15 +79,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class VennPoint extends ScatterPoint implements DrawPoint {
-            public draw: typeof DrawPointMixin.drawPoint;
-            public isValid: () => boolean;
-            public options: VennPointOptions;
-            public series: VennSeries;
-            public sets: Array<string>;
-            public value: number;
-            public shouldDraw(): boolean;
-        }
         interface VennLabelPositionObject {
             point: PositionObject;
             margin: number;
@@ -524,7 +515,7 @@ class VennSeries extends ScatterSeries {
 
     public options: VennSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.VennPoint> = void 0 as any;
+    public points: Array<VennPoint> = void 0 as any;
 
     /* *
      *
@@ -589,7 +580,7 @@ class VennSeries extends ScatterSeries {
             renderer = chart.renderer;
 
         // Iterate all points and calculate and draw their graphics.
-        points.forEach(function (point: Highcharts.VennPoint): void {
+        points.forEach(function (point: VennPoint): void {
             const attribs = {
                     zIndex: isArray(point.sets) ? point.sets.length : 0
                 },
@@ -631,7 +622,7 @@ class VennSeries extends ScatterSeries {
      * Returns the calculated attributes.
      */
     public pointAttribs(
-        point: Highcharts.VennPoint,
+        point: VennPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         const series = this,
@@ -694,7 +685,7 @@ class VennSeries extends ScatterSeries {
             centerY = scaling.centerY;
 
         // Iterate all points and calculate and draw their graphics.
-        this.points.forEach(function (point: Highcharts.VennPoint): void {
+        this.points.forEach(function (point: VennPoint): void {
             let sets: Array<string> = isArray(point.sets) ? point.sets : [],
                 id = sets.join(),
                 shape = mapOfIdToShape[id],
