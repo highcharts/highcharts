@@ -10,96 +10,147 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from './Chart';
 import type NavigationOptions from '../../Extensions/Exporting/NavigationOptions';
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module './ChartLike'{
     interface ChartLike {
-        navigation?: Highcharts.ChartNavigationObject;
+        navigation?: ChartNavigationComposition.Additions;
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
+/* *
+ *
+ *  Composition
+ *
+ * */
 
-        interface ChartNavigationMixin {
-            addUpdate(update: ChartNavigationUpdateFunction, chart: Chart): void;
-            initUpdate(chart: Chart): void;
-        }
-        interface ChartNavigationObject {
-            updates: Array<ChartNavigationUpdateObject>;
-            update(options: NavigationOptions, redraw?: boolean): void;
-        }
-        interface ChartNavigationUpdateFunction {
-            (this: NavigationChart, options: NavigationOptions, redraw?: boolean): void;
-        }
-        interface ChartNavigationUpdateObject {
-            context: NavigationChart;
-            update: ChartNavigationUpdateFunction;
-        }
-        interface NavigationChart extends Chart {
-            addUpdate: ChartNavigationMixin['addUpdate'];
-            initUpdate: ChartNavigationMixin['initUpdate'];
-            navigation: ChartNavigationObject;
-        }
+namespace ChartNavigationComposition {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface Composition extends Chart {
+        navigation: Additions;
     }
-}
 
-const ChartNavigationComposition: Highcharts.ChartNavigationMixin = {
+    export interface UpdateFunction {
+        (this: Composition, options: NavigationOptions, redraw?: boolean): void;
+    }
+
+    export interface UpdateObject {
+        context: Composition;
+        update: UpdateFunction;
+    }
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    export function compose<T extends Chart>(
+        chart: T
+    ): (T&Composition) {
+        if (!chart.navigation) {
+            chart.navigation = new Additions(chart as Composition);
+        }
+
+        return chart as (T&Composition);
+    }
+
+    /* *
+     *
+     *  Class
+     *
+     * */
+
     /**
      * Initializes `chart.navigation` object which delegates `update()` methods
      * to all other common classes (used in exporting and navigationBindings).
-     *
      * @private
-     * @param {Highcharts.Chart} chart
-     *        The chart instance.
-     * @return {void}
      */
-    initUpdate: function (chart: Chart): void {
-        if (!chart.navigation) {
-            chart.navigation = {
-                updates: [],
-                update: function (options, redraw?: boolean): void {
-                    this.updates.forEach(function (
-                        updateConfig: Highcharts.ChartNavigationUpdateObject
-                    ): void {
-                        updateConfig.update.call(
-                            updateConfig.context,
-                            options,
-                            redraw
-                        );
-                    });
-                }
-            };
+    export class Additions {
+
+        /* *
+         *
+         *  Constructor
+         *
+         * */
+
+        constructor(chart: Composition) {
+            this.chart = chart;
         }
-    },
-    /**
-     * Registers an `update()` method in the `chart.navigation` object.
-     *
-     * @private
-     * @param {Highcharts.ChartNavigationUpdateFunction} update
-     *        The `update()` method that will be called in `chart.update()`.
-     * @param {Highcharts.Chart} chart
-     *        The chart instance. `update()` will use that as a context
-     *        (`this`).
-     * @return {void}
-     */
-    addUpdate: function (
-        update: Highcharts.ChartNavigationUpdateFunction,
-        chart: Highcharts.NavigationChart
-    ): void {
-        if (!chart.navigation) {
-            this.initUpdate(chart);
+
+        /* *
+         *
+         *  Properties
+         *
+         * */
+
+        private chart: Composition;
+
+        public updates: Array<UpdateFunction> = [];
+
+        /* *
+         *
+         *  Functions
+         *
+         * */
+
+        /**
+         * Registers an `update()` method in the `chart.navigation` object.
+         *
+         * @private
+         * @param {UpdateFunction} updateFn
+         * The `update()` method that will be called in `chart.update()`.
+         */
+        public addUpdate(updateFn: UpdateFunction): void {
+            this.chart.navigation.updates.push(updateFn);
         }
-        chart.navigation.updates.push({
-            update: update,
-            context: chart
-        });
+
+        /**
+         * @private
+         */
+        public update(
+            options: NavigationOptions,
+            redraw?: boolean
+        ): void {
+            this.updates.forEach((updateFn): void => {
+                updateFn.call(
+                    this.chart,
+                    options,
+                    redraw
+                );
+            });
+        }
     }
-};
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ChartNavigationComposition;
