@@ -10,10 +10,10 @@
 
 'use strict';
 
-import type Chart from '../Core/Chart/Chart';
-import type NavigationOptions from '../Extensions/Exporting/NavigationOptions';
+import type Chart from './Chart';
+import type NavigationOptions from '../../Extensions/Exporting/NavigationOptions';
 
-declare module '../Core/Chart/ChartLike'{
+declare module './ChartLike'{
     interface ChartLike {
         navigation?: Highcharts.ChartNavigationObject;
     }
@@ -49,7 +49,7 @@ declare global {
     }
 }
 
-const chartNavigation: Highcharts.ChartNavigationMixin = {
+const ChartNavigationComposition: Highcharts.ChartNavigationMixin = {
     /**
      * Initializes `chart.navigation` object which delegates `update()` methods
      * to all other common classes (used in exporting and navigationBindings).
@@ -102,4 +102,4 @@ const chartNavigation: Highcharts.ChartNavigationMixin = {
     }
 };
 
-export default chartNavigation;
+export default ChartNavigationComposition;
