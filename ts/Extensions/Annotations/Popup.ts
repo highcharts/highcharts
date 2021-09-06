@@ -209,7 +209,7 @@ H.Popup.prototype = {
             if (activeAnnotation) {
                 activeAnnotation.cancelClick = true;
 
-                const unbind = addEvent(H.doc, 'mouseup', (): void => {
+                const unbind = addEvent(H.doc, 'click', (): void => {
                     setTimeout((): void => {
                         activeAnnotation.cancelClick = false;
                     }, 0);

@@ -35,6 +35,14 @@ describe('Stock Tools', () => {
         cy.get('.highcharts-popup').should('be.visible');
     });
 
+    it('#15727: Should keep popup open after dragging from input to outside popup', () => {
+        cy.get('.highcharts-annotation-edit-button').click();
+        cy.get('.highcharts-popup input')
+            .first()
+            .dragTo('.highcharts-container', 100, 200);
+        cy.get('.highcharts-popup').should('be.visible');
+    });
+
     it('#15725: Should use the same axis for all points in multi-step annotation', () => {
         cy.get('.highcharts-elliott3').first().click();
         cy.get('.highcharts-container')
