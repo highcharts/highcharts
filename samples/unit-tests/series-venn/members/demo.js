@@ -545,10 +545,9 @@ QUnit.test('sortByTotalOverlap', function (assert) {
 
 QUnit.module('nelder-mead', () => {
     const vennUtils = Highcharts.seriesTypes.venn.prototype.utils;
-    const NelderMeadModule = vennUtils.nelderMead;
 
     QUnit.test('getCentroid', assert => {
-        const { getCentroid } = NelderMeadModule;
+        const { getCentroid } = vennUtils;
         assert.deepEqual(
             getCentroid([
                 [184.16021264966827, 99.75],
@@ -561,8 +560,7 @@ QUnit.module('nelder-mead', () => {
     });
 
     QUnit.test('nelderMead', assert => {
-        const { nelderMead } = NelderMeadModule;
-        const { getMarginFromCircles } = vennUtils;
+        const { getMarginFromCircles, nelderMead } = vennUtils;
         const internal = [{ r: 160, x: 184.16021264966827, y: 175 }];
         const external = [{ r: 160, x: 415.8397873503318, y: 175 }];
         const fn = ([x, y]) =>
