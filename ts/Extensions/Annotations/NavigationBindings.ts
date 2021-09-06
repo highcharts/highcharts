@@ -18,7 +18,7 @@ import type PointerEvent from '../../Core/PointerEvent';
 
 import Annotation from './Annotations.js';
 import Chart from '../../Core/Chart/Chart.js';
-import chartNavigationMixin from '../../Core/Chart/ChartNavigationComposition.js';
+import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
@@ -490,12 +490,11 @@ class NavigationBindings {
      */
     public initUpdate(): void {
         const navigation = this;
-        chartNavigationMixin.addUpdate(
-            function (options: NavigationOptions): void {
+        ChartNavigationComposition
+            .compose(this.chart).navigation
+            .addUpdate((options: NavigationOptions): void => {
                 navigation.update(options);
-            },
-            this.chart
-        );
+            });
     }
 
     /**
