@@ -141,7 +141,9 @@ declare global {
                 optionName: string,
                 chart: AnnotationChart,
                 parentDiv: HTMLDOMElement,
+                currentSeries: SMAIndicator,
                 selectedOption?: string
+
             ): void;
         }
         interface PopupTabsObject {
@@ -984,6 +986,7 @@ H.Popup.prototype = {
             optionName: string,
             chart: Highcharts.AnnotationChart,
             parentDiv: HTMLDOMElement,
+            currentSeries: SMAIndicator,
             selectedOption?: string
         ): void {
             let selectName = PREFIX + optionName + '-type-' + type,
@@ -1019,19 +1022,22 @@ H.Popup.prototype = {
             selectBox.setAttribute('id', PREFIX + 'select-' + optionName);
 
             // list all series which have id - mandatory for creating indicator
-            chart.series.forEach(function (serie): void {
-
-                seriesOptions = serie.options;
+            chart.series.forEach(function (series): void {
+                seriesOptions = series.options;
 
                 if (
-                    !(seriesOptions as any).params &&
-                    seriesOptions.id &&
-                    seriesOptions.id !== PREFIX + 'navigator-series'
+                    seriesOptions.id !== PREFIX + 'navigator-series' &&
+                    seriesOptions.id !== (
+                        currentSeries && currentSeries.options && currentSeries.options.id
+                    )
                 ) {
+                    const seriesName = seriesOptions.name ||
+                        (seriesOptions as any).params ? series.name : seriesOptions.id || '';
+
                     if (
                         !defined(selectedOption) &&
                         optionName === 'volume' &&
-                        serie.type === 'column'
+                        series.type === 'column'
                     ) {
                         selectedOption = seriesOptions.id;
                     }
@@ -1043,9 +1049,7 @@ H.Popup.prototype = {
                         },
                         null as any,
                         selectBox
-                    ).appendChild(doc.createTextNode(
-                        seriesOptions.name || seriesOptions.id
-                    ));
+                    ).appendChild(doc.createTextNode(seriesName));
                 }
             });
 
@@ -1113,6 +1117,7 @@ H.Popup.prototype = {
                 'series',
                 chart,
                 rhsColWrapper,
+                series,
                 series.linkedParent && series.linkedParent.options.id
             );
 
@@ -1123,6 +1128,7 @@ H.Popup.prototype = {
                     'volume',
                     chart,
                     rhsColWrapper,
+                    series,
                     series.linkedParent && fields.volumeSeriesID
                 );
             }
