@@ -952,10 +952,14 @@ H.Popup.prototype = {
             filter?: string
         ): [Highcharts.FilteredSeries] {
             const popup = this,
-                indicators = popup.indicators;
+                indicators = popup.indicators,
+                lang = popup.chart && popup.chart.options.lang,
+                indicatorAliases: any = lang &&
+                    lang.navigation &&
+                    lang.navigation.popup &&
+                    lang.navigation.popup.indicatorAliases;
             let filteredSeriesArray: [Highcharts.FilteredSeries] = [] as any,
                 filteredSeries: Highcharts.FilteredSeries;
-
 
             objectEach(series, function (
                 series: Series,
@@ -971,8 +975,12 @@ H.Popup.prototype = {
                         indicators.getNameType(series, value);
 
                     if (filter) {
-                        const regex = new RegExp(filter, 'i');
-                        if (indicatorFullName.match(regex)) {
+                        const regex = new RegExp(filter, 'i'),
+                            alias = indicatorAliases &&
+                                indicatorAliases[indicatorType] &&
+                                indicatorAliases[indicatorType].join(' ') || '';
+
+                        if (indicatorFullName.match(regex) || alias.match(regex)) {
                             filteredSeries = {
                                 indicatorFullName,
                                 indicatorType,

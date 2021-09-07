@@ -340,7 +340,49 @@ setOptions({
                 factor: 'Factor',
                 fastAvgPeriod: 'Fast average period',
                 slowAvgPeriod: 'Slow average period',
-                average: 'Average'
+                average: 'Average',
+
+                /**
+                 * Configure the aliases for indicator names.
+                 *
+                 * @product highstock
+                 * @since   next
+                 */
+                indicatorAliases: {
+                    // Overlays
+                    abands: ['Acceleration Bands'],
+                    bb: ['Bollinger Bands'],
+                    dema: ['Double Exponential Moving Average'],
+                    ema: ['Exponential Moving Average'],
+                    ikh: ['Ichimoku Kinko Hyo'],
+                    pc: ['Price Channel'],
+                    psar: ['Parabolic SAR'],
+                    sma: ['Simple Moving Average'],
+                    supertrend: ['Super Trend'],
+                    tema: ['Triple Exponential Moving Average'],
+                    vbp: ['Volume by Price'],
+                    vwap: ['Weighted Moving Average'],
+                    wma: ['Volume Weighted Average Price'],
+                    zigzag: ['Zig Zag'],
+
+                    // Oscilators
+                    apo: ['Absolute price indicator'],
+                    ad: ['Accumulation/Distribution'],
+                    atr: ['Average True Range'],
+                    ao: ['Awesome oscillator'],
+                    cci: ['Commodity Channel Index'],
+                    cmf: ['Chaikin Money Flow'],
+                    cmo: ['Chande Momentum Oscillator'],
+                    dmi: ['Directional Movement Index'],
+                    dpo: ['Detrended price'],
+                    macd: ['Moving Average Convergence Divergence'],
+                    mfi: ['Money Flow Index'],
+                    natr: ['Normalized Average True Range'],
+                    obv: ['On-Balance Volume'],
+                    ppo: ['Percentage Price oscillator'],
+                    roc: ['Rate of Change'],
+                    rsi: ['Relative Strength Index']
+                }
             }
         }
     },

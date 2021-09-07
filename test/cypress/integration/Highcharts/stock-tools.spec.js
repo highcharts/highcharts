@@ -80,4 +80,15 @@ describe('Indicator popup searchbox, #16019.', () => {
         cy.get('.highcharts-indicator-list')
             .should('have.length', 50)
     });
+
+    it('Indicators should be accessible through aliases,  #16019.', () => {
+        cy.get('.clear-filter-button')
+        .click();
+
+        cy.get('input[name="highcharts-input-search-indicators"]')
+            .type('boll');
+
+        cy.get('.highcharts-indicator-list li:first')
+            .should('contain.text', 'BB');
+    });
 });

@@ -97,7 +97,10 @@ declare global {
             langKey?: string;
         }
         interface LangNavigationOptions {
-            popup?: Record<string, string>;
+            popup?: Record<string, string>|IndicatorAliases;
+        }
+        interface IndicatorAliases {
+            indicatorAliases?: Record<string, Array<string>>;
         }
         interface NavigationBindingsButtonEventsObject {
             button: HTMLDOMElement;
