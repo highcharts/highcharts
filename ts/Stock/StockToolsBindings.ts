@@ -112,6 +112,7 @@ declare global {
             updateHeight(this: NavigationBindings, e: PointerEvent, annotation: Annotation): void;
             updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject['updateHeight'];
         }
+
         interface StockToolsFieldsObject {
             [key: string]: any;
         }
@@ -250,6 +251,7 @@ bindingsUtils.addFlagFromForm = function (
 };
 
 bindingsUtils.indicatorsWithAxes = [
+
     'ad',
     'atr',
     'cci',
@@ -543,6 +545,7 @@ bindingsUtils.updateNthPoint = function (
         const options = annotation.options.typeOptions,
             xAxis = isNumber(options.xAxis) && this.chart.xAxis[options.xAxis],
             yAxis = isNumber(options.yAxis) && this.chart.yAxis[options.yAxis];
+
 
         if (xAxis && yAxis) {
             (options.points as any).forEach(function (
@@ -2335,6 +2338,27 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                 'deselectButton',
                 { button: button }
             );
+        }
+    },
+    /**
+     * Change main series to `'hlc'` type.
+     *
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
+     * @product highstock
+     * @default {"className": "highcharts-series-type-hlc", "init": function () {}}
+     */
+
+    seriesTypeHLC: {
+        className: 'highcharts-series-type-hlc',
+        init: function (
+            this: NavigationBindings,
+            button: HTMLDOMElement
+        ): void {
+            this.chart.series[0].update({
+                type: 'hlc',
+                useOhlcData: true
+            });
+            fireEvent(this, 'deselectButton', { button });
         }
     },
     /**

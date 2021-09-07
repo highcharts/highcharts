@@ -30,6 +30,8 @@ export interface SankeyPointOptions extends ColumnPointOptions, Highcharts.Nodes
     height?: number;
     level?: number;
     offset?: (number|string);
+    offsetHorizontal?: (number|string);
+    offsetVertical?: (number|string);
     to?: string;
     width?: number;
 }

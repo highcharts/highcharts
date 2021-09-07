@@ -34,6 +34,7 @@ const {
 } = H;
 import U from '../../Core/Utilities.js';
 const {
+    attr,
     extend,
     pick
 } = U;
@@ -56,7 +57,6 @@ const {
     addClass,
     getElement,
     getHeadingTagNameForElement,
-    setElAttrs,
     stripHTMLTagsFromString,
     visuallyHideElement
 } = HTMLUtilities;
@@ -444,7 +444,11 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         sectionDiv.appendChild(hiddenDiv);
         region.insertIntoDOM(sectionDiv, chart);
 
-        visuallyHideElement(hiddenDiv);
+        if (chart.styledMode) {
+            addClass(hiddenDiv, 'highcharts-visually-hidden');
+        } else {
+            visuallyHideElement(hiddenDiv);
+        }
         unhideChartElementFromAT(chart, hiddenDiv);
         if (region.afterInserted) {
             region.afterInserted();
@@ -470,7 +474,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             sectionId = 'highcharts-screen-reader-region-' + regionKey + '-' +
                 chart.index;
 
-        setElAttrs(sectionDiv, {
+        attr(sectionDiv, {
             id: sectionId,
             'aria-label': labelText
         });
@@ -758,9 +762,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         };
 
         if (el && chart) {
-            setElAttrs(el, {
-                tabindex: -1
-            });
+            el.setAttribute('tabindex', -1);
 
             el.onclick = function (e): void {
                 const onPlayAsSoundClick = (
@@ -790,7 +792,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             tableId = tableButtonId.replace('hc-linkto-', '');
 
         if (el) {
-            setElAttrs(el, {
+            attr(el, {
                 tabindex: -1,
                 'aria-expanded': !!getElement(tableId)
             });

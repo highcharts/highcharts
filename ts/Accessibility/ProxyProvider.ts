@@ -26,8 +26,7 @@ import type { ProxyTarget, ProxyGroupTypes } from './ProxyElement';
 import HTMLUtilities from './Utils/HTMLUtilities.js';
 const {
     removeElement,
-    removeChildNodes,
-    setElAttrs
+    removeChildNodes
 } = HTMLUtilities;
 import ChartUtilities from './Utils/ChartUtilities.js';
 const {
@@ -39,7 +38,8 @@ const {
 } = H;
 import U from '../Core/Utilities.js';
 const {
-    merge
+    attr,
+    css
 } = U;
 
 
@@ -120,7 +120,8 @@ class ProxyProvider {
             groupElement = proxyContainer;
         }
 
-        groupElement.className = 'highcharts-a11y-proxy-group-' + groupKey.replace(/\W/g, '-');
+        groupElement.className = 'highcharts-a11y-proxy-group highcharts-a11y-proxy-group-' +
+            groupKey.replace(/\W/g, '-');
 
         this.groups[groupKey] = {
             proxyContainerElement: proxyContainer,
@@ -129,13 +130,12 @@ class ProxyProvider {
             proxyElements: []
         };
 
-        setElAttrs(groupElement, merge(attributes, {
-            margin: '0',
-            padding: '0'
-        }));
+        attr(groupElement, attributes || {});
 
         if (groupType === 'ul') {
-            proxyContainer.style.listStyle = 'none';
+            if (!this.chart.styledMode) {
+                proxyContainer.style.listStyle = 'none';
+            }
             proxyContainer.setAttribute('role', 'list'); // Needed for webkit
         }
 
@@ -155,7 +155,7 @@ class ProxyProvider {
         if (!group) {
             throw new Error('ProxyProvider.updateGroupAttrs: Invalid group key ' + groupKey);
         }
-        setElAttrs(group.groupElement, attributes);
+        attr(group.groupElement, attributes);
     }
 
 
@@ -288,12 +288,16 @@ class ProxyProvider {
         const el = this.domElementProvider.createElement('div');
         el.setAttribute('aria-hidden', 'false');
         el.className = 'highcharts-a11y-proxy-container' + (classNamePostfix ? '-' + classNamePostfix : '');
-        merge(true, el.style, {
-            whiteSpace: 'nowrap',
-            position: 'absolute',
+        css(el, {
             top: '0',
             left: '0'
         });
+
+        if (!this.chart.styledMode) {
+            el.style.whiteSpace = 'nowrap';
+            el.style.position = 'absolute';
+        }
+
         return el;
     }
 

@@ -20,6 +20,8 @@
 
 import type ChartSonify from './ChartSonify';
 import type SeriesSonify from './SeriesSonify';
+import type SignalHandler from './SignalHandler';
+import type SonificationUtilities from './SonificationUtilities';
 
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
@@ -32,10 +34,9 @@ import Instrument from './Instrument.js';
 import IntrumentDefinitions from './InstrumentDefinitions.js';
 import Earcon from './Earcon.js';
 import pointSonifyFunctions from './PointSonify.js';
-import utilities from './Utilities.js';
+import SU from './SonificationUtilities.js';
 import TimelineClasses from './Timeline.js';
 import sonificationOptions from './Options.js';
-
 
 /* *
  *
@@ -76,7 +77,7 @@ declare global {
             TimelinePath: typeof TimelinePath;
             fadeOutDuration: number;
             instruments: Record<string, Instrument>;
-            utilities: SonificationUtilitiesObject;
+            utilities: typeof SonificationUtilities;
         }
         interface SonifyablePoint extends Point {
             cancelSonify: PointSonifyFunctions['pointCancelSonify'];
@@ -167,7 +168,7 @@ const Sonification = {
     fadeOutDuration: 20,
 
     // Classes and functions
-    utilities: utilities,
+    utilities: SU,
     Instrument: Instrument as any,
     instruments: IntrumentDefinitions,
     Earcon: Earcon as any,

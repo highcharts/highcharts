@@ -22,8 +22,6 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
-import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import H from '../../Core/Globals.js';
 const {
@@ -33,12 +31,9 @@ const {
 import U from '../../Core/Utilities.js';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 const {
-    merge
+    css
 } = U;
 
-type Nullable<T> = {
-    [P in keyof T]: T[P] | null;
-};
 
 /* eslint-disable valid-jsdoc */
 
@@ -61,7 +56,24 @@ function addClass(el: HTMLDOMElement, className: string): void {
         // Note: Dumb check for class name exists, should be fine for practical
         // use cases, but will return false positives if the element has a class
         // that contains the className.
-        el.className += className;
+        el.className += ' ' + className;
+    }
+}
+
+
+/**
+ * @private
+ * @param {Highcharts.HTMLDOMElement} el
+ * @param {string} className
+ * @return {void}
+ */
+function removeClass(el: HTMLDOMElement, className: string): void {
+    if (el.classList) {
+        el.classList.remove(className);
+    } else {
+        // Note: Dumb logic that will break if the element has a class name that
+        // consists of className plus something else.
+        el.className = el.className.replace(new RegExp(className, 'g'), '');
     }
 }
 
@@ -334,28 +346,6 @@ function reverseChildNodes(node: DOMElementType): void {
 
 
 /**
- * Set attributes on element. Set to null to remove attribute.
- * @private
- * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} el
- * @param {Highcharts.HTMLAttributes|Highcharts.SVGAttributes} attrs
- * @return {void}
- */
-function setElAttrs(
-    el: DOMElementType,
-    attrs: Nullable<(HTMLAttributes|SVGAttributes)>
-): void {
-    Object.keys(attrs).forEach(function (attr: string): void {
-        const val = (attrs as any)[attr];
-        if (val === null) {
-            el.removeAttribute(attr);
-        } else {
-            el.setAttribute(attr, val);
-        }
-    });
-}
-
-
-/**
  * Used for aria-label attributes, painting on a canvas will fail if the
  * text contains tags.
  * @private
@@ -376,7 +366,7 @@ function stripHTMLTagsFromString(str: string): string {
  * @return {void}
  */
 function visuallyHideElement(element: HTMLDOMElement): void {
-    const hiddenStyle = {
+    css(element, {
         position: 'absolute',
         width: '1px',
         height: '1px',
@@ -386,9 +376,8 @@ function visuallyHideElement(element: HTMLDOMElement): void {
         marginTop: '-3px',
         '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)',
         filter: 'alpha(opacity=1)',
-        opacity: '0.01'
-    };
-    merge(true, element.style, hiddenStyle);
+        opacity: 0.01
+    });
 }
 
 const HTMLUtilities = {
@@ -399,10 +388,10 @@ const HTMLUtilities = {
     getElement,
     getFakeMouseEvent,
     getHeadingTagNameForElement,
-    removeElement,
     removeChildNodes,
+    removeClass,
+    removeElement,
     reverseChildNodes,
-    setElAttrs,
     stripHTMLTagsFromString,
     visuallyHideElement
 };

@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -16,7 +22,7 @@ import type {
 } from './StochasticOptions';
 import type StochasticPoint from './StochasticPoint';
 
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -31,6 +37,12 @@ const {
     merge
 } = U;
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * The Stochastic series type.
  *
@@ -40,7 +52,14 @@ const {
  *
  * @augments Highcharts.Series
  */
-class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLinesMixin {
+class StochasticIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Stochastic oscillator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
@@ -202,7 +221,13 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
     }
 }
 
-interface StochasticIndicator {
+/* *
+ *
+ *  Class Properties
+ *
+ * */
+
+interface StochasticIndicator extends MultipleLinesComposition.Composition {
     linesApiNames: Array<string>;
     nameBase: string;
     nameComponents: Array<string>;
@@ -210,11 +235,7 @@ interface StochasticIndicator {
     pointArrayMap: Array<string>;
     pointClass: typeof StochasticPoint;
     pointValKey: string;
-
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    translate: typeof MultipleLinesMixin.translate;
-    toYData: typeof MultipleLinesMixin.toYData;
+    toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(StochasticIndicator.prototype, {
     nameComponents: ['periods'],
@@ -222,20 +243,21 @@ extend(StochasticIndicator.prototype, {
     pointArrayMap: ['y', 'smoothed'],
     parallelArrays: ['x', 'y', 'smoothed'],
     pointValKey: 'y',
-    linesApiNames: ['smoothedLine'],
-
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    linesApiNames: ['smoothedLine']
 });
+MultipleLinesComposition.compose(StochasticIndicator);
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         stochastic: typeof StochasticIndicator;
     }
 }
-
 SeriesRegistry.registerSeriesType('stochastic', StochasticIndicator);
 
 /* *

@@ -27,20 +27,17 @@ import type CircleObject from '../../Core/Geometry/CircleObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type IntersectionObject from '../../Core/Geometry/IntersectionObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import type ScatterPoint from '../Scatter/ScatterPoint';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type VennPointOptions from './VennPointOptions';
 import type VennSeriesOptions from './VennSeriesOptions';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import DrawPointComposition from '../DrawPointComposition.js';
 import CU from '../../Core/Geometry/CircleUtilities.js';
 const {
     getAreaOfIntersectionBetweenCircles,
@@ -51,8 +48,6 @@ const {
 } = CU;
 import GU from '../../Core/Geometry/GeometryUtilities.js';
 const { getCenterOfPoints } = GU;
-import NelderMeadMixin from '../../Mixins/NelderMead.js';
-const { nelderMead } = NelderMeadMixin;
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -99,43 +94,6 @@ declare global {
             circle: CircleObject;
             sets: Array<string>;
             value: number;
-        }
-        interface VennUtilsObject {
-            geometry: typeof GU;
-            geometryCircles: typeof CU;
-            nelderMead: NelderMeadMixin;
-            addOverlapToSets(
-                relations: Array<VennRelationObject>
-            ): Array<VennRelationObject>;
-            getDistanceBetweenCirclesByOverlap(
-                r1: number,
-                r2: number,
-                overlap: number
-            ): number;
-            getLabelWidth(
-                pos: PositionObject,
-                internal: Array<CircleObject>,
-                external: Array<CircleObject>
-            ): number;
-            getMarginFromCircles(
-                point: PositionObject,
-                internal: Array<CircleObject>,
-                external: Array<CircleObject>
-            ): number;
-            layoutGreedyVenn(
-                relations: Array<VennRelationObject>
-            ): Record<string, CircleObject>;
-            loss(
-                mapOfIdToCircle: Record<string, CircleObject>,
-                relations: Array<VennRelationObject>
-            ): number;
-            processVennData(
-                data: Array<VennPointOptions>
-            ): Array<VennRelationObject>;
-            sortByTotalOverlap(
-                a: VennRelationObject,
-                b: VennRelationObject
-            ): number;
         }
     }
 }
@@ -288,7 +246,7 @@ class VennSeries extends ScatterSeries {
         }).point;
 
         // Use nelder mead to optimize the initial label position.
-        const optimal = nelderMead(
+        const optimal = VennUtils.nelderMead(
             function (p: Array<number>): number {
                 return -(
                     VennUtils.getMarginFromCircles({ x: p[0], y: p[1] }, internal, external)

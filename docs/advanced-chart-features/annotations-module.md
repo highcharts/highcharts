@@ -110,4 +110,4 @@ The path type allows to define points property that takes an array of points.
 Defining markers for the path
 -----------------------------
 
-It is possible to define markers at the end and at the beginning of the path. To apply the markers set `markerEnd` or `markerStart` property to the id of the marker. Check the following example about how to define custom markers [here](https://api.highcharts.com/highcharts/defs.markers).
+It is possible to define markers at the end and at the beginning of the path. To apply the markers set `markerEnd` or `markerStart` property to the id of the marker. Check the following example about how to define custom markers [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations/custom-markers).
