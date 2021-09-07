@@ -35,6 +35,14 @@ describe('Stock Tools', () => {
         cy.get('.highcharts-popup').should('be.visible');
     });
 
+    it('#15727: Should keep popup open after dragging from input to outside popup', () => {
+        cy.get('.highcharts-annotation-edit-button').click();
+        cy.get('.highcharts-popup input')
+            .first()
+            .dragTo('.highcharts-container', 100, 200);
+        cy.get('.highcharts-popup').should('be.visible');
+    });
+
     it('#15725: Should use the same axis for all points in multi-step annotation', () => {
         cy.get('.highcharts-elliott3').first().click();
         cy.get('.highcharts-container')
@@ -47,6 +55,20 @@ describe('Stock Tools', () => {
                 assert.ok(point.y > -50 && point.y < 50)
             )
         );
+    });
+
+    it('#16158: Should use correct default series in popup', () => {
+        cy.get('.highcharts-indicators').click();
+        cy.get('.highcharts-indicator-list').contains('Accumulation').click();
+        cy.get('.highcharts-tab-item-show #highcharts-select-series').should('have.value', 'aapl-ohlc');
+        cy.get('.highcharts-tab-item-show #highcharts-select-volume').should('have.value', 'aapl-volume');
+        cy.get('.highcharts-popup-rhs-col button').contains('add').click();
+
+        cy.get('.highcharts-indicators').click();
+        cy.get('.highcharts-tab-item').contains('edit').click();
+        cy.get('.highcharts-tab-item-show #highcharts-select-series').should('have.value', 'aapl-ohlc');
+        cy.get('.highcharts-tab-item-show #highcharts-select-volume').should('have.value', 'aapl-volume');
+        cy.get('.highcharts-popup-rhs-col button').contains('save').click();
     });
 });
 
@@ -96,7 +118,7 @@ describe('Adding custom indicator on a separate axis through indicator popup, #1
     });
 });
 
-describe('Popup for the pivot point indicator and the selection box, #15497.', () => {
+describe('An indicator on indicator, #15696.', () => {
     beforeEach(() => {
         cy.viewport(1000, 800);
     });
@@ -105,112 +127,52 @@ describe('Popup for the pivot point indicator and the selection box, #15497.', (
         cy.visit('/stock/demo/stock-tools-gui');
     });
 
-    it('Popup for the Pivot Point indicator should contain a selection box for the algorithm, #15497.', () => {
+    it('There should be a possibility to add indicators based on other indicator, #15696.', () => {
         cy.openIndicators();
 
-        cy.get('.highcharts-indicator-list')
-            .contains('Pivot Points')
-            .click();
+        cy.addIndicator(); // Add SMA indicator.
 
-        cy.contains('label', 'Algorithm')            
-            .should('be.visible');
-
-        cy.get('select[name="highcharts-params.algorithm-type-pivotpoints"]')
-            .should('be.visible')
-            .select('fibonacci');
-        cy.addIndicator(); // Add indicator with fibonacci algorythm.
-    });
-
-    it('Two indicators with different algorithms should have different points, #15497.', () => {
         cy.openIndicators();
 
-        cy.get('.highcharts-indicator-list')
-            .contains('Pivot Points')
-            .click();
+        cy.get('#highcharts-select-series')
+            .contains('SMA (14)')
+        
+        cy.get('#highcharts-select-series')
+            .select('SMA (14)')
 
-        cy.addIndicator(); // Add indicator with standard algorythm.
+        cy.get('input[name="highcharts-sma-period"]')
+            .eq(0)
+            .clear()
+            .type('20');
+
+        cy.addIndicator(); // Add SMA indicator with period 20.
+
+        cy.chart().then((chart) => {
+            // Select the first 3m period.
+            chart.xAxis[0].setExtremes(1565098200000, 1565098200000 + 36e5 *24 *90);
+        });
 
         cy.chart().should(chart =>
-            assert.notStrictEqual(
-                chart.series[2].points[0].R3,
-                chart.series[3].points[0].R3
+            // Select the first 3m period.
+            assert.strictEqual(
+                chart.series[2].processedXData.length - chart.series[3].processedXData.length,
+                19,
+                `The second SMA indicator which is based on the previous SMA indicator
+                should be shifted by period (19) thus data should have 19 fewer points.`
             )
         );
-    });
 
-    it('Changing the algorithm to the same as the second series should result in identical points, #15497.', () => {
         cy.openIndicators();
+
+        cy.get('#highcharts-select-series')
+            .contains('SMA (20)')
 
         cy.get('.highcharts-tab-item')
             .eq(1)
             .click(); // Open EDIT bookmark.
 
-        cy.get('select[name="highcharts-params.algorithm-type-pivotpoints"]')
-            .should('have.value', 'fibonacci')
-            .select('standard');
-
-        cy.get('.highcharts-popup-rhs-col')
-            .children('.highcharts-popup button')
-            .eq(1)
-            .click();
-
-        cy.chart().should(chart =>
-            assert.strictEqual(
-                chart.series[2].points[0].R3,
-                chart.series[3].points[0].R3
-            )
-        );
-    });
-
-    it('Series and volume in the indicator popup should have a dropdown with series to choose from, #15497. ', () => {
-        cy.openIndicators();
-
-        cy.get('.highcharts-indicator-list')
-            .contains('Accumulation/Distribution')
-            .click();
-
         cy.get('#highcharts-select-series')
-            .select('aapl-ohlc')
-            .select('aapl-volume')
-
-        cy.get('#highcharts-select-volume')
-            .select('aapl-ohlc')
-            .select('aapl-volume')
-    });
-
-    it(
-        'In the case of indicators where parameters are declared in array, inputs should nott be duplicated. #15497. ',
-        () => {
-        cy.openIndicators();
-
-        cy.get('.highcharts-indicator-list')
-            .eq(34)
-            .click(); // Stochastic
-
-        cy.get('input[name="highcharts-stochastic-0"]')
-            .should('have.value', '14');
-        cy.get('input[name="highcharts-stochastic-1"]')
-            .should('have.value', '3');
-        cy.get('input[name="highcharts-stochastic-periods"]')
-            .should('not.exist');
-        cy.addIndicator();
-
-        cy.openIndicators();
-        cy.get('.highcharts-indicator-list')
-            .contains('Stochastic')
-            .click();
-        cy.get('input[name="highcharts-stochastic-0"]')
-            .eq(0)
-            .clear()
-            .type('20');
-        cy.addIndicator()
-
-        cy.chart().should(chart =>
-            assert.notStrictEqual(
-                chart.series[3].points[0].x,
-                chart.series[4].points[0].x,
-                'With diferent periods, indicators should start from diferent place.'
-            )
-        );
+            .contains('SMA (20)')
+            .should('not.contain', 'SMA (14)')
     });
 });

@@ -28,10 +28,14 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 const {
     doc
 } = H;
+import U from '../../Core/Utilities.js';
+const {
+    attr
+} = U;
 import DOMElementProvider from './DOMElementProvider.js';
 import HTMLUtilities from './HTMLUtilities.js';
 const {
-    setElAttrs,
+    addClass,
     visuallyHideElement
 } = HTMLUtilities;
 
@@ -111,12 +115,17 @@ class Announcer {
         const chartContainer = this.chart.announcerContainer || this.createAnnouncerContainer(),
             div = this.domElementProvider.createElement('div');
 
-        setElAttrs(div, {
+        attr(div, {
             'aria-hidden': false,
             'aria-live': type
         });
 
-        visuallyHideElement(div);
+        if (this.chart.styledMode) {
+            addClass(div, 'highcharts-visually-hidden');
+        } else {
+            visuallyHideElement(div);
+        }
+
         chartContainer.appendChild(div);
         return div;
     }
@@ -125,11 +134,11 @@ class Announcer {
         const chart = this.chart,
             container = doc.createElement('div');
 
-        setElAttrs(container, {
+        attr(container, {
             'aria-hidden': false,
-            style: 'position:relative',
             'class': 'highcharts-announcer-container'
         });
+        container.style.position = 'relative';
 
         chart.renderTo.insertBefore(container, chart.renderTo.firstChild);
         chart.announcerContainer = container;

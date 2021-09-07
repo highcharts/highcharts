@@ -23,6 +23,7 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Point from '../../Core/Series/Point';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import DataLabel from '../../Core/Series/DataLabel.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -149,6 +150,8 @@ namespace ColumnDataLabel {
 
     /** @private */
     export function compose(ColumnSeriesClass: typeof ColumnSeries): void {
+
+        DataLabel.compose(Series);
 
         if (composedClasses.indexOf(ColumnSeriesClass) === -1) {
             composedClasses.push(ColumnSeriesClass);

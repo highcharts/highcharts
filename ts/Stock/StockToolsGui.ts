@@ -215,6 +215,7 @@ setOptions({
                 typeOHLC: 'OHLC',
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
+                typeHLC: 'HLC',
                 typeHollowCandlestick: 'Hollow Candlestick',
                 typeHeikinAshi: 'Heikin Ashi',
 
@@ -902,6 +903,7 @@ setOptions({
                         'typeLine',
                         'typeCandlestick',
                         'typeHollowCandlestick',
+                        'typeHLC',
                         'typeHeikinAshi'
                     ],
                     typeOHLC: {
@@ -927,6 +929,14 @@ setOptions({
                          * @type   {string}
                          */
                         symbol: 'series-candlestick.svg'
+                    },
+                    typeHLC: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-hlc.svg'
                     },
                     typeHeikinAshi: {
                         /**
@@ -1726,6 +1736,7 @@ Toolbar.prototype.classMapping = {
     zoomXY: PREFIX + 'zoom-xy',
     typeLine: PREFIX + 'series-type-line',
     typeOHLC: PREFIX + 'series-type-ohlc',
+    typeHLC: PREFIX + 'series-type-hlc',
     typeCandlestick: PREFIX + 'series-type-candlestick',
     typeHollowCandlestick: PREFIX + 'series-type-hollowcandlestick',
     typeHeikinAshi: PREFIX + 'series-type-heikinashi',

@@ -24,7 +24,8 @@ import type {
 import type DMIPoint from './DMIPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import palette from '../../../Core/Color/Palette.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -56,6 +57,13 @@ const {
  * @augments Highcharts.Series
  */
 class DMIIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Directional Movement Index (DMI).
      * This series requires the `linkedTo` option to be set and should
@@ -136,6 +144,14 @@ class DMIIndicator extends SMAIndicator {
             approximation: 'averages'
         }
     } as DMIOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public options: DMIOptions = void 0 as any;
 
     /* *
      *
@@ -329,31 +345,23 @@ class DMIIndicator extends SMAIndicator {
 
 }
 
-interface DMIIndicator {
+interface DMIIndicator extends MultipleLinesComposition.Composition {
     nameBase: string;
     pointArrayMap: Array<string>;
     parallelArrays: Array<string>;
     pointValKey: string;
     linesApiNames: Array<string>;
     pointClass: typeof DMIPoint;
-
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    translate: typeof MultipleLinesMixin.translate;
-    toYData: typeof MultipleLinesMixin.toYData;
+    toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(DMIIndicator.prototype, {
     nameBase: 'DMI',
+    linesApiNames: ['plusDILine', 'minusDILine'],
     pointArrayMap: ['y', 'plusDI', 'minusDI'],
     parallelArrays: ['x', 'y', 'plusDI', 'minusDI'],
-    pointValKey: 'y',
-    linesApiNames: ['plusDILine', 'minusDILine'],
-
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    pointValKey: 'y'
 });
+MultipleLinesComposition.compose(DMIIndicator);
 
 /* *
  *

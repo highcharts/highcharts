@@ -11,8 +11,17 @@
  * */
 
 'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Instrument from './Instrument';
 import type RangeSelector from '../../Extensions/RangeSelector';
-import H from '../../Core/Globals.js';
+
+import Sonification from './Sonification.js';
 import U from '../../Core/Utilities.js';
 const {
     error,
@@ -243,7 +252,7 @@ declare global {
  */
 
 
-import utilities from './Utilities.js';
+import SU from './SonificationUtilities.js';
 
 // Defaults for the instrument options
 // NOTE: Also change defaults in Highcharts.PointInstrumentOptionsObject if
@@ -314,12 +323,12 @@ function pointSonify(
 
                 // Find data extremes if we don't have them
                 dataExtremes[dataProp] = dataExtremes[dataProp] ||
-                    utilities.calculateDataExtremes(
+                    SU.calculateDataExtremes(
                         point.series.chart, dataProp
                     );
 
                 // Find the value
-                return utilities.virtualAxisTranslate(
+                return SU.virtualAxisTranslate(
                     pointValue,
                     dataExtremes[dataProp],
                     allowedExtremes,
@@ -341,7 +350,7 @@ function pointSonify(
     // Register signal handler for the point
     const signalHandler = point.sonification.signalHandler =
         point.sonification.signalHandler ||
-        new utilities.SignalHandler(['onEnd']);
+        new SU.SignalHandler(['onEnd']);
 
     signalHandler.clearSignalCallbacks();
     signalHandler.registerSignalCallbacks({ onEnd: options.onEnd });
@@ -357,7 +366,7 @@ function pointSonify(
         instrumentDefinition: Highcharts.PointInstrumentObject
     ): void {
         const instrument = typeof instrumentDefinition.instrument === 'string' ?
-                H.sonification.instruments[instrumentDefinition.instrument] :
+                Sonification.instruments[instrumentDefinition.instrument] :
                 instrumentDefinition.instrument,
             mapping = instrumentDefinition.instrumentMapping || {},
             extremes = merge(

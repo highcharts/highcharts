@@ -52,8 +52,7 @@ const {
     merge,
     pick,
     splat,
-    syncTimeout,
-    timeUnits
+    syncTimeout
 } = U;
 
 /* *
@@ -1086,7 +1085,9 @@ class Tooltip {
                 if (
                     chart.polar ||
                     currentSeries.options.clip === false ||
-                    currentSeries.shouldShowTooltip(checkX, checkY)
+                    points.some((p): boolean => // #16004
+                        p.series.shouldShowTooltip(checkX, checkY)
+                    )
                 ) {
                     const label = tooltip.getLabel();
 
@@ -1803,6 +1804,13 @@ class Tooltip {
         );
     }
 }
+
+/* *
+ *
+ *  Class namespace
+ *
+ * */
+
 namespace Tooltip {
     export interface FormatterCallbackFunction {
         (
@@ -1838,7 +1846,19 @@ namespace Tooltip {
     export type ShapeValue = ('callout'|'circle'|'square'|'rect');
 }
 
+/* *
+ *
+ *  Default export
+ *
+ * */
+
 export default Tooltip;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
 
 /**
  * Callback function to format the text of the tooltip from scratch.
@@ -1942,4 +1962,4 @@ export default Tooltip;
  * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
  */
 
-''; // separates doclets above from variables below
+''; // keeps doclets above in JS file

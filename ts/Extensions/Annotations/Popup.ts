@@ -133,7 +133,8 @@ declare global {
                 selectBox: HTMLSelectElement,
                 indicatorType?: string,
                 paramterName?: string,
-                selectedOption?: string
+                selectedOption?: string,
+                currentSeries?: SMAIndicator
             ): HTMLSelectElement;
             addFormFields(
                 this: Popup,
@@ -159,6 +160,7 @@ declare global {
                 optionName: string,
                 chart: AnnotationChart,
                 parentDiv: HTMLDOMElement,
+                currentSeries: SMAIndicator,
                 selectedOption?: string
             ): void;
         }
@@ -209,13 +211,8 @@ const dropdownParameters: Highcharts.DropdownParameters = {
 // Related issue #4606
 
 wrap(Pointer.prototype, 'onContainerMouseDown', function (this: Pointer, proceed: Function, e): void {
-
-    const popupClass = e.target && e.target.className;
-
     // elements is not in popup
-    if (!(isString(popupClass) &&
-        popupClass.indexOf(PREFIX + 'popup-field') >= 0)
-    ) {
+    if (!this.inClass(e.target, PREFIX + 'popup')) {
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
 });
@@ -239,7 +236,24 @@ H.Popup.prototype = {
         // create popup div
         this.container = createElement(DIV, {
             className: PREFIX + 'popup highcharts-no-tooltip'
-        }, null as any, parentDiv);
+        }, void 0, parentDiv);
+
+        addEvent(this.container, 'mousedown', (): void => {
+            const activeAnnotation = chart &&
+                chart.navigationBindings &&
+                chart.navigationBindings.activeAnnotation;
+
+            if (activeAnnotation) {
+                activeAnnotation.cancelClick = true;
+
+                const unbind = addEvent(H.doc, 'click', (): void => {
+                    setTimeout((): void => {
+                        activeAnnotation.cancelClick = false;
+                    }, 0);
+                    unbind();
+                });
+            }
+        });
 
         this.lang = this.getLangpack();
         this.iconsURL = iconsURL;
@@ -325,7 +339,13 @@ H.Popup.prototype = {
      * Default value of input i.e period value is 14, extracted from
      * defaultOptions (ADD mode) or series options (EDIT mode)
      */
-    addInput: function (option: string, type: string, parentDiv: HTMLDOMElement, value: string): void {
+    addInput: function (
+        this: Highcharts.Popup,
+        option: string,
+        type: string,
+        parentDiv: HTMLDOMElement,
+        value: string
+    ): void {
         const optionParamList = option.split('.'),
             optionName = optionParamList[optionParamList.length - 1],
             lang = this.lang,
@@ -1067,7 +1087,8 @@ H.Popup.prototype = {
             selectBox: HTMLSelectElement,
             indicatorType?: string,
             parameterName?: string,
-            selectedOption?: string
+            selectedOption?: string,
+            currentSeries?: SMAIndicator
         ): void {
             const popup = this;
 
@@ -1075,13 +1096,24 @@ H.Popup.prototype = {
             if (optionName === 'series' || optionName === 'volume') {
                 // List all series which have id - mandatory for indicator.
                 chart.series.forEach(function (series): void {
-                    const seriesOptions = series.options;
+                    const seriesOptions = series.options,
+                        seriesName = seriesOptions.name ||
+                        (seriesOptions as any).params ? series.name : seriesOptions.id || '';
 
                     if (
-                        !(seriesOptions as any).params &&
-                        seriesOptions.id &&
-                        seriesOptions.id !== PREFIX + 'navigator-series'
+                        seriesOptions.id !== PREFIX + 'navigator-series' &&
+                        seriesOptions.id !== (
+                            currentSeries && currentSeries.options && currentSeries.options.id
+                        )
                     ) {
+                        if (
+                            !defined(selectedOption) &&
+                            optionName === 'volume' &&
+                            series.type === 'column'
+                        ) {
+                            selectedOption = seriesOptions.id;
+                        }
+
                         createElement(
                             OPTION,
                             {
@@ -1089,9 +1121,7 @@ H.Popup.prototype = {
                             },
                             void 0,
                             selectBox
-                        ).appendChild(doc.createTextNode(
-                            seriesOptions.name || seriesOptions.id
-                        ));
+                        ).appendChild(doc.createTextNode(seriesName));
                     }
                 });
             } else if (indicatorType && parameterName) {
@@ -1176,6 +1206,7 @@ H.Popup.prototype = {
             optionName: string,
             chart: Highcharts.AnnotationChart,
             parentDiv: HTMLDOMElement,
+            currentSeries: SMAIndicator,
             selectedOption?: string
         ): void {
             const popup = this,
@@ -1190,7 +1221,16 @@ H.Popup.prototype = {
             const selectBox = indicators.addSelection.call(popup, indicatorType, optionName, parentDiv);
 
             // Add possible dropdown options.
-            indicators.addSelectionOptions.call(popup, chart, optionName, selectBox);
+            indicators.addSelectionOptions.call(
+                popup,
+                chart,
+                optionName,
+                selectBox,
+                void 0,
+                void 0,
+                void 0,
+                currentSeries
+            );
 
             // Add the default dropdown value if defined.
             if (defined(selectedOption)) {
@@ -1257,7 +1297,8 @@ H.Popup.prototype = {
                 'series',
                 chart,
                 rhsColWrapper,
-                series.linkedParent && fields.volumeSeriesID
+                series,
+                series.linkedParent && series.linkedParent.options.id
             );
 
             if (fields.volumeSeriesID) {
@@ -1267,7 +1308,8 @@ H.Popup.prototype = {
                     'volume',
                     chart,
                     rhsColWrapper,
-                    series.linkedParent && series.linkedParent.options.id as any
+                    series,
+                    series.linkedParent && fields.volumeSeriesID
                 );
             }
 

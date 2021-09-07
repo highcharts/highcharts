@@ -8,11 +8,15 @@
  *
  * */
 
-import type {
-    AlignObject,
-    AlignValue,
-    VerticalAlignValue
-} from '../AlignObject';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AlignObject from '../AlignObject';
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
@@ -31,26 +35,25 @@ import type SVGAttributes from './SVGAttributes';
 import type SVGElementLike from './SVGElementLike';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
-import A from '../../Animation/AnimationUtilities.js';
-import AST from '../HTML/AST.js';
 
+import A from '../../Animation/AnimationUtilities.js';
 const {
     animate,
     animObject,
     stop
 } = A;
+import AST from '../HTML/AST.js';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
     deg2rad,
     doc,
-    hasTouch,
     noop,
     svg,
     SVG_NS,
     win
 } = H;
-import palette from '../../Color/Palette.js';
+import Palette from '../../Color/Palette.js';
 import U from '../../Utilities.js';
 const {
     addEvent,
@@ -1979,7 +1982,7 @@ class SVGElement implements SVGElementLike {
                 for (let i = 0; i < childNodes.length; i++) {
                     const childNode: any = childNodes[i];
                     if (
-                        childNode.nodeType === Node.TEXT_NODE ||
+                        childNode.nodeType === win.Node.TEXT_NODE ||
                         childNode.nodeName === 'tspan'
                     ) {
                         textPathElement.appendChild(childNode);
@@ -2100,7 +2103,7 @@ class SVGElement implements SVGElementLike {
             element = this.element,
             oldShadowOptions = this.oldShadowOptions,
             defaultShadowOptions: ShadowOptionsObject = {
-                color: palette.neutralColor100,
+                color: Palette.neutralColor100,
                 offsetX: this.parentInverted ? -1 : 1,
                 offsetY: this.parentInverted ? -1 : 1,
                 opacity: 0.15,
@@ -2154,7 +2157,7 @@ class SVGElement implements SVGElementLike {
                 attr(shadow, {
                     stroke: (
                         (shadowOptions as any).color ||
-                        palette.neutralColor100
+                        Palette.neutralColor100
                     ),
                     'stroke-opacity': shadowElementOpacity * i,
                     'stroke-width': strokeWidth,
@@ -2680,9 +2683,12 @@ class SVGElement implements SVGElementLike {
 
 }
 
-/**
- * @private
- */
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface SVGElement extends SVGElementLike {
     // takes interfaces from shared interface and internal namespace
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
@@ -2721,6 +2727,12 @@ SVGElement.prototype.verticalAlignSetter = function (
     this.doTransform = true;
 };
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace SVGElement {
 
     export interface ElementSetterFunction<T> {
@@ -2736,6 +2748,12 @@ namespace SVGElement {
     }
 
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SVGElement;
 
@@ -2909,4 +2927,4 @@ export default SVGElement;
  * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
  */
 
-''; // detach doclets above
+''; // keeps doclets above in JS file

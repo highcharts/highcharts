@@ -1,5 +1,9 @@
 QUnit.test('getSVG', function (assert) {
     var chart = Highcharts.chart('container', {
+        accessibility: {
+            enabled: false // Adds DOM elements to container
+        },
+
         credits: {
             enabled: false
         },
