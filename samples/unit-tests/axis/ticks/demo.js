@@ -104,6 +104,15 @@ QUnit.test(
             1,
             'Actual tick interval is as option'
         );
+
+        chart.xAxis[0].update({
+            tickInterval: -1
+        });
+
+        assert.ok(
+            true,
+            'No errors should occur when tickInterval has a negative value.'
+        );
     }
 );
 QUnit.test('Prevent dense ticks(#4477)', function (assert) {

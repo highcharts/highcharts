@@ -22,11 +22,15 @@ import type SplineSeries from '../Spline/SplineSeries';
 import type SplinePoint from '../Spline/SplinePoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import palette from '../../Core/Color/Palette.js';
+
+import Palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-const { defined, merge } = U;
+const {
+    defined,
+    merge
+} = U;
 
 /* *
  *
@@ -99,7 +103,7 @@ class LineSeries extends Series {
                 (
                     options.lineColor ||
                     this.color ||
-                    palette.neutralColor20 // when colorByPoint = true
+                    Palette.neutralColor20 // when colorByPoint = true
                 ) as any,
                 options.dashStyle as any
             );
@@ -360,7 +364,7 @@ class LineSeries extends Series {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

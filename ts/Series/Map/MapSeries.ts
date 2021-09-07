@@ -28,11 +28,12 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
+
+import ColorMapComposition from '../ColorMapComposition.js';
+const { colorMapSeriesMixin } = ColorMapComposition;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import MapChart from '../../Core/Chart/MapChart.js';
 const {
     maps,
@@ -91,10 +92,10 @@ declare module '../../Core/Series/SeriesOptions' {
 
 declare global {
     namespace Highcharts {
-        class MapPoint extends ScatterPoint implements ColorMapPoint {
+        class MapPoint extends ScatterPoint implements ColorMapComposition.PointComposition {
             public colorInterval?: unknown;
-            public dataLabelOnNull: ColorMapPointMixin['dataLabelOnNull'];
-            public isValid: ColorMapPointMixin['isValid'];
+            public dataLabelOnNull: ColorMapComposition.PointComposition['dataLabelOnNull'];
+            public isValid: ColorMapComposition.PointComposition['isValid'];
             public middleX: number;
             public middleY: number;
             public options: MapPointOptions;
@@ -1312,9 +1313,8 @@ class MapSeries extends ScatterSeries {
  *
  * */
 
-interface MapSeries extends Highcharts.ColorMapSeries {
-    colorAttribs: typeof colorMapSeriesMixin['colorAttribs'];
-    drawLegendSymbol: Highcharts.LegendSymbolMixin['drawRectangle'];
+interface MapSeries extends ColorMapComposition.SeriesComposition {
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     pointArrayMap: typeof colorMapSeriesMixin['pointArrayMap'];
     pointClass: typeof MapPoint;
     preserveAspectRatio: boolean;
@@ -1339,9 +1339,7 @@ extend(MapSeries.prototype, {
 
     axisTypes: colorMapSeriesMixin.axisTypes,
 
-    colorAttribs: colorMapSeriesMixin.colorAttribs,
-
-    colorKey: colorMapSeriesMixin.colorKey,
+    colorKey: 'value',
 
     // When tooltip is not shared, this series (and derivatives) requires
     // direct touch/hover. KD-tree does not apply.
@@ -1354,13 +1352,13 @@ extend(MapSeries.prototype, {
     // No graph for the map series
     drawGraph: noop,
 
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     forceDL: true,
 
     getExtremesFromAll: true,
 
-    getSymbol: colorMapSeriesMixin.getSymbol,
+    getSymbol: noop,
 
     parallelArrays: colorMapSeriesMixin.parallelArrays,
 
@@ -1379,6 +1377,8 @@ extend(MapSeries.prototype, {
     useMapGeometry: true
 
 });
+
+ColorMapComposition.compose(MapSeries, MapPoint);
 
 /* *
  *

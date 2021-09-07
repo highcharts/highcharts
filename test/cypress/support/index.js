@@ -36,3 +36,34 @@ Cypress.Commands.add('openIndicators', () =>
     cy.get('.highcharts-indicators .highcharts-menu-item-btn')
         .click()
 );
+
+Cypress.Commands.add('addIndicator', () =>
+    cy.get('.highcharts-popup-rhs-col')
+        .children('.highcharts-popup button')
+        .eq(0)
+        .click()
+);
+
+Cypress.Commands.add(
+    'dragTo',
+    {
+        prevSubject: true
+    },
+    (subject, toSelector, x, y, options) => {
+        cy.wrap(subject).trigger(
+            'mousedown',
+            // Pass the trigger options object to mousedown as well for things
+            // like shiftKey
+            [
+                x, y, options
+            ].find(arg => typeof arg === 'object')
+        );
+        cy.get(toSelector)
+            .trigger('mousemove', x, y, options)
+            .trigger('mouseup', x, y, options)
+            .trigger('click', x, y, options);
+
+        // Keep the dragged element as the subject
+        cy.wrap(subject);
+    }
+);

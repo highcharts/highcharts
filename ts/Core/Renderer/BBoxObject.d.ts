@@ -32,7 +32,7 @@ export interface BBoxObject extends PositionObject, SizeObject {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

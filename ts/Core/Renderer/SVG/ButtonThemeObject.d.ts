@@ -36,7 +36,7 @@ export interface ButtonThemeStatesObject {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
