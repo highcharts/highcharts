@@ -118,7 +118,7 @@ const defaultOptions: Highcharts.CurrentDateIndicatorOptions = {
     label: {
         /**
          * Format of the label. This options is passed as the fist argument to
-         * [dateFormat](/class-reference/Highcharts#.dateFormat) function.
+         * [dateFormat](/class-reference/Highcharts.Time#dateFormat) function.
          *
          * @type      {string}
          * @default   %a, %b %d %Y, %H:%M
