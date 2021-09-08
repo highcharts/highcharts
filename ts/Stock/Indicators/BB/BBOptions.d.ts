@@ -12,6 +12,7 @@
  *
  * */
 
+import type MultipleLinesComposition from '../MultipleLinesComposition';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -23,7 +24,7 @@ import type {
  *
  * */
 
-export interface BBOptions extends SMAOptions, Highcharts.MultipleLinesIndicatorOptions{
+export interface BBOptions extends SMAOptions, MultipleLinesComposition.Options{
     params?: BBParamsOptions;
 }
 
