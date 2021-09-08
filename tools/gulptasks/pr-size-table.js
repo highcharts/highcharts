@@ -70,14 +70,16 @@ function makeTable(master, proposed) {
             }
 
             if (masterSizes[key] && proposedSizes[key]) {
-                const difference = proposedSizes[key].compiled - masterSizes[key].compiled,
-                    gzipDifference = proposedSizes[key].gzip - masterSizes[key].gzip;
+                const difference = proposedSizes[key].compiled -
+                        masterSizes[key].compiled,
+                    gzipDifference = proposedSizes[key].gzip -
+                        masterSizes[key].gzip;
 
                 if (difference) {
-                    tableBody += `\n| ${package} | ${toFixedKiloBytes(masterSizes[key].compiled)} kB | ${toFixedKiloBytes(proposedSizes[key].compiled)} kB | ` +
-                        `${difference} B |`;
-                    tableBody += `\n| ${package}, gzipped | ${toFixedKiloBytes(masterSizes[key].gzip)} kB | ${toFixedKiloBytes(proposedSizes[key].gzip)} kB | ` +
-                        `${gzipDifference} B|`;
+                    tableBody += `\n| ${package}.js | ` +
+                        `**${toFixedKiloBytes(masterSizes[key].gzip)} kB**<br>${toFixedKiloBytes(masterSizes[key].compiled)} kB | ` +
+                        `**${toFixedKiloBytes(proposedSizes[key].gzip)} kB**<br>${toFixedKiloBytes(proposedSizes[key].compiled)} kB | ` +
+                        `**${gzipDifference} B**<br>${difference} B |`;
                 }
             }
         });
