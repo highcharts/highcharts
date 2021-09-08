@@ -7,7 +7,21 @@ const { getFileSizes } = require('../compareFilesize');
 const log = require('./lib/log');
 const { createPRComment, updatePRComment, fetchPRComments } = require('./lib/github');
 
-const files = argv.files ? argv.files.split(',') : ['highcharts.src.js', 'highstock.src.js', 'highmaps.src.js', 'highcharts-gantt.src.js'];
+const files = argv.files ? argv.files.split(',') : [
+    'highcharts.src.js',
+    'highstock.src.js',
+    'highmaps.src.js',
+    'highcharts-gantt.src.js',
+    'indicators/indicators-all.src.js',
+    'modules/accessibility.src.js',
+    'modules/annotations.src.js',
+    'modules/annotations-advanced.src.js',
+    'modules/boost.src.js',
+    'modules/data.src.js',
+    'modules/exporting.src.js',
+    'modules/heatmap.src.js',
+    'modules/offline-exporting.src.js'
+];
 
 /**
  * @param {string} outputFolder output path
