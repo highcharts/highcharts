@@ -47,7 +47,7 @@ const {
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
-import Palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

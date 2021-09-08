@@ -18,7 +18,7 @@
 
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
 import MapPointPoint from './MapPointPoint.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -80,7 +80,7 @@ class MapPointSeries extends ScatterSeries {
             overflow: false as any,
             style: {
                 /** @internal */
-                color: palette.neutralColor100
+                color: Palette.neutralColor100
             }
         }
     } as MapPointSeriesOptions);
