@@ -67,3 +67,15 @@ Cypress.Commands.add(
         cy.wrap(subject);
     }
 );
+
+Cypress.Commands.add('openIndicators', () =>
+    cy.get('.highcharts-indicators .highcharts-menu-item-btn')
+        .click()
+);
+
+Cypress.Commands.add('addIndicator', () =>
+    cy.get('.highcharts-popup-rhs-col')
+        .children('.highcharts-popup button')
+        .eq(0)
+        .click()
+);
