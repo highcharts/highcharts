@@ -48,6 +48,7 @@ function makeTable(master, proposed) {
     // eslint-disable-next-line require-jsdoc
     function tableTemplate(body) {
         return '### File size comparison' +
+        '\nSizes for compiled+gzipped (bold) and compiled files.' +
         '\n| | master | candidate | difference |' +
         '\n|-------------|-------------:|-------------:|-------------:|' +
         body;
