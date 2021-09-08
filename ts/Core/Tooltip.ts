@@ -735,7 +735,7 @@ class Tooltip {
      *
      * @return {Highcharts.SVGElement}
      */
-    public getLabel(preventSplit?: boolean): SVGElement {
+    public getLabel(preventSplit?: boolean): SVGElement { // getLabel
 
         let tooltip = this,
             renderer: SVGRenderer = this.chart.renderer,
@@ -768,6 +768,30 @@ class Tooltip {
                     series.onMouseOut();
                 }
             };
+
+        // Destroy tooltip only when the property is explicitly defined.
+        // Only while creating the tooltip. Not in case of animating etc.
+        if (defined(preventSplit)) {
+            const isRegularTooltip = tooltip.label &&
+                tooltip.label.hasClass('highcharts-label');
+
+            // When previously split tooltip was rendered and now if
+            // hovering over another series where split tooltip should not
+            // be used, destroy the label in order to create ordinary one.
+            // #13868
+            if (preventSplit && !isRegularTooltip && tooltip.label) {
+                tooltip.label = tooltip.label.destroy();
+                // Remove the bottom tooltip if exists.
+                tooltip.tt = tooltip.tt && tooltip.tt.destroy();
+                this.cleanSplit();
+            }
+
+            // When previously tooltip was generated for noSplitTooltip series
+            // and now split one should be rendered, destroy the label.
+            if (!preventSplit && isRegularTooltip && tooltip.label) {
+                tooltip.label = tooltip.label.destroy();
+            }
+        }
 
         if (!this.label) {
 
@@ -1396,29 +1420,6 @@ class Tooltip {
         if (text === false) {
             this.hide();
         } else {
-            // When previously split tooltip was rendered and now if
-            // hovering over another series where split tooltip should not
-            // be used, destroy the label in order to create ordinary one.
-            // #13868
-            if (tooltip.split &&
-                point.series.noSplitTooltip &&
-                tooltip.tt &&
-                tooltip.label
-            ) {
-                tooltip.label = tooltip.label.destroy();
-                tooltip.tt = tooltip.tt.destroy();
-                this.cleanSplit();
-            }
-            // When previously tooltip was generated for noSplitTooltip series
-            // and now split one should be rendered, destroy the label.
-            if (tooltip.split &&
-                !point.series.noSplitTooltip &&
-                !(tooltip.tt || !tooltip.options.headerFormat) &&
-                tooltip.label
-            ) {
-                tooltip.label = tooltip.label.destroy();
-            }
-
             // update text
             if (tooltip.split && !point.series.noSplitTooltip) { // #13868
                 this.renderSplit(text as any, points);
@@ -1548,7 +1549,7 @@ class Tooltip {
                 bottom: scrollTop + chartHeight
             };
 
-        const tooltipLabel = tooltip.getLabel();
+        const tooltipLabel = tooltip.getLabel(false);
         const ren = this.renderer || chart.renderer;
         const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
         const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
