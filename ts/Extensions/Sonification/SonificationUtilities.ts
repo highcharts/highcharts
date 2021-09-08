@@ -24,6 +24,7 @@ import type {
     SonificationInstrumentOptions
 } from './SonificationOptions';
 import type Point from '../../Core/Series/Point';
+import type PointSonify from './PointSonify';
 import type RangeSelector from '../RangeSelector';
 import type Series from '../../Core/Series/Series';
 
@@ -166,7 +167,7 @@ const SonificationUtilities = {
  */
 function getExtremesForInstrumentProps(
     chart: Chart,
-    instruments?: Array<Highcharts.PointInstrumentObject>,
+    instruments?: Array<PointSonify.PointInstrument>,
     dataExtremes?: Record<string, RangeSelector.RangeObject>
 ): Record<string, RangeSelector.RangeObject> {
     const defaultInstrumentDef = (
@@ -175,9 +176,9 @@ function getExtremesForInstrumentProps(
         ),
         optionDefToInstrDef = (
             optionDef: SonificationInstrumentOptions|DefaultSonificationInstrumentOptions
-        ): Highcharts.PointInstrumentObject => ({
+        ): PointSonify.PointInstrument => ({
             instrumentMapping: optionDef.mapping
-        } as Highcharts.PointInstrumentObject);
+        } as PointSonify.PointInstrument);
     let allInstrumentDefinitions = (instruments || []).slice(0);
 
     if (defaultInstrumentDef) {
@@ -196,7 +197,7 @@ function getExtremesForInstrumentProps(
 
     return (allInstrumentDefinitions).reduce(function (
         newExtremes: Record<string, RangeSelector.RangeObject>,
-        instrumentDefinition: Highcharts.PointInstrumentObject
+        instrumentDefinition: PointSonify.PointInstrument
     ): Record<string, RangeSelector.RangeObject> {
         Object.keys(instrumentDefinition.instrumentMapping || {}).forEach(
             function (instrumentParameter: string): void {

@@ -22,6 +22,7 @@ import type Chart from '../../Core/Chart/Chart';
 import type { DefaultSonificationInstrumentOptions } from './SonificationOptions';
 import type Earcon from './Earcon';
 import type Options from '../../Core/Options';
+import type PointSonify from './PointSonify';
 import type RangeSelector from '../../Extensions/RangeSelector';
 
 import Point from '../../Core/Series/Point.js';
@@ -848,7 +849,7 @@ namespace ChartSonify {
         dataExtremes?: Record<string, RangeSelector.RangeObject>;
         duration: number;
         earcons?: Array<Earcon.Configuration>;
-        instruments?: Array<Highcharts.PointInstrumentObject>;
+        instruments?: Array<PointSonify.PointInstrument>;
         masterVolume?: number;
         onSeriesEnd?: Function;
         onSeriesStart?: Function;
