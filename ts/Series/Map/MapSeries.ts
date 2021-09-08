@@ -40,7 +40,7 @@ const {
     splitPath
 } = MapChart;
 import MapPoint from './MapPoint.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -187,7 +187,7 @@ class MapSeries extends ScatterSeries {
          *
          * @private
          */
-        nullColor: palette.neutralColor3,
+        nullColor: Palette.neutralColor3,
 
         /**
          * Whether to allow pointer interaction like tooltips and mouse events
@@ -247,7 +247,7 @@ class MapSeries extends ScatterSeries {
          *
          * @private
          */
-        borderColor: palette.neutralColor20,
+        borderColor: Palette.neutralColor20,
 
         /**
          * The border width of each map area.
@@ -397,7 +397,7 @@ class MapSeries extends ScatterSeries {
                  * @product   highmaps
                  * @apioption plotOptions.series.states.select.color
                  */
-                color: palette.neutralColor20
+                color: Palette.neutralColor20
             },
 
             inactive: {

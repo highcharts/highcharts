@@ -16,7 +16,6 @@
  *
  * */
 
-import type ColorType from './Color/ColorType';
 import type { Options } from './Options';
 import type Point from './Series/Point';
 import type Series from './Series/Series';
@@ -29,7 +28,8 @@ const {
     isTouchDevice,
     svg
 } = H;
-import palette from './Color/Palette.js';
+import { Palette } from './Color/Palettes.js';
+import Palettes from './Color/Palettes.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 const { merge } = U;
@@ -121,7 +121,7 @@ const defaultOptions: Options = {
      * @default ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9",
      *          "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"]
      */
-    colors: palette.colors,
+    colors: Palettes.colors,
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for
@@ -1007,7 +1007,7 @@ const defaultOptions: Options = {
             /**
              * @ignore-option
              */
-            color: palette.neutralColor80
+            color: Palette.neutralColor80
         }
     },
 
@@ -1308,7 +1308,7 @@ const defaultOptions: Options = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: palette.neutralColor40,
+        borderColor: Palette.neutralColor40,
 
         /**
          * The border corner radius of the legend.
@@ -1409,7 +1409,7 @@ const defaultOptions: Options = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            activeColor: palette.highlightColor100,
+            activeColor: Palette.highlightColor100,
 
             /**
              * The color of the inactive up or down arrow in the legend page
@@ -1426,7 +1426,7 @@ const defaultOptions: Options = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            inactiveColor: palette.neutralColor20
+            inactiveColor: Palette.neutralColor20
         },
 
         /**
@@ -1507,7 +1507,7 @@ const defaultOptions: Options = {
             /**
              * @ignore
              */
-            color: palette.neutralColor80,
+            color: Palette.neutralColor80,
             /**
              * @ignore
              */
@@ -1546,7 +1546,7 @@ const defaultOptions: Options = {
             /**
              * @ignore
              */
-            color: palette.neutralColor100
+            color: Palette.neutralColor100
         },
 
         /**
@@ -1568,7 +1568,7 @@ const defaultOptions: Options = {
             /**
              * @ignore
              */
-            color: palette.neutralColor20
+            color: Palette.neutralColor20
         },
 
         /**
@@ -1893,7 +1893,7 @@ const defaultOptions: Options = {
             /**
              * @ignore
              */
-            backgroundColor: palette.backgroundColor,
+            backgroundColor: Palette.backgroundColor,
             /**
              * @ignore
              */
@@ -2519,7 +2519,7 @@ const defaultOptions: Options = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: color(palette.neutralColor3)
+        backgroundColor: color(Palette.neutralColor3)
             // @todo: Disallow undefined as input for colors
             .setOpacity(0.85).get() as any,
 
@@ -2586,7 +2586,7 @@ const defaultOptions: Options = {
          */
         style: {
             /** @internal */
-            color: palette.neutralColor80,
+            color: Palette.neutralColor80,
             /** @internal */
             cursor: 'default',
             /** @internal */
@@ -2710,7 +2710,7 @@ const defaultOptions: Options = {
             /** @internal */
             cursor: 'pointer',
             /** @internal */
-            color: palette.neutralColor40,
+            color: Palette.neutralColor40,
             /** @internal */
             fontSize: '9px'
         },

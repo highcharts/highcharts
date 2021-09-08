@@ -18,7 +18,7 @@ import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -143,7 +143,7 @@ class WaterfallSeries extends ColumnSeries {
          * @since   3.0
          * @product highcharts
          */
-        lineColor: palette.neutralColor80,
+        lineColor: Palette.neutralColor80,
 
         /**
          * A name for the dash style to use for the line connecting the columns
@@ -170,7 +170,7 @@ class WaterfallSeries extends ColumnSeries {
          * @since   3.0
          * @product highcharts
          */
-        borderColor: palette.neutralColor80,
+        borderColor: Palette.neutralColor80,
 
         states: {
             hover: {

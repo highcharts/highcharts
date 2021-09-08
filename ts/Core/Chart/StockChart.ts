@@ -40,7 +40,7 @@ import F from '../../Core/FormatUtilities.js';
 const { format } = F;
 import D from '../DefaultOptions.js';
 const { getOptions } = D;
-import Palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
 const {
     prototype: {

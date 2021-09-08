@@ -24,7 +24,7 @@ import type OptionsType from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import ColorType from '../../Core/Color/ColorType';
 
 /* *
@@ -709,7 +709,7 @@ const Options: DeepPartial<OptionsType> = {
                  */
                 style: {
                     /** @internal */
-                    color: palette.highlightColor80,
+                    color: Palette.highlightColor80,
                     /** @internal */
                     lineWidth: 2,
                     /** @internal */

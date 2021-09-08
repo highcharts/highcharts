@@ -22,7 +22,7 @@ import type {
     YAxisOptions
 } from './AxisOptions';
 
-import Palette from '../Color/Palette.js';
+import { Palette } from '../Color/Palettes.js';
 
 /* *
  *
