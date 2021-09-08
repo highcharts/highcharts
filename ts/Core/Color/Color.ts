@@ -264,9 +264,11 @@ class Color implements ColorLike {
                     stop.get(format) as string
                 ];
             });
+            return ret;
+        }
 
         // it's NaN if gradient colors on a column chart
-        } else if (rgba && isNumber(rgba[0])) {
+        if (rgba && isNumber(rgba[0])) {
             if (format === 'rgb' || (!format && rgba[3] === 1)) {
                 return 'rgb(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ')';
             }

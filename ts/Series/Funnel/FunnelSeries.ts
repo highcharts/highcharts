@@ -256,10 +256,16 @@ class FunnelSeries extends PieSeries {
             y = dlBox.y,
             x = dlBox.x;
 
+        // #16176: Only SVGLabel has height set
+        const dataLabelHeight = pick(
+            dataLabel.height,
+            dataLabel.getBBox().height
+        );
+
         if (verticalAlign === 'middle') {
-            y = dlBox.y - dlBox.height / 2 + dataLabel.height / 2;
+            y = dlBox.y - dlBox.height / 2 + dataLabelHeight / 2;
         } else if (verticalAlign === 'top') {
-            y = dlBox.y - dlBox.height + dataLabel.height +
+            y = dlBox.y - dlBox.height + dataLabelHeight +
                 options.padding;
         }
 

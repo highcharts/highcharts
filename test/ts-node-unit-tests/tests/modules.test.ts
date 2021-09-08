@@ -54,6 +54,7 @@ export function testStockSeries() {
         'bar',
         'scatter',
         'pie',
+        'hlc',
         'ohlc',
         'candlestick',
         'flags'
@@ -215,6 +216,7 @@ export function testStockIndicators() {
         'bar',
         'scatter',
         'pie',
+        'hlc',
         'ohlc',
         'candlestick',
         'flags',

@@ -376,7 +376,7 @@ const Options: DeepPartial<OptionsType> = {
              * Date format to use to describe range of datetime axes.
              *
              * For an overview of the replacement codes, see
-             * [dateFormat](/class-reference/Highcharts#.dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [point.dateFormat](#accessibility.point.dateFormat)
              *
@@ -440,7 +440,7 @@ const Options: DeepPartial<OptionsType> = {
              * Defaults to the same format as in tooltip.
              *
              * For an overview of the replacement codes, see
-             * [dateFormat](/class-reference/Highcharts#.dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [dateFormatter](#accessibility.point.dateFormatter)
              *
@@ -454,7 +454,7 @@ const Options: DeepPartial<OptionsType> = {
              * points on datetime axes when describing them to screen reader
              * users. Receives one argument, `point`, referring to the point
              * to describe. Should return a date format string compatible with
-             * [dateFormat](/class-reference/Highcharts#.dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [dateFormat](#accessibility.point.dateFormat)
              *
@@ -536,7 +536,7 @@ const Options: DeepPartial<OptionsType> = {
          * landmarks can make navigation with screen readers easier, but can
          * be distracting if there are lots of charts on the page. Three modes
          * are available:
-         *  - `all`: Adds regions for all series, legend, menu, information
+         *  - `all`: Adds regions for all series, legend, information
          *      region.
          *  - `one`: Adds a single landmark per chart.
          *  - `disabled`: No landmarks are added.

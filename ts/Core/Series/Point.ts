@@ -983,7 +983,6 @@ class Point {
         function update(): void {
 
             point.applyOptions(options);
-            point.resolveColor();
 
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718

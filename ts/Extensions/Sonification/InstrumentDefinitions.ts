@@ -37,7 +37,7 @@ declare global {
 }
 
 import Instrument from './Instrument.js';
-import utilities from './Utilities.js';
+import SU from './SonificationUtilities.js';
 
 const instruments: Highcharts.InstrumentsDictionary = {} as any;
 
@@ -51,13 +51,13 @@ const instruments: Highcharts.InstrumentsDictionary = {} as any;
 
     // Add musical instruments
     instruments[waveform + 'Musical'] = new (Instrument as any)({
-        allowedFrequencies: utilities.musicalFrequencies,
+        allowedFrequencies: SU.musicalFrequencies,
         oscillator: { waveformShape: waveform }
     });
 
     // Add scaled instruments
     instruments[waveform + 'Major'] = new (Instrument as any)({
-        allowedFrequencies: utilities.getMusicalScale([1, 3, 5, 6, 8, 10, 12]),
+        allowedFrequencies: SU.getMusicalScale([1, 3, 5, 6, 8, 10, 12]),
         oscillator: { waveformShape: waveform }
     });
 });

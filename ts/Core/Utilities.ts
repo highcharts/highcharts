@@ -489,9 +489,13 @@ function attr(
     value: (number|string)
 ): undefined;
 /**
- * Set or get an attribute or an object of attributes. To use as a setter, pass
- * a key and a value, or let the second argument be a collection of keys and
- * values. To use as a getter, pass only a string as the second argument.
+ * Set or get an attribute or an object of attributes.
+ *
+ * To use as a setter, pass a key and a value, or let the second argument be a
+ * collection of keys and values. When using a collection, passing a value of
+ * `null` or `undefined` will remove the attribute.
+ *
+ * To use as a getter, pass only a string as the second argument.
  *
  * @function Highcharts.attr
  *
@@ -533,7 +537,11 @@ function attr(
     // else if prop is defined, it is a hash of key/value pairs
     } else {
         objectEach(prop, function (val, key): void {
-            elem.setAttribute(key, val as any);
+            if (defined(val)) {
+                elem.setAttribute(key, val as any);
+            } else {
+                elem.removeAttribute(key);
+            }
         });
     }
     return ret;
