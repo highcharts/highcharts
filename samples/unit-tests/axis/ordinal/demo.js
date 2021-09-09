@@ -23,7 +23,17 @@ QUnit.test('Ordinal general tests.', function (assert) {
                     [1472659200000, 387630083],
                     [1475251200000, 405138911]
                 ]
-            }, {
+            },
+            {
+                data: [1, 2, 3, 4, [420, 44]],
+                dataGrouping: {
+                    forced: true,
+                    units: [['millisecond', [1, 42]]]
+                }
+            },
+            {
+                type: 'column',
+                data: [1, 2, 3],
                 visible: false
             }]
         }),
@@ -55,9 +65,12 @@ QUnit.test('Ordinal general tests.', function (assert) {
             'ordinal is enabled (#12716).'
     );
 
+    chart.xAxis[0].setExtremes(0, 5);
+    chart.xAxis[0].setExtremes(0, 500);
+
     controller.click(100, 100);
 
-    assert.ok(true, 'Click shoult not throw #16255');
+    assert.ok(true, 'Click should not throw #16255');
 });
 
 QUnit.test(
