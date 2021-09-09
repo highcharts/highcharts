@@ -24,7 +24,7 @@ import type {
 import type SupertrendPoint from './SupertrendPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
-import palette from '../../../Core/Color/Palette.js';
+import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -33,7 +33,9 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
+import StockChart from '../../../Core/Chart/StockChart.js';
 const {
+    addEvent,
     correctFloat,
     isArray,
     extend,
@@ -119,7 +121,7 @@ class SupertrendIndicator extends SMAIndicator {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        risingTrendColor: palette.positiveColor,
+        risingTrendColor: Palette.positiveColor,
         /**
          * Color of the Supertrend series line that is above the main series.
          *
@@ -128,7 +130,7 @@ class SupertrendIndicator extends SMAIndicator {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        fallingTrendColor: palette.negativeColor,
+        fallingTrendColor: Palette.negativeColor,
         /**
          * The styles for the Supertrend line that intersect main series.
          *
@@ -147,7 +149,7 @@ class SupertrendIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.neutralColor80,
+                lineColor: Palette.neutralColor80,
 
                 /**
                  * The dash or dot style of the grid lines. For possible
@@ -190,17 +192,28 @@ class SupertrendIndicator extends SMAIndicator {
             parentOptions: SeriesOptions;
 
         SMAIndicator.prototype.init.apply(this, arguments);
+        const indicator = this;
 
-        options = this.options;
-        parentOptions = this.linkedParent.options;
+        // Only after series are linked add some additional logic/properties.
+        const unbinder = addEvent(StockChart, 'afterLinkSeries', function (): void {
+            // Protection for a case where the indicator is being updated,
+            // for a brief moment the indicator is deleted.
+            if (indicator.options) {
+                const options = indicator.options;
+                parentOptions = indicator.linkedParent.options;
 
-        // Indicator cropThreshold has to be equal linked series one
-        // reduced by period due to points comparison in drawGraph method
-        // (#9787)
-        options.cropThreshold = (
-            (parentOptions.cropThreshold as any) -
-            ((options.params as any).period - 1)
-        );
+                // Indicator cropThreshold has to be equal linked series one
+                // reduced by period due to points comparison in drawGraph
+                // (#9787)
+                options.cropThreshold = (
+                    (parentOptions.cropThreshold as any) -
+                    ((options.params as any).period - 1)
+                );
+            }
+            unbinder();
+        }, {
+            order: 1
+        });
     }
 
     public drawGraph(): void {

@@ -24,7 +24,7 @@ import type OptionsType from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import ColorType from '../../Core/Color/ColorType';
 
 /* *
@@ -51,7 +51,7 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
-declare module '../../Core/LegendOptions' {
+declare module '../../Core/Legend/LegendOptions' {
     interface LegendOptions {
         accessibility?: Highcharts.LegendAccessibilityOptions;
     }
@@ -60,6 +60,12 @@ declare module '../../Core/LegendOptions' {
 declare module '../../Core/Options'{
     interface Options {
         accessibility?: Highcharts.AccessibilityOptions;
+    }
+}
+
+declare module '../../Extensions/Exporting/ExportingOptions' {
+    interface ExportingOptions {
+        accessibility?: Highcharts.ExportingAccessibilityOptions;
     }
 }
 
@@ -149,9 +155,6 @@ declare global {
         }
         interface ExportingAccessibilityOptions {
             enabled: boolean;
-        }
-        interface ExportingOptions {
-            accessibility?: ExportingAccessibilityOptions;
         }
         interface FocusBorderStyleObject {
             borderRadius?: number;
@@ -373,7 +376,7 @@ const Options: DeepPartial<OptionsType> = {
              * Date format to use to describe range of datetime axes.
              *
              * For an overview of the replacement codes, see
-             * [dateFormat](/class-reference/Highcharts#.dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [point.dateFormat](#accessibility.point.dateFormat)
              *
@@ -437,7 +440,7 @@ const Options: DeepPartial<OptionsType> = {
              * Defaults to the same format as in tooltip.
              *
              * For an overview of the replacement codes, see
-             * [dateFormat](/class-reference/Highcharts#.dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [dateFormatter](#accessibility.point.dateFormatter)
              *
@@ -451,7 +454,7 @@ const Options: DeepPartial<OptionsType> = {
              * points on datetime axes when describing them to screen reader
              * users. Receives one argument, `point`, referring to the point
              * to describe. Should return a date format string compatible with
-             * [dateFormat](/class-reference/Highcharts#.dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [dateFormat](#accessibility.point.dateFormat)
              *
@@ -533,7 +536,7 @@ const Options: DeepPartial<OptionsType> = {
          * landmarks can make navigation with screen readers easier, but can
          * be distracting if there are lots of charts on the page. Three modes
          * are available:
-         *  - `all`: Adds regions for all series, legend, menu, information
+         *  - `all`: Adds regions for all series, legend, information
          *      region.
          *  - `one`: Adds a single landmark per chart.
          *  - `disabled`: No landmarks are added.
@@ -706,7 +709,7 @@ const Options: DeepPartial<OptionsType> = {
                  */
                 style: {
                     /** @internal */
-                    color: palette.highlightColor80,
+                    color: Palette.highlightColor80,
                     /** @internal */
                     lineWidth: 2,
                     /** @internal */

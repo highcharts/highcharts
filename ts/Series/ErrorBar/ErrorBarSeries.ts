@@ -15,7 +15,7 @@ import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -77,7 +77,7 @@ class ErrorBarSeries extends BoxPlotSeries {
          * @since   3.0
          * @product highcharts
          */
-        color: palette.neutralColor100,
+        color: Palette.neutralColor100,
 
         grouping: false,
 

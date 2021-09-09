@@ -257,32 +257,47 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
         `After panning 20px, the axis extremes should not be reset
         but changed respectively.`
     );
+
+    const extendedOrdinalPositionsLength =
+        chart.xAxis[0].ordinal.extendedOrdinalPositions.length;
+    chart.series[0].addPoint([1585666260000 + 36e7, 1171.11]);
+    assert.notStrictEqual(
+        extendedOrdinalPositionsLength,
+        chart.xAxis[0].ordinal.extendedOrdinalPositions.length,
+        `After adding the point, the extendedOrdinalPositions array
+        should be recalculated, #16055.`
+    );
 });
 
 QUnit.test('findIndexOf', assert => {
     const findIndexOf =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.findIndexOf;
+        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.findIndexOf;
     const array = [0, 1, 3, 5, 10, 12, 13, 15];
     assert.equal(findIndexOf(array, 3), 2);
     assert.equal(findIndexOf(array, 0), 0);
+    assert.equal(findIndexOf(array, 15), array.length - 1);
     assert.equal(findIndexOf(array, 14), -1);
     assert.equal(findIndexOf(array, 18), -1);
+    assert.equal(findIndexOf(array, -18), -1);
     assert.equal(findIndexOf(array, 3, true), 2);
     assert.equal(findIndexOf(array, 0, true), 0);
     assert.equal(findIndexOf(array, -10, true), 0);
-    assert.equal(findIndexOf(array, 2, true), 2);
+    assert.equal(findIndexOf(array, 1, true), 1);
     assert.equal(findIndexOf(array, 11, true), 4);
     assert.equal(findIndexOf(array, 18, true), 7);
+    assert.equal(findIndexOf(array, 0.1, true), 0);
+    assert.equal(findIndexOf(array, 6, true), 3);
 });
 
 
 QUnit.test('lin2val- unit test for values outside the plotArea.', function (assert) {
     const axis = {
         transA: -0.04,
-        min: 3,
+        min: 3.24,
         len: 500,
         translationSlope: 0.2,
+        minPixelPadding: 0,
         ordinal: {
             extendedOrdinalPositions: [0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9],
             positions: [3, 4.2, 4.8, 5, 7],
@@ -308,10 +323,10 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
 
     axis.ordinal.getIndexOfPoint =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.getIndexOfPoint;
+        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.prototype.getIndexOfPoint;
     axis.ordinal.findIndexOf =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.findIndexOf;
+        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.prototype.findIndexOf;
     function lin2val(val) {
         return Highcharts.Axis.prototype.lin2val.call(axis, val);
     }
@@ -363,5 +378,99 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
         12.2,
         `For the pixel value higher than any point in extendedOrdinalPositions,
         array, the function should calculate value for that point.`
+    );
+});
+
+QUnit.test('val2lin- unit tests', function (assert) {
+    const axis = {
+        ordinal: {
+            extendedOrdinalPositions: [
+                0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9, 10
+            ],
+            positions: [3, 4.2, 4.8, 5, 7]
+        }
+    };
+    axis.ordinal.axis = axis;
+
+    function val2lin(val, toIndex) {
+        return Highcharts.Axis.prototype.val2lin.call(axis, val, toIndex);
+    }
+
+    assert.equal(
+        val2lin(5, true),
+        3,
+        `If the value we are looking for is inside the ordinal positions array
+        and fits the exact value, the method should return the index of that
+        value in this array as a total number.`
+    );
+    assert.equal(
+        val2lin(7, true),
+        4,
+        `If the value we are looking for is inside the ordinal positions array
+        and fits the exact value, the method should return the index of that
+        value in this array as a total number.`
+    );
+    assert.equal(
+        val2lin(3, true),
+        0,
+        `If the value we are looking for is inside the ordinal positions array
+        and fits the exact value, the method should return the index of that
+        value in this array as a total number.`
+    );
+    assert.equal(
+        val2lin(6, true),
+        3.5,
+        `If the value we are looking for is inside the ordinal positions array
+        and doesn't fit the exact value, the method should return the index
+        between higher and lower value.`
+    );
+    assert.equal(
+        val2lin(3.6, true),
+        0.5,
+        `If the value we are looking for is inside the ordinal positions array
+        and doesn't fit the exact value, the method should return the index
+        between higher and lower value.`
+    );
+    assert.equal(
+        val2lin(0, true),
+        -3,
+        `If the value we are looking for is inside the extended ordinal
+        positions array and fits the exact value, the method should return
+        the index of that value in this array as a total number.`
+    );
+    assert.equal(
+        val2lin(9, true),
+        6,
+        `If the value we are looking for is inside the extended ordinal
+        positions array and fits the exact value, the method should return
+        the index of that value in this array as a total number.`
+    );
+    assert.equal(
+        val2lin(2.25, true),
+        -0.5,
+        `If the value we are looking for is inside the extended ordinal
+        positions array and doesn't fit the exact value, the method should
+        return the index between higher and lower value.`
+    );
+    assert.equal(
+        val2lin(8.5, true),
+        5.5,
+        `If the value we are looking for is inside the extended ordinal
+        positions array and doesn't fit the exact value, the method should
+        return the index between higher and lower value.`
+    );
+    assert.equal(
+        val2lin(-10, true),
+        -14,
+        `If the value we are looking for is outside the extended ordinal
+        positions array, the method should return the approximate index
+        extrapolated from the slope of the array`
+    );
+    assert.equal(
+        val2lin(20, true),
+        19,
+        `If the value we are looking for is outside the extended ordinal
+        positions array, the method should return the approximate index
+        extrapolated from the slope of the array`
     );
 });

@@ -215,6 +215,9 @@ setOptions({
                 typeOHLC: 'OHLC',
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
+                typeHLC: 'HLC',
+                typeHollowCandlestick: 'Hollow Candlestick',
+                typeHeikinAshi: 'Heikin Ashi',
 
                 // Basic shapes:
                 circle: 'Circle',
@@ -313,6 +316,7 @@ setOptions({
                 // Indicators' params (#15170):
                 index: 'Index',
                 period: 'Period',
+                periods: 'Periods',
                 standardDeviation: 'Standard deviation',
                 periodTenkan: 'Tenkan period',
                 periodSenkouSpanB: 'Senkou Span B period',
@@ -891,12 +895,16 @@ setOptions({
                      *   'typeOHLC',
                      *   'typeLine',
                      *   'typeCandlestick'
+                     *   'typeHollowCandlestick'
                      * ]
                      */
                     items: [
                         'typeOHLC',
                         'typeLine',
-                        'typeCandlestick'
+                        'typeCandlestick',
+                        'typeHollowCandlestick',
+                        'typeHLC',
+                        'typeHeikinAshi'
                     ],
                     typeOHLC: {
                         /**
@@ -921,6 +929,30 @@ setOptions({
                          * @type   {string}
                          */
                         symbol: 'series-candlestick.svg'
+                    },
+                    typeHLC: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-hlc.svg'
+                    },
+                    typeHeikinAshi: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-heikin-ashi.svg'
+                    },
+                    typeHollowCandlestick: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-hollow-candlestick.svg'
                     }
                 },
                 fullScreen: {
@@ -1432,6 +1464,7 @@ class Toolbar {
 
         // Mimic event behaviour of being outside chart.container
         [
+            'mousedown',
             'mousemove',
             'click',
             'touchstart'
@@ -1550,7 +1583,7 @@ class Toolbar {
         redraw?: boolean
     ): void {
         const buttonWrapper = button.parentNode,
-            buttonWrapperClass = buttonWrapper.classList.value,
+            buttonWrapperClass = buttonWrapper.className,
             // main button in first level og GUI
             mainNavButton = buttonWrapper.parentNode.parentNode;
 
@@ -1703,7 +1736,10 @@ Toolbar.prototype.classMapping = {
     zoomXY: PREFIX + 'zoom-xy',
     typeLine: PREFIX + 'series-type-line',
     typeOHLC: PREFIX + 'series-type-ohlc',
+    typeHLC: PREFIX + 'series-type-hlc',
     typeCandlestick: PREFIX + 'series-type-candlestick',
+    typeHollowCandlestick: PREFIX + 'series-type-hollowcandlestick',
+    typeHeikinAshi: PREFIX + 'series-type-heikinashi',
     fullScreen: PREFIX + 'full-screen',
     toggleAnnotations: PREFIX + 'toggle-annotations',
     saveChart: PREFIX + 'save-chart',

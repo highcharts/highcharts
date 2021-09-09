@@ -81,10 +81,6 @@ declare global {
             public getKeyboardNavigationHandler(): KeyboardNavigationHandler;
             public init(): void;
             public onDrillupAll(): void;
-            public onHandlerInit(
-                handler: KeyboardNavigationHandler,
-                initDirection: number
-            ): number;
             public onHandlerTerminate(): void;
             public onKbdSideways(
                 handler: KeyboardNavigationHandler,
@@ -675,9 +671,19 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         e.addEvent(Point, 'afterSetState', function (): void {
             const point = this;
             const pointEl = point.graphic && point.graphic.element;
+            const focusedElement = doc.activeElement;
+            // VO brings focus with it to container, causing series nav to run.
+            // If then navigating with virtual cursor, it is possible to leave
+            // keyboard nav module state on the data points and still activate
+            // proxy buttons.
+            const focusedElClassName = focusedElement && focusedElement.getAttribute('class');
+            const isProxyFocused = focusedElClassName &&
+                focusedElClassName.indexOf('highcharts-a11y-proxy-button') > -1;
+
             if (
                 chart.highlightedPoint === point &&
-                doc.activeElement !== pointEl &&
+                focusedElement !== pointEl &&
+                !isProxyFocused &&
                 pointEl &&
                 pointEl.focus
             ) {
@@ -756,14 +762,35 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
                             point.firePointEvent('click');
                         }
                         return this.response.success;
+                    }],
+
+                [[keys.home],
+                    function (this: Highcharts.KeyboardNavigationHandler): number {
+                        highlightFirstValidPointInChart(chart);
+                        return this.response.success;
+                    }],
+
+                [[keys.end],
+                    function (this: Highcharts.KeyboardNavigationHandler): number {
+                        highlightLastValidPointInChart(chart);
+                        return this.response.success;
+                    }],
+
+                [[keys.pageDown, keys.pageUp],
+                    function (
+                        this: Highcharts.KeyboardNavigationHandler,
+                        keyCode: number
+                    ): number {
+                        chart.highlightAdjacentSeries(keyCode === keys.pageDown);
+                        return this.response.success;
                     }]
             ],
 
             init: function (
-                this: Highcharts.KeyboardNavigationHandler,
-                dir: number
+                this: Highcharts.KeyboardNavigationHandler
             ): number {
-                return keyboardNavigation.onHandlerInit(this, dir);
+                highlightFirstValidPointInChart(chart);
+                return this.response.success;
             },
 
             terminate: function (): void {
@@ -829,30 +856,6 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
             'highlightAdjacentSeries';
 
         chart[highlightMethod](isNext);
-
-        return handler.response.success;
-    },
-
-
-    /**
-     * @private
-     * @param {Highcharts.KeyboardNavigationHandler} handler
-     * @param {number} initDirection
-     * @return {number}
-     * response
-     */
-    onHandlerInit: function (
-        this: Highcharts.SeriesKeyboardNavigation,
-        handler: Highcharts.KeyboardNavigationHandler,
-        initDirection: number
-    ): number {
-        const chart = this.chart;
-
-        if (initDirection > 0) {
-            highlightFirstValidPointInChart(chart);
-        } else {
-            highlightLastValidPointInChart(chart);
-        }
 
         return handler.response.success;
     },

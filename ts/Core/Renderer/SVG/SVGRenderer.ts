@@ -49,7 +49,7 @@ const {
     symbolSizes,
     win
 } = H;
-import Palette from '../../Color/Palette.js';
+import { Palette } from '../../Color/Palettes.js';
 import RendererRegistry from '../RendererRegistry.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
@@ -1631,7 +1631,7 @@ class SVGRenderer implements SVGRendererLike {
 
         const wrapper = renderer.createElement('text').attr(attribs);
 
-        if (!useHTML) {
+        if (!useHTML || (renderer.forExport && !renderer.allowHTML)) {
             wrapper.xSetter = function (
                 value: string,
                 key: string,

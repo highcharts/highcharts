@@ -342,24 +342,19 @@ function getPointA11yTimeDescription(
     const series = point.series,
         chart = series.chart,
         a11yOptions = chart.options.accessibility.point || {},
-        hasDateXAxis = series.xAxis && series.xAxis.dateTime;
+        dateXAxis = series.xAxis && series.xAxis.dateTime;
 
-    if (hasDateXAxis) {
-        const tooltipDateFormat = Tooltip.prototype.getXDateFormat.call(
-                {
-                    getDateFormat: Tooltip.prototype.getDateFormat,
-                    chart: chart
-                },
-                point,
-                chart.options.tooltip,
-                series.xAxis
+    if (dateXAxis) {
+        const tooltipDateFormat = dateXAxis.getXDateFormat(
+                point.x || 0,
+                chart.options.tooltip.dateTimeLabelFormats
             ),
             dateFormat = a11yOptions.dateFormatter &&
                 a11yOptions.dateFormatter(point) ||
                 a11yOptions.dateFormat ||
                 tooltipDateFormat;
 
-        return chart.time.dateFormat(dateFormat, (point.x as any), void 0);
+        return chart.time.dateFormat(dateFormat, point.x || 0, void 0);
     }
 }
 
@@ -576,7 +571,9 @@ function describePointsInSeries(series: Highcharts.AccessibilitySeries): void {
                 // When setting tabindex, also remove default outline to
                 // avoid ugly border on click.
                 pointEl.setAttribute('tabindex', '-1');
-                pointEl.style.outline = '0';
+                if (!series.chart.styledMode) {
+                    pointEl.style.outline = 'none';
+                }
 
                 if (setScreenReaderProps && !pointA11yDisabled) {
                     setPointScreenReaderAttribs(point, pointEl);
@@ -653,7 +650,9 @@ function describeSeriesElement(
     } /* else do not add role */
 
     seriesElement.setAttribute('tabindex', '-1');
-    seriesElement.style.outline = '0'; // Don't show browser outline on click, despite tabindex
+    if (!series.chart.styledMode) {
+        seriesElement.style.outline = 'none'; // Don't show browser outline on click, despite tabindex
+    }
     seriesElement.setAttribute(
         'aria-label',
         stripHTMLTags(

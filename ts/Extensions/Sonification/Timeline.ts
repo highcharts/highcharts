@@ -11,7 +11,17 @@
  * */
 
 'use strict';
-import H from '../../Core/Globals.js';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+import type Earcon from './Earcon';
+import type PointSonify from './PointSonify';
+import type SignalHandler from './SignalHandler';
+
+import Sonification from './Sonification.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -73,7 +83,7 @@ declare global {
             eventObject?: TimelineEventObject;
             id?: string;
             onEnd?: Function;
-            playOptions?: PointSonifyOptionsObject|Partial<EarconOptionsObject>;
+            playOptions?: PointSonify.Options|Partial<Earcon.Options>;
             time?: number;
         }
         interface TimelineOptionsObject {
@@ -156,7 +166,7 @@ declare global {
  */
 
 
-import utilities from './Utilities.js';
+import SU from './SonificationUtilities.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -338,7 +348,7 @@ TimelinePath.prototype.init = function (
     this.updateEventIdMap();
 
     // Signal events to fire
-    this.signalHandler = new utilities.SignalHandler(
+    this.signalHandler = new SU.SignalHandler(
         ['playOnEnd', 'masterOnEnd', 'onStart', 'onEventStart', 'onEventEnd']
     );
     this.signalHandler.registerSignalCallbacks(
@@ -654,7 +664,7 @@ Timeline.prototype.init = function (
     this.cursor = 0;
     this.paths = options.paths || [];
     this.pathsPlaying = {};
-    this.signalHandler = new utilities.SignalHandler(
+    this.signalHandler = new SU.SignalHandler(
         ['playOnEnd', 'masterOnEnd', 'onPathStart', 'onPathEnd']
     );
     this.signalHandler.registerSignalCallbacks(
@@ -779,7 +789,7 @@ Timeline.prototype.playPaths = function (
             // Leave a timeout to let notes fade out before next play
             setTimeout(function (): void {
                 playPath(path);
-            }, H.sonification.fadeOutDuration);
+            }, Sonification.fadeOutDuration);
         }
     });
 };

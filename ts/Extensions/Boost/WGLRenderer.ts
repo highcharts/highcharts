@@ -14,12 +14,13 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
+import type ColorMapComposition from '../../Series/ColorMapComposition';
 import type ColorString from '../../Core/Color/ColorString';
 import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type Series from '../../Core/Series/Series';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import GLShader from './WGLShader.js';
@@ -596,8 +597,8 @@ function GLRenderer(
                         point.shapeArgs;
 
                     pointAttr = chart.styledMode ?
-                        (point.series as Highcharts.ColorMapSeries)
-                            .colorAttribs(point as Highcharts.ColorMapPoint) :
+                        (point.series as ColorMapComposition.SeriesComposition)
+                            .colorAttribs(point as ColorMapComposition.PointComposition) :
                         pointAttr = point.series.pointAttribs(point);
 
                     swidth = pointAttr['stroke-width'] || 0;
@@ -1340,6 +1341,12 @@ function GLRenderer(
                 cbuffer = GLVertexBuffer(gl, shader); // eslint-disable-line new-cap
                 cbuffer.build(s.colorData, 'aColor', 4);
                 cbuffer.bind();
+            } else {
+                // #15869, a buffer with fewer points might already be bound by
+                // a different series/chart causing out of range errors
+                gl.disableVertexAttribArray(
+                    gl.getAttribLocation(shader.program() as any, 'aColor')
+                );
             }
 
             // Set series specific uniforms
@@ -1372,13 +1379,11 @@ function GLRenderer(
             // If the line width is < 0, skip rendering of the lines. See #7833.
             if (lineWidth > 0 || s.drawMode !== 'line_strip') {
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
-                    // if (s.segments[sindex].from < s.segments[sindex].to) {
                     vbuffer.render(
                         s.segments[sindex].from,
                         s.segments[sindex].to,
                         s.drawMode
                     );
-                    // }
                 }
             }
 
@@ -1390,13 +1395,11 @@ function GLRenderer(
                 }
                 shader.setDrawAsCircle(true);
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
-                    // if (s.segments[sindex].from < s.segments[sindex].to) {
                     vbuffer.render(
                         s.segments[sindex].from,
                         s.segments[sindex].to,
                         'POINTS'
                     );
-                    // }
                 }
             }
         });

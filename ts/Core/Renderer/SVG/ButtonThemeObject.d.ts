@@ -15,7 +15,7 @@
  * */
 
 import type SVGAttributes from 'SVGAttributes';
-import CSSObject from '../CSSObject';
+import type CSSObject from '../CSSObject';
 
 /* *
  *
@@ -36,7 +36,7 @@ export interface ButtonThemeStatesObject {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

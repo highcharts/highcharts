@@ -12,17 +12,20 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
-import Ajax from '../Extensions/Ajax.js';
-const {
-    ajax
-} = Ajax;
+
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
+import G from '../Core/Globals.js';
+const { doc } = G;
+import HU from '../Core/HttpUtilities.js';
+const { ajax } = HU;
 import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
@@ -44,6 +47,7 @@ const {
  * Declarations
  *
  * */
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         data?: Highcharts.Data;
@@ -99,8 +103,9 @@ declare global {
             endRow?: number;
             error?: Function;
             firstRowAsNames?: boolean;
+            googleAPIKey?: string;
             googleSpreadsheetKey?: string;
-            googleSpreadsheetWorksheet?: string;
+            googleSpreadsheetRange?: string;
             itemDelimiter?: string;
             lineDelimiter?: string;
             parsed?: DataParsedCallbackFunction;
@@ -443,8 +448,27 @@ declare global {
  */
 
 /**
- * The key for a Google Spreadsheet to load. See [general information
- * on GS](https://developers.google.com/gdata/samples/spreadsheet_sample).
+ * The Google Spreadsheet API key required for access generated at [API Services
+ * / Credentials](https://console.cloud.google.com/apis/credentials). See a
+ * comprehensive tutorial for setting up the key at the
+ * [Hands-On Data Visualization](https://handsondataviz.org/google-sheets-api-key.html)
+ * book website.
+ *
+ * @sample {highcharts} highcharts/data/google-spreadsheet/
+ *         Load a Google Spreadsheet
+ *
+ * @type      {string}
+ * @since     9.2.2
+ * @apioption data.googleAPIKey
+ */
+
+/**
+ * The key or `spreadsheetId` value for a Google Spreadsheet to load. See
+ * [developers.google.com](https://developers.google.com/sheets/api/guides/concepts)
+ * for how to find the `spreadsheetId`.
+ *
+ * In order for Google Sheets to load, a valid [googleAPIKey](#data.googleAPIKey)
+ * must also be given.
  *
  * @sample {highcharts} highcharts/data/google-spreadsheet/
  *         Load a Google Spreadsheet
@@ -455,13 +479,32 @@ declare global {
  */
 
 /**
- * The Google Spreadsheet worksheet to use in combination with
- * [googleSpreadsheetKey](#data.googleSpreadsheetKey). The available id's from
- * your sheet can be read from `https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic`.
+ * The Google Spreadsheet `range` to use in combination with
+ * [googleSpreadsheetKey](#data.googleSpreadsheetKey). See
+ * [developers.google.com](https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get)
+ * for details.
+ *
+ * If given, it takes precedence over `startColumn`, `endColumn`, `startRow` and
+ * `endRow`.
+ *
+ * @example
+ * googleSpreadsheetRange: 'Fruit Consumption' // Load a named worksheet
+ * googleSpreadsheetRange: 'A:Z' // Load columns A to Z
  *
  * @sample {highcharts} highcharts/data/google-spreadsheet/
  *         Load a Google Spreadsheet
  *
+ * @type      {string|undefined}
+ * @since     9.2.2
+ * @apioption data.googleSpreadsheetRange
+ */
+
+/**
+ * No longer works since v9.2.2, that uses Google Sheets API v4. Instead, use
+ * the [googleSpreadsheetRange](#data.googleSpreadsheetRange) option to load a
+ * specific sheet.
+ *
+ * @deprecated
  * @type      {string}
  * @since     4.0
  * @apioption data.googleSpreadsheetWorksheet
@@ -1745,23 +1788,32 @@ class Data {
      *         Always returns false, because it is an intermediate fetch.
      */
     public parseGoogleSpreadsheet(): boolean {
-        let data = this,
+        const data = this,
             options = this.options,
             googleSpreadsheetKey = options.googleSpreadsheetKey,
             chart = this.chart,
-            // use sheet 1 as the default rather than od6
-            // as the latter sometimes cause issues (it looks like it can
-            // be renamed in some cases, ref. a fogbugz case).
-            worksheet = options.googleSpreadsheetWorksheet || 1,
-            startRow = options.startRow || 0,
-            endRow = options.endRow || Number.MAX_VALUE,
-            startColumn = options.startColumn || 0,
-            endColumn = options.endColumn || Number.MAX_VALUE,
-            refreshRate = (options.dataRefreshRate || 2) * 1000;
+            refreshRate = Math.max((options.dataRefreshRate || 2) * 1000, 4000);
 
-        if (refreshRate < 4000) {
-            refreshRate = 4000;
-        }
+        /**
+         * Form the `values` field after range settings, unless the
+         * googleSpreadsheetRange option is set.
+         */
+        const getRange = (): string => {
+            if (options.googleSpreadsheetRange) {
+                return options.googleSpreadsheetRange;
+            }
+
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const start = (alphabet.charAt(options.startColumn || 0) || 'A') +
+                ((options.startRow || 0) + 1);
+
+            let end = alphabet.charAt(pick(options.endColumn, -1)) || 'ZZ';
+            if (defined(options.endRow)) {
+                end += options.endRow + 1;
+            }
+
+            return `${start}:${end}`;
+        };
 
         /**
          * Fetch the actual spreadsheet using XMLHttpRequest.
@@ -1769,14 +1821,20 @@ class Data {
          */
         function fetchSheet(fn: Function): void {
             const url = [
-                'https://spreadsheets.google.com/feeds/cells',
+                'https://sheets.googleapis.com/v4/spreadsheets',
                 googleSpreadsheetKey,
-                worksheet,
-                'public/values?alt=json'
+                'values',
+                getRange(),
+                '?alt=json&' +
+                'majorDimension=COLUMNS&' +
+                'valueRenderOption=UNFORMATTED_VALUE&' +
+                'dateTimeRenderOption=FORMATTED_STRING&' +
+                'key=' + options.googleAPIKey
+
             ].join('/');
 
             ajax({
-                url: url,
+                url,
                 dataType: 'json',
                 success: function (json: Highcharts.JSONType): void {
                     fn(json);
@@ -1786,7 +1844,7 @@ class Data {
                             function (): void {
                                 fetchSheet(fn);
                             },
-                            (options.dataRefreshRate || 2) * 1000
+                            refreshRate
                         );
                     }
                 },
@@ -1807,81 +1865,27 @@ class Data {
                 json: Highcharts.JSONType
             ): (boolean|undefined) {
                 // Prepare the data from the spreadsheat
-                let columns: Array<Array<Highcharts.DataValueType>> = [],
-                    cells = json.feed.entry,
-                    cell,
-                    cellCount = (cells || []).length,
-                    colCount = 0,
-                    rowCount = 0,
-                    val,
-                    gr,
-                    gc,
-                    cellInner,
-                    i: number;
+                const columns: Array<Array<Highcharts.DataValueType>> =
+                    json.values;
 
-                if (!cells || cells.length === 0) {
+                if (!columns || columns.length === 0) {
                     return false;
                 }
 
-                // First, find the total number of columns and rows that
-                // are actually filled with data
-                for (i = 0; i < cellCount; i++) {
-                    cell = cells[i];
-                    colCount = Math.max(colCount, cell.gs$cell.col);
-                    rowCount = Math.max(rowCount, cell.gs$cell.row);
-                }
-
-                // Set up arrays containing the column data
-                for (i = 0; i < colCount; i++) {
-                    if (i >= startColumn && i <= endColumn) {
-                        // Create new columns with the length of either
-                        // end-start or rowCount
-                        columns[i - startColumn] = [];
-                    }
-                }
-
-                // Loop over the cells and assign the value to the right
-                // place in the column arrays
-                for (i = 0; i < cellCount; i++) {
-                    cell = cells[i];
-                    gr = cell.gs$cell.row - 1; // rows start at 1
-                    gc = cell.gs$cell.col - 1; // columns start at 1
-
-                    // If both row and col falls inside start and end set the
-                    // transposed cell value in the newly created columns
-                    if (gc >= startColumn && gc <= endColumn &&
-                        gr >= startRow && gr <= endRow) {
-
-                        cellInner = cell.gs$cell || cell.content;
-
-                        val = null;
-
-                        if (cellInner.numericValue) {
-                            if (cellInner.$t.indexOf('/') >= 0 ||
-                                cellInner.$t.indexOf('-') >= 0) {
-                                // This is a date - for future reference.
-                                val = cellInner.$t;
-                            } else if (cellInner.$t.indexOf('%') > 0) {
-                                // Percentage
-                                val = parseFloat(cellInner.numericValue) * 100;
-                            } else {
-                                val = parseFloat(cellInner.numericValue);
-                            }
-                        } else if (cellInner.$t && cellInner.$t.length) {
-                            val = cellInner.$t;
-                        }
-
-                        columns[gc - startColumn][gr - startRow] = val;
-                    }
-                }
+                // Find the maximum row count in order to extend shorter columns
+                const rowCount = columns.reduce(
+                    (rowCount, column): number => Math.max(
+                        rowCount,
+                        column.length
+                    ),
+                    0
+                );
 
                 // Insert null for empty spreadsheet cells (#5298)
-                columns.forEach(function (
-                    column: Array<Highcharts.DataValueType>
-                ): void {
-                    for (i = 0; i < column.length; i++) {
+                columns.forEach((column): void => {
+                    for (let i = 0; i < rowCount; i++) {
                         if (typeof column[i] === 'undefined') {
-                            column[i] = null as any;
+                            column[i] = null;
                         }
                     }
                 });
@@ -2585,12 +2589,12 @@ class Data {
  *
  * @return {Highcharts.Data}
  */
-H.data = function (
+G.data = function (
     dataOptions: Highcharts.DataOptions,
     chartOptions?: Options,
     chart?: Chart
 ): Highcharts.Data {
-    return new H.Data(dataOptions, chartOptions, chart);
+    return new G.Data(dataOptions, chartOptions, chart);
 };
 
 // Extend Chart.init so that the Chart constructor accepts a new configuration
@@ -2618,7 +2622,7 @@ addEvent(
              * @name Highcharts.Chart#data
              * @type {Highcharts.Data|undefined}
              */
-            chart.data = new H.Data(extend(userOptions.data, {
+            chart.data = new G.Data(extend(userOptions.data, {
 
                 afterComplete: function (
                     dataOptions?: Partial<Options>
@@ -2865,5 +2869,5 @@ class SeriesBuilder {
     }
 }
 
-H.Data = Data as any;
-export default H.Data;
+G.Data = Data as any;
+export default G.Data;

@@ -12,25 +12,44 @@
 
 'use strict';
 
-import type Options from '../../Core/Options';
+/* *
+ *
+ *  Imports
+ *
+ * */
 
-import Chart from '../../Core/Chart/Chart.js';
-import H from '../../Core/Globals.js';
+import type ChartSonify from './ChartSonify';
+
+import type SeriesSonify from './SeriesSonify';
+import type SignalHandler from './SignalHandler';
+import type SonificationUtilities from './SonificationUtilities';
+
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import Point from '../../Core/Series/Point.js';
-import Series from '../../Core/Series/Series.js';
+import PointSonify from './PointSonify.js';
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
-    extend,
     merge
 } = U;
+import Instrument from './Instrument.js';
+import IntrumentDefinitions from './InstrumentDefinitions.js';
+import Earcon from './Earcon.js';
+import pointSonifyFunctions from './PointSonify.js';
+import SU from './SonificationUtilities.js';
+import TimelineClasses from './Timeline.js';
+import sonificationOptions from './Options.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
-        sonification?: Highcharts.SonifyableChart['sonification'];
-        sonify?: Highcharts.SonifyableChart['sonify'];
+        sonification?: ChartSonify.SonifyableChart['sonification'];
+        sonify?: ChartSonify.SonifyableChart['sonify'];
     }
 }
 
@@ -41,23 +60,12 @@ declare module '../../Core/Series/PointLike' {
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
-        sonify?: Highcharts.SonifyableSeries['sonify'];
-    }
-}
-
 /**
  * Internal types.
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartSonificationStateObject {
-            currentlyPlayingPoint?: SonifyablePoint;
-            timeline?: Timeline;
-            duration?: number;
-        }
         interface PointSonificationStateObject {
             currentlyPlayingPoint?: SonifyablePoint;
             instrumentsPlaying?: Record<string, Instrument>;
@@ -71,46 +79,17 @@ declare global {
             TimelinePath: typeof TimelinePath;
             fadeOutDuration: number;
             instruments: Record<string, Instrument>;
-            utilities: SonificationUtilitiesObject;
-        }
-        interface SonifyableChart extends Chart {
-            cancelSonify: SonifyChartFunctionsObject['cancel'];
-            getCurrentSonifyPoints: (
-                SonifyChartFunctionsObject['getCurrentPoints']
-            );
-            pauseSonify: SonifyChartFunctionsObject['pause'];
-            resetSonifyCursor: SonifyChartFunctionsObject['resetCursor'];
-            resetSonifyCursorEnd: SonifyChartFunctionsObject['resetCursorEnd'];
-            resumeSonify: SonifyChartFunctionsObject['resume'];
-            rewindSonify: SonifyChartFunctionsObject['rewind'];
-            series: Array<SonifyableSeries>;
-            setSonifyCursor: SonifyChartFunctionsObject['setCursor'];
-            sonification: ChartSonificationStateObject;
-            sonify: SonifyChartFunctionsObject['chartSonify'];
+            utilities: typeof SonificationUtilities;
         }
         interface SonifyablePoint extends Point {
-            cancelSonify: PointSonifyFunctions['pointCancelSonify'];
-            series: SonifyableSeries;
+            cancelSonify: PointSonify.Composition['pointCancelSonify'];
+            series: SeriesSonify.Composition;
             sonification: PointSonificationStateObject;
-            sonify: PointSonifyFunctions['pointSonify'];
-        }
-        interface SonifyableSeries extends Series {
-            chart: SonifyableChart;
-            points: Array<SonifyablePoint>;
-            sonify: SonifyChartFunctionsObject['seriesSonify'];
+            sonify: PointSonify.Composition['pointSonify'];
         }
         let sonification: SonificationObject;
     }
 }
-
-import Instrument from './Instrument.js';
-import instruments from './InstrumentDefinitions.js';
-import Earcon from './Earcon.js';
-import pointSonifyFunctions from './PointSonify.js';
-import chartSonifyFunctions from './ChartSonify.js';
-import utilities from './Utilities.js';
-import TimelineClasses from './Timeline.js';
-import sonificationOptions from './Options.js';
 
 // Expose on the Highcharts object
 
@@ -169,18 +148,6 @@ import sonificationOptions from './Options.js';
  * @name Highcharts.SonificationObject#Timeline
  * @type {Function}
  */
-H.sonification = {
-    fadeOutDuration: 20,
-
-    // Classes and functions
-    utilities: utilities,
-    Instrument: Instrument as any,
-    instruments: instruments,
-    Earcon: Earcon as any,
-    TimelineEvent: TimelineClasses.TimelineEvent,
-    TimelinePath: TimelineClasses.TimelinePath,
-    Timeline: TimelineClasses.Timeline
-};
 
 // Add default options
 merge(
@@ -189,36 +156,23 @@ merge(
     sonificationOptions
 );
 
-// Chart specific
-Point.prototype.sonify = pointSonifyFunctions.pointSonify;
-Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
-Series.prototype.sonify = chartSonifyFunctions.seriesSonify;
-extend<Chart|Highcharts.SonifyableChart>(Chart.prototype, {
-    sonify: chartSonifyFunctions.chartSonify,
-    pauseSonify: chartSonifyFunctions.pause,
-    resumeSonify: chartSonifyFunctions.resume,
-    rewindSonify: chartSonifyFunctions.rewind,
-    cancelSonify: chartSonifyFunctions.cancel,
-    getCurrentSonifyPoints: chartSonifyFunctions.getCurrentPoints,
-    setSonifyCursor: chartSonifyFunctions.setCursor,
-    resetSonifyCursor: chartSonifyFunctions.resetCursor,
-    resetSonifyCursorEnd: chartSonifyFunctions.resetCursorEnd
-});
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
-/* eslint-disable no-invalid-this */
+const Sonification = {
+    fadeOutDuration: 20,
 
-// Prepare charts for sonification on init
-addEvent(Chart, 'init', function (): void {
-    this.sonification = {};
-});
+    // Classes and functions
+    utilities: SU,
+    Instrument: Instrument as any,
+    instruments: IntrumentDefinitions,
+    Earcon: Earcon as any,
+    TimelineEvent: TimelineClasses.TimelineEvent,
+    TimelinePath: TimelineClasses.TimelinePath,
+    Timeline: TimelineClasses.Timeline
+};
 
-// Update with chart/series/point updates
-addEvent(Chart as any, 'update', function (
-    this: Highcharts.SonifyableChart,
-    e: { options: Options}
-): void {
-    const newOptions = e.options.sonification;
-    if (newOptions) {
-        merge(true, this.options.sonification, newOptions);
-    }
-});
+export default Sonification;

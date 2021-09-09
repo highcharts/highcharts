@@ -46,7 +46,7 @@ declare module '../SVG/SVGRendererLike' {
 
 /* *
  *
- *  Composition
+ *  Class
  *
  * */
 
@@ -57,17 +57,40 @@ class HTMLRenderer extends SVGRenderer {
 
     /* *
      *
-     *  Functions
+     *  Static Properties
+     *
+     * */
+
+    private static readonly composedClasses: Array<Function> = [];
+
+    /* *
+     *
+     *  Static Functions
      *
      * */
 
     /** @private */
-    public static compose(SVGRendererClass: typeof SVGRenderer): void {
-        const svgRendererProto = SVGRendererClass.prototype,
-            htmlRendererProto = HTMLRenderer.prototype;
+    public static compose<T extends typeof SVGRenderer>(
+        SVGRendererClass: T
+    ): (T&typeof HTMLRenderer) {
 
-        svgRendererProto.html = htmlRendererProto.html;
+        if (HTMLRenderer.composedClasses.indexOf(SVGRendererClass) === -1) {
+            HTMLRenderer.composedClasses.push(SVGRendererClass);
+
+            const htmlRendererProto = HTMLRenderer.prototype,
+                svgRendererProto = SVGRendererClass.prototype;
+
+            svgRendererProto.html = htmlRendererProto.html;
+        }
+
+        return SVGRendererClass as (T&typeof HTMLRenderer);
     }
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Create HTML text node. This is used by the VML renderer as well as the
@@ -197,11 +220,11 @@ class HTMLRenderer extends SVGRenderer {
         // This is specific for HTML within SVG
         if (isSVG) {
             wrapper.add = function (svgGroupWrapper?: HTMLElement): HTMLElement {
+                const container = renderer.box.parentNode,
+                    parents = [] as Array<HTMLElement>;
 
                 let htmlGroup: (HTMLElement|HTMLDOMElement|null|undefined),
-                    container = renderer.box.parentNode,
-                    parentGroup,
-                    parents = [] as Array<HTMLElement>;
+                    parentGroup;
 
                 this.parentGroup = svgGroupWrapper as any;
 
@@ -224,8 +247,7 @@ class HTMLRenderer extends SVGRenderer {
                         // Ensure dynamically updating position when any parent
                         // is translated
                         parents.reverse().forEach(function (parentGroup): void {
-                            let htmlGroupStyle: CSSObject,
-                                cls = attr(parentGroup.element, 'class');
+                            const cls = attr(parentGroup.element, 'class');
 
                             /**
                              * Common translate setter for X and Y on the HTML
@@ -268,7 +290,8 @@ class HTMLRenderer extends SVGRenderer {
                                     opacity: parentGroup.opacity, // #5075
                                     cursor: parentGroupStyles.cursor, // #6794
                                     pointerEvents:
-                                        parentGroupStyles.pointerEvents // #5595
+                                        parentGroupStyles.pointerEvents, // #5595
+                                    visibility: parentGroup.visibility
 
                                 // the top group is appended to container
                                 },
@@ -276,7 +299,7 @@ class HTMLRenderer extends SVGRenderer {
                             );
 
                             // Shortcut
-                            htmlGroupStyle = (htmlGroup as any).style;
+                            const htmlGroupStyle = (htmlGroup as any).style;
 
                             // Set listeners to update the HTML div's position
                             // whenever the SVG group position is changed.
@@ -301,7 +324,7 @@ class HTMLRenderer extends SVGRenderer {
                                     if (parents[0].div) { // #6418
                                         wrapper.on.apply({
                                             element: parents[0].div,
-                                            onEvents: wrapper.onEvents
+                                            onEvents: parentGroup.onEvents
                                         }, arguments);
                                     }
                                     return parentGroup;

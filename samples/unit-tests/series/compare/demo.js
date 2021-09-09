@@ -182,3 +182,41 @@ QUnit.test('Compare with one single value', assert => {
         'The Y axis should have one tick at 0 (#12058)'
     );
 });
+
+QUnit.test('Compare multi line indicators, #15867.', assert => {
+    const chart = Highcharts.stockChart('container', {
+        plotOptions: {
+            series: {
+                compare: 'value'
+            }
+        },
+        series: [{
+            type: 'line',
+            id: 'aapl',
+            name: 'AAPL Stock Price',
+            data: [1, 2, 3, 4, 5]
+        }, {
+            type: 'bb',
+            linkedTo: 'aapl',
+            params: {
+                period: 3
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].toPixels(0) - chart.plotTop,
+        chart.series[1].points[0].plotMiddle,
+        `The first point of the main line should be located at 0 on yAxis.`
+    );
+    assert.strictEqual(
+        chart.yAxis[0].toPixels(2) - chart.plotTop,
+        chart.series[1].points[0].plotTop,
+        `The first point of the top line should be located at 2 on yAxis.`
+    );
+    assert.strictEqual(
+        chart.yAxis[0].toPixels(-2) - chart.plotTop,
+        chart.series[1].points[0].plotBottom,
+        `The first point of the bottom line should be located at -2 on yAxis.`
+    );
+});

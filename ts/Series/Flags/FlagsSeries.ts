@@ -20,11 +20,14 @@ import type ColorType from '../../Core/Color/ColorType';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
+import R from '../../Core/Renderer/RendererUtilities.js';
+const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -65,18 +68,16 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface DataLabelsBoxObject {
-            anchorX?: number;
-            plotX?: number;
-        }
-    }
+interface DistributedBoxObject extends R.BoxObject {
+    anchorX?: number;
+    plotX?: number;
 }
+
+/* *
+ *
+ *  Classes
+ *
+ * */
 
 /**
  * The Flags series.
@@ -262,7 +263,7 @@ class FlagsSeries extends ColumnSeries {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highstock
          */
-        fillColor: palette.backgroundColor,
+        fillColor: Palette.backgroundColor,
 
         /**
          * The color of the line/border of the flag.
@@ -297,7 +298,7 @@ class FlagsSeries extends ColumnSeries {
                  * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highstock
                  */
-                lineColor: palette.neutralColor100,
+                lineColor: Palette.neutralColor100,
 
                 /**
                  * The fill or background color of the flag.
@@ -305,7 +306,7 @@ class FlagsSeries extends ColumnSeries {
                  * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highstock
                  */
-                fillColor: palette.highlightColor20
+                fillColor: Palette.highlightColor20
             }
         },
 
@@ -383,8 +384,8 @@ class FlagsSeries extends ColumnSeries {
             attribs: SVGAttributes,
             outsideRight,
             yAxis = series.yAxis,
-            boxesMap: Record<string, Highcharts.DataLabelsBoxObject> = {},
-            boxes: Highcharts.DataLabelsBoxArray = [],
+            boxesMap: Record<string, DistributedBoxObject> = {},
+            boxes: Array<DistributedBoxObject> = [],
             centered;
 
         i = points.length;
@@ -508,14 +509,12 @@ class FlagsSeries extends ColumnSeries {
 
         // Handle X-dimension overlapping
         if (!options.allowOverlapX) {
-            objectEach(boxesMap, function (
-                box: Highcharts.DataLabelsBoxObject
-            ): void {
+            objectEach(boxesMap, function (box): void {
                 box.plotX = box.anchorX;
                 boxes.push(box);
             });
 
-            H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
+            distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
 
             points.forEach(function (point): void {
                 const box = point.graphic && boxesMap[point.plotX as any];

@@ -17,19 +17,20 @@
  * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type ColorAxis from '../../Core/Axis/ColorAxis';
+import type ColorAxis from '../../Core/Axis/Color/ColorAxis';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
 import type Point from '../../Core/Series/Point.js';
 import type { PointStateHoverOptions } from '../../Core/Series/PointOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import Color from '../../Core/Color/Color.js';
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
+import ColorMapComposition from '../ColorMapComposition.js';
+const { colorMapSeriesMixin } = ColorMapComposition;
 import HeatmapPoint from './HeatmapPoint.js';
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -191,11 +192,14 @@ class HeatmapSeries extends ScatterSeries {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        nullColor: palette.neutralColor3,
+        nullColor: Palette.neutralColor3,
 
         dataLabels: {
-            formatter: function (): (number|null) { // #2945
-                return (this.point as HeatmapPoint).value;
+            formatter: function (): string { // #2945
+                const { numberFormatter } = this.series.chart;
+                const { value } = this.point as HeatmapPoint;
+
+                return isNumber(value) ? numberFormatter(value, -1) : '';
             },
             inside: true,
             verticalAlign: 'middle',
@@ -578,10 +582,12 @@ class HeatmapSeries extends ScatterSeries {
             brightness,
             // Get old properties in order to keep backward compatibility
             borderColor =
+                (point && point.options.borderColor) ||
                 seriesOptions.borderColor ||
                 heatmapPlotOptions.borderColor ||
                 seriesPlotOptions.borderColor,
             borderWidth =
+                (point && point.options.borderWidth) ||
                 seriesOptions.borderWidth ||
                 heatmapPlotOptions.borderWidth ||
                 seriesPlotOptions.borderWidth ||
@@ -714,11 +720,9 @@ class HeatmapSeries extends ScatterSeries {
  *
  * */
 
-interface HeatmapSeries {
+interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     axisTypes: typeof colorMapSeriesMixin.axisTypes;
-    colorAttribs: typeof colorMapSeriesMixin.colorAttribs;
-    colorKey: typeof colorMapSeriesMixin.colorKey;
-    drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getSymbol: typeof Series.prototype.getSymbol;
     parallelArrays: typeof colorMapSeriesMixin.parallelArrays;
     pointArrayMap: Array<string>;
@@ -734,16 +738,14 @@ extend(HeatmapSeries.prototype, {
 
     axisTypes: colorMapSeriesMixin.axisTypes,
 
-    colorAttribs: colorMapSeriesMixin.colorAttribs,
-
-    colorKey: colorMapSeriesMixin.colorKey,
+    colorKey: 'value',
 
     directTouch: true,
 
     /**
      * @private
      */
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     getExtremesFromAll: true,
 
@@ -758,6 +760,8 @@ extend(HeatmapSeries.prototype, {
     trackerGroups: colorMapSeriesMixin.trackerGroups
 
 });
+
+ColorMapComposition.compose(HeatmapSeries);
 
 /* *
  *
