@@ -19,7 +19,6 @@
  * */
 
 import type ChartSonify from './ChartSonify';
-
 import type SeriesSonify from './SeriesSonify';
 import type SignalHandler from './SignalHandler';
 import type SonificationUtilities from './SonificationUtilities';
@@ -33,9 +32,7 @@ const {
     merge
 } = U;
 import Instrument from './Instrument.js';
-import IntrumentDefinitions from './InstrumentDefinitions.js';
 import Earcon from './Earcon.js';
-import pointSonifyFunctions from './PointSonify.js';
 import SU from './SonificationUtilities.js';
 import TimelineClasses from './Timeline.js';
 import sonificationOptions from './Options.js';
@@ -168,7 +165,7 @@ const Sonification = {
     // Classes and functions
     utilities: SU,
     Instrument: Instrument as any,
-    instruments: IntrumentDefinitions,
+    instruments: Instrument.definitions,
     Earcon: Earcon as any,
     TimelineEvent: TimelineClasses.TimelineEvent,
     TimelinePath: TimelineClasses.TimelinePath,
