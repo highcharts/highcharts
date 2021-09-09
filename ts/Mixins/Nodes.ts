@@ -183,7 +183,6 @@ const NodesMixin = H.NodesMixin = {
                 coll: string
             ): (number|undefined) {
                 let offset = 0;
-
                 for (let i = 0; i < (node as any)[coll].length; i++) {
                     if ((node as any)[coll][i] === point) {
                         return offset;

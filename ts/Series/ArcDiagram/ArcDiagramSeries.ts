@@ -88,7 +88,7 @@ class ArcDiagramSeries extends SankeySeries {
         center: [null, null],
         curveFactor: 0.6,
         nodeShape: 'circle',
-        // linkBase: 'center',
+        equalNodes: false,
 
         /**
          * The start angle of the dependency wheel, in degrees where 0 is up.
@@ -141,8 +141,6 @@ class ArcDiagramSeries extends SankeySeries {
             node.column = 0;
             columns[0].push(node);
         });
-        this.calculateNodeHeight(columns[0]);
-
         return columns;
     }
 
@@ -165,16 +163,21 @@ class ArcDiagramSeries extends SankeySeries {
             node: DependencyWheelPoint,
             factor: number
         ): (Record<string, number>|undefined) {
-            const linkBase = (node.series.options as any).linkBase;
+            const equalNodes = (node.series.options as any).equalNodes;
             const maxNodesLength = chart.inverted ? chart.plotWidth : chart.plotHeight;
             let offset = 0,
                 totalNodeOffset,
-                nodePadding = series.nodePadding;
+                nodePadding = series.nodePadding,
+                maxRadius = Math.min(
+                    chart.plotWidth,
+                    chart.plotHeight,
+                    maxNodesLength / series.nodes.length - nodePadding
+                );
 
             for (let i = 0; i < column.length; i++) {
                 const sum = column[i].getSum();
-                const height = linkBase === 'center' ?
-                    maxNodesLength / node.series.nodes.length - nodePadding :
+                const height = equalNodes ?
+                    maxRadius :
                     Math.max(
                         sum * factor,
                         series.options.minLinkWidth as any
@@ -203,8 +206,7 @@ class ArcDiagramSeries extends SankeySeries {
             this: ArcDiagramSeries.ColumnArray,
             factor: number
         ): number {
-
-            const linkBase = (series.options as any).linkBase;
+            const equalNodes = (series.options as any).equalNodes;
             const maxNodesLength = chart.inverted ? chart.plotWidth : chart.plotHeight,
                 nodePadding = series.nodePadding;
             const height = this.reduce(function (
@@ -214,7 +216,7 @@ class ArcDiagramSeries extends SankeySeries {
                 if (height > 0) {
                     height += nodePadding;
                 }
-                const nodeHeight = linkBase === 'center' ?
+                const nodeHeight = equalNodes ?
                     maxNodesLength / node.series.nodes.length - nodePadding :
                     Math.max(
                         node.getSum() * factor,
@@ -223,18 +225,9 @@ class ArcDiagramSeries extends SankeySeries {
                 height += nodeHeight;
                 return height;
             }, 0);
-            return ((chart.plotSizeY as any) - height) / 2;
+            return ((chart.plotSizeY as any) - Math.round(height)) / 2;
         };
-
         return column;
-    }
-
-    /**
-     * Translate from vertical pixels to perimeter.
-     * @private
-     */
-    public getNodePadding(): number {
-        return (this.options.nodePadding as any) / Math.PI;
     }
 
     /**
@@ -285,7 +278,7 @@ class ArcDiagramSeries extends SankeySeries {
                     ((fromNode.shapeArgs.height || 0) - linkHeight) / 2 :
                 getY(fromNode, 'linksFrom'),
             toY = centeredLinks ? toNode.nodeY +
-                ((fromNode.shapeArgs.height || 0) - linkHeight) / 2 :
+                ((toNode.shapeArgs.height || 0) - linkHeight) / 2 :
                 getY(toNode, 'linksTo'),
             nodeLeft = fromNode.nodeX,
             nodeW = this.nodeWidth,
@@ -303,6 +296,10 @@ class ArcDiagramSeries extends SankeySeries {
             right = right - 2 * nodeW;
             nodeW = -nodeW;
             linkHeight = -linkHeight;
+        }
+
+        if (!chart.inverted && !(chart as any).options.chart.reversed) {
+            right -= nodeW / 2;
         }
 
         if ((chart as any).options.chart.reversed) {
@@ -327,8 +324,10 @@ class ArcDiagramSeries extends SankeySeries {
         ) * pick(
             (point.series.options as any).majorRadius,
             Math.min(Math.abs(toY + linkHeight - fromY) / 2,
-                chart.plotWidth - 2 * this.nodeWidth - Math.abs(linkHeight),
-                chart.plotHeight - 2 * this.nodeWidth - Math.abs(linkHeight))
+                chart.inverted ?
+                    fromNode.nodeX - Math.abs(linkHeight) - chart.plotTop :
+                    (chart.plotWidth - fromNode.nodeX) - Math.abs(linkHeight) - chart.plotLeft
+            )
         );
 
         point.shapeArgs = {
@@ -394,26 +393,6 @@ class ArcDiagramSeries extends SankeySeries {
 
     }
 
-    public calculateNodeHeight(column: ArcDiagramSeries.ColumnArray): void {
-        const translationFactor = this.translationFactor || 1.71,
-            chart = this.chart,
-            series = this,
-            maxNodesLength = chart.inverted ? chart.plotWidth : chart.plotHeight,
-            options = this.options,
-            linkBase = (column[0].series.options as any).linkBase;
-
-        let sum;
-        column.forEach(function (node): void {
-            sum = node.getSum();
-            (node as any).nodeHeight = linkBase === 'center' ?
-                maxNodesLength / node.series.nodes.length - series.nodePadding :
-                Math.max(
-                    Math.round(sum * translationFactor),
-                    series.options.minLinkWidth as any
-                );
-        });
-    }
-
     /**
      * Run translation operations for one node.
      * @private
@@ -428,16 +407,16 @@ class ArcDiagramSeries extends SankeySeries {
             options = this.options,
             maxRadius = Math.min(
                 chart.plotWidth,
-                chart.plotTop,
+                chart.plotHeight,
                 maxNodesLength / node.series.nodes.length - this.nodePadding
             ),
-            sum = Math.min(maxRadius / translationFactor, node.getSum());
-        let linkBase = (node.series.options as any).linkBase;
+            sum = node.getSum();
+        let equalNodes = (node.series.options as any).equalNodes;
 
-        const nodeHeight = linkBase === 'center' ?
-            maxNodesLength / node.series.nodes.length - this.nodePadding :
+        const nodeHeight = equalNodes ?
+            maxRadius :
             Math.max(
-                Math.round(sum * translationFactor),
+                sum * translationFactor,
                 this.options.minLinkWidth as any
             );
 
@@ -453,7 +432,8 @@ class ArcDiagramSeries extends SankeySeries {
             left = Math.floor(
                 this.colDistance * (node.column as any) +
                 (options.borderWidth as any) / 2
-            ) + crisp + maxRadius;
+            ) + crisp + (column as any).maxRadius / 2;
+
         let nodeWidth = Math.round(this.nodeWidth);
 
         let nodeLeft = chart.inverted ?
@@ -509,7 +489,7 @@ class ArcDiagramSeries extends SankeySeries {
                 } // (a || b) ^ !(a && b)
 
                 node.shapeArgs = {
-                    x: x + width,
+                    x: x + width / 2,
                     y: y + height / 2,
                     r: height / 2,
                     width: width,
@@ -518,7 +498,7 @@ class ArcDiagramSeries extends SankeySeries {
                 };
 
                 node.dlBox = {
-                    x: x,
+                    x: x + width / 2,
                     y: y + height / 2,
                     height: 0,
                     width: 0

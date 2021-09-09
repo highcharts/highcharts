@@ -756,6 +756,7 @@ class SankeySeries extends ColumnSeries {
             let exceedsMinLinkWidth: boolean;
             let factor = 0;
             let i: number;
+            let maxRadius: number = 0;
 
             let remainingHeight = (chart.plotSizeY as any) -
                 (options.borderWidth as any) - (column.length - 1) * series.nodePadding;
@@ -774,6 +775,7 @@ class SankeySeries extends ColumnSeries {
                         remainingHeight -= minLinkWidth;
                         exceedsMinLinkWidth = true;
                     }
+                    maxRadius = Math.max(maxRadius, column[i].getSum() * factor);
                 }
                 if (!exceedsMinLinkWidth) {
                     break;
@@ -783,6 +785,7 @@ class SankeySeries extends ColumnSeries {
             // Re-insert original nodes
             column.length = 0;
             nodes.forEach((node): number => column.push(node));
+            (column as any).maxRadius = maxRadius;
             return factor;
         };
 
