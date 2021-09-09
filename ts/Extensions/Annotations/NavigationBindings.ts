@@ -97,10 +97,14 @@ declare global {
             langKey?: string;
         }
         interface LangNavigationOptions {
-            popup?: Record<string, string>|IndicatorAliases;
+            popup?: PopupOptions;
+        }
+        interface PopupOptions {
+            [key: string]: string | IndicatorAliases | undefined;
+            indicatorAliases?: IndicatorAliases;
         }
         interface IndicatorAliases {
-            indicatorAliases?: Record<string, Array<string>>;
+            [key: string]: Array<string>;
         }
         interface NavigationBindingsButtonEventsObject {
             button: HTMLDOMElement;
@@ -1187,7 +1191,6 @@ setOptions({
          * `annotations.js` or `annotations-advanced.src.js` module to be
          * loaded.
          *
-         * @since   7.0.0
          * @product highcharts highstock
          */
         navigation: {
@@ -1195,6 +1198,7 @@ setOptions({
              * Translations for all field names used in popup.
              *
              * @product highcharts highstock
+             * @since   7.0.0
              */
             popup: {
                 simpleShapes: 'Simple shapes',

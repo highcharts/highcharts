@@ -968,7 +968,7 @@ H.Popup.prototype = {
             const popup = this,
                 indicators = popup.indicators,
                 lang = popup.chart && popup.chart.options.lang,
-                indicatorAliases: any = lang &&
+                indicatorAliases = lang &&
                     lang.navigation &&
                     lang.navigation.popup &&
                     lang.navigation.popup.indicatorAliases;
