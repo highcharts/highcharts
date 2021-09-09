@@ -484,15 +484,14 @@ class Tooltip {
 
         // Destroy tooltip only when the property is explicitly defined.
         // Only while creating the tooltip. Not in case of animating etc.
-        if (defined(preventSplit)) {
-            const isRegularTooltip = tooltip.label &&
-                tooltip.label.hasClass('highcharts-label');
+        if (defined(preventSplit) && tooltip.label) {
+            const isRegularTooltip = tooltip.label.hasClass('highcharts-label');
 
             // When previously split tooltip was rendered and now if
             // hovering over another series where split tooltip should not
             // be used, destroy the label in order to create ordinary one.
             // #13868
-            if (preventSplit && !isRegularTooltip && tooltip.label) {
+            if (preventSplit && !isRegularTooltip) {
                 tooltip.label = tooltip.label.destroy();
                 // Remove the bottom tooltip if exists.
                 tooltip.tt = tooltip.tt && tooltip.tt.destroy();
@@ -501,8 +500,8 @@ class Tooltip {
 
             // When previously tooltip was generated for noSplitTooltip series
             // and now split one should be rendered, destroy the label.
-            if (!preventSplit && isRegularTooltip && tooltip.label) {
-                tooltip.label = tooltip.label.destroy();
+            if (!preventSplit && isRegularTooltip) {
+                tooltip.label = tooltip.label && tooltip.label.destroy();
             }
         }
 
