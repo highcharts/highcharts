@@ -188,7 +188,7 @@ declare global {
             keyboardNavigation?: (
                 SeriesAccessibilityKeyboardNavigationOptions
             );
-            pointDescriptionFormatter?: Function;
+            point: AccessibilityPointOptions;
         }
     }
 }
@@ -912,23 +912,38 @@ const Options: DeepPartial<OptionsType> = {
      */
 
     /**
-     * Formatter function to use instead of the default for point
-     * descriptions. Same as `accessibility.point.descriptionFormatter`, but for
-     * a single series.
-     *
-     * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
-     *
-     * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
-     * @since     7.1.0
-     * @apioption plotOptions.series.accessibility.pointDescriptionFormatter
-     */
-
-    /**
      * Expose only the series element to screen readers, not its points.
      *
      * @type       {boolean}
      * @since      7.1.0
      * @apioption  plotOptions.series.accessibility.exposeAsGroupOnly
+     */
+
+    /**
+     * Point accessibility options for a series.
+     *
+     * @extends    accessibility.point
+     * @since      next
+     * @requires   modules/accessibility
+     * @apioption  plotOptions.series.accessibility.point
+     */
+
+    /**
+     * Formatter function to use instead of the default for point
+     * descriptions. Same as `accessibility.point.descriptionFormatter`, but
+     * applies to a series instead of the whole chart.
+     *
+     * Note: Prefer using [accessibility.point.valueDescriptionFormat](#plotOptions.series.accessibility.point.valueDescriptionFormat)
+     * instead if possible, as default functionality such as describing
+     * annotations will be preserved.
+     *
+     * @see [accessibility.point.valueDescriptionFormat](#plotOptions.series.accessibility.point.valueDescriptionFormat)
+     * @see [point.accessibility.description](#series.line.data.accessibility.description)
+     * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
+     *
+     * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
+     * @since     next
+     * @apioption plotOptions.series.accessibility.point.descriptionFormatter
      */
 
     /**
