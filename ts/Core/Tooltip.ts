@@ -71,7 +71,6 @@ declare module './Series/PointLike' {
 declare module './Series/SeriesLike' {
     interface SeriesLike {
         noSharedTooltip?: boolean;
-        noSplitTooltip?: boolean;
         tt?: SVGElement;
     }
 }
@@ -330,12 +329,12 @@ class Tooltip {
             this.label = this.label.destroy();
         }
         if (this.split && this.tt) {
-            (this.cleanSplit as any)(this.chart, true);
+            this.cleanSplit(true);
             this.tt = this.tt.destroy();
         }
         if (this.renderer) {
             this.renderer = this.renderer.destroy() as any;
-            discardElement(this.container as any);
+            discardElement(this.container);
         }
         U.clearTimeout(this.hideTimer as any);
         U.clearTimeout(this.tooltipTimeout as any);
@@ -491,17 +490,11 @@ class Tooltip {
             // hovering over another series where split tooltip should not
             // be used, destroy the label in order to create ordinary one.
             // #13868
-            if (preventSplit && !isRegularTooltip) {
-                tooltip.label = tooltip.label.destroy();
-                // Remove the bottom tooltip if exists.
-                tooltip.tt = tooltip.tt && tooltip.tt.destroy();
-                this.cleanSplit();
-            }
-
-            // When previously tooltip was generated for noSplitTooltip series
-            // and now split one should be rendered, destroy the label.
-            if (!preventSplit && isRegularTooltip) {
-                tooltip.label = tooltip.label && tooltip.label.destroy();
+            if (
+                (preventSplit && !isRegularTooltip) ||
+                (!preventSplit && isRegularTooltip)
+            ) {
+                tooltip.destroy();
             }
         }
 
@@ -1097,7 +1090,7 @@ class Tooltip {
             this.hide();
         } else {
             // update text
-            if (tooltip.split && !point.series.noSplitTooltip) { // #13868
+            if (tooltip.split && !point.series.noSharedTooltip) { // #13868
                 this.renderSplit(text as any, points);
             } else {
                 let checkX = x;

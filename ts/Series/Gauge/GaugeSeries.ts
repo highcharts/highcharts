@@ -626,7 +626,6 @@ interface GaugeSeries {
     fixedBox: boolean;
     forceDL: boolean;
     noSharedTooltip: boolean;
-    noSplitTooltip: boolean;
     pointClass: typeof GaugePoint;
 }
 
@@ -640,7 +639,6 @@ extend(GaugeSeries.prototype, {
     fixedBox: true,
     forceDL: true,
     noSharedTooltip: true,
-    noSplitTooltip: true,
     pointClass: GaugePoint,
     trackerGroups: ['group', 'dataLabelsGroup']
 });

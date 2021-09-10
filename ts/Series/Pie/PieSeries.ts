@@ -1214,8 +1214,6 @@ extend(PieSeries.prototype, {
 
     noSharedTooltip: true,
 
-    noSplitTooltip: true,
-
     pointAttribs: ColumnSeries.prototype.pointAttribs,
 
     pointClass: PiePoint,
