@@ -67,7 +67,7 @@ Highcharts.getJSON(
             },
             subtitle: {
                 useHTMl: true,
-                text: "Source:Harvard.edu"
+                text: "Source: Harvard.edu"
             },
             tooltip: {
                 useHTML: true,
