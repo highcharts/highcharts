@@ -105,11 +105,8 @@ describe('Adding custom indicator on a separate axis through indicator popup, #1
         cy.get('.highcharts-indicator-list')
             .contains('CUSTOMINDICATORBASEDONRSI')
             .click();
+        cy.addIndicator();
 
-        cy.get('.highcharts-popup-rhs-col')
-            .children('.highcharts-popup button')
-            .eq(0)
-            .click(); // Add indicator.
         cy.chart().should(chart =>
             assert.strictEqual(
                 chart.yAxis.length,

@@ -27,7 +27,7 @@ const { prototype: colProto } = ColumnSeries;
 import DumbbellPoint from './DumbbellPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -126,7 +126,7 @@ class DumbbellSeries extends AreaRangeSeries {
              * @since 8.0.0
              * @product   highcharts highstock
              */
-            lowColor: palette.neutralColor80,
+            lowColor: Palette.neutralColor80,
             /**
              * Color of the line that connects the dumbbell point's values.
              * By default it is the series' color.

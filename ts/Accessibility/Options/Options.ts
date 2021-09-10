@@ -24,7 +24,7 @@ import type OptionsType from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import ColorType from '../../Core/Color/ColorType';
 
 /* *
@@ -376,7 +376,7 @@ const Options: DeepPartial<OptionsType> = {
              * Date format to use to describe range of datetime axes.
              *
              * For an overview of the replacement codes, see
-             * [dateFormat](/class-reference/Highcharts#.dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [point.dateFormat](#accessibility.point.dateFormat)
              *
@@ -440,7 +440,7 @@ const Options: DeepPartial<OptionsType> = {
              * Defaults to the same format as in tooltip.
              *
              * For an overview of the replacement codes, see
-             * [dateFormat](/class-reference/Highcharts#.dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [dateFormatter](#accessibility.point.dateFormatter)
              *
@@ -454,7 +454,7 @@ const Options: DeepPartial<OptionsType> = {
              * points on datetime axes when describing them to screen reader
              * users. Receives one argument, `point`, referring to the point
              * to describe. Should return a date format string compatible with
-             * [dateFormat](/class-reference/Highcharts#.dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [dateFormat](#accessibility.point.dateFormat)
              *
@@ -709,7 +709,7 @@ const Options: DeepPartial<OptionsType> = {
                  */
                 style: {
                     /** @internal */
-                    color: palette.highlightColor80,
+                    color: Palette.highlightColor80,
                     /** @internal */
                     lineWidth: 2,
                     /** @internal */

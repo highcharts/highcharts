@@ -18,6 +18,7 @@
  *
  * */
 import type Earcon from './Earcon';
+import type PointSonify from './PointSonify';
 import type SignalHandler from './SignalHandler';
 
 import Sonification from './Sonification.js';
@@ -82,7 +83,7 @@ declare global {
             eventObject?: TimelineEventObject;
             id?: string;
             onEnd?: Function;
-            playOptions?: PointSonifyOptionsObject|Partial<Earcon.Options>;
+            playOptions?: PointSonify.Options|Partial<Earcon.Options>;
             time?: number;
         }
         interface TimelineOptionsObject {

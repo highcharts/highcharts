@@ -39,7 +39,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -148,15 +148,15 @@ class TimelineSeries extends LineSeries {
              */
             alternate: true,
 
-            backgroundColor: palette.backgroundColor,
+            backgroundColor: Palette.backgroundColor,
 
             borderWidth: 1,
 
-            borderColor: palette.neutralColor40,
+            borderColor: Palette.neutralColor40,
 
             borderRadius: 3,
 
-            color: palette.neutralColor80,
+            color: Palette.neutralColor80,
 
             /**
              * The color of the line connecting the data label to the point.
