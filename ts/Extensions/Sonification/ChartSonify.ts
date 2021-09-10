@@ -825,7 +825,7 @@ namespace ChartSonify {
     }
 
     export interface ChartSonificationStateObject {
-        currentlyPlayingPoint?: Highcharts.SonifyablePoint;
+        currentlyPlayingPoint?: Sonification.SonifyablePoint;
         timeline?: Highcharts.Timeline;
         duration?: number;
     }

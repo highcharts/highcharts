@@ -21,7 +21,6 @@
 import type ChartSonify from './ChartSonify';
 import type SeriesSonify from './SeriesSonify';
 import type SignalHandler from './SignalHandler';
-import type SonificationUtilities from './SonificationUtilities';
 
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
@@ -52,43 +51,72 @@ declare module '../../Core/Chart/ChartLike'{
 
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
-        cancelSonify?: Highcharts.SonifyablePoint['cancelSonify'];
-        sonify?: Highcharts.SonifyablePoint['sonify'];
+        cancelSonify?: Sonification.SonifyablePoint['cancelSonify'];
+        sonify?: Sonification.SonifyablePoint['sonify'];
     }
 }
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface PointSonificationStateObject {
-            currentlyPlayingPoint?: SonifyablePoint;
-            instrumentsPlaying?: Record<string, Instrument>;
-            signalHandler?: SignalHandler;
-        }
-        interface SonificationObject {
-            Earcon: typeof Earcon;
-            Instrument: typeof Instrument;
-            Timeline: typeof Timeline;
-            TimelineEvent: typeof TimelineEvent;
-            TimelinePath: typeof TimelinePath;
-            fadeOutDuration: number;
-            instruments: Record<string, Instrument>;
-            utilities: typeof SonificationUtilities;
-        }
-        interface SonifyablePoint extends Point {
-            cancelSonify: PointSonify.Composition['pointCancelSonify'];
-            series: SeriesSonify.Composition;
-            sonification: PointSonificationStateObject;
-            sonify: PointSonify.Composition['pointSonify'];
-        }
-        let sonification: SonificationObject;
-    }
-}
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 // Expose on the Highcharts object
+
+// Add default options
+merge(
+    true,
+    defaultOptions,
+    sonificationOptions
+);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const Sonification = {
+    fadeOutDuration: 20,
+
+    // Classes and functions
+    utilities: SU,
+    Instrument: Instrument as any,
+    instruments: Instrument.definitions,
+    Earcon: Earcon as any,
+    TimelineEvent: TimelineClasses.TimelineEvent,
+    TimelinePath: TimelineClasses.TimelinePath,
+    Timeline: TimelineClasses.Timeline
+};
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+namespace Sonification {
+    export interface PointSonificationStateObject {
+        currentlyPlayingPoint?: SonifyablePoint;
+        instrumentsPlaying?: Record<string, Instrument>;
+        signalHandler?: SignalHandler;
+    }
+    export interface SonifyablePoint extends Point {
+        cancelSonify: PointSonify.Composition['pointCancelSonify'];
+        series: SeriesSonify.Composition;
+        sonification: PointSonificationStateObject;
+        sonify: PointSonify.Composition['pointSonify'];
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default Sonification;
 
 /**
  * Global classes and objects related to sonification.
@@ -145,31 +173,4 @@ declare global {
  * @name Highcharts.SonificationObject#Timeline
  * @type {Function}
  */
-
-// Add default options
-merge(
-    true,
-    defaultOptions,
-    sonificationOptions
-);
-
-/* *
- *
- *  Default Export
- *
- * */
-
-const Sonification = {
-    fadeOutDuration: 20,
-
-    // Classes and functions
-    utilities: SU,
-    Instrument: Instrument as any,
-    instruments: Instrument.definitions,
-    Earcon: Earcon as any,
-    TimelineEvent: TimelineClasses.TimelineEvent,
-    TimelinePath: TimelineClasses.TimelinePath,
-    Timeline: TimelineClasses.Timeline
-};
-
-export default Sonification;
+(''); // detach doclets above

@@ -74,9 +74,9 @@ namespace PointSonify {
      * */
 
     export declare class Composition extends Point {
-        pointCancelSonify(this: Highcharts.SonifyablePoint, fadeOut?: boolean): void;
+        pointCancelSonify(this: Sonification.SonifyablePoint, fadeOut?: boolean): void;
         pointSonify(
-            this: Highcharts.SonifyablePoint,
+            this: Sonification.SonifyablePoint,
             options: Options
         ): void;
     }
@@ -159,7 +159,7 @@ namespace PointSonify {
      * @return {void}
      */
     function pointSonify(
-        this: Highcharts.SonifyablePoint,
+        this: Sonification.SonifyablePoint,
         options: PointSonify.Options
     ): void {
         const point = this,
@@ -330,7 +330,7 @@ namespace PointSonify {
      * @return {void}
      */
     function pointCancelSonify(
-        this: Highcharts.SonifyablePoint,
+        this: Sonification.SonifyablePoint,
         fadeOut?: boolean
     ): void {
         const playing = this.sonification && this.sonification.instrumentsPlaying,
