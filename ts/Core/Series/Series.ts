@@ -63,7 +63,7 @@ const {
     win
 } = H;
 import LegendSymbol from '../Legend/LegendSymbol.js';
-import Palette from '../Color/Palette.js';
+import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
 import SeriesDefaults from './SeriesDefaults.js';
 import SeriesRegistry from './SeriesRegistry.js';

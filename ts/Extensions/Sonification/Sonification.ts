@@ -19,6 +19,7 @@
  * */
 
 import type ChartSonify from './ChartSonify';
+
 import type SeriesSonify from './SeriesSonify';
 import type SignalHandler from './SignalHandler';
 import type SonificationUtilities from './SonificationUtilities';
@@ -26,6 +27,7 @@ import type SonificationUtilities from './SonificationUtilities';
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import Point from '../../Core/Series/Point.js';
+import PointSonify from './PointSonify.js';
 import U from '../../Core/Utilities.js';
 const {
     merge
@@ -80,10 +82,10 @@ declare global {
             utilities: typeof SonificationUtilities;
         }
         interface SonifyablePoint extends Point {
-            cancelSonify: PointSonifyFunctions['pointCancelSonify'];
+            cancelSonify: PointSonify.Composition['pointCancelSonify'];
             series: SeriesSonify.Composition;
             sonification: PointSonificationStateObject;
-            sonify: PointSonifyFunctions['pointSonify'];
+            sonify: PointSonify.Composition['pointSonify'];
         }
         let sonification: SonificationObject;
     }
@@ -153,10 +155,6 @@ merge(
     defaultOptions,
     sonificationOptions
 );
-
-// Chart specific
-Point.prototype.sonify = pointSonifyFunctions.pointSonify;
-Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
 
 /* *
  *

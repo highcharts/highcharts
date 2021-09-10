@@ -38,7 +38,7 @@ const {
     noop
 } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
-import Palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';

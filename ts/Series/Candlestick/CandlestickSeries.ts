@@ -23,7 +23,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 const {
@@ -124,7 +124,7 @@ class CandlestickSeries extends OHLCSeries {
              * @default #000000
              * @product highstock
              */
-            lineColor: palette.neutralColor100,
+            lineColor: Palette.neutralColor100,
             /**
              * The pixel width of the candlestick line/border. Defaults to `1`.
              *
@@ -151,7 +151,7 @@ class CandlestickSeries extends OHLCSeries {
              * @product highstock
             */
 
-            upColor: palette.backgroundColor,
+            upColor: Palette.backgroundColor,
             /**
              * @product highstock
              */
