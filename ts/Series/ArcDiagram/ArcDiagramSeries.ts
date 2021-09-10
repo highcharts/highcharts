@@ -306,7 +306,7 @@ class ArcDiagramSeries extends SankeySeries {
             [fromY, toY] = [toY, fromY];
             right = (chart.plotSizeX as any) - right;
             if (chart.inverted) {
-                right -= nodeW;
+                right -= nodeW / 2;
             }
             linkWidth = -linkWidth;
         }
@@ -429,10 +429,15 @@ class ArcDiagramSeries extends SankeySeries {
                     (nodeOffset as any).relativeTop
                 )
             )) + crisp,
-            left = Math.floor(
-                this.colDistance * (node.column as any) +
-                (options.borderWidth as any) / 2
-            ) + crisp + (column as any).maxRadius / 2;
+            left = (options as any).centerPos ? // POC for centering the nodes
+                parseInt((options as any).centerPos, 10) *
+                (chart.inverted ?
+                    chart.plotHeight : chart.plotWidth -
+                    (column as any).maxRadius) / 100 :
+                Math.floor(
+                    this.colDistance * (node.column as any) +
+                    (options.borderWidth as any) / 2
+                ) + crisp + (column as any).maxRadius / 2;
 
         let nodeWidth = Math.round(this.nodeWidth);
 
