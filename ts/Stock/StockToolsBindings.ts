@@ -1312,7 +1312,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-crooked3", "start": function() {}, "steps": [function() {}, function() {}, function() {}, function() {}], "annotationsOptions": {}}
+     * @default {"className": "highcharts-crooked5", "start": function() {}, "steps": [function() {}, function() {}, function() {}, function() {}], "annotationsOptions": {}}
      */
     crooked5: {
         /** @ignore-option */
@@ -1337,7 +1337,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                 navigation = this.chart.options.navigation,
                 options = merge(
                     {
-                        langKey: 'crookedLine',
+                        langKey: 'crooked5',
                         type: 'crookedLine',
                         typeOptions: {
                             xAxis: coordsX.axis.options.index,
