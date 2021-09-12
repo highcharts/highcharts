@@ -185,6 +185,7 @@ declare global {
         interface AnnotationsOptions extends AnnotationControllableOptionsObject { // @todo AnnotationOptions.d.ts
             animation: Partial<AnimationOptions>;
             controlPointOptions: AnnotationControlPointOptionsObject;
+            crop: boolean;
             draggable: AnnotationDraggableValue;
             events: AnnotationsEventsOptions;
             id?: (number|string);
@@ -545,7 +546,11 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public addClipPaths(): void {
         this.setClipAxes();
 
-        if (this.clipXAxis && this.clipYAxis) {
+        if (
+            this.clipXAxis &&
+            this.clipYAxis &&
+            this.options.crop // #15399
+        ) {
             this.clipRect = this.chart.renderer.clipRect(this.getClipBox() as any);
         }
     }
@@ -691,8 +696,11 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         this.shapesGroup = renderer
             .g('annotation-shapes')
-            .add(this.graphic)
-            .clip(this.chart.plotBoxClip);
+            .add(this.graphic);
+
+        if (this.options.crop) { // #15399
+            this.shapesGroup.clip(this.chart.plotBoxClip);
+        }
 
         this.labelsGroup = renderer
             .g('annotation-labels')
@@ -1069,9 +1077,19 @@ merge<Annotation>(
                  *          Animation defer settings
                  * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  * @since 8.2.0
-                 * @apioption annotations.animation
                  */
                 animation: {},
+
+                /**
+                 * Whether to hide the part of the annotation
+                 * that is outside the plot area.
+                 *
+                 * @sample highcharts/annotations/label-crop-overflow/
+                 *         Crop line annotation
+                 * @type  {boolean}
+                 * @since next
+                 */
+                crop: true,
 
                 /**
                  * The animation delay time in milliseconds.
