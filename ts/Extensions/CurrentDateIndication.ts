@@ -33,7 +33,7 @@ import type {
 } from '../Core/Axis/PlotLineOrBand/PlotLineOptions';
 
 import Axis from '../Core/Axis/Axis.js';
-import Palette from '../Core/Color/Palette.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
 import U from '../Core/Utilities.js';
 const {
@@ -118,7 +118,7 @@ const defaultOptions: Highcharts.CurrentDateIndicatorOptions = {
     label: {
         /**
          * Format of the label. This options is passed as the fist argument to
-         * [dateFormat](/class-reference/Highcharts#.dateFormat) function.
+         * [dateFormat](/class-reference/Highcharts.Time#dateFormat) function.
          *
          * @type      {string}
          * @default   %a, %b %d %Y, %H:%M

@@ -41,6 +41,7 @@ module.exports = {
             'stock/depth-chart',
             'stock/flag-series',
             'stock/navigator',
+            'stock/hlc-chart',
             'stock/ohlc-chart',
             'stock/range-selector',
             'stock/axis-resizer',

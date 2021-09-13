@@ -14,6 +14,7 @@ import Highcharts from '../../Core/Globals.js';
 import OrdinalAxis from '../../Core/Axis/OrdinalAxis.js';
 import './broken-axis.src.js';
 import '../../Extensions/DataGrouping.js';
+import '../../Series/HLC/HLCSeries.js';
 import '../../Series/OHLC/OHLCSeries.js';
 import '../../Series/Candlestick/CandlestickSeries.js';
 import '../../Series/Flags/FlagsSeries.js';

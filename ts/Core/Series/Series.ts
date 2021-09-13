@@ -63,7 +63,7 @@ const {
     win
 } = H;
 import LegendSymbol from '../Legend/LegendSymbol.js';
-import Palette from '../Color/Palette.js';
+import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
 import SeriesDefaults from './SeriesDefaults.js';
 import SeriesRegistry from './SeriesRegistry.js';
@@ -1383,11 +1383,18 @@ class Series {
                 // Assume all points are arrays when first point is
                 } else if (isArray(firstPoint)) {
                     if (valueCount) { // [x, low, high] or [x, o, h, l, c]
-                        for (i = 0; i < dataLength; i++) {
-                            pt = data[i];
-                            (xData as any)[i] = (pt as any)[0];
-                            (yData as any)[i] =
-                                (pt as any).slice(1, valueCount + 1);
+                        if (firstPoint.length === valueCount) {
+                            for (i = 0; i < dataLength; i++) {
+                                (xData as any)[i] = this.autoIncrement();
+                                (yData as any)[i] = data[i];
+                            }
+                        } else {
+                            for (i = 0; i < dataLength; i++) {
+                                pt = data[i];
+                                (xData as any)[i] = (pt as any)[0];
+                                (yData as any)[i] =
+                                    (pt as any).slice(1, valueCount + 1);
+                            }
                         }
                     } else { // [x, y]
                         if (keys) {
@@ -1398,10 +1405,21 @@ class Series {
                             indexOfY = indexOfY >= 0 ? indexOfY : 1;
                         }
 
-                        for (i = 0; i < dataLength; i++) {
-                            pt = data[i];
-                            (xData as any)[i] = (pt as any)[indexOfX];
-                            (yData as any)[i] = (pt as any)[indexOfY];
+                        if (firstPoint.length === 1) {
+                            indexOfY = 0;
+                        }
+
+                        if (indexOfX === indexOfY) {
+                            for (i = 0; i < dataLength; i++) {
+                                (xData as any)[i] = this.autoIncrement();
+                                (yData as any)[i] = (data[i] as any)[indexOfY];
+                            }
+                        } else {
+                            for (i = 0; i < dataLength; i++) {
+                                pt = data[i];
+                                (xData as any)[i] = (pt as any)[indexOfX];
+                                (yData as any)[i] = (pt as any)[indexOfY];
+                            }
                         }
                     }
                 } else {
@@ -2882,7 +2900,7 @@ class Series {
         // Handle hover and select states
         state = state || 'normal';
         if (state) {
-            seriesStateOptions = (seriesMarkerOptions as any).states[state];
+            seriesStateOptions = (seriesMarkerOptions as any).states[state] || {};
             pointStateOptions = (
                 pointMarkerOptions.states &&
                 (pointMarkerOptions.states as any)[state]

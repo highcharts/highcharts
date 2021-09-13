@@ -18,9 +18,9 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
+import type ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
@@ -38,12 +38,12 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
+import ColorMapComposition from '../ColorMapComposition.js';
+const { colorMapSeriesMixin } = ColorMapComposition;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -560,7 +560,7 @@ class TreemapSeries extends ScatterSeries {
          *
          * @type {Highcharts.ColorString}
          */
-        borderColor: palette.neutralColor10,
+        borderColor: Palette.neutralColor10,
 
         /**
          * The width of the border surrounding each tree map item.
@@ -595,7 +595,7 @@ class TreemapSeries extends ScatterSeries {
                 /**
                  * The border color for the hovered state.
                  */
-                borderColor: palette.neutralColor40,
+                borderColor: Palette.neutralColor40,
 
                 /**
                  * Brightness for the hovered point. Defaults to 0 if the
@@ -637,7 +637,7 @@ class TreemapSeries extends ScatterSeries {
 
     public colorValueData?: Array<number>;
 
-    public colorAxis?: Highcharts.ColorSeries['colorAxis'];
+    public colorAxis?: ColorAxisComposition.SeriesComposition['colorAxis'];
 
     public data: Array<TreemapPoint> = void 0 as any;
 
@@ -1300,7 +1300,7 @@ class TreemapSeries extends ScatterSeries {
 
         // If color series logic is loaded, add some properties
         if (colorMapSeriesMixin) {
-            this.colorAttribs = colorMapSeriesMixin.colorAttribs;
+            this.colorAttribs = ColorMapComposition.seriesColorAttribs;
         }
 
         setOptionsEvent = addEvent(series, 'setOptions', function (
@@ -1880,7 +1880,7 @@ class TreemapSeries extends ScatterSeries {
  * */
 
 interface TreemapSeries extends Highcharts.TreeSeries {
-    colorAttribs: Highcharts.ColorMapSeriesMixin['colorAttribs'];
+    colorAttribs?: ColorMapComposition.SeriesComposition['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
@@ -1949,6 +1949,8 @@ namespace TreemapSeries {
         trigger?: string;
     }
 }
+
+ColorMapComposition.compose(TreemapSeries);
 
 /* *
  *

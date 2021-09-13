@@ -27,20 +27,17 @@ import type CircleObject from '../../Core/Geometry/CircleObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type IntersectionObject from '../../Core/Geometry/IntersectionObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import type ScatterPoint from '../Scatter/ScatterPoint';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type VennPointOptions from './VennPointOptions';
 import type VennSeriesOptions from './VennSeriesOptions';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import DrawPointMixin from '../../Mixins/DrawPoint.js';
 import CU from '../../Core/Geometry/CircleUtilities.js';
 const {
     getAreaOfIntersectionBetweenCircles,
@@ -51,9 +48,7 @@ const {
 } = CU;
 import GU from '../../Core/Geometry/GeometryUtilities.js';
 const { getCenterOfPoints } = GU;
-import NelderMeadMixin from '../../Mixins/NelderMead.js';
-const { nelderMead } = NelderMeadMixin;
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -79,15 +74,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class VennPoint extends ScatterPoint implements DrawPoint {
-            public draw: typeof DrawPointMixin.drawPoint;
-            public isValid: () => boolean;
-            public options: VennPointOptions;
-            public series: VennSeries;
-            public sets: Array<string>;
-            public value: number;
-            public shouldDraw(): boolean;
-        }
         interface VennLabelPositionObject {
             point: PositionObject;
             margin: number;
@@ -108,43 +94,6 @@ declare global {
             circle: CircleObject;
             sets: Array<string>;
             value: number;
-        }
-        interface VennUtilsObject {
-            geometry: typeof GU;
-            geometryCircles: typeof CU;
-            nelderMead: NelderMeadMixin;
-            addOverlapToSets(
-                relations: Array<VennRelationObject>
-            ): Array<VennRelationObject>;
-            getDistanceBetweenCirclesByOverlap(
-                r1: number,
-                r2: number,
-                overlap: number
-            ): number;
-            getLabelWidth(
-                pos: PositionObject,
-                internal: Array<CircleObject>,
-                external: Array<CircleObject>
-            ): number;
-            getMarginFromCircles(
-                point: PositionObject,
-                internal: Array<CircleObject>,
-                external: Array<CircleObject>
-            ): number;
-            layoutGreedyVenn(
-                relations: Array<VennRelationObject>
-            ): Record<string, CircleObject>;
-            loss(
-                mapOfIdToCircle: Record<string, CircleObject>,
-                relations: Array<VennRelationObject>
-            ): number;
-            processVennData(
-                data: Array<VennPointOptions>
-            ): Array<VennRelationObject>;
-            sortByTotalOverlap(
-                a: VennRelationObject,
-                b: VennRelationObject
-            ): number;
         }
     }
 }
@@ -195,7 +144,7 @@ class VennSeries extends ScatterSeries {
      * @optionparent plotOptions.venn
      */
     public static defaultOptions: VennSeriesOptions = merge(ScatterSeries.defaultOptions, {
-        borderColor: palette.neutralColor20,
+        borderColor: Palette.neutralColor20,
         borderDashStyle: 'solid' as any,
         borderWidth: 1,
         brighten: 0,
@@ -222,14 +171,14 @@ class VennSeries extends ScatterSeries {
              */
             hover: {
                 opacity: 1,
-                borderColor: palette.neutralColor80
+                borderColor: Palette.neutralColor80
             },
             /**
              * @excluding halo
              */
             select: {
-                color: palette.neutralColor20,
-                borderColor: palette.neutralColor100,
+                color: Palette.neutralColor20,
+                borderColor: Palette.neutralColor100,
                 animation: false
             },
             inactive: {
@@ -297,7 +246,7 @@ class VennSeries extends ScatterSeries {
         }).point;
 
         // Use nelder mead to optimize the initial label position.
-        const optimal = nelderMead(
+        const optimal = VennUtils.nelderMead(
             function (p: Array<number>): number {
                 return -(
                     VennUtils.getMarginFromCircles({ x: p[0], y: p[1] }, internal, external)
@@ -524,7 +473,7 @@ class VennSeries extends ScatterSeries {
 
     public options: VennSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.VennPoint> = void 0 as any;
+    public points: Array<VennPoint> = void 0 as any;
 
     /* *
      *
@@ -589,7 +538,7 @@ class VennSeries extends ScatterSeries {
             renderer = chart.renderer;
 
         // Iterate all points and calculate and draw their graphics.
-        points.forEach(function (point: Highcharts.VennPoint): void {
+        points.forEach(function (point: VennPoint): void {
             const attribs = {
                     zIndex: isArray(point.sets) ? point.sets.length : 0
                 },
@@ -631,7 +580,7 @@ class VennSeries extends ScatterSeries {
      * Returns the calculated attributes.
      */
     public pointAttribs(
-        point: Highcharts.VennPoint,
+        point: VennPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         const series = this,
@@ -694,7 +643,7 @@ class VennSeries extends ScatterSeries {
             centerY = scaling.centerY;
 
         // Iterate all points and calculate and draw their graphics.
-        this.points.forEach(function (point: Highcharts.VennPoint): void {
+        this.points.forEach(function (point: VennPoint): void {
             let sets: Array<string> = isArray(point.sets) ? point.sets : [],
                 id = sets.join(),
                 shape = mapOfIdToShape[id],
