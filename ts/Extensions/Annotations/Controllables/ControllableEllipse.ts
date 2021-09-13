@@ -35,6 +35,8 @@ const {
  * @param {number} index of the Ellipse
  */
 interface EllipseShapeOptions extends Highcharts.AnnotationsShapeOptions {
+    ry: number;
+    rx: number;
     angle: number;
     referencePoints: Array<ReferencePointsOptions>;
 }
@@ -166,7 +168,9 @@ class ControllableEllipse implements ControllableMixin.Type {
                 cy: attrs.cy,
                 rx: attrs.rx,
                 ry: attrs.ry,
-                transform: `rotate(${attrs.angle}, ${position.x}, ${position.y})`
+                rotation: attrs.angle,
+                rotationOriginX: position.x,
+                rotationOriginY: position.y
             });
         } else {
             this.graphic.attr({
