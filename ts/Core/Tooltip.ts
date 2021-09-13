@@ -486,10 +486,8 @@ class Tooltip {
         if (defined(preventSplit) && tooltip.label) {
             const isRegularTooltip = tooltip.label.hasClass('highcharts-label');
 
-            // When previously split tooltip was rendered and now if
-            // hovering over another series where split tooltip should not
-            // be used, destroy the label in order to create ordinary one.
-            // #13868
+            // If changing from a split tooltip to a non-split tooltip, we must
+            // destroy it in order to get the SVG right. #13868.
             if (
                 (preventSplit && !isRegularTooltip) ||
                 (!preventSplit && isRegularTooltip)
