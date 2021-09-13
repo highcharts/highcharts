@@ -41,7 +41,6 @@ Highcharts.getJSON(
                             level: 1,
                             colorByPoint: true,
                             dataLabels: {
-                                enabled: true,
                                 format: "{point.name} {point.value:.0f}%",
                                 style: {
                                     textOutline: false,
@@ -53,10 +52,14 @@ Highcharts.getJSON(
                         },
                         {
                             level: 2,
-                            dataLabels: {
-                                enabled: false
-                            },
                             borderWidth: 1
+                        },
+                        {
+                            level: 1,
+                            levelIsConstant: false,
+                            dataLabels: {
+                                enabled: true
+                            }
                         }
                     ],
                     data: dataJson

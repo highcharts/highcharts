@@ -19,7 +19,10 @@ Highcharts.getJSON(
                     allowDrillToNode: true,
                     turboThreshold: dataJson.length,
                     dataLabels: {
-                        enabled: false
+                        enabled: false,
+                        style: {
+                            textOutline: false
+                        }
                     },
                     color: "#ffffff",
                     borderColor: "black",
@@ -27,10 +30,8 @@ Highcharts.getJSON(
                         {
                             level: 1,
                             dataLabels: {
-                                enabled: true,
                                 format: "{point.name} {point.value:.0f}%",
                                 style: {
-                                    textOutline: false,
                                     fontSize: 18
                                 },
                                 zIndex: 9
@@ -39,10 +40,14 @@ Highcharts.getJSON(
                         },
                         {
                             level: 2,
-                            dataLabels: {
-                                enabled: false
-                            },
                             borderWidth: 1
+                        },
+                        {
+                            level: 1,
+                            levelIsConstant: false,
+                            dataLabels: {
+                                enabled: true
+                            }
                         }
                     ],
                     data: dataJson
