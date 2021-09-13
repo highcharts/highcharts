@@ -19,10 +19,7 @@ Highcharts.getJSON(
                     allowDrillToNode: true,
                     turboThreshold: dataJson.length,
                     dataLabels: {
-                        enabled: false,
-                        style: {
-                            textOutline: false
-                        }
+                        enabled: false
                     },
                     color: "#ffffff",
                     borderColor: "black",
@@ -57,11 +54,9 @@ Highcharts.getJSON(
                 text: "Denmark Export 2018"
             },
             subtitle: {
-                useHTMl: true,
                 text: "Source: Harvard.edu"
             },
             tooltip: {
-                useHTML: true,
                 valueDecimals: 2,
                 pointFormat: "<b>{point.name}</b>: <b>{point.value}%"
             }

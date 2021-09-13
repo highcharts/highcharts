@@ -69,11 +69,9 @@ Highcharts.getJSON(
                 text: "Denmark Export 2018"
             },
             subtitle: {
-                useHTMl: true,
                 text: "Source: Harvard.edu"
             },
             tooltip: {
-                useHTML: true,
                 valueDecimals: 2,
                 pointFormat: "<b>{point.name}</b>: <b>{point.value}%"
             }
