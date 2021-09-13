@@ -2900,7 +2900,7 @@ class Series {
         // Handle hover and select states
         state = state || 'normal';
         if (state) {
-            seriesStateOptions = (seriesMarkerOptions as any).states[state];
+            seriesStateOptions = (seriesMarkerOptions as any).states[state] || {};
             pointStateOptions = (
                 pointMarkerOptions.states &&
                 (pointMarkerOptions.states as any)[state]
