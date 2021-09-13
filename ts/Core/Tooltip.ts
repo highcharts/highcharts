@@ -137,6 +137,8 @@ class Tooltip {
      *  Properties
      *
      * */
+    public allowShared: boolean = true;
+
     public chart: Chart;
 
     public container: globalThis.HTMLElement = void 0 as any;
@@ -436,16 +438,14 @@ class Tooltip {
      *
      * @function Highcharts.Tooltip#getLabel
      *
-     * @param {boolean} preventSplit
-     *        Prevents rendering split tooltip.
-     *
      * @return {Highcharts.SVGElement}
      */
-    public getLabel(preventSplit?: boolean): SVGElement { // getLabel
+    public getLabel(): SVGElement { // getLabel
 
         const tooltip = this,
             styledMode = this.chart.styledMode,
             options = this.options,
+            doSplit = this.split && this.allowShared,
             className = (
                 'tooltip' + (
                     defined(options.className) ?
@@ -481,17 +481,12 @@ class Tooltip {
         let container: globalThis.HTMLElement,
             renderer: SVGRenderer = this.chart.renderer;
 
-        // Destroy tooltip only when the property is explicitly defined.
-        // Only while creating the tooltip. Not in case of animating etc.
-        if (defined(preventSplit) && tooltip.label) {
-            const isRegularTooltip = tooltip.label.hasClass('highcharts-label');
+        // If changing from a split tooltip to a non-split tooltip, we must
+        // destroy it in order to get the SVG right. #13868.
+        if (tooltip.label) {
+            const wasSplit = !tooltip.label.hasClass('highcharts-label');
 
-            // If changing from a split tooltip to a non-split tooltip, we must
-            // destroy it in order to get the SVG right. #13868.
-            if (
-                (preventSplit && !isRegularTooltip) ||
-                (!preventSplit && isRegularTooltip)
-            ) {
+            if ((doSplit && !wasSplit) || (!doSplit && wasSplit)) {
                 tooltip.destroy();
             }
         }
@@ -549,7 +544,7 @@ class Tooltip {
 
 
             // Create the label
-            if (this.split && !preventSplit) {
+            if (doSplit) {
                 this.label = renderer.g(className);
             } else {
                 this.label = renderer
@@ -1043,6 +1038,14 @@ class Tooltip {
 
         U.clearTimeout(this.hideTimer as any);
 
+        // A switch saying if this specific tooltip configuration allows shared
+        // or split modes
+        tooltip.allowShared = !(
+            !isArray(pointOrPoints) &&
+            pointOrPoints.series &&
+            pointOrPoints.series.noSharedTooltip
+        );
+
         // get the reference point coordinates (pie charts use tooltipPos)
         tooltip.followPointer = !tooltip.split && point.series.tooltipOptions.followPointer;
         const anchor = tooltip.getAnchor(pointOrPoints, mouseEvent),
@@ -1050,14 +1053,7 @@ class Tooltip {
             y = anchor[1];
 
         // shared tooltip, array is sent over
-        if (
-            shared &&
-            !(
-                !isArray(pointOrPoints) &&
-                pointOrPoints.series &&
-                pointOrPoints.series.noSharedTooltip
-            )
-        ) {
+        if (shared && tooltip.allowShared) {
             chart.pointer.applyInactiveState(points);
 
             // Now set hover state for the choosen ones:
@@ -1088,7 +1084,7 @@ class Tooltip {
             this.hide();
         } else {
             // update text
-            if (tooltip.split && !point.series.noSharedTooltip) { // #13868
+            if (tooltip.split && tooltip.allowShared) { // #13868
                 this.renderSplit(text as any, points);
             } else {
                 let checkX = x;
@@ -1107,7 +1103,7 @@ class Tooltip {
                         p.series.shouldShowTooltip(checkX, checkY)
                     )
                 ) {
-                    const label = tooltip.getLabel(true);
+                    const label = tooltip.getLabel();
 
                     // Prevent the tooltip from flowing over the chart box
                     // (#6659)
@@ -1218,7 +1214,7 @@ class Tooltip {
                 bottom: scrollTop + chartHeight
             };
 
-        const tooltipLabel = tooltip.getLabel(false);
+        const tooltipLabel = tooltip.getLabel();
         const ren = this.renderer || chart.renderer;
         const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
         const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
