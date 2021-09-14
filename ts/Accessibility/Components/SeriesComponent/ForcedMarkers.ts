@@ -175,7 +175,7 @@ function handleForcePointMarkers(series: Series): void {
             if (pointOptions.marker.enabled && !isStillForcedMarker) {
                 unforcePointMarkerOptions(pointOptions);
                 point.hasForcedA11yMarker = false;
-            } else {
+            } else if (pointOptions.marker.enabled === false) {
                 forceZeroOpacityMarkerOptions(pointOptions);
                 point.hasForcedA11yMarker = true;
             }
