@@ -16,7 +16,8 @@ QUnit.test('Stock: general tests for the Cumulative Sum', function (assert) {
         dataArr2 = [4, 5, 1, -3];
 
     assert.deepEqual(
-        Highcharts.Series.prototype.getCumulativeExtremes([1, 2, 3, 4, 5, 0]),
+        chart.series[0].dataModify.constructor
+            .getCumulativeExtremes([1, 2, 3, 4, 5, 0]),
         [1, 15],
         'Data min and max should be calculated correctly.'
     );

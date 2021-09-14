@@ -2273,8 +2273,8 @@ class Series {
                 null as any;
 
             // General hook, used for Highcharts Stock compare and cumulative
-            if (series.modifyValue) {
-                yValue = series.modifyValue(yValue, i);
+            if (series.dataModify && series.dataModify.modifyValue) {
+                yValue = series.dataModify.modifyValue(yValue, i);
             }
 
             // Set the the plotY value, reset it for redraws
