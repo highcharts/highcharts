@@ -6,6 +6,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
@@ -13,6 +19,7 @@ import type PointOptions from '../Core/Series/PointOptions';
 import type Series from '../Core/Series/Series';
 import type TreemapSeries from './Treemap/TreemapSeries';
 import type TreemapSeriesOptions from './Treemap/TreemapSeriesOptions';
+
 import Color from '../Core/Color/Color.js';
 import U from '../Core/Utilities.js';
 const {
@@ -23,6 +30,12 @@ const {
     merge,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -90,12 +103,11 @@ declare global {
     }
 }
 
-const isBoolean = function (x: unknown): x is boolean {
-        return typeof x === 'boolean';
-    },
-    isFn = function (x: unknown): x is Function {
-        return typeof x === 'function';
-    };
+/* *
+ *
+ *  Composition
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 
@@ -112,11 +124,7 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
         idRoot = options.idRoot,
         mapIdToNode = options.mapIdToNode,
         nodeRoot = mapIdToNode[idRoot],
-        levelIsConstant = (
-            isBoolean(options.levelIsConstant) ?
-                options.levelIsConstant :
-                true
-        ),
+        levelIsConstant = (options.levelIsConstant !== false),
         points = options.points,
         point = points[tree.i],
         optionsPoint = point && point.options || {},
@@ -128,10 +136,10 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
     tree.name = pick(point && point.name, '');
     tree.visible = (
         idRoot === tree.id ||
-        (isBoolean(options.visible) ? options.visible : false)
+        options.visible === true
     );
 
-    if (isFn(before)) {
+    if (typeof before === 'function') {
         tree = before(tree, options);
     }
     // First give the children some values
@@ -294,11 +302,7 @@ const getLevelOptions = function getLevelOptions<T extends Highcharts.TreeSeries
 
                 if (isObject(item) && isNumber(item.level)) {
                     options = merge({}, item);
-                    levelIsConstant = (
-                        isBoolean(options.levelIsConstant) ?
-                            options.levelIsConstant :
-                            defaults.levelIsConstant
-                    );
+                    levelIsConstant = pick(options.levelIsConstant, defaults.levelIsConstant);
                     // Delete redundant properties.
                     delete options.levelIsConstant;
                     delete options.level;
@@ -358,6 +362,12 @@ const updateRootId = function (series: any): string {
     }
     return rootId;
 };
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 const result: Highcharts.TreeSeriesMixin = {
     getColor: getColor,
