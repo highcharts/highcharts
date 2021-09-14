@@ -47,7 +47,7 @@ const {
 } = SeriesRegistry;
 import SunburstPoint from './SunburstPoint.js';
 import SunburstUtilities from './SunburstUtilities.js';
-import TreeSeriesMixin from '../TreeComposition.js';
+import TreeSeriesMixin from '../TreeUtilities.js';
 const {
     getColor,
     getLevelOptions,
