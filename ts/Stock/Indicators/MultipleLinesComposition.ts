@@ -319,7 +319,8 @@ namespace MultipleLinesComposition {
      */
     function translate(this: Composition): void {
         const indicator = this,
-            modfidyValue = indicator.dataModify.modifyValue,
+            modfidyValue =
+                indicator.dataModify && indicator.dataModify.modifyValue,
             pointArrayMap: Array<string> = (indicator.pointArrayMap as any);
         let LinesNames = [] as Array<string>,
             value;

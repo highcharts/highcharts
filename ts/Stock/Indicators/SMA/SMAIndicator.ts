@@ -484,7 +484,9 @@ class SMAIndicator extends LineSeries {
         super.processData.apply(series, arguments);
 
         if (
+            series.dataModify &&
             linkedParent &&
+            linkedParent.dataModify &&
             linkedParent.dataModify.compareValue &&
             compareToMain
         ) {

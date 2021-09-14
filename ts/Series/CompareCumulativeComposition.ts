@@ -64,7 +64,7 @@ declare module '../Core/Series/PointLike' {
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
-        dataModify: CompareCumulativeComposition.Additions;
+        dataModify?: CompareCumulativeComposition.Additions;
         setCompare(compare?: string|null, redraw?: boolean): void;
         setCumulative(cumulative?: boolean|null, redraw?: boolean): void;
     }
@@ -94,15 +94,28 @@ namespace CompareCumulativeComposition {
      * */
 
     export declare class AxisComposition extends Axis {
-        public tooltipFormatter(pointFormat: string): string;
+        setCompare(this: Axis, compare?: string|null, redraw?: boolean): void;
+        setCumulative(this: Axis, cumulative?: boolean, redraw?: boolean): void;
+        setModifier(
+            this: Axis,
+            mode: 'compare'|'cumulative',
+            modeState?: boolean|null|string,
+            redraw?: boolean
+        ): void
     }
 
     export declare class PointComposition extends Point {
-        public tooltipFormatter(pointFormat: string): string;
+        tooltipFormatter(pointFormat: string): string;
     }
 
     export declare class SeriesComposition extends Series {
-        public tooltipFormatter(pointFormat: string): string;
+        dataModify: Additions;
+        setCompare(this: Series, compare?: string|null, redraw?: boolean): void;
+        setCumulative(
+            this: Series,
+            cumulative?: boolean|null,
+            redraw?: boolean
+        ): void;
     }
 
     /* *
@@ -281,7 +294,7 @@ namespace CompareCumulativeComposition {
         const dataExtremes: DataExtremesObject = (e as any).dataExtremes,
             activeYData = dataExtremes.activeYData;
 
-        if (this.dataModify.modifyValue && dataExtremes) {
+        if (this.dataModify && this.dataModify.modifyValue && dataExtremes) {
             let extremes;
 
             if (this.options.compare) {
@@ -336,7 +349,7 @@ namespace CompareCumulativeComposition {
         compare?: string|null,
         redraw?: boolean
     ): void {
-        this.dataModify.initCompare(compare);
+        this.dataModify && this.dataModify.initCompare(compare);
 
         // Survive to export, #5485
         this.options.compare = this.userOptions.compare = compare;
@@ -379,8 +392,8 @@ namespace CompareCumulativeComposition {
             // find the first value for comparison
             for (i = 0; i < length - compareStart; i++) {
                 const compareValue = processedYData[i] && keyIndex > -1 ?
-                    (processedYData[i] as any)[keyIndex] :
-                    processedYData[i];
+                    (processedYData[i] as any)[keyIndex] : processedYData[i];
+
                 if (
                     isNumber(compareValue) &&
                     compareValue !== 0 &&
@@ -455,7 +468,7 @@ namespace CompareCumulativeComposition {
         // Set default value to false
         cumulative = pick(cumulative, false);
 
-        this.dataModify.initCumulative(cumulative);
+        this.dataModify && this.dataModify.initCumulative(cumulative);
 
         // Survive to export, #5485
         this.options.cumulative = this.userOptions.cumulative = cumulative;
