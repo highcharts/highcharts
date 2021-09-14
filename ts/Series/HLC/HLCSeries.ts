@@ -355,7 +355,7 @@ class HLCSeries extends ColumnSeries {
     public translate(): void {
         const series = this,
             yAxis = series.yAxis,
-            hasModifyValue = !!series.modifyValue,
+            hasModifyValue = !!series.dataModify.modifyValue,
             names = (this.pointArrayMap && this.pointArrayMap.slice()) || [],
             translated = names.map(
                 (name: string): string =>
@@ -372,7 +372,7 @@ class HLCSeries extends ColumnSeries {
                     let value = (point as any)[name];
                     if (value !== null) {
                         if (hasModifyValue) {
-                            value = (series.modifyValue as any)(value);
+                            value = (series.dataModify.modifyValue as any)(value);
                         }
                         (point as any)[translated[i]] =
                             yAxis.toPixels(value, true);

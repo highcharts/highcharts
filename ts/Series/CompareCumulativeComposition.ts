@@ -64,11 +64,7 @@ declare module '../Core/Series/PointLike' {
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
-        compareValue?: number;
-        getCumulativeExtremes(activeYData: Array<number>): [number, number];
-        initCompare(compare?: string|null): void;
-        initCumulative(cumulative?: boolean): void;
-        modifyValue?(value?: number|null, index?: number): (number|undefined);
+        dataModify: CompareCumulativeComposition.Additions;
         setCompare(compare?: string|null, redraw?: boolean): void;
         setCumulative(cumulative?: boolean|null, redraw?: boolean): void;
     }
@@ -107,10 +103,6 @@ namespace CompareCumulativeComposition {
 
     export declare class SeriesComposition extends Series {
         public tooltipFormatter(pointFormat: string): string;
-    }
-
-    export interface DrawParams {
-        shapeType: string;
     }
 
     /* *
@@ -155,9 +147,6 @@ namespace CompareCumulativeComposition {
 
             seriesProto.setCompare = seriesSetCompare;
             seriesProto.setCumulative = seriesSetCumulative;
-            seriesProto.initCompare = initCompare;
-            seriesProto.initCumulative = initCumulative;
-            seriesProto.getCumulativeExtremes = getCumulativeExtremes;
 
             addEvent(SeriesClass, 'afterInit', afterInit);
             addEvent(SeriesClass, 'afterGetExtremes', afterGetExtremes);
@@ -171,7 +160,7 @@ namespace CompareCumulativeComposition {
 
             axisProto.setCompare = axisSetCompare;
             axisProto.setModifier = setModifier;
-            axisProto.setCumulative = AxisSetCumulative;
+            axisProto.setCumulative = axisSetCumulative;
         }
 
         if (composedClasses.indexOf(PointClass) === -1) {
@@ -273,12 +262,14 @@ namespace CompareCumulativeComposition {
      * @function Highcharts.Series#init
      */
     function afterInit(this: Series): void {
+        this.dataModify = new Additions(this as SeriesComposition);
+
         if (this.options.compare) {
             // Set comparison mode
-            this.initCompare(this.options.compare);
+            this.dataModify.initCompare(this.options.compare);
         } else if (this.options.cumulative) {
             // Set Cumulative Sum mode
-            this.initCumulative(this.options.cumulative);
+            this.dataModify.initCumulative(this.options.cumulative);
         }
     }
 
@@ -290,13 +281,13 @@ namespace CompareCumulativeComposition {
         const dataExtremes: DataExtremesObject = (e as any).dataExtremes,
             activeYData = dataExtremes.activeYData;
 
-        if (this.modifyValue && dataExtremes) {
+        if (this.dataModify.modifyValue && dataExtremes) {
             let extremes;
 
             if (this.options.compare) {
                 extremes = [
-                    this.modifyValue(dataExtremes.dataMin),
-                    this.modifyValue(dataExtremes.dataMax)
+                    this.dataModify.modifyValue(dataExtremes.dataMin),
+                    this.dataModify.modifyValue(dataExtremes.dataMax)
                 ];
             } else if (
                 this.options.cumulative &&
@@ -305,7 +296,7 @@ namespace CompareCumulativeComposition {
                 // so no need to change extremes
                 activeYData.length >= 2
             ) {
-                extremes = this.getCumulativeExtremes(activeYData);
+                extremes = Additions.getCumulativeExtremes(activeYData);
             }
 
             if (extremes) {
@@ -345,76 +336,13 @@ namespace CompareCumulativeComposition {
         compare?: string|null,
         redraw?: boolean
     ): void {
-        this.initCompare(compare);
+        this.dataModify.initCompare(compare);
 
         // Survive to export, #5485
         this.options.compare = this.userOptions.compare = compare;
 
         if (pick(redraw, true)) {
             this.chart.redraw();
-        }
-    }
-
-    /**
-     * @ignore
-     * @function Highcharts.Series#initCompare
-     *
-     * @param {string} [compare]
-     *        Can be one of `null` (default), `"percent"` or `"value"`.
-     */
-    function initCompare(this: Series, compare?: string): void {
-        if (compare === 'value' || compare === 'percent') {
-            // Set the modifyValue method
-            this.modifyValue = function (
-                this: Series,
-                value?: number|null,
-                index?: number
-            ): (number|undefined) {
-                if (value === null) {
-                    value = 0;
-                }
-
-                const compareValue = this.compareValue;
-
-                if (
-                    typeof value !== 'undefined' &&
-                    typeof compareValue !== 'undefined'
-                ) { // #2601, #5814
-
-                    // Get the modified value
-                    if (compare === 'value') {
-                        value -= compareValue;
-                    // Compare percent
-                    } else {
-                        value = 100 * (value / compareValue) -
-                            (this.options.compareBase === 100 ? 0 : 100);
-                    }
-
-                    // record for tooltip etc.
-                    if (typeof index !== 'undefined') {
-                        const point = this.points[index];
-
-                        if (point) {
-                            point.change = value;
-                        }
-                    }
-
-                    return value;
-                }
-                return 0;
-            };
-        } else {
-            // When disabling,
-            // unset the modifyValue method and clear the points
-            this.modifyValue = null as any;
-            this.points.forEach((point): void => {
-                delete point.change;
-            });
-        }
-
-        // Mark dirty
-        if (this.chart.hasRendered) {
-            this.isDirty = true;
         }
     }
 
@@ -426,21 +354,19 @@ namespace CompareCumulativeComposition {
      * @function Highcharts.Series#processData
      */
     function afterProcessData(this: Series): (boolean|undefined) {
-        let series = this,
-            i,
-            keyIndex = -1,
-            processedXData,
-            processedYData,
-            compareStart = series.options.compareStart === true ? 0 : 1,
-            length,
-            compareValue;
+        const series = this;
 
-        if (series.xAxis && series.processedYData) { // not pies
-
-            // local variables
-            processedXData = series.processedXData;
-            processedYData = series.processedYData;
-            length = processedYData.length;
+        if (
+            series.xAxis && // not pies
+            series.processedYData &&
+            series.dataModify
+        ) {
+            const processedXData = series.processedXData,
+                processedYData = series.processedYData,
+                length = processedYData.length,
+                compareStart = series.options.compareStart === true ? 0 : 1;
+            let keyIndex = -1,
+                i;
 
             // For series with more than one value (range, OHLC etc), compare
             // against close or the pointValKey (#4922, #3112, #9854)
@@ -452,16 +378,15 @@ namespace CompareCumulativeComposition {
 
             // find the first value for comparison
             for (i = 0; i < length - compareStart; i++) {
-                compareValue = processedYData[i] && keyIndex > -1 ?
+                const compareValue = processedYData[i] && keyIndex > -1 ?
                     (processedYData[i] as any)[keyIndex] :
                     processedYData[i];
                 if (
                     isNumber(compareValue) &&
-                    (processedXData as any)[i + compareStart] >=
-                    (series.xAxis.min as any) &&
-                    compareValue !== 0
+                    compareValue !== 0 &&
+                    processedXData[i + compareStart] >= (series.xAxis.min || 0)
                 ) {
-                    series.compareValue = compareValue;
+                    series.dataModify.compareValue = compareValue;
                     break;
                 }
             }
@@ -530,65 +455,13 @@ namespace CompareCumulativeComposition {
         // Set default value to false
         cumulative = pick(cumulative, false);
 
-        this.initCumulative(cumulative);
+        this.dataModify.initCumulative(cumulative);
 
         // Survive to export, #5485
         this.options.cumulative = this.userOptions.cumulative = cumulative;
 
         if (pick(redraw, true)) {
             this.chart.redraw();
-        }
-    }
-
-    /**
-     * @ignore
-     * @function Highcharts.Series#initCumulative
-     */
-    function initCumulative(this: Series, cumulative?: boolean): void {
-        if (cumulative) {
-            // Set the modifyValue method
-            this.modifyValue = function (
-                this: Series,
-                value?: number|null,
-                index?: number
-            ): (number|undefined) {
-                if (value === null) {
-                    value = 0;
-                }
-
-                if (value !== void 0 && index !== void 0) {
-                    const prevPoint = index > 0 ?
-                        this.points[index - 1] : null;
-
-                    // Get the modified value
-                    if (prevPoint && prevPoint.cumulativeSum) {
-                        value = correctFloat(prevPoint.cumulativeSum + value);
-                    }
-
-                    // Record for tooltip etc.
-                    const point = this.points[index];
-
-                    if (point) {
-                        point.cumulativeSum = value;
-                    }
-
-                    return value;
-                }
-
-                return 0;
-            };
-        } else {
-            // When disabling,
-            // unset the modifyValue method and clear the points
-            this.modifyValue = null as any;
-            this.points.forEach((point): void => {
-                delete point.cumulativeSum;
-            });
-        }
-
-        // Mark dirty
-        if (this.chart.hasRendered) {
-            this.isDirty = true;
         }
     }
 
@@ -612,7 +485,7 @@ namespace CompareCumulativeComposition {
      *        Whether to redraw the chart or to wait for a later call to
      *        {@link Chart#redraw}.
      */
-    function AxisSetCumulative(
+    function axisSetCumulative(
         this: Axis,
         cumulative?: boolean,
         redraw?: boolean
@@ -620,30 +493,192 @@ namespace CompareCumulativeComposition {
         this.setModifier('cumulative', cumulative, redraw);
     }
 
-    /**
-     * @ignore
-     * @function Highcharts.Series#getCumulativeExtremes
+    /* *
      *
-     * @param {Array} [activeYData]
-     *        An array cointaining all the points' y values in a visible range.
+     *  Classes
+     *
+     * */
+
+    /**
+     * @private
      */
-    function getCumulativeExtremes(
-        this: Series,
-        activeYData: Array<number>
-    ): [number, number] {
-        let cumulativeDataMin = Infinity,
-            cumulativeDataMax = -Infinity;
+    export class Additions {
 
-        activeYData.reduce((prev, cur): number => {
-            const sum = prev + cur;
+        /* *
+         *
+         *  Constructors
+         *
+         * */
 
-            cumulativeDataMin = Math.min(cumulativeDataMin, sum, prev);
-            cumulativeDataMax = Math.max(cumulativeDataMax, sum, prev);
+        /**
+         * @private
+         */
+        public constructor(series: SeriesComposition) {
+            this.series = series;
+        }
 
-            return sum;
-        });
+        /* *
+         *
+         *  Properties
+         *
+         * */
 
-        return [cumulativeDataMin, cumulativeDataMax];
+        public series: SeriesComposition;
+        public compare?: string|null;
+        public compareValue?: number;
+
+        public modifyValue?(
+            value?: number|null,
+            index?: number
+        ): (number|undefined);
+
+        /* *
+        *
+        *  Functions
+        *
+        * */
+
+        /**
+         * @ignore
+         * @function Highcharts.Series#getCumulativeExtremes
+         *
+         * @param {Array} [activeYData]
+         *        An array cointaining all the points' y values
+         *        in a visible range.
+         */
+        static getCumulativeExtremes(
+            activeYData: Array<number>
+        ): [number, number] {
+            let cumulativeDataMin = Infinity,
+                cumulativeDataMax = -Infinity;
+
+            activeYData.reduce((prev, cur): number => {
+                const sum = prev + cur;
+
+                cumulativeDataMin = Math.min(cumulativeDataMin, sum, prev);
+                cumulativeDataMax = Math.max(cumulativeDataMax, sum, prev);
+
+                return sum;
+            });
+
+            return [cumulativeDataMin, cumulativeDataMax];
+        }
+
+        /**
+         * @ignore
+         * @function Highcharts.Series#initCompare
+         *
+         * @param {string} [compare]
+         *        Can be one of `null` (default), `"percent"` or `"value"`.
+         */
+        public initCompare(compare?: string|null): void {
+            if (compare === 'value' || compare === 'percent') {
+                // Set the modifyValue method
+                this.modifyValue = function (
+                    value?: number|null,
+                    index?: number
+                ): (number|undefined) {
+                    if (value === null) {
+                        value = 0;
+                    }
+
+                    const compareValue = this.compareValue;
+
+                    if (
+                        typeof value !== 'undefined' &&
+                        typeof compareValue !== 'undefined'
+                    ) { // #2601, #5814
+
+                        // Get the modified value
+                        if (compare === 'value') {
+                            value -= compareValue;
+                        // Compare percent
+                        } else {
+                            const compareBase = this.series.options.compareBase;
+
+                            value = 100 * (value / compareValue) -
+                                (compareBase === 100 ? 0 : 100);
+                        }
+
+                        // record for tooltip etc.
+                        if (typeof index !== 'undefined') {
+                            const point = this.series.points[index];
+
+                            if (point) {
+                                point.change = value;
+                            }
+                        }
+
+                        return value;
+                    }
+                    return 0;
+                };
+            } else {
+                // When disabling,
+                // unset the modifyValue method and clear the points
+                this.modifyValue = null as any;
+                this.series.points.forEach((point): void => {
+                    delete point.change;
+                });
+            }
+
+            // Mark dirty
+            if (this.series.chart.hasRendered) {
+                this.series.isDirty = true;
+            }
+        }
+
+        /**
+         * @ignore
+         * @function Highcharts.Series#initCumulative
+         */
+        public initCumulative(cumulative?: boolean): void {
+            if (cumulative) {
+                // Set the modifyValue method
+                this.modifyValue = function (
+                    value?: number|null,
+                    index?: number
+                ): (number|undefined) {
+                    if (value === null) {
+                        value = 0;
+                    }
+
+                    if (value !== void 0 && index !== void 0) {
+                        const prevPoint = index > 0 ?
+                            this.series.points[index - 1] : null;
+
+                        // Get the modified value
+                        if (prevPoint && prevPoint.cumulativeSum) {
+                            value =
+                                correctFloat(prevPoint.cumulativeSum + value);
+                        }
+
+                        // Record for tooltip etc.
+                        const point = this.series.points[index];
+
+                        if (point) {
+                            point.cumulativeSum = value;
+                        }
+
+                        return value;
+                    }
+
+                    return 0;
+                };
+            } else {
+                // When disabling,
+                // unset the modifyValue method and clear the points
+                this.modifyValue = null as any;
+                this.series.points.forEach((point): void => {
+                    delete point.cumulativeSum;
+                });
+            }
+
+            // Mark dirty
+            if (this.series.chart.hasRendered) {
+                this.series.isDirty = true;
+            }
+        }
     }
 
 }
