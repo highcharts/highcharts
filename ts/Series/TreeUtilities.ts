@@ -12,13 +12,11 @@
  *
  * */
 
-import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
 import type PointOptions from '../Core/Series/PointOptions';
 import type Series from '../Core/Series/Series';
 import type TreemapSeries from './Treemap/TreemapSeries';
-import type TreemapSeriesOptions from './Treemap/TreemapSeriesOptions';
 
 import Color from '../Core/Color/Color.js';
 import U from '../Core/Utilities.js';
@@ -70,20 +68,6 @@ declare global {
             points: Array<TreePoint>;
             tree: TreeNodeObject;
         }
-        interface TreeSeriesMixin {
-            getColor( // @todo
-                node: any,
-                options: any
-            ): Highcharts.TreeColorObject;
-            getLevelOptions<T extends TreeSeries>(
-                params: any
-            ): (T['mapOptionsToLevel']|null);
-            setTreeValues<T extends TreeSeries>(
-                tree: T['tree'],
-                options: TreeValuesOptionsObject<T>
-            ): T['tree'];
-            updateRootId(series: any): string; // @todo
-        }
         interface TreeValuesBeforeCallbackFunction<
             T extends TreeSeries = TreeSeries
         > {
@@ -105,18 +89,169 @@ declare global {
 
 /* *
  *
- *  Composition
+ *  Functions
  *
  * */
 
 /* eslint-disable valid-jsdoc */
 
 /**
+ * @private
+ */
+function getColor(
+    node: TreemapSeries.NodeObject,
+    options: TreeUtilities.GetColorOptions
+): Highcharts.TreeColorObject {
+    let index = options.index,
+        mapOptionsToLevel = options.mapOptionsToLevel,
+        parentColor = options.parentColor,
+        parentColorIndex = options.parentColorIndex,
+        series = options.series,
+        colors = options.colors,
+        siblings = options.siblings,
+        points = series.points,
+        getColorByPoint,
+        chartOptionsChart = series.chart.options.chart,
+        point,
+        level: AnyRecord,
+        colorByPoint,
+        colorIndexByPoint,
+        color,
+        colorIndex;
+
+    /**
+     * @private
+     */
+    const variateColor = (color: ColorType): ColorType => {
+        const colorVariation = level && level.colorVariation;
+
+        if (
+            colorVariation &&
+            colorVariation.key === 'brightness' &&
+            index &&
+            siblings
+        ) {
+            return Color.parse(color).brighten(
+                colorVariation.to * (index / siblings)
+            ).get();
+        }
+
+        return color;
+    };
+
+    if (node) {
+        point = points[node.i];
+        level = mapOptionsToLevel[node.level] || {};
+        getColorByPoint = point && level.colorByPoint;
+
+        if (getColorByPoint) {
+            colorIndexByPoint = (point.index as any) % (colors ?
+                colors.length :
+                (chartOptionsChart.colorCount as any)
+            );
+            colorByPoint = colors && colors[colorIndexByPoint];
+        }
+
+        // Select either point color, level color or inherited color.
+        if (!series.chart.styledMode) {
+            color = pick(
+                point && point.options.color,
+                level && level.color,
+                colorByPoint,
+                parentColor && variateColor(parentColor),
+                series.color
+            );
+        }
+
+        colorIndex = pick(
+            point && point.options.colorIndex,
+            level && level.colorIndex,
+            colorIndexByPoint,
+            parentColorIndex,
+            options.colorIndex
+        );
+    }
+    return {
+        color: color,
+        colorIndex: colorIndex
+    };
+}
+
+/**
+ * Creates a map from level number to its given options.
+ *
+ * @private
+ *
+ * @param {object} params
+ * Object containing parameters.
+ * - `defaults` Object containing default options. The default options are
+ *   merged with the userOptions to get the final options for a specific
+ *   level.
+ * - `from` The lowest level number.
+ * - `levels` User options from series.levels.
+ * - `to` The highest level number.
+ *
+ * @return {Highcharts.Dictionary<object>|null}
+ * Returns a map from level number to its given options.
+ */
+function getLevelOptions<T extends Highcharts.TreeSeries>(
+    params: any
+): (T['mapOptionsToLevel']|null) {
+    let result: T['mapOptionsToLevel'] = null,
+        defaults: any,
+        converted,
+        i: number,
+        from: any,
+        to,
+        levels;
+
+    if (isObject(params)) {
+        result = {};
+        from = isNumber(params.from) ? params.from : 1;
+        levels = params.levels;
+        converted = {} as any;
+        defaults = isObject(params.defaults) ? params.defaults : {};
+        if (isArray(levels)) {
+            converted = levels.reduce(function (obj: any, item: any): any {
+                let level,
+                    levelIsConstant,
+                    options: any;
+
+                if (isObject(item) && isNumber(item.level)) {
+                    options = merge({}, item);
+                    levelIsConstant = pick(options.levelIsConstant, defaults.levelIsConstant);
+                    // Delete redundant properties.
+                    delete options.levelIsConstant;
+                    delete options.level;
+                    // Calculate which level these options apply to.
+                    level = item.level + (levelIsConstant ? 0 : from - 1);
+                    if (isObject(obj[level])) {
+                        merge(true, obj[level], options); // #16329
+                    } else {
+                        obj[level] = options;
+                    }
+                }
+                return obj;
+            }, {});
+        }
+        to = isNumber(params.to) ? params.to : 1;
+        for (i = 0; i <= to; i++) {
+            result[i] = merge(
+                {},
+                defaults,
+                isObject(converted[i]) ? converted[i] : {}
+            );
+        }
+    }
+    return result;
+}
+
+/**
  * @todo Combine buildTree and buildNode with setTreeValues
  * @todo Remove logic from Treemap and make it utilize this mixin.
  * @private
  */
-const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
+function setTreeValues<T extends Highcharts.TreeSeries>(
     tree: T['tree'],
     options: Highcharts.TreeValuesOptionsObject<T>
 ): T['tree'] {
@@ -171,163 +306,7 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
     tree.val = value;
 
     return tree;
-};
-
-/**
- * @private
- */
-const getColor = function getColor(
-    node: TreemapSeries.NodeObject,
-    options: {
-        colorIndex?: number;
-        colors: Array<ColorString>;
-        index: number;
-        mapOptionsToLevel: Array<TreemapSeriesOptions>;
-        parentColor: ColorString;
-        parentColorIndex: number;
-        series: Series;
-        siblings: number;
-    }
-): Highcharts.TreeColorObject {
-    let index = options.index,
-        mapOptionsToLevel = options.mapOptionsToLevel,
-        parentColor = options.parentColor,
-        parentColorIndex = options.parentColorIndex,
-        series = options.series,
-        colors = options.colors,
-        siblings = options.siblings,
-        points = series.points,
-        getColorByPoint,
-        chartOptionsChart = series.chart.options.chart,
-        point,
-        level: AnyRecord,
-        colorByPoint,
-        colorIndexByPoint,
-        color,
-        colorIndex;
-
-    /**
-     * @private
-     */
-    function variation(color: ColorString): ColorString {
-        const colorVariation = level && level.colorVariation;
-
-        if (colorVariation) {
-            if (colorVariation.key === 'brightness') {
-                return Color.parse(color).brighten(
-                    colorVariation.to * (index / siblings)
-                ).get() as any;
-            }
-        }
-
-        return color;
-    }
-
-    if (node) {
-        point = points[node.i];
-        level = mapOptionsToLevel[node.level] || {};
-        getColorByPoint = point && level.colorByPoint;
-
-        if (getColorByPoint) {
-            colorIndexByPoint = (point.index as any) % (colors ?
-                colors.length :
-                (chartOptionsChart.colorCount as any)
-            );
-            colorByPoint = colors && colors[colorIndexByPoint];
-        }
-
-        // Select either point color, level color or inherited color.
-        if (!series.chart.styledMode) {
-            color = pick(
-                point && point.options.color,
-                level && level.color,
-                colorByPoint,
-                parentColor && variation(parentColor),
-                series.color
-            );
-        }
-
-        colorIndex = pick(
-            point && point.options.colorIndex,
-            level && level.colorIndex,
-            colorIndexByPoint,
-            parentColorIndex,
-            options.colorIndex
-        );
-    }
-    return {
-        color: color,
-        colorIndex: colorIndex
-    };
-};
-
-/**
- * Creates a map from level number to its given options.
- *
- * @private
- * @function getLevelOptions
- * @param {object} params
- *        Object containing parameters.
- *        - `defaults` Object containing default options. The default options
- *           are merged with the userOptions to get the final options for a
- *           specific level.
- *        - `from` The lowest level number.
- *        - `levels` User options from series.levels.
- *        - `to` The highest level number.
- * @return {Highcharts.Dictionary<object>|null}
- *         Returns a map from level number to its given options.
- */
-const getLevelOptions = function getLevelOptions<T extends Highcharts.TreeSeries>(
-    params: any
-): (T['mapOptionsToLevel']|null) {
-    let result = null,
-        defaults: any,
-        converted,
-        i: number,
-        from: any,
-        to,
-        levels;
-
-    if (isObject(params)) {
-        result = {} as any;
-        from = isNumber(params.from) ? params.from : 1;
-        levels = params.levels;
-        converted = {} as any;
-        defaults = isObject(params.defaults) ? params.defaults : {};
-        if (isArray(levels)) {
-            converted = levels.reduce(function (obj: any, item: any): any {
-                let level,
-                    levelIsConstant,
-                    options: any;
-
-                if (isObject(item) && isNumber(item.level)) {
-                    options = merge({}, item);
-                    levelIsConstant = pick(options.levelIsConstant, defaults.levelIsConstant);
-                    // Delete redundant properties.
-                    delete options.levelIsConstant;
-                    delete options.level;
-                    // Calculate which level these options apply to.
-                    level = item.level + (levelIsConstant ? 0 : from - 1);
-                    if (isObject(obj[level])) {
-                        merge(true, obj[level], options); // #16329
-                    } else {
-                        obj[level] = options;
-                    }
-                }
-                return obj;
-            }, {});
-        }
-        to = isNumber(params.to) ? params.to : 1;
-        for (i = 0; i <= to; i++) {
-            result[i] = merge(
-                {},
-                defaults,
-                isObject(converted[i]) ? converted[i] : {}
-            );
-        }
-    }
-    return result;
-};
+}
 
 /**
  * Update the rootId property on the series. Also makes sure that it is
@@ -342,7 +321,9 @@ const getLevelOptions = function getLevelOptions<T extends Highcharts.TreeSeries
  * @return {string}
  *         Returns the resulting rootId after update.
  */
-const updateRootId = function (series: any): string {
+function updateRootId(
+    series: any
+): string {
     let rootId,
         options;
 
@@ -361,7 +342,34 @@ const updateRootId = function (series: any): string {
         series.rootNode = rootId;
     }
     return rootId;
-};
+}
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+namespace TreeUtilities {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface GetColorOptions {
+        colorIndex?: number;
+        colors?: Array<ColorType>;
+        index?: number;
+        mapOptionsToLevel?: any;
+        parentColor?: ColorType;
+        parentColorIndex?: number;
+        series: Series;
+        siblings?: number;
+    }
+
+}
 
 /* *
  *
@@ -369,11 +377,11 @@ const updateRootId = function (series: any): string {
  *
  * */
 
-const result: Highcharts.TreeSeriesMixin = {
-    getColor: getColor,
-    getLevelOptions: getLevelOptions,
-    setTreeValues: setTreeValues,
-    updateRootId: updateRootId
+const TreeUtilities = {
+    getColor,
+    getLevelOptions,
+    setTreeValues,
+    updateRootId
 };
 
-export default result;
+export default TreeUtilities;
