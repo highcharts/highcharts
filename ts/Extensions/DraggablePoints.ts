@@ -90,6 +90,12 @@ declare module '../Core/Chart/ChartOptions'{
     }
 }
 
+declare module '../Core/Chart/ChartOptions'{
+    interface ChartZoomingOptions {
+        key?: string;
+    }
+}
+
 declare module '../Core/Series/PointLike' {
     interface PointLike {
         /** @requires modules/draggable-points */
