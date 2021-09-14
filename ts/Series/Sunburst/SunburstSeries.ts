@@ -47,13 +47,13 @@ const {
 } = SeriesRegistry;
 import SunburstPoint from './SunburstPoint.js';
 import SunburstUtilities from './SunburstUtilities.js';
-import TreeSeriesMixin from '../TreeUtilities.js';
+import TU from '../TreeUtilities.js';
 const {
     getColor,
     getLevelOptions,
     setTreeValues,
     updateRootId
-} = TreeSeriesMixin;
+} = TU;
 import U from '../../Core/Utilities.js';
 const {
     error,

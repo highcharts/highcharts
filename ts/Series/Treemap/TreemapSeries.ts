@@ -56,12 +56,12 @@ const {
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
-import TreeSeriesMixin from '../TreeUtilities.js';
+import TU from '../TreeUtilities.js';
 const {
     getColor,
     getLevelOptions,
     updateRootId
-} = TreeSeriesMixin;
+} = TU;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -1488,7 +1488,7 @@ class TreemapSeries extends ScatterSeries {
         parentColor?: ColorType,
         colorIndex?: number,
         index?: number,
-        siblings?: unknown
+        siblings?: number
     ): void {
         let series = this,
             chart = series && series.chart,
