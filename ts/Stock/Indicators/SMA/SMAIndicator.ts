@@ -17,7 +17,6 @@
 import type AxisType from '../../../Core/Axis/AxisType';
 import type IndicatorLike from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type RequireIndicatorsResultObject from '../RequireIndicatorsResultObject';
 import type SeriesType from '../../../Core/Series/SeriesType';
 import type {
     SMAOptions,
@@ -26,7 +25,6 @@ import type {
 import type SMAPoint from './SMAPoint';
 
 import Chart from '../../../Core/Chart/Chart.js';
-import IndicatorUtilities from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -62,8 +60,6 @@ declare module '../../../Core/Series/SeriesOptions' {
         useOhlcData?: boolean;
     }
 }
-
-const generateMessage = IndicatorUtilities.generateMessage;
 
 /* *
  *
@@ -294,16 +290,7 @@ class SMAIndicator extends LineSeries {
         chart: Chart,
         options: SMAOptions
     ): void {
-        const indicator = this,
-            requiredIndicators = indicator.requireIndicators();
-
-        // Check whether all required indicators are loaded.
-        if (!requiredIndicators.allLoaded) {
-            return error(generateMessage(
-                indicator.type,
-                requiredIndicators.needed as any
-            ));
-        }
+        const indicator = this;
 
         super.init.call(
             indicator,
@@ -488,27 +475,6 @@ class SMAIndicator extends LineSeries {
         }
 
         return;
-    }
-
-    /**
-     * @private
-     */
-    public requireIndicators(): RequireIndicatorsResultObject {
-        const obj: RequireIndicatorsResultObject = {
-            allLoaded: true
-        };
-
-        // Check whether all required indicators are loaded, else return
-        // the object with missing indicator's name.
-        this.requiredIndicators.forEach(function (indicator: string): void {
-            if (SeriesRegistry.seriesTypes[indicator]) {
-                (SeriesRegistry.seriesTypes[indicator].prototype as SMAIndicator).requireIndicators();
-            } else {
-                obj.allLoaded = false;
-                obj.needed = indicator;
-            }
-        });
-        return obj;
     }
 
     /* eslint-enable valid-jsdoc */

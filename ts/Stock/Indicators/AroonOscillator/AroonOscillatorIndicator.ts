@@ -17,7 +17,6 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import multipleLinesMixin from '../../../Mixins/MultipleLines.js';
-import requiredIndicator from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -131,21 +130,6 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
             xData: xData,
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
-    }
-
-    public init(): void {
-        const args = arguments,
-            ctx = this;
-
-        requiredIndicator.isParentLoaded(
-            AROON,
-            'aroon',
-            ctx.type,
-            function (indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
     }
 }
 

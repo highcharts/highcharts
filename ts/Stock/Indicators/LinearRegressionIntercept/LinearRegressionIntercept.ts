@@ -135,6 +135,7 @@ export default LinearRegressionInterceptIndicator;
  * @product   highstock
  * @excluding dataParser,dataURL
  * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/linearregression
  * @requires  stock/indicators/linearregressionintercept
  * @apioption series.linearregressionintercept
  */

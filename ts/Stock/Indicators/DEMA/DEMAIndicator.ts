@@ -15,7 +15,7 @@ import type {
 import type DEMAPoint from './DEMAPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import IndicatorUtilities from '../IndicatorUtilities.js';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -65,21 +65,6 @@ class DEMAIndicator extends EMAIndicator {
     public data: Array<DEMAPoint> = void 0 as any;
     public options: DEMAOptions = void 0 as any;
     public points: Array<DEMAPoint> = void 0 as any;
-
-    public init(): void {
-        const args = arguments,
-            ctx = this;
-
-        IndicatorUtilities.isParentLoaded(
-            EMAIndicator,
-            'ema',
-            ctx.type,
-            function (indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
 
     public getEMA(
         yVal: (Array<number>|Array<Array<number>>),
@@ -241,7 +226,6 @@ export default DEMAIndicator;
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @requires  stock/indicators/dema
  * @apioption series.dema
  */

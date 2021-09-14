@@ -16,7 +16,6 @@ import type ChaikinPoint from './ChaikinPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
-import IndicatorUtilities from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import '../AD/ADIndicator.js'; // For historic reasons, AD i built into Chaikin
 const {
@@ -201,22 +200,6 @@ class ChaikinIndicator extends EMAIndicator {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-
-    init(): void {
-        const args = arguments,
-            ctx = this;
-
-        IndicatorUtilities.isParentLoaded(
-            EMAIndicator,
-            'ema',
-            ctx.type,
-            function (indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
-
 }
 
 /* *
@@ -266,7 +249,6 @@ export default ChaikinIndicator;
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, stacking, showInNavigator
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @requires  stock/indicators/chaikin
  * @apioption series.chaikin
  */

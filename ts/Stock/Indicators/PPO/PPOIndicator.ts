@@ -16,7 +16,6 @@ import type {
 } from './PPOOptions';
 import type PPOPoint from './PPOPoint';
 
-import IndicatorUtilities from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -100,21 +99,6 @@ class PPOIndicator extends EMAIndicator {
      *  Functions
      *
      * */
-
-    public init(): void {
-        const args = arguments,
-            ctx = this;
-
-        IndicatorUtilities.isParentLoaded(
-            EMAIndicator,
-            'ema',
-            ctx.type,
-            function (indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,

@@ -154,6 +154,7 @@ export default LinearRegressionAngleIndicator;
  * @product   highstock
  * @excluding dataParser,dataURL
  * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/linearregression
  * @requires  stock/indicators/linearregressionangle
  * @apioption series.linearregressionangle
  */

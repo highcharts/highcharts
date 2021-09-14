@@ -25,7 +25,6 @@ import type DisparityIndexPoint from './DisparityIndexPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
-import IndicatorUtilities from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -127,17 +126,7 @@ class DisparityIndexIndicator extends SMAIndicator {
             averageType = params && params.average ? params.average : void 0;
 
         ctx.averageIndicator = SeriesRegistry.seriesTypes[averageType] as typeof SMAIndicator || SMAIndicator;
-
-        // Check if the required average indicator modules is loaded
-        IndicatorUtilities.isParentLoaded(
-            ctx.averageIndicator,
-            averageType,
-            ctx.type,
-            function (indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
+        ctx.averageIndicator.prototype.init.apply(ctx, args);
     }
 
     public calculateDisparityIndex(

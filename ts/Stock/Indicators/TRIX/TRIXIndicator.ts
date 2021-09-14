@@ -14,7 +14,6 @@ import type {
 } from './TRIXOptions';
 import type TRIXPoint from './TRIXPoint';
 
-import IndicatorUtilities from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -61,21 +60,6 @@ class TRIXIndicator extends TEMAIndicator {
     public data: Array<TRIXPoint> = void 0 as any;
     public options: TRIXOptions = void 0 as any;
     public points: Array<TRIXPoint> = void 0 as any;
-
-    public init(): void {
-        const args = arguments,
-            ctx = this;
-
-        IndicatorUtilities.isParentLoaded(
-            TEMAIndicator,
-            'tema',
-            ctx.type,
-            function (indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
 
     // TRIX is calculated using TEMA so we just extend getTemaPoint method.
     public getTemaPoint(
@@ -125,6 +109,8 @@ export default TRIXIndicator;
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/tema
  * @apioption series.trix
  */
 

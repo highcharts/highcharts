@@ -16,7 +16,6 @@ import type {
 } from './TEMAOptions';
 import type TEMAPoint from './TEMAPoint';
 
-import IndicatorUtilities from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -263,22 +262,6 @@ class TEMAIndicator extends EMAIndicator {
             yData: yDataTema
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-
-    public init(): void {
-        const args = arguments,
-            ctx = this;
-
-        IndicatorUtilities.isParentLoaded(
-            EMAIndicator,
-            'ema',
-            ctx.type,
-            function (indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
-
 }
 
 /* *
@@ -352,7 +335,6 @@ export default TEMAIndicator;
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @requires  stock/indicators/tema
  * @apioption series.tema
  */

@@ -15,7 +15,7 @@ import type {
 import type KlingerPoint from './KlingerPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import IndicatorUtilities from '../IndicatorUtilities.js';
+
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -128,22 +128,6 @@ class KlingerIndicator extends SMAIndicator {
      *  Functions
      *
      * */
-
-    init(this: KlingerIndicator): void {
-        const args = arguments,
-            ctx = this;
-
-        // Check if the EMA module is added.
-        IndicatorUtilities.isParentLoaded(
-            EMAIndicator,
-            'ema',
-            ctx.type,
-            function (indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
 
     public calculateTrend(
         this: KlingerIndicator,
@@ -431,7 +415,6 @@ export default KlingerIndicator;
  * @since 9.1.0
  * @product   highstock
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @requires  stock/indicators/klinger
  * @apioption series.klinger
  */

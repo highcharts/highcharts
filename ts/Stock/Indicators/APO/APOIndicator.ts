@@ -20,7 +20,7 @@ import type {
 import type APOPoint from './APOPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import IndicatorUtilities from '../IndicatorUtilities.js';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -174,21 +174,6 @@ class APOIndicator extends EMAIndicator {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-
-    public init(): void {
-        const args = arguments,
-            ctx = this;
-
-        IndicatorUtilities.isParentLoaded(
-            EMAIndicator,
-            'ema',
-            ctx.type,
-            function (indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
 }
 
 /* *
@@ -241,7 +226,6 @@ export default APOIndicator;
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @requires  stock/indicators/apo
  * @apioption series.apo
  */

@@ -245,7 +245,6 @@ export default EMAIndicator;
  * @product   highstock
  * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @apioption series.ema
  */
 

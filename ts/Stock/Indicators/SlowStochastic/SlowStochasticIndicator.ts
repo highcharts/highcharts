@@ -16,7 +16,6 @@ import type {
 } from './SlowStochasticOptions';
 import type SlowStochasticPoint from './SlowStochasticPoint';
 
-import IndicatorUtilities from '../IndicatorUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -72,21 +71,6 @@ class SlowStochasticIndicator extends StochasticIndicator {
     public data: Array<SlowStochasticPoint> = void 0 as any;
     public options: SlowStochasticOptions = void 0 as any;
     public points: Array<SlowStochasticPoint> = void 0 as any;
-
-    public init(): void {
-        const args = arguments,
-            ctx = this;
-
-        IndicatorUtilities.isParentLoaded(
-            StochasticIndicator,
-            'stochastic',
-            ctx.type,
-            function (indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
 
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
