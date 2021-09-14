@@ -2187,11 +2187,11 @@ class Chart {
 
         // Plot clip
         if (!clipRect) {
-            chart.clipRect = (renderer.clipRect as any)(clipBox);
+            chart.clipRect = renderer.clipRect(clipBox);
         } else {
             clipRect.animate({
-                width: (clipBox as any).width,
-                height: (clipBox as any).height
+                width: clipBox.width,
+                height: clipBox.height
             });
         }
 
