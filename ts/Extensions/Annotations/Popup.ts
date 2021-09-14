@@ -196,7 +196,7 @@ declare global {
             switchTabs(this: Popup, disableTab: number): void;
         }
         interface InputAttributes {
-            value?: string|undefined;
+            value?: string;
             type?: string;
             htmlFor?: string;
             labelClassName?: string;
@@ -891,7 +891,7 @@ H.Popup.prototype = {
                 }
 
                 storage.forEach(function (genInput: any): void {
-                    if ((genInput as any)[0] === true) {
+                    if (genInput[0] === true) {
                         createElement(
                             SPAN, {
                                 className: PREFIX + 'annotation-title'
@@ -903,11 +903,10 @@ H.Popup.prototype = {
                         ));
 
                     } else {
-                        const inputAttributes = {
+                        genInput[4] = {
                             value: genInput[4][0],
                             type: genInput[4][1]
                         };
-                        genInput[4] = inputAttributes;
                         addInput.apply(genInput[0], genInput.splice(1));
                     }
                 });
@@ -1039,19 +1038,23 @@ H.Popup.prototype = {
                         indicators.getNameType(series, value);
 
                     if (filter) {
-                        const regex = new RegExp(filter, 'i'),
-                            alias = indicatorAliases &&
-                                indicatorAliases[indicatorType] &&
-                                indicatorAliases[indicatorType].join(' ') || '';
+                        try {
+                            const regex = new RegExp(filter, 'i'),
+                                alias = indicatorAliases &&
+                                    indicatorAliases[indicatorType] &&
+                                    indicatorAliases[indicatorType].join(' ') || '';
 
-                        if (indicatorFullName.match(regex) || alias.match(regex)) {
-                            filteredSeries = {
-                                indicatorFullName,
-                                indicatorType,
-                                series
-                            };
+                            if (indicatorFullName.match(regex) || alias.match(regex)) {
+                                filteredSeries = {
+                                    indicatorFullName,
+                                    indicatorType,
+                                    series
+                                };
 
-                            filteredSeriesArray.push(filteredSeries);
+                                filteredSeriesArray.push(filteredSeries);
+                            }
+                        } catch {
+                            // Invalid RegExp.
                         }
                     } else {
                         filteredSeries = {
@@ -1148,23 +1151,23 @@ H.Popup.prototype = {
                 series = (
                     isEdit ?
                         chart.series : // EDIT mode
-                        chart.options.plotOptions // ADD mode
+                        chart.options.plotOptions || {} // ADD mode
                 );
+
+            if (!chart && series) {
+                return;
+            }
 
             let rhsColWrapper: HTMLElement,
                 indicatorList: HTMLDOMElement,
                 item: HTMLDOMElement,
                 filteredSeriesArray: [Highcharts.FilteredSeries] = [] as any;
 
-            if (!chart && series) {
-                return;
-            }
-
             // Filter and sort the series.
-            if (!isEdit && series && !isArray(series)) {
+            if (!isEdit && !isArray(series)) {
                 // Apply filters only for the 'add' indicator list.
                 filteredSeriesArray = indicators.filterSeries.call(this, series, filter);
-            } else if (series && isArray(series)) {
+            } else if (isArray(series)) {
                 filteredSeriesArray = indicators.filterSeriesArray.call(this, series);
             }
 

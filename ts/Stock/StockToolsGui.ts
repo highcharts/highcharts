@@ -475,20 +475,20 @@ setOptions({
                     vbp: ['Volume by Price'],
 
                     /**
+                     *  Volume Weighted Moving Average alias.
+                     *
+                     * @default ['Volume Weighted Moving Average']
+                     * @type    {Array<string>}
+                     */
+                    vwap: ['Volume Weighted Moving Average'],
+
+                    /**
                      *  Weighted Moving Average alias.
                      *
                      * @default ['Weighted Moving Average']
                      * @type    {Array<string>}
                      */
-                    vwap: ['Weighted Moving Average'],
-
-                    /**
-                     *  Volume Weighted Average Price alias.
-                     *
-                     * @default ['Volume Weighted Average Price']
-                     * @type    {Array<string>}
-                     */
-                    wma: ['Volume Weighted Average Price'],
+                    wma: ['Weighted Moving Average'],
 
                     /**
                      *  Zig Zagalias.
@@ -599,12 +599,12 @@ setOptions({
                     dmi: ['Directional Movement Index'],
 
                     /**
-                     *  Detrended price alias.
+                     *  Detrended price oscillator alias.
                      *
-                     * @default ['Detrended price’]
+                     * @default ['Detrended price oscillator’]
                      * @type    {Array<string>}
                      */
-                    dpo: ['Detrended price'],
+                    dpo: ['Detrended price oscillator'],
 
                     /**
                      *  Klinger Oscillator alias.

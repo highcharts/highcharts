@@ -1190,7 +1190,7 @@ setOptions({
          * Configure the Popup strings in the chart. Requires the
          * `annotations.js` or `annotations-advanced.src.js` module to be
          * loaded.
-         *
+         * @since   7.0.0
          * @product highcharts highstock
          */
         navigation: {
@@ -1198,7 +1198,6 @@ setOptions({
              * Translations for all field names used in popup.
              *
              * @product highcharts highstock
-             * @since   7.0.0
              */
             popup: {
                 simpleShapes: 'Simple shapes',
