@@ -24,12 +24,20 @@ QUnit.test('General aniamtion tests.', function (assert) {
                 },
                 data: [194.1, 95.6, 54.4, 29.9]
             });
-            width = newSeries.sharedClipKey &&
-                chart.sharedClips[newSeries.sharedClipKey]
-                    .element.width.baseVal.value;
 
-            assert.ok(
-                width === 0,
+            const animationClipKey = [
+                newSeries.sharedClipKey,
+                500, // duration
+                undefined, // easing
+                0 // defer
+            ].join(',');
+
+            width = chart.sharedClips[animationClipKey]
+                .element.width.baseVal.value;
+
+            assert.strictEqual(
+                width,
+                0,
                 'Animation should run when duration is set and series is added dynamically (#14362).'
             );
 
@@ -64,8 +72,15 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
             width;
 
         setTimeout(function () {
+            const animationClipKey = [
+                chart.series[0].sharedClipKey,
+                500, // duration
+                undefined, // easing
+                0 // defer
+            ].join(',');
+
             // animation started
-            width = chart.sharedClips[chart.series[0].sharedClipKey]
+            width = chart.sharedClips[animationClipKey]
                 .element.width.baseVal.value;
 
             assert.strictEqual(
@@ -76,7 +91,7 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
 
             setTimeout(function () {
                 // animation uncovers most of the plot
-                width = chart.sharedClips[chart.series[0].sharedClipKey]
+                width = chart.sharedClips[animationClipKey]
                     .element.width.baseVal.value;
                 assert.strictEqual(
                     width > 300 && width < 600,
@@ -86,9 +101,7 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
             }, 300);
 
             setTimeout(function () {
-                const clipRect = chart.sharedClips[
-                    chart.series[0].sharedClipKey
-                ];
+                const clipRect = chart.sharedClips[animationClipKey];
                 // animation finished
                 assert.strictEqual(
                     // Highcharts - tested in browser
@@ -144,19 +157,26 @@ QUnit.test(
                 width;
 
             setTimeout(function () {
+                const animationClipKey = [
+                    chart.series[0].sharedClipKey,
+                    200, // duration
+                    undefined, // easing
+                    200 // defer
+                ].join(',');
+
                 // animation started
-                width = chart.sharedClips[chart.series[0].sharedClipKey]
+                width = chart.sharedClips[animationClipKey]
                     .element.width.baseVal.value;
 
                 assert.strictEqual(
-                    width === 0,
-                    true,
+                    width,
+                    0,
                     'Animate should not start'
                 );
 
                 setTimeout(function () {
                     // animation uncovers most of the plot
-                    width = chart.sharedClips[chart.series[0].sharedClipKey]
+                    width = chart.sharedClips[animationClipKey]
                         .element.width.baseVal.value;
                     assert.strictEqual(
                         width > 300 && width < 600,
@@ -167,8 +187,9 @@ QUnit.test(
 
                 setTimeout(function () {
                     const clipRect = chart.sharedClips[
-                        chart.series[0].sharedClipKey
+                        animationClipKey
                     ];
+
                     // animation finished
                     assert.strictEqual(
                         // Highcharts - tested in browser
