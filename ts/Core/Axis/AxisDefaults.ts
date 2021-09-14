@@ -1511,6 +1511,7 @@ namespace AxisDefaults {
          * @extends   scrollbar
          * @since     4.2.6
          * @product   highstock
+         * @excluding opposite
          * @apioption xAxis.scrollbar
          */
 
@@ -2593,7 +2594,7 @@ namespace AxisDefaults {
          * @extends   scrollbar
          * @since     4.2.6
          * @product   highstock
-         * @excluding height
+         * @excluding height, opposite
          * @apioption yAxis.scrollbar
          */
 
