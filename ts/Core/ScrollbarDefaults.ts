@@ -20,7 +20,7 @@ import type ScrollbarOptions from './ScrollbarOptions';
 
 import H from './Globals.js';
 const { isTouchDevice } = H;
-import Palette from './Color/Palette.js';
+import { Palette } from './Color/Palettes.js';
 
 /* *
  *

@@ -305,7 +305,7 @@ const getLevelOptions = function getLevelOptions<T extends Highcharts.TreeSeries
                     // Calculate which level these options apply to.
                     level = item.level + (levelIsConstant ? 0 : from - 1);
                     if (isObject(obj[level])) {
-                        extend(obj[level], options);
+                        merge(true, obj[level], options); // #16329
                     } else {
                         obj[level] = options;
                     }

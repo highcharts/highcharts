@@ -30,7 +30,7 @@ import ColorMapComposition from '../ColorMapComposition.js';
 const { colorMapSeriesMixin } = ColorMapComposition;
 import HeatmapPoint from './HeatmapPoint.js';
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -192,7 +192,7 @@ class HeatmapSeries extends ScatterSeries {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        nullColor: palette.neutralColor3,
+        nullColor: Palette.neutralColor3,
 
         dataLabels: {
             formatter: function (): string { // #2945

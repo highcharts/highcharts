@@ -43,7 +43,7 @@ const { colorMapSeriesMixin } = ColorMapComposition;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -560,7 +560,7 @@ class TreemapSeries extends ScatterSeries {
          *
          * @type {Highcharts.ColorString}
          */
-        borderColor: palette.neutralColor10,
+        borderColor: Palette.neutralColor10,
 
         /**
          * The width of the border surrounding each tree map item.
@@ -595,7 +595,7 @@ class TreemapSeries extends ScatterSeries {
                 /**
                  * The border color for the hovered state.
                  */
-                borderColor: palette.neutralColor40,
+                borderColor: Palette.neutralColor40,
 
                 /**
                  * Brightness for the hovered point. Defaults to 0 if the

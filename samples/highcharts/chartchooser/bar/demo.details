@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo Chart Chooser Bar Chart
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

@@ -20,22 +20,22 @@
 
 import type ChartSonify from './ChartSonify';
 import type SeriesSonify from './SeriesSonify';
+import type SignalHandler from './SignalHandler';
+import type SonificationUtilities from './SonificationUtilities';
 
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import Point from '../../Core/Series/Point.js';
+import PointSonify from './PointSonify.js';
 import U from '../../Core/Utilities.js';
 const {
     merge
 } = U;
 import Instrument from './Instrument.js';
-import IntrumentDefinitions from './InstrumentDefinitions.js';
 import Earcon from './Earcon.js';
-import pointSonifyFunctions from './PointSonify.js';
-import utilities from './Utilities.js';
+import SU from './SonificationUtilities.js';
 import TimelineClasses from './Timeline.js';
 import sonificationOptions from './Options.js';
-
 
 /* *
  *
@@ -76,13 +76,13 @@ declare global {
             TimelinePath: typeof TimelinePath;
             fadeOutDuration: number;
             instruments: Record<string, Instrument>;
-            utilities: SonificationUtilitiesObject;
+            utilities: typeof SonificationUtilities;
         }
         interface SonifyablePoint extends Point {
-            cancelSonify: PointSonifyFunctions['pointCancelSonify'];
+            cancelSonify: PointSonify.Composition['pointCancelSonify'];
             series: SeriesSonify.Composition;
             sonification: PointSonificationStateObject;
-            sonify: PointSonifyFunctions['pointSonify'];
+            sonify: PointSonify.Composition['pointSonify'];
         }
         let sonification: SonificationObject;
     }
@@ -153,10 +153,6 @@ merge(
     sonificationOptions
 );
 
-// Chart specific
-Point.prototype.sonify = pointSonifyFunctions.pointSonify;
-Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
-
 /* *
  *
  *  Default Export
@@ -167,9 +163,9 @@ const Sonification = {
     fadeOutDuration: 20,
 
     // Classes and functions
-    utilities: utilities,
+    utilities: SU,
     Instrument: Instrument as any,
-    instruments: IntrumentDefinitions,
+    instruments: Instrument.definitions,
     Earcon: Earcon as any,
     TimelineEvent: TimelineClasses.TimelineEvent,
     TimelinePath: TimelineClasses.TimelinePath,

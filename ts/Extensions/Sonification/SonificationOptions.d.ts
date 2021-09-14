@@ -16,6 +16,7 @@
  *
  * */
 import type Instrument from './Instrument';
+import type PointSonify from './PointSonify';
 
 /* *
  *
@@ -30,7 +31,7 @@ export interface DefaultSonificationInstrumentOptions {
     instrument: (string|Instrument);
     mapping?: DefaultSonificationInstrumentMappingOptions;
 }
-export interface SonificationInstrumentOptions extends Highcharts.PointInstrumentOptionsObject {
+export interface SonificationInstrumentOptions extends PointSonify.PointInstrumentOptions {
     instrument: (string|Instrument);
     mapping?: SonificationInstrumentMappingOptions;
 }

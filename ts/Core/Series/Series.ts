@@ -63,7 +63,7 @@ const {
     win
 } = H;
 import LegendSymbol from '../Legend/LegendSymbol.js';
-import Palette from '../Color/Palette.js';
+import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
 import SeriesDefaults from './SeriesDefaults.js';
 import SeriesRegistry from './SeriesRegistry.js';
@@ -2900,7 +2900,7 @@ class Series {
         // Handle hover and select states
         state = state || 'normal';
         if (state) {
-            seriesStateOptions = (seriesMarkerOptions as any).states[state];
+            seriesStateOptions = (seriesMarkerOptions as any).states[state] || {};
             pointStateOptions = (
                 pointMarkerOptions.states &&
                 (pointMarkerOptions.states as any)[state]

@@ -16,7 +16,7 @@ import type KlingerPoint from './KlingerPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -43,6 +43,13 @@ const {
  * @augments Highcharts.Series
  */
 class KlingerIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Klinger oscillator. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js` file.
@@ -355,35 +362,25 @@ class KlingerIndicator extends SMAIndicator {
  *
  * */
 
-interface KlingerIndicator {
+interface KlingerIndicator extends MultipleLinesComposition.Composition {
     linesApiNames: Array<string>;
     nameBase: string;
     nameComponents: Array<string>;
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
-    pointValKey: string;
-
     pointClass: typeof KlingerPoint;
-
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    translate: typeof MultipleLinesMixin.translate;
-    toYData: typeof MultipleLinesMixin.toYData;
+    pointValKey: string;
+    toYData: MultipleLinesComposition.Composition['toYData'];
 }
-
 extend(KlingerIndicator.prototype, {
     linesApiNames: ['signalLine'],
     nameBase: 'Klinger',
     nameComponents: ['fastAvgPeriod', 'slowAvgPeriod'],
     pointArrayMap: ['y', 'signal'],
     parallelArrays: ['x', 'y', 'signal'],
-    pointValKey: 'y',
-
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    pointValKey: 'y'
 });
+MultipleLinesComposition.compose(KlingerIndicator);
 
 /* *
  *
@@ -396,7 +393,6 @@ declare module '../../../Core/Series/SeriesType' {
         klinger: typeof KlingerIndicator;
     }
 }
-
 SeriesRegistry.registerSeriesType('klinger', KlingerIndicator);
 
 /* *
