@@ -124,11 +124,14 @@ const ScrollbarDefaults: ScrollbarOptions = {
      * However, in the case of RTL languages could be set to `false`
      * which positions the scrollbar on the left.
      *
+     * Works only for vertical axes.
+     *
      * @sample stock/yaxis/scrollbar-opposite/
      *         A scrollbar not on the opposite side
      *
      * @type      {boolean}
      * @default   true
+     * @since     next
      * @apioption scrollbar.opposite
      */
     opposite: true,
