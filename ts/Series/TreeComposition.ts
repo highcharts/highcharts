@@ -11,8 +11,8 @@ import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
 import type PointOptions from '../Core/Series/PointOptions';
 import type Series from '../Core/Series/Series';
-import type TreemapSeries from '../Series/Treemap/TreemapSeries';
-import type TreemapSeriesOptions from '../Series/Treemap/TreemapSeriesOptions';
+import type TreemapSeries from './Treemap/TreemapSeries';
+import type TreemapSeriesOptions from './Treemap/TreemapSeriesOptions';
 import Color from '../Core/Color/Color.js';
 import U from '../Core/Utilities.js';
 const {

@@ -41,7 +41,7 @@ import GridAxis from './GridAxis.js';
 import type Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
-import mixinTreeSeries from '../../Mixins/TreeSeries.js';
+import mixinTreeSeries from '../../Series/TreeComposition.js';
 const { getLevelOptions } = mixinTreeSeries;
 import U from '../Utilities.js';
 const {
