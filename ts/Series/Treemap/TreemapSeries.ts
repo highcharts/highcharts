@@ -56,7 +56,7 @@ const {
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
-import TreeSeriesMixin from '../TreeComposition.js';
+import TreeSeriesMixin from '../TreeUtilities.js';
 const {
     getColor,
     getLevelOptions,
