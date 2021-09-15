@@ -1267,15 +1267,15 @@ class SVGRenderer implements SVGRendererLike {
                 }
             };
 
+        const args = arguments;
+
         // optional properties
-        if (arguments.length > 1) {
-            extend(attribs, {
-                x: x,
-                y: y,
-                width: width,
-                height: height
+        (['x', 'y', 'width', 'height'] as (keyof SVGAttributes)[])
+            .forEach(function (prop, i): void {
+                if (isNumber(args[i + 1])) {
+                    attribs[prop] = args[i + 1];
+                }
             });
-        }
 
         const elemWrapper = this.createElement('image').attr(attribs) as any,
             onDummyLoad = function (e: Event): void {
