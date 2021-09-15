@@ -54,8 +54,7 @@ class APOIndicator extends EMAIndicator {
 
     /**
      * Absolute Price Oscillator. This series requires the `linkedTo` option to
-     * be set and should be loaded after the `stock/indicators/indicators.js`
-     * and `stock/indicators/ema.js`.
+     * be set and should be loaded after the `stock/indicators/indicators.js`.
      *
      * @sample {highstock} stock/indicators/apo
      *         Absolute Price Oscillator
@@ -67,7 +66,6 @@ class APOIndicator extends EMAIndicator {
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
      * @requires     stock/indicators/apo
      * @optionparent plotOptions.apo
      */

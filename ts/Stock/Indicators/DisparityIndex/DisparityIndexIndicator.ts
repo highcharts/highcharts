@@ -86,8 +86,9 @@ class DisparityIndexIndicator extends SMAIndicator {
         params: {
             /**
              * The average used to calculate the Disparity Index indicator.
-             * By default it uses SMA. To use other averages, e.g. EMA,
-             * the `stock/indicators/ema.js` file needs to be loaded.
+             * By default it uses SMA, with EMA as an option. To use other
+             * averages, e.g. TEMA, the `stock/indicators/tema.js` file needs to
+             * be loaded.
              *
              * If value is different than ema|dema|tema|wma, then sma is used.
              */

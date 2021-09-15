@@ -55,7 +55,7 @@ class TEMAIndicator extends EMAIndicator {
     /**
      * Triple exponential moving average (TEMA) indicator. This series requires
      * `linkedTo` option to be set and should be loaded after the
-     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
+     * `stock/indicators/indicators.js`.
      *
      * @sample {highstock} stock/indicators/tema
      *         TEMA indicator
@@ -68,7 +68,6 @@ class TEMAIndicator extends EMAIndicator {
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
      * @requires     stock/indicators/tema
      * @optionparent plotOptions.tema
      */

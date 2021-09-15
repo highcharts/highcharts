@@ -40,11 +40,8 @@ class TRIXIndicator extends TEMAIndicator {
      * Triple exponential average (TRIX) oscillator. This series requires
      * `linkedTo` option to be set.
      *
-     * Requires https://code.highcharts.com/stock/indicators/ema.js
-     * and https://code.highcharts.com/stock/indicators/tema.js.
-     *
      * @sample {highstock} stock/indicators/trix
-     *         TRIX indicator
+     * TRIX indicator
      *
      * @extends      plotOptions.tema
      * @since        7.0.0
@@ -53,6 +50,9 @@ class TRIXIndicator extends TEMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/tema
+     * @requires     stock/indicators/trix
      * @optionparent plotOptions.trix
      */
     public static defaultOptions: TRIXOptions = merge(TEMAIndicator.defaultOptions)

@@ -57,8 +57,7 @@ class ChaikinIndicator extends EMAIndicator {
 
     /**
      * Chaikin Oscillator. This series requires the `linkedTo` option to
-     * be set and should be loaded after the `stock/indicators/indicators.js`
-     * and `stock/indicators/ema.js`.
+     * be set and should be loaded after the `stock/indicators/indicators.js`.
      *
      * @sample {highstock} stock/indicators/chaikin
      *         Chaikin Oscillator
@@ -70,7 +69,6 @@ class ChaikinIndicator extends EMAIndicator {
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
      * @requires     stock/indicators/chaikin
      * @optionparent plotOptions.chaikin
      */

@@ -56,13 +56,12 @@ class EMAIndicator extends SMAIndicator {
      * `linkedTo` option to be set.
      *
      * @sample stock/indicators/ema
-     *         Exponential moving average indicator
+     * Exponential moving average indicator
      *
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
      * @optionparent plotOptions.ema
      */
     public static defaultOptions: EMAOptions = merge(SMAIndicator.defaultOptions, {

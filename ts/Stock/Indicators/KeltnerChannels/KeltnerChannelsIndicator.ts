@@ -20,9 +20,7 @@ import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        sma: SMAIndicator,
-        ema: EMAIndicator,
-        atr: ATRIndicator
+        sma: SMAIndicator
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';

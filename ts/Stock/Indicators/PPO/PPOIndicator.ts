@@ -49,7 +49,7 @@ class PPOIndicator extends EMAIndicator {
     /**
      * Percentage Price Oscillator. This series requires the
      * `linkedTo` option to be set and should be loaded after the
-     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
+     * `stock/indicators/indicators.js`.
      *
      * @sample {highstock} stock/indicators/ppo
      *         Percentage Price Oscillator
@@ -61,7 +61,6 @@ class PPOIndicator extends EMAIndicator {
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
      * @requires     stock/indicators/ppo
      * @optionparent plotOptions.ppo
      */
@@ -221,7 +220,6 @@ export default PPOIndicator;
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @requires  stock/indicators/ppo
  * @apioption series.ppo
  */
