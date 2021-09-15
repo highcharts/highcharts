@@ -12,10 +12,10 @@
  *
  * */
 
+import type CorePoint from '../Core/Series/Point';
+import type CorePointOptions from '../Core/Series/PointOptions';
+import type CoreSeries from '../Core/Series/Series';
 import type ColorType from '../Core/Color/ColorType';
-import type Point from '../Core/Series/Point';
-import type PointOptions from '../Core/Series/PointOptions';
-import type Series from '../Core/Series/Series';
 import type TreemapSeries from './Treemap/TreemapSeries';
 
 import Color from '../Core/Color/Color.js';
@@ -31,64 +31,6 @@ const {
 
 /* *
  *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface TreeColorObject {
-            color: ColorType;
-            colorIndex: number;
-        }
-        interface TreeNodeObject {
-            children: Array<TreeNodeObject>;
-            childrenTotal?: number;
-            i: number;
-            id: string;
-            isLeaf?: boolean;
-            levelDynamic?: number;
-            level: number;
-            name?: string;
-            val: number;
-            visible: boolean;
-        }
-        interface TreePoint extends Point {
-            options: TreePointOptions;
-        }
-        interface TreePointOptions extends PointOptions {
-            value?: (number|null);
-        }
-        interface TreeSeries extends Series {
-            mapOptionsToLevel: any;
-            points: Array<TreePoint>;
-            tree: TreeNodeObject;
-        }
-        interface TreeValuesBeforeCallbackFunction<
-            T extends TreeSeries = TreeSeries
-        > {
-            (node: T['tree'], options: TreeValuesOptionsObject<T>): T['tree'];
-        }
-        interface TreeValuesOptionsObject<T extends TreeSeries = TreeSeries> {
-            before?: TreeValuesBeforeCallbackFunction<T>;
-            idRoot: string;
-            index?: number;
-            levelIsConstant?: boolean;
-            mapIdToNode: Record<string, TreeNodeObject>;
-            points: T['points'];
-            series: T;
-            siblings?: number;
-            visible?: boolean;
-        }
-    }
-}
-
-/* *
- *
  *  Functions
  *
  * */
@@ -99,9 +41,9 @@ declare global {
  * @private
  */
 function getColor(
-    node: TreemapSeries.NodeObject,
+    node: TreeUtilities.NodeObject,
     options: TreeUtilities.GetColorOptions
-): Highcharts.TreeColorObject {
+): TreeUtilities.ColorObject {
     const index = options.index,
         mapOptionsToLevel = options.mapOptionsToLevel,
         parentColor = options.parentColor,
@@ -195,7 +137,7 @@ function getColor(
  * @return {Highcharts.Dictionary<object>|null}
  * Returns a map from level number to its given options.
  */
-function getLevelOptions<T extends Highcharts.TreeSeries>(
+function getLevelOptions<T extends TreeUtilities.Series>(
     params: any
 ): (T['mapOptionsToLevel']|null) {
     let result: T['mapOptionsToLevel'] = null,
@@ -213,7 +155,7 @@ function getLevelOptions<T extends Highcharts.TreeSeries>(
         converted = {} as any;
         defaults = isObject(params.defaults) ? params.defaults : {};
         if (isArray(levels)) {
-            converted = levels.reduce(function (obj: any, item: any): any {
+            converted = levels.reduce((obj: any, item: any): any => {
                 let level,
                     levelIsConstant,
                     options: any;
@@ -252,9 +194,9 @@ function getLevelOptions<T extends Highcharts.TreeSeries>(
  * @todo Remove logic from Treemap and make it utilize this mixin.
  * @private
  */
-function setTreeValues<T extends Highcharts.TreeSeries>(
+function setTreeValues<T extends TreeUtilities.Series>(
     tree: T['tree'],
-    options: Highcharts.TreeValuesOptionsObject<T>
+    options: TreeUtilities.SetTreeValuesOptions<T>
 ): T['tree'] {
     const before = options.before,
         idRoot = options.idRoot,
@@ -264,7 +206,7 @@ function setTreeValues<T extends Highcharts.TreeSeries>(
         points = options.points,
         point = points[tree.i],
         optionsPoint = point && point.options || {},
-        children: Array<Highcharts.TreeNodeObject> = [];
+        children: Array<TreeUtilities.NodeObject> = [];
 
     let childrenTotal = 0;
 
@@ -279,11 +221,8 @@ function setTreeValues<T extends Highcharts.TreeSeries>(
         tree = before(tree, options);
     }
     // First give the children some values
-    tree.children.forEach(function (
-        child: Highcharts.TreeNodeObject,
-        i: number
-    ): void {
-        const newOptions = extend<Highcharts.TreeValuesOptionsObject<T>>(
+    tree.children.forEach((child, i): void => {
+        const newOptions = extend<TreeUtilities.SetTreeValuesOptions<T>>(
             {} as any, options
         );
 
@@ -359,6 +298,11 @@ namespace TreeUtilities {
      *
      * */
 
+    export interface ColorObject {
+        color: ColorType;
+        colorIndex: number;
+    }
+
     export interface GetColorOptions {
         colorIndex?: number;
         colors?: Array<ColorType>;
@@ -366,8 +310,51 @@ namespace TreeUtilities {
         mapOptionsToLevel?: any;
         parentColor?: ColorType;
         parentColorIndex?: number;
-        series: Series;
+        series: CoreSeries;
         siblings?: number;
+    }
+
+    export interface NodeObject {
+        children: Array<NodeObject>;
+        childrenTotal?: number;
+        i: number;
+        id: string;
+        isLeaf?: boolean;
+        levelDynamic?: number;
+        level: number;
+        name?: string;
+        val: number;
+        visible: boolean;
+    }
+
+    export interface Point extends CorePoint {
+        options: PointOptions;
+    }
+
+    export interface PointOptions extends CorePointOptions {
+        value?: (number|null);
+    }
+
+    export interface Series extends CoreSeries {
+        mapOptionsToLevel: any;
+        points: Array<Point>;
+        tree: NodeObject;
+    }
+
+    export interface SetTreeValuesBeforeCallbackFunction<T extends Series> {
+        (node: T['tree'], options: SetTreeValuesOptions<T>): T['tree'];
+    }
+
+    export interface SetTreeValuesOptions<T extends Series> {
+        before?: SetTreeValuesBeforeCallbackFunction<T>;
+        idRoot: string;
+        index?: number;
+        levelIsConstant?: boolean;
+        mapIdToNode: Record<string, NodeObject>;
+        points: T['points'];
+        series: T;
+        siblings?: number;
+        visible?: boolean;
     }
 
 }

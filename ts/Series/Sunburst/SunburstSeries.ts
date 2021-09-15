@@ -1173,7 +1173,7 @@ namespace SunburstSeries {
         extends
         CU.RadianAngles,
         TreemapSeriesType.NodeValuesObject,
-        Highcharts.TreeValuesOptionsObject<SunburstSeries>
+        TU.SetTreeValuesOptions<SunburstSeries>
     {
         color: ColorType;
         mapOptionsToLevel: SunburstSeriesOptions['levels'];

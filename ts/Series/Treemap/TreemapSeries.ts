@@ -1493,7 +1493,7 @@ class TreemapSeries extends ScatterSeries {
         let series = this,
             chart = series && series.chart,
             colors = chart && chart.options && chart.options.colors,
-            colorInfo: Highcharts.TreeColorObject,
+            colorInfo: TU.ColorObject,
             point: (TreemapPoint|undefined);
 
         if (node) {
@@ -1879,7 +1879,7 @@ class TreemapSeries extends ScatterSeries {
  *
  * */
 
-interface TreemapSeries extends Highcharts.TreeSeries {
+interface TreemapSeries extends TU.Series {
     colorAttribs?: ColorMapComposition.SeriesComposition['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
@@ -1922,7 +1922,7 @@ namespace TreemapSeries {
         direction: number;
     }
     export type ListOfParentsObject = Record<string, Array<number>>;
-    export interface NodeObject extends Highcharts.TreeNodeObject {
+    export interface NodeObject extends TU.NodeObject {
         children: Array<NodeObject>;
         childrenTotal?: number;
         height: number;
