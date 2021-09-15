@@ -125,6 +125,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      * which positions the scrollbar on the left.
      *
      * Works only for vertical axes.
+     * This means yAxis in a non-inverted chart and xAxis in the inverted.
      *
      * @sample stock/yaxis/scrollbar-opposite/
      *         A scrollbar not on the opposite side
