@@ -3206,13 +3206,17 @@ class Axis {
      */
     public getOffset(): void {
         const axis = this,
-            chart = axis.chart,
+            {
+                chart,
+                horiz,
+                options,
+                side,
+                ticks,
+                tickPositions,
+                coll,
+                axisParent
+            } = axis,
             renderer = chart.renderer,
-            options = axis.options,
-            tickPositions = axis.tickPositions,
-            ticks = axis.ticks,
-            horiz = axis.horiz,
-            side = axis.side,
             invertedSide = (
                 chart.inverted && !axis.isZAxis ?
                     [1, 0, 3, 2][side] :
@@ -3224,8 +3228,7 @@ class Axis {
             axisOffset = chart.axisOffset,
             clipOffset = chart.clipOffset,
             directionFactor = [-1, 1, 1, -1][side],
-            className = options.className,
-            axisParent = axis.axisParent; // Used in color axis
+            className = options.className; // Used in color axis
 
         let showAxis,
             titleOffset = 0,
@@ -3250,7 +3253,7 @@ class Axis {
             ): SVGElement => renderer.g(name)
                 .attr({ zIndex })
                 .addClass(
-                    `highcharts-${this.coll.toLowerCase()}${suffix} ` +
+                    `highcharts-${coll.toLowerCase()}${suffix} ` +
                     (this.isRadial ? `highcharts-radial-axis${suffix} ` : '') +
                     (className || '')
                 )
@@ -3379,26 +3382,28 @@ class Axis {
 
         // Due to GridAxis.tickSize, tickSize should be calculated after ticks
         // has rendered.
-        const tickSize = this.tickSize('tick');
+        if (coll !== 'colorAxis') {
+            const tickSize = this.tickSize('tick');
 
-        axisOffset[side] = Math.max(
-            axisOffset[side],
-            (axis.axisTitleMargin || 0) + titleOffset +
-            directionFactor * axis.offset,
-            labelOffsetPadded, // #3027
-            tickPositions && tickPositions.length && tickSize ?
-                tickSize[0] + directionFactor * axis.offset :
-                0 // #4866
-        );
+            axisOffset[side] = Math.max(
+                axisOffset[side],
+                (axis.axisTitleMargin || 0) + titleOffset +
+                directionFactor * axis.offset,
+                labelOffsetPadded, // #3027
+                tickPositions && tickPositions.length && tickSize ?
+                    tickSize[0] + directionFactor * axis.offset :
+                    0 // #4866
+            );
 
-        // Decide the clipping needed to keep the graph inside
-        // the plot area and axis lines
-        const clip = options.offset ?
-            0 :
-            // #4308, #4371:
-            Math.floor((axis.axisLine as any).strokeWidth() / 2) * 2;
-        (clipOffset as any)[invertedSide] =
-            Math.max((clipOffset as any)[invertedSide], clip);
+            // Decide the clipping needed to keep the graph inside
+            // the plot area and axis lines
+            const clip = !axis.axisLine || options.offset ?
+                0 :
+                // #4308, #4371:
+                Math.floor(axis.axisLine.strokeWidth() / 2) * 2;
+            (clipOffset as any)[invertedSide] =
+                Math.max((clipOffset as any)[invertedSide], clip);
+        }
 
         fireEvent(this, 'afterGetOffset');
     }
