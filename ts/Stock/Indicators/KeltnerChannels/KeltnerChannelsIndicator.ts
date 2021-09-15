@@ -211,7 +211,6 @@ interface KeltnerChannelsIndicator extends MultipleLinesComposition.Composition 
     pointArrayMap: MultipleLinesComposition.Composition['pointArrayMap'];
     pointClass: typeof KeltnerChannelsPoint;
     pointValKey: MultipleLinesComposition.Composition['pointValKey'];
-    requiredIndicators: Array<string>;
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(KeltnerChannelsIndicator.prototype, {
@@ -219,8 +218,7 @@ extend(KeltnerChannelsIndicator.prototype, {
     nameComponents: ['period', 'periodATR', 'multiplierATR'],
     linesApiNames: ['topLine', 'bottomLine'],
     pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
-    requiredIndicators: ['ema', 'atr']
+    pointValKey: 'middle'
 });
 MultipleLinesComposition.compose(KeltnerChannelsIndicator);
 

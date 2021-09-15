@@ -635,14 +635,12 @@ class SupertrendIndicator extends SMAIndicator {
 interface SupertrendIndicator {
     nameBase: string;
     nameComponents: Array<string>;
-    requiredIndicators: Array<string>;
     pointClass: typeof SupertrendPoint;
 }
 
 extend(SupertrendIndicator.prototype, {
     nameBase: 'Supertrend',
-    nameComponents: ['multiplier', 'period'],
-    requiredIndicators: ['atr']
+    nameComponents: ['multiplier', 'period']
 });
 
 /* *

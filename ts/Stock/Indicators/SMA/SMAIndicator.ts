@@ -494,7 +494,6 @@ interface SMAIndicator extends IndicatorLike {
     nameComponents: Array<string>;
     nameSuffixes: Array<string>;
     pointClass: typeof SMAPoint;
-    requiredIndicators: Array<string>;
     useCommonDataGrouping: boolean;
 }
 extend(SMAIndicator.prototype, {
@@ -506,8 +505,6 @@ extend(SMAIndicator.prototype, {
     hasDerivedData: true,
     nameComponents: ['period'],
     nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
-    // Defines on which other indicators is this indicator based on.
-    requiredIndicators: [],
     useCommonDataGrouping: true
 });
 
