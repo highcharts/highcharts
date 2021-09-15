@@ -56,12 +56,12 @@ const {
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
-import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
+import TU from '../TreeUtilities.js';
 const {
     getColor,
     getLevelOptions,
     updateRootId
-} = TreeSeriesMixin;
+} = TU;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -1488,12 +1488,12 @@ class TreemapSeries extends ScatterSeries {
         parentColor?: ColorType,
         colorIndex?: number,
         index?: number,
-        siblings?: unknown
+        siblings?: number
     ): void {
         let series = this,
             chart = series && series.chart,
             colors = chart && chart.options && chart.options.colors,
-            colorInfo: Highcharts.TreeColorObject,
+            colorInfo: TU.ColorObject,
             point: (TreemapPoint|undefined);
 
         if (node) {
@@ -1879,7 +1879,7 @@ class TreemapSeries extends ScatterSeries {
  *
  * */
 
-interface TreemapSeries extends Highcharts.TreeSeries {
+interface TreemapSeries extends TU.Series {
     colorAttribs?: ColorMapComposition.SeriesComposition['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
@@ -1922,7 +1922,7 @@ namespace TreemapSeries {
         direction: number;
     }
     export type ListOfParentsObject = Record<string, Array<number>>;
-    export interface NodeObject extends Highcharts.TreeNodeObject {
+    export interface NodeObject extends TU.NodeObject {
         children: Array<NodeObject>;
         childrenTotal?: number;
         height: number;

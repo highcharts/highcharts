@@ -43,8 +43,8 @@ const {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
-const { getLevelOptions } = TreeSeriesMixin;
+import TU from '../TreeUtilities.js';
+const { getLevelOptions } = TU;
 import U from '../../Core/Utilities.js';
 const {
     defined,

@@ -136,10 +136,10 @@ function forceZeroOpacityMarkerOptions(
 /**
  * @private
  */
-function getPointMarkerOpacity(pointOptions: PointOptions): number {
+function getPointMarkerOpacity(pointOptions: PointOptions): number|undefined {
     return (pointOptions.marker as any).states &&
         (pointOptions.marker as any).states.normal &&
-        (pointOptions.marker as any).states.normal.opacity || 1;
+        (pointOptions.marker as any).states.normal.opacity;
 }
 
 
@@ -150,7 +150,7 @@ function unforcePointMarkerOptions(pointOptions: PointOptions): void {
     merge(true, pointOptions.marker, {
         states: {
             normal: {
-                opacity: getPointMarkerOpacity(pointOptions)
+                opacity: getPointMarkerOpacity(pointOptions) || 1
             }
         }
     });
@@ -166,13 +166,16 @@ function handleForcePointMarkers(series: Series): void {
     while (i--) {
         const point = series.points[i];
         const pointOptions = point.options;
+        const hadForcedMarker = point.hasForcedA11yMarker;
         delete point.hasForcedA11yMarker;
 
         if (pointOptions.marker) {
-            if (pointOptions.marker.enabled) {
+            const isStillForcedMarker = hadForcedMarker && getPointMarkerOpacity(pointOptions) === 0;
+
+            if (pointOptions.marker.enabled && !isStillForcedMarker) {
                 unforcePointMarkerOptions(pointOptions);
                 point.hasForcedA11yMarker = false;
-            } else {
+            } else if (pointOptions.marker.enabled === false) {
                 forceZeroOpacityMarkerOptions(pointOptions);
                 point.hasForcedA11yMarker = true;
             }
