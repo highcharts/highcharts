@@ -19,6 +19,7 @@
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type Axis from '../Axis/Axis';
 import type AxisType from '../Axis/AxisType';
+import type BBoxObject from '../Renderer/BBoxObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
@@ -2391,38 +2392,23 @@ class Series {
      *
      * @return {Highcharts.Dictionary<number>}
      */
-    public getClipBox(): Record<string, number> {
+    public getClipBox(): BBoxObject {
         const { chart, xAxis, yAxis } = this;
 
-        if (xAxis && yAxis) {
-            let height = yAxis.len;
+        // If no axes on the series, use global clipBox
+        const seriesBox = merge(chart.clipBox);
 
-            if (chart.inverted) {
-                return {
-                    height,
-                    width: xAxis.len,
-                    x: 0
-                };
-            }
-
-            if (xAxis.axisLine) {
-                const dist = chart.plotTop + chart.plotHeight -
-                        yAxis.pos - height,
-                    lineHeightCorrection = Math.floor(
-                        xAxis.axisLine.strokeWidth() / 2
-                    );
-
-                if (dist >= 0) {
-                    height -= Math.max(lineHeightCorrection - dist, 0);
-                }
-            }
-
-            return {
-                height,
-                width: xAxis.len
-            };
+        // Otherwise, use clipBox.width which is corrected for plotBorderWidth
+        // and clipOffset
+        if (xAxis && xAxis.len !== chart.plotSizeX) {
+            seriesBox.width = xAxis.len;
         }
-        return {};
+
+        if (yAxis && yAxis.len !== chart.plotSizeY) {
+            seriesBox.height = yAxis.len;
+        }
+
+        return seriesBox;
     }
 
     /**
@@ -2434,27 +2420,8 @@ class Series {
     public getSharedClipKey(): string {
         this.sharedClipKey = (this.options.xAxis || 0) + ',' +
             (this.options.yAxis || 0);
+
         return this.sharedClipKey;
-
-        /*
-        if (this.sharedClipKey) {
-            return this.sharedClipKey;
-        }
-
-        const sharedClipKey = [
-            animation && animation.duration,
-            animation && animation.easing,
-            animation && animation.defer,
-            this.options.xAxis,
-            this.options.yAxis,
-            this.chart.renderNo
-        ].join(',');
-
-        if (this.options.clip !== false || animation) {
-            this.sharedClipKey = sharedClipKey;
-        }
-
-        return sharedClipKey;*/
     }
 
     /**
@@ -2465,19 +2432,18 @@ class Series {
      * @function Highcharts.Series#setClip
      */
     public setClip(): void {
-        const chart = this.chart,
-            options = this.options,
+        const { chart, group, markerGroup } = this,
+            sharedClips = chart.sharedClips,
             renderer = chart.renderer,
             clipBox = this.getClipBox(),
             sharedClipKey = this.getSharedClipKey(); // #4526
 
-        let clipRect = chart.sharedClips[sharedClipKey];
+        let clipRect = sharedClips[sharedClipKey];
 
         // If a clipping rectangle for the same set of axes does not exist,
         // create it
         if (!clipRect) {
-            chart.sharedClips[sharedClipKey] = clipRect =
-                renderer.clipRect(clipBox);
+            sharedClips[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
 
         // When setting chart size, or when the series is rendered again before
         // starting animating, in compliance to a responsive rule
@@ -2485,14 +2451,14 @@ class Series {
             clipRect.animate(clipBox);
         }
 
-        if (this.group) {
+        if (group) {
             // When clip is false, reset to no clip after animation
-            this.group.clip(options.clip === false ? void 0 : clipRect);
+            group.clip(this.options.clip === false ? void 0 : clipRect);
         }
 
         // Unclip temporary animation clip
-        if (this.markerGroup) {
-            this.markerGroup.clip();
+        if (markerGroup) {
+            markerGroup.clip();
         }
     }
 
@@ -2512,6 +2478,7 @@ class Series {
             chart = series.chart,
             inverted = chart.inverted,
             animation = animObject(series.options.animation),
+            // The key for temporary animation clips
             animationClipKey = [
                 this.getSharedClipKey(),
                 animation.duration,
