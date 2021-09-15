@@ -1,5 +1,11 @@
 /* *
  *
+ *  (c) 2014-2021 Highsoft AS
+ *
+ *  Authors: Jon Arild Nygard / Oystein Moseng
+ *
+ *  License: www.highcharts.com/license
+ *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
@@ -16,7 +22,6 @@ import type CorePoint from '../Core/Series/Point';
 import type CorePointOptions from '../Core/Series/PointOptions';
 import type CoreSeries from '../Core/Series/Series';
 import type ColorType from '../Core/Color/ColorType';
-import type TreemapSeries from './Treemap/TreemapSeries';
 
 import Color from '../Core/Color/Color.js';
 import U from '../Core/Utilities.js';
@@ -190,9 +195,9 @@ function getLevelOptions<T extends TreeUtilities.Series>(
 }
 
 /**
+ * @private
  * @todo Combine buildTree and buildNode with setTreeValues
  * @todo Remove logic from Treemap and make it utilize this mixin.
- * @private
  */
 function setTreeValues<T extends TreeUtilities.Series>(
     tree: T['tree'],
@@ -253,13 +258,12 @@ function setTreeValues<T extends TreeUtilities.Series>(
  * accessible to exporting.
  *
  * @private
- * @function updateRootId
  *
  * @param {object} series
- *        The series to operate on.
+ * The series to operate on.
  *
  * @return {string}
- *         Returns the resulting rootId after update.
+ * Returns the resulting rootId after update.
  */
 function updateRootId(
     series: any
