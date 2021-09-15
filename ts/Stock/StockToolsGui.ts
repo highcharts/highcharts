@@ -241,7 +241,7 @@ setOptions({
                 ray: 'Ray',
                 arrowRay: 'Arrow ray',
                 line: 'Line',
-                arrowLine: 'Arrow line',
+                arrowInfinityLine: 'Arrow line',
                 horizontalLine: 'Horizontal line',
                 verticalLine: 'Vertical line',
                 infinityLine: 'Infinity line',
@@ -274,7 +274,7 @@ setOptions({
                 ray: 'Ray',
                 arrowRay: 'Arrow ray',
                 line: 'Line',
-                arrowLine: 'Arrow line',
+                arrowInfinityLine: 'Arrow line',
                 horizontalLine: 'Horizontal line',
                 verticalLine: 'Vertical line',
                 crooked3: 'Crooked 3 line',
@@ -560,7 +560,7 @@ setOptions({
                      *   'ray',
                      *   'arrowRay',
                      *   'line',
-                     *   'arrowLine',
+                     *   'arrowInfinityLine',
                      *   'horizontalLine',
                      *   'verticalLine'
                      * ]
@@ -571,7 +571,7 @@ setOptions({
                         'ray',
                         'arrowRay',
                         'line',
-                        'arrowLine',
+                        'arrowInfinityLine',
                         'horizontalLine',
                         'verticalLine'
                     ],
@@ -615,7 +615,7 @@ setOptions({
                          */
                         symbol: 'line.svg'
                     },
-                    arrowLine: {
+                    arrowInfinityLine: {
                         /**
                          * A predefined background symbol for the button.
                          *
@@ -1709,7 +1709,7 @@ Toolbar.prototype.classMapping = {
     ray: PREFIX + 'ray',
     arrowRay: PREFIX + 'arrow-ray',
     line: PREFIX + 'infinity-line',
-    arrowLine: PREFIX + 'arrow-infinity-line',
+    arrowInfinityLine: PREFIX + 'arrow-infinity-line',
     verticalLine: PREFIX + 'vertical-line',
     horizontalLine: PREFIX + 'horizontal-line',
     crooked3: PREFIX + 'crooked3',
