@@ -56,7 +56,7 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      * @since        7.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/linearregressionintercept
+     * @requires  stock/indicators/regressions
      * @optionparent plotOptions.linearregressionintercept
      */
     public static defaultOptions: LinearRegressionParamsOptions = merge(
@@ -135,8 +135,7 @@ export default LinearRegressionInterceptIndicator;
  * @product   highstock
  * @excluding dataParser,dataURL
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/linearregression
- * @requires  stock/indicators/linearregressionintercept
+ * @requires  stock/indicators/regressions
  * @apioption series.linearregressionintercept
  */
 
