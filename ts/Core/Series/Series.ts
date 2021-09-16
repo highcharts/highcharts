@@ -3389,7 +3389,7 @@ class Series {
         }
 
         // Initialize the animation
-        if (animDuration) {
+        if (series.animate && animDuration) {
             series.animate(true);
         }
 
@@ -3438,7 +3438,7 @@ class Series {
         series.invertGroups(inverted);
 
         // Run the animation
-        if (animDuration) {
+        if (series.animate && animDuration) {
             series.animate();
         }
 
