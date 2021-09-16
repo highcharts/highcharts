@@ -3214,7 +3214,7 @@ class Axis {
                 ticks,
                 tickPositions,
                 coll,
-                axisParent
+                axisParent // Used in color axis
             } = axis,
             renderer = chart.renderer,
             invertedSide = (
@@ -3228,7 +3228,7 @@ class Axis {
             axisOffset = chart.axisOffset,
             clipOffset = chart.clipOffset,
             directionFactor = [-1, 1, 1, -1][side],
-            className = options.className; // Used in color axis
+            className = options.className;
 
         let showAxis,
             titleOffset = 0,
