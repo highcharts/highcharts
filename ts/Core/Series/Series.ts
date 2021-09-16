@@ -2474,10 +2474,9 @@ class Series {
      * Initialize the animation.
      */
     public animate(init?: boolean): void {
-        const series = this,
-            chart = series.chart,
+        const { chart, group, markerGroup } = this,
             inverted = chart.inverted,
-            animation = animObject(series.options.animation),
+            animation = animObject(this.options.animation),
             // The key for temporary animation clips
             animationClipKey = [
                 this.getSharedClipKey(),
@@ -2490,7 +2489,7 @@ class Series {
             markerAnimationClipRect = chart.sharedClips[animationClipKey + 'm'];
 
         // Initialize the animation. Set up the clipping rectangle.
-        if (init && series.group) {
+        if (init && group) {
 
             // Create temporary animation clips
             if (!animationClipRect) {
@@ -2513,9 +2512,9 @@ class Series {
                 chart.sharedClips[animationClipKey + 'm'] = markerAnimationClipRect;
             }
 
-            series.group.clip(animationClipRect);
-            if (series.markerGroup) {
-                series.markerGroup.clip(markerAnimationClipRect);
+            group.clip(animationClipRect);
+            if (markerGroup) {
+                markerGroup.clip(markerAnimationClipRect);
             }
 
 
@@ -2525,22 +2524,30 @@ class Series {
             // Only first series in this pane
             !animationClipRect.hasClass('highcharts-animating')
         ) {
-            const finalBox = series.getClipBox(),
+            const finalBox = this.getClipBox(),
                 step = animation.step;
-            animation.step = function (val, fx): void {
-                if (step) {
-                    step.apply(fx, arguments);
-                }
-                if (
-                    markerAnimationClipRect &&
-                    markerAnimationClipRect.element
-                ) {
-                    markerAnimationClipRect.attr(
-                        fx.prop,
-                        fx.prop === 'width' ? val + 99 : val
-                    );
-                }
-            };
+
+            // Only do this when there are actually markers
+            if (markerGroup && markerGroup.element.childNodes.length) {
+
+                // To provide as smooth animation as possible, update the marker
+                // group clipping in steps of the main group animation
+                animation.step = function (val, fx): void {
+                    if (step) {
+                        step.apply(fx, arguments);
+                    }
+                    if (
+                        markerAnimationClipRect &&
+                        markerAnimationClipRect.element
+                    ) {
+                        markerAnimationClipRect.attr(
+                            fx.prop,
+                            fx.prop === 'width' ? val + 99 : val
+                        );
+                    }
+                };
+            }
+
             animationClipRect
                 .addClass('highcharts-animating')
                 .animate(finalBox, animation);
@@ -3349,11 +3356,8 @@ class Series {
             inverted = chart.inverted;
         // Animation doesn't work in IE8 quirks when the group div is
         // hidden, and looks bad in other oldIE
-        let animDuration = (
-            !series.finishedAnimating &&
-            chart.renderer.isSVG &&
-            animOptions.duration
-        );
+        let animDuration = (!series.finishedAnimating && chart.renderer.isSVG) ?
+            animOptions.duration : 0;
 
         fireEvent(this, 'render');
 
@@ -3384,8 +3388,8 @@ class Series {
             series.setClip();
         }
 
-        // initiate the animation
-        if (animDuration && series.animate) {
+        // Initialize the animation
+        if (animDuration) {
             series.animate(true);
         }
 
@@ -3434,7 +3438,7 @@ class Series {
         series.invertGroups(inverted);
 
         // Run the animation
-        if (animDuration && series.animate) {
+        if (animDuration) {
             series.animate();
         }
 
