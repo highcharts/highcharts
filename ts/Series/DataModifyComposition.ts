@@ -64,7 +64,7 @@ declare module '../Core/Series/PointLike' {
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
-        dataModify?: CompareCumulativeComposition.Additions;
+        dataModify?: DataModifyComposition.Additions;
         setCompare(compare?: string|null, redraw?: boolean): void;
         setCumulative(cumulative?: boolean|null, redraw?: boolean): void;
     }
@@ -85,7 +85,7 @@ declare module '../Core/Series/SeriesOptions' {
  *
  * */
 
-namespace CompareCumulativeComposition {
+namespace DataModifyComposition {
 
     /* *
      *
@@ -135,7 +135,8 @@ namespace CompareCumulativeComposition {
     /* eslint-disable valid-jsdoc */
 
     /**
-     * Extends the axis with ordinal support.
+     * Extends the series, axis and point classes with
+     * compare and cumulative support.
      *
      * @private
      *
@@ -366,7 +367,7 @@ namespace CompareCumulativeComposition {
      * @ignore
      * @function Highcharts.Series#processData
      */
-    function afterProcessData(this: Series): (boolean|undefined) {
+    function afterProcessData(this: Series): void {
         const series = this;
 
         if (
@@ -404,8 +405,6 @@ namespace CompareCumulativeComposition {
                 }
             }
         }
-
-        return;
     }
 
     /**
@@ -702,7 +701,7 @@ namespace CompareCumulativeComposition {
  *
  * */
 
-export default CompareCumulativeComposition;
+export default DataModifyComposition;
 
 /* *
  *
