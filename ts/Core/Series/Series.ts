@@ -2525,8 +2525,12 @@ class Series {
             // Only first series in this pane
             !animationClipRect.hasClass('highcharts-animating')
         ) {
-            const finalBox = series.getClipBox();
-            animation.step = (val, fx): void => {
+            const finalBox = series.getClipBox(),
+                step = animation.step;
+            animation.step = function (val, fx): void {
+                if (step) {
+                    step.apply(fx, arguments);
+                }
                 if (
                     markerAnimationClipRect &&
                     markerAnimationClipRect.element
@@ -2537,8 +2541,9 @@ class Series {
                     );
                 }
             };
-            animationClipRect.addClass('highcharts-animating');
-            animationClipRect.animate(finalBox, animation);
+            animationClipRect
+                .addClass('highcharts-animating')
+                .animate(finalBox, animation);
         }
     }
 
