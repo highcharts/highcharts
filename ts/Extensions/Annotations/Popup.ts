@@ -1007,6 +1007,9 @@ H.Popup.prototype = {
          * @param {string|undefined} filter
          *        Applied filter string from the input.
          *        For the first iteration, it's an empty string.
+         *
+         * @return {Array<Highcharts.FilteredSeries>} filteredSeriesArray
+         *         Returns array of filtered series based on filter string.
          */
         filterSeries: function (
             this: Highcharts.Popup,
@@ -1076,6 +1079,9 @@ H.Popup.prototype = {
          *
          * @param {Highcharts.FilteredSeries} series
          *        All series that are available in the plotOptions.
+         *
+         * @return {Array<Highcharts.FilteredSeries>} filteredSeriesArray
+         *         Returns array of filtered series based on filter string.
          */
         filterSeriesArray: function (
             this: Highcharts.Popup,
