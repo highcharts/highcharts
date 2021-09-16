@@ -1,6 +1,6 @@
 /* eslint func-style:0 */
 
-QUnit.test('General aniamtion tests.', function (assert) {
+QUnit.test('General animation tests', function (assert) {
     var clock = null;
 
     try {
@@ -17,17 +17,23 @@ QUnit.test('General aniamtion tests.', function (assert) {
             done = assert.async(),
             width;
 
+        const initialClips = chart.container.querySelectorAll('defs clipPath').length;
+        assert.ok(
+            initialClips >= 2,
+            'There should be at least clips initially, one for plot area and one for the series'
+        );
+
         setTimeout(function () {
             newSeries = chart.addSeries({
                 animation: {
-                    duration: 500
+                    duration: 200
                 },
                 data: [194.1, 95.6, 54.4, 29.9]
             });
 
             const animationClipKey = [
                 newSeries.sharedClipKey,
-                500, // duration
+                200, // duration
                 undefined, // easing
                 0 // defer
             ].join(',');
@@ -40,9 +46,28 @@ QUnit.test('General aniamtion tests.', function (assert) {
                 0,
                 'Animation should run when duration is set and series is added dynamically (#14362).'
             );
+        }, 100);
+
+        setTimeout(function () {
+            assert.strictEqual(
+                chart.container.querySelectorAll('defs clipPath').length,
+                initialClips + 2,
+                'There should be an additional two clips when animating, ' +
+                'one for the line and one for markers'
+            );
+
+        }, 200);
+
+        setTimeout(function () {
+            assert.strictEqual(
+                chart.container.querySelectorAll('defs clipPath').length,
+                initialClips,
+                'When the animation settles, the two temporary clips should ' +
+                'be purged'
+            );
 
             done();
-        }, 100);
+        }, 400);
 
         TestUtilities.lolexRunAndUninstall(clock);
     } finally {
