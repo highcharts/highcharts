@@ -127,7 +127,7 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

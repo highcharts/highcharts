@@ -122,7 +122,7 @@ class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

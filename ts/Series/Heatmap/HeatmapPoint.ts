@@ -233,7 +233,7 @@ class HeatmapPoint extends ScatterPoint {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

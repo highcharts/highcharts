@@ -1107,7 +1107,7 @@ class SunburstSeries extends TreemapSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

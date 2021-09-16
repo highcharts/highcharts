@@ -320,7 +320,7 @@ class TilemapSeries extends HeatmapSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

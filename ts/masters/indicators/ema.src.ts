@@ -1,14 +1,5 @@
-/**
- * @license Highstock JS v@product.version@ (@product.date@)
- * @module highcharts/indicators/ema
- * @requires highcharts
- * @requires highcharts/modules/stock
- *
- * Indicator series type for Highcharts Stock
- *
- * (c) 2010-2021 Sebastian Bochan
- *
- * License: www.highcharts.com/license
+/*
+ * Since v9.3.0, EMA technical indicator is part of indicators.js.
+ * It's no longer necessary to load this file.
  */
 'use strict';
-import '../../Stock/Indicators/EMA/EMAIndicator.js';
