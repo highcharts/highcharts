@@ -204,7 +204,7 @@ enum DropdownProperties {
  */
 const dropdownParameters: Highcharts.DropdownParameters = {
     'algorithm-pivotpoints': ['standard', 'fibonacci', 'camarilla'],
-    'average-disparityindex': ['sma', 'ema']
+    'average-disparityindex': ['sma', 'ema', 'dema', 'tema', 'wma']
 };
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

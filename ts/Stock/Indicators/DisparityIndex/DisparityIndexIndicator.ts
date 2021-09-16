@@ -90,7 +90,8 @@ class DisparityIndexIndicator extends SMAIndicator {
              * averages, e.g. TEMA, the `stock/indicators/tema.js` file needs to
              * be loaded.
              *
-             * If value is different than ema|dema|tema|wma, then sma is used.
+             * If value is different than `ema`, `dema`, `tema` or `wma`,
+             * then sma is used.
              */
             average: 'sma',
             index: 3
