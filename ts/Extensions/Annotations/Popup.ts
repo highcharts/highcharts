@@ -398,7 +398,8 @@ H.Popup.prototype = {
      * @param {Highcharts.InputAttributes} inputAttributes
      *        Attributes of the input.
      *
-     * @return {HTMLSelectElement}
+     * @return {HTMLInputElement}
+     *         Return created input element.
      */
     addInput: function (
         option: string,
@@ -1006,8 +1007,6 @@ H.Popup.prototype = {
          * @param {string|undefined} filter
          *        Applied filter string from the input.
          *        For the first iteration, it's an empty string.
-         *
-         * @return {void}
          */
         filterSeries: function (
             this: Highcharts.Popup,
@@ -1038,23 +1037,22 @@ H.Popup.prototype = {
                         indicators.getNameType(series, value);
 
                     if (filter) {
-                        try {
-                            const regex = new RegExp(filter, 'i'),
-                                alias = indicatorAliases &&
-                                    indicatorAliases[indicatorType] &&
-                                    indicatorAliases[indicatorType].join(' ') || '';
+                        // Replace invalid characters.
+                        const validFilter = filter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-                            if (indicatorFullName.match(regex) || alias.match(regex)) {
-                                filteredSeries = {
-                                    indicatorFullName,
-                                    indicatorType,
-                                    series
-                                };
+                        const regex = new RegExp(validFilter, 'i'),
+                            alias = indicatorAliases &&
+                                indicatorAliases[indicatorType] &&
+                                indicatorAliases[indicatorType].join(' ') || '';
 
-                                filteredSeriesArray.push(filteredSeries);
-                            }
-                        } catch {
-                            // Invalid RegExp.
+                        if (indicatorFullName.match(regex) || alias.match(regex)) {
+                            filteredSeries = {
+                                indicatorFullName,
+                                indicatorType,
+                                series
+                            };
+
+                            filteredSeriesArray.push(filteredSeries);
                         }
                     } else {
                         filteredSeries = {
@@ -1078,8 +1076,6 @@ H.Popup.prototype = {
          *
          * @param {Highcharts.FilteredSeries} series
          *        All series that are available in the plotOptions.
-         *
-         * @return {void}
          */
         filterSeriesArray: function (
             this: Highcharts.Popup,
@@ -1128,8 +1124,6 @@ H.Popup.prototype = {
          * @param {string|undefined} filter
          *        Applied filter string from the input.
          *        For the first iteration, it's an empty string.
-         *
-         * @return {void}
          */
         addIndicatorList: function (
             this: Highcharts.Popup,
@@ -1269,8 +1263,6 @@ H.Popup.prototype = {
          *
          * @param {HTMLDOMElement} parentDiv
          *        HTML parent element.
-         *
-         * @return {HTMLSelectElement}
          */
         addSearchBox: function (
             this: Highcharts.Popup,
@@ -1411,8 +1403,6 @@ H.Popup.prototype = {
          *
          * @param {string|undefined} selectedOption
          *        Default value in dropdown.
-         *
-         * @return {void}
          */
         addSelectionOptions: function (
             this: Highcharts.Popup,
@@ -1492,7 +1482,7 @@ H.Popup.prototype = {
          * @param {string} [IndicatorType]
          *        Type of the indicator i.e. sma, ema...
          *
-         * @return {Highcharts.IndicatorNameCouple}
+         * @return Highcharts.Dictionary<string>
          *        Full name and series type.
          */
         getNameType: function (
@@ -1538,8 +1528,6 @@ H.Popup.prototype = {
          *
          * @param {string|undefined} selectedOption
          *        Default value in dropdown.
-         *
-         * @return {void}
          */
         listAllSeries: function (
             this: Highcharts.Popup,
