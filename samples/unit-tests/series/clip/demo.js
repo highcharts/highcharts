@@ -37,7 +37,6 @@ QUnit.test('General series clip tests', assert => {
             done = assert.async();
 
         assert.strictEqual(
-            // chart.series[0].clipBox.height,
             chart.sharedClips[chart.series[0].getSharedClipKey()].attr('height'),
             chart.yAxis[0].len,
             '#13858: clipBox should have been updated in compliance with responsive rule'
@@ -143,7 +142,6 @@ QUnit.test('Each series should have their own clip-path, (#14549).', assert => {
     });
 
     assert.strictEqual(
-        // chart.series[0].clipBox.height,
         chart.sharedClips[chart.series[0].getSharedClipKey()].attr('height'),
         chart.clipBox.height,
         '#15400: clipBox should have been updated by setSize in load event'
@@ -180,7 +178,6 @@ QUnit.test('Each series should have their own clip-path, (#14549).', assert => {
     chart.redraw(false);
 
     assert.ok(
-        // chart.series[0].clipBox.height + chart.series[1].clipBox.height <=
         chart.sharedClips[chart.series[0].getSharedClipKey()].attr('height') +
         chart.sharedClips[chart.series[1].getSharedClipKey()].attr('height') <=
         chart.plotHeight,

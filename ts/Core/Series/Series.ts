@@ -3433,40 +3433,6 @@ class Series {
             series.animate();
         }
 
-        /*
-        if (hasRendered) {
-            const animation = animObject(this.options.animation);
-
-            // #15435: this.sharedClipKey might not have been set yet, for
-            // example when updating the series, so we need to use this
-            // function instead
-            const sharedClipKey = this.getSharedClipKey();
-            const clipRect = chart.sharedClips[sharedClipKey];
-
-            // On redrawing, resizing etc, update the clip rectangle.
-            //
-            // #15435: Update it even when we are creating/updating clipBox,
-            // since there could be series updating and pane size changes
-            // happening at the same time and we dont destroy shared clips in
-            // stock.
-            if (clipRect) {
-                // animate in case resize is done during initial animation
-                const box = this.getClipBox();
-                clipRect.animate(box);
-
-                const markerClipRect = chart.sharedClips[sharedClipKey + 'm'];
-
-                // also change markers clip animation for consistency
-                // (marker clip rects should exist only on chart init)
-                if (markerClipRect) {
-                    markerClipRect.animate({
-                        width: this.xAxis.len
-                    });
-                }
-            }
-        }
-        */
-
         // Call the afterAnimate function on animation complete (but don't
         // overwrite the animation.complete option which should be available
         // to the user).
