@@ -16,10 +16,7 @@ import type {
 } from './WilliamsROptions';
 import type WilliamsRPoint from './WilliamsRPoint';
 
-import ReduceArrayMixin from '../ArrayUtilities.js';
-const {
-    getArrayExtremes
-} = ReduceArrayMixin;
+import AU from '../ArrayUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -115,7 +112,7 @@ class WilliamsRIndicator extends SMAIndicator {
         // with (+1)
         for (i = period - 1; i < yValLen; i++) {
             slicedY = yVal.slice(i - period + 1, i + 1);
-            extremes = getArrayExtremes(slicedY, low as any, high as any);
+            extremes = AU.getArrayExtremes(slicedY, low as any, high as any);
 
             LL = extremes[0];
             HH = extremes[1];

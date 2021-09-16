@@ -16,9 +16,9 @@ import type {
 } from '../PC/PCOptions';
 import type PCPoint from './PCPoint';
 
+import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import Palettes from '../../../Core/Color/Palettes.js';
-import ReduceArrayMixin from '../ArrayUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -30,8 +30,6 @@ const {
     merge,
     extend
 } = U;
-
-const getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 
 /* *
  *
@@ -164,7 +162,7 @@ class PCIndicator extends SMAIndicator {
         for (i = period; i <= yValLen; i++) {
             date = xVal[i - 1];
             slicedY = yVal.slice(i - period, i);
-            extremes = getArrayExtremes(slicedY, low as any, high as any);
+            extremes = AU.getArrayExtremes(slicedY, low as any, high as any);
             TL = extremes[1];
             BL = extremes[0];
             ML = (TL + BL) / 2;

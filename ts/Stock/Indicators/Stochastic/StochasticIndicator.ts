@@ -22,8 +22,8 @@ import type {
 } from './StochasticOptions';
 import type StochasticPoint from './StochasticPoint';
 
+import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
-import ReduceArrayMixin from '../ArrayUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -189,7 +189,7 @@ class StochasticIndicator extends SMAIndicator {
             slicedY = yVal.slice(i - periodK + 1, i + 1);
 
             // Calculate %K
-            extremes = ReduceArrayMixin.getArrayExtremes(slicedY, low as any, high as any);
+            extremes = AU.getArrayExtremes(slicedY, low as any, high as any);
             LL = extremes[0]; // Lowest low in %K periods
             CL = yVal[i][close] - LL;
             HL = extremes[1] - LL;
