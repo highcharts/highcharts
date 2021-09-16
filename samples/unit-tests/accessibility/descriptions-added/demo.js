@@ -83,3 +83,39 @@ QUnit.test('Accessible pie', function (assert) {
         'There be screen reader region'
     );
 });
+
+QUnit.test('No information region', function (assert) {
+    var chart = Highcharts.chart('container', {
+        accessibility: {
+            screenReaderSection: {
+                beforeChartFormat: null
+            }
+        },
+        series: [{ data: [1, 2, 3] }]
+    });
+
+    assert.notOk(
+        chart.accessibility.components.infoRegions
+            .screenReaderSections.before.element,
+        'There is no before screen reader region'
+    );
+    assert.ok(
+        chart.accessibility.components.infoRegions
+            .screenReaderSections.after.element,
+        'There is an after screen reader region'
+    );
+
+    chart.update({
+        accessibility: {
+            screenReaderSection: {
+                afterChartFormat: null
+            }
+        }
+    });
+
+    assert.notOk(
+        chart.accessibility.components.infoRegions
+            .screenReaderSections.after.element,
+        'There is no after screen reader region after update'
+    );
+});
