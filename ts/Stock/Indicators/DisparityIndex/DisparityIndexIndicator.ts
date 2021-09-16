@@ -83,7 +83,8 @@ class DisparityIndexIndicator extends SMAIndicator {
              * By default it uses SMA. To use other averages, e.g. EMA,
              * the `stock/indicators/ema.js` file needs to be loaded.
              *
-             * If value is different than ema|dema|tema|wma, then sma is used.
+             * If value is different than `ema`, `dema`, `tema` or `wma`,
+             * then sma is used.
              */
             average: 'sma',
             index: 3
