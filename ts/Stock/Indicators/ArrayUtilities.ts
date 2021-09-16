@@ -58,6 +58,7 @@ function getArrayExtremes<T extends Array<number>>(
 
 namespace ArrayUtilities {
 
+    /** 0: min, 1: max */
     export type Extremes = [number, number];
 
 }
