@@ -18,7 +18,7 @@ import type PCPoint from './PCPoint';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import Palettes from '../../../Core/Color/Palettes.js';
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+import ReduceArrayMixin from '../ArrayUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
