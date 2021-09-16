@@ -16,7 +16,7 @@ import type {
 } from './WilliamsROptions';
 import type WilliamsRPoint from './WilliamsRPoint';
 
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+import ReduceArrayMixin from '../ArrayUtilities.js';
 const {
     getArrayExtremes
 } = ReduceArrayMixin;

@@ -23,7 +23,7 @@ import type {
 import type StochasticPoint from './StochasticPoint';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+import ReduceArrayMixin from '../ArrayUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
