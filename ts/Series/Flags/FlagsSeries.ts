@@ -514,7 +514,9 @@ class FlagsSeries extends ColumnSeries {
                 boxes.push(box);
             });
 
-            distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
+            // If necessary (for overlapping or long labels)
+            // distribute it by the maxDistance = 300, #16041.
+            distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 300);
 
             points.forEach(function (point): void {
                 const box = point.graphic && boxesMap[point.plotX as any];
