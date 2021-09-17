@@ -70,7 +70,7 @@
     "gulp-jsdoc3": "^3.0.0",
     "gulp-zip": "^5.1.0",
     "gzip-size": "^6.0.0",
-    "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.3.7",
+    "highcharts-assembler": "github:highcharts/highcharts-assembler#migrate-global-window",
     "highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.20",
     "highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.27",
     "highcharts-utils": "github:highcharts/highcharts-utils",
