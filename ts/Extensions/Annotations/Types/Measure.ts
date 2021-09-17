@@ -468,6 +468,7 @@ class Measure extends Annotation {
                 this.options.controlPointOptions,
                 1
             );
+            controlPoint.isEditedHorizontally = true;
 
             this.controlPoints.push(controlPoint);
         }

@@ -25,6 +25,7 @@ declare global {
             public chart: AnnotationChart;
             public graphic: SVGElement;
             public index: number;
+            public isEditedHorizontally?: boolean;
             public mouseMoveToRadians: AnnotationEventEmitterMixin['mouseMoveToRadians'];
             public mouseMoveToScale: AnnotationEventEmitterMixin['mouseMoveToScale'];
             public mouseMoveToTranslation: AnnotationEventEmitterMixin['mouseMoveToTranslation'];
@@ -116,6 +117,7 @@ class ControlPoint implements eventEmitterMixin.Type {
     public chart: Highcharts.AnnotationChart;
     public graphic: SVGElement = void 0 as any;
     public index: number;
+    public isEditedHorizontally?: boolean;
     public mouseMoveToRadians = eventEmitterMixin.mouseMoveToRadians;
     public mouseMoveToScale = eventEmitterMixin.mouseMoveToScale;
     public mouseMoveToTranslation = eventEmitterMixin.mouseMoveToTranslation;
@@ -153,6 +155,7 @@ class ControlPoint implements eventEmitterMixin.Type {
      */
     public setVisibility(visible: boolean): void {
         this.graphic.attr('visibility', visible ? 'visible' : 'hidden');
+        this.graphic.attr('cursor', this.isEditedHorizontally ? 'default' : 'pointer');
 
         this.options.visible = visible as any;
     }
