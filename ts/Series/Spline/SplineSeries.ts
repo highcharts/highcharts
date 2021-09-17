@@ -250,7 +250,7 @@ class SplineSeries extends LineSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

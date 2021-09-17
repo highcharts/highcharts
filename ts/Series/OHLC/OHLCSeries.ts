@@ -207,7 +207,7 @@ class OHLCSeries extends HLCSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  *
  * */

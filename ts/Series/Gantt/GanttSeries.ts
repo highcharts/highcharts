@@ -259,7 +259,7 @@ class GanttSeries extends XRangeSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

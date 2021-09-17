@@ -48,7 +48,7 @@ const {
 } = CU;
 import GU from '../../Core/Geometry/GeometryUtilities.js';
 const { getCenterOfPoints } = GU;
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -144,7 +144,7 @@ class VennSeries extends ScatterSeries {
      * @optionparent plotOptions.venn
      */
     public static defaultOptions: VennSeriesOptions = merge(ScatterSeries.defaultOptions, {
-        borderColor: palette.neutralColor20,
+        borderColor: Palette.neutralColor20,
         borderDashStyle: 'solid' as any,
         borderWidth: 1,
         brighten: 0,
@@ -171,14 +171,14 @@ class VennSeries extends ScatterSeries {
              */
             hover: {
                 opacity: 1,
-                borderColor: palette.neutralColor80
+                borderColor: Palette.neutralColor80
             },
             /**
              * @excluding halo
              */
             select: {
-                color: palette.neutralColor20,
-                borderColor: palette.neutralColor100,
+                color: Palette.neutralColor20,
+                borderColor: Palette.neutralColor100,
                 animation: false
             },
             inactive: {
@@ -721,7 +721,7 @@ class VennSeries extends ScatterSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

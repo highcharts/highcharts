@@ -43,8 +43,8 @@ const {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
-const { getLevelOptions } = TreeSeriesMixin;
+import TU from '../TreeUtilities.js';
+const { getLevelOptions } = TU;
 import U from '../../Core/Utilities.js';
 const {
     defined,
@@ -1149,7 +1149,7 @@ class SankeySeries extends ColumnSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -1161,6 +1161,7 @@ interface SankeySeries extends Highcharts.NodesSeries {
     init(chart: Chart, options: SankeySeriesOptions): void;
     invertible: boolean;
     isCartesian: boolean;
+    noSharedTooltip: boolean;
     orderNodes: boolean;
     pointArrayMap: Array<string>;
     pointClass: typeof SankeyPoint;
@@ -1177,6 +1178,7 @@ extend(SankeySeries.prototype, {
     invertible: true,
     isCartesian: false,
     orderNodes: true,
+    noSharedTooltip: true,
     pointArrayMap: ['from', 'to'],
     pointClass: SankeyPoint,
     searchPoint: H.noop as any,

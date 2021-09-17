@@ -37,7 +37,7 @@ declare class PackedBubbleChart extends Chart {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

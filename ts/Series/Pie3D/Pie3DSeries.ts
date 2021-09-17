@@ -258,7 +258,7 @@ class Pie3DSeries extends PieSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

@@ -18,7 +18,7 @@
 
 import type ColorAxis from './ColorAxis';
 
-import Palette from '../../Color/Palette.js';
+import { Palette } from '../../Color/Palettes.js';
 
 /* *
  *
@@ -74,7 +74,8 @@ import Palette from '../../Color/Palette.js';
  *               categories, crosshair, dateTimeLabelFormats, height, left,
  *               lineWidth, linkedTo, maxZoom, minRange, minTickInterval,
  *               offset, opposite, pane, plotBands, plotLines,
- *               reversedStacks, showEmpty, title, top, width, zoomEnabled
+ *               reversedStacks, scrollbar, showEmpty, title, top, width,
+ *               zoomEnabled
  * @product      highcharts highstock highmaps
  * @type         {*|Array<*>}
  * @optionparent colorAxis

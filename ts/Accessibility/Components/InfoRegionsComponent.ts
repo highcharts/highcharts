@@ -429,29 +429,36 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         this: Highcharts.InfoRegionsComponent,
         regionKey: string
     ): void {
-        const chart = this.chart,
-            region = this.screenReaderSections[regionKey],
-            content = region.buildContent(chart),
-            sectionDiv = region.element = (
-                region.element || this.createElement('div')
-            ),
-            hiddenDiv: HTMLDOMElement = (
-                (sectionDiv.firstChild as any) || this.createElement('div')
-            );
+        const chart = this.chart;
+        const region = this.screenReaderSections[regionKey];
+        const content = region.buildContent(chart);
+        const sectionDiv = region.element = (
+            region.element || this.createElement('div')
+        );
+        const hiddenDiv: HTMLDOMElement = (
+            (sectionDiv.firstChild as any) || this.createElement('div')
+        );
 
-        this.setScreenReaderSectionAttribs(sectionDiv, regionKey);
-        AST.setElementHTML(hiddenDiv, content);
-        sectionDiv.appendChild(hiddenDiv);
-        region.insertIntoDOM(sectionDiv, chart);
+        if (content) {
+            this.setScreenReaderSectionAttribs(sectionDiv, regionKey);
+            AST.setElementHTML(hiddenDiv, content);
+            sectionDiv.appendChild(hiddenDiv);
+            region.insertIntoDOM(sectionDiv, chart);
 
-        if (chart.styledMode) {
-            addClass(hiddenDiv, 'highcharts-visually-hidden');
+            if (chart.styledMode) {
+                addClass(hiddenDiv, 'highcharts-visually-hidden');
+            } else {
+                visuallyHideElement(hiddenDiv);
+            }
+            unhideChartElementFromAT(chart, hiddenDiv);
+            if (region.afterInserted) {
+                region.afterInserted();
+            }
         } else {
-            visuallyHideElement(hiddenDiv);
-        }
-        unhideChartElementFromAT(chart, hiddenDiv);
-        if (region.afterInserted) {
-            region.afterInserted();
+            if (sectionDiv.parentNode) {
+                sectionDiv.parentNode.removeChild(sectionDiv);
+            }
+            delete region.element;
         }
     },
 
@@ -499,10 +506,14 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     defaultBeforeChartFormatter: function (
         this: Highcharts.InfoRegionsComponent
     ): string {
-        const chart = this.chart,
-            format = chart.options.accessibility
-                .screenReaderSection.beforeChartFormat,
-            axesDesc = this.getAxesDescription(),
+        const chart = this.chart;
+        const format = chart.options.accessibility.screenReaderSection.beforeChartFormat;
+
+        if (!format) {
+            return '';
+        }
+
+        const axesDesc = this.getAxesDescription(),
             shouldHaveSonifyBtn = (
                 chart.sonify &&
                 chart.options.sonification &&
@@ -548,13 +559,15 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     defaultAfterChartFormatter: function (
         this: Highcharts.InfoRegionsComponent
     ): string {
-        const chart = this.chart,
-            format = chart.options.accessibility
-                .screenReaderSection.afterChartFormat,
-            context = {
-                endOfChartMarker: this.getEndOfChartMarkerText()
-            },
-            formattedString = H.i18nFormat(format, context, chart);
+        const chart = this.chart;
+        const format = chart.options.accessibility.screenReaderSection.afterChartFormat;
+
+        if (!format) {
+            return '';
+        }
+
+        const context = { endOfChartMarker: this.getEndOfChartMarkerText() };
+        const formattedString = H.i18nFormat(format, context, chart);
 
         return stripEmptyHTMLTags(formattedString);
     },

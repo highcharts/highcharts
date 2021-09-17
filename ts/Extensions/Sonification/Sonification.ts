@@ -73,12 +73,6 @@ merge(
     sonificationOptions
 );
 
-/* *
- *
- *  Default Export
- *
- * */
-
 const Sonification = {
     fadeOutDuration: 20,
 

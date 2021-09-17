@@ -40,7 +40,7 @@ import F from '../../Core/FormatUtilities.js';
 const { format } = F;
 import D from '../DefaultOptions.js';
 const { getOptions } = D;
-import Palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
 const {
     prototype: {
@@ -449,7 +449,6 @@ addEvent(Series, 'setOptions', function (
     let overrides;
 
     if (this.chart.options.isStock) {
-
         if (this.is('column') || this.is('columnrange')) {
             overrides = {
                 borderWidth: 0,
@@ -1147,85 +1146,6 @@ Point.prototype.tooltipFormatter = function (pointFormat: string): string {
 /* ************************************************************************** *
  *  End value compare logic                                                   *
  * ************************************************************************** */
-
-
-// Extend the Series prototype to create a separate series clip box. This is
-// related to using multiple panes, and a future pane logic should incorporate
-// this feature (#2754).
-addEvent(Series, 'render', function (): void {
-    let chart = this.chart,
-        clipHeight;
-
-    // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
-    // if the series type handles clipping in the animate method (#2975).
-    if (
-        !(chart.is3d && chart.is3d()) &&
-        !chart.polar &&
-        this.xAxis &&
-        !this.xAxis.isRadial && // Gauge, #6192
-        this.options.clip !== false // #15128
-    ) {
-
-        clipHeight = this.yAxis.len;
-
-        // Include xAxis line width (#8031) but only if the Y axis ends on the
-        // edge of the X axis (#11005).
-        if (this.xAxis.axisLine) {
-            const dist = chart.plotTop + chart.plotHeight -
-                    (this.yAxis.pos as any) - this.yAxis.len,
-                lineHeightCorrection = Math.floor(
-                    this.xAxis.axisLine.strokeWidth() / 2
-                );
-
-            if (dist >= 0) {
-                clipHeight -= Math.max(lineHeightCorrection - dist, 0);
-            }
-        }
-
-        // First render, initial clip box. clipBox also needs to be updated if
-        // the series is rendered again before starting animating, in
-        // compliance with a responsive rule (#13858).
-        if (!chart.hasLoaded || (!this.clipBox && this.isDirty && !this.isDirtyData)) {
-            this.clipBox = this.clipBox || merge(chart.clipBox);
-            this.clipBox.width = this.xAxis.len;
-            this.clipBox.height = clipHeight;
-        }
-
-        if (chart.hasRendered) {
-            const animation = animObject(this.options.animation);
-
-            // #15435: this.sharedClipKey might not have been set yet, for
-            // example when updating the series, so we need to use this
-            // function instead
-            const sharedClipKey = this.getSharedClipKey(animation);
-            const clipRect = chart.sharedClips[sharedClipKey];
-
-            // On redrawing, resizing etc, update the clip rectangle.
-            //
-            // #15435: Update it even when we are creating/updating clipBox,
-            // since there could be series updating and pane size changes
-            // happening at the same time and we dont destroy shared clips in
-            // stock.
-            if (clipRect) {
-                // animate in case resize is done during initial animation
-                clipRect.animate({
-                    width: this.xAxis.len,
-                    height: clipHeight
-                });
-
-                const markerClipRect = chart.sharedClips[sharedClipKey + 'm'];
-
-                // also change markers clip animation for consistency
-                // (marker clip rects should exist only on chart init)
-                if (markerClipRect) {
-                    markerClipRect.animate({
-                        width: this.xAxis.len
-                    });
-                }
-            }
-        }
-    }
-});
 
 addEvent(Chart, 'update', function (
     this: StockChart,

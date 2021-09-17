@@ -49,7 +49,7 @@ const {
     symbolSizes,
     win
 } = H;
-import Palette from '../../Color/Palette.js';
+import { Palette } from '../../Color/Palettes.js';
 import RendererRegistry from '../RendererRegistry.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
@@ -1248,8 +1248,7 @@ class SVGRenderer implements SVGRendererLike {
         height?: number,
         onload?: Function
     ): SVGElement {
-        const attribs: SVGAttributes =
-            { preserveAspectRatio: 'none' },
+        const attribs: SVGAttributes = { preserveAspectRatio: 'none' },
             setSVGImageSource = function (
                 el: SVGElement,
                 src: string
@@ -1267,15 +1266,20 @@ class SVGRenderer implements SVGRendererLike {
                 }
             };
 
-        // optional properties
-        if (arguments.length > 1) {
-            extend(attribs, {
-                x: x,
-                y: y,
-                width: width,
-                height: height
-            });
+        // Optional properties (#11756)
+        if (isNumber(x)) {
+            attribs.x = x;
         }
+        if (isNumber(y)) {
+            attribs.y = y;
+        }
+        if (isNumber(width)) {
+            attribs.width = width;
+        }
+        if (isNumber(height)) {
+            attribs.height = height;
+        }
+
 
         const elemWrapper = this.createElement('image').attr(attribs) as any,
             onDummyLoad = function (e: Event): void {

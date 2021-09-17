@@ -84,7 +84,7 @@ class VennPoint extends ScatterSeries.prototype.pointClass {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
