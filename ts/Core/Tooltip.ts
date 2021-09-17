@@ -33,7 +33,7 @@ import F from './FormatUtilities.js';
 const { format } = F;
 import H from './Globals.js';
 const { doc } = H;
-import palette from './Color/Palette.js';
+import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';
@@ -137,6 +137,7 @@ class Tooltip {
      *  Properties
      *
      * */
+    public allowShared: boolean = true;
 
     public chart: Chart;
 
@@ -330,12 +331,12 @@ class Tooltip {
             this.label = this.label.destroy();
         }
         if (this.split && this.tt) {
-            (this.cleanSplit as any)(this.chart, true);
+            this.cleanSplit(true);
             this.tt = this.tt.destroy();
         }
         if (this.renderer) {
             this.renderer = this.renderer.destroy() as any;
-            discardElement(this.container as any);
+            discardElement(this.container);
         }
         U.clearTimeout(this.hideTimer as any);
         U.clearTimeout(this.tooltipTimeout as any);
@@ -436,13 +437,15 @@ class Tooltip {
      * Creates the Tooltip label element if it does not exist, then returns it.
      *
      * @function Highcharts.Tooltip#getLabel
+     *
      * @return {Highcharts.SVGElement}
      */
-    public getLabel(): SVGElement {
+    public getLabel(): SVGElement { // getLabel
 
         const tooltip = this,
             styledMode = this.chart.styledMode,
             options = this.options,
+            doSplit = this.split && this.allowShared,
             className = (
                 'tooltip' + (
                     defined(options.className) ?
@@ -477,6 +480,16 @@ class Tooltip {
             };
         let container: globalThis.HTMLElement,
             renderer: SVGRenderer = this.chart.renderer;
+
+        // If changing from a split tooltip to a non-split tooltip, we must
+        // destroy it in order to get the SVG right. #13868.
+        if (tooltip.label) {
+            const wasSplit = !tooltip.label.hasClass('highcharts-label');
+
+            if ((doSplit && !wasSplit) || (!doSplit && wasSplit)) {
+                tooltip.destroy();
+            }
+        }
 
         if (!this.label) {
 
@@ -531,7 +544,7 @@ class Tooltip {
 
 
             // Create the label
-            if (this.split) {
+            if (doSplit) {
                 this.label = renderer.g(className);
             } else {
                 this.label = renderer
@@ -1025,6 +1038,14 @@ class Tooltip {
 
         U.clearTimeout(this.hideTimer as any);
 
+        // A switch saying if this specific tooltip configuration allows shared
+        // or split modes
+        tooltip.allowShared = !(
+            !isArray(pointOrPoints) &&
+            pointOrPoints.series &&
+            pointOrPoints.series.noSharedTooltip
+        );
+
         // get the reference point coordinates (pie charts use tooltipPos)
         tooltip.followPointer = !tooltip.split && point.series.tooltipOptions.followPointer;
         const anchor = tooltip.getAnchor(pointOrPoints, mouseEvent),
@@ -1032,14 +1053,7 @@ class Tooltip {
             y = anchor[1];
 
         // shared tooltip, array is sent over
-        if (
-            shared &&
-            !(
-                !isArray(pointOrPoints) &&
-                pointOrPoints.series &&
-                pointOrPoints.series.noSharedTooltip
-            )
-        ) {
+        if (shared && tooltip.allowShared) {
             chart.pointer.applyInactiveState(points);
 
             // Now set hover state for the choosen ones:
@@ -1070,7 +1084,7 @@ class Tooltip {
             this.hide();
         } else {
             // update text
-            if (tooltip.split) {
+            if (tooltip.split && tooltip.allowShared) { // #13868
                 this.renderSplit(text as any, points);
             } else {
                 let checkX = x;
@@ -1085,7 +1099,9 @@ class Tooltip {
                 if (
                     chart.polar ||
                     currentSeries.options.clip === false ||
-                    currentSeries.shouldShowTooltip(checkX, checkY)
+                    points.some((p): boolean => // #16004
+                        p.series.shouldShowTooltip(checkX, checkY)
+                    )
                 ) {
                     const label = tooltip.getLabel();
 
@@ -1119,7 +1135,7 @@ class Tooltip {
                                 options.borderColor ||
                                 point.color ||
                                 currentSeries.color ||
-                                palette.neutralColor60
+                                Palette.neutralColor60
                             )
                         });
                     }
@@ -1364,7 +1380,7 @@ class Tooltip {
                             options.borderColor ||
                             point.color ||
                             series.color ||
-                            palette.neutralColor80
+                            Palette.neutralColor80
                         )
                     });
             }

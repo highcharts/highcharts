@@ -51,9 +51,6 @@ function getLinearRegressionZones(xData, yData) {
     };
 }
 
-// eslint-disable-next-line no-underscore-dangle
-var multipleLinesMixin = Highcharts._modules['Mixins/MultipleLines.js'];
-
 Highcharts.seriesType(
     'linearregressionzones',
     'sma',
@@ -107,14 +104,21 @@ Highcharts.seriesType(
         nameSuffixes: ['%'],
         parallelArrays: ['x', 'y', 'y1', 'y2', 'y3', 'y4'],
         pointArrayMap: ['y1', 'y2', 'y', 'y3', 'y4'],
-        pointValKey: 'y',
-
-        drawGraph: multipleLinesMixin.drawGraph,
-        getTranslatedLinesNames: multipleLinesMixin.getTranslatedLinesNames,
-        translate: multipleLinesMixin.translate,
-        toYData: multipleLinesMixin.toYData
+        pointValKey: 'y'
     }
 );
+/* eslint-disable no-underscore-dangle */
+if (Highcharts._modules['Mixins/MultipleLines.js']) {
+    Highcharts.extend(
+        Highcharts.seriesTypes.linearregressionzones,
+        Highcharts._modules['Mixins/MultipleLines.js']
+    );
+} else { // Highcharts v9.2.3+
+    Highcharts._modules['Stock/Indicators/MultipleLinesComposition.js'].compose(
+        Highcharts.seriesTypes.linearregressionzones
+    );
+}
+/* eslint-enable no-underscore-dangle */
 
 Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (data) {
     Highcharts.stockChart('container', {

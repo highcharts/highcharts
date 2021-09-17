@@ -840,6 +840,46 @@ text.highcharts-drilldown-data-label,
     fill: $neutral-color-10;
 }
 
+/* A11y module */
+.highcharts-a11y-proxy-button {
+    border-width: 0;
+    background-color: transparent;
+    cursor: pointer;
+    outline: none;
+    opacity: 0.001;
+    z-index: 999;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    display: block;
+    position: absolute;
+}
+.highcharts-a11y-proxy-group ul {
+    list-style: none;
+}
+.highcharts-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    clip: rect(1px, 1px, 1px, 1px);
+    margin-top: -3px;
+    opacity: 0.01;
+}
+.highcharts-a11y-invisible {
+    visibility: hidden;
+}
+.highcharts-a11y-proxy-container,
+.highcharts-a11y-proxy-container-before,
+.highcharts-a11y-proxy-container-after {
+    position: absolute;
+    white-space: nowrap;
+}
+g.highcharts-series, .highcharts-markers, .highcharts-point {
+    outline: none;
+}
+
 /* Gantt */
 .highcharts-treegrid-node-collapsed, .highcharts-treegrid-node-expanded {
     cursor: pointer;

@@ -20,6 +20,8 @@
  *  series.exposeElementToA11y -> series.accessibility.exposeAsGroupOnly
  *  series.pointDescriptionFormatter ->
  *      series.accessibility.pointDescriptionFormatter
+ *  series.accessibility.pointDescriptionFormatter ->
+ *      series.accessibility.point.descriptionFormatter
  *  series.skipKeyboardNavigation ->
  *      series.accessibility.keyboardNavigation.enabled
  *  point.description -> point.accessibility.description !!!! WARNING: No longer deprecated and handled, removed for HC8.
@@ -216,10 +218,13 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
         description: ['accessibility', 'description'],
         exposeElementToA11y: ['accessibility', 'exposeAsGroupOnly'],
         pointDescriptionFormatter: [
-            'accessibility', 'pointDescriptionFormatter'
+            'accessibility', 'point', 'descriptionFormatter'
         ],
         skipKeyboardNavigation: [
             'accessibility', 'keyboardNavigation', 'enabled'
+        ],
+        'accessibility.pointDescriptionFormatter': [
+            'accessibility', 'point', 'descriptionFormatter'
         ]
     };
     chart.series.forEach(function (series: Series): void {
@@ -227,7 +232,14 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
         Object.keys(oldToNewSeriesOptions).forEach(function (
             oldOption: string
         ): void {
-            const optionVal = (series.options as any)[oldOption];
+            let optionVal = (series.options as any)[oldOption];
+
+            // Special case
+            if (oldOption === 'accessibility.pointDescriptionFormatter') {
+                optionVal = series.options.accessibility &&
+                    (series.options.accessibility as any).pointDescriptionFormatter;
+            }
+
             if (typeof optionVal !== 'undefined') {
                 // Set the new option
                 traverseSetOption(

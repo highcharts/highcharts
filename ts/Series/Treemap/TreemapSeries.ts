@@ -43,7 +43,7 @@ const { colorMapSeriesMixin } = ColorMapComposition;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -56,12 +56,12 @@ const {
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
-import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
+import TU from '../TreeUtilities.js';
 const {
     getColor,
     getLevelOptions,
     updateRootId
-} = TreeSeriesMixin;
+} = TU;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -560,7 +560,7 @@ class TreemapSeries extends ScatterSeries {
          *
          * @type {Highcharts.ColorString}
          */
-        borderColor: palette.neutralColor10,
+        borderColor: Palette.neutralColor10,
 
         /**
          * The width of the border surrounding each tree map item.
@@ -595,7 +595,7 @@ class TreemapSeries extends ScatterSeries {
                 /**
                  * The border color for the hovered state.
                  */
-                borderColor: palette.neutralColor40,
+                borderColor: Palette.neutralColor40,
 
                 /**
                  * Brightness for the hovered point. Defaults to 0 if the
@@ -1488,12 +1488,12 @@ class TreemapSeries extends ScatterSeries {
         parentColor?: ColorType,
         colorIndex?: number,
         index?: number,
-        siblings?: unknown
+        siblings?: number
     ): void {
         let series = this,
             chart = series && series.chart,
             colors = chart && chart.options && chart.options.colors,
-            colorInfo: Highcharts.TreeColorObject,
+            colorInfo: TU.ColorObject,
             point: (TreemapPoint|undefined);
 
         if (node) {
@@ -1875,11 +1875,11 @@ class TreemapSeries extends ScatterSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface TreemapSeries extends Highcharts.TreeSeries {
+interface TreemapSeries extends TU.Series {
     colorAttribs?: ColorMapComposition.SeriesComposition['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
@@ -1922,7 +1922,7 @@ namespace TreemapSeries {
         direction: number;
     }
     export type ListOfParentsObject = Record<string, Array<number>>;
-    export interface NodeObject extends Highcharts.TreeNodeObject {
+    export interface NodeObject extends TU.NodeObject {
         children: Array<NodeObject>;
         childrenTotal?: number;
         height: number;

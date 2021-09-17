@@ -18,7 +18,7 @@
 
 import type ColorAxis from './ColorAxis';
 
-import Palette from '../../Color/Palette.js';
+import { Palette } from '../../Color/Palettes.js';
 
 /* *
  *

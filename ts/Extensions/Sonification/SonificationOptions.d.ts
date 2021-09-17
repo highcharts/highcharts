@@ -12,6 +12,14 @@
 
 /* *
  *
+ * Imports
+ *
+ * */
+import type Instrument from './Instrument';
+import type PointSonify from './PointSonify';
+
+/* *
+ *
  * Declarations
  *
  * */
@@ -20,11 +28,11 @@ export interface DefaultSonificationInstrumentMappingOptions extends Sonificatio
     pointPlayTime?: (string|Function);
 }
 export interface DefaultSonificationInstrumentOptions {
-    instrument: (string|Highcharts.Instrument);
+    instrument: (string|Instrument);
     mapping?: DefaultSonificationInstrumentMappingOptions;
 }
-export interface SonificationInstrumentOptions extends Highcharts.PointInstrumentOptionsObject {
-    instrument: (string|Highcharts.Instrument);
+export interface SonificationInstrumentOptions extends PointSonify.PointInstrumentOptions {
+    instrument: (string|Instrument);
     mapping?: SonificationInstrumentMappingOptions;
 }
 export interface SonificationInstrumentMappingOptions {

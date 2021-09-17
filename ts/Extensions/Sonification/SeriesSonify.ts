@@ -20,6 +20,7 @@
 
 import type ChartSonify from './ChartSonify';
 import type Earcon from './Earcon';
+import type PointSonify from './PointSonify';
 import type { SonificationInstrumentOptions } from './SonificationOptions';
 import type RangeSelector from '../../Extensions/RangeSelector';
 import type Series from '../../Core/Series/Series';
@@ -30,7 +31,7 @@ import type {
 
 import Point from '../../Core/Series/Point.js';
 import Sonification from './Sonification.js';
-import SU from './Utilities.js';
+import SU from './SonificationUtilities.js';
 const {
     getExtremesForInstrumentProps,
     virtualAxisTranslate
@@ -82,7 +83,7 @@ namespace SeriesSonify {
         duration: number;
         earcons?: Array<Earcon.Configuration>;
         events?: SeriesSonificationEventsOptions;
-        instruments: Array<Highcharts.PointInstrumentObject>;
+        instruments: Array<PointSonify.PointInstrument>;
         masterVolume?: number;
         onEnd?: Function;
         onPointEnd?: Function;
@@ -156,9 +157,9 @@ namespace SeriesSonify {
      * Array of instrument options.
      */
     function applyMasterVolumeToInstruments(
-        instruments: Array<Highcharts.PointInstrumentObject>,
+        instruments: Array<PointSonify.PointInstrument>,
         masterVolume: number
-    ): Array<Highcharts.PointInstrumentObject> {
+    ): Array<PointSonify.PointInstrument> {
         instruments.forEach((instrOpts): void => {
             const instr = instrOpts.instrument;
             if (typeof instr !== 'string') {
@@ -394,7 +395,7 @@ namespace SeriesSonify {
      */
     function getFinalNoteDuration(
         series: SeriesSonify.Composition,
-        instruments: Array<Highcharts.PointInstrumentObject>,
+        instruments: Array<PointSonify.PointInstrument>,
         dataExtremes: Record<string, RangeSelector.RangeObject>
     ): number {
         const finalPoint = series.points[series.points.length - 1];
@@ -487,7 +488,7 @@ namespace SeriesSonify {
     function getSeriesInstrumentOptions(
         series: Composition,
         options?: SonifySeriesOptions
-    ): (Array<Highcharts.PointInstrumentObject>|undefined) {
+    ): (Array<PointSonify.PointInstrument>|undefined) {
         if (options && options.instruments) {
             return options.instruments;
         }
@@ -512,7 +513,7 @@ namespace SeriesSonify {
 
         // Convert series options to PointInstrumentObjects and merge with
         // default options
-        return (seriesInstrOpts).map((optionSet): Highcharts.PointInstrumentObject => {
+        return (seriesInstrOpts).map((optionSet): PointSonify.PointInstrument => {
             // Allow setting option to null to use default
             removeNullsFromObject(optionSet.mapping || {});
             removeNullsFromObject(optionSet);
@@ -525,7 +526,7 @@ namespace SeriesSonify {
                     // remove the following which are not instrumentOptions:
                     mapping: void 0,
                     instrument: void 0
-                }) as Partial<Highcharts.PointInstrumentOptionsObject>,
+                }) as Partial<PointSonify.PointInstrumentOptions>,
                 instrumentMapping: merge(defaultInstrOpts.mapping, optionSet.mapping)
             };
         });
@@ -598,11 +599,11 @@ namespace SeriesSonify {
      * Array of copied instrument options.
      */
     function makeInstrumentCopies(
-        instruments: Array<Highcharts.PointInstrumentObject>
-    ): Array<Highcharts.PointInstrumentObject> {
+        instruments: Array<PointSonify.PointInstrument>
+    ): Array<PointSonify.PointInstrument> {
         return instruments.map(function (
-            instrumentDef: Highcharts.PointInstrumentObject
-        ): Highcharts.PointInstrumentObject {
+            instrumentDef: PointSonify.PointInstrument
+        ): PointSonify.PointInstrument {
             const instrument = instrumentDef.instrument,
                 copy = (typeof instrument === 'string' ?
                     Sonification.instruments[instrument] :

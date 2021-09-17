@@ -32,7 +32,7 @@ const {
     charts,
     noop
 } = H;
-import Palette from '../Core/Color/Palette.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 const {
