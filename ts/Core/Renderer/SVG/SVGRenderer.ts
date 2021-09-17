@@ -1248,8 +1248,7 @@ class SVGRenderer implements SVGRendererLike {
         height?: number,
         onload?: Function
     ): SVGElement {
-        const attribs: SVGAttributes =
-            { preserveAspectRatio: 'none' },
+        const attribs: SVGAttributes = { preserveAspectRatio: 'none' },
             setSVGImageSource = function (
                 el: SVGElement,
                 src: string
@@ -1267,15 +1266,20 @@ class SVGRenderer implements SVGRendererLike {
                 }
             };
 
-        const args = arguments;
+        // Optional properties (#11756)
+        if (isNumber(x)) {
+            attribs.x = x;
+        }
+        if (isNumber(y)) {
+            attribs.y = y;
+        }
+        if (isNumber(width)) {
+            attribs.width = width;
+        }
+        if (isNumber(height)) {
+            attribs.height = height;
+        }
 
-        // optional properties
-        (['x', 'y', 'width', 'height'] as (keyof SVGAttributes)[])
-            .forEach(function (prop, i): void {
-                if (isNumber(args[i + 1])) {
-                    attribs[prop] = args[i + 1];
-                }
-            });
 
         const elemWrapper = this.createElement('image').attr(attribs) as any,
             onDummyLoad = function (e: Event): void {
