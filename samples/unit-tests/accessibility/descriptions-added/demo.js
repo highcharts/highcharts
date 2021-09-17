@@ -119,3 +119,41 @@ QUnit.test('No information region', function (assert) {
         'There is no after screen reader region after update'
     );
 });
+
+
+QUnit.test('Proxy region', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{ data: [1, 2, 3] }]
+    });
+
+    function testProxyRegions(msgAdd) {
+        assert.ok(
+            chart.accessibility.proxyProvider.beforeChartProxyPosContainer,
+            'There is a before proxy region' + msgAdd
+        );
+        assert.ok(
+            chart.accessibility.proxyProvider.afterChartProxyPosContainer,
+            'There is an after proxy region' + msgAdd
+        );
+        assert.strictEqual(
+            chart.container.querySelectorAll('.highcharts-a11y-proxy-container-before').length, 1,
+            'The is only one before proxy region' + msgAdd
+        );
+        assert.strictEqual(
+            chart.container.querySelectorAll('.highcharts-a11y-proxy-container-after').length, 1,
+            'The is only one after proxy region' + msgAdd
+        );
+    }
+
+    testProxyRegions();
+
+    chart.update({
+        accessibility: {
+            screenReaderSection: {
+                afterChartFormat: 'Anything'
+            }
+        }
+    });
+
+    testProxyRegions(' after update');
+});
