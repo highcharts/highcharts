@@ -212,14 +212,13 @@ QUnit.test('Distributing the flag, #16041.)', function (assert) {
             data: [
                 [1, 10],
                 [6, 60]
-            ],
-            type: 'line'
+            ]
         }, {
             data: [{
                 x: 5,
-                title: "Very long long text very long long text"
+                title: 'Very long long text very long long text'
             }],
-            type: "flags"
+            type: 'flags'
         }]
     });
 
@@ -227,7 +226,7 @@ QUnit.test('Distributing the flag, #16041.)', function (assert) {
         chart.series[1].points[0].graphic.x > 0,
         'The flag graphic should have a positive x position.'
     );
-    chart.setSize(400, undefined);
+    chart.setSize(400);
     assert.ok(
         chart.series[1].points[0].graphic.x > 0,
         `After decreasing the chart size, the flag graphic should be distributed
