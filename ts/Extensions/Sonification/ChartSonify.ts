@@ -24,6 +24,9 @@ import type Earcon from './Earcon';
 import type Options from '../../Core/Options';
 import type PointSonify from './PointSonify';
 import type RangeSelector from '../../Extensions/RangeSelector';
+import type Timeline from './Timeline';
+import type TimelineEvent from './TimelineEvent';
+import type TimelinePath from './TimelinePath';
 
 import Point from '../../Core/Series/Point.js';
 import SeriesSonify from './SeriesSonify.js';
@@ -99,10 +102,10 @@ function buildPathOrder(
     chart: ChartSonify.SonifyableChart,
     seriesOptionsCallback: Function
 ): Array<(SonifySeriesOrderObject|Array<(
-        SonifySeriesOrderObject|Highcharts.TimelinePath
+        SonifySeriesOrderObject|TimelinePath
     )>)> {
     let order: Array<(SonifySeriesOrderObject|Array<(
-        SonifySeriesOrderObject|Highcharts.TimelinePath
+        SonifySeriesOrderObject|TimelinePath
     )>)>;
 
     if (orderOptions === 'sequential' || orderOptions === 'simultaneous') {
@@ -135,27 +138,27 @@ function buildPathOrder(
         // earcons or silent waits.
         order = (orderOptions as any).reduce(function (
             orderList: Array<Array<(
-                SonifySeriesOrderObject|Highcharts.TimelinePath
+                SonifySeriesOrderObject|TimelinePath
             )>>,
             orderDef: (
                 string|Earcon|Array<string|Earcon>
             )
         ): Array<Array<(
-                SonifySeriesOrderObject|Highcharts.TimelinePath
+                SonifySeriesOrderObject|TimelinePath
             )>> {
             // Return set of items to play simultaneously. Could be only one.
             const simulItems: Array<(
-                SonifySeriesOrderObject|Highcharts.TimelinePath
+                SonifySeriesOrderObject|TimelinePath
             )> = splat(orderDef).reduce(function (
                 items: Array<(
-                    SonifySeriesOrderObject|Highcharts.TimelinePath
+                    SonifySeriesOrderObject|TimelinePath
                 )>,
                 item: (string|Earcon)
             ): Array<(
-                    SonifySeriesOrderObject|Highcharts.TimelinePath
+                    SonifySeriesOrderObject|TimelinePath
                 )> {
                 let itemObject: (
-                    SonifySeriesOrderObject|Highcharts.TimelinePath|
+                    SonifySeriesOrderObject|TimelinePath|
                     undefined
                 );
 
@@ -219,11 +222,11 @@ function buildPathOrder(
  */
 function addAfterSeriesWaits(
     order: Array<(SonifySeriesOrderObject|Array<(
-        SonifySeriesOrderObject|Highcharts.TimelinePath
+        SonifySeriesOrderObject|TimelinePath
     )>)>,
     wait: number
 ): Array<(SonifySeriesOrderObject|Array<(
-        SonifySeriesOrderObject|Highcharts.TimelinePath
+        SonifySeriesOrderObject|TimelinePath
     )>)> {
     if (!wait) {
         return order;
@@ -231,18 +234,18 @@ function addAfterSeriesWaits(
 
     return order.reduce(function (
         newOrder: Array<(SonifySeriesOrderObject|Array<(
-            SonifySeriesOrderObject|Highcharts.TimelinePath
+            SonifySeriesOrderObject|TimelinePath
         )>)>,
         orderDef: (SonifySeriesOrderObject|Array<(
-            SonifySeriesOrderObject|Highcharts.TimelinePath
+            SonifySeriesOrderObject|TimelinePath
         )>),
         i: number
     ): Array<(SonifySeriesOrderObject|Array<(
-            SonifySeriesOrderObject|Highcharts.TimelinePath
+            SonifySeriesOrderObject|TimelinePath
         )>)> {
         const simultaneousPaths: Array<(
             SonifySeriesOrderObject|
-            Highcharts.TimelinePath
+            TimelinePath
         )> = splat(orderDef);
 
         newOrder.push(simultaneousPaths);
@@ -252,7 +255,7 @@ function addAfterSeriesWaits(
             i < order.length - 1 && // Do not add wait after last series
             simultaneousPaths.some(function (
                 item: (
-                    SonifySeriesOrderObject|Highcharts.TimelinePath
+                    SonifySeriesOrderObject|TimelinePath
                 )
             ): (SeriesSonify.Composition|undefined) {
                 return (item as any).series;
@@ -278,17 +281,17 @@ function addAfterSeriesWaits(
  */
 function getWaitTime(
     order: Array<(SonifySeriesOrderObject|Array<(
-        SonifySeriesOrderObject|Highcharts.TimelinePath
+        SonifySeriesOrderObject|TimelinePath
     )>)>
 ): number {
     return order.reduce(function (
         waitTime: number,
         orderDef: (SonifySeriesOrderObject|Array<(
-            SonifySeriesOrderObject|Highcharts.TimelinePath
+            SonifySeriesOrderObject|TimelinePath
         )>)
     ): number {
         const def: Array<(
-            SonifySeriesOrderObject|Highcharts.TimelinePath
+            SonifySeriesOrderObject|TimelinePath
         )> = splat(orderDef);
 
         return waitTime + (
@@ -305,11 +308,11 @@ function getWaitTime(
  * @private
  * @param {Array<Highcharts.TimelinePath>} paths - The paths to sync.
  */
-function syncSimultaneousPaths(paths: Array<Highcharts.TimelinePath>): void {
+function syncSimultaneousPaths(paths: Array<TimelinePath>): void {
     // Find the extremes for these paths
     const extremes = paths.reduce(function (
         extremes: RangeSelector.RangeObject,
-        path: Highcharts.TimelinePath
+        path: TimelinePath
     ): RangeSelector.RangeObject {
         const events = path.events;
 
@@ -326,7 +329,7 @@ function syncSimultaneousPaths(paths: Array<Highcharts.TimelinePath>): void {
     });
 
     // Go through the paths and add events to make them fit the same timespan
-    paths.forEach(function (path: Highcharts.TimelinePath): void {
+    paths.forEach(function (path: TimelinePath): void {
         const events = path.events,
             hasEvents = events && events.length,
             eventsToAdd = [];
@@ -357,20 +360,20 @@ function syncSimultaneousPaths(paths: Array<Highcharts.TimelinePath>): void {
  */
 function getSimulPathDurationTotal(
     order: Array<(SonifySeriesOrderObject|Array<(
-        SonifySeriesOrderObject|Highcharts.TimelinePath
+        SonifySeriesOrderObject|TimelinePath
     )>)>
 ): number {
     return order.reduce(function (
         durationTotal: number,
         orderDef: (SonifySeriesOrderObject|Array<(
-            SonifySeriesOrderObject|Highcharts.TimelinePath
+            SonifySeriesOrderObject|TimelinePath
         )>)
     ): number {
         return durationTotal + splat(orderDef).reduce(
             function (
                 maxPathDuration: number,
                 item: (
-                    SonifySeriesOrderObject|Highcharts.TimelinePath
+                    SonifySeriesOrderObject|TimelinePath
                 )
             ): number {
                 const timeExtremes: RangeSelector.RangeObject = (
@@ -425,10 +428,10 @@ function getSeriesDurationMs(
  */
 function buildPathsFromOrder(
     order: Array<(SonifySeriesOrderObject|Array<(
-        SonifySeriesOrderObject|Highcharts.TimelinePath
+        SonifySeriesOrderObject|TimelinePath
     )>)>,
     duration: number
-): Array<Array<Highcharts.TimelinePath>> {
+): Array<Array<TimelinePath>> {
     // Find time used for waits (custom or after series), and subtract it from
     // available duration.
     const totalAvailableDurationMs = Math.max(
@@ -440,18 +443,18 @@ function buildPathsFromOrder(
 
     // Go through the order list and convert the items
     return order.reduce(function (
-        allPaths: Array<Array<Highcharts.TimelinePath>>,
+        allPaths: Array<Array<TimelinePath>>,
         orderDef: (SonifySeriesOrderObject|Array<(
-            SonifySeriesOrderObject|Highcharts.TimelinePath
+            SonifySeriesOrderObject|TimelinePath
         )>)
-    ): Array<Array<Highcharts.TimelinePath>> {
-        const simultaneousPaths: Array<Highcharts.TimelinePath> =
+    ): Array<Array<TimelinePath>> {
+        const simultaneousPaths: Array<TimelinePath> =
             splat(orderDef).reduce(function (
-                simulPaths: Array<Highcharts.TimelinePath>,
+                simulPaths: Array<TimelinePath>,
                 item: (
-                    SonifySeriesOrderObject|Highcharts.TimelinePath
+                    SonifySeriesOrderObject|TimelinePath
                 )
-            ): Array<Highcharts.TimelinePath> {
+            ): Array<TimelinePath> {
                 if (item instanceof Sonification.TimelinePath) {
                     // This item is already a path object
                     simulPaths.push(item);
@@ -569,7 +572,7 @@ function chartSonify(
 
     // Sync simultaneous paths
     paths.forEach(function (
-        simultaneousPaths: Array<Highcharts.TimelinePath>
+        simultaneousPaths: Array<TimelinePath>
     ): void {
         syncSimultaneousPaths(simultaneousPaths);
     });
@@ -595,7 +598,7 @@ function chartSonify(
 function getCurrentPoints(
     this: ChartSonify.SonifyableChart
 ): Array<Point> {
-    let cursorObj: Record<string, Highcharts.TimelineEvent>;
+    let cursorObj: Record<string, TimelineEvent>;
 
     if (this.sonification.timeline) {
         cursorObj = this.sonification.timeline.getCursor(); // Cursor per pathID
@@ -628,7 +631,7 @@ function setCursor(
     this: ChartSonify.SonifyableChart,
     points: (Point|Array<Point>)
 ): void {
-    const timeline: Highcharts.Timeline = this.sonification.timeline as any;
+    const timeline: Timeline = this.sonification.timeline as any;
 
     if (timeline) {
         splat(points).forEach(function (point: Point): void {
@@ -826,7 +829,7 @@ namespace ChartSonify {
 
     export interface ChartSonificationStateObject {
         currentlyPlayingPoint?: Sonification.SonifyablePoint;
-        timeline?: Highcharts.Timeline;
+        timeline?: Timeline;
         duration?: number;
     }
 

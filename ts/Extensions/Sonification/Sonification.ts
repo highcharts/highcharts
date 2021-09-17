@@ -33,7 +33,9 @@ const {
 import Instrument from './Instrument.js';
 import Earcon from './Earcon.js';
 import SU from './SonificationUtilities.js';
-import TimelineClasses from './Timeline.js';
+import Timeline from './Timeline.js';
+import TimelineEvent from './TimelineEvent.js';
+import TimelinePath from './TimelinePath.js';
 import sonificationOptions from './Options.js';
 
 /* *
@@ -85,9 +87,9 @@ const Sonification = {
     Instrument: Instrument as any,
     instruments: Instrument.definitions,
     Earcon: Earcon as any,
-    TimelineEvent: TimelineClasses.TimelineEvent,
-    TimelinePath: TimelineClasses.TimelinePath,
-    Timeline: TimelineClasses.Timeline
+    TimelineEvent: TimelineEvent,
+    TimelinePath: TimelinePath,
+    Timeline: Timeline
 };
 
 /* *
