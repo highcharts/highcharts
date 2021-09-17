@@ -60,6 +60,10 @@ body {
     }
 }
 
+.hcd-edit-menu {
+    overflow: hidden;
+}
+
 .hcd-edit-menu.hcd-edit-toolbar-row .hcd-edit-menu-item {
     float: left;
 }
@@ -104,23 +108,12 @@ body {
     opacity: 0.5;
 }
 
-.hcd-edit-ctx-detection-pointer {
-    position: absolute;
-    z-index: 101;
-    display: none;
-    pointer-events: none;
-    border: 3px solid rgb(128, 133, 232);
-    opacity: 0.6;
-}
-
-// .hcd-layout.edit-mode .hcd-row :hover .hcd-cell  {
-//     border: 1px dashed #bdbdbd;
-//     cursor: pointer;
-// }
-
-// .hcd-layout.edit-mode .hcd-row:hover .hcd-cell .toolbar,
-// .hcd-layout.edit-mode .add-item {
-//     display: block;
+// .hcd-edit-ctx-detection-pointer {
+//     position: absolute;
+//     z-index: 101;
+//     display: none;
+//     pointer-events: none;
+//     border: 2px solid rgb(128, 133, 232);
 // }
 
 .w-1-5 {
@@ -149,8 +142,6 @@ body {
     background-color: #fff;
     box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
     background-clip: border-box;
-    /*border: 1px solid rgba(26, 54, 126, 0.125);
-    border-radius: .25rem;*/
 }
 
 .hcd-component img {
@@ -234,10 +225,6 @@ body {
     display: inline-block;
     float: right;
     margin-left: 10px;
-}
-
-.hcd-edit-custom-select {
-
 }
 
 .hcd-edit-toggle-wrapper {
@@ -404,7 +391,6 @@ h1 {
 }
 
 .hcd-edit-toolbar {
-    background: #252526;
     color:#a6a6a6;
     position: absolute;
     z-index: 99;
@@ -424,40 +410,27 @@ h1 {
 }
 
 .hcd-edit-toolbar-row {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background: #1A5E20;
     .hcd-edit-toolbar-item {
-        background: #8aea9f;
-
         div {
             min-width: 23px;
             min-height: 23px;
             background-size: 21px 21px;
         }
-
-        div:first-child:before {
-            content: "";
-            border: solid transparent;
-            border-right-color: #8aea9f;
-            border-width: 23px 10px 0 0;
-            right: 100%;
-            position: absolute;
-            top: 0px;
-        }
-
-        div:last-child:after {
-            content: "";
-            border: solid transparent;
-            border-left-color: #8aea9f;
-            border-width: 23px 0 0 10px;
-            left: 100%;
-            position: absolute;
-            top: 0px;
-        }
+    }
+    .hcd-edit-toolbar-item:hover {
+        background-color: #fff;
     }
 }
 
 .hcd-edit-toolbar-cell {
-    .hcd-edit-toolbar-item {
-        background: #30436b;
+    background: #1779BA;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    .hcd-edit-toolbar-item:hover {
+        background-color: #0d47a1;
     }
 }
 
@@ -465,7 +438,7 @@ h1 {
     position: absolute;
     pointer-events: none;
     display: none;
-    border: 2px dashed #30436b;
+    border: 2px solid #1779BA;
     opacity: 1;
 }
 
@@ -473,7 +446,7 @@ h1 {
     position: absolute;
     pointer-events: none;
     display: none;
-    border: 2px solid #8aea9f;
+    border: 2px solid #7BB343;
     opacity: 1;
 }
 
@@ -483,7 +456,7 @@ h1 {
 
 .hcd-edit-toolbar-item:hover div {
     cursor: pointer;
-    background-color: #4B4B4D;
+    background-color: #1779BA;
 }
 
 .hcd-edit-menu-vertical-separator {
@@ -497,17 +470,17 @@ h1 {
 
 .hcd-edit-sidebar {
     top: 0px;
-    left: -210px;
+    left: -310px;
     transition: 0.5s;
-    width: 200px;
+    width: 300px;
     margin: 5px;
     background: #fff;
-    border: 1px solid #efefef;
     color:#a6a6a6;
     position: absolute;
     z-index: 1000;
     min-height: 500px;
     height: 100%;
+    padding: 10px 20px;
 }
 
 .hcd-edit-sidebar-tab-btn,
@@ -538,24 +511,32 @@ h1 {
 .hcd-edit-sidebar-item input,
 .hcd-edit-sidebar-item textarea,
 .hcd-edit-sidebar-item select {
-    border: none;
     width: 100%;
-    color: #000;
-    border: 1px solid #ededed;
+    color: #8C8C8C;
+    border: 1px solid #8C8C8C;
+    border-radius: 3px;
 }
 
 .hcd-edit-sidebar .hcd-edit-button,
 .hcd-edit-sidebar-item button {
+    background: #1779BA;
+    color: #fff;
     padding: 5px 10px;
-    float: right;
     margin-top: 20px;
     border: none;
+    border-radius: 3px;
 }
 
-.hcd-edit-sidebar-button-nav {
+.hcd-edit-sidebar .hcd-edit-button:hover,
+.hcd-edit-sidebar-item button:hover {
+    background-color: #0d47a1;
+}
+
+.hcd-edit-button.hcd-edit-sidebar-button-nav {
     min-width: 34px;
     min-height: 34px;
     background-position: 50% 50%;
+    background-color: #fff;
 }
 
 .hcd-edit-sidebar .hcd-edit-button {
@@ -571,14 +552,22 @@ h1 {
     display: inline-block;
 }
 
-.hcd-edit-popup-content .hcd-edit-label-text {
+.hcd-edit-sidebar .hcd-edit-label-text {
+    background: #EAF1F8;
+    border: 1px solid #EBEBEB;
     width: 100%;
+    color: #000;
+    font-weight: bold;
+    padding: 3px;
+    margin-top: 15px;
+    margin-bottom: 5px;
 }
 
 .hcd-edit-sidebar-title {
-    padding: 5px;
+    color: #424242;
+    padding: 5px 5px 5px 50px;
+    background: url("https://code.highcharts.com/8.2.2/gfx/stock-icons/edit.svg") no-repeat 0px 50%;
     text-transform: uppercase;
-    background: #efefef;
 }
 
 .hcd-edit-sidebar-tab-wrapper {
@@ -587,10 +576,6 @@ h1 {
 
 .hcd-edit-sidebar-tab-wrapper.current {
     display: block;
-}
-
-.hcd-edit-grid-items {
-    
 }
 
 .hcd-edit-grid-items div {
@@ -610,18 +595,24 @@ h1 {
 
 .hcd-edit-sidebar-tabs {
     display: flex;
-    justify-content: center;
     font-size: 0.876em;
     text-transform: uppercase;
+    margin-top: 15px;
+    font-weight: bold;
 }
 
 .hcd-edit-sidebar-tab {
-    text-align: center;
+    text-align: left;
     padding: 5px;
     border-bottom: 3px solid transparent;
     transition: 0.3s;
-    opacity: 0.5;
     font-size: 0.876em;
+    color: #000;
+    margin-left: 25px;
+}
+
+.hcd-edit-sidebar-tab:first-child {
+    margin-left: 20px;
 }
 
 .hcd-edit-sidebar-tab-content {
@@ -633,7 +624,8 @@ h1 {
 .hcd-edit-toolbar-tab-active {
     cursor: pointer;
     opacity: 1;
-    border-color: #8aea9f;
+    border-color: #1779BA;
+    color: #1779BA
 }
 
 .hcd-edit-mask {
