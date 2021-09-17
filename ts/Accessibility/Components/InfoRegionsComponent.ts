@@ -509,7 +509,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         const chart = this.chart;
         const format = chart.options.accessibility.screenReaderSection.beforeChartFormat;
 
-        if (format === null) {
+        if (!format) {
             return '';
         }
 
@@ -562,7 +562,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         const chart = this.chart;
         const format = chart.options.accessibility.screenReaderSection.afterChartFormat;
 
-        if (format === null) {
+        if (!format) {
             return '';
         }
 

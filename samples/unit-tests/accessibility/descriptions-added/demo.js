@@ -88,7 +88,7 @@ QUnit.test('No information region', function (assert) {
     var chart = Highcharts.chart('container', {
         accessibility: {
             screenReaderSection: {
-                beforeChartFormat: null
+                beforeChartFormat: ''
             }
         },
         series: [{ data: [1, 2, 3] }]
@@ -108,7 +108,7 @@ QUnit.test('No information region', function (assert) {
     chart.update({
         accessibility: {
             screenReaderSection: {
-                afterChartFormat: null
+                afterChartFormat: ''
             }
         }
     });

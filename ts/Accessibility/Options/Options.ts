@@ -341,7 +341,7 @@ const Options: DeepPartial<OptionsType> = {
              * corresponds to the heading level below the previous heading in
              * the DOM.
              *
-             * Set to `null` or empty string to remove the region altogether.
+             * Set to empty string to remove the region altogether.
              *
              * @since 8.0.0
              */
