@@ -319,8 +319,6 @@ namespace MultipleLinesComposition {
      */
     function translate(this: Composition): void {
         const indicator = this,
-            modfidyValue =
-                indicator.dataModify && indicator.dataModify.modifyValue,
             pointArrayMap: Array<string> = (indicator.pointArrayMap as any);
         let LinesNames = [] as Array<string>,
             value;
@@ -338,8 +336,8 @@ namespace MultipleLinesComposition {
 
                 // If the modifier, like for example compare exists,
                 // modified the original value by that method, #15867.
-                if (modfidyValue) {
-                    value = modfidyValue.call(indicator.dataModify, value);
+                if (indicator.dataModify) {
+                    value = indicator.dataModify.modifyValue(value);
                 }
 
                 if (value !== null) {

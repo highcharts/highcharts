@@ -1,5 +1,9 @@
 /* *
  *
+ *  (c) 2010-2021 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
@@ -33,7 +37,6 @@ const {
     defined,
     isArray,
     isNumber,
-    isString,
     pick
 } = U;
 
@@ -45,11 +48,11 @@ const {
 
 declare module '../Core/Axis/AxisLike' {
     interface AxisLike {
-        setCompare(compare?: string, redraw?: boolean): void;
+        setCompare(compare?: 'percent'|'value', redraw?: boolean): void;
         setCumulative(cumulative?: boolean, redraw?: boolean): void;
         setModifier(
             mode: 'compare'|'cumulative',
-            modeState?: boolean|null|string,
+            modeState?: boolean|null|'percent'|'value',
             redraw?: boolean
         ): void;
     }
@@ -65,14 +68,14 @@ declare module '../Core/Series/PointLike' {
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         dataModify?: DataModifyComposition.Additions;
-        setCompare(compare?: string|null, redraw?: boolean): void;
+        setCompare(compare?: 'percent'|'value'|null, redraw?: boolean): void;
         setCumulative(cumulative?: boolean|null, redraw?: boolean): void;
     }
 }
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
-        compare?: string|null;
+        compare?: 'percent'|'value'|null;
         compareBase?: (0|100);
         compareStart?: boolean;
         cumulative?: boolean;
@@ -94,12 +97,20 @@ namespace DataModifyComposition {
      * */
 
     export declare class AxisComposition extends Axis {
-        setCompare(this: Axis, compare?: string|null, redraw?: boolean): void;
-        setCumulative(this: Axis, cumulative?: boolean, redraw?: boolean): void;
+        setCompare(
+            this: Axis,
+            compare?: 'percent'|'value'|null,
+            redraw?: boolean
+        ): void;
+        setCumulative(
+            this: Axis,
+            cumulative?: boolean,
+            redraw?: boolean
+        ): void;
         setModifier(
             this: Axis,
             mode: 'compare'|'cumulative',
-            modeState?: boolean|null|string,
+            modeState?: boolean|null|'percent'|'value',
             redraw?: boolean
         ): void
     }
@@ -110,7 +121,11 @@ namespace DataModifyComposition {
 
     export declare class SeriesComposition extends Series {
         dataModify: Additions;
-        setCompare(this: Series, compare?: string|null, redraw?: boolean): void;
+        setCompare(
+            this: Series,
+            compare?: 'percent'|'value'|null,
+            redraw?: boolean
+        ): void;
         setCumulative(
             this: Series,
             cumulative?: boolean|null,
@@ -200,7 +215,7 @@ namespace DataModifyComposition {
     function setModifier(
         this: Axis,
         mode: 'compare'|'cumulative',
-        modeState?: boolean|null|string,
+        modeState?: boolean|null|'percent'|'value',
         redraw?: boolean
     ): void {
         if (!this.isXAxis) {
@@ -208,7 +223,8 @@ namespace DataModifyComposition {
                 if (
                     mode === 'compare' &&
                     (
-                        isString(modeState) ||
+                        modeState === 'percent' ||
+                        modeState === 'value' ||
                         typeof modeState === 'undefined' ||
                         modeState === null
                     )
@@ -276,15 +292,25 @@ namespace DataModifyComposition {
      * @function Highcharts.Series#init
      */
     function afterInit(this: Series): void {
-        this.dataModify = new Additions(this as SeriesComposition);
+        const compare = this.options.compare;
+        let dataModify: Additions|undefined;
 
-        if (this.options.compare) {
-            // Set comparison mode
-            this.dataModify.initCompare(this.options.compare);
-        } else if (this.options.cumulative) {
-            // Set Cumulative Sum mode
-            this.dataModify.initCumulative(this.options.cumulative);
+        if (
+            compare === 'percent' ||
+            compare === 'value' ||
+            this.options.cumulative
+        ) {
+            dataModify = new Additions(this as SeriesComposition);
+            if (compare === 'percent' || compare === 'value') {
+                // Set comparison mode
+                dataModify.initCompare(compare);
+            } else {
+                // Set Cumulative Sum mode
+                dataModify.initCumulative();
+            }
         }
+
+        this.dataModify = dataModify;
     }
 
     /**
@@ -295,7 +321,7 @@ namespace DataModifyComposition {
         const dataExtremes: DataExtremesObject = (e as any).dataExtremes,
             activeYData = dataExtremes.activeYData;
 
-        if (this.dataModify && this.dataModify.modifyValue && dataExtremes) {
+        if (this.dataModify && dataExtremes) {
             let extremes;
 
             if (this.options.compare) {
@@ -347,16 +373,22 @@ namespace DataModifyComposition {
      */
     function seriesSetCompare(
         this: Series,
-        compare?: string|null,
+        compare?: 'percent'|'value'|null,
         redraw?: boolean
     ): void {
-        this.dataModify && this.dataModify.initCompare(compare);
-
-        // Survive to export, #5485
+        // Survive to export, #5485 (and for options generally)
         this.options.compare = this.userOptions.compare = compare;
 
-        if (pick(redraw, true)) {
-            this.chart.redraw();
+        // Fire series.init() that will set or delete series.dataModify
+        this.update({}, pick(redraw, true));
+
+        if (this.dataModify && (compare === 'value' || compare === 'percent')) {
+            this.dataModify.initCompare(compare);
+        } else {
+            // When disabling, clear the points
+            this.points.forEach((point): void => {
+                delete point.change;
+            });
         }
     }
 
@@ -428,7 +460,7 @@ namespace DataModifyComposition {
      */
     function axisSetCompare(
         this: Axis,
-        compare?: string|null,
+        compare?: 'percent'|'value'|null,
         redraw?: boolean
     ): void {
         this.setModifier('compare', compare, redraw);
@@ -467,13 +499,20 @@ namespace DataModifyComposition {
         // Set default value to false
         cumulative = pick(cumulative, false);
 
-        this.dataModify && this.dataModify.initCumulative(cumulative);
-
-        // Survive to export, #5485
+        // Survive to export, #5485 (and for options generally)
         this.options.cumulative = this.userOptions.cumulative = cumulative;
 
-        if (pick(redraw, true)) {
-            this.chart.redraw();
+        // Fire series.init() that will set or delete series.dataModify
+        this.update({}, pick(redraw, true));
+
+        // If should, turn on the Cumulative Sum mode
+        if (this.dataModify) {
+            this.dataModify.initCumulative();
+        } else {
+            // When disabling, clear the points
+            this.points.forEach((point): void => {
+                delete point.cumulativeSum;
+            });
         }
     }
 
@@ -536,10 +575,10 @@ namespace DataModifyComposition {
          * */
 
         public series: SeriesComposition;
-        public compare?: string|null;
+        public compare?: 'percent'|'value'|null;
         public compareValue?: number;
 
-        public modifyValue?(
+        public modifyValue(
             value?: number|null,
             index?: number
         ): (number|undefined);
@@ -549,6 +588,13 @@ namespace DataModifyComposition {
         *  Functions
         *
         * */
+
+        /**
+         * @private
+         */
+        public modifyValue(): (number|undefined) {
+            return;
+        }
 
         /**
          * @ignore
@@ -581,115 +627,86 @@ namespace DataModifyComposition {
          * @function Highcharts.Series#initCompare
          *
          * @param {string} [compare]
-         *        Can be one of `null` (default), `"percent"` or `"value"`.
+         *        Can be one of `"percent"` or `"value"`.
          */
-        public initCompare(compare?: string|null): void {
-            if (compare === 'value' || compare === 'percent') {
-                // Set the modifyValue method
-                this.modifyValue = function (
-                    value?: number|null,
-                    index?: number
-                ): (number|undefined) {
-                    if (value === null) {
-                        value = 0;
+        public initCompare(compare: 'percent'|'value'): void {
+            // Set the modifyValue method
+            this.modifyValue = function (
+                value?: number|null,
+                index?: number
+            ): (number|undefined) {
+                if (value === null) {
+                    value = 0;
+                }
+
+                const compareValue = this.compareValue;
+
+                if (
+                    typeof value !== 'undefined' &&
+                    typeof compareValue !== 'undefined'
+                ) { // #2601, #5814
+
+                    // Get the modified value
+                    if (compare === 'value') {
+                        value -= compareValue;
+                    // Compare percent
+                    } else {
+                        const compareBase = this.series.options.compareBase;
+
+                        value = 100 * (value / compareValue) -
+                            (compareBase === 100 ? 0 : 100);
                     }
 
-                    const compareValue = this.compareValue;
+                    // record for tooltip etc.
+                    if (typeof index !== 'undefined') {
+                        const point = this.series.points[index];
 
-                    if (
-                        typeof value !== 'undefined' &&
-                        typeof compareValue !== 'undefined'
-                    ) { // #2601, #5814
-
-                        // Get the modified value
-                        if (compare === 'value') {
-                            value -= compareValue;
-                        // Compare percent
-                        } else {
-                            const compareBase = this.series.options.compareBase;
-
-                            value = 100 * (value / compareValue) -
-                                (compareBase === 100 ? 0 : 100);
+                        if (point) {
+                            point.change = value;
                         }
-
-                        // record for tooltip etc.
-                        if (typeof index !== 'undefined') {
-                            const point = this.series.points[index];
-
-                            if (point) {
-                                point.change = value;
-                            }
-                        }
-
-                        return value;
                     }
-                    return 0;
-                };
-            } else {
-                // When disabling,
-                // unset the modifyValue method and clear the points
-                this.modifyValue = null as any;
-                this.series.points.forEach((point): void => {
-                    delete point.change;
-                });
-            }
 
-            // Mark dirty
-            if (this.series.chart.hasRendered) {
-                this.series.isDirty = true;
-            }
+                    return value;
+                }
+                return 0;
+            };
         }
 
         /**
          * @ignore
          * @function Highcharts.Series#initCumulative
          */
-        public initCumulative(cumulative?: boolean): void {
-            if (cumulative) {
-                // Set the modifyValue method
-                this.modifyValue = function (
-                    value?: number|null,
-                    index?: number
-                ): (number|undefined) {
-                    if (value === null) {
-                        value = 0;
+        public initCumulative(): void {
+            // Set the modifyValue method
+            this.modifyValue = function (
+                value?: number|null,
+                index?: number
+            ): (number|undefined) {
+                if (value === null) {
+                    value = 0;
+                }
+
+                if (value !== void 0 && index !== void 0) {
+                    const prevPoint = index > 0 ?
+                        this.series.points[index - 1] : null;
+
+                    // Get the modified value
+                    if (prevPoint && prevPoint.cumulativeSum) {
+                        value = correctFloat(prevPoint.cumulativeSum + value);
                     }
 
-                    if (value !== void 0 && index !== void 0) {
-                        const prevPoint = index > 0 ?
-                            this.series.points[index - 1] : null;
+                    // Record for tooltip etc.
+                    const point = this.series.points[index];
 
-                        // Get the modified value
-                        if (prevPoint && prevPoint.cumulativeSum) {
-                            value =
-                                correctFloat(prevPoint.cumulativeSum + value);
-                        }
-
-                        // Record for tooltip etc.
-                        const point = this.series.points[index];
-
-                        if (point) {
-                            point.cumulativeSum = value;
-                        }
-
-                        return value;
+                    if (point) {
+                        point.cumulativeSum = value;
                     }
 
-                    return 0;
-                };
-            } else {
-                // When disabling,
-                // unset the modifyValue method and clear the points
-                this.modifyValue = null as any;
-                this.series.points.forEach((point): void => {
-                    delete point.cumulativeSum;
-                });
-            }
+                    return value;
+                }
 
-            // Mark dirty
-            if (this.series.chart.hasRendered) {
-                this.series.isDirty = true;
-            }
+                return 0;
+            };
         }
     }
 

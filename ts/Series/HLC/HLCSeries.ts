@@ -370,10 +370,7 @@ class HLCSeries extends ColumnSeries {
                 function (name: string, i: number): void {
                     let value = (point as any)[name];
                     if (value !== null) {
-                        if (
-                            series.dataModify &&
-                            series.dataModify.modifyValue
-                        ) {
+                        if (series.dataModify) {
                             value = series.dataModify.modifyValue(value);
                         }
                         (point as any)[translated[i]] =
