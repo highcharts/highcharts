@@ -173,8 +173,8 @@ declare global {
                 type: string,
                 parentDiv: HTMLDOMElement
             ): void;
-            filterSeries(series: SeriesTypePlotOptions, filter?: string): [Highcharts.FilteredSeries];
-            filterSeriesArray(series: Array<Series>): [Highcharts.FilteredSeries];
+            filterSeries(series: SeriesTypePlotOptions, filter?: string): Array<Highcharts.FilteredSeries>;
+            filterSeriesArray(series: Array<Series>): Array<Highcharts.FilteredSeries>;
             getAmount(this: Chart): number;
             getNameType(series: Series, type: string): IndicatorNameCouple;
             listAllSeries(
@@ -1015,7 +1015,7 @@ H.Popup.prototype = {
             this: Highcharts.Popup,
             series: Series,
             filter?: string
-        ): [Highcharts.FilteredSeries] {
+        ): Array<Highcharts.FilteredSeries> {
             const popup = this,
                 indicators = popup.indicators,
                 lang = popup.chart && popup.chart.options.lang,
@@ -1023,7 +1023,7 @@ H.Popup.prototype = {
                     lang.navigation &&
                     lang.navigation.popup &&
                     lang.navigation.popup.indicatorAliases;
-            let filteredSeriesArray: [Highcharts.FilteredSeries] = [] as any,
+            let filteredSeriesArray: Array<Highcharts.FilteredSeries> = [],
                 filteredSeries: Highcharts.FilteredSeries;
 
             objectEach(series, function (
@@ -1086,8 +1086,8 @@ H.Popup.prototype = {
         filterSeriesArray: function (
             this: Highcharts.Popup,
             series: Array<Series>
-        ): [Highcharts.FilteredSeries] {
-            let filteredSeriesArray: [Highcharts.FilteredSeries] = [] as any,
+        ): Array<Highcharts.FilteredSeries> {
+            let filteredSeriesArray: Array<Highcharts.FilteredSeries> = [],
                 filteredSeries: Highcharts.FilteredSeries;
 
             // Allow only indicators.
@@ -1161,7 +1161,7 @@ H.Popup.prototype = {
             let rhsColWrapper: HTMLElement,
                 indicatorList: HTMLDOMElement,
                 item: HTMLDOMElement,
-                filteredSeriesArray: [Highcharts.FilteredSeries] = [] as any;
+                filteredSeriesArray: Array<Highcharts.FilteredSeries> = [];
 
             // Filter and sort the series.
             if (!isEdit && !isArray(series)) {
