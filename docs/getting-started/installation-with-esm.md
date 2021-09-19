@@ -88,7 +88,9 @@ import Chart from 'highcharts/es-modules/Core/Chart/Chart.js';
 import PieSeries from 'highcharts/es-modules/Series/Pie/PieSeries.js';
 
 // Example to create a simple pie chart in a div#container:
-const myChart = new Chart('container', { series: [{ type: 'pie', data: [1, 2, 3]}] });
+const myChart = new Chart('container');
+const mySeries = new PieSeries();
+mySeries.init(myChart, { data: [1, 2, 3] });
 ```
 
 
@@ -138,10 +140,10 @@ examples.
 
 | File              | Download Size | Saving |
 |-------------------|---------------|--------|
-| highcharts.src.js | 3,27 MB       | 0%     |
-| LineSeries.js     | 1,01 MB       | 69%    |
-| ColumnSeries.js   | 1,33 MB       | 59%    |
-| PieSeries.js      | 1,40 MB       | 57%    |
+| highcharts.js     | 303 kB        | 0%     |
+| LineSeries.js     | 229 kB        | 24%    |
+| ColumnSeries.js   | 238 kB        | 21%    |
+| PieSeries.js      | 246 kB        | 19%    |
 
 
 
