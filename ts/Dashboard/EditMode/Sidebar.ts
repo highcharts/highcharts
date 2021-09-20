@@ -32,22 +32,23 @@ class Sidebar {
     }
 
     public static tabs: Array<Sidebar.TabOptions> = [{
-        type: 'design',
+    // {
+    //     type: 'design',
+    //     icon: '',
+    //     items: {
+    //         cell: ['cellWidth']
+    //     }
+    // },
+        type: 'component',
         icon: '',
         items: {
-            cell: ['cellWidth']
+            cell: ['componentSettings']
         }
     }, {
         type: 'data',
         icon: '',
         items: {
             cell: ['']
-        }
-    }, {
-        type: 'component',
-        icon: '',
-        items: {
-            cell: ['componentSettings']
         }
     }]
 
@@ -345,7 +346,7 @@ class Sidebar {
         sidebar.title = createElement(
             'div', {
                 className: EditGlobals.classNames.editSidebarTitle,
-                textContent: 'Cell Options' // shoudl be dynamic
+                textContent: 'SETTINGS'
             }, {}, sidebar.container
         );
     }
@@ -378,8 +379,10 @@ class Sidebar {
 
         let tabElement;
         let contentContainer;
+        let buttonsContainer;
         let content;
         let saveBtn;
+        let cancelBtn;
         let contentItems = [];
 
         for (let i = 0, iEnd = tabs.length; i < iEnd; ++i) {
@@ -417,10 +420,16 @@ class Sidebar {
             );
 
             if (isRowCell) {
+                buttonsContainer = createElement(
+                    'div', {
+                        className: EditGlobals.classNames.editSidebarTabBtnWrapper
+                    }, {}, contentContainer
+                );
+
                 saveBtn = EditRenderer.renderButton(
-                    contentContainer,
+                    buttonsContainer,
                     {
-                        value: 'Save',
+                        value: 'Apply',
                         className: EditGlobals.classNames.editSidebarTabBtn,
                         callback: (): void => {
                             // temp switch
@@ -452,6 +461,18 @@ class Sidebar {
                         }
                     }
                 );
+
+
+                cancelBtn = EditRenderer.renderButton(
+                    buttonsContainer,
+                    {
+                        value: 'Cancel',
+                        className: EditGlobals.classNames.editSidebarTabBtn,
+                        callback: (): void => {
+                            sidebar.hide();
+                        }
+                    }
+                );
             }
 
             sidebar.tabs[tabs[i].type] = {
@@ -460,7 +481,8 @@ class Sidebar {
                 isActive: false,
                 contentContainer: contentContainer,
                 content: content,
-                saveBtn: saveBtn as HTMLDOMElement
+                saveBtn: saveBtn as HTMLDOMElement,
+                cancelBtn: cancelBtn as HTMLDOMElement
             };
         }
     }
@@ -620,7 +642,7 @@ class Sidebar {
         sidebar.closeButton = EditRenderer.renderButton(
             sidebar.container,
             {
-                className: EditGlobals.classNames.sidebarNavButton,
+                className: EditGlobals.classNames.sidebarNavButton + ' ' + EditGlobals.classNames.sidebarCloseButton,
                 callback: (): void => {
                     sidebar.hide();
                 },
@@ -898,6 +920,7 @@ namespace Sidebar {
         content: Menu;
         contentContainer: HTMLDOMElement;
         saveBtn: HTMLDOMElement;
+        cancelBtn?: HTMLDOMElement;
         listComponent?: boolean;
         customFields?: Array<unknown>;
     }

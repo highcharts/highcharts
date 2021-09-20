@@ -170,7 +170,7 @@ class RowEditToolbar extends EditToolbar {
 
         if (toolbar.editMode.sidebar) {
             toolbar.editMode.sidebar.show(toolbar.row);
-            toolbar.editMode.sidebar.updateTitle('ROW OPTIONS');
+            // toolbar.editMode.sidebar.updateTitle('ROW OPTIONS');
 
             // @ToDo - mask is buggy - should be refactored or removed.
             // if (this.row) {

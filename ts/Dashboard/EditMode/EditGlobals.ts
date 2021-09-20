@@ -54,7 +54,9 @@ const EditGlobals: EditGlobals = {
         popupContentContainer: PREFIX + 'popup-content',
         popupConfirmBtn: PREFIX + 'popup-confirm-btn',
         overlay: PREFIX + 'overlay',
-        resizerMenuBtnActive: PREFIX + 'resizer-menu-btn-active'
+        resizerMenuBtnActive: PREFIX + 'resizer-menu-btn-active',
+        sidebarCloseButton: PREFIX + 'close-btn',
+        editSidebarTabBtnWrapper: PREFIX + 'tabs-buttons-wrapper'
     },
     lang: {
         editMode: 'Edit mode',
@@ -82,59 +84,61 @@ interface EditGlobals {
 }
 
 namespace EditGlobals {
-    // export interface ClassNamesOptions {
-    //     resizeSnap: string;
-    //     resizeSnapX: string;
-    //     resizeSnapY: string;
-    //     separator: string;
-    //     contextMenuBtn: string;
-    //     contextMenu: string;
-    //     contextMenuItem: string;
-    //     editModeEnabled: string;
-    //     editToolbar: string;
-    //     editToolbarCellOutline: string;
-    //     editToolbarRowOutline: string;
-    //     editToolbarItem: string;
-    //     editToolbarRow: string;
-    //     editToolbarCell: string;
-    //     editSidebar: string;
-    //     editSidebarShow: string;
-    //     editSidebarHide: string;
-    //     editSidebarTitle: string;
-    //     editSidebarTab: string;
-    //     editSidebarTabContainer: string;
-    //     editSidebarTabsContainer: string;
-    //     editSidebarTabContent: string;
-    //     editSidebarTabActive: string;
-    //     editSidebarMenuItem: string;
-    //     rowContextHighlight: string;
-    //     dragMock: string;
-    //     dropPointer: string;
-    //     contextDetectionPointer: string;
-    //     resizePointer: string;
-    //     maskElement: string;
-    //     currentEditedElement: string;
-    //     menuItem: string;
-    //     menu: string;
-    //     menuVerticalSeparator: string;
-    //     menuHorizontalSeparator: string;
-    //     menuDestroy: string;
-    //     editSidebarWrapper: string;
-    //     customSelect: string;
-    //     toggleWrapper: string;
-    //     toggleSlider: string;
-    //     button: string;
-    //     labelText: string;
-    //     sidebarNavButton: string;
-    //     editSidebarTabBtn: string;
-    //     editToolsBtn: string;
-    //     editTools: string;
-    //     editGridItems: string;
-    //     popupContentContainer: string;
-    //     popupConfirmBtn: string;
-    //     overlay: string;
-    //     resizerMenuBtnActive: string;
-    // }
+    export interface ClassNamesOptions {
+        resizeSnap: string;
+        resizeSnapX: string;
+        resizeSnapY: string;
+        separator: string;
+        contextMenuBtn: string;
+        contextMenu: string;
+        contextMenuItem: string;
+        editModeEnabled: string;
+        editToolbar: string;
+        editToolbarCellOutline: string;
+        editToolbarRowOutline: string;
+        editToolbarItem: string;
+        editToolbarRow: string;
+        editToolbarCell: string;
+        editSidebar: string;
+        editSidebarShow: string;
+        editSidebarHide: string;
+        editSidebarTitle: string;
+        editSidebarTab: string;
+        editSidebarTabContainer: string;
+        editSidebarTabsContainer: string;
+        editSidebarTabContent: string;
+        editSidebarTabActive: string;
+        editSidebarMenuItem: string;
+        rowContextHighlight: string;
+        dragMock: string;
+        dropPointer: string;
+        contextDetectionPointer: string;
+        resizePointer: string;
+        maskElement: string;
+        currentEditedElement: string;
+        menuItem: string;
+        menu: string;
+        menuVerticalSeparator: string;
+        menuHorizontalSeparator: string;
+        menuDestroy: string;
+        editSidebarWrapper: string;
+        customSelect: string;
+        toggleWrapper: string;
+        toggleSlider: string;
+        button: string;
+        labelText: string;
+        sidebarNavButton: string;
+        editSidebarTabBtn: string;
+        editToolsBtn: string;
+        editTools: string;
+        editGridItems: string;
+        popupContentContainer: string;
+        popupConfirmBtn: string;
+        overlay: string;
+        resizerMenuBtnActive: string;
+        sidebarCloseButton: string;
+        editSidebarTabBtnWrapper: string;
+    }
 
     export interface LangOptions {
         editMode?: string;

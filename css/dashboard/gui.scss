@@ -559,6 +559,11 @@ h1 {
     background-color: #fff;
 }
 
+.hcd-edit-sidebar-button-nav.hcd-edit-close-btn {
+    background-size: 15px;
+    margin-right: -10px;
+}
+
 .hcd-edit-sidebar .hcd-edit-button {
     background-repeat: no-repeat;
     float: right;
@@ -590,7 +595,6 @@ h1 {
     background: url("https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg") no-repeat 0px 50%;
     text-transform: uppercase;
     background-size: 20px;
-
 }
 
 .hcd-edit-sidebar-tab-wrapper {
@@ -649,6 +653,19 @@ h1 {
     opacity: 1;
     border-color: #1779BA;
     color: #1779BA
+}
+
+.hcd-edit-tabs-buttons-wrapper {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.hcd-edit-sidebar .hcd-edit-tabs-buttons-wrapper button.hcd-edit-button {
+    float: none;
+}
+
+.hcd-edit-tabs-buttons-wrapper button:first-child {
+    margin-right: 10px;
 }
 
 .hcd-edit-mask {

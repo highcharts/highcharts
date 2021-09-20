@@ -171,7 +171,7 @@ class CellEditToolbar extends EditToolbar {
 
         if (toolbar.editMode.sidebar) {
             toolbar.editMode.sidebar.show(toolbar.cell);
-            toolbar.editMode.sidebar.updateTitle('CELL OPTIONS');
+            // toolbar.editMode.sidebar.updateTitle('CELL OPTIONS');
 
 
             // @ToDo - mask is buggy - should be refactored or removed.

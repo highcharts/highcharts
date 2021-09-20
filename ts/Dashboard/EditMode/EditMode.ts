@@ -334,7 +334,7 @@ class EditMode {
         // Open the sidebar.
         if (editMode.sidebar) {
             editMode.sidebar.show();
-            editMode.sidebar.updateTitle('General');
+            // editMode.sidebar.updateTitle('General');
         }
 
         // Sets proper rwd mode.
@@ -522,7 +522,7 @@ class EditMode {
                     // sidebar trigger
                     if (editMode.sidebar) {
                         editMode.sidebar.show();
-                        editMode.sidebar.updateTitle('General');
+                        // editMode.sidebar.updateTitle('General');
                     }
                 },
                 style: {
