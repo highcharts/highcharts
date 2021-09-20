@@ -118,6 +118,7 @@ declare global {
             drag?: AnnotationControlPointDragEventFunction;
         }
         interface AnnotationControlPointOptionsObject {
+            cursorType?: CSSObject['cursor'];
             draggable?: undefined;
             events: AnnotationControlPointEventsOptionsObject;
             height: number;
