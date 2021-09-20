@@ -60,6 +60,16 @@ body {
     }
 }
 
+.hcd-edit-row-context-highlight {
+    background: repeating-linear-gradient(
+        -45deg,
+        rgba(224, 239, 173, 0.7),
+        rgba(224, 239, 173, 0.7) 5px,
+        rgba(235, 235, 235, 0.5) 5px,
+        rgba(235, 235, 235, 0.5) 10px
+    );
+}
+
 .hcd-edit-menu {
     overflow: hidden;
 }
@@ -108,13 +118,13 @@ body {
     opacity: 0.5;
 }
 
-// .hcd-edit-ctx-detection-pointer {
-//     position: absolute;
-//     z-index: 101;
-//     display: none;
-//     pointer-events: none;
-//     border: 2px solid rgb(128, 133, 232);
-// }
+.hcd-edit-ctx-detection-pointer {
+    position: absolute;
+    z-index: 101;
+    display: none;
+    pointer-events: none;
+    border: 2px solid rgb(128, 133, 232);
+}
 
 .w-1-5 {
     width: 20%;

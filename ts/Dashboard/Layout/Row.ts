@@ -11,8 +11,9 @@ import Layout from './Layout.js';
 import Cell from './Cell.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
+import EditGlobals from './../EditMode/EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import { NumberFormatterCallbackFunction } from '../../Core/Options';
+
 const {
     pick,
     defined,
@@ -412,6 +413,21 @@ class Row extends GUIElement {
 
     public show(): void {
         this.changeVisibility(true, 'flex');
+    }
+
+    public setHighlight(
+        remove?: boolean
+    ): void {
+        if (this.container) {
+            const cnt = this.container,
+                isSet = cnt.classList.contains(EditGlobals.classNames.rowContextHighlight);
+
+            if (!remove && !isSet) {
+                cnt.classList.add(EditGlobals.classNames.rowContextHighlight);
+            } else if (remove && isSet) {
+                cnt.classList.remove(EditGlobals.classNames.rowContextHighlight);
+            }
+        }
     }
 
     // Row can have cells below each others.

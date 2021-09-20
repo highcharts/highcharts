@@ -357,15 +357,17 @@ class EditMode {
         const editMode = this,
             dashboardCnt = editMode.dashboard.container;
 
-        this.editCellContext = void 0;
-        this.potentialCellContext = void 0;
-
         dashboardCnt.classList.remove(
             EditGlobals.classNames.editModeEnabled
         );
 
         // Hide toolbars.
         editMode.hideToolbars();
+
+        // Remove highlight from the context row if exists.
+        if (this.editCellContext) {
+            this.editCellContext.row.setHighlight(true);
+        }
 
         // TODO all buttons should be deactivated.
         if (this.addComponentBtn) {
@@ -385,6 +387,9 @@ class EditMode {
 
         editMode.active = false;
         editMode.stopContextDetection();
+
+        this.editCellContext = void 0;
+        this.potentialCellContext = void 0;
     }
 
     public isActive(): boolean {
@@ -610,10 +615,24 @@ class EditMode {
     }
 
     public onContextConfirm(): void {
-        if (this.isContextDetectionActive && this.potentialCellContext) {
+        if (
+            this.isContextDetectionActive &&
+            this.potentialCellContext &&
+            this.editCellContext !== this.potentialCellContext
+        ) {
+            const oldContextRow = this.editCellContext && this.editCellContext.row;
             this.editCellContext = this.potentialCellContext;
 
             this.showToolbars(['row', 'cell'], this.editCellContext);
+
+            if (oldContextRow !== this.editCellContext.row) {
+                if (oldContextRow) {
+                    // Remove highlight from the previous row.
+                    oldContextRow.setHighlight(true);
+                }
+                // Add highlight to the context row.
+                this.editCellContext.row.setHighlight();
+            }
 
             if (this.sidebar) {
                 this.sidebar.show(this.editCellContext);
