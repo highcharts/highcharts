@@ -163,6 +163,12 @@ class ControllableEllipse implements ControllableMixin.Type {
 
     }
 
+    /**
+     * The fuction calculates the svg attributes of the ellipse, and returns all
+     * parameters neccessary to draw the ellipse.
+     * @param position absolute position of the first point in points array
+     * @param position2 absolute position of the second point in points array
+     */
     public getAttrs(position: BBoxObject, position2: BBoxObject): any {
         const x1 = position.x,
             y1 = position.y,
@@ -181,17 +187,26 @@ class ControllableEllipse implements ControllableMixin.Type {
 
         return { cx, cy, rx, ry, angle };
     }
-
+    /**
+     * Get the value of minor radius of the ellipse.
+     */
     public getRY(): number {
         const yAxis = this.getYAxis();
         return Math.abs(yAxis.toPixels(this.options.ry) - yAxis.toPixels(0));
     }
 
+    /**
+     * get the yAxis object to which the ellipse is pinned.
+     */
     public getYAxis(): AxisType {
         const yAxisIndex = (this.options as EllipseShapeOptions).yAxis;
         return this.chart.yAxis[yAxisIndex];
     }
 
+    /**
+     * Get the absolute coordinates of the MockPoint
+     * @param point MockPoint that is added through options
+     */
     public getAbsolutePosition(point: Highcharts.AnnotationPointType): BBoxObject {
         return this.anchor(point).absolutePosition;
     }

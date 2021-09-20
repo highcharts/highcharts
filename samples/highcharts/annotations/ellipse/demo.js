@@ -127,6 +127,8 @@ Highcharts.chart('container', {
                             yAxis.toValue(0) - yAxis.toValue(newR)
                         );
                         target.options.ry = newRY;
+                        target.annotation.userOptions.shapes[0].ry = newRY;
+                        target.annotation.options.shapes[0].ry = newRY;
 
                         target.redraw(false);
                     }
