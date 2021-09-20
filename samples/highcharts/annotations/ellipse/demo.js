@@ -111,25 +111,18 @@ Highcharts.chart('container', {
                             position2 = target.getAbsolutePosition(
                                 target.points[1]
                             ),
-                            attrs = target.getAttrs(
+                            newR = target.getDistanceFromLine(
                                 position,
-                                position2
-                            );
-                        const dx = e.chartX - attrs.cx,
-                            dy = e.chartY - attrs.cy,
-                            newR = Math.max(
-                                Math.sqrt(dx * dx + dy * dy),
-                                5
+                                position2,
+                                e.chartX,
+                                e.chartY
                             );
 
                         const yAxis = target.getYAxis();
                         const newRY = Math.abs(
                             yAxis.toValue(0) - yAxis.toValue(newR)
                         );
-                        target.options.ry = newRY;
-                        target.annotation.userOptions.shapes[0].ry = newRY;
-                        target.annotation.options.shapes[0].ry = newRY;
-
+                        target.setYRadius(newRY);
                         target.redraw(false);
                     }
                 }

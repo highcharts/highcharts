@@ -271,9 +271,7 @@ class BasicAnnotation extends Annotation {
                         newR = Math.max(Math.sqrt(dx * dx + dy * dy), 5),
                         yAxis = target.getYAxis(),
                         newRY = Math.abs(yAxis.toValue(0) - yAxis.toValue(newR));
-                    target.options.ry = newRY;
-                    target.annotation.userOptions.shapes[0].ry = newRY;
-                    target.annotation.options.shapes[0].ry = newRY;
+                    target.setYRadius(newRY);
                     target.redraw(false);
                 }
             }

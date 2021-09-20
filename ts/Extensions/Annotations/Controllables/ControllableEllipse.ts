@@ -79,6 +79,7 @@ class ControllableEllipse implements ControllableMixin.Type {
         this.collection = 'shapes';
     }
 
+
     /* *
      *
      *  Properties
@@ -107,7 +108,15 @@ class ControllableEllipse implements ControllableMixin.Type {
         this.options = options;
         this.redraw();
     }
-
+    public getDistanceFromLine(point1: any, point2: any, x0: any, y0: any): number {
+        return ((Math.abs((point2.y - point1.y) * x0 -
+            (point2.x - point1.x) * y0 +
+            point2.x * point1.y -
+            point2.y * point1.x)) /
+            (Math.pow((Math.pow(point2.y - point1.y, 2) +
+                Math.pow(point2.x - point1.x, 2)),
+            0.5)));
+    }
     public referencePoints: Array<ReferencePointsOptions> = void 0 as any;
 
     /**
@@ -250,6 +259,8 @@ class ControllableEllipse implements ControllableMixin.Type {
      */
     public setYRadius(ry: number): void {
         this.options.ry = ry;
+        this.annotation.userOptions.shapes[0].ry = ry;
+        this.annotation.options.shapes[0].ry = ry;
     }
 }
 

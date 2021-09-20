@@ -295,19 +295,20 @@ var chart = Highcharts.chart('container', {
                             position2 = target.getAbsolutePosition(
                                 target.points[1]
                             ),
-                            attrs = target.getAttrs(position, position2),
-                            dx = e.chartX - attrs.cx,
-                            dy = e.chartY - attrs.cy,
-                            newR = Math.max(
-                                Math.sqrt(dx * dx + dy * dy), 5
-                            ),
-                            yAxis = target.getYAxis(),
-                            newRY = Math.abs(
-                                yAxis.toValue(0) - yAxis.toValue(newR)
+                            newR = target.getDistanceFromLine(
+                                position,
+                                position2,
+                                e.chartX,
+                                e.chartY
                             );
-                        target.options.ry = newRY;
 
+                        const yAxis = target.getYAxis();
+                        const newRY = Math.abs(
+                            yAxis.toValue(0) - yAxis.toValue(newR)
+                        );
+                        target.setYRadius(newRY);
                         target.redraw(false);
+
                     }
                 }
             }]

@@ -1389,7 +1389,6 @@ setOptions({
                 steps: [
                     function (this: NavigationBindings, e: PointerEvent, annotation: Annotation): void {
 
-
                         annotation.shapes[0].translatePoint(
                             e.chartX -
                             ((annotation.shapes[0].points[1] as MockPoint).plotX +
@@ -1403,27 +1402,19 @@ setOptions({
 
                     function (this: NavigationBindings, e: PointerEvent, annotation: Annotation): void {
 
-                        const target = annotation.shapes[0] as ControllableEllipse;
-                        const position = target.getAbsolutePosition(target.points[0]),
+                        const target = annotation.shapes[0] as ControllableEllipse,
+                            position = target.getAbsolutePosition(target.points[0]),
                             position2 = target.getAbsolutePosition(target.points[1]),
-                            attrs = target.getAttrs(position, position2);
-                        const dx =
-                        e.chartX -
-                        attrs.cx,
-                            dy =
-                        e.chartY -
-                        attrs.cy,
-                            newR = Math.max(
-                                Math.sqrt(dx * dx + dy * dy),
-                                5
-                            );
-
-                        const yAxis = target.getYAxis();
-                        const newRY = Math.abs(yAxis.toValue(0) - yAxis.toValue(newR));
-                        target.options.ry = newRY;
-
+                            newR = target.getDistanceFromLine(
+                                position,
+                                position2,
+                                e.chartX,
+                                e.chartY
+                            ),
+                            yAxis = target.getYAxis(),
+                            newRY = Math.abs(yAxis.toValue(0) - yAxis.toValue(newR));
+                        target.setYRadius(newRY);
                         target.redraw(false);
-
                     }
                 ]
             },
