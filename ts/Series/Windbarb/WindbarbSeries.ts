@@ -22,7 +22,7 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import OnSeriesMixin from '../OnSeriesComposition.js';
+import OnSeriesComposition from '../OnSeriesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -332,7 +332,7 @@ class WindbarbSeries extends ColumnSeries {
         const beaufortFloor = this.beaufortFloor,
             beaufortName = this.beaufortName;
 
-        OnSeriesMixin.translate.call(this);
+        OnSeriesComposition.translate.call(this);
 
         this.points.forEach(function (
             point: WindbarbPoint
@@ -447,14 +447,14 @@ class WindbarbSeries extends ColumnSeries {
     }
 }
 
-interface WindbarbSeries {
+interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
     beaufortFloor: Array<number>;
     beaufortName: Array<string>;
-    getPlotBox: Highcharts.OnSeriesMixin['getPlotBox'];
-    onSeries: Highcharts.OnSeriesSeries['onSeries'];
+    group: typeof ColumnSeries.prototype.group;
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
     pointClass: typeof WindbarbPoint;
+    remove: typeof ColumnSeries.prototype.remove;
     windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
 
 }
@@ -469,7 +469,7 @@ extend(WindbarbSeries.prototype, {
     beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
         24.5, 28.5, 32.7], // @todo dictionary with names?
     trackerGroups: ['markerGroup'],
-    getPlotBox: OnSeriesMixin.getPlotBox,
+    getPlotBox: OnSeriesComposition.getPlotBox,
     // Don't invert the marker group (#4960)
     invertGroups: noop
 });

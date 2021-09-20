@@ -24,7 +24,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import OnSeriesMixin from '../OnSeriesComposition.js';
+import OnSeriesComposition from '../OnSeriesComposition.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
@@ -673,13 +673,13 @@ class FlagsSeries extends ColumnSeries {
  *
  * */
 
-interface FlagsSeries {
+interface FlagsSeries extends OnSeriesComposition.SeriesComposition {
     allowDG: boolean;
-    getPlotBox: typeof OnSeriesMixin['getPlotBox'];
+    group: typeof ColumnSeries.prototype.group;
     init: typeof Series.prototype['init'];
     pointClass: typeof FlagsPoint;
+    remove: typeof ColumnSeries.prototype.remove;
     takeOrdinalPosition: boolean;
-    translate: typeof OnSeriesMixin['translate'];
 }
 extend(FlagsSeries.prototype, {
 
@@ -693,7 +693,7 @@ extend(FlagsSeries.prototype, {
 
     forceCrop: true,
 
-    getPlotBox: OnSeriesMixin.getPlotBox,
+    getPlotBox: OnSeriesComposition.getPlotBox,
 
     /**
      * Inherit the initialization from base Series.
@@ -724,7 +724,7 @@ extend(FlagsSeries.prototype, {
 
     trackerGroups: ['markerGroup'],
 
-    translate: OnSeriesMixin.translate
+    translate: OnSeriesComposition.translate
 
 });
 
