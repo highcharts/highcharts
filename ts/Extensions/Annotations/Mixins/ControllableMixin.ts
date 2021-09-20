@@ -105,7 +105,12 @@ declare global {
             ): void;
             translate(this: AnnotationControllable, dx: number, dy: number): void;
             translatePoint(this: Highcharts.AnnotationControllable, dx: number, dy: number, i: number): void;
-            translateShape(this: Highcharts.AnnotationControllable, dx: number, dy: number): void;
+            translateShape(
+                this: Highcharts.AnnotationControllable,
+                dx: number,
+                dy: number,
+                translateSecondPoint?: boolean
+            ): void;
             update(this: Highcharts.AnnotationControllable, newOptions: AnnotationControllableOptionsObject): void;
         }
         interface AnnotationControllableOptionsObject {
@@ -512,8 +517,14 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      *
      * @param {number} dx translation for x coordinate
      * @param {number} dy translation for y coordinate
+     * @param {number|undefined} translateSecondPoint wether to translate second point
      */
-    translateShape: function (this: Highcharts.AnnotationControllable, dx: number, dy: number): void {
+    translateShape: function (
+        this: Highcharts.AnnotationControllable,
+        dx: number,
+        dy: number,
+        translateSecondPoint?: boolean
+    ): void {
         const chart: Highcharts.AnnotationChart = this.annotation.chart,
             // Annotation.options
             shapeOptions = this.annotation.userOptions,
@@ -522,6 +533,9 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
             chartOptions = chart.options.annotations[annotationIndex];
 
         this.translatePoint(dx, dy, 0);
+        if (translateSecondPoint) {
+            this.translatePoint(dx, dy, 1);
+        }
 
         // Options stored in:
         // - chart (for exporting)

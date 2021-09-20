@@ -13,11 +13,10 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge,
-    defined,
-    correctFloat
-} = U;
+import BBoxObject from '../../../Core/Renderer/BBoxObject';
+import MockPointOptions from '../MockPointOptions';
+import AxisType from '../../../Core/Axis/AxisType';
+const { merge, defined } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -35,23 +34,19 @@ const {
  * @param {number} index of the Ellipse
  */
 interface EllipseShapeOptions extends Highcharts.AnnotationsShapeOptions {
+    yAxis: number;
+    xAxis: number;
     ry: number;
     rx: number;
     angle: number;
     referencePoints: Array<ReferencePointsOptions>;
-}
-interface EllispseShapeSVGOptions {
-    cx: number;
-    cy: number;
-    rx: number;
-    ry: number;
-    angle: number;
 }
 interface ReferencePointsOptions {
     x: number;
     y: number;
 }
 class ControllableEllipse implements ControllableMixin.Type {
+
     /* *
      *
      *  Static Properties
@@ -66,10 +61,7 @@ class ControllableEllipse implements ControllableMixin.Type {
      * @type {Highcharts.Dictionary<string>}
      */
     public static attrsMap = merge(ControllablePath.attrsMap, {
-        cx: 'cx',
-        rx: 'rx',
-        ry: 'ry',
-        cy: 'cy'
+        ry: 'ry'
     });
 
     /* *
@@ -78,8 +70,11 @@ class ControllableEllipse implements ControllableMixin.Type {
      *
      * */
 
-    public constructor(annotation: Annotation, options: EllipseShapeOptions, index: number) {
-        this.angle = options.angle;
+    public constructor(
+        annotation: Annotation,
+        options: EllipseShapeOptions,
+        index: number
+    ) {
         this.init(annotation, options, index);
         this.collection = 'shapes';
     }
@@ -103,8 +98,16 @@ class ControllableEllipse implements ControllableMixin.Type {
     public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
     public transform = ControllableMixin.transform;
     public translatePoint = ControllableMixin.translatePoint;
-    public update = ControllableMixin.update;
-    public angle: number = void 0 as any;
+    public transformPoint = ControllableMixin.transformPoint;
+    public update(
+        this: ControllableEllipse,
+        newOptions: Highcharts.AnnotationControllableOptionsObject
+    ): void {
+        const options = merge(true, this.options, newOptions);
+        this.options = options;
+        this.redraw();
+    }
+
     public referencePoints: Array<ReferencePointsOptions> = void 0 as any;
 
     /**
@@ -112,32 +115,34 @@ class ControllableEllipse implements ControllableMixin.Type {
      */
     public type = 'ellipse';
 
-    public translate = ControllableMixin.translateShape;
-
-    /**
-     * Functions
-     */
+    /* *
+     *
+     *  Functions
+     *
+     * *
 
     /**
      * Transform the middle point (center of an ellipse).
      * Mostly used to handle dragging of the ellipse.
      */
-    public transformPoint(): void {
-        // Call save points, to handle the pinning of the angle
-        // and radius to axes points.
-        this.savePoints();
-        ControllableMixin.transformPoint.apply(this, arguments);
-    }
 
-    public init(annotation: Annotation, options: EllipseShapeOptions, index: number): void {
+    public init(
+        annotation: Annotation,
+        options: EllipseShapeOptions,
+        index: number
+    ): void {
+        if (defined(options.yAxis)) {
+            (options.points as MockPointOptions[]).forEach((point): void => {
+                point.yAxis = options.yAxis;
+            });
+        }
+        if (defined(options.xAxis)) {
+            (options.points as MockPointOptions[]).forEach((point): void => {
+                point.xAxis = options.xAxis;
+            });
+        }
         ControllableMixin.init.call(this, annotation, options, index);
-        this.savePoints();
     }
-    /* *
-     *
-     *  Functions
-     *
-     * */
 
     /**
      *
@@ -153,6 +158,44 @@ class ControllableEllipse implements ControllableMixin.Type {
         ControllableMixin.render.call(this);
     }
 
+    public translate(this: ControllableEllipse, dx: number, dy: number): void {
+        ControllableMixin.translateShape.call(this, dx, dy, true);
+
+    }
+
+    public getAttrs(position: BBoxObject, position2: BBoxObject): any {
+        const x1 = position.x,
+            y1 = position.y,
+            x2 = position2.x,
+            y2 = position2.y;
+        const cx = (x1 + x2) / 2;
+        const cy = (y1 + y2) / 2;
+        const rx = Math.sqrt(((x1 - x2) * (x1 - x2)) / 4 + ((y1 - y2) * (y1 - y2)) / 4);
+        const tan = (y2 - y1) / (x2 - x1);
+        let angle = (Math.atan(tan) * 180) / Math.PI;
+
+        if (cx < x1) {
+            angle += 180;
+        }
+        const ry = this.getRY();
+
+        return { cx, cy, rx, ry, angle };
+    }
+
+    public getRY(): number {
+        const yAxis = this.getYAxis();
+        return Math.abs(yAxis.toPixels(this.options.ry) - yAxis.toPixels(0));
+    }
+
+    public getYAxis(): AxisType {
+        const yAxisIndex = (this.options as EllipseShapeOptions).yAxis;
+        return this.chart.yAxis[yAxisIndex];
+    }
+
+    public getAbsolutePosition(point: Highcharts.AnnotationPointType): BBoxObject {
+        return this.anchor(point).absolutePosition;
+    }
+
     /**
      *
      * Redraw the element
@@ -160,8 +203,11 @@ class ControllableEllipse implements ControllableMixin.Type {
      */
 
     public redraw(animation?: boolean): void {
-        const position = this.anchor(this.points[0]).absolutePosition,
-            attrs = this.getAttrsFromPoints();
+
+        const position = this.getAbsolutePosition(this.points[0]),
+            position2 = this.getAbsolutePosition(this.points[1]),
+            attrs = this.getAttrs(position, position2);
+
         if (position) {
             this.graphic[animation ? 'animate' : 'attr']({
                 cx: attrs.cx,
@@ -169,8 +215,8 @@ class ControllableEllipse implements ControllableMixin.Type {
                 rx: attrs.rx,
                 ry: attrs.ry,
                 rotation: attrs.angle,
-                rotationOriginX: position.x,
-                rotationOriginY: position.y
+                rotationOriginX: attrs.cx,
+                rotationOriginY: attrs.cy
             });
         } else {
             this.graphic.attr({
@@ -189,117 +235,6 @@ class ControllableEllipse implements ControllableMixin.Type {
      */
     public setYRadius(ry: number): void {
         this.options.ry = ry;
-    }
-
-    /**
-     * Set the radius X.
-     *
-     * @param {number} rx a radius in x direction to be set
-     */
-    public setXRadius(rx: number): void {
-        this.options.rx = rx;
-    }
-
-    /**
-     * Set the angle of the ellipse.
-     *
-     * @param {number} angle the value of the angle on which the ellipse
-     * is rotated (clockwise driection).
-     */
-    public setAngle(angle: number): void {
-        this.angle = angle;
-    }
-
-    /**
-     * Save the reference point positions, to pin the ellipse to the axes.
-     *
-     * @param {number} x x position of the center of the ellipse
-     * (in pixels or in xAxis value if xAxis is defined)
-     * @param {number} y y position of the center of the ellipse
-     * (in pixels or in yAxis value if yAxis is defined)
-     * @param {number} rx x radius of the ellipse in pixels
-     * @param {number} ry y radius of the ellipse in pixels
-     * @param {number} angle angle in degrees
-     */
-    public savePoints(x?: number, y?: number, rx?: number, ry?: number, angle?: number): void {
-        const xAxis = this.chart.xAxis[(this.options.point as any).xAxis],
-            yAxis = this.chart.yAxis[(this.options.point as any).yAxis],
-            position = this.anchor(this.points[0]).absolutePosition;
-        let points;
-        x = x || position.x;
-        y = y || position.y;
-        rx = rx || this.options.rx;
-        ry = ry || this.options.ry;
-        angle = angle || this.angle;
-
-        if (xAxis && yAxis) {
-            const pointX1 = x - rx * Math.cos((angle * Math.PI) / 180),
-                pointY1 = y - rx * Math.sin((angle * Math.PI) / 180),
-                pointX2 = x + ry * Math.sin((angle * Math.PI) / 180),
-                pointY2 = y - ry * Math.cos((angle * Math.PI) / 180);
-
-            points = [{
-                x: xAxis.toValue(pointX1),
-                y: yAxis.toValue(pointY1)
-            }, {
-                x: xAxis.toValue(pointX2),
-                y: yAxis.toValue(pointY2)
-            }];
-            this.referencePoints = points;
-        }
-    }
-
-    /**
-     * Retrieve the attributes needed to plot
-     * the ellipse from the reference points.
-     */
-    public getAttrsFromPoints(): EllispseShapeSVGOptions {
-        const points = this.referencePoints,
-            position = this.anchor(this.points[0]).absolutePosition,
-            xAxisIndex = (this.options.point as any).xAxis,
-            yAxisIndex = (this.options.point as any).yAxis,
-            cx = position.x,
-            cy = position.y;
-            // Handle the ellipse if it is not pinned to the axes.
-        if (defined(yAxisIndex) && defined(xAxisIndex)) {
-            const xAxis = this.chart.xAxis[xAxisIndex],
-                yAxis = this.chart.yAxis[yAxisIndex],
-                x1 = xAxis.toPixels(points[0].x),
-                x2 = xAxis.toPixels(points[1].x),
-                y1 = yAxis.toPixels(points[0].y),
-                y2 = yAxis.toPixels(points[1].y),
-                rx = Math.sqrt((cx - x1) * (cx - x1) + (cy - y1) * (cy - y1)),
-                ry = Math.sqrt((cx - x2) * (cx - x2) + (cy - y2) * (cy - y2));
-
-            let tan;
-
-            if (rx > ry) {
-                tan = (cy - y1) / (cx - x1);
-            } else {
-                tan = (x2 - cx) / (cy - y2);
-            }
-
-            let angle = (Math.atan(tan) * 180) / Math.PI;
-
-            if (cx < x1) {
-                angle += 180;
-            }
-
-            return {
-                cx: correctFloat(cx),
-                cy: correctFloat(cy),
-                rx: correctFloat(rx),
-                ry: correctFloat(ry),
-                angle: correctFloat(angle)
-            };
-        }
-        return {
-            cx,
-            cy,
-            angle: this.angle,
-            rx: this.options.rx,
-            ry: this.options.ry
-        };
     }
 }
 

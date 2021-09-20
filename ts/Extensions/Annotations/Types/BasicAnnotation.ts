@@ -188,14 +188,13 @@ class BasicAnnotation extends Annotation {
                 this: Highcharts.AnnotationControlPoint,
                 target: ControllableEllipse
             ): PositionObject {
-                const xy = MockPoint.pointToPixels(target.points[0]),
-                    attrs = target.getAttrsFromPoints();
 
                 return {
-                    x: xy.x - this.graphic.width / 2 + (attrs.ry * Math.sin(attrs.angle * Math.PI / 180)),
-                    y: xy.y - this.graphic.height / 2 - (attrs.ry * Math.cos(attrs.angle * Math.PI / 180))
+                    x: target.chart.plotLeft + (target.points[0] as MockPoint).plotX -
+                      this.graphic.width / 2,
+                    y: target.chart.plotTop + (target.points[0] as MockPoint).plotY -
+                      this.graphic.width / 2
                 };
-
             },
             events: {
                 drag: function (
@@ -203,28 +202,12 @@ class BasicAnnotation extends Annotation {
                     e: Highcharts.AnnotationEventObject,
                     target: ControllableEllipse
                 ): void {
-                    let mockPointOpts = target.options.point as MockPointOptions,
-                        inverted = this.chart.inverted,
-                        dx, dy;
 
-                    if (isNumber(mockPointOpts.xAxis) && isNumber(mockPointOpts.yAxis)) {
-                        const x = this.chart.xAxis[mockPointOpts.xAxis].toPixels(mockPointOpts.x),
-                            y = this.chart.yAxis[mockPointOpts.yAxis].toPixels(mockPointOpts.y);
-                        dx = inverted ? y - e.chartX : x - e.chartX;
-                        dy = inverted ? x - e.chartY : y - e.chartY;
-                    } else {
-                        dx = e.chartX - (target.points[0].plotX as number + target.chart.plotLeft);
-                        dy = e.chartY - (target.points[0].plotY as number + target.chart.plotTop);
+                    target.translatePoint(
+                        e.chartX - ((target.points[0] as MockPoint).plotX + target.chart.plotLeft),
+                        e.chartY - ((target.points[0] as MockPoint).plotY + target.chart.plotTop),
+                        0);
 
-                    }
-                    const distance = Math.max(
-                        Math.sqrt(
-                            dx * dx + dy * dy
-                        ),
-                        5
-                    );
-                    target.setYRadius(distance);
-                    target.savePoints();
                     target.redraw(false);
                 }
             }
@@ -233,50 +216,64 @@ class BasicAnnotation extends Annotation {
                 this: Highcharts.AnnotationControlPoint,
                 target: ControllableEllipse
             ): PositionObject {
-                const xy = MockPoint.pointToPixels(target.points[0]),
-                    attrs = target.getAttrsFromPoints();
-
                 return {
-                    x: xy.x - this.graphic.width / 2 - (attrs.rx * Math.cos(attrs.angle * Math.PI / 180)),
-                    y: xy.y - this.graphic.height / 2 - (attrs.rx * Math.sin(attrs.angle * Math.PI / 180))
+                    x: target.chart.plotLeft + (target.points[1] as MockPoint).plotX -
+                      this.graphic.width / 2,
+                    y: target.chart.plotTop + (target.points[1] as MockPoint).plotY -
+                      this.graphic.width / 2
                 };
             },
             events: {
                 drag: function (
                     this: Annotation,
                     e: Highcharts.AnnotationEventObject,
+                    target: ControllableEllipse): void {
+
+                    target.translatePoint(e.chartX - ((target.points[1] as MockPoint).plotX +
+                        target.chart.plotLeft), e.chartY -
+                      ((target.points[1] as MockPoint).plotY +
+                        target.chart.plotTop), 1);
+
+                    target.redraw(false);
+                }
+            }
+        }, {
+            positioner: function (
+                this: Highcharts.AnnotationControlPoint,
+                target: ControllableEllipse
+            ): PositionObject {
+
+                const position = target.getAbsolutePosition(target.points[0]),
+                    position2 = target.getAbsolutePosition(target.points[1]),
+                    attrs = target.getAttrs(position, position2);
+
+
+                return {
+                    x: attrs.cx - this.graphic.width / 2 + attrs.ry *
+                      Math.sin((attrs.angle * Math.PI) / 180),
+                    y: attrs.cy - this.graphic.height / 2 - attrs.ry *
+                      Math.cos((attrs.angle * Math.PI) / 180)
+                };
+
+
+            },
+            events: {
+                drag: function (this: Annotation,
+                    e: Highcharts.AnnotationEventObject,
                     target: ControllableEllipse
                 ): void {
-                    let mockPointOpts = target.options.point as MockPointOptions,
-                        inverted = this.chart.inverted,
-                        dx, dy;
 
-                    if (isNumber(mockPointOpts.xAxis) && isNumber(mockPointOpts.yAxis)) {
-                        const x = this.chart.xAxis[mockPointOpts.xAxis].toPixels(mockPointOpts.x),
-                            y = this.chart.yAxis[mockPointOpts.yAxis].toPixels(mockPointOpts.y);
-                        dx = inverted ? y - e.chartX : x - e.chartX;
-                        dy = inverted ? x - e.chartY : y - e.chartY;
-                    } else {
-                        dx = e.chartX - (target.points[0].plotX as number + target.chart.plotLeft);
-                        dy = e.chartY - (target.points[0].plotY as number + target.chart.plotTop);
-
-                    }
-                    const distance = Math.max(
-                        Math.sqrt(
-                            dx * dx + dy * dy
-                        ),
-                        5
-                    );
-                    let newAngle = -Math.atan(dx / dy) * 180 / Math.PI + 90;
-
-                    if (dy < 0) {
-                        newAngle += 180;
-                    }
-
-                    target.setXRadius(distance);
-                    target.setAngle(newAngle);
-                    target.savePoints();
-
+                    const position = target.getAbsolutePosition(target.points[0]),
+                        position2 = target.getAbsolutePosition(target.points[1]),
+                        attrs = target.getAttrs(position, position2),
+                        dx = e.chartX - attrs.cx,
+                        dy = e.chartY - attrs.cy,
+                        newR = Math.max(Math.sqrt(dx * dx + dy * dy), 5),
+                        yAxis = target.getYAxis(),
+                        newRY = Math.abs(yAxis.toValue(0) - yAxis.toValue(newR));
+                    target.options.ry = newRY;
+                    target.annotation.userOptions.shapes[0].ry = newRY;
+                    target.annotation.options.shapes[0].ry = newRY;
                     target.redraw(false);
                 }
             }

@@ -25,6 +25,8 @@ import H from '../../Core/Globals.js';
 import D from '../../Core/DefaultOptions.js';
 const { setOptions } = D;
 import U from '../../Core/Utilities.js';
+import MockPoint from './MockPoint';
+import ControllableEllipse from './Controllables/ControllableEllipse';
 const {
     addEvent,
     attr,
@@ -1366,15 +1368,16 @@ setOptions({
                                 shapes: [
                                     {
                                         type: 'ellipse',
-                                        point: {
+                                        xAxis: coordsX.axis.options.index,
+                                        yAxis: coordsY.axis.options.index,
+                                        points: [{
                                             x: coordsX.value,
-                                            y: coordsY.value,
-                                            xAxis: coordsX.axis.options.index,
-                                            yAxis: coordsY.axis.options.index
-                                        },
-                                        rx: 10,
-                                        ry: 10,
-                                        angle: 0
+                                            y: coordsY.value
+                                        }, {
+                                            x: coordsX.value,
+                                            y: coordsY.value
+                                        }],
+                                        ry: 1
                                     }
                                 ]
                             },
@@ -1386,51 +1389,40 @@ setOptions({
                 steps: [
                     function (this: NavigationBindings, e: PointerEvent, annotation: Annotation): void {
 
-                        let mockPointOpts = annotation.options.shapes[0].point as MockPointOptions,
-                            inverted = this.chart.inverted;
 
-                        if (isNumber(mockPointOpts.xAxis) && isNumber(mockPointOpts.yAxis)) {
-                            const x = this.chart.xAxis[mockPointOpts.xAxis].toPixels(mockPointOpts.x),
-                                y = this.chart.yAxis[mockPointOpts.yAxis].toPixels(mockPointOpts.y),
-                                dx = inverted ? y - e.chartX : x - e.chartX,
-                                dy = inverted ? x - e.chartY : y - e.chartY,
-                                newAngle = -Math.atan(dx / dy) * 180 / Math.PI - 90,
-                                distance = Math.max(
-                                    Math.sqrt(
-                                        dx * dx + dy * dy
-                                    ),
-                                    5
-                                );
-                            annotation.update({
-                                shapes: [{
-                                    rx: correctFloat(distance),
-                                    angle: correctFloat(newAngle)
-                                }]
-                            });
-                        }
+                        annotation.shapes[0].translatePoint(
+                            e.chartX -
+                            ((annotation.shapes[0].points[1] as MockPoint).plotX +
+                            annotation.shapes[0].chart.plotLeft),
+                            e.chartY -
+                            ((annotation.shapes[0].points[1] as MockPoint).plotY +
+                            annotation.shapes[0].chart.plotTop),
+                            1);
+                        annotation.shapes[0].redraw(false);
                     },
 
                     function (this: NavigationBindings, e: PointerEvent, annotation: Annotation): void {
-                        let mockPointOpts = annotation.options.shapes[0].point as MockPointOptions,
-                            inverted = this.chart.inverted;
 
-                        if (isNumber(mockPointOpts.xAxis) && isNumber(mockPointOpts.yAxis)) {
-                            const x = this.chart.xAxis[mockPointOpts.xAxis].toPixels(mockPointOpts.x),
-                                y = this.chart.yAxis[mockPointOpts.yAxis].toPixels(mockPointOpts.y),
-                                dx = inverted ? y - e.chartX : x - e.chartX,
-                                dy = inverted ? x - e.chartY : y - e.chartY,
-                                distance = Math.max(
-                                    Math.sqrt(
-                                        dx * dx + dy * dy
-                                    ),
-                                    5
-                                );
-                            annotation.update({
-                                shapes: [{
-                                    ry: correctFloat(distance)
-                                }]
-                            });
-                        }
+                        const target = annotation.shapes[0] as ControllableEllipse;
+                        const position = target.getAbsolutePosition(target.points[0]),
+                            position2 = target.getAbsolutePosition(target.points[1]),
+                            attrs = target.getAttrs(position, position2);
+                        const dx =
+                        e.chartX -
+                        attrs.cx,
+                            dy =
+                        e.chartY -
+                        attrs.cy,
+                            newR = Math.max(
+                                Math.sqrt(dx * dx + dy * dy),
+                                5
+                            );
+
+                        const yAxis = target.getYAxis();
+                        const newRY = Math.abs(yAxis.toValue(0) - yAxis.toValue(newR));
+                        target.options.ry = newRY;
+
+                        target.redraw(false);
 
                     }
                 ]

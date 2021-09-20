@@ -201,93 +201,133 @@ var chart = Highcharts.chart('container', {
                     }
                 }
             }]
-        }, {
+        },
+        {
             type: 'ellipse',
-            point: {
-                x: 10,
-                y: 6,
-                xAxis: 0,
-                yAxis: 0
-            },
-            angle: 45,
-            rx: 40,
-            ry: 30,
-            controlPoints: [{
-                positioner: function (target) {
-                    var xy = Highcharts.Annotation.MockPoint.pointToPixels(
-                            target.points[0]
-                        ),
-                        attrs = target.getAttrsFromPoints();
-
-                    return {
-                        x: xy.x -
-                            this.graphic.width / 2 +
-                            attrs.ry *
-                            Math.sin((attrs.angle * Math.PI) / 180),
-                        y: xy.y -
-                            this.graphic.height / 2 -
-                            attrs.ry *
-                            Math.cos((attrs.angle * Math.PI) / 180)
-                    };
+            xAxis: 0,
+            yAxis: 0,
+            points: [
+                {
+                    x: 8,
+                    y: 4
                 },
-                events: {
-                    drag: function (e, target) {
-                        var dx = e.chartX -
-                            (target.points[0].plotX + target.chart.plotLeft),
-                            dy = e.chartY -
-                            (target.points[0].plotY + target.chart.plotTop),
-                            newR = Math.max(Math.sqrt(dx * dx + dy * dy), 5);
-
-                        target.setYRadius(newR);
-                        target.savePoints();
-
-                        target.redraw(false);
-                    }
+                {
+                    x: 12,
+                    y: 6
                 }
-            }, {
-                positioner: function (target) {
-                    var xy = Highcharts.Annotation.MockPoint.pointToPixels(
-                            target.points[0]
-                        ),
-                        attrs = target.getAttrsFromPoints();
+            ],
+            ry: 1,
+            controlPoints: [
+                {
+                    positioner: function (target) {
+                        return {
+                            x:
+                                target.chart.plotLeft +
+                                target.points[0].plotX -
+                                this.graphic.width / 2,
+                            y:
+                                target.chart.plotTop +
+                                target.points[0].plotY -
+                                this.graphic.width / 2
+                        };
+                    },
+                    events: {
+                        drag: function (e, target) {
+                            target.translatePoint(
+                                e.chartX -
+                                    (target.points[0].plotX +
+                                        target.chart.plotLeft),
+                                e.chartY -
+                                    (target.points[0].plotY +
+                                        target.chart.plotTop),
+                                0
+                            );
 
-                    return {
-                        x: xy.x -
-                            this.graphic.width / 2 -
-                            attrs.rx *
-                            Math.cos((attrs.angle * Math.PI) / 180),
-                        y: xy.y -
-                            this.graphic.height / 2 -
-                            attrs.rx *
-                            Math.sin((attrs.angle * Math.PI) / 180)
-                    };
-                },
-                events: {
-                    drag: function (e, target) {
-                        var dx = e.chartX -
-                            (target.points[0].plotX + target.chart.plotLeft),
-                            dy = e.chartY -
-                            (target.points[0].plotY + target.chart.plotTop),
-                            newR = Math.max(
-                                Math.sqrt(dx * dx + dy * dy),
-                                5
-                            ),
-                            newAngle = (-Math.atan(dx / dy) * 180) /
-                                Math.PI - 90;
-
-                        if (dy < 0) {
-                            newAngle += 180;
+                            target.redraw(false);
                         }
+                    }
+                },
+                {
+                    positioner: function (target) {
+                        return {
+                            x:
+                                target.chart.plotLeft +
+                                target.points[1].plotX -
+                                this.graphic.width / 2,
+                            y:
+                                target.chart.plotTop +
+                                target.points[1].plotY -
+                                this.graphic.width / 2
+                        };
+                    },
+                    events: {
+                        drag: function (e, target) {
+                            target.translatePoint(
+                                e.chartX -
+                                    (target.points[1].plotX +
+                                        target.chart.plotLeft),
+                                e.chartY -
+                                    (target.points[1].plotY +
+                                        target.chart.plotTop),
+                                1
+                            );
+                            target.redraw(false);
+                        }
+                    }
+                },
+                {
+                    positioner: function (target) {
+                        const position = target.getAbsolutePosition(
+                                target.points[0]
+                            ),
+                            position2 = target.getAbsolutePosition(
+                                target.points[1]
+                            ),
+                            attrs = target.getAttrs(position, position2);
 
-                        target.setXRadius(newR);
-                        target.setAngle(newAngle);
-                        target.savePoints();
+                        return {
+                            x:
+                                attrs.cx -
+                                this.graphic.width / 2 +
+                                attrs.ry * Math.sin(
+                                    (attrs.angle * Math.PI) / 180
+                                ),
+                            y:
+                                attrs.cy -
+                                this.graphic.height / 2 -
+                                attrs.ry * Math.cos(
+                                    (attrs.angle * Math.PI) / 180
+                                )
+                        };
+                    },
+                    events: {
+                        drag: function (e, target) {
+                            const position = target.getAbsolutePosition(
+                                    target.points[0]
+                                ),
+                                position2 = target.getAbsolutePosition(
+                                    target.points[1]
+                                ),
+                                attrs = target.getAttrs(position, position2),
+                                dx = e.chartX - attrs.cx,
+                                dy = e.chartY - attrs.cy,
+                                newR = Math.max(
+                                    Math.sqrt(dx * dx + dy * dy), 5
+                                ),
+                                yAxis = target.getYAxis(),
+                                newRY = Math.abs(
+                                    yAxis.toValue(0) - yAxis.toValue(newR)
+                                );
+                            target.options.ry = newRY;
 
-                        target.redraw(false);
+                            target.redraw(false);
+                        }
                     }
                 }
-            }]
-        }],
+            ]
+        }
+
+        ],
 
         labels: [{
             point: 'c',
