@@ -417,30 +417,29 @@ h1 {
     background-size: 17px 17px;
     background-repeat: no-repeat;
     background-position: 50% 50%;
+    cursor: pointer;
 }
 
 .hcd-edit-toolbar-row {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    background: #1A5E20;
+    background: #6da944;
     padding-left: 3px;
     padding-right: 3px;
     .hcd-edit-toolbar-item {
         div {
-            min-width: 23px;
-            min-height: 23px;
+            min-width: 25px;
+            min-height: 25px;
             background-size: 17px 17px;
         }
     }
     .hcd-edit-toolbar-item:hover {
-        background-color: #fff;
+        background-color: #1A5E20;
     }
 }
 
 .hcd-edit-toolbar-cell .hcd-edit-toolbar-item div {
-    padding-left: 8px;
-    padding-right: 8px;
-    min-width: auto;
+    min-width: 30px;
 }
 
 .hcd-edit-toolbar-cell {
@@ -467,15 +466,6 @@ h1 {
     display: none;
     border: 2px solid #7BB343;
     opacity: 1;
-}
-
-// .hcd-edit-toolbar-item.hcd-edit-menu-destroy div {
-//     background-color: #e01d5a;
-// }
-
-.hcd-edit-toolbar-item:hover div {
-    cursor: pointer;
-    background-color: #1779BA;
 }
 
 .hcd-edit-menu-vertical-separator {

@@ -98,15 +98,17 @@ let dashboard = new Dashboard('container', {
                     }, {
                         id: 'settings',
                         icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
-                    }, {
-                        id: 'my-option-1',
-                        text: 't1',
-                        events: {
-                            click: function() {
-                                console.log('hello world!');
-                            }
-                        }
-                    }, {
+                    },
+                    // {
+                    //     id: 'my-option-1',
+                    //     text: 't1',
+                    //     events: {
+                    //         click: function() {
+                    //             console.log('hello world!');
+                    //         }
+                    //     }
+                    // },
+                    {
                         id: 'destroy',
                         icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
                     }]
@@ -678,15 +680,17 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
                     }, {
                         id: 'settings',
                         icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
-                    }, {
-                        id: 'my-option-1',
-                        text: 't1',
-                        events: {
-                            click: function() {
-                                console.log('hello world!');
-                            }
-                        }
-                    }, {
+                    },
+                    // {
+                    //     id: 'my-option-1',
+                    //     text: 't1',
+                    //     events: {
+                    //         click: function() {
+                    //             console.log('hello world!');
+                    //         }
+                    //     }
+                    // },
+                    {
                         id: 'destroy',
                         icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
                     }]
