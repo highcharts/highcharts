@@ -37,6 +37,7 @@ const {
     defined,
     isArray,
     isNumber,
+    isString,
     pick
 } = U;
 
@@ -222,21 +223,12 @@ namespace DataModifyComposition {
             this.series.forEach(function (series): void {
                 if (
                     mode === 'compare' &&
-                    (
-                        modeState === 'percent' ||
-                        modeState === 'value' ||
-                        typeof modeState === 'undefined' ||
-                        modeState === null
-                    )
+                    typeof modeState !== 'boolean'
                 ) {
                     series.setCompare(modeState, false);
                 } else if (
                     mode === 'cumulative' &&
-                    (
-                        typeof modeState === 'boolean' ||
-                        typeof modeState === 'undefined' ||
-                        modeState === null
-                    )
+                    !isString(modeState)
                 ) {
                     series.setCumulative(modeState, false);
                 }
