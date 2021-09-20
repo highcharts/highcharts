@@ -48,8 +48,8 @@ const {
 
 declare module '../Core/Axis/AxisLike' {
     interface AxisLike {
-        setCompare(compare?: 'percent'|'value', redraw?: boolean): void;
-        setCumulative(cumulative?: boolean, redraw?: boolean): void;
+        setCompare(compare?: 'percent'|'value'|null, redraw?: boolean): void;
+        setCumulative(cumulative?: boolean|null, redraw?: boolean): void;
         setModifier(
             mode: 'compare'|'cumulative',
             modeState?: boolean|null|'percent'|'value',
@@ -104,7 +104,7 @@ namespace DataModifyComposition {
         ): void;
         setCumulative(
             this: Axis,
-            cumulative?: boolean,
+            cumulative?: boolean|null,
             redraw?: boolean
         ): void;
         setModifier(
@@ -538,7 +538,7 @@ namespace DataModifyComposition {
      */
     function axisSetCumulative(
         this: Axis,
-        cumulative?: boolean,
+        cumulative?: boolean|null,
         redraw?: boolean
     ): void {
         this.setModifier('cumulative', cumulative, redraw);
