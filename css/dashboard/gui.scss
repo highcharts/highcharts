@@ -9,7 +9,7 @@ body {
 
 .hcd,
 .highcharts-dashboard {
-    background-color: #F1F4F6;
+    background-color: #F3F3F3;
     padding: 20px 10px;
     position: relative;
     overflow: hidden;
@@ -218,7 +218,7 @@ body {
     display: inline-block;
     cursor: move;
     text-indent: -9999px;
-    background: url("https://code.highcharts.com/8.2.2/gfx/stock-icons/measure-xy.svg") no-repeat 50% 50%;
+    background: url("https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg") no-repeat 50% 50%;
     width: 20px;
     height: 20px;
     margin-right: 10px;
@@ -226,7 +226,7 @@ body {
 
 .hcd-toolbar .edit-col,
 .hcd-toolbar .edit-row {
-    background: url("https://code.highcharts.com/8.2.2/gfx/stock-icons/edit.svg") no-repeat 50% 50%;
+    background: url("https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg") no-repeat 50% 50%;
     background-size: cover;
     font-size: 0px;
     text-indent: -9999px;
@@ -409,12 +409,12 @@ h1 {
 }
 
 .hcd-edit-toolbar-item div {
-    min-width: 25px;
-    min-height: 25px;
+    min-width: 35px;
+    min-height: 30px;
     box-sizing: border-box;
     text-align: center;
-    padding: 10px 5px;
-    background-size: 23px 23px;
+    padding: 15px 10px;
+    background-size: 17px 17px;
     background-repeat: no-repeat;
     background-position: 50% 50%;
 }
@@ -423,11 +423,13 @@ h1 {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     background: #1A5E20;
+    padding-left: 3px;
+    padding-right: 3px;
     .hcd-edit-toolbar-item {
         div {
             min-width: 23px;
             min-height: 23px;
-            background-size: 21px 21px;
+            background-size: 17px 17px;
         }
     }
     .hcd-edit-toolbar-item:hover {
@@ -435,10 +437,17 @@ h1 {
     }
 }
 
+.hcd-edit-toolbar-cell .hcd-edit-toolbar-item div {
+    padding-left: 8px;
+    padding-right: 8px;
+    min-width: auto;
+}
+
 .hcd-edit-toolbar-cell {
     background: #1779BA;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
+    color: #fff;
     .hcd-edit-toolbar-item:hover {
         background-color: #0d47a1;
     }
@@ -535,6 +544,7 @@ h1 {
     margin-top: 20px;
     border: none;
     border-radius: 3px;
+    background-size: 20px;
 }
 
 .hcd-edit-sidebar .hcd-edit-button:hover,
@@ -550,6 +560,7 @@ h1 {
 }
 
 .hcd-edit-sidebar .hcd-edit-button {
+    background-repeat: no-repeat;
     float: right;
     margin-top: 0px;
 }
@@ -575,9 +586,11 @@ h1 {
 
 .hcd-edit-sidebar-title {
     color: #424242;
-    padding: 5px 5px 5px 50px;
-    background: url("https://code.highcharts.com/8.2.2/gfx/stock-icons/edit.svg") no-repeat 0px 50%;
+    padding: 5px 5px 5px 30px;
+    background: url("https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg") no-repeat 0px 50%;
     text-transform: uppercase;
+    background-size: 20px;
+
 }
 
 .hcd-edit-sidebar-tab-wrapper {
