@@ -86,6 +86,9 @@ class EditMode {
             dashboard.container,
             this.options.confirmationPopup
         );
+
+        this.initEditMode();
+        this.initEvents();
     }
 
     /* *
@@ -316,11 +319,6 @@ class EditMode {
     public activateEditMode(): void {
         const editMode = this;
 
-        if (!editMode.isInitialized) {
-            editMode.initEditMode();
-            editMode.initEvents();
-        }
-
         // Set edit mode active class to dashboard.
         editMode.dashboard.container.classList.add(
             EditGlobals.classNames.editModeEnabled
@@ -334,7 +332,6 @@ class EditMode {
         // Open the sidebar.
         if (editMode.sidebar) {
             editMode.sidebar.show();
-            // editMode.sidebar.updateTitle('General');
         }
 
         // Sets proper rwd mode.
@@ -488,11 +485,12 @@ class EditMode {
         const options = this.options;
 
         // create tools container
-        this.tools.container = createElement(
-            'div', {
-                className: EditGlobals.classNames.editTools
-            }, {},
-            this.dashboard.container
+        this.tools.container = document.createElement('div');
+        this.tools.container.classList.add(EditGlobals.classNames.editTools);
+
+        this.dashboard.layoutsWrapper.parentNode.insertBefore(
+            this.tools.container,
+            this.dashboard.layoutsWrapper
         );
 
         // create context menu button

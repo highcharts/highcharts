@@ -492,7 +492,6 @@ h1 {
     left: -310px;
     transition: 0.5s;
     width: 300px;
-    margin: 5px;
     background: #fff;
     color:#a6a6a6;
     position: absolute;
@@ -572,6 +571,7 @@ h1 {
 
 .hcd-edit-sidebar-show {
     left: 0;
+    transition: left 0.5s;
 }
 
 .hcd-edit-label-text {

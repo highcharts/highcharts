@@ -127,6 +127,14 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
 
         this.initContainer(renderTo);
 
+        // Create layouts wrapper.
+        this.layoutsWrapper = createElement(
+            'div', {
+                className: DashboardGlobals.classNames.layoutsWrapper
+            }, {},
+            this.container
+        );
+
         // Init edit mode.
         if (
             EditMode && !(
@@ -136,14 +144,6 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         ) {
             this.editMode = new EditMode(this, this.options.editMode);
         }
-
-        // Create layouts wrapper.
-        this.layoutsWrapper = createElement(
-            'div', {
-                className: DashboardGlobals.classNames.layoutsWrapper
-            }, {},
-            this.container
-        );
 
         // Init layouts from options.
         if (options.gui && this.options.gui) {

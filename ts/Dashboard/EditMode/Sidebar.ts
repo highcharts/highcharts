@@ -569,7 +569,6 @@ class Sidebar {
         }
 
         if (!sidebar.isVisible) {
-            sidebar.editMode.dashboard.container.style.paddingLeft = '210px';
 
             sidebar.container.classList.add(
                 EditGlobals.classNames.editSidebarShow
@@ -582,7 +581,6 @@ class Sidebar {
 
             // Refresh layout
             sidebar.afterCSSAnimate((): void => {
-                sidebar.editMode.dashboard.reflow();
                 sidebar.editMode.isContextDetectionActive = true;
             });
         }
@@ -626,8 +624,6 @@ class Sidebar {
 
         // Refresh layout
         sidebar.afterCSSAnimate((): void => {
-            sidebar.editMode.dashboard.reflow();
-
             if (sidebar.editMode.isActive()) {
                 sidebar.editMode.isContextDetectionActive = true;
             }
