@@ -448,8 +448,15 @@ class Measure extends Annotation {
     }
 
     public addControlPoints(): void {
+        const options = this.options.controlPointOptions;
         let selectType = this.options.typeOptions.selectType,
             controlPoint;
+
+        if (selectType === 'x') {
+            options.cursorType = 'ew-resize';
+        } else if (selectType === 'y') {
+            options.cursorType = 'ns-resize';
+        }
 
         controlPoint = new ControlPoint(
             this.chart,
@@ -468,7 +475,6 @@ class Measure extends Annotation {
                 this.options.controlPointOptions,
                 1
             );
-            controlPoint.isEditedHorizontally = true;
 
             this.controlPoints.push(controlPoint);
         }
