@@ -51,6 +51,7 @@ Gulp.registry(new GulpForwardReference());
     'jsdoc-websearch',
     'jsdoc-wrappers',
     'lint',
+    'lint-cypress',
     'lint-dts',
     'lint-samples',
     'lint-ts',
