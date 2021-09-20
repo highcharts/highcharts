@@ -676,57 +676,34 @@ class FlagsSeries extends ColumnSeries {
 interface FlagsSeries extends OnSeriesComposition.SeriesComposition {
     allowDG: boolean;
     group: typeof ColumnSeries.prototype.group;
-    init: typeof Series.prototype['init'];
     pointClass: typeof FlagsPoint;
-    remove: typeof ColumnSeries.prototype.remove;
     takeOrdinalPosition: boolean;
+    init: typeof Series.prototype['init'];
+    remove: typeof ColumnSeries.prototype.remove;
 }
 extend(FlagsSeries.prototype, {
-
     allowDG: false,
-
-    /**
-     * @private
-     * @function Highcharts.seriesTypes.flags#buildKDTree
-     */
-    buildKDTree: noop,
-
     forceCrop: true,
-
-    getPlotBox: OnSeriesComposition.getPlotBox,
-
+    invertible: false, // Flags series group should not be invertible (#14063).
+    noSharedTooltip: true,
+    pointClass: FlagsPoint,
+    sorted: false,
+    takeOrdinalPosition: false, // #1074
+    trackerGroups: ['markerGroup'],
+    buildKDTree: noop,
     /**
      * Inherit the initialization from base Series.
-     *
      * @private
-     * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
      */
     init: Series.prototype.init,
-
     /**
      * Don't invert the flag marker group (#4960).
-     *
      * @private
-     * @function Highcharts.seriesTypes.flags#invertGroups
      */
-    invertGroups: noop,
-
-    // Flags series group should not be invertible (#14063).
-    invertible: false,
-
-    noSharedTooltip: true,
-
-    pointClass: FlagsPoint,
-
-    sorted: false,
-
-    takeOrdinalPosition: false, // #1074
-
-    trackerGroups: ['markerGroup'],
-
-    translate: OnSeriesComposition.translate
-
+    invertGroups: noop
 });
+
+OnSeriesComposition.compose(FlagsSeries);
 
 /* *
  *

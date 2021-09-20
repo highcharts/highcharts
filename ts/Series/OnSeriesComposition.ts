@@ -59,11 +59,38 @@ namespace OnSeriesComposition {
 
     /* *
      *
+     *  Properties
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
+
+    /* *
+     *
      *  Functions
      *
      * */
 
     /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    export function compose<T extends typeof Series>(
+        SeriesClass: T
+    ): (T&SeriesComposition) {
+
+        if (composedClasses.indexOf(SeriesClass) === -1) {
+            composedClasses.push(SeriesClass);
+
+            const seriesProto = SeriesClass.prototype as SeriesComposition;
+
+            seriesProto.getPlotBox = getPlotBox;
+            seriesProto.translate = translate;
+        }
+
+        return SeriesClass as (T&SeriesComposition);
+    }
 
     /**
      * Override getPlotBox. If the onSeries option is valid, return the plot box
@@ -93,26 +120,27 @@ namespace OnSeriesComposition {
 
         columnProto.translate.apply(this);
 
-        let series = this,
+        const series = this,
             options = series.options,
             chart = series.chart,
             points = series.points,
-            cursor = points.length - 1,
-            point: PointComposition,
-            lastPoint: (PointComposition|undefined),
             optionsOnSeries = options.onSeries,
             onSeries: (SeriesComposition|undefined) = (
                 optionsOnSeries &&
                 chart.get(optionsOnSeries)
             ) as any,
-            onKey = (options as any).onKey || 'y',
             step = onSeries && onSeries.options.step,
             onData: (Array<PointComposition>|undefined) =
                  (onSeries && onSeries.points),
-            i = onData && onData.length,
             inverted = chart.inverted,
             xAxis = series.xAxis,
-            yAxis = series.yAxis,
+            yAxis = series.yAxis;
+
+        let cursor = points.length - 1,
+            point: PointComposition,
+            lastPoint: (PointComposition|undefined),
+            onKey = (options as any).onKey || 'y',
+            i = onData && onData.length,
             xOffset = 0,
             leftPoint,
             lastX,
