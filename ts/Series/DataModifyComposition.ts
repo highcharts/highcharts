@@ -581,7 +581,7 @@ namespace DataModifyComposition {
         public modifyValue(
             value?: number|null,
             index?: number
-        ): (number|undefined);
+        ): number;
 
         /* *
         *
@@ -592,8 +592,8 @@ namespace DataModifyComposition {
         /**
          * @private
          */
-        public modifyValue(): (number|undefined) {
-            return;
+        public modifyValue(): number {
+            return 0;
         }
 
         /**
@@ -634,7 +634,7 @@ namespace DataModifyComposition {
             this.modifyValue = function (
                 value?: number|null,
                 index?: number
-            ): (number|undefined) {
+            ): number {
                 if (value === null) {
                     value = 0;
                 }
@@ -681,7 +681,7 @@ namespace DataModifyComposition {
             this.modifyValue = function (
                 value?: number|null,
                 index?: number
-            ): (number|undefined) {
+            ): number {
                 if (value === null) {
                     value = 0;
                 }

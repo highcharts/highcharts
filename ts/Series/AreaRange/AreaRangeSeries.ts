@@ -274,8 +274,7 @@ class AreaRangeSeries extends AreaSeries {
                 point.plotLow = plotY as any;
                 point.plotHigh = yAxis.translate(
                     series.dataModify ?
-                        (series.dataModify.modifyValue as any)(high, point) :
-                        high,
+                        series.dataModify.modifyValue(high) : high,
                     0 as any,
                     1 as any,
                     0 as any,
