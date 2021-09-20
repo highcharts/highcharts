@@ -22,7 +22,7 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import OnSeriesMixin from '../OnSeriesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,

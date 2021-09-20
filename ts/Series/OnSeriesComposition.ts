@@ -16,9 +16,9 @@
  *
  * */
 
-import type LineSeriesOptions from '../Series/Line/LineSeriesOptions';
+import type LineSeriesOptions from './Line/LineSeriesOptions';
 import type Point from '../Core/Series/Point';
-import ColumnSeries from '../Series/Column/ColumnSeries.js';
+import ColumnSeries from './Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
