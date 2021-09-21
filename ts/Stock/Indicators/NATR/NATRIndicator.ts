@@ -111,17 +111,12 @@ class NATRIndicator extends ATRIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 interface NATRIndicator {
     pointClass: typeof NATRPoint;
-    requiredIndicators: Array<string>;
 }
-
-extend(NATRIndicator.prototype, {
-    requiredIndicators: ['atr']
-});
 
 /* *
  *
@@ -154,6 +149,7 @@ export default NATRIndicator;
  * @product   highstock
  * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/atr
  * @requires  stock/indicators/natr
  * @apioption series.natr
  */

@@ -13,11 +13,11 @@
  * */
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type MultipleLinesComposition from '../MultipleLinesComposition';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from '../SMA/SMAOptions';
-import type TooltipOptions from '../../../Core/TooltipOptions';
 
 /* *
  *
@@ -25,7 +25,7 @@ import type TooltipOptions from '../../../Core/TooltipOptions';
  *
  * */
 
-export interface DMIOptions extends SMAOptions {
+export interface DMIOptions extends SMAOptions, MultipleLinesComposition.Options {
     params?: DMIParamsOptions;
     plusDILine?: DMILineOptions;
     minusDILine?: DMILineOptions;

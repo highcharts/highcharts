@@ -721,13 +721,14 @@ class Point {
      * transformed to `{ y: 10 }`, and an array config like `[1, 10]` in a
      * scatter series will be transformed to `{ x: 1, y: 10 }`.
      *
+     * @deprecated
      * @function Highcharts.Point#optionsToObject
      *
      * @param {Highcharts.PointOptionsType} options
-     *        The input option.
+     * Series data options.
      *
      * @return {Highcharts.Dictionary<*>}
-     *         Transformed options.
+     * Transformed point options.
      */
     public optionsToObject(
         options: (PointOptions|PointShortOptions)
@@ -983,7 +984,6 @@ class Point {
         function update(): void {
 
             point.applyOptions(options);
-            point.resolveColor();
 
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
@@ -1443,7 +1443,9 @@ class Point {
                     }
                 }
 
-                if (!chart.styledMode && stateMarkerGraphic) {
+                if (!chart.styledMode && stateMarkerGraphic &&
+                    point.state !== 'inactive'
+                ) {
                     stateMarkerGraphic.attr(series.pointAttribs(point, state));
                 }
             }

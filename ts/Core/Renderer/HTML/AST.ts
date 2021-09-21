@@ -143,6 +143,7 @@ class AST {
         'text-align',
         'textAnchor',
         'textLength',
+        'title',
         'type',
         'valign',
         'width',
@@ -190,6 +191,7 @@ class AST {
      */
     public static allowedTags = [
         'a',
+        'abbr',
         'b',
         'br',
         'button',
@@ -484,14 +486,7 @@ class AST {
                 tagName
             };
             if (tagName === '#text') {
-                const textContent = node.textContent || '';
-
-                // Leading whitespace text node, don't append it to the AST
-                if (nodes.length === 0 && /^[\s]*$/.test(textContent)) {
-                    return;
-                }
-
-                astNode.textContent = textContent;
+                astNode.textContent = node.textContent || '';
             }
             const parsedAttributes = (node as any).attributes;
 

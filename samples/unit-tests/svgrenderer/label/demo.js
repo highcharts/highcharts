@@ -44,7 +44,7 @@ QUnit.test('Reset visibility on HTML label (#3909)', function (assert) {
     );
 });
 
-QUnit.test('Left trim (#5261)', function (assert) {
+QUnit.test('Whitespace trimming', function (assert) {
     var ren = new Highcharts.Renderer(
         document.getElementById('container'),
         500,
@@ -106,6 +106,37 @@ QUnit.test('Left trim (#5261)', function (assert) {
         3,
         '#15235: Whitespace between spans should not be removed'
     );
+
+    let html = '<div><span>Space</span> <span>expected</span></div>';
+    label = ren
+        .text(html, 100, 50, true)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .add();
+
+    assert.strictEqual(
+        label.element.innerHTML,
+        html,
+        '#15235: Nested whitespace between spans should not be removed'
+    );
+
+    html = '<div><span>Space</span><span> </span><span>expected</span></div>';
+    label = ren
+        .text(html, 100, 50, true)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .add();
+
+    assert.strictEqual(
+        label.element.innerHTML,
+        html,
+        '#15235: Nested whitespace between spans should not be removed'
+    );
+
 });
 
 QUnit.test('Image labels should have no fill (#4324)', function (assert) {

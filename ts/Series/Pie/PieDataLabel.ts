@@ -25,7 +25,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import DataLabel from '../../Core/Series/DataLabel.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import Palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -371,29 +371,29 @@ namespace ColumnDataLabel {
                     );
                 } else {
                     switch ((options as any).alignTo) {
-                    case 'connectors':
-                        x = (dataLabelPositioners as any).alignToConnectors(
-                            points,
-                            i as any,
-                            plotWidth,
-                            plotLeft
-                        );
-                        break;
-                    case 'plotEdges':
-                        x = (dataLabelPositioners as any).alignToPlotEdges(
-                            dataLabel as any,
-                            i as any,
-                            plotWidth,
-                            plotLeft
-                        );
-                        break;
-                    default:
-                        x = (dataLabelPositioners as any).radialDistributionX(
-                            series,
-                            point,
-                            y,
-                            naturalY
-                        );
+                        case 'connectors':
+                            x = (dataLabelPositioners as any).alignToConnectors(
+                                points,
+                                i as any,
+                                plotWidth,
+                                plotLeft
+                            );
+                            break;
+                        case 'plotEdges':
+                            x = (dataLabelPositioners as any).alignToPlotEdges(
+                                dataLabel as any,
+                                i as any,
+                                plotWidth,
+                                plotLeft
+                            );
+                            break;
+                        default:
+                            x = (dataLabelPositioners as any).radialDistributionX(
+                                series,
+                                point,
+                                y,
+                                naturalY
+                            );
                     }
                 }
 

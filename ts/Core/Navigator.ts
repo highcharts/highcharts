@@ -43,7 +43,7 @@ const {
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import D from './DefaultOptions.js';
 const { defaultOptions } = D;
-import Palette from './Color/Palette.js';
+import { Palette } from './Color/Palettes.js';
 import RendererRegistry from './Renderer/RendererRegistry.js';
 import Scrollbar from './Scrollbar.js';
 import Series from './Series/Series.js';

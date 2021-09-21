@@ -64,7 +64,7 @@ class MACDIndicator extends SMAIndicator {
     /**
      * Moving Average Convergence Divergence (MACD). This series requires
      * `linkedTo` option to be set and should be loaded after the
-     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
+     * `stock/indicators/indicators.js`.
      *
      * @sample stock/indicators/macd
      *         MACD indicator
@@ -489,12 +489,10 @@ interface MACDIndicator {
     pointArrayMap: Array<string>;
     pointClass: typeof MACDPoint;
     pointValKey: string;
-    requiredIndicators: Array<string>;
 }
 
 extend(MACDIndicator.prototype, {
     nameComponents: ['longPeriod', 'shortPeriod', 'signalPeriod'],
-    requiredIndicators: ['ema'],
     // "y" value is treated as Histogram data
     pointArrayMap: ['y', 'signal', 'MACD'],
     parallelArrays: ['x', 'y', 'signal', 'MACD'],

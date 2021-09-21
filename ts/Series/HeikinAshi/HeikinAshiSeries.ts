@@ -244,7 +244,7 @@ addEvent(Axis, 'postProcessData', function (): void {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

@@ -17,6 +17,8 @@
  * */
 
 import type MapBubbleSeriesOptions from './MapBubbleSeriesOptions';
+
+import BubbleLegendComposition from '../Bubble/BubbleSeries.js';
 import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
 import MapSeries from '../Map/MapSeries.js';
@@ -51,6 +53,7 @@ class MapBubbleSeries extends BubbleSeries {
      *  Static Properties
      *
      * */
+    public static compose = BubbleSeries.compose;
 
     /**
      * A map bubble series is a bubble series laid out on top of a map
@@ -206,7 +209,7 @@ class MapBubbleSeries extends BubbleSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

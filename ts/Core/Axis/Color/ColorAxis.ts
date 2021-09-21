@@ -690,7 +690,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public drawCrosshair(
         e?: PointerEvent,
-        point?: Highcharts.ColorPoint
+        point?: ColorAxisComposition.PointComposition
     ): void {
         const axis = this;
         const plotX = point && point.plotX;

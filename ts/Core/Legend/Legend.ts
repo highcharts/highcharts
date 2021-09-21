@@ -1368,10 +1368,14 @@ class Legend {
                     allItems[i - 1].pageIx = len - 1;
                 }
 
+                // add the last page if needed (#2617, #13683)
                 if (
+                    // check the last item
                     i === allItems.length - 1 &&
+                    // if adding next page is needed
                     y + h - pages[len - 1] > clipHeight &&
-                    y !== lastY // #2617
+                    // and will fully fit inside a new page
+                    h <= clipHeight
                 ) {
                     pages.push(y);
                     item.pageIx = len;
