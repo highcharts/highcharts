@@ -255,13 +255,14 @@ class BasicAnnotation extends Annotation {
                     e: Highcharts.AnnotationEventObject,
                     target: ControllableEllipse
                 ): void {
-
                     const position = target.getAbsolutePosition(target.points[0]),
                         position2 = target.getAbsolutePosition(target.points[1]),
-                        attrs = target.getAttrs(position, position2),
-                        dx = e.chartX - attrs.cx,
-                        dy = e.chartY - attrs.cy,
-                        newR = Math.max(Math.sqrt(dx * dx + dy * dy), 5),
+                        newR = target.getDistanceFromLine(
+                            position,
+                            position2,
+                            e.chartX,
+                            e.chartY
+                        ),
                         yAxis = target.getYAxis(),
                         newRY = Math.abs(yAxis.toValue(0) - yAxis.toValue(newR));
                     target.setYRadius(newRY);

@@ -37,9 +37,6 @@ interface EllipseShapeOptions extends Highcharts.AnnotationsShapeOptions {
     yAxis: number;
     xAxis: number;
     ry: number;
-    rx: number;
-    angle: number;
-    referencePoints: Array<ReferencePointsOptions>;
 }
 interface ReferencePointsOptions {
     x: number;
@@ -100,6 +97,7 @@ class ControllableEllipse implements ControllableMixin.Type {
     public transform = ControllableMixin.transform;
     public translatePoint = ControllableMixin.translatePoint;
     public transformPoint = ControllableMixin.transformPoint;
+
     public update(
         this: ControllableEllipse,
         newOptions: Highcharts.AnnotationControllableOptionsObject
@@ -108,16 +106,6 @@ class ControllableEllipse implements ControllableMixin.Type {
         this.options = options;
         this.redraw();
     }
-    public getDistanceFromLine(point1: any, point2: any, x0: any, y0: any): number {
-        return ((Math.abs((point2.y - point1.y) * x0 -
-            (point2.x - point1.x) * y0 +
-            point2.x * point1.y -
-            point2.y * point1.x)) /
-            (Math.pow((Math.pow(point2.y - point1.y, 2) +
-                Math.pow(point2.x - point1.x, 2)),
-            0.5)));
-    }
-    public referencePoints: Array<ReferencePointsOptions> = void 0 as any;
 
     /**
      * @type 'ellipse'
@@ -169,7 +157,29 @@ class ControllableEllipse implements ControllableMixin.Type {
 
     public translate(this: ControllableEllipse, dx: number, dy: number): void {
         ControllableMixin.translateShape.call(this, dx, dy, true);
+    }
 
+    /**
+     * Get the distance from the line to the point.
+     * @param point1 first point which is on the line
+     * @param point2 second point
+     * @param x0 point's x value from which you want to calculate the distance from
+     * @param y0 point's y value from which you want to calculate the distance from
+     */
+    public getDistanceFromLine(
+        point1: ReferencePointsOptions,
+        point2: ReferencePointsOptions,
+        x0: number,
+        y0: number
+    ): number {
+        return Math.abs(
+            (point2.y - point1.y) * x0 - (point2.x - point1.x) * y0 +
+            point2.x * point1.y - point2.y * point1.x
+        ) /
+            Math.sqrt(
+                (point2.y - point1.y) * (point2.y - point1.y) +
+                (point2.x - point1.x) * (point2.x - point1.x)
+            );
     }
 
     /**
