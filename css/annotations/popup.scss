@@ -1,8 +1,14 @@
-// Colors for buttons.
-$button-background-color: #f7f7f7;
-$button-hover-color: #e6ebf5;
-$clear-filter-light-color: #fff;
-$clear-filter-dark-color: #424bcd;
+// Colors, using same names and values as in highcharts.scss
+$background-color: #fff;
+
+$neutral-color-100: #000000;
+$neutral-color-80: #333333;
+$neutral-color-60: #666666;
+$neutral-color-20: #cccccc;
+$neutral-color-10: #e6e6e6;
+$neutral-color-3: #f7f7f7;
+
+$highlight-color-80: #335cad;
 
 
 .highcharts-popup.highcharts-annotation-toolbar {
@@ -27,8 +33,9 @@ $clear-filter-dark-color: #424bcd;
 
 
 .highcharts-popup {
-  background-color: #fff;
-  color: #666;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+  background-color: $background-color;
+  color: $neutral-color-60;
   display: none;
   font-size: 0.876em;
   max-height: 90%;
@@ -59,7 +66,7 @@ $clear-filter-dark-color: #424bcd;
 }
 
 .highcharts-popup input {
-  border: 1px solid #e6e6e6;
+  border: 1px solid $neutral-color-10;
   border-radius: 0.3rem;
   padding: 5px;
   width: 100%;
@@ -71,7 +78,7 @@ $clear-filter-dark-color: #424bcd;
   overflow-y: auto;
 }
 
-.highcharts-popup-lhs-col.highcharts-popup-lhs-full { 
+.highcharts-popup-lhs-col.highcharts-popup-lhs-full {
   width: 100%;
   overflow-x: hidden;
   height: calc(100% - 104px);
@@ -87,7 +94,7 @@ $clear-filter-dark-color: #424bcd;
 .highcharts-popup-lhs-col {
   clear: both;
   width: 30%;
-  border-right: 1px solid #e6e6e6;
+  border-right: 1px solid $neutral-color-10;
 }
 
 .highcharts-popup-bottom-row {
@@ -95,7 +102,7 @@ $clear-filter-dark-color: #424bcd;
   padding: 0px 20px;
   padding-bottom: 12px;
   width: 100%;
-  border-top: 1px solid #e6e6e6;
+  border-top: 1px solid $neutral-color-10;
 }
 
 .highcharts-popup-rhs-col {
@@ -117,7 +124,7 @@ $clear-filter-dark-color: #424bcd;
 .highcharts-bindings-wrapper ul.highcharts-indicator-list,
 .highcharts-indicator-list {
   float: left;
-  color: #666;
+  color: $neutral-color-60;
   height: calc(100% - 70px);
   width: 100%;
   overflow-x: hidden;
@@ -137,11 +144,11 @@ $clear-filter-dark-color: #424bcd;
 }
 
 .highcharts-indicator-list li:hover {
-  background-color: $button-hover-color;
+  background-color: $neutral-color-10;
 }
 
 .highcharts-tab-item {
-  background-color: $button-background-color;
+  background-color: $neutral-color-3;
   cursor: pointer;
   display: block;
   float:left;
@@ -151,16 +158,16 @@ $clear-filter-dark-color: #424bcd;
 }
 
 .highcharts-tab-item.highcharts-tab-item-active {
-  background-color: $button-hover-color;
+  background-color: $neutral-color-10;
 }
 
 .highcharts-tab-item-content {
-  display: none; 
+  display: none;
   float: left;
   height: 100%;
   overflow: hidden;
   width: 100%;
-  border-top: 1px solid #e6e6e6;
+  border-top: 1px solid $neutral-color-10;
 }
 
 .highcharts-tab-item-show {
@@ -177,22 +184,22 @@ $clear-filter-dark-color: #424bcd;
   padding: 10px;
   top: 0%;
   right: 0%;
-  color: #333333;
+  color: $neutral-color-80;
 }
 
 .highcharts-popup-close:hover,
 .highcharts-popup button:hover,
 .highcharts-popup button.highcharts-annotation-edit-button:hover,
 .highcharts-popup button.highcharts-annotation-remove-button:hover {
-  background-color: $button-hover-color;
+  background-color: $neutral-color-10;
   cursor: pointer;
 }
 
 .highcharts-popup button {
   float: right;
   border: none;
-  background: $button-background-color;
-  color: #666;
+  background: $neutral-color-3;
+  color: $neutral-color-60;
   margin-left:5px;
   margin-top:12px;
 }
@@ -201,7 +208,7 @@ $clear-filter-dark-color: #424bcd;
 }
 
 .highcharts-tab-disabled {
-  color: #ccc;
+  color: $neutral-color-20;
 }
 
 /* annotation edit small popup */
@@ -234,7 +241,7 @@ $clear-filter-dark-color: #424bcd;
 }
 
 .highcharts-popup .highcharts-popup-main-title {
-  border-bottom: 1px solid #e6e6e6;
+  border-bottom: 1px solid $neutral-color-10;
   margin: 0px;
   padding: 8px 0px 6px 20px;
 }
@@ -247,7 +254,7 @@ $clear-filter-dark-color: #424bcd;
 .highcharts-input-search-indicators-label {
   text-align: center;
   font-weight: bold;
-  color: #000;
+  color: $neutral-color-100;
   margin-top: 0.5rem;
 }
 
@@ -262,13 +269,13 @@ input.highcharts-input-search-indicators {
   margin: 0 auto;
   display: block;
   float: unset;
-  color: $clear-filter-dark-color;
-  background-color: $clear-filter-light-color;
-  border: 1px solid $clear-filter-dark-color;
+  color: $highlight-color-80;
+  background-color: $background-color;
+  border: 1px solid $highlight-color-80;
   margin-top: 10px;
 }
 
 .highcharts-popup button.clear-filter-button:hover {
-  color: $clear-filter-light-color;
-  background-color: $clear-filter-dark-color;
+  color: $background-color;
+  background-color: $highlight-color-80;
 }
