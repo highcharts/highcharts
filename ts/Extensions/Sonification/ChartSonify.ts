@@ -51,12 +51,21 @@ const {
  *
  * */
 
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        sonification?: ChartSonify.SonifyableChart['sonification'];
+        sonify?: typeof chartSonify;
+    }
+}
+
 interface SonifySeriesOrderObject {
     series: SeriesSonify.Composition;
     seriesOptions: SeriesSonify.SonifySeriesOptions;
 }
 
 declare class Composition { // = interface SonifyableChart extends Chart {
+    series: Array<SeriesSonify.Composition>;
+    sonification: ChartSonify.ChartSonificationStateObject;
     cancelSonify: typeof cancel;
     getCurrentSonifyPoints: typeof getCurrentPoints;
     pauseSonify: typeof pause;
@@ -64,9 +73,7 @@ declare class Composition { // = interface SonifyableChart extends Chart {
     resetSonifyCursorEnd: typeof resetCursorEnd;
     resumeSonify: typeof resume;
     rewindSonify: typeof rewind;
-    series: Array<SeriesSonify.Composition>;
     setSonifyCursor: typeof setCursor;
-    sonification: ChartSonify.ChartSonificationStateObject;
     sonify: typeof chartSonify;
 }
 
@@ -828,7 +835,7 @@ namespace ChartSonify {
     }
 
     export interface ChartSonificationStateObject {
-        currentlyPlayingPoint?: Sonification.SonifyablePoint;
+        currentlyPlayingPoint?: PointSonify.Composition;
         timeline?: Timeline;
         duration?: number;
     }

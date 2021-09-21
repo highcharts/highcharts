@@ -77,7 +77,7 @@ namespace SeriesSonify {
 
     export declare class Composition extends Series {
         public chart: ChartSonify.SonifyableChart;
-        public points: Array<Sonification.SonifyablePoint>;
+        public points: Array<PointSonify.Composition>;
         public sonify(options?: SonifySeriesOptions): void;
     }
 
@@ -261,7 +261,7 @@ namespace SeriesSonify {
             // Get the duration of the final note
             finalNoteDuration = getFinalNoteDuration(series, options.instruments, dataExtremes),
             // Get time offset for a point, relative to duration
-            pointToTime = function (point: Sonification.SonifyablePoint): number {
+            pointToTime = function (point: PointSonify.Composition): number {
                 return virtualAxisTranslate(
                     getPointTimeValue(point, options.pointPlayTime),
                     timeExtremes,
@@ -276,7 +276,7 @@ namespace SeriesSonify {
             // Go through the points, convert to events, optionally add Earcons
             timelineEvents = series.points.reduce(function (
                 events: Array<TimelineEvent>,
-                point: Sonification.SonifyablePoint
+                point: PointSonify.Composition
             ): Array<TimelineEvent> {
                 const earcons = getPointEarcons(point, options.earcons || []),
                     time = pointToTime(point);
@@ -473,7 +473,7 @@ namespace SeriesSonify {
      * The time value.
      */
     function getPointTimeValue(
-        point: Sonification.SonifyablePoint,
+        point: PointSonify.Composition,
         timeProp: (string|Function)
     ): number {
         return typeof timeProp === 'function' ?
@@ -579,7 +579,7 @@ namespace SeriesSonify {
         // Compute the extremes from the visible points.
         return series.points.reduce(function (
             acc: RangeSelector.RangeObject,
-            point: Sonification.SonifyablePoint
+            point: PointSonify.Composition
         ): RangeSelector.RangeObject {
             const value = getPointTimeValue(point, timeProp);
 

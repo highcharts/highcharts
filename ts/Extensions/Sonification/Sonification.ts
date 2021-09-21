@@ -40,26 +40,6 @@ import sonificationOptions from './Options.js';
 
 /* *
  *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
-        sonification?: ChartSonify.SonifyableChart['sonification'];
-        sonify?: ChartSonify.SonifyableChart['sonify'];
-    }
-}
-
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
-        cancelSonify?: Sonification.SonifyablePoint['cancelSonify'];
-        sonify?: Sonification.SonifyablePoint['sonify'];
-    }
-}
-
-/* *
- *
  *  Functions
  *
  * */
@@ -85,26 +65,6 @@ const Sonification = {
     TimelinePath: TimelinePath,
     Timeline: Timeline
 };
-
-/* *
- *
- *  Namespace
- *
- * */
-
-namespace Sonification {
-    export interface PointSonificationStateObject {
-        currentlyPlayingPoint?: SonifyablePoint;
-        instrumentsPlaying?: Record<string, Instrument>;
-        signalHandler?: SignalHandler;
-    }
-    export interface SonifyablePoint extends Point {
-        cancelSonify: PointSonify.Composition['pointCancelSonify'];
-        series: SeriesSonify.Composition;
-        sonification: PointSonificationStateObject;
-        sonify: PointSonify.Composition['pointSonify'];
-    }
-}
 
 /* *
  *
