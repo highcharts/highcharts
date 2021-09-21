@@ -102,7 +102,7 @@ class PyramidSeries extends FunnelSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

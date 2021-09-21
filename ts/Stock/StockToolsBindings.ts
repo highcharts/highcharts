@@ -25,16 +25,16 @@ import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
-import H from '../Core/Globals.js';
-import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import D from '../Core/DefaultOptions.js';
 const {
     getOptions,
     setOptions
 } = D;
+import H from '../Core/Globals.js';
+import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
-import palette from '../Core/Color/Palette.js';
 const {
     correctFloat,
     defined,
@@ -1312,7 +1312,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-crooked3", "start": function() {}, "steps": [function() {}, function() {}, function() {}, function() {}], "annotationsOptions": {}}
+     * @default {"className": "highcharts-crooked5", "start": function() {}, "steps": [function() {}, function() {}, function() {}, function() {}], "annotationsOptions": {}}
      */
     crooked5: {
         /** @ignore-option */
@@ -1337,7 +1337,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                 navigation = this.chart.options.navigation,
                 options = merge(
                     {
-                        langKey: 'crookedLine',
+                        langKey: 'crooked5',
                         type: 'crookedLine',
                         typeOptions: {
                             xAxis: coordsX.axis.options.index,
@@ -1410,7 +1410,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         },
                         labelOptions: {
                             style: {
-                                color: palette.neutralColor60
+                                color: Palette.neutralColor60
                             }
                         }
                     },
@@ -1474,7 +1474,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         },
                         labelOptions: {
                             style: {
-                                color: palette.neutralColor60
+                                color: Palette.neutralColor60
                             }
                         }
                     },
@@ -1533,23 +1533,23 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                             point: { x, y },
                             crosshairX: {
                                 strokeWidth: 1,
-                                stroke: palette.neutralColor100
+                                stroke: Palette.neutralColor100
                             },
                             crosshairY: {
                                 enabled: false,
                                 strokeWidth: 0,
-                                stroke: palette.neutralColor100
+                                stroke: Palette.neutralColor100
                             },
                             background: {
                                 width: 0,
                                 height: 0,
                                 strokeWidth: 0,
-                                stroke: palette.backgroundColor
+                                stroke: Palette.backgroundColor
                             }
                         },
                         labelOptions: {
                             style: {
-                                color: palette.neutralColor60
+                                color: Palette.neutralColor60
                             }
                         }
                     },
@@ -1605,22 +1605,22 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                             crosshairX: {
                                 enabled: false,
                                 strokeWidth: 0,
-                                stroke: palette.neutralColor100
+                                stroke: Palette.neutralColor100
                             },
                             crosshairY: {
                                 strokeWidth: 1,
-                                stroke: palette.neutralColor100
+                                stroke: Palette.neutralColor100
                             },
                             background: {
                                 width: 0,
                                 height: 0,
                                 strokeWidth: 0,
-                                stroke: palette.backgroundColor
+                                stroke: Palette.backgroundColor
                             }
                         },
                         labelOptions: {
                             style: {
-                                color: palette.neutralColor60
+                                color: Palette.neutralColor60
                             }
                         }
                     },
@@ -1680,16 +1680,16 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                             },
                             crosshairX: {
                                 strokeWidth: 1,
-                                stroke: palette.neutralColor100
+                                stroke: Palette.neutralColor100
                             },
                             crosshairY: {
                                 strokeWidth: 1,
-                                stroke: palette.neutralColor100
+                                stroke: Palette.neutralColor100
                             }
                         },
                         labelOptions: {
                             style: {
-                                color: palette.neutralColor60
+                                color: Palette.neutralColor60
                             }
                         }
                     },
@@ -1748,7 +1748,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         },
                         labelOptions: {
                             style: {
-                                color: palette.neutralColor60
+                                color: Palette.neutralColor60
                             }
                         }
                     },
@@ -1859,7 +1859,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                                 y: coordsY.value,
                                 controlPoint: {
                                     style: {
-                                        fill: palette.negativeColor
+                                        fill: Palette.negativeColor
                                     }
                                 }
                             },
@@ -1934,7 +1934,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                     },
                     labelOptions: {
                         style: {
-                            color: palette.neutralColor60,
+                            color: Palette.neutralColor60,
                             fontSize: '11px'
                         }
                     },
@@ -1999,7 +1999,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                     },
                     labelOptions: {
                         style: {
-                            color: palette.neutralColor60,
+                            color: Palette.neutralColor60,
                             fontSize: '11px'
                         }
                     },
@@ -2065,7 +2065,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         connector: {
                             fill: 'none',
                             stroke: closestPoint.below ?
-                                palette.negativeColor : palette.positiveColor
+                                Palette.negativeColor : Palette.positiveColor
                         }
                     },
                     shapeOptions: {

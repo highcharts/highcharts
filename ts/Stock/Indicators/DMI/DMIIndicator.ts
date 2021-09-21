@@ -26,7 +26,7 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
-import palette from '../../../Core/Color/Palette.js';
+import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -117,7 +117,7 @@ class DMIIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.positiveColor // green-ish
+                lineColor: Palette.positiveColor // green-ish
             }
         },
         /**
@@ -137,7 +137,7 @@ class DMIIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.negativeColor // red-ish
+                lineColor: Palette.negativeColor // red-ish
             }
         },
         dataGrouping: {

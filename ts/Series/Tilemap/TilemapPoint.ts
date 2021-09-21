@@ -90,7 +90,7 @@ class TilemapPoint extends HeatmapPoint {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

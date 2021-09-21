@@ -78,7 +78,7 @@ const {
     defaultOptions,
     defaultTime
 } = D;
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
 import SeriesRegistry from '../Series/SeriesRegistry.js';
@@ -1162,10 +1162,10 @@ class Chart {
 
         // Default style
         const style = name === 'title' ? {
-            color: palette.neutralColor80,
+            color: Palette.neutralColor80,
             fontSize: this.options.isStock ? '16px' : '18px' // #2944
         } : {
-            color: palette.neutralColor60
+            color: Palette.neutralColor60
         };
 
         // Merge default options with explicit options
@@ -2187,11 +2187,11 @@ class Chart {
 
         // Plot clip
         if (!clipRect) {
-            chart.clipRect = (renderer.clipRect as any)(clipBox);
+            chart.clipRect = renderer.clipRect(clipBox);
         } else {
             clipRect.animate({
-                width: (clipBox as any).width,
-                height: (clipBox as any).height
+                width: clipBox.width,
+                height: clipBox.height
             });
         }
 

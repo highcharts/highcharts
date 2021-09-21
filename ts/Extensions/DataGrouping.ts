@@ -11,6 +11,7 @@
 'use strict';
 
 import type AxisType from '../Core/Axis/AxisType';
+import type IndicatorLike from '../Stock/Indicators/IndicatorLike';
 import type {
     PointOptions,
     PointShortOptions
@@ -1333,7 +1334,7 @@ addEvent(Series, 'afterSetOptions', function (
             (D.defaultOptions.plotOptions as any)[type].dataGrouping,
         // External series, for example technical indicators should also
         // inherit commonOptions which are not available outside this module
-        baseOptions = this.useCommonDataGrouping && commonOptions;
+        baseOptions = (this as IndicatorLike).useCommonDataGrouping && commonOptions;
 
     if (specificOptions[type] || baseOptions) { // #1284
         if (!defaultOptions) {

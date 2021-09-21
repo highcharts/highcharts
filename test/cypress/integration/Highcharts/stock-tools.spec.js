@@ -62,13 +62,24 @@ describe('Stock Tools', () => {
         cy.get('.highcharts-indicator-list').contains('Accumulation').click();
         cy.get('.highcharts-tab-item-show #highcharts-select-series').should('have.value', 'aapl-ohlc');
         cy.get('.highcharts-tab-item-show #highcharts-select-volume').should('have.value', 'aapl-volume');
-        cy.get('.highcharts-popup-rhs-col button').contains('add').click();
+        cy.addIndicator();
 
         cy.get('.highcharts-indicators').click();
         cy.get('.highcharts-tab-item').contains('edit').click();
         cy.get('.highcharts-tab-item-show #highcharts-select-series').should('have.value', 'aapl-ohlc');
         cy.get('.highcharts-tab-item-show #highcharts-select-volume').should('have.value', 'aapl-volume');
         cy.get('.highcharts-popup-rhs-col button').contains('save').click();
+    });
+
+    it('For some indicators params, there should be a dropdown with options in popup, #16159.', () => {
+        cy.openIndicators();
+        cy.get('.highcharts-indicator-list')
+            .contains('Disparity Index')
+            .click();
+
+        cy.get('#highcharts-select-params\\.average')
+            .select('ema')
+        cy.addIndicator();
     });
 });
 
@@ -105,11 +116,8 @@ describe('Adding custom indicator on a separate axis through indicator popup, #1
         cy.get('.highcharts-indicator-list')
             .contains('CUSTOMINDICATORBASEDONRSI')
             .click();
+        cy.addIndicator();
 
-        cy.get('.highcharts-popup-rhs-col')
-            .children('.highcharts-popup button')
-            .eq(0)
-            .click(); // Add indicator.
         cy.chart().should(chart =>
             assert.strictEqual(
                 chart.yAxis.length,

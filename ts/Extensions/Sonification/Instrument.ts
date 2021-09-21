@@ -21,6 +21,7 @@
 import H from '../../Core/Globals.js';
 const { win } = H;
 import Sonification from './Sonification.js';
+import SU from './SonificationUtilities.js';
 import U from '../../Core/Utilities.js';
 const {
     error,
@@ -61,6 +62,8 @@ class Instrument {
      *
      * */
 
+    public static audioContext: AudioContext;
+
     // Default options for Instrument constructor
     public static defaultOptions: Instrument.Options = {
         type: 'oscillator',
@@ -71,8 +74,7 @@ class Instrument {
         }
     };
 
-    public static audioContext: AudioContext;
-
+    public static definitions = {} as Instrument.Definitions;
 
     /* *
      *
@@ -198,8 +200,8 @@ class Instrument {
             }
             return !!(
                 Instrument.audioContext &&
-                Instrument.audioContext.createOscillator &&
-                Instrument.audioContext.createGain
+                (Instrument.audioContext.createOscillator) &&
+                (Instrument.audioContext.createGain)
             );
         }
         return false;
@@ -639,11 +641,54 @@ class Instrument {
 
 /* *
  *
+ *  Class Prototype
+ *
+ * */
+
+// ['sine', 'square', 'triangle', 'sawtooth'].forEach(function (
+['sine', 'square', 'triangle', 'sawtooth'].forEach(function (
+    waveform: Instrument.Waveform
+): void {
+    // Add basic instruments
+    Instrument.definitions[waveform] = new Instrument({
+        oscillator: { waveformShape: waveform }
+    });
+
+    // Add musical instruments
+    Instrument.definitions[waveform + 'Musical'] = new (Instrument as any)({
+        allowedFrequencies: SU.musicalFrequencies,
+        oscillator: { waveformShape: waveform }
+    });
+
+    // Add scaled instruments
+    Instrument.definitions[waveform + 'Major'] = new Instrument({
+        allowedFrequencies: SU.getMusicalScale([1, 3, 5, 6, 8, 10, 12]),
+        oscillator: { waveformShape: waveform }
+    });
+});
+
+/* *
+ *
  *  Class Namespace
  *
  * */
 
 namespace Instrument {
+
+    export interface Definitions extends Record<string, Instrument> {
+        sawtooth: Instrument;
+        sawtoothMajor: Instrument;
+        sawtoothMusical: Instrument;
+        sine: Instrument;
+        sineMajor: Instrument;
+        sineMusical: Instrument;
+        square: Instrument;
+        squareMajor: Instrument;
+        squareMusical: Instrument;
+        triangle: Instrument;
+        triangleMajor: Instrument;
+        triangleMusical: Instrument;
+    }
 
     export interface Options {
         allowedFrequencies?: Array<number>;
@@ -663,9 +708,12 @@ namespace Instrument {
         pan?: (number|Function);
         volume?: (number|Function);
     }
+
     export interface OscillatorOptions{
-        waveformShape?: Highcharts.InstrumentWaveform;
+        waveformShape?: Waveform;
     }
+
+    export type Waveform = keyof Definitions;
 
 }
 

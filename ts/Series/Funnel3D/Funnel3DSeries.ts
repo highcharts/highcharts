@@ -460,7 +460,7 @@ class Funnel3DSeries extends ColumnSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

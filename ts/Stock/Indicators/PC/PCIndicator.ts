@@ -16,9 +16,9 @@ import type {
 } from '../PC/PCOptions';
 import type PCPoint from './PCPoint';
 
+import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
-import Palette from '../../../Core/Color/Palette.js';
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+import Palettes from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -30,8 +30,6 @@ const {
     merge,
     extend
 } = U;
-
-const getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 
 /* *
  *
@@ -91,7 +89,7 @@ class PCIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: Palette.colors[2],
+                lineColor: Palettes.colors[2],
                 /**
                  * Pixel width of the line.
                  */
@@ -106,7 +104,7 @@ class PCIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: Palette.colors[8],
+                lineColor: Palettes.colors[8],
                 /**
                  * Pixel width of the line.
                  */
@@ -164,7 +162,7 @@ class PCIndicator extends SMAIndicator {
         for (i = period; i <= yValLen; i++) {
             date = xVal[i - 1];
             slicedY = yVal.slice(i - period, i);
-            extremes = getArrayExtremes(slicedY, low as any, high as any);
+            extremes = AU.getArrayExtremes(slicedY, low as any, high as any);
             TL = extremes[1];
             BL = extremes[0];
             ML = (TL + BL) / 2;

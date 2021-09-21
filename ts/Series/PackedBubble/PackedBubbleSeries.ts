@@ -1524,7 +1524,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
