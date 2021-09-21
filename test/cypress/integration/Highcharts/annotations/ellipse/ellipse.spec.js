@@ -25,6 +25,7 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
                 x2 = xAxis.toPixels(ellipse.points[1].x),
                 y2 = yAxis.toPixels(ellipse.points[1].y);
 
+
             assert.closeTo(
                 x1,
                 250,
@@ -53,6 +54,7 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
                 `Second point's y value should be close to the place where
                 it was clicked.`
             );
+
             assert.closeTo(
                 ellipse.options.ry,
                 15,
@@ -97,15 +99,15 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
         cy.get('.highcharts-control-points')
             .children()
             .first()
-            .dragTo('.highcharts-container', 250, 200);
+            .dragTo('.highcharts-container', 850, 100);
         cy.get('.highcharts-control-points')
             .children()
             .eq(1)
-            .dragTo('.highcharts-container', 450, 150);
+            .dragTo('.highcharts-container', 800, 100);
         cy.get('.highcharts-control-points')
             .children()
             .last()
-            .dragTo('.highcharts-container', 350, 150);
+            .dragTo('.highcharts-container', 825, 110);
 
         cy.get('.highcharts-popup').should('be.visible');
 
@@ -120,34 +122,35 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
 
             assert.closeTo(
                 x,
-                250,
+                850,
                 1,
                 'New position of the first point should be equal to expected value.'
             );
             assert.closeTo(
                 y,
-                200,
+                100,
                 1,
                 'New position of the first point should be equal to expected value.'
             );
             assert.closeTo(
                 x2,
-                450,
+                800,
                 1,
                 'New position of the second point should be equal to expected value.'
             );
             assert.closeTo(
                 y2,
-                150,
+                101,
                 1,
                 'New position of the second point should be equal to expected value.'
             );
             assert.closeTo(
                 ellipse.options.ry,
-                26,
+                10,
                 1,
                 'New ry property value should be equal to expected value.'
             );
+
         });
     });
 
@@ -155,11 +158,12 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
         cy.contains('edit').click();
         cy.contains('save').click();
         cy.chart().then(chart => {
-            const ellipse = chart.annotations[0].shapes[0];
 
+
+            const ellipse = chart.annotations[0].shapes[0];
             assert.closeTo(
                 ellipse.options.ry,
-                26,
+                10,
                 1,
                 `Ry property shouldn't change after popup edit.`
             );
@@ -167,13 +171,11 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
     })
 
     it('Ellipse should adjust its values when extremes change.', () => {
+
+        cy.contains('3m').click();
             cy.chart().then(chart => {
                 const ellipse = chart.annotations[0].shapes[0];
 
-                chart.xAxis[0].setExtremes(
-                    ellipse.points[0].x,
-                    ellipse.points[1].x
-                );
 
                 const xAxis = chart.xAxis[ellipse.points[0].options.xAxis],
                     yAxis = chart.yAxis[ellipse.points[0].options.yAxis],
@@ -184,34 +186,36 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
 
                 assert.closeTo(
                     x,
-                    chart.plotLeft,
-                    5,
-                    'New position of the first point should be equal to expected value.'
+                    525,
+                    3,
+                    'X position of 1 point should adjust to new extremes.'
                 );
                 assert.closeTo(
                     y,
-                    213,
-                    5,
-                    'New position of the first point should be equal to expected value.'
+                    163,
+                    3,
+                    'Y position of 1 point should adjust to new extremes.'
                 );
                 assert.closeTo(
                     x2,
-                    chart.plotLeft + chart.plotWidth + 5,
-                    5,
-                    'New position of the second point should be equal to expected value.'
+                    123,
+                    3,
+                    'X position of 2 point should adjust to new extremes.'
                 );
                 assert.closeTo(
                     y2,
-                    113,
-                    1,
-                    'New position of the second point should be equal to expected value.'
+                    163,
+                    3,
+                    'Y position of 2 point should adjust to new extremes.'
                 ); 
+
                 assert.closeTo(
                     ellipse.options.ry,
-                    26,
+                    10,
                     1,
                     `RY property should adjust to current extremes.`
                 );
             });
         })
+
 });
