@@ -66,7 +66,7 @@ const filesize = async () => {
         console.log([
             '',
             colors.cyan(name),
-            printRow(colsizes, ['', 'gzipped', 'compiled', 'size']),
+            printRow(colsizes, ['', 'gzipped', 'compiled', 'source']),
             printRow(colsizes, ['New:', current.gzip, current.compiled, current.size]),
             printRow(colsizes, ['HEAD:', head.gzip, head.compiled, head.size]),
             printRow(colsizes, ['Diff:', diff(current.gzip, head.gzip) + 'B', diff(current.compiled, head.compiled) + 'B', diff(current.size, head.size) + 'B']),
@@ -112,7 +112,7 @@ const filesize = async () => {
 
     await compileTypescript();
     await runFileSize(results, 'new');
-    await commandLine(`git add . && git stash -m '${stashName}'`);
+    await commandLine(`git add . && git stash push -m '${stashName}'`);
     await compileTypescript();
     await runFileSize(results, 'head');
 
