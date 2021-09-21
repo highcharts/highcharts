@@ -202,3 +202,34 @@ QUnit.test('Scrolling inverted chart with a flag series.', function (assert) {
         'The flag series\' DOM elements should not contain NaN attributes values (#14063).'
     );
 });
+
+QUnit.test('Distributing the flag, #16041.)', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 800
+        },
+        series: [{
+            data: [
+                [1, 10],
+                [6, 60]
+            ]
+        }, {
+            data: [{
+                x: 5,
+                title: 'Very long long text very long long text'
+            }],
+            type: 'flags'
+        }]
+    });
+
+    assert.ok(
+        chart.series[1].points[0].graphic.x > 0,
+        'The flag graphic should have a positive x position.'
+    );
+    chart.setSize(400);
+    assert.ok(
+        chart.series[1].points[0].graphic.x > 0,
+        `After decreasing the chart size, the flag graphic should be distributed
+        and still have a positive x position.`
+    );
+});

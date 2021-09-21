@@ -509,12 +509,21 @@ class FlagsSeries extends ColumnSeries {
 
         // Handle X-dimension overlapping
         if (!options.allowOverlapX) {
+            let maxDistance = 100;
+
             objectEach(boxesMap, function (box): void {
                 box.plotX = box.anchorX;
                 boxes.push(box);
+                maxDistance = Math.max(box.size, maxDistance);
             });
 
-            distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
+            // If necessary (for overlapping or long labels)  distribute it
+            // depending on the label width or a hardcoded value, #16041.
+            distribute(
+                boxes,
+                inverted ? yAxis.len : this.xAxis.len,
+                maxDistance
+            );
 
             points.forEach(function (point): void {
                 const box = point.graphic && boxesMap[point.plotX as any];
