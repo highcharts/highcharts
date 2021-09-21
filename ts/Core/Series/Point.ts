@@ -721,13 +721,14 @@ class Point {
      * transformed to `{ y: 10 }`, and an array config like `[1, 10]` in a
      * scatter series will be transformed to `{ x: 1, y: 10 }`.
      *
+     * @deprecated
      * @function Highcharts.Point#optionsToObject
      *
      * @param {Highcharts.PointOptionsType} options
-     *        The input option.
+     * Series data options.
      *
      * @return {Highcharts.Dictionary<*>}
-     *         Transformed options.
+     * Transformed point options.
      */
     public optionsToObject(
         options: (PointOptions|PointShortOptions)
