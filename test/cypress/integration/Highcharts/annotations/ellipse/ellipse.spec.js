@@ -54,7 +54,7 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
 
             assert.closeTo(
                 ellipse.options.ry,
-                20,
+                15,
                 1,
                 'Calculated ry should be close to expected value.'
             );
@@ -94,7 +94,7 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
         cy.get('.highcharts-control-points')
             .children()
             .first()
-            .dragTo('.highcharts-container', 250, 100);
+            .dragTo('.highcharts-container', 250, 200);
         cy.get('.highcharts-control-points')
             .children()
             .eq(1)
@@ -122,7 +122,7 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
             );
             assert.closeTo(
                 y,
-                100,
+                200,
                 1,
                 'New position of the first point should be equal to expected value.'
             );
@@ -166,9 +166,9 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
     it('Ellipse should adjust its values when extremes change.', () => {
 
             cy.chart().then(chart => {
-                chart.xAxis[0].setExtremes(Date.UTC(2020), Date.UTC(2021));
-                const ellipse = chart.annotations[0].shapes[0],
-                    xAxis = chart.xAxis[ellipse.points[0].options.xAxis],
+                const ellipse = chart.annotations[0].shapes[0];
+                chart.xAxis[0].setExtremes(ellipse.points[0].x, ellipse.points[1].x);
+                const xAxis = chart.xAxis[ellipse.points[0].options.xAxis],
                     yAxis = chart.yAxis[ellipse.points[0].options.yAxis],
                     x = xAxis.toPixels(ellipse.points[0].x),
                     y = yAxis.toPixels(ellipse.points[0].y),
@@ -176,25 +176,25 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
                     y2 = yAxis.toPixels(ellipse.points[1].y);
                 assert.closeTo(
                     x,
-                    180,
+                    chart.plotLeft,
                     1,
                     'New position of the first point should be equal to expected value.'
                 );
                 assert.closeTo(
                     y,
-                    58,
-                    1,
+                    213,
+                    5,
                     'New position of the first point should be equal to expected value.'
                 );
                 assert.closeTo(
                     x2,
-                    593,
-                    1,
+                    chart.plotLeft + chart.plotWidth + 5,
+                    5,
                     'New position of the second point should be equal to expected value.'
                 );
                 assert.closeTo(
                     y2,
-                    138,
+                    113,
                     1,
                     'New position of the second point should be equal to expected value.'
                 ); 
