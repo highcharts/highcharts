@@ -18,6 +18,7 @@ import Annotation from '../Annotations.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
+    defined,
     extend,
     isNumber,
     merge,
@@ -452,10 +453,15 @@ class Measure extends Annotation {
         let selectType = this.options.typeOptions.selectType,
             controlPoint;
 
-        if (selectType === 'x') {
-            options.style.cursor = 'ew-resize';
-        } else if (selectType === 'y') {
-            options.style.cursor = 'ns-resize';
+        if (
+            !defined(this.userOptions.controlPointOptions &&
+                this.userOptions.controlPointOptions.style.cursor)
+        ) {
+            if (selectType === 'x') {
+                options.style.cursor = 'ew-resize';
+            } else if (selectType === 'y') {
+                options.style.cursor = 'ns-resize';
+            }
         }
 
         controlPoint = new ControlPoint(
