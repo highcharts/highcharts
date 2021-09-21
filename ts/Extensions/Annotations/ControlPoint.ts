@@ -165,8 +165,6 @@ class ControlPoint implements eventEmitterMixin.Type {
         const chart = this.chart,
             options = this.options;
 
-        options.style.cursor = this.options.cursorType || 'pointer';
-
         this.graphic = chart.renderer
             .symbol(
                 options.symbol,
