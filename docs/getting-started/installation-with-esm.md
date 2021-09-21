@@ -138,12 +138,12 @@ to download and reduces the size of your project. It is especially useful when
 only a specific chart type is needed. See the following comparison for our
 examples.
 
-| File              | Download Size | Saving |
-|-------------------|---------------|--------|
-| highcharts.js     | 303 kB        | 0%     |
-| LineSeries.js     | 229 kB        | 24%    |
-| ColumnSeries.js   | 238 kB        | 21%    |
-| PieSeries.js      | 246 kB        | 19%    |
+| Bundle (compiled+gzipped) | Download Size | Saving |
+|---------------------------|---------------|--------|
+| highcharts.js             | 100,509 bytes |     0% |
+| LineSeries.js             |  78,268 bytes |    22% |
+| ColumnSeries.js           |  80,046 bytes |    20% |
+| PieSeries.js              |  83,085 bytes |    17% |
 
 
 
