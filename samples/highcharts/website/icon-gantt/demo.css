@@ -1,0 +1,426 @@
+@import 'https://code.highcharts.com/css/highcharts.css';
+
+/*BUTTONS OUTSIDE CHART */
+.main-container #button-group{
+	width:250px;
+	text-align: center;
+	margin-top: 10px;
+	opacity:0;
+}
+
+.main-container  .btn-primary{
+	background-color: #2F2B38;
+	border-color: #2F2B38;
+}
+
+.main-container  .btn-primary:hover{
+	background-color: #2F2B38;
+	border-color: #2F2B38;
+	opacity:.8
+}
+
+.main-container  .btn-primary.disabled, 
+.main-container .btn-primary:disabled {
+	color: #fff;
+	background-color: #2F2B38;
+	border-color: #2F2B38;
+}
+
+.main-container  .btn-check:focus + .btn-primary, 
+.main-container .btn-primary:focus {
+	color: #fff;
+	background-color: #2F2B38;
+	border-color: #2F2B38;
+	box-shadow: 0 0 0 .25rem rgba(49,132,253,.5);
+}
+
+/*CHART */
+
+.chart-container .thick{
+	stroke-width:1;
+	stroke:white;
+	color:white;
+	transition: all 2s;
+}
+
+.chart-container .thin{
+	stroke-width: 1;
+	stroke:white;
+	color:white;
+	transition: all 2s;
+}
+.chart-container .transparent{
+	opacity:1;
+	stroke-width: 1;
+	stroke:white;
+	color:white;
+	transition: all 2s
+}
+
+.chart-container .highcharts-area,
+.chart-container .highcharts-arearange{
+	fill-opacity:1;
+	stroke:transparent;
+}
+
+.chart-container  .highcharts-title,
+.chart-container  .highcharts-subtitle{
+	fill:#fff;
+	stroke:#fff;
+	opacity: 1;
+	font-size: .9rem;
+	font-weight: 400;
+}
+
+.chart-container  .highcharts-subtitle{
+	opacity:0;
+}
+
+.chart-container  .highcharts-title{
+	font-size:1rem;
+	font-weight: 700;
+}
+
+.chart-container  .line{
+	color:#fff;
+	stroke:#fff;
+	stroke-width:1px;
+}
+
+.chart-container  .highcharts-tick,
+.chart-container  .highcharts-axis-line {
+	stroke:#ebebeb;
+}
+
+.chart-container  .highcharts-minor-grid-line {
+	stroke: #f2f2f2;
+	opacity:.5;
+	stroke-dasharray: 2px;
+}
+
+.chart-container  .highcharts-axis-labels.highcharts-yaxis-labels{
+	font-size:1em;
+	font-weight:300;
+}
+
+.chart-container  .highcharts-point-connecting-path-start-marker{
+	fill:#fff;
+}
+
+.chart-container  .highcharts-axis-labels {
+	fill: #fff;
+	cursor: default;
+	font-size: 0.7rem;
+}
+
+.chart-container .highcharts-data-label text, 
+.chart-container text.highcharts-data-label {
+	fill: #fff;
+	font-weight: 400;
+}
+
+.chart-container .highcharts-color-0{
+	fill:#8087e8;
+	stroke:#fff;
+}
+
+.chart-container .highcharts-point-connecting-path.highcharts-color-0,
+.chart-container .highcharts-point-connecting-path.highcharts-color-1,
+.chart-container .highcharts-point-connecting-path.highcharts-color-2{
+	fill:transparent;
+}
+
+.chart-container .highcharts-color-1{
+	fill:#e2a13f;
+	stroke:#fff;
+}
+
+.chart-container .highcharts-color-2{
+	fill:#82d2a6;
+	stroke:#fff;
+}
+
+.chart-container .highcharts-container {
+  position: relative;
+  overflow: hidden;
+  width: 500px;
+  height: 500px;
+  text-align: left;
+  line-height: normal;
+  z-index: 0;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 12px;
+  user-select: none;
+  touch-action: manipulation;
+  outline: none;
+}
+
+.chart-container .highcharts-background{
+	fill:url(#bg-gradient);
+	fill:#2F2B38;
+	transition:all 1s;
+}
+
+.chart-container .highcharts-xaxis-grid .highcharts-grid-line {
+	stroke-width: 1px;
+}
+.chart-container .highcharts-grid-line {
+	fill: none;
+	stroke: transparent;
+	z-index: 40;
+}
+
+.chart-container .highcharts-plot-band, .highcharts-pane{
+	fill:#30426B;
+	fill-opacity:1;
+	z-index: 30;
+}
+
+.chart-container .highcharts-legend-series-active g.highcharts-series:not(.highcharts-series-hover),
+.chart-container .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
+.chart-container .highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
+.chart-container .highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
+  opacity: 1;
+}
+
+.chart-container .highcharts-series-inactive {
+  opacity: 1;
+  transition: opacity 50ms;
+}
+
+.chart-container .highcharts-tooltip-0{
+	filter:drop-shadow(5px 7px 13px rgba(0,0,0,0.14)) !important;;
+	box-shadow: 5px 7px 13px 1px rgba(0,0,0,0.14);
+}
+
+.chart-container .highcharts-tooltip-box,
+.highcharts-tooltip-container .highcharts-tooltip.tip .highcharts-label-box {
+	stroke-width: 0px;
+	border:none;
+	stroke:#fff;
+	fill: #fff;
+	fill-opacity: 1;
+	filter:drop-shadow(0px 8px 24px rgba(0, 0, 0, 0.2));
+}
+
+.chart-container .highcharts-tooltip text {
+  fill: #333333;
+}
+
+.chart-container .highcharts-tooltip{
+	z-index: 100
+}
+
+.chart-container .highcharts-graph {
+    fill: unset;
+    stroke-width: unset;
+    stroke:unset;
+    stroke-linecap:butt;
+    stroke-linejoin: round;
+}
+
+#gantt{
+	width:250px;
+	height:250px;
+}
+
+#gantt .highcharts-plot-background{
+	fill:#45445d;
+	stroke:transparent;
+}
+
+#gantt .cover{
+	fill:#46445d;
+	stroke:transparent;
+}
+
+#gantt .foreground{
+	fill:#201836;
+	stroke:transparent;
+}
+
+#gantt .step-w,
+#gantt .pole{
+	fill:#fff;
+	stroke:transparent;
+}
+
+#gantt .step-p{
+	fill:#8087E8;
+	stroke:transparent;
+}
+
+#gantt .flag{
+	fill:transparent;
+	stroke:transparent;
+}
+
+#gantt .flag.show{
+	fill:#8bf2b6;
+	stroke:transparent;
+}
+#gantt .transparent{
+	fill:transparent;
+	stroke:transparent;
+}
+
+#gantt .green{
+	fill:#8bf2b6;
+	stroke:#8bf2b6;
+}
+
+#gantt .particle-2{
+	transform-origin: center;
+	opacity: 0;
+	transform: translate(-10px,-10px) scale(.2);
+	transition: all 1s;
+}
+
+#gantt .particle-2.grow{
+	transform: translate(-10px,-10px) scale(.5);
+	opacity: 1;
+	transform-origin: center;
+}
+
+#gantt .particle-3{
+	transform-origin: center;
+	opacity: 0;
+	transform: translate(0px,-40px) scale(.2);
+	transition: all 1s;
+}
+
+#gantt .particle-3.grow{
+	transform: translate(0px,-40px) scale(.6);
+	opacity: 1;
+	transform-origin: center;
+}
+
+#gantt .particle-5{
+	transform-origin: center;
+	opacity: 0;
+	transform: translate(-20px,-38px) scale(.2);
+	transition: all 1s;
+}
+
+#gantt .particle-5.grow{
+	transform: translate(-20px,-38px) scale(.6);
+	opacity: 1;
+	transform-origin: center;
+}
+
+#gantt .particle-6{
+	transform-origin: center;
+	opacity: 0;
+	transform: translate(-20px,-15px) scale(.2);
+	transition: all 1s;
+}
+
+#gantt .particle-6.grow{
+	transform: translate(-20px,-15px) scale(.6);
+	opacity: 1;
+	transform-origin: center;
+}
+
+#gantt #clip{
+	transform:scale(.6);
+}
+
+#gantt .gantt-label{
+	width:100px;
+	padding:2px;
+	font-weight:bold;
+	position:absolute;
+	left:15px;
+	top:-25px;
+	color:#fff
+}
+
+#gantt .day-label{
+	position:absolute;
+	top:-8px;
+	text-align:center;
+	background-color:
+	transparent;
+	color:#fff;
+	font-size:0.7rem;
+}
+
+@media screen  and (min-width: 500px) {
+
+	#gantt .highcharts-title{
+		font-size:1.4em;
+	}
+	#gantt .highcharts-subtitle{
+		font-size:1em;
+		opacity:1;
+	}
+	.main-container #button-group{
+		width:500px;
+	}
+
+	#gantt{
+		width:500px;
+		height:500px;
+	}
+
+	#gantt .particle-2{
+		transform-origin: center;
+		opacity: 0;
+		transform: translate(-20px,-60px) scale(.2);
+		transition: all 1s;
+	}
+
+	#gantt .particle-2.grow{
+		transform: none;
+		opacity: 1;
+	}
+
+	#gantt .particle-3{
+		transform-origin: center;
+		opacity: 0;
+		transform: translate(10px,-150px) scale(.2);
+		transition: all 1s;
+	}
+
+	#gantt .particle-3.grow{
+		transform: none;
+		opacity: 1;
+	}
+
+	#gantt .particle-5{
+		transform-origin: center;
+		opacity: 0;
+		transform: translate(-40px,-150px) scale(.2);
+		transition: all 1s;
+	}
+
+	#gantt .particle-5.grow{
+		transform: none;
+		opacity: 1;
+	}
+
+	#gantt .particle-6{
+		transform-origin: center;
+		opacity: 0;
+		transform: translate(-40px,-100px) scale(.2);
+		transition: all 1s;
+	}
+
+	#gantt .particle-6.grow{
+		transform: none;
+		opacity: 1;
+	}
+
+	#gantt .gantt-label{
+		width:100px;
+		padding:2px;
+		font-weight:bold;
+		font-size:1.2em;
+		position:absolute;
+		left:20px;
+		top:-50px;
+		color:#fff
+	}
+	
+}

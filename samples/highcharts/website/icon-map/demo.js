@@ -20,7 +20,7 @@ Math.easeOutBounce = pos => {
 
 const big = window.matchMedia("(min-width: 500px)").matches;
 
-
+const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
 const maps = {
     chart: {
         animation: {
@@ -183,7 +183,7 @@ const maps = {
         enabled: false
     },
     tooltip: {
-        enabled: true
+        enabled: false
     },
     plotOptions: {
         series: {
@@ -491,7 +491,7 @@ const maps = {
                     className: 'particle-1',
                     marker: {
                         enabled: true,
-                        symbol: 'url(p1.svg)',
+                        symbol: 'url(' + imgPath + 'p1.svg)',
                         width: 25,
                         height: 35
 
@@ -503,7 +503,7 @@ const maps = {
                     className: 'particle-2',
                     marker: {
                         enabled: true,
-                        symbol: 'url(p2.svg)',
+                        symbol: 'url(' + imgPath + 'p2.svg)',
                         width: 30,
                         height: 45
 
@@ -515,7 +515,7 @@ const maps = {
                     className: 'particle-6',
                     marker: {
                         enabled: true,
-                        symbol: 'url(p6.svg)',
+                        symbol: 'url(' + imgPath + 'p6.svg)',
                         width: 45,
                         height: 45
 
@@ -527,7 +527,7 @@ const maps = {
                     className: 'particle-5',
                     marker: {
                         enabled: true,
-                        symbol: 'url(p5.svg)',
+                        symbol: 'url(' + imgPath + 'p5.svg)',
                         width: 35,
                         height: 50
 
