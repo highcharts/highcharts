@@ -1388,16 +1388,18 @@ setOptions({
                 },
                 steps: [
                     function (this: NavigationBindings, e: PointerEvent, annotation: Annotation): void {
-
-                        annotation.shapes[0].translatePoint(
+                        const target = annotation.shapes[0] as ControllableEllipse;
+                        const position = target.getAbsolutePosition(
+                            target.points[1]
+                        );
+                        target.translatePoint(
                             e.chartX -
-                            ((annotation.shapes[0].points[1] as MockPoint).plotX +
-                            annotation.shapes[0].chart.plotLeft),
+                            position.x,
                             e.chartY -
-                            ((annotation.shapes[0].points[1] as MockPoint).plotY +
-                            annotation.shapes[0].chart.plotTop),
-                            1);
-                        annotation.shapes[0].redraw(false);
+                            position.y,
+                            1
+                        );
+                        target.redraw(false);
                     },
 
                     function (this: NavigationBindings, e: PointerEvent, annotation: Annotation): void {

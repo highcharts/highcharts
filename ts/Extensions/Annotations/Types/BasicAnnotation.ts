@@ -188,12 +188,34 @@ class BasicAnnotation extends Annotation {
                 this: Highcharts.AnnotationControlPoint,
                 target: ControllableEllipse
             ): PositionObject {
+                const position = target.getAbsolutePosition(target.points[0]);
 
                 return {
-                    x: target.chart.plotLeft + (target.points[0] as MockPoint).plotX -
-                      this.graphic.width / 2,
-                    y: target.chart.plotTop + (target.points[0] as MockPoint).plotY -
-                      this.graphic.width / 2
+                    x: position.x - this.graphic.width / 2,
+                    y: position.y - this.graphic.width / 2
+                };
+            },
+            events: {
+                drag: function (
+                    this: Annotation,
+                    e: Highcharts.AnnotationEventObject,
+                    target: ControllableEllipse
+                ): void {
+                    const position = target.getAbsolutePosition(target.points[0]);
+                    target.translatePoint(e.chartX - position.x, e.chartY - position.y, 0);
+                    target.redraw(false);
+                }
+            }
+        }, {
+            positioner: function (
+                this: Highcharts.AnnotationControlPoint,
+                target: ControllableEllipse
+            ): PositionObject {
+                const position = target.getAbsolutePosition(target.points[1]);
+
+                return {
+                    x: position.x - this.graphic.width / 2,
+                    y: position.y - this.graphic.width / 2
                 };
             },
             events: {
@@ -203,37 +225,8 @@ class BasicAnnotation extends Annotation {
                     target: ControllableEllipse
                 ): void {
 
-                    target.translatePoint(
-                        e.chartX - ((target.points[0] as MockPoint).plotX + target.chart.plotLeft),
-                        e.chartY - ((target.points[0] as MockPoint).plotY + target.chart.plotTop),
-                        0);
-
-                    target.redraw(false);
-                }
-            }
-        }, {
-            positioner: function (
-                this: Highcharts.AnnotationControlPoint,
-                target: ControllableEllipse
-            ): PositionObject {
-                return {
-                    x: target.chart.plotLeft + (target.points[1] as MockPoint).plotX -
-                      this.graphic.width / 2,
-                    y: target.chart.plotTop + (target.points[1] as MockPoint).plotY -
-                      this.graphic.width / 2
-                };
-            },
-            events: {
-                drag: function (
-                    this: Annotation,
-                    e: Highcharts.AnnotationEventObject,
-                    target: ControllableEllipse): void {
-
-                    target.translatePoint(e.chartX - ((target.points[1] as MockPoint).plotX +
-                        target.chart.plotLeft), e.chartY -
-                      ((target.points[1] as MockPoint).plotY +
-                        target.chart.plotTop), 1);
-
+                    const position = target.getAbsolutePosition(target.points[1]);
+                    target.translatePoint(e.chartX - position.x, e.chartY - position.y, 1);
                     target.redraw(false);
                 }
             }
