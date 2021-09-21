@@ -384,10 +384,9 @@ wrap(Series.prototype, 'processData', function (
     this: Series,
     proceed: Function
 ): void {
+    const series = this;
 
-    let series = this,
-        dataToMeasure = this.options.data,
-        firstPoint: (PointOptions|PointShortOptions);
+    let dataToMeasure = this.options.data;
 
     /**
      * Used twice in this function, first on this.options.data, the second
@@ -432,6 +431,7 @@ wrap(Series.prototype, 'processData', function (
         // Enter or exit boost mode
         if (this.isSeriesBoosting) {
             // Force turbo-mode:
+            let firstPoint;
             if (this.options.data && this.options.data.length) {
                 firstPoint = this.getFirstValidPoint(this.options.data);
                 if (!isNumber(firstPoint) && !isArray(firstPoint)) {
