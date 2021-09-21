@@ -453,9 +453,9 @@ class Measure extends Annotation {
             controlPoint;
 
         if (selectType === 'x') {
-            options.cursorType = 'ew-resize';
+            options.style.cursor = 'ew-resize';
         } else if (selectType === 'y') {
-            options.cursorType = 'ns-resize';
+            options.style.cursor = 'ns-resize';
         }
 
         controlPoint = new ControlPoint(

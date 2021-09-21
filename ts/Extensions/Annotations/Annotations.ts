@@ -118,7 +118,6 @@ declare global {
             drag?: AnnotationControlPointDragEventFunction;
         }
         interface AnnotationControlPointOptionsObject {
-            cursorType?: CSSObject['cursor'];
             draggable?: undefined;
             events: AnnotationControlPointEventsOptionsObject;
             height: number;
@@ -1603,9 +1602,10 @@ merge<Annotation>(
                     width: 10,
                     height: 10,
                     style: {
+                        cursor: 'pointer',
+                        fill: Palette.backgroundColor,
                         stroke: Palette.neutralColor100,
-                        'stroke-width': 2,
-                        fill: Palette.backgroundColor
+                        'stroke-width': 2
                     },
                     visible: false,
                     events: {}
