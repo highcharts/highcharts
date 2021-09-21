@@ -68,6 +68,7 @@ Gulp.registry(new GulpForwardReference());
     'scripts-watch',
     'test',
     'test-tree',
+    'test-ts',
     'reset-visual-references',
     'tsdoc',
     'tsdoc-debug',

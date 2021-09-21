@@ -1,0 +1,6 @@
+---
+ name: Highcharts Stock Demo
+ authors:
+   - Karol Kolodziej
+ js_wrap: b
+...

@@ -118,6 +118,9 @@ const ScrollbarDefaults: ScrollbarOptions = {
      */
     minWidth: 6,
 
+    /** @ignore-option */
+    opposite: true,
+
     /**
      * Whether to show or hide the scrollbar when the scrolled content is
      * zoomed out to it full extent.

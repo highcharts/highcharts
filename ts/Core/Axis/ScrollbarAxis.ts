@@ -219,9 +219,16 @@ class ScrollbarAxis {
                         (scrollbarsOffsets as any)[0] += offset;
                     }
 
+                    let xPosition;
+                    if (!scrollbar.options.opposite) {
+                        xPosition = axis.opposite ? 0 : axisMargin;
+                    } else {
+                        xPosition = axis.left + axis.width + 2 + (scrollbarsOffsets as any)[0] -
+                            (axis.opposite ? 0 : axisMargin);
+                    }
+
                     scrollbar.position(
-                        axis.left + axis.width + 2 + (scrollbarsOffsets as any)[0] -
-                            (axis.opposite ? 0 : axisMargin),
+                        xPosition,
                         axis.top,
                         axis.width,
                         axis.height
@@ -271,7 +278,8 @@ class ScrollbarAxis {
         // Make space for a scrollbar:
         addEvent(AxisClass, 'afterGetOffset', function (): void {
             const axis = this as ScrollbarAxis,
-                index = axis.horiz ? 2 : 1,
+                opposite = axis.scrollbar && !axis.scrollbar.options.opposite,
+                index = axis.horiz ? 2 : opposite ? 3 : 1,
                 scrollbar = axis.scrollbar;
 
             if (scrollbar) {
