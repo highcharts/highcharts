@@ -158,15 +158,9 @@ describe('An indicator on indicator, #15696.', () => {
 
         cy.addIndicator(); // Add SMA indicator with period 20.
 
-        cy.chart().then((chart) => {
-            // Select the first 3m period.
-            chart.xAxis[0].setExtremes(1565098200000, 1565098200000 + 36e5 *24 *90);
-        });
-
         cy.chart().should(chart =>
-            // Select the first 3m period.
             assert.strictEqual(
-                chart.series[2].processedXData.length - chart.series[3].processedXData.length,
+                chart.series[2].xData.length - chart.series[3].xData.length,
                 19,
                 `The second SMA indicator which is based on the previous SMA indicator
                 should be shifted by period (19) thus data should have 19 fewer points.`
