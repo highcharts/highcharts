@@ -1771,7 +1771,7 @@ defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
 // zoom and pan right click menus.
 /**
  * A collection of options for buttons and menus appearing in the exporting
- * module.
+ * module or in Stock Tools.
  *
  * @requires     modules/exporting
  * @optionparent navigation
