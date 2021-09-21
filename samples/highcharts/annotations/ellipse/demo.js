@@ -33,10 +33,8 @@ Highcharts.chart('container', {
                     );
 
                     return {
-                        x: position.x -
-                        this.graphic.width / 2,
-                        y: position.y -
-                        this.graphic.width / 2
+                        x: position.x - this.graphic.width / 2,
+                        y: position.y - this.graphic.height / 2
                     };
                 },
                 events: {
@@ -44,11 +42,10 @@ Highcharts.chart('container', {
                         const position = target.getAbsolutePosition(
                             target.points[0]
                         );
+
                         target.translatePoint(
-                            e.chartX -
-                            position.x,
-                            e.chartY -
-                            position.y,
+                            e.chartX - position.x,
+                            e.chartY - position.y,
                             0
                         );
 
@@ -62,10 +59,8 @@ Highcharts.chart('container', {
                     );
 
                     return {
-                        x: position.x -
-                        this.graphic.width / 2,
-                        y: position.y -
-                        this.graphic.width / 2
+                        x: position.x - this.graphic.width / 2,
+                        y: position.y - this.graphic.height / 2
                     };
                 },
                 events: {
@@ -73,13 +68,13 @@ Highcharts.chart('container', {
                         const position = target.getAbsolutePosition(
                             target.points[1]
                         );
+
                         target.translatePoint(
-                            e.chartX -
-                            position.x,
-                            e.chartY -
-                            position.y,
+                            e.chartX - position.x,
+                            e.chartY - position.y,
                             1
                         );
+
                         target.redraw(false);
                     }
                 }
@@ -94,12 +89,10 @@ Highcharts.chart('container', {
                         attrs = target.getAttrs(position, position2);
 
                     return {
-                        x: attrs.cx -
-                        this.graphic.width / 2 +
-                        attrs.ry * Math.sin((attrs.angle * Math.PI) / 180),
-                        y: attrs.cy -
-                        this.graphic.height / 2 -
-                        attrs.ry * Math.cos((attrs.angle * Math.PI) / 180)
+                        x: attrs.cx - this.graphic.width / 2 +
+                            attrs.ry * Math.sin((attrs.angle * Math.PI) / 180),
+                        y: attrs.cy - this.graphic.height / 2 -
+                            attrs.ry * Math.cos((attrs.angle * Math.PI) / 180)
                     };
                 },
                 events: {
@@ -115,11 +108,12 @@ Highcharts.chart('container', {
                                 position2,
                                 e.chartX,
                                 e.chartY
+                            ),
+                            yAxis = target.getYAxis(),
+                            newRY = Math.abs(
+                                yAxis.toValue(0) - yAxis.toValue(newR)
                             );
-                        const yAxis = target.getYAxis();
-                        const newRY = Math.abs(
-                            yAxis.toValue(0) - yAxis.toValue(newR)
-                        );
+
                         target.setYRadius(newRY);
                         target.redraw(false);
                     }
@@ -130,14 +124,12 @@ Highcharts.chart('container', {
     xAxis: {
         minRange: 0.1
     },
-    series: [
-        {
-            data: Array.from(
-                {
-                    length: 100
-                },
-                (_, x) => Math.floor(Math.cos(x / 10) * 20)
-            )
-        }
-    ]
+    series: [{
+        data: Array.from(
+            {
+                length: 100
+            },
+            (_, x) => Math.floor(Math.cos(x / 10) * 20)
+        )
+    }]
 });

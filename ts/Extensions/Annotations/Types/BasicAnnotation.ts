@@ -17,8 +17,7 @@ import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 
 const {
-    merge,
-    isNumber
+    merge
 } = U;
 
 /* eslint-disable no-invalid-this */
@@ -192,7 +191,7 @@ class BasicAnnotation extends Annotation {
 
                 return {
                     x: position.x - this.graphic.width / 2,
-                    y: position.y - this.graphic.width / 2
+                    y: position.y - this.graphic.height / 2
                 };
             },
             events: {
@@ -201,8 +200,15 @@ class BasicAnnotation extends Annotation {
                     e: Highcharts.AnnotationEventObject,
                     target: ControllableEllipse
                 ): void {
-                    const position = target.getAbsolutePosition(target.points[0]);
-                    target.translatePoint(e.chartX - position.x, e.chartY - position.y, 0);
+                    const position =
+                        target.getAbsolutePosition(target.points[0]);
+
+                    target.translatePoint(
+                        e.chartX - position.x,
+                        e.chartY - position.y,
+                        0
+                    );
+
                     target.redraw(false);
                 }
             }
@@ -215,7 +221,7 @@ class BasicAnnotation extends Annotation {
 
                 return {
                     x: position.x - this.graphic.width / 2,
-                    y: position.y - this.graphic.width / 2
+                    y: position.y - this.graphic.height / 2
                 };
             },
             events: {
@@ -224,9 +230,14 @@ class BasicAnnotation extends Annotation {
                     e: Highcharts.AnnotationEventObject,
                     target: ControllableEllipse
                 ): void {
-
                     const position = target.getAbsolutePosition(target.points[1]);
-                    target.translatePoint(e.chartX - position.x, e.chartY - position.y, 1);
+
+                    target.translatePoint(
+                        e.chartX - position.x,
+                        e.chartY - position.y,
+                        1
+                    );
+
                     target.redraw(false);
                 }
             }
@@ -235,23 +246,20 @@ class BasicAnnotation extends Annotation {
                 this: Highcharts.AnnotationControlPoint,
                 target: ControllableEllipse
             ): PositionObject {
-
                 const position = target.getAbsolutePosition(target.points[0]),
                     position2 = target.getAbsolutePosition(target.points[1]),
                     attrs = target.getAttrs(position, position2);
 
-
                 return {
-                    x: attrs.cx - this.graphic.width / 2 + attrs.ry *
-                      Math.sin((attrs.angle * Math.PI) / 180),
-                    y: attrs.cy - this.graphic.height / 2 - attrs.ry *
-                      Math.cos((attrs.angle * Math.PI) / 180)
+                    x: attrs.cx - this.graphic.width / 2 +
+                        attrs.ry * Math.sin((attrs.angle * Math.PI) / 180),
+                    y: attrs.cy - this.graphic.height / 2 -
+                        attrs.ry * Math.cos((attrs.angle * Math.PI) / 180)
                 };
-
-
             },
             events: {
-                drag: function (this: Annotation,
+                drag: function (
+                    this: Annotation,
                     e: Highcharts.AnnotationEventObject,
                     target: ControllableEllipse
                 ): void {
@@ -265,7 +273,9 @@ class BasicAnnotation extends Annotation {
                         ),
                         yAxis = target.getYAxis(),
                         newRY = Math.abs(yAxis.toValue(0) - yAxis.toValue(newR));
+
                     target.setYRadius(newRY);
+
                     target.redraw(false);
                 }
             }

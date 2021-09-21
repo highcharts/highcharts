@@ -25,12 +25,10 @@ import H from '../../Core/Globals.js';
 import D from '../../Core/DefaultOptions.js';
 const { setOptions } = D;
 import U from '../../Core/Utilities.js';
-import MockPoint from './MockPoint';
 import ControllableEllipse from './Controllables/ControllableEllipse';
 const {
     addEvent,
     attr,
-    correctFloat,
     fireEvent,
     isArray,
     isFunction,
@@ -1280,7 +1278,10 @@ setOptions({
                 /** @ignore-option */
                 className: 'highcharts-circle-annotation',
                 /** @ignore-option */
-                start: function (this: NavigationBindings, e: PointerEvent): Annotation | void {
+                start: function (
+                    this: NavigationBindings,
+                    e: PointerEvent
+                ): Annotation|void {
                     const coords = this.chart.pointer.getCoordinates(e),
                         coordsX = this.utils.getAssignedAxis(coords.xAxis),
                         coordsY = this.utils.getAssignedAxis(coords.yAxis),
@@ -1319,21 +1320,30 @@ setOptions({
                         e: PointerEvent,
                         annotation: Annotation
                     ): void {
-                        let mockPointOpts = annotation.options.shapes[0].point as MockPointOptions,
-                            inverted = this.chart.inverted,
-                            x,
-                            y,
+                        let mockPointOpts = annotation.options.shapes[0]
+                                .point as MockPointOptions,
                             distance;
 
-                        if (isNumber(mockPointOpts.xAxis) && isNumber(mockPointOpts.yAxis)) {
-                            x = this.chart.xAxis[mockPointOpts.xAxis].toPixels(mockPointOpts.x);
-
-                            y = this.chart.yAxis[mockPointOpts.yAxis].toPixels(mockPointOpts.y);
+                        if (
+                            isNumber(mockPointOpts.xAxis) &&
+                            isNumber(mockPointOpts.yAxis)
+                        ) {
+                            let inverted = this.chart.inverted,
+                                x = this.chart.xAxis[mockPointOpts.xAxis]
+                                    .toPixels(mockPointOpts.x),
+                                y = this.chart.yAxis[mockPointOpts.yAxis]
+                                    .toPixels(mockPointOpts.y);
 
                             distance = Math.max(
                                 Math.sqrt(
-                                    Math.pow(inverted ? y - e.chartX : x - e.chartX, 2) +
-                                        Math.pow(inverted ? x - e.chartY : y - e.chartY, 2)
+                                    Math.pow(
+                                        inverted ? y - e.chartX : x - e.chartX,
+                                        2
+                                    ) +
+                                    Math.pow(
+                                        inverted ? x - e.chartY : y - e.chartY,
+                                        2
+                                    )
                                 ),
                                 5
                             );
@@ -1349,7 +1359,10 @@ setOptions({
             },
             ellipseAnnotation: {
                 className: 'highcharts-ellipse-annotation',
-                start: function (this: NavigationBindings, e: PointerEvent): Annotation | void {
+                start: function (
+                    this: NavigationBindings,
+                    e: PointerEvent
+                ): Annotation|void {
                     const coords = this.chart.pointer.getCoordinates(e),
                         coordsX = this.utils.getAssignedAxis(coords.xAxis),
                         coordsY = this.utils.getAssignedAxis(coords.yAxis),
@@ -1386,26 +1399,35 @@ setOptions({
                     );
                 },
                 steps: [
-                    function (this: NavigationBindings, e: PointerEvent, annotation: Annotation): void {
-                        const target = annotation.shapes[0] as ControllableEllipse;
-                        const position = target.getAbsolutePosition(
-                            target.points[1]
-                        );
+                    function (
+                        this: NavigationBindings,
+                        e: PointerEvent,
+                        annotation: Annotation
+                    ): void {
+                        const target = annotation.shapes[0] as ControllableEllipse,
+                            position = target.getAbsolutePosition(
+                                target.points[1]
+                            );
+
                         target.translatePoint(
-                            e.chartX -
-                            position.x,
-                            e.chartY -
-                            position.y,
+                            e.chartX - position.x,
+                            e.chartY - position.y,
                             1
                         );
+
                         target.redraw(false);
                     },
-
-                    function (this: NavigationBindings, e: PointerEvent, annotation: Annotation): void {
-
-                        const target = annotation.shapes[0] as ControllableEllipse,
-                            position = target.getAbsolutePosition(target.points[0]),
-                            position2 = target.getAbsolutePosition(target.points[1]),
+                    function (
+                        this: NavigationBindings,
+                        e: PointerEvent,
+                        annotation: Annotation
+                    ): void {
+                        const target =
+                                annotation.shapes[0] as ControllableEllipse,
+                            position =
+                                target.getAbsolutePosition(target.points[0]),
+                            position2 =
+                                target.getAbsolutePosition(target.points[1]),
                             newR = target.getDistanceFromLine(
                                 position,
                                 position2,
@@ -1413,7 +1435,10 @@ setOptions({
                                 e.chartY
                             ),
                             yAxis = target.getYAxis(),
-                            newRY = Math.abs(yAxis.toValue(0) - yAxis.toValue(newR));
+                            newRY = Math.abs(
+                                yAxis.toValue(0) - yAxis.toValue(newR)
+                            );
+
                         target.setYRadius(newRY);
                         target.redraw(false);
                     }

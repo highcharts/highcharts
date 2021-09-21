@@ -10,13 +10,18 @@
 
 import type Annotation from '../Annotations';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import AxisType from '../../../Core/Axis/AxisType';
+import BBoxObject from '../../../Core/Renderer/BBoxObject';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import ControllablePath from './ControllablePath.js';
-import U from '../../../Core/Utilities.js';
-import BBoxObject from '../../../Core/Renderer/BBoxObject';
 import MockPointOptions from '../MockPointOptions';
-import AxisType from '../../../Core/Axis/AxisType';
-const { merge, defined } = U;
+
+import U from '../../../Core/Utilities.js';
+
+const {
+    merge,
+    defined
+} = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -33,15 +38,18 @@ const { merge, defined } = U;
  * @param {Highcharts.AnnotationsShapeOptions} options a shape's options
  * @param {number} index of the Ellipse
  */
+
 interface EllipseShapeOptions extends Highcharts.AnnotationsShapeOptions {
     yAxis: number;
     xAxis: number;
     ry: number;
 }
+
 interface ReferencePointsOptions {
     x: number;
     y: number;
 }
+
 class ControllableEllipse implements ControllableMixin.Type {
 
     /* *
@@ -75,7 +83,6 @@ class ControllableEllipse implements ControllableMixin.Type {
         this.init(annotation, options, index);
         this.collection = 'shapes';
     }
-
 
     /* *
      *
@@ -122,7 +129,6 @@ class ControllableEllipse implements ControllableMixin.Type {
      * Transform the middle point (center of an ellipse).
      * Mostly used to handle dragging of the ellipse.
      */
-
     public init(
         annotation: Annotation,
         options: EllipseShapeOptions,
@@ -133,11 +139,13 @@ class ControllableEllipse implements ControllableMixin.Type {
                 point.yAxis = options.yAxis;
             });
         }
+
         if (defined(options.xAxis)) {
             (options.points as MockPointOptions[]).forEach((point): void => {
                 point.xAxis = options.xAxis;
             });
         }
+
         ControllableMixin.init.call(this, annotation, options, index);
     }
 
@@ -146,12 +154,11 @@ class ControllableEllipse implements ControllableMixin.Type {
      * Render the element
      * @param parent parent SVG element.
      */
-
     public render(parent: SVGElement): void {
-        const attrs = this.attrsFromOptions(this.options),
-            graphic = this.annotation.chart.renderer.createElement('ellipse');
-        graphic.attr(attrs).add(parent);
-        this.graphic = graphic;
+        this.graphic = this.annotation.chart.renderer.createElement('ellipse')
+            .attr(this.attrsFromOptions(this.options))
+            .add(parent);
+
         ControllableMixin.render.call(this);
     }
 
@@ -175,11 +182,10 @@ class ControllableEllipse implements ControllableMixin.Type {
         return Math.abs(
             (point2.y - point1.y) * x0 - (point2.x - point1.x) * y0 +
             point2.x * point1.y - point2.y * point1.x
-        ) /
-            Math.sqrt(
-                (point2.y - point1.y) * (point2.y - point1.y) +
+        ) / Math.sqrt(
+            (point2.y - point1.y) * (point2.y - point1.y) +
                 (point2.x - point1.x) * (point2.x - point1.x)
-            );
+        );
     }
 
     /**
@@ -192,20 +198,25 @@ class ControllableEllipse implements ControllableMixin.Type {
         const x1 = position.x,
             y1 = position.y,
             x2 = position2.x,
-            y2 = position2.y;
-        const cx = (x1 + x2) / 2;
-        const cy = (y1 + y2) / 2;
-        const rx = Math.sqrt(((x1 - x2) * (x1 - x2)) / 4 + ((y1 - y2) * (y1 - y2)) / 4);
-        const tan = (y2 - y1) / (x2 - x1);
-        let angle = (Math.atan(tan) * 180) / Math.PI;
+            y2 = position2.y,
+            cx = (x1 + x2) / 2,
+            cy = (y1 + y2) / 2,
+            rx = Math.sqrt(
+                (x1 - x2) * (x1 - x2) / 4 + (y1 - y2) * (y1 - y2) / 4
+            ),
+            tan = (y2 - y1) / (x2 - x1);
+
+        let angle = Math.atan(tan) * 180 / Math.PI;
 
         if (cx < x1) {
             angle += 180;
         }
+
         const ry = this.getRY();
 
         return { cx, cy, rx, ry, angle };
     }
+
     /**
      * Get the value of minor radius of the ellipse.
      */
@@ -235,9 +246,7 @@ class ControllableEllipse implements ControllableMixin.Type {
      * Redraw the element
      * @param animation display an annimation
      */
-
     public redraw(animation?: boolean): void {
-
         const position = this.getAbsolutePosition(this.points[0]),
             position2 = this.getAbsolutePosition(this.points[1]),
             attrs = this.getAttrs(position, position2);
@@ -258,7 +267,9 @@ class ControllableEllipse implements ControllableMixin.Type {
                 y: -9e9
             });
         }
+
         this.graphic.placed = Boolean(position);
+
         ControllableMixin.redraw.call(this, animation);
     }
 

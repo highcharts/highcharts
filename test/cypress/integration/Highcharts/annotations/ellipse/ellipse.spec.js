@@ -25,33 +25,34 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
                 x2 = xAxis.toPixels(ellipse.points[1].x),
                 y2 = yAxis.toPixels(ellipse.points[1].y);
 
-           
-          
             assert.closeTo(
                 x1,
                 250,
                 1,
-                `First point's x value should be close to the place, where it was clicked.`
+                `First point's x value should be close to the place where
+                it was clicked.`
             );
             assert.closeTo(
                 y1,
                 200,
                 1,
-                `First point's y value should be close to the place, where it was clicked.`
+                `First point's y value should be close to the place where
+                it was clicked.`
             );
             assert.closeTo(
                 x2,
                 350,
                 1,
-                `Second point's x value should be close to the place, where it was clicked.`
+                `Second point's x value should be close to the place where
+                it was clicked.`
             );
             assert.closeTo(
                 y2,
                 100,
                 1,
-                `Second point's y value should be close to the place, where it was clicked.`
+                `Second point's y value should be close to the place where
+                it was clicked.`
             );
-
             assert.closeTo(
                 ellipse.options.ry,
                 15,
@@ -79,13 +80,15 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
                 (x + x2) / 2,
                 300,
                 5,
-                'Center of the ellipse should be close to the place, where it was clicked.'
+                `Center of the ellipse should be close to the place where
+                it was clicked.`
             );
             assert.closeTo(
                 (y + y2) / 2,
                 100,
                 5,
-                'Center of the ellipse should be close to the place, where it was clicked.'
+                `Center of the ellipse should be close to the place where
+                it was clicked.`
             );
         });
     });
@@ -114,6 +117,7 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
                 y = yAxis.toPixels(ellipse.points[0].y),
                 x2 = xAxis.toPixels(ellipse.points[1].x),
                 y2 = yAxis.toPixels(ellipse.points[1].y);
+
             assert.closeTo(
                 x,
                 250,
@@ -144,7 +148,6 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
                 1,
                 'New ry property value should be equal to expected value.'
             );
-           
         });
     });
 
@@ -153,7 +156,7 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
         cy.contains('save').click();
         cy.chart().then(chart => {
             const ellipse = chart.annotations[0].shapes[0];
-           
+
             assert.closeTo(
                 ellipse.options.ry,
                 26,
@@ -164,20 +167,25 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
     })
 
     it('Ellipse should adjust its values when extremes change.', () => {
-
             cy.chart().then(chart => {
                 const ellipse = chart.annotations[0].shapes[0];
-                chart.xAxis[0].setExtremes(ellipse.points[0].x, ellipse.points[1].x);
+
+                chart.xAxis[0].setExtremes(
+                    ellipse.points[0].x,
+                    ellipse.points[1].x
+                );
+
                 const xAxis = chart.xAxis[ellipse.points[0].options.xAxis],
                     yAxis = chart.yAxis[ellipse.points[0].options.yAxis],
                     x = xAxis.toPixels(ellipse.points[0].x),
                     y = yAxis.toPixels(ellipse.points[0].y),
                     x2 = xAxis.toPixels(ellipse.points[1].x),
                     y2 = yAxis.toPixels(ellipse.points[1].y);
+
                 assert.closeTo(
                     x,
                     chart.plotLeft,
-                    1,
+                    5,
                     'New position of the first point should be equal to expected value.'
                 );
                 assert.closeTo(
@@ -198,7 +206,6 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
                     1,
                     'New position of the second point should be equal to expected value.'
                 ); 
-
                 assert.closeTo(
                     ellipse.options.ry,
                     26,
@@ -207,5 +214,4 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
                 );
             });
         })
-
 });

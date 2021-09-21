@@ -533,6 +533,7 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
             chartOptions = chart.options.annotations[annotationIndex];
 
         this.translatePoint(dx, dy, 0);
+
         if (translateSecondPoint) {
             this.translatePoint(dx, dy, 1);
         }

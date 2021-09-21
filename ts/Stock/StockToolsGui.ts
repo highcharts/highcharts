@@ -486,7 +486,6 @@ setOptions({
                          *
                          */
                         symbol: 'ellipse.svg'
-
                     },
                     rectangle: {
                         /**

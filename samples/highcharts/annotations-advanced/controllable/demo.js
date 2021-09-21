@@ -216,25 +216,21 @@ var chart = Highcharts.chart('container', {
             controlPoints: [{
                 positioner: function (target) {
                     return {
-                        x:
-                            target.chart.plotLeft +
-                            target.points[0].plotX -
+                        x: target.chart.plotLeft + target.points[0].plotX -
                             this.graphic.width / 2,
-                        y:
-                            target.chart.plotTop +
-                            target.points[0].plotY -
+                        y: target.chart.plotTop + target.points[0].plotY -
                             this.graphic.width / 2
                     };
                 },
                 events: {
                     drag: function (e, target) {
                         target.translatePoint(
-                            e.chartX -
-                                (target.points[0].plotX +
-                                    target.chart.plotLeft),
-                            e.chartY -
-                                (target.points[0].plotY +
-                                    target.chart.plotTop),
+                            e.chartX - (
+                                target.points[0].plotX + target.chart.plotLeft
+                            ),
+                            e.chartY - (
+                                target.points[0].plotY + target.chart.plotTop
+                            ),
                             0
                         );
 
@@ -244,25 +240,21 @@ var chart = Highcharts.chart('container', {
             }, {
                 positioner: function (target) {
                     return {
-                        x:
-                            target.chart.plotLeft +
-                            target.points[1].plotX -
+                        x: target.chart.plotLeft + target.points[1].plotX -
                             this.graphic.width / 2,
-                        y:
-                            target.chart.plotTop +
-                            target.points[1].plotY -
+                        y: target.chart.plotTop + target.points[1].plotY -
                             this.graphic.width / 2
                     };
                 },
                 events: {
                     drag: function (e, target) {
                         target.translatePoint(
-                            e.chartX -
-                                (target.points[1].plotX +
-                                    target.chart.plotLeft),
-                            e.chartY -
-                                (target.points[1].plotY +
-                                    target.chart.plotTop),
+                            e.chartX - (
+                                target.points[1].plotX + target.chart.plotLeft
+                            ),
+                            e.chartY - (
+                                target.points[1].plotY + target.chart.plotTop
+                            ),
                             1
                         );
                         target.redraw(false);
@@ -279,11 +271,9 @@ var chart = Highcharts.chart('container', {
                         attrs = target.getAttrs(position, position2);
 
                     return {
-                        x:
-                            attrs.cx - this.graphic.width / 2 +
+                        x: attrs.cx - this.graphic.width / 2 +
                             attrs.ry * Math.sin((attrs.angle * Math.PI) / 180),
-                        y:
-                            attrs.cy - this.graphic.height / 2 -
+                        y: attrs.cy - this.graphic.height / 2 -
                             attrs.ry * Math.cos((attrs.angle * Math.PI) / 180)
                     };
                 },
@@ -300,15 +290,14 @@ var chart = Highcharts.chart('container', {
                                 position2,
                                 e.chartX,
                                 e.chartY
+                            ),
+                            yAxis = target.getYAxis(),
+                            newRY = Math.abs(
+                                yAxis.toValue(0) - yAxis.toValue(newR)
                             );
 
-                        const yAxis = target.getYAxis();
-                        const newRY = Math.abs(
-                            yAxis.toValue(0) - yAxis.toValue(newR)
-                        );
                         target.setYRadius(newRY);
                         target.redraw(false);
-
                     }
                 }
             }]
