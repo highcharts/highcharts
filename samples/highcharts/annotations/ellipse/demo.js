@@ -17,13 +17,13 @@ Highcharts.chart('container', {
             xAxis: 0,
             yAxis: 0,
             points: [{
-                x: 10,
-                y: 10
+                x: 30,
+                y: -20
             }, {
-                x: 50,
+                x: 60,
                 y: 20
             }],
-            ry: 3,
+            ry: 10,
             stroke: '#00f',
             strokeWidth: 4,
             controlPoints: [{
