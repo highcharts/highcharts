@@ -107,11 +107,19 @@ Highcharts.seriesType(
         pointValKey: 'y'
     }
 );
+
 /* eslint-disable no-underscore-dangle */
-if (Highcharts._modules['Mixins/MultipleLines.js']) {
+var multipleLinesMixin = Highcharts._modules['Mixins/MultipleLines.js'];
+
+if (multipleLinesMixin) {
     Highcharts.extend(
-        Highcharts.seriesTypes.linearregressionzones,
-        Highcharts._modules['Mixins/MultipleLines.js']
+        Highcharts.seriesTypes.linearregressionzones.prototype,
+        {
+            drawGraph: multipleLinesMixin.drawGraph,
+            getTranslatedLinesNames: multipleLinesMixin.getTranslatedLinesNames,
+            translate: multipleLinesMixin.translate,
+            toYData: multipleLinesMixin.toYData
+        }
     );
 } else { // Highcharts v9.2.3+
     Highcharts._modules['Stock/Indicators/MultipleLinesComposition.js'].compose(

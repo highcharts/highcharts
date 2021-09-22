@@ -224,7 +224,8 @@ var multipleLinesMixin = Highcharts._modules['Mixins/MultipleLines.js'];
 
 Highcharts.seriesType(
   'linearregressionzones',
-  'sma', {
+  'sma',
+  {
     color: '#00ff00',
     params: {
       zoneDistance: 5
@@ -261,9 +262,10 @@ Highcharts.seriesType(
         lineColor: '#ff0000'
       }
     }
-  }, {
-    getValues: function(series) {
-      return this.getLinearRegressionZones(series.xData, series.yData);
+  },
+  {
+    getValues: function (series) {
+        return this.getLinearRegressionZones(series.xData, series.yData);
     },
     getLinearRegressionZones: getLinearRegressionZones,
 
@@ -273,14 +275,28 @@ Highcharts.seriesType(
     nameSuffixes: ['%'],
     parallelArrays: ['x', 'y', 'y1', 'y2', 'y3', 'y4'],
     pointArrayMap: ['y1', 'y2', 'y', 'y3', 'y4'],
-    pointValKey: 'y',
-
-    drawGraph: multipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: multipleLinesMixin.getTranslatedLinesNames,
-    translate: multipleLinesMixin.translate,
-    toYData: multipleLinesMixin.toYData
+    pointValKey: 'y'
   }
 );
+
+/* eslint-disable no-underscore-dangle */
+var multipleLinesMixin = Highcharts._modules['Mixins/MultipleLines.js'];
+
+if (multipleLinesMixin) {
+  Highcharts.extend(
+    Highcharts.seriesTypes.linearregressionzones.prototype,
+    {
+      drawGraph: multipleLinesMixin.drawGraph,
+      getTranslatedLinesNames: multipleLinesMixin.getTranslatedLinesNames,
+      translate: multipleLinesMixin.translate,
+      toYData: multipleLinesMixin.toYData
+    }
+  );
+} else { // Highcharts v9.2.3+
+  Highcharts._modules['Stock/Indicators/MultipleLinesComposition.js'].compose(
+    Highcharts.seriesTypes.linearregressionzones
+  );
+}
 ```
 
 A live demo of the above multiline indicator can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-regression-multiple-lines/).
