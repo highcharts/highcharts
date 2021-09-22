@@ -590,6 +590,18 @@ class VBPIndicator extends SMAIndicator {
             rangeStep: number,
             zoneStartsLength: number;
 
+        // If the compare mode is set on the main series, change the VBP
+        // zones to fit new extremes, #16277.
+        const mainSeries = indicator.linkedParent;
+        if (
+            !indicator.options.compareToMain &&
+            mainSeries.options.compare &&
+            mainSeries.dataModify
+        ) {
+            lowRange = mainSeries.dataModify.modifyValue(lowRange) || 0;
+            highRange = mainSeries.dataModify.modifyValue(highRange) || 0;
+        }
+
         if (!lowRange || !highRange) {
             if (this.points.length) {
                 this.setData([]);
@@ -690,6 +702,19 @@ class VBPIndicator extends SMAIndicator {
                                 (yValues[i - 1] as any)
                         ) :
                         value;
+
+                    // If the compare mode is set on the main series,
+                    // change the VBP zones to fit new extremes, #16277.
+                    const mainSeries = indicator.linkedParent;
+                    if (
+                        !indicator.options.compareToMain &&
+                        mainSeries.options.compare &&
+                        mainSeries.dataModify
+                    ) {
+                        value = mainSeries.dataModify.modifyValue(value) || 0;
+                        previousValue = mainSeries.dataModify
+                            .modifyValue(previousValue) || 0;
+                    }
 
                     // Checks if this is the point with the
                     // lowest close value and if so, adds it calculations

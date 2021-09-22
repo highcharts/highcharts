@@ -26,9 +26,6 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
                 type: 'candlestick',
                 id: 'main',
                 name: 'AAPL',
-                params: {
-                    volumeSeriesID: 'volume'
-                },
                 data: [
                     [0, 37.86, 38.07, 37.56, 37.58],
                     [1, 37.6, 37.79, 37.34, 37.63],
@@ -112,7 +109,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     function round(array) {
-        return Highcharts.map(array, function (value) {
+        return array.map(function (value) {
             return value === null ? null : Number(value.toFixed(2));
         });
     }
@@ -194,6 +191,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         ],
         'volumeDataArray is correct after point remove on the base and the volume series.'
     );
+
+    // chart.series[0].setCompare('percent');
+    // chart.redraw();
 
     const negativeGraphic = indicator.points[0].negativeGraphic;
     indicator.points[0].destroy();
