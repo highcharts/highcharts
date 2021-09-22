@@ -36,6 +36,12 @@ function Meteogram(json, container) {
     this.parseYrData();
 }
 
+/**
+ * Mapping of the symbol code in yr.no's API to the icons in their public
+ * GitHub repo, as well as the text used in the tooltip.
+ *
+ * https://api.met.no/weatherapi/weathericon/2.0/documentation
+ */
 Meteogram.dictionary = {
     clearsky: {
         symbol: '01',
@@ -220,8 +226,8 @@ Meteogram.prototype.drawWeatherSymbols = function (chart) {
             if (Meteogram.dictionary[symbol]) {
                 chart.renderer
                     .image(
-                        'https://cdn.jsdelivr.net/gh/YR/weather-symbols' +
-                            `@6.0.2/dist/svg/${icon}.svg`,
+                        'https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols' +
+                            `@8.0.1/dist/svg/${icon}.svg`,
                         point.plotX + chart.plotLeft - 8,
                         point.plotY + chart.plotTop - 30,
                         30,
@@ -581,12 +587,9 @@ Meteogram.prototype.parseYrData = function () {
         return this.error();
     }
 
-    // The returned xml variable is a JavaScript representation of the provided
-    // XML, generated on the server by running PHP simple_load_xml and
-    // converting it to JavaScript by json_encode.
+    // Loop over hourly (or 6-hourly) forecasts
     this.json.properties.timeseries.forEach((node, i) => {
-        // Get the times - only Safari can't parse ISO8601 so we need to do
-        // some replacements
+
         const x = Date.parse(node.time),
             nextHours = node.data.next_1_hours || node.data.next_6_hours,
             symbolCode = nextHours && nextHours.summary.symbol_code,
@@ -597,9 +600,7 @@ Meteogram.prototype.parseYrData = function () {
         }
 
         // Populate the parallel arrays
-        this.symbols.push(
-            nextHours.summary.symbol_code
-        );
+        this.symbols.push(nextHours.summary.symbol_code);
 
         this.temperatures.push({
             x,
