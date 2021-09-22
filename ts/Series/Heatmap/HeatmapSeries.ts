@@ -440,6 +440,10 @@ class HeatmapSeries extends ScatterSeries {
                         });
                     }
 
+                    // Applying borderRadius from options (#16165)
+                    (point.shapeArgs || {}).r = this.options.borderRadius;
+                    (point.shapeArgs || {}).d = point.graphic.pathArray;
+
                     if (point.value === null) { // #15708
                         point.graphic.addClass('highcharts-null-point');
                     }
