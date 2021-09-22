@@ -21,6 +21,8 @@
 import type Instrument from './Instrument';
 import type Point from '../../Core/Series/Point';
 import type RangeSelector from '../../Extensions/RangeSelector';
+import type SeriesSonify from './SeriesSonify';
+import type SignalHandler from './SignalHandler';
 
 import Sonification from './Sonification.js';
 import U from '../../Core/Utilities.js';
@@ -30,6 +32,19 @@ const {
     pick
 } = U;
 import SU from './SonificationUtilities.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        cancelSonify?(fadeOut?: boolean): void;
+        sonify?(options: PointSonify.Options): void;
+    }
+}
 
 /* *
  *
@@ -74,11 +89,24 @@ namespace PointSonify {
      * */
 
     export declare class Composition extends Point {
-        pointCancelSonify(this: Highcharts.SonifyablePoint, fadeOut?: boolean): void;
-        pointSonify(
-            this: Highcharts.SonifyablePoint,
-            options: Options
-        ): void;
+        series: SeriesSonify.Composition;
+        sonification: SonificationStateObject;
+        cancelSonify(fadeOut?: boolean): void;
+        sonify(options: Options): void;
+    }
+
+    export interface Options {
+        dataExtremes?: Record<string, RangeSelector.RangeObject>;
+        instruments: Array<PointInstrument>;
+        onEnd?: Function;
+        masterVolume?: number;
+    }
+
+    export interface PointInstrument {
+        instrument: (string|Instrument);
+        instrumentMapping: PointInstrumentMapping;
+        instrumentOptions?: Partial<PointInstrumentOptions>;
+        onEnd?: Function;
     }
 
     export interface PointInstrumentMapping {
@@ -88,12 +116,7 @@ namespace PointSonify {
         pan: (number|string|Function);
         volume: (number|string|Function);
     }
-    export interface PointInstrument {
-        instrument: (string|Instrument);
-        instrumentMapping: PointInstrumentMapping;
-        instrumentOptions?: Partial<PointInstrumentOptions>;
-        onEnd?: Function;
-    }
+
     export interface PointInstrumentOptions {
         maxDuration: number;
         minDuration: number;
@@ -104,11 +127,11 @@ namespace PointSonify {
         maxVolume: number;
         minVolume: number;
     }
-    export interface Options {
-        dataExtremes?: Record<string, RangeSelector.RangeObject>;
-        instruments: Array<PointInstrument>;
-        onEnd?: Function;
-        masterVolume?: number;
+
+    export interface SonificationStateObject {
+        currentlyPlayingPoint?: Composition;
+        instrumentsPlaying?: Record<string, Instrument>;
+        signalHandler?: SignalHandler;
     }
 
     /* *
@@ -155,11 +178,9 @@ namespace PointSonify {
      *
      * @param {Highcharts.PointSonifyOptionsObject} options
      * Options for the sonification of the point.
-     *
-     * @return {void}
      */
     function pointSonify(
-        this: Highcharts.SonifyablePoint,
+        this: Composition,
         options: PointSonify.Options
     ): void {
         const point = this,
@@ -235,7 +256,7 @@ namespace PointSonify {
 
         // Go through instruments and play them
         options.instruments.forEach(function (
-            instrumentDefinition: PointSonify.PointInstrument
+            instrumentDefinition: PointInstrument
         ): void {
             const instrument = typeof instrumentDefinition.instrument === 'string' ?
                     Sonification.instruments[instrumentDefinition.instrument] :
@@ -330,7 +351,7 @@ namespace PointSonify {
      * @return {void}
      */
     function pointCancelSonify(
-        this: Highcharts.SonifyablePoint,
+        this: Composition,
         fadeOut?: boolean
     ): void {
         const playing = this.sonification && this.sonification.instrumentsPlaying,

@@ -18,8 +18,10 @@
  *
  * */
 
+import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject';
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type WordcloudPointOptions from './WordcloudPointOptions';
+import type WordcloudUtils from './WordcloudUtils';
 
 import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -28,9 +30,9 @@ const {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import WordcloudSeries from './WordcloudSeries';
 import U from '../../Core/Utilities.js';
 const { extend } = U;
+import WordcloudSeries from './WordcloudSeries';
 
 class WordcloudPoint extends ColumnSeries.prototype.pointClass {
 
@@ -42,8 +44,8 @@ class WordcloudPoint extends ColumnSeries.prototype.pointClass {
     public dimensions: SizeObject = void 0 as any;
     public lastCollidedWith?: WordcloudPoint;
     public options: WordcloudPointOptions = void 0 as any;
-    public polygon?: Highcharts.PolygonObject = void 0 as any;
-    public rect?: Highcharts.PolygonBoxObject = void 0 as any;
+    public polygon?: WordcloudUtils.PolygonObject = void 0 as any;
+    public rect?: PolygonBoxObject = void 0 as any;
     public rotation?: (boolean|number);
     public series: WordcloudSeries = void 0 as any;
 
