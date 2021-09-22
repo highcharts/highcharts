@@ -219,7 +219,7 @@ var chart = Highcharts.chart('container', {
                         x: target.chart.plotLeft + target.points[0].plotX -
                             this.graphic.width / 2,
                         y: target.chart.plotTop + target.points[0].plotY -
-                            this.graphic.width / 2
+                            this.graphic.height / 2
                     };
                 },
                 events: {
@@ -243,7 +243,7 @@ var chart = Highcharts.chart('container', {
                         x: target.chart.plotLeft + target.points[1].plotX -
                             this.graphic.width / 2,
                         y: target.chart.plotTop + target.points[1].plotY -
-                            this.graphic.width / 2
+                            this.graphic.height / 2
                     };
                 },
                 events: {

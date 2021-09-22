@@ -159,7 +159,6 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
         cy.contains('save').click();
         cy.chart().then(chart => {
 
-
             const ellipse = chart.annotations[0].shapes[0];
             assert.closeTo(
                 ellipse.options.ry,

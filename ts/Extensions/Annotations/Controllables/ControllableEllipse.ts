@@ -44,6 +44,7 @@ interface EllipseShapeOptions extends Highcharts.AnnotationsShapeOptions {
     xAxis: number;
     ry: number;
 }
+
 interface EllipseShapeSVGOptions {
     cx: number;
     cy: number;
@@ -290,7 +291,7 @@ class ControllableEllipse implements ControllableMixin.Type {
 }
 
 interface ControllableEllipse extends ControllableMixin.Type {
-    // adds mixin property types, created during init
+    // Adds mixin property types, created during init.
     options: EllipseShapeOptions;
 }
 

@@ -24,7 +24,7 @@ Highcharts.chart('container', {
                 y: 30
             }],
             ry: 3,
-            stroke: 'blue',
+            stroke: '#0000FF',
             strokeWidth: 4,
             controlPoints: [{
                 positioner: function (target) {
@@ -121,9 +121,6 @@ Highcharts.chart('container', {
             }]
         }]
     }],
-    xAxis: {
-        minRange: 0.1
-    },
     series: [{
         data: Array.from(
             {
