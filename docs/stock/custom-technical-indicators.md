@@ -279,7 +279,6 @@ Highcharts.seriesType(
   }
 );
 
-/* eslint-disable no-underscore-dangle */
 var multipleLinesMixin = Highcharts._modules['Mixins/MultipleLines.js'];
 
 if (multipleLinesMixin) {
