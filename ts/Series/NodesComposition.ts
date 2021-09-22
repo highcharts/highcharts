@@ -12,7 +12,6 @@
  *
  * */
 
-import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type PointOptions from '../Core/Series/PointOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
@@ -27,6 +26,12 @@ const {
     pick
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../Core/Series/PointLike' {
     interface PointLike {
         name?: string;
@@ -35,78 +40,87 @@ declare module '../Core/Series/PointLike' {
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
-        nodes?: Array<Highcharts.NodesPoint>;
+        nodes?: Array<NodesComposition.NodesPoint>;
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface NodesMixin {
-            createNode(this: NodesSeries, id: string): NodesPoint;
-            destroy(this: NodesSeries): void;
-            generatePoints(this: NodesSeries): void;
-            setData(
-                this: NodesSeries,
-                data: Array<NodesPointOptions>,
-                redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptions>),
-                updatePoints?: boolean
-            ): void;
-            setNodeState(this: NodesPoint, state: StatesOptionsKey): void;
-        }
-        interface NodesPointOptions extends PointOptions {
-            id?: string;
-            level?: number;
-            mass?: number;
-            outgoing?: boolean;
-            weight?: (number|null);
-        }
-        interface NodesSeriesOptions extends SeriesOptions {
-            mass?: number;
-            nodes?: Array<NodesPointOptions>;
-        }
-        class NodesPoint extends Point {
-            public className: string;
-            public formatPrefix: string;
-            public from: string;
-            public fromNode: NodesPoint;
-            public id: string;
-            public isNode: true;
-            public level?: unknown;
-            public linksFrom: Array<NodesPoint>;
-            public linksTo: Array<NodesPoint>;
-            public mass: number;
-            public options: NodesPointOptions;
-            public series: NodesSeries;
-            public setNodeState: NodesMixin['setNodeState'];
-            public to: string;
-            public toNode: NodesPoint;
-            public weight?: number;
-            public y?: (number|null);
-            public getSum(): number;
-            public hasShape(): boolean;
-            public init(series: Series, options: NodesPointOptions): NodesPoint;
-            public offset(point: NodesPoint, coll: string): (number|undefined);
-        }
-        class NodesSeries extends Series {
-            public createNode: NodesMixin['createNode'];
-            public data: Array<NodesPoint>;
-            public generatePoints: NodesMixin['generatePoints'];
-            public nodeLookup: Record<string, NodesPoint>;
-            public nodes: Array<NodesPoint>;
-            public options: NodesSeriesOptions;
-            public pointClass: typeof NodesPoint;
-            public points: Array<NodesPoint>;
-            public setData: NodesMixin['setData'];
-        }
-    }
-}
+/* *
+ *
+ *  Composition
+ *
+ * */
 
-const NodesComposition = {
+namespace NodesComposition {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface NodesPointOptions extends PointOptions {
+        id?: string;
+        level?: number;
+        mass?: number;
+        outgoing?: boolean;
+        weight?: (number|null);
+    }
+
+    export interface NodesSeriesOptions extends SeriesOptions {
+        mass?: number;
+        nodes?: Array<NodesPointOptions>;
+    }
+
+    export declare class NodesPoint extends Point {
+        public className: string;
+        public formatPrefix: string;
+        public from: string;
+        public fromNode: NodesPoint;
+        public id: string;
+        public isNode: true;
+        public level?: unknown;
+        public linksFrom: Array<NodesPoint>;
+        public linksTo: Array<NodesPoint>;
+        public mass: number;
+        public options: NodesPointOptions;
+        public series: NodesSeries;
+        public to: string;
+        public toNode: NodesPoint;
+        public weight?: number;
+        public y?: (number|null);
+        public getSum(): number;
+        public hasShape(): boolean;
+        public init(
+            series: NodesSeries,
+            options: NodesPointOptions
+        ): NodesPoint;
+        public offset(
+            point: NodesPoint,
+            coll: string
+        ): (number|undefined);
+        public setNodeState(
+            state?: StatesOptionsKey
+        ): void;
+    }
+
+    export declare class NodesSeries extends Series {
+        public data: Array<NodesPoint>;
+        public nodeLookup: Record<string, NodesPoint>;
+        public nodes: Array<NodesPoint>;
+        public options: NodesSeriesOptions;
+        public pointClass: typeof NodesPoint;
+        public points: Array<NodesPoint>;
+        public createNode(
+            id: string
+        ): NodesPoint;
+        public generatePoints(): void;
+    }
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /* eslint-disable valid-jsdoc */
 
@@ -115,10 +129,10 @@ const NodesComposition = {
      * links.
      * @private
      */
-    createNode: function (
-        this: Highcharts.NodesSeries,
+    export function createNode(
+        this: NodesSeries,
         id: string
-    ): Highcharts.NodesPoint {
+    ): NodesPoint {
 
         /**
          * @private
@@ -131,7 +145,7 @@ const NodesComposition = {
 
         let node = findById(this.nodes, id),
             PointClass = this.pointClass,
-            options: (Highcharts.NodesPointOptions|undefined);
+            options: (NodesPointOptions|undefined);
 
         if (!node) {
             options = this.options.nodes && findById(this.options.nodes, id);
@@ -142,7 +156,7 @@ const NodesComposition = {
                     isNode: true,
                     id: id,
                     y: 1 // Pass isNull test
-                } as Highcharts.NodesPointOptions, options as any)
+                } as NodesPointOptions, options as any)
             );
             node.linksTo = [];
             node.linksFrom = [];
@@ -168,12 +182,12 @@ const NodesComposition = {
                     sumFrom = 0;
 
                 (node as any).linksTo.forEach(function (
-                    link: Highcharts.NodesPointOptions
+                    link: NodesPointOptions
                 ): void {
                     sumTo += link.weight as any;
                 });
                 (node as any).linksFrom.forEach(function (
-                    link: Highcharts.NodesPointOptions
+                    link: NodesPointOptions
                 ): void {
                     sumFrom += link.weight as any;
                 });
@@ -184,7 +198,7 @@ const NodesComposition = {
              * @private
              */
             node.offset = function (
-                point: Highcharts.NodesPoint,
+                point: NodesPoint,
                 coll: string
             ): (number|undefined) {
                 let offset = 0;
@@ -203,7 +217,7 @@ const NodesComposition = {
                 let outgoing = 0;
 
                 (node as any).linksTo.forEach(function (
-                    link: Highcharts.NodesPointOptions
+                    link: NodesPointOptions
                 ): void {
                     if (link.outgoing) {
                         outgoing++;
@@ -218,15 +232,15 @@ const NodesComposition = {
             this.nodes.push(node);
         }
         return node;
-    },
+    }
 
     /**
      * Extend generatePoints by adding the nodes, which are Point objects
      * but pushed to the this.nodes array.
      */
-    generatePoints: function (this: Highcharts.NodesSeries): void {
+    export function generatePoints(this: NodesSeries): void {
         const chart = this.chart,
-            nodeLookup = {} as Record<string, Highcharts.NodesPoint>;
+            nodeLookup = {} as Record<string, NodesPoint>;
 
         Series.prototype.generatePoints.call(this);
 
@@ -236,14 +250,14 @@ const NodesComposition = {
         this.colorCounter = 0;
 
         // Reset links from previous run
-        this.nodes.forEach(function (node: Highcharts.NodesPoint): void {
+        this.nodes.forEach(function (node: NodesPoint): void {
             node.linksFrom.length = 0;
             node.linksTo.length = 0;
             node.level = node.options.level;
         });
 
         // Create the node list and set up links
-        this.points.forEach(function (point: Highcharts.NodesPoint): void {
+        this.points.forEach(function (point: NodesPoint): void {
             if (defined(point.from)) {
                 if (!nodeLookup[point.from]) {
                     nodeLookup[point.from] = this.createNode(point.from);
@@ -276,38 +290,44 @@ const NodesComposition = {
 
         // Store lookup table for later use
         this.nodeLookup = nodeLookup;
-    },
+    }
 
-    // Destroy all nodes on setting new data
-    setData: function (this: Highcharts.NodesSeries): void {
+    /**
+     * Destroy all nodes on setting new data
+     * @private
+     */
+    export function setData(this: NodesSeries): void {
         if (this.nodes) {
-            this.nodes.forEach(function (node: Highcharts.NodesPoint): void {
+            this.nodes.forEach(function (node: NodesPoint): void {
                 node.destroy();
             });
             this.nodes.length = 0;
         }
         Series.prototype.setData.apply(this, arguments as any);
-    },
+    }
 
-    // Destroy alll nodes and links
-    destroy: function (this: Highcharts.NodesSeries): void {
+    /**
+     * Destroy alll nodes and links.
+     * @private
+     */
+    export function destroy(this: NodesSeries): void {
         // Nodes must also be destroyed (#8682, #9300)
-        this.data = ([] as Array<Highcharts.NodesPoint>)
+        this.data = ([] as Array<NodesPoint>)
             .concat(this.points || [], this.nodes);
 
         return Series.prototype.destroy.apply(this, arguments as any);
-    },
+    }
 
     /**
      * When hovering node, highlight all connected links. When hovering a link,
      * highlight all connected nodes.
      */
-    setNodeState: function (this: Highcharts.NodesPoint, state?: StatesOptionsKey): void {
+    export function setNodeState(this: NodesPoint, state?: StatesOptionsKey): void {
         const args = arguments,
             others = this.isNode ? this.linksTo.concat(this.linksFrom) :
                 [this.fromNode, this.toNode];
         if (state !== 'select') {
-            others.forEach(function (linkOrNode: Highcharts.NodesPoint): void {
+            others.forEach(function (linkOrNode: NodesPoint): void {
                 if (linkOrNode && linkOrNode.series) {
                     Point.prototype.setState.apply(linkOrNode, args as any);
 
@@ -332,8 +352,12 @@ const NodesComposition = {
         Point.prototype.setState.apply(this, args as any);
     }
 
-    /* eslint-enable valid-jsdoc */
+}
 
-};
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default NodesComposition;
