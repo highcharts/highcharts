@@ -23,6 +23,8 @@ Math.easeOutBounce = pos => {
 };
 
 const big = window.matchMedia("(min-width: 500px)").matches;
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 
 const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
 
@@ -75,157 +77,287 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 events: {
                     load: function () {
                         const chart = this;
+                        let head = 40; //arrow head radius
+                        if (big) {
+                            head = 70;
+                        }
+
+                        if (reduced) {
+                            chart.series[2].update({
+                                data: [{
+                                    x: 0,
+                                    y: 6.67
+                                }, {
+                                    x: 8.5,
+                                    y: 6.67
+                                },
+                                {
+                                    x: 14.2,
+                                    y: 12.14,
+                                    marker: {
+                                        enabled: true,
+                                        symbol: 'square',
+                                        radius: head
+                                    }
+                                }]
+                            });
+                            chart.series[3].update({
+                                data: [{
+                                    x: 0,
+                                    y: 8.25
+                                }, {
+                                    x: 10.52,
+                                    y: 8.25
+                                },
+                                {
+                                    x: 14,
+                                    y: 12.1,
+                                    marker: {
+                                        enabled: true,
+                                        symbol: 'square',
+                                        radius: head
+                                    }
+                                }]
+                            });
+
+
+                            $('#stock .particle-1').css({
+                                opacity: 1,
+                                transition: 'none',
+                                transform: 'translate(70px, -30px)'
+                            });
+
+                            $('#stock .particle-2').css({
+                                opacity: 1,
+                                transition: 'none',
+                                transform: 'translate(130px, 0px)'
+                            });
+
+                            $('#stock .particle-3').css({
+                                opacity: 1,
+                                transition: 'none',
+                                transform: 'translate(180px, -20px)'
+                            });
+
+                            $('#stock .particle-4').css({
+                                opacity: 1,
+                                transition: 'none',
+                                transform: 'translate(130px, -40px)'
+                            });
+
+                            $('#stock .particle-5').css({
+                                opacity: 1,
+                                transition: 'none',
+                                transform: 'translate(180px, -80px)'
+                            });
+                            $('#stock .particle-6').css({
+                                opacity: 1,
+                                transition: 'none',
+                                transform: 'translate(180px, 30px)'
+                            });
+                            $('.purple-line .highcharts-point').css({ fill: '#8087E8', transition: 'none', transform: 'none' });
+                            $('.green-line .highcharts-point').css({ fill: '#8bf2b6', transition: 'none',  transform: 'none' });
+
+                            setTimeout(function () {
+                                ///grows the arrow heads (which are line markers)
+                                $('#stock .particle-1').css({ opacity: 0,  transition: 'opacity 500ms' });
+                                $('#stock .particle-2').css({ opacity: 0,  transition: 'opacity 500ms' });
+                                $('#stock .particle-3').css({ opacity: 0,  transition: 'opacity 500ms' });
+                                $('#stock .particle-4').css({ opacity: 0,  transition: 'opacity 500ms' });
+                                $('#stock .particle-5').css({ opacity: 0,  transition: 'opacity 500ms' });
+                                $('#stock .particle-6').css({ opacity: 0,  transition: 'opacity 500ms' });
+                            }, 1000);
+
+                            setTimeout(function () {
+                                $('#stock .stock-bottom').css({ opacity: 0, transition: 'opacity 0s' });
+                                $('#stock .stock-top').css({ opacity: 0, transition: 'opacity 0ms' });
+                                $('.purple-line').css({ opacity: 0, transition: 'opacity 0s' });
+                                $('.green-line').css({ opacity: 0, transition: 'opacity 0s' });
+                            }, 2000);
+
+                            setTimeout(function () {
+                                ///get the margins ready for the real chart
+                                let margins = [50, 10, 30, 10];
+                                if (big) {
+                                    margins = [80, 10, 30, 10];
+                                }
+                                chart.update({
+                                    chart: {
+                                        margin: margins
+                                    }
+                                });
+                                $('.highcharts-range-selector-group').css({ opacity: 1 });
+                                chart.series[12].update({
+                                    visible: true
+                                });
+                                chart.series[13].update({
+                                    visible: true
+                                });
+                                $('.stick').animate({ opacity: 1 }, 1);
+                                $('#stock .highcharts-column-series.column .highcharts-point').css({ opacity: 1 });
+                                $('.highcharts-axis-labels').animate({ opacity: 1 }, 1000);
+                                $('.highcharts-title').css({ opacity: 1 });
+                                if (big) {
+                                    $('.highcharts-subtitle').css({ opacity: 1 });
+                                }
+                                ///turn on the axes
+                                chart.yAxis[0].update({
+                                    visible: true
+                                });
+                                chart.xAxis[0].update({
+                                    visible: true
+                                });
+                            }, 3000);
+
+                        } else {
+                            setTimeout(function () {
+                                $('#stock .particle-1').css({ opacity: 1, transform: 'translate(500px, -50px)' });
+                            }, 0);
+
+                            setTimeout(function () {
+                                $('#stock .particle-2').css({ opacity: 1, transform: 'translate(500px, -150px)' });
+                            }, 100);
+
+                            setTimeout(function () {
+                                $('#stock .particle-5').css({ opacity: 1, transform: 'translate(500px, -250px)' });
+                            }, 200);
+
+                            setTimeout(function () {
+                                $('#stock .particle-4').css({ opacity: 1, transform: 'translate(500px, 30px)' });
+                            }, 400);
+
+                            setTimeout(function () {
+                                $('#stock .particle-3').css({ opacity: 1, transform: 'translate(500px, 230px)' });
+                            }, 600);
+
+                            setTimeout(function () {
+                                $('#stock .particle-6').css({ opacity: 1, transform: 'translate(500px, 100px)' });
+                            }, 800);
+
+                            setTimeout(function () {
+
+                                //moves green lie
+                                chart.series[2].data[2].update({
+                                    x: 8.5,
+                                    y: 6.67,
+                                    marker: {
+                                        enabled: false
+                                    }
+                                });
+                                chart.series[2].data[1].update({
+                                    x: 8.5,
+                                    y: 6.67
+                                });
+                                ///moves the purple line
+
+                                chart.series[3].data[2].update({
+                                    x: 10.52,
+                                    y: 8.4,
+                                    marker: {
+                                        enabled: false
+                                    }
+                                });
+                                chart.series[3].data[1].update({
+                                    x: 10.52,
+                                    y: 8.4
+                                });
+                            }, 1000);
+
+                            setTimeout(function () {
+
+                                ///moves green line
+                                //turns on the marker
+                                chart.series[2].data[2].update({
+                                    x: 14.2,
+                                    y: 12.14,
+                                    marker: {
+                                        enabled: true,
+                                        symbol: 'square',
+                                        radius: head
+                                    }
+                                });
+                                ///moves purple line
+                                //turns on the marker
+                                chart.series[3].data[2].update({
+                                    x: 14,
+                                    y: 12.1,
+                                    marker: {
+                                        enabled: true,
+                                        symbol: 'square',
+                                        radius: head
+                                    }
+                                });
+                            }, 2000);
+
+                            setTimeout(function () {
+                                ///grows the arrow heads (which are line markers)
+                                $('.purple-line .highcharts-point').css({ fill: '#8087E8', transform: 'none' });
+                                $('.green-line .highcharts-point').css({ fill: '#8bf2b6', transform: 'none' });
+                            }, 3200);
+
+                            setTimeout(function () {
+                                ///set the x extremes to slide to the right
+                                chart.xAxis[1].setExtremes(0, 7);
+                            }, 5200);
+
+                            setTimeout(function () {
+                                ///hides all the earlier chart stuff and sets the yAxis extremes so
+                                ///the lines part vertically
+                                $('#stock .stock-bottom').css({ opacity: 0, transition: 'opacity 300ms' });
+                                $('#stock .stock-top').css({ opacity: 0, transition: 'opacity 300ms' });
+                                $('.purple-line .highcharts-point').css({ opacity: 0, transition: 'opacity 1s' });
+                                $('.green-line .highcharts-point').css({ opacity: 0, transition: 'opacity 1s' });
+                                chart.yAxis[2].setExtremes(10, 20);
+                                chart.yAxis[3].setExtremes(10, 20);
+                            }, 6000);
+
+                            setTimeout(function () {
+                                ///get the margins ready for the real chart
+                                let margins = [50, 10, 30, 10];
+                                if (big) {
+                                    margins = [80, 10, 30, 10];
+                                }
+                                chart.update({
+                                    chart: {
+                                        margin: margins
+                                    }
+                                });
+                            }, 6300);
+
+                            setTimeout(function () {
+                                ///show the range selector and the series
+                                $('.highcharts-range-selector-group').css({ opacity: 1 });
+                                chart.series[12].update({
+                                    visible: true
+                                });
+                                chart.series[13].update({
+                                    visible: true
+                                });
+                            }, 6500);
+
+                            setTimeout(function () {
+                                ///fade in the candlestick and the column series, axis labels, title
+                                $('.stick').animate({ opacity: 1 }, 1);
+                                $('#stock .highcharts-column-series.column .highcharts-point').css({ opacity: 1 });
+                                $('.highcharts-axis-labels').animate({ opacity: 1 }, 1000);
+                                $('.highcharts-title').css({ opacity: 1 });
+                                if (big) {
+                                    $('.highcharts-subtitle').css({ opacity: 1 });
+                                }
+                            }, 6800);
+
+                            setTimeout(function () {
+                                ///turn on the axes
+                                chart.yAxis[0].update({
+                                    visible: true
+                                });
+                                chart.xAxis[0].update({
+                                    visible: true
+                                });
+                            }, 7500);
+                        }
                         //particles fly by in the background
-                        setTimeout(function () {
-                            $('#stock .particle-1').css({ opacity: 1, transform: 'translate(500px, -50px)' });
-                        }, 0);
 
-                        setTimeout(function () {
-                            $('#stock .particle-2').css({ opacity: 1, transform: 'translate(500px, -150px)' });
-                        }, 100);
-
-                        setTimeout(function () {
-                            $('#stock .particle-5').css({ opacity: 1, transform: 'translate(500px, -250px)' });
-                        }, 200);
-
-                        setTimeout(function () {
-                            $('#stock .particle-4').css({ opacity: 1, transform: 'translate(500px, 30px)' });
-                        }, 400);
-
-                        setTimeout(function () {
-                            $('#stock .particle-3').css({ opacity: 1, transform: 'translate(500px, 230px)' });
-                        }, 600);
-
-                        setTimeout(function () {
-                            $('#stock .particle-6').css({ opacity: 1, transform: 'translate(500px, 100px)' });
-                        }, 800);
-
-                        setTimeout(function () {
-
-                            //moves green lie
-                            chart.series[2].data[1].update({
-                                x: 8.5,
-                                y: 6.67
-                            });
-
-                            chart.series[2].data[2].update({
-                                x: 8.5,
-                                y: 6.67,
-                                marker: {
-                                    enabled: false
-                                }
-                            });
-
-                            ///moves the purple line
-                            chart.series[3].data[1].update({
-                                x: 10.52,
-                                y: 8.4
-                            });
-                            chart.series[3].data[2].update({
-                                x: 10.52,
-                                y: 8.4,
-                                marker: {
-                                    enabled: false
-                                }
-                            });
-                        }, 1000);
-
-                        setTimeout(function () {
-
-                            let head = 40; //arrow head radius
-                            if (big) {
-                                head = 70;
-                            }
-                            ///moves green line
-                            //turns on the marker
-                            chart.series[2].data[2].update({
-                                x: 14.2,
-                                y: 12.14,
-                                marker: {
-                                    enabled: true,
-                                    symbol: 'square',
-                                    radius: head
-                                }
-                            });
-                            ///moves purple line
-                            //turns on the marker
-                            chart.series[3].data[2].update({
-                                x: 14,
-                                y: 12.1,
-                                marker: {
-                                    enabled: true,
-                                    symbol: 'square',
-                                    radius: head
-                                }
-                            });
-                        }, 2000);
-
-                        setTimeout(function () {
-                            ///grows the arrow heads (which are line markers)
-                            $('.purple-line .highcharts-point').css({ fill: '#8087E8', transform: 'none' });
-                            $('.green-line .highcharts-point').css({ fill: '#8bf2b6', transform: 'none' });
-                        }, 3200);
-
-                        setTimeout(function () {
-                            ///set the x extremes to slide to the right
-                            chart.xAxis[1].setExtremes(0, 7);
-                        }, 5200);
-
-                        setTimeout(function () {
-                            ///hides all the earlier chart stuff and sets the yAxis extremes so
-                            ///the lines part vertically
-                            $('#stock .stock-bottom').css({ opacity: 0, transition: 'opacity 300ms' });
-                            $('#stock .stock-top').css({ opacity: 0, transition: 'opacity 300ms' });
-                            $('.purple-line .highcharts-point').css({ opacity: 0, transition: 'opacity 1s' });
-                            $('.green-line .highcharts-point').css({ opacity: 0, transition: 'opacity 1s' });
-                            chart.yAxis[2].setExtremes(10, 20);
-                            chart.yAxis[3].setExtremes(10, 20);
-                        }, 6000);
-
-                        setTimeout(function () {
-                            ///get the margins ready for the real chart
-                            let margins = [50, 10, 30, 10];
-                            if (big) {
-                                margins = [80, 10, 30, 10];
-                            }
-                            chart.update({
-                                chart: {
-                                    margin: margins
-                                }
-                            });
-                        }, 6300);
-
-                        setTimeout(function () {
-                            ///show the range selector and the series
-                            $('.highcharts-range-selector-group').css({ opacity: 1 });
-                            chart.series[12].update({
-                                visible: true
-                            });
-                            chart.series[13].update({
-                                visible: true
-                            });
-                        }, 6500);
-
-                        setTimeout(function () {
-                            ///fade in the candlestick and the column series, axis labels, title
-                            $('.stick').animate({ opacity: 1 }, 1);
-                            $('#stock .highcharts-column-series.column .highcharts-point').css({ opacity: 1 });
-                            $('.highcharts-axis-labels').animate({ opacity: 1 }, 1000);
-                            $('.highcharts-title').css({ opacity: 1 });
-                            if (big) {
-                                $('.highcharts-subtitle').css({ opacity: 1 });
-                            }
-                        }, 6800);
-
-                        setTimeout(function () {
-                            ///turn on the axes
-                            chart.yAxis[0].update({
-                                visible: true
-                            });
-                            chart.xAxis[0].update({
-                                visible: true
-                            });
-                        }, 7500);
                     }
                 }
             },
@@ -528,7 +660,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                         x: 6,
                         y: 10
                     }, {
-                        x: 6,
+                        x: 6.1,
                         y: 14
                     }],
                     zIndex: 21,
@@ -637,7 +769,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                             }
                         },
                         {
-                            x: 10,
+                            x: 10.1,
                             y: 8,
                             className: 'particle-2',
                             marker: {
@@ -648,7 +780,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                             }
                         },
                         {
-                            x: 10,
+                            x: 10.11,
                             y: 8,
                             className: 'particle-3',
                             marker: {
@@ -660,7 +792,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                         },
 
                         {
-                            x: 10,
+                            x: 10.111,
                             y: 8,
                             className: 'particle-4',
                             marker: {
@@ -671,7 +803,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                             }
                         },
                         {
-                            x: 10,
+                            x: 10.1111,
                             y: 8,
                             className: 'particle-5',
                             marker: {
@@ -682,7 +814,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                             }
                         },
                         {
-                            x: 10,
+                            x: 10.11,
                             y: 8,
                             className: 'particle-6',
                             marker: {

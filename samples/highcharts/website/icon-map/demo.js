@@ -19,6 +19,8 @@ Math.easeOutBounce = pos => {
 };
 
 const big = window.matchMedia("(min-width: 500px)").matches;
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 
 const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
 const maps = {
@@ -37,22 +39,69 @@ const maps = {
             load: function () {
                 const chart = this;
 
-                setTimeout(function () {
+                const updateData = function () {
+                    chart.series[10].update({
+                        data: [
+                            { x: 4, y: 2 },
+                            { x: 6, y: 7 },
+                            { x: 10, y: 5 }
+                        ]
+                    });
+                    chart.series[11].update({
+                        data: [
+                            { x: 4, y: 2 },
+                            { x: 6, y: 7 },
+                            { x: 10, y: 5 }
+                        ]
+                    });
+                    chart.series[12].update({
+                        data: [
+                            { x: 4, y: 2 },
+                            { x: 10, y: 5 },
+                            { x: 16, y: 2 }
+                        ]
+                    });
+                    chart.series[13].update({
+                        data: [
+                            { x: 6, y: 9 },
+                            { x: 10, y: 11 },
+                            { x: 14, y: 9 }
+                        ]
+                    });
+
+                };
+
+                const growEnvelope = function () {
+                    $('.left').css({ transition: 'none' });
+                    $('.right').css({ transition: 'none' });
                     chart.series[10].data[2].update({
                         x: 10, y: 5
                     });
-
+                    chart.series[10].data[1].update({
+                        x: 6
+                    });
                     chart.series[11].data[2].update({
                         x: 10, y: 5
                     });
-
+                    chart.series[11].data[1].update({
+                        x: 6
+                    });
                     chart.series[12].data[1].update({
                         x: 10, y: 5
                     });
                     chart.series[13].data[1].update({
                         x: 10, y: 11
                     });
+                };
 
+                if (reduced) {
+                    updateData();
+                }
+
+                setTimeout(function () {
+                    if (!reduced) {
+                        growEnvelope();
+                    }
                     if (big) {
                         $('.map-point-point').css({ transform: 'translate(-250px, -300px) scale(2)' });
                         $('.map-point-top').css({ transform: 'translate(-250px, -300px) scale(2)' });
@@ -62,29 +111,37 @@ const maps = {
                         $('.map-point-top').css({ transform: 'translate(14px, -11px) scale(.89)' });
                         $('.map-point-center').css({ transform: 'translate(0px, -25px) scale(1)' });
                     }
+
                 }, 1000);
 
                 setTimeout(function () {
-                    $('.map-point-point').css({ opacity: 0, transition: 'all 0s' });
-                    $('.map-point-top').css({ opacity: 0, transition: 'all 0s' });
-                    $('.map-point-center').css({ opacity: 0, transition: 'all 0s' });
                     $('.particle').css({ opacity: 0, transition: 'all 1s' });
                     $('.green').css({ opacity: 0, transition: 'all 1s' });
+                    $('.left').css({ opacity: 0, transition: 'all 1s' });
+                    $('.right').css({ opacity: 0, transition: 'all 1s' });
 
+                }, 4000);
+
+                setTimeout(function () {
                     $('.top').css({
                         opacity: 0,
                         transition: 'none'
                     });
-                    $('.bottom').css({
-                        fill: '#45445d',
-                        transition: 'fill  1s'
-                    });
-                    $('.left').css({ opacity: 0, transition: 'none' });
-                    $('.right').css({ opacity: 0, transition: 'none' });
-
+                    if (reduced) {
+                        $('.bottom').css({
+                            opacity: 0
+                        });
+                    } else {
+                        $('.bottom').css({
+                            fill: '#45445d',
+                            transition: 'fill  1s'
+                        });
+                    }
+                    $('.map-point-point').css({ opacity: 0, transition: 'all 0s' });
+                    $('.map-point-top').css({ opacity: 0, transition: 'all 0s' });
+                    $('.map-point-center').css({ opacity: 0, transition: 'all 0s' });
                     $('.highcharts-plot-background').css({ fill: '#1f1836' });
-
-                }, 4500);
+                }, 4200);
 
                 setTimeout(function () {
                     chart.update({
@@ -94,25 +151,30 @@ const maps = {
                             }
                         }
                     });
-
-                    $('.bottom').css({ transform: 'translateY(4px)' });
-                    chart.series[12].data[0].update({
-                        y: 15.7
-                    });
-                    chart.series[12].data[1].update({
-                        y: 15.7
-                    });
-                    chart.series[12].data[2].update({
-                        y: 15.7
-                    });
+                    if (!reduced) {
+                        $('.bottom').css({ transform: 'translateY(4px)' });
+                        chart.series[12].data[0].update({
+                            y: 15.7
+                        });
+                        chart.series[12].data[1].update({
+                            y: 15.7
+                        });
+                        chart.series[12].data[2].update({
+                            y: 15.7
+                        });
+                    }
                 }, 5000);
+
                 setTimeout(function () {
-                    chart.series[12].data[2].update({
-                        x: 19.68
-                    });
-                    chart.series[12].data[0].update({
-                        x: 0.4
-                    });
+                    if (!reduced) {
+                        chart.series[12].data[2].update({
+                            x: 19.68
+                        });
+                        chart.series[12].data[0].update({
+                            x: 0.4
+                        });
+                    }
+
                 }, 5700);
 
 
@@ -334,7 +396,7 @@ const maps = {
             className: 'left',
             data: [
                 { x: 4, y: 2 },
-                { x: 6, y: 7 },
+                { x: 4, y: 7 },
                 { x: 4, y: 2 }
 
             ],
@@ -356,7 +418,7 @@ const maps = {
             xAxis: 2,
             data: [
                 { x: 4, y: 2 },
-                { x: 6, y: 7 },
+                { x: 4, y: 7 },
                 { x: 4, y: 2 }
 
             ],
@@ -561,13 +623,18 @@ const finalMap = function () {
                             const chart = this;
                             $('.highcharts-map-series').css({ opacity: 0 });
                             chart.mapZoom(0.01, 4540, -8600);
+                            if (reduced) {
+                                chart.mapZoom(10);
+                            }
                             $('.highcharts-map-series').css({ opacity: 0 });
                             $('.highcharts-title').animate({ opacity: 1 }, 500);
                             $('.highcharts-subtitle').animate({ opacity: 1 }, 500);
 
                             setTimeout(function () {
                                 $('.highcharts-map-series').animate({ opacity: '1' }, 1000);
-                                chart.mapZoom(10);
+                                if (!reduced) {
+                                    chart.mapZoom(10);
+                                }
                                 chart.tooltip.refresh(
                                     [chart.series[0].points[143]]
                                 );
@@ -678,8 +745,12 @@ const finalMap = function () {
 
 $(document).ready(function () {
     Highcharts.mapChart('maps', maps);
+    let dtime = 6500;
+    if (reduced) {
+        dtime = 5500;
+    }
     setTimeout(function () {
         finalMap();
-    }, 6500);
+    }, dtime);
 
 });
