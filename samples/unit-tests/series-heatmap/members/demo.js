@@ -219,3 +219,46 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
         'When state:select zIndex is 0'
     );
 });
+
+QUnit.test('Check if borderRadius is correct according to user settings', function (assert) {
+    const chart = new Highcharts.Chart('container', {
+            chart: {
+                type: 'heatmap'
+            },
+
+            series: [{
+                borderWidth: 1,
+                data: [
+                    [0, 0, 10],
+                    [0, 1, 19],
+                    [0, 2, 8],
+                    [0, 3, 24]
+                ],
+                borderRadius: 39
+            }]
+        }),
+        point = chart.series[0].points[0],
+        setState = Highcharts.seriesTypes.heatmap.prototype
+            .pointClass.prototype.setState;
+
+    setState.call(point, '');
+    assert.strictEqual(
+        point.graphic.r,
+        point.series.options.borderRadius,
+        'Border radius should have the value set in options on state:normal'
+    );
+
+    setState.call(point, 'hover');
+    assert.strictEqual(
+        point.graphic.r,
+        point.series.options.borderRadius,
+        'Border radius should have the value set in options on state:hover'
+    );
+
+    setState.call(point, '');
+    assert.strictEqual(
+        point.graphic.r,
+        point.series.options.borderRadius,
+        'Border radius should have the value set in options on state:normal'
+    );
+});
