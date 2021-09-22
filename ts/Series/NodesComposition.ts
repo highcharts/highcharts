@@ -6,11 +6,17 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type PointOptions from '../Core/Series/PointOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import H from '../Core/Globals.js';
+
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
@@ -97,11 +103,10 @@ declare global {
             public points: Array<NodesPoint>;
             public setData: NodesMixin['setData'];
         }
-        let NodesMixin: NodesMixin;
     }
 }
 
-const NodesMixin = H.NodesMixin = {
+const NodesComposition = {
 
     /* eslint-disable valid-jsdoc */
 
@@ -331,4 +336,4 @@ const NodesMixin = H.NodesMixin = {
 
 };
 
-export default NodesMixin;
+export default NodesComposition;

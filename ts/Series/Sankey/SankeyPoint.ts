@@ -20,7 +20,7 @@
 
 import type SankeyPointOptions from './SankeyPointOptions';
 import type SankeySeries from './SankeySeries';
-import NodesMixin from '../../Mixins/Nodes.js';
+import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -136,7 +136,7 @@ interface SankeyPoint extends Highcharts.NodesPoint {
     setState: Highcharts.NodesMixin['setNodeState'];
 }
 extend(SankeyPoint.prototype, {
-    setState: NodesMixin.setNodeState
+    setState: NodesComposition.setNodeState
 });
 
 /* *

@@ -24,7 +24,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
-import NodesMixin from '../../Mixins/Nodes.js';
+import NodesComposition from '../NodesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -127,10 +127,10 @@ class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
  * */
 
 interface DependencyWheelPoint {
-    setState: typeof NodesMixin['setNodeState'];
+    setState: typeof NodesComposition['setNodeState'];
 }
 extend(DependencyWheelPoint.prototype, {
-    setState: NodesMixin.setNodeState
+    setState: NodesComposition.setNodeState
 });
 
 /* *
