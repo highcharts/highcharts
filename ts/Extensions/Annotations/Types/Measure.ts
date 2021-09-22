@@ -449,18 +449,19 @@ class Measure extends Annotation {
     }
 
     public addControlPoints(): void {
-        const options = this.options.controlPointOptions;
+        const inverted = this.chart.inverted,
+            options = this.options.controlPointOptions;
         let selectType = this.options.typeOptions.selectType,
             controlPoint;
 
-        if (
-            !defined(this.userOptions.controlPointOptions &&
-                this.userOptions.controlPointOptions.style.cursor)
-        ) {
+        if (!defined(
+            this.userOptions.controlPointOptions &&
+            this.userOptions.controlPointOptions.style.cursor
+        )) {
             if (selectType === 'x') {
-                options.style.cursor = 'ew-resize';
+                options.style.cursor = inverted ? 'ns-resize' : 'ew-resize';
             } else if (selectType === 'y') {
-                options.style.cursor = 'ns-resize';
+                options.style.cursor = inverted ? 'ew-resize' : 'ns-resize';
             }
         }
 
