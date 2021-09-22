@@ -34,7 +34,7 @@ QUnit.test('Compare in candlesticks', function (assert) {
         yAxis = chart.yAxis[0];
 
     assert.strictEqual(
-        chart.series[0].compareValue,
+        chart.series[0].dataModify.compareValue,
         points[0].close,
         'Compare by close'
     );
@@ -113,7 +113,7 @@ QUnit.test('Compare with the correct compareValue', function (assert) {
     var series = chart.series[0];
 
     assert.strictEqual(
-        series.compareValue,
+        series.dataModify.compareValue,
         series.points[0][series.options.pointValKey],
         'compareValue is correct'
     );
@@ -149,7 +149,7 @@ QUnit.test('Compare to the proper series (#7773)', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[1].compareValue,
+        chart.series[1].dataModify.compareValue,
         13,
         'compareValue is correct'
     );
