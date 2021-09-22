@@ -39,7 +39,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import H from '../../Core/Globals.js';
-import NodesMixin from '../../Mixins/Nodes.js';
+import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -723,7 +723,7 @@ extend(NetworkgraphSeries.prototype, {
      * links.
      * @private
      */
-    createNode: NodesMixin.createNode,
+    createNode: NodesComposition.createNode,
     destroy: function (this: NetworkgraphSeries): void {
         if (this.layout) {
             this.layout.removeElementFromCollection(
@@ -731,7 +731,7 @@ extend(NetworkgraphSeries.prototype, {
                 this.layout.series
             );
         }
-        NodesMixin.destroy.call(this);
+        NodesComposition.destroy.call(this);
     },
 
     /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -773,7 +773,7 @@ extend(NetworkgraphSeries.prototype, {
         let node,
             i;
 
-        NodesMixin.generatePoints.apply(this, arguments as any);
+        NodesComposition.generatePoints.apply(this, arguments as any);
 
         // In networkgraph, it's fine to define stanalone nodes, create
         // them:
@@ -1161,7 +1161,7 @@ interface NetworkgraphPoint {
     renderLink(): void;
 }
 extend(NetworkgraphPoint.prototype, {
-    setState: NodesMixin.setNodeState,
+    setState: NodesComposition.setNodeState,
     /**
      * Basic `point.init()` and additional styles applied when
      * `series.draggable` is enabled.

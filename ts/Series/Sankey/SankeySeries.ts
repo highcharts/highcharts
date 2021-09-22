@@ -33,7 +33,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Color from '../../Core/Color/Color.js';
 import H from '../../Core/Globals.js';
-import NodesMixin from '../../Mixins/Nodes.js';
+import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
 import SankeyPoint from './SankeyPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -610,7 +610,7 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public generatePoints(): void {
-        NodesMixin.generatePoints.apply(this, arguments as any);
+        NodesComposition.generatePoints.apply(this, arguments as any);
 
         /**
          * Order the nodes, starting with the root node(s). (#9818)
@@ -1172,8 +1172,8 @@ extend(SankeySeries.prototype, {
     animate: Series.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
-    createNode: NodesMixin.createNode as any,
-    destroy: NodesMixin.destroy,
+    createNode: NodesComposition.createNode as any,
+    destroy: NodesComposition.destroy,
     forceDL: true,
     invertible: true,
     isCartesian: false,
@@ -1182,7 +1182,7 @@ extend(SankeySeries.prototype, {
     pointArrayMap: ['from', 'to'],
     pointClass: SankeyPoint,
     searchPoint: H.noop as any,
-    setData: NodesMixin.setData
+    setData: NodesComposition.setData
 });
 
 /* *
