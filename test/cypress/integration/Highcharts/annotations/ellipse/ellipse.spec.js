@@ -192,19 +192,19 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
                 );
                 assert.closeTo(
                     y,
-                    163,
+                    133,
                     3,
                     'Y position of 1 point should adjust to new extremes.'
                 );
                 assert.closeTo(
                     x2,
-                    123,
+                    130,
                     3,
                     'X position of 2 point should adjust to new extremes.'
                 );
                 assert.closeTo(
                     y2,
-                    163,
+                    133,
                     3,
                     'Y position of 2 point should adjust to new extremes.'
                 ); 
