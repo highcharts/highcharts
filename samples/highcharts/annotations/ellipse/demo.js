@@ -20,11 +20,11 @@ Highcharts.chart('container', {
                 x: 10,
                 y: 10
             }, {
-                x: 20,
-                y: 30
+                x: 50,
+                y: 20
             }],
             ry: 3,
-            stroke: '#0000FF',
+            stroke: '#00f',
             strokeWidth: 4,
             controlPoints: [{
                 positioner: function (target) {

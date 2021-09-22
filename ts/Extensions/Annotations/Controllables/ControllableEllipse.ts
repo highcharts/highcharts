@@ -113,18 +113,10 @@ class ControllableEllipse implements ControllableMixin.Type {
     public translatePoint = ControllableMixin.translatePoint;
     public transformPoint = ControllableMixin.transformPoint;
 
-    public update(
-        this: ControllableEllipse,
-        newOptions: Highcharts.AnnotationControllableOptionsObject
-    ): void {
-        const options = merge(true, this.options, newOptions);
-        this.options = options;
-        this.redraw();
-    }
-
     /**
      * @type 'ellipse'
      */
+
     public type = 'ellipse';
 
     /* *

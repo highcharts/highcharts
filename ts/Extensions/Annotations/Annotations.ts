@@ -1511,10 +1511,14 @@ merge<Annotation>(
                      */
 
                     /**
-                     * The type of the shape, e.g. circle or rectangle.
+                     * The type of the shape.
+                     * Avaliable options are circle, rect and ellipse.
                      *
                      * @sample highcharts/annotations/shape/
                      *         Basic shape annotation
+                     *
+                     * @sample highcharts/annotations/ellipse/
+                     *         Ellipse annotation
                      *
                      * @type      {string}
                      * @default   rect
