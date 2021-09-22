@@ -44,6 +44,13 @@ interface EllipseShapeOptions extends Highcharts.AnnotationsShapeOptions {
     xAxis: number;
     ry: number;
 }
+interface EllipseShapeSVGOptions {
+    cx: number;
+    cy: number;
+    rx: number;
+    ry: number;
+    angle: number;
+}
 
 interface ReferencePointsOptions {
     x: number;
@@ -123,17 +130,9 @@ class ControllableEllipse implements ControllableMixin.Type {
      *
      *  Functions
      *
-     * *
+     * */
 
-    /**
-     * Transform the middle point (center of an ellipse).
-     * Mostly used to handle dragging of the ellipse.
-     */
-    public init(
-        annotation: Annotation,
-        options: EllipseShapeOptions,
-        index: number
-    ): void {
+    public init(annotation: Annotation, options: EllipseShapeOptions, index: number): void {
         if (defined(options.yAxis)) {
             (options.points as MockPointOptions[]).forEach((point): void => {
                 point.yAxis = options.yAxis;
@@ -161,6 +160,11 @@ class ControllableEllipse implements ControllableMixin.Type {
 
         ControllableMixin.render.call(this);
     }
+
+    /**
+     * Translate the points.
+     * Mostly used to handle dragging of the ellipse.
+     */
 
     public translate(this: ControllableEllipse, dx: number, dy: number): void {
         ControllableMixin.translateShape.call(this, dx, dy, true);
@@ -194,7 +198,7 @@ class ControllableEllipse implements ControllableMixin.Type {
      * @param position absolute position of the first point in points array
      * @param position2 absolute position of the second point in points array
      */
-    public getAttrs(position: BBoxObject, position2: BBoxObject): any {
+    public getAttrs(position: BBoxObject, position2: BBoxObject): EllipseShapeSVGOptions {
         const x1 = position.x,
             y1 = position.y,
             x2 = position2.x,
