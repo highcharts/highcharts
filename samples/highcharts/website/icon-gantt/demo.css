@@ -6,6 +6,10 @@
 	text-align: center;
 	margin-top: 10px;
 	opacity:0;
+	transition: opacity 1s;
+}
+.main-container #button-group.on{
+	opacity:1;
 }
 
 .main-container  .btn-primary{
@@ -161,6 +165,9 @@
 	fill:#2F2B38;
 	transition:all 1s;
 }
+.chart-container .highcharts-background.on{
+	fill:#2F2B38;
+}
 
 .chart-container .highcharts-xaxis-grid .highcharts-grid-line {
 	stroke-width: 1px;
@@ -259,6 +266,7 @@
 #gantt .flag.show{
 	fill:#8bf2b6;
 	stroke:transparent;
+	transition:fill 1s 50ms;
 }
 #gantt .transparent{
 	fill:transparent;

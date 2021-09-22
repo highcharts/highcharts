@@ -23,6 +23,8 @@ Math.easeOutBounce = pos => {
 };
 
 const big = window.matchMedia("(min-width: 500px)").matches;
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 let chart;
 
 const ganttChart = function () {
@@ -74,8 +76,8 @@ const ganttChart = function () {
             events: {
                 load: function () {
                     const chart = this;
-                    $('#button-group').animate({ opacity: 1 }, 1000);
-                    $('.highcharts-background').css({ fill: '#2F2B38' });
+                    $('#button-group').addClass('on');
+                    $('.highcharts-background').addClass('on');
                     $('.highcharts-scrollable-mask').attr('fill', '#2F2B38');
 
                     if (!big) {
@@ -93,7 +95,7 @@ const ganttChart = function () {
                 },
                 redraw: function () {
 
-                    $('.highcharts-background').css({ fill: '#2F2B38' });
+                    $('.highcharts-background').addClass('on');
                     $('.highcharts-scrollable-mask').attr('fill', '#2F2B38');
 
                 }
@@ -421,10 +423,11 @@ const gantt = {
                 const startSeries = 9;
                 const endSeries = 12;
                 let count = startSeries;
+                const rcount = startSeries;
 
-                const stairs = setInterval(function () {
-                    if (count <= endSeries) {
-                        const series = chart.series[count];
+                if (reduced) {
+                    for (let ii = rcount; ii <= endSeries; ++ii) {
+                        const series = chart.series[ii];
                         const low = series.data[0].low;
                         const x = series.data[0].x;
                         const high = series.data[0].high + 1;
@@ -441,62 +444,107 @@ const gantt = {
                             }
                             ]
                         });
-                        count = count + 1;
-                    } else {
-                        clearInterval(stairs);
                     }
-                }, 500);
-
-                setTimeout(function () {
-
-                    chart.update({
-                        animation: {
-                            duration: 500,
-                            easing: 'easeInSine'
-                        }
-                    });
-
                     pole.update({
                         data: [
                             { x: 10, low: 6, high: 14 },
                             { x: 11, low: 6, high: 14 }
                         ]
                     });
+                    setTimeout(function () {
+                        chart.xAxis[1].setExtremes(0, 20);
+                    }, 500);
+                    setTimeout(function () {
+                        $('#gantt .flag').addClass('show');
+                    }, 1000);
+                    setTimeout(function () {
+                        $('#gantt .particle-2').addClass('grow');
+                        $('#gantt .particle-3').addClass('grow');
+                        $('#gantt .particle-5').addClass('grow');
+                        $('#gantt .particle-6').addClass('grow');
+                    }, 2000);
 
-                }, 2500);
+                    setTimeout(function () {
+                        ganttChart();
+                    }, 4000);
+                }
 
-                setTimeout(function () {
-                    chart.xAxis[1].setExtremes(0, 20);
-                    $('#gantt .flag').addClass('show');
+                if (!reduced) {
+                    const stairs = setInterval(function () {
+                        if (count <= endSeries) {
+                            const series = chart.series[count];
+                            const low = series.data[0].low;
+                            const x = series.data[0].x;
+                            const high = series.data[0].high + 1;
+                            series.update({
+                                data: [{
+                                    x: x,
+                                    low: low,
+                                    high: high
+                                },
+                                {
+                                    x: x + 4,
+                                    low: low,
+                                    high: high
+                                }
+                                ]
+                            });
+                            count = count + 1;
+                        } else {
+                            clearInterval(stairs);
+                        }
+                    }, 500);
+                    setTimeout(function () {
+                        chart.update({
+                            animation: {
+                                duration: 500,
+                                easing: 'easeInSine'
+                            }
+                        });
+                        pole.update({
+                            data: [
+                                { x: 10, low: 6, high: 14 },
+                                { x: 11, low: 6, high: 14 }
+                            ]
+                        });
+                    }, 2500);
+                    setTimeout(function () {
+                        chart.xAxis[1].setExtremes(0, 20);
+                    }, 3000);
+                    setTimeout(function () {
+                        $('#gantt .flag').addClass('show');
 
-                }, 3200);
-                setTimeout(function () {
-                    $('#gantt .particle-2').addClass('grow');
-                    $('#gantt .particle-3').addClass('grow');
-                    $('#gantt .particle-5').addClass('grow');
-                    $('#gantt .particle-6').addClass('grow');
-                }, 3500);
+                    }, 3300);
+                    setTimeout(function () {
+                        $('#gantt .particle-2').addClass('grow');
+                        $('#gantt .particle-3').addClass('grow');
+                        $('#gantt .particle-5').addClass('grow');
+                        $('#gantt .particle-6').addClass('grow');
+                    }, 3500);
 
-                setTimeout(function () {
-                    $('.green').hide();
-                    $('.step-p').hide();
-                    $('.step-w').hide();
-                    $('.pole').hide();
-                    $('.flag').hide();
-                    $('.cover').hide();
+                    setTimeout(function () {
+                        $('.green').hide();
+                        $('.step-p').hide();
+                        $('.step-w').hide();
+                        $('.pole').hide();
+                        $('.flag').hide();
+                        $('.cover').hide();
 
-                    chart.series[8].update({
-                        data: [
-                            { x: 0, low: 12, high: 18 },
-                            { x: 20, low: 12, high: 18 }
-                        ]
-                    });
+                        chart.series[8].update({
+                            data: [
+                                { x: 0, low: 12, high: 18 },
+                                { x: 20, low: 12, high: 18 }
+                            ]
+                        });
 
-                }, 5000);
+                    }, 5000);
 
-                setTimeout(function () {
-                    ganttChart();
-                }, 6000);
+                    setTimeout(function () {
+                        ganttChart();
+                    }, 6500);
+                }
+
+
             }
         }
     },
@@ -513,7 +561,8 @@ const gantt = {
             min: 0,
             max: 20,
             gridLineColor: 'transparent',
-            tickInterval: 1
+            tickInterval: 1,
+            visible: false
         },
         //1 - for flag cover
         {
@@ -521,6 +570,7 @@ const gantt = {
             max: 250,
             gridLineColor: 'transparent',
             tickInterval: 1
+            // reversed: true
         }],
     yAxis: [{
         min: -2,
@@ -780,7 +830,7 @@ const gantt = {
             className: 'cover',
             data: [
                 { x: 15, low: 12, high: 12 },
-                { x: 20, low: 12, high: 12 },
+                { x: 16, low: 12, high: 12 },
                 { x: 16, low: 10, high: 14 }
             ],
             // marker:{
