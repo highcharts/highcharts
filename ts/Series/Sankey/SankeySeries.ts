@@ -1153,10 +1153,10 @@ class SankeySeries extends ColumnSeries {
  *
  * */
 
-interface SankeySeries extends Highcharts.NodesSeries {
+interface SankeySeries extends NodesComposition.NodesSeries {
     animate(init?: boolean): void;
     createNode(id: string): SankeyPoint;
-    destroy: Highcharts.NodesMixin['destroy'];
+    destroy: NodesComposition.NodesSeries['destroy'];
     forceDL: boolean;
     init(chart: Chart, options: SankeySeriesOptions): void;
     invertible: boolean;
@@ -1166,7 +1166,7 @@ interface SankeySeries extends Highcharts.NodesSeries {
     pointArrayMap: Array<string>;
     pointClass: typeof SankeyPoint;
     remove: typeof ColumnSeries.prototype.remove;
-    setData: Highcharts.NodesMixin['setData'];
+    setData: NodesComposition.NodesSeries['setData'];
 }
 extend(SankeySeries.prototype, {
     animate: Series.prototype.animate,

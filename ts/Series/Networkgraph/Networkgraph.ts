@@ -117,7 +117,7 @@ declare global {
             linkFormatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
             linkTextPath?: DataLabelTextPathOptions;
         }
-        interface NetworkgraphPointOptions extends PointOptions, NodesPointOptions {
+        interface NetworkgraphPointOptions extends PointOptions, NodesComposition.NodesPointOptions {
             color?: ColorType;
             colorIndex?: number;
             dashStyle?: string;
@@ -126,7 +126,7 @@ declare global {
             opacity?: number;
             width?: number;
         }
-        interface NetworkgraphSeriesOptions extends SeriesOptions, NodesSeriesOptions {
+        interface NetworkgraphSeriesOptions extends SeriesOptions, NodesComposition.NodesSeriesOptions {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
             inactiveOtherPoints?: boolean;
@@ -135,26 +135,26 @@ declare global {
             nodes?: Array<NetworkgraphPointOptions>;
             states?: SeriesStatesOptions<NetworkgraphSeries>;
         }
-        class NetworkgraphPoint extends Point implements DragNodesPoint, NodesPoint {
-            public className: NodesPoint['className'];
+        class NetworkgraphPoint extends Point implements DragNodesPoint, NodesComposition.NodesPoint {
+            public className: NodesComposition.NodesPoint['className'];
             public degree: number;
             public fixedPosition: DragNodesPoint['fixedPosition'];
-            public formatPrefix: NodesPoint['formatPrefix'];
-            public from: NodesPoint['from'];
+            public formatPrefix: NodesComposition.NodesPoint['formatPrefix'];
+            public from: NodesComposition.NodesPoint['from'];
             public fromNode: NetworkgraphPoint;
-            public getSum: NodesPoint['getSum'];
-            public hasShape: NodesPoint['hasShape'];
-            public isNode: NodesPoint['isNode'];
+            public getSum: NodesComposition.NodesPoint['getSum'];
+            public hasShape: NodesComposition.NodesPoint['hasShape'];
+            public isNode: NodesComposition.NodesPoint['isNode'];
             public isValid: () => boolean;
             public linksFrom: Array<NetworkgraphPoint>;
             public linksTo: Array<NetworkgraphPoint>;
-            public mass: NodesPoint['mass'];
-            public offset: NodesPoint['offset'];
+            public mass: NodesComposition.NodesPoint['mass'];
+            public offset: NodesComposition.NodesPoint['offset'];
             public options: NetworkgraphPointOptions;
             public radius: number;
             public series: NetworkgraphSeries;
-            public setNodeState: NodesMixin['setNodeState'];
-            public to: NodesPoint['to'];
+            public setNodeState: NodesComposition.NodesPoint['setState'];
+            public to: NodesComposition.NodesPoint['to'];
             public toNode: NetworkgraphPoint;
             public destroy(): void;
             public getDegree(): number;
@@ -166,7 +166,7 @@ declare global {
                 series: NetworkgraphSeries,
                 options: (NetworkgraphPointOptions|PointShortOptions),
                 x?: number
-            ): Highcharts.NetworkgraphPoint;
+            ): NetworkgraphPoint;
             public redrawLink(): void;
             public remove(redraw?: boolean, animation?: boolean): void;
             public renderLink(): void;
@@ -226,7 +226,7 @@ declare global {
  *
  * @extends Highcharts.Series
  */
-class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, Highcharts.NodesSeries {
+class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, NodesComposition.NodesSeries {
 
     /* *
      *
@@ -659,7 +659,7 @@ class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, H
 
 interface NetworkgraphSeries {
     chart: Highcharts.NetworkgraphChart;
-    createNode: Highcharts.NodesMixin['createNode'];
+    createNode: NodesComposition.NodesSeries['createNode'];
     data: Array<NetworkgraphPoint>;
     destroy(): void;
     directTouch: boolean;
@@ -668,7 +668,7 @@ interface NetworkgraphSeries {
     hasDraggableNodes: boolean;
     isCartesian: boolean;
     layout: Highcharts.NetworkgraphLayout;
-    nodeLookup: Highcharts.NodesSeries['nodeLookup'];
+    nodeLookup: NodesComposition.NodesSeries['nodeLookup'];
     nodes: Array<NetworkgraphPoint>;
     noSharedTooltip: boolean;
     onMouseDown: Highcharts.DragNodesMixin['onMouseDown'];
@@ -779,7 +779,7 @@ extend(NetworkgraphSeries.prototype, {
         // them:
         if (this.options.nodes) {
             this.options.nodes.forEach(
-                function (nodeOptions: Highcharts.NodesPointOptions): void {
+                function (nodeOptions: NodesComposition.NodesPointOptions): void {
                     if (!this.nodeLookup[nodeOptions.id as any]) {
                         this.nodeLookup[nodeOptions.id as any] =
                             this.createNode(nodeOptions.id as any);
@@ -1101,7 +1101,7 @@ extend(NetworkgraphSeries.prototype, {
 
 class NetworkgraphPoint
     extends Series.prototype.pointClass
-    implements Highcharts.DragNodesPoint, Highcharts.NodesPoint {
+    implements Highcharts.DragNodesPoint, NodesComposition.NodesPoint {
 
     /* *
      *
@@ -1132,19 +1132,19 @@ class NetworkgraphPoint
  * */
 
 interface NetworkgraphPoint {
-    className: Highcharts.NodesPoint['className'];
+    className: NodesComposition.NodesPoint['className'];
     fixedPosition: Highcharts.DragNodesPoint['fixedPosition'];
-    formatPrefix: Highcharts.NodesPoint['formatPrefix'];
-    from: Highcharts.NodesPoint['from'];
+    formatPrefix: NodesComposition.NodesPoint['formatPrefix'];
+    from: NodesComposition.NodesPoint['from'];
     fromNode: NetworkgraphPoint;
-    getSum: Highcharts.NodesPoint['getSum'];
-    hasShape: Highcharts.NodesPoint['hasShape'];
-    isNode: Highcharts.NodesPoint['isNode'];
+    getSum: NodesComposition.NodesPoint['getSum'];
+    hasShape: NodesComposition.NodesPoint['hasShape'];
+    isNode: NodesComposition.NodesPoint['isNode'];
     isValid: () => boolean;
-    mass: Highcharts.NodesPoint['mass'];
-    offset: Highcharts.NodesPoint['offset'];
-    setNodeState: Highcharts.NodesMixin['setNodeState'];
-    to: Highcharts.NodesPoint['to'];
+    mass: NodesComposition.NodesPoint['mass'];
+    offset: NodesComposition.NodesPoint['offset'];
+    setNodeState: NodesComposition.NodesPoint['setState'];
+    to: NodesComposition.NodesPoint['to'];
     destroy(): void;
     getDegree(): number;
     getLinkAttributes(): SVGAttributes;

@@ -19,6 +19,7 @@
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type { DOMElementType } from './Renderer/DOMElementType';
+import type NodesComposition from '../Series/NodesComposition';
 import type Options from './Options';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
@@ -634,7 +635,7 @@ class Pointer {
             let y = point.plotY || 0;
 
             if (
-                (point as Highcharts.NodesPoint).isNode &&
+                (point as NodesComposition.NodesPoint).isNode &&
                 shapeArgs &&
                 isNumber(shapeArgs.x) &&
                 isNumber(shapeArgs.y)
