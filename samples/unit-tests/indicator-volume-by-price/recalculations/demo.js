@@ -238,9 +238,6 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'volumeDataArray is correct after point remove on the base and the volume series.'
     );
 
-    // chart.series[0].setCompare('percent');
-    // chart.redraw();
-
     const negativeGraphic = indicator.points[0].negativeGraphic;
     indicator.points[0].destroy();
     assert.notOk(
