@@ -1,8 +1,9 @@
-/* global hull */
 Highcharts.addEvent(Highcharts.Series, 'afterRender', function () {
     this.points
         .forEach(point => {
             if (point.visible && !point.isNull) {
+
+                // First improvement, create padding between groups
                 const pointPadding = (this.options.pointPadding || 0) *
                     this.itemSize,
                     translateX = Math.cos(point.angle) * pointPadding,
@@ -10,33 +11,37 @@ Highcharts.addEvent(Highcharts.Series, 'afterRender', function () {
 
                 point.graphic.translate(translateX, translateY);
 
-                const polygon = hull(
-                    Object.keys(point.graphics).map(key => point.graphics[key]),
-                    10,
-                    ['.x', '.y']
-                );
+                // Second improvement, create a backdrop for each group
+                if (window.hull) {
+                    const polygon = window.hull(
+                        Object.keys(point.graphics)
+                            .map(key => point.graphics[key]),
+                        10,
+                        ['.x', '.y']
+                    );
 
-                const d = polygon
-                    .map((p, i) => [
-                        i === 0 ? 'M' : 'L',
-                        p.x + point.graphics[i].width / 2,
-                        p.y + point.graphics[i].height / 2
-                    ]);
-                d.push(['z']);
+                    const d = polygon
+                        .map((p, i) => [
+                            i === 0 ? 'M' : 'L',
+                            p.x + point.graphics[i].width / 2,
+                            p.y + point.graphics[i].height / 2
+                        ]);
+                    d.push(['z']);
 
-                if (point.backdrop) {
-                    point.backdrop.animate({ d });
-                } else {
-                    point.backgrop = this.chart.renderer
-                        .path(d)
-                        .attr({
-                            stroke: point.color,
-                            'stroke-width': this.itemSize,
-                            'stroke-linejoin': 'round',
-                            fill: point.color,
-                            opacity: 0.2
-                        })
-                        .add(point.graphic);
+                    if (point.backdrop) {
+                        point.backdrop.animate({ d });
+                    } else {
+                        point.backgrop = this.chart.renderer
+                            .path(d)
+                            .attr({
+                                stroke: point.color,
+                                'stroke-width': this.itemSize,
+                                'stroke-linejoin': 'round',
+                                fill: point.color,
+                                opacity: 0.2
+                            })
+                            .add(point.graphic);
+                    }
                 }
             } else if (point.backdrop) {
                 point.backdrop = point.backdrop.destroy();
