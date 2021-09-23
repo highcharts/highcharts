@@ -118,11 +118,48 @@ namespace NodesComposition {
 
     /* *
      *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
+
+    /* *
+     *
      *  Functions
      *
      * */
 
     /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    export function compose<T extends typeof Series>(
+        PointClass: typeof Point,
+        SeriesClass: T
+    ): (T&SeriesComposition) {
+
+        if (composedClasses.indexOf(PointClass) === -1) {
+            composedClasses.push(PointClass);
+
+            const pointProto = PointClass.prototype as PointComposition;
+
+            pointProto.setNodeState = setNodeState;
+            pointProto.setState = setNodeState;
+        }
+
+        if (composedClasses.indexOf(SeriesClass) === -1) {
+            composedClasses.push(SeriesClass);
+
+            const seriesProto = SeriesClass.prototype as SeriesComposition;
+
+            seriesProto.destroy = destroy;
+            seriesProto.setData = setData;
+        }
+
+        return SeriesClass as (T&SeriesComposition);
+    }
 
     /**
      * Create a single node that holds information on incoming and outgoing
@@ -234,6 +271,18 @@ namespace NodesComposition {
     }
 
     /**
+     * Destroy alll nodes and links.
+     * @private
+     */
+    export function destroy(this: SeriesComposition): void {
+        // Nodes must also be destroyed (#8682, #9300)
+        this.data = ([] as Array<PointComposition>)
+            .concat(this.points || [], this.nodes);
+
+        return Series.prototype.destroy.apply(this, arguments as any);
+    }
+
+    /**
      * Extend generatePoints by adding the nodes, which are Point objects
      * but pushed to the this.nodes array.
      */
@@ -295,7 +344,7 @@ namespace NodesComposition {
      * Destroy all nodes on setting new data
      * @private
      */
-    export function setData(this: SeriesComposition): void {
+    function setData(this: SeriesComposition): void {
         if (this.nodes) {
             this.nodes.forEach(function (node: PointComposition): void {
                 node.destroy();
@@ -303,18 +352,6 @@ namespace NodesComposition {
             this.nodes.length = 0;
         }
         Series.prototype.setData.apply(this, arguments as any);
-    }
-
-    /**
-     * Destroy alll nodes and links.
-     * @private
-     */
-    export function destroy(this: SeriesComposition): void {
-        // Nodes must also be destroyed (#8682, #9300)
-        this.data = ([] as Array<PointComposition>)
-            .concat(this.points || [], this.nodes);
-
-        return Series.prototype.destroy.apply(this, arguments as any);
     }
 
     /**
