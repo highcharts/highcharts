@@ -1168,12 +1168,13 @@ interface SankeySeries extends NodesComposition.SeriesComposition {
     remove: typeof ColumnSeries.prototype.remove;
     setData: NodesComposition.SeriesComposition['setData'];
 }
+
+NodesComposition.compose(SankeyPoint, SankeySeries);
 extend(SankeySeries.prototype, {
     animate: Series.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
     createNode: NodesComposition.createNode as any,
-    destroy: NodesComposition.destroy,
     forceDL: true,
     invertible: true,
     isCartesian: false,
@@ -1181,8 +1182,7 @@ extend(SankeySeries.prototype, {
     noSharedTooltip: true,
     pointArrayMap: ['from', 'to'],
     pointClass: SankeyPoint,
-    searchPoint: H.noop as any,
-    setData: NodesComposition.setData
+    searchPoint: H.noop as any
 });
 
 /* *
