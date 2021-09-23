@@ -1258,12 +1258,12 @@ setOptions({
          *
          * @type         {Highcharts.Dictionary<Highcharts.NavigationBindingsOptionsObject>|*}
          *
-         * @sample       stock/stocktools/stocktools-thresholds
-         *               Custom bindings in Highcharts Stock
-         * @sample       highcharts/annotations/bindings/
-         *               Simple bingind without Stock Tools
-         * @sample       highcharts/annotations/bindings-custom-annotation/
-         *               Custom annotation binding without Stock Tools
+         * @sample {highstock} stock/stocktools/stocktools-thresholds
+         *               Custom bindings
+         * @sample {highcharts} highcharts/annotations/bindings/
+         *               Simple binding
+         * @sample {highcharts} highcharts/annotations/bindings-custom-annotation/
+         *               Custom annotation binding
          *
          * @since        7.0.0
          * @requires     modules/annotations
