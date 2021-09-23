@@ -1699,7 +1699,8 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
      * @param  {Highcharts.AnnotationsOptions} options
      *         The annotation options for the new, detailed annotation.
      * @param {boolean} [redraw]
-     *
+     * @sample highcharts/annotations/add-annotation/
+     *         Add annotation
      * @return {Highcharts.Annotation} - The newly generated annotation.
      */
     addAnnotation: function (
