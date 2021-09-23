@@ -219,7 +219,9 @@ class ControllableEllipse implements ControllableMixin.Type {
      */
     public getRY(): number {
         const yAxis = this.getYAxis();
-        return Math.abs(yAxis.toPixels(this.options.ry) - yAxis.toPixels(0));
+        return defined(yAxis) ?
+            Math.abs(yAxis.toPixels(this.options.ry) - yAxis.toPixels(0)) :
+            this.options.ry;
     }
 
     /**
