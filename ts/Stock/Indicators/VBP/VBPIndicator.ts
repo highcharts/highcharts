@@ -596,11 +596,10 @@ class VBPIndicator extends SMAIndicator {
         const mainSeries = indicator.linkedParent;
         if (
             !indicator.options.compareToMain &&
-            mainSeries.options.compare &&
             mainSeries.dataModify
         ) {
-            lowRange = mainSeries.dataModify.modifyValue(lowRange) || 0;
-            highRange = mainSeries.dataModify.modifyValue(highRange) || 0;
+            lowRange = mainSeries.dataModify.modifyValue(lowRange);
+            highRange = mainSeries.dataModify.modifyValue(highRange);
         }
 
         if (!defined(lowRange) || !defined(highRange)) {
@@ -709,12 +708,11 @@ class VBPIndicator extends SMAIndicator {
                     const mainSeries = indicator.linkedParent;
                     if (
                         !indicator.options.compareToMain &&
-                        mainSeries.options.compare &&
                         mainSeries.dataModify
                     ) {
-                        value = mainSeries.dataModify.modifyValue(value) || 0;
+                        value = mainSeries.dataModify.modifyValue(value);
                         previousValue = mainSeries.dataModify
-                            .modifyValue(previousValue) || 0;
+                            .modifyValue(previousValue);
                     }
 
                     // Checks if this is the point with the
