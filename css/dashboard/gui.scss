@@ -553,6 +553,11 @@ h1 {
     margin-right: -10px;
 }
 
+.hcd-edit-sidebar-button-nav.hcd-edit-close-btn:hover {
+    background-color: #fff;
+    border: 1px solid #0d47a1;
+}
+
 .hcd-edit-sidebar .hcd-edit-button {
     background-repeat: no-repeat;
     float: right;
@@ -582,9 +587,25 @@ h1 {
 .hcd-edit-sidebar-title {
     color: #424242;
     padding: 5px 5px 5px 30px;
-    background: url("https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg") no-repeat 0px 50%;
     text-transform: uppercase;
+    position: relative;
+    font-weight: bold;
+}
+
+.hcd-edit-sidebar-title::before {
+    content: ' ';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    display: block;
+    width: 24px;
+    height: 20px;
     background-size: 20px;
+    background-color: #1779BA;
+    -webkit-mask-image: url("https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg");
+    mask-image: url("https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg");
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
 }
 
 .hcd-edit-sidebar-tab-wrapper {
