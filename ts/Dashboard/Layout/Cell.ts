@@ -15,6 +15,7 @@ import Bindings from '../Actions/Bindings.js';
 import U from '../../Core/Utilities.js';
 import Layout from './Layout.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import EditGlobals from './../EditMode/EditGlobals.js';
 
 const {
     merge,
@@ -176,6 +177,11 @@ class Cell extends GUIElement {
      * Layout nested in the cell.
      */
     public nestedLayout?: Layout;
+
+    /**
+     * Cell highlight flag.
+     */
+     public isHighlighted?: boolean;
 
     /**
      * Mount component from JSON.
@@ -394,6 +400,40 @@ class Cell extends GUIElement {
         cell.options.responsive[cntSize] = {
             width: width
         };
+    }
+
+    public setHighlight(
+        remove?: boolean
+    ): void {
+        const cell = this,
+            editMode = cell.row.layout.dashboard.editMode;
+
+        if (cell.container && editMode) {
+            const cnt = cell.container,
+                isSet = cnt.classList.contains(EditGlobals.classNames.cellEditHighlight);
+
+            if (!remove && !isSet) {
+                cnt.classList.add(EditGlobals.classNames.cellEditHighlight);
+                cell.row.layout.dashboard.container.classList.add(
+                    EditGlobals.classNames.dashboardCellEditHighlightActive
+                );
+                editMode.stopContextDetection();
+                editMode.hideToolbars(['cell']);
+                if (editMode.resizer) {
+                    editMode.resizer.disableResizer();
+                }
+
+                cell.isHighlighted = true;
+            } else if (remove && isSet) {
+                cnt.classList.remove(EditGlobals.classNames.cellEditHighlight);
+                cell.row.layout.dashboard.container.classList.remove(
+                    EditGlobals.classNames.dashboardCellEditHighlightActive
+                );
+                editMode.isContextDetectionActive = true;
+                editMode.showToolbars(['cell'], editMode.editCellContext);
+                cell.isHighlighted = false;
+            }
+        }
     }
 }
 

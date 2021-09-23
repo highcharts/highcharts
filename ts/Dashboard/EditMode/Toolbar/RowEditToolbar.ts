@@ -199,7 +199,7 @@ class RowEditToolbar extends EditToolbar {
     }
 
     public resetEditedRow(): void {
-        super.resetCurrentElements(this.row as Row, true);
+        // super.resetCurrentElements(this.row as Row, true);
         this.editedRow = void 0;
     }
 }

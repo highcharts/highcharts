@@ -576,7 +576,7 @@ class Sidebar {
             sidebar.isVisible = true;
 
             // Hide row and cell toolbars.
-            sidebar.editMode.hideToolbars(['cell', 'row']);
+            sidebar.editMode.hideToolbars(['cell']);
             sidebar.editMode.stopContextDetection();
 
             // Refresh layout
@@ -607,27 +607,32 @@ class Sidebar {
 
         sidebar.editMode.dashboard.container.style.paddingLeft = '';
 
-        if (sidebar.editMode.cellToolbar) {
-            sidebar.editMode.cellToolbar.resetEditedCell();
-        }
+        // if (sidebar.editMode.cellToolbar) {
+        //     sidebar.editMode.cellToolbar.resetEditedCell();
+        // }
 
-        if (sidebar.editMode.rowToolbar) {
-            sidebar.editMode.rowToolbar.resetEditedRow();
-        }
+        // if (sidebar.editMode.rowToolbar) {
+        //     sidebar.editMode.rowToolbar.resetEditedRow();
+        // }
 
         sidebar.isVisible = false;
         sidebar.guiElement = void 0;
 
         // Hide row and cell toolbars.
-        sidebar.editMode.hideToolbars(['cell', 'row']);
-        sidebar.editMode.stopContextDetection();
+        // sidebar.editMode.hideToolbars(['cell', 'row']);
+        // sidebar.editMode.stopContextDetection();
+
+        // Remove cell highlight.
+        if (sidebar.editMode.editCellContext && sidebar.editMode.editCellContext.isHighlighted) {
+            sidebar.editMode.editCellContext.setHighlight(true);
+        }
 
         // Refresh layout
-        sidebar.afterCSSAnimate((): void => {
-            if (sidebar.editMode.isActive()) {
-                sidebar.editMode.isContextDetectionActive = true;
-            }
-        });
+        // sidebar.afterCSSAnimate((): void => {
+        //     if (sidebar.editMode.isActive()) {
+        //         sidebar.editMode.isContextDetectionActive = true;
+        //     }
+        // });
     }
 
 

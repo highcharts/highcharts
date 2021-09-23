@@ -329,19 +329,8 @@ class EditMode {
             this.addComponentBtn.style.display = 'block';
         }
 
-        // Open the sidebar.
-        if (editMode.sidebar) {
-            editMode.sidebar.show();
-        }
-
         // Sets proper rwd mode.
-        if (editMode.sidebar) {
-            editMode.sidebar.afterCSSAnimate((): void => {
-                editMode.rwdMode = editMode.dashboard.getLayoutContainerSize();
-            });
-        } else {
-            editMode.rwdMode = editMode.dashboard.getLayoutContainerSize();
-        }
+        editMode.rwdMode = editMode.dashboard.getLayoutContainerSize();
 
         // show reponsive buttons
         this.showRwdButtons();
@@ -630,10 +619,6 @@ class EditMode {
                 }
                 // Add highlight to the context row.
                 this.editCellContext.row.setHighlight();
-            }
-
-            if (this.sidebar) {
-                this.sidebar.show(this.editCellContext);
             }
 
             if (this.resizer) {

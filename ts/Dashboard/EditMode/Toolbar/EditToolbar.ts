@@ -2,11 +2,11 @@ import EditMode from '../EditMode.js';
 import U from '../../../Core/Utilities.js';
 import Menu from '../Menu/Menu.js';
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
-import EditGlobals from '../EditGlobals.js';
-import Row from '../../Layout/Row.js';
-import Cell from '../../Layout/Cell.js';
+// import EditGlobals from '../EditGlobals.js';
+// import Row from '../../Layout/Row.js';
+// import Cell from '../../Layout/Cell.js';
 import GUIElement from '../../Layout/GUIElement.js';
-import type Layout from '../../Layout/Layout.js';
+// import type Layout from '../../Layout/Layout.js';
 
 const {
     defined,
@@ -114,79 +114,79 @@ abstract class EditToolbar {
         toolbar.isVisible = defined(x) && defined(y);
     }
 
-    public maskNotEditedElements(
-        currentElement: Cell|Row,
-        isRow?: boolean
-    ): void {
-        const components = isRow ?
-            (currentElement as Row).layout.dashboard.mountedComponents :
-            (currentElement as Cell).row.layout.dashboard.mountedComponents;
+    // public maskNotEditedElements(
+    //     currentElement: Cell|Row,
+    //     isRow?: boolean
+    // ): void {
+    //     const components = isRow ?
+    //         (currentElement as Row).layout.dashboard.mountedComponents :
+    //         (currentElement as Cell).row.layout.dashboard.mountedComponents;
 
-        // set opacity
-        for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
-            (components[i].cell.container as HTMLDOMElement).classList.add(
-                EditGlobals.classNames.maskElement
-            );
-        }
+    //     // set opacity
+    //     for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
+    //         (components[i].cell.container as HTMLDOMElement).classList.add(
+    //             EditGlobals.classNames.maskElement
+    //         );
+    //     }
 
-        // highlight current element
-        if (isRow) {
-            this.unmaskRow(
-                currentElement as Row
-            );
-        } else {
-            (currentElement.container as HTMLDOMElement).classList.remove(
-                EditGlobals.classNames.maskElement
-            );
-        }
-    }
+    //     // highlight current element
+    //     if (isRow) {
+    //         this.unmaskRow(
+    //             currentElement as Row
+    //         );
+    //     } else {
+    //         (currentElement.container as HTMLDOMElement).classList.remove(
+    //             EditGlobals.classNames.maskElement
+    //         );
+    //     }
+    // }
 
-    public unmaskRow(
-        row: Row
-    ): void {
-        const cells = row.cells;
-        let nestedLayout: Layout|undefined;
-        let rows;
+    // public unmaskRow(
+    //     row: Row
+    // ): void {
+    //     const cells = row.cells;
+    //     let nestedLayout: Layout|undefined;
+    //     let rows;
 
-        for (let i = 0, iEnd = cells.length; i < iEnd; ++i) {
-            nestedLayout = cells[i].nestedLayout;
+    //     for (let i = 0, iEnd = cells.length; i < iEnd; ++i) {
+    //         nestedLayout = cells[i].nestedLayout;
 
-            if (nestedLayout) {
-                rows = nestedLayout.rows;
-                for (let j = 0, jEnd = rows.length; j < jEnd; ++j) {
-                    this.unmaskRow(
-                        rows[j]
-                    );
-                }
-            } else {
-                (cells[i].container as HTMLDOMElement).classList.remove(
-                    EditGlobals.classNames.maskElement
-                );
-            }
-        }
-    }
+    //         if (nestedLayout) {
+    //             rows = nestedLayout.rows;
+    //             for (let j = 0, jEnd = rows.length; j < jEnd; ++j) {
+    //                 this.unmaskRow(
+    //                     rows[j]
+    //                 );
+    //             }
+    //         } else {
+    //             (cells[i].container as HTMLDOMElement).classList.remove(
+    //                 EditGlobals.classNames.maskElement
+    //             );
+    //         }
+    //     }
+    // }
 
-    public resetCurrentElements(
-        currentElement: Cell|Row,
-        isRow?: boolean
-    ): void {
-        if (currentElement) {
-            const components = isRow ?
-                (currentElement as Row).layout.dashboard.mountedComponents :
-                (currentElement as Cell).row.layout.dashboard.mountedComponents;
-            let cellContainer;
+    // public resetCurrentElements(
+    //     currentElement: Cell|Row,
+    //     isRow?: boolean
+    // ): void {
+    //     if (currentElement) {
+    //         const components = isRow ?
+    //             (currentElement as Row).layout.dashboard.mountedComponents :
+    //             (currentElement as Cell).row.layout.dashboard.mountedComponents;
+    //         let cellContainer;
 
-            // set opacity
-            for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
-                cellContainer = components[i].cell.container;
-                if (cellContainer) {
-                    (cellContainer as HTMLDOMElement).classList.remove(
-                        EditGlobals.classNames.maskElement
-                    );
-                }
-            }
-        }
-    }
+    //         // set opacity
+    //         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
+    //             cellContainer = components[i].cell.container;
+    //             if (cellContainer) {
+    //                 (cellContainer as HTMLDOMElement).classList.remove(
+    //                     EditGlobals.classNames.maskElement
+    //                 );
+    //             }
+    //         }
+    //     }
+    // }
 }
 
 namespace EditToolbar {

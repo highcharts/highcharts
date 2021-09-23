@@ -29,6 +29,8 @@ const EditGlobals: EditGlobals = {
         editSidebarTabActive: PREFIX + 'toolbar-tab-active',
         editSidebarMenuItem: PREFIX + 'sidebar-item',
         rowContextHighlight: PREFIX + 'row-context-highlight',
+        cellEditHighlight: PREFIX + 'cell-highlight',
+        dashboardCellEditHighlightActive: PREFIX + 'cell-highlight-active',
         dragMock: PREFIX + 'drag-mock',
         dropPointer: PREFIX + 'drop-pointer',
         contextDetectionPointer: PREFIX + 'ctx-detection-pointer',
@@ -110,6 +112,8 @@ namespace EditGlobals {
         editSidebarTabActive: string;
         editSidebarMenuItem: string;
         rowContextHighlight: string;
+        cellEditHighlight: string;
+        dashboardCellEditHighlightActive: string;
         dragMock: string;
         dropPointer: string;
         contextDetectionPointer: string;

@@ -173,14 +173,9 @@ class CellEditToolbar extends EditToolbar {
             toolbar.editMode.sidebar.show(toolbar.cell);
             // toolbar.editMode.sidebar.updateTitle('CELL OPTIONS');
 
-
-            // @ToDo - mask is buggy - should be refactored or removed.
-            // if (this.cell) {
-            //     super.maskNotEditedElements(
-            //         this.cell
-            //     );
-            //     this.editedCell = this.cell;
-            // }
+            if (this.cell) {
+                this.cell.setHighlight();
+            }
         }
     }
 
@@ -206,7 +201,7 @@ class CellEditToolbar extends EditToolbar {
     }
 
     public resetEditedCell(): void {
-        super.resetCurrentElements(this.cell as Cell);
+        // super.resetCurrentElements(this.cell as Cell);
         this.editedCell = void 0;
     }
 }
