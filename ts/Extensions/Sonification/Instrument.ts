@@ -537,7 +537,7 @@ class Instrument {
             instrument.stopTimeout = setTimeout(
                 onStop,
                 immediate ? duration :
-                    duration - H.sonification.fadeOutDuration
+                    duration - Sonification.fadeOutDuration
             );
 
             // Play the note
@@ -634,7 +634,7 @@ class Instrument {
             instr.mute();
             // Stop the oscillator after the mute fade-out has finished
             instr.stopOscillatorTimeout =
-                setTimeout(reset, H.sonification.fadeOutDuration + 100);
+                setTimeout(reset, Sonification.fadeOutDuration + 100);
         }
     }
 }

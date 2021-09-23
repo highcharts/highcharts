@@ -74,7 +74,7 @@ class ProxyElement {
     // on group type.
     public buttonElement: HTMLButtonElement;
 
-    private eventProvider: Highcharts.EventProvider;
+    private eventProvider: EventProvider;
 
     constructor(
         private chart: Highcharts.AccessibilityChart,

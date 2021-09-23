@@ -26,14 +26,10 @@ import type Series from '../../Core/Series/Series';
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import HTMLUtilities from './HTMLUtilities.js';
-const {
-    stripHTMLTagsFromString: stripHTMLTags
-} = HTMLUtilities;
 import H from '../../Core/Globals.js';
-const {
-    doc
-} = H;
+const { doc } = H;
+import HU from './HTMLUtilities.js';
+const { stripHTMLTagsFromString: stripHTMLTags } = HU;
 import U from '../../Core/Utilities.js';
 const {
     defined,
@@ -41,13 +37,13 @@ const {
     fireEvent
 } = U;
 
-/* eslint-disable valid-jsdoc */
-
 /* *
  *
  *  Functions
  *
  * */
+
+/* eslint-disable valid-jsdoc */
 
 /**
  * Fire an event on an element that is either wrapped by Highcharts,
@@ -418,6 +414,12 @@ function scrollToPoint(point: Point): void {
     }
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 const ChartUtilities = {
     fireEventOnWrappedOrUnwrappedElement,
     getChartTitle,
@@ -431,11 +433,5 @@ const ChartUtilities = {
     hideSeriesFromAT,
     scrollToPoint
 };
-
-/* *
- *
- *  Default Export
- *
- * */
 
 export default ChartUtilities;
