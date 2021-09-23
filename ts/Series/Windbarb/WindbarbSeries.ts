@@ -328,28 +328,6 @@ class WindbarbSeries extends ColumnSeries {
         return path;
     }
 
-    public translate(): void {
-        const beaufortFloor = this.beaufortFloor,
-            beaufortName = this.beaufortName;
-
-        OnSeriesComposition.translate.call(this);
-
-        this.points.forEach(function (
-            point: WindbarbPoint
-        ): void {
-            let level = 0;
-
-            // Find the beaufort level (zero based)
-            for (; level < beaufortFloor.length; level++) {
-                if (beaufortFloor[level] > point.value) {
-                    break;
-                }
-            }
-            point.beaufortLevel = level - 1;
-            point.beaufort = beaufortName[level - 1];
-
-        });
-    }
     public drawPoints(): void {
         const chart = this.chart,
             yAxis = this.yAxis,
@@ -459,6 +437,7 @@ interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
 
 }
 
+OnSeriesComposition.compose(WindbarbSeries);
 extend(WindbarbSeries.prototype, {
     beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
         24.5, 28.5, 32.7], // @todo dictionary with names?
@@ -470,10 +449,30 @@ extend(WindbarbSeries.prototype, {
     pointArrayMap: ['value', 'direction'],
     pointClass: WindbarbPoint,
     trackerGroups: ['markerGroup'],
-    invertGroups: noop // Don't invert the marker group (#4960)
-});
+    invertGroups: noop, // Don't invert the marker group (#4960)
+    translate: function (this: WindbarbSeries): void {
+        const beaufortFloor = this.beaufortFloor,
+            beaufortName = this.beaufortName;
 
-OnSeriesComposition.compose(WindbarbSeries);
+        OnSeriesComposition.translate.call(this);
+
+        this.points.forEach(function (
+            point: WindbarbPoint
+        ): void {
+            let level = 0;
+
+            // Find the beaufort level (zero based)
+            for (; level < beaufortFloor.length; level++) {
+                if (beaufortFloor[level] > point.value) {
+                    break;
+                }
+            }
+            point.beaufortLevel = level - 1;
+            point.beaufort = beaufortName[level - 1];
+
+        });
+    }
+});
 
 /* *
  *

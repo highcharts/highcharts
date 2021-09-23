@@ -681,6 +681,8 @@ interface FlagsSeries extends OnSeriesComposition.SeriesComposition {
     init: typeof Series.prototype['init'];
     remove: typeof ColumnSeries.prototype.remove;
 }
+
+OnSeriesComposition.compose(FlagsSeries);
 extend(FlagsSeries.prototype, {
     allowDG: false,
     forceCrop: true,
@@ -702,8 +704,6 @@ extend(FlagsSeries.prototype, {
      */
     invertGroups: noop
 });
-
-OnSeriesComposition.compose(FlagsSeries);
 
 /* *
  *
