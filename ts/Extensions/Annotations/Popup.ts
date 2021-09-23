@@ -1317,8 +1317,15 @@ H.Popup.prototype = {
             button.classList.add('clear-filter-button');
 
             // Add input change events.
-            addEvent(input, 'input', function (): void {
+            addEvent(input, 'input', function (e): void {
                 handleInputChange(this.value);
+
+                // Show clear filter button.
+                if (this.value.length) {
+                    button.style.display = 'block';
+                } else {
+                    button.style.display = 'none';
+                }
             });
 
             // Add clear filter click event.
@@ -1328,6 +1335,9 @@ H.Popup.prototype = {
                     // Clear the input.
                     input.value = '';
                     handleInputChange('');
+
+                    // Hide clear filter button- no longer nececary.
+                    button.style.display = 'none';
                 });
             });
         },
