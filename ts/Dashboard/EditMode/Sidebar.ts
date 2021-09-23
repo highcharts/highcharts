@@ -545,6 +545,7 @@ class Sidebar {
         context?: Cell|Row
     ): void {
         const sidebar = this;
+        let isRightSidebar = false;
 
         // hide tabs
         if (sidebar.rowCellTab) {
@@ -569,10 +570,21 @@ class Sidebar {
         }
 
         if (!sidebar.isVisible) {
+            // detect position of right sidebar
+            isRightSidebar = this.detectRightSidebar();
 
-            sidebar.container.classList.add(
-                EditGlobals.classNames.editSidebarShow
-            );
+            if (isRightSidebar) {
+                sidebar.container.classList.add(
+                    EditGlobals.classNames.editSidebarRight
+                );
+                sidebar.container.classList.add(
+                    EditGlobals.classNames.editSidebarRightShow
+                );
+            } else {
+                sidebar.container.classList.add(
+                    EditGlobals.classNames.editSidebarShow
+                );
+            }
             sidebar.isVisible = true;
 
             // Hide row and cell toolbars.
@@ -584,6 +596,21 @@ class Sidebar {
                 sidebar.editMode.isContextDetectionActive = true;
             });
         }
+    }
+
+    public detectRightSidebar(): boolean {
+
+        const editMode = this.editMode;
+        const sidebar = editMode.sidebar;
+        const layoutWrapper = editMode.dashboard.layoutsWrapper;
+
+        if (sidebar) {
+            return (
+                GUIElement.getOffsets(sidebar.context as Cell, layoutWrapper).left
+            ) < ((layoutWrapper.offsetWidth / 2) - 10); // 10 = snap
+        }
+
+        return false;
     }
 
     public update(
@@ -603,6 +630,14 @@ class Sidebar {
         sidebar.context = void 0;
         sidebar.container.classList.remove(
             EditGlobals.classNames.editSidebarShow
+        );
+
+        sidebar.container.classList.remove(
+            EditGlobals.classNames.editSidebarRight
+        );
+
+        sidebar.container.classList.remove(
+            EditGlobals.classNames.editSidebarRightShow
         );
 
         sidebar.editMode.dashboard.container.style.paddingLeft = '';

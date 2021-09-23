@@ -58,7 +58,9 @@ const EditGlobals: EditGlobals = {
         overlay: PREFIX + 'overlay',
         resizerMenuBtnActive: PREFIX + 'resizer-menu-btn-active',
         sidebarCloseButton: PREFIX + 'close-btn',
-        editSidebarTabBtnWrapper: PREFIX + 'tabs-buttons-wrapper'
+        editSidebarTabBtnWrapper: PREFIX + 'tabs-buttons-wrapper',
+        editSidebarRight: PREFIX + 'sidebar-right',
+        editSidebarRightShow: PREFIX + 'sidebar-right-show'
     },
     lang: {
         editMode: 'Edit mode',
@@ -142,6 +144,8 @@ namespace EditGlobals {
         resizerMenuBtnActive: string;
         sidebarCloseButton: string;
         editSidebarTabBtnWrapper: string;
+        editSidebarRight: string;
+        editSidebarRightShow: string;
     }
 
     export interface LangOptions {

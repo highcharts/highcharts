@@ -508,6 +508,11 @@ h1 {
     padding: 10px 20px;
 }
 
+.hcd-edit-sidebar-right {
+    left: auto;
+    right: -310px;
+}
+
 .hcd-edit-sidebar-tab-btn,
 .hcd-edit-sidebar .hcd-edit-button.hcd-edit-sidebar-tab-btn {
     margin-top: 10px;
@@ -586,6 +591,11 @@ h1 {
     transition: left 0.5s;
 }
 
+.hcd-edit-sidebar-right-show {
+    right: 0;
+    transition: left 0.5s;
+}
+
 .hcd-edit-label-text {
     display: inline-block;
 }
@@ -607,6 +617,7 @@ h1 {
     text-transform: uppercase;
     position: relative;
     font-weight: bold;
+    width: 75%;
 }
 
 .hcd-edit-sidebar-title::before {
