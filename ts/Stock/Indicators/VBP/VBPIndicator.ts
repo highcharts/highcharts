@@ -46,6 +46,7 @@ const {
     arrayMax,
     arrayMin,
     correctFloat,
+    defined,
     error,
     extend,
     isArray,
@@ -602,7 +603,7 @@ class VBPIndicator extends SMAIndicator {
             highRange = mainSeries.dataModify.modifyValue(highRange) || 0;
         }
 
-        if (!lowRange || !highRange) {
+        if (!defined(lowRange) || !defined(highRange)) {
             if (this.points.length) {
                 this.setData([]);
                 this.zoneStarts = [];
