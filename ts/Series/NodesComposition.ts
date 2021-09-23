@@ -40,7 +40,7 @@ declare module '../Core/Series/PointLike' {
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
-        nodes?: Array<NodesComposition.NodesPoint>;
+        nodes?: Array<NodesComposition.PointComposition>;
     }
 }
 
@@ -58,44 +58,31 @@ namespace NodesComposition {
      *
      * */
 
-    export interface NodesPointOptions extends PointOptions {
-        id?: string;
-        level?: number;
-        mass?: number;
-        outgoing?: boolean;
-        weight?: (number|null);
-    }
-
-    export interface NodesSeriesOptions extends SeriesOptions {
-        mass?: number;
-        nodes?: Array<NodesPointOptions>;
-    }
-
-    export declare class NodesPoint extends Point {
+    export declare class PointComposition extends Point {
         public className: string;
         public formatPrefix: string;
         public from: string;
-        public fromNode: NodesPoint;
+        public fromNode: PointComposition;
         public id: string;
         public isNode: true;
         public level?: unknown;
-        public linksFrom: Array<NodesPoint>;
-        public linksTo: Array<NodesPoint>;
+        public linksFrom: Array<PointComposition>;
+        public linksTo: Array<PointComposition>;
         public mass: number;
-        public options: NodesPointOptions;
-        public series: NodesSeries;
+        public options: PointCompositionOptions;
+        public series: SeriesComposition;
         public to: string;
-        public toNode: NodesPoint;
+        public toNode: PointComposition;
         public weight?: number;
         public y?: (number|null);
         public getSum(): number;
         public hasShape(): boolean;
         public init(
-            series: NodesSeries,
-            options: NodesPointOptions
-        ): NodesPoint;
+            series: SeriesComposition,
+            options: PointCompositionOptions
+        ): PointComposition;
         public offset(
-            point: NodesPoint,
+            point: PointComposition,
             coll: string
         ): (number|undefined);
         public setNodeState(
@@ -103,17 +90,30 @@ namespace NodesComposition {
         ): void;
     }
 
-    export declare class NodesSeries extends Series {
-        public data: Array<NodesPoint>;
-        public nodeLookup: Record<string, NodesPoint>;
-        public nodes: Array<NodesPoint>;
-        public options: NodesSeriesOptions;
-        public pointClass: typeof NodesPoint;
-        public points: Array<NodesPoint>;
+    export interface PointCompositionOptions extends PointOptions {
+        id?: string;
+        level?: number;
+        mass?: number;
+        outgoing?: boolean;
+        weight?: (number|null);
+    }
+
+    export declare class SeriesComposition extends Series {
+        public data: Array<PointComposition>;
+        public nodeLookup: Record<string, PointComposition>;
+        public nodes: Array<PointComposition>;
+        public options: SeriesCompositionOptions;
+        public pointClass: typeof PointComposition;
+        public points: Array<PointComposition>;
         public createNode(
             id: string
-        ): NodesPoint;
+        ): PointComposition;
         public generatePoints(): void;
+    }
+
+    export interface SeriesCompositionOptions extends SeriesOptions {
+        mass?: number;
+        nodes?: Array<PointCompositionOptions>;
     }
 
     /* *
@@ -130,22 +130,21 @@ namespace NodesComposition {
      * @private
      */
     export function createNode(
-        this: NodesSeries,
+        this: SeriesComposition,
         id: string
-    ): NodesPoint {
+    ): PointComposition {
 
-        /**
-         * @private
-         */
-        function findById<T>(nodes: Array<T>, id: string): (T|undefined) {
-            return find(nodes, function (node: T): boolean {
-                return (node as any).id === id;
-            });
-        }
+        const PointClass = this.pointClass,
+            findById = <T>(
+                nodes: Array<T>,
+                id: string
+            ): (T|undefined) => find(
+                nodes,
+                (node: T): boolean => (node as any).id === id
+            );
 
         let node = findById(this.nodes, id),
-            PointClass = this.pointClass,
-            options: (NodesPointOptions|undefined);
+            options: (PointCompositionOptions|undefined);
 
         if (!node) {
             options = this.options.nodes && findById(this.options.nodes, id);
@@ -156,7 +155,7 @@ namespace NodesComposition {
                     isNode: true,
                     id: id,
                     y: 1 // Pass isNull test
-                } as NodesPointOptions, options as any)
+                } as PointCompositionOptions, options as any)
             );
             node.linksTo = [];
             node.linksFrom = [];
@@ -182,12 +181,12 @@ namespace NodesComposition {
                     sumFrom = 0;
 
                 (node as any).linksTo.forEach(function (
-                    link: NodesPointOptions
+                    link: PointCompositionOptions
                 ): void {
                     sumTo += link.weight as any;
                 });
                 (node as any).linksFrom.forEach(function (
-                    link: NodesPointOptions
+                    link: PointCompositionOptions
                 ): void {
                     sumFrom += link.weight as any;
                 });
@@ -198,7 +197,7 @@ namespace NodesComposition {
              * @private
              */
             node.offset = function (
-                point: NodesPoint,
+                point: PointComposition,
                 coll: string
             ): (number|undefined) {
                 let offset = 0;
@@ -217,7 +216,7 @@ namespace NodesComposition {
                 let outgoing = 0;
 
                 (node as any).linksTo.forEach(function (
-                    link: NodesPointOptions
+                    link: PointCompositionOptions
                 ): void {
                     if (link.outgoing) {
                         outgoing++;
@@ -238,9 +237,9 @@ namespace NodesComposition {
      * Extend generatePoints by adding the nodes, which are Point objects
      * but pushed to the this.nodes array.
      */
-    export function generatePoints(this: NodesSeries): void {
+    export function generatePoints(this: SeriesComposition): void {
         const chart = this.chart,
-            nodeLookup = {} as Record<string, NodesPoint>;
+            nodeLookup = {} as Record<string, PointComposition>;
 
         Series.prototype.generatePoints.call(this);
 
@@ -250,14 +249,14 @@ namespace NodesComposition {
         this.colorCounter = 0;
 
         // Reset links from previous run
-        this.nodes.forEach(function (node: NodesPoint): void {
+        this.nodes.forEach(function (node: PointComposition): void {
             node.linksFrom.length = 0;
             node.linksTo.length = 0;
             node.level = node.options.level;
         });
 
         // Create the node list and set up links
-        this.points.forEach(function (point: NodesPoint): void {
+        this.points.forEach(function (point: PointComposition): void {
             if (defined(point.from)) {
                 if (!nodeLookup[point.from]) {
                     nodeLookup[point.from] = this.createNode(point.from);
@@ -296,9 +295,9 @@ namespace NodesComposition {
      * Destroy all nodes on setting new data
      * @private
      */
-    export function setData(this: NodesSeries): void {
+    export function setData(this: SeriesComposition): void {
         if (this.nodes) {
-            this.nodes.forEach(function (node: NodesPoint): void {
+            this.nodes.forEach(function (node: PointComposition): void {
                 node.destroy();
             });
             this.nodes.length = 0;
@@ -310,9 +309,9 @@ namespace NodesComposition {
      * Destroy alll nodes and links.
      * @private
      */
-    export function destroy(this: NodesSeries): void {
+    export function destroy(this: SeriesComposition): void {
         // Nodes must also be destroyed (#8682, #9300)
-        this.data = ([] as Array<NodesPoint>)
+        this.data = ([] as Array<PointComposition>)
             .concat(this.points || [], this.nodes);
 
         return Series.prototype.destroy.apply(this, arguments as any);
@@ -322,12 +321,12 @@ namespace NodesComposition {
      * When hovering node, highlight all connected links. When hovering a link,
      * highlight all connected nodes.
      */
-    export function setNodeState(this: NodesPoint, state?: StatesOptionsKey): void {
+    export function setNodeState(this: PointComposition, state?: StatesOptionsKey): void {
         const args = arguments,
             others = this.isNode ? this.linksTo.concat(this.linksFrom) :
                 [this.fromNode, this.toNode];
         if (state !== 'select') {
-            others.forEach(function (linkOrNode: NodesPoint): void {
+            others.forEach(function (linkOrNode: PointComposition): void {
                 if (linkOrNode && linkOrNode.series) {
                     Point.prototype.setState.apply(linkOrNode, args as any);
 

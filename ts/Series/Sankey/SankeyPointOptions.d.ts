@@ -25,7 +25,7 @@ import type NodesComposition from '../NodesComposition';
  *
  * */
 
-export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition.NodesPointOptions {
+export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition.PointCompositionOptions {
     column?: number;
     from?: string;
     height?: number;

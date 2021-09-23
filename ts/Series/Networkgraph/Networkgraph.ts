@@ -117,7 +117,7 @@ declare global {
             linkFormatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
             linkTextPath?: DataLabelTextPathOptions;
         }
-        interface NetworkgraphPointOptions extends PointOptions, NodesComposition.NodesPointOptions {
+        interface NetworkgraphPointOptions extends PointOptions, NodesComposition.PointCompositionOptions {
             color?: ColorType;
             colorIndex?: number;
             dashStyle?: string;
@@ -126,7 +126,7 @@ declare global {
             opacity?: number;
             width?: number;
         }
-        interface NetworkgraphSeriesOptions extends SeriesOptions, NodesComposition.NodesSeriesOptions {
+        interface NetworkgraphSeriesOptions extends SeriesOptions, NodesComposition.SeriesCompositionOptions {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
             inactiveOtherPoints?: boolean;
@@ -135,26 +135,26 @@ declare global {
             nodes?: Array<NetworkgraphPointOptions>;
             states?: SeriesStatesOptions<NetworkgraphSeries>;
         }
-        class NetworkgraphPoint extends Point implements DragNodesPoint, NodesComposition.NodesPoint {
-            public className: NodesComposition.NodesPoint['className'];
+        class NetworkgraphPoint extends Point implements DragNodesPoint, NodesComposition.PointComposition {
+            public className: NodesComposition.PointComposition['className'];
             public degree: number;
             public fixedPosition: DragNodesPoint['fixedPosition'];
-            public formatPrefix: NodesComposition.NodesPoint['formatPrefix'];
-            public from: NodesComposition.NodesPoint['from'];
+            public formatPrefix: NodesComposition.PointComposition['formatPrefix'];
+            public from: NodesComposition.PointComposition['from'];
             public fromNode: NetworkgraphPoint;
-            public getSum: NodesComposition.NodesPoint['getSum'];
-            public hasShape: NodesComposition.NodesPoint['hasShape'];
-            public isNode: NodesComposition.NodesPoint['isNode'];
+            public getSum: NodesComposition.PointComposition['getSum'];
+            public hasShape: NodesComposition.PointComposition['hasShape'];
+            public isNode: NodesComposition.PointComposition['isNode'];
             public isValid: () => boolean;
             public linksFrom: Array<NetworkgraphPoint>;
             public linksTo: Array<NetworkgraphPoint>;
-            public mass: NodesComposition.NodesPoint['mass'];
-            public offset: NodesComposition.NodesPoint['offset'];
+            public mass: NodesComposition.PointComposition['mass'];
+            public offset: NodesComposition.PointComposition['offset'];
             public options: NetworkgraphPointOptions;
             public radius: number;
             public series: NetworkgraphSeries;
-            public setNodeState: NodesComposition.NodesPoint['setState'];
-            public to: NodesComposition.NodesPoint['to'];
+            public setNodeState: NodesComposition.PointComposition['setState'];
+            public to: NodesComposition.PointComposition['to'];
             public toNode: NetworkgraphPoint;
             public destroy(): void;
             public getDegree(): number;
@@ -226,7 +226,7 @@ declare global {
  *
  * @extends Highcharts.Series
  */
-class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, NodesComposition.NodesSeries {
+class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, NodesComposition.SeriesComposition {
 
     /* *
      *
@@ -659,7 +659,7 @@ class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, N
 
 interface NetworkgraphSeries {
     chart: Highcharts.NetworkgraphChart;
-    createNode: NodesComposition.NodesSeries['createNode'];
+    createNode: NodesComposition.SeriesComposition['createNode'];
     data: Array<NetworkgraphPoint>;
     destroy(): void;
     directTouch: boolean;
@@ -668,7 +668,7 @@ interface NetworkgraphSeries {
     hasDraggableNodes: boolean;
     isCartesian: boolean;
     layout: Highcharts.NetworkgraphLayout;
-    nodeLookup: NodesComposition.NodesSeries['nodeLookup'];
+    nodeLookup: NodesComposition.SeriesComposition['nodeLookup'];
     nodes: Array<NetworkgraphPoint>;
     noSharedTooltip: boolean;
     onMouseDown: Highcharts.DragNodesMixin['onMouseDown'];
@@ -779,7 +779,7 @@ extend(NetworkgraphSeries.prototype, {
         // them:
         if (this.options.nodes) {
             this.options.nodes.forEach(
-                function (nodeOptions: NodesComposition.NodesPointOptions): void {
+                function (nodeOptions: NodesComposition.PointCompositionOptions): void {
                     if (!this.nodeLookup[nodeOptions.id as any]) {
                         this.nodeLookup[nodeOptions.id as any] =
                             this.createNode(nodeOptions.id as any);
@@ -1101,7 +1101,7 @@ extend(NetworkgraphSeries.prototype, {
 
 class NetworkgraphPoint
     extends Series.prototype.pointClass
-    implements Highcharts.DragNodesPoint, NodesComposition.NodesPoint {
+    implements Highcharts.DragNodesPoint, NodesComposition.PointComposition {
 
     /* *
      *
@@ -1132,19 +1132,19 @@ class NetworkgraphPoint
  * */
 
 interface NetworkgraphPoint {
-    className: NodesComposition.NodesPoint['className'];
+    className: NodesComposition.PointComposition['className'];
     fixedPosition: Highcharts.DragNodesPoint['fixedPosition'];
-    formatPrefix: NodesComposition.NodesPoint['formatPrefix'];
-    from: NodesComposition.NodesPoint['from'];
+    formatPrefix: NodesComposition.PointComposition['formatPrefix'];
+    from: NodesComposition.PointComposition['from'];
     fromNode: NetworkgraphPoint;
-    getSum: NodesComposition.NodesPoint['getSum'];
-    hasShape: NodesComposition.NodesPoint['hasShape'];
-    isNode: NodesComposition.NodesPoint['isNode'];
+    getSum: NodesComposition.PointComposition['getSum'];
+    hasShape: NodesComposition.PointComposition['hasShape'];
+    isNode: NodesComposition.PointComposition['isNode'];
     isValid: () => boolean;
-    mass: NodesComposition.NodesPoint['mass'];
-    offset: NodesComposition.NodesPoint['offset'];
-    setNodeState: NodesComposition.NodesPoint['setState'];
-    to: NodesComposition.NodesPoint['to'];
+    mass: NodesComposition.PointComposition['mass'];
+    offset: NodesComposition.PointComposition['offset'];
+    setNodeState: NodesComposition.PointComposition['setState'];
+    to: NodesComposition.PointComposition['to'];
     destroy(): void;
     getDegree(): number;
     getLinkAttributes(): SVGAttributes;
