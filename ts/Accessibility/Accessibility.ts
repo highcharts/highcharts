@@ -15,6 +15,7 @@
 import type { Options } from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
+import A11yI18n from './A11yI18n.js';
 import Chart from '../Core/Chart/Chart.js';
 import ChartUtilities from './Utils/ChartUtilities.js';
 import ProxyProvider from './ProxyProvider.js';
@@ -109,7 +110,6 @@ import defaultOptionsA11Y from './Options/Options.js';
 import defaultLangOptions from './Options/LangOptions.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
 import HTMLUtilities from './Utils/HTMLUtilities.js';
-import './A11yI18n.js';
 import './FocusBorder.js';
 
 
@@ -442,3 +442,42 @@ addEvent(Chart, 'destroy', function (): void {
         this.accessibility.destroy();
     }
 });
+
+namespace AccessibilityComposition {
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
+
+    export const i18nFormat = A11yI18n.i18nFormat;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    export function compose(
+        ChartClass: typeof Chart
+    ): void {
+        A11yI18n.compose(ChartClass);
+    }
+
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default AccessibilityComposition;

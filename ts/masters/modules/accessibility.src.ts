@@ -10,6 +10,13 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
 
-import '../../Accessibility/Accessibility.js';
+import Highcharts from '../../Core/Globals.js';
+import Accessibility from '../../Accessibility/Accessibility.js';
+
+const G: AnyRecord = Highcharts;
+G.i18nFormat = Accessibility.i18nFormat;
+
+Accessibility.compose(G.Chart);
