@@ -1153,10 +1153,10 @@ class SankeySeries extends ColumnSeries {
  *
  * */
 
-interface SankeySeries extends NodesComposition.NodesSeries {
+interface SankeySeries extends NodesComposition.SeriesComposition {
     animate(init?: boolean): void;
     createNode(id: string): SankeyPoint;
-    destroy: NodesComposition.NodesSeries['destroy'];
+    destroy: NodesComposition.SeriesComposition['destroy'];
     forceDL: boolean;
     init(chart: Chart, options: SankeySeriesOptions): void;
     invertible: boolean;
@@ -1166,7 +1166,7 @@ interface SankeySeries extends NodesComposition.NodesSeries {
     pointArrayMap: Array<string>;
     pointClass: typeof SankeyPoint;
     remove: typeof ColumnSeries.prototype.remove;
-    setData: NodesComposition.NodesSeries['setData'];
+    setData: NodesComposition.SeriesComposition['setData'];
 }
 extend(SankeySeries.prototype, {
     animate: Series.prototype.animate,

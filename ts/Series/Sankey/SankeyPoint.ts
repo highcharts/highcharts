@@ -132,9 +132,9 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
  *
  * */
 
-interface SankeyPoint extends NodesComposition.NodesPoint {
+interface SankeyPoint extends NodesComposition.PointComposition {
     init(series: SankeySeries, options: SankeyPointOptions): SankeyPoint;
-    setState: NodesComposition.NodesSeries['setState'];
+    setState: NodesComposition.SeriesComposition['setState'];
 }
 extend(SankeyPoint.prototype, {
     setState: NodesComposition.setNodeState

@@ -635,7 +635,7 @@ class Pointer {
             let y = point.plotY || 0;
 
             if (
-                (point as NodesComposition.NodesPoint).isNode &&
+                (point as NodesComposition.PointComposition).isNode &&
                 shapeArgs &&
                 isNumber(shapeArgs.x) &&
                 isNumber(shapeArgs.y)

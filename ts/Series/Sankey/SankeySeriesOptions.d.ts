@@ -54,7 +54,7 @@ export interface SankeySeriesNodeOptions {
 }
 
 
-export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesComposition.NodesSeriesOptions {
+export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesComposition.SeriesCompositionOptions {
     curveFactor?: number;
     dataLabels?: SankeyDataLabelOptions;
     height?: number;
