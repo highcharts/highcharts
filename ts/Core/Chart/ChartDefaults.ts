@@ -18,11 +18,11 @@
 
 import type ChartOptions from './ChartOptions';
 
-import Palette from '../Color/Palette.js';
+import { Palette } from '../Color/Palettes.js';
 
 /* *
  *
- *  Constants
+ *  API Options
  *
  * */
 

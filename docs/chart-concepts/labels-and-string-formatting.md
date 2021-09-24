@@ -37,13 +37,13 @@ Format strings are templates for labels, where variables are inserted. Format st
 *   Thousands separator, no decimal places: `{point.y:,.0f}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/no-decimal-places)]
 *   Thousands separator, one decimal place: `{point.y:,.1f}` [[Demo, internationalized](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/one-decimal-place)]
 
-**Dates** allow, like numbers, the format to be appended behind a colon. The format conventions allowed are the same as those of [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts#.dateFormat). For example:
+**Dates** allow, like numbers, the format to be appended behind a colon. The format conventions allowed are the same as those of [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts.Time#dateFormat). For example:
 
 *   Full date: `{value:%Y-%m-%d}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/full-date)]
 
 ### Formatter callbacks
 
-For full control over string handling and additional scripting capabilities around the labels, you might need to use formatter callbacks. These formatters return HTML (subset). Examples of these are [xAxis.labels.formatter](https://api.highcharts.com/highcharts/xAxis.labels.formatter), [tooltip.formatter](https://api.highcharts.com/highcharts/tooltip.formatter) and [legend.labelFormatter](https://api.highcharts.com/highcharts/legend.labelFormatter). Often times you'll need to call [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts#.dateFormat) and [Highcharts.numberFormat()](https://api.highcharts.com/class-reference/Highcharts#.numberFormat) from the formatters.
+For full control over string handling and additional scripting capabilities around the labels, you might need to use formatter callbacks. These formatters return HTML (subset). Examples of these are [xAxis.labels.formatter](https://api.highcharts.com/highcharts/xAxis.labels.formatter), [tooltip.formatter](https://api.highcharts.com/highcharts/tooltip.formatter) and [legend.labelFormatter](https://api.highcharts.com/highcharts/legend.labelFormatter). Often times you'll need to call [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts.Time#dateFormat) and [Highcharts.numberFormat()](https://api.highcharts.com/class-reference/Highcharts#.numberFormat) from the formatters.
 
 ### Advanced format strings
 

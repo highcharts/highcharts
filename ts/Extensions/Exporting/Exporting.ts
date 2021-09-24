@@ -36,7 +36,7 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
-import chartNavigationMixin from '../../Mixins/Navigation.js';
+import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import ExportingDefaults from './ExportingDefaults.js';
@@ -47,7 +47,7 @@ const {
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
-import Palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -1331,8 +1331,7 @@ namespace Exporting {
     function inlineStyles(
         this: ChartComposition
     ): void {
-        const renderer = this.renderer,
-            blacklist = inlineBlacklist,
+        const blacklist = inlineBlacklist,
             whitelist = inlineWhitelist, // For IE
             defaultStyles: Record<string, CSSObject> = {};
         let dummySVG: SVGElement;
@@ -1382,7 +1381,7 @@ namespace Exporting {
 
                 // Check against whitelist & blacklist
                 blacklisted = whitelisted = false;
-                if (whitelist) {
+                if (whitelist.length) {
                     // Styled mode in IE has a whitelist instead.
                     // Exclude all props not in this list.
                     i = whitelist.length;
@@ -1397,10 +1396,10 @@ namespace Exporting {
                     blacklisted = true;
                 }
 
-                i = (blacklist as any).length;
+                i = blacklist.length;
                 while (i-- && !blacklisted) {
                     blacklisted = (
-                        (blacklist as any)[i].test(prop) ||
+                        blacklist[i].test(prop) ||
                         typeof val === 'function'
                     );
                 }
@@ -1434,12 +1433,12 @@ namespace Exporting {
 
             if (
                 node.nodeType === 1 &&
-                (unstyledElements as any).indexOf(node.nodeName) === -1
+                unstyledElements.indexOf(node.nodeName) === -1
             ) {
                 styles = win.getComputedStyle(node, null) as any;
                 parentStyles = node.nodeName === 'svg' ?
                     {} :
-                    win.getComputedStyle(node.parentNode as any, null) as any;
+                    win.getComputedStyle(node.parentNode, null) as any;
 
                 // Get default styles from the browser so that we don't have to
                 // add these
@@ -1586,15 +1585,14 @@ namespace Exporting {
         // Register update() method for navigation. Can not be set the same way
         // as for exporting, because navigation options are shared with bindings
         // which has separate update() logic.
-        chartNavigationMixin.addUpdate(
-            function (
+        ChartNavigationComposition
+            .compose(chart).navigation
+            .addUpdate((
                 options: NavigationOptions,
                 redraw?: boolean
-            ): void {
+            ): void => {
                 update('navigation', options, redraw);
-            },
-            chart
-        );
+            });
     }
 
     /**

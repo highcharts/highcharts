@@ -6,7 +6,10 @@ const { test, only } = QUnit;
 test('GoogleDataStore', function (assert) {
     const registeredEvents = [];
 
-    const datastore = new GoogleSheetsStore(undefined, { googleSpreadsheetKey: '0AoIaUO7wH1HwdENPcGVEVkxfUDJkMmFBcXMzOVVPdHc' });
+    const datastore = new GoogleSheetsStore(undefined, {
+        googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+        googleSpreadsheetKey: '0AoIaUO7wH1HwdENPcGVEVkxfUDJkMmFBcXMzOVVPdHc'
+    });
 
     const doneLoading = assert.async();
 
@@ -50,7 +53,10 @@ test('GoogleDataStore', function (assert) {
 test('GoogleDataStore, bad spreadsheetkey', function (assert) {
     const registeredEvents = [];
 
-    const datastore = new GoogleSheetsStore(undefined, { googleSpreadsheetKey: 'thisisnotaworkingspreadsheet' });
+    const datastore = new GoogleSheetsStore(undefined, {
+        googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+        googleSpreadsheetKey: 'thisisnotaworkingspreadsheet'
+    });
 
     const hasErrored = assert.async();
 

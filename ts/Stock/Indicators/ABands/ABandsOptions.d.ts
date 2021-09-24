@@ -13,6 +13,7 @@
  * */
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type MultipleLinesComposition from '../MultipleLinesComposition';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -24,7 +25,7 @@ import type {
  *
  * */
 
-export interface ABandsOptions extends SMAOptions, Highcharts.MultipleLinesIndicatorOptions {
+export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.Options {
     bottomLine?: Record<string, CSSObject>;
     lineWidth?: number;
     params?: ABandsParamsOptions;

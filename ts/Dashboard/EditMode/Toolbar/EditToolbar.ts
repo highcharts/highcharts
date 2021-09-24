@@ -173,7 +173,7 @@ abstract class EditToolbar {
     //     if (currentElement) {
     //         const components = isRow ?
     //             (currentElement as Row).layout.dashboard.mountedComponents :
-    //             (currentElement as Cell).row.layout.dashboard.mountedComponents;
+    //          (currentElement as Cell).row.layout.dashboard.mountedComponents;
     //         let cellContainer;
 
     //         // set opacity

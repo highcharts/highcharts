@@ -375,7 +375,7 @@ class DependencyWheelSeries extends SankeySeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

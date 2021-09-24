@@ -594,7 +594,7 @@ class BubbleSeries extends ScatterSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

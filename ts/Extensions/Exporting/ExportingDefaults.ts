@@ -21,11 +21,11 @@ import type NavigationOptions from './NavigationOptions';
 
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
-import Palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
- *  Constants
+ *  API Options
  *
  * */
 

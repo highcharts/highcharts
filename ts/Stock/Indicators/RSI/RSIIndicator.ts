@@ -193,7 +193,7 @@ class RSIIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

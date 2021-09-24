@@ -343,7 +343,7 @@ class BulletSeries extends ColumnSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

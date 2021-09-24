@@ -9,25 +9,36 @@ QUnit.test('Ordinal general tests.', function (assert) {
             xAxis: {
                 min: 1458054620689
             },
-            series: [
-                {
-                    type: 'column',
-                    data: [
-                        [1451577600000, 305899579],
-                        [1454256000000, 303016703],
-                        [1456761600000, 308008429],
-                        [1459440000000, 328699625],
-                        [1462032000000, 350010305],
-                        [1464710400000, 365809905],
-                        [1467302400000, 364839585],
-                        [1469980800000, 386193804],
-                        [1472659200000, 387630083],
-                        [1475251200000, 405138911]
-                    ]
+            series: [{
+                type: 'column',
+                data: [
+                    [1451577600000, 305899579],
+                    [1454256000000, 303016703],
+                    [1456761600000, 308008429],
+                    [1459440000000, 328699625],
+                    [1462032000000, 350010305],
+                    [1464710400000, 365809905],
+                    [1467302400000, 364839585],
+                    [1469980800000, 386193804],
+                    [1472659200000, 387630083],
+                    [1475251200000, 405138911]
+                ]
+            },
+            {
+                data: [1, 2, 3, 4, [420, 44]],
+                dataGrouping: {
+                    forced: true,
+                    units: [['millisecond', [1, 42]]]
                 }
-            ]
+            },
+            {
+                type: 'column',
+                data: [1, 2, 3],
+                visible: false
+            }]
         }),
-        tickPositions = chart.xAxis[0].tickPositions;
+        tickPositions = chart.xAxis[0].tickPositions,
+        controller = new TestController(chart);
 
     assert.ok(
         tickPositions[0] >= chart.xAxis[0].min,
@@ -53,6 +64,13 @@ QUnit.test('Ordinal general tests.', function (assert) {
         'Last tick should be smaller than axis max when ' +
             'ordinal is enabled (#12716).'
     );
+
+    chart.xAxis[0].setExtremes(0, 5);
+    chart.xAxis[0].setExtremes(0, 500);
+
+    controller.click(100, 100);
+
+    assert.ok(true, 'Click should not throw #16255');
 });
 
 QUnit.test(
@@ -257,6 +275,16 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
         `After panning 20px, the axis extremes should not be reset
         but changed respectively.`
     );
+
+    const extendedOrdinalPositionsLength =
+        chart.xAxis[0].ordinal.extendedOrdinalPositions.length;
+    chart.series[0].addPoint([1585666260000 + 36e7, 1171.11]);
+    assert.notStrictEqual(
+        extendedOrdinalPositionsLength,
+        chart.xAxis[0].ordinal.extendedOrdinalPositions.length,
+        `After adding the point, the extendedOrdinalPositions array
+        should be recalculated, #16055.`
+    );
 });
 
 QUnit.test('findIndexOf', assert => {
@@ -284,9 +312,10 @@ QUnit.test('findIndexOf', assert => {
 QUnit.test('lin2val- unit test for values outside the plotArea.', function (assert) {
     const axis = {
         transA: -0.04,
-        min: 3,
+        min: 3.24,
         len: 500,
         translationSlope: 0.2,
+        minPixelPadding: 0,
         ordinal: {
             extendedOrdinalPositions: [0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9],
             positions: [3, 4.2, 4.8, 5, 7],

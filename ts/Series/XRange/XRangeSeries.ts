@@ -391,10 +391,13 @@ class XRangeSeries extends ColumnSeries {
             );
         }
 
+        const x = Math.floor(Math.min(plotX, plotX2)) + crisper;
+        const x2 = Math.floor(Math.max(plotX, plotX2)) + crisper;
+
         const shapeArgs = {
-            x: Math.floor(Math.min(plotX, plotX2)) + crisper,
+            x,
             y: Math.floor((point.plotY as any) + yOffset) + crisper,
-            width: Math.round(Math.abs(plotX2 - plotX)),
+            width: x2 - x,
             height: pointHeight,
             r: series.options.borderRadius
         };

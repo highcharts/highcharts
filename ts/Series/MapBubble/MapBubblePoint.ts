@@ -90,7 +90,7 @@ class MapBubblePoint extends BubbleSeries.prototype.pointClass {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

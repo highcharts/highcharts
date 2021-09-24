@@ -10,7 +10,9 @@
  *  Imports
  *
  * */
+
 import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type MultipleLinesComposition from '../MultipleLinesComposition';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -21,7 +23,7 @@ import type {
 *  Declarations
 *
 * */
-export interface PCOptions extends SMAOptions, Highcharts.MultipleLinesIndicatorOptions {
+export interface PCOptions extends SMAOptions, MultipleLinesComposition.Options {
     params?: PCParamsOptions;
     bottomLine: Record<string, CSSObject>;
     topLine: Record<string, CSSObject>;

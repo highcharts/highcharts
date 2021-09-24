@@ -15,13 +15,12 @@ import type {
 } from './KeltnerChannelsOptions';
 import type KeltnerChannelsPoint from './KeltnerChannelsPoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        sma: SMAIndicator,
-        ema: EMAIndicator,
-        atr: ATRIndicator
+        sma: SMAIndicator
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
@@ -40,7 +39,7 @@ const {
  *
  * @augments Highcharts.Series
  */
-class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndicator {
+class KeltnerChannelsIndicator extends SMAIndicator {
     /**
      * Keltner Channels. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js`,
@@ -200,40 +199,40 @@ class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.Multip
     }
 }
 
-interface KeltnerChannelsIndicator {
-    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface KeltnerChannelsIndicator extends MultipleLinesComposition.Composition {
     nameBase: string;
     nameComponents: Array<string>;
-    pointArrayMap: Highcharts.MultipleLinesMixin['pointArrayMap'];
-    pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
-    requiredIndicators: Array<string>;
-
+    pointArrayMap: MultipleLinesComposition.Composition['pointArrayMap'];
     pointClass: typeof KeltnerChannelsPoint;
-
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    translate: typeof MultipleLinesMixin.translate;
-    toYData: typeof MultipleLinesMixin.toYData;
+    pointValKey: MultipleLinesComposition.Composition['pointValKey'];
+    toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(KeltnerChannelsIndicator.prototype, {
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
     nameBase: 'Keltner Channels',
     nameComponents: ['period', 'periodATR', 'multiplierATR'],
     linesApiNames: ['topLine', 'bottomLine'],
-    requiredIndicators: ['ema', 'atr'],
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle'
 });
+MultipleLinesComposition.compose(KeltnerChannelsIndicator);
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         keltnerchannels: typeof KeltnerChannelsIndicator;
     }
 }
-
 SeriesRegistry.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
 
 /* *

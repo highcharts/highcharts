@@ -21,7 +21,8 @@
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
 import type TreemapSeries from './TreemapSeries';
-import DrawPointMixin from '../../Mixins/DrawPoint.js';
+
+import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -55,7 +56,7 @@ const {
  *
  * */
 
-class TreemapPoint extends ScatterPoint implements DrawPointMixin.DrawPoint {
+class TreemapPoint extends ScatterPoint {
 
     /* *
      *
@@ -140,18 +141,18 @@ class TreemapPoint extends ScatterPoint implements DrawPointMixin.DrawPoint {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface TreemapPoint extends DrawPointMixin.DrawPoint {
-    draw: typeof DrawPointMixin.drawPoint;
+interface TreemapPoint extends DrawPointComposition.Composition {
     setVisible: typeof PiePoint.prototype.setVisible;
 }
 extend(TreemapPoint.prototype, {
-    draw: DrawPointMixin.drawPoint,
     setVisible: PiePoint.prototype.setVisible
 });
+
+DrawPointComposition.compose(TreemapPoint);
 
 /* *
  *

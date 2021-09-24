@@ -528,6 +528,18 @@ QUnit.test('Sankey and circular data', function (assert) {
         'The link should have a complex, circular structure, ' +
             'not direct (#12882)'
     );
+
+    chart.series[0].setData([
+        ['a', 'a', 1]
+    ]);
+    chart.series[0].redraw();
+
+    const shapeArgs = chart.series[0].nodes[0].shapeArgs;
+    assert.deepEqual(
+        [shapeArgs.x, shapeArgs.y],
+        [0, 0],
+        '#16080: Node should still be in top left corner after redraw'
+    );
 });
 
 QUnit.test('Sankey and minimum line width', function (assert) {

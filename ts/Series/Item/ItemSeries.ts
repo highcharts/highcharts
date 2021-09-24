@@ -18,6 +18,7 @@
  *
  * */
 
+import type CoreGeometryObject from '../../Core/Geometry/GeometryObject';
 import type { ItemPointMarkerOptions } from './ItemPointOptions';
 import type ItemSeriesOptions from './ItemSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -570,7 +571,7 @@ class ItemSeries extends PieSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -588,7 +589,7 @@ extend(ItemSeries.prototype, {
  * */
 
 namespace ItemSeries {
-    export interface GeometryObject extends Highcharts.GeometryObject {
+    export interface GeometryObject extends CoreGeometryObject {
         angle: number;
     }
     export interface RowContainerObject {

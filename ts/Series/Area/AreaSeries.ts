@@ -22,9 +22,10 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type StackingAxis from '../../Core/Axis/StackingAxis';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -622,19 +623,17 @@ class AreaSeries extends LineSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
 interface AreaSeries {
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     pointClass: typeof AreaPoint;
 }
 extend(AreaSeries.prototype, {
-
     singleStacks: false,
-
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle
-
+    drawLegendSymbol: LegendSymbol.drawRectangle
 });
 
 /* *

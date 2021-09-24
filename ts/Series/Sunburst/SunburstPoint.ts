@@ -20,10 +20,11 @@
  *
  * */
 
-import type DrawPointMixin from '../../Mixins/DrawPoint';
 import type SunburstPointOptions from './SunburstPointOptions';
 import type SunburstSeries from './SunburstSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
+import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -48,7 +49,7 @@ const { correctFloat, extend } = U;
  *
  * */
 
-class SunburstPoint extends TreemapPoint implements DrawPointMixin.DrawPoint {
+class SunburstPoint extends TreemapPoint {
 
     /* *
      *
@@ -136,12 +137,19 @@ class SunburstPoint extends TreemapPoint implements DrawPointMixin.DrawPoint {
         return true;
     }
 
-    public shouldDraw(): boolean {
-        return !this.isNull;
-    }
-
     /* eslint-enable valid-jsdoc */
 
+}
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface SunburstPoint extends DrawPointComposition.Composition {
+    setState: typeof Point.prototype.setState;
+    setVisible: typeof TreemapPoint.prototype.setVisible;
 }
 
 extend(SunburstPoint.prototype, {
@@ -149,6 +157,8 @@ extend(SunburstPoint.prototype, {
     haloPath: Point.prototype.haloPath,
     setState: Point.prototype.setState
 });
+
+DrawPointComposition.compose(SunburstPoint);
 
 /* *
  *

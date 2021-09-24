@@ -24,7 +24,7 @@ import type OptionsType from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import ColorType from '../../Core/Color/ColorType';
 
 /* *
@@ -51,7 +51,7 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
-declare module '../../Core/LegendOptions' {
+declare module '../../Core/Legend/LegendOptions' {
     interface LegendOptions {
         accessibility?: Highcharts.LegendAccessibilityOptions;
     }
@@ -188,7 +188,7 @@ declare global {
             keyboardNavigation?: (
                 SeriesAccessibilityKeyboardNavigationOptions
             );
-            pointDescriptionFormatter?: Function;
+            point: AccessibilityPointOptions;
         }
     }
 }
@@ -341,6 +341,8 @@ const Options: DeepPartial<OptionsType> = {
              * corresponds to the heading level below the previous heading in
              * the DOM.
              *
+             * Set to empty string to remove the region altogether.
+             *
              * @since 8.0.0
              */
             beforeChartFormat:
@@ -376,7 +378,7 @@ const Options: DeepPartial<OptionsType> = {
              * Date format to use to describe range of datetime axes.
              *
              * For an overview of the replacement codes, see
-             * [dateFormat](/class-reference/Highcharts#.dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [point.dateFormat](#accessibility.point.dateFormat)
              *
@@ -440,7 +442,7 @@ const Options: DeepPartial<OptionsType> = {
              * Defaults to the same format as in tooltip.
              *
              * For an overview of the replacement codes, see
-             * [dateFormat](/class-reference/Highcharts#.dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [dateFormatter](#accessibility.point.dateFormatter)
              *
@@ -454,7 +456,7 @@ const Options: DeepPartial<OptionsType> = {
              * points on datetime axes when describing them to screen reader
              * users. Receives one argument, `point`, referring to the point
              * to describe. Should return a date format string compatible with
-             * [dateFormat](/class-reference/Highcharts#.dateFormat).
+             * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
              *
              * @see [dateFormat](#accessibility.point.dateFormat)
              *
@@ -536,7 +538,7 @@ const Options: DeepPartial<OptionsType> = {
          * landmarks can make navigation with screen readers easier, but can
          * be distracting if there are lots of charts on the page. Three modes
          * are available:
-         *  - `all`: Adds regions for all series, legend, menu, information
+         *  - `all`: Adds regions for all series, legend, information
          *      region.
          *  - `one`: Adds a single landmark per chart.
          *  - `disabled`: No landmarks are added.
@@ -709,7 +711,7 @@ const Options: DeepPartial<OptionsType> = {
                  */
                 style: {
                     /** @internal */
-                    color: palette.highlightColor80,
+                    color: Palette.highlightColor80,
                     /** @internal */
                     lineWidth: 2,
                     /** @internal */
@@ -912,23 +914,38 @@ const Options: DeepPartial<OptionsType> = {
      */
 
     /**
-     * Formatter function to use instead of the default for point
-     * descriptions. Same as `accessibility.point.descriptionFormatter`, but for
-     * a single series.
-     *
-     * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
-     *
-     * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
-     * @since     7.1.0
-     * @apioption plotOptions.series.accessibility.pointDescriptionFormatter
-     */
-
-    /**
      * Expose only the series element to screen readers, not its points.
      *
      * @type       {boolean}
      * @since      7.1.0
      * @apioption  plotOptions.series.accessibility.exposeAsGroupOnly
+     */
+
+    /**
+     * Point accessibility options for a series.
+     *
+     * @extends    accessibility.point
+     * @since      next
+     * @requires   modules/accessibility
+     * @apioption  plotOptions.series.accessibility.point
+     */
+
+    /**
+     * Formatter function to use instead of the default for point
+     * descriptions. Same as `accessibility.point.descriptionFormatter`, but
+     * applies to a series instead of the whole chart.
+     *
+     * Note: Prefer using [accessibility.point.valueDescriptionFormat](#plotOptions.series.accessibility.point.valueDescriptionFormat)
+     * instead if possible, as default functionality such as describing
+     * annotations will be preserved.
+     *
+     * @see [accessibility.point.valueDescriptionFormat](#plotOptions.series.accessibility.point.valueDescriptionFormat)
+     * @see [point.accessibility.description](#series.line.data.accessibility.description)
+     * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
+     *
+     * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
+     * @since     next
+     * @apioption plotOptions.series.accessibility.point.descriptionFormatter
      */
 
     /**
