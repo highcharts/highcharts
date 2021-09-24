@@ -62,13 +62,24 @@ describe('Stock Tools annotation popup, #15725', () => {
         cy.get('.highcharts-indicator-list').contains('Accumulation').click();
         cy.get('.highcharts-tab-item-show #highcharts-select-series').should('have.value', 'aapl-ohlc');
         cy.get('.highcharts-tab-item-show #highcharts-select-volume').should('have.value', 'aapl-volume');
-        cy.get('.highcharts-popup-rhs-col button').contains('add').click();
+        cy.addIndicator();
 
         cy.get('.highcharts-indicators').click();
         cy.get('.highcharts-tab-item').contains('edit').click();
         cy.get('.highcharts-tab-item-show #highcharts-select-series').should('have.value', 'aapl-ohlc');
         cy.get('.highcharts-tab-item-show #highcharts-select-volume').should('have.value', 'aapl-volume');
         cy.get('.highcharts-popup-rhs-col button').contains('save').click();
+    });
+
+    it('For some indicators params, there should be a dropdown with options in popup, #16159.', () => {
+        cy.openIndicators();
+        cy.get('.highcharts-indicator-list')
+            .contains('Disparity Index')
+            .click();
+
+        cy.get('#highcharts-select-params\\.average')
+            .select('ema')
+        cy.addIndicator();
     });
 });
 
@@ -151,15 +162,9 @@ describe('An indicator on indicator, #15696.', () => {
 
         cy.addIndicator(); // Add SMA indicator with period 20.
 
-        cy.chart().then((chart) => {
-            // Select the first 3m period.
-            chart.xAxis[0].setExtremes(1565098200000, 1565098200000 + 36e5 *24 *90);
-        });
-
         cy.chart().should(chart =>
-            // Select the first 3m period.
             assert.strictEqual(
-                chart.series[2].processedXData.length - chart.series[3].processedXData.length,
+                chart.series[2].xData.length - chart.series[3].xData.length,
                 19,
                 `The second SMA indicator which is based on the previous SMA indicator
                 should be shifted by period (19) thus data should have 19 fewer points.`

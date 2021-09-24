@@ -115,6 +115,13 @@ QUnit.test('Markers enabled, point marker off', function (assert) {
     assert.strictEqual(hasVisibleMarker(pointA), true, 'Series marker visible');
     assert.strictEqual(hasMarker(pointB), true, 'Point marker exists');
     assert.strictEqual(hasVisibleMarker(pointB), false, 'Point marker hidden');
+
+    // Force redraw
+    chart.update({
+        yAxis: { visible: false }
+    });
+    assert.strictEqual(hasMarker(pointB), true, 'Point marker exists after update');
+    assert.strictEqual(hasVisibleMarker(pointB), false, 'Point marker hidden after update');
 });
 
 QUnit.test('Markers disabled, point marker off', function (assert) {

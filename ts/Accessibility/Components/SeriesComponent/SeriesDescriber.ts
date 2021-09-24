@@ -265,15 +265,18 @@ function pointNumberToString(
     point: Highcharts.AccessibilityPoint,
     value: number
 ): string {
-    const chart = point.series.chart,
+    const series = point.series,
+        chart = series.chart,
         a11yPointOptions = chart.options.accessibility.point || {},
-        tooltipOptions = point.series.tooltipOptions || {},
+        seriesA11yPointOptions = series.options.accessibility && series.options.accessibility.point || {},
+        tooltipOptions = series.tooltipOptions || {},
         lang = chart.options.lang;
 
     if (isNumber(value)) {
         return numberFormat(
             value,
-            a11yPointOptions.valueDecimals ||
+            seriesA11yPointOptions.valueDecimals ||
+                a11yPointOptions.valueDecimals ||
                 tooltipOptions.valueDecimals ||
                 -1,
             lang.decimalPoint,
@@ -341,6 +344,7 @@ function getPointA11yTimeDescription(
 ): (string|undefined) {
     const series = point.series,
         chart = series.chart,
+        seriesA11yOptions = series.options.accessibility && series.options.accessibility.point || {},
         a11yOptions = chart.options.accessibility.point || {},
         dateXAxis = series.xAxis && series.xAxis.dateTime;
 
@@ -349,8 +353,9 @@ function getPointA11yTimeDescription(
                 point.x || 0,
                 chart.options.tooltip.dateTimeLabelFormats
             ),
-            dateFormat = a11yOptions.dateFormatter &&
-                a11yOptions.dateFormatter(point) ||
+            dateFormat = seriesA11yOptions.dateFormatter && seriesA11yOptions.dateFormatter(point) ||
+                a11yOptions.dateFormatter && a11yOptions.dateFormatter(point) ||
+                seriesA11yOptions.dateFormat ||
                 a11yOptions.dateFormat ||
                 tooltipDateFormat;
 
@@ -418,11 +423,16 @@ function getPointValue(
 ): string {
     const series = point.series,
         a11yPointOpts = series.chart.options.accessibility.point || {},
+        seriesA11yPointOpts = series.chart.options.accessibility && series.chart.options.accessibility.point || {},
         tooltipOptions = series.tooltipOptions || {},
-        valuePrefix = a11yPointOpts.valuePrefix ||
-            tooltipOptions.valuePrefix || '',
-        valueSuffix = a11yPointOpts.valueSuffix ||
-            tooltipOptions.valueSuffix || '',
+        valuePrefix = seriesA11yPointOpts.valuePrefix ||
+            a11yPointOpts.valuePrefix ||
+            tooltipOptions.valuePrefix ||
+            '',
+        valueSuffix = seriesA11yPointOpts.valueSuffix ||
+            a11yPointOpts.valueSuffix ||
+            tooltipOptions.valueSuffix ||
+            '',
         fallbackKey: ('value'|'y') = (
             typeof point.value !==
             'undefined' ?
@@ -472,8 +482,11 @@ function getPointAnnotationDescription(point: Point): string {
 function getPointValueDescription(point: Highcharts.AccessibilityPoint): string {
     const series = point.series,
         chart = series.chart,
-        pointValueDescriptionFormat = chart.options.accessibility
-            .point.valueDescriptionFormat,
+        seriesA11yOptions = series.options.accessibility,
+        seriesValueDescFormat = seriesA11yOptions && seriesA11yOptions.point &&
+            seriesA11yOptions.point.valueDescriptionFormat,
+        pointValueDescriptionFormat = seriesValueDescFormat ||
+            chart.options.accessibility.point.valueDescriptionFormat,
         showXDescription = pick(
             series.xAxis &&
             series.xAxis.options.accessibility &&
@@ -505,7 +518,7 @@ function defaultPointDescriptionFormatter(
         chart = series.chart,
         valText = getPointValueDescription(point),
         description = point.options && point.options.accessibility &&
-        point.options.accessibility.description,
+            point.options.accessibility.description,
         userDescText = description ? ' ' + description : '',
         seriesNameText = chart.series.length > 1 && series.name ?
             ' ' + series.name + '.' : '',
@@ -531,10 +544,10 @@ function setPointScreenReaderAttribs(
 ): void {
     const series = point.series,
         a11yPointOptions = series.chart.options.accessibility.point || {},
-        seriesA11yOptions = series.options.accessibility || {},
+        seriesPointA11yOptions = series.options.accessibility && series.options.accessibility.point || {},
         label = stripHTMLTags(
-            seriesA11yOptions.pointDescriptionFormatter &&
-            seriesA11yOptions.pointDescriptionFormatter(point) ||
+            seriesPointA11yOptions.descriptionFormatter &&
+            seriesPointA11yOptions.descriptionFormatter(point) ||
             a11yPointOptions.descriptionFormatter &&
             a11yPointOptions.descriptionFormatter(point) ||
             defaultPointDescriptionFormatter(point)

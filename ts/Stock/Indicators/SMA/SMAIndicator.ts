@@ -17,7 +17,6 @@
 import type AxisType from '../../../Core/Axis/AxisType';
 import type IndicatorLike from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type RequireIndicatorsResultObject from '../RequireIndicatorsResultObject';
 import type SeriesType from '../../../Core/Series/SeriesType';
 import type {
     SMAOptions,
@@ -26,7 +25,6 @@ import type {
 import type SMAPoint from './SMAPoint';
 
 import Chart from '../../../Core/Chart/Chart.js';
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -62,8 +60,6 @@ declare module '../../../Core/Series/SeriesOptions' {
         useOhlcData?: boolean;
     }
 }
-
-const generateMessage = RequiredIndicatorMixin.generateMessage;
 
 /* *
  *
@@ -294,16 +290,7 @@ class SMAIndicator extends LineSeries {
         chart: Chart,
         options: SMAOptions
     ): void {
-        const indicator = this,
-            requiredIndicators = indicator.requireIndicators();
-
-        // Check whether all required indicators are loaded.
-        if (!requiredIndicators.allLoaded) {
-            return error(generateMessage(
-                indicator.type,
-                requiredIndicators.needed as any
-            )) as any;
-        }
+        const indicator = this;
 
         super.init.call(
             indicator,
@@ -483,32 +470,18 @@ class SMAIndicator extends LineSeries {
 
         super.processData.apply(series, arguments);
 
-        if (linkedParent && linkedParent.compareValue && compareToMain) {
-            series.compareValue = linkedParent.compareValue;
+        if (
+            series.dataModify &&
+            linkedParent &&
+            linkedParent.dataModify &&
+            linkedParent.dataModify.compareValue &&
+            compareToMain
+        ) {
+            series.dataModify.compareValue =
+                linkedParent.dataModify.compareValue;
         }
 
         return;
-    }
-
-    /**
-     * @private
-     */
-    public requireIndicators(): RequireIndicatorsResultObject {
-        const obj: RequireIndicatorsResultObject = {
-            allLoaded: true
-        };
-
-        // Check whether all required indicators are loaded, else return
-        // the object with missing indicator's name.
-        this.requiredIndicators.forEach(function (indicator: string): void {
-            if (SeriesRegistry.seriesTypes[indicator]) {
-                (SeriesRegistry.seriesTypes[indicator].prototype as SMAIndicator).requireIndicators();
-            } else {
-                obj.allLoaded = false;
-                obj.needed = indicator;
-            }
-        });
-        return obj;
     }
 
     /* eslint-enable valid-jsdoc */
@@ -517,7 +490,7 @@ class SMAIndicator extends LineSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -528,7 +501,6 @@ interface SMAIndicator extends IndicatorLike {
     nameComponents: Array<string>;
     nameSuffixes: Array<string>;
     pointClass: typeof SMAPoint;
-    requiredIndicators: Array<string>;
     useCommonDataGrouping: boolean;
 }
 extend(SMAIndicator.prototype, {
@@ -540,8 +512,6 @@ extend(SMAIndicator.prototype, {
     hasDerivedData: true,
     nameComponents: ['period'],
     nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
-    // Defines on which other indicators is this indicator based on.
-    requiredIndicators: [],
     useCommonDataGrouping: true
 });
 

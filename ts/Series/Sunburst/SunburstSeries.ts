@@ -47,13 +47,13 @@ const {
 } = SeriesRegistry;
 import SunburstPoint from './SunburstPoint.js';
 import SunburstUtilities from './SunburstUtilities.js';
-import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
+import TU from '../TreeUtilities.js';
 const {
     getColor,
     getLevelOptions,
     setTreeValues,
     updateRootId
-} = TreeSeriesMixin;
+} = TU;
 import U from '../../Core/Utilities.js';
 const {
     error,
@@ -1107,7 +1107,7 @@ class SunburstSeries extends TreemapSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -1173,7 +1173,7 @@ namespace SunburstSeries {
         extends
         CU.RadianAngles,
         TreemapSeriesType.NodeValuesObject,
-        Highcharts.TreeValuesOptionsObject<SunburstSeries>
+        TU.SetTreeValuesOptions<SunburstSeries>
     {
         color: ColorType;
         mapOptionsToLevel: SunburstSeriesOptions['levels'];

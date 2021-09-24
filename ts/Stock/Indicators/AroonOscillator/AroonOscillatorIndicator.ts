@@ -17,7 +17,6 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
-import requiredIndicator from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -48,6 +47,13 @@ const AROON = SeriesRegistry.seriesTypes.aroon;
  * @augments Highcharts.Series
  */
 class AroonOscillatorIndicator extends AroonIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Aroon Oscillator. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js` and
@@ -125,28 +131,13 @@ class AroonOscillatorIndicator extends AroonIndicator {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-
-    public init(this: AroonOscillatorIndicator): void {
-        const args = arguments,
-            ctx = this;
-
-        requiredIndicator.isParentLoaded(
-            (AROON as any),
-            'aroon',
-            ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
 }
 
 /* *
-*
-*   Prototype Properties
-*
-* */
+ *
+ * Class Prototype
+ *
+ * */
 
 interface AroonOscillatorIndicator extends MultipleLinesComposition.Composition {
     nameBase: string;

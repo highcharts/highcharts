@@ -223,7 +223,8 @@ const indexFilter = /\d/g,
  * @private
  */
 enum DropdownProperties {
-    'params.algorithm'
+    'params.algorithm',
+    'params.average'
 }
 
 /**
@@ -231,7 +232,8 @@ enum DropdownProperties {
  * @private
  */
 const dropdownParameters: Highcharts.DropdownParameters = {
-    'algorithm-pivotpoints': ['standard', 'fibonacci', 'camarilla']
+    'algorithm-pivotpoints': ['standard', 'fibonacci', 'camarilla'],
+    'average-disparityindex': ['sma', 'ema', 'dema', 'tema', 'wma']
 };
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

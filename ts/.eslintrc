@@ -26,6 +26,8 @@
             "never"
         ],
         "consistent-return": 0,
+        "default-case": 0,
+        "dot-notation": 0,
         "function-paren-newline": 0,
         "func-style": 0,
         "indent": 0,
@@ -54,7 +56,7 @@
         "prefer-const": 1, // @todo
         "prefer-spread": 0, // @todo
         "prefer-rest-params": 0, // @todo
-        "quote-props": [2, "as-needed", { "keywords": false, "unnecessary": false }],
+        "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
         "valid-jsdoc": [ // @todo EOL 2018-11
             "error",
             {
@@ -73,7 +75,14 @@
                 "allowTypedFunctionExpressions": false
             }
         ],
-        "@typescript-eslint/indent": ["error", 4, { "FunctionExpression": { "parameters": 1 }}],
+        "@typescript-eslint/indent": [
+            "error",
+            4,
+            {
+                "FunctionExpression": { "parameters": 1 },
+                "SwitchCase": 1
+            }
+        ],
         "@typescript-eslint/no-empty-function": 0, // @todo
         "@typescript-eslint/no-empty-interface": 0,
         "@typescript-eslint/no-explicit-any": 0,

@@ -129,7 +129,7 @@ QUnit.test('Wrong datalabel position (#3648)', function (assert) {
         plotLeft = chart.plotLeft,
         firstSeriesCenterX = firstSeries.plotX,
         firstSeriesColumnX = firstSeries.graphic.getBBox().height + plotLeft,
-        firstSeriesWidth = chart.series[0].clipBox.height,
+        firstSeriesWidth = chart.series[0].yAxis.len,
         seriesCenterY = chart.plotHeight / 2 + chart.plotTop,
         secondSeriesCenterX = secondSeries.plotX + firstSeriesWidth,
         secondSeriesColumnX =

@@ -26,6 +26,7 @@
 import type CircleObject from '../../Core/Geometry/CircleObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type IntersectionObject from '../../Core/Geometry/IntersectionObject';
+import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
@@ -406,7 +407,7 @@ class VennSeries extends ScatterSeries {
     public static getScale(
         targetWidth: number,
         targetHeight: number,
-        field: Highcharts.PolygonBoxObject
+        field: PolygonBoxObject
     ): Record<string, number> {
         const height = field.bottom - field.top, // top is smaller than bottom
             width = field.right - field.left,
@@ -437,9 +438,9 @@ class VennSeries extends ScatterSeries {
      * Returns a modified field object.
      */
     public static updateFieldBoundaries(
-        field: Highcharts.PolygonBoxObject,
+        field: PolygonBoxObject,
         circle: CircleObject
-    ): Highcharts.PolygonBoxObject {
+    ): PolygonBoxObject {
         const left = circle.x - circle.r,
             right = circle.x + circle.r,
             bottom = circle.y + circle.r,
@@ -629,9 +630,9 @@ class VennSeries extends ScatterSeries {
                     return shape && isNumber((shape as any).r);
                 })
                 .reduce(function (
-                    field: Highcharts.PolygonBoxObject,
+                    field: PolygonBoxObject,
                     key: string
-                ): Highcharts.PolygonBoxObject {
+                ): PolygonBoxObject {
                     return VennSeries.updateFieldBoundaries(
                         field,
                         mapOfIdToShape[key] as any
@@ -721,7 +722,7 @@ class VennSeries extends ScatterSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

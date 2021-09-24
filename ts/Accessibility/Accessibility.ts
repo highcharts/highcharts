@@ -299,6 +299,11 @@ Accessibility.prototype = {
             components[componentName].destroyBase();
         });
 
+        // Destroy proxy provider
+        if (this.proxyProvider) {
+            this.proxyProvider.destroy();
+        }
+
         // Kill keyboard nav
         if (this.keyboardNavigation) {
             this.keyboardNavigation.destroy();
