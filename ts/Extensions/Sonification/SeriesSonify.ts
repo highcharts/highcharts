@@ -28,6 +28,9 @@ import type {
     SeriesEventsOptions,
     SeriesOptions
 } from '../../Core/Series/SeriesOptions';
+import type Timeline from './Timeline';
+import type TimelineEvent from './TimelineEvent';
+import type TimelinePath from './TimelinePath';
 
 import Point from '../../Core/Series/Point.js';
 import Sonification from './Sonification.js';
@@ -74,7 +77,7 @@ namespace SeriesSonify {
 
     export declare class Composition extends Series {
         public chart: ChartSonify.SonifyableChart;
-        public points: Array<Highcharts.SonifyablePoint>;
+        public points: Array<PointSonify.Composition>;
         public sonify(options?: SonifySeriesOptions): void;
     }
 
@@ -246,7 +249,7 @@ namespace SeriesSonify {
     export function buildTimelinePathFromSeries(
         series: Composition,
         options: SonifySeriesOptions
-    ): Highcharts.TimelinePath {
+    ): TimelinePath {
         // options.timeExtremes is internal and used so that the calculations
         // from chart.sonify can be reused.
         const timeExtremes = options.timeExtremes || getTimeExtremes(series, options.pointPlayTime),
@@ -258,7 +261,7 @@ namespace SeriesSonify {
             // Get the duration of the final note
             finalNoteDuration = getFinalNoteDuration(series, options.instruments, dataExtremes),
             // Get time offset for a point, relative to duration
-            pointToTime = function (point: Highcharts.SonifyablePoint): number {
+            pointToTime = function (point: PointSonify.Composition): number {
                 return virtualAxisTranslate(
                     getPointTimeValue(point, options.pointPlayTime),
                     timeExtremes,
@@ -272,9 +275,9 @@ namespace SeriesSonify {
             instruments = applyMasterVolumeToInstruments(instrumentCopies, masterVolume),
             // Go through the points, convert to events, optionally add Earcons
             timelineEvents = series.points.reduce(function (
-                events: Array<Highcharts.TimelineEvent>,
-                point: Highcharts.SonifyablePoint
-            ): Array<Highcharts.TimelineEvent> {
+                events: Array<TimelineEvent>,
+                point: PointSonify.Composition
+            ): Array<TimelineEvent> {
                 const earcons = getPointEarcons(point, options.earcons || []),
                     time = pointToTime(point);
 
@@ -293,7 +296,7 @@ namespace SeriesSonify {
                     // Earcons
                     earcons.map(function (
                         earcon: Earcon
-                    ): Highcharts.TimelineEvent {
+                    ): TimelineEvent {
                         return new Sonification.TimelineEvent({
                             eventObject: earcon,
                             time: time,
@@ -314,7 +317,7 @@ namespace SeriesSonify {
                 }
             },
             onEventStart: function (
-                event: Highcharts.TimelineEvent
+                event: TimelineEvent
             ): (boolean|undefined) {
                 const eventObject = event.options && event.options.eventObject;
 
@@ -337,7 +340,7 @@ namespace SeriesSonify {
                     }
                 }
             },
-            onEventEnd: function (eventData: Highcharts.SignalDataObject): void {
+            onEventEnd: function (eventData: Timeline.SignalData): void {
                 const eventObject = eventData.event && eventData.event.options &&
                         eventData.event.options.eventObject;
 
@@ -470,7 +473,7 @@ namespace SeriesSonify {
      * The time value.
      */
     function getPointTimeValue(
-        point: Highcharts.SonifyablePoint,
+        point: PointSonify.Composition,
         timeProp: (string|Function)
     ): number {
         return typeof timeProp === 'function' ?
@@ -576,7 +579,7 @@ namespace SeriesSonify {
         // Compute the extremes from the visible points.
         return series.points.reduce(function (
             acc: RangeSelector.RangeObject,
-            point: Highcharts.SonifyablePoint
+            point: PointSonify.Composition
         ): RangeSelector.RangeObject {
             const value = getPointTimeValue(point, timeProp);
 
