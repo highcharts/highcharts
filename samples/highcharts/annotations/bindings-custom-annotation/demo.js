@@ -4,7 +4,7 @@ Highcharts.chart('container', {
             thresholds: {
                 className: 'highcharts-threshold-annotation',
                 start: function (event) {
-                    var chart = this.chart,
+                    const chart = this.chart,
                         x = chart.xAxis[0].toValue(event.chartX),
                         y = chart.yAxis[0].toValue(event.chartY),
                         colors = chart.options.colors,
@@ -15,9 +15,7 @@ Highcharts.chart('container', {
 
                     chart.customColorIndex++;
 
-                    if (
-                        chart.customColorIndex === colors.length
-                    ) {
+                    if (chart.customColorIndex === colors.length) {
                         chart.customColorIndex = 1;
                     }
 
