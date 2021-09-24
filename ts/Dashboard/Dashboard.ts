@@ -50,6 +50,12 @@ const {
  *
  * */
 
+/**
+ * Creates a dashboard with components like charts, tables, and HTML.
+ *
+ * @class
+ * @name Dashboard.Dashboard
+ */
 class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
 
     /* *
@@ -92,7 +98,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     public static importLocal(): (Dashboard|undefined) {
         const dashboardJSON = localStorage.getItem(
             // Dashboard.prefix + this.id,
-            DashboardGlobals.prefix + '1' // temporary for demo test
+            DashboardGlobals.classNamePrefix + '1' // temporary for demo test
         );
 
         if (dashboardJSON) {
@@ -302,7 +308,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     public exportLocal(): void {
         localStorage.setItem(
             // Dashboard.prefix + this.id,
-            DashboardGlobals.prefix + '1', // temporary for demo test
+            DashboardGlobals.classNamePrefix + '1', // temporary for demo test
             JSON.stringify(this.toJSON())
         );
     }

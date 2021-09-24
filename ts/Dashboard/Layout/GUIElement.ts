@@ -59,7 +59,7 @@ abstract class GUIElement {
     public static createElementId(
         elementType: string // col, row, layout
     ): string {
-        return DashboardGlobals.prefix + elementType + '-' + uniqueKey().slice(11);
+        return DashboardGlobals.classNamePrefix + elementType + '-' + uniqueKey().slice(11);
     }
 
     // Get width in percentages (0% - 100%).

@@ -72,7 +72,7 @@ function findMatchingPoint(
     }
 }
 
-export const configs: {
+const configs: {
     handlers: Record<string, Sync.HandlerConfig>;
     emitters: Record<string, Sync.EmitterConfig>;
 } = {
@@ -356,7 +356,7 @@ export const configs: {
     }
 };
 
-export const defaults: Sync.OptionsRecord = {
+const defaults: Sync.OptionsRecord = {
     panning: { emitter: configs.emitters.panEmitter, handler: configs.handlers.selectionHandler },
     selection: { emitter: configs.emitters.selectionEmitter, handler: configs.handlers.selectionHandler },
     tooltip: { emitter: configs.emitters.tooltipEmitter, handler: configs.handlers.tooltipHandler },

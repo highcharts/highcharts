@@ -1,0 +1,7 @@
+---
+ name: Dashboard Demo
+ authors:
+   - Sebastian Bochan, Wojciech Chmiel
+ requiresManualTesting: true
+ js_wrap: b
+...

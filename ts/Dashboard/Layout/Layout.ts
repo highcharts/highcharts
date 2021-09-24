@@ -61,7 +61,7 @@ class Layout extends GUIElement {
         dashboard: Dashboard
     ): Layout|undefined {
         const layoutOptions = localStorage.getItem(
-            DashboardGlobals.prefix + id
+            DashboardGlobals.classNamePrefix + id
         );
 
         let layout;
@@ -279,7 +279,7 @@ class Layout extends GUIElement {
      */
     public exportLocal(): void {
         localStorage.setItem(
-            DashboardGlobals.prefix + this.options.id,
+            DashboardGlobals.classNamePrefix + this.options.id,
             JSON.stringify(this.toJSON())
         );
     }

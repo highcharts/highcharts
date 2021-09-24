@@ -1,46 +1,61 @@
-import GUIElement from './Layout/GUIElement';
+'use strict';
 
-/**
+/* *
  *
- * Prefix of a GUIElement HTML class name.
+ *  Imports
  *
- */
-const PREFIX = 'hcd-';
+ * */
 
-const DashboardGlobals: DashboardGlobals = {
-    prefix: PREFIX,
-    guiElementType: {
+import type GUIElement from './Layout/GUIElement';
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+namespace DashboardGlobals {
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    /**
+     *
+     * Prefix of a GUIElement HTML class name.
+     *
+     */
+    export const classNamePrefix = 'hd-';
+
+    export const classNames = {
+        layout: classNamePrefix + 'layout',
+        cell: classNamePrefix + 'cell',
+        row: classNamePrefix + 'row',
+        layoutsWrapper: classNamePrefix + 'layouts-wrapper'
+    };
+
+    export const guiElementType: Record<string, GUIElement.GUIElementType> = {
         row: 'row',
         cell: 'cell',
         layout: 'layout'
-    },
-    respoBreakpoints: {
+    };
+
+    export const respoBreakpoints: Record<string, string> = {
         small: 'small',
         medium: 'medium',
         large: 'large'
-    },
-    classNames: {
-        layout: PREFIX + 'layout',
-        cell: PREFIX + 'cell',
-        row: PREFIX + 'row',
-        layoutsWrapper: PREFIX + 'layouts-wrapper'
-    }
-};
+    };
 
-interface DashboardGlobals {
-    prefix: string;
-    guiElementType: Record<string, GUIElement.GUIElementType>;
-    respoBreakpoints: Record<string, string>;
-    classNames: EditGlobals.ClassNamesOptions;
+    export const win = window;
+
 }
 
-namespace EditGlobals {
-    export interface ClassNamesOptions {
-        layout: string;
-        cell: string;
-        row: string;
-        layoutsWrapper: string;
-    }
-}
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default DashboardGlobals;

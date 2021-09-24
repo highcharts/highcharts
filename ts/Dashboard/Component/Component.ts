@@ -29,7 +29,11 @@ const {
     relativeLength
 } = U;
 
-import { getMargins, getPaddings } from './Utils.js';
+import CU from './ComponentUtilities.js';
+const {
+    getMargins,
+    getPaddings
+} = CU;
 import ComponentGroup from './ComponentGroup.js';
 import Sync from './Sync/Sync.js';
 
