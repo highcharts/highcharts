@@ -251,6 +251,14 @@ $highlight-color-80: #335cad;
   padding-bottom: 15px;
 }
 
+.highcharts-input-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
 .highcharts-input-search-indicators-label {
   text-align: center;
   font-weight: bold;
@@ -261,21 +269,20 @@ $highlight-color-80: #335cad;
 input.highcharts-input-search-indicators {
   width: 80%;
   margin: 0 auto;
-  display: block;
   float: none;
+  border-color: #949494;
 }
 
-.highcharts-popup button.clear-filter-button {
+.highcharts-popup a.clear-filter-button {
   margin: 0 auto;
   display: none;
-  float: unset;
   color: $highlight-color-80;
   background-color: $background-color;
   border: 1px solid $highlight-color-80;
   margin-top: 10px;
 }
 
-.highcharts-popup button.clear-filter-button:hover {
+.highcharts-popup a.clear-filter-button:hover {
   color: $background-color;
   background-color: $highlight-color-80;
 }

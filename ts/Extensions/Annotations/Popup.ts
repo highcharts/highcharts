@@ -33,7 +33,6 @@ const {
     fireEvent,
     isArray,
     isObject,
-    isString,
     objectEach,
     pick,
     stableSort,
@@ -206,6 +205,7 @@ declare global {
 
 const indexFilter = /\d/g,
     PREFIX = 'highcharts-',
+    A = 'a',
     DIV = 'div',
     INPUT = 'input',
     LABEL = 'label',
@@ -1188,8 +1188,8 @@ H.Popup.prototype = {
 
             // If the list exists remove it from the DOM
             // in order to create a new one with different filters.
-            if (lhsCol.children[3]) {
-                lhsCol.children[3].remove();
+            if (lhsCol.children[1]) {
+                lhsCol.children[1].remove();
             }
 
             // Create wrapper for list.
@@ -1286,7 +1286,15 @@ H.Popup.prototype = {
                     htmlFor: 'search-indicators',
                     labelClassName: 'highcharts-input-search-indicators-label'
                 },
-                clearFilterText = this.lang.clearFilter;
+                clearFilterText = this.lang.clearFilter,
+                inputWrapper = createElement(
+                    DIV,
+                    {
+                        className: 'highcharts-input-wrapper'
+                    },
+                    void 0,
+                    lhsCol
+                );
 
             const handleInputChange = function (inputText: string): void {
                 // Apply some filters.
@@ -1303,14 +1311,16 @@ H.Popup.prototype = {
             const input = this.addInput(
                     options,
                     INPUT,
-                    lhsCol,
+                    inputWrapper,
                     inputAttributes
                 ) as HTMLInputElement,
-                button = this.addButton(
-                    lhsCol,
-                    clearFilterText,
-                    'button',
-                    lhsCol
+                button = createElement(
+                    A,
+                    {
+                        textContent: clearFilterText
+                    },
+                    void 0,
+                    inputWrapper
                 );
 
             input.classList.add('highcharts-input-search-indicators');
@@ -1322,7 +1332,7 @@ H.Popup.prototype = {
 
                 // Show clear filter button.
                 if (this.value.length) {
-                    button.style.display = 'block';
+                    button.style.display = 'inline-block';
                 } else {
                     button.style.display = 'none';
                 }
