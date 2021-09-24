@@ -518,7 +518,7 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      * @param {number} dx translation for x coordinate
      * @param {number} dy translation for y coordinate
      * @param {boolean|undefined} translateSecondPoint If the shape has two
-     * points attached to it, this option allows you to translate more also
+     * points attached to it, this option allows you to translate also
      * the second point
      */
     translateShape: function (
