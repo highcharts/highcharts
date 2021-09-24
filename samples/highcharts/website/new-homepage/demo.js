@@ -510,6 +510,7 @@ const sankey = {
                     chart.series[0].update({
                         curveFactor: 2
                     });
+                    $('.highcharts-data-labels').animate({ opacity: 0 }, 1000);
                 };
                 ///if it's not reduced motion, execute p2
                 if (!reduced) {
@@ -1149,11 +1150,11 @@ const candlestick = function () {
                                 $(' .highcharts-candlestick-series .highcharts-point-down').css({ fillOpacity: 1 });
                             }
                         };
-                        setTimeout(p1, 10);
+                        setTimeout(p1, 300);
 
                         const p2 = function () {
                             chart.xAxis[0].update({ visible: true });
-                            chart.rangeSelector.clickButton(1);
+                            //chart.rangeSelector.clickButton(1);
                             $('.highcharts-yaxis-labels').css({ opacity: 0 });
                             if (!reduced) {
                                 $('.highcharts-candlestick-series.candlestick').animate({ opacity: 1 }, 800);
@@ -1167,30 +1168,30 @@ const candlestick = function () {
                         setTimeout(p2, 500);
 
                         const p21 = function () {
-                            $('.highcharts-yaxis-labels').animate({ opacity: 1 }, 800);
+                            $('.highcharts-axis-labels').animate({ opacity: 1 }, 800);
+                            chart.rangeSelector.clickButton(3);
                             if (reduced) {
                                 $('.highcharts-candlestick-series.candlestick').animate({ opacity: 1 }, 800);
-
                                 $(' .highcharts-candlestick-series .highcharts-point-up').css({ fillOpacity: 1 });
                                 $(' .highcharts-candlestick-series .highcharts-point-down').css({ fillOpacity: 1 });
                             }
                         };
-                        setTimeout(p21, 1000);
-
-                        const p3 = function () {
-                            chart.rangeSelector.clickButton(2);
-                        };
-                        setTimeout(p3, 2300);
+                        setTimeout(p21, 3000);
 
                         const p4 = function () {
                             $('.highcharts-range-selector-buttons').animate({ opacity: 0 }, 1000);
-                            $('.highcharts-title').animate({ opacity: 0 }, 1000);
-                            $('.highcharts-candlestick-series.candlestick').animate({ opacity: 0 }, 1000);
+                            //$('.highcharts-title').animate({ opacity: 0 }, 1000);
                             $('.highcharts-axis-labels').animate({ opacity: 0 }, 800);
-                            chart.yAxis[0].update({ visible: false });
-                            chart.xAxis[0].update({ visible: false });
+                            $('.highcharts-xaxis').animate({ opacity: 0 }, 800);
+
+                            $('.highcharts-candlestick-series.candlestick').css({ stroke: 'transparent' });
                         };
                         setTimeout(p4, 5500);
+
+                        const p5 = function () {
+                            $('.highcharts-candlestick-series.candlestick').animate({ opacity: 0 }, 900);
+                        };
+                        setTimeout(p5, 5600);
                     }
                 }
             },
@@ -1213,7 +1214,7 @@ const candlestick = function () {
             },
             rangeSelector: {
                 enabled: true,
-                selected: 1,
+                selected: 0,
                 inputEnabled: false,
                 buttons: [{
                     type: 'week',
@@ -1335,4 +1336,4 @@ const loopCharts = function () {
 loopCharts();
 
 //loop
-window.setInterval(loopCharts, 25000);
+window.setInterval(loopCharts, 24500);
