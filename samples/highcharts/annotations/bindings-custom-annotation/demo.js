@@ -1,5 +1,6 @@
 Highcharts.chart('container', {
     navigation: {
+        bindingsClassName: 'tools-container',
         bindings: {
             thresholds: {
                 className: 'highcharts-threshold-annotation',
@@ -31,7 +32,7 @@ Highcharts.chart('container', {
                         draggable: 'y',
                         events: {
                             drag: function (e) {
-                                var newZones = series.userOptions.zones;
+                                const newZones = series.userOptions.zones;
 
                                 newZones[this.userOptions.zoneIndex].value =
                                 chart.yAxis[0].toValue(e.chartY);
@@ -60,17 +61,4 @@ Highcharts.chart('container', {
     series: [{
         data: [2, 5, 1, 6, 7, 8, 5]
     }]
-}, function () {
-    const chart = this;
-    document.getElementById('add-annotation').addEventListener('click', function (e) {
-        const button = this,
-            annotationOptions =
-                chart.navigationBindings.options.bindings.thresholds;
-
-        chart.navigationBindings.bindingsButtonClick(
-            button,
-            annotationOptions,
-            e
-        );
-    });
 });
