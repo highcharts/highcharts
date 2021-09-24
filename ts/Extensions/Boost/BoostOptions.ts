@@ -113,7 +113,7 @@ declare global {
  * amount of series.
  *
  * @type      {number|null}
- * @default   null
+ * @default   50
  * @apioption boost.seriesThreshold
  */
 
