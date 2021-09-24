@@ -1489,6 +1489,36 @@ merge<Annotation>(
                 shapeOptions: {
 
                     /**
+                     *
+                     * The radius of the shape in y direction.
+                     * Used for the ellipse.
+                     *
+                     * @sample highcharts/annotations/ellipse/
+                     *         Ellipse annotation
+                     *
+                     * @type      {number}
+                     * @apioption annotations.shapeOptions.ry
+                     **/
+
+                    /**
+                     *
+                     * The xAxis index to which the points should be attached.
+                     * Used for the ellipse.
+                     *
+                     * @type      {number}
+                     * @apioption annotations.shapeOptions.xAxis
+                     **/
+
+                    /**
+                     * The yAxis index to which the points should be attached.
+                     * Used for the ellipse.
+                     *
+                     * @type      {number}
+                     * @apioption annotations.shapeOptions.yAxis
+                     **/
+
+
+                    /**
                      * The width of the shape.
                      *
                      * @sample highcharts/annotations/shape/
