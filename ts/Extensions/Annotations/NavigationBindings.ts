@@ -1328,7 +1328,7 @@ setOptions({
                             isNumber(mockPointOpts.xAxis) &&
                             isNumber(mockPointOpts.yAxis)
                         ) {
-                            let inverted = this.chart.inverted,
+                            const inverted = this.chart.inverted,
                                 x = this.chart.xAxis[mockPointOpts.xAxis]
                                     .toPixels(mockPointOpts.x),
                                 y = this.chart.yAxis[mockPointOpts.yAxis]

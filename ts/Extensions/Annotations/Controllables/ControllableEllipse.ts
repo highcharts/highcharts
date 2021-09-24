@@ -25,20 +25,6 @@ const {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-/**
- * A controllable ellipse class.
- *
- * @requires modules/annotations
- *
- * @private
- * @class
- * @name Highcharts.AnnotationControllableEllipse
- *
- * @param {Highcharts.Annotation} annotation an annotation instance
- * @param {Highcharts.AnnotationsShapeOptions} options a shape's options
- * @param {number} index of the Ellipse
- */
-
 interface EllipseShapeOptions extends Highcharts.AnnotationsShapeOptions {
     yAxis: number;
     xAxis: number;
@@ -57,6 +43,21 @@ interface ReferencePointsOptions {
     x: number;
     y: number;
 }
+
+/**
+ * A controllable ellipse class.
+ *
+ * @requires modules/annotations
+ *
+ * @private
+ * @class
+ * @name Highcharts.AnnotationControllableEllipse
+ *
+ * @param {Highcharts.Annotation} annotation an annotation instance
+ * @param {Highcharts.AnnotationsShapeOptions} options a shape's options
+ * @param {number} index of the Ellipse
+ */
+
 
 class ControllableEllipse implements ControllableMixin.Type {
 
@@ -79,15 +80,11 @@ class ControllableEllipse implements ControllableMixin.Type {
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
-    public constructor(
-        annotation: Annotation,
-        options: EllipseShapeOptions,
-        index: number
-    ) {
+    public constructor(annotation: Annotation, options: EllipseShapeOptions, index: number) {
         this.init(annotation, options, index);
         this.collection = 'shapes';
     }
