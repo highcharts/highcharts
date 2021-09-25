@@ -38,6 +38,6 @@ See [Legend](https://highcharts.com/docs/chart-concepts/legend) for more infor
 Axes
 ----
 
-Most charts, like the typical cartesian line chart and column chart, have two axes to measure and categorize data: a vertical axis (y-axis) and a horizontal axis (x-axis). 3D charts have a third axis, a depth axis (z-axis). Polar charts, also known as radar charts, only have one axis that spans around the perimeter of the chart. Gauge charts, also known as speedometer charts, can even have a single value axis. Pie charts, however, have no axes.
+Most charts, like the typical cartesian line chart and the column chart, have two axes to measure and categorize data: a vertical axis (y-axis) and a horizontal axis (x-axis). 3D charts have a third axis, a depth axis (z-axis). Polar charts, also known as radar charts, only have one axis that spans around the perimeter of the chart. Gauge charts, also known as speedometer charts, can even have a single value axis. Pie charts, however, have no axes.
 
 See [Axes](https://highcharts.com/docs/chart-concepts/axes) for more information.
