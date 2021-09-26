@@ -110,7 +110,6 @@ import defaultLangOptions from './Options/LangOptions.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
 import HTMLUtilities from './Utils/HTMLUtilities.js';
 import './A11yI18n.js';
-import './FocusBorder.js';
 
 
 // Add default options
