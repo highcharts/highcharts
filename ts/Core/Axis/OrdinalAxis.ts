@@ -490,7 +490,7 @@ namespace OrdinalAxis {
 
             // Check if the index is inside position array.
             // If true, read/approximate value for that exact index.
-            if (index >= 0 && index < positions.length) {
+            if (index >= 0 && index < positions.length - 1) {
                 const leftNeighbour = positions[Math.floor(index)],
                     rightNeighbour = positions[Math.ceil(index)],
                     distance = rightNeighbour - leftNeighbour;
