@@ -362,5 +362,16 @@ transition: transform 1s !important;
 	opacity:1;
 }
 
+@media (prefers-reduced-motion: reduce) {
+	#hero .highcharts-candlestick-series.candlestick{
+    transform-origin: center;
+    transform: none;
+    transition: transform 1s !important;
+  }
+}
+
+
+
+
 
 
