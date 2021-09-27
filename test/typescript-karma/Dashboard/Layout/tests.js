@@ -1,4 +1,5 @@
 import Dashboard from  '/base/js/Dashboard/Dashboard.js';
+import DashboardGlobals from  '/base/js/Dashboard/DashboardGlobals.js';
 const { test, only, skip } = QUnit;
 
 function setupContainer() {
@@ -65,7 +66,7 @@ test('Components in layout with no row style', function (assert) {
         components
     });
 
-    const comps = document.querySelectorAll('.hcd-component')
+    const comps = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'component')
     for (const component of comps) {
         assert.strictEqual(component.style.height, '', 'Height should be unset')
         assert.strictEqual(component.style.width, '', 'Width should be unset')
@@ -90,10 +91,10 @@ skip('Components in rows with set height', function (assert) {
         components
     });
 
-    const columns = document.querySelectorAll('.hcd-cell')
+    const columns = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'cell')
     assert.strictEqual(columns.length, 2)
     for (const column of columns) {
-        const components = column.querySelectorAll('.hcd-component')
+        const components = column.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'component')
         for (const component of components) {
             assert.strictEqual(component.style.height, column.style.height, 'Height should be set to the row')
             assert.strictEqual(component.style.width, '', 'Width should be unset')
@@ -118,10 +119,10 @@ skip('Components in layout with set width', function (assert) {
         components
     });
 
-    const columns = document.querySelectorAll('.hcd-cell')
+    const columns = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'cell')
     assert.strictEqual(columns.length, 2)
     for (const column of columns) {
-        const components = column.querySelectorAll('.hcd-component');
+        const components = column.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'component');
         assert.strictEqual(column.style.width, '800px');
         for (const component of components) {
             assert.strictEqual(component.style.height, '', 'Height should be unset')
@@ -147,7 +148,7 @@ test('Components and rows in layout with set height', function (assert) {
         components
     });
 
-    const rows = document.querySelectorAll('.hcd-row')
+    const rows = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'row')
     assert.strictEqual(rows.length, 2)
 
     // This is on the todo list :)
