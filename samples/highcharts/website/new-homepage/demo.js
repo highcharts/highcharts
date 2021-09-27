@@ -113,7 +113,6 @@ const bubble = {
                             data: bubbleData
                         });
                         chart.series[0].update({ visible: true });
-                        //$('.highcharts-title').css({opacity:0});
                         $('.highcharts-bubble-series').animate({ opacity: 1 }, 1000);
                         //show the plot lines
                         $('.highcharts-plot-line').animate({ opacity: 1 }, 1000);
@@ -210,7 +209,6 @@ const bubble = {
                     });
                     setTimeout(function () {
                         chart.series[0].update({ visible: true });
-                        //$('.highcharts-title').css({opacity:0});
                         $('.highcharts-bubble-series').animate({ opacity: 1 }, 1000);
                     }, 100);
 
@@ -226,33 +224,34 @@ const bubble = {
                         const count6 = 42;
                         let count7 = 51;
                         const count8 = 58;
-
-                        //raises/lowers the bubbles in the ODD columns
-                        const drop = setInterval(function () {
-                            if (count1 < count2) {
-                                chart.series[0].data[count1].update({
-                                    y: bubbleData[count1].y
-                                });
-                                count1 = count1 + 1;
-                            } else if (count3 < count4) {
-                                chart.series[0].data[count3].update({
-                                    y: bubbleData[count3].y
-                                });
-                                count3 = count3 + 1;
-                            } else if (count5 < count6) {
-                                chart.series[0].data[count5].update({
-                                    y: bubbleData[count5].y
-                                });
-                                count5 = count5 + 1;
-                            } else if (count7 < count8) {
-                                chart.series[0].data[count7].update({
-                                    y: bubbleData[count7].y
-                                });
-                                count7 = count7 + 1;
-                            } else {
-                                clearInterval(drop);
-                            }
-                        }, 50);
+                        if (chart.series) {
+                            //raises/lowers the bubbles in the ODD columns
+                            const drop = setInterval(function () {
+                                if (count1 < count2) {
+                                    chart.series[0].data[count1].update({
+                                        y: bubbleData[count1].y
+                                    });
+                                    count1 = count1 + 1;
+                                } else if (count3 < count4) {
+                                    chart.series[0].data[count3].update({
+                                        y: bubbleData[count3].y
+                                    });
+                                    count3 = count3 + 1;
+                                } else if (count5 < count6) {
+                                    chart.series[0].data[count5].update({
+                                        y: bubbleData[count5].y
+                                    });
+                                    count5 = count5 + 1;
+                                } else if (count7 < count8) {
+                                    chart.series[0].data[count7].update({
+                                        y: bubbleData[count7].y
+                                    });
+                                    count7 = count7 + 1;
+                                } else {
+                                    clearInterval(drop);
+                                }
+                            }, 50);
+                        }
                     }, 500);
 
                     setTimeout(function () {
@@ -262,28 +261,30 @@ const bubble = {
                         const count5 = 34;
                         let count6 = 42;
                         const count7 = 51;
+                        if (chart.series) {
+                            //raises/lowers the bubbles in the EVEN columns
+                            const drop = setInterval(function () {
+                                if (count2 < count3) {
+                                    chart.series[0].data[count2].update({
+                                        y: bubbleData[count2].y
+                                    });
+                                    count2 = count2 + 1;
+                                } else if (count4 < count5) {
+                                    chart.series[0].data[count4].update({
+                                        y: bubbleData[count4].y
+                                    });
+                                    count4 = count4 + 1;
+                                } else if (count6 < count7) {
+                                    chart.series[0].data[count6].update({
+                                        y: bubbleData[count6].y
+                                    });
+                                    count6 = count6 + 1;
+                                } else {
+                                    clearInterval(drop);
+                                }
+                            }, 50);
+                        }
 
-                        //raises/lowers the bubbles in the EVEN columns
-                        const drop = setInterval(function () {
-                            if (count2 < count3) {
-                                chart.series[0].data[count2].update({
-                                    y: bubbleData[count2].y
-                                });
-                                count2 = count2 + 1;
-                            } else if (count4 < count5) {
-                                chart.series[0].data[count4].update({
-                                    y: bubbleData[count4].y
-                                });
-                                count4 = count4 + 1;
-                            } else if (count6 < count7) {
-                                chart.series[0].data[count6].update({
-                                    y: bubbleData[count6].y
-                                });
-                                count6 = count6 + 1;
-                            } else {
-                                clearInterval(drop);
-                            }
-                        }, 50);
                     }, 1500);
 
                     setTimeout(function () {
@@ -1118,7 +1119,7 @@ const bubble2 = {
     ]
 };
 
-const candlestick = function () {
+const candlestick = function (type) {
     Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', function (data) {
     // create the chart
         heroChart = Highcharts.stockChart('hero', {
@@ -1138,60 +1139,46 @@ const candlestick = function () {
                         $('.highcharts-candlestick-series.candlestick').css({ opacity: 0 });
                         $('.highcharts-yaxis-labels').css({ opacity: 0 });
 
-                        ///pre-rotate it for reduced motion so the spin isn't visible
-                        if (reduced) {
+                        if (reduced || type === 'static') {
                             $(' .highcharts-candlestick-series.candlestick').css({ transform: 'rotate(0deg)' });
-                            $('.highcharts-yaxis-labels').css({ opacity: 0 });
+                            chart.rangeSelector.clickButton(3);
                         }
-                        const p1 = function () {
-                            if (!reduced) {
-                                $('.highcharts-candlestick-series.candlestick').animate({ opacity: 1 }, 800);
-                                $(' .highcharts-candlestick-series .highcharts-point-up').css({ fillOpacity: 1 });
-                                $(' .highcharts-candlestick-series .highcharts-point-down').css({ fillOpacity: 1 });
-                            }
-                        };
-                        setTimeout(p1, 300);
 
-                        const p2 = function () {
+                        const p1 = function () {
+                            $('.highcharts-axis-labels').animate({ opacity: 1 }, 800);
                             chart.xAxis[0].update({ visible: true });
-                            //chart.rangeSelector.clickButton(1);
-                            $('.highcharts-yaxis-labels').css({ opacity: 0 });
+                            $('.highcharts-candlestick-series.candlestick').animate({ opacity: 1 }, 800);
+                            $(' .highcharts-candlestick-series .highcharts-point-up').css({ fillOpacity: 1 });
+                            $(' .highcharts-candlestick-series .highcharts-point-down').css({ fillOpacity: 1 });
+                            $('.highcharts-range-selector-buttons').animate({ opacity: 1 }, 1000);
+
                             if (!reduced) {
-                                $('.highcharts-candlestick-series.candlestick').animate({ opacity: 1 }, 800);
-                                $(' .highcharts-candlestick-series .highcharts-point-up').css({ fillOpacity: 1 });
-                                $(' .highcharts-candlestick-series .highcharts-point-down').css({ fillOpacity: 1 });
                                 $(' .highcharts-candlestick-series.candlestick').css({ transform: 'rotate(0deg)' });
                             }
-                            //$('.highcharts-title').animate({opacity:1},1000);
-                            $('.highcharts-range-selector-buttons').animate({ opacity: 1 }, 1000);
-                        };
-                        setTimeout(p2, 500);
 
-                        const p21 = function () {
-                            $('.highcharts-axis-labels').animate({ opacity: 1 }, 800);
-                            chart.rangeSelector.clickButton(3);
-                            if (reduced) {
-                                $('.highcharts-candlestick-series.candlestick').animate({ opacity: 1 }, 800);
-                                $(' .highcharts-candlestick-series .highcharts-point-up').css({ fillOpacity: 1 });
-                                $(' .highcharts-candlestick-series .highcharts-point-down').css({ fillOpacity: 1 });
-                            }
                         };
-                        setTimeout(p21, 3000);
+                        setTimeout(p1, 700);
 
-                        const p4 = function () {
-                            $('.highcharts-range-selector-buttons').animate({ opacity: 0 }, 1000);
-                            //$('.highcharts-title').animate({ opacity: 0 }, 1000);
-                            $('.highcharts-axis-labels').animate({ opacity: 0 }, 800);
-                            $('.highcharts-xaxis').animate({ opacity: 0 }, 800);
+                        if (type === 'animated') {
 
-                            $('.highcharts-candlestick-series.candlestick').css({ stroke: 'transparent' });
-                        };
-                        setTimeout(p4, 5500);
+                            const p2 = function () {
+                                chart.rangeSelector.clickButton(3);
+                            };
+                            setTimeout(p2, 3000);
 
-                        const p5 = function () {
-                            $('.highcharts-candlestick-series.candlestick').animate({ opacity: 0 }, 900);
-                        };
-                        setTimeout(p5, 5600);
+                            const p21 = function () {
+                                $('.highcharts-range-selector-buttons').animate({ opacity: 0 }, 1000);
+                                $('.highcharts-axis-labels').animate({ opacity: 0 }, 800);
+                                $('.highcharts-xaxis').animate({ opacity: 0 }, 800);
+                                $('.highcharts-candlestick-series.candlestick').css({ stroke: 'transparent' });
+                            };
+                            setTimeout(p21, 5500);
+
+                            const p3 = function () {
+                                $('.highcharts-candlestick-series.candlestick').animate({ opacity: 0 }, 900);
+                            };
+                            setTimeout(p3, 5600);
+                        }
                     }
                 }
             },
@@ -1265,7 +1252,7 @@ const candlestick = function () {
                 }
             }],
             yAxis: [{
-                visible: true
+                visible: false
             }],
             series: [{
                 name: 'AAPL',
@@ -1300,7 +1287,6 @@ const loops = [0, 5500, 10500, 18000, 23010];
 
 ///bubble chart
 const createBubble = function () {
-    console.log(heroChart);
     if (heroChart) {
         heroChart.destroy();
     }
@@ -1316,7 +1302,7 @@ const createSankey = function () {
 ///candlestick
 const createStick = function () {
     heroChart.destroy();
-    candlestick();
+    candlestick('animated');
 };
 
 ///bubble2
