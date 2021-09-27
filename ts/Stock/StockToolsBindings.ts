@@ -2108,8 +2108,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
             const navigation = this.chart.options.navigation,
                 options = merge(
                     {
-                        langKey: 'Fibonacci Time Zones',
                         type: 'fibonacciTimeZones',
+                        langKey: 'fibonacciTimeZones',
                         typeOptions: {
                             xAxis: coordsX.axis.options.index,
                             yAxis: coordsY.axis.options.index,

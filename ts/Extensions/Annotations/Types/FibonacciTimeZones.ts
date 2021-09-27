@@ -57,12 +57,15 @@ class FibonacciTimeZones extends CrookedLine {
 
     It uses x coordinate to create two mock points on the same x. Then,
     it uses some logic from InfinityLine to find equation of the line passing
-    through our two points and, using that equation, if finds and returns
+    through our two points and, using that equation, it finds and returns
     the coordinates of where the line intersects the plot area edges.
 
     This is being done for each fibonacci time zone line.
 
+
             this point here is found
+               |
+               v
      |---------*--------------------------------------------------------|
      |                                                                  |
      |                                                                  |
@@ -73,7 +76,7 @@ class FibonacciTimeZones extends CrookedLine {
      |         *   primary point (e.g. the one given in options)        |
      |                                                                  |
      |---------*--------------------------------------------------------|
-            and this point here is found
+            and this point here is found (intersection with the plot area edge)
 
     */
     private edgePoint(
@@ -83,11 +86,19 @@ class FibonacciTimeZones extends CrookedLine {
     ): Function {
         return function (target: any): PositionObject {
             const annotation = target.annotation;
+
             let points = annotation.points;
             // Offset between the first and the second line
-            const deltaX = points.length > 1 ? points[1].x - points[0].x : 0,
+
+            const xAxis = points[0].series.xAxis,
+                // Distance between the two first lines in pixels
+                deltaX = points.length > 1 ?
+                    xAxis.toPixels(points[1].x) - xAxis.toPixels(points[0].x) :
+                    0,
                 // firstLine.x + fibb * offset
-                x = points[0].x + fibonacciIndex * deltaX;
+                x = xAxis.toValue(
+                    xAxis.toPixels(points[0].x) + fibonacciIndex * deltaX
+                );
 
             // We need 2 mock points with the same x coordinate, different y
             points = [
@@ -184,10 +195,34 @@ class FibonacciTimeZones extends CrookedLine {
 interface FibonacciTimeZones {
     defaultOptions: CrookedLine['defaultOptions'];
 }
+
 FibonacciTimeZones.prototype.defaultOptions = merge(
     CrookedLine.prototype.defaultOptions,
     {
         typeOptions: {
+            // Options for showing in popup edit
+            line: {
+                /**
+                 * The color of the lines.
+                 *
+                 * @type      {string}
+                 * @since     next
+                 * @default   'rgba(0, 0, 0, 0.75)'
+                 * @apioption annotations.fibonacciTimeZones.typeOptions.line.stroke
+                 */
+                stroke: 'rgba(0, 0, 0, 0.75)',
+                /**
+                 * The width of the lines.
+                 *
+                 * @type      {number}
+                 * @since     next
+                 * @default   1
+                 * @apioption annotations.fibonacciTimeZones.typeOptions.line.strokeWidth
+                 */
+                strokeWidth: 1,
+                // Don't inherit fill (don't display in popup edit)
+                fill: void 0
+            },
             controlPointOptions: {
                 positioner: function (
                     this: Highcharts.AnnotationControlPoint
@@ -199,10 +234,15 @@ FibonacciTimeZones.prototype.defaultOptions = merge(
                         args = { annotation: target },
                         firstEdgePointY: number = edgePoints[0](args).y,
                         secondEdgePointY: number = edgePoints[1](args).y,
-                        x: number = edgePoints[0](args).x,
-                        y: number = (firstEdgePointY + secondEdgePointY) / 2,
                         plotLeft = this.chart.plotLeft,
                         plotTop = this.chart.plotTop;
+
+                    let x: number = edgePoints[0](args).x,
+                        y: number = (firstEdgePointY + secondEdgePointY) / 2;
+
+                    if (this.chart.inverted) {
+                        [x, y] = [y, x];
+                    }
 
                     return {
                         x: plotLeft + x - graphic.width / 2,
