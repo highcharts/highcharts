@@ -85,25 +85,24 @@ class FibonacciTimeZones extends CrookedLine {
         fibonacciIndex: number
     ): Function {
         return function (target: any): PositionObject {
-            const annotation = target.annotation;
+            const chart = target.annotation.chart,
+                plotLeftOrTop = chart.inverted ? chart.plotTop : chart.plotLeft;
 
-            let points = annotation.points;
-            // Offset between the first and the second line
+            let points = target.annotation.points;
 
             const xAxis = points[0].series.xAxis,
                 // Distance between the two first lines in pixels
                 deltaX = points.length > 1 ?
-                    xAxis.toPixels(points[1].x) - xAxis.toPixels(points[0].x) :
-                    0,
+                    points[1].plotX - points[0].plotX : 0,
                 // firstLine.x + fibb * offset
                 x = xAxis.toValue(
-                    xAxis.toPixels(points[0].x) + fibonacciIndex * deltaX
+                    points[0].plotX + plotLeftOrTop + fibonacciIndex * deltaX
                 );
 
             // We need 2 mock points with the same x coordinate, different y
             points = [
                 new MockPoint(
-                    annotation.chart,
+                    chart,
                     points[0].target,
                     {
                         x: x,
@@ -113,7 +112,7 @@ class FibonacciTimeZones extends CrookedLine {
                     }
                 ),
                 new MockPoint(
-                    annotation.chart,
+                    chart,
                     points[0].target,
                     {
                         x: x,

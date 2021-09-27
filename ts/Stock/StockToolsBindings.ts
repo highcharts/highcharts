@@ -35,6 +35,7 @@ const {
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 import palette from '../Core/Color/Palette.js';
+import FibonacciTimeZones from '../Extensions/Annotations/Types/FibonacciTimeZones';
 const {
     correctFloat,
     defined,
@@ -2130,7 +2131,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
             function (
                 this: NavigationBindings,
                 e: PointerEvent,
-                annotation: Annotation
+                annotation: FibonacciTimeZones
             ): void {
                 const mockPointOpts = annotation.options.typeOptions.points,
                     x = mockPointOpts && mockPointOpts[0].x,
