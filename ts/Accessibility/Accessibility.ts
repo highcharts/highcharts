@@ -14,6 +14,7 @@
 
 import type { Options } from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import A11yI18n from './A11yI18n.js';
 import Chart from '../Core/Chart/Chart.js';
@@ -96,6 +97,7 @@ declare global {
 }
 
 import AccessibilityComponent from './AccessibilityComponent.js';
+import FocusBorder from './FocusBorder.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
 import LegendComponent from './Components/LegendComponent.js';
 import MenuComponent from './Components/MenuComponent.js';
@@ -110,8 +112,6 @@ import defaultOptionsA11Y from './Options/Options.js';
 import defaultLangOptions from './Options/LangOptions.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
 import HTMLUtilities from './Utils/HTMLUtilities.js';
-import './FocusBorder.js';
-
 
 // Add default options
 merge(
@@ -467,9 +467,11 @@ namespace AccessibilityComposition {
      * @private
      */
     export function compose(
-        ChartClass: typeof Chart
+        ChartClass: typeof Chart,
+        SVGElementClass: typeof SVGElement
     ): void {
         A11yI18n.compose(ChartClass);
+        FocusBorder.compose(ChartClass, SVGElementClass);
     }
 
 }

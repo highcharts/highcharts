@@ -19,4 +19,4 @@ import Accessibility from '../../Accessibility/Accessibility.js';
 const G: AnyRecord = Highcharts;
 G.i18nFormat = Accessibility.i18nFormat;
 
-Accessibility.compose(G.Chart);
+Accessibility.compose(G.Chart, G.SVGElement);
