@@ -302,3 +302,30 @@ A live demo of the above multiline indicator can be found [here](https://jsfiddl
 
 _For more detailed samples and documentation check the [API](https://api.highcharts.com/highstock/series.trendline)._
 
+### 4. Indicators calculated on events.
+
+The idea behind creating a custom indicator that is calculated after some chart evet (for example `afterSetExtremes`) is similar to the ones previously mentioned with a few additions.
+
+The most important object to add while creating the indicators is `bindTo` where inside are specified two properties:
+*   `series` - whether the indicator should be calculated together with the linked main series,
+*   `eventName` - on which event the indicator should be calculated,
+
+The indicator code should look like: 
+``` JS
+Highcharts.seriesType('customIndicator', 'sma', {}, {
+    getValues: function (series) {
+        return this.getSum(
+            series.processedXData || series.xData,
+            series.processedYData || series.yData
+        );
+    },
+    bindTo: {
+        series: false,
+        eventName: 'afterSetExtremes'
+    },
+    getSum: getSum
+});
+```
+
+
+A live demo of the example above can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-indicator-on-event/).
