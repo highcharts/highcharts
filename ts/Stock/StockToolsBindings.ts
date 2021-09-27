@@ -1964,7 +1964,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
     timeCycles: {
 
         className: 'highcharts-time-cycles',
-        start: function (this: NavigationBindings, e: PointerEvent): void {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation|void {
             let closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
                 options,
@@ -1996,8 +1996,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                 (navigation.bindings as any).timeCycles.annotationsOptions
             );
 
-            annotation = this.chart.addAnnotation(options);
-            (annotation.options.events.click as any).call(annotation, {});
+            return this.chart.addAnnotation(options);
         },
 
         steps: [function (this: NavigationBindings, e: PointerEvent, annotation: TimeCycles): void {
