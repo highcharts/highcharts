@@ -128,7 +128,7 @@ class MapLineSeries extends MapSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

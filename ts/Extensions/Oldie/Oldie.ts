@@ -47,7 +47,7 @@ const {
 } = H;
 import D from '../../Core/DefaultOptions.js';
 const { getOptions } = D;
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../../Core/Pointer.js';
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
@@ -1174,7 +1174,7 @@ if (!svg) {
                     // apply the opacity
                     markup = [
                         '<stroke color="',
-                        shadowOptions.color || palette.neutralColor100,
+                        shadowOptions.color || Palette.neutralColor100,
                         '" opacity="', shadowElementOpacity * i, '"/>'];
                     createElement(
                         renderer.prepVML(markup),

@@ -152,7 +152,11 @@ AccessibilityComponent.prototype = {
             enter: 13,
             space: 32,
             esc: 27,
-            tab: 9
+            tab: 9,
+            pageUp: 33,
+            pageDown: 34,
+            end: 35,
+            home: 36
         };
     },
 

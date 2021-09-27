@@ -20,6 +20,7 @@ import type ProxyElement from '../ProxyElement';
 import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
 const {
+    attr,
     extend
 } = U;
 
@@ -34,8 +35,7 @@ const {
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
-    getFakeMouseEvent,
-    setElAttrs
+    getFakeMouseEvent
 } = HTMLUtilities;
 
 declare module '../../Core/Chart/ChartLike' {
@@ -386,8 +386,8 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             // Set accessibility properties on parent div
             const parentDiv = (exportList[0] && exportList[0].parentNode);
             if (parentDiv) {
-                setElAttrs(parentDiv, {
-                    'aria-hidden': null,
+                attr(parentDiv, {
+                    'aria-hidden': void 0,
                     'aria-label': chart.langFormat(
                         'accessibility.exporting.chartMenuLabel', { chart: chart }
                     ),

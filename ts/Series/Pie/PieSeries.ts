@@ -21,13 +21,13 @@ import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
-const { getStartAndEndRadians } = CenteredSeriesMixin;
+import CU from '../CenteredUtilities.js';
+const { getStartAndEndRadians } = CU;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
-import Palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import PiePoint from './PiePoint.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -1191,7 +1191,7 @@ class PieSeries extends Series {
 interface PieSeries {
     drawGraph: undefined;
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
-    getCenter: typeof CenteredSeriesMixin['getCenter'];
+    getCenter: typeof CU['getCenter'];
     pointClass: typeof PiePoint;
 }
 extend(PieSeries.prototype, {
@@ -1206,7 +1206,7 @@ extend(PieSeries.prototype, {
 
     drawTracker: ColumnSeries.prototype.drawTracker,
 
-    getCenter: CenteredSeriesMixin.getCenter,
+    getCenter: CU.getCenter,
 
     getSymbol: noop,
 

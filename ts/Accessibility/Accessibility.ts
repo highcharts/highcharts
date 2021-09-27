@@ -89,7 +89,7 @@ declare global {
             options: Required<SeriesOptions>;
             points: Array<AccessibilityPoint>;
         }
-        let A11yChartUtilities: A11yChartUtilities;
+        let A11yChartUtilities: typeof ChartUtilities;
         let A11yHTMLUtilities: typeof HTMLUtilities;
     }
 }
@@ -110,7 +110,6 @@ import defaultLangOptions from './Options/LangOptions.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
 import HTMLUtilities from './Utils/HTMLUtilities.js';
 import './A11yI18n.js';
-import './FocusBorder.js';
 
 
 // Add default options
@@ -298,6 +297,11 @@ Accessibility.prototype = {
             components[componentName].destroy();
             components[componentName].destroyBase();
         });
+
+        // Destroy proxy provider
+        if (this.proxyProvider) {
+            this.proxyProvider.destroy();
+        }
 
         // Kill keyboard nav
         if (this.keyboardNavigation) {

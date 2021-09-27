@@ -40,7 +40,9 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
-    stripHTMLTagsFromString: stripHTMLTags
+    stripHTMLTagsFromString: stripHTMLTags,
+    addClass,
+    removeClass
 } = HTMLUtilities;
 import ChartUtils from '../Utils/ChartUtilities.js';
 const {
@@ -96,6 +98,7 @@ declare global {
                 keyboardNavigationHandler: KeyboardNavigationHandler
             ): number;
             public onKbdNavigationInit(direction: number): void;
+            public highlightAdjacentLegendPage(direction: number): void;
             public proxyLegendItem(item: LegendItem): void;
             public proxyLegendItems(): void;
             public recreateProxies(): boolean;
@@ -251,30 +254,40 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
 
     /**
+     * Update visibility of legend items when using paged legend
      * @private
      */
     updateLegendItemProxyVisibility: function (
         this: Highcharts.LegendComponent
     ): void {
-        const legend = this.chart.legend,
-            items = legend.allItems || [],
-            curPage = legend.currentPage || 1,
-            clipHeight = legend.clipHeight || 0;
+        const chart = this.chart;
+        const legend = chart.legend;
+        const items = legend.allItems || [];
+        const curPage = legend.currentPage || 1;
+        const clipHeight = legend.clipHeight || 0;
 
         items.forEach(function (item: LegendItem): void {
             if (item.a11yProxyElement) {
                 const hasPages = legend.pages && legend.pages.length;
-                const elStyle = item.a11yProxyElement.element.style;
+                const proxyEl = item.a11yProxyElement.element;
+                let hide = false;
 
                 if (hasPages) {
                     const itemPage = item.pageIx || 0;
                     const y = item._legendItemPos ? item._legendItemPos[1] : 0;
                     const h = item.legendItem ? Math.round(item.legendItem.getBBox().height) : 0;
-                    const hide = y + h - legend.pages[itemPage] > clipHeight || itemPage !== curPage - 1;
+                    hide = y + h - legend.pages[itemPage] > clipHeight || itemPage !== curPage - 1;
+                }
 
-                    elStyle.visibility = hide ? 'hidden' : 'visible';
+                if (hide) {
+                    if (chart.styledMode) {
+                        addClass(proxyEl, 'highcharts-a11y-invisible');
+                    } else {
+                        proxyEl.style.visibility = 'hidden';
+                    }
                 } else {
-                    elStyle.visibility = 'visible';
+                    removeClass(proxyEl, 'highcharts-a11y-invisible');
+                    proxyEl.style.visibility = '';
                 }
             }
         });
@@ -287,6 +300,31 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     onChartRender: function (this: Highcharts.LegendComponent): void {
         if (!shouldDoLegendA11y(this.chart)) {
             this.removeProxies();
+        }
+    },
+
+
+    /**
+     * @private
+     */
+    highlightAdjacentLegendPage: function (this: Highcharts.LegendComponent, direction: number): void {
+        const chart = this.chart;
+        const legend = chart.legend;
+        const curPageIx = legend.currentPage || 1;
+        const newPageIx = curPageIx + direction;
+        const pages = legend.pages || [];
+
+        if (newPageIx > 0 && newPageIx <= pages.length) {
+            const len = legend.allItems.length;
+            for (let i = 0; i < len; ++i) {
+                if ((legend.allItems[i].pageIx as number) + 1 === newPageIx) {
+                    const res = chart.highlightLegendItem(i);
+                    if (res) {
+                        this.highlightedLegendItemIx = i;
+                    }
+                    return;
+                }
+            }
         }
     },
 
@@ -457,6 +495,17 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                             return this.response.success;
                         }
                         return component.onKbdClick(this);
+                    }
+                ],
+                [
+                    [keys.pageDown, keys.pageUp],
+                    function (
+                        this: Highcharts.KeyboardNavigationHandler,
+                        keyCode: number
+                    ): number {
+                        const direction = keyCode === keys.pageDown ? 1 : -1;
+                        component.highlightAdjacentLegendPage(direction);
+                        return this.response.success;
                     }
                 ]
             ],

@@ -1802,29 +1802,29 @@ function resizeRect(
     let resizeAttrs;
 
     switch (updateSide) {
-    case 'left':
-        resizeAttrs = {
-            x: (rect.attr('x') as any) + update.x,
-            width: Math.max(1, (rect.attr('width') as any) - update.x)
-        };
-        break;
-    case 'right':
-        resizeAttrs = {
-            width: Math.max(1, (rect.attr('width') as any) + update.x)
-        };
-        break;
-    case 'top':
-        resizeAttrs = {
-            y: (rect.attr('y') as any) + update.y,
-            height: Math.max(1, (rect.attr('height') as any) - update.y)
-        };
-        break;
-    case 'bottom':
-        resizeAttrs = {
-            height: Math.max(1, (rect.attr('height') as any) + update.y)
-        };
-        break;
-    default:
+        case 'left':
+            resizeAttrs = {
+                x: (rect.attr('x') as any) + update.x,
+                width: Math.max(1, (rect.attr('width') as any) - update.x)
+            };
+            break;
+        case 'right':
+            resizeAttrs = {
+                width: Math.max(1, (rect.attr('width') as any) + update.x)
+            };
+            break;
+        case 'top':
+            resizeAttrs = {
+                y: (rect.attr('y') as any) + update.y,
+                height: Math.max(1, (rect.attr('height') as any) - update.y)
+            };
+            break;
+        case 'bottom':
+            resizeAttrs = {
+                height: Math.max(1, (rect.attr('height') as any) + update.y)
+            };
+            break;
+        default:
     }
     rect.attr(resizeAttrs);
 }

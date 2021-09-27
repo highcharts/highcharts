@@ -53,7 +53,7 @@ const {
     SVG_NS,
     win
 } = H;
-import Palette from '../../Color/Palette.js';
+import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 const {
     addEvent,
@@ -1982,7 +1982,7 @@ class SVGElement implements SVGElementLike {
                 for (let i = 0; i < childNodes.length; i++) {
                     const childNode: any = childNodes[i];
                     if (
-                        childNode.nodeType === Node.TEXT_NODE ||
+                        childNode.nodeType === win.Node.TEXT_NODE ||
                         childNode.nodeName === 'tspan'
                     ) {
                         textPathElement.appendChild(childNode);

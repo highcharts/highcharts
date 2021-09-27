@@ -39,11 +39,12 @@ const {
     cloneMouseEvent,
     cloneTouchEvent,
     getFakeMouseEvent,
-    removeElement,
-    setElAttrs
+    removeElement
 } = HTMLUtilities;
 import U from '../Core/Utilities.js';
 const {
+    attr,
+    css,
     merge
 } = U;
 
@@ -73,7 +74,7 @@ class ProxyElement {
     // on group type.
     public buttonElement: HTMLButtonElement;
 
-    private eventProvider: Highcharts.EventProvider;
+    private eventProvider: EventProvider;
 
     constructor(
         private chart: Highcharts.AccessibilityChart,
@@ -85,7 +86,10 @@ class ProxyElement {
 
         const wrapperEl = groupType === 'ul' ? doc.createElement('li') : null;
         const btnEl = this.buttonElement = doc.createElement('button');
-        this.hideButtonVisually(btnEl);
+
+        if (!chart.styledMode) {
+            this.hideButtonVisually(btnEl);
+        }
 
         if (wrapperEl) {
             wrapperEl.appendChild(btnEl);
@@ -120,7 +124,7 @@ class ProxyElement {
         this.target = target;
         this.updateCSSClassName();
 
-        setElAttrs(this.buttonElement, merge({
+        attr(this.buttonElement, merge({
             'aria-label': this.getTargetAttr(target.click, 'aria-label')
         }, attributes));
 
@@ -135,7 +139,7 @@ class ProxyElement {
      */
     public refreshPosition(): void {
         const bBox = this.getTargetPosition();
-        merge(true, this.buttonElement.style, {
+        css(this.buttonElement, {
             width: (bBox.width || 1) + 'px',
             height: (bBox.height || 1) + 'px',
             left: (Math.round(bBox.x) || 0) + 'px',
@@ -210,22 +214,21 @@ class ProxyElement {
      * Set visually hidden style on a proxy button
      */
     private hideButtonVisually(button: HTMLDOMElement): void {
-        merge(true, button.style, {
-            borderWidth: '0',
+        css(button, {
+            borderWidth: 0,
             backgroundColor: 'transparent',
             cursor: 'pointer',
             outline: 'none',
-            opacity: '0.001',
+            opacity: 0.001,
             filter: 'alpha(opacity=1)',
-            zIndex: '999',
+            zIndex: 999,
             overflow: 'hidden',
-            padding: '0',
-            margin: '0',
+            padding: 0,
+            margin: 0,
             display: 'block',
-            position: 'absolute'
+            position: 'absolute',
+            '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)'
         });
-        (button.style as any)['-ms-filter'] =
-            'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)';
     }
 
 

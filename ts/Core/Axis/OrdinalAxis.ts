@@ -1357,6 +1357,7 @@ namespace OrdinalAxis {
             if (axis.series.length > 1) {
                 axis.series.forEach(function (series): void {
                     if (
+                        series.points &&
                         defined(series.points[0]) &&
                         defined(series.points[0].plotX) &&
                         series.points[0].plotX < firstPointX

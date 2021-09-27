@@ -34,6 +34,7 @@ const {
 } = H;
 import U from '../../Core/Utilities.js';
 const {
+    attr,
     extend,
     pick
 } = U;
@@ -56,7 +57,6 @@ const {
     addClass,
     getElement,
     getHeadingTagNameForElement,
-    setElAttrs,
     stripHTMLTagsFromString,
     visuallyHideElement
 } = HTMLUtilities;
@@ -429,25 +429,36 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         this: Highcharts.InfoRegionsComponent,
         regionKey: string
     ): void {
-        const chart = this.chart,
-            region = this.screenReaderSections[regionKey],
-            content = region.buildContent(chart),
-            sectionDiv = region.element = (
-                region.element || this.createElement('div')
-            ),
-            hiddenDiv: HTMLDOMElement = (
-                (sectionDiv.firstChild as any) || this.createElement('div')
-            );
+        const chart = this.chart;
+        const region = this.screenReaderSections[regionKey];
+        const content = region.buildContent(chart);
+        const sectionDiv = region.element = (
+            region.element || this.createElement('div')
+        );
+        const hiddenDiv: HTMLDOMElement = (
+            (sectionDiv.firstChild as any) || this.createElement('div')
+        );
 
-        this.setScreenReaderSectionAttribs(sectionDiv, regionKey);
-        AST.setElementHTML(hiddenDiv, content);
-        sectionDiv.appendChild(hiddenDiv);
-        region.insertIntoDOM(sectionDiv, chart);
+        if (content) {
+            this.setScreenReaderSectionAttribs(sectionDiv, regionKey);
+            AST.setElementHTML(hiddenDiv, content);
+            sectionDiv.appendChild(hiddenDiv);
+            region.insertIntoDOM(sectionDiv, chart);
 
-        visuallyHideElement(hiddenDiv);
-        unhideChartElementFromAT(chart, hiddenDiv);
-        if (region.afterInserted) {
-            region.afterInserted();
+            if (chart.styledMode) {
+                addClass(hiddenDiv, 'highcharts-visually-hidden');
+            } else {
+                visuallyHideElement(hiddenDiv);
+            }
+            unhideChartElementFromAT(chart, hiddenDiv);
+            if (region.afterInserted) {
+                region.afterInserted();
+            }
+        } else {
+            if (sectionDiv.parentNode) {
+                sectionDiv.parentNode.removeChild(sectionDiv);
+            }
+            delete region.element;
         }
     },
 
@@ -470,7 +481,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             sectionId = 'highcharts-screen-reader-region-' + regionKey + '-' +
                 chart.index;
 
-        setElAttrs(sectionDiv, {
+        attr(sectionDiv, {
             id: sectionId,
             'aria-label': labelText
         });
@@ -495,10 +506,14 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     defaultBeforeChartFormatter: function (
         this: Highcharts.InfoRegionsComponent
     ): string {
-        const chart = this.chart,
-            format = chart.options.accessibility
-                .screenReaderSection.beforeChartFormat,
-            axesDesc = this.getAxesDescription(),
+        const chart = this.chart;
+        const format = chart.options.accessibility.screenReaderSection.beforeChartFormat;
+
+        if (!format) {
+            return '';
+        }
+
+        const axesDesc = this.getAxesDescription(),
             shouldHaveSonifyBtn = (
                 chart.sonify &&
                 chart.options.sonification &&
@@ -544,13 +559,15 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     defaultAfterChartFormatter: function (
         this: Highcharts.InfoRegionsComponent
     ): string {
-        const chart = this.chart,
-            format = chart.options.accessibility
-                .screenReaderSection.afterChartFormat,
-            context = {
-                endOfChartMarker: this.getEndOfChartMarkerText()
-            },
-            formattedString = H.i18nFormat(format, context, chart);
+        const chart = this.chart;
+        const format = chart.options.accessibility.screenReaderSection.afterChartFormat;
+
+        if (!format) {
+            return '';
+        }
+
+        const context = { endOfChartMarker: this.getEndOfChartMarkerText() };
+        const formattedString = H.i18nFormat(format, context, chart);
 
         return stripEmptyHTMLTags(formattedString);
     },
@@ -758,9 +775,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         };
 
         if (el && chart) {
-            setElAttrs(el, {
-                tabindex: -1
-            });
+            el.setAttribute('tabindex', -1);
 
             el.onclick = function (e): void {
                 const onPlayAsSoundClick = (
@@ -790,7 +805,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             tableId = tableButtonId.replace('hc-linkto-', '');
 
         if (el) {
-            setElAttrs(el, {
+            attr(el, {
                 tabindex: -1,
                 'aria-expanded': !!getElement(tableId)
             });

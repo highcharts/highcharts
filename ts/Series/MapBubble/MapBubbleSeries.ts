@@ -209,7 +209,7 @@ class MapBubbleSeries extends BubbleSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

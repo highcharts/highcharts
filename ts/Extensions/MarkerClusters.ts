@@ -39,7 +39,7 @@ const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import D from '../Core/DefaultOptions.js';
 const { defaultOptions } = D;
-import palette from '../Core/Color/Palette.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
@@ -505,7 +505,7 @@ const clusterDefaultOptions = {
         /** @internal */
         lineWidth: 0,
         /** @internal */
-        lineColor: palette.backgroundColor
+        lineColor: Palette.backgroundColor
     },
     /**
      * Fires when the cluster point is clicked and `drillToCluster` is enabled.

@@ -18,7 +18,11 @@
  *
  * */
 
+import type Instrument from './Instrument';
+import type Point from '../../Core/Series/Point';
 import type RangeSelector from '../../Extensions/RangeSelector';
+import type SeriesSonify from './SeriesSonify';
+import type SignalHandler from './SignalHandler';
 
 import Sonification from './Sonification.js';
 import U from '../../Core/Utilities.js';
@@ -27,51 +31,357 @@ const {
     merge,
     pick
 } = U;
+import SU from './SonificationUtilities.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        cancelSonify?(fadeOut?: boolean): void;
+        sonify?(options: PointSonify.Options): void;
+    }
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedClasses: Array<Function> = [];
+
+// Defaults for the instrument options
+// NOTE: Also change defaults in Highcharts.PointInstrumentOptionsObject if
+//       making changes here.
+const defaultInstrumentOptions: PointSonify.PointInstrumentOptions = {
+    minDuration: 20,
+    maxDuration: 2000,
+    minVolume: 0.1,
+    maxVolume: 1,
+    minPan: -1,
+    maxPan: 1,
+    minFrequency: 220,
+    maxFrequency: 2200
+};
+
+/* eslint-disable valid-jsdoc */
+
+/* *
+ *
+ *  Composition
+ *
+ * */
 
 /**
- * Internal types.
  * @private
  */
-declare global {
-    namespace Highcharts {
-        interface PointInstrumentMappingObject {
-            [key: string]: (number|string|Function);
-            duration: (number|string|Function);
-            frequency: (number|string|Function);
-            pan: (number|string|Function);
-            volume: (number|string|Function);
+
+namespace PointSonify {
+
+    /* *
+     *
+     * Declarations
+     *
+     * */
+
+    export declare class Composition extends Point {
+        series: SeriesSonify.Composition;
+        sonification: SonificationStateObject;
+        cancelSonify(fadeOut?: boolean): void;
+        sonify(options: Options): void;
+    }
+
+    export interface Options {
+        dataExtremes?: Record<string, RangeSelector.RangeObject>;
+        instruments: Array<PointInstrument>;
+        onEnd?: Function;
+        masterVolume?: number;
+    }
+
+    export interface PointInstrument {
+        instrument: (string|Instrument);
+        instrumentMapping: PointInstrumentMapping;
+        instrumentOptions?: Partial<PointInstrumentOptions>;
+        onEnd?: Function;
+    }
+
+    export interface PointInstrumentMapping {
+        [key: string]: (number|string|Function);
+        duration: (number|string|Function);
+        frequency: (number|string|Function);
+        pan: (number|string|Function);
+        volume: (number|string|Function);
+    }
+
+    export interface PointInstrumentOptions {
+        maxDuration: number;
+        minDuration: number;
+        maxFrequency: number;
+        minFrequency: number;
+        maxPan: number;
+        minPan: number;
+        maxVolume: number;
+        minVolume: number;
+    }
+
+    export interface SonificationStateObject {
+        currentlyPlayingPoint?: Composition;
+        instrumentsPlaying?: Record<string, Instrument>;
+        signalHandler?: SignalHandler;
+    }
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Extends the axis with ordinal support.
+     *
+     * @private
+     *
+     * @param PointClass
+     * Point class to extend.
+     */
+    export function compose<T extends typeof Point>(
+        PointClass: T
+    ): (typeof Composition&T) {
+
+        if (composedClasses.indexOf(PointClass) === -1) {
+            composedClasses.push(PointClass);
+
+            const pointProto = PointClass.prototype as Composition;
+
+            pointProto.sonify = pointSonify;
+            pointProto.cancelSonify = pointCancelSonify;
+
         }
-        interface PointInstrumentObject {
-            instrument: (string|Instrument);
-            instrumentMapping: PointInstrumentMappingObject;
-            instrumentOptions?: Partial<PointInstrumentOptionsObject>;
-            onEnd?: Function;
+        return PointClass as (typeof Composition&T);
+    }
+
+    /**
+     * Sonify a single point.
+     *
+     * @sample highcharts/sonification/point-basic/
+     *         Click on points to sonify
+     * @sample highcharts/sonification/point-advanced/
+     *         Sonify bubbles
+     *
+     * @requires module:modules/sonification
+     *
+     * @function Highcharts.Point#sonify
+     *
+     * @param {Highcharts.PointSonifyOptionsObject} options
+     * Options for the sonification of the point.
+     */
+    function pointSonify(
+        this: Composition,
+        options: PointSonify.Options
+    ): void {
+        const point = this,
+            chart = point.series.chart,
+            masterVolume = pick(
+                options.masterVolume,
+                chart.options.sonification &&
+                chart.options.sonification.masterVolume
+            ),
+            dataExtremes = options.dataExtremes || {},
+            // Get the value to pass to instrument.play from the mapping value
+            // passed in.
+            getMappingValue = function (
+                value: (number|string|Function),
+                makeFunction: boolean,
+                allowedExtremes: RangeSelector.RangeObject
+            ): (number|Function) {
+                // Function. Return new function if we try to use callback,
+                // otherwise call it now and return result.
+                if (typeof value === 'function') {
+                    return makeFunction ?
+                        function (time: any): any {
+                            return value(point, dataExtremes, time);
+                        } :
+                        value(point, dataExtremes);
+                }
+                // String, this is a data prop. Potentially with
+                // negative polarity.
+                if (typeof value === 'string') {
+                    const hasInvertedPolarity = value.charAt(0) === '-';
+                    const dataProp = hasInvertedPolarity ? value.slice(1) : value;
+                    const pointValue = pick((point as any)[dataProp], (point.options as any)[dataProp]);
+
+                    // Find data extremes if we don't have them
+                    dataExtremes[dataProp] = dataExtremes[dataProp] ||
+                        SU.calculateDataExtremes(
+                            point.series.chart, dataProp
+                        );
+
+                    // Find the value
+                    return SU.virtualAxisTranslate(
+                        pointValue,
+                        dataExtremes[dataProp],
+                        allowedExtremes,
+                        hasInvertedPolarity
+                    );
+                }
+                // Fixed number or something else weird, just use that
+                return value;
+            };
+
+        // Register playing point on chart
+        chart.sonification.currentlyPlayingPoint = point;
+
+        // Keep track of instruments playing
+        point.sonification = point.sonification || {};
+        point.sonification.instrumentsPlaying =
+            point.sonification.instrumentsPlaying || {};
+
+        // Register signal handler for the point
+        const signalHandler = point.sonification.signalHandler =
+            point.sonification.signalHandler ||
+            new SU.SignalHandler(['onEnd']);
+
+        signalHandler.clearSignalCallbacks();
+        signalHandler.registerSignalCallbacks({ onEnd: options.onEnd });
+
+        // If we have a null point or invisible point, just return
+        if (point.isNull || !point.visible || !point.series.visible) {
+            signalHandler.emitSignal('onEnd');
+            return;
         }
-        interface PointInstrumentOptionsObject {
-            maxDuration: number;
-            minDuration: number;
-            maxFrequency: number;
-            minFrequency: number;
-            maxPan: number;
-            minPan: number;
-            maxVolume: number;
-            minVolume: number;
-        }
-        interface PointSonifyFunctions {
-            pointCancelSonify(this: SonifyablePoint, fadeOut?: boolean): void;
-            pointSonify(
-                this: SonifyablePoint,
-                options: PointSonifyOptionsObject
-            ): void;
-        }
-        interface PointSonifyOptionsObject {
-            dataExtremes?: Record<string, RangeSelector.RangeObject>;
-            instruments: Array<PointInstrumentObject>;
-            onEnd?: Function;
-            masterVolume?: number;
+
+        // Go through instruments and play them
+        options.instruments.forEach(function (
+            instrumentDefinition: PointInstrument
+        ): void {
+            const instrument = typeof instrumentDefinition.instrument === 'string' ?
+                    Sonification.instruments[instrumentDefinition.instrument] :
+                    instrumentDefinition.instrument,
+                mapping = instrumentDefinition.instrumentMapping || {},
+                extremes = merge(
+                    defaultInstrumentOptions,
+                    instrumentDefinition.instrumentOptions
+                ),
+                id = instrument.id,
+                onEnd = function (this: any, cancelled?: boolean): void {
+                    // Instrument on end
+                    if (instrumentDefinition.onEnd) {
+                        instrumentDefinition.onEnd.apply(this, arguments);
+                    }
+
+                    // Remove currently playing point reference on chart
+                    if (
+                        chart.sonification &&
+                        chart.sonification.currentlyPlayingPoint
+                    ) {
+                        delete chart.sonification.currentlyPlayingPoint;
+                    }
+
+                    // Remove reference from instruments playing
+                    if (
+                        point.sonification && point.sonification.instrumentsPlaying
+                    ) {
+                        delete point.sonification.instrumentsPlaying[id];
+
+                        // This was the last instrument?
+                        if (
+                            !Object.keys(
+                                point.sonification.instrumentsPlaying
+                            ).length
+                        ) {
+                            signalHandler.emitSignal('onEnd', cancelled);
+                        }
+                    }
+                };
+
+            // Play the note on the instrument
+            if (instrument && instrument.play) {
+                if (typeof masterVolume !== 'undefined') {
+                    instrument.setMasterVolume(masterVolume);
+                }
+
+                (point.sonification.instrumentsPlaying as any)[instrument.id] =
+                    instrument;
+                instrument.play({
+                    frequency: getMappingValue(
+                        mapping.frequency,
+                        true,
+                        { min: extremes.minFrequency, max: extremes.maxFrequency }
+                    ),
+                    duration: getMappingValue(
+                        mapping.duration,
+                        false,
+                        { min: extremes.minDuration, max: extremes.maxDuration }
+                    ) as any,
+                    pan: getMappingValue(
+                        mapping.pan,
+                        true,
+                        { min: extremes.minPan, max: extremes.maxPan }
+                    ),
+                    volume: getMappingValue(
+                        mapping.volume,
+                        true,
+                        { min: extremes.minVolume, max: extremes.maxVolume }
+                    ),
+                    onEnd: onEnd,
+                    minFrequency: extremes.minFrequency,
+                    maxFrequency: extremes.maxFrequency
+                });
+            } else {
+                error(30);
+            }
+        });
+    }
+
+    /**
+     * Cancel sonification of a point. Calls onEnd functions.
+     *
+     * @requires module:modules/sonification
+     *
+     * @function Highcharts.Point#cancelSonify
+     *
+     * @param {boolean} [fadeOut=false]
+     *        Whether or not to fade out as we stop. If false, the points are
+     *        cancelled synchronously.
+     *
+     * @return {void}
+     */
+    function pointCancelSonify(
+        this: Composition,
+        fadeOut?: boolean
+    ): void {
+        const playing = this.sonification && this.sonification.instrumentsPlaying,
+            instrIds = playing && Object.keys(playing);
+
+        if (instrIds && instrIds.length) {
+            instrIds.forEach(function (instr: string): void {
+                (playing as any)[instr].stop(!fadeOut, null, 'cancelled');
+            });
+            this.sonification.instrumentsPlaying = {};
+            (this.sonification.signalHandler as any).emitSignal(
+                'onEnd', 'cancelled'
+            );
         }
     }
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default PointSonify;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
 
 /**
  * Define the parameter mapping for an instrument.
@@ -249,236 +559,4 @@ declare global {
  * @name Highcharts.PointSonifyOptionsObject#onEnd
  * @type {Function|undefined}
  */
-
-
-import utilities from './Utilities.js';
-
-// Defaults for the instrument options
-// NOTE: Also change defaults in Highcharts.PointInstrumentOptionsObject if
-//       making changes here.
-const defaultInstrumentOptions: Highcharts.PointInstrumentOptionsObject = {
-    minDuration: 20,
-    maxDuration: 2000,
-    minVolume: 0.1,
-    maxVolume: 1,
-    minPan: -1,
-    maxPan: 1,
-    minFrequency: 220,
-    maxFrequency: 2200
-};
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
-/**
- * Sonify a single point.
- *
- * @sample highcharts/sonification/point-basic/
- *         Click on points to sonify
- * @sample highcharts/sonification/point-advanced/
- *         Sonify bubbles
- *
- * @requires module:modules/sonification
- *
- * @function Highcharts.Point#sonify
- *
- * @param {Highcharts.PointSonifyOptionsObject} options
- * Options for the sonification of the point.
- *
- * @return {void}
- */
-function pointSonify(
-    this: Highcharts.SonifyablePoint,
-    options: Highcharts.PointSonifyOptionsObject
-): void {
-    const point = this,
-        chart = point.series.chart,
-        masterVolume = pick(
-            options.masterVolume,
-            chart.options.sonification &&
-            chart.options.sonification.masterVolume
-        ),
-        dataExtremes = options.dataExtremes || {},
-        // Get the value to pass to instrument.play from the mapping value
-        // passed in.
-        getMappingValue = function (
-            value: (number|string|Function),
-            makeFunction: boolean,
-            allowedExtremes: RangeSelector.RangeObject
-        ): (number|Function) {
-            // Function. Return new function if we try to use callback,
-            // otherwise call it now and return result.
-            if (typeof value === 'function') {
-                return makeFunction ?
-                    function (time: any): any {
-                        return value(point, dataExtremes, time);
-                    } :
-                    value(point, dataExtremes);
-            }
-            // String, this is a data prop. Potentially with negative polarity.
-            if (typeof value === 'string') {
-                const hasInvertedPolarity = value.charAt(0) === '-';
-                const dataProp = hasInvertedPolarity ? value.slice(1) : value;
-                const pointValue = pick((point as any)[dataProp], (point.options as any)[dataProp]);
-
-                // Find data extremes if we don't have them
-                dataExtremes[dataProp] = dataExtremes[dataProp] ||
-                    utilities.calculateDataExtremes(
-                        point.series.chart, dataProp
-                    );
-
-                // Find the value
-                return utilities.virtualAxisTranslate(
-                    pointValue,
-                    dataExtremes[dataProp],
-                    allowedExtremes,
-                    hasInvertedPolarity
-                );
-            }
-            // Fixed number or something else weird, just use that
-            return value;
-        };
-
-    // Register playing point on chart
-    chart.sonification.currentlyPlayingPoint = point;
-
-    // Keep track of instruments playing
-    point.sonification = point.sonification || {};
-    point.sonification.instrumentsPlaying =
-        point.sonification.instrumentsPlaying || {};
-
-    // Register signal handler for the point
-    const signalHandler = point.sonification.signalHandler =
-        point.sonification.signalHandler ||
-        new utilities.SignalHandler(['onEnd']);
-
-    signalHandler.clearSignalCallbacks();
-    signalHandler.registerSignalCallbacks({ onEnd: options.onEnd });
-
-    // If we have a null point or invisible point, just return
-    if (point.isNull || !point.visible || !point.series.visible) {
-        signalHandler.emitSignal('onEnd');
-        return;
-    }
-
-    // Go through instruments and play them
-    options.instruments.forEach(function (
-        instrumentDefinition: Highcharts.PointInstrumentObject
-    ): void {
-        const instrument = typeof instrumentDefinition.instrument === 'string' ?
-                Sonification.instruments[instrumentDefinition.instrument] :
-                instrumentDefinition.instrument,
-            mapping = instrumentDefinition.instrumentMapping || {},
-            extremes = merge(
-                defaultInstrumentOptions,
-                instrumentDefinition.instrumentOptions
-            ),
-            id = instrument.id,
-            onEnd = function (this: any, cancelled?: boolean): void {
-                // Instrument on end
-                if (instrumentDefinition.onEnd) {
-                    instrumentDefinition.onEnd.apply(this, arguments);
-                }
-
-                // Remove currently playing point reference on chart
-                if (
-                    chart.sonification &&
-                    chart.sonification.currentlyPlayingPoint
-                ) {
-                    delete chart.sonification.currentlyPlayingPoint;
-                }
-
-                // Remove reference from instruments playing
-                if (
-                    point.sonification && point.sonification.instrumentsPlaying
-                ) {
-                    delete point.sonification.instrumentsPlaying[id];
-
-                    // This was the last instrument?
-                    if (
-                        !Object.keys(
-                            point.sonification.instrumentsPlaying
-                        ).length
-                    ) {
-                        signalHandler.emitSignal('onEnd', cancelled);
-                    }
-                }
-            };
-
-        // Play the note on the instrument
-        if (instrument && instrument.play) {
-            if (typeof masterVolume !== 'undefined') {
-                instrument.setMasterVolume(masterVolume);
-            }
-
-            (point.sonification.instrumentsPlaying as any)[instrument.id] =
-                instrument;
-            instrument.play({
-                frequency: getMappingValue(
-                    mapping.frequency,
-                    true,
-                    { min: extremes.minFrequency, max: extremes.maxFrequency }
-                ),
-                duration: getMappingValue(
-                    mapping.duration,
-                    false,
-                    { min: extremes.minDuration, max: extremes.maxDuration }
-                ) as any,
-                pan: getMappingValue(
-                    mapping.pan,
-                    true,
-                    { min: extremes.minPan, max: extremes.maxPan }
-                ),
-                volume: getMappingValue(
-                    mapping.volume,
-                    true,
-                    { min: extremes.minVolume, max: extremes.maxVolume }
-                ),
-                onEnd: onEnd,
-                minFrequency: extremes.minFrequency,
-                maxFrequency: extremes.maxFrequency
-            });
-        } else {
-            error(30);
-        }
-    });
-}
-
-
-/**
- * Cancel sonification of a point. Calls onEnd functions.
- *
- * @requires module:modules/sonification
- *
- * @function Highcharts.Point#cancelSonify
- *
- * @param {boolean} [fadeOut=false]
- *        Whether or not to fade out as we stop. If false, the points are
- *        cancelled synchronously.
- *
- * @return {void}
- */
-function pointCancelSonify(
-    this: Highcharts.SonifyablePoint,
-    fadeOut?: boolean
-): void {
-    const playing = this.sonification && this.sonification.instrumentsPlaying,
-        instrIds = playing && Object.keys(playing);
-
-    if (instrIds && instrIds.length) {
-        instrIds.forEach(function (instr: string): void {
-            (playing as any)[instr].stop(!fadeOut, null, 'cancelled');
-        });
-        this.sonification.instrumentsPlaying = {};
-        (this.sonification.signalHandler as any).emitSignal(
-            'onEnd', 'cancelled'
-        );
-    }
-}
-
-
-const pointSonifyFunctions: Highcharts.PointSonifyFunctions = {
-    pointSonify,
-    pointCancelSonify
-};
-
-export default pointSonifyFunctions;
+(''); // detach doclets above

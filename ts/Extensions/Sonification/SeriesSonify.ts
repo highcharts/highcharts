@@ -19,20 +19,22 @@
  * */
 
 import type ChartSonify from './ChartSonify';
-import type {
-    EarconConfiguration,
-    SonificationInstrumentOptions
-} from './SonificationOptions';
+import type Earcon from './Earcon';
+import type PointSonify from './PointSonify';
+import type { SonificationInstrumentOptions } from './SonificationOptions';
 import type RangeSelector from '../../Extensions/RangeSelector';
 import type Series from '../../Core/Series/Series';
 import type {
     SeriesEventsOptions,
     SeriesOptions
 } from '../../Core/Series/SeriesOptions';
+import type Timeline from './Timeline';
+import type TimelineEvent from './TimelineEvent';
+import type TimelinePath from './TimelinePath';
 
 import Point from '../../Core/Series/Point.js';
 import Sonification from './Sonification.js';
-import SU from './Utilities.js';
+import SU from './SonificationUtilities.js';
 const {
     getExtremesForInstrumentProps,
     virtualAxisTranslate
@@ -75,16 +77,16 @@ namespace SeriesSonify {
 
     export declare class Composition extends Series {
         public chart: ChartSonify.SonifyableChart;
-        public points: Array<Highcharts.SonifyablePoint>;
+        public points: Array<PointSonify.Composition>;
         public sonify(options?: SonifySeriesOptions): void;
     }
 
     export interface SonifySeriesOptions extends SeriesOptions {
         dataExtremes?: Record<string, RangeSelector.RangeObject>;
         duration: number;
-        earcons?: Array<EarconConfiguration>;
+        earcons?: Array<Earcon.Configuration>;
         events?: SeriesSonificationEventsOptions;
-        instruments: Array<Highcharts.PointInstrumentObject>;
+        instruments: Array<PointSonify.PointInstrument>;
         masterVolume?: number;
         onEnd?: Function;
         onPointEnd?: Function;
@@ -102,7 +104,7 @@ namespace SeriesSonify {
     }
 
     export interface SeriesSonificationOptions {
-        earcons?: Array<EarconConfiguration>;
+        earcons?: Array<Earcon.Configuration>;
         enabled?: boolean;
         events?: SeriesSonificationEventsOptions;
         duration?: number;
@@ -158,9 +160,9 @@ namespace SeriesSonify {
      * Array of instrument options.
      */
     function applyMasterVolumeToInstruments(
-        instruments: Array<Highcharts.PointInstrumentObject>,
+        instruments: Array<PointSonify.PointInstrument>,
         masterVolume: number
-    ): Array<Highcharts.PointInstrumentObject> {
+    ): Array<PointSonify.PointInstrument> {
         instruments.forEach((instrOpts): void => {
             const instr = instrOpts.instrument;
             if (typeof instr !== 'string') {
@@ -247,7 +249,7 @@ namespace SeriesSonify {
     export function buildTimelinePathFromSeries(
         series: Composition,
         options: SonifySeriesOptions
-    ): Highcharts.TimelinePath {
+    ): TimelinePath {
         // options.timeExtremes is internal and used so that the calculations
         // from chart.sonify can be reused.
         const timeExtremes = options.timeExtremes || getTimeExtremes(series, options.pointPlayTime),
@@ -259,7 +261,7 @@ namespace SeriesSonify {
             // Get the duration of the final note
             finalNoteDuration = getFinalNoteDuration(series, options.instruments, dataExtremes),
             // Get time offset for a point, relative to duration
-            pointToTime = function (point: Highcharts.SonifyablePoint): number {
+            pointToTime = function (point: PointSonify.Composition): number {
                 return virtualAxisTranslate(
                     getPointTimeValue(point, options.pointPlayTime),
                     timeExtremes,
@@ -273,9 +275,9 @@ namespace SeriesSonify {
             instruments = applyMasterVolumeToInstruments(instrumentCopies, masterVolume),
             // Go through the points, convert to events, optionally add Earcons
             timelineEvents = series.points.reduce(function (
-                events: Array<Highcharts.TimelineEvent>,
-                point: Highcharts.SonifyablePoint
-            ): Array<Highcharts.TimelineEvent> {
+                events: Array<TimelineEvent>,
+                point: PointSonify.Composition
+            ): Array<TimelineEvent> {
                 const earcons = getPointEarcons(point, options.earcons || []),
                     time = pointToTime(point);
 
@@ -293,8 +295,8 @@ namespace SeriesSonify {
                     }),
                     // Earcons
                     earcons.map(function (
-                        earcon: Highcharts.Earcon
-                    ): Highcharts.TimelineEvent {
+                        earcon: Earcon
+                    ): TimelineEvent {
                         return new Sonification.TimelineEvent({
                             eventObject: earcon,
                             time: time,
@@ -315,7 +317,7 @@ namespace SeriesSonify {
                 }
             },
             onEventStart: function (
-                event: Highcharts.TimelineEvent
+                event: TimelineEvent
             ): (boolean|undefined) {
                 const eventObject = event.options && event.options.eventObject;
 
@@ -338,7 +340,7 @@ namespace SeriesSonify {
                     }
                 }
             },
-            onEventEnd: function (eventData: Highcharts.SignalDataObject): void {
+            onEventEnd: function (eventData: Timeline.SignalData): void {
                 const eventObject = eventData.event && eventData.event.options &&
                         eventData.event.options.eventObject;
 
@@ -396,7 +398,7 @@ namespace SeriesSonify {
      */
     function getFinalNoteDuration(
         series: SeriesSonify.Composition,
-        instruments: Array<Highcharts.PointInstrumentObject>,
+        instruments: Array<PointSonify.PointInstrument>,
         dataExtremes: Record<string, RangeSelector.RangeObject>
     ): number {
         const finalPoint = series.points[series.points.length - 1];
@@ -428,13 +430,13 @@ namespace SeriesSonify {
      */
     function getPointEarcons(
         point: Point,
-        earconDefinitions: Array<EarconConfiguration>
-    ): Array<Highcharts.Earcon> {
+        earconDefinitions: Array<Earcon.Configuration>
+    ): Array<Earcon> {
         return earconDefinitions.reduce(
             function (
-                earcons: Array<Highcharts.Earcon>,
-                earconDefinition: EarconConfiguration
-            ): Array<Highcharts.Earcon> {
+                earcons: Array<Earcon>,
+                earconDefinition: Earcon.Configuration
+            ): Array<Earcon> {
                 const earcon = earconDefinition.earcon;
                 let cond;
 
@@ -471,7 +473,7 @@ namespace SeriesSonify {
      * The time value.
      */
     function getPointTimeValue(
-        point: Highcharts.SonifyablePoint,
+        point: PointSonify.Composition,
         timeProp: (string|Function)
     ): number {
         return typeof timeProp === 'function' ?
@@ -489,7 +491,7 @@ namespace SeriesSonify {
     function getSeriesInstrumentOptions(
         series: Composition,
         options?: SonifySeriesOptions
-    ): (Array<Highcharts.PointInstrumentObject>|undefined) {
+    ): (Array<PointSonify.PointInstrument>|undefined) {
         if (options && options.instruments) {
             return options.instruments;
         }
@@ -514,7 +516,7 @@ namespace SeriesSonify {
 
         // Convert series options to PointInstrumentObjects and merge with
         // default options
-        return (seriesInstrOpts).map((optionSet): Highcharts.PointInstrumentObject => {
+        return (seriesInstrOpts).map((optionSet): PointSonify.PointInstrument => {
             // Allow setting option to null to use default
             removeNullsFromObject(optionSet.mapping || {});
             removeNullsFromObject(optionSet);
@@ -527,7 +529,7 @@ namespace SeriesSonify {
                     // remove the following which are not instrumentOptions:
                     mapping: void 0,
                     instrument: void 0
-                }) as Partial<Highcharts.PointInstrumentOptionsObject>,
+                }) as Partial<PointSonify.PointInstrumentOptions>,
                 instrumentMapping: merge(defaultInstrOpts.mapping, optionSet.mapping)
             };
         });
@@ -577,7 +579,7 @@ namespace SeriesSonify {
         // Compute the extremes from the visible points.
         return series.points.reduce(function (
             acc: RangeSelector.RangeObject,
-            point: Highcharts.SonifyablePoint
+            point: PointSonify.Composition
         ): RangeSelector.RangeObject {
             const value = getPointTimeValue(point, timeProp);
 
@@ -600,11 +602,11 @@ namespace SeriesSonify {
      * Array of copied instrument options.
      */
     function makeInstrumentCopies(
-        instruments: Array<Highcharts.PointInstrumentObject>
-    ): Array<Highcharts.PointInstrumentObject> {
+        instruments: Array<PointSonify.PointInstrument>
+    ): Array<PointSonify.PointInstrument> {
         return instruments.map(function (
-            instrumentDef: Highcharts.PointInstrumentObject
-        ): Highcharts.PointInstrumentObject {
+            instrumentDef: PointSonify.PointInstrument
+        ): PointSonify.PointInstrument {
             const instrument = instrumentDef.instrument,
                 copy = (typeof instrument === 'string' ?
                     Sonification.instruments[instrument] :

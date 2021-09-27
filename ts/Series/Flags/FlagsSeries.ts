@@ -25,7 +25,7 @@ import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -263,7 +263,7 @@ class FlagsSeries extends ColumnSeries {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highstock
          */
-        fillColor: palette.backgroundColor,
+        fillColor: Palette.backgroundColor,
 
         /**
          * The color of the line/border of the flag.
@@ -298,7 +298,7 @@ class FlagsSeries extends ColumnSeries {
                  * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highstock
                  */
-                lineColor: palette.neutralColor100,
+                lineColor: Palette.neutralColor100,
 
                 /**
                  * The fill or background color of the flag.
@@ -306,7 +306,7 @@ class FlagsSeries extends ColumnSeries {
                  * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highstock
                  */
-                fillColor: palette.highlightColor20
+                fillColor: Palette.highlightColor20
             }
         },
 
@@ -509,12 +509,21 @@ class FlagsSeries extends ColumnSeries {
 
         // Handle X-dimension overlapping
         if (!options.allowOverlapX) {
+            let maxDistance = 100;
+
             objectEach(boxesMap, function (box): void {
                 box.plotX = box.anchorX;
                 boxes.push(box);
+                maxDistance = Math.max(box.size, maxDistance);
             });
 
-            distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
+            // If necessary (for overlapping or long labels)  distribute it
+            // depending on the label width or a hardcoded value, #16041.
+            distribute(
+                boxes,
+                inverted ? yAxis.len : this.xAxis.len,
+                maxDistance
+            );
 
             points.forEach(function (point): void {
                 const box = point.graphic && boxesMap[point.plotX as any];
@@ -660,7 +669,7 @@ class FlagsSeries extends ColumnSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

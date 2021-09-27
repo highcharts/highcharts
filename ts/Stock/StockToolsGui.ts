@@ -215,6 +215,7 @@ setOptions({
                 typeOHLC: 'OHLC',
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
+                typeHLC: 'HLC',
                 typeHollowCandlestick: 'Hollow Candlestick',
                 typeHeikinAshi: 'Heikin Ashi',
 
@@ -240,7 +241,7 @@ setOptions({
                 ray: 'Ray',
                 arrowRay: 'Arrow ray',
                 line: 'Line',
-                arrowLine: 'Arrow line',
+                arrowInfinityLine: 'Arrow line',
                 horizontalLine: 'Horizontal line',
                 verticalLine: 'Vertical line',
                 infinityLine: 'Infinity line',
@@ -274,7 +275,7 @@ setOptions({
                 ray: 'Ray',
                 arrowRay: 'Arrow ray',
                 line: 'Line',
-                arrowLine: 'Arrow line',
+                arrowInfinityLine: 'Arrow line',
                 horizontalLine: 'Horizontal line',
                 verticalLine: 'Vertical line',
                 crooked3: 'Crooked 3 line',
@@ -561,7 +562,7 @@ setOptions({
                      *   'ray',
                      *   'arrowRay',
                      *   'line',
-                     *   'arrowLine',
+                     *   'arrowInfinityLine',
                      *   'horizontalLine',
                      *   'verticalLine'
                      * ]
@@ -572,7 +573,7 @@ setOptions({
                         'ray',
                         'arrowRay',
                         'line',
-                        'arrowLine',
+                        'arrowInfinityLine',
                         'horizontalLine',
                         'verticalLine'
                     ],
@@ -616,7 +617,7 @@ setOptions({
                          */
                         symbol: 'line.svg'
                     },
-                    arrowLine: {
+                    arrowInfinityLine: {
                         /**
                          * A predefined background symbol for the button.
                          *
@@ -914,6 +915,7 @@ setOptions({
                         'typeLine',
                         'typeCandlestick',
                         'typeHollowCandlestick',
+                        'typeHLC',
                         'typeHeikinAshi'
                     ],
                     typeOHLC: {
@@ -939,6 +941,14 @@ setOptions({
                          * @type   {string}
                          */
                         symbol: 'series-candlestick.svg'
+                    },
+                    typeHLC: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-hlc.svg'
                     },
                     typeHeikinAshi: {
                         /**
@@ -1711,7 +1721,7 @@ Toolbar.prototype.classMapping = {
     ray: PREFIX + 'ray',
     arrowRay: PREFIX + 'arrow-ray',
     line: PREFIX + 'infinity-line',
-    arrowLine: PREFIX + 'arrow-infinity-line',
+    arrowInfinityLine: PREFIX + 'arrow-infinity-line',
     verticalLine: PREFIX + 'vertical-line',
     horizontalLine: PREFIX + 'horizontal-line',
     crooked3: PREFIX + 'crooked3',
@@ -1739,6 +1749,7 @@ Toolbar.prototype.classMapping = {
     zoomXY: PREFIX + 'zoom-xy',
     typeLine: PREFIX + 'series-type-line',
     typeOHLC: PREFIX + 'series-type-ohlc',
+    typeHLC: PREFIX + 'series-type-hlc',
     typeCandlestick: PREFIX + 'series-type-candlestick',
     typeHollowCandlestick: PREFIX + 'series-type-hollowcandlestick',
     typeHeikinAshi: PREFIX + 'series-type-heikinashi',
