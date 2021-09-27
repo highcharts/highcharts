@@ -1979,11 +1979,12 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                 {
                     langKey: 'timeCycles',
                     type: 'timeCycles',
-                    r: 10,
                     typeOptions: {
+                        xAxis: closestPoint.xAxis,
                         points: [{
-                            x: closestPoint.x,
-                            xAxis: closestPoint.xAxis
+                            x: closestPoint.x
+                        }, {
+                            x: closestPoint.x
                         }]
                     },
                     shapeOptions: {
@@ -1997,7 +1998,14 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
 
             annotation = this.chart.addAnnotation(options);
             (annotation.options.events.click as any).call(annotation, {});
-        }
+        },
+
+        steps: [function (this: NavigationBindings, e: PointerEvent, annotation: TimeCycles): void {
+
+            const position = annotation.anchor(annotation.points[1]).absolutePosition;
+            annotation.translatePoint(e.chartX - position.x, 0, 1);
+            annotation.redraw(false);
+        }]
     },
     verticalLabel: {
         /** @ignore-option */

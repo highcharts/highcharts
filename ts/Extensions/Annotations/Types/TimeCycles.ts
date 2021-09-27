@@ -106,7 +106,6 @@ class TimeCycles extends CrookedLine {
         const shape = this.initShape(
             merge(typeOptions.line, {
                 type: 'path',
-
                 d: this.getPath(),
                 points: this.options.points
             }),
@@ -154,12 +153,12 @@ class TimeCycles extends CrookedLine {
             x = isNumber(xValue1) && !isNaN(xValue1) ? xAxis.toPixels(xValue1) : xAxis.left,
             x2 = isNumber(xValue2) && !isNaN(xValue2) ? xAxis.toPixels(xValue2) : xAxis.left + 30,
             xAxisLength = xAxis.len,
-            pixelInterval = Math.max(Math.abs(x2 - x), 2),
+            pixelInterval = Math.round(Math.max(Math.abs(x2 - x), 2)),
             numberOfCircles = Math.floor(xAxisLength / pixelInterval) + 2,
             pixelShift = (Math.floor((x - xAxis.left) / pixelInterval) + 1) * pixelInterval;
         this.startX = x - pixelShift;
         this.y = y;
-        this.pixelInterval = Math.round(pixelInterval);
+        this.pixelInterval = pixelInterval;
         this.numberOfCircles = numberOfCircles;
     }
 
