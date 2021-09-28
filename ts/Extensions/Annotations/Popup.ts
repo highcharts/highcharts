@@ -1226,6 +1226,7 @@ H.Popup.prototype = {
 
                 ['click', 'touchstart'].forEach(function (eventName: string): void {
                     addEvent(item, eventName, function (): void {
+                        const button = rhsColWrapper.parentNode.children[1] as HTMLDOMElement;
 
                         addFormFields.call(
                             popup,
@@ -1234,6 +1235,10 @@ H.Popup.prototype = {
                             indicatorType,
                             rhsColWrapper
                         );
+                        if (button) {
+                            button.style.display = 'block';
+                        }
+
 
                         // add hidden input with series.id
                         if (isEdit && series.options) {
@@ -1258,6 +1263,9 @@ H.Popup.prototype = {
             // select first item from the list
             if (indicatorList.childNodes.length > 0) {
                 (indicatorList.childNodes[0] as HTMLDOMElement).click();
+            } else if (!isEdit) {
+                rhsColWrapper.parentNode.children[0].innerHTML = 'No match';
+                (rhsColWrapper.parentNode.children[1] as HTMLDOMElement).style.display = 'none';
             }
         },
 
