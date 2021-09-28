@@ -206,34 +206,43 @@ function merge<T>(): T {
     /* eslint-enable valid-jsdoc */
     let i,
         args = arguments,
+        copyDepth = 0,
         ret = {} as T;
-    const doCopy = function (copy: any, original: any): any {
-        // An object is replacing a primitive
-        if (typeof copy !== 'object') {
-            copy = {};
-        }
-
-        objectEach(original, function (value, key): void {
-
-            // Prototype pollution (#14883)
-            if (key === '__proto__' || key === 'constructor') {
-                return;
+    const copyDepthError = new Error('Recursive copy depth > 100'), // describtive error stack
+        doCopy = (copy: any, original: any): any => {
+            // An object is replacing a primitive
+            if (typeof copy !== 'object') {
+                copy = {};
             }
 
-            // Copy the contents of objects, but not arrays or DOM nodes
-            if (isObject(value, true) &&
-                !isClass(value) &&
-                !isDOMElement(value)
-            ) {
-                copy[key] = doCopy(copy[key] || {}, value);
-
-            // Primitives and arrays are copied over directly
-            } else {
-                copy[key] = original[key];
+            if (++copyDepth > 100) {
+                throw copyDepthError;
             }
-        });
-        return copy;
-    };
+
+            objectEach(original, (value, key): void => {
+
+                // Prototype pollution (#14883)
+                if (key === '__proto__' || key === 'constructor') {
+                    return;
+                }
+
+                // Copy the contents of objects, but not arrays or DOM nodes
+                if (isObject(value, true) &&
+                    !isClass(value) &&
+                    !isDOMElement(value)
+                ) {
+                    copy[key] = doCopy(copy[key] || {}, value);
+
+                // Primitives and arrays are copied over directly
+                } else {
+                    copy[key] = original[key];
+                }
+            });
+
+            --copyDepth;
+
+            return copy;
+        };
 
     // If first argument is true, copy into the existing object. Used in
     // setOptions.

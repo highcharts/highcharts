@@ -1,13 +1,13 @@
 //@ts-check
-import ChartComponent from '/base/js/Dashboard/Component/ChartComponent.js';
-import HTMLComponent from '/base/js/Dashboard/Component/HTMLComponent.js';
-import Component from '/base/js/Dashboard/Component/Component.js';
-import CSVStore from '/base/js/Data/Stores/CSVStore.js';
+import ChartComponent from '/base/code/es-modules/Dashboard/Component/ChartComponent.js';
+import HTMLComponent from '/base/code/es-modules/Dashboard/Component/HTMLComponent.js';
+import Component from '/base/code/es-modules/Dashboard/Component/Component.js';
+import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';
 
-import Highcharts from '/base/js/masters/highcharts.src.js';
-import Stock from '/base/js/masters/highstock.src.js';
-import Gantt from '/base/js/masters/highcharts-gantt.src.js';
-import Maps from '/base/js/masters/highmaps.src.js';
+import Highcharts from '/base/code/es-modules/masters/highcharts.src.js';
+import Stock from '/base/code/es-modules/masters/highstock.src.js';
+import Gantt from '/base/code/es-modules/masters/highcharts-gantt.src.js';
+import Maps from '/base/code/es-modules/masters/highmaps.src.js';
 
 const { test, only,skip } = QUnit;
 
@@ -57,7 +57,7 @@ test('ChartComponent events', function (assert) {
 
     store.load();
 
-    const component = new ChartComponent({
+    const component = new ChartComponent(Highcharts, {
         parentElement: 'container'
     });
 
@@ -81,7 +81,7 @@ test('ChartComponent events', function (assert) {
     emptyArray(expectedEvents);
 
     // With a store set in constructor
-    const componentWithStore = new ChartComponent({
+    const componentWithStore = new ChartComponent(Highcharts, {
         parentElement,
         store
     });
@@ -322,7 +322,7 @@ test('ChartComponent constructors', function (assert) {
     }
 
     Object.keys(constructorMap).forEach(HCType =>{
-        const component = new ChartComponent({
+        const component = new ChartComponent(Highcharts, {
             Highcharts: constructorMap[HCType],
             chartConstructor: HCType,
             chartOptions: {}
@@ -459,7 +459,7 @@ test('ChartComponent resizing', function(assert) {
     parent.style.width = '500px';
     document.getElementById('container').appendChild(parent)
 
-    const component = new ChartComponent({
+    const component = new ChartComponent(Highcharts, {
         parentElement: parent,
         chartOptions: {
             chart: {}
@@ -479,7 +479,7 @@ test('toJSON', function(assert) {
     container.id = 'container';
 
     const store = new CSVStore();
-    const component = new ChartComponent({
+    const component = new ChartComponent(Highcharts, {
         Highcharts, // TODO, when not passing this it fails, is this a bug? Or a feature?
         store,
         parentElement: container,
@@ -493,7 +493,7 @@ test('toJSON', function(assert) {
 
     component.render()
     const json = component.toJSON()
-    const clone = ChartComponent.fromJSON(json);
+    const clone = ChartComponent.fromJSON(Highcharts, json);
     clone.render();
 
     assert.deepEqual(json, clone.toJSON())

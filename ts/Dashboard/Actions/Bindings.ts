@@ -1,16 +1,14 @@
 /* eslint-disable */
 import type ComponentTypes from '../Component/ComponentType';
-import ChartComponent from './../Component/ChartComponent.js';
-import HTMLComponent from './../Component/HTMLComponent.js';
-
-import type {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
 import type GUIElement from '../Layout/GUIElement';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 
 import Cell from '../Layout/Cell.js';
-import Row from '../Layout/Row.js';
+import ChartComponent from './../Component/ChartComponent.js';
+import G from '../../Core/Globals.js';
+import HTMLComponent from './../Component/HTMLComponent.js';
 import Layout from '../Layout/Layout.js';
+import Row from '../Layout/Row.js';
 import U from '../../Core/Utilities.js';
 const {
     fireEvent,
@@ -93,7 +91,7 @@ class Bindings {
 
         switch (json.$class) {
             case 'Chart':
-                component = ChartComponent.fromJSON(json as ChartComponent.ClassJSON);
+                component = ChartComponent.fromJSON(G, json as ChartComponent.ClassJSON);
                 break;
             case 'HTML':
                 component = HTMLComponent.fromJSON(json as HTMLComponent.ClassJSON);
@@ -132,6 +130,7 @@ class Bindings {
         options: Bindings.ComponentOptions
     ): ChartComponent {
         return new ChartComponent(
+            G,
             merge(
                 options,
                 {

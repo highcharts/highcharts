@@ -1,8 +1,8 @@
-import HTMLTableStore from '/base/js/Data/Stores/HTMLTableStore.js'
-import HTMLTableParser from '/base/js/Data/Parsers/HTMLTableParser.js'
-import U from '/base/js/Core/Utilities.js';
+import HTMLTableStore from '/base/code/es-modules/Data/Stores/HTMLTableStore.js'
+import HTMLTableParser from '/base/code/es-modules/Data/Parsers/HTMLTableParser.js'
+import U from '/base/code/es-modules/Core/Utilities.js';
 import { registerStoreEvents, testExportedDataTable } from './utils.js'
-import CSVStore from '/base/js/Data/Stores/CSVStore.js';
+import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';
 const { test, only } = QUnit;
 const { createElement } = U;
 

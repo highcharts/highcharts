@@ -1,7 +1,7 @@
 /**
  * @license "Highsoft Dashboard" v@product.version@ (@product.date@)
- * @module @highsoft/dashboard
- * @requires dashboard
+ * @modules highsoft/dashboard
+ * @requires window
  *
  * Highsoft Dashboard
  *
@@ -39,10 +39,10 @@ declare global {
  *
  * */
 
-const D = {
-    Dashboard,
-    ...DashboardGlobals
-};
+const D: AnyRecord = DashboardGlobals;
+
+D._modules = _modules;
+D.Dashboard = Dashboard;
 
 /* *
  *
@@ -58,3 +58,5 @@ if (!D.win.Dashboard) {
 if (D.win.Highcharts) {
     D.win.Highcharts.Dashboard = D;
 }
+
+export default DashboardGlobals;

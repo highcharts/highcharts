@@ -1,4 +1,8 @@
-const PREFIX = 'hcd-edit-';
+'use strict';
+
+import DG from '../DashboardGlobals.js';
+
+const PREFIX = DG.classNamePrefix + 'edit-';
 
 const EditGlobals: EditGlobals = {
     prefix: PREFIX,

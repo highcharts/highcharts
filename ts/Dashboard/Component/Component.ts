@@ -10,12 +10,16 @@ import type Serializable from '../Serializable';
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
-import DataTable from '../../Data/DataTable.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
-import EditableOptions from './EditableOptions.js';
 import CallbackRegistry from '../CallbackRegistry.js';
+import DG from '../DashboardGlobals.js';
+const {
+    classNamePrefix
+} = DG;
+import DataTable from '../../Data/DataTable.js';
+import EditableOptions from './EditableOptions.js';
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -203,19 +207,17 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         elementName: string,
         textOptions: Component.TextOptionsType
     ): HTMLElement | undefined {
-        const classBase = 'hcd';
-
         if (typeof textOptions === 'object') {
             const { className, text, style } = textOptions;
             return createElement(tagName, {
-                className: className || `${classBase}-component-${elementName}`,
+                className: className || `${classNamePrefix}component-${elementName}`,
                 textContent: text
             }, style);
         }
 
         if (typeof textOptions === 'string') {
             return createElement(tagName, {
-                className: `${classBase}-component-${elementName}`,
+                className: `${classNamePrefix}component-${elementName}`,
                 textContent: textOptions
             });
         }
@@ -223,7 +225,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public static Sync = Sync;
     public static defaultOptions: Component.ComponentOptions = {
-        className: 'hcd-component',
+        className: `${classNamePrefix}component`,
         parentElement: document.body,
         parentCell: void 0,
         type: '',

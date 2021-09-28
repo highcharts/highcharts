@@ -1,6 +1,6 @@
-import CSVStore from '/base/js/Data/Stores/CSVStore.js'
+import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js'
 import { registerStoreEvents, testExportedDataTable } from './utils.js'
-import DataTable from '/base/js/Data/DataTable.js';
+import DataTable from '/base/code/es-modules/Data/DataTable.js';
 
 const { test, only } = QUnit;
 

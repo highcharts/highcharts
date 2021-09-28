@@ -1,5 +1,5 @@
 
-import GoogleSheetsStore from '/base/js/Data/Stores/GoogleSheetsStore.js'
+import GoogleSheetsStore from '/base/code/es-modules/Data/Stores/GoogleSheetsStore.js'
 import { registerStoreEvents } from './utils.js'
 const { test, only } = QUnit;
 

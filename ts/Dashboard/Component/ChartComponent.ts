@@ -6,26 +6,38 @@
  *
  * */
 
-import type AxisOptions from '../../Core/Axis/AxisOptions.js';
-import type Series from '../../Core/Series/Series.js';
+import type AxisOptions from '../../Core/Axis/AxisOptions';
+import type Chart from '../../Core/Chart/Chart';
+import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
-import type Options from '../../Core/Options.js';
-import SyncEmitter from './Sync/Emitter.js';
-import SyncHandler from './Sync/Handler.js';
+import type Options from '../../Core/Options';
 
-import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 import DataTable from '../../Data/DataTable.js';
-import Highcharts from '../../masters/highcharts.src.js';
 import defaultHandlers from './Sync/ChartSyncHandlers.js';
-
+import G from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
     createElement,
     merge,
     uniqueKey
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/GlobalsLike' {
+    interface GlobalsLike {
+        chart: typeof Chart.chart;
+        ganttChart: typeof Chart.chart;
+        mapChart: typeof Chart.chart;
+        stockChart: typeof Chart.chart;
+    }
+}
 
 /* *
  *
@@ -50,7 +62,6 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
             chartOptions: {
                 series: []
             },
-            Highcharts,
             chartConstructor: '',
             editableOptions: [
                 ...Component.defaultOptions.editableOptions,
@@ -61,17 +72,21 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
             tableAxisMap: {}
         });
 
-    public static fromJSON(json: ChartComponent.ClassJSON): ChartComponent {
+    public static fromJSON(
+        charter: typeof G,
+        json: ChartComponent.ClassJSON
+    ): ChartComponent {
         const options = json.options;
         const chartOptions = JSON.parse(json.options.chartOptions || '');
         // const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
 
         const component = new ChartComponent(
+            charter,
             merge(
                 options,
                 {
                     chartOptions,
-                    Highcharts, // TODO: Find a solution
+                    // Highcharts, // TODO: Find a solution
                     // store: store instanceof DataStore ? store : void 0,
                     syncHandlers: ChartComponent.syncHandlers // Get from static registry
                 }
@@ -96,7 +111,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
     public chart: Chart | undefined;
     public chartContainer: HTMLElement;
     public options: ChartComponent.ComponentOptions;
-    public charter: typeof Highcharts;
+    public charter: typeof G;
     public chartConstructor: ChartComponent.constructorType;
 
     public sync: Component['sync'];
@@ -106,7 +121,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
      *
      * */
 
-    constructor(options: Partial<ChartComponent.ComponentOptions>) {
+    constructor(charter: typeof G, options: Partial<ChartComponent.ComponentOptions>) {
         options = merge(
             ChartComponent.defaultOptions,
             options
@@ -114,7 +129,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
         super(options);
         this.options = options as ChartComponent.ComponentOptions;
 
-        this.charter = this.options.Highcharts;
+        this.charter = charter;
         this.chartConstructor = this.options.chartConstructor;
         this.type = 'chart';
 
@@ -338,20 +353,16 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
 
     private constructChart(): Chart {
-        const constructorMap = {
-            '': 'chart',
+        const constructorMap: Record<string, ('chart'|'ganttChart'|'mapChart'|'stockChart')> = {
             stock: 'stockChart',
             map: 'mapChart',
             gantt: 'ganttChart'
         };
 
         if (this.chartConstructor !== 'chart') {
-            const constructor = constructorMap[this.chartConstructor];
-            if ((this.charter as any)[constructor]) {
-                this.chart = new (this.charter as any)[constructor](this.chartContainer, this.chartOptions);
-                if (this.chart instanceof Chart) {
-                    return this.chart;
-                }
+            const factory = this.charter[constructorMap[this.chartConstructor] || 'chart'];
+            if (factory) {
+                return factory(this.chartContainer, this.chartOptions);
             }
         }
 
@@ -423,7 +434,6 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
     public toJSON(): ChartComponent.ClassJSON {
         const chartOptions = JSON.stringify(this.options.chartOptions),
-            Highcharts = this.options.Highcharts,
             chartConstructor = this.options.chartConstructor;
 
         this.registerChartEvents();
@@ -435,7 +445,6 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
             options: {
                 ...base.options,
                 chartOptions,
-                Highcharts: Highcharts.product,
                 chartConstructor,
                 syncEvents: this.sync.syncEvents
             }
@@ -466,7 +475,6 @@ namespace ChartComponent {
     }>;
 
     export interface ComponentOptions extends Component.ComponentOptions, EditableOptions {
-        Highcharts: typeof Highcharts;
         chartConstructor: ChartComponent.constructorType;
     }
 
@@ -481,7 +489,6 @@ namespace ChartComponent {
         chartOptions?: string;
         chartClassName?: string;
         chartID?: string;
-        Highcharts: string; // reference?
         chartConstructor: ChartComponent.constructorType;
     }
 

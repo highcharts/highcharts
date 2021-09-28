@@ -1,4 +1,4 @@
-import DataPromise from '/base/js/Data/DataPromise.js';
+import DataPromise from '/base/code/es-modules/Data/DataPromise.js';
 
 QUnit.test('DataPromise API', function (assert) {
 

@@ -97,6 +97,13 @@ declare global {
     /**
      * @private
      * @deprecated
+     * @todo Replace assembler with webpack
+     */
+    const _modules: AnyRecord;
+
+    /**
+     * @private
+     * @deprecated
      * @todo: Rename UMD argument `win` to `window`
      */
     const win: Window|undefined;

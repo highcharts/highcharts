@@ -1,33 +1,35 @@
+'use strict';
+
 import EditMode from '../EditMode.js';
 import U from '../../../Core/Utilities.js';
-import Menu from '../Menu/Menu.js';
-import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
-// import EditGlobals from '../EditGlobals.js';
-// import Row from '../../Layout/Row.js';
-// import Cell from '../../Layout/Cell.js';
-import GUIElement from '../../Layout/GUIElement.js';
-// import type Layout from '../../Layout/Layout.js';
-
 const {
     defined,
     createElement,
     css
 } = U;
+import Menu from '../Menu/Menu.js';
+import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
+import GUIElement from '../../Layout/GUIElement.js';
+
 
 abstract class EditToolbar {
+
     /* *
-    *
-    *  Constructor
-    *
-    * */
+     *
+     *  Constructor
+     *
+     * */
+
     constructor(
         editMode: EditMode,
         options: EditToolbar.Options
     ) {
         this.container = createElement(
-            'div', {
+            'div',
+            {
                 className: options.className
-            }, {},
+            },
+            void 0,
             editMode.dashboard.container
         );
 
@@ -43,19 +45,22 @@ abstract class EditToolbar {
 
         if (this.options.outline) {
             this.outline = createElement(
-                'div', {
+                'div',
+                {
                     className: options.outlineClassName
-                }, {},
+                },
+                void 0,
                 this.container
             );
         }
     }
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
+
     public container: HTMLDOMElement;
     public editMode: EditMode;
     public menu: Menu;
@@ -64,10 +69,11 @@ abstract class EditToolbar {
     public outline?: HTMLDOMElement;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
+
     public hide(): void {
         this.setPosition(void 0, void 0);
     }

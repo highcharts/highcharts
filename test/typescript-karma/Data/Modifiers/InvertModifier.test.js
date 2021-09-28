@@ -1,5 +1,5 @@
-import DataTable from '/base/js/Data/DataTable.js';
-import InvertModifier from '/base/js/Data/Modifiers/InvertModifier.js';
+import DataTable from '/base/code/es-modules/Data/DataTable.js';
+import InvertModifier from '/base/code/es-modules/Data/Modifiers/InvertModifier.js';
 
 QUnit.test('InvertModifier.modify', function (assert) {
 

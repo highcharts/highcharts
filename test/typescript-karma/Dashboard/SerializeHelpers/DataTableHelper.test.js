@@ -1,5 +1,5 @@
-import DataTable from '/base/js/Data/DataTable.js';
-import DataTableHelper from '/base/js/Dashboard/SerializeHelper/DataTableHelper.js';
+import DataTable from '/base/code/es-modules/Data/DataTable.js';
+import DataTableHelper from '/base/code/es-modules/Dashboard/SerializeHelper/DataTableHelper.js';
 
 QUnit.skip('JSON serializer for DataTable', function (assert) {
 

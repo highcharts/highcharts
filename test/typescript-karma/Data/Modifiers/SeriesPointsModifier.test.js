@@ -1,5 +1,5 @@
-import DataTable from '/base/js/Data/DataTable.js';
-import SeriesPointsModifier from '/base/js/Data/Modifiers/SeriesPointsModifier.js';
+import DataTable from '/base/code/es-modules/Data/DataTable.js';
+import SeriesPointsModifier from '/base/code/es-modules/Data/Modifiers/SeriesPointsModifier.js';
 
 QUnit.test('SeriesPointsModifier.modify', function (assert) {
 

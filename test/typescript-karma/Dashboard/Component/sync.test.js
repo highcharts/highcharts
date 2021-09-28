@@ -1,5 +1,6 @@
-import ChartComponent from '/base/js/Dashboard/Component/ChartComponent.js';
-import CSVStore from '/base/js/Data/Stores/CSVStore.js';
+import ChartComponent from '/base/code/es-modules/Dashboard/Component/ChartComponent.js';
+import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';
+import Highcharts from '/base/code/es-modules/masters/highcharts.src.js';
 
 const { test, only, skip } = QUnit;
 
@@ -13,11 +14,11 @@ test('Both components should work', (assert) => {
     store.load();
 
     const components = [
-        new ChartComponent({
+        new ChartComponent(Highcharts, {
             store,
             syncEvents: ['visibility']
         }),
-        new ChartComponent({
+        new ChartComponent(Highcharts, {
             store,
             syncEvents: ['visibility']
         })

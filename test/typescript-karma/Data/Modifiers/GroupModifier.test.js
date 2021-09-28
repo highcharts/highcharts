@@ -1,5 +1,5 @@
-import DataTable from '/base/js/Data/DataTable.js';
-import GroupModifier from '/base/js/Data/Modifiers/GroupModifier.js';
+import DataTable from '/base/code/es-modules/Data/DataTable.js';
+import GroupModifier from '/base/code/es-modules/Data/Modifiers/GroupModifier.js';
 
 QUnit.test('GroupModifier.modify', function (assert) {
 

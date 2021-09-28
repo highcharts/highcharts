@@ -1,5 +1,5 @@
-import DataTable from '/base/js/Data/DataTable.js';
-import SortModifier from '/base/js/Data/Modifiers/SortModifier.js';
+import DataTable from '/base/code/es-modules/Data/DataTable.js';
+import SortModifier from '/base/code/es-modules/Data/Modifiers/SortModifier.js';
 
 QUnit.test('DataTable Clone', function (assert) {
     const table = new DataTable({}, 'table');
