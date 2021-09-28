@@ -173,7 +173,7 @@ QUnit.test('General Navigator tests', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[1].clipBox.height,
+        chart.sharedClips[chart.series[1].getSharedClipKey()].attr('height'),
         100,
         'Navigator series has correct clipping rect height (#5904)'
     );

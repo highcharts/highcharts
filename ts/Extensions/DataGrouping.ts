@@ -11,6 +11,7 @@
 'use strict';
 
 import type AxisType from '../Core/Axis/AxisType';
+import type IndicatorLike from '../Stock/Indicators/IndicatorLike';
 import type {
     PointOptions,
     PointShortOptions
@@ -127,6 +128,11 @@ declare global {
             sum: (
                 arr: DataGroupingApproximationsArray
             ) => (null|number|undefined);
+            hlc: (
+                high: DataGroupingApproximationsArray,
+                low: DataGroupingApproximationsArray,
+                close: DataGroupingApproximationsArray
+            ) => ([number, number, number]|undefined);
             ohlc: (
                 open: DataGroupingApproximationsArray,
                 high: DataGroupingApproximationsArray,
@@ -173,7 +179,7 @@ declare global {
         let defaultDataGroupingUnits: Array<[string, (Array<number>|null)]>;
         type DataGroupingApproximationValue = (
             'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'|
-            'windbarb'|'ichimoku-averages'
+            'windbarb'|'ichimoku-averages'|'hlc'
         );
         type DataGroupingAnchor = ('start'|'middle'|'end');
         type DataGroupingAnchorExtremes = ('start'|'middle'|'end'|'firstPoint'|'lastPoint');
@@ -325,8 +331,25 @@ H.approximations = {
             arr[arr.length - 1] :
             (arr.hasNulls ? null : void 0);
     },
-    // ohlc and range are special cases where a multidimensional array is
-    // input and an array is output
+    // HLC, OHLC and range are special cases where a multidimensional array is
+    // input and an array is output.
+    hlc: function (
+        high: Highcharts.DataGroupingApproximationsArray,
+        low: Highcharts.DataGroupingApproximationsArray,
+        close: Highcharts.DataGroupingApproximationsArray
+    ): ([number, number, number]|undefined) {
+        high = approximations.high(high) as any;
+        low = approximations.low(low) as any;
+        close = approximations.close(close) as any;
+
+        if (
+            isNumber(high) ||
+            isNumber(low) ||
+            isNumber(close)
+        ) {
+            return [high, low, close] as any;
+        }
+    },
     ohlc: function (
         open: Highcharts.DataGroupingApproximationsArray,
         high: Highcharts.DataGroupingApproximationsArray,
@@ -346,7 +369,7 @@ H.approximations = {
         ) {
             return [open, high, low, close] as any;
         }
-        // else, return is undefined
+
     },
     range: function (
         low: Highcharts.DataGroupingApproximationsArray,
@@ -930,7 +953,10 @@ const baseProcessData = seriesProto.processData,
         ohlc: {
             groupPixelWidth: 5
         },
+        hlc: {
+            groupPixelWidth: 5
         // Move to HeikinAshiSeries.ts aftre refactoring data grouping.
+        },
         heikinashi: {
             groupPixelWidth: 10
         }
@@ -976,6 +1002,9 @@ seriesProto.getDGApproximation = function (): string {
     if (this.is('ohlc')) {
         return 'ohlc';
     }
+    if (this.is('hlc')) {
+        return 'hlc';
+    }
     if (this.is('column')) {
         return 'sum';
     }
@@ -1010,6 +1039,7 @@ seriesProto.groupData = groupData;
  * @return {void}
  */
 seriesProto.applyGrouping = applyGrouping;
+
 
 // Destroy the grouped data points. #622, #740
 seriesProto.destroyGroupedData = function (): void {
@@ -1255,6 +1285,7 @@ addEvent(Tooltip, 'headerFormatter', function (
             xDateFormat = xAxis.dateTime.getXDateFormat(
                 labelConfig.x,
                 tooltipOptions.dateTimeLabelFormats
+
             );
         }
 
@@ -1303,7 +1334,7 @@ addEvent(Series, 'afterSetOptions', function (
             (D.defaultOptions.plotOptions as any)[type].dataGrouping,
         // External series, for example technical indicators should also
         // inherit commonOptions which are not available outside this module
-        baseOptions = this.useCommonDataGrouping && commonOptions;
+        baseOptions = (this as IndicatorLike).useCommonDataGrouping && commonOptions;
 
     if (specificOptions[type] || baseOptions) { // #1284
         if (!defaultOptions) {
@@ -1335,7 +1366,6 @@ addEvent(Axis, 'afterSetScale', function (): void {
         series.hasProcessed = false;
     });
 });
-
 
 H.dataGrouping = dataGrouping;
 export default dataGrouping;
@@ -1415,7 +1445,7 @@ export default dataGrouping;
  * from the raw data.
  *
  * Defaults to `average` for line-type series, `sum` for columns, `range`
- * for range series and `ohlc` for OHLC and candlestick.
+ * for range series, `hlc` for HLC, and `ohlc` for OHLC and candlestick.
  *
  * @sample {highstock} stock/plotoptions/series-datagrouping-approximation
  *         Approximation callback with custom data

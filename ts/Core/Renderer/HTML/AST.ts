@@ -143,6 +143,7 @@ class AST {
         'text-align',
         'textAnchor',
         'textLength',
+        'title',
         'type',
         'valign',
         'width',
@@ -190,6 +191,7 @@ class AST {
      */
     public static allowedTags = [
         'a',
+        'abbr',
         'b',
         'br',
         'button',

@@ -8,8 +8,6 @@ const { getLatestCommitShaSync } = require('../tools/gulptasks/lib/git');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;
-// Internal reference
-const hasJSONSources = {};
 
 /**
  * Get browserstack credentials from the environment variables.

@@ -36,7 +36,7 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
-import chartNavigationMixin from '../../Mixins/Navigation.js';
+import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import ExportingDefaults from './ExportingDefaults.js';
@@ -47,7 +47,7 @@ const {
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
-import Palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -1585,15 +1585,14 @@ namespace Exporting {
         // Register update() method for navigation. Can not be set the same way
         // as for exporting, because navigation options are shared with bindings
         // which has separate update() logic.
-        chartNavigationMixin.addUpdate(
-            function (
+        ChartNavigationComposition
+            .compose(chart).navigation
+            .addUpdate((
                 options: NavigationOptions,
                 redraw?: boolean
-            ): void {
+            ): void => {
                 update('navigation', options, redraw);
-            },
-            chart
-        );
+            });
     }
 
     /**
@@ -1772,7 +1771,7 @@ defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
 // zoom and pan right click menus.
 /**
  * A collection of options for buttons and menus appearing in the exporting
- * module.
+ * module or in Stock Tools.
  *
  * @requires     modules/exporting
  * @optionparent navigation

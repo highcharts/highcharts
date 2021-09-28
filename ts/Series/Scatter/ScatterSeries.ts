@@ -242,7 +242,7 @@ class ScatterSeries extends LineSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

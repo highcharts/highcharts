@@ -595,7 +595,7 @@ namespace OfflineExporting {
             sanitize = (svg: string): string => chart.sanitizeSVG(svg, chartCopyOptions as any),
             // When done with last image we have our SVG
             checkDone = (): void => {
-                if (images && imagesEmbedded === images.length) {
+                if (images && imagesEmbedded === imagesLength) {
                     successCallback(sanitize(
                         (chartCopyContainer as any).innerHTML
                     ));
@@ -622,12 +622,11 @@ namespace OfflineExporting {
             };
 
         let el: SVGImageElement,
-            i: number,
-            l: number,
             chartCopyContainer: (HTMLDOMElement|undefined),
             chartCopyOptions: (Options|undefined),
             href: (string|null) = null,
             images: (Array<SVGImageElement>|HTMLCollectionOf<SVGImageElement>|undefined),
+            imagesLength = 0,
             imagesEmbedded = 0;
 
         // Hook into getSVG to get a copy of the chart copy's
@@ -638,6 +637,7 @@ namespace OfflineExporting {
             chartCopyOptions = e.chartCopy.options;
             chartCopyContainer = e.chartCopy.container.cloneNode(true) as any;
             images = chartCopyContainer && chartCopyContainer.getElementsByTagName('image') || [];
+            imagesLength = images.length;
         });
 
         // Trigger hook to get chart copy
@@ -652,7 +652,7 @@ namespace OfflineExporting {
             }
 
             // Go through the images we want to embed
-            for (i = 0, l = images.length; i < l; ++i) {
+            for (let i = 0; i < images.length; i++) {
                 el = images[i];
                 href = el.getAttributeNS(
                     'http://www.w3.org/1999/xlink',
@@ -675,8 +675,9 @@ namespace OfflineExporting {
 
                 // Hidden, boosted series have blank href (#10243)
                 } else {
-                    ++imagesEmbedded;
+                    imagesEmbedded++;
                     el.parentNode.removeChild(el);
+                    i--;
                     checkDone();
                 }
             }
@@ -832,10 +833,9 @@ namespace OfflineExporting {
 
         try {
             // Safari requires data URI since it doesn't allow navigation to
-            // blob URLs. Firefox has an issue with Blobs and internal
-            // references, leading to gradients not working using Blobs (#4550).
-            // foreignObjects also dont work well in Blobs in Chrome (#14780).
-            if (!webKit && !H.isFirefox && svg.indexOf('<foreignObject') === -1) {
+            // blob URLs. ForeignObjects also dont work well in Blobs in Chrome
+            // (#14780).
+            if (!webKit && svg.indexOf('<foreignObject') === -1) {
                 return domurl.createObjectURL(new win.Blob([svg], {
                     type: 'image/svg+xml;charset-utf-16'
                 }));

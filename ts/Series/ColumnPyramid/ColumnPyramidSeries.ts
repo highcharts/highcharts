@@ -206,10 +206,10 @@ class ColumnPyramidSeries extends ColumnSeries {
 
             /*
                     /\
-                    /  \
+                   /  \
             x1,y1,------ x2,y1
-                    /      \
-                ----------
+                /      \
+               ----------
             x4,y2        x3,y2
             */
 
@@ -228,9 +228,9 @@ class ColumnPyramidSeries extends ColumnSeries {
 
             // inverted chart
             if (chart.inverted) {
-                invBarPos = chart.plotWidth - barY;
-                stackHeight = (topPointY -
-                (chart.plotWidth - (translatedThreshold as any)));
+                invBarPos = yAxis.width - barY;
+                stackHeight =
+                    topPointY - (yAxis.width - (translatedThreshold as any));
 
                 // proportion tanges
                 topXwidth = (barW *

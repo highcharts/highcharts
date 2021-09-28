@@ -4,6 +4,7 @@ module.exports = {
         'Getting started': [
             'getting-started/system-requirements',
             'getting-started/installation',
+            'getting-started/installation-with-esm',
             'getting-started/install-from-npm',
             'getting-started/install-from-bower',
             'getting-started/your-first-chart',
@@ -41,6 +42,7 @@ module.exports = {
             'stock/depth-chart',
             'stock/flag-series',
             'stock/navigator',
+            'stock/hlc-chart',
             'stock/ohlc-chart',
             'stock/range-selector',
             'stock/axis-resizer',

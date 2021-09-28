@@ -58,7 +58,7 @@ import H from '../../Core/Globals.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 const {
     addEvent,
     defined,
@@ -185,6 +185,7 @@ declare global {
         interface AnnotationsOptions extends AnnotationControllableOptionsObject { // @todo AnnotationOptions.d.ts
             animation: Partial<AnimationOptions>;
             controlPointOptions: AnnotationControlPointOptionsObject;
+            crop: boolean;
             draggable: AnnotationDraggableValue;
             events: AnnotationsEventsOptions;
             id?: (number|string);
@@ -545,7 +546,11 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public addClipPaths(): void {
         this.setClipAxes();
 
-        if (this.clipXAxis && this.clipYAxis) {
+        if (
+            this.clipXAxis &&
+            this.clipYAxis &&
+            this.options.crop // #15399
+        ) {
             this.clipRect = this.chart.renderer.clipRect(this.getClipBox() as any);
         }
     }
@@ -691,8 +696,11 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         this.shapesGroup = renderer
             .g('annotation-shapes')
-            .add(this.graphic)
-            .clip(this.chart.plotBoxClip);
+            .add(this.graphic);
+
+        if (this.options.crop) { // #15399
+            this.shapesGroup.clip(this.chart.plotBoxClip);
+        }
 
         this.labelsGroup = renderer
             .g('annotation-labels')
@@ -1069,9 +1077,19 @@ merge<Annotation>(
                  *          Animation defer settings
                  * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  * @since 8.2.0
-                 * @apioption annotations.animation
                  */
                 animation: {},
+
+                /**
+                 * Whether to hide the part of the annotation
+                 * that is outside the plot area.
+                 *
+                 * @sample highcharts/annotations/label-crop-overflow/
+                 *         Crop line annotation
+                 * @type  {boolean}
+                 * @since next
+                 */
+                crop: true,
 
                 /**
                  * The animation delay time in milliseconds.
@@ -1143,7 +1161,7 @@ merge<Annotation>(
                      *
                      * @type {Highcharts.ColorString}
                      */
-                    borderColor: palette.neutralColor100,
+                    borderColor: Palette.neutralColor100,
 
                     /**
                      * The border radius in pixels for the annotaiton's label.
@@ -1584,9 +1602,10 @@ merge<Annotation>(
                     width: 10,
                     height: 10,
                     style: {
-                        stroke: palette.neutralColor100,
-                        'stroke-width': 2,
-                        fill: palette.backgroundColor
+                        cursor: 'pointer',
+                        fill: Palette.backgroundColor,
+                        stroke: Palette.neutralColor100,
+                        'stroke-width': 2
                     },
                     visible: false,
                     events: {}
@@ -1681,7 +1700,8 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
      * @param  {Highcharts.AnnotationsOptions} options
      *         The annotation options for the new, detailed annotation.
      * @param {boolean} [redraw]
-     *
+     * @sample highcharts/annotations/add-annotation/
+     *         Add annotation
      * @return {Highcharts.Annotation} - The newly generated annotation.
      */
     addAnnotation: function (

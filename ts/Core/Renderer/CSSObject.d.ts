@@ -38,6 +38,7 @@ export interface CSSObject {
     // [key: string]: (boolean|number|string|undefined);
     align?: string;
     'align-items'?: string;
+    '-ms-filter'?: string;
     '-ms-touch-action'?: string;
     '-ms-transform'?: string;
     '-o-transform'?: string;
@@ -45,6 +46,7 @@ export interface CSSObject {
     background?: string;
     backgroundColor?: ColorString;
     borderRadius?: number|string;
+    borderWidth?: number;
     border?: string|0;
     'border-radius'?: string;
     bottom?: string;

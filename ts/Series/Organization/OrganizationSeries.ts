@@ -37,7 +37,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import OrganizationPoint from './OrganizationPoint.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -102,7 +102,7 @@ class OrganizationSeries extends SankeySeries {
          * @type {Highcharts.ColorString}
          * @private
          */
-        borderColor: palette.neutralColor60,
+        borderColor: Palette.neutralColor60,
         /**
          * The border radius of the node cards.
          *
@@ -261,7 +261,7 @@ class OrganizationSeries extends SankeySeries {
          * @type {Highcharts.ColorString}
          * @private
          */
-        linkColor: palette.neutralColor60,
+        linkColor: Palette.neutralColor60,
         /**
          * The line width of the links connecting nodes, in pixels.
          *
@@ -633,7 +633,7 @@ class OrganizationSeries extends SankeySeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

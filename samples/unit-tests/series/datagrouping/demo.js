@@ -986,13 +986,13 @@ QUnit.test('The dataGrouping enabling/disabling.', function (assert) {
         It should be grouped the same as the second one is.
         Thus only two grouped points should be visible.`
     );
-    
+
     chart.series[0].remove();
 
     const series = chart.series[0],
         mapArray = [
             'groupMap',
-            'hasGroupedData', 
+            'hasGroupedData',
             'currentDataGrouping'
         ];
 

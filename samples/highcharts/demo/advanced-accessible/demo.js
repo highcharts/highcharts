@@ -29,7 +29,9 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
             }
 
             if (!graphic) {
-                point.graphic = graphic = series.chart.renderer.path('point').add(series.group);
+                point.graphic = graphic = series.chart.renderer
+                    .path('point')
+                    .add(series.group);
             }
 
             graphic.attr({
