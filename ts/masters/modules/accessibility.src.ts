@@ -13,7 +13,9 @@
 'use strict';
 
 import Highcharts from '../../Core/Globals.js';
+import AccessibilityComponent from '../../Accessibility/AccessibilityComponent.js';
 import FocusBorder from '../../Accessibility/FocusBorder.js';
 import '../../Accessibility/Accessibility.js';
 const G: AnyRecord = Highcharts;
+G.AccessibilityComponent = AccessibilityComponent;
 FocusBorder.compose(G.Chart, G.SVGElement);

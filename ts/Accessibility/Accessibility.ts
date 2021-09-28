@@ -130,7 +130,6 @@ merge(
 H.A11yChartUtilities = ChartUtilities;
 H.A11yHTMLUtilities = HTMLUtilities;
 H.KeyboardNavigationHandler = KeyboardNavigationHandler as any;
-H.AccessibilityComponent = AccessibilityComponent as any;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
