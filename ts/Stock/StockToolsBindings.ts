@@ -1985,18 +1985,21 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                             x: closestPoint.x
                         }, {
                             x: closestPoint.x
-                        }]
-                    },
-                    shapeOptions: {
-                        stroke: 'rgba(0, 0, 0, 0.75)',
-                        strokeWidth: 1
+                        }],
+                        line: {
+                            stroke: 'rgba(0, 0, 0, 0.75)',
+                            fill: 'rgba(255, 0, 0, 0.25)',
+                            strokeWidth: 2
+                        }
                     }
                 },
                 navigation.annotationsOptions,
                 (navigation.bindings as any).timeCycles.annotationsOptions
             );
+            annotation = this.chart.addAnnotation(options);
+            (annotation.options.events.click as any).call(annotation, {});
 
-            return this.chart.addAnnotation(options);
+            return annotation;
         },
 
         steps: [function (this: NavigationBindings, e: PointerEvent, annotation: TimeCycles): void {
