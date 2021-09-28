@@ -79,3 +79,9 @@ Cypress.Commands.add('addIndicator', () =>
         .eq(0)
         .click()
 );
+
+Cypress.Commands.add('selectRange', (range) =>
+    cy.get('.highcharts-range-selector-group')
+        .contains(range)
+        .click()
+);
