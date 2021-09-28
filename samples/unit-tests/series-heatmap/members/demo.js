@@ -214,7 +214,8 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
     assert.strictEqual(
         point.graphic.d.split(' ')[1] - point.graphic.getBBox().x,
         point.series.options.borderRadius,
-        'Border radius should have the value set in options on state:normal'
+        `The point's border radius should be correct (value set in options)
+        when the point is in a 'normal' state, #16165.`
     );
 
     setState.call(point, 'hover');
@@ -222,7 +223,8 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
     assert.strictEqual(
         point.graphic.d.split(' ')[1] - point.graphic.getBBox().x,
         point.series.options.borderRadius,
-        'Border radius should have the value set in options on state:hover'
+        `The point's border radius should be correct (value set in options)
+        when the point is in a 'hover' state, #16165.`
     );
 
     setState.call(point, 'select');
@@ -236,6 +238,7 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
     assert.strictEqual(
         point.graphic.d.split(' ')[1] - point.graphic.getBBox().x,
         point.series.options.borderRadius,
-        'Border radius should have the value set in options on state:normal'
+        `The point's border radius should be correct (value set in options)
+        when the point is in a 'normal' state, #16165.`
     );
 });
