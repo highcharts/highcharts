@@ -40,7 +40,7 @@ const {
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         a11yDirty?: boolean;
-        accessibility?: Highcharts.Accessibility;
+        accessibility?: Accessibility;
         types?: Array<string>;
         /** @require modules/accessibility */
         updateA11yEnabled(): void;
@@ -53,20 +53,6 @@ declare module '../Core/Chart/ChartLike' {
  */
 declare global {
     namespace Highcharts {
-        class Accessibility {
-            public constructor(chart: AccessibilityChart);
-            public chart: AccessibilityChart;
-            public components: AccessibilityComponentsObject;
-            public keyboardNavigation: KeyboardNavigation;
-            public proxyProvider: ProxyProvider;
-            public zombie?: boolean; // Zombie object on old browsers
-            public destroy(): void;
-            public getChartTypes(): Array<string>;
-            public init(chart: Chart): void;
-            public initComponents(): void;
-            public getComponentOrder(): Array<string>;
-            public update(): void;
-        }
         interface AccessibilityComponentsObject {
             [key: string]: AccessibilityComponent;
             container: ContainerComponent;
@@ -132,8 +118,6 @@ H.A11yHTMLUtilities = HTMLUtilities;
 H.KeyboardNavigationHandler = KeyboardNavigationHandler as any;
 H.AccessibilityComponent = AccessibilityComponent as any;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
 /**
  * The Accessibility class
  *
@@ -146,14 +130,43 @@ H.AccessibilityComponent = AccessibilityComponent as any;
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
-function Accessibility(
-    this: Highcharts.Accessibility,
-    chart: Chart
-): void {
-    this.init(chart);
-}
+class Accessibility {
 
-Accessibility.prototype = {
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    constructor(
+        chart: Chart
+    ) {
+        this.init(chart);
+    }
+
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public chart: Highcharts.AccessibilityChart = void 0 as any;
+    public components: Highcharts.AccessibilityComponentsObject = void 0 as any;
+    public keyboardNavigation: Highcharts.KeyboardNavigation = void 0 as any;
+    public proxyProvider: ProxyProvider = void 0 as any;
+    public zombie?: boolean; // Zombie object on old browsers
+
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
 
     /**
      * Initialize the accessibility class
@@ -161,8 +174,7 @@ Accessibility.prototype = {
      * @param {Highcharts.Chart} chart
      *        Chart object
      */
-    init: function (
-        this: Highcharts.Accessibility,
+    public init(
         chart: Chart
     ): void {
         this.chart = chart as Highcharts.AccessibilityChart;
@@ -185,13 +197,13 @@ Accessibility.prototype = {
             chart, this.components
         );
         this.update();
-    },
+    }
 
 
     /**
      * @private
      */
-    initComponents: function (this: Highcharts.Accessibility): void {
+    public initComponents(): void {
         const chart = this.chart;
         const proxyProvider = this.proxyProvider;
         const a11yOptions = chart.options.accessibility;
@@ -215,14 +227,14 @@ Accessibility.prototype = {
             components[componentName].initBase(chart, proxyProvider);
             components[componentName].init();
         });
-    },
+    }
 
 
     /**
      * Get order to update components in.
      * @private
      */
-    getComponentOrder: function (this: Highcharts.Accessibility): string[] {
+    public getComponentOrder(): string[] {
         if (!this.components) {
             return []; // For zombie accessibility object on old browsers
         }
@@ -237,13 +249,13 @@ Accessibility.prototype = {
         // Update series first, so that other components can read accessibility
         // info on points.
         return ['series'].concat(componentsExceptSeries);
-    },
+    }
 
 
     /**
      * Update all components.
      */
-    update: function (this: Highcharts.Accessibility): void {
+    public update(): void {
         const components = this.components,
             chart = this.chart,
             a11yOptions = chart.options.accessibility;
@@ -282,13 +294,13 @@ Accessibility.prototype = {
         fireEvent(chart, 'afterA11yUpdate', {
             accessibility: this
         });
-    },
+    }
 
 
     /**
      * Destroy all elements.
      */
-    destroy: function (): void {
+    public destroy(): void {
         const chart: Chart = this.chart || {};
 
         // Destroy components
@@ -317,21 +329,22 @@ Accessibility.prototype = {
         if (chart.focusElement) {
             chart.focusElement.removeFocusBorder();
         }
-    },
+    }
 
 
     /**
      * Return a list of the types of series we have in the chart.
      * @private
      */
-    getChartTypes: function (this: Highcharts.Accessibility): Array<string> {
+    public getChartTypes(): Array<string> {
         const types: Record<string, number> = {};
         this.chart.series.forEach(function (series): void {
             types[series.type] = 1;
         });
         return Object.keys(types);
     }
-};
+
+}
 
 
 /**

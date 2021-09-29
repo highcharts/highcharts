@@ -18,6 +18,7 @@
  *
  * */
 
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -29,19 +30,16 @@ const {
     win
 } = H;
 import U from '../../Core/Utilities.js';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-const {
-    css
-} = U;
-
-
-/* eslint-disable valid-jsdoc */
+const { css } = U;
 
 /* *
  *
  *  Functions
  *
  * */
+
+/* eslint-disable valid-jsdoc */
+
 
 /**
  * @private
@@ -380,6 +378,13 @@ function visuallyHideElement(element: HTMLDOMElement): void {
     });
 }
 
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 const HTMLUtilities = {
     addClass,
     cloneMouseEvent,
@@ -395,11 +400,5 @@ const HTMLUtilities = {
     stripHTMLTagsFromString,
     visuallyHideElement
 };
-
-/* *
- *
- *  Default export
- *
- * */
 
 export default HTMLUtilities;
