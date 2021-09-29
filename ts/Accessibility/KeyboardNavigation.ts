@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Accessibility from './Accessibility';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -50,10 +51,10 @@ declare global {
         class KeyboardNavigation {
             public constructor(
                 chart: Chart,
-                components: AccessibilityComponentsObject
+                components: Accessibility.ComponentsObject
             );
             public chart: Chart;
-            public components: AccessibilityComponentsObject;
+            public components: Accessibility.ComponentsObject;
             public currentModuleIx: number;
             public eventProvider: EventProvider;
             public exitAnchor: DOMElementType;
@@ -69,7 +70,7 @@ declare global {
             public destroy(): void;
             public init(
                 chart: Chart,
-                components: AccessibilityComponentsObject
+                components: Accessibility.ComponentsObject
             ): void;
             public makeElementAnExitAnchor(el: DOMElementType): void;
             public move(direction: number): boolean;
@@ -135,7 +136,7 @@ Chart.prototype.dismissPopupContent = function (): void {
 function KeyboardNavigation(
     this: Highcharts.KeyboardNavigation,
     chart: Chart,
-    components: Highcharts.AccessibilityComponentsObject
+    components: Accessibility.ComponentsObject
 ): void {
     this.init(chart, components);
 }
@@ -152,7 +153,7 @@ KeyboardNavigation.prototype = {
     init: function (
         this: Highcharts.KeyboardNavigation,
         chart: Chart,
-        components: Highcharts.AccessibilityComponentsObject
+        components: Accessibility.ComponentsObject
     ): void {
         const ep = this.eventProvider = new EventProvider();
 
@@ -196,7 +197,7 @@ KeyboardNavigation.prototype = {
      */
     update: function (
         this: Highcharts.KeyboardNavigation,
-        order?: Array<(keyof Highcharts.AccessibilityComponentsObject)>
+        order?: Array<(keyof Accessibility.ComponentsObject)>
     ): void {
         const a11yOptions = this.chart.options.accessibility,
             keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
@@ -213,7 +214,7 @@ KeyboardNavigation.prototype = {
             // We (still) have keyboard navigation. Update module list
             this.modules = order.reduce(function (
                 modules: Array<Highcharts.KeyboardNavigationHandler>,
-                componentName: keyof Highcharts.AccessibilityComponentsObject
+                componentName: keyof Accessibility.ComponentsObject
             ): Array<Highcharts.KeyboardNavigationHandler> {
                 const navModules = components[componentName].getKeyboardNavigation();
                 return modules.concat(navModules);

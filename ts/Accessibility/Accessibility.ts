@@ -18,17 +18,17 @@
  *
  * */
 
+import type Chart from '../Core/Chart/Chart.js';
 import type { Options } from '../Core/Options';
+import type Point from '../Core/Series/Point.js';
+import type Series from '../Core/Series/Series.js';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
-import Chart from '../Core/Chart/Chart.js';
 import D from '../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 const { doc } = H;
-import type Point from '../Core/Series/Point.js';
-import type Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -39,9 +39,7 @@ const {
 
 import A11yI18n from './A11yI18n.js';
 import ContainerComponent from './Components/ContainerComponent.js';
-import CU from './Utils/ChartUtilities.js';
 import FocusBorder from './FocusBorder.js';
-import HU from './Utils/HTMLUtilities.js';
 import InfoRegionsComponent from './Components/InfoRegionsComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
 import LegendComponent from './Components/LegendComponent.js';
@@ -72,40 +70,6 @@ declare module '../Core/Chart/ChartLike' {
         updateA11yEnabled(): void;
     }
 }
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AccessibilityComponentsObject {
-            [key: string]: AccessibilityComponent;
-            container: ContainerComponent;
-            infoRegions: InfoRegionsComponent;
-            legend: LegendComponent;
-            chartMenu: MenuComponent;
-            rangeSelector: RangeSelectorComponent;
-            series: SeriesComponent;
-            zoom: ZoomComponent;
-        }
-        let A11yChartUtilities: typeof CU;
-        let A11yHTMLUtilities: typeof HU;
-    }
-}
-
-// Add default options
-merge(
-    true,
-    defaultOptions,
-    defaultOptionsA11Y,
-    {
-        accessibility: {
-            highContrastTheme: highContrastTheme
-        },
-        lang: defaultLangOptions
-    }
-);
 
 /* *
  *
@@ -148,7 +112,7 @@ class Accessibility {
      * */
 
     public chart: Accessibility.ChartComposition = void 0 as any;
-    public components: Highcharts.AccessibilityComponentsObject = void 0 as any;
+    public components: Accessibility.ComponentsObject = void 0 as any;
     public keyboardNavigation: Highcharts.KeyboardNavigation = void 0 as any;
     public proxyProvider: ProxyProvider = void 0 as any;
     public zombie?: boolean; // Zombie object on old browsers
@@ -177,7 +141,7 @@ class Accessibility {
         // Abort on old browsers
         if (!doc.addEventListener || !chart.renderer.isSVG) {
             this.zombie = true;
-            this.components = {} as Highcharts.AccessibilityComponentsObject;
+            this.components = {} as Accessibility.ComponentsObject;
             chart.renderTo.setAttribute('aria-hidden', true);
             return;
         }
@@ -355,6 +319,17 @@ namespace Accessibility {
      *
      * */
 
+    export interface ComponentsObject {
+        [key: string]: Highcharts.AccessibilityComponent;
+        container: Highcharts.ContainerComponent;
+        infoRegions: Highcharts.InfoRegionsComponent;
+        legend: Highcharts.LegendComponent;
+        chartMenu: Highcharts.MenuComponent;
+        rangeSelector: Highcharts.RangeSelectorComponent;
+        series: Highcharts.SeriesComponent;
+        zoom: Highcharts.ZoomComponent;
+    }
+
     export declare class ChartComposition extends Chart {
         highlightedPoint?: PointComposition;
         options: Required<Options>;
@@ -496,7 +471,7 @@ namespace Accessibility {
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
 
-            const chartProto = Chart.prototype;
+            const chartProto = ChartClass.prototype;
 
             chartProto.updateA11yEnabled = chartUpdateA11yEnabled;
             addEvent(
@@ -518,7 +493,7 @@ namespace Accessibility {
             // Mark dirty for update
             ['addSeries', 'init'].forEach((event): void => {
                 addEvent(
-                    Chart as typeof ChartComposition,
+                    ChartClass as typeof ChartComposition,
                     event,
                     function (): void {
                         this.a11yDirty = true;
@@ -528,7 +503,7 @@ namespace Accessibility {
             // Direct updates (events happen after render)
             ['afterDrilldown', 'drillupall'].forEach((event): void => {
                 addEvent(
-                    Chart as typeof ChartComposition,
+                    ChartClass as typeof ChartComposition,
                     event,
                     function chartOnAfterDrilldown(): void {
                         const a11y = this.accessibility;
@@ -581,6 +556,25 @@ namespace Accessibility {
     }
 
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+// Add default options
+merge(
+    true,
+    defaultOptions,
+    defaultOptionsA11Y,
+    {
+        accessibility: {
+            highContrastTheme: highContrastTheme
+        },
+        lang: defaultLangOptions
+    }
+);
 
 /* *
  *
