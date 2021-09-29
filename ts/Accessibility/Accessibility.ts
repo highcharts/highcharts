@@ -14,7 +14,9 @@
 
 import type { Options } from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
+import A11yI18n from './A11yI18n.js';
 import Chart from '../Core/Chart/Chart.js';
 import ChartUtilities from './Utils/ChartUtilities.js';
 import ProxyProvider from './ProxyProvider.js';
@@ -81,6 +83,7 @@ declare global {
 }
 
 import AccessibilityComponent from './AccessibilityComponent.js';
+import FocusBorder from './FocusBorder.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
 import LegendComponent from './Components/LegendComponent.js';
 import MenuComponent from './Components/MenuComponent.js';
@@ -95,8 +98,6 @@ import defaultOptionsA11Y from './Options/Options.js';
 import defaultLangOptions from './Options/LangOptions.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
 import HTMLUtilities from './Utils/HTMLUtilities.js';
-import './A11yI18n.js';
-
 
 // Add default options
 merge(
@@ -454,3 +455,44 @@ addEvent(Chart, 'destroy', function (): void {
         this.accessibility.destroy();
     }
 });
+
+namespace AccessibilityComposition {
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
+
+    export const i18nFormat = A11yI18n.i18nFormat;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    export function compose(
+        ChartClass: typeof Chart,
+        SVGElementClass: typeof SVGElement
+    ): void {
+        A11yI18n.compose(ChartClass);
+        FocusBorder.compose(ChartClass, SVGElementClass);
+    }
+
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default AccessibilityComposition;
