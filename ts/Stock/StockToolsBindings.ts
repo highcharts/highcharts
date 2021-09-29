@@ -1987,7 +1987,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         }],
                         line: {
                             stroke: 'rgba(0, 0, 0, 0.75)',
-                            fill: 'rgba(255, 0, 0, 0.25)',
+                            fill: 'transparent',
                             strokeWidth: 2
                         }
                     }
