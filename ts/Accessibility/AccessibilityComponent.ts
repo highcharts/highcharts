@@ -176,35 +176,38 @@ interface AccessibilityComponent {
     onChartUpdate(): void;
 }
 
-/** @lends Highcharts.AccessibilityComponent */
-extend(AccessibilityComponent.prototype, {
-    /**
-     * Called on component initialization.
-     */
-    init(): void {},
+extend(
+    AccessibilityComponent.prototype,
+    /** @lends Highcharts.AccessibilityComponent */
+    {
+        /**
+         * Called on component initialization.
+         */
+        init(): void {},
 
-    /**
-     * Get keyboard navigation handler for this component.
-     * @return {Highcharts.KeyboardNavigationHandler}
-     */
-    getKeyboardNavigation: function (): void {} as any,
+        /**
+         * Get keyboard navigation handler for this component.
+         * @return {Highcharts.KeyboardNavigationHandler}
+         */
+        getKeyboardNavigation: function (): void {} as any,
 
-    /**
-     * Called on updates to the chart, including options changes.
-     * Note that this is also called on first render of chart.
-     */
-    onChartUpdate(): void {},
+        /**
+         * Called on updates to the chart, including options changes.
+         * Note that this is also called on first render of chart.
+         */
+        onChartUpdate(): void {},
 
-    /**
-     * Called on every chart render.
-     */
-    onChartRender(): void {},
+        /**
+         * Called on every chart render.
+         */
+        onChartRender(): void {},
 
-    /**
-     * Called when accessibility is disabled or chart is destroyed.
-     */
-    destroy(): void {}
-});
+        /**
+         * Called when accessibility is disabled or chart is destroyed.
+         */
+        destroy(): void {}
+    }
+);
 
 /* *
  *
