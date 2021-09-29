@@ -575,9 +575,9 @@ namespace AxisDefaults {
          * In Highcharts Stock, `endOnTick` is always `false` when the navigator
          * is enabled, to prevent jumpy scrolling.
          *
-         * @sample {highcharts} highcharts/chart/reflow-true/
-         *         True by default
          * @sample {highcharts} highcharts/yaxis/endontick/
+         *         True by default
+         * @sample {highcharts} highcharts/yaxis/endontick-false/
          *         False
          * @sample {highstock} stock/demo/basic-line/
          *         True by default
@@ -2393,9 +2393,9 @@ namespace AxisDefaults {
          * @see [type](#chart.panning.type)
          *
          *
-         * @sample {highcharts} highcharts/chart/reflow-true/
-         *         True by default
          * @sample {highcharts} highcharts/yaxis/endontick/
+         *         True by default
+         * @sample {highcharts} highcharts/yaxis/endontick-false/
          *         False
          * @sample {highstock} stock/demo/basic-line/
          *         True by default
