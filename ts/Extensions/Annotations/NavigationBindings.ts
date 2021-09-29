@@ -330,7 +330,9 @@ class NavigationBindings {
     // Define non editable fields per annotation, for example Rectangle inherits
     // options from Measure, but crosshairs are not available
     public static annotationsNonEditable = {
-        rectangle: ['crosshairX', 'crosshairY', 'label']
+        rectangle: ['crosshairX', 'crosshairY', 'labelOptions'],
+        ellipse: ['labelOptions'],
+        circle: ['labelOptions']
     };
 
     /* *
