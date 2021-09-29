@@ -16,9 +16,8 @@
 
 'use strict';
 
-import type {
-    HTMLDOMElement
-} from '../Core/Renderer/DOMElementType';
+import type Accessibility from './Accessibility';
+import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 import type { ProxyTarget, ProxyGroupTypes } from './ProxyElement';
 
@@ -62,7 +61,7 @@ class ProxyProvider {
     private groups: Record<string, ProxyGroup|undefined>;
     private groupOrder: string[];
 
-    constructor(private chart: Highcharts.AccessibilityChart) {
+    constructor(private chart: Accessibility.ChartComposition) {
         this.domElementProvider = new DOMElementProvider();
         this.groups = {};
         this.groupOrder = [];

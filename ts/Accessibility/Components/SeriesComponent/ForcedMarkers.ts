@@ -18,6 +18,7 @@
  *
  * */
 
+import type Accessibility from '../../Accessibility';
 import type {
     PointMarkerOptions,
     PointOptions
@@ -58,7 +59,7 @@ declare module '../../../Core/Series/SeriesLike' {
  * @private
  */
 function isWithinDescriptionThreshold(
-    series: Highcharts.AccessibilitySeries
+    series: Accessibility.SeriesComposition
 ): boolean {
     const a11yOptions = series.chart.options.accessibility;
 
@@ -72,7 +73,7 @@ function isWithinDescriptionThreshold(
  * @private
  */
 function shouldForceMarkers(
-    series: Highcharts.AccessibilitySeries
+    series: Accessibility.SeriesComposition
 ): boolean {
     const chart = series.chart,
         chartA11yEnabled = chart.options.accessibility.enabled,
@@ -94,7 +95,7 @@ function hasIndividualPointMarkerOptions(series: Series): boolean {
 /**
  * @private
  */
-function unforceSeriesMarkerOptions(series: Highcharts.AccessibilitySeries): void {
+function unforceSeriesMarkerOptions(series: Accessibility.SeriesComposition): void {
     const resetMarkerOptions = series.resetA11yMarkerOptions;
 
     if (resetMarkerOptions) {
@@ -193,8 +194,8 @@ function addForceMarkersEvents(): void {
      * Keep track of forcing markers.
      * @private
      */
-    addEvent(Series, 'render', function (): void {
-        const series = this as Highcharts.AccessibilitySeries,
+    addEvent(Series as typeof Accessibility.SeriesComposition, 'render', function (): void {
+        const series = this,
             options = series.options;
 
         if (shouldForceMarkers(series)) {
@@ -231,9 +232,7 @@ function addForceMarkersEvents(): void {
      * Process marker graphics after render
      * @private
      */
-    addEvent(Series as any, 'afterRender', function (
-        this: Highcharts.AccessibilitySeries
-    ): void {
+    addEvent(Series as typeof Accessibility.SeriesComposition, 'afterRender', function (): void {
         const series = this;
 
         // For styled mode the rendered graphic does not reflect the style

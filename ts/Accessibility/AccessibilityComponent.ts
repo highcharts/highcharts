@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Accessibility from './Accessibility';
 import type {
     HTMLDOMElement,
     DOMElementType
@@ -45,7 +46,7 @@ declare global {
     namespace Highcharts {
         class AccessibilityComponent {
             public constructor();
-            public chart: AccessibilityChart;
+            public chart: Accessibility.ChartComposition;
             public domElementProvider: DOMElementProvider;
             public eventProvider: EventProvider;
             public keyCodes: Record<string, number>;
@@ -60,7 +61,7 @@ declare global {
             );
             public init(): void;
             public initBase(
-                chart: AccessibilityChart,
+                chart: Accessibility.ChartComposition,
                 proxyProvider: ProxyProvider
             ): void;
             public onChartRender(): void;
@@ -134,7 +135,7 @@ AccessibilityComponent.prototype = {
      */
     initBase: function (
         this: Highcharts.AccessibilityComponent,
-        chart: Highcharts.AccessibilityChart,
+        chart: Accessibility.ChartComposition,
         proxyProvider: ProxyProvider
     ): void {
         this.chart = chart;

@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Accessibility from '../Accessibility';
 import type BubbleLegendItem from '../../Series/Bubble/BubbleLegendItem';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
@@ -188,7 +189,7 @@ addEvent(Legend, 'afterColorizeItem', function (
         visible: (boolean|undefined);
     }
 ): void {
-    const chart: Highcharts.AccessibilityChart = this.chart as any,
+    const chart: Accessibility.ChartComposition = this.chart as any,
         a11yOptions = chart.options.accessibility,
         legendItem = e.item;
 
