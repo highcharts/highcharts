@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Default theme for Windows High Contrast Mode.
  *
@@ -13,23 +13,15 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
+import type Options from '../Core/Options';
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface DataLabelsOptions {
-            connectorColor?: ColorType;
-        }
-        interface SeriesOptions {
-            fillColor?: ColorType;
-        }
+declare module '../Core/Series/DataLabelOptions' {
+    interface DataLabelOptions {
+        connectorColor?: ColorType;
     }
 }
 
-var theme: Highcharts.Options = {
+const theme: DeepPartial<Options> = {
     chart: {
         backgroundColor: 'window'
     },

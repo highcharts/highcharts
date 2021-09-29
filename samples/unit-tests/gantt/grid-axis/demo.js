@@ -6,38 +6,66 @@ QUnit.test('isOuterAxis()', function (assert) {
         chart: {
             type: 'bar'
         },
-        xAxis: [{
-            grid: {
-                enabled: true
-            }
-        }, {
-            grid: {
-                enabled: true
-            }
-        }, {
-            grid: {
-                enabled: true
+        xAxis: [
+            {
+                grid: {
+                    enabled: true
+                }
             },
-            opposite: true
-        }, {
-            grid: {
-                enabled: true
+            {
+                grid: {
+                    enabled: true
+                }
             },
-            opposite: true
-        }],
-        series: [{
-            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5],
-            xAxis: 0
-        }, {
-            data: [29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5],
-            xAxis: 1
-        }, {
-            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5],
-            xAxis: 2
-        }, {
-            data: [29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5],
-            xAxis: 3
-        }]
+            {
+                grid: {
+                    enabled: true
+                },
+                opposite: true
+            },
+            {
+                grid: {
+                    enabled: true
+                },
+                opposite: true
+            }
+        ],
+        series: [
+            {
+                data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5],
+                xAxis: 0
+            },
+            {
+                data: [
+                    29.9,
+                    -71.5,
+                    -106.4,
+                    -129.2,
+                    -144.0,
+                    -176.0,
+                    -135.6,
+                    -148.5
+                ],
+                xAxis: 1
+            },
+            {
+                data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5],
+                xAxis: 2
+            },
+            {
+                data: [
+                    29.9,
+                    -71.5,
+                    -106.4,
+                    -129.2,
+                    -144.0,
+                    -176.0,
+                    -135.6,
+                    -148.5
+                ],
+                xAxis: 3
+            }
+        ]
     });
 
     assert.ok(
@@ -127,13 +155,15 @@ QUnit.test('dateFormats', function (assert) {
         assert.equal(
             Highcharts.dateFormat('%W', date),
             expectedWeek,
-            `Week format produces correct output when using UTC for ${new Date(date)}`
+            `Week format produces correct output when using UTC for ${new Date(
+                date
+            )}`
         );
 
         assert.equal(
             Highcharts.dateFormat('%E', date),
             expectedDay,
-            `Single character week day format produces correct output when using UTC`
+            'Single character week day format produces correct output when using UTC'
         );
     });
 
@@ -158,38 +188,55 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
         chart: {
             type: 'line'
         },
-        yAxis: [{
-            grid: {
-                enabled: true
+        yAxis: [
+            {
+                grid: {
+                    enabled: true
+                },
+                id: 'axis1'
             },
-            id: 'axis1'
-        }, {
-            grid: {
-                enabled: true
+            {
+                grid: {
+                    enabled: true
+                },
+                id: 'axis2'
             },
-            id: 'axis2'
-        }, {
-            grid: {
-                enabled: true
+            {
+                grid: {
+                    enabled: true
+                },
+                opposite: true,
+                linkedTo: 0,
+                id: 'axis3'
             },
-            opposite: true,
-            linkedTo: 0,
-            id: 'axis3'
-        }, {
-            grid: {
-                enabled: true
+            {
+                grid: {
+                    enabled: true
+                },
+                opposite: true,
+                linkedTo: 1,
+                id: 'axis4'
+            }
+        ],
+        series: [
+            {
+                data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5],
+                yAxis: 0
             },
-            opposite: true,
-            linkedTo: 1,
-            id: 'axis4'
-        }],
-        series: [{
-            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5],
-            yAxis: 0
-        }, {
-            data: [29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5],
-            yAxis: 1
-        }]
+            {
+                data: [
+                    29.9,
+                    -71.5,
+                    -106.4,
+                    -129.2,
+                    -144.0,
+                    -176.0,
+                    -135.6,
+                    -148.5
+                ],
+                yAxis: 1
+            }
+        ]
     });
 
     axes[0] = chart.yAxis[0].axisGroup.getBBox();
@@ -209,6 +256,16 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
         axes[2].x + axes[2].width,
         'Right outer linear axis horizontal placement'
     );
+
+    chart.yAxis[1].update({
+        lineColor: 'red'
+    });
+
+    assert.strictEqual(
+        chart.yAxis[1].grid.axisLineExtra.attr('stroke'),
+        'red',
+        '#15664: axisLineExtra stroke should be updated'
+    );
 });
 
 /**
@@ -223,83 +280,94 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
         title: {
             type: 'scatter'
         },
-        yAxis: [{
-            grid: {
-                enabled: true
+        yAxis: [
+            {
+                grid: {
+                    enabled: true
+                },
+                id: 'axis1',
+                tickInterval: 1000 * 60 * 60 * 24, // Day
+                type: 'datetime',
+                labels: {
+                    format: '{value:%E}',
+                    style: {
+                        fontSize: '2em'
+                    }
+                },
+                min: Date.UTC(2014, 10, 18),
+                max: Date.UTC(2014, 10, 21)
             },
-            id: 'axis1',
-            tickInterval: 1000 * 60 * 60 * 24, // Day
-            type: 'datetime',
-            labels: {
-                format: '{value:%E}',
-                style: {
-                    fontSize: '2em'
-                }
+            {
+                grid: {
+                    enabled: true
+                },
+                id: 'axis2',
+                tickInterval: 1000 * 60 * 60 * 24, // Day
+                type: 'datetime',
+                labels: {
+                    format: '{value:%E}',
+                    style: {
+                        fontSize: '1em'
+                    }
+                },
+                linkedTo: 0
             },
-            min: Date.UTC(2014, 10, 18),
-            max: Date.UTC(2014, 10, 21)
-        }, {
-            grid: {
-                enabled: true
+            {
+                grid: {
+                    enabled: true
+                },
+                id: 'axis3',
+                opposite: true,
+                tickInterval: 1000 * 60 * 60 * 24, // Day
+                type: 'datetime',
+                labels: {
+                    format: '{value:%E}',
+                    style: {
+                        fontSize: '1em'
+                    }
+                },
+                linkedTo: 0
             },
-            id: 'axis2',
-            tickInterval: 1000 * 60 * 60 * 24, // Day
-            type: 'datetime',
-            labels: {
-                format: '{value:%E}',
-                style: {
-                    fontSize: '1em'
-                }
-            },
-            linkedTo: 0
-        }, {
-            grid: {
-                enabled: true
-            },
-            id: 'axis3',
-            opposite: true,
-            tickInterval: 1000 * 60 * 60 * 24, // Day
-            type: 'datetime',
-            labels: {
-                format: '{value:%E}',
-                style: {
-                    fontSize: '1em'
-                }
-            },
-            linkedTo: 0
-        }, {
-            grid: {
-                enabled: true
-            },
-            id: 'axis4',
-            opposite: true,
-            tickInterval: 1000 * 60 * 60 * 24, // Day
-            type: 'datetime',
-            labels: {
-                format: '{value:%E}',
-                style: {
-                    fontSize: '1em'
-                }
-            },
-            linkedTo: 0
-        }],
-        series: [{
-            name: 'Project 3',
-            borderRadius: 10,
-            data: [{
-                x: 7,
-                x2: 9,
-                y: Date.UTC(2014, 10, 19)
-            }, {
-                x: 7,
-                x2: 12,
-                y: Date.UTC(2014, 10, 20)
-            }, {
-                x: 12,
-                x2: 13,
-                y: Date.UTC(2014, 10, 21)
-            }]
-        }]
+            {
+                grid: {
+                    enabled: true
+                },
+                id: 'axis4',
+                opposite: true,
+                tickInterval: 1000 * 60 * 60 * 24, // Day
+                type: 'datetime',
+                labels: {
+                    format: '{value:%E}',
+                    style: {
+                        fontSize: '1em'
+                    }
+                },
+                linkedTo: 0
+            }
+        ],
+        series: [
+            {
+                name: 'Project 3',
+                borderRadius: 10,
+                data: [
+                    {
+                        x: 7,
+                        x2: 9,
+                        y: Date.UTC(2014, 10, 19)
+                    },
+                    {
+                        x: 7,
+                        x2: 12,
+                        y: Date.UTC(2014, 10, 20)
+                    },
+                    {
+                        x: 12,
+                        x2: 13,
+                        y: Date.UTC(2014, 10, 21)
+                    }
+                ]
+            }
+        ]
     });
 
     axes[0] = chart.yAxis[0].axisGroup.getBBox();
@@ -337,38 +405,55 @@ QUnit.test('Horizontal Linear axis vertical placement', function (assert) {
         chart: {
             type: 'line'
         },
-        xAxis: [{
-            grid: {
-                enabled: true
+        xAxis: [
+            {
+                grid: {
+                    enabled: true
+                },
+                id: 'axis1'
             },
-            id: 'axis1'
-        }, {
-            grid: {
-                enabled: true
+            {
+                grid: {
+                    enabled: true
+                },
+                id: 'axis2'
             },
-            id: 'axis2'
-        }, {
-            grid: {
-                enabled: true
+            {
+                grid: {
+                    enabled: true
+                },
+                opposite: true,
+                linkedTo: 0,
+                id: 'axis3'
             },
-            opposite: true,
-            linkedTo: 0,
-            id: 'axis3'
-        }, {
-            grid: {
-                enabled: true
+            {
+                grid: {
+                    enabled: true
+                },
+                opposite: true,
+                linkedTo: 1,
+                id: 'axis4'
+            }
+        ],
+        series: [
+            {
+                data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5],
+                xAxis: 0
             },
-            opposite: true,
-            linkedTo: 1,
-            id: 'axis4'
-        }],
-        series: [{
-            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5],
-            xAxis: 0
-        }, {
-            data: [29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5],
-            xAxis: 1
-        }]
+            {
+                data: [
+                    29.9,
+                    -71.5,
+                    -106.4,
+                    -129.2,
+                    -144.0,
+                    -176.0,
+                    -135.6,
+                    -148.5
+                ],
+                xAxis: 1
+            }
+        ]
     });
 
     axes[0] = chart.xAxis[0].axisGroup.getBBox();
@@ -405,83 +490,94 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
         title: {
             type: 'scatter'
         },
-        xAxis: [{
-            grid: {
-                enabled: true
+        xAxis: [
+            {
+                grid: {
+                    enabled: true
+                },
+                id: 'axis1',
+                tickInterval: 1000 * 60 * 60 * 24, // Day
+                type: 'datetime',
+                labels: {
+                    format: '{value:%E}',
+                    style: {
+                        fontSize: '2em'
+                    }
+                },
+                min: Date.UTC(2014, 10, 18),
+                max: Date.UTC(2014, 10, 21)
             },
-            id: 'axis1',
-            tickInterval: 1000 * 60 * 60 * 24, // Day
-            type: 'datetime',
-            labels: {
-                format: '{value:%E}',
-                style: {
-                    fontSize: '2em'
-                }
+            {
+                grid: {
+                    enabled: true
+                },
+                id: 'axis2',
+                tickInterval: 1000 * 60 * 60 * 24, // Day
+                type: 'datetime',
+                labels: {
+                    format: '{value:%E}',
+                    style: {
+                        fontSize: '1em'
+                    }
+                },
+                linkedTo: 0
             },
-            min: Date.UTC(2014, 10, 18),
-            max: Date.UTC(2014, 10, 21)
-        }, {
-            grid: {
-                enabled: true
+            {
+                grid: {
+                    enabled: true
+                },
+                id: 'axis3',
+                opposite: true,
+                tickInterval: 1000 * 60 * 60 * 24, // Day
+                type: 'datetime',
+                labels: {
+                    format: '{value:%E}',
+                    style: {
+                        fontSize: '1em'
+                    }
+                },
+                linkedTo: 0
             },
-            id: 'axis2',
-            tickInterval: 1000 * 60 * 60 * 24, // Day
-            type: 'datetime',
-            labels: {
-                format: '{value:%E}',
-                style: {
-                    fontSize: '1em'
-                }
-            },
-            linkedTo: 0
-        }, {
-            grid: {
-                enabled: true
-            },
-            id: 'axis3',
-            opposite: true,
-            tickInterval: 1000 * 60 * 60 * 24, // Day
-            type: 'datetime',
-            labels: {
-                format: '{value:%E}',
-                style: {
-                    fontSize: '1em'
-                }
-            },
-            linkedTo: 0
-        }, {
-            grid: {
-                enabled: true
-            },
-            id: 'axis4',
-            opposite: true,
-            tickInterval: 1000 * 60 * 60 * 24, // Day
-            type: 'datetime',
-            labels: {
-                format: '{value:%E}',
-                style: {
-                    fontSize: '1em'
-                }
-            },
-            linkedTo: 0
-        }],
-        series: [{
-            name: 'Project 3',
-            borderRadius: 10,
-            data: [{
-                y: 0,
-                x: Date.UTC(2014, 10, 19),
-                x2: Date.UTC(2014, 10, 20)
-            }, {
-                y: 1,
-                x: Date.UTC(2014, 10, 20),
-                x2: Date.UTC(2014, 10, 21)
-            }, {
-                y: 2,
-                x: Date.UTC(2014, 10, 21),
-                x2: Date.UTC(2014, 10, 22)
-            }]
-        }]
+            {
+                grid: {
+                    enabled: true
+                },
+                id: 'axis4',
+                opposite: true,
+                tickInterval: 1000 * 60 * 60 * 24, // Day
+                type: 'datetime',
+                labels: {
+                    format: '{value:%E}',
+                    style: {
+                        fontSize: '1em'
+                    }
+                },
+                linkedTo: 0
+            }
+        ],
+        series: [
+            {
+                name: 'Project 3',
+                borderRadius: 10,
+                data: [
+                    {
+                        y: 0,
+                        x: Date.UTC(2014, 10, 19),
+                        x2: Date.UTC(2014, 10, 20)
+                    },
+                    {
+                        y: 1,
+                        x: Date.UTC(2014, 10, 20),
+                        x2: Date.UTC(2014, 10, 21)
+                    },
+                    {
+                        y: 2,
+                        x: Date.UTC(2014, 10, 21),
+                        x2: Date.UTC(2014, 10, 22)
+                    }
+                ]
+            }
+        ]
     });
 
     axes[0] = chart.xAxis[0].axisGroup.getBBox();
@@ -521,65 +617,74 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
         chart: {
             type: 'line'
         },
-        xAxis: [{
-            type: 'datetime',
-            grid: {
-                enabled: true
+        xAxis: [
+            {
+                type: 'datetime',
+                grid: {
+                    enabled: true
+                }
+            },
+            {
+                type: 'datetime',
+                grid: {
+                    enabled: true
+                },
+                linkedTo: 0
+            },
+            {
+                grid: {
+                    enabled: true
+                },
+                opposite: true
+            },
+            {
+                grid: {
+                    enabled: true
+                },
+                opposite: true,
+                linkedTo: 2
             }
-        }, {
-            type: 'datetime',
-            grid: {
-                enabled: true
+        ],
+        series: [
+            {
+                xAxis: 0,
+                data: [
+                    {
+                        x: Date.UTC(2016, 10, 12),
+                        y: 1
+                    },
+                    {
+                        x: Date.UTC(2016, 10, 14),
+                        y: 2
+                    }
+                ]
             },
-            linkedTo: 0
-        }, {
-            grid: {
-                enabled: true
+            {
+                xAxis: 1,
+                data: [
+                    {
+                        x: Date.UTC(2016, 10, 13),
+                        y: 1
+                    },
+                    {
+                        x: Date.UTC(2016, 10, 15),
+                        y: 2
+                    }
+                ]
             },
-            opposite: true
-        }, {
-            grid: {
-                enabled: true
+            {
+                xAxis: 2,
+                data: [129.9, 306.4, 544.0]
             },
-            opposite: true,
-            linkedTo: 2
-        }],
-        series: [{
-            xAxis: 0,
-            data: [{
-                x: Date.UTC(2016, 10, 12),
-                y: 1
-            }, {
-                x: Date.UTC(2016, 10, 14),
-                y: 2
-            }]
-        }, {
-            xAxis: 1,
-            data: [{
-                x: Date.UTC(2016, 10, 13),
-                y: 1
-            }, {
-                x: Date.UTC(2016, 10, 15),
-                y: 2
-            }]
-        }, {
-            xAxis: 2,
-            data: [129.9, 306.4, 544.0]
-        }, {
-            xAxis: 3,
-            data: [-144.0, -106.4, 29.9]
-        }]
+            {
+                xAxis: 3,
+                data: [-144.0, -106.4, 29.9]
+            }
+        ]
     });
 
     types.forEach(function (type) {
-        var axes,
-            axis,
-            $axisGroup,
-            axisGroupBox,
-            leftTick,
-            rightTick,
-            ticks,
-            i;
+        var axes, axis, $axisGroup, axisGroupBox, leftTick, rightTick, ticks, i;
 
         chart.options.chart.type = type;
         chart = Highcharts.chart('container', chart.options);
@@ -596,13 +701,19 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
             assert.equal(
                 leftTick.x,
                 axisGroupBox.x,
-                type + ' chart, ' + axis.coll + ', leftmost tick is placed correctly'
+                type +
+                    ' chart, ' +
+                    axis.coll +
+                    ', leftmost tick is placed correctly'
             );
 
             assert.equal(
                 type === 'bar' ? rightTick.x + rightTick.width : rightTick.x,
                 axisGroupBox.x + axisGroupBox.width,
-                type + ' chart, ' + axis.coll + ', rightmost tick is placed correctly'
+                type +
+                    ' chart, ' +
+                    axis.coll +
+                    ', rightmost tick is placed correctly'
             );
         }
     });
@@ -645,54 +756,78 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
         chart: {
             type: 'scatter'
         },
-        xAxis: [{
-            grid: {
-                enabled: true
+        xAxis: [
+            {
+                grid: {
+                    enabled: true
+                }
+            },
+            {
+                grid: {
+                    enabled: true
+                },
+                linkedTo: 0
+            },
+            {
+                grid: {
+                    enabled: true
+                },
+                type: 'datetime',
+                opposite: true
+            },
+            {
+                grid: {
+                    enabled: true
+                },
+                type: 'datetime',
+                opposite: true,
+                linkedTo: 2
             }
-        }, {
-            grid: {
-                enabled: true
+        ],
+        series: [
+            {
+                xAxis: 0,
+                data: [
+                    [1, 271.5],
+                    [2, -29.2],
+                    [3, 376.0]
+                ]
             },
-            linkedTo: 0
-        }, {
-            grid: {
-                enabled: true
+            {
+                xAxis: 1,
+                data: [
+                    [29.9, -71.5],
+                    [-106.4, -129.2],
+                    [-144.0, -176.0]
+                ]
             },
-            type: 'datetime',
-            opposite: true
-        }, {
-            grid: {
-                enabled: true
+            {
+                xAxis: 2,
+                data: [
+                    {
+                        x: Date.UTC(2016, 10, 12),
+                        y: 1
+                    },
+                    {
+                        x: Date.UTC(2016, 10, 14),
+                        y: 2
+                    }
+                ]
             },
-            type: 'datetime',
-            opposite: true,
-            linkedTo: 2
-        }],
-        series: [{
-            xAxis: 0,
-            data: [[1, 271.5], [2, -29.2], [3, 376.0]]
-        }, {
-            xAxis: 1,
-            data: [[29.9, -71.5], [-106.4, -129.2], [-144.0, -176.0]]
-        }, {
-            xAxis: 2,
-            data: [{
-                x: Date.UTC(2016, 10, 12),
-                y: 1
-            }, {
-                x: Date.UTC(2016, 10, 14),
-                y: 2
-            }]
-        }, {
-            xAxis: 3,
-            data: [{
-                x: Date.UTC(2016, 10, 13),
-                y: 1
-            }, {
-                x: Date.UTC(2016, 10, 15),
-                y: 2
-            }]
-        }]
+            {
+                xAxis: 3,
+                data: [
+                    {
+                        x: Date.UTC(2016, 10, 13),
+                        y: 1
+                    },
+                    {
+                        x: Date.UTC(2016, 10, 15),
+                        y: 2
+                    }
+                ]
+            }
+        ]
     });
 
     axes = chart.xAxis;
@@ -745,58 +880,82 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
             type: 'scatter',
             width: 800
         },
-        xAxis: [{
-            grid: {
-                enabled: true
-            }
-        }, {
-            type: 'datetime',
-            min: Date.UTC(2016, 10, 11),
-            max: Date.UTC(2016, 10, 15),
-            tickInterval: 1000 * 60 * 60 * 24, // Day
-            grid: {
-                enabled: true
-            }
-        }, {
-            grid: {
-                enabled: true
+        xAxis: [
+            {
+                grid: {
+                    enabled: true
+                }
             },
-            opposite: true
-        }, {
-            grid: {
-                enabled: true
+            {
+                type: 'datetime',
+                min: Date.UTC(2016, 10, 11),
+                max: Date.UTC(2016, 10, 15),
+                tickInterval: 1000 * 60 * 60 * 24, // Day
+                grid: {
+                    enabled: true
+                }
             },
-            type: 'datetime',
-            min: Date.UTC(2016, 10, 12),
-            max: Date.UTC(2016, 10, 16),
-            tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
-            opposite: true
-        }],
-        series: [{
-            xAxis: 0,
-            data: [[1, 271.5], [2, -29.2], [3, 376.0]]
-        }, {
-            xAxis: 1,
-            data: [{
-                x: Date.UTC(2016, 10, 12),
-                y: 1
-            }, {
-                x: Date.UTC(2016, 10, 14),
-                y: 2
-            }]
-        }, {
-            xAxis: 2,
-            data: [[29.9, -71.5], [-106.4, -129.2], [-144.0, -176.0]]
-        }, {
-            xAxis: 3,
-            data: [{
-                x: Date.UTC(2016, 10, 13),
-                y: 1
-            }, {
-                x: Date.UTC(2016, 10, 15),
-                y: 2
-            }]
-        }]
+            {
+                grid: {
+                    enabled: true
+                },
+                opposite: true
+            },
+            {
+                grid: {
+                    enabled: true
+                },
+                type: 'datetime',
+                min: Date.UTC(2016, 10, 12),
+                max: Date.UTC(2016, 10, 16),
+                tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
+                opposite: true
+            }
+        ],
+        series: [
+            {
+                xAxis: 0,
+                data: [
+                    [1, 271.5],
+                    [2, -29.2],
+                    [3, 376.0]
+                ]
+            },
+            {
+                xAxis: 1,
+                data: [
+                    {
+                        x: Date.UTC(2016, 10, 12),
+                        y: 1
+                    },
+                    {
+                        x: Date.UTC(2016, 10, 14),
+                        y: 2
+                    }
+                ]
+            },
+            {
+                xAxis: 2,
+                data: [
+                    [29.9, -71.5],
+                    [-106.4, -129.2],
+                    [-144.0, -176.0]
+                ]
+            },
+            {
+                xAxis: 3,
+                data: [
+                    {
+                        x: Date.UTC(2016, 10, 13),
+                        y: 1
+                    },
+                    {
+                        x: Date.UTC(2016, 10, 15),
+                        y: 2
+                    }
+                ]
+            }
+        ]
     });
 
     axes = Highcharts.grep(chart.xAxis, function (axis) {
@@ -833,25 +992,29 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
                 labelBox = tick.label.element.getBBox();
                 expected = {
                     x: (nextTickBox.x + tickBox.x) / 2,
-                    y: tickBox.y + (tickBox.height / 2)
+                    y: tickBox.y + tickBox.height / 2
                 };
                 actual = {
-                    x: labelBox.x + (labelBox.width / 2),
-                    y: labelBox.y + (labelBox.height / 2)
+                    x: labelBox.x + labelBox.width / 2,
+                    y: labelBox.y + labelBox.height / 2
                 };
 
                 assert.close(
                     actual.x,
                     expected.x,
                     xError,
-                    axisType + ' tick label x position correct ' + tick.label.textStr
+                    axisType +
+                        ' tick label x position correct ' +
+                        tick.label.textStr
                 );
 
                 assert.close(
                     actual.y,
                     expected.y,
                     yError,
-                    axisType + ' tick label y position correct ' + tick.label.textStr
+                    axisType +
+                        ' tick label y position correct ' +
+                        tick.label.textStr
                 );
             }
         }
@@ -902,58 +1065,82 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
         chart: {
             type: 'scatter'
         },
-        yAxis: [{
-            grid: {
-                enabled: true
-            }
-        }, {
-            type: 'datetime',
-            min: Date.UTC(2016, 10, 11),
-            max: Date.UTC(2016, 10, 15),
-            tickInterval: 1000 * 60 * 60 * 24, // Day
-            grid: {
-                enabled: true
-            }
-        }, {
-            grid: {
-                enabled: true
+        yAxis: [
+            {
+                grid: {
+                    enabled: true
+                }
             },
-            opposite: true
-        }, {
-            grid: {
-                enabled: true
+            {
+                type: 'datetime',
+                min: Date.UTC(2016, 10, 11),
+                max: Date.UTC(2016, 10, 15),
+                tickInterval: 1000 * 60 * 60 * 24, // Day
+                grid: {
+                    enabled: true
+                }
             },
-            type: 'datetime',
-            min: Date.UTC(2016, 10, 12),
-            max: Date.UTC(2016, 10, 16),
-            tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
-            opposite: true
-        }],
-        series: [{
-            yAxis: 0,
-            data: [[271.5, 1], [-29.2, 2], [376.0, 3]]
-        }, {
-            yAxis: 1,
-            data: [{
-                x: 1,
-                y: Date.UTC(2016, 10, 12)
-            }, {
-                x: 2,
-                y: Date.UTC(2016, 10, 14)
-            }]
-        }, {
-            yAxis: 2,
-            data: [[-71.5, 29.9], [-129.2, -106.4], [-176.0, -144.0]]
-        }, {
-            yAxis: 3,
-            data: [{
-                x: 1,
-                y: Date.UTC(2016, 10, 13)
-            }, {
-                x: 2,
-                y: Date.UTC(2016, 10, 15)
-            }]
-        }]
+            {
+                grid: {
+                    enabled: true
+                },
+                opposite: true
+            },
+            {
+                grid: {
+                    enabled: true
+                },
+                type: 'datetime',
+                min: Date.UTC(2016, 10, 12),
+                max: Date.UTC(2016, 10, 16),
+                tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
+                opposite: true
+            }
+        ],
+        series: [
+            {
+                yAxis: 0,
+                data: [
+                    [271.5, 1],
+                    [-29.2, 2],
+                    [376.0, 3]
+                ]
+            },
+            {
+                yAxis: 1,
+                data: [
+                    {
+                        x: 1,
+                        y: Date.UTC(2016, 10, 12)
+                    },
+                    {
+                        x: 2,
+                        y: Date.UTC(2016, 10, 14)
+                    }
+                ]
+            },
+            {
+                yAxis: 2,
+                data: [
+                    [-71.5, 29.9],
+                    [-129.2, -106.4],
+                    [-176.0, -144.0]
+                ]
+            },
+            {
+                yAxis: 3,
+                data: [
+                    {
+                        x: 1,
+                        y: Date.UTC(2016, 10, 13)
+                    },
+                    {
+                        x: 2,
+                        y: Date.UTC(2016, 10, 15)
+                    }
+                ]
+            }
+        ]
     });
 
     axes = chart.yAxis;
@@ -988,12 +1175,12 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
                 labelBox = tick.label.element.getBBox();
 
                 expected = {
-                    x: tickBox.x + (tickBox.width / 2),
+                    x: tickBox.x + tickBox.width / 2,
                     y: (tickBox.y + nextTickBox.y) / 2
                 };
                 actual = {
-                    x: labelBox.x + (labelBox.width / 2),
-                    y: labelBox.y + (labelBox.height / 2)
+                    x: labelBox.x + labelBox.width / 2,
+                    y: labelBox.y + labelBox.height / 2
                 };
 
                 assert.close(
@@ -1036,7 +1223,6 @@ QUnit.module('labels alignment', function () {
         getCellCenter,
         getBBox;
 
-
     getBBox = function (container, element) {
         var containerRect = container.getBoundingClientRect(),
             rect = element.getBoundingClientRect();
@@ -1063,10 +1249,7 @@ QUnit.module('labels alignment', function () {
             right = bboxTickMark.x + bboxTickMark.width;
         }
 
-        return [
-            left + ((right - left) / 2),
-            top + ((bottom - top) / 2)
-        ];
+        return [left + (right - left) / 2, top + (bottom - top) / 2];
     };
 
     getTestFunction = function (assert) {
@@ -1080,23 +1263,28 @@ QUnit.module('labels alignment', function () {
                     getBBox(container, tick.mark.element)
                 ),
                 bboxLabel = getBBox(container, tick.label.element),
-
                 // Firefox/Mac needs 2.3 in order to pass, Edge needs 1.5,
                 // others 1.1.
                 precision = 2.3;
 
             assert.close(
                 bboxLabel.x,
-                center[0] - (bboxLabel.width / 2),
+                center[0] - bboxLabel.width / 2,
                 precision,
-                axis.coll + ' label "' + tick.label.textStr + '" is centered horizontally.'
+                axis.coll +
+                    ' label "' +
+                    tick.label.textStr +
+                    '" is centered horizontally.'
             );
 
             assert.close(
                 bboxLabel.y,
-                center[1] - (bboxLabel.height / 2),
+                center[1] - bboxLabel.height / 2,
                 precision,
-                axis.coll + ' label "' + tick.label.textStr + '" is centered vertically.'
+                axis.coll +
+                    ' label "' +
+                    tick.label.textStr +
+                    '" is centered vertically.'
             );
         };
     };
@@ -1200,39 +1388,44 @@ QUnit.test('Last tick label does not pop out of its cell', function (assert) {
             chart: {
                 marginRight: 150
             },
-            xAxis: [{
-                grid: {
-                    enabled: true
+            xAxis: [
+                {
+                    grid: {
+                        enabled: true
+                    },
+                    type: 'datetime',
+                    opposite: true,
+                    tickInterval: 1000 * 60 * 60 * 24, // Day
+                    labels: {
+                        format: '{value:%E}',
+                        style: {
+                            fontSize: '15px'
+                        }
+                    },
+                    min: Date.UTC(2016, 10, 21),
+                    max: Date.UTC(2016, 10, 30)
                 },
-                type: 'datetime',
-                opposite: true,
-                tickInterval: 1000 * 60 * 60 * 24, // Day
-                labels: {
-                    format: '{value:%E}',
-                    style: {
-                        fontSize: '15px'
-                    }
-                },
-                min: Date.UTC(2016, 10, 21),
-                max: Date.UTC(2016, 10, 30)
-            }, {
-                grid: {
-                    enabled: true
-                },
-                type: 'datetime',
-                opposite: true,
-                tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
-                labels: {
-                    format: '{value:Week %W}',
-                    style: {
-                        fontSize: '15px'
-                    }
-                },
-                linkedTo: 0
-            }],
-            series: [{
-                data: [[Date.UTC(2016, 10, 22), 1]]
-            }]
+                {
+                    grid: {
+                        enabled: true
+                    },
+                    type: 'datetime',
+                    opposite: true,
+                    tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
+                    labels: {
+                        format: '{value:Week %W}',
+                        style: {
+                            fontSize: '15px'
+                        }
+                    },
+                    linkedTo: 0
+                }
+            ],
+            series: [
+                {
+                    data: [[Date.UTC(2016, 10, 22), 1]]
+                }
+            ]
         });
 
     axis = chart.xAxis[1];
@@ -1243,10 +1436,7 @@ QUnit.test('Last tick label does not pop out of its cell', function (assert) {
     labelBox = tick.label.element.getBBox();
     axisBox = axis.axisGroup.getBBox();
     axisRight = axisBox.x + axisBox.width;
-    assert.ok(
-        labelBox.x < axisRight,
-        'Last tick label does not pop out'
-    );
+    assert.ok(labelBox.x < axisRight, 'Last tick label does not pop out');
 
     /*
      * Make sure the tickPositions are not adjusted when they are within min and
@@ -1257,23 +1447,32 @@ QUnit.test('Last tick label does not pop out of its cell', function (assert) {
     const userTickPositions = [start + month, start + 2 * month];
     const end = start + 3 * month;
     // Reassign tickPositions
-    ({ xAxis: [{ tickPositions }] } = Highcharts.chart('container', {
-        xAxis: [{
-            type: 'datetime',
-            tickPositions: userTickPositions,
-            grid: {
-                enabled: true
+    ({
+        xAxis: [{ tickPositions }]
+    } = Highcharts.chart('container', {
+        xAxis: [
+            {
+                type: 'datetime',
+                tickPositions: userTickPositions,
+                grid: {
+                    enabled: true
+                }
             }
-        }],
-        series: [{
-            data: [{
-                x: start,
-                y: 0
-            }, {
-                x: end,
-                y: 0
-            }]
-        }]
+        ],
+        series: [
+            {
+                data: [
+                    {
+                        x: start,
+                        y: 0
+                    },
+                    {
+                        x: end,
+                        y: 0
+                    }
+                ]
+            }
+        ]
     }));
     assert.deepEqual(
         tickPositions,
@@ -1287,59 +1486,57 @@ QUnit.test('Last tick label does not pop out of its cell', function (assert) {
  */
 QUnit.test('Leftmost ticklabel appears', function (assert) {
     var chart = Highcharts.chart('container', {
-            xAxis: [{
-                grid: {
-                    enabled: true
+            xAxis: [
+                {
+                    grid: {
+                        enabled: true
+                    },
+                    type: 'datetime',
+                    opposite: true,
+                    tickInterval: 1000 * 60 * 60 * 24, // Day
+                    labels: {
+                        format: '{value:%E}',
+                        style: {
+                            fontSize: '15px'
+                        }
+                    },
+                    min: Date.UTC(2016, 10, 23),
+                    max: Date.UTC(2016, 10, 28)
                 },
-                type: 'datetime',
-                opposite: true,
-                tickInterval: 1000 * 60 * 60 * 24, // Day
-                labels: {
-                    format: '{value:%E}',
-                    style: {
-                        fontSize: '15px'
-                    }
-                },
-                min: Date.UTC(2016, 10, 23),
-                max: Date.UTC(2016, 10, 28)
-            }, {
-                grid: {
-                    enabled: true
-                },
-                type: 'datetime',
-                opposite: true,
-                tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
-                labels: {
-                    format: '{value:Week %W}',
-                    style: {
-                        fontSize: '15px'
-                    }
-                },
-                linkedTo: 0
-            }],
-            series: [{
-                data: [[Date.UTC(2016, 10, 27), 1]]
-            }]
+                {
+                    grid: {
+                        enabled: true
+                    },
+                    type: 'datetime',
+                    opposite: true,
+                    tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
+                    labels: {
+                        format: '{value:Week %W}',
+                        style: {
+                            fontSize: '15px'
+                        }
+                    },
+                    linkedTo: 0
+                }
+            ],
+            series: [
+                {
+                    data: [[Date.UTC(2016, 10, 27), 1]]
+                }
+            ]
         }),
         axis = chart.xAxis[1],
         tickPositions = axis.tickPositions,
         firstTick = axis.ticks[tickPositions[0]],
         axisBox = axis.axisGroup.getBBox(),
-        axisCenter = axisBox.x + (axisBox.width / 2),
+        axisCenter = axisBox.x + axisBox.width / 2,
         tickLabel = firstTick.label.element;
 
     // In a linked axis, a tick which normally would have been added even
     // though its pos is lower than axis.min, is trimmed.
-    assert.ok(
-        firstTick !== undefined,
-        'First tick exists'
-    );
+    assert.ok(firstTick !== undefined, 'First tick exists');
 
-    assert.equal(
-        firstTick.pos,
-        axis.min,
-        'First tick gets pos from axis.min'
-    );
+    assert.equal(firstTick.pos, axis.min, 'First tick gets pos from axis.min');
 
     assert.close(
         +tickLabel.getAttribute('x'),
@@ -1363,17 +1560,32 @@ QUnit.test('Reversed axis', function (assert) {
                 },
                 tickPixelInterval: 100
             },
-            series: [{
-                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-                type: 'column'
-            }]
+            series: [
+                {
+                    data: [
+                        29.9,
+                        71.5,
+                        106.4,
+                        129.2,
+                        144.0,
+                        176.0,
+                        135.6,
+                        148.5,
+                        216.4,
+                        194.1,
+                        95.6,
+                        54.4
+                    ],
+                    type: 'column'
+                }
+            ]
         }),
         axis = chart.xAxis[0],
         ticks = axis.ticks,
         tickLabel = ticks[10].label,
         rightBorder = ticks[10].mark.element.getBBox(),
         leftBorder = ticks[11].mark.element.getBBox(),
-        center = leftBorder.x + ((rightBorder.x - leftBorder.x) / 2);
+        center = leftBorder.x + (rightBorder.x - leftBorder.x) / 2;
 
     // TODO: extend test to check all tick labels
     // #6754
@@ -1383,7 +1595,6 @@ QUnit.test('Reversed axis', function (assert) {
         'Last tick label is centered in its grid'
     );
 });
-
 
 QUnit.test('defaultOptions.borderWidth', function (assert) {
     var createGridAxis = function () {
@@ -1398,8 +1609,11 @@ QUnit.test('defaultOptions.borderWidth', function (assert) {
     // Set side to top
     axis.side = 0;
     // Several cases where there is no check if chart exists
-    axis.chart = {};
-
+    axis.chart = {
+        options: {
+            chart: {}
+        }
+    };
 
     /**
      * grid.borderWidth should default to 1
@@ -1494,15 +1708,20 @@ QUnit.test('startOnTick and endOnTick', function (assert) {
             endOnTick: true,
             type: 'datetime'
         },
-        series: [{
-            data: [{
-                x: Date.UTC(2018, 8, 17, 16),
-                y: 1
-            }, {
-                x: Date.UTC(2018, 8, 21, 8),
-                y: 2
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        x: Date.UTC(2018, 8, 17, 16),
+                        y: 1
+                    },
+                    {
+                        x: Date.UTC(2018, 8, 21, 8),
+                        y: 2
+                    }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -1528,22 +1747,23 @@ QUnit.test('Chart.update', assert => {
             },
             type: 'category'
         },
-        series: [{
-            data: [{ x: 0, x2: 100000, y: 0 }]
-        }]
+        series: [
+            {
+                data: [{ x: 0, x2: 100000, y: 0 }]
+            }
+        ]
     });
-    const { yAxis: [axis] } = chart;
-    const getYAxisLabels = () => Array.from(
-        document.querySelectorAll('.highcharts-yaxis-labels > text > tspan')
-    )
-        .map((text => text.innerHTML))
-        .reverse();
+    const {
+        yAxis: [axis]
+    } = chart;
+    const getYAxisLabels = () =>
+        Array.from(
+            document.querySelectorAll('.highcharts-yaxis-labels > text')
+        )
+            .map(text => text.textContent)
+            .reverse();
 
-    assert.strictEqual(
-        chart.yAxis.length,
-        1,
-        'should have only one yAxis'
-    );
+    assert.strictEqual(chart.yAxis.length, 1, 'should have only one yAxis');
 
     assert.deepEqual(
         getYAxisLabels(),
@@ -1551,17 +1771,22 @@ QUnit.test('Chart.update', assert => {
         'should have two labels after init.'
     );
 
-    chart.update({
-        yAxis: {
-            grid: {
-                columns: [
-                    getColumn('Updated 1'),
-                    getColumn('Updated 2'),
-                    getColumn('New 3')
-                ]
+    chart.update(
+        {
+            yAxis: {
+                grid: {
+                    columns: [
+                        getColumn('Updated 1'),
+                        getColumn('Updated 2'),
+                        getColumn('New 3')
+                    ]
+                }
             }
-        }
-    }, true, true, true);
+        },
+        true,
+        true,
+        true
+    );
 
     assert.strictEqual(
         chart.yAxis.length,
@@ -1590,26 +1815,32 @@ QUnit.test(
             chart: {
                 width: 1200
             },
-            series: [{
-                data: [{
-                    end: 1574946000000,
-                    start: 1488200400000
+            series: [
+                {
+                    data: [
+                        {
+                            end: 1574946000000,
+                            start: 1488200400000
+                        },
+                        {
+                            end: 1640696400000,
+                            start: 1563458400000
+                        }
+                    ]
                 },
                 {
-                    end: 1640696400000,
-                    start: 1563458400000
-                }]
-            },
-            {
-                data: [{
-                    end: 1579525200000,
-                    start: 1526133600000
-                },
-                {
-                    end: 1629986400000,
-                    start: 1552136400000
-                }]
-            }]
+                    data: [
+                        {
+                            end: 1579525200000,
+                            start: 1526133600000
+                        },
+                        {
+                            end: 1629986400000,
+                            start: 1552136400000
+                        }
+                    ]
+                }
+            ]
         });
 
         assert.notDeepEqual(
@@ -1618,6 +1849,23 @@ QUnit.test(
             'The secondary axis should have longer range ticks'
         );
 
+        chart.update({
+            series: [{
+                data: [{
+                    start: Date.UTC(2019, 7, 2),
+                    end: Date.UTC(2019, 11, 1)
+                }]
+            }]
+        }, true, true);
+        chart.setSize(400);
+
+        const axis = chart.xAxis[1];
+
+        assert.strictEqual(
+            axis.ticks[axis.tickPositions[0]].label.textStr,
+            '2019',
+            '#15692: Primary axis should show years'
+        );
     }
 );
 
@@ -1626,18 +1874,23 @@ QUnit.test('Zero-width slot', assert => {
         chart: {
             width: 600
         },
-        series: [{
-            data: [{
-                start: 1580688000000,
-                end: 1583107200000,
-                y: 1
-            }]
-        }],
-        xAxis: [{
-            min: 1582934399999 - 24 * 36e5,
-            max: 1582934399999
-        },
-        {}
+        series: [
+            {
+                data: [
+                    {
+                        start: 1580688000000,
+                        end: 1583107200000,
+                        y: 1
+                    }
+                ]
+            }
+        ],
+        xAxis: [
+            {
+                min: 1582934399999 - 24 * 36e5,
+                max: 1582934399999
+            },
+            {}
         ]
     });
 
@@ -1653,93 +1906,113 @@ QUnit.test('Zero-width slot', assert => {
     );
 });
 
-QUnit.test('Only one scrollbar should be visible for the vertical scrolling #13359', assert => {
-    const chart = Highcharts.ganttChart('container', {
-        yAxis: {
-            min: 0,
-            max: 1,
-            type: 'category',
-            scrollbar: {
-                enabled: true
+QUnit.test(
+    'Only one scrollbar should be visible for the vertical scrolling #13359',
+    assert => {
+        const chart = Highcharts.ganttChart('container', {
+            yAxis: {
+                min: 0,
+                max: 1,
+                type: 'category',
+                scrollbar: {
+                    enabled: true
+                },
+                grid: {
+                    enabled: true,
+                    columns: [
+                        {
+                            title: {
+                                text: 'Project'
+                            },
+                            labels: {
+                                format: '{point.name}'
+                            }
+                        },
+                        {
+                            title: {
+                                text: 'Assignee'
+                            },
+                            labels: {
+                                format: '{point.assignee}'
+                            }
+                        }
+                    ]
+                }
             },
-            grid: {
-                enabled: true,
-                columns: [{
-                    title: {
-                        text: 'Project'
-                    },
-                    labels: {
-                        format: '{point.name}'
-                    }
-                }, {
-                    title: {
-                        text: 'Assignee'
-                    },
-                    labels: {
-                        format: '{point.assignee}'
-                    }
-                }]
-            }
-        },
-        series: [{
-            name: 'Project 1',
-            data: [{
-                start: 1,
-                end: 2,
-                name: 'Task A',
-                assignee: 'Person 1',
-                y: 0
-            }, {
-                start: 3,
-                end: 4,
-                name: 'Task B',
-                assignee: 'Person 2',
-                y: 1
-            }, {
-                start: 5,
-                end: 6,
-                name: 'Task C',
-                assignee: 'Person 3',
-                y: 2
-            }, {
-                start: 6,
-                end: 9,
-                name: 'Task D',
-                assignee: 'Person 4',
-                y: 3
-            }, {
-                start: 4,
-                end: 10,
-                name: 'Task E',
-                assignee: 'Person 5',
-                y: 4
-            }]
-        }]
-    });
+            series: [
+                {
+                    name: 'Project 1',
+                    data: [
+                        {
+                            start: 1,
+                            end: 2,
+                            name: 'Task A',
+                            assignee: 'Person 1',
+                            y: 0
+                        },
+                        {
+                            start: 3,
+                            end: 4,
+                            name: 'Task B',
+                            assignee: 'Person 2',
+                            y: 1
+                        },
+                        {
+                            start: 5,
+                            end: 6,
+                            name: 'Task C',
+                            assignee: 'Person 3',
+                            y: 2
+                        },
+                        {
+                            start: 6,
+                            end: 9,
+                            name: 'Task D',
+                            assignee: 'Person 4',
+                            y: 3
+                        },
+                        {
+                            start: 4,
+                            end: 10,
+                            name: 'Task E',
+                            assignee: 'Person 5',
+                            y: 4
+                        }
+                    ]
+                }
+            ]
+        });
 
-    assert.notOk(
-        chart.yAxis[0].grid.columns[0].scrollbar,
-        'The scrollbar for the column grid axis should not exist.'
-    );
-    assert.ok(
-        chart.yAxis[0].scrollbar,
-        'Only one scrollbar should be visible.'
-    );
-});
+        assert.notOk(
+            chart.yAxis[0].grid.columns[0].scrollbar,
+            'The scrollbar for the column grid axis should not exist.'
+        );
+        assert.ok(
+            chart.yAxis[0].scrollbar,
+            'Only one scrollbar should be visible.'
+        );
+    }
+);
 
 QUnit.test('yAxis label adjustment #10281', assert => {
     const chart = Highcharts.ganttChart('container', {
-        series: [{
-            data: [{
-                name: 'Start prototype',
-                start: Date.UTC(2014, 10, 18),
-                end: Date.UTC(2014, 10, 25)
-            }, {
-                name: 'Really Long series name that is very long indeed. Really Long series name that is very long indeed.',
-                start: Date.UTC(2014, 10, 23),
-                end: Date.UTC(2014, 10, 26)
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        name: 'Start prototype',
+                        start: Date.UTC(2014, 10, 18),
+                        end: Date.UTC(2014, 10, 25)
+                    },
+                    {
+                        name:
+                            'Really Long series name that is very long indeed. Really Long series name that is very long indeed.',
+                        start: Date.UTC(2014, 10, 23),
+                        end: Date.UTC(2014, 10, 26)
+                    }
+                ]
+            }
+        ]
     });
 
     const yAxis = chart.yAxis[0],
@@ -1754,24 +2027,28 @@ QUnit.test('yAxis label adjustment #10281', assert => {
 
 QUnit.test('yAxis max value #10779', assert => {
     const chart = Highcharts.ganttChart('container', {
-
         yAxis: {
             max: 5
         },
 
-        series: [{
-            data: [{
-                start: 1595548800000,
-                end: 1595808000000,
-                y: 0,
-                name: 'test'
-            }, {
-                start: 1595808000000,
-                end: 1596067200000,
-                y: 1,
-                name: 'test1'
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        start: 1595548800000,
+                        end: 1595808000000,
+                        y: 0,
+                        name: 'test'
+                    },
+                    {
+                        start: 1595808000000,
+                        end: 1596067200000,
+                        y: 1,
+                        name: 'test1'
+                    }
+                ]
+            }
+        ]
     });
 
     const yAxis = chart.yAxis[0];
@@ -1783,35 +2060,111 @@ QUnit.test('yAxis max value #10779', assert => {
     );
 });
 
-QUnit.test('When the grid axis label has format "%E", time zone declared per chart should be respected., #13591.', assert => {
-    const chart = Highcharts.ganttChart('container', {
-        chart: {
-            width: 500
-        },
-        time: {
-            timezoneOffset: -4 * 60
-        },
-        xAxis: [{
-            min: Date.UTC(2020, 4, 29),
-            max: Date.UTC(2020, 5, 5)
-        }, {}],
-        series: [{
-            data: [{
-                name: "Task 1",
-                start: Date.UTC(2020, 5, 2),
-                end: Date.UTC(2020, 5, 3)
+QUnit.test(
+    'When the grid axis label has format "%E", time zone declared per chart should be respected., #13591.',
+    assert => {
+        const chart = Highcharts.ganttChart('container', {
+            chart: {
+                width: 500
+            },
+            time: {
+                timezoneOffset: -4 * 60
+            },
+            xAxis: [
+                {
+                    min: Date.UTC(2020, 4, 29),
+                    max: Date.UTC(2020, 5, 5)
+                },
+                {}
+            ],
+            series: [
+                {
+                    data: [
+                        {
+                            name: 'Task 1',
+                            start: Date.UTC(2020, 5, 2),
+                            end: Date.UTC(2020, 5, 3)
+                        }
+                    ]
+                }
+            ]
+        });
+
+        assert.strictEqual(
+            chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[0]].label.textStr,
+            'F',
+            'The first tick should be "F" shortcut from Friday.'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[1]].label.textStr,
+            'S',
+            'The second tick should be "S" shortcut from Saturday.'
+        );
+    }
+);
+
+QUnit.test(
+    'Grid axis code should not interfere with non-Gantt type charts, 14868.',
+    assert => {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                zoomType: 'x'
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+            series: [{
+                type: 'xrange',
+                data: [{
+                    x: Date.UTC(2014, 11, 8),
+                    x2: Date.UTC(2014, 11, 9),
+                    y: 0
+                }, {
+                    x: Date.UTC(2014, 11, 9),
+                    x2: Date.UTC(2014, 11, 19),
+                    y: 1
+                }, {
+                    x: Date.UTC(2014, 11, 10),
+                    x2: Date.UTC(2014, 11, 23),
+                    y: 2
+                }]
             }]
+        });
+
+        assert.notOk(
+            chart.xAxis[0].options.labels.align,
+            'Label align options should not be defined.'
+        );
+        chart.xAxis[0].setExtremes(
+            Date.UTC(2014, 11, 8),
+            Date.UTC(2014, 11, 10)
+        );
+        assert.notOk(
+            chart.xAxis[0].options.labels.align,
+            'Label align options should still not be defined.'
+        );
+    }
+);
+
+QUnit.test('slotWidth', assert => {
+    const chart = Highcharts.ganttChart("container", {
+        chart: {
+            width: 600
+        },
+        series: [{
+            data: [
+                {
+                    start: Date.UTC(2017, 8, 1),
+                    end: Date.UTC(2017, 11, 4)
+                }
+            ]
         }]
     });
 
-    assert.strictEqual(
-        chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[0]].label.textStr,
-        "F",
-        'The first tick should be "F" shortcut from Friday.'
-    );
-    assert.strictEqual(
-        chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[1]].label.textStr,
-        "S",
-        'The second tick should be "S" shortcut from Saturday.'
+    const axis = chart.xAxis[1];
+
+    assert.ok(
+        axis.ticks[axis.tickPositions[3]].slotWidth < 30,
+        '#15742: Rightmost tick slotWidth should be much smaller than the other ticks'
     );
 });

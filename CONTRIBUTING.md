@@ -43,7 +43,7 @@ Your issue should:
 
 ## Suggesting Features and Enhancements
 
-Features and enhancements can be suggested on [user voice](https://highcharts.uservoice.com/).
+Features and enhancements can be suggested on [UserVoice](https://highcharts.uservoice.com/).
 
 ## Contributing Code
 
@@ -55,10 +55,10 @@ will be part of the Highcharts source base, which is a commercial product.
 For this reason, submissions may not contain code that prevents or limits commercial usage in closed-source applications.
 To ensure this, submissions must be licensed using one of the following licenses:
 
-* [Apache License 2.0](http://opensource.org/licenses/apache2.0)
-* [BSD Licence](http://www.opensource.org/licenses/BSD-3-Clause)
-* [MIT / X11 License](http://www.opensource.org/licenses/MIT)
-* [Mozilla Public License](http://www.opensource.org/licenses/MPL-2.0)
+* [Apache License 2.0](https://opensource.org/licenses/apache2.0)
+* [BSD Licence](https://opensource.org/licenses/BSD-3-Clause)
+* [MIT / X11 License](https://opensource.org/licenses/MIT)
+* [Mozilla Public License](https://opensource.org/licenses/MPL-2.0)
 
 No other license is permitted for contributions.
 
@@ -95,7 +95,7 @@ We use the following JavaScript style:
 * no `console.*`
 * single quotes
 
-This style is enforced by ESLint, which is ran in a post-commit hook.
+This style is enforced by ESLint, which is run in a post-commit hook.
 
 ### Pull Requests
 

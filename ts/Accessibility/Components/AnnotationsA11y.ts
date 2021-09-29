@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Annotations accessibility code.
  *
@@ -38,7 +38,10 @@ function getChartAnnotationLabels(
         acc: Array<Highcharts.AnnotationLabelType>,
         cur: Annotation
     ): Array<Highcharts.AnnotationLabelType> => {
-        if (cur.options?.visible !== false) {
+        if (
+            cur.options &&
+            cur.options.visible !== false
+        ) {
             acc = acc.concat(cur.labels);
         }
         return acc;
@@ -54,8 +57,19 @@ function getChartAnnotationLabels(
  * @return {string} The text in the label.
  */
 function getLabelText(label: Highcharts.AnnotationLabelType): string {
-    const a11yDesc = label.options?.accessibility?.description;
-    return a11yDesc ? a11yDesc : label.graphic?.text?.textStr || '';
+    return (
+        (
+            label.options &&
+            label.options.accessibility &&
+            label.options.accessibility.description
+        ) ||
+        (
+            label.graphic &&
+            label.graphic.text &&
+            label.graphic.text.textStr
+        ) ||
+        ''
+    );
 }
 
 
@@ -67,7 +81,12 @@ function getLabelText(label: Highcharts.AnnotationLabelType): string {
  * @return {string} The description for the label.
  */
 function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): string {
-    const a11yDesc = label.options?.accessibility?.description;
+    const a11yDesc = (
+        label.options &&
+        label.options.accessibility &&
+        label.options.accessibility.description
+    );
+
     if (a11yDesc) {
         return a11yDesc;
     }
@@ -75,11 +94,23 @@ function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): s
     const chart = label.chart;
     const labelText = getLabelText(label);
     const points = label.points as Array<Highcharts.AccessibilityPoint>;
-    const getAriaLabel = (point: Point): string =>
-        point?.graphic?.element?.getAttribute('aria-label') || '';
+    const getAriaLabel = (point: Point): string => (
+        point.graphic &&
+        point.graphic.element &&
+        point.graphic.element.getAttribute('aria-label') ||
+        ''
+    );
     const getValueDesc = (point: Highcharts.AccessibilityPoint): string => {
-        const valDesc = point?.accessibility?.valueDescription || getAriaLabel(point);
-        const seriesName = point?.series.name || '';
+        const valDesc = (
+            point.accessibility &&
+            point.accessibility.valueDescription ||
+            getAriaLabel(point)
+        );
+        const seriesName = (
+            point &&
+            point.series.name ||
+            ''
+        );
         return (seriesName ? seriesName + ', ' : '') + 'data point ' + valDesc;
     };
     const pointValueDescriptions = points
@@ -91,6 +122,7 @@ function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): s
     const langFormatStr = 'accessibility.screenReaderSection.annotations.description' + pointsSelector;
     const context = {
         annotationText: labelText,
+        annotation: label,
         numPoints: numPoints,
         annotationPoint: pointValueDescriptions[0],
         additionalAnnotationPoints: pointValueDescriptions.slice(1)
@@ -136,7 +168,7 @@ function getAnnotationsInfoHTML(chart: Highcharts.AnnotationChart): string {
     }
 
     const annotationItems = getAnnotationListItems(chart);
-    return `<ul>${annotationItems.join(' ')}</ul>`;
+    return `<ul style="list-style-type: none">${annotationItems.join(' ')}</ul>`;
 }
 
 

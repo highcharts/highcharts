@@ -1,24 +1,21 @@
 // Give the points a 3D feel by adding a radial gradient
 Highcharts.setOptions({
-    colors: $.map(Highcharts.getOptions().colors, function (color) {
-        return {
-            radialGradient: {
-                cx: 0.4,
-                cy: 0.3,
-                r: 0.5
-            },
-            stops: [
-                [0, color],
-                [1, Highcharts.color(color).brighten(-0.2).get('rgb')]
-            ]
-        };
-    })
+    colors: Highcharts.getOptions().colors.map(color => ({
+        radialGradient: {
+            cx: 0.4,
+            cy: 0.3,
+            r: 0.5
+        },
+        stops: [
+            [0, color],
+            [1, Highcharts.color(color).brighten(-0.2).get('rgb')]
+        ]
+    }))
 });
 
 // Set up the chart
-var chart = new Highcharts.Chart({
+const chart = Highcharts.chart('container', {
     chart: {
-        renderTo: 'container',
         margin: 100,
         type: 'scatter3d',
         options3d: {
@@ -196,33 +193,42 @@ var chart = new Highcharts.Chart({
     }]
 });
 
-
-// Add mouse events for rotation
-$(chart.container).on('mousedown.hc touchstart.hc', function (eStart) {
+function start(eStart) {
     eStart = chart.pointer.normalize(eStart);
 
-    var posX = eStart.pageX,
+    const posX = eStart.pageX,
         posY = eStart.pageY,
         alpha = chart.options.chart.options3d.alpha,
         beta = chart.options.chart.options3d.beta,
-        newAlpha,
-        newBeta,
         sensitivity = 5; // lower is more sensitive
 
-    $(document).on({
-        'mousemove.hc touchdrag.hc': function (e) {
-            // Run beta
-            newBeta = beta + (posX - e.pageX) / sensitivity;
-            chart.options.chart.options3d.beta = newBeta;
+    const move = e => {
+        // Run beta
+        const newBeta = beta + (posX - e.pageX) / sensitivity;
+        chart.options.chart.options3d.beta = newBeta;
 
-            // Run alpha
-            newAlpha = alpha + (e.pageY - posY) / sensitivity;
-            chart.options.chart.options3d.alpha = newAlpha;
+        // Run alpha
+        const newAlpha = alpha + (e.pageY - posY) / sensitivity;
+        chart.options.chart.options3d.alpha = newAlpha;
 
-            chart.redraw(false);
-        },
-        'mouseup touchend': function () {
-            $(document).off('.hc');
-        }
-    });
-});
+        chart.redraw(false);
+    };
+
+    const end = () => {
+        document.removeEventListener('mousemove', move);
+        document.removeEventListener('touchdrag', move);
+
+        document.removeEventListener('mouseup', end);
+        document.removeEventListener('touchend', end);
+    };
+
+    document.addEventListener('mousemove', move);
+    document.addEventListener('touchdrag', move);
+
+    document.addEventListener('mouseup', end);
+    document.addEventListener('touchend', end);
+}
+
+// Add mouse events for rotation
+chart.container.addEventListener('mousedown', start);
+chart.container.addEventListener('touchstart', start);

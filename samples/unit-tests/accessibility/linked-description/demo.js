@@ -54,7 +54,10 @@ const html = `
 // Create a chart, optionally with a linkedDescriptionOption, and test its
 // longdesc against an expected value.
 function createChartAndAssertLongDesc(
-    assert, container, expectedDesc, linkedDescriptionOption
+    assert,
+    container,
+    expectedDesc,
+    linkedDescriptionOption
 ) {
     const options = {
         chart: {
@@ -80,7 +83,6 @@ function createChartAndAssertLongDesc(
 }
 
 QUnit.module('linked-description', function (hooks) {
-
     // Dynamically set HTML content because of Karma HTML template
     const container = document.getElementById('container');
     hooks.before(() => (container.innerHTML = html));
@@ -111,7 +113,11 @@ QUnit.module('linked-description', function (hooks) {
         function (assert) {
             const descNode = document.getElementById('explicitDescriptionId'),
                 chartsWithExpectedDescriptions = [
-                    ['containerExplicit1', '#explicitDescriptionId', 'Explicit1'],
+                    [
+                        'containerExplicit1',
+                        '#explicitDescriptionId',
+                        'Explicit1'
+                    ],
                     ['containerExplicit2', '.uniqueClassName', 'Explicit2'],
                     ['containerExplicit3', descNode, 'Explicit1']
                 ];
@@ -119,7 +125,10 @@ QUnit.module('linked-description', function (hooks) {
             chartsWithExpectedDescriptions.forEach(
                 ([container, linkedDescOpt, expectedDesc]) => {
                     createChartAndAssertLongDesc(
-                        assert, container, expectedDesc, linkedDescOpt
+                        assert,
+                        container,
+                        expectedDesc,
+                        linkedDescOpt
                     );
                 }
             );

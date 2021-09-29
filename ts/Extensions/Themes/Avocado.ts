@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *
  *  Author: Øystein Moseng
  *
@@ -13,33 +13,77 @@
  *
  * */
 
-import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Options from '../../Core/Options';
+import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
+
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
-const { setOptions } = U;
 
-H.theme = {
-    colors: ['#F3E796', '#95C471', '#35729E', '#251735'],
+/* *
+ *
+ *  Theme
+ *
+ * */
 
-    colorAxis: {
-        maxColor: '#05426E',
-        minColor: '#F3E796'
-    },
+namespace AvocadoTheme {
 
-    plotOptions: {
-        map: {
-            nullColor: '#FCFEFE'
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    export const options: DeepPartial<Options> = {
+        colors: ['#F3E796', '#95C471', '#35729E', '#251735'],
+
+        colorAxis: {
+            maxColor: '#05426E',
+            minColor: '#F3E796'
+        },
+
+        plotOptions: {
+            map: {
+                nullColor: '#FCFEFE'
+            }
+        } as SeriesTypePlotOptions,
+
+        navigator: {
+            maskFill: 'rgba(170, 205, 170, 0.5)',
+            series: {
+                color: '#95C471',
+                lineColor: '#35729E'
+            }
         }
-    } as SeriesPlotOptionsType,
+    };
 
-    navigator: {
-        maskFill: 'rgba(170, 205, 170, 0.5)',
-        series: {
-            color: '#95C471',
-            lineColor: '#35729E'
-        }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Apply the theme.
+     */
+    export function apply(): void {
+        setOptions(options);
     }
-};
 
-// Apply the theme
-setOptions(H.theme);
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default AvocadoTheme;

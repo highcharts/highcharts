@@ -1,54 +1,59 @@
 QUnit.test('Drilldown across types', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: 'Drilldown from column to pie'
+        },
+        xAxis: {
+            type: 'category',
+            showEmpty: false
+        },
+        yAxis: {
+            showEmpty: false
+        },
 
-    var chart = Highcharts
-        .chart('container', {
-            chart: {
-                type: 'pie'
-            },
-            title: {
-                text: 'Drilldown from column to pie'
-            },
-            xAxis: {
-                type: 'category',
-                showEmpty: false
-            },
-            yAxis: {
-                showEmpty: false
-            },
+        legend: {
+            enabled: false
+        },
 
-            legend: {
-                enabled: false
-            },
-
-            plotOptions: {
-                series: {
-                    borderWidth: 0,
-                    dataLabels: {
-                        enabled: true
-                    }
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true
                 }
-            },
+            }
+        },
 
-            series: [{
+        series: [
+            {
                 name: 'Things',
                 colorByPoint: true,
-                data: [{
-                    name: 'Animals',
-                    y: 5,
-                    drilldown: 'animals'
-                }, {
-                    name: 'Fruits',
-                    y: 2,
-                    drilldown: 'fruits'
-                }, {
-                    name: 'Cars',
-                    y: 4,
-                    drilldown: 'cars'
-                }],
+                data: [
+                    {
+                        name: 'Animals',
+                        y: 5,
+                        drilldown: 'animals'
+                    },
+                    {
+                        name: 'Fruits',
+                        y: 2,
+                        drilldown: 'fruits'
+                    },
+                    {
+                        name: 'Cars',
+                        y: 4,
+                        drilldown: 'cars'
+                    }
+                ],
                 type: 'column'
-            }],
-            drilldown: {
-                series: [{
+            }
+        ],
+        drilldown: {
+            series: [
+                {
                     id: 'animals',
                     name: 'Animals series',
                     data: [
@@ -58,71 +63,58 @@ QUnit.test('Drilldown across types', function (assert) {
                         ['Sheep', 2],
                         ['Pigs', 1]
                     ]
-                }, {
+                },
+                {
                     id: 'fruits',
                     data: [
                         ['Apples', 4],
                         ['Oranges', 2]
                     ]
-                }, {
+                },
+                {
                     id: 'cars',
                     data: [
                         ['Toyota', 4],
                         ['Opel', 2],
                         ['Volkswagen', 2]
                     ]
-                }]
-            }
-        });
+                }
+            ]
+        }
+    });
 
     chart.options.drilldown.animation = false;
 
-    assert.equal(
-        chart.series.length,
-        1,
-        'Chart created'
-    );
+    assert.equal(chart.series.length, 1, 'Chart created');
 
     chart.series[0].points[0].doDrilldown();
 
-    assert.equal(
-        chart.series[0].name,
-        'Animals series',
-        'Second level name'
-    );
+    assert.equal(chart.series[0].name, 'Animals series', 'Second level name');
 
-    assert.equal(
-        chart.series[0].type,
-        'pie',
-        'Second level type'
-    );
+    assert.equal(chart.series[0].type, 'pie', 'Second level type');
 
     // Check that the point actually draws an arc
     assert.equal(
-        typeof chart.series[0].points[0].graphic.element.getAttribute('d').indexOf('A'),
+        typeof chart.series[0].points[0].graphic.element
+            .getAttribute('d')
+            .indexOf('A'),
         'number',
         'Point is arc'
     );
 
     assert.notEqual(
-        chart.series[0].points[0].graphic.element.getAttribute('d').indexOf('A'),
+        chart.series[0].points[0].graphic.element
+            .getAttribute('d')
+            .indexOf('A'),
         -1,
         'Point is arc'
     );
 
     chart.drillUp();
 
-    assert.equal(
-        chart.series[0].name,
-        'Things',
-        'First level name'
-    );
+    assert.equal(chart.series[0].name, 'Things', 'First level name');
 
-    assert.equal(
-        chart.series[0].type,
-        'column',
-        'First level type'
-    );
+    assert.equal(chart.series[0].type, 'column', 'First level type');
 
     chart = Highcharts.chart('container', {
         xAxis: {
@@ -135,52 +127,68 @@ QUnit.test('Drilldown across types', function (assert) {
         legend: {
             enabled: false
         },
-        series: [{
-            type: 'column',
-            data: [{
-                name: "Drilldown",
-                y: 62.74,
-                drilldown: "tree"
-            }, {
-                name: "A",
-                y: 10.57
-            }]
-        }],
+        series: [
+            {
+                type: 'column',
+                data: [
+                    {
+                        name: 'Drilldown',
+                        y: 62.74,
+                        drilldown: 'tree'
+                    },
+                    {
+                        name: 'A',
+                        y: 10.57
+                    }
+                ]
+            }
+        ],
         drilldown: {
-            series: [{
-                type: "treemap",
-                id: 'tree',
-                layoutAlgorithm: 'stripes',
-                levels: [{
-                    level: 1,
-                    layoutAlgorithm: 'sliceAndDice'
-                }],
-                data: [{
-                    id: 'A',
-                    name: 'Apples',
-                    color: "#EC2500"
-                }, {
-                    id: 'B',
-                    name: 'Bananas',
-                    color: "#ECE100"
-                }, {
-                    name: 'Anne',
-                    parent: 'A',
-                    value: 5
-                }, {
-                    name: 'Rick',
-                    parent: 'A',
-                    value: 3
-                }, {
-                    name: 'Peter',
-                    parent: 'A',
-                    value: 4
-                }, {
-                    name: 'Anne',
-                    parent: 'B',
-                    value: 4
-                }]
-            }]
+            series: [
+                {
+                    type: 'treemap',
+                    id: 'tree',
+                    layoutAlgorithm: 'stripes',
+                    levels: [
+                        {
+                            level: 1,
+                            layoutAlgorithm: 'sliceAndDice'
+                        }
+                    ],
+                    data: [
+                        {
+                            id: 'A',
+                            name: 'Apples',
+                            color: '#EC2500'
+                        },
+                        {
+                            id: 'B',
+                            name: 'Bananas',
+                            color: '#ECE100'
+                        },
+                        {
+                            name: 'Anne',
+                            parent: 'A',
+                            value: 5
+                        },
+                        {
+                            name: 'Rick',
+                            parent: 'A',
+                            value: 3
+                        },
+                        {
+                            name: 'Peter',
+                            parent: 'A',
+                            value: 4
+                        },
+                        {
+                            name: 'Anne',
+                            parent: 'B',
+                            value: 4
+                        }
+                    ]
+                }
+            ]
         }
     });
 
@@ -204,53 +212,69 @@ QUnit.test('Drilldown across types', function (assert) {
         legend: {
             enabled: false
         },
-        series: [{
-            type: "treemap",
-            id: 'tree',
-            layoutAlgorithm: 'stripes',
-            levels: [{
-                level: 1,
-                layoutAlgorithm: 'sliceAndDice'
-            }],
-            data: [{
-                id: 'A',
-                name: 'Apples',
-                color: "#EC2500"
-            }, {
-                id: 'B',
-                name: 'Bananas',
-                color: "#ECE100"
-            }, {
-                name: 'Anne',
-                parent: 'A',
-                value: 5,
-                drilldown: "column"
-            }, {
-                name: 'Rick',
-                parent: 'A',
-                value: 3
-            }, {
-                name: 'Peter',
-                parent: 'A',
-                value: 4
-            }, {
-                name: 'Anne',
-                parent: 'B',
-                value: 4
-            }]
-        }],
+        series: [
+            {
+                type: 'treemap',
+                id: 'tree',
+                layoutAlgorithm: 'stripes',
+                levels: [
+                    {
+                        level: 1,
+                        layoutAlgorithm: 'sliceAndDice'
+                    }
+                ],
+                data: [
+                    {
+                        id: 'A',
+                        name: 'Apples',
+                        color: '#EC2500'
+                    },
+                    {
+                        id: 'B',
+                        name: 'Bananas',
+                        color: '#ECE100'
+                    },
+                    {
+                        name: 'Anne',
+                        parent: 'A',
+                        value: 5,
+                        drilldown: 'column'
+                    },
+                    {
+                        name: 'Rick',
+                        parent: 'A',
+                        value: 3
+                    },
+                    {
+                        name: 'Peter',
+                        parent: 'A',
+                        value: 4
+                    },
+                    {
+                        name: 'Anne',
+                        parent: 'B',
+                        value: 4
+                    }
+                ]
+            }
+        ],
         drilldown: {
-            series: [{
-                type: 'column',
-                id: 'column',
-                data: [{
-                    name: "Drilldown",
-                    y: 62.74
-                }, {
-                    name: "A",
-                    y: 10.57
-                }]
-            }]
+            series: [
+                {
+                    type: 'column',
+                    id: 'column',
+                    data: [
+                        {
+                            name: 'Drilldown',
+                            y: 62.74
+                        },
+                        {
+                            name: 'A',
+                            y: 10.57
+                        }
+                    ]
+                }
+            ]
         }
     });
 

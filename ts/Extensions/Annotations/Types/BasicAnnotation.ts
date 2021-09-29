@@ -8,26 +8,15 @@
 
 import type ControllableCircle from '../Controllables/ControllableCircle';
 import type ControllableRect from '../Controllables/ControllableRect';
+import type MockPointOptions from '../MockPointOptions';
+import type PointerEvent from '../../../Core/PointerEvent';
+import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotations.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
     merge
 } = U;
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationBasicControlPoints {
-            label: DeepPartial<AnnotationControlPointOptionsObject>[];
-            rectangle: DeepPartial<AnnotationControlPointOptionsObject>[];
-            circle: DeepPartial<AnnotationControlPointOptionsObject>[];
-        }
-    }
-}
 
 /* eslint-disable no-invalid-this */
 
@@ -39,20 +28,20 @@ class BasicAnnotation extends Annotation {
      *
      * */
 
-    public static basicControlPoints: Highcharts.AnnotationBasicControlPoints = {
+    public static basicControlPoints: BasicAnnotation.ControlPoints = {
         label: [{
             symbol: 'triangle-down',
             positioner: function (
                 this: Highcharts.AnnotationControlPoint,
                 target: Highcharts.AnnotationControllable
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 if (!target.graphic.placed) {
                     return {
                         x: 0,
                         y: -9e7
                     };
                 }
-                var xy = MockPoint
+                const xy = MockPoint
                     .pointToPixels(target.points[0]);
                 return {
                     x: xy.x - this.graphic.width / 2,
@@ -66,7 +55,7 @@ class BasicAnnotation extends Annotation {
                     e: Highcharts.AnnotationEventObject,
                     target: Annotation
                 ): void {
-                    var xy = this.mouseMoveToTranslation(e);
+                    const xy = this.mouseMoveToTranslation(e);
 
                     (target.translatePoint as any)(xy.x, xy.y);
 
@@ -80,7 +69,7 @@ class BasicAnnotation extends Annotation {
             positioner: function (
                 this: Highcharts.AnnotationControlPoint,
                 target: Highcharts.AnnotationControllable
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 if (!target.graphic.placed) {
                     return {
                         x: 0,
@@ -102,7 +91,7 @@ class BasicAnnotation extends Annotation {
                     e: Highcharts.AnnotationEventObject,
                     target: Highcharts.AnnotationControllable
                 ): void {
-                    var xy = this.mouseMoveToTranslation(e);
+                    const xy = this.mouseMoveToTranslation(e);
                     target.translate(xy.x, xy.y);
 
                     target.annotation.userOptions.labels[0].point =
@@ -114,8 +103,8 @@ class BasicAnnotation extends Annotation {
         }],
 
         rectangle: [{
-            positioner: function (annotation: Annotation): Highcharts.PositionObject {
-                var xy = MockPoint
+            positioner: function (annotation: Annotation): PositionObject {
+                const xy = MockPoint
                     .pointToPixels(annotation.points[2]);
                 return {
                     x: xy.x - 4,
@@ -125,14 +114,14 @@ class BasicAnnotation extends Annotation {
             events: {
                 drag: function (
                     this: Annotation,
-                    e: Highcharts.PointerEventObject,
+                    e: PointerEvent,
                     target: ControllableRect
                 ): void {
-                    var annotation = target.annotation,
+                    const annotation = target.annotation,
                         coords = this.chart.pointer.getCoordinates(e),
                         x = coords.xAxis[0].value,
                         y = coords.yAxis[0].value,
-                        points: Array<Highcharts.AnnotationMockPointOptionsObject> = target.options.points as any;
+                        points: Array<MockPointOptions> = target.options.points as any;
 
                     // Top right point
                     points[1].x = x;
@@ -153,8 +142,8 @@ class BasicAnnotation extends Annotation {
             positioner: function (
                 this: Highcharts.AnnotationControlPoint,
                 target: Highcharts.AnnotationControllable
-            ): Highcharts.PositionObject {
-                var xy = MockPoint.pointToPixels(target.points[0]),
+            ): PositionObject {
+                const xy = MockPoint.pointToPixels(target.points[0]),
                     r: number = target.options.r as any;
                 return {
                     x: xy.x + r * Math.cos(Math.PI / 4) -
@@ -171,7 +160,7 @@ class BasicAnnotation extends Annotation {
                     e: Highcharts.AnnotationEventObject,
                     target: ControllableCircle
                 ): void {
-                    var annotation = target.annotation,
+                    const annotation = target.annotation,
                         position = this.mouseMoveToTranslation(e);
 
                     target.setRadius(
@@ -248,12 +237,36 @@ interface BasicAnnotation {
     defaultOptions: Annotation['defaultOptions'];
     basicType: string;
 }
+namespace BasicAnnotation {
+    export interface ControlPoints {
+        label: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
+        rectangle: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
+        circle: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
+    }
+}
 
 BasicAnnotation.prototype.defaultOptions = merge(
     Annotation.prototype.defaultOptions,
     {}
 );
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+
 Annotation.types.basicAnnotation = BasicAnnotation;
+declare module './AnnotationType' {
+    interface AnnotationTypeRegistry {
+        basicAnnotation: typeof BasicAnnotation;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default BasicAnnotation;

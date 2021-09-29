@@ -5,9 +5,11 @@ QUnit.test('Center the halo on the point(#4689)', function (assert) {
                 width: 500,
                 height: 300
             },
-            series: [{
-                data: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
-            }],
+            series: [
+                {
+                    data: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+                }
+            ],
             plotOptions: {
                 line: {
                     marker: {
@@ -55,58 +57,51 @@ QUnit.test('Center the halo on the point(#4689)', function (assert) {
     }
 });
 
-/* global TestController */
-
-QUnit.test(
-    'Point inactive state - basics',
-    function (assert) {
-
-        var chart = Highcharts.chart('container', {
-                plotOptions: {
-                    series: {
+QUnit.test('Point inactive state - basics', function (assert) {
+    var chart = Highcharts.chart('container', {
+            plotOptions: {
+                series: {
+                    states: {
+                        inactive: {
+                            opacity: 0.1,
+                            animation: false
+                        }
+                    },
+                    marker: {
                         states: {
                             inactive: {
-                                opacity: 0.1,
-                                animation: false
-                            }
-                        },
-                        marker: {
-                            states: {
-                                inactive: {
-                                    opacity: 0.1
-                                }
+                                opacity: 0.1
                             }
                         }
                     }
-                },
-                series: [{
+                }
+            },
+            series: [
+                {
                     data: [5, 10, 15]
-                }, {
+                },
+                {
                     data: [15, 15, 13]
-                }]
-            }),
-            controller = new TestController(chart);
+                }
+            ]
+        }),
+        controller = new TestController(chart);
 
-        controller.mouseMove(
-            chart.series[0].points[1].plotX + chart.plotLeft + 15,
-            chart.series[0].points[1].plotY + chart.plotTop
-        );
+    controller.mouseMove(
+        chart.series[0].points[1].plotX + chart.plotLeft + 15,
+        chart.series[0].points[1].plotY + chart.plotTop
+    );
 
-        assert.strictEqual(
-            Highcharts.attr(
-                chart.series[1].group.element,
-                'opacity'
-            ),
-            '0.1',
-            'Correct opacity for inactive series.'
-        );
-    }
-);
+    assert.strictEqual(
+        Highcharts.attr(chart.series[1].group.element, 'opacity'),
+        '0.1',
+        'Correct opacity for inactive series.'
+    );
+});
 
 QUnit.test(
     'Point inactive state - series mix, shared tooltip, legend',
     function (assert) {
-
         var chart = Highcharts.chart('container', {
                 plotOptions: {
                     series: {
@@ -129,13 +124,16 @@ QUnit.test(
                 tooltip: {
                     shared: true
                 },
-                series: [{
-                    data: [5, 10, 15]
-                }, {
-                    type: 'column',
-                    data: [15, 15, 13, 16],
-                    allowPointSelect: true
-                }]
+                series: [
+                    {
+                        data: [5, 10, 15]
+                    },
+                    {
+                        type: 'column',
+                        data: [15, 15, 13, 16],
+                        allowPointSelect: true
+                    }
+                ]
             }),
             legend = chart.legend,
             controller = new TestController(chart);
@@ -146,19 +144,13 @@ QUnit.test(
         );
 
         assert.ok(
-            Highcharts.attr(
-                chart.series[0].group.element,
-                'opacity'
-            ) !== '0.1',
+            Highcharts.attr(chart.series[0].group.element, 'opacity') !== '0.1',
             'Shared tooltip: no change in opacity when Series 1' +
                 ' has hovered points'
         );
 
         assert.ok(
-            Highcharts.attr(
-                chart.series[1].group.element,
-                'opacity'
-            ) !== '0.1',
+            Highcharts.attr(chart.series[1].group.element, 'opacity') !== '0.1',
             'Shared tooltip: no change in opacity when Series 2' +
                 ' has hovered points'
         );
@@ -169,20 +161,14 @@ QUnit.test(
         );
 
         assert.strictEqual(
-            Highcharts.attr(
-                chart.series[0].group.element,
-                'opacity'
-            ),
+            Highcharts.attr(chart.series[0].group.element, 'opacity'),
             '0.1',
             'Shared tooltip: Series 1 has no point for shared tooltip,' +
                 ' opacity changed'
         );
 
         assert.ok(
-            Highcharts.attr(
-                chart.series[1].group.element,
-                'opacity'
-            ) !== '0.1',
+            Highcharts.attr(chart.series[1].group.element, 'opacity') !== '0.1',
             'Shared tooltip: no change in opacity when Series 1' +
                 ' has hovered points'
         );
@@ -193,19 +179,13 @@ QUnit.test(
         );
 
         assert.strictEqual(
-            Highcharts.attr(
-                chart.series[0].group.element,
-                'opacity'
-            ),
+            Highcharts.attr(chart.series[0].group.element, 'opacity'),
             '0.1',
             'Legend hover: correct inactive series opacity'
         );
 
         assert.ok(
-            Highcharts.attr(
-                chart.series[1].group.element,
-                'opacity'
-            ) !== '0.1',
+            Highcharts.attr(chart.series[1].group.element, 'opacity') !== '0.1',
             'Legend hover: correct hovered series opacity'
         );
 
@@ -229,15 +209,12 @@ QUnit.test(
             '',
             'Correct state for column after deselection (#10504)'
         );
-
     }
 );
-
 
 QUnit.test(
     'Point inactive state - series with inactive points within',
     function (assert) {
-
         var chart = Highcharts.chart('container', {
                 plotOptions: {
                     series: {
@@ -257,18 +234,24 @@ QUnit.test(
                         }
                     }
                 },
-                series: [{
-                    type: 'networkgraph',
-                    layoutAlgorithm: {
-                        integration: 'verlet'
+                series: [
+                    {
+                        type: 'networkgraph',
+                        layoutAlgorithm: {
+                            integration: 'verlet'
+                        },
+                        keys: ['from', 'to'],
+                        data: [
+                            ['A', 'B'],
+                            ['B', 'C']
+                        ]
                     },
-                    keys: ['from', 'to'],
-                    data: [['A', 'B'], ['B', 'C']]
-                }, {
-                    type: 'pie',
-                    showInLegend: true,
-                    data: [5, 10]
-                }]
+                    {
+                        type: 'pie',
+                        showInLegend: true,
+                        data: [5, 10]
+                    }
+                ]
             }),
             legend = chart.legend,
             controller = new TestController(chart);
@@ -370,19 +353,72 @@ QUnit.test('Dynamic point states', function (assert) {
             tooltip: {
                 shared: true
             },
-            series: [{
-                type: 'line',
-                data: [1, 2, 1, 2, 1, 3, 3, 5, 6, 6, 54, 4, 3, 3, 2, 2, 2, 3, 4, 4, 5, 56, 7, 7],
-                marker: {
-                    enabled: false
+            series: [
+                {
+                    type: 'line',
+                    data: [
+                        1,
+                        2,
+                        1,
+                        2,
+                        1,
+                        3,
+                        3,
+                        5,
+                        6,
+                        6,
+                        54,
+                        4,
+                        3,
+                        3,
+                        2,
+                        2,
+                        2,
+                        3,
+                        4,
+                        4,
+                        5,
+                        56,
+                        7,
+                        7
+                    ],
+                    marker: {
+                        enabled: false
+                    }
+                },
+                {
+                    type: 'line',
+                    data: [
+                        1,
+                        2,
+                        1,
+                        2,
+                        1,
+                        3,
+                        3,
+                        5,
+                        6,
+                        6,
+                        54,
+                        4,
+                        3,
+                        3,
+                        2,
+                        2,
+                        2,
+                        3,
+                        4,
+                        4,
+                        5,
+                        56,
+                        7,
+                        7
+                    ].reverse(),
+                    marker: {
+                        enabled: false
+                    }
                 }
-            }, {
-                type: 'line',
-                data: [1, 2, 1, 2, 1, 3, 3, 5, 6, 6, 54, 4, 3, 3, 2, 2, 2, 3, 4, 4, 5, 56, 7, 7].reverse(),
-                marker: {
-                    enabled: false
-                }
-            }]
+            ]
         }),
         topX = chart.xAxis[0].toPixels(8.9, true),
         topY = chart.yAxis[0].toPixels(0),
@@ -402,7 +438,8 @@ QUnit.test('Dynamic point states', function (assert) {
             haloBox.x + haloBox.width / 2,
             point.plotX,
             1,
-            'Point index: ' + index +
+            'Point index: ' +
+                index +
                 ' - correct x-position for halo after zoom (#8284).'
         );
 
@@ -410,90 +447,103 @@ QUnit.test('Dynamic point states', function (assert) {
             haloBox.y + haloBox.height / 2,
             point.plotY,
             1,
-            'Point index: ' + index +
+            'Point index: ' +
+                index +
                 ' - correct y-position for halo after zoom (#8284).'
         );
     });
 });
 
 QUnit.test('Custom point.group option (#5681)', function (assert) {
-
     assert.expect(0);
     Highcharts.chart('container', {
-
         chart: {
             type: 'column'
         },
 
-        series: [{
-            data: [{
-                y: 95,
-                group: 'test'
-            }, {
-                y: 102.9
-            }]
-        }]
-
+        series: [
+            {
+                data: [
+                    {
+                        y: 95,
+                        group: 'test'
+                    },
+                    {
+                        y: 102.9
+                    }
+                ]
+            }
+        ]
     });
 });
 
-QUnit.test('Update className after initially selected (#5777)', function (assert) {
+QUnit.test(
+    'Update className after initially selected (#5777)',
+    function (assert) {
+        ['line', 'column', 'pie'].forEach(function (type) {
+            var chart = Highcharts.chart('container', {
+                chart: {
+                    type: type,
+                    animation: false
+                },
 
-    ['line', 'column', 'pie'].forEach(function (type) {
-        var chart = Highcharts.chart('container', {
+                series: [
+                    {
+                        data: [
+                            {
+                                y: 1,
+                                selected: true,
+                                sliced: true
+                            },
+                            {
+                                y: 2
+                            },
+                            {
+                                y: 3
+                            }
+                        ],
+                        allowPointSelect: true,
+                        animation: false
+                    }
+                ]
+            });
 
-            chart: {
-                type: type,
-                animation: false
-            },
+            assert.strictEqual(
+                chart.series[0].points[0].graphic.hasClass(
+                    'highcharts-point-select'
+                ),
+                true,
+                'Class is there initially (' + type + ')'
+            );
 
-            series: [{
-                data: [{
-                    y: 1,
-                    selected: true,
-                    sliced: true
-                }, {
-                    y: 2
-                }, {
-                    y: 3
-                }],
-                allowPointSelect: true,
-                animation: false
-            }]
-
+            // Select the second point, first point should toggle back to
+            // unselected
+            chart.series[0].points[1].select();
+            assert.strictEqual(
+                chart.series[0].points[0].graphic.hasClass(
+                    'highcharts-point-select'
+                ),
+                false,
+                'Selected class is removed (' + type + ')'
+            );
         });
-
-        assert.strictEqual(
-            chart.series[0].points[0].graphic.hasClass('highcharts-point-select'),
-            true,
-            'Class is there initially (' + type + ')'
-        );
-
-        // Select the second point, first point should toggle back to unselected
-        chart.series[0].points[1].select();
-        assert.strictEqual(
-            chart.series[0].points[0].graphic.hasClass('highcharts-point-select'),
-            false,
-            'Selected class is removed (' + type + ')'
-        );
-    });
-});
+    }
+);
 
 QUnit.test('Update className with Point.update (#6454)', function (assert) {
-
     ['line', 'column', 'pie'].forEach(function (type) {
         var chart = Highcharts.chart('container', {
-
             chart: {
                 type: type,
                 animation: false
             },
 
-            series: [{
-                data: [10, 20, 30],
-                animation: false
-            }]
-
+            series: [
+                {
+                    data: [10, 20, 30],
+                    animation: false
+                }
+            ]
         });
 
         assert.strictEqual(
@@ -517,88 +567,92 @@ QUnit.test(
     'Point with negative color has only one highcharts-negative class',
     function (assert) {
         var chart = Highcharts.chart('container', {
-            series: [{
-                data: [-10, -7, 5, 16],
-                negativeColor: '#123456'
-            }]
+            series: [
+                {
+                    data: [-10, -7, 5, 16],
+                    negativeColor: '#123456'
+                }
+            ]
         });
         assert.strictEqual(
-            Highcharts.attr(chart.series[0].points[0].graphic.element,
-                'class').match(/highcharts-negative/g).length,
+            Highcharts.attr(
+                chart.series[0].points[0].graphic.element,
+                'class'
+            ).match(/highcharts-negative/g).length,
             1,
             'One occurrence of class name'
         );
     }
 );
 
-QUnit.test(
-    'Point with state options (#6401)',
-    function (assert) {
+QUnit.test('Point with state options (#6401)', function (assert) {
+    // Boost module adds hex aliases
+    var names = Highcharts.Color.names;
+    Highcharts.Color.names = {};
 
-        // Boost module adds hex aliases
-        var names = Highcharts.Color.prototype.names;
-        Highcharts.Color.prototype.names = {};
-
-        var color = 'red',
-            chart = Highcharts.chart('container', {
-                chart: {
-                    type: 'column'
-                },
-                plotOptions: {
-                    column: {
-                        states: {
-                            hover: {
-                                color: 'blue'
-                            }
+    var color = 'red',
+        chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
+            plotOptions: {
+                column: {
+                    states: {
+                        hover: {
+                            color: 'blue'
                         }
                     }
-                },
-                series: [{
-                    data: [{
-                        y: 20,
-                        states: {
-                            hover: {
-                                color: color
+                }
+            },
+            series: [
+                {
+                    data: [
+                        {
+                            y: 20,
+                            states: {
+                                hover: {
+                                    color: color
+                                }
                             }
                         }
-                    }]
-                }]
-            });
+                    ]
+                }
+            ]
+        });
 
-        chart.series[0].points[0].setState('hover');
+    chart.series[0].points[0].setState('hover');
 
-        assert.strictEqual(
-            Highcharts.attr(
-                chart.series[0].points[0].graphic.element,
-                'fill'
-            ),
-            color,
-            'Correct fill color on hover'
-        );
+    assert.strictEqual(
+        Highcharts.attr(chart.series[0].points[0].graphic.element, 'fill'),
+        color,
+        'Correct fill color on hover'
+    );
 
-        Highcharts.Color.prototype.names = names;
-    }
-);
+    Highcharts.Color.names = names;
+});
 
 QUnit.test('Select and unselect', function (assert) {
-
     var chart = Highcharts.chart('container', {
-            xAxis: [{
-                min: 0,
-                max: 10
-            }],
-            series: [{
-                cropThreshold: 5,
-                type: 'column',
-                allowPointSelect: true,
-                data: (function (i) {
-                    var tab = [];
-                    while (i--) {
-                        tab.push(i + 1);
-                    }
-                    return tab;
-                }(200))
-            }]
+            xAxis: [
+                {
+                    min: 0,
+                    max: 10
+                }
+            ],
+            series: [
+                {
+                    cropThreshold: 5,
+                    type: 'column',
+                    allowPointSelect: true,
+                    data: (function (i) {
+                        var tab = [];
+                        while (i--) {
+                            tab.push(i + 1);
+                        }
+                        return tab;
+                    }(200))
+                }
+            ]
         }),
         series = chart.series[0],
         axis = chart.xAxis[0];
@@ -621,38 +675,43 @@ QUnit.test('Select and unselect', function (assert) {
 
 QUnit.test('Point className on other elements', function (assert) {
     var chart = Highcharts.chart('container', {
-        series: [{
-            data: [{
-                y: 1
-            }, {
-                y: 2,
-                className: 'my-class'
-            }, {
-                y: 3
-            }],
-            type: 'pie'
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        y: 1
+                    },
+                    {
+                        y: 2,
+                        className: 'my-class'
+                    },
+                    {
+                        y: 3
+                    }
+                ],
+                type: 'pie'
+            }
+        ]
     });
 
     assert.notEqual(
         chart.series[0].points[1].connector.element
-            .getAttribute('class').indexOf('my-class'),
+            .getAttribute('class')
+            .indexOf('my-class'),
         -1,
         'The connector should have the point className'
     );
 
     chart.series[0].points[1].onMouseOver();
     assert.notEqual(
-        chart.series[0].halo.element
-            .getAttribute('class').indexOf('my-class'),
+        chart.series[0].halo.element.getAttribute('class').indexOf('my-class'),
         -1,
         'The halo should have the point className'
     );
 
     chart.series[0].points[0].onMouseOver();
     assert.strictEqual(
-        chart.series[0].halo.element
-            .getAttribute('class').indexOf('my-class'),
+        chart.series[0].halo.element.getAttribute('class').indexOf('my-class'),
         -1,
         'The halo for other points should not have the point className'
     );
@@ -668,11 +727,14 @@ QUnit.test('Deselecting points', function (assert) {
                 allowPointSelect: true
             }
         },
-        series: [{
-            data: [1, 2, 3]
-        }, {
-            data: [1, 2, 3]
-        }]
+        series: [
+            {
+                data: [1, 2, 3]
+            },
+            {
+                data: [1, 2, 3]
+            }
+        ]
     });
 
     chart.series[0].points[1].select(true, true);
@@ -684,5 +746,52 @@ QUnit.test('Deselecting points', function (assert) {
         chart.series[0].options.data['-1'],
         undefined,
         'No fake points in series.options.data after deselecting other points.'
+    );
+});
+
+QUnit.test('#14623: colorIndex Series.update()', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [
+            {
+                data: [
+                    29.9,
+                    {
+                        colorIndex: 4,
+                        y: 71.5
+                    },
+                    106.4,
+                    129.2,
+                    144.0,
+                    176.0
+                ],
+                colorIndex: 1
+            }
+        ]
+    });
+
+    chart.series[0].update({
+        colorIndex: 2
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].colorIndex,
+        2,
+        'Point.colorIndex should be updated'
+    );
+
+    chart.series[0].points[0].update({
+        colorIndex: 3
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].colorIndex,
+        3,
+        'Point.colorIndex should be updated'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].colorIndex,
+        4,
+        'Point.colorIndex should be correct'
     );
 });

@@ -1,26 +1,27 @@
 /* eslint func-style:0 */
 
-
 QUnit.test('Option chart.alignTicks update', function (assert) {
     var chart = Highcharts.chart('container', {
-
         chart: {
             alignTicks: false
         },
 
-        yAxis: [{
+        yAxis: [
+            {},
+            {
+                opposite: true
+            }
+        ],
 
-        }, {
-            opposite: true
-        }],
-
-        series: [{
-            data: [1, 2, 3, 4]
-        }, {
-            data: [2, 4, 6],
-            yAxis: 1
-        }]
-
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            },
+            {
+                data: [2, 4, 6],
+                yAxis: 1
+            }
+        ]
     });
 
     assert.notEqual(
@@ -67,13 +68,16 @@ QUnit.test('Option chart.animation update', function (assert) {
             }
         },
 
-        series: [{
-            data: [1, 3, 2, 4],
-            name: 'First'
-        }, {
-            data: [5, 3, 4, 1],
-            name: 'Last'
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4],
+                name: 'First'
+            },
+            {
+                data: [5, 3, 4, 1],
+                name: 'Last'
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -105,7 +109,6 @@ QUnit.test('Option chart.animation update', function (assert) {
         true,
         'Enabled animation'
     );
-
 });
 
 QUnit.test('Option chart border and background update', function (assert) {
@@ -122,13 +125,16 @@ QUnit.test('Option chart border and background update', function (assert) {
             }
         },
 
-        series: [{
-            data: [1, 3, 2, 4],
-            name: 'First'
-        }, {
-            data: [5, 3, 4, 1],
-            name: 'Last'
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4],
+                name: 'First'
+            },
+            {
+                data: [5, 3, 4, 1],
+                name: 'Last'
+            }
+        ]
     });
 
     chart.update({
@@ -201,13 +207,16 @@ QUnit.test('Option chart className update', function (assert) {
             }
         },
 
-        series: [{
-            data: [1, 3, 2, 4],
-            name: 'First'
-        }, {
-            data: [5, 3, 4, 1],
-            name: 'Last'
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4],
+                name: 'First'
+            },
+            {
+                data: [5, 3, 4, 1],
+                name: 'Last'
+            }
+        ]
     });
 
     assert.ok(
@@ -225,7 +234,6 @@ QUnit.test('Option chart className update', function (assert) {
         chart.container.className.indexOf('my-class') > -1,
         'Custom class name'
     );
-
 });
 
 QUnit.test('Option chart.inverted update', function (assert) {
@@ -242,25 +250,21 @@ QUnit.test('Option chart.inverted update', function (assert) {
             }
         },
 
-        series: [{
-            data: [1, 3, 2, 4],
-            name: 'First'
-        }, {
-            data: [5, 3, 4, 1],
-            name: 'Last'
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4],
+                name: 'First'
+            },
+            {
+                data: [5, 3, 4, 1],
+                name: 'Last'
+            }
+        ]
     });
 
-    assert.ok(
-        !chart.inverted,
-        'Initially not inverted'
-    );
+    assert.ok(!chart.inverted, 'Initially not inverted');
 
-    assert.strictEqual(
-        chart.xAxis[0].side,
-        2,
-        'Initially X axis on bottom'
-    );
+    assert.strictEqual(chart.xAxis[0].side, 2, 'Initially X axis on bottom');
 
     chart.update({
         chart: {
@@ -268,16 +272,9 @@ QUnit.test('Option chart.inverted update', function (assert) {
         }
     });
 
-    assert.ok(
-        chart.inverted,
-        'Chart is inverted'
-    );
+    assert.ok(chart.inverted, 'Chart is inverted');
 
-    assert.strictEqual(
-        chart.xAxis[0].side,
-        3,
-        'X axis on left'
-    );
+    assert.strictEqual(chart.xAxis[0].side, 3, 'X axis on left');
 
     assert.strictEqual(
         chart.series[0].group.inverted,
@@ -291,16 +288,9 @@ QUnit.test('Option chart.inverted update', function (assert) {
         }
     });
 
-    assert.ok(
-        !chart.inverted,
-        'Chart is not inverted'
-    );
+    assert.ok(!chart.inverted, 'Chart is not inverted');
 
-    assert.strictEqual(
-        chart.xAxis[0].side,
-        2,
-        'X axis at the bottom'
-    );
+    assert.strictEqual(chart.xAxis[0].side, 2, 'X axis at the bottom');
 });
 
 QUnit.test('Option chart.options3d update', function (assert) {
@@ -317,13 +307,16 @@ QUnit.test('Option chart.options3d update', function (assert) {
             }
         },
 
-        series: [{
-            data: [1, 3, 2, 4],
-            name: 'First'
-        }, {
-            data: [5, 3, 4, 1],
-            name: 'Last'
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4],
+                name: 'First'
+            },
+            {
+                data: [5, 3, 4, 1],
+                name: 'Last'
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -348,7 +341,6 @@ QUnit.test('Option chart.options3d update', function (assert) {
         '3D column'
     );
 
-
     chart.update({
         chart: {
             options3d: {
@@ -364,7 +356,6 @@ QUnit.test('Option chart.options3d update', function (assert) {
         'rect',
         'Back to 2D column'
     );
-
 });
 
 QUnit.test('Option chart shadows update', function (assert) {
@@ -381,24 +372,21 @@ QUnit.test('Option chart shadows update', function (assert) {
             }
         },
 
-        series: [{
-            data: [1, 3, 2, 4],
-            name: 'First'
-        }, {
-            data: [5, 3, 4, 1],
-            name: 'Last'
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4],
+                name: 'First'
+            },
+            {
+                data: [5, 3, 4, 1],
+                name: 'Last'
+            }
+        ]
     });
 
-    assert.ok(
-        !chart.chartBackground.shadows,
-        'Chart shadow does not exist'
-    );
+    assert.ok(!chart.chartBackground.shadows, 'Chart shadow does not exist');
 
-    assert.ok(
-        !chart.plotBackground.shadows,
-        'Plot shadow does not exist'
-    );
+    assert.ok(!chart.plotBackground.shadows, 'Plot shadow does not exist');
 
     chart.update({
         chart: {
@@ -407,16 +395,9 @@ QUnit.test('Option chart shadows update', function (assert) {
         }
     });
 
-    assert.ok(
-        chart.chartBackground.shadows,
-        'Chart shadow exists'
-    );
+    assert.ok(chart.chartBackground.shadows, 'Chart shadow exists');
 
-    assert.ok(
-        chart.plotBackground.shadows,
-        'Plot shadow exists'
-    );
-
+    assert.ok(chart.plotBackground.shadows, 'Plot shadow exists');
 
     chart.update({
         chart: {
@@ -425,46 +406,47 @@ QUnit.test('Option chart shadows update', function (assert) {
         }
     });
 
-    assert.ok(
-        !chart.chartBackground.shadows,
-        'Chart shadow does not exist'
-    );
+    assert.ok(!chart.chartBackground.shadows, 'Chart shadow does not exist');
 
-    assert.ok(
-        !chart.plotBackground.shadows,
-        'Plot shadow does not exist'
-    );
-
-
+    assert.ok(!chart.plotBackground.shadows, 'Plot shadow does not exist');
 });
 
 QUnit.test('Option chart.margin update', function (assert) {
-    var chart = Highcharts.chart('container', Highcharts.merge({
-        chart: {
-            plotBackgroundColor: 'silver',
-            animation: false
-        }
-    }, {
-        chart: {
-            type: 'column',
-            animation: false,
-            height: 300
-        },
+    var chart = Highcharts.chart(
+        'container',
+        Highcharts.merge(
+            {
+                chart: {
+                    plotBackgroundColor: 'silver',
+                    animation: false
+                }
+            },
+            {
+                chart: {
+                    type: 'column',
+                    animation: false,
+                    height: 300
+                },
 
-        plotOptions: {
-            series: {
-                animation: false
+                plotOptions: {
+                    series: {
+                        animation: false
+                    }
+                },
+
+                series: [
+                    {
+                        data: [1, 3, 2, 4],
+                        name: 'First'
+                    },
+                    {
+                        data: [5, 3, 4, 1],
+                        name: 'Last'
+                    }
+                ]
             }
-        },
-
-        series: [{
-            data: [1, 3, 2, 4],
-            name: 'First'
-        }, {
-            data: [5, 3, 4, 1],
-            name: 'Last'
-        }]
-    }));
+        )
+    );
 
     // Test for integer
     chart.update({
@@ -499,7 +481,6 @@ QUnit.test('Option chart.margin update', function (assert) {
         chart.plotBackground.getBBox().height <= chart.chartHeight - 150,
         'Plot area height ok'
     );
-
 
     // Test for unique names
     chart.update({

@@ -22,16 +22,17 @@ Highcharts.chart('container', {
     defs: {
         marker0: {
             tagName: 'marker',
-            render: false, // if false it does not render the element to the dom
-            id: 'custom-shape',
             children: [{
                 tagName: 'path',
                 d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,2.5 12.5,2.5 10,0 Z'
             }],
-            markerWidth: 40,
-            markerHeight: 40,
-            refX: 20,
-            refY: 5
+            attributes: {
+                id: 'custom-shape',
+                markerWidth: 40,
+                markerHeight: 40,
+                refX: 20,
+                refY: 5
+            }
         },
         marker1: {
             children: [{
@@ -39,7 +40,7 @@ Highcharts.chart('container', {
                 r: 9,
                 cx: 11,
                 cy: 11,
-                fill: 'rgba(224, 101, 0, 0.6'
+                fill: 'rgba(224, 101, 0, 0.6)'
             }, {
                 tagName: 'circle',
                 r: 10,
@@ -50,11 +51,13 @@ Highcharts.chart('container', {
                 stroke: 'black'
             }],
             tagName: 'marker',
-            id: 'circle',
-            markerWidth: 25,
-            markerHeight: 25,
-            refX: 10,
-            refY: 10
+            attributes: {
+                id: 'circle',
+                markerWidth: 25,
+                markerHeight: 25,
+                refX: 10,
+                refY: 10
+            }
         }
     },
 

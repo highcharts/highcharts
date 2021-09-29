@@ -1,18 +1,4 @@
-var chart,
-    btnRemove = $('#remove'),
-    btnAdd = $('#add');
-
-btnAdd.click(function () {
-    chart.series[0].addPoint(Math.floor(Math.random() * 10 + 1)); // Return random integer between 1 and 10.
-});
-
-btnRemove.click(function () {
-    if (chart.series[0].points[0]) {
-        chart.series[0].points[0].remove();
-    }
-});
-
-chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         plotBackgroundColor: null,
         plotBorderWidth: null,
@@ -26,4 +12,14 @@ chart = Highcharts.chart('container', {
         name: 'Random data',
         data: []
     }]
+});
+
+document.getElementById('add').addEventListener('click', () => {
+    chart.series[0].addPoint(Math.floor(Math.random() * 10 + 1)); // Return random integer between 1 and 10.
+});
+
+document.getElementById('remove').addEventListener('click', () => {
+    if (chart.series[0].points[0]) {
+        chart.series[0].points[0].remove();
+    }
 });

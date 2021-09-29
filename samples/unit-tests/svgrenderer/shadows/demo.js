@@ -1,15 +1,17 @@
 QUnit.test('Series shadows', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{
-                shadow: {
-                    color: 'red',
-                    width: 10,
-                    offsetX: 40,
-                    offsetY: -20,
-                    opacity: 0.05
-                },
-                data: [29, 71, 106, 129, 144]
-            }]
+            series: [
+                {
+                    shadow: {
+                        color: 'red',
+                        width: 10,
+                        offsetX: 40,
+                        offsetY: -20,
+                        opacity: 0.05
+                    },
+                    data: [29, 71, 106, 129, 144]
+                }
+            ]
         }),
         attributes = [
             'stroke="blue"',
@@ -66,16 +68,21 @@ QUnit.test('Series shadows', function (assert) {
     );
 
     chart = Highcharts.chart('container', {
-        series: [{
-            shadow: true,
-            data: [29, 71, 106, 129, 144]
-        }]
+        chart: {
+            inverted: true
+        },
+        series: [
+            {
+                shadow: true,
+                data: [29, 71, 106, 129, 144]
+            }
+        ]
     });
 
     attributes = [
         'stroke="red"',
         'stroke-opacity="0.3"',
-        'transform="translate(5, 10)'
+        'transform="translate(10, 5)'
     ];
 
     chart.series[0].update({

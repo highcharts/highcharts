@@ -43,16 +43,17 @@ without any bundling tools by using `<script type="module">` ([demo](https://jsf
 ```
 The following example shows dynamic import with lazy-loading:
 ```js
-    import('https://code.highcharts.com/es-modules/masters/highcharts.src.js')
-        .then(imported => imported.default)
-        .then(Highcharts => import('https://code.highcharts.com/es-modules/masters/modules/exporting.src.js').then(() => Highcharts))
-        .then(Highcharts => import('https://code.highcharts.com/es-modules/masters/modules/accessibility.src.js').then(() => Highcharts))
-        .then(Highcharts => {
-            Highcharts.chart('container', {
-                ...
-            });
-        });
+const loadHighchartsAndCreateChart = async () => {
+    const { default: Highcharts } =
+        await import('https://code.highcharts.com/es-modules/masters/highcharts.src.js');
+    await import('https://code.highcharts.com/es-modules/masters/highcharts-more.src.js');
+    await import('https://code.highcharts.com/es-modules/masters/modules/exporting.src.js');
+    await import('https://code.highcharts.com/es-modules/masters/modules/export-data.src.js');
+
+    Highcharts.chart('container', { /* options */ });
+};
 ```
+View it [live on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/async-await/);
 
 ## Load Highcharts from the CDN as an AMD module
 Highcharts is compatible with AMD module loaders (such as RequireJS). The
@@ -96,6 +97,9 @@ our CDN using RequireJS.
     </body>
 </html>
 ```
+See it [live on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/amd/simple/).
+When using AMD modules, Highcharts also allows to load [multiple versions in the
+same page](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/amd/version-mix/).
 
 ## Load Highcharts as a CommonJS module
 Highcharts is using an UMD module pattern, as a result it has support for CommonJS.
@@ -117,7 +121,7 @@ Highcharts.chart('container', {
 
 ## Load Highcharts as a transpiled ES6/UMD module
 Since Highcharts supports ES6 (ESM - ECMAScript modules) and UMD (AMD, CommonJS), it can be also loaded as a module with the use of transpilers. Two common transpilers are [Babel](https://babeljs.io/) and [TypeScript](https://www.typescriptlang.org/).
-*The following examples presumes you are using npm to install Highcharts, see [Download and install Highcharts](#download-and-install-highcharts) for more details.*
+*The following examples assume you have used npm to install Highcharts; see [Download and install Highcharts](#download-and-install-highcharts) for more details.*
 ### Babel
 ```js
 import Highcharts from 'highcharts';
@@ -187,6 +191,12 @@ Highcharts.chart('container', {
   }
 }
 ```
+
+## Create your own custom build of Highcharts
+To reduce file size, or combine modules into one file to reduce latency, you may
+want to create your own build of the Highcharts modules. See [Creating custom
+Highcharts files](https://www.highcharts.com/docs/getting-started/how-to-create-custom-highcharts-files)
+for the description.
 
 ## Build and debug
 If you want to do modifications to Highcharts or fix issues, you may build your own files. Highcharts uses Gulp as the build system. After `npm install` in the root folder, run `gulp`, which will set up a watch task for the JavaScript and SCSS files. Now any changes in the files of the `/js` or `/css` folders will result in new files being built and saved in the `code` folder. Other tasks are also available, like `gulp lint`.

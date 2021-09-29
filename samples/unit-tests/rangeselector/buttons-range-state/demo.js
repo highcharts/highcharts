@@ -1,5 +1,4 @@
 QUnit.test('Range selector buttons states (#3375)', function (assert) {
-
     var data = [
         [1317888000000, 372.5101, 375, 372.2, 372.52],
         [1317888060000, 372.4, 373, 372.01, 372.16],
@@ -124,32 +123,41 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
         [1317895200000, 376.94, 377.01, 375.75, 375.98]
     ];
 
-    var chart = $('#container').highcharts('StockChart', {
-        rangeSelector: {
-            buttons: [{
-                type: 'hour',
-                count: 1,
-                text: '1h'
-            }, {
-                type: 'hour',
-                count: 2,
-                text: '2h'
-            }, {
-                type: 'day',
-                count: 1,
-                text: '1D'
-            }, {
-                type: 'all',
-                count: 1,
-                text: 'All'
-            }],
-            inputEnabled: false,
-            selected: 0
-        },
-        series: [{
-            data: data
-        }]
-    }).highcharts();
+    var chart = $('#container')
+        .highcharts('StockChart', {
+            rangeSelector: {
+                buttons: [
+                    {
+                        type: 'hour',
+                        count: 1,
+                        text: '1h'
+                    },
+                    {
+                        type: 'hour',
+                        count: 2,
+                        text: '2h'
+                    },
+                    {
+                        type: 'day',
+                        count: 1,
+                        text: '1D'
+                    },
+                    {
+                        type: 'all',
+                        count: 1,
+                        text: 'All'
+                    }
+                ],
+                inputEnabled: false,
+                selected: 0
+            },
+            series: [
+                {
+                    data: data
+                }
+            ]
+        })
+        .highcharts();
 
     /**
      * Get a string representation of the states.
@@ -159,42 +167,24 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
      * 3 = Disabled
      */
     function getStates() {
-        return chart.rangeSelector.buttons.map(function (button) {
-            return button.state || 0;
-        }).join(',');
+        return chart.rangeSelector.buttons
+            .map(function (button) {
+                return button.state || 0;
+            })
+            .join(',');
     }
 
-    assert.strictEqual(
-        getStates(),
-        '2,0,3,0',
-        'Initial state'
-    );
+    assert.strictEqual(getStates(), '2,0,3,0', 'Initial state');
 
     chart.rangeSelector.clickButton(1);
-    assert.strictEqual(
-        getStates(),
-        '0,2,3,3',
-        'Selected 2h'
-    );
+    assert.strictEqual(getStates(), '0,2,3,3', 'Selected 2h');
 
     chart.rangeSelector.clickButton(0);
-    assert.strictEqual(
-        getStates(),
-        '2,0,3,0',
-        'Selected 1h'
-    );
+    assert.strictEqual(getStates(), '2,0,3,0', 'Selected 1h');
 
     chart.rangeSelector.clickButton(3);
-    assert.strictEqual(
-        getStates(),
-        '0,0,3,2',
-        'Selected All'
-    );
+    assert.strictEqual(getStates(), '0,0,3,2', 'Selected All');
 
     chart.rangeSelector.clickButton(1);
-    assert.strictEqual(
-        getStates(),
-        '0,2,3,3',
-        'Selected 2h'
-    );
+    assert.strictEqual(getStates(), '0,2,3,3', 'Selected 2h');
 });

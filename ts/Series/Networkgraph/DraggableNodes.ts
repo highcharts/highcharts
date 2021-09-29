@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2020 Paweł Fus
+ *  (c) 2010-2021 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -10,9 +10,17 @@
  *
  * */
 
+'use strict';
+
 import type Point from '../../Core/Series/Point';
+import type PointerEvent from '../../Core/PointerEvent';
+import type Series from '../../Core/Series/Series';
+import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
+const { addEvent } = U;
+
 
 /**
  * Internal types
@@ -29,12 +37,12 @@ declare global {
             onMouseMove(
                 this: DragNodesSeries,
                 point: DragNodesPoint,
-                event: PointerEventObject
+                event: PointerEvent
             ): void;
             onMouseUp(
                 this: DragNodesSeries,
                 point: DragNodesPoint,
-                event?: PointerEventObject
+                event?: PointerEvent
             ): void;
             redrawHalo(point: DragNodesPoint): void;
         }
@@ -43,7 +51,7 @@ declare global {
             hoverPoint: DragNodesPoint;
         }
         interface DragNodesPoint extends Point {
-            fixedPosition?: Dictionary<number>;
+            fixedPosition?: Record<string, number>;
             hasDragged?: boolean;
             inDragMode?: boolean;
             series: DragNodesSeries;
@@ -68,11 +76,6 @@ declare global {
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    addEvent
-} = U;
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 H.dragNodesMixin = {
@@ -87,16 +90,16 @@ H.dragNodesMixin = {
     onMouseDown: function (
         this: Highcharts.DragNodesSeries,
         point: Highcharts.DragNodesPoint,
-        event: Highcharts.PointerEventObject
+        event: PointerEvent
     ): void {
-        var normalizedEvent = this.chart.pointer.normalize(event);
+        const normalizedEvent = this.chart.pointer.normalize(event);
 
         point.fixedPosition = {
             chartX: normalizedEvent.chartX,
             chartY: normalizedEvent.chartY,
             plotX: point.plotX,
             plotY: point.plotY
-        } as Highcharts.Dictionary<number>;
+        } as Record<string, number>;
 
         point.inDragMode = true;
     },
@@ -113,10 +116,10 @@ H.dragNodesMixin = {
     onMouseMove: function (
         this: Highcharts.DragNodesSeries,
         point: Highcharts.DragNodesPoint,
-        event: Highcharts.PointerEventObject
+        event: PointerEvent
     ): void {
         if (point.fixedPosition && point.inDragMode) {
-            var series = this,
+            let series = this,
                 chart = series.chart,
                 normalizedEvent = chart.pointer.normalize(event),
                 diffX = point.fixedPosition.chartX - normalizedEvent.chartX,
@@ -154,7 +157,7 @@ H.dragNodesMixin = {
     onMouseUp: function (
         this: Highcharts.DragNodesSeries,
         point: Highcharts.DragNodesPoint,
-        event?: Highcharts.PointerEventObject
+        event?: PointerEvent
     ): void {
         if (point.fixedPosition) {
             if (point.hasDragged) {
@@ -199,7 +202,7 @@ addEvent(
     Chart as any,
     'load',
     function (this: Highcharts.DragNodesChart): void {
-        var chart = this,
+        let chart = this,
             mousedownUnbinder: Function,
             mousemoveUnbinder: Function,
             mouseupUnbinder: Function;
@@ -208,8 +211,8 @@ addEvent(
             mousedownUnbinder = addEvent(
                 chart.container,
                 'mousedown',
-                function (event: Highcharts.PointerEventObject): void {
-                    var point = chart.hoverPoint;
+                function (event: PointerEvent): void {
+                    const point = chart.hoverPoint;
                     if (
                         point &&
                         point.series &&
@@ -220,7 +223,7 @@ addEvent(
                         mousemoveUnbinder = addEvent(
                             chart.container,
                             'mousemove',
-                            function (e: Highcharts.PointerEventObject): void {
+                            function (e: PointerEvent): void {
                                 return point &&
                                     point.series &&
                                     point.series.onMouseMove(point, e);
@@ -229,7 +232,7 @@ addEvent(
                         mouseupUnbinder = addEvent(
                             chart.container.ownerDocument,
                             'mouseup',
-                            function (e: Highcharts.PointerEventObject): void {
+                            function (e: PointerEvent): void {
                                 mousemoveUnbinder();
                                 mouseupUnbinder();
                                 return point &&

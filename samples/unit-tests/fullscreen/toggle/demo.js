@@ -1,15 +1,31 @@
-QUnit.test("Fullscreen module.", function (assert) {
+QUnit.test('Fullscreen module.', function (assert) {
     var chart = Highcharts.chart('container', {
-        series: [{
-            data: [5, 3, 4, 2, 4, 3]
-        }]
+        series: [
+            {
+                data: [5, 3, 4, 2, 4, 3]
+            }
+        ]
     });
 
-    chart.fullscreen.toggle();
+    const eventCount = el => {
+        let count = 0;
+        //eslint-disable-next-line
+        for (const t in el.hcEvents) {
+            count += el.hcEvents[t].length;
+        }
+        return count;
+    };
 
-    assert.ok(
-        true,
-        'Chart displayed in fullscreen mode without any errors.'
+    const before = eventCount(chart);
+
+    chart.fullscreen.open();
+    chart.fullscreen.close();
+
+    assert.strictEqual(
+        eventCount(chart),
+        before,
+        'It should not leak event listeners'
     );
 
+    assert.ok(true, 'Chart displayed in fullscreen mode without any errors.');
 });

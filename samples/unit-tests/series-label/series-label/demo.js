@@ -3,29 +3,33 @@ QUnit.test('Series label', function (assert) {
         chart: {
             width: 400
         },
-        series: [{
-            data: [1, 3, 2, 4],
-            label: {
-                enabled: true
-            }
-        }, {
-            data: [1, 3, 2, 4],
-            label: {
-                enabled: true,
-                format: 'Format {name}',
-                formatter: function () {
-                    return 'Formatter ' + this.name;
+        series: [
+            {
+                data: [1, 3, 2, 4],
+                label: {
+                    enabled: true
+                }
+            },
+            {
+                data: [1, 3, 2, 4],
+                label: {
+                    enabled: true,
+                    format: 'Format {name}',
+                    formatter: function () {
+                        return 'Formatter ' + this.name;
+                    }
+                }
+            },
+            {
+                data: [1, 3, 2, 4],
+                label: {
+                    enabled: true,
+                    formatter: function () {
+                        return 'Formatter ' + this.name;
+                    }
                 }
             }
-        }, {
-            data: [1, 3, 2, 4],
-            label: {
-                enabled: true,
-                formatter: function () {
-                    return 'Formatter ' + this.name;
-                }
-            }
-        }]
+        ]
     });
 
     assert.strictEqual(

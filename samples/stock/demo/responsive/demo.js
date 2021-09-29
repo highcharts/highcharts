@@ -1,14 +1,11 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (data) {
-
-    // Create the chart
-    var chart = Highcharts.stockChart('container', {
-
+Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => {
+    const chart = Highcharts.stockChart('container', {
         chart: {
             height: 400
         },
 
         title: {
-            text: 'Highstock Responsive Chart'
+            text: 'Highcharts Stock Responsive Chart'
         },
 
         subtitle: {
@@ -49,16 +46,15 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
         }
     });
 
-
-    $('#small').click(function () {
+    document.getElementById('small').addEventListener('click', () => {
         chart.setSize(400);
     });
 
-    $('#large').click(function () {
+    document.getElementById('large').addEventListener('click', () => {
         chart.setSize(800);
     });
 
-    $('#auto').click(function () {
+    document.getElementById('auto').addEventListener('click', () => {
         chart.setSize(null);
     });
 });

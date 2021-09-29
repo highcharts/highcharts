@@ -1,6 +1,5 @@
 (function () {
     function checkY(chart, assert) {
-
         assert.strictEqual(
             typeof chart.series[0].points[2].graphic.attr('y'),
             'number',
@@ -14,7 +13,6 @@
     }
 
     QUnit.test('Positive (#5280)', function (assert) {
-
         var chart = Highcharts.chart('container', {
             chart: {
                 type: 'area'
@@ -25,18 +23,20 @@
                     threshold: -10
                 }
             },
-            series: [{
-                data: [1, 1, 0, 1, 1]
-            }, {
-                data: [1, 1, 0, 1, 1]
-            }]
+            series: [
+                {
+                    data: [1, 1, 0, 1, 1]
+                },
+                {
+                    data: [1, 1, 0, 1, 1]
+                }
+            ]
         });
 
         checkY(chart, assert);
     });
 
     QUnit.test('Negative', function (assert) {
-
         var chart = Highcharts.chart('container', {
             chart: {
                 type: 'area'
@@ -47,18 +47,20 @@
                     threshold: 10
                 }
             },
-            series: [{
-                data: [-1, -1, 0, -1, -1]
-            }, {
-                data: [-1, -1, 0, -1, -1]
-            }]
+            series: [
+                {
+                    data: [-1, -1, 0, -1, -1]
+                },
+                {
+                    data: [-1, -1, 0, -1, -1]
+                }
+            ]
         });
 
         checkY(chart, assert);
     });
 
     QUnit.test('Reversed', function (assert) {
-
         var chart = Highcharts.chart('container', {
             chart: {
                 type: 'area'
@@ -72,18 +74,20 @@
             yAxis: {
                 reversed: true
             },
-            series: [{
-                data: [1, 1, 0, 1, 1]
-            }, {
-                data: [1, 1, 0, 1, 1]
-            }]
+            series: [
+                {
+                    data: [1, 1, 0, 1, 1]
+                },
+                {
+                    data: [1, 1, 0, 1, 1]
+                }
+            ]
         });
 
         checkY(chart, assert);
     });
 
     QUnit.test('Un-reversed stacks', function (assert) {
-
         var chart = Highcharts.chart('container', {
             chart: {
                 type: 'area'
@@ -97,11 +101,14 @@
             yAxis: {
                 reversedStacks: false
             },
-            series: [{
-                data: [1, 1, 0, 1, 1]
-            }, {
-                data: [1, 1, 0, 1, 1]
-            }]
+            series: [
+                {
+                    data: [1, 1, 0, 1, 1]
+                },
+                {
+                    data: [1, 1, 0, 1, 1]
+                }
+            ]
         });
 
         checkY(chart, assert);

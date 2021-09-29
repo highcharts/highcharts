@@ -15,20 +15,28 @@
 
 'use strict';
 
+import type AreaSeries from '../Series/Area/AreaSeries';
+import type ColumnSeries from '../Series/Column/ColumnSeries';
+import type HeatmapSeries from '../Series/Heatmap/HeatmapSeries';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import H from '../Core/Globals.js';
 const {
     doc,
     noop
 } = H;
-import LineSeries from '../Series/LineSeries.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -39,6 +47,47 @@ const {
     pick,
     wrap
 } = U;
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike extends Highcharts.BoostTargetObject {
+        cvsStrokeBatch?: number;
+        /** @requires modules/boost-canvas */
+        canvasToSVG(): void;
+        /** @requires modules/boost-canvas */
+        cvsDrawPoint(
+            ctx: CanvasRenderingContext2D,
+            clientX: number,
+            plotY: number,
+            yBottom: number,
+            lastPoint?: Record<string, number>
+        ): void;
+        /** @requires modules/boost-canvas */
+        cvsLineTo(
+            ctx: CanvasRenderingContext2D,
+            clientX: number,
+            plotY: number
+        ): void;
+        /** @requires modules/boost-canvas */
+        cvsMarkerCircle(
+            ctx: CanvasRenderingContext2D,
+            clientX: number,
+            plotY: number,
+            r: number,
+            i?: number
+        ): void;
+        /** @requires modules/boost-canvas */
+        cvsMarkerSquare(
+            ctx: CanvasRenderingContext2D,
+            clientX: number,
+            plotY: number,
+            r: number
+        ): void;
+        /** @requires modules/boost-canvas */
+        getContext(): (CanvasRenderingContext2D|null|undefined);
+        /** @requires modules/boost-canvas */
+        renderCanvas(): void;
+    }
+}
 
 /**
  * Internal types
@@ -53,55 +102,13 @@ declare global {
             timeSeriesProcessing?: boolean;
             timeSetup?: boolean;
         }
-        interface Series extends BoostTargetObject {
-            cvsStrokeBatch?: number;
-            /** @requires modules/boost-canvas */
-            canvasToSVG(): void;
-            /** @requires modules/boost-canvas */
-            cvsDrawPoint(
-                ctx: CanvasRenderingContext2D,
-                clientX: number,
-                plotY: number,
-                yBottom: number,
-                lastPoint?: Dictionary<number>
-            ): void;
-            /** @requires modules/boost-canvas */
-            cvsLineTo(
-                ctx: CanvasRenderingContext2D,
-                clientX: number,
-                plotY: number
-            ): void;
-            /** @requires modules/boost-canvas */
-            cvsMarkerCircle(
-                ctx: CanvasRenderingContext2D,
-                clientX: number,
-                plotY: number,
-                r: number,
-                i?: number
-            ): void;
-            /** @requires modules/boost-canvas */
-            cvsMarkerSquare(
-                ctx: CanvasRenderingContext2D,
-                clientX: number,
-                plotY: number,
-                r: number
-            ): void;
-            /** @requires modules/boost-canvas */
-            getContext(): (CanvasRenderingContext2D|null|undefined);
-            /** @requires modules/boost-canvas */
-            renderCanvas(): void;
-        }
         interface BoostTargetObject {
             ctx?: (CanvasRenderingContext2D|null);
         }
     }
 }
 
-
-import '../Core/Options.js';
-
-var seriesTypes = Series.seriesTypes,
-    CHUNK_SIZE = 50000,
+let CHUNK_SIZE = 50000,
     destroyLoadingDiv: number;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -114,9 +121,9 @@ var seriesTypes = Series.seriesTypes,
 const initCanvasBoost = function (): void {
     if (H.seriesTypes.heatmap) {
         wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (
-            this: Highcharts.HeatmapSeries
+            this: HeatmapSeries
         ): void {
-            var chart = this.chart,
+            const chart = this.chart,
                 ctx = this.getContext(),
                 inverted = this.chart.inverted,
                 xAxis = this.xAxis,
@@ -125,19 +132,18 @@ const initCanvasBoost = function (): void {
             if (ctx) {
 
                 // draw the columns
-                this.points.forEach(function (
-                    point: Highcharts.HeatmapPoint
-                ): void {
-                    var plotY = point.plotY,
-                        shapeArgs: SVGAttributes,
+                this.points.forEach(function (point): void {
+                    let plotY = point.plotY,
                         pointAttr: SVGAttributes;
 
                     if (
                         typeof plotY !== 'undefined' &&
                         !isNaN(plotY) &&
-                        point.y !== null
+                        point.y !== null &&
+                        ctx
                     ) {
-                        shapeArgs = point.shapeArgs as any;
+                        const { x = 0, y = 0, width = 0, height = 0 } =
+                            point.shapeArgs || {};
 
                         if (!chart.styledMode) {
                             pointAttr = point.series.pointAttribs(point);
@@ -145,21 +151,21 @@ const initCanvasBoost = function (): void {
                             pointAttr = point.series.colorAttribs(point);
                         }
 
-                        (ctx as any).fillStyle = pointAttr.fill as any;
+                        ctx.fillStyle = pointAttr.fill as any;
 
                         if (inverted) {
-                            (ctx as any).fillRect(
-                                yAxis.len - shapeArgs.y + xAxis.left,
-                                xAxis.len - shapeArgs.x + yAxis.top,
-                                -shapeArgs.height,
-                                -shapeArgs.width
+                            ctx.fillRect(
+                                yAxis.len - y + xAxis.left,
+                                xAxis.len - x + yAxis.top,
+                                -height,
+                                -width
                             );
                         } else {
-                            (ctx as any).fillRect(
-                                shapeArgs.x + xAxis.left,
-                                shapeArgs.y + yAxis.top,
-                                shapeArgs.width,
-                                shapeArgs.height
+                            ctx.fillRect(
+                                x + xAxis.left,
+                                y + yAxis.top,
+                                width,
+                                height
                             );
                         }
                     }
@@ -182,7 +188,7 @@ const initCanvasBoost = function (): void {
     }
 
 
-    extend(LineSeries.prototype, {
+    extend(Series.prototype, {
 
         /**
          * Create a hidden canvas to draw the graph on. The contents is later
@@ -192,9 +198,9 @@ const initCanvasBoost = function (): void {
          * @function Highcharts.Series#getContext
          */
         getContext: function (
-            this: Highcharts.Series
+            this: Series
         ): (CanvasRenderingContext2D|null|undefined) {
-            var chart = this.chart,
+            let chart = this.chart,
                 width = chart.chartWidth,
                 height = chart.chartHeight,
                 targetGroup = chart.seriesGroup || this.group,
@@ -261,7 +267,7 @@ const initCanvasBoost = function (): void {
 
                 target.renderTarget.clip(target.boostClipRect);
 
-            } else if (!(target instanceof H.Chart)) {
+            } else if (!(target instanceof Chart)) {
                 // ctx.clearRect(0, 0, width, height);
             }
 
@@ -293,7 +299,7 @@ const initCanvasBoost = function (): void {
          * @private
          * @function Highcharts.Series#canvasToSVG
          */
-        canvasToSVG: function (this: Highcharts.Series): void {
+        canvasToSVG: function (this: Series): void {
             if (!this.chart.isChartSeriesBoosting()) {
                 if (this.boostCopy || this.chart.boostCopy) {
                     (this.boostCopy || this.chart.boostCopy)();
@@ -306,7 +312,7 @@ const initCanvasBoost = function (): void {
         },
 
         cvsLineTo: function (
-            this: Highcharts.Series,
+            this: Series,
             ctx: CanvasRenderingContext2D,
             clientX: number,
             plotY: number
@@ -314,8 +320,8 @@ const initCanvasBoost = function (): void {
             ctx.lineTo(clientX, plotY);
         },
 
-        renderCanvas: function (this: Highcharts.Series): void {
-            var series = this,
+        renderCanvas: function (this: Series): void {
+            let series = this,
                 options = series.options,
                 chart = series.chart,
                 xAxis = this.xAxis,
@@ -331,18 +337,17 @@ const initCanvasBoost = function (): void {
                 c = 0,
                 xData = series.processedXData,
                 yData = series.processedYData,
-                rawData: Array<Highcharts.PointOptionsType> =
-                    options.data as any,
+                rawData: Array<(PointOptions|PointShortOptions)> = options.data as any,
                 xExtremes = xAxis.getExtremes(),
                 xMin = xExtremes.min,
                 xMax = xExtremes.max,
                 yExtremes = yAxis.getExtremes(),
                 yMin = yExtremes.min,
                 yMax = yExtremes.max,
-                pointTaken: Highcharts.Dictionary<boolean> = {},
+                pointTaken: Record<string, boolean> = {},
                 lastClientX: number,
                 sampling = !!series.sampling,
-                points: Array<Highcharts.Dictionary<number>>,
+                points: Array<Record<string, number>>,
                 r = options.marker && options.marker.radius,
                 cvsDrawPoint = this.cvsDrawPoint,
                 cvsLineTo = options.lineWidth ? this.cvsLineTo : void 0,
@@ -353,7 +358,7 @@ const initCanvasBoost = function (): void {
                 ),
                 strokeBatch = this.cvsStrokeBatch || 1000,
                 enableMouseTracking = options.enableMouseTracking !== false,
-                lastPoint: Highcharts.Dictionary<number>,
+                lastPoint: Record<string, number>,
                 threshold: number = options.threshold as any,
                 yBottom: number = yAxis.getThreshold(threshold) as any,
                 hasThreshold = isNumber(threshold),
@@ -382,7 +387,7 @@ const initCanvasBoost = function (): void {
                 ),
                 fillColor = (
                     series.fillOpacity ?
-                        new Color(series.color).setOpacity(
+                        Color.parse(series.color).setOpacity(
                             pick((options as any).fillOpacity, 0.75)
                         ).get() :
                         series.color
@@ -559,7 +564,7 @@ const initCanvasBoost = function (): void {
             if (rawData.length > 99999) {
                 chart.options.loading = merge(loadingOptions, {
                     labelStyle: {
-                        backgroundColor: color('${palette.backgroundColor}').setOpacity(0.75).get(),
+                        backgroundColor: color(Palette.backgroundColor).setOpacity(0.75).get(),
                         padding: '1em',
                         borderRadius: '0.5em'
                     },
@@ -579,7 +584,7 @@ const initCanvasBoost = function (): void {
 
             // Loop over the points
             (H as any).eachAsync(sdata, function (d: any, i: number): boolean {
-                var x: number,
+                let x: number,
                     y: number,
                     clientX: number,
                     plotY: number,
@@ -721,7 +726,7 @@ const initCanvasBoost = function (): void {
 
                 return !chartDestroyed;
             }, function (): void {
-                var loadingDiv: HTMLElement =
+                const loadingDiv: HTMLElement =
                         chart.loadingDiv as any,
                     loadingShown = chart.loadingShown;
 
@@ -746,7 +751,7 @@ const initCanvasBoost = function (): void {
                 if (loadingShown) {
                     extend(loadingDiv.style, {
                         transition: 'opacity 250ms',
-                        opacity: 0
+                        opacity: 0 as any
                     });
                     chart.loadingShown = false;
                     destroyLoadingDiv = setTimeout(function (): void {
@@ -812,12 +817,12 @@ const initCanvasBoost = function (): void {
 
     extend(seriesTypes.area.prototype, {
         cvsDrawPoint: function (
-            this: Highcharts.AreaSeries,
+            this: AreaSeries,
             ctx: CanvasRenderingContext2D,
             clientX: number,
             plotY: number,
             yBottom: number,
-            lastPoint: Highcharts.Dictionary<number>
+            lastPoint: Record<string, number>
         ): void {
             if (lastPoint && clientX !== lastPoint.clientX) {
                 ctx.moveTo(lastPoint.clientX as any, lastPoint.yBottom as any);
@@ -833,7 +838,7 @@ const initCanvasBoost = function (): void {
 
     extend(seriesTypes.column.prototype, {
         cvsDrawPoint: function (
-            this: Highcharts.ColumnSeries,
+            this: ColumnSeries,
             ctx: CanvasRenderingContext2D,
             clientX: number,
             plotY: number,

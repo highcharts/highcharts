@@ -11,28 +11,31 @@ const gulp = require('gulp');
  * */
 
 /**
- * @return {Promise<void>}
- *         Promise to keep
+ * @return {Promise}
+ * Promise to keep
  */
-function task() {
+function scriptsTS() {
 
-    const processLib = require('./lib/process');
+    const fsLib = require('./lib/fs'),
+        processLib = require('./lib/process');
 
     return new Promise((resolve, reject) => {
 
         processLib.isRunning('scripts-ts', true);
 
-        processLib
-            .exec('npx tsc --project ts')
+        Promise
+            .resolve()
+            .then(() => fsLib.deleteDirectory('js', true))
+            .then(() => processLib.exec('npx tsc --project ts'))
             .then(function (output) {
-                processLib.isRunning('scripts-ts', true);
+                processLib.isRunning('scripts-ts', false);
                 resolve(output);
             })
             .catch(function (error) {
-                processLib.isRunning('scripts-ts', true);
+                processLib.isRunning('scripts-ts', false);
                 reject(error);
             });
     });
 }
 
-gulp.task('scripts-ts', task);
+gulp.task('scripts-ts', gulp.series('scripts-messages', scriptsTS));

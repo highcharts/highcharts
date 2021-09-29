@@ -1,6 +1,5 @@
 /* eslint func-style:0 */
 
-
 QUnit.test('Option chart plot border and background update', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -15,18 +14,22 @@ QUnit.test('Option chart plot border and background update', function (assert) {
             }
         },
 
-        series: [{
-            data: [1, 3, 2, 4],
-            name: 'First'
-        }, {
-            data: [5, 3, 4, 1],
-            name: 'Last'
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4],
+                name: 'First'
+            },
+            {
+                data: [5, 3, 4, 1],
+                name: 'Last'
+            }
+        ]
     });
 
-    var testimage = location.host.substr(0, 12) === 'localhost:98' ?
-        'base/test/testimage.png' : // karma
-        'testimage.png'; // utils
+    var testimage =
+        location.host.substr(0, 12) === 'localhost:98' ?
+            'base/test/testimage.png' : // karma
+            'testimage.png'; // utils
 
     chart.update({
         chart: {
@@ -72,7 +75,6 @@ QUnit.test('Option chart plot border and background update', function (assert) {
 });
 
 QUnit.test('Option chart.ignoreHiddenSeries update', function (assert) {
-
     var cfg = {
         chart: {
             type: 'column',
@@ -86,13 +88,16 @@ QUnit.test('Option chart.ignoreHiddenSeries update', function (assert) {
             }
         },
 
-        series: [{
-            data: [1, 3, 2, 4],
-            name: 'First'
-        }, {
-            data: [5, 3, 4, 1],
-            name: 'Last'
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4],
+                name: 'First'
+            },
+            {
+                data: [5, 3, 4, 1],
+                name: 'Last'
+            }
+        ]
     };
 
     cfg.series[0].data[0] = 100; // Add a spike to test ignoreHiddenSeries
@@ -100,15 +105,8 @@ QUnit.test('Option chart.ignoreHiddenSeries update', function (assert) {
 
     var chart = Highcharts.chart('container', cfg);
 
-    assert.strictEqual(
-        typeof chart.yAxis[0].max,
-        'number',
-        'Valid axis'
-    );
-    assert.ok(
-        chart.yAxis[0].max < 10,
-        'Small axis'
-    );
+    assert.strictEqual(typeof chart.yAxis[0].max, 'number', 'Valid axis');
+    assert.ok(chart.yAxis[0].max < 10, 'Small axis');
 
     // Now series[0] should not be ignored, causing the y axis to make room for the 100 point
     chart.update({
@@ -117,40 +115,44 @@ QUnit.test('Option chart.ignoreHiddenSeries update', function (assert) {
         }
     });
 
-    assert.ok(
-        chart.yAxis[0].max >= 100,
-        'Make space for hidden series'
-    );
-
-
+    assert.ok(chart.yAxis[0].max >= 100, 'Make space for hidden series');
 });
 
 QUnit.test('Option chart.spacing update', function (assert) {
-    var chart = Highcharts.chart('container', Highcharts.merge({
-        chart: {
-            plotBackgroundColor: 'silver'
-        }
-    }, {
-        chart: {
-            type: 'column',
-            animation: false,
-            height: 300
-        },
+    var chart = Highcharts.chart(
+        'container',
+        Highcharts.merge(
+            {
+                chart: {
+                    plotBackgroundColor: 'silver'
+                }
+            },
+            {
+                chart: {
+                    type: 'column',
+                    animation: false,
+                    height: 300
+                },
 
-        plotOptions: {
-            series: {
-                animation: false
+                plotOptions: {
+                    series: {
+                        animation: false
+                    }
+                },
+
+                series: [
+                    {
+                        data: [1, 3, 2, 4],
+                        name: 'First'
+                    },
+                    {
+                        data: [5, 3, 4, 1],
+                        name: 'Last'
+                    }
+                ]
             }
-        },
-
-        series: [{
-            data: [1, 3, 2, 4],
-            name: 'First'
-        }, {
-            data: [5, 3, 4, 1],
-            name: 'Last'
-        }]
-    }));
+        )
+    );
 
     // Test for integer
     chart.update({
@@ -186,7 +188,6 @@ QUnit.test('Option chart.spacing update', function (assert) {
         'Plot area height ok'
     );
 
-
     // Test for unique names
     chart.update({
         chart: {
@@ -208,9 +209,11 @@ QUnit.test('Option chart.spacing update', function (assert) {
         'Plot area height ok'
     );
 
-    var titleX = chart.container.querySelector('.highcharts-title')
+    var titleX = chart.container
+            .querySelector('.highcharts-title')
             .getAttribute('x'),
-        legendTransform = chart.container.querySelector('.highcharts-legend')
+        legendTransform = chart.container
+            .querySelector('.highcharts-legend')
             .getAttribute('transform');
 
     chart.update({
@@ -219,14 +222,14 @@ QUnit.test('Option chart.spacing update', function (assert) {
         }
     });
     assert.notEqual(
-        chart.container.querySelector('.highcharts-title')
-            .getAttribute('x'),
+        chart.container.querySelector('.highcharts-title').getAttribute('x'),
         titleX,
         'The title should move after update (#8190)'
     );
 
     assert.notEqual(
-        chart.container.querySelector('.highcharts-legend')
+        chart.container
+            .querySelector('.highcharts-legend')
             .getAttribute('transform'),
         legendTransform,
         'The legend should move after update (#8190)'

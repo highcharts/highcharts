@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type BubbleSeries from '../../Series/Bubble/BubbleSeries';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -65,7 +66,7 @@ declare global {
  * @return {*}
  */
 function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
-    var vertShade = [
+    let vertShade = [
             /* eslint-disable max-len, @typescript-eslint/indent */
             '#version 100',
             '#define LN10 2.302585092994046',
@@ -265,7 +266,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
             '}'
             /* eslint-enable max-len, @typescript-eslint/indent */
         ].join('\n'),
-        uLocations: Highcharts.Dictionary<WebGLUniformLocation> = {},
+        uLocations: Record<string, WebGLUniformLocation> = {},
         // The shader program
         shaderProgram: (WebGLProgram|null|undefined),
         // Uniform handle to the perspective matrix
@@ -311,7 +312,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
         str: string,
         type: string
     ): (false|WebGLShader|null) {
-        var t = type === 'vertex' ? gl.VERTEX_SHADER : gl.FRAGMENT_SHADER,
+        const t = type === 'vertex' ? gl.VERTEX_SHADER : gl.FRAGMENT_SHADER,
             shader = gl.createShader(t);
 
         gl.shaderSource(shader as any, str);
@@ -336,7 +337,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
      * @private
      */
     function createShader(): boolean {
-        var v = stringToProgram(vertShade, 'vertex'),
+        const v = stringToProgram(vertShade, 'vertex'),
             f = stringToProgram(fragShade, 'fragment');
 
         if (!v || !f) {
@@ -416,7 +417,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
      */
     function setUniform(name: string, val: number): void {
         if (gl && shaderProgram) {
-            var u = uLocations[name] = (
+            const u = uLocations[name] = (
                 uLocations[name] ||
                 gl.getUniformLocation(
                     shaderProgram,
@@ -477,11 +478,11 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
      * @param series {Highcharts.Series} - the series to use
      */
     function setBubbleUniforms(
-        series: Highcharts.BubbleSeries,
+        series: BubbleSeries,
         zCalcMin: number,
         zCalcMax: number
     ): void {
-        var seriesOptions = series.options,
+        let seriesOptions = series.options,
             zMin = Number.MAX_VALUE,
             zMax = -Number.MAX_VALUE;
 
@@ -503,7 +504,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
             );
             gl.uniform1i(
                 bubbleSizeAbsUniform as any,
-                (series as Highcharts.BubbleSeries).options
+                (series as BubbleSeries).options
                     .sizeByAbsoluteValue as any
             );
 

@@ -7,11 +7,9 @@ QUnit.test('Compatibility', function (assert) {
 });
 
 QUnit.test('Interpolate colors', function (assert) {
-
     // Cache names from Boost module
     var colorNames = Highcharts.Color.names;
     Highcharts.Color.names = {};
-
 
     var color = Highcharts.color;
 
@@ -52,29 +50,28 @@ QUnit.test('Interpolate colors', function (assert) {
     );
 
     assert.equal(
-        JSON.stringify(color({
-            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-            stops: [
-                [0, '#FF0000'],
-                [1, '#00FF00']
-            ]
-        }).tweenTo(color({
-            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-            stops: [
-                [0, '#FFFF00'],
-                [1, '#00FFFF']
-            ]
-        }), 0.5)),
+        JSON.stringify(
+            color({
+                radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                stops: [
+                    [0, '#FF0000'],
+                    [1, '#00FF00']
+                ]
+            }).tweenTo(
+                color({
+                    radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                    stops: [
+                        [0, '#FFFF00'],
+                        [1, '#00FFFF']
+                    ]
+                }),
+                0.5
+            )
+        ),
         '{"radialGradient":{"cx":0.5,"cy":0.3,"r":0.7},"stops":[[0,"#FFFF00"],[1,"#00FFFF"]]}',
         'Gradients'
     );
-    assert.equal(
-        color().tweenTo(color(), 0.5),
-        'none',
-        'Undefined colors'
-    );
+    assert.equal(color().tweenTo(color(), 0.5), 'none', 'Undefined colors');
 
     Highcharts.Color.names = colorNames;
-
-
 });

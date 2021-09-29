@@ -1,18 +1,14 @@
 // Configure the chart
-var chart = Highcharts.chart('container', {
-
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
-
     title: {
         text: 'Highcharts axis visibility'
     },
-
     xAxis: {
         categories: ['Apples', 'Pears', 'Oranges', 'Peaches']
     },
-
     yAxis: {
         allowDecimals: false,
         title: {
@@ -20,7 +16,6 @@ var chart = Highcharts.chart('container', {
         },
         visible: false
     },
-
     plotOptions: {
         series: {
             stacking: 'normal',
@@ -29,7 +24,6 @@ var chart = Highcharts.chart('container', {
             }
         }
     },
-
     series: [{
         data: [1, 3, 2, 4],
         name: 'Ola'
@@ -37,20 +31,21 @@ var chart = Highcharts.chart('container', {
         data: [5, 4, 5, 2],
         name: 'Kari'
     }]
-
 });
 
-var yVis = false,
-    xVis = true;
-$('#toggle-y').click(function () {
-    yVis = !yVis;
+let yVisible = false;
+let xVisible = true;
+
+document.getElementById('toggle-y').addEventListener('click', () => {
+    yVisible = !yVisible;
     chart.yAxis[0].update({
-        visible: yVis
+        visible: yVisible
     });
 });
-$('#toggle-x').click(function () {
-    xVis = !xVis;
+
+document.getElementById('toggle-x').addEventListener('click', () => {
+    xVisible = !xVisible;
     chart.xAxis[0].update({
-        visible: xVis
+        visible: xVisible
     });
 });

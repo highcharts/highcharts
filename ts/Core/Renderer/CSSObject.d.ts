@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,7 +14,9 @@
  *
  * */
 
+import type { AlignValue } from './AlignObject';
 import type ColorString from '../Color/ColorString';
+import ColorType from '../Color/ColorType';
 
 /* *
  *
@@ -33,22 +35,88 @@ export type CursorValue = (
 );
 
 export interface CSSObject {
-    [key: string]: (boolean|number|string|undefined);
+    // [key: string]: (boolean|number|string|undefined);
+    align?: string;
+    'align-items'?: string;
+    '-ms-filter'?: string;
+    '-ms-touch-action'?: string;
+    '-ms-transform'?: string;
+    '-o-transform'?: string;
+    '-webkit-transform'?: string;
+    background?: string;
     backgroundColor?: ColorString;
-    borderRadius?: (number|string);
+    borderRadius?: number|string;
+    borderWidth?: number;
+    border?: string|0;
+    'border-radius'?: string;
+    bottom?: string;
+    boxShadow?: string;
+    clip?: string;
     color?: ('contrast'|ColorString);
     cursor?: CursorValue;
+    direction?: string;
+    display?: string;
+    fill?: ColorType;
+    filter?: string;
+    flip?: string;
+    'flex-direction'?: string;
+    font?: string;
+    fontFamily?: string;
     fontSize?: (number|string);
-    lineWidth?: (number|string);
+    fontStyle?: string;
+    fontWeight?: string;
+    height?: string|0;
+    'justify-content'?: AlignValue;
+    left?: string|0;
+    lineHeight?: string|0;
+    lineWidth?: (number|string); // @todo: Check this. It's not CSS...
+    listStyle?: string;
+    margin?: string|0;
+    marginLeft?: string|0;
+    marginTop?: string|0;
+    'max-height'?: string;
+    'max-width'?: string;
+    MozBoxShadow?: string;
+    MozTransform?: string;
+    opacity?: number;
+    overflow?: string;
+    overflowX?: string;
+    overflowY?: string;
+    outline?: string;
+    padding?: number|string;
     pointerEvents?: string;
+    'pointer-events'?: string;
+    position?: 'absolute'|'fixed'|'relative';
+    right?: string;
+    rotation?: number;
     stroke?: ColorString;
     strokeWidth?: (number|string);
-    width?: string;
+    'text-align'?: AlignValue;
+    textAlign?: AlignValue;
+    textDecoration?: string;
+    textOverflow?: string;
+    textOutline?: string;
+    textTransform?: string;
+    top?: string|0;
+    'touch-action'?: string;
+    transform?: string;
+    transformOrigin?: string;
+    transition?: string;
+    userSelect?: string;
+    visibility?: 'hidden'|'inherit'|'visible';
+    whiteSpace?: string;
+    'white-space'?: string;
+    width?: string|0;
+    WebkitBoxShadow?: string;
+    WebkitOverflowScrolling?: string;
+    '-webkit-tap-highlight-color'?: string;
+    zIndex?: number;
+    'z-index'?: number;
 }
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

@@ -7,26 +7,30 @@ QUnit.test('Point select and staging', assert => {
         xAxis: {
             type: 'category'
         },
-        series: [{
-            data: [
-                ['Ein', 1],
-                ['To', 2],
-                ['Tre', 3],
-                ['Fire', 4]
-            ],
-            point: {
-                events: {
-                    select: () => {
-                        selectedPoints = chart.getSelectedPoints()
-                            .map(p => p.name);
-                    },
-                    unselect: () => {
-                        selectedPoints = chart.getSelectedPoints()
-                            .map(p => p.name);
+        series: [
+            {
+                data: [
+                    ['Ein', 1],
+                    ['To', 2],
+                    ['Tre', 3],
+                    ['Fire', 4]
+                ],
+                point: {
+                    events: {
+                        select: () => {
+                            selectedPoints = chart
+                                .getSelectedPoints()
+                                .map(p => p.name);
+                        },
+                        unselect: () => {
+                            selectedPoints = chart
+                                .getSelectedPoints()
+                                .map(p => p.name);
+                        }
                     }
                 }
             }
-        }]
+        ]
     });
 
     assert.deepEqual(
@@ -69,5 +73,4 @@ QUnit.test('Point select and staging', assert => {
         [],
         'After unselecting the final point, there should be no point selected'
     );
-
 });

@@ -1,7 +1,5 @@
 QUnit.test('Global marker is null (#6321)', function (assert) {
-
     var chart = Highcharts.chart('container', {
-
         chart: {
             type: 'bubble'
         },
@@ -15,19 +13,20 @@ QUnit.test('Global marker is null (#6321)', function (assert) {
             }
         },
 
-        series: [{
-            data: [
-                { x: 3, y: 1, z: 1, name: 'BE', country: 'Belgium' },
-                { x: 3, y: 5, z: 1, name: 'FI', country: 'Finland' }
-            ]
-        },
-        {
-            data: [
-                { x: 1, y: 1, z: 1, name: 'BE', country: 'Belgium' },
-                { x: 4, y: 5, z: 1, name: 'FI', country: 'Finland' }
-            ]
-        }]
-
+        series: [
+            {
+                data: [
+                    { x: 3, y: 1, z: 1, name: 'BE', country: 'Belgium' },
+                    { x: 3, y: 5, z: 1, name: 'FI', country: 'Finland' }
+                ]
+            },
+            {
+                data: [
+                    { x: 1, y: 1, z: 1, name: 'BE', country: 'Belgium' },
+                    { x: 4, y: 5, z: 1, name: 'FI', country: 'Finland' }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -38,33 +37,32 @@ QUnit.test('Global marker is null (#6321)', function (assert) {
 });
 
 QUnit.test('Clicking marker (#6705)', function (assert) {
-
     var clicked;
 
     var chart = Highcharts.chart('container', {
-        series: [{
-            animation: false,
-            cursor: 'pointer',
-            type: 'bubble',
-            point: {
-                events: {
-                    click: function () {
-                        // console.log('click');
-                        clicked = true;
+        series: [
+            {
+                animation: false,
+                cursor: 'pointer',
+                type: 'bubble',
+                point: {
+                    events: {
+                        click: function () {
+                            // console.log('click');
+                            clicked = true;
+                        }
                     }
-                }
-            },
-            states: {
-                hover: {
-                    halo: {
-                        size: 10
+                },
+                states: {
+                    hover: {
+                        halo: {
+                            size: 10
+                        }
                     }
-                }
-            },
-            data: [
-                [1, 2, 3]
-            ]
-        }]
+                },
+                data: [[1, 2, 3]]
+            }
+        ]
     });
 
     var controller = new TestController(chart);
@@ -79,11 +77,7 @@ QUnit.test('Clicking marker (#6705)', function (assert) {
         chart.plotTop + chart.series[0].points[0].plotY
     );
 
-    assert.strictEqual(
-        clicked,
-        true,
-        'Click event fired'
-    );
+    assert.strictEqual(clicked, true, 'Click event fired');
 });
 
 QUnit.test('Bubble data points without z-param.(#8608)', function (assert) {
@@ -91,16 +85,20 @@ QUnit.test('Bubble data points without z-param.(#8608)', function (assert) {
         chart: {
             type: 'bubble'
         },
-        series: [{
-            data: [{
-                x: 95,
-                y: 95
-            },
+        series: [
             {
-                x: 86.5,
-                y: 102.9
-            }]
-        }]
+                data: [
+                    {
+                        x: 95,
+                        y: 95
+                    },
+                    {
+                        x: 86.5,
+                        y: 102.9
+                    }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -114,7 +112,6 @@ QUnit.test('Bubble animation and async redraws (#13494)', assert => {
     const clock = TestUtilities.lolexInstall();
 
     try {
-
         const chart = Highcharts.chart('container', {
             chart: {
                 type: 'bubble'
@@ -173,10 +170,7 @@ QUnit.test('Bubble animation and async redraws (#13494)', assert => {
         }, 200);
 
         TestUtilities.lolexRunAndUninstall(clock);
-
     } finally {
-
         TestUtilities.lolexUninstall(clock);
-
     }
 });

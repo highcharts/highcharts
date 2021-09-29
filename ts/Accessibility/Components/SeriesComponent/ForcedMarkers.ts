@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Handle forcing series markers.
  *
@@ -12,30 +12,41 @@
 
 'use strict';
 
-import CartesianSeries from '../../../Core/Series/CartesianSeries.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    PointMarkerOptions,
+    PointOptions
+} from '../../../Core/Series/PointOptions';
+import type SeriesOptions from '../../../Core/Series/SeriesOptions';
+import Series from '../../../Core/Series/Series.js';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
     merge
 } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface PointStatesNormalOptionsObject {
-            opacity?: number;
-        }
-        interface Series {
-            a11yMarkersForced?: boolean;
-            resetA11yMarkerOptions: PointMarkerOptionsObject;
-            resetMarkerOptions?: unknown;
-        }
-        interface PointLike {
-            hasForcedA11yMarker?: boolean;
-        }
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../../Core/Series/PointLike' {
+    interface PointLike {
+        hasForcedA11yMarker?: boolean;
+    }
+}
+
+declare module '../../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        a11yMarkersForced?: boolean;
+        resetA11yMarkerOptions?: PointMarkerOptions;
+        resetMarkerOptions?: unknown;
     }
 }
 
@@ -75,7 +86,7 @@ function shouldForceMarkers(
 /**
  * @private
  */
-function hasIndividualPointMarkerOptions(series: Highcharts.Series): boolean {
+function hasIndividualPointMarkerOptions(series: Series): boolean {
     return !!(series._hasPointMarkers && series.points && series.points.length);
 }
 
@@ -107,7 +118,7 @@ function unforceSeriesMarkerOptions(series: Highcharts.AccessibilitySeries): voi
  * @private
  */
 function forceZeroOpacityMarkerOptions(
-    options: (Highcharts.PointOptionsObject|Highcharts.SeriesOptions)
+    options: (PointOptions|SeriesOptions)
 ): void {
     merge(true, options, {
         marker: {
@@ -125,25 +136,21 @@ function forceZeroOpacityMarkerOptions(
 /**
  * @private
  */
-function getPointMarkerOpacity(
-    pointOptions: Highcharts.PointOptionsObject
-): number {
+function getPointMarkerOpacity(pointOptions: PointOptions): number|undefined {
     return (pointOptions.marker as any).states &&
         (pointOptions.marker as any).states.normal &&
-        (pointOptions.marker as any).states.normal.opacity || 1;
+        (pointOptions.marker as any).states.normal.opacity;
 }
 
 
 /**
  * @private
  */
-function unforcePointMarkerOptions(
-    pointOptions: Highcharts.PointOptionsObject
-): void {
+function unforcePointMarkerOptions(pointOptions: PointOptions): void {
     merge(true, pointOptions.marker, {
         states: {
             normal: {
-                opacity: getPointMarkerOpacity(pointOptions)
+                opacity: getPointMarkerOpacity(pointOptions) || 1
             }
         }
     });
@@ -153,19 +160,22 @@ function unforcePointMarkerOptions(
 /**
  * @private
  */
-function handleForcePointMarkers(series: Highcharts.Series): void {
+function handleForcePointMarkers(series: Series): void {
     let i = series.points.length;
 
     while (i--) {
         const point = series.points[i];
         const pointOptions = point.options;
+        const hadForcedMarker = point.hasForcedA11yMarker;
         delete point.hasForcedA11yMarker;
 
         if (pointOptions.marker) {
-            if (pointOptions.marker.enabled) {
+            const isStillForcedMarker = hadForcedMarker && getPointMarkerOpacity(pointOptions) === 0;
+
+            if (pointOptions.marker.enabled && !isStillForcedMarker) {
                 unforcePointMarkerOptions(pointOptions);
                 point.hasForcedA11yMarker = false;
-            } else {
+            } else if (pointOptions.marker.enabled === false) {
                 forceZeroOpacityMarkerOptions(pointOptions);
                 point.hasForcedA11yMarker = true;
             }
@@ -183,7 +193,7 @@ function addForceMarkersEvents(): void {
      * Keep track of forcing markers.
      * @private
      */
-    addEvent(CartesianSeries, 'render', function (): void {
+    addEvent(Series, 'render', function (): void {
         const series = this as Highcharts.AccessibilitySeries,
             options = series.options;
 
@@ -208,8 +218,8 @@ function addForceMarkersEvents(): void {
      * Keep track of options to reset markers to if no longer forced.
      * @private
      */
-    addEvent(CartesianSeries, 'afterSetOptions', function (
-        e: { options: Highcharts.SeriesOptions }
+    addEvent(Series, 'afterSetOptions', function (
+        e: { options: SeriesOptions }
     ): void {
         this.resetA11yMarkerOptions = merge(
             e.options.marker || {}, this.userOptions.marker || {}
@@ -221,7 +231,7 @@ function addForceMarkersEvents(): void {
      * Process marker graphics after render
      * @private
      */
-    addEvent(CartesianSeries as any, 'afterRender', function (
+    addEvent(Series as any, 'afterRender', function (
         this: Highcharts.AccessibilitySeries
     ): void {
         const series = this;

@@ -112,7 +112,7 @@ class ControllableRect implements ControllableMixin.Type {
      * */
 
     public render(parent: SVGElement): void {
-        var attrs = this.attrsFromOptions(this.options);
+        const attrs = this.attrsFromOptions(this.options);
 
         this.graphic = this.annotation.chart.renderer
             .rect(0, -9e9, 0, 0)
@@ -123,7 +123,7 @@ class ControllableRect implements ControllableMixin.Type {
     }
 
     public redraw(animation?: boolean): void {
-        var position = this.anchor(this.points[0]).absolutePosition;
+        const position = this.anchor(this.points[0]).absolutePosition;
 
         if (position) {
             this.graphic[animation ? 'animate' : 'attr']({

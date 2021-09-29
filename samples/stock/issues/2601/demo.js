@@ -10,7 +10,7 @@ Highcharts.stockChart('container', {
         zoomType: 'x'
     },
     title: {
-        text: 'In Highstock <= 1.3.9, comparing against an empty series would fail'
+        text: 'In Highcharts Stock <= 1.3.9, comparing against an empty series would fail'
     },
     series: [{
         type: 'line',

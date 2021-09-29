@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -12,20 +12,21 @@
 
 'use strict';
 
+import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
+import type ColorMapComposition from '../../Series/ColorMapComposition';
 import type ColorString from '../../Core/Color/ColorString';
 import type Point from '../../Core/Series/Point';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import type Series from '../../Core/Series/Series';
+import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
+
 import Color from '../../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import GLShader from './WGLShader.js';
 import GLVertexBuffer from './WGLVBuffer.js';
 import H from '../../Core/Globals.js';
-const {
-    doc
-} = H;
+const { doc } = H;
 import U from '../../Core/Utilities.js';
 const {
     isNumber,
@@ -91,7 +92,7 @@ declare global {
             hasMarkers: boolean;
             markerFrom: number;
             markerTo?: number;
-            segments: Array<Dictionary<number>>;
+            segments: Array<Record<string, number>>;
             series: Series;
             showMarkers: boolean;
             skipTranslation?: boolean;
@@ -148,9 +149,10 @@ function GLRenderer(
     postRenderCallback: Function
 ): (false|Highcharts.BoostGLRenderer) {
     //  // Shader
-    var shader: Highcharts.BoostGLShader = false as any,
+    let shader: Highcharts.BoostGLShader = false as any,
         // Vertex buffers - keyed on shader attribute name
         vbuffer: Highcharts.BoostGLVertexBuffer = false as any,
+        vlen = 0,
         // Opengl context
         gl: WebGLRenderingContext = false as any,
         // Width of our viewport in pixels
@@ -168,18 +170,18 @@ function GLRenderer(
         // The series stack
         series: Array<Highcharts.BoostGLSeriesObject> = [],
         // Texture handles
-        textureHandles: Highcharts.Dictionary<(
+        textureHandles: Record<string, (
             Highcharts.BoostGLTextureObject
         )> = {},
         // Things to draw as "rectangles" (i.e lines)
-        asBar: Highcharts.Dictionary<boolean> = {
+        asBar: Record<string, boolean> = {
             'column': true,
             'columnrange': true,
             'bar': true,
             'area': true,
             'arearange': true
         },
-        asCircle: Highcharts.Dictionary<boolean> = {
+        asCircle: Record<string, boolean> = {
             'scatter': true,
             'bubble': true
         },
@@ -213,8 +215,8 @@ function GLRenderer(
     /**
      * @private
      */
-    function seriesPointCount(series: Highcharts.Series): number {
-        var isStacked: boolean,
+    function seriesPointCount(series: Series): number {
+        let isStacked: boolean,
             xData: Array<number>,
             s: number;
 
@@ -247,13 +249,13 @@ function GLRenderer(
      * @private
      */
     function allocateBuffer(chart: Chart): void {
-        var s = 0;
+        let s = 0;
 
         if (!settings.usePreallocated) {
             return;
         }
 
-        chart.series.forEach(function (series: Highcharts.Series): void {
+        chart.series.forEach(function (series: Series): void {
             if (series.isSeriesBoosting) {
                 s += seriesPointCount(series);
             }
@@ -265,8 +267,8 @@ function GLRenderer(
     /**
      * @private
      */
-    function allocateBufferForSingleSeries(series: Highcharts.Series): void {
-        var s = 0;
+    function allocateBufferForSingleSeries(series: Series): void {
+        let s = 0;
 
         if (!settings.usePreallocated) {
             return;
@@ -286,7 +288,7 @@ function GLRenderer(
      * @param {number} height - the height of the viewport in pixels
      */
     function orthoMatrix(width: number, height: number): Array<number> {
-        var near = 0,
+        const near = 0,
             far = 1;
 
         return [
@@ -321,10 +323,10 @@ function GLRenderer(
      * @private
      */
     function pushSeriesData(
-        series: Highcharts.Series,
+        series: Series,
         inst: Highcharts.BoostGLSeriesObject
     ): void {
-        var isRange = (
+        let isRange = (
                 series.pointArrayMap &&
                 series.pointArrayMap.join(',') === 'low,high'
             ),
@@ -369,7 +371,6 @@ function GLRenderer(
             lastX: number = false as any,
             lastY: number = false as any,
             minVal: (number|undefined),
-            pcolor: Color.RGBA,
             scolor: Color.RGBA,
             sdata = isStacked ? series.data : (xData || rawData),
             closestLeft = { x: Number.MAX_VALUE, y: 0 },
@@ -383,7 +384,7 @@ function GLRenderer(
             // The following are used in the builder while loop
             x: number,
             y: number,
-            d: (number|Array<number>|Highcharts.Dictionary<number>),
+            d: (number|Array<number>|Record<string, number>),
             z: (number|undefined),
             i = -1,
             px: number = false as any,
@@ -397,8 +398,10 @@ function GLRenderer(
             isXInside = false,
             isYInside = true,
             firstPoint = true,
+            zoneAxis = options.zoneAxis || 'y',
             zones = options.zones || false,
-            zoneDefColor: (Color|undefined) = false as any,
+            zoneColors: Array<Color.RGBA>,
+            zoneDefColor: (Color.RGBA|undefined) = false as any,
             threshold: number = options.threshold as any,
             gapSize: number = false as any;
 
@@ -413,20 +416,31 @@ function GLRenderer(
         }
 
         if (zones) {
-            zones.some(function (zone: Highcharts.SeriesZonesOptions): (boolean) {
-                if (typeof zone.value === 'undefined') {
-                    zoneDefColor = new Color(zone.color);
-                    return true;
+            zoneColors = [];
+
+            zones.forEach(function (zone, i): void {
+                if (zone.color) {
+                    const zoneColor = color(zone.color).rgba as Color.RGBA;
+                    zoneColor[0] /= 255.0;
+                    zoneColor[1] /= 255.0;
+                    zoneColor[2] /= 255.0;
+                    zoneColors[i] = zoneColor;
+
+                    if (!zoneDefColor && typeof zone.value === 'undefined') {
+                        zoneDefColor = zoneColor;
+                    }
                 }
-                return false;
             });
 
             if (!zoneDefColor) {
-                zoneDefColor = (
+                const seriesColor = (
                     (series.pointAttribs && series.pointAttribs().fill) ||
                     series.color
-                ) as any;
-                zoneDefColor = new Color(zoneDefColor as any);
+                );
+                zoneDefColor = color(seriesColor).rgba as Color.RGBA;
+                zoneDefColor[0] /= 255.0;
+                zoneDefColor[1] /= 255.0;
+                zoneDefColor[2] /= 255.0;
             }
         }
 
@@ -464,6 +478,7 @@ function GLRenderer(
             pushColor(color);
             if (settings.usePreallocated) {
                 vbuffer.push(x, y, checkTreshold ? 1 : 0, pointSize || 1);
+                vlen += 4;
             } else {
                 data.push(x);
                 data.push(y);
@@ -477,7 +492,7 @@ function GLRenderer(
          */
         function closeSegment(): void {
             if (inst.segments.length) {
-                inst.segments[inst.segments.length - 1].to = data.length;
+                inst.segments[inst.segments.length - 1].to = data.length || vlen;
             }
         }
 
@@ -492,7 +507,7 @@ function GLRenderer(
             // set the previous segment's end
 
             if (inst.segments.length &&
-                inst.segments[inst.segments.length - 1].from === data.length
+                inst.segments[inst.segments.length - 1].from === (data.length || vlen)
             ) {
                 return;
             }
@@ -500,7 +515,7 @@ function GLRenderer(
             closeSegment();
 
             inst.segments.push({
-                from: data.length
+                from: data.length || vlen
             });
 
         }
@@ -568,21 +583,22 @@ function GLRenderer(
             }
 
             points.forEach(function (point: Point): void {
-                var plotY = point.plotY,
-                    shapeArgs: SVGAttributes,
+                let plotY = point.plotY,
                     swidth,
                     pointAttr;
 
                 if (
                     typeof plotY !== 'undefined' &&
                     !isNaN(plotY) &&
-                    point.y !== null
+                    point.y !== null &&
+                    point.shapeArgs
                 ) {
-                    shapeArgs = point.shapeArgs as any;
+                    let { x = 0, y = 0, width = 0, height = 0 } =
+                        point.shapeArgs;
 
                     pointAttr = chart.styledMode ?
-                        (point.series as Highcharts.ColorMapSeries)
-                            .colorAttribs(point as Highcharts.ColorMapPoint) :
+                        (point.series as ColorMapComposition.SeriesComposition)
+                            .colorAttribs(point as ColorMapComposition.PointComposition) :
                         pointAttr = point.series.pointAttribs(point);
 
                     swidth = pointAttr['stroke-width'] || 0;
@@ -609,13 +625,7 @@ function GLRenderer(
                         scolor[1] /= 255.0;
                         scolor[2] /= 255.0;
 
-                        pushRect(
-                            shapeArgs.x,
-                            shapeArgs.y,
-                            shapeArgs.width,
-                            shapeArgs.height,
-                            scolor
-                        );
+                        pushRect(x, y, width, height, scolor);
 
                         swidth /= 2;
                     }
@@ -629,17 +639,17 @@ function GLRenderer(
                     // bottom-right. This causes a vertical and horizontal flip
                     // in the resulting image, making it rotated 180 degrees.
                     if (series.type === 'heatmap' && chart.inverted) {
-                        shapeArgs.x = xAxis.len - shapeArgs.x;
-                        shapeArgs.y = yAxis.len - shapeArgs.y;
-                        shapeArgs.width = -shapeArgs.width;
-                        shapeArgs.height = -shapeArgs.height;
+                        x = xAxis.len - x;
+                        y = yAxis.len - y;
+                        width = -width;
+                        height = -height;
                     }
 
                     pushRect(
-                        shapeArgs.x + swidth,
-                        shapeArgs.y + swidth,
-                        shapeArgs.width - (swidth * 2),
-                        shapeArgs.height - (swidth * 2),
+                        x + swidth,
+                        y + swidth,
+                        width - (swidth * 2),
+                        height - (swidth * 2),
                         pcolor
                     );
                 }
@@ -659,6 +669,10 @@ function GLRenderer(
 
         while (i < sdata.length - 1) {
             d = sdata[++i];
+
+            if (typeof d === 'undefined') {
+                continue;
+            }
 
             // px = x = y = z = nx = low = false;
             // chartDestroyed = typeof chart.index === 'undefined';
@@ -779,12 +793,12 @@ function GLRenderer(
 
             if (x > xMax && closestRight.x < xMax) {
                 closestRight.x = x;
-                closestRight.y = y as any;
+                closestRight.y = y;
             }
 
             if (x < xMin && closestLeft.x > xMin) {
                 closestLeft.x = x;
-                closestLeft.y = y as any;
+                closestLeft.y = y;
             }
 
             if (y === null && connectNulls) {
@@ -816,28 +830,33 @@ function GLRenderer(
 
             // Note: Boost requires that zones are sorted!
             if (zones) {
-                pcolor = (zoneDefColor as any).rgba;
+                let zoneColor: Color.RGBA|undefined;
                 zones.some(function ( // eslint-disable-line no-loop-func
-                    zone: Highcharts.SeriesZonesOptions,
+                    zone: SeriesZonesOptions,
                     i: number
                 ): boolean {
-                    var last: Highcharts.SeriesZonesOptions =
-                            (zones as any)[i - 1];
+                    const last: SeriesZonesOptions = (zones as any)[i - 1];
+
+                    if (zoneAxis === 'x') {
+                        if (typeof zone.value !== 'undefined' && x <= zone.value) {
+                            if (zoneColors[i] && (!last || x >= (last.value as any))) {
+                                zoneColor = zoneColors[i];
+                            }
+                            return true;
+                        }
+                        return false;
+                    }
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
-                        if (!last || y >= (last.value as any)) {
-                            pcolor = color(zone.color).rgba as any;
-
+                        if (zoneColors[i] && (!last || y >= (last.value as any))) {
+                            zoneColor = zoneColors[i];
                         }
                         return true;
                     }
                     return false;
                 });
 
-                (pcolor as any)[0] /= 255.0;
-                (pcolor as any)[1] /= 255.0;
-                (pcolor as any)[2] /= 255.0;
-
+                pcolor = zoneColor || zoneDefColor || pcolor;
             }
 
             // Skip translations - temporary floating point fix
@@ -871,33 +890,6 @@ function GLRenderer(
 
             }
 
-            if (drawAsBar) {
-
-                // maxVal = y;
-                minVal = low;
-
-                if ((low as any) === false || typeof low === 'undefined') {
-                    if (y < 0) {
-                        minVal = y;
-                    } else {
-                        minVal = 0;
-                    }
-                }
-
-                if (!isRange && !isStacked) {
-                    minVal = Math.max(
-                        threshold === null ? yMin : threshold, // #5268
-                        yMin
-                    ); // #8731
-                }
-                if (!settings.useGPUTranslations) {
-                    minVal = yAxis.toPixels(minVal as any, true);
-                }
-
-                // Need to add an extra point here
-                vertice(x, minVal as any, 0 as any, 0, pcolor);
-            }
-
             // No markers on out of bounds things.
             // Out of bound things are shown if and only if the next
             // or previous point is inside the rect.
@@ -924,7 +916,6 @@ function GLRenderer(
 
             // If the last _drawn_ point is closer to this point than the
             // threshold, skip it. Shaves off 20-100ms in processing.
-
             if (!settings.useGPUTranslations &&
                 !settings.usePreallocated &&
                 (lastX && Math.abs(x - lastX) < cullXThreshold) &&
@@ -935,6 +926,32 @@ function GLRenderer(
                 }
 
                 continue;
+            }
+
+            if (drawAsBar) {
+                // maxVal = y;
+                minVal = low;
+
+                if ((low as any) === false || typeof low === 'undefined') {
+                    if (y < 0) {
+                        minVal = y;
+                    } else {
+                        minVal = 0;
+                    }
+                }
+
+                if (!isRange && !isStacked) {
+                    minVal = Math.max(
+                        threshold === null ? yMin : threshold, // #5268
+                        yMin
+                    ); // #8731
+                }
+                if (!settings.useGPUTranslations) {
+                    minVal = yAxis.toPixels(minVal as any, true);
+                }
+
+                // Need to add an extra point here
+                vertice(x, minVal as any, 0 as any, 0, pcolor);
             }
 
             // Do step line if enabled.
@@ -984,7 +1001,7 @@ function GLRenderer(
          * @private
          */
         function pushSupplementPoint(
-            point: Highcharts.PositionObject,
+            point: PositionObject,
             atStart?: boolean
         ): void {
             if (!settings.useGPUTranslations) {
@@ -1033,7 +1050,7 @@ function GLRenderer(
      * @private
      * @param s {Highchart.Series} - the series to push
      */
-    function pushSeries(s: Highcharts.Series): void {
+    function pushSeries(s: Series): void {
         if (series.length > 0) {
             // series[series.length - 1].to = data.length;
             if (series[series.length - 1].hasMarkers) {
@@ -1045,7 +1062,7 @@ function GLRenderer(
             console.time('building ' + s.type + ' series'); // eslint-disable-line no-console
         }
 
-        series.push({
+        const obj = {
             segments: [],
             // from: data.length,
             markerFrom: markerData.length,
@@ -1073,12 +1090,18 @@ function GLRenderer(
                     'heatmap': 'triangles',
                     'treemap': 'triangles',
                     'bubble': 'points'
-                } as Highcharts.Dictionary<Highcharts.BoostGLDrawModeValue>
+                } as Record<string, Highcharts.BoostGLDrawModeValue>
             )[s.type] || 'line_strip'
-        });
+        };
+
+        if (s.index >= series.length) {
+            series.push(obj);
+        } else {
+            series[s.index] = obj;
+        }
 
         // Add the series data to our buffer(s)
-        pushSeriesData(s, series[series.length - 1]);
+        pushSeriesData(s, obj);
 
         if (settings.debug.timeSeriesProcessing) {
             console.timeEnd('building ' + s.type + ' series'); // eslint-disable-line no-console
@@ -1106,7 +1129,7 @@ function GLRenderer(
      * @private
      * @param axis {Highcharts.Axis} - the x-axis
      */
-    function setXAxis(axis: Highcharts.Axis): void {
+    function setXAxis(axis: Axis): void {
         if (!shader) {
             return;
         }
@@ -1127,7 +1150,7 @@ function GLRenderer(
      * @private
      * @param axis {Highcharts.Axis} - the y-axis
      */
-    function setYAxis(axis: Highcharts.Axis): void {
+    function setYAxis(axis: Axis): void {
         if (!shader) {
             return;
         }
@@ -1202,7 +1225,7 @@ function GLRenderer(
             s: Highcharts.BoostGLSeriesObject,
             si: number
         ): void {
-            var options = s.series.options,
+            let options = s.series.options,
                 shapeOptions = options.marker,
                 sindex,
                 lineWidth = (
@@ -1234,10 +1257,7 @@ function GLRenderer(
 
             if (
                 s.segments.length === 0 ||
-                (
-                    (s as any).segmentslength &&
-                    s.segments[0].from === s.segments[0].to
-                )
+                s.segments[0].from === s.segments[0].to
             ) {
                 return;
             }
@@ -1255,7 +1275,11 @@ function GLRenderer(
 
             } else {
                 fillColor =
-                    (s.series.pointAttribs && s.series.pointAttribs().fill) ||
+                    (
+                        s.drawMode === 'points' && // #14260
+                        s.series.pointAttribs &&
+                        s.series.pointAttribs().fill
+                    ) ||
                     s.series.color;
 
                 if (options.colorByPoint) {
@@ -1317,6 +1341,12 @@ function GLRenderer(
                 cbuffer = GLVertexBuffer(gl, shader); // eslint-disable-line new-cap
                 cbuffer.build(s.colorData, 'aColor', 4);
                 cbuffer.bind();
+            } else {
+                // #15869, a buffer with fewer points might already be bound by
+                // a different series/chart causing out of range errors
+                gl.disableVertexAttribArray(
+                    gl.getAttribLocation(shader.program() as any, 'aColor')
+                );
             }
 
             // Set series specific uniforms
@@ -1349,13 +1379,11 @@ function GLRenderer(
             // If the line width is < 0, skip rendering of the lines. See #7833.
             if (lineWidth > 0 || s.drawMode !== 'line_strip') {
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
-                    // if (s.segments[sindex].from < s.segments[sindex].to) {
                     vbuffer.render(
                         s.segments[sindex].from,
                         s.segments[sindex].to,
                         s.drawMode
                     );
-                    // }
                 }
             }
 
@@ -1367,13 +1395,11 @@ function GLRenderer(
                 }
                 shader.setDrawAsCircle(true);
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
-                    // if (s.segments[sindex].from < s.segments[sindex].to) {
                     vbuffer.render(
                         s.segments[sindex].from,
                         s.segments[sindex].to,
                         'POINTS'
                     );
-                    // }
                 }
             }
         });
@@ -1435,7 +1461,7 @@ function GLRenderer(
      * @param canvas {HTMLCanvas} - the canvas to render to
      */
     function init(canvas?: HTMLCanvasElement, noFlush?: boolean): boolean {
-        var i = 0,
+        let i = 0,
             contexts = [
                 'webgl',
                 'experimental-webgl',
@@ -1493,7 +1519,7 @@ function GLRenderer(
             name: string,
             fn: Highcharts.BoostGLTextureCallbackFunction
         ): void {
-            var props: Highcharts.BoostGLTextureObject = {
+            const props: Highcharts.BoostGLTextureObject = {
                     isReady: false,
                     texture: doc.createElement('canvas'),
                     handle: gl.createTexture()

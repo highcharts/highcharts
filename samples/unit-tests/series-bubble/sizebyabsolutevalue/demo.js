@@ -3,30 +3,30 @@ QUnit.test('Size by threshold', function (assert) {
         $container = $('#container');
 
     $container.highcharts({
-
         chart: {
             type: 'bubble',
             animation: false
         },
 
-        series: [{
-            animation: false,
-            data: [
-                [-5, 0, -5],
-                [-4, 0, -4],
-                [-3, 0, -3],
-                [-2, 0, -2],
-                [-1, 0, -1],
-                [0, 0, 0],
-                [1, 0, 1],
-                [2, 0, 2],
-                [3, 0, 3],
-                [4, 0, 4],
-                [5, 0, 5]
-            ],
-            sizeByAbsoluteValue: true
-        }]
-
+        series: [
+            {
+                animation: false,
+                data: [
+                    [-5, 0, -5],
+                    [-4, 0, -4],
+                    [-3, 0, -3],
+                    [-2, 0, -2],
+                    [-1, 0, -1],
+                    [0, 0, 0],
+                    [1, 0, 1],
+                    [2, 0, 2],
+                    [3, 0, 3],
+                    [4, 0, 4],
+                    [5, 0, 5]
+                ],
+                sizeByAbsoluteValue: true
+            }
+        ]
     });
 
     chart = $container.highcharts();
@@ -39,16 +39,17 @@ QUnit.test('Size by threshold', function (assert) {
 
     chart.series[0].update({ sizeByAbsoluteValue: false });
     assert.strictEqual(
-        parseInt(chart.series[0].points[0].marker.radius, 10) < parseInt(chart.series[0].points[10].marker.radius, 10),
+        parseInt(chart.series[0].points[0].marker.radius, 10) <
+            parseInt(chart.series[0].points[10].marker.radius, 10),
         true,
         'Size by threshold: false give different sizes'
     );
 
-
     chart.series[0].update({ sizeByAbsoluteValue: true });
     chart.series[0].points[10].update({ z: 4 });
     assert.strictEqual(
-        parseInt(chart.series[0].points[0].marker.radius, 10) > parseInt(chart.series[0].points[10].marker.radius, 10),
+        parseInt(chart.series[0].points[0].marker.radius, 10) >
+            parseInt(chart.series[0].points[10].marker.radius, 10),
         true,
         'Negative absolute value gives greater bubble size'
     );
@@ -74,5 +75,4 @@ QUnit.test('Size by threshold', function (assert) {
         0.5,
         'Correct size of the marker (#8092).'
     );
-
 });

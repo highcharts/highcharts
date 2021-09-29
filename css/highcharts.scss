@@ -76,8 +76,8 @@ $scrollbar-track-background: $neutral-color-5 !default;
 $scrollbar-track-border: $neutral-color-5 !default;
 
 // Indicators
-$indicator-positive-line: #06B535;
-$indicator-negative-line: #F21313;
+$positive-color: #06b535; // Positive indicator color
+$negative-color: #f21313; // Negative indicator color
 
 .highcharts-container {
     position: relative;
@@ -91,6 +91,8 @@ $indicator-negative-line: #F21313;
     font-family: $font-family;
     font-size: 12px;
     user-select: none;
+    touch-action: manipulation;
+    outline: none;
 }
 .highcharts-root {
     display: block;
@@ -137,6 +139,7 @@ $indicator-negative-line: #F21313;
 }
 .highcharts-subtitle {
     fill: $neutral-color-60;
+    font-size: $subtitle-font-size;
 }
 
 /* Axes */
@@ -686,6 +689,18 @@ input.highcharts-range-selector {
 .highcharts-candlestick-series .highcharts-point-up {
     fill: $background-color;
 }
+.highcharts-hollowcandlestick-series .highcharts-point-down {
+    fill: $negative-color;
+    stroke: $negative-color;
+}
+.highcharts-hollowcandlestick-series .highcharts-point-down-bearish-up {
+    fill: $positive-color;
+    stroke: $positive-color;
+}
+.highcharts-hollowcandlestick-series .highcharts-point-up {
+    fill: transparent;
+    stroke: $positive-color;
+}
 .highcharts-ohlc-series .highcharts-point-hover {
     stroke-width: 3px;
 }
@@ -823,6 +838,46 @@ text.highcharts-drilldown-data-label,
 }
 .highcharts-annotation-label text {
     fill: $neutral-color-10;
+}
+
+/* A11y module */
+.highcharts-a11y-proxy-button {
+    border-width: 0;
+    background-color: transparent;
+    cursor: pointer;
+    outline: none;
+    opacity: 0.001;
+    z-index: 999;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    display: block;
+    position: absolute;
+}
+.highcharts-a11y-proxy-group ul {
+    list-style: none;
+}
+.highcharts-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    clip: rect(1px, 1px, 1px, 1px);
+    margin-top: -3px;
+    opacity: 0.01;
+}
+.highcharts-a11y-invisible {
+    visibility: hidden;
+}
+.highcharts-a11y-proxy-container,
+.highcharts-a11y-proxy-container-before,
+.highcharts-a11y-proxy-container-after {
+    position: absolute;
+    white-space: nowrap;
+}
+g.highcharts-series, .highcharts-markers, .highcharts-point {
+    outline: none;
 }
 
 /* Gantt */

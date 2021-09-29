@@ -1,55 +1,107 @@
-QUnit.test('Polar chart with no data (#5226)', function (assert) {
-    assert.expect(0);
-    Highcharts.chart('container', {
+QUnit.test('Polar chart data', function (assert) {
+    const chart = Highcharts.chart('container', {
         chart: {
             polar: true
         },
 
-        series: [{
-            type: 'line',
-            name: 'Line',
-            data: []
-        }]
+        series: [
+            {
+                type: 'line',
+                name: 'Line',
+                data: []
+            }
+        ]
     });
-});
-QUnit.test("Polar and categorized chart should not render extra alternate band.(#2248)", function (assert) {
-    var chart = $('#container').highcharts({
-            chart: {
-                polar: true
-            },
-            xAxis: {
-                // This alternateGridColor is wrong:
-                alternateGridColor: '#FFC0C0',
-                categories: ['Category A', 'Category B', 'Category C', 'Category D', 'Category E'],
-                // The X axis line is a circle instead of a polygon
-                lineWidth: 0
-            },
-            yAxis: {
-                //This is correct:
-                alternateGridColor: '#C0FFC0',
-                gridLineInterpolation: 'polygon',
-                title: {
-                    text: 'Y-axis'
-                }
-            },
-            series: [{
-                name: 'Serie 1',
-                data: [7.0, 6.9, 9.5, 14.5, 18.2]
-            }, {
-                name: 'Serie 2',
-                data: [-0.2, 0.8, 5.7, 11.3, 17.0]
-            }, {
-                name: 'Serie 3',
-                data: [-0.9, 0.6, 3.5, 8.4, 13.5]
-            }]
-        }).highcharts(),
-        UNDEFINED;
 
-    assert.strictEqual(
-        chart.xAxis[0].alternateBands[4],
-        UNDEFINED,
-        "Zero extra bands.");
+    assert.ok(
+        true,
+        '#5226: Polar chart with no data should not throw'
+    );
+
+    chart.series[0].update({
+        data: [null]
+    });
+
+    assert.notOk(
+        Number.isNaN(chart.series[0].points[0].plotX),
+        '#15438: plotX should not be NaN with null data'
+    );
+    assert.notOk(
+        Number.isNaN(chart.series[0].points[0].plotY),
+        '#15438: plotY should not be NaN with null data'
+    );
+
+    chart.series[0].update({
+        type: 'spline',
+        data: [
+            { x: 45, y: 5 },
+            { x: 90, y: 2 },
+            { x: 180, y: void 0 },
+            { x: 270, y: 2 }
+        ]
+    });
+
+    assert.ok(
+        chart.series[0].graphPath.every(
+            p => p.slice(1).every(Highcharts.isNumber)
+        ),
+        '#15489: Graph path should not contain any NaN values'
+    );
 });
+QUnit.test(
+    'Polar and categorized chart should not render extra alternate band.(#2248)',
+    function (assert) {
+        var chart = $('#container')
+                .highcharts({
+                    chart: {
+                        polar: true
+                    },
+                    xAxis: {
+                        // This alternateGridColor is wrong:
+                        alternateGridColor: '#FFC0C0',
+                        categories: [
+                            'Category A',
+                            'Category B',
+                            'Category C',
+                            'Category D',
+                            'Category E'
+                        ],
+                        // The X axis line is a circle instead of a polygon
+                        lineWidth: 0
+                    },
+                    yAxis: {
+                        //This is correct:
+                        alternateGridColor: '#C0FFC0',
+                        gridLineInterpolation: 'polygon',
+                        title: {
+                            text: 'Y-axis'
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'Serie 1',
+                            data: [7.0, 6.9, 9.5, 14.5, 18.2]
+                        },
+                        {
+                            name: 'Serie 2',
+                            data: [-0.2, 0.8, 5.7, 11.3, 17.0]
+                        },
+                        {
+                            name: 'Serie 3',
+                            data: [-0.9, 0.6, 3.5, 8.4, 13.5]
+                        }
+                    ]
+                })
+                .highcharts(),
+            UNDEFINED;
+
+        assert.strictEqual(
+            chart.xAxis[0].alternateBands[4],
+            UNDEFINED,
+            'Zero extra bands.'
+        );
+    }
+);
 
 QUnit.test('Paddings and extremes', function (assert) {
     var chart = Highcharts.chart('container', {
@@ -60,10 +112,11 @@ QUnit.test('Paddings and extremes', function (assert) {
             maxPadding: 0,
             minPadding: 0
         },
-        series: [{
-            data: [67, 29, 70, 91, 59, 53, 17, 63, 20, 31, 31]
-        }]
-
+        series: [
+            {
+                data: [67, 29, 70, 91, 59, 53, 17, 63, 20, 31, 31]
+            }
+        ]
     });
 
     // Axis setExtremes caused padded axis (#5662)
@@ -72,7 +125,6 @@ QUnit.test('Paddings and extremes', function (assert) {
         11,
         'Axis initially padded as per autoConnect (#5662).'
     );
-
 
     chart.xAxis[0].setExtremes(4, 10);
 
@@ -103,7 +155,6 @@ QUnit.test('Paddings and extremes', function (assert) {
 // Highcharts 3.0.10, Issue #2848
 // Polar chart with reversed yAxis
 QUnit.test('Polar reversed yaxis (#2848)', function (assert) {
-
     var chart = Highcharts.chart('container', {
         chart: {
             height: 350,
@@ -113,22 +164,24 @@ QUnit.test('Polar reversed yaxis (#2848)', function (assert) {
         yAxis: {
             reversed: true
         },
-        series: [{
-            name: 'Allocated Budget',
-            data: [43000, 19000, 60000, 35000, 17000, 10000],
-            pointPlacement: 'on'
-        }, {
-            name: 'Actual Spending',
-            data: [50000, 39000, 42000, 31000, 26000, 14000],
-            pointPlacement: 'on'
-        }]
+        series: [
+            {
+                name: 'Allocated Budget',
+                data: [43000, 19000, 60000, 35000, 17000, 10000],
+                pointPlacement: 'on'
+            },
+            {
+                name: 'Actual Spending',
+                data: [50000, 39000, 42000, 31000, 26000, 14000],
+                pointPlacement: 'on'
+            }
+        ]
     });
 
     function increaseHeight() {
-
         chart.update({
             chart: {
-                height: (chart.plotHeight + 1)
+                height: chart.plotHeight + 1
             }
         });
 
@@ -136,17 +189,14 @@ QUnit.test('Polar reversed yaxis (#2848)', function (assert) {
             chart.yAxis[0].translationSlope < 0.002,
             'There should be no increase to the translation slope of the yAxis.'
         );
-
     }
 
     for (var i = 0; i < 100; ++i) {
         increaseHeight();
     }
-
 });
 
 QUnit.test('Polar with overlapping axis labels', assert => {
-
     const data = [];
 
     for (let i = 0; i < 100; i++) {
@@ -167,18 +217,20 @@ QUnit.test('Polar with overlapping axis labels', assert => {
         xAxis: {
             type: 'category'
         },
-        series: [{
-            type: 'column',
-            data: data
-        }]
+        series: [
+            {
+                type: 'column',
+                data: data
+            }
+        ]
     });
 
     assert.ok(
         chart.xAxis[0].tickPositions.some(
-            pos => chart.xAxis[0].ticks[pos]
-                .label
-                .element
-                .getAttribute('opacity') === '0'
+            pos =>
+                chart.xAxis[0].ticks[pos].label.element.getAttribute(
+                    'opacity'
+                ) === '0'
         ),
         'The axis should have some hidden labels'
     );
@@ -191,10 +243,10 @@ QUnit.test('Polar with overlapping axis labels', assert => {
 
     assert.notOk(
         chart.xAxis[0].tickPositions.some(
-            pos => chart.xAxis[0].ticks[pos]
-                .label
-                .element
-                .getAttribute('opacity') === '0'
+            pos =>
+                chart.xAxis[0].ticks[pos].label.element.getAttribute(
+                    'opacity'
+                ) === '0'
         ),
         'The axis should have no hidden labels'
     );
@@ -202,7 +254,6 @@ QUnit.test('Polar with overlapping axis labels', assert => {
 
 QUnit.test('Data validation', assert => {
     const chart = Highcharts.chart('container', {
-
         chart: {
             polar: true
         },
@@ -211,10 +262,11 @@ QUnit.test('Data validation', assert => {
             min: -10
         },
 
-        series: [{
-            data: [15, 20, 5, 2, -25]
-        }]
-
+        series: [
+            {
+                data: [15, 20, 5, 2, -25]
+            }
+        ]
     });
 
     // #10082
@@ -239,7 +291,6 @@ QUnit.test('Data validation', assert => {
     );
 });
 
-
 QUnit.test('Polar and pie in panes (#11897)', assert => {
     Highcharts.chart('container', {
         chart: {
@@ -248,40 +299,41 @@ QUnit.test('Polar and pie in panes (#11897)', assert => {
         pane: {
             center: ['25%', '50%']
         },
-        series: [{
-            type: 'column',
-            data: [1, 2, 3]
-        }, {
-            type: 'pie',
-            data: [1, 2, 3],
-            center: ['75%', '50%']
-        }]
+        series: [
+            {
+                type: 'column',
+                data: [1, 2, 3]
+            },
+            {
+                type: 'pie',
+                data: [1, 2, 3],
+                center: ['75%', '50%']
+            }
+        ]
     });
 
-    assert.ok(true, "No errors (#11897).");
+    assert.ok(true, 'No errors (#11897).');
 });
 
-QUnit.test(
-    'Polar and clipping',
-    assert => {
-        const chart = Highcharts.chart('container', {
-            chart: {
-                polar: true
-            },
-            series: [{
+QUnit.test('Polar and clipping', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            polar: true
+        },
+        series: [
+            {
                 data: [1, 2, 3]
-            }]
-        });
+            }
+        ]
+    });
 
-        const oldLen = chart.container.querySelectorAll('defs clipPath').length;
+    const oldLen = chart.container.querySelectorAll('defs clipPath').length;
 
-        chart.series[0].setData([4, 3, 1]);
+    chart.series[0].setData([4, 3, 1]);
 
-        assert.strictEqual(
-            chart.container.querySelectorAll('defs clipPath').length,
-            oldLen,
-            'On data update new clip paths should not be created (#12335)'
-        );
-
-    }
-);
+    assert.strictEqual(
+        chart.container.querySelectorAll('defs clipPath').length,
+        oldLen,
+        'On data update new clip paths should not be created (#12335)'
+    );
+});

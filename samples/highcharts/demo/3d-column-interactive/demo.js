@@ -1,5 +1,5 @@
 // Set up the chart
-var chart = new Highcharts.Chart({
+const chart = new Highcharts.Chart({
     chart: {
         renderTo: 'container',
         type: 'column',
@@ -28,16 +28,16 @@ var chart = new Highcharts.Chart({
 });
 
 function showValues() {
-    $('#alpha-value').html(chart.options.chart.options3d.alpha);
-    $('#beta-value').html(chart.options.chart.options3d.beta);
-    $('#depth-value').html(chart.options.chart.options3d.depth);
+    document.getElementById('alpha-value').innerHTML = chart.options.chart.options3d.alpha;
+    document.getElementById('beta-value').innerHTML = chart.options.chart.options3d.beta;
+    document.getElementById('depth-value').innerHTML = chart.options.chart.options3d.depth;
 }
 
 // Activate the sliders
-$('#sliders input').on('input change', function () {
-    chart.options.chart.options3d[this.id] = parseFloat(this.value);
+document.querySelectorAll('#sliders input').forEach(input => input.addEventListener('input', e => {
+    chart.options.chart.options3d[e.target.id] = parseFloat(e.target.value);
     showValues();
     chart.redraw(false);
-});
+}));
 
 showValues();

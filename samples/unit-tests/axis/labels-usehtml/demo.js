@@ -1,7 +1,5 @@
 QUnit.test('Auto rotation and useHTML (#4443)', function (assert) {
-
     $('#container').highcharts({
-
         chart: {
             width: 1000,
             height: 300
@@ -18,10 +16,12 @@ QUnit.test('Auto rotation and useHTML (#4443)', function (assert) {
                 'Mar sad asd asd asd as'
             ]
         },
-        series: [{
-            name: 'Tokyo',
-            data: [7.0, 6.9, 9.5, 7.0, 6.9, 9.5]
-        }]
+        series: [
+            {
+                name: 'Tokyo',
+                data: [7.0, 6.9, 9.5, 7.0, 6.9, 9.5]
+            }
+        ]
     });
 
     var chart = $('#container').highcharts(),
@@ -46,7 +46,6 @@ QUnit.test('Auto rotation and useHTML (#4443)', function (assert) {
         0,
         'Not rotated in the end'
     );
-
 });
 
 QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
@@ -59,7 +58,31 @@ QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
             text: null
         },
         xAxis: {
-            categories: ["Nick Presta", "Nathan Duthoit", "Jude", "Sarah", "Michael Warkentin", "Cam", "Vivian", "Brooke", "Jack", "Ash", "Andrew", "Dieter", "Brian", "Satraj", "Yoseph", "Henry", "James", "Fisher", "Cathy", "Azucena", "Katie", "Rustin", "Andrea"],
+            categories: [
+                'Nick Presta',
+                'Nathan Duthoit',
+                'Jude',
+                'Sarah',
+                'Michael Warkentin',
+                'Cam',
+                'Vivian',
+                'Brooke',
+                'Jack',
+                'Ash',
+                'Andrew',
+                'Dieter',
+                'Brian',
+                'Satraj',
+                'Yoseph',
+                'Henry',
+                'James',
+                'Fisher',
+                'Cathy',
+                'Azucena',
+                'Katie',
+                'Rustin',
+                'Andrea'
+            ],
             title: {
                 text: null
             },
@@ -73,19 +96,42 @@ QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
         credits: {
             enabled: false
         },
-        series: [{
-            data: [4, 1, 6.7, 1.2, 1.3, 1.3, 7.6, 1.85, 1.85, 2, 0.5, 1.5, 2, 4.15, 2, 1, 2, 2, 2.5, 2, 0.5, 0.5, 5]
-        }],
+        series: [
+            {
+                data: [
+                    4,
+                    1,
+                    6.7,
+                    1.2,
+                    1.3,
+                    1.3,
+                    7.6,
+                    1.85,
+                    1.85,
+                    2,
+                    0.5,
+                    1.5,
+                    2,
+                    4.15,
+                    2,
+                    1,
+                    2,
+                    2,
+                    2.5,
+                    2,
+                    0.5,
+                    0.5,
+                    5
+                ]
+            }
+        ],
         exporting: {
             enabled: false
         }
     });
 
     var labelLength = chart.xAxis[0].ticks[0].label.element.offsetWidth;
-    assert.ok(
-        labelLength > 20,
-        'Label has length'
-    );
+    assert.ok(labelLength > 20, 'Label has length');
 
     chart.setSize(600, 400, false);
 
@@ -101,9 +147,7 @@ QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
         labelLength,
         'Back to start'
     );
-
 });
-
 
 QUnit.test('Auto rotated labels with useHTML', function (assert) {
     var chart = Highcharts.chart('container', {
@@ -113,31 +157,44 @@ QUnit.test('Auto rotated labels with useHTML', function (assert) {
         },
 
         xAxis: {
-            categories: ['Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo ', 'Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar ', 'a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a '],
+            categories: [
+                'Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo ' +
+                    'Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo ' +
+                    'Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo ' +
+                    'Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo ' +
+                    'Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo ' +
+                    'Foo Foo Foo Foo Foo ',
+                'Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar ' +
+                    'Bar Bar Bar Bar Bar Bar ',
+                'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                    'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                    'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                    'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                    'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                    'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                    'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                    'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                    'a a a a a a a a '
+            ],
 
             labels: {
                 useHTML: true
             }
         },
 
-        series: [{
-            data: [29.9, 71.5, 106.4]
-        }]
+        series: [
+            {
+                data: [29.9, 71.5, 106.4]
+            }
+        ]
     });
 
     var labelLength = chart.xAxis[0].ticks[0].label.element.offsetWidth;
-    assert.ok(
-        labelLength > 20,
-        'Label has length'
-    );
+    assert.ok(labelLength > 20, 'Label has length');
 
     chart.setSize(300, 400, false);
 
-    assert.ok(
-        chart.plotHeight > 100,
-        'Plot height is ok'
-    );
-
+    assert.ok(chart.plotHeight > 100, 'Plot height is ok');
 });
 
 QUnit.test('Bounding box for rotated label', function (assert) {
@@ -149,19 +206,24 @@ QUnit.test('Bounding box for rotated label', function (assert) {
             text: 'with useHTML enabled on Axis labels'
         },
         xAxis: {
-            categories: ['This really looooong title name will be cut off', 'Feb'],
+            categories: [
+                'This really looooong title name will be cut off',
+                'Feb'
+            ],
             labels: {
                 useHTML: true,
                 rotation: 45,
                 style: {
                     textOverflow: 'none',
-                    whiteSpace: "nowrap"
+                    whiteSpace: 'nowrap'
                 }
             }
         },
-        series: [{
-            data: [29.9, 71.5]
-        }]
+        series: [
+            {
+                data: [29.9, 71.5]
+            }
+        ]
     });
 
     var label = chart.xAxis[0].ticks[0].label.element;
@@ -200,59 +262,60 @@ QUnit.test('Resizing chart with HTML labels (#8789)', function (assert) {
             },
             type: 'category'
         },
-        series: [{
-            name: 'Average Sale Price',
-            data: [{
-                name: 'T00 (00.0,00.0)',
-                y: 44.46
-            },
+        series: [
             {
-                name: 'T01 [00.0,10.0)',
-                y: 81.33
-            },
-            {
-                name: 'T02 [10.0,20.0)',
-                y: 77.09
-            },
-            {
-                name: 'T03 [20.0,30.0)',
-                y: 68.43
-            },
-            {
-                name: 'T04 [30.0,40.0)',
-                y: 49.29
-            },
-            {
-                name: 'T05 [40.0,50.0)',
-                y: 53.11
-            },
-            {
-                name: 'T06 [50.0,60.0)',
-                y: 70.07
-            },
-            {
-                name: 'T07 [60.0,70.0)',
-                y: 75.05
-            },
-            {
-                name: 'T08 [70.0,80.0)',
-                y: 110.64
-            },
-            {
-                name: 'T09 [80.0,90.0)',
-                y: 87.78
-            },
-            {
-                name: 'T10 [90.0,00.9)',
-                y: 109.00
-            }]
-        }]
+                name: 'Average Sale Price',
+                data: [
+                    {
+                        name: 'T00 (00.0,00.0)',
+                        y: 44.46
+                    },
+                    {
+                        name: 'T01 [00.0,10.0)',
+                        y: 81.33
+                    },
+                    {
+                        name: 'T02 [10.0,20.0)',
+                        y: 77.09
+                    },
+                    {
+                        name: 'T03 [20.0,30.0)',
+                        y: 68.43
+                    },
+                    {
+                        name: 'T04 [30.0,40.0)',
+                        y: 49.29
+                    },
+                    {
+                        name: 'T05 [40.0,50.0)',
+                        y: 53.11
+                    },
+                    {
+                        name: 'T06 [50.0,60.0)',
+                        y: 70.07
+                    },
+                    {
+                        name: 'T07 [60.0,70.0)',
+                        y: 75.05
+                    },
+                    {
+                        name: 'T08 [70.0,80.0)',
+                        y: 110.64
+                    },
+                    {
+                        name: 'T09 [80.0,90.0)',
+                        y: 87.78
+                    },
+                    {
+                        name: 'T10 [90.0,00.9)',
+                        y: 109.0
+                    }
+                ]
+            }
+        ]
     });
 
-    assert.ok(
-        chart.plotHeight > 200,
-        'Plot height should be more than 200'
-    );
+    assert.ok(chart.plotHeight > 200, 'Plot height should be more than 200');
 
     chart.setSize(950);
     assert.ok(
@@ -273,7 +336,6 @@ QUnit.test('Varying label width with HTML labels (#8809)', function (assert) {
             events: {
                 drilldown: function (e) {
                     if (!e.seriesOptions) {
-
                         var chart = this,
                             drilldowns = {
                                 'All patches maximum dE': {
@@ -294,86 +356,84 @@ QUnit.test('Varying label width with HTML labels (#8809)', function (assert) {
                                 'All patches average dE': {
                                     name: 'Cars',
                                     data: [
-                                        ["value 0", 99],
-                                        ["value 1", 56],
-                                        ["value 2", 86],
-                                        ["value 3", 75],
-                                        ["value 4", 0],
-                                        ["value 5", 74],
-                                        ["value 6", 82],
-                                        ["value 7", 40],
-                                        ["value 8", 27],
-                                        ["value 9", 18],
-                                        ["value 10", 30],
-                                        ["value 11", 92],
-                                        ["value 12", 33],
-                                        ["value 13", 69],
-                                        ["value 14", 13],
-                                        ["value 15", 4],
-                                        ["value 16", 13],
-                                        ["value 17", 84],
-                                        ["value 18", 95],
-                                        ["value 19", 52],
-                                        ["value 20", 95],
-                                        ["value 21", 40],
-                                        ["value 22", 77],
-                                        ["value 23", 13],
-                                        ["value 24", 29],
-                                        ["value 25", 52],
-                                        ["value 26", 92],
-                                        ["value 27", 57],
-                                        ["value 28", 73],
-                                        ["value 29", 25],
-                                        ["value 30", 33],
-                                        ["value 31", 72],
-                                        ["value 32", 47],
-                                        ["value 33", 59],
-                                        ["value 34", 27],
-                                        ["value 35", 97],
-                                        ["value 36", 24],
-                                        ["value 37", 41],
-                                        ["value 38", 9],
-                                        ["value 39", 40],
-                                        ["value 40", 90],
-                                        ["value 41", 98],
-                                        ["value 42", 81],
-                                        ["value 43", 19],
-                                        ["value 44", 90],
-                                        ["value 45", 2],
-                                        ["value 46", 58],
-                                        ["value 47", 99],
-                                        ["value 48", 49],
-                                        ["value 49", 93],
-                                        ["value 50", 69],
-                                        ["value 51", 16],
-                                        ["value 52", 65],
-                                        ["value 53", 61],
-                                        ["value 54", 52],
-                                        ["value 55", 74],
-                                        ["value 56", 56],
-                                        ["value 57", 54],
-                                        ["value 58", 89],
-                                        ["value 59", 34],
-                                        ["value 60", 94],
-                                        ["value 61", 69],
-                                        ["value 62", 41],
-                                        ["value 63", 53],
-                                        ["value 64", 24],
-                                        ["value 65", 55],
-                                        ["value 66", 80],
-                                        ["value 67", 22],
-                                        ["value 68", 28],
-                                        ["value 69", 1],
-                                        ["value 70", 6],
-                                        ["value 71", 88]
+                                        ['value 0', 99],
+                                        ['value 1', 56],
+                                        ['value 2', 86],
+                                        ['value 3', 75],
+                                        ['value 4', 0],
+                                        ['value 5', 74],
+                                        ['value 6', 82],
+                                        ['value 7', 40],
+                                        ['value 8', 27],
+                                        ['value 9', 18],
+                                        ['value 10', 30],
+                                        ['value 11', 92],
+                                        ['value 12', 33],
+                                        ['value 13', 69],
+                                        ['value 14', 13],
+                                        ['value 15', 4],
+                                        ['value 16', 13],
+                                        ['value 17', 84],
+                                        ['value 18', 95],
+                                        ['value 19', 52],
+                                        ['value 20', 95],
+                                        ['value 21', 40],
+                                        ['value 22', 77],
+                                        ['value 23', 13],
+                                        ['value 24', 29],
+                                        ['value 25', 52],
+                                        ['value 26', 92],
+                                        ['value 27', 57],
+                                        ['value 28', 73],
+                                        ['value 29', 25],
+                                        ['value 30', 33],
+                                        ['value 31', 72],
+                                        ['value 32', 47],
+                                        ['value 33', 59],
+                                        ['value 34', 27],
+                                        ['value 35', 97],
+                                        ['value 36', 24],
+                                        ['value 37', 41],
+                                        ['value 38', 9],
+                                        ['value 39', 40],
+                                        ['value 40', 90],
+                                        ['value 41', 98],
+                                        ['value 42', 81],
+                                        ['value 43', 19],
+                                        ['value 44', 90],
+                                        ['value 45', 2],
+                                        ['value 46', 58],
+                                        ['value 47', 99],
+                                        ['value 48', 49],
+                                        ['value 49', 93],
+                                        ['value 50', 69],
+                                        ['value 51', 16],
+                                        ['value 52', 65],
+                                        ['value 53', 61],
+                                        ['value 54', 52],
+                                        ['value 55', 74],
+                                        ['value 56', 56],
+                                        ['value 57', 54],
+                                        ['value 58', 89],
+                                        ['value 59', 34],
+                                        ['value 60', 94],
+                                        ['value 61', 69],
+                                        ['value 62', 41],
+                                        ['value 63', 53],
+                                        ['value 64', 24],
+                                        ['value 65', 55],
+                                        ['value 66', 80],
+                                        ['value 67', 22],
+                                        ['value 68', 28],
+                                        ['value 69', 1],
+                                        ['value 70', 6],
+                                        ['value 71', 88]
                                     ]
                                 }
                             },
                             series = drilldowns[e.point.name];
                         chart.addSeriesAsDrilldown(e.point, series);
-
                     }
-
                 }
             }
         },
@@ -391,13 +451,14 @@ QUnit.test('Varying label width with HTML labels (#8809)', function (assert) {
                 formatter: function () {
                     var value = this.value;
                     if (this.chart.series[0].name === 'Cars') {
-                        return '<div style="background: #f86b57;' +
+                        return (
+                            '<div style="background: #f86b57;' +
                             'border: 1px solid #f86b57;' +
                             'border-radius: 2px;' +
-                            'width: 6px; height: 6px"></div>';
+                            'width: 6px; height: 6px"></div>'
+                        );
                     }
                     return '<div>' + value + '</div>';
-
                 }
             }
         },
@@ -413,35 +474,37 @@ QUnit.test('Varying label width with HTML labels (#8809)', function (assert) {
                 cropThreshold: 200,
                 maxPointWidth: 120,
                 marker: {
-                    symbol: "circle"
+                    symbol: 'circle'
                 }
             }
         },
 
-        series: [{
-            name: 'Things',
-            colorByPoint: true,
-            data: [{
-                name: 'All patches maximum dE',
-                y: 50,
-                drilldown: true
-            }, {
-                name: 'Primaries maximum dE',
-                y: 72,
-                drilldown: true
-            }, {
-                name: 'All patches average dE',
-                y: 44,
-                drilldown: true
-            }]
-        }],
-        yAxis: {
-
-        },
-
+        series: [
+            {
+                name: 'Things',
+                colorByPoint: true,
+                data: [
+                    {
+                        name: 'All patches maximum dE',
+                        y: 50,
+                        drilldown: true
+                    },
+                    {
+                        name: 'Primaries maximum dE',
+                        y: 72,
+                        drilldown: true
+                    },
+                    {
+                        name: 'All patches average dE',
+                        y: 44,
+                        drilldown: true
+                    }
+                ]
+            }
+        ],
+        yAxis: {},
 
         drilldown: {
-
             series: []
         }
     });
@@ -454,7 +517,6 @@ QUnit.test('Varying label width with HTML labels (#8809)', function (assert) {
 
     chart.series[0].points[2].doDrilldown();
 
-
     chart.drillUp();
 
     assert.strictEqual(
@@ -462,27 +524,53 @@ QUnit.test('Varying label width with HTML labels (#8809)', function (assert) {
         '',
         'After resetting, the label width should be released'
     );
-
 });
 
 QUnit.test('Ellipsis on single-word labels (#9537)', function (assert) {
     var chart = Highcharts.chart('container', {
-
         chart: {
             width: 400
         },
 
         xAxis: {
-            categories: ['JanuaryJanuary', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            categories: [
+                'JanuaryJanuary',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+            ],
             labels: {
                 rotation: 0,
                 useHTML: true
             }
         },
 
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-        }]
+        series: [
+            {
+                data: [
+                    29.9,
+                    71.5,
+                    106.4,
+                    129.2,
+                    144.0,
+                    176.0,
+                    135.6,
+                    148.5,
+                    216.4,
+                    194.1,
+                    95.6,
+                    54.4
+                ]
+            }
+        ]
     });
 
     assert.notEqual(
@@ -492,64 +580,67 @@ QUnit.test('Ellipsis on single-word labels (#9537)', function (assert) {
     );
 
     assert.ok(
-        parseFloat(chart.xAxis[0].ticks[0].label.element.style.left) >= chart.plotLeft,
+        parseFloat(chart.xAxis[0].ticks[0].label.element.style.left) >=
+            chart.plotLeft,
         'The label should be within the tick bounds'
     );
 });
 
 // Highcharts 8.1.2, Issue #13762
-QUnit.test('Overlapping of xAxis labels (useHTML: true) in polar chart (#13762)', function (assert) {
-    var chart = Highcharts.chart('container', {
-            chart: {
-                polar: true,
-                width: 600,
-                height: 400
-            },
-            xAxis: {
-                tickmarkPlacement: 'on',
-                labels: {
-                    useHTML: true
+QUnit.test(
+    'Overlapping of xAxis labels (useHTML: true) in polar chart (#13762)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    polar: true,
+                    width: 600,
+                    height: 400
                 },
-                categories: [
-                    'CATEGORY1',
-                    'CATEGORY2',
-                    'CATEGORY3',
-                    'CATEGORY4',
-                    'CATEGORY5',
-                    'CATEGORY6',
-                    'CATEGORY7',
-                    'CATEGORY8',
-                    'CATEGORY9',
-                    'CATEGORY10',
-                    'CATEGORY11',
-                    'CATEGORY12'
-                ]
-            },
-            series: [{
-                pointPlacement: 'on',
-                data: (numberOfPoints => {
-                    var data = [];
-                    while (numberOfPoints) {
-                        data.push(100);
-                        numberOfPoints--;
+                xAxis: {
+                    tickmarkPlacement: 'on',
+                    labels: {
+                        useHTML: true
+                    },
+                    categories: [
+                        'CATEGORY1',
+                        'CATEGORY2',
+                        'CATEGORY3',
+                        'CATEGORY4',
+                        'CATEGORY5',
+                        'CATEGORY6',
+                        'CATEGORY7',
+                        'CATEGORY8',
+                        'CATEGORY9',
+                        'CATEGORY10',
+                        'CATEGORY11',
+                        'CATEGORY12'
+                    ]
+                },
+                series: [
+                    {
+                        pointPlacement: 'on',
+                        data: (numberOfPoints => {
+                            var data = [];
+                            while (numberOfPoints) {
+                                data.push(100);
+                                numberOfPoints--;
+                            }
+                            return data;
+                        })(12)
                     }
-                    return data;
-                })(12)
-            }]
-        }),
-        ticks = chart.xAxis[0].ticks,
-        visible = true;
+                ]
+            }),
+            ticks = chart.xAxis[0].ticks,
+            visible = true;
 
-    for (var prop in ticks) {
-        if (Object.prototype.hasOwnProperty.call(ticks, prop)) {
-            if (!ticks[prop].label.opacity) {
-                visible = false;
+        for (var prop in ticks) {
+            if (Object.prototype.hasOwnProperty.call(ticks, prop)) {
+                if (!ticks[prop].label.opacity) {
+                    visible = false;
+                }
             }
         }
-    }
 
-    assert.ok(
-        visible,
-        'All xAxis labels are visible'
-    );
-});
+        assert.ok(visible, 'All xAxis labels are visible');
+    }
+);

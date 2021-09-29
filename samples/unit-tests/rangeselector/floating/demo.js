@@ -1,5 +1,4 @@
 QUnit.test('Floating enabled.', function (assert) {
-
     var chart = Highcharts.stockChart('container', {
         chart: {
             width: 400
@@ -10,9 +9,11 @@ QUnit.test('Floating enabled.', function (assert) {
             y: 100
         },
 
-        series: [{
-            data: [1, 2, 10, 10]
-        }]
+        series: [
+            {
+                data: [1, 2, 10, 10]
+            }
+        ]
     });
 
     assert.deepEqual(

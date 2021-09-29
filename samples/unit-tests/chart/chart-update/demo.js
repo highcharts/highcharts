@@ -1,6 +1,5 @@
 /* eslint func-style:0 */
 (function () {
-
     function getConfig() {
         return {
             chart: {
@@ -9,18 +8,24 @@
                 height: 300
             },
 
-            series: [{
-                data: [1, 3, 2, 4],
-                name: 'First'
-            }, {
-                data: [5, 3, 4, 1],
-                name: 'Last'
-            }]
+            series: [
+                {
+                    data: [1, 3, 2, 4],
+                    name: 'First'
+                },
+                {
+                    data: [5, 3, 4, 1],
+                    name: 'Last'
+                }
+            ]
         };
     }
 
     QUnit.test('Credits update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
+        var chart = Highcharts.chart(
+            $('<div>').appendTo('#container')[0],
+            getConfig()
+        );
 
         chart.update({
             credits: {
@@ -28,11 +33,7 @@
             }
         });
 
-        assert.strictEqual(
-            chart.credits,
-            undefined,
-            'Credits removed'
-        );
+        assert.strictEqual(chart.credits, undefined, 'Credits removed');
 
         chart.update({
             credits: {
@@ -40,11 +41,7 @@
             }
         });
 
-        assert.strictEqual(
-            chart.credits,
-            undefined,
-            'Still removed'
-        );
+        assert.strictEqual(chart.credits, undefined, 'Still removed');
 
         chart.update({
             credits: {
@@ -60,7 +57,10 @@
     });
 
     QUnit.test('Legend update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
+        var chart = Highcharts.chart(
+            $('<div>').appendTo('#container')[0],
+            getConfig()
+        );
 
         assert.ok(
             chart.legend.group.translateX < chart.chartWidth / 2,
@@ -78,7 +78,6 @@
             'Legend is to the right of the middle'
         );
 
-
         chart.update({
             legend: {
                 itemStyle: {
@@ -94,7 +93,10 @@
     });
 
     QUnit.test('Title update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
+        var chart = Highcharts.chart(
+            $('<div>').appendTo('#container')[0],
+            getConfig()
+        );
 
         chart.update({
             title: {
@@ -119,11 +121,13 @@
             'Updated title',
             'Updated title'
         );
-
     });
 
     QUnit.test('Subtitle update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
+        var chart = Highcharts.chart(
+            $('<div>').appendTo('#container')[0],
+            getConfig()
+        );
 
         chart.update({
             subtitle: {
@@ -136,13 +140,17 @@
             'Updated subtitle',
             'Updated subtitle'
         );
-
     });
 
     QUnit.test('Colors update', function (assert) {
         var chart = Highcharts.chart(
             $('<div>').appendTo('#container')[0],
             Highcharts.merge(getConfig(), {
+                chart: {
+                    style: {
+                        fontFamily: 'ProximaNova, Arial, \'Helvetica Neue\', Helvetica, sans-serif'
+                    }
+                },
                 title: {
                     text: 'Colors update'
                 }
@@ -153,15 +161,28 @@
             colors: ['#68266f', '#96a537', '#953255', '#679933']
         });
 
+        assert.strictEqual(chart.series[0].color, '#68266f', 'Color updated');
+
+        chart.update({
+            chart: {
+                style: {
+                    color: 'red'
+                }
+            }
+        });
+
         assert.strictEqual(
-            chart.series[0].color,
-            '#68266f',
-            'Color updated'
+            chart.renderer.style.fontFamily,
+            'ProximaNova, Arial, \'Helvetica Neue\', Helvetica, sans-serif',
+            '#16153: fontFamily should not reset when updating chart.style'
         );
     });
 
     QUnit.test('Loading update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
+        var chart = Highcharts.chart(
+            $('<div>').appendTo('#container')[0],
+            getConfig()
+        );
 
         chart.update({
             loading: {
@@ -211,11 +232,13 @@
         );
 
         chart.hideLoading();
-
     });
 
     QUnit.test('Exporting update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
+        var chart = Highcharts.chart(
+            $('<div>').appendTo('#container')[0],
+            getConfig()
+        );
 
         chart.update({
             exporting: {
@@ -232,7 +255,11 @@
             }
         });
         assert.strictEqual(
-            chart.container.querySelector('.highcharts-contextbutton .highcharts-button-symbol').getAttribute('stroke'),
+            chart.container
+                .querySelector(
+                    '.highcharts-contextbutton .highcharts-button-symbol'
+                )
+                .getAttribute('stroke'),
             'blue',
             'Stroke is updated'
         );
@@ -244,7 +271,9 @@
         });
 
         assert.strictEqual(
-            chart.container.querySelector('.highcharts-contextbutton .highcharts-button-symbol'),
+            chart.container.querySelector(
+                '.highcharts-contextbutton .highcharts-button-symbol'
+            ),
             null,
             'Button is removed'
         );
@@ -266,14 +295,19 @@
         });
 
         assert.strictEqual(
-            typeof chart.container.querySelector('.highcharts-contextbutton .highcharts-button-symbol'),
+            typeof chart.container.querySelector(
+                '.highcharts-contextbutton .highcharts-button-symbol'
+            ),
             'object',
             'Button is revived'
         );
     });
 
     QUnit.test('Plot options update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
+        var chart = Highcharts.chart(
+            $('<div>').appendTo('#container')[0],
+            getConfig()
+        );
 
         chart.update({
             plotOptions: {
@@ -303,15 +337,14 @@
     });
 
     QUnit.test('Tooltip update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
+        var chart = Highcharts.chart(
+            $('<div>').appendTo('#container')[0],
+            getConfig()
+        );
 
         chart.series[0].points[0].onMouseOver();
 
-        assert.strictEqual(
-            chart.tooltip.isHidden,
-            false,
-            'Tooltip visible'
-        );
+        assert.strictEqual(chart.tooltip.isHidden, false, 'Tooltip visible');
 
         chart.update({
             tooltip: {
@@ -319,12 +352,7 @@
             }
         });
 
-        assert.strictEqual(
-            chart.tooltip.isHidden,
-            true,
-            'Tooltip hidden'
-        );
-
+        assert.strictEqual(chart.tooltip.isHidden, true, 'Tooltip hidden');
     });
 
     QUnit.test('Update all on 3D chart (#8641)', function (assert) {
@@ -332,27 +360,33 @@
 
         assert.expect(0);
 
-        chart.update({
-            chart: {
-                options3d: {
-                    skew3d: false,
-                    enabled: true,
-                    alpha: 15,
-                    beta: 0,
-                    viewDistance: 25,
-                    depth: 100
-                }
+        chart.update(
+            {
+                chart: {
+                    options3d: {
+                        skew3d: false,
+                        enabled: true,
+                        alpha: 15,
+                        beta: 0,
+                        viewDistance: 25,
+                        depth: 100
+                    }
+                },
+                xAxis: {
+                    categories: ['Ein', 'Zwei', 'Drei', 'Vier']
+                },
+                series: [
+                    {
+                        data: [1, 3, 2, 4]
+                    }
+                ]
             },
-            xAxis: {
-                categories: ['Ein', 'Zwei', 'Drei', 'Vier']
-            },
-            series: [{
-                data: [1, 3, 2, 4]
-            }]
-        }, true, true);
+            true,
+            true
+        );
     });
 
-    QUnit.test('Options for chart.update should not be mutated', function (assert) {
+    QUnit.test('Chart options mutation', function (assert) {
         var options = {
             legend: {
                 enabled: false
@@ -360,20 +394,53 @@
             title: {
                 text: 'Hello Bello'
             },
-            series: [{
-                data: [1, 4, 3, 5]
-            }]
+            series: [
+                {
+                    data: [1, 4, 3, 5]
+                }
+            ]
         };
-        var chart = Highcharts.chart('container', options);
 
         var cfg = JSON.stringify(options, null, '  ');
 
-        chart.update(options);
+        [
+            'chart',
+            'stockChart',
+            'ganttChart',
+            'mapChart'
+        ].forEach(constructor => {
+            if (constructor === 'mapChart') {
+                options.series[0].data = [];
+                cfg = JSON.stringify(options, null, '  ');
+            }
 
-        assert.strictEqual(
-            cfg,
-            JSON.stringify(options, null, '  '),
-            'Options should not be mutated after chart.update'
-        );
+            const chart = Highcharts[constructor]('container', options);
+
+            assert.strictEqual(
+                JSON.stringify(options, null, '  '),
+                cfg,
+                constructor + ': #15445: Options should not be mutated after chart creation'
+            );
+
+            chart.update(options);
+
+            assert.strictEqual(
+                JSON.stringify(options, null, '  '),
+                cfg,
+                constructor + ': Options should not be mutated after chart.update'
+            );
+
+            chart.update({
+                title: {
+                    text: 'Ohai'
+                }
+            });
+
+            assert.strictEqual(
+                JSON.stringify(options, null, '  '),
+                cfg,
+                constructor + ': #14305: Options should not be mutated after actually changing something with chart.update'
+            );
+        });
     });
 }());

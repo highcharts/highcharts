@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Place desriptions on a series and its points.
  *
@@ -12,10 +12,13 @@
 
 'use strict';
 
-import type {
-    DOMElementType
-} from '../../../Core/Renderer/DOMElementType';
+import type Axis from '../../../Core/Axis/Axis';
+import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
 import type Point from '../../../Core/Series/Point';
+import type PositionObject from '../../../Core/Renderer/PositionObject';
+import type Series from '../../../Core/Series/Series';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+
 import AnnotationsA11y from '../AnnotationsA11y.js';
 const {
     getPointAnnotationTexts
@@ -27,9 +30,13 @@ const {
     getSeriesA11yElement,
     unhideChartElementFromAT
 } = ChartUtilities;
+import F from '../../../Core/FormatUtilities.js';
+const {
+    format,
+    numberFormat
+} = F;
 import HTMLUtilities from '../../Utils/HTMLUtilities.js';
 const {
-    escapeStringForHTML,
     reverseChildNodes,
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
@@ -37,24 +44,15 @@ import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 const {
     find,
-    format,
     isNumber,
-    numberFormat,
     pick,
     defined
 } = U;
 
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface PointLike {
-            /** @requires modules/accessibility */
-            hasDummyGraphic?: boolean;
-        }
+declare module '../../../Core/Series/PointLike' {
+    interface PointLike {
+        /** @requires modules/accessibility */
+        hasDummyGraphic?: boolean;
     }
 }
 
@@ -66,6 +64,7 @@ declare global {
     namespace Highcharts {
         interface AccessibilityPoint {
             accessibility?: AccessibilityPointStateObject;
+            value?: (number|null);
         }
         interface AccessibilityPointStateObject {
             valueDescription?: string;
@@ -117,9 +116,9 @@ function shouldAddDummyPoint(point: Point): boolean {
  */
 function makeDummyElement(
     point: Point,
-    pos: Highcharts.PositionObject
-): Highcharts.SVGElement {
-    var renderer = point.series.chart.renderer,
+    pos: PositionObject
+): SVGElement {
+    const renderer = point.series.chart.renderer,
         dummy = renderer.rect(pos.x, pos.y, 1, 1);
 
     dummy.attr({
@@ -142,7 +141,7 @@ function makeDummyElement(
 function addDummyPointElement(
     point: Point
 ): (DOMElementType|undefined) {
-    var series = point.series,
+    const series = point.series,
         firstPointWithGraphic = findFirstPointWithGraphic(point),
         firstGraphic = firstPointWithGraphic && firstPointWithGraphic.graphic,
         parentGroup = firstGraphic ?
@@ -182,7 +181,7 @@ function addDummyPointElement(
 function hasMorePointsThanDescriptionThreshold(
     series: Highcharts.AccessibilitySeries
 ): boolean {
-    var chartA11yOptions = series.chart.options.accessibility,
+    const chartA11yOptions = series.chart.options.accessibility,
         threshold: (boolean|number) = (
             (chartA11yOptions.series as any).pointDescriptionEnabledThreshold
         );
@@ -203,7 +202,7 @@ function hasMorePointsThanDescriptionThreshold(
 function shouldSetScreenReaderPropsOnPoints(
     series: Highcharts.AccessibilitySeries
 ): boolean {
-    var seriesA11yOptions = series.options.accessibility || {};
+    const seriesA11yOptions = series.options.accessibility || {};
 
     return !hasMorePointsThanDescriptionThreshold(series) &&
         !seriesA11yOptions.exposeAsGroupOnly;
@@ -218,7 +217,7 @@ function shouldSetScreenReaderPropsOnPoints(
 function shouldSetKeyboardNavPropsOnPoints(
     series: Highcharts.AccessibilitySeries
 ): boolean {
-    var chartA11yOptions = series.chart.options.accessibility,
+    const chartA11yOptions = series.chart.options.accessibility,
         seriesNavOptions = chartA11yOptions.keyboardNavigation.seriesNavigation;
 
     return !!(
@@ -239,8 +238,8 @@ function shouldSetKeyboardNavPropsOnPoints(
 function shouldDescribeSeriesElement(
     series: Highcharts.AccessibilitySeries
 ): boolean {
-    var chart = series.chart,
-        chartOptions = chart.options.chart || {},
+    const chart = series.chart,
+        chartOptions = chart.options.chart,
         chartHas3d = chartOptions.options3d && chartOptions.options3d.enabled,
         hasMultipleSeries = chart.series.length > 1,
         describeSingleSeriesOption =
@@ -266,15 +265,18 @@ function pointNumberToString(
     point: Highcharts.AccessibilityPoint,
     value: number
 ): string {
-    var chart = point.series.chart,
+    const series = point.series,
+        chart = series.chart,
         a11yPointOptions = chart.options.accessibility.point || {},
-        tooltipOptions = point.series.tooltipOptions || {},
+        seriesA11yPointOptions = series.options.accessibility && series.options.accessibility.point || {},
+        tooltipOptions = series.tooltipOptions || {},
         lang = chart.options.lang;
 
     if (isNumber(value)) {
         return numberFormat(
             value,
-            a11yPointOptions.valueDecimals ||
+            seriesA11yPointOptions.valueDecimals ||
+                a11yPointOptions.valueDecimals ||
                 tooltipOptions.valueDecimals ||
                 -1,
             lang.decimalPoint,
@@ -294,7 +296,7 @@ function pointNumberToString(
 function getSeriesDescriptionText(
     series: Highcharts.AccessibilitySeries
 ): string {
-    var seriesA11yOptions = series.options.accessibility || {},
+    const seriesA11yOptions = series.options.accessibility || {},
         descOpt = seriesA11yOptions.description;
 
     return descOpt && series.chart.langFormat(
@@ -313,10 +315,10 @@ function getSeriesDescriptionText(
  * @return {string}
  */
 function getSeriesAxisDescriptionText(
-    series: Highcharts.Series,
+    series: Series,
     axisCollection: string
 ): string {
-    var axis: Highcharts.Axis = (series as any)[axisCollection];
+    const axis: Axis = (series as any)[axisCollection];
 
     return series.chart.langFormat(
         'accessibility.series.' + axisCollection + 'Description',
@@ -340,27 +342,24 @@ function getSeriesAxisDescriptionText(
 function getPointA11yTimeDescription(
     point: Highcharts.AccessibilityPoint
 ): (string|undefined) {
-    var series = point.series,
+    const series = point.series,
         chart = series.chart,
+        seriesA11yOptions = series.options.accessibility && series.options.accessibility.point || {},
         a11yOptions = chart.options.accessibility.point || {},
-        hasDateXAxis = series.xAxis && series.xAxis.dateTime;
+        dateXAxis = series.xAxis && series.xAxis.dateTime;
 
-    if (hasDateXAxis) {
-        var tooltipDateFormat = Tooltip.prototype.getXDateFormat.call(
-                {
-                    getDateFormat: Tooltip.prototype.getDateFormat,
-                    chart: chart
-                },
-                point,
-                chart.options.tooltip,
-                series.xAxis
+    if (dateXAxis) {
+        const tooltipDateFormat = dateXAxis.getXDateFormat(
+                point.x || 0,
+                chart.options.tooltip.dateTimeLabelFormats
             ),
-            dateFormat = a11yOptions.dateFormatter &&
-                a11yOptions.dateFormatter(point) ||
+            dateFormat = seriesA11yOptions.dateFormatter && seriesA11yOptions.dateFormatter(point) ||
+                a11yOptions.dateFormatter && a11yOptions.dateFormatter(point) ||
+                seriesA11yOptions.dateFormat ||
                 a11yOptions.dateFormat ||
                 tooltipDateFormat;
 
-        return chart.time.dateFormat(dateFormat, (point.x as any), void 0);
+        return chart.time.dateFormat(dateFormat, point.x || 0, void 0);
     }
 }
 
@@ -373,7 +372,7 @@ function getPointA11yTimeDescription(
 function getPointXDescription(
     point: Highcharts.AccessibilityPoint
 ): string {
-    var timeDesc = getPointA11yTimeDescription(point),
+    const timeDesc = getPointA11yTimeDescription(point),
         xAxis = point.series.xAxis || {},
         pointCategory = xAxis.categories && defined(point.category) &&
             ('' + point.category).replace('<br/>', ' '),
@@ -397,10 +396,10 @@ function getPointArrayMapValueDescription(
     prefix: string,
     suffix: string
 ): string {
-    var pre = prefix || '',
+    const pre = prefix || '',
         suf = suffix || '',
         keyToValStr = function (key: string): string {
-            var num = pointNumberToString(
+            const num = pointNumberToString(
                 point,
                 pick((point as any)[key], (point.options as any)[key])
             );
@@ -422,15 +421,20 @@ function getPointArrayMapValueDescription(
 function getPointValue(
     point: Highcharts.AccessibilityPoint
 ): string {
-    var series = point.series,
+    const series = point.series,
         a11yPointOpts = series.chart.options.accessibility.point || {},
+        seriesA11yPointOpts = series.chart.options.accessibility && series.chart.options.accessibility.point || {},
         tooltipOptions = series.tooltipOptions || {},
-        valuePrefix = a11yPointOpts.valuePrefix ||
-            tooltipOptions.valuePrefix || '',
-        valueSuffix = a11yPointOpts.valueSuffix ||
-            tooltipOptions.valueSuffix || '',
+        valuePrefix = seriesA11yPointOpts.valuePrefix ||
+            a11yPointOpts.valuePrefix ||
+            tooltipOptions.valuePrefix ||
+            '',
+        valueSuffix = seriesA11yPointOpts.valueSuffix ||
+            a11yPointOpts.valueSuffix ||
+            tooltipOptions.valueSuffix ||
+            '',
         fallbackKey: ('value'|'y') = (
-            typeof (point as Highcharts.PackedBubblePoint).value !==
+            typeof point.value !==
             'undefined' ?
                 'value' : 'y'
         ),
@@ -478,8 +482,11 @@ function getPointAnnotationDescription(point: Point): string {
 function getPointValueDescription(point: Highcharts.AccessibilityPoint): string {
     const series = point.series,
         chart = series.chart,
-        pointValueDescriptionFormat = chart.options.accessibility
-            .point.valueDescriptionFormat,
+        seriesA11yOptions = series.options.accessibility,
+        seriesValueDescFormat = seriesA11yOptions && seriesA11yOptions.point &&
+            seriesA11yOptions.point.valueDescriptionFormat,
+        pointValueDescriptionFormat = seriesValueDescFormat ||
+            chart.options.accessibility.point.valueDescriptionFormat,
         showXDescription = pick(
             series.xAxis &&
             series.xAxis.options.accessibility &&
@@ -507,11 +514,11 @@ function getPointValueDescription(point: Highcharts.AccessibilityPoint): string 
 function defaultPointDescriptionFormatter(
     point: Highcharts.AccessibilityPoint
 ): string {
-    var series = point.series,
+    const series = point.series,
         chart = series.chart,
         valText = getPointValueDescription(point),
         description = point.options && point.options.accessibility &&
-        point.options.accessibility.description,
+            point.options.accessibility.description,
         userDescText = description ? ' ' + description : '',
         seriesNameText = chart.series.length > 1 && series.name ?
             ' ' + series.name + '.' : '',
@@ -535,17 +542,15 @@ function setPointScreenReaderAttribs(
     point: Highcharts.AccessibilityPoint,
     pointElement: DOMElementType
 ): void {
-    var series = point.series,
+    const series = point.series,
         a11yPointOptions = series.chart.options.accessibility.point || {},
-        seriesA11yOptions = series.options.accessibility || {},
-        label = escapeStringForHTML(
-            stripHTMLTags(
-                seriesA11yOptions.pointDescriptionFormatter &&
-                seriesA11yOptions.pointDescriptionFormatter(point) ||
-                a11yPointOptions.descriptionFormatter &&
-                a11yPointOptions.descriptionFormatter(point) ||
-                defaultPointDescriptionFormatter(point)
-            )
+        seriesPointA11yOptions = series.options.accessibility && series.options.accessibility.point || {},
+        label = stripHTMLTags(
+            seriesPointA11yOptions.descriptionFormatter &&
+            seriesPointA11yOptions.descriptionFormatter(point) ||
+            a11yPointOptions.descriptionFormatter &&
+            a11yPointOptions.descriptionFormatter(point) ||
+            defaultPointDescriptionFormatter(point)
         );
 
     pointElement.setAttribute('role', 'img');
@@ -559,24 +564,31 @@ function setPointScreenReaderAttribs(
  * @param {Highcharts.Series} series
  */
 function describePointsInSeries(series: Highcharts.AccessibilitySeries): void {
-    var setScreenReaderProps = shouldSetScreenReaderPropsOnPoints(series),
+    const setScreenReaderProps = shouldSetScreenReaderPropsOnPoints(series),
         setKeyboardProps = shouldSetKeyboardNavPropsOnPoints(series);
 
     if (setScreenReaderProps || setKeyboardProps) {
         series.points.forEach(function (
             point: Highcharts.AccessibilityPoint
         ): void {
-            var pointEl = point.graphic && point.graphic.element ||
+            const pointEl = point.graphic && point.graphic.element ||
                     shouldAddDummyPoint(point) && addDummyPointElement(point);
+            const pointA11yDisabled = (
+                point.options &&
+                point.options.accessibility &&
+                point.options.accessibility.enabled === false
+            );
 
             if (pointEl) {
                 // We always set tabindex, as long as we are setting props.
                 // When setting tabindex, also remove default outline to
                 // avoid ugly border on click.
                 pointEl.setAttribute('tabindex', '-1');
-                pointEl.style.outline = '0';
+                if (!series.chart.styledMode) {
+                    pointEl.style.outline = 'none';
+                }
 
-                if (setScreenReaderProps) {
+                if (setScreenReaderProps && !pointA11yDisabled) {
                     setPointScreenReaderAttribs(point, pointEl);
                 } else {
                     pointEl.setAttribute('aria-hidden', true);
@@ -595,12 +607,12 @@ function describePointsInSeries(series: Highcharts.AccessibilitySeries): void {
 function defaultSeriesDescriptionFormatter(
     series: Highcharts.AccessibilitySeries
 ): string {
-    var chart = series.chart,
+    const chart = series.chart,
         chartTypes = chart.types || [],
         description = getSeriesDescriptionText(series),
         shouldDescribeAxis = function (
             coll: ('xAxis'|'yAxis')
-        ): (boolean|Highcharts.Axis) {
+        ): (boolean|Axis) {
             return chart[coll] && chart[coll].length > 1 && series[coll];
         },
         xAxisInfo = getSeriesAxisDescriptionText(series, 'xAxis'),
@@ -639,7 +651,7 @@ function describeSeriesElement(
     series: Highcharts.AccessibilitySeries,
     seriesElement: DOMElementType
 ): void {
-    var seriesA11yOptions = series.options.accessibility || {},
+    const seriesA11yOptions = series.options.accessibility || {},
         a11yOptions = series.chart.options.accessibility,
         landmarkVerbosity = a11yOptions.landmarkVerbosity;
 
@@ -651,15 +663,15 @@ function describeSeriesElement(
     } /* else do not add role */
 
     seriesElement.setAttribute('tabindex', '-1');
-    seriesElement.style.outline = '0'; // Don't show browser outline on click, despite tabindex
+    if (!series.chart.styledMode) {
+        seriesElement.style.outline = 'none'; // Don't show browser outline on click, despite tabindex
+    }
     seriesElement.setAttribute(
         'aria-label',
-        escapeStringForHTML(
-            stripHTMLTags(
-                (a11yOptions.series as any).descriptionFormatter &&
-                (a11yOptions.series as any).descriptionFormatter(series) ||
-                defaultSeriesDescriptionFormatter(series)
-            )
+        stripHTMLTags(
+            (a11yOptions.series as any).descriptionFormatter &&
+            (a11yOptions.series as any).descriptionFormatter(series) ||
+            defaultSeriesDescriptionFormatter(series)
         )
     );
 }

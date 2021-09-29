@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -66,7 +66,7 @@ if (!Array.prototype.forEach) {
         fn: ArrayForEachCallbackFunction<T>,
         thisArg?: TScope
     ): void {
-        var i = 0,
+        let i = 0,
             len = this.length;
 
         for (; i < len; i++) {
@@ -86,7 +86,7 @@ if (!Array.prototype.map) {
         fn: ArrayMapCallbackFunction<TInput, TOutput>
         // @todo support optional ctx
     ): Array<TOutput> {
-        var results = [] as Array<TOutput>,
+        let results = [] as Array<TOutput>,
             i = 0,
             len = this.length;
 
@@ -104,7 +104,7 @@ if (!Array.prototype.indexOf) {
         member: T,
         fromIndex?: number
     ): number {
-        var arr = this, // #8874
+        let arr = this, // #8874
             len: number,
             i = fromIndex || 0; // #8346
 
@@ -128,7 +128,7 @@ if (!Array.prototype.filter) {
         fn: ArrayFilterCallbackFunction<T>
         // @todo support optional ctx
     ): Array<T> {
-        var ret = [] as Array<T>,
+        let ret = [] as Array<T>,
             i = 0,
             length = this.length;
 
@@ -148,7 +148,7 @@ if (!Array.prototype.some) {
         fn: ArraySomeCallbackFunction<T>,
         thisArg?: TScope
     ): boolean { // legacy
-        var i = 0,
+        let i = 0,
             len = this.length;
 
         for (; i < len; i++) {
@@ -166,7 +166,7 @@ if (!Array.prototype.reduce) {
         func: ArrayReduceCallbackFunction<T>,
         initialValue?: T
     ): T {
-        var context = this,
+        let context = this,
             i = arguments.length > 1 ? 0 : 1,
             accumulator = arguments.length > 1 ? initialValue : this[0],
             len = this.length;
@@ -202,12 +202,30 @@ if (!Function.prototype.bind) {
     };
 }
 
+// Adapted from https://johnresig.com/blog/objectgetprototypeof/
+if (!Object.getPrototypeOf) {
+    if (typeof ('test' as any).__proto__ === 'object') { // eslint-disable-line no-proto
+        Object.getPrototypeOf = function (object): any {
+            return (object as any).__proto__; // eslint-disable-line no-proto
+        };
+    } else {
+        Object.getPrototypeOf = function (object): any {
+            const proto = object.constructor.prototype;
+            if (proto === object) {
+                return {}.constructor.prototype;
+            }
+            // May break if the constructor has been tampered with
+            return proto;
+        };
+    }
+}
+
 if (!Object.keys) {
     Object.keys = function (
-        this: Record<string, any>,
+        this: AnyRecord,
         obj: object
     ): Array<string> {
-        var result = [] as Array<string>,
+        let result = [] as Array<string>,
             prop: (number|string|symbol);
 
         for (prop in obj) {
@@ -227,7 +245,7 @@ if (!document.getElementsByClassName) {
     document.getElementsByClassName = function (
         search: string
     ): any {
-        var d = document,
+        let d = document,
             elements,
             pattern,
             i,

@@ -20,13 +20,7 @@ require(
     ],
 
     // This function runs when the above files have been loaded.
-    function (Highcharts, ExportingModule, AccessibilityModule) {
-
-        // We need to initialize module files and pass in Highcharts.
-        ExportingModule(Highcharts);
-
-        // Load accessibility after exporting.
-        AccessibilityModule(Highcharts);
+    function (Highcharts) {
 
         // Create a test chart.
         Highcharts.chart('container', {

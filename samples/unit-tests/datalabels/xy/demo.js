@@ -1,5 +1,4 @@
 QUnit.test('Data label alignment and x/y options (#13580)', assert => {
-
     const chart = Highcharts.chart('container', {
         chart: {
             width: 300,
@@ -9,15 +8,17 @@ QUnit.test('Data label alignment and x/y options (#13580)', assert => {
         yAxis: {
             max: 2000
         },
-        series: [{
-            data: [1000],
-            dataLabels: {
-                enabled: true,
-                backgroundColor: 'black'
-            },
-            type: 'column',
-            animation: false
-        }]
+        series: [
+            {
+                data: [1000],
+                dataLabels: {
+                    enabled: true,
+                    backgroundColor: 'black'
+                },
+                type: 'column',
+                animation: false
+            }
+        ]
     });
 
     const label = chart.series[0].points[0].dataLabel;

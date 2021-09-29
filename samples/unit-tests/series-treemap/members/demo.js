@@ -1,44 +1,63 @@
-QUnit.test("Axis extremes should be reset after updated data. (#4298)", function (assert) {
-    var chart = $('#container').highcharts({
-            series: [{
-                type: "treemap",
-                layoutAlgorithm: 'squarified',
-                allowDrillToNode: true,
-                data: [{
-                    id: "A"
-                }, {
-                    id: "B",
-                    value: 2
-                }, {
-                    id: "A1",
-                    parent: "A",
-                    value: 1
-                }]
-            }]
-        }).highcharts(),
-        series = chart.series[0],
-        extremesX,
-        extremesY,
-        root;
+QUnit.test(
+    'Axis extremes should be reset after updated data. (#4298)',
+    function (assert) {
+        var chart = $('#container')
+                .highcharts({
+                    series: [
+                        {
+                            type: 'treemap',
+                            layoutAlgorithm: 'squarified',
+                            allowDrillToNode: true,
+                            data: [
+                                {
+                                    id: 'A'
+                                },
+                                {
+                                    id: 'B',
+                                    value: 2
+                                },
+                                {
+                                    id: 'A1',
+                                    parent: 'A',
+                                    value: 1
+                                }
+                            ]
+                        }
+                    ]
+                })
+                .highcharts(),
+            series = chart.series[0],
+            extremesX,
+            extremesY,
+            root;
 
-    // Actions
-    series.drillToNode("A");
-    series.addPoint({
-        id: "A2",
-        parent: "A",
-        value: 1
-    });
-    root = series.nodeMap[series.rootNode].pointValues;
-    extremesX = series.xAxis.getExtremes();
-    extremesY = series.yAxis.getExtremes();
+        // Actions
+        series.drillToNode('A');
+        series.addPoint({
+            id: 'A2',
+            parent: 'A',
+            value: 1
+        });
+        root = series.nodeMap[series.rootNode].pointValues;
+        extremesX = series.xAxis.getExtremes();
+        extremesY = series.yAxis.getExtremes();
 
-    // Tests
-    assert.strictEqual(series.rootNode, "A", "Root node is updated to A");
-    assert.strictEqual(root.x, extremesX.min, "xAxis.min equals root.x");
-    assert.strictEqual(root.x + root.width, extremesX.max, "xAxis.max equals root.x + root.width");
-    assert.strictEqual(root.y, extremesY.min, "yAxis.min equals root.y");
-    assert.strictEqual(root.y + root.height, extremesY.max, "yAxis.max equals root.y + root.height");
-});
+        // Tests
+        assert.strictEqual(series.rootNode, 'A', 'Root node is updated to A');
+        assert.strictEqual(root.x, extremesX.min, 'xAxis.min equals root.x');
+        assert.strictEqual(
+            root.x + root.width,
+            extremesX.max,
+            'xAxis.max equals root.x + root.width'
+        );
+        assert.strictEqual(root.y, extremesY.min, 'yAxis.min equals root.y');
+        assert.strictEqual(
+            root.y + root.height,
+            extremesY.max,
+            'yAxis.max equals root.y + root.height'
+        );
+    }
+);
 
 QUnit.test('directTouch', function (assert) {
     var treemapSeries = Highcharts.seriesTypes.treemap;
@@ -142,11 +161,7 @@ QUnit.test('seriesTypes.treemap.pointClass.setState', function (assert) {
         'When state:normal zIndex is 0'
     );
     setState.call(point, 'hover');
-    assert.strictEqual(
-        point.graphic.zIndex,
-        1,
-        'When state:hover zIndex is 1'
-    );
+    assert.strictEqual(point.graphic.zIndex, 1, 'When state:hover zIndex is 1');
     setState.call(point, 'select');
     assert.strictEqual(
         point.graphic.zIndex,
@@ -184,11 +199,7 @@ QUnit.test('seriesTypes.treemap.drillUp', function (assert) {
 
     series.rootNode = 'A';
     drillUp.call(series);
-    assert.strictEqual(
-        series.rootNode,
-        '',
-        'Drill to parent'
-    );
+    assert.strictEqual(series.rootNode, '', 'Drill to parent');
 });
 
 QUnit.module('setRootNode', () => {
@@ -226,12 +237,12 @@ QUnit.module('setRootNode', () => {
         assert.strictEqual(
             series.rootNode,
             '',
-            'Drill to \'\': Root node updated'
+            "Drill to '': Root node updated"
         );
         assert.strictEqual(
             series.chart.redrawed,
             undefined,
-            'Drill to \'\': Redraw false'
+            "Drill to '': Redraw false"
         );
 
         setRootNode.call(series, 'A');
@@ -274,7 +285,8 @@ QUnit.module('setRootNode', () => {
 });
 
 QUnit.test('seriesTypes.treemap.onClickDrillToNode', function (assert) {
-    var onClickDrillToNode = Highcharts.seriesTypes.treemap.prototype.onClickDrillToNode,
+    var onClickDrillToNode =
+            Highcharts.seriesTypes.treemap.prototype.onClickDrillToNode,
         series = {
             setRootNode: function (id) {
                 this.rootNode = id;
@@ -305,12 +317,12 @@ QUnit.test('seriesTypes.treemap.onClickDrillToNode', function (assert) {
     assert.strictEqual(
         series.rootNode,
         '',
-        'On click drill to \'\': rootNode is updated.'
+        "On click drill to '': rootNode is updated."
     );
     assert.strictEqual(
         point.state,
         '',
-        'On click drill to \'\': point.state is updated.'
+        "On click drill to '': point.state is updated."
     );
 });
 
@@ -319,12 +331,16 @@ QUnit.test('traverseUpButton', assert => {
         chart: {
             type: 'treemap'
         },
-        series: [{
-            data: [{
-                id: 'A',
-                name: 'A'
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        id: 'A',
+                        name: 'A'
+                    }
+                ]
+            }
+        ]
     });
     const series = chart.series[0];
 
@@ -333,7 +349,7 @@ QUnit.test('traverseUpButton', assert => {
     assert.strictEqual(
         series.drillUpButton,
         undefined,
-        'should destroy traverseUpButton when root id is \'\'.'
+        "should destroy traverseUpButton when root id is ''."
     );
 
     // Render button when root id is 'A'
@@ -355,62 +371,74 @@ QUnit.test('traverseUpButton', assert => {
 });
 
 QUnit.test('Traversing single top node', assert => {
-    const data = [{
-        value: 350,
-        id: "0_0",
-        name: "0_0",
-        parent: ""
-    }, {
-        value: 300,
-        id: "1_0",
-        name: "1_0",
-        parent: "0_0"
-    }, {
-        value: 50,
-        id: "1_1",
-        name: "1_1",
-        parent: "0_0"
-    }, {
-        value: 200,
-        id: "2_0",
-        name: "2_0",
-        parent: "1_0"
-    }, {
-        value: 100,
-        id: "2_1",
-        name: "2_1",
-        parent: "1_0"
-    }, {
-        value: 100,
-        id: "3_0",
-        name: "3_0",
-        parent: "2_0"
-    }, {
-        value: 100,
-        id: "3_1",
-        name: "3_1",
-        parent: "2_0"
-    }];
+    const data = [
+        {
+            value: 350,
+            id: '0_0',
+            name: '0_0',
+            parent: ''
+        },
+        {
+            value: 300,
+            id: '1_0',
+            name: '1_0',
+            parent: '0_0'
+        },
+        {
+            value: 50,
+            id: '1_1',
+            name: '1_1',
+            parent: '0_0'
+        },
+        {
+            value: 200,
+            id: '2_0',
+            name: '2_0',
+            parent: '1_0'
+        },
+        {
+            value: 100,
+            id: '2_1',
+            name: '2_1',
+            parent: '1_0'
+        },
+        {
+            value: 100,
+            id: '3_0',
+            name: '3_0',
+            parent: '2_0'
+        },
+        {
+            value: 100,
+            id: '3_1',
+            name: '3_1',
+            parent: '2_0'
+        }
+    ];
 
     const chart = Highcharts.chart('container', {
-        series: [{
-            type: "treemap",
-            layoutAlgorithm: 'squarified',
-            levelIsConstant: false,
-            allowTraversingTree: true,
-            dataLabels: {
-                enabled: false
-            },
-            borderWidth: 3,
-            levels: [{
-                level: 1,
+        series: [
+            {
+                type: 'treemap',
+                layoutAlgorithm: 'squarified',
+                levelIsConstant: false,
+                allowTraversingTree: true,
                 dataLabels: {
-                    enabled: true
+                    enabled: false
                 },
-                borderWidth: 3
-            }],
-            data
-        }]
+                borderWidth: 3,
+                levels: [
+                    {
+                        level: 1,
+                        dataLabels: {
+                            enabled: true
+                        },
+                        borderWidth: 3
+                    }
+                ],
+                data
+            }
+        ]
     });
 
     const series = chart.series[0];
@@ -438,6 +466,4 @@ QUnit.test('Traversing single top node', assert => {
         chart.get('2_1').graphic.parentGroup.element.className.baseVal,
         'The ephemeral 2_1 node should be in the same group as the 2_0 node (#12286)'
     );
-
-
 });

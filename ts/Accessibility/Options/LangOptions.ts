@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Default lang/i18n options for accessibility.
  *
@@ -11,6 +11,24 @@
  * */
 
 'use strict';
+
+/* *
+ *
+ * Import
+ *
+ * */
+import type LangOptions from '../../Core/LangOptions';
+
+/* *
+ *
+ * Declarations
+ *
+ * */
+declare module '../../Core/LangOptions'{
+    interface LangOptions {
+        accessibility?: Highcharts.LangAccessibilityOptions;
+    }
+}
 
 /**
  * Internal types.
@@ -69,6 +87,7 @@ declare global {
         interface LangAccessibilityLegendOptions {
             legendItem: string;
             legendLabel: string;
+            legendLabelNoTitle: string;
         }
         interface LangAccessibilityOptions {
             announceNewData: LangAccessibilityAnnounceNewDataOptions;
@@ -95,9 +114,10 @@ declare global {
             zoom: LangAccessibilityZoomOptions;
         }
         interface LangAccessibilityRangeSelectorOptions {
-            buttonText: string;
+            dropdownLabel: string;
             maxInputLabel: string;
             minInputLabel: string;
+            clickButtonAnnouncement: string;
         }
         interface LangAccessibilityAnnotationOptions {
             heading: string;
@@ -169,13 +189,10 @@ declare global {
             mapZoomOut: string;
             resetZoomButton: string;
         }
-        interface LangOptions {
-            accessibility?: LangAccessibilityOptions;
-        }
     }
 }
 
-var langOptions: Highcharts.LangOptions = {
+const langOptions: DeepPartial<LangOptions> = {
 
     /**
      * Configure the accessibility strings in the chart. Requires the
@@ -185,10 +202,10 @@ var langOptions: Highcharts.LangOptions = {
      * [Highcharts Accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility).
      *
      * For more dynamic control over the accessibility functionality, see
-     * [accessibility.pointDescriptionFormatter](#accessibility.pointDescriptionFormatter),
-     * [accessibility.seriesDescriptionFormatter](#accessibility.seriesDescriptionFormatter),
+     * [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter),
+     * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
      * and
-     * [accessibility.screenReaderSectionFormatter](#accessibility.screenReaderSectionFormatter).
+     * [accessibility.screenReaderSection.beforeChartFormatter](#accessibility.screenReaderSection.beforeChartFormatter).
      *
      * @since        6.0.6
      * @optionparent lang.accessibility
@@ -238,7 +255,7 @@ var langOptions: Highcharts.LangOptions = {
          * @since 8.0.0
          */
         screenReaderSection: {
-            beforeRegionLabel: 'Chart screen reader information.',
+            beforeRegionLabel: 'Chart screen reader information, {chartTitle}.',
             afterRegionLabel: '',
 
             /**
@@ -278,8 +295,9 @@ var langOptions: Highcharts.LangOptions = {
          * @since 8.0.0
          */
         legend: {
-            legendLabel: 'Toggle series visibility',
-            legendItem: 'Hide {itemName}'
+            legendLabelNoTitle: 'Toggle series visibility, {chartTitle}',
+            legendLabel: 'Chart legend: {legendTitle}',
+            legendItem: 'Show {itemName}'
         },
 
         /**
@@ -299,9 +317,10 @@ var langOptions: Highcharts.LangOptions = {
          * @since 8.0.0
          */
         rangeSelector: {
+            dropdownLabel: '{rangeTitle}',
             minInputLabel: 'Select start date.',
             maxInputLabel: 'Select end date.',
-            buttonText: 'Select range {buttonText}'
+            clickButtonAnnouncement: 'Viewing {axisRangeDescription}'
         },
 
         /**
@@ -430,8 +449,7 @@ var langOptions: Highcharts.LangOptions = {
          */
         exporting: {
             chartMenuLabel: 'Chart menu',
-            menuButtonLabel: 'View chart menu',
-            exportRegionLabel: 'Chart menu'
+            menuButtonLabel: 'View chart menu, {chartTitle}'
         },
 
         /**

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -15,6 +15,7 @@
  * */
 
 import type Point from './Point';
+import type PointOptions from './PointOptions';
 
 /* *
  *
@@ -28,6 +29,11 @@ import type Point from './Point';
 export type PointType = PointTypeRegistry[keyof PointTypeRegistry]['prototype'];
 
 /**
+ * All possible options of series types.
+ */
+export type PointTypeOptions = (PointOptions&PointType['options']);
+
+/**
  * Helper interface to add series point types to `PointType`.
  *
  * Use the `declare module './PointType'` pattern to overload the interface in
@@ -39,7 +45,7 @@ export interface PointTypeRegistry {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

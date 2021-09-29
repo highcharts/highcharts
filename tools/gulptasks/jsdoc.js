@@ -26,7 +26,7 @@ function jsDoc() {
 
         if (!process.argv.includes('jsdoc-watch')) {
             logLib.message(
-                'Hint: Run the `jsdoc-watch` task to start the JSDoc server.'
+                'Hint: Call `npm run jsdoc` to start the JSDoc server.'
             );
         }
 
@@ -43,6 +43,7 @@ require('./jsdoc-websearch');
 gulp.task(
     'jsdoc',
     gulp.series(
+        'scripts',
         'jsdoc-clean',
         'jsdoc-classes',
         'jsdoc-namespace',

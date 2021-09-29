@@ -15,9 +15,11 @@ QUnit.test('No series markers', function (assert) {
                     }
                 }
             },
-            series: [{
-                data: [1, 2, 3, 4]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4]
+                }
+            ]
         }),
         point = chart.series[0].points[1];
 
@@ -28,12 +30,14 @@ QUnit.test('No series markers', function (assert) {
 
 QUnit.test('Too many points for markers', function (assert) {
     const chart = Highcharts.chart('container', {
-            series: [{
-                data: [1, 2, 3, 4],
-                marker: {
-                    enabledThreshold: 100
+            series: [
+                {
+                    data: [1, 2, 3, 4],
+                    marker: {
+                        enabledThreshold: 100
+                    }
                 }
-            }]
+            ]
         }),
         point = chart.series[0].points[1];
 
@@ -48,12 +52,14 @@ QUnit.test('Too many points for a11y', function (assert) {
                     pointDescriptionEnabledThreshold: 1
                 }
             },
-            series: [{
-                marker: {
-                    enabled: false
-                },
-                data: [1, 2, 3, 4]
-            }]
+            series: [
+                {
+                    marker: {
+                        enabled: false
+                    },
+                    data: [1, 2, 3, 4]
+                }
+            ]
         }),
         point = chart.series[0].points[1];
 
@@ -70,9 +76,11 @@ QUnit.test('Markers enabled', function (assert) {
                     }
                 }
             },
-            series: [{
-                data: [1, 2, 3, 4]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4]
+                }
+            ]
         }),
         point = chart.series[0].points[1];
 
@@ -83,14 +91,21 @@ QUnit.test('Markers enabled', function (assert) {
 
 QUnit.test('Markers enabled, point marker off', function (assert) {
     const chart = Highcharts.chart('container', {
-            series: [{
-                data: [1, 2, {
-                    y: 3,
-                    marker: {
-                        enabled: false
-                    }
-                }, 4]
-            }]
+            series: [
+                {
+                    data: [
+                        1,
+                        2,
+                        {
+                            y: 3,
+                            marker: {
+                                enabled: false
+                            }
+                        },
+                        4
+                    ]
+                }
+            ]
         }),
         pointA = chart.series[0].points[1],
         pointB = chart.series[0].points[2];
@@ -100,21 +115,35 @@ QUnit.test('Markers enabled, point marker off', function (assert) {
     assert.strictEqual(hasVisibleMarker(pointA), true, 'Series marker visible');
     assert.strictEqual(hasMarker(pointB), true, 'Point marker exists');
     assert.strictEqual(hasVisibleMarker(pointB), false, 'Point marker hidden');
+
+    // Force redraw
+    chart.update({
+        yAxis: { visible: false }
+    });
+    assert.strictEqual(hasMarker(pointB), true, 'Point marker exists after update');
+    assert.strictEqual(hasVisibleMarker(pointB), false, 'Point marker hidden after update');
 });
 
 QUnit.test('Markers disabled, point marker off', function (assert) {
     const chart = Highcharts.chart('container', {
-            series: [{
-                marker: {
-                    enabled: false
-                },
-                data: [1, 2, {
-                    y: 3,
+            series: [
+                {
                     marker: {
                         enabled: false
-                    }
-                }, 4]
-            }]
+                    },
+                    data: [
+                        1,
+                        2,
+                        {
+                            y: 3,
+                            marker: {
+                                enabled: false
+                            }
+                        },
+                        4
+                    ]
+                }
+            ]
         }),
         pointA = chart.series[0].points[1],
         pointB = chart.series[0].points[2];
@@ -128,17 +157,24 @@ QUnit.test('Markers disabled, point marker off', function (assert) {
 
 QUnit.test('Markers disabled, point marker on', function (assert) {
     const chart = Highcharts.chart('container', {
-            series: [{
-                marker: {
-                    enabled: false
-                },
-                data: [1, 2, {
-                    y: 3,
+            series: [
+                {
                     marker: {
-                        enabled: true
-                    }
-                }, 4]
-            }]
+                        enabled: false
+                    },
+                    data: [
+                        1,
+                        2,
+                        {
+                            y: 3,
+                            marker: {
+                                enabled: true
+                            }
+                        },
+                        4
+                    ]
+                }
+            ]
         }),
         pointA = chart.series[0].points[1],
         pointB = chart.series[0].points[2];
@@ -152,19 +188,26 @@ QUnit.test('Markers disabled, point marker on', function (assert) {
 
 QUnit.test('Dynamic markers on update', function (assert) {
     const chart = Highcharts.chart('container', {
-            series: [{
-                type: 'arearange',
-                marker: {
-                    enabled: false
-                },
-                data: [[1, 2], [2, 3], {
-                    low: 3,
-                    high: 4,
+            series: [
+                {
+                    type: 'arearange',
                     marker: {
-                        enabled: true
-                    }
-                }, [4, 5]]
-            }]
+                        enabled: false
+                    },
+                    data: [
+                        [1, 2],
+                        [2, 3],
+                        {
+                            low: 3,
+                            high: 4,
+                            marker: {
+                                enabled: true
+                            }
+                        },
+                        [4, 5]
+                    ]
+                }
+            ]
         }),
         series = chart.series[0];
 

@@ -1,28 +1,30 @@
-QUnit.test("Bubble with null(#4543)", function (assert) {
-    var chart = $('#container').highcharts({
-        accessibility: {
-            enabled: false
-        },
+QUnit.test('Bubble with null(#4543)', function (assert) {
+    var chart = $('#container')
+        .highcharts({
+            accessibility: {
+                enabled: false
+            },
 
-        chart: {
-            type: 'bubble'
-        },
+            chart: {
+                type: 'bubble'
+            },
 
-        title: {
-            text: 'Highcharts with nulls'
-        },
+            title: {
+                text: 'Highcharts with nulls'
+            },
 
-        series: [{
-            data: [
-                [0, 0, -1],
-                [0, 1, null],
-                [0, 2, 0],
-                [0, 3, 1]
+            series: [
+                {
+                    data: [
+                        [0, 0, -1],
+                        [0, 1, null],
+                        [0, 2, 0],
+                        [0, 3, 1]
+                    ]
+                }
             ]
-        }]
-
-    }).highcharts();
-
+        })
+        .highcharts();
 
     assert.strictEqual(
         chart.series[0].group.element.childNodes.length,
@@ -38,5 +40,4 @@ QUnit.test("Bubble with null(#4543)", function (assert) {
         3,
         'No element created for null point'
     );
-
 });

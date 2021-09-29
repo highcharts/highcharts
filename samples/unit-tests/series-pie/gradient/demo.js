@@ -1,5 +1,4 @@
 QUnit.test('Pie radial gradient (#3801)', function (assert) {
-
     const colors = Highcharts.defaultOptions.colors;
     // Radialize the colors
     Highcharts.setOptions({
@@ -25,23 +24,23 @@ QUnit.test('Pie radial gradient (#3801)', function (assert) {
             width: 300,
             height: 300
         },
-        series: [{
-            data: [1, 1, 1, 1],
-            dataLabels: {
-                enabled: false
+        series: [
+            {
+                data: [1, 1, 1, 1],
+                dataLabels: {
+                    enabled: false
+                }
             }
-        }]
+        ]
     });
 
     var chart = $('#container').highcharts(),
         series = chart.series[0],
         gradient;
 
-
     gradient = series.points[0].graphic.element.getAttribute('fill'); // url()
     gradient = gradient.replace('url(#', '').replace(')', '');
     gradient = document.getElementById(gradient);
-
 
     assert.strictEqual(
         parseFloat(gradient.getAttribute('cx')),

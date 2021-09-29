@@ -5,6 +5,6 @@ QUnit.test('Init chart with different defined type.', function (assert) {
             yAxis: definedType,
             series: []
         });
-        assert.ok(true, "No errors (#7995).");
+        assert.ok(true, 'No errors (#7995).');
     });
 });

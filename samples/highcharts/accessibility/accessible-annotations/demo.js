@@ -93,7 +93,8 @@ Highcharts.chart('container', {
             point: {
                 x: 0, y: 0
             },
-            x: -10,
+            align: 'left',
+            x: 10,
             y: 10,
             style: {
                 width: 150

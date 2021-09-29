@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2020 Paweł Fus
+ *  (c) 2010-2021 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -32,7 +32,7 @@ declare global {
                 width: number,
                 height: number
             );
-            public box: Dictionary<number>;
+            public box: Record<string, number>;
             public maxDepth: number;
             public root: QuadTreeNode;
             public calculateMassAndCenter(): void;
@@ -44,9 +44,9 @@ declare global {
             ): void;
         }
         class QuadTreeNode {
-            public constructor(box: Dictionary<number>);
+            public constructor(box: Record<string, number>);
             public body: (boolean|Point);
-            public box: Dictionary<number>;
+            public box: Record<string, number>;
             public boxSize: number;
             public isEmpty: boolean;
             public isInternal: boolean;
@@ -75,9 +75,9 @@ declare global {
  *
  * @param {Highcharts.Dictionary<number>} box Available space for the node
  */
-var QuadTreeNode = H.QuadTreeNode = function (
+const QuadTreeNode = H.QuadTreeNode = function (
     this: Highcharts.QuadTreeNode,
-    box: Highcharts.Dictionary<number>
+    box: Record<string, number>
 ): void {
     /**
      * Read only. The available space for node.
@@ -146,7 +146,7 @@ extend(
             point: Point,
             depth: number
         ): void {
-            var newQuadTreeNode: Highcharts.QuadTreeNode;
+            let newQuadTreeNode: Highcharts.QuadTreeNode;
 
             if (this.isInternal) {
                 // Internal node:
@@ -203,7 +203,7 @@ extend(
          * position is used to imitate real node in the layout by approximation.
          */
         updateMassAndCenter: function (this: Highcharts.QuadTreeNode): void {
-            var mass = 0,
+            let mass = 0,
                 plotX = 0,
                 plotY = 0;
 
@@ -252,7 +252,7 @@ extend(
          * ```
          */
         divideBox: function (this: Highcharts.QuadTreeNode): void {
-            var halfWidth = this.box.width / 2,
+            const halfWidth = this.box.width / 2,
                 halfHeight = this.box.height / 2;
 
             // Top left
@@ -298,7 +298,7 @@ extend(
             this: Highcharts.QuadTreeNode,
             point: Point
         ): number {
-            var left =
+            let left =
                     (point.plotX as any) < this.box.left + this.box.width / 2,
                 top =
                     (point.plotY as any) < this.box.top + this.box.height / 2,
@@ -339,7 +339,7 @@ extend(
  * @param {number} width width of the plotting area
  * @param {number} height height of the plotting area
  */
-var QuadTree = H.QuadTree = function (
+const QuadTree = H.QuadTree = function (
     this: Highcharts.QuadTree,
     x: number,
     y: number,
@@ -409,7 +409,7 @@ extend(
             beforeCallback?: (Function|null),
             afterCallback?: (Function|null)
         ): void {
-            var goFurther: (boolean|undefined);
+            let goFurther: (boolean|undefined);
 
             if (!node) {
                 node = this.root;

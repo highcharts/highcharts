@@ -1,4 +1,5 @@
 (function () {
+    /* eslint no-extend-native: 0 */
     function getData() {
         var arr = [];
         for (var i = 0; i < 1000; i++) {
@@ -8,77 +9,89 @@
     }
 
     function singleTouchDrag(chart) {
-
         var offset = Highcharts.offset(chart.container);
 
         // Perform single touch-drag
         chart.pointer.onContainerTouchStart({
             type: 'touchstart',
-            touches: [{
-                pageX: 100 + offset.left,
-                pageY: 100 + offset.top
-            }],
+            touches: [
+                {
+                    pageX: 100 + offset.left,
+                    pageY: 100 + offset.top
+                }
+            ],
             preventDefault: function () {}
         });
 
         chart.pointer.onContainerTouchMove({
             type: 'touchmove',
-            touches: [{
-                pageX: 200 + offset.left,
-                pageY: 100 + offset.top
-            }],
+            touches: [
+                {
+                    pageX: 200 + offset.left,
+                    pageY: 100 + offset.top
+                }
+            ],
             preventDefault: function () {}
         });
 
         chart.pointer.onDocumentTouchEnd({
             type: 'touchend',
-            touches: [{
-                pageX: 200 + offset.left,
-                pageY: 100 + offset.top
-            }]
+            touches: [
+                {
+                    pageX: 200 + offset.left,
+                    pageY: 100 + offset.top
+                }
+            ]
         });
     }
 
     function dualTouchZoom(chart) {
-
         var offset = Highcharts.offset(chart.container);
 
         // Perform dual touch zoom
         chart.pointer.onContainerTouchStart({
             type: 'touchstart',
-            touches: [{
-                pageX: 200 + offset.left,
-                pageY: 100 + offset.top
-            }, {
-                pageX: 300 + offset.left,
-                pageY: 100 + offset.top
-            }],
+            touches: [
+                {
+                    pageX: 200 + offset.left,
+                    pageY: 100 + offset.top
+                },
+                {
+                    pageX: 300 + offset.left,
+                    pageY: 100 + offset.top
+                }
+            ],
             preventDefault: function () {}
         });
 
         chart.pointer.onContainerTouchMove({
             type: 'touchmove',
-            touches: [{
-                pageX: 150 + offset.left,
-                pageY: 100 + offset.top
-            }, {
-                pageX: 350 + offset.left,
-                pageY: 100 + offset.top
-            }],
+            touches: [
+                {
+                    pageX: 150 + offset.left,
+                    pageY: 100 + offset.top
+                },
+                {
+                    pageX: 350 + offset.left,
+                    pageY: 100 + offset.top
+                }
+            ],
             preventDefault: function () {}
         });
 
         chart.pointer.onDocumentTouchEnd({
             type: 'touchend',
-            touches: [{
-                pageX: 150 + offset.left,
-                pageY: 100 + offset.top
-            }, {
-                pageX: 350 + offset.left,
-                pageY: 100 + offset.top
-            }]
+            touches: [
+                {
+                    pageX: 150 + offset.left,
+                    pageY: 100 + offset.top
+                },
+                {
+                    pageX: 350 + offset.left,
+                    pageY: 100 + offset.top
+                }
+            ]
         });
-
     }
 
     /**
@@ -86,45 +99,52 @@
      * pinching.
      */
     function dualTouchPan(chart) {
-
         var offset = Highcharts.offset(chart.container);
 
         // Perform dual touch zoom
         chart.pointer.onContainerTouchStart({
             type: 'touchstart',
-            touches: [{
-                pageX: 200 + offset.left,
-                pageY: 100 + offset.top
-            }, {
-                pageX: 300 + offset.left,
-                pageY: 100 + offset.top
-            }],
+            touches: [
+                {
+                    pageX: 200 + offset.left,
+                    pageY: 100 + offset.top
+                },
+                {
+                    pageX: 300 + offset.left,
+                    pageY: 100 + offset.top
+                }
+            ],
             preventDefault: function () {}
         });
 
         chart.pointer.onContainerTouchMove({
             type: 'touchmove',
-            touches: [{
-                pageX: 100 + offset.left,
-                pageY: 100 + offset.top
-            }, {
-                pageX: 200 + offset.left,
-                pageY: 100 + offset.top
-            }],
+            touches: [
+                {
+                    pageX: 100 + offset.left,
+                    pageY: 100 + offset.top
+                },
+                {
+                    pageX: 200 + offset.left,
+                    pageY: 100 + offset.top
+                }
+            ],
             preventDefault: function () {}
         });
 
         chart.pointer.onDocumentTouchEnd({
             type: 'touchend',
-            touches: [{
-                pageX: 100 + offset.left,
-                pageY: 100 + offset.top
-            }, {
-                pageX: 200 + offset.left,
-                pageY: 100 + offset.top
-            }]
+            touches: [
+                {
+                    pageX: 100 + offset.left,
+                    pageY: 100 + offset.top
+                },
+                {
+                    pageX: 200 + offset.left,
+                    pageY: 100 + offset.top
+                }
+            ]
         });
-
     }
 
     function mouseZoom(chart) {
@@ -148,10 +168,10 @@
         });
     }
 
-    Array.prototype.item = function (i) { // eslint-disable-line no-extend-native
+    Array.prototype.item = function (i) {
+        // eslint-disable-line no-extend-native
         return this[i];
     };
-
 
     QUnit.test('pinchType on, followTouchMove is true', function (assert) {
         var chart = Highcharts.chart('container', {
@@ -163,26 +183,21 @@
             tooltip: {
                 followTouchMove: true
             },
-            series: [{
-                animation: false,
-                data: getData(),
-                kdNow: true
-            }]
+            series: [
+                {
+                    animation: false,
+                    data: getData(),
+                    kdNow: true
+                }
+            ]
         });
 
         var xAxis = chart.xAxis[0],
             initialExtremes = xAxis.getExtremes();
 
-        assert.ok(
-            xAxis.min <= 0,
-            'Initial min'
-        );
+        assert.ok(xAxis.min <= 0, 'Initial min');
 
-        assert.ok(
-            xAxis.max >= 1000,
-            'Initial max'
-        );
-
+        assert.ok(xAxis.max >= 1000, 'Initial max');
 
         singleTouchDrag(chart);
         assert.deepEqual(
@@ -191,17 +206,9 @@
             'Extremes have not changed'
         );
 
-
         dualTouchZoom(chart);
-        assert.ok(
-            xAxis.min > 100,
-            'Zoomed in'
-        );
-        assert.ok(
-            xAxis.max < 900,
-            'Zoomed in'
-        );
-
+        assert.ok(xAxis.min > 100, 'Zoomed in');
+        assert.ok(xAxis.max < 900, 'Zoomed in');
 
         var lastMin = xAxis.min,
             lastMax = xAxis.max;
@@ -212,9 +219,7 @@
             [xAxis.min, xAxis.max].toString(),
             'Chart has dragged'
         );
-
     });
-
 
     QUnit.test('pinchType on, followTouchMove is false', function (assert) {
         var chart = Highcharts.chart('container', {
@@ -226,28 +231,23 @@
             tooltip: {
                 followTouchMove: false
             },
-            series: [{
-                animation: false,
-                data: getData(),
-                kdNow: true
-            }]
+            series: [
+                {
+                    animation: false,
+                    data: getData(),
+                    kdNow: true
+                }
+            ]
         });
 
         var xAxis = chart.xAxis[0];
 
-        assert.ok(
-            xAxis.min <= 0,
-            'Initial min'
-        );
+        assert.ok(xAxis.min <= 0, 'Initial min');
 
-        assert.ok(
-            xAxis.max >= 1000,
-            'Initial max'
-        );
+        assert.ok(xAxis.max >= 1000, 'Initial max');
 
         dualTouchZoom(chart);
         var initialExtremes = [xAxis.min, xAxis.max].toString();
-
 
         singleTouchDrag(chart);
         assert.notEqual(
@@ -257,7 +257,6 @@
         );
     });
 
-
     QUnit.test('pinchType is on, zoomType is off (#5840)', function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
@@ -266,11 +265,13 @@
                 animation: false,
                 width: 600
             },
-            series: [{
-                animation: false,
-                data: getData(),
-                kdNow: true
-            }],
+            series: [
+                {
+                    animation: false,
+                    data: getData(),
+                    kdNow: true
+                }
+            ],
             xAxis: {
                 minPadding: 0,
                 maxPadding: 0
@@ -280,30 +281,13 @@
         var xAxis = chart.xAxis[0];
 
         mouseZoom(chart);
-        assert.strictEqual(
-            xAxis.min,
-            0,
-            'Unaltered min'
-        );
-        assert.strictEqual(
-            xAxis.max,
-            999,
-            'Unaltered max'
-        );
+        assert.strictEqual(xAxis.min, 0, 'Unaltered min');
+        assert.strictEqual(xAxis.max, 999, 'Unaltered max');
 
         dualTouchZoom(chart);
-        assert.notEqual(
-            xAxis.min,
-            0,
-            'Altered min'
-        );
-        assert.notEqual(
-            xAxis.max,
-            999,
-            'Altered max'
-        );
+        assert.notEqual(xAxis.min, 0, 'Altered min');
+        assert.notEqual(xAxis.max, 999, 'Altered max');
     });
-
 
     QUnit.test('pinchType is off, zoomType is on', function (assert) {
         var chart = Highcharts.chart('container', {
@@ -313,11 +297,13 @@
                 animation: false,
                 width: 600
             },
-            series: [{
-                animation: false,
-                data: getData(),
-                kdNow: true
-            }],
+            series: [
+                {
+                    animation: false,
+                    data: getData(),
+                    kdNow: true
+                }
+            ],
             xAxis: {
                 minPadding: 0,
                 maxPadding: 0
@@ -327,30 +313,13 @@
         var xAxis = chart.xAxis[0];
 
         dualTouchZoom(chart);
-        assert.strictEqual(
-            xAxis.min,
-            0,
-            'Unaltered min'
-        );
-        assert.strictEqual(
-            xAxis.max,
-            999,
-            'Unaltered max'
-        );
+        assert.strictEqual(xAxis.min, 0, 'Unaltered min');
+        assert.strictEqual(xAxis.max, 999, 'Unaltered max');
 
         mouseZoom(chart);
-        assert.notEqual(
-            xAxis.min,
-            0,
-            'Altered min'
-        );
-        assert.notEqual(
-            xAxis.max,
-            999,
-            'Altered max'
-        );
+        assert.notEqual(xAxis.min, 0, 'Altered min');
+        assert.notEqual(xAxis.max, 999, 'Altered max');
     });
-
 
     QUnit.test('zoomType is on, pinchType inherited', function (assert) {
         var chart = Highcharts.chart('container', {
@@ -359,11 +328,13 @@
                 animation: false,
                 width: 600
             },
-            series: [{
-                animation: false,
-                data: getData(),
-                kdNow: true
-            }],
+            series: [
+                {
+                    animation: false,
+                    data: getData(),
+                    kdNow: true
+                }
+            ],
             xAxis: {
                 minPadding: 0,
                 maxPadding: 0
@@ -373,15 +344,51 @@
         var xAxis = chart.xAxis[0];
 
         dualTouchZoom(chart);
-        assert.notEqual(
-            xAxis.min,
-            0,
-            'Altered min'
+        assert.notEqual(xAxis.min, 0, 'Altered min');
+        assert.notEqual(xAxis.max, 999, 'Altered max');
+    });
+
+    QUnit.test('zoomBySingleTouch is true', assert => {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                zoomType: 'x',
+                animation: false,
+                width: 600
+            },
+            series: [
+                {
+                    animation: false,
+                    data: getData(),
+                    kdNow: true
+                }
+            ]
+        });
+
+        var xAxis = chart.xAxis[0];
+
+        assert.ok(xAxis.min <= 0, 'Initial min');
+
+        assert.ok(xAxis.max >= 1000, 'Initial max');
+
+        var initialExtremes = [xAxis.min, xAxis.max];
+
+        singleTouchDrag(chart);
+        assert.deepEqual(
+            [xAxis.min, xAxis.max],
+            initialExtremes,
+            'Extremes should not change after single touch'
         );
-        assert.notEqual(
-            xAxis.max,
-            999,
-            'Altered max'
+
+        chart.update({
+            chart: {
+                zoomBySingleTouch: true
+            }
+        });
+        singleTouchDrag(chart);
+        assert.notDeepEqual(
+            [xAxis.min, xAxis.max],
+            initialExtremes,
+            'Extremes should change after single touch zoom'
         );
     });
 }());

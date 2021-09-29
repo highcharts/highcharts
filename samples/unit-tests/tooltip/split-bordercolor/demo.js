@@ -1,10 +1,13 @@
 QUnit.test('tooltip.borderColor #6831', function (assert) {
     var chart = Highcharts.chart('container', {
-        series: [{
-            data: [1, 2, 3]
-        }, {
-            data: [3, 2, 1]
-        }],
+        series: [
+            {
+                data: [1, 2, 3]
+            },
+            {
+                data: [3, 2, 1]
+            }
+        ],
         tooltip: {
             shared: true,
             borderColor: 'red',

@@ -1,13 +1,17 @@
 QUnit.test('Dumbbell connectors', function (assert) {
-
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'dumbbell'
         },
-        series: [{
-            data: [[4, 10], [2, 10], [3, 6]]
-        }]
-
+        series: [
+            {
+                data: [
+                    [4, 10],
+                    [2, 10],
+                    [3, 6]
+                ]
+            }
+        ]
     });
 
     chart.series[0].points.forEach(function (point) {
@@ -38,34 +42,50 @@ QUnit.test('Dumbbell connectors', function (assert) {
     assert.strictEqual(
         chart.series[0].points[3].connector.element.getAttribute('stroke'),
         'green',
-        'Added point\'s connector should have correct color.'
+        "Added point's connector should have correct color."
     );
 
     assert.strictEqual(
-        chart.series[0].points[3].connector.element.getAttribute('stroke-width'),
+        chart.series[0].points[3].connector.element.getAttribute(
+            'stroke-width'
+        ),
         '3',
-        'Added point\'s connector should have correct width.'
+        "Added point's connector should have correct width."
     );
 
     chart.addSeries({
-        data: [[1, 5], [1, 6]],
+        data: [
+            [1, 5],
+            [1, 6]
+        ],
         connectorColor: 'blue'
     });
 
-    var point = chart.series[1].points[1],
-        lowerGraphic = point.lowerGraphic,
-        upperGraphic = point.upperGraphic,
-        connector = point.connector,
-        pointGraphics = [lowerGraphic, upperGraphic, connector];
+    const assertDestruction = msg => {
+        var point = chart.series[1].points[0],
+            lowerGraphic = point.lowerGraphic,
+            upperGraphic = point.upperGraphic,
+            connector = point.connector,
+            pointGraphics = [lowerGraphic, upperGraphic, connector];
 
-    point.remove();
+        point.remove();
 
-    pointGraphics.forEach(function (graphic) {
-        assert.strictEqual(
-            graphic.element,
-            undefined,
-            'All point\'s graphics should be removed.'
-        );
+        pointGraphics.forEach(function (graphic) {
+            assert.strictEqual(
+                graphic && graphic.element,
+                undefined,
+                msg
+            );
+        });
+    };
+
+    assertDestruction("All point's graphics should be removed.");
+
+    chart.series[1].update({
+        marker: {
+            enabled: false
+        }
     });
 
+    assertDestruction('#15560: All point graphics should be destroyed when markers are disabled');
 });

@@ -16,29 +16,35 @@
                 categories: ['Prototyping', 'Development', 'Testing'],
                 reversed: true
             },
-            series: [{
-                name: 'Project 1',
-                // pointPadding: 0,
-                // groupPadding: 0,
-                borderRadius: 5,
-                pointWidth: 10,
-                data: [{
-                    x: Date.UTC(2014, 11, 1),
-                    x2: Date.UTC(2014, 11, 2),
-                    partialFill: 0.25,
-                    y: 0
-                }, {
-                    x: Date.UTC(2014, 11, 2),
-                    x2: Date.UTC(2014, 11, 5),
-                    partialFill: 0.5,
-                    y: 1
-                }, {
-                    x: Date.UTC(2014, 11, 8),
-                    x2: Date.UTC(2014, 11, 9),
-                    partialFill: 0.75,
-                    y: 2
-                }]
-            }]
+            series: [
+                {
+                    name: 'Project 1',
+                    // pointPadding: 0,
+                    // groupPadding: 0,
+                    borderRadius: 5,
+                    pointWidth: 10,
+                    data: [
+                        {
+                            x: Date.UTC(2014, 11, 1),
+                            x2: Date.UTC(2014, 11, 2),
+                            partialFill: 0.25,
+                            y: 0
+                        },
+                        {
+                            x: Date.UTC(2014, 11, 2),
+                            x2: Date.UTC(2014, 11, 5),
+                            partialFill: 0.5,
+                            y: 1
+                        },
+                        {
+                            x: Date.UTC(2014, 11, 8),
+                            x2: Date.UTC(2014, 11, 9),
+                            partialFill: 0.75,
+                            y: 2
+                        }
+                    ]
+                }
+            ]
         };
     });
 
@@ -69,7 +75,9 @@
             assert.equal(
                 partShapeArgs.y,
                 shapeArgs.y,
-                'point ' + i + ' partShapeArgs y-position is correctly calculated'
+                'point ' +
+                    i +
+                    ' partShapeArgs y-position is correctly calculated'
             );
 
             assert.equal(
@@ -94,7 +102,9 @@
             assert.equal(
                 clipRectArgs.y,
                 shapeArgs.y,
-                'point ' + i + ' clipRectArgs y-position is correctly calculated'
+                'point ' +
+                    i +
+                    ' clipRectArgs y-position is correctly calculated'
             );
 
             assert.equal(
@@ -219,25 +229,28 @@
     /**
      * Checks that the fill option in a point's partialFill options is applied
      */
-    QUnit.test('point fill option is applied in drawPoints()', function (assert) {
-        var chart,
-            $graphic,
-            expected = "#fa0",
-            actual;
+    QUnit.test(
+        'point fill option is applied in drawPoints()',
+        function (assert) {
+            var chart,
+                $graphic,
+                expected = '#fa0',
+                actual;
 
-        defaultChartConfig.series[0].data[0].partialFill = {
-            amount: 0.25,
-            fill: expected
-        };
-        chart = Highcharts.chart('container', defaultChartConfig);
-        $graphic = $(chart.series[0].data[0].graphic.element);
-        actual = $graphic.find('.highcharts-partfill-overlay').attr('fill');
-        assert.equal(
-            actual,
-            expected,
-            'fill in point.partialFill options is applied'
-        );
-    });
+            defaultChartConfig.series[0].data[0].partialFill = {
+                amount: 0.25,
+                fill: expected
+            };
+            chart = Highcharts.chart('container', defaultChartConfig);
+            $graphic = $(chart.series[0].data[0].graphic.element);
+            actual = $graphic.find('.highcharts-partfill-overlay').attr('fill');
+            assert.equal(
+                actual,
+                expected,
+                'fill in point.partialFill options is applied'
+            );
+        }
+    );
 
     /**
      * Checks that the fill option in a series' partialFill options is applied
@@ -245,7 +258,7 @@
     QUnit.test('General', function (assert) {
         var chart,
             $graphic,
-            expected = "#000",
+            expected = '#000',
             actual;
 
         defaultChartConfig.series[0].partialFill = {

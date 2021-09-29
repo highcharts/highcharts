@@ -4,19 +4,22 @@ QUnit.test('Axis.setBreaks', assert => {
         series: [{ points }],
         xAxis: [axis]
     } = Highcharts.chart('container', {
-        series: [{
-            connectNulls: true,
-            data: [1, 2, 3, 4, null, 6, 7, 8, 9, 10]
-        }]
+        series: [
+            {
+                connectNulls: true,
+                data: [1, 2, 3, 4, null, 6, 7, 8, 9, 10]
+            }
+        ]
     });
-    const getXValuesOfInvisiblePoints = points => points
-        .filter(point => !point.visible)
-        .map(point => point.x);
+    const getXValuesOfInvisiblePoints = points =>
+        points.filter(point => !point.visible).map(point => point.x);
 
-    axis.brokenAxis.setBreaks([{
-        from: 3,
-        to: 6
-    }]);
+    axis.brokenAxis.setBreaks([
+        {
+            from: 3,
+            to: 6
+        }
+    ]);
     assert.deepEqual(
         getXValuesOfInvisiblePoints(points),
         [4, 5],

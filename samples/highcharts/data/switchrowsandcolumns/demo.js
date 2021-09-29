@@ -1,4 +1,4 @@
-var options = {
+const chart = Highcharts.chart('container', {
     data: {
         table: document.getElementById('datatable'),
         switchRowsAndColumns: true
@@ -15,12 +15,12 @@ var options = {
             text: 'Units'
         }
     }
-};
+});
 
-$('#container').highcharts(Highcharts.merge(options));
-
-
-$('#toggle').click(function () {
-    options.data.switchRowsAndColumns = !options.data.switchRowsAndColumns;
-    $('#container').highcharts(Highcharts.merge(options));
+document.getElementById('toggle').addEventListener('click', () => {
+    chart.update({
+        data: {
+            switchRowsAndColumns: !chart.options.data.switchRowsAndColumns
+        }
+    });
 });

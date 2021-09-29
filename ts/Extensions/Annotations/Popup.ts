@@ -2,7 +2,7 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2017 Sebastian Bochan
+ *  (c) 2009-2021 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -12,24 +12,31 @@
 
 import type Annotation from './Annotations';
 import type Chart from '../../Core/Chart/Chart';
-import type {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
-import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type Series from '../../Core/Series/Series';
+import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
+import type SMAIndicator from '../../Stock/Indicators/SMA/SMAIndicator';
 import H from '../../Core/Globals.js';
+const {
+    doc,
+    isFirefox
+} = H;
 import NavigationBindings from './NavigationBindings.js';
+import D from '../../Core/DefaultOptions.js';
+const { getOptions } = D;
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
     defined,
-    getOptions,
+    fireEvent,
     isArray,
     isObject,
     isString,
     objectEach,
     pick,
+    stableSort,
     wrap
 } = U;
 
@@ -40,13 +47,15 @@ const {
 declare global {
     namespace Highcharts {
         class Popup {
-            public constructor(parentDiv: HTMLDOMElement, iconsURL: string);
+            public constructor(parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart);
             public annotations: PopupAnnotationsObject;
             public container: HTMLDOMElement;
+            public formType?: string;
             public iconsURL: string;
             public indicators: PopupIndicatorsObject;
-            public lang: Dictionary<string>;
+            public lang: Record<string, string>;
             public popup: Popup;
+            public chart?: Chart;
             public tabs: PopupTabsObject;
             public addButton (
                 parentDiv: HTMLDOMElement,
@@ -56,13 +65,13 @@ declare global {
                 fieldsDiv: HTMLDOMElement
             ): HTMLDOMElement;
             public addCloseBtn(): void;
-            public addColsContainer(container: HTMLDOMElement): Dictionary<HTMLDOMElement>;
+            public addColsContainer(container: HTMLDOMElement): Record<string, HTMLDOMElement>;
             public addInput(option: string, type: string, parentDiv: HTMLDOMElement, value: string): void;
             public closePopup(): void;
             public deselectAll(): void;
             public getFields(parentDiv: HTMLDOMElement, type: string): PopupFieldsObject;
-            public getLangpack(): Dictionary<string>;
-            public init(parentDiv: HTMLDOMElement, iconsURL: string): void;
+            public getLangpack(): Record<string, string>;
+            public init(parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart): void;
             public showForm(
                 type: string,
                 chart: AnnotationChart,
@@ -96,7 +105,12 @@ declare global {
             onSubmit: Function;
             options: AnnotationsOptions;
         }
-        type PopupFieldsDictionary<T> = Dictionary<(T|PopupFieldsDictionary<T>)>;
+        interface PopupFieldsDictionary<T> {
+            [key: string]: (T | PopupFieldsDictionary<T>);
+        }
+        interface DropdownParameters {
+            [key: string]: Array<string>;
+        }
         interface PopupFieldsObject {
             actionType: string;
             fields: PopupFieldsDictionary<string>;
@@ -106,6 +120,22 @@ declare global {
         }
         interface PopupIndicatorsObject {
             addForm(this: Popup, chart: AnnotationChart, options: AnnotationsOptions, callback: Function): void;
+            addSelection(
+                this: Highcharts.Popup,
+                type: string,
+                optionName: string,
+                parentDiv: HTMLDOMElement,
+            ): HTMLSelectElement;
+            addSelectionOptions(
+                this: Highcharts.Popup,
+                chart: Highcharts.AnnotationChart,
+                optionName: string,
+                selectBox: HTMLSelectElement,
+                indicatorType?: string,
+                paramterName?: string,
+                selectedOption?: string,
+                currentSeries?: SMAIndicator
+            ): HTMLSelectElement;
             addFormFields(
                 this: Popup,
                 chart: AnnotationChart,
@@ -123,14 +153,15 @@ declare global {
                 parentDiv: HTMLDOMElement
             ): void;
             getAmount(this: Chart): number;
-            getNameType(series: SMAIndicator, type: string): Dictionary<string>;
+            getNameType(series: SMAIndicator, type: string): Record<string, string>;
             listAllSeries(
                 this: Popup,
-                type: string,
+                indicatorType: string,
                 optionName: string,
                 chart: AnnotationChart,
                 parentDiv: HTMLDOMElement,
-                selectedOption: string
+                currentSeries: SMAIndicator,
+                selectedOption?: string
             ): void;
         }
         interface PopupTabsObject {
@@ -144,7 +175,7 @@ declare global {
     }
 }
 
-var indexFilter = /\d/g,
+const indexFilter = /\d/g,
     PREFIX = 'highcharts-',
     DIV = 'div',
     INPUT = 'input',
@@ -157,25 +188,39 @@ var indexFilter = /\d/g,
     LI = 'li',
     H3 = 'h3';
 
+
+/**
+ * Enum for properties which should have dropdown list.
+ * @private
+ */
+enum DropdownProperties {
+    'params.algorithm',
+    'params.average'
+}
+
+/**
+ * List of available algorithms for the specific indicator.
+ * @private
+ */
+const dropdownParameters: Highcharts.DropdownParameters = {
+    'algorithm-pivotpoints': ['standard', 'fibonacci', 'camarilla'],
+    'average-disparityindex': ['sma', 'ema', 'dema', 'tema', 'wma']
+};
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 // onContainerMouseDown blocks internal popup events, due to e.preventDefault.
 // Related issue #4606
 
 wrap(Pointer.prototype, 'onContainerMouseDown', function (this: Pointer, proceed: Function, e): void {
-
-    var popupClass = e.target && e.target.className;
-
     // elements is not in popup
-    if (!(isString(popupClass) &&
-        popupClass.indexOf(PREFIX + 'popup-field') >= 0)
-    ) {
+    if (!this.inClass(e.target, PREFIX + 'popup')) {
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
 });
 
-H.Popup = function (this: Highcharts.Popup, parentDiv: HTMLDOMElement, iconsURL: string): void {
-    this.init(parentDiv, iconsURL);
+H.Popup = function (this: Highcharts.Popup, parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart): void {
+    this.init(parentDiv, iconsURL, chart);
 } as any;
 
 H.Popup.prototype = {
@@ -187,12 +232,30 @@ H.Popup.prototype = {
      * @param {string} iconsURL
      * Icon URL
      */
-    init: function (parentDiv: HTMLDOMElement, iconsURL: string): void {
+    init: function (parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart): void {
+        this.chart = chart;
 
         // create popup div
         this.container = createElement(DIV, {
-            className: PREFIX + 'popup'
-        }, null as any, parentDiv);
+            className: PREFIX + 'popup highcharts-no-tooltip'
+        }, void 0, parentDiv);
+
+        addEvent(this.container, 'mousedown', (): void => {
+            const activeAnnotation = chart &&
+                chart.navigationBindings &&
+                chart.navigationBindings.activeAnnotation;
+
+            if (activeAnnotation) {
+                activeAnnotation.cancelClick = true;
+
+                const unbind = addEvent(H.doc, 'click', (): void => {
+                    setTimeout((): void => {
+                        activeAnnotation.cancelClick = false;
+                    }, 0);
+                    unbind();
+                });
+            }
+        });
 
         this.lang = this.getLangpack();
         this.iconsURL = iconsURL;
@@ -205,8 +268,10 @@ H.Popup.prototype = {
      * @private
      */
     addCloseBtn: function (): void {
-        var _self = this,
+        let _self = this,
             closeBtn: HTMLDOMElement;
+
+        const iconsURL = this.iconsURL;
 
         // create close popup btn
         closeBtn = createElement(DIV, {
@@ -214,11 +279,18 @@ H.Popup.prototype = {
         }, null as any, this.container);
 
         closeBtn.style['background-image' as any] = 'url(' +
-                this.iconsURL + 'close.svg)';
+                (
+                    iconsURL.match(/png|svg|jpeg|jpg|gif/ig) ?
+                        iconsURL : iconsURL + 'close.svg'
+                ) + ')';
 
         ['click', 'touchstart'].forEach(function (eventName: string): void {
             addEvent(closeBtn, eventName, function (): void {
-                _self.closePopup();
+                if (_self.chart) {
+                    fireEvent(_self.chart.navigationBindings, 'closePopup');
+                } else {
+                    _self.closePopup();
+                }
             });
         });
     },
@@ -233,7 +305,7 @@ H.Popup.prototype = {
     addColsContainer: function (
         container: HTMLDOMElement
     ): Record<string, HTMLDOMElement> {
-        var rhsCol,
+        let rhsCol,
             lhsCol;
 
         // left column
@@ -269,8 +341,14 @@ H.Popup.prototype = {
      * Default value of input i.e period value is 14, extracted from
      * defaultOptions (ADD mode) or series options (EDIT mode)
      */
-    addInput: function (option: string, type: string, parentDiv: HTMLDOMElement, value: string): void {
-        var optionParamList = option.split('.'),
+    addInput: function (
+        this: Highcharts.Popup,
+        option: string,
+        type: string,
+        parentDiv: HTMLDOMElement,
+        value: string
+    ): void {
+        const optionParamList = option.split('.'),
             optionName = optionParamList[optionParamList.length - 1],
             lang = this.lang,
             inputName = PREFIX + type + '-' + optionName;
@@ -279,26 +357,30 @@ H.Popup.prototype = {
             // add label
             createElement(
                 LABEL, {
-                    innerHTML: lang[optionName] || optionName,
                     htmlFor: inputName
                 },
-                null as any,
+                void 0,
                 parentDiv
+            ).appendChild(
+                doc.createTextNode(lang[optionName] || optionName)
             );
         }
 
         // add input
-        createElement(
-            INPUT,
-            {
-                name: inputName,
-                value: value[0],
-                type: value[1],
-                className: PREFIX + 'popup-field'
-            },
-            null as any,
-            parentDiv
-        ).setAttribute(PREFIX + 'data-name', option);
+        if (value !== '') {
+
+            createElement(
+                INPUT,
+                {
+                    name: inputName,
+                    value: value[0],
+                    type: value[1],
+                    className: PREFIX + 'popup-field'
+                },
+                void 0,
+                parentDiv
+            ).setAttribute(PREFIX + 'data-name', option);
+        }
     },
     /**
      * Create button.
@@ -323,14 +405,13 @@ H.Popup.prototype = {
         callback: Function,
         fieldsDiv: HTMLDOMElement
     ): HTMLDOMElement {
-        var _self = this,
+        let _self = this,
             closePopup = this.closePopup,
             getFields = this.getFields,
             button: HTMLDOMElement;
 
-        button = createElement(BUTTON, {
-            innerHTML: label
-        }, null as any, parentDiv);
+        button = createElement(BUTTON, void 0, void 0, parentDiv);
+        button.appendChild(doc.createTextNode(label));
 
         ['click', 'touchstart'].forEach(function (eventName: string): void {
             addEvent(button, eventName, function (): void {
@@ -345,35 +426,39 @@ H.Popup.prototype = {
         return button;
     },
     /**
-     * Get values from all inputs and create JSON.
+     * Get values from all inputs and selections then create JSON.
+     *
      * @private
-     * @param {Highcharts.HTMLDOMElement} - container where inputs are created
-     * @param {string} - add | edit | remove
-     * @return {Highcharts.PopupFieldsObject} - fields
+     *
+     * @param {Highcharts.HTMLDOMElement} parentDiv
+     *        The container where inputs and selections are created.
+     *
+     * @param {string} type
+     *         Type of the popup bookmark (add|edit|remove).
+     *
+     * @return {Highcharts.PopupFieldsObject}
      */
     getFields: function (
         parentDiv: HTMLDOMElement,
         type: string
     ): Highcharts.PopupFieldsObject {
-
-        var inputList = parentDiv.querySelectorAll('input'),
+        const inputList = Array.prototype.slice.call(parentDiv.querySelectorAll(INPUT)),
+            selectList = Array.prototype.slice.call(parentDiv.querySelectorAll(SELECT)),
             optionSeries = '#' + PREFIX + 'select-series > option:checked',
             optionVolume = '#' + PREFIX + 'select-volume > option:checked',
             linkedTo = parentDiv.querySelectorAll(optionSeries)[0],
-            volumeTo = parentDiv.querySelectorAll(optionVolume)[0],
-            seriesId,
-            param,
-            fieldsOutput: Highcharts.PopupFieldsObject;
+            volumeTo = parentDiv.querySelectorAll(optionVolume)[0];
+        let fieldsOutput: Highcharts.PopupFieldsObject;
 
         fieldsOutput = {
             actionType: type,
-            linkedTo: linkedTo && linkedTo.getAttribute('value'),
+            linkedTo: linkedTo && linkedTo.getAttribute('value') || '',
             fields: { }
-        } as any;
+        };
 
-        [].forEach.call(inputList, function (input: HTMLInputElement): void {
-            param = input.getAttribute(PREFIX + 'data-name');
-            seriesId = input.getAttribute(PREFIX + 'data-series-id');
+        inputList.forEach(function (input: HTMLInputElement): void {
+            const param = input.getAttribute(PREFIX + 'data-name'),
+                seriesId = input.getAttribute(PREFIX + 'data-series-id');
 
             // params
             if (seriesId) {
@@ -386,11 +471,22 @@ H.Popup.prototype = {
             }
         });
 
+        selectList.forEach(function (select: HTMLInputElement): void {
+            const id = select.id;
+
+            // Get inputs only for the parameters, not for series and volume.
+            if (id !== PREFIX + 'select-series' && id !== PREFIX + 'select-volume') {
+                const parameter = id.split('highcharts-select-')[1];
+
+                fieldsOutput.fields[parameter] = select.value;
+            }
+        });
+
         if (volumeTo) {
-            fieldsOutput.fields['params.volumeSeriesID'] = volumeTo.getAttribute('value') as any;
+            fieldsOutput.fields['params.volumeSeriesID'] = volumeTo.getAttribute('value') || '';
         }
 
-        return fieldsOutput as any;
+        return fieldsOutput;
     },
     /**
      * Reset content of the current popup and show.
@@ -398,10 +494,12 @@ H.Popup.prototype = {
      */
     showPopup: function (): void {
 
-        var popupDiv = this.container,
+        const popupDiv = this.container,
             toolbarClass = PREFIX + 'annotation-toolbar',
             popupCloseBtn = popupDiv
                 .querySelectorAll('.' + PREFIX + 'popup-close')[0];
+
+        this.formType = void 0;
 
         // reset content
         popupDiv.innerHTML = '';
@@ -417,13 +515,18 @@ H.Popup.prototype = {
         // add close button
         popupDiv.appendChild(popupCloseBtn);
         popupDiv.style.display = 'block';
+        popupDiv.style.height = '';
     },
     /**
      * Hide popup.
      * @private
      */
     closePopup: function (): void {
-        this.popup.container.style.display = 'none';
+        const container = pick(
+            this.popup && this.popup.container,
+            this.container
+        );
+        container.style.display = 'none';
     },
     /**
      * Create content and show popup.
@@ -439,6 +542,10 @@ H.Popup.prototype = {
         options: Highcharts.AnnotationsOptions,
         callback: Function
     ): void {
+
+        if (!chart) {
+            return;
+        }
 
         this.popup = chart.navigationBindings.popup;
 
@@ -464,13 +571,18 @@ H.Popup.prototype = {
         if (type === 'flag') {
             this.annotations.addForm.call(this, chart, options, callback, true);
         }
+
+        this.formType = type;
+
+        // Explicit height is needed to make inner elements scrollable
+        this.container.style.height = this.container.offsetHeight + 'px';
     },
     /**
      * Return lang definitions for popup.
      * @private
      * @return {Highcharts.Dictionary<string>} - elements translations.
      */
-    getLangpack: function (this: Highcharts.Popup): Highcharts.Dictionary<string> {
+    getLangpack: function (this: Highcharts.Popup): Record<string, string> {
         return (getOptions().lang as any).navigation.popup;
     },
     annotations: {
@@ -488,7 +600,7 @@ H.Popup.prototype = {
             options: Highcharts.AnnotationsOptions,
             callback: Function
         ): void {
-            var _self = this,
+            let _self = this,
                 lang = this.lang,
                 popupDiv = this.popup.container,
                 showForm = this.showForm,
@@ -501,17 +613,19 @@ H.Popup.prototype = {
             }
 
             // set position
-            popupDiv.style.top = chart.plotTop + 10 + 'px';
+            if (chart) {
+                popupDiv.style.top = chart.plotTop + 10 + 'px';
+            }
 
             // create label
-            createElement(SPAN, {
-                innerHTML: pick(
+            createElement(SPAN, void 0, void 0, popupDiv).appendChild(
+                doc.createTextNode(pick(
                     // Advanced annotations:
                     lang[options.langKey as any] || options.langKey,
                     // Basic shapes:
                     options.shapes && options.shapes[0].type
-                )
-            }, null as any, popupDiv);
+                ))
+            );
 
             // add buttons
             button = this.addButton(
@@ -567,16 +681,24 @@ H.Popup.prototype = {
             callback: Function,
             isInit?: boolean
         ): void {
-            var popupDiv = this.popup.container,
+            let popupDiv = this.popup.container,
                 lang = this.lang,
                 bottomRow,
                 lhsCol;
 
+            if (!chart) {
+                return;
+            }
+
             // create title of annotations
             lhsCol = createElement('h2', {
-                innerHTML: lang[options.langKey as any] || options.langKey,
                 className: PREFIX + 'popup-main-title'
-            }, null as any, popupDiv);
+            }, void 0, popupDiv);
+            lhsCol.appendChild(
+                doc.createTextNode(
+                    lang[options.langKey as any] || options.langKey || ''
+                )
+            );
 
             // left column
             lhsCol = createElement(DIV, {
@@ -632,12 +754,16 @@ H.Popup.prototype = {
             storage: Array<unknown>,
             isRoot?: boolean
         ): void {
-            var _self = this,
+            let _self = this,
                 addFormFields = this.annotations.addFormFields,
                 addInput = this.addInput,
                 lang = this.lang,
                 parentFullName,
                 titleName;
+
+            if (!chart) {
+                return;
+            }
 
             objectEach(options, function (value, option: string): void {
 
@@ -684,16 +810,26 @@ H.Popup.prototype = {
             });
 
             if (isRoot) {
-                storage = storage.sort(function (a): number {
-                    return (a as any)[1].match(/format/g) ? -1 : 1;
+                stableSort(storage, function (a: any): number {
+                    return a[1].match(/format/g) ? -1 : 1;
                 });
+
+                if (isFirefox) {
+                    storage.reverse(); // (#14691)
+                }
 
                 storage.forEach(function (genInput): void {
                     if ((genInput as any)[0] === true) {
-                        createElement(SPAN, {
-                            className: PREFIX + 'annotation-title',
-                            innerHTML: (genInput as any)[1]
-                        }, null as any, (genInput as any)[2]);
+                        createElement(
+                            SPAN, {
+                                className: PREFIX + 'annotation-title'
+                            },
+                            void 0,
+                            (genInput as any)[2]
+                        ).appendChild(doc.createTextNode(
+                            (genInput as any)[1]
+                        ));
+
                     } else {
                         addInput.apply((genInput as any)[0], (genInput as any).splice(1));
                     }
@@ -714,10 +850,14 @@ H.Popup.prototype = {
             callback: Function
         ): void {
 
-            var tabsContainers,
+            let tabsContainers,
                 indicators = this.indicators,
                 lang = this.lang,
                 buttonParentDiv;
+
+            if (!chart) {
+                return;
+            }
 
             // add tabs
             this.tabs.init.call(this, chart);
@@ -784,7 +924,7 @@ H.Popup.prototype = {
             parentDiv: HTMLDOMElement,
             listType: string
         ): void {
-            var _self = this,
+            let _self = this,
                 lhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-lhs-col')[0],
                 rhsCol = parentDiv.querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0],
                 isEdit = listType === 'edit',
@@ -798,6 +938,10 @@ H.Popup.prototype = {
                 indicatorList: HTMLDOMElement,
                 item: HTMLDOMElement;
 
+            if (!chart) {
+                return;
+            }
+
             // create wrapper for list
             indicatorList = createElement(UL, {
                 className: PREFIX + 'indicator-list'
@@ -807,23 +951,25 @@ H.Popup.prototype = {
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0];
 
             objectEach(series, function (
-                serie: (SeriesPlotOptionsType|Highcharts.Series),
+                serie: (Series|SeriesTypePlotOptions),
                 value: string
             ): void {
-                var seriesOptions = serie.options;
+                const seriesOptions = serie.options;
 
                 if (
                     (serie as any).params ||
                     seriesOptions && (seriesOptions as any).params
                 ) {
 
-                    var indicatorNameType = _self.indicators.getNameType(serie as any, value),
+                    const indicatorNameType = _self.indicators.getNameType(serie as any, value),
                         indicatorType = indicatorNameType.type;
 
                     item = createElement(LI, {
-                        className: PREFIX + 'indicator-list',
-                        innerHTML: indicatorNameType.name
-                    }, null as any, indicatorList);
+                        className: PREFIX + 'indicator-list'
+                    }, void 0, indicatorList);
+                    item.appendChild(doc.createTextNode(
+                        indicatorNameType.name
+                    ));
 
                     ['click', 'touchstart'].forEach(function (eventName: string): void {
                         addEvent(item, eventName, function (): void {
@@ -859,6 +1005,150 @@ H.Popup.prototype = {
             }
         },
         /**
+         * Add selection HTML element and its' label.
+         *
+         * @private
+         *
+         * @param {string} indicatorType
+         *        Type of the indicator i.e. sma, ema...
+         *
+         * @param {string} [optionName]
+         *        Name of the option into which selection is being added.
+         *
+         * @param {HTMLDOMElement} [parentDiv]
+         *        HTML parent element.
+         *
+         * @return {HTMLSelectElement}
+         */
+        addSelection: function (
+            this: Highcharts.Popup,
+            indicatorType: string,
+            optionName: string,
+            parentDiv: HTMLDOMElement
+        ): HTMLSelectElement {
+            const optionParamList = optionName.split('.'),
+                labelText = optionParamList[optionParamList.length - 1];
+            let selectName = PREFIX + optionName + '-type-' + indicatorType,
+                lang = this.lang,
+                selectBox: HTMLSelectElement;
+
+            // Add a label for the selection box.
+            createElement(
+                LABEL, {
+                    htmlFor: selectName
+                },
+                null as any,
+                parentDiv
+            ).appendChild(doc.createTextNode(
+                lang[labelText] || optionName
+            ));
+
+            // Create a selection box.
+            selectBox = createElement(
+                SELECT,
+                {
+                    name: selectName,
+                    className: PREFIX + 'popup-field',
+                    id: PREFIX + 'select-' + optionName
+                },
+                null as any,
+                parentDiv
+            ) as HTMLSelectElement;
+
+            return selectBox;
+        },
+        /**
+         * Get and add selection options.
+         *
+         * @private
+         *
+         * @param {Highcharts.AnnotationChart} chart
+         *        The chart object.
+         *
+         * @param {string} [optionName]
+         *        Name of the option into which selection is being added.
+         *
+         * @param {HTMLSelectElement} [selectBox]
+         *        HTML select box element to which the options are being added.
+         *
+         * @param {string|undefined} indicatorType
+         *        Type of the indicator i.e. sma, ema...
+         *
+         * @param {string|undefined} parameterName
+         *        Name of the parameter which should be applied.
+         *
+         * @param {string|undefined} selectedOption
+         *        Default value in dropdown.
+         *
+         * @return {void}
+         */
+        addSelectionOptions: function (
+            this: Highcharts.Popup,
+            chart: Highcharts.AnnotationChart,
+            optionName: string,
+            selectBox: HTMLSelectElement,
+            indicatorType?: string,
+            parameterName?: string,
+            selectedOption?: string,
+            currentSeries?: SMAIndicator
+        ): void {
+            const popup = this;
+
+            // Get and apply selection options for the possible series.
+            if (optionName === 'series' || optionName === 'volume') {
+                // List all series which have id - mandatory for indicator.
+                chart.series.forEach(function (series): void {
+                    const seriesOptions = series.options,
+                        seriesName = seriesOptions.name ||
+                        (seriesOptions as any).params ? series.name : seriesOptions.id || '';
+
+                    if (
+                        seriesOptions.id !== PREFIX + 'navigator-series' &&
+                        seriesOptions.id !== (
+                            currentSeries && currentSeries.options && currentSeries.options.id
+                        )
+                    ) {
+                        if (
+                            !defined(selectedOption) &&
+                            optionName === 'volume' &&
+                            series.type === 'column'
+                        ) {
+                            selectedOption = seriesOptions.id;
+                        }
+
+                        createElement(
+                            OPTION,
+                            {
+                                value: seriesOptions.id
+                            },
+                            void 0,
+                            selectBox
+                        ).appendChild(doc.createTextNode(seriesName));
+                    }
+                });
+            } else if (indicatorType && parameterName) {
+                // Get and apply options for the possible parameters.
+                const dropdownKey = parameterName + '-' + indicatorType,
+                    parameterOption = dropdownParameters[dropdownKey];
+
+                parameterOption.forEach(function (element): void {
+                    createElement(
+                        OPTION,
+                        {
+                            value: element
+                        },
+                        void 0,
+                        selectBox
+                    ).appendChild(doc.createTextNode(element));
+                });
+            }
+
+            // Add the default dropdown value if defined.
+            if (defined(selectedOption)) {
+                selectBox.value = selectedOption;
+            }
+        },
+        /**
          * Extract full name and type of requested indicator.
          * @private
          * @param {Highcharts.Series} series
@@ -868,10 +1158,10 @@ H.Popup.prototype = {
          * @return {Object} - series name and type like: sma, ema, etc.
          */
         getNameType: function (
-            series: Highcharts.SMAIndicator,
+            series: SMAIndicator,
             type: string
-        ): Highcharts.Dictionary<string> {
-            var options = series.options,
+        ): Record<string, string> {
+            let options = series.options,
                 seriesTypes = H.seriesTypes,
                 // add mode
                 seriesName = seriesTypes[type] &&
@@ -890,77 +1180,61 @@ H.Popup.prototype = {
             };
         },
         /**
-         * List all series with unique ID. Its mandatory for indicators to set
-         * correct linking.
+         * Create the selection box for the series,
+         * add options and apply the default one.
+         *
          * @private
-         * @param {string} type
-         * Indicator type like: sma, ema, etc.
-         * @param {string} optionName
-         * Type of select i.e series or volume.
-         * @param {Highcharts.Chart} chart
-         * Chart
-         * @param {Highcharts.HTMLDOMElement} parentDiv
-         * Element where created HTML list is added
-         * @param {string} selectedOption
-         *         optional param for default value in dropdown
+         *
+         * @param {string} indicatorType
+         *        Type of the indicator i.e. sma, ema...
+         *
+         * @param {string} [optionName]
+         *        Name of the option into which selection is being added.
+         *
+         * @param {Highcharts.AnnotationChart} chart
+         *        The chart object.
+         *
+         * @param {HTMLDOMElement} [parentDiv]
+         *        HTML parent element.
+         *
+         * @param {string|undefined} selectedOption
+         *        Default value in dropdown.
+         *
+         * @return {void}
          */
         listAllSeries: function (
             this: Highcharts.Popup,
-            type: string,
+            indicatorType: string,
             optionName: string,
             chart: Highcharts.AnnotationChart,
             parentDiv: HTMLDOMElement,
-            selectedOption: string
+            currentSeries: SMAIndicator,
+            selectedOption?: string
         ): void {
-            var selectName = PREFIX + optionName + '-type-' + type,
-                lang = this.lang,
-                selectBox: HTMLSelectElement,
-                seriesOptions;
+            const popup = this,
+                indicators = popup.indicators;
 
-            createElement(
-                LABEL, {
-                    innerHTML: lang[optionName] || optionName,
-                    htmlFor: selectName
-                },
-                null as any,
-                parentDiv
+            // Won't work without the chart.
+            if (!chart) {
+                return;
+            }
+
+            // Add selection boxes.
+            const selectBox = indicators.addSelection.call(popup, indicatorType, optionName, parentDiv);
+
+            // Add possible dropdown options.
+            indicators.addSelectionOptions.call(
+                popup,
+                chart,
+                optionName,
+                selectBox,
+                void 0,
+                void 0,
+                void 0,
+                currentSeries
             );
 
-            // select type
-            selectBox = createElement(
-                SELECT,
-                {
-                    name: selectName,
-                    className: PREFIX + 'popup-field'
-                },
-                null as any,
-                parentDiv
-            ) as any;
-
-            selectBox.setAttribute('id', PREFIX + 'select-' + optionName);
-
-            // list all series which have id - mandatory for creating indicator
-            chart.series.forEach(function (serie: Highcharts.Series): void {
-
-                seriesOptions = serie.options;
-
-                if (
-                    !(seriesOptions as any).params &&
-                    seriesOptions.id &&
-                    seriesOptions.id !== PREFIX + 'navigator-series'
-                ) {
-                    createElement(
-                        OPTION,
-                        {
-                            innerHTML: seriesOptions.name || seriesOptions.id,
-                            value: seriesOptions.id
-                        },
-                        null as any,
-                        selectBox
-                    );
-                }
-            });
-
+            // Add the default dropdown value if defined.
             if (defined(selectedOption)) {
                 selectBox.value = selectedOption;
             }
@@ -984,11 +1258,11 @@ H.Popup.prototype = {
         addFormFields: function (
             this: Highcharts.Popup,
             chart: Highcharts.AnnotationChart,
-            series: Highcharts.SMAIndicator,
+            series: SMAIndicator,
             seriesType: string,
             rhsColWrapper: HTMLDOMElement
         ): void {
-            var fields = (series as any).params || series.options.params,
+            const fields = (series as any).params || series.options.params,
                 getNameType = this.indicators.getNameType;
 
             // reset current content
@@ -998,11 +1272,12 @@ H.Popup.prototype = {
             createElement(
                 H3,
                 {
-                    className: PREFIX + 'indicator-title',
-                    innerHTML: getNameType(series, seriesType).name
+                    className: PREFIX + 'indicator-title'
                 },
-                null as any,
+                void 0,
                 rhsColWrapper
+            ).appendChild(
+                doc.createTextNode(getNameType(series, seriesType).name)
             );
 
             // input type
@@ -1024,7 +1299,8 @@ H.Popup.prototype = {
                 'series',
                 chart,
                 rhsColWrapper,
-                series.linkedParent && fields.volumeSeriesID
+                series,
+                series.linkedParent && series.linkedParent.options.id
             );
 
             if (fields.volumeSeriesID) {
@@ -1034,7 +1310,8 @@ H.Popup.prototype = {
                     'volume',
                     chart,
                     rhsColWrapper,
-                    series.linkedParent && series.linkedParent.options.id as any
+                    series,
+                    series.linkedParent && fields.volumeSeriesID
                 );
             }
 
@@ -1072,35 +1349,76 @@ H.Popup.prototype = {
             type: string,
             parentDiv: HTMLDOMElement
         ): void {
-            var _self = this,
-                addParamInputs = this.indicators.addParamInputs,
+            const popup = this,
+                indicators = popup.indicators;
+            let addParamInputs = this.indicators.addParamInputs,
                 addInput = this.addInput,
                 parentFullName;
+
+            if (!chart) {
+                return;
+            }
 
             objectEach(fields, function (value, fieldName): void {
                 // create name like params.styles.fontSize
                 parentFullName = parentNode + '.' + fieldName;
 
-                if (isObject(value)) {
-                    addParamInputs.call(
-                        _self,
-                        chart,
-                        parentFullName,
-                        value as any,
-                        type,
-                        parentDiv
-                    );
-                } else if (
-                // skip volume field which is created by addFormFields
-                    parentFullName !== 'params.volumeSeriesID'
+                if (
+                    defined(value) && // skip if field is unnecessary, #15362
+                    parentFullName
                 ) {
-                    addInput.call(
-                        _self,
-                        parentFullName,
-                        type,
-                        parentDiv,
-                        [value, 'text'] as any // all inputs are text type
-                    );
+                    if (isObject(value)) {
+                        addInput.call( // (15733) 'Periods' has an arrayed value. Label must be created here.
+                            popup,
+                            parentFullName,
+                            type,
+                            parentDiv,
+                            ''
+                        );
+                        addParamInputs.call(
+                            popup,
+                            chart,
+                            parentFullName,
+                            value as any,
+                            type,
+                            parentDiv
+                        );
+                    }
+
+                    // If the option is listed in dropdown enum,
+                    // add the selection box for it.
+                    if (parentFullName in DropdownProperties) {
+                        // Add selection boxes.
+                        const selectBox = indicators.addSelection.call(
+                            popup,
+                            type,
+                            parentFullName,
+                            parentDiv
+                        );
+
+                        // Add possible dropdown options.
+                        indicators.addSelectionOptions.call(
+                            popup,
+                            chart,
+                            parentNode,
+                            selectBox,
+                            type,
+                            fieldName,
+                            value as any
+                        );
+                    } else if (
+                        // Skip volume field which is created by addFormFields.
+                        parentFullName !== 'params.volumeSeriesID' &&
+                        !isArray(value) // Skip params declared in array.
+                    ) {
+                        addInput.call(
+                            popup,
+                            parentFullName,
+                            type,
+                            parentDiv,
+                            [value, 'text'] as any // all inputs are text type
+                        );
+                    }
                 }
             });
         },
@@ -1110,11 +1428,11 @@ H.Popup.prototype = {
          * @return {number} - Amount of indicators
          */
         getAmount: function (this: Chart): number {
-            var series = this.series,
+            let series = this.series,
                 counter = 0;
 
             series.forEach(function (serie): void {
-                var seriesOptions = serie.options;
+                const seriesOptions = serie.options;
 
                 if (
                     (serie as any).params ||
@@ -1135,9 +1453,13 @@ H.Popup.prototype = {
          * Reference to current chart
          */
         init: function (this: Highcharts.Popup, chart: Highcharts.AnnotationChart): void {
-            var tabs = this.tabs,
+            let tabs = this.tabs,
                 indicatorsCount = this.indicators.getAmount.call(chart),
                 firstTab; // run by default
+
+            if (!chart) {
+                return;
+            }
 
             // create menu items
             firstTab = tabs.addMenuItem.call(this, 'add');
@@ -1167,7 +1489,7 @@ H.Popup.prototype = {
             tabName: string,
             disableTab?: number
         ): HTMLDOMElement {
-            var popupDiv = this.popup.container,
+            let popupDiv = this.popup.container,
                 className = PREFIX + 'tab-item',
                 lang = this.lang,
                 menuItem;
@@ -1180,11 +1502,13 @@ H.Popup.prototype = {
             menuItem = createElement(
                 SPAN,
                 {
-                    innerHTML: lang[tabName + 'Button'] || tabName,
-                    className: className
+                    className
                 },
-                null as any,
+                void 0,
                 popupDiv
+            );
+            menuItem.appendChild(
+                doc.createTextNode(lang[tabName + 'Button'] || tabName)
             );
 
             menuItem.setAttribute(PREFIX + 'data-tab-type', tabName);
@@ -1197,12 +1521,12 @@ H.Popup.prototype = {
          * @return {HTMLDOMElement} - created HTML tab-content element
          */
         addContentItem: function (this: Highcharts.Popup): HTMLDOMElement {
-            var popupDiv = this.popup.container;
+            const popupDiv = this.popup.container;
 
             return createElement(
                 DIV,
                 {
-                    className: PREFIX + 'tab-item-content'
+                    className: PREFIX + 'tab-item-content ' + PREFIX + 'no-mousewheel'// #12100
                 },
                 null as any,
                 popupDiv
@@ -1215,7 +1539,7 @@ H.Popup.prototype = {
          * Disable tab when 0
          */
         switchTabs: function (this: Highcharts.Popup, disableTab: number): void {
-            var _self = this,
+            let _self = this,
                 popupDiv = this.popup.container,
                 tabs = popupDiv.querySelectorAll('.' + PREFIX + 'tab-item'),
                 dataParam;
@@ -1245,7 +1569,7 @@ H.Popup.prototype = {
          * @param {number} - Index of tab in menu
          */
         selectTab: function (this: Highcharts.Popup, tab: Element, index: number): void {
-            var allTabs = this.popup.container
+            const allTabs = this.popup.container
                 .querySelectorAll('.' + PREFIX + 'tab-item-content');
 
             tab.className += ' ' + PREFIX + 'tab-item-active';
@@ -1256,7 +1580,7 @@ H.Popup.prototype = {
          * @private
          */
         deselectAll: function (this: Highcharts.Popup): void {
-            var popupDiv = this.popup.container,
+            let popupDiv = this.popup.container,
                 tabs = popupDiv
                     .querySelectorAll('.' + PREFIX + 'tab-item'),
                 tabsContent = popupDiv
@@ -1285,7 +1609,7 @@ addEvent(NavigationBindings, 'showPopup', function (
                     this.chart.options.stockTools.gui.iconsURL
                 ) ||
                 'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
-            )
+            ), this.chart
         );
     }
 
@@ -1302,3 +1626,5 @@ addEvent(NavigationBindings, 'closePopup', function (this: NavigationBindings): 
         this.popup.closePopup();
     }
 });
+
+export default H.Popup;

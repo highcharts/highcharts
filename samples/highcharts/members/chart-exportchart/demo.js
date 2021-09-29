@@ -1,13 +1,10 @@
-var chart = Highcharts.chart('container', {
-
+const chart = Highcharts.chart('container', {
     credits: {
         enabled: false
     },
-
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
-
     series: [{
         data: [null, 71.5, 106.4, 129.2, null, 176.0, 135.6, 148.5, 216.4, 194.1, null, 54.4]
     }, {
@@ -17,7 +14,6 @@ var chart = Highcharts.chart('container', {
             enabled: true
         }
     }],
-
     navigation: {
         buttonOptions: {
             enabled: false
@@ -26,6 +22,6 @@ var chart = Highcharts.chart('container', {
 });
 
 // the button handler
-$('#button').click(function () {
+document.getElementById('button').addEventListener('click', () => {
     chart.exportChart();
 });

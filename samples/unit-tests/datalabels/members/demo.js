@@ -2,19 +2,27 @@ QUnit.test('Series.drawDataLabels', function (assert) {
     const {
         extend,
         noop,
-        Series: { prototype: { drawDataLabels } }
+        Series: {
+            prototype: { drawDataLabels }
+        }
     } = Highcharts;
 
     // Create a Point and Series to use when calling drawDataLabels
     const {
         renderer,
         series: [series],
-        series: [{ points: [point] }]
+        series: [
+            {
+                points: [point]
+            }
+        ]
     } = Highcharts.chart('container', {
-        series: [{
-            dataLabels: { enabled: false }, // Disable data labels
-            data: [{}] // Create one null point
-        }]
+        series: [
+            {
+                dataLabels: { enabled: false }, // Disable data labels
+                data: [{}] // Create one null point
+            }
+        ]
     });
 
     // Mock SvgRenderer.label to listen for function calls and input parameters.

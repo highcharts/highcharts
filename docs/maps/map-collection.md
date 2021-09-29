@@ -1,7 +1,7 @@
 Map collection
 ===
 
-For your convenience, Highcharts Maps offers a free [collection of maps](https://code.highcharts.com/mapdata/), optimized for use with Highcharts Maps. For common maps, it saves you the trouble of finding or drawing suitable SVG or GeoJSON maps. Instead, you can choose between hundres of pre-generated maps of countries, regions and other administration levels.
+For your convenience, Highcharts Maps offers a free [collection of maps](https://code.highcharts.com/mapdata/), optimized for use with Highcharts Maps. For common maps, it saves you the trouble of finding or drawing suitable SVG or GeoJSON maps. Instead, you can choose between hundreds of pre-generated maps of countries, regions and other administration levels.
 
 License
 -------
@@ -36,7 +36,7 @@ Alternatively, you can set the default map for all series with the [`chart.map`]
 map: 'custom/world'
 ```
 
-3. Join your data with the map. By default Highcharts Maps is set up to map your data against the `hc-key`property of the map collection, allowing you to define your data like this:
+3. Join your data with the map. By default Highcharts Maps is set up to map your data against the `hc-key` property of the map collection, allowing you to define your data like this:
 ```js 
 data: [['us-ny', 0], ['us-mi', 5], ['us-tx', 3], ['us-ak', 5]]
 ```
@@ -71,7 +71,7 @@ The following table outlines the properties available in the Highcharts Maps Map
 
 | Property       | Example values                        | Description                                                                                                                                                                                                                                                                                                                                                                           | Availability                                                      |
 | -------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| hc-group       | admin1, admin2, special               | The administrative group the area belongs to. Admin0 is countries, admin1 is first level administrative division (USA States, German Bundesländer, Canada Provinces). Admin2 is second level adm.div. (USA counties, German Kreise, Norwegian Kommuner). "Special" is used to denote an area where this grouping does not make sense (e.g. congressional districts, historical maps). | All maps                                                          |
+| hc-group       | admin1, admin2, special               | The administrative group the area belongs to. Admin0 is countries, admin1 is first level administrative division (USA States, German Bundesländer, Canada Provinces). Admin2 is second level administrative division (USA counties, German Kreise, Norwegian Kommuner). "Special" is used to denote an area where this grouping does not make sense (e.g. congressional districts, historical maps). | All maps                                                          |
 | hc-middle-x    | 0.65                                  | Data label X position. Defined as fraction of map bounding box width. 0 is left aligned, 1 is right aligned.                                                                                                                                                                                                                                                                          | All maps                                                          |
 | hc-middle-y    | 0.65                                  | Data label Y position. Defined as fraction of map bounding box height. 0 is top aligned, 1 is bottom aligned                                                                                                                                                                                                                                                                          | All maps                                                          |
 | hc-key         | us, us-ma-027, gb-hi                  | Unique hierarchical identifier for the area. Consistent across maps, and reflected in the naming convention of the maps. More detailed description below.                                                                                                                                                                                                                             | All maps                                                          |
@@ -107,7 +107,7 @@ Some maps may provide additional properties that are not mentioned in the above 
 Using parts of a map
 --------------------
 
-If you can't find the exact map that you want in the collection, it is easy to use only selected parts of a larger area. Say you want a comparative map of Canada, USA and Mexico. Since we don't have that exact combination in the collection (as of now), you can use the map called "North America without Central". This map also contains Greenland as well as Caribbean islands. So we apply a data set only for the three countries we want, and set the [allAreas](https://api.highcharts.com/highmaps/plotOptions.map.allAreas) option to false. This option makes sure all null points (the countries that don't have data), are hidden. See [demo on jsFiddle](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/maps/plotoptions/series-allareas-false/).
+If you can't find the exact map that you want in the collection, it is easy to use only selected parts of a larger area. Say you want a comparative map of Canada, USA and Mexico. Since we don't have that exact combination in the collection (as of now), you can use the map called "North America without Central". This map also contains Greenland as well as Caribbean islands. So we apply a data set only for the three countries we want, and set the [allAreas](https://api.highcharts.com/highmaps/plotOptions.map.allAreas) option to false. This option makes sure all null points (the countries that don't have data), are hidden. See [demo on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/plotoptions/series-allareas-false/).
 
 Modify our maps
 ---------------

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  Extenstion for 3d axes
  *
@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Position3DObject from '../Renderer/Position3DObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type Tick from './Tick.js';
 import U from '../Utilities.js';
@@ -54,7 +55,7 @@ class Tick3D {
     public static onAfterGetLabelPosition(
         this: Tick,
         e: {
-            pos: Highcharts.Position3dObject;
+            pos: Position3DObject;
             tickmarkOffset: number;
             index: number;
         }
@@ -84,7 +85,7 @@ class Tick3D {
             const start = path[0];
             const end = path[1];
             if (start[0] === 'M' && end[0] === 'L') {
-                const pArr: Array<Highcharts.Position3dObject> = [
+                const pArr: Array<Position3DObject> = [
                     axis3D.fix3dPosition({ x: start[1], y: start[2], z: 0 }),
                     axis3D.fix3dPosition({ x: end[1], y: end[2], z: 0 })
                 ];

@@ -14,23 +14,30 @@ QUnit.test('Pie data labels alignTo option', function (assert) {
                 }
             }
         },
-        series: [{
-            name: 'Brands',
-            colorByPoint: true,
-            data: [{
-                name: 'Chrome',
-                y: 30
-            }, {
-                name: 'Chromium',
-                y: 10
-            }, {
-                name: 'IE',
-                y: 30
-            }, {
-                name: 'Firefox',
-                y: 20
-            }]
-        }]
+        series: [
+            {
+                name: 'Brands',
+                colorByPoint: true,
+                data: [
+                    {
+                        name: 'Chrome',
+                        y: 30
+                    },
+                    {
+                        name: 'Chromium',
+                        y: 10
+                    },
+                    {
+                        name: 'IE',
+                        y: 30
+                    },
+                    {
+                        name: 'Firefox',
+                        y: 20
+                    }
+                ]
+            }
+        ]
     });
 
     var series = chart.series[0],
@@ -46,15 +53,18 @@ QUnit.test('Pie data labels alignTo option', function (assert) {
         rightHalfMaxLabelWidth = 0,
         i;
 
-
     // alignTo: 'plotEdges'
     for (i = 0; i < points.length && isAlignmnetCorrect; i++) {
         point = points[i];
         dataLabel = point.dataLabel;
         width = dataLabel.getBBox().width;
         translateX = dataLabel.translateX;
-        isAlignmnetCorrect = (point.half ?
-            Math.abs(translateX - connectorPadding) : Math.abs(chart.plotWidth - translateX - width - connectorPadding)) <= acceptableDifference;
+        isAlignmnetCorrect =
+            (point.half ?
+                Math.abs(translateX - connectorPadding) :
+                Math.abs(
+                    chart.plotWidth - translateX - width - connectorPadding
+                )) <= acceptableDifference;
     }
     assert.ok(
         isAlignmnetCorrect,
@@ -74,7 +84,8 @@ QUnit.test('Pie data labels alignTo option', function (assert) {
     for (i = 0; i < points.length; i++) {
         point = points[i];
         width = point.dataLabel.getBBox().width;
-        if (point.half) { // left half
+        if (point.half) {
+            // left half
             if (width > leftHalfMaxLabelWidth) {
                 leftHalfMaxLabelWidth = width;
             }
@@ -92,9 +103,20 @@ QUnit.test('Pie data labels alignTo option', function (assert) {
         width = dataLabel.getBBox().width;
         translateX = dataLabel.translateX;
 
-        isAlignmnetCorrect = (point.half ? Math.abs(leftHalfMaxLabelWidth - translateX - width + connectorPadding) :
-            Math.abs(chart.plotWidth - translateX - rightHalfMaxLabelWidth - connectorPadding)) <= acceptableDifference;
-
+        isAlignmnetCorrect =
+            (point.half ?
+                Math.abs(
+                    leftHalfMaxLabelWidth -
+                          translateX -
+                          width +
+                          connectorPadding
+                ) :
+                Math.abs(
+                    chart.plotWidth -
+                          translateX -
+                          rightHalfMaxLabelWidth -
+                          connectorPadding
+                )) <= acceptableDifference;
     }
     assert.ok(
         isAlignmnetCorrect,

@@ -25,10 +25,12 @@ QUnit.test('3D columns stackLabels render', function (assert) {
                 }
             }
         },
-        series: [{
-            data: [3, 3, 3],
-            stack: 'female'
-        }]
+        series: [
+            {
+                data: [3, 3, 3],
+                stack: 'female'
+            }
+        ]
     });
 
     var series = chart.series[0],

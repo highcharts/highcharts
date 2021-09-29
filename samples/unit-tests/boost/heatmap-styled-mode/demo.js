@@ -1,5 +1,4 @@
 QUnit.test('Boosted heatmap with styled mode (#6650)', function (assert) {
-
     assert.expect(0);
     var xsize = 26;
     var ysize = 100;
@@ -10,8 +9,7 @@ QUnit.test('Boosted heatmap with styled mode (#6650)', function (assert) {
         row[0] = Math.floor(i / ysize);
         row[1] = -i % ysize;
 
-
-        row[2] = ((row[1] / ysize) * 125);
+        row[2] = (row[1] / ysize) * 125;
         // row[2] = Math.random() * -125;
         data[i] = row;
     }
@@ -77,14 +75,14 @@ QUnit.test('Boosted heatmap with styled mode (#6650)', function (assert) {
             }
         },
 
-        series: [{
-            boostThreshold: 100,
-            borderWidth: 0,
-            // nullColor: '#000000',
-            // colsize: 100*26, // one full buffer ? no idea...
-            data: data
-        }]
+        series: [
+            {
+                boostThreshold: 100,
+                borderWidth: 0,
+                // nullColor: '#000000',
+                // colsize: 100*26, // one full buffer ? no idea...
+                data: data
+            }
+        ]
     });
-
-
 });

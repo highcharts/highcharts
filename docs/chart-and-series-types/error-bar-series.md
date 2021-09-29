@@ -3,7 +3,7 @@ Error bar series
 
 Error bars are a graphical representation of the variability of data and are used on graphs to indicate the error, or uncertainty in a reported measurement. 
 
-![error-bar.png](error-bar.png)
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/error-bar" allow="fullscreen"></iframe>
 
 ### Setting up the error bar series
 

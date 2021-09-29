@@ -1,9 +1,7 @@
 QUnit.test('Color axis padding (#3379)', function (assert) {
-
     var chart;
 
     $('#container').highcharts({
-
         chart: {
             type: 'heatmap'
         },
@@ -12,20 +10,17 @@ QUnit.test('Color axis padding (#3379)', function (assert) {
             max: 1
         },
 
-
-        series: [{
-            data: [[0, 0, -1], [0, 1, 1]]
-        }]
-
+        series: [
+            {
+                data: [
+                    [0, 0, -1],
+                    [0, 1, 1]
+                ]
+            }
+        ]
     });
 
     chart = $('#container').highcharts();
 
-    assert.strictEqual(
-        chart.colorAxis[0].toPixels(-1),
-        0,
-        'No left padding'
-    );
-
-
+    assert.strictEqual(chart.colorAxis[0].toPixels(-1), 0, 'No left padding');
 });

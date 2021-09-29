@@ -2,8 +2,7 @@
  * Checks that the timezone option is applied and works.
  */
 QUnit.test('timezone', function (assert) {
-    var chart,
-        oct27Point;
+    var chart, oct27Point;
 
     Highcharts.setOptions({
         global: {
@@ -19,7 +18,6 @@ QUnit.test('timezone', function (assert) {
     });
 
     chart = Highcharts.chart('container', {
-
         title: {
             text: 'timezone with local DST crossover'
         },
@@ -32,26 +30,28 @@ QUnit.test('timezone', function (assert) {
             type: 'datetime'
         },
 
-        series: [{
-            data: (function () {
-                var arr = [],
-                    i;
-                for (i = 0; i < 5; i = i + 1) {
-                    arr.push(i);
+        series: [
+            {
+                data: (function () {
+                    var arr = [],
+                        i;
+                    for (i = 0; i < 5; i = i + 1) {
+                        arr.push(i);
+                    }
+                    return arr;
+                }()),
+                dataLabels: {
+                    enabled: true,
+                    format: '{x:%H:%M}'
+                },
+                pointStart: Date.UTC(2014, 9, 24),
+                pointInterval: 24 * 36e5,
+                name: 'UTC Midnight',
+                tooltip: {
+                    pointFormat: 'UTC midnight = {point.x:%H:%M} local time'
                 }
-                return arr;
-            }()),
-            dataLabels: {
-                enabled: true,
-                format: '{x:%H:%M}'
-            },
-            pointStart: Date.UTC(2014, 9, 24),
-            pointInterval: 24 * 36e5,
-            name: 'UTC Midnight',
-            tooltip: {
-                pointFormat: 'UTC midnight = {point.x:%H:%M} local time'
             }
-        }]
+        ]
     });
 
     oct27Point = chart.series[0].data[3];
@@ -84,8 +84,7 @@ QUnit.test('timezone', function (assert) {
  * is not.
  */
 QUnit.test('getTimezoneOffset', function (assert) {
-    var chart,
-        oct27Point;
+    var chart, oct27Point;
 
     Highcharts.setOptions({
         global: {
@@ -98,7 +97,6 @@ QUnit.test('getTimezoneOffset', function (assert) {
     });
 
     chart = Highcharts.chart('container', {
-
         title: {
             text: 'timezone with local DST crossover'
         },
@@ -111,26 +109,28 @@ QUnit.test('getTimezoneOffset', function (assert) {
             type: 'datetime'
         },
 
-        series: [{
-            data: (function () {
-                var arr = [],
-                    i;
-                for (i = 0; i < 5; i = i + 1) {
-                    arr.push(i);
+        series: [
+            {
+                data: (function () {
+                    var arr = [],
+                        i;
+                    for (i = 0; i < 5; i = i + 1) {
+                        arr.push(i);
+                    }
+                    return arr;
+                }()),
+                dataLabels: {
+                    enabled: true,
+                    format: '{x:%H:%M}'
+                },
+                pointStart: Date.UTC(2014, 9, 24),
+                pointInterval: 24 * 36e5,
+                name: 'UTC Midnight',
+                tooltip: {
+                    pointFormat: 'UTC midnight = {point.x:%H:%M} local time'
                 }
-                return arr;
-            }()),
-            dataLabels: {
-                enabled: true,
-                format: '{x:%H:%M}'
-            },
-            pointStart: Date.UTC(2014, 9, 24),
-            pointInterval: 24 * 36e5,
-            name: 'UTC Midnight',
-            tooltip: {
-                pointFormat: 'UTC midnight = {point.x:%H:%M} local time'
             }
-        }]
+        ]
     });
 
     oct27Point = chart.series[0].data[3];
@@ -155,11 +155,9 @@ QUnit.test('getTimezoneOffset', function (assert) {
             getTimezoneOffset: undefined
         }
     });
-
 });
 
 QUnit.test('Crossing over DST with hourly ticks (#6278)', function (assert) {
-
     Highcharts.setOptions({
         global: {
             useUTC: true,
@@ -168,9 +166,8 @@ QUnit.test('Crossing over DST with hourly ticks (#6278)', function (assert) {
     });
 
     var chart = Highcharts.chart('container', {
-
         chart: {
-            width: 600
+            width: 700
         },
         tooltip: {
             borderColor: 'black',
@@ -187,33 +184,43 @@ QUnit.test('Crossing over DST with hourly ticks (#6278)', function (assert) {
             text: 'DST Demo'
         },
 
-        series: [{
-            data: [
-                [Date.UTC(2016, 9, 29, 23, 15), 9],
-                [Date.UTC(2016, 9, 30, 0, 15), 9],
-                [Date.UTC(2016, 9, 30, 0, 30), 10],
-                [Date.UTC(2016, 9, 30, 0, 45), 11],
-                [Date.UTC(2016, 9, 30, 1, 0), 12],
-                [Date.UTC(2016, 9, 30, 1, 15), 13],
-                [Date.UTC(2016, 9, 30, 1, 30), 14],
-                [Date.UTC(2016, 9, 30, 1, 45), 15],
-                [Date.UTC(2016, 9, 30, 2, 0), 16],
-                [Date.UTC(2016, 9, 30, 2, 15), 17],
-                [Date.UTC(2016, 9, 30, 2, 30), 18],
-                [Date.UTC(2016, 9, 30, 2, 45), 19],
-                [Date.UTC(2016, 9, 30, 3, 0), 20]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    [Date.UTC(2016, 9, 29, 23, 15), 9],
+                    [Date.UTC(2016, 9, 30, 0, 15), 9],
+                    [Date.UTC(2016, 9, 30, 0, 30), 10],
+                    [Date.UTC(2016, 9, 30, 0, 45), 11],
+                    [Date.UTC(2016, 9, 30, 1, 0), 12],
+                    [Date.UTC(2016, 9, 30, 1, 15), 13],
+                    [Date.UTC(2016, 9, 30, 1, 30), 14],
+                    [Date.UTC(2016, 9, 30, 1, 45), 15],
+                    [Date.UTC(2016, 9, 30, 2, 0), 16],
+                    [Date.UTC(2016, 9, 30, 2, 15), 17],
+                    [Date.UTC(2016, 9, 30, 2, 30), 18],
+                    [Date.UTC(2016, 9, 30, 2, 45), 19],
+                    [Date.UTC(2016, 9, 30, 3, 0), 20]
+                ]
+            }
+        ]
     });
 
-    var ticks = chart.xAxis[0].tickPositions
-        .map(function (pos) {
-            return chart.xAxis[0].ticks[pos].label.element.textContent;
-        });
+    var ticks = chart.xAxis[0].tickPositions.map(function (pos) {
+        return chart.xAxis[0].ticks[pos].label.element.textContent;
+    });
 
     assert.deepEqual(
         ticks,
-        ['00:30', '01:00', '01:30', '01:00', '01:30', '02:00', '02:30', '03:00'],
+        [
+            '00:30',
+            '01:00',
+            '01:30',
+            '01:00',
+            '01:30',
+            '02:00',
+            '02:30',
+            '03:00'
+        ],
         'Ticks before DST crossover'
     );
 
@@ -223,7 +230,6 @@ QUnit.test('Crossing over DST with hourly ticks (#6278)', function (assert) {
             timezone: undefined
         }
     });
-
 });
 
 QUnit.test('Negative timezoneOffset', function (assert) {
@@ -240,27 +246,27 @@ QUnit.test('Negative timezoneOffset', function (assert) {
         xAxis: {
             type: 'datetime'
         },
-        series: [{
-            data: [{
-                x: 1493031600000,
-                y: 39.9
-            }, {
-                x: 1493031630000,
-                y: 81.5
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        x: 1493031600000,
+                        y: 39.9
+                    },
+                    {
+                        x: 1493031630000,
+                        y: 81.5
+                    }
+                ]
+            }
+        ]
     });
 
-    var ticks = chart.xAxis[0].tickPositions
-        .map(function (pos) {
-            return chart.xAxis[0].ticks[pos].label.element.textContent;
-        });
+    var ticks = chart.xAxis[0].tickPositions.map(function (pos) {
+        return chart.xAxis[0].ticks[pos].label.element.textContent;
+    });
 
-    assert.deepEqual(
-        ticks,
-        ['14:00:00', '14:00:30'],
-        'Two ticks'
-    );
+    assert.deepEqual(ticks, ['14:00:00', '14:00:30'], 'Two ticks');
 
     // Reset
     Highcharts.setOptions({
@@ -268,7 +274,6 @@ QUnit.test('Negative timezoneOffset', function (assert) {
             timezoneOffset: 0
         }
     });
-
 });
 
 QUnit.test('Crossing DST with a wide pointRange (#7432)', function (assert) {
@@ -289,23 +294,27 @@ QUnit.test('Crossing DST with a wide pointRange (#7432)', function (assert) {
                 format: '{value:%Y-%m-%d<br>%H:%M}'
             }
         },
-        series: [{
-            data: [
-                [Date.UTC(2017, 9, 29, 23), 10],
-                [Date.UTC(2017, 9, 30, 23), 8]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    [Date.UTC(2017, 9, 29, 23), 10],
+                    [Date.UTC(2017, 9, 30, 23), 8]
+                ]
+            }
+        ]
     });
 
     assert.notEqual(
-        chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[0]].label.element
-            .textContent.indexOf('00:00'),
+        chart.xAxis[0].ticks[
+            chart.xAxis[0].tickPositions[0]
+        ].label.element.textContent.indexOf('00:00'),
         -1,
         'Tick should land on midnight'
     );
     assert.notEqual(
-        chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[1]].label.element
-            .textContent.indexOf('00:00'),
+        chart.xAxis[0].ticks[
+            chart.xAxis[0].tickPositions[1]
+        ].label.element.textContent.indexOf('00:00'),
         -1,
         'Tick should land on midnight'
     );
@@ -334,11 +343,13 @@ QUnit.skip('Midnight ticks should show date (#3359)', function (assert) {
             xAxis: {
                 type: 'datetime'
             },
-            series: [{
-                data: Array.apply(null, { length: 48 }).map(Math.random),
-                pointStart: Date.UTC(2013, 0, 1, 12),
-                pointInterval: 36e5 // one hour
-            }]
+            series: [
+                {
+                    data: Array.apply(null, { length: 48 }).map(Math.random),
+                    pointStart: Date.UTC(2013, 0, 1, 12),
+                    pointInterval: 36e5 // one hour
+                }
+            ]
         });
         return chart;
     }
@@ -350,9 +361,24 @@ QUnit.skip('Midnight ticks should show date (#3359)', function (assert) {
         }
         return tickLabels;
     }
-    var defaultHighchartsOptions = Highcharts.getOptions().global.timezoneOffset;
-    var minus60OffsetXLabels = ['16:00', '2. Jan', '08:00', '16:00', '3. Jan', '08:00'];
-    var plus60OffsetXLabels = ['16:00', '2. Jan', '08:00', '16:00', '3. Jan', '0…08:00'];
+    var defaultHighchartsOptions = Highcharts.getOptions().global
+        .timezoneOffset;
+    var minus60OffsetXLabels = [
+        '16:00',
+        '2. Jan',
+        '08:00',
+        '16:00',
+        '3. Jan',
+        '08:00'
+    ];
+    var plus60OffsetXLabels = [
+        '16:00',
+        '2. Jan',
+        '08:00',
+        '16:00',
+        '3. Jan',
+        '0…08:00'
+    ];
     var chartMinus60OffsetXLabels = getCurrentTickLabels(
         initChart(-60).xAxis[0].labelGroup.element.childNodes || []
     );

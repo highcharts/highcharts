@@ -3,8 +3,10 @@
         connectionFromPoint = function (point) {
             var connections = point.series.chart.pathfinder.connections;
             return Highcharts.find(connections, function (connection) {
-                return connection.fromPoint === point ||
-                        connection.endPoint === point;
+                return (
+                    connection.fromPoint === point ||
+                    connection.endPoint === point
+                );
             });
         };
 
@@ -44,52 +46,64 @@
             // Fill the square with a center point, and add points at top,
             // bottom, left, right and all cordners, and connect them to the
             // center
-            series: [{
-                connectors: {
-                    marker: {
-                        enabled: true
-                    }
-                },
-                showInLegend: false,
-                data: [{
-                    x: 10,
-                    y: 10,
-                    id: 'center'
-                }, {
-                    x: 10,
-                    y: 5,
-                    connect: 'center'
-                }, {
-                    x: 15,
-                    y: 5,
-                    connect: 'center'
-                }, {
-                    x: 15,
-                    y: 10,
-                    connect: 'center'
-                }, {
-                    x: 15,
-                    y: 15,
-                    connect: 'center'
-                }, {
-                    x: 10,
-                    y: 15,
-                    connect: 'center'
-                }, {
-                    x: 5,
-                    y: 15,
-                    connect: 'center'
-                }, {
-                    x: 5,
-                    y: 10,
-                    connect: 'center'
-                }, {
-                    x: 5,
-                    y: 5,
-                    connect: 'center'
-                }],
-                type: 'scatter'
-            }]
+            series: [
+                {
+                    connectors: {
+                        marker: {
+                            enabled: true
+                        }
+                    },
+                    showInLegend: false,
+                    data: [
+                        {
+                            x: 10,
+                            y: 10,
+                            id: 'center'
+                        },
+                        {
+                            x: 10,
+                            y: 5,
+                            connect: 'center'
+                        },
+                        {
+                            x: 15,
+                            y: 5,
+                            connect: 'center'
+                        },
+                        {
+                            x: 15,
+                            y: 10,
+                            connect: 'center'
+                        },
+                        {
+                            x: 15,
+                            y: 15,
+                            connect: 'center'
+                        },
+                        {
+                            x: 10,
+                            y: 15,
+                            connect: 'center'
+                        },
+                        {
+                            x: 5,
+                            y: 15,
+                            connect: 'center'
+                        },
+                        {
+                            x: 5,
+                            y: 10,
+                            connect: 'center'
+                        },
+                        {
+                            x: 5,
+                            y: 5,
+                            connect: 'center'
+                        }
+                    ],
+                    type: 'scatter'
+                }
+            ]
         };
     });
 
@@ -137,7 +151,8 @@
 
         Highcharts.each(points, function (point) {
             var connection = connectionFromPoint(point);
-            if (point.id !== 'center' && connection) { // All but the center point
+            if (point.id !== 'center' && connection) {
+                // All but the center point
                 graphic = connection.graphics;
                 start = graphic.start.element.getBBox();
                 end = graphic.end ? graphic.end.element.getBBox() : {};
@@ -149,14 +164,22 @@
                     start.x,
                     startPositions[point.x][point.y].x,
                     error,
-                    'Start marker x from ' + x + ',' + y + ' positioned correctly'
+                    'Start marker x from ' +
+                        x +
+                        ',' +
+                        y +
+                        ' positioned correctly'
                 );
 
                 assert.close(
                     start.y,
                     startPositions[point.x][point.y].y,
                     error,
-                    'Start marker y from ' + x + ',' + y + ' positioned correctly'
+                    'Start marker y from ' +
+                        x +
+                        ',' +
+                        y +
+                        ' positioned correctly'
                 );
 
                 // End marker
@@ -222,7 +245,8 @@
 
         Highcharts.each(points, function (point) {
             var connection = connectionFromPoint(point);
-            if (point.id !== 'center' && connection) { // All but the center point
+            if (point.id !== 'center' && connection) {
+                // All but the center point
                 graphic = connection.graphics;
                 start = graphic.start;
                 end = graphic.end;
@@ -256,23 +280,28 @@
             aligns = ['left', 'center', 'right'],
             verticalAligns = ['top', 'middle', 'bottom'];
 
-        series.data = [{
-            x: 14,
-            y: 10,
-            connect: 'left'
-        }, {
-            x: 6,
-            y: 10,
-            id: 'left'
-        }, {
-            x: 10,
-            y: 6,
-            connect: 'top'
-        }, {
-            x: 10,
-            y: 14,
-            id: 'top'
-        }];
+        series.data = [
+            {
+                x: 14,
+                y: 10,
+                connect: 'left'
+            },
+            {
+                x: 6,
+                y: 10,
+                id: 'left'
+            },
+            {
+                x: 10,
+                y: 6,
+                connect: 'top'
+            },
+            {
+                x: 10,
+                y: 14,
+                id: 'top'
+            }
+        ];
 
         // This test is run for each combination of align and verticalAlign
         function test(chart, align, verticalAlign) {
@@ -323,13 +352,15 @@
                     yMod = markerCenter.y - pointCenter.y;
                 }
 
-
                 // Check x position
                 assert.close(
                     markerCenter.x,
                     pointCenter.x + xMod,
                     error,
-                    align + ' ' + verticalAlign + ' aligned start marker x correct'
+                    align +
+                        ' ' +
+                        verticalAlign +
+                        ' aligned start marker x correct'
                 );
 
                 // Check y position
@@ -337,7 +368,10 @@
                     markerCenter.y,
                     pointCenter.y + yMod,
                     error,
-                    align + ' ' + verticalAlign + ' aligned start marker y correct'
+                    align +
+                        ' ' +
+                        verticalAlign +
+                        ' aligned start marker y correct'
                 );
             });
         }
@@ -369,41 +403,48 @@
                 connectors: {
                     animation: false
                 },
-                series: [{
-                    // Default pathfinder settings
-                    data: [{
-                        y: 1,
-                        id: 'one-one',
-                        connect: 'one-two'
-                    }, {
-                        y: 2,
-                        id: 'one-two',
-                        connect: 'one-one'
-                    }]
-                }, {
-                    connectors: {
-                        marker: {
-                            enabled: true
-                        }
+                series: [
+                    {
+                        // Default pathfinder settings
+                        data: [
+                            {
+                                y: 1,
+                                id: 'one-one',
+                                connect: 'one-two'
+                            },
+                            {
+                                y: 2,
+                                id: 'one-two',
+                                connect: 'one-one'
+                            }
+                        ]
                     },
-                    data: [{
-                        y: 1,
-                        id: 'two-one',
-                        connect: 'two-two'
-                    }, {
-                        y: 2,
-                        id: 'two-two',
-                        connect: 'two-one'
-                    }]
-                }]
+                    {
+                        connectors: {
+                            marker: {
+                                enabled: true
+                            }
+                        },
+                        data: [
+                            {
+                                y: 1,
+                                id: 'two-one',
+                                connect: 'two-two'
+                            },
+                            {
+                                y: 2,
+                                id: 'two-two',
+                                connect: 'two-one'
+                            }
+                        ]
+                    }
+                ]
             });
 
-        pathWithoutMarkers = connectionFromPoint(
-            chart.series[0].points[0]
-        ).graphics;
-        pathWithMarkers = connectionFromPoint(
-            chart.series[1].points[0]
-        ).graphics;
+        pathWithoutMarkers = connectionFromPoint(chart.series[0].points[0])
+            .graphics;
+        pathWithMarkers = connectionFromPoint(chart.series[1].points[0])
+            .graphics;
 
         assert.ok(
             typeof pathWithoutMarkers.start === 'undefined' &&
@@ -437,11 +478,21 @@
                     options
                 ).path.flat(),
                 [
-                    'M', 647.5, 25.5,
-                    'L', 612.5, 25.5,
-                    'L', 612.5, 25.5,
-                    'L', 612.5, 25.5,
-                    'L', 577.5, 25.5
+                    'M',
+                    647.5,
+                    25.5,
+                    'L',
+                    612.5,
+                    25.5,
+                    'L',
+                    612.5,
+                    25.5,
+                    'L',
+                    612.5,
+                    25.5,
+                    'L',
+                    577.5,
+                    25.5
                 ],
                 'should not switch direction when waypoint equals start or end. #10329.'
             );

@@ -10,9 +10,11 @@ QUnit.test('Point should have focus border when focused', function (assert) {
                     }
                 }
             },
-            series: [{
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3]
+                }
+            ]
         }),
         point = chart.series[0].points[0];
 
@@ -35,9 +37,11 @@ QUnit.test('Point should have focus border when focused', function (assert) {
 
 QUnit.test('Updating point should update focus border', function (assert) {
     const chart = Highcharts.chart('container', {
-            series: [{
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3]
+                }
+            ]
         }),
         point = chart.series[0].points[0];
 

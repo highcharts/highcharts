@@ -1,13 +1,12 @@
 (function (H) {
     H.wrap(H.Tooltip.prototype, 'refresh', function (proceed, points) {
-
         // Run the original proceed method
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
         // For each point add or update trackball
-        H.each(points, function (point) {
+        points.forEach(point => {
             // Function variables
-            var series = point.series,
+            const series = point.series,
                 chart = series.chart,
                 pointX = point.plotX + series.xAxis.pos,
                 pointY = H.pick(point.plotClose, point.plotY) + series.yAxis.pos;
@@ -35,12 +34,12 @@
     });
 
     H.wrap(H.Tooltip.prototype, 'hide', function (proceed) {
-        var series = this.chart.series;
+        const series = this.chart.series;
         // Run original proceed method
         proceed.apply(this);
         // For each series destroy trackball
-        H.each(series, function (serie) {
-            var trackball = serie.trackball;
+        series.forEach(serie => {
+            const trackball = serie.trackball;
             if (trackball) {
                 serie.trackball = trackball.destroy();
             }
@@ -48,15 +47,12 @@
     });
 }(Highcharts));
 
-$.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
-
+Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', data => {
     // Split the data set into ohlc and volume
-    var ohlc = [],
-        volume = [],
-        dataLength = data.length,
-        i;
+    const ohlc = [];
+    const volume = [];
 
-    for (i = 0; i < dataLength; i++) {
+    for (let i = 0; i < data.length; i++) {
         ohlc.push([
             data[i][0], // the date
             data[i][1], // open
@@ -72,7 +68,7 @@ $.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (dat
     }
 
     // Set the allowed units for data grouping
-    var groupingUnits = [
+    const groupingUnits = [
         [
             'week', // unit name
             [1] // allowed multiples

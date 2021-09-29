@@ -1,10 +1,12 @@
 QUnit.test('series.data.color: default to series.color', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2]
+                }
+            ]
         }),
         series = chart.series[0],
         point = series.points[0];
@@ -18,16 +20,21 @@ QUnit.test('series.data.color: default to series.color', function (assert) {
 QUnit.test('series.data.color: custom color', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [{
-                    color: '#ff0000',
-                    value: 1
-                }, {
-                    color: '#00ff00',
-                    value: 1
-                }]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [
+                        {
+                            color: '#ff0000',
+                            value: 1
+                        },
+                        {
+                            color: '#00ff00',
+                            value: 1
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0],
         points = series.points;

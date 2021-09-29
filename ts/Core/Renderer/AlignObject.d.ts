@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,6 +13,7 @@
  *  Declatations
  *
  * */
+
 export type AlignValue = ('center'|'left'|'right');
 
 export type VerticalAlignValue = ('bottom'|'middle'|'top');
@@ -23,11 +24,12 @@ export interface AlignObject {
     verticalAlign?: VerticalAlignValue;
     x?: number;
     y?: number;
+    width?: number;
 }
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

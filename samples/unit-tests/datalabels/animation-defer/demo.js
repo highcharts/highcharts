@@ -1,40 +1,61 @@
 QUnit.test('Initial animation - defer test #12901', function (assert) {
-
     var clock = null;
 
     try {
         clock = TestUtilities.lolexInstall();
 
         var chart = Highcharts.chart('container', {
-                series: [{
-                    data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175],
-                    animation: {
-                        defer: 100,
-                        duration: 100
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        defer: true
-                    }
-                }, {
-                    data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175].reverse(),
-                    animation: {
-                        duration: 100
-                    },
-                    dataLabels: {
-                        defer: true,
-                        enabled: true,
+                series: [
+                    {
+                        data: [
+                            43934,
+                            52503,
+                            57177,
+                            69658,
+                            97031,
+                            119931,
+                            137133,
+                            154175
+                        ],
                         animation: {
-                            defer: 400
+                            defer: 100,
+                            duration: 100
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            defer: true
+                        }
+                    },
+                    {
+                        data: [
+                            43934,
+                            52503,
+                            57177,
+                            69658,
+                            97031,
+                            119931,
+                            137133,
+                            154175
+                        ].reverse(),
+                        animation: {
+                            duration: 100
+                        },
+                        dataLabels: {
+                            defer: true,
+                            enabled: true,
+                            animation: {
+                                defer: 400
+                            }
+                        }
+                    },
+                    {
+                        data: [43934, 52503, 57177, 69658].reverse(),
+                        dataLabels: {
+                            enabled: true,
+                            defer: false
                         }
                     }
-                }, {
-                    data: [43934, 52503, 57177, 69658].reverse(),
-                    dataLabels: {
-                        enabled: true,
-                        defer: false
-                    }
-                }]
+                ]
             }),
             done = assert.async(),
             dlOpacity = chart.series[2].dataLabelsGroup.attr('opacity');

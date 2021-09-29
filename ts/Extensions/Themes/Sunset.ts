@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *
  *  Author: Øystein Moseng
  *
@@ -13,32 +13,76 @@
  *
  * */
 
-import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Options from '../../Core/Options';
+import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
+
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
-const { setOptions } = U;
 
-H.theme = {
-    colors: ['#FDD089', '#FF7F79', '#A0446E', '#251535'],
+/* *
+ *
+ *  Theme
+ *
+ * */
 
-    colorAxis: {
-        maxColor: '#60042E',
-        minColor: '#FDD089'
-    },
+namespace SunsetTheme {
 
-    plotOptions: {
-        map: {
-            nullColor: '#fefefc'
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    export const options: DeepPartial<Options> = {
+        colors: ['#FDD089', '#FF7F79', '#A0446E', '#251535'],
+
+        colorAxis: {
+            maxColor: '#60042E',
+            minColor: '#FDD089'
+        },
+
+        plotOptions: {
+            map: {
+                nullColor: '#fefefc'
+            }
+        } as SeriesTypePlotOptions,
+
+        navigator: {
+            series: {
+                color: '#FF7F79',
+                lineColor: '#A0446E'
+            }
         }
-    } as SeriesPlotOptionsType,
+    };
 
-    navigator: {
-        series: {
-            color: '#FF7F79',
-            lineColor: '#A0446E'
-        }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Apply the theme.
+     */
+    export function apply(): void {
+        setOptions(options);
     }
-};
 
-// Apply the theme
-setOptions(H.theme);
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default SunsetTheme;

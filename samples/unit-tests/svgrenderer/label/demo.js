@@ -5,7 +5,8 @@ QUnit.test('Reset visibility on HTML label (#3909)', function (assert) {
         300
     );
 
-    var label = ren.label('Hello World', 100, 100, null, null, null, true)
+    var label = ren
+        .label('Hello World', 100, 100, null, null, null, true)
         .attr({
             'stroke-width': 1,
             stroke: 'blue',
@@ -41,26 +42,44 @@ QUnit.test('Reset visibility on HTML label (#3909)', function (assert) {
         'visible',
         'Visibility is visible'
     );
-
-
 });
 
-QUnit.test('Left trim (#5261)', function (assert) {
+QUnit.test('Whitespace trimming', function (assert) {
     var ren = new Highcharts.Renderer(
         document.getElementById('container'),
         500,
         300
     );
 
-    var correctLabel = ren.label('Hello World', 100, 25)
+    var label = ren
+        .label('<br>Hello World', 100, 50)
         .attr({
             'stroke-width': 1,
             stroke: 'blue'
         })
         .add();
 
+    assert.strictEqual(
+        label.element.querySelector('tspan'),
+        null,
+        'Initial break should be left out'
+    );
 
-    var label = ren.label('<br>Hello World', 100, 50)
+    label = ren.label('<span> </span><br>Hello World', 100, 50)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .add();
+
+    assert.strictEqual(
+        label.element.querySelector('tspan'),
+        null,
+        'Initial empty break should be left out'
+    );
+
+    label = ren
+        .label('Hello World<br>', 100, 50)
         .attr({
             'stroke-width': 1,
             stroke: 'blue'
@@ -70,24 +89,54 @@ QUnit.test('Left trim (#5261)', function (assert) {
     // tspan.dy should be the same as the reference
     assert.strictEqual(
         label.element.querySelector('tspan').getAttribute('dy'),
-        correctLabel.element.querySelector('tspan').getAttribute('dy'),
-        'Tspan dy offset'
+        null,
+        'Ending break should have no dy'
     );
 
-
-    label = ren.label('Hello World<br>', 100, 50)
+    label = ren
+        .label('<span>Hello</span> <span>World</span>', 100, 50)
         .attr({
             'stroke-width': 1,
             stroke: 'blue'
         })
         .add();
 
-    // tspan.dy should be the same as the reference
     assert.strictEqual(
-        label.element.querySelector('tspan').getAttribute('dy'),
-        correctLabel.element.querySelector('tspan').getAttribute('dy'),
-        'Tspan dy offset'
+        label.text.element.childNodes.length,
+        3,
+        '#15235: Whitespace between spans should not be removed'
     );
+
+    let html = '<div><span>Space</span> <span>expected</span></div>';
+    label = ren
+        .text(html, 100, 50, true)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .add();
+
+    assert.strictEqual(
+        label.element.innerHTML,
+        html,
+        '#15235: Nested whitespace between spans should not be removed'
+    );
+
+    html = '<div><span>Space</span><span> </span><span>expected</span></div>';
+    label = ren
+        .text(html, 100, 50, true)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .add();
+
+    assert.strictEqual(
+        label.element.innerHTML,
+        html,
+        '#15235: Nested whitespace between spans should not be removed'
+    );
+
 });
 
 QUnit.test('Image labels should have no fill (#4324)', function (assert) {
@@ -97,12 +146,13 @@ QUnit.test('Image labels should have no fill (#4324)', function (assert) {
         300
     );
 
-    var image = ren.label(
-        '',
-        100,
-        100,
-        'url(https://smartview.antaris-solutions.net//images/icons/view_alerts.png)'
-    )
+    var image = ren
+        .label(
+            '',
+            100,
+            100,
+            'url(https://smartview.antaris-solutions.net//images/icons/view_alerts.png)'
+        )
         .attr({
             'stroke-width': 1,
             stroke: 'blue'
@@ -115,19 +165,13 @@ QUnit.test('Image labels should have no fill (#4324)', function (assert) {
         'No fill for image'
     );
 
-
-    var circle = ren.label(
-        '',
-        150,
-        100,
-        'circle'
-    )
+    var circle = ren
+        .label('', 150, 100, 'circle')
         .attr({
             'stroke-width': 2,
             stroke: 'blue'
         })
         .add();
-
 
     assert.strictEqual(
         circle.box.element.getAttribute('fill'),
@@ -143,7 +187,8 @@ QUnit.test('New label with rect symbol (#5324)', function (assert) {
         400
     );
 
-    var label = renderer.label('Max observation', 270, 50, 'rect', 100, 100)
+    var label = renderer
+        .label('Max observation', 270, 50, 'rect', 100, 100)
         .css({
             color: '#FFFFFF'
         })
@@ -169,11 +214,13 @@ QUnit.test('New label with url symbol (#5635)', function (assert) {
         400
     );
 
-    var url = location.host.substr(0, 12) === 'localhost:98' ?
-        'url(base/test/testimage.png)' : // karma
-        'url(testimage.png)'; // utils
+    var url =
+        location.host.substr(0, 12) === 'localhost:98' ?
+            'url(base/test/testimage.png)' : // karma
+            'url(testimage.png)'; // utils
 
-    var label = renderer.label('Max observation', 270, 50, url, 100, 100)
+    var label = renderer
+        .label('Max observation', 270, 50, url, 100, 100)
         .attr({
             padding: 8
         })
@@ -193,7 +240,12 @@ QUnit.test('Box with nested ems (#5932)', function (assert) {
         400
     );
 
-    var label = ren.label('This is line 1<br><span style="font-size: 2em">This is line 2</span>', 10, 10)
+    var label = ren
+        .label(
+            'This is line 1<br><span style="font-size: 2em">This is line 2</span>',
+            10,
+            10
+        )
         .attr({
             'stroke-width': 1,
             stroke: 'blue'
@@ -203,40 +255,39 @@ QUnit.test('Box with nested ems (#5932)', function (assert) {
         })
         .add();
 
-    assert.ok(
-        label.getBBox().height > 100,
-        'Nested em is included'
-    );
+    assert.ok(label.getBBox().height > 100, 'Nested em is included');
 });
 
 // Highcharts 3.0.10, Issue #2794
 // Renderer.label with <br> tags
 QUnit.test('buildText fontSize (#2794)', function (assert) {
+    Highcharts.chart(
+        'container',
+        {
+            series: [
+                {
+                    data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0]
+                }
+            ]
+        },
+        function (chart) {
+            var renderer = chart.renderer,
+                group = renderer.g().add(),
+                catchedException;
 
-    Highcharts.chart('container', {
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0]
-        }]
-    }, function (chart) {
+            try {
+                renderer.label('Regression caused').add(group);
+                renderer.label('error in <br> wrapped text', 0, 20).add(group);
+            } catch (exception) {
+                catchedException = exception;
+            }
 
-        var renderer = chart.renderer,
-            group = renderer.g().add(),
-            catchedException;
-
-        try {
-            renderer.label('Regression caused').add(group);
-            renderer.label('error in <br> wrapped text', 0, 20).add(group);
-        } catch (exception) {
-            catchedException = exception;
+            assert.ok(
+                !catchedException,
+                'There should be not exception, when adding labels to a group.'
+            );
         }
-
-        assert.ok(
-            !catchedException,
-            'There should be not exception, when adding labels to a group.'
-        );
-
-    });
-
+    );
 });
 
 // Highcharts 4.0.4, Issue #3507
@@ -247,7 +298,8 @@ QUnit.test('Tooltip overflow (#3507)', function (assert) {
         500,
         300
     );
-    var lbl = ren.label('<span>Header</span><br>Body', 100, 100)
+    var lbl = ren
+        .label('<span>Header</span><br>Body', 100, 100)
         .attr({
             'stroke-width': 1,
             stroke: 'blue'
@@ -261,7 +313,7 @@ QUnit.test('Tooltip overflow (#3507)', function (assert) {
 
     assert.ok(
         boxHeight > textHeight,
-        "The second line of text should appear inside the rectangle"
+        'The second line of text should appear inside the rectangle'
     );
 });
 
@@ -273,7 +325,8 @@ QUnit.test('SVG text wrap (#3132)', function (assert) {
         500,
         300
     );
-    renderer.label('Foo: barracuda', 100, 150)
+    renderer
+        .label('Foo: barracuda', 100, 150)
         .attr({
             'stroke-width': 1,
             stroke: 'blue'
@@ -283,7 +336,8 @@ QUnit.test('SVG text wrap (#3132)', function (assert) {
         })
         .add();
 
-    renderer.label('Foo: <b>barracuda</b>', 100, 100)
+    renderer
+        .label('Foo: <b>barracuda</b>', 100, 100)
         .attr({
             'stroke-width': 1,
             stroke: 'blue'
@@ -292,19 +346,17 @@ QUnit.test('SVG text wrap (#3132)', function (assert) {
             width: '260px'
         })
         .add();
-
 
     var labelWithMarkup = renderer.box.childNodes[3].childNodes[0].getBBox(),
         label = renderer.box.childNodes[2].childNodes[0].getBBox();
 
     assert.ok(
         labelWithMarkup.width > label.width,
-        "The width of the label that contains markup should be the greatest"
+        'The width of the label that contains markup should be the greatest'
     );
 });
 
 QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
-
     document.getElementById('container').innerHTML = '';
     var ren = new Highcharts.Renderer(
         document.getElementById('container'),
@@ -345,11 +397,7 @@ QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
         .add();
 
     label3 = ren
-        .label(
-            'No inline span',
-            100,
-            160
-        )
+        .label('No inline span', 100, 160)
         .attr({
             stroke: 'blue',
             'stroke-width': '1px'
@@ -376,7 +424,8 @@ QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
         'Label with text outside inner span should be equal'
     );
 
-    label1 = ren.label('I should be inside the box', 100, 200)
+    label1 = ren
+        .label('I should be inside the box', 100, 200)
         .attr({
             stroke: 'red',
             'stroke-width': '1px'
@@ -387,16 +436,19 @@ QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
         });
 
     assert.ok(
-        label1.box.element.getBBox().height > label1.text.element.getBBox().height,
+        label1.box.element.getBBox().height >
+            label1.text.element.getBBox().height,
         'Border should be higher than text'
     );
 
     assert.ok(
-        label1.box.element.getBBox().width > label1.text.element.getBBox().width,
+        label1.box.element.getBBox().width >
+            label1.text.element.getBBox().width,
         'Border should be wider than text'
     );
 
-    label1 = ren.text('Testing text-anchor', 100, 300)
+    label1 = ren
+        .text('Testing text-anchor', 100, 300)
         .attr({
             align: ''
         })
@@ -406,7 +458,7 @@ QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
         });
 
     assert.strictEqual(
-        label1.element.attributes["text-anchor"],
+        label1.element.attributes['text-anchor'],
         undefined,
         'Label text-anchor with empty align attribute should not be set'
     );
@@ -455,33 +507,44 @@ QUnit.test('Labels with useHTML', assert => {
         '200px',
         'The span width should adapt to shorter text (#10009)'
     );
+
+    const g = ren.g('parent')
+        .attr({
+            visibility: 'hidden'
+        })
+        .add();
+    ren.label('Foo', 0, 0, void 0, 0, 0, true).add(g);
+
+    assert.strictEqual(
+        g.div.style.visibility,
+        'hidden',
+        'Visibility should be set on parent group div'
+    );
 });
 
-QUnit.test("Change of label alignment after add (#4652)", function (assert) {
+QUnit.test('Change of label alignment after add (#4652)', function (assert) {
     var ren = new Highcharts.Renderer(
         document.getElementById('container'),
         500,
         300
     );
 
-    var lbl = ren.label('Hello World', 100, 100)
+    var lbl = ren
+        .label('Hello World', 100, 100)
         .attr({
             //align: 'right',
             fill: 'silver'
         })
         .add();
 
-
     var g = ren.box.querySelector('g');
-
 
     assert.close(
         g.getBoundingClientRect().left,
         100 + document.getElementById('container').offsetLeft,
         1, // +/- 0.5px in Edge
-        "Box is left aligned"
+        'Box is left aligned'
     );
-
 
     lbl.attr({ align: 'right' });
 
@@ -489,9 +552,8 @@ QUnit.test("Change of label alignment after add (#4652)", function (assert) {
         g.getBoundingClientRect().right,
         100 + document.getElementById('container').offsetLeft,
         1, // +/- 0.5px in Edge
-        "Box is right aligned"
+        'Box is right aligned'
     );
-
 });
 
 QUnit.test('Labels and styled mode', assert => {
@@ -520,4 +582,76 @@ QUnit.test('Labels and styled mode', assert => {
         `No errors should be thrown when updating
         labels text before adding to DOM (#11758)`
     );
+});
+
+QUnit.test('Label padding', assert => {
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    const label = ren.label('Hello', 10, 30)
+        .attr({ padding: 5 })
+        .add();
+
+    let width = label.getBBox().width;
+    label.attr({ padding: 0 });
+
+    assert.strictEqual(
+        label.getBBox().width,
+        width - 10,
+        'Width should have updated'
+    );
+
+    width = label.getBBox().width;
+
+    [
+        [10],
+        [0, 10, 10],
+        [10, 10, 10]
+    ].forEach(([padding, paddingLeft, paddingRight]) => {
+        const label = ren.label('Hello', 10, 60)
+            .attr({ padding, paddingLeft, paddingRight })
+            .add();
+
+        assert.strictEqual(
+            label.getBBox().width,
+            width + 20,
+            'Padding should increase width by 20'
+        );
+    });
+});
+
+QUnit.test('#14858: Callout missing line when anchorX within width and no room for chevron', assert => {
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    [
+        [1, 'left', 100],
+        [1, 'right', 100],
+        [1, 'left', 20],
+        [1, 'right', 20],
+        [2, 'left', 100],
+        [2, 'right', 100],
+        [2, 'left', 20],
+        [2, 'right', 20]
+    ].forEach(([strokeWidth, align, anchorY]) => {
+        const label = ren
+            .label('Some text', 100, 50, 'callout', 100, anchorY)
+            .attr({
+                align,
+                'stroke-width': strokeWidth,
+                stroke: 'black'
+            })
+            .add();
+
+        assert.ok(
+            label.box.pathArray.length > 9,
+            'Anchor line should have rendered'
+        );
+    });
 });

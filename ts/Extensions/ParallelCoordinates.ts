@@ -2,7 +2,7 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2020 Pawel Fus
+ *  (c) 2010-2021 Pawel Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -12,12 +12,28 @@
 
 'use strict';
 
-import type { AxisType } from '../Core/Axis/Types';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AxisOptions from '../Core/Axis/AxisOptions';
+import type AxisType from '../Core/Axis/AxisType';
+import type ChartOptions from '../Core/Chart/ChartOptions';
+import type Options from '../Core/Options';
 import type Point from '../Core/Series/Point';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
+
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
 import H from '../Core/Globals.js';
+import D from '../Core/DefaultOptions.js';
+const { setOptions } = D;
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -26,20 +42,49 @@ const {
     defined,
     erase,
     extend,
-    format,
     merge,
     pick,
-    setOptions,
     splat,
     wrap
 } = U;
+
+/* *
+ *
+ * Declarations
+ *
+ * */
+
+declare module '../Core/Axis/AxisComposition' {
+    interface AxisComposition {
+        parallelCoordinates?: ParallelAxis['parallelCoordinates'];
+    }
+}
+
+declare module '../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        angle?: number;
+        tooltipValueFormat?: string;
+    }
+}
+
+declare module '../Core/Axis/AxisType' {
+    interface AxisTypeRegistry {
+        ParallelAxis: ParallelAxis;
+    }
+}
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         hasParallelCoordinates?: Highcharts.ParallelChart['hasParallelCoordinates'];
         parallelInfo?: Highcharts.ParallelChart['parallelInfo'];
         /** @requires modules/parallel-coordinates */
-        setParallelInfo(options: Highcharts.Options): void;
+        setParallelInfo(options: Partial<Options>): void;
+    }
+}
+declare module '../Core/Chart/ChartOptions'{
+    interface ChartOptions {
+        parallelAxes?: DeepPartial<AxisOptions>;
+        parallelCoordinates?: boolean;
     }
 }
 
@@ -49,11 +94,6 @@ declare module '../Core/Chart/ChartLike'{
  */
 declare global {
     namespace Highcharts {
-
-        interface ChartOptions {
-            parallelAxes?: XAxisOptions;
-            parallelCoordinates?: boolean;
-        }
         interface ParallelChart extends Chart {
             hasParallelCoordinates?: boolean;
             parallelInfo: ParallelInfoObject;
@@ -61,31 +101,19 @@ declare global {
         interface ParallelInfoObject {
             counter: number;
         }
-        interface XAxisOptions {
-            angle?: number;
-            tooltipValueFormat?: string;
-        }
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Axis/Types' {
-    interface AxisComposition {
-        parallelCoordinates?: ParallelAxis['parallelCoordinates'];
-    }
-    interface AxisTypeRegistry {
-        ParallelAxis: ParallelAxis;
-    }
-}
-
-import '../Series/LineSeries.js';
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 // Extensions for parallel coordinates plot.
-var ChartProto = Chart.prototype;
+const ChartProto = Chart.prototype;
 
-var defaultXAxisOptions = {
+const defaultXAxisOptions = {
     lineWidth: 0,
     tickLength: 0,
     opposite: true,
@@ -97,7 +125,7 @@ var defaultXAxisOptions = {
 /**
  * @optionparent chart
  */
-var defaultParallelOptions: Highcharts.ChartOptions = {
+const defaultParallelOptions: ChartOptions = {
     /**
      * Flag to render charts as a parallel coordinates plot. In a parallel
      * coordinates plot (||-coords) by default all required yAxes are generated
@@ -184,7 +212,7 @@ setOptions({
 // Initialize parallelCoordinates
 addEvent(Chart, 'init', function (
     e: {
-        args: { 0: Highcharts.Options };
+        args: { 0: Partial<Options> };
     }
 ): void {
     const options = e.args[0],
@@ -248,7 +276,7 @@ addEvent(Chart, 'init', function (
 });
 
 // Initialize parallelCoordinates
-addEvent(Chart, 'update', function (e: { options: Highcharts.Options }): void {
+addEvent(Chart, 'update', function (e: { options: Partial<Options> }): void {
     const options = e.options;
 
     if (options.chart) {
@@ -256,8 +284,8 @@ addEvent(Chart, 'update', function (e: { options: Highcharts.Options }): void {
             this.hasParallelCoordinates = options.chart.parallelCoordinates;
         }
 
-        (this.options.chart as any).parallelAxes = merge(
-            (this.options.chart as any).parallelAxes,
+        this.options.chart.parallelAxes = merge(
+            this.options.chart.parallelAxes,
             options.chart.parallelAxes
         );
     }
@@ -297,19 +325,17 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
      */
     setParallelInfo: function (
         this: Highcharts.ParallelChart,
-        options: Highcharts.Options
+        options: Partial<Options>
     ): void {
-        var chart = this,
-            seriesOptions: Array<Highcharts.SeriesOptions> =
+        const chart = this,
+            seriesOptions: Array<SeriesOptions> =
                 options.series as any;
 
         chart.parallelInfo = {
             counter: 0
         };
 
-        seriesOptions.forEach(function (
-            series: Highcharts.SeriesOptions
-        ): void {
+        seriesOptions.forEach(function (series): void {
             if (series.data) {
                 chart.parallelInfo.counter = Math.max(
                     chart.parallelInfo.counter,
@@ -323,11 +349,11 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
 
 // Bind each series to each yAxis. yAxis needs a reference to all series to
 // calculate extremes.
-addEvent(H.Series, 'bindAxes', function (e: Event): void {
+addEvent(Series, 'bindAxes', function (e: Event): void {
     if (this.chart.hasParallelCoordinates) {
-        var series = this;
+        const series = this;
 
-        this.chart.axes.forEach(function (axis: Highcharts.Axis): void {
+        this.chart.axes.forEach(function (axis): void {
             series.insert(axis.series);
             axis.isDirty = true;
         });
@@ -340,8 +366,8 @@ addEvent(H.Series, 'bindAxes', function (e: Event): void {
 
 
 // Translate each point using corresponding yAxis.
-addEvent(H.Series, 'afterTranslate', function (): void {
-    var series = this,
+addEvent(Series, 'afterTranslate', function (): void {
+    let series = this,
         chart = this.chart,
         points = series.points,
         dataLength = points && points.length,
@@ -355,7 +381,7 @@ addEvent(H.Series, 'afterTranslate', function (): void {
             point = points[i];
             if (defined(point.y)) {
                 if (chart.polar) {
-                    point.plotX = (chart.yAxis[i] as RadialAxis).angleRad || 0;
+                    point.plotX = (chart.yAxis[i] as RadialAxis.AxisComposition).angleRad || 0;
                 } else if (chart.inverted) {
                     point.plotX = (
                         chart.plotHeight -
@@ -380,7 +406,7 @@ addEvent(H.Series, 'afterTranslate', function (): void {
                 point.isInside = chart.isInsidePlot(
                     point.plotX,
                     point.plotY as any,
-                    chart.inverted
+                    { inverted: chart.inverted }
                 );
             } else {
                 point.isNull = true;
@@ -391,9 +417,9 @@ addEvent(H.Series, 'afterTranslate', function (): void {
 }, { order: 1 });
 
 // On destroy, we need to remove series from each axis.series
-addEvent(H.Series, 'destroy', function (): void {
+addEvent(Series, 'destroy', function (): void {
     if (this.chart.hasParallelCoordinates) {
-        (this.chart.axes || []).forEach(function (axis: Highcharts.Axis): void {
+        (this.chart.axes || []).forEach(function (axis): void {
             if (axis && axis.series) {
                 erase(axis.series, this);
                 axis.isDirty = axis.forceRedraw = true;
@@ -409,7 +435,7 @@ function addFormattedValue(
     this: Point,
     proceed: Function
 ): void {
-    var chart = this.series && this.series.chart,
+    let chart = this.series && this.series.chart,
         config = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
         formattedValue,
         yAxisOptions,
@@ -454,7 +480,7 @@ function addFormattedValue(
              * @apioption yAxis.tooltipValueFormat
              */
             yAxisOptions.tooltipValueFormat,
-            (yAxisOptions.labels as any).format
+            yAxisOptions.labels.format
         );
 
         if (labelFormat) {
@@ -462,7 +488,7 @@ function addFormattedValue(
                 labelFormat,
                 extend(
                     this,
-                    { value: this.y }
+                    { value: this.y } as any
                 ),
                 chart
             );
@@ -542,7 +568,7 @@ class ParallelAxisAdditions {
      */
     public setPosition(
         axisPosition: Array<('left'|'width'|'height'|'top')>,
-        options: Highcharts.AxisOptions
+        options: AxisOptions
     ): void {
         const parallel = this,
             axis = parallel.axis,
@@ -591,7 +617,7 @@ namespace ParallelAxis {
      */
     function onAfterSetOptions(
         this: Axis,
-        e: { userOptions: Highcharts.XAxisOptions }
+        e: { userOptions: AxisOptions }
     ): void {
         const axis = this as ParallelAxis,
             chart = axis.chart,
@@ -614,7 +640,7 @@ namespace ParallelAxis {
                 const axisIndex = chart.yAxis.indexOf(axis); // #13608
                 axis.options = merge(
                     axis.options,
-                    (axis.chart.options.chart as any).parallelAxes,
+                    axis.chart.options.chart.parallelAxes,
                     e.userOptions
                 );
                 parallelCoordinates.position = pick(
@@ -646,10 +672,10 @@ namespace ParallelAxis {
         }
 
         if (chart && chart.hasParallelCoordinates && !axis.isXAxis) {
-            var index = parallelCoordinates.position,
+            const index = parallelCoordinates.position,
                 currentPoints: Array<Point> = [];
 
-            axis.series.forEach(function (series: Highcharts.Series): void {
+            axis.series.forEach(function (series): void {
                 if (
                     series.visible &&
                     defined((series.yData as any)[index as any])

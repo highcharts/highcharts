@@ -5,10 +5,11 @@
  * */
 
 import type Annotation from '../Annotations';
-import type {
-    CursorValue
-} from '../../../Core/Renderer/CSSObject';
+import type { CursorValue } from '../../../Core/Renderer/CSSObject';
 import type DOMElementType from '../../../Core/Renderer/DOMElementType';
+import type EventCallback from '../../../Core/EventCallback';
+import type PointerEvent from '../../../Core/PointerEvent';
+import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import H from '../../../Core/Globals.js';
 
@@ -50,7 +51,7 @@ declare global {
             onMouseUp(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
             removeDocEvents(this: AnnotationEventEmitter): void;
         }
-        interface AnnotationEventObject extends PointerEventObject {
+        interface AnnotationEventObject extends PointerEvent {
             prevChartX: number;
             prevChartY: number;
         }
@@ -84,14 +85,15 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
      * Add emitter events.
      */
     addEvents: function (this: Highcharts.AnnotationEventEmitter): void {
-        var emitter = this,
+        const emitter = this,
             addMouseDownEvent = function (element: DOMElementType): void {
                 addEvent(
                     element,
                     H.isTouchDevice ? 'touchstart' : 'mousedown',
                     (e: Highcharts.AnnotationEventObject): void => {
                         emitter.onMouseDown(e);
-                    }
+                    },
+                    { passive: false }
                 );
             };
 
@@ -105,10 +107,10 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         });
 
         objectEach(emitter.options.events, function (
-            event: Highcharts.EventCallbackFunction<Annotation>,
+            event: EventCallback<Annotation>,
             type: string
         ): void {
-            var eventHandler = function (e: Highcharts.PointerEventObject): void {
+            const eventHandler = function (e: PointerEvent): void {
                 if (type !== 'click' || !emitter.cancelClick) {
                     (event as any).call(
                         emitter,
@@ -121,7 +123,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             if ((emitter.nonDOMEvents || []).indexOf(type) === -1) {
                 emitter.graphic.on(type, eventHandler);
             } else {
-                addEvent(emitter, type, eventHandler);
+                addEvent(emitter, type, eventHandler, { passive: false });
             }
         });
 
@@ -173,7 +175,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
      * Mouse down handler.
      */
     onMouseDown: function (this: Highcharts.AnnotationEventEmitter, e: Highcharts.AnnotationEventObject): void {
-        var emitter = this,
+        let emitter = this,
             pointer = emitter.chart.pointer,
             prevChartX: number,
             prevChartY: number;
@@ -207,19 +209,35 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
 
                 prevChartX = e.chartX;
                 prevChartY = e.chartY;
-            }
+            },
+            H.isTouchDevice ? { passive: false } : void 0
         );
         emitter.removeMouseUp = addEvent(
             H.doc,
             H.isTouchDevice ? 'touchend' : 'mouseup',
             function (e: Highcharts.AnnotationEventObject): void {
+                // Sometimes the target is the annotation and sometimes its the
+                // controllable
+                const annotation = pick(
+                    emitter.target && emitter.target.annotation,
+                    emitter.target
+                );
+                if (annotation) {
+                    // Keep annotation selected after dragging control point
+                    (annotation as Annotation).cancelClick = emitter.hasDragged;
+                }
+
                 emitter.cancelClick = emitter.hasDragged;
                 emitter.hasDragged = false;
                 emitter.chart.hasDraggedAnnotation = false;
                 // ControlPoints vs Annotation:
-                fireEvent(pick(emitter.target, emitter), 'afterUpdate');
+                fireEvent(pick(
+                    annotation, // #15952
+                    emitter
+                ), 'afterUpdate');
                 emitter.onMouseUp(e);
-            }
+            },
+            H.isTouchDevice ? { passive: false } : void 0
         );
     },
 
@@ -227,7 +245,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
      * Mouse up handler.
      */
     onMouseUp: function (this: Highcharts.AnnotationEventEmitter, _e: Highcharts.AnnotationEventObject): void {
-        var chart = this.chart,
+        const chart = this.chart,
             annotation: Annotation = this.target as any || this,
             annotationsOptions = chart.options.annotations,
             index = chart.annotations.indexOf(annotation);
@@ -248,10 +266,13 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         if (
             this.chart.isInsidePlot(
                 e.chartX - this.chart.plotLeft,
-                e.chartY - this.chart.plotTop
+                e.chartY - this.chart.plotTop,
+                {
+                    visiblePlotOnly: true
+                }
             )
         ) {
-            var translation = this.mouseMoveToTranslation(e);
+            const translation = this.mouseMoveToTranslation(e);
 
             if (this.options.draggable === 'x') {
                 translation.y = 0;
@@ -285,7 +306,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         cx: number,
         cy: number
     ): number {
-        var prevDy = e.prevChartY - cy,
+        let prevDy = e.prevChartY - cy,
             prevDx = e.prevChartX - cx,
             dy = e.chartY - cy,
             dx = e.chartX - cx,
@@ -310,8 +331,8 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     mouseMoveToTranslation: function (
         this: Highcharts.AnnotationEventEmitter,
         e: Highcharts.AnnotationEventObject
-    ): Highcharts.PositionObject {
-        var dx = e.chartX - e.prevChartX,
+    ): PositionObject {
+        let dx = e.chartX - e.prevChartX,
             dy = e.chartY - e.prevChartY,
             temp;
 
@@ -339,8 +360,8 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         e: Highcharts.AnnotationEventObject,
         cx: number,
         cy: number
-    ): Highcharts.PositionObject {
-        var prevDx = e.prevChartX - cx,
+    ): PositionObject {
+        let prevDx = e.prevChartX - cx,
             prevDy = e.prevChartY - cy,
             dx = e.chartX - cx,
             dy = e.chartY - cy,

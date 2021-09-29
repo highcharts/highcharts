@@ -5,7 +5,7 @@
 
 /*
  * Script to compare two different tree.json versions.
- * Use to verifiy that a generated API isn't missing half its options.
+ * Use to verify that a generated API isn't missing half its options.
  *
  */
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component for series and points.
  *
@@ -12,9 +12,10 @@
 
 'use strict';
 
+import type Series from '../../../Core/Series/Series';
 import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
-var extend = U.extend;
+const extend = U.extend;
 
 import AccessibilityComponent from '../../AccessibilityComponent.js';
 import SeriesKeyboardNavigation from './SeriesKeyboardNavigation.js';
@@ -22,10 +23,10 @@ import NewDataAnnouncer from './NewDataAnnouncer.js';
 import addForceMarkersEvents from './ForcedMarkers.js';
 
 import ChartUtilities from '../../Utils/ChartUtilities.js';
-var hideSeriesFromAT = ChartUtilities.hideSeriesFromAT;
+const hideSeriesFromAT = ChartUtilities.hideSeriesFromAT;
 
 import SeriesDescriber from './SeriesDescriber.js';
-var describeSeries = SeriesDescriber.describeSeries;
+const describeSeries = SeriesDescriber.describeSeries;
 
 import Tooltip from '../../../Core/Tooltip.js';
 
@@ -65,7 +66,7 @@ addForceMarkersEvents();
  * @class
  * @name Highcharts.SeriesComponent
  */
-var SeriesComponent: typeof Highcharts.SeriesComponent =
+const SeriesComponent: typeof Highcharts.SeriesComponent =
     function (): void {} as any;
 SeriesComponent.prototype = new (AccessibilityComponent as any)();
 extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
@@ -93,7 +94,7 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
     hideTooltipFromATWhenShown: function (
         this: Highcharts.SeriesComponent
     ): void {
-        var component = this;
+        const component = this;
 
         this.addEvent(Tooltip, 'refresh', function (): void {
             if (
@@ -117,7 +118,7 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
             this.chart as any,
             'afterDrawSeriesLabels',
             function (): void {
-                this.series.forEach(function (series: Highcharts.Series): void {
+                this.series.forEach(function (series: Series): void {
                     if (series.labelBySeries) {
                         series.labelBySeries.attr('aria-hidden', true as any);
                     }
@@ -132,12 +133,12 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
      * markers change on zoom/pixel density.
      */
     onChartRender: function (this: Highcharts.SeriesComponent): void {
-        var chart = this.chart;
+        const chart = this.chart;
 
         chart.series.forEach(function (
             series: Highcharts.AccessibilitySeries
         ): void {
-            var shouldDescribeSeries = (series.options.accessibility &&
+            const shouldDescribeSeries = (series.options.accessibility &&
                 series.options.accessibility.enabled) !== false &&
                 series.visible;
 

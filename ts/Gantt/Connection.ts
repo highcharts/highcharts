@@ -11,7 +11,8 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -32,7 +33,7 @@ declare global {
             );
             public chart: Chart;
             public fromPoint: Point;
-            public graphics: Dictionary<SVGElement>;
+            public graphics: Record<string, SVGElement>;
             public options?: ConnectorsOptions;
             public pathfinder: Pathfinder;
             public toPoint: Point;
@@ -54,7 +55,7 @@ declare global {
             public renderPath(
                 path: SVGPath,
                 attribs?: SVGAttributes,
-                animation?: (boolean|DeepPartial<AnimationOptionsObject>)
+                animation?: (boolean|DeepPartial<AnimationOptions>)
             ): void;
         }
     }
@@ -85,8 +86,8 @@ declare global {
 
 ''; // detach doclets above
 
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -104,7 +105,7 @@ import type Pathfinder from './Pathfinder.js';
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import '../Extensions/ArrowSymbols.js';
 
-var deg2rad = H.deg2rad,
+const deg2rad = H.deg2rad,
     max = Math.max,
     min = Math.min;
 
@@ -397,17 +398,17 @@ extend(defaultOptions, {
  * @return {Highcharts.Dictionary<number>|null}
  *         Result xMax, xMin, yMax, yMin.
  */
-function getPointBB(point: Point): (Highcharts.Dictionary<number>|null) {
-    var shapeArgs = point.shapeArgs,
+function getPointBB(point: Point): (Record<string, number>|null) {
+    let shapeArgs = point.shapeArgs,
         bb;
 
     // Prefer using shapeArgs (columns)
     if (shapeArgs) {
         return {
-            xMin: shapeArgs.x,
-            xMax: shapeArgs.x + shapeArgs.width,
-            yMin: shapeArgs.y,
-            yMax: shapeArgs.y + shapeArgs.height
+            xMin: shapeArgs.x || 0,
+            xMax: (shapeArgs.x || 0) + (shapeArgs.width || 0),
+            yMin: shapeArgs.y || 0,
+            yMax: (shapeArgs.y || 0) + (shapeArgs.height || 0)
         };
     }
 
@@ -436,19 +437,19 @@ function getPointBB(point: Point): (Highcharts.Dictionary<number>|null) {
  *         The calculated margin in pixels. At least 1.
  */
 function calculateObstacleMargin(obstacles: Array<any>): number {
-    var len = obstacles.length,
+    let len = obstacles.length,
         i = 0,
         j,
         obstacleDistance,
         distances = [],
         // Compute smallest distance between two rectangles
         distance = function (
-            a: Highcharts.Dictionary<number>,
-            b: Highcharts.Dictionary<number>,
+            a: Record<string, number>,
+            b: Record<string, number>,
             bbMargin?: number
         ): number {
             // Count the distance even if we are slightly off
-            var margin = pick(bbMargin, 10),
+            const margin = pick(bbMargin, 10),
                 yOverlap = a.yMax + margin > b.yMin - margin &&
                             a.yMin - margin < b.yMax + margin,
                 xOverlap = a.xMax + margin > b.xMin - margin &&
@@ -586,14 +587,13 @@ class Connection {
     public renderPath(
         path: SVGPath,
         attribs?: SVGAttributes,
-        animation?: (boolean|DeepPartial<AnimationOptionsObject>)
+        animation?: (boolean|DeepPartial<AnimationOptions>)
     ): void {
-        var connection = this,
+        let connection = this,
             chart = this.chart,
             styledMode = chart.styledMode,
             pathfinder = chart.pathfinder,
-            animate =
-                !(chart.options.chart as any).forExport && animation !== false,
+            animate = !chart.options.chart.forExport && animation !== false,
             pathGraphic = connection.graphics && connection.graphics.path,
             anim: SVGAttributes;
 
@@ -657,7 +657,7 @@ class Connection {
         options: Highcharts.ConnectorsMarkerOptions,
         path: SVGPath
     ): void {
-        var connection = this,
+        let connection = this,
             chart = connection.fromPoint.series.chart,
             pathfinder = chart.pathfinder,
             renderer = chart.renderer,
@@ -673,7 +673,7 @@ class Connection {
             box,
             width,
             height,
-            pathVector: Highcharts.PositionObject,
+            pathVector: PositionObject,
             segment: SVGPath.Segment;
 
 
@@ -772,7 +772,7 @@ class Connection {
     public getPath(
         options: Highcharts.ConnectorsOptions
     ): (Highcharts.PathfinderAlgorithmResultObject) {
-        var pathfinder = this.pathfinder,
+        let pathfinder = this.pathfinder,
             chart = this.chart,
             algorithm = pathfinder.algorithms[options.type as any],
             chartObstacles = pathfinder.chartObstacles;
@@ -835,7 +835,7 @@ class Connection {
      * @function Highcharts.Connection#render
      */
     public render(): void {
-        var connection = this,
+        let connection = this,
             fromPoint = connection.fromPoint,
             series = fromPoint.series,
             chart = series.chart,
@@ -937,25 +937,25 @@ extend(Point.prototype, /** @lends Point.prototype */ {
     getPathfinderAnchorPoint: function (
         this: Point,
         markerOptions: Highcharts.ConnectorsMarkerOptions
-    ): Highcharts.PositionObject {
-        var bb = getPointBB(this),
+    ): PositionObject {
+        let bb = getPointBB(this),
             x,
             y;
 
         switch (markerOptions.align) { // eslint-disable-line default-case
-        case 'right':
-            x = 'xMax';
-            break;
-        case 'left':
-            x = 'xMin';
+            case 'right':
+                x = 'xMax';
+                break;
+            case 'left':
+                x = 'xMin';
         }
 
         switch (markerOptions.verticalAlign) { // eslint-disable-line default-case
-        case 'top':
-            y = 'yMin';
-            break;
-        case 'bottom':
-            y = 'yMax';
+            case 'top':
+                y = 'yMin';
+                break;
+            case 'bottom':
+                y = 'yMax';
         }
 
         return {
@@ -981,10 +981,10 @@ extend(Point.prototype, /** @lends Point.prototype */ {
      */
     getRadiansToVector: function (
         this: Point,
-        v1: Highcharts.PositionObject,
-        v2: Highcharts.PositionObject
+        v1: PositionObject,
+        v2: PositionObject
     ): number {
-        var box: (Highcharts.Dictionary<number>|null);
+        let box: (Record<string, number>|null);
 
         if (!defined(v2)) {
             box = getPointBB(this);
@@ -1024,9 +1024,9 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         this: Point,
         radians: number,
         markerRadius: number,
-        anchor: Highcharts.PositionObject
-    ): Highcharts.PositionObject {
-        var twoPI = Math.PI * 2.0,
+        anchor: PositionObject
+    ): PositionObject {
+        let twoPI = Math.PI * 2.0,
             theta = radians,
             bb = getPointBB(this),
             rectWidth = (bb as any).xMax - (bb as any).xMin,
@@ -1042,7 +1042,6 @@ extend(Point.prototype, /** @lends Point.prototype */ {
                 x: rectHorizontalCenter,
                 y: rectVerticalCenter
             },
-            markerPoint = {} as Highcharts.PositionObject,
             xFactor = 1,
             yFactor = 1;
 
@@ -1088,10 +1087,10 @@ extend(Point.prototype, /** @lends Point.prototype */ {
             edgePoint.y = anchor.y;
         }
 
-        markerPoint.x = edgePoint.x + (markerRadius * Math.cos(theta));
-        markerPoint.y = edgePoint.y - (markerRadius * Math.sin(theta));
-
-        return markerPoint;
+        return {
+            x: edgePoint.x + (markerRadius * Math.cos(theta)),
+            y: edgePoint.y - (markerRadius * Math.sin(theta))
+        };
     }
 });
 
@@ -1104,10 +1103,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 function warnLegacy(chart: Chart): void {
     if (
         (chart.options as any).pathfinder ||
-        chart.series.reduce(function (
-            acc: boolean,
-            series: Highcharts.Series
-        ): boolean {
+        chart.series.reduce(function (acc, series): boolean {
             if (series.options) {
                 merge(
                     true,

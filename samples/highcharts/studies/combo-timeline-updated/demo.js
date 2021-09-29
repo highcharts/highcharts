@@ -1,5 +1,5 @@
 /**
- * This is an advanced demo of setting up Highcharts with the flags feature borrowed from Highstock.
+ * This is an advanced demo of setting up Highcharts with the flags feature borrowed from Highcharts Stock.
  * It also shows custom graphics drawn in the chart area on chart load.
  */
 
@@ -14,7 +14,9 @@ function onChartLoad() {
         path = [],
         angle,
         radius,
-        badgeColor = Highcharts.color(Highcharts.getOptions().colors[0]).brighten(-0.2).get(),
+        badgeColor = Highcharts.color(Highcharts.getOptions().colors[0])
+            .brighten(-0.2)
+            .get(),
         spike,
         empImage,
         big5,
@@ -147,13 +149,12 @@ function onChartLoad() {
         y: centerY + 62
     });
 
-
     // Prepare mouseover
     renderer = this.renderer;
     if (renderer.defs) { // is SVG
-        $.each(this.get('employees').points, function () {
-            var point = this,
-                pattern;
+        this.get('employees').points.forEach(point => {
+            let pattern;
+
             if (point.image) {
                 pattern = renderer.createElement('pattern').attr({
                     id: 'pattern-' + point.image,
@@ -221,8 +222,7 @@ function getTurnover() {
 
             return turnover;
         },
-        []
-    )
+        [])
         .sort((a, b) => a.x - b.x)
         .map(event => Object.assign(
             event, {
@@ -231,16 +231,13 @@ function getTurnover() {
         ));
 }
 
-
-var options = {
-
+const options = {
     chart: {
         events: {
             load: onChartLoad
         },
         height: '56%'
     },
-
     xAxis: {
         type: 'datetime',
         minTickInterval: 365 * 24 * 36e5,
@@ -294,19 +291,15 @@ var options = {
                 x: 20
             }
         }]
-
     },
-
     title: {
         text: 'Highcharts and Highsoft timeline'
     },
-
     tooltip: {
         style: {
             width: '250px'
         }
     },
-
     yAxis: [{
         max: 100,
         labels: {
@@ -324,7 +317,6 @@ var options = {
         opposite: true,
         gridLineWidth: 0
     }],
-
     plotOptions: {
         series: {
             marker: {
@@ -342,7 +334,6 @@ var options = {
             allowOverlapX: true
         }
     },
-
     series: [{
         name: 'Revenue',
         id: 'revenue',
@@ -473,7 +464,6 @@ var options = {
             xDateFormat: '%B %Y',
             valueSuffix: ' % of best month'
         }
-
     }, {
         yAxis: 1,
         name: 'Highsoft employees',
@@ -490,7 +480,7 @@ var options = {
     }]
 };
 
-// Add flags for important milestones. This requires Highstock.
+// Add flags for important milestones. This requires Highcharts Stock.
 if (Highcharts.seriesTypes.flags) {
     options.series.push({
         type: 'flags',
@@ -549,7 +539,7 @@ if (Highcharts.seriesTypes.flags) {
         },
         {
             x: Date.UTC(2011, 9, 18),
-            text: 'Highstock version 1.0 released',
+            text: 'Highcharts Stock version 1.0 released',
             title: 'Stock',
             shape: 'squarepin'
         },
@@ -639,4 +629,4 @@ if (Highcharts.seriesTypes.flags) {
     });
 }
 
-$('#container').highcharts(options);
+Highcharts.chart('container', options);

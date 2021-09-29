@@ -1,15 +1,10 @@
-var renderer,
-    rect,
-    circ;
-
-
-renderer = new Highcharts.Renderer(
-    $('#container')[0],
+const renderer = new Highcharts.Renderer(
+    document.getElementById('container'),
     400,
     300
 );
 
-rect = renderer.rect(100, 100, 100, 100, 5)
+const rect = renderer.rect(100, 100, 100, 100, 5)
     .attr({
         'stroke-width': 2,
         stroke: 'red',
@@ -17,7 +12,7 @@ rect = renderer.rect(100, 100, 100, 100, 5)
     })
     .add();
 
-circ = renderer.circle(200, 200, 50)
+const circ = renderer.circle(200, 200, 50)
     .attr({
         'stroke-width': 2,
         stroke: 'red',
@@ -25,10 +20,5 @@ circ = renderer.circle(200, 200, 50)
     })
     .add();
 
-rect.on('click', function () {
-    rect.toFront();
-});
-
-circ.on('click', function () {
-    circ.toFront();
-});
+rect.on('click', () => rect.toFront());
+circ.on('click', () => circ.toFront());

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Handle announcing new data for a chart.
  *
@@ -15,16 +15,16 @@
 import type Chart from '../../../Core/Chart/Chart';
 import type Point from '../../../Core/Series/Point';
 import H from '../../../Core/Globals.js';
-import CartesianSeries from '../../../Core/Series/CartesianSeries.js';
+import Series from '../../../Core/Series/Series.js';
 import U from '../../../Core/Utilities.js';
-var extend = U.extend,
+const extend = U.extend,
     defined = U.defined;
 
 import ChartUtilities from '../../Utils/ChartUtilities.js';
-var getChartTitle = ChartUtilities.getChartTitle;
+const getChartTitle = ChartUtilities.getChartTitle;
 
 import SeriesDescriber from './SeriesDescriber.js';
-var defaultPointDescriptionFormatter = SeriesDescriber
+const defaultPointDescriptionFormatter = SeriesDescriber
         .defaultPointDescriptionFormatter,
     defaultSeriesDescriptionFormatter = SeriesDescriber
         .defaultSeriesDescriptionFormatter;
@@ -56,7 +56,7 @@ declare global {
                 dirtySeries: Array<Series>,
                 newSeries?: Series,
                 newPoint?: Point
-            ): string;
+            ): string|null;
             public destroy(): void;
             public init(): void;
             public onPointAdded(point: Point): void;
@@ -69,7 +69,7 @@ declare global {
             ): void;
         }
         interface NewDataAnnouncerDirtyObject {
-            allSeries: Dictionary<Series>;
+            allSeries: Record<string, Series>;
             hasDirty?: boolean;
             newPoint?: Point;
             newSeries?: Series;
@@ -99,7 +99,7 @@ function chartHasAnnounceEnabled(chart: Chart): boolean {
 function findPointInDataArray(
     point: Point
 ): Point {
-    var candidates = point.series.data.filter(function (
+    const candidates = point.series.data.filter(function (
         candidate: Point
     ): boolean {
         return point.x === candidate.x && point.y === candidate.y;
@@ -114,21 +114,21 @@ function findPointInDataArray(
  * @private
  */
 function getUniqueSeries(
-    arrayA?: Array<Highcharts.Series>,
-    arrayB?: Array<Highcharts.Series>
-): Array<Highcharts.Series> {
-    var uniqueSeries = (arrayA || []).concat(arrayB || [])
+    arrayA?: Array<Series>,
+    arrayB?: Array<Series>
+): Array<Series> {
+    const uniqueSeries = (arrayA || []).concat(arrayB || [])
         .reduce(function (
-            acc: Highcharts.Dictionary<Highcharts.Series>,
-            cur: Highcharts.Series
-        ): Highcharts.Dictionary<Highcharts.Series> {
+            acc: Record<string, Series>,
+            cur: Series
+        ): Record<string, Series> {
             acc[cur.name + cur.index] = cur;
             return acc;
         }, {});
 
     return Object.keys(uniqueSeries).map(function (
         ix: string
-    ): Highcharts.Series {
+    ): Series {
         return uniqueSeries[ix];
     });
 }
@@ -138,7 +138,7 @@ function getUniqueSeries(
  * @private
  * @class
  */
-var NewDataAnnouncer: typeof Highcharts.NewDataAnnouncer = function (
+const NewDataAnnouncer: typeof Highcharts.NewDataAnnouncer = function (
     this: Highcharts.NewDataAnnouncer,
     chart: Highcharts.AccessibilityChart
 ): void {
@@ -181,7 +181,7 @@ extend(NewDataAnnouncer.prototype, {
      * @private
      */
     addEventListeners: function (this: Highcharts.NewDataAnnouncer): void {
-        var announcer = this,
+        const announcer = this,
             chart = this.chart,
             e = this.eventProvider;
 
@@ -189,17 +189,17 @@ extend(NewDataAnnouncer.prototype, {
             announcer.lastAnnouncementTime = 0;
         });
 
-        e.addEvent(CartesianSeries, 'updatedData', function (): void {
+        e.addEvent(Series, 'updatedData', function (): void {
             announcer.onSeriesUpdatedData(this);
         });
 
         e.addEvent(chart, 'afterAddSeries', function (
-            e: { series: Highcharts.Series }
+            e: { series: Series }
         ): void {
             announcer.onSeriesAdded(e.series);
         });
 
-        e.addEvent(CartesianSeries, 'addPoint', function (
+        e.addEvent(Series, 'addPoint', function (
             e: { point: Point }
         ): void {
             announcer.onPointAdded(e.point);
@@ -218,9 +218,9 @@ extend(NewDataAnnouncer.prototype, {
      */
     onSeriesUpdatedData: function (
         this: Highcharts.NewDataAnnouncer,
-        series: Highcharts.Series
+        series: Series
     ): void {
-        var chart = this.chart;
+        const chart = this.chart;
 
         if (series.chart === chart && chartHasAnnounceEnabled(chart)) {
             this.dirty.hasDirty = true;
@@ -236,7 +236,7 @@ extend(NewDataAnnouncer.prototype, {
      */
     onSeriesAdded: function (
         this: Highcharts.NewDataAnnouncer,
-        series: Highcharts.Series
+        series: Series
     ): void {
         if (chartHasAnnounceEnabled(this.chart)) {
             this.dirty.hasDirty = true;
@@ -257,7 +257,7 @@ extend(NewDataAnnouncer.prototype, {
         this: Highcharts.NewDataAnnouncer,
         point: Point
     ): void {
-        var chart = point.series.chart;
+        const chart = point.series.chart;
 
         if (this.chart === chart && chartHasAnnounceEnabled(chart)) {
             // Add it to newPoint storage unless we already have one
@@ -272,14 +272,14 @@ extend(NewDataAnnouncer.prototype, {
      * @private
      */
     announceDirtyData: function (this: Highcharts.NewDataAnnouncer): void {
-        var chart = this.chart,
+        const chart = this.chart,
             announcer = this;
 
         if (
             (chart.options.accessibility as any).announceNewData &&
             this.dirty.hasDirty
         ) {
-            var newPoint = this.dirty.newPoint;
+            let newPoint = this.dirty.newPoint;
 
             // If we have a single new point, see if we can find it in the
             // data array. Otherwise we can only pass through options to
@@ -291,7 +291,7 @@ extend(NewDataAnnouncer.prototype, {
             this.queueAnnouncement(
                 Object.keys(this.dirty.allSeries).map(function (
                     ix: string
-                ): Highcharts.Series {
+                ): Series {
                     return announcer.dirty.allSeries[ix];
                 }),
                 this.dirty.newSeries,
@@ -318,8 +318,8 @@ extend(NewDataAnnouncer.prototype, {
      */
     queueAnnouncement: function (
         this: Highcharts.NewDataAnnouncer,
-        dirtySeries: Array<Highcharts.Series>,
-        newSeries?: Highcharts.Series,
+        dirtySeries: Array<Series>,
+        newSeries?: Series,
         newPoint?: Point
     ): void {
         const chart = this.chart;
@@ -388,16 +388,16 @@ extend(NewDataAnnouncer.prototype, {
      */
     buildAnnouncementMessage: function (
         this: Highcharts.NewDataAnnouncer,
-        dirtySeries: Array<Highcharts.Series>,
+        dirtySeries: Array<Series>,
         newSeries?: Highcharts.AccessibilitySeries,
         newPoint?: Highcharts.AccessibilityPoint
     ): (string|null) {
-        var chart = this.chart,
+        const chart = this.chart,
             annOptions = chart.options.accessibility.announceNewData;
 
         // User supplied formatter?
         if (annOptions.announcementFormatter) {
-            var formatterRes = annOptions.announcementFormatter(
+            const formatterRes = annOptions.announcementFormatter(
                 dirtySeries, newSeries, newPoint
             );
             if (formatterRes !== false) {
@@ -406,7 +406,7 @@ extend(NewDataAnnouncer.prototype, {
         }
 
         // Default formatter - use lang options
-        var multiple = H.charts && H.charts.length > 1 ? 'Multiple' : 'Single',
+        const multiple = H.charts && H.charts.length > 1 ? 'Multiple' : 'Single',
             langKey = newSeries ? 'newSeriesAnnounce' + multiple :
                 newPoint ? 'newPointAnnounce' + multiple : 'newDataAnnounce',
             chartTitle = getChartTitle(chart);

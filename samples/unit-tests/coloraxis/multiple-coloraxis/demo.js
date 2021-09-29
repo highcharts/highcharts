@@ -1,19 +1,25 @@
 QUnit.test('Multiple color axis - general', function (assert) {
     var chart = Highcharts.chart('container', {
-            colorAxis: [{
-                id: 'first'
-            }, {
-                id: 'second'
-            }],
+            colorAxis: [
+                {
+                    id: 'first'
+                },
+                {
+                    id: 'second'
+                }
+            ],
 
-            series: [{
-                type: 'column',
-                data: [1, 2, 2]
-            }, {
-                type: 'line',
-                colorAxis: 'second',
-                data: [4, 5]
-            }]
+            series: [
+                {
+                    type: 'column',
+                    data: [1, 2, 2]
+                },
+                {
+                    type: 'line',
+                    colorAxis: 'second',
+                    data: [4, 5]
+                }
+            ]
         }),
         s1 = chart.series[0],
         s2 = chart.series[1];
@@ -50,22 +56,31 @@ QUnit.test('Multiple color axis - general', function (assert) {
     );
 });
 
-
 QUnit.test('Multiple color axis - colorKey', function (assert) {
     var chart = Highcharts.chart('container', {
-        colorAxis: [{
-            minColor: '#278f36'
-        }, {}],
+        colorAxis: [
+            {
+                minColor: '#278f36'
+            },
+            {}
+        ],
 
-        series: [{
-            type: 'bubble',
-            colorKey: 'x',
-            data: [[1, 1, 1], [1, 3, 100], [2, 2, 2]]
-        }, {
-            type: 'line',
-            colorAxis: 1,
-            data: [3, 5]
-        }]
+        series: [
+            {
+                type: 'bubble',
+                colorKey: 'x',
+                data: [
+                    [1, 1, 1],
+                    [1, 3, 100],
+                    [2, 2, 2]
+                ]
+            },
+            {
+                type: 'line',
+                colorAxis: 1,
+                data: [3, 5]
+            }
+        ]
     });
 
     var s1 = chart.series[0],
@@ -78,11 +93,14 @@ QUnit.test('Multiple color axis - colorKey', function (assert) {
     );
 
     chart.update({
-        series: [{
-            colorKey: 'y'
-        }, {
-            colorAxis: 0
-        }]
+        series: [
+            {
+                colorKey: 'y'
+            },
+            {
+                colorAxis: 0
+            }
+        ]
     });
 
     assert.notEqual(
@@ -98,49 +116,63 @@ QUnit.test('Multiple color axis - colorKey', function (assert) {
     );
 });
 
-
 QUnit.test('Multiple color axis - dataClasses', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
                 polar: true
             },
             yAxis: [{}, {}],
-            colorAxis: [{
-                minColor: '#1500ff',
-                dataClasses: [{
-                    to: 2
-                }, {
-                    from: 2,
-                    to: 4
-                }, {
-                    from: 4,
-                    to: 6
-                }]
-            }, {
-                maxColor: '#c9b516',
-                dataClasses: [{
-                    to: 3
-                }, {
-                    from: 3,
-                    to: 10
-                }, {
-                    from: 10,
-                    to: 30
-                }, {
-                    from: 30,
-                    to: 100
-                }]
-            }],
+            colorAxis: [
+                {
+                    minColor: '#1500ff',
+                    dataClasses: [
+                        {
+                            to: 2
+                        },
+                        {
+                            from: 2,
+                            to: 4
+                        },
+                        {
+                            from: 4,
+                            to: 6
+                        }
+                    ]
+                },
+                {
+                    maxColor: '#c9b516',
+                    dataClasses: [
+                        {
+                            to: 3
+                        },
+                        {
+                            from: 3,
+                            to: 10
+                        },
+                        {
+                            from: 10,
+                            to: 30
+                        },
+                        {
+                            from: 30,
+                            to: 100
+                        }
+                    ]
+                }
+            ],
 
-            series: [{
-                type: 'column',
-                yAxis: 1,
-                data: [1, 3, 5]
-            }, {
-                type: 'scatter',
-                colorAxis: 1,
-                data: [20, 50, 70]
-            }]
+            series: [
+                {
+                    type: 'column',
+                    yAxis: 1,
+                    data: [1, 3, 5]
+                },
+                {
+                    type: 'scatter',
+                    colorAxis: 1,
+                    data: [20, 50, 70]
+                }
+            ]
         }),
         controller = new TestController(chart),
         s1 = chart.series[0],
@@ -160,9 +192,11 @@ QUnit.test('Multiple color axis - dataClasses', function (assert) {
 
 QUnit.test('Multiple color axis - dynamics', function (assert) {
     var chart = Highcharts.chart('container', {
-        series: [{
-            data: [1, 2, 3]
-        }],
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ],
         colorAxis: [{}]
     });
 

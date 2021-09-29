@@ -1,62 +1,60 @@
 QUnit.test('Destroy map', function (assert) {
-
     // Test data
     var data = [
         {
-            code: "AF",
+            code: 'AF',
             value: 53,
-            name: "Afghanistan"
+            name: 'Afghanistan'
         },
         {
-            code: "AL",
+            code: 'AL',
             value: 117,
-            name: "Albania"
+            name: 'Albania'
         },
         {
-            code: "DZ",
+            code: 'DZ',
             value: 15,
-            name: "Algeria"
+            name: 'Algeria'
         },
         {
-            code: "AS",
+            code: 'AS',
             value: 342,
-            name: "American Samoa"
+            name: 'American Samoa'
         },
         {
-            code: "AD",
+            code: 'AD',
             value: 181,
-            name: "Andorra"
+            name: 'Andorra'
         },
         {
-            code: "AO",
+            code: 'AO',
             value: 15,
-            name: "Angola"
+            name: 'Angola'
         },
         {
-            code: "AI",
+            code: 'AI',
             value: 202,
-            name: "Antigua and Barbuda"
+            name: 'Antigua and Barbuda'
         },
         {
-            code: "AR",
+            code: 'AR',
             value: 15,
-            name: "Argentina"
+            name: 'Argentina'
         },
         {
-            code: "AM",
+            code: 'AM',
             value: 109,
-            name: "Armenia"
+            name: 'Armenia'
         },
         {
-            code: "AW",
+            code: 'AW',
             value: 597,
-            name: "Aruba"
+            name: 'Aruba'
         }
     ];
 
     // Initiate the chart
     var chart = Highcharts.mapChart('container', {
-
         title: {
             text: 'Destroy chart from button'
         },
@@ -74,20 +72,22 @@ QUnit.test('Destroy map', function (assert) {
             type: 'logarithmic'
         },
 
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
+        series: [
+            {
+                data: data,
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '/km²'
                 }
-            },
-            tooltip: {
-                valueSuffix: '/km²'
             }
-        }]
+        ]
     });
 
     assert.notEqual(
@@ -96,7 +96,7 @@ QUnit.test('Destroy map', function (assert) {
         'SVG in container'
     );
 
-    var chartIndex = (Highcharts.charts.length - 1);
+    var chartIndex = Highcharts.charts.length - 1;
 
     chart.destroy();
 
@@ -116,5 +116,4 @@ QUnit.test('Destroy map', function (assert) {
         undefined,
         'Chart should be removed'
     );
-
 });

@@ -1,34 +1,27 @@
 /* global CodeMirror*/
 
-
-var chart = Highcharts.chart('container', {
-
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'column',
         styledMode: true
     },
-
     title: {
         text: 'POC: Exporting CSS-based Highcharts'
     },
-
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
-
     plotOptions: {
         series: {
             stacking: 'normal'
         }
     },
-
     legend: {
         align: 'right',
         verticalAlign: 'middle',
         layout: 'vertical'
     },
-
     series: [{
         data: [1, 2, 3]
     }, {
@@ -40,12 +33,12 @@ var chart = Highcharts.chart('container', {
 
 });
 
-var start = Date.now();
-var svg = chart.getSVGForExport();
+const start = Date.now();
+const svg = chart.getSVGForExport();
 
-$('#report').html('SVG size: ' + Highcharts.numberFormat(svg.length, 0) + ' B<br>Export generation time: ' + (Date.now() - start) + ' ms');
-$('#pre').html((function () {
-    var indent = '';
+document.getElementById('report').innerHTML = 'SVG size: ' + Highcharts.numberFormat(svg.length, 0) + ' B<br>Export generation time: ' + (Date.now() - start) + ' ms';
+document.getElementById('pre').innerHTML = (function () {
+    let indent = '';
     return svg
         .replace(/(<\/?|\/?>)/g, function (a) {
             var ret;
@@ -63,7 +56,7 @@ $('#pre').html((function () {
             }
             return ret;
         });
-}()));
+}());
 
 CodeMirror.fromTextArea(document.getElementById('pre'), {
     mode: "xml",

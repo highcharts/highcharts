@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -8,8 +8,18 @@
  *
  * */
 
-import type { AxisLike } from './Types';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AxisLike from './AxisLike';
+import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
+
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
@@ -19,31 +29,31 @@ const {
     splat
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisType' {
+    interface AxisTypeRegistry {
+        ZAxis: ZAxis;
+    }
+}
+
 declare module '../Chart/ChartLike'{
     interface ChartLike {
         zAxis?: Array<ZAxis>;
-        addZAxis(options: Highcharts.AxisOptions): Axis;
+        addZAxis(options: AxisOptions): Axis;
     }
 }
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            zAxis?: (Highcharts.AxisOptions|Array<Highcharts.AxisOptions>);
-        }
-    }
-}
-
-/**
- * @private
- */
-declare module './Types' {
-    interface AxisTypeRegistry {
-        ZAxis: ZAxis;
+declare module '../Options' {
+    interface Options {
+        zAxis?: (
+            DeepPartial<AxisOptions>|
+            Array<DeepPartial<AxisOptions>>
+        );
     }
 }
 
@@ -87,7 +97,7 @@ class ZChart {
         }
         chart.zAxis = [];
         zAxisOptions.forEach(function (
-            axisOptions: Highcharts.AxisOptions,
+            axisOptions: AxisOptions,
             i: number
         ): void {
             axisOptions.index = i;
@@ -104,8 +114,8 @@ class ZChart {
      */
     public static wrapAddZAxis(
         this: Chart,
-        options: Highcharts.AxisOptions
-    ): Highcharts.Axis {
+        options: AxisOptions
+    ): Axis {
         return new ZAxis(this, options);
     }
 
@@ -137,7 +147,7 @@ class ZAxis extends Axis implements AxisLike {
      *
      * */
 
-    public constructor(chart: Chart, userOptions: Highcharts.AxisOptions) {
+    public constructor(chart: Chart, userOptions: AxisOptions) {
         super(chart, userOptions);
     }
 
@@ -171,17 +181,14 @@ class ZAxis extends Axis implements AxisLike {
         }
 
         // loop through this axis' series
-        axis.series.forEach(function (series: Highcharts.Series): void {
+        axis.series.forEach(function (series): void {
 
             if (
                 series.visible ||
-                !(
-                    chart.options.chart &&
-                    chart.options.chart.ignoreHiddenSeries
-                )
+                !chart.options.chart.ignoreHiddenSeries
             ) {
 
-                var seriesOptions = series.options,
+                let seriesOptions = series.options,
                     zData: Array<(number|null|undefined)>,
                     threshold = seriesOptions.threshold;
 
@@ -217,7 +224,6 @@ class ZAxis extends Axis implements AxisLike {
         super.setAxisSize();
 
         axis.width = axis.len = (
-            chart.options.chart &&
             chart.options.chart.options3d &&
             chart.options.chart.options3d.depth
         ) || 0;
@@ -227,12 +233,15 @@ class ZAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public setOptions(userOptions: DeepPartial<Highcharts.AxisOptions>): void {
+    public setOptions(userOptions: DeepPartial<AxisOptions>): void {
 
-        userOptions = merge<Highcharts.AxisOptions>({
-            offset: 0 as any,
-            lineWidth: 0 as any
+        userOptions = merge<DeepPartial<AxisOptions>>({
+            offset: 0,
+            lineWidth: 0
         }, userOptions);
+
+        // #14793, this used to be set on the prototype
+        this.isZAxis = true;
 
         super.setOptions(userOptions);
 

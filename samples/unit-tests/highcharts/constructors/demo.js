@@ -1,7 +1,5 @@
 QUnit.test('Highcharts', function (assert) {
-
-    var chart,
-        calledBack;
+    var chart, calledBack;
 
     Highcharts.setOptions({
         plotOptions: {
@@ -11,14 +9,25 @@ QUnit.test('Highcharts', function (assert) {
         }
     });
 
-    chart = new Highcharts.Chart({
-        chart: {
-            renderTo: 'container'
+    const options = JSON.parse(`{
+        "chart": {
+            "__proto__": {
+                "prototypePollution": true
+            },
+            "renderTo": "container"
         },
-        series: [{
-            data: [1, 2, 3, 4]
+        "series": [{
+            "data": [1, 2, 3, 4]
         }]
-    });
+    }`);
+
+    chart = new Highcharts.Chart(options);
+
+    assert.strictEqual(
+        window.prototypePollution,
+        undefined,
+        'Prototype pollution through JSON options should not be possible'
+    );
 
     assert.strictEqual(
         chart.series[0].yData.join(','),
@@ -30,9 +39,11 @@ QUnit.test('Highcharts', function (assert) {
         chart: {
             renderTo: document.getElementById('container')
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -42,41 +53,46 @@ QUnit.test('Highcharts', function (assert) {
     );
 
     calledBack = false;
-    chart = new Highcharts.Chart({
-        chart: {
-            renderTo: 'container'
+    chart = new Highcharts.Chart(
+        {
+            chart: {
+                renderTo: 'container'
+            },
+            series: [
+                {
+                    data: [1, 2, 3, 4]
+                }
+            ]
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
-    }, function () {
-        calledBack = true;
-    });
+        function () {
+            calledBack = true;
+        }
+    );
     assert.strictEqual(
         calledBack,
         true,
         'Chart constructor, renderTo string option, callback fired'
     );
 
-    chart = $('#container').highcharts({
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
-    }).highcharts();
+    chart = $('#container')
+        .highcharts({
+            series: [
+                {
+                    data: [1, 2, 3, 4]
+                }
+            ]
+        })
+        .highcharts();
 
     assert.strictEqual(
         chart.series[0].yData.join(','),
         '1,2,3,4',
         'jQuery plugin constructor'
     );
-
 });
 
-
-QUnit.test('Highstock', function (assert) {
-
-    var chart,
-        calledBack;
+QUnit.test('Highcharts Stock', function (assert) {
+    var chart, calledBack;
 
     Highcharts.setOptions({
         plotOptions: {
@@ -90,9 +106,11 @@ QUnit.test('Highstock', function (assert) {
         chart: {
             renderTo: 'container'
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -100,19 +118,17 @@ QUnit.test('Highstock', function (assert) {
         '1,2,3,4',
         'StockChart constructor, renderTo string option'
     );
-    assert.strictEqual(
-        typeof chart.rangeSelector,
-        'object',
-        'Is stock chart'
-    );
+    assert.strictEqual(typeof chart.rangeSelector, 'object', 'Is stock chart');
 
     chart = new Highcharts.StockChart({
         chart: {
             renderTo: document.getElementById('container')
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -120,57 +136,51 @@ QUnit.test('Highstock', function (assert) {
         '1,2,3,4',
         'StockChart constructor, renderTo DOM option'
     );
-    assert.strictEqual(
-        typeof chart.rangeSelector,
-        'object',
-        'Is stock chart'
-    );
+    assert.strictEqual(typeof chart.rangeSelector, 'object', 'Is stock chart');
 
     calledBack = false;
-    chart = new Highcharts.StockChart({
-        chart: {
-            renderTo: 'container'
+    chart = Highcharts.StockChart(
+        {
+            chart: {
+                renderTo: 'container'
+            },
+            series: [
+                {
+                    data: [1, 2, 3, 4]
+                }
+            ]
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
-    }, function () {
-        calledBack = true;
-    });
+        function () {
+            calledBack = true;
+        }
+    );
     assert.strictEqual(
         calledBack,
         true,
         'StockChart constructor, renderTo string option, callback fired'
     );
-    assert.strictEqual(
-        typeof chart.rangeSelector,
-        'object',
-        'Is stock chart'
-    );
+    assert.strictEqual(typeof chart.rangeSelector, 'object', 'Is stock chart');
 
-    chart = $('#container').highcharts('StockChart', {
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
-    }).highcharts();
+    chart = $('#container')
+        .highcharts('StockChart', {
+            series: [
+                {
+                    data: [1, 2, 3, 4]
+                }
+            ]
+        })
+        .highcharts();
 
     assert.strictEqual(
         chart.series[0].yData.join(','),
         '1,2,3,4',
         'jQuery plugin constructor'
     );
-    assert.strictEqual(
-        typeof chart.rangeSelector,
-        'object',
-        'Is stock chart'
-    );
-
+    assert.strictEqual(typeof chart.rangeSelector, 'object', 'Is stock chart');
 });
 
 QUnit.test('Highmaps', function (assert) {
-
-    var chart,
-        calledBack;
+    var chart, calledBack;
 
     Highcharts.setOptions({
         plotOptions: {
@@ -180,16 +190,20 @@ QUnit.test('Highmaps', function (assert) {
         }
     });
 
-    chart = new Highcharts.Map({
+    chart = new Highcharts.MapChart({
         chart: {
             renderTo: 'container'
         },
-        series: [{
-            data: [{
-                path: 'M 0 0 L 100 0 100 100 0 100',
-                value: 1
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        path: 'M 0 0 L 100 0 100 100 0 100',
+                        value: 1
+                    }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -197,22 +211,22 @@ QUnit.test('Highmaps', function (assert) {
         1,
         'Map constructor, renderTo string option'
     );
-    assert.strictEqual(
-        chart.series[0].type,
-        'map',
-        'Is map chart'
-    );
+    assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 
-    chart = new Highcharts.Map({
+    chart = Highcharts.Map({
         chart: {
             renderTo: document.getElementById('container')
         },
-        series: [{
-            data: [{
-                path: 'M 0 0 L 100 0 100 100 0 100',
-                value: 1
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        path: 'M 0 0 L 100 0 100 100 0 100',
+                        value: 1
+                    }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -220,57 +234,57 @@ QUnit.test('Highmaps', function (assert) {
         1,
         'Map constructor, renderTo DOM option'
     );
-    assert.strictEqual(
-        chart.series[0].type,
-        'map',
-        'Is map chart'
-    );
+    assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 
     calledBack = false;
-    chart = new Highcharts.Map({
-        chart: {
-            renderTo: 'container'
+    chart = new Highcharts.Map(
+        {
+            chart: {
+                renderTo: 'container'
+            },
+            series: [
+                {
+                    data: [
+                        {
+                            path: 'M 0 0 L 100 0 100 100 0 100',
+                            value: 1
+                        }
+                    ]
+                }
+            ]
         },
-        series: [{
-            data: [{
-                path: 'M 0 0 L 100 0 100 100 0 100',
-                value: 1
-            }]
-        }]
-    }, function () {
-        calledBack = true;
-    });
+        function () {
+            calledBack = true;
+        }
+    );
     assert.strictEqual(
         calledBack,
         true,
         'Map constructor, renderTo string option, callback fired'
     );
-    assert.strictEqual(
-        chart.series[0].type,
-        'map',
-        'Is map chart'
-    );
+    assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 
-    chart = $('#container').highcharts('Map', {
-        series: [{
-            data: [{
-                path: 'M 0 0 L 100 0 100 100 0 100',
-                value: 1
-            }]
-        }]
-    }).highcharts();
+    chart = $('#container')
+        .highcharts('Map', {
+            series: [
+                {
+                    data: [
+                        {
+                            path: 'M 0 0 L 100 0 100 100 0 100',
+                            value: 1
+                        }
+                    ]
+                }
+            ]
+        })
+        .highcharts();
 
     assert.strictEqual(
         chart.series[0].points.length,
         1,
         'jQuery plugin constructor, Map'
     );
-    assert.strictEqual(
-        chart.series[0].type,
-        'map',
-        'Is map chart'
-    );
-
+    assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 });
 
 QUnit.test('Lower case constructors, no new', function (assert) {
@@ -280,9 +294,11 @@ QUnit.test('Lower case constructors, no new', function (assert) {
         chart: {
             renderTo: 'container'
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -295,9 +311,11 @@ QUnit.test('Lower case constructors, no new', function (assert) {
         chart: {
             renderTo: 'container'
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -306,22 +324,22 @@ QUnit.test('Lower case constructors, no new', function (assert) {
         'stockChart constructor'
     );
 
-    assert.strictEqual(
-        typeof chart.rangeSelector,
-        'object',
-        'Is stock chart'
-    );
+    assert.strictEqual(typeof chart.rangeSelector, 'object', 'Is stock chart');
 
     chart = Highcharts.mapChart({
         chart: {
             renderTo: 'container'
         },
-        series: [{
-            data: [{
-                path: 'M 0 0 L 100 0 100 100 0 100',
-                value: 1
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        path: 'M 0 0 L 100 0 100 100 0 100',
+                        value: 1
+                    }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -329,21 +347,18 @@ QUnit.test('Lower case constructors, no new', function (assert) {
         1,
         'jQuery plugin constructor, Map'
     );
-    assert.strictEqual(
-        chart.series[0].type,
-        'map',
-        'Is map chart'
-    );
+    assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 });
 
 QUnit.test('renderTo as first argument', function (assert) {
-    var chart,
-        calledBack;
+    var chart, calledBack;
 
     chart = new Highcharts.Chart('container', {
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -352,11 +367,12 @@ QUnit.test('renderTo as first argument', function (assert) {
         'String renderTo, new Chart'
     );
 
-
     chart = Highcharts.chart('container', {
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -366,9 +382,11 @@ QUnit.test('renderTo as first argument', function (assert) {
     );
 
     chart = Highcharts.chart(document.getElementById('container'), {
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -378,9 +396,11 @@ QUnit.test('renderTo as first argument', function (assert) {
     );
 
     chart = Highcharts.stockChart('container', {
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -389,19 +409,19 @@ QUnit.test('renderTo as first argument', function (assert) {
         'stockChart constructor, string renderTo'
     );
 
-    assert.strictEqual(
-        typeof chart.rangeSelector,
-        'object',
-        'Is stock chart'
-    );
+    assert.strictEqual(typeof chart.rangeSelector, 'object', 'Is stock chart');
 
     chart = Highcharts.mapChart('container', {
-        series: [{
-            data: [{
-                path: 'M 0 0 L 100 0 100 100 0 100',
-                value: 1
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        path: 'M 0 0 L 100 0 100 100 0 100',
+                        value: 1
+                    }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -409,20 +429,22 @@ QUnit.test('renderTo as first argument', function (assert) {
         1,
         'mapChart constructor, string renderTo'
     );
-    assert.strictEqual(
-        chart.series[0].type,
-        'map',
-        'Is map chart'
-    );
+    assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 
     calledBack = false;
-    chart = Highcharts.chart('container', {
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
-    }, function () {
-        calledBack = true;
-    });
+    chart = Highcharts.chart(
+        'container',
+        {
+            series: [
+                {
+                    data: [1, 2, 3, 4]
+                }
+            ]
+        },
+        function () {
+            calledBack = true;
+        }
+    );
     assert.strictEqual(
         calledBack,
         true,
@@ -430,13 +452,19 @@ QUnit.test('renderTo as first argument', function (assert) {
     );
 
     calledBack = false;
-    chart = Highcharts.stockChart('container', {
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
-    }, function () {
-        calledBack = true;
-    });
+    chart = Highcharts.stockChart(
+        'container',
+        {
+            series: [
+                {
+                    data: [1, 2, 3, 4]
+                }
+            ]
+        },
+        function () {
+            calledBack = true;
+        }
+    );
     assert.strictEqual(
         calledBack,
         true,
@@ -444,20 +472,27 @@ QUnit.test('renderTo as first argument', function (assert) {
     );
 
     calledBack = false;
-    chart = Highcharts.mapChart('container', {
-        series: [{
-            data: [{
-                path: 'M 0 0 L 100 0 100 100 0 100',
-                value: 1
-            }]
-        }]
-    }, function () {
-        calledBack = true;
-    });
+    chart = Highcharts.mapChart(
+        'container',
+        {
+            series: [
+                {
+                    data: [
+                        {
+                            path: 'M 0 0 L 100 0 100 100 0 100',
+                            value: 1
+                        }
+                    ]
+                }
+            ]
+        },
+        function () {
+            calledBack = true;
+        }
+    );
     assert.strictEqual(
         calledBack,
         true,
         'mapChart constructor, string renderTo, callback'
     );
-
 });

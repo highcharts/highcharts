@@ -9,6 +9,6 @@ alt_text: >-
 tags:
   - Highcharts demo
 categories:
-  - Pie charts
-priority: 1
+  - Pie charts:
+      priority: 1
 ...

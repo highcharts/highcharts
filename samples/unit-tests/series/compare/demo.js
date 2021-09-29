@@ -1,43 +1,40 @@
 QUnit.test('Compare to negative (#4661)', function (assert) {
-    var chart = $('#container').highcharts('StockChart', {
-        series: [{
-            data: [-100, -150, -125, -300, -250],
-            compare: 'percent'
-        }]
-    }).highcharts();
+    var chart = $('#container')
+        .highcharts('StockChart', {
+            series: [
+                {
+                    data: [-100, -150, -125, -300, -250],
+                    compare: 'percent'
+                }
+            ]
+        })
+        .highcharts();
 
-    assert.strictEqual(
-        typeof chart.yAxis[0].min,
-        'number',
-        'Has a minimum'
-    );
-    assert.strictEqual(
-        typeof chart.yAxis[0].max,
-        'number',
-        'Has a maximum'
-    );
+    assert.strictEqual(typeof chart.yAxis[0].min, 'number', 'Has a minimum');
+    assert.strictEqual(typeof chart.yAxis[0].max, 'number', 'Has a maximum');
 });
 
 QUnit.test('Compare in candlesticks', function (assert) {
     var chart = Highcharts.stockChart('container', {
-        series: [{
-            name: 'AAPL',
-            type: 'candlestick',
-            data: [
-                [100, 102, 99, 101],
-                [101, 104, 100, 102],
-                [102, 104, 100, 101]
-            ],
-            compare: 'percent'
-        }]
+        series: [
+            {
+                name: 'AAPL',
+                type: 'candlestick',
+                data: [
+                    [100, 102, 99, 101],
+                    [101, 104, 100, 102],
+                    [102, 104, 100, 101]
+                ],
+                compare: 'percent'
+            }
+        ]
     });
 
     var points = chart.series[0].points,
         yAxis = chart.yAxis[0];
 
-
     assert.strictEqual(
-        chart.series[0].compareValue,
+        chart.series[0].dataModify.compareValue,
         points[0].close,
         'Compare by close'
     );
@@ -61,20 +58,23 @@ QUnit.test('Compare in candlesticks', function (assert) {
 
 QUnit.test('Compare with one invalid series (#5814)', function (assert) {
     var chart = Highcharts.stockChart('container', {
-
         plotOptions: {
             series: {
                 compare: 'value'
             }
         },
 
-        series: [{
-            data: [1, 2, 3, 4]
-        }, {
-            data: [1, 0, -1, -2]
-        }, {
-            data: [0, 0, 0, 0]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            },
+            {
+                data: [1, 0, -1, -2]
+            },
+            {
+                data: [0, 0, 0, 0]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -91,28 +91,29 @@ QUnit.test('Compare with one invalid series (#5814)', function (assert) {
 
 QUnit.test('Compare with the correct compareValue', function (assert) {
     var chart = Highcharts.stockChart('container', {
-
         plotOptions: {
             series: {
                 compare: 'percent'
             }
         },
 
-        series: [{
-            type: 'ohlc',
-            pointValKey: 'open',
-            data: [
-                [0, 10, 20, 30, 50],
-                [1, 4, 6, 8, 5],
-                [3, 60, 5, 12, 2]
-            ]
-        }]
+        series: [
+            {
+                type: 'ohlc',
+                pointValKey: 'open',
+                data: [
+                    [0, 10, 20, 30, 50],
+                    [1, 4, 6, 8, 5],
+                    [3, 60, 5, 12, 2]
+                ]
+            }
+        ]
     });
 
     var series = chart.series[0];
 
     assert.strictEqual(
-        series.compareValue,
+        series.dataModify.compareValue,
         series.points[0][series.options.pointValKey],
         'compareValue is correct'
     );
@@ -120,7 +121,6 @@ QUnit.test('Compare with the correct compareValue', function (assert) {
 
 QUnit.test('Compare to the proper series (#7773)', function (assert) {
     var chart = Highcharts.stockChart('container', {
-
         plotOptions: {
             series: {
                 compare: 'percent'
@@ -131,22 +131,25 @@ QUnit.test('Compare to the proper series (#7773)', function (assert) {
             pointFormat: '{series.name}: {point.y} ({point.change}%)'
         },
 
-        series: [{
-            data: [13, 12, 8, 4, 2, 5, 10, 30],
-            id: 'main'
-        }, {
-            type: 'sma',
-            name: 'SMA',
-            linkedTo: 'main',
-            compareToMain: true,
-            params: {
-                period: 3
+        series: [
+            {
+                data: [13, 12, 8, 4, 2, 5, 10, 30],
+                id: 'main'
+            },
+            {
+                type: 'sma',
+                name: 'SMA',
+                linkedTo: 'main',
+                compareToMain: true,
+                params: {
+                    period: 3
+                }
             }
-        }]
+        ]
     });
 
     assert.strictEqual(
-        chart.series[1].compareValue,
+        chart.series[1].dataModify.compareValue,
         13,
         'compareValue is correct'
     );
@@ -160,21 +163,60 @@ QUnit.test('Compare to the proper series (#7773)', function (assert) {
 
 QUnit.test('Compare with one single value', assert => {
     const chart = Highcharts.chart('container', {
-
         plotOptions: {
             series: {
                 compare: 'value'
             }
         },
 
-        series: [{
-            data: [1]
-        }]
+        series: [
+            {
+                data: [1]
+            }
+        ]
     });
 
     assert.deepEqual(
         chart.yAxis[0].tickPositions,
         [0],
         'The Y axis should have one tick at 0 (#12058)'
+    );
+});
+
+QUnit.test('Compare multi line indicators, #15867.', assert => {
+    const chart = Highcharts.stockChart('container', {
+        plotOptions: {
+            series: {
+                compare: 'value'
+            }
+        },
+        series: [{
+            type: 'line',
+            id: 'aapl',
+            name: 'AAPL Stock Price',
+            data: [1, 2, 3, 4, 5]
+        }, {
+            type: 'bb',
+            linkedTo: 'aapl',
+            params: {
+                period: 3
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].toPixels(0) - chart.plotTop,
+        chart.series[1].points[0].plotMiddle,
+        `The first point of the main line should be located at 0 on yAxis.`
+    );
+    assert.strictEqual(
+        chart.yAxis[0].toPixels(2) - chart.plotTop,
+        chart.series[1].points[0].plotTop,
+        `The first point of the top line should be located at 2 on yAxis.`
+    );
+    assert.strictEqual(
+        chart.yAxis[0].toPixels(-2) - chart.plotTop,
+        chart.series[1].points[0].plotBottom,
+        `The first point of the bottom line should be located at -2 on yAxis.`
     );
 });

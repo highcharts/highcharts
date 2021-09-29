@@ -4,7 +4,7 @@ Extending Highcharts
 Since version 2.3, Highcharts is built in a modular way with extensions in mind. 
 
 *   Major chart concepts correspond to JavaScript prototypes or "classes" which are exposed on the Highcharts namespace and can easily be modified. Examples are `Highcharts.Series`, `Highcharts.Tooltip`, `Highcharts.Chart`, `Highcharts.Axis`, `Highcharts.Legend` etc. Check [full list](https://api.highcharts.com/class-reference/classes.list) of classes.
-*   Constructor logic is consequently kept in a method, `init`, to allow overriding the initiation.
+*   Constructor logic is consequently kept in a method, `init`, to allow overriding the initialization.
 *   Events can be added to the instance through framework event binding. If your framework is jQuery, you can for example run:
     `$(chart).bind('load', someFunction);`
 

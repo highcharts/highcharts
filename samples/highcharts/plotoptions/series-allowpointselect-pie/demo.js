@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'pie'
     },
@@ -15,9 +15,7 @@ var chart = Highcharts.chart('container', {
     }]
 });
 
-
-// the button action
-$('#button').click(function () {
+document.getElementById('button').addEventListener('click', () => {
     var selectedPoints = chart.getSelectedPoints();
 
     if (chart.lbl) {

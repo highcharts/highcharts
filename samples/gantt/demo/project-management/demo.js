@@ -3,8 +3,7 @@ var today = new Date(),
     // Utility functions
     dateFormat = Highcharts.dateFormat,
     defined = Highcharts.defined,
-    isObject = Highcharts.isObject,
-    reduce = Highcharts.reduce;
+    isObject = Highcharts.isObject;
 
 // Set to 00:00:00:000 today
 today.setUTCHours(0);
@@ -142,7 +141,7 @@ Highcharts.ganttChart('container', {
                 value: options.owner || 'unassigned'
             }];
 
-            return reduce(lines, function (str, line) {
+            return lines.reduce(function (str, line) {
                 var s = '',
                     style = (
                         defined(line.style) ? line.style : 'font-size: 0.8em;'

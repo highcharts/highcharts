@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,18 +10,17 @@
 
 'use strict';
 
+import type Series from '../Core/Series/Series';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
 import H from '../Core/Globals.js';
-const {
-    win
-} = H;
-import '../Core/Options.js';
+const { win } = H;
 import U from '../Core/Utilities.js';
 const {
     error,
     extend,
-    format,
     merge,
     wrap
 } = U;
@@ -53,6 +52,13 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../Core/Chart/ChartOptions'{
+    interface ChartOptions {
+        /** @requires modules/map */
+        proj4?: any;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -60,36 +66,36 @@ declare module '../Core/Chart/ChartLike'{
 declare global {
     namespace Highcharts {
         interface MapCoordinateObject {
+            name?: string;
+            properties?: object;
             x: number;
             y: (number|null);
         }
         interface MapPathObject {
+            name?: string;
             path: SVGPath;
+            properties?: object;
         }
         interface MapLatLonObject {
             lat: number;
             lon: number;
         }
-        interface ChartOptions {
-            /** @requires modules/map */
-            proj4?: any;
-        }
         interface GeoJSON {
             copyright?: string;
             copyrightShort?: string;
-            crs?: Record<string, any>;
+            crs?: AnyRecord;
             features: Array<GeoJSONFeature>;
             'hc-transform'?: Record<string, GeoJSONTransform>;
             title?: string;
             type?: string;
             version?: string;
         }
-        interface GeoJSONFeature extends Record<string, any> {
+        interface GeoJSONFeature extends AnyRecord {
             type: string;
         }
         interface GeoJSONTransform {
             crs?: string;
-            hitZone?: Record<string, any>;
+            hitZone?: AnyRecord;
             jsonmarginX?: number;
             jsonmarginY?: number;
             jsonres?: number;
@@ -259,7 +265,7 @@ function pointInPolygon(
     point: Highcharts.MapCoordinateObject,
     polygon: Array<Array<number>>
 ): boolean {
-    var i,
+    let i,
         j,
         rel1,
         rel2,
@@ -323,7 +329,12 @@ Chart.prototype.transformFromLatLon = function (
      * @apioption  chart.proj4
      */
 
-    const proj4 = (this.userOptions.chart?.proj4 || win.proj4);
+    const proj4 = (
+        this.userOptions.chart &&
+        this.userOptions.chart.proj4 ||
+        win.proj4
+    );
+
     if (!proj4) {
         error(21, false, this);
         return {
@@ -332,7 +343,7 @@ Chart.prototype.transformFromLatLon = function (
         };
     }
 
-    var projected = proj4(transform.crs, [latLon.lon, latLon.lat]),
+    const projected = proj4(transform.crs, [latLon.lon, latLon.lat]),
         cosAngle = transform.cosAngle ||
             (transform.rotation && Math.cos(transform.rotation)),
         sinAngle = transform.sinAngle ||
@@ -387,7 +398,7 @@ Chart.prototype.transformToLatLon = function (
         return;
     }
 
-    var normalized = {
+    const normalized = {
             x: (
                 (
                     point.x -
@@ -438,7 +449,7 @@ Chart.prototype.transformToLatLon = function (
 Chart.prototype.fromPointToLatLon = function (
     point: Highcharts.MapCoordinateObject
 ): (Highcharts.MapLatLonObject|undefined) {
-    var transforms = this.mapTransforms,
+    let transforms = this.mapTransforms,
         transform;
 
     if (!transforms) {
@@ -485,7 +496,7 @@ Chart.prototype.fromPointToLatLon = function (
 Chart.prototype.fromLatLonToPoint = function (
     latLon: Highcharts.MapLatLonObject
 ): Highcharts.MapCoordinateObject {
-    var transforms = this.mapTransforms,
+    let transforms = this.mapTransforms,
         transform,
         coords;
 
@@ -551,9 +562,9 @@ Chart.prototype.fromLatLonToPoint = function (
 H.geojson = function (
     geojson: Highcharts.GeoJSON,
     hType?: string,
-    series?: Highcharts.Series
+    series?: Series
 ): Array<any> {
-    var mapData = [] as Array<any>,
+    let mapData = [] as Array<any>,
         path = [] as SVGPath,
         polygonToPath = function (polygon: Array<Array<number>>): void {
             polygon.forEach((point, i): void => {
@@ -569,7 +580,7 @@ H.geojson = function (
 
     geojson.features.forEach(function (feature: any): void {
 
-        var geometry = feature.geometry,
+        let geometry = feature.geometry,
             type = geometry.type,
             coordinates = geometry.coordinates,
             properties = feature.properties,
@@ -630,7 +641,7 @@ H.geojson = function (
                  * @name Highcharts.Point#properties
                  * @type {*}
                  */
-                properties: properties
+                properties
             }));
         }
 
@@ -656,7 +667,7 @@ H.geojson = function (
 wrap(Chart.prototype, 'addCredits', function (
     this: Chart,
     proceed: Function,
-    credits: Highcharts.CreditsOptions
+    credits: Chart.CreditsOptions
 ): void {
 
     credits = merge(true, this.options.credits, credits);

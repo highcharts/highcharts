@@ -4,19 +4,26 @@ QUnit.test('#12391 series.update and zones', function (assert) {
             min: 3,
             max: 4
         },
-        series: [{
-            data: [1, 2, 3, 2, 4],
-            zoneAxis: 'x',
-            zones: [{
-                value: 4
-            }]
-        }, {
-            data: [3, 4],
-            zoneAxis: 'x',
-            zones: [{
-                value: 4
-            }]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 2, 4],
+                zoneAxis: 'x',
+                zones: [
+                    {
+                        value: 4
+                    }
+                ]
+            },
+            {
+                data: [3, 4],
+                zoneAxis: 'x',
+                zones: [
+                    {
+                        value: 4
+                    }
+                ]
+            }
+        ]
     });
 
     const series = chart.series[1];
@@ -30,8 +37,5 @@ QUnit.test('#12391 series.update and zones', function (assert) {
     series.show();
     series.update();
 
-    assert.ok(
-        true,
-        'Update should not return zone clip error.'
-    );
+    assert.ok(true, 'Update should not return zone clip error.');
 });

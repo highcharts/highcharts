@@ -15,7 +15,8 @@ require('highcharts/modules/exporting')(Highcharts);
 // Create the chart
 Highcharts.chart('container', { /*Highcharts options*/ });
 ```
-    
+
+For other ways to load Highcharts (ECMAScript modules etc.) please see [the README](https://github.com/highcharts/highcharts#load-highcharts-from-the-cdn-as-ecmascript-modules).
 
 Load Highcharts Stock or Highcharts Maps
 --------------------------

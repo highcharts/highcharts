@@ -35,33 +35,37 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
             min: 2,
             max: 5
         },
-        series: [{
-            showInLegend: true,
-            data: [{
-                x: 5,
-                y: 5
-            }, {
-                x: 5,
-                y: 10
-            }, {
-                x: 7,
-                y: 10
-            }]
-        }]
+        series: [
+            {
+                showInLegend: true,
+                data: [
+                    {
+                        x: 5,
+                        y: 5
+                    },
+                    {
+                        x: 5,
+                        y: 10
+                    },
+                    {
+                        x: 7,
+                        y: 10
+                    }
+                ]
+            }
+        ]
     });
 
     var testColumnCrop = function (chart, string) {
         var shapeArgs0 = chart.series[0].data[0].shapeArgs;
         var shapeArgs1 = chart.series[0].data[1].shapeArgs;
         assert.strictEqual(
-            (
-                shapeArgs0.x >= -0.5 &&
+            shapeArgs0.x >= -0.5 &&
                 shapeArgs1.x >= -0.5 &&
                 shapeArgs0.x + shapeArgs0.width <= chart.xAxis[0].len + 0.5 &&
                 shapeArgs0.y + shapeArgs0.height <= chart.yAxis[0].len + 0.5 &&
                 shapeArgs1.x + shapeArgs1.width <= chart.xAxis[0].len + 0.5 &&
-                shapeArgs1.y + shapeArgs1.height <= chart.yAxis[0].len + 0.5
-            ),
+                shapeArgs1.y + shapeArgs1.height <= chart.yAxis[0].len + 0.5,
             true,
             string + ' are cropped outside plotArea'
         );
@@ -73,12 +77,10 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
         shapeArgs0 = chart.series[0].data[0].shapeArgs;
         shapeArgs1 = chart.series[0].data[1].shapeArgs;
         assert.strictEqual(
-            (
-                shapeArgs0.x === shapeArgs1.x &&
+            shapeArgs0.x === shapeArgs1.x &&
                 shapeArgs0.y === shapeArgs1.y &&
                 shapeArgs0.height === shapeArgs1.height &&
-                shapeArgs0.width === shapeArgs1.width
-            ),
+                shapeArgs0.width === shapeArgs1.width,
             true,
             string + ' are cropped outside plotArea with reversed axis'
         );
@@ -87,10 +89,7 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
 
         shapeArgs0 = chart.series[0].data[0].shapeArgs;
         assert.strictEqual(
-            (
-                shapeArgs0.x !== 0 ||
-                shapeArgs0.y !== 0
-            ),
+            shapeArgs0.x !== 0 || shapeArgs0.y !== 0,
             true,
             '0 ' + string + ' are visible inside plotArea'
         );
@@ -125,28 +124,24 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
     var point0 = chart.series[0].points[0];
 
     assert.strictEqual(
-        (
-            point0.outside3dPlot &&
-            point0.dataLabel.alignAttr.y <= -9e9
-        ),
+        point0.outside3dPlot && point0.dataLabel.alignAttr.y <= -9e9,
         true,
         'DataLabels are hidden outside plotArea with reversed axis'
     );
 
     chart.addSeries({
         stacking: 'normal',
-        data: [{
-            x: 5,
-            y: 8
-        }],
+        data: [
+            {
+                x: 5,
+                y: 8
+            }
+        ],
         zIndex: 3
     });
 
     assert.strictEqual(
-        (
-            point0.outside3dPlot &&
-            point0.dataLabel.alignAttr.y <= -9e9
-        ),
+        point0.outside3dPlot && point0.dataLabel.alignAttr.y <= -9e9,
         true,
         'DataLabels are hidden outside plotArea with stacking enabled'
     );
@@ -190,10 +185,7 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
         );
     } else {
         assert.strictEqual(
-            (
-                oldTitleX === newTitleX &&
-            oldTitleY === newTitleY
-            ),
+            oldTitleX === newTitleX && oldTitleY === newTitleY,
             true,
             'yAxis title is on the same position after toggling series visibility'
         );
@@ -218,14 +210,18 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
                 'One Two Three Four Five Six'
             ]
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     var labelWidth = chart.xAxis[0].ticks[0].label.getBBox().width;
-    var yAxisFirstLine = chart.yAxis[0].gridGroup.element.childNodes[0].getBBox();
-    var xAxisFirstLine = chart.xAxis[0].gridGroup.element.childNodes[0].getBBox();
+    var yAxisFirstLine = chart.yAxis[0].gridGroup.element.childNodes[0]
+        .getBBox();
+    var xAxisFirstLine = chart.xAxis[0].gridGroup.element.childNodes[0]
+        .getBBox();
 
     assert.ok(
         labelWidth < xAxisFirstLine.x - yAxisFirstLine.x + 1,
@@ -235,12 +231,15 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
     // Testing scrollbar moving when the chart has two linked x axes.
     var controller = new TestController(chart);
 
-    chart.addAxis({
-        type: 'category',
-        categories: ["0.0", "0.3", "0.0", "0.1", "0.3"],
-        opposite: true,
-        linkedTo: 0
-    }, true);
+    chart.addAxis(
+        {
+            type: 'category',
+            categories: ['0.0', '0.3', '0.0', '0.1', '0.3'],
+            opposite: true,
+            linkedTo: 0
+        },
+        true
+    );
 
     chart.update({
         xAxis: {

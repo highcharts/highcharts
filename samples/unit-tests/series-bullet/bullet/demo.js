@@ -3,17 +3,19 @@ QUnit.test('Bullet', function (assert) {
         chart: {
             type: 'bullet'
         },
-        series: [{
-            data: [
-                [5, 10],
-                [10, 10],
-                [15, 5],
-                [null, 40],
-                [7, null],
-                [null, null],
-                [0, 0]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    [5, 10],
+                    [10, 10],
+                    [15, 5],
+                    [null, 40],
+                    [7, null],
+                    [null, null],
+                    [0, 0]
+                ]
+            }
+        ]
     });
 
     assert.deepEqual(
@@ -27,16 +29,8 @@ QUnit.test('Bullet', function (assert) {
         target: 10
     });
 
-    assert.deepEqual(
-        chart.series[0].points.length,
-        8,
-        'addPoint'
-    );
+    assert.deepEqual(chart.series[0].points.length, 8, 'addPoint');
 
     chart.series[0].removePoint(0);
-    assert.deepEqual(
-        chart.series[0].points.length,
-        7,
-        'removePoint'
-    );
+    assert.deepEqual(chart.series[0].points.length, 7, 'removePoint');
 });

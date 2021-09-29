@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 QUnit.test('X-Range', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -15,37 +16,39 @@ QUnit.test('X-Range', function (assert) {
         }
     });
 
-    assert.notEqual(
-        typeof chart.yAxis[0].max,
-        'number',
-        'Axis empty'
-    );
+    assert.notEqual(typeof chart.yAxis[0].max, 'number', 'Axis empty');
 
     chart.addSeries({
         name: 'Project 1',
         borderRadius: 5,
-        data: [{
-            x: Date.UTC(2014, 11, 1),
-            x2: Date.UTC(2014, 11, 2),
-            y: 0,
-            colorIndex: 9
-        }, {
-            x: Date.UTC(2014, 11, 2),
-            x2: Date.UTC(2014, 11, 5),
-            y: 1
-        }, {
-            x: Date.UTC(2014, 11, 8),
-            x2: Date.UTC(2014, 11, 9),
-            y: 2
-        }, {
-            x: Date.UTC(2014, 11, 9),
-            x2: Date.UTC(2014, 11, 19),
-            y: 1
-        }, {
-            x: Date.UTC(2014, 11, 10),
-            x2: Date.UTC(2014, 11, 23),
-            y: 2
-        }]
+        data: [
+            {
+                x: Date.UTC(2014, 11, 1),
+                x2: Date.UTC(2014, 11, 2),
+                y: 0,
+                colorIndex: 9
+            },
+            {
+                x: Date.UTC(2014, 11, 2),
+                x2: Date.UTC(2014, 11, 5),
+                y: 1
+            },
+            {
+                x: Date.UTC(2014, 11, 8),
+                x2: Date.UTC(2014, 11, 9),
+                y: 2
+            },
+            {
+                x: Date.UTC(2014, 11, 9),
+                x2: Date.UTC(2014, 11, 19),
+                y: 1
+            },
+            {
+                x: Date.UTC(2014, 11, 10),
+                x2: Date.UTC(2014, 11, 23),
+                y: 2
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -54,11 +57,7 @@ QUnit.test('X-Range', function (assert) {
         'The point colorIndex option should be applied'
     );
 
-    assert.strictEqual(
-        chart.yAxis[0].max,
-        2,
-        'Axis added'
-    );
+    assert.strictEqual(chart.yAxis[0].max, 2, 'Axis added');
 
     var series = chart.series[0];
     series.addPoint({
@@ -73,21 +72,13 @@ QUnit.test('X-Range', function (assert) {
         'Resting'
     ]);
 
-    assert.strictEqual(
-        series.points.length,
-        6,
-        'Now six points'
-    );
+    assert.strictEqual(series.points.length, 6, 'Now six points');
 
     series.points[5].update({
         partialFill: 0.5
     });
 
-    assert.strictEqual(
-        series.points[5].partialFill,
-        0.5,
-        'Partial fill set'
-    );
+    assert.strictEqual(series.points[5].partialFill, 0.5, 'Partial fill set');
 
     series.update({
         states: {
@@ -117,38 +108,33 @@ QUnit.test('X-Range', function (assert) {
     );
 
     series.points[0].remove();
-    assert.strictEqual(
-        series.points.length,
-        5,
-        'Now five points'
-    );
+    assert.strictEqual(series.points.length, 5, 'Now five points');
 
     series.remove();
-    assert.strictEqual(
-        chart.series.length,
-        0,
-        'No series left'
-    );
+    assert.strictEqual(chart.series.length, 0, 'No series left');
 
     // #7617
-    chart.addSeries({
-        pointWidth: 20,
-        data: [{
-            x: 1,
-            x2: 9,
-            y: 0,
-            partialFill: 0.25
-        }]
-    }, false);
+    chart.addSeries(
+        {
+            pointWidth: 20,
+            data: [
+                {
+                    x: 1,
+                    x2: 9,
+                    y: 0,
+                    partialFill: 0.25
+                }
+            ]
+        },
+        false
+    );
     chart.xAxis[0].setExtremes(2, null);
 
     var point = chart.series[0].points[0],
         clipRect = point.graphic.partialClipRect;
     assert.strictEqual(
         Math.floor(
-            chart.xAxis[0].toValue(
-                clipRect.attr('width') - clipRect.attr('x')
-            )
+            chart.xAxis[0].toValue(clipRect.attr('width') - clipRect.attr('x'))
         ),
         (point.x2 - point.x) * point.partialFill,
         'Clip rect ends at correct position after zoom (#7617).'
@@ -161,23 +147,29 @@ QUnit.test('X-Range', function (assert) {
         'Correct fill for a point upon point selection (#8104).'
     );
 
-    chart.xAxis[0].update({
-        min: 0,
-        max: 1000,
-        reversed: true
-    }, false);
+    chart.xAxis[0].update(
+        {
+            min: 0,
+            max: 1000,
+            reversed: true
+        },
+        false
+    );
     chart.series[0].update({
         minPointLength: 10,
         borderWidth: 0,
-        data: [{
-            x: 45,
-            x2: 45.1,
-            y: 1
-        }, {
-            x: 5,
-            x2: 45,
-            y: 0
-        }]
+        data: [
+            {
+                x: 45,
+                x2: 45.1,
+                y: 1
+            },
+            {
+                x: 5,
+                x2: 45,
+                y: 0
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -226,29 +218,40 @@ QUnit.test('X-Range', function (assert) {
             max: 1,
             categories: ['Prototyping', 'Development']
         },
-        series: [{
-            data: [{
-                x: 2,
-                x2: 5,
-                y: 0
-            }, {
-                x: 2,
-                x2: 5,
-                y: 1
-            }]
-        }, {
-            data: [{
-                x: 3,
-                x2: 6,
-                y: 0
-            }]
-        }, {
-            data: [{
-                x: 2.5,
-                x2: 6,
-                y: 0
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        x: 2,
+                        x2: 5,
+                        y: 0
+                    },
+                    {
+                        x: 2,
+                        x2: 5,
+                        y: 1
+                    }
+                ]
+            },
+            {
+                data: [
+                    {
+                        x: 3,
+                        x2: 6,
+                        y: 0
+                    }
+                ]
+            },
+            {
+                data: [
+                    {
+                        x: 2.5,
+                        x2: 6,
+                        y: 0
+                    }
+                ]
+            }
+        ]
     });
 
     point = chart.series[0].points[0];
@@ -256,13 +259,19 @@ QUnit.test('X-Range', function (assert) {
     var leftHandleBBox = chart.dragHandles.draggableX1.getBBox(),
         rightHandleBBox = chart.dragHandles.draggableX2.getBBox(),
         leftHandleX = chart.dragHandles.draggableX1.translateX,
-        leftHandleY = chart.dragHandles.draggableX1.translateY +
-            leftHandleBBox.y + leftHandleBBox.height / 2,
+        leftHandleY =
+            chart.dragHandles.draggableX1.translateY +
+            leftHandleBBox.y +
+            leftHandleBBox.height / 2,
         rightHandleX = chart.dragHandles.draggableX2.translateX,
-        rightHandleY = chart.dragHandles.draggableX2.translateY +
-            rightHandleBBox.y + rightHandleBBox.height / 2,
+        rightHandleY =
+            chart.dragHandles.draggableX2.translateY +
+            rightHandleBBox.y +
+            rightHandleBBox.height / 2,
         plotX = point.plotX,
-        plotY = point.plotY + point.series.columnMetrics.offset +
+        plotY =
+            point.plotY +
+            point.series.columnMetrics.offset +
             point.series.columnMetrics.width / 2,
         result = false;
 
@@ -275,10 +284,7 @@ QUnit.test('X-Range', function (assert) {
         result = true;
     }
 
-    assert.ok(
-        result,
-        'Drag handles should be in correct positions (#12872).'
-    );
+    assert.ok(result, 'Drag handles should be in correct positions (#12872).');
 });
 
 QUnit.test('Partial fill reversed', assert => {
@@ -289,14 +295,18 @@ QUnit.test('Partial fill reversed', assert => {
         xAxis: {
             type: 'datetime'
         },
-        series: [{
-            data: [{
-                x: Date.UTC(2019, 0, 1),
-                x2: Date.UTC(2019, 0, 2),
-                y: 1,
-                partialFill: 0.5
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        x: Date.UTC(2019, 0, 1),
+                        x2: Date.UTC(2019, 0, 2),
+                        y: 1,
+                        partialFill: 0.5
+                    }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -311,9 +321,9 @@ QUnit.test('Partial fill reversed', assert => {
 
     assert.close(
         chart.series[0].points[0].graphic.rect.attr('x') +
-        chart.series[0].points[0].graphic.rect.attr('width'),
+            chart.series[0].points[0].graphic.rect.attr('width'),
         chart.series[0].points[0].graphic.partialClipRect.attr('x') +
-        chart.series[0].points[0].graphic.partialClipRect.attr('width'),
+            chart.series[0].points[0].graphic.partialClipRect.attr('width'),
         1,
         'Partial fill should be aligned left'
     );
@@ -325,41 +335,50 @@ QUnit.test('X-range data labels', function (assert) {
             zoomType: 'x',
             width: 600
         },
-        xAxis: [{
-            minRange: 1
-        }],
-        series: [{
-            type: 'xrange',
-            dataLabels: {
-                enabled: true
-            },
-            data: [{
-                y: 0,
-                x: 0,
-                x2: 2,
-                color: "#8CCAF4",
-                label: "first",
-                partialFill: 0.28
-            }, {
-                y: 0,
-                x: 2,
-                x2: 4,
-                color: "#F4C986",
-                label: "second"
-            }, {
-                y: 0,
-                x: 4,
-                x2: 5,
-                color: "#AA45FC",
-                label: "third"
-            }, {
-                y: 0,
-                x: 5,
-                x2: 7,
-                color: "#FCC9FF",
-                label: "fourth"
-            }]
-        }]
+        xAxis: [
+            {
+                minRange: 1
+            }
+        ],
+        series: [
+            {
+                type: 'xrange',
+                dataLabels: {
+                    enabled: true
+                },
+                data: [
+                    {
+                        y: 0,
+                        x: 0,
+                        x2: 2,
+                        color: '#8CCAF4',
+                        label: 'first',
+                        partialFill: 0.28
+                    },
+                    {
+                        y: 0,
+                        x: 2,
+                        x2: 4,
+                        color: '#F4C986',
+                        label: 'second'
+                    },
+                    {
+                        y: 0,
+                        x: 4,
+                        x2: 5,
+                        color: '#AA45FC',
+                        label: 'third'
+                    },
+                    {
+                        y: 0,
+                        x: 5,
+                        x2: 7,
+                        color: '#FCC9FF',
+                        label: 'fourth'
+                    }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -376,11 +395,12 @@ QUnit.test('X-range data labels', function (assert) {
 
     var y = chart.series[0].points[0].dataLabel.attr('y');
 
-
     assert.strictEqual(
-        chart.series[0].points.map(function (p) {
-            return p.dataLabel.attr('y');
-        }).join(','),
+        chart.series[0].points
+            .map(function (p) {
+                return p.dataLabel.attr('y');
+            })
+            .join(','),
         [y, y, y, y].join(','),
         'Initial labels'
     );
@@ -388,9 +408,11 @@ QUnit.test('X-range data labels', function (assert) {
     chart.xAxis[0].setExtremes(3.2, 3.5);
 
     assert.strictEqual(
-        chart.series[0].points.map(function (p) {
-            return p.dataLabel.attr('y');
-        }).join(','),
+        chart.series[0].points
+            .map(function (p) {
+                return p.dataLabel.attr('y');
+            })
+            .join(','),
         [-9999, y, -9999, -9999].join(','),
         'Shown and hidden labels'
     );
@@ -398,9 +420,11 @@ QUnit.test('X-range data labels', function (assert) {
     chart.xAxis[0].setExtremes();
 
     assert.strictEqual(
-        chart.series[0].points.map(function (p) {
-            return p.dataLabel.attr('y');
-        }).join(','),
+        chart.series[0].points
+            .map(function (p) {
+                return p.dataLabel.attr('y');
+            })
+            .join(','),
         [y, y, y, y].join(','),
         'Reverted labels'
     );
@@ -408,9 +432,11 @@ QUnit.test('X-range data labels', function (assert) {
     chart.xAxis[0].setExtremes(0, 0.5);
 
     assert.strictEqual(
-        chart.series[0].points.map(function (p) {
-            return p.dataLabel.attr('y');
-        }).join(','),
+        chart.series[0].points
+            .map(function (p) {
+                return p.dataLabel.attr('y');
+            })
+            .join(','),
         [y, -9999, -9999, -9999].join(','),
         'Shown and hidden labels'
     );
@@ -431,7 +457,6 @@ QUnit.test('X-range data labels', function (assert) {
         ['hidden', 'hidden', 'hidden', 'hidden', 'visible'],
         'Shown and hidden labels'
     );
-
 });
 
 QUnit.test('Stacking', assert => {
@@ -440,7 +465,7 @@ QUnit.test('Stacking', assert => {
             type: 'xrange'
         },
         yAxis: {
-            categories: ["First", "Second"],
+            categories: ['First', 'Second'],
             reversed: true
         },
         plotOptions: {
@@ -448,34 +473,42 @@ QUnit.test('Stacking', assert => {
                 stacking: 'normal'
             }
         },
-        series: [{
-            data: [{
-                x: 0,
-                x2: 5,
-                y: 0
-            }, {
-                x: 5,
-                x2: 10,
-                y: 1
-            }]
-        }, {
-            data: [{
-                x: 5,
-                x2: 10,
-                y: 0
-            }, {
-                x: 0,
-                x2: 5,
-                y: 1
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        x: 0,
+                        x2: 5,
+                        y: 0
+                    },
+                    {
+                        x: 5,
+                        x2: 10,
+                        y: 1
+                    }
+                ]
+            },
+            {
+                data: [
+                    {
+                        x: 5,
+                        x2: 10,
+                        y: 0
+                    },
+                    {
+                        x: 0,
+                        x2: 5,
+                        y: 1
+                    }
+                ]
+            }
+        ]
     });
 
     assert.ok(
         chart.series[0].options.stacking === undefined,
         'Stacking should be disabled.'
     );
-
 });
 
 QUnit.test('#13811: partialFill application order', function (assert) {
@@ -490,45 +523,53 @@ QUnit.test('#13811: partialFill application order', function (assert) {
             categories: ['Prototyping', 'Development', 'Testing'],
             reversed: true
         },
-        series: [{
-            name: 'Project 1',
-            borderColor: 'gray',
-            pointWidth: 20,
-            partialFill: {
-                fill: 'red'
-            },
-            data: [{
-                x: Date.UTC(2014, 10, 21),
-                x2: Date.UTC(2014, 11, 2),
-                y: 0,
+        series: [
+            {
+                name: 'Project 1',
+                borderColor: 'gray',
+                pointWidth: 20,
                 partialFill: {
-                    fill: 'black',
-                    amount: 0.25
+                    fill: 'red'
+                },
+                data: [
+                    {
+                        x: Date.UTC(2014, 10, 21),
+                        x2: Date.UTC(2014, 11, 2),
+                        y: 0,
+                        partialFill: {
+                            fill: 'black',
+                            amount: 0.25
+                        }
+                    },
+                    {
+                        x: Date.UTC(2014, 11, 2),
+                        x2: Date.UTC(2014, 11, 5),
+                        y: 1
+                    },
+                    {
+                        x: Date.UTC(2014, 11, 8),
+                        x2: Date.UTC(2014, 11, 9),
+                        y: 2,
+                        partialFill: {
+                            amount: 0.5
+                        }
+                    },
+                    {
+                        x: Date.UTC(2014, 11, 9),
+                        x2: Date.UTC(2014, 11, 19),
+                        y: 1
+                    },
+                    {
+                        x: Date.UTC(2014, 11, 10),
+                        x2: Date.UTC(2014, 11, 23),
+                        y: 2
+                    }
+                ],
+                dataLabels: {
+                    enabled: true
                 }
-            }, {
-                x: Date.UTC(2014, 11, 2),
-                x2: Date.UTC(2014, 11, 5),
-                y: 1
-            }, {
-                x: Date.UTC(2014, 11, 8),
-                x2: Date.UTC(2014, 11, 9),
-                y: 2,
-                partialFill: {
-                    amount: 0.50
-                }
-            }, {
-                x: Date.UTC(2014, 11, 9),
-                x2: Date.UTC(2014, 11, 19),
-                y: 1
-            }, {
-                x: Date.UTC(2014, 11, 10),
-                x2: Date.UTC(2014, 11, 23),
-                y: 2
-            }],
-            dataLabels: {
-                enabled: true
             }
-        }]
+        ]
     });
 
     assert.strictEqual(
@@ -540,5 +581,215 @@ QUnit.test('#13811: partialFill application order', function (assert) {
         chart.series[0].points[2].graphic.partRect.attr('fill'),
         'red',
         'Series.partialFill should still work'
+    );
+});
+
+QUnit.test('XRange series and tooltip position', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'xrange'
+        },
+        yAxis: {
+            categories: ['First', 'Second']
+        },
+        series: [
+            {
+                data: [
+                    {
+                        x: 0,
+                        x2: 5,
+                        y: 0
+                    },
+                    {
+                        x: 5,
+                        x2: 10,
+                        y: 1
+                    }
+                ]
+            },
+            {
+                data: [
+                    {
+                        x: 5,
+                        x2: 10,
+                        y: 0
+                    },
+                    {
+                        x: 0,
+                        x2: 5,
+                        y: 1
+                    }
+                ]
+            }
+        ]
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    var labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    var pointGraphicBox = chart.series[0].points[0].graphic.element
+        .getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.left + labelBox.width / 2,
+        pointGraphicBox.left + pointGraphicBox.width / 2,
+        2,
+        'No inverted chart, no reversed xAxis, no reversed yAxis'
+    );
+
+    chart.update({
+        yAxis: {
+            reversed: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0].graphic.element
+        .getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.left + labelBox.width / 2,
+        pointGraphicBox.left + pointGraphicBox.width / 2,
+        2,
+        'No inverted chart, no reversed xAxis, reversed yAxis'
+    );
+
+    chart.update({
+        xAxis: {
+            reversed: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0].graphic.element
+        .getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.left + labelBox.width / 2,
+        pointGraphicBox.left + pointGraphicBox.width / 2,
+        2,
+        'No inverted chart, reversed xAxis, no reversed yAxis'
+    );
+
+    chart.update({
+        xAxis: {
+            reversed: true
+        },
+        yAxis: {
+            reversed: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0].graphic.element
+        .getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.left + labelBox.width / 2,
+        pointGraphicBox.left + pointGraphicBox.width / 2,
+        2,
+        'No inverted chart, reversed xAxis, reversed yAxis'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        },
+        xAxis: {
+            reversed: true
+        },
+        yAxis: {
+            reversed: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0].graphic.element
+        .getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.top + labelBox.height / 2,
+        pointGraphicBox.top + pointGraphicBox.height / 2,
+        2.001,
+        'Inverted chart, reversed xAxis, reversed yAxis'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0].graphic.element
+        .getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.top + labelBox.height / 2,
+        pointGraphicBox.top + pointGraphicBox.height / 2,
+        2.001,
+        'Inverted chart, no reversed xAxis, no reversed yAxis'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        },
+        xAxis: {
+            reversed: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0].graphic.element
+        .getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.top + labelBox.height / 2,
+        pointGraphicBox.top + pointGraphicBox.height / 2,
+        2.001,
+        'Inverted chart, reversed xAxis, no reversed yAxis'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        },
+        yAxis: {
+            reversed: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0].graphic.element
+        .getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.top + labelBox.height / 2,
+        pointGraphicBox.top + pointGraphicBox.height / 2,
+        2.001,
+        'Inverted chart, no reversed xAxis, reversed yAxis'
     );
 });

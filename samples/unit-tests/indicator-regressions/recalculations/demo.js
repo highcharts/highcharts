@@ -1,25 +1,54 @@
 QUnit.test('Test algorithm on data updates.', function (assert) {
-
     var map = Highcharts.map,
         chart = Highcharts.stockChart('container', {
-            series: [{
-                id: 'main',
-                data: [
-                    13, 14, 15, 13, 14, 15,
-                    13, 14, 15, 13, 14, 15,
-                    13, 14, 15, 13, 14, 15,
-                    13, 14, 15, 13, 14, 15,
-                    13, 14, 15, 13, 14, 15
-                ]
-            }, {
-                type: 'linearRegression',
-                linkedTo: 'main'
-            }]
+            series: [
+                {
+                    id: 'main',
+                    data: [
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15
+                    ]
+                },
+                {
+                    type: 'linearRegression',
+                    linkedTo: 'main'
+                }
+            ]
         });
 
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length + chart.series[1].options.params.period - 1,
+        chart.series[1].points.length +
+            chart.series[1].options.params.period -
+            1,
         'Initial number of linear regression points is correct'
     );
 
@@ -27,7 +56,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length + chart.series[1].options.params.period - 1,
+        chart.series[1].points.length +
+            chart.series[1].options.params.period -
+            1,
         'After addPoint number of linear regression points is correct'
     );
 

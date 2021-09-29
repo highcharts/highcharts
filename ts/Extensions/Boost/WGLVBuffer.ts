@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -54,7 +54,7 @@ function GLVertexBuffer(
     dataComponents?: number
     /* , type */
 ): Highcharts.BoostGLVertexBuffer {
-    var buffer: (false|WebGLBuffer|null) = false,
+    let buffer: (false|WebGLBuffer|null) = false,
         vertAttribute: (false|number) = false,
         components = dataComponents || 2,
         preAllocated: (false|Float32Array) = false,
@@ -91,7 +91,7 @@ function GLVertexBuffer(
         attrib: string,
         dataComponents?: number
     ): boolean {
-        var farray: (false|Float32Array|undefined);
+        let farray: (false|Float32Array|undefined);
 
         data = dataIn || [];
 
@@ -155,7 +155,7 @@ function GLVertexBuffer(
      * @param drawMode {String} - the draw mode
      */
     function render(from: number, to: number, drawMode: string): boolean {
-        var length = preAllocated ? preAllocated.length : (data as any).length;
+        const length = preAllocated ? preAllocated.length : (data as any).length;
 
         if (!buffer) {
             return false;
@@ -171,6 +171,10 @@ function GLVertexBuffer(
 
         if (!to || to > length) {
             to = length;
+        }
+
+        if (from >= to) {
+            return false;
         }
 
         drawMode = drawMode || 'points';

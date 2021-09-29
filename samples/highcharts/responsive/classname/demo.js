@@ -1,32 +1,25 @@
-var chart = Highcharts.chart('container', {
-
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
-
     title: {
         text: 'Highcharts responsive chart'
     },
-
     subtitle: {
         text: 'Resize the frame to see subtitle and legend hide'
     },
-
     xAxis: {
         categories: ['Apples', 'Oranges', 'Bananas']
     },
-
     yAxis: {
         title: {
             text: 'Amount'
         }
     },
-
     series: [{
         name: 'Fruits',
         data: [1, 4, 3]
     }],
-
     responsive: {
         rules: [{
             condition: {
@@ -41,10 +34,10 @@ var chart = Highcharts.chart('container', {
     }
 });
 
-$('#small').click(function () {
+document.getElementById('small').addEventListener('click', () => {
     chart.setSize(400, 300);
 });
 
-$('#large').click(function () {
+document.getElementById('large').addEventListener('click', () => {
     chart.setSize(600, 300);
 });

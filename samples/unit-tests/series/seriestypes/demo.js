@@ -1,43 +1,44 @@
 Object.keys(Highcharts.seriesTypes).forEach(function (type) {
-
     if (
         // Don't test indicator series (yet), they have more complex setup
         !('linkedTo' in Highcharts.defaultOptions.plotOptions[type]) &&
-
         // Complains about a missing axis
         type !== 'scatter3d'
     ) {
+        QUnit.test(
+            `No errors in the console during initialization with no data for
+            ${type} series.`,
+            assert => {
+                const chart = Highcharts.chart('container', {
+                    chart: {
+                        type: type
+                    }
+                });
 
-        QUnit.test(`No errors in the console during initialization with no data for ${type} series.`, assert => {
-            const chart = Highcharts.chart('container', {
-                chart: {
-                    type: type
-                }
-            });
+                assert.ok(
+                    true,
+                    'No errors in console when series is not declared.'
+                );
 
-            assert.ok(
-                true,
-                'No errors in console when series is not declared.'
-            );
+                chart.addSeries({
+                    name: 'Test series'
+                });
 
-            chart.addSeries({
-                name: 'Test series'
-            });
+                assert.ok(
+                    true,
+                    'No errors in console after adding empty series.'
+                );
 
-            assert.ok(
-                true,
-                'No errors in console after adding empty series.'
-            );
+                chart.series[0].update({
+                    data: []
+                });
 
-            chart.series[0].update({
-                data: []
-            });
-
-            assert.ok(
-                true,
-                'No errors in console after updating series with empty data.'
-            );
-        });
+                assert.ok(
+                    true,
+                    'No errors in console after updating series with empty data.'
+                );
+            }
+        );
     }
 });
 
@@ -46,15 +47,18 @@ QUnit.test('#13277: Event listener memory leak', assert => {
         if (
             !('linkedTo' in Highcharts.defaultOptions.plotOptions[type]) &&
             type !== 'scatter3d' &&
-            type !== 'map' && type !== 'mapline' // Transform error on redraw
+            type !== 'map' &&
+            type !== 'mapline' // Transform error on redraw
         ) {
             const chart = Highcharts.chart('container', {
                 chart: {
                     type: type
                 },
-                series: [{
-                    name: 'Test series'
-                }]
+                series: [
+                    {
+                        name: 'Test series'
+                    }
+                ]
             });
 
             const eventCount = el => {
@@ -73,8 +77,16 @@ QUnit.test('#13277: Event listener memory leak', assert => {
                 data: []
             });
 
-            assert.strictEqual(eventCount(chart.series[0]), before, `${type} update() should not leak into series.hcEvents`);
-            assert.strictEqual(eventCount(chart), beforeChart, `${type} update() should not leak into chart.hcEvents`);
+            assert.strictEqual(
+                eventCount(chart.series[0]),
+                before,
+                `${type} update() should not leak into series.hcEvents`
+            );
+            assert.strictEqual(
+                eventCount(chart),
+                beforeChart,
+                `${type} update() should not leak into chart.hcEvents`
+            );
         }
     });
 });

@@ -2,17 +2,17 @@
  * Unit tests for flat data, where one or more data points have the same value.
  */
 
-
 QUnit.test('Line series', function (assert) {
-
     var chart = Highcharts.chart('container', {
         chart: {
             width: 600,
             height: 250
         },
-        series: [{
-            data: [1.333333333, 1.333333333]
-        }]
+        series: [
+            {
+                data: [1.333333333, 1.333333333]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -37,20 +37,20 @@ QUnit.test('Line series', function (assert) {
         '1',
         'Now one tick (#6563)'
     );
-
 });
 
 QUnit.test('Column series, inferred threshold', function (assert) {
-
     var chart = Highcharts.chart('container', {
         chart: {
             width: 600,
             height: 250
         },
-        series: [{
-            data: [1.333333333, 1.333333333],
-            type: 'column'
-        }]
+        series: [
+            {
+                data: [1.333333333, 1.333333333],
+                type: 'column'
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -58,5 +58,4 @@ QUnit.test('Column series, inferred threshold', function (assert) {
         '0,1,2',
         'Ticks from threshold through points'
     );
-
 });

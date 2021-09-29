@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -8,9 +8,29 @@
  *
  * */
 
-export type SVGPath = globalThis.Array<SVGPath.Segment>;
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface SVGPath extends globalThis.Array<SVGPath.Segment> {
+    // nothing here yet
+}
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
 
 export namespace SVGPath {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     export type Arc = ['A'|'a', number, number, number, number, number, number, number];
     export type Close = ['Z'|'z'];
@@ -38,5 +58,11 @@ export namespace SVGPath {
     }
 
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SVGPath;

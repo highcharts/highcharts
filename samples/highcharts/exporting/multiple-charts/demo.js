@@ -113,14 +113,12 @@ const chart2 = Highcharts.chart('container2', {
 
 });
 
-document.getElementById('export-png').addEventListener(
-    'click',
-    () => Highcharts.exportCharts([chart1, chart2])
+document.getElementById('export-png').addEventListener('click', () =>
+    Highcharts.exportCharts([chart1, chart2])
 );
 
-document.getElementById('export-pdf').addEventListener(
-    'click',
-    () => Highcharts.exportCharts([chart1, chart2], {
+document.getElementById('export-pdf').addEventListener('click', () =>
+    Highcharts.exportCharts([chart1, chart2], {
         type: 'application/pdf'
     })
 );

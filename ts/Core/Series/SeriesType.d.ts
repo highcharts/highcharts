@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -22,15 +22,32 @@ import type Series from './Series';
  *
  * */
 
+export type NonPlotOptions = (
+    'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|'treemap'|'type'|
+    'xAxis'|'yAxis'|'zIndex'
+);
+
 /**
  * All possible series types.
  */
 export type SeriesType = SeriesTypeRegistry[keyof SeriesTypeRegistry]['prototype'];
 
 /**
- * Helper interface to add series types to `SeriesType`.
+ * All possible series options.
+ */
+export type SeriesTypeOptions = SeriesType['options'];
+
+/**
+ * All possible series plotOptions.
+ */
+export type SeriesTypePlotOptions = {
+    [K in keyof SeriesTypeRegistry]?: Omit<SeriesTypeRegistry[K]['prototype']['options'], NonPlotOptions>;
+};
+
+/**
+ * Helper interface to add series types to `SeriesOptionsType` and `SeriesType`.
  *
- * Use the `declare module './SeriesType'` pattern to overload the interface in
+ * Use the `declare module 'SeriesType'` pattern to overload the interface in
  * this definition file.
  */
 export interface SeriesTypeRegistry {
@@ -39,7 +56,7 @@ export interface SeriesTypeRegistry {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

@@ -1,5 +1,4 @@
 QUnit.test('Funnel selected state (#5156)', function (assert) {
-
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'funnel'
@@ -14,13 +13,18 @@ QUnit.test('Funnel selected state (#5156)', function (assert) {
                 }
             }
         },
-        series: [{
-            data: [{
-                y: 1,
-                name: 'selected',
-                selected: true
-            }, 2]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        y: 1,
+                        name: 'selected',
+                        selected: true
+                    },
+                    2
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -30,58 +34,50 @@ QUnit.test('Funnel selected state (#5156)', function (assert) {
     );
 });
 
-QUnit.test("Funnel size relative to center(#4738)", function (assert) {
-    var chart = $("#container").highcharts({
-        chart: {
-            type: 'funnel',
-            marginRight: 100
-        },
-        title: {
-            text: 'Sales funnel',
-            x: -50
-        },
-        plotOptions: {
-            series: {
-                center: [110, 150],
-                neckWidth: 50,
-                neckHeight: 100,
-                //reversed: true,
-                //-- Other available options
-                height: 200,
-                width: 150
-            }
-        },
-        legend: {
-            enabled: false
-        },
-        series: [{
-            name: 'Unique users',
-            data: [
-                ['Website visits', 15654],
-                ['Downloads', 4064],
-                ['Requested price list', 1987],
-                ['Invoice sent', 976],
-                ['Finalized', 846]
+QUnit.test('Funnel size relative to center(#4738)', function (assert) {
+    var chart = $('#container')
+        .highcharts({
+            chart: {
+                type: 'funnel',
+                marginRight: 100
+            },
+            title: {
+                text: 'Sales funnel',
+                x: -50
+            },
+            plotOptions: {
+                series: {
+                    center: [110, 150],
+                    neckWidth: 50,
+                    neckHeight: 100,
+                    //reversed: true,
+                    //-- Other available options
+                    height: 200,
+                    width: 150
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            series: [
+                {
+                    name: 'Unique users',
+                    data: [
+                        ['Website visits', 15654],
+                        ['Downloads', 4064],
+                        ['Requested price list', 1987],
+                        ['Invoice sent', 976],
+                        ['Finalized', 846]
+                    ]
+                }
             ]
-        }]
-    }).highcharts();
+        })
+        .highcharts();
 
     var series = chart.series[0];
-    assert.equal(
-        series.getWidthAt(250),
-        50,
-        'Bottom width'
-    );
-    assert.equal(
-        series.getWidthAt(150),
-        50,
-        'Center width'
-    );
-    assert.equal(
-        series.getWidthAt(50),
-        150,
-        'Top width'
-    );
+    assert.equal(series.getWidthAt(250), 50, 'Bottom width');
+    assert.equal(series.getWidthAt(150), 50, 'Center width');
+    assert.equal(series.getWidthAt(50), 150, 'Top width');
 });
 
 QUnit.test('Visible funnel items', function (assert) {
@@ -114,22 +110,25 @@ QUnit.test('Visible funnel items', function (assert) {
         legend: {
             enabled: true
         },
-        series: [{
-            name: 'Unique users',
-            data: [
-                {
-                    name: 'Website visits',
-                    y: 15654,
-                    visible: false
-                }, {
-                    name: 'Downloads',
-                    y: 4064
-                },
-                ['Requested price list', 1987],
-                ['Invoice sent', 976],
-                ['Finalized', 846]
-            ]
-        }]
+        series: [
+            {
+                name: 'Unique users',
+                data: [
+                    {
+                        name: 'Website visits',
+                        y: 15654,
+                        visible: false
+                    },
+                    {
+                        name: 'Downloads',
+                        y: 4064
+                    },
+                    ['Requested price list', 1987],
+                    ['Invoice sent', 976],
+                    ['Finalized', 846]
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -149,19 +148,23 @@ QUnit.test('Top path of funnel intact', function (assert) {
                 reversed: true
             }
         },
-        series: [{
-            name: 'Unique users',
-            data: [
-                ['Website visits', 323],
-                ['Downloads', 1343],
-                ['Requested price list', 2287],
-                ['Invoice sent', 2784]
-            ]
-        }]
+        series: [
+            {
+                name: 'Unique users',
+                data: [
+                    ['Website visits', 323],
+                    ['Downloads', 1343],
+                    ['Requested price list', 2287],
+                    ['Invoice sent', 2784]
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
-        chart.series[0].points[3].graphic.element.getAttribute('d').split(' ')
+        chart.series[0].points[3].graphic.element
+            .getAttribute('d')
+            .split(' ')
             .filter(function (s) {
                 return s !== 'L'; // Because Edge adds an L for each segment
             }).length,
@@ -171,6 +174,14 @@ QUnit.test('Top path of funnel intact', function (assert) {
 });
 
 QUnit.test('Funnel dataLabels', function (assert) {
+    const data = [
+        ['Website visits', 5654],
+        ['Downloads', 4064],
+        ['Requested price list', 1987],
+        ['Invoice sent', 1976],
+        ['Finalized', 4201]
+    ];
+
     var chart = Highcharts.chart('container', {
             chart: {
                 type: 'funnel'
@@ -186,16 +197,12 @@ QUnit.test('Funnel dataLabels', function (assert) {
                     width: '50%'
                 }
             },
-            series: [{
-                name: 'Unique users',
-                data: [
-                    ['Website visits', 5654],
-                    ['Downloads', 4064],
-                    ['Requested price list', 1987],
-                    ['Invoice sent', 1976],
-                    ['Finalized', 4201]
-                ]
-            }]
+            series: [
+                {
+                    name: 'Unique users',
+                    data
+                }
+            ]
         }),
         series = chart.series[0],
         point = series.points[2],
@@ -251,8 +258,10 @@ QUnit.test('Funnel dataLabels', function (assert) {
 
     assert.strictEqual(
         Math.round(
-            point.plotX + pointWidth / 2 -
-            point.dataLabel.padding - point.dataLabel.width
+            point.plotX +
+                pointWidth / 2 -
+                point.dataLabel.padding -
+                point.dataLabel.width
         ),
         point.dataLabel.x,
         'DataLabels inside the funnel and right aligned (#10036)'
@@ -269,8 +278,10 @@ QUnit.test('Funnel dataLabels', function (assert) {
 
     assert.strictEqual(
         Math.round(
-            pointBBox.y + pointBBox.height +
-            point.dataLabel.options.y - point.dataLabel.height
+            pointBBox.y +
+                pointBBox.height +
+                point.dataLabel.options.y -
+                point.dataLabel.height
         ),
         point.dataLabel.y,
         'DataLabels inside the funnel and bottom aligned (#10036)'
@@ -329,9 +340,9 @@ QUnit.test('Funnel dataLabels', function (assert) {
         }
     });
 
-    chart.series[0].points[0].legendGroup.element.onclick();
-    chart.series[0].points[0].legendGroup.element.onclick();
-    chart.series[0].points[0].legendGroup.element.onclick();
+    Highcharts.fireEvent(chart.series[0].points[0].legendGroup.element, 'click');
+    Highcharts.fireEvent(chart.series[0].points[0].legendGroup.element, 'click');
+    Highcharts.fireEvent(chart.series[0].points[0].legendGroup.element, 'click');
 
     dataLabel = chart.series[0].points[1].dataLabel;
 
@@ -339,5 +350,23 @@ QUnit.test('Funnel dataLabels', function (assert) {
         dataLabel.x,
         dataLabel.alignAttr.x,
         'DataLabels with allowOverlap set to false should be positioned correctly after point hide (#12350)'
+    );
+
+    chart.update({
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    rotation: 1
+                }
+            }
+        }
+    });
+
+    // Force dataLabel re-creation
+    chart.series[0].setData(data, true, false, false);
+
+    assert.ok(
+        Highcharts.isNumber(chart.series[0].points[1].dataLabel.alignAttr.y),
+        '#16176: dataLabel.alignAttr.y should be a number when rotation is set'
     );
 });

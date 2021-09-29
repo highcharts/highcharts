@@ -1,4 +1,4 @@
-var dataSequence = [{
+const dataSequence = [{
     name: 'Week 1',
     data: [1, 2, 2, 1, 1, 2, 2]
 }, {
@@ -27,9 +27,7 @@ var dataSequence = [{
     data: [11, 11, 12, 12, 12, 11, 11]
 }];
 
-// Initiate the chart
-var chart = Highcharts.chart('container', {
-
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'areaspline'
     },
@@ -102,16 +100,18 @@ function pause(button) {
  * or from a timer when the timeline is playing.
  */
 function update(increment) {
-    var input = $('#play-range')[0],
-        output = $('#play-output')[0];
+    const input = document.getElementById('play-range');
+    const output = document.getElementById('play-output');
 
     if (increment) {
         input.value = parseInt(input.value, 10) + increment;
     }
+
     chart.series[0].setData(dataSequence[input.value].data); // Increment dataset (updates chart)
     output.innerHTML = dataSequence[input.value].name; // Output value
+
     if (input.value >= input.max) { // Auto-pause
-        pause($('#play-pause-button')[0]);
+        pause(document.getElementById('play-pause-button'));
     }
 }
 
@@ -121,26 +121,25 @@ function update(increment) {
 function play(button) {
     button.title = 'pause';
     button.className = 'fa fa-pause';
-    chart.sequenceTimer = setInterval(function () {
+    chart.sequenceTimer = setInterval(() => {
         update(1);
     }, 1000);
-
 }
 
 /**
  * Toggle play and pause from the button
  */
-$('#play-pause-button').on('click', function () {
+document.getElementById('play-pause-button').addEventListener('click', e => {
     if (chart.sequenceTimer === undefined) {
-        play(this);
+        play(e.target);
     } else {
-        pause(this);
+        pause(e.target);
     }
 });
 
 /**
  * Update the chart when the input is changed
  */
-$('#play-range').on('input', function () {
+document.getElementById('play-range').addEventListener('click', () => {
     update();
 });

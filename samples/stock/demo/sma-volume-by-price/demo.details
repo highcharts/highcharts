@@ -1,5 +1,5 @@
 ---
-name: SMA volume by price
+name: SMA and Volume by price
 authors:
   - Torstein Hønsi
 compareTooltips: true
@@ -7,5 +7,6 @@ js_wrap: b
 tags:
   - Highcharts Stock demo
 categories:
-  - Flags and Indicators
+  - Flags and Technical indicators:
+      priority: 2
 ...

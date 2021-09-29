@@ -1,5 +1,4 @@
 QUnit.test('Update to non-ordinal (#4202)', function (assert) {
-
     var chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container'
@@ -14,7 +13,6 @@ QUnit.test('Update to non-ordinal (#4202)', function (assert) {
             enabled: true
         }
     });
-
 
     // In an ordinal axis, the point distance is the same even though the actual time distance is
     // different.

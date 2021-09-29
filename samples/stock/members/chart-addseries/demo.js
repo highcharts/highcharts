@@ -1,5 +1,4 @@
-var chart = Highcharts.stockChart('container', {
-
+const chart = Highcharts.stockChart('container', {
     scrollbar: {
         enabled: true
     },
@@ -18,10 +17,10 @@ var chart = Highcharts.stockChart('container', {
     }]
 });
 
-$('#button').click(function () {
+document.getElementById('button').addEventListener('click', e => {
     chart.addSeries({
         name: 'ADBE',
         data: ADBE
     });
-    $(this).attr('disabled', true);
+    e.target.disabled = true;
 });

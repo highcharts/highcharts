@@ -1,7 +1,7 @@
-var seriesOptions = [],
-    names = ['Serie 1', 'Serie 2'];
+const seriesOptions = [];
+const names = ['Serie 1', 'Serie 2'];
 
-$.each(names, function (i, name) {
+names.forEach((name, i) => {
     seriesOptions[i] = {
         name: name,
         data: [
@@ -35,7 +35,7 @@ Highcharts.stockChart('container', {
         type: 'column'
     },
     title: {
-        text: 'In Highstock 1.3.6-1.3.9, stacking percent failed with data grouping'
+        text: 'In Highcharts Stock 1.3.6-1.3.9, stacking percent failed with data grouping'
     },
     rangeSelector: {
         enabled: false

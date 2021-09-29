@@ -8,8 +8,6 @@ const { getLatestCommitShaSync } = require('../tools/gulptasks/lib/git');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;
-// Internal reference
-const hasJSONSources = {};
 
 /**
  * Get browserstack credentials from the environment variables.
@@ -143,57 +141,7 @@ function handleDetails(path) {
     return true;
 }
 
-const browserStackBrowsers = {
-    'Mac.Chrome': {
-        base: 'BrowserStack',
-        browser: 'chrome',
-        browser_version: '80.0',
-        os: 'OS X',
-        os_version: 'Mojave'
-    },
-    'Mac.Firefox': {
-        base: 'BrowserStack',
-        browser: 'firefox',
-        browser_version: '73.0',
-        os: 'OS X',
-        os_version: 'Mojave'
-    },
-    'Mac.Safari': {
-        base: 'BrowserStack',
-        browser: 'safari',
-        browser_version: '13.0',
-        os: 'OS X',
-        os_version: 'Catalina'
-    },
-    'Win.Chrome': {
-        base: 'BrowserStack',
-        browser: 'chrome',
-        browser_version: '80.0',
-        os: 'Windows',
-        os_version: '10'
-    },
-    'Win.Edge': {
-        base: 'BrowserStack',
-        browser: 'edge',
-        browser_version: '80.0',
-        os: 'Windows',
-        os_version: '10',
-    },
-    'Win.Firefox': {
-        base: 'BrowserStack',
-        browser: 'firefox',
-        browser_version: '73.0',
-        os: 'Windows',
-        os_version: '10'
-    },
-    'Win.IE': {
-        base: 'BrowserStack',
-        browser: 'ie',
-        browser_version: '11.0',
-        os: 'Windows',
-        os_version: '10'
-    }
-};
+const browserStackBrowsers = require('./karma-bs.json');
 
 module.exports = function (config) {
 
@@ -363,21 +311,14 @@ module.exports = function (config) {
             // Maps
             'samples/maps/demo/map-pies/demo.js', // advanced data
             'samples/maps/demo/us-counties/demo.js', // advanced data
-            'samples/maps/demo/data-class-ranges/demo.js', // Google Spreadsheets
-            'samples/maps/demo/data-class-two-ranges/demo.js', // Google Spr
 
             // Unknown error
             'samples/highcharts/boost/scatter-smaller/demo.js',
-
-            // CommonJS
-            'samples/highcharts/common-js/browserify/demo.js',
-            'samples/highcharts/common-js/webpack/demo.js',
+            'samples/highcharts/data/google-spreadsheet/demo.js',
 
             // Various
-            'samples/highcharts/data/google-spreadsheet/demo.js', // advanced demo
             'samples/highcharts/data/delimiters/demo.js', // data island
             'samples/highcharts/css/exporting/demo.js', // advanced demo
-            'samples/highcharts/css/map-dataclasses/demo.js', // Google Spreadsheets
             'samples/highcharts/css/pattern/demo.js', // styled mode, setOptions
             'samples/highcharts/studies/logistics/demo.js', // overriding
 
@@ -530,7 +471,7 @@ module.exports = function (config) {
                         assertion = `
                             let svg = getSVG(chart);
                             saveSVGSnapshot(svg, '${path}/reference.svg');
-                            
+
                             assert.ok(
                                 svg,
                                 '${path}: SVG and reference.svg file should be generated'
@@ -661,6 +602,10 @@ module.exports = function (config) {
         };
         options.browserDisconnectTimeout = 30 * 60 * 1000;
         options.browserNoActivityTimeout = 30 * 60 * 1000;
+    } else {
+        // Local tests
+        options.browserDisconnectTimeout = 30 * 1000;
+        options.browserNoActivityTimeout = 30 * 1000;
     }
 
     config.set(options);
@@ -691,23 +636,25 @@ function createVisualTestTemplate(argv, path, js, assertion) {
         resets.push('callbacks');
     }
 
-    var useFakeTime = path.startsWith('gantt/');
-    var startOfMockedTime = Date.UTC(2019, 7, 1);
-
     resets = JSON.stringify(resets);
     return `
         QUnit.test('${path}', function (assert) {
             // Apply demo.html
             document.getElementById('demo-html').innerHTML = \`${html}\`;
-            
-            ${useFakeTime ? `var clock = TestUtilities.lolexInstall({ now: ${startOfMockedTime} });` : ''}
-            
+
+            // Override setTimeout and animation and stuff for all visual
+            // samples
+            var originalSetTimeout = setTimeout;
+            var clock = TestUtilities.lolexInstall({
+                now: Date.UTC(2019, 7, 1)
+            });
+
             /*
              * we expect 2 callbacks if --visualcompare argument is supplied,
              * one for the test comparison and one for checking if chart exists.
-             */ 
+             */
             var done = assert.async();
-            
+
             ${scriptBody}
 
             let attempts = 0;
@@ -723,7 +670,7 @@ function createVisualTestTemplate(argv, path, js, assertion) {
                     `}
                     assert.test.resets = ${resets};
                 } else if (attempts < 100) {
-                    setTimeout(waitForChartToLoad, 100);
+                    originalSetTimeout(waitForChartToLoad, 100);
                     attempts++;
                 } else {
                     assert.ok(
@@ -735,8 +682,8 @@ function createVisualTestTemplate(argv, path, js, assertion) {
                 }
             }
             waitForChartToLoad();
-            
-            ${useFakeTime ? 'TestUtilities.lolexUninstall(clock);' : ''}
+
+            TestUtilities.lolexUninstall(clock);
         });
     `;
 }

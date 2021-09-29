@@ -1,60 +1,75 @@
 QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     var chart = Highcharts.chart('container', {
-        series: [{
-            type: "sunburst",
-            data: [{
-                id: '0.0',
-                parent: '',
-                name: 'test'
-            }, {
-                id: '1.1',
-                parent: '0.0',
-                name: 'test1'
-            }, {
-                id: '1.2',
-                parent: '0.0',
-                name: 'test2'
-            }, {
-                parent: '1.1',
-                value: 3,
-                name: 'First'
-            }, {
-                parent: '1.1',
-                value: 2,
-                name: 'SecondSecondSecondSecond'
-            }, {
-                parent: '1.1',
-                value: 1,
-                name: 'ThirdThird'
-            }, {
-                parent: '1.2',
-                value: 3,
-                name: 'First'
-            }, {
-                parent: '1.2',
-                value: 2,
-                name: 'SecondSecondSecondSecond'
-            }, {
-                parent: '1.2',
-                value: 1,
-                name: 'ThirdThird'
-            }],
-            allowDrillToNode: true,
-            dataLabels: {
-                textPath: {
-                    enabled: true,
-                    attributes: {
-                        dy: 5
+        series: [
+            {
+                type: 'sunburst',
+                data: [
+                    {
+                        id: '0.0',
+                        parent: '',
+                        name: 'test'
+                    },
+                    {
+                        id: '1.1',
+                        parent: '0.0',
+                        name: 'test1'
+                    },
+                    {
+                        id: '1.2',
+                        parent: '0.0',
+                        name: 'test2'
+                    },
+                    {
+                        parent: '1.1',
+                        value: 3,
+                        name: 'First'
+                    },
+                    {
+                        parent: '1.1',
+                        value: 2,
+                        name: 'SecondSecondSecondSecond'
+                    },
+                    {
+                        parent: '1.1',
+                        value: 1,
+                        name: 'ThirdThird'
+                    },
+                    {
+                        parent: '1.2',
+                        value: 3,
+                        name: 'First'
+                    },
+                    {
+                        parent: '1.2',
+                        value: 2,
+                        name: 'SecondSecondSecondSecond'
+                    },
+                    {
+                        parent: '1.2',
+                        value: 1,
+                        name: 'ThirdThird'
                     }
-                }
-            },
-            levels: [{
-                level: 1
-            }, {
-                level: 2,
-                colorByPoint: true
-            }]
-        }]
+                ],
+                allowDrillToNode: true,
+                dataLabels: {
+                    textPath: {
+                        enabled: true,
+                        attributes: {
+                            dy: 5
+                        }
+                    }
+                },
+                levels: [
+                    {
+                        level: 1
+                    },
+                    {
+                        level: 2,
+                        colorByPoint: true
+                    }
+                ]
+            }
+        ]
     });
 
     var series = chart.series[0],
@@ -79,12 +94,14 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     );
 
     assert.strictEqual(
-        points[7].dataLabels[0].textPathWrapper.element.textContent.indexOf('…') > 0,
+        points[7].dataLabels[0].textPathWrapper.element.textContent.indexOf(
+            '…'
+        ) > 0,
         true,
         'Ellipsis should be applied with this data label'
     );
     // drilldown
-    var  point = points[2],
+    var point = points[2],
         drillId = point && point.drillId;
     if (Highcharts.isString(drillId)) {
         series.setRootNode(drillId, true, {
@@ -105,7 +122,9 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     );
 
     assert.strictEqual(
-        points[7].dataLabels[0].textPathWrapper.element.textContent.indexOf('…') > 0,
+        points[7].dataLabels[0].textPathWrapper.element.textContent.indexOf(
+            '…'
+        ) > 0,
         false,
         'Ellipsis should not be applied with this data label after drilldown'
     );
@@ -128,7 +147,9 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     );
 
     assert.strictEqual(
-        points[7].dataLabels[0].textPathWrapper.element.textContent.indexOf('…') > 0,
+        points[7].dataLabels[0].textPathWrapper.element.textContent.indexOf(
+            '…'
+        ) > 0,
         true,
         'Ellipsis should be applied with this data label after drillup'
     );

@@ -1,6 +1,5 @@
 QUnit.test('getUnionExtremes', function (assert) {
     var chart = Highcharts.stockChart('container', {
-
         chart: {
             animation: false,
             width: 600
@@ -8,47 +7,51 @@ QUnit.test('getUnionExtremes', function (assert) {
 
         rangeSelector: {
             allButtonsEnabled: true,
-            buttons: [{
-                type: 'month',
-                count: 3,
-                text: '3M',
-                dataGrouping: {
-                    forced: true,
-                    units: [
-                        ['month', [1]]
-                    ]
+            buttons: [
+                {
+                    type: 'month',
+                    count: 3,
+                    text: '3M',
+                    dataGrouping: {
+                        forced: true,
+                        units: [['month', [1]]]
+                    }
+                },
+                {
+                    type: 'month',
+                    count: 6,
+                    text: '6M'
+                },
+                {
+                    type: 'all',
+                    text: 'All'
+                },
+                {
+                    type: 'all',
+                    text: 'ALL G',
+                    dataGrouping: {
+                        forced: true,
+                        units: [['year', null]]
+                    }
                 }
-            }, {
-                type: 'month',
-                count: 6,
-                text: '6M'
-
-            }, {
-                type: 'all',
-                text: 'All'
-            }, {
-                type: 'all',
-                text: 'ALL G',
-                dataGrouping: {
-                    forced: true,
-                    units: [['year', null]]
-                }
-            }],
+            ],
             selected: 4
         },
 
-        series: [{
-            data: (function () {
-                var arr = [];
-                for (var i = 0; i < 1000; i++) {
-                    arr.push(i);
-                }
-                return arr;
-            }()),
-            animation: false,
-            pointStart: Date.UTC(2009, 0, 1),
-            pointInterval: 24 * 36e5
-        }]
+        series: [
+            {
+                data: (function () {
+                    var arr = [];
+                    for (var i = 0; i < 1000; i++) {
+                        arr.push(i);
+                    }
+                    return arr;
+                }()),
+                animation: false,
+                pointStart: Date.UTC(2009, 0, 1),
+                pointInterval: 24 * 36e5
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -63,18 +66,9 @@ QUnit.test('getUnionExtremes', function (assert) {
         'Day grouping'
     );
 
-    assert.strictEqual(
-        chart.xAxis[0].min,
-        Date.UTC(2009, 0, 1),
-        'All'
-    );
+    assert.strictEqual(chart.xAxis[0].min, Date.UTC(2009, 0, 1), 'All');
 
-    assert.strictEqual(
-        chart.xAxis[0].max,
-        Date.UTC(2011, 8, 27),
-        'All'
-    );
-
+    assert.strictEqual(chart.xAxis[0].max, Date.UTC(2011, 8, 27), 'All');
 
     chart.rangeSelector.clickButton(0);
 
@@ -90,18 +84,9 @@ QUnit.test('getUnionExtremes', function (assert) {
         'Month grouping'
     );
 
-    assert.strictEqual(
-        chart.xAxis[0].min,
-        Date.UTC(2011, 5, 27),
-        'All'
-    );
+    assert.strictEqual(chart.xAxis[0].min, Date.UTC(2011, 5, 27), 'All');
 
-    assert.strictEqual(
-        chart.xAxis[0].max,
-        Date.UTC(2011, 8, 27),
-        'All'
-    );
-
+    assert.strictEqual(chart.xAxis[0].max, Date.UTC(2011, 8, 27), 'All');
 
     chart.series[0].update({
         type: 'column',
@@ -146,18 +131,18 @@ QUnit.test('getUnionExtremes', function (assert) {
     chart.update({
         rangeSelector: {
             selected: 0,
-            buttons: [{
-                type: 'month',
-                count: 3,
-                text: '3M',
-                preserveDataGrouping: true,
-                dataGrouping: {
-                    forced: true,
-                    units: [
-                        ['month', [1]]
-                    ]
+            buttons: [
+                {
+                    type: 'month',
+                    count: 3,
+                    text: '3M',
+                    preserveDataGrouping: true,
+                    dataGrouping: {
+                        forced: true,
+                        units: [['month', [1]]]
+                    }
                 }
-            }]
+            ]
         }
     });
 

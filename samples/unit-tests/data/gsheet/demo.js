@@ -1,15 +1,15 @@
 QUnit.skip('data-google-spreadsheetloading', function (assert) {
-
     var done = assert.async(),
         chart;
 
     function chartLoad() {
-
         var options = chart.options;
 
-
         assert.strictEqual(
-            (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
+            (Highcharts.isArray(options.xAxis) ?
+                options.xAxis[0] :
+                options.xAxis
+            ).type,
             'datetime',
             'X axis is date/time'
         );
@@ -66,6 +66,7 @@ QUnit.skip('data-google-spreadsheetloading', function (assert) {
             }
         },
         data: {
+            googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
             googleSpreadsheetKey: '1BNuncjK16FzPUE045dfBUheODVYIJpe1UXtVFLprmgw'
         }
     });

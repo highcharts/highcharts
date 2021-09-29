@@ -12,30 +12,41 @@ QUnit.test('3D columns with scatter series', function (assert) {
                 viewDistance: 5
             }
         },
-        series: [{
-            data: [{
-                x: 1,
-                y: 4
-            }, {
-                x: 2,
-                y: 9
-            }, {
-                x: 3,
-                y: 9
-            }]
-        }, {
-            type: 'scatter',
-            data: [{
-                x: 1,
-                y: 5
-            }, {
-                x: 2,
-                y: 10
-            }, {
-                x: 3,
-                y: 10
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        x: 1,
+                        y: 4
+                    },
+                    {
+                        x: 2,
+                        y: 9
+                    },
+                    {
+                        x: 3,
+                        y: 9
+                    }
+                ]
+            },
+            {
+                type: 'scatter',
+                data: [
+                    {
+                        x: 1,
+                        y: 5
+                    },
+                    {
+                        x: 2,
+                        y: 10
+                    },
+                    {
+                        x: 3,
+                        y: 10
+                    }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -43,5 +54,4 @@ QUnit.test('3D columns with scatter series', function (assert) {
         null,
         'seriesGroup is not translated'
     );
-
 });

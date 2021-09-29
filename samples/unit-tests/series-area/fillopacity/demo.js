@@ -8,9 +8,11 @@ QUnit.test('Fill opacity zero (#4888)', function (assert) {
                 fillOpacity: 0
             }
         },
-        series: [{
-            data: [1, 3, 2, 4]
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4]
+            }
+        ]
     });
 
     assert.strictEqual(

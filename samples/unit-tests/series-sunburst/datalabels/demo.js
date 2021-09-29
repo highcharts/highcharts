@@ -1,43 +1,55 @@
 QUnit.test('Rotation mode', function (assert) {
     var chart = Highcharts.chart('container', {
-        series: [{
-            type: 'sunburst',
-            data: [{
-                id: 'root'
-            }, {
-                parent: 'root',
-                name: 'First',
-                value: 1
-            }, {
-                parent: 'root',
-                name: 'Second',
-                value: 1
-            }, {
-                parent: 'root',
-                name: 'Third',
-                value: 1
-            }, {
-                parent: 'root',
-                name: 'Fourth',
-                value: 1
-            }, {
-                parent: 'root',
-                name: 'Fifth',
-                value: 1
-            }, {
-                parent: 'root',
-                name: 'Sixth',
-                value: 1
-            }, {
-                parent: 'root',
-                name: 'Second',
-                value: 1
-            }, {
-                parent: 'root',
-                name: 'Eight',
-                value: 1
-            }]
-        }]
+        series: [
+            {
+                type: 'sunburst',
+                data: [
+                    {
+                        id: 'root'
+                    },
+                    {
+                        parent: 'root',
+                        name: 'First',
+                        value: 1
+                    },
+                    {
+                        parent: 'root',
+                        name: 'Second',
+                        value: 1
+                    },
+                    {
+                        parent: 'root',
+                        name: 'Third',
+                        value: 1
+                    },
+                    {
+                        parent: 'root',
+                        name: 'Fourth',
+                        value: 1
+                    },
+                    {
+                        parent: 'root',
+                        name: 'Fifth',
+                        value: 1
+                    },
+                    {
+                        parent: 'root',
+                        name: 'Sixth',
+                        value: 1
+                    },
+                    {
+                        parent: 'root',
+                        name: 'Second',
+                        value: 1
+                    },
+                    {
+                        parent: 'root',
+                        name: 'Eight',
+                        value: 1
+                    }
+                ]
+            }
+        ]
     });
 
     assert.deepEqual(
@@ -87,5 +99,4 @@ QUnit.test('Rotation mode', function (assert) {
         [0, 65.5, 57.3, -90, -57.3, -24.5, 8.2, 40.9, 73.6],
         'Different sized points should give different rotation'
     );
-
 });

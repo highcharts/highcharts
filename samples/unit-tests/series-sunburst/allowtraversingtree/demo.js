@@ -1,21 +1,28 @@
 QUnit.test('Drill to node by click events', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{
-                type: 'sunburst',
-                allowTraversingTree: true,
-                data: [{
-                    id: 'level-1'
-                }, {
-                    id: 'level-2',
-                    parent: 'level-1'
-                }, {
-                    id: 'level-3',
-                    parent: 'level-2',
-                    value: 1
-                }, {
-                    value: 1
-                }]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    allowTraversingTree: true,
+                    data: [
+                        {
+                            id: 'level-1'
+                        },
+                        {
+                            id: 'level-2',
+                            parent: 'level-1'
+                        },
+                        {
+                            id: 'level-3',
+                            parent: 'level-2',
+                            value: 1
+                        },
+                        {
+                            value: 1
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0],
         testController = new TestController(chart),
@@ -69,34 +76,36 @@ QUnit.test('Drill to node by click events', function (assert) {
     );
 });
 
-
 QUnit.test('Drill up button (#12804)', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{
-                type: "sunburst",
-                data: [{
-                    id: '0',
-                    name: 'Parent'
-                }, {
-                    id: '1',
-                    parent: '0',
-                    name: '1'
-                }, {
-                    id: '1.1',
-                    parent: '1',
-                    name: '1.1',
-                    value: 5
-                }],
-                allowTraversingTree: true
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [
+                        {
+                            id: '0',
+                            name: 'Parent'
+                        },
+                        {
+                            id: '1',
+                            parent: '0',
+                            name: '1'
+                        },
+                        {
+                            id: '1.1',
+                            parent: '1',
+                            name: '1.1',
+                            value: 5
+                        }
+                    ],
+                    allowTraversingTree: true
+                }
+            ]
         }),
         series = chart.series[0];
 
     series.setRootNode('1');
     series.drillUp();
 
-    assert.ok(
-        !series.drillUpButton,
-        'Drill-up button should not be visible.'
-    );
+    assert.ok(!series.drillUpButton, 'Drill-up button should not be visible.');
 });

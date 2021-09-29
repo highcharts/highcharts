@@ -1,7 +1,6 @@
 // Set up the chart
-var chart = new Highcharts.Chart({
+const chart = Highcharts.chart('container', {
     chart: {
-        renderTo: 'container',
         margin: 100,
         type: 'scatter3d',
         options3d: {
@@ -174,34 +173,44 @@ var chart = new Highcharts.Chart({
     }]
 });
 
-
 // Add mouse events for rotation
-$(chart.container).on('mousedown.hc touchstart.hc', function (eStart) {
+function start(eStart) {
     eStart = chart.pointer.normalize(eStart);
 
-    var posX = eStart.chartX,
+    const posX = eStart.chartX,
         posY = eStart.chartY,
         alpha = chart.options.chart.options3d.alpha,
         beta = chart.options.chart.options3d.beta,
-        newAlpha,
-        newBeta,
         sensitivity = 5; // lower is more sensitive
 
-    $(document).on({
-        'mousemove.hc touchmove.hc': function (e) {
-            // Run beta
-            e = chart.pointer.normalize(e);
-            newBeta = beta + (posX - e.chartX) / sensitivity;
-            chart.options.chart.options3d.beta = newBeta;
+    const move = e => {
+        // Run beta
+        e = chart.pointer.normalize(e);
+        const newBeta = beta + (posX - e.chartX) / sensitivity;
+        chart.options.chart.options3d.beta = newBeta;
 
-            // Run alpha
-            newAlpha = alpha + (e.chartY - posY) / sensitivity;
-            chart.options.chart.options3d.alpha = newAlpha;
+        // Run alpha
+        const newAlpha = alpha + (e.chartY - posY) / sensitivity;
+        chart.options.chart.options3d.alpha = newAlpha;
 
-            chart.redraw(false);
-        },
-        'mouseup touchend': function () {
-            $(document).off('.hc');
-        }
-    });
-});
+        chart.redraw(false);
+    };
+
+    const end = () => {
+        document.removeEventListener('mousemove', move);
+        document.removeEventListener('touchdrag', move);
+
+        document.removeEventListener('mouseup', end);
+        document.removeEventListener('touchend', end);
+    };
+
+    document.addEventListener('mousemove', move);
+    document.addEventListener('touchdrag', move);
+
+    document.addEventListener('mouseup', end);
+    document.addEventListener('touchend', end);
+}
+
+// Add mouse events for rotation
+chart.container.addEventListener('mousedown', start);
+chart.container.addEventListener('touchstart', start);

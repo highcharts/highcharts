@@ -20,20 +20,22 @@ QUnit.test('3D line series', function (assert) {
             max: 10
         },
 
-
-        series: [{
-            data: [
-                [0, 5],
-                [1, 3],
-                [2, 4]
-            ]
-        }, {
-            data: [
-                [0, 6],
-                [1, 4],
-                [2, 5]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    [0, 5],
+                    [1, 3],
+                    [2, 4]
+                ]
+            },
+            {
+                data: [
+                    [0, 6],
+                    [1, 4],
+                    [2, 5]
+                ]
+            }
+        ]
     });
 
     var path = chart.series[0].graph.attr('d');
@@ -46,5 +48,4 @@ QUnit.test('3D line series', function (assert) {
         path,
         'Graph should not change after toggle (#7477)'
     );
-
 });

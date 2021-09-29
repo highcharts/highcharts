@@ -1,16 +1,21 @@
-var chart;
+let chart;
+
+function getScript(url, cb) {
+    const script = document.createElement('script');
+    script.src = url;
+    script.onload = cb;
+    document.head.appendChild(script);
+}
 
 function showMap(mapKey) {
-
-    var supportsLatLon = !!Highcharts.maps[mapKey]['hc-transform'];
+    const supportsLatLon = !!Highcharts.maps[mapKey]['hc-transform'];
 
     // Initiate the chart
     chart = Highcharts.mapChart('container', {
-
         chart: {
             events: {
                 click: function (e) {
-                    var series = this.get($('input[name=series]:checked').val()),
+                    var series = this.get(document.querySelector('input[name=series]:checked').value),
                         x = Math.round(e.xAxis[0].value),
                         y = Math.round(e.yAxis[0].value);
 
@@ -87,7 +92,7 @@ function showMap(mapKey) {
             point: {
                 events: {
                     click: function () {
-                        if ($('input#delete')[0].checked) {
+                        if (document.getElementById('delete').checked) {
                             this.remove();
                         }
                     }
@@ -105,7 +110,7 @@ function showMap(mapKey) {
             point: {
                 events: {
                     click: function () {
-                        if ($('input#delete')[0].checked) {
+                        if (document.getElementById('delete').checked) {
                             this.remove();
                         }
                     }
@@ -116,17 +121,16 @@ function showMap(mapKey) {
 }
 
 (function () {
-
-    var $select,
-        $option,
-        group,
-        name;
-
     showMap('custom/world');
 
-    $('#getconfig').click(function () {
-        var points,
-            html = '';
+    const container = document.getElementById('container');
+
+    document.getElementById('getconfig').addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        let points;
+        let html = '';
 
         function getPointConfigString(point) {
             return point.lat ? '{ lat: ' + point.lat + ', lon: ' + point.lon + ' }' :
@@ -135,14 +139,14 @@ function showMap(mapKey) {
 
         if (chart.get('points').data.length) {
             points = '{\n    type: "mappoint",\n    data: [\n        ' +
-                $.map(chart.get('points').data, getPointConfigString).join(",\n        ") +
+                chart.get('points').data.map(getPointConfigString).join(",\n        ") +
                 '\n    ]\n}';
             html += '<h3>Points configuration</h3><pre>' + points + '</pre>';
         }
 
         if (chart.get('connected-points').data.length) {
             points = '{\n    type: "mappoint",\n    lineWidth: 2,\n    data: [\n        ' +
-                $.map(chart.get('connected-points').data, getPointConfigString).join(",\n        ") +
+                chart.get('connected-points').data.map(getPointConfigString).join(",\n        ") +
                 '\n    ]\n}';
             html += '<h3>Connected points configuration</h3><pre>' + points + '</pre>';
         }
@@ -151,42 +155,37 @@ function showMap(mapKey) {
             html = 'No points added. Click the map to add points.';
         }
 
-        $('#code-inner').html(html);
-        $('#container').css({
-            'margin-top': -500
-        });
-
-
-        return false;
+        document.getElementById('code-inner').innerHTML = html;
+        container.style.marginTop = '-500px';
     });
 
-    $('#close').click(function () {
-        $('#container').css({
-            'margin-top': 0
-        });
+    document.getElementById('close').addEventListener('click', () => {
+        container.style.marginTop = 0;
     });
 
-    $select = $('select#maps');
-    for (group in Highcharts.mapDataIndex) {
-        if (Highcharts.mapDataIndex.hasOwnProperty(group)) {
+    const select = document.getElementById('maps');
+
+    for (const group in Highcharts.mapDataIndex) {
+        if (Object.prototype.hasOwnProperty.call(Highcharts.mapDataIndex, group)) {
             if (group !== 'version') {
-                for (name in Highcharts.mapDataIndex[group]) {
-                    if (Highcharts.mapDataIndex[group].hasOwnProperty(name)) {
-                        $option = $('<option value="' + Highcharts.mapDataIndex[group][name] + '">' + name + '</option>');
-                        if (name === 'World') {
-                            $option.attr('selected', true);
-                        }
-                        $select.append($option);
+                for (const name in Highcharts.mapDataIndex[group]) {
+                    if (Object.prototype.hasOwnProperty.call(Highcharts.mapDataIndex[group], name)) {
+                        const option = document.createElement('option');
+                        option.value = Highcharts.mapDataIndex[group][name];
+                        option.innerText = name;
+                        option.selected = name === 'World';
+
+                        select.append(option);
                     }
                 }
             }
         }
     }
-    $select.change(function () {
-        var mapKey = $select.val().replace(/\.js$/, '');
-        $.getScript('https://code.highcharts.com/mapdata/' + mapKey + '.js', function () {
+
+    select.addEventListener('change', () => {
+        const mapKey = select.value.replace(/\.js$/, '');
+        getScript('https://code.highcharts.com/mapdata/' + mapKey + '.js', () => {
             showMap(mapKey);
         });
     });
-
 }());

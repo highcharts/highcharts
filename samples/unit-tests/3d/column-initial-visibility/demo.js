@@ -12,30 +12,41 @@ QUnit.test('3D columns with initial visibility', function (assert) {
                 viewDistance: 5
             }
         },
-        series: [{
-            visible: false,
-            data: [{
-                x: 1,
-                y: 4
-            }, {
-                x: 2,
-                y: 9
-            }, {
-                x: 3,
-                y: 9
-            }]
-        }, {
-            data: [{
-                x: 1,
-                y: 5
-            }, {
-                x: 2,
-                y: 10
-            }, {
-                x: 3,
-                y: 10
-            }]
-        }]
+        series: [
+            {
+                visible: false,
+                data: [
+                    {
+                        x: 1,
+                        y: 4
+                    },
+                    {
+                        x: 2,
+                        y: 9
+                    },
+                    {
+                        x: 3,
+                        y: 9
+                    }
+                ]
+            },
+            {
+                data: [
+                    {
+                        x: 1,
+                        y: 5
+                    },
+                    {
+                        x: 2,
+                        y: 10
+                    },
+                    {
+                        x: 3,
+                        y: 10
+                    }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -43,5 +54,4 @@ QUnit.test('3D columns with initial visibility', function (assert) {
         'visible',
         'Second series is visible'
     );
-
 });

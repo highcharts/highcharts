@@ -17,19 +17,34 @@ QUnit.test('#3165 - Stack labels in waterfall series', function (assert) {
                 stacking: 'normal'
             }
         },
-        series: [{
-            data: [-10, -30, {
-                isIntermediateSum: true
-            }, -20, {
-                isSum: true
-            }]
-        }, {
-            data: [20, 10, {
-                isIntermediateSum: true
-            }, 10, {
-                isSum: true
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    -10,
+                    -30,
+                    {
+                        isIntermediateSum: true
+                    },
+                    -20,
+                    {
+                        isSum: true
+                    }
+                ]
+            },
+            {
+                data: [
+                    20,
+                    10,
+                    {
+                        isIntermediateSum: true
+                    },
+                    10,
+                    {
+                        isSum: true
+                    }
+                ]
+            }
+        ]
     });
 
     var series = chart.series,
@@ -65,15 +80,16 @@ QUnit.test('#3165 - Stack labels in waterfall series', function (assert) {
     });
 
     assert.close(
-        chart.container.querySelector('.highcharts-stack-labels text')
-            .getBBox().y,
+        chart.container.querySelector('.highcharts-stack-labels text').getBBox()
+            .y,
         0,
         1.1,
         'The y attribute is equal to 0.'
     );
 
     assert.strictEqual(
-        chart.container.querySelector('.highcharts-label.highcharts-stack-labels')
+        chart.container
+            .querySelector('.highcharts-label.highcharts-stack-labels')
             .getAttribute('visibility'),
         'hidden',
         'Stack label is hidden.'

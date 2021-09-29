@@ -3,16 +3,25 @@ QUnit.test('Basic map', function (assert) {
         chart: {
             map: 'custom/europe'
         },
-        series: [{
-            data: [
-                ['no', 1], ['se', 2], ['fi', 3], ['gb', 4], ['fr', 5], ['it', 6]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    ['no', 1],
+                    ['se', 2],
+                    ['fi', 3],
+                    ['gb', 4],
+                    ['fr', 5],
+                    ['it', 6]
+                ]
+            }
+        ]
     });
 
     assert.ok(
         chart.accessibility.components.infoRegions.screenReaderSections.before
-            .element.getAttribute('aria-label'),
+            .element.getAttribute(
+                'aria-label'
+            ),
         'There be screen reader region'
     );
 });
@@ -27,21 +36,32 @@ QUnit.test('Map with series info', function (assert) {
         chart: {
             map: 'custom/europe'
         },
-        series: [{
-            data: [
-                ['no', 1], ['se', 2], ['fi', 3], ['gb', 4], ['fr', 5], ['it', 6]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    ['no', 1],
+                    ['se', 2],
+                    ['fi', 3],
+                    ['gb', 4],
+                    ['fr', 5],
+                    ['it', 6]
+                ]
+            }
+        ]
     });
 
     assert.ok(
-        chart.series[0].points[0].graphic.element.parentNode.getAttribute('aria-label'),
+        chart.series[0].points[0].graphic.element.parentNode.getAttribute(
+            'aria-label'
+        ),
         'There be ARIA on series'
     );
 
     assert.ok(
         chart.accessibility.components.infoRegions.screenReaderSections.before
-            .element.getAttribute('aria-label'),
+            .element.getAttribute(
+                'aria-label'
+            ),
         'There be screen reader region'
     );
 });
@@ -56,11 +76,18 @@ QUnit.test('Map with point info', function (assert) {
         chart: {
             map: 'custom/europe'
         },
-        series: [{
-            data: [
-                ['no', 1], ['se', 2], ['fi', 3], ['gb', 4], ['fr', 5], ['it', 6]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    ['no', 1],
+                    ['se', 2],
+                    ['fi', 3],
+                    ['gb', 4],
+                    ['fr', 5],
+                    ['it', 6]
+                ]
+            }
+        ]
     });
 
     assert.ok(
@@ -82,11 +109,18 @@ QUnit.test('Map navigation', function (assert) {
         mapNavigation: {
             enabled: true
         },
-        series: [{
-            data: [
-                ['no', 1], ['se', 2], ['fi', 3], ['gb', 4], ['fr', 5], ['it', 6]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    ['no', 1],
+                    ['se', 2],
+                    ['fi', 3],
+                    ['gb', 4],
+                    ['fr', 5],
+                    ['it', 6]
+                ]
+            }
+        ]
     });
 
     assert.ok(

@@ -7,7 +7,21 @@ const { getFileSizes } = require('../compareFilesize');
 const log = require('./lib/log');
 const { createPRComment, updatePRComment, fetchPRComments } = require('./lib/github');
 
-const files = argv.files ? argv.files.split(',') : ['highcharts.src.js', 'highstock.src.js', 'highmaps.src.js', 'highcharts-gantt.src.js'];
+const files = argv.files ? argv.files.split(',') : [
+    'highcharts.src.js',
+    'highstock.src.js',
+    'highmaps.src.js',
+    'highcharts-gantt.src.js',
+    'indicators/indicators-all.src.js',
+    'modules/accessibility.src.js',
+    'modules/annotations.src.js',
+    'modules/annotations-advanced.src.js',
+    'modules/boost.src.js',
+    'modules/data.src.js',
+    'modules/exporting.src.js',
+    'modules/heatmap.src.js',
+    'modules/offline-exporting.src.js'
+];
 
 /**
  * @param {string} outputFolder output path
@@ -34,6 +48,7 @@ function makeTable(master, proposed) {
     // eslint-disable-next-line require-jsdoc
     function tableTemplate(body) {
         return '### File size comparison' +
+        '\nSizes for compiled+gzipped (bold) and compiled files.' +
         '\n| | master | candidate | difference |' +
         '\n|-------------|-------------:|-------------:|-------------:|' +
         body;
@@ -56,14 +71,16 @@ function makeTable(master, proposed) {
             }
 
             if (masterSizes[key] && proposedSizes[key]) {
-                const difference = proposedSizes[key].compiled - masterSizes[key].compiled,
-                    gzipDifference = proposedSizes[key].gzip - masterSizes[key].gzip;
+                const difference = proposedSizes[key].compiled -
+                        masterSizes[key].compiled,
+                    gzipDifference = proposedSizes[key].gzip -
+                        masterSizes[key].gzip;
 
                 if (difference) {
-                    tableBody += `\n| ${package} | ${toFixedKiloBytes(masterSizes[key].compiled)} kB | ${toFixedKiloBytes(proposedSizes[key].compiled)} kB | ` +
-                        `${difference} B |`;
-                    tableBody += `\n| ${package}, gzipped | ${toFixedKiloBytes(masterSizes[key].gzip)} kB | ${toFixedKiloBytes(proposedSizes[key].gzip)} kB | ` +
-                        `${gzipDifference} B|`;
+                    tableBody += `\n| ${package}.js | ` +
+                        `**${toFixedKiloBytes(masterSizes[key].gzip)} kB**<br>${toFixedKiloBytes(masterSizes[key].compiled)} kB | ` +
+                        `**${toFixedKiloBytes(proposedSizes[key].gzip)} kB**<br>${toFixedKiloBytes(proposedSizes[key].compiled)} kB | ` +
+                        `**${gzipDifference} B**<br>${difference} B |`;
                 }
             }
         });
@@ -91,16 +108,12 @@ async function writeFileSizes() {
  * @return {void}
  */
 async function writeTable() {
-    try {
-        const { master, proposed } = argv;
-        if (master && proposed) {
-            fs.writeFileSync('./tmp/filesizes/comparison.md', makeTable(master, proposed));
-        } else {
-            log.failure('Please provide all required arguments');
-        }
-    } catch (error) {
-        log.failure(error);
+    const { master, proposed } = argv;
+    if (master && proposed) {
+        // eslint-disable-next-line node/no-unsupported-features/node-builtins
+        return fs.promises.writeFile('./tmp/filesizes/comparison.md', makeTable(master, proposed));
     }
+    throw new Error('Please provide all required arguments');
 }
 
 /**
@@ -140,3 +153,4 @@ comment.flags = {
 gulp.task('write-size-table', writeTable);
 gulp.task('write-file-sizes', writeFileSizes);
 gulp.task('pr-comment-sizes', comment);
+gulp.task('compare-size-and-comment', gulp.series(writeTable, comment));

@@ -1,19 +1,18 @@
-var renderer;
-
-var angle = 0;
-renderer = new Highcharts.Renderer(
-    $('#container')[0],
+const renderer = new Highcharts.Renderer(
+    document.getElementById('container'),
     400,
     300
 );
 
+let angle = 0;
 
-var liveDot = renderer.circle(-10, -10, 3)
+const liveDot = renderer.circle(-10, -10, 3)
     .attr({
         fill: 'green'
     })
     .add();
-var liveLabel = renderer.label('Callout test<br>Click me', 200, 140, 'callout')
+
+const liveLabel = renderer.label('Callout test<br>Click me', 200, 140, 'callout')
     .attr({
         align: 'center',
         stroke: 'green',
@@ -25,8 +24,8 @@ var liveLabel = renderer.label('Callout test<br>Click me', 200, 140, 'callout')
         color: 'white',
         cursor: 'pointer'
     })
-    .on('click', function () {
-        setInterval(function () {
+    .on('click', () => {
+        setInterval(() => {
             var anchorX = Math.cos(angle) * 100 + 200,
                 anchorY = Math.sin(angle) * 100 + 140;
 
@@ -62,7 +61,6 @@ renderer.label('Top left', 20, 20, 'callout')
     })
     .add();
 
-
 renderer.circle(200, 10, 3)
     .attr({
         fill: 'blue'
@@ -79,7 +77,6 @@ renderer.label('Top', 200, 20, 'callout')
         r: 5
     })
     .add();
-
 
 renderer.circle(390, 10, 3)
     .attr({
@@ -98,7 +95,6 @@ renderer.label('Top right', 380, 20, 'callout')
     })
     .add();
 
-
 renderer.circle(390, 150, 3)
     .attr({
         fill: 'blue'
@@ -115,7 +111,6 @@ renderer.label('Right', 380, 140, 'callout')
         r: 5
     })
     .add();
-
 
 renderer.circle(390, 290, 3)
     .attr({
@@ -134,7 +129,6 @@ renderer.label('Bottom right', 380, 260, 'callout')
     })
     .add();
 
-
 renderer.circle(200, 290, 3)
     .attr({
         fill: 'blue'
@@ -152,7 +146,6 @@ renderer.label('Bottom', 200, 260, 'callout')
     })
     .add();
 
-
 renderer.circle(10, 290, 3)
     .attr({
         fill: 'blue'
@@ -168,7 +161,6 @@ renderer.label('Bottom left', 20, 260, 'callout')
         r: 10
     })
     .add();
-
 
 renderer.circle(10, 150, 3)
     .attr({

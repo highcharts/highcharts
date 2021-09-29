@@ -1,92 +1,20 @@
 QUnit.test('Zones on macd with no data.', function (assert) {
-
     Highcharts.stockChart('container', {
-        yAxis: [{
-            height: '50%'
-        }, {
-            top: '60%',
-            height: '40%'
-        }],
-        series: [{
-            id: 'main',
-            data: []
-        }, {
-            yAxis: 1,
-            type: 'macd',
-            linkedTo: 'main',
-            params: {
-                shortPeriod: 12,
-                longPeriod: 26,
-                signalPeriod: 9,
-                period: 26
-            },
-            macdLine: {
-                zones: [{
-                    value: 0,
-                    color: 'green'
-                }, {
-                    color: 'red'
-                }]
-            }
-        }]
-    });
-
-    // We expect no JS error when applying zones on macd and chart has no data.
-    assert.expect(0);
-
-});
-
-QUnit.test('Test algorithm on data updates.', function (assert) {
-
-    var chart = Highcharts.stockChart('container', {
-            yAxis: [{
+        yAxis: [
+            {
                 height: '50%'
-            }, {
+            },
+            {
                 top: '60%',
                 height: '40%'
-            }],
-            series: [{
+            }
+        ],
+        series: [
+            {
                 id: 'main',
-                data: [
-                    459.99,
-                    448.85,
-                    446.06,
-                    450.81,
-                    442.8,
-                    448.97,
-                    444.57,
-                    441.4,
-                    430.47,
-                    420.05,
-                    431.14,
-                    425.66,
-                    430.58,
-                    431.72,
-                    437.87,
-                    428.43,
-                    428.35,
-                    432.5,
-                    443.66,
-                    455.72,
-                    454.49,
-                    452.08,
-                    452.73,
-                    461.91,
-                    463.58,
-                    461.14,
-                    452.08,
-                    442.66,
-                    428.91,
-                    429.79,
-                    431.99,
-                    427.72,
-                    423.2,
-                    426.21,
-                    426.98,
-                    435.69,
-                    434.338
-                ]
-            }, {
+                data: []
+            },
+            {
                 yAxis: 1,
                 type: 'macd',
                 linkedTo: 'main',
@@ -95,15 +23,100 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
                     longPeriod: 26,
                     signalPeriod: 9,
                     period: 26
+                },
+                macdLine: {
+                    zones: [
+                        {
+                            value: 0,
+                            color: 'green'
+                        },
+                        {
+                            color: 'red'
+                        }
+                    ]
                 }
-            }]
+            }
+        ]
+    });
+
+    // We expect no JS error when applying zones on macd and chart has no data.
+    assert.expect(0);
+});
+
+QUnit.test('Test algorithm on data updates.', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+            yAxis: [
+                {
+                    height: '50%'
+                },
+                {
+                    top: '60%',
+                    height: '40%'
+                }
+            ],
+            series: [
+                {
+                    id: 'main',
+                    data: [
+                        459.99,
+                        448.85,
+                        446.06,
+                        450.81,
+                        442.8,
+                        448.97,
+                        444.57,
+                        441.4,
+                        430.47,
+                        420.05,
+                        431.14,
+                        425.66,
+                        430.58,
+                        431.72,
+                        437.87,
+                        428.43,
+                        428.35,
+                        432.5,
+                        443.66,
+                        455.72,
+                        454.49,
+                        452.08,
+                        452.73,
+                        461.91,
+                        463.58,
+                        461.14,
+                        452.08,
+                        442.66,
+                        428.91,
+                        429.79,
+                        431.99,
+                        427.72,
+                        423.2,
+                        426.21,
+                        426.98,
+                        435.69,
+                        434.338
+                    ]
+                },
+                {
+                    yAxis: 1,
+                    type: 'macd',
+                    linkedTo: 'main',
+                    params: {
+                        shortPeriod: 12,
+                        longPeriod: 26,
+                        signalPeriod: 9,
+                        period: 26
+                    }
+                }
+            ]
         }),
         lastPoint;
 
-
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length + chart.series[1].options.params.period - 1,
+        chart.series[1].points.length +
+            chart.series[1].options.params.period -
+            1,
         'Initial number of MACD points is correct'
     );
 
@@ -130,7 +143,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length + chart.series[1].options.params.period - 1,
+        chart.series[1].points.length +
+            chart.series[1].options.params.period -
+            1,
         'After addPoint number of MACD points is correct'
     );
 
@@ -172,126 +187,48 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'Long and short SMA / EMA are correct.'
     );
 
-    chart.series[0].setData([
-        [1435017600000, 0, 0, 0, 0],
-        [1435104000000, 0, 0, 0, 0],
-        [1435190400000, 0, 0, 0, 0],
-        [1435276800000, 0, 0, 0, 0],
-        [1435363200000, 0, 0, 0, 0],
-        [1435449600000, 0, 0, 0, 0],
-        [1435536000000, 0, 0, 0, 0],
-        [1435622400000, 0, 0, 0, 0],
-        [1435708800000, 0, 0, 0, 0],
-        [1435795200000, 0, 0, 0, 0],
-        [1435881600000, 0, 0, 0, 0],
-        [1435968000000, 0, 0, 0, 0],
-        [1436054400000, 0, 0, 0, 0],
-        [1436140800000, 0, 0, 0, 0],
-        [1436227200000, 0, 0, 0, 0],
-        [1436313600000, 0, 0, 0, 0],
-        [1436400000000, 0, 0, 0, 0],
-        [1436486400000, 0, 0, 0, 0],
-        [1436572800000, 0, 0, 0, 0],
-        [1436659200000, 0, 0, 0, 0],
-        [1436745600000, 0, 0, 0, 0],
-        [1436832000000, 0, 0, 0, 0],
-        [1436918400000, 0, 0, 0, 0],
-        [1437004800000, 0, 0, 0, 0],
-        [1437091200000, 0, 0, 0, 0],
-        [1437177600000, 0, 0, 0, 0],
-        [1437264000000, 0, 0, 0, 0],
-        [1437350400000, 0, 0, 0, 0],
-        [1437436800000, 0, 0, 0, 0],
-        [1437523200000, 0, 0, 0, 0],
-        [1437609600000, 0, 0, 0, 0],
-        [1437696000000, 0, 0, 0, 0],
-        [1437782400000, 0, 0, 0, 0],
-        [1437868800000, 0, 0, 0, 0],
-        [1437955200000, 0, 0, 0, 0],
-        [1438041600000, 0, 0, 0, 0],
-        [1438128000000, 0, 0, 0, 0],
-        [1438214400000, 0, 0, 0, 0],
-        [1438300800000, 0, 0, 0, 0],
-        [1438387200000, 0, 0, 0, 0],
-        [1438473600000, 0, 0, 0, 0],
-        [1438560000000, 0, 0, 0, 0],
-        [1438646400000, 0, 0, 0, 0],
-        [1438732800000, 0, 0, 0, 0],
-        [1438819200000, 0, 0, 0, 0],
-        [1491955200000, 0.0403, 0.0355, 0.03569, 0.0381],
-        [1492041600000, 0.04398, 0.03794, 0.0381, 0.04253],
-        [1492128000000, 0.04266, 0.03898, 0.04253, 0.04012]
-    ]);
-    /*
-    assert.deepEqual(
-        chart.series[1].yData,
+    chart.series[0].setData(
         [
-            [0, null, 0],
-            [0, null, 0],
-            [0, null, 0],
-            [0, null, 0],
-            [0, null, 0],
-            [0, null, 0],
-            [0, null, 0],
-            [0, null, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0.002571851851851852, 0.0006429629629629631, 0.0032148148148148153],
-            [0.004278005275931203, 0.001712464281945764, 0.005990469557876967],
-            [0.005023277556609541, 0.0029682836710981497, 0.00799156122770769]
+            459.99,
+            448.85,
+            446.06,
+            450.81,
+            442.8,
+            448.97,
+            444.57,
+            441.4,
+            430.47,
+            420.05,
+            431.14,
+            425.66,
+            430.58,
+            431.72,
+            437.87,
+            428.43,
+            428.35,
+            432.5,
+            443.66,
+            455.72,
+            454.49,
+            452.08,
+            452.73,
+            461.91,
+            463.58,
+            461.14,
+            452.08,
+            442.66,
+            428.91,
+            429.79,
+            431.99,
+            427.72,
+            423.2,
+            426.21,
+            426.98,
+            435.69,
+            434.33
         ],
-        'Correct values'
+        false
     );
-*/
-    chart.series[0].setData([
-        459.99,
-        448.85,
-        446.06,
-        450.81,
-        442.8,
-        448.97,
-        444.57,
-        441.4,
-        430.47,
-        420.05,
-        431.14,
-        425.66,
-        430.58,
-        431.72,
-        437.87,
-        428.43,
-        428.35,
-        432.5,
-        443.66,
-        455.72,
-        454.49,
-        452.08,
-        452.73,
-        461.91,
-        463.58,
-        461.14,
-        452.08,
-        442.66,
-        428.91,
-        429.79,
-        431.99,
-        427.72,
-        423.2,
-        426.21,
-        426.98,
-        435.69,
-        434.33
-    ], false);
 
     chart.series[1].update({
         signalLine: {
@@ -313,20 +250,25 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
             period: 24
         }
     });
+    chart.xAxis[0].setExtremes();
 
     assert.deepEqual(
         chart.series[1].yData,
         [
-            [0, null, 2.009761429293235], [0, null, 1.89936238155002], [0, null, 3.495107645510018],
-            [0, null, 5.685067060259996], [0, null, 7.728053717040041], [0, null, 8.87498471007001],
-            [2.7551900116424, 5.40792115922762, 8.163111170870025],
-            [-0.29114458390317, 5.3108729645932, 5.019728380690026],
-            [-1.7051015772624, 4.7425057721724, 3.037404194909982],
-            [-1.8372917917743, 4.1300751749143, 2.2927833831400335],
-            [-2.4903351390182, 3.2999634619082, 0.8096283228899779],
-            [-3.3599830199836, 2.1799691219137, -1.1800138980699444],
-            [-3.7837396762978, 0.91872256314778, -2.8650171131499746],
-            [-3.6746291128633, -0.30615380780666, -3.9807829206699807]
+            [0, null, 6.660611645503252], // [histogram, signal, macd]
+            [0, null, 7.677330740260004],
+            [0, null, 8.082536302640051],
+            [0, null, 7.347508688820028],
+            [0, null, 5.728233231320019],
+            [0, null, 3.026040676299999],
+            [-4.6137988919462, 5.651410398816195, 1.0376115068700074],
+            [-4.4262272164997, 4.1760013266497, -0.25022588984995764],
+            [-4.3700561511823, 2.7193159429223, -1.6507402082600038],
+            [-4.3953516672392, 1.2541987205092, -3.14115294672996],
+            [-3.8737978188144, -0.037067219095604, -3.910865037910014],
+            [-3.2384218442658, -1.1165411671842, -4.354963011449968],
+            [-1.9668939154094, -1.7721724723206, -3.739066387729963],
+            [-1.1905335274795, -2.1690169814805, -3.3595505089600124]
         ],
         'Correct values'
     );
@@ -348,17 +290,21 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.deepEqual(
         chart.series[1].yData,
         [
-            [0, null, 2.009761429293235], [0, null, 1.89936238155002], [0, null, 3.495107645510018],
-            [0, null, 5.685067060259996], [0, null, 8.828053717040007], [0, null, 9.816584710070003],
-            [0.91233744021383, 5.441045730656185, 6.353383170870018],
-            [-0.99759124156209, 5.1085153168021, 4.110924075240007],
-            [-1.4652281468866, 4.6201059345066, 3.1548777876199665],
-            [-2.3400513629525, 3.8400888135225, 1.5000374505700051],
-            [-3.3517260665044, 2.7228467913544, -0.6288792751499841],
-            [-3.8621861274858, 1.4354514155258, -2.426734711960023],
-            [-3.8019554226344, 0.16813294131435, -3.63382248132001]
+            [0, null, 6.660611645503252], // [histogram, signal, macd]
+            [0, null, 7.677330740260004],
+            [0, null, 8.082536302640051],
+            [0, null, 7.347508688820028],
+            [0, null, 4.3282332313199845],
+            [0, null, 2.0821861308500047],
+            [-4.6667104952448, 5.251949374024759, 0.5852388787799896],
+            [-4.6775847896886, 3.6927544441286, -0.9848303455599989],
+            [-4.7289840687815, 2.1164264212015, -2.6125576475799903],
+            [-4.2073089268511, 0.71399011225112, -3.493318814600002],
+            [-3.5558024760008, -0.47127737974916, -4.027079855750003],
+            [-2.2591251736131, -1.2243191042869, -3.4834442779000483],
+            [-1.4532902209598, -1.7087491779402, -3.162039398899992]
         ],
-        'Correct values after point.remove()'
+        'Values should be recalculated after point.remove()'
     );
 
     chart.series[0].update({
@@ -371,7 +317,6 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         chart.series[1].currentDataGrouping !== undefined,
         'DataGrouping applied to MACD series too (#7823).'
     );
-
 
     Highcharts.seriesTypes.macd.prototype.getValues(
         {
@@ -389,12 +334,66 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     Highcharts.seriesTypes.macd.prototype.getValues(
         {
             xData: [
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
             ],
             yData: [
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
             ]
         },
         Highcharts.getOptions().plotOptions.macd.params
@@ -405,11 +404,137 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'No error when periods are greater than data length (#8847).'
     );
 
-
     // Last test: destroy MACD:
     chart.series[1].remove();
-    assert.ok(
-        true,
-        'No error when removing MACD without lines (#8848).'
+    assert.ok(true, 'No error when removing MACD without lines (#8848).');
+});
+
+QUnit.test('After changing the MACD params all points should calculate properly, #14197.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+            yAxis: [{
+                height: '60%'
+            }, {
+                top: '60%',
+                height: '20%'
+            }, {
+                top: '80%',
+                height: '20%'
+            }],
+            series: [
+                {
+                    id: 'main',
+                    data: [
+                        459.99,
+                        448.85,
+                        446.06,
+                        450.81,
+                        442.8,
+                        448.97,
+                        444.57,
+                        441.4,
+                        430.47,
+                        420.05,
+                        431.14,
+                        425.66,
+                        430.58,
+                        431.72,
+                        437.87,
+                        428.43,
+                        428.35,
+                        432.5,
+                        443.66,
+                        455.72,
+                        454.49,
+                        452.08,
+                        452.73,
+                        461.91,
+                        463.58,
+                        461.14,
+                        452.08,
+                        442.66,
+                        428.91,
+                        429.79,
+                        431.99,
+                        427.72,
+                        423.2,
+                        426.21,
+                        426.98,
+                        435.69,
+                        434.338
+                    ]
+                }, {
+                    yAxis: 1,
+                    type: 'macd',
+                    linkedTo: 'main',
+                    params: {
+                        shortPeriod: 10,
+                        longPeriod: 20
+                    }
+                }, {
+                    yAxis: 2,
+                    type: 'macd',
+                    linkedTo: 'main',
+                    params: {
+                        shortPeriod: 13,
+                        longPeriod: 28
+                    }
+                }
+            ]
+        }),
+        seriesPoints = chart.series[0].points,
+        firstMACD = chart.series[1].points,
+        secondMACCD = chart.series[2].points;
+
+    assert.strictEqual(
+        seriesPoints[seriesPoints.length - 1].x,
+        firstMACD[firstMACD.length - 1].x,
+        `After changing the short period to 10, the x value of the last MACD
+        point should be the same as the main series(ending at the same point).`
+    );
+    const firstMACDstartPoint = chart.series[1].options.params.longPeriod;
+
+    assert.strictEqual(
+        firstMACDstartPoint - 1, // subtracting 1 because series starts from 0
+        firstMACD[0].x,
+        `Change of the short period should not influence on the beginning of
+        the MACD series which should start from the long period value.`
+    );
+
+    assert.strictEqual(
+        seriesPoints[seriesPoints.length - 1].x,
+        secondMACCD[secondMACCD.length - 1].x,
+        `After changing the short period to 13, the x value of the last MACD
+        point should be the same as the main series(ending at the same point).`
+    );
+    const secondMACDstartPoint = chart.series[2].options.params.longPeriod;
+
+    assert.strictEqual(
+        secondMACDstartPoint - 1, // subtracting 1 because series starts from 0
+        secondMACCD[0].x,
+        `Change of the short period should not influence on the beginning of
+        the MACD series which should start from the long period value.`
+    );
+});
+
+QUnit.test('#14977: Index param', assert => {
+    const xData = [...Array(50).keys()];
+    const yData = xData.map(() => {
+        const y = Math.random();
+        return [y, y * 2, y, y * 2];
+    });
+
+    const getValues = index =>
+        Highcharts.seriesTypes.macd.prototype.getValues({
+            xData,
+            yData
+        }, Highcharts.merge(
+            Highcharts.getOptions().plotOptions.macd.params,
+            { index }
+        )).values;
+
+    assert.notStrictEqual(
+        getValues(0)[0][3],
+        getValues(1)[0][3],
+        'getValues should return different values when passed different index param'
     );
 });

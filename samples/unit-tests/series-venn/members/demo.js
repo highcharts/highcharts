@@ -129,12 +129,20 @@ QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
         'should return a distance of 5.0003489085283945 when r1=3, r2=4 and overlap=6.64.'
     );
     assert.strictEqual(
-        getDistanceBetweenCirclesByOverlap(1.1283791670955126, 0.5641895835477563, 1),
+        getDistanceBetweenCirclesByOverlap(
+            1.1283791670955126,
+            0.5641895835477563,
+            1
+        ),
         0,
         'should return a distance of 0 when r1=1.1283791670955126, r2=0.5641895835477563 and overlap=1. The circles completely overlap.'
     );
     assert.strictEqual(
-        getDistanceBetweenCirclesByOverlap(25.2313252202016, 25.2313252202016, 1000),
+        getDistanceBetweenCirclesByOverlap(
+            25.2313252202016,
+            25.2313252202016,
+            1000
+        ),
         20.385535837223518,
         'should return a distance of 20.385535837223518 when r1=r2=25.2313252202016 and overlap=1000.'
     );
@@ -161,71 +169,94 @@ QUnit.test('layoutGreedyVenn', assert => {
     const { layoutGreedyVenn } = vennPrototype.utils;
 
     // Data from #9844
-    const relations1 = [{
-        id: "A",
-        sets: ["A"],
-        value: 8.707145671877052
-    }, {
-        id: "C",
-        sets: ["C"],
-        value: 3.269735977932484
-    }, {
-        id: "B",
-        sets: ["B"],
-        value: 3.0135951661631424
-    }, {
-        id: "A_C",
-        sets: ["A", "C"],
-        value: 2.798830947064232
-    }, {
-        id: "A_B",
-        sets: ["A", "B"],
-        value: 2.078352817548929
-    }, {
-        id: "B_C",
-        sets: ["B", "C"],
-        value: 0.7966636017338763
-    }, {
-        id: "A_B_C",
-        sets: ["A", "B", "C"],
-        value: 0.6833705503743597
-    }];
+    const relations1 = [
+        {
+            id: 'A',
+            sets: ['A'],
+            value: 8.707145671877052
+        },
+        {
+            id: 'C',
+            sets: ['C'],
+            value: 3.269735977932484
+        },
+        {
+            id: 'B',
+            sets: ['B'],
+            value: 3.0135951661631424
+        },
+        {
+            id: 'A_C',
+            sets: ['A', 'C'],
+            value: 2.798830947064232
+        },
+        {
+            id: 'A_B',
+            sets: ['A', 'B'],
+            value: 2.078352817548929
+        },
+        {
+            id: 'B_C',
+            sets: ['B', 'C'],
+            value: 0.7966636017338763
+        },
+        {
+            id: 'A_B_C',
+            sets: ['A', 'B', 'C'],
+            value: 0.6833705503743597
+        }
+    ];
     assert.deepEqual(
         layoutGreedyVenn(relations1),
         {
             A: { r: 1.66480345620763, x: 0, y: 0 },
-            B: { r: 0.9794167317058717, x: 0.50013676238039, y: 1.16865602691445 },
+            B: {
+                r: 0.9794167317058717,
+                x: 0.50013676238039,
+                y: 1.16865602691445
+            },
             C: { r: 1.0201908091071663, x: 0.9751416859635283, y: 0 }
         },
         'should return expected positions and sizes for the sets in relations1.'
     );
 
     // Data from #10006
-    const relations2 = [{
-        sets: ['A'],
-        value: 1000
-    }, {
-        sets: ['B'],
-        value: 600
-    }, {
-        sets: ['C'],
-        value: 50
-    }, {
-        sets: ['A', 'B'],
-        value: 100
-    }, {
-        sets: ['A', 'C'],
-        value: 5
-    }, {
-        sets: ['B', 'C'],
-        value: 10
-    }];
+    const relations2 = [
+        {
+            sets: ['A'],
+            value: 1000
+        },
+        {
+            sets: ['B'],
+            value: 600
+        },
+        {
+            sets: ['C'],
+            value: 50
+        },
+        {
+            sets: ['A', 'B'],
+            value: 100
+        },
+        {
+            sets: ['A', 'C'],
+            value: 5
+        },
+        {
+            sets: ['B', 'C'],
+            value: 10
+        }
+    ];
     assert.deepEqual(
         layoutGreedyVenn(relations2),
         {
             A: { r: 17.841241161527712, x: 24.351995419742487, y: 0 },
             B: { r: 13.81976597885342, x: 0, y: 0 },
-            C: { r: 3.989422804014327, x: 8.56494669770081, y: 13.08868212641161 }
+            C: {
+                r: 3.989422804014327,
+                x: 8.56494669770081,
+                y: 13.08868212641161
+            }
         },
         'should return expected positions and sizes for the sets in relations2.'
     );
@@ -241,55 +272,53 @@ QUnit.test('loss', function (assert) {
         };
 
     assert.strictEqual(
-        loss(
-            map,
-            [{
+        loss(map, [
+            {
                 sets: ['A', 'B'],
                 value: 2
-            }]
-        ),
+            }
+        ]),
         4,
         'should return a loss of 4, since overlap between A and B equals 0.'
     );
 
     assert.strictEqual(
-        loss(
-            map,
-            [{
+        loss(map, [
+            {
                 sets: ['A', 'C'],
                 value: 2
-            }]
-        ),
+            }
+        ]),
         0.00009108128,
         'should return a loss of 0, since overlap between A and C equals 2.'
     );
 
     assert.strictEqual(
-        loss(
-            map,
-            [{
+        loss(map, [
+            {
                 sets: ['B', 'C'],
                 value: 24
-            }]
-        ),
+            }
+        ]),
         1.58641695078,
         'should return a loss of 1.5876, since overlap between B and C equals 22.74.'
     );
 
     assert.strictEqual(
-        loss(
-            map,
-            [{
+        loss(map, [
+            {
                 sets: ['A', 'B'],
                 value: 2
-            }, {
+            },
+            {
                 sets: ['A', 'C'],
                 value: 2
-            }, {
+            },
+            {
                 sets: ['B', 'C'],
                 value: 24
-            }]
-        ),
+            }
+        ]),
         5.586508032059999,
         'should return a total loss of 5.5876 between A∩B, A∩C, B∩C.'
     );
@@ -316,134 +345,174 @@ QUnit.test('processVennData', function (assert) {
     );
 
     // filter out sets that has a value < 1.
-    data =  [{
-        sets: ['A'],
-        value: undefined
-    }, {
-        sets: ['B'],
-        value: '3'
-    }, {
-        sets: ['C'],
-        value: 2
-    }];
-    assert.deepEqual(
-        processVennData(data),
-        [{
+    data = [
+        {
+            sets: ['A'],
+            value: undefined
+        },
+        {
+            sets: ['B'],
+            value: '3'
+        },
+        {
             sets: ['C'],
             value: 2
-        }],
+        }
+    ];
+    assert.deepEqual(
+        processVennData(data),
+        [
+            {
+                sets: ['C'],
+                value: 2
+            }
+        ],
         'should filter out sets that has a value < 1.'
     );
 
     // filter out relations that includes sets that has a value < 1.
-    data =  [{
-        sets: ['A'],
-        value: 0
-    }, {
-        sets: ['B'],
-        value: 2
-    }, {
-        sets: ['A', 'B'],
-        value: 2
-    }];
-    assert.deepEqual(
-        processVennData(data),
-        [{
+    data = [
+        {
+            sets: ['A'],
+            value: 0
+        },
+        {
             sets: ['B'],
             value: 2
-        }],
+        },
+        {
+            sets: ['A', 'B'],
+            value: 2
+        }
+    ];
+    assert.deepEqual(
+        processVennData(data),
+        [
+            {
+                sets: ['B'],
+                value: 2
+            }
+        ],
         'should filter out relations that includes sets that has a value < 1.'
     );
 
     // should filter out duplicate relations.
-    data = [{
-        sets: ['A'],
-        value: 1
-    }, {
-        sets: ['A'],
-        value: 2
-    }, {
-        sets: ['B'],
-        value: 2
-    }, {
-        sets: ['A', 'B'],
-        value: 1
-    }, {
-        sets: ['B', 'A'],
-        value: 2
-    }];
-    assert.deepEqual(
-        processVennData(data),
-        [{
+    data = [
+        {
+            sets: ['A'],
+            value: 1
+        },
+        {
             sets: ['A'],
             value: 2
-        }, {
+        },
+        {
             sets: ['B'],
             value: 2
-        }, {
+        },
+        {
             sets: ['A', 'B'],
+            value: 1
+        },
+        {
+            sets: ['B', 'A'],
             value: 2
-        }],
+        }
+    ];
+    assert.deepEqual(
+        processVennData(data),
+        [
+            {
+                sets: ['A'],
+                value: 2
+            },
+            {
+                sets: ['B'],
+                value: 2
+            },
+            {
+                sets: ['A', 'B'],
+                value: 2
+            }
+        ],
         'should remove duplicate sets and just update existing values for the set.'
     );
 
     // add missing relations between sets as value = 0.
-    data = [{
-        sets: ['A'],
-        value: 1
-    }, {
-        sets: ['B'],
-        value: 1
-    }, {
-        sets: ['C'],
-        value: 1
-    }];
-    assert.deepEqual(
-        processVennData(data),
-        [{
+    data = [
+        {
             sets: ['A'],
             value: 1
-        }, {
+        },
+        {
             sets: ['B'],
             value: 1
-        }, {
+        },
+        {
             sets: ['C'],
             value: 1
-        }, {
-            sets: ['A', 'B'],
-            value: 0
-        }, {
-            sets: ['A', 'C'],
-            value: 0
-        }, {
-            sets: ['B', 'C'],
-            value: 0
-        }],
+        }
+    ];
+    assert.deepEqual(
+        processVennData(data),
+        [
+            {
+                sets: ['A'],
+                value: 1
+            },
+            {
+                sets: ['B'],
+                value: 1
+            },
+            {
+                sets: ['C'],
+                value: 1
+            },
+            {
+                sets: ['A', 'B'],
+                value: 0
+            },
+            {
+                sets: ['A', 'C'],
+                value: 0
+            },
+            {
+                sets: ['B', 'C'],
+                value: 0
+            }
+        ],
         'should add missing relations between sets as value = 0.'
     );
 
     // remove relations with duplicate sets
-    data = [{
-        sets: ['A'],
-        value: 1
-    }, {
-        sets: ['A', 'A'],
-        value: 1
-    }];
-    assert.deepEqual(
-        processVennData(data),
-        [{
+    data = [
+        {
             sets: ['A'],
             value: 1
-        }],
+        },
+        {
+            sets: ['A', 'A'],
+            value: 1
+        }
+    ];
+    assert.deepEqual(
+        processVennData(data),
+        [
+            {
+                sets: ['A'],
+                value: 1
+            }
+        ],
         'should remove relations that has duplicate values in sets.'
     );
 
     // remove relations with invalid values in sets
-    data = [{
-        sets: [2],
-        value: 1
-    }];
+    data = [
+        {
+            sets: [2],
+            value: 1
+        }
+    ];
     assert.deepEqual(
         processVennData(data),
         [],
@@ -476,10 +545,9 @@ QUnit.test('sortByTotalOverlap', function (assert) {
 
 QUnit.module('nelder-mead', () => {
     const vennUtils = Highcharts.seriesTypes.venn.prototype.utils;
-    const NelderMeadModule = vennUtils.nelderMead;
 
     QUnit.test('getCentroid', assert => {
-        const { getCentroid } = NelderMeadModule;
+        const { getCentroid } = vennUtils;
         assert.deepEqual(
             getCentroid([
                 [184.16021264966827, 99.75],
@@ -492,18 +560,13 @@ QUnit.module('nelder-mead', () => {
     });
 
     QUnit.test('nelderMead', assert => {
-        const { nelderMead } = NelderMeadModule;
-        const { getMarginFromCircles } = vennUtils;
+        const { getMarginFromCircles, nelderMead } = vennUtils;
         const internal = [{ r: 160, x: 184.16021264966827, y: 175 }];
         const external = [{ r: 160, x: 415.8397873503318, y: 175 }];
-        const fn = ([x, y]) => -(
-            getMarginFromCircles({ x, y }, internal, external)
-        );
+        const fn = ([x, y]) =>
+            -getMarginFromCircles({ x, y }, internal, external);
         assert.deepEqual(
-            nelderMead(
-                fn,
-                [184.16021264966827, 95]
-            ),
+            nelderMead(fn, [184.16021264966827, 95]),
             [140.0000000000064, 174.99997672224276],
             'Should optimize position into the one with the best margin.'
         );
@@ -598,8 +661,26 @@ QUnit.module('geometry-circles', () => {
             ]).d,
             [
                 ['M', 3.73409987366425, 1.89092145501881],
-                ['A', 2.763953195770684, 2.763953195770684, 0, 0, 1, 3.73409987366425, -1.89092145501881],
-                ['A', 1.9544100476116797, 1.9544100476116797, 0, 0, 1, 3.73409987366425, 1.89092145501881]
+                [
+                    'A',
+                    2.763953195770684,
+                    2.763953195770684,
+                    0,
+                    0,
+                    1,
+                    3.73409987366425,
+                    -1.89092145501881
+                ],
+                [
+                    'A',
+                    1.9544100476116797,
+                    1.9544100476116797,
+                    0,
+                    0,
+                    1,
+                    3.73409987366425,
+                    1.89092145501881
+                ]
             ],
             'should return a path representing the area of overlap between the two circles.'
         );
@@ -625,7 +706,10 @@ QUnit.module('geometry-circles', () => {
 
         assert.deepEqual(
             getCircleCircleIntersection(a, c),
-            [{ x: 2.5, y: 1.6583123951777 }, { x: 2.5, y: -1.6583123951777 }],
+            [
+                { x: 2.5, y: 1.6583123951777 },
+                { x: 2.5, y: -1.6583123951777 }
+            ],
             'should return (2.5, 1.6583123951777) and (2.5, -1.6583123951777) when c1(0, 0, 3) and c2(5, 0, 3).'
         );
     });
@@ -711,7 +795,11 @@ QUnit.module('geometry-circles', () => {
         );
 
         assert.strictEqual(
-            getOverlapBetweenCircles(2.5231325220201604, 3.0901936161855166, 0.7011044346618891),
+            getOverlapBetweenCircles(
+                2.5231325220201604,
+                3.0901936161855166,
+                0.7011044346618891
+            ),
             19.68884261304518,
             'should return 19.68884261304518 when r1=2.5231325220201604, r2=3.0901936161855166 and d=0.7011044346618891.'
         );
@@ -731,7 +819,10 @@ QUnit.module('geometry-circles', () => {
 
     QUnit.test('isPointInsideAllCircles', function (assert) {
         const { isPointInsideAllCircles } = geometryCircles;
-        const circles = [{ x: 0, y: 0, r: 3 }, { x: 4, y: 0, r: 3 }];
+        const circles = [
+            { x: 0, y: 0, r: 3 },
+            { x: 4, y: 0, r: 3 }
+        ];
 
         assert.strictEqual(
             isPointInsideAllCircles({ x: 2, y: 0 }, circles),

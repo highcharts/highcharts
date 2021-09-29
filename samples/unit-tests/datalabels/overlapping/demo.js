@@ -1,52 +1,65 @@
-QUnit.test(
-    'Overlapping dataLabels should be hidden',
-    function (assert) {
-        var chart = Highcharts.chart('container', {
-                plotOptions: {
-                    series: {
-                        dataLabels: {
-                            enabled: true,
-                            rotation: 270
-                        }
+QUnit.test('Overlapping dataLabels should be hidden', function (assert) {
+    var chart = Highcharts.chart('container', {
+            plotOptions: {
+                series: {
+                    dataLabels: {
+                        enabled: true,
+                        rotation: 270
                     }
-                },
-                series: [{
+                }
+            },
+            series: [
+                {
                     data: [
                         [0, 1],
                         [1, 1],
                         [2, 0]
                     ]
-                }, {
+                },
+                {
                     data: [
                         [0, 1],
                         [1, 2],
                         [2, 0.5]
                     ]
-                }]
-            }),
-            series = chart.series;
+                }
+            ]
+        }),
+        series = chart.series;
 
-        assert.strictEqual(
-            (
-                chart.series[0].points[0].dataLabel.opacity === 1 &&
-                series[0].points[0].dataLabel.element
-                    .getAttribute('visibility') !== 'hidden'
-            ),
-            true,
-            'Rotated dataLabel visible (#7362).'
-        );
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel.opacity === 1 &&
+            series[0].points[0].dataLabel.element.getAttribute('visibility') !==
+                'hidden',
+        true,
+        'Rotated dataLabel visible (#7362).'
+    );
 
-        assert.strictEqual(
-            (
-                chart.series[1].points[0].dataLabel.opacity === 0 ||
-                series[1].points[0].dataLabel.element
-                    .getAttribute('visibility') === 'hidden'
-            ),
-            true,
-            'Rotated dataLabel hidden (#7362).'
-        );
-    }
-);
+    assert.strictEqual(
+        chart.series[1].points[0].dataLabel.opacity === 0 ||
+            series[1].points[0].dataLabel.element.getAttribute('visibility') ===
+                'hidden',
+        true,
+        'Rotated dataLabel hidden (#7362).'
+    );
+
+    chart.update({
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    allowOverlap: true
+                }
+            }
+        }
+    });
+
+    assert.ok(
+        chart.series[1].points[0].dataLabel.opacity === 1 &&
+            series[1].points[0].dataLabel.element.getAttribute('visibility') !==
+                'hidden',
+        '#13449: dataLabel should be visible after updating allowOverlap'
+    );
+});
 
 QUnit.test(
     'After zooming, dataLabels from hidden points should remain hidden.',
@@ -59,30 +72,35 @@ QUnit.test(
                 zoomType: 'xy'
             },
             colorAxis: {
-                dataClasses: [{
-                    to: 100
-                }, {
-                    from: 100,
-                    to: 5000
-                }]
+                dataClasses: [
+                    {
+                        to: 100
+                    },
+                    {
+                        from: 100,
+                        to: 5000
+                    }
+                ]
             },
-            series: [{
-                data: [
-                    [0, 0, 67],
-                    [0, 1, 2222],
-                    [1, 0, 48],
-                    [1, 1, 1117]
-                ],
-                dataLabels: {
-                    enabled: true,
-                    style: {
-                        fontSize: "26px"
+            series: [
+                {
+                    data: [
+                        [0, 0, 67],
+                        [0, 1, 2222],
+                        [1, 0, 48],
+                        [1, 1, 1117]
+                    ],
+                    dataLabels: {
+                        enabled: true,
+                        style: {
+                            fontSize: '26px'
+                        }
                     }
                 }
-            }]
+            ]
         });
 
-        chart.legend.allItems[1].legendGroup.element.onclick();
+        Highcharts.fireEvent(chart.legend.allItems[1].legendGroup.element, 'click');
         chart.xAxis[0].setExtremes(0.5);
 
         assert.strictEqual(
@@ -93,44 +111,45 @@ QUnit.test(
     }
 );
 
-QUnit.test(
-    'Overlapping labels with paddings',
-    function (assert) {
-        var chart = Highcharts.chart('container', {
-            chart: {
-                type: 'bar',
-                width: 530
-            },
-            yAxis: {
-                min: -10,
-                stackLabels: {
+QUnit.test('Overlapping labels with paddings', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'bar',
+            width: 530
+        },
+        yAxis: {
+            min: -10,
+            stackLabels: {
+                enabled: true
+            }
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal',
+                dataLabels: {
                     enabled: true
                 }
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true
-                    }
-                }
-            },
-            series: [{
+            }
+        },
+        series: [
+            {
                 name: 'John',
                 data: [2.89765436543]
-            }, {
+            },
+            {
                 name: 'Jane',
                 data: [1.89765436543]
-            }, {
+            },
+            {
                 name: 'Joe',
                 data: [5.89765436543]
-            }]
-        });
+            }
+        ]
+    });
 
-        assert.ok(
-            chart.series[0].points[0].dataLabel.attr('y') < 0 ||
+    assert.ok(
+        chart.series[0].points[0].dataLabel.attr('y') < 0 ||
             chart.series[0].points[0].dataLabel.attr('opacity') === 0,
-            'Overlapping dataLabel is hidden (#9119).'
-        );
-    }
-);
+        'Overlapping dataLabel is hidden (#9119).'
+    );
+});

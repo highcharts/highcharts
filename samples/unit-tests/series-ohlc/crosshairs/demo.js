@@ -1,13 +1,15 @@
 QUnit.test('Crosshairs in OHLC', function (assert) {
     var chart = Highcharts.stockChart('container', {
-        series: [{
-            type: 'ohlc',
-            data: [
-                [100, 102, 99, 101],
-                [101, 104, 100, 102],
-                [102, 104, 100, 101]
-            ]
-        }],
+        series: [
+            {
+                type: 'ohlc',
+                data: [
+                    [100, 102, 99, 101],
+                    [101, 104, 100, 102],
+                    [102, 104, 100, 101]
+                ]
+            }
+        ],
         yAxis: {
             crosshair: {
                 color: 'red'

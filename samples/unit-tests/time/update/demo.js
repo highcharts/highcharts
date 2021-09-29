@@ -1,6 +1,5 @@
 QUnit.test('Time zone update', function (assert) {
     var chart = Highcharts.chart('container', {
-
         chart: {
             width: 600,
             height: 200
@@ -22,37 +21,33 @@ QUnit.test('Time zone update', function (assert) {
             type: 'datetime'
         },
 
-        series: [{
-            data: (function () {
-                var arr = [],
-                    i;
-                for (i = 0; i < 5; i = i + 1) {
-                    arr.push(i);
+        series: [
+            {
+                data: (function () {
+                    var arr = [],
+                        i;
+                    for (i = 0; i < 5; i = i + 1) {
+                        arr.push(i);
+                    }
+                    return arr;
+                }()),
+                dataLabels: {
+                    enabled: true,
+                    format: '{x:%H:%M}'
+                },
+                pointStart: Date.UTC(2014, 9, 24),
+                pointInterval: 24 * 36e5,
+                name: 'UTC Midnight',
+                tooltip: {
+                    pointFormat: 'UTC midnight = {point.x:%H:%M} local time'
                 }
-                return arr;
-            }()),
-            dataLabels: {
-                enabled: true,
-                format: '{x:%H:%M}'
-            },
-            pointStart: Date.UTC(2014, 9, 24),
-            pointInterval: 24 * 36e5,
-            name: 'UTC Midnight',
-            tooltip: {
-                pointFormat: 'UTC midnight = {point.x:%H:%M} local time'
             }
-        }]
+        ]
     });
-
 
     assert.deepEqual(
         chart.xAxis[0].tickPositions,
-        [
-            1414188000000,
-            1414274400000,
-            1414364400000,
-            1414450800000
-        ],
+        [1414188000000, 1414274400000, 1414364400000, 1414450800000],
         'Ticks should be placed on local (Oslo) midnights'
     );
 
@@ -65,12 +60,7 @@ QUnit.test('Time zone update', function (assert) {
 
     assert.deepEqual(
         chart.xAxis[0].tickPositions,
-        [
-            1414123200000,
-            1414209600000,
-            1414296000000,
-            1414382400000
-        ],
+        [1414123200000, 1414209600000, 1414296000000, 1414382400000],
         'Ticks should be placed on local (New York) midnights'
     );
 
@@ -79,23 +69,20 @@ QUnit.test('Time zone update', function (assert) {
         'America/New_York',
         'Chart-level options should also be updated (#14230)'
     );
-
 });
 
 QUnit.test('Updating from global to instance time', assert => {
     var chart;
 
     chart = Highcharts.chart('container', {
-        series: [{
-            data: [1, 3, 2, 4]
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4]
+            }
+        ]
     });
 
-    assert.strictEqual(
-        chart.time.useUTC,
-        true,
-        'Initial useUTC setting'
-    );
+    assert.strictEqual(chart.time.useUTC, true, 'Initial useUTC setting');
 
     chart.update({
         time: {
@@ -104,9 +91,11 @@ QUnit.test('Updating from global to instance time', assert => {
     });
 
     chart = Highcharts.chart('container', {
-        series: [{
-            data: [1, 3, 2, 4]
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4]
+            }
+        ]
     });
 
     assert.strictEqual(

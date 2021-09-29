@@ -1,5 +1,4 @@
 QUnit.test('Squished text with Chart.addSeries (#5086)', function (assert) {
-
     var series = {
         data: [
             ['MapRefreshListServer', 1618],
@@ -13,7 +12,7 @@ QUnit.test('Squished text with Chart.addSeries (#5086)', function (assert) {
             width: 400
         },
         xAxis: {
-            type: "category"
+            type: 'category'
         },
         series: [series]
     });
@@ -24,7 +23,7 @@ QUnit.test('Squished text with Chart.addSeries (#5086)', function (assert) {
             width: 400
         },
         xAxis: {
-            type: "category"
+            type: 'category'
         }
     });
     chart2.addSeries(series);

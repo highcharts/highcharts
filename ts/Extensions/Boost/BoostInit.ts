@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -11,8 +11,14 @@
  * */
 
 'use strict';
+
+import type BubbleSeries from '../../Series/Bubble/BubbleSeries';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
+const { noop } = H;
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -24,33 +30,23 @@ const {
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         didBoost?: boolean;
-        markerGroup?: Highcharts.Series['markerGroup'];
+        isBoosting?: boolean;
+        markerGroup?: Series['markerGroup'];
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Series {
-            fill?: boolean;
-            fillOpacity?: boolean;
-            sampling?: boolean;
-        }
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        fill?: boolean;
+        fillOpacity?: boolean;
+        sampling?: boolean;
     }
 }
-
-import '../../Series/LineSeries.js';
 
 import butils from './BoostUtils.js';
 import createAndAttachRenderer from './BoostAttach.js';
 
-var Series = H.Series,
-    seriesTypes = H.seriesTypes,
-    noop = function (): void {},
-    eachAsync = butils.eachAsync,
+let eachAsync = butils.eachAsync,
     pointDrawHandler = butils.pointDrawHandler,
     allocateIfNotSeriesBoosting = butils.allocateIfNotSeriesBoosting,
     renderIfNotSeriesBoosting = butils.renderIfNotSeriesBoosting,
@@ -71,8 +67,8 @@ function init(): void {
          * @private
          * @function Highcharts.Series#renderCanvas
          */
-        renderCanvas: function (this: Highcharts.Series): void {
-            var series = this,
+        renderCanvas: function (this: Series): void {
+            let series = this,
                 options = series.options || {},
                 renderer: Highcharts.BoostGLRenderer = false as any,
                 chart = series.chart,
@@ -87,10 +83,10 @@ function init(): void {
                 yExtremes = yAxis.getExtremes(),
                 yMin = yExtremes.min,
                 yMax = yExtremes.max,
-                pointTaken: Highcharts.Dictionary<boolean> = {},
+                pointTaken: Record<string, boolean> = {},
                 lastClientX: (number|undefined),
                 sampling = !!series.sampling,
-                points: Array<Highcharts.Dictionary<number>>,
+                points: Array<Record<string, number>>,
                 enableMouseTracking = options.enableMouseTracking !== false,
                 threshold: number = options.threshold as any,
                 yBottom = yAxis.getThreshold(threshold),
@@ -217,10 +213,10 @@ function init(): void {
              * @private
              */
             function processPoint(
-                d: (number|Array<number>|Highcharts.Dictionary<number>),
+                d: (number|Array<number>|Record<string, number>),
                 i: number
             ): boolean {
-                var x: number,
+                let x: number,
                     y: number,
                     clientX,
                     plotY,
@@ -228,6 +224,10 @@ function init(): void {
                     low: number = false as any,
                     chartDestroyed = typeof chart.index === 'undefined',
                     isYInside = true;
+
+                if (typeof d === 'undefined') {
+                    return true;
+                }
 
                 if (!chartDestroyed) {
                     if (useRaw) {
@@ -372,7 +372,7 @@ function init(): void {
             seriesTypes.bubble.prototype,
             'markerAttribs',
             function (
-                this: Highcharts.BubbleSeries,
+                this: BubbleSeries,
                 proceed: Function
             ): boolean {
                 if (this.isSeriesBoosting) {
@@ -395,6 +395,8 @@ function init(): void {
         fill: true,
         sampling: true
     });
+
+    Chart.prototype.propsRequireUpdateSeries.push('boost');
 
     // Take care of the canvas blitting
     Chart.prototype.callbacks.push(function (
@@ -460,6 +462,30 @@ function init(): void {
         //         shouldForceChartSeriesBoosting(chart);
         // });
 
+        let prevX = -1;
+        let prevY = -1;
+
+        addEvent(chart.pointer, 'afterGetHoverData', (): void => {
+            const series = chart.hoverSeries;
+
+            if (chart.markerGroup && series) {
+                const xAxis = chart.inverted ? series.yAxis : series.xAxis;
+                const yAxis = chart.inverted ? series.xAxis : series.yAxis;
+
+                if (
+                    (xAxis && xAxis.pos !== prevX) ||
+                    (yAxis && yAxis.pos !== prevY)
+                ) {
+                    // #10464: Keep the marker group position in sync with the
+                    // position of the hovered series axes since there is only
+                    // one shared marker group when boosting.
+                    chart.markerGroup.translate(xAxis.pos, yAxis.pos);
+
+                    prevX = xAxis.pos;
+                    prevY = yAxis.pos;
+                }
+            }
+        });
     });
 
     /* eslint-enable no-invalid-this */

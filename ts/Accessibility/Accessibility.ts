@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility module for Highcharts
  *
@@ -12,19 +12,25 @@
 
 'use strict';
 
-import type Chart from '../Core/Chart/Chart';
+import type { Options } from '../Core/Options';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
+import A11yI18n from './A11yI18n.js';
+import Chart from '../Core/Chart/Chart.js';
 import ChartUtilities from './Utils/ChartUtilities.js';
+import ProxyProvider from './ProxyProvider.js';
 import H from '../Core/Globals.js';
 const {
     doc
 } = H;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import CartesianSeries from '../Core/Series/CartesianSeries.js';
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 const {
     defaultOptions
-} = O;
+} = D;
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -54,6 +60,8 @@ declare global {
             public chart: AccessibilityChart;
             public components: AccessibilityComponentsObject;
             public keyboardNavigation: KeyboardNavigation;
+            public proxyProvider: ProxyProvider;
+            public zombie?: boolean; // Zombie object on old browsers
             public destroy(): void;
             public getChartTypes(): Array<string>;
             public init(chart: Chart): void;
@@ -83,11 +91,13 @@ declare global {
             options: Required<SeriesOptions>;
             points: Array<AccessibilityPoint>;
         }
-        let A11yChartUtilities: A11yChartUtilities;
+        let A11yChartUtilities: typeof ChartUtilities;
+        let A11yHTMLUtilities: typeof HTMLUtilities;
     }
 }
 
 import AccessibilityComponent from './AccessibilityComponent.js';
+import FocusBorder from './FocusBorder.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
 import LegendComponent from './Components/LegendComponent.js';
 import MenuComponent from './Components/MenuComponent.js';
@@ -101,9 +111,7 @@ import highContrastTheme from './HighContrastTheme.js';
 import defaultOptionsA11Y from './Options/Options.js';
 import defaultLangOptions from './Options/LangOptions.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
-import './A11yI18n.js';
-import './FocusBorder.js';
-
+import HTMLUtilities from './Utils/HTMLUtilities.js';
 
 // Add default options
 merge(
@@ -121,9 +129,9 @@ merge(
 
 // Expose functionality on Highcharts namespace
 H.A11yChartUtilities = ChartUtilities;
+H.A11yHTMLUtilities = HTMLUtilities;
 H.KeyboardNavigationHandler = KeyboardNavigationHandler as any;
 H.AccessibilityComponent = AccessibilityComponent as any;
-
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -158,10 +166,12 @@ Accessibility.prototype = {
         this: Highcharts.Accessibility,
         chart: Chart
     ): void {
-        this.chart = chart as any;
+        this.chart = chart as Highcharts.AccessibilityChart;
 
         // Abort on old browsers
         if (!doc.addEventListener || !chart.renderer.isSVG) {
+            this.zombie = true;
+            this.components = {} as Highcharts.AccessibilityComponentsObject;
             chart.renderTo.setAttribute('aria-hidden', true);
             return;
         }
@@ -170,6 +180,7 @@ Accessibility.prototype = {
         // every update, but it is probably not needed.
         copyDeprecatedOptions(chart);
 
+        this.proxyProvider = new ProxyProvider(this.chart);
         this.initComponents();
         this.keyboardNavigation = new (KeyboardNavigation as any)(
             chart, this.components
@@ -182,8 +193,9 @@ Accessibility.prototype = {
      * @private
      */
     initComponents: function (this: Highcharts.Accessibility): void {
-        const chart = this.chart,
-            a11yOptions = chart.options.accessibility;
+        const chart = this.chart;
+        const proxyProvider = this.proxyProvider;
+        const a11yOptions = chart.options.accessibility;
 
         this.components = {
             container: new ContainerComponent(),
@@ -201,7 +213,7 @@ Accessibility.prototype = {
 
         const components = this.components;
         this.getComponentOrder().forEach(function (componentName: string): void {
-            components[componentName].initBase(chart);
+            components[componentName].initBase(chart, proxyProvider);
             components[componentName].init();
         });
     },
@@ -233,7 +245,7 @@ Accessibility.prototype = {
      * Update all components.
      */
     update: function (this: Highcharts.Accessibility): void {
-        var components = this.components,
+        const components = this.components,
             chart = this.chart,
             a11yOptions = chart.options.accessibility;
 
@@ -241,6 +253,11 @@ Accessibility.prototype = {
 
         // Update the chart type list as this is used by multiple modules
         chart.types = this.getChartTypes();
+
+        // Update proxies. We don't update proxy positions since most likely we
+        // need to recreate the proxies on update.
+        const kbdNavOrder = a11yOptions.keyboardNavigation.order;
+        this.proxyProvider.updateGroupOrder(kbdNavOrder);
 
         // Update markup
         this.getComponentOrder().forEach(function (componentName: string): void {
@@ -253,9 +270,7 @@ Accessibility.prototype = {
         });
 
         // Update keyboard navigation
-        this.keyboardNavigation.update(
-            (a11yOptions.keyboardNavigation as any).order
-        );
+        this.keyboardNavigation.update(kbdNavOrder);
 
         // Handle high contrast mode
         if (
@@ -275,14 +290,19 @@ Accessibility.prototype = {
      * Destroy all elements.
      */
     destroy: function (): void {
-        var chart: Chart = this.chart || {};
+        const chart: Chart = this.chart || {};
 
         // Destroy components
-        var components = this.components;
+        const components = this.components;
         Object.keys(components).forEach(function (componentName: string): void {
             components[componentName].destroy();
             components[componentName].destroyBase();
         });
+
+        // Destroy proxy provider
+        if (this.proxyProvider) {
+            this.proxyProvider.destroy();
+        }
 
         // Kill keyboard nav
         if (this.keyboardNavigation) {
@@ -305,9 +325,9 @@ Accessibility.prototype = {
      * Return a list of the types of series we have in the chart.
      * @private
      */
-    getChartTypes: function (): Array<string> {
-        var types: Highcharts.Dictionary<number> = {};
-        this.chart.series.forEach(function (series: Highcharts.Series): void {
+    getChartTypes: function (this: Highcharts.Accessibility): Array<string> {
+        const types: Record<string, number> = {};
+        this.chart.series.forEach(function (series): void {
             types[series.type] = 1;
         });
         return Object.keys(types);
@@ -318,11 +338,12 @@ Accessibility.prototype = {
 /**
  * @private
  */
-H.Chart.prototype.updateA11yEnabled = function (): void {
-    var a11y = this.accessibility,
-        accessibilityOptions = this.options.accessibility;
+Chart.prototype.updateA11yEnabled = function (): void {
+    let a11y = this.accessibility;
+    const accessibilityOptions = this.options.accessibility;
+
     if (accessibilityOptions && accessibilityOptions.enabled) {
-        if (a11y) {
+        if (a11y && !a11y.zombie) {
             a11y.update();
         } else {
             this.accessibility = a11y = new (Accessibility as any)(this);
@@ -340,7 +361,7 @@ H.Chart.prototype.updateA11yEnabled = function (): void {
 };
 
 // Handle updates to the module and send render updates to components
-addEvent(H.Chart, 'render', function (e: Event): void {
+addEvent(Chart, 'render', function (): void {
     // Update/destroy
     if (this.a11yDirty && this.renderTo) {
         delete this.a11yDirty;
@@ -348,7 +369,8 @@ addEvent(H.Chart, 'render', function (e: Event): void {
     }
 
     const a11y = this.accessibility;
-    if (a11y) {
+    if (a11y && !a11y.zombie) {
+        a11y.proxyProvider.updateProxyElementPositions();
         a11y.getComponentOrder().forEach(function (
             componentName: string
         ): void {
@@ -358,12 +380,12 @@ addEvent(H.Chart, 'render', function (e: Event): void {
 });
 
 // Update with chart/series/point updates
-addEvent(H.Chart as any, 'update', function (
+addEvent(Chart as any, 'update', function (
     this: Highcharts.AccessibilityChart,
-    e: { options: Highcharts.Options }
+    e: { options: Options }
 ): void {
     // Merge new options
-    var newOptions = e.options.accessibility;
+    const newOptions = e.options.accessibility;
     if (newOptions) {
         // Handle custom component updating specifically
         if (newOptions.customComponents) {
@@ -390,12 +412,12 @@ addEvent(Point, 'update', function (): void {
     }
 });
 ['addSeries', 'init'].forEach(function (event: string): void {
-    addEvent(H.Chart, event, function (): void {
+    addEvent(Chart, event, function (): void {
         this.a11yDirty = true;
     });
 });
 ['update', 'updatedData', 'remove'].forEach(function (event: string): void {
-    addEvent(CartesianSeries, event, function (): void {
+    addEvent(Series, event, function (): void {
         if (this.chart.accessibility) {
             this.chart.a11yDirty = true;
         }
@@ -406,16 +428,58 @@ addEvent(Point, 'update', function (): void {
 [
     'afterDrilldown', 'drillupall'
 ].forEach(function (event: string): void {
-    addEvent(H.Chart, event, function (): void {
-        if (this.accessibility) {
-            this.accessibility.update();
+    addEvent(Chart, event, function (): void {
+        const a11y = this.accessibility;
+        if (a11y && !a11y.zombie) {
+            a11y.update();
         }
     });
 });
 
 // Destroy with chart
-addEvent(H.Chart, 'destroy', function (): void {
+addEvent(Chart, 'destroy', function (): void {
     if (this.accessibility) {
         this.accessibility.destroy();
     }
 });
+
+namespace AccessibilityComposition {
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
+
+    export const i18nFormat = A11yI18n.i18nFormat;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    export function compose(
+        ChartClass: typeof Chart,
+        SVGElementClass: typeof SVGElement
+    ): void {
+        A11yI18n.compose(ChartClass);
+        FocusBorder.compose(ChartClass, SVGElementClass);
+    }
+
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default AccessibilityComposition;

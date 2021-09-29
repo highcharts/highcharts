@@ -1,8 +1,10 @@
 QUnit.test('Legend.renderItem', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{
-                className: 'className'
-            }]
+            series: [
+                {
+                    className: 'className'
+                }
+            ]
         }),
         element = chart.legend.allItems[0].group.element,
         classNames = element.getAttribute('class').split(' ');
@@ -34,22 +36,20 @@ QUnit.test('Legend.update', function (assert) {
         chart: {
             animation: false
         },
-        series: [{
-            data: [1, 3, 2, 4],
-            spacingRight: 10,
-            animation: false
-        }],
+        series: [
+            {
+                data: [1, 3, 2, 4],
+                spacingRight: 10,
+                animation: false
+            }
+        ],
         legend: {
             align: 'right',
             verticalAlign: 'middle'
         }
     });
 
-    assert.notEqual(
-        chart.marginRight,
-        10,
-        'Margin has room for legend'
-    );
+    assert.notEqual(chart.marginRight, 10, 'Margin has room for legend');
 
     chart.update({
         legend: {
@@ -57,21 +57,15 @@ QUnit.test('Legend.update', function (assert) {
         }
     });
 
-    assert.strictEqual(
-        chart.marginRight,
-        10,
-        'Legend is hidden'
-    );
+    assert.strictEqual(chart.marginRight, 10, 'Legend is hidden');
 });
 
 QUnit.test('Color axis', function (assert) {
     var chart = Highcharts.chart('container', {
-
         chart: {
             type: 'heatmap',
             width: 600
         },
-
 
         title: {
             text: 'Legend update'
@@ -88,15 +82,16 @@ QUnit.test('Color axis', function (assert) {
             tickInterval: 1
         },
 
-        series: [{
-            data: [
-                [1, 2, 3],
-                [2, 3, 4],
-                [3, 4, 5],
-                [4, 5, 6]
-            ]
-        }]
-
+        series: [
+            {
+                data: [
+                    [1, 2, 3],
+                    [2, 3, 4],
+                    [3, 4, 5],
+                    [4, 5, 6]
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -122,16 +117,16 @@ QUnit.test('Color axis', function (assert) {
         chart.legend.group.translateY + 10
     );
     assert.notEqual(
-        chart.container.querySelector('.highcharts-root')
-            .className.baseVal
-            .indexOf('highcharts-legend-series-active'),
+        chart.container
+            .querySelector('.highcharts-root')
+            .className.baseVal.indexOf('highcharts-legend-series-active'),
         -1,
         'Chart should be in series hover mode (#7406)'
     );
     assert.notEqual(
-        chart.container.querySelector('.highcharts-series-0')
-            .className.baseVal
-            .indexOf('highcharts-series-hover'),
+        chart.container
+            .querySelector('.highcharts-series-0')
+            .className.baseVal.indexOf('highcharts-series-hover'),
         -1,
         'Series should be in hover state (#7406)'
     );
@@ -145,9 +140,11 @@ QUnit.test('Legend.title renders after update', function (assert) {
                     text: 'Hello World'
                 }
             },
-            series: [{
-                data: [1, 2, 3, 4]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4]
+                }
+            ]
         },
         chart = Highcharts.chart('container', config);
     var called = false;
@@ -160,9 +157,7 @@ QUnit.test('Legend.title renders after update', function (assert) {
 
     chart.legend.update(config.legend);
 
-    assert.ok(
-        called
-    );
+    assert.ok(called);
 
     assert.ok(
         chart.legend.title.text,
@@ -170,8 +165,5 @@ QUnit.test('Legend.title renders after update', function (assert) {
     );
 
     chart.update(config);
-    assert.ok(
-        chart.legend.title.text,
-        'Legend title exists chart.update.'
-    );
+    assert.ok(chart.legend.title.text, 'Legend title exists chart.update.');
 });

@@ -1,8 +1,9 @@
 // Project the data using Proj4
 function project(geojson, projection) {
+    const p = window.proj4(projection);
     const projectPolygon = coordinate => {
         coordinate.forEach((lonLat, i) => {
-            coordinate[i] = window.proj4(projection, lonLat);
+            coordinate[i] = p.forward(lonLat);
         });
     };
     geojson.features.forEach(function (feature) {
@@ -21,8 +22,9 @@ function getRandomData(geojson) {
     return geojson.features.map(() => Math.round(Math.random() * 100));
 }
 
+// Source: https://github.com/leakyMirror/map-of-europe
 Highcharts.getJSON(
-    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@219f5b38b5/samples/data/us-albers.geo.json',
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v9.2.0/samples/data/europe.topo.json',
     function (topology) {
 
         // Convert the topoJSON feature into geoJSON
@@ -31,16 +33,18 @@ Highcharts.getJSON(
             // For this demo, get the first of the named objects
             topology.objects[Object.keys(topology.objects)[0]]
         );
+        geojson.copyrightUrl = 'https://github.com/leakyMirror/map-of-europe';
+        geojson.copyrightShort = 'leakyMirror';
+
         const data = getRandomData(geojson);
 
         // Optionally project the data using Proj4. This costs performance, and
-        // when possible, should be done on the server. In this case we're using
-        // a Lambert Conformal Conic projection for the USA, with a projection
-        // center in the middle of the country. A mercator based projection,
-        // like 'EPSG:3857', is faster but is more distorted.
+        // when performance is crucial, should be done on the server. In this
+        // case we're using a Lambert Conformal Conic projection for Europe,
+        // with a projection center in the middle of the map.
         project(
             geojson,
-            '+proj=lcc +lat_1=33 +lat_2=45 +lat_0=39 +lon_0=-96'
+            '+proj=lcc +lat_1=43 +lat_2=62 +lat_0=30 +lon_0=10'
         );
 
         // Initialize the chart
@@ -67,7 +71,7 @@ Highcharts.getJSON(
             },
 
             tooltip: {
-                pointFormat: '{point.properties.name}: {point.value}'
+                pointFormat: '{point.properties.NAME}: {point.value}'
             },
 
             series: [{
@@ -81,7 +85,7 @@ Highcharts.getJSON(
                 },
                 dataLabels: {
                     enabled: true,
-                    format: '{point.properties.name}'
+                    format: '{point.properties.NAME}'
                 }
             }]
         });

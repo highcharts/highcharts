@@ -1,11 +1,8 @@
-var gaugeOptions = {
-
+const gaugeOptions = {
     chart: {
         type: 'solidgauge'
     },
-
     title: null,
-
     pane: {
         center: ['50%', '85%'],
         size: '140%',
@@ -18,11 +15,9 @@ var gaugeOptions = {
             shape: 'arc'
         }
     },
-
     tooltip: {
         enabled: false
     },
-
     // the value axis
     yAxis: {
         minColor: '#FFFFFF',
@@ -38,7 +33,6 @@ var gaugeOptions = {
             y: 16
         }
     },
-
     plotOptions: {
         solidgauge: {
             dataLabels: {
@@ -51,7 +45,7 @@ var gaugeOptions = {
 };
 
 // The speed gauge
-$('#container-speed').highcharts(Highcharts.merge(gaugeOptions, {
+Highcharts.chart('container-speed', Highcharts.merge(gaugeOptions, {
     yAxis: {
         min: 0,
         max: 200,
@@ -59,11 +53,9 @@ $('#container-speed').highcharts(Highcharts.merge(gaugeOptions, {
             text: 'Speed'
         }
     },
-
     credits: {
         enabled: false
     },
-
     series: [{
         name: 'Speed',
         data: [30],
@@ -78,11 +70,10 @@ $('#container-speed').highcharts(Highcharts.merge(gaugeOptions, {
             valueSuffix: ' km/h'
         }
     }]
-
 }));
 
 // The RPM gauge
-$('#container-rpm').highcharts(Highcharts.merge(gaugeOptions, {
+Highcharts.chart('container-rpm', Highcharts.merge(gaugeOptions, {
     yAxis: {
         min: 0,
         max: 5,
@@ -90,7 +81,6 @@ $('#container-rpm').highcharts(Highcharts.merge(gaugeOptions, {
             text: 'RPM'
         }
     },
-
     series: [{
         name: 'RPM',
         data: [4],
@@ -109,5 +99,4 @@ $('#container-rpm').highcharts(Highcharts.merge(gaugeOptions, {
             valueSuffix: ' revolutions/min'
         }
     }]
-
 }));

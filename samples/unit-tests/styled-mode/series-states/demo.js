@@ -6,17 +6,22 @@ QUnit.test('Inactive state and styledMode', function (assert) {
                 className: 'fix-11389'
             },
 
-            series: [{
-                data: [{
-                    from: 'A',
-                    to: 'B',
-                    weight: 1
-                }, {
-                    from: 'A',
-                    to: 'C',
-                    weight: 1
-                }]
-            }]
+            series: [
+                {
+                    data: [
+                        {
+                            from: 'A',
+                            to: 'B',
+                            weight: 1
+                        },
+                        {
+                            from: 'A',
+                            to: 'C',
+                            weight: 1
+                        }
+                    ]
+                }
+            ]
         }),
         controller = new TestController(chart),
         x = chart.chartWidth / 2,
@@ -25,7 +30,9 @@ QUnit.test('Inactive state and styledMode', function (assert) {
 
     controller.mouseOver(x, y);
 
-    inactivePoints = document.querySelectorAll('.fix-11389 .highcharts-point-inactive');
+    inactivePoints = document.querySelectorAll(
+        '.fix-11389 .highcharts-point-inactive'
+    );
 
     assert.strictEqual(
         inactivePoints.length,
@@ -34,7 +41,8 @@ QUnit.test('Inactive state and styledMode', function (assert) {
     );
 
     assert.strictEqual(
-        document.querySelectorAll('.fix-11389 .highcharts-series-inactive').length,
+        document.querySelectorAll('.fix-11389 .highcharts-series-inactive')
+            .length,
         0,
         'Series should not have inactive state class, ' +
             'when points within inherit state'

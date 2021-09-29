@@ -4,33 +4,34 @@ function getPoint(i) {
         y: Math.random()
     };
 }
-var data = [];
-var dataPoints = 20;
-for (var i = 0; i < dataPoints; i++) {
+
+const data = [];
+const dataPoints = 20;
+
+let i;
+for (i = 0; i < dataPoints; i++) {
     data.push(getPoint(i));
 }
-var chart = Highcharts.chart('container', {
 
+const chart = Highcharts.chart('container', {
     chart: {
         backgroundColor: '#efe'
     },
-
     xAxis: {
         staticScale: 24,
         minRange: 1,
         categories: true
     },
-
     series: [{
         data: data,
         type: 'bar'
     }]
-
 });
 
-$('#add').click(function () {
+document.getElementById('add').addEventListener('click', () => {
     chart.series[0].addPoint(getPoint(i++));
 });
-$('#remove').click(function () {
+
+document.getElementById('remove').addEventListener('click', () => {
     chart.series[0].removePoint(0);
 });

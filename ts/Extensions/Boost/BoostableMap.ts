@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -14,7 +14,7 @@ import boostables from './Boostables.js';
 
 // These are the series we allow boosting for.
 
-const boostableMap: Highcharts.Dictionary<number> = {};
+const boostableMap: Record<string, number> = {};
 
 boostables.forEach(function (item: string): void {
     boostableMap[item] = 1;

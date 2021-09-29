@@ -1,28 +1,31 @@
 QUnit.test('Test algorithm on data updates.', function (assert) {
-
     var chart = Highcharts.stockChart('container', {
-        series: [{
-            id: 'main',
-            type: 'ohlc',
-            data: [
-                [62.1, 62.34, 61.37, 62.15],
-                [62.1, 62.05, 60.69, 60.81],
-                [62.1, 62.27, 60.10, 60.45],
-                [62.1, 60.79, 58.61, 59.18],
-                [62.1, 59.93, 58.71, 59.24]
-            ]
-        }, {
-            name: 'Volume',
-            id: 'volume',
-            data: [7849, 11692, 10575, 13059, 20734]
-        }, {
-            type: 'ad',
-            linkedTo: 'main',
-            params: {
-                period: 0,
-                volumeSeriesID: 'volume'
+        series: [
+            {
+                id: 'main',
+                type: 'ohlc',
+                data: [
+                    [62.1, 62.34, 61.37, 62.15],
+                    [62.1, 62.05, 60.69, 60.81],
+                    [62.1, 62.27, 60.1, 60.45],
+                    [62.1, 60.79, 58.61, 59.18],
+                    [62.1, 59.93, 58.71, 59.24]
+                ]
+            },
+            {
+                name: 'Volume',
+                id: 'volume',
+                data: [7849, 11692, 10575, 13059, 20734]
+            },
+            {
+                type: 'ad',
+                linkedTo: 'main',
+                params: {
+                    period: 0,
+                    volumeSeriesID: 'volume'
+                }
             }
-        }]
+        ]
     });
 
     assert.strictEqual(
@@ -33,11 +36,17 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.deepEqual(
         chart.series[2].yData,
-        [4774.134020618497, -4854.5718617343655, -12018.28153915371, -18248.26319052985, -20967.476305283893],
+        [
+            4774.134020618497,
+            -4854.5718617343655,
+            -12018.28153915371,
+            -18248.26319052985,
+            -20967.476305283893
+        ],
         'Correct values'
     );
 
-    chart.series[0].addPoint([62.1, 61.75, 59.86, 60.20], false);
+    chart.series[0].addPoint([62.1, 61.75, 59.86, 60.2], false);
     chart.series[1].addPoint(29630);
 
     assert.strictEqual(
@@ -46,13 +55,16 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'After addPoint number of AD points is correct'
     );
 
-    chart.series[0].setData([
-        [62.1, 60.00, 57.97, 58.48],
-        [62.1, 59.00, 58.02, 58.24],
-        [62.1, 59.07, 57.48, 58.69],
-        [62.1, 59.22, 58.30, 58.65],
-        [62.1, 58.75, 57.83, 58.47]
-    ], false);
+    chart.series[0].setData(
+        [
+            [62.1, 60.0, 57.97, 58.48],
+            [62.1, 59.0, 58.02, 58.24],
+            [62.1, 59.07, 57.48, 58.69],
+            [62.1, 59.22, 58.3, 58.65],
+            [62.1, 58.75, 57.83, 58.47]
+        ],
+        false
+    );
 
     chart.series[1].setData([17705, 7259, 10475, 5204, 3423], false);
     chart.series[2].update({

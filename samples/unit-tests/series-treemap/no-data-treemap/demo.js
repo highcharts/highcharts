@@ -3,12 +3,14 @@ QUnit.test('Treemap opacity on levels', function (assert) {
             title: {
                 text: 'No data in treemap'
             },
-            series: [{
-                type: 'treemap',
-                layoutAlgorithm: "squarified",
-                name: 'Random data',
-                color: 'rgba(0, 100, 200, 0.4)'
-            }]
+            series: [
+                {
+                    type: 'treemap',
+                    layoutAlgorithm: 'squarified',
+                    name: 'Random data',
+                    color: 'rgba(0, 100, 200, 0.4)'
+                }
+            ]
         }),
         series = chart.series[0];
     // Test when series data is empty

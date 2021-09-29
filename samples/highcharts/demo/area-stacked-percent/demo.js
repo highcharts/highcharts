@@ -8,6 +8,11 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: Wikipedia.org'
     },
+    accessibility: {
+        point: {
+            valueDescriptionFormat: '{index}. {point.category}, {point.y:,.0f} millions, {point.percentage:.1f}%.'
+        }
+    },
     xAxis: {
         categories: ['1750', '1800', '1850', '1900', '1950', '1999', '2050'],
         tickmarkPlacement: 'on',
@@ -35,16 +40,6 @@ Highcharts.chart('container', {
             marker: {
                 lineWidth: 1,
                 lineColor: '#ffffff'
-            },
-            accessibility: {
-                pointDescriptionFormatter: function (point) {
-                    function round(x) {
-                        return Math.round(x * 100) / 100;
-                    }
-                    return (point.index + 1) + ', ' + point.category + ', ' +
-                        point.y + ' millions, ' + round(point.percentage) + '%, ' +
-                        point.series.name;
-                }
             }
         }
     },

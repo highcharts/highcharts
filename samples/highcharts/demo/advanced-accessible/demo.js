@@ -10,7 +10,7 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
     // Stroke width is hardcoded to 1 for simplicity
     drawPoints: function () {
         var series = this;
-        Highcharts.each(this.points, function (point) {
+        this.points.forEach(function (point) {
             var graphic = point.graphic,
                 verb = graphic ? 'animate' : 'attr',
                 shapeArgs = point.shapeArgs,
@@ -20,14 +20,18 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
                 crispX = left + Math.round(width / 2) + 0.5,
                 highPlot = Math.floor(point.highPlot) + 0.5,
                 medianPlot = Math.floor(point.medianPlot) + 0.5,
-                lowPlot = Math.floor(point.lowPlot) + 0.5 - (point.low === 0 ? 1 : 0); // Sneakily draw low marker even if 0
+                // Sneakily draw low marker even if 0
+                lowPlot = Math.floor(point.lowPlot) +
+                    0.5 - (point.low === 0 ? 1 : 0);
 
             if (point.isNull) {
                 return;
             }
 
             if (!graphic) {
-                point.graphic = graphic = series.chart.renderer.path('point').add(series.group);
+                point.graphic = graphic = series.chart.renderer
+                    .path('point')
+                    .add(series.group);
             }
 
             graphic.attr({
@@ -89,7 +93,8 @@ var chart = Highcharts.chart('container', {
         accessibility: {
             description: 'Months of the year'
         },
-        categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        crosshair: true
     }],
 
     yAxis: {

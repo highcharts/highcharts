@@ -126,8 +126,9 @@ handleDefaultOptionsFunctions(true);
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 
+/*
 // Override Highcharts and jQuery ajax functions to load from local
-Highcharts.wrap(Highcharts, 'ajax', function (proceed, attr) {
+function ajax(proceed, attr) {
     var success = attr.success;
     attr.error = function (e) {
         throw new Error('Failed to load: ' + attr.url);
@@ -142,11 +143,41 @@ Highcharts.wrap(Highcharts, 'ajax', function (proceed, attr) {
         };
         return proceed.call(this, attr);
     }
-});
+}
+Highcharts.wrap(Highcharts.HttpUtilities, 'ajax', ajax);
+Highcharts.wrap(Highcharts, 'ajax', ajax);
 if (window.$) {
     $.getJSON = function (url, callback) { // eslint-disable-line no-undef
         callback(window.JSONSources[url]);
     };
+}
+*/
+
+// Hijack XHMLHttpRequest to run local JSON sources
+var open = XMLHttpRequest.prototype.open;
+var send = XMLHttpRequest.prototype.send;
+XMLHttpRequest.prototype.open = function (type, url) {
+	this.requestURL = url;
+    return open.apply(this, arguments);
+}
+
+XMLHttpRequest.prototype.send = function () {
+    var localData = this.requestURL && window.JSONSources[this.requestURL];
+	if (localData) {
+        Object.defineProperty(this, 'readyState', {
+            get: function () { return 4; }
+        });
+        Object.defineProperty(this, 'status', {
+            get: function () { return 200; }
+        });
+        Object.defineProperty(this, 'responseText', {
+            get: function () { return JSON.stringify(localData); }
+        });
+
+        this.onreadystatechange();
+    } else {
+        return send.apply(this, arguments);
+    }
 }
 
 function resetDefaultOptions(testName) {
@@ -415,6 +446,25 @@ Highcharts.prepareShot = function (chart) {
 };
 
 /**
+* Basic pretty-print SVG, each tag on a new line.
+* @param  {String} svg The SVG
+* @return {String}     Pretty SVG
+*/
+function prettyXML(svg) {
+    svg = svg
+        .replace(/>/g, '>\n')
+
+        // Don't introduce newlines inside tspans or links, it will make the text
+        // render differently
+        .replace(/<tspan([^>]*)>\n/g, '<tspan$1>')
+        .replace(/<\/tspan>\n/g, '</tspan>')
+        .replace(/<a([^>]*)>\n/g, '<a$1>')
+        .replace(/<\/a>\n/g, '</a>');
+
+    return svg;
+}
+
+/**
  * Get the SVG of a chart, or the first SVG in the page
  * @param  {Object} chart The chart
  * @return {String}       The SVG
@@ -445,7 +495,8 @@ function getSVG(chart) {
             svg = document.getElementsByTagName('svg')[0].outerHTML;
         }
     }
-    return svg;
+
+    return prettyXML(svg);
 }
 
 /**

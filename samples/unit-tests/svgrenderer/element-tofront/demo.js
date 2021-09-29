@@ -1,17 +1,10 @@
 QUnit.test('Element to front', function (assert) {
+    var renderer, rect, circ;
 
-    var renderer,
-        rect,
-        circ;
+    renderer = new Highcharts.Renderer($('#container')[0], 400, 300);
 
-
-    renderer = new Highcharts.Renderer(
-        $('#container')[0],
-        400,
-        300
-    );
-
-    rect = renderer.rect(100, 100, 100, 100, 5)
+    rect = renderer
+        .rect(100, 100, 100, 100, 5)
         .attr({
             'stroke-width': 2,
             stroke: 'red',
@@ -19,7 +12,8 @@ QUnit.test('Element to front', function (assert) {
         })
         .add();
 
-    circ = renderer.circle(200, 200, 50)
+    circ = renderer
+        .circle(200, 200, 50)
         .attr({
             'stroke-width': 2,
             stroke: 'red',
@@ -78,5 +72,4 @@ QUnit.test('Element to front', function (assert) {
         true,
         'Circle is above rect'
     );
-
 });

@@ -1,18 +1,17 @@
 Highcharts.getJSON(
     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json',
-    function (data) {
-        var detailChart;
+    data => {
+        let detailChart;
 
         // create the detail chart
         function createDetail(masterChart) {
-
             // prepare the detail chart
             var detailData = [],
                 detailStart = data[0][0];
 
-            $.each(masterChart.series[0].data, function () {
-                if (this.x >= detailStart) {
-                    detailData.push(this.y);
+            masterChart.series[0].data.forEach(point => {
+                if (point.x >= detailStart) {
+                    detailData.push(point.y);
                 }
             });
 
@@ -107,9 +106,9 @@ Highcharts.getJSON(
                                 xAxis = this.xAxis[0];
 
                             // reverse engineer the last part of the data
-                            $.each(this.series[0].data, function () {
-                                if (this.x > min && this.x < max) {
-                                    detailData.push([this.x, this.y]);
+                            this.series[0].data.forEach(point => {
+                                if (point.x > min && point.x < max) {
+                                    detailData.push([point.x, point.y]);
                                 }
                             });
 
@@ -214,26 +213,15 @@ Highcharts.getJSON(
                     enabled: false
                 }
 
-            }, function (masterChart) {
+            }, masterChart => {
                 createDetail(masterChart);
             }); // return chart instance
         }
 
         // make the container smaller and add a second container for the master chart
-        var $container = $('#container')
-            .css('position', 'relative');
-
-        $('<div id="detail-container">')
-            .appendTo($container);
-
-        $('<div id="master-container">')
-            .css({
-                position: 'absolute',
-                top: 300,
-                height: 100,
-                width: '100%'
-            })
-            .appendTo($container);
+        const container = document.getElementById('container');
+        container.style.position = 'relative';
+        container.innerHTML += '<div id="detail-container"></div><div id="master-container"></div>';
 
         // create master and in its callback, create the detail chart
         createMaster();

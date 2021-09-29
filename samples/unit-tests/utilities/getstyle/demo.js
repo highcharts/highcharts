@@ -1,5 +1,4 @@
 QUnit.test('Container with box-sizing', function (assert) {
-
     var div = document.createElement('div');
     div.style.boxSizing = 'border-box';
     div.style.width = '400px';
@@ -9,31 +8,22 @@ QUnit.test('Container with box-sizing', function (assert) {
     div.style.padding = '20px';
     document.body.appendChild(div);
 
-
     var chart = Highcharts.chart(div, {
-        series: [{
-            data: [1, 3, 2, 4]
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4]
+            }
+        ]
     });
 
-    assert.strictEqual(
-        chart.chartWidth,
-        360,
-        'Chart width is inner box'
-    );
+    assert.strictEqual(chart.chartWidth, 360, 'Chart width is inner box');
 
-    assert.strictEqual(
-        chart.chartHeight,
-        260,
-        'Chart height is inner box'
-    );
+    assert.strictEqual(chart.chartHeight, 260, 'Chart height is inner box');
 
     document.body.removeChild(div);
-
 });
 
 QUnit.test('Container with overflow:auto', function (assert) {
-
     var div = document.createElement('div');
     div.style.width = '200px';
     div.style.height = '200px';
@@ -44,23 +34,16 @@ QUnit.test('Container with overflow:auto', function (assert) {
     document.body.appendChild(div);
 
     var chart = Highcharts.chart(div, {
-        series: [{
-            data: [1, 3, 2, 4]
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4]
+            }
+        ]
     });
 
-    assert.strictEqual(
-        chart.chartWidth,
-        200,
-        'Chart width is inner box'
-    );
+    assert.strictEqual(chart.chartWidth, 200, 'Chart width is inner box');
 
-    assert.strictEqual(
-        chart.chartHeight,
-        200,
-        'Chart height is inner box'
-    );
+    assert.strictEqual(chart.chartHeight, 200, 'Chart height is inner box');
 
     document.body.removeChild(div);
-
 });

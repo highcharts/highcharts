@@ -1,10 +1,12 @@
 QUnit.test('series.cursor: default to undefined', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2]
+                }
+            ]
         }),
         series = chart.series[0],
         result;
@@ -16,21 +18,19 @@ QUnit.test('series.cursor: default to undefined', function (assert) {
     result = !H.find(series.points, function (p) {
         return H.getStyle(p.graphic.element, 'cursor', false) !== 'auto';
     });
-    assert.strictEqual(
-        result,
-        true,
-        'All points has a cursor value of "auto"'
-    );
+    assert.strictEqual(result, true, 'All points has a cursor value of "auto"');
 });
 
 QUnit.test('series.cursor: "pointer"', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2],
-                cursor: 'pointer'
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2],
+                    cursor: 'pointer'
+                }
+            ]
         }),
         series = chart.series[0],
         result;

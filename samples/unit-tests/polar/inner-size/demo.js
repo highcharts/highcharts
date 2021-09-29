@@ -16,9 +16,11 @@ QUnit.test('(#12850) Inner size of pane.', function (assert) {
                     borderWidth: 0
                 }
             },
-            series: [{
-                data: [0, 1, 2, 3, 4, 5]
-            }]
+            series: [
+                {
+                    data: [0, 1, 2, 3, 4, 5]
+                }
+            ]
         }),
         series = chart.series[0],
         xAxis = series.xAxis,
@@ -27,13 +29,13 @@ QUnit.test('(#12850) Inner size of pane.', function (assert) {
     assert.strictEqual(
         series.points[0].rectPlotY,
         yAxis.len,
-        'The first point\'s is in a correct place.'
+        "The first point's is in a correct place."
     );
 
     assert.strictEqual(
         series.points[5].rectPlotY,
         0,
-        'The sixth point\'s is in a correct place.'
+        "The sixth point's is in a correct place."
     );
 
     chart.pane[0].update({
@@ -46,10 +48,7 @@ QUnit.test('(#12850) Inner size of pane.', function (assert) {
         'The yAxis has a correct length.'
     );
 
-    assert.ok(
-        xAxis.pane.center[3] / 2,
-        'The innerSize is set.'
-    );
+    assert.ok(xAxis.pane.center[3] / 2, 'The innerSize is set.');
 
     chart.pane[0].update({
         innerSize: -100

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  Extension to the VML Renderer
  *
@@ -10,12 +10,21 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../../Core/Color/ColorType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+
 import Axis from '../../Core/Axis/Axis.js';
-import U from '../../Core/Utilities.js';
-const { setOptions } = U;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 import VMLAxis3D from './VMLAxis3D.js';
 
 /**
@@ -51,7 +60,7 @@ class VMLRenderer3D {
      *
      * */
 
-    public static compose(vmlClass: typeof Highcharts.VMLRenderer, svgClass: typeof SVGRenderer3D): void {
+    public static compose(vmlClass: typeof Highcharts.VMLRenderer, svgClass: typeof SVGRenderer): void {
         const svgProto = svgClass.prototype;
         const vmlProto = vmlClass.prototype;
 
@@ -72,7 +81,7 @@ class VMLRenderer3D {
             this: Highcharts.VMLRenderer,
             shapeArgs: SVGAttributes
         ): Highcharts.VMLElement {
-            var result = svgProto.arc3d.call(this, shapeArgs);
+            const result = svgProto.arc3d.call(this, shapeArgs);
 
             result.css({ zIndex: result.zIndex });
             return result as any;

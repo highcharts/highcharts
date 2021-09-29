@@ -1,12 +1,7 @@
 QUnit.test('Element.on', function (assert) {
-
-    var renderer = new Highcharts
-            .Renderer(
-                $('#container')[0],
-                400,
-                300
-            ),
-        rectSvgElement = renderer.rect(100, 100, 100, 100, 5)
+    var renderer = new Highcharts.Renderer($('#container')[0], 400, 300),
+        rectSvgElement = renderer
+            .rect(100, 100, 100, 100, 5)
             .attr({
                 'stroke-width': 2,
                 stroke: 'gray',
@@ -21,14 +16,12 @@ QUnit.test('Element.on', function (assert) {
                     height: 20,
                     'stroke-width': 10
                 });
-
             })
             .add();
 
     var clock = TestUtilities.lolexInstall();
 
     try {
-
         var rectNodeElement = document.querySelector('#container rect'),
             done = assert.async();
 
@@ -39,7 +32,7 @@ QUnit.test('Element.on', function (assert) {
         );
 
         // Start transforming
-        rectNodeElement.onclick();
+        Highcharts.fireEvent(rectNodeElement, 'click');
 
         assert.strictEqual(
             rectNodeElement.getAttribute('width'),
@@ -58,20 +51,12 @@ QUnit.test('Element.on', function (assert) {
 
         setTimeout(function () {
             var width = parseInt(rectNodeElement.getAttribute('width'), 10);
-            assert.strictEqual(
-                width,
-                200,
-                '600 ms: landed'
-            );
+            assert.strictEqual(width, 200, '600 ms: landed');
             done();
         }, 600);
 
         TestUtilities.lolexRunAndUninstall(clock);
-
     } finally {
-
         TestUtilities.lolexUninstall(clock);
-
     }
-
 });

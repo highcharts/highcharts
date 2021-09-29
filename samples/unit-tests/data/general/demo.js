@@ -1,5 +1,40 @@
-QUnit.test("Data module with decimapPoint and negative numbers (#4749)", function (assert) {
-    document.body.innerHTML += `<table id="datatable">
+QUnit.test(
+    'Parsing dates with timezone information (#10322)',
+    function (assert) {
+        var data = new Highcharts.Data({}),
+            samples = [
+                '2018-03-13T17:00:00+00:00',
+                '2018-03-13T20:00:00+03:00',
+                '2018-03-13T17:00:00GMT',
+                '2018-03-13T07:00:00GMT-1000',
+                '2018-03-13T08:00:00GMT-09:00',
+                '2018-03-13T17:00:00UTC',
+                '2018-03-13T18:30:00UTC+0130',
+                '2018-03-13T17:30:00UTC+00:30',
+                '2018-03-13T17:00:00Z'
+            ],
+            previousSample;
+
+        samples
+            .map(sample => data.parseDate(sample))
+            .map(sample => (new Date(sample)).toUTCString())
+            .forEach((sample, index) => {
+                if (previousSample) {
+                    assert.strictEqual(
+                        sample,
+                        previousSample,
+                        'Parsed dates should be the same. (Index: ' + index + ')'
+                    );
+                }
+                previousSample = sample;
+            });
+    }
+);
+
+QUnit.test(
+    'Data module with decimapPoint and negative numbers (#4749)',
+    function (assert) {
+        document.body.innerHTML += `<table id="datatable">
     <thead>
         <tr>
             <th></th>
@@ -35,47 +70,48 @@ QUnit.test("Data module with decimapPoint and negative numbers (#4749)", functio
         </tr>
     </tbody>
 </table>`;
-    var chart = $("#container").highcharts({
-        data: {
-            table: 'datatable',
-            decimalPoint: ','
-        },
-        chart: {
-            type: 'column'
-        }
-    }).highcharts();
+        var chart = $('#container')
+            .highcharts({
+                data: {
+                    table: 'datatable',
+                    decimalPoint: ','
+                },
+                chart: {
+                    type: 'column'
+                }
+            })
+            .highcharts();
 
-    assert.equal(
-        chart.series[0].points.map(function (point) {
-            return point.y;
-        }).join(','),
-        '-3.4,-1.2,5.1,-1.1,-3.12',
-        'Series 1 correct data'
-    );
-    assert.equal(
-        chart.series[1].points.map(function (point) {
-            return point.y;
-        }).join(','),
-        '-4.24,-1.5,11.1,-1.1,-2.9',
-        'Series 2 correct data'
-    );
-});
+        assert.equal(
+            chart.series[0].points
+                .map(function (point) {
+                    return point.y;
+                })
+                .join(','),
+            '-3.4,-1.2,5.1,-1.1,-3.12',
+            'Series 1 correct data'
+        );
+        assert.equal(
+            chart.series[1].points
+                .map(function (point) {
+                    return point.y;
+                })
+                .join(','),
+            '-4.24,-1.5,11.1,-1.1,-2.9',
+            'Series 2 correct data'
+        );
+    }
+);
 
 QUnit.test('Empty data config', function (assert) {
-
     var chart = Highcharts.chart('container', {
         data: {}
     });
 
-    assert.strictEqual(
-        chart.series.length,
-        0,
-        'Series array should exist'
-    );
+    assert.strictEqual(chart.series.length, 0, 'Series array should exist');
 });
 
 QUnit.test('Combination charts and column mapping', function (assert) {
-
     var csv = [
         'X values,First,Second,Third,Fourth,Fifth,Sixth',
         'Oak,10,9,11,20,19,21',
@@ -87,9 +123,11 @@ QUnit.test('Combination charts and column mapping', function (assert) {
         data: {
             csv: csv
         },
-        series: [{
-            type: 'pie'
-        }]
+        series: [
+            {
+                type: 'pie'
+            }
+        ]
     });
 
     assert.deepEqual(
@@ -104,15 +142,20 @@ QUnit.test('Combination charts and column mapping', function (assert) {
         data: {
             csv: csv
         },
-        series: [{
-            type: 'column'
-        }, {
-            type: 'errorbar'
-        }, {
-            type: 'line'
-        }, {
-            type: 'errorbar'
-        }]
+        series: [
+            {
+                type: 'column'
+            },
+            {
+                type: 'errorbar'
+            },
+            {
+                type: 'line'
+            },
+            {
+                type: 'errorbar'
+            }
+        ]
     });
 
     assert.deepEqual(
@@ -131,20 +174,26 @@ QUnit.test('Combination charts and column mapping', function (assert) {
                 'A,C,1,A,C',
                 'A,D,1,B,C'
             ].join('\n'),
-            seriesMapping: [{
-                from: 0,
-                to: 1,
-                weight: 2
-            }, {
-                from: 3,
-                to: 4
-            }]
+            seriesMapping: [
+                {
+                    from: 0,
+                    to: 1,
+                    weight: 2
+                },
+                {
+                    from: 3,
+                    to: 4
+                }
+            ]
         },
-        series: [{
-            type: 'sankey'
-        }, {
-            type: 'networkgraph'
-        }]
+        series: [
+            {
+                type: 'sankey'
+            },
+            {
+                type: 'networkgraph'
+            }
+        ]
     });
 
     assert.deepEqual(
@@ -195,12 +244,13 @@ QUnit.test('Data config on updates', function (assert) {
     );
 });
 
-QUnit.test("Data module - empty point should be parsed to null (#12566).", function (assert) {
-
-    const table = document.createElement('table');
-    document.body.appendChild(table);
-    table.id = 'secondTable';
-    table.innerHTML = `
+QUnit.test(
+    'Data module - empty point should be parsed to null (#12566).',
+    function (assert) {
+        const table = document.createElement('table');
+        document.body.appendChild(table);
+        table.id = 'secondTable';
+        table.innerHTML = `
         <thead>
             <tr>
                 <th></th>
@@ -234,22 +284,23 @@ QUnit.test("Data module - empty point should be parsed to null (#12566).", funct
             </tr>
         </tbody>`;
 
-    const chart = Highcharts.chart('container', {
-        chart: {
-            type: 'column'
-        },
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
 
-        data: {
-            table: 'secondTable',
-            decimalPoint: ','
-        }
-    });
+            data: {
+                table: 'secondTable',
+                decimalPoint: ','
+            }
+        });
 
-    assert.strictEqual(
-        chart.data.columns[2][0],
-        null,
-        'Empty point should be parsed to null instead of undefined.'
-    );
+        assert.strictEqual(
+            chart.data.columns[2][0],
+            null,
+            'Empty point should be parsed to null instead of undefined.'
+        );
 
-    document.body.removeChild(table);
-});
+        document.body.removeChild(table);
+    }
+);

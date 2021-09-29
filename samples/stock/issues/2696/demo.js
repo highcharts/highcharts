@@ -7,7 +7,7 @@ Highcharts.stockChart('container', {
     },
 
     title: {
-        text: 'Highstock <= 1.3.9: Data grouping included single point immediately to the left of zoomed range.'
+        text: 'Highcharts Stock <= 1.3.9: Data grouping included single point immediately to the left of zoomed range.'
     },
 
     xAxis: {

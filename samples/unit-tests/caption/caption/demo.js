@@ -1,8 +1,10 @@
 QUnit.test('Caption as initial option', assert => {
     const chart = Highcharts.chart('container', {
-        series: [{
-            data: [1, 3, 2, 4]
-        }],
+        series: [
+            {
+                data: [1, 3, 2, 4]
+            }
+        ],
         caption: {
             text: 'The quick brown fox jumps over the lazy dog'
         }
@@ -17,9 +19,11 @@ QUnit.test('Caption as initial option', assert => {
 
 QUnit.test('Caption and chart.update lifecycle', assert => {
     const chart = Highcharts.chart('container', {
-        series: [{
-            data: [1, 3, 2, 4]
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -34,7 +38,6 @@ QUnit.test('Caption and chart.update lifecycle', assert => {
         'An empty text element should be added for the caption'
     );
 
-
     chart.update({
         caption: {
             text: 'The quick brown fox jumps over the lazy dog'
@@ -45,7 +48,6 @@ QUnit.test('Caption and chart.update lifecycle', assert => {
         'The quick brown fox jumps over the lazy dog',
         'The caption text should be applied'
     );
-
 
     chart.update({
         caption: {

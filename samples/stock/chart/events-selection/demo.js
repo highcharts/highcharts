@@ -1,16 +1,15 @@
-var $report = $('#report');
+const report = document.getElementById('report');
 
 Highcharts.stockChart('container', {
-
     chart: {
         zoomType: 'x',
         events: {
-            selection: function (event) {
+            selection(event) {
                 if (event.xAxis) {
-                    $report.html('Last selection:<br/>min: ' + Highcharts.dateFormat('%Y-%m-%d', event.xAxis[0].min) +
-                        ', max: ' + Highcharts.dateFormat('%Y-%m-%d', event.xAxis[0].max));
+                    report.innerHTML = 'Last selection:<br/>min: ' + Highcharts.dateFormat('%Y-%m-%d', event.xAxis[0].min) +
+                        ', max: ' + Highcharts.dateFormat('%Y-%m-%d', event.xAxis[0].max);
                 } else {
-                    $report.html('Selection reset');
+                    report.innerHTML = 'Selection reset';
                 }
             }
         }

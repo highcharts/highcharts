@@ -1,7 +1,7 @@
 Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
     // Initiate the chart
-    var chart = Highcharts.mapChart('container', {
+    const chart = Highcharts.mapChart('container', {
 
         title: {
             text: 'Update point'
@@ -36,8 +36,17 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         }]
     });
 
+    // Set button text
+    const country = 76,  // Needed in case the API changes
+        button = document.getElementById('update');
+    button.textContent = "Update population of " + chart.series[0].points[country].name;
+
     // Activate the button
-    $('#update').click(function () {
-        chart.series[0].points[73].update(1000);
-    });
+    button.disabled = false;
+
+    // When the button is clicked
+    button.onclick = () => {
+        chart.series[0].points[country].update(10000000);
+        console.log(chart.series[0].points[country]);
+    };
 });

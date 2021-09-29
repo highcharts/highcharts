@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
@@ -12,9 +12,7 @@ var chart = Highcharts.chart('container', {
     }]
 });
 
-
-// the button action
-$('#button').click(function () {
+document.getElementById('button').addEventListener('click', () => {
     var selectedPoints = chart.getSelectedPoints();
 
     if (chart.lbl) {

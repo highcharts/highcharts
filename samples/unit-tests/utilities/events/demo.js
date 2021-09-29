@@ -36,9 +36,7 @@
         // Fire it again, should do nothing, since the handler is removed
         fireEvent(o, 'customEvent', null, null);
         assertEquals(assert, 'clicked again, no change', 1, o.clickedCount);
-
     });
-
 
     /**
      * Test an event that triggers another event that remove itself.
@@ -74,7 +72,6 @@
         fireEvent(o, 'innerEvent', null, null);
         assertEquals(assert, 'clicked again, no change', 1, o.clickedCount);
     });
-
 
     /**
      * Test event add/fire/remove on a POJO.
@@ -166,7 +163,12 @@
     QUnit.test('ObjectEventPreventDefaultExists', function (assert) {
         var o = { clickedCount: 0 },
             f = function (e) {
-                assertEquals(assert, 'preventDefault should exist', typeof e.preventDefault, 'function');
+                assertEquals(
+                    assert,
+                    'preventDefault should exist',
+                    typeof e.preventDefault,
+                    'function'
+                );
             };
 
         // Setup event handler
@@ -180,7 +182,8 @@
     });
 
     /**
-     * Tests that it is possible to prevent the default action by calling preventDefault.
+     * Tests that it is possible to prevent the default action by calling
+     * preventDefault.
      */
     QUnit.test('ObjectEventPreventDefaultByFunction', function (assert) {
         var o = { clickedCount: 0 },
@@ -213,38 +216,47 @@
      * Test that it is possible to prevent the default action from one
      * handler and still not running the default.
      */
-    QUnit.test('ObjectEventPreventDefaultByFunctionMultiple', function (assert) {
-        var o = { clickedCount: 0 },
-            f = function (e) {
-                o.clickedCount += e.inc;
-                e.preventDefault();
-            },
-            g = function (e) {
-                o.clickedCount += e.inc;
-                // e.preventDefault(); Do not prevent the default.
-            },
-            defaultFunction = function (e) {
-                o.clickedCount += e.inc;
-            };
+    QUnit.test(
+        'ObjectEventPreventDefaultByFunctionMultiple',
+        function (assert) {
+            var o = { clickedCount: 0 },
+                f = function (e) {
+                    o.clickedCount += e.inc;
+                    e.preventDefault();
+                },
+                g = function (e) {
+                    o.clickedCount += e.inc;
+                    // e.preventDefault(); Do not prevent the default.
+                },
+                defaultFunction = function (e) {
+                    o.clickedCount += e.inc;
+                };
 
-        // Setup event handler
-        addEvent(o, 'customEvent', f);
-        addEvent(o, 'customEvent', g);
-        assertEquals(assert, 'not yet clicked', 0, o.clickedCount);
+            // Setup event handler
+            addEvent(o, 'customEvent', f);
+            addEvent(o, 'customEvent', g);
+            assertEquals(assert, 'not yet clicked', 0, o.clickedCount);
 
-        // Fire it once
-        fireEvent(o, 'customEvent', { inc: 1 }, defaultFunction);
+            // Fire it once
+            fireEvent(o, 'customEvent', { inc: 1 }, defaultFunction);
 
-        assertEquals(assert, 'now clicked', 2, o.clickedCount);
+            assertEquals(assert, 'now clicked', 2, o.clickedCount);
 
-        // Remove the handler (Most fine-grained)
-        removeEvent(o, 'customEvent', f);
+            // Remove the handler (Most fine-grained)
+            removeEvent(o, 'customEvent', f);
 
-        // Fire it again, should fire 'g' which is not preventing the default
-        fireEvent(o, 'customEvent', { inc: 10 }, defaultFunction);
-        assertEquals(assert, 'clicked again, no change', 22, o.clickedCount); // 2 (from before) + 2 * 10 (handler + default)
-        removeEvent(o, 'customEvent', g);
-    });
+            // Fire it again, should fire 'g' which is not preventing the
+            // default
+            fireEvent(o, 'customEvent', { inc: 10 }, defaultFunction);
+            assertEquals(
+                assert,
+                'clicked again, no change',
+                22, // 2 (from before) + 2 * 10 (handler + default)
+                o.clickedCount
+            );
+            removeEvent(o, 'customEvent', g);
+        }
+    );
 
     /**
      * Test that arguments are passed to the event handler.
@@ -296,55 +308,71 @@
         // Remove the handler (Most fine-grained)
         removeEvent(o, 'customEvent', f);
 
-        // Fire it again, should only run the default function, since the handler is removed
+        // Fire it again, should only run the default function, since the
+        // handler is removed
         fireEvent(o, 'customEvent', { inc: 2 }, defaultFunction);
         assertEquals(assert, 'clicked again, no change', 6, o.clickedCount);
     });
 
     /**
-     * Tests that properties set in the handler is passed on to the default function.
+     * Tests that properties set in the handler is passed on to the default
+     * function.
      */
-    QUnit.test('ObjectEventPropertiesSetInHandlerSuppliedToDefaultFunction', function (assert) {
-        var o = { clickedCount: 0 },
-            f = function (e) {
-                o.clickedCount += e.inc;
-                e.extraInc = 100;
-            },
-            defaultFunction = function (e) {
-                o.clickedCount += e.inc;
-                o.clickedCount += (e.extraInc || 0);
-            };
+    QUnit.test(
+        'ObjectEventPropertiesSetInHandlerSuppliedToDefaultFunction',
+        function (assert) {
+            var o = { clickedCount: 0 },
+                f = function (e) {
+                    o.clickedCount += e.inc;
+                    e.extraInc = 100;
+                },
+                defaultFunction = function (e) {
+                    o.clickedCount += e.inc;
+                    o.clickedCount += e.extraInc || 0;
+                };
 
-        // Setup event handler
-        addEvent(o, 'customEvent', f);
-        assertEquals(assert, 'not yet clicked', 0, o.clickedCount);
+            // Setup event handler
+            addEvent(o, 'customEvent', f);
+            assertEquals(assert, 'not yet clicked', 0, o.clickedCount);
 
-        // Fire it once
-        fireEvent(o, 'customEvent', { inc: 2 }, defaultFunction);
+            // Fire it once
+            fireEvent(o, 'customEvent', { inc: 2 }, defaultFunction);
 
-        assertEquals(assert, 'now clicked', 104, o.clickedCount);
+            assertEquals(assert, 'now clicked', 104, o.clickedCount);
 
-        // Remove the handler (Most fine-grained)
-        removeEvent(o, 'customEvent', f);
+            // Remove the handler (Most fine-grained)
+            removeEvent(o, 'customEvent', f);
 
-        // Fire it again, should only run the default function, since the handler is removed
-        fireEvent(o, 'customEvent', { inc: 2 }, defaultFunction);
-        assertEquals(assert, 'clicked again, no change', 106, o.clickedCount);
-    });
+            // Fire it again, should only run the default function, since the
+            // handler is removed
+            fireEvent(o, 'customEvent', { inc: 2 }, defaultFunction);
+            assertEquals(
+                assert,
+                'clicked again, no change',
+                106,
+                o.clickedCount
+            );
+        }
+    );
 
     /**
-     * Tests that the default function is executed even when no listeners are registered.
+     * Tests that the default function is executed even when no listeners are
+     * registered.
      */
-    QUnit.test('ObjectEventDefaultFunctionShouldRunWhenNoHandlersAreRegistered', function (assert) {
-        var o = { clickedCount: 0 },
-            defaultFunction = function (e) {
-                o.clickedCount += e.inc;
-            };
+    QUnit.test(
+        'ObjectEventDefaultFunctionShouldRunWhenNoHandlersAreRegistered',
+        function (assert) {
+            var o = { clickedCount: 0 },
+                defaultFunction = function (e) {
+                    o.clickedCount += e.inc;
+                };
 
-        // Fire it, should only run the default function, since there is no handler
-        fireEvent(o, 'customEvent', { inc: 1 }, defaultFunction);
-        assertEquals(assert, 'clicked again, no change', 1, o.clickedCount);
-    });
+            // Fire it, should only run the default function, since there is no
+            // handler
+            fireEvent(o, 'customEvent', { inc: 1 }, defaultFunction);
+            assertEquals(assert, 'clicked again, no change', 1, o.clickedCount);
+        }
+    );
 
     /**
      * Test event add/fire/remove on DOM element.
@@ -373,8 +401,12 @@
 
         // Fire it again, should do nothing, since the handler is removed
         fireEvent(o, 'customEvent', null, null);
-        assertEquals(assert, 'custom clicked again, no change', 1, pInt(o.innerHTML));
-
+        assertEquals(
+            assert,
+            'custom clicked again, no change',
+            1,
+            pInt(o.innerHTML)
+        );
 
         // 2. Test HTML events
         // Reset the counter
@@ -422,7 +454,12 @@
 
         // Fire it again, should do nothing, since the handler is removed
         fireEvent(o, 'customEvent', null, null);
-        assertEquals(assert, 'custom clicked again, no change', 1, pInt(o.innerHTML));
+        assertEquals(
+            assert,
+            'custom clicked again, no change',
+            1,
+            pInt(o.innerHTML)
+        );
 
         // 2. Test HTML events
         // Reset the counter
@@ -471,7 +508,12 @@
 
         // Fire it again, should do nothing, since the handler is removed
         fireEvent(o, 'customEvent', null, null);
-        assertEquals(assert, 'custom clicked again, no change', 1, pInt(o.innerHTML));
+        assertEquals(
+            assert,
+            'custom clicked again, no change',
+            1,
+            pInt(o.innerHTML)
+        );
 
         // 2. Test HTML events
         // Reset the counter
@@ -493,52 +535,51 @@
         assertEquals(assert, 'clicked again, no change', 1, pInt(o.innerHTML));
     });
 
-
     QUnit.test('Event assigned as null (#5311)', function (assert) {
         assert.expect(0);
         var chart = Highcharts.chart('container', {
-
             chart: {
                 events: {
                     redraw: null
                 }
             },
 
-            series: [{
-                data: [1, 3, 2, 4]
-            }]
-
+            series: [
+                {
+                    data: [1, 3, 2, 4]
+                }
+            ]
         });
 
         chart.setSize(400, 300, false);
-
     });
 
     QUnit.test('Unbinding prototype event', function (assert) {
-        var unbind = Highcharts.addEvent(Highcharts.Chart, 'render', function () {
+        var unbind = addEvent(Highcharts.Chart, 'render', function () {
             assert.ok(false, 'This event should never fire');
         });
         unbind();
         Highcharts.chart('container', {});
 
         assert.ok(true, 'Chart should render');
-
     });
 
     QUnit.test('Event order', assert => {
         var obj = {},
             calls = [];
 
-        [
-            undefined,
-            { order: 2 },
-            undefined,
-            { order: 1 }
-        ].forEach(options => {
-            addEvent(obj, 'hit', () => {
-                calls.push(options ? options.order : undefined);
-            }, options);
-        });
+        [undefined, { order: 2 }, undefined, { order: 1 }].forEach(
+            options => {
+                addEvent(
+                    obj,
+                    'hit',
+                    () => {
+                        calls.push(options ? options.order : undefined);
+                    },
+                    options
+                );
+            }
+        );
 
         fireEvent(obj, 'hit');
 
@@ -547,6 +588,108 @@
             [1, 2, undefined, undefined],
             'Events should be fired in ascending order'
         );
+    });
 
+    QUnit.test('Events in extended classes', assert => {
+        const results = [];
+
+        function Series() {}
+        Series.prototype.type = 'line';
+
+        const ColumnSeries = Highcharts.extendClass(Series, {
+            type: 'column'
+        });
+        const item = new ColumnSeries();
+
+        addEvent(Series, 'touch', () => results.push('Series'));
+        addEvent(ColumnSeries, 'touch', () => results.push('ColumnSeries'));
+
+        addEvent(item, 'touch', () => results.push('item'));
+
+        fireEvent(item, 'touch');
+        assert.deepEqual(
+            results,
+            ['Series', 'ColumnSeries', 'item'],
+            'All levels of the prototype chain should fire'
+        );
+
+        const line = new Series();
+        results.length = 0;
+        fireEvent(line, 'touch');
+        assert.deepEqual(
+            results,
+            ['Series'],
+            `Only the Series class event should fire on a Series
+            instance`
+        );
+
+        // Removed
+        results.length = 0;
+        removeEvent(ColumnSeries, 'touch');
+        fireEvent(item, 'touch');
+        assert.deepEqual(
+            results,
+            ['Series', 'item'],
+            'Remaining levels of the prototype chain should fire'
+        );
+
+        // Remove all
+        results.length = 0;
+        removeEvent(Series, 'touch');
+        removeEvent(item, 'touch');
+        fireEvent(item, 'touch');
+        assert.deepEqual(results, [], 'No events should fire');
+
+        // Add randomly ordered events spread over the prototype chain
+        results.length = 0;
+        addEvent(Series, 'touch', () => results.push('Series.3'), { order: 3 });
+        addEvent(Series, 'touch', () => results.push('Series.1'), { order: 1 });
+
+        addEvent(ColumnSeries, 'touch', () => results.push('ColumnSeries.2'), {
+            order: 2
+        });
+        addEvent(ColumnSeries, 'touch', () => results.push('ColumnSeries.0'), {
+            order: 0
+        });
+
+        addEvent(item, 'touch', () => results.push('item.4'), { order: 4 });
+
+        addEvent(item, 'touch', () => results.push('item.-1'), { order: -1 });
+        fireEvent(item, 'touch');
+        assert.deepEqual(
+            results,
+            [
+                'item.-1',
+                'ColumnSeries.0',
+                'Series.1',
+                'ColumnSeries.2',
+                'Series.3',
+                'item.4'
+            ],
+            'Events should fire in order across the prototype chain'
+        );
+    });
+
+    QUnit.test('FireEvent on dom element keeps params', assert => {
+        const container = document.getElementById('container');
+        const value = 'test';
+
+        Highcharts.addEvent(container, 'testEvent', function (e) {
+            e.test = value;
+        });
+
+        Highcharts.fireEvent(container, 'testEvent', { a: 'test' }, function (e) {
+            assert.equal(e.test, value);
+        });
+
+        const obj = {};
+
+        Highcharts.addEvent(obj, 'testEvent2', function (e) {
+            e.test = value;
+        });
+
+        Highcharts.fireEvent(obj, 'testEvent2', { a: 'testt2' }, function (e) {
+            assert.equal(e.test, value);
+        });
     });
 }());

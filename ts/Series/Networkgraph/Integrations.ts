@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2020 Paweł Fus
+ *  (c) 2010-2021 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -13,6 +13,7 @@
 'use strict';
 
 import type Point from '../../Core/Series/Point';
+import type PositionObject from '../../Core/Renderer/PositionObject';
 import H from '../../Core/Globals.js';
 
 /**
@@ -134,7 +135,7 @@ H.networkgraphIntegrations = {
          * @return {void}
          */
         barycenter: function (this: Highcharts.NetworkgraphLayout): void {
-            var gravitationalConstant = this.options.gravitationalConstant,
+            let gravitationalConstant = this.options.gravitationalConstant,
                 xFactor = (this.barycenter as any).xFactor,
                 yFactor = (this.barycenter as any).yFactor;
 
@@ -172,9 +173,9 @@ H.networkgraphIntegrations = {
             this: Highcharts.NetworkgraphLayout,
             node: Highcharts.NetworkgraphPoint,
             force: number,
-            distanceXY: Highcharts.PositionObject
+            distanceXY: PositionObject
         ): void {
-            var factor =
+            const factor =
                 force * (this.diffTemperature as any) / node.mass / node.degree;
 
             if (!node.fixedPosition) {
@@ -201,9 +202,9 @@ H.networkgraphIntegrations = {
             this: Highcharts.NetworkgraphLayout,
             link: Highcharts.NetworkgraphPoint,
             force: number,
-            distanceXY: Highcharts.PositionObject
+            distanceXY: PositionObject
         ): void {
-            var massFactor = link.getMass(),
+            const massFactor = link.getMass(),
                 translatedX =
                     -distanceXY.x * force * (this.diffTemperature as any),
                 translatedY =
@@ -258,7 +259,7 @@ H.networkgraphIntegrations = {
             layout: Highcharts.NetworkgraphLayout,
             node: Highcharts.NetworkgraphPoint
         ): void {
-            var friction = -(layout.options.friction as any),
+            let friction = -(layout.options.friction as any),
                 maxSpeed = layout.options.maxSpeed,
                 prevX = node.prevX,
                 prevY = node.prevY,
@@ -359,13 +360,13 @@ H.networkgraphIntegrations = {
          * @return {void}
          */
         barycenter: function (this: Highcharts.NetworkgraphLayout): void {
-            var gravitationalConstant = this.options.gravitationalConstant,
+            const gravitationalConstant = this.options.gravitationalConstant,
                 xFactor = (this.barycenter as any).xFactor,
                 yFactor = (this.barycenter as any).yFactor;
 
             this.nodes.forEach(function (node: Point): void {
                 if (!(node as Highcharts.DragNodesPoint).fixedPosition) {
-                    var degree =
+                    const degree =
                             (node as Highcharts.NetworkgraphPoint).getDegree(),
                         phi = degree * (1 + degree / 2);
 
@@ -397,7 +398,7 @@ H.networkgraphIntegrations = {
         repulsive: function (
             node: Highcharts.NetworkgraphPoint,
             force: number,
-            distanceXY: Highcharts.PositionObject,
+            distanceXY: PositionObject,
             distanceR: number
         ): void {
             (node.dispX as any) +=
@@ -424,10 +425,10 @@ H.networkgraphIntegrations = {
         attractive: function (
             link: Highcharts.NetworkgraphPoint,
             force: number,
-            distanceXY: Highcharts.PositionObject,
+            distanceXY: PositionObject,
             distanceR: number
         ): void {
-            var massFactor = link.getMass(),
+            const massFactor = link.getMass(),
                 translatedX = (distanceXY.x / distanceR) * force,
                 translatedY = (distanceXY.y / distanceR) * force;
 
@@ -482,7 +483,7 @@ H.networkgraphIntegrations = {
             layout: Highcharts.NetworkgraphLayout,
             node: Highcharts.NetworkgraphPoint
         ): void {
-            var distanceR: number;
+            let distanceR: number;
 
             (node.dispX as any) +=
                 (node.dispX as any) * (layout.options.friction as any);

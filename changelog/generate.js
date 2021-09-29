@@ -11,6 +11,7 @@
  * --before String Optional. The end date for the changelog, defaults to today.
  * --review        Create a review page with edit links and a list of all PRs
  *                 that are not used in the changelog.
+ * --fromCache     Re-format pulls from cache, do not load new from GitHub.
  */
 
 const marked = require('marked');
@@ -57,7 +58,10 @@ const childProcess = require('child_process');
      * Get the log from Git
      */
     async function getLog(callback) {
-        var log = await prLog(params.since).catch(e => console.error(e));
+        var log = await prLog(
+            params.since,
+            params.fromCache
+        ).catch(e => console.error(e));
 
         callback(log);
     }
@@ -82,14 +86,26 @@ const childProcess = require('child_process');
         return washed;
     }
 
-    function addAPILinks(str, apiFolder) {
+    function addLinks(str, apiFolder) {
         let match;
-        const reg = /`([a-zA-Z0-9\.\[\]]+)`/g;
 
-        while ((match = reg.exec(str)) !== null) {
+        // Add links to issues
+        const issueReg = /[^\[]#([0-9]+)[^\]]/g;
+        while ((match = issueReg.exec(str)) !== null) {
+            const num = match[1];
+
+            str = str.replace(
+                `#${num}`,
+                `[#${num}](https://github.com/highcharts/highcharts/issues/${num})`
+            );
+        }
+
+        // Add API Links
+        const apiReg = /`([a-zA-Z0-9\.\[\]]+)`/g;
+        while ((match = apiReg.exec(str)) !== null) {
 
             const shortKey = match[1];
-            const replacements = [];
+            let replacements = [];
 
             optionKeys.forEach(longKey => {
                 if (longKey.indexOf(shortKey) !== -1) {
@@ -99,13 +115,26 @@ const childProcess = require('child_process');
 
             // If more than one match, see if we can rule out children of
             // objects
-            /*
             if (replacements.length > 1) {
                 replacements = replacements.filter(
                     longKey => longKey.lastIndexOf(shortKey) === longKey.length - shortKey.length
                 );
+
+                // Check if it is a member on the root series options
+                if (
+                    replacements.length > 1 &&
+                    replacements.indexOf(`plotOptions.series.${shortKey}`) !== -1
+                ) {
+                    replacements = replacements.filter(longKey => {
+                        // Remove series-specific members so that we may isolate
+                        // it to plotOptions.series.shortKey
+                        const m = longKey.match(
+                            new RegExp('plotOptions\.([a-zA-Z\.]+)\.' + shortKey)
+                        );
+                        return !m || m[1] === 'series';
+                    });
+                }
             }
-            */
 
             // If more than one match, we may be dealing with ambiguous keys
             // like `formatter`, `lineWidth` etch.
@@ -140,7 +169,7 @@ const childProcess = require('child_process');
 
         const upgradeNotes = log
             .filter(change => typeof change.upgradeNote === 'string')
-            .map(change => addAPILinks(`- ${change.upgradeNote}`, apiFolder))
+            .map(change => addLinks(`- ${change.upgradeNote}`, apiFolder))
             .join('\n');
 
         // Start the output string
@@ -151,7 +180,7 @@ const childProcess = require('child_process');
         }
         log.forEach((change, i) => {
 
-            const desc = addAPILinks(change.description || change, apiFolder);
+            const desc = addLinks(change.description || change, apiFolder);
 
 
             // Start fixes
@@ -165,7 +194,7 @@ const childProcess = require('child_process');
             }
 
             const edit = params.review ?
-                ` [<a href="https://github.com/highcharts/highcharts/pull/${change.number}">Edit</a>]` :
+                ` [Edit](https://github.com/highcharts/highcharts/pull/${change.number}).` :
                 '';
 
             // All items

@@ -1,5 +1,4 @@
 QUnit.module('Styled mode for series types', function () {
-
     var notified = {};
 
     function checkStyledMode(chart, assert) {
@@ -13,17 +12,22 @@ QUnit.module('Styled mode for series types', function () {
             'style'
         ];
         if (
-            (new RegExp(' (' + blacklist.join('|') + ')="', 'g')).test(
+            new RegExp(' (' + blacklist.join('|') + ')="', 'g').test(
                 container.innerHTML
             )
         ) {
             blacklist.forEach(function (attr) {
-                container.querySelectorAll('*[' + attr + ']').forEach(
-                    function (elem) {
+                container
+                    .querySelectorAll('*[' + attr + ']')
+                    .forEach(function (elem) {
                         if (elem.className === 'highcharts-a11y-proxy-button') {
                             return;
                         }
-                        var key = [attr, elem.nodeName, elem.getAttribute('class')].join(',');
+                        var key = [
+                            attr,
+                            elem.nodeName,
+                            elem.getAttribute('class')
+                        ].join(',');
                         if (!notified[key]) {
                             console.log(
                                 '⚠️ Found presentational attribute in styled mode:',
@@ -32,34 +36,29 @@ QUnit.module('Styled mode for series types', function () {
                             );
                             assert.ok(
                                 false,
-                                'Unexpected attribute: ' + attr + '. See console for details.'
+                                'Unexpected attribute: ' +
+                                    attr +
+                                    '. See console for details.'
                             );
                         }
                         notified[key] = true;
-                    }
-                );
+                    });
             });
         }
     }
 
     Object.keys(Highcharts.seriesTypes).forEach(function (type) {
-
         if (
             // Don't test indicator series (yet), they have more complex setup
             !('linkedTo' in Highcharts.defaultOptions.plotOptions[type]) &&
-
             // In solid gauge, the fill conveys magnitude
             type !== 'solidgauge' &&
-
             // Complains about a missing axis
             type !== 'scatter3d' &&
-
             // Uses CSS for HTML data label positioning
             type !== 'organization'
         ) {
-
             QUnit.test('Styled mode for ' + type, function (assert) {
-
                 var cfg = {
                     chart: {
                         type: type,
@@ -68,37 +67,44 @@ QUnit.module('Styled mode for series types', function () {
                     accessibility: {
                         enabled: false // A11y forces graphic for null points
                     },
-                    series: [{
-                        id: 'primary',
-                        data: [
-                            [1, 2, 3, 4],
-                            [2, 3, 4, 5],
-                            [3, 4, 5, 6]
-                        ],
-                        dataLabels: {
-                            enabled: true
+                    series: [
+                        {
+                            id: 'primary',
+                            data: [
+                                [1, 2, 3, 4],
+                                [2, 3, 4, 5],
+                                [3, 4, 5, 6]
+                            ],
+                            dataLabels: {
+                                enabled: true
+                            }
+                        },
+                        {
+                            colorByPoint: true,
+                            data: [
+                                [1, 2, 3, 4],
+                                [2, 3, 4, 5],
+                                [3, 4, 5, 6]
+                            ]
                         }
-                    }, {
-                        colorByPoint: true,
-                        data: [
-                            [1, 2, 3, 4],
-                            [2, 3, 4, 5],
-                            [3, 4, 5, 6]
-                        ]
-                    }]
+                    ]
                 };
 
                 // Special cases
                 if (type === 'line') {
-                    cfg.annotations = [{
-                        labels: [{
-                            point: {
-                                xAxis: 2,
-                                yAxis: 2
-                            },
-                            text: 'Annotation label'
-                        }]
-                    }];
+                    cfg.annotations = [
+                        {
+                            labels: [
+                                {
+                                    point: {
+                                        xAxis: 2,
+                                        yAxis: 2
+                                    },
+                                    text: 'Annotation label'
+                                }
+                            ]
+                        }
+                    ];
                 }
 
                 if (type === 'networkgraph') {
@@ -119,5 +125,4 @@ QUnit.module('Styled mode for series types', function () {
             });
         }
     });
-
 });

@@ -17,15 +17,16 @@ function isPointAriaHidden(point) {
     return point.graphic.element.getAttribute('aria-hidden') === 'true';
 }
 
-
 QUnit.test('Accessibility disabled', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
                 enabled: false
             },
-            series: [{
-                data: [1, 2, 3, 4, 5, 6]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4, 5, 6]
+                }
+            ]
         }),
         point = chart.series[0].points[0],
         srSection = getScreenReaderSectionEl(chart);
@@ -38,6 +39,27 @@ QUnit.test('Accessibility disabled', function (assert) {
     );
 });
 
+QUnit.test('Point hidden from AT', function (assert) {
+    var chart = Highcharts.chart('container', {
+            series: [
+                {
+                    data: [1, {
+                        y: 2,
+                        accessibility: {
+                            enabled: false
+                        }
+                    }, 3, 4, 5, 6]
+                }
+            ]
+        }),
+        pointA = chart.series[0].points[0],
+        pointB = chart.series[0].points[1];
+
+    assert.ok(getPointAriaLabel(pointA), 'There should be ARIA on point A');
+    assert.notOk(getPointAriaLabel(pointB), 'There should be no ARIA label on point B');
+    assert.ok(isPointAriaHidden(pointB), 'Point B should be ARIA hidden');
+});
+
 QUnit.test('Keyboard nav disabled', function (assert) {
     const chart = Highcharts.chart('container', {
         accessibility: {
@@ -45,12 +67,17 @@ QUnit.test('Keyboard nav disabled', function (assert) {
                 enabled: false
             }
         },
-        series: [{
-            data: [1]
-        }]
+        series: [
+            {
+                data: [1]
+            }
+        ]
     });
 
-    assert.notOk(chart.container.getAttribute('tabindex'), 'There is no tabindex on container');
+    assert.notOk(
+        chart.container.getAttribute('tabindex'),
+        'There is no tabindex on container'
+    );
 });
 
 QUnit.test('No data', function (assert) {
@@ -86,9 +113,11 @@ QUnit.test('pointDescriptionEnabledThreshold', function (assert) {
                     describeSingleSeries: true
                 }
             },
-            series: [{
-                data: [1, 2, 3, 4, 5, 6]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4, 5, 6]
+                }
+            ]
         }),
         series = chart.series[0];
 
@@ -97,7 +126,10 @@ QUnit.test('pointDescriptionEnabledThreshold', function (assert) {
 
     series.addPoint(4);
 
-    assert.notOk(getPointAriaLabel(series.points[6]), 'There be no ARIA on point');
+    assert.notOk(
+        getPointAriaLabel(series.points[6]),
+        'There be no ARIA on point'
+    );
     assert.ok(getSeriesAriaLabel(series), 'There be ARIA on series');
 });
 
@@ -110,9 +142,11 @@ QUnit.test('pointNavigationThreshold', function (assert) {
                     }
                 }
             },
-            series: [{
-                data: [1, 2, 3, 4, 5, 6]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4, 5, 6]
+                }
+            ]
         }),
         point = chart.series[0].points[0];
 
@@ -151,13 +185,16 @@ QUnit.test('seriesDescriptionFormatter', function (assert) {
                 describeSingleSeries: true
             }
         },
-        series: [{
-            data: [1, 2, 3, 4, 5, 6],
-            name: 'First'
-        }, {
-            data: [1, 2, 3, 4, 5, 6],
-            name: 'Second with <em>markup</em>'
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4, 5, 6],
+                name: 'First'
+            },
+            {
+                data: [1, 2, 3, 4, 5, 6],
+                name: 'Second with <em>markup</em>'
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -181,13 +218,19 @@ QUnit.test('pointDescriptionFormatter', function (assert) {
                     }
                 }
             },
-            series: [{
-                data: [1, 2, 3, 4, 5, 6]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4, 5, 6]
+                }
+            ]
         }),
         point = chart.series[0].points[0];
 
-    assert.strictEqual(getPointAriaLabel(point), 'yo0', 'Custom aria-label on point');
+    assert.strictEqual(
+        getPointAriaLabel(point),
+        'yo0',
+        'Custom aria-label on point'
+    );
 });
 
 QUnit.test('Chart description', function (assert) {
@@ -195,29 +238,39 @@ QUnit.test('Chart description', function (assert) {
         accessibility: {
             description: 'Description: Yo.'
         },
-        series: [{
-            data: [1, 2, 3, 4, 5, 6]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4, 5, 6]
+            }
+        ]
     });
     assert.ok(
-        getScreenReaderSectionEl(chart).innerHTML.indexOf('Description: Yo.') > -1,
+        getScreenReaderSectionEl(chart).innerHTML.indexOf('Description: Yo.') >
+            -1,
         'Chart description included in screen reader region'
+    );
+
+    chart.update({});
+    assert.ok(
+        document.querySelector('.highcharts-exit-anchor'),
+        '#15986: There should still be an exit anchor after updating'
     );
 });
 
 QUnit.test('Landmark verbosity', function (assert) {
     var numRegions = function (chart) {
-            return (
-                chart.renderTo.outerHTML.match(/role="region"/g) || []
-            ).length;
+            return (chart.renderTo.outerHTML.match(/role="region"/g) || [])
+                .length;
         },
         chart = Highcharts.chart('container', {
             accessibility: {
                 landmarkVerbosity: 'disabled'
             },
-            series: [{
-                data: [1, 2, 3, 4, 5, 6]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4, 5, 6]
+                }
+            ]
         });
     assert.strictEqual(numRegions(chart), 0, 'No landmarks in chart');
 
@@ -243,16 +296,21 @@ QUnit.test('exposeAsGroupOnly', function (assert) {
                     describeSingleSeries: false
                 }
             },
-            series: [{
-                data: [1, 2, 3, 4, 5, 6]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4, 5, 6]
+                }
+            ]
         }),
         series = chart.series[0],
         point = series.points[0];
 
     assert.ok(getPointAriaLabel(point), 'Point has aria');
     assert.notOk(isPointAriaHidden(point), 'Point is not aria hidden');
-    assert.notOk(getSeriesAriaLabel(chart.series[0]), 'Series does not have aria');
+    assert.notOk(
+        getSeriesAriaLabel(chart.series[0]),
+        'Series does not have aria'
+    );
 
     series.update({
         accessibility: {
@@ -269,23 +327,25 @@ QUnit.test('Focus border in wordcloud', function (assert) {
         chart: {
             margin: 0
         },
-        series: [{
-            type: 'wordcloud',
-            data: [
-                {
-                    name: 'Lorem',
-                    weight: 1
-                },
-                {
-                    name: 'ipsum',
-                    weight: 2
-                },
-                {
-                    name: 'test',
-                    weight: 1
-                }
-            ]
-        }]
+        series: [
+            {
+                type: 'wordcloud',
+                data: [
+                    {
+                        name: 'Lorem',
+                        weight: 1
+                    },
+                    {
+                        name: 'ipsum',
+                        weight: 2
+                    },
+                    {
+                        name: 'test',
+                        weight: 1
+                    }
+                ]
+            }
+        ]
     });
 
     const point = chart.series[0].points[2];
@@ -297,9 +357,7 @@ QUnit.test('Focus border in wordcloud', function (assert) {
         focusBorderY = chart.focusElement.focusBorder.attr('y'),
         focusBorderHeight = chart.focusElement.focusBorder.attr('height'),
         focusElementX = chart.focusElement.attr('x'),
-        focusElementY = chart.focusElement.attr('y'),
-        focusElementHeight = point.graphic.getBBox().height,
-        H = Highcharts;
+        focusElementY = chart.focusElement.attr('y');
 
     assert.strictEqual(
         focusBorderX + focusBorderWidth / 2,
@@ -307,71 +365,70 @@ QUnit.test('Focus border in wordcloud', function (assert) {
         'should be correctly applied for text elements horizontally, #11397'
     );
 
-    // Correct baseline position on Firefox.
     assert.strictEqual(
         focusBorderY + focusBorderHeight / 2,
-        H.isFirefox ? focusElementY - (focusElementHeight * 0.25) : focusElementY,
+        focusElementY,
         'should be correctly applied for text elements vertically, #11397'
     );
 });
 
 QUnit.test('Focus border', function (assert) {
     const H = Highcharts;
-    const ren = new H.Renderer(
-        document.getElementById('container'),
-        600,
-        400
-    );
+    const ren = new H.Renderer(document.getElementById('container'), 600, 400);
 
     const style = {
         stroke: 'blue',
         strokeWidth: 1
     };
 
-    const regularText = ren.text('regular text', 50, 50)
-        .add();
+    const regularText = ren.text('regular text', 50, 50).add();
     regularText.addFocusBorder(2, style);
 
-    const wordcloudText = ren.text('wordcloud text', 100, 100)
+    const wordcloudText = ren
+        .text('wordcloud text', 100, 100)
         .attr({
-            "alignment-baseline": "middle",
+            'alignment-baseline': 'middle',
             'text-anchor': 'middle'
         })
         .css({
             color: 'red',
-            whiteSpace: "nowrap"
+            whiteSpace: 'nowrap'
         })
         .add();
     wordcloudText.addFocusBorder(2, style);
 
-    const regularRotatedText = ren.text('regular rotated text', 150, 150)
+    const regularRotatedText = ren
+        .text('regular rotated text', 150, 150)
         .attr({
             rotation: 90
         })
         .add();
     regularRotatedText.addFocusBorder(2, style);
 
-    const wordcloudRotatedText = ren.text('wordcloud rotated text', 200, 200)
+    const wordcloudRotatedText = ren
+        .text('wordcloud rotated text', 200, 200)
         .attr({
-            "alignment-baseline": "middle",
+            'alignment-baseline': 'middle',
             'text-anchor': 'middle',
             rotation: 90
         })
         .css({
             color: 'red',
-            whiteSpace: "nowrap"
+            whiteSpace: 'nowrap'
         })
         .add();
     wordcloudRotatedText.addFocusBorder(2, style);
 
-    const labelText = ren.label('label', 250, 250)
+    const labelText = ren
+        .label('label', 250, 250)
         .css({
             color: 'blue'
         })
         .add();
     labelText.addFocusBorder(2, style);
 
-    const labelRotatedText = ren.label('rotated label', 300, 300)
+    const labelRotatedText = ren
+        .label('rotated label', 300, 300)
         .attr({
             rotation: 90
         })
@@ -384,90 +441,85 @@ QUnit.test('Focus border', function (assert) {
     // Comparing the midpoint of the border with the midpoint of the text.
     assert.close(
         regularText.focusBorder.getBBox().x +
-        regularText.focusBorder.getBBox().width / 2,
-        regularText.attr('x') +
-        regularText.getBBox().width / 2,
+            regularText.focusBorder.getBBox().width / 2,
+        regularText.attr('x') + regularText.getBBox().width / 2,
         0.1,
         'should be correctly applied for text horizontally.'
     );
 
     assert.close(
         regularText.focusBorder.getBBox().y +
-        regularText.focusBorder.getBBox().height / 2,
-        regularText.attr('y') -
-        regularText.getBBox().height / 2 * 0.5,
+            regularText.focusBorder.getBBox().height / 2,
+        regularText.attr('y') - (regularText.getBBox().height / 2) * 0.5,
         0.1,
         'should be correctly applied for text vertically.'
     );
 
     assert.close(
         regularRotatedText.focusBorder.getBBox().x +
-        regularRotatedText.focusBorder.getBBox().width / 2,
+            regularRotatedText.focusBorder.getBBox().width / 2,
         regularRotatedText.attr('x') +
-        regularRotatedText.getBBox().width / 2 * 0.5,
+            (regularRotatedText.getBBox().width / 2) * 0.5,
         0.1,
         'should be correctly applied for rotated text horizontally.'
     );
 
     assert.close(
         regularRotatedText.focusBorder.getBBox().y +
-        regularRotatedText.focusBorder.getBBox().height / 2,
-        regularRotatedText.attr('y') +
-        regularRotatedText.getBBox().height / 2,
+            regularRotatedText.focusBorder.getBBox().height / 2,
+        regularRotatedText.attr('y') + regularRotatedText.getBBox().height / 2,
         0.1,
         'should be correctly applied for rotated text element vertically.'
     );
 
     assert.close(
         wordcloudText.focusBorder.getBBox().x +
-        wordcloudText.focusBorder.getBBox().width / 2,
+            wordcloudText.focusBorder.getBBox().width / 2,
         wordcloudText.attr('x') +
-        wordcloudText.getBBox().width * (H.isFirefox && wordcloudText.rotation ? 0.25 : 0),
+            wordcloudText.getBBox().width *
+                (H.isFirefox && wordcloudText.rotation ? 0.25 : 0),
         0.1,
         'should be correctly applied for wordcloud text element horizontally.'
     );
 
     assert.close(
         wordcloudRotatedText.focusBorder.getBBox().y +
-        wordcloudRotatedText.focusBorder.getBBox().height / 2,
+            wordcloudRotatedText.focusBorder.getBBox().height / 2,
         wordcloudRotatedText.attr('y') +
-        wordcloudRotatedText.getBBox().height * (H.isFirefox && !wordcloudRotatedText.rotation ? -0.25 : 0),
+            wordcloudRotatedText.getBBox().height *
+                (H.isFirefox && !wordcloudRotatedText.rotation ? -0.25 : 0),
         0.1,
         'should be correctly for wordcloud text element vertically.'
     );
 
     assert.close(
         labelText.focusBorder.getBBox().x +
-        labelText.focusBorder.getBBox().width / 2,
-        labelText.attr('x') +
-        labelText.getBBox().width / 2,
+            labelText.focusBorder.getBBox().width / 2,
+        labelText.attr('x') + labelText.getBBox().width / 2,
         0.1,
         'should be correctly for labels horizontally.'
     );
 
     assert.close(
         labelText.focusBorder.getBBox().x +
-        labelText.focusBorder.getBBox().height / 2,
-        labelText.attr('y') +
-        labelText.getBBox().height / 2,
+            labelText.focusBorder.getBBox().height / 2,
+        labelText.attr('y') + labelText.getBBox().height / 2,
         0.1,
         'should be correctly for labels vertically.'
     );
 
     assert.close(
         labelRotatedText.focusBorder.getBBox().x +
-        labelRotatedText.focusBorder.getBBox().width / 2,
-        labelRotatedText.attr('x') -
-        labelRotatedText.getBBox().height / 2,
+            labelRotatedText.focusBorder.getBBox().width / 2,
+        labelRotatedText.attr('x') - labelRotatedText.getBBox().height / 2,
         0.1,
         'should be correctly for rotated labels horizontally.'
     );
 
     assert.close(
         labelRotatedText.focusBorder.getBBox().y +
-        labelRotatedText.focusBorder.getBBox().height / 2,
-        labelRotatedText.attr('y') +
-        labelRotatedText.getBBox().width / 2,
+            labelRotatedText.focusBorder.getBBox().height / 2,
+        labelRotatedText.attr('y') + labelRotatedText.getBBox().width / 2,
         0.1,
         'should be correctly for rotated labels vertically.'
     );

@@ -18,7 +18,7 @@ QUnit.test('hasData', function (assert) {
     assert.strictEqual(
         hasData.call({
             visible: undefined,
-            points: ["Point"]
+            points: ['Point']
         }),
         false,
         'should return false if series.visible is not explicitly true'
@@ -42,7 +42,7 @@ QUnit.test('hasData', function (assert) {
     assert.strictEqual(
         hasData.call({
             visible: true,
-            points: ["Point"]
+            points: ['Point']
         }),
         true,
         'should return true if series.visible is true, and series.points has length > 0'
@@ -222,10 +222,27 @@ QUnit.test('isPolygonsColliding', function (assert) {
     console.clear(); // eslint-disable-line
     var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
         isPolygonsColliding = wordcloudPrototype.utils.isPolygonsColliding,
-        polygonA = [[10, 10], [20, 30], [30, 10]],
-        polygonB = [[40, 10], [50, 30], [60, 10]],
-        polygonC = [[20, 20], [30, 40], [40, 20]],
-        polygonD = [[30, 0], [30, 40], [70, 40], [70, 0]],
+        polygonA = [
+            [10, 10],
+            [20, 30],
+            [30, 10]
+        ],
+        polygonB = [
+            [40, 10],
+            [50, 30],
+            [60, 10]
+        ],
+        polygonC = [
+            [20, 20],
+            [30, 40],
+            [40, 20]
+        ],
+        polygonD = [
+            [30, 0],
+            [30, 40],
+            [70, 40],
+            [70, 0]
+        ],
         print = function (polygon) {
             return '((' + polygon.join('), (') + '))';
         };
@@ -233,25 +250,41 @@ QUnit.test('isPolygonsColliding', function (assert) {
     assert.strictEqual(
         isPolygonsColliding(polygonA, polygonB),
         false,
-        'Polygons A' + print(polygonA) + '  and B' + print(polygonB) + ' are not overlapping.'
+        'Polygons A' +
+            print(polygonA) +
+            '  and B' +
+            print(polygonB) +
+            ' are not overlapping.'
     );
 
     assert.strictEqual(
         isPolygonsColliding(polygonA, polygonC),
         true,
-        'Polygons A' + print(polygonA) + '  and C' + print(polygonC) + ' are overlapping.'
+        'Polygons A' +
+            print(polygonA) +
+            '  and C' +
+            print(polygonC) +
+            ' are overlapping.'
     );
 
     assert.strictEqual(
         isPolygonsColliding(polygonB, polygonC),
         false,
-        'Polygons B' + print(polygonB) + '  and C' + print(polygonC) + ' are not overlapping.'
+        'Polygons B' +
+            print(polygonB) +
+            '  and C' +
+            print(polygonC) +
+            ' are not overlapping.'
     );
 
     assert.strictEqual(
         isPolygonsColliding(polygonC, polygonD),
         true,
-        'Polygons C' + print(polygonC) + '  and D' + print(polygonD) + ' are overlapping.'
+        'Polygons C' +
+            print(polygonC) +
+            '  and D' +
+            print(polygonD) +
+            ' are overlapping.'
     );
 });
 

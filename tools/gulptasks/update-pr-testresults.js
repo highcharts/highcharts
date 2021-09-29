@@ -41,7 +41,7 @@ async function postGitCommitStatusUpdate(pr, newReview) {
     }
 
     const commitSha = getLatestCommitShaSync();
-    let commitState = 'pending';
+    let commitState = 'failure'; // https://docs.github.com/en/rest/reference/repos#statuses
     let description = 'Review of changed samples needed. Click on details.';
 
     if (newReview.samples.length === 0) {

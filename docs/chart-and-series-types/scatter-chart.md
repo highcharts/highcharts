@@ -3,7 +3,7 @@ Scatter chart
 
 A scatter chart draws a single point for each point of data in a series without connecting them.
 
-![scatter.png](scatter.png)
+<iframe style="width: 100%; height: 480px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/scatter" allow="fullscreen"></iframe>
 
 Scatter chart features
 ----------------------

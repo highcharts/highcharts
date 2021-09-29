@@ -1,23 +1,24 @@
 QUnit.test('Guard too dense minor grid lines', function (assert) {
-
     assert.expect(0);
 
     Highcharts.setOptions({
         yAxis: {
-            minorTickInterval: "auto" // This is not working
+            minorTickInterval: 'auto' // This is not working
         }
     });
 
     Highcharts.stockChart('container', {
         yAxis: {
-            minorTickInterval: "auto" // This is working
+            minorTickInterval: 'auto' // This is working
         },
-        series: [{
-            data: [
-                [1426723200000, 22.999999999999996],
-                [1457568000000, 23]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    [1426723200000, 22.999999999999996],
+                    [1457568000000, 23]
+                ]
+            }
+        ]
     });
 
     // Reset
@@ -26,11 +27,9 @@ QUnit.test('Guard too dense minor grid lines', function (assert) {
             minorTickInterval: null
         }
     });
-
 });
 
 QUnit.test('Animation of grid lines and tick marks', function (assert) {
-
     var clock = TestUtilities.lolexInstall();
     var chart = Highcharts.stockChart('container', {
         chart: {
@@ -44,14 +43,16 @@ QUnit.test('Animation of grid lines and tick marks', function (assert) {
         xAxis: {
             gridLineWidth: 1
         },
-        series: [{
-            data: [
-                [0, 1],
-                [1, 1],
-                [2, 2],
-                [3, 1]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    [0, 1],
+                    [1, 1],
+                    [2, 2],
+                    [3, 1]
+                ]
+            }
+        ]
     });
 
     var oldPos1 = chart.xAxis[0].toPixels(1),
@@ -74,7 +75,8 @@ QUnit.test('Animation of grid lines and tick marks', function (assert) {
         chart.xAxis[0].ticks[1].gridLine.attr('d').split(' ')[1],
         halfwayPos1,
         15,
-        'Half way in the animation, the dying line should be half way between old and new position'
+        'Half way in the animation, the dying line should be half way ' +
+            'between old and new position'
     );
     assert.close(
         chart.xAxis[0].ticks[1].mark.attr('d').split(' ')[1],
@@ -87,7 +89,8 @@ QUnit.test('Animation of grid lines and tick marks', function (assert) {
         chart.xAxis[0].ticks[5].gridLine.attr('d').split(' ')[1],
         halfwayPos5,
         15,
-        'Half way in the animation, the new line should be half way between old and new position'
+        'Half way in the animation, the new line should be half way ' +
+            'between old and new position'
     );
     assert.close(
         chart.xAxis[0].ticks[5].mark.attr('d').split(' ')[1],

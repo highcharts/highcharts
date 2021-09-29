@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  aws-s3: circleci/aws-s3@1.0.11
+  aws-s3: circleci/aws-s3@3.0.0
   slack: circleci/slack@3.4.1
 
 parameters:
@@ -14,6 +14,8 @@ parameters:
 defaults: &defaults
   executor: node_image
   working_directory: /home/circleci/repo/highcharts
+  environment:
+    CYPRESS_CACHE_FOLDER: /home/circleci/repo/highcharts/.cache
 
 persist_workspace: &persist_workspace
   - persist_to_workspace:
@@ -67,6 +69,8 @@ commands:
 jobs:
   checkout_and_install:
     <<: *defaults
+    environment:
+      CYPRESS_INSTALL_BINARY: 0 # skip installing the Cypress binary on npm install
     steps:
       # rather than using the checkout keyword we checkout via commandline
       # to avoid a huge and slow checkout depth
@@ -87,13 +91,13 @@ jobs:
      - run: node --version && npm --version
      - restore_cache:
          keys:
-           - npm-deps-v1-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
-           - npm-deps-v1-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}
-     - run: npm install --quiet
+           - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
+           - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}
+     - run: npm ci --quiet --cache .npm --prefer-offline
      - save_cache:
          paths:
-           - /home/circleci/repo/highcharts/node_modules
-         key: npm-deps-v1-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
+           - /home/circleci/repo/highcharts/.npm
+         key: npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
      - run: npm run gulp scripts
      - run: git diff --name-only --exit-code || (echo "Untracked files found. Did you forget to commit any transpiled files? Failing build now as this likely will trigger errors later in the build.." && exit 1)
      - <<: *persist_workspace
@@ -152,6 +156,39 @@ jobs:
       - <<: *load_workspace
       - run: ./.circleci/scripts/test_timezones.sh -b=<<parameters.browsers>>
 
+  test_cypress:
+    <<: *defaults
+    description: Run Cypress tests
+    steps:
+      - << : *load_workspace
+      - restore_cache:
+          name: Restore cached Cypress binary
+          key: cypress-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install Cypress
+          description: Will install Cypress if cached version is not found
+          command: npx cypress install
+      - save_cache:
+          name: Caching Cypress binary
+          key: cypress-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - /home/circleci/repo/highcharts/.cache
+      - run:
+          name: Run utils in background
+          command: sudo npx highcharts-utils
+          background: true
+      - run: npx cypress info
+      - run:
+          name: Run cypress tests (Chrome)
+          command: npx cypress run --browser chrome --headless
+      - run:
+          name: Run cypress tests (Firefox)
+          command: npx cypress run --browser firefox --headless
+      - store_artifacts:
+          path: cypress/videos
+      - store_artifacts:
+          path: cypress/screenshots
+
   check_for_docs_changes_and_deploy:
     <<: *defaults
     description: Checks for changes in docs/ and triggers deploy via doc-builder
@@ -164,6 +201,23 @@ jobs:
       - <<: *load_workspace
       - run: ./.circleci/scripts/check_and_trigger_docs_deploy.sh  --bucket=${DOCS_DEPLOY_BUCKET} --token=${CIRCLE_API_TOKEN} <<# parameters.always_deploy >>-f<</ parameters.always_deploy >>
 
+
+  check_for_samples_changes_and_deploy:
+    <<: *defaults
+    description: Checks for changes in samples/ and samples/*/demo and triggers deploy via highcharts-demo-manager
+    parameters:
+      always_deploy:
+        description: "Deploy regardless of finding changes in on last commit"
+        type: boolean
+        default: false
+      include_thumbnails:
+        description: "Include thumbnails in the build"
+        type: boolean
+        default: false
+    steps:
+      - <<: *load_workspace
+      - run: ./.circleci/scripts/check_and_trigger_samples_deploy.sh  --bucket=${SAMPLES_DEPLOY_BUCKET} --token=${CIRCLE_API_TOKEN} <<# parameters.always_deploy >>-f<</ parameters.always_deploy >> <<# parameters.include_thumbnails >>--thumbnails<</ parameters.include_thumbnails >>
+
   generate_release_reference_images:
     <<: *defaults
     description: Generate visual tests reference images
@@ -174,7 +228,7 @@ jobs:
       - aws-s3/sync:
           from: "/home/circleci/repo/tmp/latest/"
           to: 's3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/visualtests/reference/latest/' # delete existing latest references in S3 location
-          overwrite: true
+          arguments: '--delete'
       - run:
           name: "Upload test results"
           command: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}"
@@ -210,18 +264,18 @@ jobs:
       - run: > # checkout master at diverge point of current branch and install
           git checkout master && git fetch origin master && git reset --hard origin/master &&
           git checkout $(git merge-base master ${CIRCLE_BRANCH}) && git log --oneline -5 &&
-          npm i && npx gulp scripts
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
       - run:
           name: Write file sizes at master
           command: npx gulp write-file-sizes --filename master.json
       - generate_references_command:
           browsercount: 2
-      - run: git checkout ${CIRCLE_BRANCH}  && git log --oneline -5 && npm i && npx gulp scripts
-      # Running these in the background to save a few minutes
+      - run: git checkout ${CIRCLE_BRANCH}  && git log --oneline -5 && npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
       - run:
           name: File size comparison
-          command: (npx gulp write-file-sizes --filename ${CIRCLE_PULL_REQUEST##*/}.json && npx gulp write-size-table --master ./tmp/filesizes/master.json --proposed ./tmp/filesizes/${CIRCLE_PULL_REQUEST##*/}.json) || touch ./tmp/filesizes/comparsion.md
-          background: true
+          command: |
+            npx gulp write-file-sizes --filename ${CIRCLE_PULL_REQUEST##*/}.json &&
+            npx gulp compare-size-and-comment --master ./tmp/filesizes/master.json --proposed ./tmp/filesizes/${CIRCLE_PULL_REQUEST##*/}.json --pr ${CIRCLE_PULL_REQUEST##*/} --user circleci-mu
       # we are forcing success on the below test runs to avoid failing the PR build
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare || true
@@ -241,10 +295,6 @@ jobs:
           path: ../visual-test-results
       - store_artifacts:
           path: ../visual-test-results
-      - run:
-          name: Wait for file size comparison and comment on PR
-          command: while [ ! -f ./tmp/filesizes/comparison.md ]; do sleep 1; done && npx gulp pr-comment-sizes --pr ${CIRCLE_PULL_REQUEST##*/} --user circleci-mu
-          no_output_timeout: 2m #wait for max 2 minutes
 
   nightly_visual_diff:
     <<: *defaults
@@ -424,6 +474,8 @@ workflows:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-staging
+      - test_cypress:
+          requires: [lint]
       - test_timezones:
           requires: [lint]
           filters:
@@ -463,6 +515,17 @@ workflows:
           # need to add this release deploy job separately as it has different requires tag than master branch.
           requires: [generate_release_reference_images]
           always_deploy: true
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
+          context: highcharts-prod
+      - check_for_samples_changes_and_deploy:
+          # On release, make sure everything is up to date and force update thumbnails
+          requires: [generate_release_reference_images]
+          always_deploy: true
+          include_thumbnails: true
           filters:
             branches:
               ignore: /.*/
@@ -523,6 +586,7 @@ workflows:
           notify_on_failure: true
       - build_dist:
           requires: [checkout_and_install, "test-Win.IE8"]
+          context: highcharts-staging
       - deploy_code:
           requires: [build_dist]
           context: highcharts-staging

@@ -1,8 +1,5 @@
 (function () {
-    var today,
-        day,
-        defaultConfig;
-
+    var today, day, defaultConfig;
 
     /**
      * Sets common test variables
@@ -21,35 +18,44 @@
             title: {
                 text: 'Current Date Indicator'
             },
-            xAxis: [{
-                id: 'bottom-datetime-axis',
-                currentDateIndicator: true,
-                type: 'datetime',
-                tickInterval: day,
-                labels: {
-                    format: '{value:%a}'
-                },
-                min: today.getTime() - (3 * day),
-                max: today.getTime() + (3 * day)
-            }],
-            series: [{
-                name: 'Project 1',
-                borderRadius: 3,
-                xAxis: 0,
-                data: [{
-                    x: today.getTime() - (2 * day),
-                    y: 0
-                }, {
-                    x: today.getTime() - day,
-                    y: 1
-                }, {
-                    x: today.getTime() + day,
-                    y: 0
-                }, {
-                    x: today.getTime() + (2 * day),
-                    y: 2
-                }]
-            }]
+            xAxis: [
+                {
+                    id: 'bottom-datetime-axis',
+                    currentDateIndicator: true,
+                    type: 'datetime',
+                    tickInterval: day,
+                    labels: {
+                        format: '{value:%a}'
+                    },
+                    min: today.getTime() - 3 * day,
+                    max: today.getTime() + 3 * day
+                }
+            ],
+            series: [
+                {
+                    name: 'Project 1',
+                    borderRadius: 3,
+                    xAxis: 0,
+                    data: [
+                        {
+                            x: today.getTime() - 2 * day,
+                            y: 0
+                        },
+                        {
+                            x: today.getTime() - day,
+                            y: 1
+                        },
+                        {
+                            x: today.getTime() + day,
+                            y: 0
+                        },
+                        {
+                            x: today.getTime() + 2 * day,
+                            y: 2
+                        }
+                    ]
+                }
+            ]
         };
     });
 
@@ -66,22 +72,21 @@
             clock = TestUtilities.lolexInstall();
 
         try {
-            oldValue = cdi.options.value.getTime();
+            oldValue = cdi.options.value;
 
             // Run lolex ticker
-            setTimeout(function () { }, wait);
+            setTimeout(function () {}, wait);
 
             TestUtilities.lolexRunAndUninstall(clock);
 
             axis.redraw();
 
-            newValue = cdi.options.value.getTime();
+            newValue = cdi.options.value;
 
             assert.ok(
                 newValue > oldValue,
                 'Value is greater after Axis.redraw()'
             );
-
         } finally {
             TestUtilities.lolexUninstall(clock);
         }
@@ -135,8 +140,8 @@
         var formatRegex = new RegExp(
                 // 'Tue, Dec 06 2016, '
                 /^[A-Z][a-z]{2}, [A-Z][a-z]{2} [0-9]{2} [0-9]{4}, /.source +
-                // '21:35:12'
-                /[0-9]{2}:[0-9]{2}$/.source
+                    // '21:35:12'
+                    /[0-9]{2}:[0-9]{2}$/.source
             ),
             customFormat,
             chart = Highcharts.chart('container', defaultConfig),
@@ -153,15 +158,20 @@
             /^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/.source
         );
         customFormat = '%Y-%d-%m %H:%M:%S';
-        chart = Highcharts.chart('container', Highcharts.merge(defaultConfig, {
-            xAxis: [{
-                currentDateIndicator: {
-                    label: {
-                        format: customFormat
+        chart = Highcharts.chart(
+            'container',
+            Highcharts.merge(defaultConfig, {
+                xAxis: [
+                    {
+                        currentDateIndicator: {
+                            label: {
+                                format: customFormat
+                            }
+                        }
                     }
-                }
-            }]
-        }));
+                ]
+            })
+        );
 
         axis = chart.xAxis[0];
         cdi = axis.plotLinesAndBands[0];
@@ -178,7 +188,8 @@
      */
     QUnit.test('Formatter', function (assert) {
         // Today: Tue, Dec 06 2016
-        var formatRegex = /^Today: [A-Z][a-z]{2}, [A-Z][a-z]{2} [0-9]{2} [0-9]{4}$/,
+        var formatRegex =
+                /^Today: [A-Z][a-z]{2}, [A-Z][a-z]{2} [0-9]{2} [0-9]{4}$/,
             customFormat,
             chart,
             axis,
@@ -212,15 +223,20 @@
             /^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/.source
         );
         customFormat = '%Y-%d-%m %H:%M:%S';
-        chart = Highcharts.chart('container', Highcharts.merge(defaultConfig, {
-            xAxis: [{
-                currentDateIndicator: {
-                    label: {
-                        format: customFormat
+        chart = Highcharts.chart(
+            'container',
+            Highcharts.merge(defaultConfig, {
+                xAxis: [
+                    {
+                        currentDateIndicator: {
+                            label: {
+                                format: customFormat
+                            }
+                        }
                     }
-                }
-            }]
-        }));
+                ]
+            })
+        );
 
         axis = chart.xAxis[0];
         cdi = axis.plotLinesAndBands[0];
@@ -235,11 +251,14 @@
         var chart = Highcharts.chart('container', defaultConfig);
         var t0 = Date.parse(chart.xAxis[0].plotLinesAndBands[0].label.textStr);
 
-        chart = Highcharts.chart('container', Highcharts.merge(defaultConfig, {
-            time: {
-                timezoneOffset: -5
-            }
-        }));
+        chart = Highcharts.chart(
+            'container',
+            Highcharts.merge(defaultConfig, {
+                time: {
+                    timezoneOffset: -5
+                }
+            })
+        );
         var t1 = Date.parse(chart.xAxis[0].plotLinesAndBands[0].label.textStr);
 
         assert.ok(t1 - t0 >= 300000, 'Per-chart time options work');

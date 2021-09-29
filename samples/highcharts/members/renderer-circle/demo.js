@@ -1,7 +1,5 @@
-var renderer;
-
-renderer = new Highcharts.Renderer(
-    $('#container')[0],
+const renderer = new Highcharts.Renderer(
+    document.getElementById('container'),
     400,
     300
 );

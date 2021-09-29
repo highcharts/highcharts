@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Default options for sonification.
  *
@@ -12,20 +12,39 @@
 
 'use strict';
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            sonification?: ChartSonificationOptions;
-        }
-        interface SeriesOptions {
-            sonification?: SeriesSonificationOptions;
-        }
+/* *
+ *
+ * Imports
+ *
+ * */
+
+import type ChartSonify from './ChartSonify';
+import type SeriesSonify from './SeriesSonify';
+
+/* *
+ *
+ * Declarations
+ *
+ * */
+
+declare module '../../Core/Options'{
+    interface Options {
+        sonification?: ChartSonify.ChartSonificationOptions;
     }
 }
+
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        sonification?: SeriesSonify.SeriesSonificationOptions;
+    }
+}
+
+/* *
+ *
+ * Constants
+ *
+ * */
+
 
 // Experimental, disabled by default, not exposed in API
 const options = {
@@ -48,5 +67,11 @@ const options = {
         }
     }
 };
+
+/* *
+ *
+ * Default Export
+ *
+ * */
 
 export default options;

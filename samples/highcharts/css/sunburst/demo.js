@@ -1387,7 +1387,7 @@ Highcharts.chart('container', {
         text: 'World population 2017'
     },
     subtitle: {
-        text: 'Source <href="https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)">Wikipedia</a>'
+        text: 'Source <a href="https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)">Wikipedia</a>'
     },
     series: [{
         type: "sunburst",

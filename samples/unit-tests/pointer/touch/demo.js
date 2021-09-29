@@ -1,49 +1,57 @@
 QUnit.test('Single touch drag should not zoom (#5790)', function (assert) {
-
+    /* eslint no-extend-native: 0 */
     var chart = Highcharts.chart('container', {
         chart: {
             zoomType: 'xy',
             animation: false
         },
-        series: [{
-            type: 'line',
-            data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-            animation: false
-        }]
+        series: [
+            {
+                type: 'line',
+                data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                animation: false
+            }
+        ]
     });
     var offset = Highcharts.offset(chart.container);
 
-    Array.prototype.item = function (i) { // eslint-disable-line no-extend-native
+    Array.prototype.item = function (i) {
+        // eslint-disable-line no-extend-native
         return this[i];
     };
 
     // Swipe across the plot area
     chart.pointer.onContainerTouchStart({
         type: 'touchstart',
-        touches: [{
-            pageX: offset.left + 100,
-            pageY: offset.top + 100
-        }],
+        touches: [
+            {
+                pageX: offset.left + 100,
+                pageY: offset.top + 100
+            }
+        ],
         preventDefault: function () {}
     });
 
     chart.pointer.onContainerTouchMove({
         type: 'touchmove',
-        touches: [{
-            pageX: offset.left + 200,
-            pageY: offset.top + 100
-        }],
+        touches: [
+            {
+                pageX: offset.left + 200,
+                pageY: offset.top + 100
+            }
+        ],
         preventDefault: function () {}
     });
 
     chart.pointer.onDocumentTouchEnd({
         type: 'touchend',
-        touches: [{
-            pageX: offset.left + 200,
-            pageY: offset.top + 100
-        }]
+        touches: [
+            {
+                pageX: offset.left + 200,
+                pageY: offset.top + 100
+            }
+        ]
     });
-
 
     assert.strictEqual(
         typeof chart.resetZoomButton,
@@ -69,8 +77,9 @@ QUnit.test('TouchPointer events', function (assert) {
         backups = {};
 
     // Allow the wrapped event handler to be registered
-    if (Highcharts.unbindDocumentTouchEnd) {
-        Highcharts.unbindDocumentTouchEnd = Highcharts.unbindDocumentTouchEnd();
+    if (Highcharts.Pointer.unbindDocumentTouchEnd) {
+        Highcharts.Pointer.unbindDocumentTouchEnd =
+            Highcharts.Pointer.unbindDocumentTouchEnd();
     }
 
     // Listen to internal functions
@@ -86,9 +95,11 @@ QUnit.test('TouchPointer events', function (assert) {
             width: 600,
             height: 200
         },
-        series: [{
-            data: [1]
-        }]
+        series: [
+            {
+                data: [1]
+            }
+        ]
     });
     Highcharts.hoverChartIndex = chart.index;
     controller = new TestController(chart);
@@ -122,16 +133,14 @@ QUnit.test('TouchPointer events', function (assert) {
     });
 
     // Allow the original event handler to be re-registered
-    if (Highcharts.unbindDocumentTouchEnd) {
-        Highcharts.unbindDocumentTouchEnd = Highcharts.unbindDocumentTouchEnd();
+    if (Highcharts.Pointer.unbindDocumentTouchEnd) {
+        Highcharts.Pointer.unbindDocumentTouchEnd =
+            Highcharts.Pointer.unbindDocumentTouchEnd();
     }
 });
 
 QUnit.test('followPointer and followTouchMove', function (assert) {
-
-
     var chart;
-
 
     function swipe() {
         var offset = Highcharts.offset(chart.container),
@@ -143,35 +152,53 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         }
         chart.pointer.onContainerTouchStart({
             type: 'touchstart',
-            touches: [{
-                pageX: offset.left + chart.plotLeft + points[0].shapeArgs.x + points[0].shapeArgs.width / 2,
-                pageY: offset.top + chart.plotTop + chart.plotHeight - 10
-            }],
+            touches: [
+                {
+                    pageX:
+                        offset.left +
+                        chart.plotLeft +
+                        points[0].shapeArgs.x +
+                        points[0].shapeArgs.width / 2,
+                    pageY: offset.top + chart.plotTop + chart.plotHeight - 10
+                }
+            ],
             preventDefault: function () {},
             target: points[0].graphic.element
         });
 
         chart.pointer.onContainerTouchMove({
             type: 'touchmove',
-            touches: [{
-                pageX: offset.left + chart.plotLeft + points[2].shapeArgs.x + points[2].shapeArgs.width / 2,
-                pageY: offset.top + chart.plotTop + chart.plotHeight - 10
-            }],
+            touches: [
+                {
+                    pageX:
+                        offset.left +
+                        chart.plotLeft +
+                        points[2].shapeArgs.x +
+                        points[2].shapeArgs.width / 2,
+                    pageY: offset.top + chart.plotTop + chart.plotHeight - 10
+                }
+            ],
             preventDefault: function () {},
             target: points[2].graphic.element
         });
 
         chart.pointer.onDocumentTouchEnd({
             type: 'touchend',
-            touches: [{
-                pageX: offset.left + chart.plotLeft + points[2].shapeArgs.x + points[2].shapeArgs.width / 2,
-                pageY: offset.top + chart.plotTop + chart.plotHeight - 10
-            }]
+            touches: [
+                {
+                    pageX:
+                        offset.left +
+                        chart.plotLeft +
+                        points[2].shapeArgs.x +
+                        points[2].shapeArgs.width / 2,
+                    pageY: offset.top + chart.plotTop + chart.plotHeight - 10
+                }
+            ]
         });
-
     }
 
-    Array.prototype.item = function (i) { // eslint-disable-line no-extend-native
+    Array.prototype.item = function (i) {
+        // eslint-disable-line no-extend-native
         return this[i];
     };
 
@@ -182,12 +209,14 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         xAxis: {
             categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
         },
-        series: [{
-            data: [1, 4, 3, 5],
-            pointPadding: 0,
-            groupPadding: 0,
-            type: 'column'
-        }]
+        series: [
+            {
+                data: [1, 4, 3, 5],
+                pointPadding: 0,
+                groupPadding: 0,
+                type: 'column'
+            }
+        ]
     });
     swipe();
 
@@ -198,7 +227,8 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         'followPointer is false, followTouchMove is true by default, the tooltip should stay next to the top of Bananas'
     );
     assert.ok(
-        chart.tooltip.label.translateX > chart.plotLeft + chart.series[0].points[2].shapeArgs.x,
+        chart.tooltip.label.translateX >
+            chart.plotLeft + chart.series[0].points[2].shapeArgs.x,
         'The tooltip should be above Bananas'
     );
     assert.notEqual(
@@ -217,12 +247,14 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         tooltip: {
             followTouchMove: false
         },
-        series: [{
-            data: [1, 4, 3, 5],
-            pointPadding: 0,
-            groupPadding: 0,
-            type: 'column'
-        }]
+        series: [
+            {
+                data: [1, 4, 3, 5],
+                pointPadding: 0,
+                groupPadding: 0,
+                type: 'column'
+            }
+        ]
     });
     swipe();
 
@@ -233,7 +265,8 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         'followPointer is false, followTouchMove is false, the tooltip should stay next to Apples'
     );
     assert.ok(
-        chart.tooltip.label.translateX < chart.plotLeft + chart.series[0].points[2].shapeArgs.x,
+        chart.tooltip.label.translateX <
+            chart.plotLeft + chart.series[0].points[2].shapeArgs.x,
         'The tooltip should be above Apples'
     );
     assert.notEqual(
@@ -249,15 +282,17 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         xAxis: {
             categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
         },
-        series: [{
-            data: [1, 4, 3, 5],
-            pointPadding: 0,
-            groupPadding: 0,
-            type: 'column',
-            tooltip: {
-                followPointer: true
+        series: [
+            {
+                data: [1, 4, 3, 5],
+                pointPadding: 0,
+                groupPadding: 0,
+                type: 'column',
+                tooltip: {
+                    followPointer: true
+                }
             }
-        }]
+        ]
     });
     swipe();
 
@@ -268,7 +303,8 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         'followPointer is true, followTouchMove is true by default, the tooltip should stay next to the touch'
     );
     assert.ok(
-        chart.tooltip.label.translateX > chart.plotLeft + chart.series[0].points[2].shapeArgs.x,
+        chart.tooltip.label.translateX >
+            chart.plotLeft + chart.series[0].points[2].shapeArgs.x,
         'The tooltip should be above Bananas'
     );
     assert.notEqual(
@@ -276,7 +312,6 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         -1,
         'The tooltip should show Bananas'
     );
-
 
     chart = Highcharts.chart('container', {
         chart: {
@@ -288,15 +323,17 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         tooltip: {
             followTouchMove: false
         },
-        series: [{
-            data: [1, 4, 3, 5],
-            pointPadding: 0,
-            groupPadding: 0,
-            type: 'column',
-            tooltip: {
-                followPointer: true
+        series: [
+            {
+                data: [1, 4, 3, 5],
+                pointPadding: 0,
+                groupPadding: 0,
+                type: 'column',
+                tooltip: {
+                    followPointer: true
+                }
             }
-        }]
+        ]
     });
     swipe();
 
@@ -307,7 +344,8 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         'followPointer is true, followTouchMove is false, the tooltip should stay next to the touch'
     );
     assert.ok(
-        chart.tooltip.label.translateX < chart.plotLeft + chart.series[0].points[2].shapeArgs.x,
+        chart.tooltip.label.translateX <
+            chart.plotLeft + chart.series[0].points[2].shapeArgs.x,
         'The tooltip should be above Apples'
     );
     assert.notEqual(
@@ -331,41 +369,62 @@ QUnit.test('Touch and panning', function (assert) {
             tooltip: {
                 followTouchMove: false
             },
-            series: [{
-                data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-            }]
+            series: [
+                {
+                    data: [
+                        49.9,
+                        71.5,
+                        106.4,
+                        129.2,
+                        144.0,
+                        176.0,
+                        135.6,
+                        148.5,
+                        216.4,
+                        194.1,
+                        95.6,
+                        54.4
+                    ]
+                }
+            ]
         }),
         offset = Highcharts.offset(chart.container);
 
-    Array.prototype.item = function (i) { // eslint-disable-line no-extend-native
+    Array.prototype.item = function (i) {
+        // eslint-disable-line no-extend-native
         return this[i];
     };
 
-
     chart.pointer.onContainerTouchStart({
         type: 'touchstart',
-        touches: [{
-            pageX: offset.left + chart.plotLeft + chart.plotWidth / 2,
-            pageY: offset.top + chart.plotTop + 10
-        }],
+        touches: [
+            {
+                pageX: offset.left + chart.plotLeft + chart.plotWidth / 2,
+                pageY: offset.top + chart.plotTop + 10
+            }
+        ],
         preventDefault: function () {}
     });
 
     chart.pointer.onContainerTouchMove({
         type: 'touchmove',
-        touches: [{
-            pageX: offset.left + chart.plotLeft + 10,
-            pageY: offset.top + chart.plotTop + 10
-        }],
+        touches: [
+            {
+                pageX: offset.left + chart.plotLeft + 10,
+                pageY: offset.top + chart.plotTop + 10
+            }
+        ],
         preventDefault: function () {}
     });
 
     chart.pointer.onDocumentTouchEnd({
         type: 'touchend',
-        touches: [{
-            pageX: offset.left + chart.plotLeft + 10,
-            pageY: offset.top + chart.plotTop + 10
-        }]
+        touches: [
+            {
+                pageX: offset.left + chart.plotLeft + 10,
+                pageY: offset.top + chart.plotTop + 10
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -373,5 +432,4 @@ QUnit.test('Touch and panning', function (assert) {
         true,
         'Touch-device panning allows panning outside the xAxis options: min & max (#10633)'
     );
-
 });

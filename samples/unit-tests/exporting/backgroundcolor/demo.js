@@ -1,5 +1,4 @@
 QUnit.test('Capture POST', function (assert) {
-
     var chart = Highcharts.chart('container', {
         chart: {
             backgroundColor: {
@@ -14,11 +13,39 @@ QUnit.test('Capture POST', function (assert) {
             enabled: false
         },
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            categories: [
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'Jun',
+                'Jul',
+                'Aug',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dec'
+            ]
         },
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-        }],
+        series: [
+            {
+                data: [
+                    29.9,
+                    71.5,
+                    106.4,
+                    129.2,
+                    144.0,
+                    176.0,
+                    135.6,
+                    148.5,
+                    216.4,
+                    194.1,
+                    95.6,
+                    54.4
+                ]
+            }
+        ],
         navigation: {
             buttonOptions: {
                 enabled: false
@@ -26,13 +53,12 @@ QUnit.test('Capture POST', function (assert) {
         }
     });
 
-    var originalPost = Highcharts.post;
+    var originalPost = Highcharts.HttpUtilities.post;
 
     try {
-
         var postData;
 
-        Highcharts.post = function (url, data) {
+        Highcharts.HttpUtilities.post = function (url, data) {
             postData = data;
         };
 
@@ -42,17 +68,10 @@ QUnit.test('Capture POST', function (assert) {
                 backgroundColor: '#ffeeff'
             }
         });
-        assert.strictEqual(
-            postData.type,
-            'image/png',
-            'Posting for PNG'
-        );
 
-        assert.strictEqual(
-            typeof postData.svg,
-            'string',
-            'SVG is there'
-        );
+        assert.strictEqual(postData.type, 'image/png', 'Posting for PNG');
+
+        assert.strictEqual(typeof postData.svg, 'string', 'SVG is there');
 
         assert.strictEqual(
             postData.svg.indexOf('linearGradient'),
@@ -65,11 +84,7 @@ QUnit.test('Capture POST', function (assert) {
             -1,
             'Solid background is there'
         );
-
     } finally {
-
-        Highcharts.post = originalPost;
-
+        Highcharts.HttpUtilities.post = originalPost;
     }
-
 });

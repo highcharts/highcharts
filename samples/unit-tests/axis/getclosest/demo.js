@@ -8,7 +8,6 @@ QUnit.test('getClosest ignores invisible series', function (assert) {
     }
 
     var chart = Highcharts.stockChart('container', {
-
         boost: {
             enabled: false
         },
@@ -26,14 +25,17 @@ QUnit.test('getClosest ignores invisible series', function (assert) {
             }
         },
 
-        series: [{
-            type: 'column',
-            data: data1,
-            visible: false
-        }, {
-            type: 'column',
-            data: data2
-        }]
+        series: [
+            {
+                type: 'column',
+                data: data1,
+                visible: false
+            },
+            {
+                type: 'column',
+                data: data2
+            }
+        ]
     });
 
     assert.strictEqual(chart.xAxis[0].getClosest(), 86400000);

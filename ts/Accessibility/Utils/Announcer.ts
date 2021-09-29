@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Create announcer to speak messages to screen readers and other AT.
  *
@@ -12,55 +12,87 @@
 
 'use strict';
 
-import type Chart from '../../Core/Chart/Chart';
-import type {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
-import H from '../../Core/Globals.js';
-import DOMElementProvider from './DOMElementProvider.js';
-import HTMLUtilities from './HTMLUtilities.js';
-const {
-    visuallyHideElement
-} = HTMLUtilities;
+/* *
+ *
+ *  Imports
+ *
+ * */
 
+import type Chart from '../../Core/Chart/Chart';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+
+import AST from '../../Core/Renderer/HTML/AST.js';
+import DOMElementProvider from './DOMElementProvider.js';
+import H from '../../Core/Globals.js';
+const { doc } = H;
+import HU from './HTMLUtilities.js';
+const {
+    addClass,
+    visuallyHideElement
+} = HU;
+import U from '../../Core/Utilities.js';
+const { attr } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types.
  * @private
  */
-declare global {
-    namespace Highcharts {
-        type AnnouncerType = ('assertive'|'polite');
-        class Announcer {
-            public constructor(chart: Chart, type: AnnouncerType);
-            public destroy(): void;
-            public announce(message: string): void;
-        }
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        announcerContainer?: HTMLDOMElement;
     }
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class Announcer {
-    private domElementProvider: Highcharts.DOMElementProvider;
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    private domElementProvider: DOMElementProvider;
     private announceRegion: HTMLDOMElement;
     private clearAnnouncementRegionTimer?: number;
 
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     constructor(
         private chart: Chart,
-        type: Highcharts.AnnouncerType
+        type: Announcer.Type
     ) {
         this.domElementProvider = new DOMElementProvider();
         this.announceRegion = this.addAnnounceRegion(type);
     }
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public destroy(): void {
         this.domElementProvider.destroyCreatedElements();
     }
 
-
     public announce(message: string): void {
-        this.announceRegion.innerHTML = message;
+        AST.setElementHTML(this.announceRegion, message);
 
         // Delete contents after a little while to avoid user finding the live
         // region in the DOM.
@@ -73,21 +105,55 @@ class Announcer {
         }, 1000);
     }
 
+    private addAnnounceRegion(type: Announcer.Type): HTMLDOMElement {
+        const chartContainer = this.chart.announcerContainer || this.createAnnouncerContainer(),
+            div = this.domElementProvider.createElement('div');
 
-    private addAnnounceRegion(type: Highcharts.AnnouncerType): HTMLDOMElement {
-        const chartContainer = this.chart.renderTo;
-        const div = this.domElementProvider.createElement('div');
+        attr(div, {
+            'aria-hidden': false,
+            'aria-live': type
+        });
 
-        div.setAttribute('aria-hidden', false);
-        div.setAttribute('aria-live', type);
+        if (this.chart.styledMode) {
+            addClass(div, 'highcharts-visually-hidden');
+        } else {
+            visuallyHideElement(div);
+        }
 
-        visuallyHideElement(div);
-        chartContainer.insertBefore(div, chartContainer.firstChild);
-
+        chartContainer.appendChild(div);
         return div;
+    }
+
+    private createAnnouncerContainer(): HTMLDOMElement {
+        const chart = this.chart,
+            container = doc.createElement('div');
+
+        attr(container, {
+            'aria-hidden': false,
+            'class': 'highcharts-announcer-container'
+        });
+        container.style.position = 'relative';
+
+        chart.renderTo.insertBefore(container, chart.renderTo.firstChild);
+        chart.announcerContainer = container;
+        return container;
     }
 }
 
-H.Announcer = Announcer;
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace Announcer {
+    export type Type = ('assertive'|'polite');
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Announcer;

@@ -11,6 +11,7 @@ function getPath(width, height) {
         y,
         i,
         angle;
+
     //loop to add points to the path
     for (i = 0; i < 32; i = i + 1) {
         angle = i * Math.PI / 16;
@@ -32,6 +33,7 @@ function getPath(width, height) {
     }
     return path;
 }
+
 /**
 * Function to check if the drawing of the compassrose exists, if so - it updates the path, if not, it draws it.
 */
@@ -57,7 +59,7 @@ Highcharts.chart('container', {
         plotBackgroundImage: null,
         plotBorderWidth: 0,
         plotShadow: false,
-        height: $('#container').width(),
+        height: document.getElementById('container').offsetWidth,
         events: {
             load: onDraw,
             resize: onDraw
@@ -96,7 +98,7 @@ Highcharts.chart('container', {
             useHTML: true,
             formatter: function () {
                 var style = '',
-                    scale = $('#container').width() * 0.005;
+                    scale = document.getElementById('container').offsetWidth * 0.005;
                 if (this.value.length === 1) {
                     style = 'font-size:' + (scale * 1.3) + 'em';
                 } else if (this.value.length === 2) {
@@ -137,17 +139,13 @@ Highcharts.chart('container', {
         name: 'Direction',
         data: [0]
     }]
-
-},
-function (chart) {
+}, chart => {
     if (!chart.renderer.forExport) {
-        setInterval(function () {
-            var point = chart.series[0].points[0],
-                newVal,
-                inc = 5 - Math.floor(Math.random() * 10);
-            newVal = point.y + inc;
+        setInterval(() => {
+            const point = chart.series[0].points[0];
+            const inc = 5 - Math.floor(Math.random() * 10);
+            const newVal = point.y + inc;
             point.update(newVal);
-
         }, 3000);
     }
 });

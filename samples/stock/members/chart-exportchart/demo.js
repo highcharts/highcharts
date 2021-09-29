@@ -1,5 +1,4 @@
-var chart = Highcharts.stockChart('container', {
-
+const chart = Highcharts.stockChart('container', {
     rangeSelector: {
         selected: 1,
         inputBoxStyle: {
@@ -22,6 +21,6 @@ var chart = Highcharts.stockChart('container', {
     }
 });
 
-$('#button').click(function () {
+document.getElementById('button').addEventListener('click', () => {
     chart.exportChart();
 });

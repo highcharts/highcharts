@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Keyboard navigation handler base class definition
  *
@@ -32,7 +32,7 @@ declare global {
             public chart: Chart;
             public init: Function;
             public keyCodeMap: Array<[Array<number>, Function]>;
-            public response: Dictionary<number>;
+            public response: Record<string, number>;
             public terminate?: Function;
             public validate?: Function;
             public run(e: KeyboardEvent): number;
@@ -129,13 +129,13 @@ KeyboardNavigationHandler.prototype = {
         this: Highcharts.KeyboardNavigationHandler,
         e: KeyboardEvent
     ): number {
-        var keyCode = e.which || e.keyCode,
-            response = this.response.noHandler,
-            handlerCodeSet = find(this.keyCodeMap, function (
-                codeSet: [Array<number>, Function]
-            ): boolean {
-                return codeSet[0].indexOf(keyCode) > -1;
-            });
+        const keyCode = e.which || e.keyCode;
+        let response = this.response.noHandler;
+        const handlerCodeSet = find(this.keyCodeMap, function (
+            codeSet: [Array<number>, Function]
+        ): boolean {
+            return codeSet[0].indexOf(keyCode) > -1;
+        });
 
         if (handlerCodeSet) {
             response = handlerCodeSet[1].call(this, keyCode, e);

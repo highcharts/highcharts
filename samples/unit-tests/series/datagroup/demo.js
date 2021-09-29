@@ -3,17 +3,19 @@ QUnit.test('Point dataGroup', function (assert) {
         chart: {
             width: 400
         },
-        series: [{
-            pointStart: Date.UTC(2016, 0, 1),
-            pointInterval: 24 * 36e5,
-            data: (function () {
-                var arr = [];
-                for (var i = 0; i < 3 * 365; i++) {
-                    arr.push(i);
-                }
-                return arr;
-            }())
-        }],
+        series: [
+            {
+                pointStart: Date.UTC(2016, 0, 1),
+                pointInterval: 24 * 36e5,
+                data: (function () {
+                    var arr = [];
+                    for (var i = 0; i < 3 * 365; i++) {
+                        arr.push(i);
+                    }
+                    return arr;
+                }())
+            }
+        ],
         navigator: {
             enabled: false
         }

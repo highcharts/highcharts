@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -14,6 +14,7 @@
 
 'use strict';
 
+import type Series from '../../Core/Series/Series';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const {
@@ -38,7 +39,6 @@ declare global {
     }
 }
 
-import '../../Series/LineSeries.js';
 import boostableMap from './BoostableMap.js';
 import createAndAttachRenderer from './BoostAttach.js';
 
@@ -64,7 +64,7 @@ const CHUNK_SIZE = 3000;
  * Max value
  */
 function patientMax(...args: Array<Array<unknown>>): number {
-    var r = -Number.MAX_VALUE;
+    let r = -Number.MAX_VALUE;
 
     args.forEach(function (t: Array<unknown>): (boolean|undefined) {
         if (
@@ -121,7 +121,7 @@ function boostEnabled(chart: Chart): boolean {
 function shouldForceChartSeriesBoosting(chart: Chart): boolean {
     // If there are more than five series currently boosting,
     // we should boost the whole chart to avoid running out of webgl contexts.
-    var sboostCount = 0,
+    let sboostCount = 0,
         canBoostCount = 0,
         allowBoostForce = pick(
             chart.options.boost && chart.options.boost.allowForce,
@@ -134,7 +134,7 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
     }
 
     if (chart.series.length > 1) {
-        for (var i = 0; i < chart.series.length; i++) {
+        for (let i = 0; i < chart.series.length; i++) {
 
             series = chart.series[i];
 
@@ -191,7 +191,7 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
  */
 function renderIfNotSeriesBoosting(
     renderer: Highcharts.BoostGLRenderer,
-    series: Highcharts.Series,
+    series: Series,
     chart?: Chart
 ): void {
     if (renderer &&
@@ -208,7 +208,7 @@ function renderIfNotSeriesBoosting(
  */
 function allocateIfNotSeriesBoosting(
     renderer: Highcharts.BoostGLRenderer,
-    series: Highcharts.Series
+    series: Series
 ): void {
     if (renderer &&
         series.renderTarget &&
@@ -243,7 +243,7 @@ function eachAsync(
     i = i || 0;
     chunkSize = chunkSize || CHUNK_SIZE;
 
-    var threshold = i + chunkSize,
+    let threshold = i + chunkSize,
         proceed = true;
 
     while (proceed && i < threshold && i < arr.length) {
@@ -282,7 +282,7 @@ function eachAsync(
  * @return {boolean}
  */
 function hasWebGLSupport(): boolean {
-    var i = 0,
+    let i = 0,
         canvas,
         contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
         context: (false|WebGLRenderingContext|null) = false;
@@ -317,8 +317,8 @@ function hasWebGLSupport(): boolean {
  *
  * @return {*}
  */
-function pointDrawHandler(this: Highcharts.Series, proceed: Function): void {
-    var enabled = true,
+function pointDrawHandler(this: Series, proceed: Function): void {
+    let enabled = true,
         renderer: Highcharts.BoostGLRenderer;
 
     if (this.chart.options && this.chart.options.boost) {

@@ -1,50 +1,52 @@
-QUnit.test("Marker should not move after hover(#4586)", function (assert) {
-    var chart = $('#container').highcharts({
-        plotOptions: {
-            series: {
-                states: {
-                    hover: {
-                        enabled: false
+QUnit.test('Marker should not move after hover(#4586)', function (assert) {
+    var chart = $('#container')
+        .highcharts({
+            plotOptions: {
+                series: {
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
                     }
                 }
-            }
-        },
+            },
 
-        series: [
-            {
-                lineWidth: 0,
-                marker: {
-                    symbol: 'circle',
-                    radius: 47,
-                    lineWidth: 2,
-                    lineColor: 'green',
-                    fillColor: 'rgba(0,0,0,0)'
-                },
-                data: [
-                    {
-                        x: 3.2,
-                        y: 5.3
+            series: [
+                {
+                    lineWidth: 0,
+                    marker: {
+                        symbol: 'circle',
+                        radius: 47,
+                        lineWidth: 2,
+                        lineColor: 'green',
+                        fillColor: 'rgba(0,0,0,0)'
                     },
-                    {
-                        x: 6.1,
-                        y: 6.4
-                    },
-                    {
-                        x: 9.0,
-                        y: 7.0
-                    },
-                    {
-                        x: 11.9,
-                        y: 8.1
-                    },
-                    {
-                        x: 14.7,
-                        y: 9.7
-                    }
-                ]
-            }
-        ]
-    }).highcharts();
+                    data: [
+                        {
+                            x: 3.2,
+                            y: 5.3
+                        },
+                        {
+                            x: 6.1,
+                            y: 6.4
+                        },
+                        {
+                            x: 9.0,
+                            y: 7.0
+                        },
+                        {
+                            x: 11.9,
+                            y: 8.1
+                        },
+                        {
+                            x: 14.7,
+                            y: 9.7
+                        }
+                    ]
+                }
+            ]
+        })
+        .highcharts();
 
     var markerX = chart.series[0].points[1].graphic.attr('x');
 
@@ -55,7 +57,6 @@ QUnit.test("Marker should not move after hover(#4586)", function (assert) {
         markerX,
         'Correct position'
     );
-
 });
 
 QUnit.test('Marker size and position', function (assert) {
@@ -66,19 +67,34 @@ QUnit.test('Marker size and position', function (assert) {
         accessibility: {
             enabled: false // A11y forces markers
         },
-        series: [{
-            data: [1, 2, 3],
-            animation: false,
-            marker: {
+        series: [
+            {
+                data: [1, 2, 3],
                 animation: false,
-                states: {
-                    hover: {
-                        animation: false
+                marker: {
+                    radius: 2.5,
+                    animation: false,
+                    states: {
+                        hover: {
+                            animation: false
+                        }
                     }
                 }
             }
-        }]
+        ]
     }).series[0];
+
+    assert.strictEqual(
+        series.points[0].graphic.x % 1,
+        0,
+        '#15179: Position should be a whole number because of crisping'
+    );
+
+    series.update({
+        marker: {
+            radius: 4
+        }
+    });
 
     // Default size
     assert.strictEqual(
@@ -92,7 +108,8 @@ QUnit.test('Marker size and position', function (assert) {
     assert.strictEqual(
         series.points[0].graphic.attr('width'),
         (plotOptions.line.marker.radius +
-            plotOptions.line.marker.states.hover.radiusPlus) * 2,
+            plotOptions.line.marker.states.hover.radiusPlus) *
+            2,
         'Hover width'
     );
 
@@ -160,6 +177,10 @@ QUnit.test('Marker size and position', function (assert) {
         'Correct image y-position (#7273)'
     );
 
+    assert.ok(
+        series.stateMarkerGraphic.attr('class'),
+        '#5430: State marker should have class set'
+    );
 });
 
 QUnit.test('visibility', assert => {
@@ -167,7 +188,7 @@ QUnit.test('visibility', assert => {
     const data = [85, 82, 84, 87, 92];
     const {
         series: [series1, series2],
-        yAxis: [/* yAxis1 */, yAxis2]
+        yAxis: [, /* yAxis1 */ yAxis2]
     } = Highcharts.stockChart('container', {
         // NOTE: Disable a11y, because it affects stateMarkerGraphic in Karma.
         accessibility: {
@@ -179,18 +200,21 @@ QUnit.test('visibility', assert => {
         tooltip: {
             split: true
         },
-        yAxis: [{
-            height: axisHeight,
-            top: 0,
-            offset: 0,
-            allowDecimals: true
-        }, {
-            opposite: false,
-            height: axisHeight,
-            top: axisHeight,
-            offset: 0,
-            allowDecimals: true
-        }],
+        yAxis: [
+            {
+                height: axisHeight,
+                top: 0,
+                offset: 0,
+                allowDecimals: true
+            },
+            {
+                opposite: false,
+                height: axisHeight,
+                top: axisHeight,
+                offset: 0,
+                allowDecimals: true
+            }
+        ],
         rangeSelector: {
             enabled: false
         },
@@ -200,7 +224,10 @@ QUnit.test('visibility', assert => {
         scrollbar: {
             enabled: false
         },
-        series: [{ data: data, yAxis: 0 }, { data: data, yAxis: 1 }]
+        series: [
+            { data: data, yAxis: 0 },
+            { data: data, yAxis: 1 }
+        ]
     });
 
     yAxis2.setExtremes(85, 90);

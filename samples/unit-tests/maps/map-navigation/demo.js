@@ -1,106 +1,110 @@
-QUnit.test('Zoom in - zoomout with padding, panning in both directions.', function (assert) {
+QUnit.test(
+    'Zoom in - zoomout with padding, panning in both directions.',
+    function (assert) {
+        var chart = Highcharts.mapChart('container', {
+            chart: {
+                plotBorderWidth: 1
+            },
 
-    var chart = Highcharts.mapChart('container', {
+            mapNavigation: {
+                enabled: false
+            },
 
-        chart: {
-            plotBorderWidth: 1
-        },
+            colorAxis: {
+                min: 1,
+                max: 1000,
+                type: 'logarithmic',
+                minColor: '#e6e696',
+                maxColor: '#003700'
+            },
 
-        mapNavigation: {
-            enabled: false
-        },
+            // Add some padding inside the plot box
+            xAxis: {
+                minPadding: 0.2,
+                maxPadding: 0.2
+            },
+            yAxis: {
+                minPadding: 0.2,
+                maxPadding: 0.2
+            },
 
-        colorAxis: {
-            min: 1,
-            max: 1000,
-            type: 'logarithmic',
-            minColor: '#e6e696',
-            maxColor: '#003700'
-        },
+            // The map series
+            series: [
+                {
+                    data: [
+                        {
+                            value: 1,
+                            path: 'M,0,0,L,100,0,L,100,100,L,0,100,z'
+                        },
+                        {
+                            value: 2,
+                            path: 'M,200,200,L,300,200,L,300,300,L,200,300,z'
+                        }
+                    ]
+                }
+            ]
+        });
 
-        // Add some padding inside the plot box
-        xAxis: {
-            minPadding: 0.2,
-            maxPadding: 0.2
-        },
-        yAxis: {
-            minPadding: 0.2,
-            maxPadding: 0.2
-        },
+        var xExtremes = chart.xAxis[0].getExtremes(),
+            yExtremes,
+            plotLeft = chart.plotLeft,
+            plotTop = chart.plotTop,
+            controller = new TestController(chart);
 
-        // The map series
-        series: [{
-            data: [{
-                value: 1,
-                path: 'M,0,0,L,100,0,L,100,100,L,0,100,z'
-            }, {
-                value: 2,
-                path: 'M,200,200,L,300,200,L,300,300,L,200,300,z'
-            }]
-        }]
-    });
+        controller.pan(
+            [plotLeft + 50, plotTop + 50],
+            [plotLeft + 100, plotTop + 100]
+        );
 
-    var xExtremes = chart.xAxis[0].getExtremes(),
-        yExtremes,
-        plotLeft = chart.plotLeft,
-        plotTop = chart.plotTop,
-        controller = new TestController(chart);
+        assert.ok(
+            !chart.resetZoomButton,
+            'Reset zoom button should not appear while panning and chart is not zoomed.'
+        );
 
-    controller.pan(
-        [plotLeft + 50, plotTop + 50],
-        [plotLeft + 100, plotTop + 100]
-    );
+        chart.mapZoom(0.5);
 
-    assert.ok(
-        !chart.resetZoomButton,
-        'Reset zoom button should not appear while panning and chart is not zoomed.'
-    );
+        assert.notEqual(
+            chart.xAxis[0].getExtremes().min,
+            xExtremes.min,
+            'Zoomed in'
+        );
 
-    chart.mapZoom(0.5);
+        chart.mapZoom(2);
+        assert.strictEqual(
+            chart.xAxis[0].getExtremes().min,
+            xExtremes.min,
+            'Zoomed out including padding'
+        );
 
-    assert.notEqual(
-        chart.xAxis[0].getExtremes().min,
-        xExtremes.min,
-        'Zoomed in'
-    );
+        chart.mapZoom(0.2);
 
-    chart.mapZoom(2);
-    assert.strictEqual(
-        chart.xAxis[0].getExtremes().min,
-        xExtremes.min,
-        'Zoomed out including padding'
-    );
+        xExtremes = chart.xAxis[0].getExtremes();
+        yExtremes = chart.yAxis[0].getExtremes();
 
-    chart.mapZoom(0.2);
+        controller.pan(
+            [plotLeft + 50, plotTop + 50],
+            [plotLeft + 100, plotTop + 100]
+        );
 
-    xExtremes = chart.xAxis[0].getExtremes();
-    yExtremes = chart.yAxis[0].getExtremes();
+        assert.notEqual(
+            chart.xAxis[0].getExtremes().min,
+            xExtremes.min,
+            'Correctly panned in horizontal direction'
+        );
 
-    controller.pan(
-        [plotLeft + 50, plotTop + 50],
-        [plotLeft + 100, plotTop + 100]
-    );
-
-    assert.notEqual(
-        chart.xAxis[0].getExtremes().min,
-        xExtremes.min,
-        'Correctly panned in horizontal direction'
-    );
-
-    assert.notEqual(
-        chart.yAxis[0].getExtremes().min,
-        yExtremes.min,
-        'Correctly panned in vertical direction'
-    );
-
-});
+        assert.notEqual(
+            chart.yAxis[0].getExtremes().min,
+            yExtremes.min,
+            'Correctly panned in vertical direction'
+        );
+    }
+);
 
 QUnit.test('Map navigation button alignment', assert => {
     const chart = Highcharts.mapChart('container', {
-
         chart: {
             plotBorderWidth: 1,
-            width: 600
+            width: 400
         },
 
         mapNavigation: {
@@ -110,19 +114,42 @@ QUnit.test('Map navigation button alignment', assert => {
             }
         },
 
-        series: [{
-            data: [{
-                path: 'M 0 0 L 100 0 L 0 100',
-                value: 1
-            }, {
-                path: 'M 100 0 L 100 100 L 0 100',
-                value: 2
+        series: [
+            {
+                data: [
+                    {
+                        path: 'M 0 0 L 100 0 L 0 100',
+                        value: 1
+                    },
+                    {
+                        path: 'M 100 0 L 100 100 L 0 100',
+                        value: 2
+                    }
+                ]
+            }
+        ],
+        responsive: {
+            rules: [{
+                condition: { maxWidth: 500 },
+                chartOptions: {
+                    mapNavigation: {
+                        enabled: false
+                    }
+                }
             }]
-        }]
+        }
     });
 
+    assert.ok(
+        true,
+        '#15406: Responsive rule should not make it throw'
+    );
+
+    chart.setSize(600);
+
     assert.close(
-        chart.mapNavButtons[1].translateY + chart.mapNavButtons[1].element.getBBox().height,
+        chart.mapNavButtons[1].translateY +
+            chart.mapNavButtons[1].element.getBBox().height,
         chart.plotTop + chart.plotHeight,
         1.5,
         'The buttons should initially be bottom-aligned to the plot box (#12776)'
@@ -131,10 +158,10 @@ QUnit.test('Map navigation button alignment', assert => {
     chart.setSize(undefined, 380);
 
     assert.close(
-        chart.mapNavButtons[1].translateY + chart.mapNavButtons[1].element.getBBox().height,
+        chart.mapNavButtons[1].translateY +
+            chart.mapNavButtons[1].element.getBBox().height,
         chart.plotTop + chart.plotHeight,
         1.5,
         'The buttons should be bottom-aligned to the plot box after redraw (#12776)'
     );
-
 });

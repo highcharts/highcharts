@@ -1,58 +1,69 @@
-QUnit.test('False detection of overlapping labels in different panes (#4911)', function (assert) {
-    var chart = Highcharts.chart('container', {
-        chart: {
-            type: 'column'
-        },
-        yAxis: [{
-            height: "50%",
-            top: "50%"
-        }, {
-            height: "50%",
-            top: "0%"
-        }],
-        series: [{
-            data: [1, 2, 3]
-        }, {
-            yAxis: 1,
-            data: [1, 2, 3]
-        }],
-        plotOptions: {
-            series: {
-                dataLabels: {
-                    enabled: true,
-                    allowOverlap: false
+QUnit.test(
+    'False detection of overlapping labels in different panes (#4911)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
+            yAxis: [
+                {
+                    height: '50%',
+                    top: '50%'
+                },
+                {
+                    height: '50%',
+                    top: '0%'
+                }
+            ],
+            series: [
+                {
+                    data: [1, 2, 3]
+                },
+                {
+                    yAxis: 1,
+                    data: [1, 2, 3]
+                }
+            ],
+            plotOptions: {
+                series: {
+                    dataLabels: {
+                        enabled: true,
+                        allowOverlap: false
+                    }
                 }
             }
-        }
-    });
-
-    chart.series.forEach(function (series) {
-        series.points.forEach(function (point) {
-            assert.strictEqual(
-                point.dataLabel.attr('opacity'),
-                1,
-                'Data label is visible'
-            );
         });
-    });
-});
+
+        chart.series.forEach(function (series) {
+            series.points.forEach(function (point) {
+                assert.strictEqual(
+                    point.dataLabel.attr('opacity'),
+                    1,
+                    'Data label is visible'
+                );
+            });
+        });
+    }
+);
 QUnit.test('Bottom -90', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
-        series: [{
-            data: [100, 200],
-            dataLabels: {
-                enabled: true,
-                defer: false,
-                inside: true,
-                verticalAlign: 'bottom',
-                align: 'left',
-                rotation: -90
-            },
-            animation: false
-        }]
+        series: [
+            {
+                data: [100, 200],
+                dataLabels: {
+                    enabled: true,
+                    defer: false,
+                    inside: true,
+                    verticalAlign: 'bottom',
+                    align: 'left',
+                    rotation: -90
+                },
+                animation: false
+            }
+        ]
     });
 
     assert.ok(
@@ -60,11 +71,16 @@ QUnit.test('Bottom -90', function (assert) {
         'Labels are visible'
     );
     assert.strictEqual(
-        Math.round(chart.series[0].points[0].dataLabel.element.getBoundingClientRect().bottom),
-        Math.round(chart.series[0].points[1].dataLabel.element.getBoundingClientRect().bottom),
+        Math.round(
+            chart.series[0].points[0].dataLabel.element.getBoundingClientRect()
+                .bottom
+        ),
+        Math.round(
+            chart.series[0].points[1].dataLabel.element.getBoundingClientRect()
+                .bottom
+        ),
         'Labels are equally bottom aligned'
     );
-
 });
 
 QUnit.test('Top -90', function (assert) {
@@ -72,18 +88,20 @@ QUnit.test('Top -90', function (assert) {
         chart: {
             type: 'column'
         },
-        series: [{
-            data: [100, 200],
-            dataLabels: {
-                enabled: true,
-                defer: false,
-                inside: true,
-                verticalAlign: 'top',
-                align: 'right',
-                rotation: -90
-            },
-            animation: false
-        }]
+        series: [
+            {
+                data: [100, 200],
+                dataLabels: {
+                    enabled: true,
+                    defer: false,
+                    inside: true,
+                    verticalAlign: 'top',
+                    align: 'right',
+                    rotation: -90
+                },
+                animation: false
+            }
+        ]
     });
 
     assert.ok(
@@ -92,19 +110,24 @@ QUnit.test('Top -90', function (assert) {
     );
     assert.ok(
         Math.abs(
-            chart.series[0].points[0].dataLabel.element.getBoundingClientRect().top -
-            chart.series[0].points[0].graphic.element.getBoundingClientRect().top
+            chart.series[0].points[0].dataLabel.element.getBoundingClientRect()
+                .top -
+                chart.series[0].points[0].graphic.element
+                    .getBoundingClientRect()
+                    .top
         ) < 12,
         'Label is top aligned to element'
     );
     assert.ok(
         Math.abs(
-            chart.series[0].points[1].dataLabel.element.getBoundingClientRect().top -
-            chart.series[0].points[1].graphic.element.getBoundingClientRect().top
+            chart.series[0].points[1].dataLabel.element.getBoundingClientRect()
+                .top -
+                chart.series[0].points[1].graphic.element
+                    .getBoundingClientRect()
+                    .top
         ) < 12,
         'Label is top aligned to element'
     );
-
 });
 
 QUnit.test('Bottom 90', function (assert) {
@@ -112,18 +135,20 @@ QUnit.test('Bottom 90', function (assert) {
         chart: {
             type: 'column'
         },
-        series: [{
-            data: [100, 200],
-            dataLabels: {
-                enabled: true,
-                defer: false,
-                inside: true,
-                verticalAlign: 'bottom',
-                align: 'right',
-                rotation: 90
-            },
-            animation: false
-        }]
+        series: [
+            {
+                data: [100, 200],
+                dataLabels: {
+                    enabled: true,
+                    defer: false,
+                    inside: true,
+                    verticalAlign: 'bottom',
+                    align: 'right',
+                    rotation: 90
+                },
+                animation: false
+            }
+        ]
     });
 
     assert.ok(
@@ -132,12 +157,14 @@ QUnit.test('Bottom 90', function (assert) {
     );
     assert.ok(
         Math.abs(
-            chart.series[0].points[0].dataLabel.element.getBoundingClientRect().bottom -
-            chart.series[0].points[1].dataLabel.element.getBoundingClientRect().bottom
+            chart.series[0].points[0].dataLabel.element.getBoundingClientRect()
+                .bottom -
+                chart.series[0].points[1].dataLabel.element
+                    .getBoundingClientRect()
+                    .bottom
         ) < 12,
         'Labels are equally bottom aligned'
     );
-
 });
 
 QUnit.test('Top 90', function (assert) {
@@ -145,18 +172,20 @@ QUnit.test('Top 90', function (assert) {
         chart: {
             type: 'column'
         },
-        series: [{
-            data: [100, 200],
-            dataLabels: {
-                enabled: true,
-                defer: false,
-                inside: true,
-                verticalAlign: 'top',
-                align: 'left',
-                rotation: 90
-            },
-            animation: false
-        }]
+        series: [
+            {
+                data: [100, 200],
+                dataLabels: {
+                    enabled: true,
+                    defer: false,
+                    inside: true,
+                    verticalAlign: 'top',
+                    align: 'left',
+                    rotation: 90
+                },
+                animation: false
+            }
+        ]
     });
 
     assert.ok(
@@ -165,26 +194,40 @@ QUnit.test('Top 90', function (assert) {
     );
     assert.ok(
         Math.abs(
-            Math.round(chart.series[0].points[0].dataLabel.element.getBoundingClientRect().top) -
-            Math.round(chart.series[0].points[0].graphic.element.getBoundingClientRect().top)
+            Math.round(
+                chart.series[0].points[0].dataLabel.element
+                    .getBoundingClientRect()
+                    .top
+            ) -
+                Math.round(
+                    chart.series[0].points[0].graphic.element
+                        .getBoundingClientRect()
+                        .top
+                )
         ) < 12,
         'Label is top aligned to element'
     );
     assert.ok(
         Math.abs(
-            Math.round(chart.series[0].points[1].dataLabel.element.getBoundingClientRect().top) -
-            Math.round(chart.series[0].points[1].graphic.element.getBoundingClientRect().top)
+            Math.round(
+                chart.series[0].points[1].dataLabel.element
+                    .getBoundingClientRect()
+                    .top
+            ) -
+                Math.round(
+                    chart.series[0].points[1].graphic.element
+                        .getBoundingClientRect()
+                        .top
+                )
         ) < 12,
         'Label is top aligned to element'
     );
-
 });
 
 QUnit.test(
     'Connect ends and data label still visible (#6465)',
     function (assert) {
         var chart = Highcharts.chart('container', {
-
             chart: {
                 polar: true,
                 type: 'line'
@@ -204,13 +247,14 @@ QUnit.test(
                 max: 60000
             },
 
-            series: [{
-                name: 'Actual Spending',
-                data: [45000, 39000, 42000, 31000, 26000, 14000],
-                pointPlacement: 'on',
-                animation: false
-            }]
-
+            series: [
+                {
+                    name: 'Actual Spending',
+                    data: [45000, 39000, 42000, 31000, 26000, 14000],
+                    pointPlacement: 'on',
+                    animation: false
+                }
+            ]
         });
 
         assert.strictEqual(
@@ -223,73 +267,78 @@ QUnit.test(
 
 // Highcharts 4.1.1, Issue #3866
 // Data Labels are not rendering for column charts when series are shown/hidden
-QUnit.test(
-    'Datalabels overlap in hidden series (#3866)',
-    function (assert) {
-
-        var chart = Highcharts.chart('container', {
-            chart: {
-                width: 400,
-                type: 'column'
-            },
-            title: {
-                text: 'Test for data labels allowOverlap'
-            },
-            plotOptions: {
-                series: {
-                    dataLabels: {
-                        enabled: true,
-                        format: '{y} km'
-                    }
+QUnit.test('Datalabels overlap in hidden series (#3866)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 400,
+            type: 'column'
+        },
+        title: {
+            text: 'Test for data labels allowOverlap'
+        },
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    format: '{y} km'
                 }
-            },
-            series: [{
-                data: [{
-                    labelrank: 1000,
-                    y: 1
-                }, {
-                    labelrank: 1000,
-                    y: 2
-                }, {
-                    labelrank: 1000,
-                    y: 3
-                }, {
-                    labelrank: 1000,
-                    y: 4
-                }, {
-                    labelrank: 1000,
-                    y: 5
-                }, {
-                    labelrank: 1000,
-                    y: 6
-                }],
+            }
+        },
+        series: [
+            {
+                data: [
+                    {
+                        labelrank: 1000,
+                        y: 1
+                    },
+                    {
+                        labelrank: 1000,
+                        y: 2
+                    },
+                    {
+                        labelrank: 1000,
+                        y: 3
+                    },
+                    {
+                        labelrank: 1000,
+                        y: 4
+                    },
+                    {
+                        labelrank: 1000,
+                        y: 5
+                    },
+                    {
+                        labelrank: 1000,
+                        y: 6
+                    }
+                ],
                 name: '1. Click me'
-            }, {
+            },
+            {
                 data: [1.1, 2.1, 3.1, 4.1, 5.1, 6.1],
                 name: '2. My data labels should show'
-            }]
-        });
+            }
+        ]
+    });
 
-        assert.ok(
-            chart.series[1].points.every(
-                point => point.dataLabel.attr('translateY') < 0 ||
+    assert.ok(
+        chart.series[1].points.every(
+            point =>
+                point.dataLabel.attr('translateY') < 0 ||
                 point.dataLabel.attr('opacity') === 0
-            ),
-            'All six labels of the second series should be hidden.'
-        );
+        ),
+        'All six labels of the second series should be hidden.'
+    );
 
-        chart.series[0].hide();
+    chart.series[0].hide();
 
-        assert.ok(
-            chart.series[1].points.every(
-                point => point.dataLabel.attr('translateY') >= 0
-            ),
-            'All six labels of the second series should be visible.'
-        );
-
-
-    }
-);
+    assert.ok(
+        chart.series[1].points.every(
+            point => point.dataLabel.attr('translateY') >= 0
+        ),
+        'All six labels of the second series should be visible.'
+    );
+});
 
 QUnit.test(
     'Data labels with missing values on arearange (#9247)',
@@ -300,24 +349,25 @@ QUnit.test(
                 width: 600,
                 height: 400
             },
-            series: [{
-                data: [
-                    [0, 1],
-                    [2, 3],
-                    [4, 5],
-                    [0, 5]
-                ],
-                dataLabels: {
-                    enabled: true,
-                    formatter: function () {
-                        if (this.y > 0.5 && this.y < 4.5) {
-                            return this.y;
+            series: [
+                {
+                    data: [
+                        [0, 1],
+                        [2, 3],
+                        [4, 5],
+                        [0, 5]
+                    ],
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function () {
+                            if (this.y > 0.5 && this.y < 4.5) {
+                                return this.y;
+                            }
+                            return null;
                         }
-                        return null;
                     }
                 }
-            }]
-
+            ]
         });
 
         assert.deepEqual(
@@ -368,27 +418,29 @@ QUnit.test('defer:true and exporting (#10661)', assert => {
         xAxis: {
             categories: ['Apples', 'Pears', 'Bananas']
         },
-        series: [{
-            data: [1000, 4000, 3000],
-            type: 'column',
-            dataLabels: {
-                enabled: true,
-                defer: true
+        series: [
+            {
+                data: [1000, 4000, 3000],
+                type: 'column',
+                dataLabels: {
+                    enabled: true,
+                    defer: true
+                }
             }
-        }]
+        ]
     });
 
     assert.deepEqual(
-        chart.series[0].points.map(
-            p => p.dataLabel.element.getAttribute('visibility')
+        chart.series[0].points.map(p =>
+            p.dataLabel.element.getAttribute('visibility')
         ),
         [null, null, null],
         'Data labels should be visible'
     );
 
     assert.deepEqual(
-        chart.series[0].points.map(
-            p => p.dataLabel.element.getAttribute('opacity')
+        chart.series[0].points.map(p =>
+            p.dataLabel.element.getAttribute('opacity')
         ),
         [null, null, null],
         'Data labels should be visible'

@@ -1,14 +1,19 @@
 QUnit.test('Soft threshold', function (assert) {
     var chart = Highcharts.chart('container', {
-        series: [{
-            type: 'area',
-            threshold: null,
-            data: [-50, -100]
-        }]
+        series: [
+            {
+                type: 'area',
+                threshold: null,
+                data: [-50, -100]
+            }
+        ]
     });
 
     assert.strictEqual(
-        Math.round(chart.series[0].area.getBBox().y + chart.series[0].area.getBBox().height),
+        Math.round(
+            chart.series[0].area.getBBox().y +
+                chart.series[0].area.getBBox().height
+        ),
         Math.round(chart.plotHeight),
         'Area goes all the way down'
     );
@@ -18,11 +23,13 @@ QUnit.test(
     'Threshold should be applied when setSize / reflow is triggered (#6033)',
     function (assert) {
         var chart = new Highcharts.Chart({
-            series: [{
-                data: [80, 100, 60]
-            }],
+            series: [
+                {
+                    data: [80, 100, 60]
+                }
+            ],
             chart: {
-                type: "bar",
+                type: 'bar',
                 renderTo: 'container',
                 height: 175
             },
@@ -31,14 +38,15 @@ QUnit.test(
             },
             plotOptions: {
                 series: {
-                    stacking: "normal",
+                    stacking: 'normal',
                     threshold: 10
                 }
             }
         });
 
         assert.strictEqual(
-            chart.yAxis[0].stacking.stacks[chart.series[0].stackKey][0].cumulative,
+            chart.yAxis[0].stacking.stacks[chart.series[0].stackKey][0]
+                .cumulative,
             90,
             'Threshold is applied'
         );

@@ -1,20 +1,23 @@
-QUnit.test('Pie in Highstock, StockChart constructor', function (assert) {
-
+QUnit.test('Pie in Highcharts Stock, StockChart constructor', function (assert) {
     var chart;
 
     chart = new Highcharts.StockChart({
         chart: {
-            renderTo: "container"
+            renderTo: 'container'
         },
         navigator: {
             enabled: false
         },
-        series: [{
-            type: "pie",
-            data: [{
-                y: 36
-            }]
-        }]
+        series: [
+            {
+                type: 'pie',
+                data: [
+                    {
+                        y: 36
+                    }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -25,24 +28,25 @@ QUnit.test('Pie in Highstock, StockChart constructor', function (assert) {
 });
 
 QUnit.test('Stock chart with overshooting range (#4501)', function (assert) {
-    var chart,
-        i;
+    var chart, i;
 
-
-    var eps = [{
-        x: Date.UTC(2005, 11, 31, 12, 0, 0, 0),
-        y: 15.3
-    }, {
-        x: Date.UTC(2015, 11, 31, 12, 0, 0, 0),
-        y: 41.95
-    }];
+    var eps = [
+        {
+            x: Date.UTC(2005, 11, 31, 12, 0, 0, 0),
+            y: 15.3
+        },
+        {
+            x: Date.UTC(2015, 11, 31, 12, 0, 0, 0),
+            y: 41.95
+        }
+    ];
 
     var buttons = [];
     for (i = 11; i > 6; i--) {
         buttons.push({
-            type: "year",
+            type: 'year',
             count: i,
-            text: i + "y"
+            text: i + 'y'
         });
     }
 
@@ -54,10 +58,12 @@ QUnit.test('Stock chart with overshooting range (#4501)', function (assert) {
         xAxis: {
             minRange: 1
         },
-        series: [{
-            name: "EPS",
-            data: eps
-        }]
+        series: [
+            {
+                name: 'EPS',
+                data: eps
+            }
+        ]
     });
     chart = $('#container').highcharts();
 
@@ -66,7 +72,6 @@ QUnit.test('Stock chart with overshooting range (#4501)', function (assert) {
         Date.UTC(2015, 11, 31, 12, 0, 0, 0),
         'Initially valid maximum'
     );
-
 
     chart.rangeSelector.clickButton(2);
     assert.strictEqual(
@@ -81,19 +86,18 @@ QUnit.test('Stock chart with overshooting range (#4501)', function (assert) {
         Date.UTC(2015, 11, 31, 12, 0, 0, 0),
         'Valid maximum for full range'
     );
-
-
 });
 
-QUnit.test('Default plot options for stock chart', function (assert) {
-
+QUnit.test('Default options for stock chart', function (assert) {
     const chart = Highcharts.stockChart('container', {
-        series: [{
-            data: [1, 2, 3, 4],
-            marker: {
-                enabled: true
+        series: [
+            {
+                data: [1, 2, 3, 4],
+                marker: {
+                    enabled: true
+                }
             }
-        }],
+        ],
         navigator: {
             enabled: false
         },
@@ -102,6 +106,11 @@ QUnit.test('Default plot options for stock chart', function (assert) {
         },
         scrollbar: {
             enabled: false
+        },
+        plotOptions: {
+            series: {
+                compare: 'value'
+            }
         }
     });
 
@@ -137,5 +146,35 @@ QUnit.test('Default plot options for stock chart', function (assert) {
         chart.series[0].options.marker.radius,
         5,
         'The individual series marker should be respected'
+    );
+
+    chart.update({
+        plotOptions: {
+            series: {
+                compare: 'percent'
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].options.compare,
+        'percent',
+        '#14932: Updating compare through plotOptions should be possible'
+    );
+
+    chart.addAxis({});
+
+    assert.strictEqual(
+        chart.yAxis[1].options.title.text,
+        null,
+        '#8603: Axis should have stock defaults applied'
+    );
+
+    chart.addAxis({}, true);
+
+    assert.strictEqual(
+        chart.xAxis[1].options.type,
+        'datetime',
+        '#8603: Axis should have stock forced options applied'
     );
 });
