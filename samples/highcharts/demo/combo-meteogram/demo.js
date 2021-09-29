@@ -465,7 +465,7 @@ Meteogram.prototype.getChartOptions = function () {
             },
             tooltip: {
                 pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-                    '{series.name}: <b>{point.value}°C</b><br/>'
+                    '{series.name}: <b>{point.y}°C</b><br/>'
             },
             zIndex: 1,
             color: '#FF3333',

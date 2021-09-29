@@ -39,6 +39,7 @@ const {
     pick
 } = U;
 
+import A11yI18n from '../A11yI18n.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import Announcer from '../Utils/Announcer.js';
 import AnnotationsA11y from './AnnotationsA11y.js';
@@ -543,7 +544,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 annotationsTitle: annotationsList ? annotationsTitleStr : '',
                 annotationsList: annotationsList
             },
-            formattedString = H.i18nFormat(format, context, chart);
+            formattedString = A11yI18n.i18nFormat(format, context, chart);
 
         this.dataTableButtonId = dataTableButtonId;
         this.sonifyButtonId = sonifyButtonId;
@@ -567,7 +568,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         }
 
         const context = { endOfChartMarker: this.getEndOfChartMarkerText() };
-        const formattedString = H.i18nFormat(format, context, chart);
+        const formattedString = A11yI18n.i18nFormat(format, context, chart);
 
         return stripEmptyHTMLTags(formattedString);
     },
