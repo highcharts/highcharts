@@ -263,10 +263,9 @@ class HLCSeries extends ColumnSeries {
 
 
     /**
+     * Draw single point
      * @private
-     * draw single point
      */
-
     public drawSinglePoint(point: HLCPoint): void {
 
         const series = point.series,
