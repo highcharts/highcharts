@@ -344,9 +344,9 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
 
     /**
-     * @private
      * Returns false if legend a11y is disabled and proxies were not created,
      * true otherwise.
+     * @private
      */
     recreateProxies: function (this: Highcharts.LegendComponent): boolean {
         this.removeProxies();

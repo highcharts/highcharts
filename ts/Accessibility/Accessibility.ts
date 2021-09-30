@@ -18,6 +18,7 @@
  *
  * */
 
+import type AccessibilityComponent from './AccessibilityComponent';
 import type Chart from '../Core/Chart/Chart.js';
 import type { Options } from '../Core/Options';
 import type Point from '../Core/Series/Point.js';
@@ -320,7 +321,7 @@ namespace Accessibility {
      * */
 
     export interface ComponentsObject {
-        [key: string]: Highcharts.AccessibilityComponent;
+        [key: string]: AccessibilityComponent;
         container: Highcharts.ContainerComponent;
         infoRegions: Highcharts.InfoRegionsComponent;
         legend: Highcharts.LegendComponent;

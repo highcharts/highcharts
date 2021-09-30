@@ -1119,13 +1119,10 @@ class Legend {
         legend.renderTitle();
 
         // sort by legendIndex
-        stableSort(allItems, function (
-            a: (Series|Point),
-            b: (Series|Point)
-        ): number {
-            return ((a.options && a.options.legendIndex) || 0) -
-                ((b.options && b.options.legendIndex) || 0);
-        });
+        stableSort(allItems, (a, b): number =>
+            ((a.options && a.options.legendIndex) || 0) -
+            ((b.options && b.options.legendIndex) || 0)
+        );
 
         // reversed legend
         if (options.reversed) {

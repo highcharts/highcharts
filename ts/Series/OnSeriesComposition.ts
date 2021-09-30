@@ -16,9 +16,10 @@
  *
  * */
 
-import type LineSeriesOptions from '../Series/Line/LineSeriesOptions';
+import type CoreSeriesOptions from '../Core/Series/SeriesOptions';
 import type Point from '../Core/Series/Point';
-import ColumnSeries from '../Series/Column/ColumnSeries.js';
+
+import ColumnSeries from './Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
@@ -30,52 +31,75 @@ const {
 
 /* *
  *
- *  Declarations
+ *  Composition
  *
  * */
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        const OnSeriesMixin: OnSeriesMixin;
-        interface OnSeriesMixin {
-            getPlotBox(this: OnSeriesSeries): Series.PlotBoxObject;
-            translate(): void;
-        }
-        interface OnSeriesPoint extends Point {
-            stackIndex?: number;
-        }
-        interface OnSeriesSeries extends Series {
-            options: OnSeriesSeriesOptions;
-            onSeries?: OnSeriesSeries;
-        }
-        interface OnSeriesSeriesOptions extends LineSeriesOptions {
-            onSeries?: (string|null);
-        }
-    }
-}
+namespace OnSeriesComposition {
 
-/**
- * @private
- * @mixin onSeriesMixin
- */
-const onSeriesMixin = {
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export declare class PointComposition extends Point {
+        stackIndex?: number;
+    }
+
+    export declare class SeriesComposition extends Series {
+        options: SeriesOptions;
+        onSeries?: SeriesComposition;
+        points: Array<PointComposition>;
+    }
+
+    export interface SeriesOptions extends CoreSeriesOptions {
+        onSeries?: (string|null);
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    export function compose<T extends typeof Series>(
+        SeriesClass: T
+    ): (T&SeriesComposition) {
+
+        if (composedClasses.indexOf(SeriesClass) === -1) {
+            composedClasses.push(SeriesClass);
+
+            const seriesProto = SeriesClass.prototype as SeriesComposition;
+
+            seriesProto.getPlotBox = getPlotBox;
+            seriesProto.translate = translate;
+        }
+
+        return SeriesClass as (T&SeriesComposition);
+    }
 
     /**
      * Override getPlotBox. If the onSeries option is valid, return the plot box
      * of the onSeries, otherwise proceed as usual.
      *
      * @private
-     * @function onSeriesMixin.getPlotBox
-     * @return {Highcharts.SeriesPlotBoxObject}
      */
-    getPlotBox: function (
-        this: Highcharts.OnSeriesSeries
+    export function getPlotBox(
+        this: SeriesComposition
     ): Series.PlotBoxObject {
         return seriesProto.getPlotBox.call(
             (
@@ -83,39 +107,40 @@ const onSeriesMixin = {
                 this.chart.get(this.options.onSeries)
             ) || this
         );
-    },
+    }
 
     /**
      * Extend the translate method by placing the point on the related series
      *
      * @private
-     * @function onSeriesMixin.translate
-     * @return {void}
      */
-    translate: function (this: Highcharts.OnSeriesSeries): void {
+    export function translate(
+        this: SeriesComposition
+    ): void {
 
         columnProto.translate.apply(this);
 
-        let series = this,
+        const series = this,
             options = series.options,
             chart = series.chart,
             points = series.points,
-            cursor = points.length - 1,
-            point: Highcharts.OnSeriesPoint,
-            lastPoint: (Highcharts.OnSeriesPoint|undefined),
             optionsOnSeries = options.onSeries,
-            onSeries: (Highcharts.OnSeriesSeries|undefined) = (
+            onSeries: (SeriesComposition|undefined) = (
                 optionsOnSeries &&
                 chart.get(optionsOnSeries)
             ) as any,
-            onKey = (options as any).onKey || 'y',
             step = onSeries && onSeries.options.step,
-            onData: (Array<Highcharts.OnSeriesPoint>|undefined) =
+            onData: (Array<PointComposition>|undefined) =
                  (onSeries && onSeries.points),
-            i = onData && onData.length,
             inverted = chart.inverted,
             xAxis = series.xAxis,
-            yAxis = series.yAxis,
+            yAxis = series.yAxis;
+
+        let cursor = points.length - 1,
+            point: PointComposition,
+            lastPoint: (PointComposition|undefined),
+            onKey = (options as any).onKey || 'y',
+            i = onData && onData.length,
             xOffset = 0,
             leftPoint,
             lastX,
@@ -133,12 +158,7 @@ const onSeriesMixin = {
             ); // #2374
 
             // sort the data points
-            stableSort(points, function (
-                a: Highcharts.OnSeriesPoint,
-                b: Highcharts.OnSeriesPoint
-            ): number {
-                return ((a.x as any) - (b.x as any));
-            });
+            stableSort(points, (a, b): number => ((a.x as any) - (b.x as any)));
 
             onKey = 'plot' + onKey[0].toUpperCase() + onKey.substr(1);
             while (i-- && points[cursor]) {
@@ -187,10 +207,7 @@ const onSeriesMixin = {
         }
 
         // Add plotY position and handle stacking
-        points.forEach(function (
-            point: Highcharts.OnSeriesPoint,
-            i: number
-        ): void {
+        points.forEach((point, i): void => {
 
             let stackIndex;
 
@@ -247,7 +264,12 @@ const onSeriesMixin = {
         this.onSeries = onSeries;
     }
 
-    /* eslint-enable valid-jsdoc */
-};
+}
 
-export default onSeriesMixin;
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default OnSeriesComposition;

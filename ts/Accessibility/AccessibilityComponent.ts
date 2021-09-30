@@ -12,99 +12,33 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Accessibility from './Accessibility';
-import type {
-    HTMLDOMElement,
-    DOMElementType
-} from '../Core/Renderer/DOMElementType';
+import type EventCallback from '../Core/EventCallback';
+import type { DOMElementType } from '../Core/Renderer/DOMElementType';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type ProxyProvider from './ProxyProvider';
+
+import CU from './Utils/ChartUtilities.js';
+const { fireEventOnWrappedOrUnwrappedElement } = CU;
 import DOMElementProvider from './Utils/DOMElementProvider.js';
 import EventProvider from './Utils/EventProvider.js';
-
-import HTMLUtilities from './Utils/HTMLUtilities.js';
-const {
-    getFakeMouseEvent
-} = HTMLUtilities;
-
-import ChartUtilities from './Utils/ChartUtilities.js';
-const {
-    fireEventOnWrappedOrUnwrappedElement
-} = ChartUtilities;
-
+import HU from './Utils/HTMLUtilities.js';
+const { getFakeMouseEvent } = HU;
 import U from '../Core/Utilities.js';
-const {
-    extend
-} = U;
+const { extend } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class AccessibilityComponent {
-            public constructor();
-            public chart: Accessibility.ChartComposition;
-            public domElementProvider: DOMElementProvider;
-            public eventProvider: EventProvider;
-            public keyCodes: Record<string, number>;
-            public proxyProvider: ProxyProvider;
-            public addEvent: EventProvider['addEvent'];
-            public createElement: DOMElementProvider['createElement'];
-            public destroy(): void;
-            public destroyBase(): void;
-            public fakeClickEvent(el: (HTMLElement|SVGElement|DOMElementType)): void;
-            public getKeyboardNavigation(): (
-                KeyboardNavigationHandler|Array<KeyboardNavigationHandler>
-            );
-            public init(): void;
-            public initBase(
-                chart: Accessibility.ChartComposition,
-                proxyProvider: ProxyProvider
-            ): void;
-            public onChartRender(): void;
-            public onChartUpdate(): void;
-        }
-    }
-}
-
-
-/* eslint-disable valid-jsdoc */
-
-/** @lends Highcharts.AccessibilityComponent */
-const functionsToOverrideByDerivedClasses: (
-    Partial<Highcharts.AccessibilityComponent>
-) = {
-    /**
-     * Called on component initialization.
-     */
-    init: function (): void {},
-
-    /**
-     * Get keyboard navigation handler for this component.
-     * @return {Highcharts.KeyboardNavigationHandler}
-     */
-    getKeyboardNavigation: function (): void {} as any,
-
-    /**
-     * Called on updates to the chart, including options changes.
-     * Note that this is also called on first render of chart.
-     */
-    onChartUpdate: function (): void {},
-
-    /**
-     * Called on every chart render.
-     */
-    onChartRender: function (): void {},
-
-    /**
-     * Called when accessibility is disabled or chart is destroyed.
-     */
-    destroy: function (): void {}
-};
-
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The AccessibilityComponent base class, representing a part of the chart that
@@ -122,19 +56,35 @@ const functionsToOverrideByDerivedClasses: (
  * @class
  * @name Highcharts.AccessibilityComponent
  */
-function AccessibilityComponent(): void {}
-/**
- * @lends Highcharts.AccessibilityComponent
- */
-AccessibilityComponent.prototype = {
+class AccessibilityComponent {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public chart: Accessibility.ChartComposition = void 0 as any;
+    public domElementProvider: DOMElementProvider = void 0 as any;
+    public eventProvider: EventProvider = void 0 as any;
+    public keyCodes: Record<string, number> = void 0 as any;
+    public proxyProvider: ProxyProvider = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
     /**
      * Initialize the class
      * @private
      * @param {Highcharts.Chart} chart The chart object
      * @param {Highcharts.ProxyProvider} proxyProvider The proxy provider of the accessibility module
      */
-    initBase: function (
-        this: Highcharts.AccessibilityComponent,
+    public initBase(
         chart: Accessibility.ChartComposition,
         proxyProvider: ProxyProvider
     ): void {
@@ -159,7 +109,7 @@ AccessibilityComponent.prototype = {
             end: 35,
             home: 36
         };
-    },
+    }
 
 
     /**
@@ -167,10 +117,14 @@ AccessibilityComponent.prototype = {
      * See EventProvider for details.
      * @private
      */
-    addEvent: function (this: Highcharts.AccessibilityComponent): Function {
-        return (this.eventProvider as any).addEvent
-            .apply(this.eventProvider, arguments);
-    },
+    public addEvent<T>(
+        el: (T|U.Class<T>),
+        type: string,
+        fn: (Function|EventCallback<T>),
+        options?: U.EventOptions
+    ): Function {
+        return this.eventProvider.addEvent<T>(el, type, fn, options);
+    }
 
 
     /**
@@ -178,35 +132,88 @@ AccessibilityComponent.prototype = {
      * See DOMElementProvider for details.
      * @private
      */
-    createElement: function (
-        this: Highcharts.AccessibilityComponent
-    ): HTMLDOMElement {
-        return (this.domElementProvider as any).createElement.apply(
-            this.domElementProvider, arguments
-        );
-    },
+    public createElement<K extends keyof HTMLElementTagNameMap>(
+        tagName: K,
+        options?: ElementCreationOptions
+    ): HTMLElementTagNameMap[K] {
+        return this.domElementProvider.createElement(tagName, options);
+    }
 
 
     /**
      * Fire a fake click event on an element. It is useful to have this on
      * AccessibilityComponent for users of custom components.
      */
-    fakeClickEvent(el: (HTMLElement|SVGElement|DOMElementType)): void {
+    public fakeClickEvent(
+        el: (HTMLElement|SVGElement|DOMElementType)
+    ): void {
         const fakeEvent = getFakeMouseEvent('click');
         fireEventOnWrappedOrUnwrappedElement(el, fakeEvent);
-    },
+    }
 
 
     /**
      * Remove traces of the component.
      * @private
      */
-    destroyBase: function (): void {
+    public destroyBase(): void {
         this.domElementProvider.destroyCreatedElements();
         this.eventProvider.removeAddedEvents();
     }
-};
 
-extend(AccessibilityComponent.prototype, functionsToOverrideByDerivedClasses);
+}
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface AccessibilityComponent {
+    destroy(): void;
+    getKeyboardNavigation(): (Highcharts.KeyboardNavigationHandler|Array<Highcharts.KeyboardNavigationHandler>);
+    init(): void;
+    onChartRender(): void;
+    onChartUpdate(): void;
+}
+
+extend(
+    AccessibilityComponent.prototype,
+    /** @lends Highcharts.AccessibilityComponent */
+    {
+        /**
+         * Called on component initialization.
+         */
+        init(): void {},
+
+        /**
+         * Get keyboard navigation handler for this component.
+         * @return {Highcharts.KeyboardNavigationHandler}
+         */
+        getKeyboardNavigation: function (): void {} as any,
+
+        /**
+         * Called on updates to the chart, including options changes.
+         * Note that this is also called on first render of chart.
+         */
+        onChartUpdate(): void {},
+
+        /**
+         * Called on every chart render.
+         */
+        onChartRender(): void {},
+
+        /**
+         * Called when accessibility is disabled or chart is destroyed.
+         */
+        destroy(): void {}
+    }
+);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default AccessibilityComponent;
