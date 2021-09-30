@@ -8,8 +8,7 @@ describe('Stock Tools Time Cicles, #15826', () => {
     });
 
     it(`Should create an annotation and check the shape's coordinates.`, () => {
-        cy.get('.highcharts-fibonacci').children().eq(1).click();
-        cy.get('.highcharts-time-cycles').click();
+        cy.selectAnnotation('highcharts-time-cycles', 'highcharts-fibonacci');
         cy.get('.highcharts-container')
             .click(120, 150, { force: true })
             .click(220, 150, { force: true })

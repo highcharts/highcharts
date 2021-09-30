@@ -79,3 +79,11 @@ Cypress.Commands.add('addIndicator', () =>
         .eq(0)
         .click()
 );
+
+Cypress.Commands.add('selectAnnotation', (annotationClassName, parentClassName) => {
+
+    if(parentClassName) {
+        cy.get(`.${parentClassName}`).children().eq(1).click();
+    }
+    cy.get(`.${annotationClassName}`).click();
+})
