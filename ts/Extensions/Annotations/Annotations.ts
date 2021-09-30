@@ -49,6 +49,7 @@ const chartProto: Highcharts.AnnotationChart = Chart.prototype as any;
 import ControllableMixin from './Mixins/ControllableMixin.js';
 import ControllableRect from './Controllables/ControllableRect.js';
 import ControllableCircle from './Controllables/ControllableCircle.js';
+import ControllableEllipse from './Controllables/ControllableEllipse.js';
 import ControllablePath from './Controllables/ControllablePath.js';
 import ControllableImage from './Controllables/ControllableImage.js';
 import ControllableLabel from './Controllables/ControllableLabel.js';
@@ -204,6 +205,7 @@ declare global {
             fill: ColorType;
             height?: number;
             r: number;
+            ry: number;
             shapes: Array<AnnotationsShapeOptions>;
             snap: number;
             src: string;
@@ -317,6 +319,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public static shapesMap: Record<string, Function> = {
         'rect': ControllableRect,
         'circle': ControllableCircle,
+        'ellipse': ControllableEllipse,
         'path': ControllablePath,
         'image': ControllableImage
     };
@@ -1486,6 +1489,36 @@ merge<Annotation>(
                 shapeOptions: {
 
                     /**
+                     *
+                     * The radius of the shape in y direction.
+                     * Used for the ellipse.
+                     *
+                     * @sample highcharts/annotations/ellipse/
+                     *         Ellipse annotation
+                     *
+                     * @type      {number}
+                     * @apioption annotations.shapeOptions.ry
+                     **/
+
+                    /**
+                     *
+                     * The xAxis index to which the points should be attached.
+                     * Used for the ellipse.
+                     *
+                     * @type      {number}
+                     * @apioption annotations.shapeOptions.xAxis
+                     **/
+
+                    /**
+                     * The yAxis index to which the points should be attached.
+                     * Used for the ellipse.
+                     *
+                     * @type      {number}
+                     * @apioption annotations.shapeOptions.yAxis
+                     **/
+
+
+                    /**
                      * The width of the shape.
                      *
                      * @sample highcharts/annotations/shape/
@@ -1506,10 +1539,14 @@ merge<Annotation>(
                      */
 
                     /**
-                     * The type of the shape, e.g. circle or rectangle.
+                     * The type of the shape.
+                     * Avaliable options are circle, rect and ellipse.
                      *
                      * @sample highcharts/annotations/shape/
                      *         Basic shape annotation
+                     *
+                     * @sample highcharts/annotations/ellipse/
+                     *         Ellipse annotation
                      *
                      * @type      {string}
                      * @default   rect
