@@ -1238,7 +1238,7 @@ namespace OrdinalAxis {
                 });
 
                 // Apply grouping if needed.
-                axis.applyGrouping.call(fakeAxis);
+                axis.applyGrouping.call(fakeAxis, false);
 
                 // Force to use the ordinal when points are evenly spaced
                 // (e.g. weeks), #3825.
