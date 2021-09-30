@@ -167,7 +167,7 @@ class TimeCycles extends CrookedLine {
         this.setPathProperties();
 
         if (this.shapes[0]) {
-            this.shapes[0].attr({ d: this.getPath() });
+            (this.shapes[0] as any)[animation ? 'animate' : 'attr']({ d: this.getPath() });
         }
     }
 }
@@ -286,13 +286,13 @@ export default TimeCycles;
  * */
 
 /**
- * The Fibonacci Timezones annotation.
- *
- * @sample highcharts/annotations-advanced/fibonacci-timezones/
- *         Fibonacci Timezones
+ * The TimeCycles Annotation
+ * @sample highcharts/annotations-advanced/time-cycles/
+ *     Time Cycles annotation
  *
  * @extends   annotations.crookedLine
  * @product   highstock
+ * @excludes  labelOptions
  * @apioption annotations.timeCycles
  */
 
