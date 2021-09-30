@@ -434,17 +434,6 @@ class HeatmapSeries extends ScatterSeries {
                         this.chart.styledMode ? 'css' : 'animate'
                     ](this.colorAttribs(point));
 
-                    if (this.options.borderRadius) {
-                        point.graphic.attr({
-                            r: this.options.borderRadius
-                        });
-                    }
-
-                    // Saving option for reapplying later
-                    // when changing point's states (#16165)
-                    (point.shapeArgs || {}).r = this.options.borderRadius;
-                    (point.shapeArgs || {}).d = point.graphic.pathArray;
-
                     if (point.value === null) { // #15708
                         point.graphic.addClass('highcharts-null-point');
                     }
@@ -660,25 +649,23 @@ class HeatmapSeries extends ScatterSeries {
 
         series.generatePoints();
         series.points.forEach(function (point): void {
-            let pointAttr,
-                sizeDiff,
-                hasImage,
-                cellAttr = point.getCellAttributes(),
+            const cellAttr = point.getCellAttributes(),
                 shapeArgs: SVGAttributes = {};
 
             shapeArgs.x = Math.min(cellAttr.x1, cellAttr.x2);
             shapeArgs.y = Math.min(cellAttr.y1, cellAttr.y2);
             shapeArgs.width = Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0);
             shapeArgs.height = Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0);
+            shapeArgs.r = options.borderRadius || 0;
 
-            hasImage = point.hasImage =
+            const hasImage = point.hasImage =
                 (point.marker && point.marker.symbol || symbol || '')
                     .indexOf('url') === 0;
 
             // If marker shape is regular (symetric), find shorter
             // cell's side.
             if (hasRegularShape) {
-                sizeDiff = Math.abs(shapeArgs.width - shapeArgs.height);
+                const sizeDiff = Math.abs(shapeArgs.width - shapeArgs.height);
                 shapeArgs.x = Math.min(cellAttr.x1, cellAttr.x2) +
                     (shapeArgs.width < shapeArgs.height ? 0 : sizeDiff / 2);
                 shapeArgs.y = Math.min(cellAttr.y1, cellAttr.y2) +
@@ -687,21 +674,6 @@ class HeatmapSeries extends ScatterSeries {
                     Math.min(shapeArgs.width, shapeArgs.height);
             }
 
-            pointAttr = {
-                plotX: (cellAttr.x1 + cellAttr.x2) / 2,
-                plotY: (cellAttr.y1 + cellAttr.y2) / 2,
-                clientX: (cellAttr.x1 + cellAttr.x2) / 2,
-                shapeType: 'path',
-                shapeArgs: merge(true, shapeArgs, {
-                    d: symbols[shape](
-                        shapeArgs.x,
-                        shapeArgs.y,
-                        shapeArgs.width,
-                        shapeArgs.height
-                    )
-                })
-            };
-
             if (hasImage) {
                 point.marker = {
                     width: shapeArgs.width,
@@ -709,7 +681,13 @@ class HeatmapSeries extends ScatterSeries {
                 };
             }
 
-            extend(point, pointAttr);
+            extend(point, {
+                plotX: (cellAttr.x1 + cellAttr.x2) / 2,
+                plotY: (cellAttr.y1 + cellAttr.y2) / 2,
+                clientX: (cellAttr.x1 + cellAttr.x2) / 2,
+                shapeType: 'path',
+                shapeArgs
+            });
         });
 
         fireEvent(series, 'afterTranslate');
