@@ -15,8 +15,8 @@
 
 import Highcharts from '../../Core/Globals.js';
 import Accessibility from '../../Accessibility/Accessibility.js';
-
+import AccessibilityComponent from '../../Accessibility/AccessibilityComponent.js';
 const G: AnyRecord = Highcharts;
 G.i18nFormat = Accessibility.i18nFormat;
-
+G.AccessibilityComponent = AccessibilityComponent;
 Accessibility.compose(G.Chart, G.SVGElement);
