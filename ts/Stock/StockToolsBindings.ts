@@ -1961,7 +1961,6 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
      * @default {"className": "highcharts-vertical-label", "start": function() {}, "annotationsOptions": {}}
      */
     timeCycles: {
-
         className: 'highcharts-time-cycles',
         start: function (this: NavigationBindings, e: PointerEvent): Annotation|void {
             let closestPoint = bindingsUtils.attractToPoint(e, this.chart),
@@ -2001,12 +2000,9 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
             return annotation;
         },
 
-        steps: [function (this: NavigationBindings, e: PointerEvent, annotation: TimeCycles): void {
-
-            const position = annotation.anchor(annotation.points[1]).absolutePosition;
-            annotation.translatePoint(e.chartX - position.x, 0, 1);
-            annotation.redraw(false);
-        }]
+        steps: [
+            bindingsUtils.updateNthPoint(1)
+        ]
     },
     verticalLabel: {
         /** @ignore-option */
