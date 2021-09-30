@@ -50,7 +50,7 @@ function getStartingPath(x: number, y: number): string {
 }
 
 /**
- * function to create circle paths
+ * Function which generates the path of the halfcircle.
  *
  * @param {number} pixelInterval diameter of the circle in pixels
  * @param {number} numberOfCircles number of cricles
