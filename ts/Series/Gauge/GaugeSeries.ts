@@ -16,8 +16,10 @@
  *
  * */
 
-import type GaugeSeriesOptions from './GaugeSeriesOptions';
-import type GaugeSeriesDialOptions from './GaugeSeriesDialOptions';
+import type {
+    GaugeSeriesDialOptions,
+    GaugeSeriesOptions
+} from './GaugeSeriesOptions';
 import type {
     PointOptions,
     PointShortOptions
@@ -25,6 +27,7 @@ import type {
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import GaugePoint from './GaugePoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -407,9 +410,9 @@ class GaugeSeries extends Series {
 
         series.generatePoints();
 
-        series.points.forEach(function (point: GaugePoint): void {
+        series.points.forEach((point): void => {
 
-            let dialOptions: GaugeSeriesDialOptions =
+            const dialOptions: GaugeSeriesDialOptions =
                     merge(options.dial, point.dial) as any,
                 radius = (
                     (pInt(pick(dialOptions.radius, '80%')) * center[2]) /
@@ -424,8 +427,9 @@ class GaugeSeries extends Series {
                     100
                 ),
                 baseWidth = dialOptions.baseWidth || 3,
-                topWidth = dialOptions.topWidth || 1,
-                overshoot = options.overshoot,
+                topWidth = dialOptions.topWidth || 1;
+
+            let overshoot = options.overshoot,
                 rotation = yAxis.startAngleRad + (yAxis.translate(
                     point.y as any, null, null, null, true
                 ) as any);
@@ -480,7 +484,7 @@ class GaugeSeries extends Series {
             pivotOptions = options.pivot,
             renderer = chart.renderer;
 
-        series.points.forEach(function (point: GaugePoint): void {
+        series.points.forEach((point): void => {
 
             const graphic = point.graphic,
                 shapeArgs = point.shapeArgs,
@@ -550,9 +554,7 @@ class GaugeSeries extends Series {
         const series = this;
 
         if (!init) {
-            series.points.forEach(function (
-                point: GaugePoint
-            ): void {
+            series.points.forEach((point): void => {
                 const graphic = point.graphic;
 
                 if (graphic) {
@@ -661,7 +663,7 @@ SeriesRegistry.registerSeriesType('gauge', GaugeSeries);
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 
