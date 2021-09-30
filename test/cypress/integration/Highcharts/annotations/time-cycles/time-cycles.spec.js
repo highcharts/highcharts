@@ -23,25 +23,25 @@ describe('Stock Tools Time Cicles, #15826', () => {
                 xAxis.toPixels(point1.x),
                 120,
                 4,
-                'first point should be close to the place, where the mouse clicked'
+                'First point should be close to the place, where the mouse clicked.'
             );
             assert.closeTo(
                 xAxis.toPixels(point2.x),
                 220,
                 4,
-                'second point should be close to the place, where the mouse clicked'
+                'Second point should be close to the place, where the mouse clicked.'
             );
             assert.closeTo(
                 annotation.pixelInterval,
                 100,
                 4,
-                'pixel interval should be equal to the difference between positions'
+                'Pixel interval should be equal to the difference between positions.'
             );
-            });
+        });
     });
 
 
-    it(`Dragging control Points should change annotation's properties`, () => {
+    it(`Changes annotation's properties when the controlPoints are dragged.`, () => {
         cy.get('.highcharts-annotation').first()
             .click({ force: true })
 
@@ -60,24 +60,24 @@ describe('Stock Tools Time Cicles, #15826', () => {
                 xAxis.toPixels(point1.x),
                 120,
                 4,
-                'first point should be close to the place, where the mouse clicked'
+                'First point should be close to the place, where it was dragged.'
             );
             assert.closeTo(
                 xAxis.toPixels(point2.x),
                 370,
                 4,
-                'first point should be close to the place, where the mouse clicked'
+                'Second point should be close to the place, where it was dragged.'
             );
             assert.closeTo(
                 annotation.pixelInterval,
                 250,
                 4,
-                'first point should be close to the place, where the mouse clicked'
+                'Pixel interval should be adjusted to new value.'
             );
         });
     });
 
-    it(`Changes annotation's properties when the controlPoints are dragged`, () => {
+    it(`Dragging control Points should change annotation's properties.`, () => {
         cy.get('.highcharts-annotation').first()
             .dragTo('.highcharts-container', 450, 100);
 
@@ -87,8 +87,18 @@ describe('Stock Tools Time Cicles, #15826', () => {
                 xAxis = chart.xAxis[0],
                 point1 = annotation.points[0],
                 point2 = annotation.points[1];
-            assert.closeTo(xAxis.toPixels(point1.x), 75, 4, 'The point1 should change its place');
-            assert.closeTo(xAxis.toPixels(point2.x), 325, 4, 'The point1 should change its place');
+            assert.closeTo(
+                xAxis.toPixels(point1.x),
+                75,
+                4,
+                'The point1 should change its place.'
+            );
+            assert.closeTo(
+                xAxis.toPixels(point2.x),
+                325,
+                4,
+                'The point1 should change its place.'
+            );
             });
     });
 });
