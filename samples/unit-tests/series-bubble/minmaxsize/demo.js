@@ -157,8 +157,8 @@ QUnit.test(
         result = false;
         point = chart.series[0].points[2];
         xAxis = chart.xAxis[0];
-        approximateMin =
-            point.x - (xAxis.toValue(point.graphic.radius) - xAxis.toValue(0));
+        approximateMin = point.x - (xAxis.toValue(point.graphic.width / 2) -
+            xAxis.toValue(0));
         maxDifference = xAxis.toValue(5) - xAxis.toValue(0);
 
         if (Math.abs(xAxis.min - approximateMin) < maxDifference) {
@@ -172,8 +172,8 @@ QUnit.test(
         });
 
         result = false;
-        approximateMin =
-            point.x - (xAxis.toValue(point.graphic.radius) - xAxis.toValue(0));
+        approximateMin = point.x - (xAxis.toValue(point.graphic.width / 2) -
+            xAxis.toValue(0));
         maxDifference = xAxis.toValue(5) - xAxis.toValue(0);
 
         if (Math.abs(xAxis.min - approximateMin) < maxDifference) {
