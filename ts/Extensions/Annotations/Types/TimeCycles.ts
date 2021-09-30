@@ -119,9 +119,10 @@ class TimeCycles extends CrookedLine {
 
         const options = this.options,
             typeOptions = options.typeOptions as TimeCycles.TypeOptions;
+        options.controlPointOptions.style.cursor = this.chart.inverted ? 'ns-resize' : 'ew-resize';
+
         typeOptions.controlPointOptions.forEach(
             (option: Highcharts.AnnotationControlPointOptionsObject): void => {
-
                 const controlPointsOptions = merge(options.controlPointOptions, option);
                 const controlPoint = new ControlPoint(this.chart, this, controlPointsOptions, 0);
                 this.controlPoints.push(controlPoint);
