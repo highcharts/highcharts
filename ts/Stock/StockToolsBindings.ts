@@ -34,7 +34,6 @@ import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js'
 import { Palette } from '../Core/Color/Palettes.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
-import TimeCycles from '../Extensions/Annotations/Types/TimeCycles';
 const {
     correctFloat,
     defined,
@@ -1979,6 +1978,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                     type: 'timeCycles',
                     typeOptions: {
                         xAxis: closestPoint.xAxis,
+                        yAxis: closestPoint.yAxis,
                         points: [{
                             x: closestPoint.x
                         }, {
