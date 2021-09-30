@@ -1590,6 +1590,19 @@ class Axis {
     }
 
     /**
+     * @private
+     * @function Highcharts.Axis#hasExtemesChanged
+     *
+     * @return {boolean}
+     */
+    public hasExtemesChanged(): boolean {
+        const axis = this;
+
+        return axis.min !== (axis.old && axis.old.min) ||
+            axis.max !== (axis.old && axis.old.max);
+    }
+
+    /**
      * Set the tick positions to round values and optionally extend the extremes
      * to the nearest tick.
      *
@@ -1840,18 +1853,17 @@ class Axis {
         // This is in turn needed in order to find tick positions in ordinal
         // axes.
         if (isXAxis && !secondPass) {
+            const hasExtemesChanged = axis.hasExtemesChanged();
+
             // First process all series assigned to that axis.
             axis.series.forEach(function (series): void {
                 // Allows filtering out points outside the plot area.
                 series.forceCrop = series.forceCropping && series.forceCropping();
 
-                series.processData(
-                    axis.min !== (axis.old && axis.old.min) ||
-                    axis.max !== (axis.old && axis.old.max)
-                );
+                series.processData(hasExtemesChanged);
             });
             // Then apply grouping if needed.
-            fireEvent(this, 'postProcessData');
+            fireEvent(this, 'postProcessData', { hasExtemesChanged });
         }
 
         // set the translation factor used in translate function
