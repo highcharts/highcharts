@@ -75,6 +75,7 @@ QUnit.test('Bindings general tests', function (assert) {
         [
             'circle-annotation',
             'rectangle-annotation',
+            'ellipse-annotation',
             'segment',
             'arrow-segment',
             'ray',

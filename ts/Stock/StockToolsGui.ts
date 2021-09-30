@@ -221,6 +221,7 @@ setOptions({
 
                 // Basic shapes:
                 circle: 'Circle',
+                ellipse: 'Ellipse',
                 label: 'Label',
                 rectangle: 'Rectangle',
 
@@ -268,6 +269,7 @@ setOptions({
             popup: {
                 // Annotations:
                 circle: 'Circle',
+                ellipse: 'Ellipse',
                 rectangle: 'Rectangle',
                 label: 'Label',
                 segment: 'Segment',
@@ -458,6 +460,7 @@ setOptions({
                      * @default [
                      *   'label',
                      *   'circle',
+                     *   'ellipse',
                      *   'rectangle'
                      * ]
                      *
@@ -465,6 +468,7 @@ setOptions({
                     items: [
                         'label',
                         'circle',
+                        'ellipse',
                         'rectangle'
                     ],
                     circle: {
@@ -475,6 +479,15 @@ setOptions({
                          *
                          */
                         symbol: 'circle.svg'
+                    },
+                    ellipse: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
+                        symbol: 'ellipse.svg'
                     },
                     rectangle: {
                         /**
@@ -1714,6 +1727,7 @@ interface Toolbar {
  */
 Toolbar.prototype.classMapping = {
     circle: PREFIX + 'circle-annotation',
+    ellipse: PREFIX + 'ellipse-annotation',
     rectangle: PREFIX + 'rectangle-annotation',
     label: PREFIX + 'label-annotation',
     segment: PREFIX + 'segment',

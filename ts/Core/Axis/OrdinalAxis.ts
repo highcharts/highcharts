@@ -603,9 +603,8 @@ namespace OrdinalAxis {
     }
 
     /**
-     * @private
-     *
      * Extending the Chart.pan method for ordinal axes
+     * @private
      */
     function onChartPan(this: Chart, e: Event): void {
         const chart = this,

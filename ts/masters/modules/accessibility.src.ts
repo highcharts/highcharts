@@ -10,10 +10,13 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
 
 import Highcharts from '../../Core/Globals.js';
-import FocusBorder from '../../Accessibility/FocusBorder.js';
-import '../../Accessibility/Accessibility.js';
+import Accessibility from '../../Accessibility/Accessibility.js';
+import AccessibilityComponent from '../../Accessibility/AccessibilityComponent.js';
 const G: AnyRecord = Highcharts;
-FocusBorder.compose(G.Chart, G.SVGElement);
+G.i18nFormat = Accessibility.i18nFormat;
+G.AccessibilityComponent = AccessibilityComponent;
+Accessibility.compose(G.Chart, G.SVGElement);
