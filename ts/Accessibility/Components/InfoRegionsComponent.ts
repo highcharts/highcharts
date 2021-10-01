@@ -18,6 +18,7 @@
  *
  * */
 
+import type Accessibility from '../Accessibility';
 import type Axis from '../../Core/Axis/Axis';
 import type ChartSonify from '../../Extensions/Sonification/ChartSonify';
 import type {
@@ -307,7 +308,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             before: {
                 element: null,
                 buildContent: function (
-                    chart: Highcharts.AccessibilityChart
+                    chart: Accessibility.ChartComposition
                 ): string {
                     const formatter: (
                         Highcharts.ScreenReaderFormatterCallbackFunction<Chart>|undefined
@@ -318,7 +319,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 },
                 insertIntoDOM: function (
                     el: HTMLDOMElement,
-                    chart: Highcharts.AccessibilityChart
+                    chart: Accessibility.ChartComposition
                 ): void {
                     chart.renderTo.insertBefore(
                         el, chart.renderTo.firstChild
@@ -337,7 +338,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             after: {
                 element: null,
                 buildContent: function (
-                    chart: Highcharts.AccessibilityChart
+                    chart: Accessibility.ChartComposition
                 ): string {
                     const formatter = chart.options.accessibility.screenReaderSection
                         .afterChartFormatter;
@@ -346,7 +347,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 },
                 insertIntoDOM: function (
                     el: HTMLDOMElement,
-                    chart: Highcharts.AccessibilityChart
+                    chart: Accessibility.ChartComposition
                 ): void {
                     chart.renderTo.insertBefore(
                         el, chart.container.nextSibling
@@ -785,7 +786,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 );
 
                 (onPlayAsSoundClick || defaultHandler).call(
-                    this, e, chart as Highcharts.AccessibilityChart
+                    this, e, chart as Accessibility.ChartComposition
                 );
             };
         }

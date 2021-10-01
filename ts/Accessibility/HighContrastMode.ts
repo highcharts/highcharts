@@ -12,8 +12,9 @@
 
 'use strict';
 
+import type Accessibility from './Accessibility';
 import type ColorType from '../Core/Color/ColorType';
-import type Point from '../Core/Series/Point';
+
 import H from '../Core/Globals.js';
 const {
     doc,
@@ -80,7 +81,7 @@ const whcm = {
      * @return {void}
      */
     setHighContrastTheme: function (
-        chart: Highcharts.AccessibilityChart
+        chart: Accessibility.ChartComposition
     ): void {
         // We might want to add additional functionality here in the future for
         // storing the old state so that we can reset the theme if HC mode is
