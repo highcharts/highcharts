@@ -225,9 +225,9 @@ QUnit.test('General marker-clusters', function (assert) {
                     to: 10,
                     marker: {
                         fillColor: '#fc1100',
+                        className: 'test-class-name',
                         radius: 18
-                    },
-                    className: 'test-class-name'
+                    }
                 }
             ]
         }
@@ -236,14 +236,14 @@ QUnit.test('General marker-clusters', function (assert) {
     clusters = series.markerClusterInfo.clusters;
     assert.deepEqual(
         [
-            clusters[0].point.graphic.attr('fill'),
-            clusters[1].point.graphic.attr('fill'),
-            clusters[3].point.graphic.attr('fill'),
-            Math.round(clusters[0].point.graphic.getBBox().width),
-            Math.round(clusters[1].point.graphic.getBBox().width),
-            Math.round(clusters[3].point.graphic.getBBox().width)
+            clusters[0].point.graphic.fillColor,
+            clusters[1].point.graphic.fillColor,
+            clusters[3].point.graphic.fillColor,
+            clusters[0].point.graphic.radius,
+            clusters[1].point.graphic.radius,
+            clusters[3].point.graphic.radius
         ],
-        ['#ff5500', '#ff9603', '#ff5500', 36, 30, 36],
+        ['#ff5500', '#ff9603', '#ff5500', 18, 15, 18],
         'Clusters should have zones applied properly.'
     );
 
@@ -282,7 +282,7 @@ QUnit.test('General marker-clusters', function (assert) {
     assert.deepEqual(
         [
             series.markerClusterInfo.clusters[3].clusterZone,
-            series.markerClusterInfo.clusters[3].point.graphic.attr('fill')
+            series.markerClusterInfo.clusters[3].point.graphic.fillColor
         ],
         [
             series.options.cluster.zones[3],
@@ -291,8 +291,9 @@ QUnit.test('General marker-clusters', function (assert) {
         'After addPoint() cluster zone should be updated.'
     );
 
-    assert.ok(
-        series.markerClusterInfo.clusters[3].point.graphic.hasClass('test-class-name'),
+    assert.strictEqual(
+        series.markerClusterInfo.clusters[3].point.graphic.className,
+        'test-class-name',
         'Cluster class name should be consistent with zone.className.'
     );
 

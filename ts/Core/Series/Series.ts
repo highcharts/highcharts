@@ -2687,10 +2687,11 @@ class Series {
                                 markerAttribs.y,
                                 markerAttribs.width,
                                 markerAttribs.height,
-                                markerAttribs as any
+                                hasPointMarker ?
+                                    pointMarkerOptions :
+                                    seriesMarkerOptions
                             )
                             .add(markerGroup);
-
                         // Sliding animation for new points
                         if (
                             series.enabledDataSorting &&
