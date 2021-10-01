@@ -171,7 +171,7 @@ class Fibonacci extends Tunnel {
                 type: 'path',
                 d: createPathDGenerator(i),
                 stroke: lineColors[i] || lineColor
-            }, false as any);
+            }, i);
 
             if (i > 0) {
                 (this.initShape as any)({

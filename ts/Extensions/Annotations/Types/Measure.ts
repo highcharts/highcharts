@@ -18,6 +18,7 @@ import Annotation from '../Annotations.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
+    defined,
     extend,
     isNumber,
     merge,
@@ -448,8 +449,21 @@ class Measure extends Annotation {
     }
 
     public addControlPoints(): void {
+        const inverted = this.chart.inverted,
+            options = this.options.controlPointOptions;
         let selectType = this.options.typeOptions.selectType,
             controlPoint;
+
+        if (!defined(
+            this.userOptions.controlPointOptions &&
+            this.userOptions.controlPointOptions.style.cursor
+        )) {
+            if (selectType === 'x') {
+                options.style.cursor = inverted ? 'ns-resize' : 'ew-resize';
+            } else if (selectType === 'y') {
+                options.style.cursor = inverted ? 'ew-resize' : 'ns-resize';
+            }
+        }
 
         controlPoint = new ControlPoint(
             this.chart,
@@ -546,10 +560,16 @@ class Measure extends Annotation {
             return;
         }
 
-        this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
-            type: 'path',
-            points: this.shapePointsOptions()
-        }, this.options.typeOptions.background), false as any);
+        this.initShape(
+            extend<Partial<Highcharts.AnnotationsShapeOptions>>(
+                {
+                    type: 'path',
+                    points: this.shapePointsOptions()
+                },
+                this.options.typeOptions.background
+            ),
+            2
+        );
     }
 
     /**
@@ -624,13 +644,21 @@ class Measure extends Annotation {
             crosshairOptionsX = merge(defaultOptions, options.crosshairX);
             crosshairOptionsY = merge(defaultOptions, options.crosshairY);
 
-            this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
-                d: pathH
-            }, crosshairOptionsX), false as any);
+            this.initShape(
+                extend<Partial<Highcharts.AnnotationsShapeOptions>>(
+                    { d: pathH },
+                    crosshairOptionsX
+                ),
+                0
+            );
 
-            this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
-                d: pathV
-            }, crosshairOptionsY), false as any);
+            this.initShape(
+                extend<Partial<Highcharts.AnnotationsShapeOptions>>(
+                    { d: pathV },
+                    crosshairOptionsY
+                ),
+                1
+            );
 
         }
     }

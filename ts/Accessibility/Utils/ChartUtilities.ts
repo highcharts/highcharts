@@ -18,6 +18,7 @@
  *
  * */
 
+import type Accessibility from '../Accessibility';
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
 import type { DOMElementType } from '../../Core/Renderer/DOMElementType';
@@ -26,14 +27,10 @@ import type Series from '../../Core/Series/Series';
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import HTMLUtilities from './HTMLUtilities.js';
-const {
-    stripHTMLTagsFromString: stripHTMLTags
-} = HTMLUtilities;
 import H from '../../Core/Globals.js';
-const {
-    doc
-} = H;
+const { doc } = H;
+import HU from './HTMLUtilities.js';
+const { stripHTMLTagsFromString: stripHTMLTags } = HU;
 import U from '../../Core/Utilities.js';
 const {
     defined,
@@ -41,13 +38,13 @@ const {
     fireEvent
 } = U;
 
-/* eslint-disable valid-jsdoc */
-
 /* *
  *
  *  Functions
  *
  * */
+
+/* eslint-disable valid-jsdoc */
 
 /**
  * Fire an event on an element that is either wrapped by Highcharts,
@@ -77,7 +74,7 @@ function fireEventOnWrappedOrUnwrappedElement(
 /**
  * @return {string}
  */
-function getChartTitle(chart: Highcharts.AccessibilityChart): string {
+function getChartTitle(chart: Accessibility.ChartComposition): string {
     return stripHTMLTags(
         chart.options.title.text ||
         chart.langFormat(
@@ -418,6 +415,12 @@ function scrollToPoint(point: Point): void {
     }
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 const ChartUtilities = {
     fireEventOnWrappedOrUnwrappedElement,
     getChartTitle,
@@ -431,11 +434,5 @@ const ChartUtilities = {
     hideSeriesFromAT,
     scrollToPoint
 };
-
-/* *
- *
- *  Default Export
- *
- * */
 
 export default ChartUtilities;

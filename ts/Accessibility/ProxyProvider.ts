@@ -16,26 +16,22 @@
 
 'use strict';
 
-import type {
-    HTMLDOMElement
-} from '../Core/Renderer/DOMElementType';
+import type Accessibility from './Accessibility';
+import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
-import DOMElementProvider from './Utils/DOMElementProvider.js';
-import ProxyElement from './ProxyElement.js';
 import type { ProxyTarget, ProxyGroupTypes } from './ProxyElement';
-import HTMLUtilities from './Utils/HTMLUtilities.js';
+
+import CU from './Utils/ChartUtilities.js';
+const { unhideChartElementFromAT } = CU;
+import DOMElementProvider from './Utils/DOMElementProvider.js';
+import H from '../Core/Globals.js';
+const { doc } = H;
+import HU from './Utils/HTMLUtilities.js';
 const {
     removeElement,
     removeChildNodes
-} = HTMLUtilities;
-import ChartUtilities from './Utils/ChartUtilities.js';
-const {
-    unhideChartElementFromAT
-} = ChartUtilities;
-import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
+} = HU;
+import ProxyElement from './ProxyElement.js';
 import U from '../Core/Utilities.js';
 const {
     attr,
@@ -61,11 +57,11 @@ interface ProxyGroup {
 class ProxyProvider {
     private beforeChartProxyPosContainer: HTMLDOMElement;
     private afterChartProxyPosContainer: HTMLDOMElement;
-    private domElementProvider: Highcharts.DOMElementProvider;
+    private domElementProvider: DOMElementProvider;
     private groups: Record<string, ProxyGroup|undefined>;
     private groupOrder: string[];
 
-    constructor(private chart: Highcharts.AccessibilityChart) {
+    constructor(private chart: Accessibility.ChartComposition) {
         this.domElementProvider = new DOMElementProvider();
         this.groups = {};
         this.groupOrder = [];

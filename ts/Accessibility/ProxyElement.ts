@@ -16,6 +16,7 @@
 
 'use strict';
 
+import type Accessibility from './Accessibility';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type {
     DOMElementType,
@@ -74,10 +75,10 @@ class ProxyElement {
     // on group type.
     public buttonElement: HTMLButtonElement;
 
-    private eventProvider: Highcharts.EventProvider;
+    private eventProvider: EventProvider;
 
     constructor(
-        private chart: Highcharts.AccessibilityChart,
+        private chart: Accessibility.ChartComposition,
         public target: ProxyTarget,
         public groupType: ProxyGroupTypes,
         attributes?: HTMLAttributes

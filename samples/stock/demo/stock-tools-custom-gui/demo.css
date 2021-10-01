@@ -120,6 +120,10 @@
     background-image: url('https://code.highcharts.com/gfx/stock-icons/rectangle.svg');
 }
 
+.highcharts-ellipse-annotation>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/ellipse.svg'); 
+}
+
 .highcharts-segment>.highcharts-menu-item-btn {
     background-image: url('https://code.highcharts.com/gfx/stock-icons/segment.svg');
 }

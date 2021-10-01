@@ -234,6 +234,7 @@ interface XRangePoint {
 
 }
 extend(XRangePoint.prototype, {
+    ttBelow: false,
     tooltipDateKeys: ['x', 'x2']
 });
 
