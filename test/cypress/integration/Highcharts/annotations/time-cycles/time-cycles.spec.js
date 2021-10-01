@@ -99,6 +99,6 @@ describe('Stock Tools Time Cicles, #15826', () => {
                 4,
                 'The point1 should change its place.'
             );
-            });
+        });
     });
 });

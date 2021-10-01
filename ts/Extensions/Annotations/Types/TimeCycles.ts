@@ -116,7 +116,6 @@ class TimeCycles extends CrookedLine {
     }
 
     public addControlPoints(): void {
-
         const options = this.options,
             typeOptions = options.typeOptions as TimeCycles.TypeOptions;
         options.controlPointOptions.style.cursor = this.chart.inverted ? 'ns-resize' : 'ew-resize';
