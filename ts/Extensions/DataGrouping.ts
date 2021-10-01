@@ -48,7 +48,7 @@ const {
 
 declare module '../Core/Axis/AxisLike' {
     interface AxisLike {
-        applyGrouping(e: any): void;
+        applyGrouping(e: Highcharts.PostProcessDataEvent): void;
         getGroupPixelWidth(): number;
         setDataGrouping(
             dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
@@ -152,6 +152,9 @@ declare global {
             length?: number;
             options?: (PointOptions|PointShortOptions|SeriesTypeOptions);
             start?: number;
+        }
+        interface PostProcessDataEvent {
+            hasExtemesChanged?: boolean;
         }
         interface DataGroupingOptionsObject {
             anchor?: DataGroupingAnchor;
@@ -409,8 +412,8 @@ const applyGrouping = function (this: Series, hasExtemesChanged: boolean): void 
         series.requireSorting = revertRequireSorting = true;
     }
 
-    // Skip if processData returns false or if grouping is disabled (in that
-    // order)
+    // Skip if skipDataGrouping method returns false or if grouping is disabled
+    // (in that order).
     skip = skipDataGrouping(series, hasExtemesChanged) === false || !groupingEnabled;
 
     // Revert original requireSorting value if changed
@@ -1080,7 +1083,7 @@ seriesProto.generatePoints = function (): void {
  *
  * @function Highcharts.Axis#applyGrouping
  */
-Axis.prototype.applyGrouping = function (this: Axis, e: any): void {
+Axis.prototype.applyGrouping = function (this: Axis, e: Highcharts.PostProcessDataEvent): void {
     const axis = this,
         series = axis.series;
 
@@ -1095,7 +1098,7 @@ Axis.prototype.applyGrouping = function (this: Axis, e: any): void {
         }
         // Fire independing on series.groupPixelWidth to always set a proper
         // dataGrouping state, (#16238)
-        series.applyGrouping(e.hasExtemesChanged);
+        series.applyGrouping(!!e.hasExtemesChanged);
     });
 };
 
@@ -1138,6 +1141,7 @@ Axis.prototype.getGroupPixelWidth = function (): number {
             // Execute grouping if the amount of points is greater than the
             // limit defined in groupPixelWidth
             if (
+                series[i].groupPixelWidth ||
                 dataLength > ((this.chart.plotSizeX as any) / groupPixelWidth) ||
                 (dataLength && dgOptions.forced)
             ) {
