@@ -20,6 +20,8 @@
  *  series.exposeElementToA11y -> series.accessibility.exposeAsGroupOnly
  *  series.pointDescriptionFormatter ->
  *      series.accessibility.pointDescriptionFormatter
+ *  series.accessibility.pointDescriptionFormatter ->
+ *      series.accessibility.point.descriptionFormatter
  *  series.skipKeyboardNavigation ->
  *      series.accessibility.keyboardNavigation.enabled
  *  point.description -> point.accessibility.description !!!! WARNING: No longer deprecated and handled, removed for HC8.
@@ -61,7 +63,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type A11yOptions from '../Options/Options';
+import type Options from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
+
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
@@ -70,22 +81,25 @@ const {
     pick
 } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface XAxisOptions {
-            /** @deprecated */
-            description?: XAxisAccessibilityOptions['description'];
-        }
-        interface Options {
-            /** @deprecated */
-            exposeElementToA11y?: (
-                SeriesAccessibilityOptions['exposeAsGroupOnly']
-            );
-        }
+/* *
+ *
+ * Declarations
+ *
+ * */
+
+declare module '../../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        /** @deprecated */
+        description?: A11yOptions.AxisAccessibilityOptions['description'];
+    }
+}
+
+declare module '../../Core/Options'{
+    interface Options {
+        /** @deprecated */
+        exposeElementToA11y?: (
+            Highcharts.SeriesAccessibilityOptions['exposeAsGroupOnly']
+        );
     }
 }
 
@@ -129,7 +143,7 @@ function deprecateFromOptionsMap(
      * @private
      */
     function getChildProp(
-        root: Highcharts.Options,
+        root: Options,
         propAsArray: Array<string>
     ): Record<string, unknown> {
         return propAsArray.reduce(function (
@@ -204,10 +218,13 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
         description: ['accessibility', 'description'],
         exposeElementToA11y: ['accessibility', 'exposeAsGroupOnly'],
         pointDescriptionFormatter: [
-            'accessibility', 'pointDescriptionFormatter'
+            'accessibility', 'point', 'descriptionFormatter'
         ],
         skipKeyboardNavigation: [
             'accessibility', 'keyboardNavigation', 'enabled'
+        ],
+        'accessibility.pointDescriptionFormatter': [
+            'accessibility', 'point', 'descriptionFormatter'
         ]
     };
     chart.series.forEach(function (series: Series): void {
@@ -215,7 +232,14 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
         Object.keys(oldToNewSeriesOptions).forEach(function (
             oldOption: string
         ): void {
-            const optionVal = (series.options as any)[oldOption];
+            let optionVal = (series.options as any)[oldOption];
+
+            // Special case
+            if (oldOption === 'accessibility.pointDescriptionFormatter') {
+                optionVal = series.options.accessibility &&
+                    (series.options.accessibility as any).pointDescriptionFormatter;
+            }
+
             if (typeof optionVal !== 'undefined') {
                 // Set the new option
                 traverseSetOption(

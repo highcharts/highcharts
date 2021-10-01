@@ -14,6 +14,13 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type { YAxisOptions } from '../Core/Axis/AxisOptions';
 import type ColorType from '../Core/Color/ColorType';
 import type {
     CursorValue
@@ -21,12 +28,14 @@ import type {
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import H from '../Core/Globals.js';
 const {
     hasTouch
 } = H;
 import Axis from '../Core/Axis/Axis.js';
-import palette from '../Core/Color/Palette.js';
+import AxisDefaults from '../Core/Axis/AxisDefaults.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -38,6 +47,26 @@ const {
     relativeLength,
     wrap
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Axis/AxisLike' {
+    interface AxisLike {
+        resizer?: AxisResizer;
+    }
+}
+
+declare module '../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        maxLength?: (number|string);
+        minLength?: (number|string);
+        resize?: Highcharts.YAxisResizeOptions;
+    }
+}
 
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
@@ -51,14 +80,6 @@ declare module '../Core/Chart/ChartLike' {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            resizer?: AxisResizer;
-        }
-        interface XAxisOptions {
-            maxLength?: (number|string);
-            minLength?: (number|string);
-            resize?: YAxisResizeOptions;
-        }
         interface YAxisResizeControlledAxisOptions {
             next?: Array<number|string>;
             prev?: Array<number|string>;
@@ -97,6 +118,12 @@ declare global {
     }
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -112,7 +139,7 @@ declare global {
 class AxisResizer {
 
     // Default options for AxisResizer.
-    public static resizerOptions: DeepPartial<Highcharts.YAxisOptions> = {
+    public static resizerOptions: DeepPartial<YAxisOptions> = {
         /**
          * Minimal size of a resizable axis. Could be set as a percent
          * of plot area or pixel size.
@@ -224,7 +251,7 @@ class AxisResizer {
              * @type     {Highcharts.ColorString}
              * @requires modules/drag-panes
              */
-            lineColor: palette.neutralColor20,
+            lineColor: Palette.neutralColor20,
 
             /**
              * Dash style of the control line.
@@ -274,14 +301,12 @@ class AxisResizer {
         }
     }
 
-    public constructor(
-        axis: Highcharts.Axis
-    ) {
+    public constructor(axis: Axis) {
         this.init(axis);
     }
     /* eslint-enable no-invalid-this */
 
-    public axis: Highcharts.Axis = void 0 as any;
+    public axis: Axis = void 0 as any;
     public controlLine: SVGElement = void 0 as any;
     public eventsToUnbind?: Array<Function>;
     public grabbed?: boolean;
@@ -301,7 +326,7 @@ class AxisResizer {
      *        Main axis for the AxisResizer.
      */
     public init(
-        axis: Highcharts.Axis,
+        axis: Axis,
         update?: boolean
     ): void {
         this.axis = axis;
@@ -539,7 +564,7 @@ class AxisResizer {
                 i: number
             ): void {
                 // Axes given as array index, axis object or axis id
-                let axis: Highcharts.Axis = isNumber(axisInfo) ?
+                let axis: Axis = isNumber(axisInfo) ?
                         // If it's a number - it's an index
                         chart.yAxis[axisInfo] :
                         (
@@ -551,7 +576,7 @@ class AxisResizer {
                                 chart.get(axisInfo)
                         ),
                     axisOptions = axis && axis.options,
-                    optionsToUpdate: DeepPartial<Highcharts.YAxisOptions> = {},
+                    optionsToUpdate: DeepPartial<YAxisOptions> = {},
                     hDelta = 0,
                     height, top,
                     minLength, maxLength;
@@ -747,7 +772,7 @@ wrap(Pointer.prototype, 'drag', function (
     }
 });
 
-merge(true, Axis.defaultYAxisOptions, AxisResizer.resizerOptions);
+merge(true, AxisDefaults.defaultYAxisOptions, AxisResizer.resizerOptions);
 
 H.AxisResizer = AxisResizer as any;
 export default H.AxisResizer;

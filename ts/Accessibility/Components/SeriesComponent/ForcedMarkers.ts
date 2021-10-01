@@ -18,6 +18,7 @@
  *
  * */
 
+import type Accessibility from '../../Accessibility';
 import type {
     PointMarkerOptions,
     PointOptions
@@ -58,7 +59,7 @@ declare module '../../../Core/Series/SeriesLike' {
  * @private
  */
 function isWithinDescriptionThreshold(
-    series: Highcharts.AccessibilitySeries
+    series: Accessibility.SeriesComposition
 ): boolean {
     const a11yOptions = series.chart.options.accessibility;
 
@@ -72,7 +73,7 @@ function isWithinDescriptionThreshold(
  * @private
  */
 function shouldForceMarkers(
-    series: Highcharts.AccessibilitySeries
+    series: Accessibility.SeriesComposition
 ): boolean {
     const chart = series.chart,
         chartA11yEnabled = chart.options.accessibility.enabled,
@@ -94,7 +95,7 @@ function hasIndividualPointMarkerOptions(series: Series): boolean {
 /**
  * @private
  */
-function unforceSeriesMarkerOptions(series: Highcharts.AccessibilitySeries): void {
+function unforceSeriesMarkerOptions(series: Accessibility.SeriesComposition): void {
     const resetMarkerOptions = series.resetA11yMarkerOptions;
 
     if (resetMarkerOptions) {
@@ -136,10 +137,10 @@ function forceZeroOpacityMarkerOptions(
 /**
  * @private
  */
-function getPointMarkerOpacity(pointOptions: PointOptions): number {
+function getPointMarkerOpacity(pointOptions: PointOptions): number|undefined {
     return (pointOptions.marker as any).states &&
         (pointOptions.marker as any).states.normal &&
-        (pointOptions.marker as any).states.normal.opacity || 1;
+        (pointOptions.marker as any).states.normal.opacity;
 }
 
 
@@ -150,7 +151,7 @@ function unforcePointMarkerOptions(pointOptions: PointOptions): void {
     merge(true, pointOptions.marker, {
         states: {
             normal: {
-                opacity: getPointMarkerOpacity(pointOptions)
+                opacity: getPointMarkerOpacity(pointOptions) || 1
             }
         }
     });
@@ -166,13 +167,16 @@ function handleForcePointMarkers(series: Series): void {
     while (i--) {
         const point = series.points[i];
         const pointOptions = point.options;
+        const hadForcedMarker = point.hasForcedA11yMarker;
         delete point.hasForcedA11yMarker;
 
         if (pointOptions.marker) {
-            if (pointOptions.marker.enabled) {
+            const isStillForcedMarker = hadForcedMarker && getPointMarkerOpacity(pointOptions) === 0;
+
+            if (pointOptions.marker.enabled && !isStillForcedMarker) {
                 unforcePointMarkerOptions(pointOptions);
                 point.hasForcedA11yMarker = false;
-            } else {
+            } else if (pointOptions.marker.enabled === false) {
                 forceZeroOpacityMarkerOptions(pointOptions);
                 point.hasForcedA11yMarker = true;
             }
@@ -190,8 +194,8 @@ function addForceMarkersEvents(): void {
      * Keep track of forcing markers.
      * @private
      */
-    addEvent(Series, 'render', function (): void {
-        const series = this as Highcharts.AccessibilitySeries,
+    addEvent(Series as typeof Accessibility.SeriesComposition, 'render', function (): void {
+        const series = this,
             options = series.options;
 
         if (shouldForceMarkers(series)) {
@@ -228,9 +232,7 @@ function addForceMarkersEvents(): void {
      * Process marker graphics after render
      * @private
      */
-    addEvent(Series as any, 'afterRender', function (
-        this: Highcharts.AccessibilitySeries
-    ): void {
+    addEvent(Series as typeof Accessibility.SeriesComposition, 'afterRender', function (): void {
         const series = this;
 
         // For styled mode the rendered graphic does not reflect the style

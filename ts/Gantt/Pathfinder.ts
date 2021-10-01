@@ -28,9 +28,20 @@ import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 
+/* *
+ *
+ * Declarations
+ *
+ * */
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         pathfinder?: Pathfinder;
+    }
+}
+
+declare module '../Core/Options'{
+    interface Options {
+        connectors?: Highcharts.ConnectorsOptions;
     }
 }
 
@@ -132,9 +143,6 @@ declare global {
             verticalAlign?: VerticalAlignValue;
             width?: number;
         }
-        interface Options {
-            connectors?: ConnectorsOptions;
-        }
         interface PointConnectOptionsObject {
             to?: string;
         }
@@ -188,8 +196,8 @@ declare global {
 
 ''; // detach doclets above
 
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { defaultOptions } = D;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -981,19 +989,19 @@ extend(Point.prototype, /** @lends Point.prototype */ {
             y;
 
         switch (markerOptions.align) { // eslint-disable-line default-case
-        case 'right':
-            x = 'xMax';
-            break;
-        case 'left':
-            x = 'xMin';
+            case 'right':
+                x = 'xMax';
+                break;
+            case 'left':
+                x = 'xMin';
         }
 
         switch (markerOptions.verticalAlign) { // eslint-disable-line default-case
-        case 'top':
-            y = 'yMin';
-            break;
-        case 'bottom':
-            y = 'yMax';
+            case 'top':
+                y = 'yMin';
+                break;
+            case 'bottom':
+                y = 'yMax';
         }
 
         return {

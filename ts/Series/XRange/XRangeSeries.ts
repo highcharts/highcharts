@@ -19,6 +19,7 @@
  * */
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
+import type SeriesClass from '../../Core/Series/Series';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type {
@@ -251,7 +252,7 @@ class XRangeSeries extends ColumnSeries {
         yData: Array<number>,
         min: number,
         max: number
-    ): Highcharts.SeriesCropDataObject {
+    ): SeriesClass.CropDataObject {
 
         // Replace xData with x2Data to find the appropriate cropStart
         const cropData = Series.prototype.cropData,
@@ -390,10 +391,13 @@ class XRangeSeries extends ColumnSeries {
             );
         }
 
+        const x = Math.floor(Math.min(plotX, plotX2)) + crisper;
+        const x2 = Math.floor(Math.max(plotX, plotX2)) + crisper;
+
         const shapeArgs = {
-            x: Math.floor(Math.min(plotX, plotX2)) + crisper,
+            x,
             y: Math.floor((point.plotY as any) + yOffset) + crisper,
-            width: Math.round(Math.abs(plotX2 - plotX)),
+            width: x2 - x,
             height: pointHeight,
             r: series.options.borderRadius
         };

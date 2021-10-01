@@ -527,6 +527,51 @@ QUnit.test('HTML', function (assert) {
             '',
             'The style width should be removed when setting to undefined'
         );
+
+        document.getElementById('container').style.position = 'relative';
+        text = renderer
+            .text(
+                'LooooooooooooooooooooooooooooooooooooongText',
+                0,
+                10,
+                true
+            )
+            .css({
+                width: '50px',
+                textOverflow: 'ellipsis'
+            })
+            .add();
+        assert.ok(
+            text.getBBox().width <= 50,
+            'When potentially overflowing, the box should be restrained'
+        );
+
+        text.css({ width: '600px' });
+        assert.ok(
+            text.getBBox().width < 500,
+            'When not overflowing, the bounding box should not extend to the CSS width (#16261)'
+        );
+
+
+        renderer = new Highcharts.SVGRenderer(
+            document.getElementById('container'),
+            500,
+            500,
+            void 0,
+            true
+        );
+
+        text = renderer.text('Line<br>break', 0, 10, true)
+            .add()
+            .attr({
+                x: 10
+            });
+
+        assert.strictEqual(
+            text.element.querySelector('tspan').getAttribute('x'),
+            '10',
+            '#16062: tspan breaks should have correct x when exporting useHTML=true text with allowHTML=false'
+        );
     } finally {
         renderer.destroy();
     }

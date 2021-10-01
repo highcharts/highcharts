@@ -12,6 +12,24 @@
 
 'use strict';
 
+/* *
+ *
+ * Import
+ *
+ * */
+import type LangOptions from '../../Core/LangOptions';
+
+/* *
+ *
+ * Declarations
+ *
+ * */
+declare module '../../Core/LangOptions'{
+    interface LangOptions {
+        accessibility?: Highcharts.LangAccessibilityOptions;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -171,13 +189,10 @@ declare global {
             mapZoomOut: string;
             resetZoomButton: string;
         }
-        interface LangOptions {
-            accessibility?: LangAccessibilityOptions;
-        }
     }
 }
 
-const langOptions: Highcharts.LangOptions = {
+const langOptions: DeepPartial<LangOptions> = {
 
     /**
      * Configure the accessibility strings in the chart. Requires the
@@ -240,7 +255,7 @@ const langOptions: Highcharts.LangOptions = {
          * @since 8.0.0
          */
         screenReaderSection: {
-            beforeRegionLabel: 'Chart screen reader information.',
+            beforeRegionLabel: 'Chart screen reader information, {chartTitle}.',
             afterRegionLabel: '',
 
             /**
@@ -280,7 +295,7 @@ const langOptions: Highcharts.LangOptions = {
          * @since 8.0.0
          */
         legend: {
-            legendLabelNoTitle: 'Toggle series visibility',
+            legendLabelNoTitle: 'Toggle series visibility, {chartTitle}',
             legendLabel: 'Chart legend: {legendTitle}',
             legendItem: 'Show {itemName}'
         },
@@ -434,8 +449,7 @@ const langOptions: Highcharts.LangOptions = {
          */
         exporting: {
             chartMenuLabel: 'Chart menu',
-            menuButtonLabel: 'View chart menu',
-            exportRegionLabel: 'Chart menu'
+            menuButtonLabel: 'View chart menu, {chartTitle}'
         },
 
         /**

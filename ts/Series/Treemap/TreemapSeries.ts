@@ -18,9 +18,9 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
+import type ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
@@ -38,12 +38,12 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
+import ColorMapComposition from '../ColorMapComposition.js';
+const { colorMapSeriesMixin } = ColorMapComposition;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -56,12 +56,12 @@ const {
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
-import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
+import TU from '../TreeUtilities.js';
 const {
     getColor,
     getLevelOptions,
     updateRootId
-} = TreeSeriesMixin;
+} = TU;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -144,6 +144,12 @@ class TreemapSeries extends ScatterSeries {
         allowTraversingTree: false,
 
         animationLimit: 250,
+
+        /**
+         * The border radius for each treemap item.
+         */
+        borderRadius: 0,
+
         /**
          * When the series contains less points than the crop threshold, all
          * points are drawn, event if the points fall outside the visible plot
@@ -554,7 +560,7 @@ class TreemapSeries extends ScatterSeries {
          *
          * @type {Highcharts.ColorString}
          */
-        borderColor: palette.neutralColor10,
+        borderColor: Palette.neutralColor10,
 
         /**
          * The width of the border surrounding each tree map item.
@@ -589,7 +595,7 @@ class TreemapSeries extends ScatterSeries {
                 /**
                  * The border color for the hovered state.
                  */
-                borderColor: palette.neutralColor40,
+                borderColor: Palette.neutralColor40,
 
                 /**
                  * Brightness for the hovered point. Defaults to 0 if the
@@ -631,7 +637,7 @@ class TreemapSeries extends ScatterSeries {
 
     public colorValueData?: Array<number>;
 
-    public colorAxis?: Highcharts.ColorSeries['colorAxis'];
+    public colorAxis?: ColorAxisComposition.SeriesComposition['colorAxis'];
 
     public data: Array<TreemapPoint> = void 0 as any;
 
@@ -1294,7 +1300,7 @@ class TreemapSeries extends ScatterSeries {
 
         // If color series logic is loaded, add some properties
         if (colorMapSeriesMixin) {
-            this.colorAttribs = colorMapSeriesMixin.colorAttribs;
+            this.colorAttribs = ColorMapComposition.seriesColorAttribs;
         }
 
         setOptionsEvent = addEvent(series, 'setOptions', function (
@@ -1482,12 +1488,12 @@ class TreemapSeries extends ScatterSeries {
         parentColor?: ColorType,
         colorIndex?: number,
         index?: number,
-        siblings?: unknown
+        siblings?: number
     ): void {
         let series = this,
             chart = series && series.chart,
             colors = chart && chart.options && chart.options.colors,
-            colorInfo: Highcharts.TreeColorObject,
+            colorInfo: TU.ColorObject,
             point: (TreemapPoint|undefined);
 
         if (node) {
@@ -1869,14 +1875,15 @@ class TreemapSeries extends ScatterSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface TreemapSeries extends Highcharts.TreeSeries {
-    colorAttribs: Highcharts.ColorMapSeriesMixin['colorAttribs'];
+interface TreemapSeries extends TU.Series {
+    colorAttribs?: ColorMapComposition.SeriesComposition['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getExtremesFromAll: boolean;
     optionalAxis: string;
     parallelArrays: Array<string>;
@@ -1891,7 +1898,7 @@ extend(TreemapSeries.prototype, {
     buildKDTree: noop,
     colorKey: 'colorValue', // Point color option key
     directTouch: true,
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
     getExtremesFromAll: true,
     getSymbol: noop,
     optionalAxis: 'colorAxis',
@@ -1915,7 +1922,7 @@ namespace TreemapSeries {
         direction: number;
     }
     export type ListOfParentsObject = Record<string, Array<number>>;
-    export interface NodeObject extends Highcharts.TreeNodeObject {
+    export interface NodeObject extends TU.NodeObject {
         children: Array<NodeObject>;
         childrenTotal?: number;
         height: number;
@@ -1942,6 +1949,8 @@ namespace TreemapSeries {
         trigger?: string;
     }
 }
+
+ColorMapComposition.compose(TreemapSeries);
 
 /* *
  *
@@ -2015,7 +2024,7 @@ export default TreemapSeries;
  *
  * @type      {Array<number|null|*>}
  * @extends   series.heatmap.data
- * @excluding x, y
+ * @excluding x, y, pointPadding
  * @product   highcharts
  * @apioption series.treemap.data
  */

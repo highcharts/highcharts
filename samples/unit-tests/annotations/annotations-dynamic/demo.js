@@ -105,6 +105,13 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
                     xAxis: 0,
                     yAxis: 0
                 }
+            }, {
+                point: {
+                    x: 3,
+                    y: 125000,
+                    xAxis: 0,
+                    yAxis: 0
+                }
             }
         ]
     };
@@ -129,6 +136,11 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
         thirdAnnotation.labels[0].options.format,
         'custom format',
         'Correct annotations text after update (annotations.labels)'
+    );
+    assert.strictEqual(
+        thirdAnnotation.labels.length,
+        2,
+        '#16011: Labels should not disappear on update'
     );
 
     thirdAnnotation.update({
@@ -203,6 +215,44 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
         fib.shapes[5].graphic.stroke,
         'blue',
         '#15424: Fourth line should be blue (lineColor)'
+    );
+
+    const rect = chart.addAnnotation({
+        shapes: [{
+            type: 'path',
+            points: [
+                { xAxis: 0, yAxis: 0, x: 1, y: 150000 },
+                { xAxis: 0, yAxis: 0, x: 3, y: 150000 },
+                { xAxis: 0, yAxis: 0, x: 3, y: 100000 },
+                { xAxis: 0, yAxis: 0, x: 1, y: 100000 }
+            ]
+        }, {
+            type: 'path',
+            points: [
+                { xAxis: 0, yAxis: 0, x: 1, y: 150000 },
+                { xAxis: 0, yAxis: 0, x: 3, y: 150000 },
+                { xAxis: 0, yAxis: 0, x: 3, y: 100000 },
+                { xAxis: 0, yAxis: 0, x: 1, y: 100000 }
+            ]
+        }]
+    });
+
+    assert.ok(
+        rect.clipRect,
+        '#15726: Rectangle annotations should be clipped'
+    );
+
+    assert.ok(
+        thirdAnnotation.labels[0].graphic.hasClass('highcharts-no-tooltip'),
+        '#14403: Annotation label should have no-tooltip class'
+    );
+
+    rect.update({});
+
+    assert.strictEqual(
+        rect.shapes.length,
+        2,
+        '#16011: Shapes should not disappear on update'
     );
 });
 

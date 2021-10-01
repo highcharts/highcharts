@@ -24,8 +24,8 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import Chart from '../../Core/Chart/Chart.js';
-import O from '../../Core/Options.js';
-const { getOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { getOptions } = D;
 import Point from '../../Core/Series/Point.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -94,7 +94,7 @@ declare global {
     }
 }
 
-import '../../Core/Options.js';
+import '../../Core/DefaultOptions.js';
 
 import butils from './BoostUtils.js';
 import boostable from './Boostables.js';
@@ -384,20 +384,23 @@ wrap(Series.prototype, 'processData', function (
     this: Series,
     proceed: Function
 ): void {
+    const series = this;
 
-    let series = this,
-        dataToMeasure = this.options.data,
-        firstPoint: (PointOptions|PointShortOptions);
+    let dataToMeasure = this.options.data;
 
     /**
      * Used twice in this function, first on this.options.data, the second
      * time it runs the check again after processedXData is built.
+     * If the data is going to be grouped, the series shouldn't be boosted.
      * @private
-     * @todo Check what happens with data grouping
      */
     function getSeriesBoosting(
         data?: Array<(PointOptions|PointShortOptions)>
     ): boolean {
+        // Check if will be grouped.
+        if (series.forceCrop) {
+            return false;
+        }
         return series.chart.isChartSeriesBoosting() || (
             (data ? data.length : 0) >=
             (series.options.boostThreshold || Number.MAX_VALUE)
@@ -428,6 +431,7 @@ wrap(Series.prototype, 'processData', function (
         // Enter or exit boost mode
         if (this.isSeriesBoosting) {
             // Force turbo-mode:
+            let firstPoint;
             if (this.options.data && this.options.data.length) {
                 firstPoint = this.getFirstValidPoint(this.options.data);
                 if (!isNumber(firstPoint) && !isArray(firstPoint)) {

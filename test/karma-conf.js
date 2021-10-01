@@ -8,8 +8,6 @@ const { getLatestCommitShaSync } = require('../tools/gulptasks/lib/git');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;
-// Internal reference
-const hasJSONSources = {};
 
 /**
  * Get browserstack credentials from the environment variables.
@@ -313,21 +311,14 @@ module.exports = function (config) {
             // Maps
             'samples/maps/demo/map-pies/demo.js', // advanced data
             'samples/maps/demo/us-counties/demo.js', // advanced data
-            'samples/maps/demo/data-class-ranges/demo.js', // Google Spreadsheets
-            'samples/maps/demo/data-class-two-ranges/demo.js', // Google Spr
 
             // Unknown error
             'samples/highcharts/boost/scatter-smaller/demo.js',
-
-            // CommonJS
-            'samples/highcharts/common-js/browserify/demo.js',
-            'samples/highcharts/common-js/webpack/demo.js',
+            'samples/highcharts/data/google-spreadsheet/demo.js',
 
             // Various
-            'samples/highcharts/data/google-spreadsheet/demo.js', // advanced demo
             'samples/highcharts/data/delimiters/demo.js', // data island
             'samples/highcharts/css/exporting/demo.js', // advanced demo
-            'samples/highcharts/css/map-dataclasses/demo.js', // Google Spreadsheets
             'samples/highcharts/css/pattern/demo.js', // styled mode, setOptions
             'samples/highcharts/studies/logistics/demo.js', // overriding
 

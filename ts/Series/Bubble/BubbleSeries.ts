@@ -19,7 +19,9 @@
 import type BubbleSeriesOptions from './BubbleSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import Axis from '../../Core/Axis/Axis.js';
+import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -47,7 +49,7 @@ const {
 
 import '../Column/ColumnSeries.js';
 import '../Scatter/ScatterSeries.js';
-import './BubbleLegend.js';
+import './BubbleLegendItem.js';
 
 /* *
  *
@@ -60,7 +62,7 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../../Core/Axis/Types' {
+declare module '../../Core/Axis/AxisLike' {
     interface AxisLike {
         beforePadding?(): void;
     }
@@ -92,6 +94,8 @@ class BubbleSeries extends ScatterSeries {
      *
      * */
 
+    public static compose = BubbleLegendComposition.compose;
+
     /**
      * A bubble series is a three dimensional series type where each point
      * renders an X, Y and Z value. Each points is drawn as a bubble where the
@@ -112,8 +116,11 @@ class BubbleSeries extends ScatterSeries {
         dataLabels: {
             formatter: function (
                 this: Point.PointLabelObject
-            ): (number|null|undefined) { // #2945
-                return (this.point as BubblePoint).z;
+            ): string { // #2945
+                const { numberFormatter } = this.series.chart;
+                const { z } = (this.point as BubblePoint);
+
+                return isNumber(z) ? numberFormatter(z, -1) : '';
             },
             inside: true,
             verticalAlign: 'middle'
@@ -673,7 +680,7 @@ class BubbleSeries extends ScatterSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -714,7 +721,7 @@ addEvent(BubbleSeries, 'updatedData', (e): void => {
 
 // Add logic to pad each axis with the amount of pixels necessary to avoid the
 // bubbles to overflow.
-Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
+Axis.prototype.beforePadding = function (): void {
     let axis = this,
         axisLength = this.len,
         chart = this.chart,

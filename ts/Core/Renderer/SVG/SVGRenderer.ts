@@ -32,6 +32,7 @@ import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRendererLike from './SVGRendererLike';
 import type SymbolOptions from './SymbolOptions';
+import type { SymbolKey } from './SymbolType';
 
 import AST from '../HTML/AST.js';
 import Color from '../../Color/Color.js';
@@ -48,7 +49,7 @@ const {
     symbolSizes,
     win
 } = H;
-import Palette from '../../Color/Palette.js';
+import { Palette } from '../../Color/Palettes.js';
 import RendererRegistry from '../RendererRegistry.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
@@ -670,7 +671,7 @@ class SVGRenderer implements SVGRendererLike {
         hoverState?: SVGAttributes,
         pressedState?: SVGAttributes,
         disabledState?: SVGAttributes,
-        shape?: SVGRenderer.SymbolKeyValue,
+        shape?: SymbolKey,
         useHTML?: boolean
     ): SVGElement {
         const label = this.label(
@@ -1247,8 +1248,7 @@ class SVGRenderer implements SVGRendererLike {
         height?: number,
         onload?: Function
     ): SVGElement {
-        const attribs: SVGAttributes =
-            { preserveAspectRatio: 'none' },
+        const attribs: SVGAttributes = { preserveAspectRatio: 'none' },
             setSVGImageSource = function (
                 el: SVGElement,
                 src: string
@@ -1266,15 +1266,20 @@ class SVGRenderer implements SVGRendererLike {
                 }
             };
 
-        // optional properties
-        if (arguments.length > 1) {
-            extend(attribs, {
-                x: x,
-                y: y,
-                width: width,
-                height: height
-            });
+        // Optional properties (#11756)
+        if (isNumber(x)) {
+            attribs.x = x;
         }
+        if (isNumber(y)) {
+            attribs.y = y;
+        }
+        if (isNumber(width)) {
+            attribs.width = width;
+        }
+        if (isNumber(height)) {
+            attribs.height = height;
+        }
+
 
         const elemWrapper = this.createElement('image').attr(attribs) as any,
             onDummyLoad = function (e: Event): void {
@@ -1333,7 +1338,7 @@ class SVGRenderer implements SVGRendererLike {
      * @return {Highcharts.SVGElement}
      */
     public symbol(
-        symbol: string,
+        symbol: SymbolKey,
         x?: number,
         y?: number,
         width?: number,
@@ -1355,7 +1360,7 @@ class SVGRenderer implements SVGRendererLike {
         if (symbolFn) {
             // Check if there's a path defined for this symbol
             if (typeof x === 'number') {
-                path = symbolFn.call(
+                path = (symbolFn as any).call(
                     this.symbols,
                     Math.round(x || 0),
                     Math.round(y || 0),
@@ -1630,7 +1635,7 @@ class SVGRenderer implements SVGRendererLike {
 
         const wrapper = renderer.createElement('text').attr(attribs);
 
-        if (!useHTML) {
+        if (!useHTML || (renderer.forExport && !renderer.allowHTML)) {
             wrapper.xSetter = function (
                 value: string,
                 key: string,
@@ -2044,7 +2049,7 @@ class SVGRenderer implements SVGRendererLike {
         str: string,
         x: number,
         y?: number,
-        shape?: SVGRenderer.SymbolKeyValue,
+        shape?: SymbolKey,
         anchorX?: number,
         anchorY?: number,
         useHTML?: boolean,
@@ -2151,10 +2156,6 @@ extend(SVGRenderer.prototype, {
 
 namespace SVGRenderer {
     export type ClipRectElement = SVGElement;
-    export type SymbolKeyValue = (
-        'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|'rect'|
-        'square'|'topbutton'|'triangle'|'triangle-down'
-    );
 }
 
 /* *

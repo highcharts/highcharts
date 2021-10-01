@@ -86,11 +86,23 @@ const childProcess = require('child_process');
         return washed;
     }
 
-    function addAPILinks(str, apiFolder) {
+    function addLinks(str, apiFolder) {
         let match;
-        const reg = /`([a-zA-Z0-9\.\[\]]+)`/g;
 
-        while ((match = reg.exec(str)) !== null) {
+        // Add links to issues
+        const issueReg = /[^\[]#([0-9]+)[^\]]/g;
+        while ((match = issueReg.exec(str)) !== null) {
+            const num = match[1];
+
+            str = str.replace(
+                `#${num}`,
+                `[#${num}](https://github.com/highcharts/highcharts/issues/${num})`
+            );
+        }
+
+        // Add API Links
+        const apiReg = /`([a-zA-Z0-9\.\[\]]+)`/g;
+        while ((match = apiReg.exec(str)) !== null) {
 
             const shortKey = match[1];
             let replacements = [];
@@ -157,7 +169,7 @@ const childProcess = require('child_process');
 
         const upgradeNotes = log
             .filter(change => typeof change.upgradeNote === 'string')
-            .map(change => addAPILinks(`- ${change.upgradeNote}`, apiFolder))
+            .map(change => addLinks(`- ${change.upgradeNote}`, apiFolder))
             .join('\n');
 
         // Start the output string
@@ -168,7 +180,7 @@ const childProcess = require('child_process');
         }
         log.forEach((change, i) => {
 
-            const desc = addAPILinks(change.description || change, apiFolder);
+            const desc = addLinks(change.description || change, apiFolder);
 
 
             // Start fixes
@@ -182,7 +194,7 @@ const childProcess = require('child_process');
             }
 
             const edit = params.review ?
-                ` [<a href="https://github.com/highcharts/highcharts/pull/${change.number}">Edit</a>]` :
+                ` [Edit](https://github.com/highcharts/highcharts/pull/${change.number}).` :
                 '';
 
             // All items

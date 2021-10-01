@@ -12,12 +12,12 @@
 
 'use strict';
 
-import type Chart from '../../Core/Chart/Chart';
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import RangeSelector from '../../Extensions/RangeSelector.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
@@ -25,16 +25,12 @@ const {
     getAxisRangeDescription
 } = ChartUtilities;
 import Announcer from '../Utils/Announcer.js';
-import H from '../../Core/Globals.js';
-import HTMLUtilities from '../Utils/HTMLUtilities.js';
-const {
-    setElAttrs
-} = HTMLUtilities;
+import Chart from '../../Core/Chart/Chart.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
-import RangeSelector from '../../Extensions/RangeSelector.js';
 const {
     addEvent,
+    attr,
     extend
 } = U;
 
@@ -95,8 +91,7 @@ function shouldRunInputNavigation(chart: Chart): boolean {
     return Boolean(
         chart.rangeSelector &&
         chart.rangeSelector.inputGroup &&
-        chart.rangeSelector.inputGroup.element
-            .getAttribute('visibility') !== 'hidden' &&
+        chart.rangeSelector.inputGroup.element.style.visibility !== 'hidden' &&
         (chart.options.rangeSelector as any).inputEnabled !== false &&
         chart.rangeSelector.minInput &&
         chart.rangeSelector.maxInput
@@ -114,7 +109,7 @@ function shouldRunInputNavigation(chart: Chart): boolean {
  *
  * @return {boolean}
  */
-H.Chart.prototype.highlightRangeSelectorButton = function (
+Chart.prototype.highlightRangeSelectorButton = function (
     ix: number
 ): boolean {
     const buttons: Array<SVGElement> = (
@@ -295,7 +290,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         this: Highcharts.RangeSelectorComponent,
         button: SVGElement
     ): void {
-        setElAttrs(button.element, {
+        attr(button.element, {
             tabindex: -1,
             role: 'button'
         });
@@ -312,7 +307,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
     ): void {
         const chart = this.chart;
 
-        setElAttrs(input, {
+        attr(input, {
             tabindex: -1,
             'aria-label': chart.langFormat(langKey, { chart: chart })
         });

@@ -94,7 +94,16 @@ QUnit.test('Navigator (#4053)', function (assert) {
 });
 
 QUnit.test('General Navigator tests', function (assert) {
+    let left = 0;
+
     var chart = Highcharts.stockChart('container', {
+            chart: {
+                events: {
+                    afterSetChartSize() {
+                        left = this.navigator && this.navigator.left;
+                    }
+                }
+            },
             legend: {
                 enabled: true
             },
@@ -104,7 +113,10 @@ QUnit.test('General Navigator tests', function (assert) {
                 }
             },
             navigator: {
-                height: 100
+                height: 100,
+                xAxis: {
+                    left: 200
+                }
             },
             series: [
                 {
@@ -120,6 +132,12 @@ QUnit.test('General Navigator tests', function (assert) {
         secondShadeXBeforeTranslate,
         x,
         y;
+
+    assert.strictEqual(
+        left,
+        200,
+        '#15803: navigator.left should be correct after afterSetChartSize'
+    );
 
     const eventCount = el => {
         let count = 0;
@@ -155,7 +173,7 @@ QUnit.test('General Navigator tests', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[1].clipBox.height,
+        chart.sharedClips[chart.series[1].getSharedClipKey()].attr('height'),
         100,
         'Navigator series has correct clipping rect height (#5904)'
     );
@@ -1269,5 +1287,23 @@ QUnit.test('Scrolling when the range is set, #14742.', function (assert) {
         chart.xAxis[0].max > chart.xAxis[0].min,
         `After changing the extremes and adding shifted points,
         the range should not equal zero.`
+    );
+});
+
+
+QUnit.test('Initiation chart without data but with set range, #15864.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            selected: 1
+        },
+        series: [{
+            pointInterval: 36e7
+        }]
+    });
+    assert.notStrictEqual(
+        chart.xAxis[0].max,
+        0,
+        `After adding series to the chart that has set the range,
+        the navigator shouldn't stick to min.`
     );
 });

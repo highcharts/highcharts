@@ -10,14 +10,16 @@
  *
  * */
 
+import type ChartOptions from '../Core/Chart/ChartOptions';
+import type Options from '../Core/Options';
 import type {
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
-import O from '../Core/Options.js';
-const { setOptions } = O;
+import D from '../Core/DefaultOptions.js';
+const { setOptions } = D;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -31,11 +33,28 @@ const {
     pick
 } = U;
 
+/* *
+ *
+ * Declarations
+ *
+ * */
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         stockTools?: Toolbar;
         /** @requires modules/stock-tools */
         setStockTools(options?: Highcharts.StockToolsOptions): void;
+    }
+}
+
+declare module '../Core/LangOptions'{
+    interface LangOptions {
+        stockTools?: Highcharts.LangStockToolsOptions;
+    }
+}
+
+declare module '../Core/Options'{
+    interface Options {
+        stockTools?: Highcharts.StockToolsOptions;
     }
 }
 
@@ -45,14 +64,8 @@ declare module '../Core/Chart/ChartLike'{
  */
 declare global {
     namespace Highcharts {
-        interface LangOptions {
-            stockTools?: LangStockToolsOptions;
-        }
         interface LangStockToolsOptions {
             gui?: Record<string, string>;
-        }
-        interface Options {
-            stockTools?: StockToolsOptions;
         }
         interface StockToolsGuiDefinitionsButtonOptions {
             symbol?: string;
@@ -202,9 +215,13 @@ setOptions({
                 typeOHLC: 'OHLC',
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
+                typeHLC: 'HLC',
+                typeHollowCandlestick: 'Hollow Candlestick',
+                typeHeikinAshi: 'Heikin Ashi',
 
                 // Basic shapes:
                 circle: 'Circle',
+                ellipse: 'Ellipse',
                 label: 'Label',
                 rectangle: 'Rectangle',
 
@@ -225,7 +242,7 @@ setOptions({
                 ray: 'Ray',
                 arrowRay: 'Arrow ray',
                 line: 'Line',
-                arrowLine: 'Arrow line',
+                arrowInfinityLine: 'Arrow line',
                 horizontalLine: 'Horizontal line',
                 verticalLine: 'Vertical line',
                 infinityLine: 'Infinity line',
@@ -243,6 +260,7 @@ setOptions({
 
                 // Advanced:
                 fibonacci: 'Fibonacci',
+                fibonacciTimeZones: 'Fibonacci Time Zones',
                 pitchfork: 'Pitchfork',
                 parallelChannel: 'Parallel channel'
             }
@@ -251,6 +269,7 @@ setOptions({
             popup: {
                 // Annotations:
                 circle: 'Circle',
+                ellipse: 'Ellipse',
                 rectangle: 'Rectangle',
                 label: 'Label',
                 segment: 'Segment',
@@ -258,7 +277,7 @@ setOptions({
                 ray: 'Ray',
                 arrowRay: 'Arrow ray',
                 line: 'Line',
-                arrowLine: 'Arrow line',
+                arrowInfinityLine: 'Arrow line',
                 horizontalLine: 'Horizontal line',
                 verticalLine: 'Vertical line',
                 crooked3: 'Crooked 3 line',
@@ -269,6 +288,7 @@ setOptions({
                 verticalLabel: 'Vertical label',
                 verticalArrow: 'Vertical arrow',
                 fibonacci: 'Fibonacci',
+                fibonacciTimeZones: 'Fibonacci Time Zones',
                 pitchfork: 'Pitchfork',
                 parallelChannel: 'Parallel channel',
                 infinityLine: 'Infinity line',
@@ -300,6 +320,7 @@ setOptions({
                 // Indicators' params (#15170):
                 index: 'Index',
                 period: 'Period',
+                periods: 'Periods',
                 standardDeviation: 'Standard deviation',
                 periodTenkan: 'Tenkan period',
                 periodSenkouSpanB: 'Senkou Span B period',
@@ -439,6 +460,7 @@ setOptions({
                      * @default [
                      *   'label',
                      *   'circle',
+                     *   'ellipse',
                      *   'rectangle'
                      * ]
                      *
@@ -446,6 +468,7 @@ setOptions({
                     items: [
                         'label',
                         'circle',
+                        'ellipse',
                         'rectangle'
                     ],
                     circle: {
@@ -456,6 +479,15 @@ setOptions({
                          *
                          */
                         symbol: 'circle.svg'
+                    },
+                    ellipse: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
+                        symbol: 'ellipse.svg'
                     },
                     rectangle: {
                         /**
@@ -543,7 +575,7 @@ setOptions({
                      *   'ray',
                      *   'arrowRay',
                      *   'line',
-                     *   'arrowLine',
+                     *   'arrowInfinityLine',
                      *   'horizontalLine',
                      *   'verticalLine'
                      * ]
@@ -554,7 +586,7 @@ setOptions({
                         'ray',
                         'arrowRay',
                         'line',
-                        'arrowLine',
+                        'arrowInfinityLine',
                         'horizontalLine',
                         'verticalLine'
                     ],
@@ -598,7 +630,7 @@ setOptions({
                          */
                         symbol: 'line.svg'
                     },
-                    arrowLine: {
+                    arrowInfinityLine: {
                         /**
                          * A predefined background symbol for the button.
                          *
@@ -726,12 +758,14 @@ setOptions({
                      * @type {array}
                      * @default [
                      *   'fibonacci',
+                     *   'fibonacciTimeZones',
                      *   'pitchfork',
                      *   'parallelChannel'
                      * ]
                      */
                     items: [
                         'fibonacci',
+                        'fibonacciTimeZones',
                         'pitchfork',
                         'parallelChannel'
                     ],
@@ -750,6 +784,14 @@ setOptions({
                          * @type   {string}
                          */
                         symbol: 'fibonacci.svg'
+                    },
+                    fibonacciTimeZones: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'fibonacci-timezone.svg'
                     },
                     parallelChannel: {
                         /**
@@ -878,12 +920,16 @@ setOptions({
                      *   'typeOHLC',
                      *   'typeLine',
                      *   'typeCandlestick'
+                     *   'typeHollowCandlestick'
                      * ]
                      */
                     items: [
                         'typeOHLC',
                         'typeLine',
-                        'typeCandlestick'
+                        'typeCandlestick',
+                        'typeHollowCandlestick',
+                        'typeHLC',
+                        'typeHeikinAshi'
                     ],
                     typeOHLC: {
                         /**
@@ -908,6 +954,30 @@ setOptions({
                          * @type   {string}
                          */
                         symbol: 'series-candlestick.svg'
+                    },
+                    typeHLC: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-hlc.svg'
+                    },
+                    typeHeikinAshi: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-heikin-ashi.svg'
+                    },
+                    typeHollowCandlestick: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-hollow-candlestick.svg'
                     }
                 },
                 fullScreen: {
@@ -959,7 +1029,7 @@ addEvent(Chart, 'getMargins', function (): void {
 ['beforeRender', 'beforeRedraw'].forEach((event: string): void => {
     addEvent(Chart, event, function (): void {
         if (this.stockTools) {
-            const optionsChart = this.options.chart as Highcharts.ChartOptions;
+            const optionsChart = this.options.chart as ChartOptions;
             const listWrapper = this.stockTools.listWrapper,
                 offsetWidth = listWrapper && (
                     (
@@ -1419,6 +1489,7 @@ class Toolbar {
 
         // Mimic event behaviour of being outside chart.container
         [
+            'mousedown',
             'mousemove',
             'click',
             'touchstart'
@@ -1537,7 +1608,7 @@ class Toolbar {
         redraw?: boolean
     ): void {
         const buttonWrapper = button.parentNode,
-            buttonWrapperClass = buttonWrapper.classList.value,
+            buttonWrapperClass = buttonWrapper.className,
             // main button in first level og GUI
             mainNavButton = buttonWrapper.parentNode.parentNode;
 
@@ -1598,7 +1669,7 @@ class Toolbar {
      *
      * @param {Object} - general options for Stock Tools
      */
-    public update(options: Highcharts.StockToolsOptions): void {
+    public update(options: Highcharts.StockToolsOptions, redraw?: boolean): void {
         merge(true, this.chart.options.stockTools, options);
         this.destroy();
         this.chart.setStockTools(options);
@@ -1606,6 +1677,12 @@ class Toolbar {
         // If Stock Tools are updated, then bindings should be updated too:
         if (this.chart.navigationBindings) {
             this.chart.navigationBindings.update();
+        }
+
+        this.chart.isDirtyBox = true;
+
+        if (pick(redraw, true)) {
+            this.chart.redraw();
         }
     }
     /**
@@ -1624,10 +1701,6 @@ class Toolbar {
         if (parent) {
             parent.removeChild(stockToolsDiv);
         }
-
-        // redraw
-        this.chart.isDirtyBox = true;
-        this.chart.redraw();
     }
     /**
      * Redraw, GUI requires to verify if the navigation should be visible.
@@ -1654,6 +1727,7 @@ interface Toolbar {
  */
 Toolbar.prototype.classMapping = {
     circle: PREFIX + 'circle-annotation',
+    ellipse: PREFIX + 'ellipse-annotation',
     rectangle: PREFIX + 'rectangle-annotation',
     label: PREFIX + 'label-annotation',
     segment: PREFIX + 'segment',
@@ -1661,7 +1735,7 @@ Toolbar.prototype.classMapping = {
     ray: PREFIX + 'ray',
     arrowRay: PREFIX + 'arrow-ray',
     line: PREFIX + 'infinity-line',
-    arrowLine: PREFIX + 'arrow-infinity-line',
+    arrowInfinityLine: PREFIX + 'arrow-infinity-line',
     verticalLine: PREFIX + 'vertical-line',
     horizontalLine: PREFIX + 'horizontal-line',
     crooked3: PREFIX + 'crooked3',
@@ -1670,6 +1744,7 @@ Toolbar.prototype.classMapping = {
     elliott5: PREFIX + 'elliott5',
     pitchfork: PREFIX + 'pitchfork',
     fibonacci: PREFIX + 'fibonacci',
+    fibonacciTimeZones: PREFIX + 'fibonacci-time-zones',
     parallelChannel: PREFIX + 'parallel-channel',
     measureX: PREFIX + 'measure-x',
     measureY: PREFIX + 'measure-y',
@@ -1688,7 +1763,10 @@ Toolbar.prototype.classMapping = {
     zoomXY: PREFIX + 'zoom-xy',
     typeLine: PREFIX + 'series-type-line',
     typeOHLC: PREFIX + 'series-type-ohlc',
+    typeHLC: PREFIX + 'series-type-hlc',
     typeCandlestick: PREFIX + 'series-type-candlestick',
+    typeHollowCandlestick: PREFIX + 'series-type-hollowcandlestick',
+    typeHeikinAshi: PREFIX + 'series-type-heikinashi',
     fullScreen: PREFIX + 'full-screen',
     toggleAnnotations: PREFIX + 'toggle-annotations',
     saveChart: PREFIX + 'save-chart',
@@ -1705,7 +1783,7 @@ extend(Chart.prototype, {
         this: Chart,
         options?: Highcharts.StockToolsOptions
     ): void {
-        const chartOptions: Highcharts.Options = this.options,
+        const chartOptions: Options = this.options,
             lang = chartOptions.lang,
             guiOptions = merge(
                 chartOptions.stockTools && chartOptions.stockTools.gui,
@@ -1759,7 +1837,7 @@ addEvent(NavigationBindings, 'deselectButton', function (
 });
 
 // Check if the correct price indicator button is displayed, #15029.
-addEvent(H.Chart, 'render', function (): void {
+addEvent(Chart, 'render', function (): void {
     const chart = this,
         stockTools = chart.stockTools,
         button = stockTools &&

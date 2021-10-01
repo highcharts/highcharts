@@ -217,7 +217,7 @@ class AreaRangeSeries extends AreaSeries {
     public points: Array<AreaRangePoint> = void 0 as any;
     public lowerStateMarkerGraphic?: SVGElement = void 0;
     public upperStateMarkerGraphic?: SVGElement;
-    public xAxis: RadialAxis = void 0 as any;
+    public xAxis: RadialAxis.AxisComposition = void 0 as any;
 
     /* *
      *
@@ -256,8 +256,7 @@ class AreaRangeSeries extends AreaSeries {
      */
     public translate(): void {
         const series = this,
-            yAxis = series.yAxis,
-            hasModifyValue = !!series.modifyValue;
+            yAxis = series.yAxis;
 
         areaProto.translate.apply(series);
 
@@ -274,15 +273,14 @@ class AreaRangeSeries extends AreaSeries {
             } else {
                 point.plotLow = plotY as any;
                 point.plotHigh = yAxis.translate(
-                    hasModifyValue ?
-                        (series.modifyValue as any)(high, point) :
-                        high,
+                    series.dataModify ?
+                        series.dataModify.modifyValue(high) : high,
                     0 as any,
                     1 as any,
                     0 as any,
                     1 as any
                 ) as any;
-                if (hasModifyValue) {
+                if (series.dataModify) {
                     point.yBottom = point.plotHigh;
                 }
             }

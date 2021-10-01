@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Accessibility from '../../Accessibility';
 import type Series from '../../../Core/Series/Series';
 import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
@@ -136,7 +137,7 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
         const chart = this.chart;
 
         chart.series.forEach(function (
-            series: Highcharts.AccessibilitySeries
+            series: Accessibility.SeriesComposition
         ): void {
             const shouldDescribeSeries = (series.options.accessibility &&
                 series.options.accessibility.enabled) !== false &&

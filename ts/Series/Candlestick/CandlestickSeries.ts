@@ -21,9 +21,9 @@ import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import O from '../../Core/Options.js';
-const { defaultOptions } = O;
-import palette from '../../Core/Color/Palette.js';
+import D from '../../Core/DefaultOptions.js';
+const { defaultOptions } = D;
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 const {
@@ -56,123 +56,108 @@ class CandlestickSeries extends OHLCSeries {
 
     /* *
      *
-     * Static properties
+     * Static Properties
      *
      * */
 
-    /**
-     * A candlestick chart is a style of financial chart used to describe price
-     * movements over time.
-     *
-     * @sample stock/demo/candlestick/
-     *         Candlestick chart
-     *
-     * @extends      plotOptions.ohlc
-     * @excluding    borderColor,borderRadius,borderWidth
-     * @product      highstock
-     * @optionparent plotOptions.candlestick
-     */
-    public static defaultOptions: CandlestickSeriesOptions =
-    merge(OHLCSeries.defaultOptions, defaultOptions.plotOptions, {
+    public static defaultOptions: CandlestickSeriesOptions = merge(
+        OHLCSeries.defaultOptions,
+        defaultOptions.plotOptions,
         /**
-         * The specific line color for up candle sticks. The default is to
-         * inherit the general `lineColor` setting.
+         * A candlestick chart is a style of financial chart used to describe
+         * price movements over time.
          *
-         * @sample {highstock} stock/plotoptions/candlestick-linecolor/
-         *         Candlestick line colors
+         * @sample stock/demo/candlestick/
+         *         Candlestick chart
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @since     1.3.6
-         * @product   highstock
-         * @apioption plotOptions.candlestick.upLineColor
+         * @extends      plotOptions.ohlc
+         * @excluding    borderColor,borderRadius,borderWidth
+         * @product      highstock
+         * @optionparent plotOptions.candlestick
          */
-
-        /**
-         * @type      {Highcharts.DataGroupingApproximationValue|Function}
-         * @default   ohlc
-         * @product   highstock
-         * @apioption plotOptions.candlestick.dataGrouping.approximation
-         */
-
-        states: {
-
+        {
             /**
-             * @extends plotOptions.column.states.hover
-             * @product highstock
+             * The specific line color for up candle sticks. The default is to
+             * inherit the general `lineColor` setting.
+             *
+             * @sample {highstock} stock/plotoptions/candlestick-linecolor/
+             *         Candlestick line colors
+             *
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @since     1.3.6
+             * @product   highstock
+             * @apioption plotOptions.candlestick.upLineColor
              */
-            hover: {
-
+            states: {
                 /**
-                 * The pixel width of the line/border around the candlestick.
-                 *
+                 * @extends plotOptions.column.states.hover
                  * @product highstock
                  */
-                lineWidth: 2
-            }
-        },
+                hover: {
+                    /**
+                     * The pixel width of the line/border around the
+                     * candlestick.
+                     *
+                     * @product highstock
+                     */
+                    lineWidth: 2
+                }
+            },
+            tooltip: (defaultOptions.plotOptions as any).ohlc.tooltip,
+            /**
+             * @type    {number|null}
+             * @product highstock
+             */
+            threshold: null,
+            /**
+             * The color of the line/border of the candlestick.
+             *
+             * In styled mode, the line stroke can be set with the
+             * `.highcharts-candlestick-series .highcahrts-point` rule.
+             *
+             * @see [upLineColor](#plotOptions.candlestick.upLineColor)
+             *
+             * @sample {highstock} stock/plotoptions/candlestick-linecolor/
+             *         Candlestick line colors
+             *
+             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @default #000000
+             * @product highstock
+             */
+            lineColor: Palette.neutralColor100,
+            /**
+             * The pixel width of the candlestick line/border. Defaults to `1`.
+             *
+             *
+             * In styled mode, the line stroke width can be set with the
+             * `.highcharts-candlestick-series .highcahrts-point` rule.
+             *
+             * @product highstock
+             */
+            lineWidth: 1,
+            /**
+             * The fill color of the candlestick when values are rising.
+             *
+             * In styled mode, the up color can be set with the
+             * `.highcharts-candlestick-series .highcharts-point-up` rule.
+             *
+             * @sample {highstock} stock/plotoptions/candlestick-color/
+             *         Custom colors
+             * @sample {highstock} highcharts/css/candlestick/
+             *         Colors in styled mode
+             *
+             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @default #ffffff
+             * @product highstock
+            */
 
-        /**
-         * @extends plotOptions.ohlc.tooltip
-         */
-        tooltip: (defaultOptions.plotOptions as any).ohlc.tooltip,
-
-        /**
-         * @type    {number|null}
-         * @product highstock
-         */
-        threshold: null,
-
-        /**
-         * The color of the line/border of the candlestick.
-         *
-         * In styled mode, the line stroke can be set with the
-         * `.highcharts-candlestick-series .highcahrts-point` rule.
-         *
-         * @see [upLineColor](#plotOptions.candlestick.upLineColor)
-         *
-         * @sample {highstock} stock/plotoptions/candlestick-linecolor/
-         *         Candlestick line colors
-         *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @default #000000
-         * @product highstock
-         */
-        lineColor: palette.neutralColor100,
-
-        /**
-         * The pixel width of the candlestick line/border. Defaults to `1`.
-         *
-         *
-         * In styled mode, the line stroke width can be set with the
-         * `.highcharts-candlestick-series .highcahrts-point` rule.
-         *
-         * @product highstock
-         */
-        lineWidth: 1,
-
-        /**
-         * The fill color of the candlestick when values are rising.
-         *
-         * In styled mode, the up color can be set with the
-         * `.highcharts-candlestick-series .highcharts-point-up` rule.
-         *
-         * @sample {highstock} stock/plotoptions/candlestick-color/
-         *         Custom colors
-         * @sample {highstock} highcharts/css/candlestick/
-         *         Colors in styled mode
-         *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @default #ffffff
-         * @product highstock
-         */
-        upColor: palette.backgroundColor,
-
-        /**
-         * @product highstock
-         */
-        stickyTracking: true
-    } as CandlestickSeriesOptions);
-
+            upColor: Palette.backgroundColor,
+            /**
+             * @product highstock
+             */
+            stickyTracking: true
+        } as CandlestickSeriesOptions
+    );
     /* *
      *
      * Properties

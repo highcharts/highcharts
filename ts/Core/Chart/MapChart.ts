@@ -17,11 +17,12 @@
  * */
 
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
+import type Options from '../Options';
 import type { ProjectionRotationOption } from '../../Maps/ProjectionOptions';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Chart from './Chart.js';
-import O from '../../Core/Options.js';
-const { getOptions } = O;
+import D from '../DefaultOptions.js';
+const { getOptions } = D;
 import MapView from '../../Maps/MapView.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
@@ -70,7 +71,7 @@ class MapChart extends Chart {
      * @fires Highcharts.MapChart#event:afterInit
      */
     public init(
-        userOptions: Partial<Highcharts.Options>,
+        userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
         const hiddenAxis = {
@@ -172,8 +173,8 @@ namespace MapChart {
      * The chart object.
      */
     export function mapChart(
-        a: (string|HTMLDOMElement|Highcharts.Options),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        a: (string|HTMLDOMElement|Options),
+        b?: (Chart.CallbackFunction|Options),
         c?: Chart.CallbackFunction
     ): MapChart {
         return new MapChart(a as any, b as any, c);

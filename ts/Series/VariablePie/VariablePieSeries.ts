@@ -484,7 +484,7 @@ class VariablePieSeries extends PieSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

@@ -16,8 +16,9 @@ import type Series from '../Core/Series/Series';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
+import CU from '../Series/CenteredUtilities.js';
 import H from '../Core/Globals.js';
-import palette from '../Core/Color/Palette.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -28,11 +29,23 @@ const {
     splat
 } = U;
 
+declare module '../Core/Axis/AxisLike' {
+    interface AxisLike {
+        pane?: Pane;
+    }
+}
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         pane?: Array<Highcharts.Pane>;
         hoverPane?: Highcharts.Pane;
         getHoverPane?(eventArgs: any): Highcharts.Pane|undefined;
+    }
+}
+
+declare module '../Core/Options'{
+    interface Options {
+        pane?: Highcharts.PaneOptions|Array<Highcharts.PaneOptions>;
     }
 }
 
@@ -43,12 +56,6 @@ declare module '../Core/Chart/ChartLike'{
 declare global {
     namespace Highcharts {
         type PaneBackgroundShapeValue = ('arc'|'circle'|'solid');
-        interface Axis {
-            pane?: Pane;
-        }
-        interface Options {
-            pane?: PaneOptions;
-        }
         interface PaneBackgroundOptions {
             backgroundColor?: ColorType;
             borderColor?: ColorType;
@@ -75,12 +82,12 @@ declare global {
         }
         class Pane {
             public constructor(options: PaneOptions, chart: Chart);
-            public axis?: RadialAxis;
+            public axis?: RadialAxis.AxisComposition;
             public background: Array<SVGElement>;
             public center: Array<number>;
             public chart: PaneChart;
             public coll: 'pane';
-            public defaultBackgroundOptions?: PaneBackgroundOptions;
+            public defaultBackgroundOptions: PaneBackgroundOptions;
             public defaultOptions: PaneOptions;
             public group?: SVGElement;
             public options: PaneOptions;
@@ -92,7 +99,7 @@ declare global {
             ): void;
             public setOptions(options: PaneOptions): void;
             public update(options: PaneOptions, redraw?: boolean): void;
-            public updateCenter(axis?: RadialAxis): void;
+            public updateCenter(axis?: RadialAxis.AxisComposition): void;
         }
     }
 }
@@ -100,8 +107,6 @@ declare global {
 /**
  * @typedef {"arc"|"circle"|"solid"} Highcharts.PaneBackgroundShapeValue
  */
-
-import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -126,7 +131,7 @@ class Pane {
         this.init(options, chart);
     }
 
-    public axis?: RadialAxis;
+    public axis?: RadialAxis.AxisComposition;
     public background: Array<SVGElement> = void 0 as any;
     public center: Array<number> = void 0 as any;
     public chart: Highcharts.PaneChart = void 0 as any;
@@ -167,8 +172,8 @@ class Pane {
 
         // Set options. Angular charts have a default background (#3318)
         this.options = options = merge(
-            this.defaultOptions as any,
-            this.chart.angular ? { background: ({} as any) } : void 0,
+            this.defaultOptions,
+            this.chart.angular ? { background: {} } : void 0,
             options
         );
     }
@@ -400,7 +405,7 @@ class Pane {
          * @since   2.3.0
          * @product highcharts
          */
-        borderColor: palette.neutralColor20,
+        borderColor: Palette.neutralColor20,
 
         /**
          * The background color or gradient for the pane.
@@ -417,8 +422,8 @@ class Pane {
 
             /** @ignore-option */
             stops: [
-                [0, palette.backgroundColor],
-                [1, palette.neutralColor10]
+                [0, Palette.backgroundColor],
+                [1, Palette.neutralColor10]
             ]
 
         },
@@ -459,12 +464,12 @@ class Pane {
      * @param {Highcharts.Axis} [axis]
      * @return {void}
      */
-    public updateCenter(axis?: RadialAxis): void {
+    public updateCenter(axis?: RadialAxis.AxisComposition): void {
         this.center = (
             axis ||
             this.axis ||
             ({} as Record<string, Array<number>>)
-        ).center = centeredSeriesMixin.getCenter.call(this as any);
+        ).center = CU.getCenter.call(this as any);
     }
 
     /**
@@ -499,11 +504,10 @@ class Pane {
         redraw?: boolean
     ): void {
         merge(true, this.options, options);
-        merge(true, this.chart.options.pane, options); // #9917
 
         this.setOptions(this.options);
         this.render();
-        this.chart.axes.forEach(function (axis: Highcharts.Axis): void {
+        this.chart.axes.forEach(function (axis): void {
             if (axis.pane === this) {
                 axis.pane = null as any;
                 axis.update({}, redraw);
@@ -598,7 +602,7 @@ addEvent(Pointer, 'beforeGetHoverData', function (
 });
 
 addEvent(Pointer, 'afterGetHoverData', function (
-    eventArgs: Highcharts.PointerEventArgsObject
+    eventArgs: Pointer.EventArgsObject
 ): void {
     const chart = this.chart;
     if (

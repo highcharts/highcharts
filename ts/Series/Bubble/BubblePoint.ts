@@ -76,7 +76,7 @@ class BubblePoint extends ScatterPoint {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

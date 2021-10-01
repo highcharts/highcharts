@@ -13,6 +13,7 @@
  * */
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type MultipleLinesComposition from '../MultipleLinesComposition';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -24,9 +25,8 @@ import type {
  *
  * */
 
-export interface DMIOptions extends SMAOptions {
+export interface DMIOptions extends SMAOptions, MultipleLinesComposition.Options {
     params?: DMIParamsOptions;
-    tooltip?: Highcharts.TooltipOptions;
     plusDILine?: DMILineOptions;
     minusDILine?: DMILineOptions;
 }

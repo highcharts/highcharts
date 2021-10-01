@@ -20,7 +20,7 @@ import type MapPointSeriesOptions from './MapPointSeriesOptions';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import MapPointPoint from './MapPointPoint.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -35,7 +35,7 @@ const {
     merge
 } = U;
 
-import '../../Core/Options.js';
+import '../../Core/DefaultOptions.js';
 import '../Scatter/ScatterSeries.js';
 
 /* *
@@ -83,7 +83,7 @@ class MapPointSeries extends ScatterSeries {
             overflow: false as any,
             style: {
                 /** @internal */
-                color: palette.neutralColor100
+                color: Palette.neutralColor100
             }
         }
     } as MapPointSeriesOptions);
@@ -165,7 +165,7 @@ class MapPointSeries extends ScatterSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

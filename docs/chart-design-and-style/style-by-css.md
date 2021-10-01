@@ -9,9 +9,13 @@ Highcharts comes with a default CSS file, [css/highcharts.css](https://code.high
 
 To customize your styles, you can [create your own themes with SCSS](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-styled-mode), or just add your own individual CSS rules. See our [CodePen boilerplate](https://codepen.io/anon/pen/eQyawK) to experiment with the default SCSS.
 
-### Upgrade note
 
-Prior to Highcharts v7, styled mode was served as a separate set of files. Instead of an option `chart.styledMode`, styled mode was enabled by loading files from the `/js/` folder on `code.highcharts.com`, in the zip file and in the npm package. These files are no longer maintained.
+WHAT CAN BE STYLED?
+-------------------
+Typography, colors and visual properties like stroke width and style can be set by CSS.
+
+However, layout and positioning of elements like the title or legend can not be controlled by CSS. This is a limitation of CSS for SVG, that does not ([yet](https://github.com/w3c/svgwg/wiki/SVG-2-new-features#geometric-attributes-that-can-now-be-specified-as-style-properties)) allow geometric attributes like `x`, `y`, `width` or `height`. And even if those were settable, we would still need to compute the layout flow in JavaScript. Instead, positioning is subject to Highcharts JavaScript options like `align`, `verticalAlign` etc.
+
 
 WHAT CSS RULES APPLY
 --------------------
@@ -88,6 +92,13 @@ Rules to differentiate between up or down points in Highcharts Stock candlestick
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/candlestick/).
 
+    .highcharts-hollowcandlestick-series .highcharts-point-down
+    .highcharts-hollowcandlestick-series .highcharts-point-down-bearish-up
+    .highcharts-hollowcandlestick-series .highcharts-point-up
+
+Rules to differentiate between up or down points in Highcharts Stock hollow candlesticks.
+
+[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/hollow-candlestick/).
 
     .highcharts-color-{n}
 
@@ -243,7 +254,7 @@ Replaces [axis.minorGridLineColor](https://api.highcharts.com/highcharts/xAxis.
     .highcharts-navigator-handle-left
     .highcharts-navigator-handle-left
 
-Fills and strokes for the navigator handles in Highcharts Stock. Replaces [navigator.handles.backgroundColor](https://api.highcharts.com/highstock#navigator.handles.backgroundColor) and [navigator.handles.borderColor](https://api.highcharts.com/highstock#navigator.handles.borderColor).
+Fills and strokes for the navigator handles in Highcharts Stock. Replaces [navigator.handles.backgroundColor](https://api.highcharts.com/highstock/navigator.handles.backgroundColor) and [navigator.handles.borderColor](https://api.highcharts.com/highstock/navigator.handles.borderColor).
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
@@ -251,14 +262,14 @@ Fills and strokes for the navigator handles in Highcharts Stock. Replaces [navi
     .highcharts-navigator-mask-outside
     .highcharts-navigator-mask-inside
 
-Styles for the navigator mask in Highcharts Stock, the shaded element that shows the selected area. Replaces [navigator.maskFill](https://api.highcharts.com/highstock#navigator.maskFill).
+Styles for the navigator mask in Highcharts Stock, the shaded element that shows the selected area. Replaces [navigator.maskFill](https://api.highcharts.com/highstock/navigator.maskFill).
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
 
     .highcharts-navigator-outline
 
-Styles for the Highcharts Stock navigator outline, a path element that highlights the zoomed area. Replaces [navigator.outlineColor](https://api.highcharts.com/highstock#navigator.outlineColor) and [navigator.outlineWidth](https://api.highcharts.com/highstock#navigator.outlineWidth).
+Styles for the Highcharts Stock navigator outline, a path element that highlights the zoomed area. Replaces [navigator.outlineColor](https://api.highcharts.com/highstock/navigator.outlineColor) and [navigator.outlineWidth](https://api.highcharts.com/highstock/navigator.outlineWidth).
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
@@ -282,7 +293,7 @@ Styles for the label shown when no data is present in the chart (requires the _
 
     .highcharts-null-point
 
-Styles for null points in maps or heat maps. Replaces [plotOptions.map.nullColor](https://api.highcharts.com/highmaps#plotOptions.map.nullColor).
+Styles for null points in maps or heat maps. Replaces [plotOptions.map.nullColor](https://api.highcharts.com/highmaps/plotOptions.map.nullColor).
 
 
     .highcharts-ohlc-series .highcharts-point-up
@@ -362,21 +373,21 @@ Style the plot line labels. Use the _className_ option on each line to disting
 
     .highcharts-range-input text
 
-Text styling for the range selector input boxes in Highcharts Stock. Use _input.highcharts-range-selector_ for the HTML input (when the boxes are active). Replaces [rangeSelector.inputStyle](https://api.highcharts.com/highstock#rangeSelector.inputStyle).
+Text styling for the range selector input boxes in Highcharts Stock. Use _input.highcharts-range-selector_ for the HTML input (when the boxes are active). Replaces [rangeSelector.inputStyle](https://api.highcharts.com/highstock/rangeSelector.inputStyle).
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
 
     .highcharts-range-label
 
-Styles for the Highcharts Stock range selector labels saying "Zoom", "From" and "To". Replaces [rangeSelector.labelStyle](https://api.highcharts.com/highstock#rangeSelector.labelStyle).
+Styles for the Highcharts Stock range selector labels saying "Zoom", "From" and "To". Replaces [rangeSelector.labelStyle](https://api.highcharts.com/highstock/rangeSelector.labelStyle).
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
 
     .highcharts-range-selector-buttons
 
-Top level group for the Highcharts Stock range selector buttons. Replaces [rangeSelector.buttonTheme](https://api.highcharts.com/highstock#rangeSelector.buttonTheme).
+Top level group for the Highcharts Stock range selector buttons. Replaces [rangeSelector.buttonTheme](https://api.highcharts.com/highstock/rangeSelector.buttonTheme).
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
@@ -459,3 +470,8 @@ Styles for the tooltip. The tooltip box is the shape or path where the backgroun
 When [zones](https://api.highcharts.com/highcharts/plotOptions.series.zones) are applied, each zone is given a class name with its index. A custom _className_ option can also be set in the zone options. Replaces the color, dashStyle and fillColor options for zones.
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/color-zones/).
+
+
+### Compatibility note
+
+Prior to Highcharts v7, styled mode was served as a separate set of files. Instead of an option `chart.styledMode`, styled mode was enabled by loading files from the `/js/` folder on `code.highcharts.com`, in the zip file and in the npm package. These files are no longer maintained.

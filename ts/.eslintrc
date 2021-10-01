@@ -26,6 +26,8 @@
             "never"
         ],
         "consistent-return": 0,
+        "default-case": 0,
+        "dot-notation": 0,
         "function-paren-newline": 0,
         "func-style": 0,
         "indent": 0,
@@ -73,7 +75,14 @@
                 "allowTypedFunctionExpressions": false
             }
         ],
-        "@typescript-eslint/indent": ["error", 4, { "FunctionExpression": { "parameters": 1 }}],
+        "@typescript-eslint/indent": [
+            "error",
+            4,
+            {
+                "FunctionExpression": { "parameters": 1 },
+                "SwitchCase": 1
+            }
+        ],
         "@typescript-eslint/no-empty-function": 0, // @todo
         "@typescript-eslint/no-empty-interface": 0,
         "@typescript-eslint/no-explicit-any": 0,
@@ -89,13 +98,14 @@
         "@typescript-eslint/prefer-regexp-exec": 0, // @todo
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
         "@typescript-eslint/unbound-method": 0, // @todo
+        "highcharts/doclet-apioption-last": 2,
         "highcharts/no-highcharts-namespace": 1, // @todo
         "highcharts/no-highcharts-object": 2,
         "highcharts/no-mixin": 1, // @todo
         "highcharts/no-optional-chaining": 2,
         "highcharts/no-private-constructor-doclet": 0,
         "highcharts/no-wrap": 1, // @todo
-        "highcharts/doclet-apioption-last": 2,
+        "highcharts/quote-members": 2,
         "node/no-missing-import": 0, // @todo
         "node/no-unsupported-features/es-syntax": 0, // @todo
     }

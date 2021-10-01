@@ -12,15 +12,25 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Accessibility from '../Accessibility';
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
 import type { DOMElementType } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
-import HTMLUtilities from './HTMLUtilities.js';
-const {
-    stripHTMLTagsFromString: stripHTMLTags
-} = HTMLUtilities;
+import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
+import H from '../../Core/Globals.js';
+const { doc } = H;
+import HU from './HTMLUtilities.js';
+const { stripHTMLTagsFromString: stripHTMLTags } = HU;
 import U from '../../Core/Utilities.js';
 const {
     defined,
@@ -28,45 +38,43 @@ const {
     fireEvent
 } = U;
 
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface A11yChartUtilities {
-            getChartTitle(chart: Chart): string;
-            getAxisDescription(axis: Axis): string;
-            getAxisRangeDescription(axis: Axis): string;
-            getPointFromXY(
-                series: Array<Series>,
-                x: number,
-                y: number
-            ): (Point|undefined);
-            getSeriesFirstPointElement(
-                series: Series
-            ): (DOMElementType|undefined);
-            getSeriesFromName(chart: Chart, name: string): Array<Series>;
-            getSeriesA11yElement(
-                series: Series
-            ): (DOMElementType|undefined);
-            unhideChartElementFromAT(
-                chart: Chart,
-                element: DOMElementType
-            ): void;
-            hideSeriesFromAT(series: Series): void;
-            scrollToPoint(point: Point): void;
-        }
-    }
-}
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 
 /**
+ * Fire an event on an element that is either wrapped by Highcharts,
+ * or a DOM element
+ */
+function fireEventOnWrappedOrUnwrappedElement(
+    el: (HTMLElement|SVGElement|DOMElementType),
+    eventObject: Event
+): void {
+    const type = eventObject.type;
+    const hcEvents = (el as SVGElement).hcEvents;
+
+    if (doc.createEvent && ((el as Element).dispatchEvent || (el as SVGElement).fireEvent)) {
+        if (el.dispatchEvent) {
+            el.dispatchEvent(eventObject);
+        } else {
+            (el as SVGElement).fireEvent(type, eventObject);
+        }
+    } else if (hcEvents && hcEvents[type]) {
+        fireEvent(el, type, eventObject);
+    } else if ((el as SVGElement).element) {
+        fireEventOnWrappedOrUnwrappedElement((el as SVGElement).element, eventObject);
+    }
+}
+
+
+/**
  * @return {string}
  */
-function getChartTitle(chart: Highcharts.AccessibilityChart): string {
+function getChartTitle(chart: Accessibility.ChartComposition): string {
     return stripHTMLTags(
         chart.options.title.text ||
         chart.langFormat(
@@ -81,7 +89,7 @@ function getChartTitle(chart: Highcharts.AccessibilityChart): string {
  * @param {Highcharts.Axis} axis
  * @return {string}
  */
-function getAxisDescription(axis: Highcharts.Axis): string {
+function getAxisDescription(axis: Axis): string {
     return axis && (
         axis.userOptions && axis.userOptions.accessibility &&
             axis.userOptions.accessibility.description ||
@@ -99,7 +107,7 @@ function getAxisDescription(axis: Highcharts.Axis): string {
  * @param {Highcharts.Axis} axis The axis to get range desc of.
  * @return {string} A string with the range description for the axis.
  */
-function getAxisRangeDescription(axis: Highcharts.Axis): string {
+function getAxisRangeDescription(axis: Axis): string {
     const axisOptions = axis.options || {};
 
     // Handle overridden range description
@@ -131,7 +139,7 @@ function getAxisRangeDescription(axis: Highcharts.Axis): string {
  * @param {Highcharts.Axis} axis
  * @return {string}
  */
-function getCategoryAxisRangeDesc(axis: Highcharts.Axis): string {
+function getCategoryAxisRangeDesc(axis: Axis): string {
     const chart = axis.chart;
 
     if (axis.dataMax && axis.dataMin) {
@@ -154,9 +162,9 @@ function getCategoryAxisRangeDesc(axis: Highcharts.Axis): string {
  * @param {Highcharts.Axis} axis
  * @return {string}
  */
-function getAxisTimeLengthDesc(axis: Highcharts.Axis): string {
-    const chart = axis.chart;
-    const range: Record<string, number> = {};
+function getAxisTimeLengthDesc(axis: Axis): string {
+    const chart = axis.chart,
+        range: Record<string, number> = {};
     let rangeUnit = 'Seconds';
 
     range.Seconds = ((axis.max || 0) - (axis.min || 0)) / 1000;
@@ -192,19 +200,19 @@ function getAxisTimeLengthDesc(axis: Highcharts.Axis): string {
  * @param {Highcharts.Axis} axis
  * @return {string}
  */
-function getAxisFromToDescription(axis: Highcharts.Axis): string {
-    const chart = axis.chart;
-    const dateRangeFormat = (
-        chart.options &&
-        chart.options.accessibility &&
-        chart.options.accessibility.screenReaderSection.axisRangeDateFormat ||
-        ''
-    );
-    const format = function (axisKey: string): string {
-        return axis.dateTime ? chart.time.dateFormat(
-            dateRangeFormat, (axis as any)[axisKey]
-        ) : (axis as any)[axisKey];
-    };
+function getAxisFromToDescription(axis: Axis): string {
+    const chart = axis.chart,
+        dateRangeFormat = (
+            chart.options &&
+            chart.options.accessibility &&
+            chart.options.accessibility.screenReaderSection.axisRangeDateFormat ||
+            ''
+        ),
+        format = function (axisKey: string): string {
+            return axis.dateTime ? chart.time.dateFormat(
+                dateRangeFormat, (axis as any)[axisKey]
+            ) : (axis as any)[axisKey];
+        };
 
     return chart.langFormat(
         'accessibility.axis.rangeFromTo',
@@ -270,7 +278,11 @@ function getSeriesA11yElement(
  */
 function unhideChartElementFromAT(chart: Chart, element: DOMElementType): void {
     element.setAttribute('aria-hidden', false);
-    if (element === chart.renderTo || !element.parentNode) {
+    if (
+        element === chart.renderTo ||
+        !element.parentNode ||
+        element.parentNode === doc.body // #16126: Full screen printing
+    ) {
         return;
     }
 
@@ -284,7 +296,7 @@ function unhideChartElementFromAT(chart: Chart, element: DOMElementType): void {
         }
     );
     // Repeat for parent
-    unhideChartElementFromAT(chart, element.parentNode as any);
+    unhideChartElementFromAT(chart, element.parentNode);
 }
 
 
@@ -364,11 +376,11 @@ function getRelativePointAxisPosition(axis: Axis, point: Point): number {
         return 0;
     }
 
-    const axisStart = axis.toPixels(axis.dataMin);
-    const axisEnd = axis.toPixels(axis.dataMax);
-    // We have to use pixel position because of axis breaks, log axis etc.
-    const positionProp = axis.coll === 'xAxis' ? 'x' : 'y';
-    const pointPos = axis.toPixels(point[positionProp] || 0);
+    const axisStart = axis.toPixels(axis.dataMin),
+        axisEnd = axis.toPixels(axis.dataMax),
+        // We have to use pixel position because of axis breaks, log axis etc.
+        positionProp = axis.coll === 'xAxis' ? 'x' : 'y',
+        pointPos = axis.toPixels(point[positionProp] || 0);
 
     return (pointPos - axisStart) / (axisEnd - axisStart);
 }
@@ -380,10 +392,10 @@ function getRelativePointAxisPosition(axis: Axis, point: Point): number {
  * @param {Highcharts.Point} point
  */
 function scrollToPoint(point: Point): void {
-    const xAxis = point.series.xAxis;
-    const yAxis = point.series.yAxis;
-    const axis = (xAxis && xAxis.scrollbar ? xAxis : yAxis);
-    const scrollbar = (axis && axis.scrollbar);
+    const xAxis = point.series.xAxis,
+        yAxis = point.series.yAxis,
+        axis = (xAxis && xAxis.scrollbar ? xAxis : yAxis),
+        scrollbar = (axis && axis.scrollbar);
 
     if (scrollbar && defined(scrollbar.to) && defined(scrollbar.from)) {
         const range = scrollbar.to - scrollbar.from;
@@ -403,8 +415,14 @@ function scrollToPoint(point: Point): void {
     }
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
-const ChartUtilities: Highcharts.A11yChartUtilities = {
+const ChartUtilities = {
+    fireEventOnWrappedOrUnwrappedElement,
     getChartTitle,
     getAxisDescription,
     getAxisRangeDescription,

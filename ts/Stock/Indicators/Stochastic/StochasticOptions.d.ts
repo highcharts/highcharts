@@ -12,12 +12,13 @@
  *
  * */
 
+import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type MultipleLinesComposition from '../MultipleLinesComposition';
+import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from '../SMA/SMAOptions';
-import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
 
 /* *
  *
@@ -25,12 +26,11 @@ import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
  *
  * */
 
-export interface StochasticOptions extends SMAOptions, Highcharts.MultipleLinesIndicatorOptions{
+export interface StochasticOptions extends SMAOptions, MultipleLinesComposition.Options{
     dataGrouping?: Highcharts.DataGroupingOptionsObject;
     marker?: PointMarkerOptions;
     params?: StochasticParamsOptions;
     smoothedLine?: Record<string, CSSObject>;
-    tooltip?: Highcharts.TooltipOptions;
 }
 
 export interface StochasticParamsOptions extends SMAParamsOptions {

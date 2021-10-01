@@ -12,11 +12,13 @@
 
 'use strict';
 
-import type Chart from '../Core/Chart/Chart';
+import type Accessibility from './Accessibility';
 import type {
     DOMElementType,
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
+
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
     doc,
@@ -49,10 +51,10 @@ declare global {
         class KeyboardNavigation {
             public constructor(
                 chart: Chart,
-                components: AccessibilityComponentsObject
+                components: Accessibility.ComponentsObject
             );
             public chart: Chart;
-            public components: AccessibilityComponentsObject;
+            public components: Accessibility.ComponentsObject;
             public currentModuleIx: number;
             public eventProvider: EventProvider;
             public exitAnchor: DOMElementType;
@@ -68,7 +70,7 @@ declare global {
             public destroy(): void;
             public init(
                 chart: Chart,
-                components: AccessibilityComponentsObject
+                components: Accessibility.ComponentsObject
             ): void;
             public makeElementAnExitAnchor(el: DOMElementType): void;
             public move(direction: number): boolean;
@@ -105,7 +107,7 @@ addEvent(doc, 'keydown', (e: KeyboardEvent): void => {
 /**
  * Dismiss popup content in chart, including export menu and tooltip.
  */
-H.Chart.prototype.dismissPopupContent = function (): void {
+Chart.prototype.dismissPopupContent = function (): void {
     const chart = this;
 
     fireEvent(this, 'dismissPopupContent', {}, function (): void {
@@ -134,7 +136,7 @@ H.Chart.prototype.dismissPopupContent = function (): void {
 function KeyboardNavigation(
     this: Highcharts.KeyboardNavigation,
     chart: Chart,
-    components: Highcharts.AccessibilityComponentsObject
+    components: Accessibility.ComponentsObject
 ): void {
     this.init(chart, components);
 }
@@ -151,7 +153,7 @@ KeyboardNavigation.prototype = {
     init: function (
         this: Highcharts.KeyboardNavigation,
         chart: Chart,
-        components: Highcharts.AccessibilityComponentsObject
+        components: Accessibility.ComponentsObject
     ): void {
         const ep = this.eventProvider = new EventProvider();
 
@@ -160,7 +162,6 @@ KeyboardNavigation.prototype = {
         this.modules = [];
         this.currentModuleIx = 0;
 
-        // Run an update to get all modules
         this.update();
 
         ep.addEvent(this.tabindexContainer, 'keydown',
@@ -186,11 +187,6 @@ KeyboardNavigation.prototype = {
         ep.addEvent(chart.renderTo, 'mouseout', (): void => {
             this.pointerIsOverChart = false;
         });
-
-        // Init first module
-        if (this.modules.length) {
-            this.modules[0].init(1);
-        }
     },
 
 
@@ -201,7 +197,7 @@ KeyboardNavigation.prototype = {
      */
     update: function (
         this: Highcharts.KeyboardNavigation,
-        order?: Array<(keyof Highcharts.AccessibilityComponentsObject)>
+        order?: Array<(keyof Accessibility.ComponentsObject)>
     ): void {
         const a11yOptions = this.chart.options.accessibility,
             keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
@@ -218,7 +214,7 @@ KeyboardNavigation.prototype = {
             // We (still) have keyboard navigation. Update module list
             this.modules = order.reduce(function (
                 modules: Array<Highcharts.KeyboardNavigationHandler>,
-                componentName: keyof Highcharts.AccessibilityComponentsObject
+                componentName: keyof Accessibility.ComponentsObject
             ): Array<Highcharts.KeyboardNavigationHandler> {
                 const navModules = components[componentName].getKeyboardNavigation();
                 return modules.concat(navModules);

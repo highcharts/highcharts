@@ -54,6 +54,13 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../Core/Chart/ChartOptions'{
+    interface ChartOptions {
+        /** @requires modules/map */
+        proj4?: any;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -74,10 +81,6 @@ declare global {
         interface MapLatLonObject {
             lat: number;
             lon: number;
-        }
-        interface ChartOptions {
-            /** @requires modules/map */
-            proj4?: any;
         }
         interface GeoJSON {
             copyright?: string;
@@ -642,7 +645,7 @@ H.geojson = function (
 wrap(Chart.prototype, 'addCredits', function (
     this: Chart,
     proceed: Function,
-    credits: Highcharts.CreditsOptions
+    credits: Chart.CreditsOptions
 ): void {
 
     credits = merge(true, this.options.credits, credits);

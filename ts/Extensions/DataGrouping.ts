@@ -10,7 +10,8 @@
 
 'use strict';
 
-import type { AxisType } from '../Core/Axis/Types';
+import type AxisType from '../Core/Axis/AxisType';
+import type IndicatorLike from '../Stock/Indicators/IndicatorLike';
 import type {
     PointOptions,
     PointShortOptions
@@ -20,6 +21,7 @@ import type {
     SeriesTypePlotOptions
 } from '../Core/Series/SeriesType';
 import type TimeTicksInfoObject from '../Core/Axis/TimeTicksInfoObject';
+
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import F from '../Core/FormatUtilities.js';
@@ -29,7 +31,7 @@ import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import Tooltip from '../Core/Tooltip.js';
-import O from '../Core/Options.js';
+import D from '../Core/DefaultOptions.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -44,6 +46,17 @@ const {
     pick
 } = U;
 
+declare module '../Core/Axis/AxisLike' {
+    interface AxisLike {
+        applyGrouping(): void;
+        getGroupPixelWidth(): number;
+        setDataGrouping(
+            dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
+            redraw?: boolean
+        ): void;
+    }
+}
+
 declare module '../Core/Axis/TimeTicksInfoObject' {
     interface TimeTicksInfoObject {
         gapSize?: number;
@@ -52,6 +65,7 @@ declare module '../Core/Axis/TimeTicksInfoObject' {
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
+        allGroupedData?: Array<(number|null|undefined)>|Array<Array<(number|null|undefined)>>;
         cropStart?: number;
         currentDataGrouping?: TimeTicksInfoObject;
         dataGroupInfo?: Highcharts.DataGroupingInfoObject;
@@ -62,6 +76,7 @@ declare module '../Core/Series/SeriesLike' {
         hasGroupedData?: boolean;
         hasProcessed?: boolean;
         preventGraphAnimation?: boolean;
+        applyGrouping(): void;
         destroyGroupedData(): void;
         generatePoints(): void;
         getDGApproximation(): string;
@@ -86,13 +101,6 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            getGroupPixelWidth(): number;
-            setDataGrouping(
-                dataGrouping?: (boolean|DataGroupingOptionsObject),
-                redraw?: boolean
-            ): void;
-        }
         interface DataGroupingApproximationsArray extends Array<number> {
             hasNulls?: boolean;
         }
@@ -120,6 +128,11 @@ declare global {
             sum: (
                 arr: DataGroupingApproximationsArray
             ) => (null|number|undefined);
+            hlc: (
+                high: DataGroupingApproximationsArray,
+                low: DataGroupingApproximationsArray,
+                close: DataGroupingApproximationsArray
+            ) => ([number, number, number]|undefined);
             ohlc: (
                 open: DataGroupingApproximationsArray,
                 high: DataGroupingApproximationsArray,
@@ -166,7 +179,7 @@ declare global {
         let defaultDataGroupingUnits: Array<[string, (Array<number>|null)]>;
         type DataGroupingApproximationValue = (
             'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'|
-            'windbarb'|'ichimoku-averages'
+            'windbarb'|'ichimoku-averages'|'hlc'
         );
         type DataGroupingAnchor = ('start'|'middle'|'end');
         type DataGroupingAnchorExtremes = ('start'|'middle'|'end'|'firstPoint'|'lastPoint');
@@ -209,6 +222,17 @@ declare global {
 
 import '../Core/Axis/Axis.js';
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        dataGroup?: Highcharts.DataGroupingInfoObject;
+    }
+}
 
 /* ************************************************************************** *
  *  Start data grouping module                                                *
@@ -307,8 +331,25 @@ H.approximations = {
             arr[arr.length - 1] :
             (arr.hasNulls ? null : void 0);
     },
-    // ohlc and range are special cases where a multidimensional array is
-    // input and an array is output
+    // HLC, OHLC and range are special cases where a multidimensional array is
+    // input and an array is output.
+    hlc: function (
+        high: Highcharts.DataGroupingApproximationsArray,
+        low: Highcharts.DataGroupingApproximationsArray,
+        close: Highcharts.DataGroupingApproximationsArray
+    ): ([number, number, number]|undefined) {
+        high = approximations.high(high) as any;
+        low = approximations.low(low) as any;
+        close = approximations.close(close) as any;
+
+        if (
+            isNumber(high) ||
+            isNumber(low) ||
+            isNumber(close)
+        ) {
+            return [high, low, close] as any;
+        }
+    },
     ohlc: function (
         open: Highcharts.DataGroupingApproximationsArray,
         high: Highcharts.DataGroupingApproximationsArray,
@@ -328,7 +369,7 @@ H.approximations = {
         ) {
             return [open, high, low, close] as any;
         }
-        // else, return is undefined
+
     },
     range: function (
         low: Highcharts.DataGroupingApproximationsArray,
@@ -343,6 +384,184 @@ H.approximations = {
             return null;
         }
         // else, return is undefined
+    }
+};
+
+const applyGrouping = function (this: Series): void {
+    let series = this,
+        chart = series.chart,
+        options = series.options,
+        dataGroupingOptions = options.dataGrouping,
+        groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
+            pick(dataGroupingOptions.enabled, chart.options.isStock),
+        visible = (
+            series.visible || !chart.options.chart.ignoreHiddenSeries
+        ),
+        hasGroupedData,
+        skip,
+        lastDataGrouping = this.currentDataGrouping,
+        currentDataGrouping,
+        croppedData,
+        revertRequireSorting = false;
+
+    // Data needs to be sorted for dataGrouping
+    if (groupingEnabled && !series.requireSorting) {
+        series.requireSorting = revertRequireSorting = true;
+    }
+
+    // Skip if processData returns false or if grouping is disabled (in that
+    // order)
+    skip = skipDataGrouping(series) || !groupingEnabled;
+
+    // Revert original requireSorting value if changed
+    if (revertRequireSorting) {
+        series.requireSorting = false;
+    }
+
+    if (!skip) {
+        series.destroyGroupedData();
+
+        let i,
+            processedXData = (dataGroupingOptions as any).groupAll ?
+                series.xData :
+                series.processedXData,
+            processedYData = (dataGroupingOptions as any).groupAll ?
+                series.yData :
+                series.processedYData,
+            plotSizeX = chart.plotSizeX,
+            xAxis = series.xAxis,
+            ordinal = xAxis.options.ordinal,
+            groupPixelWidth = series.groupPixelWidth;
+
+        // Execute grouping if the amount of points is greater than the limit
+        // defined in groupPixelWidth
+        if (
+            groupPixelWidth &&
+            processedXData &&
+            processedXData.length
+        ) {
+            hasGroupedData = true;
+
+            // Force recreation of point instances in series.translate, #5699
+            series.isDirty = true;
+            series.points = null as any; // #6709
+
+            let extremes = xAxis.getExtremes(),
+                xMin = extremes.min,
+                xMax = extremes.max,
+                groupIntervalFactor = (
+                    ordinal &&
+                    xAxis.ordinal &&
+                    xAxis.ordinal.getGroupIntervalFactor(xMin, xMax, series)
+                ) || 1,
+                interval =
+                    (groupPixelWidth * (xMax - xMin) / (plotSizeX as any)) *
+                    groupIntervalFactor,
+                groupPositions = xAxis.getTimeTicks(
+                    DateTimeAxis.Additions.prototype.normalizeTimeTickInterval(
+                        interval,
+                        (dataGroupingOptions as any).units ||
+                        defaultDataGroupingUnits
+                    ),
+                    // Processed data may extend beyond axis (#4907)
+                    Math.min(xMin, processedXData[0]),
+                    Math.max(
+                        xMax,
+                        processedXData[processedXData.length - 1]
+                    ),
+                    xAxis.options.startOfWeek,
+                    processedXData,
+                    series.closestPointRange
+                ),
+                groupedData = seriesProto.groupData.apply(
+                    series,
+                    [
+                        processedXData,
+                        processedYData as any,
+                        groupPositions,
+                        (dataGroupingOptions as any).approximation
+                    ]
+                ),
+                groupedXData = groupedData.groupedXData,
+                groupedYData = groupedData.groupedYData,
+                gapSize = 0;
+
+            // The smoothed option is deprecated, instead,
+            // there is a fallback to the new anchoring mechanism. #12455.
+            if (dataGroupingOptions && dataGroupingOptions.smoothed && groupedXData.length) {
+                dataGroupingOptions.firstAnchor = 'firstPoint';
+                dataGroupingOptions.anchor = 'middle';
+                dataGroupingOptions.lastAnchor = 'lastPoint';
+
+                error(32, false, chart, { 'dataGrouping.smoothed': 'use dataGrouping.anchor' });
+            }
+
+            anchorPoints(series, groupedXData, xMax);
+
+            // Record what data grouping values were used
+            for (i = 1; i < groupPositions.length; i++) {
+                // The grouped gapSize needs to be the largest distance between
+                // the group to capture varying group sizes like months or DST
+                // crossing (#10000). Also check that the gap is not at the
+                // start of a segment.
+                if (!(groupPositions.info as any).segmentStarts ||
+                    (groupPositions.info as any).segmentStarts.indexOf(i) === -1
+                ) {
+                    gapSize = Math.max(
+                        groupPositions[i] - groupPositions[i - 1],
+                        gapSize
+                    );
+                }
+            }
+            currentDataGrouping = groupPositions.info;
+            (currentDataGrouping as any).gapSize = gapSize;
+            series.closestPointRange = (groupPositions.info as any).totalRange;
+            series.groupMap = groupedData.groupMap;
+
+            if (visible) {
+                adjustExtremes(xAxis, groupedXData);
+            }
+
+            // We calculated all group positions but we should render
+            // only the ones within the visible range
+            if ((dataGroupingOptions as any).groupAll) {
+                // Keep the reference to all grouped points
+                // for further calculation (eg. heikinashi).
+                series.allGroupedData = groupedYData;
+
+                croppedData = series.cropData(
+                    groupedXData,
+                    groupedYData as any,
+                    xAxis.min as any,
+                    xAxis.max as any,
+                    1 // Ordinal xAxis will remove left-most points otherwise
+                );
+                groupedXData = croppedData.xData;
+                groupedYData = croppedData.yData;
+                series.cropStart = croppedData.start; // #15005
+            }
+            // Set series props
+            series.processedXData = groupedXData;
+            series.processedYData = groupedYData as any;
+        } else {
+            series.groupMap = null as any;
+        }
+        series.hasGroupedData = hasGroupedData;
+        series.currentDataGrouping = currentDataGrouping;
+
+        series.preventGraphAnimation =
+            (lastDataGrouping && lastDataGrouping.totalRange) !==
+            (currentDataGrouping && currentDataGrouping.totalRange);
+    }
+};
+
+const skipDataGrouping = function (series: Series): void|false {
+    if (series.isCartesian &&
+        !series.isDirty &&
+        !series.xAxis.isDirty &&
+        !series.yAxis.isDirty
+    ) {
+        return false;
     }
 };
 
@@ -733,6 +952,13 @@ const baseProcessData = seriesProto.processData,
         },
         ohlc: {
             groupPixelWidth: 5
+        },
+        hlc: {
+            groupPixelWidth: 5
+        // Move to HeikinAshiSeries.ts aftre refactoring data grouping.
+        },
+        heikinashi: {
+            groupPixelWidth: 10
         }
     } as SeriesTypePlotOptions,
 
@@ -776,6 +1002,9 @@ seriesProto.getDGApproximation = function (): string {
     if (this.is('ohlc')) {
         return 'ohlc';
     }
+    if (this.is('hlc')) {
+        return 'hlc';
+    }
     if (this.is('column')) {
         return 'sum';
     }
@@ -801,180 +1030,16 @@ seriesProto.getDGApproximation = function (): string {
  */
 seriesProto.groupData = groupData;
 
-// Extend the basic processData method, that crops the data to the current zoom
-// range, with data grouping logic.
-seriesProto.processData = function (): any {
-    let series = this,
-        chart = series.chart,
-        options = series.options,
-        dataGroupingOptions = options.dataGrouping,
-        groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
-            pick(dataGroupingOptions.enabled, chart.options.isStock),
-        visible = (
-            series.visible || !chart.options.chart.ignoreHiddenSeries
-        ),
-        hasGroupedData,
-        skip,
-        lastDataGrouping = this.currentDataGrouping,
-        currentDataGrouping,
-        croppedData,
-        revertRequireSorting = false;
+/**
+ * For the processed data, calculate the grouped data if needed.
+ *
+ * @private
+ * @function Highcharts.Series#applyGrouping
+ *
+ * @return {void}
+ */
+seriesProto.applyGrouping = applyGrouping;
 
-    // Run base method
-    series.forceCrop = groupingEnabled; // #334
-    series.groupPixelWidth = null as any; // #2110
-    series.hasProcessed = true; // #2692
-
-    // Data needs to be sorted for dataGrouping
-    if (groupingEnabled && !series.requireSorting) {
-        series.requireSorting = revertRequireSorting = true;
-    }
-
-    // Skip if processData returns false or if grouping is disabled (in that
-    // order)
-    skip = (
-        baseProcessData.apply(series, arguments as any) === false ||
-        !groupingEnabled
-    );
-
-    // Revert original requireSorting value if changed
-    if (revertRequireSorting) {
-        series.requireSorting = false;
-    }
-
-    if (!skip) {
-        series.destroyGroupedData();
-
-        let i,
-            processedXData = (dataGroupingOptions as any).groupAll ?
-                series.xData :
-                series.processedXData,
-            processedYData = (dataGroupingOptions as any).groupAll ?
-                series.yData :
-                series.processedYData,
-            plotSizeX = chart.plotSizeX,
-            xAxis = series.xAxis,
-            ordinal = xAxis.options.ordinal,
-            groupPixelWidth = series.groupPixelWidth =
-                xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth();
-
-        // Execute grouping if the amount of points is greater than the limit
-        // defined in groupPixelWidth
-        if (
-            groupPixelWidth &&
-            processedXData &&
-            processedXData.length
-        ) {
-            hasGroupedData = true;
-
-            // Force recreation of point instances in series.translate, #5699
-            series.isDirty = true;
-            series.points = null as any; // #6709
-
-            let extremes = xAxis.getExtremes(),
-                xMin = extremes.min,
-                xMax = extremes.max,
-                groupIntervalFactor = (
-                    ordinal &&
-                    xAxis.ordinal &&
-                    xAxis.ordinal.getGroupIntervalFactor(xMin, xMax, series)
-                ) || 1,
-                interval =
-                    (groupPixelWidth * (xMax - xMin) / (plotSizeX as any)) *
-                    groupIntervalFactor,
-                groupPositions = xAxis.getTimeTicks(
-                    DateTimeAxis.AdditionsClass.prototype.normalizeTimeTickInterval(
-                        interval,
-                        (dataGroupingOptions as any).units ||
-                        defaultDataGroupingUnits
-                    ),
-                    // Processed data may extend beyond axis (#4907)
-                    Math.min(xMin, processedXData[0]),
-                    Math.max(
-                        xMax,
-                        processedXData[processedXData.length - 1]
-                    ),
-                    xAxis.options.startOfWeek,
-                    processedXData,
-                    series.closestPointRange
-                ),
-                groupedData = seriesProto.groupData.apply(
-                    series,
-                    [
-                        processedXData,
-                        processedYData as any,
-                        groupPositions,
-                        (dataGroupingOptions as any).approximation
-                    ]
-                ),
-                groupedXData = groupedData.groupedXData,
-                groupedYData = groupedData.groupedYData,
-                gapSize = 0;
-
-            // The smoothed option is deprecated, instead,
-            // there is a fallback to the new anchoring mechanism. #12455.
-            if (dataGroupingOptions && dataGroupingOptions.smoothed && groupedXData.length) {
-                dataGroupingOptions.firstAnchor = 'firstPoint';
-                dataGroupingOptions.anchor = 'middle';
-                dataGroupingOptions.lastAnchor = 'lastPoint';
-
-                error(32, false, chart, { 'dataGrouping.smoothed': 'use dataGrouping.anchor' });
-            }
-
-            anchorPoints(series, groupedXData, xMax);
-
-            // Record what data grouping values were used
-            for (i = 1; i < groupPositions.length; i++) {
-                // The grouped gapSize needs to be the largest distance between
-                // the group to capture varying group sizes like months or DST
-                // crossing (#10000). Also check that the gap is not at the
-                // start of a segment.
-                if (!(groupPositions.info as any).segmentStarts ||
-                    (groupPositions.info as any).segmentStarts.indexOf(i) === -1
-                ) {
-                    gapSize = Math.max(
-                        groupPositions[i] - groupPositions[i - 1],
-                        gapSize
-                    );
-                }
-            }
-            currentDataGrouping = groupPositions.info;
-            (currentDataGrouping as any).gapSize = gapSize;
-            series.closestPointRange = (groupPositions.info as any).totalRange;
-            series.groupMap = groupedData.groupMap;
-
-            if (visible) {
-                adjustExtremes(xAxis, groupedXData);
-            }
-
-            // We calculated all group positions but we should render
-            // only the ones within the visible range
-            if ((dataGroupingOptions as any).groupAll) {
-                croppedData = series.cropData(
-                    groupedXData,
-                    groupedYData as any,
-                    xAxis.min as any,
-                    xAxis.max as any,
-                    1 // Ordinal xAxis will remove left-most points otherwise
-                );
-                groupedXData = croppedData.xData;
-                groupedYData = croppedData.yData;
-                series.cropStart = croppedData.start; // #15005
-            }
-            // Set series props
-            series.processedXData = groupedXData;
-            series.processedYData = groupedYData as any;
-        } else {
-            series.groupMap = null as any;
-        }
-        series.hasGroupedData = hasGroupedData;
-        series.currentDataGrouping = currentDataGrouping;
-
-        series.preventGraphAnimation =
-            (lastDataGrouping && lastDataGrouping.totalRange) !==
-            (currentDataGrouping && currentDataGrouping.totalRange);
-    }
-};
 
 // Destroy the grouped data points. #622, #740
 seriesProto.destroyGroupedData = function (): void {
@@ -1009,6 +1074,151 @@ seriesProto.generatePoints = function (): void {
     this.groupedData = this.hasGroupedData ? this.points : null;
 };
 
+/**
+ * Check the groupPixelWidth and apply the grouping if needed.
+ * Fired only after processing the data.
+ *
+ * @product highstock
+ *
+ * @function Highcharts.Axis#applyGrouping
+ */
+Axis.prototype.applyGrouping = function (this: Axis): void {
+    const axis = this,
+        series = axis.series;
+
+    series.forEach(function (series): void {
+        // Reset the groupPixelWidth, then calculate if needed.
+        series.groupPixelWidth = void 0; // #2110
+
+        series.groupPixelWidth = axis.getGroupPixelWidth && axis.getGroupPixelWidth();
+
+        if (series.groupPixelWidth) {
+            series.hasProcessed = true; // #2692
+        }
+
+        // Fire independing on series.groupPixelWidth to always set a proper
+        // dataGrouping state, (#16238)
+        series.applyGrouping();
+    });
+};
+
+// Get the data grouping pixel width based on the greatest defined individual
+// width of the axis' series, and if whether one of the axes need grouping.
+Axis.prototype.getGroupPixelWidth = function (): number {
+
+    let series = this.series,
+        len = series.length,
+        i,
+        groupPixelWidth = 0,
+        doGrouping = false,
+        dataLength,
+        dgOptions;
+
+    // If multiple series are compared on the same x axis, give them the same
+    // group pixel width (#334)
+    i = len;
+    while (i--) {
+        dgOptions = series[i].options.dataGrouping;
+        if (dgOptions) {
+            groupPixelWidth = Math.max(
+                groupPixelWidth,
+                // Fallback to commonOptions (#9693)
+                pick(dgOptions.groupPixelWidth, commonOptions.groupPixelWidth)
+            );
+
+        }
+    }
+
+    // If one of the series needs grouping, apply it to all (#1634)
+    i = len;
+    while (i--) {
+        dgOptions = series[i].options.dataGrouping;
+
+        if (dgOptions) { // #2692
+
+            dataLength = (series[i].processedXData || series[i].data).length;
+
+            // Execute grouping if the amount of points is greater than the
+            // limit defined in groupPixelWidth
+            if (
+                series[i].groupPixelWidth ||
+                dataLength >
+                ((this.chart.plotSizeX as any) / groupPixelWidth) ||
+                (dataLength && dgOptions.forced)
+            ) {
+                doGrouping = true;
+            }
+        }
+    }
+
+    return doGrouping ? groupPixelWidth : 0;
+};
+
+/**
+ * Highcharts Stock only. Force data grouping on all the axis' series.
+ *
+ * @product highstock
+ *
+ * @function Highcharts.Axis#setDataGrouping
+ *
+ * @param {boolean|Highcharts.DataGroupingOptionsObject} [dataGrouping]
+ *        A `dataGrouping` configuration. Use `false` to disable data grouping
+ *        dynamically.
+ *
+ * @param {boolean} [redraw=true]
+ *        Whether to redraw the chart or wait for a later call to
+ *        {@link Chart#redraw}.
+ */
+Axis.prototype.setDataGrouping = function (
+    this: Axis,
+    dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
+    redraw?: boolean
+): void {
+    const axis = this as AxisType;
+
+    let i;
+
+    redraw = pick(redraw, true);
+
+    if (!dataGrouping) {
+        dataGrouping = {
+            forced: false,
+            units: null as any
+        } as Highcharts.DataGroupingOptionsObject;
+    }
+
+    // Axis is instantiated, update all series
+    if (this instanceof Axis) {
+        i = this.series.length;
+        while (i--) {
+            this.series[i].update({
+                dataGrouping: dataGrouping as any
+            }, false);
+        }
+
+    // Axis not yet instanciated, alter series options
+    } else {
+        (this as any).chart.options.series.forEach(function (
+            seriesOptions: any
+        ): void {
+            seriesOptions.dataGrouping = dataGrouping;
+        }, false);
+    }
+
+    // Clear ordinal slope, so we won't accidentaly use the old one (#7827)
+    if (axis.ordinal) {
+        axis.ordinal.slope = void 0;
+    }
+
+    if (redraw) {
+        this.chart.redraw();
+    }
+};
+
+// When all series are processed, calculate the group pixel width and then
+// if this value is different than zero apply groupings.
+addEvent(Axis, 'postProcessData', Axis.prototype.applyGrouping);
+
 // Override point prototype to throw a warning when trying to update grouped
 // points.
 addEvent(Point, 'update', function (): (boolean|undefined) {
@@ -1021,7 +1231,7 @@ addEvent(Point, 'update', function (): (boolean|undefined) {
 // Extend the original method, make the tooltip's header reflect the grouped
 // range.
 addEvent(Tooltip, 'headerFormatter', function (
-    this: Highcharts.Tooltip,
+    this: Tooltip,
     e: AnyRecord
 ): void {
     let tooltip = this,
@@ -1039,8 +1249,8 @@ addEvent(Tooltip, 'headerFormatter', function (
         dateTimeLabelFormats,
         labelFormats,
         formattedKey,
-        formatString = (tooltipOptions as any)[
-            (e.isFooter ? 'footer' : 'header') + 'Format'
+        formatString = tooltipOptions[
+            e.isFooter ? 'footerFormat' : 'headerFormat'
         ];
 
     // apply only to grouped series
@@ -1071,11 +1281,11 @@ addEvent(Tooltip, 'headerFormatter', function (
         // if not grouped, and we don't have set the xDateFormat option, get the
         // best fit, so if the least distance between points is one minute, show
         // it, but if the least distance is one day, skip hours and minutes etc.
-        } else if (!xDateFormat && dateTimeLabelFormats) {
-            xDateFormat = tooltip.getXDateFormat(
-                labelConfig,
-                tooltipOptions,
-                xAxis
+        } else if (!xDateFormat && dateTimeLabelFormats && xAxis.dateTime) {
+            xDateFormat = xAxis.dateTime.getXDateFormat(
+                labelConfig.x,
+                tooltipOptions.dateTimeLabelFormats
+
             );
         }
 
@@ -1121,10 +1331,10 @@ addEvent(Series, 'afterSetOptions', function (
         type = this.type,
         plotOptions: SeriesTypePlotOptions = this.chart.options.plotOptions as any,
         defaultOptions: Highcharts.DataGroupingOptionsObject =
-            (O.defaultOptions.plotOptions as any)[type].dataGrouping,
+            (D.defaultOptions.plotOptions as any)[type].dataGrouping,
         // External series, for example technical indicators should also
         // inherit commonOptions which are not available outside this module
-        baseOptions = this.useCommonDataGrouping && commonOptions;
+        baseOptions = (this as IndicatorLike).useCommonDataGrouping && commonOptions;
 
     if (specificOptions[type] || baseOptions) { // #1284
         if (!defaultOptions) {
@@ -1156,121 +1366,6 @@ addEvent(Axis, 'afterSetScale', function (): void {
         series.hasProcessed = false;
     });
 });
-
-// Get the data grouping pixel width based on the greatest defined individual
-// width of the axis' series, and if whether one of the axes need grouping.
-Axis.prototype.getGroupPixelWidth = function (this: Highcharts.Axis): number {
-
-    let series = this.series,
-        len = series.length,
-        i,
-        groupPixelWidth = 0,
-        doGrouping = false,
-        dataLength,
-        dgOptions;
-
-    // If multiple series are compared on the same x axis, give them the same
-    // group pixel width (#334)
-    i = len;
-    while (i--) {
-        dgOptions = series[i].options.dataGrouping;
-        if (dgOptions) {
-            groupPixelWidth = Math.max(
-                groupPixelWidth,
-                // Fallback to commonOptions (#9693)
-                pick(dgOptions.groupPixelWidth, commonOptions.groupPixelWidth)
-            );
-
-        }
-    }
-
-    // If one of the series needs grouping, apply it to all (#1634)
-    i = len;
-    while (i--) {
-        dgOptions = series[i].options.dataGrouping;
-
-        if (dgOptions && series[i].hasProcessed) { // #2692
-
-            dataLength = (series[i].processedXData || series[i].data).length;
-
-            // Execute grouping if the amount of points is greater than the
-            // limit defined in groupPixelWidth
-            if (
-                series[i].groupPixelWidth ||
-                dataLength >
-                ((this.chart.plotSizeX as any) / groupPixelWidth) ||
-                (dataLength && dgOptions.forced)
-            ) {
-                doGrouping = true;
-            }
-        }
-    }
-
-    return doGrouping ? groupPixelWidth : 0;
-};
-
-/**
- * Highcharts Stock only. Force data grouping on all the axis' series.
- *
- * @product highstock
- *
- * @function Highcharts.Axis#setDataGrouping
- *
- * @param {boolean|Highcharts.DataGroupingOptionsObject} [dataGrouping]
- *        A `dataGrouping` configuration. Use `false` to disable data grouping
- *        dynamically.
- *
- * @param {boolean} [redraw=true]
- *        Whether to redraw the chart or wait for a later call to
- *        {@link Chart#redraw}.
- *
- * @return {void}
- */
-Axis.prototype.setDataGrouping = function (
-    this: Highcharts.Axis,
-    dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
-    redraw?: boolean
-): void {
-    const axis = this as AxisType;
-
-    let i;
-
-    redraw = pick(redraw, true);
-
-    if (!dataGrouping) {
-        dataGrouping = {
-            forced: false,
-            units: null as any
-        } as Highcharts.DataGroupingOptionsObject;
-    }
-
-    // Axis is instantiated, update all series
-    if (this instanceof Axis) {
-        i = this.series.length;
-        while (i--) {
-            this.series[i].update({
-                dataGrouping: dataGrouping as any
-            }, false);
-        }
-
-    // Axis not yet instanciated, alter series options
-    } else {
-        (this as any).chart.options.series.forEach(function (
-            seriesOptions: any
-        ): void {
-            seriesOptions.dataGrouping = dataGrouping;
-        }, false);
-    }
-
-    // Clear ordinal slope, so we won't accidentaly use the old one (#7827)
-    if (axis.ordinal) {
-        axis.ordinal.slope = void 0;
-    }
-
-    if (redraw) {
-        this.chart.redraw();
-    }
-};
 
 H.dataGrouping = dataGrouping;
 export default dataGrouping;
@@ -1350,7 +1445,7 @@ export default dataGrouping;
  * from the raw data.
  *
  * Defaults to `average` for line-type series, `sum` for columns, `range`
- * for range series and `ohlc` for OHLC and candlestick.
+ * for range series, `hlc` for HLC, and `ohlc` for OHLC and candlestick.
  *
  * @sample {highstock} stock/plotoptions/series-datagrouping-approximation
  *         Approximation callback with custom data

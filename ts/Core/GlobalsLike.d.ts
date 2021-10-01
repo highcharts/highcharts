@@ -15,6 +15,7 @@
  * */
 
 import type Chart from './Chart/Chart';
+import type Options from './Options';
 import type { SeriesTypeRegistry } from './Series/SeriesType';
 import type SizeObject from './Renderer/SizeObject';
 import type Time from './Time';
@@ -26,77 +27,15 @@ import type Time from './Time';
  * */
 
 /**
- * Deprecated API
- * @private
- */
-declare global {
-    /**
-     * [[include:README.md]]
-     * @deprecated
-     * @todo remove
-     */
-    namespace Highcharts {
-        // @todo remove
-    }
-    interface Document {
-        /** @deprecated */
-        exitFullscreen: () => Promise<void>;
-        /** @deprecated */
-        mozCancelFullScreen: Function;
-        /** @deprecated */
-        msExitFullscreen: Function;
-        /** @deprecated */
-        msHidden: boolean;
-        /** @deprecated */
-        webkitExitFullscreen: Function;
-        /** @deprecated */
-        webkitHidden: boolean;
-    }
-    interface Element {
-        /** @deprecated */
-        currentStyle?: ElementCSSInlineStyle;
-        /** @deprecated */
-        mozRequestFullScreen: Function;
-        /** @deprecated */
-        msMatchesSelector: Element['matches'];
-        /** @deprecated */
-        msRequestFullscreen: Function;
-        /** @deprecated */
-        webkitMatchesSelector: Element['matches'];
-        /** @deprecated */
-        webkitRequestFullScreen: Function;
-    }
-    interface PointerEvent {
-        /** @deprecated */
-        readonly toElement: Element;
-    }
-    interface Window {
-        /** @deprecated */
-        createObjectURL?: (typeof URL)['createObjectURL'];
-        /** @deprecated */
-        opera?: unknown;
-        /** @deprecated */
-        webkitAudioContext?: typeof AudioContext;
-        /** @deprecated */
-        webkitURL?: typeof URL;
-    }
-}
-
-/**
- * @deprecated
- * @todo remove
- */
-export type InternalNamespace = typeof Highcharts;
-
-/**
  * Helper interface to add property types to `Globals`.
  *
  * Use the `declare module 'GlobalsLike'` pattern to overload the interface in
  * this definition file.
  */
-export interface GlobalsLike extends InternalNamespace {
+export interface GlobalsLike {
     readonly Obj: ObjectConstructor;
     readonly SVG_NS: string;
+    chartCount: number;
     readonly charts: Array<(Chart|undefined)>;
     readonly dateFormats: Record<string, Time.TimeFormatCallbackFunction>;
     readonly deg2rad: number;
@@ -117,11 +56,17 @@ export interface GlobalsLike extends InternalNamespace {
     readonly supportsPassiveEvents: boolean;
     readonly svg: boolean;
     readonly symbolSizes: Record<string, SizeObject>;
-    theme?: Partial<Highcharts.Options>;
+    theme?: DeepPartial<Options>;
     readonly userAgent: string;
     readonly version: string;
     // eslint-disable-next-line node/no-unsupported-features/es-builtins
     readonly win: (Window&typeof globalThis);
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default GlobalsLike;

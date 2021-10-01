@@ -1,0 +1,5169 @@
+[
+  { "id": "Agriculture", "name": "Agriculture" },
+  { "id": "Chemicals", "name": "Chemicals" },
+  { "id": "Electronics", "name": "Electronics" },
+  { "id": "Machinery", "name": "Machinery" },
+  { "id": "Metals", "name": "Metals" },
+  { "id": "Minerals", "name": "Minerals" },
+  { "id": "Other", "name": "Other" },
+  { "id": "Services", "name": "Services" },
+  { "id": "Stone", "name": "Stone" },
+  { "id": "Textiles", "name": "Textiles" },
+  { "id": "Vehicles", "name": "Vehicles" },
+  { "name": "Horses", "value": 0.0151142663917422, "parent": "Agriculture" },
+  { "name": "Bovine", "value": 0.0378831257241724, "parent": "Agriculture" },
+  { "name": "Swine", "value": 0.515942852298127, "parent": "Agriculture" },
+  { "name": "Sheep", "value": 0.0000525242533416179, "parent": "Agriculture" },
+  { "name": "Fowl", "value": 0.0593460028443313, "parent": "Agriculture" },
+  {
+    "name": "Other live animals",
+    "value": 0.0196710044531659,
+    "parent": "Agriculture"
+  },
+  { "name": "Beef", "value": 0.168569418969471, "parent": "Agriculture" },
+  {
+    "name": "Beef (frozen)",
+    "value": 0.023497830764616,
+    "parent": "Agriculture"
+  },
+  { "name": "Pork", "value": 1.26848767176934, "parent": "Agriculture" },
+  { "name": "Lamb", "value": 0.00424902568726836, "parent": "Agriculture" },
+  {
+    "name": "Horse meat",
+    "value": 0.00123266722361314,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Edible offal",
+    "value": 0.121310124117883,
+    "parent": "Agriculture"
+  },
+  { "name": "Poultry", "value": 0.0929895976628431, "parent": "Agriculture" },
+  {
+    "name": "Other meat",
+    "value": 0.00128489348892336,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Pig and poultry fat",
+    "value": 0.00972226236001442,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Preserved meat",
+    "value": 0.0996422444760354,
+    "parent": "Agriculture"
+  },
+  { "name": "Live Fish", "value": 0.0195050405709088, "parent": "Agriculture" },
+  {
+    "name": "Fish. excluding fillets",
+    "value": 0.439518449032406,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Frozen fish. excluding fillets",
+    "value": 0.225547891453118,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Fish fillets",
+    "value": 0.305217194551344,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Preserved fish",
+    "value": 0.195104162749952,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Crustaceans",
+    "value": 0.210737153462838,
+    "parent": "Agriculture"
+  },
+  { "name": "Molluscs", "value": 0.019248762034632, "parent": "Agriculture" },
+  { "name": "Milk", "value": 0.120974108399042, "parent": "Agriculture" },
+  {
+    "name": "Milk. concentrated",
+    "value": 0.131115228254286,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Fermented milk products",
+    "value": 0.0186235963886726,
+    "parent": "Agriculture"
+  },
+  { "name": "Whey", "value": 0.130007304338912, "parent": "Agriculture" },
+  { "name": "Butter", "value": 0.169405639605134, "parent": "Agriculture" },
+  { "name": "Cheese", "value": 0.895806657934511, "parent": "Agriculture" },
+  {
+    "name": "Eggs. in shell",
+    "value": 0.0197293262292073,
+    "parent": "Agriculture"
+  },
+  { "name": "Egg yolks", "value": 0.0207446862327535, "parent": "Agriculture" },
+  { "name": "Honey", "value": 0.00806923280161357, "parent": "Agriculture" },
+  {
+    "name": "Edible animal products. n.e.c.",
+    "value": 0.000398093799567319,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Human hair. unworked",
+    "value": 0.0000246474730043849,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Brushmaking hair",
+    "value": 0.000400220551183996,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Animal guts. except fish",
+    "value": 0.0432939879836501,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Feathers and down",
+    "value": 0.00081576817194589,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Bones. simply prepared",
+    "value": 0.00163165057263715,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Whalebone & horns",
+    "value": 0.000000528652840886616,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Coral and shells",
+    "value": 0.00148149881825347,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Animal products used in pharmaceuticals",
+    "value": 0.00123598427186634,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Animal products n.e.c.",
+    "value": 0.0472054053715982,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Flower bulbs",
+    "value": 0.011713549721278,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other live plants",
+    "value": 0.160240004540199,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cut flowers",
+    "value": 0.00744296459993802,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other parts of plants",
+    "value": 0.069431696925735,
+    "parent": "Agriculture"
+  },
+  { "name": "Potatoes", "value": 0.0367175863747581, "parent": "Agriculture" },
+  { "name": "Tomatoes", "value": 0.00123423386809673, "parent": "Agriculture" },
+  {
+    "name": "Onions. shallots. garlic",
+    "value": 0.00524834896825821,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cabbages. cauliflowers. broccoli",
+    "value": 0.00185668396016257,
+    "parent": "Agriculture"
+  },
+  { "name": "Lettuce", "value": 0.00619246113715668, "parent": "Agriculture" },
+  {
+    "name": "Carrots & turnips",
+    "value": 0.0269921841038202,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cucumbers",
+    "value": 0.000579704260791568,
+    "parent": "Agriculture"
+  },
+  { "name": "Legumes", "value": 0.00115019738043483, "parent": "Agriculture" },
+  {
+    "name": "Other vegetables",
+    "value": 0.00792539287519863,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Frozen vegetables",
+    "value": 0.0126740600611783,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Vegetables. provisionally preserved",
+    "value": 0.000146083665925418,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Vegetables. dried",
+    "value": 0.00167496423666015,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Legumes. dried",
+    "value": 0.00965237423371734,
+    "parent": "Agriculture"
+  },
+  { "name": "Tubers", "value": 0.000909753597048651, "parent": "Agriculture" },
+  {
+    "name": "Cashew nuts & coconuts",
+    "value": 0.0020345132843662,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other nuts",
+    "value": 0.00745874472168958,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Bananas and plantains",
+    "value": 0.00521073680856928,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Avocados. pineapples. mangos. etc.",
+    "value": 0.0115896440905042,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Citrus fruit",
+    "value": 0.0101895042822675,
+    "parent": "Agriculture"
+  },
+  { "name": "Grapes", "value": 0.0100361960620698, "parent": "Agriculture" },
+  {
+    "name": "Melons and papayas",
+    "value": 0.00232483253859269,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Apples & pears",
+    "value": 0.00694117869106001,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Peaches & cherries",
+    "value": 0.0027503219230095,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other fresh fruit",
+    "value": 0.0028214461478072,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Fruits and nuts. frozen",
+    "value": 0.00692397981518119,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Fruits and nuts. provisionally preserved",
+    "value": 0.000111976176583539,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Fruits. dried",
+    "value": 0.0090624909225051,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Peel of citrus fruit or melons",
+    "value": 0.0000278784358262963,
+    "parent": "Agriculture"
+  },
+  { "name": "Coffee", "value": 0.0240446343875928, "parent": "Agriculture" },
+  { "name": "Tea", "value": 0.00494845050248167, "parent": "Agriculture" },
+  { "name": "Mate", "value": 0.000000566177259655186, "parent": "Agriculture" },
+  { "name": "Pepper", "value": 0.00179728335708162, "parent": "Agriculture" },
+  { "name": "Vanilla", "value": 0.000901500432238317, "parent": "Agriculture" },
+  {
+    "name": "Cinnamon",
+    "value": 0.000225020695442607,
+    "parent": "Agriculture"
+  },
+  { "name": "Cloves", "value": 0.0000196953533863092, "parent": "Agriculture" },
+  { "name": "Nutmeg", "value": 0.0000896044492115304, "parent": "Agriculture" },
+  {
+    "name": "Anise. fennel. etc.",
+    "value": 0.00010311710277603,
+    "parent": "Agriculture"
+  },
+  { "name": "Spices", "value": 0.00481698921962287, "parent": "Agriculture" },
+  {
+    "name": "Wheat and meslin",
+    "value": 0.0510014153059643,
+    "parent": "Agriculture"
+  },
+  { "name": "Rye", "value": 0.00514677478128919, "parent": "Agriculture" },
+  { "name": "Barley", "value": 0.0791555805613721, "parent": "Agriculture" },
+  { "name": "Oats", "value": 0.00659886659548123, "parent": "Agriculture" },
+  { "name": "Corn", "value": 0.00647712303342411, "parent": "Agriculture" },
+  { "name": "Rice", "value": 0.00696553755713769, "parent": "Agriculture" },
+  {
+    "name": "Grain sorghum",
+    "value": 0.00000987112945488496,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other cereals",
+    "value": 0.00291503535919414,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Wheat or meslin flour",
+    "value": 0.00247993696442413,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cereal flours",
+    "value": 0.00118202857231464,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cereal meals",
+    "value": 0.00345184369103635,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Worked cereal grains",
+    "value": 0.00907677393031374,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Potato flour",
+    "value": 0.0152025083734546,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Flour of dried legumes",
+    "value": 0.00270424304042107,
+    "parent": "Agriculture"
+  },
+  { "name": "Malt", "value": 0.0488961099982724, "parent": "Agriculture" },
+  { "name": "Starches", "value": 0.0624955553360649, "parent": "Agriculture" },
+  {
+    "name": "Wheat gluten",
+    "value": 0.000321362433312159,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Soya beans",
+    "value": 0.00160095614991415,
+    "parent": "Agriculture"
+  },
+  { "name": "Peanuts", "value": 0.000555391196577974, "parent": "Agriculture" },
+  { "name": "Copra", "value": 0.0000368605676541788, "parent": "Agriculture" },
+  { "name": "Linseed", "value": 0.000580698106059247, "parent": "Agriculture" },
+  {
+    "name": "Rape or colza seeds",
+    "value": 0.0117727102784448,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Sunflower seeds",
+    "value": 0.00283987670754913,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other oil seeds",
+    "value": 0.00516937827713007,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Flours of oil seeds",
+    "value": 0.000807531010196501,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Seeds used for sowing",
+    "value": 0.223404284750457,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Hop cones",
+    "value": 0.000819063147011583,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Plants used in perfumery. pharmacy or insecticide",
+    "value": 0.00182375959367128,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Seaweeds & edible vegetable products",
+    "value": 0.00043214610594042,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cereal straw and husks",
+    "value": 0.00330117983870242,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Forage products",
+    "value": 0.00468799627095747,
+    "parent": "Agriculture"
+  },
+  { "name": "Lac", "value": 0.000258541589826383, "parent": "Agriculture" },
+  {
+    "name": "Vegetable saps and extracts",
+    "value": 0.119946098251733,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Vegetable materials used for plaiting",
+    "value": 0.000692764782711581,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Vegetable products n.e.c.",
+    "value": 0.00516918679222841,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Pig and poultry fat. rendered",
+    "value": 0.0113578060910988,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Bovine. sheep and goat fats",
+    "value": 0.00297389075454358,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Lard oil. tallow oil etc.",
+    "value": 0.00000568660493250165,
+    "parent": "Agriculture"
+  },
+  { "name": "Fish oils", "value": 0.123320841402453, "parent": "Agriculture" },
+  {
+    "name": "Wool grease",
+    "value": 0.00000657394707044077,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other animal fats and oils",
+    "value": 0.000716145806582527,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Soybean oil",
+    "value": 0.000792088056384171,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Peanut oil",
+    "value": 0.0000327549547771471,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Olive oil",
+    "value": 0.000914795113076146,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Olive oil. blended",
+    "value": 0.000105621305899144,
+    "parent": "Agriculture"
+  },
+  { "name": "Palm oil", "value": 0.0614272925240113, "parent": "Agriculture" },
+  {
+    "name": "Sunflower seed oil",
+    "value": 0.00227036363743136,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Coconut & palm kernel oil",
+    "value": 0.00181886927897824,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Rapeseed. colza or mustard oil.",
+    "value": 0.0642001616562335,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other vegetable fats and oils",
+    "value": 0.0973289037906906,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Vegetable fats. hydrogenated",
+    "value": 0.00998396869310018,
+    "parent": "Agriculture"
+  },
+  { "name": "Margarine", "value": 0.0351227632599938, "parent": "Agriculture" },
+  {
+    "name": "Animal or vegetable fats and oils. processed",
+    "value": 0.00350118278342014,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Stearic acid",
+    "value": 0.00738492425703742,
+    "parent": "Agriculture"
+  },
+  { "name": "Glycerol", "value": 0.00481880529112533, "parent": "Agriculture" },
+  {
+    "name": "Vegetable waxes and beeswax",
+    "value": 0.000859011201768852,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Degras and wax residues",
+    "value": 0.000877410307218583,
+    "parent": "Agriculture"
+  },
+  { "name": "Sausages", "value": 0.0809299734711751, "parent": "Agriculture" },
+  {
+    "name": "Other prepared or preserved meat",
+    "value": 0.266711366548939,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Extracts and juices of meat or fish",
+    "value": 0.00123323671185092,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Prepared or preserved fish",
+    "value": 0.157663781020874,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Prepared aquatic invertibrates",
+    "value": 0.230809768526172,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Sugarcane & sucrose",
+    "value": 0.0509066506973424,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other sugars",
+    "value": 0.0362637439809835,
+    "parent": "Agriculture"
+  },
+  { "name": "Molasses", "value": 0.00193107556854158, "parent": "Agriculture" },
+  {
+    "name": "Confectionery sugar",
+    "value": 0.0844172015854509,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cocoa beans",
+    "value": 0.0000442777104875369,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cocoa residues",
+    "value": 0.0000454746290803167,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cocoa paste",
+    "value": 0.0000570172506594664,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cocoa butter",
+    "value": 0.0044543626177481,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cocoa powder",
+    "value": 0.000234520995347308,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Chocolates",
+    "value": 0.0877265286376636,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Malt extract",
+    "value": 0.397154669316842,
+    "parent": "Agriculture"
+  },
+  { "name": "Pasta", "value": 0.00917934251438012, "parent": "Agriculture" },
+  {
+    "name": "Tapioca",
+    "value": 0.0000811244823995214,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cereal foods",
+    "value": 0.0464470280390104,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Bakery products",
+    "value": 0.190743207239794,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Pickled fruits and vegetables",
+    "value": 0.00270621693521424,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Tomatoes. prepared or preserved",
+    "value": 0.00101124225041606,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Mushrooms. prepared or preserved",
+    "value": 0.000186257419024986,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other vegetables. frozen",
+    "value": 0.0107167620977035,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other vegetables. prepared or preserved",
+    "value": 0.0159332898070162,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Vegetables. fruits and nuts. preserved by sugar",
+    "value": 0.000629501923645899,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Jams. jellies and marmalades",
+    "value": 0.0340312044058412,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Fruits and nuts. otherwise prepared",
+    "value": 0.0210164137929692,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Fruit juices",
+    "value": 0.0486226320342871,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Coffee extracts",
+    "value": 0.00870349370448682,
+    "parent": "Agriculture"
+  },
+  { "name": "Yeasts", "value": 0.0467724133107465, "parent": "Agriculture" },
+  {
+    "name": "Sauces and seasonings",
+    "value": 0.029739428472661,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Soups and broths",
+    "value": 0.0133750007525439,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Ice cream",
+    "value": 0.00870745528981534,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Food preparations n.e.c.",
+    "value": 0.505465222284642,
+    "parent": "Agriculture"
+  },
+  { "name": "Waters", "value": 0.00946169721072298, "parent": "Agriculture" },
+  {
+    "name": "Waters. flavored or sweetened",
+    "value": 0.225797141886491,
+    "parent": "Agriculture"
+  },
+  { "name": "Beer", "value": 0.157652197012068, "parent": "Agriculture" },
+  { "name": "Wine", "value": 0.0795462759803154, "parent": "Agriculture" },
+  {
+    "name": "Wine. flavored",
+    "value": 0.00032429375261361,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other fermented beverages",
+    "value": 0.0168046178474162,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Ethyl alcohol > 80%",
+    "value": 0.00170940006466625,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Spirits < 80% alcohol",
+    "value": 0.0693876300141881,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Vinegars",
+    "value": 0.000313759875703709,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Flours of fish. for animal feed",
+    "value": 0.175325421275864,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cereal residues",
+    "value": 0.00212171010064998,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Starch residues",
+    "value": 0.00925330259194328,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Solid soybean residues",
+    "value": 0.0250393714120476,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Solid peanut residues",
+    "value": 0.0000365548540071525,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Solid vegetable oil and fat residues",
+    "value": 0.00739082497188878,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Vegetable materials for animal feeding",
+    "value": 0.0145084721751424,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Animal feed",
+    "value": 0.299944845958135,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Unmanufactured tobacco",
+    "value": 0.000289136683205586,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cigars and cigarettes",
+    "value": 0.00821307438351756,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other manufactured tobacco",
+    "value": 0.103637014634662,
+    "parent": "Agriculture"
+  },
+  { "name": "Salt", "value": 0.0349960587490436, "parent": "Minerals" },
+  {
+    "name": "Sulphur. crude",
+    "value": 0.0000675163622990371,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Natural graphite",
+    "value": 0.0000599264967734061,
+    "parent": "Minerals"
+  },
+  { "name": "Natural sands", "value": 0.011695352585494, "parent": "Minerals" },
+  { "name": "Quartz", "value": 0.0000433528439308292, "parent": "Minerals" },
+  { "name": "Kaolin", "value": 0.000296514094301425, "parent": "Minerals" },
+  { "name": "Clays", "value": 0.00602613194364624, "parent": "Minerals" },
+  { "name": "Chalk", "value": 0.00963387469526443, "parent": "Minerals" },
+  {
+    "name": "Natural calcium phosphates",
+    "value": 0.000562003219896871,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Natural barium sulfate",
+    "value": 0.00011748950699408,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Siliceous fossil meals and earths",
+    "value": 0.00912498453098603,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Natural abrasives",
+    "value": 0.000219973109288546,
+    "parent": "Minerals"
+  },
+  { "name": "Slate", "value": 0.0000267052459100907, "parent": "Minerals" },
+  { "name": "Marble", "value": 0.000118124662964707, "parent": "Minerals" },
+  { "name": "Granite", "value": 0.00147998459759022, "parent": "Minerals" },
+  { "name": "Gravel", "value": 0.0157307087139972, "parent": "Minerals" },
+  { "name": "Dolomite", "value": 0.000354638315314564, "parent": "Minerals" },
+  {
+    "name": "Natural magnesia",
+    "value": 0.000407014126470171,
+    "parent": "Minerals"
+  },
+  { "name": "Gypsum", "value": 0.000817920859557893, "parent": "Minerals" },
+  { "name": "Limstone", "value": 0.00144690461512697, "parent": "Minerals" },
+  { "name": "Quicklime", "value": 0.00181588829500489, "parent": "Minerals" },
+  { "name": "Cements", "value": 0.131945921763797, "parent": "Minerals" },
+  { "name": "Mica", "value": 0.0000781335654917913, "parent": "Minerals" },
+  {
+    "name": "Natural steatite",
+    "value": 0.0000628997551311274,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Natural borates",
+    "value": 0.00000305051451400962,
+    "parent": "Minerals"
+  },
+  { "name": "Feldspar", "value": 0.0000192522341470274, "parent": "Minerals" },
+  {
+    "name": "Mineral substances n.e.c.",
+    "value": 0.00226990451513113,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Iron ores and concentrates",
+    "value": 0.00000783377424762673,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Manganese > 47% by weight",
+    "value": 0.000186989697020661,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Aluminum ore",
+    "value": 0.000044501201511085,
+    "parent": "Minerals"
+  },
+  { "name": "Lead ore", "value": 0.0000276174203839796, "parent": "Minerals" },
+  { "name": "Zinc ore", "value": 0.000134612230375991, "parent": "Minerals" },
+  { "name": "Tin ore", "value": 0.00000274480086698333, "parent": "Minerals" },
+  {
+    "name": "Chromium ore",
+    "value": 0.000228560131059983,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Titanium ore",
+    "value": 0.00000968626650948098,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Zirconium ore",
+    "value": 0.00000839057040258978,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Granulated iron or steel slag",
+    "value": 0.00000477443045861274,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Iron or steel slag",
+    "value": 0.0013631197618027,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Slag. ash and residues containing metals",
+    "value": 0.00433867207553616,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Other slag and ash",
+    "value": 0.000503167138586504,
+    "parent": "Minerals"
+  },
+  { "name": "Coal", "value": 0.00051976341644628, "parent": "Minerals" },
+  { "name": "Lignite", "value": 0.0000341814345200405, "parent": "Minerals" },
+  { "name": "Peat", "value": 0.00264402683306159, "parent": "Minerals" },
+  { "name": "Coke", "value": 0.000229189216904045, "parent": "Minerals" },
+  {
+    "name": "Non-petroleum gases",
+    "value": 0.000140565369047687,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Tar distilled from coal. lignite etc.",
+    "value": 0.000940201903730906,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Oils etc. from high temperature coal tar",
+    "value": 0.0971372114010707,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Pitch and pitch coke",
+    "value": 0.0540388801515174,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Petroleum oils. crude",
+    "value": 0.619856638216351,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Petroleum oils. refined",
+    "value": 1.47302270100536,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Petroleum gases",
+    "value": 0.141677001258562,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Petroleum jelly",
+    "value": 0.00141627254915869,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Petroleum coke",
+    "value": 0.000325087283704627,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Bitumen and asphalt. natural",
+    "value": 0.000512812017869402,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Bituminous mixtures",
+    "value": 0.00156206264169021,
+    "parent": "Minerals"
+  },
+  {
+    "name": "Electrical energy",
+    "value": 0.245788192107334,
+    "parent": "Minerals"
+  },
+  { "name": "Iodine", "value": 0.0000846539850825181, "parent": "Chemicals" },
+  {
+    "name": "Sulfur. sublimed or precipitated",
+    "value": 0.00000146621148041309,
+    "parent": "Chemicals"
+  },
+  { "name": "Carbon", "value": 0.00275477794773827, "parent": "Chemicals" },
+  {
+    "name": "Silicon & rare gases",
+    "value": 0.0221977001543538,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Rare-earth metals",
+    "value": 0.000118961788601059,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Hydrochloric acid",
+    "value": 0.00192613338185788,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Sulfiric acid. oleum",
+    "value": 0.00018892772288412,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Sulfonitric acids",
+    "value": 0.000192425219445226,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Phosphoric acid etc.",
+    "value": 0.000314456836599366,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Oxides of boron; boric acids",
+    "value": 0.000086845300772665,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Other inorganic acids",
+    "value": 0.0102220776850774,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Halides of nonmetals",
+    "value": 0.0000477713442408283,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Sulfides of nonmetals",
+    "value": 0.00013198828021063,
+    "parent": "Chemicals"
+  },
+  { "name": "Ammonia", "value": 0.000966327728468836, "parent": "Chemicals" },
+  {
+    "name": "Sodium hydroxide",
+    "value": 0.00311272393020134,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Hydroxides or peroxides of magnesium",
+    "value": 0.0000541593247064895,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Zinc oxide or peroxide",
+    "value": 0.00150943850717511,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Aluminum oxide",
+    "value": 0.0107861072235878,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Chromium oxides and hydroxides",
+    "value": 0.0000612696502334458,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Manganese oxides",
+    "value": 0.000200550911597685,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Iron oxides and hydroxides",
+    "value": 0.00212979440557585,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Cobalt oxides and hydroxides",
+    "value": 0.0000244118417277058,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Titanium oxides",
+    "value": 0.000372194776831064,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Metal base oxides. n.e.c.",
+    "value": 0.000907489991669406,
+    "parent": "Chemicals"
+  },
+  { "name": "Flourides", "value": 0.00129470391711259, "parent": "Chemicals" },
+  {
+    "name": "Chlorides. bromides. iodides etc.",
+    "value": 0.000741106167019879,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Hyopchlorites",
+    "value": 0.00133597746677989,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Sodium chlorate",
+    "value": 0.000221821738742586,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Sulfides; polysulfides",
+    "value": 0.000298405214641423,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Dithionites and sulfoxylates",
+    "value": 0.00000375575285498362,
+    "parent": "Chemicals"
+  },
+  { "name": "Sulfites", "value": 0.000226614931410583, "parent": "Chemicals" },
+  { "name": "Sulfates", "value": 0.00173048437337668, "parent": "Chemicals" },
+  {
+    "name": "Nitrites. nitrates",
+    "value": 0.0102166421626528,
+    "parent": "Chemicals"
+  },
+  { "name": "Phosphates", "value": 0.00616513066821034, "parent": "Chemicals" },
+  { "name": "Carbonates", "value": 0.00221431760702237, "parent": "Chemicals" },
+  { "name": "Cyanides", "value": 0.0000480599511675336, "parent": "Chemicals" },
+  { "name": "Silicates", "value": 0.00295200298180774, "parent": "Chemicals" },
+  { "name": "Borates", "value": 0.0000327030827864964, "parent": "Chemicals" },
+  {
+    "name": "Salts of oxometallic acids",
+    "value": 0.00114974322460179,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Other salts of acids",
+    "value": 0.00231178231830654,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Compounds of precious metals",
+    "value": 0.000412577121552611,
+    "parent": "Chemicals"
+  },
+  { "name": "Uranium", "value": 0.000084067941954103, "parent": "Chemicals" },
+  {
+    "name": "Non-radioactive isotopes",
+    "value": 0.000173804830290699,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Compounds of rare-earth metals",
+    "value": 0.0000146052763462903,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Hydrogen peroxide",
+    "value": 0.000190961767113252,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Phosphides",
+    "value": 0.000000768146925380135,
+    "parent": "Chemicals"
+  },
+  { "name": "Carbides", "value": 0.00166870869531955, "parent": "Chemicals" },
+  {
+    "name": "Hydrides. nitrides. azides. silicides and borides",
+    "value": 0.00000291917904831963,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Inorganic compounds. liquid or compressed air",
+    "value": 0.0217472437875434,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Acyclic hydrocarbons",
+    "value": 0.00160271924576658,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Cyclic hydrocarbons",
+    "value": 0.0013162269304248,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Halogenated derivatives of hydrocarbons",
+    "value": 0.00165560660304275,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Sulfonated. nitrated derivatives of hydrocarbons",
+    "value": 0.000268174880685838,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Acyclic alcohols",
+    "value": 0.0065274774924334,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Cyclic alcohols",
+    "value": 0.000363672870962785,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Phenols. phenol-alcohols",
+    "value": 0.00273750843765941,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Derivatives of phenols",
+    "value": 0.000105390641089655,
+    "parent": "Chemicals"
+  },
+  { "name": "Ethers", "value": 0.00265738662980257, "parent": "Chemicals" },
+  { "name": "Epoxides", "value": 0.000297015155657923, "parent": "Chemicals" },
+  {
+    "name": "Acetals and hemiacetals",
+    "value": 0.00000259911782941124,
+    "parent": "Chemicals"
+  },
+  { "name": "Aldehydes", "value": 0.00187059006829446, "parent": "Chemicals" },
+  {
+    "name": "Ketones and quinones",
+    "value": 0.0013164437994921,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Saturated acyclic monocarboxylic acids",
+    "value": 0.0107806165181944,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Unsaturated acyclic monocarboxylic acids",
+    "value": 0.0039418574171851,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Polycarboxylic acids",
+    "value": 0.00278080665045115,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Carboxylic acids with additional oxygen function",
+    "value": 0.0051462328845358,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Phosporic esters",
+    "value": 0.000754637030964075,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Esters of other inorganic acids of nonmetals",
+    "value": 0.003372823887066,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Amine-function compounds",
+    "value": 0.0124360857156449,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Oxygen-function amino-compounds",
+    "value": 0.0370712871314331,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Quaternary ammonium salts and hydroxides",
+    "value": 0.013090788597472,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Carboxyamide-function compounds",
+    "value": 0.00487056250120094,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Carboxyimide-function compounds",
+    "value": 0.000249383976157789,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Nitrile-function compounds",
+    "value": 0.00118119696497517,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Diazo-. azo-. or azoxy-compounds",
+    "value": 0.00000455038760537687,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Organix derivatives of hydrazine",
+    "value": 0.0000932448696617695,
+    "parent": "Chemicals"
+  },
+  { "name": "Isocyanates", "value": 0.0025459352432521, "parent": "Chemicals" },
+  {
+    "name": "Organo-sulfur compounds",
+    "value": 0.0143912039518531,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Other organo-inorganic compounds",
+    "value": 0.00238799055001769,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Heterocyclic compounds with oxygen hetero-atom(s) only",
+    "value": 0.00467536544123403,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Heterocyclic compounds with nitrogen hetero-atom(s) only",
+    "value": 0.0304518847459511,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Nucleic acids and their salts",
+    "value": 0.00250822430604907,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Sulfonamides",
+    "value": 0.00120847445827148,
+    "parent": "Chemicals"
+  },
+  { "name": "Vitamins", "value": 0.0741580784697739, "parent": "Chemicals" },
+  { "name": "Hormones", "value": 0.949784112819823, "parent": "Chemicals" },
+  { "name": "Glycosides", "value": 0.00212220895468773, "parent": "Chemicals" },
+  {
+    "name": "Vegetable alkaloids",
+    "value": 0.00199555741938755,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Other sugars. chemically pure",
+    "value": 0.0136330473511404,
+    "parent": "Chemicals"
+  },
+  { "name": "Antibiotics", "value": 0.0833517817999486, "parent": "Chemicals" },
+  {
+    "name": "Other organic compounds",
+    "value": 0.00119197585426644,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Heparin for therapeutic use",
+    "value": 0.0189401347268542,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Serums and vaccines",
+    "value": 0.648389605857271,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Medicaments. not packaged",
+    "value": 0.069672259352504,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Medicaments. packaged",
+    "value": 6.37236832969592,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Wadding. gauze and bandages",
+    "value": 0.0426091938289487,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Pharmaceutical goods",
+    "value": 0.0704457347453493,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Animal or vegetable fertilizers",
+    "value": 0.00103121296681657,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Nitrogenous fertilizers",
+    "value": 0.012262928181578,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Phosphatic fertilizers",
+    "value": 0.000217569339168607,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Potassic fertilizers",
+    "value": 0.00274793801875832,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Mixed fertilizers",
+    "value": 0.0224190633226259,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Vegetable tanning extracts",
+    "value": 0.000124235624927106,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Synthetic tanning substances",
+    "value": 0.0017336656715267,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Coloring matter of animal or vegetable origin",
+    "value": 0.0511652469183079,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Synthetic organic coloring matter",
+    "value": 0.0535995663297625,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Color lakes",
+    "value": 0.00582807530223729,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Other coloring matter",
+    "value": 0.0296242572021853,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Prepared pigments",
+    "value": 0.00097794595071521,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Paints and varnishes. nonaqueous",
+    "value": 0.023946064361444,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Paints and varnishes. aqueous",
+    "value": 0.0656810253185163,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Other paints and varnishes",
+    "value": 0.00217127709869482,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Prepared driers",
+    "value": 0.000451620175621933,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Pigments. nonaqueous",
+    "value": 0.00188670680615556,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Artists' colors",
+    "value": 0.00553877693293318,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Glaziers' putty",
+    "value": 0.0373531926384101,
+    "parent": "Chemicals"
+  },
+  { "name": "Ink", "value": 0.041774204877148, "parent": "Chemicals" },
+  {
+    "name": "Essential oils",
+    "value": 0.00211056369278665,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Mixtures of odoriferous subtances",
+    "value": 0.0231936798992654,
+    "parent": "Chemicals"
+  },
+  { "name": "Perfumes", "value": 0.016232321900183, "parent": "Chemicals" },
+  {
+    "name": "Make-up preparations",
+    "value": 0.119037124390033,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Hair products",
+    "value": 0.0522560906011852,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Dental hygiene products",
+    "value": 0.0415910768842824,
+    "parent": "Chemicals"
+  },
+  { "name": "Toiletries", "value": 0.0597534783004205, "parent": "Chemicals" },
+  { "name": "Soap", "value": 0.0212063712300507, "parent": "Chemicals" },
+  {
+    "name": "Cleaning products",
+    "value": 0.208906544559082,
+    "parent": "Chemicals"
+  },
+  { "name": "Lubricants", "value": 0.0191625463715331, "parent": "Chemicals" },
+  {
+    "name": "Artificial and prepared waxes",
+    "value": 0.0641202390588939,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Polishes and creams",
+    "value": 0.0122345939344296,
+    "parent": "Chemicals"
+  },
+  { "name": "Candles", "value": 0.0259934054787322, "parent": "Chemicals" },
+  {
+    "name": "Modeling pastes",
+    "value": 0.00199731885975092,
+    "parent": "Chemicals"
+  },
+  { "name": "Casein", "value": 0.0514188501842584, "parent": "Chemicals" },
+  { "name": "Albumins", "value": 0.0356260407645179, "parent": "Chemicals" },
+  { "name": "Gelatin", "value": 0.00969593456561077, "parent": "Chemicals" },
+  { "name": "Peptones", "value": 0.0779649616563078, "parent": "Chemicals" },
+  {
+    "name": "Dextrins and other modified starches",
+    "value": 0.0205932443005598,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Glues and adhesives",
+    "value": 0.0179792910818225,
+    "parent": "Chemicals"
+  },
+  { "name": "Enzymes", "value": 0.652923544523315, "parent": "Chemicals" },
+  {
+    "name": "Propellant powders",
+    "value": 0.0000221846571078536,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Prepared explosives. except gunpowder",
+    "value": 0.000639566193491505,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Detonators",
+    "value": 0.0000448896896112772,
+    "parent": "Chemicals"
+  },
+  { "name": "Fireworks", "value": 0.00117560141194115, "parent": "Chemicals" },
+  { "name": "Matches", "value": 0.0000186954379920644, "parent": "Chemicals" },
+  {
+    "name": "Ferrocerium and other pyrophoric alloys",
+    "value": 0.00368514955741119,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Photographic plates",
+    "value": 0.000881185374112638,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Photographic film in rolls",
+    "value": 0.000103453167055884,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Photographic paper",
+    "value": 0.00022283434621965,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Photographic film. not developed",
+    "value": 0.0000185944531592019,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Photographic film. developed",
+    "value": 0.0000140644832522726,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Motion-picture film",
+    "value": 0.00000221394070734562,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Chemical preparations for photographic uses",
+    "value": 0.00245248674843555,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Artificial graphite",
+    "value": 0.00105857489005511,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Activated carbon",
+    "value": 0.00476978736361982,
+    "parent": "Chemicals"
+  },
+  { "name": "Tall oil", "value": 0.00016901218945239, "parent": "Chemicals" },
+  {
+    "name": "Residual lyes",
+    "value": 0.000019834414467628,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Turpentines",
+    "value": 0.00030097067085988,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Rosin and resin acids",
+    "value": 0.0020749160467862,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Wood tar and oils",
+    "value": 0.000675070363773137,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Insecticides. rodenticides. fungicides. etc.",
+    "value": 0.154748901829481,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Finishing agents",
+    "value": 0.00383491889382124,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Pickling preparations for metal surfaces",
+    "value": 0.00746717281651094,
+    "parent": "Chemicals"
+  },
+  { "name": "Anti-knock", "value": 0.0170602672978489, "parent": "Chemicals" },
+  {
+    "name": "Stabilizers for rubber or plastic",
+    "value": 0.00406355021091095,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Preparations for fire extinguishers",
+    "value": 0.00130053675691235,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Organic composite solvents and thinners",
+    "value": 0.0035872163427221,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Catalytic preparations",
+    "value": 0.207423950358899,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Refractory cements",
+    "value": 0.00578224088020054,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Mixed alkylbenzenes",
+    "value": 0.000143391840708461,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Chemical elements for electronics",
+    "value": 0.00665958883066441,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Hydraulic fluids",
+    "value": 0.000657299792337781,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Antifreezing preparation",
+    "value": 0.00343335408551783,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Prepared culture media for micro-organisms",
+    "value": 0.0266168869404845,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Diagnostic or laboratory reagents",
+    "value": 0.119120455087525,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Industrial monocarboxylic fatty acids",
+    "value": 0.197488119976782,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Polymers of ethylene",
+    "value": 0.0336968419687444,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Polymers of propylene",
+    "value": 0.0355102801399356,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Polymers of styrene",
+    "value": 0.00892039698522229,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Polymers of vinyl chloride",
+    "value": 0.0043761120643625,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Polymers of vinyl acetate",
+    "value": 0.00311395561406445,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Acrylic polymers",
+    "value": 0.0091213799794655,
+    "parent": "Chemicals"
+  },
+  { "name": "Polyacetals", "value": 0.0312199654517687, "parent": "Chemicals" },
+  { "name": "Polyamides", "value": 0.00680053661768572, "parent": "Chemicals" },
+  {
+    "name": "Amino-resins",
+    "value": 0.0191704529872995,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Silicones in primary forms",
+    "value": 0.00237461033557826,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Petroleum resins",
+    "value": 0.00366525554533728,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Cellulose n.e.c.",
+    "value": 0.00521831618933085,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Natural polymers",
+    "value": 0.0198442193775204,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Ion-exchangers based on polymers",
+    "value": 0.000658939278340154,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Plastic waste",
+    "value": 0.0106616751472918,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Monofilament",
+    "value": 0.0310797102110055,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Plastic tubes and fittings",
+    "value": 0.110216828758343,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Plastic floor coverings",
+    "value": 0.00626088305197335,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Self-adhesive plastic sheets",
+    "value": 0.0504351276803715,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Other plates of plastics. noncellular and not reinforced",
+    "value": 0.194542885737924,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Other plastic plates. sheets etc.",
+    "value": 0.10058077875045,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Baths. sinks etc.",
+    "value": 0.0401530749375082,
+    "parent": "Chemicals"
+  },
+  { "name": "Packing lids", "value": 0.207544028498958, "parent": "Chemicals" },
+  {
+    "name": "Plastic household articles",
+    "value": 0.0806991938811109,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Plastic builders' ware",
+    "value": 0.0634740420798742,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Other articles of plastic",
+    "value": 0.35883882965398,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Natural rubber",
+    "value": 0.00444668335581305,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Synthetic rubber",
+    "value": 0.00983985837013824,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Reclaimed rubber",
+    "value": 0.0000704620291723698,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Scrap of rubber",
+    "value": 0.00333485524539877,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Compounded rubber",
+    "value": 0.00498798634046218,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Unvulcanized rubber rods",
+    "value": 0.000888685291399162,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Vulcanized rubber thread and cord",
+    "value": 0.000176027600273049,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Vulcanized rubber plates",
+    "value": 0.0134014720226664,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Vulcanized rubber tubes",
+    "value": 0.0141085921028757,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Conveyor belts of vulcanized rubber",
+    "value": 0.00810313445848191,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "New pneumatic tires of rubber",
+    "value": 0.0261279150687863,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Used pneumatic tires of rubber",
+    "value": 0.00161470884939283,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Rubber inner tubes",
+    "value": 0.000896809879892246,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Rubber hygenic or pharmeceutical items",
+    "value": 0.00287251467443247,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Vulcanized rubber articles of apparel",
+    "value": 0.00796533927446684,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Other articles of vulcanized rubber",
+    "value": 0.0757822589239277,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Hard rubber",
+    "value": 0.000849004874040463,
+    "parent": "Chemicals"
+  },
+  {
+    "name": "Raw hides of bovines or equines",
+    "value": 0.00066067257538945,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Raw skins of sheep or lambs",
+    "value": 0.0000824499773095524,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other raw hides and skins",
+    "value": 0.0220317826257905,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Tanned hides of bovines or equines",
+    "value": 0.0628627604688592,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Tanned sheepskins",
+    "value": 0.0000824996419814519,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Tanned skins of other animals",
+    "value": 0.0000089374336231729,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Bovine leather further prepared",
+    "value": 0.00191864560482449,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Chamois leather",
+    "value": 0.0000999087649713172,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Patent leather",
+    "value": 0.000027130154769676,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Waste of leather",
+    "value": 0.00000853349429172301,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Composition leather",
+    "value": 0.000171435825441089,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Saddlery and harnesses",
+    "value": 0.010627132816156,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Trunks or cases",
+    "value": 0.0759378925544297,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Leather apparel",
+    "value": 0.0277198488033053,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other articles of leather",
+    "value": 0.00526564938079958,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Articles of gut",
+    "value": 0.0000143387426070959,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other raw furskins",
+    "value": 0.427278213191249,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other tanned furskins",
+    "value": 0.0162976088705434,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Furskin apparel",
+    "value": 0.00511069174166509,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Artificial fur",
+    "value": 0.000570839116857493,
+    "parent": "Agriculture"
+  },
+  { "name": "Fuel wood", "value": 0.0616376764888154, "parent": "Agriculture" },
+  {
+    "name": "Wood charcoal",
+    "value": 0.00136743672545015,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Wood in the rough",
+    "value": 0.0295396749549622,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Strips and other pieces of wood",
+    "value": 0.00145092248708365,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Wood wool or flour",
+    "value": 0.00105445272228745,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Wooden railway ties",
+    "value": 0.000176002216107411,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Wood sawn lengthwise",
+    "value": 0.0359068404048006,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Sheets for veneering for plywood",
+    "value": 0.0012258267428035,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Wood shaped along its edges",
+    "value": 0.0299624206421714,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Particle board and similar board",
+    "value": 0.02345793347819,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Fiberboard of wood",
+    "value": 0.0040047356509584,
+    "parent": "Agriculture"
+  },
+  { "name": "Plywood", "value": 0.0109934075640966, "parent": "Agriculture" },
+  {
+    "name": "Densified wood",
+    "value": 0.000720761310091061,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Wooden frames",
+    "value": 0.00251302191335457,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Packing boxes",
+    "value": 0.0321837183429144,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Casks. barrels. etc. of wood",
+    "value": 0.000162282074580309,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Wooden tools",
+    "value": 0.000603162540818802,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Wood carpentry for construction",
+    "value": 0.179335607348649,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Wooden kitchenware",
+    "value": 0.0067718558214934,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Wood marquetry. ornaments. etc.",
+    "value": 0.0133454844862043,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other articles of wood",
+    "value": 0.0211538856047873,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Natural cork. raw",
+    "value": 0.0000224434652314192,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Natural cork. debacked",
+    "value": 0.0000150439809480699,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Articles of natural cork",
+    "value": 0.000167000770240457,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Agglomerated cork",
+    "value": 0.00154346322206382,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Products of plaiting materials",
+    "value": 0.000545696100793488,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Basketwork",
+    "value": 0.00406963468504833,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Mechanical woodpulp",
+    "value": 0.000180896393608271,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Chemical woodpulp. dissolving grade",
+    "value": 0.000000608116315925941,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Chemical woodpulp. soda or sulfate",
+    "value": 0.000290390992085894,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Chemical woodpulp. sulfite",
+    "value": 0.000179160889240225,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Semichemical woodpulp",
+    "value": 0.000000540793094017624,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Pulps of recovered paper fibers",
+    "value": 0.0043377632120404,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Paper waste",
+    "value": 0.043176629260292,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Newsprint",
+    "value": 0.00222417935537256,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Paper used for graphic purposes",
+    "value": 0.00325311602472707,
+    "parent": "Agriculture"
+  },
+  { "name": "Tissue", "value": 0.00329353258288926, "parent": "Agriculture" },
+  {
+    "name": "Uncoated kraft paper and paperboard",
+    "value": 0.00104479515092173,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other uncoated paper and paperboard",
+    "value": 0.0172847328526256,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Transparent paper",
+    "value": 0.00328543889685869,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Uncoated composite paper",
+    "value": 0.00141697668384029,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Corrugated paper and paperboard",
+    "value": 0.00578619749906188,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Carbon paper",
+    "value": 0.000529115825994658,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Paper and paperboard. coated with kaolin",
+    "value": 0.014800547903265,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cellulose wadding. coated",
+    "value": 0.0788628989242522,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Filter blocks of paper pulp",
+    "value": 0.00760664777009558,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cigarette paper",
+    "value": 0.00353796885406647,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Wallpaper",
+    "value": 0.000968186842686943,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other carbon paper",
+    "value": 0.0000656092388980933,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Letterstock",
+    "value": 0.00167115054168795,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Toilet paper",
+    "value": 0.121407590484656,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Cardboard packing containers",
+    "value": 0.139642082931205,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Notebooks",
+    "value": 0.00686018499229649,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Paper labels",
+    "value": 0.0355794067412636,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Bobbins. spools. cops of paper",
+    "value": 0.000274735032014084,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other paper cut to size",
+    "value": 0.0592980731249701,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Books. brochures etc.",
+    "value": 0.0470083006364007,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Newspapers. journals and periodicals",
+    "value": 0.0273411391251804,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Children's books",
+    "value": 0.00218234790589092,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Music. printed or in manuscript",
+    "value": 0.0000309328131481203,
+    "parent": "Agriculture"
+  },
+  { "name": "Maps", "value": 0.000323082486448948, "parent": "Agriculture" },
+  {
+    "name": "Architectural. engineering. etc. drawings",
+    "value": 0.0000999258716916382,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Unused stamps",
+    "value": 0.000704528687995528,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Transfers (decalcomanias)",
+    "value": 0.0011206325530827,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Printed or illustrated postcards",
+    "value": 0.00130414296392195,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Calendars",
+    "value": 0.00130530566907409,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Other printed matter",
+    "value": 0.0685577841150775,
+    "parent": "Agriculture"
+  },
+  {
+    "name": "Silkworm cocoons",
+    "value": 0.00000218083092607924,
+    "parent": "Textiles"
+  },
+  { "name": "Raw silk", "value": 0.00000348314898922372, "parent": "Textiles" },
+  {
+    "name": "Silk waste",
+    "value": 0.00000551664138866754,
+    "parent": "Textiles"
+  },
+  { "name": "Silk yarn", "value": 0.0000146654257822575, "parent": "Textiles" },
+  {
+    "name": "Yarn from silk waste",
+    "value": 0.0000115762831901038,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Silk yarn. for retail sale",
+    "value": 0.0000196517588409751,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven silk fabrics",
+    "value": 0.000164976658945705,
+    "parent": "Textiles"
+  },
+  { "name": "Wool", "value": 0.00245990885773609, "parent": "Textiles" },
+  {
+    "name": "Animal hair",
+    "value": 0.000063056474762455,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Wool or animal hair waste",
+    "value": 0.00000194685513846345,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Garnetted stock of wool or animal hair",
+    "value": 0.00000125982717718596,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Wool. combed",
+    "value": 0.0000973284093512903,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Yarn of carded wool. not for retail sale",
+    "value": 0.0135992952401174,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Yarn of combed wool. not for retail sale",
+    "value": 0.00068284067760667,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Yarn of animal hair. not for retail sale",
+    "value": 0.000100013612611994,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Yarn of wool or animal hair. for retail sale",
+    "value": 0.00218163383827495,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Yarn of coarse animal hair or of horsehair",
+    "value": 0.0000595661519872902,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of carded wool",
+    "value": 0.018552152102656,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of combed wool",
+    "value": 0.0216708109611493,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of coarse animal hair",
+    "value": 0.0000204270795522963,
+    "parent": "Textiles"
+  },
+  { "name": "Raw cotton", "value": 0.000273019393514798, "parent": "Textiles" },
+  {
+    "name": "Cotton waste",
+    "value": 0.000100362920804355,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Cotton. carded or combed",
+    "value": 0.0000528509365167796,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Cotton sewing thread",
+    "value": 0.000166872745752894,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Cotton yarn of > 85%",
+    "value": 0.00201988096836521,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Cotton yarn of < 85%",
+    "value": 0.0000384134163955723,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Cotton yarn for retail sale",
+    "value": 0.00579004816662316,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of cotton of > 85% weighing < 200 g/m2",
+    "value": 0.00554122153845002,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of cotton of < 85% weighing > 200 g/m2",
+    "value": 0.00271355516640224,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of cotton of < 85% weighing < 200 g/m2",
+    "value": 0.000249236085801465,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of cotton of < 85% weighing > 200 g/m2",
+    "value": 0.00103687308392406,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Other woven cotton fabrics",
+    "value": 0.000562418195822076,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Flax. raw or processed",
+    "value": 0.000632182160439413,
+    "parent": "Textiles"
+  },
+  { "name": "Hemp fiber", "value": 0.000028457856998458, "parent": "Textiles" },
+  {
+    "name": "Textile bast fibers",
+    "value": 0.0000132963363268925,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Vegetable textile fibers",
+    "value": 0.000411350404156692,
+    "parent": "Textiles"
+  },
+  { "name": "Flax yarn", "value": 0.0000494478028322829, "parent": "Textiles" },
+  {
+    "name": "Yarn of textile bast fibers",
+    "value": 0.0000363550916601787,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Yarn of other vegetable textile fibers",
+    "value": 0.000396570197799377,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of flax",
+    "value": 0.000802888467033266,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of jute or of other textile bast fibers",
+    "value": 0.0000236376246757601,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of vegetable textile fibers",
+    "value": 0.000110645715206318,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Synthetic sowing thread",
+    "value": 0.000977013358542874,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Synthetic filament yarn",
+    "value": 0.0136530434517065,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Artificial filament yarn",
+    "value": 0.000132899902854831,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Synthetic monofilament >67 dtex. thickness < 1mm",
+    "value": 0.00444509187899351,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Artificial monofilament >67dtex t<1mm. strip. straws t<5mm",
+    "value": 0.00000173715985710968,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Synthetic filament yarn for retail sale",
+    "value": 0.0000791522430954204,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of synthetic filament yarn",
+    "value": 0.0153881207035746,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of artificial filament yarn",
+    "value": 0.000901236657647561,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Synthetic filament tow",
+    "value": 0.00194929477751309,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Artificial filament tow",
+    "value": 0.0000474424537469155,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Synthetic staple fibers",
+    "value": 0.0862721174832938,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Artificial staple fibers. not processed for spinning",
+    "value": 0.000281390098048628,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Waste of man-made fibers",
+    "value": 0.000123488447529861,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Synthetic staple fibers. processed",
+    "value": 0.00000722124329419861,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Artificial staple fibers. processed",
+    "value": 0.0000187175111795753,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Synthetic staple fibers sewing thread",
+    "value": 0.000266037644305093,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Yarn of synthetic staple fibers. not for retail sale",
+    "value": 0.00165941974618527,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Yarn of artificial staple fibers. not for retail sale",
+    "value": 0.0000831811516458517,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Yarn of synthetic staple fibers. for retail sale",
+    "value": 0.00053041869588749,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of > 85% synthetic staple fibers",
+    "value": 0.00474539980239838,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of < 85% synthetic staple fibers weighing < 170 g/m2",
+    "value": 0.000612026581093501,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of < 85% synthetic staple fibers weighing > 170 g/m2",
+    "value": 0.00619297709791475,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Other woven fabrics of synthetic staple fibers",
+    "value": 0.00341911798323266,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabrics of artificial staple fibers",
+    "value": 0.000927626256976246,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Wadding of textile materials",
+    "value": 0.00235850187516247,
+    "parent": "Textiles"
+  },
+  { "name": "Felt", "value": 0.00979068813763891, "parent": "Textiles" },
+  {
+    "name": "Nonwoven textiles",
+    "value": 0.0773761108184415,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Rubber textiles",
+    "value": 0.000319556846573765,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Metallised yarn",
+    "value": 0.000283540578341879,
+    "parent": "Textiles"
+  },
+  { "name": "Gimp yarn", "value": 0.000122861017174863, "parent": "Textiles" },
+  {
+    "name": "Twine and ropes of baste fibers",
+    "value": 0.0123217190128539,
+    "parent": "Textiles"
+  },
+  { "name": "Nets", "value": 0.00830731972040327, "parent": "Textiles" },
+  {
+    "name": "Articles of yarn. rope etc not elsewhere clasified",
+    "value": 0.00438455892139324,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Carpets. knotted",
+    "value": 0.00559898927748486,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven carpets and rugs",
+    "value": 0.0279839611138298,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Carpets. tufted",
+    "value": 0.0702745174444645,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Carpets of felt",
+    "value": 0.00042710348625355,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Other carpets",
+    "value": 0.00225116658625311,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven pile fabrics",
+    "value": 0.00327691257635291,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Terry cloth",
+    "value": 0.0000402151403261514,
+    "parent": "Textiles"
+  },
+  { "name": "Gauze", "value": 0.0000373483850981702, "parent": "Textiles" },
+  {
+    "name": "Lace and net fabrics",
+    "value": 0.00019932309054239,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Hand-woven tapestries",
+    "value": 0.0000808607078087659,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Narrow woven fabrics",
+    "value": 0.00460233685218383,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Labels and badges of textiles",
+    "value": 0.00373830786306405,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Braids in piece",
+    "value": 0.000843616257139359,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Woven fabric incorporating metal threads",
+    "value": 0.0000380773521157185,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Embroidery in the piece",
+    "value": 0.0005441024166552,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Quilted textile products",
+    "value": 0.000733989771366358,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Stiffened textiles",
+    "value": 0.000840343355261177,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Tire cord fabric",
+    "value": 0.000206374922122442,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Textile fabrics impregnated with plastics",
+    "value": 0.00677089784515543,
+    "parent": "Textiles"
+  },
+  { "name": "Linoleum", "value": 0.000551341870329095, "parent": "Textiles" },
+  {
+    "name": "Textile wall coverings",
+    "value": 0.00109598673556738,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Rubberized textile fabrics",
+    "value": 0.0030035460819645,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Other textile fabrics impregnated. coated or covered",
+    "value": 0.00342603847934702,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Textile wicks",
+    "value": 0.0000436723533200498,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Textile hosepiping and similar tubing",
+    "value": 0.00136630933739803,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Transmission belts or belting. of textile material",
+    "value": 0.000594715131958372,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Textile articles for technical use",
+    "value": 0.0122693647230562,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Pile fabrics. knit",
+    "value": 0.00188171109199215,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Other knitted fabrics",
+    "value": 0.0299992343043021,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Men's overcoats. knit",
+    "value": 0.00699222624815715,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Women's overcoats. knit",
+    "value": 0.0221401928789316,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Men's suits. knit",
+    "value": 0.029017997241329,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Women's suits. knit",
+    "value": 0.145418097517039,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Men's shirts. knit",
+    "value": 0.0268966535555917,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Women's shirts. knit",
+    "value": 0.0408654296741357,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Men's undergarments. knit",
+    "value": 0.0243307801538907,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Women's undergarments. knit",
+    "value": 0.0185360938587418,
+    "parent": "Textiles"
+  },
+  { "name": "T-shirts. knit", "value": 0.21726829179342, "parent": "Textiles" },
+  {
+    "name": "Sweaters. pullovers. sweatshirts etc.. knit",
+    "value": 0.317200039367574,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Babies' garments. knit",
+    "value": 0.0197197442585088,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Activewear. knit",
+    "value": 0.00741807984016789,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Garments knit with impregnated fibers",
+    "value": 0.0121408424851144,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Other garments. knit",
+    "value": 0.0434844575186818,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Socks. stockings. etc.. knit",
+    "value": 0.0246662948113755,
+    "parent": "Textiles"
+  },
+  { "name": "Gloves. knit", "value": 0.0118226144444288, "parent": "Textiles" },
+  {
+    "name": "Other clothing accesories. knit",
+    "value": 0.00959941624224113,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Men's overcoats. not knit",
+    "value": 0.0924058324873793,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Womens overcoats. not knit",
+    "value": 0.128989050540483,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Men's suits and pants",
+    "value": 0.263135651440569,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Women's suits and pants",
+    "value": 0.385791392386218,
+    "parent": "Textiles"
+  },
+  { "name": "Men's shirts", "value": 0.0543823389491874, "parent": "Textiles" },
+  {
+    "name": "Women's shirts",
+    "value": 0.165325402064465,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Men's undergarments",
+    "value": 0.00223429825635726,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Women's undergarments",
+    "value": 0.00385427928658707,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Babies' garments",
+    "value": 0.00477401603451722,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Garments made of textile felts and nonwoven fabric",
+    "value": 0.0717025599690337,
+    "parent": "Textiles"
+  },
+  { "name": "Activewear", "value": 0.0421287885613235, "parent": "Textiles" },
+  { "name": "Brassieres", "value": 0.00853616845838995, "parent": "Textiles" },
+  {
+    "name": "Handkerchiefs",
+    "value": 0.000159884374586935,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Shawls. scarves. etc.",
+    "value": 0.0140737859971491,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Ties. bow ties and cravats",
+    "value": 0.00134278263048951,
+    "parent": "Textiles"
+  },
+  { "name": "Gloves", "value": 0.0037599511752482, "parent": "Textiles" },
+  {
+    "name": "Other clothing accesories",
+    "value": 0.00377677039230184,
+    "parent": "Textiles"
+  },
+  { "name": "Blankets", "value": 0.00556167400216795, "parent": "Textiles" },
+  { "name": "House linen", "value": 0.0452969796525913, "parent": "Textiles" },
+  { "name": "Curtains", "value": 0.0302655627628526, "parent": "Textiles" },
+  {
+    "name": "Other furnishing articles",
+    "value": 0.0168871406662445,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Bags for packing goods",
+    "value": 0.00553431373441848,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Tents. tarpaulins. etc.",
+    "value": 0.0382898330333362,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Other made up articles",
+    "value": 0.0274845729049452,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Needlecraft sets of woven fabric and yarn",
+    "value": 0.000828706370805418,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Used clothes and textiles",
+    "value": 0.00492433278597755,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Used or new rags textile scraps",
+    "value": 0.00228084343503186,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Waterproof footwear",
+    "value": 0.0104682235246273,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Other footwear of rubber or plastics",
+    "value": 0.0198856286772909,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Leather footwear",
+    "value": 0.175978575723587,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Textile footwear",
+    "value": 0.0839718882713305,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Other footwear",
+    "value": 0.00604277898983729,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Parts of footwear",
+    "value": 0.00404622386237425,
+    "parent": "Textiles"
+  },
+  { "name": "Hat forms", "value": 0.0000785783402201364, "parent": "Textiles" },
+  {
+    "name": "Hat shapes",
+    "value": 0.00000924756190770138,
+    "parent": "Textiles"
+  },
+  { "name": "Hats", "value": 0.000396798655290115, "parent": "Textiles" },
+  { "name": "Hats. knit", "value": 0.0154400688467221, "parent": "Textiles" },
+  {
+    "name": "Other headgear",
+    "value": 0.0028550967221676,
+    "parent": "Textiles"
+  },
+  { "name": "Headbands", "value": 0.000139949527116132, "parent": "Textiles" },
+  { "name": "Umbrellas", "value": 0.0021423209394883, "parent": "Textiles" },
+  {
+    "name": "Walking sticks",
+    "value": 0.000166962142162313,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Parts of umbrellas or walking sticks",
+    "value": 0.000781603292316483,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Feathers or down",
+    "value": 0.000241019341750524,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Artificial flowers",
+    "value": 0.00139294339727839,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Human animal hair prepared for use in wigs",
+    "value": 0.0000947116329718703,
+    "parent": "Textiles"
+  },
+  { "name": "Wigs", "value": 0.000249310582809315, "parent": "Textiles" },
+  {
+    "name": "Flagstones. of natural stone",
+    "value": 0.00184212834848818,
+    "parent": "Stone"
+  },
+  {
+    "name": "Worked building stone",
+    "value": 0.00584857963794587,
+    "parent": "Stone"
+  },
+  { "name": "Worked slate", "value": 0.00027809126017512, "parent": "Stone" },
+  { "name": "Grindstones", "value": 0.00337949826713961, "parent": "Stone" },
+  {
+    "name": "Natural or artificial abrasive powder",
+    "value": 0.0104836129509599,
+    "parent": "Stone"
+  },
+  {
+    "name": "Mineral wools and insulating materials",
+    "value": 0.0704627090265452,
+    "parent": "Stone"
+  },
+  { "name": "Asphalt", "value": 0.00273932175001343, "parent": "Stone" },
+  {
+    "name": "Panels of vegetable fibers",
+    "value": 0.00528623317998321,
+    "parent": "Stone"
+  },
+  {
+    "name": "Plaster articles",
+    "value": 0.0232238716051429,
+    "parent": "Stone"
+  },
+  {
+    "name": "Articles of cement. of concrete or of artificial stone",
+    "value": 0.0298330143730698,
+    "parent": "Stone"
+  },
+  {
+    "name": "Asbestos-cement or cellulose fiber-cement",
+    "value": 0.00523460289073578,
+    "parent": "Stone"
+  },
+  {
+    "name": "Asbestos fibres",
+    "value": 0.000533901844876714,
+    "parent": "Stone"
+  },
+  {
+    "name": "Friction material and articles thereof",
+    "value": 0.00283968632630685,
+    "parent": "Stone"
+  },
+  { "name": "Mica articles", "value": 0.000313869137981888, "parent": "Stone" },
+  {
+    "name": "Articles of stone or of other mineral substances",
+    "value": 0.0248145273021051,
+    "parent": "Stone"
+  },
+  {
+    "name": "Bricks. blocks. and other ceramic goods",
+    "value": 0.00256666306998424,
+    "parent": "Stone"
+  },
+  {
+    "name": "Bricks. tiles and similar refractory ceramic constructional goods",
+    "value": 0.00279968474406987,
+    "parent": "Stone"
+  },
+  {
+    "name": "Other refractory ceramic goods",
+    "value": 0.00196070771911562,
+    "parent": "Stone"
+  },
+  {
+    "name": "Ceramic building bricks",
+    "value": 0.0333581289063893,
+    "parent": "Stone"
+  },
+  {
+    "name": "Architectural ceramic ornaments",
+    "value": 0.0041253474103259,
+    "parent": "Stone"
+  },
+  { "name": "Ceramic pipes", "value": 0.000237048927146997, "parent": "Stone" },
+  {
+    "name": "Unglazed ceramic flags and pavers",
+    "value": 0.000683952614427533,
+    "parent": "Stone"
+  },
+  {
+    "name": "Glazed ceramic flags and pavers",
+    "value": 0.00000173495253835858,
+    "parent": "Stone"
+  },
+  {
+    "name": "Ceramic wares for technical ware",
+    "value": 0.0165322280915751,
+    "parent": "Stone"
+  },
+  {
+    "name": "Ceramic sinks. washbasins. and similar sanitary fixtures",
+    "value": 0.00749335161689889,
+    "parent": "Stone"
+  },
+  {
+    "name": "Porcelain or china household articles",
+    "value": 0.0419122770796663,
+    "parent": "Stone"
+  },
+  {
+    "name": "Ceramic household articles",
+    "value": 0.0156318075900358,
+    "parent": "Stone"
+  },
+  {
+    "name": "Ornamental ceramic articles",
+    "value": 0.0125009996491364,
+    "parent": "Stone"
+  },
+  {
+    "name": "Other ceramic articles",
+    "value": 0.00717903935967772,
+    "parent": "Stone"
+  },
+  {
+    "name": "Cullet and other scraps of glass",
+    "value": 0.00111681278798393,
+    "parent": "Stone"
+  },
+  { "name": "Glass balls", "value": 0.000419264193709045, "parent": "Stone" },
+  {
+    "name": "Glass. cast or rolled",
+    "value": 0.000400968832240617,
+    "parent": "Stone"
+  },
+  {
+    "name": "Drawn and blown glass",
+    "value": 0.00013039238875359,
+    "parent": "Stone"
+  },
+  { "name": "Float glass", "value": 0.00348875392336243, "parent": "Stone" },
+  { "name": "Worked glass", "value": 0.00129164181417514, "parent": "Stone" },
+  { "name": "Safety glass", "value": 0.0177854973247516, "parent": "Stone" },
+  {
+    "name": "Multiple-walled insulating glass",
+    "value": 0.0045900663672465,
+    "parent": "Stone"
+  },
+  { "name": "Glass mirrors", "value": 0.01192718948124, "parent": "Stone" },
+  {
+    "name": "Glass containers for conveyance",
+    "value": 0.0281871999878366,
+    "parent": "Stone"
+  },
+  {
+    "name": "Glass envelopes",
+    "value": 0.000284747429869039,
+    "parent": "Stone"
+  },
+  {
+    "name": "Glassware for interior decorative use",
+    "value": 0.0251084273791755,
+    "parent": "Stone"
+  },
+  {
+    "name": "Signaling glassware",
+    "value": 0.000276183584944489,
+    "parent": "Stone"
+  },
+  {
+    "name": "Clock or watch glasses and similar glasses",
+    "value": 0.0000261749375801408,
+    "parent": "Stone"
+  },
+  {
+    "name": "Glass paving blocks or other molded products",
+    "value": 0.00126997753246285,
+    "parent": "Stone"
+  },
+  {
+    "name": "Laboratory. hygienic or pharmaceutical glassware",
+    "value": 0.0118363925280732,
+    "parent": "Stone"
+  },
+  { "name": "Glass beads", "value": 0.00321317017728855, "parent": "Stone" },
+  { "name": "Glass fibers", "value": 0.0726696348748998, "parent": "Stone" },
+  {
+    "name": "Other articles of glass",
+    "value": 0.00736277546885927,
+    "parent": "Stone"
+  },
+  { "name": "Pearls", "value": 0.0000353187555065408, "parent": "Stone" },
+  { "name": "Diamonds", "value": 0.0016249822626901, "parent": "Stone" },
+  {
+    "name": "Precious stones",
+    "value": 0.00045536268456441,
+    "parent": "Stone"
+  },
+  {
+    "name": "Synthetic precious stones",
+    "value": 0.0000163021526361925,
+    "parent": "Stone"
+  },
+  { "name": "Diamond dust", "value": 0.000037341763141917, "parent": "Stone" },
+  { "name": "Silver", "value": 0.00206307819632409, "parent": "Stone" },
+  {
+    "name": "Silver clad metals",
+    "value": 0.0000257980379033918,
+    "parent": "Stone"
+  },
+  { "name": "Gold", "value": 0.0146564585498312, "parent": "Stone" },
+  {
+    "name": "Gold clad metals",
+    "value": 0.000151729435461024,
+    "parent": "Stone"
+  },
+  { "name": "Platinum", "value": 0.000633141792266451, "parent": "Stone" },
+  {
+    "name": "Platinum clad metals",
+    "value": 0.0000358418900505497,
+    "parent": "Stone"
+  },
+  {
+    "name": "Scrap of precious metal",
+    "value": 0.00826368378784261,
+    "parent": "Stone"
+  },
+  {
+    "name": "Jewelry of precious metal",
+    "value": 0.0587819755131397,
+    "parent": "Stone"
+  },
+  {
+    "name": "Goldsmith and silversmith wares",
+    "value": 0.0044460945535362,
+    "parent": "Stone"
+  },
+  {
+    "name": "Other articles of precious metals",
+    "value": 0.00459842382786783,
+    "parent": "Stone"
+  },
+  {
+    "name": "Articles of precious stones",
+    "value": 0.00291653854326363,
+    "parent": "Stone"
+  },
+  {
+    "name": "Imitation jewelry",
+    "value": 0.0174382728412923,
+    "parent": "Stone"
+  },
+  { "name": "Coin", "value": 0.0000301679772008668, "parent": "Stone" },
+  { "name": "Pig iron", "value": 0.000805879935770684, "parent": "Metals" },
+  { "name": "Ferroalloys", "value": 0.00764667363283883, "parent": "Metals" },
+  {
+    "name": "Ferrous products from the reduction of iron ore",
+    "value": 0.00383069298207227,
+    "parent": "Metals"
+  },
+  {
+    "name": "Ferrous waste and scrap",
+    "value": 0.304368242101124,
+    "parent": "Metals"
+  },
+  {
+    "name": "Powders of iron or steel",
+    "value": 0.00073255942881565,
+    "parent": "Metals"
+  },
+  {
+    "name": "Iron and nonalloy steel",
+    "value": 0.00132475876922746,
+    "parent": "Metals"
+  },
+  {
+    "name": "Semifinished products of iron or nonalloy steel",
+    "value": 0.0195202423751476,
+    "parent": "Metals"
+  },
+  {
+    "name": "Flat-rolled iron. width > 600mm. hot-rolled. not clad",
+    "value": 0.25297444498469,
+    "parent": "Metals"
+  },
+  {
+    "name": "Flat-rolled iron. width > 600mm. cold-rolled. not clad",
+    "value": 0.00434804711010174,
+    "parent": "Metals"
+  },
+  {
+    "name": "Flat rolled iron. width > 600mm. clad",
+    "value": 0.018771502196227,
+    "parent": "Metals"
+  },
+  {
+    "name": "Flat-rolled iron. width < 600mm. not clad",
+    "value": 0.00308011465846177,
+    "parent": "Metals"
+  },
+  {
+    "name": "Flat-rolled iron. width < 600mm. clad",
+    "value": 0.0138116503405663,
+    "parent": "Metals"
+  },
+  {
+    "name": "Hot rolled bars of iron",
+    "value": 0.0015898423000024,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other bars of iron. not further worked than forged",
+    "value": 0.0494437546096934,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other bars and rods of iron or nonalloy steel",
+    "value": 0.00558575750523143,
+    "parent": "Metals"
+  },
+  {
+    "name": "Angles of iron or nonalloy steel",
+    "value": 0.0358393450120297,
+    "parent": "Metals"
+  },
+  {
+    "name": "Wire of iron or nonalloy steel",
+    "value": 0.00385085297605569,
+    "parent": "Metals"
+  },
+  {
+    "name": "Stainless steel in ingots",
+    "value": 0.0073729020954596,
+    "parent": "Metals"
+  },
+  {
+    "name": "Flat-rolled products of stainless steel of a width > 600 mm",
+    "value": 0.0397305411528991,
+    "parent": "Metals"
+  },
+  {
+    "name": "Flat-rolled products of stainless steel of a width < 600 mm",
+    "value": 0.00837563126928238,
+    "parent": "Metals"
+  },
+  {
+    "name": "Bars of stainless steel. hot-rolled",
+    "value": 0.00103325639215039,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other bars and rods of stainless steel",
+    "value": 0.0202046325905175,
+    "parent": "Metals"
+  },
+  {
+    "name": "Wire of stainless steel",
+    "value": 0.00232356940043737,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other alloy steel in primary form",
+    "value": 0.000846314152482882,
+    "parent": "Metals"
+  },
+  {
+    "name": "Flat-rolled products of other alloy steel. width > 600 mm",
+    "value": 0.010265547516902,
+    "parent": "Metals"
+  },
+  {
+    "name": "Flat-rolled products of other alloy steel. width < 600 mm",
+    "value": 0.00113987761344378,
+    "parent": "Metals"
+  },
+  {
+    "name": "Bars of other alloy steel",
+    "value": 0.00000409678360202739,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other bars and rods of other alloy steel",
+    "value": 0.00364049991371409,
+    "parent": "Metals"
+  },
+  {
+    "name": "Wire of other alloy steel",
+    "value": 0.000278677855133223,
+    "parent": "Metals"
+  },
+  {
+    "name": "Sheet piling of iron or steel",
+    "value": 0.00791400200678362,
+    "parent": "Metals"
+  },
+  {
+    "name": "Railway construction material of iron or steel",
+    "value": 0.000687557165948067,
+    "parent": "Metals"
+  },
+  {
+    "name": "Tubes of cast iron",
+    "value": 0.00216401502000373,
+    "parent": "Metals"
+  },
+  {
+    "name": "Tubes. seamless. of iron or steel",
+    "value": 0.0243529085243704,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other tubes and pipes. diameter > 406.4 mm. of iron or steel",
+    "value": 0.00258268489313904,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other tubes. pipes and hollow profiles of iron or steel",
+    "value": 0.0547488730570813,
+    "parent": "Metals"
+  },
+  {
+    "name": "Tube or pipe fittings of iron or steel",
+    "value": 0.097220648049862,
+    "parent": "Metals"
+  },
+  {
+    "name": "Structures and their parts. of iron or steel",
+    "value": 0.709591032282758,
+    "parent": "Metals"
+  },
+  {
+    "name": "Tanks etc. > 300 liters. iron or steel",
+    "value": 0.0167125395457144,
+    "parent": "Metals"
+  },
+  {
+    "name": "Tanks etc. < 300 liters. iron or steel",
+    "value": 0.0454303193637073,
+    "parent": "Metals"
+  },
+  {
+    "name": "Containers for compressed or liquified gas",
+    "value": 0.00359509315968537,
+    "parent": "Metals"
+  },
+  {
+    "name": "Wire of iron or steel. not insulated",
+    "value": 0.0201951102174253,
+    "parent": "Metals"
+  },
+  {
+    "name": "Barbed wire of iron or steel",
+    "value": 0.000137388485535177,
+    "parent": "Metals"
+  },
+  {
+    "name": "Cloth of iron or steel wire",
+    "value": 0.010457784010594,
+    "parent": "Metals"
+  },
+  {
+    "name": "Chain of iron or steel",
+    "value": 0.0101479305372501,
+    "parent": "Metals"
+  },
+  {
+    "name": "Anchors of iron or steel",
+    "value": 0.000442150226350059,
+    "parent": "Metals"
+  },
+  {
+    "name": "Nails and similar articles of iron or steel",
+    "value": 0.0238511893868846,
+    "parent": "Metals"
+  },
+  {
+    "name": "Screws and similar articles of iron or steel",
+    "value": 0.096764015605186,
+    "parent": "Metals"
+  },
+  {
+    "name": "Articles for sewing of iron or steel",
+    "value": 0.000773663566768804,
+    "parent": "Metals"
+  },
+  {
+    "name": "Springs of iron or steel",
+    "value": 0.0166971545340192,
+    "parent": "Metals"
+  },
+  {
+    "name": "Stoves and similar non-electric appliances of iron or steel",
+    "value": 0.0684682994129082,
+    "parent": "Metals"
+  },
+  {
+    "name": "Radiators for central heating of iron or steel",
+    "value": 0.00655797546378756,
+    "parent": "Metals"
+  },
+  {
+    "name": "Household articles of iron or steel",
+    "value": 0.0282594764330224,
+    "parent": "Metals"
+  },
+  {
+    "name": "Sanitary ware and parts of iron or steel",
+    "value": 0.0121966655763296,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other cast articles of iron or steel",
+    "value": 0.0891409255177135,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other articles of iron or steel",
+    "value": 0.578605276517137,
+    "parent": "Metals"
+  },
+  {
+    "name": "Copper mattes",
+    "value": 0.0000765128416988017,
+    "parent": "Metals"
+  },
+  {
+    "name": "Unrefined copper",
+    "value": 0.0000667035171689473,
+    "parent": "Metals"
+  },
+  {
+    "name": "Refined copper and copper alloys",
+    "value": 0.00174300704448132,
+    "parent": "Metals"
+  },
+  {
+    "name": "Copper waste and scrap",
+    "value": 0.066088416896493,
+    "parent": "Metals"
+  },
+  {
+    "name": "Master alloys of copper",
+    "value": 0.00000206163571352025,
+    "parent": "Metals"
+  },
+  {
+    "name": "Copper powders and flakes",
+    "value": 0.0000165079851097319,
+    "parent": "Metals"
+  },
+  {
+    "name": "Copper bars. rods and profiles",
+    "value": 0.0132867035878628,
+    "parent": "Metals"
+  },
+  { "name": "Copper wire", "value": 0.00331906519071283, "parent": "Metals" },
+  {
+    "name": "Copper plates. sheets and strip > 0.15 mm",
+    "value": 0.00955098766884216,
+    "parent": "Metals"
+  },
+  {
+    "name": "Copper foil < 0.15 mm thick",
+    "value": 0.000223498749163729,
+    "parent": "Metals"
+  },
+  {
+    "name": "Copper tubes and pipes",
+    "value": 0.0039959212753556,
+    "parent": "Metals"
+  },
+  {
+    "name": "Copper tube or pipe fittings",
+    "value": 0.00764834457313341,
+    "parent": "Metals"
+  },
+  {
+    "name": "Copper wire. uninsulated",
+    "value": 0.000807166250772883,
+    "parent": "Metals"
+  },
+  {
+    "name": "Screws and similar articles of copper",
+    "value": 0.004007339735255,
+    "parent": "Metals"
+  },
+  {
+    "name": "Household articles of copper",
+    "value": 0.00368482618521415,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other articles of copper",
+    "value": 0.0133683478938282,
+    "parent": "Metals"
+  },
+  {
+    "name": "Nickel mattes",
+    "value": 0.0000221708613656593,
+    "parent": "Metals"
+  },
+  {
+    "name": "Nickel unwrought",
+    "value": 0.000910922372327354,
+    "parent": "Metals"
+  },
+  {
+    "name": "Nickel waste and scrap",
+    "value": 0.000468817947841381,
+    "parent": "Metals"
+  },
+  {
+    "name": "Nickel bars. wire etc.",
+    "value": 0.000101407534403309,
+    "parent": "Metals"
+  },
+  { "name": "Nickel plates", "value": 0.00031885933384842, "parent": "Metals" },
+  {
+    "name": "Nickel tubes and pipes",
+    "value": 0.000364500063664757,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other articles of nickel",
+    "value": 0.000802938131705166,
+    "parent": "Metals"
+  },
+  {
+    "name": "Unwrought aluminum",
+    "value": 0.00278325291145705,
+    "parent": "Metals"
+  },
+  {
+    "name": "Waste or scrap. aluminium",
+    "value": 0.0742077519709485,
+    "parent": "Metals"
+  },
+  {
+    "name": "Aluminum powders",
+    "value": 0.000225347378617768,
+    "parent": "Metals"
+  },
+  { "name": "Aluminum bars", "value": 0.103444677707967, "parent": "Metals" },
+  {
+    "name": "Aluminum wire",
+    "value": 0.000679315589561176,
+    "parent": "Metals"
+  },
+  {
+    "name": "Aluminum plates > 0.2 mm",
+    "value": 0.0793755089724559,
+    "parent": "Metals"
+  },
+  {
+    "name": "Aluminum foil < 0.2 mm",
+    "value": 0.0285255002815853,
+    "parent": "Metals"
+  },
+  {
+    "name": "Aluminum tubes and pipes",
+    "value": 0.0487668361682959,
+    "parent": "Metals"
+  },
+  {
+    "name": "Aluminum tube or pipe fittings",
+    "value": 0.0012046282053477,
+    "parent": "Metals"
+  },
+  {
+    "name": "Aluminum structures (bridges. towers etc)",
+    "value": 0.0941994732166919,
+    "parent": "Metals"
+  },
+  {
+    "name": "Aluminum containers. >300 liters",
+    "value": 0.000874455259240558,
+    "parent": "Metals"
+  },
+  {
+    "name": "Aluminum containers. <300 liters",
+    "value": 0.051387779965518,
+    "parent": "Metals"
+  },
+  {
+    "name": "Aluminum containers for compressed or liquefied gas",
+    "value": 0.00110375539391185,
+    "parent": "Metals"
+  },
+  {
+    "name": "Aluminum wire. not insulated",
+    "value": 0.000190768074892844,
+    "parent": "Metals"
+  },
+  {
+    "name": "Household articles of aluminum",
+    "value": 0.0167502515865768,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other articles of aluminum",
+    "value": 0.0511831924197542,
+    "parent": "Metals"
+  },
+  {
+    "name": "Lead refined unwrought",
+    "value": 0.00082164350263161,
+    "parent": "Metals"
+  },
+  {
+    "name": "Lead waste or scrap",
+    "value": 0.00249070371346227,
+    "parent": "Metals"
+  },
+  {
+    "name": "Lead foil <2mm",
+    "value": 0.0000421239192161585,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other articles of lead",
+    "value": 0.000578079674190764,
+    "parent": "Metals"
+  },
+  {
+    "name": "Unwrought zinc",
+    "value": 0.000603684019873748,
+    "parent": "Metals"
+  },
+  {
+    "name": "Zinc waste and scrap",
+    "value": 0.00336224696744045,
+    "parent": "Metals"
+  },
+  { "name": "Zinc powders", "value": 0.00161572035321052, "parent": "Metals" },
+  {
+    "name": "Zinx bars and wire",
+    "value": 0.0000541333887111642,
+    "parent": "Metals"
+  },
+  {
+    "name": "Zinc plates and foil",
+    "value": 0.000114070922078326,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other articles of zinc",
+    "value": 0.00830691909204994,
+    "parent": "Metals"
+  },
+  { "name": "Unwrought tin", "value": 0.00147941897216025, "parent": "Metals" },
+  {
+    "name": "Tin waste and scrap",
+    "value": 0.000206315324516163,
+    "parent": "Metals"
+  },
+  {
+    "name": "Tin bars and wire",
+    "value": 0.000919665010070743,
+    "parent": "Metals"
+  },
+  {
+    "name": "Other articles of tin",
+    "value": 0.000406769665918487,
+    "parent": "Metals"
+  },
+  {
+    "name": "Tungsten (wolfram)",
+    "value": 0.000380509194736742,
+    "parent": "Metals"
+  },
+  { "name": "Molybdenum", "value": 0.0000277752436746827, "parent": "Metals" },
+  { "name": "Tantalum", "value": 0.000318068010076154, "parent": "Metals" },
+  { "name": "Magnesium", "value": 0.000454565290665578, "parent": "Metals" },
+  { "name": "Cobalt", "value": 0.000133395445914451, "parent": "Metals" },
+  { "name": "Bismuth", "value": 0.0000184035200872324, "parent": "Metals" },
+  { "name": "Cadmium", "value": 0.00000291421258112967, "parent": "Metals" },
+  { "name": "Titanium", "value": 0.00288136491896498, "parent": "Metals" },
+  { "name": "Zirconium", "value": 0.00000815162814778403, "parent": "Metals" },
+  { "name": "Antimony", "value": 0.0000447594578049628, "parent": "Metals" },
+  { "name": "Manganese", "value": 0.0000366795675165893, "parent": "Metals" },
+  { "name": "Other metals", "value": 0.000197768586311933, "parent": "Metals" },
+  { "name": "Cermets", "value": 0.000659393434173192, "parent": "Metals" },
+  {
+    "name": "Handtools for gardening",
+    "value": 0.00263372969108774,
+    "parent": "Metals"
+  },
+  { "name": "Handsaws", "value": 0.00808233434206067, "parent": "Metals" },
+  {
+    "name": "Pliers. pincers and other metal handtools",
+    "value": 0.00395640088860636,
+    "parent": "Metals"
+  },
+  { "name": "Wrenches", "value": 0.00485881735812638, "parent": "Metals" },
+  {
+    "name": "Hand tools n.e.c.",
+    "value": 0.0187002146298418,
+    "parent": "Metals"
+  },
+  {
+    "name": "Retail tool sets",
+    "value": 0.00317565182864655,
+    "parent": "Metals"
+  },
+  {
+    "name": "Interchangeable tools for hand tools",
+    "value": 0.0345404416709932,
+    "parent": "Metals"
+  },
+  {
+    "name": "Knives and blades for machines",
+    "value": 0.0113518154280083,
+    "parent": "Metals"
+  },
+  {
+    "name": "Articles for utensils. of cermet",
+    "value": 0.000881908822833309,
+    "parent": "Metals"
+  },
+  {
+    "name": "Hand-operated appliances. food preparation. <10kg",
+    "value": 0.0012642931348491,
+    "parent": "Metals"
+  },
+  { "name": "Knife sets", "value": 0.00442328356973272, "parent": "Metals" },
+  { "name": "Razors", "value": 0.00323517217876975, "parent": "Metals" },
+  { "name": "Scissors", "value": 0.00140390659768538, "parent": "Metals" },
+  { "name": "Other cutlery", "value": 0.00111771447769375, "parent": "Metals" },
+  { "name": "Cutlery", "value": 0.00490221434843223, "parent": "Metals" },
+  {
+    "name": "Padlocks and locks",
+    "value": 0.0229791285166593,
+    "parent": "Metals"
+  },
+  {
+    "name": "Base metal mountings. fittings and similar articles",
+    "value": 0.0763460699378817,
+    "parent": "Metals"
+  },
+  { "name": "Safes", "value": 0.000505786674114363, "parent": "Metals" },
+  {
+    "name": "Paper trays and similar office equipment. of base metal",
+    "value": 0.00129240278731458,
+    "parent": "Metals"
+  },
+  {
+    "name": "Paper clips and similar office articles. of metal",
+    "value": 0.00183972623385731,
+    "parent": "Metals"
+  },
+  {
+    "name": "Ornaments. statuettes. etc. of metal",
+    "value": 0.010258741249533,
+    "parent": "Metals"
+  },
+  {
+    "name": "Flexible tubing of base metal",
+    "value": 0.0726503605675653,
+    "parent": "Metals"
+  },
+  {
+    "name": "Clasps. buckles etc. of metal",
+    "value": 0.00244950741995126,
+    "parent": "Metals"
+  },
+  {
+    "name": "Stoppers. caps and lids of metal",
+    "value": 0.0399786570244344,
+    "parent": "Metals"
+  },
+  {
+    "name": "Sign plates and similar plates of base metal",
+    "value": 0.0126745004212692,
+    "parent": "Metals"
+  },
+  {
+    "name": "Wire etc. used for welding",
+    "value": 0.00460270105977776,
+    "parent": "Metals"
+  },
+  {
+    "name": "Nuclear reactors and related equipment",
+    "value": 0.000256481057772238,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Steam boilers",
+    "value": 0.0407502076353287,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Central heating boilers",
+    "value": 0.0305789512571765,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Auxiliary parts for use with boilers",
+    "value": 0.00307363286694919,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Water gas generators",
+    "value": 0.00709326791947746,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Steam turbines",
+    "value": 0.00141555241141615,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Spark-ignition reciprocating internal combustion piston engines",
+    "value": 0.0303297140677156,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Compression-ignition internal combustion piston engines",
+    "value": 0.00692206220701618,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Parts suitable for use with spark-ignition engines",
+    "value": 0.113196523657543,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Hydraulic turbines. water wheels and regulators",
+    "value": 0.00055335770417853,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Gas turbines",
+    "value": 0.0279170484532092,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Other engines and motors",
+    "value": 0.668965065790654,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Pumps for liquids",
+    "value": 0.467783324567094,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Pumps. compressors. fans. etc.",
+    "value": 0.133817869333123,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Air conditioners",
+    "value": 0.0945628685173217,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Furnace burners",
+    "value": 0.0308802745472068,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Industrial furnaces",
+    "value": 0.0304879148099252,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Refrigerators. freezers",
+    "value": 0.253931538395164,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Equipment for temperature change of materials",
+    "value": 0.303264441457178,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Calendering or other rolling machines. other than for metals or glass",
+    "value": 0.00144390762809268,
+    "parent": "Machinery"
+  },
+  { "name": "Centrifuges", "value": 0.248269130090812, "parent": "Machinery" },
+  {
+    "name": "Dish washing machines",
+    "value": 0.167420235852002,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Weighing machinery",
+    "value": 0.0419527328177363,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Sprays and powder dispersers",
+    "value": 0.109484767079906,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Pulleys and winches",
+    "value": 0.0470321043618125,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Ships' derricks; cranes",
+    "value": 0.069125661010171,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Fork-lift trucks",
+    "value": 0.0439514467029379,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Other lifting machinery",
+    "value": 0.244195178993946,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Self-propelled bulldozers. excavators and road rollers",
+    "value": 0.0334264255558669,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Other moving. excavating or boring machinery",
+    "value": 0.0118407254947815,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Parts for use with hoists and excavation machinery",
+    "value": 0.317327322196037,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machinery for soil preparation or cultivation",
+    "value": 0.0869967802292774,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Harvesting or agricultural machinery",
+    "value": 0.113951832817067,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Dairy machinery",
+    "value": 0.082006783021433,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machines for wine and juice production",
+    "value": 0.00107869128949319,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Other agricultural machinery",
+    "value": 0.115175941162223,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machinery for processing grain",
+    "value": 0.0360927165095114,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machinery for the industrial preparation of food or drink",
+    "value": 0.325156134391111,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machinery for making paper",
+    "value": 0.00489906947104161,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Bookbinding machinery",
+    "value": 0.00112096916919224,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Other machinery for making paper",
+    "value": 0.034244003177359,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machinery for making printing components",
+    "value": 0.0149904424317621,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Printers and copiers",
+    "value": 0.141459571532305,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machines to extrude. cut manmade textile fibres",
+    "value": 0.000619472419070623,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machines for preparing textile fibers",
+    "value": 0.00474699845300385,
+    "parent": "Machinery"
+  },
+  { "name": "Looms", "value": 0.00000579973001849514, "parent": "Machinery" },
+  {
+    "name": "Knitting machines",
+    "value": 0.00045868304379574,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Auxiliary machinery for use with knitting and textile machines",
+    "value": 0.00363826831445674,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machinery to manufacture felt",
+    "value": 0.00140689585910405,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Household- or laundry-type washing machines",
+    "value": 0.0283594547285344,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machinery for processing fabrics",
+    "value": 0.0665881494471027,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Sewing machines",
+    "value": 0.00340881477113225,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machinery for preparing leather",
+    "value": 0.0037689327552464,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machines used in metallurgy",
+    "value": 0.00103354334358804,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Metal-rolling mills",
+    "value": 0.000745799478514389,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machines for working materials by laser and similar means",
+    "value": 0.00452216648331447,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machining centers for working metal",
+    "value": 0.00996438205016236,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Lathes for removing metal",
+    "value": 0.00218586582015048,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machine tools for drilling by removing metal",
+    "value": 0.0164318591006442,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machines with grinding stones for finishing metal",
+    "value": 0.018872491443727,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Other machine tools for planing and cutting metals",
+    "value": 0.00681979216281088,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machine tools for molding and forging metals",
+    "value": 0.0119159630580719,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Other machine tools for working metal. without removal",
+    "value": 0.00774422001491679,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machine tools for working stone",
+    "value": 0.00337314725926303,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machine tools for working wood",
+    "value": 0.030922538079334,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Parts and accessories for metal working machines",
+    "value": 0.042302667888622,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Tools for hand working. pneumatic. hydraulic motors",
+    "value": 0.0159898380024411,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machinery for soldering",
+    "value": 0.00146431594543559,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Word processing machines",
+    "value": 0.0000567451986233942,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Cash registers. calculators. etc.",
+    "value": 0.0119414465530533,
+    "parent": "Machinery"
+  },
+  { "name": "Computers", "value": 0.367111330576574, "parent": "Machinery" },
+  {
+    "name": "Other office machines",
+    "value": 0.00409936671679586,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Parts and accessories for office machines",
+    "value": 0.394839280239696,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machinery for working minerals",
+    "value": 0.121724119993563,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machines for assembling electric lamps",
+    "value": 0.00167789334864285,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Automatic goods-vending machines",
+    "value": 0.0122829540809473,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machinery for working rubber or plastics",
+    "value": 0.055311028581972,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machinery for preparing tobacco",
+    "value": 0.000444073904641636,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machines n.e.c.",
+    "value": 0.435081491123011,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Molding boxes for metal foundry",
+    "value": 0.0631740365591382,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Appliances for thermostatically controlled valves",
+    "value": 0.702339230867769,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Ball or roller bearings",
+    "value": 0.0165688430950182,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Transmission shafts",
+    "value": 0.292140437879173,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Gaskets and similar joints of metal sheeting",
+    "value": 0.0110462772628228,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machinery parts. not containing electrical features. n.e.c.",
+    "value": 0.0343833379662029,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Electric motors and generators",
+    "value": 0.30347161156588,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electric generating sets and rotary converters",
+    "value": 0.949238392990353,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Parts for use with electric generators",
+    "value": 0.249394368214469,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electrical transformers",
+    "value": 0.492006934980982,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electromagnets",
+    "value": 0.0182790405535833,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Primary cells and primary batteries",
+    "value": 0.00915743708309428,
+    "parent": "Electronics"
+  },
+  { "name": "Batteries", "value": 0.0402141205448884, "parent": "Electronics" },
+  {
+    "name": "Vacuum cleaners",
+    "value": 0.013672429228638,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electromechanical domestic appliances",
+    "value": 0.0539384603922552,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electric shavers and hair clippers",
+    "value": 0.00226207129271319,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electrical ignition equipment",
+    "value": 0.048983179893728,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electrical lighting equipment used for motor vehicles",
+    "value": 0.010016462632435,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Portable electric lamps",
+    "value": 0.0166671349990044,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Industrial electric furnaces",
+    "value": 0.01153189290636,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electric soldering machines",
+    "value": 0.018612800392661,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electric heaters",
+    "value": 0.103868633005852,
+    "parent": "Electronics"
+  },
+  { "name": "Telephones", "value": 0.066615957248729, "parent": "Electronics" },
+  {
+    "name": "Microphones",
+    "value": 0.271742658275978,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Sound reproducing apparatus",
+    "value": 0.0219666821738645,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Magnetic tape recorders",
+    "value": 0.00318995525415363,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Video recording apparatus",
+    "value": 0.0609266991190886,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Parts and accessories for video or sound equipment",
+    "value": 0.010725377262789,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Sound storage media",
+    "value": 0.0553133771691232,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Tapes. cassettes. records and compact disks",
+    "value": 0.00271495571014981,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Transmission apparatus for radio. telephone and TV",
+    "value": 0.296521347550841,
+    "parent": "Electronics"
+  },
+  { "name": "Radar", "value": 0.0879174175632581, "parent": "Electronics" },
+  {
+    "name": "Reception apparatus for radio broadcasting",
+    "value": 0.00937887861118199,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Monitors and projectors",
+    "value": 0.0855980111659852,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Parts of radios. telephones. and T.V.s",
+    "value": 0.0708987471872734,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electric signal and traffic controls",
+    "value": 0.0146522580222479,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electric sound or visual signaling apparatus",
+    "value": 0.027414020375704,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electrical capacitors",
+    "value": 0.00694003198896882,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electrical resistors",
+    "value": 0.0129497011975397,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electronic printed circuits",
+    "value": 0.014796242528041,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electrical apparatus for > 1k volts",
+    "value": 0.0232755736322497,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electrical apparatus for < 1k volts",
+    "value": 0.158257532106368,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electrical boards",
+    "value": 0.145676274347441,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Parts for electrical apparatus",
+    "value": 0.0988523951926945,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electrical filament",
+    "value": 0.0114242695623536,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Thermionic. cold cathode or photocathode tubes",
+    "value": 0.00143074317906116,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Semiconductor devices",
+    "value": 0.0483962494231751,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electronic integrated circuits",
+    "value": 0.123411571032398,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electrical machines with individual functions n.e.c.",
+    "value": 0.0982304963784867,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Insulated electrical wire",
+    "value": 0.154122606036321,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Carbon articles for eletrical purposes",
+    "value": 0.00411814603290046,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electrical insulators of any material",
+    "value": 0.00250866742528835,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Insulating fittings for electrical machines",
+    "value": 0.0114168055139968,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Waste and scrap of batteries",
+    "value": 0.031729244655977,
+    "parent": "Electronics"
+  },
+  {
+    "name": "Electric trains",
+    "value": 0.0000332891259149114,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Other rail locomotives",
+    "value": 0.00000258697757628023,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Self-propelled railway coaches",
+    "value": 0.0000238611156993082,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Railway service vehicles",
+    "value": 0.000292906783632452,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Railway coaches. not self-propelled",
+    "value": 0.00034852349054435,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Railway cars. not self-propelled",
+    "value": 0.000353684753614092,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Parts of railway locomotives",
+    "value": 0.00761203086869981,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Railway track fixtures",
+    "value": 0.00938404042608142,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Containers for multimodal transportation",
+    "value": 0.00994058715402559,
+    "parent": "Vehicles"
+  },
+  { "name": "Tractors", "value": 0.0366520069346631, "parent": "Vehicles" },
+  { "name": "Buses", "value": 0.00950408656001895, "parent": "Vehicles" },
+  { "name": "Cars", "value": 0.53100397086898, "parent": "Vehicles" },
+  {
+    "name": "Motor vehicles for transporting goods",
+    "value": 0.119980700180475,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Special purpose motor vehicles",
+    "value": 0.116902753109027,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Vehicle chassis fitted with engines",
+    "value": 0.00884616761477149,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Vehicle Bodies",
+    "value": 0.0220994369455114,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Parts of motor vehicles",
+    "value": 0.488905034086446,
+    "parent": "Vehicles"
+  },
+  { "name": "Work trucks", "value": 0.00566875600125063, "parent": "Vehicles" },
+  {
+    "name": "Tanks and other armored fighting vehicles",
+    "value": 0.0224207364702392,
+    "parent": "Vehicles"
+  },
+  { "name": "Motorcycles", "value": 0.0147389339113064, "parent": "Vehicles" },
+  { "name": "Bicycles", "value": 0.00805437754641871, "parent": "Vehicles" },
+  { "name": "Wheelchairs", "value": 0.014078261335917, "parent": "Vehicles" },
+  {
+    "name": "Parts of motorcycles or wheelchairs",
+    "value": 0.0516852735575152,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Baby carriages",
+    "value": 0.0044486666317109,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Trailers and semi-trailers",
+    "value": 0.129472153151622,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Gliders. hang gliders",
+    "value": 0.000036923476238585,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Other aircraft and spacecraft",
+    "value": 0.0534599754919435,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Parts of other aircraft",
+    "value": 0.12444671523391,
+    "parent": "Vehicles"
+  },
+  { "name": "Parachutes", "value": 0.000642106817374012, "parent": "Vehicles" },
+  {
+    "name": "Aircraft launching gear",
+    "value": 0.000104422731817301,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Cargo ships and similar vessels",
+    "value": 0.705431101705899,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Fishing vessels",
+    "value": 0.0659176013276209,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Pleasure or sport boats",
+    "value": 0.0283635493048176,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Tugs and pusher craft",
+    "value": 0.000899074588930866,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Special function vessels. n.e.c.",
+    "value": 0.00260279963708806,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Other vessels",
+    "value": 0.0315337534707865,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Other floating structures",
+    "value": 0.0192032978903157,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Floating structures for scrapping",
+    "value": 0.00348087876188822,
+    "parent": "Vehicles"
+  },
+  {
+    "name": "Optical fibers",
+    "value": 0.0448465586028809,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Lenses and other optical elements",
+    "value": 0.00896721863057046,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Frames for spectacles. goggles",
+    "value": 0.0612587195909904,
+    "parent": "Machinery"
+  },
+  { "name": "Glasses", "value": 0.0114499704782319, "parent": "Machinery" },
+  {
+    "name": "Binoculars and telescopes",
+    "value": 0.000852340132673363,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Photographic cameras",
+    "value": 0.0141940363080711,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Cinematographic cameras and projectors",
+    "value": 0.00230838359925955,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Still image projectors",
+    "value": 0.00144988725458939,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Electrostatic photo-copyers",
+    "value": 0.00494657759252137,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Apparatus and equipment for photographic laboratories. n.e.c.",
+    "value": 0.0155551750012947,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Optical microscopes",
+    "value": 0.00262861974817896,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Microscopes. other than optical",
+    "value": 0.000359305138984061,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Liquid crystal devices",
+    "value": 0.0159126171632529,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Navigational instruments",
+    "value": 0.0253167430863098,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Surveying instruments",
+    "value": 0.0596360666014123,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Balances of a sensitivity < 50 milligram",
+    "value": 0.000216602533555628,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Drafting tables and machines",
+    "value": 0.0046679107739819,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Medical instruments",
+    "value": 0.47432330983123,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Therapy applicances",
+    "value": 0.00931536080680056,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Other breathing appliances and gas masks",
+    "value": 0.0161830214358773,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Orthopedic appliances",
+    "value": 0.351647314528721,
+    "parent": "Machinery"
+  },
+  {
+    "name": "X-ray machines",
+    "value": 0.034567366545119,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Instruments designed for demonstrational purposes",
+    "value": 0.00918146705867805,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Machines for testing the mechanical properties of materials",
+    "value": 0.0119850278544748,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Thermometers. hydrometers etc.",
+    "value": 0.0237870491186153,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Instruments for measuring properties of liquids or gases",
+    "value": 0.139890953705753,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Instruments for physical or chemical analysis",
+    "value": 0.192508232288817,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Gas. liquid or electricity meters",
+    "value": 0.0387064291305048,
+    "parent": "Machinery"
+  },
+  { "name": "Meters", "value": 0.0140869725193682, "parent": "Machinery" },
+  {
+    "name": "Instruments for measuring electricity",
+    "value": 0.0582154274239343,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Measuring instruments",
+    "value": 0.127322498395584,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Automatic regulating instruments",
+    "value": 0.236516976571896,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Other parts for machines and appliances",
+    "value": 0.0164567521378596,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Watches with precious metal",
+    "value": 0.00496097758822381,
+    "parent": "Machinery"
+  },
+  { "name": "Watches", "value": 0.0168858758726001, "parent": "Machinery" },
+  {
+    "name": "Clocks with watch movements",
+    "value": 0.000322196799800072,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Instrument panel clocks for vehicles",
+    "value": 0.0000527847169542468,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Other clocks",
+    "value": 0.00470653002285102,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Apparatus for measuring intervals of time",
+    "value": 0.00271719724234155,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Time switches",
+    "value": 0.00027535804773158,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Watch movements. complete",
+    "value": 0.0000372904429809541,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Clock movements. complete",
+    "value": 0.0000880985059935976,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Clock movements. complete. unassembled",
+    "value": 0.0000233981305912666,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Watch cases and parts",
+    "value": 0.000320146752509995,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Clock cases",
+    "value": 0.0000861637911082652,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Watch straps",
+    "value": 0.00111663013235728,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Other clock or watch parts",
+    "value": 0.00021677304892915,
+    "parent": "Machinery"
+  },
+  { "name": "Pianos", "value": 0.000658390759630508, "parent": "Machinery" },
+  {
+    "name": "Musical instruments. string",
+    "value": 0.00195748117093121,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Musical instruments. wind",
+    "value": 0.000790929765869536,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Musical instruments. percussion",
+    "value": 0.000286090031499391,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Musical instruments. electric",
+    "value": 0.00224426871515594,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Other musical instruments. n.e.c.",
+    "value": 0.000137407247744562,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Parts of musical instruments",
+    "value": 0.00610441836596154,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Military weapons. other than pistols and swords",
+    "value": 0.0000212829673980324,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Revolvers and pistols",
+    "value": 0.0000339811203433789,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Other firearms",
+    "value": 0.00225407196955923,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Other arms (air guns. truncheons. etc.)",
+    "value": 0.00390667385995206,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Parts of military weapons",
+    "value": 0.00260361524136659,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Munitions of war",
+    "value": 0.00868403398237719,
+    "parent": "Machinery"
+  },
+  { "name": "Swords", "value": 0.0000532752935466771, "parent": "Machinery" },
+  { "name": "Seats", "value": 0.331967637520182, "parent": "Textiles" },
+  {
+    "name": "Medical. dental or veterinary furniture",
+    "value": 0.016092637251317,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Other furniture and parts",
+    "value": 0.720518849370166,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Mattresses and bedding",
+    "value": 0.178515491310593,
+    "parent": "Textiles"
+  },
+  { "name": "Lamps", "value": 0.205494488892194, "parent": "Textiles" },
+  {
+    "name": "Prefabricated buildings",
+    "value": 0.0335242826180591,
+    "parent": "Textiles"
+  },
+  { "name": "Toys", "value": 0.296544798105252, "parent": "Machinery" },
+  { "name": "Games", "value": 0.107786014569066, "parent": "Machinery" },
+  {
+    "name": "Christmas and other festivity articles",
+    "value": 0.014586505307631,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Sports equipment",
+    "value": 0.0600926063387008,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Fishing and hunting equipment",
+    "value": 0.00781127173661872,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Fairground amusements",
+    "value": 0.00118362280828262,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Worked animal carving material",
+    "value": 0.000103385292004288,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Worked vegetable or mineral carving material",
+    "value": 0.00119871093560571,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Brooms and mops",
+    "value": 0.0440831000225281,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Hand sieves and riddles",
+    "value": 0.000101848998153527,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Travel sets",
+    "value": 0.0000956839568817265,
+    "parent": "Machinery"
+  },
+  { "name": "Buttons", "value": 0.00180803355122912, "parent": "Machinery" },
+  {
+    "name": "Slide fasteners",
+    "value": 0.0061805449268789,
+    "parent": "Machinery"
+  },
+  { "name": "Pens", "value": 0.00580717420098319, "parent": "Machinery" },
+  {
+    "name": "Pencils. crayons. pastels. etc.",
+    "value": 0.00486629078758789,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Slates and boards. with writing or drawing surfaces",
+    "value": 0.00331418646444323,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Hand-operated stamps",
+    "value": 0.000364822884032104,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Typewriter ribbons and ink pads",
+    "value": 0.00189713914640291,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Cigarette lighters",
+    "value": 0.00308002250290391,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Smoking pipes",
+    "value": 0.00073086696716325,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Combs. hair-slides etc.",
+    "value": 0.0035926678682076,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Scent sprays",
+    "value": 0.000552082425770086,
+    "parent": "Machinery"
+  },
+  {
+    "name": "Vacuum vessels",
+    "value": 0.00771150424004747,
+    "parent": "Machinery"
+  },
+  { "name": "Mannequins", "value": 0.00302603148625219, "parent": "Machinery" },
+  {
+    "name": "Paintings and drawings",
+    "value": 0.0206375937489068,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Original engravings",
+    "value": 0.00137599063744032,
+    "parent": "Textiles"
+  },
+  { "name": "Sculptures", "value": 0.0043567726411248, "parent": "Textiles" },
+  {
+    "name": "Postage or revenue stamps",
+    "value": 0.00196422232239704,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Collectors pieces",
+    "value": 0.00422093369335289,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Antiques >100 years",
+    "value": 0.00452036807036201,
+    "parent": "Textiles"
+  },
+  {
+    "name": "Commodities not specified according to kind",
+    "value": 6.89638198695844,
+    "parent": "Other"
+  },
+  {
+    "name": "Travel and tourism",
+    "value": 5.7875261945841,
+    "parent": "Services"
+  },
+  { "name": "Transport", "value": 25.8418034894412, "parent": "Services" },
+  { "name": "ICT", "value": 6.03112998873825, "parent": "Services" },
+  {
+    "name": "Insurance and finance",
+    "value": 0.891645809113052,
+    "parent": "Services"
+  }
+]

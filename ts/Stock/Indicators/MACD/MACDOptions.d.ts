@@ -21,6 +21,7 @@ import type {
     SeriesStatesOptions,
     SeriesZonesOptions
 } from '../../../Core/Series/SeriesOptions';
+import type TooltipOptions from '../../../Core/TooltipOptions';
 
 /* *
 *
@@ -50,7 +51,6 @@ export interface MACDOptions extends SMAOptions {
     groupPadding?: number;
     pointPadding?: number;
     minPointLength?: number;
-    tooltip?: Highcharts.TooltipOptions;
     signalLine?: MACDLineOptions;
     macdLine?: MACDLineOptions;
 }

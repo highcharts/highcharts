@@ -30,12 +30,12 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
+import ColorMapComposition from '../ColorMapComposition.js';
+const { colorMapSeriesMixin } = ColorMapComposition;
+import CU from '../CenteredUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import MapChart from '../../Core/Chart/MapChart.js';
 const {
     maps,
@@ -43,7 +43,7 @@ const {
 } = MapChart;
 import MapPoint from './MapPoint.js';
 import MapView from '../../Maps/MapView.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -105,10 +105,10 @@ declare module '../../Core/Series/SeriesOptions' {
 
 declare global {
     namespace Highcharts {
-        class MapPoint extends ScatterPoint implements ColorMapPoint {
+        class MapPoint extends ScatterPoint implements ColorMapComposition.PointComposition {
             public colorInterval?: unknown;
-            public dataLabelOnNull: ColorMapPointMixin['dataLabelOnNull'];
-            public isValid: ColorMapPointMixin['isValid'];
+            public dataLabelOnNull: ColorMapComposition.PointComposition['dataLabelOnNull'];
+            public isValid: ColorMapComposition.PointComposition['isValid'];
             public middleX: number;
             public middleY: number;
             public options: MapPointOptions;
@@ -164,8 +164,11 @@ class MapSeries extends ScatterSeries {
 
         dataLabels: {
             crop: false,
-            formatter: function (): (number|null) { // #2945
-                return (this.point as MapPoint).value;
+            formatter: function (): string { // #2945
+                const { numberFormatter } = this.series.chart;
+                const { value } = this.point as MapPoint;
+
+                return isNumber(value) ? numberFormatter(value, -1) : '';
             },
             inside: true, // for the color
             overflow: false as any,
@@ -193,7 +196,7 @@ class MapSeries extends ScatterSeries {
          *
          * @private
          */
-        nullColor: palette.neutralColor3,
+        nullColor: Palette.neutralColor3,
 
         /**
          * Whether to allow pointer interaction like tooltips and mouse events
@@ -253,7 +256,7 @@ class MapSeries extends ScatterSeries {
          *
          * @private
          */
-        borderColor: palette.neutralColor20,
+        borderColor: Palette.neutralColor20,
 
         /**
          * The border width of each map area.
@@ -403,7 +406,7 @@ class MapSeries extends ScatterSeries {
                  * @product   highmaps
                  * @apioption plotOptions.series.states.select.color
                  */
-                color: palette.neutralColor20
+                color: Palette.neutralColor20
             },
 
             inactive: {
@@ -1197,14 +1200,13 @@ class MapSeries extends ScatterSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface MapSeries extends Highcharts.ColorMapSeries {
-    colorAttribs: typeof colorMapSeriesMixin['colorAttribs'];
-    drawLegendSymbol: Highcharts.LegendSymbolMixin['drawRectangle'];
-    getCenter: typeof CenteredSeriesMixin['getCenter'];
+interface MapSeries extends ColorMapComposition.SeriesComposition {
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
+    getCenter: typeof CU['getCenter'];
     pointArrayMap: typeof colorMapSeriesMixin['pointArrayMap'];
     pointClass: typeof MapPoint;
     preserveAspectRatio: boolean;
@@ -1229,9 +1231,7 @@ extend(MapSeries.prototype, {
 
     axisTypes: ['colorAxis'],
 
-    colorAttribs: colorMapSeriesMixin.colorAttribs,
-
-    colorKey: colorMapSeriesMixin.colorKey,
+    colorKey: 'value',
 
     // When tooltip is not shared, this series (and derivatives) requires
     // direct touch/hover. KD-tree does not apply.
@@ -1244,15 +1244,15 @@ extend(MapSeries.prototype, {
     // No graph for the map series
     drawGraph: noop,
 
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     forceDL: true,
 
-    getCenter: CenteredSeriesMixin.getCenter,
+    getCenter: CU.getCenter,
 
     getExtremesFromAll: true,
 
-    getSymbol: colorMapSeriesMixin.getSymbol,
+    getSymbol: noop,
 
     isCartesian: false,
 
@@ -1273,6 +1273,8 @@ extend(MapSeries.prototype, {
     useMapGeometry: true
 
 });
+
+ColorMapComposition.compose(MapSeries, MapPoint);
 
 /* *
  *

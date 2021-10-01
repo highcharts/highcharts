@@ -12,6 +12,7 @@
  *
  * */
 
+import type Axis from '../../../Core/Axis/Axis';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 
 import Annotation from '../Annotations.js';
@@ -99,8 +100,8 @@ class InfinityLine extends CrookedLine {
         secondPoint: Highcharts.AnnotationPointType
     ): PositionObject {
         let chart = firstPoint.series.chart,
-            xAxis: Highcharts.Axis = firstPoint.series.xAxis as any,
-            yAxis: Highcharts.Axis = secondPoint.series.yAxis as any,
+            xAxis: Axis = firstPoint.series.xAxis as any,
+            yAxis: Axis = secondPoint.series.yAxis as any,
             firstPointPixels = MockPoint.pointToPixels(firstPoint),
             secondPointPixels = MockPoint.pointToPixels(secondPoint),
             deltaX = secondPointPixels.x - firstPointPixels.x,
@@ -191,7 +192,7 @@ class InfinityLine extends CrookedLine {
                 type: 'path',
                 points: points
             }),
-            false as any
+            0
         );
 
         typeOptions.line = line.options;

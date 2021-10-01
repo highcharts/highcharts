@@ -46,10 +46,12 @@ declare global {
             projection?: ProjectionOptions;
         }
 
-        interface Options {
-            mapView?: DeepPartial<MapViewOptions>;
-        }
+    }
+}
 
+declare module '../Core/Options'{
+    interface Options {
+        mapView?: DeepPartial<Highcharts.MapViewOptions>;
     }
 }
 

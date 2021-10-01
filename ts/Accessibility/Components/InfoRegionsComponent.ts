@@ -10,12 +10,23 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Accessibility from '../Accessibility';
+import type Axis from '../../Core/Axis/Axis';
+import type ChartSonify from '../../Extensions/Sonification/ChartSonify';
 import type {
     DOMElementType,
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import AST from '../../Core/Renderer/HTML/AST.js';
+import Chart from '../../Core/Chart/Chart.js';
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
@@ -24,10 +35,12 @@ const {
 } = H;
 import U from '../../Core/Utilities.js';
 const {
+    attr,
     extend,
     pick
 } = U;
 
+import A11yI18n from '../A11yI18n.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import Announcer from '../Utils/Announcer.js';
 import AnnotationsA11y from './AnnotationsA11y.js';
@@ -44,10 +57,8 @@ const {
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
     addClass,
-    escapeStringForHTML,
     getElement,
     getHeadingTagNameForElement,
-    setElAttrs,
     stripHTMLTagsFromString,
     visuallyHideElement
 } = HTMLUtilities;
@@ -216,7 +227,7 @@ function getTableSummary(chart: Chart): string {
  * @param {Array<string>} types The series types in this chart.
  * @return {string} The text description of the chart type.
  */
-H.Chart.prototype.getTypeDescription = function (types: Array<string>): string {
+Chart.prototype.getTypeDescription = function (types: Array<string>): string {
     const firstType = types[0],
         firstSeries = this.series && this.series[0] || {},
         formatContext: Highcharts.InfoRegionsComponentTypeDescFormatContextObject = {
@@ -297,7 +308,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             before: {
                 element: null,
                 buildContent: function (
-                    chart: Highcharts.AccessibilityChart
+                    chart: Accessibility.ChartComposition
                 ): string {
                     const formatter: (
                         Highcharts.ScreenReaderFormatterCallbackFunction<Chart>|undefined
@@ -308,7 +319,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 },
                 insertIntoDOM: function (
                     el: HTMLDOMElement,
-                    chart: Highcharts.AccessibilityChart
+                    chart: Accessibility.ChartComposition
                 ): void {
                     chart.renderTo.insertBefore(
                         el, chart.renderTo.firstChild
@@ -327,7 +338,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             after: {
                 element: null,
                 buildContent: function (
-                    chart: Highcharts.AccessibilityChart
+                    chart: Accessibility.ChartComposition
                 ): string {
                     const formatter = chart.options.accessibility.screenReaderSection
                         .afterChartFormatter;
@@ -336,11 +347,17 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 },
                 insertIntoDOM: function (
                     el: HTMLDOMElement,
-                    chart: Highcharts.AccessibilityChart
+                    chart: Accessibility.ChartComposition
                 ): void {
                     chart.renderTo.insertBefore(
                         el, chart.container.nextSibling
                     );
+                },
+                afterInserted: function (): void {
+                    if (component.chart.accessibility) {
+                        component.chart.accessibility
+                            .keyboardNavigation.updateExitAnchor(); // #15986
+                    }
                 }
             }
         };
@@ -414,25 +431,36 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         this: Highcharts.InfoRegionsComponent,
         regionKey: string
     ): void {
-        const chart = this.chart,
-            region = this.screenReaderSections[regionKey],
-            content = region.buildContent(chart),
-            sectionDiv = region.element = (
-                region.element || this.createElement('div')
-            ),
-            hiddenDiv: HTMLDOMElement = (
-                (sectionDiv.firstChild as any) || this.createElement('div')
-            );
+        const chart = this.chart;
+        const region = this.screenReaderSections[regionKey];
+        const content = region.buildContent(chart);
+        const sectionDiv = region.element = (
+            region.element || this.createElement('div')
+        );
+        const hiddenDiv: HTMLDOMElement = (
+            (sectionDiv.firstChild as any) || this.createElement('div')
+        );
 
-        this.setScreenReaderSectionAttribs(sectionDiv, regionKey);
-        AST.setElementHTML(hiddenDiv, content);
-        sectionDiv.appendChild(hiddenDiv);
-        region.insertIntoDOM(sectionDiv, chart);
+        if (content) {
+            this.setScreenReaderSectionAttribs(sectionDiv, regionKey);
+            AST.setElementHTML(hiddenDiv, content);
+            sectionDiv.appendChild(hiddenDiv);
+            region.insertIntoDOM(sectionDiv, chart);
 
-        visuallyHideElement(hiddenDiv);
-        unhideChartElementFromAT(chart, hiddenDiv);
-        if (region.afterInserted) {
-            region.afterInserted();
+            if (chart.styledMode) {
+                addClass(hiddenDiv, 'highcharts-visually-hidden');
+            } else {
+                visuallyHideElement(hiddenDiv);
+            }
+            unhideChartElementFromAT(chart, hiddenDiv);
+            if (region.afterInserted) {
+                region.afterInserted();
+            }
+        } else {
+            if (sectionDiv.parentNode) {
+                sectionDiv.parentNode.removeChild(sectionDiv);
+            }
+            delete region.element;
         }
     },
 
@@ -451,11 +479,11 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 'accessibility.screenReaderSection.' + regionKey + 'RegionLabel'
             ),
             chart = this.chart,
-            labelText = chart.langFormat(labelLangKey, { chart: chart }),
+            labelText = chart.langFormat(labelLangKey, { chart: chart, chartTitle: getChartTitle(chart) }),
             sectionId = 'highcharts-screen-reader-region-' + regionKey + '-' +
                 chart.index;
 
-        setElAttrs(sectionDiv, {
+        attr(sectionDiv, {
             id: sectionId,
             'aria-label': labelText
         });
@@ -480,10 +508,14 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     defaultBeforeChartFormatter: function (
         this: Highcharts.InfoRegionsComponent
     ): string {
-        const chart = this.chart,
-            format = chart.options.accessibility
-                .screenReaderSection.beforeChartFormat,
-            axesDesc = this.getAxesDescription(),
+        const chart = this.chart;
+        const format = chart.options.accessibility.screenReaderSection.beforeChartFormat;
+
+        if (!format) {
+            return '';
+        }
+
+        const axesDesc = this.getAxesDescription(),
             shouldHaveSonifyBtn = (
                 chart.sonify &&
                 chart.options.sonification &&
@@ -513,7 +545,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 annotationsTitle: annotationsList ? annotationsTitleStr : '',
                 annotationsList: annotationsList
             },
-            formattedString = H.i18nFormat(format, context, chart);
+            formattedString = A11yI18n.i18nFormat(format, context, chart);
 
         this.dataTableButtonId = dataTableButtonId;
         this.sonifyButtonId = sonifyButtonId;
@@ -529,13 +561,15 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     defaultAfterChartFormatter: function (
         this: Highcharts.InfoRegionsComponent
     ): string {
-        const chart = this.chart,
-            format = chart.options.accessibility
-                .screenReaderSection.afterChartFormat,
-            context = {
-                endOfChartMarker: this.getEndOfChartMarkerText()
-            },
-            formattedString = H.i18nFormat(format, context, chart);
+        const chart = this.chart;
+        const format = chart.options.accessibility.screenReaderSection.afterChartFormat;
+
+        if (!format) {
+            return '';
+        }
+
+        const context = { endOfChartMarker: this.getEndOfChartMarkerText() };
+        const formattedString = A11yI18n.i18nFormat(format, context, chart);
 
         return stripEmptyHTMLTags(formattedString);
     },
@@ -715,7 +749,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         sonifyButtonId: string
     ): void {
         const el = this.sonifyButton = getElement(sonifyButtonId);
-        const chart = this.chart as Highcharts.SonifyableChart;
+        const chart = this.chart as ChartSonify.SonifyableChart;
         const defaultHandler = (e: Event): void => {
             if (el) {
                 el.setAttribute('aria-hidden', 'true');
@@ -743,9 +777,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         };
 
         if (el && chart) {
-            setElAttrs(el, {
-                tabindex: -1
-            });
+            el.setAttribute('tabindex', -1);
 
             el.onclick = function (e): void {
                 const onPlayAsSoundClick = (
@@ -754,7 +786,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 );
 
                 (onPlayAsSoundClick || defaultHandler).call(
-                    this, e, chart as Highcharts.AccessibilityChart
+                    this, e, chart as Accessibility.ChartComposition
                 );
             };
         }
@@ -775,7 +807,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             tableId = tableButtonId.replace('hc-linkto-', '');
 
         if (el) {
-            setElAttrs(el, {
+            attr(el, {
                 tabindex: -1,
                 'aria-expanded': !!getElement(tableId)
             });
@@ -850,10 +882,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             ),
             {
                 chart: chart,
-                names: axes.map(function (axis: Highcharts.Axis): string {
+                names: axes.map(function (axis): string {
                     return getAxisDescription(axis);
                 }),
-                ranges: axes.map(function (axis: Highcharts.Axis): string {
+                ranges: axes.map(function (axis): string {
                     return getAxisRangeDescription(axis);
                 }),
                 numAxes: axes.length

@@ -28,6 +28,7 @@ import type {
     StateSelectOptions,
     StatesOptions
 } from './StatesOptions';
+import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 
 /* *
  *
@@ -66,7 +67,7 @@ export interface PointMarkerOptions {
     radius?: number;
     radiusPlus?: number;
     states?: PointStatesOptions<Point>;
-    symbol?: string;
+    symbol?: SymbolKey;
     width?: number;
 }
 
@@ -152,7 +153,7 @@ export interface PointUpdateEvent {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

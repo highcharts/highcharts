@@ -16,31 +16,73 @@
 
 'use strict';
 
-import Highcharts from '../../Core/Globals.js';
-import O from '../../Core/Options.js';
-const { setOptions } = O;
+/* *
+ *
+ *  Imports
+ *
+ * */
 
-Highcharts.theme = {
-    colors: [
-        '#5f98cf',
-        '#434348',
-        '#49a65e',
-        '#f45b5b',
-        '#708090',
-        '#b68c51',
-        '#397550',
-        '#c0493d',
-        '#4f4a7a',
-        '#b381b3'
-    ],
+import type Options from '../../Core/Options';
 
-    navigator: {
-        series: {
-            color: '#5f98cf',
-            lineColor: '#5f98cf'
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
+import H from '../../Core/Globals.js';
+
+/* *
+ *
+ *  Theme
+ *
+ * */
+
+namespace HighContrastLightTheme {
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    export const options: DeepPartial<Options> = {
+        colors: [
+            '#5f98cf',
+            '#434348',
+            '#49a65e',
+            '#f45b5b',
+            '#708090',
+            '#b68c51',
+            '#397550',
+            '#c0493d',
+            '#4f4a7a',
+            '#b381b3'
+        ],
+
+        navigator: {
+            series: {
+                color: '#5f98cf',
+                lineColor: '#5f98cf'
+            }
         }
-    }
-};
+    };
 
-// Apply the theme
-setOptions(Highcharts.theme);
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Apply the theme.
+     */
+    export function apply(): void {
+        setOptions(options);
+    }
+
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default HighContrastLightTheme;
