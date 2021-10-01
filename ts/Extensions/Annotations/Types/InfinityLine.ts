@@ -192,7 +192,7 @@ class InfinityLine extends CrookedLine {
                 type: 'path',
                 points: points
             }),
-            false as any
+            0
         );
 
         typeOptions.line = line.options;

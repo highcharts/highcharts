@@ -103,7 +103,7 @@ class VerticalLine extends Annotation {
                         VerticalLine.connectorSecondPoint
                     ]
                 }),
-                false as any
+                0
             );
 
         typeOptions.connector = connector.options;

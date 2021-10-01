@@ -864,6 +864,9 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      * Initialisation of a single shape
      * @private
      * @param {Object} shapeOptions - a confg object for a single shape
+     * @param {number} index - annotation may have many shapes,
+     * this is the shape's index saved in shapes.index.
+
      */
     public initShape(
         shapeOptions: Partial<Highcharts.AnnotationsShapesOptions>,
