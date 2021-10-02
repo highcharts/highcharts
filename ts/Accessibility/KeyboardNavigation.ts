@@ -36,54 +36,9 @@ const {
     fireEvent
 } = U;
 
-import HTMLUtilities from './Utils/HTMLUtilities.js';
-const getElement = HTMLUtilities.getElement;
-
 import EventProvider from './Utils/EventProvider.js';
-
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
-        /** @requires modules/accessibility */
-        dismissPopupContent(): void;
-    }
-}
-
-/* eslint-disable valid-jsdoc */
-
-// Add event listener to document to detect ESC key press and dismiss
-// hover/popup content.
-addEvent(doc, 'keydown', (e: KeyboardEvent): void => {
-    const keycode = e.which || e.keyCode;
-    const esc = 27;
-    if (keycode === esc && H.charts) {
-        H.charts.forEach((chart): void => {
-            if (chart && chart.dismissPopupContent) {
-                chart.dismissPopupContent();
-            }
-        });
-    }
-});
-
-
-/**
- * Dismiss popup content in chart, including export menu and tooltip.
- */
-Chart.prototype.dismissPopupContent = function (): void {
-    const chart = this;
-
-    fireEvent(this, 'dismissPopupContent', {}, function (): void {
-        if (chart.tooltip) {
-            chart.tooltip.hide(0);
-        }
-        chart.hideExportMenu();
-    });
-};
+import HTMLUtilities from './Utils/HTMLUtilities.js';
+const { getElement } = HTMLUtilities;
 
 /* *
  *
@@ -122,7 +77,7 @@ class KeyboardNavigation {
 
     /* *
      *
-     *  Functions
+     *  Properties
      *
      * */
 
@@ -144,6 +99,9 @@ class KeyboardNavigation {
      *  Functions
      *
      * */
+
+    /* eslint-disable valid-jsdoc */
+
 
     /**
      * Initialize the class
@@ -555,6 +513,100 @@ class KeyboardNavigation {
         this.removeExitAnchor();
         this.eventProvider.removeAddedEvents();
         this.chart.container.removeAttribute('tabindex');
+    }
+
+}
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace KeyboardNavigation {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export declare class ChartComposition extends Chart {
+        dismissPopupContent(): void;
+    }
+
+    /* *
+     *
+     *  Construction
+     *
+     * */
+
+    const composedItems: Array<(Document|Function)> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    export function compose<T extends typeof Chart>(
+        ChartClass: T
+    ): (T&typeof ChartComposition) {
+
+        if (composedItems.indexOf(ChartClass) === -1) {
+            composedItems.push(ChartClass);
+
+            const chartProto = ChartClass.prototype as ChartComposition;
+
+            chartProto.dismissPopupContent = chartDismissPopupContent;
+        }
+
+        if (composedItems.indexOf(doc) === -1) {
+            composedItems.push(doc);
+
+            addEvent(doc, 'keydown', documentOnKeydown);
+        }
+
+        return ChartClass as (T&typeof ChartComposition);
+    }
+
+    /**
+     * Dismiss popup content in chart, including export menu and tooltip.
+     * @private
+     */
+    function chartDismissPopupContent(
+        this: ChartComposition
+    ): void {
+        const chart = this;
+
+        fireEvent(this, 'dismissPopupContent', {}, function (): void {
+            if (chart.tooltip) {
+                chart.tooltip.hide(0);
+            }
+            chart.hideExportMenu();
+        });
+    }
+
+    /**
+     * Add event listener to document to detect ESC key press and dismiss
+     * hover/popup content.
+     * @private
+     */
+    function documentOnKeydown(e: KeyboardEvent): void {
+        const keycode = e.which || e.keyCode;
+        const esc = 27;
+        if (keycode === esc && H.charts) {
+            H.charts.forEach((chart): void => {
+                if (chart && (chart as ChartComposition).dismissPopupContent) {
+                    (chart as ChartComposition).dismissPopupContent();
+                }
+            });
+        }
     }
 
 }
