@@ -468,6 +468,7 @@ namespace Accessibility {
     ): void {
         A11yI18n.compose(ChartClass);
         FocusBorder.compose(ChartClass, SVGElementClass);
+        KeyboardNavigation.compose(ChartClass);
 
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
