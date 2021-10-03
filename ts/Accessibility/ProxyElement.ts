@@ -16,6 +16,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Accessibility from './Accessibility';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type {
@@ -26,22 +32,9 @@ import type {
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import EventProvider from './Utils/EventProvider.js';
+
 import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
-import ChartUtilities from './Utils/ChartUtilities.js';
-const {
-    fireEventOnWrappedOrUnwrappedElement
-} = ChartUtilities;
-import HTMLUtilities from './Utils/HTMLUtilities.js';
-const {
-    cloneMouseEvent,
-    cloneTouchEvent,
-    getFakeMouseEvent,
-    removeElement
-} = HTMLUtilities;
+const { doc } = H;
 import U from '../Core/Utilities.js';
 const {
     attr,
@@ -49,15 +42,22 @@ const {
     merge
 } = U;
 
+import EventProvider from './Utils/EventProvider.js';
+import ChartUtilities from './Utils/ChartUtilities.js';
+const { fireEventOnWrappedOrUnwrappedElement } = ChartUtilities;
+import HTMLUtilities from './Utils/HTMLUtilities.js';
+const {
+    cloneMouseEvent,
+    cloneTouchEvent,
+    getFakeMouseEvent,
+    removeElement
+} = HTMLUtilities;
 
-/* eslint-disable valid-jsdoc */
-
-export interface ProxyTarget {
-    click: DOMElementType|SVGElement|HTMLElement;
-    visual?: DOMElementType;
-}
-export type ProxyGroupTypes = 'div'|'ul';
-
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Represents a proxy element that overlays a target and relays events
@@ -67,20 +67,37 @@ export type ProxyGroupTypes = 'div'|'ul';
  * @class
  */
 class ProxyElement {
-    // The entire proxy HTML element. Note: May not refer to the
-    // button element directly, see below.
-    public element: HTMLDOMElement;
 
-    // The proxy button element, may be same as element, depending
-    // on group type.
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    /**
+     * The proxy button element, may be same as element, depending on group
+     * type.
+     */
     public buttonElement: HTMLButtonElement;
+
+    /**
+     * The entire proxy HTML element. Note: May not refer to the button element
+     * directly, see below.
+     */
+    public element: HTMLDOMElement;
 
     private eventProvider: EventProvider;
 
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     constructor(
         private chart: Accessibility.ChartComposition,
-        public target: ProxyTarget,
-        public groupType: ProxyGroupTypes,
+        public target: ProxyElement.Target,
+        public groupType: ProxyElement.GroupType,
         attributes?: HTMLAttributes
     ) {
         this.eventProvider = new EventProvider();
@@ -102,6 +119,14 @@ class ProxyElement {
         this.updateTarget(target, attributes);
     }
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
 
     /**
      * Fake a click event on the target.
@@ -121,7 +146,10 @@ class ProxyElement {
      * @param target The new target definition
      * @param attributes New HTML attributes to apply to the button. Set an attribute to null to remove.
      */
-    public updateTarget(target: ProxyTarget, attributes?: HTMLAttributes): void {
+    public updateTarget(
+        target: ProxyElement.Target,
+        attributes?: HTMLAttributes
+    ): void {
         this.target = target;
         this.updateCSSClassName();
 
@@ -270,6 +298,36 @@ class ProxyElement {
         }
         return target.getAttribute(key);
     }
+
 }
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace ProxyElement {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export type GroupType = ('div'|'ul');
+
+    export interface Target {
+        click: (DOMElementType|SVGElement|HTMLElement);
+        visual?: DOMElementType;
+    }
+
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ProxyElement;
