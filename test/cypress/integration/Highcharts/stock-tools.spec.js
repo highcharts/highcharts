@@ -223,7 +223,7 @@ describe('Indicator popup searchbox, #16019.', () => {
 
     it('Clicking the reset button should reset the indicator list, #16019.', () => {
         cy.get('.clear-filter-button')
-        .click();
+            .click();
 
         cy.get('input[name="highcharts-input-search-indicators"]')
             .should('have.value', '')
@@ -232,11 +232,26 @@ describe('Indicator popup searchbox, #16019.', () => {
             .should('have.length', 50)
     });
 
-    it('Indicators should be accessible through aliases,  #16019.', () => {
+    it('Indicators should be accessible through aliases, #16019.', () => {
         cy.get('input[name="highcharts-input-search-indicators"]')
             .type('boll');
 
         cy.get('.highcharts-indicator-list li:first')
             .should('contain.text', 'BB');
+    });
+
+
+    it('Popup should warn when no items are found using the filter, #16019.', () => {
+        cy.get('input[name="highcharts-input-search-indicators"]')
+            .type('dada');
+
+        cy.get('.highcharts-popup-rhs-col-wrapper')
+            .should('contain.text', 'No match');
+
+        cy.get('.clear-filter-button')
+            .click();
+
+        cy.get('.highcharts-indicator-list li:first')
+            .should('contain.text', 'Acceleration Bands');
     });
 });

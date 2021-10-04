@@ -313,6 +313,9 @@ setOptions({
                 tunnel: 'Tunnel',
                 background: 'Background',
 
+                // Indicators' searchbox (#16019):
+                noFilterMatch: 'No match',
+
                 // Indicators' params (#15170):
                 searchIndicators: 'Search Indicators',
                 clearFilter: '\u2715 clear filter',
