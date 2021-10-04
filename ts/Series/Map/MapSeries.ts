@@ -900,6 +900,12 @@ class MapSeries extends ScatterSeries {
             pointStrokeWidth /= mapView.getScale();
         }
 
+        // In order for dash style to avoid being scaled, set the transformed
+        // stroke width on the item
+        if (attr.dashstyle && mapView && this.options.borderWidth) {
+            pointStrokeWidth = this.options.borderWidth / mapView.getScale();
+        }
+
         attr['stroke-width'] = pick(
             pointStrokeWidth,
             // By default set the stroke-width on the group element and let all
