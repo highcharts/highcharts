@@ -15,17 +15,21 @@ function showMap(mapKey) {
         chart: {
             events: {
                 click: function (e) {
-                    var series = this.get(document.querySelector('input[name=series]:checked').value),
-                        x = Math.round(e.xAxis[0].value),
-                        y = Math.round(e.yAxis[0].value);
+                    const series = this.get(
+                            document
+                                .querySelector('input[name=series]:checked')
+                                .value
+                        ),
+                        pos = this.mapView.pixelsToProjectedUnits({
+                            x: Math.round(e.chartX - this.plotLeft),
+                            y: Math.round(e.chartY - this.plotTop)
+                        });
 
-                    series.addPoint(supportsLatLon ? this.fromPointToLatLon({
-                        x: x,
-                        y: y
-                    }) : {
-                        x: x,
-                        y: y
-                    });
+                    series.addPoint(
+                        supportsLatLon ?
+                            this.fromPointToLatLon(pos) :
+                            pos
+                    );
                 }
             },
             animation: false
@@ -68,7 +72,8 @@ function showMap(mapKey) {
                         drop: function () {
                             var newLatLon;
                             if (supportsLatLon) {
-                                newLatLon = this.series.chart.fromPointToLatLon(this);
+                                newLatLon = this.series.chart
+                                    .fromPointToLatLon(this);
                                 this.lat = newLatLon.lat;
                                 this.lon = newLatLon.lon;
                             }
@@ -166,10 +171,16 @@ function showMap(mapKey) {
     const select = document.getElementById('maps');
 
     for (const group in Highcharts.mapDataIndex) {
-        if (Object.prototype.hasOwnProperty.call(Highcharts.mapDataIndex, group)) {
+        if (
+            Object.prototype.hasOwnProperty.call(Highcharts.mapDataIndex, group)
+        ) {
             if (group !== 'version') {
                 for (const name in Highcharts.mapDataIndex[group]) {
-                    if (Object.prototype.hasOwnProperty.call(Highcharts.mapDataIndex[group], name)) {
+                    if (
+                        Object.prototype.hasOwnProperty.call(
+                            Highcharts.mapDataIndex[group], name
+                        )
+                    ) {
                         const option = document.createElement('option');
                         option.value = Highcharts.mapDataIndex[group][name];
                         option.innerText = name;

@@ -121,11 +121,6 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
             mapPoint = typeof mapKey !== 'undefined' &&
                 series.mapMap[mapKey];
             if (mapPoint) {
-                // This applies only to bubbles
-                if ((series as any).xyFromShape) {
-                    point.x = mapPoint._midX;
-                    point.y = mapPoint._midY;
-                }
                 extend(point, mapPoint); // copy over properties
             } else {
                 point.value = point.value || null;

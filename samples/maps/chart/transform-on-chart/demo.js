@@ -20,6 +20,7 @@ Highcharts.mapChart('container', {
     }, {
         // Specify points using lat/lon
         type: 'mappoint',
+        name: 'Cities',
         data: [{
             name: 'London',
             lat: 51.507222,

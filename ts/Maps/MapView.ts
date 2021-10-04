@@ -280,8 +280,8 @@ class MapView {
         const centerPxY = this.chart.plotHeight / 2;
 
         const projectedCenter = this.projection.forward(this.center);
-        const projectedX = projectedCenter[0] - ((centerPxY - y) / scale);
-        const projectedY = projectedCenter[1] - ((centerPxX - x) / scale);
+        const projectedX = projectedCenter[0] - ((centerPxX - x) / scale);
+        const projectedY = projectedCenter[1] - ((centerPxY - y) / scale);
         return { x: projectedX, y: projectedY };
     }
 

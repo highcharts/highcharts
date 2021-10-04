@@ -364,7 +364,7 @@ Chart.prototype.transformFromLatLon = function (
 
     return {
         x: ((rotated[0] - xoffset) * scale + xpan) * jsonres + jsonmarginX,
-        y: ((yoffset - rotated[1]) * scale + ypan) * jsonres - jsonmarginY
+        y: -(((yoffset - rotated[1]) * scale + ypan) * jsonres - jsonmarginY)
     };
 };
 
@@ -520,7 +520,7 @@ Chart.prototype.fromLatLonToPoint = function (
         ) {
             coords = this.transformFromLatLon(latLon, transforms[transform]);
             if (pointInPolygon(
-                { x: coords.x, y: -(coords.y as any) },
+                coords,
                 transforms[transform].hitZone.coordinates[0]
             )) {
                 return coords;
