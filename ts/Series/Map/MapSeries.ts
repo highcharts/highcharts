@@ -826,16 +826,17 @@ class MapSeries extends ScatterSeries {
                             // labels, bubbles etc
                             const midX = (
                                 x1 + (x2 - x1) * pick(
-                                    point.options.middleX,
+                                    (point as any).middleX,
                                     properties && (properties as any)['hc-middle-x'],
                                     0.5
                                 )
                             );
+
                             const midY = (
                                 // Note the sign. We may have to flip this with
                                 // unprojected maps
                                 y2 - (y2 - y1) * pick(
-                                    point.options.middleY,
+                                    (point as any).middleY,
                                     properties && (properties as any)['hc-middle-y'],
                                     0.5
                                 )
