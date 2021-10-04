@@ -201,8 +201,8 @@ class HeikinAshiSeries extends CandlestickSeries {
 addEvent(HeikinAshiSeries, 'afterTranslate', function (): void {
     const series = this,
         points = series.points,
-        heikiashiData = series.heikiashiData;
-    let cropStart = series.cropStart || 0;
+        heikiashiData = series.heikiashiData,
+        cropStart = series.cropStart || 0;
 
     // Reset the proccesed data.
     series.processedYData.length = 0;

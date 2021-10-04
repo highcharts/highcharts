@@ -39,6 +39,12 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
+/* *
+ *
+ * Constants
+ *
+ * */
+
 
 // Experimental, disabled by default, not exposed in API
 const options = {
@@ -61,5 +67,11 @@ const options = {
         }
     }
 };
+
+/* *
+ *
+ * Default Export
+ *
+ * */
 
 export default options;

@@ -1,0 +1,12 @@
+---
+ name: Highcharts Stock Cumulative Sum Demo
+ authors:
+   - Rafal Sebestjanski
+ js_wrap: b
+ new_until: 2021-12-31
+ tags:
+   - Highcharts Stock demo
+ categories:
+   - Chart types:
+      priority: 16
+...

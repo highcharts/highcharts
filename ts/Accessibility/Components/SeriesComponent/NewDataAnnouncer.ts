@@ -12,8 +12,10 @@
 
 'use strict';
 
+import type Accessibility from '../../Accessibility';
 import type Chart from '../../../Core/Chart/Chart';
 import type Point from '../../../Core/Series/Point';
+
 import H from '../../../Core/Globals.js';
 import Series from '../../../Core/Series/Series.js';
 import U from '../../../Core/Utilities.js';
@@ -40,9 +42,9 @@ import EventProvider from '../../Utils/EventProvider.js';
 declare global {
     namespace Highcharts {
         class NewDataAnnouncer {
-            public constructor(chart: AccessibilityChart);
+            public constructor(chart: Accessibility.ChartComposition);
             public announcer: Announcer;
-            public chart: AccessibilityChart;
+            public chart: Accessibility.ChartComposition;
             public dirty: NewDataAnnouncerDirtyObject;
             public eventProvider: EventProvider;
             public lastAnnouncementTime: number;
@@ -140,7 +142,7 @@ function getUniqueSeries(
  */
 const NewDataAnnouncer: typeof Highcharts.NewDataAnnouncer = function (
     this: Highcharts.NewDataAnnouncer,
-    chart: Highcharts.AccessibilityChart
+    chart: Accessibility.ChartComposition
 ): void {
     this.chart = chart;
 } as any;
@@ -389,8 +391,8 @@ extend(NewDataAnnouncer.prototype, {
     buildAnnouncementMessage: function (
         this: Highcharts.NewDataAnnouncer,
         dirtySeries: Array<Series>,
-        newSeries?: Highcharts.AccessibilitySeries,
-        newPoint?: Highcharts.AccessibilityPoint
+        newSeries?: Accessibility.SeriesComposition,
+        newPoint?: Accessibility.PointComposition
     ): (string|null) {
         const chart = this.chart,
             annOptions = chart.options.accessibility.announceNewData;

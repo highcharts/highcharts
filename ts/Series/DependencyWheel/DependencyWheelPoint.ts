@@ -24,11 +24,15 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
-import NodesMixin from '../../Mixins/Nodes.js';
+import NodesComposition from '../NodesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        sankey: SankeySeries
+        sankey: {
+            prototype: {
+                pointClass: SankeyPoint
+            }
+        }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -40,7 +44,7 @@ const { extend } = U;
  *
  * */
 
-class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
+class DependencyWheelPoint extends SankeyPoint {
 
     /* *
      *
@@ -119,19 +123,6 @@ class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
     /* eslint-enable valid-jsdoc */
 
 }
-
-/* *
- *
- *  Class Prototype
- *
- * */
-
-interface DependencyWheelPoint {
-    setState: typeof NodesMixin['setNodeState'];
-}
-extend(DependencyWheelPoint.prototype, {
-    setState: NodesMixin.setNodeState
-});
 
 /* *
  *

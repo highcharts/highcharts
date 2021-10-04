@@ -1,0 +1,6 @@
+---
+ name: Highcharts Annotations Controllable Ellipse
+ authors:
+   - Pawel Lysy
+ js_wrap: b
+...

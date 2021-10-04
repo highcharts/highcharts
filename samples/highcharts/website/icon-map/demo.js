@@ -18,9 +18,11 @@ Math.easeOutBounce = pos => {
     return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
 };
 
+
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let done = false;
 let mapLoaded = false;
+
 
 const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
 const maps = {
@@ -38,6 +40,7 @@ const maps = {
         events: {
             load: function () {
                 const chart = this;
+
                 const mapPointPoint = document.getElementsByClassName('map-point-point')[0];
                 const mapPointTop = document.getElementsByClassName('map-point-top')[1];
                 const mapPointCenter = document.getElementsByClassName('map-point-center')[1];
@@ -49,10 +52,6 @@ const maps = {
                 const green = document.getElementsByClassName('green');
                 const background = document.getElementsByClassName('highcharts-plot-background')[0];
 
-
-                // mapPointPoint.classList.add('grow');
-                // mapPointTop.classList.add('grow');
-                // mapPointCenter.classList.add('grow');
 
                 const updateData = function () {
                     chart.series[10].update({
@@ -87,8 +86,10 @@ const maps = {
                 };
 
                 const growEnvelope = function () {
+
                     leftSide.style.transition = 'none';
                     rightSide.style.transition = 'none';
+
 
 
                     chart.series[10].data[2].update({
@@ -128,6 +129,7 @@ const maps = {
                 }, 1000);
 
                 setTimeout(function () {
+
                     done = true;
                     for (let pp = 0; pp < particle.length; ++pp) {
                         particle[pp].classList.add('fade');
@@ -146,9 +148,11 @@ const maps = {
                     mapPointCenter.classList.add('hide');
                     background.style.fill = '#1f1836';
 
+
                 }, 4000);
 
                 setTimeout(function () {
+
                     top.style.opacity = 0;
                     top.style.transition = 'none';
                     if (reduced) {
@@ -157,10 +161,12 @@ const maps = {
                         bottom.style.fill = '#45445d';
                         bottom.style.transition = 'fill  1s';
                     }
+
                 }, 4200);
 
                 setTimeout(function () {
                     chart.update({
+
                         animation: {
                             duration: 1000
                         }
@@ -168,10 +174,12 @@ const maps = {
                     if (!reduced) {
                         bottom.style.transform = 'translateY(4px)';
 
+
                         chart.series[12].data[0].update({
                             y: 15.7
                         });
                         chart.series[12].data[1].update({
+
 
                             y: 15.7
                         });
@@ -181,6 +189,15 @@ const maps = {
                         });
                     }
                 }, 5200);
+
+                            y: 15.7
+                        });
+                        chart.series[12].data[2].update({
+                            y: 15.7
+                        });
+                    }
+                }, 5000);
+
 
                 setTimeout(function () {
                     if (!reduced) {
@@ -222,6 +239,7 @@ const maps = {
                     mapPointCenter.classList.add('hide');
                     background.style.fill = '#1f1836';
                 }
+
             }
         }
     },
@@ -660,11 +678,14 @@ const finalMap = function () {
                 chart: {
                     styledMode: (true),
                     animation: {
+
                         duration: 1000
+
                     },
                     events: {
                         load: function () {
                             const chart = this;
+
                             const mapSeries = document.getElementsByClassName('highcharts-map-series')[0];
                             const title = document.getElementsByClassName('highcharts-title')[0];
                             const subtitle = document.getElementsByClassName('highcharts-subtitle')[0];
@@ -681,12 +702,14 @@ const finalMap = function () {
                             }, 200);
 
                             setTimeout(function () {
+
                                 if (!reduced) {
                                     chart.mapZoom(10);
                                 }
                                 chart.tooltip.refresh(
                                     [chart.series[0].points[143]]
                                 );
+
                                 mapSeries.classList.add('fade-in');
                             }, 500);
                             setTimeout(function () {
@@ -698,6 +721,9 @@ const finalMap = function () {
                             if (mapLoaded) {
                                 mapSeries.classList.add('show');
                             }
+
+
+                            }, 500);
 
                         }
                     }
@@ -803,9 +829,11 @@ const finalMap = function () {
         });
 };
 
+
 document.addEventListener("DOMContentLoaded", function () {
     Highcharts.mapChart('maps', maps);
     let dtime = 7000;
+
     if (reduced) {
         dtime = 5500;
     }

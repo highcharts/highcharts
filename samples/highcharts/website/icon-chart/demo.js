@@ -25,9 +25,11 @@ Math.easeOutBounce = pos => {
 const big = window.matchMedia("(min-width: 500px)").matches;
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+
 const countOffset = 2;
 const  icebergLabels = [180, 160, 140, 120, 100, 80, 60, 40, 20,
     10, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180];
+
 
 let done = false;
 
@@ -46,6 +48,7 @@ const charts = {
         events: {
             load: function () {
                 const chart = this;
+
                 const grid = document.getElementsByClassName('highcharts-grid'); //array
                 const gridLine = document.getElementsByClassName('highcharts-grid-line');//array
                 const particles = document.getElementsByClassName('particles')[0];
@@ -83,6 +86,8 @@ const charts = {
                     for (let pp = 0; pp < particle.length; ++pp) {
                         particle[pp].classList.add('rotate');
                     }
+
+
                     chart.series[8].data[1].update({
                         x: 4,
                         low: 2,
@@ -111,6 +116,7 @@ const charts = {
                 }, 500);
 
                 setTimeout(function () {
+
                     if (reduced) {
                         particles.style.opacity = 1;
                     }
@@ -153,7 +159,6 @@ const charts = {
                     chart.yAxis[0].update({
                         visible: true
                     });
-
 
                     for (let gg = 0; gg < gridLine.length; ++gg) {
                         gridLine[gg].style.stroke = 'transparent';
@@ -238,6 +243,7 @@ const charts = {
                     subtitle.style.transition = "opacity 1s";
                     subtitle.style.opacity = 1;
                 }
+
             }
         }
     },
@@ -254,6 +260,7 @@ const charts = {
     },
     subtitle: {
         text: '<p class="iceberg-subtitle">Above-water characterization and distribution of icebergs in "Iceberg Alley" in Newfoundland, Canada</p>',
+
         useHTML: true,
         floating: true,
         y: 100,
@@ -390,6 +397,7 @@ const charts = {
             animation: false
         },
         line: {
+
             animation: false,
             marker: {
                 enabled: false,
@@ -400,6 +408,8 @@ const charts = {
             marker: {
                 enabled: false
             }
+            animation: false
+
         }
 
     },
@@ -601,6 +611,7 @@ const charts = {
             type: 'scatter',
             className: 'iceberg-types',
             xAxis: 2,
+
             marker: {
                 enabled: false,
                 radius: 1
@@ -727,6 +738,7 @@ const charts = {
             xAxis: 2,
             zIndex: 50,
             visible: false,
+
             marker: {
                 enabled: false
             },
@@ -786,6 +798,7 @@ const charts = {
             zIndex: 50,
             xAxis: 2,
             visible: false,
+
             marker: {
                 enabled: false
             },

@@ -76,6 +76,7 @@ const ganttChart = function () {
             events: {
                 load: function () {
                     const chart = this;
+
                     const buttonGroup = document.getElementById('button-group');
                     const background = document.getElementsByClassName('highcharts-background')[0];
                     const scrollMask = document.getElementsByClassName('highcharts-scrollable-mask')[0];
@@ -85,7 +86,6 @@ const ganttChart = function () {
                     if (scrollMask) {
                         scrollMask.style.fill = '#2F2B38';
                     }
-
 
                     if (!big) {
                         chart.update({
@@ -436,6 +436,7 @@ const gantt = {
                 let count = startSeries;
                 const rcount = startSeries;
 
+
                 const flag = document.getElementsByClassName('flag')[0];
                 const flagpole = document.getElementsByClassName('pole')[0];
                 const particle2 = document.getElementsByClassName('particle-2')[1];
@@ -448,6 +449,7 @@ const gantt = {
                 const stepW = document.getElementsByClassName('step-w');//array
 
                 const cover = document.getElementsByClassName('cover')[0];
+
 
                 if (reduced) {
                     for (let ii = rcount; ii <= endSeries; ++ii) {
@@ -486,8 +488,8 @@ const gantt = {
                         particle3.classList.add('grow');
                         particle5.classList.add('grow');
                         particle6.classList.add('grow');
-                    }, 2000);
-
+                    }, 1000);
+                   
                     setTimeout(function () {
                         ganttChart();
                     }, 4000);
@@ -565,13 +567,13 @@ const gantt = {
                         flag.classList.add('hide');
                         flagpole.classList.add('hide');
                         cover.classList.add('hide');
-
                     }, 5000);
 
                     setTimeout(function () {
                         ganttChart();
                     }, 6500);
                 }
+
             }
         }
     },

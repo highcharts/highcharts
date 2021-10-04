@@ -112,7 +112,6 @@
 	height:250px;
 }
 
-
 #charts .highcharts-plot-background,
 #charts .highcharts-background
 {
@@ -191,6 +190,7 @@
 #charts .highcharts-grid{
 	display: block;
 }
+
 
 #charts .highcharts-grid.fade-out{
 opacity:0;
@@ -509,6 +509,7 @@ transition: opacity 1500ms;
 	width:150px;
 	white-space:normal !important;
 }
+
 #charts .highcharts-subtitle .iceberg-subtitle{
 	opacity:0;
 	
@@ -620,11 +621,20 @@ transition: opacity 1500ms;
 		width:300px;
 	}
 
+
 	#charts .highcharts-subtitle .iceberg-subtitle{
 		color:#fff;
 		width:300px;
 		white-space:normal;
 		opacity:0;
+	}
+
+
+
+	#charts .iceberg-subtitle{
+		color:#fff;
+		width:300px;
+		white-space:normal
 	}
 
 
@@ -650,6 +660,8 @@ transition: opacity 1500ms;
 	}
 }
 
+
 @media screen  and (prefers-reduced-motion: reduce) {
 	
 }
+

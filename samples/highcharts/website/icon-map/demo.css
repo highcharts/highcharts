@@ -109,6 +109,7 @@
 	transform:translate(0px, -25px) scale(1);
 }
 
+
 #maps .map-point-point,
 #maps .map-point-top,
 #maps .map-point-top .highcharts-color-4{
@@ -116,6 +117,7 @@
 	stroke:#8bf2b6;
 	transition: all 3s;
 }
+
 
 #maps .map-point-point.grow{
 	transform: translate(-87px, -106px) scale(1.7);
@@ -139,6 +141,7 @@
 	fill:#fff;
 	stroke:transparent;
 }
+
 
 #maps .fade-in{
 	opacity: 1 !important;
@@ -343,23 +346,29 @@
 	#maps .map-point-point.on {
 		transform:translate(-250px, -300px) scale(2);
 	}
+
 	#maps .map-point-point.grow{
 		transform: translate(-250px, -300px) scale(2);
 	}
 
+
 	#maps .map-point-top{
 		transform:translate(0px, 0px) scale(1)
 	}
+
 	#maps .map-point-top.grow{
 		transform: translate(-250px, -300px) scale(2);
 	}
 
+
 	#maps .map-point-center{
 		transform:translate(0px, 0px) scale(1)
 	}
+
 	#maps .map-point-center.grow{
 		transform:translate(-250px, -300px) scale(2);
 	}
+
 
 	#maps .highcharts-legend-title {
     transform: translate(30px,0px);
