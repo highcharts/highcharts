@@ -18,13 +18,12 @@
  *
  * */
 
-import type Instrument from './Instrument';
 import type Point from '../../Core/Series/Point';
 import type RangeSelector from '../../Extensions/RangeSelector';
 import type SeriesSonify from './SeriesSonify';
 import type SignalHandler from './SignalHandler';
 
-import Sonification from './Sonification.js';
+import Instrument from './Instrument.js';
 import U from '../../Core/Utilities.js';
 const {
     error,
@@ -259,7 +258,7 @@ namespace PointSonify {
             instrumentDefinition: PointInstrument
         ): void {
             const instrument = typeof instrumentDefinition.instrument === 'string' ?
-                    Sonification.instruments[instrumentDefinition.instrument] :
+                    Instrument.definitions[instrumentDefinition.instrument] :
                     instrumentDefinition.instrument,
                 mapping = instrumentDefinition.instrumentMapping || {},
                 extremes = merge(

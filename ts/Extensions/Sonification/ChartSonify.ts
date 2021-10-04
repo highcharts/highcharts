@@ -20,22 +20,21 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type { DefaultSonificationInstrumentOptions } from './SonificationOptions';
-import type Earcon from './Earcon';
 import type Options from '../../Core/Options';
 import type PointSonify from './PointSonify';
 import type RangeSelector from '../../Extensions/RangeSelector';
-import type Timeline from './Timeline';
-import type TimelineEvent from './TimelineEvent';
-import type TimelinePath from './TimelinePath';
 
+import Earcon from './Earcon.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesSonify from './SeriesSonify.js';
-import Sonification from './Sonification.js';
 import SU from './SonificationUtilities.js';
 const {
     getExtremesForInstrumentProps,
     virtualAxisTranslate
 } = SU;
+import Timeline from './Timeline.js';
+import TimelineEvent from './TimelineEvent.js';
+import TimelinePath from './TimelinePath.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -183,10 +182,10 @@ function buildPathOrder(
                     }
 
                 // Is it an earcon? If so, just create the path.
-                } else if (item instanceof Sonification.Earcon) {
+                } else if (item instanceof Earcon) {
                     // Path with a single event
-                    itemObject = new Sonification.TimelinePath({
-                        events: [new Sonification.TimelineEvent({
+                    itemObject = new TimelinePath({
+                        events: [new TimelineEvent({
                             eventObject: item
                         })]
                     });
@@ -195,7 +194,7 @@ function buildPathOrder(
 
                 // Is this item a silent wait? If so, just create the path.
                 if ((item as any).silentWait) {
-                    itemObject = new Sonification.TimelinePath({
+                    itemObject = new TimelinePath({
                         silentWait: (item as any).silentWait
                     } as any);
                 }
@@ -270,7 +269,7 @@ function addAfterSeriesWaits(
         ) {
             // We have a series, meaning we should add a wait after these
             // paths have finished.
-            newOrder.push(new Sonification.TimelinePath({
+            newOrder.push(new TimelinePath({
                 silentWait: wait
             } as any) as any);
         }
@@ -342,12 +341,12 @@ function syncSimultaneousPaths(paths: Array<TimelinePath>): void {
             eventsToAdd = [];
 
         if (!(hasEvents && events[0].time <= extremes.min)) {
-            eventsToAdd.push(new Sonification.TimelineEvent({
+            eventsToAdd.push(new TimelineEvent({
                 time: extremes.min
             }));
         }
         if (!(hasEvents && events[events.length - 1].time >= extremes.max)) {
-            eventsToAdd.push(new Sonification.TimelineEvent({
+            eventsToAdd.push(new TimelineEvent({
                 time: extremes.max
             }));
         }
@@ -462,7 +461,7 @@ function buildPathsFromOrder(
                     SonifySeriesOrderObject|TimelinePath
                 )
             ): Array<TimelinePath> {
-                if (item instanceof Sonification.TimelinePath) {
+                if (item instanceof TimelinePath) {
                     // This item is already a path object
                     simulPaths.push(item);
                 } else if (item.series) {
@@ -585,7 +584,7 @@ function chartSonify(
     });
 
     // We have a set of paths. Create the timeline, and play it.
-    this.sonification.timeline = new Sonification.Timeline({
+    this.sonification.timeline = new Timeline({
         paths: paths,
         onEnd: opts.onEnd
     });
