@@ -4,10 +4,10 @@
 
 import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type JSON from '../../Core/JSON';
+import type Layout from './Layout.js';
 import type Serializable from '../Serializable';
 
 import DashboardGlobals from './../DashboardGlobals.js';
-import Layout from './Layout.js';
 import Cell from './Cell.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
@@ -30,9 +30,9 @@ class Row extends GUIElement {
 
     public static fromJSON(
         json: Row.JSON,
-        layout: Layout
-    ): Row|undefined {
-        if (layout instanceof Layout) {
+        layout?: Layout
+    ): (Row|undefined) {
+        if (layout) {
             const options = json.options;
 
             let id = options.containerId || '';

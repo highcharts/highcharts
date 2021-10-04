@@ -16,6 +16,7 @@
  *
  * */
 
+import ChartComponent from '../Dashboard/Component/ChartComponent.js';
 import Dashboard from '../Dashboard/Dashboard.js';
 import DashboardGlobals from '../Dashboard/DashboardGlobals.js';
 
@@ -39,10 +40,12 @@ declare global {
  *
  * */
 
-const D: AnyRecord = DashboardGlobals;
-
-D._modules = _modules;
-D.Dashboard = Dashboard;
+const D = {
+    ...DashboardGlobals,
+    _modules,
+    ChartComponent,
+    Dashboard
+};
 
 /* *
  *

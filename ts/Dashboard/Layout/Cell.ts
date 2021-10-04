@@ -6,14 +6,14 @@ import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type Component from './../Component/Component.js';
 import type ComponentType from '../Component/ComponentType';
 import type JSON from '../../Core/JSON';
+import type LayoutType from './Layout.js';
+import type Row from './Row.js';
 import type Serializable from '../Serializable';
 
 import DashboardGlobals from './../DashboardGlobals.js';
-import Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import Bindings from '../Actions/Bindings.js';
 import U from '../../Core/Utilities.js';
-import Layout from './Layout.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import EditGlobals from './../EditMode/EditGlobals.js';
 
@@ -30,9 +30,9 @@ class Cell extends GUIElement {
 
     public static fromJSON(
         json: Cell.JSON,
-        row: Row
+        row?: Row
     ): Cell|undefined {
-        if (row instanceof Row) {
+        if (row) {
             const options = json.options;
 
             let id = options.containerId;
@@ -127,7 +127,8 @@ class Cell extends GUIElement {
 
             // nested layout
             if (this.options.layout) {
-                const dashboard = this.row.layout.dashboard;
+                const dashboard = this.row.layout.dashboard,
+                    Layout = this.row.layout.constructor as typeof LayoutType;
 
                 this.nestedLayout = new Layout(
                     dashboard,
@@ -176,7 +177,7 @@ class Cell extends GUIElement {
     /**
      * Layout nested in the cell.
      */
-    public nestedLayout?: Layout;
+    public nestedLayout?: LayoutType;
 
     /**
      * Cell highlight flag.
@@ -455,14 +456,14 @@ namespace Cell {
         style?: CSSJSONObject;
         parentContainerId?: string;
         mountedComponentJSON?: Component.JSON;
-        layout?: Layout.Options;
+        layout?: LayoutType.Options;
         responsive?: Record<string, CellResponsiveOptions>;
     }
 
     export interface OptionsJSON extends JSON.Object {
         containerId: string;
         parentContainerId: string;
-        mountedComponentJSON: Component.JSON|undefined;
+        mountedComponentJSON?: Component.JSON;
         style?: CSSJSONObject;
     }
 

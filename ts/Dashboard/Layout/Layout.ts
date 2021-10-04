@@ -3,18 +3,17 @@ import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type JSON from '../../Core/JSON';
 import type Serializable from '../Serializable';
 
-import Row from './Row.js';
-import Dashboard from '../Dashboard.js';
-import GUIElement from './GUIElement.js';
-import DashboardGlobals from './../DashboardGlobals.js';
-
 import U from '../../Core/Utilities.js';
-import Cell from './Cell.js';
-
 const {
     pick,
     defined
 } = U;
+
+import Cell from './Cell.js';
+import Dashboard from '../Dashboard.js';
+import Row from './Row.js';
+import GUIElement from './GUIElement.js';
+import DashboardGlobals from './../DashboardGlobals.js';
 
 class Layout extends GUIElement {
     /* *
