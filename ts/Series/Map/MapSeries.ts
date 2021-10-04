@@ -586,7 +586,7 @@ class MapSeries extends ScatterSeries {
             this.isDirtyData ||
             this.chart.isResizing ||
             this.chart.renderer.isVML ||
-            !this.chart.hasRendered
+            !this.hasRendered
         );
     }
 
