@@ -832,7 +832,9 @@ class MapSeries extends ScatterSeries {
                                 )
                             );
                             const midY = (
-                                y1 + (y2 - y1) * pick(
+                                // Note the sign. We may have to flip this with
+                                // unprojected maps
+                                y2 - (y2 - y1) * pick(
                                     point.options.middleY,
                                     properties && (properties as any)['hc-middle-y'],
                                     0.5
