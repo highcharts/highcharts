@@ -18,6 +18,7 @@
 
 import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeries from './MapPointSeries';
+import type ScatterPoint from './../Scatter/ScatterPoint';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -80,6 +81,16 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
 
     /* eslint-enable valid-jsdoc */
 
+}
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface MapPointPoint extends ScatterPoint {
+    bounds?: Highcharts.MapBounds;
 }
 
 /* *

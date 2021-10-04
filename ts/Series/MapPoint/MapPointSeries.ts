@@ -128,23 +128,18 @@ class MapPointSeries extends ScatterSeries {
             const { forward } = mapView.projection;
             this.points.forEach((p): void => {
 
-                let { x, y } = p;
+                let { x = void 0, y = void 0 } = p;
 
                 const coordinates = p.options.coordinates;
                 if (coordinates) {
-
-                    /*
-                    if (!hasCoordinates) {
-                        coordinates = [
-                            coordinates[0],
-                            -coordinates[1]
-                        ];
-                    }
-                    */
-
                     const xy = forward(coordinates);
                     x = xy[0];
                     y = xy[1];
+
+                // Map bubbles getting geometry from shape
+                } else if (p.bounds) {
+                    x = p.bounds.midX;
+                    y = p.bounds.midY;
                 }
 
                 if (isNumber(x) && isNumber(y)) {
