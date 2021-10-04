@@ -76,9 +76,16 @@ const ganttChart = function () {
             events: {
                 load: function () {
                     const chart = this;
-                    $('#button-group').addClass('on');
-                    $('.highcharts-background').addClass('on');
-                    $('.highcharts-scrollable-mask').attr('fill', '#2F2B38');
+                    const buttonGroup = document.getElementById('button-group');
+                    const background = document.getElementsByClassName('highcharts-background')[0];
+                    const scrollMask = document.getElementsByClassName('highcharts-scrollable-mask')[0];
+
+                    buttonGroup.classList.add('on');
+                    background.classList.add('on');
+                    if (scrollMask) {
+                        scrollMask.style.fill = '#2F2B38';
+                    }
+
 
                     if (!big) {
                         chart.update({
@@ -94,9 +101,12 @@ const ganttChart = function () {
 
                 },
                 redraw: function () {
-
-                    $('.highcharts-background').addClass('on');
-                    $('.highcharts-scrollable-mask').attr('fill', '#2F2B38');
+                    const background = document.getElementsByClassName('highcharts-background')[0];
+                    const scrollMask = document.getElementsByClassName('highcharts-scrollable-mask')[0];
+                    background.classList.add('on');
+                    if (scrollMask) {
+                        scrollMask.style.fill = '#2F2B38';
+                    }
 
                 }
             },
@@ -288,6 +298,7 @@ const ganttChart = function () {
                     plotOptions: {
                         series: {
                             dataLabels: {
+                                enabled: false,
                                 y: 15
                             }
                         }
@@ -425,6 +436,19 @@ const gantt = {
                 let count = startSeries;
                 const rcount = startSeries;
 
+                const flag = document.getElementsByClassName('flag')[0];
+                const flagpole = document.getElementsByClassName('pole')[0];
+                const particle2 = document.getElementsByClassName('particle-2')[1];
+                const particle3 = document.getElementsByClassName('particle-3')[1];
+                const particle5 = document.getElementsByClassName('particle-5')[1];
+                const particle6 = document.getElementsByClassName('particle-6')[1];
+
+                const green = document.getElementsByClassName('green');//array
+                const stepP = document.getElementsByClassName('step-p');//array
+                const stepW = document.getElementsByClassName('step-w');//array
+
+                const cover = document.getElementsByClassName('cover')[0];
+
                 if (reduced) {
                     for (let ii = rcount; ii <= endSeries; ++ii) {
                         const series = chart.series[ii];
@@ -455,13 +479,13 @@ const gantt = {
                         chart.xAxis[1].setExtremes(0, 20);
                     }, 500);
                     setTimeout(function () {
-                        $('#gantt .flag').addClass('show');
-                    }, 1000);
+                        flag.classList.add('show');
+                    }, 1500);
                     setTimeout(function () {
-                        $('#gantt .particle-2').addClass('grow');
-                        $('#gantt .particle-3').addClass('grow');
-                        $('#gantt .particle-5').addClass('grow');
-                        $('#gantt .particle-6').addClass('grow');
+                        particle2.classList.add('grow');
+                        particle3.classList.add('grow');
+                        particle5.classList.add('grow');
+                        particle6.classList.add('grow');
                     }, 2000);
 
                     setTimeout(function () {
@@ -512,30 +536,35 @@ const gantt = {
                         chart.xAxis[1].setExtremes(0, 20);
                     }, 3000);
                     setTimeout(function () {
-                        $('#gantt .flag').addClass('show');
+                        flag.classList.add('show');
 
                     }, 3300);
                     setTimeout(function () {
-                        $('#gantt .particle-2').addClass('grow');
-                        $('#gantt .particle-3').addClass('grow');
-                        $('#gantt .particle-5').addClass('grow');
-                        $('#gantt .particle-6').addClass('grow');
+                        particle2.classList.add('grow');
+                        particle3.classList.add('grow');
+                        particle5.classList.add('grow');
+                        particle6.classList.add('grow');
                     }, 3500);
 
                     setTimeout(function () {
-                        $('.green').hide();
-                        $('.step-p').hide();
-                        $('.step-w').hide();
-                        $('.pole').hide();
-                        $('.flag').hide();
-                        $('.cover').hide();
-
                         chart.series[8].update({
                             data: [
                                 { x: 0, low: 12, high: 18 },
                                 { x: 20, low: 12, high: 18 }
                             ]
                         });
+                        for (let gg = 0; gg < green.length; ++gg) {
+                            green[gg].classList.add('hide');
+                        }
+                        for (let pp = 0; pp < stepP.length; ++pp) {
+                            stepP[pp].classList.add('hide');
+                        }
+                        for (let ww = 0; ww < stepW.length; ++ww) {
+                            stepW[ww].classList.add('hide');
+                        }
+                        flag.classList.add('hide');
+                        flagpole.classList.add('hide');
+                        cover.classList.add('hide');
 
                     }, 5000);
 
@@ -543,8 +572,6 @@ const gantt = {
                         ganttChart();
                     }, 6500);
                 }
-
-
             }
         }
     },

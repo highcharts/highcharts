@@ -112,6 +112,7 @@
 	height:250px;
 }
 
+
 #charts .highcharts-plot-background,
 #charts .highcharts-background
 {
@@ -189,6 +190,11 @@
 #charts .highcharts-axis, 
 #charts .highcharts-grid{
 	display: block;
+}
+
+#charts .highcharts-grid.fade-out{
+opacity:0;
+transition: opacity 1500ms;
 }
 
 #charts .highcharts-xaxis-grid .highcharts-grid-line {
@@ -498,11 +504,17 @@
 	font-size: .9em;
 	transform:translateY(-20px);
 	font-weight: 400;
-	opacity:0;
 	transition: opacity 300ms;
 	color:#fff;
 	width:150px;
 	white-space:normal !important;
+}
+#charts .highcharts-subtitle .iceberg-subtitle{
+	opacity:0;
+	
+}
+#charts .highcharts-subtitle .iceberg-subtitle.show{
+	opacity:1 !important
 }
 
 #charts .label-title{
@@ -604,16 +616,17 @@
 		transform:translateY(20px);
 		font-weight: 400;
 		color:#fff;
-		opacity:0;
 		transition: opacity 1s;
 		width:300px;
 	}
 
-	#charts .iceberg-subtitle{
+	#charts .highcharts-subtitle .iceberg-subtitle{
 		color:#fff;
 		width:300px;
-		white-space:normal
+		white-space:normal;
+		opacity:0;
 	}
+
 
 	#charts .highcharts-axis-labels{
 		font-size: 0.9em;;
@@ -635,4 +648,8 @@
 		font-size:1.1em;
 		font-weight:500;
 	}
+}
+
+@media screen  and (prefers-reduced-motion: reduce) {
+	
 }

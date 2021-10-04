@@ -27,7 +27,7 @@ const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 
 const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
-
+let done = false;
 
 // Create the chart
 Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
@@ -61,6 +61,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             data[i][5] // the volume
         ]);
     }
+
+
     Highcharts.stockChart('stock',
         {
             chart: {
@@ -77,10 +79,33 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 events: {
                     load: function () {
                         const chart = this;
+
+                        const particle1 = document.querySelectorAll('#stock .particle-1')[0];
+                        const particle2 = document.querySelectorAll('#stock .particle-2')[0];
+                        const particle3 = document.querySelectorAll('#stock .particle-3')[0];
+                        const particle4 = document.querySelectorAll('#stock .particle-4')[0];
+                        const particle5 = document.querySelectorAll('#stock .particle-5')[0];
+                        const particle6 = document.querySelectorAll('#stock .particle-6')[0];
+                        const particles = [particle1, particle2, particle3,
+                            particle4, particle5, particle6];
+
+                        const greenLine = document.querySelectorAll('#stock .highcharts-series-2.green-line')[0];
+                        const greenArrow = document.getElementsByClassName('green-line')[1];
+
+                        const purpleLine = document.querySelectorAll('#stock .highcharts-series-3.purple-line')[0];
+                        const purpleArrow = document.getElementsByClassName('purple-line')[1];
+                        const bottomArea =  document.querySelectorAll('#stock .stock-bottom')[0];
+                        const topArea =  document.querySelectorAll('#stock .stock-top')[0];
+                        const rangeSelectorGroup =  document.querySelectorAll('#stock .highcharts-range-selector-group')[0];
+                        const candlestick =  document.querySelectorAll('#stock .stick')[0];
+                        const column = document.querySelectorAll('#stock .highcharts-column-series.column')[0];
+                        const title = document.querySelectorAll('#stock .highcharts-title')[0];
+                        const subtitle = document.querySelectorAll('#stock .highcharts-subtitle')[0];
                         let head = 40; //arrow head radius
                         if (big) {
                             head = 70;
                         }
+
 
                         if (reduced) {
                             chart.series[2].update({
@@ -97,7 +122,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                     marker: {
                                         enabled: true,
                                         symbol: 'square',
-                                        radius: head
+                                        radius: head,
+                                        className: 'green-arrow'
                                     }
                                 }]
                             });
@@ -115,64 +141,42 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                     marker: {
                                         enabled: true,
                                         symbol: 'square',
-                                        radius: head
+                                        radius: head,
+                                        className: 'purple-arrow'
                                     }
                                 }]
                             });
 
 
-                            $('#stock .particle-1').css({
-                                opacity: 1,
-                                transition: 'none',
-                                transform: 'translate(70px, -30px)'
-                            });
+                            particle1.classList.add('static');
+                            particle2.classList.add('static');
+                            particle3.classList.add('static');
+                            particle4.classList.add('static');
+                            particle5.classList.add('static');
+                            particle6.classList.add('static');
 
-                            $('#stock .particle-2').css({
-                                opacity: 1,
-                                transition: 'none',
-                                transform: 'translate(130px, 0px)'
-                            });
-
-                            $('#stock .particle-3').css({
-                                opacity: 1,
-                                transition: 'none',
-                                transform: 'translate(180px, -20px)'
-                            });
-
-                            $('#stock .particle-4').css({
-                                opacity: 1,
-                                transition: 'none',
-                                transform: 'translate(130px, -40px)'
-                            });
-
-                            $('#stock .particle-5').css({
-                                opacity: 1,
-                                transition: 'none',
-                                transform: 'translate(180px, -80px)'
-                            });
-                            $('#stock .particle-6').css({
-                                opacity: 1,
-                                transition: 'none',
-                                transform: 'translate(180px, 30px)'
-                            });
-                            $('.purple-line .highcharts-point').css({ fill: '#8087E8', transition: 'none', transform: 'none' });
-                            $('.green-line .highcharts-point').css({ fill: '#8bf2b6', transition: 'none',  transform: 'none' });
+                            greenArrow.classList.add('static');
+                            purpleArrow.classList.add('static');
+                            greenLine.classList.add('static');
+                            purpleLine.classList.add('static');
 
                             setTimeout(function () {
-                                ///grows the arrow heads (which are line markers)
-                                $('#stock .particle-1').css({ opacity: 0,  transition: 'opacity 500ms' });
-                                $('#stock .particle-2').css({ opacity: 0,  transition: 'opacity 500ms' });
-                                $('#stock .particle-3').css({ opacity: 0,  transition: 'opacity 500ms' });
-                                $('#stock .particle-4').css({ opacity: 0,  transition: 'opacity 500ms' });
-                                $('#stock .particle-5').css({ opacity: 0,  transition: 'opacity 500ms' });
-                                $('#stock .particle-6').css({ opacity: 0,  transition: 'opacity 500ms' });
+                                particle1.classList.add('fade');
+                                particle2.classList.add('fade');
+                                particle3.classList.add('fade');
+                                particle4.classList.add('fade');
+                                particle5.classList.add('fade');
+                                particle6.classList.add('fade');
+
                             }, 1000);
 
                             setTimeout(function () {
-                                $('#stock .stock-bottom').css({ opacity: 0, transition: 'opacity 0s' });
-                                $('#stock .stock-top').css({ opacity: 0, transition: 'opacity 0ms' });
-                                $('.purple-line').css({ opacity: 0, transition: 'opacity 0s' });
-                                $('.green-line').css({ opacity: 0, transition: 'opacity 0s' });
+                                bottomArea.classList.add('hide');
+                                topArea.classList.add('hide');
+                                purpleLine.classList.add('hide');
+                                purpleArrow.classList.add('hide');
+                                greenLine.classList.add('hide');
+                                greenArrow.classList.add('hide');
                             }, 2000);
 
                             setTimeout(function () {
@@ -181,25 +185,35 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                 if (big) {
                                     margins = [80, 10, 30, 10];
                                 }
+
+                                rangeSelectorGroup.classList.add('fade-in');
+
                                 chart.update({
                                     chart: {
                                         margin: margins
                                     }
                                 });
-                                $('.highcharts-range-selector-group').css({ opacity: 1 });
+
                                 chart.series[12].update({
                                     visible: true
                                 });
                                 chart.series[13].update({
                                     visible: true
                                 });
-                                $('.stick').animate({ opacity: 1 }, 1);
-                                $('#stock .highcharts-column-series.column .highcharts-point').css({ opacity: 1 });
-                                $('.highcharts-axis-labels').animate({ opacity: 1 }, 1000);
-                                $('.highcharts-title').css({ opacity: 1 });
-                                if (big) {
-                                    $('.highcharts-subtitle').css({ opacity: 1 });
-                                }
+
+                                chart.series[2].update({
+                                    visible: false
+                                });
+                                chart.series[3].update({
+                                    visible: false
+                                });
+                                chart.series[0].update({
+                                    visible: false
+                                });
+                                chart.series[1].update({
+                                    visible: false
+                                });
+
                                 ///turn on the axes
                                 chart.yAxis[0].update({
                                     visible: true
@@ -207,35 +221,44 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                 chart.xAxis[0].update({
                                     visible: true
                                 });
+
+                                candlestick.classList.add('fade-in');
+                                title.style.opacity = 1;
+                                if (big) {
+                                    subtitle.style.opacity = 1;
+                                }
                             }, 3000);
+                            setTimeout(function () {
+                                done = true;
+                                chart.redraw();
+                            }, 3100);
 
                         } else {
                             setTimeout(function () {
-                                $('#stock .particle-1').css({ opacity: 1, transform: 'translate(500px, -50px)' });
+                                particle1.classList.add('move');
                             }, 0);
 
                             setTimeout(function () {
-                                $('#stock .particle-2').css({ opacity: 1, transform: 'translate(500px, -150px)' });
+                                particle2.classList.add('move');
                             }, 100);
 
                             setTimeout(function () {
-                                $('#stock .particle-5').css({ opacity: 1, transform: 'translate(500px, -250px)' });
+                                particles[2].classList.add('move');
                             }, 200);
 
                             setTimeout(function () {
-                                $('#stock .particle-4').css({ opacity: 1, transform: 'translate(500px, 30px)' });
+                                particles[3].classList.add('move');
                             }, 400);
 
                             setTimeout(function () {
-                                $('#stock .particle-3').css({ opacity: 1, transform: 'translate(500px, 230px)' });
+                                particles[4].classList.add('move');
                             }, 600);
 
                             setTimeout(function () {
-                                $('#stock .particle-6').css({ opacity: 1, transform: 'translate(500px, 100px)' });
+                                particles[5].classList.add('move');
                             }, 800);
 
                             setTimeout(function () {
-
                                 //moves green lie
                                 chart.series[2].data[2].update({
                                     x: 8.5,
@@ -249,7 +272,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                     y: 6.67
                                 });
                                 ///moves the purple line
-
                                 chart.series[3].data[2].update({
                                     x: 10.52,
                                     y: 8.4,
@@ -261,6 +283,14 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                     x: 10.52,
                                     y: 8.4
                                 });
+                                particle1.classList.add('move');
+                                particle2.classList.add('move');
+                                particle3.classList.add('move');
+                                particle4.classList.add('move');
+                                particle5.classList.add('move');
+                                particle6.classList.add('move');
+
+
                             }, 1000);
 
                             setTimeout(function () {
@@ -291,11 +321,23 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
 
                             setTimeout(function () {
                                 ///grows the arrow heads (which are line markers)
-                                $('.purple-line .highcharts-point').css({ fill: '#8087E8', transform: 'none' });
-                                $('.green-line .highcharts-point').css({ fill: '#8bf2b6', transform: 'none' });
+                                greenArrow.classList.add('grow');
+                                purpleArrow.classList.add('grow');
                             }, 3200);
 
                             setTimeout(function () {
+                                chart.series[2].data[2].update({
+                                    marker: {
+                                        enabled: false
+                                    }
+                                });
+                                chart.series[3].data[2].update({
+                                    marker: {
+                                        enabled: false
+                                    }
+                                });
+                                greenArrow.classList.add('hide');
+                                purpleArrow.classList.add('hide');
                                 ///set the x extremes to slide to the right
                                 chart.xAxis[1].setExtremes(0, 7);
                             }, 5200);
@@ -303,12 +345,14 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                             setTimeout(function () {
                                 ///hides all the earlier chart stuff and sets the yAxis extremes so
                                 ///the lines part vertically
-                                $('#stock .stock-bottom').css({ opacity: 0, transition: 'opacity 300ms' });
-                                $('#stock .stock-top').css({ opacity: 0, transition: 'opacity 300ms' });
-                                $('.purple-line .highcharts-point').css({ opacity: 0, transition: 'opacity 1s' });
-                                $('.green-line .highcharts-point').css({ opacity: 0, transition: 'opacity 1s' });
                                 chart.yAxis[2].setExtremes(10, 20);
                                 chart.yAxis[3].setExtremes(10, 20);
+
+                                bottomArea.classList.add('fade-out');
+                                topArea.classList.add('fade-out');
+
+                                purpleLine.classList.add('fade-out');
+                                greenLine.classList.add('fade-out');
                             }, 6000);
 
                             setTimeout(function () {
@@ -322,42 +366,58 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                         margin: margins
                                     }
                                 });
+                                bottomArea.classList.add('fade-out');
+                                topArea.classList.add('fade-out');
                             }, 6300);
 
                             setTimeout(function () {
-                                ///show the range selector and the series
-                                $('.highcharts-range-selector-group').css({ opacity: 1 });
                                 chart.series[12].update({
                                     visible: true
                                 });
                                 chart.series[13].update({
                                     visible: true
                                 });
+                                bottomArea.classList.add('fade-out');
+                                topArea.classList.add('fade-out');
+
                             }, 6500);
 
                             setTimeout(function () {
                                 ///fade in the candlestick and the column series, axis labels, title
-                                $('.stick').animate({ opacity: 1 }, 1);
-                                $('#stock .highcharts-column-series.column .highcharts-point').css({ opacity: 1 });
-                                $('.highcharts-axis-labels').animate({ opacity: 1 }, 1000);
-                                $('.highcharts-title').css({ opacity: 1 });
+                                candlestick.classList.add('fade-in');
+                                title.style.opacity = 1;
                                 if (big) {
-                                    $('.highcharts-subtitle').css({ opacity: 1 });
+                                    subtitle.style.opacity = 1;
                                 }
+                                column.classList.add('fade-in');
                             }, 6800);
 
                             setTimeout(function () {
-                                ///turn on the axes
+                                //turn on the axes
                                 chart.yAxis[0].update({
                                     visible: true
                                 });
                                 chart.xAxis[0].update({
                                     visible: true
                                 });
-                            }, 7500);
+                                done = true;
+                                chart.redraw();
+                            }, 7200);
                         }
-                        //particles fly by in the background
-
+                    },
+                    redraw: function () {
+                        if (done) {
+                            const candlestick =  document.querySelectorAll('#stock .stick')[0];
+                            const rangeSelectorGroup =  document.querySelectorAll('#stock .highcharts-range-selector-group')[0];
+                            const bottomArea =  document.querySelectorAll('#stock .stock-bottom')[0];
+                            const topArea =  document.querySelectorAll('#stock .stock-top')[0];
+                            const column = document.querySelectorAll('#stock .highcharts-column-series.column')[0];
+                            column.classList.add('fade-in');
+                            rangeSelectorGroup.classList.add('fade-in');
+                            candlestick.classList.add('fade-in');
+                            bottomArea.classList.add('fade-out');
+                            topArea.classList.add('fade-out');
+                        }
                     }
                 }
             },

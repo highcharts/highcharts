@@ -23,12 +23,14 @@ Math.easeOutBounce = pos => {
 };
 
 const big = window.matchMedia("(min-width: 500px)").matches;
-
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const countOffset = 2;
 const  icebergLabels = [180, 160, 140, 120, 100, 80, 60, 40, 20,
     10, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180];
+
 let done = false;
+
 const charts = {
     chart: {
         // width: 500,
@@ -44,26 +46,53 @@ const charts = {
         events: {
             load: function () {
                 const chart = this;
-
-                $('.highcharts-grid').fadeOut(1500);
+                const grid = document.getElementsByClassName('highcharts-grid'); //array
+                const gridLine = document.getElementsByClassName('highcharts-grid-line');//array
+                const particles = document.getElementsByClassName('particles')[0];
+                const particle = document.getElementsByClassName('particle'); //array
+                const cover = document.getElementsByClassName('cover')[0];
+                const title = document.getElementsByClassName('highcharts-title')[0];
+                const background = document.getElementsByClassName('highcharts-background')[0];
+                const plotBackground = document.getElementsByClassName('highcharts-plot-background')[0];
+                const bergDepth1 = document.getElementsByClassName('berg-depth-1')[0];
+                const bergDepth2 = document.getElementsByClassName('berg-depth-2')[0];
+                const bergDepth3 = document.getElementsByClassName('berg-depth-3')[0];
+                const bergDepth4 = document.getElementsByClassName('berg-depth-4')[0];
+                const bergDepth5 = document.getElementsByClassName('berg-depth-5')[0];
+                const icebergTypes = document.getElementsByClassName('iceberg-types');
+                if (reduced) {
+                    particles.style.transition = 'none';
+                    particles.style.opacity = 0;
+                }
 
                 setTimeout(function () {
-                    $('.particles').addClass('rotate');
-                    $('.particle').each(function () {
-                        $(this).addClass('rotate');
-                    });
+                    for (let gg = 0; gg < grid.length; ++gg) {
+                        grid[gg].classList.add('fade-out');
+                    }
+                    if (reduced) {
+                        particles.style.opacity = 0;
+                    }
+                }, 200);
+
+                setTimeout(function () {
+                    if (reduced) {
+                        particles.style.opacity = 0;
+                    }
+
+                    particles.classList.add('rotate');
+                    for (let pp = 0; pp < particle.length; ++pp) {
+                        particle[pp].classList.add('rotate');
+                    }
                     chart.series[8].data[1].update({
                         x: 4,
                         low: 2,
                         high: 14
                     });
-
                     chart.series[9].data[1].update({
                         x: 4,
                         low: 2,
                         high: 14
                     });
-
                     chart.series[10].update({
                         data: [
                             { x: 0, low: -2, high: -2 },
@@ -82,6 +111,16 @@ const charts = {
                 }, 500);
 
                 setTimeout(function () {
+                    if (reduced) {
+                        particles.style.opacity = 1;
+                    }
+                }, 1000);
+
+                setTimeout(function () {
+
+                    if (reduced) {
+                        particles.style.opacity = 0;
+                    }
 
                     for (let ii = 0; ii < 11; ++ii) {
                         chart.series[ii].hide();
@@ -91,13 +130,11 @@ const charts = {
                         low: 2,
                         high: 14
                     });
-
                     chart.series[9].data[1].update({
                         x: 4,
                         low: 2,
                         high: 14
                     });
-
                     chart.series[10].update({
                         data: [
                             { x: 0, low: -2, high: -2 },
@@ -118,30 +155,22 @@ const charts = {
                     });
 
 
-                    done = true;
-                    $('#charts .highcharts-grid-line').css({ stroke: 'transparent' });
-                    $('.cover').css({ fill: '#30426B' });
-                    $('.highcharts-background').css({ fill: '#f0f0f0' });
-                    $('.highcharts-plot-background').css({ fill: '#f0f0f0', transition: 'fill 2s' });
-                    $('.particle').each(function () {
-                        $(this).addClass('iceberg');
-                    });
+                    for (let gg = 0; gg < gridLine.length; ++gg) {
+                        gridLine[gg].style.stroke = 'transparent';
+                    }
+                    cover.style.fill =  '#30426B';
+                    background.style.fill = '#f0f0f0';
+                    plotBackground.style.transition = 'fill 2s';
+                    plotBackground.style.fill = '#f0f0f0';
+
+                    for (let pp = 0; pp < particle.length; ++pp) {
+                        particle[pp].classList.add('iceberg');
+                    }
 
                 }, 5000);
-
                 setTimeout(function () {
-                    $('.particle').each(function () {
-                        $(this).addClass('clip');
-                    });
-                    $('#charts .berg-depth').css({ opacity: 0.6 });
-                    chart.series[13].update({
-                        dataLabels: {
-                            enabled: true
-                        }
-                    });
-
-                    for (let ii = 1; ii <= 5; ++ii) {
-                        $('#charts .berg-depth-' + ii + '').css({ opacity: 1 });
+                    for (let pp = 0; pp < particle.length; ++pp) {
+                        particle[pp].classList.add('clip');
                     }
                     for (let hh = 14; hh <= 22; ++hh) {
                         if (hh % 2 === 0) {
@@ -150,8 +179,21 @@ const charts = {
                             });
                         }
                     }
-                    $('#charts .highcharts-data-labels.iceberg-types').css({ color: '#000' });
+                    if (reduced) {
+                        particles.style.transition = 'opacity 1s';
+                        particles.style.opacity = 1;
+                    }
+                    bergDepth1.style.opacity = 1;
+                    bergDepth2.style.opacity = 1;
+                    bergDepth3.style.opacity = 1;
+                    bergDepth4.style.opacity = 1;
+                    bergDepth5.style.opacity = 1;
 
+                    done = true;
+
+                }, 8500);
+
+                setTimeout(function () {
 
                     chart.update({
                         tooltip: {
@@ -159,10 +201,43 @@ const charts = {
                         }
                     });
 
-                    $('.highcharts-subtitle').css({ opacity: 1 });
+                    for (let hh = 14; hh <= 22; ++hh) {
+                        if (hh % 2 === 0) {
+                            chart.series[hh].update({
+                                visible: true
+                            });
+                        }
+                    }
+                    title.style.opacity = 1;
 
-                    $('#charts .highcharts-title').css({ opacity: 1 });
-                }, 7500);
+                }, 9000);
+                setTimeout(function () {
+
+                    chart.series[13].update({
+                        dataLabels: {
+                            enabled: true
+                        }
+                    });
+                    bergDepth1.style.opacity = 1;
+                    bergDepth2.style.opacity = 1;
+                    bergDepth3.style.opacity = 1;
+                    bergDepth4.style.opacity = 1;
+                    bergDepth5.style.opacity = 1;
+
+                    for (let it = 0; it < icebergTypes.length; ++it) {
+                        icebergTypes[it].style.color = '#000';
+                    }
+
+                }, 10400);
+            },
+            redraw: function () {
+                const subtitle = document.querySelectorAll('#charts .highcharts-subtitle .iceberg-subtitle')[0];
+                if (!done) {
+                    subtitle.style.opacity = 0;
+                } else {
+                    subtitle.style.transition = "opacity 1s";
+                    subtitle.style.opacity = 1;
+                }
             }
         }
     },
@@ -179,7 +254,10 @@ const charts = {
     },
     subtitle: {
         text: '<p class="iceberg-subtitle">Above-water characterization and distribution of icebergs in "Iceberg Alley" in Newfoundland, Canada</p>',
-        useHTML: true
+        useHTML: true,
+        floating: true,
+        y: 100,
+        x: 10
     },
     xAxis: [
     //0 -
@@ -287,12 +365,14 @@ const charts = {
                 events: {
                     mouseOver: function () {
                         if (done) {
-                            $('.highcharts-subtitle').css({ opacity: 0 });
+                            const subtitle = document.querySelectorAll('#charts .highcharts-subtitle .iceberg-subtitle')[0];
+                            subtitle.style.opacity = 0;
                         }
                     },
                     mouseOut: function () {
                         if (done) {
-                            $('.highcharts-subtitle').css({ opacity: 1 });
+                            const subtitle = document.querySelectorAll('#charts .highcharts-subtitle .iceberg-subtitle')[0];
+                            subtitle.style.opacity = 1;
                         }
                     }
                 }
@@ -304,23 +384,22 @@ const charts = {
                 inactive: {
                     enabled: false
                 }
-            },
-            lineColor: 'transparent',
-            dragDrop: {
-                enabled: false,
-                draggableX: true,
-                draggableY: true,
-                dragMaxX: 20,
-                dragMinX: 0,
-                dragMaxY: 18,
-                dragMinY: 0
             }
         },
         pie: {
             animation: false
         },
         line: {
-            animation: false
+            animation: false,
+            marker: {
+                enabled: false,
+                symbol: 'circle'
+            }
+        },
+        scatter: {
+            marker: {
+                enabled: false
+            }
         }
 
     },
@@ -522,6 +601,10 @@ const charts = {
             type: 'scatter',
             className: 'iceberg-types',
             xAxis: 2,
+            marker: {
+                enabled: false,
+                radius: 1
+            },
             dataLabels: {
                 enabled: false,
                 useHTML: true,
@@ -644,6 +727,9 @@ const charts = {
             xAxis: 2,
             zIndex: 50,
             visible: false,
+            marker: {
+                enabled: false
+            },
             data: [
                 { x: 0.24, y: 8 },
                 { x: 2.88, y: 0.64 },
@@ -659,6 +745,9 @@ const charts = {
             zIndex: 50,
             xAxis: 2,
             visible: false,
+            marker: {
+                enabled: false
+            },
             tooltip: {
                 pointFormatter: function () {
                     if (done) {
@@ -697,6 +786,9 @@ const charts = {
             zIndex: 50,
             xAxis: 2,
             visible: false,
+            marker: {
+                enabled: false
+            },
             tooltip: {
                 pointFormatter: function () {
                     if (done) {
@@ -738,6 +830,9 @@ const charts = {
             zIndex: 50,
             xAxis: 2,
             visible: false,
+            marker: {
+                enabled: false
+            },
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip">
@@ -775,6 +870,9 @@ const charts = {
             zIndex: 50,
             xAxis: 2,
             visible: false,
+            marker: {
+                enabled: false
+            },
             tooltip: {
                 pointFormatter: function () {
                     if (done) {
