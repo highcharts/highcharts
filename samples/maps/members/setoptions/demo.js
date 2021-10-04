@@ -1,6 +1,21 @@
 Highcharts.setOptions({
     chart: {
-        backgroundColor: '#272822'
+        backgroundColor: {
+            linearGradient: {
+                x1: 0,
+                x2: 0,
+                y1: 0,
+                y2: 1
+            },
+            stops: [
+                [0, '#011590'],
+                [0.15, '#004AB3'],
+                [0.4, '#0378D7'],
+                [0.6, '#0378D7'],
+                [0.75, '#004AB3'],
+                [1, '#011590']
+            ]
+        }
     },
     title: {
         style: {
@@ -10,7 +25,7 @@ Highcharts.setOptions({
     legend: {
         title: {
             style: {
-                color: 'silver'
+                color: 'white'
             }
         }
     },

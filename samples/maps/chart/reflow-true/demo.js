@@ -33,16 +33,6 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             backgroundColor: 'rgba(255,255,255,0.85)'
         },
 
-        // Add some padding inside the plot box
-        xAxis: {
-            minPadding: 0.02,
-            maxPadding: 0.02
-        },
-        yAxis: {
-            minPadding: 0.02,
-            maxPadding: 0.02
-        },
-
         // The map series
         series: [{
             data: data,

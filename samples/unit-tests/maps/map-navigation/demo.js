@@ -23,16 +23,6 @@ QUnit.test(
                 maxColor: '#003700'
             },
 
-            // Add some padding inside the plot box
-            xAxis: {
-                minPadding: 0.2,
-                maxPadding: 0.2
-            },
-            yAxis: {
-                minPadding: 0.2,
-                maxPadding: 0.2
-            },
-
             // The map series
             series: [
                 {
