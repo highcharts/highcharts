@@ -145,7 +145,8 @@ class MapPointSeries extends ScatterSeries {
                 if (isNumber(x) && isNumber(y)) {
                     const plotCoords = mapView.projectedUnitsToPixels({ x, y });
                     p.plotX = plotCoords.x;
-                    p.plotY = plotCoords.y;
+                    // Flipped y because SVG coordinate system is positive down
+                    p.plotY = this.chart.plotHeight - plotCoords.y;
                 } else {
                     p.plotX = void 0;
                     p.plotY = void 0;
