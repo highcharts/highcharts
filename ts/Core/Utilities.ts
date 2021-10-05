@@ -1149,7 +1149,9 @@ let garbageBin: (globalThis.HTMLElement|undefined);
  *         The corrected float number.
  */
 function correctFloat(num: number, prec?: number): number {
-    return parseFloat(
+
+    // When the number is higher than 1e14 use the number (#16275)
+    return num > 1e14 ? num : parseFloat(
         num.toPrecision(prec || 14)
     );
 }
