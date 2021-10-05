@@ -20,10 +20,14 @@
 
 import type Accessibility from '../../Accessibility';
 import type Chart from '../../../Core/Chart/Chart';
+import type Series from '../../../Core/Series/Series';
 
 import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
-const { defined } = U;
+const {
+    addEvent,
+    defined
+} = U;
 
 import Announcer from '../../Utils/Announcer.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
@@ -34,8 +38,6 @@ const {
     defaultPointDescriptionFormatter,
     defaultSeriesDescriptionFormatter
 } = SeriesDescriber;
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { series: Series } = SeriesRegistry;
 
 
 /* *
@@ -101,6 +103,7 @@ function getUniqueSeries(
  * @class
  */
 class NewDataAnnouncer {
+
 
     /* *
      *
@@ -184,42 +187,15 @@ class NewDataAnnouncer {
             announcer.lastAnnouncementTime = 0;
         });
 
-        e.addEvent(Series as typeof Accessibility.SeriesComposition, 'updatedData', function (): void {
-            announcer.onSeriesUpdatedData(this); // @todo fix instance reference on class event
-        });
-
         e.addEvent(chart, 'afterAddSeries', function (
             e: { series: Accessibility.SeriesComposition }
         ): void {
             announcer.onSeriesAdded(e.series);
         });
 
-        e.addEvent(Series as typeof Accessibility.SeriesComposition, 'addPoint', function (
-            e: { point: Accessibility.PointComposition }
-        ): void {
-            announcer.onPointAdded(e.point); // @todo fix instance reference on class event
-        });
-
         e.addEvent(chart, 'redraw', function (): void {
             announcer.announceDirtyData();
         });
-    }
-
-
-    /**
-     * On new data in the series, make sure we add it to the dirty list.
-     * @private
-     * @param {Highcharts.Series} series
-     */
-    public onSeriesUpdatedData(
-        series: Accessibility.SeriesComposition
-    ): void {
-        const chart = this.chart;
-
-        if (series.chart === chart && chartHasAnnounceEnabled(chart)) {
-            this.dirty.hasDirty = true;
-            this.dirty.allSeries[series.name + series.index] = series;
-        }
     }
 
 
@@ -237,24 +213,6 @@ class NewDataAnnouncer {
             // Add it to newSeries storage unless we already have one
             this.dirty.newSeries = defined(this.dirty.newSeries) ?
                 void 0 : series;
-        }
-    }
-
-
-    /**
-     * On new point added, update dirty list.
-     * @private
-     * @param {Highcharts.Point} point
-     */
-    public onPointAdded(
-        point: Accessibility.PointComposition
-    ): void {
-        const chart = point.series.chart;
-
-        if (this.chart === chart && chartHasAnnounceEnabled(chart)) {
-            // Add it to newPoint storage unless we already have one
-            this.dirty.newPoint = defined(this.dirty.newPoint) ?
-                void 0 : point;
         }
     }
 
@@ -443,6 +401,89 @@ namespace NewDataAnnouncer {
         series: Array<Accessibility.SeriesComposition>;
         time: number;
     }
+
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    export const composedClasses: Array<Function> = [];
+
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(
+        SeriesClass: typeof Series
+    ): void {
+
+        if (composedClasses.indexOf(SeriesClass) === -1) {
+            composedClasses.push(SeriesClass);
+
+            addEvent(SeriesClass, 'addPoint', seriesOnAddPoint);
+            addEvent(SeriesClass, 'updatedData', seriesOnUpdatedData);
+        }
+    }
+
+
+    /**
+     * On new point added, update dirty list.
+     * @private
+     * @param {Highcharts.Point} point
+     */
+    function seriesOnAddPoint(
+        this: Series,
+        e: { point: Accessibility.PointComposition }
+    ): void {
+        const series = e.point.series as Accessibility.SeriesComposition,
+            chart = series.chart,
+            newDataAnnouncer = series.newDataAnnouncer;
+
+        if (
+            newDataAnnouncer &&
+            newDataAnnouncer.chart === chart &&
+            chartHasAnnounceEnabled(chart)
+        ) {
+            // Add it to newPoint storage unless we already have one
+            newDataAnnouncer.dirty.newPoint = (
+                defined(newDataAnnouncer.dirty.newPoint) ?
+                    void 0 :
+                    e.point
+            );
+        }
+    }
+
+
+    /**
+     * On new data in the series, make sure we add it to the dirty list.
+     * @private
+     * @param {Highcharts.Series} series
+     */
+    function seriesOnUpdatedData(
+        this: Series
+    ): void {
+        const series = this as Accessibility.SeriesComposition,
+            chart = series.chart,
+            newDataAnnouncer = series.newDataAnnouncer;
+
+        if (
+            newDataAnnouncer &&
+            newDataAnnouncer.chart === chart &&
+            chartHasAnnounceEnabled(chart)
+        ) {
+            newDataAnnouncer.dirty.hasDirty = true;
+            newDataAnnouncer.dirty.allSeries[series.name + series.index] = series;
+        }
+    }
+
 
 }
 

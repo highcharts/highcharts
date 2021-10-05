@@ -19,10 +19,10 @@
  * */
 
 import type AccessibilityComponent from './AccessibilityComponent';
-import type Chart from '../Core/Chart/Chart.js';
+import type Chart from '../Core/Chart/Chart';
 import type { Options } from '../Core/Options';
-import type Point from '../Core/Series/Point.js';
-import type Series from '../Core/Series/Series.js';
+import type Point from '../Core/Series/Point';
+import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
@@ -45,6 +45,7 @@ import InfoRegionsComponent from './Components/InfoRegionsComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
 import LegendComponent from './Components/LegendComponent.js';
 import MenuComponent from './Components/MenuComponent.js';
+import NewDataAnnouncer from './Components/SeriesComponent/NewDataAnnouncer.js';
 import ProxyProvider from './ProxyProvider.js';
 import RangeSelectorComponent from './Components/RangeSelectorComponent.js';
 import SeriesComponent from './Components/SeriesComponent/SeriesComponent.js';
@@ -343,6 +344,7 @@ namespace Accessibility {
 
     export declare class SeriesComposition extends Series {
         chart: ChartComposition;
+        newDataAnnouncer?: NewDataAnnouncer;
         options: Required<SeriesOptions>;
         points: Array<PointComposition>;
     }
@@ -468,6 +470,7 @@ namespace Accessibility {
     ): void {
         A11yI18n.compose(ChartClass);
         FocusBorder.compose(ChartClass, SVGElementClass);
+        NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
 
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
