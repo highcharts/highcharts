@@ -504,48 +504,37 @@ class MapSeries extends ScatterSeries {
     }
 
     /**
-     * Animate in the new series from the clicked point in the old series.
-     * Depends on the drilldown.js module
+     * Animate in the new series. Depends on the drilldown.js module.
      * @private
      */
     public animateDrilldown(init?: boolean): void {
-        let toBox = this.chart.plotBox,
-            level: Highcharts.DrilldownLevelObject =
-                (this.chart.drilldownLevels as any)[
-                    (this.chart.drilldownLevels as any).length - 1
-                ],
-            fromBox = level.bBox,
-            animationOptions: (boolean|Partial<AnimationOptions>) =
-                (this.chart.options.drilldown as any).animation,
-            scale;
+        const chart = this.chart,
+            group = this.group;
 
-        if (!init) {
+        if (chart.renderer.isSVG) {
 
-            scale = Math.min(
-                (fromBox.width as any) / toBox.width,
-                (fromBox.height as any) / toBox.height
-            );
-            level.shapeArgs = {
-                scaleX: scale,
-                scaleY: scale,
-                translateX: fromBox.x,
-                translateY: fromBox.y
-            };
+            // Initialize the animation
+            if (init) {
+                // Scale down the group and place it in the center. This is a
+                // regression from <= v9.2, when it animated from the old point.
+                group.attr({
+                    translateX: chart.plotLeft + chart.plotWidth / 2,
+                    translateY: chart.plotTop + chart.plotHeight / 2,
+                    scaleX: 0.1,
+                    scaleY: 0.1,
+                    opacity: 0.01
+                });
 
-            this.points.forEach(function (
-                point: MapPoint
-            ): void {
-                if (point.graphic) {
-                    (point.graphic
-                        .attr(level.shapeArgs) as any)
-                        .animate({
-                            scaleX: 1,
-                            scaleY: 1,
-                            translateX: 0,
-                            translateY: 0
-                        }, animationOptions);
-                }
-            });
+            // Run the animation
+            } else {
+                group.animate({
+                    translateX: chart.plotLeft,
+                    translateY: chart.plotTop,
+                    scaleX: 1,
+                    scaleY: 1,
+                    opacity: 1
+                });
+            }
         }
 
     }
@@ -555,8 +544,18 @@ class MapSeries extends ScatterSeries {
      * series and animate them into the origin point in the upper series.
      * @private
      */
-    public animateDrillupFrom(level: Highcharts.DrilldownLevelObject): void {
-        ColumnSeries.prototype.animateDrillupFrom.call(this, level);
+    public animateDrillupFrom(): void {
+        const chart = this.chart;
+
+        if (chart.renderer.isSVG) {
+            this.group.animate({
+                translateX: chart.plotLeft + chart.plotWidth / 2,
+                translateY: chart.plotTop + chart.plotHeight / 2,
+                scaleX: 0.1,
+                scaleY: 0.1,
+                opacity: 0.01
+            });
+        }
     }
 
     /**
