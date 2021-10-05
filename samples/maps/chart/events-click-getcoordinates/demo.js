@@ -58,9 +58,9 @@ function showMap(mapKey) {
         },
 
         tooltip: {
-            pointFormatter: function () {
-                return supportsLatLon ? 'Lat: ' + this.lat.toFixed(3) + ', Lon: ' + this.lon.toFixed(3) : 'x: ' + this.x + ', y: ' + this.y;
-            }
+            pointFormat: supportsLatLon ?
+                'Lat: {point.lat:.2f}, Lon: {point.lon:.2f}' :
+                'x: {point.x:.0f}, y: {point.y:.0f}'
         },
 
         plotOptions: {
@@ -184,7 +184,8 @@ function showMap(mapKey) {
                         const option = document.createElement('option');
                         option.value = Highcharts.mapDataIndex[group][name];
                         option.innerText = name;
-                        option.selected = name === 'World';
+                        option.selected = name ===
+                            'World, Miller projection, medium resolution';
 
                         select.append(option);
                     }
@@ -195,8 +196,9 @@ function showMap(mapKey) {
 
     select.addEventListener('change', () => {
         const mapKey = select.value.replace(/\.js$/, '');
-        getScript('https://code.highcharts.com/mapdata/' + mapKey + '.js', () => {
-            showMap(mapKey);
-        });
+        getScript(
+            `https://code.highcharts.com/mapdata/${mapKey}.js`,
+            () => showMap(mapKey)
+        );
     });
 }());

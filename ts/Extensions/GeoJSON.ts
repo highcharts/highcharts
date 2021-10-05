@@ -418,7 +418,7 @@ Chart.prototype.transformToLatLon = function (
 
     const normalized = {
             x: ((point.x - jsonmarginX) / jsonres - xpan) / scale + xoffset,
-            y: ((-point.y - jsonmarginY) / jsonres + ypan) / scale + yoffset
+            y: ((point.y - jsonmarginY) / jsonres + ypan) / scale + yoffset
         },
         cosAngle = transform.cosAngle ||
             (transform.rotation && Math.cos(transform.rotation)),
@@ -454,20 +454,19 @@ Chart.prototype.transformToLatLon = function (
 Chart.prototype.fromPointToLatLon = function (
     point: Highcharts.MapCoordinateObject
 ): (Highcharts.MapLatLonObject|undefined) {
-    let transforms = this.mapTransforms,
-        transform;
+    const transforms = this.mapTransforms;
 
     if (!transforms) {
         error(22, false, this);
         return;
     }
 
-    for (transform in transforms) {
+    for (const transform in transforms) {
         if (
             Object.hasOwnProperty.call(transforms, transform) &&
             transforms[transform].hitZone &&
             pointInPolygon(
-                { x: point.x, y: -(point.y as any) },
+                point,
                 transforms[transform].hitZone.coordinates[0]
             )
         ) {
