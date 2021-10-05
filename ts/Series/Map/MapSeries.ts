@@ -1232,7 +1232,6 @@ interface MapSeries extends ColorMapComposition.SeriesComposition {
         state?: StatesOptionsKey
     ): SVGAttributes;
     render(): void;
-    // translatePath(path: SVGPath): SVGPath;
 }
 extend(MapSeries.prototype, {
     type: 'map',

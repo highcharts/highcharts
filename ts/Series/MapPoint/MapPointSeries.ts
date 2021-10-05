@@ -125,7 +125,7 @@ class MapPointSeries extends ScatterSeries {
 
         // Create map based translation
         if (mapView) {
-            const { forward } = mapView.projection;
+            const { forward, hasCoordinates } = mapView.projection;
             this.points.forEach((p): void => {
 
                 let { x = void 0, y = void 0 } = p;
@@ -145,8 +145,9 @@ class MapPointSeries extends ScatterSeries {
                 if (isNumber(x) && isNumber(y)) {
                     const plotCoords = mapView.projectedUnitsToPixels({ x, y });
                     p.plotX = plotCoords.x;
-                    // Flipped y because SVG coordinate system is positive down
-                    p.plotY = this.chart.plotHeight - plotCoords.y;
+                    p.plotY = hasCoordinates ?
+                        plotCoords.y :
+                        this.chart.plotHeight - plotCoords.y;
                 } else {
                     p.plotX = void 0;
                     p.plotY = void 0;
