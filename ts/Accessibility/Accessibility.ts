@@ -115,7 +115,7 @@ class Accessibility {
 
     public chart: Accessibility.ChartComposition = void 0 as any;
     public components: Accessibility.ComponentsObject = void 0 as any;
-    public keyboardNavigation: Highcharts.KeyboardNavigation = void 0 as any;
+    public keyboardNavigation: KeyboardNavigation = void 0 as any;
     public proxyProvider: ProxyProvider = void 0 as any;
     public zombie?: boolean; // Zombie object on old browsers
 
@@ -470,6 +470,7 @@ namespace Accessibility {
     ): void {
         A11yI18n.compose(ChartClass);
         FocusBorder.compose(ChartClass, SVGElementClass);
+        KeyboardNavigation.compose(ChartClass);
         NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
 
         if (composedClasses.indexOf(ChartClass) === -1) {
