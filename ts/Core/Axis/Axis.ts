@@ -1053,21 +1053,18 @@ class Axis {
         min: number,
         max: number
     ): Array<number> {
-        const tickPositions = [];
+        const roundedMin = correctFloat(Math.floor(min / tickInterval) * tickInterval),
+            roundedMax = correctFloat(Math.ceil(max / tickInterval) * tickInterval),
+            tickPositions = [];
 
         let pos,
             lastPos,
-            precision,
-            roundedMin = correctFloat(Math.floor(min / tickInterval) * tickInterval),
-            roundedMax = correctFloat(Math.ceil(max / tickInterval) * tickInterval);
+            precision;
 
         // When the precision is higher than what we filter out in
         // correctFloat, skip it (#6183).
-        // Comment TODO (#16275)
         if (correctFloat(roundedMin + tickInterval) === roundedMin) {
             precision = 20;
-            roundedMin = correctFloat(Math.floor(min / tickInterval) * tickInterval, precision);
-            roundedMax = correctFloat(Math.ceil(max / tickInterval) * tickInterval, precision);
         }
 
         // For single points, add a tick regardless of the relative position
