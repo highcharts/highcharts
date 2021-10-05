@@ -428,8 +428,16 @@ namespace NewDataAnnouncer {
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
-            addEvent(SeriesClass, 'addPoint', seriesOnAddPoint);
-            addEvent(SeriesClass, 'updatedData', seriesOnUpdatedData);
+            addEvent(
+                SeriesClass as typeof Accessibility.SeriesComposition,
+                'addPoint',
+                seriesOnAddPoint
+            );
+            addEvent(
+                SeriesClass as typeof Accessibility.SeriesComposition,
+                'updatedData',
+                seriesOnUpdatedData
+            );
         }
     }
 
@@ -440,12 +448,11 @@ namespace NewDataAnnouncer {
      * @param {Highcharts.Point} point
      */
     function seriesOnAddPoint(
-        this: Series,
+        this: Accessibility.SeriesComposition,
         e: { point: Accessibility.PointComposition }
     ): void {
-        const series = e.point.series as Accessibility.SeriesComposition,
-            chart = series.chart,
-            newDataAnnouncer = series.newDataAnnouncer;
+        const chart = this.chart,
+            newDataAnnouncer = this.newDataAnnouncer;
 
         if (
             newDataAnnouncer &&
@@ -468,11 +475,10 @@ namespace NewDataAnnouncer {
      * @param {Highcharts.Series} series
      */
     function seriesOnUpdatedData(
-        this: Series
+        this: Accessibility.SeriesComposition
     ): void {
-        const series = this as Accessibility.SeriesComposition,
-            chart = series.chart,
-            newDataAnnouncer = series.newDataAnnouncer;
+        const chart = this.chart,
+            newDataAnnouncer = this.newDataAnnouncer;
 
         if (
             newDataAnnouncer &&
@@ -480,7 +486,7 @@ namespace NewDataAnnouncer {
             chartHasAnnounceEnabled(chart)
         ) {
             newDataAnnouncer.dirty.hasDirty = true;
-            newDataAnnouncer.dirty.allSeries[series.name + series.index] = series;
+            newDataAnnouncer.dirty.allSeries[this.name + this.index] = this;
         }
     }
 
