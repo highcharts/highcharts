@@ -1148,7 +1148,7 @@ class MapSeries extends ScatterSeries {
             projection = mapView && mapView.projection;
 
         // Recalculate box on updated data
-        if (this.chart.hasRendered && this.isDirtyData) {
+        if (this.chart.hasRendered && (this.isDirtyData || !this.hasRendered)) {
             this.processData();
             this.generatePoints();
             delete this.bounds;
