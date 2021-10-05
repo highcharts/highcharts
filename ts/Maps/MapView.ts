@@ -268,20 +268,23 @@ class MapView {
         const projectedCenter = this.projection.forward(this.center);
         const centerPxX = this.chart.plotWidth / 2;
         const centerPxY = this.chart.plotHeight / 2;
+
         const x = centerPxX - scale * (projectedCenter[0] - pos.x);
         const y = centerPxY + scale * (projectedCenter[1] - pos.y);
+
         return { x, y };
     }
 
     public pixelsToProjectedUnits(pos: PositionObject): Highcharts.ProjectedXY {
         const { x, y } = pos;
         const scale = this.getScale();
+        const projectedCenter = this.projection.forward(this.center);
         const centerPxX = this.chart.plotWidth / 2;
         const centerPxY = this.chart.plotHeight / 2;
 
-        const projectedCenter = this.projection.forward(this.center);
-        const projectedX = projectedCenter[0] - ((centerPxX - x) / scale);
-        const projectedY = projectedCenter[1] - ((centerPxY - y) / scale);
+        const projectedX = projectedCenter[0] + (x - centerPxX) / scale;
+        const projectedY = projectedCenter[1] - (y - centerPxY) / scale;
+
         return { x: projectedX, y: projectedY };
     }
 
