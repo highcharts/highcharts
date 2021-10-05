@@ -83,12 +83,19 @@ class EditMode {
         this.createTools();
 
         this.confirmationPopup = new ConfirmationPopup(
+            this,
             dashboard.container,
             this.options.confirmationPopup
         );
 
-        this.initEditMode();
-        this.initEvents();
+        // Create edit overlay.
+        this.editOverlay = createElement(
+            'div', {
+                className: EditGlobals.classNames.editOverlay
+            }, {},
+            dashboard.container
+        );
+        this.isEditOverlayActive = false;
     }
 
     /* *
@@ -119,6 +126,8 @@ class EditMode {
     public potentialCellContext?: Cell;
     public editCellContext?: Cell;
     public contextPointer: EditMode.ContextPointer;
+    public editOverlay: HTMLDOMElement;
+    public isEditOverlayActive: boolean;
 
     /* *
     *
@@ -319,6 +328,12 @@ class EditMode {
     public activateEditMode(): void {
         const editMode = this;
 
+        // Init edit mode.
+        if (!editMode.isInitialized) {
+            editMode.initEditMode();
+            editMode.initEvents();
+        }
+
         // Set edit mode active class to dashboard.
         editMode.dashboard.container.classList.add(
             EditGlobals.classNames.editModeEnabled
@@ -509,7 +524,7 @@ class EditMode {
                     // sidebar trigger
                     if (editMode.sidebar) {
                         editMode.sidebar.show();
-                        // editMode.sidebar.updateTitle('General');
+                        editMode.setEditOverlay();
                     }
                 },
                 style: {
@@ -607,23 +622,32 @@ class EditMode {
             this.potentialCellContext &&
             this.editCellContext !== this.potentialCellContext
         ) {
-            const oldContextRow = this.editCellContext && this.editCellContext.row;
-            this.editCellContext = this.potentialCellContext;
+            this.setEditCellContext(this.potentialCellContext, this.editCellContext);
+        }
+    }
 
-            this.showToolbars(['row', 'cell'], this.editCellContext);
+    public setEditCellContext(
+        editCellContext: Cell,
+        oldEditCellContext?: Cell
+    ): void {
+        const editMode = this,
+            oldContextRow = oldEditCellContext && oldEditCellContext.row;
 
-            if (oldContextRow !== this.editCellContext.row) {
-                if (oldContextRow) {
-                    // Remove highlight from the previous row.
-                    oldContextRow.setHighlight(true);
-                }
-                // Add highlight to the context row.
-                this.editCellContext.row.setHighlight();
+        editMode.editCellContext = editCellContext;
+        editMode.showToolbars(['row', 'cell'], editCellContext);
+
+        if (!oldContextRow || oldContextRow !== editCellContext.row) {
+            if (oldContextRow) {
+                // Remove highlight from the previous row.
+                oldContextRow.setHighlight(true);
             }
 
-            if (this.resizer) {
-                this.resizer.setSnapPositions(this.editCellContext);
-            }
+            // Add highlight to the context row.
+            editCellContext.row.setHighlight();
+        }
+
+        if (editMode.resizer) {
+            editMode.resizer.setSnapPositions(editCellContext);
         }
     }
 
@@ -666,6 +690,22 @@ class EditMode {
         if (this.contextPointer.isVisible) {
             this.contextPointer.isVisible = false;
             this.contextPointer.element.style.display = 'none';
+        }
+    }
+
+    public setEditOverlay(
+        remove?: boolean
+    ): void {
+        const editMode = this,
+            cnt = editMode.editOverlay,
+            isSet = cnt.classList.contains(EditGlobals.classNames.editOverlayActive);
+
+        if (!remove && !isSet) {
+            cnt.classList.add(EditGlobals.classNames.editOverlayActive);
+            editMode.isEditOverlayActive = true;
+        } else if (remove && isSet) {
+            cnt.classList.remove(EditGlobals.classNames.editOverlayActive);
+            editMode.isEditOverlayActive = false;
         }
     }
 }

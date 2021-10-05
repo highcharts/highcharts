@@ -59,7 +59,8 @@ const EditGlobals: EditGlobals = {
         editGridItems: PREFIX + 'grid-items',
         popupContentContainer: PREFIX + 'popup-content',
         popupConfirmBtn: PREFIX + 'popup-confirm-btn',
-        overlay: PREFIX + 'overlay',
+        editOverlay: PREFIX + 'overlay',
+        editOverlayActive: PREFIX + 'overlay-active',
         resizerMenuBtnActive: PREFIX + 'resizer-menu-btn-active',
         sidebarCloseButton: PREFIX + 'close-btn',
         editSidebarTabBtnWrapper: PREFIX + 'tabs-buttons-wrapper',
@@ -144,7 +145,7 @@ namespace EditGlobals {
         editGridItems: string;
         popupContentContainer: string;
         popupConfirmBtn: string;
-        overlay: string;
+        editOverlay: string;
         resizerMenuBtnActive: string;
         sidebarCloseButton: string;
         editSidebarTabBtnWrapper: string;

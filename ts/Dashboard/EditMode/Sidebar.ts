@@ -2,7 +2,6 @@ import EditMode from './EditMode.js';
 import U from '../../Core/Utilities.js';
 import Cell from '../Layout/Cell.js';
 import Row from '../Layout/Row.js';
-import Layout from '../Layout/Layout.js';
 import EditGlobals from './EditGlobals.js';
 import Menu from './Menu/Menu.js';
 import type MenuItem from './Menu/MenuItem.js';
@@ -76,9 +75,9 @@ class Sidebar {
             onDrop: function (): void {}
         }, {
             text: 'chart',
-            onDrop: function (sidebar: Sidebar, dropContext: Cell|Row): void {
+            onDrop: function (sidebar: Sidebar, dropContext: Cell|Row): Cell | void {
                 if (sidebar && dropContext) {
-                    sidebar.onDropNewComponent(dropContext, {
+                    return sidebar.onDropNewComponent(dropContext, {
                         type: 'chart',
                         cell: '',
                         chartOptions: {
@@ -158,13 +157,14 @@ class Sidebar {
         items: {
             cell: ['addComponent']
         }
-    }, {
-        type: 'layout',
-        icon: '',
-        items: {
-            cell: ['addLayout']
-        }
     }]
+    // {
+    //     type: 'layout',
+    //     icon: '',
+    //     items: {
+    //         cell: ['addLayout']
+    //     }
+    // }
 
     public static items: Record<string, MenuItem.Options> =
     merge(Menu.items, {
@@ -309,7 +309,6 @@ class Sidebar {
     *  Properties
     *
     * */
-    public guiElement?: Cell|Row|Layout;
     public container: HTMLDOMElement;
     public options?: Sidebar.Options;
     public isVisible: boolean;
@@ -544,7 +543,9 @@ class Sidebar {
     public show(
         context?: Cell|Row
     ): void {
-        const sidebar = this;
+        const sidebar = this,
+            editMode = sidebar.editMode;
+
         let isRightSidebar = false;
 
         // hide tabs
@@ -556,10 +557,10 @@ class Sidebar {
             sidebar.generalOptionsTab.classList.remove('current');
         }
 
-        // run current tab
-        sidebar.update(context);
-
         if (context) {
+            // run current tab
+            sidebar.update(context);
+
             if (sidebar.rowCellTab) {
                 sidebar.rowCellTab.classList.add('current');
             }
@@ -571,7 +572,7 @@ class Sidebar {
 
         if (!sidebar.isVisible) {
             // detect position of right sidebar
-            isRightSidebar = this.detectRightSidebar();
+            isRightSidebar = context ? this.detectRightSidebar() : false;
 
             if (isRightSidebar) {
                 sidebar.container.classList.add(
@@ -585,16 +586,22 @@ class Sidebar {
                     EditGlobals.classNames.editSidebarShow
                 );
             }
-            sidebar.isVisible = true;
+
+            // Disable resizer.
+            if (editMode.resizer) {
+                editMode.resizer.disableResizer();
+            }
+
+            // Remove highlight from the row.
+            if (editMode.editCellContext) {
+                editMode.editCellContext.row.setHighlight(true);
+            }
 
             // Hide row and cell toolbars.
-            sidebar.editMode.hideToolbars(['cell']);
-            sidebar.editMode.stopContextDetection();
+            editMode.hideToolbars(['cell', 'row']);
+            editMode.stopContextDetection();
 
-            // Refresh layout
-            sidebar.afterCSSAnimate((): void => {
-                sidebar.editMode.isContextDetectionActive = true;
-            });
+            sidebar.isVisible = true;
         }
     }
 
@@ -624,50 +631,43 @@ class Sidebar {
         ]);
     }
 
-    public hide(): void {
-        const sidebar = this;
+    public hide(
+        showToolbars: boolean = true,
+        startContextDetection: boolean = true
+    ): void {
+        const sidebar = this,
+            editMode = sidebar.editMode;
 
         sidebar.context = void 0;
-        sidebar.container.classList.remove(
-            EditGlobals.classNames.editSidebarShow
-        );
 
-        sidebar.container.classList.remove(
-            EditGlobals.classNames.editSidebarRight
-        );
+        // Styles.
+        sidebar.container.classList.remove(EditGlobals.classNames.editSidebarShow);
+        sidebar.container.classList.remove(EditGlobals.classNames.editSidebarRight);
+        sidebar.container.classList.remove(EditGlobals.classNames.editSidebarRightShow);
+        editMode.dashboard.container.style.paddingLeft = '';
 
-        sidebar.container.classList.remove(
-            EditGlobals.classNames.editSidebarRightShow
-        );
-
-        sidebar.editMode.dashboard.container.style.paddingLeft = '';
-
-        // if (sidebar.editMode.cellToolbar) {
-        //     sidebar.editMode.cellToolbar.resetEditedCell();
-        // }
-
-        // if (sidebar.editMode.rowToolbar) {
-        //     sidebar.editMode.rowToolbar.resetEditedRow();
-        // }
-
-        sidebar.isVisible = false;
-        sidebar.guiElement = void 0;
-
-        // Hide row and cell toolbars.
-        // sidebar.editMode.hideToolbars(['cell', 'row']);
-        // sidebar.editMode.stopContextDetection();
-
-        // Remove cell highlight.
-        if (sidebar.editMode.editCellContext && sidebar.editMode.editCellContext.isHighlighted) {
-            sidebar.editMode.editCellContext.setHighlight(true);
+        // Remove edit overlay if active.
+        if (editMode.isEditOverlayActive) {
+            editMode.setEditOverlay(true);
         }
 
-        // Refresh layout
-        // sidebar.afterCSSAnimate((): void => {
-        //     if (sidebar.editMode.isActive()) {
-        //         sidebar.editMode.isContextDetectionActive = true;
-        //     }
-        // });
+        if (editMode.editCellContext) {
+            if (showToolbars) {
+                editMode.showToolbars(['cell', 'row'], editMode.editCellContext);
+                editMode.editCellContext.row.setHighlight();
+            }
+
+            // Remove cell highlight if active.
+            if (editMode.editCellContext.isHighlighted) {
+                editMode.editCellContext.setHighlight(true);
+            }
+        }
+
+        if (startContextDetection) {
+            editMode.isContextDetectionActive = true;
+        }
+
+        sidebar.isVisible = false;
     }
 
 
@@ -794,8 +794,13 @@ class Sidebar {
             // Drag drop new component.
             (gridElement.onmousedown as any) = function (e: PointerEvent): void {
                 if (sidebar.editMode.dragDrop) {
+                    sidebar.hide(false, false);
                     sidebar.editMode.dragDrop.onDragStart(e, void 0, (dropContext: Cell|Row): void => {
-                        components[i].onDrop(sidebar, dropContext);
+                        const newCell = components[i].onDrop(sidebar, dropContext);
+
+                        if (newCell) {
+                            sidebar.editMode.setEditCellContext(newCell);
+                        }
                     });
                 }
             };
@@ -847,7 +852,7 @@ class Sidebar {
     public onDropNewComponent(
         dropContext: Cell|Row,
         componentOptions: Bindings.ComponentOptions
-    ): void {
+    ): Cell | void {
         const sidebar = this,
             dragDrop = sidebar.editMode.dragDrop;
 
@@ -860,6 +865,8 @@ class Sidebar {
                 cell: newCell.id
             }));
             newCell.mountedComponent = component;
+
+            return newCell;
         }
     }
 

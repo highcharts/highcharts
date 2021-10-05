@@ -418,11 +418,6 @@ class Cell extends GUIElement {
                 cell.row.layout.dashboard.container.classList.add(
                     EditGlobals.classNames.dashboardCellEditHighlightActive
                 );
-                editMode.stopContextDetection();
-                editMode.hideToolbars(['cell']);
-                if (editMode.resizer) {
-                    editMode.resizer.disableResizer();
-                }
 
                 cell.isHighlighted = true;
             } else if (remove && isSet) {
@@ -430,8 +425,7 @@ class Cell extends GUIElement {
                 cell.row.layout.dashboard.container.classList.remove(
                     EditGlobals.classNames.dashboardCellEditHighlightActive
                 );
-                editMode.isContextDetectionActive = true;
-                editMode.showToolbars(['cell'], editMode.editCellContext);
+
                 cell.isHighlighted = false;
             }
         }

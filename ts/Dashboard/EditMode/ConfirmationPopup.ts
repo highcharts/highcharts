@@ -5,6 +5,7 @@ import EditGlobals from './EditGlobals.js';
 import EditRenderer from './EditRenderer.js';
 import CellEditToolbar from './Toolbar/CellEditToolbar.js';
 import RowEditToolbar from './Toolbar/RowEditToolbar.js';
+import EditMode from './EditMode.js';
 
 const {
     createElement
@@ -23,6 +24,7 @@ class ConfirmationPopup extends Popup {
     *
     * */
     constructor(
+        editMode: EditMode,
         parentNode: HTMLDOMElement,
         options: ConfirmationPopup.Options
     ) {
@@ -32,15 +34,8 @@ class ConfirmationPopup extends Popup {
             void 0
         );
 
+        this.editMode = editMode;
         this.options = options;
-
-        // create overlay
-        this.overlay = createElement(
-            'div', {
-                className: EditGlobals.classNames.overlay
-            }, {},
-            parentNode
-        );
     }
 
     /* *
@@ -50,7 +45,7 @@ class ConfirmationPopup extends Popup {
     * */
     public options: ConfirmationPopup.Options;
     public contentContainer: HTMLDOMElement|undefined;
-    public overlay: HTMLDOMElement;
+    public editMode: EditMode;
 
     /* *
     *
@@ -117,12 +112,12 @@ class ConfirmationPopup extends Popup {
     ): void {
         this.showPopup();
         this.renderContent(options);
-        this.overlay.style.display = 'block';
+        this.editMode.setEditOverlay();
     }
 
     public closePopup(): void {
         super.closePopup();
-        this.overlay.style.display = 'none';
+        this.editMode.setEditOverlay(true);
     }
 }
 
