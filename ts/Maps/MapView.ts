@@ -15,6 +15,7 @@ import Chart from '../Core/Chart/Chart.js';
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
 const {
+    addEvent,
     fireEvent,
     isNumber,
     merge
@@ -96,6 +97,13 @@ class MapView {
         this.projection = new Projection(options.projection);
         this.userOptions = userOptions || {};
         this.zoom = options.zoom;
+
+        // On resize, fit to the bounds unless the zoom has been user set
+        addEvent(chart, 'resize', (): void => {
+            if (this.zoom === this.minZoom) {
+                this.fitToBounds();
+            }
+        });
     }
 
     public center: Highcharts.LonLatArray;
