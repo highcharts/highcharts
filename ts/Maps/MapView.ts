@@ -12,13 +12,10 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import type ProjectionOptions from './ProjectionOptions';
 
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
-const {
-    win
-} = H;
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
 const {
+    fireEvent,
     isNumber,
     merge
 } = U;
@@ -257,6 +254,8 @@ class MapView {
 
             this.center = this.projection.inverse(projectedCenter);
         }
+
+        fireEvent(this, 'afterSetView');
 
         if (redraw) {
             this.redraw(animation);

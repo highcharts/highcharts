@@ -11,11 +11,18 @@ Highcharts.seriesType('mappie', 'pie', {
             }
         }
     },
-    linkedMap: null, //id of linked map
+    linkedMap: null, // id of linked map
     dataLabels: {
         enabled: false
     }
 }, {
+    init: function () {
+        Highcharts.Series.prototype.init.apply(this, arguments);
+        // Respond to zooming and dragging the base map
+        Highcharts.addEvent(this.chart.mapView, 'afterSetView', () => {
+            this.isDirty = true;
+        });
+    },
     render: function () {
         const series = this,
             chart = series.chart,
