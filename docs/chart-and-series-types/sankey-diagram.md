@@ -10,7 +10,7 @@ _For more detailed samples and documentation, check the [API.](https://api.highc
 Links
 --------------
 
-A Sankey diagram consists of two types of data: nodes and links. In Highcharts, you define the links in the `data` array of a `series.sankey` object, where each link has three parameters `from`, `to`, and `weight`. In Highcharts, you only need to define the links; the nodes will be generated dynamically. The code below shows how to define the links from the previous demo.
+A Sankey diagram consists of two types of data: nodes and links. In Highcharts, you define the links in the `data` array of a `series.sankey` object, where each link has three parameters `from`, `to`, and `weight`. In Highcharts, you only need to define the links; the nodes will be generated dynamically. The code below shows how to define the links from the previous demo:
 
     series: [{
         type: 'sankey',
