@@ -86,7 +86,8 @@ All Overlay type technical indicators (the ones listed in the left column of the
 ```js
 yAxis: [{
   // Main series yAxis:
-  height: '50%'}, {
+  height: '50%'
+}, {
   // yAxis for Stochastic technical indicator:
   top: '50%',
   height: '50%'}]
