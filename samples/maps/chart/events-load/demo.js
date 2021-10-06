@@ -5,18 +5,16 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
 
         chart: {
             events: {
-                load: function () {
-                    this.addSeries({
-                        type: 'mappoint',
-                        colorAxis: false,
-                        data: [{
-                            x: 200,
-                            y: -1100,
-                            name: 'Point added on chart load'
-                        }],
-                        name: 'Series added on chart load'
-                    });
-                }
+                load: e => e.target.addSeries({
+                    type: 'mappoint',
+                    colorAxis: false,
+                    data: [{
+                        x: 4450,
+                        y: 8550,
+                        name: 'Point added on chart load'
+                    }],
+                    name: 'Series added on chart load'
+                })
             }
         },
 
