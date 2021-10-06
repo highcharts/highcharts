@@ -40,8 +40,9 @@ declare global {
 
         interface MapViewOptions {
             center: LonLatArray;
-            zoom: number;
+            maxZoom?: number;
             projection?: ProjectionOptions;
+            zoom: number;
         }
 
     }
@@ -200,6 +201,9 @@ class MapView {
         if (typeof zoom === 'number') {
             if (typeof this.minZoom === 'number') {
                 zoom = Math.max(zoom, this.minZoom);
+            }
+            if (typeof this.options.maxZoom === 'number') {
+                zoom = Math.min(zoom, this.options.maxZoom);
             }
             zoomingIn = zoom > this.zoom;
             this.zoom = zoom;

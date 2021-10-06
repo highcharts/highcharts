@@ -2,9 +2,13 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
 
     // Initiate the chart
     Highcharts.mapChart('container', {
+        chart: {
+            width: 600,
+            height: 500
+        },
 
         title: {
-            text: 'Axis minRange prevents zooming in too far'
+            text: 'Predefined zoomed area'
         },
 
         mapNavigation: {
@@ -14,18 +18,15 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             }
         },
 
+        mapView: {
+            center: [4500, 8300], // In terms of pre-projected units
+            zoom: 15
+        },
+
         colorAxis: {
             min: 1,
             max: 1000,
             type: 'logarithmic'
-        },
-
-        xAxis: {
-            minRange: 300
-        },
-
-        yAxis: {
-            minRange: 300
         },
 
         legend: {

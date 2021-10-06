@@ -2393,8 +2393,6 @@ class Axis {
      *         Set extremes off ticks
      * @sample stock/members/axis-setextremes/
      *         Set extremes in Highcharts Stock
-     * @sample maps/members/axis-setextremes/
-     *         Set extremes in Highmaps
      *
      * @function Highcharts.Axis#setExtremes
      *
@@ -2585,8 +2583,6 @@ class Axis {
      *
      * @sample highcharts/members/axis-getextremes/
      *         Report extremes by click on a button
-     * @sample maps/members/axis-getextremes/
-     *         Get extremes in Highmaps
      *
      * @function Highcharts.Axis#getExtremes
      *
