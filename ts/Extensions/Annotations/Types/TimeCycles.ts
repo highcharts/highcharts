@@ -15,12 +15,12 @@
  * */
 
 import type PositionObject from '../../../Core/Renderer/PositionObject';
-
 import Annotation from '../Annotations.js';
 import CrookedLine from './CrookedLine.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
 import MockPointOptions from '../MockPointOptions';
+import SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 const { merge, isNumber, defined } = U;
 
 /**
@@ -45,8 +45,8 @@ interface TimeCyclesOptions extends CrookedLine.Options {
  * @param {number} y y position of the TimeCycles
  * @return {string} path
  */
-function getStartingPath(x: number, y: number): string {
-    return `M ${x} ${y}`;
+function getStartingPath(x: number, y: number): SVGPath.MoveTo {
+    return ['M', x, y];
 }
 
 /**
@@ -54,16 +54,28 @@ function getStartingPath(x: number, y: number): string {
  *
  * @param {number} pixelInterval diameter of the circle in pixels
  * @param {number} numberOfCircles number of cricles
+ * @param {number} startX x position of the first circle
+ * @param {number} y y position of the bottom of the timeCycles
  * @return {string} path
+ *
  */
-function getCirclePath(pixelInterval: number, numberOfCircles: number): string {
-    const strToRepeat = `a 1 1 0 1 1 ${pixelInterval} 0 `;
-    let path = strToRepeat;
-    for (let i = 1; i < numberOfCircles; i++) {
-        path += strToRepeat;
+function getCirclePath(pixelInterval: number, numberOfCircles: number, startX: number, y: number): SVGPath.Arc[] {
+    const strToRepeat = (i: number): SVGPath.Arc => [
+        'A',
+        pixelInterval / 2,
+        pixelInterval / 2,
+        0,
+        1,
+        1,
+        startX + i * pixelInterval,
+        y
+    ];
+    let path = [];
+    for (let i = 1; i <= numberOfCircles; i++) {
+        path.push(strToRepeat(i));
     }
 
-    return path.trim();
+    return path;
 }
 
 /* *
@@ -92,12 +104,18 @@ class TimeCycles extends CrookedLine {
 
     }
 
-    public getPath(): string {
+    public setPath(): void {
 
-        return `${getStartingPath(this.startX, this.y)} ${getCirclePath(
+        this.shapes[0].options.d = this.getPath();
+    }
+    public getPath(): SVGPath {
+
+        return ([getStartingPath(this.startX, this.y)] as SVGPath).concat(getCirclePath(
             this.pixelInterval,
-            this.numberOfCircles
-        )}`;
+            this.numberOfCircles,
+            this.startX,
+            this.y
+        ));
     }
 
     public addShapes(): void {
@@ -162,13 +180,10 @@ class TimeCycles extends CrookedLine {
         this.numberOfCircles = numberOfCircles;
     }
 
-    public redraw(animation: boolean): void {
-        super.redraw(animation);
+    public redraw(animation?: boolean): void {
         this.setPathProperties();
-
-        if (this.shapes[0]) {
-            (this.shapes[0] as any)[animation ? 'animate' : 'attr']({ d: this.getPath() });
-        }
+        this.setPath();
+        super.redraw(animation);
     }
 }
 
