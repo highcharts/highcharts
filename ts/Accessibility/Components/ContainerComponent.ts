@@ -196,7 +196,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
      */
     getKeyboardNavigation: function (
         this: Highcharts.ContainerComponent
-    ): Highcharts.KeyboardNavigationHandler {
+    ): KeyboardNavigationHandler {
         const chart = this.chart;
         return new (KeyboardNavigationHandler as any)(chart, {
             keyCodeMap: [],

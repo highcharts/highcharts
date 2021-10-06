@@ -23,6 +23,7 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
+import type KeyboardNavigationHandler from './KeyboardNavigationHandler';
 
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -89,7 +90,7 @@ class KeyboardNavigation {
     public exiting?: boolean;
     public isClickingChart?: boolean;
     public keyboardReset?: boolean;
-    public modules: Array<Highcharts.KeyboardNavigationHandler> = [];
+    public modules: Array<KeyboardNavigationHandler> = [];
     public pointerIsOverChart?: boolean;
     public tabindexContainer: HTMLDOMElement = void 0 as any;
     public tabbingInBackwards?: boolean;
@@ -172,9 +173,9 @@ class KeyboardNavigation {
         ) {
             // We (still) have keyboard navigation. Update module list
             this.modules = order.reduce(function (
-                modules: Array<Highcharts.KeyboardNavigationHandler>,
+                modules: Array<KeyboardNavigationHandler>,
                 componentName: keyof Accessibility.ComponentsObject
-            ): Array<Highcharts.KeyboardNavigationHandler> {
+            ): Array<KeyboardNavigationHandler> {
                 const navModules = components[componentName].getKeyboardNavigation();
                 return modules.concat(navModules);
             }, []);
