@@ -252,35 +252,35 @@ bindingsUtils.addFlagFromForm = function (
 };
 
 bindingsUtils.indicatorsWithAxes = [
-
+    'apo',
     'ad',
+    'aroon',
+    'aroonoscillator',
     'atr',
+    'ao',
     'cci',
+    'chaikin',
     'cmf',
     'disparityindex',
     'cmo',
     'dmi',
+    'dpo',
+    'linearRegressionAngle',
+    'linearRegressionIntercept',
+    'linearRegressionSlope',
+    'klinger',
     'macd',
     'mfi',
-    'roc',
-    'rsi',
-    'ao',
-    'aroon',
-    'aroonoscillator',
-    'trix',
-    'apo',
-    'dpo',
-    'ppo',
+    'momentum',
     'natr',
     'obv',
-    'williamsr',
-    'stochastic',
+    'ppo',
+    'roc',
+    'rsi',
     'slowstochastic',
-    'linearRegression',
-    'linearRegressionSlope',
-    'linearRegressionIntercept',
-    'linearRegressionAngle',
-    'klinger'
+    'stochastic',
+    'trix',
+    'williamsr'
 ];
 
 bindingsUtils.manageIndicators = function (
