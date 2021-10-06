@@ -234,4 +234,21 @@ export default MapLineSeries;
  * @apioption series.mapline.data
  */
 
+ /**
+  * For map and mapline series types, the SVG path for the shape. For
+  * compatibily with old IE, not all SVG path definitions are supported,
+  * but M, L and C operators are safe.
+  *
+  * To achieve a better separation between the structure and the data,
+  * it is recommended to use `mapData` to define that paths instead
+  * of defining them on the data points themselves.
+  *
+  * @sample maps/demo/mapline-mappoint/
+  *         Mapline paths defined in data
+  *
+  * @type      {string}
+  * @product   highmaps
+  * @apioption series.mapline.data.path
+  */
+
 ''; // adds doclets above to transpiled file
