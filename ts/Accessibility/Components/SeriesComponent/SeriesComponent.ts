@@ -19,6 +19,7 @@
  * */
 
 import type Accessibility from '../../Accessibility';
+import type KeyboardNavigationHandler from '../../KeyboardNavigationHandler';
 
 import H from '../../../Core/Globals.js';
 import Series from '../../../Core/Series/Series.js';
@@ -165,7 +166,7 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
      */
     getKeyboardNavigation: function (
         this: Highcharts.SeriesComponent
-    ): Highcharts.KeyboardNavigationHandler {
+    ): KeyboardNavigationHandler {
         return (this.keyboardNavigation as any).getKeyboardNavigationHandler();
     },
 

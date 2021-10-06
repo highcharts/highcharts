@@ -723,7 +723,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      */
     getKeyboardNavigationHandler: function (
         this: Highcharts.SeriesKeyboardNavigation
-    ): Highcharts.KeyboardNavigationHandler {
+    ): KeyboardNavigationHandler {
         const keyboardNavigation = this,
             keys = this.keyCodes,
             chart = this.chart,
@@ -733,7 +733,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
             keyCodeMap: [
                 [inverted ? [keys.up, keys.down] : [keys.left, keys.right],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler,
+                        this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
                         return keyboardNavigation.onKbdSideways(this, keyCode);
@@ -741,7 +741,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
 
                 [inverted ? [keys.left, keys.right] : [keys.up, keys.down],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler,
+                        this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
                         return keyboardNavigation.onKbdVertical(this, keyCode);
@@ -749,7 +749,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
 
                 [[keys.enter, keys.space],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler,
+                        this: KeyboardNavigationHandler,
                         keyCode: number,
                         event: KeyboardEvent
                     ): number {
@@ -763,20 +763,20 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
                     }],
 
                 [[keys.home],
-                    function (this: Highcharts.KeyboardNavigationHandler): number {
+                    function (this: KeyboardNavigationHandler): number {
                         highlightFirstValidPointInChart(chart);
                         return this.response.success;
                     }],
 
                 [[keys.end],
-                    function (this: Highcharts.KeyboardNavigationHandler): number {
+                    function (this: KeyboardNavigationHandler): number {
                         highlightLastValidPointInChart(chart);
                         return this.response.success;
                     }],
 
                 [[keys.pageDown, keys.pageUp],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler,
+                        this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
                         chart.highlightAdjacentSeries(keyCode === keys.pageDown);
@@ -785,7 +785,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
             ],
 
             init: function (
-                this: Highcharts.KeyboardNavigationHandler
+                this: KeyboardNavigationHandler
             ): number {
                 highlightFirstValidPointInChart(chart);
                 return this.response.success;
@@ -807,7 +807,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      */
     onKbdSideways: function (
         this: Highcharts.SeriesKeyboardNavigation,
-        handler: Highcharts.KeyboardNavigationHandler,
+        handler: KeyboardNavigationHandler,
         keyCode: number
     ): number {
         const keys = this.keyCodes,
@@ -826,7 +826,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      */
     onKbdVertical: function (
         this: Highcharts.SeriesKeyboardNavigation,
-        handler: Highcharts.KeyboardNavigationHandler,
+        handler: KeyboardNavigationHandler,
         keyCode: number
     ): number {
         const chart = this.chart,
@@ -894,7 +894,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      */
     attemptHighlightAdjacentPoint: function (
         this: Highcharts.SeriesKeyboardNavigation,
-        handler: Highcharts.KeyboardNavigationHandler,
+        handler: KeyboardNavigationHandler,
         directionIsNext: boolean
     ): number {
         const chart = this.chart,

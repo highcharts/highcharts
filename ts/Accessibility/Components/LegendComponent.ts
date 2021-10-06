@@ -470,7 +470,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      */
     getKeyboardNavigation: function (
         this: Highcharts.LegendComponent
-    ): Highcharts.KeyboardNavigationHandler {
+    ): KeyboardNavigationHandler {
         const keys = this.keyCodes,
             component = this,
             chart = this.chart;
@@ -480,7 +480,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 [
                     [keys.left, keys.right, keys.up, keys.down],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler,
+                        this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
                         return component.onKbdArrowKey(this, keyCode);
@@ -489,7 +489,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 [
                     [keys.enter, keys.space],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler,
+                        this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
                         if (H.isFirefox && keyCode === keys.space) { // #15520
@@ -501,7 +501,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 [
                     [keys.pageDown, keys.pageUp],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler,
+                        this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
                         const direction = keyCode === keys.pageDown ? 1 : -1;
@@ -537,7 +537,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      */
     onKbdArrowKey: function (
         this: Highcharts.LegendComponent,
-        keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler,
+        keyboardNavigationHandler: KeyboardNavigationHandler,
         keyCode: number
     ): number {
         const keys = this.keyCodes,
@@ -575,7 +575,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      */
     onKbdClick: function (
         this: Highcharts.LegendComponent,
-        keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
+        keyboardNavigationHandler: KeyboardNavigationHandler
     ): number {
         const legendItem: LegendItem = this.chart.legend.allItems[
             this.highlightedLegendItemIx
