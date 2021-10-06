@@ -18,6 +18,7 @@
  *
  * */
 
+import type Accessibility from '../Accessibility';
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
 import type { DOMElementType } from '../../Core/Renderer/DOMElementType';
@@ -73,7 +74,7 @@ function fireEventOnWrappedOrUnwrappedElement(
 /**
  * @return {string}
  */
-function getChartTitle(chart: Highcharts.AccessibilityChart): string {
+function getChartTitle(chart: Accessibility.ChartComposition): string {
     return stripHTMLTags(
         chart.options.title.text ||
         chart.langFormat(

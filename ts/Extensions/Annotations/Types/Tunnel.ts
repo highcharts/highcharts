@@ -97,37 +97,43 @@ class Tunnel extends CrookedLine {
 
     public addLine(): void {
         const line = this.initShape(
-            merge(this.options.typeOptions.line, {
-                type: 'path',
-                points: [
-                    this.points[0],
-                    this.points[1],
-                    function (target: any): MockPointOptions {
-                        const pointOptions = MockPoint.pointToOptions(
-                            target.annotation.points[2]
-                        );
+            merge(
+                this.options.typeOptions.line,
+                {
+                    type: 'path',
+                    points: [
+                        this.points[0],
+                        this.points[1],
+                        function (target: any): MockPointOptions {
+                            const pointOptions = MockPoint.pointToOptions(
+                                target.annotation.points[2]
+                            );
 
-                        pointOptions.command = 'M';
+                            pointOptions.command = 'M';
 
-                        return pointOptions;
-                    },
-                    this.points[3]
-                ] as any
-            }),
-            false as any
+                            return pointOptions;
+                        },
+                        this.points[3]
+                    ]
+                }
+            ),
+            0
         );
 
         this.options.typeOptions.line = line.options;
     }
 
     public addBackground(): void {
-        const background = (this.initShape as any)(merge(
-            this.options.typeOptions.background,
-            {
-                type: 'path',
-                points: this.points.slice() as any
-            }
-        ));
+        const background = this.initShape(
+            merge(
+                this.options.typeOptions.background,
+                {
+                    type: 'path',
+                    points: this.points.slice()
+                }
+            ),
+            1
+        );
 
         this.options.typeOptions.background = background.options;
     }
@@ -181,8 +187,6 @@ Tunnel.prototype.defaultOptions = merge(
      */
     {
         typeOptions: {
-            xAxis: 0,
-            yAxis: 0,
             /**
              * Background options.
              *
@@ -276,7 +280,7 @@ Tunnel.prototype.defaultOptions = merge(
                         target.translateSide(
                             translation.x,
                             translation.y,
-                            this.index as any
+                            !!this.index
                         );
 
                         target.redraw(false);

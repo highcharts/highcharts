@@ -15,16 +15,28 @@
  * */
 
 import type GaugeSeries from './GaugeSeries';
-import type GaugeSeriesDialOptions from './GaugeSeriesDialOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 /* *
  *
  *  Declarations
  *
  * */
+
+export interface GaugeSeriesDialOptions {
+    backgroundColor?: ColorType;
+    baseLength?: string;
+    baseWidth?: number;
+    borderColor?: ColorType;
+    borderWidth?: number;
+    path?: SVGPath;
+    radius?: string;
+    rearLength?: string;
+    topWidth?: number;
+}
 
 export interface GaugeSeriesPivotOptions {
     backgroundColor?: ColorType;
@@ -43,7 +55,7 @@ export interface GaugeSeriesOptions extends LineSeriesOptions {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

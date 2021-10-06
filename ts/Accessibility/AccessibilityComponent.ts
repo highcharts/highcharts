@@ -18,6 +18,7 @@
  *
  * */
 
+import type Accessibility from './Accessibility';
 import type EventCallback from '../Core/EventCallback';
 import type { DOMElementType } from '../Core/Renderer/DOMElementType';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
@@ -63,7 +64,7 @@ class AccessibilityComponent {
      *
      * */
 
-    public chart: Highcharts.AccessibilityChart = void 0 as any;
+    public chart: Accessibility.ChartComposition = void 0 as any;
     public domElementProvider: DOMElementProvider = void 0 as any;
     public eventProvider: EventProvider = void 0 as any;
     public keyCodes: Record<string, number> = void 0 as any;
@@ -84,7 +85,7 @@ class AccessibilityComponent {
      * @param {Highcharts.ProxyProvider} proxyProvider The proxy provider of the accessibility module
      */
     public initBase(
-        chart: Highcharts.AccessibilityChart,
+        chart: Accessibility.ChartComposition,
         proxyProvider: ProxyProvider
     ): void {
         this.chart = chart;

@@ -12,15 +12,24 @@
 
 'use strict';
 
-import type Series from '../../../Core/Series/Series';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Accessibility from '../../Accessibility';
+
 import H from '../../../Core/Globals.js';
+import Series from '../../../Core/Series/Series.js';
+import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
-const extend = U.extend;
+const { extend } = U;
 
 import AccessibilityComponent from '../../AccessibilityComponent.js';
 import SeriesKeyboardNavigation from './SeriesKeyboardNavigation.js';
 import NewDataAnnouncer from './NewDataAnnouncer.js';
-import addForceMarkersEvents from './ForcedMarkers.js';
+import ForcedMarkers from './ForcedMarkers.js';
 
 import ChartUtilities from '../../Utils/ChartUtilities.js';
 const hideSeriesFromAT = ChartUtilities.hideSeriesFromAT;
@@ -28,7 +37,6 @@ const hideSeriesFromAT = ChartUtilities.hideSeriesFromAT;
 import SeriesDescriber from './SeriesDescriber.js';
 const describeSeries = SeriesDescriber.describeSeries;
 
-import Tooltip from '../../../Core/Tooltip.js';
 
 /**
  * Internal types.
@@ -54,7 +62,7 @@ declare global {
 H.SeriesAccessibilityDescriber = SeriesDescriber;
 
 // Handle forcing markers
-addForceMarkersEvents();
+ForcedMarkers.compose(Series);
 
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -136,7 +144,7 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
         const chart = this.chart;
 
         chart.series.forEach(function (
-            series: Highcharts.AccessibilitySeries
+            series: Accessibility.SeriesComposition
         ): void {
             const shouldDescribeSeries = (series.options.accessibility &&
                 series.options.accessibility.enabled) !== false &&
@@ -170,5 +178,11 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
         (this as any).keyboardNavigation.destroy();
     }
 });
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SeriesComponent;

@@ -152,7 +152,7 @@ function getJSON(
     url: string,
     success: Highcharts.AjaxSuccessCallbackFunction
 ): void {
-    exports.ajax({
+    HttpUtilities.ajax({
         url: url,
         success: success,
         dataType: 'json',
@@ -215,13 +215,13 @@ function post(
  *
  * */
 
-const exports = {
+const HttpUtilities = {
     ajax,
     getJSON,
     post
 };
 
-export default exports;
+export default HttpUtilities;
 
 /**
  * @interface Highcharts.AjaxSettingsObject
