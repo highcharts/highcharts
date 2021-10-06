@@ -183,10 +183,10 @@ const defaultOptions: MapNavigationOptions = {
              * Click handler for the button.
              *
              * @type    {Function}
-             * @default function () { this.mapZoom(-0.5); }
+             * @default function () { this.mapZoom(2); }
              */
             onclick: function (this: Highcharts.MapNavigationChart): void {
-                this.mapZoom(-0.5);
+                this.mapZoom(2);
             },
 
             /**

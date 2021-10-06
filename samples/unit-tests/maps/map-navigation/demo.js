@@ -63,7 +63,7 @@ QUnit.test(
             'The chart should have zoomed in'
         );
 
-        chart.mapZoom(-0.5);
+        chart.mapZoom(2);
         assert.strictEqual(
             chart.mapView.zoom,
             zoomBefore,

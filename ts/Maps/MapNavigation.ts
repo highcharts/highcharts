@@ -380,8 +380,9 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
      * @function Highcharts.Chart#mapZoom
      *
      * @param {number} [howMuch]
-     *        How much to zoom the map. +1 zooms in to half the current view,
-     *        -1 zooms out to twice the current view.
+     *        How much to zoom the map. Values less than 1 zooms in. 0.5 zooms
+     *        in to half the current view. 2 zooms to twice the current view. If
+     *        omitted, the zoom is reset.
      *
      * @param {number} [lat]
      *        The latitude to keep stationary when zooming if available space.
@@ -409,6 +410,12 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
         chartY?: number
     ): void {
         if (this.mapView) {
+
+            if (typeof howMuch === 'number') {
+                // Compliance, mapView.zoomBy uses different values
+                howMuch = Math.log(howMuch) / Math.log(0.5);
+            }
+
             this.mapView.zoomBy(
                 howMuch,
                 typeof xProjected === 'number' && typeof yProjected === 'number' ?
