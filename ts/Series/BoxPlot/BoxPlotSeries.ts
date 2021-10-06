@@ -635,6 +635,15 @@ class BoxPlotSeries extends ColumnSeries {
                         ['Z']
                     ];
                     point.boxLower[verb]({ d });
+
+                    // Upper-line
+                    d = [['M', left, q3Plot],
+                        ['L', right, q3Plot]]
+                    point.boxUpperShape[verb]({ d })
+                    // Lower-line
+                    d = [['M', left, q1Plot],
+                        ['L', right, q1Plot]]
+                    point.boxLowerShape[verb]({ d })
                 }
 
                 // The whiskers
