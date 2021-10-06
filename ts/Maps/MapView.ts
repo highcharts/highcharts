@@ -119,11 +119,15 @@ class MapView {
      * Fit the view to given bounds
      * @param bounds Bounds in terms of projected units. If not set, fit to the
      *               bounds of the current data set
+     * @param padding Padding inside the bounds
      * @param redraw
      * @param animation
      */
     public fitToBounds(
         bounds?: Highcharts.MapBounds,
+        // @todo: Implement. Decide either for pixels or relative like
+        // axis.minPadding/maxPadding
+        padding = 0,
         redraw = true,
         animation?: boolean|Partial<AnimationOptions>
     ): void {
@@ -325,7 +329,7 @@ class MapView {
 
             // Fit to natural bounds if center/zoom are not explicitly given
             if (!userOptions.center && !isNumber(userOptions.zoom)) {
-                this.fitToBounds(void 0, false);
+                this.fitToBounds(void 0, 0, false);
             }
         }
 
@@ -387,7 +391,7 @@ class MapView {
 
         // Undefined howMuch => reset zoom
         } else {
-            this.fitToBounds(void 0, void 0, animation);
+            this.fitToBounds(void 0, 0, void 0, animation);
         }
 
     }

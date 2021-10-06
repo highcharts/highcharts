@@ -234,7 +234,7 @@ addEvent(Chart, 'afterSetChartSize', function (): void {
 
     if (mapView && mapView.minZoom === void 0) {
 
-        mapView.fitToBounds(void 0, false);
+        mapView.fitToBounds(void 0, 0, false);
 
         if (isNumber(mapView.userOptions.zoom)) {
             mapView.zoom = mapView.userOptions.zoom;
@@ -332,6 +332,7 @@ addEvent(Chart, 'selection', function (evt: PointerEvent): void {
             );
             mapView.fitToBounds(
                 { x1, y1, x2, y2 },
+                0,
                 true,
                 (evt as any).originalEvent.touches ?
                     // On touch zoom, don't animate, since we're already in
