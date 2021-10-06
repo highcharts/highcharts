@@ -950,6 +950,8 @@ Scatter.prototype.animateClusterPoint = function (
     clusterObj: Highcharts.ClusterAndNoiseObject
 ): void {
     const series = this,
+        chart = series.chart,
+        mapView = chart.mapView,
         clusterOptions = series.options.cluster,
         animation = animObject((clusterOptions || {}).animation),
         animDuration = animation.duration || 500,
@@ -971,8 +973,8 @@ Scatter.prototype.animateClusterPoint = function (
     if (oldState && newState) {
         newPointObj = newState[clusterObj.stateId];
         const newPos = valuesToPixels(series, newPointObj);
-        newX = newPos.x;
-        newY = newPos.y;
+        newX = newPos.x - (mapView ? 0 : chart.plotLeft);
+        newY = newPos.y - (mapView ? 0 : chart.plotTop);
 
         // Point has one ancestor.
         if (newPointObj.parentsId.length === 1) {
@@ -1182,13 +1184,15 @@ Scatter.prototype.getScaledGridSize = function (
 
 Scatter.prototype.getRealExtremes = function (): Record<string, number> {
     const chart = this.chart,
+        x = chart.mapView ? 0 : chart.plotLeft,
+        y = chart.mapView ? 0 : chart.plotTop,
         p1 = pixelsToValues(this, {
-            x: chart.plotLeft,
-            y: chart.plotTop
+            x,
+            y
         }),
         p2 = pixelsToValues(this, {
-            x: chart.plotLeft + chart.plotWidth,
-            y: chart.plotTop + chart.plotHeight
+            x: x + chart.plotWidth,
+            y: x + chart.plotHeight
         }),
         realMinX = p1.x,
         realMaxX = p2.x,
@@ -1213,59 +1217,58 @@ Scatter.prototype.onDrillToCluster = function (
         this: Point,
         e: PointClickEvent
     ): void {
-        let point = e.point || e.target,
+        const point = e.point || e.target,
             series = point.series,
             xAxis = point.series.xAxis,
             yAxis = point.series.yAxis,
             chart = point.series.chart,
+            mapView = chart.mapView,
             clusterOptions = series.options.cluster,
-            drillToCluster = (clusterOptions || {}).drillToCluster,
-            offsetX, offsetY,
-            sortedDataX, sortedDataY, minX, minY, maxX, maxY;
+            drillToCluster = (clusterOptions || {}).drillToCluster;
 
         if (drillToCluster && point.clusteredData) {
-            sortedDataX = point.clusteredData.map(
-                (data: Highcharts.MarkerClusterSplitDataObject): number =>
-                    data.x
-            ).sort((a: number, b: number): number => a - b);
+            const sortedDataX = point.clusteredData
+                    .map((data): number => data.x)
+                    .sort((a: number, b: number): number => a - b),
 
-            sortedDataY = point.clusteredData.map(
-                (data: Highcharts.MarkerClusterSplitDataObject): number =>
-                    data.y
-            ).sort((a: number, b: number): number => a - b);
+                sortedDataY = point.clusteredData
+                    .map((data): number => data.y)
+                    .sort((a: number, b: number): number => a - b),
 
-            minX = sortedDataX[0];
-            maxX = sortedDataX[sortedDataX.length - 1];
-            minY = sortedDataY[0];
-            maxY = sortedDataY[sortedDataY.length - 1];
+                minX = sortedDataX[0],
+                maxX = sortedDataX[sortedDataX.length - 1],
+                minY = sortedDataY[0],
+                maxY = sortedDataY[sortedDataY.length - 1],
 
-            offsetX = Math.abs((maxX - minX) * 0.1);
-            offsetY = Math.abs((maxY - minY) * 0.1);
+                offsetX = Math.abs((maxX - minX) * 0.1),
+                offsetY = Math.abs((maxY - minY) * 0.1),
 
-            chart.pointer.zoomX = true;
-            chart.pointer.zoomY = true;
+                x1 = Math.min(minX, maxX) - offsetX,
+                x2 = Math.max(minX, maxX) + offsetX,
+                y1 = Math.min(minY, maxY) - offsetY,
+                y2 = Math.max(minY, maxY) + offsetY;
 
-            // Swap when minus values.
-            if (minX > maxX) {
-                [minX, maxX] = [maxX, minX];
+            if (mapView) {
+                mapView.fitToBounds({ x1, x2, y1, y2 });
+
+            } else if (xAxis && yAxis) {
+
+                chart.pointer.zoomX = true;
+                chart.pointer.zoomY = true;
+                chart.zoom({
+                    originalEvent: e,
+                    xAxis: [{
+                        axis: xAxis,
+                        min: x1,
+                        max: x2
+                    }],
+                    yAxis: [{
+                        axis: yAxis,
+                        min: y1,
+                        max: y2
+                    }]
+                });
             }
-            if (minY > maxY) {
-                [minY, maxY] = [maxY, minY];
-            }
-
-            chart.zoom({
-                originalEvent: e,
-                xAxis: [{
-                    axis: xAxis,
-                    min: minX - offsetX,
-                    max: maxX + offsetX
-                }],
-                yAxis: [{
-                    axis: yAxis,
-                    min: minY - offsetY,
-                    max: maxY + offsetY
-                }]
-            });
         }
     });
 };

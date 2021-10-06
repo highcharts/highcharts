@@ -152,6 +152,8 @@ class MapPointSeries extends ScatterSeries {
                     p.plotX = void 0;
                     p.plotY = void 0;
                 }
+
+                p.isInside = this.isPointInside(p);
             });
         }
     }

@@ -117,7 +117,8 @@ class MapView {
 
     /*
      * Fit the view to given bounds
-     * @param bounds If not set, fit to the bounds of the current data set
+     * @param bounds Bounds in terms of projected units. If not set, fit to the
+     *               bounds of the current data set
      * @param redraw
      * @param animation
      */
