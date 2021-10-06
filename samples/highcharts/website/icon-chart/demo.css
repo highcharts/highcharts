@@ -107,6 +107,11 @@
     stroke-linejoin: round;
 }
 
+.chart-container .highcharts-color-3 {
+		fill: transparent;
+		stroke: transparent;
+}
+
 #charts{
 	width:250px;
 	height:250px;
@@ -208,7 +213,7 @@ transition: opacity 1500ms;
 }
 
 #charts .highcharts-data-labels.iceberg-types{
-	color:#f0f0f0;
+	color:#000;
 	transition: color 300ms;
 }
 
@@ -297,7 +302,7 @@ transition: opacity 1500ms;
 }
 
 #charts #particle-3.iceberg.clip{
-	clip-path:polygon(-5% 107.55%, -21.66% 33.84%, 118.12% 4.23%, 83.31% 100.31%);
+	clip-path:polygon(-5% 107.55%, -24.99% 42.3%, 111.46% 2.82%, 83.31% 100.31%);
 }                   
 
 
@@ -362,6 +367,7 @@ transition: opacity 1500ms;
 
 #charts #particle-5.iceberg.clip{
 	clip-path:polygon(-20.13% 113.70%, 54.94% 54.87%, 114.92% 3.13%, 103.06% 144.34%);
+	z-index: 10;
 }  
 
 #charts #particle-6{
@@ -389,50 +395,65 @@ transition: opacity 1500ms;
 	fill-opacity: 0;
 }
 
-#charts .berg-depth-1,
-#charts .berg-depth-2,
-#charts .berg-depth-3,
-#charts .berg-depth-4,
-#charts .berg-depth-5{
+#charts .berg-depth{
 	stroke:#fff;
-	fill:transparent;
+	fill:#201735;
 	opacity:0;
 	stroke-dasharray: 2px;
 	transition: opacity 2s;
 	stroke-width:1px;
 }
+#charts .berg-depth:hover{
+	cursor:hand;
+}
 
-#charts .berg-depth-1.highcharts-series-hover,
+#charts .berg-label{
+	position:absolute;
+	z-index:100;
+	width:50px;
+	height:50px;
+	opacity:0;
+}
+
+
+#charts .berg-depth-0.highcharts-series-hover,
 #charts .berg-depth-2.highcharts-series-hover,
-#charts .berg-depth-3.highcharts-series-hover,
 #charts .berg-depth-4.highcharts-series-hover,
-#charts .berg-depth-5.highcharts-series-hover{
+#charts .berg-depth-6.highcharts-series-hover,
+#charts .berg-depth-8.highcharts-series-hover
+{
 	opacity:1;
 	stroke-dasharray: 0px;
 	stroke-width:2px;
 	cursor:pointer;
 }
-#charts .berg-depth-1.highcharts-series-hover{
+#charts .berg-depth-0.highcharts-series-hover{
 	fill:#8087E8;
 	filter:none;
+	cursor:pointer;
 }
 #charts .berg-depth-2.highcharts-series-hover{
 	fill:#8bf2b6;
 	filter:none;
-}
-#charts .berg-depth-3.highcharts-series-hover{
-	fill:#6699A1;
-	filter:none;
+	cursor:pointer;
 }
 #charts .berg-depth-4.highcharts-series-hover{
+	fill:#6699A1;
+	filter:none;
+	cursor:pointer;
+}
+#charts .berg-depth-6.highcharts-series-hover{
 	fill:#78748C;
 	filter:none;
+	cursor:pointer;
 }
 
-#charts .berg-depth-5.highcharts-series-hover{
+#charts .berg-depth-8.highcharts-series-hover{
 	fill:#d6c7a5;
+	cursor:pointer;
 
 }
+
 
 #charts .chart-container .highcharts-tooltip-box {
 	stroke-width: 0px;

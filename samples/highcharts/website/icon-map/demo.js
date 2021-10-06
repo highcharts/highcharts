@@ -20,7 +20,6 @@ Math.easeOutBounce = pos => {
 
 
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-let done = false;
 let mapLoaded = false;
 
 
@@ -41,16 +40,34 @@ const maps = {
             load: function () {
                 const chart = this;
 
-                const mapPointPoint = document.getElementsByClassName('map-point-point')[0];
+                const mapPointPoint = document.querySelector('.map-point-point');
                 const mapPointTop = document.getElementsByClassName('map-point-top')[1];
                 const mapPointCenter = document.getElementsByClassName('map-point-center')[1];
-                const leftSide =  document.getElementsByClassName('left')[0];
-                const rightSide =  document.getElementsByClassName('right')[0];
-                const top =  document.getElementsByClassName('top')[0];
-                const bottom =  document.getElementsByClassName('bottom')[0];
-                const particle = document.getElementsByClassName('particle');
-                const green = document.getElementsByClassName('green');
+                const leftSide =  document.querySelector('.left');
+                const rightSide =  document.querySelector('.right');
+                const top =  document.querySelector('.top');
+                const bottom =  document.querySelector('.bottom');
                 const background = document.getElementsByClassName('highcharts-plot-background')[0];
+
+                const finalHide = function () {
+                    [].forEach.call(
+                        document.getElementsByClassName('particle'),
+                        p => p.classList.add('fade')
+                    );
+                    [].forEach.call(
+                        document.getElementsByClassName('green'),
+                        g => g.classList.add('fade')
+                    );
+
+                    leftSide.classList.add('fade');
+                    rightSide.classList.add('fade');
+                    leftSide.style.transition = 'all 1s';
+                    rightSide.style.transition = 'all 1s';
+                    mapPointPoint.classList.add('hide');
+                    mapPointTop.classList.add('hide');
+                    mapPointCenter.classList.add('hide');
+                    background.style.fill = '#1f1836';
+                };
 
 
                 const updateData = function () {
@@ -90,8 +107,6 @@ const maps = {
                     leftSide.style.transition = 'none';
                     rightSide.style.transition = 'none';
 
-
-
                     chart.series[10].data[2].update({
                         x: 10, y: 5
                     });
@@ -112,47 +127,31 @@ const maps = {
                     });
                 };
 
+                ///if reduced motion, show the envelope right away
                 if (reduced) {
                     updateData();
                 }
 
                 setTimeout(function () {
+                    ///if not reduced motion, build the envelope
                     if (!reduced) {
                         growEnvelope();
                     }
-
+                    ///grow the map marker
                     mapPointPoint.classList.add('grow');
                     mapPointTop.classList.add('grow');
                     mapPointCenter.classList.add('grow');
-
-
                 }, 1000);
 
                 setTimeout(function () {
-
-                    done = true;
-                    for (let pp = 0; pp < particle.length; ++pp) {
-                        particle[pp].classList.add('fade');
-                    }
-
-                    for (let ii = 0; ii < green.length; ++ii) {
-                        console.log(ii, green[ii]);
-                        green[ii].classList.add('fade');
-                    }
-                    leftSide.classList.add('fade');
-                    rightSide.classList.add('fade');
-                    leftSide.style.transition = 'all 1s';
-                    rightSide.style.transition = 'all 1s';
-                    mapPointPoint.classList.add('hide');
-                    mapPointTop.classList.add('hide');
-                    mapPointCenter.classList.add('hide');
-                    background.style.fill = '#1f1836';
-
-
+                    ///animation is don
+                    ///hide everything
+                    finalHide();
                 }, 4000);
 
                 setTimeout(function () {
-
+                    ///hide the top, animate the bottom fill
+                    ///if reduced, do not animate the bottom fill
                     top.style.opacity = 0;
                     top.style.transition = 'none';
                     if (reduced) {
@@ -161,45 +160,32 @@ const maps = {
                         bottom.style.fill = '#45445d';
                         bottom.style.transition = 'fill  1s';
                     }
-
                 }, 4200);
 
                 setTimeout(function () {
                     chart.update({
-
                         animation: {
                             duration: 1000
                         }
                     });
+                    ////move the final area into place
                     if (!reduced) {
                         bottom.style.transform = 'translateY(4px)';
-
-
                         chart.series[12].data[0].update({
                             y: 15.7
                         });
                         chart.series[12].data[1].update({
-
-
                             y: 15.7
                         });
                         chart.series[12].data[2].update({
                             x: 18,
                             y: 15.7
                         });
+                        finalHide();
                     }
                 }, 5200);
-
-                            y: 15.7
-                        });
-                        chart.series[12].data[2].update({
-                            y: 15.7
-                        });
-                    }
-                }, 5000);
-
-
                 setTimeout(function () {
+                    ////move the final area into place
                     if (!reduced) {
                         chart.series[12].data[2].update({
                             x: 20
@@ -208,38 +194,8 @@ const maps = {
                             x: 0
                         });
                     }
-
+                    finalHide();
                 }, 5300);
-            },
-            redraw: function () {
-                const mapPointPoint = document.getElementsByClassName('map-point-point')[0];
-                const mapPointTop = document.getElementsByClassName('map-point-top')[1];
-                const mapPointCenter = document.getElementsByClassName('map-point-center')[1];
-                const leftSide =  document.getElementsByClassName('left')[0];
-                const rightSide =  document.getElementsByClassName('right')[0];
-                const particle = document.getElementsByClassName('particle');
-                const green = document.getElementsByClassName('green');
-                const background = document.getElementsByClassName('highcharts-plot-background')[0];
-                if (done) {
-                    for (let pp = 0; pp < particle.length; ++pp) {
-                        particle[pp].classList.add('fade');
-                    }
-
-                    for (let ii = 0; ii < green.length; ++ii) {
-                        console.log(ii, green[ii]);
-                        green[ii].classList.add('fade');
-                    }
-                    leftSide.classList.add('fade');
-                    rightSide.classList.add('fade');
-                    leftSide.style.transition = 'all 1s';
-                    rightSide.style.transition = 'all 1s';
-
-                    mapPointPoint.classList.add('hide');
-                    mapPointTop.classList.add('hide');
-                    mapPointCenter.classList.add('hide');
-                    background.style.fill = '#1f1836';
-                }
-
             }
         }
     },
@@ -712,6 +668,8 @@ const finalMap = function () {
 
                                 mapSeries.classList.add('fade-in');
                             }, 500);
+
+
                             setTimeout(function () {
                                 mapLoaded  = true;
                             }, 2000);
@@ -722,8 +680,6 @@ const finalMap = function () {
                                 mapSeries.classList.add('show');
                             }
 
-
-                            }, 500);
 
                         }
                     }

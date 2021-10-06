@@ -80,34 +80,34 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     load: function () {
                         const chart = this;
 
-                        const particle1 = document.querySelectorAll('#stock .particle-1')[0];
-                        const particle2 = document.querySelectorAll('#stock .particle-2')[0];
-                        const particle3 = document.querySelectorAll('#stock .particle-3')[0];
-                        const particle4 = document.querySelectorAll('#stock .particle-4')[0];
-                        const particle5 = document.querySelectorAll('#stock .particle-5')[0];
-                        const particle6 = document.querySelectorAll('#stock .particle-6')[0];
+                        const particle1 = document.querySelector('#stock .particle-1');
+                        const particle2 = document.querySelector('#stock .particle-2');
+                        const particle3 = document.querySelector('#stock .particle-3');
+                        const particle4 = document.querySelector('#stock .particle-4');
+                        const particle5 = document.querySelector('#stock .particle-5');
+                        const particle6 = document.querySelector('#stock .particle-6');
                         const particles = [particle1, particle2, particle3,
                             particle4, particle5, particle6];
-
-                        const greenLine = document.querySelectorAll('#stock .highcharts-series-2.green-line')[0];
+                        const greenLine = document.querySelector('#stock .highcharts-series-2.green-line');
                         const greenArrow = document.getElementsByClassName('green-line')[1];
-
-                        const purpleLine = document.querySelectorAll('#stock .highcharts-series-3.purple-line')[0];
+                        const purpleLine = document.querySelector('#stock .highcharts-series-3.purple-line');
                         const purpleArrow = document.getElementsByClassName('purple-line')[1];
-                        const bottomArea =  document.querySelectorAll('#stock .stock-bottom')[0];
-                        const topArea =  document.querySelectorAll('#stock .stock-top')[0];
-                        const rangeSelectorGroup =  document.querySelectorAll('#stock .highcharts-range-selector-group')[0];
-                        const candlestick =  document.querySelectorAll('#stock .stick')[0];
-                        const column = document.querySelectorAll('#stock .highcharts-column-series.column')[0];
-                        const title = document.querySelectorAll('#stock .highcharts-title')[0];
-                        const subtitle = document.querySelectorAll('#stock .highcharts-subtitle')[0];
+                        const bottomArea =  document.querySelector('#stock .stock-bottom');
+                        const topArea =  document.querySelector('#stock .stock-top');
+                        const rangeSelectorGroup =  document.querySelector('#stock .highcharts-range-selector-group');
+                        const candlestick =  document.querySelector('#stock .stick');
+                        const column = document.querySelector('#stock .highcharts-column-series.column');
+                        const title = document.querySelector('#stock .highcharts-title');
+                        const subtitle = document.querySelector('#stock .highcharts-subtitle');
+
+                        ///for the arrow head sizes
+                        ///based on screen size
                         let head = 40; //arrow head radius
                         if (big) {
                             head = 70;
                         }
-
-
                         if (reduced) {
+                            ///show the lines and particles immediately
                             chart.series[2].update({
                                 data: [{
                                     x: 0,
@@ -146,31 +146,24 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                     }
                                 }]
                             });
-
-
-                            particle1.classList.add('static');
-                            particle2.classList.add('static');
-                            particle3.classList.add('static');
-                            particle4.classList.add('static');
-                            particle5.classList.add('static');
-                            particle6.classList.add('static');
-
+                            particles.forEach(function (p) {
+                                p.classList.add('static');
+                            });
                             greenArrow.classList.add('static');
                             purpleArrow.classList.add('static');
                             greenLine.classList.add('static');
                             purpleLine.classList.add('static');
 
                             setTimeout(function () {
-                                particle1.classList.add('fade');
-                                particle2.classList.add('fade');
-                                particle3.classList.add('fade');
-                                particle4.classList.add('fade');
-                                particle5.classList.add('fade');
-                                particle6.classList.add('fade');
+                                ///fade out the particles
+                                particles.forEach(function (p) {
+                                    p.classList.add('fade');
+                                });
 
                             }, 1000);
 
                             setTimeout(function () {
+                                ///hide everything else
                                 bottomArea.classList.add('hide');
                                 topArea.classList.add('hide');
                                 purpleLine.classList.add('hide');
@@ -185,22 +178,21 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                 if (big) {
                                     margins = [80, 10, 30, 10];
                                 }
-
+                                ///fade in range selector
                                 rangeSelectorGroup.classList.add('fade-in');
-
+                                ///update margins
                                 chart.update({
                                     chart: {
                                         margin: margins
                                     }
                                 });
-
+                                ///turn on the candlestick and the column
                                 chart.series[12].update({
                                     visible: true
                                 });
                                 chart.series[13].update({
                                     visible: true
                                 });
-
                                 chart.series[2].update({
                                     visible: false
                                 });
@@ -221,7 +213,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                 chart.xAxis[0].update({
                                     visible: true
                                 });
-
+                                ///fade in the candlestick and the subtitle if
+                                ///the screen is big
                                 candlestick.classList.add('fade-in');
                                 title.style.opacity = 1;
                                 if (big) {
@@ -234,6 +227,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                             }, 3100);
 
                         } else {
+                            ///move all the particles individually
                             setTimeout(function () {
                                 particle1.classList.add('move');
                             }, 0);
@@ -283,13 +277,9 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                     x: 10.52,
                                     y: 8.4
                                 });
-                                particle1.classList.add('move');
-                                particle2.classList.add('move');
-                                particle3.classList.add('move');
-                                particle4.classList.add('move');
-                                particle5.classList.add('move');
-                                particle6.classList.add('move');
-
+                                particles.forEach(function (p) {
+                                    p.classList.add('move');
+                                });
 
                             }, 1000);
 
