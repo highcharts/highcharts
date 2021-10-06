@@ -22,6 +22,7 @@ import type Accessibility from './Accessibility';
 import type EventCallback from '../Core/EventCallback';
 import type { DOMElementType } from '../Core/Renderer/DOMElementType';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
+import type KeyboardNavigationHandler from './KeyboardNavigationHandler';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type ProxyProvider from './ProxyProvider';
 
@@ -171,7 +172,7 @@ class AccessibilityComponent {
 
 interface AccessibilityComponent {
     destroy(): void;
-    getKeyboardNavigation(): (Highcharts.KeyboardNavigationHandler|Array<Highcharts.KeyboardNavigationHandler>);
+    getKeyboardNavigation(): (KeyboardNavigationHandler|Array<KeyboardNavigationHandler>);
     init(): void;
     onChartRender(): void;
     onChartUpdate(): void;
