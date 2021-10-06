@@ -37,6 +37,12 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
     whiskerDashStyle?: BoxPlotPoint['whiskerDashStyle'];
     whiskerLength?: BoxPlotPoint['whiskerLength'];
     whiskerWidth?: BoxPlotPoint['whiskerWidth'];
+    fillUpperColor?: BoxPlotPoint['fillUpperColor'];
+    fillLowerColor?: BoxPlotPoint['fillLowerColor'];
+    upperLineColor?: BoxPlotPoint['upperLineColor'];
+    lowerLineColor?: BoxPlotPoint['lowerLineColor'];
+
+
 }
 
 /* *

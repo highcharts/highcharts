@@ -29,13 +29,17 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
  *
  * */
 declare class BoxPlotPoint extends ColumnPoint {
-    public box: SVGElement;
     public boxDashStyle: DashStyleValue;
+    public boxLower: SVGElement;
+    public boxUpper: SVGElement;
     public fillColor: ColorType;
+    public fillUpperColor: ColorType;
+    public fillLowerColor: ColorType;
     public high: number;
     public highPlot: number;
     public low: number;
     public lowPlot: number;
+    public lowerLineColor: SVGElement;
     public median: number;
     public medianColor: (ColorString|GradientColor);
     public medianDashStyle: DashStyleValue;
@@ -53,6 +57,7 @@ declare class BoxPlotPoint extends ColumnPoint {
     public stemColor: ColorType;
     public stemDashStyle: DashStyleValue;
     public stemWidth: number;
+    public upperLineColor: SVGElement;
     public whiskerColor: ColorType;
     public whiskerDashStyle: DashStyleValue;
     public whiskers: SVGElement;
