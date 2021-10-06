@@ -59,7 +59,12 @@ function getStartingPath(x: number, y: number): SVGPath.MoveTo {
  * @return {string} path
  *
  */
-function getCirclePath(pixelInterval: number, numberOfCircles: number, startX: number, y: number): SVGPath.Arc[] {
+function getCirclePath(
+    pixelInterval: number,
+    numberOfCircles: number,
+    startX: number,
+    y: number
+): SVGPath.Arc[] {
     const strToRepeat = (i: number): SVGPath.Arc => [
         'A',
         pixelInterval / 2,
@@ -101,13 +106,12 @@ class TimeCycles extends CrookedLine {
             });
         }
         super.init.call(this, annotation, options, index);
-
     }
 
     public setPath(): void {
-
         this.shapes[0].options.d = this.getPath();
     }
+
     public getPath(): SVGPath {
 
         return ([getStartingPath(this.startX, this.y)] as SVGPath).concat(getCirclePath(
@@ -153,6 +157,7 @@ class TimeCycles extends CrookedLine {
         if (!points) {
             return;
         }
+
         const point1 = points[0],
             point2 = points[1],
             xAxisNumber = options.xAxis || 0,
@@ -167,13 +172,17 @@ class TimeCycles extends CrookedLine {
             return;
         }
 
-        const y = isNumber(yValue) && !isNaN(yValue) ? yAxis.toPixels(yValue) : yAxis.top + yAxis.height,
-            x = isNumber(xValue1) && !isNaN(xValue1) ? xAxis.toPixels(xValue1) : xAxis.left,
-            x2 = isNumber(xValue2) && !isNaN(xValue2) ? xAxis.toPixels(xValue2) : xAxis.left + 30,
+        const y = isNumber(yValue) ? yAxis.toPixels(yValue) : yAxis.top + yAxis.height,
+            x = isNumber(xValue1) ? xAxis.toPixels(xValue1) : xAxis.left,
+            x2 = isNumber(xValue2) ? xAxis.toPixels(xValue2) : xAxis.left + 30,
             xAxisLength = xAxis.len,
             pixelInterval = Math.round(Math.max(Math.abs(x2 - x), 2)),
+            // There can be 2 not full circles on the chart, so add 2.
             numberOfCircles = Math.floor(xAxisLength / pixelInterval) + 2,
+            // Calculate where the annotation should start drawing
+            // relative to first point.
             pixelShift = (Math.floor((x - xAxis.left) / pixelInterval) + 1) * pixelInterval;
+
         this.startX = x - pixelShift;
         this.y = y;
         this.pixelInterval = pixelInterval;
@@ -200,6 +209,7 @@ interface TimeCycles {
     numberOfCircles: number;
     y: number;
 }
+
 TimeCycles.prototype.defaultOptions = merge(
     CrookedLine.prototype.defaultOptions,
     {
@@ -307,7 +317,7 @@ export default TimeCycles;
  *
  * @extends   annotations.crookedLine
  * @product   highstock
- * @excludes  labelOptions
+ * @exclude  labelOptions
  * @apioption annotations.timeCycles
  */
 
