@@ -7,6 +7,10 @@ Highcharts.mapChart('container', {
         text: 'Nordic countries'
     },
 
+    mapNavigation: {
+        enabled: true
+    },
+
     series: [{
         data: [
             ['is', 1],

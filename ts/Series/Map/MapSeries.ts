@@ -918,25 +918,6 @@ class MapSeries extends ScatterSeries {
     }
 
     /**
-     * Override render to throw in an async call in IE8. Otherwise it chokes on
-     * the US counties demo.
-     * @private
-     */
-    public render(): void {
-        const series = this,
-            render = Series.prototype.render;
-
-        // Give IE8 some time to breathe.
-        if (series.chart.renderer.isVML && series.data.length > 3000) {
-            setTimeout(function (): void {
-                render.call(series);
-            });
-        } else {
-            render.call(series);
-        }
-    }
-
-    /**
      * Extend setData to join in mapData. If the allAreas option is true, all
      * areas from the mapData are used, and those that don't correspond to a
      * data value are given null values.
