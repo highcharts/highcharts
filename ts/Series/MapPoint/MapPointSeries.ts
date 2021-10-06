@@ -31,6 +31,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     extend,
+    fireEvent,
     isNumber,
     merge
 } = U;
@@ -156,6 +157,8 @@ class MapPointSeries extends ScatterSeries {
                 p.isInside = this.isPointInside(p);
             });
         }
+
+        fireEvent(this, 'afterTranslate');
     }
 
     /* eslint-enable valid-jsdoc */
