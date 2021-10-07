@@ -915,7 +915,6 @@ namespace OrdinalAxis {
                 maxIndex,
                 slope,
                 i,
-                hasBoostedSeries,
                 ordinalPositions = [] as Array<number>,
                 overscrollPointsRange = Number.MAX_VALUE,
                 useOrdinal = false;
