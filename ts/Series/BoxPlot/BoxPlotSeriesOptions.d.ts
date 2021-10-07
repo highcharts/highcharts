@@ -42,6 +42,8 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
     fillLowerColor?: BoxPlotPoint['fillLowerColor'];
     upperLineColor?: BoxPlotPoint['upperLineColor'];
     lowerLineColor?: BoxPlotPoint['lowerLineColor'];
+    upperLineWidth?: BoxPlotPoint['upperLineWidth'];
+    lowerLineWidth?: BoxPlotPoint['lowerLineWidth'];
 
 
 }

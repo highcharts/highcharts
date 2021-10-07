@@ -450,16 +450,16 @@ class BoxPlotSeries extends ColumnSeries {
                             .add(graphic);
                     }
                     if (doQuartiles) {
-                        point.boxUpper = renderer.path(boxUpperPath)
+                        point.boxUpperShape = renderer.path(boxUpperPath)
                             .addClass('highcharts-boxplot-box-upper')
                             .add(graphic);
-                        point.boxLower = renderer.path(boxLowerPath)
+                        point.boxLowerShape = renderer.path(boxLowerPath)
                             .addClass('highcharts-boxplot-box-lower')
                             .add(graphic);
-                        point.boxUpperShape = renderer.path(boxUpperLinePath)
+                        point.boxUpperLineShape = renderer.path(boxUpperLinePath)
                             .addClass('highcharts-boxplot-box-line-upper')
                             .add(graphic);
-                        point.boxLowerShape = renderer.path(boxLowerLinePath)
+                        point.boxLowerLineShape = renderer.path(boxLowerLinePath)
                             .addClass('highcharts-boxplot-box-line-lower')
                             .add(graphic);
                     }
@@ -521,7 +521,7 @@ class BoxPlotSeries extends ColumnSeries {
                             options.boxDashStyle ||
                             options.dashStyle
                         );
-                        point.boxUpperPath.attr(boxAttrUpper);
+                        point.boxUpperShape.attr(boxAttrUpper);
                         // box-lower
                         boxAttrLower.fill = (
                             point.fillLowerColor ||
@@ -537,39 +537,47 @@ class BoxPlotSeries extends ColumnSeries {
                             options.boxDashStyle ||
                             options.dashStyle
                         );
-                        point.boxLowerPath.attr(boxAttrLower);
+                        point.boxLowerShape.attr(boxAttrLower);
                         // box-upper-line
-                        boxAttrUpperLine.fill = (
+                        boxAttrUpperLine.stroke = (
+                            point.whiskerColor ||
                             point.upperLineColor ||
+                            options.whiskerColor ||
                             options.upperLineColor ||
-                            point.fillColor ||
-                            options.fillColor ||
+                            options.lineColor ||
                             color
                         );
-                        boxAttrUpperLine.stroke = options.lineColor || color;
-                        boxAttrUpperLine['stroke-width'] = options.lineWidth || 0;
+                        boxAttrUpperLine['stroke-width'] = (
+                            options.upperLineWidth ||
+                            options.lineWidth ||
+                            0
+                        );
                         boxAttrUpperLine.dashstyle = (
                             point.lineDashStyle ||
                             options.lineDashStyle ||
                             options.dashStyle
                         );
-                        point.boxUpperShape.attr(boxAttrUpperLine);
+                        point.boxUpperLineShape.attr(boxAttrUpperLine);
                         // box-lower-line
-                        boxAttrLowerLine.fill = (
+                        boxAttrLowerLine.stroke = (
+                            point.whiskerColor ||
                             point.lowerLineColor ||
+                            options.whiskerColor ||
                             options.lowerLineColor ||
-                            point.fillColor ||
-                            options.fillColor ||
+                            options.lineColor ||
                             color
                         );
-                        boxAttrLowerLine.stroke = options.lineColor || color;
-                        boxAttrLowerLine['stroke-width'] = options.lineWidth || 0;
+                        boxAttrLowerLine['stroke-width'] = (
+                            options.lowerLineWidth ||
+                            options.lineWidth ||
+                            0
+                        );
                         boxAttrLowerLine.dashstyle = (
                             point.lineDashStyle ||
                             options.lineDashStyle ||
                             options.dashStyle
                         );
-                        point.boxLowerShape.attr(boxAttrLowerLine);
+                        point.boxLowerLineShape.attr(boxAttrLowerLine);
                     }
 
                     // Median attributes
@@ -610,7 +618,7 @@ class BoxPlotSeries extends ColumnSeries {
                 // The box
                 if (doQuartiles) {
                     medianPlot = Math.round(point.medianPlot);
-                    crispCorr = (point.boxUpper.strokeWidth() % 2) / 2;
+                    crispCorr = (point.boxUpperShape.strokeWidth() % 2) / 2;
                     q1Plot = Math.floor(q1Plot) + crispCorr;
                     q3Plot = Math.floor(q3Plot) + crispCorr;
                     left += crispCorr;
@@ -624,7 +632,7 @@ class BoxPlotSeries extends ColumnSeries {
                         ['L', left, q3Plot],
                         ['Z']
                     ];
-                    point.boxUpper[verb]({ d });
+                    point.boxUpperShape[verb]({ d });
                     // box-lower
                     d = [
                         ['M', left, medianPlot],
@@ -634,16 +642,18 @@ class BoxPlotSeries extends ColumnSeries {
                         ['L', left, medianPlot],
                         ['Z']
                     ];
-                    point.boxLower[verb]({ d });
+                    point.boxLowerShape[verb]({ d });
 
                     // Upper-line
                     d = [['M', left, q3Plot],
-                        ['L', right, q3Plot]];
-                    point.boxUpperShape[verb]({ d });
+                        ['L', right, q3Plot],
+                        ['Z']];
+                    point.boxUpperLineShape[verb]({ d });
                     // Lower-line
                     d = [['M', left, q1Plot],
-                        ['L', right, q1Plot]];
-                    point.boxLowerShape[verb]({ d });
+                        ['L', right, q1Plot],
+                        ['Z']];
+                    point.boxLowerLineShape[verb]({ d });
                 }
 
                 // The whiskers
@@ -673,7 +683,8 @@ class BoxPlotSeries extends ColumnSeries {
 
                 d = [
                     ['M', left, medianPlot],
-                    ['L', right, medianPlot]
+                    ['L', right, medianPlot],
+                    ['Z']
                 ];
                 point.medianShape[verb]({ d });
             }
