@@ -25,6 +25,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * */
 export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
     boxDashStyle?: BoxPlotPoint['boxDashStyle'];
+    lineDashStyle?: BoxPlotPoint['boxDashStyle'];
     fillColor?: BoxPlotPoint['fillColor'];
     medianColor?: BoxPlotPoint['medianColor'];
     medianDashStyle?: BoxPlotPoint['medianDashStyle'];
