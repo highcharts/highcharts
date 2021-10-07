@@ -139,9 +139,9 @@ const downloadURL = Highcharts.downloadURL = function (
 };
 
 
-const exports = {
+const DownloadURL = {
     dataURLtoBlob,
     downloadURL
 };
 
-export default exports;
+export default DownloadURL;

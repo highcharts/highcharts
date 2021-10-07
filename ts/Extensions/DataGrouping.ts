@@ -48,7 +48,7 @@ const {
 
 declare module '../Core/Axis/AxisLike' {
     interface AxisLike {
-        applyGrouping(): void;
+        applyGrouping(e: Highcharts.PostProcessDataEvent): void;
         getGroupPixelWidth(): number;
         setDataGrouping(
             dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
@@ -76,7 +76,7 @@ declare module '../Core/Series/SeriesLike' {
         hasGroupedData?: boolean;
         hasProcessed?: boolean;
         preventGraphAnimation?: boolean;
-        applyGrouping(): void;
+        applyGrouping(hasExtemesChanged: boolean): void;
         destroyGroupedData(): void;
         generatePoints(): void;
         getDGApproximation(): string;
@@ -152,6 +152,9 @@ declare global {
             length?: number;
             options?: (PointOptions|PointShortOptions|SeriesTypeOptions);
             start?: number;
+        }
+        interface PostProcessDataEvent {
+            hasExtemesChanged?: boolean;
         }
         interface DataGroupingOptionsObject {
             anchor?: DataGroupingAnchor;
@@ -387,7 +390,7 @@ H.approximations = {
     }
 };
 
-const applyGrouping = function (this: Series): void {
+const applyGrouping = function (this: Series, hasExtemesChanged: boolean): void {
     let series = this,
         chart = series.chart,
         options = series.options,
@@ -409,9 +412,9 @@ const applyGrouping = function (this: Series): void {
         series.requireSorting = revertRequireSorting = true;
     }
 
-    // Skip if processData returns false or if grouping is disabled (in that
-    // order)
-    skip = skipDataGrouping(series) || !groupingEnabled;
+    // Skip if skipDataGrouping method returns false or if grouping is disabled
+    // (in that order).
+    skip = skipDataGrouping(series, hasExtemesChanged) === false || !groupingEnabled;
 
     // Revert original requireSorting value if changed
     if (revertRequireSorting) {
@@ -555,14 +558,12 @@ const applyGrouping = function (this: Series): void {
     }
 };
 
-const skipDataGrouping = function (series: Series): void|false {
-    if (series.isCartesian &&
+const skipDataGrouping = function (series: Series, force: boolean): boolean {
+    return !(series.isCartesian &&
         !series.isDirty &&
         !series.xAxis.isDirty &&
-        !series.yAxis.isDirty
-    ) {
-        return false;
-    }
+        !series.yAxis.isDirty &&
+        !force);
 };
 
 const groupData = function (
@@ -1082,7 +1083,7 @@ seriesProto.generatePoints = function (): void {
  *
  * @function Highcharts.Axis#applyGrouping
  */
-Axis.prototype.applyGrouping = function (this: Axis): void {
+Axis.prototype.applyGrouping = function (this: Axis, e: Highcharts.PostProcessDataEvent): void {
     const axis = this,
         series = axis.series;
 
@@ -1095,10 +1096,9 @@ Axis.prototype.applyGrouping = function (this: Axis): void {
         if (series.groupPixelWidth) {
             series.hasProcessed = true; // #2692
         }
-
         // Fire independing on series.groupPixelWidth to always set a proper
         // dataGrouping state, (#16238)
-        series.applyGrouping();
+        series.applyGrouping(!!e.hasExtemesChanged);
     });
 };
 
@@ -1142,8 +1142,7 @@ Axis.prototype.getGroupPixelWidth = function (): number {
             // limit defined in groupPixelWidth
             if (
                 series[i].groupPixelWidth ||
-                dataLength >
-                ((this.chart.plotSizeX as any) / groupPixelWidth) ||
+                dataLength > ((this.chart.plotSizeX as any) / groupPixelWidth) ||
                 (dataLength && dgOptions.forced)
             ) {
                 doGrouping = true;

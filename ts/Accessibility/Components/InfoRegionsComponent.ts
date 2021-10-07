@@ -18,6 +18,7 @@
  *
  * */
 
+import type Accessibility from '../Accessibility';
 import type Axis from '../../Core/Axis/Axis';
 import type ChartSonify from '../../Extensions/Sonification/ChartSonify';
 import type {
@@ -39,6 +40,7 @@ const {
     pick
 } = U;
 
+import A11yI18n from '../A11yI18n.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import Announcer from '../Utils/Announcer.js';
 import AnnotationsA11y from './AnnotationsA11y.js';
@@ -306,7 +308,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             before: {
                 element: null,
                 buildContent: function (
-                    chart: Highcharts.AccessibilityChart
+                    chart: Accessibility.ChartComposition
                 ): string {
                     const formatter: (
                         Highcharts.ScreenReaderFormatterCallbackFunction<Chart>|undefined
@@ -317,7 +319,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 },
                 insertIntoDOM: function (
                     el: HTMLDOMElement,
-                    chart: Highcharts.AccessibilityChart
+                    chart: Accessibility.ChartComposition
                 ): void {
                     chart.renderTo.insertBefore(
                         el, chart.renderTo.firstChild
@@ -336,7 +338,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             after: {
                 element: null,
                 buildContent: function (
-                    chart: Highcharts.AccessibilityChart
+                    chart: Accessibility.ChartComposition
                 ): string {
                     const formatter = chart.options.accessibility.screenReaderSection
                         .afterChartFormatter;
@@ -345,7 +347,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 },
                 insertIntoDOM: function (
                     el: HTMLDOMElement,
-                    chart: Highcharts.AccessibilityChart
+                    chart: Accessibility.ChartComposition
                 ): void {
                     chart.renderTo.insertBefore(
                         el, chart.container.nextSibling
@@ -543,7 +545,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 annotationsTitle: annotationsList ? annotationsTitleStr : '',
                 annotationsList: annotationsList
             },
-            formattedString = H.i18nFormat(format, context, chart);
+            formattedString = A11yI18n.i18nFormat(format, context, chart);
 
         this.dataTableButtonId = dataTableButtonId;
         this.sonifyButtonId = sonifyButtonId;
@@ -567,7 +569,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         }
 
         const context = { endOfChartMarker: this.getEndOfChartMarkerText() };
-        const formattedString = H.i18nFormat(format, context, chart);
+        const formattedString = A11yI18n.i18nFormat(format, context, chart);
 
         return stripEmptyHTMLTags(formattedString);
     },
@@ -784,7 +786,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 );
 
                 (onPlayAsSoundClick || defaultHandler).call(
-                    this, e, chart as Highcharts.AccessibilityChart
+                    this, e, chart as Accessibility.ChartComposition
                 );
             };
         }

@@ -121,7 +121,7 @@ class Pitchfork extends InfinityLine {
                 this.points[0],
                 Pitchfork.middleLineEdgePoint as any
             ]
-        }, false as any);
+        }, 0);
 
         this.initShape({
             type: 'path',
@@ -129,7 +129,7 @@ class Pitchfork extends InfinityLine {
                 this.points[1],
                 Pitchfork.topLineEdgePoint as any
             ]
-        }, false as any);
+        }, 1);
 
         this.initShape({
             type: 'path',
@@ -137,7 +137,7 @@ class Pitchfork extends InfinityLine {
                 this.points[2],
                 Pitchfork.bottomLineEdgePoint as any
             ]
-        }, false as any);
+        }, 2);
     }
 
     public addBackgrounds(): void {
@@ -175,7 +175,8 @@ class Pitchfork extends InfinityLine {
                         };
                     }
                 ]
-            })
+            }),
+            3
         );
 
         const outerBackground = (this.initShape as any)(
@@ -187,7 +188,8 @@ class Pitchfork extends InfinityLine {
                     shapes[2].points[1],
                     this.points[2]
                 ]
-            })
+            }),
+            4
         );
 
         typeOptions.innerBackground = innerBackground.options;

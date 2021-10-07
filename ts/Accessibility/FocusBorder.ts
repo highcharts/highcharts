@@ -18,9 +18,8 @@
  *
  * */
 
-import type {
-    DOMElementType
-} from '../Core/Renderer/DOMElementType';
+import type Accessibility from './Accessibility';
+import type { DOMElementType } from '../Core/Renderer/DOMElementType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 import Chart from '../Core/Chart/Chart.js';
@@ -75,7 +74,7 @@ namespace FocusBorderComposition {
      *
      * */
 
-    export interface ChartComposition extends Highcharts.AccessibilityChart {
+    export interface ChartComposition extends Accessibility.ChartComposition {
         focusElement?: SVGElement;
         renderFocusBorder(): void;
         setFocusToElement(
