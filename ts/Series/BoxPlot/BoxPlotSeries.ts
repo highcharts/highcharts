@@ -618,8 +618,8 @@ class BoxPlotSeries extends ColumnSeries {
                     // box-upper
                     d = [
                         ['M', left, q3Plot],
-                        ['L', left, median],
-                        ['L', right, median],
+                        ['L', left, medianPlot],
+                        ['L', right, medianPlot],
                         ['L', right, q3Plot],
                         ['L', left, q3Plot],
                         ['Z']
@@ -638,12 +638,12 @@ class BoxPlotSeries extends ColumnSeries {
 
                     // Upper-line
                     d = [['M', left, q3Plot],
-                        ['L', right, q3Plot]]
-                    point.boxUpperShape[verb]({ d })
+                        ['L', right, q3Plot]];
+                    point.boxUpperShape[verb]({ d });
                     // Lower-line
                     d = [['M', left, q1Plot],
-                        ['L', right, q1Plot]]
-                    point.boxLowerShape[verb]({ d })
+                        ['L', right, q1Plot]];
+                    point.boxLowerShape[verb]({ d });
                 }
 
                 // The whiskers
