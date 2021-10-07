@@ -963,6 +963,39 @@ const getGraticule = () => {
     return data;
 };
 
+// Add flight route after initial animation
+const afterAnimate = e => {
+    const chart = e.target.chart;
+    chart.addSeries({
+        type: 'mapline',
+        animation: false,
+        data: [{
+            type: 'LineString',
+            coordinates: [
+                [4.90, 53.38], // Amsterdam
+                [-118.24, 34.05] // Los Angeles
+            ],
+            color: '#3030d0'
+        }],
+        lineWidth: 2
+    }, false);
+    chart.addSeries({
+        type: 'mappoint',
+        animation: false,
+        data: [{
+            type: 'Point',
+            name: 'Amsterdam',
+            coordinates: [4.90, 53.38]
+        }, {
+            type: 'Point',
+            name: 'LA',
+            coordinates: [-118.24, 34.05]
+        }],
+        color: '#3030d0'
+    }, false);
+    chart.redraw(false);
+};
+
 
 Highcharts.getJSON(
     'https://rawgit.com/deldersveld/topojson/master/world-countries.json',
@@ -1032,7 +1065,9 @@ Highcharts.getJSON(
 
             plotOptions: {
                 series: {
-                    animation: true,
+                    animation: {
+                        duration: 750
+                    },
                     clip: false
                 }
             },
@@ -1056,41 +1091,12 @@ Highcharts.getJSON(
                 dataLabels: {
                     enabled: false,
                     format: '{point.name}'
+                },
+                events: {
+                    afterAnimate
                 }
             }]
         });
-
-        // Add flight route after initial animation
-        setTimeout(() => {
-            chart.addSeries({
-                type: 'mapline',
-                animation: false,
-                data: [{
-                    type: 'LineString',
-                    coordinates: [
-                        [4.90, 53.38], // Amsterdam
-                        [-118.24, 34.05] // Los Angeles
-                    ],
-                    color: '#3030d0'
-                }],
-                lineWidth: 2
-            }, false);
-            chart.addSeries({
-                type: 'mappoint',
-                animation: false,
-                data: [{
-                    type: 'Point',
-                    name: 'Amsterdam',
-                    coordinates: [4.90, 53.38]
-                }, {
-                    type: 'Point',
-                    name: 'LA',
-                    coordinates: [-118.24, 34.05]
-                }],
-                color: '#3030d0'
-            }, false);
-            chart.redraw(false);
-        }, 1000);
 
         // Render a circle filled with a radial gradient behind the globe to
         // make it appear as the sea around the continents

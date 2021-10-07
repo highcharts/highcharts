@@ -2577,8 +2577,8 @@ class Series {
             }
         });
 
-        fireEvent(this, 'afterAnimate');
         this.finishedAnimating = true;
+        fireEvent(this, 'afterAnimate');
     }
 
     /**

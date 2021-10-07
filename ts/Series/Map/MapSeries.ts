@@ -30,6 +30,8 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import A from '../../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
 import ColorMapComposition from '../ColorMapComposition.js';
 const { colorMapSeriesMixin } = ColorMapComposition;
 import CU from '../CenteredUtilities.js';
@@ -468,17 +470,10 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public animate(init?: boolean): void {
-        let chart = this.chart,
-            animation = this.options.animation,
-            group = this.group;
+        const { chart, group } = this,
+            animation = animObject(this.options.animation);
 
         if (chart.renderer.isSVG) {
-
-            if (animation === true) {
-                animation = {
-                    duration: 1000
-                };
-            }
 
             // Initialize the animation
             if (init) {
