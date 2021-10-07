@@ -339,7 +339,13 @@ namespace Accessibility {
     }
 
     export declare class PointComposition extends Point {
+        accessibility?: PointStateObject;
         series: SeriesComposition;
+        value?: (number|null);
+    }
+
+    export interface PointStateObject {
+        valueDescription?: string;
     }
 
     export declare class SeriesComposition extends Series {
