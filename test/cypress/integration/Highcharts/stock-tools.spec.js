@@ -97,7 +97,7 @@ describe('Adding custom indicator on a separate axis through indicator popup, #1
         cy.window().then((win) => {
             const H = win.Highcharts,
                 bindingsUtils = H._modules['Extensions/Annotations/NavigationBindings.js'].prototype.utils;
-            
+
             H.seriesType(
                 'customIndicatorBasedOnRSI',
                 'rsi', {
@@ -147,7 +147,7 @@ describe('An indicator on indicator, #15696.', () => {
 
         cy.get('#highcharts-select-series')
             .contains('SMA (14)')
-        
+
         cy.get('#highcharts-select-series')
             .select('SMA (14)')
 
