@@ -266,8 +266,9 @@ const bindingsUtils = {
         coords: Array<Pointer.AxisCoordinateObject>
     ): Pointer.AxisCoordinateObject {
         return coords.filter(function (coord): boolean {
-            const axisMin = coord.axis.min,
-                axisMax = coord.axis.max,
+            const extremes = coord.axis.getExtremes(),
+                axisMin = extremes.min,
+                axisMax = extremes.max,
                 // Correct axis edges when axis has series
                 // with pointRange (like column)
                 minPointOffset = pick(coord.axis.minPointOffset, 0);
