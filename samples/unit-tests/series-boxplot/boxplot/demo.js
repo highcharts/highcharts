@@ -94,7 +94,7 @@ QUnit.test('Individual fill color (#5770)', function (assert) {
     );
 });
 
-QUnit.test('Individual fill color 2 (#5770)', function (assert) {
+QUnit.test('Individual fill color (#6796)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'boxplot'
